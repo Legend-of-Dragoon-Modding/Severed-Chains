@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.Hardware.DMA;
@@ -27,11 +26,11 @@ import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
+import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.Timers.TMR_HRETRACE_MODE;
 import static legend.core.dma.DmaManager.DMA_DICR;
 import static legend.core.dma.DmaManager.DMA_DPCR;
 import static legend.core.kernel.Bios.EnterCriticalSection;
-import static legend.game.Helper.getMethodAddress;
 
 @EntryPoint
 public final class Scus94491 {
@@ -63,8 +62,8 @@ public final class Scus94491 {
   public static final Value _801c52ac = MEMORY.ref(4, 0x801c52acL);
 
   public static final BoolRef interruptHandlersInitialized_801c5424 = MEMORY.ref(2, 0x801c5424L, BoolRef::new);
-  public static final Value _801c5426 = MEMORY.ref(2, 0x801c5426L);
-  public static final Value _801c5428 = MEMORY.ref(4, 0x801c5428L);
+  public static final Value inExceptionHandler_801c5426 = MEMORY.ref(2, 0x801c5426L);
+  public static final Value interruptCallbacks_801c5428 = MEMORY.ref(4, 0x801c5428L);
 
   public static final Value _801c5454 = MEMORY.ref(2, 0x801c5454L);
   public static final Value _801c5456 = MEMORY.ref(2, 0x801c5456L);
@@ -213,6 +212,11 @@ public final class Scus94491 {
     _1f800000.setu(decompress(_80188a88.getAddress(), _80010000.getAddress()));
     StopCallback();
     EnterCriticalSection();
+
+    MEMORY.addFunctions(Scus94491BpeSegment.class);
+    MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
+    MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
+    MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
     Exec(_80188898, 1, 0);
   }
 
@@ -317,7 +321,7 @@ public final class Scus94491 {
 
     zeroMemory_801c15ac(interruptHandlersInitialized_801c5424.getAddress(), 1050);
 
-    setjmp(_801c545c, value -> handleException());
+    setjmp(_801c545c, MEMORY.ref(4, getMethodAddress(Scus94491.class, "handleException"), RunnableRef::new));
 
     //LAB_801c111c
     _801c545c.sp.set((int)_801c643c.getAddress());
@@ -340,7 +344,7 @@ public final class Scus94491 {
     }
 
     //LAB_801c11d4
-    _801c5426.setu(0x1L);
+    inExceptionHandler_801c5426.setu(0x1L);
     long s0 = I_MASK.get(_801c5454.get(I_STAT));
 
     //LAB_801c1210
@@ -352,9 +356,9 @@ public final class Scus94491 {
       while(s0 != 0 && s1 < 0xbL) {
         if((s0 & 0x1L) != 0) {
           I_STAT.setu(~(0x1L << s1));
-          final long v0 = _801c5428.offset(s2).get();
+          final long v0 = interruptCallbacks_801c5428.offset(s2).get();
           if(v0 != 0) {
-            MEMORY.ref(4, v0).cast(RunnableRef::new).run();
+            MEMORY.ref(4, v0).call();
           }
         }
 
@@ -375,20 +379,20 @@ public final class Scus94491 {
     } else {
       _801c64bc.addu(0x1L);
       if(_801c64bc.get() >= 0x800L) {
-        LOGGER.error("intr timeout(%04x:%04x)\n", I_STAT.get(), I_MASK.get());
+        LOGGER.error("intr timeout(%04x:%04x)", I_STAT.get(), I_MASK.get());
         _801c64bc.setu(0);
         I_STAT.setu(0);
       }
     }
 
     //LAB_801c1320
-    _801c5426.setu(0);
+    inExceptionHandler_801c5426.setu(0);
     ReturnFromException();
   }
 
   @Method(0x801c134cL)
   public static long InterruptCallback_Impl(final InterruptType interrupt, final long callback) {
-    final long oldCallback = _801c5428.offset(interrupt.ordinal() * 4L).get();
+    final long oldCallback = interruptCallbacks_801c5428.offset(interrupt.ordinal() * 4L).get();
     if(callback == oldCallback || !interruptHandlersInitialized_801c5424.get()) {
       return oldCallback;
     }
@@ -398,13 +402,13 @@ public final class Scus94491 {
 
     if(callback == 0) {
       //LAB_801c13dc
-      _801c5428.offset(interrupt.ordinal() * 4L).setu(0);
+      interruptCallbacks_801c5428.offset(interrupt.ordinal() * 4L).setu(0);
 
       final long v0 = ~interrupt.getBit();
       oldIMask &= v0;
       _801c5454.and(v0);
     } else {
-      _801c5428.offset(interrupt.ordinal() * 4L).setu(callback);
+      interruptCallbacks_801c5428.offset(interrupt.ordinal() * 4L).setu(callback);
 
       final long v1 = interrupt.getBit();
       oldIMask |= v1;
@@ -487,7 +491,7 @@ public final class Scus94491 {
   }
 
   @Method(0x801c1d60L)
-  public static void setjmp(final jmp_buf buffer, final Consumer<Long> callback) {
+  public static void setjmp(final jmp_buf buffer, final RunnableRef callback) {
     buffer.set(callback);
   }
 
@@ -499,7 +503,7 @@ public final class Scus94491 {
     zeroMemory_801c1ed0(vsyncCallbacks_801c64cc.getAddress(), 8);
     InterruptCallback(InterruptType.VBLANK, getMethodAddress(Scus94491.class, "executeVsyncCallbacks"));
 
-    return getMethodAddress(Scus94491.class, "SetVsyncInterruptCallback", InterruptType.class, long.class);
+    return getMethodAddress(Scus94491.class, "SetVsyncInterruptCallback_Impl", InterruptType.class, long.class);
   }
 
   @Method(0x801c1e38L)
@@ -516,7 +520,7 @@ public final class Scus94491 {
   }
 
   @Method(0x801c1ea4L)
-  public static void SetVsyncInterruptCallback(final InterruptType interrupt, final long callback) {
+  public static void SetVsyncInterruptCallback_Impl(final InterruptType interrupt, final long callback) {
     final Pointer<RunnableRef> ptr = vsyncCallbacks_801c64cc.get(interrupt.ordinal());
 
     if(callback != ptr.deref().getAddress()) {
@@ -527,7 +531,7 @@ public final class Scus94491 {
   @Method(0x801c1ed0L)
   public static void zeroMemory_801c1ed0(final long address, final int words) {
     for(long i = address; i < address + words * 4L; i += 4L) {
-      MEMORY.set(address, 4, 0L);
+      MEMORY.set(i, 4, 0L);
     }
   }
 
@@ -536,21 +540,21 @@ public final class Scus94491 {
     DMA_DICR.setu(0);
 
     zeroMemory_801c2178(dmaCallbacks_801c6500.getAddress(), 8);
-    InterruptCallback(InterruptType.DMA, getMethodAddress(Scus94491.class, "executeDmaCallbacks"));
+    InterruptCallback(InterruptType.DMA, getMethodAddress(Scus94491.class, "executeDmaInterruptCallbacks"));
 
-    return getMethodAddress(Scus94491.class, "SetDmaInterruptCallback", DmaChannelType.class, long.class);
+    return getMethodAddress(Scus94491.class, "SetDmaInterruptCallback_Impl", DmaChannelType.class, long.class);
   }
 
   @Method(0x801c1f4cL)
-  public static void executeDmaCallbacks() {
-    long s1 = DMA_DICR.get() >>> 24L & 0x7fL;
+  public static void executeDmaInterruptCallbacks() {
+    long s1 = DMA_DICR.get() >>> 24 & 0x7fL;
 
     //LAB_801c1fa0
     while(s1 != 0) {
       //LAB_801c1fac
       for(int i = 0; i < 7 && s1 != 0; i++) {
         if((s1 & 0x1L) != 0) {
-          DMA_DICR.setu(DMA_DICR.get(0xff_ffffL | 0x1L << i + 24L));
+          DMA_DICR.and(0xff_ffffL | 0x1L << i + 24);
           final Pointer<RunnableRef> callback = dmaCallbacks_801c6500.get(i);
           if(!callback.isNull()) {
             callback.deref().run();
@@ -562,7 +566,7 @@ public final class Scus94491 {
       }
 
       //LAB_801c2004
-      s1 = DMA_DICR.get() >>> 24L & 0x7fL;
+      s1 = DMA_DICR.get() >>> 24 & 0x7fL;
     }
 
     //LAB_801c2028
@@ -580,7 +584,7 @@ public final class Scus94491 {
   }
 
   @Method(0x801c20ccL)
-  public static long SetDmaInterruptCallback(final DmaChannelType channel, final long callback) {
+  public static long SetDmaInterruptCallback_Impl(final DmaChannelType channel, final long callback) {
     final Pointer<RunnableRef> ptr = dmaCallbacks_801c6500.get(channel.ordinal());
     final long previous = ptr.isNull() ? 0 : ptr.deref().getAddress();
 
@@ -602,7 +606,7 @@ public final class Scus94491 {
   @Method(0x801c2178L)
   public static void zeroMemory_801c2178(final long address, final int words) {
     for(long i = address; i < address + words * 4L; i += 4L) {
-      MEMORY.set(address, 4, 0L);
+      MEMORY.set(i, 4, 0L);
     }
   }
 }
