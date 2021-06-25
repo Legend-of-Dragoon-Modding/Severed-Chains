@@ -1,42 +1,70 @@
 package legend.game;
 
+import legend.core.DebugHelper;
+import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.Pointer;
+import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnsignedIntRef;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Function;
+
+import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.Scus94491BpeSegment.FUN_80011e1c;
+import static legend.game.Scus94491BpeSegment.FUN_80013200;
+import static legend.game.Scus94491BpeSegment.FUN_800136dc;
+import static legend.game.Scus94491BpeSegment.FUN_80017c44;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
+import static legend.game.Scus94491BpeSegment.FUN_8001e5ec;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
+import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment._800103d0;
 import static legend.game.Scus94491BpeSegment._8001051c;
 import static legend.game.Scus94491BpeSegment._8011e210;
+import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.allocateLinkedList;
+import static legend.game.Scus94491BpeSegment.drawTim;
 import static legend.game.Scus94491BpeSegment.isStackPointerModified_1f8003bc;
+import static legend.game.Scus94491BpeSegment.loadSceaLogo;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.processControllerInput;
+import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.timHeader_80010548;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002504c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c008;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002db2c;
 import static legend.game.Scus94491BpeSegment_8002.SetMem;
 import static legend.game.Scus94491BpeSegment_8002._bu_init;
 import static legend.game.Scus94491BpeSegment_8002.initMemcard;
+import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
+import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
+import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b3f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003c400;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
@@ -44,6 +72,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
 import static legend.game.Scus94491BpeSegment_8003.SetTmr0InterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
+import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8003.initGte;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
@@ -53,7 +82,9 @@ import static legend.game.Scus94491BpeSegment_8003.setClip;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042090;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
+import static legend.game.Scus94491BpeSegment_8004._8004dd20;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
+import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004._8004e31c;
 import static legend.game.Scus94491BpeSegment_8004._8004e41c;
 import static legend.game.Scus94491BpeSegment_8004._8004e59c;
@@ -76,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ef1c;
 import static legend.game.Scus94491BpeSegment_8004._8004ef9c;
 import static legend.game.Scus94491BpeSegment_8004._8004f01c;
 import static legend.game.Scus94491BpeSegment_8004._8004f09c;
+import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._8005a370;
 import static legend.game.Scus94491BpeSegment_8005._8005a374;
@@ -83,6 +115,7 @@ import static legend.game.Scus94491BpeSegment_8005._8005a384;
 import static legend.game.Scus94491BpeSegment_8005._8005a388;
 import static legend.game.Scus94491BpeSegment_8005._8005a398;
 import static legend.game.Scus94491BpeSegment_8006._8006a398;
+import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007._8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -94,13 +127,16 @@ import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b._800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
 import static legend.game.Scus94491BpeSegment_800b._800bda10;
 import static legend.game.Scus94491BpeSegment_800b._800bda84;
 import static legend.game.Scus94491BpeSegment_800b._800bda86;
 import static legend.game.Scus94491BpeSegment_800b._800bda88;
 import static legend.game.Scus94491BpeSegment_800b._800bdaad;
 import static legend.game.Scus94491BpeSegment_800b._800bdadc;
+import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
@@ -111,9 +147,19 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
+import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
+import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.loadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
+import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
+import static legend.game.Scus94491BpeSegment_800c._800c6740;
 import static legend.game.Scus94491BpeSegment_800c._800ca734;
+import static legend.game.Scus94491BpeSegment_800c.fileSInitOvl_800c668c;
+import static legend.game.Scus94491BpeSegment_800c.sceaLogoAlpha_800c6734;
+import static legend.game.Scus94491BpeSegment_800c.sceaLogoDisplayTime_800c6730;
+import static legend.game.Scus94491BpeSegment_800c.sceaLogoTextureLoaded_800c672c;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
 public final class Scus94491BpeSegment_800e {
@@ -125,6 +171,7 @@ public final class Scus94491BpeSegment_800e {
 
   public static final Value ramSize_800e6f04 = MEMORY.ref(4, 0x800e6f04L);
   public static final Value stackSize_800e6f08 = MEMORY.ref(4, 0x800e6f08L);
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageCallbackArray_800e6f0c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800e6f0cL, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(RunnableRef::new)));
 
   public static final Value _800e6f64 = MEMORY.ref(4, 0x800e6f64L);
 
@@ -163,6 +210,18 @@ public final class Scus94491BpeSegment_800e {
 
   public static final Value _800e76b0 = MEMORY.ref(4, 0x800e76b0L);
 
+  @Method(0x800e4018L)
+  public static void FUN_800e4018() {
+    assert false;
+    //TODO
+  }
+
+  @Method(0x800e4708L)
+  public static void FUN_800e4708() {
+    assert false;
+    //TODO
+  }
+
   @Method(0x800e5d44L)
   public static void main() {
     FUN_800e5d64();
@@ -174,7 +233,7 @@ public final class Scus94491BpeSegment_800e {
     ResetCallback();
     SetMem(2);
 
-    isStackPointerModified_1f8003bc.set(0);
+    isStackPointerModified_1f8003bc.set(false);
 
     initMemcard(false);
     FUN_8002db2c();
@@ -242,6 +301,45 @@ public final class Scus94491BpeSegment_800e {
     SetTmr0InterruptCallback(getMethodAddress(Scus94491BpeSegment.class, "spuTimerInterruptCallback"));
   }
 
+  @Method(0x800e5fc0L)
+  public static void FUN_800e5fc0() {
+    final long loadingStage = loadingStage_800bb10c.get();
+    if(loadingStage >= 0x3L) {
+      //LAB_800e5ff8
+      if(loadingStage == 0x5L) {
+        //LAB_800e6040
+        _8004dd30.setu(0);
+
+        if(drgnBinIndex_800bc058.get() == 0x1L) {
+          _800bf0dc.setu(0);
+          _800bf0ec.setu(0x2L);
+          _8004dd24.setu(0x9L);
+        } else {
+          //LAB_800e608c
+          _8004dd24.setu(_8004dd20.get() + 1);
+        }
+
+        loadingStage_800bb10c.setu(0);
+        _8007a3b8.setu(0x2L);
+
+        //LAB_800e60c8
+        return;
+      }
+    } else if(loadingStage > 0) {
+      //LAB_800e6028
+      if(fileCount_8004ddc8.get() != 0) {
+        return;
+      }
+    } else if(loadingStage == 0) {
+      //LAB_800e600c
+      FUN_8002504c();
+      FUN_800136dc(0x1L, 0x1L);
+    }
+
+    //LAB_800e60b8
+    loadingStage_800bb10c.addu(1);
+  }
+
   @Method(0x800e60d8L)
   public static void FUN_800e60d8() {
     for(int s2 = 0; s2 < 3; s2++) {
@@ -252,8 +350,144 @@ public final class Scus94491BpeSegment_800e {
     }
   }
 
+  @Method(0x800e6184L)
+  public static void executeLoadingStage() {
+    loadingStageCallbackArray_800e6f0c.get((int)loadingStage_800bb10c.get()).deref().run();
+
+    if(sceaLogoTextureLoaded_800c672c.get() != 0) {
+      drawTim(sceaLogoAlpha_800c6734.get());
+    }
+  }
+
+  @Method(0x800e61e4L)
+  public static void nextLoadingStage() {
+    loadingStage_800bb10c.addu(0x1L);
+  }
+
+  @Method(0x800e61fcL)
+  public static void incrementSceaLogoAlpha() {
+    sceaLogoAlpha_800c6734.addu(0x3L);
+
+    if(sceaLogoAlpha_800c6734.get() > 0x80L) {
+      sceaLogoAlpha_800c6734.setu(0x80L);
+      loadingStage_800bb10c.addu(0x1L);
+    }
+  }
+
+  @Method(0x800e6238L)
+  public static void decrementSceaLogoAlpha() {
+    sceaLogoAlpha_800c6734.subu(0x3L);
+
+    if(sceaLogoAlpha_800c6734.getSigned() < 0) {
+      sceaLogoAlpha_800c6734.set(0);
+      loadingStage_800bb10c.add(0x1L);
+    }
+  }
+
+  @Method(0x800e626cL)
+  public static void checkForSceaLogoTimeout() {
+    if(_8007a398.get() != 0 || VSync(-1) - sceaLogoDisplayTime_800c6730.get() > 210L) {
+      loadingStage_800bb10c.add(0x1L);
+    }
+  }
+
+  @Method(0x800e62ccL)
+  public static void initSceaLogo() {
+    loadSceaLogo();
+    FUN_800136dc(0x2L, 0x1L);
+    sceaLogoTextureLoaded_800c672c.setu(0x1L);
+    sceaLogoDisplayTime_800c6730.setu(VSync(-1));
+    loadingStage_800bb10c.addu(0x1L);
+    sceaLogoAlpha_800c6734.setu(0);
+  }
+
+  @Method(0x800e6328L)
+  public static void findSInitOvl() {
+    SInitOvlFileName_800c66ac.set(String.format("%s%s;1", _800c6740.getString(), "\\OVL\\S_INIT.OV_"));
+
+    //LAB_800e635c
+    while(FUN_80036f20() != 0x1L) {
+      DebugHelper.sleep(1);
+    }
+
+    if(DsSearchFile(fileSInitOvl_800c668c, SInitOvlFileName_800c66ac.getString()) == null) {
+      return;
+    }
+
+    SInitOvlData_800c66a4.setu(addToLinkedListHead(fileSInitOvl_800c668c.size.get() + 0x800L));
+    loadingStage_800bb10c.addu(0x1L);
+  }
+
+  @Method(0x800e63c0L)
+  public static void loadSInitOvl() {
+    final CdlFILE file = fileSInitOvl_800c668c;
+
+    LOGGER.info("Reading file %s...", file.name.get());
+
+    final int numberOfSectors = (int)((file.size.get() + 0x7ffL) / 0x800L);
+    CDROM.readFromDisk(file.pos, numberOfSectors, SInitOvlData_800c66a4.get());
+    FUN_8003429c(0);
+    handleCdromDmaTimeout(1);
+
+    FUN_80017c44(0, SInitOvlData_800c66a4.get(), _80010004.get());
+    removeFromLinkedList(SInitOvlData_800c66a4.get());
+    loadingStage_800bb10c.addu(0x1L);
+
+    MEMORY.addFunctions(SInit.class);
+
+    // Pre-optimisation
+//    final long numberOfSectors = (file.size + 0x7ffL) / 0x800L;
+//    if(startCdromDmaTransfer(file.pos, numberOfSectors, SInitOvlData_800c66a4.get(), new CdlMODE().doubleSpeed()) != 0) {
+//      long remainingDmaTransfers;
+//
+//      //LAB_800e63f8
+//      do {
+//        remainingDmaTransfers = FUN_80035a30(sp + 0x10L);
+//
+//        try {
+//          Thread.sleep(1);
+//        } catch(final InterruptedException ignored) { }
+//      } while(remainingDmaTransfers > 0);
+//
+//      if(remainingDmaTransfers == 0) {
+//        FUN_80017c44(0, SInitOvlData_800c66a4.get(), _80010004.get());
+//        FUN_80012764(SInitOvlData_800c66a4.getAddress());
+//        loadingStage_800bb10c.addu(0x1L);
+//      }
+//    }
+
+    //LAB_800e6448
+  }
+
+  @Method(0x800e6458L)
+  public static void loadDrgnBin() {
+    final long drgnFileIndex = loadDRGN2xBIN();
+
+    if(drgnFileIndex >= 0) {
+      drgnBinIndex_800bc058.set(drgnFileIndex);
+      loadingStage_800bb10c.addu(0x1L);
+    }
+  }
+
+  @Method(0x800e6498L)
+  public static void executeSInitLoadingStages() {
+    if(executeSInitLoadingStage(0x7fff_ffffL) != 0) {
+      loadingStage_800bb10c.addu(0x1L);
+    }
+  }
+
+  @Method(0x800e64d4L)
+  public static void FUN_800e64d4() {
+    FUN_8001e5ec();
+    FUN_80013200(0x140L, 0);
+
+    loadingStage_800bb10c.setu(0);
+    _8007a3b8.setu(0x2L);
+    _8004dd24.setu(_8004dd20).addu(0x1L);
+  }
+
   @Method(0x800e6524L)
-  private static void loadSystemFont() {
+  public static void loadSystemFont() {
     final TimHeader header = parseTimHeader(timHeader_800c6748);
 
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
@@ -418,9 +652,113 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(long a0, long a1, long a2) {
-    assert false : "Unimplemented";
-    //TODO
+  public static void FUN_800e6b3c(final long a0, final long a1, final long a2) {
+    final long sp30 = MEMORY.ref(4, a0).offset(0x2cL).get();
+    final long sp34 = MEMORY.ref(4, a0).offset(0x30L).get();
+    final long sp38 = MEMORY.ref(4, a0).offset(0x34L).get();
+
+    long s0 = 0x6L;
+    long v1 = a0 + s0;
+
+    //LAB_800e6b7c
+    do {
+      MEMORY.ref(1, v1).offset(0xecL).setu(0);
+      s0--;
+      v1--;
+    } while(s0 >= 0);
+
+    MEMORY.ref(4, a0).setu(_800bd9f8.getAddress());
+    MEMORY.ref(4, a0).offset(0x4L).setu(_800bdb38.getAddress());
+    MEMORY.ref(4, a0).offset(0x8L).setu(_800bd7c0.getAddress());
+    MEMORY.ref(2, a0).offset(0xc8L).setu(MEMORY.ref(2, a2).offset(0xcL));
+    MEMORY.ref(4, a0).offset(0x8cL).setu(a1 + 0xcL);
+    MEMORY.ref(2, a0).offset(0xcaL).setu(MEMORY.ref(2, a1).offset(0x14L));
+
+    long v0 = MEMORY.ref(4, a1).offset(0xcL).get(0xffff0000L) >>> 0xbL;
+    MEMORY.ref(4, a0).offset(0x108L).setu(v0);
+
+    v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+    if(v0 == 0) {
+      //LAB_800e6c44
+      MEMORY.ref(4, a0).offset(0xa8L).setu(a1 + 0x8L);
+      s0 = 0x6L;
+      v0 = a0 + 0x18L;
+
+      //LAB_800e6c54
+      do {
+        MEMORY.ref(4, v0).offset(0xd0L).setu(0);
+        s0--;
+        v0 -= 0x4L;
+      } while(s0 >= 0);
+    } else {
+      v0 >>>= 0x2L;
+      v0 <<= 0x2L;
+      v0 += a1;
+      MEMORY.ref(4, a0).offset(0xa8L).setu(v0);
+      s0 = 0;
+      long s1 = a0;
+
+      //LAB_800e6c00
+      do {
+        v1 = MEMORY.ref(4, a0).offset(0xa8L).get();
+        v0 = s0 << 0x2L;
+        v0 += v1;
+        v0 = MEMORY.ref(4, v0).get();
+        v0 >>>= 0x2L;
+        v0 <<= 0x2L;
+        v1 += v0;
+        MEMORY.ref(4, s1).offset(0xd0L).setu(v1);
+        FUN_8002246c(a0, s0);
+        s1 += 0x4L;
+        s0++;
+      } while(s0 < 0x7L);
+    }
+
+    //LAB_800e6c64
+    MEMORY.ref(4, a0).offset(0x8cL).addu(0x4L);
+    FUN_8003c660(MEMORY.ref(4, a0).offset(0x8cL).get());
+
+    FUN_80021b08(
+      a0 + 0xcL,
+      MEMORY.ref(4, a0).offset(0x0L).get(),
+      MEMORY.ref(4, a0).offset(0x4L).get(),
+      MEMORY.ref(4, a0).offset(0x8L).get(),
+      MEMORY.ref(2, a0).offset(0xc8L).get()
+    );
+
+    MEMORY.ref(4, a0).offset(0x58L).setu(a0 + 0x64L);
+
+    FUN_8003c400(0, a0 + 0x14L);
+
+    FUN_80021ca0(
+      a0 + 0xcL,
+      MEMORY.ref(4, a0).offset(0x8cL).get(),
+      a0 + 0x14L,
+      MEMORY.ref(2, a0).offset(0xc8L).get(),
+      (MEMORY.ref(2, a0).offset(0xcaL).get() + 1 << 0x10L & 0xffffffffL) >> 0x10L
+    );
+
+    MEMORY.ref(1, a0).offset(0xa2L).setu(0);
+    MEMORY.ref(1, a0).offset(0xa3L).setu(0);
+    MEMORY.ref(4, a0).offset(0xf4L).setu(0);
+    MEMORY.ref(4, a0).offset(0xf8L).setu(0);
+    MEMORY.ref(2, a0).offset(0xa0L).setu(0);
+
+    FUN_80021584(a0, a2);
+
+    MEMORY.ref(4, a0).offset(0x2cL).setu(sp30);
+    MEMORY.ref(4, a0).offset(0x30L).setu(sp34);
+    MEMORY.ref(4, a0).offset(0x0fcL).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x100L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x104L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x10cL).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x110L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x114L).setu(0x1000L);
+    MEMORY.ref(1, a0).offset(0x0ccL).setu(0);
+    MEMORY.ref(4, a0).offset(0x118L).setu(0);
+    MEMORY.ref(4, a0).offset(0x11cL).setu(0);
+    MEMORY.ref(4, a0).offset(0x120L).setu(0);
+    MEMORY.ref(4, a0).offset(0x034L).setu(sp38);
   }
 
   @Method(0x800e6d60L)

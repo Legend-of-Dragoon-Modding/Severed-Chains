@@ -217,6 +217,7 @@ public final class Scus94491 {
     MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
     MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
     MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
+    MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
     Exec(_80188898, 1, 0);
   }
 

@@ -28,12 +28,36 @@ import static legend.core.LibDs.DSL_MAX_RESULTS;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
-  public static final Value memcardEventIndex_80052e4c = MEMORY.ref(4, 0x80052e4cL);
+  public static final Value _800500e8 = MEMORY.ref(4, 0x800500e8L);
+
+  public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
+
+  public static final Value _80052ae0 = MEMORY.ref(2, 0x80052ae0L);
+
+  public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
+
+  public static final Value _80052c5c = MEMORY.ref(4, 0x80052c5cL);
+
+  public static final Value _80052c64 = MEMORY.ref(4, 0x80052c64L);
+
+  public static final Value _80052c74 = MEMORY.ref(2, 0x80052c74L);
+
+  public static final Value _80052c94 = MEMORY.ref(2, 0x80052c94L);
+
+  public static final Value _80052d6c = MEMORY.ref(2, 0x80052d6cL);
+
+  public static final Value _80052d7c = MEMORY.ref(4, 0x80052d7cL);
+
+  public static final Value _80052db0 = MEMORY.ref(2, 0x80052db0L);
 
   public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);
   public static final Value _80052dc0 = MEMORY.ref(4, 0x80052dc0L);
 
   public static final Value _80052e1c = MEMORY.ref(4, 0x80052e1cL);
+
+  public static final Value memcardEventIndex_80052e4c = MEMORY.ref(4, 0x80052e4cL);
+
+  public static final Value _80052f24 = MEMORY.ref(4, 0x80052f24L);
 
   public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromCompleteInterruptCallbackPtr_80052f44 = MEMORY.ref(4, 0x80052f44L, Pointer.of(BiConsumerRef::new));
   public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromDataInterruptCallbackPtr_80052f48 = MEMORY.ref(4, 0x80052f48L, Pointer.of(BiConsumerRef::new));
@@ -56,6 +80,10 @@ public final class Scus94491BpeSegment_8005 {
   public static final EnumRef<SyncCode> cdromDataEndSyncCode_80053222 = MEMORY.ref(1, 0x80053222L, EnumRef.of(SyncCode.values()));
 
   public static final Value ptrCdromSyncCode_80053220_80053224 = MEMORY.ref(4, 0x80053224L);
+
+  public static final Value _8005324c = MEMORY.ref(4, 0x8005324cL);
+
+  public static final Value cdlPacketBatch_800532cc = MEMORY.ref(4, 0x800532ccL);
 
   public static final Value _800532e4 = MEMORY.ref(4, 0x800532e4L);
   public static final EnumRef<CdlCOMMAND> cdromCommand_800532e8 = MEMORY.ref(1, 0x800532e8L, EnumRef.of(CdlCOMMAND::getCommand, CdlCOMMAND.values()));
@@ -99,7 +127,18 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80053448 = MEMORY.ref(4, 0x80053448L);
 
+  public static final Value oldCdromDmaCallback_80053450 = MEMORY.ref(4, 0x80053450L);
+
+  public static final BoolRef doingCdromDmaTransfer_8005345c = MEMORY.ref(4, 0x8005345cL, BoolRef::new);
+
+  public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
   public static final EnumRef<SyncCode> syncCode_80053470 = MEMORY.ref(4, 0x80053470L, EnumRef.of(SyncCode.values()));
+
+  public static final Value cdromDmaPos_8005347c = MEMORY.ref(4, 0x8005347cL);
+  public static final Value cdromPreviousDmaPos_80053480 = MEMORY.ref(4, 0x80053480L);
+  public static final Value cdromDmaStatusCallback_80053484 = MEMORY.ref(4, 0x80053484L);
+  public static final Value _80053488 = MEMORY.ref(4, 0x80053488L);
+  public static final Value _8005348c = MEMORY.ref(4, 0x8005348cL);
 
   public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053490 = MEMORY.ref(4, 0x80053490L, Pointer.of(BiConsumerRef::new));
   public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053494 = MEMORY.ref(4, 0x80053494L, Pointer.of(BiConsumerRef::new));
@@ -156,6 +195,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value array_8005473c = MEMORY.ref(2, 0x8005473cL);
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
 
+  public static final Value _8005477c = MEMORY.ref(4, 0x8005477cL);
+
   public static final Value _80054790 = MEMORY.ref(2, 0x80054790L);
   public static final Value _80054792 = MEMORY.ref(2, 0x80054792L);
 
@@ -177,6 +218,10 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800547fc = MEMORY.ref(4, 0x800547fcL);
 
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
+
+  public static final Value _80054d0c = MEMORY.ref(4, 0x80054d0cL);
+
+  public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
   public static final PriorityChainEntry _8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
   public static final PriorityChainEntry _8005953c = MEMORY.ref(4, 0x8005953cL, PriorityChainEntry::new);
@@ -230,10 +275,32 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final ArrayRef<Pointer<FunctionRef<Long, Long>>> _8005965c = (ArrayRef<Pointer<FunctionRef<Long, Long>>>)MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.class, 5, 4, (Function)Pointer.of(FunctionRef::new)));
 
+  public static final Value _80059f3c = MEMORY.ref(1, 0x80059f3cL);
+
+  /**
+   * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
+   */
+  public static final Value _80059f7c = MEMORY.ref(2, 0x80059f7cL);
+  public static final Value _80059f7e = MEMORY.ref(2, 0x80059f7eL);
+
+  public static final Value _8005a1ce = MEMORY.ref(2, 0x8005a1ceL);
+  public static final Value _8005a1d0 = MEMORY.ref(4, 0x8005a1d0L);
+
   public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
+
+  public static final Value _8005a1e0 = MEMORY.ref(4, 0x8005a1e0L);
+  public static final Value _8005a1e4 = MEMORY.ref(4, 0x8005a1e4L);
+
+  public static final Value _8005a1ea = MEMORY.ref(2, 0x8005a1eaL);
 
   public static final Value linkedListHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value linkedListTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
+  /**
+   * 12-byte struct, repeats 16 times? May start 4 bytes earlier
+   */
+  public static final Value _8005a2a8 = MEMORY.ref(4, 0x8005a2a8L);
+  public static final Value _8005a2ac = MEMORY.ref(4, 0x8005a2acL);
+  public static final Value _8005a2b0 = MEMORY.ref(4, 0x8005a2b0L);
 
   public static final Value _8005a370 = MEMORY.ref(4, 0x8005a370L);
   public static final Value _8005a374 = MEMORY.ref(4, 0x8005a374L);
