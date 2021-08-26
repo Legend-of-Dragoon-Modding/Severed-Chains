@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.DebugHelper;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
@@ -10,6 +11,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.core.kernel.PriorityChainEntry;
 import legend.core.memory.Method;
+import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,9 +31,11 @@ import static legend.core.kernel.Kernel.EvSpTIMOUT;
 import static legend.core.kernel.Kernel.HwCARD;
 import static legend.core.kernel.Kernel.SwCARD;
 import static legend.game.SInit.FUN_800fbec8;
+import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80015310;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
+import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.fillRects;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
 import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
@@ -61,6 +65,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80042d10;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042e70;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042f40;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80043040;
+import static legend.game.Scus94491BpeSegment_8004.FUN_80043120;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80043230;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
@@ -75,6 +80,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052c64;
 import static legend.game.Scus94491BpeSegment_8005._80052dbc;
 import static legend.game.Scus94491BpeSegment_8005._80052dc0;
 import static legend.game.Scus94491BpeSegment_8005._80052e1c;
+import static legend.game.Scus94491BpeSegment_8005._80052e2c;
+import static legend.game.Scus94491BpeSegment_8005._80052e30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
@@ -272,6 +279,13 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b._800bf140;
+import static legend.game.Scus94491BpeSegment_800b._800bf144;
+import static legend.game.Scus94491BpeSegment_800b._800bf148;
+import static legend.game.Scus94491BpeSegment_800b._800bf14c;
+import static legend.game.Scus94491BpeSegment_800b._800bf150;
+import static legend.game.Scus94491BpeSegment_800b._800bf154;
+import static legend.game.Scus94491BpeSegment_800b._800bf158;
 import static legend.game.Scus94491BpeSegment_800b._800bf160;
 import static legend.game.Scus94491BpeSegment_800b._800bf164;
 import static legend.game.Scus94491BpeSegment_800b._800bf170;
@@ -285,7 +299,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf1bc;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c0;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c4;
 import static legend.game.Scus94491BpeSegment_800b._800bf200;
-import static legend.game.Scus94491BpeSegment_800b._800bf23c;
+import static legend.game.Scus94491BpeSegment_800b._800bf240;
 import static legend.game.Scus94491BpeSegment_800b._800bf270;
 import static legend.game.Scus94491BpeSegment_800b._800bf274;
 import static legend.game.Scus94491BpeSegment_800b._800bf278;
@@ -294,6 +308,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bf280;
 import static legend.game.Scus94491BpeSegment_800b._800bf284;
 import static legend.game.Scus94491BpeSegment_800b._800bf288;
 import static legend.game.Scus94491BpeSegment_800b._800bf28c;
+import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
+import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bdc50;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
@@ -337,6 +353,58 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020460L)
   public static void FUN_80020460() {
     // empty
+  }
+
+  @Method(0x80020ed8L)
+  public static void FUN_80020ed8() {
+    if(_800bdb88.get() == 0x5L) {
+      if(_8004dd08.get() == 0) {
+        if(_800bd7b4.get() == 0x1L) {
+          FUN_800e4708();
+        }
+
+        //LAB_80020f20
+        FUN_8002aae8();
+        FUN_800e4018();
+      }
+    }
+
+    //LAB_80020f30
+    //LAB_80020f34
+    final long a0 = _800bdb88.get();
+    _800bd7b4.setu(0);
+    if(a0 != _8004dd20.get()) {
+      _800bd80c.setu(a0);
+      _800bdb88.setu(_8004dd20);
+
+      if(_8004dd20.get() == 0x5L) {
+        _800bd7b0.setu(0x2L);
+        _800bd7b8.setu(0);
+
+        if(a0 == 0x2L) {
+          _800bd7b0.setu(0x9L);
+        }
+
+        //LAB_80020f84
+        if(a0 == 0x6L) {
+          _800bd7b0.setu(-0x4L);
+          _800bd7b8.setu(0x1L);
+        }
+
+        //LAB_80020fa4
+        if(a0 == 0x8L) {
+          _800bd7b0.setu(0x3L);
+        }
+      }
+    }
+
+    //LAB_80020fb4
+    //LAB_80020fb8
+    if(_800bdb88.get() == 0x2L) {
+      _800bd7ac.setu(0x1L);
+    }
+
+    //LAB_80020fd0
   }
 
   @Method(0x800212d8L)
@@ -644,12 +712,63 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021db4
   }
 
+  @Method(0x80021edcL)
+  public static void FUN_80021edc(final MATRIX m) {
+    CPU.CTC2(0x0L, m.get(1) << 16 | m.get(0));
+    CPU.CTC2(0x1L, m.get(3) << 16 | m.get(2));
+    CPU.CTC2(0x2L, m.get(5) << 16 | m.get(4));
+    CPU.CTC2(0x3L, m.get(7) << 16 | m.get(6));
+    CPU.CTC2(0x4L, m.get(8));
+  }
+
+  @Method(0x80021f0cL)
+  public static void FUN_80021f0c(final MATRIX m) {
+    CPU.CTC2(0x8L, m.get(1) << 16 | m.get(0));
+    CPU.CTC2(0x9L, m.get(3) << 16 | m.get(2));
+    CPU.CTC2(0xaL, m.get(5) << 16 | m.get(4));
+    CPU.CTC2(0xbL, m.get(7) << 16 | m.get(6));
+    CPU.CTC2(0xcL, m.get(8));
+  }
+
+  @Method(0x80021f6cL)
+  public static void FUN_80021f6c(final MATRIX m) {
+    CPU.CTC2(0x5L, m.getTransferVector(0));
+    CPU.CTC2(0x6L, m.getTransferVector(1));
+    CPU.CTC2(0x7L, m.getTransferVector(2));
+  }
+
   @Method(0x80021facL)
   public static void setScreenOffset(final int x, final int y) {
     // cop2r56, OFX - Screen offset X
     CPU.CTC2(x << 0x10, 0x18);
     // cop2r57, OFY - Screen offset Y
     CPU.CTC2(y << 0x10, 0x19);
+  }
+
+  @Method(0x80021fc4L)
+  public static long FUN_80021fc4(final long a0) {
+    long a1 = 0;
+    long v1 = a1;
+    long a2 = 0x1eL;
+
+    //LAB_80021fd4
+    do {
+      v1 = a0 >> a2 & 0x3L | v1 * 4;
+      a1 *= 2;
+      long v0 = a1 * 2 + 1;
+      v1 -= v0;
+
+      if((int)v1 >= 0) {
+        a1++;
+      } else {
+        //LAB_80022004
+        v1 += v0;
+      }
+
+      //LAB_80022008
+    } while((a2 -= 2) != 0);
+
+    return a1;
   }
 
   @Method(0x8002246cL)
@@ -663,73 +782,44 @@ public final class Scus94491BpeSegment_8002 {
     // Empty
   }
 
-  @Method(0x8002a058L)
-  public static void FUN_8002a058() {
-    //LAB_8002a080
-    for(int i = 0; i < 8; i++) {
-      if(_800be358.offset(i * 0x4cL).get() != 0) {
-        FUN_80025a04(i);
-      }
-
-      //LAB_8002a098
-      if(_800bdf38.offset(i * 0x84L).get() != 0) {
-        FUN_800264b0(i);
-      }
-    }
-
-    FUN_80024994();
+  @Method(0x8002379cL)
+  public static void FUN_8002379c() {
+    // empty
   }
 
-  @Method(0x80020ed8L)
-  public static void FUN_80020ed8() {
-    if(_800bdb88.get() == 0x5L) {
-      if(_8004dd08.get() == 0) {
-        if(_800bd7b4.get() == 0x1L) {
-          FUN_800e4708();
-        }
-
-        //LAB_80020f20
-        FUN_8002aae8();
-        FUN_800e4018();
-      }
+  @Method(0x800237a4L)
+  public static long FUN_800237a4(final long a0) {
+    if(a0 == 0) {
+      FUN_8002df60(0);
+      return 0;
     }
 
-    //LAB_80020f30
-    //LAB_80020f34
-    final long a0 = _800bdb88.get();
-    _800bd7b4.setu(0);
-    if(a0 != _8004dd20.get()) {
-      _800bd80c.setu(a0);
-      _800bdb88.setu(_8004dd20);
+    final Ref<Long> sp18 = new Ref<>(0L);
+    final Ref<Long> sp1c = new Ref<>(0L);
+    final Ref<Long> sp20 = new Ref<>(0L);
 
-      if(_8004dd20.get() == 0x5L) {
-        _800bd7b0.setu(0x2L);
-        _800bd7b8.setu(0);
-
-        if(a0 == 0x2L) {
-          _800bd7b0.setu(0x9L);
-        }
-
-        //LAB_80020f84
-        if(a0 == 0x6L) {
-          _800bd7b0.setu(-0x4L);
-          _800bd7b8.setu(0x1L);
-        }
-
-        //LAB_80020fa4
-        if(a0 == 0x8L) {
-          _800bd7b0.setu(0x3L);
-        }
-      }
+    //LAB_800237c8
+    if(FUN_8002efb8(0x1L, sp18, sp1c) == 0) {
+      return 0;
     }
 
-    //LAB_80020fb4
-    //LAB_80020fb8
-    if(_800bdb88.get() == 0x2L) {
-      _800bd7ac.setu(0x1L);
+    if(sp1c.get() != 0 && sp1c.get() != 0x3L) {
+      return 0x2L;
     }
 
-    //LAB_80020fd0
+    //LAB_800237fc
+    final long address = addToLinkedListTail(640L);
+    linkedListEntry_800bdc50.setu(address);
+    FUN_8002ed48(0, BASCUS_94491drgn00_80010734.getAddress(), address, sp20, 0, 0xfL);
+
+    removeFromLinkedList(linkedListEntry_800bdc50.get());
+    if(sp20.get() == 0) {
+      //LAB_80023854
+      return 0x2L;
+    }
+
+    //LAB_80023860
+    return 0x1L;
   }
 
   @Method(0x80024654L)
@@ -878,6 +968,23 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800299d4(final long a0) {
     assert false;
     //TODO
+  }
+
+  @Method(0x8002a058L)
+  public static void FUN_8002a058() {
+    //LAB_8002a080
+    for(int i = 0; i < 8; i++) {
+      if(_800be358.offset(i * 0x4cL).get() != 0) {
+        FUN_80025a04(i);
+      }
+
+      //LAB_8002a098
+      if(_800bdf38.offset(i * 0x84L).get() != 0) {
+        FUN_800264b0(i);
+      }
+    }
+
+    FUN_80024994();
   }
 
   @Method(0x8002a0e4L)
@@ -1283,7 +1390,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002b250L)
-  private static long FUN_8002b250(final long a0, final long a1, final long a2, final long a3) {
+  public static long FUN_8002b250(final long a0, final long a1, final long a2, final long a3) {
     if(MEMORY.ref(1, a1).offset(0x5eL).get() != 0) {
       //LAB_8002b39c
       for(int i = 0; i < 2; i++) {
@@ -1508,7 +1615,7 @@ public final class Scus94491BpeSegment_8002 {
     _800bef44.offset(_800bf064.get() * 4).setu(stack[1]);
     _800befc4.offset(_800bf064.get() * 4).setu(stack[2]);
 
-    if(_800bedbe.get() == 0) {
+    if(_800bedbe.get(0).get() == 0) {
       _800bf044.offset(_800bf064).setu(0);
     } else {
       //LAB_8002b7f8
@@ -1648,7 +1755,7 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x8002c008L)
   public static void FUN_8002c008() {
-    FUN_80043230(_800bedbe.getAddress(), _800bee4e.getAddress());
+    FUN_80043230(_800bedbe, _800bee4e);
 
     for(int i = 0; i < 2; i++) {
       //LAB_8002c034
@@ -1656,12 +1763,10 @@ public final class Scus94491BpeSegment_8002 {
       _800bee80.offset(i * 4L).setu(0);
     }
 
-    FUN_80042b60(0, _800bedb8.getAddress(), 0x2L);
-    FUN_80042b60(0x10L, _800bee48.getAddress(), 0x2L);
+    FUN_80042b60(0, _800bedb8, 0x2L);
+    FUN_80042b60(0x10L, _800bee48, 0x2L);
 
-    //TODO: disabling memcard handlers
-    //FUN_80043120();
-    LOGGER.warn("Skipping memcard stuff");
+    FUN_80043120();
 
     vibrationEnabled_800bb0a9.setu((byte)0x1L);
     _800bee88.setu(0);
@@ -1910,6 +2015,384 @@ public final class Scus94491BpeSegment_8002 {
     SetVsyncInterruptCallback(InterruptType.CONTROLLER, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002f298"));
   }
 
+  @Method(0x8002dc44L)
+  public static long FUN_8002dc44(final long a0) {
+    long v1 = MEMORY.ref(4, a0).get();
+
+    if(v1 != 0xaL) {
+      if(v1 >= 0xbL) {
+        //LAB_8002dc88
+        if(v1 == 0xbL) {
+          //LAB_8002dd0c
+          if(FUN_8002fe98() == 0) {
+            return 0;
+          }
+
+          final long ret = FUN_8002fce8();
+          _800bf144.setu(ret);
+          _80052e30.setu(_800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2));
+
+          if(ret != 0x1L) {
+            if(ret < 0x2L) {
+              if(ret == 0) {
+                //LAB_8002de0c
+                if((_800bf17c.get() & 0x1L << cardPort_800bf180.get()) == 0) {
+                  _800bf144.setu(0x4L);
+                }
+
+                //LAB_8002de28
+                _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0);
+
+                //LAB_8002de60
+                _800bf174.setu(FUN_8002f244(_800bf144.get()));
+                return 0x1L;
+              }
+
+              //LAB_8002ded8
+              _800bf174.setu(FUN_8002f244(_800bf144.get()));
+              _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0);
+              return 0x1L;
+            }
+
+            //LAB_8002dd7c
+            if(ret != 0x2L) {
+              if(ret != 0x4L) {
+                //LAB_8002ded8
+                _800bf174.setu(FUN_8002f244(_800bf144.get()));
+                _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0);
+                return 0x1L;
+              }
+
+              if(_800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).get() == 0) {
+                if(_80052e2c.get() < 0x80L) {
+                  testEvents();
+
+                  FUN_8002f6f0((int)cardPort_800bf180.get());
+
+                  MEMORY.ref(4, a0).setu(0x15L);
+                  return 0;
+                }
+              }
+
+              //LAB_8002ddcc
+              _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0x1L);
+              _800bf174.setu(FUN_8002f244(_800bf144.get()));
+              return 0x1L;
+            }
+
+            //LAB_8002de38
+            _800bf140.addu(0x1L);
+            if(_800bf140.get() < 0x3L) {
+              MEMORY.ref(4, a0).setu(0xaL);
+              return 0;
+            }
+
+            _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0x1L);
+
+            //LAB_8002de60
+            _800bf174.setu(FUN_8002f244(0x2L));
+            return 0x1L;
+          }
+
+          //LAB_8002de7c
+          _800bf140.addu(0x1L);
+          if(_800bf140.get() < 0x11L) {
+            //LAB_8002dea0
+            MEMORY.ref(4, a0).setu(0xaL);
+            return 0;
+          }
+
+          //LAB_8002dea8
+          _800bf174.setu(FUN_8002f244(0x1L));
+          _800bf1b8.offset(cardPort_800bf180.get() >> 0x4 << 0x2).setu(0);
+          return 0x1L;
+        }
+
+        if(v1 == 0x15L) {
+          //LAB_8002df14
+          if(FUN_8002fed4() == 0) {
+            return 0;
+          }
+
+          FUN_8002fdc0();
+          MEMORY.ref(4, a0).setu(0);
+          return 0;
+        }
+
+        //LAB_8002df34
+        LOGGER.error("error");
+        throw new RuntimeException("error");
+      }
+
+      if(v1 != 0) {
+        //LAB_8002df34
+        LOGGER.error("error");
+        throw new RuntimeException("error");
+      }
+
+      //LAB_8002dca0
+      _800bf144.setu(0);
+      _800bf140.setu(0);
+      MEMORY.ref(4, a0).setu(0xaL);
+      v1 = cardPort_800bf180.get() >> 0x4 << 0x2;
+      final long v0 = _800bf1c0.offset(v1).get();
+      _800bf1c0.offset(v1).setu(0);
+      _80052e2c.setu(v0);
+    }
+
+    //LAB_8002dce0
+    testEvents();
+    _card_info((int)cardPort_800bf180.get());
+    MEMORY.ref(4, a0).addu(0x1L);
+    return 0;
+  }
+
+  @Method(0x8002df60L)
+  public static boolean FUN_8002df60(final long cardPort) {
+    if(_800bf170.getSigned() > 0) {
+      //LAB_8002dfa8
+      LOGGER.error("Access Denied. : event multiple open");
+      throw new RuntimeException("Access Denied. : event multiple open");
+    }
+
+    _800bf170.setu(0x2L);
+    _800bf174.setu(0);
+    _800bf178.setu(0);
+    cardPort_800bf180.setu(cardPort);
+    FUN_8002f760(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dfc8", long.class));
+
+    //LAB_8002dfb8
+    return true;
+  }
+
+  @Method(0x8002dfc8L)
+  public static long FUN_8002dfc8(final long a0) {
+    switch((int)MEMORY.ref(4, a0).get()) {
+      case 0:
+        _800bf148.setu(0);
+        _800bf14c.setu(0);
+        _800bf150.setu(0);
+        _800bf154.setu(0);
+        _800bf158.setu(0);
+
+        MEMORY.ref(4, a0).addu(0x1L);
+
+      case 1:
+        FUN_8002f760(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dc44", long.class));
+        MEMORY.ref(4, a0).setu(0xaL);
+        return 0;
+
+      case 0xa:
+        if(_800bf174.get() == 0x1L) {
+          return 0x1L;
+        }
+
+        if(_800bf174.get() >= 0x2L) {
+          //LAB_8002e084
+          if(_800bf174.get() != 0x3L) {
+            return 0x1L;
+          }
+
+          _800bf158.setu(0x1L);
+          _800bf17c.oru(0x1L << cardPort_800bf180.get());
+          testEvents();
+
+          FUN_8002f6f0((int)cardPort_800bf180.get());
+          MEMORY.ref(4, a0).setu(0x15L);
+          return 0;
+        }
+
+        if(_800bf174.get() != 0) {
+          return 0x1L;
+        }
+
+        //LAB_8002e0c4
+        MEMORY.ref(4, a0).setu(0x1eL);
+        return 0;
+
+      case 0x15:
+        if(FUN_8002fed4() == 0) {
+          return 0;
+        }
+
+        FUN_8002fdc0();
+
+        MEMORY.ref(4, a0).setu(0x1eL);
+
+      case 0x1e:
+        testEvents();
+
+        _card_load((int)cardPort_800bf180.get());
+
+        MEMORY.ref(4, a0).addu(0x1L);
+        return 0;
+
+      case 0x1f:
+        if(FUN_8002fe98() == 0) {
+          return 0;
+        }
+
+        _800bf154.setu(FUN_8002fce8());
+
+        if(_800bf154.get() == 0x1L) {
+          //LAB_8002e1c4
+          _800bf14c.addu(0x1L);
+
+          if(_800bf14c.get() < 0x11L) {
+            MEMORY.ref(4, a0).setu(0x1eL);
+            return 0;
+          }
+        } else {
+          //LAB_8002e158
+          if(_800bf154.get() < 0x2L) {
+            if(_800bf154.get() == 0) {
+              //LAB_8002e170
+              //LAB_8002e188
+              if(_800bf158.get() == 0) {
+                _800bf174.setu(0);
+              } else {
+                _800bf174.setu(0x3L);
+              }
+
+              //LAB_8002e194
+              return 0x1L;
+            }
+          } else if(_800bf154.get() == 0x2L) {
+            //LAB_8002e1bc
+            MEMORY.ref(4, a0).setu(0x1L);
+            return 0;
+          } else if(_800bf154.get() == 0x4L) {
+            //LAB_8002e19c
+            testEvents();
+
+            _card_info((int)cardPort_800bf180.get());
+
+            MEMORY.ref(4, a0).setu(0x32L);
+            return 0;
+          }
+        }
+
+        //LAB_8002e1e8
+        _800bf174.setu(FUN_8002f244(_800bf154.get()));
+        return 0x1L;
+
+      case 0x32:
+        if(FUN_8002fe98() == 0) {
+          return 0;
+        }
+
+        _800bf154.setu(FUN_8002fce8());
+
+        if(_800bf154.get() == 0) {
+          _800bf174.setu(0x4L);
+          return 0x1L;
+        }
+
+        //LAB_8002e254
+        MEMORY.ref(4, a0).setu(0x1L);
+        break;
+    }
+
+    //LAB_8002e25c
+    return 0;
+  }
+
+  @Method(0x8002ed48L)
+  public static long FUN_8002ed48(long a0, long a1, long a2, final Ref<Long> a3, long a4, long a5) {
+    assert false;
+    //TODO
+    return 0;
+  }
+
+  @Method(0x8002efb8L)
+  public static long FUN_8002efb8(final long a0, @Nullable final Ref<Long> a1, @Nullable final Ref<Long> a2) {
+    if(_800bf170.get() == 0) {
+      if(_800bf178.get() == 0) {
+        return -0x1L;
+      }
+    }
+
+    //LAB_8002efe0
+    if(a0 == 0) {
+      //LAB_8002f004
+      while(_800bf178.get() == 0) {
+        DebugHelper.sleep(1);
+      }
+
+      //LAB_8002f014
+      if(a2 != null) {
+        a2.set(_800bf164.get());
+      }
+
+      //LAB_8002f030
+      if(a1 != null) {
+        a1.set(_800bf160.get());
+      }
+
+      //LAB_8002f04c
+      _800bf178.setu(0);
+      return 0x1L;
+    }
+
+    //LAB_8002f060
+    if(_800bf178.get() == 0) {
+      if(a2 != null) {
+        a2.set(_800bf174.get());
+      }
+
+      //LAB_8002f07c
+      if(a1 != null) {
+        a1.set(_800bf170.get());
+      }
+
+      return 0;
+    }
+
+    //LAB_8002f08c
+    if(a2 != null) {
+      a2.set(_800bf164.get());
+    }
+
+    //LAB_8002f0a8
+    if(a1 != null) {
+      a1.set(_800bf160.get());
+    }
+
+    //LAB_8002f0c4
+    _800bf178.setu(0);
+
+    //LAB_8002f0cc
+    return 0x1L;
+  }
+
+  @Method(0x8002f244L)
+  public static long FUN_8002f244(final long a0) {
+    if(a0 != 0x1L) {
+      if(a0 < 0x2L) {
+        if(a0 == 0) {
+          return 0;
+        }
+
+        return a0 | 0x8000L;
+      }
+
+      //LAB_8002f26c
+      if(a0 == 0x2L) {
+        return 0x1L;
+      }
+
+      if(a0 != 0x4L) {
+        return a0 | 0x8000L;
+      }
+
+      return 0x3L;
+    }
+
+    //LAB_8002f28c
+    //LAB_8002f290
+    return 0x2L;
+  }
+
   @Method(0x8002f298L)
   public static void FUN_8002f298() {
     if(FUN_8002f848() == 0) {
@@ -1933,16 +2416,63 @@ public final class Scus94491BpeSegment_8002 {
     _800bf1c4.addu(0x1L);
   }
 
+  @Method(0x8002f6d0L)
+  public static boolean _card_info(final int port) {
+    return (boolean)functionVectorA_000000a0.run(0xabL, new Object[] {port});
+  }
+
+  @Method(0x8002f6e0L)
+  public static void _card_load(final int port) {
+    functionVectorA_000000a0.run(0xacL, new Object[] {port});
+  }
+
+  @Method(0x8002f6f0L)
+  public static void FUN_8002f6f0(final int port) {
+    _new_card();
+    _card_write(port, 0x3fL, 0);
+  }
+
+  @Method(0x8002f730L)
+  public static void _card_write(final int port, final long src, final int length) {
+    functionVectorB_000000b0.run(0x4eL, new Object[] {port, src, length});
+  }
+
+  @Method(0x8002f740L)
+  public static void _new_card() {
+    functionVectorB_000000b0.run(0x50L, EMPTY_OBJ_ARRAY);
+  }
+
   @Method(0x8002f750L)
   public static void resetMemcardEventIndex() {
     memcardEventIndex_80052e4c.setu(0xffff_ffffL);
   }
 
+  @Method(0x8002f760L)
+  public static void FUN_8002f760(final long callback) {
+    final long a2 = memcardEventIndex_80052e4c.getSigned() + 0x1L;
+
+    if(a2 >= 0x4L) {
+      LOGGER.error("libmcrd: event overflow");
+      throw new RuntimeException("libmcrd: event overflow");
+    }
+
+    //LAB_8002f790
+    memcardEventIndex_80052e4c.setu(a2);
+    _800bf240.offset(a2 * 4).setu(callback);
+
+    //LAB_8002f7bc
+    for(int i = 0; i < 4; i++) {
+      _800bf200.offset(a2 * 16L).offset(i * 4L).setu(0);
+    }
+
+    //LAB_8002f7cc
+  }
+
   @Method(0x8002f7dcL)
   public static void FUN_8002f7dc() {
-    final long v1 = memcardEventIndex_80052e4c.get();
-    if((int)v1 >= 0) {
-      if((long)_800bf23c.offset(v1 * 4).deref(4).call(_800bf200.offset(v1 * 16).getAddress()) != 0) {
+    final long index = memcardEventIndex_80052e4c.getSigned();
+    if(index >= 0) {
+      if((long)_800bf240.offset(index * 4).deref(4).call(_800bf200.offset(index * 16).getAddress()) != 0) {
         memcardEventIndex_80052e4c.subu(0x1L);
       }
     }
@@ -2049,6 +2579,60 @@ public final class Scus94491BpeSegment_8002 {
     _800bf284.setu(0);
     _800bf288.setu(0);
     _800bf28c.setu(0);
+  }
+
+  @Method(0x8002fce8L)
+  public static long FUN_8002fce8() {
+    long s0;
+
+    do {
+      s0 = _800bf270.get() + _800bf274.get() * 2 + _800bf278.get() * 4 + _800bf27c.get() * 8;
+      DebugHelper.sleep(1);
+    } while(s0 == 0);
+
+    TestEvent((int)HwCARD_EvSpIOE_EventId_800bf260.get());
+    TestEvent((int)HwCARD_EvSpERROR_EventId_800bf264.get());
+    TestEvent((int)HwCARD_EvSpTIMOUT_EventId_800bf268.get());
+    TestEvent((int)HwCARD_EvSpNEW_EventId_800bf26c.get());
+
+    _800bf270.setu(0);
+    _800bf274.setu(0);
+    _800bf278.setu(0);
+    _800bf27c.setu(0);
+
+    return s0 >> 0x1L;
+  }
+
+  @Method(0x8002fdc0L)
+  public static long FUN_8002fdc0() {
+    long s0;
+
+    do {
+      s0 = _800bf280.get() + _800bf284.get() * 2 + _800bf288.get() * 4 + _800bf28c.get() * 8;
+      DebugHelper.sleep(1);
+    } while(s0 == 0);
+
+    TestEvent((int)SwCARD_EvSpIOE_EventId_800bf250.get());
+    TestEvent((int)SwCARD_EvSpERROR_EventId_800bf254.get());
+    TestEvent((int)SwCARD_EvSpTIMOUT_EventId_800bf258.get());
+    TestEvent((int)SwCARD_EvSpNEW_EventId_800bf25c.get());
+
+    _800bf280.setu(0);
+    _800bf284.setu(0);
+    _800bf288.setu(0);
+    _800bf28c.setu(0);
+
+    return s0 >> 0x1L;
+  }
+
+  @Method(0x8002fe98L)
+  public static long FUN_8002fe98() {
+    return _800bf270.get() + _800bf274.get() * 2 + _800bf278.get() * 4 + _800bf27c.get() * 8;
+  }
+
+  @Method(0x8002fed4L)
+  public static long FUN_8002fed4() {
+    return _800bf280.get() + _800bf284.get() * 2 + _800bf288.get() * 4 + _800bf28c.get() * 8;
   }
 
   @Method(0x8002ff10L)

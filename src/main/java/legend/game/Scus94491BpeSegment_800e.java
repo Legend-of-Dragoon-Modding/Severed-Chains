@@ -541,7 +541,7 @@ public final class Scus94491BpeSegment_800e {
     }
   }
 
-  @Method(0x800e6774)
+  @Method(0x800e6774L)
   public static void FUN_800e6774() {
     //LAB_800e6788
     for(int i = 0; i < 2; i++) {

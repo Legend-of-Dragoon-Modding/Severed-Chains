@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.DebugHelper;
+import legend.core.cdrom.CdlCOMMAND;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
 import legend.core.cdrom.CdlMODE;
@@ -19,11 +20,13 @@ import static legend.core.mdec.Mdec.MDEC_REG0;
 import static legend.core.mdec.Mdec.MDEC_REG1;
 import static legend.game.SMap._800d1cc0;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
+import static legend.game.Scus94491BpeSegment_8003.DsControl;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030a10;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030b20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030bb0;
@@ -33,7 +36,9 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_80035b90;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
+import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
+import static legend.game.Scus94491BpeSegment_8003.disableCdromDmaCallbacksAndClearDataFifo;
 import static legend.game.Scus94491BpeSegment_8003.getCdlPacketIndex800bf700;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
@@ -79,10 +84,7 @@ public final class SStrm {
 
   public static final Value _8010f7ba = MEMORY.ref(2, 0x8010f7baL);
 
-  public static final Value _8010f7c0 = MEMORY.ref(2, 0x8010f7c0L);
-  public static final Value _8010f7c2 = MEMORY.ref(2, 0x8010f7c2L);
-  public static final Value _8010f7c4 = MEMORY.ref(2, 0x8010f7c4L);
-  public static final Value _8010f7c6 = MEMORY.ref(2, 0x8010f7c6L);
+  public static final RECT _8010f7c0 = MEMORY.ref(8, 0x8010f7c0L, RECT::new);
   public static final Value _8010f7c8 = MEMORY.ref(2, 0x8010f7c8L);
   public static final Value _8010f7ca = MEMORY.ref(2, 0x8010f7caL);
   public static final Value _8010f7cc = MEMORY.ref(2, 0x8010f7ccL);
@@ -157,7 +159,7 @@ public final class SStrm {
     //LAB_800fb9e0
     FUN_800fc48c(mdecInDoubleBufferFrame0_8010f7d4.offset(mdecInDoubleBufferFrame_8010f7e4.get() * 4).get(), a1);
 
-    final long mult = _8010f7c4.get() * _8010f7c6.get();
+    final long mult = _8010f7c0.w.get() * _8010f7c0.h.get();
     startMdecOut(mdecOutDoubleBufferFrame0_8010f7dc.offset(mdecOutDoubleBufferFrame_8010f7e8.get() * 4).get(), (mult & 0xffff_ffffL) / 2);
 
     if(FUN_800fc0b4(_800fe7b0.getAddress()) >= 0) {
@@ -191,25 +193,25 @@ public final class SStrm {
     _8010f7b2.setu(MEMORY.ref(2, a0).offset(0xaL)); // used in mdecOutDmaCallback
     _8010f7b8.setu(MEMORY.ref(2, a0).offset(0x8L));
     _8010f7ba.setu(MEMORY.ref(2, a0).offset(0xaL).get() + 0xf0L);
-    _8010f7c0.setu(MEMORY.ref(2, a0).offset(0x8L));
-    _8010f7c2.setu(MEMORY.ref(2, a0).offset(0xaL));
-    _8010f7c4.setu(MEMORY.ref(4, a0).get() == 0 ? 0x10L : 0x18L);
+    _8010f7c0.x.set((short)MEMORY.ref(2, a0).offset(0x8L).get());
+    _8010f7c0.y.set((short)MEMORY.ref(2, a0).offset(0xaL).get());
+    _8010f7c0.w.set((short)(MEMORY.ref(4, a0).get() == 0 ? 0x10 : 0x18));
     _8010f7c8.setu(MEMORY.ref(2, a0).offset(0x8L));
     _8010f7ca.setu(MEMORY.ref(2, a0).offset(0xaL));
     _8010f7cc.setu(MEMORY.ref(2, a0).offset(0xcL));
     _8010f7ce.setu(MEMORY.ref(2, a0).offset(0xeL));
   }
 
+  private static long fmvTimer;
+
   @Method(0x800fbbbcL)
   public static void mdecOutDmaCallback() {
-    long v0;
-    long v1;
-    long s0;
-    long a0;
-    long a1;
-    long a3;
-    long mult;
-    RECT rect;
+    //TODO this time is not a good solution, but it makes the FMV timing issues very slightly better
+    while(System.nanoTime() < fmvTimer) {
+      DebugHelper.sleep(0);
+    }
+
+    fmvTimer = System.nanoTime() + 3_200_000L;
 
     if(_8010f7f4.get() != 0 && _800bf55c.get() != 0) {
       FUN_80030d80();
@@ -218,40 +220,23 @@ public final class SStrm {
 
     //LAB_800fbc04
     //LAB_800fbc08
-    rect = new RECT((short)_8010f7c0.get(), (short)_8010f7c2.get(), (short)_8010f7c4.get(), (short)_8010f7c6.get());
-    s0 = mdecOutDoubleBufferFrame_8010f7e8.get();
-    v1 = _8010f7c0.get();
-    a1 = _8010f7c4.get();
-    v0 = s0;
-    a3 = v0 < 0x1L ? 1 : 0;
-    v0 = doubleBufferFrame_8010f7ec.get();
-    v1 += a1;
-    _8010f7c0.setu(v1);
-    v1 <<= 0x10L;
-    mdecOutDoubleBufferFrame_8010f7e8.setu(a3);
-    v0 <<= 0x3L;
-    a0 = _8010f7b0.offset(v0).get();
-    v0 = _8010f7b4.offset(v0).get();
-    v1 >>= 0x10L;
-    a0 += v0;
-    a1 <<= 0x10L;
-    if(v1 < a0) {
-      a1 >>= 0x10L;
-      mult = a1 * _8010f7c6.get();
-      a0 = mdecOutDoubleBufferFrame0_8010f7dc.offset(a3 * 4).get();
-      a1 = (mult & 0xffff_ffffL) / 2;
-      startMdecOut(a0, a1);
+    final RECT rect = new RECT().set(_8010f7c0);
+    final long s0 = mdecOutDoubleBufferFrame_8010f7e8.get();
+    _8010f7c0.x.set((short)(_8010f7c0.x.get() + _8010f7c0.w.get()));
+    mdecOutDoubleBufferFrame_8010f7e8.setu(s0 == 0 ? 1 : 0);
+
+    if(_8010f7c0.x.get() < _8010f7b0.offset(doubleBufferFrame_8010f7ec.get() * 8).get() + _8010f7b4.offset(doubleBufferFrame_8010f7ec.get() * 8).get()) {
+      startMdecOut(mdecOutDoubleBufferFrame0_8010f7dc.offset(mdecOutDoubleBufferFrame_8010f7e8.get() * 4).get(), _8010f7c0.w.get() * _8010f7c0.h.get() / 2);
     } else {
       //LAB_800fbcbc
       _8010f7f0.setu(0x1L);
-      doubleBufferFrame_8010f7ec.setu(doubleBufferFrame_800bb108.get() ^ 1);
-      _8010f7c0.setu(_8010f7b0.offset(doubleBufferFrame_8010f7ec.get() * 8));
-      _8010f7c2.setu(_8010f7b2.offset(doubleBufferFrame_8010f7ec.get() * 8));
+      doubleBufferFrame_8010f7ec.setu(doubleBufferFrame_800bb108.get() ^ 0x1L);
+      _8010f7c0.x.set((short)_8010f7b0.offset(doubleBufferFrame_8010f7ec.get() * 8).get());
+      _8010f7c0.y.set((short)_8010f7b2.offset(doubleBufferFrame_8010f7ec.get() * 8).get());
     }
 
     //LAB_800fbcfc
-    a1 = mdecOutDoubleBufferFrame0_8010f7dc.offset(s0 * 4).get();
-    LoadImage(rect, a1);
+    LoadImage(rect, mdecOutDoubleBufferFrame0_8010f7dc.offset(s0 * 4).get());
   }
 
   @Method(0x800fbd2cL)
@@ -333,6 +318,30 @@ public final class SStrm {
 
     //LAB_800fbf38
     return sp18.get();
+  }
+
+  @Method(0x800fbf50L)
+  public static void stopFmv(final long a0) {
+    SetDispMask(0);
+    setCdVolume(0, 0);
+    reset(false);
+    registerMdecOutDmaCallback(0);
+    disableCdromDmaCallbacksAndClearDataFifo();
+
+    //LAB_800fbf88
+    while(!DsControl(CdlCOMMAND.PAUSE_09, 0, 0)) {
+      DebugHelper.sleep(1);
+    }
+
+    removeFromLinkedList(mdecInDoubleBufferFrame0_8010f7d4.get());
+    removeFromLinkedList(mdecInDoubleBufferFrame1_8010f7d8.get());
+    removeFromLinkedList(mdecOutDoubleBufferFrame0_8010f7dc.get());
+    removeFromLinkedList(mdecOutDoubleBufferFrame1_8010f7e0.get());
+    removeFromLinkedList(linkedListEntry_8010f7d0.get());
+    FUN_8004cdbc(0x1L, 0x1L);
+    setCdVolume(0x7fL, 0x7fL);
+    setCdMix(0x3fL);
+    setMainVolume(0x7fL, 0x7fL);
   }
 
   @Method(0x800fc038L)
@@ -617,7 +626,6 @@ public final class SStrm {
     MDEC_REG1.setu(0x6000_0000L); // Enable data-in request, enable data-out request
   }
 
-  //TODO definitely need to verify this
   @Method(0x800fc9c4L)
   public static void FUN_800fc9c4(long a0, long a1) {
     long s0;

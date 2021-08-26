@@ -12,9 +12,11 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.spu.SpuDmaTransfer;
+import legend.game.types.JoyData;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -81,35 +83,28 @@ public final class Scus94491BpeSegment_800c {
 
   public static final MATRIX matrix_800c34e8 = MEMORY.ref(4, 0x800c34e8L, MATRIX::new);
   public static final MATRIX matrix_800c3508 = MEMORY.ref(4, 0x800c3508L, MATRIX::new);
-
+  public static final MATRIX matrix_800c3528 = MEMORY.ref(4, 0x800c3528L, MATRIX::new);
+  public static final MATRIX matrix_800c3548 = MEMORY.ref(4, 0x800c3548L, MATRIX::new);
   public static final MATRIX matrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
   public static final MATRIX matrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
+
+  public static final Value _800c35a4 = MEMORY.ref(4, 0x800c35a4L);
+  public static final Value _800c35a8 = MEMORY.ref(4, 0x800c35a8L);
 
   public static final Value _800c3658 = MEMORY.ref(4, 0x800c3658L);
 
   public static final Value _800c37a4 = MEMORY.ref(4, 0x800c37a4L);
 
-  public static final Value _800c37b8 = MEMORY.ref(1, 0x800c37b8L);
+  public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(480, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
 
-  public static final Value _800c37f4 = MEMORY.ref(4, 0x800c37f4L);
-  public static final Value _800c37f8 = MEMORY.ref(4, 0x800c37f8L);
+  public static final ArrayRef<ByteRef> inputBuffer_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> _800c39bb = MEMORY.ref(1, 0x800c39bbL, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> inputBuffer_800c39e0 = MEMORY.ref(1, 0x800c39e0L, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> _800c3a03 = MEMORY.ref(1, 0x800c3a03L, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
 
-  public static final Value _800c38a8 = MEMORY.ref(1, 0x800c38a8L);
-
-  public static final Value _800c38e4 = MEMORY.ref(4, 0x800c38e4L);
-  public static final Value _800c38e8 = MEMORY.ref(4, 0x800c38e8L);
-
-  public static final Value _800c3998 = MEMORY.ref(4, 0x800c3998L);
-
-  public static final Value _800c39bb = MEMORY.ref(1, 0x800c39bbL);
-
-  public static final Value _800c39e0 = MEMORY.ref(4, 0x800c39e0L);
-
-  public static final Value _800c3a03 = MEMORY.ref(1, 0x800c3a03L);
-
-  public static final Value _800c3a2c = MEMORY.ref(4, 0x800c3a2cL);
-  public static final Value _800c3a30 = MEMORY.ref(4, 0x800c3a30L);
-  public static final Value _800c3a34 = MEMORY.ref(4, 0x800c3a34L);
+  public static final Value joypadTimeoutCurrentTime_800c3a2c = MEMORY.ref(4, 0x800c3a2cL);
+  public static final Value joypadTimeoutTimeout_800c3a30 = MEMORY.ref(4, 0x800c3a30L);
+  public static final Value joypadTimeoutMode_800c3a34 = MEMORY.ref(4, 0x800c3a34L);
 
   public static final Value _800c3a38 = MEMORY.ref(4, 0x800c3a38L);
   public static final Value _800c3a3c = MEMORY.ref(4, 0x800c3a3cL);
@@ -126,10 +121,13 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c43d8 = MEMORY.ref(4, 0x800c43d8L);
 
   /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... */
-  public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x10, 0xc, SpuDmaTransfer::new));
+  public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x20, 0xc, SpuDmaTransfer::new));
 
   public static final Value _800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
+  public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
+  public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
 
+  public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
   public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
 
@@ -177,6 +175,8 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c6633 = MEMORY.ref(1, 0x800c6633L);
   public static final Value _800c6634 = MEMORY.ref(1, 0x800c6634L);
 
+  public static final Value _800c6638 = MEMORY.ref(4, 0x800c6638L);
+
   public static final Value _800c663d = MEMORY.ref(1, 0x800c663dL);
 
   public static final Value _800c6642 = MEMORY.ref(2, 0x800c6642L);
@@ -203,6 +203,8 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c6672 = MEMORY.ref(2, 0x800c6672L);
 
+  public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
+  public static final Value _800c6678 = MEMORY.ref(4, 0x800c6678L);
   public static final Value _800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value _800c6680 = MEMORY.ref(4, 0x800c6680L);
 
