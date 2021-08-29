@@ -17,7 +17,6 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.types.JoyStruct;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.LibDs.DSL_MAX_COMMAND;
@@ -423,70 +422,76 @@ public final class Scus94491BpeSegment_800b {
   /**
    * TODO 0x90-byte struct
    */
-  public static final ArrayRef<JoyStruct> _800bedb8 = MEMORY.ref(4, 0x800bedb8L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
+//  public static final ArrayRef<JoyStruct> _800bedb8 = MEMORY.ref(4, 0x800bedb8L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
   //+0
-//  public static final ArrayRef<ByteRef> _800bedb8 = MEMORY.ref(4, 0x800bedb8L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+  public static final Value _800bedb8 = MEMORY.ref(1, 0x800bedb8L);
+  public static final Value _800bedb9 = MEMORY.ref(1, 0x800bedb9L);
+  public static final Value _800bedba = MEMORY.ref(1, 0x800bedbaL);
+  public static final Value _800bedbb = MEMORY.ref(1, 0x800bedbbL);
   //+4
-//  public static final Value _800bedbc = MEMORY.ref(2, 0x800bedbcL);
+  public static final Value _800bedbc = MEMORY.ref(2, 0x800bedbcL);
   //+6
-//  public static final ArrayRef<ByteRef> _800bedbe = MEMORY.ref(2, 0x800bedbeL, ArrayRef.of(ByteRef.class, 2, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> _800bedbe = MEMORY.ref(1, 0x800bedbeL, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
 
   //+28
-//  public static final Value _800bede0 = MEMORY.ref(1, 0x800bede0L);
+  public static final Value _800bede0 = MEMORY.ref(1, 0x800bede0L);
   //+29
-//  public static final Value _800bede1 = MEMORY.ref(1, 0x800bede1L);
+  public static final Value _800bede1 = MEMORY.ref(1, 0x800bede1L);
   //+2a
-//  public static final Value _800bede2 = MEMORY.ref(1, 0x800bede2L);
+  public static final Value _800bede2 = MEMORY.ref(1, 0x800bede2L);
   //+2b
-//  public static final Value _800bede3 = MEMORY.ref(1, 0x800bede3L);
+  public static final Value _800bede3 = MEMORY.ref(1, 0x800bede3L);
   //+2c
-//  public static final Value _800bede4 = MEMORY.ref(1, 0x800bede4L);
+  public static final Value _800bede4 = MEMORY.ref(1, 0x800bede4L);
 
   //+30
-//  public static final Value _800bede8 = MEMORY.ref(4, 0x800bede8L);
+  public static final Value _800bede8 = MEMORY.ref(4, 0x800bede8L);
   //+34
-//  public static final Value _800bedec = MEMORY.ref(1, 0x800bedecL);
+  public static final Value _800bedec = MEMORY.ref(1, 0x800bedecL);
   // End of struct 800bee47
 
   /**
    * TODO 0x90-byte struct
    */
   //+0
-//  public static final ArrayRef<ByteRef> _800bee48 = MEMORY.ref(4, 0x800bee48L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+  public static final Value _800bee48 = MEMORY.ref(1, 0x800bee48L);
+  public static final Value _800bee49 = MEMORY.ref(1, 0x800bee49L);
+  public static final Value _800bee4a = MEMORY.ref(1, 0x800bee4aL);
+  public static final Value _800bee4b = MEMORY.ref(1, 0x800bee4bL);
 
   //+6
-//  public static final ArrayRef<ByteRef> _800bee4e = MEMORY.ref(1, 0x800bee4eL, ArrayRef.of(ByteRef.class, 2, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> _800bee4e = MEMORY.ref(1, 0x800bee4eL, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
 
   //+38
-//  public static final Value _800bee80 = MEMORY.ref(4, 0x800bee80L);
+  public static final Value _800bee80 = MEMORY.ref(4, 0x800bee80L);
 
   //+40
-//  public static final Value _800bee88 = MEMORY.ref(4, 0x800bee88L);
+  public static final Value _800bee88 = MEMORY.ref(4, 0x800bee88L);
   //+44
-//  public static final Value _800bee8c = MEMORY.ref(4, 0x800bee8cL);
+  public static final Value _800bee8c = MEMORY.ref(4, 0x800bee8cL);
   //+48
-//  public static final Value _800bee90 = MEMORY.ref(4, 0x800bee90L);
+  public static final Value _800bee90 = MEMORY.ref(4, 0x800bee90L);
   //+4c
-//  public static final Value _800bee94 = MEMORY.ref(4, 0x800bee94L);
+  public static final Value _800bee94 = MEMORY.ref(4, 0x800bee94L);
   //+50
-//  public static final Value _800bee98 = MEMORY.ref(4, 0x800bee98L);
+  public static final Value _800bee98 = MEMORY.ref(4, 0x800bee98L);
   //+54
-//  public static final Value _800bee9c = MEMORY.ref(4, 0x800bee9cL);
+  public static final Value _800bee9c = MEMORY.ref(4, 0x800bee9cL);
 
   //+5c
-//  public static final Value _800beea4 = MEMORY.ref(4, 0x800beea8L);
+  public static final Value _800beea4 = MEMORY.ref(4, 0x800beea8L);
 
   //+64
-//  public static final Value _800beeac = MEMORY.ref(4, 0x800beeacL);
+  public static final Value _800beeac = MEMORY.ref(4, 0x800beeacL);
 
   //+6c
-//  public static final Value _800beeb4 = MEMORY.ref(4, 0x800beeb8L);
+  public static final Value _800beeb4 = MEMORY.ref(4, 0x800beeb8L);
 
   //+74
-//  public static final Value _800beebc = MEMORY.ref(4, 0x800beebcL);
+  public static final Value _800beebc = MEMORY.ref(4, 0x800beebcL);
 
   //+7c
-//  public static final Value _800beec4 = MEMORY.ref(4, 0x800beec4L);
+  public static final Value _800beec4 = MEMORY.ref(4, 0x800beec4L);
   // End of struct 800beed7
 
   public static final Value _800bef44 = MEMORY.ref(4, 0x800bef44L);

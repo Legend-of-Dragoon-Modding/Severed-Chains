@@ -40,9 +40,10 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
 
-  public static final Value _80052c5c = MEMORY.ref(4, 0x80052c5cL);
+  public static final ArrayRef<ByteRef> _80052c5c = MEMORY.ref(1, 0x80052c5cL, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
 
-  public static final Value _80052c64 = MEMORY.ref(4, 0x80052c64L);
+  /** Array */
+  public static final Value _80052c64 = MEMORY.ref(1, 0x80052c64L);
 
   public static final Value _80052c74 = MEMORY.ref(2, 0x80052c74L);
 
@@ -233,8 +234,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
-  public static final PriorityChainEntry priorityChain_8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
-  public static final PriorityChainEntry priorityChain_8005953c = MEMORY.ref(4, 0x8005953cL, PriorityChainEntry::new);
+  public static final PriorityChainEntry joypadPriorityChain_8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
+  public static final PriorityChainEntry joypadPriorityChain_8005953c = MEMORY.ref(4, 0x8005953cL, PriorityChainEntry::new);
   public static final Value _8005954c = MEMORY.ref(4, 0x8005954cL);
   public static final Value _80059550 = MEMORY.ref(4, 0x80059550L);
   public static final Value _80059554 = MEMORY.ref(4, 0x80059554L);
@@ -258,11 +259,11 @@ public final class Scus94491BpeSegment_8005 {
   public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(FunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(ConsumerRef::new));
   public static final Pointer<BiFunctionRef<JoyData, Long, Long>> _800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(BiFunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(FunctionRef::new));
+  public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(ConsumerRef::new));
   public static final Pointer<FunctionRef<Long, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(FunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(FunctionRef::new));
+  public static final Pointer<ConsumerRef<JoyData>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(ConsumerRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595f8 = MEMORY.ref(4, 0x800595f8L, Pointer.of(FunctionRef::new));
   public static final Pointer<RunnableRef> _800595fc = MEMORY.ref(4, 0x800595fcL, Pointer.of(RunnableRef::new));
   public static final Pointer<RunnableRef> _80059600 = MEMORY.ref(4, 0x80059600L, Pointer.of(RunnableRef::new));
@@ -275,10 +276,11 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _8005961c = MEMORY.ref(4, 0x8005961cL);
   public static final Value _80059620 = MEMORY.ref(4, 0x80059620L);
   public static final Value _80059624 = MEMORY.ref(4, 0x80059624L);
-  public static final Value _80059628 = MEMORY.ref(4, 0x80059628L);
+  /** The number of joypads to use (0-indexed) (default: 1, changed to 0) */
+  public static final Value maxJoypadIndex_80059628 = MEMORY.ref(4, 0x80059628L);
   public static final ArrayRef<IntRef> joySomething_8005962c = MEMORY.ref(8, 0x8005962cL, ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
 
-  public static final PriorityChainEntry _80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
+  public static final PriorityChainEntry priorityChainEntry_80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
   public static final Value _80059644 = MEMORY.ref(4, 0x80059644L);
 
   public static final Value _80059650 = MEMORY.ref(4, 0x80059650L);

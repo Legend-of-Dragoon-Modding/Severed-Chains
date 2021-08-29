@@ -249,7 +249,9 @@ public final class SStrm {
     while(FUN_80030ca0(sp18, sp1c)) {
       s0--;
       if(s0 == 0) {
-        assert false: "Timeout";
+        //TODO
+        LOGGER.error("STREAM TIMEOUT");
+//        assert false: "Timeout";
         return 0;
       }
 

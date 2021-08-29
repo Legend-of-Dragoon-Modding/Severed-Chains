@@ -13,16 +13,25 @@ import legend.core.kernel.PriorityChainEntry;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
+import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.ByteRef;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CPU;
+import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
+import static legend.core.InterruptController.I_MASK;
+import static legend.core.InterruptController.I_STAT;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.core.input.MemoryCard.JOY_MCD_CTRL;
+import static legend.core.input.MemoryCard.JOY_MCD_DATA;
+import static legend.core.input.MemoryCard.JOY_MCD_STAT;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
+import static legend.core.kernel.Bios.ProcessControlBlockAddr_a0000108;
 import static legend.core.kernel.Kernel.EvMdINTR;
 import static legend.core.kernel.Kernel.EvSpERROR;
 import static legend.core.kernel.Kernel.EvSpIOE;
@@ -32,6 +41,8 @@ import static legend.core.kernel.Kernel.HwCARD;
 import static legend.core.kernel.Kernel.SwCARD;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
+import static legend.game.Scus94491BpeSegment.FUN_80013598;
+import static legend.game.Scus94491BpeSegment.FUN_800135b8;
 import static legend.game.Scus94491BpeSegment.FUN_80015310;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
@@ -755,7 +766,7 @@ public final class Scus94491BpeSegment_8002 {
     do {
       v1 = a0 >> a2 & 0x3L | v1 * 4;
       a1 *= 2;
-      long v0 = a1 * 2 + 1;
+      final long v0 = a1 * 2 + 1;
       v1 -= v0;
 
       if((int)v1 >= 0) {
@@ -1377,7 +1388,7 @@ public final class Scus94491BpeSegment_8002 {
       MEMORY.ref(1, a0).offset(0x82L).setu(0x1L);
     } else if(MEMORY.ref(1, a0).offset(0x80L).get() == 0x6L) {
       if(FUN_80043040(a1 * 16, a1, 4) < 60) {
-        if(FUN_80042ba0(a1 * 16, _80052c5c.getAddress()) != 0) {
+        if(FUN_80042ba0(a1 * 16, _80052c5c) != 0) {
           //LAB_8002b22c
           MEMORY.ref(1, a0).offset(0x82L).setu(0x1L);
         }
@@ -1431,7 +1442,7 @@ public final class Scus94491BpeSegment_8002 {
 
       for(int i = 0; i < 4; i++) {
         //LAB_8002b2d4
-        MEMORY.ref(2, i).offset(i * 2L).offset(0x48L).setu(0);
+        MEMORY.ref(2, a1).offset(i * 2L).offset(0x48L).setu(0);
       }
 
       for(int i = 0; i < 2; i++) {
@@ -1463,7 +1474,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final long s8 = a0;
     if(MEMORY.ref(1, a0).offset(0x5eL).get() == 0) {
-      if(MEMORY.ref(1, a1).offset(0x86L).getSigned() >= 0) {
+      if(MEMORY.ref(1, a1).offset(0x84L).getSigned() >= 0) {
         MEMORY.ref(2, a1).setu(MEMORY.ref(2, a1).offset(0x2L));
         MEMORY.ref(2, a1).offset(0x2L).setu(MEMORY.ref(1, s8).offset(0x60L).get() << 8 | MEMORY.ref(1, s8).offset(0x61L).get());
         FUN_8002c23c(a1 + 0x2L);
@@ -1474,7 +1485,7 @@ public final class Scus94491BpeSegment_8002 {
         for(int i = 0; i < 4; i++) {
           a0 = MEMORY.ref(1, s8).offset(i).offset(0x62L).get() - 0x80L;
 
-          if(Math.abs(a0) < 0x30L) {
+          if(abs((int)a0) < 0x30L) {
             MathHelper.set(sp18, i * 2, 2, 0);
           } else {
             MathHelper.set(sp18, i * 2, 2, a0);
@@ -1486,7 +1497,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_8002b4dc
         long v1;
         for(int i = 0; i < 2; i++) {
-          long v0 = 0x800L - FUN_80040b90(MathHelper.get(sp18, i * 4, 2), MathHelper.get(sp18, i * 4 + 2, 2));
+          long v0 = 0x800L - FUN_80040b90((short)MathHelper.get(sp18, i * 4, 2), (short)MathHelper.get(sp18, i * 4 + 2, 2));
           MathHelper.set(sp20, i * 2, 2, v0);
           if(MathHelper.get(sp18, i * 4, 2) != 0 || MathHelper.get(sp18, i * 4 + 2, 2) != 0) {
             //LAB_8002b51c
@@ -1499,7 +1510,7 @@ public final class Scus94491BpeSegment_8002 {
             }
 
             //LAB_8002b534
-            v0 >>= 0xcL;
+            v0 = (int)v0 >> 0xcL;
             v0 <<= 0xcL;
             v0 = v1 - v0;
             if((int)v0 < 0) {
@@ -1507,8 +1518,8 @@ public final class Scus94491BpeSegment_8002 {
             }
 
             //LAB_8002b54c
-            v0 >>= 0x9L;
-            v0 = _80052c64.offset(v0).deref(1).get();
+            v0 = (int)v0 >> 0x9L;
+            v0 = _80052c64.offset(v0).get();
           } else {
             v0 = 0xffL;
           }
@@ -1679,8 +1690,65 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002b980L)
   public static void FUN_8002b980(final long a0) {
-    assert false;
-    //TODO
+    //LAB_8002b9b4
+    for(int i = 0; i < 4; i++) {
+      final long a = MEMORY.ref(1, a0).offset(0x62L).offset(i).getSigned() - 0x80L;
+      if(abs((int)a) < 0x30L) {
+        MEMORY.ref(2, a0).offset(0x48L).offset(i * 2L).setu(0);
+      } else {
+        MEMORY.ref(2, a0).offset(0x48L).offset(i * 2L).set(a);
+      }
+
+      //LAB_8002b9dc
+    }
+
+    final long[] s4 = new long[2];
+    long s3 = a0;
+    long s5 = 0x2L;
+    long s1 = a0;
+
+    //LAB_8002ba08
+    for(int i = 0; i < 2; i++) {
+      final long s0 = a0 + s5;
+      long v0 = -FUN_80040b90(MEMORY.ref(2, s1).offset(0x48L).get(), MEMORY.ref(2, s0).offset(0x48L).get()) + 0x800L;
+      MEMORY.ref(2, s3).offset(0x50L).setu(v0);
+      MEMORY.ref(4, s1).offset(0x38L).setu(FUN_80013598(v0 & 0xffffL));
+      MEMORY.ref(4, s1).offset(0x40L).setu(FUN_800135b8(MEMORY.ref(2, s3).offset(0x50L).get()));
+      long v1 = MEMORY.ref(2, s1).offset(0x48L).get();
+      v0 = MEMORY.ref(2, s0).offset(0x48L).get();
+      MEMORY.ref(2, s3).offset(0x54L).setu(FUN_80021fc4(v1 * v1 + v0 * v0));
+
+      if(MEMORY.ref(2, s1).offset(0x48L).get() != 0 || MEMORY.ref(2, s0).offset(0x48L).get() != 0) {
+        //LAB_8002ba90
+        final long a = MEMORY.ref(2, s3).offset(0x50L).get();
+        v1 = a + 0x100L;
+        v0 = v1;
+        if((int)v0 < 0) {
+          v0 = a + 0x10ffL;
+        }
+
+        //LAB_8002baa8
+        v0 = (int)v0 >> 12 << 12;
+        v0 = v1 - v0;
+        if((int)v0 < 0) {
+          v0 += 0x1ffL;
+        }
+
+        //LAB_8002bac0
+        v0 = _80052c64.offset(1, (int)v0 >> 9).get();
+      } else {
+        v0 = 0xffL;
+      }
+
+      //LAB_8002bacc
+      s4[i] = v0;
+
+      s3 += 0x2L;
+      s5 += 0x4L;
+      s1 += 0x4L;
+    }
+
+    MEMORY.ref(2, a0).offset(0x12L).setu(s4[1] << 12 | s4[0] << 4 | 0xfL);
   }
 
   @Method(0x8002bcc8L)
@@ -1763,8 +1831,8 @@ public final class Scus94491BpeSegment_8002 {
       _800bee80.offset(i * 4L).setu(0);
     }
 
-    FUN_80042b60(0, _800bedb8, 0x2L);
-    FUN_80042b60(0x10L, _800bee48, 0x2L);
+    FUN_80042b60(0, _800bedb8.cast(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)), 0x2L);
+    FUN_80042b60(0x10L, _800bee48.cast(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)), 0x2L);
 
     FUN_80043120();
 
@@ -1901,6 +1969,11 @@ public final class Scus94491BpeSegment_8002 {
     functionVectorA_000000a0.run(0x9fL, new Object[] {size});
   }
 
+  @Method(0x8002d210L)
+  public static int abs(final int i) {
+    return (int)functionVectorA_000000a0.run(0xeL, new Object[] {i});
+  }
+
   @Method(0x8002d220L)
   public static int strcmp(final String s1, final String s2) {
     return (int)functionVectorA_000000a0.run(0x17L, new Object[] {s1, s2});
@@ -1943,7 +2016,7 @@ public final class Scus94491BpeSegment_8002 {
     LOGGER.warn("Skipping bios patches");
     //TODO
 //    copyPatches();
-//    early_card_irq_patch();
+    early_card_irq_patch();
 //    patch_card_specific_delay();
 //    patch_card_info_step4();
 
@@ -1993,6 +2066,81 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002d810L)
   public static int StartCARD() {
     return (int)functionVectorB_000000b0.run(0x4bL, EMPTY_OBJ_ARRAY);
+  }
+
+  /**
+   * Replaces 0x641c (early_card_irq_vector)
+   */
+  @Method(0x8002d90cL)
+  public static void early_card_irq_patch() {
+    GATE.acquire();
+    _0000641c.set(Scus94491BpeSegment_8002::early_card_irq_vector_patched);
+    GATE.release();
+  }
+
+  private static final Value _0000641c = MEMORY.ref(4, 0x0000641cL);
+
+  private static final Value _000072f0 = MEMORY.ref(4, 0x000072f0L);
+
+  private static final Value _000075c0 = MEMORY.ref(4, 0x000075c0L);
+  private static final Value _000075c4 = MEMORY.ref(4, 0x000075c4L);
+  private static final Value _000075c8 = MEMORY.ref(4, 0x000075c8L);
+  private static final Value _000075cc = MEMORY.ref(4, 0x000075ccL);
+
+  public static boolean early_card_irq_vector_patched() {
+    if(_000075c0.get() == 0 || I_STAT.get(0x80L) == 0 || I_MASK.get(0x80L) == 0) {
+      return false;
+    }
+
+    while(JOY_MCD_STAT.get(0x80L) != 0) {
+      DebugHelper.sleep(1);
+    }
+
+    final long v0 = _000075c8.deref(1).get();
+    if(v0 == 0x4L) {
+      JOY_MCD_DATA.get(); // Intentional read to nowhere
+
+      final long v1 = _000075c4.deref(1).get();
+      _000075c4.addu(0x1L);
+      JOY_MCD_DATA.setu(v1);
+      JOY_MCD_CTRL.oru(0x10L);
+
+      I_STAT.setu(0xffff_ff7fL);
+
+      _000075cc.deref(4).xoru(v1);
+      _000072f0.addu(0x1L);
+
+      if(_000072f0.get() >= 0x80L) {
+        _000075c0.setu(0);
+      }
+
+      //LAB_000064ec;
+    } else if(v0 == 0x2L) {
+      final long v1 = JOY_MCD_DATA.get();
+      _000075c4.deref(1).setu(v1);
+      _000075c4.addu(0x1L);
+      JOY_MCD_DATA.setu(0);
+      JOY_MCD_CTRL.oru(0x10L);
+
+      I_STAT.setu(0xffff_ff7fL);
+
+      _000075cc.deref(4).xoru(v1);
+      _000072f0.addu(0x1L);
+
+      if(_000072f0.get() >= 0x7fL) {
+        _000075c0.setu(0);
+      }
+
+      //LAB_0000658c
+    } else {
+      //LAB_00006594
+      return false;
+    }
+
+    //LAB_0000659c
+    ProcessControlBlockAddr_a0000108.deref(4).deref(4).offset(0x88L).deref(4).call();
+    CPU.RFE();
+    return true;
   }
 
   @Method(0x8002db2cL)
@@ -2429,12 +2577,12 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002f6f0L)
   public static void FUN_8002f6f0(final int port) {
     _new_card();
-    _card_write(port, 0x3fL, 0);
+    _card_write(port, 0x3f, 0L);
   }
 
   @Method(0x8002f730L)
-  public static void _card_write(final int port, final long src, final int length) {
-    functionVectorB_000000b0.run(0x4eL, new Object[] {port, src, length});
+  public static boolean _card_write(final int port, final int sector, final long src) {
+    return (boolean)functionVectorB_000000b0.run(0x4eL, new Object[] {port, sector, src});
   }
 
   @Method(0x8002f740L)
