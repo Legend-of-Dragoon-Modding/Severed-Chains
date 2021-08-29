@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="game" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
+    <module name="lod-game.main" />
+    <option name="PROGRAM_PARAMETERS" value="-Xmx1G -ea" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

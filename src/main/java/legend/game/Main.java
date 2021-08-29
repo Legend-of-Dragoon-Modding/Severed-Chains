@@ -5,6 +5,7 @@ import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 public final class Main {
   static {
+    System.setProperty("log4j.skipJansi", "false");
     PluginManager.addPackage("legend");
   }
 
