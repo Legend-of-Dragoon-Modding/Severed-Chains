@@ -55,7 +55,7 @@ public class JoyData implements MemoryRef {
   public final ByteRef bytee4;
   // Unknown
   public final ShortRef shorte6;
-  public final ByteRef bytee8;
+  public final ByteRef controllerType_bytee8;
   public final ByteRef bytee9;
   public final ByteRef byteea;
   public final ByteRef byteeb;
@@ -106,7 +106,7 @@ public class JoyData implements MemoryRef {
     this.bytee4 = ref.offset(1, 0xe4L).cast(ByteRef::new);
 
     this.shorte6 = ref.offset(2, 0xe6L).cast(ShortRef::new);
-    this.bytee8 = ref.offset(1, 0xe8L).cast(ByteRef::new);
+    this.controllerType_bytee8 = ref.offset(1, 0xe8L).cast(ByteRef::new);
     this.bytee9 = ref.offset(1, 0xe9L).cast(ByteRef::new);
     this.byteea = ref.offset(1, 0xeaL).cast(ByteRef::new);
     this.byteeb = ref.offset(1, 0xebL).cast(ByteRef::new);

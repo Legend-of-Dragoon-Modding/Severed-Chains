@@ -2160,7 +2160,7 @@ public final class Scus94491BpeSegment_8002 {
     _800bf1c4.setu(0);
 
     setupMemcardEvents();
-    SetVsyncInterruptCallback(InterruptType.CONTROLLER, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002f298"));
+    SetVsyncInterruptCallback(InterruptType.CONTROLLER, getMethodAddress(Scus94491BpeSegment_8002.class, "memcardVsyncInterruptHandler"));
   }
 
   @Method(0x8002dc44L)
@@ -2542,7 +2542,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002f298L)
-  public static void FUN_8002f298() {
+  public static void memcardVsyncInterruptHandler() {
     if(FUN_8002f848() == 0) {
       FUN_8002f7dc();
 

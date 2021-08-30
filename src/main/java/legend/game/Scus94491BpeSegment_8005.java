@@ -234,7 +234,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
-  public static final PriorityChainEntry joypadPriorityChain_8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
+  public static final PriorityChainEntry joypadVblankIrqHandler_8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
   public static final PriorityChainEntry joypadPriorityChain_8005953c = MEMORY.ref(4, 0x8005953cL, PriorityChainEntry::new);
   public static final Value _8005954c = MEMORY.ref(4, 0x8005954cL);
   public static final Value _80059550 = MEMORY.ref(4, 0x80059550L);
@@ -248,7 +248,7 @@ public final class Scus94491BpeSegment_8005 {
     GATE.acquire();
   }
 
-  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> _80059570 = (Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>>)MEMORY.ref(4, 0x80059570L, Pointer.of(Pointer.of(ArrayRef.of(Pointer.class, 4, 4, 8, (Function)Pointer.of(PriorityChainEntry::new)))));
+  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = (Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>>)MEMORY.ref(4, 0x80059570L, Pointer.of(Pointer.of(ArrayRef.of(Pointer.class, 4, 4, 8, (Function)Pointer.of(PriorityChainEntry::new)))));
 
   static {
     GATE.release();
@@ -269,7 +269,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Pointer<RunnableRef> _80059600 = MEMORY.ref(4, 0x80059600L, Pointer.of(RunnableRef::new));
   public static final Pointer<RunnableRef> _80059604 = MEMORY.ref(4, 0x80059604L, Pointer.of(RunnableRef::new));
   public static final Pointer<ArrayRef<JoyData>> ptrArrJoyData_80059608 = MEMORY.ref(4, 0x80059608L, Pointer.deferred(ArrayRef.of(JoyData.class, 2, 240, JoyData::new)));
-  public static final Value _8005960c = MEMORY.ref(4, 0x8005960cL);
+  public static final BoolRef joypadsReady_8005960c = MEMORY.ref(4, 0x8005960cL, BoolRef::new);
   public static final Value _80059610 = MEMORY.ref(4, 0x80059610L);
   public static final IntRef joyDataIndex_80059614 = MEMORY.ref(4, 0x80059614L, IntRef::new);
   public static final Value joypadCallbackIndex_80059618 = MEMORY.ref(4, 0x80059618L);
@@ -280,7 +280,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value maxJoypadIndex_80059628 = MEMORY.ref(4, 0x80059628L);
   public static final ArrayRef<IntRef> joySomething_8005962c = MEMORY.ref(8, 0x8005962cL, ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
 
-  public static final PriorityChainEntry priorityChainEntry_80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
+  public static final PriorityChainEntry joypadVblankIrqHandler_80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
   public static final Value _80059644 = MEMORY.ref(4, 0x80059644L);
 
   public static final Value _80059650 = MEMORY.ref(4, 0x80059650L);

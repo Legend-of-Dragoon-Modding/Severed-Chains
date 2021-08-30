@@ -80,7 +80,7 @@ import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setClip;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80042090;
+import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandler;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
 import static legend.game.Scus94491BpeSegment_8004._8004dd20;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
@@ -237,7 +237,7 @@ public final class Scus94491BpeSegment_800e {
 
     initMemcard(false);
     FUN_8002db2c();
-    FUN_80042090();
+    registerJoypadVblankIrqHandler();
 
     _bu_init();
 
