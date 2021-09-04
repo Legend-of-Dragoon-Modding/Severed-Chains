@@ -15,6 +15,7 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.JoyData;
 
@@ -97,8 +98,8 @@ public final class Scus94491BpeSegment_800c {
 
   public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(480, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
 
-  public static final ArrayRef<ByteRef> responseBuffer0_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> responseBuffer1_800c39bb = MEMORY.ref(1, 0x800c39bbL, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> responseBuffer0_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> responseBuffer1_800c39bb = MEMORY.ref(1, 0x800c39bbL, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
   public static final ArrayRef<ByteRef> inputBuffer_800c39e0 = MEMORY.ref(1, 0x800c39e0L, ArrayRef.of(ByteRef.class, 35, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> _800c3a03 = MEMORY.ref(1, 0x800c3a03L, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
   public static final Value _800c3a28 = MEMORY.ref(4, 0x800c3a28L);

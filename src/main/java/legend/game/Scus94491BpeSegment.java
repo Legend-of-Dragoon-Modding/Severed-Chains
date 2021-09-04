@@ -2900,10 +2900,10 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800184b0L)
   public static void processControllerInput() {
-    long a0 = _8007a3b8.get();
+    int a0 = (int)_8007a3b8.get();
 
     if(a0 == 0) {
-      a0 = 0x1;
+      a0 = 1;
     }
 
     FUN_8002ae0c(a0);

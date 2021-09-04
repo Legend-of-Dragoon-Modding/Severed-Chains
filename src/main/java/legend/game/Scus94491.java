@@ -325,7 +325,7 @@ public final class Scus94491 {
     setjmp(_801c545c, MEMORY.ref(4, getMethodAddress(Scus94491.class, "handleException"), RunnableRef::new));
 
     //LAB_801c111c
-    _801c545c.sp.set((int)_801c643c.getAddress());
+    _801c545c.sp.set(_801c643c.getAddress());
     SetCustomExitFromException(_801c545c);
     interruptHandlersInitialized_801c5424.set(true);
     _801c64ac.deref(4).offset(0x14L).setu(startInterruptVsync());

@@ -20,6 +20,7 @@ import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.JoyData;
 
@@ -40,7 +41,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
 
-  public static final ArrayRef<ByteRef> _80052c5c = MEMORY.ref(1, 0x80052c5cL, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> _80052c5c = MEMORY.ref(1, 0x80052c5cL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
   /** Array */
   public static final Value _80052c64 = MEMORY.ref(1, 0x80052c64L);
@@ -258,9 +259,9 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(FunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(ConsumerRef::new));
-  public static final Pointer<BiFunctionRef<JoyData, Long, Long>> _800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(BiFunctionRef::new));
+  public static final Pointer<BiFunctionRef<JoyData, Long, Integer>> getNextJoypadCommandParam_800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(BiFunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(ConsumerRef::new));
-  public static final Pointer<FunctionRef<Long, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(FunctionRef::new));
+  public static final Pointer<FunctionRef<Integer, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(FunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(ConsumerRef::new));

@@ -46,7 +46,7 @@ import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005._80052d7c;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
-import static legend.game.Scus94491BpeSegment_800b._800bed94;
+import static legend.game.Scus94491BpeSegment_800b._800bed60;
 import static legend.game.Scus94491BpeSegment_800b._800bf55c;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -265,7 +265,7 @@ public final class SStrm {
     }
 
     //LAB_800fbda0
-    if(_800bed94.get() == 0) {
+    if(_800bed60.get(0).b34.get() == 0) {
       FUN_8002c150(0);
     }
 
