@@ -68,8 +68,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052f24 = MEMORY.ref(4, 0x80052f24L);
 
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromCompleteInterruptCallbackPtr_80052f44 = MEMORY.ref(4, 0x80052f44L, Pointer.of(BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromDataInterruptCallbackPtr_80052f48 = MEMORY.ref(4, 0x80052f48L, Pointer.of(BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromCompleteInterruptCallbackPtr_80052f44 = MEMORY.ref(4, 0x80052f44L, Pointer.of(4, BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromDataInterruptCallbackPtr_80052f48 = MEMORY.ref(4, 0x80052f48L, Pointer.of(4, BiConsumerRef::new));
   public static final Value CD_debug_80052f4c = MEMORY.ref(4, 0x80052f4cL);
   public static final Value _80052f50 = MEMORY.ref(4, 0x80052f50L);
   public static final Value _80052f54 = MEMORY.ref(4, 0x80052f54L);
@@ -97,7 +97,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800532e4 = MEMORY.ref(4, 0x800532e4L);
   public static final EnumRef<CdlCOMMAND> cdromCommand_800532e8 = MEMORY.ref(1, 0x800532e8L, EnumRef.of(CdlCOMMAND::getCommand, CdlCOMMAND.values()));
   public static final ArrayRef<ByteRef> cdromParams_800532e9 = MEMORY.ref(1, 0x800532e9L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final Pointer<ArrayRef<ByteRef>> ptrCdromParams_800532f0 = MEMORY.ref(4, 0x800532f0L, Pointer.of(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
+  public static final Pointer<ArrayRef<ByteRef>> ptrCdromParams_800532f0 = MEMORY.ref(4, 0x800532f0L, Pointer.of(4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
   public static final ArrayRef<ByteRef> cdromResponse_800532f4 = MEMORY.ref(DSL_MAX_RESULTS, 0x800532f4L, ArrayRef.of(ByteRef.class, DSL_MAX_RESULTS, 1, ByteRef::new));
   public static final Value cdromStat_800532fc = MEMORY.ref(1, 0x800532fcL);
   public static final Value _80053300 = MEMORY.ref(4, 0x80053300L);
@@ -149,8 +149,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80053488 = MEMORY.ref(4, 0x80053488L);
   public static final Value _8005348c = MEMORY.ref(4, 0x8005348cL);
 
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053490 = MEMORY.ref(4, 0x80053490L, Pointer.of(BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053494 = MEMORY.ref(4, 0x80053494L, Pointer.of(BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053490 = MEMORY.ref(4, 0x80053490L, Pointer.of(4, BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _80053494 = MEMORY.ref(4, 0x80053494L, Pointer.of(4, BiConsumerRef::new));
   public static final Value _80053498 = MEMORY.ref(4, 0x80053498L);
   public static final Value _8005349c = MEMORY.ref(4, 0x8005349cL);
 
@@ -172,11 +172,11 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(32, 0x8005460cL, ArrayRef.of(Pointer.class, 8, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(32, 0x8005460cL, ArrayRef.of(Pointer.class, 8, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final Value Vcount = MEMORY.ref(4, 0x8005462cL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(28, 0x80054640L, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(28, 0x80054640L, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
@@ -249,7 +249,7 @@ public final class Scus94491BpeSegment_8005 {
     GATE.acquire();
   }
 
-  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = (Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>>)MEMORY.ref(4, 0x80059570L, Pointer.of(Pointer.of(ArrayRef.of(Pointer.class, 4, 4, 8, (Function)Pointer.of(PriorityChainEntry::new)))));
+  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = (Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>>)MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(0x20, ArrayRef.of(Pointer.class, 4, 4, 8, (Function)Pointer.of(0x10, PriorityChainEntry::new)))));
 
   static {
     GATE.release();
@@ -257,19 +257,19 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800595a0 = MEMORY.ref(4, 0x800595a0L);
 
-  public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(FunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(ConsumerRef::new));
-  public static final Pointer<BiFunctionRef<JoyData, Long, Integer>> getNextJoypadCommandParam_800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(BiFunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(ConsumerRef::new));
-  public static final Pointer<FunctionRef<Integer, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(FunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(FunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(FunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(ConsumerRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595f8 = MEMORY.ref(4, 0x800595f8L, Pointer.of(FunctionRef::new));
-  public static final Pointer<RunnableRef> _800595fc = MEMORY.ref(4, 0x800595fcL, Pointer.of(RunnableRef::new));
-  public static final Pointer<RunnableRef> _80059600 = MEMORY.ref(4, 0x80059600L, Pointer.of(RunnableRef::new));
-  public static final Pointer<RunnableRef> _80059604 = MEMORY.ref(4, 0x80059604L, Pointer.of(RunnableRef::new));
-  public static final Pointer<ArrayRef<JoyData>> ptrArrJoyData_80059608 = MEMORY.ref(4, 0x80059608L, Pointer.deferred(ArrayRef.of(JoyData.class, 2, 240, JoyData::new)));
+  public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(4, FunctionRef::new));
+  public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(4, ConsumerRef::new));
+  public static final Pointer<BiFunctionRef<JoyData, Long, Integer>> getNextJoypadCommandParam_800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(4, BiFunctionRef::new));
+  public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(4, ConsumerRef::new));
+  public static final Pointer<FunctionRef<Integer, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(4, FunctionRef::new));
+  public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(4, FunctionRef::new));
+  public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(4, FunctionRef::new));
+  public static final Pointer<ConsumerRef<JoyData>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(4, ConsumerRef::new));
+  public static final Pointer<FunctionRef<JoyData, Long>> _800595f8 = MEMORY.ref(4, 0x800595f8L, Pointer.of(4, FunctionRef::new));
+  public static final Pointer<RunnableRef> _800595fc = MEMORY.ref(4, 0x800595fcL, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<RunnableRef> _80059600 = MEMORY.ref(4, 0x80059600L, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<RunnableRef> _80059604 = MEMORY.ref(4, 0x80059604L, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<ArrayRef<JoyData>> ptrArrJoyData_80059608 = MEMORY.ref(4, 0x80059608L, Pointer.deferred(4, ArrayRef.of(JoyData.class, 2, 240, JoyData::new)));
   public static final BoolRef joypadsReady_8005960c = MEMORY.ref(4, 0x8005960cL, BoolRef::new);
   public static final Value _80059610 = MEMORY.ref(4, 0x80059610L);
   public static final IntRef joyDataIndex_80059614 = MEMORY.ref(4, 0x80059614L, IntRef::new);
@@ -287,7 +287,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059650 = MEMORY.ref(4, 0x80059650L);
   public static final Value _80059654 = MEMORY.ref(4, 0x80059654L);
   public static final Value _80059658 = MEMORY.ref(4, 0x80059658L);
-  public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = (ArrayRef<Pointer<FunctionRef<JoyData, Long>>>)MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.class, 5, 4, (Function)Pointer.of(FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = (ArrayRef<Pointer<FunctionRef<JoyData, Long>>>)MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.class, 5, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   public static final Value _80059f3c = MEMORY.ref(1, 0x80059f3cL);
 

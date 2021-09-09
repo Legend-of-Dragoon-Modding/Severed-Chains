@@ -69,16 +69,16 @@ public class JoyData implements MemoryRef {
     this.int00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this.int04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this.int08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
-    this.joyDataPtr0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(ArrayRef.of(JoyData.class, 4, 240, JoyData::new)));
-    this.joyDataPtr10 = ref.offset(4, 0x10L).cast(Pointer.of(JoyData::new));
-    this.func14 = ref.offset(4, 0x14L).cast(Pointer.of(ConsumerRef::new));
-    this.func18 = ref.offset(4, 0x18L).cast(Pointer.of(FunctionRef::new));
+    this.joyDataPtr0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(4, ArrayRef.of(JoyData.class, 4, 240, JoyData::new)));
+    this.joyDataPtr10 = ref.offset(4, 0x10L).cast(Pointer.of(4, JoyData::new));
+    this.func14 = ref.offset(4, 0x14L).cast(Pointer.of(4, ConsumerRef::new));
+    this.func18 = ref.offset(4, 0x18L).cast(Pointer.of(4, FunctionRef::new));
 
-    this.commandParams_byteArrPtr20 = ref.offset(4, 0x20L).cast(Pointer.of(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new)));
+    this.commandParams_byteArrPtr20 = ref.offset(4, 0x20L).cast(Pointer.of(8, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new)));
     this.commandParams_byteArr24 = ref.offset(1, 0x24L).cast(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
-    this.bytePtr28 = ref.offset(4, 0x28L).cast(Pointer.deferred(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
-    this.ptrCommandParams_bytePtr2c = ref.offset(4, 0x2cL).cast(Pointer.deferred(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
-    this.bytePtr30 = ref.offset(4, 0x30L).cast(Pointer.deferred(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
+    this.bytePtr28 = ref.offset(4, 0x28L).cast(Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
+    this.ptrCommandParams_bytePtr2c = ref.offset(4, 0x2cL).cast(Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
+    this.bytePtr30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new)));
     this.byte34 = ref.offset(1, 0x34L).cast(ByteRef::new);
     this.byte35 = ref.offset(1, 0x35L).cast(ByteRef::new);
     this.commandParamCount_byte36 = ref.offset(1, 0x36L).cast(UnsignedByteRef::new);
@@ -86,8 +86,8 @@ public class JoyData implements MemoryRef {
     this.byte38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
     this.byte39 = ref.offset(1, 0x39L).cast(ByteRef::new);
 
-    this.responseBufferPtr_bytePtr3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new)));
-    this.bytePtr40 = ref.offset(4, 0x40L).cast(Pointer.deferred(ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new)));
+    this.responseBufferPtr_bytePtr3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(1, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new)));
+    this.bytePtr40 = ref.offset(4, 0x40L).cast(Pointer.deferred(1,ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new)));
     this.responseBufferIndex_byte44 = ref.offset(1, 0x44L).cast(ByteRef::new);
     this.responseBytesSent_byte45 = ref.offset(1, 0x45L).cast(UnsignedByteRef::new);
     this.byte46 = ref.offset(1, 0x46L).cast(UnsignedByteRef::new);

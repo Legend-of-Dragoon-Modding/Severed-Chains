@@ -558,7 +558,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value cardPort_800bf180 = MEMORY.ref(4, 0x800bf180L);
   public static final Value _800bf184 = MEMORY.ref(4, 0x800bf184L);
 
-  public static final Pointer<BiConsumerRef<Long, Long>> _800bf1b4 = MEMORY.ref(4, 0x800bf1b4L, Pointer.of(BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<Long, Long>> _800bf1b4 = MEMORY.ref(4, 0x800bf1b4L, Pointer.of(4, BiConsumerRef::new));
   public static final Value _800bf1b8 = MEMORY.ref(4, 0x800bf1b8L);
   public static final Value _800bf1bc = MEMORY.ref(4, 0x800bf1bcL);
   public static final Value _800bf1c0 = MEMORY.ref(4, 0x800bf1c0L);
@@ -605,7 +605,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf58c = MEMORY.ref(4, 0x800bf58cL);
   public static final Value _800bf590 = MEMORY.ref(4, 0x800bf590L);
   public static final Value _800bf594 = MEMORY.ref(4, 0x800bf594L);
-  public static final Pointer<RunnableRef> cdromDmaSubCallback_800bf598 = MEMORY.ref(4, 0x800bf598L, Pointer.of(RunnableRef::new));
+  public static final Pointer<RunnableRef> cdromDmaSubCallback_800bf598 = MEMORY.ref(4, 0x800bf598L, Pointer.of(4, RunnableRef::new));
   public static final Value _800bf59c = MEMORY.ref(4, 0x800bf59cL);
   public static final Value _800bf5a0 = MEMORY.ref(4, 0x800bf5a0L);
 
@@ -616,7 +616,7 @@ public final class Scus94491BpeSegment_800b {
   public static final ArrayRef<ByteRef> cdromResponses_800bf5c8 = MEMORY.ref(8, 0x800bf5c8L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> cdromResponses_800bf5d0 = MEMORY.ref(8, 0x800bf5d0L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
 
-  public static final Pointer<CString> _800bf5e0 = MEMORY.ref(4, 0x800bf5e0L, Pointer.of(CString::new));
+  public static final Pointer<CString> _800bf5e0 = MEMORY.ref(4, 0x800bf5e0L, Pointer.of(4, CString::new));
 
   public static final BoolRef sectorIsDataOnly_800bf5f0 = MEMORY.ref(4, 0x800bf5f0L, BoolRef::new);
 
@@ -656,10 +656,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf784 = MEMORY.ref(4, 0x800bf784L);
   public static final Value cdromResponseBufferIndex_800bf788 = MEMORY.ref(4, 0x800bf788L);
 
-  public static final Pointer<RunnableRef> _800bf798 = MEMORY.ref(4, 0x800bf798L, Pointer.of(RunnableRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800bf79c = MEMORY.ref(4, 0x800bf79cL, Pointer.of(BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromReadCompleteSubCallbackPtr_800bf7a0 = MEMORY.ref(4, 0x800bf7a0L, Pointer.of(BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800bf7a4 = MEMORY.ref(4, 0x800bf7a4L, Pointer.of(BiConsumerRef::new));
+  public static final Pointer<RunnableRef> _800bf798 = MEMORY.ref(4, 0x800bf798L, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800bf79c = MEMORY.ref(4, 0x800bf79cL, Pointer.of(4, BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromReadCompleteSubCallbackPtr_800bf7a0 = MEMORY.ref(4, 0x800bf7a0L, Pointer.of(4, BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800bf7a4 = MEMORY.ref(4, 0x800bf7a4L, Pointer.of(4, BiConsumerRef::new));
   /**
    * CD file list
    *

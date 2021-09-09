@@ -9,11 +9,15 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
+import legend.core.kernel.Kernel;
 import legend.core.kernel.PriorityChainEntry;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.Pointer;
+import legend.core.memory.types.UnsignedByteRef;
+import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.JoyStruct;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +36,6 @@ import static legend.core.input.MemoryCard.JOY_MCD_DATA;
 import static legend.core.input.MemoryCard.JOY_MCD_STAT;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
-import static legend.core.kernel.Bios.ProcessControlBlockAddr_a0000108;
 import static legend.core.kernel.Kernel.EvMdINTR;
 import static legend.core.kernel.Kernel.EvSpERROR;
 import static legend.core.kernel.Kernel.EvSpIOE;
@@ -2042,15 +2045,25 @@ public final class Scus94491BpeSegment_8002 {
     GATE.release();
   }
 
+  static {
+    GATE.acquire();
+  }
+
   private static final Value _0000641c = MEMORY.ref(4, 0x0000641cL);
 
   private static final Value _000072f0 = MEMORY.ref(4, 0x000072f0L);
 
   private static final Value _000075c0 = MEMORY.ref(4, 0x000075c0L);
-  private static final Value _000075c4 = MEMORY.ref(4, 0x000075c4L);
-  private static final Value _000075c8 = MEMORY.ref(4, 0x000075c8L);
-  private static final Value _000075cc = MEMORY.ref(4, 0x000075ccL);
+  private static final Value memcardIoAddress_000075c4 = MEMORY.ref(4, 0x000075c4L);
+  /** @see Kernel#memcardStateBitset_00007568 */
+  private static final Pointer<UnsignedByteRef> memcardStateBitset_000075c8 = MEMORY.ref(4, 0x000075c8L, Pointer.of(1, UnsignedByteRef::new));
+  private static final Pointer<UnsignedIntRef> _000075cc = MEMORY.ref(4, 0x000075ccL, Pointer.of(4, UnsignedIntRef::new));
 
+  static {
+    GATE.release();
+  }
+
+  // Address: 0x641c
   public static boolean early_card_irq_vector_patched() {
     if(_000075c0.get() == 0 || I_STAT.get(0x80L) == 0 || I_MASK.get(0x80L) == 0) {
       return false;
@@ -2060,18 +2073,25 @@ public final class Scus94491BpeSegment_8002 {
       DebugHelper.sleep(1);
     }
 
-    final long v0 = _000075c8.deref(1).get();
-    if(v0 == 0x4L) {
+    final long memcardState = memcardStateBitset_000075c8.deref().get();
+    if(memcardState == 0x4L) { // Write
       JOY_MCD_DATA.get(); // Intentional read to nowhere
 
-      final long v1 = _000075c4.deref(1).get();
-      _000075c4.addu(0x1L);
-      JOY_MCD_DATA.setu(v1);
+      // There seems to be a bug in the kernel causing this to read from address 0 sometimes. I verified this is the case in no$.
+      final long data;
+      if(memcardIoAddress_000075c4.get() != 0) {
+        data = memcardIoAddress_000075c4.deref(1).get();
+        memcardIoAddress_000075c4.addu(0x1L);
+      } else {
+        data = 0;
+      }
+
+      JOY_MCD_DATA.setu(data);
       JOY_MCD_CTRL.oru(0x10L);
 
       I_STAT.setu(0xffff_ff7fL);
 
-      _000075cc.deref(4).xoru(v1);
+      _000075cc.deref().xor(data);
       _000072f0.addu(0x1L);
 
       if(_000072f0.get() >= 0x80L) {
@@ -2079,16 +2099,16 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_000064ec;
-    } else if(v0 == 0x2L) {
-      final long v1 = JOY_MCD_DATA.get();
-      _000075c4.deref(1).setu(v1);
-      _000075c4.addu(0x1L);
+    } else if(memcardState == 0x2L) { // Read
+      final long data = JOY_MCD_DATA.get();
+      memcardIoAddress_000075c4.deref(1).setu(data);
+      memcardIoAddress_000075c4.addu(0x1L);
       JOY_MCD_DATA.setu(0);
       JOY_MCD_CTRL.oru(0x10L);
 
       I_STAT.setu(0xffff_ff7fL);
 
-      _000075cc.deref(4).xoru(v1);
+      _000075cc.deref().xor(data);
       _000072f0.addu(0x1L);
 
       if(_000072f0.get() >= 0x7fL) {
@@ -2102,7 +2122,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_0000659c
-    ProcessControlBlockAddr_a0000108.deref(4).deref(4).offset(0x88L).deref(4).call();
+//    final long epc = ProcessControlBlockPtr_a0000108.deref().threadControlBlockPtr.deref().cop0r14Epc.get();
+//    MEMORY.ref(4, epc).call();
+
     CPU.RFE();
     return true;
   }

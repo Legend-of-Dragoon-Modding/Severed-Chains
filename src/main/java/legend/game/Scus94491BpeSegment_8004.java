@@ -226,8 +226,8 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004dd36 = MEMORY.ref(2, 0x8004dd36L);
   public static final Value _8004dd38 = MEMORY.ref(2, 0x8004dd38L);
 
-  public static final Pointer<RunnableRef> callback_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(RunnableRef::new));
-  public static final Pointer<RunnableRef> callback_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(RunnableRef::new));
+  public static final Pointer<RunnableRef> callback_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<RunnableRef> callback_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
 
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
 
@@ -248,14 +248,14 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
   public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);
 
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.class, 28, 4, (Function)Pointer.of(SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.class, 28, 4, (Function)Pointer.of(4, SupplierRef::new)));
 
   public static final Value _8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
   public static final Value _8004de58 = MEMORY.ref(4, 0x8004de58L);
 
   /** This is the world's largest jump table */
-  public static final ArrayRef<Pointer<FunctionRef<Long, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<Long, Long>>>)MEMORY.ref(0x1200, 0x8004e098L, ArrayRef.of(Pointer.class, 0x480, 4, (Function)Pointer.of(FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<Long, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<Long, Long>>>)MEMORY.ref(0x1200, 0x8004e098L, ArrayRef.of(Pointer.class, 0x480, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   public static final Value _8004e31c = MEMORY.ref(4, 0x8004e31cL);
 

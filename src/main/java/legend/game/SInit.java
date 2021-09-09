@@ -52,7 +52,7 @@ public final class SInit {
   public static final Value _800fb7d4 = MEMORY.ref(1, 0x800fb7d4L);
 
   public static final Value SInitLoadingStage_800fd318 = MEMORY.ref(4, 0x800fd318L);
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.class, 6, 4, (Function)Pointer.of(SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.class, 6, 4, (Function)Pointer.of(4, SupplierRef::new)));
 
   public static final Value _800fd334 = MEMORY.ref(2, 0x800fd334L);
 

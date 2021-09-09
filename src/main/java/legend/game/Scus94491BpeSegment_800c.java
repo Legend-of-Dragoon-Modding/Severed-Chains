@@ -32,8 +32,8 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c1ba8 = MEMORY.ref(4, 0x800c1ba8L);
 
   public static final Value _800c1bb0 = MEMORY.ref(4, 0x800c1bb0L);
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromReadCompleteSubSubCallbackPtr_800c1bb4 = MEMORY.ref(4, 0x800c1bb4L, Pointer.of(BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800c1bb8 = MEMORY.ref(4, 0x800c1bb8L, Pointer.of(BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromReadCompleteSubSubCallbackPtr_800c1bb4 = MEMORY.ref(4, 0x800c1bb4L, Pointer.of(4, BiConsumerRef::new));
+  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800c1bb8 = MEMORY.ref(4, 0x800c1bb8L, Pointer.of(4, BiConsumerRef::new));
 
   public static final GpuPacket _800c1bc0 = MEMORY.ref(4, 0x800c1bc0L, GpuPacket::new);
 
@@ -169,7 +169,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c4be0 = MEMORY.ref(4, 0x800c4be0L);
 
-  public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(RunnableRef::new));
+  public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
 
   public static final Value _800c6630 = MEMORY.ref(1, 0x800c6630L);
 

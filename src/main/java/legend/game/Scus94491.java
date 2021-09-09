@@ -77,11 +77,11 @@ public final class Scus94491 {
 
   public static final Value _801c64bc = MEMORY.ref(4, 0x801c64bcL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_801c64cc = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(32, 0x801c64ccL, ArrayRef.of(Pointer.class, 8, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_801c64cc = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(32, 0x801c64ccL, ArrayRef.of(Pointer.class, 8, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final Value Vcount = MEMORY.ref(4, 0x801c64ecL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_801c6500 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(28, 0x801c6500L, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_801c6500 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(28, 0x801c6500L, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final Value _801c66e0 = MEMORY.ref(4, 0x801c66e0L);
 

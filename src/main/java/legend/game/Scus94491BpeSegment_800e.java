@@ -171,7 +171,7 @@ public final class Scus94491BpeSegment_800e {
 
   public static final Value ramSize_800e6f04 = MEMORY.ref(4, 0x800e6f04L);
   public static final Value stackSize_800e6f08 = MEMORY.ref(4, 0x800e6f08L);
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageCallbackArray_800e6f0c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800e6f0cL, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageCallbackArray_800e6f0c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800e6f0cL, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final Value _800e6f64 = MEMORY.ref(4, 0x800e6f64L);
 

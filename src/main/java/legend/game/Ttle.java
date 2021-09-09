@@ -124,12 +124,12 @@ public final class Ttle {
 
   public static final Value selectedMenuOption_800ce774 = MEMORY.ref(4, 0x800ce774L);
   public static final Value _800ce778 = MEMORY.ref(4, 0x800ce778L);
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(24, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(4, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = (ArrayRef<Pointer<ConsumerRef<Long>>>)MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(ConsumerRef::new)));
+  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = (ArrayRef<Pointer<ConsumerRef<Long>>>)MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(4, ConsumerRef::new)));
 
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
 
@@ -254,7 +254,7 @@ public final class Ttle {
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
       final RECT rect = new RECT((short)(944 + i * 16), (short)256, (short)64, (short)64);
-      _800c66d4.get(i).set((int)FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
+      _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
     }
 
     //LAB_800c7ddc

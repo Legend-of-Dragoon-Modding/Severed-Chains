@@ -252,7 +252,8 @@ public final class SStrm {
         //TODO
         LOGGER.error("STREAM TIMEOUT");
 //        assert false: "Timeout";
-        return 0;
+//        return 0;
+        break; //TODO ADDED THIS
       }
 
       DebugHelper.sleep(1);
@@ -260,9 +261,13 @@ public final class SStrm {
 
     //LAB_800fbd6c
     // This seems to be a trigger to stop at MDEC sector sequence number 0x54c
+    // Update: this block should be hit when the FMV finishes. Setting this value to 1 at any time during FMV playback should end it.
     if(MEMORY.ref(4, sp1c.get()).offset(0x8L).get() >= MEMORY.ref(4, a0).offset(0x1_1048L).get()) {
       resetMdec_800fe7a4.setu(0x1L);
     }
+
+    //TODO adding this to end the FMV when a timeout occurs
+    resetMdec_800fe7a4.setu(0x1L);
 
     //LAB_800fbda0
     if(_800bed60.get(0).b34.get() == 0) {
