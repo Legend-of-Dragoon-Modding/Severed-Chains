@@ -261,6 +261,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(4, ConsumerRef::new));
   public static final Pointer<BiFunctionRef<JoyData, Long, Integer>> getNextJoypadCommandParam_800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(4, BiFunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(4, ConsumerRef::new));
+
   public static final Pointer<FunctionRef<Integer, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(4, FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(4, FunctionRef::new));
   public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(4, FunctionRef::new));

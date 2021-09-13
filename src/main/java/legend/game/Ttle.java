@@ -172,7 +172,7 @@ public final class Ttle {
     _800c6738.setu(0);
     logoFadeInAmount_800c66ec.setu(0);
     backgroundInitialized_800c6704.setu(0);
-    backgroundScrollAmount_800c6708.setu(-176L);
+    backgroundScrollAmount_800c6708.set(-176);
     copyrightInitialized_800c6710.setu(0);
     logoFireInitialized_800c6718.setu(0);
     logoFlashStage_800c66f0.setu(0);
@@ -267,6 +267,11 @@ public final class Ttle {
       setScreenOffset(0, 0);
       loadingStage_800bb10c.setu(0x3L);
     }
+  }
+
+  @Method(0x800c8148L)
+  public static void FUN_800c8148() {
+
   }
 
   @Method(0x800c8228L)
@@ -960,7 +965,7 @@ public final class Ttle {
   @Method(0x800cb070L)
   public static void renderMenuBackground() {
     if(backgroundInitialized_800c6704.get() == 0) {
-      backgroundScrollAmount_800c6708.setu(-176);
+      backgroundScrollAmount_800c6708.set(-176);
       backgroundFadeInAmount_800c670c.setu(0);
       backgroundInitialized_800c6704.setu(0x1L);
     }
@@ -975,7 +980,7 @@ public final class Ttle {
     //LAB_800cb100
     for(int i = 0; i < 6; i++) {
       //LAB_800cb11c
-      final long page = _800bb120.offset((i / 3 & 1) * 2).get() | (int)_800ce920.offset(i % 3 * 4).get(960L) / 64;
+      final long page = _800bb120.offset((i / 3 & 1) * 2).get() | (int)_800ce920.offset(i % 3 * 4).get(0x3c0L) >> 6;
 
       renderQuad(
         linkedListAddress_1f8003d8.get(),
@@ -989,7 +994,7 @@ public final class Ttle {
         128 - (i - i % 3 & 1),
         i / 3 * -88 + 255,
         i % 3 * 128 - 192,
-        i / 3 * 255 - 120 + backgroundScrollAmount_800c6708.get(),
+        i / 3 * 255 - 120 + backgroundScrollAmount_800c6708.getSigned(),
         128,
         i / 3 * -88 + 255,
         _1f8003c8.get() - 3,

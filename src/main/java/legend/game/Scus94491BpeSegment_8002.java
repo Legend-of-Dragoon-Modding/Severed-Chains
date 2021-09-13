@@ -98,6 +98,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052e1c;
 import static legend.game.Scus94491BpeSegment_8005._80052e2c;
 import static legend.game.Scus94491BpeSegment_8005._80052e30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
+import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
@@ -1207,7 +1208,7 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_8002ae0c(final int a0) {
     long s0 = 0;
 
-    for(int joypadIndex = 0; joypadIndex < 2; joypadIndex++) {
+    for(int joypadIndex = 0; joypadIndex < maxJoypadIndex_80059628.get() + 1 /* this was hardcoded to 2 joypads */; joypadIndex++) {
       long a1;
       long a2;
 

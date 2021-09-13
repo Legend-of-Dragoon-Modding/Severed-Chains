@@ -115,7 +115,7 @@ import static legend.game.Scus94491BpeSegment_8005.ptrClearJoyData_800595d8;
 import static legend.game.Scus94491BpeSegment_8005.ptrGetJoyDataForPort_800595e8;
 import static legend.game.Scus94491BpeSegment_800c._800c3658;
 import static legend.game.Scus94491BpeSegment_800c._800c37a4;
-import static legend.game.Scus94491BpeSegment_800c._800c3a03;
+import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c3a03;
 import static legend.game.Scus94491BpeSegment_800c._800c3a28;
 import static legend.game.Scus94491BpeSegment_800c._800c3a38;
 import static legend.game.Scus94491BpeSegment_800c._800c3a3c;
@@ -666,18 +666,15 @@ public final class Scus94491BpeSegment_8004 {
     LOGGER.warn("Skipping bios patch");
   }
 
+  // Joypad handling code begins here
+
   @Method(0x80041be0L)
   public static int joypadVblankIrqHandlerFirstFunction() {
-    if(I_MASK.get(0x1L) == 0) {
+    if(I_MASK.get(0x1L) == 0 || I_STAT.get(0x1L) == 0) {
       return 0;
     }
 
-    if(I_STAT.get(0x1L) != 0) {
-      return 1;
-    }
-
-    //LAB_80041c18
-    return 0;
+    return 1;
   }
 
   @Method(0x80041c60L)
@@ -724,7 +721,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80041e08L)
   public static boolean FUN_80041e08(final long a0) {
-    if(_8005954c.get(0x1L) != 0) {
+    if(_8005954c.get(0x1L) == 0) {
       return false;
     }
 
@@ -758,21 +755,21 @@ public final class Scus94491BpeSegment_8004 {
    * Don't know why SysEnqIntRP isn't used
    */
   @Method(0x80042140L)
-  public static void enqueueIntRP(final int priority, final PriorityChainEntry struct) {
+  public static void enqueueIntRP(final int priority, final PriorityChainEntry newEntry) {
     GATE.acquire();
 
-    PriorityChainEntry entry = priorityChain_80059570.deref().deref().get(priority).deref();
+    PriorityChainEntry currentEntry = priorityChain_80059570.deref().deref().get(priority).deref();
 
     //LAB_80042170
     //LAB_80042178
-    while(!entry.next.isNull()) {
-      entry = entry.next.deref();
+    while(!currentEntry.next.isNull()) {
+      currentEntry = currentEntry.next.deref();
     }
 
-    entry.next.set(struct);
+    currentEntry.next.set(newEntry);
 
     //LAB_8004218c
-    struct.next.clear();
+    newEntry.next.clear();
 
     GATE.release();
   }
@@ -784,10 +781,10 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80042b60L)
-  public static void FUN_80042b60(final int port, final ArrayRef<UnsignedByteRef> bytePtr28, final long a2) {
+  public static void FUN_80042b60(final int port, final ArrayRef<UnsignedByteRef> bytePtr28, final long byte34) {
     final JoyData joyData = ptrGetJoyDataForPort_800595e8.deref().run(port);
     joyData.bytePtr28.set(bytePtr28);
-    joyData.byte34.setUnsigned(a2);
+    joyData.byte34.setUnsigned(byte34);
   }
 
   @Method(0x80042ba0L)
@@ -800,8 +797,8 @@ public final class Scus94491BpeSegment_8004 {
 
     joyData.commandParams_byteArrPtr20.set(params);
 
-    joyData.func14.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "queueJoypadRumbleModeCommand", JoyData.class)).cast(ConsumerRef::new));
-    joyData.func18.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80042c44", JoyData.class)).cast(FunctionRef::new));
+    joyData.commandSender.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "queueJoypadRumbleModeCommand", JoyData.class)).cast(ConsumerRef::new));
+    joyData.responseHandler.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "handleJoypadRumbleModeResponse", JoyData.class)).cast(FunctionRef::new));
 
     joyData.byte46.set(1);
 
@@ -814,10 +811,10 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80042c44L)
-  public static int FUN_80042c44(final JoyData joyData) {
+  public static int handleJoypadRumbleModeResponse(final JoyData joyData) {
     //LAB_80042c5c
     long t2 = 0;
-    long t0 = 0;
+    int t0 = 0;
 
     while(t0 < joyData.bytee9.get()) {
       int a1 = 0;
@@ -826,10 +823,11 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_80042c68
       do {
-        a1++;
         if(joyData.commandParams_byteArrPtr20.deref().get(a1).get() == t0) {
           a3++;
         }
+
+        a1++;
 
         //LAB_80042c7c
         v1--;
@@ -844,13 +842,13 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80042ca8
       //LAB_80042cac
       for(int a2 = 0; a2 < 0x6L; a2++) {
-        if(joyData.commandParams_byteArrPtr20.deref().get(a2 + 1).get() == t0) {
+        if(joyData.commandParams_byteArrPtr20.deref().get(a2).get() == t0) {
           if(a3 < t1) {
-            joyData.byteArr5d.get(a2).set(0xff);
+            joyData.getJoypadState46Params_byteArr5d.get(a2).set(0xff);
             a3--;
           } else {
             //LAB_80042cd4
-            joyData.byteArr5d.get(a2).set((int)t0);
+            joyData.getJoypadState46Params_byteArr5d.get(a2).set(t0);
           }
         }
 
@@ -867,21 +865,21 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80042d10L)
-  public static boolean FUN_80042d10(final int port, final int a1, final int a2) {
+  public static boolean FUN_80042d10(final int port, final int val, final int sel) {
     final JoyData joyData = ptrGetJoyDataForPort_800595e8.deref().run(port);
 
     if(_800595f0.deref().run(joyData) != 0) {
       return false;
     }
 
-    joyData.func14.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80042dac", JoyData.class)).cast(ConsumerRef::new));
-    joyData.func18.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80042e04", JoyData.class)).cast(FunctionRef::new));
+    joyData.commandSender.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80042dac", JoyData.class)).cast(ConsumerRef::new));
+    joyData.responseHandler.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80042e04", JoyData.class)).cast(FunctionRef::new));
 
     joyData.byte46.set(1);
 
-    joyData.byteArr51.get(0).set(a1);
-    joyData.byteArr51.get(1).set(a2);
-    joyData.byte53.setUnsigned((joyData.bytee4.get() ^ a1) < 0x1L ? 1 : 0);
+    joyData.setAnalogState44Params_byteArr51.get(0).set(val);
+    joyData.setAnalogState44Params_byteArr51.get(1).set(sel);
+    joyData.byte53.setUnsigned((joyData.bytee4.get() ^ val) < 0x1L ? 1 : 0);
 
     //LAB_80042d94
     return true;
@@ -892,10 +890,10 @@ public final class Scus94491BpeSegment_8004 {
     final long v1 = joyData.byte46.get();
     if(v1 == 0x2L) {
       //LAB_80042dd4
-      queueJoypadCommand(joyData, 0x44, joyData.byteArr51, 0x2);
+      queueJoypadCommand(joyData, 0x44, joyData.setAnalogState44Params_byteArr51, 0x2); // Set analog state
     } else if(v1 == 0x3L) {
       //LAB_80042de4
-      queueJoypadCommand(joyData, 0x4d, joyData.byteArr5d, 0x6);
+      queueJoypadCommand(joyData, 0x4d, joyData.getJoypadState46Params_byteArr5d, 0x6); // Get controller state
     }
 
     //LAB_80042dec
@@ -923,31 +921,23 @@ public final class Scus94491BpeSegment_8004 {
   public static int FUN_80042e70(final int port) {
     final JoyData joyData = ptrGetJoyDataForPort_800595e8.deref().run(port);
 
-    if(joyData.command_byte37.get() == 0) {
-      if(joyData.byte38.get() == 0) {
-        if(joyData.joyDataPtr10.getPointer() == joyData.getAddress() || joyData.byte39.getUnsigned() == 0) {
-          //LAB_80042ecc
-          if(joyData.bytePtr30.deref().get(0).get() == 0) {
-            return joyData.byte49.get();
-          }
-        }
+    //LAB_80042ecc
+    if(joyData.command_byte37.get() != 0 || joyData.byte38.get() != 0 || (joyData.joyDataPtr10.getPointer() != joyData.getAddress() && joyData.byte39.getUnsigned() != 0) || joyData.bytePtr30.deref().get(0).get() != 0) {//LAB_80042ee4
+      final int byte49 = joyData.byte49.get();
+
+      if(byte49 == 0x2 || byte49 == 0x3) {
+        return 0x1;
       }
+
+      //LAB_80042f0c
+      if(byte49 == 0x6) {
+        return 0x4;
+      }
+
+      //LAB_80042f28
     }
 
-    //LAB_80042ee4
-    final int v0 = joyData.byte49.get();
-
-    if(v0 == 0x2 || v0 == 0x3) {
-      return 0x1;
-    }
-
-    //LAB_80042f0c
-    if(v0 == 0x6) {
-      return 0x4;
-    }
-
-    //LAB_80042f28
-    return v0;
+    return joyData.byte49.get();
   }
 
   /**
@@ -984,13 +974,14 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80042fe8
-      if(a2 >= joyData.bytee3.get()) {
-        //LAB_80043020
-        return 0;
+      if((int)a2 < joyData.bytee3.get()) {
+        return (int)MEMORY.ref(2, joyData.int00.get()).offset(a2 * 2L).get();
       }
 
+      //LAB_80043020
+      return 0;
+
       //LAB_80043024
-      return (int)MEMORY.ref(2, joyData.int00.get()).offset(a2 * 2L).get();
     }
 
     if(a1 == 0x64L) {
@@ -1072,7 +1063,7 @@ public final class Scus94491BpeSegment_8004 {
 
       for(int i = 0; i < 6; i++) {
         //LAB_8004329c
-        joyData.byteArr5d.get(i).set(0xff);
+        joyData.getJoypadState46Params_byteArr5d.get(i).set(0xff);
       }
     }
 
@@ -1100,7 +1091,7 @@ public final class Scus94491BpeSegment_8004 {
     joyData_800c37b8.get(0).responseBufferPtr_bytePtr3c.set(responseBuffer0_800c3998);
     joyData_800c37b8.get(0).bytePtr40.set(inputBuffer_800c39e0);
     joyData_800c37b8.get(1).responseBufferPtr_bytePtr3c.set(responseBuffer1_800c39bb);
-    joyData_800c37b8.get(1).bytePtr40.set(_800c3a03);
+    joyData_800c37b8.get(1).bytePtr40.set(inputBuffer_800c3a03);
   }
 
   @Method(0x800433d0L)
@@ -1111,9 +1102,9 @@ public final class Scus94491BpeSegment_8004 {
 
     joyData.byte49.set(0);
     joyData.byte46.set(0);
-    joyData.shorte6.set((short)0);
-    joyData.func14.clear();
-    joyData.func18.clear();
+    joyData.shorte6.set(0);
+    joyData.commandSender.clear();
+    joyData.responseHandler.clear();
     joyData.bytee3.set(0);
     joyData.bytee4.set(0);
     joyData.bytee9.set(0);
@@ -1124,7 +1115,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80043420
     for(int i = 0; i < 6; i++) {
-      joyData.byteArr5d.get(i).set(0xff);
+      joyData.getJoypadState46Params_byteArr5d.get(i).set(0xff);
     }
   }
 
@@ -1137,7 +1128,7 @@ public final class Scus94491BpeSegment_8004 {
     do {
       final JoyData joyData = joyData_800c37b8.get(joyDataIndex_80059614.get());
 
-      if((int)a1 != -9L) {
+      if((int)a1 != -9) {
         if(a1 == 0) {
           joySomething_8005962c.get(joyDataIndex_80059614.get()).set(0);
         } else {
@@ -1180,10 +1171,8 @@ public final class Scus94491BpeSegment_8004 {
 
     if(command == 0) {
       //LAB_80043564
-      if(paramIndex < 0x6L) {
-        if(joyData.byteArr57.get(paramIndex).get() == 0) {
-          return 0;
-        }
+      if(paramIndex < 0x6L && joyData.byteArr57.get(paramIndex).get() == 0) {
+        return 0;
       }
 
       //LAB_80043580
@@ -1217,85 +1206,12 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_800435f8(final JoyData joyData) {
     bzero(joyData.byteArr57.getAddress(), 0x6);
 
-    if(joyData.shorte6.get() != 0) {
-      if(!joyData.bytePtr28.isNull()) {
-        final long t1;
-        if(joyData.byte34.getUnsigned() < 0x7L) {
-          t1 = joyData.byte34.getUnsigned();
-        } else {
-          t1 = 0x6L;
-        }
-
-        //LAB_8004364c
-        if(joyData.bytee9.get() == 0) {
-          return;
-        }
-
-        long t2 = 0;
-
-        //LAB_80043664
-        for(int t0 = 0; t0 < joyData.bytee9.get(); t0++) {
-          final long a3;
-          if(MEMORY.ref(1, joyData.int04.get()).offset(t2).offset(0x2L).get() == 0) {
-            a3 = 0x1L;
-          } else {
-            a3 = 0xffL;
-          }
-
-          //LAB_80043684
-          long a2 = 0;
-
-          //LAB_80043694
-          for(int i = 0; i < t1; i++) {
-            if(joyData.byteArr5d.get(i).get() == t0) {
-              if((joyData.bytePtr28.deref().get(i).get() & a3) != 0) {
-                //LAB_8004370c
-                a2 = 0x1L;
-                break;
-              }
-            }
-
-            //LAB_800436b8
-          }
-
-          //LAB_800436cc
-          if(a2 != 0) {
-            final long v1 = MEMORY.ref(1, joyData.int04.get()).offset(t2).offset(0x3L).get() + _8005961c.get();
-
-            if(v1 < 0x3dL) {
-              _8005961c.setu(v1);
-            } else {
-              //LAB_80043714
-              a2 = 0;
-            }
-
-            //LAB_80043718
-            if(a2 != 0) {
-              //LAB_80043730
-              for(int i = 0; i < t1; i++) {
-                if(joyData.byteArr5d.get(i).get() == t0) {
-                  joyData.byteArr57.get(i).set(0x1);
-                }
-
-                //LAB_80043744
-              }
-            }
-          }
-
-          //LAB_80043754
-          t2 += 0x5L;
-        }
-
-        return;
-      }
-    }
-
-    //LAB_80043770
-    final int controllerType = joyData.controllerType_bytee8.get();
-    if(controllerType < 0x6 || controllerType == 0x7) { // Digital pad, analog stick, or analog pad
-      //LAB_80043790
-      if(joyData.shorte6.get() == 0) {
-        if(joyData.byte34.getUnsigned() >= 0x2L) {
+    if(joyData.shorte6.get() == 0 || joyData.bytePtr28.isNull()) {
+      //LAB_80043770
+      final int controllerType = joyData.controllerType_bytee8.get();
+      if(controllerType < 0x6 || controllerType == 0x7) { // Digital pad, analog stick, or analog pad
+        //LAB_80043790
+        if(joyData.shorte6.get() == 0 && joyData.byte34.getUnsigned() >= 0x2L) {
           if((joyData.bytePtr28.deref().get(0).get() & 0xc0L) != 0x40L) {
             return;
           }
@@ -1314,25 +1230,90 @@ public final class Scus94491BpeSegment_8004 {
           return;
         }
       }
-    }
 
-    //LAB_80043824
-    if(joyData.controllerType_bytee8.get() == 0x3) { // Konami light gun for some reason
-      joyData.byteArr57.get(0).set(0x1);
-      return;
-    }
+      //LAB_80043824
+      if(joyData.controllerType_bytee8.get() == 0x3) { // Konami light gun for some reason
+        joyData.byteArr57.get(0).set(0x1);
+        return;
+      }
 
-    //LAB_8004383c
-    if(joyData.shorte6.get() != 0) {
-      return;
-    }
+      //LAB_8004383c
+      if(joyData.shorte6.get() == 0) {
+        //LAB_80043854
+        for(int i = 0; i < 6; i++) {
+          joyData.byteArr57.get(i).set(0x1);
+        }
 
-    //LAB_80043854
-    for(int i = 0; i < 6; i++) {
-      joyData.byteArr57.get(i).set(0x1);
-    }
+        //LAB_80043864
+      }
+    } else {
+      final long t1;
+      if(joyData.byte34.getUnsigned() < 0x7L) {
+        t1 = joyData.byte34.getUnsigned();
+      } else {
+        t1 = 0x6L;
+      }
 
-    //LAB_80043864
+      //LAB_8004364c
+      if(joyData.bytee9.get() == 0) {
+        return;
+      }
+
+      long t2 = 0;
+
+      //LAB_80043664
+      for(int t0 = 0; t0 < joyData.bytee9.get(); t0++) {
+        final long a3;
+        if(MEMORY.ref(1, joyData.int04.get()).offset(t2).offset(0x2L).get() == 0) {
+          a3 = 0x1L;
+        } else {
+          a3 = 0xffL;
+        }
+
+        //LAB_80043684
+        long a2 = 0;
+
+        //LAB_80043694
+        for(int i = 0; i < t1; i++) {
+          if(joyData.getJoypadState46Params_byteArr5d.get(i).get() == t0) {
+            if((joyData.bytePtr28.deref().get(i).get() & a3) != 0) {
+              //LAB_8004370c
+              a2 = 0x1L;
+              break;
+            }
+          }
+
+          //LAB_800436b8
+        }
+
+        //LAB_800436cc
+        if(a2 != 0) {
+          final long v1 = MEMORY.ref(1, joyData.int04.get()).offset(t2).offset(0x3L).get() + _8005961c.get();
+
+          if(v1 < 0x3dL) {
+            _8005961c.setu(v1);
+          } else {
+            //LAB_80043714
+            a2 = 0;
+          }
+
+          //LAB_80043718
+          if(a2 != 0) {
+            //LAB_80043730
+            for(int i = 0; i < t1; i++) {
+              if(joyData.getJoypadState46Params_byteArr5d.get(i).get() == t0) {
+                joyData.byteArr57.get(i).set(0x1);
+              }
+
+              //LAB_80043744
+            }
+          }
+        }
+
+        //LAB_80043754
+        t2 += 0x5L;
+      }
+    }
   }
 
   @Method(0x80043874L)
@@ -1347,7 +1328,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80043894L)
   public static long FUN_80043894(final JoyData joyData) {
     if(joyData.responseBufferPtr_bytePtr3c.deref().get(0).get() == 0xf3L) {
-      if(joyData.controllerType_bytee8.get() == 0 || joyData.byte46.get() == 0xffL) { // Controller type not yet read || ???
+      if(joyData.controllerType_bytee8.get() == 0 || joyData.byte46.get() == 0xffL) {
         queueJoypadCommand43Configure(joyData, false);
         return 0;
       }
@@ -1377,11 +1358,11 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80043968
-    if(joyData.func14.isNull()) {
+    if(joyData.commandSender.isNull()) {
       //LAB_80043988
-      FUN_800448a4(joyData);
+      sendNextCommand(joyData);
     } else {
-      joyData.func14.deref().run(joyData);
+      joyData.commandSender.deref().run(joyData);
     }
 
     //LAB_80043994
@@ -1420,7 +1401,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80043a8c
     //LAB_80043ac4
     //LAB_80043ad4
-    if(joyData.responseBufferPtr_bytePtr3c.deref().get(1).get() == 0 && (joyData.byte46.get() != 0x1L || !joyData.func14.isNull()) && joyData.byte50.getUnsigned() == 0 || joyData.controllerType_bytee8.get() != oldControllerType) {
+    if(joyData.responseBufferPtr_bytePtr3c.deref().get(1).get() == 0 && (joyData.byte46.get() != 0x1L || !joyData.commandSender.isNull()) && joyData.byte50.getUnsigned() == 0 || joyData.controllerType_bytee8.get() != oldControllerType) {
       //LAB_80043ae4
       ptrClearJoyData_800595d8.deref().run(joyData);
     }
@@ -1460,11 +1441,11 @@ public final class Scus94491BpeSegment_8004 {
     } else {
       //LAB_80043bc8
       final int ret;
-      if(joyData.func18.isNull()) {
+      if(joyData.responseHandler.isNull()) {
         //LAB_80043be8
         ret = FUN_80044928(joyData);
       } else {
-        ret = joyData.func18.deref().run(joyData);
+        ret = joyData.responseHandler.deref().run(joyData);
       }
 
       //LAB_80043bf0
@@ -1527,6 +1508,9 @@ public final class Scus94491BpeSegment_8004 {
     return 0x1L;
   }
 
+  /**
+   * @see Scus94491BpeSegment_8005#joypadVblankIrqHandler_8005952c
+   */
   @Method(0x80043d20L)
   public static int joypadVblankIrqHandlerFirstFunction_80043d20() {
     if(I_MASK.get(0x1L) == 0 || I_STAT.get(0x1L) == 0) {
@@ -1540,6 +1524,9 @@ public final class Scus94491BpeSegment_8004 {
     return 1;
   }
 
+  /**
+   * @see Scus94491BpeSegment_8005#joypadVblankIrqHandler_8005952c
+   */
   @Method(0x80043d88L)
   public static void joypadVblankIrqHandlerSecondFunction_80043d88(final int firstFunctionReturn) {
     if(JOY_MCD_CTRL.get(0x2L) != 0) { // If JOYn isn't selected
@@ -1550,17 +1537,13 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80043db4
     _80059644.setu(0x1L);
 
-    if(_80059624.get() != 0) {
-      if(_800c3a38.get() < 150L) {
-        _800c3a38.addu(0x1L);
-      }
+    if(_80059624.get() != 0 && _800c3a38.get() < 150L) {
+      _800c3a38.addu(0x1L);
     }
 
     //LAB_80043dec
-    if(maxJoypadIndex_80059628.get() == 0) {
-      if(_800c3a3c.get() < 150L) {
-        _800c3a3c.addu(0x1L);
-      }
+    if(maxJoypadIndex_80059628.get() == 0 && _800c3a3c.get() < 150L) {
+      _800c3a3c.addu(0x1L);
     }
 
     //LAB_80043e20
@@ -1699,7 +1682,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004424cL)
   public static void executeJoypadCallback(final JoyData joyData) {
-    LOGGER.error("Executing joypad callback %d", joypadCallbackIndex_80059618.get());
+    LOGGER.debug("Executing joypad callback %d", joypadCallbackIndex_80059618.get());
 
     //NOTE: we need to increment before executing the callback - some callbacks set the value, and we don't want to overwrite that
     joypadCallbackIndex_80059618.addu(0x1L);
@@ -1721,8 +1704,8 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80044300
-    if(joypadCallbackIndex_80059618.get() >= 0x5L) {
-      joypadCallbackIndex_80059618.subu(0x1L);
+    if(joypadCallbackIndex_80059618.get() > 4) {
+      joypadCallbackIndex_80059618.subu(1);
     }
 
     //LAB_8004432c
@@ -1909,7 +1892,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x800448a4L)
-  public static void FUN_800448a4(final JoyData joyData) {
+  public static void sendNextCommand(final JoyData joyData) {
     final int v1 = joyData.byte46.get();
 
     if(v1 == 0x2) {
@@ -1928,6 +1911,36 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80044928L)
   public static int FUN_80044928(final JoyData joyData) {
     final int v1 = joyData.byte46.get();
+
+    if(v1 == 0x2L) {
+      //LAB_80044974
+      if(joyData.responseBufferPtr_bytePtr3c.deref().get(7).get() != 0) {
+        return 0;
+      }
+
+      if(joyData.bytee3.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(3).get() && joyData.bytee4.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() && joyData.bytee9.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() && joyData.byteea.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(6).get()) {
+        joyData.shortee.set(0);
+      } else {
+        //LAB_800449e4
+        joyData.shortee.set(0xffff);
+      }
+
+      //LAB_800449e8
+      joyData.bytee3.set(joyData.responseBufferPtr_bytePtr3c.deref().get(3));
+      joyData.bytee4.set(joyData.responseBufferPtr_bytePtr3c.deref().get(4));
+      joyData.shorte6.set(0);
+      joyData.bytee9.set(joyData.responseBufferPtr_bytePtr3c.deref().get(5));
+      joyData.byteea.set(joyData.responseBufferPtr_bytePtr3c.deref().get(6));
+      joyData.shortec.set(0);
+
+      if(joyData.shortee.get() != 0) {
+        return 0;
+      }
+
+      joyData.byteeb.set(0);
+      return 1;
+    }
+
     if(v1 == 0x3) {
       //LAB_80044a34
       if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
@@ -1938,7 +1951,7 @@ public final class Scus94491BpeSegment_8004 {
         return 0;
       }
 
-      joyData.shorte6.set((short)(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() << 0x8L | joyData.responseBufferPtr_bytePtr3c.deref().get(5).get()));
+      joyData.shorte6.set(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() << 0x8L | joyData.responseBufferPtr_bytePtr3c.deref().get(5).get());
 
       if(joyData.shortee.get() != joyData.shorte6.get()) {
         joyData.shortee.set(joyData.shorte6.get());
@@ -1948,18 +1961,14 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80044a88
-      joyData.shortee.set((short)0xffffL);
+      joyData.shortee.set(0xffff);
       joyData.byteeb.set(0);
       joyData.byte47.set(0);
       return 1;
     }
 
-    if(v1 >= 0x4) {
-      //LAB_80044960
-      if(v1 != 0x4) {
-        return 1;
-      }
-
+    //LAB_80044960
+    if(v1 == 0x4) {
       //LAB_80044a9c
       if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
         return 0;
@@ -1970,7 +1979,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       joyData.byte47.incr();
-      joyData.shortec.add((short)(0x8L + (joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() + 0x3L & 0x1fcL)));
+      joyData.shortec.add(((joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() + 0x3 & 0x1fc) + 0x8));
 
       if(joyData.byte47.get() < joyData.byteea.get()) {
         return 0;
@@ -1987,46 +1996,17 @@ public final class Scus94491BpeSegment_8004 {
       if(joyData.shortee.get() != joyData.shortec.get()) {
         joyData.shortee.set(joyData.shortec.get());
         joyData.byte47.set(0);
-        joyData.shortec.set((short)0);
+        joyData.shortec.set(0);
         return 0;
       }
 
       //LAB_80044b5c
-      joyData.shortee.set((short)0);
+      joyData.shortee.set(0);
       joyData.byteeb.set(0);
       joyData.byte46.set(0xff);
       FUN_80044bd0(joyData, joyData.getAddress() + 0x63L /*TODO gotta figure out what +63 is*/);
       joyData.byte46.set(0x2);
       return 0;
-    }
-
-    if(v1 == 0x2L) {
-      //LAB_80044974
-      if(joyData.responseBufferPtr_bytePtr3c.deref().get(7).get() != 0) {
-        return 0;
-      }
-
-      if(joyData.bytee3.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(3).get() && joyData.bytee4.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() && joyData.bytee9.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() && joyData.byteea.get() == joyData.responseBufferPtr_bytePtr3c.deref().get(6).get()) {
-        joyData.shortee.set((short)0);
-      } else {
-        //LAB_800449e4
-        joyData.shortee.set((short)0xffff);
-      }
-
-      //LAB_800449e8
-      joyData.bytee3.set(joyData.responseBufferPtr_bytePtr3c.deref().get(3));
-      joyData.bytee4.set(joyData.responseBufferPtr_bytePtr3c.deref().get(4));
-      joyData.shorte6.set((short)0);
-      joyData.bytee9.set(joyData.responseBufferPtr_bytePtr3c.deref().get(5));
-      joyData.byteea.set(joyData.responseBufferPtr_bytePtr3c.deref().get(6));
-      joyData.shortec.set((short)0);
-
-      if(joyData.shortee.get() != 0) {
-        return 0;
-      }
-
-      joyData.byteeb.set(0);
-      return 1;
     }
 
     //LAB_80044b84
@@ -2063,8 +2043,8 @@ public final class Scus94491BpeSegment_8004 {
     joyData.byte46.set(0x1);
     joyData.byte49.set(0x4);
 
-    joyData.func14.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80044ca4", JoyData.class)).cast(ConsumerRef::new));
-    joyData.func18.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80044d4c", JoyData.class)).cast(FunctionRef::new));
+    joyData.commandSender.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80044ca4", JoyData.class)).cast(ConsumerRef::new));
+    joyData.responseHandler.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80044d4c", JoyData.class)).cast(FunctionRef::new));
 
     long a = (a1 + 0x3L) / 4L * 4L;
     joyData.int00.set(a);
@@ -2114,6 +2094,39 @@ public final class Scus94491BpeSegment_8004 {
     final long a0;
 
     final int v1 = joyData.byte46.get();
+
+    if(v1 == 0x2) {
+      //LAB_80044d8c
+      if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
+        return 0;
+      }
+
+      if(joyData.responseBufferPtr_bytePtr3c.deref().get(3).get() != 0) {
+        return 0;
+      }
+
+      a0 = joyData.int00.get() + joyData.byte47.get() * 2L;
+      MEMORY.ref(2, a0).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() << 8 | joyData.responseBufferPtr_bytePtr3c.deref().get(5).get());
+      final long v0 = joyData.int00.get() + joyData.byte47.get() * 2L;
+      if(joyData.shortee.get() != MEMORY.ref(2, v0).get()) {
+        joyData.shortee.set((int)MEMORY.ref(2, v0).get());
+
+        //LAB_80044e00
+        return 0;
+      }
+
+      //LAB_80044e08
+      joyData.shortee.set(0);
+      joyData.byteeb.set(0);
+      joyData.byte47.incr();
+      if(joyData.byte47.get() < joyData.bytee3.get()) {
+        return 0;
+      }
+
+      joyData.byte47.set(0);
+      return 1;
+    }
+
     if(v1 == 0x3) {
       //LAB_80044e38
       if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
@@ -2125,20 +2138,20 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       a0 = joyData.int04.get() + joyData.byte47.get() * 5L;
-      if(MEMORY.ref(1, a0).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(4).get()) {
-        if(MEMORY.ref(1, a0).offset(0x1L).get() == (joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() & 0x7f)) {
-          if(MEMORY.ref(1, a0).offset(0x2L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(6).get()) {
-            if(MEMORY.ref(1, a0).offset(0x3L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(7).get()) {
-              if(MEMORY.ref(1, a0).offset(0x4L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() / 0x80) {
-                joyData.shortee.set((short)0xffff);
-              }
-            }
-          }
-        }
+      if(
+        MEMORY.ref(1, a0).offset(0x0L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() &&
+        MEMORY.ref(1, a0).offset(0x1L).get() == (joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() & 0x7f) &&
+        MEMORY.ref(1, a0).offset(0x2L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(6).get() &&
+        MEMORY.ref(1, a0).offset(0x3L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(7).get() &&
+        MEMORY.ref(1, a0).offset(0x4L).get() == joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() / 0x80
+      ) {
+        joyData.shortee.set(0);
+      } else {
+        joyData.shortee.set(0xffff);
       }
 
       //LAB_80044ee0
-      MEMORY.ref(1, a0).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get());
+      MEMORY.ref(1, a0).offset(0x0L).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get());
       MEMORY.ref(1, a0).offset(0x1L).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(5).get() & 0x7fL);
       MEMORY.ref(1, a0).offset(0x2L).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(6).get());
       MEMORY.ref(1, a0).offset(0x3L).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(7).get());
@@ -2160,187 +2173,146 @@ public final class Scus94491BpeSegment_8004 {
       return 1;
     }
 
-    if(v1 < 0x4) {
-      if(v1 == 0x2) {
-        //LAB_80044d8c
-        if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
-          return 0;
-        }
-
-        if(joyData.responseBufferPtr_bytePtr3c.deref().get(3).get() != 0) {
-          return 0;
-        }
-
-        a0 = joyData.int00.get() + joyData.byte47.get() * 2L;
-        MEMORY.ref(2, a0).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() << 8 | joyData.responseBufferPtr_bytePtr3c.deref().get(5).get());
-        final long v0 = joyData.int00.get() + joyData.byte47.get() * 2L;
-        if(joyData.shortee.get() != MEMORY.ref(2, v0).get()) {
-          joyData.shortee.set((short)MEMORY.ref(2, v0).get());
-
-          //LAB_80044e00
-          return 0;
-        }
-
-        //LAB_80044e08
-        joyData.shortee.set((short)0);
-        joyData.byteeb.set(0);
-        joyData.byte47.incr();
-        if(joyData.byte47.get() < joyData.bytee3.get()) {
-          return 0;
-        }
-
-        joyData.byte47.set(0);
-        return 1;
-      }
-
-      return 1;
-    }
-
     //LAB_80044d78
-    if(v1 != 0x4L) {
-      return 1;
-    }
-
-    //LAB_80044f90
-    if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
-      joyData.byte48.set(0);
-      return 0;
-    }
-
-    //LAB_80044fb0
-    final long t0 = joyData.int08.get() + joyData.byte47.get() * 8L;
-    int a0_1;
-    int a3_1;
-
-    if(joyData.byte48.get() == 0) {
-      final int v0 = joyData.responseBufferPtr_bytePtr3c.deref().get(4).get();
-      joyData.byte48.set(v0);
-      MEMORY.ref(1, t0).setu(v0);
-
-      final long v1_1;
-      if(joyData.byte47.get() == 0) {
-        v1_1 = joyData.int08.get() + joyData.byteea.get() * 8L;
-      } else {
-        //LAB_80044ffc
-        v1_1 = MEMORY.ref(4, t0).offset(-0x4L).get() + (MEMORY.ref(1, t0).offset(-0x8L).get() + 0x3L & 0x1fcL);
-      }
-
-      //LAB_8004500c
-      MEMORY.ref(4, t0).offset(0x4L).setu(v1_1);
-      _800c3a28.setu(v1_1);
-
-      a3_1 = 3;
-      a0_1 = 5;
-    } else {
-      //LAB_80045024
-      a3_1 = 5;
-      a0_1 = 3;
-    }
-
-    outer:
-    {
-      //LAB_80045030
-      //LAB_80045050
-      while(a3_1 > 0) {
-        if(joyData.byte48.get() == 0) {
-          break outer;
-        }
-
-        if(_800c3a28.get() >= joyData.bytee3.getAddress()) {
-          //LAB_8004512c
-          joyData.byte47.set(0);
-          joyData.byte48.set(0);
-          return 0;
-        }
-
-        if(_800c3a28.deref(1).get() != joyData.responseBufferPtr_bytePtr3c.deref().get(a0_1).get()) {
-          joyData.shortee.set((short)0xffff);
-        }
-
-        //LAB_80045090
-        _800c3a28.deref(1).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(a0_1).get());
-        _800c3a28.addu(0x1L);
-        joyData.byte48.decr();
-        a0_1++;
-        a3_1--;
-      }
-
-      //LAB_800450bc
-      if(joyData.byte48.get() != 0) {
+    if(v1 == 0x4L) {
+      //LAB_80044f90
+      if(joyData.responseBufferPtr_bytePtr3c.deref().get(2).get() != 0) {
+        joyData.byte48.set(0);
         return 0;
       }
-    }
 
-    //LAB_800450cc
-    if(joyData.shortee.get() != 0) {
-      joyData.shortee.set((short)0);
+      //LAB_80044fb0
+      final long t0 = joyData.int08.get() + joyData.byte47.get() * 8L;
+      final int a0_1;
+
+      if(joyData.byte48.get() == 0) {
+        final int v0 = joyData.responseBufferPtr_bytePtr3c.deref().get(4).get();
+        joyData.byte48.set(v0);
+        MEMORY.ref(1, t0).setu(v0);
+
+        final long v1_1;
+        if(joyData.byte47.get() == 0) {
+          v1_1 = joyData.int08.get() + joyData.byteea.get() * 8L;
+        } else {
+          //LAB_80044ffc
+          v1_1 = MEMORY.ref(4, t0).offset(-0x4L).get() + (MEMORY.ref(1, t0).offset(-0x8L).get() + 0x3L & 0x1fcL);
+        }
+
+        //LAB_8004500c
+        MEMORY.ref(4, t0).offset(0x4L).setu(v1_1);
+        _800c3a28.setu(v1_1);
+
+        a0_1 = 5;
+      } else {
+        //LAB_80045024
+        a0_1 = 3;
+      }
+
+      outer:
+      {
+        //LAB_80045030
+        //LAB_80045050
+        for(int i = a0_1; i < 8; i++) {
+          if(joyData.byte48.get() == 0) {
+            break outer;
+          }
+
+          if(_800c3a28.get() >= joyData.bytee3.getAddress()) {
+            //LAB_8004512c
+            joyData.byte47.set(0);
+            joyData.byte48.set(0);
+            return 0;
+          }
+
+          if(_800c3a28.deref(1).get() != joyData.responseBufferPtr_bytePtr3c.deref().get(i).get()) {
+            joyData.shortee.set(0xffff);
+          }
+
+          //LAB_80045090
+          _800c3a28.deref(1).setu(joyData.responseBufferPtr_bytePtr3c.deref().get(i).get());
+          _800c3a28.addu(0x1L);
+          joyData.byte48.decr();
+        }
+
+        //LAB_800450bc
+        if(joyData.byte48.get() != 0) {
+          return 0;
+        }
+      }
+
+      //LAB_800450cc
+      if(joyData.shortee.get() != 0) {
+        joyData.shortee.set(0);
+        joyData.byte48.set(0);
+        return 0;
+      }
+
+      //LAB_800450e8
+      joyData.byte47.incr();
+
+      if(joyData.byteea.get() <= joyData.byte47.get()) {
+        joyData.byte49.set(0x6);
+        joyData.byte46.set(0xfe);
+        joyData.byteeb.set(0);
+        return 0;
+      }
+
+      //LAB_80045120
       joyData.byte48.set(0);
-      return 0;
-    }
-
-    //LAB_800450e8
-    joyData.byte47.incr();
-
-    if(joyData.byte47.get() >= joyData.byteea.get()) {
-      joyData.byte49.set(0x6);
-      joyData.byte46.set(0xfe);
       joyData.byteeb.set(0);
+
+      //LAB_80045138
+      //LAB_8004513c
       return 0;
     }
 
-    //LAB_80045120
-    joyData.byte48.set(0);
-    joyData.byteeb.set(0);
-
-    //LAB_80045138
-    //LAB_8004513c
-    return 0;
+    return 1;
   }
 
   @Method(0x80045144L)
   public static void queueJoypadCommand43Configure(final JoyData joyData, final boolean enterConfigMode) {
-    joyData.commandParams_byteArr24.get(0).set(enterConfigMode ? 1 : 0);
-    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
-    joyData.commandParamCount_byte36.set(0x1);
     joyData.command_byte37.set(0x43);
+    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
+    joyData.commandParams_byteArr24.get(0).set(enterConfigMode ? 1 : 0);
+    joyData.commandParamCount_byte36.set(1);
   }
 
   @Method(0x80045164L)
   public static void queueJoypadCommand45GetStatus(final JoyData joyData) {
+    joyData.command_byte37.set(0x45);
     joyData.ptrCommandParams_bytePtr2c.clear();
     joyData.commandParamCount_byte36.set(0);
-    joyData.command_byte37.set(0x45);
   }
 
   @Method(0x80045178L)
   public static void queueJoypadCommand4cUnknown(final JoyData joyData, final int unknownParam) {
-    joyData.commandParams_byteArr24.get(0).set(unknownParam);
-    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
-    joyData.commandParamCount_byte36.set(0x1);
     joyData.command_byte37.set(0x4c);
+    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
+    joyData.commandParams_byteArr24.get(0).set(unknownParam);
+    joyData.commandParamCount_byte36.set(1);
   }
 
   @Method(0x80045198L)
   public static void queueJoypadCommand46Unknown(final JoyData joyData, final int unknownParam) {
-    joyData.commandParams_byteArr24.get(0).set(unknownParam);
-    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
-    joyData.commandParamCount_byte36.set(0x1);
     joyData.command_byte37.set(0x46);
+    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
+    joyData.commandParams_byteArr24.get(0).set(unknownParam);
+    joyData.commandParamCount_byte36.set(1);
   }
 
   @Method(0x800451b8L)
   public static void queueJoypadCommand47Unknown(final JoyData joyData, final int unknownParam) {
-    joyData.commandParams_byteArr24.get(0).set(unknownParam);
-    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
-    joyData.commandParamCount_byte36.set(0x1);
     joyData.command_byte37.set(0x47);
+    joyData.ptrCommandParams_bytePtr2c.set(joyData.commandParams_byteArr24);
+    joyData.commandParams_byteArr24.get(0).set(unknownParam);
+    joyData.commandParamCount_byte36.set(1);
   }
 
   @Method(0x800451d8L)
   public static void queueJoypadCommand4bUnknown(final JoyData joyData) {
+    joyData.command_byte37.set(0x4b);
     joyData.ptrCommandParams_bytePtr2c.clear();
     joyData.commandParamCount_byte36.set(0);
-    joyData.command_byte37.set(0x4b);
   }
 
   @Method(0x800451ecL)
@@ -2420,14 +2392,13 @@ public final class Scus94491BpeSegment_8004 {
     if(response >= 0) {
       response &= 0xfL;
 
-      _80059650.setu(response * 2);
-
       if(response == 0) {
         _80059650.setu(0x20L);
+      } else {
+        _80059650.setu(response * 2);
       }
 
       return 0;
-
     }
 
     //LAB_80045468
@@ -2444,13 +2415,11 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_800454c0
     if(_80059658.get() == 0) {
-      if(joyData.command_byte37.get() == 0) {
-        if(joyData.byte38.get() == 0) {
-          if(joyData.joyDataPtr10.getPointer() == joyData.getAddress() || joyData.byte39.getUnsigned() == 0) {
-            //LAB_8004550c
-            if(joyData.bytePtr30.deref().get(0).get() == 0) {
-              _800595e0.deref().run(joyData);
-            }
+      if(joyData.command_byte37.get() == 0 && joyData.byte38.get() == 0) {
+        if(joyData.joyDataPtr10.getPointer() == joyData.getAddress() || joyData.byte39.getUnsigned() == 0) {
+          //LAB_8004550c
+          if(joyData.bytePtr30.deref().get(0).get() == 0) {
+            _800595e0.deref().run(joyData);
           }
         }
       }
@@ -2458,20 +2427,16 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80045538
     final int data = getNextJoypadCommandParam_800595dc.deref().run(joyData, _80059658.get());
-    final long v1 = sendJoypadData(joyData, data);
+    final int response = sendJoypadData(joyData, data);
 
-    if(v1 != 0x5aL) {
-      if(v1 != 0) {
-        if((int)v1 < 0) {
-          return v1;
-        }
-
+    if(response != 0x5aL) {
+      if(response > 0) {
         return -0x4L;
       }
     }
 
     //LAB_80045584
-    return v1;
+    return response;
   }
 
   @Method(0x80045594L)
@@ -2498,11 +2463,11 @@ public final class Scus94491BpeSegment_8004 {
 
         if(s0 >= 0) {
           final JoyData a = a0.joyDataPtr0c.deref().get(s0);
-          if(a.command_byte37.get() != 0 && a.byte38.get() == 0) {
+          if(a.command_byte37.get() == 0 && a.byte38.get() == 0) {
             if(a.getAddress() == a.joyDataPtr10.getPointer() || a.byte39.getAddress() == 0) {
               //LAB_800456c0
               if(a.bytePtr30.deref().get(0).get() == 0) {
-                _800595ec.deref().run(a);
+                _800595e0.deref().run(a);
               }
             }
           }
@@ -2589,7 +2554,7 @@ public final class Scus94491BpeSegment_8004 {
           return response;
         }
 
-        I_STAT.setu(-0x81L);
+        I_STAT.setu(0xffff_ff7fL);
         joypadTimeoutTimeout_800c3a30.setu(0x3cL);
         joypadTimeoutCurrentTime_800c3a2c.setu(TMR_SYSCLOCK_VAL);
 
@@ -2655,6 +2620,8 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80045b60
     return 0;
   }
+
+  // End of joypad code
 
   @Method(0x80045cb8L)
   public static void FUN_80045cb8() {
