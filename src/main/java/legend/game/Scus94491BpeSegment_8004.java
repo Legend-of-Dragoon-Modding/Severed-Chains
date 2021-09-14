@@ -3,6 +3,7 @@ package legend.game;
 import legend.core.DebugHelper;
 import legend.core.dma.DmaChannel;
 import legend.core.dma.DmaChannelType;
+import legend.core.dma.DmaManager;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.kernel.PriorityChainEntry;
@@ -115,7 +116,6 @@ import static legend.game.Scus94491BpeSegment_8005.ptrClearJoyData_800595d8;
 import static legend.game.Scus94491BpeSegment_8005.ptrGetJoyDataForPort_800595e8;
 import static legend.game.Scus94491BpeSegment_800c._800c3658;
 import static legend.game.Scus94491BpeSegment_800c._800c37a4;
-import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c3a03;
 import static legend.game.Scus94491BpeSegment_800c._800c3a28;
 import static legend.game.Scus94491BpeSegment_800c._800c3a38;
 import static legend.game.Scus94491BpeSegment_800c._800c3a3c;
@@ -124,6 +124,11 @@ import static legend.game.Scus94491BpeSegment_800c._800c3a62;
 import static legend.game.Scus94491BpeSegment_800c._800c43d0;
 import static legend.game.Scus94491BpeSegment_800c._800c43d4;
 import static legend.game.Scus94491BpeSegment_800c._800c43d8;
+import static legend.game.Scus94491BpeSegment_800c._800c4a90;
+import static legend.game.Scus94491BpeSegment_800c._800c4a94;
+import static legend.game.Scus94491BpeSegment_800c._800c4a98;
+import static legend.game.Scus94491BpeSegment_800c._800c4a9c;
+import static legend.game.Scus94491BpeSegment_800c._800c4aa0;
 import static legend.game.Scus94491BpeSegment_800c._800c4aa4;
 import static legend.game.Scus94491BpeSegment_800c._800c4aa8;
 import static legend.game.Scus94491BpeSegment_800c._800c4aac;
@@ -182,6 +187,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c667c;
 import static legend.game.Scus94491BpeSegment_800c._800c6680;
 import static legend.game.Scus94491BpeSegment_800c.eventSpuIrq_800c664c;
 import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c39e0;
+import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c3a03;
 import static legend.game.Scus94491BpeSegment_800c.joyData_800c37b8;
 import static legend.game.Scus94491BpeSegment_800c.joypadTimeoutCurrentTime_800c3a2c;
 import static legend.game.Scus94491BpeSegment_800c.joypadTimeoutMode_800c3a34;
@@ -667,6 +673,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   // Joypad handling code begins here
+
+  private static boolean SKIP_JOYPAD_INTERRUPT_CHECKS = true;
 
   @Method(0x80041be0L)
   public static int joypadVblankIrqHandlerFirstFunction() {
@@ -1627,7 +1635,7 @@ public final class Scus94491BpeSegment_8004 {
 
         //LAB_80044114
         setJoypadTimeout(430L);
-        while(I_STAT.get(0x80L) == 0) {
+        while(!SKIP_JOYPAD_INTERRUPT_CHECKS && I_STAT.get(0x80L) == 0) {
           if(checkJoypadTimeout()) {
             assert false : "Joypad timeout";
             return 0;
@@ -1645,7 +1653,7 @@ public final class Scus94491BpeSegment_8004 {
 
         //LAB_80044190
         setJoypadTimeout(430L);
-        while(I_STAT.get(0x80L) == 0) {
+        while(!SKIP_JOYPAD_INTERRUPT_CHECKS && I_STAT.get(0x80L) == 0) {
           if(checkJoypadTimeout()) {
             assert false : "Joypad timeout";
             return 0;
@@ -1729,9 +1737,9 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_800443bc
-      while(!checkJoypadTimeout()) {
-        DebugHelper.sleep(1);
-      }
+//      while(!checkJoypadTimeout()) {
+//        DebugHelper.sleep(1);
+//      }
 
       JOY_MCD_DATA.setu(~command);
       return data;
@@ -1755,7 +1763,7 @@ public final class Scus94491BpeSegment_8004 {
     JOY_MCD_BAUD.setu(0x88L);
 
     //LAB_800444a4
-    while(I_STAT.get(0x80L) == 0) { // Wait for joypad interrupt
+    while(!SKIP_JOYPAD_INTERRUPT_CHECKS && I_STAT.get(0x80L) == 0) { // Wait for joypad interrupt
       //TODO Removable? Shouldn't need to wait
 //      if(checkJoypadTimeout()) {
 //        assert false : "Joypad timeout";
@@ -1794,7 +1802,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004461c
     //LAB_8004466c
-    while(I_STAT.get(0x80L) == 0) { // Controller/memcard byte received interrupt
+    while(!SKIP_JOYPAD_INTERRUPT_CHECKS && I_STAT.get(0x80L) == 0) { // Controller/memcard byte received interrupt
 //      TMR_SYSCLOCK_MODE.get(); // Read to nowhere - not sure why
 
 //      long time = TMR_SYSCLOCK_VAL.get(0xffffL);
@@ -4356,6 +4364,13 @@ public final class Scus94491BpeSegment_8004 {
     // Pre-optimisation
 //    MEMORY.zero(VOICE_00_LEFT.getAddress(), 0x200);
 
+    _800c4a90.setu(DMA.spu.MADR.getAddress());
+    _800c4a94.setu(DMA.spu.BCR.getAddress());
+    _800c4a98.setu(DMA.spu.CHCR.getAddress());
+    _800c4a9c.setu(DmaManager.DMA_DPCR.getAddress());
+    _800c4aa0.setu(SPU_DELAY.getAddress());
+    _800c4ac4.setu(SPU.voices[0].LEFT.getAddress());
+
     SOUND_RAM_DATA_TRANSFER_CTRL.setu(0b100L); // Normal
 
     EnterCriticalSection();
@@ -4868,153 +4883,93 @@ public final class Scus94491BpeSegment_8004 {
     MEMORY.ref(4, a1).offset(0x18L).setu(0);
   }
 
-  /**
-   * TODO verify (there's absolutely no way I got this right)
-   */
   @Method(0x8004d034L)
-  public static void FUN_8004d034(long a0, final long a1) {
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long v0;
-    long v1;
-    long a2;
+  public static void FUN_8004d034(final long a0, final long a1) {
+    final long s1 = _800c4ac8.offset(a0 * 0x124L).getAddress();
+    _800c4ac0.setu(_800c43d4.offset(_800c4ac8.offset(a0 * 0x124L).offset(0x20L).get() * 0xcL));
 
-    s5 = 0;
-    s1 = _800c4ac8.offset(a0 * 292).getAddress();
-    v0 = _800c43d0.offset(MEMORY.ref(2, s1).offset(0x20L).get() * 12).getAddress();
-    v1 = MEMORY.ref(4, v0).offset(0x4L).get();
-    _800c4ac0.setu(v1);
-    a2 = MEMORY.ref(1, s1).offset(0x27L).get();
-    s3 = a0;
-    if(a2 != 0x1L) {
+    if(_800c4ac8.offset(a0 * 0x124L).offset(1, 0x27L).get() != 0x1L) {
       return;
     }
 
-    if(MEMORY.ref(4, v1).offset(0x10L).getSigned() == -0x1L) {
+    if(_800c4ac0.deref(4).offset(0x10L).get() == 0xffff_ffffL) {
       return;
     }
 
-    v1 = MEMORY.ref(2, s1).offset(0x20L).get();
-    a0 = _800c43d0.offset(v1 * 12).get();
-    if(a2 != a0) {
+    if(_800c43d0.offset(MEMORY.ref(2, s1).offset(0x20L).get() * 0xcL).get() != 0x1L) {
       return;
     }
 
-    if(a1 == a0) {
+    final long s5;
+    if(a1 == 0 || a1 == 0x1L) {
       //LAB_8004d134
+      //LAB_8004d13c
+      MEMORY.ref(4, s1).offset(0xcL).setu(0x110L);
+      MEMORY.ref(1, s1).offset(0x28L).setu(0);
+      MEMORY.ref(4, s1).offset(0x18L).setu(0x1L);
+      MEMORY.ref(1, s1).offset(0xe8L).setu(0);
+      MEMORY.ref(1, s1).offset(0x35L).setu(0);
+
+      if(a1 == 0) {
+        return;
+      }
+
       s5 = 0x1L;
 
-      //LAB_8004d13c
-      MEMORY.ref(4, s1).offset(0xcL).setu(0x110L);
-      MEMORY.ref(1, s1).offset(0x28L).setu(0);
-      MEMORY.ref(4, s1).offset(0x18L).setu(a0);
-      MEMORY.ref(1, s1).offset(0xe8L).setu(0);
-      MEMORY.ref(1, s1).offset(0x35L).setu(0);
-      s0 = 0;
-    } else if(a1 < 0x2L) {
-      if(a1 != 0) {
-        return;
-      }
-
-      //LAB_8004d13c
-      MEMORY.ref(4, s1).offset(0xcL).setu(0x110L);
-      MEMORY.ref(1, s1).offset(0x28L).setu(0);
-      MEMORY.ref(4, s1).offset(0x18L).setu(a0);
-      MEMORY.ref(1, s1).offset(0xe8L).setu(0);
-      MEMORY.ref(1, s1).offset(0x35L).setu(0);
-      s0 = 0;
-    } else {
       //LAB_8004d11c
-      if(a1 != 0x2L) {
-        if(a1 == 0x3L) {
-          //LAB_8004d188
-          if(MEMORY.ref(1, s1).offset(0x28L).get() == 0) {
-            if(MEMORY.ref(4, s1).offset(0x18L).get() != a0) {
-              MEMORY.ref(1, s1).offset(0x28L).setu(a0);
+    } else if(a1 == 0x2L || a1 == 0x3L) {
+      //LAB_8004d154
+      if(MEMORY.ref(1, s1).offset(0x28L).get() != 0) {
+        MEMORY.ref(1, s1).offset(0x28L).setu(0);
+        MEMORY.ref(1, s1).offset(0xe8L).setu(0x1L);
+        //LAB_8004d170
+      } else if(MEMORY.ref(4, s1).offset(0x18L).get() != 0x1L) {
+        MEMORY.ref(1, s1).offset(0x28L).setu(0x1L);
+        MEMORY.ref(1, s1).offset(0xe8L).setu(0);
+      }
 
-              //LAB_8004d1ac
-              MEMORY.ref(1, s1).offset(0xe8L).setu(0);
-            }
-          } else {
-            //LAB_8004d1b4
-            MEMORY.ref(1, s1).offset(0x28L).setu(0);
-            MEMORY.ref(1, s1).offset(0xe8L).setu(a0);
-          }
-        }
-
+      if(a1 == 0x3L) {
         return;
       }
 
-      //LAB_8004d154
-      if(MEMORY.ref(1, s1).offset(0x28L).get() == 0) {
-        //LAB_8004d170
-        s0 = 0;
-        if(MEMORY.ref(4, s1).offset(0x18L).get() != a0) {
-          MEMORY.ref(1, s1).offset(0x28L).setu(a0);
-          //LAB_8004d1ac
-          MEMORY.ref(1, s1).offset(0xe8L).setu(0);
-          return;
-        }
-      } else {
-        MEMORY.ref(1, s1).offset(0x28L).setu(0);
-        MEMORY.ref(1, s1).offset(0xe8L).setu(a0);
-
-        //LAB_8004d1c0
-        s0 = 0;
-      }
+      s5 = 0;
+    } else {
+      return;
     }
 
+    //LAB_8004d1c0
     //LAB_8004d1c4
-    s4 = (short)s3;
-    s2 = s0 & 0xffffL;
-
     //LAB_8004d1d8
-    do {
-      v1 = _800c3a40.offset(s2 * 102).getAddress();
-      if(MEMORY.ref(2, v1).offset(0x6L).get() == s4) {
-        if(MEMORY.ref(2, v1).offset(0x1aL).get() == 0) {
-          MEMORY.ref(2, v1).offset(0x8L).setu(0x1L);
-          MEMORY.ref(2, v1).setu(0);
-          MEMORY.ref(2, v1).offset(0x38L).setu(0x40L);
-          MEMORY.ref(2, v1).offset(0x14L).setu(0);
-          MEMORY.ref(2, v1).offset(0x16L).setu(0);
-          FUN_800488d4(s3, s2);
+    for(int i = 0; i < 0x18L; i++) {
+      if(_800c3a40.offset(i * 0x66L).offset(0x6L).get() == a0) {
+        if(_800c3a40.offset(i * 0x66L).offset(0x1aL).get() == 0) {
+          _800c3a40.offset(i * 0x66L).offset(0x8L).setu(0x1L);
+          _800c3a40.offset(i * 0x66L).setu(0);
+          _800c3a40.offset(i * 0x66L).offset(0x38L).setu(0x40L);
+          _800c3a40.offset(i * 0x66L).offset(0x14L).setu(0);
+          _800c3a40.offset(i * 0x66L).offset(0x16L).setu(0);
+          FUN_800488d4(a0, i);
 
           if(s5 != 0) {
-            v1 = _800c4ac4.get() + s2 * 16;
-            MEMORY.ref(2, v1).offset(0x8L).setu(0);
-            MEMORY.ref(2, v1).offset(0xaL).setu(0);
+            _800c4ac4.deref(2).offset(i * 0x10L).offset(0x8L).setu(0);
+            _800c4ac4.deref(2).offset(i * 0x10L).offset(0xaL).setu(0);
           }
         }
       }
 
       //LAB_8004d254
-      s0++;
-      v0 = s0 & 0xffffL;
-      s2 = s0 & 0xffffL;
-    } while(v0 < 0x18L);
+    }
 
-    s0 = 0;
-    v0 = MEMORY.ref(4, s1).offset(0x10L).get();
-    v0 += 0x10L;
-    _800c6680.setu(v0);
+    _800c6680.setu(MEMORY.ref(4, s1).offset(0x10L).get() + 0x10L);
 
     //LAB_8004d27c
-    do {
-      v0 = _800c6680.get();
-      MEMORY.ref(1, v0).offset(0x9L).setu(0);
-      v0 = _800c6680.get();
-      v0 += 0x10L;
-      _800c6680.setu(v0);
-      s0++;
-      v0 = s0 & 0xffffL;
-    } while(v0 < 0x10L);
+    for(int i = 0; i < 0x10L; i++) {
+      _800c6680.deref(1).offset(0x9L).setu(0);
+      _800c6680.addu(0x10L);
+    }
 
     _800c4ac4.deref(2).offset(0x18cL).setu(MEMORY.ref(2, s1).offset(0xe2L));
+    //wasteSomeCycles(0x2L); //TODO why?
     _800c4ac4.deref(2).offset(0x18eL).setu(MEMORY.ref(2, s1).offset(0xe4L));
     MEMORY.ref(2, s1).offset(0xe4L).setu(0);
     MEMORY.ref(2, s1).offset(0xe2L).setu(0);

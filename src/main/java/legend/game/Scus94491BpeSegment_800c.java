@@ -120,13 +120,17 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c43d4 = MEMORY.ref(4, 0x800c43d4L);
   public static final Value _800c43d8 = MEMORY.ref(4, 0x800c43d8L);
 
-  /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... */
+  /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... only room for 10 */
   public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x20, 0xc, SpuDmaTransfer::new));
 
+  public static final Value _800c4a90 = MEMORY.ref(4, 0x800c4a90L);
+  public static final Value _800c4a94 = MEMORY.ref(4, 0x800c4a94L);
+  public static final Value _800c4a98 = MEMORY.ref(4, 0x800c4a98L);
+  public static final Value _800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
+  public static final Value _800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
   public static final Value _800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
-
   public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
   public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);

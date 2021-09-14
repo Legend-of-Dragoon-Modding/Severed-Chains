@@ -91,14 +91,7 @@ public class JoyData implements MemoryRef {
     this.bytePtr40 = ref.offset(4, 0x40L).cast(Pointer.deferred(1,ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new)));
     this.responseBufferIndex_byte44 = ref.offset(1, 0x44L).cast(ByteRef::new);
     this.responseBytesSent_byte45 = ref.offset(1, 0x45L).cast(UnsignedByteRef::new);
-    this.byte46 = ref.offset(1, 0x46L).cast(ref1 -> new UnsignedByteRef(ref1) {
-      @Override
-      public UnsignedByteRef set(int val) {
-        System.err.println("Setting byte46 to " + Integer.toHexString(val));
-        new Throwable().printStackTrace();
-        return super.set(val);
-      }
-    });
+    this.byte46 = ref.offset(1, 0x46L).cast(UnsignedByteRef::new);
     this.byte47 = ref.offset(1, 0x47L).cast(UnsignedByteRef::new);
     this.byte48 = ref.offset(1, 0x48L).cast(UnsignedByteRef::new);
     this.byte49 = ref.offset(1, 0x49L).cast(UnsignedByteRef::new);

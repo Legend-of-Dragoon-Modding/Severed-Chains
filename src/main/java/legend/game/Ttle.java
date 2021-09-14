@@ -57,6 +57,7 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c6f8;
+import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8005._8005a374;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
@@ -66,6 +67,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bb114;
 import static legend.game.Scus94491BpeSegment_800b._800bb116;
 import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bb134;
+import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
+import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.loadingStage_800bb10c;
@@ -271,7 +274,32 @@ public final class Ttle {
 
   @Method(0x800c8148L)
   public static void FUN_800c8148() {
+    if(_800c6754.get() == 0) {
+      FUN_800136dc(0x1L, 0xfL);
+    }
 
+    //LAB_800c8174
+    renderMenuLogo();
+    renderMenuOptions();
+    FUN_800c959c();
+    renderMenuLogoFire();
+    renderMenuBackground();
+    renderCopyright();
+
+    _800c6754.addu(0x1L);
+    if(_800c6754.get() > 0xfL) {
+      FUN_800cb5c4();
+      FUN_800cb69c();
+
+      _800bf0dc.setu(0);
+      _800bf0ec.setu(0x2L);
+      _8004dd24.setu(0x9L);
+      _8007a3b8.setu(0x2L);
+
+      loadingStage_800bb10c.setu(0);
+    }
+
+    //LAB_800c8218
   }
 
   @Method(0x800c8228L)
@@ -1049,6 +1077,32 @@ public final class Ttle {
     insertElementIntoLinkedList(_1f8003d0.get() + a14 * 4, address);
   }
 
+  @Method(0x800cb5c4L)
+  public static void FUN_800cb5c4() {
+    //LAB_800cb5d8
+    for(int i = 0; i < 3; i++) {
+      //LAB_800cb5f4
+      LoadImage(rectArray_800ce798.get(i), _800c6748.offset(i * 0x4L).get());
+      DrawSync(0);
+      removeFromLinkedList(_800c6748.offset(i * 0x4L).get());
+    }
+
+    //LAB_800cb688
+  }
+
+  @Method(0x800cb69cL)
+  public static void FUN_800cb69c() {
+    FUN_800cbeb4(_800c66d0.get());
+
+    //LAB_800cb6bc
+    for(int i = 0; i < 4; i++) {
+      //LAB_800cb6d8
+      FUN_800ce448(_800c66d4.get(i).get());
+    }
+
+    //LAB_800cb714
+  }
+
   @Method(0x800cb728L)
   public static void renderMenuLogoFire() {
     final SVECTOR sp58 = new SVECTOR().set(_800c68f0);
@@ -1183,6 +1237,14 @@ public final class Ttle {
     final long address = addToLinkedListTail(0x10L);
     MEMORY.ref(4, address).offset(0x8L).setu(FUN_800cbf3c(address, transferDest));
     return address;
+  }
+
+  @Method(0x800cbeb4L)
+  public static void FUN_800cbeb4(final long a0) {
+    removeFromLinkedList(MEMORY.ref(4, a0).offset(0x4L).get());
+    removeFromLinkedList(MEMORY.ref(4, a0).get());
+    removeFromLinkedList(MEMORY.ref(4, a0).offset(0xcL).get());
+    removeFromLinkedList(a0);
   }
 
   @Method(0x800cbf3cL)
@@ -1752,5 +1814,12 @@ public final class Ttle {
     LoadImage(sp28, MEMORY.ref(4, a0).offset(0x8L).get());
 
     //LAB_800ce434
+  }
+
+  @Method(0x800ce448L)
+  public static void FUN_800ce448(final long a0) {
+    removeFromLinkedList(MEMORY.ref(4, a0).offset(0xcL).get());
+    removeFromLinkedList(MEMORY.ref(4, a0).offset(0x8L).get());
+    removeFromLinkedList(a0);
   }
 }
