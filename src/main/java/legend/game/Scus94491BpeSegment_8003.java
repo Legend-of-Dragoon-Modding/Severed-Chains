@@ -5238,11 +5238,11 @@ public final class Scus94491BpeSegment_8003 {
     final long clipX;
     final long clipY;
     if(doubleBufferFrame_800c34d4.get() == 0) {
-      clipX = clip_800c3440.x2.get();
-      clipY = clip_800c3440.y2.get();
-    } else {
       clipX = clip_800c3440.x1.get();
       clipY = clip_800c3440.y1.get();
+    } else {
+      clipX = clip_800c3440.x2.get();
+      clipY = clip_800c3440.y2.get();
     }
 
     if(doubleBufferOffsetMode_800c34d6.get() == 0) {
