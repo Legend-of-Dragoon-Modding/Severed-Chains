@@ -635,11 +635,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final BoolRef sectorIsDataOnly_800bf5f0 = MEMORY.ref(4, 0x800bf5f0L, BoolRef::new);
 
-  public static final Value _800bf5f8 = MEMORY.ref(4, 0x800bf5f8L);
-  public static final Value _800bf5fc = MEMORY.ref(4, 0x800bf5fcL);
-  public static final Value _800bf600 = MEMORY.ref(4, 0x800bf600L);
-  public static final Value _800bf604 = MEMORY.ref(4, 0x800bf604L);
-
+  public static final Response cdromResponse_800bf5f8 = MEMORY.ref(4, 0x800bf5f8L, Response::new);
   public static final Value batch_800bf608 = MEMORY.ref(4, 0x800bf608L);
   public static final EnumRef<SyncCode> syncCode_800bf60c = MEMORY.ref(1, 0x800bf60cL, EnumRef.of(SyncCode.values()));
   public static final Value response_800bf60d = MEMORY.ref(1, 0x800bf60dL);
@@ -664,11 +660,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value cdlPacketIndex_800bf700 = MEMORY.ref(4, 0x800bf700L);
 
   public static final ArrayRef<Response> cdromResponseBuffer_800bf708 = MEMORY.ref(4, 0x800bf708L, ArrayRef.of(Response.class, DSL_MAX_COMMAND, 0x10, Response::new));
-
-  public static final Value _800bf778 = MEMORY.ref(4, 0x800bf778L);
-  public static final Value _800bf77c = MEMORY.ref(4, 0x800bf77cL);
-  public static final Value _800bf780 = MEMORY.ref(4, 0x800bf780L);
-  public static final Value _800bf784 = MEMORY.ref(4, 0x800bf784L);
   public static final Value cdromResponseBufferIndex_800bf788 = MEMORY.ref(4, 0x800bf788L);
 
   public static final Pointer<RunnableRef> _800bf798 = MEMORY.ref(4, 0x800bf798L, Pointer.of(4, RunnableRef::new));

@@ -233,16 +233,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bf5a0;
 import static legend.game.Scus94491BpeSegment_800b._800bf5b0;
 import static legend.game.Scus94491BpeSegment_800b._800bf5b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf5e0;
-import static legend.game.Scus94491BpeSegment_800b._800bf5f8;
-import static legend.game.Scus94491BpeSegment_800b._800bf5fc;
-import static legend.game.Scus94491BpeSegment_800b._800bf600;
-import static legend.game.Scus94491BpeSegment_800b._800bf604;
 import static legend.game.Scus94491BpeSegment_800b._800bf6f8;
 import static legend.game.Scus94491BpeSegment_800b._800bf6fc;
-import static legend.game.Scus94491BpeSegment_800b._800bf778;
-import static legend.game.Scus94491BpeSegment_800b._800bf77c;
-import static legend.game.Scus94491BpeSegment_800b._800bf780;
-import static legend.game.Scus94491BpeSegment_800b._800bf784;
 import static legend.game.Scus94491BpeSegment_800b._800bf798;
 import static legend.game.Scus94491BpeSegment_800b._800bf79c;
 import static legend.game.Scus94491BpeSegment_800b._800bf7a4;
@@ -257,6 +249,7 @@ import static legend.game.Scus94491BpeSegment_800b.cdromParamsPtr_800bf644;
 import static legend.game.Scus94491BpeSegment_800b.cdromReadCompleteSubCallbackPtr_800bf7a0;
 import static legend.game.Scus94491BpeSegment_800b.cdromResponseBufferIndex_800bf788;
 import static legend.game.Scus94491BpeSegment_800b.cdromResponseBuffer_800bf708;
+import static legend.game.Scus94491BpeSegment_800b.cdromResponse_800bf5f8;
 import static legend.game.Scus94491BpeSegment_800b.cdromResponses_800bf5c0;
 import static legend.game.Scus94491BpeSegment_800b.cdromResponses_800bf5c8;
 import static legend.game.Scus94491BpeSegment_800b.cdromResponses_800bf5d0;
@@ -1916,37 +1909,40 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800340acL)
   public static SyncCode DsSync(final long batch, final long responses) {
-    long s0;
+    Response s0;
 
     if(batch == 0) {
       //LAB_800341dc
-      long responseBufferIndex = cdromResponseBufferIndex_800bf788.get() - 1;
-      if((int)responseBufferIndex < 0) {
-        responseBufferIndex = 0x7L;
+      int responseBufferIndex = (int)(cdromResponseBufferIndex_800bf788.get() - 1);
+      if(responseBufferIndex < 0) {
+        responseBufferIndex = 0x7;
       }
 
       //LAB_800341fc
-      if(_800bf778.offset(responseBufferIndex * 16).get() == 0) {
-        s0 = 0;
+      if(cdromResponseBuffer_800bf708.get(responseBufferIndex).getBatch() == 0) {
+        s0 = null;
       } else {
         //LAB_80034214
-        _800bf5f8.setu(_800bf778.offset(responseBufferIndex * 16));
-        _800bf5fc.setu(_800bf77c.offset(responseBufferIndex * 16));
-        _800bf600.setu(_800bf780.offset(responseBufferIndex * 16));
-        _800bf604.setu(_800bf784.offset(responseBufferIndex * 16));
-        s0 = _800bf5f8.getAddress();
+        cdromResponse_800bf5f8.setBatch(cdromResponseBuffer_800bf708.get(responseBufferIndex).getBatch());
+        cdromResponse_800bf5f8.setSyncCode(cdromResponseBuffer_800bf708.get(responseBufferIndex).getSyncCode());
+
+        for(int response = 0; response < 8; response++) {
+          cdromResponse_800bf5f8.setResponse(response, cdromResponseBuffer_800bf708.get(responseBufferIndex).getResponse(response));
+        }
+
+        s0 = cdromResponse_800bf5f8;
       }
     } else {
       FUN_80036e20(0);
 
-      long responseBufferIndex = cdromResponseBufferIndex_800bf788.get();
+      int responseBufferIndex = (int)cdromResponseBufferIndex_800bf788.get();
 
       //LAB_800340e0
       jump1:
       {
         for(int i = 0; i < DSL_MAX_RESULTS; i++) {
-          if(cdromResponseBuffer_800bf708.get((int)responseBufferIndex).getBatch() == batch) {
-            responseBufferIndex = 0x7L;
+          if(cdromResponseBuffer_800bf708.get(responseBufferIndex).getBatch() == batch) {
+            responseBufferIndex = 0x7;
             break jump1;
           }
 
@@ -1960,40 +1956,43 @@ public final class Scus94491BpeSegment_8003 {
 
         if(batch < cdromResponseBuffer_800bf708.get((int)cdromResponseBufferIndex_800bf788.get()).getBatch()) {
           //LAB_80034144
-          responseBufferIndex = 0x7L;
+          responseBufferIndex = 0x7;
         } else {
           responseBufferIndex = 0;
         }
       }
 
       //LAB_80034148
-      if(responseBufferIndex != 0x7L) {
+      if(responseBufferIndex != 0x7) {
         return SyncCode.NO_INTERRUPT;
       }
 
-      responseBufferIndex = cdromResponseBufferIndex_800bf788.get() - 1;
-      if((int)responseBufferIndex < 0) {
-        responseBufferIndex = 0x7L;
+      responseBufferIndex = (int)(cdromResponseBufferIndex_800bf788.get() - 1);
+      if(responseBufferIndex < 0) {
+        responseBufferIndex = 0x7;
       }
 
-      s0 = 0;
+      s0 = null;
 
       //LAB_80034170
       //LAB_8003417c
-      for(int i = 0; i < 0x8L; i++) {
-        if(_800bf778.offset(responseBufferIndex * 16).get() == batch) {
+      for(int i = 0; i < 8; i++) {
+        if(cdromResponseBuffer_800bf708.get(responseBufferIndex).getBatch() == batch) {
           //LAB_80034214
-          _800bf5f8.setu(_800bf778.offset(responseBufferIndex * 16));
-          _800bf5fc.setu(_800bf77c.offset(responseBufferIndex * 16));
-          _800bf600.setu(_800bf780.offset(responseBufferIndex * 16));
-          _800bf604.setu(_800bf784.offset(responseBufferIndex * 16));
-          s0 = _800bf5f8.getAddress();
+          cdromResponse_800bf5f8.setBatch(cdromResponseBuffer_800bf708.get(responseBufferIndex).getBatch());
+          cdromResponse_800bf5f8.setSyncCode(cdromResponseBuffer_800bf708.get(responseBufferIndex).getSyncCode());
+
+          for(int response = 0; response < 8; response++) {
+            cdromResponse_800bf5f8.setResponse(response, cdromResponseBuffer_800bf708.get(responseBufferIndex).getResponse(response));
+          }
+
+          s0 = cdromResponse_800bf5f8;
           break;
         }
 
         responseBufferIndex--;
-        if((int)responseBufferIndex < 0) {
-          responseBufferIndex = 0x7L;
+        if(responseBufferIndex < 0) {
+          responseBufferIndex = 0x7;
         }
 
         //LAB_800341a0
@@ -2001,13 +2000,13 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_80034268
-    if(s0 == 0) {
+    if(s0 == null) {
       //LAB_80034284
       return SyncCode.NO_RESULT;
     }
 
-    copy8Bytes(responses, s0 + 0x5L);
-    return SyncCode.fromLong(MEMORY.ref(1, s0).get());
+    copy8Bytes(responses, s0.getAddress() + 0x5L);
+    return s0.getSyncCode();
   }
 
   @Method(0x8003429cL)

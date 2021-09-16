@@ -3670,26 +3670,15 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048f98L)
-  public static void FUN_80048f98(long voiceIndex) {
+  public static void FUN_80048f98(final long voiceIndex) {
     long a1;
-    long v0;
     long v1;
 
-    a1 = _800c4ac8.getAddress();
-    v0 = voiceIndex << 3;
-    v0 += v0;
-    v0 <<= 3;
-    v0 += voiceIndex;
-    v0 <<= 2;
-    a1 += v0;
+    a1 = _800c4ac8.offset(voiceIndex * 0x124L).getAddress();
     v1 = MEMORY.ref(4, a1).offset(0x10L).get();
-    v0 = MEMORY.ref(4, a1).offset(0xcL).get();
-    v1 += v0;
-    voiceIndex = MEMORY.ref(1, v1).offset(0x3L).get();
-    v1 = MEMORY.ref(1, v1).offset(0x2L).get();
-    v0 += 0x4L;
-    MEMORY.ref(4, a1).offset(0xcL).get();
-    v1 += voiceIndex << 8;
+    v1 += MEMORY.ref(4, a1).offset(0xcL).get();
+    MEMORY.ref(4, a1).offset(0xcL).addu(0x4L);
+    v1 = MEMORY.ref(1, v1).offset(0x3L).get() << 8 | MEMORY.ref(1, v1).offset(0x2L).get();
     MEMORY.ref(2, a1).offset(0x108L).setu(v1);
   }
 

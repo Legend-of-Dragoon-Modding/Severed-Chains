@@ -266,7 +266,7 @@ public final class SStrm {
       resetMdec_800fe7a4.setu(0x1L);
     }
 
-    //TODO adding this to end the FMV when a timeout occurs
+    //TODO adding this to skip FMVs
     resetMdec_800fe7a4.setu(0x1L);
 
     //LAB_800fbda0
