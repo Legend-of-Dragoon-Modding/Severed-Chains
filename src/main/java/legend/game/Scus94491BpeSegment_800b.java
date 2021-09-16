@@ -31,8 +31,12 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bac68 = MEMORY.ref(1, 0x800bac68L);
 
+  public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
+
   public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
   public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
+
+  public static final Value _800bb0ac = MEMORY.ref(1, 0x800bb0acL);
 
   public static final Value _800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
@@ -85,7 +89,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<FileLoadingInfo> fileLoadingInfoArray_800bbad8 = MEMORY.ref(0x580, 0x800bbad8L, ArrayRef.of(FileLoadingInfo.class, 44, 32, FileLoadingInfo::new));
   public static final Value drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L);
-
+  public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final Value _800bc060 = MEMORY.ref(4, 0x800bc060L);
 
   public static final Value _800bc070 = MEMORY.ref(4, 0x800bc070L);
@@ -128,6 +132,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bca68 = MEMORY.ref(1, 0x800bca68L);
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
+
+  public static final Value _800bca78 = MEMORY.ref(1, 0x800bca78L);
 
   public static final Value _800bcf64 = MEMORY.ref(2, 0x800bcf64L);
 
@@ -209,6 +215,11 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd61c = MEMORY.ref(2, 0x800bd61cL);
 
+  public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
+  public static final Value _800bd684 = MEMORY.ref(4, 0x800bd684L);
+
+  public static final Value _800bd690 = MEMORY.ref(4, 0x800bd690L);
+
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
   public static final Value _800bd700 = MEMORY.ref(1, 0x800bd700L);
@@ -261,6 +272,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
 
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
+  public static final Value _800bdc28 = MEMORY.ref(4, 0x800bdc28L);
+
+  public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
+  public static final Value _800bdc38 = MEMORY.ref(4, 0x800bdc38L);
 
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
 

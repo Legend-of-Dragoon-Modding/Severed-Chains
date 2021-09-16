@@ -33,11 +33,15 @@ import static legend.core.LibDs.DSL_MAX_RESULTS;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
+  public static final Value _80050068 = MEMORY.ref(2, 0x80050068L);
+
   public static final Value _800500e8 = MEMORY.ref(4, 0x800500e8L);
 
   public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
 
   public static final Value _80052ae0 = MEMORY.ref(2, 0x80052ae0L);
+
+  public static final Value _80052c30 = MEMORY.ref(4, 0x80052c30L);
 
   public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
 

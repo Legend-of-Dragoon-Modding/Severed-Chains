@@ -247,6 +247,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004dda0 = MEMORY.ref(2, 0x8004dda0L);
   public static final Value fileNamePtr_8004dda4 = MEMORY.ref(4, 0x8004dda4L);
 
+  public static final Value _8004ddc0 = MEMORY.ref(4, 0x8004ddc0L);
   public static final Value callbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
   public static final Value fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L);
   public static final Value _8004ddcc = MEMORY.ref(1, 0x8004ddccL);
@@ -315,6 +316,20 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
   public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);
   public static final Value _8004f6ec = MEMORY.ref(4, 0x8004f6ecL);
+
+  public static final Value _8004fa98 = MEMORY.ref(1, 0x8004fa98L);
+
+  public static final Value _8004fa9a = MEMORY.ref(2, 0x8004fa9aL);
+  public static final Value _8004fa9c = MEMORY.ref(4, 0x8004fa9cL);
+
+
+  public static final Value _8004fb00 = MEMORY.ref(1, 0x8004fb00L);
+
+  public static final Value _8004fb02 = MEMORY.ref(2, 0x8004fb02L);
+  public static final Value _8004fb04 = MEMORY.ref(4, 0x8004fb04L);
+
+  public static final Value _8004ff10 = MEMORY.ref(4, 0x8004ff10L);
+  public static final Value _8004ff14 = MEMORY.ref(4, 0x8004ff14L);
 
   @Method(0x80040010L)
   public static void FUN_80040010(final SVECTOR vector, final MATRIX matrix) {
@@ -4441,12 +4456,13 @@ public final class Scus94491BpeSegment_8004 {
     return spuDmaTransferInProgress_800c6650.get();
   }
 
+  //TODO RunnableRef
   @Method(0x8004be7cL)
-  public static void FUN_8004be7c(final long a0) {
-    if(a0 == 0) {
+  public static void FUN_8004be7c(final long runnableRef) {
+    if(runnableRef == 0) {
       _800c6668.setu(0);
     } else {
-      _800c6628.set(MEMORY.ref(4, a0).cast(RunnableRef::new));
+      _800c6628.set(MEMORY.ref(4, runnableRef).cast(RunnableRef::new));
       _800c6668.setu(0x1L);
     }
   }
@@ -4987,6 +5003,30 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d4f8L)
   public static long FUN_8004d4f8(final long a0) {
     return _800c4bd0.offset(a0 * 292).get();
+  }
+
+  @Method(0x8004d52cL)
+  public static long FUN_8004d52c(final long a0) {
+    long v0 = _800c4ac8.offset(a0 * 0x124L).offset(0xe8L).get() * 0x2L;
+    long v1 = _800c4ac8.offset(a0 * 0x124L).offset(0x3cL).get();
+    long a2 = _800c4ac8.offset(a0 * 0x124L).offset(0x28L).get() | v0;
+
+    final long a3;
+    if(v1 != 0) {
+      if(v0 == 0) {
+        v1 |= 0x4L;
+      } else {
+        v1 = a2;
+      }
+
+      //LAB_8004d58c
+      a3 = v1 | _800c4ac8.offset(a0 * 0x124L).offset(0x3aL).get() << 3;
+    } else {
+      a3 = a2;
+    }
+
+    //LAB_8004d59c
+    return (short)(a3 | _800c6630.offset(0x2aL).get() << 4 | _800c6630.offset(0x2bL).get() << 5);
   }
 
   @Method(0x8004d648L)
