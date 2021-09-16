@@ -21,6 +21,7 @@ import java.util.function.Function;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80013200;
 import static legend.game.Scus94491BpeSegment.FUN_80013598;
 import static legend.game.Scus94491BpeSegment.FUN_800136dc;
@@ -128,6 +129,8 @@ public final class Ttle {
   public static final Value _800c6778 = MEMORY.ref(4, 0x800c6778L);
   public static final Value _800c677c = MEMORY.ref(4, 0x800c677cL);
 
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.class, 4, 4, (Function)Pointer.of(4, RunnableRef::new)));
+
   public static final SVECTOR _800c68f0 = MEMORY.ref(8, 0x800c68f0L, SVECTOR::new);
   public static final VECTOR _800c68f8 = MEMORY.ref(16, 0x800c68f8L, VECTOR::new);
 
@@ -166,6 +169,28 @@ public final class Ttle {
   public static final Value _800ce988 = MEMORY.ref(2, 0x800ce988L);
 
   public static final Value _800ce98c = MEMORY.ref(2, 0x800ce98cL);
+
+  @Method(0x800c7194L)
+  public static void FUN_800c7194() {
+    assert false;
+  }
+
+  @Method(0x800c7424L)
+  public static void FUN_800c7424() {
+    loadingStageArray_800c6898.get((int)loadingStage_800bb10c.get()).deref().run();
+  }
+
+  @Method(0x800c7488L)
+  public static void FUN_800c7488() {
+    FUN_800c7524();
+    _8007a3b8.setu(0);
+    loadingStage_800bb10c.addu(0x1L);
+  }
+
+  @Method(0x800c7524L)
+  public static void FUN_800c7524() {
+    FUN_80012b1c(0x2L, getMethodAddress(Ttle.class, "FUN_800c7194"), 0);
+  }
 
   @Method(0x800c7798L)
   public static void executeTtleLoadingStage() {
