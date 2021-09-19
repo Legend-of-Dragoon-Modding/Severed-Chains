@@ -29,6 +29,14 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800babc0 = MEMORY.ref(1, 0x800babc0L);
 
+  public static final Value _800babc8 = MEMORY.ref(4, 0x800babc8L);
+
+  public static final Value _800bac50 = MEMORY.ref(4, 0x800bac50L);
+  public static final Value _800bac54 = MEMORY.ref(4, 0x800bac54L);
+  public static final Value _800bac58 = MEMORY.ref(4, 0x800bac58L);
+
+  public static final Value _800bac60 = MEMORY.ref(4, 0x800bac60L);
+
   public static final Value _800bac68 = MEMORY.ref(1, 0x800bac68L);
 
   public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
@@ -36,7 +44,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
   public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
 
+  public static final Value _800bb0ab = MEMORY.ref(1, 0x800bb0abL);
   public static final Value _800bb0ac = MEMORY.ref(1, 0x800bb0acL);
+
+  public static final Value _800bb0b0 = MEMORY.ref(4, 0x800bb0b0L);
 
   public static final Value _800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
@@ -231,6 +242,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
 
+  public static final Value _800bd748 = MEMORY.ref(4, 0x800bd748L);
+
   public static final Value linkedListEntry_800bd76c = MEMORY.ref(4, 0x800bd76cL);
 
   public static final Value linkedListEntry_800bd778 = MEMORY.ref(4, 0x800bd778L);
@@ -242,6 +255,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value linkedListEntry_800bd784 = MEMORY.ref(4, 0x800bd784L);
   public static final Value linkedListEntry_800bd788 = MEMORY.ref(4, 0x800bd788L);
 
+  public static final Value _800bd7a0 = MEMORY.ref(4, 0x800bd7a0L);
+  public static final Value _800bd7a4 = MEMORY.ref(4, 0x800bd7a4L);
+  public static final Value _800bd7a8 = MEMORY.ref(4, 0x800bd7a8L);
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final Value _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L);
   public static final Value _800bd7b4 = MEMORY.ref(2, 0x800bd7b4L);
@@ -250,10 +266,23 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd7c0 = MEMORY.ref(1, 0x800bd7c0L);
 
+  public static final Value _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L);
+  public static final Value _800bd7ec = MEMORY.ref(4, 0x800bd7ecL);
+  public static final Value _800bd7f0 = MEMORY.ref(4, 0x800bd7f0L);
+  public static final Value _800bd7f4 = MEMORY.ref(4, 0x800bd7f4L);
+  public static final Value _800bd7f8 = MEMORY.ref(4, 0x800bd7f8L);
+  public static final Value _800bd7fc = MEMORY.ref(4, 0x800bd7fcL);
+  public static final Value _800bd800 = MEMORY.ref(4, 0x800bd800L);
+  public static final Value _800bd804 = MEMORY.ref(4, 0x800bd804L);
   public static final Value _800bd808 = MEMORY.ref(4, 0x800bd808L);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
+  public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
+
+  public static final Value _800bd818 = MEMORY.ref(4, 0x800bd818L);
 
   public static final Value _800bd9f8 = MEMORY.ref(1, 0x800bd9f8L);
+
+  public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
 
   public static final Value _800bda10 = MEMORY.ref(4, 0x800bda10L);
 
@@ -412,6 +441,17 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800be696 = MEMORY.ref(1, 0x800be696L);
   public static final Value _800be697 = MEMORY.ref(1, 0x800be697L);
   //TODO
+
+  public static final Value _800bed30 = MEMORY.ref(4, 0x800bed30L);
+  public static final Value _800bed34 = MEMORY.ref(4, 0x800bed34L);
+  public static final Value _800bed38 = MEMORY.ref(4, 0x800bed38L);
+  public static final Value _800bed3c = MEMORY.ref(4, 0x800bed3cL);
+  public static final Value _800bed40 = MEMORY.ref(4, 0x800bed40L);
+  public static final Value _800bed44 = MEMORY.ref(4, 0x800bed44L);
+  public static final Value _800bed48 = MEMORY.ref(4, 0x800bed48L);
+  public static final Value _800bed4c = MEMORY.ref(4, 0x800bed4cL);
+  public static final Value _800bed50 = MEMORY.ref(4, 0x800bed50L);
+  public static final Value _800bed54 = MEMORY.ref(4, 0x800bed54L);
 
   public static final ArrayRef<JoyStruct> _800bed60 = MEMORY.ref(4, 0x800bed60L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
 

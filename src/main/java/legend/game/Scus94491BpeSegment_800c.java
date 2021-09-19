@@ -120,21 +120,21 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c43d4 = MEMORY.ref(4, 0x800c43d4L);
   public static final Value _800c43d8 = MEMORY.ref(4, 0x800c43d8L);
 
-  /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... only room for 10 */
-  public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x20, 0xc, SpuDmaTransfer::new));
+  /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... only room for 0x10 */
+  public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x10, 0xc, SpuDmaTransfer::new));
 
-  public static final Value _800c4a90 = MEMORY.ref(4, 0x800c4a90L);
-  public static final Value _800c4a94 = MEMORY.ref(4, 0x800c4a94L);
-  public static final Value _800c4a98 = MEMORY.ref(4, 0x800c4a98L);
-  public static final Value _800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
-  public static final Value _800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
-  public static final Value _800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
+  public static final Value dmaSpuMadrPtr_800c4a90 = MEMORY.ref(4, 0x800c4a90L);
+  public static final Value dmaSpuBcrPtr_800c4a94 = MEMORY.ref(4, 0x800c4a94L);
+  public static final Value dmaSpuChcrPtr_800c4a98 = MEMORY.ref(4, 0x800c4a98L);
+  public static final Value dmaDpcrPtr_800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
+  public static final Value dmaSpuDelayPtr_800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
+  public static final Value voice00LeftPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
   public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
   public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
-
+  public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
   public static final Value _800c4ac0 = MEMORY.ref(4, 0x800c4ac0L);
   public static final Value _800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
   public static final Value _800c4ac8 = MEMORY.ref(1, 0x800c4ac8L);

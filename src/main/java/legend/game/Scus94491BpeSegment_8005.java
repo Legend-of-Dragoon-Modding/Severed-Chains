@@ -39,10 +39,17 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
 
+  public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);
+
   public static final Value _80052ae0 = MEMORY.ref(2, 0x80052ae0L);
 
   public static final Value _80052c30 = MEMORY.ref(4, 0x80052c30L);
-
+  public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
+  public static final Value _80052c38 = MEMORY.ref(4, 0x80052c38L);
+  public static final Value _80052c3c = MEMORY.ref(4, 0x80052c3cL);
+  public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
+  public static final Value _80052c44 = MEMORY.ref(4, 0x80052c44L);
+  public static final Value _80052c48 = MEMORY.ref(4, 0x80052c48L);
   public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
 
   public static final ArrayRef<UnsignedByteRef> _80052c5c = MEMORY.ref(1, 0x80052c5cL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));

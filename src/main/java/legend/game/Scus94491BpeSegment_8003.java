@@ -94,7 +94,9 @@ import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021edc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021f0c;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021f3c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021f6c;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021f8c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021fc4;
 import static legend.game.Scus94491BpeSegment_8002.setScreenOffset;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
@@ -5064,6 +5066,61 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.ref(1, a0).offset(0x7L).setu(0x64);
   }
 
+  @Method(0x8003b750L)
+  public static void FUN_8003b750(final long a0, final long a1, final long a2, final long a3) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x1L);
+
+    final long v1;
+    if(a2 != 0) {
+      v1 = 0xe100_0200L;
+    } else {
+      v1 = 0xe100_0000L;
+    }
+
+    //LAB_8003b764
+    long v0 = a3 & 0x9ffL;
+    if(a1 != 0) {
+      v0 |= 0x400L;
+    }
+
+    //LAB_8003b770
+    MEMORY.ref(4, a0).offset(0x4L).setu(v1 | v0);
+  }
+
+  @Method(0x8003b780L)
+  public static void FUN_8003b780(long a0, RECT a1, long a2, long a3) {
+    if(a1.w.get() == 0) {
+      MEMORY.ref(1, a0).offset(0x3L).setu(0);
+    } else if(a1.h.get() == 0) {
+      //LAB_8003b7a4
+      MEMORY.ref(1, a0).offset(0x3L).setu(0);
+    } else {
+      MEMORY.ref(1, a0).offset(0x3L).setu(0x5L);
+    }
+
+    //LAB_8003b7ac
+    MEMORY.ref(4, a0).offset(0x4L).setu(0x100_0000L);
+    MEMORY.ref(4, a0).offset(0x8L).setu(0x8000_0000L);
+    MEMORY.ref(4, a0).offset(0xcL).setu(a1.x.get());
+    MEMORY.ref(4, a0).offset(0x10L).setu(a3 << 16 | a2 & 0xffffL);
+    MEMORY.ref(4, a0).offset(0x14L).setu(a1.w.get());
+  }
+
+  @Method(0x8003b7e0L)
+  public static long FUN_8003b7e0(long a0, long a1) {
+    long v1 = MEMORY.ref(1, a1).offset(0x3L).get() + MEMORY.ref(1, a0).offset(0x3L).get() + 0x1L;
+
+    if(v1 < 0x11L) {
+      MEMORY.ref(1, a0).offset(0x3L).setu(v1);
+      MEMORY.ref(1, a1).setu(0);
+      return 0;
+    }
+
+    //LAB_8003b80c
+    //LAB_8003b810
+    return -0x1L;
+  }
+
   @Method(0x8003b850L)
   public static void FUN_8003b850(final long address, final boolean allowDrawingToDisplayArea, final boolean dither, final long a3, @Nullable final RECT textureWindow) {
     MEMORY.ref(1, address).offset(0x3L).setu(0x2L);
@@ -5376,6 +5433,111 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003c6c8
+  }
+
+  @Method(0x8003c6f0L)
+  public static long FUN_8003c6f0(long a0, final long a1) {
+    long v0;
+    long v1;
+
+    final long s2 = MEMORY.ref(1, a1).offset(0xcL).get();
+    final long s3 = MEMORY.ref(1, a1).offset(0xdL).get();
+    final long s4 = MEMORY.ref(1, a1).offset(0xeL).get();
+
+    final MATRIX sp10 = new MATRIX().set(matrix_800c34e8);
+    final MATRIX sp30 = new MATRIX();
+
+    FUN_8003cc0c(sp30);
+
+    v0 = MEMORY.ref(4, a1).get();
+    long a0_0 = v0 * v0;
+    v0 = MEMORY.ref(4, a1).offset(0x4L).get();
+    a0_0 += v0 * v0;
+    v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+    a0_0 += v0 * v0;
+
+    final long scale = FUN_80021fc4(a0_0);
+
+    if(scale == 0) {
+      return -0x1L;
+    }
+
+    if(a0 == 0) {
+      //LAB_8003c7ec
+      sp10.set(0, (short)((int)(-MEMORY.ref(4, a1).offset(0x0L).get() * 0x1000L) / scale));
+      sp10.set(1, (short)((int)(-MEMORY.ref(4, a1).offset(0x4L).get() * 0x1000L) / scale));
+      sp10.set(2, (short)((int)(-MEMORY.ref(4, a1).offset(0x8L).get() * 0x1000L) / scale));
+
+      v0 = s2 * 0x1000L;
+      v0 += (v0 * 0x8080_8081L) >>> 32;
+      sp30.set(0, (short)(v0 / 0x80));
+
+      v1 = s3 * 0x1000L;
+      v1 += (v1 * 0x8080_8081L) >>> 32;
+      sp30.set(3, (short)(v1 / 0x80));
+
+      long v2 = s4 * 0x1000L;
+      v2 += (v2 * 0x8080_8081L) >>> 32;
+      sp30.set(6, (short)(v2 / 0x80));
+    } else if(a0 == 0x1L) {
+      //LAB_8003c904
+      sp10.set(3, (short)((int)(-MEMORY.ref(4, a1).offset(0x0L).get() * 0x1000L) / scale));
+      sp10.set(4, (short)((int)(-MEMORY.ref(4, a1).offset(0x4L).get() * 0x1000L) / scale));
+      sp10.set(5, (short)((int)(-MEMORY.ref(4, a1).offset(0x8L).get() * 0x1000L) / scale));
+
+      v0 = (int)(s2 * 0x1000L);
+      v0 += (v0 * 0x8080_8081L) >>> 32;
+      sp30.set(1, (short)(v0 / 0x80));
+
+      v1 = (int)(s3 * 0x1000L);
+      v1 += (v1 * 0x8080_8081L) >>> 32;
+      sp30.set(4, (short)(v1 / 0x80));
+
+      long v2 = (int)(s4 * 0x1000L);
+      v2 += (v2 * 0x8080_8081L) >>> 32;
+      sp30.set(7, (short)(v2 / 0x80));
+      //LAB_8003c7dc
+    } else if(a0 == 0x2L) {
+      //LAB_8003ca20
+      sp10.set(6, (short)((int)(-MEMORY.ref(4, a1).offset(0x0L).get() * 0x1000L) / scale));
+      sp10.set(7, (short)((int)(-MEMORY.ref(4, a1).offset(0x4L).get() * 0x1000L) / scale));
+      sp10.set(8, (short)((int)(-MEMORY.ref(4, a1).offset(0x8L).get() * 0x1000L) / scale));
+
+      v0 = (int)(s2 * 0x1000L);
+      v0 += (v0 * 0x8080_8081L) >>> 32;
+      sp30.set(2, (short)(v0 / 0x80));
+
+      v1 = (int)(s3 * 0x1000L);
+      v1 += (v1 * 0x8080_8081L) >>> 32;
+      sp30.set(5, (short)(v1 / 0x80));
+
+      long v2 = (int)(s4 * 0x1000L);
+      v2 += (v2 * 0x8080_8081L) >>> 32;
+      sp30.set(8, (short)(v2 / 0x80));
+    }
+
+    //LAB_8003cb34
+    matrix_800c34e8.set(sp10);
+    FUN_8003cba8(sp30);
+
+    //LAB_8003cb88
+    return 0;
+  }
+
+  @Method(0x8003cba8L)
+  public static void FUN_8003cba8(final MATRIX a0) {
+    matrix_800c3508.set(a0);
+    FUN_80021f3c(a0);
+  }
+
+  @Method(0x8003cc0cL)
+  public static void FUN_8003cc0c(final MATRIX a0) {
+    a0.set(matrix_800c3508);
+  }
+
+  @Method(0x8003cce0L)
+  public static void FUN_8003cce0(final long a0, final long a1, final long a2) {
+    FUN_80021f8c(a0 / 0x10L, a1 / 0x10L, a2 / 0x10L);
   }
 
   @Method(0x8003cd10L)
@@ -6056,14 +6218,14 @@ public final class Scus94491BpeSegment_8003 {
     matrixStackIndex_80054a08.subu(0x20L);
 
     final MATRIX matrix = matrixStack_80054a0c.get(i / 32);
-    CPU.CTC2(0x0L, matrix.get(1) << 16 | matrix.get(0));
-    CPU.CTC2(0x1L, matrix.get(3) << 16 | matrix.get(2));
-    CPU.CTC2(0x2L, matrix.get(5) << 16 | matrix.get(4));
-    CPU.CTC2(0x3L, matrix.get(7) << 16 | matrix.get(6));
-    CPU.CTC2(0x4L, matrix.get(8));
-    CPU.CTC2(0x5L, matrix.getTransferVector(0));
-    CPU.CTC2(0x6L, matrix.getTransferVector(1));
-    CPU.CTC2(0x7L, matrix.getTransferVector(2));
+    CPU.CTC2(matrix.get(1) << 16 | matrix.get(0), 0x0L);
+    CPU.CTC2(matrix.get(3) << 16 | matrix.get(2), 0x1L);
+    CPU.CTC2(matrix.get(5) << 16 | matrix.get(4), 0x2L);
+    CPU.CTC2(matrix.get(7) << 16 | matrix.get(6), 0x3L);
+    CPU.CTC2(matrix.get(8), 0x4L);
+    CPU.CTC2(matrix.getTransferVector(0), 0x5L);
+    CPU.CTC2(matrix.getTransferVector(1), 0x6L);
+    CPU.CTC2(matrix.getTransferVector(2), 0x7L);
   }
 
   /**
@@ -6150,15 +6312,15 @@ public final class Scus94491BpeSegment_8003 {
     long t7;
     long t8;
 
-    CPU.CTC2(0x0L, a0.get(0, 1) << 16 | a0.get(0, 0));
-    CPU.CTC2(0x1L, a0.get(1, 0) << 16 | a0.get(0, 2));
-    CPU.CTC2(0x2L, a0.get(1, 2) << 16 | a0.get(1, 1));
-    CPU.CTC2(0x3L, a0.get(2, 1) << 16 | a0.get(2, 0));
-    CPU.CTC2(0x4L, a0.get(2, 2));
+    CPU.CTC2(a0.get(0, 1) << 16 | a0.get(0, 0), 0x0L);
+    CPU.CTC2(a0.get(1, 0) << 16 | a0.get(0, 2), 0x1L);
+    CPU.CTC2(a0.get(1, 2) << 16 | a0.get(1, 1), 0x2L);
+    CPU.CTC2(a0.get(2, 1) << 16 | a0.get(2, 0), 0x3L);
+    CPU.CTC2(a0.get(2, 2), 0x4L);
     t0 = a1.get(0, 0) << 16 | a1.get(0, 2);
     t2 = a1.get(2, 1) << 16 | a1.get(2, 0);
-    CPU.MTC2(0x0L, t0);
-    CPU.MTC2(0x1L, t2);
+    CPU.MTC2(t0, 0x0L);
+    CPU.MTC2(t2, 0x1L);
     CPU.COP2(0x486012L);
     t0 = a1.get(0, 1);
     t1 = a1.get(1, 1) << 16 | a1.get(1, 2);
@@ -6168,8 +6330,8 @@ public final class Scus94491BpeSegment_8003 {
     t3 = CPU.MFC2(0x9L);
     t4 = CPU.MFC2(0xaL);
     t5 = CPU.MFC2(0xbL);
-    CPU.MTC2(0x0L, t0);
-    CPU.MTC2(0x1L, t2);
+    CPU.MTC2(t0, 0x0L);
+    CPU.MTC2(t2, 0x1L);
     CPU.COP2(0x486012L);
     t0 = a1.get(0, 2);
     t1 = a1.get(1, 1) << 16 | a1.get(1, 2);
@@ -6179,8 +6341,8 @@ public final class Scus94491BpeSegment_8003 {
     t6 = CPU.MFC2(0x9L);
     t7 = CPU.MFC2(0xaL);
     t8 = CPU.MFC2(0xbL);
-    CPU.MTC2(0x0L, t0);
-    CPU.MTC2(0x1L, t2);
+    CPU.MTC2(t0, 0x0L);
+    CPU.MTC2(t2, 0x1L);
     CPU.COP2(0x486012L);
     a1.set(0, 0, (short)t3);
     a1.set(0, 1, (short)t6);
@@ -6233,10 +6395,48 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(distance, 0x1a);
   }
 
+  /** TODO not sure if this is right */
+  @Method(0x8003fa40L)
+  public static void FUN_8003fa40(final long[] a0, final long[] a1, final long[] a2, final long[] a3, final long[] a4, final int count) {
+    //LAB_8003fa4c
+    for(int i = 0; i < count; i++) {
+      CPU.MTC2(a0[i * 2    ], 0); // VXY0
+      CPU.MTC2(a0[i * 2 + 1], 1); // VZ0
+
+      CPU.COP2(0x18_0001L);
+
+      a1[i] = CPU.MFC2(18L); // SZ2
+      a2[i] = CPU.MFC2(19L); // SZ3
+      a3[i] = CPU.MFC2( 8L); // IR0
+      a4[i] = CPU.CFC2(31L) >>> 0xcL;
+    }
+  }
+
+  /** TODO figure out what insanity this is */
   @Method(0x8003fab0L)
-  public static void FUN_8003fab0(final MATRIX a0, final MATRIX a1) {
-    assert false;
-    //TODO
+  public static MATRIX FUN_8003fab0(final MATRIX a0, final MATRIX a1) {
+    long t1;
+    long t2;
+    long t3;
+
+    t1 = MEMORY.ref(4, a0.getAddress()).offset(0x00L).get();
+    t2 = MEMORY.ref(4, a0.getAddress()).offset(0x4L).get();
+    MEMORY.ref(4, a1.getAddress()).offset(0x04L).setu(t1);
+    MEMORY.ref(4, a1.getAddress()).offset(0x00L).setu(t2);
+    MEMORY.ref(2, a1.getAddress()).offset(0x00L).setu(t1);
+
+    t3 = MEMORY.ref(4, a0.getAddress()).offset(0x08L).get();
+    t1 = MEMORY.ref(4, a0.getAddress()).offset(0x0cL).get();
+    MEMORY.ref(4, a1.getAddress()).offset(0x0cL).setu(t3);
+    MEMORY.ref(4, a1.getAddress()).offset(0x08L).setu(t1);
+    MEMORY.ref(2, a1.getAddress()).offset(0x0cL).setu(t2);
+    MEMORY.ref(2, a1.getAddress()).offset(0x08L).setu(t3);
+
+    t2 = MEMORY.ref(2, a0.getAddress()).offset(0x10L).get();
+    MEMORY.ref(2, a1.getAddress()).offset(0x04L).setu(t1);
+    MEMORY.ref(2, a1.getAddress()).offset(0x10L).setu(t2);
+
+    return a1;
   }
 
   @Method(0x8003faf0L)

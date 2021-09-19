@@ -80,7 +80,6 @@ import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setClip;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandler;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
 import static legend.game.Scus94491BpeSegment_8004._8004dd20;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
@@ -108,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ef9c;
 import static legend.game.Scus94491BpeSegment_8004._8004f01c;
 import static legend.game.Scus94491BpeSegment_8004._8004f09c;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
+import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandler;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._8005a370;
 import static legend.game.Scus94491BpeSegment_8005._8005a374;
@@ -209,18 +209,6 @@ public final class Scus94491BpeSegment_800e {
   public static final Value _800e7670 = MEMORY.ref(4, 0x800e7670L);
 
   public static final Value _800e76b0 = MEMORY.ref(4, 0x800e76b0L);
-
-  @Method(0x800e4018L)
-  public static void FUN_800e4018() {
-    assert false;
-    //TODO
-  }
-
-  @Method(0x800e4708L)
-  public static void FUN_800e4708() {
-    assert false;
-    //TODO
-  }
 
   @Method(0x800e5d44L)
   public static void main() {

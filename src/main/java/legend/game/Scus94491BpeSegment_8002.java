@@ -11,6 +11,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.core.kernel.Kernel;
 import legend.core.kernel.PriorityChainEntry;
+import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
@@ -31,6 +32,7 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.core.Timers.TMR_DOTCLOCK_VAL;
 import static legend.core.input.MemoryCard.JOY_MCD_CTRL;
 import static legend.core.input.MemoryCard.JOY_MCD_DATA;
 import static legend.core.input.MemoryCard.JOY_MCD_STAT;
@@ -48,6 +50,20 @@ import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
 import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
+import static legend.game.SMap.FUN_800d9e64;
+import static legend.game.SMap.FUN_800de004;
+import static legend.game.SMap.FUN_800e2220;
+import static legend.game.SMap.FUN_800e4018;
+import static legend.game.SMap.FUN_800e4708;
+import static legend.game.SMap.FUN_800e4b20;
+import static legend.game.SMap.FUN_800e4e5c;
+import static legend.game.SMap.FUN_800e4f8c;
+import static legend.game.SMap.FUN_800e519c;
+import static legend.game.SMap.FUN_800e5534;
+import static legend.game.SMap.FUN_800e6730;
+import static legend.game.SMap.FUN_800e828c;
+import static legend.game.SMap.FUN_800e8e50;
+import static legend.game.SMap._800f7e54;
 import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
@@ -58,6 +74,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
 import static legend.game.Scus94491BpeSegment.FUN_8001ffb0;
+import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.fillRects;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
@@ -69,6 +86,7 @@ import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c400;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003e5d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f730;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f760;
@@ -97,6 +115,12 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._80052ae0;
+import static legend.game.Scus94491BpeSegment_8005._80052c30;
+import static legend.game.Scus94491BpeSegment_8005._80052c34;
+import static legend.game.Scus94491BpeSegment_8005._80052c38;
+import static legend.game.Scus94491BpeSegment_8005._80052c3c;
+import static legend.game.Scus94491BpeSegment_8005._80052c40;
+import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005._80052c5c;
 import static legend.game.Scus94491BpeSegment_8005._80052c64;
@@ -121,6 +145,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bcf78;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
 import static legend.game.Scus94491BpeSegment_800b._800bd61c;
+import static legend.game.Scus94491BpeSegment_800b._800bd7a0;
+import static legend.game.Scus94491BpeSegment_800b._800bd7a4;
+import static legend.game.Scus94491BpeSegment_800b._800bd7a8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
@@ -304,8 +331,6 @@ import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bdc50;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
-import static legend.game.Scus94491BpeSegment_800e.FUN_800e4018;
-import static legend.game.Scus94491BpeSegment_800e.FUN_800e4708;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
 import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
@@ -384,6 +409,182 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020460L)
   public static void FUN_80020460() {
     // empty
+  }
+
+  @Method(0x80020468L)
+  public static void FUN_80020468(long a0, long a1) {
+    assert false;
+  }
+
+  @Method(0x80020718L)
+  public static void FUN_80020718(long a0, long a1, long a2) {
+    long s1 = a1;
+    long v0 = MEMORY.ref(4, a0).offset(0x2cL).get();
+    long s3 = a2;
+    long sp30 = v0;
+    v0 = MEMORY.ref(4, a0).offset(0x30L).get();
+    long s0 = 0x6L;
+    long sp34 = v0;
+    long v1 = a0 + s0;
+    long sp38 = v0;
+
+    //LAB_80020760
+    do {
+      MEMORY.ref(1, v1).offset(0xecL).setu(0);
+      s0--;
+      v1--;
+    } while((int)s0 >= 0);
+
+    MEMORY.ref(4, a0).offset(0x8cL).setu(s1 + 0xcL);
+    MEMORY.ref(2, a0).offset(0xcaL).setu(MEMORY.ref(2, s1).offset(0x14L));
+    if(_8004dd20.get() == 0x5L) {
+      FUN_800de004(a0, s1);
+    }
+
+    //LAB_8002079c
+    MEMORY.ref(4, a0).offset(0x108L).setu(MEMORY.ref(4, s1).offset(0xcL).get(0xffff_0000L) >>> 11);
+    v0 = MEMORY.ref(4, s1).offset(0x8L).get();
+    s0 = 0;
+    if(v0 != 0) {
+      v0 >>>= 2;
+      v0 <<= 2;
+      v0 += s1;
+      MEMORY.ref(4, a0).offset(0xa8L).setu(v0);
+      s1 = a0;
+
+      //LAB_800207d4
+      do {
+        v1 = MEMORY.ref(4, a0).offset(0xa8L).get();
+        v0 = s0 << 2;
+        v0 += v1;
+        v0 = MEMORY.ref(4, v0).get();
+        v0 >>>= 2;
+        v0 <<= 2;
+        v1 += v0;
+        MEMORY.ref(4, s1).offset(0xd0L).setu(v1);
+        FUN_8002246c(a0, s0);
+        s1 += 0x4L;
+        s0++;
+      } while(s0 < 0x7L);
+    } else {
+      //LAB_80020818
+      MEMORY.ref(4, a0).offset(0xa8L).setu(s1 + 0x8L);
+      s0 = 0x6L;
+      v0 = a0 + 0x18L;
+
+      //LAB_80020828
+      do {
+        MEMORY.ref(4, v0).offset(0xd0L).setu(0);
+        s0--;
+        v0 -= 0x4L;
+      } while((int)s0 >= 0);
+    }
+
+    //LAB_80020838
+    MEMORY.ref(4, a0).offset(0x8cL).addu(0x4L);
+    FUN_8003c660(MEMORY.ref(4, a0).offset(0x8cL).get());
+    FUN_80021b08(a0 + 0xcL, MEMORY.ref(4, a0).get(), MEMORY.ref(4, a0).offset(0x4L).get(), MEMORY.ref(4, a0).offset(0x8L).get(), MEMORY.ref(2, a0).offset(0xc8L).getSigned());
+    MEMORY.ref(4, a0).offset(0x58L).setu(a0 + 0x64L);
+    FUN_8003c400(0, a0 + 0x14L);
+    FUN_80021ca0(a0 + 0xcL, MEMORY.ref(4, a0).offset(0x8cL).get(), a0 + 0x14L, MEMORY.ref(2, a0).offset(0xcL).offset(0xc8L).getSigned(), (short)(MEMORY.ref(2, a0).offset(0xcaL).get() + 0x1L));
+
+    MEMORY.ref(1, a0).offset(0xa2L).setu(0);
+    MEMORY.ref(1, a0).offset(0xa3L).setu(0);
+    MEMORY.ref(4, a0).offset(0xf4L).setu(0);
+    MEMORY.ref(4, a0).offset(0xf8L).setu(0);
+    MEMORY.ref(2, a0).offset(0xa0L).setu(0);
+    FUN_80021584(a0, s3);
+
+    s1 = MEMORY.ref(4, a0).offset(0xcL).get();
+    s3 = MEMORY.ref(4, a0).offset(0x10L).get();
+    MEMORY.ref(4, a0).offset(0x2cL).setu(sp30);
+    MEMORY.ref(4, a0).offset(0x30L).setu(sp34);
+    MEMORY.ref(4, a0).offset(0x34L).setu(sp38);
+    long s4 = MEMORY.ref(1, a0).offset(0x9dL).get();
+
+    if(_8004dd20.get() == 0x5L || _8004dd20.get() == 0x8L) {
+      //LAB_80020940
+      if(_8004dd20.get() == 0x5L) {
+        //LAB_80020958
+        for(int i = 0; i < s3; i++) {
+          FUN_800d9e64(s1, s4);
+          s1 += 0x10L;
+        }
+      }
+
+      //LAB_80020978
+      if(_8004dd20.get() == 0x8L) {
+        //LAB_80020990
+        for(int i = 0; i < s3; i++) {
+          NotYetLoaded.FUN_800c8844(s1, s4);
+          s1 += 0x10L;
+        }
+
+        //LAB_800209ac
+      }
+    } else {
+      //LAB_8002091c
+      for(int i = 0; i < s3; i++) {
+        FUN_80020468(s1, s4);
+        s1 += 0x10L;
+      }
+    }
+
+    //LAB_800209b0
+    MEMORY.ref(1, a0).offset(0x0ccL).setu(0);
+    MEMORY.ref(1, a0).offset(0x0cdL).setu(0xfeL);
+    MEMORY.ref(4, a0).offset(0x0fcL).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x100L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x104L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x10cL).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x110L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x114L).setu(0x1000L);
+    MEMORY.ref(4, a0).offset(0x118L).setu(0);
+    MEMORY.ref(4, a0).offset(0x11cL).setu(0);
+    MEMORY.ref(4, a0).offset(0x120L).setu(0);
+  }
+
+  @Method(0x80020a00L)
+  public static void FUN_80020a00(long a0, long a1, long a2) {
+    long v0;
+    long v1;
+    long a3;
+
+    MEMORY.ref(2, a0).offset(0xc8L).setu(MEMORY.ref(2, a1).offset(0x14L));
+
+    if(_8004dd20.get() != 0x6L || _800bd7a0.get() == 0) {
+      //LAB_80020b00
+      //LAB_80020b04
+      v0 = MEMORY.ref(2, a0).offset(0xc8L).getSigned();
+      long a = v0 * 0x140L / 0x8L;
+      a += v0 * 0x280L / 0x8L;
+      a += v0 * 0x080L / 0x8L;
+      MEMORY.ref(4, a0).setu(addToLinkedListTail(a));
+    } else {
+      removeFromLinkedList(_800bd7a0.get());
+      v0 = MEMORY.ref(2, a0).offset(0xc8L).getSigned();
+      long a = v0 * 0x080L / 0x8L;
+      a += v0 * 0x140L / 0x8L;
+      a += v0 * 0x280L / 0x8L;
+      MEMORY.ref(4, a0).setu(addToLinkedListHead(a));
+
+      _800bd7a8.subu(0x1L);
+      v0 = MEMORY.ref(2, a0).offset(0xc8L).getSigned();
+      a3 = v0 * 0x080L / 0x8L;
+      a3 += v0 * 0x140L / 0x8L;
+      a3 += v0 * 0x280L / 0x8L;
+      a3 += _800bd7a8.get() << 16;
+      _800bd7a4.subu(a3);
+      _800bd7a0.setu(addToLinkedListHead(_800bd7a4.get()));
+    }
+
+    //LAB_80020b40
+    v1 = MEMORY.ref(4, a0).get();
+    v1 += MEMORY.ref(2, a0).offset(0xc8L).getSigned() * 0x10L;
+    MEMORY.ref(4, a0).offset(0x4L).setu(v1);
+    v1 += MEMORY.ref(2, a0).offset(0xc8L).getSigned() * 0x50L;
+    MEMORY.ref(4, a0).offset(0x8L).setu(v1);
+    FUN_80020718(a0, a1, a2);
   }
 
   @Method(0x80020ed8L)
@@ -501,99 +702,105 @@ public final class Scus94491BpeSegment_8002 {
     MEMORY.ref(4, a0).offset(0x94L).setu(MEMORY.ref(4, a0).offset(0x90L));
   }
 
-  @Method(0x80021918L)
-  public static void FUN_80021918(final long a0, final long a1, final long a2, final long a3, final long a4) {
-    long v0 = (int)(a4 << 0x10L);
-    final long s2 = v0 >> 0x18L;
+  @Method(0x800218f0L)
+  public static void FUN_800218f0() {
 
-    final long s5 = a4 & 0xffL;
+  }
+
+  @Method(0x80021918L)
+  public static void FUN_80021918(long a0, long a1, long a2, long a3, long a4) {
+    long v1;
+
+    long s4 = a0;
+    long v0 = (int)(a4 << 16);
+    long s2 = v0 >> 24;
+    long s5 = a4 & 0xffL;
+
     long s1 = FUN_80021b64(a0, s5);
+
+    final Memory.TemporaryReservation temp;
     final MATRIX s3;
     final VECTOR s000vec;
     final SVECTOR s010svec;
     final VECTOR s018vec;
 
     if(s1 == 0) {
-      s1 = a4;
-      s3 = new MATRIX();
+      temp = MEMORY.temp(0x10);
+      s1 = temp.address; //sp0x10;
+      s3 = new MATRIX(); //sp0x20;
       s000vec = new VECTOR();
-      s010svec = new SVECTOR();
+      s010svec = new SVECTOR(); //sp0x40;
       s018vec = new VECTOR();
     } else {
+      temp = null;
+
       //LAB_80021984
-      MEMORY.ref(4, s1).offset(0x4L).deref(4).setu(0);
-
-      if(MEMORY.ref(4, s1).offset(0x4L).deref(4).offset(0x48L).get() == 0) {
-        MEMORY.ref(4, s1).offset(0x4L).deref(4).offset(0x48L).setu(a2);
+      v0 = MEMORY.ref(4, s1).offset(0x4L).get();
+      MEMORY.ref(4, v0).setu(0);
+      a0 = MEMORY.ref(4, s1).offset(0x4L).get();
+      v1 = MEMORY.ref(4, a0).offset(0x48L).get();
+      s000vec = new VECTOR(MEMORY.ref(4, v0).offset(0x44L).deref(4));
+      s010svec = new SVECTOR(MEMORY.ref(4, v0).offset(0x44L).deref(4).offset(0x10L));
+      s018vec = new VECTOR(MEMORY.ref(4, v0).offset(0x44L).deref(4).offset(0x18L));
+      s3 = new MATRIX(MEMORY.ref(4, v0 + 0x4L));
+      if(v1 == 0) {
+        MEMORY.ref(4, a0).offset(0x48L).setu(a2);
       }
-
-      final long s0 = MEMORY.ref(4, s1).offset(0x4L).deref(4).offset(0x44L).get();
-      s3 = new MATRIX(MEMORY.ref(4, s1).offset(0x4L).deref(4).offset(0x4L));
-      s000vec = new VECTOR(MEMORY.ref(16, s0));
-      s010svec = new SVECTOR(MEMORY.ref(8, s0).offset(0x10L));
-      s018vec = new VECTOR(MEMORY.ref(16, s0 + 0x18L));
     }
 
     //LAB_800219ac
-    final int s4 = (int)s2;
-    if(s4 == 0x2L) {
-      //LAB_80021a98
-      if(a1 != 0) {
-        FUN_8003e5d0(FUN_80021c58(a1, s5), s1, 0);
-      }
-
-      return;
-    }
-
-    if(s4 < 0x3L) {
-      if(s4 == 0x1L) {
-        //LAB_800219ec
-        s010svec.x.set((short)11);
-        s010svec.y.set((short)11);
-        s010svec.z.set((short)11);
-
-        final long v1 = MEMORY.ref(4, s1).offset(0x4L).get();
-        MEMORY.ref(2, v1).offset(0x04L).setu(0x1000L);
-        MEMORY.ref(2, v1).offset(0x0cL).setu(0x1000L);
-        MEMORY.ref(2, v1).offset(0x14L).setu(0x1000L);
-
-        v0 = MEMORY.ref(4, s1).offset(0x4L).get();
-        MEMORY.ref(2, v0).offset(0x06L).setu(0);
-        MEMORY.ref(2, v0).offset(0x08L).setu(0);
-        MEMORY.ref(2, v0).offset(0x0aL).setu(0);
-        MEMORY.ref(2, v0).offset(0x0eL).setu(0);
-        MEMORY.ref(2, v0).offset(0x10L).setu(0);
-        MEMORY.ref(2, v0).offset(0x12L).setu(0);
-
-        FUN_800402a0(s010svec.x.get(), s3);
-        FUN_80040440(s010svec.y.get(), s3);
-        FUN_800405e0(s010svec.z.get(), s3);
-
-        s000vec.x.set(0x1000);
-        s000vec.y.set(0x1000);
-        s000vec.z.set(0x1000);
-
-        FUN_8003faf0(s010svec, s3);
-        FUN_8003f760(s3, s000vec);
-
-        s018vec.x.set(s4);
-        s018vec.y.set(s4);
-        s018vec.z.set(s4);
-
-        FUN_8003f730(s3, s018vec);
-        return;
-      }
-
-      return;
+    //LAB_80021a98
+    s2 = (short)s2;
+    if(s2 == 0x2L && a1 != 0) {
+      FUN_8003e5d0(FUN_80021c58(a1, s5), s1, 0);
     }
 
     //LAB_800219d8
     //LAB_80021ac0
-    if(s4 != 0x8L || a0 == 0) {
-      return;
+    if(s2 == 0x8L && s4 != 0) {
+      FUN_80021bac(s4, s5, (short)a3);
     }
 
-    FUN_80021bac(a0, s5, (int)(a3 & 0xffffffffL));
+    if(s2 == 0x1L) {
+      //LAB_800219ec
+      s010svec.x.set((short)11);
+      s010svec.y.set((short)11);
+      s010svec.z.set((short)11);
+
+      v1 = MEMORY.ref(4, s1).offset(0x4L).get();
+      MEMORY.ref(2, v1).offset(0x14L).setu(0x1000L);
+      MEMORY.ref(2, v1).offset(0xcL).setu(0x1000L);
+      MEMORY.ref(2, v1).offset(0x4L).setu(0x1000L);
+
+      v0 = MEMORY.ref(4, s1).offset(0x4L).get();
+      MEMORY.ref(2, v0).offset(0x12L).setu(0);
+      MEMORY.ref(2, v0).offset(0x10L).setu(0);
+      MEMORY.ref(2, v0).offset(0xeL).setu(0);
+      MEMORY.ref(2, v0).offset(0xaL).setu(0);
+      MEMORY.ref(2, v0).offset(0x8L).setu(0);
+      MEMORY.ref(2, v0).offset(0x6L).setu(0);
+
+      FUN_800402a0(s010svec.getX(), s3);
+      FUN_80040440(s010svec.getY(), s3);
+      FUN_800405e0(s010svec.getZ(), s3);
+
+      s000vec.x.set(0x1000);
+      s000vec.y.set(0x1000);
+      s000vec.z.set(0x1000);
+
+      FUN_8003faf0(s010svec, s3);
+      FUN_8003f760(s3, s000vec);
+
+      s018vec.x.set((int)s2);
+      s018vec.y.set((int)s2);
+      s018vec.z.set((int)s2);
+
+      FUN_8003f730(s3, s018vec);
+    }
+
+    if(temp != null) {
+      temp.release();
+    }
 
     //LAB_80021ad8
   }
@@ -622,24 +829,18 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021b64L)
   public static long FUN_80021b64(final long a0, final long a1) {
-    final long a2 = MEMORY.ref(4, a0).offset(0x4L).get();
     long a4 = MEMORY.ref(4, a0).offset(0x0L).get();
 
-    if(a2 > 0) {
-      long v1 = 0;
-      final long v0 = a1 << 0x10L & 0xffffffffL;
-      final long a3 = v0 >> 0x10L;
+    final long a3 = (short)a1;
 
-      //LAB_80021b80
-      do {
-        if(a3 == MEMORY.ref(4, a4).offset(0xcL).get()) {
-          return a4;
-        }
+    //LAB_80021b80
+    for(int i = 0; i < MEMORY.ref(4, a0).offset(0x4L).get(); i++) {
+      if(a3 == MEMORY.ref(4, a4).offset(0xcL).get()) {
+        return a4;
+      }
 
-        //LAB_80021b98
-        a4 += 0x10L;
-        v1++;
-      } while(v1 < a2);
+      //LAB_80021b98
+      a4 += 0x10L;
     }
 
     //LAB_80021ba4
@@ -744,27 +945,43 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021edcL)
   public static void FUN_80021edc(final MATRIX m) {
-    CPU.CTC2(0x0L, m.get(1) << 16 | m.get(0));
-    CPU.CTC2(0x1L, m.get(3) << 16 | m.get(2));
-    CPU.CTC2(0x2L, m.get(5) << 16 | m.get(4));
-    CPU.CTC2(0x3L, m.get(7) << 16 | m.get(6));
-    CPU.CTC2(0x4L, m.get(8));
+    CPU.CTC2(m.get(1) << 16 | m.get(0), 0x0L);
+    CPU.CTC2(m.get(3) << 16 | m.get(2), 0x1L);
+    CPU.CTC2(m.get(5) << 16 | m.get(4), 0x2L);
+    CPU.CTC2(m.get(7) << 16 | m.get(6), 0x3L);
+    CPU.CTC2(m.get(8), 0x4L);
   }
 
   @Method(0x80021f0cL)
   public static void FUN_80021f0c(final MATRIX m) {
-    CPU.CTC2(0x8L, m.get(1) << 16 | m.get(0));
-    CPU.CTC2(0x9L, m.get(3) << 16 | m.get(2));
-    CPU.CTC2(0xaL, m.get(5) << 16 | m.get(4));
-    CPU.CTC2(0xbL, m.get(7) << 16 | m.get(6));
-    CPU.CTC2(0xcL, m.get(8));
+    CPU.CTC2(m.get(1) << 16 | m.get(0), 0x8L);
+    CPU.CTC2(m.get(3) << 16 | m.get(2), 0x9L);
+    CPU.CTC2(m.get(5) << 16 | m.get(4), 0xaL);
+    CPU.CTC2(m.get(7) << 16 | m.get(6), 0xbL);
+    CPU.CTC2(m.get(8), 0xcL);
+  }
+
+  @Method(0x80021f3cL)
+  public static void FUN_80021f3c(final MATRIX m) {
+    CPU.CTC2(m.get(1) << 16 | m.get(0), 16L);
+    CPU.CTC2(m.get(3) << 16 | m.get(2), 17L);
+    CPU.CTC2(m.get(5) << 16 | m.get(4), 18L);
+    CPU.CTC2(m.get(7) << 16 | m.get(6), 19L);
+    CPU.CTC2(m.get(8), 0xa000);
   }
 
   @Method(0x80021f6cL)
   public static void FUN_80021f6c(final MATRIX m) {
-    CPU.CTC2(0x5L, m.getTransferVector(0));
-    CPU.CTC2(0x6L, m.getTransferVector(1));
-    CPU.CTC2(0x7L, m.getTransferVector(2));
+    CPU.CTC2(m.getTransferVector(0), 0x5L);
+    CPU.CTC2(m.getTransferVector(1), 0x6L);
+    CPU.CTC2(m.getTransferVector(2), 0x7L);
+  }
+
+  @Method(0x80021f8cL)
+  public static void FUN_80021f8c(final long a0, final long a1, final long a2) {
+    CPU.CTC2(a0 * 0x10L, 13L);
+    CPU.CTC2(a1 * 0x10L, 14L);
+    CPU.CTC2(a2 * 0x10L, 15L);
   }
 
   @Method(0x80021facL)
@@ -1272,10 +1489,75 @@ public final class Scus94491BpeSegment_8002 {
     _800be5f3.setu(0);
   }
 
+  @Method(0x8002a9c0L)
+  public static void FUN_8002a9c0() {
+    _80052c30.setu(0x2a3L);
+    _80052c34.setu(0x4L);
+    _80052c38.setu(0);
+    _80052c3c.setu(-0x1L);
+    _80052c40.setu(0);
+    _80052c44.setu(0x2L);
+  }
+
   @Method(0x8002aae8L)
-  public static void FUN_8002aae8() {
-    assert false;
-    //TODO
+  public static long FUN_8002aae8() {
+    long s0 = 0;
+    switch((int)_80052c44.get()) {
+      case 0x1:
+      case 0x2:
+        return 0;
+
+      case 0x5:
+        FUN_800e519c();
+        FUN_800e8e50();
+        FUN_800e828c();
+        FUN_800e4f8c();
+        FUN_800e2220();
+
+        _80052c44.setu(0x2L);
+        break;
+
+      case 0x4:
+        FUN_800e519c();
+
+      case 0x3:
+        FUN_800e8e50();
+        FUN_800e828c();
+        FUN_800e4f8c();
+        FUN_800e2220();
+        FUN_800e4e5c();
+
+        //LAB_8002ab98
+        _80052c44.setu(0x2L);
+        break;
+
+      case 0x0:
+        s0 = 0x1L;
+        FUN_800e519c();
+        break;
+    }
+
+    //caseD_6
+    if(_800f7e54.get(0x1L) == 0) {
+      if(FUN_800e4b20() != 0) {
+        FUN_800e5534(-0x1L, 0);
+      }
+    }
+
+    //LAB_8002abdc
+    //LAB_8002abe0
+    final long a0 = FUN_800e6730(_80052c38.get());
+    if(a0 != 0) {
+      if((a0 & 0x10L) == 0) {
+        return s0;
+      }
+
+      FUN_800e5534(a0 >>> 22, (a0 >> 16) & 0x3fL);
+    }
+
+    //LAB_8002ac10
+    //LAB_8002ac14
+    return s0;
   }
 
   @Method(0x8002ac24L)
@@ -2038,14 +2320,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002c8dc
     if(_800bf0d8.get() == 0x1L) {
       callbackIndex_8004ddc4.setu(0x15L);
-
-      //TODO
-//      LOGGER.error("NOTE: skipping intro FMV");
-//      callbackIndex_8004ddc4.setu(0x18L);
-//      _800bf0b4.setu(0x1L);
-//      _800bf0d8.setu(0x4L);
-//      FUN_8001e29c(8);
-      //
     }
 
     //LAB_8002c8f4
@@ -2086,6 +2360,15 @@ public final class Scus94491BpeSegment_8002 {
     functionVectorA_000000a0.run(0x9fL, new Object[] {size});
   }
 
+  @Method(0x8002d12cL)
+  public static long getTimerValue(final long timerIndex) {
+    if(timerIndex >= 3) {
+      return 0;
+    }
+
+    return TMR_DOTCLOCK_VAL.offset(timerIndex * 0x10L).get();
+  }
+
   @Method(0x8002d210L)
   public static int abs(final int i) {
     return (int)functionVectorA_000000a0.run(0xeL, new Object[] {i});
@@ -2104,6 +2387,11 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002d260L)
   public static int rand() {
     return (int)functionVectorA_000000a0.run(0x2fL, EMPTY_OBJ_ARRAY);
+  }
+
+  @Method(0x8002d270L)
+  public static void srand(final long seed) {
+    functionVectorA_000000a0.run(0x30L, new Object[] {seed});
   }
 
   @Method(0x8002d280L)
