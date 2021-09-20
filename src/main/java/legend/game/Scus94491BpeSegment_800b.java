@@ -17,6 +17,7 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.BigStruct;
 import legend.game.types.JoyStruct;
 
 import java.util.function.Function;
@@ -117,6 +118,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc0c0 = MEMORY.ref(4, 0x800bc0c0L);
 
+  /** TODO array of pointers to pointers of {@link BigStruct}? */
   public static final Value _800bc1c0 = MEMORY.ref(4, 0x800bc1c0L);
 
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
@@ -284,15 +286,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
 
-  public static final Value _800bda10 = MEMORY.ref(4, 0x800bda10L);
-
-  public static final Value _800bda84 = MEMORY.ref(2, 0x800bda84L);
-  public static final Value _800bda86 = MEMORY.ref(2, 0x800bda86L);
-  public static final Value _800bda88 = MEMORY.ref(2, 0x800bda88L);
-
-  public static final Value _800bdaad = MEMORY.ref(1, 0x800bdaadL);
-
-  public static final Value _800bdadc = MEMORY.ref(1, 0x800bdadcL);
+  public static final BigStruct bigStruct_800bda10 = MEMORY.ref(4, 0x800bda10L, BigStruct::new);
 
   public static final Value _800bdb38 = MEMORY.ref(1, 0x800bdb38L);
 

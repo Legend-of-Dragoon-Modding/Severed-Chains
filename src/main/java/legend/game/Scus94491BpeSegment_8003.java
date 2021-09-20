@@ -37,6 +37,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.InnerBigStruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -5354,13 +5355,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c400L)
-  public static void FUN_8003c400(final long a0, final long a1) {
-    MEMORY.ref(4, a1).offset(0x00L).setu(0);
-    MEMORY.ref(4, a1).offset(0x04L).cast(MATRIX::new).set(matrix_800c3568);
-    MEMORY.ref(4, a1).offset(0x48L).setu(a0);
+  public static void FUN_8003c400(final long a0, final InnerBigStruct a1) {
+    a1.ui_00.set(0);
+    a1.m_04.set(matrix_800c3568);
+    a1.ui_48.set(a0);
 
     if(a0 > 1) {
-      MEMORY.ref(4, a1).offset(0x48L).deref(4).offset(0x4cL).setu(a1);
+      MEMORY.ref(4, a1.ui_48.get()).offset(0x4cL).setu(a1.getAddress());
     }
 
     //LAB_8003c468

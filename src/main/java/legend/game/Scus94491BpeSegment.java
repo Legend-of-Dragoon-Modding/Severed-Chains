@@ -344,7 +344,7 @@ public final class Scus94491BpeSegment {
   /** unknown size */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
 
-  public static final Value timHeader_80010548 = MEMORY.ref(4, 0x80010548L);
+  public static final Value ovalBlobTimHeader_80010548 = MEMORY.ref(4, 0x80010548L);
 
   public static final CString BASCUS_94491drgn00_80010734 = MEMORY.ref(20, 0x80010734L, CString::new);
 

@@ -15,6 +15,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.InnerBigStruct;
 
 import java.util.function.Function;
 
@@ -1588,7 +1589,7 @@ public final class Ttle {
     //LAB_800cc0f0
     for(int sp10 = 0; sp10 < MEMORY.ref(4, a0).offset(0x8L).get(); sp10++) {
       //LAB_800cc114
-      FUN_8003c400(a1, sp18);
+      FUN_8003c400(a1, MEMORY.ref(4, sp18).cast(InnerBigStruct::new));
 
       MEMORY.ref(4, sp14).offset(0x4L).setu(sp18);
       MEMORY.ref(4, sp14).offset(0x4L).deref(4).offset(0x18L).setu(0x64L);
