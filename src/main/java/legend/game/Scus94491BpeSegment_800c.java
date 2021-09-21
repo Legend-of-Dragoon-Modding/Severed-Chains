@@ -45,6 +45,8 @@ public final class Scus94491BpeSegment_800c {
   public static final Value gpuDmaCallbackSomething_800c1c18 = MEMORY.ref(4, 0x800c1c18L);
   public static final Value gpuDmaCallbackObj_800c1c1c = MEMORY.ref(4, 0x800c1c1cL);
 
+  public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
+
   /** Note this is overlapped by {@link #_800c3423} */
   public static final Value _800c3420 = MEMORY.ref(4, 0x800c3420L);
   public static final Value _800c3423 = MEMORY.ref(1, 0x800c3423L);

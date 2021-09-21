@@ -603,6 +603,41 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020fd0
   }
 
+  @Method(0x80020fe0L)
+  public static void FUN_80020fe0(final BigStruct a0) {
+    if(a0.ptr_ui_00.get() != 0) {
+      removeFromLinkedList(a0.ptr_ui_00.get());
+    }
+
+    //LAB_80021008
+    if(_8004dd20.get() == 0x5L && a0.addr_ui_a4.get() != 0) {
+      removeFromLinkedList(a0.addr_ui_a4.get());
+    }
+
+    //LAB_80021034
+    a0.ptr_ui_00.set(0);
+  }
+
+  @Method(0x80021048L)
+  public static void FUN_80021048(final long a0, final long a1) {
+    // empty
+  }
+
+  @Method(0x80021050L)
+  public static void FUN_80021050(final long a0, final long a1) {
+    // empty
+  }
+
+  @Method(0x80021058L)
+  public static void FUN_80021058(final long a0, final long a1) {
+    // empty
+  }
+
+  @Method(0x80021060L)
+  public static void FUN_80021060(final long a0, final long a1) {
+    // empty
+  }
+
   @Method(0x800212d8L)
   public static void FUN_800212d8(final BigStruct a0) {
     long s6 = a0.us_ca.get();
@@ -832,7 +867,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021bf4
-    if(size <= 0 || v1 >= size) {
+    if(v1 >= size) {
       s0 = a0.addr_ui00.get() + a0.size_ui04.get() * 16;
       a0.size_ui04.incr();
     }
@@ -874,26 +909,22 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021ca0L)
   public static void FUN_80021ca0(final UnknownStruct a0, final long a1, final InnerBigStruct a2, final long a3, final long a4) {
-    long v1 = (int)(a4 & 0xffffffffL);
-    long s3 = (int)(a3 & 0xffffffffL);
     long s1 = 0x801_0000L;
 
     //LAB_80021d08
-    for(int s0 = 1; s0 < v1; s0++) {
-      FUN_80021918(a0, a1, a2, s3, s1 / 0x1_0000L);
+    for(int s0 = 1; s0 < a4; s0++) {
+      FUN_80021918(a0, a1, a2, (short)a3, s1 / 0x1_0000L);
       s1 += 0x1_0000L;
     }
 
     //LAB_80021d3c
-    v1 = (int)(a4 & 0xffffffffL);
-    s3 = (int)(a3 & 0xffffffffL);
     long s2 = 0x101_0000L;
     s1 = 0x201_0000L;
 
     //LAB_80021d64
-    for(int s0 = 1; s0 < v1; s0++) {
-      FUN_80021918(a0, a1, a2, s3, s1 / 0x1_0000L);
-      FUN_80021918(a0, a1, a2, s3, s2 / 0x1_0000L);
+    for(int s0 = 1; s0 < a4; s0++) {
+      FUN_80021918(a0, a1, a2, (short)a3, s1 / 0x1_0000L);
+      FUN_80021918(a0, a1, a2, (short)a3, s2 / 0x1_0000L);
       s2 += 0x1_0000L;
       s1 += 0x1_0000L;
     }

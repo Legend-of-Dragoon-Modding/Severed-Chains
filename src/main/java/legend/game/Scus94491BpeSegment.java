@@ -2195,8 +2195,42 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015800L)
   public static long FUN_80015800() {
-    assert false;
-    return 0;
+    _8004de4c.addu(0x1L);
+
+    if(_8004de4c.get() >= 0x48L) {
+      _8004de4c.setu(0x9L);
+    }
+
+    //LAB_80015824
+    long v1 = _800bc1c0.offset(_8004de4c.get() * 0x4L).getAddress();
+
+    //LAB_8001584c
+    for(long i = _8004de4c.get(); i < 0x48L; i++) {
+      if(MEMORY.ref(4, v1).get() == _800bc0c0.getAddress()) {
+        //LAB_800158c0
+        _8004de4c.setu(i);
+        return i;
+      }
+
+      v1 += 0x4L;
+    }
+
+    //LAB_8001586c
+    v1 = _800bc1c0.offset(0x24L).getAddress();
+
+    //LAB_80015898
+    for(long i = 0x9L; i < _8004de4c.get(); i++) {
+      if(MEMORY.ref(4, v1).get() == _800bc0c0.getAddress()) {
+        //LAB_800158c0
+        _8004de4c.setu(i);
+        return i;
+      }
+
+      v1 += 0x4L;
+    }
+
+    //LAB_800158b8
+    return -0x1L;
   }
 
   @Method(0x800158ccL)
@@ -2211,24 +2245,126 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015918L)
-  public static long FUN_80015918(final long a0, final long a1, final long a2, final long a3, final long a4) {
-    assert false;
-    return 0;
+  public static long FUN_80015918(long a0, long a1, long a2, long a3, long a4) {
+    long v0;
+    long v1;
+
+    long s1 = a0;
+    long s0 = a1;
+
+    if(a2 != 0) {
+      a1 = addToLinkedListHead(s0 + 0x100L);
+    } else {
+      //LAB_80015954
+      a1 = addToLinkedListTail(s0 + 0x100L);
+    }
+
+    //LAB_80015968
+    if(a1 == 0) {
+      return -0x1L;
+    }
+
+    //LAB_80015978
+    v1 = _800bc1c0.getAddress();
+    v0 = s1 << 2;
+    v0 += v1;
+    MEMORY.ref(4, v0).setu(a1);
+
+    if(s0 != 0) {
+      a2 = a1 + 0x100L;
+      v1 = a2;
+      a0 = s0 >>> 2;
+      v0 = a0;
+      a0--;
+
+      //LAB_800159ac
+      while((int)v0 > 0) {
+        MEMORY.ref(4, v1).setu(0);
+        v1 += 0x4L;
+        v0 = a0;
+        a0--;
+      }
+    } else {
+      a2 = 0;
+    }
+
+    //LAB_800159c0
+    v1 = 0x8L;
+    a0 = a1 + 0x20L;
+    MEMORY.ref(4, a1).offset(0x48L).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).offset(0x4cL).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).offset(0x50L).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).offset(0x54L).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).offset(0x58L).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).offset(0x5cL).setu(0xffff_ffffL);
+    MEMORY.ref(4, a1).setu(a2);
+    MEMORY.ref(4, a1).offset(0x44L).setu(s1);
+    MEMORY.ref(4, a1).offset(0x60L).setu(0x80f_0000L);
+
+    //LAB_800159f8
+    do {
+      MEMORY.ref(4, a0).offset(0x44L).setu(0xffff_ffffL);
+      v1++;
+      a0 += 0x4L;
+    } while(v1 < 0x19L);
+
+    v1 = 0x9L;
+    v0 = a1 + 0x24L;
+
+    //LAB_80015a14
+    do {
+      MEMORY.ref(4, v0).offset(0x1cL).setu(0);
+      v1--;
+      v0 -= 0x4L;
+    } while((int)v1 >= 0);
+
+    MEMORY.ref(4, a1).offset(0xf8L).setu(a3);
+    MEMORY.ref(4, a1).offset(0xfcL).setu(a4);
+
+    //LAB_80015a34
+    return s1;
   }
 
   @Method(0x80015a68L)
   public static void FUN_80015a68(final long a0, final long a1) {
-    assert false;
+    final long a0_0 = _800bc1c0.offset(a0 * 0x4L).get();
+
+    if(a1 == 0) {
+      //LAB_80015aa0
+      MEMORY.ref(4, a0_0).offset(0x4L).setu(0);
+      MEMORY.ref(4, a0_0).offset(0x60L).oru(0x4_ffffL);
+    } else {
+      MEMORY.ref(4, a0_0).offset(0x4L).setu(a1);
+      MEMORY.ref(4, a0_0).offset(0x60L).and(0xfffb_ffffL);
+    }
   }
 
   @Method(0x80015ab4L)
   public static void FUN_80015ab4(final long a0, final long a1) {
-    assert false;
+    final long a0_0 = _800bc1c0.offset(a0 * 0x4L).get();
+
+    if(a1 == 0) {
+      //LAB_80015aec
+      MEMORY.ref(4, a0_0).offset(0x8L).setu(0);
+      MEMORY.ref(4, a0_0).offset(0x60L).oru(0x8_0000L);
+    } else {
+      MEMORY.ref(4, a0_0).offset(0x8L).setu(a1);
+      MEMORY.ref(4, a0_0).offset(0x60L).and(0x8_0000L);
+    }
   }
 
   @Method(0x80015b00L)
   public static void FUN_80015b00(final long a0, final long a1) {
-    assert false;
+    final long a0_0 = _800bc1c0.offset(a0 * 0x4L).get();
+
+    if(a1 == 0) {
+      //LAB_80015b38
+      MEMORY.ref(4, a0_0).offset(0xcL).setu(0);
+      MEMORY.ref(4, a0_0).offset(0x60L).oru(0x800_0000L);
+    } else {
+      MEMORY.ref(4, a0_0).offset(0xcL).setu(a1);
+      MEMORY.ref(4, a0_0).offset(0x60L).and(0xf7ff_ffffL);
+    }
   }
 
   @Method(0x80015b4cL)
@@ -2253,7 +2389,16 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015bb8L)
   public static void FUN_80015bb8(final long a0, final long a1, final long a2) {
-    assert false;
+    final long a0_0 = _800bc1c0.offset(a0 * 0x4L).get();
+    if(a1 != 0) {
+      MEMORY.ref(4, a0_0).offset(0x14L).setu(a1);
+      MEMORY.ref(4, a0_0).offset(0x18L).setu(a1 + MEMORY.ref(4, a1).offset(a2 * 0x4L).get());
+      MEMORY.ref(4, a0_0).offset(0x60L).and(0xfffd_ffffL);
+    } else {
+      MEMORY.ref(4, a0_0).offset(0x14L).setu(0);
+      MEMORY.ref(4, a0_0).offset(0x18L).setu(0);
+      MEMORY.ref(4, a0_0).offset(0x60L).oru(0x2_0000L);
+    }
   }
 
   @Method(0x80015f6cL)

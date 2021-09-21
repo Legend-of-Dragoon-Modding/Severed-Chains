@@ -38,6 +38,7 @@ import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.InnerBigStruct;
+import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -273,6 +274,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c1bb0;
 import static legend.game.Scus94491BpeSegment_800c._800c1bb8;
 import static legend.game.Scus94491BpeSegment_800c._800c1bc0;
 import static legend.game.Scus94491BpeSegment_800c._800c1be8;
+import static legend.game.Scus94491BpeSegment_800c._800c3410;
 import static legend.game.Scus94491BpeSegment_800c._800c3420;
 import static legend.game.Scus94491BpeSegment_800c._800c3423;
 import static legend.game.Scus94491BpeSegment_800c._800c3424;
@@ -948,7 +950,7 @@ public final class Scus94491BpeSegment_8003 {
       }
     }
 
-    LOGGER.error("CDROM: unknown intr (%d)", syncCode);
+    LOGGER.error("CDROM: unknown intr (%s)", syncCode);
 
     //LAB_80031f2c
     //LAB_80031f30
@@ -5152,6 +5154,63 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003b8dc
+  }
+
+  @Method(0x8003b8f0L)
+  public static void FUN_8003b8f0(final long a0) {
+    _800c3410.setu(a0);
+  }
+
+  @Method(0x8003b900L)
+  public static WeirdTimHeader FUN_8003b900(final WeirdTimHeader timHeader) {
+    final long ret = FUN_8003b964(_800c3410.get(), timHeader);
+
+    if(ret == -0x1L) {
+      //LAB_8003b950
+      return null;
+    }
+
+    _800c3410.addu(ret * 0x4L);
+
+    //LAB_8003b954
+    return timHeader;
+  }
+
+  /** TODO figure out what this is doing - looks important... TIM loader? Why is this one different? */
+  @Method(0x8003b964L)
+  public static long FUN_8003b964(final long a0, final WeirdTimHeader timHeader) {
+    if(MEMORY.ref(4, a0).get() != 0x10L) {
+      return -0x1L;
+    }
+
+    //LAB_8003b998
+    timHeader.flags.set(MEMORY.ref(4, a0).offset(0x4L).get());
+
+    LOGGER.info("id  =%08x", 0x10L);
+    LOGGER.info("mode=%08x", timHeader.flags.get());
+    LOGGER.info("timaddr=%08x", a0 + 0x8L);
+
+    //LAB_8003ba04
+    final long a0_0;
+    if((timHeader.flags.get() & 0b1000L) != 0) {
+      timHeader.clutRect.set(MEMORY.ref(4, a0).offset(0xcL).cast(RECT::new));
+      timHeader.clutAddress.set(a0 + 0x14L);
+      a0_0 = MEMORY.ref(4, a0).offset(0x8L).get() / 0x4L;
+    } else {
+      //LAB_8003ba38
+      timHeader.clutRect.clear();
+      timHeader.clutAddress.set(0);
+      a0_0 = 0;
+    }
+
+    final long s0 = a0 + a0_0 * 0x4L;
+
+    //LAB_8003ba44
+    timHeader.imageRect.set(MEMORY.ref(4, s0).offset(0xcL).cast(RECT::new));
+    timHeader.imageAddress.set(s0 + 0x14L);
+
+    //LAB_8003ba64
+    return MEMORY.ref(4, s0).offset(0x8L).get() / 0x4L + 0x2L + a0_0; // +8 CLUT data pointer / 4 + 2 (plus CLUT data pointer if CLUT present) ???
   }
 
   @Method(0x8003bc30L)
