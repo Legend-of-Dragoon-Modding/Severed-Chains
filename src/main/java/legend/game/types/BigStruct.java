@@ -1,9 +1,15 @@
 package legend.game.types;
 
+import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.GsDOBJ2;
+import legend.core.gte.GsOBJTABLE2;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -13,22 +19,18 @@ public class BigStruct implements MemoryRef {
   private final Value ref;
 
   /** Pointer to an address on the linked list */
-  public final UnsignedIntRef ptr_ui_00;
-  public final UnsignedIntRef ptr_ui_04;
-  public final UnsignedIntRef ptr_ui_08;
-  public final UnknownStruct unknown_ui_0c;
+  public final Pointer<UnboundedArrayRef<GsDOBJ2>> dobj2ArrPtr_00;
+  public final Pointer<UnboundedArrayRef<GsCOORDINATE2>> coord2ArrPtr_04;
+  public final Pointer<UnboundedArrayRef<GsCOORD2PARAM>> coord2ParamArrPtr_08;
+  public final GsOBJTABLE2 ObjTable_0c;
 
-  // At least 4c bytes
-  public final InnerBigStruct inner_14;
-
-  // inner_14 + 18 public final UnsignedIntRef ui_2c;
-  // inner_14 + 1c public final UnsignedIntRef ui_30;
-  // inner_14 + 20 public final UnsignedIntRef ui_34;
+  // 0x50 bytes
+  public final GsCOORDINATE2 coord2_14;
 
   /** TODO part of InnerBigStruct? */
   public final UnsignedIntRef ui_58;
 
-  /** TODO unknown type, maybe part of InnerBigStruct? */
+  /** TODO unknown type */
   public final Value v_64;
 
   public final UnsignedShortRef us_74;
@@ -59,6 +61,7 @@ public class BigStruct implements MemoryRef {
   public final ArrayRef<UnsignedIntRef> aub_d0;
   /** 7 bytes long */
   public final ArrayRef<UnsignedByteRef> aub_ec;
+
   public final UnsignedIntRef ui_f4;
   public final UnsignedIntRef ui_f8;
   public final UnsignedIntRef ui_fc;
@@ -114,12 +117,12 @@ public class BigStruct implements MemoryRef {
   public BigStruct(final Value ref) {
     this.ref = ref;
 
-    this.ptr_ui_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this.ptr_ui_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
-    this.ptr_ui_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
-    this.unknown_ui_0c = ref.offset(4, 0x0cL).cast(UnknownStruct::new);
+    this.dobj2ArrPtr_00 = ref.offset(4, 0x00L).cast(Pointer.of(4, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+    this.coord2ArrPtr_04 = ref.offset(4, 0x04L).cast(Pointer.of(4, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
+    this.coord2ParamArrPtr_08 = ref.offset(4, 0x08L).cast(Pointer.of(4, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
+    this.ObjTable_0c = ref.offset(4, 0x0cL).cast(GsOBJTABLE2::new);
 
-    this.inner_14 = ref.offset(4, 0x14L).cast(InnerBigStruct::new);
+    this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);
 
     this.ui_58 = ref.offset(4, 0x58L).cast(UnsignedIntRef::new);
 

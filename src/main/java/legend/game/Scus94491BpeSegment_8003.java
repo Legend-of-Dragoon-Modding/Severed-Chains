@@ -21,6 +21,7 @@ import legend.core.gpu.DR_ENV;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
@@ -37,7 +38,6 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.types.InnerBigStruct;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -5414,13 +5414,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c400L)
-  public static void FUN_8003c400(final long a0, final InnerBigStruct a1) {
-    a1.ui_00.set(0);
-    a1.m_04.set(matrix_800c3568);
-    a1.ui_48.set(a0);
+  public static void insertCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
+    newCoord.flg.set(0);
+    newCoord.coord.set(matrix_800c3568);
+    newCoord.super_.setNullable(superCoord);
 
-    if(a0 > 1) {
-      MEMORY.ref(4, a1.ui_48.get()).offset(0x4cL).setu(a1.getAddress());
+    if(superCoord != null) {
+      superCoord.sub.set(newCoord);
     }
 
     //LAB_8003c468
@@ -5967,14 +5967,14 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003e5d0L)
-  public static void FUN_8003e5d0(long a0, final long a1, final long a2) {
+  public static void FUN_8003e5d0(long a0, final GsDOBJ2 dobj2, final long a2) {
     long s1 = 0;
     long s2 = 0;
     long s3 = 0;
     long s4 = 0;
 
     a0 += a2 * 0x1cL;
-    MEMORY.ref(4, a1).offset(0x8L).setu(a0);
+    dobj2.tmd.set(a0);
 
     long s0 = MEMORY.ref(4, a0).offset(0x10L).get();
     final long s6 = MEMORY.ref(4, a0).offset(0x14L).get();
@@ -6417,11 +6417,11 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f730L)
-  public static MATRIX FUN_8003f730(final MATRIX a0, final VECTOR a1) {
-    a0.setTransferVector(0, a1.getX());
-    a0.setTransferVector(1, a1.getY());
-    a0.setTransferVector(2, a1.getZ());
-    return a0;
+  public static MATRIX setTransferVector(final MATRIX matrix, final VECTOR vector) {
+    matrix.setTransferVector(0, vector.getX());
+    matrix.setTransferVector(1, vector.getY());
+    matrix.setTransferVector(2, vector.getZ());
+    return matrix;
   }
 
   @Method(0x8003f760L)

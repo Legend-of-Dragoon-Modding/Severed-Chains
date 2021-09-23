@@ -7,6 +7,9 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.Response;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.GsDOBJ2;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
@@ -16,6 +19,7 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
 import legend.game.types.JoyStruct;
@@ -40,7 +44,17 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bac68 = MEMORY.ref(1, 0x800bac68L);
 
+  public static final Value _800bac84 = MEMORY.ref(1, 0x800bac84L);
+
+  public static final Value _800bad04 = MEMORY.ref(4, 0x800bad04L);
+
+  public static final Value _800bad64 = MEMORY.ref(1, 0x800bad64L);
+
   public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
+
+  public static final Value _800baf02 = MEMORY.ref(2, 0x800baf02L);
+
+  public static final Value _800baf07 = MEMORY.ref(1, 0x800baf07L);
 
   public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
   public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
@@ -118,7 +132,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc0c0 = MEMORY.ref(4, 0x800bc0c0L);
 
-  /** TODO array of pointers to pointers of {@link BigStruct}? */
+  /** TODO array of pointers to some struct with a pointer to {@link BigStruct} */
   public static final Value _800bc1c0 = MEMORY.ref(4, 0x800bc1c0L);
 
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
@@ -266,7 +280,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd7b8 = MEMORY.ref(4, 0x800bd7b8L);
 
-  public static final Value _800bd7c0 = MEMORY.ref(1, 0x800bd7c0L);
+  public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
 
   public static final Value _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L);
   public static final Value _800bd7ec = MEMORY.ref(4, 0x800bd7ecL);
@@ -282,13 +296,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd818 = MEMORY.ref(4, 0x800bd818L);
 
-  public static final Value _800bd9f8 = MEMORY.ref(1, 0x800bd9f8L);
+  public static final UnboundedArrayRef<GsDOBJ2> _800bd9f8 = MEMORY.ref(4, 0x800bd9f8L, UnboundedArrayRef.of(0x10, GsDOBJ2::new));
 
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
 
   public static final BigStruct bigStruct_800bda10 = MEMORY.ref(4, 0x800bda10L, BigStruct::new);
 
-  public static final Value _800bdb38 = MEMORY.ref(1, 0x800bdb38L);
+  public static final UnboundedArrayRef<GsCOORDINATE2> _800bdb38 = MEMORY.ref(4, 0x800bdb38L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new));
 
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
@@ -446,6 +460,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bed4c = MEMORY.ref(4, 0x800bed4cL);
   public static final Value _800bed50 = MEMORY.ref(4, 0x800bed50L);
   public static final Value _800bed54 = MEMORY.ref(4, 0x800bed54L);
+  public static final Value _800bed58 = MEMORY.ref(4, 0x800bed58L);
 
   public static final ArrayRef<JoyStruct> _800bed60 = MEMORY.ref(4, 0x800bed60L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
 

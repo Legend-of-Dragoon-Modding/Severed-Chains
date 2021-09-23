@@ -3,6 +3,7 @@ package legend.game;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
@@ -15,8 +16,8 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.types.InnerBigStruct;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 import static legend.core.Hardware.CPU;
@@ -47,7 +48,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.setScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b850;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c400;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c470;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
@@ -60,6 +60,7 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
+import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c6f8;
@@ -456,7 +457,7 @@ public final class Ttle {
   @Method(0x800c7c18L)
   public static void fileCallback_800c7c18(final Value transferDest, final long fileSize, final long unknown) {
     _800c66d0.setu(FUN_800cbe48(transferDest.get()));
-    FUN_800cc0b0(_800c66d0.get(), 0);
+    FUN_800cc0b0(_800c66d0.get(), null);
     _800c66d0.deref(4).offset(0xcL).setu(transferDest);
     FUN_800cc1bc(_800c66d0.get(), 0);
     _800c6724.addu(1L);
@@ -1562,18 +1563,19 @@ public final class Ttle {
     removeFromLinkedList(a0);
   }
 
+  //TODO figure out this struct
   @Method(0x800cbf3cL)
   public static long FUN_800cbf3c(final long a0, final long a1) {
     FUN_8003c660(a1 + 0x4L);
     final long sp18 = MEMORY.ref(4, a1).offset(0x8L).get();
-    MEMORY.ref(4, a0).setu(addToLinkedListTail(sp18 * 16));
-    MEMORY.ref(4, a0).offset(0x4L).setu(addToLinkedListTail(sp18 * 80));
+    MEMORY.ref(4, a0).setu(addToLinkedListTail(sp18 * 0x10L));
+    MEMORY.ref(4, a0).offset(0x4L).setu(addToLinkedListTail(sp18 * 0x50L));
 
     //LAB_800cc02c
     final long sp1c = MEMORY.ref(4, a0).get();
     for(int sp14 = 0; sp14 < sp18; sp14++) {
       //LAB_800cc04c
-      FUN_8003e5d0(a1 + 0xcL, sp1c + sp14 * 16L, sp14);
+      FUN_8003e5d0(a1 + 0xcL, MEMORY.ref(4, sp1c + sp14 * 0x10L, GsDOBJ2::new), sp14);
     }
 
     //LAB_800cc088
@@ -1581,15 +1583,16 @@ public final class Ttle {
     return sp18;
   }
 
+  //TODO figure out this struct
   @Method(0x800cc0b0L)
-  public static void FUN_800cc0b0(final long a0, final long a1) {
+  public static void FUN_800cc0b0(final long a0, @Nullable final GsCOORDINATE2 superCoord2) {
     long sp14 = MEMORY.ref(4, a0).get();
     long sp18 = MEMORY.ref(4, a0).offset(0x4L).get();
 
     //LAB_800cc0f0
     for(int sp10 = 0; sp10 < MEMORY.ref(4, a0).offset(0x8L).get(); sp10++) {
       //LAB_800cc114
-      FUN_8003c400(a1, MEMORY.ref(4, sp18).cast(InnerBigStruct::new));
+      insertCoordinate2(superCoord2, MEMORY.ref(4, sp18).cast(GsCOORDINATE2::new));
 
       MEMORY.ref(4, sp14).offset(0x4L).setu(sp18);
       MEMORY.ref(4, sp14).offset(0x4L).deref(4).offset(0x18L).setu(0x64L);

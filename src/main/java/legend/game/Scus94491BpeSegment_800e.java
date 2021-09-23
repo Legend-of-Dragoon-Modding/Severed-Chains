@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b3f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c400;
+import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -638,18 +638,18 @@ public final class Scus94491BpeSegment_800e {
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, long, long)} */
   @Method(0x800e6b3cL)
   public static void FUN_800e6b3c(final BigStruct a0, final long a1, final long a2) {
-    final long sp30 = a0.inner_14.ui_18.get();
-    final long sp34 = a0.inner_14.ui_1c.get();
-    final long sp38 = a0.inner_14.ui_20.get();
+    final int sp30 = a0.coord2_14.coord.getTransferVector(0);
+    final int sp34 = a0.coord2_14.coord.getTransferVector(1);
+    final int sp38 = a0.coord2_14.coord.getTransferVector(2);
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
       a0.aub_ec.get(i).set(0);
     }
 
-    a0.ptr_ui_00.set(_800bd9f8.getAddress());
-    a0.ptr_ui_04.set(_800bdb38.getAddress());
-    a0.ptr_ui_08.set(_800bd7c0.getAddress());
+    a0.dobj2ArrPtr_00.set(_800bd9f8);
+    a0.coord2ArrPtr_04.set(_800bdb38);
+    a0.coord2ParamArrPtr_08.set(_800bd7c0);
     a0.s_c8.set((short)MEMORY.ref(2, a2).offset(0xcL).get());
     a0.ui_8c.set(a1 + 0xcL);
     a0.us_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
@@ -677,10 +677,10 @@ public final class Scus94491BpeSegment_800e {
     //LAB_800e6c64
     a0.ui_8c.add(0x4L);
     FUN_8003c660(a0.ui_8c.get());
-    FUN_80021b08(a0.unknown_ui_0c, a0.ptr_ui_00.get(), a0.ptr_ui_04.get(), a0.ptr_ui_08.get(), a0.s_c8.get());
+    FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.s_c8.get());
     a0.ui_58.set(a0.v_64.getAddress());
-    FUN_8003c400(0, a0.inner_14);
-    FUN_80021ca0(a0.unknown_ui_0c, a0.ui_8c.get(), a0.inner_14, a0.s_c8.get(), (short)(a0.us_ca.get() + 0x1L));
+    insertCoordinate2(null, a0.coord2_14);
+    FUN_80021ca0(a0.ObjTable_0c, a0.ui_8c.get(), a0.coord2_14, a0.s_c8.get(), (short)(a0.us_ca.get() + 0x1L));
 
     a0.us_a0.set(0);
     a0.ub_a2.set(0);
@@ -690,9 +690,9 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_80021584(a0, a2);
 
-    a0.inner_14.ui_18.set(sp30);
-    a0.inner_14.ui_1c.set(sp34);
-    a0.inner_14.ui_20.set(sp38);
+    a0.coord2_14.coord.setTransferVector(0, sp30);
+    a0.coord2_14.coord.setTransferVector(1, sp34);
+    a0.coord2_14.coord.setTransferVector(2, sp38);
     a0.ub_cc.set(0);
     a0.ui_fc.set(0x1000L);
     a0.ui_100.set(0x1000L);
