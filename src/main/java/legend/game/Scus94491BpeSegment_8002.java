@@ -868,27 +868,23 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021c58L)
-  public static long FUN_80021c58(long a0, final long a1) {
-    a0 += 0x4L;
-    long v1 = MEMORY.ref(4, a0).get();
-    a0 += 0x4L;
+  public static long FUN_80021c58(long address, final long objId) {
+    long v1 = MEMORY.ref(4, address).offset(0x4L).get();
+    address += 0x8L;
     long a2 = 0x1L;
     //LAB_80021c74
     while(v1 > 0) {
-      if((int)(a1 & 0xffffffffL) == a2) {
-        break;
+      if(a2 == objId) {
+        //LAB_80021c8c
+        return address;
       }
 
-      a0 += 0x1cL;
+      address += 0x1cL;
       v1--;
       a2++;
     }
 
     //LAB_80021c8c
-    if(v1 != 0) {
-      return a0;
-    }
-
     //LAB_80021c98
     return 0;
   }

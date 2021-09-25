@@ -126,8 +126,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bc0c0;
-import static legend.game.Scus94491BpeSegment_800b._800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.biggerStruct_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.biggerStructPtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
@@ -508,7 +508,7 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6654() {
     //LAB_800e666c
     for(int i = 0; i < 0x48; i++) {
-      _800bc1c0.offset(i * 4).setu(_800bc0c0.getAddress());
+      biggerStructPtrArr_800bc1c0.get(i).set(biggerStruct_800bc0c0);
     }
   }
 

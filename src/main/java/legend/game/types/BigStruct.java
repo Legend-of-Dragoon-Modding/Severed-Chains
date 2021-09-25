@@ -117,9 +117,9 @@ public class BigStruct implements MemoryRef {
   public BigStruct(final Value ref) {
     this.ref = ref;
 
-    this.dobj2ArrPtr_00 = ref.offset(4, 0x00L).cast(Pointer.of(4, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
-    this.coord2ArrPtr_04 = ref.offset(4, 0x04L).cast(Pointer.of(4, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    this.coord2ParamArrPtr_08 = ref.offset(4, 0x08L).cast(Pointer.of(4, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
+    this.dobj2ArrPtr_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+    this.coord2ArrPtr_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
+    this.coord2ParamArrPtr_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
     this.ObjTable_0c = ref.offset(4, 0x0cL).cast(GsOBJTABLE2::new);
 
     this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);

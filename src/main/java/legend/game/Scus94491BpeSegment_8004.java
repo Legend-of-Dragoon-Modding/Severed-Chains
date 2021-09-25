@@ -258,7 +258,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.class, 28, 4, (Function)Pointer.of(4, SupplierRef::new)));
 
-  public static final Value _8004de4c = MEMORY.ref(4, 0x8004de4cL);
+  public static final Value index_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
   public static final Value _8004de58 = MEMORY.ref(4, 0x8004de58L);
 

@@ -22,6 +22,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
+import legend.game.types.BiggerStruct;
 import legend.game.types.JoyStruct;
 
 import java.util.function.Function;
@@ -130,10 +131,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
 
-  public static final Value _800bc0c0 = MEMORY.ref(4, 0x800bc0c0L);
+  public static final BiggerStruct<BigStruct> biggerStruct_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, BiggerStruct.of(BigStruct::new));
 
-  /** TODO array of pointers to some struct with a pointer to {@link BigStruct} */
-  public static final Value _800bc1c0 = MEMORY.ref(4, 0x800bc1c0L);
+  public static final ArrayRef<Pointer<BiggerStruct<BigStruct>>> biggerStructPtrArr_800bc1c0 = MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(BiggerStruct.classFor(BigStruct.class)), 0x48, 4, Pointer.of(4, BiggerStruct.of(BigStruct::new))));
 
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
 
