@@ -6,6 +6,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -15,7 +16,10 @@ import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.TmdRenderingStruct;
+import legend.game.types.TwoVectorsAndRotation;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -28,7 +32,6 @@ import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80013200;
-import static legend.game.Scus94491BpeSegment.FUN_80013598;
 import static legend.game.Scus94491BpeSegment.FUN_800136dc;
 import static legend.game.Scus94491BpeSegment.FUN_80015310;
 import static legend.game.Scus94491BpeSegment.FUN_80019a60;
@@ -40,29 +43,30 @@ import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800237a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
-import static legend.game.Scus94491BpeSegment_8002.setScreenOffset;
+import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b850;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c470;
+import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dca0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003e5d0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f760;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
+import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
+import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c6f8;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
@@ -97,7 +101,7 @@ import static legend.game.Scus94491BpeSegment_800c.matrix_800c3568;
 public final class Ttle {
   private Ttle() { }
 
-  public static final Value _800c66d0 = MEMORY.ref(4, 0x800c66d0L);
+  public static final Pointer<TmdRenderingStruct> _800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.of(4, TmdRenderingStruct::new));
   public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(16, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
   public static final Value _800c66e4 = MEMORY.ref(4, 0x800c66e4L);
   public static final Value menuLoadingStage_800c66e8 = MEMORY.ref(4, 0x800c66e8L);
@@ -131,14 +135,7 @@ public final class Ttle {
   public static final Value _800c6754 = MEMORY.ref(4, 0x800c6754L);
   public static final Value _800c6758 = MEMORY.ref(4, 0x800c6758L);
 
-  public static final Value _800c6760 = MEMORY.ref(4, 0x800c6760L);
-  public static final Value _800c6764 = MEMORY.ref(4, 0x800c6764L);
-  public static final Value _800c6768 = MEMORY.ref(4, 0x800c6768L);
-  public static final Value _800c676c = MEMORY.ref(4, 0x800c676cL);
-  public static final Value _800c6770 = MEMORY.ref(4, 0x800c6770L);
-  public static final Value _800c6774 = MEMORY.ref(4, 0x800c6774L);
-  public static final Value _800c6778 = MEMORY.ref(4, 0x800c6778L);
-  public static final Value _800c677c = MEMORY.ref(4, 0x800c677cL);
+  public static final TwoVectorsAndRotation _800c6760 = MEMORY.ref(4, 0x800c6760L, TwoVectorsAndRotation::new);
 
   public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.class, 4, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
@@ -200,8 +197,6 @@ public final class Ttle {
     long a2;
     long a3;
     long s0;
-    long t0;
-    long t1;
     long t2;
     long t3;
     long t4;
@@ -223,9 +218,8 @@ public final class Ttle {
     do {
       MEMORY.ref(4, a0).setu(a3);
       a0 += 0x4L;
-      v0 = v1;
       v1--;
-    } while(v0 > 0);
+    } while(v1 >= 0);
 
     t9 = 0;
     t3 = 0;
@@ -256,49 +250,34 @@ public final class Ttle {
       MEMORY.ref(1, a3).offset(0x33eL).setu(a2);
       MEMORY.ref(1, a3).offset(0x33fL).setu(0x1L);
 
-      v1 = t3;
-
       //LAB_800c7294
       for(int i = 0; i < 0x8; i++) {
-        v0 = i + v1;
-        v0 += t2;
+        v0 = i + t3 + t2;
         MEMORY.ref(1, v0).offset(0x346L).setu(0);
         MEMORY.ref(1, v0).offset(0x34eL).setu(0);
       }
 
       MEMORY.ref(1, a3).offset(0x346L).setu(0x1L);
 
-      t1 = _8004f5ac.offset(t5).getAddress();
-      t0 = t3;
-      v1 = a1 + 0x8L;
-
       //LAB_800c72d4
-      for(int i = 0x1; i < a2; i++) {
-        a1 = MEMORY.ref(1, v1).offset(0x2L).get();
+      for(int i = 1; i < a2; i++) {
+        a1 = MEMORY.ref(1, a1).offset(i * 0x8L).offset(0x2L).get();
         if(a1 != 0xffL) {
-          v0 = MEMORY.ref(2, t1).get();
-          v0 = a1 - v0 + t0 + t2;
+          v0 = _8004f5ac.offset(t5).get();
+          v0 = a1 - v0 + t3 + t2;
           MEMORY.ref(1, v0).offset(0x346L).setu(0x1L);
         }
 
         //LAB_800c72fc
-        v1 += 0x8L;
       }
 
       //LAB_800c730c
-      a2 = t3;
-      t0 = _800ce6fc.getAddress();
-      v0 = _800ce758.getAddress();
-      v0 += t5;
-      v0 = MEMORY.ref(1, v0).get();
-      a1 = t9;
-      MEMORY.ref(1, a3).offset(0x345L).setu(v0);
+      MEMORY.ref(1, a3).offset(0x345L).setu(_800ce758.offset(t5));
 
       //LAB_800c7334
       for(int i = 0; i < 0x5; i++) {
-        v0 = i + a2 + t2;
-        MEMORY.ref(1, v0).offset(0x340L).setu(MEMORY.ref(1, t0).offset(a1));
-        a1 += 0x2L;
+        v0 = i + t3 + t2;
+        MEMORY.ref(1, v0).offset(0x340L).setu(_800ce6fc.offset(t9).offset(i * 0x2L));
       }
 
       t9 += 0xaL;
@@ -344,7 +323,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7424L)
-  public static void FUN_800c7424() {
+  public static void executeLoadingStage() {
     loadingStageArray_800c6898.get((int)loadingStage_800bb10c.get()).deref().run();
   }
 
@@ -416,15 +395,15 @@ public final class Ttle {
     //LAB_800c7978
     FUN_80013200(384L, 0);
     setProjectionPlaneDistance(320);
-    _800c6760.setu(0); // 0
-    _800c6764.setu(0); // 4
-    _800c6768.setu(2000L); // 8
-    _800c676c.setu(0); // c
-    _800c6770.setu(0); // 10
-    _800c6774.setu(-4000L); // 14
-    _800c6778.setu(0); // 18 angle?
-    _800c677c.setu(0); // 1c
-    FUN_8003cfb0(_800c6760.getAddress());
+    _800c6760.vector_00.setX(0);
+    _800c6760.vector_00.setY(0);
+    _800c6760.vector_00.setZ(2000);
+    _800c6760.vector_0c.setX(0);
+    _800c6760.vector_0c.setY(0);
+    _800c6760.vector_0c.setZ(-4000);
+    _800c6760.rotation_18.set(0);
+    _800c6760.ui_1c.set(0);
+    FUN_8003cfb0(_800c6760);
 
     _8007a3b8.setu(0x2L);
     loadingStage_800bb10c.setu(0x1L);
@@ -455,11 +434,12 @@ public final class Ttle {
   }
 
   @Method(0x800c7c18L)
-  public static void fileCallback_800c7c18(final Value transferDest, final long fileSize, final long unknown) {
-    _800c66d0.setu(FUN_800cbe48(transferDest.get()));
-    FUN_800cc0b0(_800c66d0.get(), null);
-    _800c66d0.deref(4).offset(0xcL).setu(transferDest);
-    FUN_800cc1bc(_800c66d0.get(), 0);
+  public static void fileCallback_800c7c18(final Value tmdAddressPtr, final long fileSize, final long unknown) {
+    final TmdWithId tmd = tmdAddressPtr.deref(4).cast(TmdWithId::new);
+    _800c66d0.set(parseTmdFile(tmd));
+    FUN_800cc0b0(_800c66d0.deref(), null);
+    _800c66d0.deref().tmd_0c.set(tmd);
+    setDobjAttributes(_800c66d0.deref(), 0);
     _800c6724.addu(1L);
   }
 
@@ -485,7 +465,7 @@ public final class Ttle {
   public static void FUN_800c7df0() {
     if(_800c6724.get() == 0x2L) {
       FUN_800136dc(0x2L, 0xfL);
-      setScreenOffset(0, 0);
+      SetGeomOffset(0, 0);
       loadingStage_800bb10c.setu(0x3L);
     }
   }
@@ -505,27 +485,25 @@ public final class Ttle {
     renderCopyright();
 
     _800c6754.addu(0x1L);
-    if(_800c6754.get() < 0x10L) {
-      return;
+    if(_800c6754.get() >= 0x10L) {
+      FUN_800cb5c4();
+      deallocateFire();
+
+      if(drgnBinIndex_800bc058.get() == 0x1L) {
+        _8004dd24.setu(0x9L);
+      } else {
+        //LAB_800c7f40
+        _8004dd24.setu(0xaL);
+        _8004ddc0.setu(0x1L);
+        _800bc05c.setu(0x9L);
+      }
+
+      _800bf0dc.setu(0x2L);
+      _800bf0ec.setu(0x3L);
+      _8007a3b8.setu(0x2L);
+
+      loadingStage_800bb10c.setu(0);
     }
-
-    FUN_800cb5c4();
-    FUN_800cb69c();
-
-    if(drgnBinIndex_800bc058.get() == 0x1L) {
-      _8004dd24.setu(0x9L);
-    } else {
-      //LAB_800c7f40
-      _8004dd24.setu(0xaL);
-      _8004ddc0.setu(0x1L);
-      _800bc05c.setu(0x9L);
-    }
-
-    _800bf0dc.setu(0x2L);
-    _800bf0ec.setu(0x3L);
-    _8007a3b8.setu(0x2L);
-
-    loadingStage_800bb10c.setu(0);
 
     //LAB_800c7f90
   }
@@ -543,7 +521,7 @@ public final class Ttle {
       if(_800c6728.get() == 0x2L) {
         _800bdc38.setu(0xbL);
         FUN_800cb5c4();
-        FUN_800cb69c();
+        deallocateFire();
         _800c6728.setu(0x3L);
       }
     }
@@ -605,7 +583,7 @@ public final class Ttle {
     _800c6754.addu(0x1L);
     if(_800c6754.get() > 0xfL) {
       FUN_800cb5c4();
-      FUN_800cb69c();
+      deallocateFire();
 
       _800bf0dc.setu(0);
       _800bf0ec.setu(0x2L);
@@ -731,11 +709,6 @@ public final class Ttle {
   public static void renderMenuOptions() {
     if(_800c66e4.get() == 0) {
       _800c66e4.setu(FUN_800237a4(0x1L));
-
-      //TODO added this to bypass memory card bugs/issues
-//      _800c66e4.setu(0x1L);
-      //
-
       selectedMenuOption_800ce774.setu(_800c66e4.get() == 1 ? 1 : 0);
       return;
     }
@@ -1407,8 +1380,8 @@ public final class Ttle {
   }
 
   @Method(0x800cb69cL)
-  public static void FUN_800cb69c() {
-    FUN_800cbeb4(_800c66d0.get());
+  public static void deallocateFire() {
+    deallocateTmdRenderer(_800c66d0.deref());
 
     //LAB_800cb6bc
     for(int i = 0; i < 4; i++) {
@@ -1436,32 +1409,30 @@ public final class Ttle {
     }
 
     //LAB_800cb7f0
-    FUN_8003cfb0(_800c6760.getAddress());
+    FUN_8003cfb0(_800c6760);
 
-    long sp50 = _800c66d0.deref(4).get();
-    long sp54 = _800c66d0.deref(4).offset(0x4L).get();
+    UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.deref().dobj2s_00.deref();
+    UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.deref().coord2s_04.deref();
 
     //LAB_800cb834
-    for(int i = 0; i < _800c66d0.deref(4).offset(0x8L).get(); i++) {
+    for(int i = 0; i < _800c66d0.deref().count_08.get(); i++) {
       final MATRIX sp10 = new MATRIX();
       final MATRIX sp30 = new MATRIX();
 
       //LAB_800cb85c
-      FUN_800cc26c(sp58, new GsCOORDINATE2(MEMORY.ref(4, sp54)));
-      FUN_8003dca0(new GsCOORDINATE2(MEMORY.ref(4, sp50).offset(0x4L).deref(4)), sp10, sp30);
+      FUN_800cc26c(sp58, coord2s.get(i));
+      FUN_8003dca0(dobj2s.get(i).coord2_04.deref(), sp10, sp30);
       FUN_8003c4a0(sp10);
-      FUN_8003f760(sp30, sp60);
-      FUN_8003c470(sp30);
-      FUN_800cc388(sp50);
-      sp50 += 0x10L;
-      sp54 += 0x50L;
+      ScaleMatrixL(sp30, sp60);
+      setRotTransMatrix(sp30);
+      FUN_800cc388(dobj2s.get(i));
     }
 
     //LAB_800cb904
     //LAB_800cb908
     for(int i = 0; i < 0x4L; i++) {
       //LAB_800cb924
-      FUN_800cdcb0(_800c66d4.get(i).get());
+      animateFire(_800c66d4.get(i).get());
     }
 
     //LAB_800cb960
@@ -1497,7 +1468,7 @@ public final class Ttle {
     }
 
     //LAB_800cba90
-    final long colour = (int)(FUN_80013598(_800c66fc.get()) * 160) >> 12;
+    final long colour = (int)(rsin(_800c66fc.get()) * 160) >> 12;
 
     // GP0.66 Textured quad, variable size, translucent, blended
     final long sp3c = linkedListAddress_1f8003d8.get();
@@ -1549,72 +1520,63 @@ public final class Ttle {
   }
 
   @Method(0x800cbe48L)
-  public static long FUN_800cbe48(final long transferDest) {
-    final long address = addToLinkedListTail(0x10L);
-    MEMORY.ref(4, address).offset(0x8L).setu(FUN_800cbf3c(address, transferDest));
-    return address;
+  public static TmdRenderingStruct parseTmdFile(final TmdWithId tmd) {
+    final TmdRenderingStruct tmdRenderer = MEMORY.ref(4, addToLinkedListTail(0x10L), TmdRenderingStruct::new);
+    tmdRenderer.count_08.set(prepareTmdRenderer(tmdRenderer, tmd));
+    return tmdRenderer;
   }
 
   @Method(0x800cbeb4L)
-  public static void FUN_800cbeb4(final long a0) {
-    removeFromLinkedList(MEMORY.ref(4, a0).offset(0x4L).get());
-    removeFromLinkedList(MEMORY.ref(4, a0).get());
-    removeFromLinkedList(MEMORY.ref(4, a0).offset(0xcL).get());
-    removeFromLinkedList(a0);
+  public static void deallocateTmdRenderer(final TmdRenderingStruct renderer) {
+    removeFromLinkedList(renderer.coord2s_04.getPointer());
+    removeFromLinkedList(renderer.dobj2s_00.getPointer());
+    removeFromLinkedList(renderer.tmd_0c.getPointer());
+    removeFromLinkedList(renderer.getAddress());
   }
 
-  //TODO figure out this struct
   @Method(0x800cbf3cL)
-  public static long FUN_800cbf3c(final long a0, final long a1) {
-    FUN_8003c660(a1 + 0x4L);
-    final long sp18 = MEMORY.ref(4, a1).offset(0x8L).get();
-    MEMORY.ref(4, a0).setu(addToLinkedListTail(sp18 * 0x10L));
-    MEMORY.ref(4, a0).offset(0x4L).setu(addToLinkedListTail(sp18 * 0x50L));
+  public static long prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
+    adjustTmdPointers(tmd.tmd);
+
+    tmdRenderer.dobj2s_00.set(MEMORY.ref(4, addToLinkedListTail(tmd.tmd.header.nobj.get() * 0x10L), UnboundedArrayRef.of(4, GsDOBJ2::new)));
+    tmdRenderer.coord2s_04.set(MEMORY.ref(4, addToLinkedListTail(tmd.tmd.header.nobj.get() * 0x50L), UnboundedArrayRef.of(4, GsCOORDINATE2::new)));
 
     //LAB_800cc02c
-    final long sp1c = MEMORY.ref(4, a0).get();
-    for(int sp14 = 0; sp14 < sp18; sp14++) {
+    for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
       //LAB_800cc04c
-      FUN_8003e5d0(a1 + 0xcL, MEMORY.ref(4, sp1c + sp14 * 0x10L, GsDOBJ2::new), sp14);
+      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00.deref().get(objIndex), objIndex);
     }
 
     //LAB_800cc088
     //LAB_800cc09c
-    return sp18;
+    return tmd.tmd.header.nobj.get();
   }
 
-  //TODO figure out this struct
   @Method(0x800cc0b0L)
-  public static void FUN_800cc0b0(final long a0, @Nullable final GsCOORDINATE2 superCoord2) {
-    long sp14 = MEMORY.ref(4, a0).get();
-    long sp18 = MEMORY.ref(4, a0).offset(0x4L).get();
-
+  public static void FUN_800cc0b0(final TmdRenderingStruct renderer, @Nullable final GsCOORDINATE2 superCoord2) {
     //LAB_800cc0f0
-    for(int sp10 = 0; sp10 < MEMORY.ref(4, a0).offset(0x8L).get(); sp10++) {
+    for(int i = 0; i < renderer.count_08.get(); i++) {
+      final GsCOORDINATE2 coord2 = renderer.coord2s_04.deref().get(i);
+      final GsDOBJ2 dobj2 = renderer.dobj2s_00.deref().get(i);
+
       //LAB_800cc114
-      insertCoordinate2(superCoord2, MEMORY.ref(4, sp18).cast(GsCOORDINATE2::new));
+      insertCoordinate2(superCoord2, coord2);
 
-      MEMORY.ref(4, sp14).offset(0x4L).setu(sp18);
-      MEMORY.ref(4, sp14).offset(0x4L).deref(4).offset(0x18L).setu(0x64L);
-      MEMORY.ref(4, sp14).offset(0x4L).deref(4).offset(0x1cL).setu(-0x1aeL);
-      MEMORY.ref(4, sp14).offset(0x4L).deref(4).offset(0x20L).setu(-0x800L);
-
-      sp14 += 0x10L;
-      sp18 += 0x50L;
+      dobj2.coord2_04.set(coord2);
+      coord2.coord.transfer.setX(100);
+      coord2.coord.transfer.setY(-430);
+      coord2.coord.transfer.setZ(-2048);
     }
 
     //LAB_800cc1a8
   }
 
   @Method(0x800cc1bcL)
-  public static void FUN_800cc1bc(final long a0, final long a1) {
-    long sp04 = MEMORY.ref(4, a0).get();
-
+  public static void setDobjAttributes(final TmdRenderingStruct renderer, final long dobjAttribute) {
     //LAB_800cc1e4
-    for(int sp00 = 0; sp00 < MEMORY.ref(4, a0).offset(0x8L).get(); sp00++) {
+    for(int i = 0; i < renderer.count_08.get(); i++) {
       //LAB_800cc208
-      MEMORY.ref(4, sp04).setu(a1);
-      sp04 += 0x10;
+      renderer.dobj2s_00.deref().get(i).attribute_00.set(dobjAttribute);
     }
 
     //LAB_800cc25c
@@ -1623,44 +1585,44 @@ public final class Ttle {
   @Method(0x800cc26cL)
   public static void FUN_800cc26c(final SVECTOR a0, final GsCOORDINATE2 a1) {
     final MATRIX m = new MATRIX();
-
-    for(int i = 0; i < 9; i++) {
-      m.set(i, matrix_800c3568.get(i));
-    }
-
-    m.setTransferVector(0, a1.coord.getTransferVector(0));
-    m.setTransferVector(1, a1.coord.getTransferVector(1));
-    m.setTransferVector(2, a1.coord.getTransferVector(2));
+    m.set(matrix_800c3568);
+    m.transfer.set(a1.coord.transfer);
     FUN_8003faf0(a0, m);
     a1.coord.set(m);
     a1.flg.set(0);
   }
 
   @Method(0x800cc388L)
-  public static void FUN_800cc388(final long a0) {
-    final long sp10 = MEMORY.ref(4, a0).offset(0x8L).deref(4).offset(0x00L).get();
-    final long sp14 = MEMORY.ref(4, a0).offset(0x8L).deref(4).offset(0x08L).get();
-    long sp18 = MEMORY.ref(4, a0).offset(0x8L).deref(4).offset(0x10L).get();
-    long sp1c = MEMORY.ref(4, a0).offset(0x8L).deref(4).offset(0x14L).get();
+  public static void FUN_800cc388(final GsDOBJ2 dobj2) {
+    final long vertices = dobj2.tmd_08.deref().vert_top_00.get();
+    final long normals = dobj2.tmd_08.deref().normal_top_08.get();
+    long primitives = dobj2.tmd_08.deref().primitives_10.getPointer();
+    long primitiveCount = dobj2.tmd_08.deref().n_primitive_14.get();
+//    int primitiveIndex = 0;
 
     //LAB_800cc408
-    while(sp1c != 0) {
-      //LAB_800cc420
-      sp1c -= MEMORY.ref(2, sp18).get();
+    while(primitiveCount != 0) {
+//      final long primitive = primitives.get(primitiveIndex / 4).get();
+      final long primitive = MEMORY.ref(4, primitives).get();
+      final long command = primitive & 0xff04_0000L;
+      final long len = primitive & 0xffffL;
 
-      final long v0 = MEMORY.ref(4, sp18).get(0xff04_0000L);
-      if(v0 == 0x3400_0000L) {
+      //LAB_800cc420
+      primitiveCount -= len;
+
+      //TODO pass in the array or something instead of the address to an element in the array?
+      if(command == 0x3400_0000L) {
         //LAB_800cc528
-        sp18 = FUN_800cd72c(sp18, sp10, sp14, MEMORY.ref(2, sp18).get());
-      } else if(v0 == 0x3700_0000L) {
+        primitives = FUN_800cd72c(primitives, vertices, normals, len);
+      } else if(command == 0x3700_0000L) {
         //LAB_800cc4a0
-        sp18 = FUN_800cc57c(sp18, sp10, MEMORY.ref(2, sp18).get());
-      } else if(v0 == 0x3c00_0000L) {
+        primitives = FUN_800cc57c(primitives, vertices, len);
+      } else if(command == 0x3c00_0000L) {
         //LAB_800cc4f8
-        sp18 = FUN_800cd2d8(sp18, sp10, sp14, MEMORY.ref(2, sp18).get());
-      } else if(v0 == 0x3f00_0000L) {
+        primitives = FUN_800cd2d8(primitives, vertices, normals, len);
+      } else if(command == 0x3f00_0000L) {
         //LAB_800cc4cc
-        sp18 = FUN_800ccb78(sp18, sp10, MEMORY.ref(2, sp18).get());
+        primitives = FUN_800ccb78(primitives, vertices, len);
       }
 
       //LAB_800cc558
@@ -1671,18 +1633,18 @@ public final class Ttle {
   }
 
   @Method(0x800cc57cL)
-  public static long FUN_800cc57c(final long a0, final long a1, final long a2) {
-    long sp18 = a0;
-    long sp20 = a2;
+  public static long FUN_800cc57c(final long primitives, final long vertices, final long len) {
+    long sp18 = primitives;
+    long sp20 = len;
     final long sp00 = _800c671c.get();
     long address = linkedListAddress_1f8003d8.get();
 
     //LAB_800cc5b0
     while(sp20 != 0) {
       //LAB_800cc5c8
-      final long t5 = a1 + MEMORY.ref(2, sp18).offset(0x1cL).get() * 8;
-      final long t6 = a1 + MEMORY.ref(2, sp18).offset(0x1eL).get() * 8;
-      final long t7 = a1 + MEMORY.ref(2, sp18).offset(0x20L).get() * 8;
+      final long t5 = vertices + MEMORY.ref(2, sp18).offset(0x1cL).get() * 8;
+      final long t6 = vertices + MEMORY.ref(2, sp18).offset(0x1eL).get() * 8;
+      final long t7 = vertices + MEMORY.ref(2, sp18).offset(0x20L).get() * 8;
       CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0x0L);
       CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 0x1L);
       CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 0x2L);
@@ -1760,7 +1722,7 @@ public final class Ttle {
   }
 
   @Method(0x800ccb78L)
-  public static long FUN_800ccb78(long a0, long a1, long a2) {
+  public static long FUN_800ccb78(long a0, long a1, long len) {
     long a3;
     long v0;
     long v1;
@@ -1771,7 +1733,7 @@ public final class Ttle {
 
     long sp18 = a0;
     final long sp1c = a1;
-    long sp20 = a2;
+    long sp20 = len;
     final long sp00 = _800c671c.get();
     a1 = _8005a374.offset(doubleBufferFrame_800bb108.get() * 20).get();
     v1 = linkedListAddress_1f8003d8.get();
@@ -1779,18 +1741,18 @@ public final class Ttle {
     //LAB_800ccbcc
     while(sp20 != 0) {
       //LAB_800ccbe4
-      final long t5 = sp1c + MEMORY.ref(2, sp18).offset(0x24L).get() * 8;
-      final long t6 = sp1c + MEMORY.ref(2, sp18).offset(0x26L).get() * 8;
-      final long t7 = sp1c + MEMORY.ref(2, sp18).offset(0x28L).get() * 8;
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0x0L);
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 0x1L);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 0x2L);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 0x3L);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 0x4L);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 0x5L);
-      CPU.COP2(0x280030L);
+      final SVECTOR t5 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x24L).get() * 8, SVECTOR::new);
+      final SVECTOR t6 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x26L).get() * 8, SVECTOR::new);
+      final SVECTOR t7 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x28L).get() * 8, SVECTOR::new);
+      CPU.MTC2(t5.getXY(), 0); // VXY0
+      CPU.MTC2(t5.getZ(),  1); // VZ0
+      CPU.MTC2(t6.getXY(), 2); // VXY1
+      CPU.MTC2(t6.getZ(),  3); // VY1
+      CPU.MTC2(t7.getXY(), 4); // VXY2
+      CPU.MTC2(t7.getZ(),  5); // VZ2
+      CPU.COP2(0x280030L); // Perspective transform triple
 
-      MEMORY.ref(4, v1).offset(0xcL).setu(MEMORY.ref(4, sp18).offset(0x4L));
+      MEMORY.ref(4, v1).offset(0x0cL).setu(MEMORY.ref(4, sp18).offset(0x4L));
       MEMORY.ref(4, v1).offset(0x18L).setu(MEMORY.ref(4, sp18).offset(0x8L));
       sp20--;
 
@@ -2020,7 +1982,7 @@ public final class Ttle {
   }
 
   @Method(0x800cdcb0L)
-  public static void FUN_800cdcb0(final long a0) {
+  public static void animateFire(final long a0) {
     final long a1;
     final long v1;
     final RECT sp10 = new RECT();

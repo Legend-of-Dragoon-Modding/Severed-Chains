@@ -20,6 +20,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.core.spu.Voice;
+import legend.game.types.HmdSomethingStruct;
 import legend.game.types.JoyData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,12 +125,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c3a62;
 import static legend.game.Scus94491BpeSegment_800c._800c43d0;
 import static legend.game.Scus94491BpeSegment_800c._800c43d4;
 import static legend.game.Scus94491BpeSegment_800c._800c43d8;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuMadrPtr_800c4a90;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuBcrPtr_800c4a94;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuChcrPtr_800c4a98;
-import static legend.game.Scus94491BpeSegment_800c.dmaDpcrPtr_800c4a9c;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuDelayPtr_800c4aa0;
-import static legend.game.Scus94491BpeSegment_800c.voice00LeftPtr_800c4aa4;
 import static legend.game.Scus94491BpeSegment_800c._800c4aa8;
 import static legend.game.Scus94491BpeSegment_800c._800c4aac;
 import static legend.game.Scus94491BpeSegment_800c._800c4ab0;
@@ -186,6 +181,11 @@ import static legend.game.Scus94491BpeSegment_800c._800c6674;
 import static legend.game.Scus94491BpeSegment_800c._800c6678;
 import static legend.game.Scus94491BpeSegment_800c._800c667c;
 import static legend.game.Scus94491BpeSegment_800c._800c6680;
+import static legend.game.Scus94491BpeSegment_800c.dmaDpcrPtr_800c4a9c;
+import static legend.game.Scus94491BpeSegment_800c.dmaSpuBcrPtr_800c4a94;
+import static legend.game.Scus94491BpeSegment_800c.dmaSpuChcrPtr_800c4a98;
+import static legend.game.Scus94491BpeSegment_800c.dmaSpuDelayPtr_800c4aa0;
+import static legend.game.Scus94491BpeSegment_800c.dmaSpuMadrPtr_800c4a90;
 import static legend.game.Scus94491BpeSegment_800c.eventSpuIrq_800c664c;
 import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c39e0;
 import static legend.game.Scus94491BpeSegment_800c.inputBuffer_800c3a03;
@@ -199,6 +199,7 @@ import static legend.game.Scus94491BpeSegment_800c.responseBuffer1_800c39bb;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaIndex_800c6669;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaTransferInProgress_800c6650;
 import static legend.game.Scus94491BpeSegment_800c.spuMono_800c6666;
+import static legend.game.Scus94491BpeSegment_800c.voice00LeftPtr_800c4aa4;
 
 public final class Scus94491BpeSegment_8004 {
   private Scus94491BpeSegment_8004() { }
@@ -235,7 +236,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Pointer<RunnableRef> callback_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
   public static final Pointer<RunnableRef> callback_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
-
+  public static final Value _8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
 
   public static final Value _8004dd80 = MEMORY.ref(2, 0x8004dd80L);
@@ -263,10 +264,10 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004de58 = MEMORY.ref(4, 0x8004de58L);
 
   /** This is the world's largest jump table */
-  public static final ArrayRef<Pointer<FunctionRef<Long, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<Long, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   /** Actually this is */
-  public static final ArrayRef<Pointer<FunctionRef<Long, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<Long, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   public static final Value _8004e31c = MEMORY.ref(4, 0x8004e31cL);
 
@@ -4523,6 +4524,35 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004b1c4
   }
 
+  @Method(0x8004b1e8L)
+  public static long FUN_8004b1e8(final long a0, final long a1, long a2, final long a3) {
+    final long v1;
+
+    a2 &= 0xffffL;
+    if(a2 == 0xffffL) {
+      _800c667c.setu(_800c4ac8.offset(a0 * 0x124L).offset(4, 0x10L));
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x8eL).setu(0x1L);
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x9eL).setu(a3);
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xaeL).setu(a1);
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xbeL).setu(a1);
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xceL).setu(_800c667c.deref(1));
+      v1 = _800c667c.deref(1).get();
+    } else {
+      //LAB_8004b268
+      _800c6680.setu(_800c4ac8.offset(a0 * 0x124L).offset(4, 0x10L).get() + (a2 + 0x1L) * 0x10L);
+      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x3eL).setu(0x1L);
+      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x4eL).setu(a3);
+      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x5eL).setu(a1);
+      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x6eL).setu(a1);
+      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x7eL).setu(_800c6680.deref(1).offset(0x3L));
+      v1 = _800c6680.deref(1).offset(0x3L).get();
+    }
+
+    //LAB_8004b2b8
+    _800c4ac8.offset(a0 * 0x124L).offset(1, 0x3cL).setu(0x1L);
+    return v1;
+  }
+
   @Method(0x8004b2c4L)
   public static void FUN_8004b2c4() {
     long v0;
@@ -5336,6 +5366,31 @@ public final class Scus94491BpeSegment_8004 {
     MEMORY.ref(2, s1).offset(0xe2L).setu(0);
 
     //LAB_8004d2d4
+  }
+
+  @Method(0x8004d41cL)
+  public static long FUN_8004d41c(final long a0, final long a1, final long a2) {
+    if(a1 >= 0x100L) {
+      //LAB_8004d49c
+      return -0x1L;
+    }
+
+    if(a2 >= 0x80L) {
+      return -0x1L;
+    }
+
+    if(_800c4ac8.offset(a0 * 0x124L).offset(1, 0x28L).get() == 0) {
+      return -0x1L;
+    }
+
+    if(a2 == 0) {
+      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x3aL).setu(0x1L);
+    }
+
+    //LAB_8004d48c
+    //LAB_8004d4a0
+    //LAB_8004d4a4
+    return (short)FUN_8004b1e8(a0, a1, 0xffffL, a2);
   }
 
   @Method(0x8004d4b4L)

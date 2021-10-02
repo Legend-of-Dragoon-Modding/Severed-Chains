@@ -4,6 +4,8 @@ import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
+import legend.core.gte.SVECTOR;
+import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
@@ -33,9 +35,7 @@ public class BigStruct implements MemoryRef {
   /** TODO unknown type */
   public final Value v_64;
 
-  public final UnsignedShortRef us_74;
-  public final UnsignedShortRef us_76;
-  public final UnsignedShortRef us_78;
+  public final SVECTOR svec_74;
 
   public final UnsignedIntRef ui_8c;
   public final UnsignedIntRef ptr_ui_90;
@@ -64,14 +64,8 @@ public class BigStruct implements MemoryRef {
 
   public final UnsignedIntRef ui_f4;
   public final UnsignedIntRef ui_f8;
-  public final UnsignedIntRef ui_fc;
-  public final UnsignedIntRef ui_100;
-  public final UnsignedIntRef ui_104;
-  public final UnsignedIntRef ui_108;
-  public final UnsignedIntRef ui_10c;
-  public final UnsignedIntRef ui_110;
-  public final UnsignedIntRef ui_114;
-  public final UnsignedIntRef ui_118;
+  public final VECTOR scaleVector_fc;
+  public final VECTOR vector_10c;
   public final UnsignedIntRef ui_11c;
   public final UnsignedIntRef ui_120;
   public final UnsignedIntRef ui_124;
@@ -85,17 +79,22 @@ public class BigStruct implements MemoryRef {
 
   public final UnsignedIntRef ui_144;
 
+  public final UnsignedIntRef ui_160;
+
   public final UnsignedIntRef ui_16c;
   public final UnsignedShortRef us_170;
   public final UnsignedShortRef us_172;
 
   public final UnsignedShortRef us_178;
 
+  public final Pointer<UnsignedShortRef> usPtr_17c;
+  public final Pointer<UnsignedShortRef> usPtr_180;
+  public final Pointer<UnsignedShortRef> usPtr_184;
   public final UnsignedIntRef ui_188;
   public final UnsignedIntRef ui_18c;
   public final UnsignedIntRef ui_190;
   public final UnsignedIntRef ui_194;
-
+  public final UnsignedIntRef ui_198;
   public final UnsignedIntRef ui_19c;
   public final UnsignedIntRef ui_1a0;
   public final UnsignedIntRef ui_1a4;
@@ -110,7 +109,11 @@ public class BigStruct implements MemoryRef {
   public final UnsignedByteRef ub_1c5;
   public final UnsignedByteRef ub_1c6;
   public final UnsignedByteRef ub_1c7;
+  public final UnsignedByteRef ub_1c8;
 
+  public final ShortRef s_1ca;
+  public final ShortRef s_1cc;
+  public final ShortRef s_1ce;
   /** TODO unknown type */
   public final Value v_1d0;
 
@@ -128,9 +131,7 @@ public class BigStruct implements MemoryRef {
 
     this.v_64 = ref.offset(4, 0x64L);
 
-    this.us_74 = ref.offset(2, 0x74L).cast(UnsignedShortRef::new);
-    this.us_76 = ref.offset(2, 0x76L).cast(UnsignedShortRef::new);
-    this.us_78 = ref.offset(2, 0x78L).cast(UnsignedShortRef::new);
+    this.svec_74 = ref.offset(2, 0x74L).cast(SVECTOR::new);
 
     this.ui_8c = ref.offset(4, 0x8cL).cast(UnsignedIntRef::new);
     this.ptr_ui_90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
@@ -155,14 +156,8 @@ public class BigStruct implements MemoryRef {
     this.aub_ec = ref.offset(1, 0xecL).cast(ArrayRef.of(UnsignedByteRef.class, 7, 1, UnsignedByteRef::new));
     this.ui_f4 = ref.offset(4, 0xf4L).cast(UnsignedIntRef::new);
     this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);
-    this.ui_fc = ref.offset(4, 0xfcL).cast(UnsignedIntRef::new);
-    this.ui_100 = ref.offset(4, 0x100L).cast(UnsignedIntRef::new);
-    this.ui_104 = ref.offset(4, 0x104L).cast(UnsignedIntRef::new);
-    this.ui_108 = ref.offset(4, 0x108L).cast(UnsignedIntRef::new);
-    this.ui_10c = ref.offset(4, 0x10cL).cast(UnsignedIntRef::new);
-    this.ui_110 = ref.offset(4, 0x110L).cast(UnsignedIntRef::new);
-    this.ui_114 = ref.offset(4, 0x114L).cast(UnsignedIntRef::new);
-    this.ui_118 = ref.offset(4, 0x118L).cast(UnsignedIntRef::new);
+    this.scaleVector_fc = ref.offset(4, 0xfcL).cast(VECTOR::new);
+    this.vector_10c = ref.offset(4, 0x10cL).cast(VECTOR::new);
     this.ui_11c = ref.offset(4, 0x11cL).cast(UnsignedIntRef::new);
     this.ui_120 = ref.offset(4, 0x120L).cast(UnsignedIntRef::new);
     this.ui_124 = ref.offset(4, 0x124L).cast(UnsignedIntRef::new);
@@ -176,17 +171,22 @@ public class BigStruct implements MemoryRef {
 
     this.ui_144 = ref.offset(4, 0x144L).cast(UnsignedIntRef::new);
 
+    this.ui_160 = ref.offset(4, 0x160L).cast(UnsignedIntRef::new);
+
     this.ui_16c = ref.offset(4, 0x16cL).cast(UnsignedIntRef::new);
     this.us_170 = ref.offset(2, 0x170L).cast(UnsignedShortRef::new);
     this.us_172 = ref.offset(2, 0x172L).cast(UnsignedShortRef::new);
 
     this.us_178 = ref.offset(2, 0x178L).cast(UnsignedShortRef::new);
 
+    this.usPtr_17c = ref.offset(4, 0x17cL).cast(Pointer.deferred(4, UnsignedShortRef::new));
+    this.usPtr_180 = ref.offset(4, 0x180L).cast(Pointer.deferred(4, UnsignedShortRef::new));
+    this.usPtr_184 = ref.offset(4, 0x184L).cast(Pointer.deferred(4, UnsignedShortRef::new));
     this.ui_188 = ref.offset(4, 0x188L).cast(UnsignedIntRef::new);
     this.ui_18c = ref.offset(4, 0x18cL).cast(UnsignedIntRef::new);
     this.ui_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
     this.ui_194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
-
+    this.ui_198 = ref.offset(4, 0x198L).cast(UnsignedIntRef::new);
     this.ui_19c = ref.offset(4, 0x19cL).cast(UnsignedIntRef::new);
     this.ui_1a0 = ref.offset(4, 0x1a0L).cast(UnsignedIntRef::new);
     this.ui_1a4 = ref.offset(4, 0x1a4L).cast(UnsignedIntRef::new);
@@ -201,7 +201,11 @@ public class BigStruct implements MemoryRef {
     this.ub_1c5 = ref.offset(1, 0x1c5L).cast(UnsignedByteRef::new);
     this.ub_1c6 = ref.offset(1, 0x1c6L).cast(UnsignedByteRef::new);
     this.ub_1c7 = ref.offset(1, 0x1c7L).cast(UnsignedByteRef::new);
+    this.ub_1c8 = ref.offset(1, 0x1c8L).cast(UnsignedByteRef::new);
 
+    this.s_1ca = ref.offset(2, 0x1caL).cast(ShortRef::new);
+    this.s_1cc = ref.offset(2, 0x1ccL).cast(ShortRef::new);
+    this.s_1ce = ref.offset(2, 0x1ceL).cast(ShortRef::new);
     this.v_1d0 = ref.offset(4, 0x1d0L);
   }
 

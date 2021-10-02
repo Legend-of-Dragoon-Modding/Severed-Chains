@@ -4,6 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -65,7 +66,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003b3f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c660;
+import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
@@ -628,9 +629,9 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_800e6b3c(bigStruct_800bda10, _800103d0.getAddress(), _8001051c.getAddress());
 
-    bigStruct_800bda10.us_74.set(0);
-    bigStruct_800bda10.us_76.set(0);
-    bigStruct_800bda10.us_78.set(0);
+    bigStruct_800bda10.svec_74.x.set((short)0);
+    bigStruct_800bda10.svec_74.y.set((short)0);
+    bigStruct_800bda10.svec_74.z.set((short)0);
     bigStruct_800bda10.ub_9d.set(0);
     bigStruct_800bda10.ub_cc.set(0);
   }
@@ -638,9 +639,9 @@ public final class Scus94491BpeSegment_800e {
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, long, long)} */
   @Method(0x800e6b3cL)
   public static void FUN_800e6b3c(final BigStruct a0, final long a1, final long a2) {
-    final int sp30 = a0.coord2_14.coord.getTransferVector(0);
-    final int sp34 = a0.coord2_14.coord.getTransferVector(1);
-    final int sp38 = a0.coord2_14.coord.getTransferVector(2);
+    final int x = a0.coord2_14.coord.transfer.getX();
+    final int y = a0.coord2_14.coord.transfer.getY();
+    final int z = a0.coord2_14.coord.transfer.getZ();
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
@@ -653,7 +654,7 @@ public final class Scus94491BpeSegment_800e {
     a0.s_c8.set((short)MEMORY.ref(2, a2).offset(0xcL).get());
     a0.ui_8c.set(a1 + 0xcL);
     a0.us_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
-    a0.ui_108.set(MEMORY.ref(4, a1).offset(0xcL).get(0xffff0000L) >>> 0xbL);
+    a0.scaleVector_fc.setPad((int)(MEMORY.ref(4, a1).offset(0xcL).get(0xffff0000L) >>> 11));
 
     long v0 = MEMORY.ref(4, a1).offset(0x8L).get();
     if(v0 == 0) {
@@ -676,7 +677,7 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6c64
     a0.ui_8c.add(0x4L);
-    FUN_8003c660(a0.ui_8c.get());
+    adjustTmdPointers(MEMORY.ref(4, a0.ui_8c.get(), Tmd::new)); //TODO
     FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.s_c8.get());
     a0.ui_58.set(a0.v_64.getAddress());
     insertCoordinate2(null, a0.coord2_14);
@@ -690,17 +691,17 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_80021584(a0, a2);
 
-    a0.coord2_14.coord.setTransferVector(0, sp30);
-    a0.coord2_14.coord.setTransferVector(1, sp34);
-    a0.coord2_14.coord.setTransferVector(2, sp38);
+    a0.coord2_14.coord.transfer.setX(x);
+    a0.coord2_14.coord.transfer.setY(y);
+    a0.coord2_14.coord.transfer.setZ(z);
     a0.ub_cc.set(0);
-    a0.ui_fc.set(0x1000L);
-    a0.ui_100.set(0x1000L);
-    a0.ui_104.set(0x1000L);
-    a0.ui_10c.set(0x1000L);
-    a0.ui_110.set(0x1000L);
-    a0.ui_114.set(0x1000L);
-    a0.ui_118.set(0);
+    a0.scaleVector_fc.setX(0x1000);
+    a0.scaleVector_fc.setY(0x1000);
+    a0.scaleVector_fc.setZ(0x1000);
+    a0.vector_10c.setX(0x1000);
+    a0.vector_10c.setY(0x1000);
+    a0.vector_10c.setZ(0x1000);
+    a0.vector_10c.setPad(0);
     a0.ui_11c.set(0);
     a0.ui_120.set(0);
   }

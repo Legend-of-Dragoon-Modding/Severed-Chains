@@ -17,13 +17,17 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.EnumRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
+import legend.game.types.HmdSomethingStruct;
 import legend.game.types.JoyStruct;
+import legend.game.types.TwoVectorsAndRotation;
 
 import java.util.function.Function;
 
@@ -65,6 +69,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb0b0 = MEMORY.ref(4, 0x800bb0b0L);
 
+  public static final Value _800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
   public static final Value _800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
@@ -119,22 +124,13 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final Value _800bc060 = MEMORY.ref(4, 0x800bc060L);
 
-  public static final Value _800bc070 = MEMORY.ref(4, 0x800bc070L);
-  public static final Value _800bc074 = MEMORY.ref(4, 0x800bc074L);
-  public static final Value _800bc078 = MEMORY.ref(4, 0x800bc078L);
-  public static final Value _800bc07c = MEMORY.ref(4, 0x800bc07cL);
-  public static final Value _800bc080 = MEMORY.ref(4, 0x800bc080L);
-  public static final Value _800bc084 = MEMORY.ref(4, 0x800bc084L);
-  public static final Value _800bc088 = MEMORY.ref(4, 0x800bc088L);
-  public static final Value _800bc08c = MEMORY.ref(4, 0x800bc08cL);
+  public static final HmdSomethingStruct _800bc070 = MEMORY.ref(4, 0x800bc070L, HmdSomethingStruct::new);
 
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
 
-  public static final BiggerStruct<BigStruct> biggerStruct_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, BiggerStruct.of(BigStruct::new));
-
-  public static final ArrayRef<Pointer<BiggerStruct<BigStruct>>> biggerStructPtrArr_800bc1c0 = MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(BiggerStruct.classFor(BigStruct.class)), 0x48, 4, Pointer.of(4, BiggerStruct.of(BigStruct::new))));
-
+  public static final BiggerStruct<VoidRef> biggerStruct_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, BiggerStruct.of(VoidRef::new));
+  public static final ArrayRef<Pointer<BiggerStruct<? extends MemoryRef>>> biggerStructPtrArr_800bc1c0 = (ArrayRef<Pointer<BiggerStruct<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(BiggerStruct.class), 0x48, 4, (Function)Pointer.deferred(4, BiggerStruct.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
 
   public static final Value _800bc300 = MEMORY.ref(4, 0x800bc300L);
@@ -282,14 +278,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
 
-  public static final Value _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L);
-  public static final Value _800bd7ec = MEMORY.ref(4, 0x800bd7ecL);
-  public static final Value _800bd7f0 = MEMORY.ref(4, 0x800bd7f0L);
-  public static final Value _800bd7f4 = MEMORY.ref(4, 0x800bd7f4L);
-  public static final Value _800bd7f8 = MEMORY.ref(4, 0x800bd7f8L);
-  public static final Value _800bd7fc = MEMORY.ref(4, 0x800bd7fcL);
-  public static final Value _800bd800 = MEMORY.ref(4, 0x800bd800L);
-  public static final Value _800bd804 = MEMORY.ref(4, 0x800bd804L);
+  public static final TwoVectorsAndRotation _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, TwoVectorsAndRotation::new);
   public static final Value _800bd808 = MEMORY.ref(4, 0x800bd808L);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
@@ -641,14 +630,14 @@ public final class Scus94491BpeSegment_800b {
   public static final Value HwCARD_EvSpERROR_EventId_800bf264 = MEMORY.ref(4, 0x800bf264L);
   public static final Value HwCARD_EvSpTIMOUT_EventId_800bf268 = MEMORY.ref(4, 0x800bf268L);
   public static final Value HwCARD_EvSpNEW_EventId_800bf26c = MEMORY.ref(4, 0x800bf26cL);
-  public static final Value _800bf270 = MEMORY.ref(4, 0x800bf270L);
-  public static final Value _800bf274 = MEMORY.ref(4, 0x800bf274L);
-  public static final Value _800bf278 = MEMORY.ref(4, 0x800bf278L);
-  public static final Value _800bf27c = MEMORY.ref(4, 0x800bf27cL);
-  public static final Value _800bf280 = MEMORY.ref(4, 0x800bf280L);
-  public static final Value _800bf284 = MEMORY.ref(4, 0x800bf284L);
-  public static final Value _800bf288 = MEMORY.ref(4, 0x800bf288L);
-  public static final Value _800bf28c = MEMORY.ref(4, 0x800bf28cL);
+  public static final BoolRef cardDoneRead_800bf270 = MEMORY.ref(4, 0x800bf270L, BoolRef::new);
+  public static final BoolRef cardErrorWrite_800bf274 = MEMORY.ref(4, 0x800bf274L, BoolRef::new);
+  public static final BoolRef cardErrorBusy_800bf278 = MEMORY.ref(4, 0x800bf278L, BoolRef::new);
+  public static final BoolRef cardErrorEject_800bf27c = MEMORY.ref(4, 0x800bf27cL, BoolRef::new);
+  public static final BoolRef cardFinishedOkay_800bf280 = MEMORY.ref(4, 0x800bf280L, BoolRef::new);
+  public static final BoolRef cardError8000_800bf284 = MEMORY.ref(4, 0x800bf284L, BoolRef::new);
+  public static final BoolRef cardErrorBusyLow_800bf288 = MEMORY.ref(4, 0x800bf288L, BoolRef::new);
+  public static final BoolRef cardError2000_800bf28c = MEMORY.ref(4, 0x800bf28cL, BoolRef::new);
 
   public static final Value _800bf550 = MEMORY.ref(4, 0x800bf550L);
   public static final Value _800bf554 = MEMORY.ref(2, 0x800bf554L);
