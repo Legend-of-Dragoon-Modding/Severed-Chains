@@ -20,8 +20,11 @@ import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.GsOT;
+import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
 
 import java.util.function.Function;
@@ -328,11 +331,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _8005a2ac = MEMORY.ref(4, 0x8005a2acL);
   public static final Value _8005a2b0 = MEMORY.ref(4, 0x8005a2b0L);
 
-  public static final Value _8005a370 = MEMORY.ref(4, 0x8005a370L);
-  public static final Value _8005a374 = MEMORY.ref(4, 0x8005a374L);
-
-  public static final Value _8005a384 = MEMORY.ref(4, 0x8005a384L);
-  public static final Value _8005a388 = MEMORY.ref(4, 0x8005a388L);
-
-  public static final Value _8005a398 = MEMORY.ref(4, 0x8005a398L);
+  public static final ArrayRef<GsOT> orderingTables_8005a370 = MEMORY.ref(4, 0x8005a370L, ArrayRef.of(GsOT.class, 2, 0x14, GsOT::new));
+  public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> _8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
 }

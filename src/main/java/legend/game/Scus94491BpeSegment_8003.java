@@ -41,8 +41,9 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.GsOT;
+import legend.game.types.GsOT_TAG;
 import legend.game.types.MathStruct;
 import legend.game.types.TwoVectorsAndRotation;
 import legend.game.types.WeirdTimHeader;
@@ -4223,7 +4224,7 @@ public final class Scus94491BpeSegment_8003 {
    * Initialize an array to a linked list for use as an ordering table.
    *
    * @param ot Head pointer of OT
-   * @param count  Number of entries in OT
+   * @param count Number of entries in OT
    *
    * Walks the array specified by ot and sets each element to be a pointer to the previous element, except the
    * first, which is set to a pointer to a special terminator value which the PlayStation uses to recognize the end
@@ -4232,17 +4233,16 @@ public final class Scus94491BpeSegment_8003 {
    * To execute the OT initialized by ClearOTagR(), execute DrawOTag(ot+n-1).
    */
   @Method(0x800389f8L)
-  public static long ClearOTagR(final long ot, final long count) {
+  public static UnboundedArrayRef<GsOT_TAG> ClearOTagR(final UnboundedArrayRef<GsOT_TAG> ot, final int count) {
     LOGGER.trace("ClearOTagR(%08x,%d)...", ot, count);
 
-    final long dmaOtcAddress = ot + (count - 1) * 4;
-
-    for(int i = 0; i < count - 1; i++) {
-      MEMORY.ref(4, dmaOtcAddress).offset(-i * 4L).setu(dmaOtcAddress - (i + 1) * 4L & 0xff_ffffL);
+    for(int i = 1; i < count; i++) {
+      ot.get(i).set(ot.get(i - 1).getAddress() & 0xff_ffffL);
     }
 
     _8005477c.setu(0x405_4768L);
-    MEMORY.ref(4, ot).setu(0x5_477cL);
+    ot.get(0).num.set(0);
+    ot.get(0).p.set(0x5_477cL);
     return ot;
 
     // Pre-optimisation:
@@ -4567,12 +4567,12 @@ public final class Scus94491BpeSegment_8003 {
         //LAB_800396d4
         // Monochrome quad
         dr_env.code.get(size++).set(0x6000_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() - drawEnv.ofs.get(0).get() & 0xffff) << 16 | drawEnv.clip.y.get() - drawEnv.ofs.get(1).get() & 0xffff);
+        dr_env.code.get(size++).set((drawEnv.clip.x.get() - drawEnv.ofs.get(0).get() & 0xffffL) << 16 | drawEnv.clip.y.get() - drawEnv.ofs.get(1).get() & 0xffffL);
       } else {
         //LAB_8003974c
         // Monochrome triangle, opaque
         dr_env.code.get(size++).set(0x200_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() & 0xffff) << 16 | drawEnv.clip.y.get() & 0xffff);
+        dr_env.code.get(size++).set((drawEnv.clip.x.get() & 0xffffL) << 16 | drawEnv.clip.y.get() & 0xffffL);
       }
 
       dr_env.code.get(size++).set(width << 16 | height);
@@ -4609,13 +4609,13 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003993c
-    final long v0 = rect.y.get() / 8L << 15;
-    final long a1 = rect.x.get() / 8L << 10;
-    final long v1 = (-rect.h.get() & 0xffL) / 8L << 5;
-    final long a2 = (-rect.w.get() & 0xffL) / 8L;
+    final long y = rect.y.get() / 8L << 15;
+    final long x = rect.x.get() / 8L << 10;
+    final long h = (-rect.h.get() & 0xffL) / 8L << 5;
+    final long w = (-rect.w.get() & 0xffL) / 8L;
 
     //LAB_800399a4
-    return 0xe200_0000L | v0 | a1 | v1 | a2;
+    return 0xe200_0000L | y | x | h | w;
   }
 
   @Method(0x80039aa4L)
@@ -4632,8 +4632,8 @@ public final class Scus94491BpeSegment_8003 {
         .add(0xe600_0000L) // Mask bit (draw always)
         .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
         .add(0x6000_0000L | colour) // Monochrome rect (var size, opaque) - colour bbrrgg
-        .add(rect.y.get() << 16 | rect.x.get()) // - vertex YyyyXxxx
-        .add(rect.h.get() << 16 | rect.w.get()) // - w/h HhhhWwww
+        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - vertex YyyyXxxx
+        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - w/h HhhhWwww
         .next(_800c1be8)
       );
 
@@ -4648,8 +4648,8 @@ public final class Scus94491BpeSegment_8003 {
         .add(0xe600_0000L) // Mask bit (draw always)
         .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
         .add(0x0200_0000L | colour) // Fill rect - BbGgRr
-        .add(rect.y.get() << 16 | rect.x.get()) // - YyyyXxxx
-        .add(rect.h.get() << 16 | rect.w.get()) // - HhhhWwww
+        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - YyyyXxxx
+        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - HhhhWwww
       );
     }
 
@@ -5321,8 +5321,9 @@ public final class Scus94491BpeSegment_8003 {
     _800c34d0.setu(0x1L);
   }
 
+  //TODO struct
   @Method(0x8003c048L)
-  public static void FUN_8003c048(final long a0, final long a1, final long a2, final long a3) {
+  public static void FUN_8003c048(final long a0, final long a1, final long a2, final GsOT ot) {
     _800c3424.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a0);
     _800c3425.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a1);
     _800c3426.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a2);
@@ -5345,13 +5346,13 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003c150
-    FUN_8003c180(MEMORY.ref(4, a3).offset(0x10L).get(), _800c3420.offset(doubleBufferFrame_800c34d4.get() * 16).getAddress());
+    FUN_8003c180(ot.tag_10.deref(), _800c3420.offset(doubleBufferFrame_800c34d4.get() * 16).getAddress());
   }
 
   @Method(0x8003c180L)
-  public static void FUN_8003c180(final long a0, final long a1) {
-    MEMORY.ref(4, a1).setu(MEMORY.ref(4, a1).get(0xff00_0000L) | MEMORY.ref(4, a0).get(0x00ff_ffffL));
-    MEMORY.ref(4, a0).setu(MEMORY.ref(4, a0).get(0xff00_0000L) | a1 & 0x00ff_ffffL); //TODO this code is correct but I feel like it's a bug in the SDK... every other one is getting the value at the pointer, but this one is using the pointer address
+  public static void FUN_8003c180(final GsOT_TAG tag, final long a1) {
+    MEMORY.ref(3, a1).setu(tag.p.get());
+    tag.p.set(a1 & 0xff_ffffL);
   }
 
   @Method(0x8003c1c0L)
@@ -5604,17 +5605,17 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cd10L)
-  public static void drawOTag(final long a0) {
-    DrawOTag(MEMORY.ref(4, a0).offset(0x10L).deref(4).cast(UnsignedIntRef::new));
+  public static void drawOTag(final GsOT ot) {
+    DrawOTag(ot.tag_10.deref());
   }
 
   @Method(0x8003cd40L)
-  public static void FUN_8003cd40(final long a0, final long a1, final long a2) {
-    MEMORY.ref(4, a2).offset(0x8L).setu(a0);
-    MEMORY.ref(4, a2).offset(0xcL).setu(a1);
-    MEMORY.ref(4, a2).offset(0x10L).setu(MEMORY.ref(4, a2).offset(0x4L)).add((0x4L << MEMORY.ref(4, a2).get()) - 0x4L);
+  public static void FUN_8003cd40(final long offset, final long point, final GsOT ot) {
+    ot.offset_08.set(offset);
+    ot.point_0c.set(point);
+    ot.tag_10.set(ot.org_04.deref().get((1 << ot.length_00.get()) - 1));
 
-    ClearOTagR(MEMORY.ref(4, a2).offset(0x4L).get(), 0x1L << MEMORY.ref(4, a2).get());
+    ClearOTagR(ot.org_04.deref(), 1 << ot.length_00.get());
   }
 
   @Method(0x8003cda0L)

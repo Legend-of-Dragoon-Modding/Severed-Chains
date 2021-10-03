@@ -25,6 +25,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
+import legend.game.types.GsOT;
 import legend.game.types.HmdSomethingStruct;
 import legend.game.types.MathStruct;
 import legend.game.types.TwoVectorsAndRotation;
@@ -58,7 +59,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
 import static legend.game.Scus94491BpeSegment.FUN_8001f3d0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ffb0;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
-import static legend.game.Scus94491BpeSegment._1f8003d0;
+import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
@@ -134,7 +135,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
-import static legend.game.Scus94491BpeSegment_8005._8005a370;
+import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
 import static legend.game.Scus94491BpeSegment_8007._8007a3b8;
@@ -478,8 +479,7 @@ public final class SMap {
 
   public static final Value _800f64ac = MEMORY.ref(4, 0x800f64acL);
 
-  public static final Value _800f64c0 = MEMORY.ref(4, 0x800f64c0L);
-
+  public static final Pointer<GsOT> _800f64c0 = MEMORY.ref(4, 0x800f64c0L, Pointer.of(4, GsOT::new));
   public static final Value _800f64c4 = MEMORY.ref(1, 0x800f64c4L);
 
   public static final Value _800f64c6 = MEMORY.ref(1, 0x800f64c6L);
@@ -1875,7 +1875,7 @@ public final class SMap {
 
     MEMORY.ref(4, a1).offset(0x48L).deref(4).call(a1);
 
-    _800f64c0.setu(_8005a370.offset(doubleBufferFrame_800bb108.get() * 0x14L).getAddress());
+    _800f64c0.set(orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
     _800c6ae0.addu(0x1L);
 
     if(_800bb0ab.get() != 0) {
@@ -1888,7 +1888,7 @@ public final class SMap {
 
   @Method(0x800e519cL)
   public static void FUN_800e519c() {
-    if(_800f64c0.get() == 0) {
+    if(_800f64c0.isNull()) {
       return;
     }
 
@@ -1903,7 +1903,7 @@ public final class SMap {
     }
 
     //LAB_800e5234
-    FUN_800e7954(_800f64c0.get(), matrices, _800c6730.get());
+    FUN_800e7954(_800f64c0.deref(), matrices, _800c6730.get());
 
     //LAB_800e5248
   }
@@ -2934,7 +2934,7 @@ public final class SMap {
   }
 
   @Method(0x800e7954L)
-  public static void FUN_800e7954(long a0, MATRIX[] a1, final long a2) {
+  public static void FUN_800e7954(final GsOT ot, MATRIX[] a1, final long a2) {
     long s0;
     long s1;
     long s3;
@@ -2962,7 +2962,7 @@ public final class SMap {
       v1 += MEMORY.ref(2, s1).offset(0x1eL).get();
       MEMORY.ref(2, s1).offset(0x12L).setu(v1);
       memcpy(s0, s1, 0x1c);
-      insertElementIntoLinkedList(MEMORY.ref(4, a0).offset(0x4L).get() + MEMORY.ref(2, s1).offset(0x20L).getSigned() * 0x4L, s0);
+      insertElementIntoLinkedList(ot.org_04.deref().get((int)MEMORY.ref(2, s1).offset(0x20L).get()).getAddress(), s0);
       s1 += 0x24L;
     }
 
@@ -3070,7 +3070,6 @@ public final class SMap {
       s3 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.addu(0x1cL);
       if(_800cb590.offset(i * 0xcL).offset(0x8L).get() == 0) {
-        s0 = MEMORY.ref(4, a0).offset(0x4L).get() + sp38[i] * 0x4L;
         v0 = _800cb560.get();
         v0 += screenOffsetX_800cb568.get();
         v0 += MEMORY.ref(2, s1).offset(0x1cL).get();
@@ -3082,7 +3081,7 @@ public final class SMap {
         v0 += _800cb590.offset(i * 0xcL).offset(0x4L).get();
         MEMORY.ref(2, s1).offset(0x12L).setu(v0);
         memcpy(s3, s1, 0x1c);
-        insertElementIntoLinkedList(s0, s3);
+        insertElementIntoLinkedList(ot.org_04.deref().get((int)sp38[i]).getAddress(), s3);
       }
 
       //LAB_800e7eb4
@@ -3985,7 +3984,7 @@ public final class SMap {
         MEMORY.ref(1, s1).offset(0x24L).setu(sp10[(int)MEMORY.ref(2, s0).offset(0x2L).getSigned()] + sp30[(int)MEMORY.ref(2, s0).offset(0x2L).getSigned()]);
         MEMORY.ref(1, s1).offset(0x25L).setu(sp20[(int)MEMORY.ref(2, s0).offset(0x2L).getSigned()] + sp40[(int)MEMORY.ref(2, s0).offset(0x2L).getSigned()]);
 
-        insertElementIntoLinkedList(_1f8003d0.deref(4).offset(MEMORY.ref(4, s0).offset(0x4cL).get() * 0x4L).getAddress(), s1);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s0).offset(0x4cL).get()).getAddress(), s1);
 
         MEMORY.ref(2, s0).offset(0x4L).addu(0x1L);
         s0 = MEMORY.ref(4, s0).offset(0x50L).get();
@@ -4144,8 +4143,8 @@ public final class SMap {
         MEMORY.ref(1, s0).offset(0x5L).setu(a0);
         MEMORY.ref(1, s0).offset(0x6L).setu(a3);
 
-        insertElementIntoLinkedList(_1f8003d0.get() + MEMORY.ref(4, s1).offset(0x20L).get() * 0x4L, s0);
-        insertElementIntoLinkedList(_1f8003d0.get() + MEMORY.ref(4, s1).offset(0x20L).get() * 0x4L, s3);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s1).offset(0x20L).get()).getAddress(), s0);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s1).offset(0x20L).get()).getAddress(), s3);
 
         s3 = s1;
         MEMORY.ref(2, s1).addu(0x1L);
@@ -4675,11 +4674,7 @@ public final class SMap {
         MEMORY.ref(2, a1).offset(0x1aL).setu(sp1a);
         MEMORY.ref(2, a1).offset(0x20L).setu(sp12);
         MEMORY.ref(2, a1).offset(0x22L).setu(sp1a);
-        a0 = MEMORY.ref(4, s0).offset(0x34L).get();
-        v0 = _1f8003d0.get();
-        a0 <<= 2;
-        a0 += v0;
-        insertElementIntoLinkedList(a0, a1);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s0).offset(0x34L).get()).getAddress(), a1);
         v0 = MEMORY.ref(2, s0).offset(0x2L).get();
         s1 = s0;
         v0++;
@@ -4771,7 +4766,7 @@ public final class SMap {
       //LAB_800f4660
       FUN_800f4754(0xbL);
       FUN_8003b780(linkedListAddress_1f8003d8.get(), new RECT((short)992, (short)288, (short)8, (short)64), 984L, 288L);
-      insertElementIntoLinkedList(_1f8003d0.get() + 0x4L, linkedListAddress_1f8003d8.get());
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
       _800f9ea8.addu(0x1L);
       _800f9eac.setu(0x1L);

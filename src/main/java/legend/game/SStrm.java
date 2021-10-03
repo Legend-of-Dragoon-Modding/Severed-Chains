@@ -267,6 +267,7 @@ public final class SStrm {
     }
 
     //TODO adding this to skip FMVs
+    LOGGER.warn("Skipping FMV");
     resetMdec_800fe7a4.setu(0x1L);
 
     //LAB_800fbda0

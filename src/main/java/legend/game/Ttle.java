@@ -18,6 +18,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.GsOT_TAG;
 import legend.game.types.TmdRenderingStruct;
 import legend.game.types.TwoVectorsAndRotation;
 
@@ -38,7 +39,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80019a60;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
-import static legend.game.Scus94491BpeSegment._1f8003d0;
+import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -52,7 +53,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b850;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dca0;
@@ -66,13 +66,14 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c6f8;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
-import static legend.game.Scus94491BpeSegment_8005._8005a374;
+import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
 import static legend.game.Scus94491BpeSegment_8007._8007a3b8;
@@ -839,7 +840,7 @@ public final class Ttle {
       MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce7f8.offset((i * 2L + 0x1L) * 4)); // U
       MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce7f8.offset(i * 8L).get() + 0x10L); // V
 
-      insertElementIntoLinkedList(_1f8003d0.get() + 400L, sp10);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(100).getAddress(), sp10);
       sp10 += 0x28L;
 
       setCommand(0xcL, sp10, true, false);
@@ -873,7 +874,7 @@ public final class Ttle {
       MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
       MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 0x20L);
 
-      insertElementIntoLinkedList(_1f8003d0.get() + 400L, sp10);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(100).getAddress(), sp10);
       sp10 += 0x28L;
     }
 
@@ -1073,7 +1074,7 @@ public final class Ttle {
       MEMORY.ref(1, address).offset(0x24L).setu(_800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4));
       MEMORY.ref(1, address).offset(0x25L).setu(_800ce7f8.offset((i + 0x3L) * 8).get() + 0x10L);
 
-      insertElementIntoLinkedList(_1f8003d0.get() + 0x190L, address);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(100).getAddress(), address);
       address += 0x28L;
     }
 
@@ -1109,7 +1110,7 @@ public final class Ttle {
       MEMORY.ref(1, address).offset(0x24L).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get());
       MEMORY.ref(1, address).offset(0x25L).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4).get() + 0x1fL);
 
-      insertElementIntoLinkedList(_1f8003d0.get() + 0x190L, address);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(100).getAddress(), address);
       address += 0x28L;
     }
 
@@ -1169,7 +1170,7 @@ public final class Ttle {
       MEMORY.ref(1, address).offset(0x24L).setu(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get());
       MEMORY.ref(1, address).offset(0x25L).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4).get() + 0x1fL);
 
-      insertElementIntoLinkedList(_1f8003d0.get() + 0x190L, address);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(100).getAddress(), address);
       address += 0x28L;
     }
 
@@ -1363,7 +1364,7 @@ public final class Ttle {
     MEMORY.ref(1, address).offset(0x24L).setu(u + uw); // U
     MEMORY.ref(1, address).offset(0x25L).setu(v + uh); // V
 
-    insertElementIntoLinkedList(_1f8003d0.get() + a14 * 4, address);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)a14).getAddress(), address);
   }
 
   @Method(0x800cb5c4L)
@@ -1482,12 +1483,12 @@ public final class Ttle {
     MEMORY.ref(1, sp3c).offset(0x0dL).setu(sp24 * 16);
     MEMORY.ref(2, sp3c).offset(0x10L).setu(256);
     MEMORY.ref(2, sp3c).offset(0x12L).setu(240);
-    insertElementIntoLinkedList(_1f8003d0.get() + 0x14L, sp3c);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp3c);
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp40 = linkedListAddress_1f8003d8.get();
     FUN_8003b850(sp40, false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get(), null);
-    insertElementIntoLinkedList(_1f8003d0.get() + 0x14L, sp40);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp40);
     linkedListAddress_1f8003d8.addu(0xcL);
 
     // GP0.66 Textured quad, variable size, translucent, blended
@@ -1504,12 +1505,12 @@ public final class Ttle {
     //                 2               0x0eL                // CLUT
     MEMORY.ref(2, sp44).offset(0x10L).setu(128);    // W
     MEMORY.ref(2, sp44).offset(0x12L).setu(240);    // H
-    insertElementIntoLinkedList(_1f8003d0.get() + 0x14L, sp44);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp44);
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp48 = linkedListAddress_1f8003d8.get();
     FUN_8003b850(sp48, false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get() | 4, null);
-    insertElementIntoLinkedList(_1f8003d0.get() + 0x14L, sp48);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp48);
     linkedListAddress_1f8003d8.addu(0xcL);
 
     if(_800c66fc.get() == 0x800L) {
@@ -1699,8 +1700,9 @@ public final class Ttle {
                     }
 
                     //LAB_800ccaf4
-                    MEMORY.ref(4, address).setu(_1f8003d0.deref(4).offset(a3 * 4).get(0xff_ffffL) | 0x900_0000L);
-                    _1f8003d0.deref(4).offset(a3 * 4).setu(address & 0xff_ffffL);
+                    MEMORY.ref(4, address).setu(tags_1f8003d0.deref().get((int)a3).p.get() | 0x900_0000L);
+                    tags_1f8003d0.deref().get((int)a3).num.set(0);
+                    tags_1f8003d0.deref().get((int)a3).p.set(address & 0xff_ffffL);
                     address += 0x28L;
                   }
                 }
@@ -1732,18 +1734,17 @@ public final class Ttle {
     long sp08;
 
     long sp18 = a0;
-    final long sp1c = a1;
     long sp20 = len;
     final long sp00 = _800c671c.get();
-    a1 = _8005a374.offset(doubleBufferFrame_800bb108.get() * 20).get();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
     v1 = linkedListAddress_1f8003d8.get();
 
     //LAB_800ccbcc
     while(sp20 != 0) {
       //LAB_800ccbe4
-      final SVECTOR t5 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x24L).get() * 8, SVECTOR::new);
-      final SVECTOR t6 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x26L).get() * 8, SVECTOR::new);
-      final SVECTOR t7 = MEMORY.ref(4, sp1c + MEMORY.ref(2, sp18).offset(0x28L).get() * 8, SVECTOR::new);
+      final SVECTOR t5 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x24L).get() * 8, SVECTOR::new);
+      final SVECTOR t6 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x26L).get() * 8, SVECTOR::new);
+      final SVECTOR t7 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x28L).get() * 8, SVECTOR::new);
       CPU.MTC2(t5.getXY(), 0); // VXY0
       CPU.MTC2(t5.getZ(),  1); // VZ0
       CPU.MTC2(t6.getXY(), 2); // VXY1
@@ -1766,7 +1767,7 @@ public final class Ttle {
           MEMORY.ref(4, v1).offset(0x08L).setu(CPU.MFC2(0xcL));
           MEMORY.ref(4, v1).offset(0x14L).setu(CPU.MFC2(0xdL));
           MEMORY.ref(4, v1).offset(0x20L).setu(CPU.MFC2(0xeL));
-          v0 = MEMORY.ref(2, sp18).offset(0x2aL).get() * 8 + sp1c;
+          v0 = MEMORY.ref(2, sp18).offset(0x2aL).get() * 8 + a1;
           CPU.MTC2(MEMORY.ref(4, v0).get(), 0x0L);
           CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 0x1L);
           CPU.COP2(0x180001L);
@@ -1920,13 +1921,9 @@ public final class Ttle {
                     v0 = t0 - a3;
                     MEMORY.ref(1, v1).offset(0x2aL).setu(v0);
 
-                    a0 = a1 + _800c6758.get() * 4;
-                    v0 = MEMORY.ref(4, a0).get();
-                    v0 &= 0xff_ffffL;
-                    v0 |= 0xc00_0000L;
-                    MEMORY.ref(4, v1).setu(v0);
-                    a3 = v1 & 0xff_ffffL;
-                    MEMORY.ref(4, a0).setu(a3);
+                    MEMORY.ref(4, v1).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL);
+                    tags.get((int)_800c6758.get()).num.set(0x0c);
+                    tags.get((int)_800c6758.get()).p.set(v1 & 0xff_ffffL);
                     v1 += 0x34L;
                   }
                 }
