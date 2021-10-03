@@ -1763,11 +1763,11 @@ public final class SMap {
   public static void FUN_800e4d00(final long a0, final long a1) {
     if(FUN_800e5264(_800c6ac0.getAddress(), a0) == 0) {
       //LAB_800e4d34
-      final SVECTOR sp10 = new SVECTOR();
-      FUN_800e92dc(a1, sp10);
-      _800c6ac0.transfer.setX(sp10.getX());
-      _800c6ac0.transfer.setY(sp10.getY());
-      _800c6ac0.transfer.setZ(sp10.getZ());
+      final SVECTOR avg = new SVECTOR();
+      get3dAverageOfSomething(a1, avg);
+      _800c6ac0.transfer.setX(avg.getX());
+      _800c6ac0.transfer.setY(avg.getY());
+      _800c6ac0.transfer.setZ(avg.getZ());
       _800f7e24.setu(0x2L);
     } else {
       _800f7e24.setu(0x1L);
@@ -1791,7 +1791,7 @@ public final class SMap {
     } else {
       //LAB_800e4e20
       final SVECTOR sp10 = new SVECTOR();
-      FUN_800e92dc(a1.coord2_14.coord.getAddress() + 0x18L, sp10);
+      get3dAverageOfSomething(a1.coord2_14.coord.getAddress() + 0x18L, sp10);
       a1.coord2_14.coord.transfer.setX(sp10.getX());
       a1.coord2_14.coord.transfer.setY(sp10.getY());
       a1.coord2_14.coord.transfer.setZ(sp10.getZ());
@@ -2000,9 +2000,9 @@ public final class SMap {
     boolean a0;
 
     if(_800cb440.get() == 0) {
-      v1 = _800cab20.get();
       _800cab20.subu(0x1L);
-      if((int)v1 > 0) {
+
+      if(_800cab20.getSigned() >= 0) {
         DrawSync(0);
         FUN_80013200(0x180L, 0);
         DrawSync(0);
@@ -3093,7 +3093,7 @@ public final class SMap {
   }
 
   @Method(0x800e7f00L)
-  public static void transformVertices(final UnsignedIntRef x, final UnsignedIntRef y, final SVECTOR v0) {
+  public static void transformVertex(final IntRef x, final IntRef y, final SVECTOR v0) {
     final DVECTOR[] v1 = {new DVECTOR()};
     RotTransPersN(new SVECTOR[] {v0}, v1, new UnsignedShortRef[] {new UnsignedShortRef()}, new UnsignedShortRef[] {new UnsignedShortRef()}, new UnsignedShortRef[] {new UnsignedShortRef()}, 1);
     x.set(v1[0].getX());
@@ -3154,9 +3154,9 @@ public final class SMap {
     if(_800cbd38.deref(4).get() == 0) {
       _800cbd38.deref(4).setu(0x1L);
 
-      final UnsignedIntRef transformedX = new UnsignedIntRef();
-      final UnsignedIntRef transformedY = new UnsignedIntRef();
-      transformVertices(transformedX, transformedY, v0);
+      final IntRef transformedX = new IntRef();
+      final IntRef transformedY = new IntRef();
+      transformVertex(transformedX, transformedY, v0);
       FUN_800e7f68(transformedX.get(), transformedY.get());
     }
 
@@ -3177,9 +3177,9 @@ public final class SMap {
     FUN_800e5084(getMethodAddress(SMap.class, "FUN_800e4f74", long.class, long.class), s0_1, 0);
     _800cbd3c.setu(s0_1);
 
-    final SVECTOR v0 = new SVECTOR();
-    FUN_800e92dc(a0, v0);
-    FUN_800e8104(v0);
+    final SVECTOR avg = new SVECTOR();
+    get3dAverageOfSomething(a0, avg);
+    FUN_800e8104(avg);
   }
 
   @Method(0x800e828cL)
@@ -3278,8 +3278,8 @@ public final class SMap {
   }
 
   @Method(0x800e92dcL)
-  public static long FUN_800e92dc(final long a0, final SVECTOR a1) {
-    a1.set((short)0, (short)0, (short)0);
+  public static long get3dAverageOfSomething(final long a0, final SVECTOR out) {
+    out.set((short)0, (short)0, (short)0);
 
     if(_800f7f14.get() == 0 || (int)a0 < 0 || a0 >= _800d1a88.deref(4).offset(0xcL).get()) {
       //LAB_800e9318
@@ -3287,18 +3287,17 @@ public final class SMap {
     }
 
     //LAB_800e932c
-    final long v0 = _800d1a88.deref(4).offset(0x14L).get() + a0 * 0xcL;
-    final long t0 = MEMORY.ref(4, v0).offset(0x4L).get() + _800d1a88.deref(4).offset(0x10L).get() + 0x6L;
-    final long a3 = MEMORY.ref(1, v0).get();
+    final long v0 = _800d1a88.deref(4).offset(0x14L).deref(4).offset(a0 * 0xcL).getAddress();
+    final long t0 = MEMORY.ref(4, v0).offset(0x4L).deref(2).offset(_800d1a88.deref(4).offset(0x10L).get() + 0x6L).getAddress();
+    final long count = MEMORY.ref(1, v0).get();
 
     //LAB_800e937c
-    for(int i = 0; i < a3; i++) {
-      final long a0_1 = _800d1a88.deref(4).offset(0x4L).get() + MEMORY.ref(2, t0).offset(i * 0x2L).get() * 0x8L;
-      a1.add(MEMORY.ref(2, a0_1).cast(SVECTOR::new));
+    for(int i = 0; i < count; i++) {
+      out.add(_800d1a88.deref(4).offset(0x4L).deref(4).offset(MEMORY.ref(2, t0).offset(i * 0x2L).get() * 0x8L).cast(SVECTOR::new));
     }
 
     //LAB_800e93e0
-    a1.div((int)a3);
+    out.div((int)count);
     return 0x1L;
   }
 

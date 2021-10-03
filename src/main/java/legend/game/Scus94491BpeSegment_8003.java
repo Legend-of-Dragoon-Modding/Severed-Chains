@@ -6498,7 +6498,7 @@ public final class Scus94491BpeSegment_8003 {
       v1[i] = new DVECTOR().setXY(CPU.MFC2(14)); // SXY2
       sz[i] = new UnsignedShortRef().set((int)CPU.MFC2(19)); // SZ3
       interpolation[i] = new UnsignedShortRef().set((int)CPU.MFC2( 8)); // IR0
-      flag[i] = new UnsignedShortRef().set((int)(CPU.CFC2(31) >>> 12)); // Flag (see no$ "GTE Saturation")
+      flag[i] = new UnsignedShortRef().set((int)(CPU.CFC2(31) >>> 12) & 0xffff); // Flag (see no$ "GTE Saturation")
     }
   }
 
