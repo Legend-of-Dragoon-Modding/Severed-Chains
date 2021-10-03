@@ -21,3 +21,17 @@ dependencies {
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 }
+
+jar {
+  manifest {
+    attributes(
+            'Main-Class': 'legend.game.Main'
+    )
+  }
+
+  from {
+    configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+  } {
+    exclude "META-INF/**"
+  }
+}
