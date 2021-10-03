@@ -261,10 +261,10 @@ public final class Ttle {
 
       //LAB_800c72d4
       for(int i = 1; i < a2; i++) {
-        a1 = MEMORY.ref(1, a1).offset(i * 0x8L).offset(0x2L).get();
-        if(a1 != 0xffL) {
+        final long a1_0 = MEMORY.ref(1, a1).offset(i * 0x8L).offset(0x2L).get();
+        if(a1_0 != 0xffL) {
           v0 = _8004f5ac.offset(t5).get();
-          v0 = a1 - v0 + t3 + t2;
+          v0 = a1_0 - v0 + t3 + t2;
           MEMORY.ref(1, v0).offset(0x346L).setu(0x1L);
         }
 
