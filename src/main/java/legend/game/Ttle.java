@@ -18,6 +18,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.TmdRenderingStruct;
 import legend.game.types.TwoVectorsAndRotation;
@@ -52,7 +53,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b850;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dca0;
@@ -1487,7 +1488,7 @@ public final class Ttle {
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp40 = linkedListAddress_1f8003d8.get();
-    FUN_8003b850(sp40, false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get(), null);
+    SetDrawMode(MEMORY.ref(4, sp40, DR_MODE::new), false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get(), null);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp40);
     linkedListAddress_1f8003d8.addu(0xcL);
 
@@ -1509,7 +1510,7 @@ public final class Ttle {
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp48 = linkedListAddress_1f8003d8.get();
-    FUN_8003b850(sp48, false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get() | 4, null);
+    SetDrawMode(MEMORY.ref(4, sp48, DR_MODE::new), false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get() | 4, null);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp48);
     linkedListAddress_1f8003d8.addu(0xcL);
 

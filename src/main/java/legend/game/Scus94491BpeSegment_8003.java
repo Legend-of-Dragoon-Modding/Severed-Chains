@@ -42,6 +42,7 @@ import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.MathStruct;
@@ -5136,11 +5137,24 @@ public final class Scus94491BpeSegment_8003 {
     return -0x1L;
   }
 
+  /**
+   * Initialize content of a drawing mode primitive.
+   * <p>
+   * Initializes a DR_MODE primitive. By using AddPrim() to insert a DR_MODE primitive into your primitive list, it
+   * is possible to change part of your drawing environment in the middle of drawing.<br>
+   * If tw is 0, the texture window is not changed.
+   *
+   * @param drawMode Pointer to drawing mode primitive
+   * @param allowDrawingToDisplayArea 0: drawing not allowed in display area, 1: drawing allowed in display area
+   * @param dither 0: dithering off, 1: dithering on
+   * @param texturePage Texture page
+   * @param textureWindow Pointer to texture window
+   */
   @Method(0x8003b850L)
-  public static void FUN_8003b850(final long address, final boolean allowDrawingToDisplayArea, final boolean dither, final long a3, @Nullable final RECT textureWindow) {
-    MEMORY.ref(1, address).offset(0x3L).setu(0x2L);
+  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage, @Nullable final RECT textureWindow) {
+    drawMode.tag.and(0xff_ffffL).or(0x200_0000L);
 
-    long drawingMode = 0xe100_0000L | a3 & 0x9ffL;
+    long drawingMode = 0xe100_0000L | texturePage & 0x9ffL;
     if(dither) {
       drawingMode |= 0x200L;
     }
@@ -5151,18 +5165,18 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003b878
-    MEMORY.ref(4, address).offset(0x4L).setu(drawingMode);
+    drawMode.code.get(0).set(drawingMode);
 
     if(textureWindow == null) {
       //LAB_8003b8d8
-      MEMORY.ref(4, address).offset(0x8L).setu(0);
+      drawMode.code.get(1).set(0);
     } else {
       final long val = 0xe200_0000L |
         textureWindow.y.get() / 8 << 15 | // Texture window offset Y
         textureWindow.x.get() / 8 << 10 | // Texture window offset X
-        (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y (broken? shouldn't this be << 5? And why & 0xf8?)
-        (-textureWindow.w.get() & 0xffL) / 8; // Texture window mask X
-      MEMORY.ref(4, address).offset(0x8L).setu(val);
+        (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y
+        (-textureWindow.w.get() & 0xffL) >> 3; // Texture window mask X
+      drawMode.code.get(1).set(val);
     }
 
     //LAB_8003b8dc
