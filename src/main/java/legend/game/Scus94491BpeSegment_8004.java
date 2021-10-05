@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 
+import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
@@ -611,6 +612,121 @@ public final class Scus94491BpeSegment_8004 {
     a1.set(1, 0, (short)((t1 * m00 + t0 * m11) / 4096));
     a1.set(1, 1, (short)((t1 * m10 + t0 * m02) / 4096));
     a1.set(1, 2, (short)((t1 * m01 + t0 * m12) / 4096));
+  }
+
+  @Method(0x80040780L)
+  public static void FUN_80040780(SVECTOR vector, MATRIX matrix) {
+    long v1;
+    long t0;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    long t6;
+    long t7;
+    long a2;
+    long a3;
+    long at;
+    long lo;
+
+    t0 = vector.getZ();
+    v1 = _80054d0c.getAddress();
+    t4 = vector.getXY();
+    long a0;
+    long a1;
+    t3 = t0 >> 0x1fL;
+    t0 += t3;
+    t0 ^= t3;
+    t0 <<= 2;
+    t0 &= 0x3ffcL;
+    t0 += v1;
+    a2 = MEMORY.ref(4, t0).get();
+    t0 = t4 >> 16;
+    t2 = t0 >> 0x1f;
+    t0 += t2;
+    t0 ^= t2;
+    t0 <<= 2;
+    t0 &= 0x3ffcL;
+    t0 += v1;
+    a1 = MEMORY.ref(4, t0).get();
+    t0 = (short)t4;
+    t1 = t0 >> 0x1fL;
+    t0 += t1;
+    t0 ^= t1;
+    t0 <<= 2;
+    t0 &= 0x3ffcL;
+    t0 += v1;
+    a0 = MEMORY.ref(4, t0).get();
+    at = a2 << 16;
+    a2 &= 0xffff_0000L;
+    at += t3;
+    at ^= t3;
+    at >>>= 16;
+    a2 |= at;
+    at = a1 << 16;
+    a1 &= 0xffff_0000L;
+    at += t2;
+    at ^= t2;
+    at >>>= 16;
+    a1 |= at;
+    at = a0 << 16;
+    a0 &= 0xffff_0000L;
+    at += t1;
+    at ^= t1;
+    at >>>= 16;
+    a0 |= at;
+    t0 = a0 >> 16;
+    CPU.MTC2(t0, 8);
+    a3 = (short)a1;
+    CPU.MTC2(a3, 9);
+    v1 = (short)a2;
+    CPU.MTC2(v1, 10);
+    CPU.MTC2(a2 >> 16, 11);
+    CPU.COP2(0x198_003dL);
+    lo = (a1 >> 16) * t0;
+    t0 = CPU.MFC2(9);
+    t1 = CPU.MFC2(10);
+    t2 = CPU.MFC2(11);
+    t6 = (short)a0;
+    CPU.MTC2(t6, 8);
+    CPU.MTC2(a3, 9);
+    CPU.MTC2(v1, 10);
+    CPU.MTC2(a2 >> 16, 11);
+    CPU.COP2(0x198_003dL);
+    matrix.set(8, (short)(lo >> 12));
+    t3 = CPU.MFC2(9);
+    t4 = CPU.MFC2(10);
+    t5 = CPU.MFC2(11);
+
+    CPU.MTC2(a2 >> 16, 8);
+    at = a1 >> 16;
+    CPU.MTC2(at, 9);
+    CPU.MTC2(t3, 10);
+    CPU.MTC2(t0, 11);
+    CPU.COP2(0x198_003dL);
+    a0 = CPU.MFC2(9);
+    a1 = CPU.MFC2(10);
+    a2 = CPU.MFC2(11);
+
+    matrix.set(6, (short)(-a3 & 0xffffL));
+    matrix.set(7, (short)(at * t6 / 0x1000L));
+    matrix.set(0, (short)a0);
+    matrix.set(1, (short)(a1 - t1));
+
+    CPU.MTC2(at, 9);
+    CPU.MTC2(v1, 8);
+    CPU.MTC2(t3, 10);
+    CPU.MTC2(t0, 11);
+    CPU.COP2(0x198_003dL);
+    at = CPU.MFC2(9);
+    t6 = CPU.MFC2(10);
+    t7 = CPU.MFC2(11);
+
+    matrix.set(2, (short)(a2 + t4));
+    matrix.set(3, (short)at);
+    matrix.set(4, (short)(t6 + t2));
+    matrix.set(5, (short)(t7 - t5));
   }
 
   @Method(0x80040b90L)

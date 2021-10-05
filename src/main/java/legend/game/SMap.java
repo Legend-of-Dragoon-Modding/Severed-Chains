@@ -29,7 +29,7 @@ import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
 import legend.game.types.HmdSomethingStruct;
 import legend.game.types.MathStruct;
-import legend.game.types.TwoVectorsAndRotation;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
 
 import java.util.function.Function;
@@ -60,7 +60,8 @@ import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
 import static legend.game.Scus94491BpeSegment.FUN_8001f3d0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ffb0;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
+import static legend.game.Scus94491BpeSegment._1f8003e8;
+import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
@@ -70,6 +71,7 @@ import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020a00;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020b98;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
@@ -78,22 +80,25 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800211d8;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021258;
+import static legend.game.Scus94491BpeSegment_8002.FUN_800212d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
-import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
+import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
+import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
+import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.abs;
 import static legend.game.Scus94491BpeSegment_8002.getTimerValue;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
@@ -102,32 +107,38 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003b430;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b750;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b780;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b7e0;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c6f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cce0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003d690;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003d9d0;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
+import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
+import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
+import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Scus94491BpeSegment_8003.setTransferVector;
+import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
+import static legend.game.Scus94491BpeSegment_8004.FUN_80040780;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
+import static legend.game.Scus94491BpeSegment_8005._800503f8;
+import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c30;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c38;
@@ -316,8 +327,7 @@ public final class SMap {
   /** unknown size */
   public static final Value _800cbc90 = MEMORY.ref(1, 0x800cbc90L);
 
-  /** TODO either a struct or array (0x20 long) */
-  public static final TwoVectorsAndRotation _800cbd10 = MEMORY.ref(4, 0x800cbd10L, TwoVectorsAndRotation::new);
+  public static final GsRVIEW2 _800cbd10 = MEMORY.ref(4, 0x800cbd10L, GsRVIEW2::new);
   public static final Value _800cbd30 = MEMORY.ref(4, 0x800cbd30L);
   public static final Value _800cbd34 = MEMORY.ref(4, 0x800cbd34L);
   public static final Value _800cbd38 = MEMORY.ref(4, 0x800cbd38L);
@@ -606,6 +616,72 @@ public final class SMap {
     //LAB_800da0fc
   }
 
+  @Method(0x800da114L)
+  public static void FUN_800da114(final BigStruct a0) {
+    if(a0.addr_ui_a4.get() != 0) {
+      //LAB_800da138
+      for(int i = 0; i < 4; i++) {
+        if(MEMORY.ref(1, a0.addr_ui_a4.get()).offset(0x4L).offset(i).get() != 0) {
+          FUN_800dde70(a0, i);
+        }
+
+        //LAB_800da15c
+      }
+    }
+
+    //LAB_800da16c
+    //LAB_800da174
+    for(int i = 0; i < 7; i++) {
+      if(a0.aub_ec.get(i).get() != 0) {
+        FUN_80022018(a0, i);
+      }
+
+      //LAB_800da18c
+    }
+
+    final long v1 = a0.ub_9c.get();
+    if(v1 != 0x2L) {
+      if(v1 == 0) {
+        if(a0.ub_a2.get() == 0) {
+          a0.us_9e.set(a0.us_9a);
+        } else {
+          //LAB_800da1d0
+          a0.us_9e.set((short)a0.us_9a.get() / 2);
+        }
+
+        //LAB_800da1e4
+        a0.ub_9c.incr();
+        a0.ptr_ui_94.set(a0.ptr_ui_90);
+      }
+
+      //LAB_800da1f8
+      if((a0.us_9e.get() & 0x1L) != 0 || a0.ub_a2.get() != 0) {
+        //LAB_800da24c
+        FUN_800212d8(a0);
+      } else {
+        final long s0 = a0.ptr_ui_94.get();
+
+        if(a0.ub_a3.get() == 0) {
+          FUN_800da920(a0);
+        } else {
+          //LAB_800da23c
+          FUN_800212d8(a0);
+        }
+
+        a0.ptr_ui_94.set(s0);
+      }
+
+      //LAB_800da254
+      a0.us_9e.decr();
+
+      if(a0.us_9e.get() == 0) {
+        a0.ub_9c.set(0);
+      }
+    }
+
+    //LAB_800da274
+  }
+
   @Method(0x800da6c8L)
   public static void FUN_800da6c8(final long a0, long a1, long a2) {
     final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
@@ -700,9 +776,87 @@ public final class SMap {
     //LAB_800da918
   }
 
+  @Method(0x800da920L)
+  public static void FUN_800da920(final BigStruct a0) {
+    long s4 = a0.ptr_ui_94.get();
+
+    //LAB_800da96c
+    for(int i = 0; i < a0.us_ca.get(); i++) {
+      final MATRIX coord = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().coord;
+      final GsCOORD2PARAM params = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().param.deref();
+
+      FUN_80040780(params.rotate, coord);
+
+      params.trans.x.add((int)MEMORY.ref(2, s4).offset(0x6L).getSigned());
+      params.trans.y.add((int)MEMORY.ref(2, s4).offset(0x8L).getSigned());
+      params.trans.z.add((int)MEMORY.ref(2, s4).offset(0xaL).getSigned());
+      params.trans.div(2);
+
+      setTransferVector(coord, params.trans);
+
+      s4 += 0xcL;
+    }
+
+    //LAB_800daa0c
+    a0.ptr_ui_94.set(s4);
+  }
+
   @Method(0x800daa3cL)
   public static void FUN_800daa3c(final BigStruct a0) {
     assert false;
+  }
+
+  @Method(0x800dde70L)
+  public static void FUN_800dde70(BigStruct a0, int index) {
+    long a2;
+    long t1;
+    long t2;
+    long t3;
+    long v0;
+    long v1;
+    long s0;
+
+    a2 = a0.addr_ui_a4.get();
+    long a1 = MEMORY.ref(4, a2).offset(0x20L).offset(index * 0x4L).get() + 0x4L;
+    if(MEMORY.ref(4, a2).offset(0x20L).offset(index * 0x4L).get() == 0) {
+      MEMORY.ref(1, a2).offset(0x4L).offset(index).setu(0);
+    } else {
+      //LAB_800ddeac
+      v1 = (a0.ub_9d.get() & 0x7fL) * 0x2L;
+      t2 = _80050424.offset(v1).get() + 0x70L;
+      t1 = _800503f8.offset(v1).get();
+
+      //LAB_800ddef8
+      for(int i = 0; i < MEMORY.ref(2, a2).offset(0x8L).offset(index * 0x2L).getSigned(); i++) {
+        a1 += 0x4L;
+      }
+
+      //LAB_800ddf08
+      t3 = MEMORY.ref(2, a1).get();
+      a1 += 0x2L;
+
+      final long addr = a0.addr_ui_a4.get();
+
+      MEMORY.ref(2, addr).offset(index * 0x2L).offset(0x10L).addu(0x1L);
+
+      if(MEMORY.ref(4, addr).offset(0x10L).offset(index * 0x2L).get() == (MEMORY.ref(2, a1).get() & 0xffffL)) {
+        MEMORY.ref(4, addr).offset(0x10L).offset(index * 0x2L).setu(0);
+        if((MEMORY.ref(2, a1).offset(0x2L).get() & 0xffffL) == 0xffffL) {
+          MEMORY.ref(2, addr).offset(index * 0x2L).offset(0x8L).setu(0);
+        } else {
+          //LAB_800ddf70
+          MEMORY.ref(2, addr).offset(index * 0x2L).offset(0x8L).addu(0x1L);
+        }
+      }
+
+      //LAB_800ddf8c
+      s0 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x18L);
+      FUN_8003b780(s0, new RECT((short)t1, (short)(t2 + t3), (short)16, (short)1), t1 & 0xffffL, (MEMORY.ref(2, addr).offset((long)index * 0x2L).offset(0x18L).get() + t2) & 0xffffL);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), s0);
+    }
+
+    //LAB_800ddff4
   }
 
   @Method(0x800de004L)
@@ -810,9 +964,9 @@ public final class SMap {
   @Method(0x800df314L)
   public static long FUN_800df314(final HmdSomethingStruct a0) {
     final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)a0.uiArr_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
-    struct.svec_74.x.set((short)a0.uiArr_20.get(1).deref().get());
-    struct.svec_74.y.set((short)a0.uiArr_20.get(2).deref().get());
-    struct.svec_74.z.set((short)a0.uiArr_20.get(3).deref().get());
+    struct.coord2Param_64.rotate.x.set((short)a0.uiArr_20.get(1).deref().get());
+    struct.coord2Param_64.rotate.y.set((short)a0.uiArr_20.get(2).deref().get());
+    struct.coord2Param_64.rotate.z.set((short)a0.uiArr_20.get(3).deref().get());
     struct.ui_188.set(0);
     return 0;
   }
@@ -888,7 +1042,7 @@ public final class SMap {
   public static long FUN_800e0018(final HmdSomethingStruct a0) {
     final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)a0.uiArr_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
     final long v1 = (0xc01L - FUN_80040b90(a0.uiArr_20.get(3).deref().get() - struct.coord2_14.coord.transfer.getZ(), a0.uiArr_20.get(1).deref().get() - struct.coord2_14.coord.transfer.getX())) & 0xfffL;
-    struct.svec_74.y.set((short)v1);
+    struct.coord2Param_64.rotate.y.set((short)v1);
     struct.ui_188.set(0);
     return 0;
   }
@@ -1008,7 +1162,7 @@ public final class SMap {
       for(int i = 0; i < 7; i++) {
         v1 = a0.ui_a8.get();
         v1 += MEMORY.ref(4, v1).offset(i * 0x4L).get() / 0x4L * 0x4L;
-        a0.aub_d0.get(i).set(v1);
+        a0.aui_d0.get(i).set(v1);
         FUN_8002246c(a0, i);
       }
     } else {
@@ -1017,7 +1171,7 @@ public final class SMap {
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {
-        a0.aub_d0.get(i).set(0);
+        a0.aui_d0.get(i).set(0);
       }
     }
 
@@ -1027,7 +1181,7 @@ public final class SMap {
     adjustTmdPointers(MEMORY.ref(4, a0.ui_8c.get(), Tmd::new)); //TODO
     FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.s_c8.get());
 
-    a0.ui_58.set(a0.v_64.getAddress());
+    a0.coord2_14.param.set(a0.coord2Param_64);
 
     insertCoordinate2(null, a0.coord2_14);
     FUN_80021ca0(a0.ObjTable_0c, a0.ui_8c.get(), a0.coord2_14, a0.s_c8.get(), (short)(a0.us_ca.get() + 1));
@@ -1062,9 +1216,9 @@ public final class SMap {
     if(puVar1.us_128.get() == 0) {
       if(puVar1.ui_188.get() != 0) {
         puVar1.ui_188.sub(1);
-        puVar1.svec_74.x.add((short)puVar1.usPtr_17c.deref().get());
-        puVar1.svec_74.y.add((short)puVar1.usPtr_180.deref().get());
-        puVar1.svec_74.z.add((short)puVar1.usPtr_184.deref().get());
+        puVar1.coord2Param_64.rotate.x.add((short)puVar1.usPtr_17c.deref().get());
+        puVar1.coord2Param_64.rotate.y.add((short)puVar1.usPtr_180.deref().get());
+        puVar1.coord2Param_64.rotate.z.add((short)puVar1.usPtr_184.deref().get());
       }
 
       if(puVar1.us_12e.get() == 0) {
@@ -1451,9 +1605,9 @@ public final class SMap {
             bigStruct_800c6748.coord2_14.coord.transfer.setX(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setY(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setZ(0);
-            bigStruct_800c6748.svec_74.x.set((short)0);
-            bigStruct_800c6748.svec_74.y.set((short)0);
-            bigStruct_800c6748.svec_74.z.set((short)0);
+            bigStruct_800c6748.coord2Param_64.rotate.x.set((short)0);
+            bigStruct_800c6748.coord2Param_64.rotate.y.set((short)0);
+            bigStruct_800c6748.coord2Param_64.rotate.z.set((short)0);
           }
 
           //LAB_800e1c50
@@ -1500,9 +1654,9 @@ public final class SMap {
           struct.coord2_14.coord.transfer.setY((int)MEMORY.ref(4, v1).offset(0x04L).get());
           struct.coord2_14.coord.transfer.setZ((int)MEMORY.ref(4, v1).offset(0x08L).get());
 
-          struct.svec_74.x.set((short)MEMORY.ref(2, v1).offset(0x0cL).getSigned());
-          struct.svec_74.y.set((short)MEMORY.ref(2, v1).offset(0x0eL).getSigned());
-          struct.svec_74.z.set((short)MEMORY.ref(2, v1).offset(0x10L).getSigned());
+          struct.coord2Param_64.rotate.x.set((short)MEMORY.ref(2, v1).offset(0x0cL).getSigned());
+          struct.coord2Param_64.rotate.y.set((short)MEMORY.ref(2, v1).offset(0x0eL).getSigned());
+          struct.coord2Param_64.rotate.z.set((short)MEMORY.ref(2, v1).offset(0x10L).getSigned());
 
           struct.ui_18c.set(0x7L);
           struct.ui_190.set(0);
@@ -1541,9 +1695,9 @@ public final class SMap {
         _800c6734.setu(addToLinkedListTail(0x28L));
         _800c69fc.setu(addToLinkedListTail(0x140L));
 
-        _800c6aa0.setu(_800bd7e8.vector_00.getX() - _800bd7e8.vector_0c.getX());
-        _800c6aa4.setu(_800bd7e8.vector_00.getY() - _800bd7e8.vector_0c.getY());
-        _800c6aa8.setu(_800bd7e8.vector_00.getZ() - _800bd7e8.vector_0c.getZ());
+        _800c6aa0.setu(_800bd7e8.viewpoint_00.getX() - _800bd7e8.refpoint_0c.getX());
+        _800c6aa4.setu(_800bd7e8.viewpoint_00.getY() - _800bd7e8.refpoint_0c.getY());
+        _800c6aa8.setu(_800bd7e8.viewpoint_00.getZ() - _800bd7e8.refpoint_0c.getZ());
 
         loadTimImage(_800d689c.getAddress());
         FUN_800f3af8();
@@ -2799,14 +2953,14 @@ public final class SMap {
 
   @Method(0x800e7418L)
   public static void FUN_800e7418(final long xy0, final long z0, final long xy1, final long z1, final long rotation, final long projectionDistance) {
-    _800cbd10.vector_00.setX((int)(xy0 & 0xffffL));
-    _800cbd10.vector_00.setY((int)(xy0 >>> 16));
-    _800cbd10.vector_00.setZ((int)(z0 & 0xffffL));
-    _800cbd10.vector_0c.setX((int)(xy1 & 0xffffL));
-    _800cbd10.vector_0c.setY((int)(xy1 >>> 16));
-    _800cbd10.vector_0c.setZ((int)(z1 & 0xffffL));
-    _800cbd10.rotation_18.set((int)(rotation << 16) >> 4);
-    _800cbd10.ui_1c.set(0);
+    _800cbd10.viewpoint_00.setX((int)(xy0 & 0xffffL));
+    _800cbd10.viewpoint_00.setY((int)(xy0 >>> 16));
+    _800cbd10.viewpoint_00.setZ((int)(z0 & 0xffffL));
+    _800cbd10.refpoint_0c.setX((int)(xy1 & 0xffffL));
+    _800cbd10.refpoint_0c.setY((int)(xy1 >>> 16));
+    _800cbd10.refpoint_0c.setZ((int)(z1 & 0xffffL));
+    _800cbd10.viewpointTwist_18.set((int)(rotation << 16) >> 4);
+    _800cbd10.super_1c.clear();
     projectionPlaneDistance_800bd810.setu(projectionDistance & 0xffffL);
 
     if(_800cab2c.get() == 0) {
@@ -3746,7 +3900,17 @@ public final class SMap {
 
   @Method(0x800eece0L)
   public static void FUN_800eece0(final long a0) {
-    assert false;
+    _800d4bf8.coord2_14.coord.transfer.setX(0);
+    _800d4bf8.coord2_14.coord.transfer.setY(0);
+    _800d4bf8.coord2_14.coord.transfer.setZ(0);
+
+    _800d4bf8.coord2Param_64.rotate.setX((short)0);
+    _800d4bf8.coord2Param_64.rotate.setY((short)0);
+    _800d4bf8.coord2Param_64.rotate.setZ((short)0);
+
+    FUN_800214bc(_800d4bf8);
+    FUN_80020b98(_800d4bf8);
+    FUN_800eee48(_800d4bf8, a0);
   }
 
   @Method(0x800eeddcL)
@@ -3761,6 +3925,34 @@ public final class SMap {
       _800d4be4.setu(0x1L);
       _800d4bf0.setu(address);
     }
+  }
+
+  @Method(0x800eee48L)
+  public static void FUN_800eee48(final BigStruct a0, long a1) {
+    _1f8003e8.setu(a0.us_a0.get());
+    _1f8003ec.setu(a0.scaleVector_fc.pad.get());
+
+    final MATRIX matrix = new MATRIX();
+
+    //LAB_800eee94
+    for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
+      FUN_8003d690(a0.ObjTable_0c.top.deref().get(0).coord2_04.deref(), matrix);
+      FUN_8003c4a0(matrix);
+
+      PushMatrix();
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x00L).get(), 0);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x04L).get(), 1);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x08L).get(), 2);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x0cL).get(), 3);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x10L).get(), 4);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x14L).get(), 5);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x18L).get(), 6);
+      CPU.CTC2(MEMORY.ref(4, a1).offset(0x1cL).get(), 7);
+      FUN_80021258(a0.ObjTable_0c.top.deref().get(i));
+      PopMatrix();
+    }
+
+    //LAB_800eef0c
   }
 
   @Method(0x800eef2cL)

@@ -326,17 +326,10 @@ public final class Scus94491BpeSegment {
   public static final Value linkedListAddress_1f8003d8 = MEMORY.ref(4, 0x1f8003d8L);
   public static final Value centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL);
   public static final Value centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL);
-  /**
-   * displayWidth
-   */
-  public static final Value _1f8003e0 = MEMORY.ref(4, 0x1f8003e0L);
-  /**
-   * displayHeight
-   */
-  public static final Value _1f8003e4 = MEMORY.ref(4, 0x1f8003e4L);
-
   public static final Value displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L);
   public static final Value displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L);
+  public static final Value _1f8003e8 = MEMORY.ref(4, 0x1f8003e8L);
+  public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
 
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
@@ -2643,6 +2636,11 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x8001670cL)
+  public static long FUN_8001670c(final HmdSomethingStruct a0) {
+    return FUN_8001664c(a0, a0.uiArr_20.get(0).deref().get(), a0.uiArr_20.get(1).deref().get(), a0.driverAndCategory_18.get()) == 0 ? 0x2L : 0;
+  }
+
   @Method(0x80016774L)
   public static long FUN_80016774(final HmdSomethingStruct a0) {
     a0.uiArr_20.get(1).deref().set(a0.uiArr_20.get(0).deref());
@@ -2781,6 +2779,12 @@ public final class Scus94491BpeSegment {
   public static long FUN_800174d8(final HmdSomethingStruct a0) {
     final long v0 = _800bac84.offset((a0.uiArr_20.get(0).deref().get() >>> 5) * 0x4L).get(0x1L << (a0.uiArr_20.get(0).deref().get() & 0x1fL)) != 0 ? 1 : 0;
     a0.uiArr_20.get(1).deref().set(v0);
+    return 0;
+  }
+
+  @Method(0x8001751cL)
+  public static long FUN_8001751c(final HmdSomethingStruct a0) {
+    FUN_800136dc(a0.uiArr_20.get(0).deref().get(), Math.max(1, a0.uiArr_20.get(1).deref().get()));
     return 0;
   }
 
@@ -3558,18 +3562,18 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001b54c() {
     FUN_8001b92c();
 
-    long v0 = -_1f8003e0.get();
+    long v0 = -displayWidth_1f8003e0.get();
     v0 += v0 >>> 0x1fL;
     v0 >>= 0x1L;
     long sp10x4 = v0;
 
-    v0 = -_1f8003e4.get();
+    v0 = -displayHeight_1f8003e4.get();
     v0 += v0 >>> 0x1fL;
     v0 >>= 0x1L;
     long sp14x4 = v0;
 
-    long a0 = _1f8003e4.getSigned();
-    if(_1f8003e4.getSigned() < 0) {
+    long a0 = displayHeight_1f8003e4.getSigned();
+    if(displayHeight_1f8003e4.getSigned() < 0) {
       a0 += 0x7L;
     }
 
@@ -3596,11 +3600,11 @@ public final class Scus94491BpeSegment {
       long sp28x4 = sp30x4 * 0x100L + 0x8L;
       long sp2cx4 = sp10x4;
 
-      long s5 = _1f8003e4.get() - (_800bd710.get() + 1) * 8 + (sp18x4 << 0x3L);
+      long s5 = displayHeight_1f8003e4.get() - (_800bd710.get() + 1) * 8 + (sp18x4 << 0x3L);
 
       //LAB_8001b664
       do {
-        v0 = _1f8003e0.get();
+        v0 = displayWidth_1f8003e0.get();
         if(v0 < 0) {
           v0 += 0x1fL;
         }

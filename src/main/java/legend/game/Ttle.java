@@ -21,7 +21,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.TmdRenderingStruct;
-import legend.game.types.TwoVectorsAndRotation;
+import legend.game.types.GsRVIEW2;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -137,7 +137,7 @@ public final class Ttle {
   public static final Value _800c6754 = MEMORY.ref(4, 0x800c6754L);
   public static final Value _800c6758 = MEMORY.ref(4, 0x800c6758L);
 
-  public static final TwoVectorsAndRotation _800c6760 = MEMORY.ref(4, 0x800c6760L, TwoVectorsAndRotation::new);
+  public static final GsRVIEW2 _800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
 
   public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.class, 4, 4, (Function)Pointer.of(4, RunnableRef::new)));
 
@@ -397,14 +397,14 @@ public final class Ttle {
     //LAB_800c7978
     FUN_80013200(384L, 0);
     setProjectionPlaneDistance(320);
-    _800c6760.vector_00.setX(0);
-    _800c6760.vector_00.setY(0);
-    _800c6760.vector_00.setZ(2000);
-    _800c6760.vector_0c.setX(0);
-    _800c6760.vector_0c.setY(0);
-    _800c6760.vector_0c.setZ(-4000);
-    _800c6760.rotation_18.set(0);
-    _800c6760.ui_1c.set(0);
+    _800c6760.viewpoint_00.setX(0);
+    _800c6760.viewpoint_00.setY(0);
+    _800c6760.viewpoint_00.setZ(2000);
+    _800c6760.refpoint_0c.setX(0);
+    _800c6760.refpoint_0c.setY(0);
+    _800c6760.refpoint_0c.setZ(-4000);
+    _800c6760.viewpointTwist_18.set(0);
+    _800c6760.super_1c.clear();
     FUN_8003cfb0(_800c6760);
 
     _8007a3b8.setu(0x2L);

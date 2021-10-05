@@ -46,7 +46,7 @@ import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.MathStruct;
-import legend.game.types.TwoVectorsAndRotation;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -5711,7 +5711,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cfb0L)
-  public static long FUN_8003cfb0(final TwoVectorsAndRotation struct) {
+  public static long FUN_8003cfb0(final GsRVIEW2 struct) {
     long s0;
     long s1;
     long s2;
@@ -5721,7 +5721,7 @@ public final class Scus94491BpeSegment_8003 {
 
     matrix_800c3548.set(matrix_800c3588);
 
-    FUN_8003d5d0(matrix_800c3548, -struct.rotation_18.get());
+    FUN_8003d5d0(matrix_800c3548, -struct.viewpointTwist_18.get());
     final long[] sp10 = new long[6];
     FUN_8003d380(struct, sp10);
 
@@ -5770,11 +5770,11 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003d230
-    matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, new VECTOR().set(struct.vector_00).negate()));
+    matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
 
-    if(struct.ui_1c.get() != 0) {
+    if(!struct.super_1c.isNull()) {
       final MATRIX sp50 = new MATRIX();
-      FUN_8003d690(struct.ui_1c.get(), sp30);
+      FUN_8003d690(struct.super_1c.deref(), sp30);
       TransposeMatrix(sp30, sp50);
       sp50.transfer.set(ApplyMatrixLV(sp50, sp30.transfer)).negate();
       FUN_8003d550(matrix_800c3548, sp50);
@@ -5789,52 +5789,52 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003d380L)
-  public static void FUN_8003d380(final TwoVectorsAndRotation a0, final long[] a1) {
+  public static void FUN_8003d380(final GsRVIEW2 a0, final long[] a1) {
     long longestComponentBits = log2(getLongestComponent(a0));
 
     if(longestComponentBits < 16) {
-      a1[0] = a0.vector_00.getX();
-      a1[1] = a0.vector_00.getY();
-      a1[2] = a0.vector_00.getZ();
-      a1[3] = a0.vector_0c.getX();
-      a1[4] = a0.vector_0c.getY();
-      a1[5] = a0.vector_0c.getZ();
+      a1[0] = a0.viewpoint_00.getX();
+      a1[1] = a0.viewpoint_00.getY();
+      a1[2] = a0.viewpoint_00.getZ();
+      a1[3] = a0.refpoint_0c.getX();
+      a1[4] = a0.refpoint_0c.getY();
+      a1[5] = a0.refpoint_0c.getZ();
     } else {
       longestComponentBits -= 0xfL;
 
-      a1[0] = a0.vector_00.getX() >> longestComponentBits;
-      a1[1] = a0.vector_00.getY() >> longestComponentBits;
-      a1[2] = a0.vector_00.getZ() >> longestComponentBits;
-      a1[3] = a0.vector_0c.getX() >> longestComponentBits;
-      a1[4] = a0.vector_0c.getY() >> longestComponentBits;
-      a1[5] = a0.vector_0c.getZ() >> longestComponentBits;
+      a1[0] = a0.viewpoint_00.getX() >> longestComponentBits;
+      a1[1] = a0.viewpoint_00.getY() >> longestComponentBits;
+      a1[2] = a0.viewpoint_00.getZ() >> longestComponentBits;
+      a1[3] = a0.refpoint_0c.getX() >> longestComponentBits;
+      a1[4] = a0.refpoint_0c.getY() >> longestComponentBits;
+      a1[5] = a0.refpoint_0c.getZ() >> longestComponentBits;
     }
   }
 
   @Method(0x8003d46cL)
-  public static long getLongestComponent(final TwoVectorsAndRotation a0) {
-    long largest = Math.abs(a0.vector_00.getX());
-    long other = Math.abs(a0.vector_00.getY());
+  public static long getLongestComponent(final GsRVIEW2 a0) {
+    long largest = Math.abs(a0.viewpoint_00.getX());
+    long other = Math.abs(a0.viewpoint_00.getY());
     if(largest < other) {
       largest = other;
     }
 
-    other = Math.abs(a0.vector_00.getZ());
+    other = Math.abs(a0.viewpoint_00.getZ());
     if(largest < other) {
       largest = other;
     }
 
-    other = Math.abs(a0.vector_0c.getX());
+    other = Math.abs(a0.refpoint_0c.getX());
     if(largest < other) {
       largest = other;
     }
 
-    other = Math.abs(a0.vector_0c.getY());
+    other = Math.abs(a0.refpoint_0c.getY());
     if(largest < other) {
       largest = other;
     }
 
-    other = Math.abs(a0.vector_0c.getZ());
+    other = Math.abs(a0.refpoint_0c.getZ());
     if(largest < other) {
       largest = other;
     }
@@ -5879,9 +5879,64 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003d690L)
-  public static void FUN_8003d690(final long a0, final MATRIX a1) {
-    assert false;
-    //TODO
+  public static void FUN_8003d690(final GsCOORDINATE2 a0, final MATRIX a1) {
+    GsCOORDINATE2 a3 = a0;
+    long s1 = 0;
+    long a1_0 = 0x64L;
+
+    //LAB_8003d6c0
+    do {
+      _800c35a8.offset(s1 * 0x4L).setu(a3.getAddress());
+
+      if(a3.super_.isNull()) {
+        if(a3.flg.get() == 0 || a3.flg.get() == _800c34d0.get()) {
+          //LAB_8003d6fc
+          a3.workm.set(a3.coord);
+          a1.set(a3.workm);
+          a3.flg.set(_800c34d0.get());
+          break;
+        }
+
+        //LAB_8003d78c
+        if(a1_0 == 0x64L) {
+          a1.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          s1 = 0;
+          break;
+        }
+
+        //LAB_8003d7e8
+        s1 = a1_0 + 0x1L;
+        a1.set(_800c35a8.offset(s1 * 0x4L).deref(4).cast(GsCOORDINATE2::new).workm);
+        break;
+      }
+
+      //LAB_8003d83c
+      if(a3.flg.get() == _800c34d0.get()) {
+        a1.set(a3.workm);
+        break;
+      }
+
+      //LAB_8003d898
+      if(a3.flg.get() == 0) {
+        a1_0 = s1;
+      }
+
+      //LAB_8003d8a4
+      a3 = a3.super_.deref();
+      s1++;
+    } while(true);
+
+    //LAB_8003d8ac
+    //LAB_8003d8c0
+    while((int)s1 > 0) {
+      final GsCOORDINATE2 coord2 = _800c35a8.offset((s1 - 0x1L) * 0x4L).deref(4).cast(GsCOORDINATE2::new);
+      FUN_8003d950(a1, coord2.coord);
+      coord2.workm.set(a1);
+      coord2.flg.set(_800c34d0.get());
+      s1--;
+    }
+
+    //LAB_8003d930
   }
 
   @Method(0x8003d950L)
@@ -5964,7 +6019,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003dcd8
     do {
-      _800c35a8.offset(s1 * 4).setu(coord.flg.get());
+      _800c35a8.offset(s1 * 4).setu(coord.getAddress());
 
       if(coord.super_.isNull()) {
         if(coord.flg.get() == _800c34d0.get() || coord.flg.get() == 0) {

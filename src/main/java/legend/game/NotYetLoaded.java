@@ -16,4 +16,16 @@ public final class NotYetLoaded {
   public static void FUN_800c925c() {
     assert false;
   }
+
+  public static void FUN_800da288() {
+    assert false;
+  }
+
+  public static void FUN_800ec0b0() {
+    assert false;
+  }
+
+  public static void FUN_800c8af4() {
+    assert false;
+  }
 }

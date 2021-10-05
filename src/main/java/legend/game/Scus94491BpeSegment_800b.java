@@ -27,7 +27,7 @@ import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.HmdSomethingStruct;
 import legend.game.types.JoyStruct;
-import legend.game.types.TwoVectorsAndRotation;
+import legend.game.types.GsRVIEW2;
 
 import java.util.function.Function;
 
@@ -278,7 +278,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
 
-  public static final TwoVectorsAndRotation _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, TwoVectorsAndRotation::new);
+  public static final GsRVIEW2 _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, GsRVIEW2::new);
   public static final Value _800bd808 = MEMORY.ref(4, 0x800bd808L);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
