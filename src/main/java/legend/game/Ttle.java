@@ -20,11 +20,10 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
-import legend.game.types.TmdRenderingStruct;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.TmdRenderingStruct;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
@@ -40,12 +39,12 @@ import static legend.game.Scus94491BpeSegment.FUN_80019a60;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
+import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800237a4;
@@ -53,13 +52,13 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dca0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
@@ -132,14 +131,12 @@ public final class Ttle {
 
   public static final Value _800c6748 = MEMORY.ref(4, 0x800c6748L);
 
-  public static final Value _800c674e = MEMORY.ref(1, 0x800c674eL);
-
   public static final Value _800c6754 = MEMORY.ref(4, 0x800c6754L);
   public static final Value _800c6758 = MEMORY.ref(4, 0x800c6758L);
 
-  public static final GsRVIEW2 _800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
+  public static final GsRVIEW2 GsRVIEW2_800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
 
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.class, 4, 4, (Function)Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final SVECTOR _800c68f0 = MEMORY.ref(8, 0x800c68f0L, SVECTOR::new);
   public static final VECTOR _800c68f8 = MEMORY.ref(16, 0x800c68f8L, VECTOR::new);
@@ -156,39 +153,25 @@ public final class Ttle {
 
   public static final Value selectedMenuOption_800ce774 = MEMORY.ref(4, 0x800ce774L);
   public static final Value _800ce778 = MEMORY.ref(4, 0x800ce778L);
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(24, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(4, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = (ArrayRef<Pointer<ConsumerRef<Long>>>)MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.class, 17, 4, (Function)Pointer.of(4, ConsumerRef::new)));
+  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.classFor(ConsumerRef.classFor(Long.class)), 17, 4, Pointer.of(4, ConsumerRef::new)));
 
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
 
   public static final Value _800ce840 = MEMORY.ref(1, 0x800ce840L);
 
-  public static final Value _800ce858 = MEMORY.ref(2, 0x800ce858L);
-
-  public static final Value _800ce85c = MEMORY.ref(2, 0x800ce85cL);
-
   public static final Value _800ce8ac = MEMORY.ref(2, 0x800ce8acL);
 
   public static final ArrayRef<UnsignedIntRef> _800ce8f4 = MEMORY.ref(32, 0x800ce8f4L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-
-  public static final Value _800ce90c = MEMORY.ref(2, 0x800ce90cL);
-
-  public static final Value _800ce910 = MEMORY.ref(2, 0x800ce910L);
 
   public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
 
   public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
   public static final Value _800ce920 = MEMORY.ref(4, 0x800ce920L);
-
-  public static final Value _800ce984 = MEMORY.ref(2, 0x800ce984L);
-
-  public static final Value _800ce988 = MEMORY.ref(2, 0x800ce988L);
-
-  public static final Value _800ce98c = MEMORY.ref(2, 0x800ce98cL);
 
   @Method(0x800c7194L)
   public static void FUN_800c7194(final long unused) {
@@ -397,15 +380,15 @@ public final class Ttle {
     //LAB_800c7978
     FUN_80013200(384L, 0);
     setProjectionPlaneDistance(320);
-    _800c6760.viewpoint_00.setX(0);
-    _800c6760.viewpoint_00.setY(0);
-    _800c6760.viewpoint_00.setZ(2000);
-    _800c6760.refpoint_0c.setX(0);
-    _800c6760.refpoint_0c.setY(0);
-    _800c6760.refpoint_0c.setZ(-4000);
-    _800c6760.viewpointTwist_18.set(0);
-    _800c6760.super_1c.clear();
-    FUN_8003cfb0(_800c6760);
+    GsRVIEW2_800c6760.viewpoint_00.setX(0);
+    GsRVIEW2_800c6760.viewpoint_00.setY(0);
+    GsRVIEW2_800c6760.viewpoint_00.setZ(2000);
+    GsRVIEW2_800c6760.refpoint_0c.setX(0);
+    GsRVIEW2_800c6760.refpoint_0c.setY(0);
+    GsRVIEW2_800c6760.refpoint_0c.setZ(-4000);
+    GsRVIEW2_800c6760.viewpointTwist_18.set(0);
+    GsRVIEW2_800c6760.super_1c.clear();
+    FUN_8003cfb0(GsRVIEW2_800c6760);
 
     _8007a3b8.setu(0x2L);
     loadingStage_800bb10c.setu(0x1L);
@@ -1411,7 +1394,7 @@ public final class Ttle {
     }
 
     //LAB_800cb7f0
-    FUN_8003cfb0(_800c6760);
+    FUN_8003cfb0(GsRVIEW2_800c6760);
 
     UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.deref().dobj2s_00.deref();
     UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.deref().coord2s_04.deref();
@@ -1647,33 +1630,33 @@ public final class Ttle {
       final long t5 = vertices + MEMORY.ref(2, sp18).offset(0x1cL).get() * 8;
       final long t6 = vertices + MEMORY.ref(2, sp18).offset(0x1eL).get() * 8;
       final long t7 = vertices + MEMORY.ref(2, sp18).offset(0x20L).get() * 8;
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0x0L);
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 0x1L);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 0x2L);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 0x3L);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 0x4L);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 0x5L);
-      CPU.COP2(0x280030L);
+      CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0L); // VXY0
+      CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 1L); // VZ0
+      CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 2L); // VXY1
+      CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 3L); // VZ1
+      CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 4L); // VXY2
+      CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 5L); // VZ2
+      CPU.COP2(0x280030L); // Perspective transformation triple
 
       MEMORY.ref(4, address).offset(0x0cL).setu(MEMORY.ref(4, sp18).offset(0x4L));
       MEMORY.ref(4, address).offset(0x18L).setu(MEMORY.ref(4, sp18).offset(0x8L));
       sp20--;
 
-      if((int)CPU.CFC2(0x1fL) >= 0) {
+      if((int)CPU.CFC2(31L) >= 0) { // Were any flags set?
         //LAB_800cc674
-        CPU.COP2(0x1400006L);
+        CPU.COP2(0x1400006L); // Normal clipping
 
         MEMORY.ref(4, address).offset(0x24L).setu(MEMORY.ref(4, sp18).offset(0xcL));
 
-        if(CPU.MFC2(0x18L) != 0) {
+        if(CPU.MFC2(24L) != 0) { // MAC0
           //LAB_800cc6b0
-          MEMORY.ref(1, address).offset(0x03L).setu(0x9L);
-          MEMORY.ref(4, address).offset(0x04L).setu(0x3680_8080L);
-          MEMORY.ref(4, address).offset(0x08L).setu(CPU.MFC2(0xcL));
-          MEMORY.ref(4, address).offset(0x14L).setu(CPU.MFC2(0xdL));
-          MEMORY.ref(4, address).offset(0x20L).setu(CPU.MFC2(0xeL));
+          MEMORY.ref(1, address).offset(0x03L).setu(0x9L); // 9 words
+          MEMORY.ref(4, address).offset(0x04L).setu(0x3680_8080L); // Shaded Textured three-point polygon, semi-transparent, tex-blend
+          MEMORY.ref(4, address).offset(0x08L).setu(CPU.MFC2(12L)); // SXY0
+          MEMORY.ref(4, address).offset(0x14L).setu(CPU.MFC2(13L)); // SXY1
+          MEMORY.ref(4, address).offset(0x20L).setu(CPU.MFC2(14L)); // SXY2
 
-          if((int)CPU.CFC2(0x1fL) >= 0) {
+          if((int)CPU.CFC2(31L) >= 0) { // Flags
             //LAB_800cc6e8
             if(MEMORY.ref(2, address).offset(0x8L).getSigned() >= -0xc0L || MEMORY.ref(2, address).offset(0x14L).getSigned() >= -0xc0L || MEMORY.ref(2, address).offset(0x20L).getSigned() >= -0xc0L) {
               //LAB_800cc72c
@@ -1683,7 +1666,7 @@ public final class Ttle {
                   //LAB_800cc7b4
                   if(MEMORY.ref(2, address).offset(0xaL).getSigned() <= 0x78L || MEMORY.ref(2, address).offset(0x16L).getSigned() <= 0x78L || MEMORY.ref(2, address).offset(0x22L).getSigned() <= 0x78L) {
                     //LAB_800cc7f8
-                    CPU.COP2(0x158002dL);
+                    CPU.COP2(0x158002dL); // Average of three Z values
 
                     MEMORY.ref(1, address).offset(0x04L).setu(MEMORY.ref(1, sp18).offset(0x10L).get() * sp00 / 0xffL);
                     MEMORY.ref(1, address).offset(0x05L).setu(MEMORY.ref(1, sp18).offset(0x11L).get() * sp00 / 0xffL);
@@ -1695,7 +1678,8 @@ public final class Ttle {
                     MEMORY.ref(1, address).offset(0x1dL).setu(MEMORY.ref(1, sp18).offset(0x19L).get() * sp00 / 0xffL);
                     MEMORY.ref(1, address).offset(0x1eL).setu(MEMORY.ref(1, sp18).offset(0x1aL).get() * sp00 / 0xffL);
 
-                    long a3 = (int)(CPU.MFC2(0x7L) + _800c6758.get()) >> _1f8003c4.get(0x1fL);
+                    // OTZ - Average Z value (for ordering table)
+                    long a3 = (int)(CPU.MFC2(7L) + _800c6758.get()) >> _1f8003c4.get(0x1fL);
                     if(a3 > _1f8003cc.get()) {
                       a3 = _1f8003cc.get();
                     }
@@ -1922,7 +1906,7 @@ public final class Ttle {
                     v0 = t0 - a3;
                     MEMORY.ref(1, v1).offset(0x2aL).setu(v0);
 
-                    MEMORY.ref(4, v1).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL);
+                    MEMORY.ref(4, v1).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL | 0xc00_0000L);
                     tags.get((int)_800c6758.get()).num.set(0x0c);
                     tags.get((int)_800c6758.get()).p.set(v1 & 0xff_ffffL);
                     v1 += 0x34L;

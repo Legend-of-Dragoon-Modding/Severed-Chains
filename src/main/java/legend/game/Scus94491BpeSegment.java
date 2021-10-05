@@ -2647,15 +2647,91 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x800167bcL)
+  public static long FUN_800167bc(final HmdSomethingStruct a0) {
+    Pointer<UnsignedIntRef> a2 = a0.uiArr_20.get(2);
+    Pointer<UnsignedIntRef> a1 = a0.uiArr_20.get(1);
+
+    long a0_0 = (int)(a0.uiArr_20.get(0).deref().get() << 2) >> 2;
+
+    if(a2.getPointer() < a1.getPointer()) {
+      a0_0--;
+
+      //LAB_800167e8
+      while((int)a0_0 >= 0) {
+        a2.deref().set(a1.deref());
+        a1.incr();
+        a2.incr();
+        a0_0--;
+      }
+
+      return 0;
+    }
+
+    //LAB_8001680c
+    if(a1.getPointer() < a2.getPointer()) {
+      a0_0--;
+
+      a2.add(a0_0 * 0x4L);
+      a1.add(a0_0 * 0x4L);
+
+      //LAB_8001682c
+      while((int)a0_0 >= 0) {
+        a2.deref().set(a1.deref());
+        a1.decr();
+        a2.decr();
+        a0_0--;
+      }
+    }
+
+    //LAB_80016848
+    return 0;
+  }
+
   @Method(0x80016920L)
   public static long FUN_80016920(final HmdSomethingStruct a0) {
     a0.uiArr_20.get(1).deref().shl(a0.uiArr_20.get(0).deref());
     return 0;
   }
 
+  @Method(0x80016944L)
+  public static long FUN_80016944(final HmdSomethingStruct a0) {
+    a0.uiArr_20.get(1).deref().set((int)a0.uiArr_20.get(1).deref().get() >> a0.uiArr_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x8001698cL)
+  public static long FUN_8001698c(final HmdSomethingStruct a0) {
+    //TODO this is the last code that executes before the crash
+    if(a0.uiArr_20.get(1).deref().get() - a0.uiArr_20.get(0).deref().get() < 0) {
+      new Throwable().printStackTrace();
+    }
+
+    a0.uiArr_20.get(1).deref().sub(a0.uiArr_20.get(0).deref());
+    return 0;
+  }
+
   @Method(0x800169d4L)
   public static long FUN_800169d4(final HmdSomethingStruct a0) {
     a0.uiArr_20.get(0).deref().incr();
+    return 0;
+  }
+
+  @Method(0x800169f4L)
+  public static long FUN_800169f4(final HmdSomethingStruct a0) {
+    a0.uiArr_20.get(0).deref().decr();
+    return 0;
+  }
+
+  @Method(0x80016a5cL)
+  public static long FUN_80016a5c(final HmdSomethingStruct a0) {
+    a0.uiArr_20.get(1).deref().mul(a0.uiArr_20.get(0).deref());
+    return 0;
+  }
+
+  @Method(0x80016a84L)
+  public static long FUN_80016a84(final HmdSomethingStruct a0) {
+    a0.uiArr_20.get(1).deref().div(a0.uiArr_20.get(0).deref());
     return 0;
   }
 

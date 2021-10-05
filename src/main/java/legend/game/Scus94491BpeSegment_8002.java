@@ -60,6 +60,7 @@ import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
+import static legend.game.SMap.FUN_800da288;
 import static legend.game.SMap.FUN_800daa3c;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2220;
@@ -806,7 +807,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80021258(final GsDOBJ2 dobj2) {
     if(_8004dd20.get() == 0x5L) {
       //LAB_800212b0
-      NotYetLoaded.FUN_800da288();
+      FUN_800da288(dobj2);
       return;
     }
 

@@ -27,9 +27,10 @@ import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
+import legend.game.types.GsOT_TAG;
+import legend.game.types.GsRVIEW2;
 import legend.game.types.HmdSomethingStruct;
 import legend.game.types.MathStruct;
-import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
 
 import java.util.function.Function;
@@ -60,6 +61,8 @@ import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
 import static legend.game.Scus94491BpeSegment.FUN_8001f3d0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ffb0;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
+import static legend.game.Scus94491BpeSegment._1f8003c4;
+import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
@@ -682,6 +685,76 @@ public final class SMap {
     //LAB_800da274
   }
 
+  @Method(0x800da288L)
+  public static void FUN_800da288(final GsDOBJ2 dobj2) {
+    final TmdObjTable objTable = dobj2.tmd_08.deref();
+    final long vertices = objTable.vert_top_00.get();
+    final long normals = objTable.normal_top_08.get();
+    long primitives = objTable.primitives_10.getPointer();
+    long count = objTable.n_primitive_14.get();
+
+    //LAB_800da2bc
+    while(count != 0) {
+      final long length = MEMORY.ref(2, primitives).get();
+      final long command = MEMORY.ref(4, primitives).get(0xff04_0000L);
+      count -= length;
+
+      if(command == 0x3000_0000L) {
+        //LAB_800da3e8
+        primitives = FUN_800daeb8(primitives, vertices, normals);
+      } else if(command == 0x3004_0000L) {
+        //LAB_800da408
+        primitives = FUN_800dbb14(primitives, vertices, normals);
+      } else if(command == 0x3200_0000L) {
+        //LAB_800da3f8
+        primitives = FUN_800dce24(primitives, vertices, normals);
+      } else if(command == 0x3204_0000L) {
+        //LAB_800da41c
+        primitives = FUN_800dd4e0(primitives, vertices, normals);
+      } else if(command == 0x3400_0000L) {
+        //LAB_800da430
+        primitives = FUN_800db4c0(primitives, vertices, normals);
+      } else if(command == 0x3500_0000L) {
+        //LAB_800da450
+        primitives = FUN_800dc164(primitives, vertices, length);
+      } else if(command == 0x3600_0000L) {
+        //LAB_800da440
+        primitives = FUN_800dc7c0(primitives, vertices, normals);
+      } else if(command == 0x3700_0000L) {
+        //LAB_800da464
+        primitives = FUN_800ddb8c(primitives, vertices, length);
+      } else if(command == 0x3800_0000L) {
+        //LAB_800da478
+        primitives = FUN_800dab7c(primitives, vertices, normals);
+      } else if(command == 3804_0000L) {
+        //LAB_800da498
+        primitives = FUN_800db790(primitives, vertices, normals);
+      } else if(command == 0x3a00_0000L) {
+        //LAB_800da488
+        primitives = FUN_800dca90(primitives, vertices, normals);
+      } else if(command == 0x3a04_0000L) {
+        //LAB_800da4ac
+        primitives = FUN_800dd0fc(primitives, vertices, normals);
+      } else if(command == 0x3c00_0000L) {
+        //LAB_800da4c0
+        primitives = FUN_800db144(primitives, vertices, normals);
+      } else if(command == 0x3d00_0000L) {
+        //LAB_800da4e4
+        primitives = FUN_800dbde8(primitives, vertices, length);
+      } else if(command == 0x3e00_0000L) {
+        //LAB_800da4d0
+        primitives = FUN_800dc43c(primitives, vertices, normals);
+      } else if(command == 0x3f00_0000L) {
+        //LAB_800da4f8
+        primitives = FUN_800dd808(primitives, vertices, length);
+      }
+
+      //LAB_800da504
+    }
+
+    //LAB_800da50c
+  }
+
   @Method(0x800da6c8L)
   public static void FUN_800da6c8(final long a0, long a1, long a2) {
     final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
@@ -806,13 +879,199 @@ public final class SMap {
     assert false;
   }
 
+  @Method(0x800dab7cL)
+  public static long FUN_800dab7c(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800daeb8L)
+  public static long FUN_800daeb8(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800db144L)
+  public static long FUN_800db144(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800db4c0L)
+  public static long FUN_800db4c0(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800db790L)
+  public static long FUN_800db790(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dbb14L)
+  public static long FUN_800dbb14(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dbde8L)
+  public static long FUN_800dbde8(final long primitives, final long vertices, final long length) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dc164L)
+  public static long FUN_800dc164(final long primitives, final long vertices, final long length) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dc43cL)
+  public static long FUN_800dc43c(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dc7c0L)
+  public static long FUN_800dc7c0(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dca90L)
+  public static long FUN_800dca90(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dce24L)
+  public static long FUN_800dce24(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dd0fcL)
+  public static long FUN_800dd0fc(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dd4e0L)
+  public static long FUN_800dd4e0(final long primitives, final long vertices, final long normals) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800dd808L)
+  public static long FUN_800dd808(final long primitives, final long vertices, final long length) {
+    long a2 = length;
+    long t4 = primitives;
+    long t2 = linkedListAddress_1f8003d8.get();
+    final UnboundedArrayRef<GsOT_TAG> tags = tags_1f8003d0.deref();
+    long t0 = primitives + 0x22L;
+    long a3 = t2 + 0x2aL;
+
+    //LAB_800dd84c
+    while(a2 != 0) {
+      long t5 = vertices + MEMORY.ref(2, t4).offset(0x24L).get() * 0x8L;
+      long t6 = vertices + MEMORY.ref(2, t4).offset(0x26L).get() * 0x8L;
+      long t7 = vertices + MEMORY.ref(2, t4).offset(0x28L).get() * 0x8L;
+      CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0);
+      CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 1);
+      CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 2);
+      CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 3);
+      CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 4);
+      CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 5);
+      CPU.COP2(0x28_0030L);
+      MEMORY.ref(4, a3 - 0x1eL).setu(MEMORY.ref(4, t0 - 0x1eL));
+      MEMORY.ref(4, a3 - 0x12L).setu(MEMORY.ref(4, t0 - 0x1aL));
+
+      if(CPU.CFC2(31) >= 0) {
+        CPU.COP2(0x140_0006L);
+
+        MEMORY.ref(4, a3 + 0x6L).setu(MEMORY.ref(4, t0 - 0x16L));
+
+        if(CPU.MFC2(24) != 0) {
+          MEMORY.ref(4, t2).offset(0x08L).setu(CPU.MFC2(12));
+          MEMORY.ref(4, t2).offset(0x14L).setu(CPU.MFC2(13));
+          MEMORY.ref(4, t2).offset(0x20L).setu(CPU.MFC2(14));
+          long v0 = vertices + MEMORY.ref(2, t0).offset(0x8L).get() * 0x8L;
+          CPU.MTC2(MEMORY.ref(4, v0).offset(0x0L).get(), 0);
+          CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 1);
+          CPU.COP2(0x18_0001L);
+
+          MEMORY.ref(1, a3).offset(-0x27L).setu(0xcL);
+          MEMORY.ref(4, a3).offset(-0x26L).setu(0x3e80_8080L);
+          MEMORY.ref(4, a3 + 0x6L).setu(MEMORY.ref(4, t0 - 0x12L));
+
+          if(CPU.CFC2(31) >= 0) {
+            MEMORY.ref(4, t2).offset(0x2cL).setu(CPU.MFC2(14));
+
+            if(MEMORY.ref(2, a3).offset(-0x22L).getSigned() >= -0xc0L || MEMORY.ref(2, a3).offset(-0x16L).getSigned() >= -0xc0L || MEMORY.ref(2, a3).offset(-0xaL).getSigned() >= -0xc0L || MEMORY.ref(2, a3).offset(0x2L).getSigned() >= -0xc0L) {
+              //LAB_800dd98c
+              if(MEMORY.ref(2, a3).offset(-0x20L).getSigned() >= -0x80L || MEMORY.ref(2, a3).offset(-0x14L).getSigned() >= -0x80L || MEMORY.ref(2, a3).offset(-0x8L).getSigned() >= -0x80L || MEMORY.ref(2, a3).offset(0x4L).getSigned() == 0) {
+                //LAB_800dd9dc
+                if(MEMORY.ref(2, a3).offset(-0x22L).getSigned() < 0xc1L || MEMORY.ref(2, a3).offset(-0x16L).getSigned() < 0xc1L || MEMORY.ref(2, a3).offset(-0xaL).getSigned() < 0xc1L || MEMORY.ref(2, a3).offset(0x2L).getSigned() < 0xc1L) {
+                  //LAB_800dda2c
+                  if(MEMORY.ref(2, a3).offset(-0x20L).getSigned() <= 0x80L || MEMORY.ref(2, a3).offset(-0x14L).getSigned() <= 0x80L || MEMORY.ref(2, a3).offset(-0x8L).getSigned() <= 0x80L || MEMORY.ref(2, a3).offset(0x4L).getSigned() <= 0x80L) {
+                    //LAB_800dda7c
+                    CPU.COP2(0x168_002eL);
+                    MEMORY.ref(1, a3).offset(-0x26L).setu(MEMORY.ref(1, t0).offset(-0xeL));
+                    MEMORY.ref(1, a3).offset(-0x25L).setu(MEMORY.ref(1, t0).offset(-0xdL));
+                    MEMORY.ref(1, a3).offset(-0x24L).setu(MEMORY.ref(1, t0).offset(-0xcL));
+                    MEMORY.ref(1, a3).offset(-0x1aL).setu(MEMORY.ref(1, t0).offset(-0xaL));
+                    MEMORY.ref(1, a3).offset(-0x19L).setu(MEMORY.ref(1, t0).offset(-0x9L));
+                    MEMORY.ref(1, a3).offset(-0x18L).setu(MEMORY.ref(1, t0).offset(-0x8L));
+                    MEMORY.ref(1, a3).offset(-0x0eL).setu(MEMORY.ref(1, t0).offset(-0x6L));
+                    MEMORY.ref(1, a3).offset(-0x0dL).setu(MEMORY.ref(1, t0).offset(-0x5L));
+                    MEMORY.ref(1, a3).offset(-0x0cL).setu(MEMORY.ref(1, t0).offset(-0x4L));
+                    MEMORY.ref(1, a3).offset(-0x02L).setu(MEMORY.ref(1, t0).offset(-0x2L));
+                    MEMORY.ref(1, a3).offset(-0x01L).setu(MEMORY.ref(1, t0).offset(-0x1L));
+                    MEMORY.ref(1, a3).offset(-0x00L).setu(MEMORY.ref(1, t0).offset(-0x0L));
+                    long t1 = CPU.MFC2(7) + _1f8003e8.get();
+                    long v1 = _1f8003cc.get();
+                    t1 >>= _1f8003c4.get();
+                    if(t1 >= v1) {
+                      t1 = v1;
+                    }
+
+                    //LAB_800ddb3c
+                    MEMORY.ref(4, t2).setu(0xc00_0000L | tags.get((int)t1).p.get());
+                    tags.get((int)t1).p.set(t2 & 0xff_ffffL);
+                    a3 += 0x34L;
+                    t2 += 0x34L;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      //LAB_800ddb64
+      t0 += 0x2cL;
+      t4 += 0x2cL;
+      a2--;
+    }
+
+    //LAB_800ddb70
+    linkedListAddress_1f8003d8.setu(t2);
+    return t4;
+  }
+
+  @Method(0x800ddb8cL)
+  public static long FUN_800ddb8c(final long primitives, final long vertices, final long length) {
+    assert false;
+    return 0;
+  }
+
   @Method(0x800dde70L)
   public static void FUN_800dde70(BigStruct a0, int index) {
     long a2;
     long t1;
     long t2;
     long t3;
-    long v0;
     long v1;
     long s0;
 
@@ -2703,6 +2962,16 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800e68b4L)
+  public static long FUN_800e68b4(final HmdSomethingStruct a0) {
+    final IntRef x = new IntRef();
+    final IntRef y = new IntRef();
+    getScreenOffset(x, y);
+    a0.uiArr_20.get(0).deref().set(x.get() & 0xffff_ffffL);
+    a0.uiArr_20.get(1).deref().set(y.get() & 0xffff_ffffL);
+    return 0;
+  }
+
   @Method(0x800e6904L)
   public static long FUN_800e6904(final HmdSomethingStruct a0) {
     final int x = (int)a0.uiArr_20.get(0).deref().get();
@@ -2724,6 +2993,12 @@ public final class SMap {
 
     //LAB_800e6988
     _800f7e50.setu(0);
+    return 0;
+  }
+
+  @Method(0x800e6a64L)
+  public static long FUN_800e6a64(final HmdSomethingStruct a0) {
+    FUN_800e76b0(a0.uiArr_20.get(0).deref().get(), a0.uiArr_20.get(0).deref().get(), a0.uiArr_20.get(2).deref().get());
     return 0;
   }
 
