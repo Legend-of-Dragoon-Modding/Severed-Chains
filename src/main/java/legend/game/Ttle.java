@@ -1651,7 +1651,7 @@ public final class Ttle {
         if(CPU.MFC2(24L) != 0) { // MAC0
           //LAB_800cc6b0
           MEMORY.ref(1, address).offset(0x03L).setu(0x9L); // 9 words
-          MEMORY.ref(4, address).offset(0x04L).setu(0x3680_8080L); // Shaded Textured three-point polygon, semi-transparent, tex-blend
+          MEMORY.ref(4, address).offset(0x04L).setu(0x3680_8080L); // Shaded textured three-point polygon, semi-transparent, tex-blend
           MEMORY.ref(4, address).offset(0x08L).setu(CPU.MFC2(12L)); // SXY0
           MEMORY.ref(4, address).offset(0x14L).setu(CPU.MFC2(13L)); // SXY1
           MEMORY.ref(4, address).offset(0x20L).setu(CPU.MFC2(14L)); // SXY2
@@ -1709,27 +1709,26 @@ public final class Ttle {
   }
 
   @Method(0x800ccb78L)
-  public static long FUN_800ccb78(long a0, long a1, long len) {
+  public static long FUN_800ccb78(long primitives, long vertices, long len) {
     long a3;
     long v0;
-    long v1;
     long t0;
     long t1;
     long mult;
     long sp08;
 
-    long sp18 = a0;
+    long sp18 = primitives;
     long sp20 = len;
     final long sp00 = _800c671c.get();
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
-    v1 = linkedListAddress_1f8003d8.get();
+    long address = linkedListAddress_1f8003d8.get();
 
     //LAB_800ccbcc
     while(sp20 != 0) {
       //LAB_800ccbe4
-      final SVECTOR t5 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x24L).get() * 8, SVECTOR::new);
-      final SVECTOR t6 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x26L).get() * 8, SVECTOR::new);
-      final SVECTOR t7 = MEMORY.ref(4, a1 + MEMORY.ref(2, sp18).offset(0x28L).get() * 8, SVECTOR::new);
+      final SVECTOR t5 = MEMORY.ref(4, vertices + MEMORY.ref(2, sp18).offset(0x24L).get() * 8, SVECTOR::new);
+      final SVECTOR t6 = MEMORY.ref(4, vertices + MEMORY.ref(2, sp18).offset(0x26L).get() * 8, SVECTOR::new);
+      final SVECTOR t7 = MEMORY.ref(4, vertices + MEMORY.ref(2, sp18).offset(0x28L).get() * 8, SVECTOR::new);
       CPU.MTC2(t5.getXY(), 0); // VXY0
       CPU.MTC2(t5.getZ(),  1); // VZ0
       CPU.MTC2(t6.getXY(), 2); // VXY1
@@ -1738,178 +1737,60 @@ public final class Ttle {
       CPU.MTC2(t7.getZ(),  5); // VZ2
       CPU.COP2(0x280030L); // Perspective transform triple
 
-      MEMORY.ref(4, v1).offset(0x0cL).setu(MEMORY.ref(4, sp18).offset(0x4L));
-      MEMORY.ref(4, v1).offset(0x18L).setu(MEMORY.ref(4, sp18).offset(0x8L));
+      MEMORY.ref(4, address).offset(0x0cL).setu(MEMORY.ref(4, sp18).offset(0x4L));
+      MEMORY.ref(4, address).offset(0x18L).setu(MEMORY.ref(4, sp18).offset(0x8L));
       sp20--;
 
-      if((int)CPU.CFC2(0x1fL) >= 0) {
+      if((int)CPU.CFC2(31L) >= 0) {
         //LAB_800ccc90
-        CPU.COP2(0x1400006L);
-        MEMORY.ref(4, v1).offset(0x24L).setu(MEMORY.ref(4, sp18).offset(0xcL));
+        CPU.COP2(0x1400006L); // Normal clipping
 
-        if(CPU.MFC2(0x18L) != 0) {
+        MEMORY.ref(4, address).offset(0x24L).setu(MEMORY.ref(4, sp18).offset(0xcL));
+
+        if(CPU.MFC2(24L) != 0) { // MAC0
           //LAB_800ccccc
-          MEMORY.ref(4, v1).offset(0x08L).setu(CPU.MFC2(0xcL));
-          MEMORY.ref(4, v1).offset(0x14L).setu(CPU.MFC2(0xdL));
-          MEMORY.ref(4, v1).offset(0x20L).setu(CPU.MFC2(0xeL));
-          v0 = MEMORY.ref(2, sp18).offset(0x2aL).get() * 8 + a1;
-          CPU.MTC2(MEMORY.ref(4, v0).get(), 0x0L);
-          CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 0x1L);
-          CPU.COP2(0x180001L);
+          MEMORY.ref(1, address).offset(0x3L).setu(0xcL); // 12 words
+          MEMORY.ref(4, address).offset(0x4L).setu(0x3e808080L); // Shaded textured four-point polygon, semi-transparent, tex-blend
+          MEMORY.ref(4, address).offset(0x08L).setu(CPU.MFC2(12L)); // SXY0
+          MEMORY.ref(4, address).offset(0x14L).setu(CPU.MFC2(13L)); // SXY1
+          MEMORY.ref(4, address).offset(0x20L).setu(CPU.MFC2(14L)); // SXY2
 
-          MEMORY.ref(4, v1).offset(0x30L).setu(MEMORY.ref(4, sp18).offset(0x10L));
-          MEMORY.ref(1, v1).offset(0x3L).setu(0xcL);
-          MEMORY.ref(4, v1).offset(0x4L).setu(0x3e808080L);
+          v0 = vertices + MEMORY.ref(2, sp18).offset(0x2aL).get() * 8;
+          CPU.MTC2(MEMORY.ref(4, v0).get(), 0x0L); // VXY0
+          CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 0x1L); // VZ0
+          CPU.COP2(0x180001L); // Perspective transform single
 
-          if((int)CPU.CFC2(0x1fL) >= 0) {
+          MEMORY.ref(4, address).offset(0x30L).setu(MEMORY.ref(4, sp18).offset(0x10L));
+
+          if((int)CPU.CFC2(31L) >= 0) { // Flags
             //LAB_800ccd54
-            MEMORY.ref(4, v1).offset(0x2cL).setu(CPU.MFC2(0xeL));
+            MEMORY.ref(4, address).offset(0x2cL).setu(CPU.MFC2(14L)); // SXY2
 
-            if(MEMORY.ref(2, v1).offset(0x8L).getSigned() >= -0xc0L || MEMORY.ref(2, v1).offset(0x14L).getSigned() >= -0xc0L || MEMORY.ref(2, v1).offset(0x20L).getSigned() >= -0xc0L || MEMORY.ref(4, v1).offset(0x2cL).getSigned() >= -0xc0L) {
+            if(MEMORY.ref(2, address).offset(0x8L).getSigned() >= -0xc0L || MEMORY.ref(2, address).offset(0x14L).getSigned() >= -0xc0L || MEMORY.ref(2, address).offset(0x20L).getSigned() >= -0xc0L || MEMORY.ref(4, address).offset(0x2cL).getSigned() >= -0xc0L) {
               //LAB_800ccdb4
-              if(MEMORY.ref(2, v1).offset(0xaL).getSigned() >= -0x78L || MEMORY.ref(2, v1).offset(0x16L).getSigned() >= -0x78L || MEMORY.ref(2, v1).offset(0x22L).getSigned() >= -0x78L || MEMORY.ref(2, v1).offset(0x2eL).getSigned() >= -0x78L) {
+              if(MEMORY.ref(2, address).offset(0xaL).getSigned() >= -0x78L || MEMORY.ref(2, address).offset(0x16L).getSigned() >= -0x78L || MEMORY.ref(2, address).offset(0x22L).getSigned() >= -0x78L || MEMORY.ref(2, address).offset(0x2eL).getSigned() >= -0x78L) {
                 //LAB_800cce0c
-                if(MEMORY.ref(2, v1).offset(0x8L).getSigned() < 0xc1L || MEMORY.ref(2, v1).offset(0x14L).getSigned() < 0xc1L || MEMORY.ref(2, v1).offset(0x20L).getSigned() < 0xc1L || MEMORY.ref(2, v1).offset(0x2cL).getSigned() < 0xc1L) {
+                if(MEMORY.ref(2, address).offset(0x8L).getSigned() < 0xc1L || MEMORY.ref(2, address).offset(0x14L).getSigned() < 0xc1L || MEMORY.ref(2, address).offset(0x20L).getSigned() < 0xc1L || MEMORY.ref(2, address).offset(0x2cL).getSigned() < 0xc1L) {
                   //LAB_800cce64
-                  if(MEMORY.ref(2, v1).offset(0xaL).getSigned() < 0x79L || MEMORY.ref(2, v1).offset(0x16L).getSigned() < 0x79L || MEMORY.ref(2, v1).offset(0x22L).getSigned() < 0x79L || MEMORY.ref(2, v1).offset(0x2eL).getSigned() < 0x79L) {
+                  if(MEMORY.ref(2, address).offset(0xaL).getSigned() < 0x79L || MEMORY.ref(2, address).offset(0x16L).getSigned() < 0x79L || MEMORY.ref(2, address).offset(0x22L).getSigned() < 0x79L || MEMORY.ref(2, address).offset(0x2eL).getSigned() < 0x79L) {
                     //LAB_800ccebc
-                    a3 = MEMORY.ref(1, sp18).offset(0x14L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x4L).setu(v0);
+                    MEMORY.ref(1, address).offset(0x04L).setu(MEMORY.ref(1, sp18).offset(0x14L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x05L).setu(MEMORY.ref(1, sp18).offset(0x15L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x06L).setu(MEMORY.ref(1, sp18).offset(0x16L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x10L).setu(MEMORY.ref(1, sp18).offset(0x18L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x11L).setu(MEMORY.ref(1, sp18).offset(0x19L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x12L).setu(MEMORY.ref(1, sp18).offset(0x1aL).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x1cL).setu(MEMORY.ref(1, sp18).offset(0x1cL).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x1dL).setu(MEMORY.ref(1, sp18).offset(0x1dL).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x1eL).setu(MEMORY.ref(1, sp18).offset(0x1eL).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x28L).setu(MEMORY.ref(1, sp18).offset(0x20L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x29L).setu(MEMORY.ref(1, sp18).offset(0x21L).get() * sp00 / 0xffL);
+                    MEMORY.ref(1, address).offset(0x2aL).setu(MEMORY.ref(1, sp18).offset(0x22L).get() * sp00 / 0xffL);
 
-                    a3 = MEMORY.ref(1, sp18).offset(0x15L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x5L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x16L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x6L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x18L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x10L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x19L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x11L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x1aL).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x12L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x1cL).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x1cL).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x1dL).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 - v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x1dL).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x1eL).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x1eL).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x20L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x28L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x21L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    a3 = t1 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x29L).setu(v0);
-
-                    a3 = MEMORY.ref(1, sp18).offset(0x22L).get();
-                    mult = a3 * sp00;
-                    v0 = mult & 0xffff_ffffL;
-                    mult = v0 * 0x8080_8081L;
-                    t1 = mult >>> 32;
-                    sp08 = t1;
-                    a3 = sp08 + v0;
-                    t0 = (int)a3 >> 0x7L;
-                    a3 = (int)v0 >> 0x1fL;
-                    v0 = t0 - a3;
-                    MEMORY.ref(1, v1).offset(0x2aL).setu(v0);
-
-                    MEMORY.ref(4, v1).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL | 0xc00_0000L);
+                    MEMORY.ref(4, address).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL | 0xc00_0000L);
                     tags.get((int)_800c6758.get()).num.set(0x0c);
-                    tags.get((int)_800c6758.get()).p.set(v1 & 0xff_ffffL);
-                    v1 += 0x34L;
+                    tags.get((int)_800c6758.get()).p.set(address & 0xff_ffffL);
+                    address += 0x34L;
                   }
                 }
               }
@@ -1923,7 +1804,7 @@ public final class Ttle {
     }
 
     //LAB-800cd2ac
-    linkedListAddress_1f8003d8.setu(v1);
+    linkedListAddress_1f8003d8.setu(address);
 
     //LAB_800cd2c8
     return sp18;
