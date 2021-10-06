@@ -1002,7 +1002,7 @@ public final class SMap {
           CPU.COP2(0x18_0001L);
 
           MEMORY.ref(1, a3).offset(-0x27L).setu(0xcL);
-          MEMORY.ref(4, a3).offset(-0x26L).setu(0x3e80_8080L);
+          MEMORY.ref(4, a3 - 0x26L).setu(0x3e80_8080L);
           MEMORY.ref(4, a3 + 0x6L).setu(MEMORY.ref(4, t0 - 0x12L));
 
           if(CPU.CFC2(31) >= 0) {
