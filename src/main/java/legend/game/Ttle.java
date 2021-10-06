@@ -1710,13 +1710,6 @@ public final class Ttle {
 
   @Method(0x800ccb78L)
   public static long FUN_800ccb78(long primitives, long vertices, long len) {
-    long a3;
-    long v0;
-    long t0;
-    long t1;
-    long mult;
-    long sp08;
-
     long sp18 = primitives;
     long sp20 = len;
     final long sp00 = _800c671c.get();
@@ -1735,15 +1728,15 @@ public final class Ttle {
       CPU.MTC2(t6.getZ(),  3); // VY1
       CPU.MTC2(t7.getXY(), 4); // VXY2
       CPU.MTC2(t7.getZ(),  5); // VZ2
-      CPU.COP2(0x280030L); // Perspective transform triple
+      CPU.COP2(0x28_0030L); // Perspective transform triple
 
       MEMORY.ref(4, address).offset(0x0cL).setu(MEMORY.ref(4, sp18).offset(0x4L));
       MEMORY.ref(4, address).offset(0x18L).setu(MEMORY.ref(4, sp18).offset(0x8L));
       sp20--;
 
-      if((int)CPU.CFC2(31L) >= 0) {
+      if((int)CPU.CFC2(31L) >= 0) { // Flags
         //LAB_800ccc90
-        CPU.COP2(0x1400006L); // Normal clipping
+        CPU.COP2(0x140_0006L); // Normal clipping
 
         MEMORY.ref(4, address).offset(0x24L).setu(MEMORY.ref(4, sp18).offset(0xcL));
 
@@ -1755,10 +1748,10 @@ public final class Ttle {
           MEMORY.ref(4, address).offset(0x14L).setu(CPU.MFC2(13L)); // SXY1
           MEMORY.ref(4, address).offset(0x20L).setu(CPU.MFC2(14L)); // SXY2
 
-          v0 = vertices + MEMORY.ref(2, sp18).offset(0x2aL).get() * 8;
-          CPU.MTC2(MEMORY.ref(4, v0).get(), 0x0L); // VXY0
+          final long v0 = vertices + MEMORY.ref(2, sp18).offset(0x2aL).get() * 8;
+          CPU.MTC2(MEMORY.ref(4, v0).offset(0x0L).get(), 0x0L); // VXY0
           CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 0x1L); // VZ0
-          CPU.COP2(0x180001L); // Perspective transform single
+          CPU.COP2(0x18_0001L); // Perspective transform single
 
           MEMORY.ref(4, address).offset(0x30L).setu(MEMORY.ref(4, sp18).offset(0x10L));
 
@@ -1787,7 +1780,7 @@ public final class Ttle {
                     MEMORY.ref(1, address).offset(0x29L).setu(MEMORY.ref(1, sp18).offset(0x21L).get() * sp00 / 0xffL);
                     MEMORY.ref(1, address).offset(0x2aL).setu(MEMORY.ref(1, sp18).offset(0x22L).get() * sp00 / 0xffL);
 
-                    MEMORY.ref(4, address).setu(tags.get((int)_800c6758.get()).get() & 0xff_ffffL | 0xc00_0000L);
+                    MEMORY.ref(4, address).setu(0xc00_0000L | tags.get((int)_800c6758.get()).get() & 0xff_ffffL);
                     tags.get((int)_800c6758.get()).num.set(0x0c);
                     tags.get((int)_800c6758.get()).p.set(address & 0xff_ffffL);
                     address += 0x34L;
