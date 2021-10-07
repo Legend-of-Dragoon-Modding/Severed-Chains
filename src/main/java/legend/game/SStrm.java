@@ -769,8 +769,6 @@ public final class SStrm {
    * Returns an array rather than using a0 as an output
    *
    * I have verified that at least the first invocation of this method returns the correct array
-   *
-   * TODO verify
    */
   @Method(0x800fcc50L)
   public static long[] FUN_800fcc50(final long[] out, long a1, long a2) {

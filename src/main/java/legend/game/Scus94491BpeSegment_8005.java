@@ -253,7 +253,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
   public static final ArrayRef<MATRIX> matrixStack_80054a0c = MEMORY.ref(640, 0x80054a0cL, ArrayRef.of(MATRIX.class, 20, 32, MATRIX::new));
 
-  public static final Value _80054d0c = MEMORY.ref(4, 0x80054d0cL);
+  /** Precomputed sin/cos table */
+  public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);
 
   public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
 

@@ -166,7 +166,7 @@ import static legend.game.Scus94491BpeSegment_8005._800547bb;
 import static legend.game.Scus94491BpeSegment_8005._800547f4;
 import static legend.game.Scus94491BpeSegment_8005._800547f8;
 import static legend.game.Scus94491BpeSegment_8005._800547fc;
-import static legend.game.Scus94491BpeSegment_8005._80054d0c;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdlLoc_80053312;
@@ -721,7 +721,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003169cL)
   public static void FUN_8003169c(final long a0, final long a1, final long a2, final long a3) {
     assert false;
-    //TODO
   }
 
   @Method(0x800316c8L)
@@ -1479,7 +1478,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80033304L)
   public static void FUN_80033304(final SyncCode syncCode, final byte[] responses) {
     assert false;
-    //TODO
   }
 
   @Method(0x800334f4L)
@@ -3409,7 +3407,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x800369c8L)
   public static void FUN_800369c8(final SyncCode syncCode, final byte[] responses) {
     assert false;
-    //TODO
   }
 
   @Method(0x80036a80L)
@@ -3463,9 +3460,8 @@ public final class Scus94491BpeSegment_8003 {
   public static long FUN_80036f20() {
     final long s0 = FUN_8003475c(0);
 
-    //TODO not sure if commenting this out is gonna break anything
     if(s0 == 0x1L && getCdlPacketIndex800bf700() > 0) {
-    //LAB_80036f5c
+      //LAB_80036f5c
       return 0x2L;
     }
 
@@ -5335,7 +5331,6 @@ public final class Scus94491BpeSegment_8003 {
     _800c34d0.setu(0x1L);
   }
 
-  //TODO struct
   @Method(0x8003c048L)
   public static void FUN_8003c048(final long a0, final long a1, final long a2, final GsOT ot) {
     _800c3424.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a0);
@@ -5460,7 +5455,7 @@ public final class Scus94491BpeSegment_8003 {
     final MATRIX sp10 = new MATRIX();
     sp10.set(matrix_800c34e8);
     PushMatrix();
-    multiplyMatricesMaybe(sp10, matrix);
+    MulMatrix(sp10, matrix);
     PopMatrix();
     SetLightMatrix(sp10);
   }
@@ -5634,7 +5629,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003cda0L)
   public static void initGraphics() {
-    initGte();
+    InitGeom();
     SetFarColour(0, 0, 0);
     SetGeomOffset(0, 0);
     _800c34c4.setu(0);
@@ -5756,7 +5751,7 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d134
     final MATRIX sp30 = new MATRIX();
     FUN_8003cee0(sp30, -(short)(s0 / s2), (short)(a2 / s2), 0x78L);
-    multiplyMatricesMaybe(matrix_800c3548, sp30);
+    MulMatrix(matrix_800c3548, sp30);
 
     if(s1 != 0) {
       a1 = (sp10[3] - sp10[0]) * 0x1000L;
@@ -5766,7 +5761,7 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003d200
       FUN_8003cee0(sp30, -(short)(a1 / s1), (short)(a2 / s1), 0x79L);
-      multiplyMatricesMaybe(matrix_800c3548, sp30);
+      MulMatrix(matrix_800c3548, sp30);
     }
 
     //LAB_8003d230
@@ -5854,7 +5849,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d550L)
   public static void FUN_8003d550(final MATRIX matrix1, final MATRIX matrix2) {
     final VECTOR out = ApplyMatrixLV(matrix1, matrix2.transfer);
-    FUN_8003f570(matrix1, matrix2);
+    MulMatrix2(matrix1, matrix2);
     matrix2.transfer.set(matrix1.transfer).add(out);
   }
 
@@ -5874,7 +5869,7 @@ public final class Scus94491BpeSegment_8003 {
       rot.set(2, 0, (short)0);
       rot.set(2, 1, (short)0);
       rot.set(2, 2, (short)0x1000);
-      multiplyMatricesMaybe(matrix, rot);
+      MulMatrix(matrix, rot);
     }
   }
 
@@ -5942,7 +5937,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d950L)
   public static void FUN_8003d950(final MATRIX m1, final MATRIX m2) {
     final VECTOR out = ApplyMatrixLV(m1, m2.transfer);
-    multiplyMatricesMaybe(m1, m2);
+    MulMatrix(m1, m2);
     m1.transfer.add(out);
   }
 
@@ -6199,26 +6194,26 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003e958L)
-  public static void initGte() {
+  public static void InitGeom() {
     patchC0TableAgain();
 
     // Set bit 30 of status register to enable GTE
     CPU.MTC0(CpuRegisterType.SR, CPU.MFC0(CpuRegisterType.SR) | 0x40000000);
 
     // cop2r61 = 0x155, 61 = ZSF3 - Z3 avg scale factor (normally 1/3)
-    CPU.CTC2(341, 0x1d);
+    CPU.CTC2(341, 29);
     // cop2r62 = 0x100, 62 = ZSF4 - Z4 avg scale factor (normally 1/4)
-    CPU.CTC2(256, 0x1e);
+    CPU.CTC2(256, 30);
     // cop2r58 = 0x3e8, 58 = H - Projection plane distance
-    CPU.CTC2(1000, 0x1a);
+    CPU.CTC2(1000, 26);
     // cop2r59 = 0xffffef9e, 59 = DQA - Depth queueing param A (coefficient)
-    CPU.CTC2(0xffffef9e, 0x1b);
+    CPU.CTC2(0xffffef9e, 27);
     // cop2r60 = 0x1400000, 60 = DQB - Depth queueing param B (offset)
-    CPU.CTC2(0x1400000, 0x1c);
+    CPU.CTC2(0x1400000, 28);
     // cop2r56 = 0, 56 = OFX - Screen offset X
-    CPU.CTC2(0, 0x18);
+    CPU.CTC2(0, 24);
     // cop2r57 = 0, 57 = OFY - Screen offset Y
-    CPU.CTC2(0, 0x19);
+    CPU.CTC2(0, 25);
   }
 
   /**
@@ -6230,7 +6225,7 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2((matrix.get(3) & 0xffffL) << 16 | matrix.get(2) & 0xffffL, 1); //
     CPU.CTC2((matrix.get(5) & 0xffffL) << 16 | matrix.get(4) & 0xffffL, 2); // Rotation matrix
     CPU.CTC2((matrix.get(7) & 0xffffL) << 16 | matrix.get(6) & 0xffffL, 3); //
-    CPU.CTC2(                      matrix.get(8) & 0xffffL, 4); //
+    CPU.CTC2(                                  matrix.get(8) & 0xffffL, 4); //
 
     long t0 = vector.x.get();
     long t1 = vector.y.get();
@@ -6280,7 +6275,7 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t3,  9); // IR1
     CPU.MTC2(t4, 10); // IR2
     CPU.MTC2(t5, 11); // IR3
-    CPU.COP2(0x41e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, rotation, no fraction)
+    CPU.COP2(0x41_e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, rotation, no fraction)
     t3 = CPU.MFC2(25); // MAC1
     t4 = CPU.MFC2(26); // MAC2
     t5 = CPU.MFC2(27); // MAC3
@@ -6317,7 +6312,7 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t0,  9); // IR1
     CPU.MTC2(t1, 10); // IR2
     CPU.MTC2(t2, 11); // IR3
-    CPU.COP2(0x49e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, 12-bit fraction)
+    CPU.COP2(0x49_e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, 12-bit fraction)
 
     //LAB_8003ef24
     t0 = CPU.MFC2(25); // MAC1
@@ -6385,7 +6380,7 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2((matrix.get(3) & 0xffffL) << 16 | matrix.get(2) & 0xffffL, 1); //
     CPU.CTC2((matrix.get(5) & 0xffffL) << 16 | matrix.get(4) & 0xffffL, 2); // Rotation matrix
     CPU.CTC2((matrix.get(7) & 0xffffL) << 16 | matrix.get(6) & 0xffffL, 3); //
-    CPU.CTC2(matrix.get(8) & 0xffffL, 4); //
+    CPU.CTC2(                                  matrix.get(8) & 0xffffL, 4); //
 
     CPU.CTC2(matrix.transfer.x.get(), 5); //
     CPU.CTC2(matrix.transfer.y.get(), 6); // Translation vector
@@ -6407,98 +6402,86 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * mat1 will be modified
+   * Multiply two matrices. Multiplies m1 by m0. The result is stored in m0 and returned.
+   *
+   * @param m0 Matrix 0 - both modified and returned
+   * @param m1 Matrix 1
+   *
+   * @return m0
    */
   @Method(0x8003f460L)
-  public static MATRIX multiplyMatricesMaybe(final MATRIX mat1, final MATRIX mat2) {
-    CPU.CTC2((mat1.get(1) & 0xffffL) << 16 | mat1.get(0) & 0xffffL, 0); //
-    CPU.CTC2((mat1.get(3) & 0xffffL) << 16 | mat1.get(2) & 0xffffL, 1); //
-    CPU.CTC2((mat1.get(5) & 0xffffL) << 16 | mat1.get(4) & 0xffffL, 2); // Rotation matrix (3x3)
-    CPU.CTC2((mat1.get(7) & 0xffffL) << 16 | mat1.get(6) & 0xffffL, 3); //
-    CPU.CTC2(                    mat1.get(8) & 0xffffL, 4); //
+  public static MATRIX MulMatrix(final MATRIX m0, final MATRIX m1) {
+    CPU.CTC2((m0.get(1) & 0xffffL) << 16 | m0.get(0) & 0xffffL, 0); //
+    CPU.CTC2((m0.get(3) & 0xffffL) << 16 | m0.get(2) & 0xffffL, 1); //
+    CPU.CTC2((m0.get(5) & 0xffffL) << 16 | m0.get(4) & 0xffffL, 2); // Rotation matrix (3x3)
+    CPU.CTC2((m0.get(7) & 0xffffL) << 16 | m0.get(6) & 0xffffL, 3); //
+    CPU.CTC2(                                m0.get(8) & 0xffffL, 4); //
 
-    CPU.MTC2((mat2.get(1, 0) & 0xffffL) << 16 | mat2.get(0, 0) & 0xffffL, 0x0L); // Vector 0 VXY0
-    CPU.MTC2(mat2.get(2, 0), 0x1L); // Vector 1 VZ0
+    CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(6) & 0xffffL, 1); // VZ0
+    CPU.COP2(0x48_6012L); // MVMVA - Multiply vector by matrix and add vector
+    m0.set(0, (short)CPU.MFC2( 9)); // IR1
+    m0.set(3, (short)CPU.MFC2(10)); // IR2
+    m0.set(6, (short)CPU.MFC2(11)); // IR3
+
+    CPU.MTC2((m1.get(4) & 0xffffL) << 16 | m1.get(1) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(7) & 0xffffL, 1); // VZ0
     CPU.COP2(0x486012L); // MVMVA - Multiply vector by matrix and add vector
-    final long t3 = CPU.MFC2( 9);
-    final long t4 = CPU.MFC2(10);
-    final long t5 = CPU.MFC2(11);
+    m0.set(1, (short)CPU.MFC2( 9)); // IR1
+    m0.set(4, (short)CPU.MFC2(10)); // IR2
+    m0.set(7, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((mat2.get(1, 1) & 0xffffL) << 16 | mat2.get(0, 1) & 0xffffL, 0x0L); // Vector 0 VXY0
-    CPU.MTC2(mat2.get(2, 1), 0x1L); // Vector 1 VZ0
+    CPU.MTC2((m1.get(5) & 0xffffL) << 16 | m1.get(2) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(8) & 0xffffL, 1); // VZ0
     CPU.COP2(0x486012L); // MVMVA - Multiply vector by matrix and add vector
-    final long t6 = CPU.MFC2( 9);
-    final long t7 = CPU.MFC2(10);
-    final long t8 = CPU.MFC2(11);
+    m0.set(2, (short)CPU.MFC2( 9)); // IR1
+    m0.set(5, (short)CPU.MFC2(10)); // IR2
+    m0.set(8, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((mat2.get(1, 2) & 0xffffL) << 16 | mat2.get(0, 2) & 0xffffL, 0x0L); // Vector 0 VXY0
-    CPU.MTC2(mat2.get(2, 2), 0x1L); // Vector 1 VZ0
-    CPU.COP2(0x486012L); // MVMVA - Multiply vector by matrix and add vector
-    final long t0 = CPU.MFC2( 9);
-    final long t1 = CPU.MFC2(10);
-    final long t2 = CPU.MFC2(11);
-
-    mat1.set(0, 0, (short)t3);
-    mat1.set(0, 1, (short)t6);
-    mat1.set(0, 2, (short)t0);
-    mat1.set(1, 0, (short)t4);
-    mat1.set(1, 1, (short)t7);
-    mat1.set(1, 2, (short)t1);
-    mat1.set(2, 0, (short)t5);
-    mat1.set(2, 1, (short)t8);
-    mat1.set(2, 2, (short)t2);
-
-    return mat1;
+    return m0;
   }
 
+  /**
+   * Multiply two matrices. Multiplies m1 by m0. m1 is both modified and returned.
+   *
+   * @param m0 Matrix 0
+   * @param m1 Matrix 1 - both modified and returned
+   *
+   * @return m1
+   */
   @Method(0x8003f570L)
-  public static MATRIX FUN_8003f570(MATRIX a0, MATRIX a1) {
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
-    long t8;
+  public static MATRIX MulMatrix2(final MATRIX m0, final MATRIX m1) {
+    CPU.CTC2((m0.get(1) & 0xffffL) << 16 | m0.get(0) & 0xffffL, 0); //
+    CPU.CTC2((m0.get(3) & 0xffffL) << 16 | m0.get(2) & 0xffffL, 1); //
+    CPU.CTC2((m0.get(5) & 0xffffL) << 16 | m0.get(4) & 0xffffL, 2); // Rotation matrix
+    CPU.CTC2((m0.get(7) & 0xffffL) << 16 | m0.get(6) & 0xffffL, 3); //
+    CPU.CTC2(                              m0.get(8) & 0xffffL, 4); //
 
-    CPU.CTC2((a0.get(1) & 0xffffL) << 16 | a0.get(0) & 0xffffL, 0); //
-    CPU.CTC2((a0.get(3) & 0xffffL) << 16 | a0.get(2) & 0xffffL, 1); //
-    CPU.CTC2((a0.get(5) & 0xffffL) << 16 | a0.get(4) & 0xffffL, 2); // Rotation matrix
-    CPU.CTC2((a0.get(7) & 0xffffL) << 16 | a0.get(6) & 0xffffL, 3); //
-    CPU.CTC2(a0.get(8) & 0xffffL, 4); //
-    CPU.MTC2((a1.get(3) & 0xffffL) << 16 | a1.get(0) & 0xffffL, 0); // VXY1
-    CPU.MTC2((a1.get(7) & 0xffffL) << 16 | a1.get(6) & 0xffffL, 1); // VZ1
-    CPU.COP2(0x486012L);
-    t3 = CPU.MFC2(0x9L);
-    t4 = CPU.MFC2(0xaL);
-    t5 = CPU.MFC2(0xbL);
+    // First row
+    CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(6) & 0xffffL, 1); // VZ0
+    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
+    m1.set(0, (short)CPU.MFC2( 9)); // IR1
+    m1.set(3, (short)CPU.MFC2(10)); // IR2
+    m1.set(6, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.get(4) & 0xffffL) << 16 | a1.get(1) & 0xffffL, 0);
-    CPU.MTC2(a1.get(7) & 0xffffL, 1);
-    CPU.COP2(0x486012L);
-    t6 = CPU.MFC2(0x9L);
-    t7 = CPU.MFC2(0xaL);
-    t8 = CPU.MFC2(0xbL);
+    // Second row
+    CPU.MTC2((m1.get(4) & 0xffffL) << 16 | m1.get(1) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(7) & 0xffffL, 1); // VZ0
+    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
+    m1.set(1, (short)CPU.MFC2( 9)); // IR1
+    m1.set(4, (short)CPU.MFC2(10)); // IR2
+    m1.set(7, (short)CPU.MFC2(11)); // IR3
 
-    t0 = a1.get(0, 2) & 0xffffL;
-    t1 = (a1.get(1, 2) & 0xffffL) << 16;
-    t2 = a1.get(2, 2) & 0xffffL;
-    t0 |= t1;
-    CPU.MTC2(t0, 0x0L);
-    CPU.MTC2(t2, 0x1L);
-    CPU.COP2(0x486012L);
-    a1.set(0, 0, (short)t3);
-    a1.set(0, 1, (short)t6);
-    a1.set(2, 0, (short)t5);
-    a1.set(2, 1, (short)t8);
-    a1.set(0, 2, (short)CPU.MFC2(0x9L));
-    a1.set(1, 0, (short)t4);
-    a1.set(1, 1, (short)t7);
-    a1.set(1, 2, (short)CPU.MFC2(0xaL));
-    a1.set(2, 2, (short)CPU.MFC2(0xbL));
-    return a1;
+    // Third row
+    CPU.MTC2((m1.get(5) & 0xffffL) << 16 | m1.get(2) & 0xffffL, 0); // VXY0
+    CPU.MTC2(                              m1.get(8) & 0xffffL, 1); // VZ0
+    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
+    m1.set(2, (short)CPU.MFC2( 9)); // IR1
+    m1.set(5, (short)CPU.MFC2(10)); // IR2
+    m1.set(8, (short)CPU.MFC2(11)); // IR3
+
+    return m1;
   }
 
   @Method(0x8003f730L)
@@ -6596,11 +6579,11 @@ public final class Scus94491BpeSegment_8003 {
 
     if(a0.getX() < 0) {
       //LAB_8003fb0c
-      t9 = _80054d0c.offset((-a0.getX() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((-a0.getX() & 0xfffL) * 0x4L).get();
       t3 = -(short)t9;
     } else {
       //LAB_8003fb34
-      t9 = _80054d0c.offset((a0.getX() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((a0.getX() & 0xfffL) * 0x4L).get();
       t3 = (short)t9;
     }
 
@@ -6609,12 +6592,12 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003fb54
     if(a0.getY() < 0) {
       //LAB_8003fb70
-      t9 = _80054d0c.offset((-a0.getY() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((-a0.getY() & 0xfffL) * 0x4L).get();
       t4 = (short)t9;
       t6 = -t4;
     } else {
       //LAB_8003fb98
-      t9 = _80054d0c.offset((a0.getY() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((a0.getY() & 0xfffL) * 0x4L).get();
       t6 = (short)t9;
       t4 = -t6;
     }
@@ -6628,11 +6611,11 @@ public final class Scus94491BpeSegment_8003 {
 
     if(a0.getZ() < 0) {
       //LAB_8003fbfc
-      t9 = _80054d0c.offset((-a0.getZ() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((-a0.getZ() & 0xfffL) * 0x4L).get();
       t5 = -(short)t9;
     } else {
       //LAB_8003fc24
-      t9 = _80054d0c.offset((a0.getZ() & 0xfffL) * 0x4L).get();
+      t9 = sin_cos_80054d0c.offset((a0.getZ() & 0xfffL) * 0x4L).get();
       t5 = (short)t9;
     }
 

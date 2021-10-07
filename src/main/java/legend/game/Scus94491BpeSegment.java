@@ -144,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_8005._80050068;
 import static legend.game.Scus94491BpeSegment_8005._800500e8;
 import static legend.game.Scus94491BpeSegment_8005._800500f8;
 import static legend.game.Scus94491BpeSegment_8005._80052c30;
-import static legend.game.Scus94491BpeSegment_8005._80054d0c;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
@@ -855,7 +855,6 @@ public final class Scus94491BpeSegment {
   @Method(0x800127ccL)
   public static long FUN_800127cc(final Value a0, final long a1, final long a2, final long a3, final long a4) {
     assert false;
-    //TODO
     return 0;
   }
 
@@ -1283,7 +1282,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013598L)
   public static long rsin(final long angleDiv360Maybe) {
-    return _80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
+    return sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
   }
 
   /**
@@ -1291,7 +1290,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800135b8L)
   public static long rcos(final long angleDiv360Maybe) {
-    return _80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
+    return sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
   }
 
   /**
@@ -1549,7 +1548,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80013d78L)
   public static void FUN_80013d78(final long a0, final long a1, final long a2) {
     assert false;
-    //TODO
   }
 
   @Method(0x800145c4L)
@@ -1995,8 +1993,6 @@ public final class Scus94491BpeSegment {
     if(transferIndex_800bb494.getSigned() >= 0) {
       return 0;
     }
-
-    //TODO here this always returns 0... always resets loading? That method must get overwritten or something...
 
     if(FUN_80014ef4() == 0) {
       fileLoadingInfoArray_800bbad8.get(0).used.set(false);
@@ -3082,13 +3078,11 @@ public final class Scus94491BpeSegment {
   @Method(0x80017d58L)
   public static void FUN_80017d58(final long archiveAddress, final long destinationAddress, final long sizePtr) {
     assert false;
-    //TODO
   }
 
   @Method(0x80017d8cL)
   public static void FUN_80017d8c(final long archiveAddress, final long destinationAddress, final long sizePtr) {
     assert false;
-    //TODO
   }
 
   @Method(0x80017f94L)
@@ -3492,7 +3486,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001a810L)
   public static long FUN_8001a810() {
     assert false;
-    //TODO
     return 0;
   }
 
@@ -4233,7 +4226,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c4ecL)
   public static void FUN_8001c4ec(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x8001c594L)

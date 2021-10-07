@@ -71,7 +71,7 @@ import static legend.game.Scus94491BpeSegment_8002.SysEnqIntRP;
 import static legend.game.Scus94491BpeSegment_8003.ChangeClearRCnt;
 import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8005._80054d0c;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005._80058d0c;
 import static legend.game.Scus94491BpeSegment_8005._8005954c;
 import static legend.game.Scus94491BpeSegment_8005._80059550;
@@ -339,8 +339,9 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004ff10 = MEMORY.ref(4, 0x8004ff10L);
   public static final Value _8004ff14 = MEMORY.ref(4, 0x8004ff14L);
 
+  /** TODO This is probably one of the RotMatrix* methods */
   @Method(0x80040010L)
-  public static void FUN_80040010(final SVECTOR vector, final MATRIX matrix) {
+  public static MATRIX FUN_80040010(final SVECTOR vector, final MATRIX matrix) {
     long t0;
     long t1;
     long t2;
@@ -353,118 +354,73 @@ public final class Scus94491BpeSegment_8004 {
     long t9;
 
     t7 = vector.getX();
-    t9 = t7 & 0xfffL;
-
     if(t7 < 0) {
-      t7 = -t7;
-      t7 &= 0xfffL;
-
       //LAB_8004002c
-      t8 = t7 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t6 = (short)(t9 & 0xffffL);
+      t7 = -t7 * 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t6 = (short)t9;
       t3 = -t6;
     } else {
       //LAB_80040054
-      t8 = t9 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t3 = (short)(t9 & 0xffffL);
+      t7 = t7 & 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t3 = (short)t9;
     }
 
-    t0 = t9 >> 0x10L;
+    t0 = t9 >> 16;
 
     //LAB_80040074
     t7 = vector.getY();
-    t9 = t7 & 0xfffL;
-
     if(t7 < 0) {
-      t7 = -t7;
-      t7 &= 0xfffL;
-
       //LAB_80040090
-      t8 = t7 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t6 = (short)(t9 & 0xffffL);
+      t7 = -t7 & 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t6 = (short)t9;
       t4 = -t6;
     } else {
       //LAB_800400b8
-      t8 = t9 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t4 = (short)(t9 & 0xffffL);
+      t7 = t7 & 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t4 = (short)t9;
       t6 = -t4;
     }
 
-    t1 = t9 >> 0x10L;
+    t1 = (int)t9 >> 16;
 
     //LAB_800400dc
-    t7 = vector.getZ();
     matrix.set(2, 0, (short)t6);
-    t8 = t3 * t1 & 0xffffffffL;
-    t6 = t8 >> 0xcL;
-    matrix.set(2, 1, (short)t6);
-    t9 = t7 & 0xfffL;
+    matrix.set(2, 1, (short)((t3 * t1) >> 12));
+    matrix.set(2, 2, (short)((t0 * t1) >> 12));
 
+    t7 = vector.getZ();
     if(t7 < 0) {
-      t8 = t0 * t1 & 0xffffffffL;
-      t6 = t8 >> 0xcL;
-      matrix.set(2, 2, (short)t6);
-      t7 = -t7;
-      t7 &= 0xfffL;
-
       //LAB_8004011c
-      t8 = t7 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t8 = (short)(t9 & 0xffffL);
-      t5 = -t8;
+      t7 = -t7 & 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t5 = -(short)t9;
     } else {
       //LAB_80040144
-      t7 = t0 * t1 & 0xffffffffL;
-      t6 = t7 >> 0xcL;
-      matrix.set(2, 2, (short)t6);
-      t8 = t9 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
-      t5 = (short)(t9 & 0xffffL);
+      t7 = t7 & 0xfffL;
+      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
+      t5 = (short)t9;
     }
 
-    t2 = t9 >> 0x10L;
+    t2 = (int)t9 >> 16;
 
     //LAB_80040170
-    t7 = t1 * t2 & 0xffffffffL;
-    t6 = t7 >> 0xcL;
-    matrix.set(0, 0, (short)t6);
-    t7 = t5 * t1 & 0xffffffffL;
-    t6 = t7 >> 0xcL;
-    matrix.set(1, 0, (short)t6);
-    t7 = t3 * t4 & 0xffffffffL;
-    t8 = t7 >> 0xcL;
-    t7 = t8 * t2 & 0xffffffffL;
-    t6 = t7 >> 0xcL;
-    t7 = t5 * t0 & 0xffffffffL;
-    t9 = t7 >> 0xcL;
-    t7 = t6 - t9;
-    matrix.set(0, 1, (short)t7);
-    t6 = t0 * t2 & 0xffffffffL;
-    t7 = t6 >> 0xcL;
-    t6 = t8 * t5 & 0xffffffffL;
-    t9 = t6 >> 0xcL;
-    t6 = t9 + t7;
-    matrix.set(1, 1, (short)t6);
-    t7 = t4 * t0 & 0xffffffffL;
-    t8 = t7 >> 0xcL;
-    t7 = t8 * t2 & 0xffffffffL;
-    t6 = t7 >> 0xcL;
-    t7 = t3 * t5 & 0xffffffffL;
-    t9 = t7 >> 0xcL;
-    t7 = t6 + t9;
-    matrix.set(0, 2, (short)t7);
-    t6 = t3 * t2 & 0xffffffffL;
-    t7 = t6 >> 0xcL;
-    t6 = t8 * t5 & 0xffffffffL;
-    t9 = t6 >> 0xcL;
-    t6 = t9 - t7;
-    matrix.set(1, 2, (short)t6);
+    matrix.set(0, 0, (short)((t1 * t2) >> 12));
+    matrix.set(1, 0, (short)((t5 * t1) >> 12));
+    t8 = (t3 * t4) >> 12;
+    matrix.set(0, 1, (short)(((t8 * t2) >> 12) - ((t5 * t0) >> 12)));
+    matrix.set(1, 1, (short)(((t8 * t5) >> 12) + ((t0 * t2) >> 12)));
+    t8 = (t4 * t0) >> 12;
+    matrix.set(0, 2, (short)(((t8 * t2) >> 12) + ((t3 * t5) >> 12)));
+    matrix.set(1, 2, (short)(((t8 * t5) >> 12) - ((t3 * t2) >> 12)));
+
+    return matrix;
   }
 
+  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800402a0L)
   public static void FUN_800402a0(final long a0, final MATRIX a1) {
     final long t1;
@@ -472,15 +428,15 @@ public final class Scus94491BpeSegment_8004 {
 
     if(a0 < 0) {
       //LAB_800402bc
-      t9 = _80054d0c.offset((-a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((-a0 & 0xfffL) * 4).get();
       t1 = -(short)t9;
     } else {
       //LAB_800402e4
-      t9 = _80054d0c.offset((a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((a0 & 0xfffL) * 4).get();
       t1 = (short)t9;
     }
 
-    final long t0 = t9 >> 0x10L;
+    final long t0 = (int)t9 >> 16;
 
     //LAB_80040304
     final long m10 = a1.get(1, 0);
@@ -490,14 +446,15 @@ public final class Scus94491BpeSegment_8004 {
     final long m21 = a1.get(2, 1);
     final long m22 = a1.get(2, 2);
 
-    a1.set(1, 0, (short)((t0 * m10 - t1 * m20) / 4096));
-    a1.set(1, 1, (short)((t0 * m11 - t1 * m21) / 4096));
-    a1.set(1, 2, (short)((t0 * m12 - t1 * m22) / 4096));
-    a1.set(2, 0, (short)((t1 * m10 + t0 * m20) / 4096));
-    a1.set(2, 1, (short)((t1 * m11 + t0 * m21) / 4096));
-    a1.set(2, 2, (short)((t1 * m12 + t0 * m22) / 4096));
+    a1.set(1, 0, (short)((t0 * m10 - t1 * m20) >> 12));
+    a1.set(1, 1, (short)((t0 * m11 - t1 * m21) >> 12));
+    a1.set(1, 2, (short)((t0 * m12 - t1 * m22) >> 12));
+    a1.set(2, 0, (short)((t1 * m10 + t0 * m20) >> 12));
+    a1.set(2, 1, (short)((t1 * m11 + t0 * m21) >> 12));
+    a1.set(2, 2, (short)((t1 * m12 + t0 * m22) >> 12));
   }
 
+  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x80040440L)
   public static void FUN_80040440(final long a0, final MATRIX a1) {
     long t0;
@@ -518,13 +475,13 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004045c
       t8 = t7 << 0x2L;
-      t9 = _80054d0c.offset(t8).get();
+      t9 = sin_cos_80054d0c.offset(t8).get();
       t1 = (int)t9;
       t0 = (int)t9 >> 16;
     } else {
       //LAB_80040480
       t8 = t9 * 4L;
-      t9 = _80054d0c.offset(t8).get();
+      t9 = sin_cos_80054d0c.offset(t8).get();
       t7 = (int)t9;
       t1 = -t7;
       t0 = t9 >> 16;
@@ -581,6 +538,7 @@ public final class Scus94491BpeSegment_8004 {
     a1.set(8, (short)t8);
   }
 
+  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800405e0L)
   public static void FUN_800405e0(final long a0, final MATRIX a1) {
     final long t1;
@@ -588,11 +546,11 @@ public final class Scus94491BpeSegment_8004 {
 
     if(a0 < 0) {
       //LAB_800405fc
-      t9 = _80054d0c.offset((-a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((-a0 & 0xfffL) * 4).get();
       t1 = -(short)(t9 & 0xffffL);
     } else {
       //LAB_80040624
-      t9 = _80054d0c.offset((a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((a0 & 0xfffL) * 4).get();
       t1 = (short)(t9 & 0xffffL);
     }
 
@@ -606,14 +564,15 @@ public final class Scus94491BpeSegment_8004 {
     final long m11 = a1.get(1, 1);
     final long m12 = a1.get(1, 2);
 
-    a1.set(0, 0, (short)((t0 * m00 - t1 * m11) / 4096));
-    a1.set(0, 1, (short)((t0 * m10 - t1 * m02) / 4096));
-    a1.set(0, 2, (short)((t0 * m01 - t1 * m12) / 4096));
-    a1.set(1, 0, (short)((t1 * m00 + t0 * m11) / 4096));
-    a1.set(1, 1, (short)((t1 * m10 + t0 * m02) / 4096));
-    a1.set(1, 2, (short)((t1 * m01 + t0 * m12) / 4096));
+    a1.set(0, 0, (short)((t0 * m00 - t1 * m11) >> 12));
+    a1.set(0, 1, (short)((t0 * m10 - t1 * m02) >> 12));
+    a1.set(0, 2, (short)((t0 * m01 - t1 * m12) >> 12));
+    a1.set(1, 0, (short)((t1 * m00 + t0 * m11) >> 12));
+    a1.set(1, 1, (short)((t1 * m10 + t0 * m02) >> 12));
+    a1.set(1, 2, (short)((t1 * m01 + t0 * m12) >> 12));
   }
 
+  /** TODO RotMatrix_gte? */
   @Method(0x80040780L)
   public static void FUN_80040780(SVECTOR vector, MATRIX matrix) {
     long v1;
@@ -631,7 +590,7 @@ public final class Scus94491BpeSegment_8004 {
     long lo;
 
     t0 = vector.getZ();
-    v1 = _80054d0c.getAddress();
+    v1 = sin_cos_80054d0c.getAddress();
     t4 = vector.getXY();
     long a0;
     long a1;
@@ -923,7 +882,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x800421a0L)
   public static void FUN_800421a0() {
     assert false;
-    //TODO
   }
 
   @Method(0x80042b60L)
@@ -2960,13 +2918,11 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80046224L)
   public static void FUN_80046224(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80046a04L)
   public static void FUN_80046a04(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x800470fcL)
@@ -3770,7 +3726,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x800486d4L)
   public static void FUN_800486d4(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x800488d4L)
@@ -3789,7 +3744,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80048998L)
   public static long FUN_80048998(final long a0, final long a1, final long a2, final long a3, final long a4) {
     assert false;
-    //TODO
     return 0;
   }
 
@@ -3942,7 +3896,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80048eb8L)
   public static void FUN_80048eb8(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80048f98L)
@@ -3975,19 +3928,16 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004906cL)
   public static void FUN_8004906c(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049250L)
   public static void FUN_80049250(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049480L)
   public static void FUN_80049480(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049638L)
@@ -4137,37 +4087,31 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80049980L)
   public static void FUN_80049980(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049cbcL)
   public static void FUN_80049cbc(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049e2cL)
   public static void FUN_80049e2c(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x80049f14L)
   public static void FUN_80049f14(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x8004a2c0L)
   public static void FUN_8004a2c0(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x8004a34cL)
   public static void FUN_8004a34c(final long voiceIndex) {
     assert false;
-    //TODO
   }
 
   @Method(0x8004a5e0L)
@@ -4461,13 +4405,11 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004ad2cL)
   public static void FUN_8004ad2c(final long a0) {
     assert false;
-    //TODO verify
   }
 
   @Method(0x8004ae94L)
   public static long FUN_8004ae94(final long a0, final long a1) {
     assert false;
-    //TODO
     return 0;
   }
 
@@ -4733,7 +4675,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004b464L)
   public static void FUN_8004b464(final long a0, final long a1, final long a2) {
     assert false;
-    //TODO
   }
 
   @Method(0x8004b5bcL)
@@ -4744,7 +4685,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004b644L)
   public static long FUN_8004b644(final long a0, final long a1) {
     assert false;
-    //TODO
     return 0;
   }
 
@@ -5161,7 +5101,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c6f8L)
   public static void FUN_8004c6f8(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x8004c894L)
@@ -5559,7 +5498,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d6a8L)
   public static long FUN_8004d6a8(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5) {
     assert false;
-    //TODO
     return 0;
   }
 

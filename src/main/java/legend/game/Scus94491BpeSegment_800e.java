@@ -74,7 +74,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetTmr0InterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
-import static legend.game.Scus94491BpeSegment_8003.initGte;
+import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
@@ -252,7 +252,7 @@ public final class Scus94491BpeSegment_800e {
     _800bb104.setu(0);
     _800babc0.setu(0);
 
-    initGte();
+    InitGeom();
     setProjectionPlaneDistance(640);
     resetCdromStuff();
     set80053498(0x1L);

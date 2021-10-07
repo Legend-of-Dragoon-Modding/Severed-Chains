@@ -1644,25 +1644,21 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80025a04L)
   public static void FUN_80025a04(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x80025f4cL)
   public static void FUN_80025f4c(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x800264b0L)
   public static void FUN_800264b0(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x800282acL)
   public static void FUN_800282ac(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x80029920L)
@@ -1685,7 +1681,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800299d4L)
   public static void FUN_800299d4(final long a0) {
     assert false;
-    //TODO
   }
 
   @Method(0x8002a058L)
@@ -2527,13 +2522,11 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002bcc8L)
   public static void FUN_8002bcc8(final long a0, final long a1) {
     assert false;
-    //TODO
   }
 
   @Method(0x8002bda4L)
   public static void FUN_8002bda4(final long a0, final long a1, final long a2) {
     assert false;
-    //TODO
   }
 
   @Method(0x8002bf00L)
@@ -3246,7 +3239,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002ed48L)
   public static long FUN_8002ed48(long a0, long a1, long a2, final Ref<Long> a3, long a4, long a5) {
     assert false;
-    //TODO
     return 0;
   }
 

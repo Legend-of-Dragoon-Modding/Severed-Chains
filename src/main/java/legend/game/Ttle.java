@@ -1806,14 +1806,12 @@ public final class Ttle {
   @Method(0x800cd2d8L)
   public static long FUN_800cd2d8(final long a0, final long a1, final long a2, final long a3) {
     assert false;
-    //TODO
     return 0;
   }
 
   @Method(0x800cd72cL)
   public static long FUN_800cd72c(final long a0, final long a1, final long a2, final long a3) {
     assert false;
-    //TODO
     return 0;
   }
 

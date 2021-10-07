@@ -543,74 +543,74 @@ public final class SMap {
 
   @Method(0x800d9e64L)
   public static void FUN_800d9e64(final GsDOBJ2 dobj2, final long a1) {
-    long v0 = dobj2.tmd_08.getPointer(); //TODO use this struct
-    long s1 = MEMORY.ref(4, v0).offset(0x14L).get();
-    long s0 = MEMORY.ref(4, v0).offset(0x10L).get();
+    TmdObjTable objTable = dobj2.tmd_08.deref();
+    long count = objTable.n_primitive_14.get();
+    long primitives = objTable.primitives_10.getPointer();
     long s2 = a1 & 0x7fL;
 
     //LAB_800d9e90
-    while(s1 != 0) {
-      long v1 = MEMORY.ref(4, s0).get(0xff04_0000L);
+    while(count != 0) {
+      long v1 = MEMORY.ref(4, primitives).get(0xff04_0000L);
 
       if(v1 == 0x3500_0000L || v1 == 0x3700_0000L) {
         //LAB_800da02c
-        FUN_800da7f4(s0, MEMORY.ref(2, s0).get(), s2);
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 36;
+        FUN_800da7f4(primitives, MEMORY.ref(2, primitives).get(), s2);
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x24L;
       } else if(v1 == 0x3004_0000L || v1 == 0x3204_0000L) {
         //LAB_800d9fc8
-        FUN_80021058(s0, MEMORY.ref(2, s0).get());
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 28;
+        FUN_80021058(primitives, MEMORY.ref(2, primitives).get());
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x1cL;
         //LAB_800d9ef0
       } else if(v1 == 0x3000_0000L || v1 == 0x3200_0000L) {
         //LAB_800d9fe8
-        FUN_80021048(s0, MEMORY.ref(2, s0).get());
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 20;
+        FUN_80021048(primitives, MEMORY.ref(2, primitives).get());
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x14L;
         //LAB_800d9f00
         //LAB_800d9f28
       } else if(v1 == 0x3400_0000L || v1 == 0x3600_0000L) {
         //LAB_800da00c
-        FUN_800da6c8(s0, MEMORY.ref(2, s0).get(), s2);
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 28;
+        FUN_800da6c8(primitives, MEMORY.ref(2, primitives).get(), s2);
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x1cL;
         //LAB_800d9f38
       } else if(v1 == 0x3804_0000L || v1 == 0x3a04_0000L) {
         //LAB_800da050
-        FUN_80021060(s0, MEMORY.ref(2, s0).get());
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 36;
+        FUN_80021060(primitives, MEMORY.ref(2, primitives).get());
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x24L;
         //LAB_800d9f78
       } else if(v1 == 0x3800_0000L || v1 == 0x3a00_0000L) {
         //LAB_800da074
-        FUN_80021050(s0, MEMORY.ref(2, s0).get());
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 24;
+        FUN_80021050(primitives, MEMORY.ref(2, primitives).get());
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x18L;
         //LAB_800d9fac
       } else if(v1 == 0x3c00_0000L || v1 == 0x3e00_0000L) {
         //LAB_800da09c
-        FUN_800da754(s0, MEMORY.ref(2, s0).get(), s2);
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
-        s0 += v1 * 36;
+        FUN_800da754(primitives, MEMORY.ref(2, primitives).get(), s2);
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
+        primitives += v1 * 0x24L;
         //LAB_800d9f88
       } else if(v1 == 0x3d00_0000L || v1 == 0x3f00_0000L) {
         //LAB_800da0c4
-        FUN_800da880(s0, MEMORY.ref(2, s0).get(), s2);
-        v1 = MEMORY.ref(2, s0).get();
-        s1 -= v1;
+        FUN_800da880(primitives, MEMORY.ref(2, primitives).get(), s2);
+        v1 = MEMORY.ref(2, primitives).get();
+        count -= v1;
 
         //LAB_800da0e8
         //LAB_800da0ec
         //LAB_800da0f0
-        s0 += v1 * 44;
+        primitives += v1 * 0x2cL;
       }
 
       //LAB_800da0f4

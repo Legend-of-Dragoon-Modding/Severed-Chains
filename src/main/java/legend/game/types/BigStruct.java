@@ -29,6 +29,7 @@ public class BigStruct implements MemoryRef {
   public final GsCOORD2PARAM coord2Param_64;
   public final UnsignedIntRef ui_8c;
   public final UnsignedIntRef ptr_ui_90;
+  /** Pointer to array of SVECTORs that is us_ca long */
   public final UnsignedIntRef ptr_ui_94;
   public final UnsignedShortRef us_98;
   public final UnsignedShortRef us_9a;
