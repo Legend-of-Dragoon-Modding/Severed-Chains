@@ -12,6 +12,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
+import legend.game.types.ExtendedTmd;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +34,7 @@ import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
-import static legend.game.Scus94491BpeSegment._800103d0;
+import static legend.game.Scus94491BpeSegment.extendedMrg_800103d0;
 import static legend.game.Scus94491BpeSegment._8001051c;
 import static legend.game.Scus94491BpeSegment._8011e210;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
@@ -623,7 +624,7 @@ public final class Scus94491BpeSegment_800e {
     //LAB_800e6af0
     DrawSync(0);
 
-    FUN_800e6b3c(bigStruct_800bda10, _800103d0.getAddress(), _8001051c.getAddress());
+    FUN_800e6b3c(bigStruct_800bda10, extendedMrg_800103d0, _8001051c.getAddress());
 
     bigStruct_800bda10.coord2Param_64.rotate.x.set((short)0);
     bigStruct_800bda10.coord2Param_64.rotate.y.set((short)0);
@@ -632,74 +633,76 @@ public final class Scus94491BpeSegment_800e {
     bigStruct_800bda10.ub_cc.set(0);
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, long, long)} */
+  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, legend.game.types.ExtendedTmd, long)} */
   @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(final BigStruct a0, final long a1, final long a2) {
-    final int x = a0.coord2_14.coord.transfer.getX();
-    final int y = a0.coord2_14.coord.transfer.getY();
-    final int z = a0.coord2_14.coord.transfer.getZ();
+  public static void FUN_800e6b3c(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
+    final int x = bigStruct.coord2_14.coord.transfer.getX();
+    final int y = bigStruct.coord2_14.coord.transfer.getY();
+    final int z = bigStruct.coord2_14.coord.transfer.getZ();
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      a0.aub_ec.get(i).set(0);
+      bigStruct.aub_ec.get(i).set(0);
     }
 
-    a0.dobj2ArrPtr_00.set(_800bd9f8);
-    a0.coord2ArrPtr_04.set(_800bdb38);
-    a0.coord2ParamArrPtr_08.set(_800bd7c0);
-    a0.s_c8.set((short)MEMORY.ref(2, a2).offset(0xcL).get());
-    a0.ui_8c.set(a1 + 0xcL);
-    a0.us_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
-    a0.scaleVector_fc.setPad((int)(MEMORY.ref(4, a1).offset(0xcL).get(0xffff0000L) >>> 11));
+    bigStruct.dobj2ArrPtr_00.set(_800bd9f8);
+    bigStruct.coord2ArrPtr_04.set(_800bdb38);
+    bigStruct.coord2ParamArrPtr_08.set(_800bd7c0);
+    bigStruct.count_c8.set((short)MEMORY.ref(2, a2).offset(0xcL).get());
 
-    long v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+
+    final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
+    bigStruct.tmd_8c.set(tmd);
+    bigStruct.tmdNobj_ca.set((int)tmd.header.nobj.get());
+    bigStruct.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
+
+    final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_800e6c44
-      a0.ui_a8.set(a1 + 0x8L);
+      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress());
 
       //LAB_800e6c54
       for(int i = 0; i < 7; i++) {
-        a0.aui_d0.get(i).set(0);
+        bigStruct.aui_d0.get(i).set(0);
       }
     } else {
-      a0.ui_a8.set(a1 + v0 / 4 * 4);
+      bigStruct.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        a0.aui_d0.get(i).set(a0.ui_a8.get() + MEMORY.ref(4, a0.ui_a8.get()).offset(i * 0x4L).get() / 4 * 4);
-        FUN_8002246c(a0, i);
+        bigStruct.aui_d0.get(i).set(bigStruct.ptr_a8.get() + MEMORY.ref(4, bigStruct.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
+        FUN_8002246c(bigStruct, i);
       }
     }
 
     //LAB_800e6c64
-    a0.ui_8c.add(0x4L);
-    adjustTmdPointers(MEMORY.ref(4, a0.ui_8c.get(), Tmd::new)); //TODO
-    FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.s_c8.get());
-    a0.coord2_14.param.set(a0.coord2Param_64);
-    insertCoordinate2(null, a0.coord2_14);
-    FUN_80021ca0(a0.ObjTable_0c, a0.ui_8c.get(), a0.coord2_14, a0.s_c8.get(), (short)(a0.us_ca.get() + 0x1L));
+    adjustTmdPointers(bigStruct.tmd_8c.deref());
+    FUN_80021b08(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
+    bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
+    insertCoordinate2(null, bigStruct.coord2_14);
+    FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
 
-    a0.us_a0.set(0);
-    a0.ub_a2.set(0);
-    a0.ub_a3.set(0);
-    a0.ui_f4.set(0);
-    a0.ui_f8.set(0);
+    bigStruct.us_a0.set(0);
+    bigStruct.ub_a2.set(0);
+    bigStruct.ub_a3.set(0);
+    bigStruct.ui_f4.set(0);
+    bigStruct.ui_f8.set(0);
 
-    FUN_80021584(a0, a2);
+    FUN_80021584(bigStruct, a2);
 
-    a0.coord2_14.coord.transfer.setX(x);
-    a0.coord2_14.coord.transfer.setY(y);
-    a0.coord2_14.coord.transfer.setZ(z);
-    a0.ub_cc.set(0);
-    a0.scaleVector_fc.setX(0x1000);
-    a0.scaleVector_fc.setY(0x1000);
-    a0.scaleVector_fc.setZ(0x1000);
-    a0.vector_10c.setX(0x1000);
-    a0.vector_10c.setY(0x1000);
-    a0.vector_10c.setZ(0x1000);
-    a0.vector_10c.setPad(0);
-    a0.ui_11c.set(0);
-    a0.ui_120.set(0);
+    bigStruct.coord2_14.coord.transfer.setX(x);
+    bigStruct.coord2_14.coord.transfer.setY(y);
+    bigStruct.coord2_14.coord.transfer.setZ(z);
+    bigStruct.ub_cc.set(0);
+    bigStruct.scaleVector_fc.setX(0x1000);
+    bigStruct.scaleVector_fc.setY(0x1000);
+    bigStruct.scaleVector_fc.setZ(0x1000);
+    bigStruct.vector_10c.setX(0x1000);
+    bigStruct.vector_10c.setY(0x1000);
+    bigStruct.vector_10c.setZ(0x1000);
+    bigStruct.vector_10c.setPad(0);
+    bigStruct.ui_11c.set(0);
+    bigStruct.ui_120.set(0);
   }
 
   @Method(0x800e6d60L)

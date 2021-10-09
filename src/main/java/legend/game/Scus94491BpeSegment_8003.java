@@ -5541,34 +5541,18 @@ public final class Scus94491BpeSegment_8003 {
       sp10.set(1, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
       sp10.set(2, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
 
-      v0 = s2 * 0x1000L;
-      v0 += (v0 * 0x8080_8081L) >>> 32;
-      sp30.set(0, (short)(v0 >> 7));
-
-      v1 = s3 * 0x1000L;
-      v1 += (v1 * 0x8080_8081L) >>> 32;
-      sp30.set(3, (short)(v1 / 0x80));
-
-      long v2 = s4 * 0x1000L;
-      v2 += (v2 * 0x8080_8081L) >>> 32;
-      sp30.set(6, (short)(v2 / 0x80));
+      sp30.set(0, (short)(s2 * 0x1000L / 0xff));
+      sp30.set(3, (short)(s3 * 0x1000L / 0xff));
+      sp30.set(6, (short)(s4 * 0x1000L / 0xff));
     } else if(a0 == 0x1L) {
       //LAB_8003c904
       sp10.set(3, (short)((int)(-a1.ui_00.get() * 0x1000L) / scale));
       sp10.set(4, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
       sp10.set(5, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
 
-      v0 = (int)(s2 * 0x1000L);
-      v0 += (v0 * 0x8080_8081L) >>> 32;
-      sp30.set(1, (short)(v0 / 0x80));
-
-      v1 = (int)(s3 * 0x1000L);
-      v1 += (v1 * 0x8080_8081L) >>> 32;
-      sp30.set(4, (short)(v1 / 0x80));
-
-      long v2 = (int)(s4 * 0x1000L);
-      v2 += (v2 * 0x8080_8081L) >>> 32;
-      sp30.set(7, (short)(v2 / 0x80));
+      sp30.set(1, (short)(s2 * 0x1000L / 0xff));
+      sp30.set(4, (short)(s3 * 0x1000L / 0xff));
+      sp30.set(7, (short)(s4 * 0x1000L / 0xff));
       //LAB_8003c7dc
     } else if(a0 == 0x2L) {
       //LAB_8003ca20
@@ -5576,17 +5560,9 @@ public final class Scus94491BpeSegment_8003 {
       sp10.set(7, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
       sp10.set(8, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
 
-      v0 = (int)(s2 * 0x1000L);
-      v0 += (v0 * 0x8080_8081L) >>> 32;
-      sp30.set(2, (short)(v0 / 0x80));
-
-      v1 = (int)(s3 * 0x1000L);
-      v1 += (v1 * 0x8080_8081L) >>> 32;
-      sp30.set(5, (short)(v1 / 0x80));
-
-      long v2 = (int)(s4 * 0x1000L);
-      v2 += (v2 * 0x8080_8081L) >>> 32;
-      sp30.set(8, (short)(v2 / 0x80));
+      sp30.set(2, (short)(s2 * 0x1000L / 0xff));
+      sp30.set(5, (short)(s3 * 0x1000L / 0xff));
+      sp30.set(8, (short)(s4 * 0x1000L / 0xff));
     }
 
     //LAB_8003cb34

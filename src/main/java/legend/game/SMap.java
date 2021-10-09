@@ -31,6 +31,9 @@ import legend.game.types.GsOT_TAG;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.HmdSomethingStruct;
 import legend.game.types.MathStruct;
+import legend.game.types.MrgEntry;
+import legend.game.types.MrgFile;
+import legend.game.types.ExtendedTmd;
 import legend.game.types.WeirdTimHeader;
 
 import java.util.function.Function;
@@ -213,7 +216,7 @@ public final class SMap {
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
   public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
   public static final Value _800c670e = MEMORY.ref(2, 0x800c670eL);
-  public static final Value mrg10Addr_800c6710 = MEMORY.ref(4, 0x800c6710L);
+  public static final Pointer<MrgFile> mrg10Addr_800c6710 = MEMORY.ref(4, 0x800c6710L, Pointer.deferred(4, MrgFile::new));
   public static final Value _800c6714 = MEMORY.ref(4, 0x800c6714L);
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
   public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
@@ -235,7 +238,7 @@ public final class SMap {
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
   public static final Value mrg0Loaded_800c6874 = MEMORY.ref(4, 0x800c6874L);
-  public static final Value mrg0Addr_800c6878 = MEMORY.ref(4, 0x800c6878L);
+  public static final Pointer<MrgFile> mrg0Addr_800c6878 = MEMORY.ref(4, 0x800c6878L, Pointer.deferred(4, MrgFile::new));
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
 
@@ -243,7 +246,7 @@ public final class SMap {
 
   public static final Value mrg1Loaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L);
 
-  public static final Value mrg1Addr_800c68d8 = MEMORY.ref(4, 0x800c68d8L);
+  public static final Pointer<MrgFile> mrg1Addr_800c68d8 = MEMORY.ref(4, 0x800c68d8L, Pointer.deferred(4, MrgFile::new));
 
   public static final Value mrg10Loaded_800c68e0 = MEMORY.ref(2, 0x800c68e0L);
 
@@ -478,12 +481,8 @@ public final class SMap {
   public static final Value _800d6d10 = MEMORY.ref(4, 0x800d6d10L);
   public static final Value _800d6d14 = MEMORY.ref(4, 0x800d6d14L);
   public static final Value _800d6d18 = MEMORY.ref(4, 0x800d6d18L);
-  /** TODO struct? */
-  public static final Value _800d6d1c = MEMORY.ref(1, 0x800d6d1cL);
-
-  public static final Value _800d6d24 = MEMORY.ref(4, 0x800d6d24L);
-
-  public static final Value _800d6d2c = MEMORY.ref(4, 0x800d6d2cL);
+  /** 0x904 bytes */
+  public static final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
 
   /** TODO an array of 0x14-long somethings */
   public static final Value _800f5930 = MEMORY.ref(4, 0x800f5930L);
@@ -854,7 +853,7 @@ public final class SMap {
     long s4 = a0.ptr_ui_94.get();
 
     //LAB_800da96c
-    for(int i = 0; i < a0.us_ca.get(); i++) {
+    for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
       final MATRIX coord = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().coord;
       final GsCOORD2PARAM params = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().param.deref();
 
@@ -1122,41 +1121,32 @@ public final class SMap {
   }
 
   @Method(0x800de004L)
-  public static void FUN_800de004(final BigStruct a0, final long a1) {
-    if(MEMORY.ref(4, a1).offset(0x4L).get() != 0) {
-      long v0 = addToLinkedListTail(0x30L);
-      a0.addr_ui_a4.set(v0);
+  public static void FUN_800de004(final BigStruct bigStruct, final ExtendedTmd extendedTmd) {
+    if(extendedTmd.ptr_04.get() != 0) {
+      final long address = addToLinkedListTail(0x30L);
+      bigStruct.addr_ui_a4.set(address);
 
-      MEMORY.ref(4, v0).setu(a1 + MEMORY.ref(4, a1).offset(0x4L).get() / 4 * 4);
+      MEMORY.ref(4, address).setu(extendedTmd.getAddress() + extendedTmd.ptr_04.get() / 4 * 4);
 
       //LAB_800de05c
-      for(int a2 = 0; a2 < 4; a2++) {
-        long a0_0 = a0.addr_ui_a4.get();
-        long v1 = MEMORY.ref(4, a0_0).get();
-        a0_0 += a2 * 0x4L;
-        v1 += MEMORY.ref(4, v1).offset(a2 * 0x4L).get() / 4 * 4;
-        MEMORY.ref(4, a0_0).offset(0x20L).setu(v1);
-        v1 = a0.addr_ui_a4.get();
-        v0 = MEMORY.ref(4, v1).offset(a2 * 0x4L).offset(0x20L).get();
-        a0_0 = a2 << 1;
-        if(v0 == 0) {
-          MEMORY.ref(1, v1).offset(a2).offset(0x4L).setu(0);
+      for(int i = 0; i < 4; i++) {
+        long v1 = MEMORY.ref(4, address).get();
+        v1 += MEMORY.ref(4, v1).offset(i * 0x4L).get() / 4 * 4;
+        MEMORY.ref(4, address).offset(0x20L).offset(i * 0x4L).setu(v1);
+
+        if(MEMORY.ref(4, address).offset(0x20L).offset(i * 0x4L).get() == 0) {
+          MEMORY.ref(1, address).offset(0x4L).offset(i).setu(0);
         } else {
-          MEMORY.ref(2, v1).offset(a0_0).offset(0x8L).setu(0);
-          v1 = a0.addr_ui_a4.get();
-          v0 = MEMORY.ref(4, v1).offset(a2 * 0x4L).offset(0x20L).deref(2).offset(0x2L).get();
-          v1 += a0_0;
-          MEMORY.ref(2, v1).offset(0x18L).setu(v0);
-          v0 = a0.addr_ui_a4.get() + a0_0;
-          MEMORY.ref(2, v0).offset(0x10L).setu(0);
-          v1 = a0.addr_ui_a4.get();
-          a0_0 += v1;
-          if(MEMORY.ref(2, a0_0).offset(0x18L).get() == 0xffffL) {
+          MEMORY.ref(2, address).offset(0x8L).offset(i * 0x2L).setu(0);
+          MEMORY.ref(2, address).offset(0x18L).offset(i * 0x2L).setu(MEMORY.ref(4, address).offset(0x20L).offset(i * 0x4L).deref(2).offset(0x2L));
+          MEMORY.ref(2, address).offset(0x10L).offset(i * 0x2L).setu(0);
+
+          if(MEMORY.ref(2, address).offset(0x18L).offset(i * 0x2L).get() == 0xffffL) {
             //LAB_800de0f8
-            MEMORY.ref(1, v1).offset(a2).offset(0x4L).setu(0);
+            MEMORY.ref(1, address).offset(0x4L).offset(i).setu(0);
           } else {
             //LAB_800de104
-            MEMORY.ref(1, v1).offset(a2).offset(0x4L).setu(0x1L);
+            MEMORY.ref(1, address).offset(0x4L).offset(i).setu(0x1L);
           }
         }
 
@@ -1164,7 +1154,7 @@ public final class SMap {
       }
     } else {
       //LAB_800de120
-      a0.addr_ui_a4.set(0);
+      bigStruct.addr_ui_a4.set(0);
     }
 
     //LAB_800de124
@@ -1387,15 +1377,15 @@ public final class SMap {
     long v0 = (short)MEMORY.ref(2, a1).offset(0x14L).get();
     long v1 = v0 * 0x80L / 0x8L;
     v1 += v0 * 0x280L / 0x8L;
-    a0.s_c8.set((short)MEMORY.ref(2, a1).offset(0x14L).get());
+    a0.count_c8.set((short)MEMORY.ref(2, a1).offset(0x14L).get());
     v0 = addToLinkedListTail(v1 + v0 * 0x140L / 0x8L);
     a0.dobj2ArrPtr_00.set(MEMORY.ref(4, v0, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
-    v0 += a0.s_c8.get() * 0x10L;
+    v0 += a0.count_c8.get() * 0x10L;
     a0.coord2ArrPtr_04.set(MEMORY.ref(4, v0, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    v0 += a0.s_c8.get() * 0x50L;
+    v0 += a0.count_c8.get() * 0x50L;
     a0.coord2ParamArrPtr_08.set(MEMORY.ref(4, v0, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
-    a0.ui_8c.set(a1 + 0xcL);
-    a0.us_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
+    a0.tmd_8c.set(MEMORY.ref(4, a1 + 0xcL, Tmd::new)); //TODO
+    a0.tmdNobj_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
 
     if(MEMORY.ref(4, a1).offset(0x4L).get() != 0) {
       v0 = addToLinkedListTail(0x30L);
@@ -1418,18 +1408,18 @@ public final class SMap {
     a0.scaleVector_fc.setPad((int)(MEMORY.ref(4, a1).offset(0xcL).get(0xffff_0000L) >> 11));
     v0 = MEMORY.ref(4, a1).offset(0x8L).get();
     if(v0 != 0) {
-      a0.ui_a8.set(a1 + v0 / 0x4L * 0x4L);
+      a0.ptr_a8.set(a1 + v0 / 0x4L * 0x4L);
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
-        v1 = a0.ui_a8.get();
+        v1 = a0.ptr_a8.get();
         v1 += MEMORY.ref(4, v1).offset(i * 0x4L).get() / 0x4L * 0x4L;
         a0.aui_d0.get(i).set(v1);
         FUN_8002246c(a0, i);
       }
     } else {
       //LAB_800e0ef0
-      a0.ui_a8.set(a1 + 0x8L);
+      a0.ptr_a8.set(a1 + 0x8L);
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {
@@ -1438,15 +1428,15 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    a0.ui_8c.add(0x4L);
+    a0.tmd_8c.add(0x4L);
 
-    adjustTmdPointers(MEMORY.ref(4, a0.ui_8c.get(), Tmd::new)); //TODO
-    FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.s_c8.get());
+    adjustTmdPointers(a0.tmd_8c.deref());
+    FUN_80021b08(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.count_c8.get());
 
     a0.coord2_14.param.set(a0.coord2Param_64);
 
     insertCoordinate2(null, a0.coord2_14);
-    FUN_80021ca0(a0.ObjTable_0c, a0.ui_8c.get(), a0.coord2_14, a0.s_c8.get(), (short)(a0.us_ca.get() + 1));
+    FUN_80021ca0(a0.ObjTable_0c, a0.tmd_8c.deref(), a0.coord2_14, a0.count_c8.get(), (short)(a0.tmdNobj_ca.get() + 1));
 
     a0.ub_a2.set(0);
     a0.ub_a3.set(0);
@@ -1664,8 +1654,8 @@ public final class SMap {
         }
 
         _800bd782.setu(0);
-        final long ret = FUN_8001c60c();
 
+        final long ret = FUN_8001c60c();
         if(ret == -0x1L) {
           FUN_8001ae90();
 
@@ -1726,8 +1716,8 @@ public final class SMap {
       case 0x5:
         mrg1Loaded_800c68d0.setu(0);
         mrg0Loaded_800c6874.setu(0);
-        mrg1Addr_800c68d8.setu(0);
-        mrg0Addr_800c6878.setu(0);
+        mrg1Addr_800c68d8.clear();
+        mrg0Addr_800c6878.clear();
 
         final UnsignedIntRef sp48 = new UnsignedIntRef();
         final UnsignedIntRef sp4c = new UnsignedIntRef();
@@ -1775,17 +1765,18 @@ public final class SMap {
       case 0x9:
         FUN_800218f0();
 
-        final long fileCount = mrg1Addr_800c68d8.deref(4).offset(0x4L).get();
-        final long secondLastFileInfoPtr = mrg1Addr_800c68d8.deref(4).offset(0x8L).offset((fileCount - 0x2L) * 0x8L).getAddress(); // pointer to second-last file's addr/size
+        final int fileCount = (int)mrg1Addr_800c68d8.deref().count.get();
         final long secondLastFileIndex = fileCount - 0x2L;
 
         _800c672c.setu(secondLastFileIndex);
-        _800c6730.setu(secondLastFileIndex); // Number of files that don't have special-case handling?
+        _800c6730.setu(secondLastFileIndex);
 
         long s4;
-        if(MEMORY.ref(4, secondLastFileInfoPtr).offset(0xcL).get() != 0x4L) {
-          s3 = mrg1Addr_800c68d8.deref(4).offset(MEMORY.ref(4, secondLastFileInfoPtr).offset(0x8L)).get(); // Second last int before padding
-          s4 = mrg1Addr_800c68d8.deref(4).offset(MEMORY.ref(4, secondLastFileInfoPtr).offset(0x8L)).offset(0x4L).get(); // Last int before padding
+        final MrgEntry lastEntry = mrg1Addr_800c68d8.deref().entries.get(fileCount - 1);
+        if(lastEntry.size.get() != 0x4L) {
+          final ArrayRef<UnsignedIntRef> lastFileData = mrg1Addr_800c68d8.deref().getFile(fileCount - 1, ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
+          s3 = lastFileData.get(0).get(); // Second last int before padding
+          s4 = lastFileData.get(1).get(); // Last int before padding
         } else {
           s3 = 0;
           s4 = 0;
@@ -1796,10 +1787,10 @@ public final class SMap {
         _800c69f4.setu(secondLastFileIndex * 0x22L + 0x1L);
         _800c69f8.setu(secondLastFileIndex * 0x22L + 0x2L);
 
-        loadTimImage(mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(_800c69f0.get() * 0x8L).offset(0x8L)).getAddress());
-        loadTimImage(mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(_800c69f4.get() * 0x8L).offset(0x8L)).getAddress());
+        loadTimImage(mrg0Addr_800c6878.deref().getFile((int)_800c69f0.get()));
+        loadTimImage(mrg0Addr_800c6878.deref().getFile((int)_800c69f4.get()));
 
-        final TimHeader tim = parseTimHeader(mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(_800c69f8.get() * 0x8L).offset(0x8L)).offset(0x4L));
+        final TimHeader tim = parseTimHeader(MEMORY.ref(4, mrg0Addr_800c6878.deref().getFile((int)_800c69f8.get())).offset(0x4L));
         final RECT imageRect = new RECT();
         imageRect.x.set(tim.imageRect.x);
         imageRect.y.set(tim.imageRect.y);
@@ -1811,11 +1802,11 @@ public final class SMap {
 
         final long index = allocateBiggerStruct(0, 0, false, 0, 0);
         _800c6740.setu(index);
-        FUN_80015b98(index, mrg1Addr_800c68d8.deref(4).offset(mrg1Addr_800c68d8.deref(4).offset(0x8L)).getAddress());
+        FUN_80015b98(index, mrg1Addr_800c68d8.deref().getFile(0));
 
         //LAB_800e1a38
         for(int i = 0; i < _800c6730.get(); i++) {
-          _800c6a00.offset(i * 0x4L).setu(mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(i * 0x108L).offset(0x8L)).getAddress());
+          _800c6a00.offset(i * 0x4L).setu(mrg0Addr_800c6878.deref().getAddress() + MEMORY.ref(4, mrg0Addr_800c6878.deref().getAddress() + i * 0x108L + 0x8L).get()); //TODO is this right? What is it doing?
           _800c6a50.offset(i * 0x4L).setu(i + 0x81L);
 
           if(i + 0x1L == s3) {
@@ -1832,6 +1823,7 @@ public final class SMap {
 
         //LAB_800e1a8c
         //LAB_800e1abc
+        //TODO make sure these loops are right, they look odd
         for(int i = 0; i < _800c6730.get(); i++) {
           //LAB_800e1ae0
           for(int n = i + 1; n < _800c6730.get(); n++) {
@@ -1855,15 +1847,16 @@ public final class SMap {
           FUN_80015a68(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
           FUN_80015ab4(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
           FUN_80015b00(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
-          FUN_80015b98(index2, mrg1Addr_800c68d8.deref(4).offset(mrg1Addr_800c68d8.deref(4).offset((i + 0x1L) * 0x8L).offset(0x8L)).getAddress());
+          FUN_80015b98(index2, mrg1Addr_800c68d8.deref().getFile(i + 1));
 
           final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)index2).deref().innerStruct_00.derefAs(BigStruct.class);
           struct.ub_9d.set((int)_800c6a50.offset(1, i * 0x4L).get());
 
-          FUN_80020a00(struct, _800c6a00.offset(i * 0x4L).get(), mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(s5).offset(0x8L)).getAddress());
+          //TODO
+          FUN_80020a00(struct, _800c6a00.offset(i * 0x4L).deref(4).cast(ExtendedTmd::new), mrg0Addr_800c6878.deref().getFile((int)s5 / 8));
 
           if(i == 0) {
-            FUN_800e0d18(bigStruct_800c6748, _800c6a00.get(), mrg0Addr_800c6878.deref(4).offset(mrg0Addr_800c6878.deref(4).offset(0x10L)).getAddress());
+            FUN_800e0d18(bigStruct_800c6748, _800c6a00.get(), mrg0Addr_800c6878.deref().getFile(1)); //TODO not sure if this file 1 is right
             bigStruct_800c6748.coord2_14.coord.transfer.setX(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setY(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setZ(0);
@@ -1873,7 +1866,7 @@ public final class SMap {
           }
 
           //LAB_800e1c50
-          struct.ui_124.set(mrg0Addr_800c6878.get());
+          struct.ui_124.set(mrg0Addr_800c6878.getPointer()); //TODO
           struct.us_128.set(0);
           struct.us_12a.set(0);
           struct.us_12c.set(0);
@@ -1939,7 +1932,7 @@ public final class SMap {
         _800c670a.setu(0);
         _800c670c.setu(0);
         _800c670e.setu(0);
-        mrg10Addr_800c6710.setu(0);
+        mrg10Addr_800c6710.clear();
         _800c6714.setu(0);
         _800c6718.setu(0);
         _800c671c.setu(0);
@@ -2035,17 +2028,17 @@ public final class SMap {
     switch((int)a2) {
       case 0x0 -> {
         mrg0Loaded_800c6874.setu(0x1);
-        mrg0Addr_800c6878.setu(fileAddress);
+        mrg0Addr_800c6878.set(fileAddress.deref(4).cast(MrgFile::new));
       }
 
       case 0x1 -> {
         mrg1Loaded_800c68d0.setu(0x1);
-        mrg1Addr_800c68d8.setu(fileAddress);
+        mrg1Addr_800c68d8.set(fileAddress.deref(4).cast(MrgFile::new));
       }
 
       case 0x10 -> {
         mrg10Loaded_800c68e0.setu(0x1);
-        mrg10Addr_800c6710.setu(fileAddress);
+        mrg10Addr_800c6710.set(fileAddress.deref(4).cast(MrgFile::new));
       }
     }
   }
@@ -2208,7 +2201,7 @@ public final class SMap {
     } else {
       //LAB_800e4e20
       final SVECTOR sp10 = new SVECTOR();
-      get3dAverageOfSomething(a1.coord2_14.coord.getAddress() + 0x18L, sp10);
+      get3dAverageOfSomething(a0, sp10);
       a1.coord2_14.coord.transfer.setX(sp10.getX());
       a1.coord2_14.coord.transfer.setY(sp10.getY());
       a1.coord2_14.coord.transfer.setZ(sp10.getZ());
@@ -4138,7 +4131,8 @@ public final class SMap {
       case 0x4:
         _800d4bf8.ub_9d.set(0x91);
 
-        FUN_80020a00(_800d4bf8, _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x08L)).getAddress(), _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x10L)).getAddress());
+        //TODO
+        FUN_80020a00(_800d4bf8, _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x08L)).cast(ExtendedTmd::new), _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x10L)).getAddress());
 
         if(_80052c30.get() == 0x2a1L) {
           FUN_800eef6c(sp20, _800d4bd4.get(), _800d4bd0.get());
@@ -4472,7 +4466,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    FUN_80020a00(_800d4d40, _800d6d1c.offset(_800d6d1c.offset(4, 0x28L)).getAddress(), _800d6d1c.offset(_800d6d1c.offset(4, 0x30L)).getAddress());
+    FUN_80020a00(_800d4d40, mrg_800d6d1c.getFile(4, ExtendedTmd::new), mrg_800d6d1c.getFile(5)); //TODO file type
     _800d4eb8.setu(0);
     _800d4edc.setu(0);
     FUN_800f0e60();
@@ -4701,8 +4695,9 @@ public final class SMap {
   public static void FUN_800f2788() {
     long[] sp10 = new long[8];
 
-    long v0 = _800d6d1c.getAddress();
-    FUN_80020a00(_800d5eb0, v0 + MEMORY.ref(4, v0).offset(0x18L).get(), v0 + MEMORY.ref(4, v0).offset(0x20L).get());
+    long v0 = mrg_800d6d1c.getAddress();
+    //TODO
+    FUN_80020a00(_800d5eb0, mrg_800d6d1c.getFile(2, ExtendedTmd::new), v0 + MEMORY.ref(4, v0).offset(0x20L).get());
     _800d5598.offset(4, 0x28L).setu(0);
     _800d5598.offset(4, 0x34L).setu(0x50L);
     _800d5598.offset(4, 0x6cL).setu(0);
@@ -4884,9 +4879,10 @@ public final class SMap {
 
   @Method(0x800f3a48L)
   public static void FUN_800f3a48() {
-    FUN_800f3c98(_800d6d1c.offset(_800d6d24).getAddress(), _800d5588.getAddress());
-    FUN_800f3c98(_800d6d1c.offset(_800d6d2c).getAddress(), _800d5590.getAddress());
-    FUN_800f3b64(_800d6d1c.offset(_800d6d24).getAddress(), _800d6d1c.offset(_800d6d1c.offset(0x10L)).getAddress(), _800d4ff0.getAddress(), 0x15L);
+    //TODO file types?
+    FUN_800f3c98(mrg_800d6d1c.getFile(0), _800d5588.getAddress());
+    FUN_800f3c98(mrg_800d6d1c.getFile(1), _800d5590.getAddress());
+    FUN_800f3b64(mrg_800d6d1c.getFile(0), mrg_800d6d1c.getFile(1), _800d4ff0.getAddress(), 0x15L);
   }
 
   @Method(0x800f3abcL)

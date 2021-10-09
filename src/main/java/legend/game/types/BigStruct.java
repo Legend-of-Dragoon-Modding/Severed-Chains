@@ -4,6 +4,7 @@ import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
+import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -19,7 +20,6 @@ import legend.core.memory.types.UnsignedShortRef;
 public class BigStruct implements MemoryRef {
   private final Value ref;
 
-  /** Pointer to an address on the linked list */
   public final Pointer<UnboundedArrayRef<GsDOBJ2>> dobj2ArrPtr_00;
   public final Pointer<UnboundedArrayRef<GsCOORDINATE2>> coord2ArrPtr_04;
   public final Pointer<UnboundedArrayRef<GsCOORD2PARAM>> coord2ParamArrPtr_08;
@@ -27,7 +27,7 @@ public class BigStruct implements MemoryRef {
   // 0x50 bytes
   public final GsCOORDINATE2 coord2_14;
   public final GsCOORD2PARAM coord2Param_64;
-  public final UnsignedIntRef ui_8c;
+  public final Pointer<Tmd> tmd_8c;
   public final UnsignedIntRef ptr_ui_90;
   /** Pointer to array of SVECTORs that is us_ca long */
   public final UnsignedIntRef ptr_ui_94;
@@ -41,11 +41,12 @@ public class BigStruct implements MemoryRef {
   public final UnsignedByteRef ub_a3;
   /** Pointer to an address on the linked list */
   public final UnsignedIntRef addr_ui_a4;
-  public final UnsignedIntRef ui_a8;
+  /** Pointer to whatever is pointed to by {@link ExtendedTmd#ptr_08} */
+  public final UnsignedIntRef ptr_a8;
   public final ArrayRef<UnsignedShortRef> usArr_ac;
   public final ArrayRef<UnsignedShortRef> usArr_ba;
-  public final ShortRef s_c8;
-  public final UnsignedShortRef us_ca;
+  public final ShortRef count_c8;
+  public final UnsignedShortRef tmdNobj_ca;
   public final UnsignedByteRef ub_cc;
   public final UnsignedByteRef ub_cd;
 
@@ -118,7 +119,7 @@ public class BigStruct implements MemoryRef {
     this.ObjTable_0c = ref.offset(4, 0x0cL).cast(GsOBJTABLE2::new);
     this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);
     this.coord2Param_64 = ref.offset(4, 0x64L).cast(GsCOORD2PARAM::new);
-    this.ui_8c = ref.offset(4, 0x8cL).cast(UnsignedIntRef::new);
+    this.tmd_8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, Tmd::new));
     this.ptr_ui_90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
     this.ptr_ui_94 = ref.offset(4, 0x94L).cast(UnsignedIntRef::new);
     this.us_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
@@ -130,11 +131,11 @@ public class BigStruct implements MemoryRef {
     this.ub_a2 = ref.offset(1, 0xa2L).cast(UnsignedByteRef::new);
     this.ub_a3 = ref.offset(1, 0xa3L).cast(UnsignedByteRef::new);
     this.addr_ui_a4 = ref.offset(4, 0xa4L).cast(UnsignedIntRef::new);
-    this.ui_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
+    this.ptr_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
     this.usArr_ac = ref.offset(4, 0xacL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
     this.usArr_ba = ref.offset(4, 0xbaL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
-    this.s_c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
-    this.us_ca = ref.offset(2, 0xcaL).cast(UnsignedShortRef::new);
+    this.count_c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
+    this.tmdNobj_ca = ref.offset(2, 0xcaL).cast(UnsignedShortRef::new);
     this.ub_cc = ref.offset(1, 0xccL).cast(UnsignedByteRef::new);
     this.ub_cd = ref.offset(1, 0xcdL).cast(UnsignedByteRef::new);
 

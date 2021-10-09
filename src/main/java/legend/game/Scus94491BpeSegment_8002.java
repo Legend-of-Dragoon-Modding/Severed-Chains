@@ -29,6 +29,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 import legend.game.types.JoyStruct;
+import legend.game.types.ExtendedTmd;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -440,7 +441,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, long, long)} */
   @Method(0x80020718L)
-  public static void FUN_80020718(final BigStruct bigStruct, final long a1, final long a2) {
+  public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
     final int transferX = bigStruct.coord2_14.coord.transfer.getX();
     final int transferY = bigStruct.coord2_14.coord.transfer.getY();
     final int transferZ = bigStruct.coord2_14.coord.transfer.getZ();
@@ -450,42 +451,44 @@ public final class Scus94491BpeSegment_8002 {
       bigStruct.aub_ec.get(i).set(0);
     }
 
-    bigStruct.ui_8c.set(a1 + 0xcL);
-    bigStruct.us_ca.set((int)MEMORY.ref(2, a1).offset(0x14L).get());
+    final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
+    bigStruct.tmd_8c.set(tmd);
+    bigStruct.tmdNobj_ca.set((int)tmd.header.nobj.get());
 
     if(_8004dd20.get() == 0x5L) {
-      FUN_800de004(bigStruct, a1);
+      FUN_800de004(bigStruct, extendedTmd);
     }
 
     //LAB_8002079c
-    bigStruct.scaleVector_fc.setPad((int)(MEMORY.ref(4, a1).offset(0xcL).get(0xffff_0000L) >>> 11));
+    bigStruct.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11)); //TODO reading the upper 16 bits of the TMD ID?
 
-    final long v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+    final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_80020818
-      bigStruct.ui_a8.set(a1 + 0x8L);
+      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress());
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
         bigStruct.aui_d0.get(i).set(0);
       }
     } else {
-      bigStruct.ui_a8.set(a1 + v0 / 4 * 4);
+      bigStruct.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
-        bigStruct.aui_d0.get(i).set(bigStruct.ui_a8.get() + MEMORY.ref(4, bigStruct.ui_a8.get()).offset(i * 0x4L).get() / 4 * 4);
+        //TODO make aui_d0 array of pointers to unsigned ints (also pointers but to what?)
+        //TODO also ui_a8 is a pointer to a relative pointer?
+        bigStruct.aui_d0.get(i).set(bigStruct.ptr_a8.get() + MEMORY.ref(4, bigStruct.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
         FUN_8002246c(bigStruct, i);
       }
     }
 
     //LAB_80020838
-    bigStruct.ui_8c.add(0x4L);
-    adjustTmdPointers(MEMORY.ref(4, bigStruct.ui_8c.get(), Tmd::new)); //TODO
-    FUN_80021b08(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.s_c8.get());
+    adjustTmdPointers(bigStruct.tmd_8c.deref());
+    FUN_80021b08(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
     bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
     insertCoordinate2(null, bigStruct.coord2_14);
-    FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.ui_8c.get(), bigStruct.coord2_14, bigStruct.s_c8.get(), (short)(bigStruct.us_ca.get() + 0x1L));
+    FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
 
     bigStruct.us_a0.set(0);
     bigStruct.ub_a2.set(0);
@@ -540,31 +543,31 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020a00L)
-  public static void FUN_80020a00(final BigStruct a0, final long a1, final long a2) {
-    a0.s_c8.set((short)MEMORY.ref(2, a1).offset(0x14L).get());
+  public static void FUN_80020a00(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
+    bigStruct.count_c8.set((short)extendedTmd.tmdPtr_00.deref().tmd.header.nobj.get());
 
     final long address;
     if(_8004dd20.get() != 0x6L || _800bd7a0.get() == 0) {
       //LAB_80020b00
       //LAB_80020b04
-      address = addToLinkedListTail(a0.s_c8.get() * 0x88L);
-      a0.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+      address = addToLinkedListTail(bigStruct.count_c8.get() * 0x88L);
+      bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
     } else {
       removeFromLinkedList(_800bd7a0.get());
 
-      address = addToLinkedListHead(a0.s_c8.get() * 0x88L);
-      a0.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+      address = addToLinkedListHead(bigStruct.count_c8.get() * 0x88L);
+      bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
 
       _800bd7a8.subu(0x1L);
-      _800bd7a4.subu(a0.s_c8.get() * 0x88L + _800bd7a8.get() * 0x100L);
+      _800bd7a4.subu(bigStruct.count_c8.get() * 0x88L + _800bd7a8.get() * 0x100L);
 
       _800bd7a0.setu(addToLinkedListHead(_800bd7a4.get()));
     }
 
     //LAB_80020b40
-    a0.coord2ArrPtr_04.set(MEMORY.ref(4, address + a0.s_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    a0.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + a0.s_c8.get() * 0x60L, UnboundedArrayRef.of(0x10, GsCOORD2PARAM::new)));
-    FUN_80020718(a0, a1, a2);
+    bigStruct.coord2ArrPtr_04.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
+    bigStruct.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x10, GsCOORD2PARAM::new)));
+    FUN_80020718(bigStruct, extendedTmd, a2);
   }
 
   @Method(0x80020b98L)
@@ -614,7 +617,7 @@ public final class Scus94491BpeSegment_8002 {
         long s2 = a0.ptr_ui_94.get();
 
         //LAB_80020ce0
-        for(int i = 0; i < a0.us_ca.get() - 0x1L; i++) {
+        for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
           FUN_80040010(params.rotate, coord2.coord);
@@ -636,7 +639,7 @@ public final class Scus94491BpeSegment_8002 {
         long s6 = a0.ptr_ui_94.get();
 
         //LAB_80020d8c
-        for(int i = 0; i < a0.us_ca.get() - 0x1L; i++) {
+        for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
 
@@ -668,7 +671,7 @@ public final class Scus94491BpeSegment_8002 {
       long s5 = a0.ptr_ui_94.get();
 
       //LAB_80020e24
-      for(int i = 0; i < a0.us_ca.get() - 0x1L; i++) {
+      for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
         final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
         final GsCOORD2PARAM params = coord2.param.deref();
 
@@ -828,7 +831,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800212d8L)
   public static void FUN_800212d8(final BigStruct a0) {
-    final long count = a0.us_ca.get();
+    final long count = a0.tmdNobj_ca.get();
 
     if(count == 0) {
       return;
@@ -874,25 +877,25 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021584L)
-  public static void FUN_80021584(final BigStruct a0, final long a1) {
-    a0.ptr_ui_90.set(a1 + 0x10L);
-    a0.ptr_ui_94.set(a1 + 0x10L);
-    a0.us_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
-    a0.us_9a.set((int)MEMORY.ref(2, a1).offset(0xeL).get());
-    a0.ub_9c.set(0);
+  public static void FUN_80021584(final BigStruct bigStruct, final long a1) {
+    bigStruct.ptr_ui_90.set(a1 + 0x10L);
+    bigStruct.ptr_ui_94.set(a1 + 0x10L);
+    bigStruct.us_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
+    bigStruct.us_9a.set((int)MEMORY.ref(2, a1).offset(0xeL).get());
+    bigStruct.ub_9c.set(0);
 
-    FUN_800212d8(a0);
+    FUN_800212d8(bigStruct);
 
-    if(a0.ub_a2.get() == 0) {
-      a0.us_9e.set(a0.us_9a);
+    if(bigStruct.ub_a2.get() == 0) {
+      bigStruct.us_9e.set(bigStruct.us_9a);
     } else {
       //LAB_800215e8
-      a0.us_9e.set(a0.us_9a.get() / 2);
+      bigStruct.us_9e.set(bigStruct.us_9a.get() / 2);
     }
 
     //LAB_80021608
-    a0.ub_9c.set(1);
-    a0.ptr_ui_94.set(a0.ptr_ui_90);
+    bigStruct.ub_9c.set(1);
+    bigStruct.ptr_ui_94.set(bigStruct.ptr_ui_90);
   }
 
   @Method(0x800217a4L)
@@ -923,7 +926,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021918L)
-  public static void FUN_80021918(final GsOBJTABLE2 table, final long a1, final GsCOORDINATE2 coord2, final long maxSize, final long a4) {
+  public static void FUN_80021918(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long maxSize, final long a4) {
     final long s2 = a4 >> 8 & 0xffL;
     final long dobj2Id = a4 & 0xffL;
 
@@ -960,8 +963,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800219ac
     //LAB_80021a98
-    if(s2 == 0x2L && a1 != 0) {
-      updateTmdPacketIlen(MEMORY.ref(4, FUN_80021c58(a1, dobj2Id), UnboundedArrayRef.of(0x1c, TmdObjTable::new)), dobj2, 0); //TODO
+    if(s2 == 0x2L && tmd != null) {
+      updateTmdPacketIlen(getTmdObjTableOffset(tmd, dobj2Id), dobj2, 0);
     }
 
     //LAB_800219d8
@@ -1082,34 +1085,32 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021c58L)
-  public static long FUN_80021c58(long address, final long objId) {
-    long v1 = MEMORY.ref(4, address).offset(0x4L).get();
-    address += 0x8L;
-    long a2 = 0x1L;
+  public static UnboundedArrayRef<TmdObjTable> getTmdObjTableOffset(final Tmd tmd, final long objId) {
+    long count = tmd.header.nobj.get();
+    int id = 1;
     //LAB_80021c74
-    while(v1 > 0) {
-      if(a2 == objId) {
+    while(count > 0) {
+      if(id == objId) {
         //LAB_80021c8c
-        return address;
+        return tmd.objTable.slice(id - 1);
       }
 
-      address += 0x1cL;
-      v1--;
-      a2++;
+      count--;
+      id++;
     }
 
     //LAB_80021c8c
     //LAB_80021c98
-    return 0;
+    return null;
   }
 
   @Method(0x80021ca0L)
-  public static void FUN_80021ca0(final GsOBJTABLE2 table, final long a1, final GsCOORDINATE2 coord2, final long a3, final long a4) {
+  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long a3, final long a4) {
     long s1 = 0x801_0000L;
 
     //LAB_80021d08
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, a1, coord2, (short)a3, s1 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, (short)a3, s1 / 0x1_0000L);
       s1 += 0x1_0000L;
     }
 
@@ -1119,8 +1120,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021d64
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, a1, coord2, (short)a3, s1 / 0x1_0000L);
-      FUN_80021918(table, a1, coord2, (short)a3, s2 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, (short)a3, s1 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, (short)a3, s2 / 0x1_0000L);
       s2 += 0x1_0000L;
       s1 += 0x1_0000L;
     }

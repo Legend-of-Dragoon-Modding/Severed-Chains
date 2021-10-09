@@ -24,6 +24,7 @@ import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.HmdSomethingStruct;
+import legend.game.types.ExtendedTmd;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -338,7 +339,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010250 = MEMORY.ref(4, 0x80010250L);
 
-  public static final Value _800103d0 = MEMORY.ref(4, 0x800103d0L);
+  public static final ExtendedTmd extendedMrg_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
 
   public static final Value _8001051c = MEMORY.ref(4, 0x8001051cL);
 
