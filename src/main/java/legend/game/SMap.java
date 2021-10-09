@@ -26,17 +26,15 @@ import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.DR_MODE;
+import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.HmdSomethingStruct;
-import legend.game.types.MathStruct;
+import legend.game.types.GsF_LIGHT;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
-import legend.game.types.ExtendedTmd;
 import legend.game.types.WeirdTimHeader;
-
-import java.util.function.Function;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
@@ -116,11 +114,11 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003b7e0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c6f0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003cce0;
+import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
+import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003d690;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003d9d0;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
@@ -134,7 +132,7 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.setTransferVector;
+import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040780;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
@@ -206,11 +204,11 @@ import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 public final class SMap {
   private SMap() { }
 
-  public static final MathStruct _800c66d8 = MEMORY.ref(4, 0x800c66d8L, MathStruct::new);
+  public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
 
-  public static final MathStruct _800c66e8 = MEMORY.ref(4, 0x800c66e8L, MathStruct::new);
+  public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
 
-  public static final MathStruct _800c66f8 = MEMORY.ref(4, 0x800c66f8L, MathStruct::new);
+  public static final GsF_LIGHT GsF_LIGHT_2_800c66f8 = MEMORY.ref(4, 0x800c66f8L, GsF_LIGHT::new);
 
   public static final Value _800c6708 = MEMORY.ref(2, 0x800c6708L);
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
@@ -437,7 +435,7 @@ public final class SMap {
 
   public static final Value _800d610c = MEMORY.ref(2, 0x800d610cL);
 
-  public static final Value _800d689c = MEMORY.ref(4, 0x800d689cL);
+  public static final Value timFile_800d689c = MEMORY.ref(4, 0x800d689cL);
 
   public static final RECT _800d6b48 = MEMORY.ref(4, 0x800d6b48L, RECT::new);
 
@@ -487,7 +485,7 @@ public final class SMap {
   /** TODO an array of 0x14-long somethings */
   public static final Value _800f5930 = MEMORY.ref(4, 0x800f5930L);
 
-  public static final ArrayRef<Pointer<RunnableRef>> callbackArr_800f5ad4 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(4, 0x800f5ad4L, ArrayRef.of(Pointer.class, 0x80, 4, (Function)Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> callbackArr_800f5ad4 = MEMORY.ref(4, 0x800f5ad4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 0x80, 4, Pointer.of(4, RunnableRef::new)));
   public static final Value _800f5cd4 = MEMORY.ref(2, 0x800f5cd4L);
 
   public static final Value _800f64ac = MEMORY.ref(4, 0x800f64acL);
@@ -864,7 +862,7 @@ public final class SMap {
       params.trans.z.add((int)MEMORY.ref(2, s4).offset(0xaL).getSigned());
       params.trans.div(2);
 
-      setTransferVector(coord, params.trans);
+      TransMatrix(coord, params.trans);
 
       s4 += 0xcL;
     }
@@ -1528,52 +1526,52 @@ public final class SMap {
     final BigStruct struct = biggerStruct.innerStruct_00.deref();
 
     if(struct.us_128.get() == 0) {
-      if(struct.ub_1c4.get() != 0) {
-        MathStruct sp10 = new MathStruct();
-        sp10.ui_00.set(0);
-        sp10.ui_04.set(0x1000L);
-        sp10.ui_08.set(0);
-        sp10.ub_0c.set(struct.ub_1c5);
-        sp10.ub_0d.set(struct.ub_1c6);
-        sp10.ub_0e.set(struct.ub_1c7);
-        FUN_8003c6f0(0, sp10);
+      if(struct.flatLightingEnabled_1c4.get()) {
+        GsF_LIGHT light0 = new GsF_LIGHT();
+        light0.direction_00.setX(0);
+        light0.direction_00.setY(0x1000);
+        light0.direction_00.setZ(0);
+        light0.r_0c.set(struct.flatLightRed_1c5);
+        light0.g_0d.set(struct.flatLightGreen_1c6);
+        light0.b_0e.set(struct.flatLightBlue_1c7);
+        GsSetFlatLight(0, light0);
 
-        MathStruct sp20 = new MathStruct();
-        sp20.ui_00.set(0x1000L);
-        sp20.ui_04.set(0);
-        sp20.ui_08.set(0);
-        sp20.ub_0c.set(struct.ub_1c5);
-        sp20.ub_0d.set(struct.ub_1c6);
-        sp20.ub_0e.set(struct.ub_1c7);
-        FUN_8003c6f0(0x1L, sp20);
+        GsF_LIGHT light1 = new GsF_LIGHT();
+        light1.direction_00.setX(0x1000);
+        light1.direction_00.setY(0);
+        light1.direction_00.setZ(0);
+        light1.r_0c.set(struct.flatLightRed_1c5);
+        light1.g_0d.set(struct.flatLightGreen_1c6);
+        light1.b_0e.set(struct.flatLightBlue_1c7);
+        GsSetFlatLight(1, light1);
 
-        MathStruct sp30 = new MathStruct();
-        sp30.ui_00.set(0);
-        sp30.ui_04.set(0);
-        sp30.ui_08.set(0x1000L);
-        sp30.ub_0c.set(struct.ub_1c5);
-        sp30.ub_0d.set(struct.ub_1c6);
-        sp30.ub_0e.set(struct.ub_1c7);
-        FUN_8003c6f0(0x2L, sp30);
+        GsF_LIGHT light2 = new GsF_LIGHT();
+        light2.direction_00.setX(0);
+        light2.direction_00.setY(0);
+        light2.direction_00.setZ(0x1000);
+        light2.r_0c.set(struct.flatLightRed_1c5);
+        light2.g_0d.set(struct.flatLightGreen_1c6);
+        light2.b_0e.set(struct.flatLightBlue_1c7);
+        GsSetFlatLight(2, light2);
       }
 
       //LAB_800e1310
-      if(struct.ub_1c8.get() != 0) {
-        FUN_8003cce0(struct.s_1ca.get(), struct.s_1cc.get(), struct.s_1ce.get());
+      if(struct.ambientColourEnabled_1c8.get()) {
+        GsSetAmbient(struct.ambientRed_1ca.get(), struct.ambientGreen_1cc.get(), struct.ambientBlue_1ce.get());
       }
 
       //LAB_800e1334
       FUN_800211d8(struct);
 
-      if(struct.ub_1c4.get() != 0) {
-        FUN_8003c6f0(0, _800c66d8);
-        FUN_8003c6f0(1, _800c66e8);
-        FUN_8003c6f0(2, _800c66f8);
+      if(struct.flatLightingEnabled_1c4.get()) {
+        GsSetFlatLight(0, GsF_LIGHT_0_800c66d8);
+        GsSetFlatLight(1, GsF_LIGHT_1_800c66e8);
+        GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
       }
 
       //LAB_800e1374
-      if(struct.ub_1c8.get() != 0) {
-        FUN_8003cce0(0x800L, 0x800L, 0x800L);
+      if(struct.ambientColourEnabled_1c8.get()) {
+        GsSetAmbient(0x800L, 0x800L, 0x800L);
       }
 
       //LAB_800e1390
@@ -1600,28 +1598,29 @@ public final class SMap {
         }
 
         //LAB_800e1440
-        _800c66d8.ui_00.set(0);
-        _800c66d8.ui_04.set(0x1000L);
-        _800c66d8.ui_08.set(0);
-        _800c66d8.ub_0c.set(0x80);
-        _800c66d8.ub_0d.set(0x80);
-        _800c66d8.ub_0e.set(0x80);
-        FUN_8003c6f0(0, _800c66d8);
-        _800c66e8.ui_00.set(0);
-        _800c66e8.ui_04.set(0x1000L);
-        _800c66e8.ui_08.set(0);
-        _800c66e8.ub_0c.set(0);
-        _800c66e8.ub_0d.set(0);
-        _800c66e8.ub_0e.set(0);
-        FUN_8003c6f0(0x1L, _800c66e8);
-        _800c66f8.ui_00.set(0);
-        _800c66f8.ui_04.set(0x1000L);
-        _800c66f8.ui_08.set(0);
-        _800c66f8.ub_0c.set(0);
-        _800c66f8.ub_0d.set(0);
-        _800c66f8.ub_0e.set(0);
-        FUN_8003c6f0(0x2L, _800c66f8);
-        FUN_8003cce0(0x800L, 0x800L, 0x800L);
+        GsF_LIGHT_0_800c66d8.direction_00.setX(0);
+        GsF_LIGHT_0_800c66d8.direction_00.setY(0x1000);
+        GsF_LIGHT_0_800c66d8.direction_00.setZ(0);
+        GsF_LIGHT_0_800c66d8.r_0c.set(0x80);
+        GsF_LIGHT_0_800c66d8.g_0d.set(0x80);
+        GsF_LIGHT_0_800c66d8.b_0e.set(0x80);
+        GsSetFlatLight(0, GsF_LIGHT_0_800c66d8);
+        GsF_LIGHT_1_800c66e8.direction_00.setX(0);
+        GsF_LIGHT_1_800c66e8.direction_00.setY(0x1000);
+        GsF_LIGHT_1_800c66e8.direction_00.setZ(0);
+        GsF_LIGHT_1_800c66e8.r_0c.set(0);
+        GsF_LIGHT_1_800c66e8.g_0d.set(0);
+        GsF_LIGHT_1_800c66e8.b_0e.set(0);
+        GsSetFlatLight(0x1L, GsF_LIGHT_1_800c66e8);
+        GsF_LIGHT_2_800c66f8.direction_00.setX(0);
+        GsF_LIGHT_2_800c66f8.direction_00.setY(0x1000);
+        GsF_LIGHT_2_800c66f8.direction_00.setZ(0);
+        GsF_LIGHT_2_800c66f8.r_0c.set(0);
+        GsF_LIGHT_2_800c66f8.g_0d.set(0);
+        GsF_LIGHT_2_800c66f8.b_0e.set(0);
+        GsSetFlatLight(0x2L, GsF_LIGHT_2_800c66f8);
+
+        GsSetAmbient(0x800L, 0x800L, 0x800L);
         loadingStage_800c68e4.addu(0x1L);
         break;
 
@@ -1890,10 +1889,10 @@ public final class SMap {
           struct.ui_1b8.set(0x14L);
           struct.ui_1bc.set(0x14L);
           struct.ui_1c0.set(0x32L);
-          struct.ub_1c4.set(0);
-          struct.ub_1c5.set(0x80);
-          struct.ub_1c6.set(0x80);
-          struct.ub_1c7.set(0x80);
+          struct.flatLightingEnabled_1c4.set(false);
+          struct.flatLightRed_1c5.set(0x80);
+          struct.flatLightGreen_1c6.set(0x80);
+          struct.flatLightBlue_1c7.set(0x80);
 
           if(i == 0) {
             struct.us_178.set(1);
@@ -1954,7 +1953,7 @@ public final class SMap {
         _800c6aa4.setu(_800bd7e8.viewpoint_00.getY() - _800bd7e8.refpoint_0c.getY());
         _800c6aa8.setu(_800bd7e8.viewpoint_00.getZ() - _800bd7e8.refpoint_0c.getZ());
 
-        loadTimImage(_800d689c.getAddress());
+        loadTimImage(timFile_800d689c.getAddress());
         FUN_800f3af8();
 
         //LAB_800e1ea8
@@ -4205,7 +4204,7 @@ public final class SMap {
 
     //LAB_800eee94
     for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
-      FUN_8003d690(a0.ObjTable_0c.top.deref().get(0).coord2_04.deref(), matrix);
+      GsGetLw(a0.ObjTable_0c.top.deref().get(0).coord2_04.deref(), matrix);
       FUN_8003c4a0(matrix);
 
       PushMatrix();
@@ -4815,7 +4814,7 @@ public final class SMap {
     }
 
     final MATRIX sp0x120 = new MATRIX();
-    FUN_8003d9d0(sp10.innerStruct_00.derefAs(BigStruct.class).coord2_14, sp0x120);
+    GsGetLs(sp10.innerStruct_00.derefAs(BigStruct.class).coord2_14, sp0x120);
 
     //TODO what's up with all the unused vars? Did I miss something?
 
@@ -5055,6 +5054,7 @@ public final class SMap {
     long sp20;
     long sp24;
 
+    //TODO struct with a pointer to itself
     long s1 = _800d5eb0.us_128.getAddress();
     long s0 = MEMORY.ref(4, s1).offset(0x38L).get();
 
@@ -5124,7 +5124,7 @@ public final class SMap {
         MEMORY.ref(2, a1).offset(0xaL).setu(sp18);
         MEMORY.ref(1, a1).offset(0xcL).setu(0x40L);
         MEMORY.ref(1, a1).offset(0xdL).setu(0x20L);
-        MEMORY.ref(1, a1).offset(0xeL).setu(_800d5eb0.s_1ca.get() & 0xffffL);
+        MEMORY.ref(1, a1).offset(0xeL).setu(_800d5eb0.ambientRed_1ca.get());
         MEMORY.ref(2, a1).offset(0x10L).setu(sp12);
         MEMORY.ref(2, a1).offset(0x12L).setu(sp18);
         MEMORY.ref(1, a1).offset(0x14L).setu(0x5fL);

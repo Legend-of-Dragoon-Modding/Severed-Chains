@@ -45,7 +45,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
-import legend.game.types.MathStruct;
+import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
@@ -103,8 +103,8 @@ import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021f8c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021fc4;
+import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
+import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
@@ -314,8 +314,8 @@ import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObjPtr_800c1c14
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObj_800c1c1c;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackSomething_800c1c18;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallback_800c1c10;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3568;
@@ -5313,8 +5313,8 @@ public final class Scus94491BpeSegment_8003 {
     matrix_800c3588.transfer.setY(0);
     matrix_800c3588.transfer.setZ(0);
 
-    matrix_800c34e8.clear();
-    matrix_800c3508.clear();
+    lightDirectionMatrix_800c34e8.clear();
+    lightColourMatrix_800c3508.clear();
 
     clip_800c3448.clear();
 
@@ -5453,7 +5453,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003c4a0L)
   public static void FUN_8003c4a0(final MATRIX matrix) {
     final MATRIX sp10 = new MATRIX();
-    sp10.set(matrix_800c34e8);
+    sp10.set(lightDirectionMatrix_800c34e8);
     PushMatrix();
     MulMatrix(sp10, matrix);
     PopMatrix();
@@ -5508,85 +5508,89 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003c6c8
   }
 
+  /**
+   * Set a parallel light source.
+   * <p>
+   * Sets the values for one of up to three parallel light sources. Light source data is specified in the GsF_LIGHT structure.
+   *
+   * @param id Light source number (0, 1, 2)
+   * @param light Pointer to light source data
+   *
+   * @return 0 on success, -1 on failure
+   */
   @Method(0x8003c6f0L)
-  public static long FUN_8003c6f0(long a0, final MathStruct a1) {
-    long v0;
-    long v1;
+  public static long GsSetFlatLight(final long id, final GsF_LIGHT light) {
+    final long x = light.direction_00.getX();
+    final long y = light.direction_00.getY();
+    final long z = light.direction_00.getZ();
+    final long r = light.r_0c.get();
+    final long g = light.g_0d.get();
+    final long b = light.b_0e.get();
 
-    final long s2 = a1.ub_0c.get();
-    final long s3 = a1.ub_0d.get();
-    final long s4 = a1.ub_0e.get();
+    final MATRIX directionMatrix = new MATRIX().set(lightDirectionMatrix_800c34e8);
+    final MATRIX colourMatrix = new MATRIX();
 
-    final MATRIX sp10 = new MATRIX().set(matrix_800c34e8);
-    final MATRIX sp30 = new MATRIX();
+    getLightColour(colourMatrix);
 
-    FUN_8003cc0c(sp30);
+    // Normalize vector - calculate magnitude
+    final long mag = SquareRoot0(x * x + y * y + z * z);
 
-    v0 = a1.ui_00.get();
-    long a0_0 = v0 * v0;
-    v0 = a1.ui_04.get();
-    a0_0 += v0 * v0;
-    v0 = a1.ui_08.get();
-    a0_0 += v0 * v0;
-
-    final long scale = FUN_80021fc4(a0_0);
-
-    if(scale == 0) {
+    if(mag == 0) {
       return -0x1L;
     }
 
-    if(a0 == 0) {
+    if(id == 0) {
       //LAB_8003c7ec
-      sp10.set(0, (short)((int)(-a1.ui_00.get() * 0x1000L) / scale));
-      sp10.set(1, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
-      sp10.set(2, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
+      directionMatrix.set(0, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
+      directionMatrix.set(1, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
+      directionMatrix.set(2, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
 
-      sp30.set(0, (short)(s2 * 0x1000L / 0xff));
-      sp30.set(3, (short)(s3 * 0x1000L / 0xff));
-      sp30.set(6, (short)(s4 * 0x1000L / 0xff));
-    } else if(a0 == 0x1L) {
+      colourMatrix.set(0, (short)(r * 0x1000L / 0xff));
+      colourMatrix.set(3, (short)(g * 0x1000L / 0xff));
+      colourMatrix.set(6, (short)(b * 0x1000L / 0xff));
+    } else if(id == 0x1L) {
       //LAB_8003c904
-      sp10.set(3, (short)((int)(-a1.ui_00.get() * 0x1000L) / scale));
-      sp10.set(4, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
-      sp10.set(5, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
+      directionMatrix.set(3, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
+      directionMatrix.set(4, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
+      directionMatrix.set(5, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
 
-      sp30.set(1, (short)(s2 * 0x1000L / 0xff));
-      sp30.set(4, (short)(s3 * 0x1000L / 0xff));
-      sp30.set(7, (short)(s4 * 0x1000L / 0xff));
+      colourMatrix.set(1, (short)(r * 0x1000L / 0xff));
+      colourMatrix.set(4, (short)(g * 0x1000L / 0xff));
+      colourMatrix.set(7, (short)(b * 0x1000L / 0xff));
       //LAB_8003c7dc
-    } else if(a0 == 0x2L) {
+    } else if(id == 0x2L) {
       //LAB_8003ca20
-      sp10.set(6, (short)((int)(-a1.ui_00.get() * 0x1000L) / scale));
-      sp10.set(7, (short)((int)(-a1.ui_04.get() * 0x1000L) / scale));
-      sp10.set(8, (short)((int)(-a1.ui_08.get() * 0x1000L) / scale));
+      directionMatrix.set(6, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
+      directionMatrix.set(7, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
+      directionMatrix.set(8, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
 
-      sp30.set(2, (short)(s2 * 0x1000L / 0xff));
-      sp30.set(5, (short)(s3 * 0x1000L / 0xff));
-      sp30.set(8, (short)(s4 * 0x1000L / 0xff));
+      colourMatrix.set(2, (short)(r * 0x1000L / 0xff));
+      colourMatrix.set(5, (short)(g * 0x1000L / 0xff));
+      colourMatrix.set(8, (short)(b * 0x1000L / 0xff));
     }
 
     //LAB_8003cb34
-    matrix_800c34e8.set(sp10);
-    FUN_8003cba8(sp30);
+    lightDirectionMatrix_800c34e8.set(directionMatrix);
+    setLightColour(colourMatrix);
 
     //LAB_8003cb88
     return 0;
   }
 
   @Method(0x8003cba8L)
-  public static void FUN_8003cba8(final MATRIX a0) {
-    matrix_800c3508.set(a0);
-    SetColorMatrix(a0);
+  public static void setLightColour(final MATRIX mat) {
+    lightColourMatrix_800c3508.set(mat);
+    SetColorMatrix(mat);
   }
 
   @Method(0x8003cc0cL)
-  public static void FUN_8003cc0c(final MATRIX a0) {
-    a0.set(matrix_800c3508);
+  public static void getLightColour(final MATRIX mat) {
+    mat.set(lightColourMatrix_800c3508);
   }
 
   @Method(0x8003cce0L)
-  public static void FUN_8003cce0(final long a0, final long a1, final long a2) {
-    FUN_80021f8c(a0 / 0x10L, a1 / 0x10L, a2 / 0x10L);
+  public static void GsSetAmbient(final long r, final long g, final long b) {
+    SetBackColor(r / 0x10L, g / 0x10L, b / 0x10L);
   }
 
   @Method(0x8003cd10L)
@@ -5594,8 +5598,20 @@ public final class Scus94491BpeSegment_8003 {
     DrawOTag(ot.tag_10.deref());
   }
 
+  /**
+   * Initialize a libgs ordering table structure.
+   * <p>
+   * Initializes the libgs-style ordering table specified by the otp parameter. The length field of the GsOT
+   * structure must be properly set before this function is called. offset specifies the Z-depth value used for the
+   * start of the ordering table. point represents the average Z-depth of the entire ordering table and is used to
+   * determine depth priority when linking multiple ordering tables together.
+   *
+   * @param offset Ordering table offset value
+   * @param point Ordering table average Z value
+   * @param ot Pointer to ordering table
+   */
   @Method(0x8003cd40L)
-  public static void FUN_8003cd40(final long offset, final long point, final GsOT ot) {
+  public static void GsClearOt(final long offset, final long point, final GsOT ot) {
     ot.offset_08.set(offset);
     ot.point_0c.set(point);
     ot.tag_10.set(ot.org_04.deref().get((1 << ot.length_00.get()) - 1));
@@ -5707,7 +5723,7 @@ public final class Scus94491BpeSegment_8003 {
     v0 = sp10[5] - sp10[2];
     a0 += v0 * v0;
 
-    s2 = FUN_80021fc4(a0);
+    s2 = SquareRoot0(a0);
     if(s2 == 0) {
       return 0x1L;
     }
@@ -5721,7 +5737,7 @@ public final class Scus94491BpeSegment_8003 {
     v0 = sp10[5] - sp10[2];
     a0 += v0 * v0;
 
-    s1 = FUN_80021fc4(a0);
+    s1 = SquareRoot0(a0);
     a2 = s1 * 0x1000L;
 
     //LAB_8003d134
@@ -5745,10 +5761,10 @@ public final class Scus94491BpeSegment_8003 {
 
     if(!struct.super_1c.isNull()) {
       final MATRIX sp50 = new MATRIX();
-      FUN_8003d690(struct.super_1c.deref(), sp30);
+      GsGetLw(struct.super_1c.deref(), sp30);
       TransposeMatrix(sp30, sp50);
       sp50.transfer.set(ApplyMatrixLV(sp50, sp30.transfer)).negate();
-      FUN_8003d550(matrix_800c3548, sp50);
+      GsMulCoord2(matrix_800c3548, sp50);
       matrix_800c3548.set(sp50);
     }
 
@@ -5822,8 +5838,13 @@ public final class Scus94491BpeSegment_8003 {
     return 64 - Long.numberOfLeadingZeros(a0);
   }
 
+  /**
+   * GsMulCoord2 multiplies the MATRIX m2 by the translation matrix m1and stores the result in m2.
+   * <p>
+   * m2 = m1 x m2
+   */
   @Method(0x8003d550L)
-  public static void FUN_8003d550(final MATRIX matrix1, final MATRIX matrix2) {
+  public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
     final VECTOR out = ApplyMatrixLV(matrix1, matrix2.transfer);
     MulMatrix2(matrix1, matrix2);
     matrix2.transfer.set(matrix1.transfer).add(out);
@@ -5849,9 +5870,24 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  /**
+   * Calculates a local world perspective transformation matrix from the GsCOORDINATE2 structure pointed to
+   * by the coord argument and stores the result in the MATRIX structure pointed to by the m argument.
+   * <p>
+   * For high speed operation, the function retains the result of calculation at each node of the hierarchical
+   * coordinate system. When the next GsGetLw() function is called, calculation up to the node to which no
+   * changes have been made is omitted. This is controlled by a GsCOORDINATE2 member flag (libgs replaces
+   * 1 in flags already calculated by GsCOORDINATE2).
+   * <p>
+   * If the contents of a superior node are changed, the effect on a subordinate node is handled by libgs, so it is
+   * not necessary to clear the flags of all subordinate nodes of the changed superior node.
+   *
+   * @param coord Pointer to local coordinate system
+   * @param matrix Pointer to matrix
+   */
   @Method(0x8003d690L)
-  public static void FUN_8003d690(final GsCOORDINATE2 a0, final MATRIX a1) {
-    GsCOORDINATE2 a3 = a0;
+  public static void GsGetLw(final GsCOORDINATE2 coord, final MATRIX matrix) {
+    GsCOORDINATE2 a3 = coord;
     long s1 = 0;
     long a1_0 = 0x64L;
 
@@ -5863,27 +5899,27 @@ public final class Scus94491BpeSegment_8003 {
         if(a3.flg.get() == 0 || a3.flg.get() == _800c34d0.get()) {
           //LAB_8003d6fc
           a3.workm.set(a3.coord);
-          a1.set(a3.workm);
+          matrix.set(a3.workm);
           a3.flg.set(_800c34d0.get());
           break;
         }
 
         //LAB_8003d78c
         if(a1_0 == 0x64L) {
-          a1.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          matrix.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003d7e8
         s1 = a1_0 + 0x1L;
-        a1.set(_800c35a8.offset(s1 * 0x4L).deref(4).cast(GsCOORDINATE2::new).workm);
+        matrix.set(_800c35a8.offset(s1 * 0x4L).deref(4).cast(GsCOORDINATE2::new).workm);
         break;
       }
 
       //LAB_8003d83c
       if(a3.flg.get() == _800c34d0.get()) {
-        a1.set(a3.workm);
+        matrix.set(a3.workm);
         break;
       }
 
@@ -5901,8 +5937,8 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d8c0
     while((int)s1 > 0) {
       final GsCOORDINATE2 coord2 = _800c35a8.offset((s1 - 0x1L) * 0x4L).deref(4).cast(GsCOORDINATE2::new);
-      FUN_8003d950(a1, coord2.coord);
-      coord2.workm.set(a1);
+      GsMulCoord3(matrix, coord2.coord);
+      coord2.workm.set(matrix);
       coord2.flg.set(_800c34d0.get());
       s1--;
     }
@@ -5910,15 +5946,35 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d930
   }
 
+  /**
+   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1and stores the result in m2.
+   * <p>
+   * m1 = m1 x m2
+   */
   @Method(0x8003d950L)
-  public static void FUN_8003d950(final MATRIX m1, final MATRIX m2) {
+  public static void GsMulCoord3(final MATRIX m1, final MATRIX m2) {
     final VECTOR out = ApplyMatrixLV(m1, m2.transfer);
     MulMatrix(m1, m2);
     m1.transfer.add(out);
   }
 
+  /**
+   * Calculates a local screen perspective transformation matrix from the GsCOORDINATE2 structure pointed
+   * to by the coord argument and stores the result in the MATRIX structure pointed to by the m argument.
+   * <p>
+   * For high speed operation, the function retains the result of calculation at each node of the hierarchical
+   * coordinate system. When the next GsGetLs() function is called, calculation up to the node to which no
+   * changes have been made is omitted. This is controlled by a GsCOORDINATE2 member flag (libgs replaces
+   * 1 in flags already calculated by GsCOORDINATE2).
+   * <p>
+   * If the contents of a superior node are changed, the effect on a subordinate node is handled by libgs, so it is
+   * not necessary to clear the flags of all subordinate nodes of the changed superior node.
+   *
+   * @param coord Pointer to local coordinate system
+   * @param matrix Pointer to matrix
+   */
   @Method(0x8003d9d0L)
-  public static void FUN_8003d9d0(GsCOORDINATE2 coord, MATRIX matrix) {
+  public static void GsGetLs(final GsCOORDINATE2 coord, final MATRIX matrix) {
     GsCOORDINATE2 a3 = coord;
     long s1 = 0;
     long a1 = 0x64L;
@@ -5971,7 +6027,7 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003dc00
       do {
-        FUN_8003d950(matrix, MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).coord);
+        GsMulCoord3(matrix, MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).coord);
         MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).workm.set(matrix);
         MEMORY.ref(4, s0).deref(4).setu(_800c34d0);
         s0 -= 0x4L;
@@ -5980,11 +6036,21 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003dc70
-    FUN_8003d550(matrix_800c3548, matrix);
+    GsMulCoord2(matrix_800c3548, matrix);
   }
 
+  /**
+   * Calculate local world and local screen matrices.
+   * <p>
+   * GsGetLws() calculates local world and local screen coordinates. It is faster than calling GsGetLw() followed
+   * by calling GsGetLs(). When you use GsSetLightMatrix(), you pass it the lw matrix.
+   *
+   * @param coord Pointer to local coordinates
+   * @param lw Pointer to matrix that stores the local world coordinates
+   * @param ls Pointer to matrix that stores the local screen coordinates
+   */
   @Method(0x8003dca0L)
-  public static void FUN_8003dca0(GsCOORDINATE2 coord, final MATRIX matrix1, final MATRIX matrix2) {
+  public static void GsGetLws(GsCOORDINATE2 coord, final MATRIX lw, final MATRIX ls) {
     long s1 = 0;
     long a = 0x64;
 
@@ -5997,26 +6063,26 @@ public final class Scus94491BpeSegment_8003 {
           //LAB_8003dd14
           coord.flg.set((int)_800c34d0.get());
           coord.workm.set(coord.coord);
-          matrix1.set(coord.workm);
+          lw.set(coord.workm);
           break;
         }
 
         //LAB_8003dda4
         s1 = a + 0x1L;
         if(a == 0x64) {
-          matrix1.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          lw.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003de00
-        matrix1.set(_800c35a8.offset(s1 * 4).deref(4).cast(GsCOORDINATE2::new).workm);
+        lw.set(_800c35a8.offset(s1 * 4).deref(4).cast(GsCOORDINATE2::new).workm);
         break;
       }
 
       //LAB_8003de54
       if(coord.flg.get() == _800c34d0.get()) {
-        matrix1.set(coord.workm);
+        lw.set(coord.workm);
         break;
       }
 
@@ -6036,19 +6102,19 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003ded8
       do {
-        FUN_8003d950(matrix1, MEMORY.ref(4, s0).cast(GsCOORDINATE2::new).coord);
+        GsMulCoord3(lw, MEMORY.ref(4, s0).cast(GsCOORDINATE2::new).coord);
 
         final GsCOORDINATE2 c = MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new);
         c.flg.set((int)_800c34d0.get());
-        c.workm.set(matrix1);
+        c.workm.set(lw);
         s0 -= 0x4L;
         s1--;
       } while((int)s1 > 0);
     }
 
     //LAB_8003df48
-    matrix2.set(matrix1);
-    FUN_8003d550(matrix_800c3548, matrix2);
+    ls.set(lw);
+    GsMulCoord2(matrix_800c3548, ls);
   }
 
   /**
@@ -6460,8 +6526,16 @@ public final class Scus94491BpeSegment_8003 {
     return m1;
   }
 
+  /**
+   * Gives an amount of parallel transfer expressed by v to the matrix m.
+   *
+   * @param matrix Pointer to matrix (output)
+   * @param vector Pointer to transfer vector (input)
+   *
+   * @return matrix
+   */
   @Method(0x8003f730L)
-  public static MATRIX setTransferVector(final MATRIX matrix, final VECTOR vector) {
+  public static MATRIX TransMatrix(final MATRIX matrix, final VECTOR vector) {
     matrix.transfer.set(vector);
     return matrix;
   }

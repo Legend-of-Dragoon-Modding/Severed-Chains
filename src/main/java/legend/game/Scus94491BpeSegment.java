@@ -56,7 +56,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c048;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c350;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003cd40;
+import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
@@ -1060,7 +1060,7 @@ public final class Scus94491BpeSegment {
     tags_1f8003d0.set(_8005a398.get((int)doubleBufferFrame_800c34d4.get()));
     linkedListAddress_1f8003d8.setu(_8007a3c0.offset(doubleBufferFrame_800c34d4.get() * 0x20400L).getAddress());
 
-    FUN_8003cd40(0, 0, orderingTables_8005a370.get((int)doubleBufferFrame_800c34d4.get()));
+    GsClearOt(0, 0, orderingTables_8005a370.get((int)doubleBufferFrame_800c34d4.get()));
   }
 
   @Method(0x80012df8L)
@@ -1158,8 +1158,8 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013080
-    FUN_8003cd40(0, 0, orderingTables_8005a370.get(0));
-    FUN_8003cd40(0, 0, orderingTables_8005a370.get(1));
+    GsClearOt(0, 0, orderingTables_8005a370.get(0));
+    GsClearOt(0, 0, orderingTables_8005a370.get(1));
     ClearImage(rect1, (byte)0, (byte)0, (byte)0);
     ClearImage(rect2, (byte)0, (byte)0, (byte)0);
     FUN_8003c5e0();

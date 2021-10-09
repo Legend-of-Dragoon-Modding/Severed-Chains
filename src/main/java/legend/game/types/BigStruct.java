@@ -8,6 +8,7 @@ import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -39,7 +40,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_a0;
   public final UnsignedByteRef ub_a2;
   public final UnsignedByteRef ub_a3;
-  /** Pointer to an address on the linked list */
+  /** Pointer to an address on the linked list, 0x30 bytes long */
   public final UnsignedIntRef addr_ui_a4;
   /** Pointer to whatever is pointed to by {@link ExtendedTmd#ptr_08} */
   public final UnsignedIntRef ptr_a8;
@@ -98,15 +99,15 @@ public class BigStruct implements MemoryRef {
   public final UnsignedIntRef ui_1b8;
   public final UnsignedIntRef ui_1bc;
   public final UnsignedIntRef ui_1c0;
-  public final UnsignedByteRef ub_1c4;
-  public final UnsignedByteRef ub_1c5;
-  public final UnsignedByteRef ub_1c6;
-  public final UnsignedByteRef ub_1c7;
-  public final UnsignedByteRef ub_1c8;
+  public final BoolRef flatLightingEnabled_1c4;
+  public final UnsignedByteRef flatLightRed_1c5;
+  public final UnsignedByteRef flatLightGreen_1c6;
+  public final UnsignedByteRef flatLightBlue_1c7;
+  public final BoolRef ambientColourEnabled_1c8;
 
-  public final ShortRef s_1ca;
-  public final ShortRef s_1cc;
-  public final ShortRef s_1ce;
+  public final UnsignedShortRef ambientRed_1ca;
+  public final UnsignedShortRef ambientGreen_1cc;
+  public final UnsignedShortRef ambientBlue_1ce;
   /** TODO unknown type */
   public final Value v_1d0;
 
@@ -184,15 +185,15 @@ public class BigStruct implements MemoryRef {
     this.ui_1b8 = ref.offset(4, 0x1b8L).cast(UnsignedIntRef::new);
     this.ui_1bc = ref.offset(4, 0x1bcL).cast(UnsignedIntRef::new);
     this.ui_1c0 = ref.offset(4, 0x1c0L).cast(UnsignedIntRef::new);
-    this.ub_1c4 = ref.offset(1, 0x1c4L).cast(UnsignedByteRef::new);
-    this.ub_1c5 = ref.offset(1, 0x1c5L).cast(UnsignedByteRef::new);
-    this.ub_1c6 = ref.offset(1, 0x1c6L).cast(UnsignedByteRef::new);
-    this.ub_1c7 = ref.offset(1, 0x1c7L).cast(UnsignedByteRef::new);
-    this.ub_1c8 = ref.offset(1, 0x1c8L).cast(UnsignedByteRef::new);
+    this.flatLightingEnabled_1c4 = ref.offset(1, 0x1c4L).cast(BoolRef::new);
+    this.flatLightRed_1c5 = ref.offset(1, 0x1c5L).cast(UnsignedByteRef::new);
+    this.flatLightGreen_1c6 = ref.offset(1, 0x1c6L).cast(UnsignedByteRef::new);
+    this.flatLightBlue_1c7 = ref.offset(1, 0x1c7L).cast(UnsignedByteRef::new);
+    this.ambientColourEnabled_1c8 = ref.offset(1, 0x1c8L).cast(BoolRef::new);
 
-    this.s_1ca = ref.offset(2, 0x1caL).cast(ShortRef::new);
-    this.s_1cc = ref.offset(2, 0x1ccL).cast(ShortRef::new);
-    this.s_1ce = ref.offset(2, 0x1ceL).cast(ShortRef::new);
+    this.ambientRed_1ca = ref.offset(2, 0x1caL).cast(UnsignedShortRef::new);
+    this.ambientGreen_1cc = ref.offset(2, 0x1ccL).cast(UnsignedShortRef::new);
+    this.ambientBlue_1ce = ref.offset(2, 0x1ceL).cast(UnsignedShortRef::new);
     this.v_1d0 = ref.offset(4, 0x1d0L);
   }
 

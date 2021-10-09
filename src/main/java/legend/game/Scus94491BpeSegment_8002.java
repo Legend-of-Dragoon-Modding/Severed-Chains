@@ -112,7 +112,7 @@ import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.setTransferVector;
+import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040010;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800402a0;
@@ -627,7 +627,7 @@ public final class Scus94491BpeSegment_8002 {
           params.trans.z.add((int)MEMORY.ref(2, s2).offset(0xaL).getSigned());
           params.trans.div(2);
 
-          setTransferVector(coord2.coord, params.trans);
+          TransMatrix(coord2.coord, params.trans);
 
           s2 += 0xcL;
         }
@@ -655,7 +655,7 @@ public final class Scus94491BpeSegment_8002 {
           params.trans.setX((int)(s1 >> 16));
           params.trans.setY((short)s3);
           params.trans.setZ((int)(s3 >> 16));
-          setTransferVector(coord2.coord, params.trans);
+          TransMatrix(coord2.coord, params.trans);
 
           s6 += 0x6L;
         }
@@ -687,7 +687,7 @@ public final class Scus94491BpeSegment_8002 {
         params.trans.setX((int)(s1 >> 16));
         params.trans.setY((short)s3);
         params.trans.setZ((int)(s3 >> 16));
-        setTransferVector(coord2.coord, params.trans);
+        TransMatrix(coord2.coord, params.trans);
 
         s5 += 0xcL;
       }
@@ -860,7 +860,7 @@ public final class Scus94491BpeSegment_8002 {
       coord2param.trans.y.set((short)s3);
       coord2param.trans.z.set((short)(s3 >>> 16));
 
-      setTransferVector(matrix, coord2param.trans);
+      TransMatrix(matrix, coord2param.trans);
 
       s5 += 0xcL;
     }
@@ -1004,7 +1004,7 @@ public final class Scus94491BpeSegment_8002 {
       translation.y.set(1);
       translation.z.set(1);
 
-      setTransferVector(coord, translation);
+      TransMatrix(coord, translation);
     }
 
     if(temp != null) {
@@ -1164,7 +1164,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021f8cL)
-  public static void FUN_80021f8c(final long r, final long g, final long b) {
+  public static void SetBackColor(final long r, final long g, final long b) {
     CPU.CTC2(r * 0x10L, 13); // Background colour R
     CPU.CTC2(g * 0x10L, 14); // Background colour G
     CPU.CTC2(b * 0x10L, 15); // Background colour B
@@ -1179,38 +1179,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021fc4L)
-  public static long FUN_80021fc4(final long a0) {
-    long a1;
-    long a2;
-    long v0;
-    long v1;
-
-    a1 = 0;
-    v1 = a1;
-    a2 = 0x20L;
-
-    //LAB_80021fd4
-    do {
-      a2 -= 0x2L;
-      v0 = v1 << 2;
-      v1 = (int)a0 >> a2;
-      v1 &= 0x3L;
-      v1 |= v0;
-      a1 <<= 1;
-      v0 = a1 << 1;
-      v0++;
-      v1 -= v0;
-      if((int)v1 >= 0) {
-        a1++;
-      } else {
-        //LAB_80022004
-        v1 += v0;
-      }
-
-      //LAB_80022008
-    } while(a2 != 0);
-
-    return a1;
+  public static long SquareRoot0(final long n) {
+    return (long)Math.sqrt(n);
   }
 
   @Method(0x80022018L)
@@ -2489,7 +2459,7 @@ public final class Scus94491BpeSegment_8002 {
       joyStruct.iArr40.get(i).set(rcos(joyStruct.sArr50.get(i).get()));
       long v1 = joyStruct.sArr48.get(i * 2).get();
       v0 = joyStruct.sArr48.get(i * 2 + 1).get();
-      joyStruct.sArr54.get(i).set((int)FUN_80021fc4(v1 * v1 + v0 * v0));
+      joyStruct.sArr54.get(i).set((int)SquareRoot0(v1 * v1 + v0 * v0));
 
       if(joyStruct.sArr48.get(i * 2).get() != 0 || joyStruct.sArr48.get(i * 2 + 1).get() != 0) {
         //LAB_8002ba90
