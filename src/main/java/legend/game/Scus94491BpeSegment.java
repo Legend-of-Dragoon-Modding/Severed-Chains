@@ -1183,7 +1183,7 @@ public final class Scus94491BpeSegment {
     FUN_8003c350();
 
     if(_8004dd36.get(0x2L) == 0) {
-      FUN_8003c048(_8007a3a8.get(), _800bb104.get(),  _800babc0.get(), orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
+      FUN_8003c048(_8007a3a8.get(), _800bb104.get(), _800babc0.get(), orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
     }
 
     //LAB_800131b0

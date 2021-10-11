@@ -559,7 +559,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf044 = MEMORY.ref(1, 0x800bf044L);
 
   public static final Value _800bf064 = MEMORY.ref(4, 0x800bf064L);
-  public static final ArrayRef<ArrayRef<JoyStruct.JoyStruct2>> _800bf068 = (ArrayRef<ArrayRef<JoyStruct.JoyStruct2>>)MEMORY.ref(2, 0x800bf068L, ArrayRef.of(ArrayRef.class, 2, 0x20, (Function)ArrayRef.of(JoyStruct.JoyStruct2.class, 2, 0x10, JoyStruct.JoyStruct2::new)));
+  public static final ArrayRef<ArrayRef<JoyStruct.JoyStruct2>> _800bf068 = MEMORY.ref(2, 0x800bf068L, ArrayRef.of(ArrayRef.classFor(JoyStruct.JoyStruct2.class), 2, 0x20, ArrayRef.of(JoyStruct.JoyStruct2.class, 2, 0x10, JoyStruct.JoyStruct2::new)));
 //  public static final Value _800bf068 = MEMORY.ref(2, 0x800bf068L);
 //  public static final Value _800bf06a = MEMORY.ref(2, 0x800bf06aL);
 //  public static final Value _800bf06c = MEMORY.ref(2, 0x800bf06cL);

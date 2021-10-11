@@ -97,7 +97,7 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.loadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3568;
+import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public final class Ttle {
   private Ttle() { }
@@ -1570,7 +1570,7 @@ public final class Ttle {
   @Method(0x800cc26cL)
   public static void FUN_800cc26c(final SVECTOR a0, final GsCOORDINATE2 a1) {
     final MATRIX m = new MATRIX();
-    m.set(matrix_800c3568);
+    m.set(identityMatrix_800c3568);
     m.transfer.set(a1.coord.transfer);
     FUN_8003faf0(a0, m);
     a1.coord.set(m);

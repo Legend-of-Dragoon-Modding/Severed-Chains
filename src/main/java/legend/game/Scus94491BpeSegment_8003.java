@@ -318,7 +318,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3568;
+import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3588;
 
 public final class Scus94491BpeSegment_8003 {
@@ -5079,24 +5079,30 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003b750L)
-  public static void FUN_8003b750(final long a0, final long a1, final long a2, final long a3) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x1L);
+  public static void makeDrawModePacketGp0e1(final long address, final long allowDrawing, final long dither, final long other) {
+    MEMORY.ref(1, address).offset(0x3L).setu(0x1L);
 
-    final long v1;
-    if(a2 != 0) {
-      v1 = 0xe100_0200L;
+    final long command = 0xe100_0000L; // Texpage/draw mode settings
+
+    final long ditherBit;
+    if(dither != 0) {
+      ditherBit = 0x200L;
     } else {
-      v1 = 0xe100_0000L;
+      ditherBit = 0;
     }
 
     //LAB_8003b764
-    long v0 = a3 & 0x9ffL;
-    if(a1 != 0) {
-      v0 |= 0x400L;
+    final long drawingBit;
+    if(allowDrawing != 0) {
+      drawingBit = 0x400L;
+    } else {
+      drawingBit = 0;
     }
 
+    final long otherBits = other & 0x9ffL; // Texpage X/Y base; trans; texpage colours, tex disable
+
     //LAB_8003b770
-    MEMORY.ref(4, a0).offset(0x4L).setu(v1 | v0);
+    MEMORY.ref(4, address).offset(0x4L).setu(command | drawingBit | ditherBit | otherBits);
   }
 
   @Method(0x8003b780L)
@@ -5119,12 +5125,12 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003b7e0L)
-  public static long FUN_8003b7e0(long a0, long a1) {
-    long v1 = MEMORY.ref(1, a1).offset(0x3L).get() + MEMORY.ref(1, a0).offset(0x3L).get() + 0x1L;
+  public static long combineGpuPackets(final long packet1, final long packet2) {
+    final long v1 = MEMORY.ref(1, packet2).offset(0x3L).get() + MEMORY.ref(1, packet1).offset(0x3L).get() + 0x1L;
 
     if(v1 < 0x11L) {
-      MEMORY.ref(1, a0).offset(0x3L).setu(v1);
-      MEMORY.ref(1, a1).setu(0);
+      MEMORY.ref(1, packet1).offset(0x3L).setu(v1);
+      MEMORY.ref(4, packet2).setu(0);
       return 0;
     }
 
@@ -5287,18 +5293,18 @@ public final class Scus94491BpeSegment_8003 {
 
     final long a0 = ((displayHeight << 14) / displayWidth) / 3;
 
-    matrix_800c3568.set(0, 0, (short)0x1000);
-    matrix_800c3568.set(0, 1, (short)0);
-    matrix_800c3568.set(0, 2, (short)0);
-    matrix_800c3568.set(1, 0, (short)0);
-    matrix_800c3568.set(1, 1, (short)0x1000);
-    matrix_800c3568.set(1, 2, (short)0);
-    matrix_800c3568.set(2, 0, (short)0);
-    matrix_800c3568.set(2, 1, (short)0);
-    matrix_800c3568.set(2, 2, (short)0x1000);
-    matrix_800c3568.transfer.setX(0);
-    matrix_800c3568.transfer.setY(0);
-    matrix_800c3568.transfer.setZ(0);
+    identityMatrix_800c3568.set(0, 0, (short)0x1000);
+    identityMatrix_800c3568.set(0, 1, (short)0);
+    identityMatrix_800c3568.set(0, 2, (short)0);
+    identityMatrix_800c3568.set(1, 0, (short)0);
+    identityMatrix_800c3568.set(1, 1, (short)0x1000);
+    identityMatrix_800c3568.set(1, 2, (short)0);
+    identityMatrix_800c3568.set(2, 0, (short)0);
+    identityMatrix_800c3568.set(2, 1, (short)0);
+    identityMatrix_800c3568.set(2, 2, (short)0x1000);
+    identityMatrix_800c3568.transfer.setX(0);
+    identityMatrix_800c3568.transfer.setY(0);
+    identityMatrix_800c3568.transfer.setZ(0);
 
     matrix_800c3588.set(0, 0, (short)0x1000);
     matrix_800c3588.set(0, 1, (short)0);
@@ -5434,7 +5440,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003c400L)
   public static void insertCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
     newCoord.flg.set(0);
-    newCoord.coord.set(matrix_800c3568);
+    newCoord.coord.set(identityMatrix_800c3568);
     newCoord.super_.setNullable(superCoord);
 
     if(superCoord != null) {
@@ -5451,13 +5457,14 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c4a0L)
-  public static void FUN_8003c4a0(final MATRIX matrix) {
-    final MATRIX sp10 = new MATRIX();
-    sp10.set(lightDirectionMatrix_800c34e8);
+  public static void FUN_8003c4a0(final MATRIX lw) {
+    final MATRIX lightDirection = new MATRIX().set(lightDirectionMatrix_800c34e8);
+
     PushMatrix();
-    MulMatrix(sp10, matrix);
+    MulMatrix(lightDirection, lw);
     PopMatrix();
-    SetLightMatrix(sp10);
+
+    SetLightMatrix(lightDirection);
   }
 
   @Method(0x8003c540L)
@@ -5670,29 +5677,31 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cee0L)
-  public static void FUN_8003cee0(final MATRIX matrix, final long param_2, final long param_3, final long param_4) {
-    matrix.set(matrix_800c3568);
+  public static void FUN_8003cee0(final MATRIX matrix, final long sin, final long cos, final long param_4) {
+    matrix.set(identityMatrix_800c3568);
+
+    //TODO this is weird... these are the positions for rotation matrices, but if they were transposed
 
     switch((byte)(param_4 - 0x58L)) {
       case 0x0, 0x20 -> {
-        matrix.set(1, 1, (short)param_3);
-        matrix.set(1, 2, (short)-param_2);
-        matrix.set(2, 1, (short)param_2);
-        matrix.set(2, 2, (short)param_3);
+        matrix.set(1, 1, (short)cos);
+        matrix.set(1, 2, (short)-sin);
+        matrix.set(2, 1, (short)sin);
+        matrix.set(2, 2, (short)cos);
       }
 
       case 0x1, 0x21 -> {
-        matrix.set(0, 0, (short)param_3);
-        matrix.set(0, 2, (short)param_2);
-        matrix.set(2, 0, (short)-param_2);
-        matrix.set(2, 2, (short)param_3);
+        matrix.set(0, 0, (short)cos);
+        matrix.set(0, 2, (short)sin);
+        matrix.set(2, 0, (short)-sin);
+        matrix.set(2, 2, (short)cos);
       }
 
       case 0x2, 0x22 -> {
-        matrix.set(0, 0, (short)param_3);
-        matrix.set(0, 1, (short)-param_2);
-        matrix.set(1, 0, (short)param_2);
-        matrix.set(1, 1, (short)param_3);
+        matrix.set(0, 0, (short)cos);
+        matrix.set(0, 1, (short)-sin);
+        matrix.set(1, 0, (short)sin);
+        matrix.set(1, 1, (short)cos);
       }
     }
   }
@@ -5760,12 +5769,14 @@ public final class Scus94491BpeSegment_8003 {
     matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
 
     if(!struct.super_1c.isNull()) {
-      final MATRIX sp50 = new MATRIX();
-      GsGetLw(struct.super_1c.deref(), sp30);
-      TransposeMatrix(sp30, sp50);
-      sp50.transfer.set(ApplyMatrixLV(sp50, sp30.transfer)).negate();
-      GsMulCoord2(matrix_800c3548, sp50);
-      matrix_800c3548.set(sp50);
+      final MATRIX lw = new MATRIX();
+      GsGetLw(struct.super_1c.deref(), lw);
+
+      final MATRIX transposedLw = new MATRIX();
+      TransposeMatrix(lw, transposedLw);
+      transposedLw.transfer.set(ApplyMatrixLV(transposedLw, lw.transfer)).negate();
+      GsMulCoord2(matrix_800c3548, transposedLw);
+      matrix_800c3548.set(transposedLw);
     }
 
     //LAB_8003d310
@@ -6605,6 +6616,13 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  /**
+   * Transposes matrix m0 into m1.
+   *
+   * @param m0 Input
+   * @param m1 Output
+   * @return m1
+   */
   @Method(0x8003fab0L)
   public static MATRIX TransposeMatrix(final MATRIX m0, final MATRIX m1) {
     m1.set(0, m0.get(0));

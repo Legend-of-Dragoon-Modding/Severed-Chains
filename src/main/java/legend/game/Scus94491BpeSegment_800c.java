@@ -88,7 +88,7 @@ public final class Scus94491BpeSegment_800c {
   public static final MATRIX lightColourMatrix_800c3508 = MEMORY.ref(4, 0x800c3508L, MATRIX::new);
   public static final MATRIX matrix_800c3528 = MEMORY.ref(4, 0x800c3528L, MATRIX::new);
   public static final MATRIX matrix_800c3548 = MEMORY.ref(4, 0x800c3548L, MATRIX::new);
-  public static final MATRIX matrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
+  public static final MATRIX identityMatrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
   public static final MATRIX matrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
 
   public static final Value _800c35a4 = MEMORY.ref(4, 0x800c35a4L);

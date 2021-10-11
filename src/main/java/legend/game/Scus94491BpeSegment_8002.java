@@ -439,7 +439,7 @@ public final class Scus94491BpeSegment_8002 {
     assert false;
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, long, long)} */
+  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, long)} */
   @Method(0x80020718L)
   public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
     final int transferX = bigStruct.coord2_14.coord.transfer.getX();

@@ -62,7 +62,7 @@ public class BigStruct implements MemoryRef {
   public final VECTOR vector_10c;
   public final UnsignedIntRef ui_11c;
   public final UnsignedIntRef ui_120;
-  public final UnsignedIntRef ui_124;
+  public final Pointer<MrgFile> mrg_124;
   public final UnsignedShortRef us_128;
   public final UnsignedShortRef us_12a;
   public final UnsignedShortRef us_12c;
@@ -148,7 +148,7 @@ public class BigStruct implements MemoryRef {
     this.vector_10c = ref.offset(4, 0x10cL).cast(VECTOR::new);
     this.ui_11c = ref.offset(4, 0x11cL).cast(UnsignedIntRef::new);
     this.ui_120 = ref.offset(4, 0x120L).cast(UnsignedIntRef::new);
-    this.ui_124 = ref.offset(4, 0x124L).cast(UnsignedIntRef::new);
+    this.mrg_124 = ref.offset(4, 0x124L).cast(Pointer.deferred(4, MrgFile::new));
     this.us_128 = ref.offset(2, 0x128L).cast(UnsignedShortRef::new);
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
