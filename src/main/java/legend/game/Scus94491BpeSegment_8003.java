@@ -6637,25 +6637,26 @@ public final class Scus94491BpeSegment_8003 {
     return m1;
   }
 
+  /** TODO one of the RotMatrix* methods */
   @Method(0x8003faf0L)
-  public static void FUN_8003faf0(final SVECTOR a0, final MATRIX a1) {
-    long t3;
-    long t4;
-    long t5;
-    long t6;
+  public static void RotMatrix_8003faf0(final SVECTOR a0, final MATRIX a1) {
+    final long sinX;
+    final long t4;
+    final long sinZ;
+    final long t6;
     long t9;
 
     if(a0.getX() < 0) {
       //LAB_8003fb0c
       t9 = sin_cos_80054d0c.offset((-a0.getX() & 0xfffL) * 0x4L).get();
-      t3 = -(short)t9;
+      sinX = -(short)t9;
     } else {
       //LAB_8003fb34
       t9 = sin_cos_80054d0c.offset((a0.getX() & 0xfffL) * 0x4L).get();
-      t3 = (short)t9;
+      sinX = (short)t9;
     }
 
-    long t0 = t9 >> 16;
+    final long cosX = (short)(t9 >> 16);
 
     //LAB_8003fb54
     if(a0.getY() < 0) {
@@ -6670,36 +6671,36 @@ public final class Scus94491BpeSegment_8003 {
       t4 = -t6;
     }
 
-    long t1 = t9 >> 16;
+    final long cosY = (short)(t9 >> 16);
 
     //LAB_8003fbbc
-    a1.set(2, (short)t6);
-    a1.set(5, (short)(-(t1 * t3) / 0x1000));
-    a1.set(8, (short)(t1 * t0 / 0x1000));
-
     if(a0.getZ() < 0) {
       //LAB_8003fbfc
       t9 = sin_cos_80054d0c.offset((-a0.getZ() & 0xfffL) * 0x4L).get();
-      t5 = -(short)t9;
+      sinZ = -(short)t9;
     } else {
       //LAB_8003fc24
       t9 = sin_cos_80054d0c.offset((a0.getZ() & 0xfffL) * 0x4L).get();
-      t5 = (short)t9;
+      sinZ = (short)t9;
     }
 
-    long t2 = t9 >> 16;
+    final long cosZ = (short)(t9 >> 16);
 
     //LAB_8003fc50
-    a1.set(0, (short)(t2 * t1 / 0x1000));
-    a1.set(1, (short)(-(t5 * t1) / 0x1000));
-    a1.set(3, (short)(t5 * t0 / 0x1000 - t2 * t4 / 0x1000 * t3 / 0x1000));
-    a1.set(4, (short)(t2 * t0 / 0x1000 + t5 * t4 / 0x1000 * t3 / 0x1000));
-    a1.set(6, (short)(t5 * t3 / 0x1000 + t2 * t4 / 0x1000 * t0 / 0x1000));
-    a1.set(7, (short)(t2 * t3 / 0x1000 - t5 * t4 / 0x1000 * t0 / 0x1000));
+    a1.set(0, (short)(cosZ * cosY / 0x1000)); // y, z
+    a1.set(1, (short)(-(sinZ * cosY) / 0x1000)); // z
+    a1.set(2, (short)t6); // y
+    a1.set(3, (short)(sinZ * cosX / 0x1000 - cosZ * t4 / 0x1000 * sinX / 0x1000));
+    a1.set(4, (short)(cosZ * cosX / 0x1000 + sinZ * t4 / 0x1000 * sinX / 0x1000));
+    a1.set(5, (short)(-(cosY * sinX) / 0x1000));
+    a1.set(6, (short)(sinZ * sinX / 0x1000 + cosZ * t4 / 0x1000 * cosX / 0x1000));
+    a1.set(7, (short)(cosZ * sinX / 0x1000 - sinZ * t4 / 0x1000 * cosX / 0x1000));
+    a1.set(8, (short)(cosY * cosX / 0x1000));
   }
 
+  /** TODO one of the RotMatrix* methods */
   @Method(0x8003fd80L)
-  public static void FUN_8003fd80(final SVECTOR svec, final MATRIX mat) {
+  public static void RotMatrix_8003fd80(final SVECTOR svec, final MATRIX mat) {
     assert false;
   }
 }

@@ -231,7 +231,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004dd28 = MEMORY.ref(4, 0x8004dd28L);
 
   public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
-  public static final Value _8004dd34 = MEMORY.ref(2, 0x8004dd34L);
+  public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
   public static final Value _8004dd36 = MEMORY.ref(2, 0x8004dd36L);
   public static final Value _8004dd38 = MEMORY.ref(2, 0x8004dd38L);
 
@@ -341,7 +341,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is probably one of the RotMatrix* methods */
   @Method(0x80040010L)
-  public static MATRIX FUN_80040010(final SVECTOR vector, final MATRIX matrix) {
+  public static MATRIX RotMatrix_80040010(final SVECTOR vector, final MATRIX matrix) {
     long t0;
     long t1;
     long t2;
@@ -422,7 +422,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800402a0L)
-  public static void FUN_800402a0(final long a0, final MATRIX a1) {
+  public static void RotMatrix_800402a0(final long a0, final MATRIX a1) {
     final long t1;
     final long t9;
 
@@ -456,7 +456,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x80040440L)
-  public static void FUN_80040440(final long a0, final MATRIX a1) {
+  public static void RotMatrix_80040440(final long a0, final MATRIX a1) {
     long t0;
     long t1;
     long t2;
@@ -540,7 +540,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800405e0L)
-  public static void FUN_800405e0(final long a0, final MATRIX a1) {
+  public static void RotMatrix_800405e0(final long a0, final MATRIX a1) {
     final long t1;
     final long t9;
 
@@ -574,7 +574,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO RotMatrix_gte? */
   @Method(0x80040780L)
-  public static void FUN_80040780(SVECTOR vector, MATRIX matrix) {
+  public static void RotMatrix_80040780(SVECTOR vector, MATRIX matrix) {
     long v1;
     long t0;
     long t1;

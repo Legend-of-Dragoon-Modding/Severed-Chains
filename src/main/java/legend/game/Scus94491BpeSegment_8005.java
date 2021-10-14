@@ -56,7 +56,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052c30 = MEMORY.ref(4, 0x80052c30L);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
-  public static final Value _80052c38 = MEMORY.ref(4, 0x80052c38L);
+  public static final UnsignedIntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, UnsignedIntRef::new);
   public static final Value _80052c3c = MEMORY.ref(4, 0x80052c3cL);
   public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
   public static final Value _80052c44 = MEMORY.ref(4, 0x80052c44L);
@@ -194,11 +194,11 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(32, 0x8005460cL, ArrayRef.of(Pointer.class, 8, 4, (Function)Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = MEMORY.ref(32, 0x8005460cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final Value Vcount = MEMORY.ref(4, 0x8005462cL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = (ArrayRef<Pointer<RunnableRef>>)MEMORY.ref(28, 0x80054640L, ArrayRef.of(Pointer.class, 7, 4, (Function)Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(28, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
@@ -272,7 +272,7 @@ public final class Scus94491BpeSegment_8005 {
     GATE.acquire();
   }
 
-  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = (Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>>)MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(0x20, ArrayRef.of(Pointer.class, 4, 4, 8, (Function)Pointer.of(0x10, PriorityChainEntry::new)))));
+  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(0x20, ArrayRef.of(Pointer.classFor(PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, PriorityChainEntry::new)))));
 
   static {
     GATE.release();

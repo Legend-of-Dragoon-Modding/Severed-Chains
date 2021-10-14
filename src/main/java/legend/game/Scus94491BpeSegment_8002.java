@@ -101,8 +101,8 @@ import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b780;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003faf0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003fd80;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
@@ -114,10 +114,10 @@ import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040010;
-import static legend.game.Scus94491BpeSegment_8004.FUN_800402a0;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040440;
-import static legend.game.Scus94491BpeSegment_8004.FUN_800405e0;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_800402a0;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040440;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_800405e0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042b60;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042ba0;
@@ -140,7 +140,7 @@ import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052ae0;
 import static legend.game.Scus94491BpeSegment_8005._80052c30;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005._80052c38;
+import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005._80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
@@ -620,7 +620,7 @@ public final class Scus94491BpeSegment_8002 {
         for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
-          FUN_80040010(params.rotate, coord2.coord);
+          RotMatrix_80040010(params.rotate, coord2.coord);
 
           params.trans.x.add((int)MEMORY.ref(2, s2).offset(0x6L).getSigned());
           params.trans.y.add((int)MEMORY.ref(2, s2).offset(0x8L).getSigned());
@@ -650,7 +650,7 @@ public final class Scus94491BpeSegment_8002 {
           params.rotate.setX((short)v1);
           params.rotate.setY((short)(v1 >> 16));
           params.rotate.setZ((short)s1);
-          FUN_80040010(params.rotate, coord2.coord);
+          RotMatrix_80040010(params.rotate, coord2.coord);
 
           params.trans.setX((int)(s1 >> 16));
           params.trans.setY((short)s3);
@@ -682,7 +682,7 @@ public final class Scus94491BpeSegment_8002 {
         params.rotate.setX((short)v1);
         params.rotate.setY((short)(v1 >>> 16));
         params.rotate.setZ((short)s1);
-        FUN_80040010(params.rotate, coord2.coord);
+        RotMatrix_80040010(params.rotate, coord2.coord);
 
         params.trans.setX((int)(s1 >> 16));
         params.trans.setY((short)s3);
@@ -761,8 +761,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021008
-    if(_8004dd20.get() == 0x5L && a0.addr_ui_a4.get() != 0) {
-      removeFromLinkedList(a0.addr_ui_a4.get());
+    if(_8004dd20.get() == 0x5L && !a0.smallerStructPtr_ui_a4.isNull()) {
+      removeFromLinkedList(a0.smallerStructPtr_ui_a4.getPointer());
     }
 
     //LAB_80021034
@@ -854,7 +854,7 @@ public final class Scus94491BpeSegment_8002 {
       coord2param.rotate.y.set((short)(v1 >>> 16));
       coord2param.rotate.z.set((short)s1);
 
-      FUN_80040010(coord2param.rotate, matrix);
+      RotMatrix_80040010(coord2param.rotate, matrix);
 
       coord2param.trans.x.set((short)(s1 >>> 16));
       coord2param.trans.y.set((short)s3);
@@ -871,7 +871,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void FUN_800214bc(final BigStruct a0) {
-    FUN_8003faf0(a0.coord2Param_64.rotate, a0.coord2_14.coord);
+    RotMatrix_8003faf0(a0.coord2Param_64.rotate, a0.coord2_14.coord);
     ScaleMatrix(a0.coord2_14.coord, a0.scaleVector_fc);
     a0.coord2_14.flg.set(0);
   }
@@ -902,7 +902,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800217a4(final BigStruct bigStruct) {
     if(bigStruct.coord2Param_64.rotate.pad.get() == -0x1L) {
       final MATRIX mat = new MATRIX();
-      FUN_8003fd80(bigStruct.coord2Param_64.rotate, mat);
+      RotMatrix_8003fd80(bigStruct.coord2Param_64.rotate, mat);
       TransposeMatrix(mat, bigStruct.coord2_14.coord);
       bigStruct.coord2Param_64.rotate.x.set((short)0);
       bigStruct.coord2Param_64.rotate.y.set((short)0);
@@ -910,7 +910,7 @@ public final class Scus94491BpeSegment_8002 {
       bigStruct.coord2Param_64.rotate.pad.set((short)0);
     } else {
       bigStruct.coord2Param_64.rotate.y.set(FUN_800ea4c8(bigStruct.coord2Param_64.rotate.y.get()));
-      FUN_8003faf0(bigStruct.coord2Param_64.rotate, bigStruct.coord2_14.coord);
+      RotMatrix_8003faf0(bigStruct.coord2Param_64.rotate, bigStruct.coord2_14.coord);
     }
 
     ScaleMatrix(bigStruct.coord2_14.coord, bigStruct.scaleVector_fc);
@@ -989,15 +989,15 @@ public final class Scus94491BpeSegment_8002 {
       dobj2.coord2_04.deref().coord.set(7, (short)0);
       dobj2.coord2_04.deref().coord.set(8, (short)0x1000);
 
-      FUN_800402a0(rotation.x.get(), coord);
-      FUN_80040440(rotation.y.get(), coord);
-      FUN_800405e0(rotation.z.get(), coord);
+      RotMatrix_800402a0(rotation.x.get(), coord);
+      RotMatrix_80040440(rotation.y.get(), coord);
+      RotMatrix_800405e0(rotation.z.get(), coord);
 
       scale.x.set(0x1000);
       scale.y.set(0x1000);
       scale.z.set(0x1000);
 
-      FUN_8003faf0(rotation, coord);
+      RotMatrix_8003faf0(rotation, coord);
       ScaleMatrixL(coord, scale);
 
       translation.x.set(1);
@@ -1834,7 +1834,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a9c0() {
     _80052c30.setu(0x2a3L);
     _80052c34.setu(0x4L);
-    _80052c38.setu(0);
+    index_80052c38.set(0);
     _80052c3c.setu(-0x1L);
     _80052c40.setu(0);
     _80052c44.setu(0x2L);
@@ -1887,7 +1887,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002abdc
     //LAB_8002abe0
-    final long a0 = FUN_800e6730(_80052c38.get());
+    final long a0 = FUN_800e6730(index_80052c38.get());
     if(a0 != 0) {
       if((a0 & 0x10L) == 0) {
         return s0;

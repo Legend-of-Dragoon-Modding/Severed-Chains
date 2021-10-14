@@ -55,7 +55,7 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
@@ -1572,7 +1572,7 @@ public final class Ttle {
     final MATRIX m = new MATRIX();
     m.set(identityMatrix_800c3568);
     m.transfer.set(a1.coord.transfer);
-    FUN_8003faf0(a0, m);
+    RotMatrix_8003faf0(a0, m);
     a1.coord.set(m);
     a1.flg.set(0);
   }

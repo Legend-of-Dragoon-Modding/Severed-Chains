@@ -104,7 +104,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004._8004dd20;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
-import static legend.game.Scus94491BpeSegment_8004._8004dd34;
+import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004._8004dd36;
 import static legend.game.Scus94491BpeSegment_8004._8004dd38;
 import static legend.game.Scus94491BpeSegment_8004._8004dd44;
@@ -1124,8 +1124,8 @@ public final class Scus94491BpeSegment {
     _800bb104.setu(0);
     _8007a3a8.setu(0);
 
-    final RECT rect1 = new RECT((short)0, (short)16, (short)_8004dd34.get(), (short)240);
-    final RECT rect2 = new RECT((short)0, (short)256, (short)_8004dd34.get(), (short)240);
+    final RECT rect1 = new RECT((short)0, (short)16, (short)width_8004dd34.get(), (short)240);
+    final RECT rect2 = new RECT((short)0, (short)256, (short)width_8004dd34.get(), (short)240);
 
     orderingTables_8005a370.get(0).length_00.set(length);
     orderingTables_8005a370.get(1).length_00.set(length);
@@ -1151,9 +1151,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013060
-    FUN_8003bc30((short)_8004dd34.get(), (short)displayHeight, (short)flags, true, use24BitColour != 0);
+    FUN_8003bc30((short)width_8004dd34.get(), (short)displayHeight, (short)flags, true, use24BitColour != 0);
 
-    if(_8004dd34.get() == 0x180L) {
+    if(width_8004dd34.get() == 384L) {
       DISPENV_800c34b0.screen.x.set((short)9);
     }
 
@@ -1196,10 +1196,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013200L)
-  public static void FUN_80013200(final long a0, final long a1) {
-    if(a0 != displayWidth_1f8003e0.get() || a1 != _8004dd36.get()) {
+  public static void FUN_80013200(final long width, final long a1) {
+    if(width != displayWidth_1f8003e0.get() || a1 != _8004dd36.get()) {
       callback_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "FUN_80012f24")).cast(RunnableRef::new));
-      _8004dd34.setu(a0);
+      width_8004dd34.setu(width);
       _8004dd36.setu(a1);
     }
   }
@@ -2430,8 +2430,6 @@ public final class Scus94491BpeSegment {
 
     _800bc070.ui_1c.set(0);
 
-    final long s1 = _8004de58.getAddress();
-
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
       final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(index).derefAs(BiggerStruct.classFor(BigStruct.class));
@@ -2447,7 +2445,7 @@ public final class Scus94491BpeSegment {
           long a0 = _800bc070.commandPtr_0c.deref().get();
           _800bc070.commandPtr_0c.incr();
           _800bc070.type1_10.set(a0 & 0xffL);
-          _800bc070.type2_14.set(a0 >>> 8 & 0xffL);
+          _800bc070.type2_14.set(a0 >>> 8 & 0xffL); //TODO actually count
           _800bc070.driverAndCategory_18.set(a0 >>> 16);
 
           System.err.println("-- " + Long.toHexString(a0));
@@ -2489,20 +2487,20 @@ public final class Scus94491BpeSegment {
                 _800bc070.uiArr_20.get(t2).set(biggerStructPtrArr_800bc1c0.get((int)a0).deref().ui_44.get((int)a1_0));
               } else if(category == 0x5L) {
                 //LAB_80016290
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset(type1 * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset(type1 * 0x4L).deref(4).cast(UnsignedIntRef::new));
               } else if(category == 0x6L) {
                 //LAB_800162a4
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset((_800bc070.biggerStruct_04.deref().ui_44.get(type2).get() + type1) * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset((_800bc070.biggerStruct_04.deref().ui_44.get(type2).get() + type1) * 0x4L).deref(4).cast(UnsignedIntRef::new));
               } else if(category == 0x7) {
                 //LAB_800162d0
                 a0 = _800bc070.biggerStruct_04.deref().ui_44.get(type2).get();
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset(type1 * 0x4L).deref(4).offset(a0 * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset(type1 * 0x4L).deref(4).offset(a0 * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x8L) {
                 //LAB_800160e8
                 //LAB_800162f4
                 v0 = _800bc070.biggerStruct_04.deref().ui_44.get(type2).get();
                 final long a1_0 = _800bc070.biggerStruct_04.deref().ui_44.get(driver).get();
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset((type1 + v0) * 0x4L).deref(4).offset(a1_0 * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset((type1 + v0) * 0x4L).deref(4).offset(a1_0 * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x9L) {
                 //LAB_80016328
                 v1 = _800bc070.ui_08.getPointer() + (short)hmdCommand * 0x4L;
@@ -2527,21 +2525,21 @@ public final class Scus94491BpeSegment {
                 _800bc070.uiArr_20.get(t2).set(biggerStructPtrArr_800bc1c0.get((int)_800bc070.biggerStruct_04.deref().ui_44.get(type1).get()).deref().ui_44.get(type2 + driver));
               } else if(category == 0xeL) {
                 //LAB_80016418
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset((type2 + type1) * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset((type2 + type1) * 0x4L).deref(4).cast(UnsignedIntRef::new));
               } else if(category == 0xfL) {
                 //LAB_8001642c
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset(type1 * 0x4L).deref(4).offset(type2 * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset(type1 * 0x4L).deref(4).offset(type2 * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x10L) {
                 //LAB_80016180
                 //LAB_8001643c
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset((type1 + _800bc070.biggerStruct_04.deref().ui_44.get(type2).get()) * 0x4L).deref(4).offset(driver * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset((type1 + _800bc070.biggerStruct_04.deref().ui_44.get(type2).get()) * 0x4L).deref(4).offset(driver * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x11L) {
                 //LAB_80016468
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset(a0 * 0x4L).deref(4).offset(_800bc070.biggerStruct_04.deref().ui_44.get(driver).get() * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset(a0 * 0x4L).deref(4).offset(_800bc070.biggerStruct_04.deref().ui_44.get(driver).get() * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x12L) {
                 //LAB_80016138
                 //LAB_8001648c
-                _800bc070.uiArr_20.get(t2).set(MEMORY.ref(4, s1).offset((type1 + type2) * 0x4L).deref(4).offset(driver * 0x4L).cast(UnsignedIntRef::new));
+                _800bc070.uiArr_20.get(t2).set(_8004de58.offset((type1 + type2) * 0x4L).deref(4).offset(driver * 0x4L).cast(UnsignedIntRef::new));
               } else if(category == 0x13L) {
                 //LAB_800164a4
                 v1 = _800bc070.ui_08.getPointer() + ((short)a0 + driver) / 4;
@@ -3346,7 +3344,7 @@ public final class Scus94491BpeSegment {
       if(_800bd110.offset(i * 0x28L).get() == 0) {
         if(a0 == 0x8L) {
           //LAB_80019b54
-          FUN_8001a714(0x3L, 0x8L, a1, i, _800bd060.offset(2, 0x10L).get(), _800bd060.offset(4, 0x8L).get() + a1 * 2, _800bd060.offset(4, 0xcL).deref(1).offset(a1).get(), -0x1L, -0x1L, -0x1L, a5, a4, -0x1L);
+          FUN_8001a714(0x3L, 0x8L, a1, i, _800bd060.offset(2, 0x10L).get(), _800bd060.offset(4, 0x8L).get() + a1 * 2, _800bd060.offset(4, 0xcL).deref(1).offset(a1).get(), -0x1L, -0x1L, -0x1L, a5, a4, -0x1L); //TODO getSigned for first one
         } else {
           FUN_8001a714(0x3L, a0, a1, i, _800bcf90.offset(a0 * 28).get(), _800bcf88.offset(a0 * 28).get() + a1 * 2, 0, -0x1L, -0x1L, -0x1L, a5, a4, -0x1L);
         }
