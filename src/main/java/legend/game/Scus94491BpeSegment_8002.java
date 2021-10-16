@@ -115,9 +115,9 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_800402a0;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040440;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_800405e0;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042b60;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042ba0;
@@ -927,7 +927,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021918L)
   public static void FUN_80021918(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long maxSize, final long a4) {
-    final long s2 = a4 >> 8 & 0xffL;
+    final long s2 = (short)a4 >> 8 & 0xffL;
     final long dobj2Id = a4 & 0xffL;
 
     GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
@@ -956,7 +956,7 @@ public final class Scus94491BpeSegment_8002 {
       translation = dobj2.coord2_04.deref().param.deref().trans;
       coord = dobj2.coord2_04.deref().coord;
 
-      if(dobj2.coord2_04.deref().flg.get() == 0) {
+      if(dobj2.coord2_04.deref().super_.isNull()) {
         dobj2.coord2_04.deref().super_.set(coord2);
       }
     }
@@ -989,9 +989,9 @@ public final class Scus94491BpeSegment_8002 {
       dobj2.coord2_04.deref().coord.set(7, (short)0);
       dobj2.coord2_04.deref().coord.set(8, (short)0x1000);
 
-      RotMatrix_800402a0(rotation.x.get(), coord);
-      RotMatrix_80040440(rotation.y.get(), coord);
-      RotMatrix_800405e0(rotation.z.get(), coord);
+      RotMatrixX(rotation.x.get(), coord);
+      RotMatrixY(rotation.y.get(), coord);
+      RotMatrixZ(rotation.z.get(), coord);
 
       scale.x.set(0x1000);
       scale.y.set(0x1000);

@@ -6640,62 +6640,127 @@ public final class Scus94491BpeSegment_8003 {
   /** TODO one of the RotMatrix* methods */
   @Method(0x8003faf0L)
   public static void RotMatrix_8003faf0(final SVECTOR a0, final MATRIX a1) {
-    final long sinX;
-    final long t4;
-    final long sinZ;
-    final long t6;
+    long t0;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    long t6;
+    long t7;
+    long t8;
     long t9;
 
-    if(a0.getX() < 0) {
+    t7 = a0.getX();
+    t9 = t7 & 0xfffL;
+    if(t7 < 0) {
+      t7 = -t7;
+      t7 &= 0xfffL;
+
       //LAB_8003fb0c
-      t9 = sin_cos_80054d0c.offset((-a0.getX() & 0xfffL) * 0x4L).get();
-      sinX = -(short)t9;
+      t8 = t7 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
+      t8 = (short)t9;
+      t3 = -t8;
     } else {
       //LAB_8003fb34
-      t9 = sin_cos_80054d0c.offset((a0.getX() & 0xfffL) * 0x4L).get();
-      sinX = (short)t9;
+      t8 = t9 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
+      t3 = (short)t9;
     }
 
-    final long cosX = (short)(t9 >> 16);
+    t0 = (int)t9 >> 16;
 
     //LAB_8003fb54
-    if(a0.getY() < 0) {
+    t7 = a0.getY();
+    t9 = t7 & 0xfffL;
+    if(t7 < 0) {
+      t7 = -t7;
+      t7 &= 0xfffL;
+
       //LAB_8003fb70
-      t9 = sin_cos_80054d0c.offset((-a0.getY() & 0xfffL) * 0x4L).get();
+      t8 = t7 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
       t4 = (short)t9;
       t6 = -t4;
     } else {
       //LAB_8003fb98
-      t9 = sin_cos_80054d0c.offset((a0.getY() & 0xfffL) * 0x4L).get();
+      t8 = t9 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
       t6 = (short)t9;
       t4 = -t6;
     }
 
-    final long cosY = (short)(t9 >> 16);
+    t1 = (int)t9 >> 16;
 
     //LAB_8003fbbc
-    if(a0.getZ() < 0) {
+    t7 = a0.getZ();
+    a1.set(2, (short)t6);
+    t8 = t1 * t3;
+    t9 = -t8;
+    t6 = (int)t9 >> 12;
+    a1.set(5, (short)t6);
+    t9 = t7 & 0xfffL;
+    if(t7 < 0) {
+      t8 = t1 * t0;
+      t6 = (int)t8 >> 12;
+      a1.set(8, (short)t6);
+      t7 = -t7;
+      t7 &= 0xfffL;
+
       //LAB_8003fbfc
-      t9 = sin_cos_80054d0c.offset((-a0.getZ() & 0xfffL) * 0x4L).get();
-      sinZ = -(short)t9;
+      t8 = t7 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
+      t8 = (short)t9;
+      t5 = -t8;
     } else {
       //LAB_8003fc24
-      t9 = sin_cos_80054d0c.offset((a0.getZ() & 0xfffL) * 0x4L).get();
-      sinZ = (short)t9;
+      t7 = t1 * t0;
+      t6 = (int)t7 >> 12;
+      a1.set(8, (short)t6);
+      t8 = t9 << 2;
+      t9 = sin_cos_80054d0c.offset(t8).get();
+      t5 = (short)t9;
     }
 
-    final long cosZ = (short)(t9 >> 16);
+    t2 = (int)t9 >> 16;
 
     //LAB_8003fc50
-    a1.set(0, (short)(cosZ * cosY / 0x1000)); // y, z
-    a1.set(1, (short)(-(sinZ * cosY) / 0x1000)); // z
-    a1.set(2, (short)t6); // y
-    a1.set(3, (short)(sinZ * cosX / 0x1000 - cosZ * t4 / 0x1000 * sinX / 0x1000));
-    a1.set(4, (short)(cosZ * cosX / 0x1000 + sinZ * t4 / 0x1000 * sinX / 0x1000));
-    a1.set(5, (short)(-(cosY * sinX) / 0x1000));
-    a1.set(6, (short)(sinZ * sinX / 0x1000 + cosZ * t4 / 0x1000 * cosX / 0x1000));
-    a1.set(7, (short)(cosZ * sinX / 0x1000 - sinZ * t4 / 0x1000 * cosX / 0x1000));
-    a1.set(8, (short)(cosY * cosX / 0x1000));
+    t7 = t2 * t1;
+    t6 = (int)t7 >> 12;
+    a1.set(0, (short)t6);
+    t7 = t5 * t1;
+    t6 = -t7;
+    t7 = (int)t6 >> 12;
+    a1.set(1, (short)t7);
+    t7 = t2 * t4;
+    t8 = (int)t7 >> 12;
+    t7 = t8 * t3;
+    t6 = (int)t7 >> 12;
+    t7 = t5 * t0;
+    t9 = (int)t7 >> 12;
+    t7 = t9 - t6;
+    a1.set(3, (short)t7);
+    t6 = t8 * t0;
+    t7 = (int)t6 >> 12;
+    t6 = t5 * t3;
+    t9 = (int)t6 >> 12;
+    t6 = t9 + t7;
+    a1.set(6, (short)t6);
+    t7 = t5 * t4;
+    t8 = (int)t7 >> 12;
+    t7 = t8 * t3;
+    t6 = (int)t7 >> 12;
+    t7 = t2 * t0;
+    t9 = (int)t7 >> 12;
+    t7 = t9 + t6;
+    a1.set(4, (short)t7);
+    t6 = t8 * t0;
+    t7 = (int)t6 >> 12;
+    t6 = t2 * t3;
+    t9 = (int)t6 >> 12;
+    t6 = t9 - t7;
+    a1.set(7, (short)t6);
   }
 
   /** TODO one of the RotMatrix* methods */

@@ -20,7 +20,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.core.spu.Voice;
-import legend.game.types.HmdSomethingStruct;
+import legend.game.types.ScriptStruct;
 import legend.game.types.JoyData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -265,10 +265,10 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004de58 = MEMORY.ref(4, 0x8004de58L);
 
   /** This is the world's largest jump table */
-  public static final ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   /** Actually this is */
-  public static final ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<HmdSomethingStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   public static final Value _8004e31c = MEMORY.ref(4, 0x8004e31cL);
 
@@ -420,43 +420,41 @@ public final class Scus94491BpeSegment_8004 {
     return matrix;
   }
 
-  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800402a0L)
-  public static void RotMatrix_800402a0(final long a0, final MATRIX a1) {
+  public static void RotMatrixX(final long r, final MATRIX matrix) {
     final long t1;
     final long t9;
 
-    if(a0 < 0) {
+    if(r < 0) {
       //LAB_800402bc
-      t9 = sin_cos_80054d0c.offset((-a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
       t1 = -(short)t9;
     } else {
       //LAB_800402e4
-      t9 = sin_cos_80054d0c.offset((a0 & 0xfffL) * 4).get();
+      t9 = sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
       t1 = (short)t9;
     }
 
     final long t0 = (int)t9 >> 16;
 
     //LAB_80040304
-    final long m10 = a1.get(1, 0);
-    final long m11 = a1.get(1, 1);
-    final long m12 = a1.get(1, 2);
-    final long m20 = a1.get(2, 0);
-    final long m21 = a1.get(2, 1);
-    final long m22 = a1.get(2, 2);
+    final long m10 = matrix.get(1, 0);
+    final long m11 = matrix.get(1, 1);
+    final long m12 = matrix.get(1, 2);
+    final long m20 = matrix.get(2, 0);
+    final long m21 = matrix.get(2, 1);
+    final long m22 = matrix.get(2, 2);
 
-    a1.set(1, 0, (short)((t0 * m10 - t1 * m20) >> 12));
-    a1.set(1, 1, (short)((t0 * m11 - t1 * m21) >> 12));
-    a1.set(1, 2, (short)((t0 * m12 - t1 * m22) >> 12));
-    a1.set(2, 0, (short)((t1 * m10 + t0 * m20) >> 12));
-    a1.set(2, 1, (short)((t1 * m11 + t0 * m21) >> 12));
-    a1.set(2, 2, (short)((t1 * m12 + t0 * m22) >> 12));
+    matrix.set(1, 0, (short)((t0 * m10 - t1 * m20) >> 12));
+    matrix.set(1, 1, (short)((t0 * m11 - t1 * m21) >> 12));
+    matrix.set(1, 2, (short)((t0 * m12 - t1 * m22) >> 12));
+    matrix.set(2, 0, (short)((t1 * m10 + t0 * m20) >> 12));
+    matrix.set(2, 1, (short)((t1 * m11 + t0 * m21) >> 12));
+    matrix.set(2, 2, (short)((t1 * m12 + t0 * m22) >> 12));
   }
 
-  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x80040440L)
-  public static void RotMatrix_80040440(final long a0, final MATRIX a1) {
+  public static void RotMatrixY(final long r, final MATRIX matrix) {
     long t0;
     long t1;
     long t2;
@@ -467,7 +465,7 @@ public final class Scus94491BpeSegment_8004 {
     long t8;
     long lo;
 
-    long t7 = a0;
+    long t7 = r;
     long t9 = t7 & 0xfffL;
     if(t7 < 0) {
       t7 = -t7;
@@ -476,100 +474,99 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004045c
       t8 = t7 << 0x2L;
       t9 = sin_cos_80054d0c.offset(t8).get();
-      t1 = (int)t9;
+      t1 = (short)t9;
       t0 = (int)t9 >> 16;
     } else {
       //LAB_80040480
       t8 = t9 * 4L;
       t9 = sin_cos_80054d0c.offset(t8).get();
-      t7 = (int)t9;
+      t7 = (short)t9;
       t1 = -t7;
-      t0 = t9 >> 16;
+      t0 = (int)t9 >> 16;
     }
 
     //LAB_800404a4
-    t2 = a1.get(0);
-    t5 = a1.get(6);
+    t2 = matrix.get(0);
+    t5 = matrix.get(6);
     lo = t0 * t2;
-    t3 = a1.get(1);
-    t6 = a1.get(7);
+    t3 = matrix.get(1);
+    t6 = matrix.get(7);
     t8 = lo;
-    t4 = a1.get(1);
-    t7 = a1.get(8);
+    t4 = matrix.get(1);
+    t7 = matrix.get(8);
     lo = t1 * t5;
     t9 = lo;
     t9 = t8 - t9;
     t8 = t9 >> 0xcL;
     lo = t0 * t3;
-    a1.set(0, (short)t8);
+    matrix.set(0, (short)t8);
     t8 = lo;
     lo = t1 * t6;
     t9 = lo;
     t9 = t8 - t9;
     t8 = t9 >> 0xcL;
     lo = t0 * t4;
-    a1.set(1, (short)t8);
+    matrix.set(1, (short)t8);
     t8 = lo;
     lo = t1 * t7;
     t9 = lo;
     t9 = t8 - t9;
     t8 = t9 >> 0xcL;
     lo = t1 * t2;
-    a1.set(2, (short)t8);
+    matrix.set(2, (short)t8);
     t8 = lo;
     lo = t0 * t5;
     t9 = lo;
     t9 = t8 + t9;
     t8 = t9 >> 0xcL;
     lo = t1 * t3;
-    a1.set(6, (short)t8);
+    matrix.set(6, (short)t8);
     t8 = lo;
     lo = t0 * t6;
     t9 = lo;
     t9 = t8 + t9;
     t8 = t9 >> 0xcL;
     lo = t1 * t4;
-    a1.set(7, (short)t8);
+    matrix.set(7, (short)t8);
     t8 = lo;
     lo = t0 * t7;
     t9 = lo;
     t9 = t8 + t9;
     t8 = t9 >> 0xcL;
-    a1.set(8, (short)t8);
+    matrix.set(8, (short)t8);
   }
 
-  /** TODO This is RotMatrix(X/Y/Z) */
   @Method(0x800405e0L)
-  public static void RotMatrix_800405e0(final long a0, final MATRIX a1) {
+  public static void RotMatrixZ(final long r, final MATRIX matrix) {
     final long t1;
     final long t9;
 
-    if(a0 < 0) {
+    if(r < 0) {
       //LAB_800405fc
-      t9 = sin_cos_80054d0c.offset((-a0 & 0xfffL) * 4).get();
-      t1 = -(short)(t9 & 0xffffL);
+      t9 = sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
+      t1 = -(short)t9;
     } else {
       //LAB_80040624
-      t9 = sin_cos_80054d0c.offset((a0 & 0xfffL) * 4).get();
-      t1 = (short)(t9 & 0xffffL);
+      t9 = sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
+      t1 = (short)t9;
     }
 
-    final long t0 = t9 >> 0x10L;
+    final long t0 = (int)t9 >> 16;
 
     //LAB_80040644
-    final long m00 = a1.get(0, 0);
-    final long m01 = a1.get(0, 1);
-    final long m02 = a1.get(0, 2);
-    final long m10 = a1.get(1, 0);
-    final long m11 = a1.get(1, 1);
-    final long m12 = a1.get(1, 2);
+    final long m00 = matrix.get(0, 0);
+    final long m01 = matrix.get(0, 1);
+    final long m02 = matrix.get(0, 2);
+    final long m10 = matrix.get(1, 0);
+    final long m11 = matrix.get(1, 1);
+    final long m12 = matrix.get(1, 2);
 
-    a1.set(0, 0, (short)((t0 * m00 - t1 * m11) >> 12));
-    a1.set(0, 1, (short)((t0 * m10 - t1 * m02) >> 12));
-    a1.set(0, 2, (short)((t0 * m01 - t1 * m12) >> 12));
-    a1.set(1, 0, (short)((t1 * m00 + t0 * m11) >> 12));
-    a1.set(1, 1, (short)((t1 * m10 + t0 * m02) >> 12));
-    a1.set(1, 2, (short)((t1 * m01 + t0 * m12) >> 12));
+    matrix.set(0, 0, (short)((t0 * m00 - t1 * m10) >> 12));
+    matrix.set(0, 1, (short)((t0 * m01 - t1 * m11) >> 12));
+    matrix.set(0, 2, (short)((t0 * m02 - t1 * m12) >> 12));
+    matrix.set(1, 0, (short)((t1 * m00 + t0 * m10) >> 12));
+    matrix.set(1, 1, (short)((t1 * m01 + t0 * m11) >> 12));
+    matrix.set(1, 2, (short)((t1 * m02 + t0 * m12) >> 12));
   }
 
   /** TODO RotMatrix_gte? */

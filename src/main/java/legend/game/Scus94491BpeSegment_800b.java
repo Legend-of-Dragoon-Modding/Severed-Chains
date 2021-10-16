@@ -25,7 +25,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
-import legend.game.types.HmdSomethingStruct;
+import legend.game.types.ScriptStruct;
 import legend.game.types.JoyStruct;
 import legend.game.types.GsRVIEW2;
 
@@ -124,7 +124,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final Value _800bc060 = MEMORY.ref(4, 0x800bc060L);
 
-  public static final HmdSomethingStruct _800bc070 = MEMORY.ref(4, 0x800bc070L, HmdSomethingStruct::new);
+  public static final ScriptStruct _800bc070 = MEMORY.ref(4, 0x800bc070L, ScriptStruct::new);
 
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
