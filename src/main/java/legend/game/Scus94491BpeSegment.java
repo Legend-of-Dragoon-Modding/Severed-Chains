@@ -2898,7 +2898,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017750
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = (BiggerStruct<BigStruct>)biggerStructPtrArr_800bc1c0.get(i).deref();
+      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
       if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
         if((biggerStruct.ui_60.get() &0x140000L) == 0) {
           biggerStruct.callback_04.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref());
@@ -2910,7 +2910,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_800177ac
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = (BiggerStruct<BigStruct>)biggerStructPtrArr_800bc1c0.get(i).deref();
+      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
       if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
         if((biggerStruct.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
           if(biggerStruct.callback_10.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref()) != 0) {
@@ -2933,7 +2933,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017854
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = (BiggerStruct<BigStruct>)biggerStructPtrArr_800bc1c0.get(i).deref();
+      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
       if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
         if((biggerStruct.ui_60.get() & 0x18_0000L) == 0) {
           biggerStruct.callback_08.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref());

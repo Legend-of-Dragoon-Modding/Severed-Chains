@@ -61,7 +61,7 @@ import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
-import static legend.game.SMap.FUN_800da288;
+import static legend.game.SMap.renderDobj2;
 import static legend.game.SMap.FUN_800daa3c;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2220;
@@ -537,9 +537,9 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.vector_10c.setX(0x1000);
     bigStruct.vector_10c.setY(0x1000);
     bigStruct.vector_10c.setZ(0x1000);
-    bigStruct.vector_10c.setPad(0);
-    bigStruct.ui_11c.set(0);
-    bigStruct.ui_120.set(0);
+    bigStruct.vector_118.setX(0);
+    bigStruct.vector_118.setY(0);
+    bigStruct.vector_118.setZ(0);
   }
 
   @Method(0x80020a00L)
@@ -810,7 +810,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80021258(final GsDOBJ2 dobj2) {
     if(_8004dd20.get() == 0x5L) {
       //LAB_800212b0
-      FUN_800da288(dobj2);
+      renderDobj2(dobj2);
       return;
     }
 

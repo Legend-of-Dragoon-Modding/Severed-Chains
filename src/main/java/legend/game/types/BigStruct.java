@@ -59,9 +59,9 @@ public class BigStruct implements MemoryRef {
   public final UnsignedIntRef ui_f4;
   public final UnsignedIntRef ui_f8;
   public final VECTOR scaleVector_fc;
+  public final UnsignedIntRef ui_108;
   public final VECTOR vector_10c;
-  public final UnsignedIntRef ui_11c;
-  public final UnsignedIntRef ui_120;
+  public final VECTOR vector_118;
   public final Pointer<MrgFile> mrg_124;
   public final UnsignedShortRef us_128;
   public final UnsignedShortRef us_12a;
@@ -71,10 +71,11 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_132;
   public final UnsignedShortRef us_134;
 
+  public final VECTOR vec_138;
   public final UnsignedIntRef ui_144;
-
-  public final UnsignedIntRef ui_160;
-
+  public final VECTOR vec_148;
+  public final VECTOR vec_154;
+  public final VECTOR vec_160;
   public final UnsignedIntRef ui_16c;
   public final UnsignedShortRef us_170;
   public final UnsignedShortRef us_172;
@@ -145,9 +146,9 @@ public class BigStruct implements MemoryRef {
     this.ui_f4 = ref.offset(4, 0xf4L).cast(UnsignedIntRef::new);
     this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);
     this.scaleVector_fc = ref.offset(4, 0xfcL).cast(VECTOR::new);
+    this.ui_108 = ref.offset(4, 0x108L).cast(UnsignedIntRef::new);
     this.vector_10c = ref.offset(4, 0x10cL).cast(VECTOR::new);
-    this.ui_11c = ref.offset(4, 0x11cL).cast(UnsignedIntRef::new);
-    this.ui_120 = ref.offset(4, 0x120L).cast(UnsignedIntRef::new);
+    this.vector_118 = ref.offset(4, 0x118L).cast(VECTOR::new);
     this.mrg_124 = ref.offset(4, 0x124L).cast(Pointer.deferred(4, MrgFile::new));
     this.us_128 = ref.offset(2, 0x128L).cast(UnsignedShortRef::new);
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
@@ -157,10 +158,11 @@ public class BigStruct implements MemoryRef {
     this.us_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.us_134 = ref.offset(2, 0x134L).cast(UnsignedShortRef::new);
 
+    this.vec_138 = ref.offset(4, 0x138L).cast(VECTOR::new);
     this.ui_144 = ref.offset(4, 0x144L).cast(UnsignedIntRef::new);
-
-    this.ui_160 = ref.offset(4, 0x160L).cast(UnsignedIntRef::new);
-
+    this.vec_148 = ref.offset(4, 0x148L).cast(VECTOR::new);
+    this.vec_154 = ref.offset(4, 0x154L).cast(VECTOR::new);
+    this.vec_160 = ref.offset(4, 0x160L).cast(VECTOR::new);
     this.ui_16c = ref.offset(4, 0x16cL).cast(UnsignedIntRef::new);
     this.us_170 = ref.offset(2, 0x170L).cast(UnsignedShortRef::new);
     this.us_172 = ref.offset(2, 0x172L).cast(UnsignedShortRef::new);

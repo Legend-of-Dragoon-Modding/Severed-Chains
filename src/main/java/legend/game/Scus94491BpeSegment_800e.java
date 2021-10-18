@@ -700,9 +700,9 @@ public final class Scus94491BpeSegment_800e {
     bigStruct.vector_10c.setX(0x1000);
     bigStruct.vector_10c.setY(0x1000);
     bigStruct.vector_10c.setZ(0x1000);
-    bigStruct.vector_10c.setPad(0);
-    bigStruct.ui_11c.set(0);
-    bigStruct.ui_120.set(0);
+    bigStruct.vector_118.setX(0);
+    bigStruct.vector_118.setY(0);
+    bigStruct.vector_118.setZ(0);
   }
 
   @Method(0x800e6d60L)

@@ -10,6 +10,7 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
+import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
