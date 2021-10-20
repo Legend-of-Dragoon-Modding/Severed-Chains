@@ -46,6 +46,7 @@ import legend.game.types.DR_MODE;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
@@ -298,7 +299,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c3433;
 import static legend.game.Scus94491BpeSegment_800c._800c3437;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
-import static legend.game.Scus94491BpeSegment_800c._800c34d0;
+import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
 import static legend.game.Scus94491BpeSegment_800c._800c34dc;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
@@ -308,7 +309,7 @@ import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallba
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
-import static legend.game.Scus94491BpeSegment_800c.doubleBufferFrame_800c34d4;
+import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
 import static legend.game.Scus94491BpeSegment_800c.doubleBufferOffsetMode_800c34d6;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObjPtr_800c1c14;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObj_800c1c1c;
@@ -4308,7 +4309,7 @@ public final class Scus94491BpeSegment_8003 {
       LOGGER.info("PutDrawEnv(%08x)...", env.getAddress());
     }
 
-    buildDrawEnvPacket(env.dr_env, env);
+    SetDrawEnv(env.dr_env, env);
     env.dr_env.tag.set((int)(env.dr_env.tag.get() | 0xff_ffff));
     _800546b4.deref(4).offset(0x8L).deref(4).call(
       _800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new),
@@ -4544,8 +4545,20 @@ public final class Scus94491BpeSegment_8003 {
     return env;
   }
 
+  /**
+   * <p>Initializes a DR_ENV primitive using the values contained in a DRAWENV structure. By using AddPrim() to
+   * insert a DR_ENV primitive into your primitive list, it is possible to change part of your drawing environment
+   * in the middle of drawing.</p>
+   *
+   * <p>The DR_ENV primitive uses the same information as the DRAWENV structure, but the data format is
+   * different and the DRAWENV structure cannot be used as a primitive. When the DR_ENV primitive is
+   * executed, the previous drawing environment settings are destroyed.</p>
+   *
+   * @param dr_env Pointer to drawing environment change primitive
+   * @param drawEnv Pointer to drawing environment structure in which the drawing environment is described
+   */
   @Method(0x80039550L)
-  public static void buildDrawEnvPacket(final DR_ENV dr_env, final DRAWENV drawEnv) {
+  public static void SetDrawEnv(final DR_ENV dr_env, final DRAWENV drawEnv) {
     dr_env.code.get(0).set(makeSetDrawingAreaTopLeftCommand(drawEnv.clip.x.get(), drawEnv.clip.y.get()));
     dr_env.code.get(1).set(makeSetDrawingAreaBottomRightCommand(drawEnv.clip.x.get() + drawEnv.clip.w.get() - 1, drawEnv.clip.y.get() + drawEnv.clip.h.get() - 1));
     dr_env.code.get(2).set(makeSetDrawingOffsetCommand(drawEnv.ofs.get(0).get(), drawEnv.ofs.get(1).get()));
@@ -4635,9 +4648,9 @@ public final class Scus94491BpeSegment_8003 {
       );
 
       _800c1be8.build(builder -> builder
-        .add(0xe300_0000L | FUN_8003a234(0x3L)) // Draw area top left
-        .add(0xe400_0000L | FUN_8003a234(0x4L)) // Draw area top right
-        .add(0xe500_0000L | FUN_8003a234(0x5L)) // Draw offset
+        .add(0xe300_0000L | getGpuInfo(0x3L)) // Draw area top left
+        .add(0xe400_0000L | getGpuInfo(0x4L)) // Draw area top right
+        .add(0xe500_0000L | getGpuInfo(0x5L)) // Draw offset
       );
     } else {
       //LAB_80039c3c
@@ -4735,8 +4748,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003a234L)
-  public static long FUN_8003a234(final long a0) {
-    GPU_REG1.setu(0x1000_0000L | a0);
+  public static long getGpuInfo(final long type) {
+    GPU_REG1.setu(0x1000_0000L | type); // Get GPU info
     return GPU_REG0.get(0xff_ffffL);
   }
 
@@ -5033,19 +5046,54 @@ public final class Scus94491BpeSegment_8003 {
     return DMA.gpu.MADR.get();
   }
 
+  /**
+   * <p>Calculates the texture page ID, and returns it.</p>
+   *
+   * <p>The semitransparent rate is also effective for polygons on which texture mapping is not performed.
+   * The texture page address is limited to a multiple of 64 in the X direction and a multiple of 256 in the Y
+   * direction.</p>
+   *
+   * @param tp Texture mode
+   *           <ol start="0">
+   *             <li>4-bit CLUT</li>
+   *             <li>8-bit CLUT</li>
+   *             <li>16-bit Direct</li>
+   *           </ol>
+   * @param abr Semitransparency rate
+   *           <ol start="0">
+   *             <li>0.5 x Back + 0.5 x Forward</li>
+   *             <li>1.0 x Back + 1.0 x Forward</li>
+   *             <li>1.0 x Back - 1.0 x Forward</li>
+   *             <li>1.0 x Back + 0.25 x Forward</li>
+   *           </ol>
+   * @param x X
+   * @param y Y
+   *
+   * @return Texture page ID
+   */
   @Method(0x8003b3f0L)
-  public static long FUN_8003b3f0(final long a0, final long a1, final long a2, final long a3) {
+  public static long GetTPage(final long tp, final long abr, final long x, final long y) {
     return
-      (a0 & 0x3L) << 0x7L |
-      (a1 & 0x3L) << 0x5L |
-      (a3 & 0x100L) >> 0x4L |
-      (a2 & 0x3ffL) >> 0x6L |
-      (a3 & 0x200L) << 0x2L;
+      ((tp & 0x3L) << 0x7L |
+      (abr & 0x3L) << 0x5L |
+      (y & 0x100L) >> 0x4L |
+      (x & 0x3ffL) >> 0x6L |
+      (y & 0x200L) << 0x2L) & 0xffffL;
   }
 
+  /**
+   * <p>Calculates and returns the texture CLUT ID.</p>
+   *
+   * <p>The CLUT address is limited to multiples of 16 in the x direction.</p>
+   *
+   * @param x X
+   * @param y Y
+   *
+   * @return CLUT ID.
+   */
   @Method(0x8003b430L)
-  public static long FUN_8003b430(final long a0, final long a1) {
-    return (a1 << 6 | a0 >> 4 & 0x3fL) & 0xffffL;
+  public static long GetClut(final long x, final long y) {
+    return (y << 6 | x >> 4 & 0x3fL) & 0xffffL;
   }
 
   @Method(0x8003b490L)
@@ -5106,22 +5154,20 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003b780L)
-  public static void FUN_8003b780(long a0, RECT a1, long a2, long a3) {
-    if(a1.w.get() == 0) {
-      MEMORY.ref(1, a0).offset(0x3L).setu(0);
-    } else if(a1.h.get() == 0) {
+  public static void copyRect(final long packetAddr, final RECT src, final long destX, final long destY) {
+    if(src.w.get() == 0 || src.h.get() == 0) {
       //LAB_8003b7a4
-      MEMORY.ref(1, a0).offset(0x3L).setu(0);
+      MEMORY.ref(1, packetAddr).offset(0x3L).setu(0);
     } else {
-      MEMORY.ref(1, a0).offset(0x3L).setu(0x5L);
+      MEMORY.ref(1, packetAddr).offset(0x3L).setu(0x5L);
     }
 
     //LAB_8003b7ac
-    MEMORY.ref(4, a0).offset(0x4L).setu(0x100_0000L);
-    MEMORY.ref(4, a0).offset(0x8L).setu(0x8000_0000L);
-    MEMORY.ref(4, a0).offset(0xcL).setu(a1.x.get());
-    MEMORY.ref(4, a0).offset(0x10L).setu(a3 << 16 | a2 & 0xffffL);
-    MEMORY.ref(4, a0).offset(0x14L).setu(a1.w.get());
+    MEMORY.ref(4, packetAddr).offset(0x4L).setu(0x100_0000L);
+    MEMORY.ref(4, packetAddr).offset(0x8L).setu(0x8000_0000L); // Copy rect VRAM to VRAM
+    MEMORY.ref(4, packetAddr).offset(0xcL).setu((src.y.get() & 0xffffL) << 16 | src.x.get() & 0xffffL); // src
+    MEMORY.ref(4, packetAddr).offset(0x10L).setu((destY & 0xffffL) << 16 | destX & 0xffffL); // dest
+    MEMORY.ref(4, packetAddr).offset(0x14L).setu((src.h.get() & 0xffffL) << 16 | src.w.get() & 0xffffL); // size
   }
 
   @Method(0x8003b7e0L)
@@ -5241,20 +5287,63 @@ public final class Scus94491BpeSegment_8003 {
     return MEMORY.ref(4, s0).offset(0x8L).get() / 0x4L + 0x2L + a0_0; // +8 CLUT data pointer / 4 + 2 (plus CLUT data pointer if CLUT present) ???
   }
 
+  /**
+   * <p>Initialize the graphics system.</p>
+   *
+   * <p>Resets libgpu and initializes the libgs graphic system. libgpu settings are maintained by the global variables
+   * GsDISPENV and GsDRAWENV. The programmer can verify and/or modify libgpu by referencing the settings.</p>
+   *
+   * <p>Vertical 480 line non-interlace mode is effective only when a VGA monitor is connected. In 240-line mode,
+   * the top and bottom 8 lines are almost invisible on home-use TV monitors. For PAL mode, the display
+   * position should be shifted down by 24 lines.</p>
+   *
+   * <p>The double buffer offset mode is either GTE or GPU offset; when it is GPU, the packet does not include the
+   * offset value and can therefore be handled easily.</p>
+   *
+   * <p>For 24-bit mode, only the memory image display is available and polygon drawing cannot be done.
+   * Since initialization of the graphic system involves initialization of GsIDMATRIX and GsIDMATRIX2 as well,
+   * GsInitGraph() must be called prior to all other libgs functions for correct operation.</p>
+   *
+   * @param displayWidth Horizontal resolution (256/320/384/512/640)
+   * @param displayHeight Vertical resolution (240/480 NTSC or 256/512 PAL)
+   * @param flags
+   * <ul>
+   * <li>Interlace display flag (bit 0)<ul>
+   * <li>0: Non-interlace GsNONINTER</li>
+   * <li>1: Interlace GSINTER</li>
+   * </ul></li>
+   * <li>Double buffer offset mode (bit 2)<ul>
+   * <li>0: GTE offset GsOFSGTE</li>
+   * <li>1: GPU offset GsOFSGPU</li>
+   * </ul></li>
+   * <li>GPU Initialize Parameter (bits 4-5)<ul>
+   * <li>0: ResetGraph(0) GsRESET0</li>
+   * <li>3: ResetGraph(3) GsRESET3</li>
+   * </ul></li>
+   * </ul>
+   * @param dither Dithering enabled
+   * @param use24BitColour VRAM BPP
+   */
   @Method(0x8003bc30L)
-  public static void FUN_8003bc30(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
-    GsInitGraph(displayWidth, displayHeight, flags, dither, use24BitColour);
-    initGraphics();
+  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
+    GsInitGraph2(displayWidth, displayHeight, flags, dither, use24BitColour);
+    GsInit3D();
 
-    doubleBufferFrame_800c34d4.setu(0);
+    PSDIDX_800c34d4.setu(0);
 
     FUN_8003be28(displayWidth, displayHeight);
-    updateDrawEnvClip();
-    FUN_8003c1c0();
+    GsSetDrawBuffClip();
+    GsSetDrawBuffOffset();
   }
 
+  /**
+   * <p>GsInitGraph2() is different from {@link Scus94491BpeSegment_8003#GsInitGraph}() in that the GPU is not initialized COLD. This function is useful
+   * for changing libgs resolution without affecting screen synchronization.</p>
+   *
+   * <p>Always use GsInitGraph() for the first initialization.</p>
+   */
   @Method(0x8003bca4L)
-  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
+  public static void GsInitGraph2(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
     if((flags >> 4 & 0b11) == 0b11) {
       ResetGraph(3);
     } else {
@@ -5271,7 +5360,7 @@ public final class Scus94491BpeSegment_8003 {
     PutDrawEnv(DRAWENV_800c3450);
 
     DISPENV_800c34b0.disp.set((short)0, (short)0, displayWidth, displayHeight);
-    DISPENV_800c34b0.screen.set((short)0, (short)0, (short)256, (short)240); // W/H were 0, but docs say they get treated as this
+    DISPENV_800c34b0.screen.set((short)0, (short)0, (short)0, (short)0); // W/H of 0 are apparently treated as 256x240
 
     if(GsGetWorkBase() == 1) {
       DISPENV_800c34b0.screen.y.set((short)0x18);
@@ -5281,7 +5370,7 @@ public final class Scus94491BpeSegment_8003 {
     DISPENV_800c34b0.isinter.set((byte)(flags & 0b1));
     DISPENV_800c34b0.isrgb24.set((byte)(use24BitColour ? 1 : 0));
 
-    doubleBufferOffsetMode_800c34d6.setu(flags & 0b100);
+    doubleBufferOffsetMode_800c34d6.set(GsOffsetType.fromValue(flags & 0b100));
 
     PutDispEnv(DISPENV_800c34b0);
   }
@@ -5334,34 +5423,34 @@ public final class Scus94491BpeSegment_8003 {
     _800c3433.setu(0x3L);
     _800c3437.setu(0x2L);
 
-    _800c34d0.setu(0x1L);
+    PSDCNT_800c34d0.setu(0x1L);
   }
 
   @Method(0x8003c048L)
   public static void FUN_8003c048(final long a0, final long a1, final long a2, final GsOT ot) {
-    _800c3424.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a0);
-    _800c3425.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a1);
-    _800c3426.offset(doubleBufferFrame_800c34d4.get() * 16).setu(a2);
+    _800c3424.offset(PSDIDX_800c34d4.get() * 16).setu(a0);
+    _800c3425.offset(PSDIDX_800c34d4.get() * 16).setu(a1);
+    _800c3426.offset(PSDIDX_800c34d4.get() * 16).setu(a2);
 
-    if(doubleBufferFrame_800c34d4.get() == 0) {
-      _800c3428.offset(doubleBufferFrame_800c34d4.get() * 16).setu(clip_800c3440.x1.get());
-      _800c342a.offset(doubleBufferFrame_800c34d4.get() * 16).setu(clip_800c3440.y1.get());
+    if(PSDIDX_800c34d4.get() == 0) {
+      _800c3428.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.x1.get());
+      _800c342a.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.y1.get());
     } else {
-      _800c3428.offset(doubleBufferFrame_800c34d4.get() * 16).setu(clip_800c3440.x2.get());
-      _800c342a.offset(doubleBufferFrame_800c34d4.get() * 16).setu(clip_800c3440.y2.get());
+      _800c3428.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.x2.get());
+      _800c342a.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.y2.get());
     }
 
-    _800c342e.offset(doubleBufferFrame_800c34d4.get() * 16).setu(displayHeight_1f8003e4);
+    _800c342e.offset(PSDIDX_800c34d4.get() * 16).setu(displayHeight_1f8003e4);
 
     if(DISPENV_800c34b0.isrgb24.get() == 0) {
       //LAB_8003c13c
-      _800c342c.offset(doubleBufferFrame_800c34d4.get() * 16).setu(displayWidth_1f8003e0);
+      _800c342c.offset(PSDIDX_800c34d4.get() * 16).setu(displayWidth_1f8003e0);
     } else {
-      _800c342c.offset(doubleBufferFrame_800c34d4.get() * 16).setu(displayWidth_1f8003e0.get() * 3 / 2);
+      _800c342c.offset(PSDIDX_800c34d4.get() * 16).setu(displayWidth_1f8003e0.get() * 3 / 2);
     }
 
     //LAB_8003c150
-    FUN_8003c180(ot.tag_10.deref(), _800c3420.offset(doubleBufferFrame_800c34d4.get() * 16).getAddress());
+    FUN_8003c180(ot.tag_10.deref(), _800c3420.offset(PSDIDX_800c34d4.get() * 16).getAddress());
   }
 
   @Method(0x8003c180L)
@@ -5371,13 +5460,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c1c0L)
-  public static void FUN_8003c1c0() {
+  public static void GsSetDrawBuffOffset() {
     final long x = centreScreenX_1f8003dc.get();
     final long y = centreScreenY_1f8003de.get();
 
     final long clipX;
     final long clipY;
-    if(doubleBufferFrame_800c34d4.get() == 0) {
+    if(PSDIDX_800c34d4.get() == 0) {
       clipX = clip_800c3440.x1.get();
       clipY = clip_800c3440.y1.get();
     } else {
@@ -5385,7 +5474,7 @@ public final class Scus94491BpeSegment_8003 {
       clipY = clip_800c3440.y2.get();
     }
 
-    if(doubleBufferOffsetMode_800c34d6.get() == 0) {
+    if(doubleBufferOffsetMode_800c34d6.get() == GsOffsetType.GsOFSGTE) {
       SetGeomOffset((int)(x + clipX), (int)(y + clipY));
 
       _800c34c4.setu(x + clipX);
@@ -5401,11 +5490,19 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  /**
+   * Set drawing clipping area.<p>
+   * Sets clipping for drawing. The clipping value set by GsSetClip2D() is set in libgs.<p>
+   * This value is a relative one within the double buffers, so the clipping position does not change when buffers
+   * are swapped.<p>
+   * This function does not execute correctly if GPU drawing is in progress. Use ResetGraph(1) to terminate any
+   * current drawing process or DrawSync() to wait until the process is completed.
+   */
   @Method(0x8003c2d0L)
-  public static void updateDrawEnvClip() {
+  public static void GsSetDrawBuffClip() {
     DRAWENV_800c3450.clip.set(
-      (short)(displayRect_800c34c8.x.get() + (doubleBufferFrame_800c34d4.get() == 0 ? clip_800c3440.x1 : clip_800c3440.x2).get()),
-      (short)(displayRect_800c34c8.y.get() + (doubleBufferFrame_800c34d4.get() == 0 ? clip_800c3440.y1 : clip_800c3440.y2).get()),
+      (short)(displayRect_800c34c8.x.get() + (PSDIDX_800c34d4.get() == 0 ? clip_800c3440.x1 : clip_800c3440.x2).get()),
+      (short)(displayRect_800c34c8.y.get() + (PSDIDX_800c34d4.get() == 0 ? clip_800c3440.y1 : clip_800c3440.y2).get()),
       displayRect_800c34c8.w.get(),
       displayRect_800c34c8.h.get()
     );
@@ -5413,9 +5510,27 @@ public final class Scus94491BpeSegment_8003 {
     PutDrawEnv(DRAWENV_800c3450);
   }
 
+  /**
+   * <p>Swaps double buffers.</p>
+   *
+   * <p>Exchanges the display buffer with the drawing buffer according to data set by GsDefDispBuff(). Normally,
+   * swapping is done immediately after beginning vertical blanking. This function<ul>
+   * <li>Sets display starting address</li>
+   * <li>Cancels blanking</li>
+   * <li>Sets double buffer index</li>
+   * <li>Switches two-dimensional clipping</li>
+   * <li>Sets libgte or libgpu offset</li>
+   * <li>Sets libgs offset</li></ul></p>
+   *
+   * <p>Note: Using the GsOFSGPU or GsOFSGTE macro for the third argument of GsInitGraph() determines
+   * whether the libgte or libgpu offset should be set.</p>
+   *
+   * <p>This function does not execute correctly when GPU drawing is in progress, so it is necessary to call this
+   * function after terminating drawing using ResetGraph (1).</p>
+   */
   @Method(0x8003c350L)
-  public static void FUN_8003c350() {
-    if(doubleBufferFrame_800c34d4.get() == 0) {
+  public static void GsSwapDispBuff() {
+    if(PSDIDX_800c34d4.get() == 0) {
       DISPENV_800c34b0.disp.x.set(clip_800c3440.x1.get());
       DISPENV_800c34b0.disp.y.set(clip_800c3440.y1.get());
     } else {
@@ -5426,19 +5541,20 @@ public final class Scus94491BpeSegment_8003 {
     PutDispEnv(DISPENV_800c34b0);
     SetDispMask(1);
 
-    _800c34d0.addu(0x1L);
-    if(_800c34d0.get() == 0) {
-      _800c34d0.setu(0x1L);
+    // GsIncFrame macro
+    PSDCNT_800c34d0.addu(0x1L);
+    if(PSDCNT_800c34d0.get() == 0) {
+      PSDCNT_800c34d0.setu(0x1L);
     }
 
     //LAB_8003c3bc
-    doubleBufferFrame_800c34d4.set(doubleBufferFrame_800c34d4.get() == 0 ? 1 : 0);
-    updateDrawEnvClip();
-    FUN_8003c1c0();
+    PSDIDX_800c34d4.set(PSDIDX_800c34d4.get() == 0 ? 1 : 0);
+    GsSetDrawBuffClip();
+    GsSetDrawBuffOffset();
   }
 
   @Method(0x8003c400L)
-  public static void insertCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
+  public static void GsInitCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
     newCoord.flg.set(0);
     newCoord.coord.set(identityMatrix_800c3568);
     newCoord.super_.setNullable(superCoord);
@@ -5457,21 +5573,37 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c4a0L)
-  public static void FUN_8003c4a0(final MATRIX lw) {
+  public static void GsSetLightMatrix(final MATRIX mp) {
     final MATRIX lightDirection = new MATRIX().set(lightDirectionMatrix_800c34e8);
 
     PushMatrix();
-    MulMatrix(lightDirection, lw);
+    MulMatrix(lightDirection, mp);
     PopMatrix();
 
     SetLightMatrix(lightDirection);
   }
 
+  /**
+   * <p>Defines the display areas used for double-buffering.</p>
+   *
+   * <p>x0 and y0 specify the frame buffer coordinates for buffer #0. x1 and y1 specify the frame buffer coordinates
+   * for buffer #0. Normally, buffer #0 is located at (0,0) and buffer #1 is located at (0, yres), where yres is the
+   * vertical resolution specified using GsInitGraph().</p>
+   *
+   * <p>If x0, y0 and x1, y1 are specified as the same coordinates, the double buffers are released. However,
+   * double-buffer swapping of even-numbered and odd-numbered fields is performed automatically when x0,
+   * y0 and x1, y1 are specified as the same coordinates in interlace mode.</p>
+   *
+   * <p>GsSwapDispBuffer() is used to swap double buffers. The double buffer is implemented by the GPU or GTE
+   * offset. Set the libgpu or libgte offset with GsInitGraph(). When using the libgpu offset, coordinate values
+   * based on the coordinate system using the upper left point in the double buffer as the origin are created in
+   * the packet (add the offset at the time of drawing, not at the time of packet preparation).</p>
+   */
   @Method(0x8003c540L)
-  public static void setClip(final short x1, final short y1, final short x2, final short y2) {
+  public static void GsDefDispBuff(final short x1, final short y1, final short x2, final short y2) {
     clip_800c3440.set(x1, x2, y1, y2);
 
-    if(doubleBufferOffsetMode_800c34d6.get() == 0) {
+    if(doubleBufferOffsetMode_800c34d6.get() == GsOffsetType.GsOFSGTE) {
       //LAB_8003c598
       clip_800c3448.set(x1, x2, y1, y2);
     } else {
@@ -5479,15 +5611,15 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003c5b8
-    updateDrawEnvClip();
-    FUN_8003c1c0();
+    GsSetDrawBuffClip();
+    GsSetDrawBuffOffset();
   }
 
   @Method(0x8003c5e0L)
   public static void FUN_8003c5e0() {
     centreScreenX_1f8003dc.setu(displayWidth_1f8003e0.get() / 2);
     centreScreenY_1f8003de.setu(displayHeight_1f8003e4.get() / 2);
-    FUN_8003c1c0();
+    GsSetDrawBuffOffset();
     _800c34d8.setu(0x3fff);
     _800c34dc.setu(0);
     _800c34e0.setu(10);
@@ -5626,8 +5758,16 @@ public final class Scus94491BpeSegment_8003 {
     ClearOTagR(ot.org_04.deref(), 1 << ot.length_00.get());
   }
 
+  /**
+   * Initializes the libgs three-dimensional graphics system. It must be called before using other 3D functions
+   * such as GsSetRefView2(), GsInitCoordinate2(), and GsSortObject3(). It does the following:
+   * <ul>
+   *   <li>Brings the screen point of origin to the center of the screen.</li>
+   *   <li>Sets the light source to the LIGHT_NORMAL default.</li>
+   * </ul>
+   */
   @Method(0x8003cda0L)
-  public static void initGraphics() {
+  public static void GsInit3D() {
     InitGeom();
     SetFarColour(0, 0, 0);
     SetGeomOffset(0, 0);
@@ -5907,11 +6047,11 @@ public final class Scus94491BpeSegment_8003 {
       _800c35a8.offset(s1 * 0x4L).setu(a3.getAddress());
 
       if(a3.super_.isNull()) {
-        if(a3.flg.get() == 0 || a3.flg.get() == _800c34d0.get()) {
+        if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
           //LAB_8003d6fc
           a3.workm.set(a3.coord);
           matrix.set(a3.workm);
-          a3.flg.set(_800c34d0.get());
+          a3.flg.set(PSDCNT_800c34d0.get());
           break;
         }
 
@@ -5929,7 +6069,7 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003d83c
-      if(a3.flg.get() == _800c34d0.get()) {
+      if(a3.flg.get() == PSDCNT_800c34d0.get()) {
         matrix.set(a3.workm);
         break;
       }
@@ -5950,7 +6090,7 @@ public final class Scus94491BpeSegment_8003 {
       final GsCOORDINATE2 coord2 = _800c35a8.offset((s1 - 0x1L) * 0x4L).deref(4).cast(GsCOORDINATE2::new);
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
-      coord2.flg.set(_800c34d0.get());
+      coord2.flg.set(PSDCNT_800c34d0.get());
       s1--;
     }
 
@@ -5994,11 +6134,11 @@ public final class Scus94491BpeSegment_8003 {
     do {
       _800c35a8.offset(s1 * 0x4L).setu(a3.getAddress());
       if(a3.super_.isNull()) {
-        if(a3.flg.get() == 0 || a3.flg.get() == _800c34d0.get()) {
+        if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
           //LAB_8003da3c
           a3.workm.set(a3.coord);
           matrix.set(a3.workm);
-          a3.flg.set(_800c34d0.get());
+          a3.flg.set(PSDCNT_800c34d0.get());
           break;
         }
 
@@ -6017,7 +6157,7 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003db7c
-      if(a3.flg.get() == _800c34d0.get()) {
+      if(a3.flg.get() == PSDCNT_800c34d0.get()) {
         matrix.set(a3.workm);
         break;
       }
@@ -6040,7 +6180,7 @@ public final class Scus94491BpeSegment_8003 {
       do {
         GsMulCoord3(matrix, MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).coord);
         MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).workm.set(matrix);
-        MEMORY.ref(4, s0).deref(4).setu(_800c34d0);
+        MEMORY.ref(4, s0).deref(4).setu(PSDCNT_800c34d0);
         s0 -= 0x4L;
         s1--;
       } while((int)s1 > 0);
@@ -6070,9 +6210,9 @@ public final class Scus94491BpeSegment_8003 {
       _800c35a8.offset(s1 * 4).setu(coord.getAddress());
 
       if(coord.super_.isNull()) {
-        if(coord.flg.get() == _800c34d0.get() || coord.flg.get() == 0) {
+        if(coord.flg.get() == PSDCNT_800c34d0.get() || coord.flg.get() == 0) {
           //LAB_8003dd14
-          coord.flg.set((int)_800c34d0.get());
+          coord.flg.set((int)PSDCNT_800c34d0.get());
           coord.workm.set(coord.coord);
           lw.set(coord.workm);
           break;
@@ -6092,7 +6232,7 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003de54
-      if(coord.flg.get() == _800c34d0.get()) {
+      if(coord.flg.get() == PSDCNT_800c34d0.get()) {
         lw.set(coord.workm);
         break;
       }
@@ -6116,7 +6256,7 @@ public final class Scus94491BpeSegment_8003 {
         GsMulCoord3(lw, MEMORY.ref(4, s0).cast(GsCOORDINATE2::new).coord);
 
         final GsCOORDINATE2 c = MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new);
-        c.flg.set((int)_800c34d0.get());
+        c.flg.set((int)PSDCNT_800c34d0.get());
         c.workm.set(lw);
         s0 -= 0x4L;
         s1--;

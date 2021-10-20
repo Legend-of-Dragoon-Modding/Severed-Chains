@@ -63,8 +63,8 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b3f0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
+import static legend.game.Scus94491BpeSegment_8003.GetTPage;
+import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
@@ -76,12 +76,12 @@ import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
-import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
 import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
-import static legend.game.Scus94491BpeSegment_8003.setClip;
+import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
 import static legend.game.Scus94491BpeSegment_8004._8004dd20;
@@ -234,8 +234,8 @@ public final class Scus94491BpeSegment_800e {
     DrawSync(0);
     VSync(0);
 
-    FUN_8003bc30((short)640, (short)480, 0b110101, true, false);
-    setClip((short)0, (short)16, (short)0, (short)16);
+    GsInitGraph((short)640, (short)480, 0b110101, true, false);
+    GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
 
     orderingTables_8005a370.get(0).length_00.set(0xeL);
     orderingTables_8005a370.get(0).org_04.set(_8005a398.get(0));
@@ -326,8 +326,8 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e60d8() {
     for(int s2 = 0; s2 < 3; s2++) {
       for(int s1 = 0; s1 < 5; s1++) {
-        _800bb110.offset(s2 * 16L).offset(s1 * 4L).setu(FUN_8003b3f0(s2, s1, 0, 0));
-        _800bb112.offset(s2 * 16L).offset(s1 * 4L).setu(FUN_8003b3f0(s2, s1, 0, 0x100L));
+        _800bb110.offset(s2 * 16L).offset(s1 * 4L).setu(GetTPage(s2, s1, 0, 0));
+        _800bb112.offset(s2 * 16L).offset(s1 * 4L).setu(GetTPage(s2, s1, 0, 0x100L));
       }
     }
   }
@@ -679,7 +679,7 @@ public final class Scus94491BpeSegment_800e {
     adjustTmdPointers(bigStruct.tmd_8c.deref());
     FUN_80021b08(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
     bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
-    insertCoordinate2(null, bigStruct.coord2_14);
+    GsInitCoordinate2(null, bigStruct.coord2_14);
     FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
 
     bigStruct.us_a0.set(0);

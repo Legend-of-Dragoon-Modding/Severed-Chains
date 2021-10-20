@@ -13,10 +13,12 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
+import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.SpuDmaTransfer;
+import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
 
 import static legend.core.Hardware.MEMORY;
@@ -77,9 +79,11 @@ public final class Scus94491BpeSegment_800c {
    */
   public static final Value _800c34c6 = MEMORY.ref(2, 0x800c34c6L);
   public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
-  public static final Value _800c34d0 = MEMORY.ref(4, 0x800c34d0L);
-  public static final Value doubleBufferFrame_800c34d4 = MEMORY.ref(2, 0x800c34d4L);
-  public static final Value doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L);
+  /** Incremented with each frame - overflows to 1 */
+  public static final Value PSDCNT_800c34d0 = MEMORY.ref(4, 0x800c34d0L);
+  /** Double buffer index */
+  public static final Value PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L);
+  public static final EnumRef<GsOffsetType> doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L, EnumRef.of(GsOffsetType::getValue, GsOffsetType.values()));
   public static final Value _800c34d8 = MEMORY.ref(4, 0x800c34d8L);
   public static final Value _800c34dc = MEMORY.ref(4, 0x800c34dcL);
   public static final Value _800c34e0 = MEMORY.ref(4, 0x800c34e0L);

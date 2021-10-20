@@ -52,7 +52,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c4a0;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
-import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -1407,7 +1407,7 @@ public final class Ttle {
       //LAB_800cb85c
       FUN_800cc26c(sp58, coord2s.get(i));
       GsGetLws(dobj2s.get(i).coord2_04.deref(), sp10, sp30);
-      FUN_8003c4a0(sp10);
+      GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, sp60);
       setRotTransMatrix(sp30);
       FUN_800cc388(dobj2s.get(i));
@@ -1545,7 +1545,7 @@ public final class Ttle {
       final GsDOBJ2 dobj2 = renderer.dobj2s_00.deref().get(i);
 
       //LAB_800cc114
-      insertCoordinate2(superCoord2, coord2);
+      GsInitCoordinate2(superCoord2, coord2);
 
       dobj2.coord2_04.set(coord2);
       coord2.coord.transfer.setX(100);

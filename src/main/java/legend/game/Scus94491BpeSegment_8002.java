@@ -100,7 +100,7 @@ import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b780;
+import static legend.game.Scus94491BpeSegment_8003.copyRect;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -110,7 +110,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetVsyncInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
-import static legend.game.Scus94491BpeSegment_8003.insertCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
@@ -460,7 +460,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002079c
-    bigStruct.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11)); //TODO reading the upper 16 bits of the TMD ID?
+    bigStruct.ui_108.set((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11); //TODO reading the upper 16 bits of the TMD ID?
 
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
@@ -487,7 +487,7 @@ public final class Scus94491BpeSegment_8002 {
     adjustTmdPointers(bigStruct.tmd_8c.deref());
     FUN_80021b08(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
     bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
-    insertCoordinate2(null, bigStruct.coord2_14);
+    GsInitCoordinate2(null, bigStruct.coord2_14);
     FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
 
     bigStruct.us_a0.set(0);
@@ -652,12 +652,12 @@ public final class Scus94491BpeSegment_8002 {
           params.rotate.setZ((short)s1);
           RotMatrix_80040010(params.rotate, coord2.coord);
 
-          params.trans.setX((int)(s1 >> 16));
+          params.trans.setX((short)(s1 >> 16));
           params.trans.setY((short)s3);
-          params.trans.setZ((int)(s3 >> 16));
+          params.trans.setZ((short)(s3 >> 16));
           TransMatrix(coord2.coord, params.trans);
 
-          s6 += 0x6L;
+          s6 += 0xcL;
         }
 
         //LAB_80020dfc
@@ -684,9 +684,9 @@ public final class Scus94491BpeSegment_8002 {
         params.rotate.setZ((short)s1);
         RotMatrix_80040010(params.rotate, coord2.coord);
 
-        params.trans.setX((int)(s1 >> 16));
+        params.trans.setX((short)(s1 >> 16));
         params.trans.setY((short)s3);
-        params.trans.setZ((int)(s3 >> 16));
+        params.trans.setZ((short)(s3 >> 16));
         TransMatrix(coord2.coord, params.trans);
 
         s5 += 0xcL;
@@ -1078,7 +1078,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021c2c
     struct.id_0c.set(id);
     struct.attribute_00.set(0);
-    insertCoordinate2(null, struct.coord2_04.deref());
+    GsInitCoordinate2(null, struct.coord2_04.deref());
     struct.tmd_08.clear();
 
     //LAB_80021c48
@@ -1242,7 +1242,7 @@ public final class Scus94491BpeSegment_8002 {
       s1 += 0x2L;
       rect.x.set((short)(MEMORY.ref(2, s1).get() + t2));
       rect.y.set((short)(MEMORY.ref(2, s1).get() + t1));
-      FUN_8003b780(linkedListAddress_1f8003d8.get(), rect, a2 & 0xffffL, a0_1 & 0xffffL);
+      copyRect(linkedListAddress_1f8003d8.get(), rect, a2 & 0xffffL, a0_1 & 0xffffL);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
 
@@ -1300,7 +1300,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     rect.set((short)960, (short)256, (short)s5, (short)s3);
-    FUN_8003b780(linkedListAddress_1f8003d8.get(), rect, s6 & 0xffffL, s7 & 0xffffL);
+    copyRect(linkedListAddress_1f8003d8.get(), rect, s6 & 0xffffL, s7 & 0xffffL);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0x18L);
 
@@ -1309,7 +1309,7 @@ public final class Scus94491BpeSegment_8002 {
       s0_0 >>= 14;
       s3 -= s0_0;
       rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
-      FUN_8003b780(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, 0x100L);
+      copyRect(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, 0x100L);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
 
@@ -1321,7 +1321,7 @@ public final class Scus94491BpeSegment_8002 {
       s0_0 >>= 20;
       s3 -= s0_0;
       rect.set((short)s6, (short)s7, (short)s5, (short)s0_0);
-      FUN_8003b780(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, (s3 + 0x100L) & 0xffffL);
+      copyRect(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, (s3 + 0x100L) & 0xffffL);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
 
@@ -1330,7 +1330,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002241c
-    FUN_8003b780(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, a3);
+    copyRect(linkedListAddress_1f8003d8.get(), rect, 0x3c0L, a3);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0x18L);
 

@@ -53,9 +53,9 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003bc30;
+import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c048;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c350;
+import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -66,7 +66,7 @@ import static legend.game.Scus94491BpeSegment_8003.drawOTag;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetDmaTransfer;
-import static legend.game.Scus94491BpeSegment_8003.setClip;
+import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80045cb8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004b834;
@@ -302,7 +302,7 @@ import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.transferIndex_800bb494;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
-import static legend.game.Scus94491BpeSegment_800c.doubleBufferFrame_800c34d4;
+import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
 import static legend.game.Scus94491BpeSegment_800d.sceaTexture_800d05c4;
 
 public final class Scus94491BpeSegment {
@@ -1053,15 +1053,15 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012d58L)
   public static void FUN_80012d58() {
-    doubleBufferFrame_800bb108.setu(doubleBufferFrame_800c34d4);
+    doubleBufferFrame_800bb108.setu(PSDIDX_800c34d4);
 
-    _8007a3ac.setu(_8009a7c0.offset(doubleBufferFrame_800c34d4.get() * 0x20400L).getAddress());
+    _8007a3ac.setu(_8009a7c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
 
     _1f8003d4.setu(_8007a3ac);
-    tags_1f8003d0.set(_8005a398.get((int)doubleBufferFrame_800c34d4.get()));
-    linkedListAddress_1f8003d8.setu(_8007a3c0.offset(doubleBufferFrame_800c34d4.get() * 0x20400L).getAddress());
+    tags_1f8003d0.set(_8005a398.get((int)PSDIDX_800c34d4.get()));
+    linkedListAddress_1f8003d8.setu(_8007a3c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
 
-    GsClearOt(0, 0, orderingTables_8005a370.get((int)doubleBufferFrame_800c34d4.get()));
+    GsClearOt(0, 0, orderingTables_8005a370.get((int)PSDIDX_800c34d4.get()));
   }
 
   @Method(0x80012df8L)
@@ -1144,15 +1144,15 @@ public final class Scus94491BpeSegment {
     final long displayHeight;
     if(s0 == 0) {
       //LAB_80013040
-      setClip((short)0, (short)16, (short)0, (short)256);
+      GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
       displayHeight = 240L;
     } else {
-      setClip((short)0, (short)16, (short)0, (short)16);
+      GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
       displayHeight = 480L;
     }
 
     //LAB_80013060
-    FUN_8003bc30((short)width_8004dd34.get(), (short)displayHeight, (short)flags, true, use24BitColour != 0);
+    GsInitGraph((short)width_8004dd34.get(), (short)displayHeight, (short)flags, true, use24BitColour != 0);
 
     if(width_8004dd34.get() == 384L) {
       DISPENV_800c34b0.screen.x.set((short)9);
@@ -1181,7 +1181,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80013148L)
   public static void FUN_80013148() {
-    FUN_8003c350();
+    GsSwapDispBuff();
 
     if(_8004dd36.get(0x2L) == 0) {
       FUN_8003c048(_8007a3a8.get(), _800bb104.get(), _800babc0.get(), orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
@@ -1193,7 +1193,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800131e0L)
   public static void FUN_800131e0() {
-    FUN_8003c350();
+    GsSwapDispBuff();
   }
 
   @Method(0x80013200L)
@@ -2430,8 +2430,6 @@ public final class Scus94491BpeSegment {
     }
 
     _800bc070.ui_1c.set(0);
-
-    System.err.println("-------- Frame start --------");
 
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
