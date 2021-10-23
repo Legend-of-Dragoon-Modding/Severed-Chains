@@ -28,6 +28,8 @@ import legend.game.types.AnmStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.DR_MODE;
+import legend.game.types.DR_MOVE;
+import legend.game.types.DR_TPAGE;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT;
@@ -50,11 +52,11 @@ import static legend.game.SStrm.FUN_800fb90c;
 import static legend.game.SStrm.stopFmv;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_80013200;
+import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
 import static legend.game.Scus94491BpeSegment.FUN_800136dc;
-import static legend.game.Scus94491BpeSegment.FUN_8001524c;
-import static legend.game.Scus94491BpeSegment.FUN_80015310;
+import static legend.game.Scus94491BpeSegment.loadFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.FUN_80015a68;
 import static legend.game.Scus94491BpeSegment.FUN_80015ab4;
 import static legend.game.Scus94491BpeSegment.FUN_80015b00;
@@ -137,11 +139,11 @@ import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
-import static legend.game.Scus94491BpeSegment_8003.combineGpuPackets;
-import static legend.game.Scus94491BpeSegment_8003.copyRect;
+import static legend.game.Scus94491BpeSegment_8003.MargePrim;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.makeDrawModePacketGp0e1;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
@@ -165,7 +167,7 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
-import static legend.game.Scus94491BpeSegment_8007._8007a3b8;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
 import static legend.game.Scus94491BpeSegment_800b._800bac60;
 import static legend.game.Scus94491BpeSegment_800b._800bb0ab;
@@ -209,7 +211,7 @@ import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.biggerStructPtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.loadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 
@@ -1714,10 +1716,9 @@ public final class SMap {
       }
 
       //LAB_800ddf8c
-      final long s0 = linkedListAddress_1f8003d8.get();
+      SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)t1, (short)(t2 + t3), (short)16, (short)1), t1 & 0xffffL, (smallerStruct.sa_18.get(index).get() + t2) & 0xffffL);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
-      copyRect(s0, new RECT((short)t1, (short)(t2 + t3), (short)16, (short)1), t1 & 0xffffL, (smallerStruct.sa_18.get(index).get() + t2) & 0xffffL);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), s0);
     }
 
     //LAB_800ddff4
@@ -2431,8 +2432,8 @@ public final class SMap {
         //LAB_800e1720
         //LAB_800e17c4
         //LAB_800e17d8
-        FUN_80015310(sp48.get() + 0x2L, sp4c.get() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0, 0x2L);
-        FUN_80015310(sp48.get() + 0x2L, sp4c.get() + 0x2L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x1L, 0x2L);
+        loadDrgnBinFile(sp48.get() + 0x2L, sp4c.get() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0, 0x2L);
+        loadDrgnBinFile(sp48.get() + 0x2L, sp4c.get() + 0x2L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x1L, 0x2L);
         loadingStage_800c68e4.addu(0x1L);
         break;
 
@@ -3221,7 +3222,7 @@ public final class SMap {
 
       if(_800cab20.getSigned() >= 0) {
         DrawSync(0);
-        FUN_80013200(0x180L, 0);
+        setWidthAndFlags(384L, 0);
         DrawSync(0);
         _800caaf4.setu(_80052c30);
         _800caaf8.setu(_80052c34);
@@ -3231,8 +3232,8 @@ public final class SMap {
 
     //LAB_800e5a30
     //LAB_800e5a34
-    if(loadingStage_800bb10c.get() == 0) {
-      loadingStage_800bb10c.setu(0x1L);
+    if(pregameLoadingStage_800bb10c.get() == 0) {
+      pregameLoadingStage_800bb10c.setu(0x1L);
       _800caaf4.setu(_80052c30);
       _800caaf8.setu(_80052c34);
       _80052c44.setu(0x2L);
@@ -3260,7 +3261,7 @@ public final class SMap {
         srand(getTimerValue(0));
 
         if(_800cb440.get() == 0) {
-          FUN_80013200(0x180L, 0);
+          setWidthAndFlags(384L, 0);
         }
 
         //LAB_800e5b2c
@@ -3271,7 +3272,7 @@ public final class SMap {
 
       case 0x1:
         _800cab1c.setu(0);
-        FUN_8001524c(_80052c4c.getAddress(), 0, getMethodAddress(SMap.class, "newrootCallback_800e54a4", Value.class, long.class, long.class), 0x63L, 0);
+        loadFile(_80052c4c.getAddress(), 0, getMethodAddress(SMap.class, "newrootCallback_800e54a4", Value.class, long.class, long.class), 0x63L, 0);
         _800cb430.setu(0x2L);
         break;
 
@@ -3311,7 +3312,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         _800cab10.setu(0);
-        FUN_80015310(0x2L, sp24.get(), 0, getMethodAddress(SMap.class, "loadBackground", Value.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(0x2L, sp24.get(), 0, getMethodAddress(SMap.class, "loadBackground", Value.class, long.class, long.class), 0, 0x4L);
         FUN_800e4fec();
         _800cb430.setu(0x6L);
         break;
@@ -3528,8 +3529,8 @@ public final class SMap {
         //LAB_800e62cc
         if(a0) {
           _8004dd24.setu(0x8L);
-          loadingStage_800bb10c.setu(0);
-          _8007a3b8.setu(0x2L);
+          pregameLoadingStage_800bb10c.setu(0);
+          vsyncMode_8007a3b8.setu(0x2L);
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
           _800bc0b8.setu(0);
@@ -3541,8 +3542,8 @@ public final class SMap {
         FUN_800e5104((int)_800caaf8.get(), _800cab24.get());
         _80052c44.setu(0x5L);
         _8004dd24.setu(0x6L);
-        loadingStage_800bb10c.setu(0);
-        _8007a3b8.setu(0x2L);
+        pregameLoadingStage_800bb10c.setu(0);
+        vsyncMode_8007a3b8.setu(0x2L);
         _800f7e4c.setu(0);
         _800bc0b8.setu(0);
         break;
@@ -3568,8 +3569,8 @@ public final class SMap {
         if(a0) {
           _80052c44.setu(0x5L);
           _8004dd24.setu(0x9L);
-          loadingStage_800bb10c.setu(0);
-          _8007a3b8.setu(0x2L);
+          pregameLoadingStage_800bb10c.setu(0);
+          vsyncMode_8007a3b8.setu(0x2L);
           _800f7e4c.setu(0);
           _800bc0b8.setu(0);
         }
@@ -3597,8 +3598,8 @@ public final class SMap {
         if(a0) {
           FUN_8002a9c0();
           _8004dd24.setu(0x2L);
-          _8007a3b8.setu(0x2L);
-          loadingStage_800bb10c.setu(0);
+          vsyncMode_8007a3b8.setu(0x2L);
+          pregameLoadingStage_800bb10c.setu(0);
 
           //LAB_800e6484
           _80052c44.setu(0x5L);
@@ -3612,15 +3613,15 @@ public final class SMap {
 
       case 0x16:
         _8004dd24.setu(0xaL);
-        _8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.setu(0x2L);
         _80052c44.setu(0x1L);
-        loadingStage_800bb10c.setu(0);
+        pregameLoadingStage_800bb10c.setu(0);
         break;
 
       case 0x17:
         _8004dd24.setu(0x2L);
-        _8007a3b8.setu(0x2L);
-        loadingStage_800bb10c.setu(0);
+        vsyncMode_8007a3b8.setu(0x2L);
+        pregameLoadingStage_800bb10c.setu(0);
         break;
     }
 
@@ -3942,7 +3943,7 @@ public final class SMap {
       MEMORY.ref(2, s1).offset(0x12L).setu(MEMORY.ref(2, s5).offset(i * 0x24L).offset(0xeL));
 
       s0 = s3 + i * 0x24L;
-      makeDrawModePacketGp0e1(s0, 0, 0x1L, MEMORY.ref(2, s5).offset(i * 0x24L).offset(0x20L).get());
+      SetDrawTPage(MEMORY.ref(4, s0, DR_TPAGE::new), 0, 0x1L, MEMORY.ref(2, s5).offset(i * 0x24L).offset(0x20L).get());
 
       if(s4 != 0) {
         gpuLinkedListSetCommandTransparency(s0, true);
@@ -3951,7 +3952,7 @@ public final class SMap {
       //LAB_800e70ec
       s1 = s3 + i * 0x24L;
       s0 = s5 + i * 0x24L;
-      combineGpuPackets(s1, i * 0x24L + s3 + 0x8L);
+      MargePrim(s1, i * 0x24L + s3 + 0x8L);
       MEMORY.ref(2, s1).offset(0x1cL).setu(MEMORY.ref(2, s0).offset(0x10L));
       MEMORY.ref(2, s1).offset(0x1eL).setu(MEMORY.ref(2, s0).offset(0x12L));
       v1 = MEMORY.ref(2, s0).offset(0x6L).get();
@@ -4570,10 +4571,10 @@ public final class SMap {
 
   @Method(0x800ed5b0L)
   public static void FUN_800ed5b0() {
-    switch((int)loadingStage_800bb10c.get()) {
+    switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0x0:
         _800d1cb8.setu(0);
-        FUN_80015310(0, 0x1659L, 0, getMethodAddress(SMap.class, "FUN_800edc7c", Value.class, long.class, long.class), _800bf0dc.get(), 0x4L);
+        loadDrgnBinFile(0, 0x1659L, 0, getMethodAddress(SMap.class, "FUN_800edc7c", Value.class, long.class, long.class), _800bf0dc.get(), 0x4L);
 
         //LAB_800ed644
         for(int s2 = 0; s2 < 3; s2++) {
@@ -4585,7 +4586,7 @@ public final class SMap {
 
         SetDispMask(0);
 
-        ClearImage(new RECT((short)0, (short)0, (short)0x3ff, (short)0x1ff), (byte)0, (byte)0, (byte)0);
+        ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
 
         DrawSync(0);
 
@@ -4598,37 +4599,37 @@ public final class SMap {
         }
 
         //LAB_800ed700
-        FUN_80013200(_800f9718.offset(_800bf0dc.get() * 16).get(), a1);
+        setWidthAndFlags(_800f9718.offset(_800bf0dc.get() * 16).get(), a1);
 
-        loadingStage_800bb10c.setu(0x1L);
+        pregameLoadingStage_800bb10c.setu(0x1L);
         break;
 
       case 0x1:
         if(_800d1cb8.get() != 0 && fileCount_8004ddc8.get() == 0) {
-          loadingStage_800bb10c.setu(0x2L);
+          pregameLoadingStage_800bb10c.setu(0x2L);
         }
 
         break;
 
       case 0x2:
-        _8007a3b8.setu(0x4L);
+        vsyncMode_8007a3b8.setu(0x4L);
         FUN_800ed8d0(_800bf0dc.get());
 
         _800bd808.setu(-0x1L);
-        loadingStage_800bb10c.setu(0x3L);
+        pregameLoadingStage_800bb10c.setu(0x3L);
         break;
 
       case 0x3:
         if(_800bf0d8.get() == 0x5L) {
-          loadingStage_800bb10c.setu(0x4L);
+          pregameLoadingStage_800bb10c.setu(0x4L);
         }
 
         break;
 
       case 0x4:
         FUN_8002c150(0);
-        _8007a3b8.setu(0x2L);
-        loadingStage_800bb10c.setu(0);
+        vsyncMode_8007a3b8.setu(0x2L);
+        pregameLoadingStage_800bb10c.setu(0);
         _8004dd24.setu(_800bf0ec);
         break;
     }
@@ -4723,7 +4724,7 @@ public final class SMap {
     FUN_800136dc(0x1L, 0x1L);
     ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
     DrawSync(0);
-    FUN_80013200(640L, 0);
+    setWidthAndFlags(640L, 0);
 
     //LAB_800edab4
     return 0x1L;
@@ -4881,11 +4882,11 @@ public final class SMap {
         _800d4bf0.setu(0);
 
         if(_800f982c.offset(_80052c30.get() * 0x2L).getSigned() != 0) {
-          FUN_80015310(0, _800f982c.offset(_80052c30.get() * 0x2L).getSigned(), 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0, 0x2L);
-          FUN_80015310(0, _800f982c.offset(_80052c30.get() * 0x2L).getSigned() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x1L, 0x4L);
+          loadDrgnBinFile(0, _800f982c.offset(_80052c30.get() * 0x2L).getSigned(), 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0, 0x2L);
+          loadDrgnBinFile(0, _800f982c.offset(_80052c30.get() * 0x2L).getSigned() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x1L, 0x4L);
 
           if(_80052c30.get() == 0x2a1L) {
-            FUN_80015310(0, 0x1dbaL, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x2L, 0x4L);
+            loadDrgnBinFile(0, 0x1dbaL, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x2L, 0x4L);
           }
         }
 
@@ -6020,7 +6021,7 @@ public final class SMap {
     if(v1 == 0) {
       //LAB_800f4660
       loadMiscTextures(0xbL);
-      copyRect(linkedListAddress_1f8003d8.get(), new RECT((short)992, (short)288, (short)8, (short)64), 984L, 288L); // Copies the save point texture beside itself
+      SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)992, (short)288, (short)8, (short)64), 984L, 288L); // Copies the save point texture beside itself
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
       _800f9ea8.addu(0x1L);

@@ -43,9 +43,11 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
+import legend.game.types.DR_MOVE;
+import legend.game.types.DR_TPAGE;
+import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
-import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.WeirdTimHeader;
@@ -105,12 +107,12 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
 import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
+import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
@@ -167,7 +169,6 @@ import static legend.game.Scus94491BpeSegment_8005._800547bb;
 import static legend.game.Scus94491BpeSegment_8005._800547f4;
 import static legend.game.Scus94491BpeSegment_8005._800547f8;
 import static legend.game.Scus94491BpeSegment_8005._800547fc;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdlLoc_80053312;
@@ -217,6 +218,7 @@ import static legend.game.Scus94491BpeSegment_8005.oldIMask_800547f0;
 import static legend.game.Scus94491BpeSegment_8005.previousCdromCommand_80052f61;
 import static legend.game.Scus94491BpeSegment_8005.ptrCdromParams_800532f0;
 import static legend.game.Scus94491BpeSegment_8005.ptrCdromSyncCode_80053220_80053224;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.syncCode_80053320;
 import static legend.game.Scus94491BpeSegment_8005.syncCode_80053470;
 import static legend.game.Scus94491BpeSegment_8005.usingLibDs_80052f64;
@@ -276,6 +278,8 @@ import static legend.game.Scus94491BpeSegment_800b.syncCode_800bf61c;
 import static legend.game.Scus94491BpeSegment_800b.syncCode_800bf62c;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.DRAWENV_800c3450;
+import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
+import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
 import static legend.game.Scus94491BpeSegment_800c._800c13a8;
 import static legend.game.Scus94491BpeSegment_800c._800c13a9;
 import static legend.game.Scus94491BpeSegment_800c._800c1434;
@@ -299,7 +303,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c3433;
 import static legend.game.Scus94491BpeSegment_800c._800c3437;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
-import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
 import static legend.game.Scus94491BpeSegment_800c._800c34dc;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
@@ -309,17 +312,16 @@ import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallba
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
-import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
 import static legend.game.Scus94491BpeSegment_800c.doubleBufferOffsetMode_800c34d6;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObjPtr_800c1c14;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObj_800c1c1c;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackSomething_800c1c18;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallback_800c1c10;
-import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3588;
 
 public final class Scus94491BpeSegment_8003 {
@@ -4105,6 +4107,24 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  /**
+   * <p>Waits for drawing to terminate.</p>
+   *
+   * <p>If DrawSync(0) is used, and execution of the primitive list takes an exceptionally long time (approximately
+   * longer than 8 Vsync) to complete, a timeout is generated and the GPU is reset. Reasons why this might
+   * occur include an exceptionally long primitive list, or one that renders exceptionally large numbers of pixels.
+   * Another possibility is that the primitive list has been corrupted in some way. To avoid this, the application
+   * can use a loop such as:<br>
+   * <tt>while(DrawSync(1));</tt>
+   * </p>
+   *
+   * @param mode <ol start="0">
+   *               <li>Wait for termination of all non-blocking functions registered in the queue</li>
+   *               <li>Return the number of positions in the current queue</li>
+   *             </ol>
+   *
+   * @return Number of positions in the execution queue.
+   */
   @Method(0x8003850cL)
   public static int DrawSync(final int mode) {
     if(gpu_debug.get() >= 0x2L) {
@@ -5026,13 +5046,16 @@ public final class Scus94491BpeSegment_8003 {
     return GsOUT_PACKET_P.get();
   }
 
+  /**
+   * BreakDraw?
+   */
   @Method(0x8003b0d0L)
   public static long FUN_8003b0d0() {
-    if(DMA.gpu.CHCR.get(0x100_0000L) == 0) {
+    if(DMA.gpu.CHCR.get(0x100_0000L) == 0) { // Transfer stopped/completed
       return 0;
     }
 
-    if(DMA.gpu.CHCR.get(0x700L) >>> 8 != 0x4L) {
+    if(DMA.gpu.CHCR.get(0x700L) >>> 8 != 0x4L) { // Chopping enabled, or not linked list
       return -0x1L;
     }
 
@@ -5127,8 +5150,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003b750L)
-  public static void makeDrawModePacketGp0e1(final long address, final long allowDrawing, final long dither, final long other) {
-    MEMORY.ref(1, address).offset(0x3L).setu(0x1L);
+  public static void SetDrawTPage(final DR_TPAGE p, final long allowDrawing, final long dither, final long tpage) {
+    p.tag.and(0xff_ffffL).or(0x100_0000L);
 
     final long command = 0xe100_0000L; // Texpage/draw mode settings
 
@@ -5147,35 +5170,47 @@ public final class Scus94491BpeSegment_8003 {
       drawingBit = 0;
     }
 
-    final long otherBits = other & 0x9ffL; // Texpage X/Y base; trans; texpage colours, tex disable
+    final long otherBits = tpage & 0x9ffL; // Texpage X/Y base; trans; texpage colours, tex disable
 
     //LAB_8003b770
-    MEMORY.ref(4, address).offset(0x4L).setu(command | drawingBit | ditherBit | otherBits);
+    p.code.get(0).set(command | drawingBit | ditherBit | otherBits);
   }
 
   @Method(0x8003b780L)
-  public static void copyRect(final long packetAddr, final RECT src, final long destX, final long destY) {
-    if(src.w.get() == 0 || src.h.get() == 0) {
-      //LAB_8003b7a4
-      MEMORY.ref(1, packetAddr).offset(0x3L).setu(0);
-    } else {
-      MEMORY.ref(1, packetAddr).offset(0x3L).setu(0x5L);
+  public static void SetDrawMove(final DR_MOVE p, final RECT src, final long destX, final long destY) {
+    p.tag.and(0xff_ffffL);
+
+    //LAB_8003b7a4
+    if(src.w.get() != 0 && src.h.get() != 0) {
+      p.tag.or(0x500_0000L);
     }
 
     //LAB_8003b7ac
-    MEMORY.ref(4, packetAddr).offset(0x4L).setu(0x100_0000L);
-    MEMORY.ref(4, packetAddr).offset(0x8L).setu(0x8000_0000L); // Copy rect VRAM to VRAM
-    MEMORY.ref(4, packetAddr).offset(0xcL).setu((src.y.get() & 0xffffL) << 16 | src.x.get() & 0xffffL); // src
-    MEMORY.ref(4, packetAddr).offset(0x10L).setu((destY & 0xffffL) << 16 | destX & 0xffffL); // dest
-    MEMORY.ref(4, packetAddr).offset(0x14L).setu((src.h.get() & 0xffffL) << 16 | src.w.get() & 0xffffL); // size
+    p.code.get(0).set(0x100_0000L);
+    p.code.get(1).set(0x8000_0000L); // Copy rect VRAM to VRAM
+    p.code.get(2).set((src.y.get() & 0xffffL) << 16 | src.x.get() & 0xffffL); // src
+    p.code.get(3).set((destY & 0xffffL) << 16 | destX & 0xffffL); // dest
+    p.code.get(4).set((src.h.get() & 0xffffL) << 16 | src.w.get() & 0xffffL); // size
   }
 
+  /**
+   * <p>Links primitive p0 to primitive p1. The combined primitive size of p0 and p1 must be less than 15 words.
+   * Within this size, any number of connections is possible.</p>
+   *
+   * <p>The resulting linked primitives can be added to an OT using AddPrim().
+   * p0 and p1 describe continuous regions of memory. p1 must be the higher address.</p>
+   *
+   * @param packet1 First primitive
+   * @param packet2 Second primitive
+   *
+   * @return 0 on success, -1 on failure.
+   */
   @Method(0x8003b7e0L)
-  public static long combineGpuPackets(final long packet1, final long packet2) {
-    final long v1 = MEMORY.ref(1, packet2).offset(0x3L).get() + MEMORY.ref(1, packet1).offset(0x3L).get() + 0x1L;
+  public static long MargePrim(final long packet1, final long packet2) {
+    final long size = MEMORY.ref(1, packet2).offset(0x3L).get() + MEMORY.ref(1, packet1).offset(0x3L).get() + 0x1L;
 
-    if(v1 < 0x11L) {
-      MEMORY.ref(1, packet1).offset(0x3L).setu(v1);
+    if(size < 0x11L) {
+      MEMORY.ref(1, packet1).offset(0x3L).setu(size);
       MEMORY.ref(4, packet2).setu(0);
       return 0;
     }
@@ -5426,37 +5461,58 @@ public final class Scus94491BpeSegment_8003 {
     PSDCNT_800c34d0.setu(0x1L);
   }
 
+  /**
+   * <p>Register a screen clear command in the OT.</p>
+   *
+   * <p>Sets a screen clear command at the start of the OT indicated by otp. Should be called after
+   * GsSwapDispBuff(). Note: Actual clearing isn’t executed until GsDrawOt() is used to start drawing.</p>
+   *
+   * @param r R
+   * @param g G
+   * @param b B
+   * @param ot Ordering table
+   */
   @Method(0x8003c048L)
-  public static void FUN_8003c048(final long a0, final long a1, final long a2, final GsOT ot) {
-    _800c3424.offset(PSDIDX_800c34d4.get() * 16).setu(a0);
-    _800c3425.offset(PSDIDX_800c34d4.get() * 16).setu(a1);
-    _800c3426.offset(PSDIDX_800c34d4.get() * 16).setu(a2);
+  public static void GsSortClear(final long r, final long g, final long b, final GsOT ot) {
+    _800c3424.offset(PSDIDX_800c34d4.get() * 0x10L).setu(r);
+    _800c3425.offset(PSDIDX_800c34d4.get() * 0x10L).setu(g);
+    _800c3426.offset(PSDIDX_800c34d4.get() * 0x10L).setu(b);
 
     if(PSDIDX_800c34d4.get() == 0) {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.x1.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.y1.get());
+      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x1.get());
+      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y1.get());
     } else {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.x2.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 16).setu(clip_800c3440.y2.get());
+      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x2.get());
+      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y2.get());
     }
 
-    _800c342e.offset(PSDIDX_800c34d4.get() * 16).setu(displayHeight_1f8003e4);
+    _800c342e.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayHeight_1f8003e4);
 
     if(DISPENV_800c34b0.isrgb24.get() == 0) {
       //LAB_8003c13c
-      _800c342c.offset(PSDIDX_800c34d4.get() * 16).setu(displayWidth_1f8003e0);
+      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0);
     } else {
-      _800c342c.offset(PSDIDX_800c34d4.get() * 16).setu(displayWidth_1f8003e0.get() * 3 / 2);
+      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get() * 3 / 2);
     }
 
     //LAB_8003c150
-    FUN_8003c180(ot.tag_10.deref(), _800c3420.offset(PSDIDX_800c34d4.get() * 16).getAddress());
+    AddPrim(ot.tag_10.deref(), _800c3420.offset(PSDIDX_800c34d4.get() * 0x10L).getAddress());
   }
 
+  /**
+   * <p>Registers a primitive beginning with the address *p to the OT entry *ot in OT table. ot is an ordering table or
+   * pointer to another primitive.</p>
+   *
+   * <p>A primitive may be added to a primitive list only once in the same frame. Attempting to add it multiple times
+   * in the same frame results in a corrupted list.</p>
+   *
+   * @param ot OT entry
+   * @param p Start address of primitive to be registered
+   */
   @Method(0x8003c180L)
-  public static void FUN_8003c180(final GsOT_TAG tag, final long a1) {
-    MEMORY.ref(3, a1).setu(tag.p.get());
-    tag.p.set(a1 & 0xff_ffffL);
+  public static void AddPrim(final GsOT_TAG ot, final long p) {
+    MEMORY.ref(3, p).setu(ot.p.get());
+    ot.p.set(p & 0xff_ffffL);
   }
 
   @Method(0x8003c1c0L)

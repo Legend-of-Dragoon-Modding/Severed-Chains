@@ -10,7 +10,6 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
@@ -26,9 +25,10 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
-import legend.game.types.ScriptStruct;
-import legend.game.types.JoyStruct;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.JoyStruct;
+import legend.game.types.MrgFile;
+import legend.game.types.ScriptStruct;
 
 import java.util.function.Function;
 
@@ -76,7 +76,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);
   public static final Value doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L);
-  public static final Value loadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL);
+  public static final Value pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL);
   public static final Value _800bb110 = MEMORY.ref(2, 0x800bb110L);
   public static final Value _800bb112 = MEMORY.ref(2, 0x800bb112L);
   public static final Value _800bb114 = MEMORY.ref(2, 0x800bb114L);
@@ -125,7 +125,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final Value _800bc060 = MEMORY.ref(4, 0x800bc060L);
 
-  public static final ScriptStruct _800bc070 = MEMORY.ref(4, 0x800bc070L, ScriptStruct::new);
+  public static final ScriptStruct ScriptStruct_800bc070 = MEMORY.ref(4, 0x800bc070L, ScriptStruct::new);
 
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
@@ -161,11 +161,21 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bcf64 = MEMORY.ref(2, 0x800bcf64L);
 
-  public static final Value _800bcf78 = MEMORY.ref(4, 0x800bcf78L);
+  /**
+   * Bits:
+   * 0 - MRG @ 62802 - audio
+   */
+  public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
 
   public static final Value _800bcf80 = MEMORY.ref(2, 0x800bcf80L);
 
-  public static final Value linkedListEntry_800bcf84 = MEMORY.ref(4, 0x800bcf84L);
+  /**
+   * 0: unknown, 2-byte file (00 00)
+   * 1: unknown, 0x64 byte file, counts up from 0000 to 0033
+   * 2: SSHD file
+   * There is another file in the MRG but it is not copied here: 3: Soundbank (has some map and battle sounds)
+   */
+  public static final Pointer<MrgFile> DRGN0_mrg_62802_800bcf84 = MEMORY.ref(4, 0x800bcf84L, Pointer.deferred(4, MrgFile::new));
   public static final Value _800bcf88 = MEMORY.ref(4, 0x800bcf88L);
 
   public static final Value _800bcf90 = MEMORY.ref(2, 0x800bcf90L);
@@ -259,7 +269,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value linkedListEntry_800bd76c = MEMORY.ref(4, 0x800bd76cL);
 
-  public static final Value linkedListEntry_800bd778 = MEMORY.ref(4, 0x800bd778L);
+  public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
 
   public static final Value _800bd780 = MEMORY.ref(1, 0x800bd780L);
   public static final Value _800bd781 = MEMORY.ref(1, 0x800bd781L);

@@ -20,6 +20,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.core.spu.Voice;
+import legend.game.types.CallbackStruct;
 import legend.game.types.ScriptStruct;
 import legend.game.types.JoyData;
 import org.apache.logging.log4j.LogManager;
@@ -211,32 +212,57 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004db88 = MEMORY.ref(2, 0x8004db88L);
 
-  public static final Value callback_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L);
-  public static final Value _8004dbc4 = MEMORY.ref(4, 0x8004dbc4L);
-  public static final Value _8004dbc8 = MEMORY.ref(4, 0x8004dbc8L);
-
-  public static final Value _8004dbcd = MEMORY.ref(1, 0x8004dbcdL);
+  /**
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment_800e#executePregameLoadingStage()}</li>
+   *   <li>{@link Scus94491BpeSegment_800e#FUN_800e5fc0()}</li>
+   *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
+   *   <li>{@link Ttle#executeLoadingStage()}</li>
+   *   <li>{@link SMap#FUN_800eaa88()}</li>
+   *   <li>{@link SMap#FUN_800e5914()}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
+   *   <li>{@link Ttle#FUN_800c75fc()}</li>
+   *   <li>0x800cc738 (TODO)</li>
+   *   <li>{@link SMap#FUN_800ed5b0()}</li>
+   *   <li>{@link SMap#FUN_800d92a0()}</li>
+   *   <li>{@link SMap#FUN_800d9e08()}</li>
+   *   <li>{@link Ttle#FUN_800c6eb8()}</li>
+   *   <li>0x800cab8c (TODO)</li>
+   *   <li>null</li>
+   *   <li>0x800c6978 (TODO)</li>
+   *   <li>null</li>
+   *   <li>0x800cdcdc (TODO)</li>
+   *   <li>0x800cabd4 (TODO)</li>
+   *   <li>null</li>
+   * </ol>
+   */
+  public static final ArrayRef<CallbackStruct> callback_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
   public static final Value _8004dd04 = MEMORY.ref(4, 0x8004dd04L);
-  public static final Value _8004dd08 = MEMORY.ref(4, 0x8004dd08L);
+  public static final Value loadingSmapOvl_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static final Value _8004dd10 = MEMORY.ref(4, 0x8004dd10L);
   public static final Value _8004dd14 = MEMORY.ref(4, 0x8004dd14L);
   public static final Value _8004dd18 = MEMORY.ref(4, 0x8004dd18L);
   public static final Value _8004dd1c = MEMORY.ref(2, 0x8004dd1cL);
-  public static final Value _8004dd1e = MEMORY.ref(1, 0x8004dd1eL);
+  public static final Value loadingSstrmOvl_8004dd1e = MEMORY.ref(1, 0x8004dd1eL);
 
-  public static final Value _8004dd20 = MEMORY.ref(4, 0x8004dd20L);
+  public static final Value mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L);
   public static final Value _8004dd24 = MEMORY.ref(4, 0x8004dd24L);
   public static final Value _8004dd28 = MEMORY.ref(4, 0x8004dd28L);
 
   public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
   public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
-  public static final Value _8004dd36 = MEMORY.ref(2, 0x8004dd36L);
+  /**
+   * Bit 0 - Interlaced
+   * Bit 1 - Height (0 -> 240, 1 -> 480)
+   * Bit 2 - 24-bit colour
+   */
+  public static final Value renderFlags_8004dd36 = MEMORY.ref(2, 0x8004dd36L);
   public static final Value _8004dd38 = MEMORY.ref(2, 0x8004dd38L);
 
-  public static final Pointer<RunnableRef> callback_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
-  public static final Pointer<RunnableRef> callback_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
+  public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
   public static final Value _8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
 
@@ -4844,13 +4870,14 @@ public final class Scus94491BpeSegment_8004 {
     }
   }
 
+  /** TODO sshdAddress -> object */
   @Method(0x8004bea4L)
-  public static long FUN_8004bea4(final long dmaAddress, final long a1, final long addressInSoundBuffer) {
+  public static long FUN_8004bea4(final long dmaAddress, final long sshdAddress, final long addressInSoundBuffer) {
     if((dmaAddress & 0x3L) != 0) {
       return 0xffffL;
     }
 
-    if((a1 & 0x3L) != 0) {
+    if((sshdAddress & 0x3L) != 0) {
       return 0xffffL;
     }
 
@@ -4862,11 +4889,11 @@ public final class Scus94491BpeSegment_8004 {
       return 0xffffL;
     }
 
-    if(MEMORY.ref(4, a1).offset(0xcL).get() != 0x6468_5353L) { // SShd
+    if(MEMORY.ref(4, sshdAddress).offset(0xcL).get() != 0x6468_5353L) { // SShd
       return 0xffffL;
     }
 
-    final long dmaSize = MEMORY.ref(4, a1).offset(0x4L).get();
+    final long dmaSize = MEMORY.ref(4, sshdAddress).offset(0x4L).get();
 
     if(spuDmaTransferInProgress_800c6650.get()) {
       if(spuDmaIndex_800c6669.get(0xffL) >= 0x20L) {
@@ -4896,7 +4923,7 @@ public final class Scus94491BpeSegment_8004 {
       if(_800c43d0.offset(i * 12).get() == 0) {
         //LAB_8004bfc8
         _800c43d0.offset(i * 12).setu(0x1L);
-        _800c43d4.offset(i * 12).setu(a1);
+        _800c43d4.offset(i * 12).setu(sshdAddress);
         _800c43d8.offset(i * 12).setu(addressInSoundBuffer >>> 0x3L);
         return i;
       }

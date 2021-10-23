@@ -52,6 +52,16 @@ public final class SInit {
   public static final Value _800fb7d4 = MEMORY.ref(1, 0x800fb7d4L);
 
   public static final Value SInitLoadingStage_800fd318 = MEMORY.ref(4, 0x800fd318L);
+  /**
+   * <ol start="0">
+   *   <li>{@link SInit#FUN_800fb9c0()}</li>
+   *   <li>{@link SInit#FUN_800fbda8()}</li>
+   *   <li>{@link SInit#FUN_800fbdb0()}</li>
+   *   <li>{@link SInit#FUN_800fba80()}</li>
+   *   <li>{@link SInit#FUN_800fbb9c()}</li>
+   *   <li>{@link SInit#FUN_800fbcc0()}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.class, 6, 4, (Function)Pointer.of(4, SupplierRef::new)));
 
   public static final Value _800fd334 = MEMORY.ref(2, 0x800fd334L);
@@ -125,7 +135,7 @@ public final class SInit {
     if(_800bbac8.get() == 0) {
       //LAB_800fba00
       //LAB_800fba14
-      for(int i = 0; i < 44L; i++) {
+      for(int i = 0; i < 44; i++) {
         fileLoadingInfoArray_800bbad8.get(i).used.set(false);
       }
 

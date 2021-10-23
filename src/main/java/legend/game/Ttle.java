@@ -32,9 +32,9 @@ import static legend.game.SItem._80111cfc;
 import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_80013200;
+import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.FUN_800136dc;
-import static legend.game.Scus94491BpeSegment.FUN_80015310;
+import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.FUN_80019a60;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
@@ -76,7 +76,7 @@ import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
-import static legend.game.Scus94491BpeSegment_8007._8007a3b8;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
 import static legend.game.Scus94491BpeSegment_800b._800bac50;
 import static legend.game.Scus94491BpeSegment_800b._800bac54;
@@ -94,7 +94,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.loadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
@@ -309,33 +309,33 @@ public final class Ttle {
 
   @Method(0x800c7424L)
   public static void executeLoadingStage() {
-    loadingStageArray_800c6898.get((int)loadingStage_800bb10c.get()).deref().run();
+    loadingStageArray_800c6898.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
   }
 
   @Method(0x800c7488L)
   public static void FUN_800c7488() {
     FUN_800c7524();
-    _8007a3b8.setu(0);
-    loadingStage_800bb10c.addu(0x1L);
+    vsyncMode_8007a3b8.setu(0);
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c74bcL)
   public static void FUN_800c74bc() {
-    loadingStage_800bb10c.addu(0x1L);
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c74d4L)
   public static void FUN_800c74d4() {
     if(fileCount_8004ddc8.get() == 0) {
-      loadingStage_800bb10c.addu(0x1L);
+      pregameLoadingStage_800bb10c.addu(0x1L);
     }
   }
 
   @Method(0x800c7500L)
   public static void FUN_800c7500() {
     _8004dd24.setu(0x5L);
-    _8007a3b8.setu(0x2L);
-    loadingStage_800bb10c.setu(0);
+    vsyncMode_8007a3b8.setu(0x2L);
+    pregameLoadingStage_800bb10c.setu(0);
   }
 
   @Method(0x800c7524L)
@@ -345,7 +345,7 @@ public final class Ttle {
 
   @Method(0x800c7798L)
   public static void executeTtleLoadingStage() {
-    loadingStageArray_800ce77c.get((int)loadingStage_800bb10c.get()).deref().run();
+    loadingStageArray_800ce77c.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
   }
 
   @Method(0x800c77e4L)
@@ -378,7 +378,7 @@ public final class Ttle {
     }
 
     //LAB_800c7978
-    FUN_80013200(384L, 0);
+    setWidthAndFlags(384L, 0);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.setX(0);
     GsRVIEW2_800c6760.viewpoint_00.setY(0);
@@ -390,8 +390,8 @@ public final class Ttle {
     GsRVIEW2_800c6760.super_1c.clear();
     FUN_8003cfb0(GsRVIEW2_800c6760);
 
-    _8007a3b8.setu(0x2L);
-    loadingStage_800bb10c.setu(0x1L);
+    vsyncMode_8007a3b8.setu(0x2L);
+    pregameLoadingStage_800bb10c.setu(0x1L);
   }
 
   @Method(0x800c7a18L)
@@ -431,10 +431,10 @@ public final class Ttle {
   @Method(0x800c7cacL)
   public static void FUN_800c7cac() {
     _800c6724.setu(0);
-    FUN_80015310(0, 0x1656L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7af0", Value.class, long.class, long.class), 0, 0x4L);
-    FUN_80015310(0, 0x1657L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7c18", Value.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7af0", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7c18", Value.class, long.class, long.class), 0, 0x2L);
 
-    loadingStage_800bb10c.setu(0x2L);
+    pregameLoadingStage_800bb10c.setu(0x2L);
 
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
@@ -451,7 +451,7 @@ public final class Ttle {
     if(_800c6724.get() == 0x2L) {
       FUN_800136dc(0x2L, 0xfL);
       SetGeomOffset(0, 0);
-      loadingStage_800bb10c.setu(0x3L);
+      pregameLoadingStage_800bb10c.setu(0x3L);
     }
   }
 
@@ -485,9 +485,9 @@ public final class Ttle {
 
       _800bf0dc.setu(0x2L);
       _800bf0ec.setu(0x3L);
-      _8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.setu(0x2L);
 
-      loadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.setu(0);
     }
 
     //LAB_800c7f90
@@ -526,8 +526,8 @@ public final class Ttle {
         _8004dd24.setu(0x5L);
       }
 
-      loadingStage_800bb10c.setu(0);
-      _8007a3b8.setu(0x2L);
+      pregameLoadingStage_800bb10c.setu(0);
+      vsyncMode_8007a3b8.setu(0x2L);
 
       //LAB_800c80c4
       return;
@@ -536,8 +536,8 @@ public final class Ttle {
     //LAB_800c80cc
     if(_800c6728.get() == 0x3L) {
       _8004dd24.setu(0x2L);
-      loadingStage_800bb10c.setu(0);
-      _8007a3b8.setu(0x2L);
+      pregameLoadingStage_800bb10c.setu(0);
+      vsyncMode_8007a3b8.setu(0x2L);
     } else {
       //LAB_800c8108
       renderMenuLogo();
@@ -573,9 +573,9 @@ public final class Ttle {
       _800bf0dc.setu(0);
       _800bf0ec.setu(0x2L);
       _8004dd24.setu(0x9L);
-      _8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.setu(0x2L);
 
-      loadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.setu(0);
     }
 
     //LAB_800c8218
@@ -639,7 +639,7 @@ public final class Ttle {
       if(menuIdleTime_800c6720.get() > 0x690L) {
         if(fileCount_8004ddc8.get() == 0) {
           if(drgnBinIndex_800bc058.get() == 0x1L) {
-            loadingStage_800bb10c.setu(0x6L);
+            pregameLoadingStage_800bb10c.setu(0x6L);
           }
         }
       }
@@ -765,11 +765,11 @@ public final class Ttle {
       case 0x3:
         _800c672c.setu(0x4L);
         if(selectedMenuOption_800ce774.get() == 0) {
-          loadingStage_800bb10c.setu(0x4L);
+          pregameLoadingStage_800bb10c.setu(0x4L);
           //LAB_800c8a20
         } else if(selectedMenuOption_800ce774.get() == 0x1L) {
           _800c6728.setu(0x2L);
-          loadingStage_800bb10c.setu(0x5L);
+          pregameLoadingStage_800bb10c.setu(0x5L);
         }
 
         //LAB_800c8a4c
