@@ -29,8 +29,10 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MOVE;
-import legend.game.types.JoyStruct;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.JoyStruct;
+import legend.game.types.MrgEntry;
+import legend.game.types.MrgFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,7 +64,6 @@ import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
-import static legend.game.SMap.renderDobj2;
 import static legend.game.SMap.FUN_800daa3c;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2220;
@@ -78,14 +79,14 @@ import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
+import static legend.game.SMap.renderDobj2;
 import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
-import static legend.game.Scus94491BpeSegment.FUN_8001ffb0;
+import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
@@ -93,6 +94,7 @@ import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
 import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
@@ -101,24 +103,20 @@ import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
 import static legend.game.Scus94491BpeSegment_8003.SetVsyncInterruptCallback;
+import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042b60;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042ba0;
@@ -130,18 +128,21 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80043120;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80043230;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052ae0;
-import static legend.game.Scus94491BpeSegment_8005._80052c30;
+import static legend.game.Scus94491BpeSegment_8005.newrootIndex_80052c30;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005._80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
@@ -154,6 +155,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052e1c;
 import static legend.game.Scus94491BpeSegment_8005._80052e2c;
 import static legend.game.Scus94491BpeSegment_8005._80052e30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
+import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
@@ -165,7 +167,6 @@ import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpIOE_EventId_800bf2
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpNEW_EventId_800bf25c;
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpTIMOUT_EventId_800bf258;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
 import static legend.game.Scus94491BpeSegment_800b._800bd61c;
@@ -352,6 +353,7 @@ import static legend.game.Scus94491BpeSegment_800b.cardErrorWrite_800bf274;
 import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bdc50;
+import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
@@ -762,8 +764,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021008
-    if(mainCallbackIndex_8004dd20.get() == 0x5L && !a0.smallerStructPtr_ui_a4.isNull()) {
-      removeFromLinkedList(a0.smallerStructPtr_ui_a4.getPointer());
+    if(mainCallbackIndex_8004dd20.get() == 0x5L && !a0.smallerStructPtr_a4.isNull()) {
+      removeFromLinkedList(a0.smallerStructPtr_a4.getPointer());
     }
 
     //LAB_80021034
@@ -1184,6 +1186,9 @@ public final class Scus94491BpeSegment_8002 {
     return (long)Math.sqrt(n);
   }
 
+  /**
+   * This method animates the fog in the first cutscene with Rose/Feyrbrand
+   */
   @Method(0x80022018L)
   public static void FUN_80022018(final BigStruct a0, final int index) {
     final RECT rect = new RECT();
@@ -1240,8 +1245,8 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      s1 += 0x2L;
       rect.x.set((short)(MEMORY.ref(2, s1).get() + t2));
+      s1 += 0x2L;
       rect.y.set((short)(MEMORY.ref(2, s1).get() + t1));
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, a2 & 0xffffL, a0_1 & 0xffffL);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
@@ -1276,7 +1281,7 @@ public final class Scus94491BpeSegment_8002 {
     s1 += 0x2L;
     long s3 = MEMORY.ref(2, s1).get();
     s1 += 0x2L;
-    long s0_0 = MEMORY.ref(2, s1).get();
+    long s0_0 = MEMORY.ref(2, s1).offset(0x2L).get();
     long s7 = v0 + t1;
     long s5 = v1 >>> 2;
     v1 = MEMORY.ref(2, s1).get();
@@ -1295,7 +1300,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002227c
-    s0_0 <<= 16;
+    s0_0 = (int)(s0_0 << 16);
     if(s0_0 == 0) {
       return;
     }
@@ -1305,10 +1310,11 @@ public final class Scus94491BpeSegment_8002 {
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0x18L);
 
+    s0_0 = (int)s0_0 >> 20;
+    s3 -= s0_0;
+
     long a3;
-    if((v1 << 16) == 0) {
-      s0_0 >>= 14;
-      s3 -= s0_0;
+    if((int)(v1 << 16) == 0) {
       rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, 256L);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
@@ -1319,8 +1325,6 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       //LAB_80022358
 
-      s0_0 >>= 20;
-      s3 -= s0_0;
       rect.set((short)s6, (short)s7, (short)s5, (short)s0_0);
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, (s3 + 256L) & 0xffffL);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
@@ -1380,7 +1384,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80022590() {
     switch((int)_800bdc38.get()) {
       case 0x1 -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x2L);
           FUN_8001e010(0);
@@ -1389,7 +1393,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0x6 -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x7L);
           FUN_8001e010(0);
@@ -1398,7 +1402,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0xb -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0xcL);
           FUN_8001e010(0);
@@ -1407,7 +1411,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0x10 -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x11L);
           FUN_8001e010(0);
@@ -1416,7 +1420,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0x15 -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x16L);
           FUN_8001e010(0);
@@ -1425,7 +1429,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0x1f -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x20);
           FUN_8001e010(0);
@@ -1434,7 +1438,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0x1a -> {
-        if((FUN_8001ffb0() & 0x80L) == 0) {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
           _800bdc28.setu(0);
           _800bdc38.setu(0x1bL);
         }
@@ -1493,7 +1497,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800237fc
-    final long address = addToLinkedListTail(640L);
+    final long address = addToLinkedListTail(0x280L);
     linkedListEntry_800bdc50.setu(address);
     FUN_8002ed48(0, BASCUS_94491drgn00_80010734.getAddress(), address, sp20, 0, 0xfL);
 
@@ -1513,7 +1517,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002498cL)
-  public static void FUN_8002498c() {
+  public static void noop_8002498c() {
     // empty
   }
 
@@ -1522,8 +1526,19 @@ public final class Scus94491BpeSegment_8002 {
     // empty
   }
 
+  /**
+   * Loads DRGN0 MRG @ 77382 (basic UI textures)
+   *
+   * <ol start="0">
+   *   <li>Game font</li>
+   *   <li>Japanese font</li>
+   *   <li>Japanese text</li>
+   *   <li>Dialog box border</li>
+   *   <li>Red downward bobbing arrow</li>
+   * </ol>
+   */
   @Method(0x800249b4L)
-  public static void FUN_800249b4(final Value a0, final long a1, final long a2) {
+  public static void basicUiTexturesLoaded(final Value address, final long fileSize, final long unused) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -1541,30 +1556,34 @@ public final class Scus94491BpeSegment_8002 {
 
     final int[] indexOffsets = {0, 20, 22, 24, 26};
 
+    final MrgFile mrg = address.deref(4).cast(MrgFile::new);
+
     //LAB_80024e88
-    for(int s2 = 0; s2 < a0.deref(4).offset(0x4L).get(); s2++) {
-      if(a0.deref(4).offset(s2 * 8L).offset(0xcL).get() != 0) {
-        final TimHeader tim = parseTimHeader(a0.deref(4).offset(a0.deref(4).offset(s2 * 8L).offset(0x8L).get()).offset(0x4L));
-        final int rectIndex = indexOffsets[s2];
+    for(int i = 0; i < mrg.count.get(); i++) {
+      final MrgEntry entry = mrg.entries.get(i);
+
+      if(entry.size.get() != 0) {
+        final TimHeader tim = parseTimHeader(MEMORY.ref(4, mrg.getFile(i)).offset(0x4L));
+        final int rectIndex = indexOffsets[i];
 
         // Iteration 0 will count as >= 2
-        if(MathHelper.unsign(s2 - 1, 4) >= 0x2L) {
+        if(MathHelper.unsign(i - 1, 4) >= 0x2L) {
           LoadImage(rects[rectIndex], tim.getImageAddress());
         }
 
         //LAB_80024efc
-        if(s2 == 0x3L) {
+        if(i == 0x3L) {
           //LAB_80024f2c
-          LoadImage(rects[s2 * 2 + 1], tim.getClutAddress());
-        } else if(s2 < 0x4L) {
+          LoadImage(rects[i * 2 + 1], tim.getClutAddress());
+        } else if(i < 0x4L) {
           //LAB_80024fac
-          for(long s0 = 0; s0 < 4; s0++) {
+          for(int s0 = 0; s0 < 4; s0++) {
             final RECT rect = new RECT().set(rects[rectIndex + 1]);
             rect.x.set((short)(rect.x.get() + s0 * 16));
             LoadImage(rect, tim.getClutAddress() + s0 * 0x80L);
           }
           //LAB_80024f1c
-        } else if(s2 == 0x4L) {
+        } else if(i == 0x4L) {
           //LAB_80024f68
           LoadImage(rects[rectIndex + 1], tim.getClutAddress());
         }
@@ -1577,13 +1596,13 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80025018
-    removeFromLinkedList(a0.get());
+    removeFromLinkedList(mrg.getAddress());
   }
 
   @Method(0x8002504cL)
-  public static void FUN_8002504c() {
-    loadDrgnBinFile(0, 0x1a0dL, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_800249b4", Value.class, long.class, long.class), 0, 0x4L);
-    FUN_8002498c();
+  public static void loadBasicUiTexturesAndSomethingElse() {
+    loadDrgnBinFile(0, 0x1a0dL, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", Value.class, long.class, long.class), 0, 0x4L);
+    noop_8002498c();
 
     _800bdf00.setu(0xdL);
     _800bdf04.setu(0);
@@ -1758,7 +1777,7 @@ public final class Scus94491BpeSegment_8002 {
       _800be696.offset(1, s0).setu(0);
       _800be697.offset(1, s0).setu(0);
 
-      s0 += 160L;
+      s0 += 0xa0L;
     }
 
     FUN_8002a8f8();
@@ -1767,7 +1786,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a86cL)
   public static void FUN_8002a86c(final long a0) {
-    final long v0 = a0 * 160;
+    final long v0 = a0 * 0xa0;
 
     _800be66e.offset(1, v0).setu(0);
     _800be66f.offset(1, v0).setu(0);
@@ -1833,7 +1852,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
-    _80052c30.setu(0x2a3L);
+    newrootIndex_80052c30.setu(0x2a3L);
     _80052c34.setu(0x4L);
     index_80052c38.set(0);
     _80052c3c.setu(-0x1L);
@@ -1889,11 +1908,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002abdc
     //LAB_8002abe0
     final long a0 = FUN_800e6730(index_80052c38.get());
-    if(a0 != 0) {
-      if((a0 & 0x10L) == 0) {
-        return s0;
-      }
-
+    if((a0 & 0x10L) != 0) {
       FUN_800e5534(a0 >>> 22, (a0 >> 16) & 0x3fL);
     }
 

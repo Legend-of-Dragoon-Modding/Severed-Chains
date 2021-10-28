@@ -307,7 +307,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c34d8;
 import static legend.game.Scus94491BpeSegment_800c._800c34dc;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
 import static legend.game.Scus94491BpeSegment_800c._800c35a4;
-import static legend.game.Scus94491BpeSegment_800c._800c35a8;
+import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallbackPtr_800c1bb4;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
@@ -397,9 +397,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80030bb0L)
   public static long FUN_80030bb0(long a0) {
     a0 -= _800bf594.get() * 32 + _800bf590.get();
-    final long mult = a0 / 4 * 0x8208_2083L;
-    final long a1 = (mult >>> 32 >> 8) - (a0 >> 31);
-    //TODO is this math super wrong?
+    final long a1 = a0 / 4 / 504;
 
     if(_800bf590.deref(2).offset(a1 * 32).get() != 0x4L) {
       return 0x1L;
@@ -5902,8 +5900,21 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  /**
+   * <p>Calculates GsWSMATRIX using viewpoint information in pv. GsWSMATRIX doesn't change unless the
+   * viewpoint is moved, so this function should be called every frame only if the viewpoint is moved, in order for
+   * changes to be updated.</p>
+   *
+   * <p>It should also be called every frame if the GsRVIEW2 member super is set to anything other than WORLD,
+   * because even if the other parameters are not changed, if the parameters of the superior coordinate system
+   * are changed, the viewpoint will have moved.</p>
+   *
+   * @param struct Pointer to view information
+   *
+   * @return 0 on success; 2 on failure.
+   */
   @Method(0x8003cfb0L)
-  public static long FUN_8003cfb0(final GsRVIEW2 struct) {
+  public static long GsSetRefView2(final GsRVIEW2 struct) {
     long s0;
     long s1;
     long s2;
@@ -6100,7 +6111,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003d6c0
     do {
-      _800c35a8.offset(s1 * 0x4L).setu(a3.getAddress());
+      coord2s_800c35a8.get((int)s1).set(a3);
 
       if(a3.super_.isNull()) {
         if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
@@ -6113,14 +6124,14 @@ public final class Scus94491BpeSegment_8003 {
 
         //LAB_8003d78c
         if(a1_0 == 0x64L) {
-          matrix.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          matrix.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003d7e8
         s1 = a1_0 + 0x1L;
-        matrix.set(_800c35a8.offset(s1 * 0x4L).deref(4).cast(GsCOORDINATE2::new).workm);
+        matrix.set(coord2s_800c35a8.get((int)s1).deref().workm);
         break;
       }
 
@@ -6143,7 +6154,7 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d8ac
     //LAB_8003d8c0
     while((int)s1 > 0) {
-      final GsCOORDINATE2 coord2 = _800c35a8.offset((s1 - 0x1L) * 0x4L).deref(4).cast(GsCOORDINATE2::new);
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get((int)(s1 - 0x1L)).deref();
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
       coord2.flg.set(PSDCNT_800c34d0.get());
@@ -6188,7 +6199,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003da00
     do {
-      _800c35a8.offset(s1 * 0x4L).setu(a3.getAddress());
+      coord2s_800c35a8.get((int)s1).set(a3);
       if(a3.super_.isNull()) {
         if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
           //LAB_8003da3c
@@ -6202,13 +6213,13 @@ public final class Scus94491BpeSegment_8003 {
         s1 = a1 + 0x1L;
 
         if(a1 == 0x64L) {
-          matrix.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          matrix.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003db28
-        matrix.set(_800c35a8.offset(s1 * 0x4L).cast(GsCOORDINATE2::new).workm);
+        matrix.set(coord2s_800c35a8.get((int)s1).deref().workm);
         break;
       }
 
@@ -6263,7 +6274,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003dcd8
     do {
-      _800c35a8.offset(s1 * 4).setu(coord.getAddress());
+      coord2s_800c35a8.get((int)s1).set(coord);
 
       if(coord.super_.isNull()) {
         if(coord.flg.get() == PSDCNT_800c34d0.get() || coord.flg.get() == 0) {
@@ -6277,13 +6288,13 @@ public final class Scus94491BpeSegment_8003 {
         //LAB_8003dda4
         s1 = a + 0x1L;
         if(a == 0x64) {
-          lw.set(_800c35a8.deref(4).cast(GsCOORDINATE2::new).workm);
+          lw.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003de00
-        lw.set(_800c35a8.offset(s1 * 4).deref(4).cast(GsCOORDINATE2::new).workm);
+        lw.set(coord2s_800c35a8.get((int)s1).deref().workm);
         break;
       }
 

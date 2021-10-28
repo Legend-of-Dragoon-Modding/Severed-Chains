@@ -7,6 +7,7 @@ import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gpu.GpuPacket;
 import legend.core.gpu.RECT;
+import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -16,6 +17,7 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
@@ -96,8 +98,7 @@ public final class Scus94491BpeSegment_800c {
   public static final MATRIX matrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
 
   public static final Value _800c35a4 = MEMORY.ref(4, 0x800c35a4L);
-  /** TODO array of pointers to GsCOORDINATE2 */
-  public static final Value _800c35a8 = MEMORY.ref(4, 0x800c35a8L);
+  public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
 
   public static final Value _800c3658 = MEMORY.ref(4, 0x800c3658L);
 

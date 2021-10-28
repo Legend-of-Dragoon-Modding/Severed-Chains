@@ -10,6 +10,7 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
+import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
@@ -123,8 +124,7 @@ public final class Scus94491BpeSegment_800b {
   public static final ArrayRef<FileLoadingInfo> fileLoadingInfoArray_800bbad8 = MEMORY.ref(0x580, 0x800bbad8L, ArrayRef.of(FileLoadingInfo.class, 44, 32, FileLoadingInfo::new));
   public static final Value drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
-  public static final Value _800bc060 = MEMORY.ref(4, 0x800bc060L);
-
+  public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
   public static final ScriptStruct ScriptStruct_800bc070 = MEMORY.ref(4, 0x800bc070L, ScriptStruct::new);
 
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
@@ -289,7 +289,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
 
-  public static final GsRVIEW2 _800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, GsRVIEW2::new);
+  public static final GsRVIEW2 rview2_800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, GsRVIEW2::new);
   public static final Value _800bd808 = MEMORY.ref(4, 0x800bd808L);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
@@ -450,14 +450,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800be697 = MEMORY.ref(1, 0x800be697L);
   //TODO
 
-  public static final Value _800bed30 = MEMORY.ref(4, 0x800bed30L);
-  public static final Value _800bed34 = MEMORY.ref(4, 0x800bed34L);
-  public static final Value _800bed38 = MEMORY.ref(4, 0x800bed38L);
-  public static final Value _800bed3c = MEMORY.ref(4, 0x800bed3cL);
-  public static final Value _800bed40 = MEMORY.ref(4, 0x800bed40L);
-  public static final Value _800bed44 = MEMORY.ref(4, 0x800bed44L);
-  public static final Value _800bed48 = MEMORY.ref(4, 0x800bed48L);
-  public static final Value _800bed4c = MEMORY.ref(4, 0x800bed4cL);
+  public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
   public static final Value _800bed50 = MEMORY.ref(4, 0x800bed50L);
   public static final Value _800bed54 = MEMORY.ref(4, 0x800bed54L);
   public static final Value _800bed58 = MEMORY.ref(4, 0x800bed58L);

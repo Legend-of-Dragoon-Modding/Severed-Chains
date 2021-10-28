@@ -215,15 +215,15 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment_800e#executePregameLoadingStage()}</li>
-   *   <li>{@link Scus94491BpeSegment_800e#FUN_800e5fc0()}</li>
+   *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
-   *   <li>{@link Ttle#executeLoadingStage()}</li>
+   *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
    *   <li>{@link SMap#FUN_800eaa88()}</li>
-   *   <li>{@link SMap#FUN_800e5914()}</li>
+   *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link Ttle#FUN_800c75fc()}</li>
    *   <li>0x800cc738 (TODO)</li>
-   *   <li>{@link SMap#FUN_800ed5b0()}</li>
+   *   <li>{@link SMap#executeSmapPregameLoadingStage()}</li>
    *   <li>{@link SMap#FUN_800d92a0()}</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>{@link Ttle#FUN_800c6eb8()}</li>

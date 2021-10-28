@@ -40,8 +40,8 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_a0;
   public final UnsignedByteRef ub_a2;
   public final UnsignedByteRef ub_a3;
-  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link  ExtendedTmd#ext_04} */
-  public final Pointer<SmallerStruct> smallerStructPtr_ui_a4;
+  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link ExtendedTmd#ext_04} */
+  public final Pointer<SmallerStruct> smallerStructPtr_a4;
   /** TODO Pointer to whatever is pointed to by {@link ExtendedTmd#ptr_08} */
   public final UnsignedIntRef ptr_a8;
   public final ArrayRef<UnsignedShortRef> usArr_ac;
@@ -132,7 +132,7 @@ public class BigStruct implements MemoryRef {
     this.us_a0 = ref.offset(2, 0xa0L).cast(UnsignedShortRef::new);
     this.ub_a2 = ref.offset(1, 0xa2L).cast(UnsignedByteRef::new);
     this.ub_a3 = ref.offset(1, 0xa3L).cast(UnsignedByteRef::new);
-    this.smallerStructPtr_ui_a4 = ref.offset(4, 0xa4L).cast(Pointer.deferred(4, SmallerStruct::new));
+    this.smallerStructPtr_a4 = ref.offset(4, 0xa4L).cast(Pointer.deferred(4, SmallerStruct::new));
     this.ptr_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
     this.usArr_ac = ref.offset(4, 0xacL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
     this.usArr_ba = ref.offset(4, 0xbaL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));

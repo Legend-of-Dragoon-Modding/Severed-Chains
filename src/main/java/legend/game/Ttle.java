@@ -32,9 +32,7 @@ import static legend.game.SItem._80111cfc;
 import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.FUN_800136dc;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.FUN_80019a60;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
@@ -42,8 +40,10 @@ import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
+import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
@@ -52,18 +52,18 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003cfb0;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -94,8 +94,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
+import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -136,6 +136,14 @@ public final class Ttle {
 
   public static final GsRVIEW2 GsRVIEW2_800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
 
+  /**
+   * <ol start="0">
+   *   <li>{@link Ttle#FUN_800c7488()}</li>
+   *   <li>{@link Ttle#FUN_800c74bc()}</li>
+   *   <li>{@link Ttle#waitForTtleFilesToLoad()}</li>
+   *   <li>{@link Ttle#FUN_800c7500()}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final SVECTOR _800c68f0 = MEMORY.ref(8, 0x800c68f0L, SVECTOR::new);
@@ -153,6 +161,17 @@ public final class Ttle {
 
   public static final Value selectedMenuOption_800ce774 = MEMORY.ref(4, 0x800ce774L);
   public static final Value _800ce778 = MEMORY.ref(4, 0x800ce778L);
+  /**
+   * <ol start="0">
+   *   <li>{@link Ttle#initializeMainMenu()}</li>
+   *   <li>{@link Ttle#loadMainMenuGfx()}</li>
+   *   <li>{@link Ttle#FUN_800c7df0()}</li>
+   *   <li>{@link Ttle#renderMainMenu()}</li>
+   *   <li>{@link Ttle#FUN_800c7e50()}</li>
+   *   <li>{@link Ttle#FUN_800c7fa0()}</li>
+   *   <li>{@link Ttle#FUN_800c8148()}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(24, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
@@ -308,7 +327,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7424L)
-  public static void executeLoadingStage() {
+  public static void executeTtleUnloadingStage() {
     loadingStageArray_800c6898.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
   }
 
@@ -325,7 +344,7 @@ public final class Ttle {
   }
 
   @Method(0x800c74d4L)
-  public static void FUN_800c74d4() {
+  public static void waitForTtleFilesToLoad() {
     if(fileCount_8004ddc8.get() == 0) {
       pregameLoadingStage_800bb10c.addu(0x1L);
     }
@@ -349,7 +368,7 @@ public final class Ttle {
   }
 
   @Method(0x800c77e4L)
-  public static void FUN_800c77e4() {
+  public static void initializeMainMenu() {
     menuLoadingStage_800c66e8.setu(0);
     menuIdleTime_800c6720.setu(0);
     _800c6728.setu(0);
@@ -388,7 +407,7 @@ public final class Ttle {
     GsRVIEW2_800c6760.refpoint_0c.setZ(-4000);
     GsRVIEW2_800c6760.viewpointTwist_18.set(0);
     GsRVIEW2_800c6760.super_1c.clear();
-    FUN_8003cfb0(GsRVIEW2_800c6760);
+    GsSetRefView2(GsRVIEW2_800c6760);
 
     vsyncMode_8007a3b8.setu(0x2L);
     pregameLoadingStage_800bb10c.setu(0x1L);
@@ -404,8 +423,25 @@ public final class Ttle {
     }
   }
 
+  /**
+   * Loads the MRG file @ sector 61510. All files are TIMs.
+   *
+   * <ol start="0">
+   *   <li>Menu background (upper portion)</li>
+   *   <li>Logo fire 1</li>
+   *   <li>Logo</li>
+   *   <li>Menu text</li>
+   *   <li>TM</li>
+   *   <li>Copyright (left half)</li>
+   *   <li>Copyright (right half)</li>
+   *   <li>Logo fire 2</li>
+   *   <li>Logo fire 3 (same as 4)</li>
+   *   <li>Logo fire 4 (same as 3)</li>
+   *   <li>Menu background (lower portion)</li>
+   * </ol>
+   */
   @Method(0x800c7af0L)
-  public static void fileCallback_800c7af0(final Value transferDest, final long fileSize, final long unknown) {
+  public static void menuTexturesMrgLoaded(final Value transferDest, final long fileSize, final long unknown) {
     for(int i = 0; i < transferDest.deref(4).offset(0x4L).get(); i++) {
       if(transferDest.deref(4).offset(i * 8L).offset(0xcL).get() != 0) {
         loadTimImage(transferDest.deref(4).offset(transferDest.deref(4).offset(i * 8L).offset(0x8L)).getAddress());
@@ -419,7 +455,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7c18L)
-  public static void fileCallback_800c7c18(final Value tmdAddressPtr, final long fileSize, final long unknown) {
+  public static void menuFireTmdLoaded(final Value tmdAddressPtr, final long fileSize, final long unknown) {
     final TmdWithId tmd = tmdAddressPtr.deref(4).cast(TmdWithId::new);
     _800c66d0.set(parseTmdFile(tmd));
     FUN_800cc0b0(_800c66d0.deref(), null);
@@ -429,12 +465,18 @@ public final class Ttle {
   }
 
   @Method(0x800c7cacL)
-  public static void FUN_800c7cac() {
+  public static void loadMainMenuGfx() {
     _800c6724.setu(0);
-    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7af0", Value.class, long.class, long.class), 0, 0x4L);
-    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "fileCallback_800c7c18", Value.class, long.class, long.class), 0, 0x2L);
+
+    // MRG @ sector 61510
+    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", Value.class, long.class, long.class), 0, 0x4L);
+
+    // TMD @ sector 61622
+    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", Value.class, long.class, long.class), 0, 0x2L);
 
     pregameLoadingStage_800bb10c.setu(0x2L);
+
+    // Prepare fire animation struct
 
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
@@ -589,7 +631,7 @@ public final class Ttle {
   }
 
   @Method(0x800c8298L)
-  public static void FUN_800c8298() {
+  public static void renderMainMenu() {
     final long menuLoadingStage = menuLoadingStage_800c66e8.get();
 
     if(menuLoadingStage == 0) {
@@ -1394,7 +1436,7 @@ public final class Ttle {
     }
 
     //LAB_800cb7f0
-    FUN_8003cfb0(GsRVIEW2_800c6760);
+    GsSetRefView2(GsRVIEW2_800c6760);
 
     UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.deref().dobj2s_00.deref();
     UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.deref().coord2s_04.deref();

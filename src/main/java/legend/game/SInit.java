@@ -8,6 +8,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.SupplierRef;
+import legend.game.types.MrgFile;
 
 import java.util.function.Function;
 
@@ -41,7 +42,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052db0;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800bbac8;
-import static legend.game.Scus94491BpeSegment_800b._800bc060;
+import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bbacc;
@@ -271,14 +272,14 @@ public final class SInit {
       linkedListEntry_800bbacc.setu(address);
 
       //LAB_800fbd50
-      for(long a0 = 0; a0 < _80010250.get(); a0++) {
-        final long v0 = _800fd524.offset(a0 * 4).getSigned();
+      for(int i = 0; i < _80010250.get(); i++) {
+        final long v0 = _800fd524.offset(i * 0x4L).getSigned();
 
         if(v0 >= 0) {
           //LAB_800fbd68
-          _800bc060.offset(a0 * 4).setu(v0 + address);
+          drgnMrg_800bc060.get(i).set(MEMORY.ref(4, address + v0, MrgFile::new));
         } else {
-          _800bc060.offset(a0 * 4).setu(0);
+          drgnMrg_800bc060.get(i).clear();
         }
       }
     }

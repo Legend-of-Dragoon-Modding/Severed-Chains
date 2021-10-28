@@ -48,7 +48,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002504c;
+import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c008;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002db2c;
 import static legend.game.Scus94491BpeSegment_8002.SetMem;
@@ -303,14 +303,16 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e5fc0L)
-  public static void FUN_800e5fc0() {
+  public static void finalizePregameLoading() {
     final long loadingStage = pregameLoadingStage_800bb10c.get();
     if(loadingStage == 0) {
       //LAB_800e600c
-      FUN_8002504c();
+      loadBasicUiTexturesAndSomethingElse();
       FUN_800136dc(0x1L, 0x1L);
       pregameLoadingStage_800bb10c.addu(1);
     } else if(loadingStage == 0x1L || loadingStage == 0x2L) {
+      // Wait for all files to finish loading
+
       //LAB_800e6028
       if(fileCount_8004ddc8.get() == 0) {
         pregameLoadingStage_800bb10c.addu(1);

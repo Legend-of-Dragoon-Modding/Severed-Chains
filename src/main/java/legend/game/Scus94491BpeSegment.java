@@ -24,6 +24,7 @@ import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptStruct;
 import org.apache.logging.log4j.LogManager;
@@ -143,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._80050068;
 import static legend.game.Scus94491BpeSegment_8005._800500e8;
 import static legend.game.Scus94491BpeSegment_8005._800500f8;
-import static legend.game.Scus94491BpeSegment_8005._80052c30;
+import static legend.game.Scus94491BpeSegment_8005.newrootIndex_80052c30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
@@ -196,7 +197,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb164;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bc060;
+import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bc300;
@@ -2064,7 +2065,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015310L)
-  public static long loadDrgnBinFile(final long index, final long param_2, final long fileTransferDest, final long callback, final long callbackParam, final long param_6) {
+  public static long loadDrgnBinFile(final long index, final long fileIndex, final long fileTransferDest, final long callback, final long callbackParam, final long param_6) {
     final long drgnIndex = Math.min(index, 2);
 
     //LAB_80015388
@@ -2073,6 +2074,8 @@ public final class Scus94491BpeSegment {
     if(s2 < 0) {
       return -0x1L;
     }
+
+    LOGGER.info("Queueing DRGN%d file %d...", index, fileIndex);
 
     final FileLoadingInfo file = addFile();
     if(file == null) {
@@ -2088,7 +2091,7 @@ public final class Scus94491BpeSegment {
     file.callbackParam.set((int)callbackParam);
     file.unknown3.set((short)s2);
     file.used.set(true);
-    getDrgnPos(file, drgnIndex, param_2);
+    getDrgnFilePos(file, drgnIndex, fileIndex);
 
     LOGGER.info(file);
 
@@ -2143,11 +2146,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015644L)
-  public static long getDrgnPos(final FileLoadingInfo file, final long drgnIndex, final long a2) {
+  public static long getDrgnFilePos(final FileLoadingInfo file, final long drgnIndex, final long fileIndex) {
     final long sector = CdlFILE_800bb4c8.get((int)_8004dda0.offset(drgnIndex * 8).get()).pos.pack();
 
-    file.pos.unpack(_800bc060.offset(drgnIndex * 4).deref(4).offset(a2 * 8).offset(0x8L).get() + sector);
-    file.size.set((int)_800bc060.offset(drgnIndex * 4).deref(4).offset(a2 * 8).offset(0xcL).get());
+    final MrgEntry entry = drgnMrg_800bc060.get((int)drgnIndex).deref().entries.get((int)fileIndex);
+
+    file.pos.unpack(sector + entry.offset.get());
+    file.size.set((int)entry.size.get());
 
     return 0;
   }
@@ -3316,7 +3321,7 @@ public final class Scus94491BpeSegment {
       if(_800bd110.offset(i * 0x28L).get() == 0) {
         if(a0 == 0x8L) {
           //LAB_80019b54
-          FUN_8001a714(0x3L, 0x8L, a1, i, _800bd060.offset(2, 0x10L).get(), _800bd060.offset(4, 0x8L).get() + a1 * 2, _800bd060.offset(4, 0xcL).deref(1).offset(a1).get(), -0x1L, -0x1L, -0x1L, a5, a4, -0x1L); //TODO getSigned for first one
+          FUN_8001a714(0x3L, 0x8L, a1, i, _800bd060.offset(2, 0x10L).getSigned(), _800bd060.offset(4, 0x8L).get() + a1 * 2, _800bd060.offset(4, 0xcL).deref(1).offset(a1).get(), -0x1L, -0x1L, -0x1L, a5, a4, -0x1L);
         } else {
           FUN_8001a714(0x3L, a0, a1, i, _800bcf90.offset(a0 * 28).get(), _800bcf88.offset(a0 * 28).get() + a1 * 2, 0, -0x1L, -0x1L, -0x1L, a5, a4, -0x1L);
         }
@@ -4239,9 +4244,9 @@ public final class Scus94491BpeSegment {
 
           //LAB_8001c680
           do {
-            if(_800bd808.get() != 0x39L || _8004fb04.offset(a2).deref(2).offset(v1).get() == _80052c30.get()) {
+            if(_800bd808.get() != 0x39L || _8004fb04.offset(a2).deref(2).offset(v1).get() == newrootIndex_80052c30.get()) {
               //LAB_8001c6ac
-              if(_800bad6c.get(0x1L) == 0 || (_8004fb04.offset(a2).deref(2).offset(v1).get() == _80052c30.get() && _800bad6c.offset(a3 / 0x20L * 0x4L).get(t1) != 0)) {
+              if(_800bad6c.get(0x1L) == 0 || (_8004fb04.offset(a2).deref(2).offset(v1).get() == newrootIndex_80052c30.get() && _800bad6c.offset(a3 / 0x20L * 0x4L).get(t1) != 0)) {
                 //LAB_8001c7c0
                 //LAB_8001c7cc
                 a1 = _8004fb02.offset(a2).getSigned();
@@ -4273,7 +4278,7 @@ public final class Scus94491BpeSegment {
 
           //LAB_8001c748
           do {
-            if(MEMORY.ref(2, v1).get() == _80052c30.get()) {
+            if(MEMORY.ref(2, v1).get() == newrootIndex_80052c30.get()) {
               //LAB_8001c7d8
               return FUN_8001c84c(s0, _8004fa9a.offset(a0).getSigned());
             }
@@ -4327,7 +4332,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001c874() {
     if(_800bd808.get() == 0x38L) {
       for(int i = 0; ; i += 0x8) {
-        if(_8004ff10.offset(i).get() == _80052c30.get()) {
+        if(_8004ff10.offset(i).get() == newrootIndex_80052c30.get()) {
           return _8004ff14.offset(i).get();
         }
       }
@@ -4487,7 +4492,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001e010L)
   public static void FUN_8001e010(long a0) {
-    long a1;
+    long fileIndex;
     long s0;
     long v1;
 
@@ -4558,11 +4563,11 @@ public final class Scus94491BpeSegment {
           } else {
             //LAB_8001e20c
             FUN_8001e29c(0x8L);
-            a1 = 0x16b7L + s0 * 5;
+            fileIndex = 0x16b7L + s0 * 5;
 
             //LAB_8001e23c
             loadedDrgnFiles_800bcf78.oru(0x80L);
-            loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001dabc", Value.class, long.class, long.class), a1 * 0x100L, 0x4L);
+            loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001dabc", Value.class, long.class, long.class), fileIndex * 0x100L, 0x4L);
           }
 
           //LAB_8001e1dc
@@ -4574,11 +4579,11 @@ public final class Scus94491BpeSegment {
         } else {
           //LAB_8001e20c
           FUN_8001e29c(0x8L);
-          a1 = 0x16b7L + s0 * 5;
+          fileIndex = 0x16b7L + s0 * 5;
 
           //LAB_8001e23c
           loadedDrgnFiles_800bcf78.oru(0x80L);
-          loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001dabc", Value.class, long.class, long.class), a1 * 0x100L, 0x4L);
+          loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001dabc", Value.class, long.class, long.class), fileIndex * 0x100L, 0x4L);
         }
       }
     }
@@ -4792,7 +4797,7 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001f3d0(final long a0, final long a1) {
     FUN_8001e29c(8);
     loadedDrgnFiles_800bcf78.oru(0x80L);
-    final long iVar1 = a0 * 5 + 0x16b7;
+    final long iVar1 = 0x16b7 + a0 * 5;
     loadDrgnBinFile(0, iVar1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001dabc", Value.class, long.class, long.class), iVar1 * 0x100 | a1, 4);
   }
 
@@ -4859,7 +4864,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ffb0L)
-  public static long FUN_8001ffb0() {
+  public static long getLoadedDrgnFiles() {
     return loadedDrgnFiles_800bcf78.get();
   }
 }
