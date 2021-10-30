@@ -71,8 +71,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb0b0 = MEMORY.ref(4, 0x800bb0b0L);
 
-  public static final Value _800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
-  public static final Value _800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
+  public static final Value submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
+  public static final Value submapScene_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);

@@ -35,7 +35,7 @@ import static legend.game.Scus94491BpeSegment._8011e210;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.allocateLinkedList;
 import static legend.game.Scus94491BpeSegment.drawTim;
-import static legend.game.Scus94491BpeSegment.extendedMrg_800103d0;
+import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.isStackPointerModified_1f8003bc;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
@@ -642,7 +642,7 @@ public final class Scus94491BpeSegment_800e {
     //LAB_800e6af0
     DrawSync(0);
 
-    FUN_800e6b3c(bigStruct_800bda10, extendedMrg_800103d0, _8001051c.getAddress());
+    FUN_800e6b3c(bigStruct_800bda10, extendedTmd_800103d0, _8001051c.getAddress());
 
     bigStruct_800bda10.coord2Param_64.rotate.x.set((short)0);
     bigStruct_800bda10.coord2Param_64.rotate.y.set((short)0);

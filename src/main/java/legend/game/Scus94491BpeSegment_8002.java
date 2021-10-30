@@ -141,7 +141,7 @@ import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052ae0;
-import static legend.game.Scus94491BpeSegment_8005.newrootIndex_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
@@ -1852,7 +1852,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
-    newrootIndex_80052c30.setu(0x2a3L);
+    submapCut_80052c30.setu(0x2a3L);
     _80052c34.setu(0x4L);
     index_80052c38.set(0);
     _80052c3c.setu(-0x1L);

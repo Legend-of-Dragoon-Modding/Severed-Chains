@@ -288,7 +288,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value index_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
-  public static final Value _8004de58 = MEMORY.ref(4, 0x8004de58L);
+  public static final ArrayRef<Pointer<UnsignedIntRef>> scriptPtrs_8004de58 = MEMORY.ref(4, 0x8004de58L, ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 0x90, 4, Pointer.deferred(4, UnsignedIntRef::new)));
 
   /** This is the world's largest jump table */
   public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));

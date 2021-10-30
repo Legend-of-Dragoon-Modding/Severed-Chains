@@ -12,6 +12,7 @@ public class ScriptStruct implements MemoryRef {
   public final UnsignedIntRef index_00;
   public final Pointer<BiggerStruct<BigStruct>> biggerStruct_04;
   public final Pointer<UnsignedIntRef> ui_08;
+  /** Pointer to the current element in the packet (may be parent or child command) */
   public final Pointer<UnsignedIntRef> commandPtr_0c;
   public final UnsignedIntRef parentCallbackIndex_10;
   public final UnsignedIntRef childCount_14;

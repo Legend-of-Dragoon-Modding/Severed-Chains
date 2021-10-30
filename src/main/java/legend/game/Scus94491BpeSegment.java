@@ -109,7 +109,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd8;
-import static legend.game.Scus94491BpeSegment_8004._8004de58;
+import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004._8004e098;
 import static legend.game.Scus94491BpeSegment_8004._8004e29c;
 import static legend.game.Scus94491BpeSegment_8004._8004f65c;
@@ -144,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._80050068;
 import static legend.game.Scus94491BpeSegment_8005._800500e8;
 import static legend.game.Scus94491BpeSegment_8005._800500f8;
-import static legend.game.Scus94491BpeSegment_8005.newrootIndex_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
@@ -177,7 +177,7 @@ import static legend.game.Scus94491BpeSegment_800b._800baf02;
 import static legend.game.Scus94491BpeSegment_800b._800baf07;
 import static legend.game.Scus94491BpeSegment_800b._800bb0ab;
 import static legend.game.Scus94491BpeSegment_800b._800bb0ac;
-import static legend.game.Scus94491BpeSegment_800b._800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
@@ -339,7 +339,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010250 = MEMORY.ref(4, 0x80010250L);
 
-  public static final ExtendedTmd extendedMrg_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
+  public static final ExtendedTmd extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
 
   public static final Value _8001051c = MEMORY.ref(4, 0x8001051cL);
 
@@ -2410,6 +2410,7 @@ public final class Scus94491BpeSegment {
         ScriptStruct_800bc070.commandPtr_0c.set(biggerStruct.ui_18.deref());
         ScriptStruct_800bc070.ui_08.set(biggerStruct.ui_18.deref());
 
+        long ret;
         //LAB_80016018
         do {
           final long parentCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
@@ -2422,7 +2423,7 @@ public final class Scus94491BpeSegment {
 
           if(ScriptStruct_800bc070.childCount_14.get() != 0) {
             //LAB_80016050
-            for(int t2 = 0; t2 < ScriptStruct_800bc070.childCount_14.get(); t2++) {
+            for(int childIndex = 0; childIndex < ScriptStruct_800bc070.childCount_14.get(); childIndex++) {
               final long childCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
               final int operation = (int)(childCommand >>> 24);
               final int param0 = (int)(childCommand >>> 16 & 0xff);
@@ -2436,84 +2437,86 @@ public final class Scus94491BpeSegment {
 
               if(operation == 0) {
                 //LAB_80016574
-                ScriptStruct_800bc070.params_20.get(t2).set(ScriptStruct_800bc070.commandPtr_0c.deref()).decr();
+                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref()).decr();
               } else if(operation == 0x1L) {
                 //LAB_800161f4
-                ScriptStruct_800bc070.params_20.get(t2).set(ScriptStruct_800bc070.commandPtr_0c.deref());
+                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref());
                 ScriptStruct_800bc070.commandPtr_0c.incr();
               } else if(operation == 0x2L) {
                 //LAB_80016200
-                ScriptStruct_800bc070.params_20.get(t2).set(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2));
               } else if(operation == 0x3L) {
                 //LAB_800160cc
                 //LAB_8001620c
                 final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
                 final long a1_0 = biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get(param1).get();
-                ScriptStruct_800bc070.params_20.get(t2).set(biggerStructPtrArr_800bc1c0.get((int)a1_0).deref().ui_44.get(param0));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a1_0).deref().ui_44.get(param0));
               } else if(operation == 0x4L) {
                 //LAB_80016258
                 final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
                 final long a1_0 = param1 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-                ScriptStruct_800bc070.params_20.get(t2).set(biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get((int)a1_0));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get((int)a1_0));
               } else if(operation == 0x5L) {
                 //LAB_80016290
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset(param2 * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
               } else if(operation == 0x6L) {
                 //LAB_800162a4
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset((ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() + param2) * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() + param2)).deref());
               } else if(operation == 0x7) {
                 //LAB_800162d0
                 final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset(param2 * 0x4L).deref(4).offset(a0_0 * 0x4L).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
               } else if(operation == 0x8L) {
                 //LAB_800160e8
                 //LAB_800162f4
                 v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
                 final long a1_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset((param2 + v0) * 0x4L).deref(4).offset(a1_0 * 0x4L).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
               } else if(operation == 0x9L) {
                 //LAB_80016328
                 v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
               } else if(operation == 0xaL) {
                 //LAB_80016118
                 //LAB_80016334
                 v0 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get()) * 0x4L;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else if(operation == 0xbL) {
                 //LAB_80016360
                 v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
                 final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
               } else if(operation == 0xcL) {
                 //LAB_800163a0
                 ScriptStruct_800bc070.commandPtr_0c.incr();
                 v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else if(operation == 0xdL) {
                 //LAB_800163e8
-                ScriptStruct_800bc070.params_20.get(t2).set(biggerStructPtrArr_800bc1c0.get((int)ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get()).deref().ui_44.get(param1 + param0));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get()).deref().ui_44.get(param1 + param0));
               } else if(operation == 0xeL) {
                 //LAB_80016418
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset((param1 + param2) * 0x4L).deref(4).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
               } else if(operation == 0xfL) {
                 //LAB_8001642c
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset(param2 * 0x4L).deref(4).offset(param1 * 0x4L).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
               } else if(operation == 0x10L) {
                 //LAB_80016180
                 //LAB_8001643c
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset((param2 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get()) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
               } else if(operation == 0x11L) {
                 //LAB_80016468
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+//                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+                assert false;
               } else if(operation == 0x12L) {
                 //LAB_80016138
                 //LAB_8001648c
-                ScriptStruct_800bc070.params_20.get(t2).set(_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+//                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+                assert false;
               } else if(operation == 0x13L) {
                 //LAB_800164a4
                 v1 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)parentCommand + param0) / 4;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
               } else if(operation == 0x14L) {
                 //LAB_800164b4
                 v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)parentCommand * 0x4L;
@@ -2522,7 +2525,7 @@ public final class Scus94491BpeSegment {
                 v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
 
                 //LAB_800164d4
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
               } else if(operation == 0x15L) {
                 //LAB_800161a0
                 //LAB_800164e0
@@ -2530,20 +2533,20 @@ public final class Scus94491BpeSegment {
                 v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
 
                 //LAB_80016580
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else if(operation == 0x16L) {
                 //LAB_80016518
                 ScriptStruct_800bc070.commandPtr_0c.incr();
                 v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else if(operation == 0x17L) {
                 //LAB_800161d4
                 //LAB_8001654c
                 ScriptStruct_800bc070.commandPtr_0c.incr();
                 v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-                ScriptStruct_800bc070.params_20.get(t2).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else {
-                assert false : "Unknown category";
+                assert false : "Unknown op";
               }
 
               //LAB_80016584
@@ -2551,13 +2554,13 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80016598
-          v0 = _8004e098.get((int)ScriptStruct_800bc070.parentCallbackIndex_10.get()).deref().run(ScriptStruct_800bc070);
+          ret = _8004e098.get((int)ScriptStruct_800bc070.parentCallbackIndex_10.get()).deref().run(ScriptStruct_800bc070);
 
-          if(v0 == 0 || v0 == 0x1L) {
+          if(ret == 0 || ret == 0x1L) {
             //LAB_800165e8
             ScriptStruct_800bc070.ui_08.set(ScriptStruct_800bc070.commandPtr_0c.deref());
           }
-        } while(v0 == 0);
+        } while(ret == 0);
 
         //LAB_800165f4
         if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
@@ -3209,7 +3212,7 @@ public final class Scus94491BpeSegment {
           _800bc988.offset(i * 12).set(_8004f6a4.offset(_800bc981.offset(i * 12).get() * 4));
         }
 
-        if(_800bd780.get() == 0x1L || _800bb0f8.get() != 0x1bbL) {
+        if(_800bd780.get() == 0x1L || submapScene_800bb0f8.get() != 0x1bbL) {
           break;
         }
 
@@ -4244,9 +4247,9 @@ public final class Scus94491BpeSegment {
 
           //LAB_8001c680
           do {
-            if(_800bd808.get() != 0x39L || _8004fb04.offset(a2).deref(2).offset(v1).get() == newrootIndex_80052c30.get()) {
+            if(_800bd808.get() != 0x39L || _8004fb04.offset(a2).deref(2).offset(v1).get() == submapCut_80052c30.get()) {
               //LAB_8001c6ac
-              if(_800bad6c.get(0x1L) == 0 || (_8004fb04.offset(a2).deref(2).offset(v1).get() == newrootIndex_80052c30.get() && _800bad6c.offset(a3 / 0x20L * 0x4L).get(t1) != 0)) {
+              if(_800bad6c.get(0x1L) == 0 || (_8004fb04.offset(a2).deref(2).offset(v1).get() == submapCut_80052c30.get() && _800bad6c.offset(a3 / 0x20L * 0x4L).get(t1) != 0)) {
                 //LAB_8001c7c0
                 //LAB_8001c7cc
                 a1 = _8004fb02.offset(a2).getSigned();
@@ -4278,7 +4281,7 @@ public final class Scus94491BpeSegment {
 
           //LAB_8001c748
           do {
-            if(MEMORY.ref(2, v1).get() == newrootIndex_80052c30.get()) {
+            if(MEMORY.ref(2, v1).get() == submapCut_80052c30.get()) {
               //LAB_8001c7d8
               return FUN_8001c84c(s0, _8004fa9a.offset(a0).getSigned());
             }
@@ -4332,7 +4335,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001c874() {
     if(_800bd808.get() == 0x38L) {
       for(int i = 0; ; i += 0x8) {
-        if(_8004ff10.offset(i).get() == newrootIndex_80052c30.get()) {
+        if(_8004ff10.offset(i).get() == submapCut_80052c30.get()) {
           return _8004ff14.offset(i).get();
         }
       }
@@ -4351,7 +4354,7 @@ public final class Scus94491BpeSegment {
 
     final long s5 = a2;
     linkedListEntry_800bd76c.setu(address);
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && _800bb0f8.get() == 0x1bbL) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && submapScene_800bb0f8.get() == 0x1bbL) {
       //LAB_8001db1c
       a0 = linkedListEntry_800bd784.get();
       a1 = address.deref(4).offset(0x20L).get();

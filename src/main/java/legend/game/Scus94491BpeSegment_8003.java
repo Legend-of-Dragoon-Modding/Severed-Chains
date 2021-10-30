@@ -41,6 +41,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
@@ -6787,6 +6788,52 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003f8f0L)
   public static void setProjectionPlaneDistance(final int distance) {
     CPU.CTC2(distance, 0x1a);
+  }
+
+  /**
+   * <p>Perform coordinate and perspective transformation for 4 vertices.</p>
+   *
+   * <p>After transforming the four coordinate vectors v0, v1, v2, and v3 using a rotation matrix, the function
+   * performs perspective transformation, and returns four screen coordinates sxy0, sxy1, sxy2, and sxy3. It
+   * also returns an interpolation value for depth cueing to p corresponding to v3.</p>
+   *
+   * @param v0 Vector 0
+   * @param v1 Vector 1
+   * @param v2 Vector 2
+   * @param v3 Vector 3
+   * @param sxyz0 Screen coords 0 (out)
+   * @param sxyz1 Screen coords 1 (out)
+   * @param sxyz2 Screen coords 2 (out)
+   * @param sxyz3 Screen coords 3 (out)
+   * @param ir0 Interpolated value for depth cueing (out)
+   * @param flags Flags (out)
+   *
+   * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
+   */
+  @Method(0x8003f9c0L)
+  public static long RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, final UnsignedIntRef ir0, final UnsignedIntRef flags) {
+    CPU.MTC2(v0.getXY(), 0); // VXY0
+    CPU.MTC2(v0.getZ(),  1); // VZ0
+    CPU.MTC2(v1.getXY(), 2); // VXY1
+    CPU.MTC2(v1.getZ(),  3); // VZ1
+    CPU.MTC2(v2.getXY(), 4); // VXY2
+    CPU.MTC2(v2.getZ(),  5); // VZ2
+    CPU.COP2(0x28_0030L); // Perspective transformation triple
+    sxyz0.setXY(CPU.MFC2(12)); // SXY0
+    sxyz1.setXY(CPU.MFC2(13)); // SXY1
+    sxyz2.setXY(CPU.MFC2(14)); // SXY2
+    final long flags1 = CPU.CFC2(31); // Flags
+
+    CPU.MTC2(v3.getXY(), 0); // SXY0
+    CPU.MTC2(v3.getZ(),  1); // SZ0
+    CPU.COP2(0x18_0001L); // Perspective transformation single
+    sxyz3.setXY(CPU.MFC2(14)); // SXY2
+    ir0.set(CPU.MFC2(8)); // IR0
+    final long flags2 = CPU.CFC2(31); // Flags
+
+    flags.set(flags2 | flags1);
+
+    return CPU.MFC2(19) / 4; // SZ3
   }
 
   /**
