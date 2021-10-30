@@ -444,134 +444,134 @@ public final class Scus94491BpeSegment_8004 {
    * This is the world's largest jump table
    *
    * <ol start="0">
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166d0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166d8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166e0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001670c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptReturnOne}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptReturnTwo}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementIfPossible}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptCompare}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016744}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016774}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMove}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016790}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800167bc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMemCopy}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016854}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016868}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001688c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168d4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016900}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016920}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016944}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016968}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001698c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptShiftLeft}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptShiftRightArithmetic}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptAdd}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptSubtract}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800169b0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800169d4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800169f4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptIncrementBy1}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a14}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a34}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a5c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a84}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMultiply}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDivide}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ab0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016adc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b2c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b5c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b8c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016adc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016bbc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptSquareRoot}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c00}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c4c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c80}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016cb4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016cfc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016d38}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016d4c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016da0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptExecuteSubFunc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptJump}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptConditionalJump}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptConditionalJump0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016dec}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016e1c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016e50}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016f28}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ffc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800170f4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017138}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017160}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800171c0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017234}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800172c0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800172f4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800172fc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017304}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001730c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80015f64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));

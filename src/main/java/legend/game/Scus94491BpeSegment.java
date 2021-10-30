@@ -2391,7 +2391,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015f64L)
-  public static long FUN_80015f64(final ScriptStruct a0) {
+  public static long scriptNotImplemented(final ScriptStruct a0) {
+    assert false;
     return 0x2L;
   }
 
@@ -2582,32 +2583,37 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001664cL)
-  public static long FUN_8001664c(final ScriptStruct a0, final long a1, final long a2, final long a3) {
-    return switch((int)a3) {
-      case 0x0 -> (int)a1 <= (int)a2 ? 1 : 0;
-      case 0x1 -> (int)a1 < (int)a2 ? 1 : 0;
-      case 0x2 -> a1 == a2 ? 1 : 0;
-      case 0x3 -> a1 != a2 ? 1 : 0;
-      case 0x4 -> (int)a1 > (int)a2 ? 1 : 0;
-      case 0x5 -> (int)a1 >= (int)a2 ? 1 : 0;
-      case 0x6 -> a1 & a2;
-      case 0x7 -> (a1 & a2) == 0 ? 1 : 0;
+  public static long scriptCompare(final ScriptStruct a0, final long operandA, final long operandB, final long op) {
+    return switch((int)op) {
+      case 0x0 -> (int)operandA <= (int)operandB ? 1 : 0;
+      case 0x1 -> (int)operandA < (int)operandB ? 1 : 0;
+      case 0x2 -> operandA == operandB ? 1 : 0;
+      case 0x3 -> operandA != operandB ? 1 : 0;
+      case 0x4 -> (int)operandA > (int)operandB ? 1 : 0;
+      case 0x5 -> (int)operandA >= (int)operandB ? 1 : 0;
+      case 0x6 -> operandA & operandB;
+      case 0x7 -> (operandA & operandB) == 0 ? 1 : 0;
       default -> 0;
     };
   }
 
   @Method(0x800166d0L)
-  public static long FUN_800166d0(final ScriptStruct a0) {
+  public static long scriptReturnOne(final ScriptStruct a0) {
     return 0x1L;
   }
 
   @Method(0x800166d8L)
-  public static long FUN_800166d8(final ScriptStruct a0) {
+  public static long scriptReturnTwo(final ScriptStruct a0) {
     return 0x2L;
   }
 
+  /**
+   * Subtracts 1 from work array value 0 if nonzero
+   *
+   * @return 0 if value is already 0; returns 2 if value was decremented
+   */
   @Method(0x800166e0L)
-  public static long FUN_800166e0(final ScriptStruct a0) {
+  public static long scriptDecrementIfPossible(final ScriptStruct a0) {
     if(a0.params_20.get(0).deref().get() != 0) {
       a0.params_20.get(0).deref().sub(0x1L);
       return 0x2L;
@@ -2616,51 +2622,80 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /**
+   * <p>Compares work array values 0 and 2 based on an operand stored in the parent param</p>
+   *
+   * <p>
+   *   Operations:
+   *   <ol start="0">
+   *     <li>Less than or equal to</li>
+   *     <li>Less than</li>
+   *     <li>Equal</li>
+   *     <li>Inequal</li>
+   *     <li>Greater than</li>
+   *     <li>Greater than or equal to</li>
+   *     <li>And</li>
+   *     <li>Nand</li>
+   *   </ol>
+   * </p>
+   *
+   * @return 0 if comparison succeeds, otherwise return 2
+   */
   @Method(0x8001670cL)
-  public static long FUN_8001670c(final ScriptStruct a0) {
-    return FUN_8001664c(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 0x2L : 0;
+  public static long scriptCompare(final ScriptStruct a0) {
+    return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 0x2L : 0;
   }
 
-  @Method(0x80016774L) // Deref element 1 of work array and set value to deref of element 0
-  public static long FUN_80016774(final ScriptStruct a0) {
+  /**
+   * Set work array value 1 to value 0
+   *
+   * @return 0
+   */
+  @Method(0x80016774L)
+  public static long scriptMove(final ScriptStruct a0) {
     a0.params_20.get(1).deref().set(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Copy block of memory at work array parameter 1 to block of memory at work array parameter 2. Word count is at work array parameter 0.
+   *
+   * @return 0
+   */
   @Method(0x800167bcL)
-  public static long FUN_800167bc(final ScriptStruct a0) {
-    Pointer<UnsignedIntRef> a2 = a0.params_20.get(2);
-    Pointer<UnsignedIntRef> a1 = a0.params_20.get(1);
+  public static long scriptMemCopy(final ScriptStruct a0) {
+    Pointer<UnsignedIntRef> dest = a0.params_20.get(2);
+    Pointer<UnsignedIntRef> src = a0.params_20.get(1);
 
-    long a0_0 = (int)(a0.params_20.get(0).deref().get() << 2) >> 2;
+    long count = (int)(a0.params_20.get(0).deref().get() << 2) >> 2;
 
-    if(a2.getPointer() < a1.getPointer()) {
-      a0_0--;
+    if(dest.getPointer() < src.getPointer()) {
+      count--;
 
       //LAB_800167e8
-      while((int)a0_0 >= 0) {
-        a2.deref().set(a1.deref());
-        a1.incr();
-        a2.incr();
-        a0_0--;
+      while((int)count >= 0) {
+        dest.deref().set(src.deref());
+        src.incr();
+        dest.incr();
+        count--;
       }
 
       return 0;
     }
 
     //LAB_8001680c
-    if(a1.getPointer() < a2.getPointer()) {
-      a0_0--;
+    if(src.getPointer() < dest.getPointer()) {
+      count--;
 
-      a2.add(a0_0 * 0x4L);
-      a1.add(a0_0 * 0x4L);
+      dest.add(count * 0x4L);
+      src.add(count * 0x4L);
 
       //LAB_8001682c
-      while((int)a0_0 >= 0) {
-        a2.deref().set(a1.deref());
-        a1.decr();
-        a2.decr();
-        a0_0--;
+      while((int)count >= 0) {
+        dest.deref().set(src.deref());
+        src.decr();
+        dest.decr();
+        count--;
       }
     }
 
@@ -2668,74 +2703,148 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /**
+   * Shift work array value 1 left by value 0 bits
+   *
+   * @return 0
+   */
   @Method(0x80016920L)
-  public static long FUN_80016920(final ScriptStruct a0) {
+  public static long scriptShiftLeft(final ScriptStruct a0) {
     a0.params_20.get(1).deref().shl(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Shift work array value 1 right (arithmetic) by value 0 bits
+   *
+   * @return 0
+   */
   @Method(0x80016944L)
-  public static long FUN_80016944(final ScriptStruct a0) {
+  public static long scriptShiftRightArithmetic(final ScriptStruct a0) {
     a0.params_20.get(1).deref().set((int)a0.params_20.get(1).deref().get() >> a0.params_20.get(0).deref().get());
     return 0;
   }
 
+  /**
+   * Increment work array value 1 by value 0 (overflow allowed)
+   *
+   * @return 0
+   */
   @Method(0x80016968L)
-  public static long FUN_80016968(final ScriptStruct a0) {
+  public static long scriptAdd(final ScriptStruct a0) {
     a0.params_20.get(1).deref().addOverflow(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Decrement work array value 1 by value 0 (overflow allowed)
+   *
+   * @return 0
+   */
   @Method(0x8001698cL)
-  public static long FUN_8001698c(final ScriptStruct a0) {
+  public static long scriptSubtract(final ScriptStruct a0) {
     a0.params_20.get(1).deref().subOverflow(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Increment work array value 0 by 1
+   *
+   * @return 0
+   */
   @Method(0x800169d4L)
-  public static long FUN_800169d4(final ScriptStruct a0) {
+  public static long scriptIncrementBy1(final ScriptStruct a0) {
     a0.params_20.get(0).deref().incr();
     return 0;
   }
 
+  /**
+   * Decrement work array value 0 by 1
+   *
+   * @return 0
+   */
   @Method(0x800169f4L)
-  public static long FUN_800169f4(final ScriptStruct a0) {
+  public static long scriptDecrementBy1(final ScriptStruct a0) {
     a0.params_20.get(0).deref().decr();
     return 0;
   }
 
+  /**
+   * Multiply work array value 1 by value 0 (overflow allowed)
+   *
+   * @return 0
+   */
   @Method(0x80016a5cL)
-  public static long FUN_80016a5c(final ScriptStruct a0) {
+  public static long scriptMultiply(final ScriptStruct a0) {
     a0.params_20.get(1).deref().mulOverflow(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Divide work array value 1 by value 0
+   *
+   * @return 0
+   */
   @Method(0x80016a84L)
-  public static long FUN_80016a84(final ScriptStruct a0) {
+  public static long scriptDivide(final ScriptStruct a0) {
     a0.params_20.get(1).deref().div(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * Calculate square root of work array value 0 and store in value 1
+   *
+   * @return 0
+   */
   @Method(0x80016bbcL)
-  public static long FUN_80016bbc(final ScriptStruct a0) {
+  public static long scriptSquareRoot(final ScriptStruct a0) {
     a0.params_20.get(1).deref().set(SquareRoot0(a0.params_20.get(0).deref().get()));
     return 0;
   }
 
+  /**
+   * Executes the sub-function at {@link legend.game.Scus94491BpeSegment_8004#_8004e29c} denoted by the parent param
+   *
+   * @return The value that the sub-function returns
+   */
   @Method(0x80016cfcL)
-  public static long FUN_80016cfc(final ScriptStruct a0) {
+  public static long scriptExecuteSubFunc(final ScriptStruct a0) {
     return _8004e29c.get((int)a0.parentParam_18.get()).deref().run(a0);
   }
 
+  /**
+   * Jump to the value at work array element 0
+   *
+   * @return 0
+   */
   @Method(0x80016d38L)
-  public static long FUN_80016d38(final ScriptStruct a0) {
+  public static long scriptJump(final ScriptStruct a0) {
     a0.commandPtr_0c.set(a0.params_20.get(0).deref());
     return 0;
   }
 
+  /**
+   * <p>Compares value at work array element 0 to element 1 using operation denoted by parent param. If true, jumps to value at element 2.</p>
+   *
+   * <p>
+   *   Operations:
+   *   <ol start="0">
+   *     <li>Less than or equal to</li>
+   *     <li>Less than</li>
+   *     <li>Equal</li>
+   *     <li>Inequal</li>
+   *     <li>Greater than</li>
+   *     <li>Greater than or equal to</li>
+   *     <li>And</li>
+   *     <li>Nand</li>
+   *   </ol>
+   * </p>
+   *
+   * @return 0
+   */
   @Method(0x80016d4cL)
-  public static long FUN_80016d4c(final ScriptStruct a0) {
-    if(FUN_8001664c(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) != 0) {
+  public static long scriptConditionalJump(final ScriptStruct a0) {
+    if(scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(2).deref());
     }
 
@@ -2743,9 +2852,29 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
-  @Method(0x80016da0L) // Compare to 0 and jump - parent param is operand
-  public static long FUN_80016da0(final ScriptStruct a0) {
-    if(FUN_8001664c(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) != 0) {
+
+  /**
+   * <p>Compares constant 0 to work array element 0 using operation denoted by parent param. If true, jumps to value at element 1.</p>
+   *
+   * <p>
+   *   Operations:
+   *   <ol start="0">
+   *     <li>Less than or equal to</li>
+   *     <li>Less than</li>
+   *     <li>Equal</li>
+   *     <li>Inequal</li>
+   *     <li>Greater than</li>
+   *     <li>Greater than or equal to</li>
+   *     <li>And</li>
+   *     <li>Nand</li>
+   *   </ol>
+   * </p>
+   *
+   * @return 0
+   */
+  @Method(0x80016da0L)
+  public static long scriptConditionalJump0(final ScriptStruct a0) {
+    if(scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(1).deref());
     }
 
