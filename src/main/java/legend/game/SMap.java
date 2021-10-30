@@ -43,6 +43,7 @@ import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
+import legend.game.types.ScriptFile;
 import legend.game.types.ScriptStruct;
 import legend.game.types.SmallerStruct;
 import legend.game.types.SomethingStruct;
@@ -72,7 +73,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80015a68;
 import static legend.game.Scus94491BpeSegment.FUN_80015ab4;
 import static legend.game.Scus94491BpeSegment.FUN_80015b00;
 import static legend.game.Scus94491BpeSegment.FUN_80015b4c;
-import static legend.game.Scus94491BpeSegment.FUN_80015b98;
+import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -2531,7 +2532,7 @@ public final class SMap {
 
         final long biggerStructIndex = allocateBiggerStruct(0, 0, false, 0, 0);
         _800c6740.setu(biggerStructIndex);
-        FUN_80015b98(biggerStructIndex, mrg1Addr_800c68d8.deref().getFile(0));
+        loadScriptFile(biggerStructIndex, mrg1Addr_800c68d8.deref().getFile(0, ScriptFile::new));
 
         //LAB_800e1a38
         for(int i = 0; i < _800c6730.get(); i++) {
@@ -2576,7 +2577,7 @@ public final class SMap {
           FUN_80015a68(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
           FUN_80015ab4(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
           FUN_80015b00(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, BiggerStruct.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
-          FUN_80015b98(index2, mrg1Addr_800c68d8.deref().getFile(i + 1));
+          loadScriptFile(index2, mrg1Addr_800c68d8.deref().getFile(i + 1, ScriptFile::new));
 
           final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)index2).deref().innerStruct_00.derefAs(BigStruct.class);
           struct.ub_9d.set((int)_800c6a50.offset(1, i * 0x4L).get());

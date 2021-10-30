@@ -445,6 +445,7 @@ public final class Scus94491BpeSegment_8004 {
    *
    * <ol start="0">
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166d0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166d8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800166e0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001670c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016744}</li>

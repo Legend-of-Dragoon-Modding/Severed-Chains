@@ -26,6 +26,7 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
+import legend.game.types.ScriptFile;
 import legend.game.types.ScriptStruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2370,21 +2371,21 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b98L)
-  public static void FUN_80015b98(final long index, final long addr) {
-    FUN_80015bb8(index, addr, 0);
+  public static void loadScriptFile(final long index, @Nullable final ScriptFile script) {
+    loadScriptFile(index, script, 0);
   }
 
   @Method(0x80015bb8L)
-  public static void FUN_80015bb8(final long index, final long addr, final long a2) {
+  public static void loadScriptFile(final long index, @Nullable final ScriptFile script, final long offsetIndex) {
     final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
 
-    if(addr != 0) {
-      struct.ui_14.set(addr);
-      struct.ui_18.set(MEMORY.ref(4, addr).offset(MEMORY.ref(4, addr).offset(a2 * 0x4L)).cast(UnsignedIntRef::new));
+    if(script != null) {
+      struct.scriptPtr_14.set(script);
+      struct.scriptCommandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
     } else {
-      struct.ui_14.set(0);
-      struct.ui_18.clear();
+      struct.scriptPtr_14.clear();
+      struct.scriptCommandPtr_18.clear();
       struct.ui_60.or(0x0002_0000L);
     }
   }
@@ -2412,8 +2413,8 @@ public final class Scus94491BpeSegment {
       if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress() && (biggerStruct.ui_60.get() & 0x12_0000L) == 0) {
         ScriptStruct_800bc070.index_00.set(index);
         ScriptStruct_800bc070.biggerStruct_04.set(biggerStruct);
-        ScriptStruct_800bc070.commandPtr_0c.set(biggerStruct.ui_18.deref());
-        ScriptStruct_800bc070.ui_08.set(biggerStruct.ui_18.deref());
+        ScriptStruct_800bc070.commandPtr_0c.set(biggerStruct.scriptCommandPtr_18.deref());
+        ScriptStruct_800bc070.ui_08.set(biggerStruct.scriptCommandPtr_18.deref());
 
         long ret;
         //LAB_80016018
@@ -2488,9 +2489,10 @@ public final class Scus94491BpeSegment {
                 ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
               } else if(operation == 0xbL) {
                 //LAB_80016360
-                v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
-                final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
+//                v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
+//                final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
+//                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
+                assert false;
               } else if(operation == 0xcL) {
                 //LAB_800163a0
                 ScriptStruct_800bc070.commandPtr_0c.incr();
@@ -2569,7 +2571,7 @@ public final class Scus94491BpeSegment {
 
         //LAB_800165f4
         if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
-          biggerStruct.ui_18.set(ScriptStruct_800bc070.ui_08.deref());
+          biggerStruct.scriptCommandPtr_18.set(ScriptStruct_800bc070.ui_08.deref());
         }
       }
 
@@ -2599,6 +2601,11 @@ public final class Scus94491BpeSegment {
     return 0x1L;
   }
 
+  @Method(0x800166d8L)
+  public static long FUN_800166d8(final ScriptStruct a0) {
+    return 0x2L;
+  }
+
   @Method(0x800166e0L)
   public static long FUN_800166e0(final ScriptStruct a0) {
     if(a0.params_20.get(0).deref().get() != 0) {
@@ -2614,7 +2621,7 @@ public final class Scus94491BpeSegment {
     return FUN_8001664c(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 0x2L : 0;
   }
 
-  @Method(0x80016774L)
+  @Method(0x80016774L) // Deref element 1 of work array and set value to deref of element 0
   public static long FUN_80016774(final ScriptStruct a0) {
     a0.params_20.get(1).deref().set(a0.params_20.get(0).deref());
     return 0;
