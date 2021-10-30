@@ -30,16 +30,7 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
   public final Pointer<ScriptFile> scriptPtr_14;
   /** Pointer to the current script command */
   public final Pointer<UnsignedIntRef> scriptCommandPtr_18;
-  public final Pointer<UnsignedIntRef> ui_1c;
-  public final Pointer<UnsignedIntRef> ui_20;
-  public final Pointer<UnsignedIntRef> ui_24;
-  public final Pointer<UnsignedIntRef> ui_28;
-  public final Pointer<UnsignedIntRef> ui_2c;
-  public final Pointer<UnsignedIntRef> ui_30;
-  public final Pointer<UnsignedIntRef> ui_34;
-  public final Pointer<UnsignedIntRef> ui_38;
-  public final Pointer<UnsignedIntRef> ui_3c;
-  public final Pointer<UnsignedIntRef> ui_40;
+  public final ArrayRef<Pointer<UnsignedIntRef>> commandStack_1c;
   public final ArrayRef<UnsignedIntRef> ui_44;
   /**
    * <p>Bit set - which of the pointers at the start of the struct are set</p>
@@ -63,16 +54,7 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
     this.callback_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, TriFunctionRef::new));
     this.scriptPtr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, ScriptFile::new));
     this.scriptCommandPtr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_1c = ref.offset(4, 0x1cL).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_20 = ref.offset(4, 0x20L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_28 = ref.offset(4, 0x28L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_2c = ref.offset(4, 0x2cL).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_34 = ref.offset(4, 0x34L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_38 = ref.offset(4, 0x38L).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(4, UnsignedIntRef::new));
-    this.ui_40 = ref.offset(4, 0x40L).cast(Pointer.deferred(4, UnsignedIntRef::new));
+    this.commandStack_1c = ref.offset(4, 0x1cL).cast(ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 10, 4, Pointer.deferred(4, UnsignedIntRef::new)));
     this.ui_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new)); // Dunno how long this should be
     this.ui_60 = ref.offset(4, 0x60L).cast(UnsignedIntRef::new);
 

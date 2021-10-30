@@ -2269,16 +2269,10 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800159c0
-    biggerStruct.ui_1c.clear();
-    biggerStruct.ui_20.clear();
-    biggerStruct.ui_24.clear();
-    biggerStruct.ui_28.clear();
-    biggerStruct.ui_2c.clear();
-    biggerStruct.ui_30.clear();
-    biggerStruct.ui_34.clear();
-    biggerStruct.ui_38.clear();
-    biggerStruct.ui_3c.clear();
-    biggerStruct.ui_40.clear();
+    for(int i = 0; i < biggerStruct.commandStack_1c.length(); i++) {
+      biggerStruct.commandStack_1c.get(i).clear();
+    }
+
     biggerStruct.ui_44.get(0).set(index);
     biggerStruct.ui_44.get(1).set(0xffff_ffffL);
     biggerStruct.ui_44.get(2).set(0xffff_ffffL);
@@ -2882,53 +2876,54 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /**
+   * Pushes the current command to the command stack and jumps to the value at work array element 0.
+   *
+   * @return 0
+   */
   @Method(0x80016e50L)
-  public static long FUN_80016e50(final ScriptStruct a0) {
-    final BiggerStruct<?> biggerStruct = a0.biggerStruct_04.deref();
+  public static long scriptJumpAndLink(final ScriptStruct a0) {
+    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
 
-    biggerStruct.ui_40.setNullable(biggerStruct.ui_3c.derefNullable());
-    biggerStruct.ui_3c.setNullable(biggerStruct.ui_38.derefNullable());
-    biggerStruct.ui_38.setNullable(biggerStruct.ui_34.derefNullable());
-    biggerStruct.ui_34.setNullable(biggerStruct.ui_30.derefNullable());
-    biggerStruct.ui_30.setNullable(biggerStruct.ui_2c.derefNullable());
-    biggerStruct.ui_2c.setNullable(biggerStruct.ui_28.derefNullable());
-    biggerStruct.ui_28.setNullable(biggerStruct.ui_24.derefNullable());
-    biggerStruct.ui_24.setNullable(biggerStruct.ui_20.derefNullable());
-    biggerStruct.ui_20.setNullable(biggerStruct.ui_1c.derefNullable());
+    for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
+      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
+    }
 
-    biggerStruct.ui_1c.set(a0.commandPtr_0c.deref());
+    struct.commandStack_1c.get(0).set(a0.commandPtr_0c.deref());
     a0.commandPtr_0c.set(a0.params_20.get(0).deref());
+
     return 0;
   }
 
+  /**
+   * Return from a JumpAndLink
+   *
+   * @return 0
+   */
   @Method(0x80016f28L)
-  public static long FUN_80016f28(final ScriptStruct a0) {
-    a0.commandPtr_0c.set(a0.biggerStruct_04.deref().ui_1c.deref());
-    a0.biggerStruct_04.deref().ui_1c.setNullable(a0.biggerStruct_04.deref().ui_20.derefNullable());
-    a0.biggerStruct_04.deref().ui_20.setNullable(a0.biggerStruct_04.deref().ui_24.derefNullable());
-    a0.biggerStruct_04.deref().ui_24.setNullable(a0.biggerStruct_04.deref().ui_28.derefNullable());
-    a0.biggerStruct_04.deref().ui_28.setNullable(a0.biggerStruct_04.deref().ui_2c.derefNullable());
-    a0.biggerStruct_04.deref().ui_2c.setNullable(a0.biggerStruct_04.deref().ui_30.derefNullable());
-    a0.biggerStruct_04.deref().ui_30.setNullable(a0.biggerStruct_04.deref().ui_34.derefNullable());
-    a0.biggerStruct_04.deref().ui_34.setNullable(a0.biggerStruct_04.deref().ui_38.derefNullable());
-    a0.biggerStruct_04.deref().ui_38.setNullable(a0.biggerStruct_04.deref().ui_3c.derefNullable());
-    a0.biggerStruct_04.deref().ui_3c.setNullable(a0.biggerStruct_04.deref().ui_40.derefNullable());
-    a0.biggerStruct_04.deref().ui_40.clear();
+  public static long scriptJumpReturn(final ScriptStruct a0) {
+    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
+
+    a0.commandPtr_0c.set(struct.commandStack_1c.get(0).deref());
+
+    for(int i = 0; i < struct.commandStack_1c.length() - 1; i++) {
+      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i + 1).derefNullable());
+    }
+
+    struct.commandStack_1c.get(struct.commandStack_1c.length() - 1).clear();
+
     return 0;
   }
 
   @Method(0x80016ffcL)
   public static long FUN_80016ffc(final ScriptStruct a0) {
-    a0.biggerStruct_04.deref().ui_40.setNullable(a0.biggerStruct_04.deref().ui_3c.derefNullable());
-    a0.biggerStruct_04.deref().ui_3c.setNullable(a0.biggerStruct_04.deref().ui_38.derefNullable());
-    a0.biggerStruct_04.deref().ui_38.setNullable(a0.biggerStruct_04.deref().ui_34.derefNullable());
-    a0.biggerStruct_04.deref().ui_34.setNullable(a0.biggerStruct_04.deref().ui_30.derefNullable());
-    a0.biggerStruct_04.deref().ui_30.setNullable(a0.biggerStruct_04.deref().ui_2c.derefNullable());
-    a0.biggerStruct_04.deref().ui_2c.setNullable(a0.biggerStruct_04.deref().ui_28.derefNullable());
-    a0.biggerStruct_04.deref().ui_28.setNullable(a0.biggerStruct_04.deref().ui_24.derefNullable());
-    a0.biggerStruct_04.deref().ui_24.setNullable(a0.biggerStruct_04.deref().ui_20.derefNullable());
-    a0.biggerStruct_04.deref().ui_20.setNullable(a0.biggerStruct_04.deref().ui_1c.derefNullable());
-    a0.biggerStruct_04.deref().ui_1c.set(a0.commandPtr_0c.deref());
+    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
+
+    for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
+      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
+    }
+
+    struct.commandStack_1c.get(0).set(a0.commandPtr_0c.deref());
 
     final long v1 = a0.params_20.get(1).getPointer();
     a0.commandPtr_0c.set(MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20.get(0).deref().get() * 0x4L).get() * 0x4L, UnsignedIntRef::new));

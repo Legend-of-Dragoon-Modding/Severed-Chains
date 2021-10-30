@@ -516,8 +516,8 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016e50}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016f28}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptJumpAndLink}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptJumpReturn}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ffc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
