@@ -2389,6 +2389,11 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  @Method(0x80015f64L)
+  public static long FUN_80015f64(final ScriptStruct a0) {
+    return 0x2L;
+  }
+
   @Method(0x80015f6cL)
   public static void executeScriptFrame() {
     long v0;
