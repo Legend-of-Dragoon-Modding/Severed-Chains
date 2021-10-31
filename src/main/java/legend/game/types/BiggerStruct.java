@@ -25,6 +25,7 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
   public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_04;
   public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_08;
   public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_0c;
+  /** If the callback returns non-zero, it's set to null */
   public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_10;
   /** Pointer to the script file */
   public final Pointer<ScriptFile> scriptPtr_14;
@@ -36,7 +37,18 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
    * <p>Bit set - which of the pointers at the start of the struct are set</p>
    *
    * <ul>
-   *   <li></li>
+   *   <li>Bit 17 - {@link BiggerStruct#scriptPtr_14} is unset</li>
+   *   <li>Bit 18 - {@link BiggerStruct#callback_04} is unset</li>
+   *   <li>Bit 19 - {@link BiggerStruct#callback_08} is unset</li>
+   *   <li>Bit 26 - {@link BiggerStruct#callback_10} is set (note: not sure why this is backwards from the others)</li>
+   *   <li>Bit 27 - {@link BiggerStruct#callback_0c} is unset</li>
+   * </ul>
+   *
+   * <ul>
+   *   <li>If bits 17 and 20 are not set, the script will be executed</li>
+   *   <li>If bits 18 and 20 are not set, {@link BiggerStruct#callback_04} will be executed</li>
+   *   <li>If bits 19 and 20 are not set, {@link BiggerStruct#callback_08} will be executed</li>
+   *   <li>If bit 26 is set and bit 20 is not set, {@link BiggerStruct#callback_10} will be executed</li>
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array

@@ -576,7 +576,121 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
-  /** Actually this is */
+  /**
+   * <p>Actually this is</p>
+   *
+   * <p>All methods that are skipped are {@link Scus94491BpeSegment#FUN_8001734c}</p>
+   *
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment#FUN_80017354}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017374}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag1}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag1}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017440}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag2}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001751c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017564}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017584}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800175b4}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017648}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80017688}</li>
+   *   <li>{@link SMap#FUN_800d9bc0}</li>
+   *   <li>{@link SMap#FUN_800d9bf4}</li>
+   *   <li>{@link SMap#FUN_800d9c1c}</li>
+   *   <li>{@link SMap#FUN_800d9ce4}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800176c0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800176ec}</li>
+   *   <li>{@link SMap#FUN_800d9d20}</li>
+   *   <li>{@link SMap#FUN_800d9d60}</li>
+   * </ol>
+   * ...
+   * <ol start="128">
+   *   <li>800cb3fc</li>
+   *   <li>800cb468</li>
+   *   <li>800cb4c8</li>
+   *   <li>800cc7d8</li>
+   *   <li>800cb534</li>
+   *   <li>800cc948</li>
+   *   <li>800cb578</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>800cb5d8</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>800cb618</li>
+   *   <li>800cb674</li>
+   *   <li>800cb6bc</li>
+   *   <li>800cb764</li>
+   *   <li>800cb76c</li>
+   *   <li>800cb9b0</li>
+   *   <li>800cb9f0</li>
+   *   <li>800cba28</li>
+   *   <li>800cba60</li>
+   *   <li>800cbabc</li>
+   *   <li>800cbb00</li>
+   *   <li>800cbc14</li>
+   *   <li>800cbde0</li>
+   *   <li>800cbef8</li>
+   *   <li>800cc0c8</li>
+   *   <li>800cc1cc</li>
+   *   <li>800cc364</li>
+   *   <li>800cc46c</li>
+   *   <li>800cc608</li>
+   *   <li>800cc698</li>
+   *   <li>800cc784</li>
+   *   <li>800cc8f4</li>
+   *   <li>800cca34</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>800ccb3c</li>
+   *   <li>800ccb70</li>
+   *   <li>800ccba4</li>
+   *   <li>800cccf4</li>
+   *   <li>800ccd34</li>
+   *   <li>800cce04</li>
+   *   <li>800ccf0c</li>
+   *   <li>800ccec8</li>
+   *   <li>800ccef8</li>
+   *   <li>800ccf2c</li>
+   *   <li>800cd0ec</li>
+   *   <li>800cd078</li>
+   *   <li>800cd160</li>
+   *   <li>800cce70</li>
+   *   <li>800ccda0</li>
+   * </ol>
+   * ...
+   * <ol start="320">
+   *   <li>800cc9d8</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>800cb84c</li>
+   *   <li>800cb95c</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li value="352">800cd3b4</li>
+   *   <li>800ee210</li>
+   *   <li>800cd468</li>
+   *   <li>800cd4b0</li>
+   *   <li>800cd4f0</li>
+   *   <li>800cd52c</li>
+   *   <li>800cd570</li>
+   *   <li>800cda78</li>
+   *   <li>800cd5b4</li>
+   *   <li>800cd740</li>
+   *   <li>800cd7a8</li>
+   *   <li>800cd810</li>
+   *   <li>800cd8a4</li>
+   *   <li>800cd9fc</li>
+   *   <li>800cda3c</li>
+   *   <li>800cdb18</li>
+   *   <li>800cdb44</li>
+   *   <li>800cd910</li>
+   *   <li>800cd958</li>
+   *   <li>800cd998</li>
+   *   <li>800cdb74</li>
+   * </ol>
+   * ...
+   * <ol start="1023">
+   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
 
   public static final Value _8004e31c = MEMORY.ref(4, 0x8004e31cL);

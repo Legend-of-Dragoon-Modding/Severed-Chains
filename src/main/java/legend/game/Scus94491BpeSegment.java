@@ -110,7 +110,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd8;
-import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004._8004e098;
 import static legend.game.Scus94491BpeSegment_8004._8004e29c;
 import static legend.game.Scus94491BpeSegment_8004._8004f65c;
@@ -137,6 +136,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.loadingSstrmOvl_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.renderFlags_8004dd36;
+import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
@@ -145,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._80050068;
 import static legend.game.Scus94491BpeSegment_8005._800500e8;
 import static legend.game.Scus94491BpeSegment_8005._800500f8;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
@@ -157,6 +156,7 @@ import static legend.game.Scus94491BpeSegment_8005.linkedListHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.linkedListTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007._8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a0;
@@ -166,19 +166,17 @@ import static legend.game.Scus94491BpeSegment_8007._8007a3c0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_8009._8009a7c0;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
+import static legend.game.Scus94491BpeSegment_800b.DRGN0_mrg_62802_800bcf84;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b.ScriptStruct_800bc070;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bac68;
-import static legend.game.Scus94491BpeSegment_800b._800bac84;
-import static legend.game.Scus94491BpeSegment_800b._800bad04;
 import static legend.game.Scus94491BpeSegment_800b._800bad64;
 import static legend.game.Scus94491BpeSegment_800b._800bad6c;
 import static legend.game.Scus94491BpeSegment_800b._800baf02;
 import static legend.game.Scus94491BpeSegment_800b._800baf07;
 import static legend.game.Scus94491BpeSegment_800b._800bb0ab;
 import static legend.game.Scus94491BpeSegment_800b._800bb0ac;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
@@ -198,7 +196,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bb164;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bc300;
@@ -215,7 +212,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bca68;
 import static legend.game.Scus94491BpeSegment_800b._800bca6c;
 import static legend.game.Scus94491BpeSegment_800b._800bca78;
 import static legend.game.Scus94491BpeSegment_800b._800bcf64;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b._800bcf80;
 import static legend.game.Scus94491BpeSegment_800b._800bcf88;
 import static legend.game.Scus94491BpeSegment_800b._800bcf90;
@@ -286,18 +282,22 @@ import static legend.game.Scus94491BpeSegment_800b.biggerStruct_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.currentlyLoadingFileInfo_800bb468;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb464;
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb48c;
 import static legend.game.Scus94491BpeSegment_800b.fileTransferDest_800bb488;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bc984;
-import static legend.game.Scus94491BpeSegment_800b.DRGN0_mrg_62802_800bcf84;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bd76c;
-import static legend.game.Scus94491BpeSegment_800b.soundbank_800bd778;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bd784;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bd788;
+import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.numberOfTransfers_800bb490;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.scriptFlags1_800bad04;
+import static legend.game.Scus94491BpeSegment_800b.scriptFlags2_800bac84;
+import static legend.game.Scus94491BpeSegment_800b.soundbank_800bd778;
+import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.transferIndex_800bb494;
@@ -1331,8 +1331,6 @@ public final class Scus94491BpeSegment {
     _800bb148.setu(a1);
     _800bb144.setu(VSync(-1));
 
-    _800bb164.setu(_8004dd48.offset(a0 * 2));
-
     if(_8004dd48.offset(a0 * 2).get() == 0x2L) {
       _800bb14c.setu(0);
       _800bb150.setu(0);
@@ -1341,6 +1339,8 @@ public final class Scus94491BpeSegment {
       _800bb15c.setu(0);
       _800bb160.setu(0);
     }
+
+    _800bb164.setu(_8004dd48.offset(a0 * 2));
 
     //LAB_80013768
   }
@@ -2309,7 +2309,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015a68L)
-  public static void FUN_80015a68(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
+  public static void setCallback04(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
     final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
@@ -2323,7 +2323,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015ab4L)
-  public static void FUN_80015ab4(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
+  public static void setCallback08(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
     final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
@@ -2337,7 +2337,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b00L)
-  public static void FUN_80015b00(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
+  public static void setCallback0c(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
     final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
@@ -2351,7 +2351,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b4cL)
-  public static void FUN_80015b4c(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
+  public static void setCallback10(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
     final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
@@ -2930,42 +2930,71 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x8001734cL)
+  public static long FUN_8001734c(final ScriptStruct a0) {
+    return 0x2L;
+  }
+
   @Method(0x80017354L)
   public static long FUN_80017354(final ScriptStruct a0) {
     _800bb0ab.setu(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
     return 0;
   }
 
+  /**
+   * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#scriptFlags1_800bad04}.</p>
+   * <p>If work array element 1 is non-zero, the bit is set. If it's 0, the bit is cleared.</p>
+   * <p>The lower 5 bits of work array element 0 is what bit to set (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
+   *
+   * @return 0
+   */
   @Method(0x80017390L)
-  public static long FUN_80017390(final ScriptStruct a0) {
-    final long a1 = a0.params_20.get(0).deref().get() & 0x1fL;
-    final long a2 = a0.params_20.get(0).deref().get() >>> 5;
+  public static long scriptSetGlobalFlag1(final ScriptStruct a0) {
+    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
+    final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
     if(a0.params_20.get(1).deref().get() != 0) {
-      _800bad04.offset(a2 * 0x4L).oru(0x1L << a1);
+      scriptFlags1_800bad04.get(index).or(0x1L << shift);
     } else {
       //LAB_800173dc
-      _800bad04.offset(a2 * 0x4L).and(~(0x1L << a1));
+      scriptFlags1_800bad04.get(index).and(~(0x1L << shift));
     }
 
     //LAB_800173f4
     return 0;
   }
 
+  /**
+   * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#scriptFlags1_800bad04}.</p>
+   * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
+   * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
+   *
+   * @return 0
+   */
   @Method(0x800173fcL)
-  public static long FUN_800173fc(final ScriptStruct a0) {
-    final long a2 = a0.params_20.get(0).deref().get() & 0x1fL;
-    final long v0 = a0.params_20.get(0).deref().get() >>> 5;
+  public static long scriptReadGlobalFlag1(final ScriptStruct a0) {
+    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
+    final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
-    a0.params_20.get(1).deref().set(_800bad04.offset(v0 * 0x4L).get(0x1L << a2) != 0 ? 1 : 0);
+    a0.params_20.get(1).deref().set((scriptFlags1_800bad04.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
     return 0;
   }
 
+  /**
+   * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#scriptFlags2_800bac84}.</p>
+   * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
+   * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
+   *
+   * @return 0
+   */
   @Method(0x800174d8L)
-  public static long FUN_800174d8(final ScriptStruct a0) {
-    final long v0 = _800bac84.offset((a0.params_20.get(0).deref().get() >>> 5) * 0x4L).get(0x1L << (a0.params_20.get(0).deref().get() & 0x1fL)) != 0 ? 1 : 0;
-    a0.params_20.get(1).deref().set(v0);
+  public static long scriptReadGlobalFlag2(final ScriptStruct a0) {
+    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
+    final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
+
+    a0.params_20.get(1).deref().set((scriptFlags2_800bac84.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+
     return 0;
   }
 
@@ -2977,13 +3006,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800175b4L)
   public static long FUN_800175b4(final ScriptStruct a0) {
-    final long a2 = a0.params_20.get(1).deref().get();
-    final long a1 = 0x1L << (a2 & 0x1fL);
+    final long shift = a0.params_20.get(1).deref().get() & 0x1fL;
+    final long index = a0.params_20.get(1).deref().get() >>> 5;
+
     if(a0.params_20.get(2).deref().get() != 0) {
-      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset((a2 >>> 5) * 0x4L).oru(a1);
+      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).oru(0x1L << shift);
     } else {
       //LAB_800175fc
-      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset((a2 >>> 5) * 0x4L).and(~a1);
+      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).and(~(0x1L << shift));
     }
 
     //LAB_80017614
@@ -3020,7 +3050,7 @@ public final class Scus94491BpeSegment {
       if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
         if((biggerStruct.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
           if(biggerStruct.callback_10.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref()) != 0) {
-            FUN_80015b4c(i, null);
+            setCallback10(i, null);
           }
         }
       }
@@ -3348,14 +3378,13 @@ public final class Scus94491BpeSegment {
           _800bc988.offset(i * 12).set(_8004f6a4.offset(_800bc981.offset(i * 12).get() * 4));
         }
 
-        if(_800bd780.get() == 0x1L || submapScene_800bb0f8.get() != 0x1bbL) {
-          break;
+        if(_800bd780.get() != 0x1L && submapScene_800bb0f8.get() == 0x1bbL) {
+          //LAB_80019978
+          linkedListEntry_800bd784.setu(addToLinkedListTail(0x650L));
+          linkedListEntry_800bd788.setu(addToLinkedListTail(0x5c30L));
+          _800bd780.setu(0x1L);
         }
 
-        //LAB_80019978
-        linkedListEntry_800bd784.setu(addToLinkedListTail(0x650L));
-        linkedListEntry_800bd788.setu(addToLinkedListTail(0x5c30L));
-        _800bd780.setu(0x1L);
         break;
 
       case 0xf:
