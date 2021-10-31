@@ -303,12 +303,12 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb104}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800babc0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb168}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb160}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb15c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb154}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb158}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb150}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb14c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#red0_20}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#green0_1c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#blue0_14}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#red1_18}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#green1_10}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#blue1_0c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac50}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac60}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac64}</li>
@@ -579,7 +579,7 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <p>Actually this is</p>
    *
-   * <p>All methods that are skipped are {@link Scus94491BpeSegment#FUN_8001734c}</p>
+   * <p>All methods that are skipped are {@link Scus94491BpeSegment#scriptSubNotImplemented}</p>
    *
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#FUN_80017354}</li>
@@ -588,7 +588,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag1}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017440}</li>
    *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag2}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001751c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptStartEffect}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017564}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017584}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800175b4}</li>
@@ -612,9 +612,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>800cb534</li>
    *   <li>800cc948</li>
    *   <li>800cb578</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    *   <li>800cb5d8</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    *   <li>800cb618</li>
    *   <li>800cb674</li>
    *   <li>800cb6bc</li>
@@ -638,9 +638,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>800cc784</li>
    *   <li>800cc8f4</li>
    *   <li>800cca34</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    *   <li>800ccb3c</li>
    *   <li>800ccb70</li>
    *   <li>800ccba4</li>
@@ -660,10 +660,10 @@ public final class Scus94491BpeSegment_8004 {
    * ...
    * <ol start="320">
    *   <li>800cc9d8</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    *   <li>800cb84c</li>
    *   <li>800cb95c</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    *   <li value="352">800cd3b4</li>
    *   <li>800ee210</li>
    *   <li>800cd468</li>
@@ -688,7 +688,7 @@ public final class Scus94491BpeSegment_8004 {
    * </ol>
    * ...
    * <ol start="1023">
-   *   <li>{@link Scus94491BpeSegment#FUN_8001734c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));

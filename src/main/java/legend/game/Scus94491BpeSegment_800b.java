@@ -29,6 +29,7 @@ import legend.game.types.BiggerStruct;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
 import legend.game.types.MrgFile;
+import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptStruct;
 
 import java.util.function.Function;
@@ -87,17 +88,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb134 = MEMORY.ref(2, 0x800bb134L);
 
-  public static final Value _800bb140 = MEMORY.ref(4, 0x800bb140L);
-  public static final Value _800bb144 = MEMORY.ref(4, 0x800bb144L);
-  public static final Value _800bb148 = MEMORY.ref(4, 0x800bb148L);
-  public static final Value _800bb14c = MEMORY.ref(4, 0x800bb14cL);
-  public static final Value _800bb150 = MEMORY.ref(4, 0x800bb150L);
-  public static final Value _800bb154 = MEMORY.ref(4, 0x800bb154L);
-  public static final Value _800bb158 = MEMORY.ref(4, 0x800bb158L);
-  public static final Value _800bb15c = MEMORY.ref(4, 0x800bb15cL);
-  public static final Value _800bb160 = MEMORY.ref(4, 0x800bb160L);
-  public static final Value _800bb164 = MEMORY.ref(4, 0x800bb164L);
-  public static final Value _800bb168 = MEMORY.ref(4, 0x800bb168L);
+  public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
+  public static final Value _800bb168 = MEMORY.ref(4, 0x800bb168L); //TODO is this part of the previous struct?
 
   public static final ArrayRef<UnsignedIntRef> array_800bb198 = MEMORY.ref(4, 0x800bb198L, ArrayRef.of(UnsignedIntRef.class, 36, 4, UnsignedIntRef::new));
 

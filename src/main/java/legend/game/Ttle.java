@@ -32,7 +32,7 @@ import static legend.game.SItem._80111cfc;
 import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_800136dc;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.FUN_80019a60;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
@@ -491,7 +491,7 @@ public final class Ttle {
   @Method(0x800c7df0L)
   public static void FUN_800c7df0() {
     if(_800c6724.get() == 0x2L) {
-      FUN_800136dc(0x2L, 0xfL);
+      scriptStartEffect(0x2L, 0xfL);
       SetGeomOffset(0, 0);
       pregameLoadingStage_800bb10c.setu(0x3L);
     }
@@ -500,7 +500,7 @@ public final class Ttle {
   @Method(0x800c7e50L)
   public static void FUN_800c7e50() {
     if(_800c6754.get() == 0) {
-      FUN_800136dc(0x1L, 0xfL);
+      scriptStartEffect(0x1L, 0xfL);
     }
 
     //LAB_800c7e7c
@@ -538,7 +538,7 @@ public final class Ttle {
   @Method(0x800c7fa0L)
   public static void FUN_800c7fa0() {
     if(_800c6754.get() == 0) {
-      FUN_800136dc(0x1L, 0xfL);
+      scriptStartEffect(0x1L, 0xfL);
     }
 
     //LAB_800c7fcc
@@ -596,7 +596,7 @@ public final class Ttle {
   @Method(0x800c8148L)
   public static void FUN_800c8148() {
     if(_800c6754.get() == 0) {
-      FUN_800136dc(0x1L, 0xfL);
+      scriptStartEffect(0x1L, 0xfL);
     }
 
     //LAB_800c8174

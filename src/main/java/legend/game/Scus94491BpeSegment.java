@@ -183,16 +183,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb114;
 import static legend.game.Scus94491BpeSegment_800b._800bb118;
 import static legend.game.Scus94491BpeSegment_800b._800bb120;
-import static legend.game.Scus94491BpeSegment_800b._800bb140;
-import static legend.game.Scus94491BpeSegment_800b._800bb144;
-import static legend.game.Scus94491BpeSegment_800b._800bb148;
-import static legend.game.Scus94491BpeSegment_800b._800bb14c;
-import static legend.game.Scus94491BpeSegment_800b._800bb150;
-import static legend.game.Scus94491BpeSegment_800b._800bb154;
-import static legend.game.Scus94491BpeSegment_800b._800bb158;
-import static legend.game.Scus94491BpeSegment_800b._800bb15c;
-import static legend.game.Scus94491BpeSegment_800b._800bb160;
-import static legend.game.Scus94491BpeSegment_800b._800bb164;
+import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
@@ -1321,85 +1312,82 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800136dcL)
-  public static void FUN_800136dc(final long a0, long a1) {
-    if((int)a1 <= 0) {
-      a1 = 0xfL;
-    }
-
+  public static void scriptStartEffect(final long effectType, final long frames) {
     //LAB_800136f4
-    _800bb140.setu(a0);
-    _800bb148.setu(a1);
-    _800bb144.setu(VSync(-1));
+    scriptEffect_800bb140.type_00.set(effectType);
+    scriptEffect_800bb140.totalFrames_08.set((int)frames > 0 ? frames : 0xfL);
+    scriptEffect_800bb140.startTime_04.set(VSync(-1));
 
-    if(_8004dd48.offset(a0 * 2).get() == 0x2L) {
-      _800bb14c.setu(0);
-      _800bb150.setu(0);
-      _800bb154.setu(0);
-      _800bb158.setu(0);
-      _800bb15c.setu(0);
-      _800bb160.setu(0);
+    if(_8004dd48.offset(effectType * 2).get() == 0x2L) {
+      scriptEffect_800bb140.blue1_0c.set(0);
+      scriptEffect_800bb140.green1_10.set(0);
+      scriptEffect_800bb140.blue0_14.set(0);
+      scriptEffect_800bb140.red1_18.set(0);
+      scriptEffect_800bb140.green0_1c.set(0);
+      scriptEffect_800bb140.red0_20.set(0);
     }
 
-    _800bb164.setu(_8004dd48.offset(a0 * 2));
+    scriptEffect_800bb140._24.set(_8004dd48.offset(effectType * 2).get());
 
     //LAB_80013768
   }
 
+  /**
+   * This handles the lightning flashes/darkening, the scene fade-in, etc.
+   */
   @Method(0x80013778L)
   public static void FUN_80013778() {
-    long a1;
-
-    final long v1 = Math.min(_800bb148.get(), (VSync(-1) - _800bb144.get()) / 2);
+    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (VSync(-1) - scriptEffect_800bb140.startTime_04.get()) / 2);
 
     //LAB_800137d0
-    final long s2;
-    if(_800bb148.get() == 0) {
-      s2 = 0;
+    final long colour;
+    if(scriptEffect_800bb140.totalFrames_08.get() == 0) {
+      colour = 0;
     } else {
-      a1 = _800bb164.get();
+      final long a1 = scriptEffect_800bb140._24.get();
       if(a1 == 0x1L) {
         //LAB_80013818
-        s2 = v1 * 255 / _800bb148.get();
-      } else if(a1 < 0x2L) {
+        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get();
+      } else if((int)a1 < 0x2L) {
         if(a1 != 0) {
-          _800bb140.setu(0);
-          _800bb164.setu(0);
+          scriptEffect_800bb140.type_00.set(0);
+          scriptEffect_800bb140._24.set(0);
         }
 
-        s2 = 0;
+        colour = 0;
 
         //LAB_80013808
       } else if(a1 != 0x2L) {
-        _800bb140.setu(0);
-        _800bb164.setu(0);
-        s2 = 0;
-      } else {
+        scriptEffect_800bb140.type_00.set(0);
+        scriptEffect_800bb140._24.set(0);
+        colour = 0;
+      } else { // a1 == 2
         //LAB_8001383c
-        s2 = v1 * 255 / _800bb148.get() ^ 0xffL;
+        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xffL;
 
-        if(s2 == 0) {
+        if(colour == 0) {
           //LAB_80013874
-          _800bb164.setu(0);
+          scriptEffect_800bb140._24.set(0);
         }
       }
     }
 
     //LAB_80013880
     //LAB_80013884
-    _800bb168.setu(s2);
+    _800bb168.setu(colour);
 
-    if(s2 != 0) {
+    if(colour != 0) {
       //LAB_800138f0
       //LAB_80013948
-      switch((int)_800bb140.get()) {
-        case 1, 2 -> FUN_80013c3c(s2, 0x2L);
-        case 3, 4 -> FUN_80013c3c(s2, 0x1L);
+      switch((int)scriptEffect_800bb140.type_00.get()) {
+        case 1, 2 -> drawFullScreenRect(colour, 0x2L);
+        case 3, 4 -> drawFullScreenRect(colour, 0x1L);
 
         case 5 -> {
           for(int s1 = 0; s1 < 8; s1++) {
             //LAB_800138f8
             for(int s0 = 0; s0 < 6; s0++) {
-              FUN_80013d78(s2 - (0xcL - (s0 + s1)) * 11, s1, s0);
+              FUN_80013d78(colour - (0xcL - (s0 + s1)) * 11, s1, s0);
             }
           }
         }
@@ -1408,7 +1396,7 @@ public final class Scus94491BpeSegment {
           for(int s1 = 0; s1 < 8; s1++) {
             //LAB_80013950
             for(int s0 = 0; s0 < 6; s0++) {
-              FUN_80013d78(s2 - (s1 + s0) * 11, s1, s0);
+              FUN_80013d78(colour - (s1 + s0) * 11, s1, s0);
             }
           }
         }
@@ -1417,82 +1405,82 @@ public final class Scus94491BpeSegment {
 
     //caseD_0
     //LAB_80013994
-    if(_800bb160.get() != 0 || _800bb15c.get() != 0 || _800bb154.get() != 0) {
+
+    // This causes the bright flash of light from the lightning, etc.
+    if(scriptEffect_800bb140.red0_20.get() != 0 || scriptEffect_800bb140.green0_1c.get() != 0 || scriptEffect_800bb140.blue0_14.get() != 0) {
       //LAB_800139c4
       final long s0 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.addu(0x10L);
 
       MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
 
-      MEMORY.ref(1, s0).offset(0x4L).setu(_800bb160.offset(1, 0x0L));
-      MEMORY.ref(1, s0).offset(0x5L).setu(_800bb15c.offset(1, 0x0L));
-      MEMORY.ref(1, s0).offset(0x6L).setu(_800bb154.offset(1, 0x0L));
-      MEMORY.ref(1, s0).offset(0x7L).setu(0x60L);
+      MEMORY.ref(1, s0).offset(0x4L).setu(scriptEffect_800bb140.red0_20.get() & 0xffL); // R
+      MEMORY.ref(1, s0).offset(0x5L).setu(scriptEffect_800bb140.green0_1c.get() & 0xffL); // G
+      MEMORY.ref(1, s0).offset(0x6L).setu(scriptEffect_800bb140.blue0_14.get() & 0xffL); // B
+      MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle, variable size, opaque
 
-      MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get());
-      MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get());
-      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L);
-      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L);
+      MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
+      MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
+      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L); // W
+      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L); // H
 
       gpuLinkedListSetCommandTransparency(s0, true);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
 
-      a1 = linkedListAddress_1f8003d8.get();
+      final long a1 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb114.get(0x9ffL));
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb114.get(0x9ffL)); // Draw mode dither enabled, texpage X (320), whatever is or'd
 
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
 
     //LAB_80013adc
-    if(_800bb158.get() == 0 && _800bb150.get() == 0) {
-      if(_800bb14c.get() == 0) {
-        return;
-      }
+
+    // This causes the screen darkening from the lightning, etc.
+    if(scriptEffect_800bb140.red1_18.get() != 0 || scriptEffect_800bb140.green1_10.get() != 0 || scriptEffect_800bb140.blue1_0c.get() != 0) {
+      //LAB_80013b10
+      final long s0 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x10L);
+
+      MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
+
+      MEMORY.ref(1, s0).offset(0x4L).setu(scriptEffect_800bb140.red1_18.get() & 0xffL); // R
+      MEMORY.ref(1, s0).offset(0x5L).setu(scriptEffect_800bb140.green1_10.get() & 0xffL); // G
+      MEMORY.ref(1, s0).offset(0x6L).setu(scriptEffect_800bb140.blue1_0c.get() & 0xffL); // B
+      MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle, variable size, opaque
+
+      MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
+      MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
+      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L); // W
+      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L); // H
+
+      gpuLinkedListSetCommandTransparency(s0, true);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
+
+      final long a1 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x8L);
+
+      MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb118.get(0x9ffL)); // Draw mode dither enabled, texpage X (320), whatever is or'd
+
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
-
-    //LAB_80013b10
-    final long s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x10L);
-
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
-
-    MEMORY.ref(1, s0).offset(0x4L).setu(_800bb158.offset(1, 0x0L));
-    MEMORY.ref(1, s0).offset(0x5L).setu(_800bb150.offset(1, 0x0L));
-    MEMORY.ref(1, s0).offset(0x6L).setu(_800bb14c.offset(1, 0x0L));
-    MEMORY.ref(1, s0).offset(0x7L).setu(0x60L);
-
-    MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get());
-    MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get());
-    MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L);
-    MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L);
-
-    gpuLinkedListSetCommandTransparency(s0, true);
-    insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
-
-    a1 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x8L);
-
-    MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-    MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb118.get(0x9ffL));
-
-    insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
 
     //LAB_80013c20
   }
 
   @Method(0x80013c3cL)
-  public static void FUN_80013c3c(final long a0, final long a1) {
+  public static void drawFullScreenRect(final long colour, final long drawModeIndex) {
     long s0 = linkedListAddress_1f8003d8.get();
     linkedListAddress_1f8003d8.addu(0x10L);
 
     MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
 
-    MEMORY.ref(1, s0).offset(0x4L).setu(a0); // R
-    MEMORY.ref(1, s0).offset(0x5L).setu(a0); // G
-    MEMORY.ref(1, s0).offset(0x6L).setu(a0); // B
+    MEMORY.ref(1, s0).offset(0x4L).setu(colour); // R
+    MEMORY.ref(1, s0).offset(0x5L).setu(colour); // G
+    MEMORY.ref(1, s0).offset(0x6L).setu(colour); // B
     MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle (variable size, opaque)
 
     MEMORY.ref(2, s0).offset(0x8L).set(-centreScreenX_1f8003dc.get()); // xx
@@ -1507,7 +1495,7 @@ public final class Scus94491BpeSegment {
     linkedListAddress_1f8003d8.addu(0x8L);
 
     MEMORY.ref(1, s0).offset(0x3L).setu(0x1L); // 1 word
-    MEMORY.ref(4, s0).offset(0x4L).setu(0xe1000205L | _800bb110.offset((a1 & 0x3L) * 4).get(0x9ffL)); // Draw mode/texpage
+    MEMORY.ref(4, s0).offset(0x4L).setu(0xe1000205L | _800bb110.offset((drawModeIndex & 0x3L) * 4).get(0x9ffL)); // Draw mode/texpage
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x1e).getAddress(), s0);
   }
 
@@ -2931,7 +2919,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001734cL)
-  public static long FUN_8001734c(final ScriptStruct a0) {
+  public static long scriptSubNotImplemented(final ScriptStruct a0) {
     return 0x2L;
   }
 
@@ -2999,8 +2987,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001751cL)
-  public static long FUN_8001751c(final ScriptStruct a0) {
-    FUN_800136dc(a0.params_20.get(0).deref().get(), Math.max(1, a0.params_20.get(1).deref().get()));
+  public static long scriptStartEffect(final ScriptStruct a0) {
+    scriptStartEffect(a0.params_20.get(0).deref().get(), Math.max(1, a0.params_20.get(1).deref().get()));
     return 0;
   }
 
@@ -3744,7 +3732,7 @@ public final class Scus94491BpeSegment {
       if(_8004f6ec.get() == 0) {
         _8004f6ec.setu(0x1L);
         FUN_8001c594(0x1L, 0x6L);
-        FUN_800136dc(0x1L, 0x1L);
+        scriptStartEffect(0x1L, 0x1L);
       }
     }
 
@@ -3841,7 +3829,7 @@ public final class Scus94491BpeSegment {
 
           //LAB_8001b6dc
           v0 = rand();
-          final long s2 = v0 - ((v0 * 0x2aaaaaabL & 0xffffffffL) - (v0 >> 0x1fL)) * 6;
+          final long s2 = v0 - ((v0 * 0x2aaaaaabL & 0xffffffffL) - (v0 >> 0x1fL)) * 6; //TODO
 
           final long s4;
           if(s6 >= 0xf9L) {

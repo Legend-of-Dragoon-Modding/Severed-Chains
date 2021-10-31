@@ -20,7 +20,7 @@ import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
-import static legend.game.Scus94491BpeSegment.FUN_800136dc;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.FUN_80017c44;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
@@ -308,7 +308,7 @@ public final class Scus94491BpeSegment_800e {
     if(loadingStage == 0) {
       //LAB_800e600c
       loadBasicUiTexturesAndSomethingElse();
-      FUN_800136dc(0x1L, 0x1L);
+      scriptStartEffect(0x1L, 0x1L);
       pregameLoadingStage_800bb10c.addu(1);
     } else if(loadingStage == 0x1L || loadingStage == 0x2L) {
       // Wait for all files to finish loading
@@ -394,7 +394,7 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e62ccL)
   public static void initSceaLogo() {
     loadSceaLogo();
-    FUN_800136dc(0x2L, 0x1L);
+    scriptStartEffect(0x2L, 0x1L);
     sceaLogoTextureLoaded_800c672c.setu(0x1L);
     sceaLogoDisplayTime_800c6730.setu(VSync(-1));
     pregameLoadingStage_800bb10c.addu(0x1L);
