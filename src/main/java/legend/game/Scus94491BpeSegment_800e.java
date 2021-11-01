@@ -8,11 +8,13 @@ import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.ScriptStruct;
+import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,17 +22,15 @@ import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.FUN_80017c44;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
-import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
-import static legend.game.Scus94491BpeSegment._8001051c;
+import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment._8011e210;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.allocateLinkedList;
@@ -38,22 +38,24 @@ import static legend.game.Scus94491BpeSegment.drawTim;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.isStackPointerModified_1f8003bc;
+import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
 import static legend.game.Scus94491BpeSegment.processControllerInput;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c008;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002db2c;
 import static legend.game.Scus94491BpeSegment_8002.SetMem;
 import static legend.game.Scus94491BpeSegment_8002._bu_init;
 import static legend.game.Scus94491BpeSegment_8002.initMemcard;
+import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
@@ -84,28 +86,7 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
-import static legend.game.Scus94491BpeSegment_8004._8004e31c;
-import static legend.game.Scus94491BpeSegment_8004._8004e41c;
-import static legend.game.Scus94491BpeSegment_8004._8004e59c;
-import static legend.game.Scus94491BpeSegment_8004._8004e61c;
-import static legend.game.Scus94491BpeSegment_8004._8004e69c;
-import static legend.game.Scus94491BpeSegment_8004._8004e71c;
-import static legend.game.Scus94491BpeSegment_8004._8004e91c;
-import static legend.game.Scus94491BpeSegment_8004._8004e990;
-import static legend.game.Scus94491BpeSegment_8004._8004ea1c;
-import static legend.game.Scus94491BpeSegment_8004._8004ea9c;
-import static legend.game.Scus94491BpeSegment_8004._8004eb1c;
-import static legend.game.Scus94491BpeSegment_8004._8004eb9c;
-import static legend.game.Scus94491BpeSegment_8004._8004ec1c;
-import static legend.game.Scus94491BpeSegment_8004._8004ec9c;
-import static legend.game.Scus94491BpeSegment_8004._8004ed1c;
-import static legend.game.Scus94491BpeSegment_8004._8004ed9c;
-import static legend.game.Scus94491BpeSegment_8004._8004ee1c;
-import static legend.game.Scus94491BpeSegment_8004._8004ee9c;
-import static legend.game.Scus94491BpeSegment_8004._8004ef1c;
-import static legend.game.Scus94491BpeSegment_8004._8004ef9c;
-import static legend.game.Scus94491BpeSegment_8004._8004f01c;
-import static legend.game.Scus94491BpeSegment_8004._8004f09c;
+import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandler;
@@ -147,19 +128,17 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
 import static legend.game.Scus94491BpeSegment_800c._800c6740;
-import static legend.game.Scus94491BpeSegment_800c._800ca734;
 import static legend.game.Scus94491BpeSegment_800c.fileSInitOvl_800c668c;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoAlpha_800c6734;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoDisplayTime_800c6730;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoTextureLoaded_800c672c;
+import static legend.game.Scus94491BpeSegment_800c.scriptSubFunction_800ca734;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
 public final class Scus94491BpeSegment_800e {
   private Scus94491BpeSegment_800e() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_800e.class);
-
-  private static final Object[] EMPTY_OBJ_ARRAY = new Object[0];
 
   public static final Value ramSize_800e6f04 = MEMORY.ref(4, 0x800e6f04L);
   public static final Value stackSize_800e6f08 = MEMORY.ref(4, 0x800e6f08L);
@@ -186,42 +165,643 @@ public final class Scus94491BpeSegment_800e {
    */
   public static final ArrayRef<Pointer<RunnableRef>> pregameLoadingStages_800e6f0c = MEMORY.ref(4, 0x800e6f0cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 17, 4, Pointer.of(4, RunnableRef::new)));
 
-  public static final Value _800e6f64 = MEMORY.ref(4, 0x800e6f64L);
-
-  public static final Value _800e6fe4 = MEMORY.ref(4, 0x800e6fe4L);
-
-  public static final Value _800e7040 = MEMORY.ref(4, 0x800e7040L);
-
-  public static final Value _800e7048 = MEMORY.ref(4, 0x800e7048L);
-
-  public static final Value _800e7094 = MEMORY.ref(4, 0x800e7094L);
-
-  public static final Value _800e7114 = MEMORY.ref(4, 0x800e7114L);
-
-  public static final Value _800e7150 = MEMORY.ref(4, 0x800e7150L);
-
-  public static final Value _800e7170 = MEMORY.ref(4, 0x800e7170L);
-
-  public static final Value _800e71f0 = MEMORY.ref(4, 0x800e71f0L);
-
-  public static final Value _800e7270 = MEMORY.ref(4, 0x800e7270L);
-
-  public static final Value _800e72f0 = MEMORY.ref(4, 0x800e72f0L);
-
-  public static final Value _800e7370 = MEMORY.ref(4, 0x800e7370L);
-
-  public static final ArrayRef<UnsignedIntRef> _800e73f0 = MEMORY.ref(0x80, 0x800e73f0L, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-  public static final ArrayRef<UnsignedIntRef> _800e7470 = MEMORY.ref(0x80, 0x800e7470L, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-  public static final ArrayRef<UnsignedIntRef> _800e74f0 = MEMORY.ref(0x80, 0x800e74f0L, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-  public static final ArrayRef<UnsignedIntRef> _800e7570 = MEMORY.ref(0x80, 0x800e7570L, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-
-  public static final Value _800e75ac = MEMORY.ref(4, 0x800e75acL);
-
-  public static final Value _800e75f8 = MEMORY.ref(4, 0x800e75f8L);
-
-  public static final Value _800e7670 = MEMORY.ref(4, 0x800e7670L);
-
-  public static final Value _800e76b0 = MEMORY.ref(4, 0x800e76b0L);
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 736</p>
+   *
+   * <ol start="0">
+   *   <li>0x800d0309</li>
+   *   <li>0x800cec8c</li>
+   *   <li>0x800cee50</li>
+   *   <li>0x800ceecc</li>
+   *   <li>0x800d3098</li>
+   *   <li>0x800d30a0</li>
+   *   <li>0x800d30a8</li>
+   *   <li>0x800d30b0</li>
+   *   <li>0x800cef00</li>
+   *   <li>0x800cf0b4</li>
+   *   <li>0x80102088</li>
+   *   <li>0x80102364</li>
+   *   <li>0x800d30b8</li>
+   *   <li>0x800d0564</li>
+   *   <li>0x800d09b8</li>
+   *   <li>0x800d0dec</li>
+   *   <li>0x80102608</li>
+   *   <li>0x801077e8</li>
+   *   <li>0x801077bc</li>
+   *   <li>0x80108de8</li>
+   *   <li>0x800d19ec</li>
+   *   <li>0x800d1cac</li>
+   *   <li>0x800d1cf4</li>
+   *   <li>0x801078c0</li>
+   *   <li>0x80108df0</li>
+   *   <li>0x800d2ff4</li>
+   *   <li>0x800ce6a8</li>
+   *   <li>0x800d2734</li>
+   *   <li>0x800d3d74</li>
+   *   <li>0x800cfccc</li>
+   *   <li>0x800d4338</li>
+   *   <li>0x800d4580</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e6f64 = MEMORY.ref(4, 0x800e6f64L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 832</p>
+   *
+   * <ol start="0">
+   *   <li>0x800d46d4</li>
+   *   <li>0x80108df8</li>
+   *   <li>0x80102610</li>
+   *   <li>0x800cfdf8</li>
+   *   <li>0x80109158</li>
+   *   <li>0x800ce9b0</li>
+   *   <li>0x801052dc</li>
+   *   <li>0x80105604</li>
+   *   <li>0x801087f8</li>
+   *   <li>0x80105c38</li>
+   *   <li>0x800c6968</li>
+   *   <li>0x80109a7c</li>
+   *   <li>0x801089cc</li>
+   *   <li>0x801023f4</li>
+   *   <li>0x800cfec8</li>
+   *   <li>0x801023fc</li>
+   *   <li>0x8010246c</li>
+   *   <li>0x800cff24</li>
+   *   <li>0x80109d30</li>
+   *   <li>0x8010a3fc</li>
+   *   <li>0x800d34bc</li>
+   *   <li>0x800d0124</li>
+   *   <li>0x801079a4</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e6fe4 = MEMORY.ref(4, 0x800e6fe4L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 896</p>
+   *
+   * <ol start="0">
+   *   <li>0x8010a610</li>
+   *   <li>0x8010b1d8</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 32</p>
+   *
+   * <ol start="0">
+   *   <li>0x800dabcc</li>
+   *   <li>0x800dac20</li>
+   *   <li>0x800db034</li>
+   *   <li>0x800db460</li>
+   *   <li>0x800db574</li>
+   *   <li>0x800db688</li>
+   *   <li>0x800db79c</li>
+   *   <li>0x800db8b0</li>
+   *   <li>0x800db9e0</li>
+   *   <li>0x800dbb10</li>
+   *   <li>0x800dc2d8</li>
+   *   <li>0x800dbb9c</li>
+   *   <li>0x800dcbec</li>
+   *   <li>0x800dcb84</li>
+   *   <li>0x800dbc2c</li>
+   *   <li>0x800dbc80</li>
+   *   <li>0x800dbcc8</li>
+   *   <li>0x800dbcfc</li>
+   *   <li>0x800d8dec</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7048 = MEMORY.ref(4, 0x800e7048L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 19, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 224</p>
+   *
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment#FUN_8001e640}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001e918}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001e920}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001eb30}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001eccc}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001f070}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001f450}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001fe28}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ffdc}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8002013c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80020230}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800202a4}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ab34}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ab98}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001abd0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ac48}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ad5c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001adc8}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ae18}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ae68}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001aec8}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001af34}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001afa4}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b014}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b094}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b134}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b13c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b144}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b14c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b17c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b208}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b27c}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7094 = MEMORY.ref(4, 0x800e7094L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 704</p>
+   *
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b2ac}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b310}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b33c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b3a0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b0f0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b118}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ffc0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001ac88}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001acd8}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80020060}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001f250}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800203f0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001f674}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001f560}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7114 = MEMORY.ref(4, 0x800e7114L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 800</p>
+   *
+   * <ol start="0">
+   *   <li>{@link NotYetLoaded#FUN_8010c378}</li>
+   *   <li>{@link NotYetLoaded#FUN_8010d1dc}</li>
+   *   <li>{@link NotYetLoaded#FUN_8010d7dc}</li>
+   *   <li>{@link NotYetLoaded#FUN_8010e04c}</li>
+   *   <li>{@link NotYetLoaded#FUN_8010edc8}</li>
+   *   <li>{@link NotYetLoaded#FUN_8010e89c}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001c5fc}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001c604}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7150 = MEMORY.ref(4, 0x800e7150L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 8, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 416</p>
+   *
+   * <ol start="0">
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>0x800e473c</li>
+   *   <li>0x800e4788</li>
+   *   <li>0x800e47c8</li>
+   *   <li>0x800e48a8</li>
+   *   <li>0x800e48e8</li>
+   *   <li>0x800e4964</li>
+   *   <li>0x800e4abc</li>
+   *   <li>0x800e4c10</li>
+   *   <li>0x800e4c90</li>
+   *   <li>0x800e4d2c</li>
+   *   <li>0x800e4db4</li>
+   *   <li>0x800e4dfc</li>
+   *   <li>0x800e4e2c</li>
+   *   <li>0x800e4e64</li>
+   *   <li>0x800e4ea0</li>
+   *   <li>0x800e4fa0</li>
+   *   <li>0x800e50e8</li>
+   *   <li>0x800e52f8</li>
+   *   <li>0x800e540c</li>
+   *   <li>0x800e54f8</li>
+   *   <li>0x800e5528</li>
+   *   <li>0x800e5560</li>
+   *   <li>0x800e559c</li>
+   *   <li>0x800e569c</li>
+   *   <li>0x800e596c</li>
+   *   <li>0x800e59d8</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7170 = MEMORY.ref(4, 0x800e7170L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 544</p>
+   *
+   * <ol start="0">
+   *   <li>0x801115ec</li>
+   *   <li>0x80111ae4</li>
+   *   <li>0x80112704</li>
+   *   <li>0x80112770</li>
+   *   <li>0x80113964</li>
+   *   <li>0x801139d0</li>
+   *   <li>0x8011452c</li>
+   *   <li>0x80114598</li>
+   *   <li>0x80114e0c</li>
+   *   <li>0x80114e60</li>
+   *   <li>0x80111b60</li>
+   *   <li>0x8011554c</li>
+   *   <li>0x801155a0</li>
+   *   <li>0x80111be8</li>
+   *   <li>0x80111c2c</li>
+   *   <li>0x80112184</li>
+   *   <li>0x80112274</li>
+   *   <li>0x80112364</li>
+   *   <li>0x801155f8</li>
+   *   <li>0x80112900</li>
+   *   <li>0x8011299c</li>
+   *   <li>0x80115440</li>
+   *   <li>0x80111658</li>
+   *   <li>0x80112aa4</li>
+   *   <li>0x80112bf0</li>
+   *   <li>0x80112e00</li>
+   *   <li>0x8011306c</li>
+   *   <li>0x801132c8</li>
+   *   <li>0x80115600</li>
+   *   <li>0x800e9f68</li>
+   *   <li>0x80118984</li>
+   *   <li>0x80113c6c</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e71f0 = MEMORY.ref(4, 0x800e71f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 576</p>
+   *
+   * <ol start="0">
+   *   <li>0x80114094</li>
+   *   <li>0x801143f8</li>
+   *   <li>0x80115608</li>
+   *   <li>0x80114070</li>
+   *   <li>0x801147c8</li>
+   *   <li>0x80114920</li>
+   *   <li>0x80114b00</li>
+   *   <li>0x80114eb4</li>
+   *   <li>0x80114f34</li>
+   *   <li>0x80115014</li>
+   *   <li>0x80115058</li>
+   *   <li>0x80115168</li>
+   *   <li>0x801152b0</li>
+   *   <li>0x80115324</li>
+   *   <li>0x80115388</li>
+   *   <li>0x801153e4</li>
+   *   <li>0x800e74ac</li>
+   *   <li>0x80112398</li>
+   *   <li>0x800eb518</li>
+   *   <li>0x8011549c</li>
+   *   <li>0x801122ec</li>
+   *   <li>0x801121fc</li>
+   *   <li>0x80111cc4</li>
+   *   <li>0x80111ed4</li>
+   *   <li>0x800e93e0</li>
+   *   <li>0x800e96cc</li>
+   *   <li>0x800e9854</li>
+   *   <li>0x800ca648</li>
+   *   <li>null</li>
+   *   <li>0x80117eb0</li>
+   *   <li>0x801183c0</li>
+   *   <li>0x800e99bc</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7270 = MEMORY.ref(4, 0x800e7270L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 608</p>
+   *
+   * <ol start="0">
+   *   <li>0x801181a8</li>
+   *   <li>null</li>
+   *   <li>0x800ea200</li>
+   *   <li>0x801156f8</li>
+   *   <li>0x800ea13c</li>
+   *   <li>0x800ea19c</li>
+   *   <li>0x800eb84c</li>
+   *   <li>0x800eb188</li>
+   *   <li>0x800eb01c</li>
+   *   <li>0x800caae4</li>
+   *   <li>0x80115690</li>
+   *   <li>0x80118df4</li>
+   *   <li>0x80111a58</li>
+   *   <li>0x800ea384</li>
+   *   <li>0x80119484</li>
+   *   <li>0x800e73ac</li>
+   *   <li>0x800e6db4</li>
+   *   <li>0x800e7490</li>
+   *   <li>0x8011574c</li>
+   *   <li>0x8011578c</li>
+   *   <li>0x801184e4</li>
+   *   <li>0x801157d0</li>
+   *   <li>0x801127e0</li>
+   *   <li>0x801181f0</li>
+   *   <li>0x801114b8</li>
+   *   <li>null</li>
+   *   <li>0x80115ab0</li>
+   *   <li>0x80115a94</li>
+   *   <li>0x80115a58</li>
+   *   <li>0x800e7314</li>
+   *   <li>0x800e71e4</li>
+   *   <li>0x800e727c</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e72f0 = MEMORY.ref(4, 0x800e72f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 640</p>
+   *
+   * <ol start="0">
+   *   <li>0x8011357c</li>
+   *   <li>0x80115a28</li>
+   *   <li>0x8011287c</li>
+   *   <li>0x800e9798</li>
+   *   <li>0x800ea2a0</li>
+   *   <li>0x800ea30c</li>
+   *   <li>0x801188ec</li>
+   *   <li>0x80115ad8</li>
+   *   <li>0x80115ea4</li>
+   *   <li>0x80115ed4</li>
+   *   <li>0x801154f4</li>
+   *   <li>0x80116160</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   *   <li>null</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7370 = MEMORY.ref(4, 0x800e7370L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 96</p>
+   *
+   * <ol start="0">
+   *   <li>{@link SMap#FUN_800df168}</li>
+   *   <li>{@link SMap#FUN_800df198}</li>
+   *   <li>{@link SMap#FUN_800df1c8}</li>
+   *   <li>{@link SMap#FUN_800df1f8}</li>
+   *   <li>{@link SMap#FUN_800df228}</li>
+   *   <li>{@link SMap#FUN_800df258}</li>
+   *   <li>{@link SMap#FUN_800df2b8}</li>
+   *   <li>{@link SMap#FUN_800df314}</li>
+   *   <li>{@link SMap#FUN_800df374}</li>
+   *   <li>{@link SMap#FUN_800df3d0}</li>
+   *   <li>{@link SMap#FUN_800df410}</li>
+   *   <li>{@link SMap#FUN_800df440}</li>
+   *   <li>{@link SMap#FUN_800df488}</li>
+   *   <li>{@link SMap#FUN_800df4d0}</li>
+   *   <li>{@link SMap#FUN_800df500}</li>
+   *   <li>{@link SMap#FUN_800df530}</li>
+   *   <li>{@link SMap#FUN_800df560}</li>
+   *   <li>{@link SMap#FUN_800df5c0}</li>
+   *   <li>{@link SMap#FUN_800df590}</li>
+   *   <li>{@link SMap#FUN_800df5f0}</li>
+   *   <li>{@link SMap#FUN_800df620}</li>
+   *   <li>{@link SMap#FUN_800df650}</li>
+   *   <li>{@link SMap#FUN_800df680}</li>
+   *   <li>{@link SMap#FUN_800df6a4}</li>
+   *   <li>{@link SMap#FUN_800df788}</li>
+   *   <li>{@link SMap#FUN_800df890}</li>
+   *   <li>{@link SMap#FUN_800df904}</li>
+   *   <li>{@link SMap#FUN_800de1d0}</li>
+   *   <li>{@link SMap#FUN_800df954}</li>
+   *   <li>{@link SMap#FUN_800df9a8}</li>
+   *   <li>{@link SMap#FUN_800dfb28}</li>
+   *   <li>{@link SMap#FUN_800dfb44}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e73f0 = MEMORY.ref(4, 0x800e73f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 288</p>
+   *
+   * <ol start="0">
+   *   <li>{@link SMap#FUN_800dfb74}</li>
+   *   <li>{@link SMap#FUN_800dfba4}</li>
+   *   <li>{@link SMap#FUN_800dfbd4}</li>
+   *   <li>{@link SMap#FUN_800dfc00}</li>
+   *   <li>{@link SMap#FUN_800dfc60}</li>
+   *   <li>{@link SMap#FUN_800dfca0}</li>
+   *   <li>{@link SMap#FUN_800dfcd8}</li>
+   *   <li>{@link SMap#FUN_800dfd10}</li>
+   *   <li>{@link SMap#FUN_800de334}</li>
+   *   <li>{@link SMap#FUN_800de4b4}</li>
+   *   <li>{@link SMap#FUN_800dfd8c}</li>
+   *   <li>{@link SMap#FUN_800dfdd8}</li>
+   *   <li>{@link SMap#FUN_800dfd48}</li>
+   *   <li>{@link SMap#FUN_800e05c8}</li>
+   *   <li>{@link SMap#FUN_800e05f0}</li>
+   *   <li>{@link SMap#FUN_800e0614}</li>
+   *   <li>{@link SMap#FUN_800e0684}</li>
+   *   <li>{@link SMap#FUN_800e06c4}</li>
+   *   <li>{@link SMap#FUN_800e0710}</li>
+   *   <li>{@link SMap#FUN_800e0894}</li>
+   *   <li>{@link SMap#FUN_800e08f4}</li>
+   *   <li>{@link SMap#FUN_800e0930}</li>
+   *   <li>{@link SMap#FUN_800e09a0}</li>
+   *   <li>{@link SMap#FUN_800e09e0}</li>
+   *   <li>{@link SMap#FUN_800e0a14}</li>
+   *   <li>{@link SMap#FUN_800e0a48}</li>
+   *   <li>{@link SMap#FUN_800e0a94}</li>
+   *   <li>{@link SMap#FUN_800dee28}</li>
+   *   <li>{@link SMap#FUN_800e0af4}</li>
+   *   <li>{@link SMap#FUN_800e0b34}</li>
+   *   <li>{@link SMap#FUN_800e0ba0}</li>
+   *   <li>{@link SMap#FUN_800e0cb8}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7470 = MEMORY.ref(4, 0x800e7470L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 672</p>
+   *
+   * <ol start="0">
+   *   <li>{@link SMap#FUN_800dfe0c}</li>
+   *   <li>{@link SMap#FUN_800dfec8}</li>
+   *   <li>{@link SMap#FUN_800dff68}</li>
+   *   <li>{@link SMap#FUN_800dffa4}</li>
+   *   <li>{@link SMap#FUN_800dffdc}</li>
+   *   <li>{@link SMap#FUN_800e0018}</li>
+   *   <li>{@link SMap#FUN_800e0094}</li>
+   *   <li>{@link SMap#FUN_800de668}</li>
+   *   <li>{@link SMap#FUN_800de944}</li>
+   *   <li>{@link SMap#FUN_800e00cc}</li>
+   *   <li>{@link SMap#FUN_800e0148}</li>
+   *   <li>{@link SMap#FUN_800e01bc}</li>
+   *   <li>{@link SMap#FUN_800e0244}</li>
+   *   <li>{@link SMap#FUN_800e0204}</li>
+   *   <li>{@link SMap#FUN_800e0284}</li>
+   *   <li>{@link SMap#FUN_800e02c0}</li>
+   *   <li>{@link SMap#FUN_800e02fc}</li>
+   *   <li>{@link SMap#FUN_800deba0}</li>
+   *   <li>{@link SMap#FUN_800e03a8}</li>
+   *   <li>{@link SMap#FUN_800e03e4}</li>
+   *   <li>{@link SMap#FUN_800e0448}</li>
+   *   <li>{@link SMap#FUN_800e04b4}</li>
+   *   <li>{@link SMap#FUN_800e0520}</li>
+   *   <li>{@link SMap#FUN_800e057c}</li>
+   *   <li>{@link SMap#FUN_800e074c}</li>
+   *   <li>{@link SMap#FUN_800e07f0}</li>
+   *   <li>{@link SMap#FUN_800e0184}</li>
+   *   <li>{@link SMap#FUN_800e0c40}</li>
+   *   <li>{@link SMap#FUN_800e0c80}</li>
+   *   <li>{@link SMap#FUN_800e0c00}</li>
+   *   <li>{@link SMap#FUN_800e0c24}</li>
+   *   <li>{@link SMap#FUN_800e0c9c}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e74f0 = MEMORY.ref(4, 0x800e74f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 512</p>
+   *
+   * <ol start="0">
+   *   <li>0x800ee2ac</li>
+   *   <li>0x800ee2e4</li>
+   *   <li>0x800ee324</li>
+   *   <li>0x800ee384</li>
+   *   <li>0x800ee468</li>
+   *   <li>0x800ee49c</li>
+   *   <li>0x800ee4e8</li>
+   *   <li>0x800ee548</li>
+   *   <li>0x800ee384</li>
+   *   <li>0x800ee574</li>
+   *   <li>0x800ee594</li>
+   *   <li>0x800ee5c0</li>
+   *   <li>0x800ee3c0</li>
+   *   <li>0x800ee408</li>
+   *   <li>0x800ee5f0</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7570 = MEMORY.ref(4, 0x800e7570L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 864</p>
+   *
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_800244c4}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80024590}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80024480}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75ac = MEMORY.ref(4, 0x800e75acL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 3, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 192</p>
+   *
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029b68}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029bd4}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80025158}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029c98}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029cf4}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029d34}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80025218}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029e8c}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_800254bc}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029d6c}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029e04}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029ecc}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80028ff8}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029f48}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80029f80}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80025718}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75b8 = MEMORY.ref(4, 0x800e75b8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 480</p>
+   *
+   * <ol start="0">
+   *   <li>0x800f95d0</li>
+   *   <li>0x800f2500</li>
+   *   <li>0x800f96d4</li>
+   *   <li>0x800f9730</li>
+   *   <li>0x800f95d0</li>
+   *   <li>0x800f95d0</li>
+   *   <li>0x800f95d0</li>
+   *   <li>0x800f43dc</li>
+   *   <li>0x800f4518</li>
+   *   <li>0x800f97d8</li>
+   *   <li>0x800f4600</li>
+   *   <li>0x800f480c</li>
+   *   <li>0x800f2694</li>
+   *   <li>0x800f96a8</li>
+   *   <li>0x800f984c</li>
+   *   <li>0x800f2838</li>
+   *   <li>0x800f9884</li>
+   *   <li>0x800f98b0</li>
+   *   <li>0x800f99ec</li>
+   *   <li>0x800f9a50</li>
+   *   <li>0x800f9b2c</li>
+   *   <li>0x800f9b78</li>
+   *   <li>0x800f9b94</li>
+   *   <li>0x800f9bd4</li>
+   *   <li>0x800f9c00</li>
+   *   <li>0x800f9c2c</li>
+   *   <li>0x800f9cac</li>
+   *   <li>0x800f9618</li>
+   *   <li>0x800f9660</li>
+   *   <li>0x800f9d7c</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75f8 = MEMORY.ref(4, 0x800e75f8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 30, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 256</p>
+   *
+   * <ol start="0">
+   *   <li>{@link SMap#FUN_800e67d4}</li>
+   *   <li>{@link SMap#FUN_800e68b4}</li>
+   *   <li>{@link SMap#FUN_800e6904}</li>
+   *   <li>{@link SMap#FUN_800e69a4}</li>
+   *   <li>{@link SMap#FUN_800e69e8}</li>
+   *   <li>{@link SMap#FUN_800e69f0}</li>
+   *   <li>{@link SMap#FUN_800e6a28}</li>
+   *   <li>{@link SMap#FUN_800e6a64}</li>
+   *   <li>{@link SMap#FUN_800e683c}</li>
+   *   <li>{@link SMap#FUN_800e6af0}</li>
+   *   <li>{@link SMap#FUN_800e6aa0}</li>
+   *   <li>{@link SMap#FUN_800e6b64}</li>
+   *   <li>{@link SMap#FUN_800e6bd8}</li>
+   *   <li>{@link SMap#FUN_800e6be0}</li>
+   *   <li>{@link SMap#FUN_800e6cac}</li>
+   *   <li>{@link SMap#FUN_800e6ce0}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7670 = MEMORY.ref(4, 0x800e7670L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
+  /**
+   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 768</p>
+   *
+   * <ol start="0">
+   *   <li>{@link SMap#FUN_800f2048}</li>
+   *   <li>{@link SMap#FUN_800f1f9c}</li>
+   *   <li>{@link SMap#FUN_800f1060}</li>
+   *   <li>{@link SMap#FUN_800f2264}</li>
+   *   <li>{@link SMap#FUN_800f179c}</li>
+   *   <li>{@link SMap#FUN_800f23ec}</li>
+   *   <li>{@link SMap#FUN_800f2780}</li>
+   *   <li>{@link SMap#FUN_800f2090}</li>
+   *   <li>{@link SMap#FUN_800f2198}</li>
+   *   <li>{@link SMap#FUN_800f1eb8}</li>
+   *   <li>{@link SMap#FUN_800f2618}</li>
+   *   <li>{@link SMap#FUN_800f1b64}</li>
+   *   <li>{@link SMap#FUN_800f26c8}</li>
+   *   <li>{@link SMap#FUN_800f1d0c}</li>
+   *   <li>{@link SMap#FUN_800f14f0}</li>
+   *   <li>{@link SMap#FUN_800f24d8}</li>
+   *   <li>{@link SMap#FUN_800f24b0}</li>
+   *   <li>{@link SMap#FUN_800f23a0}</li>
+   *   <li>{@link SMap#FUN_800f1634}</li>
+   *   <li>{@link SMap#FUN_800f22c4}</li>
+   *   <li>{@link SMap#FUN_800f2554}</li>
+   *   <li>{@link SMap#FUN_800f25a8}</li>
+   *   <li>{@link SMap#FUN_800f1274}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e76b0 = MEMORY.ref(4, 0x800e76b0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
 
   @Method(0x800e5d44L)
   public static void main() {
@@ -292,7 +872,7 @@ public final class Scus94491BpeSegment_800e {
     loadOvalBlobTexture();
     FUN_800e6dd4();
     FUN_800e6e3c();
-    FUN_800e67ac();
+    copyScriptSubFunctions_800e67ac();
     FUN_800e6888();
     FUN_800e6d60();
     FUN_800e670c();
@@ -532,12 +1112,12 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e670c() {
     //LAB_800e6720
     for(int i = 0; i < 32; i++) {
-      _8004ee1c.offset(i * 4).setu(_800e6f64.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(736 + i).set(scriptSubFunctions_800e6f64.get(i).deref());
     }
 
     //LAB_800e6750
     for(int i = 0; i < 23; i++) {
-      _8004ef9c.offset(i * 4).setu(_800e6fe4.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(832 + i).set(scriptSubFunctions_800e6fe4.get(i).deref());
     }
   }
 
@@ -545,64 +1125,64 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6774() {
     //LAB_800e6788
     for(int i = 0; i < 2; i++) {
-      _8004f09c.offset(i * 4).setu(_800e7040.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(896 + i).set(scriptSubFunctions_800e7040.get(i).deref());
     }
   }
 
   @Method(0x800e67acL)
-  private static void FUN_800e67ac() {
+  private static void copyScriptSubFunctions_800e67ac() {
     //LAB_800e67c0
     for(int i = 0; i < 19; i++) {
-      _8004e31c.offset(i * 4).setu(_800e7048.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(32 + i).set(scriptSubFunctions_800e7048.get(i).deref());
     }
 
     //LAB_800e67f0
     for(int i = 0; i < 32; i++) {
-      _8004e61c.offset(i * 4).setu(_800e7094.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(224 + i).set(scriptSubFunctions_800e7094.get(i).deref());
     }
 
     //LAB_800e6820
     for(int i = 0; i < 15; i++) {
-      _8004ed9c.offset(i * 4).setu(_800e7114.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(704 + i).set(scriptSubFunctions_800e7114.get(i).deref());
     }
 
     //LAB_800e683c
     //LAB_800e6850
     for(int i = 0; i < 8; i++) {
-      _8004ef1c.offset(i * 4).setu(_800e7150.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(800 + i).set(scriptSubFunctions_800e7150.get(i).deref());
     }
   }
 
   @Method(0x800e6874L)
   public static void FUN_800e6874() {
-    _8004e990.setu(_800ca734.getAddress());
+    scriptSubFunctions_8004e29c.get(445).set(scriptSubFunction_800ca734);
   }
 
   @Method(0x800e6888L)
   public static void FUN_800e6888() {
     //LAB_800e68a4
     for(int i = 0; i < 32; i++) {
-      _8004e91c.offset(i * 4).setu(_800e7170.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(416 + i).setNullable(scriptSubFunctions_800e7170.get(i).derefNullable());
     }
 
     //LAB_800e68d4
     for(int i = 0; i < 32; i++) {
-      _8004eb1c.offset(i * 4).setu(_800e71f0.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(544 + i).set(scriptSubFunctions_800e71f0.get(i).deref());
     }
 
     //LAB_800e6904
     for(int i = 0; i < 32; i++) {
-      _8004eb9c.offset(i * 4).setu(_800e7270.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(576 + i).setNullable(scriptSubFunctions_800e7270.get(i).derefNullable());
     }
 
     //LAB_800e6934
     for(int i = 0; i < 32; i++) {
-      _8004ec1c.offset(i * 4).setu(_800e72f0.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(608 + i).setNullable(scriptSubFunctions_800e72f0.get(i).derefNullable());
     }
 
     //LAB_800e6964
     for(int i = 0; i < 32; i++) {
-      _8004ec9c.offset(i * 4).setu(_800e7370.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(640 + i).setNullable(scriptSubFunctions_800e7370.get(i).derefNullable());
     }
 
     FUN_800e6874();
@@ -612,22 +1192,22 @@ public final class Scus94491BpeSegment_800e {
   public static void loadOvalBlobTexture() {
     //LAB_800e69b8
     for(int i = 0; i < 32; i++) {
-      _8004e41c.get(i).set(_800e73f0.get(i));
+      scriptSubFunctions_8004e29c.get(96 + i).set(scriptSubFunctions_800e73f0.get(i).deref());
     }
 
     //LAB_800e69e8
     for(int i = 0; i < 32; i++) {
-      _8004e71c.get(i).set(_800e7470.get(i));
+      scriptSubFunctions_8004e29c.get(288 + i).set(scriptSubFunctions_800e7470.get(i).deref());
     }
 
     //LAB_800e6a18
     for(int i = 0; i < 14; i++) {
-      _8004ea9c.get(i).set(_800e7570.get(i));
+      scriptSubFunctions_8004e29c.get(512 + i).set(scriptSubFunctions_800e7570.get(i).deref());
     }
 
     //LAB_800e6a48
     for(int i = 0; i < 32; i++) {
-      _8004ed1c.get(i).set(_800e74f0.get(i));
+      scriptSubFunctions_8004e29c.get(672 + i).set(scriptSubFunctions_800e74f0.get(i).deref());
     }
 
     _800bd808.setu(0);
@@ -642,7 +1222,7 @@ public final class Scus94491BpeSegment_800e {
     //LAB_800e6af0
     DrawSync(0);
 
-    FUN_800e6b3c(bigStruct_800bda10, extendedTmd_800103d0, _8001051c.getAddress());
+    FUN_800e6b3c(bigStruct_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
 
     bigStruct_800bda10.coord2Param_64.rotate.x.set((short)0);
     bigStruct_800bda10.coord2Param_64.rotate.y.set((short)0);
@@ -651,9 +1231,9 @@ public final class Scus94491BpeSegment_800e {
     bigStruct_800bda10.ub_cc.set(0);
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, legend.game.types.ExtendedTmd, long)} */
+  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
+  public static void FUN_800e6b3c(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     final int x = bigStruct.coord2_14.coord.transfer.getX();
     final int y = bigStruct.coord2_14.coord.transfer.getY();
     final int z = bigStruct.coord2_14.coord.transfer.getZ();
@@ -666,8 +1246,7 @@ public final class Scus94491BpeSegment_800e {
     bigStruct.dobj2ArrPtr_00.set(_800bd9f8);
     bigStruct.coord2ArrPtr_04.set(_800bdb38);
     bigStruct.coord2ParamArrPtr_08.set(_800bd7c0);
-    bigStruct.count_c8.set((short)MEMORY.ref(2, a2).offset(0xcL).get());
-
+    bigStruct.count_c8.set((short)tmdAnimFile.count_0c.get());
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
     bigStruct.tmd_8c.set(tmd);
@@ -706,7 +1285,7 @@ public final class Scus94491BpeSegment_800e {
     bigStruct.ui_f4.set(0);
     bigStruct.ui_f8.set(0);
 
-    FUN_80021584(bigStruct, a2);
+    FUN_80021584(bigStruct, tmdAnimFile);
 
     bigStruct.coord2_14.coord.transfer.setX(x);
     bigStruct.coord2_14.coord.transfer.setY(y);
@@ -735,7 +1314,7 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6d9cL)
   public static void FUN_800e6d9c() {
     for(int i = 0; i < 3; i++) {
-      _8004f01c.offset(i * 4).setu(_800e75ac.offset(i * 4));
+      scriptSubFunctions_8004e29c.get(864 + i).set(scriptSubFunctions_800e75ac.get(i).deref());
     }
   }
 
@@ -743,18 +1322,18 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6dd4() {
     //LAB_800e6de8
     for(int i = 0; i < 16; i++) {
-      _8004e59c.get(i).set(_800e7570.get(14 + i));
+      scriptSubFunctions_8004e29c.get(192 + i).set(scriptSubFunctions_800e75b8.get(i).deref());
     }
 
     //LAB_800e6e18
     for(int i = 0; i < 30; i++) {
-      _8004ea1c.get(i).set(_800e75f8.offset(i * 4).get());
+      scriptSubFunctions_8004e29c.get(480 + i).set(scriptSubFunctions_800e75f8.get(i).deref());
     }
   }
 
   @Method(0x800e6e3cL)
   public static void FUN_800e6e3c() {
-    memcpy(_8004e69c.getAddress(), _800e7670.getAddress(), 0x40);
+    memcpy(scriptSubFunctions_8004e29c.get(256).getAddress(), scriptSubFunctions_800e7670.getAddress(), 0x40);
   }
 
   @Method(0x800e6e6cL)
@@ -774,8 +1353,8 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6eccL)
   public static void FUN_800e6ecc() {
     //LAB_800e6ee0
-    for(int i = 0; i < 0x17; i++) {
-      _8004ee9c.offset(i * 4).setu(_800e76b0.offset(i * 4));
+    for(int i = 0; i < 23; i++) {
+      scriptSubFunctions_8004e29c.get(768 + i).set(scriptSubFunctions_800e76b0.get(i).deref());
     }
   }
 }

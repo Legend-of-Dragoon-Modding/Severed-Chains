@@ -28,6 +28,7 @@ import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptStruct;
+import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -111,7 +112,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd8;
 import static legend.game.Scus94491BpeSegment_8004._8004e098;
-import static legend.game.Scus94491BpeSegment_8004._8004e29c;
+import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004._8004f65c;
 import static legend.game.Scus94491BpeSegment_8004._8004f664;
 import static legend.game.Scus94491BpeSegment_8004._8004f6a4;
@@ -332,8 +333,7 @@ public final class Scus94491BpeSegment {
   public static final Value _80010250 = MEMORY.ref(4, 0x80010250L);
 
   public static final ExtendedTmd extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
-
-  public static final Value _8001051c = MEMORY.ref(4, 0x8001051cL);
+  public static final TmdAnimationFile tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL, TmdAnimationFile::new);
 
   /** unknown size */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
@@ -2785,13 +2785,13 @@ public final class Scus94491BpeSegment {
   }
 
   /**
-   * Executes the sub-function at {@link legend.game.Scus94491BpeSegment_8004#_8004e29c} denoted by the parent param
+   * Executes the sub-function at {@link legend.game.Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} denoted by the parent param
    *
    * @return The value that the sub-function returns
    */
   @Method(0x80016cfcL)
   public static long scriptExecuteSubFunc(final ScriptStruct a0) {
-    return _8004e29c.get((int)a0.parentParam_18.get()).deref().run(a0);
+    return scriptSubFunctions_8004e29c.get((int)a0.parentParam_18.get()).deref().run(a0);
   }
 
   /**

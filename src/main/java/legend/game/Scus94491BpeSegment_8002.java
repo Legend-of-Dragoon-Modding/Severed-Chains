@@ -33,6 +33,8 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.JoyStruct;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
+import legend.game.types.RotateTranslateStruct;
+import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -444,7 +446,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, long)} */
   @Method(0x80020718L)
-  public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
+  public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     final int transferX = bigStruct.coord2_14.coord.transfer.getX();
     final int transferY = bigStruct.coord2_14.coord.transfer.getY();
     final int transferZ = bigStruct.coord2_14.coord.transfer.getZ();
@@ -499,7 +501,7 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.ui_f4.set(0);
     bigStruct.ui_f8.set(0);
 
-    FUN_80021584(bigStruct, a2);
+    FUN_80021584(bigStruct, tmdAnimFile);
 
     bigStruct.coord2_14.coord.transfer.setX(transferX);
     bigStruct.coord2_14.coord.transfer.setY(transferY);
@@ -546,7 +548,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020a00L)
-  public static void FUN_80020a00(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final long a2) {
+  public static void FUN_80020a00(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     bigStruct.count_c8.set((short)extendedTmd.tmdPtr_00.deref().tmd.header.nobj.get());
 
     final long address;
@@ -570,7 +572,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020b40
     bigStruct.coord2ArrPtr_04.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
     bigStruct.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x10, GsCOORD2PARAM::new)));
-    FUN_80020718(bigStruct, extendedTmd, a2);
+    FUN_80020718(bigStruct, extendedTmd, tmdAnimFile);
   }
 
   @Method(0x80020b98L)
@@ -609,15 +611,15 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80020c7c
       a0.ub_9c.incr();
-      a0.ptr_ui_94.set(a0.ptr_ui_90);
+      a0.rotateTranslateArrPtr_94.set(a0.ptr_ui_90.deref());
     }
 
     //LAB_80020c90
     if((a0.us_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
-      long sp10 = a0.ptr_ui_94.get();
+      UnboundedArrayRef<RotateTranslateStruct> sp10 = a0.rotateTranslateArrPtr_94.deref();
 
       if(a0.ub_a3.get() == 0) {
-        long s2 = a0.ptr_ui_94.get();
+        final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
         //LAB_80020ce0
         for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
@@ -625,78 +627,54 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param.deref();
           RotMatrix_80040010(params.rotate, coord2.coord);
 
-          params.trans.x.add((int)MEMORY.ref(2, s2).offset(0x6L).getSigned());
-          params.trans.y.add((int)MEMORY.ref(2, s2).offset(0x8L).getSigned());
-          params.trans.z.add((int)MEMORY.ref(2, s2).offset(0xaL).getSigned());
+          params.trans.add(rotateTranslate.get(i).translate_06);
           params.trans.div(2);
 
           TransMatrix(coord2.coord, params.trans);
-
-          s2 += 0xcL;
         }
 
         //LAB_80020d6c
-        a0.ptr_ui_94.set(s2);
+        a0.rotateTranslateArrPtr_94.set(rotateTranslate.slice(a0.tmdNobj_ca.get()));
       } else {
         //LAB_80020d74
-        long s6 = a0.ptr_ui_94.get();
+        final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
         //LAB_80020d8c
         for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
 
-          final long s1 = MEMORY.ref(4, s6).offset(0x4L).get();
-          final long s3 = MEMORY.ref(4, s6).offset(0x8L).get();
-          final long v1 = MEMORY.ref(4, s6).get();
-
-          params.rotate.setX((short)v1);
-          params.rotate.setY((short)(v1 >> 16));
-          params.rotate.setZ((short)s1);
+          params.rotate.set(rotateTranslate.get(i).rotate_00);
           RotMatrix_80040010(params.rotate, coord2.coord);
 
-          params.trans.setX((short)(s1 >> 16));
-          params.trans.setY((short)s3);
-          params.trans.setZ((short)(s3 >> 16));
+          params.trans.set(rotateTranslate.get(i).translate_06);
           TransMatrix(coord2.coord, params.trans);
-
-          s6 += 0xcL;
         }
 
         //LAB_80020dfc
-        a0.ptr_ui_94.set(s6);
+        a0.rotateTranslateArrPtr_94.set(rotateTranslate.slice(a0.tmdNobj_ca.get()));
       }
 
       //LAB_80020e00
-      a0.ptr_ui_94.set(sp10);
+      a0.rotateTranslateArrPtr_94.set(sp10);
     } else {
       //LAB_80020e0c
-      long s5 = a0.ptr_ui_94.get();
+      UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
       //LAB_80020e24
       for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
         final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
         final GsCOORD2PARAM params = coord2.param.deref();
 
-        final long v1 = MEMORY.ref(4, s5).get();
-        final long s1 = MEMORY.ref(4, s5).offset(0x4L).get();
-        final long s3 = MEMORY.ref(4, s5).offset(0x8L).get();
-
-        params.rotate.setX((short)v1);
-        params.rotate.setY((short)(v1 >>> 16));
-        params.rotate.setZ((short)s1);
+        params.rotate.set(rotateTranslate.get(i).rotate_00);
         RotMatrix_80040010(params.rotate, coord2.coord);
 
-        params.trans.setX((short)(s1 >> 16));
-        params.trans.setY((short)s3);
-        params.trans.setZ((short)(s3 >> 16));
+        params.trans.set(rotateTranslate.get(i).translate_06);
         TransMatrix(coord2.coord, params.trans);
-
-        s5 += 0xcL;
       }
 
       //LAB_80020e94
-      a0.ptr_ui_94.set(s5);
+      a0.rotateTranslateArrPtr_94.set(rotateTranslate);
     }
 
     //LAB_80020e98
@@ -840,36 +818,25 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    long s5 = a0.ptr_ui_94.get();
+    UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
     //LAB_80021320
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 obj2 = a0.dobj2ArrPtr_00.deref().get(i);
 
-      final long v1 = MEMORY.ref(4, s5).get();
-      final long s1 = MEMORY.ref(4, s5).offset(0x4L).get();
-      final long s3 = MEMORY.ref(4, s5).offset(0x8L).get();
       final GsCOORDINATE2 coord2 = obj2.coord2_04.deref();
       final GsCOORD2PARAM coord2param = coord2.param.deref();
       final MATRIX matrix = coord2.coord;
 
-      coord2param.rotate.x.set((short)v1);
-      coord2param.rotate.y.set((short)(v1 >>> 16));
-      coord2param.rotate.z.set((short)s1);
-
+      coord2param.rotate.set(rotateTranslate.get(i).rotate_00);
       RotMatrix_80040010(coord2param.rotate, matrix);
 
-      coord2param.trans.x.set((short)(s1 >>> 16));
-      coord2param.trans.y.set((short)s3);
-      coord2param.trans.z.set((short)(s3 >>> 16));
-
+      coord2param.trans.set(rotateTranslate.get(i).translate_06);
       TransMatrix(matrix, coord2param.trans);
-
-      s5 += 0xcL;
     }
 
     //LAB_80021390
-    a0.ptr_ui_94.set(s5);
+    a0.rotateTranslateArrPtr_94.set(rotateTranslate);
   }
 
   @Method(0x800214bcL)
@@ -880,11 +847,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021584L)
-  public static void FUN_80021584(final BigStruct bigStruct, final long a1) {
-    bigStruct.ptr_ui_90.set(a1 + 0x10L);
-    bigStruct.ptr_ui_94.set(a1 + 0x10L);
-    bigStruct.us_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
-    bigStruct.us_9a.set((int)MEMORY.ref(2, a1).offset(0xeL).get());
+  public static void FUN_80021584(final BigStruct bigStruct, final TmdAnimationFile tmdAnimFile) {
+    bigStruct.ptr_ui_90.set(tmdAnimFile.rotateTranslateArr_10);
+    bigStruct.rotateTranslateArrPtr_94.set(tmdAnimFile.rotateTranslateArr_10);
+    bigStruct.us_98.set(tmdAnimFile.count_0c);
+    bigStruct.us_9a.set(tmdAnimFile._0e);
     bigStruct.ub_9c.set(0);
 
     FUN_800212d8(bigStruct);
@@ -898,7 +865,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021608
     bigStruct.ub_9c.set(1);
-    bigStruct.ptr_ui_94.set(bigStruct.ptr_ui_90);
+    bigStruct.rotateTranslateArrPtr_94.set(bigStruct.ptr_ui_90.deref());
   }
 
   @Method(0x800217a4L)

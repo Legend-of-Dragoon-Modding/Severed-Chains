@@ -43,6 +43,7 @@ import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
+import legend.game.types.RotateTranslateStruct;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptStruct;
 import legend.game.types.SmallerStruct;
@@ -50,6 +51,7 @@ import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStruct2;
 import legend.game.types.Struct20;
 import legend.game.types.Struct54;
+import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdExtension;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
@@ -671,7 +673,7 @@ public final class SMap {
 
         //LAB_800da1e4
         struct.ub_9c.incr();
-        struct.ptr_ui_94.set(struct.ptr_ui_90);
+        struct.rotateTranslateArrPtr_94.set(struct.ptr_ui_90.deref());
       }
 
       //LAB_800da1f8
@@ -679,7 +681,7 @@ public final class SMap {
         //LAB_800da24c
         FUN_800212d8(struct);
       } else {
-        final long s0 = struct.ptr_ui_94.get();
+        final UnboundedArrayRef<RotateTranslateStruct> old = struct.rotateTranslateArrPtr_94.deref();
 
         if(struct.ub_a3.get() == 0) {
           FUN_800da920(struct);
@@ -688,7 +690,7 @@ public final class SMap {
           FUN_800212d8(struct);
         }
 
-        struct.ptr_ui_94.set(s0);
+        struct.rotateTranslateArrPtr_94.set(old);
       }
 
       //LAB_800da254
@@ -919,7 +921,7 @@ public final class SMap {
 
   @Method(0x800da920L)
   public static void FUN_800da920(final BigStruct a0) {
-    long s4 = a0.ptr_ui_94.get();
+    final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
     //LAB_800da96c
     for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
@@ -928,18 +930,14 @@ public final class SMap {
 
       RotMatrix_80040780(params.rotate, coord);
 
-      params.trans.x.add((int)MEMORY.ref(2, s4).offset(0x6L).getSigned());
-      params.trans.y.add((int)MEMORY.ref(2, s4).offset(0x8L).getSigned());
-      params.trans.z.add((int)MEMORY.ref(2, s4).offset(0xaL).getSigned());
+      params.trans.add(rotateTranslate.get(i).translate_06);
       params.trans.div(2);
 
       TransMatrix(coord, params.trans);
-
-      s4 += 0xcL;
     }
 
     //LAB_800daa0c
-    a0.ptr_ui_94.set(s4);
+    a0.rotateTranslateArrPtr_94.set(rotateTranslate.slice(a0.tmdNobj_ca.get()));
   }
 
   @Method(0x800daa3cL)
@@ -1991,13 +1989,13 @@ public final class SMap {
   public static long FUN_800dfe0c(final ScriptStruct a0) {
     final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
 
-    final long index = a0.params_20.get(1).deref().get();
+    final int index = (int)a0.params_20.get(1).deref().get();
 
-    struct.us_12e.set((int)index);
+    struct.mrgAnimGroup_12e.set(index);
     struct.ub_9d.set((int)_800c6a50.offset(index * 0x4L).get());
 
     FUN_80020fe0(struct);
-    FUN_800e0d18(struct, extendedTmdArr_800c6a00.get((int)index).deref(), struct.mrg_124.deref().getFile((int)(index * 0x21L + 0x1L)));
+    FUN_800e0d18(struct, extendedTmdArr_800c6a00.get(index).deref(), struct.mrg_124.deref().getFile(index * 0x21 + 0x1, TmdAnimationFile::new));
 
     struct.us_12c.set(0);
     struct.ui_188.set(0);
@@ -2009,14 +2007,12 @@ public final class SMap {
   public static long FUN_800dfec8(final ScriptStruct a0) {
     final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
 
-    struct.us_132.set((int)a0.params_20.get(1).deref().get());
+    struct.mrgAnimGroupIndex_132.set((int)a0.params_20.get(1).deref().get());
     struct.ub_a2.set(0);
     struct.ub_a3.set(0);
 
-    long v0 = struct.us_12e.get() * 0x21L + struct.us_132.get() + 0x1L;
-    long a1 = struct.mrg_124.deref().getFile((int)v0);
-
-    FUN_80021584(struct, a1);
+    long mrgIndex = struct.mrgAnimGroup_12e.get() * 0x21L + struct.mrgAnimGroupIndex_132.get() + 0x1L;
+    FUN_80021584(struct, struct.mrg_124.deref().getFile((int)mrgIndex, TmdAnimationFile::new));
 
     struct.us_12c.set(0);
     struct.ui_190.and(0x9fff_ffffL);
@@ -2104,7 +2100,7 @@ public final class SMap {
   }
 
   @Method(0x800e0d18L)
-  public static void FUN_800e0d18(final BigStruct struct, final ExtendedTmd extendedTmd, final long a2) {
+  public static void FUN_800e0d18(final BigStruct struct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     final int transferX = struct.coord2_14.coord.transfer.getX();
     final int transferY = struct.coord2_14.coord.transfer.getY();
     final int transferZ = struct.coord2_14.coord.transfer.getZ();
@@ -2178,7 +2174,7 @@ public final class SMap {
     struct.ui_f8.set(0);
     struct.us_a0.set(0);
 
-    FUN_80021584(struct, a2);
+    FUN_80021584(struct, tmdAnimFile);
 
     struct.coord2_14.coord.transfer.setX(transferX);
     struct.coord2_14.coord.transfer.setY(transferY);
@@ -2190,7 +2186,7 @@ public final class SMap {
   }
 
   @Method(0x800e0ff0L)
-  public static long FUN_800e0ff0(int index, BiggerStruct<BigStruct> biggerStruct, BigStruct bigStruct) {
+  public static long FUN_800e0ff0(final int index, final BiggerStruct<BigStruct> biggerStruct, final BigStruct bigStruct) {
     BigStruct puVar1 = biggerStruct.innerStruct_00.deref();
 
     if(puVar1.us_178.get() != 0) {
@@ -2207,7 +2203,7 @@ public final class SMap {
         puVar1.coord2Param_64.rotate.z.add((short)puVar1.usPtr_184.deref().get());
       }
 
-      if(puVar1.us_12e.get() == 0) {
+      if(puVar1.mrgAnimGroup_12e.get() == 0) {
         FUN_800217a4(puVar1);
       } else {
         FUN_800214bc(puVar1);
@@ -2216,8 +2212,8 @@ public final class SMap {
       if(puVar1.us_12a.get() == 0) {
         FUN_80020b98(puVar1);
         if(puVar1.us_12c.get() == 1 && (puVar1.ui_190.get() & 0x2000_0000L) != 0) {
-          puVar1.us_132.set(0);
-          FUN_80021584(puVar1, puVar1.mrg_124.deref().getFile((int)(puVar1.us_12e.get() * 0x21L + 0x1L)));
+          puVar1.mrgAnimGroupIndex_132.set(0);
+          FUN_80021584(puVar1, puVar1.mrg_124.deref().getFile(puVar1.mrgAnimGroup_12e.get() * 0x21 + 0x1, TmdAnimationFile::new));
           puVar1.us_12c.set(0);
           puVar1.ui_190.and(0x9fff_ffffL);
         }
@@ -2568,8 +2564,6 @@ public final class SMap {
         }
 
         //LAB_800e1b20
-        long s5 = 0x8L;
-
         //LAB_800e1b54
         for(int i = 0; i < _800c6730.get(); i++) {
           final long index2 = allocateBiggerStruct(0x210L);
@@ -2582,10 +2576,10 @@ public final class SMap {
           final BigStruct struct = biggerStructPtrArr_800bc1c0.get((int)index2).deref().innerStruct_00.derefAs(BigStruct.class);
           struct.ub_9d.set((int)_800c6a50.offset(1, i * 0x4L).get());
 
-          FUN_80020a00(struct, extendedTmdArr_800c6a00.get(i).deref(), mrg0Addr_800c6878.deref().getFile((int)s5 / 8));
+          FUN_80020a00(struct, extendedTmdArr_800c6a00.get(i).deref(), mrg0Addr_800c6878.deref().getFile(i * 21 + 1, TmdAnimationFile::new));
 
           if(i == 0) {
-            FUN_800e0d18(bigStruct_800c6748, extendedTmdArr_800c6a00.get(0).deref(), mrg0Addr_800c6878.deref().getFile(1)); //TODO not sure if this file 1 is right
+            FUN_800e0d18(bigStruct_800c6748, extendedTmdArr_800c6a00.get(0).deref(), mrg0Addr_800c6878.deref().getFile(1, TmdAnimationFile::new));
             bigStruct_800c6748.coord2_14.coord.transfer.setX(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setY(0);
             bigStruct_800c6748.coord2_14.coord.transfer.setZ(0);
@@ -2599,9 +2593,9 @@ public final class SMap {
           struct.us_128.set(0);
           struct.us_12a.set(0);
           struct.us_12c.set(0);
-          struct.us_12e.set(i);
+          struct.mrgAnimGroup_12e.set(i);
           struct.us_130.set(i);
-          struct.us_132.set(0);
+          struct.mrgAnimGroupIndex_132.set(0);
           struct.us_134.set(0);
           struct.ui_144.set(0);
           struct.ui_16c.set(0xffff_ffffL);
@@ -2652,8 +2646,6 @@ public final class SMap {
 
           //LAB_800e1d60
           FUN_800f04ac(struct.v_1d0.getAddress());
-
-          s5 += 0x108L;
         }
 
         //LAB_800e1d88
@@ -2800,7 +2792,7 @@ public final class SMap {
       }
 
       //LAB_800e2140
-      final long s3 = FUN_800e88a0((short)s1.us_12e.get(), s1.coord2_14.coord, svec);
+      final long s3 = FUN_800e88a0((short)s1.mrgAnimGroup_12e.get(), s1.coord2_14.coord, svec);
       if((int)s3 >= 0) {
         if(FUN_800e6798(s3, 0, s1.coord2_14.coord.transfer.getX(), s1.coord2_14.coord.transfer.getY(), s1.coord2_14.coord.transfer.getZ(), svec) != 0) {
           s1.coord2_14.coord.transfer.x.add(svec.x.get());
@@ -4941,8 +4933,8 @@ public final class SMap {
       case 0x4:
         bigStruct_800d4bf8.ub_9d.set(0x91);
 
-        //TODO
-        FUN_80020a00(bigStruct_800d4bf8, _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x08L)).cast(ExtendedTmd::new), _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x10L)).getAddress());
+        //TODO file types
+        FUN_80020a00(bigStruct_800d4bf8, _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x08L)).cast(ExtendedTmd::new), _800d4be8.deref(4).offset(_800d4be8.deref(4).offset(0x10L)).cast(TmdAnimationFile::new));
 
         if(submapCut_80052c30.get() == 0x2a1L) {
           FUN_800eef6c(sp20, _800d4bd4.get(), _800d4bd0.get());
@@ -5439,7 +5431,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    FUN_80020a00(_800d4d40, mrg_800d6d1c.getFile(4, ExtendedTmd::new), mrg_800d6d1c.getFile(5)); //TODO file type
+    FUN_80020a00(_800d4d40, mrg_800d6d1c.getFile(4, ExtendedTmd::new), mrg_800d6d1c.getFile(5, TmdAnimationFile::new));
     _800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
@@ -5689,7 +5681,7 @@ public final class SMap {
   public static void FUN_800f2788() {
     final long[] sp10 = new long[8];
 
-    FUN_80020a00(_800d5eb0, mrg_800d6d1c.getFile(2, ExtendedTmd::new), mrg_800d6d1c.getFile(3));
+    FUN_80020a00(_800d5eb0, mrg_800d6d1c.getFile(2, ExtendedTmd::new), mrg_800d6d1c.getFile(3, TmdAnimationFile::new));
     _800d5598.offset(4, 0x28L).setu(0);
     _800d5598.offset(4, 0x34L).setu(0x50L);
     _800d5598.offset(4, 0x6cL).setu(0);

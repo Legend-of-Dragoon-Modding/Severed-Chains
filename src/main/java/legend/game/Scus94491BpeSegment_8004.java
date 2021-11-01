@@ -21,12 +21,10 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.core.spu.Voice;
 import legend.game.types.CallbackStruct;
-import legend.game.types.ScriptStruct;
 import legend.game.types.JoyData;
+import legend.game.types.ScriptStruct;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.function.Function;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.DMA;
@@ -72,7 +70,6 @@ import static legend.game.Scus94491BpeSegment_8002.SysEnqIntRP;
 import static legend.game.Scus94491BpeSegment_8003.ChangeClearRCnt;
 import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005._80058d0c;
 import static legend.game.Scus94491BpeSegment_8005._8005954c;
 import static legend.game.Scus94491BpeSegment_8005._80059550;
@@ -117,6 +114,7 @@ import static legend.game.Scus94491BpeSegment_8005.priorityChain_80059570;
 import static legend.game.Scus94491BpeSegment_8005.ptrArrJoyData_80059608;
 import static legend.game.Scus94491BpeSegment_8005.ptrClearJoyData_800595d8;
 import static legend.game.Scus94491BpeSegment_8005.ptrGetJoyDataForPort_800595e8;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c._800c3658;
 import static legend.game.Scus94491BpeSegment_800c._800c37a4;
 import static legend.game.Scus94491BpeSegment_800c._800c3a28;
@@ -284,7 +282,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
   public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);
 
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.class, 28, 4, (Function)Pointer.of(4, SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
   public static final Value index_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
@@ -574,12 +572,14 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.class, 0x81, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 0x81, 4, Pointer.of(4, FunctionRef::new)));
 
   /**
    * <p>Actually this is</p>
    *
    * <p>All methods that are skipped are {@link Scus94491BpeSegment#scriptSubNotImplemented}</p>
+   *
+   * <p>Many methods are copied into this table at runtime.</p>
    *
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#FUN_80017354}</li>
@@ -691,50 +691,8 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e29c = (ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>>)MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.class, 0x3ff, 4, (Function)Pointer.of(4, FunctionRef::new)));
-
-  public static final Value _8004e31c = MEMORY.ref(4, 0x8004e31cL);
-
-  public static final ArrayRef<UnsignedIntRef> _8004e41c = MEMORY.ref(0x80, 0x8004e41cL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-
-  public static final ArrayRef<UnsignedIntRef> _8004e59c = MEMORY.ref(0x80, 0x8004e59cL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-
-  public static final Value _8004e61c = MEMORY.ref(4, 0x8004e61cL);
-
-  public static final Value _8004e69c = MEMORY.ref(4, 0x8004e69cL);
-
-  public static final ArrayRef<UnsignedIntRef> _8004e71c = MEMORY.ref(0x80, 0x8004e71cL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-
-  public static final Value _8004e91c = MEMORY.ref(4, 0x8004e91cL);
-
-  public static final Value _8004e990 = MEMORY.ref(4, 0x8004e990L);
-
-  public static final ArrayRef<UnsignedIntRef> _8004ea1c = MEMORY.ref(0x80, 0x8004ea1cL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-  public static final ArrayRef<UnsignedIntRef> _8004ea9c = MEMORY.ref(0x38, 0x8004ea9cL, ArrayRef.of(UnsignedIntRef.class, 14, 4, UnsignedIntRef::new));
-
-  public static final Value _8004eb1c = MEMORY.ref(4, 0x8004eb1cL);
-
-  public static final Value _8004eb9c = MEMORY.ref(4, 0x8004eb9cL);
-
-  public static final Value _8004ec1c = MEMORY.ref(4, 0x8004ec1cL);
-
-  public static final Value _8004ec9c = MEMORY.ref(4, 0x8004ec9cL);
-
-  public static final ArrayRef<UnsignedIntRef> _8004ed1c = MEMORY.ref(0x80, 0x8004ed1cL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
-
-  public static final Value _8004ed9c = MEMORY.ref(4, 0x8004ed9cL);
-
-  public static final Value _8004ee1c = MEMORY.ref(4, 0x8004ee1cL);
-
-  public static final Value _8004ee9c = MEMORY.ref(4, 0x8004ee9cL);
-
-  public static final Value _8004ef1c = MEMORY.ref(4, 0x8004ef1cL);
-
-  public static final Value _8004ef9c = MEMORY.ref(4, 0x8004ef9cL);
-
-  public static final Value _8004f01c = MEMORY.ref(1, 0x8004f01cL);
-
-  public static final Value _8004f09c = MEMORY.ref(1, 0x8004f09cL);
+  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
+  // 8004f29c end of jump table
 
   public static final Value _8004f5ac = MEMORY.ref(2, 0x8004f5acL);
 

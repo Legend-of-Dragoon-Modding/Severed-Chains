@@ -29,9 +29,9 @@ public class BigStruct implements MemoryRef {
   public final GsCOORDINATE2 coord2_14;
   public final GsCOORD2PARAM coord2Param_64;
   public final Pointer<Tmd> tmd_8c;
-  public final UnsignedIntRef ptr_ui_90;
-  /** Pointer to array of SVECTORs that is us_ca long */
-  public final UnsignedIntRef ptr_ui_94;
+  public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> ptr_ui_90;
+  /** One entry for each TMD object (tmdNobj_ca) */
+  public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotateTranslateArrPtr_94;
   public final UnsignedShortRef us_98;
   public final UnsignedShortRef us_9a;
   public final UnsignedByteRef ub_9c;
@@ -66,9 +66,10 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_128;
   public final UnsignedShortRef us_12a;
   public final UnsignedShortRef us_12c;
-  public final UnsignedShortRef us_12e;
+  public final UnsignedShortRef mrgAnimGroup_12e;
+  /** TODO possibly file index? */
   public final UnsignedShortRef us_130;
-  public final UnsignedShortRef us_132;
+  public final UnsignedShortRef mrgAnimGroupIndex_132;
   public final UnsignedShortRef us_134;
 
   public final VECTOR vec_138;
@@ -122,8 +123,8 @@ public class BigStruct implements MemoryRef {
     this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);
     this.coord2Param_64 = ref.offset(4, 0x64L).cast(GsCOORD2PARAM::new);
     this.tmd_8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, Tmd::new));
-    this.ptr_ui_90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
-    this.ptr_ui_94 = ref.offset(4, 0x94L).cast(UnsignedIntRef::new);
+    this.ptr_ui_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
+    this.rotateTranslateArrPtr_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.us_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
     this.us_9a = ref.offset(2, 0x9aL).cast(UnsignedShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
@@ -153,9 +154,9 @@ public class BigStruct implements MemoryRef {
     this.us_128 = ref.offset(2, 0x128L).cast(UnsignedShortRef::new);
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
-    this.us_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
+    this.mrgAnimGroup_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
     this.us_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
-    this.us_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
+    this.mrgAnimGroupIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.us_134 = ref.offset(2, 0x134L).cast(UnsignedShortRef::new);
 
     this.vec_138 = ref.offset(4, 0x138L).cast(VECTOR::new);

@@ -15,6 +15,7 @@ import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.EnumRef;
+import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -22,6 +23,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
+import legend.game.types.ScriptStruct;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -235,5 +237,6 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 
-  public static final Value _800ca734 = MEMORY.ref(4, 0x800ca734L);
+  /** TODO this is in an overlay that we don't have yet */
+  public static final FunctionRef<ScriptStruct, Long> scriptSubFunction_800ca734 = MEMORY.ref(4, 0x800ca734L, FunctionRef::new);
 }
