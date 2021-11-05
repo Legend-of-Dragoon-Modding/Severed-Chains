@@ -23,6 +23,9 @@ import legend.core.spu.Voice;
 import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
 import legend.game.types.ScriptStruct;
+import legend.game.types.SpuStruct0c;
+import legend.game.types.SpuStruct124;
+import legend.game.types.SpuStruct66;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,6 +98,8 @@ import static legend.game.Scus94491BpeSegment_8005._80059644;
 import static legend.game.Scus94491BpeSegment_8005._80059650;
 import static legend.game.Scus94491BpeSegment_8005._80059654;
 import static legend.game.Scus94491BpeSegment_8005._80059658;
+import static legend.game.Scus94491BpeSegment_8005._8005967c;
+import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f7c;
 import static legend.game.Scus94491BpeSegment_8005._80059f7e;
@@ -121,10 +126,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c3a28;
 import static legend.game.Scus94491BpeSegment_800c._800c3a38;
 import static legend.game.Scus94491BpeSegment_800c._800c3a3c;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
-import static legend.game.Scus94491BpeSegment_800c._800c3a62;
 import static legend.game.Scus94491BpeSegment_800c._800c43d0;
-import static legend.game.Scus94491BpeSegment_800c._800c43d4;
-import static legend.game.Scus94491BpeSegment_800c._800c43d8;
 import static legend.game.Scus94491BpeSegment_800c._800c4aa8;
 import static legend.game.Scus94491BpeSegment_800c._800c4aac;
 import static legend.game.Scus94491BpeSegment_800c._800c4ab0;
@@ -134,28 +136,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c4abc;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac4;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
-import static legend.game.Scus94491BpeSegment_800c._800c4ac9;
-import static legend.game.Scus94491BpeSegment_800c._800c4aca;
-import static legend.game.Scus94491BpeSegment_800c._800c4ad4;
-import static legend.game.Scus94491BpeSegment_800c._800c4af0;
-import static legend.game.Scus94491BpeSegment_800c._800c4af1;
-import static legend.game.Scus94491BpeSegment_800c._800c4af2;
-import static legend.game.Scus94491BpeSegment_800c._800c4af4;
-import static legend.game.Scus94491BpeSegment_800c._800c4aff;
-import static legend.game.Scus94491BpeSegment_800c._800c4b01;
-import static legend.game.Scus94491BpeSegment_800c._800c4ba6;
-import static legend.game.Scus94491BpeSegment_800c._800c4ba8;
-import static legend.game.Scus94491BpeSegment_800c._800c4baa;
-import static legend.game.Scus94491BpeSegment_800c._800c4bac;
-import static legend.game.Scus94491BpeSegment_800c._800c4bae;
-import static legend.game.Scus94491BpeSegment_800c._800c4baf;
-import static legend.game.Scus94491BpeSegment_800c._800c4bb1;
-import static legend.game.Scus94491BpeSegment_800c._800c4bb6;
-import static legend.game.Scus94491BpeSegment_800c._800c4bb8;
-import static legend.game.Scus94491BpeSegment_800c._800c4bcc;
-import static legend.game.Scus94491BpeSegment_800c._800c4bcd;
-import static legend.game.Scus94491BpeSegment_800c._800c4bd0;
-import static legend.game.Scus94491BpeSegment_800c._800c4be0;
 import static legend.game.Scus94491BpeSegment_800c._800c6628;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
 import static legend.game.Scus94491BpeSegment_800c._800c6633;
@@ -3105,6 +3085,8 @@ public final class Scus94491BpeSegment_8004 {
 
   // End of joypad code
 
+  // Start of SPU code
+
   @Method(0x80045cb8L)
   public static void FUN_80045cb8() {
     FUN_8004b7c0(0x1L);
@@ -3112,156 +3094,158 @@ public final class Scus94491BpeSegment_8004 {
 
     LAB_80045d04:
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(_800c4af0.offset(voiceIndex * 0x124L).get() == 0x1L || _800c4af2.offset(voiceIndex * 0x124L).get() == 0x1L) {
+      final SpuStruct124 spu124 = _800c4ac8.get(voiceIndex);
+
+      if(spu124._028.get() == 0x1L || spu124._02a.get() == 0x1L) {
         //LAB_80045d24
         FUN_80047b38(voiceIndex);
 
-        if(_800c4be0.offset(voiceIndex * 0x124L).get() == 0) {
-          //LAB_80045d40
-          do {
-            FUN_8004a7ec(voiceIndex);
+        //LAB_80045d40
+        while(spu124._118.get() == 0) {
+          FUN_8004a7ec(voiceIndex);
 
-            if((FUN_80047bd0(voiceIndex) & 0xffffL) == 0) {
-              _800c4ad4.offset(voiceIndex * 0x124L).addu(0x3L);
-              _800c6634.setu(0);
-            } else {
-              //LAB_80045d7c
-              _800c6634.setu(0x1L);
-              final long v1 = _800c4ac8.offset(voiceIndex * 0x124L).get(0xf0L);
-              if(v1 == 0xb0L) {
-                //LAB_80045e60
-                //switchD
-                switch((int)_800c4aca.offset(voiceIndex * 0x124L).get()) {
-                  case 0x1:
-                    FUN_8004906c(voiceIndex);
-                    break;
+          if((FUN_80047bd0(voiceIndex) & 0xffffL) == 0) {
+            spu124._00c.add(0x3L);
+            _800c6634.setu(0);
+          } else {
+            //LAB_80045d7c
+            _800c6634.setu(0x1L);
 
-                  case 0x2:
-                    FUN_80049250(voiceIndex);
-                    break;
+            //TODO clean up this if chain
+            final long v1 = spu124._000.get() & 0xf0L;
+            if(v1 == 0xb0L) {
+              //LAB_80045e60
+              //switchD
+              switch(spu124._002.get()) {
+                case 0x1:
+                  FUN_8004906c(voiceIndex);
+                  break;
 
-                  case 0x6:
-                    FUN_80049f14(voiceIndex);
-                    break;
+                case 0x2:
+                  FUN_80049250(voiceIndex);
+                  break;
 
-                  case 0x7:
-                    FUN_80049638(voiceIndex);
-                    break;
+                case 0x6:
+                  FUN_80049f14(voiceIndex);
+                  break;
 
-                  case 0xa:
-                    if(spuMono_800c6666.get() == 0) {
-                      //LAB_80045f44
-                      FUN_80049980(voiceIndex);
-                    } else if(_800c4af0.offset(voiceIndex * 0x124L).get() == 0) {
-                      //LAB_80045f30
-                      _800c4ad4.offset(voiceIndex * 0x124L).addu(0x6L);
-                    } else {
-                      _800c6680.deref(4).offset(0x4L).setu(_800c4ad4.offset(voiceIndex * 0x124L).offset(voice00LeftPtr_800c4aa4).offset(0x2L));
-                      _800c4ad4.offset(voiceIndex * 0x124L).addu(0x3L);
-                    }
+                case 0x7:
+                  FUN_80049638(voiceIndex);
+                  break;
 
-                    break;
-
-                  case 0x40:
-                    FUN_80049cbc(voiceIndex);
-                    break;
-
-                  case 0x41:
-                    FUN_80049480(voiceIndex);
-                    break;
-
-                  case 0x60:
-                    FUN_80049e2c(voiceIndex);
-                    FUN_8004a5e0(voiceIndex);
-                    break LAB_80045d04;
-
-                  case 0x62:
-                    FUN_8004a2c0(voiceIndex);
-                    break;
-
-                  case 0x63:
-                    FUN_8004a34c(voiceIndex);
-                    break;
-                }
-              } else if(v1 >= 0xb1L) {
-                //LAB_80045dd4
-                if(v1 == 0xe0L) {
-                  //LAB_80045fc8
-                  FUN_800486d4(voiceIndex);
-                } else if(v1 >= 0xe1L) {
-                  //LAB_80045df8
-                  if(v1 == 0xf0L) {
-                    if(_800c4aca.offset(voiceIndex * 0x124L).get() == 0x2fL) {
-                      //LAB_80045e24
-                      FUN_80048eb8(voiceIndex);
-                      break;
-                    }
-
-                    if(_800c4aca.offset(voiceIndex * 0x124L).get() == 0x51L) {
-                      //LAB_80045e38
-                      FUN_80048f98(voiceIndex);
-                    }
+                case 0xa:
+                  if(spuMono_800c6666.get() == 0) {
+                    //LAB_80045f44
+                    FUN_80049980(voiceIndex);
+                  } else if(spu124._028.get() == 0) {
+                    //LAB_80045f30
+                    spu124._00c.add(0x6L);
+                  } else {
+                    _800c6680.deref(4).offset(0x4L).setu(voice00LeftPtr_800c4aa4.deref(2).offset(spu124._00c.get()).offset(0x2L));
+                    spu124._00c.add(0x3L);
                   }
-                } else if(v1 == 0xc0L) {
-                  //LAB_80045e4c
-                  FUN_80048fec(voiceIndex);
-                }
-              } else if(v1 == 0x90L) {
-                //LAB_80046004
-                FUN_80046a04(voiceIndex);
-              } else if(v1 >= 0x91L) {
-                //LAB_80045dc0
-                if(v1 == 0xa0L) {
-                  //LAB_80045ff0
-                  FUN_80046224(voiceIndex);
-                }
-              } else if(v1 == 0x80L) {
-                //LAB_80045fdc
-                FUN_800486d4(voiceIndex);
-              }
-            }
 
-            //caseD_3
-            FUN_8004a5e0(voiceIndex);
-          } while(_800c4be0.offset(voiceIndex * 0x124L).get() == 0);
+                  break;
+
+                case 0x40:
+                  FUN_80049cbc(voiceIndex);
+                  break;
+
+                case 0x41:
+                  FUN_80049480(voiceIndex);
+                  break;
+
+                case 0x60:
+                  FUN_80049e2c(voiceIndex);
+                  FUN_8004a5e0(voiceIndex);
+                  break LAB_80045d04;
+
+                case 0x62:
+                  FUN_8004a2c0(voiceIndex);
+                  break;
+
+                case 0x63:
+                  FUN_8004a34c(voiceIndex);
+                  break;
+              }
+            } else if(v1 >= 0xb1L) {
+              //LAB_80045dd4
+              if(v1 == 0xe0L) {
+                //LAB_80045fc8
+                FUN_800486d4(voiceIndex);
+              } else if(v1 >= 0xe1L) {
+                //LAB_80045df8
+                if(v1 == 0xf0L) {
+                  if(spu124._002.get() == 0x2fL) {
+                    //LAB_80045e24
+                    FUN_80048eb8(voiceIndex);
+                    break;
+                  }
+
+                  if(spu124._002.get() == 0x51L) {
+                    //LAB_80045e38
+                    FUN_80048f98(voiceIndex);
+                  }
+                }
+              } else if(v1 == 0xc0L) {
+                //LAB_80045e4c
+                FUN_80048fec(voiceIndex);
+              }
+            } else if(v1 == 0x90L) {
+              //LAB_80046004
+              FUN_80046a04(voiceIndex);
+            } else if(v1 >= 0x91L) {
+              //LAB_80045dc0
+              if(v1 == 0xa0L) {
+                //LAB_80045ff0
+                FUN_80046224(voiceIndex);
+              }
+            } else if(v1 == 0x80L) {
+              //LAB_80045fdc
+              FUN_800486d4(voiceIndex);
+            }
+          }
+
+          //caseD_3
+          FUN_8004a5e0(voiceIndex);
         }
 
         //LAB_8004602c
         if(_800c6634.get() != 0) {
-          _800c666a.oru(_800c4ba6.offset(voiceIndex * 0x124L));
-          _800c666c.oru(_800c4ba8.offset(voiceIndex * 0x124L));
-          _800c666e.oru(_800c4baa.offset(voiceIndex * 0x124L));
-          _800c6670.oru(_800c4bac.offset(voiceIndex * 0x124L));
+          _800c666a.oru(spu124._0de.get());
+          _800c666c.oru(spu124._0e0.get());
+          _800c666e.oru(spu124._0e2.get());
+          _800c6670.oru(spu124._0e4.get());
 
-          _800c4ba6.offset(voiceIndex * 0x124L).setu(0);
-          _800c4ba8.offset(voiceIndex * 0x124L).setu(0);
-          _800c4baa.offset(voiceIndex * 0x124L).setu(0);
-          _800c4bac.offset(voiceIndex * 0x124L).setu(0);
+          spu124._0de.set(0);
+          spu124._0e0.set(0);
+          spu124._0e2.set(0);
+          spu124._0e4.set(0);
 
           _800c6634.setu(0);
         }
 
         //LAB_800460a0
-        if(_800c4bd0.offset(voiceIndex * 0x124L).get() != 0 || _800c4af2.offset(voiceIndex * 0x124L).get() == 0x1L) {
+        if(spu124._108.get() != 0 || spu124._02a.get() == 0x1L) {
           //LAB_800460c0
-          if(_800c4be0.offset(voiceIndex * 0x124L).get() != 0) {
-            _800c4be0.offset(voiceIndex * 0x124L).subu(0x1L);
+          if(spu124._118.get() != 0) {
+            spu124._118.decr();
           }
         }
 
         //LAB_800460d4
-        if(_800c4aff.offset(voiceIndex * 0x124L).get() != 0) {
-          _800c4ac8.offset(voiceIndex * 0x124L).setu(_800c4b01.offset(voiceIndex * 0x124L));
-          _800c4aff.offset(voiceIndex * 0x124L).setu(0);
-          _800c4ac9.offset(voiceIndex * 0x124L).setu(_800c4b01.offset(voiceIndex * 0x124L));
-          _800c4ad4.offset(voiceIndex * 0x124L).setu(_800c4af4.offset(voiceIndex * 0x124L));
+        if(spu124._037.get() != 0) {
+          spu124._000.set(spu124._039);
+          spu124._001.set(spu124._039);
+          spu124._00c.set(spu124._02c);
+          spu124._037.set(0);
 
-          if(_800c4bae.offset(voiceIndex * 0x124L).get() == 0) {
+          if(spu124._0e6.get() == 0) {
             //LAB_80046118
-            _800c4af0.offset(voiceIndex * 0x124L).setu(0x1L);
-            _800c4be0.offset(voiceIndex * 0x124L).setu(0);
+            spu124._028.set(1);
+            spu124._118.set(0);
           } else {
-            _800c4bae.offset(voiceIndex * 0x124L).setu(0);
+            spu124._0e6.set(0);
           }
         }
       }
@@ -3294,13 +3278,423 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80046224L)
-  public static void FUN_80046224(final long voiceIndex) {
-    assert false;
+  public static void FUN_80046224(final int voiceIndex) {
+    long s1;
+    long t0;
+    long t1;
+    long v0;
+    long v1;
+    long a0;
+    long a1;
+    long a2;
+
+    final SpuStruct124 s3 = _800c4ac8.get(voiceIndex);
+    if(s3._003.get() == 0) {
+      FUN_80048514(voiceIndex);
+      return;
+    }
+
+    //TODO struct
+    long s4 = _800c6630.getAddress();
+    //LAB_8004629c
+    long sp18 = s3._002.get() - _800c6674.deref(1).offset(0x6L).get();
+    if((int)sp18 < 0) {
+      return;
+    }
+
+    _800c6678.addu(sp18 * 0x10L);
+    _800c6680.deref(1).offset(0xaL).setu(0x40L);
+    final short s5 = (short)FUN_80048000(_800c6678.deref(1).offset(0x0L).get(), _800c6678.deref(1).offset(0x1L).get(), s3._020.get());
+    if(s5 == -0x1L) {
+      s3._00c.add(0x4L);
+      MEMORY.ref(1, s4).offset(0x4L).setu(0);
+      return;
+    }
+
+    //LAB_8004632c
+    final SpuStruct66 struct66 = _800c3a40.get(s5);
+    if(_800c6678.deref(1).offset(0xfL).get(0x1L) != 0) {
+      struct66._08.set(0);
+      struct66._0c.set(1);
+    } else {
+      //LAB_80046374
+      struct66._08.set(1);
+      struct66._0c.set(0);
+    }
+
+    //LAB_8004639c
+    struct66._00.set(1);
+    a1 = _800c6678.get();
+    struct66._02.set(s3._002.get());
+    struct66._04.set(s3._000.get() & 0xf);
+    struct66._06.set(voiceIndex);
+    struct66._0a.set((int)MEMORY.ref(1, s4).offset(0x0L).get());
+    struct66._0e.set((int)sp18);
+    struct66._12.set(0);
+    struct66._18.set(0);
+    struct66._1a.set(1);
+    struct66._1c.set(4);
+    struct66._1e.set((int)MEMORY.ref(1, a1).offset(0x1L).get());
+    struct66._20.set((int)MEMORY.ref(1, a1).offset(0x0L).get());
+    struct66._22.set(s3._020.get());
+    struct66._24.set(s3._024.get());
+    struct66._26.set(s3._022.get());
+    struct66._28.set((int)_800c6680.deref(1).offset(0xeL).get());
+    struct66._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
+    v0 = _800c4ab0.get() + s3._003.get();
+    struct66._2c.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
+    struct66._2e.set((int)MEMORY.ref(1, a1).offset(0xbL).get());
+    v0 = _80059f3c.offset((FUN_80048b90(0x4L, 0) / 2) & 0x7ffeL).getAddress();
+    struct66._30.set((int)MEMORY.ref(1, v0).get());
+    v0 = _80059f3c.offset((FUN_80048b90(0x4L, 0) / 2) & 0x7ffeL).getAddress();
+    a1 = _800c6680.get();
+    a0 = _800c6678.get();
+    struct66._32.set((int)MEMORY.ref(1, v0).offset(0x1L).get());
+    struct66._34.set((int)MEMORY.ref(1, a1).offset(0x3L).get());
+
+    v1 = MEMORY.ref(1, a0).offset(0x3L).get();
+    if((v1 & 0x80L) != 0) {
+      v1 |= 0xff00L;
+    }
+
+    //LAB_80046500
+    struct66._36.set((int)v1);
+    struct66._38.set((int)MEMORY.ref(1, a1).offset(0xaL).get());
+    struct66._3a.set((int)MEMORY.ref(1, a0).offset(0xdL).get());
+    struct66._3c.set((int)MEMORY.ref(1, a1).offset(0xcL).get());
+    struct66._3e.set(s3._005.get());
+    struct66._40.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
+    struct66._44.set(0);
+    struct66._4a.set((int)MEMORY.ref(1, a0).offset(0xaL).get());
+    struct66._4c.set((int)MEMORY.ref(1, a0).offset(0xcL).get());
+    struct66._4e.set(120);
+    struct66._62.set(0);
+
+    if(MEMORY.ref(1, s4).get() < 0x18L) {
+      MEMORY.ref(1, s4).addu(0x1L);
+    }
+
+    v1 = _800c6678.deref(1).offset(0xfL).get();
+    if((v1 & 0x20L) != 0) {
+      if((v1 & 0x40L) != 0) {
+        struct66._10.set((int)_800c6674.deref(1).offset(0x5L).get());
+      } else {
+        //LAB_800465a4
+        struct66._10.set((int)_800c6678.deref(1).offset(0xeL).get());
+      }
+
+      //LAB_800465b0
+      struct66._14.set(1);
+      struct66._16.set(127);
+    } else {
+      //LAB_800465ec
+      struct66._14.set(0);
+    }
+
+    //LAB_800465f0
+    s1 = FUN_80048ab8(voiceIndex, FUN_80048b90(0x4L, 0) & 0xffffL, 0);
+    final long s2 = FUN_80048ab8(voiceIndex, FUN_80048b90(0x4L, 0) & 0xffffL, 0x1L);
+
+    if(_800c6678.deref(1).offset(0xfL).get(0x10L) != 0) {
+      t0 = _800c6674.deref(1).offset(0x4L).get();
+    } else {
+      //LAB_80046668
+      t0 = _800c6678.deref(1).offset(0xdL).get();
+    }
+
+    //LAB_8004666c
+    if(s3._0e9.get() != 0) {
+      a2 = _800c6678.deref(1).offset(0x3L).get();
+      if((a2 & 0x80L) != 0) {
+        a2 |= 0xffff_ff00L;
+      }
+
+      //LAB_8004669c
+      v0 = FUN_80048998(_800c6678.deref(1).offset(0x2L).get(), s3._002.get(), a2, _800c6680.deref(1).offset(0xaL).get(), t0) & 0xffffL;
+      t1 = v0 * s3._0ec.get();
+      v0 = _800c4ac4.get() + s5 * 0x10L;
+      MEMORY.ref(2, v0).offset(0x4L).setu((int)t1 >> 12);
+      s1 = FUN_8004b644(s1 & 0xffffL, s3._0ee.get());
+      a1 = FUN_8004b644(s2 & 0xffffL, s3._0f0.get());
+      struct66._42.set(1);
+    } else {
+      //LAB_80046730
+      a2 = _800c6678.deref(1).offset(0x3L).get();
+      if((a2 & 0x80L) != 0) {
+        a2 = 0xffff_ff00L | a2;
+      }
+
+      //LAB_80046750
+      v0 = FUN_80048998(_800c6678.deref(1).offset(0x2L).get(), s3._002.get(), a2, _800c6680.deref(1).offset(0xaL).get(), t0);
+      v1 = _800c4ac4.get() + s5 * 0x10L;
+      MEMORY.ref(2, v1).offset(0x4L).setu(v0);
+      s1 = FUN_8004b644(s1 & 0xffffL, 0x1000L);
+      a1 = FUN_8004b644(s2 & 0xffffL, 0x1000L);
+      struct66._42.set(0);
+    }
+
+    //LAB_800467c8
+    if(MEMORY.ref(2, s4).offset(0x36L).get() != 0) {
+      a1 = maxShort((short)s1, (short)a1);
+      s1 = a1;
+    }
+
+    //LAB_800467f0
+    a2 = _800c4ac4.get() + s5 * 0x10L;
+    MEMORY.ref(2, a2).setu(s1);
+    MEMORY.ref(2, a2).offset(0x2L).setu(a1);
+    a1 = _800c6678.get();
+    MEMORY.ref(2, a2).offset(0x6L).setu(MEMORY.ref(2, a1).offset(0x4L).get() + _800c43d0.get(s3._020.get()).soundBufferPtr_08.get());
+    MEMORY.ref(2, a2).offset(0x8L).setu(MEMORY.ref(2, a1).offset(0x6L));
+    MEMORY.ref(2, a2).offset(0xaL).setu(MEMORY.ref(2, a1).offset(0x8L));
+    FUN_80048828(voiceIndex, s5 & 0xffffL);
+
+    if(s3._0ea.get() != 0) {
+      if(s5 < 0x10L) {
+        //LAB_800468a8
+        MEMORY.ref(2, s4).offset(0x12L).oru(0x1L << s5);
+      } else {
+        //LAB_800468c0
+        MEMORY.ref(2, s4).offset(0x14L).oru(0x1L << s5 - 16);
+      }
+    } else {
+      //LAB_80046884
+      if(_800c6678.deref(1).offset(0xfL).get(0x80L) == 0) {
+        //LAB_800468d8
+        if(s5 < 0x10L) {
+          MEMORY.ref(2, s4).offset(0x12L).and(~(0x1L << s5));
+        } else {
+          //LAB_800468f8
+          MEMORY.ref(2, s4).offset(0x14L).setu(~(0x1L << s5 - 16));
+        }
+      } else {
+        if(s5 < 0x10L) {
+          //LAB_800468a8
+          MEMORY.ref(2, s4).offset(0x12L).oru(0x1L << s5);
+        } else {
+          //LAB_800468bc
+          //LAB_800468c0
+          MEMORY.ref(2, s4).offset(0x14L).oru(0x1L << s5 - 16);
+        }
+      }
+    }
+
+    //LAB_80046914
+    if(_800c6678.deref(1).offset(0xfL).get(0x2L) != 0) {
+      FUN_8004888c(voiceIndex & 0xffffL, s5 & 0xffffL);
+      _800c4ac4.deref(2).offset(0x1aaL).and(0xc0ffL).oru(_800c6678.deref(1).offset(0x2L).get() << 8);
+    } else {
+      //LAB_80046964
+      if(s5 < 0x10L) {
+        MEMORY.ref(2, s4).offset(0x16L).and(~(0x1L << s5));
+      } else {
+        //LAB_80046990
+        MEMORY.ref(2, s4).offset(0x18L).and(~(0x1L << s5 - 16));
+      }
+    }
+
+    //LAB_800469ac
+    _800c6678.subu((short)sp18 << 4);
+    s3._00c.sub(0x4L);
+
+    //LAB_800469d4
   }
 
   @Method(0x80046a04L)
-  public static void FUN_80046a04(final long voiceIndex) {
-    assert false;
+  public static void FUN_80046a04(final int voiceIndex) {
+    long s0;
+    long v0;
+    long v1;
+    long a2;
+    long t0;
+
+    final SpuStruct124 s2 = _800c4ac8.get(voiceIndex);
+    if(s2._003.get() == 0) {
+      FUN_800486d4(voiceIndex);
+      return;
+    }
+
+    //LAB_80046a7c
+    if(_800c6680.deref(1).offset(0x3L).get() != 0) {
+      v1 = _800c6674.deref(1).get();
+      if(v1 == 0xffL) {
+        v0 = s2._002.get() - _800c6674.deref(1).offset(0x6L).get();
+        s2._026.set((int)v0);
+        s2._01e.set((int)v0);
+        //LAB_80046acc
+      } else if((v1 & 0x80L) != 0) {
+        s2._026.set((int)(v1 + 0x80L));
+        s2._01e.set(0);
+        _800c6630.offset(0xcL).setu(0);
+      } else {
+        //LAB_80046ae8
+        s2._026.set((int)v1);
+        s2._01e.set(0);
+        _800c6630.offset(0xcL).setu(0x1L);
+      }
+
+      //LAB_80046af8
+      //LAB_80046b24
+      for(int s7 = s2._01e.get(); s7 < s2._026.get() + 0x1L; s7++) {
+        if(FUN_80048938(_800c6674.deref(1).get(), s7, s2._002.get())) {
+          final short s5 = (short)FUN_80047e1c();
+          if(s5 == -0x1L) {
+            break;
+          }
+
+          final SpuStruct66 s1 = _800c3a40.get(s5);
+
+          _800c6678.addu(s7 * 0x10L);
+          if((_800c6678.deref(1).offset(0xfL).get() & 0x1L) != 0) {
+            s1._08.set(0);
+            s1._0c.set(1);
+          } else {
+            //LAB_80046bb4
+            s1._08.set(1);
+            s1._0c.set(0);
+          }
+
+          //LAB_80046bdc
+          s1._00.set(1);
+          s1._02.set(s2._002.get());
+          s1._06.set(voiceIndex);
+          s1._04.set(s2._000.get() & 0xf);
+          s1._0e.set(s7);
+          s1._12.set(0);
+          s1._1a.set(0);
+          s1._1c.set(0);
+          s1._1e.set(0);
+          s1._20.set(0);
+          s1._0a.set((int)_800c6630.get());
+          s1._22.set(s2._020.get());
+          s1._28.set((int)_800c6680.deref(1).offset(0xeL).get());
+          s1._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
+          _800c6678.deref(2).offset(0x2cL).setu(_800c4ab0.deref(1).offset(s2._003.get()).offset(0x2L));
+          s1._2e.set((int)_800c6678.deref(1).offset(0xbL).get());
+          s1._30.set((int)_80059f3c.offset((FUN_80048b90(0, 0) / 0x2L) & 0x7ffeL).get());
+          s1._32.set((int)_80059f3c.offset((FUN_80048b90(0, 0) / 0x2L) & 0x7ffeL).offset(0x1L).get());
+          s1._34.set((int)_800c6680.deref(1).offset(0x3L).get());
+          v1 = _800c6678.deref(1).offset(0x3L).get();
+          if((v1 & 0x80L) != 0) {
+            v1 |= 0xff00L;
+          }
+
+          //LAB_80046d08
+          s1._36.set((int)v1);
+          s1._38.set((int)_800c6680.deref(1).offset(0xaL).get());
+          s1._3a.set((int)_800c6678.deref(1).offset(0xdL).get());
+          s1._3c.set((int)_800c6680.deref(1).offset(0xcL).get());
+          s1._3e.set(s2._005.get());
+          s1._40.set((int)_800c6678.deref(1).offset(0x2L).get());
+          s1._42.set(0);
+          s1._44.set(0);
+          s1._4a.set((int)_800c6678.deref(1).offset(0xaL).get());
+          s1._4c.set((int)_800c6680.deref(1).offset(0x4L).get());
+          s1._4e.set(120);
+
+          if(_800c6680.deref(1).offset(0xbL).get() == 0x7fL) {
+            s1._18.set(1);
+          }
+
+          //LAB_80046d80
+          if((_800c6678.deref(1).offset(0xfL).get() & 0x20L) == 0 || _800c6680.deref(1).offset(0x9L).get() == 0) {
+            //LAB_80046e1c
+            //LAB_80046e20
+            s1._14.set(0);
+            s1._16.set(0);
+          } else {
+            if((_800c6678.deref(1).offset(0xfL).get() & 0x40L) != 0) {
+              s1._10.set((int)_800c6674.deref(1).offset(0x5L).get());
+            } else {
+              //LAB_80046dd0
+              s1._10.set((int)_800c6678.deref(1).offset(0xeL).get());
+            }
+
+            //LAB_80046ddc
+            s1._14.set(1);
+            s1._16.set((int)_800c6680.deref(1).offset(0x9L).get());
+          }
+
+          //LAB_80046e4c
+          if((_800c6678.deref(1).offset(0xfL).get() & 0x10L) != 0) {
+            t0 = _800c6674.deref(1).offset(0x4L).get();
+          } else {
+            //LAB_80046e7c
+            t0 = _800c6678.deref(1).offset(0xdL).get();
+          }
+
+          //LAB_80046e80
+          a2 = _800c6678.deref(1).offset(0x3L).get();
+          if((a2 & 0x80L) != 0) {
+            a2 |= 0xffff_ff00L;
+          }
+
+          //LAB_80046ea0
+          v0 = FUN_80048998(_800c6678.deref(1).offset(0x2L).get(), s2._002.get(), a2, _800c6680.deref(1).offset(0xaL).get(), t0);
+          _800c4ac4.deref(2).offset(s5 * 0x10L).offset(0x4L).setu(v0);
+          s0 = FUN_80048ab8(voiceIndex, FUN_80048b90(0, 0), 0);
+          v0 = FUN_80048ab8(voiceIndex, FUN_80048b90(0, 0), 0x1L);
+          if(_800c6630.offset(2, 0x36L).get() != 0) {
+            v0 = maxShort(s0, v0);
+            s0 = v0;
+          }
+
+          //LAB_80046f30
+          a2 = _800c4ac4.get() + s5 * 0x10L;
+          MEMORY.ref(2, a2).setu(s0);
+          MEMORY.ref(2, a2).offset(0x2L).setu(v0);
+          MEMORY.ref(2, a2).offset(0x6L).setu(_800c6678.deref(2).offset(0x4L).get() + _800c43d0.get(s2._020.get()).soundBufferPtr_08.get());
+          MEMORY.ref(2, a2).offset(0x8L).setu(_800c6678.deref(2).offset(0x6L));
+          MEMORY.ref(2, a2).offset(0xaL).setu(_800c6678.deref(2).offset(0x8L));
+          FUN_80048828(voiceIndex, s5);
+
+          if((_800c6678.deref(1).offset(0xfL).get() & 0x80L) != 0) {
+            if(s5 < 0x10L) {
+              _800c6630.offset(2, 0x12L).oru(0x1L << s5);
+            } else {
+              //LAB_80046fcc
+              _800c6630.offset(2, 0x14L).oru(0x1L << (s5 - 0x10L));
+            }
+          } else {
+            //LAB_80046fe8
+            if(s5 < 0x10L) {
+              _800c6630.offset(2, 0x12L).and(~(0x1L << s5));
+            } else {
+              //LAB_80047008
+              _800c6630.offset(2, 0x14L).and(~(0x1L << (s5 - 0x10L)));
+            }
+          }
+
+          //LAB_80047024
+          if(s5 < 0x10L) {
+            _800c6630.offset(2, 0x16L).and(~(0x1L << s5));
+          } else {
+            //LAB_80047050
+            _800c6630.offset(2, 0x18L).and(~(0x1L << (s5 - 0x10L)));
+          }
+
+          //LAB_8004706c
+          if(_800c6630.get() < 24) {
+            _800c6630.addu(0x1L);
+          }
+
+          _800c6678.subu(s7 * 0x10L);
+
+          if(_800c6630.offset(0xcL).get() != 0) {
+            //LAB_80046ae0
+            _800c6630.offset(0xcL).setu(0);
+            break;
+          }
+        }
+
+        //LAB_8004709c
+      }
+    }
+
+    //LAB_800470bc
+    s2._00c.add(0x3L);
+
+    //LAB_800470cc
   }
 
   @Method(0x800470fcL)
@@ -3308,227 +3702,105 @@ public final class Scus94491BpeSegment_8004 {
     long v0;
     long v1;
 
-    long a0;
     long a1;
     long a2;
     long a3;
     long s0;
     long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long t0;
     long t1;
     long t2;
     long t3;
     long t4;
-    long div;
 
-    s3 = _800c4ac8.getAddress();
-    s6 = _800c6630.getAddress();
-    s2 = 0;
-    s4 = _800c3a40.getAddress();
-    s5 = 0x1L;
-    v1 = s2 << 0x10L;
+    long s6 = _800c6630.getAddress();
 
     //LAB_80047144
-    do {
-      v1 >>= 0x10L;
-      v0 = v1 * 3;
-      v1 = v0 << 0x4L;
-      v0 += v1;
-      v0 <<= 0x1L;
-      a0 = v0 + s4;
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
 
-      v0 = s2 + 0x1L;
-      if(MEMORY.ref(2, a0).get() == s5) {
-        v0 = MEMORY.ref(2, a0).offset(0x6L).get();
-        v1 = v0 << 0x3L;
-        v1 += v0;
-        v1 <<= 0x3L;
-        v1 += v0;
-        v1 <<= 0x2L;
-        v0 = MEMORY.ref(2, a0).offset(0x14L).get();
-
-        s3 += v1;
-        v1 >>= 0x10L;
-        if(v0 == s5 && MEMORY.ref(2, a0).offset(0x44L).get() == s5 && MEMORY.ref(1, s3).offset(0x104L).get() == s5) {
+      if(spu66._00.get() == 0x1L) {
+        final SpuStruct124 s3 = _800c4ac8.get(spu66._06.get());
+        v0 = spu66._14.get();
+        if(v0 == 0x1L && spu66._44.get() == 0x1L && s3._104.get() == 0x1L) {
           //LAB_800471d0
-          v1 = s2 << 0x10L;
-
           //LAB_800471d4
-          v1 >>= 0x10L;
-          v0 = v1 << 0x1L;
-          v0 += v1;
-          v1 = v0 << 0x4L;
-          v0 += v1;
-          v0 <<= 0x1L;
-          v1 = v0 + s4;
+          a2 = spu66._36.get();
+          a1 = spu66._02.get();
+          t2 = spu66._40.get();
+          a3 = spu66._38.get();
+          v0 = spu66._14.get();
+          t3 = spu66._3a.get();
 
-          a2 = MEMORY.ref(2, v1).offset(0x36L).get();
-          a1 = MEMORY.ref(2, v1).offset(0x02L).get();
-          t2 = MEMORY.ref(2, v1).offset(0x40L).get();
-          a3 = MEMORY.ref(2, v1).offset(0x38L).get();
-          v0 = MEMORY.ref(2, v1).offset(0x14L).get();
-          t3 = MEMORY.ref(2, v1).offset(0x3aL).get();
-
-          if(v0 == s5 || MEMORY.ref(2, v1).offset(0x44L).get() == s5) {
+          if(v0 == 0x1L || spu66._44.get() == 0x1L) {
             //LAB_80047220
-            v1 = t2 & 0xffffL;
-            v0 = a1 & 0xffffL;
-            if(v0 < v1) {
-              v0 = t2 - a1;
-
+            if(a1 < t2) {
               //LAB_80047244
-              t2 = v0 + 0x78L;
+              t2 = 0x78L + (t2 - a1);
             } else {
-              v1 = a1 - t2;
-              v0 = 0x78L;
-              t2 = v0 - v1;
+              t2 = 0x78L - (a1 - t2);
             }
 
             //LAB_80047248
-            v1 = s2 << 0x10L;
-            v1 >>= 0x10L;
-            v0 = v1 << 0x1L;
-            v0 += v1;
-            v1 = v0 << 0x4L;
-            v0 += v1;
-            v0 <<= 0x1L;
-            a0 = v0 + s4;
-            v0 = MEMORY.ref(2, a0).offset(0x14L).get();
+            v0 = spu66._14.get();
 
             if(v0 != 0) {
               if(MEMORY.ref(2, s6).offset(0x42L).get() != 0x3cL) {
                 //LAB_800472cc
-                v1 = s2 << 0x10L;
-
                 //LAB_800472d0
-                v1 >>= 0x10L;
-                v0 = v1 << 0x1L;
-                v0 += v1;
-                v1 = v0 << 0x4L;
-                v0 += v1;
-                v0 += s4;
-                v1 = MEMORY.ref(2, v0).offset(0x3cL).get();
-                a0 = MEMORY.ref(2, v0).offset(0x12L).get();
-                v1 &= 0xfffL;
-                a0 += v1;
-                MEMORY.ref(2, v0).offset(0x12L).setu(a0);
+                spu66._12.add(spu66._3c.get() & 0xfff);
               } else {
-                v1 = MEMORY.ref(2, a0).offset(0x3cL).get();
+                v1 = spu66._3c.get();
                 a1 = v1 & 0xfffL;
                 if(a1 == 0x78L) {
                   v0 = v1 & 0xf000L;
                   if(v0 != 0) {
                     v0 -= 0x1000L;
-                    v1 = MEMORY.ref(2, a0).offset(0x12L).get();
+                    v1 = spu66._12.get();
                     v0 |= a1;
-                    MEMORY.ref(2, a0).offset(0x3cL).setu(v0);
+                    spu66._3c.set((int)v0);
 
                     v0 &= 0xfffL;
                     v1 += v0;
-                    MEMORY.ref(2, a0).offset(0x12L).setu(v1);
+                    spu66._12.set((int)v1);
                   } else {
                     //LAB_800472c0
-                    v0 = v1 | 0x6000L;
-                    MEMORY.ref(2, a0).offset(0x3cL).setu(v0);
+                    spu66._3c.or(0x6000);
                   }
                 } else {
                   //LAB_800472cc
-                  v1 = s2 << 0x10L;
-
                   //LAB_800472d0
-                  v1 >>= 0x10L;
-                  v0 = v1 << 0x1L;
-                  v0 += v1;
-                  v1 = v0 << 0x4L;
-                  v0 += v1;
-                  v0 += s4;
-                  v1 = MEMORY.ref(2, v0).offset(0x3cL).get();
-                  a0 = MEMORY.ref(2, v0).offset(0x12L).get();
-                  v1 &= 0xfffL;
-                  a0 += v1;
-                  MEMORY.ref(2, v0).offset(0x12L).setu(a0);
+                  spu66._12.add(spu66._3c.get() & 0xfff);
                 }
               }
 
               //LAB_80047300
-              a0 = MEMORY.ref(2, s3).offset(0x20L).get();
-              v0 = a0 << 0x1L;
-              v0 += a0;
-              v0 <<= 0x2L;
-              v0 += v1;
-              a0 = MEMORY.ref(4, v0).offset(0x4L).get();
-              v0 = a0 & 0x3L;
+              long a0 = _800c43d0.get(s3._020.get()).sshdPtr_04.get();
               a3 = 0x80L;
-              if(v0 != 0) {
-                //LAB_800473d4
-                v1 = s2 << 0x10L;
-              } else {
+              if((a0 & 0x3L) == 0) {
                 v0 = MEMORY.ref(4, a0).offset(0x18L).get();
                 a1 = a0 + v0;
                 _800c4ac0.setu(a0);
-                if(a1 == v0) {
-                  //LAB_800473d4
-                  v1 = s2 << 0x10L;
-                } else {
-                  v0 = a1 & 0x1L;
-                  v1 = s2 << 0x10L;
-                  if(v0 == 0) {
-                    v1 >>= 0x10L;
-                    v0 = v1 << 0x1L;
-                    v0 += v1;
-                    v1 = v0 << 0x4L;
-                    v0 += v1;
-                    v0 <<= 0x1L;
-                    a0 = v0 + s4;
-                    v0 = MEMORY.ref(2, a0).offset(0x12L).get();
-                    _800c4ab4.setu(a1);
-                    _800c4ab8.setu(a1);
-                    if(v0 >= 0xf0L) {
-                      v0 = MEMORY.ref(2, a0).offset(0x3cL).get();
-                      v0 &= 0xfffL;
-                      v0 >>= 0x1L;
-                      MEMORY.ref(2, a0).offset(0x12L).setu(v0);
-                    }
-
-                    //LAB_800473a0
-                    v0 = MEMORY.ref(2, a0).offset(0x10L).get();
-                    v1 = _800c4ab4.get();
-                    a0 = MEMORY.ref(2, a0).offset(0x12L).get();
-                    v0 <<= 0x1L;
-                    v0 += v1;
-                    a0 >>>= 0x2L;
-                    v0 = MEMORY.ref(2, v0).offset(0x2L).get();
-                    v1 = _800c4ab8.get();
-                    v0 += a0;
-                    v1 += v0;
-                    a3 = MEMORY.ref(1, v1).get();
-                    v1 = s2 << 0x10L;
+                if(a1 != v0 && (a1 & 0x1L) == 0) {
+                  _800c4ab4.setu(a1);
+                  _800c4ab8.setu(a1);
+                  if(spu66._12.get() >= 0xf0L) {
+                    spu66._12.set((spu66._3c.get() & 0xfff) / 2);
                   }
+
+                  //LAB_800473a0
+                  v0 = _800c4ab4.get() + spu66._10.get() * 0x2L;
+                  v0 = MEMORY.ref(2, v0).offset(0x2L).get() + spu66._12.get() / 0x4L;
+                  a3 = _800c4ab8.deref(1).offset(v0).get();
                 }
               }
 
+              //LAB_800473d4
               //LAB_800473d8
-              v1 >>= 0x10L;
-              v0 = v1 << 0x1L;
-              v0 += v1;
-              v1 = v0 << 0x4L;
-              v0 += v1;
-              v0 <<= 0x1L;
-              a0 = v0 + s4;
-              v0 = MEMORY.ref(2, a0).offset(0x1cL).get();
-              a1 = MEMORY.ref(2, a0).offset(0x4eL).get();
-              if(v0 == 0) {
-                v0 = 0x40L;
-                if(MEMORY.ref(2, a0).offset(0x38L).get() >= 0x40L) {
-                  v0 = MEMORY.ref(2, a0).offset(0x38L).get();
-                  v1 = MEMORY.ref(2, a0).offset(0x3aL).get();
-                  v0 -= 0x40L;
-                  v0 = v0 * v1 & 0xffffffffL;
+              a1 = spu66._4e.get();
+              if(spu66._1c.get() == 0) {
+                if(spu66._38.get() >= 0x40L) {
+                  v0 = spu66._38.get() - 0x40L;
+                  v0 = v0 * spu66._3a.get();
                   v1 = v0;
                   if((int)v0 < 0) {
                     v1 = v0 + 0x3fL;
@@ -3546,10 +3818,8 @@ public final class Scus94491BpeSegment_8004 {
                   v1 += 0x4L;
                 } else {
                   //LAB_80047454
-                  v1 = MEMORY.ref(2, a0).offset(0x38L).get();
-                  a0 = MEMORY.ref(2, a0).offset(0x3aL).get();
-                  v0 -= v1;
-                  v0 = v0 * a0 & 0xffffffffL;
+                  v0 = 0x40L - spu66._38.get();
+                  v0 = v0 * spu66._3a.get();
                   v1 = v0;
                   if((int)v0 < 0) {
                     v1 = v0 + 0x3fL;
@@ -3574,120 +3844,57 @@ public final class Scus94491BpeSegment_8004 {
               }
 
               //LAB_80047498
-              v1 = s2 << 0x10L;
-              v1 >>= 0x10L;
-              v0 = v1 << 0x1L;
-              v0 += v1;
-              v1 = v0 << 0x4L;
-              v0 += v1;
-              v0 <<= 0x1L;
-              v0 += s4;
-              v0 = MEMORY.ref(2, v0).offset(0x16L).get();
+              v0 = spu66._16.get();
+              v1 = a3 * v0 / 255;
 
-              v1 = a3 * v0 & 0xffffffffL;
-
-              a0 = 0x80808081;
-              final long mult = v1 * a0;
               v0++;
               v0 >>= 0x1L;
               v0 -= 0x40L;
-              t0 = mult >>> 0x20L;
-              v1 += t0;
-              v1 >>= 0x7L;
               a3 = v1 - v0;
             }
 
             //LAB_800474f0
-            v1 = s2 << 0x10L;
-            v1 >>= 0x10L;
-            v0 = v1 << 0x1L;
-            v0 += v1;
-            v1 = v0 << 0x4L;
-            v0 += v1;
-            v0 <<= 0x1L;
-            t0 = v0 + s4;
-            v0 = MEMORY.ref(2, t0).offset(0x44L).get();
-            v1 = s2 << 0x10L;
+            if(spu66._44.get() != 0 && spu66._62.get() != 0) {
+              spu66._62.decr();
 
-            if(v0 != 0 && MEMORY.ref(2, t0).offset(0x62L).get() != 0) {
-              v0--;
-              v1 &= 0x80L;
-              MEMORY.ref(2, t0).offset(0x62L).setu(v0);
-
-              if(v1 != 0) {
-                a0 = v0 & 0xffffL;
-                a1 = MEMORY.ref(2, t0).offset(0x64L).get();
-                v0 = MEMORY.ref(1, t0).offset(0x60L).get();
-                a0 = a1 - a0;
-                v0 = -v0;
-                v0 &= 0xffL;
-                v0 = a0 * v0 & 0xffffffffL;
-                v1 = v0 << 0x1L;
-                v1 += v0;
-                v1 <<= 0x6L;
-                v0 = a1 << 0x4L;
-                v0 -= a1;
-                v0 <<= 0x3L;
-                div = Math.floorDiv(v1, v0);
+              a1 = spu66._64.get();
+              if((spu66._60.get() & 0x80L) != 0) {
+                long a0 = a1 - spu66._62.get();
+                v0 = -spu66._60.get() & 0xffL;
 
                 //LAB_800475a4
-                t1 = div;
-                v1 = MEMORY.ref(2, t0).offset(0x60L).get();
-                v0 = 0x100L - v1;
-                a0 = a0 * v0 & 0xffffffffL;
-                v1 = a0 * 0x66666667L >>> 0x20L;
-                a0 >>= 0x1fL;
-                v0 = v1 >> 0x2L;
-                v0 -= a0;
-                div = Math.floorDiv(v0, a1);
+                t1 = a0 * v0 * 192 / (a1 * 120);
+                v0 = 0x100L - spu66._60.get();
 
                 //LAB_80047600
-                v0 = div;
-                v1 = MEMORY.ref(2, t0).offset(0x4eL).get();
-                a0 = t1;
-                a1 = v1 - v0;
+                v0 = a0 * v0 / 10 / a1;
+                a1 = spu66._4e.get() - v0;
                 if(t1 < 0) {
                   a0 = t1 + 0xfL;
+                } else {
+                  a0 = t1;
                 }
 
                 //LAB_80047618
-                v0 = a0 >> 0x4L;
-                v0 <<= 0x4L;
-                v0 = t1 - v0;
-                a2 -= v0;
+                a2 -= t1 - (a0 & ~0xfL);
               } else {
                 //LAB_8004762c
-                a1 = MEMORY.ref(2, t0).offset(0x64L).get();
-                a0 = MEMORY.ref(2, t0).offset(0x62L).get();
-                v0 = MEMORY.ref(2, t0).offset(0x60L).get();
-                a0 = a1 - a0;
-                a0 = a0 * v0 & 0xffffffffL;
-                v0 = a1 * 120;
-                v1 = a0 * 192;
-                div = Math.floorDiv(v1, v0);
+                long a0 = (a1 - spu66._62.get()) * spu66._60.get();
 
                 //LAB_80047684
-                t1 = div;
-                v1 = a0 * 0x66666667L >> 0x20L;
-                a0 >>= 0x1fL;
-                v0 = v1 >> 0x2L;
-                v0 -= a0;
-                div = Math.floorDiv(v0, a1);
+                t1 = a0 * 192 / (a1 * 120);
 
                 //LAB_800476cc
-                v0 = div;
-                v1 = MEMORY.ref(2, t0).offset(0x4eL).get();
-                a0 = t1;
-                a1 = v1 + v0;
-                if(t1 < 0) {
+                v0 = a0 / 10 / a1;
+                a1 = spu66._4e.get() + v0;
+                if((int)t1 < 0) {
                   a0 = t1 + 0xfL;
+                } else {
+                  a0 = t1;
                 }
 
                 //LAB_800476e4
-                v0 = a0 >> 0x4L;
-                v0 <<= 0x4L;
-                v0 = t1 - v0;
-                a2 += v0;
+                a2 += t1 - (a0 & ~0xfL);
               }
 
               //LAB_800476f4
@@ -3698,474 +3905,668 @@ public final class Scus94491BpeSegment_8004 {
               }
 
               //LAB_8004770c
-              v1 = s2 << 0x10L;
               if(v0 >= 0xf3L) {
                 a1 = 0xf3L;
               }
 
               //LAB_8004771c
-              v1 >>= 0x10L;
-              v0 = v1 << 0x1L;
-              v0 += v1;
-              v1 = v0 << 0x4L;
-              v0 += v1;
-              v0 <<= 0x1L;
-              v1 = v0 + s4;
-              MEMORY.ref(1, s3).offset(0x11cL).setu(a1);
+              s3._11c.set((int)a1);
 
-              v0 = MEMORY.ref(2, v1).offset(0x62L).get();
-              if(v0 == 0) {
-                MEMORY.ref(2, v1).offset(0x4eL).setu(a1);
-                MEMORY.ref(2, v1).offset(0x44L).setu(0);
+              if(spu66._62.get() == 0) {
+                spu66._4e.set((int)a1);
+                spu66._44.set(0);
               }
 
               //LAB_80047754
-              v1 = s2 << 0x10L;
             }
           }
 
-          v1 = s2 << 0x10L;
-
           //LAB_80047758
-          v1 >>= 0x10L;
-          v0 = v1 << 0x1L;
-          v0 += v1;
-          v1 = v0 << 0x4L;
-          v0 += v1;
-          v0 <<= 0x1L;
-          v0 += s4;
-
-          if(MEMORY.ref(2, v0).offset(0x42L).get() == s5 || MEMORY.ref(1, s3).offset(0x104L).get() == s5) {
+          if(spu66._42.get() == 0x1L || s3._104.get() == 0x1L) {
             //LAB_80047794
-            s0 = MEMORY.ref(2, s3).offset(0xecL).get();
+            s0 = s3._0ec.get();
           } else {
             s0 = 0x1000L;
             //LAB_800477a0
           }
 
           //LAB_800477a4
-          v0 = FUN_80048998(t2 & 0xffffL, a1 & 0xffffL, (short)a2, a3 & 0xffffL, t3);
-          v0 &= 0xffffL;
-          t4 = s0 * v0 & 0xffffffffL;
-          SPU.voices[(short)s2 / 0x1000].pitch = (short)(t4 / 0x1000);
-          v1 = (short)s2;
+          t4 = s0 * FUN_80048998(t2 & 0xffffL, a1 & 0xffffL, (short)a2, a3 & 0xffffL, t3);
+          SPU.voices[(short)voiceIndex / 0x1000].pitch = (short)(t4 / 0x1000);
         }
 
         //LAB_800477ec
-        v0 = v1 << 0x1L;
-        v0 += v1;
-        v1 = v0 << 0x4L;
-        v0 += v1;
-        v0 <<= 0x1L;
-        v1 = v0 + s4;
-
-        if(MEMORY.ref(2, v1).offset(0x1aL).get() == s5) {
-          if(MEMORY.ref(2, v1).offset(0x46L).get() == s5 || MEMORY.ref(2, v1).offset(0x48L).get() == s5 || MEMORY.ref(1, s3).offset(0x105L).get() == s5) {
+        if(spu66._1a.get() == 0x1L) {
+          if(spu66._46.get() == 0x1L || spu66._48.get() == 0x1L || s3._105.get() == 0x1L) {
             //LAB_80047844
-            v1 = s2 << 0x10L;
-
             //LAB_80047848
-            v1 >>= 0x10L;
-            v0 = v1 << 0x1L;
-            v0 += v1;
-            v1 = v0 << 0x4L;
-            v0 += v1;
-            v0 <<= 0x1L;
-            s0 = v0 + s4;
-            v0 = MEMORY.ref(2, s0).offset(0x46L).get();
-            v1 = s2 << 0x10L;
-            if(v0 != 0) {
-              v1 = MEMORY.ref(2, s0).offset(0x50L).get();
-              v0 = MEMORY.ref(2, s0).offset(0x52L).get();
-
-              if(v1 != v0) {
-                v0 = MEMORY.ref(2, s0).offset(0x54L).get();
-                if(v0 != 0) {
-                  a0 = MEMORY.ref(2, s0).offset(0x50L).get();
-                  a1 = MEMORY.ref(2, s0).offset(0x52L).get();
-                  a2 = MEMORY.ref(2, s0).offset(0x56L).get();
-                  a3 = MEMORY.ref(2, s0).offset(0x54L).get();
-                  v0 = FUN_8004af3c(a0, a1, a2, a3);
-                  v1 = MEMORY.ref(2, s0).offset(0x54L).get();
-                  v0 &= 0xffL;
-                  MEMORY.ref(2, s0).offset(0x2cL).setu(v0);
-                  v1--;
-                  MEMORY.ref(2, s0).offset(0x54L).setu(v1);
+            jmp_LAB_800478d0:
+            if(spu66._46.get() != 0) {
+              if(spu66._50.get() != spu66._52.get()) {
+                if(spu66._54.get() != 0) {
+                  spu66._2c.set((int)FUN_8004af3c(spu66._50.get(), spu66._52.get(), spu66._56.get(), spu66._54.get()));
+                  spu66._54.decr();
+                  break jmp_LAB_800478d0;
                 }
 
                 //LAB_800478c8
-                MEMORY.ref(2, s0).offset(0x2cL).setu(v1);
+                spu66._2c.set(spu66._50);
               }
 
               //LAB_800478cc
-              MEMORY.ref(2, s0).offset(0x46L).setu(0);
-
-              //LAB_800478d0
-              v1 = s2 << 0x10L;
+              spu66._46.set(0);
             }
 
+            //LAB_800478d0
             //LAB_800478d4
-            v1 >>= 0x10L;
-            v0 = v1 << 0x1L;
-            v0 += v1;
-            v1 = v0 << 0x4L;
-            v0 += v1;
-            v0 <<= 0x1L;
-            s0 = v0 + s4;
-            v0 = MEMORY.ref(2, s0).offset(0x48L).get();
-            if(v0 != 0) {
-              v1 = MEMORY.ref(2, s0).offset(0x58L).get();
-              v0 = MEMORY.ref(2, s0).offset(0x5aL).get();
-
-              if(v1 == v0) {
-                MEMORY.ref(2, s0).offset(0x48L).setu(0);
+            if(spu66._48.get() != 0) {
+              if(spu66._58.get() == spu66._5a.get()) {
+                spu66._48.set(0);
               } else {
                 //LAB_8004791c
-                v0 = MEMORY.ref(2, s0).offset(0x5cL).get();
-                if(v0 != 0) {
-                  a0 = MEMORY.ref(1, s0).offset(0x58L).get();
-                  a1 = MEMORY.ref(1, s0).offset(0x5aL).get();
-                  a2 = MEMORY.ref(1, s0).offset(0x5eL).get();
-                  a3 = MEMORY.ref(1, s0).offset(0x5cL).get();
-                  v0 = FUN_8004af3c(a0, a1, a2, a3);
-                  v1 = MEMORY.ref(2, s0).offset(0x5cL).get();
-                  v0 &= 0xffL;
-                  MEMORY.ref(2, s0).offset(0x4cL).setu(v0);
-                  v1--;
-                  MEMORY.ref(2, s0).offset(0x5cL).setu(v1);
+                if(spu66._5c.get() != 0) {
+                  spu66._4c.set((int)FUN_8004af3c(spu66._58.get(), spu66._5a.get(), spu66._5e.get(), spu66._5c.get()));
+                  spu66._5c.decr();
                 } else {
                   //LAB_8004795c
-                  MEMORY.ref(2, s0).offset(0x4cL).setu(v1);
-                  MEMORY.ref(2, s0).offset(0x48L).setu(0);
+                  spu66._4c.set(spu66._58);
+                  spu66._48.set(0);
                 }
 
                 //LAB_80047964
-                v0 = s2 << 0x10L;
-                v0 >>= 0x10L;
-                v1 = v0 << 0x1L;
-                v1 += v0;
-                v0 = v1 << 0x4L;
-                v1 += v0;
-                v1 <<= 0x1L;
-                v1 += s4;
-                v0 = MEMORY.ref(2, v1).offset(0x4cL).get();
-                a1 = _80059f3c.getAddress();
-                v0 >>>= 0x2L;
-                v0 <<= 0x1L;
-                v0 += a1;
-                a0 = MEMORY.ref(1, v0).get();
-                v0 = MEMORY.ref(2, v1).offset(0x4cL).get();
-                v0 >>>= 0x2L;
-                v0 <<= 0x1L;
-                v0 += a1;
-                MEMORY.ref(2, v1).offset(0x30L).setu(a0);
-                v0 = MEMORY.ref(1, v0).offset(0x1L).get();
-                MEMORY.ref(2, v1).offset(0x32L).setu(v0);
+                spu66._30.set((int)_80059f3c.offset(spu66._4c.get() / 0x4L * 0x2L).offset(0x0L).get());
+                spu66._32.set((int)_80059f3c.offset(spu66._4c.get() / 0x4L * 0x2L).offset(0x1L).get());
               }
             }
 
             //LAB_800479c4
-            s0 = s2 & 0xffffL;
-            s1 = FUN_8004ae94(s0, 0);
-            v0 = FUN_8004ae94(s0, 0x1L);
-            a0 = s2 << 0x10L >> 0x10L;
-            v1 = a0 << 0x1L;
-            v1 += a0;
-            a0 = v1 << 0x4L;
-            v1 += a0;
-            v1 <<= 0x1L;
-            v1 += s4;
-            v1 = MEMORY.ref(2, v1).offset(0x42L).get();
-            s0 = v0;
-            if(v1 == s5 || MEMORY.ref(1, s3).offset(0x105L).get() == s5) {
+            s1 = FUN_8004ae94(voiceIndex, 0);
+            s0 = FUN_8004ae94(voiceIndex, 0x1L);
+            if(spu66._42.get() == 0x1L || s3._105.get() == 0x1L) {
               //LAB_80047a24
-              s1 = FUN_8004b644(s1 & 0xffffL, MEMORY.ref(2, s3).offset(0xeeL).get());
-              s0 = FUN_8004b644(s0 & 0xffffL, MEMORY.ref(2, s3).offset(0xf0L).get());
+              s1 = FUN_8004b644(s1 & 0xffffL, s3._0ee.get());
+              s0 = FUN_8004b644(s0 & 0xffffL, s3._0f0.get());
             }
 
             //LAB_80047a44
             if(MEMORY.ref(2, s6).offset(0x36L).get() != 0) {
-              s0 = maxShort(s1 << 0x10L >> 0x10L, s0 << 0x10L >> 0x10L);
+              s0 = maxShort(s1, s0);
               s1 = s0;
             }
 
             //LAB_80047a6c
-            SPU.voices[(short)s2 >> 12].volumeLeft.set(s1);
-            SPU.voices[(short)s2 >> 12].volumeRight.set(s0);
-
-            //LAB_80047a88
-            v1 = s2 << 0x10L;
-            v1 >>= 0x10L;
+            SPU.voices[voiceIndex].volumeLeft.set(s1);
+            SPU.voices[voiceIndex].volumeRight.set(s0);
           }
-        } else {
-          //LAB_80047a88
-          v1 = s2 << 0x10L;
-          v1 >>= 0x10L;
         }
 
         //LAB_80047a90
-        v0 = v1 * 3;
-        v1 = v0 << 0x4L;
-        v0 += v1;
-        v0 <<= 0x1L;
-        v0 += s4;
-        v1 = MEMORY.ref(2, v0).offset(0x6L).get();
-        v0 = v1 * 72;
-        v0 += v1;
-        v0 <<= 0x2L;
-        s3 -= v0;
-        v0 = s2 + 0x1L;
       }
 
       //LAB_80047acc
-      s2 = v0;
-      v0 <<= 0x10L;
-      v0 >>= 0x10L;
-      v1 = s2 << 0x10L;
-    } while(v0 < 0x18L);
+    }
   }
 
   @Method(0x80047b38L)
-  public static void FUN_80047b38(final long voiceIndex) {
-    final long a1 = _800c4ac8.offset(voiceIndex * 292).getAddress();
-    final long v0 = _800c43d4.offset(MEMORY.ref(2, a1).offset(0x20L).get() * 12).get();
+  public static void FUN_80047b38(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+    final long sshdPtr = _800c43d0.get(a1._020.get()).sshdPtr_04.get();
 
-    _800c6638.setu(v0);
-    _800c4ac0.setu(v0);
-    voice00LeftPtr_800c4aa4.setu(MEMORY.ref(4, a1).offset(0x10L));
-    _800c4ab0.setu(MEMORY.ref(4, v0).offset(0x14L).get() + v0);
+    _800c6638.setu(sshdPtr);
+    _800c4ac0.setu(sshdPtr);
+    voice00LeftPtr_800c4aa4.setu(a1.voicePtr_010.get());
+    _800c4ab0.setu(MEMORY.ref(4, sshdPtr).offset(0x14L).get() + sshdPtr);
 
-    final long a0 = MEMORY.ref(2, a1).offset(0x2aL).get() * 16 + v0;
-    final long v1 = MEMORY.ref(4, a0).offset(0x10L).get() + v0;
+    final long v1 = sshdPtr + MEMORY.ref(4, sshdPtr).offset(a1._02a.get() * 0x10L).offset(0x10L).get();
 
     _800c4aa8.setu(v1);
     _800c4aac.setu(v1);
   }
 
   @Method(0x80047bd0L)
-  public static long FUN_80047bd0(long voiceIndex) {
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
-    long v0;
-    long v1;
+  public static long FUN_80047bd0(final int voiceIndex) {
+    final SpuStruct124 t2 = _800c4ac8.get(voiceIndex);
 
-    t2 = _800c4ac8.getAddress();
-    t3 = voiceIndex;
-    v0 = t3 << 3;
-    v0 += t3;
-    v0 <<= 3;
-    v0 += t3;
-    v0 <<= 2;
-    t2 += v0;
-    voiceIndex = 0xff_00ffL;
-    v0 = MEMORY.ref(4, t2).offset(0x28L).get();
-    t5 = _800c6630.getAddress();
-    v1 = 0x1_0000L;
-    v0 &= voiceIndex;
-    if(v0 == v1) {
-      t1 = _800c4ac0.get();
-      voiceIndex = MEMORY.ref(4, t1).offset(0x20L).get();
-      t4 = 0x1L;
-      if(voiceIndex != v0) {
-        a2 = voice00LeftPtr_800c4aa4.get();
-        v0 = MEMORY.ref(4, t2).offset(0xcL).get();
-        t0 = _800c4aa8.get();
-        a1 = MEMORY.ref(4, t5).offset(0x8L).get();
-        v0 += a2;
-        v1 += voiceIndex;
-        v0 = MEMORY.ref(1, v0).offset(0x3L).get();
-        voiceIndex = MEMORY.ref(4, t2).offset(0xcL).get();
-        v0 <<= 1;
-        v0 += t0;
-        voiceIndex += a2;
-        v0 = MEMORY.ref(2, v0).offset(0x192L).get();
-        v0 += 0x190L;
-        v1 += v0;
-        _800c6674.setu(v1);
-        v0 = MEMORY.ref(4, t1).offset(0x20L).get();
-        voiceIndex = MEMORY.ref(1, voiceIndex).offset(0x3L).get();
-        v0 += a1;
-        _800c667c.setu(v0);
-        v0 = t3 << 4;
-        v0 += 0x10L;
-        voiceIndex <<= 1;
-        v1 = MEMORY.ref(4, t1).offset(0x20L).get();
-        voiceIndex += t0;
-        v1 += a1;
-        v1 += v0;
-        _800c6680.setu(v1);
-        v1 = MEMORY.ref(4, t1).offset(0x20L).get();
-        v0 = MEMORY.ref(2, voiceIndex).offset(0x192L).get();
-        a1 += v1;
-        v0 += a1;
-        v0 += 0x198L;
-        _800c6678.setu(v0);
-        return t4;
+    if(MEMORY.ref(4, t2._028.getAddress()).get(0xff_00ffL) == 0x1_0000L) {
+      if(_800c4ac0.deref(4).offset(0x20L).get() != -0x1L) {
+        _800c6674.setu(_800c6630.offset(4, 0x8L).get() + _800c4ac0.deref(4).offset(0x20L).get() + _800c4aa8.deref(2).offset(voice00LeftPtr_800c4aa4.deref(1).offset(t2._00c.get()).offset(0x3L).get() * 0x2L).offset(0x192L).get() + 0x190L);
+        _800c6678.setu(_800c6630.offset(4, 0x8L).get() + _800c4ac0.deref(4).offset(0x20L).get() + _800c4aa8.deref(2).offset(voice00LeftPtr_800c4aa4.deref(1).offset(t2._00c.get()).offset(0x3L).get() * 0x2L).offset(0x192L).get() + 0x198L);
+        _800c667c.setu(_800c4ac0.deref(4).offset(0x20L).get() + _800c6630.offset(4, 0x8L).get());
+        _800c6680.setu(_800c4ac0.deref(4).offset(0x20L).get() + _800c6630.offset(4, 0x8L).get() + (voiceIndex + 1) * 0x10L);
+        return 0x1L;
       }
     }
 
     //LAB_80047cd0
-    v0 = MEMORY.ref(1, t2).offset(0x28L).get();
-    if(v0 == 0) {
+    if(t2._028.get() == 0) {
       return 0;
     }
 
-    v0 = 0x1L;
-    v1 = MEMORY.ref(1, t2).offset(0x2aL).get();
-    if(v1 == v0) {
+    if(t2._02a.get() == 0x1L) {
       //LAB_80047cf0
       return 0;
     }
 
     //LAB_80047cf8
-    v0 = MEMORY.ref(1, t2).get();
-    v1 = v0 & 0xfL;
-    a2 = v1 & 0xffL;
-    if(v0 < 0xa0L) {
-      v1 = voice00LeftPtr_800c4aa4.get();
-      v0 = a2 << 4;
-      a1 = v0 + v1;
-      v0 = MEMORY.ref(1, a1).offset(0x12L).get();
-      voiceIndex = _800c4aa8.get();
-      v0 <<= 1;
-      v0 += voiceIndex;
-      v1 = MEMORY.ref(2, v0).offset(0x2L).get();
-      v0 = 0xffffL;
-      t4 = 0;
-      if(v1 == v0) {
-        return t4;
+    final long v1 = t2._000.get() & 0xfL;
+    if(t2._000.get() < 0xa0L) {
+      if(_800c4aa8.deref(2).offset(voice00LeftPtr_800c4aa4.deref(1).offset(v1 * 0x10L).offset(0x12L).get() * 0x2L).offset(0x2L).get() == 0xffffL) {
+        return 0;
       }
 
-      v0 = MEMORY.ref(2, voiceIndex).get();
-      v1 = MEMORY.ref(1, a1).offset(0x12L).get();
-      if(v0 < v1) {
-        return t4;
+      if(_800c4aa8.deref(2).get() < voice00LeftPtr_800c4aa4.deref(1).offset(v1 * 0x10L).offset(0x12L).get()) {
+        return 0;
       }
 
-      v0 = _800c4ac0.get();
-      v1 = MEMORY.ref(4, v0).offset(0x10L).get();
-      v0 = -0x1L;
-      t4 = 0x1L;
-      if(v1 != v0) {
-        return t4;
+      if(_800c4ac0.deref(4).offset(0x10L).getSigned() == -0x1L) {
+        return 0;
       }
 
-      return 0;
+      return 0x1L;
     }
 
     //LAB_80047d7c
-    t4 = 0x1L;
-
     //LAB_80047d80
-    a2 <<= 4;
-    a1 = voice00LeftPtr_800c4aa4.get();
-    a3 = _800c4aa8.get();
-    t0 = _800c4ac0.get();
-    voiceIndex = MEMORY.ref(4, t5).offset(0x8L).get();
-    a1 += a2;
-    a2 += 0x10L;
-    v1 = MEMORY.ref(1, a1).offset(0x12L).get();
-    v0 = MEMORY.ref(4, t0).offset(0x10L).get();
-    v1 <<= 1;
-    v1 += a3;
-    v1 = MEMORY.ref(2, v1).offset(0x2L).get();
-    v0 += voiceIndex;
-    v0 += v1;
-    _800c6674.setu(v0);
-    voiceIndex = MEMORY.ref(1, a1).offset(0x12L).get();
-    v1 = MEMORY.ref(4, t2).offset(0x10L).get();
-    _800c667c.setu(v1);
-    voiceIndex <<= 1;
-    v0 = MEMORY.ref(4, t2).offset(0x10L).get();
-    voiceIndex += a3;
-    v0 += a2;
-    _800c6680.setu(v0);
-    v0 = MEMORY.ref(4, t0).offset(0x10L).get();
-    v1 = MEMORY.ref(4, t5).offset(0x8L).get();
-    voiceIndex = MEMORY.ref(2, voiceIndex).offset(0x2L).get();
-    v0 += v1;
-    v0 += voiceIndex;
-    v0 += 0x8L;
-    _800c6678.setu(v0);
+    _800c6674.setu(_800c4ac0.deref(4).offset(0x10L).get() + _800c6630.offset(4, 0x8L).get() + _800c4aa8.deref(2).offset(voice00LeftPtr_800c4aa4.deref(1).offset(v1 * 0x10L).offset(0x12L).get() * 0x2L).offset(0x2L).get());
+    _800c6678.setu(_800c4ac0.deref(4).offset(0x10L).get() + _800c6630.offset(4, 0x8L).get() + _800c4aa8.deref(2).offset(voice00LeftPtr_800c4aa4.deref(1).offset(v1 * 0x10L).offset(0x12L).get() * 0x2L).offset(0x2L).get() + 0x8L);
+    _800c667c.setu(t2.voicePtr_010.get());
+    _800c6680.setu(t2.voicePtr_010.get() + (v1 + 1) * 0x10L);
 
     //LAB_80047e14
-    return t4;
+    return 0x1L;
+  }
+
+  @Method(0x80047e1cL)
+  public static long FUN_80047e1c() {
+    //LAB_80047e34
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      short v1 = (short)(_800c6630.offset(2, 0x10L).get() + 0x1L);
+      if(v1 >= 0x18L) {
+        v1 = 0;
+      }
+
+      //LAB_80047e4c
+      _800c6630.offset(2, 0x10L).setu(v1);
+      if(_800c3a40.get(v1)._00.get() == 0) {
+        return _800c6630.offset(2, 0x10L).getSigned();
+      }
+    }
+
+    long a1 = 0x18L;
+
+    //LAB_80047ea0
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      if(_800c3a40.get(voiceIndex)._1a.get() == 0) {
+        if(_800c3a40.get(voiceIndex)._08.get() == 0x1L) {
+          final long v1 = _800c3a40.get(voiceIndex)._0a.get();
+          if(a1 > v1) {
+            a1 = v1;
+            _800c6630.offset(2, 0x10L).setu(voiceIndex);
+          }
+        }
+      }
+
+      //LAB_80047ef4
+    }
+
+    outer:
+    if(a1 == 0x18L) {
+      //LAB_80047f28
+      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+        if(_800c3a40.get(voiceIndex)._1a.get() == 0) {
+          if(_800c3a40.get(voiceIndex)._0a.get() < 0x18L) {
+            //LAB_80047f84
+            a1 = _800c3a40.get(voiceIndex)._0a.get();
+            _800c6630.offset(2, 0x10L).setu(voiceIndex);
+            break outer;
+          }
+        }
+
+        //LAB_80047f64
+      }
+
+      _800c6630.offset(2, 0x10L).setu(-0x1L);
+      return _800c6630.offset(2, 0x10L).getSigned();
+    }
+
+    //LAB_80047f90
+    //LAB_80047fa0
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      if(a1 < _800c3a40.get(voiceIndex)._0a.get()) {
+        _800c3a40.get(voiceIndex)._0a.decr();
+      }
+
+      //LAB_80047fd0
+    }
+
+    _800c6630.subu(0x1L);
+
+    //LAB_80047ff4
+    return _800c6630.offset(2, 0x10L).getSigned();
+  }
+
+  @Method(0x80048000L)
+  public static long FUN_80048000(final long a0, final long a1, final long a2) {
+    long v1;
+
+    int t2 = 0;
+    long t1 = 0x18L;
+    long t3 = -0x1L;
+
+    if((a0 & 0xffffL) != 0) {
+      //LAB_8004802c
+      for(int n = 0; n < 24; n++) {
+        final SpuStruct66 spu66 = _800c3a40.get(n);
+
+        if(spu66._1a.get() == 0x1L) {
+          if(spu66._20.get() == (a0 & 0xffffL)) {
+            if(spu66._22.get() == (a2 & 0xffffL)) {
+              //LAB_80048080
+              for(int i = 0; i < 24; i++) {
+                v1 = spu66._0a.get();
+                if(v1 < _800c3a40.get(i)._0a.get() && v1 != 0x40L) {
+                  _800c3a40.get(i)._0a.decr();
+                }
+
+                //LAB_800480cc
+              }
+
+              //LAB_80048260
+              _800c6630.subu(0x1L);
+              return (short)n;
+            }
+          }
+        }
+
+        //LAB_800480f0
+      }
+    }
+
+    //LAB_80048108
+    if(_800c6630.offset(0xdL).get() >= _800c6630.offset(0x3L).get()) {
+      //LAB_80048134
+      for(int n = 0; n < 24; n++) {
+        //LAB_80048144
+        for(int i = 0; i < 24; i++) {
+          if(_800c3a40.get(i)._1a.get() == 0x1L) {
+            v1 = _800c3a40.get(i)._0a.get();
+
+            if(v1 >= (short)n && v1 < (short)t1) {
+              t1 = v1;
+              t2 = i;
+            }
+          }
+
+          //LAB_800481a0
+        }
+
+        if(_800c3a40.get(t2)._1e.get() <= (a1 & 0xffffL)) {
+          //LAB_800481fc
+          for(int i = 0; i < 24; i++) {
+            v1 = _800c3a40.get(i)._0a.get();
+
+            if(t1 < v1 && v1 != 0xffffL) {
+              _800c3a40.get(i)._0a.decr();
+            }
+
+            //LAB_80048240
+          }
+
+          //LAB_80048260
+          _800c6630.subu(0x1L);
+          return (short)t2;
+        }
+
+        //LAB_8004826c
+        t1 = 0x18L;
+      }
+
+      return -0x1L;
+    }
+
+    //LAB_800482a0
+    //LAB_800482a8
+    for(int i = 0; i < 24; i++) {
+      v1 = _800c6630.offset(2, 0x10L).getSigned();
+      v1++;
+      if(v1 >= 0x18L) {
+        v1 = 0;
+      }
+
+      //LAB_800482c0
+      _800c6630.offset(2, 0x10L).setu(v1);
+
+      if(_800c3a40.get((int)v1)._00.get() == 0) {
+        //LAB_8004828c
+        _800c6630.offset(0xdL).addu(0x1L);
+        return _800c6630.offset(2, 0x10L).getSigned();
+      }
+    }
+
+    //LAB_80048320
+    jmp_80048478:
+    {
+      for(int n = 0; n < 24; n++) {
+        if(_800c3a40.get(n)._08.get() == 0x1L && _800c3a40.get(n)._1a.get() != 0x1L) {
+          //LAB_8004836c
+          for(int i = n; i < 24; i++) {
+            if(_800c3a40.get(i)._08.get() == 0x1L && _800c3a40.get(i)._1a.get() != 0x1L) {
+              v1 = _800c3a40.get(i)._0a.get();
+
+              if((short)v1 < (short)t1) {
+                t1 = v1;
+                t3 = i;
+              }
+            }
+
+            //LAB_800483c8
+          }
+
+          break jmp_80048478;
+        }
+
+        //LAB_800483e8
+      }
+
+      //LAB_80048414
+      for(int i = 0; i < 24; i++) {
+        if(_800c3a40.get(i)._1a.get() != 0x1L) {
+          v1 = _800c3a40.get(i)._0a.get();
+          if((short)v1 < (short)t1) {
+            t1 = v1;
+            t3 = i;
+          }
+        }
+
+        //LAB_80048460
+      }
+    }
+
+    //LAB_80048478
+    //LAB_8004847c
+    //LAB_80048494
+    for(int i = 0; i < 24; i++) {
+      v1 = _800c3a40.get(i)._0a.get();
+      if(v1 > t1 && v1 != 0xffffL) {
+        _800c3a40.get(i)._0a.decr();
+      }
+
+      //LAB_800484d8
+    }
+
+    _800c6630.offset(0xdL).addu(0x1L);
+    _800c6630.offset(0x0L).subu(0x1L);
+
+    //LAB_80048508
+    return (short)t3;
+  }
+
+  @Method(0x80048514L)
+  public static void FUN_80048514(final int voiceIndex) {
+    long s3 = 0;
+    long a3 = 0;
+
+    //LAB_8004857c
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+      if(spu66._00.get() == 0x1L) {
+        if(spu66._1a.get() == 0x1L) {
+          if(spu66._22.get() == _800c4ac8.get(voiceIndex)._020.get()) {
+            if(spu66._3e.get() == _800c4ac8.get(voiceIndex)._005.get()) {
+              if(spu66._02.get() == _800c4ac8.get(voiceIndex)._002.get()) {
+                if(spu66._0c.get() == 0x1L) {
+                  if(spu66._06.get() == voiceIndex) {
+                    s3 |= 0x1L << i;
+                  } else {
+                    //LAB_8004861c
+                    a3 |= 0x1L << i;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      //LAB_80048620
+    }
+
+    if(s3 == 0) {
+      s3 = a3;
+    }
+
+    //LAB_80048640
+    //LAB_80048650
+    for(int i = 0; i < 24; i++) {
+      if((s3 & 0x1L << i) != 0) {
+        FUN_800488d4(voiceIndex, i);
+        _800c3a40.get(i)._02.decr();
+      }
+
+      //LAB_80048684
+    }
+
+    _800c4ac8.get(voiceIndex)._00c.add(0x4L);
   }
 
   @Method(0x800486d4L)
-  public static void FUN_800486d4(final long voiceIndex) {
+  public static long FUN_800486d4(final int voiceIndex) {
+    final SpuStruct124 s1 = _800c4ac8.get(voiceIndex);
+
+    //LAB_80048724
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+      if(spu66._00.get() == 0x1L) {
+        if(spu66._1a.get() == 0) {
+          if(spu66._06.get() == voiceIndex) {
+            if(spu66._22.get() == s1._020.get()) {
+              if(spu66._04.get() == (s1._000.get() & 0xfL)) {
+                if(spu66._02.get() == s1._002.get()) {
+                  if(spu66._0c.get() == 0) {
+                    //LAB_800487d0
+                    spu66._08.set(1);
+                  } else if(spu66._18.get() == 0) {
+                    spu66._08.set(1);
+                  } else {
+                    //LAB_800487d4
+                    spu66._18.set(0);
+                  }
+
+                  //LAB_800487d8
+                  FUN_800488d4(voiceIndex, i);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      //LAB_800487e4
+    }
+
+    s1._00c.add(0x3L);
+    return voiceIndex;
+  }
+
+  @Method(0x80048828L)
+  public static void FUN_80048828(final int voiceIndex, final long a1) {
+    if(a1 < 0x10L) {
+      _800c4ac8.get(voiceIndex)._0de.or(1 << a1);
+    } else {
+      //LAB_80048874
+      _800c4ac8.get(voiceIndex)._0e0.or(1 << (a1 - 0x10L));
+    }
+  }
+
+  @Method(0x8004888cL)
+  public static void FUN_8004888c(final long a0, final long a1) {
     assert false;
   }
 
   @Method(0x800488d4L)
-  public static void FUN_800488d4(final long a0, final long a1) {
-    final long a2 = _800c4ac8.offset(a0 * 0x124L).getAddress();
+  public static void FUN_800488d4(final int voiceIndex, final long a1) {
+    final SpuStruct124 a2 = _800c4ac8.get(voiceIndex);
 
     if(a1 < 0x10L) {
-      MEMORY.ref(2, a2).offset(0xe2L).oru(0x1L << a1);
-      return;
+      a2._0e2.or(1 << a1);
+    } else {
+      //LAB_80048920
+      a2._0e4.or(1 << (a1 - 16));
+    }
+  }
+
+  @Method(0x80048938L)
+  public static boolean FUN_80048938(final long a0, final long voiceIndex, final long a2) {
+    if(a0 == 0xffL) {
+      return true;
     }
 
-    //LAB_80048920
-    MEMORY.ref(2, a2).offset(0xe4L).oru(0x1L << (a1 - 16));
+    //LAB_80048950
+    _800c6678.addu(voiceIndex * 0x10L);
+
+    final boolean ret;
+    if(a2 >= _800c6678.deref(1).get()) {
+      ret = _800c6678.deref(1).offset(0x1L).get() >= a2;
+    } else {
+      ret = false;
+    }
+
+    //LAB_80048988
+    _800c6678.subu(voiceIndex * 0x10L);
+
+    //LAB_80048990
+    return ret;
   }
 
   @Method(0x80048998L)
-  public static long FUN_80048998(final long a0, final long a1, final long a2, final long a3, final long a4) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x80048ab8L)
-  public static long FUN_80048ab8(final long a0, final long a1, final long a2) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x80048b90L)
-  public static long FUN_80048b90(final long a0, final long a1) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x80048c38L)
-  public static long FUN_80048c38(long a0, long a1, long a2) {
+  public static long FUN_80048998(long a0, long a1, long a2, long a3, long a4) {
     long t0;
     long t1;
     long t3;
     long v0;
     long v1;
-    long a3;
 
-    long t2 = a0;
-    a0 = _800c43d0.getAddress();
-    v1 = t2;
-    v0 = v1 << 1;
-    v0 += v1;
+    t0 = a4;
+    v1 = a1 & 0xffffL;
+    a0 &= 0xffffL;
+    t1 = a2;
+    if(v1 < a0) {
+      v0 = 0x2aaa_aaabL; //TODO
+      a1 = a0 - v1;
+      v1 = a1 * v0 >>> 32;
+      v0 = a3 & 0xffffL;
+      v0 -= 0x40L;
+      t0 = t0 * v0;
+      a2 = _8005967c.getAddress();
+      a0 = v1 >> 1;
+      v0 = a1 >> 31;
+      a0 -= v0;
+      v0 = a0 << 1;
+      v0 += a0;
+      v0 <<= 2;
+      a1 -= v0;
+      v1 = 0xcL;
+      v1 -= a1;
+      v1 <<= 4;
+      v0 = t0 >> 2;
+      v0 += 0xd0L;
+      v1 += v0;
+      v0 = (short)t1;
+      v1 += v0;
+      v1 <<= 1;
+      v1 += a2;
+      v0 = MEMORY.ref(2, v1).get();
+      a0++;
+      v0 = v0 >> a0;
+      return v0 & 0xffffL;
+    }
+
+    //LAB_80048a38
+    v0 = 0x2aaa_aaabL; //TODO
+    v1 -= a0;
+    t3 = v1 * v0 >>> 32;
+    v0 = a3 & 0xffffL;
+    v0 -= 0x40L;
+    t0 = t0 * v0;
+    a1 = _8005967c.getAddress();
+    a0 = t3 >> 1;
+    v0 = v1 >> 31;
+    a0 -= v0;
+    v0 = a0 << 1;
+    v0 += a0;
     v0 <<= 2;
-    a0 += v0;
-    a3 = _800c6630.getAddress();
-    t0 = MEMORY.ref(4, a0).offset(0x4L).get();
-    MEMORY.ref(4, a3).offset(0x8L).setu(t0);
-    _800c4ac0.setu(t0);
-    v0 = MEMORY.ref(4, t0).offset(0x1cL).get();
-    t3 = MEMORY.ref(4, t0).offset(0x20L).get();
-    t1 = t0 + v0;
+    v1 -= v0;
+    v1 <<= 4;
+    v0 = t0 >> 2;
+    v0 += 0xd0L;
+    v1 += v0;
+    v1 += (short)t1;
+    v1 <<= 1;
+    v1 += a1;
+    v0 = MEMORY.ref(2, v1).get() << a0;
+    return v0 & 0xffffL;
+  }
+
+  @Method(0x80048ab8L)
+  public static long FUN_80048ab8(final int voiceIndex, final long a1, final long a2) {
+    final long t2 = _800c6680.deref(1).offset(0xeL).get() * _800c6674.deref(1).offset(0x1L).get() * _800c4ab0.deref(1).offset(_800c4ac8.get(voiceIndex)._003.get()).offset(0x2L).get() * _800c6678.deref(1).offset(0xbL).get();
+    long v1 = _80059f3c.offset(a2).offset(a1 / 0x2L & 0xfffeL).get();
+    long v0 = (int)t2 >> 14;
+    final long a0 = (int)(v0 * v1) >> 7;
+    if(_800c6678.deref(1).offset(0xaL).get() != 0) {
+      v0 = _800c6678.deref(1).offset(0xaL).get();
+      v1 = (short)a0 >> 7;
+      v1 = v0 << 8 | v1;
+    } else {
+      v1 = a0;
+    }
+
+    //LAB_80048b88
+    return v1 & 0xffffL;
+  }
+
+  @Method(0x80048b90L)
+  public static long FUN_80048b90(final long a0, final long a1) {
+    _800c6678.addu(a1 * 0x10L);
+
+    final long a1_0;
+    if(a0 == 0x4L) {
+      a1_0 = _800c6678.deref(1).offset(0xcL).get();
+    } else {
+      //LAB_80048bc4
+      final long v1 = _800c6674.deref(1).offset(0x2L).get() / 0x4L * 0x20L + _800c6678.deref(1).offset(0xcL).get() / 0x4L;
+      final long v0 = _800c6680.deref(1).offset(0x4L).get() / 0x4L * 0x20L + _80059b3c.offset(1, v1).offset(0x0L).get() / 0x4L;
+      a1_0 = _80059b3c.offset(1, v0).get();
+    }
+
+    //LAB_80048c1c
+    _800c6678.subu(a1 * 0x10L);
+
+    return a1_0 & 0xffffL;
+  }
+
+  @Method(0x80048c38L)
+  public static long FUN_80048c38(int a0, long a1, long a2) {
+    long t1;
+    long t3;
+    long v0;
+    long v1;
+
+    final SpuStruct0c spu0c = _800c43d0.get(a0);
+
+    final long a3 = _800c6630.getAddress();
+    final long sshd = spu0c.sshdPtr_04.get();
+    MEMORY.ref(4, a3).offset(0x8L).setu(sshd);
+    _800c4ac0.setu(sshd);
+    v0 = MEMORY.ref(4, sshd).offset(0x1cL).get();
+    t3 = MEMORY.ref(4, sshd).offset(0x20L).get();
+    t1 = sshd + v0;
     _800c4abc.setu(t1);
     if(t3 == -0x1L) {
       return 0;
     }
 
-    if((t2 & 0x80L) != 0) {
+    if((a0 & 0x80L) != 0) {
       return 0;
     }
 
@@ -4173,7 +4574,7 @@ public final class Scus94491BpeSegment_8004 {
       return 0;
     }
 
-    if(MEMORY.ref(4, a0).get() != 0x1L) {
+    if(spu0c.used_00.get() != 0x1L) {
       return 0;
     }
 
@@ -4192,78 +4593,78 @@ public final class Scus94491BpeSegment_8004 {
       return 0;
     }
 
-    voice00LeftPtr_800c4aa4.setu(t0 + t3);
-    v1 = MEMORY.ref(4, t0).offset(0x14L).get();
+    voice00LeftPtr_800c4aa4.setu(sshd + t3);
+    v1 = MEMORY.ref(4, sshd).offset(0x14L).get();
     v0 = MEMORY.ref(2, a1).offset(0x2L).get();
-    v1 += t0;
+    v1 += sshd;
     v0 >>>= 1;
     v0 += a2;
     v0 <<= 1;
     v0 += t1;
     _800c4ab0.setu(v1);
-    v1 = MEMORY.ref(4, t0).offset(0x1cL).get();
+    v1 = MEMORY.ref(4, sshd).offset(0x1cL).get();
     v0 = MEMORY.ref(2, v0).offset(0x2L).get();
-    v1 += t0;
+    v1 += sshd;
     v0 += v1;
     return v0;
   }
 
   @Method(0x80048d44L)
-  public static long FUN_80048d44(final long a0, final long a1, final long a2) {
+  public static long FUN_80048d44(final int a0, final long a1, final long a2) {
     final long ret = FUN_80048c38(a0, a1, a2);
     if(ret == 0) {
       return -0x1L;
     }
 
     final long s0 = _800c6630.getAddress();
-    long v1 = _800c4ac8.offset(0xecL).getAddress();
 
     //LAB_80048dac
-    for(int i = 0; i < 0x18; i++) {
-      if(MEMORY.ref(1, v1).offset(-0xc5L).get() == 0) {
-        if(MEMORY.ref(1, v1).offset(-0xc3L).get() == 0) {
-          MEMORY.ref(1, v1).offset(-0xc3L).setu(0x1L);
-          MEMORY.ref(1, v1).offset(-0xc2L).setu(0x1L);
-          MEMORY.ref(1, v1).offset(-0xc4L).setu(0);
-          MEMORY.ref(1, v1).offset(-0xc5L).setu(0);
-          MEMORY.ref(4, v1).offset(0x2cL).setu(0);
-          MEMORY.ref(1, v1).offset(-0x5L).setu(0);
-          MEMORY.ref(4, v1).offset(-0xdcL).setu(ret);
-          MEMORY.ref(4, v1).offset(-0xe0L).setu(0);
-          MEMORY.ref(2, v1).offset(-0xccL).setu(a0);
-          MEMORY.ref(2, v1).offset(-0xc8L).setu(a1);
-          MEMORY.ref(2, v1).offset(-0xcaL).setu(a2);
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      SpuStruct124 v1 = _800c4ac8.get(voiceIndex);
+
+      if(v1._027.get() == 0) {
+        if(v1._029.get() == 0) {
+          v1._029.set(1);
+          v1._02a.set(1);
+          v1._028.set(0);
+          v1._027.set(0);
+          v1._118.set(0);
+          v1._0e7.set(0);
+          v1.voicePtr_010.set(ret);
+          v1._00c.set(0);
+          v1._020.set((int)a0);
+          v1._024.set((int)a1);
+          v1._022.set((int)a2);
 
           if(MEMORY.ref(1, s0).offset(0x23L).get() != 0) {
-            MEMORY.ref(1, v1).offset(-0x2L).setu(0x1L);
+            v1._0ea.set(1);
             MEMORY.ref(1, s0).offset(0x23L).setu(0);
           }
 
           //LAB_80048e10
-          MEMORY.ref(1, v1).offset(-0x6L).setu(0);
-          MEMORY.ref(1, v1).offset(-0xb7L).setu(0);
-          MEMORY.ref(1, v1).offset(-0xb5L).setu(0);
-          MEMORY.ref(2, v1).offset(0x4L).setu(0);
-          MEMORY.ref(2, v1).offset(0x2L).setu(0);
-          MEMORY.ref(1, v1).offset(-0x3L).setu(0);
+          v1._0e6.set(0);
+          v1._035.set(0);
+          v1._037.set(0);
+          v1._0f0.set(0);
+          v1._0ee.set(0);
+          v1._0e9.set(0);
 
           if(MEMORY.ref(1, s0).offset(0x22L).get() != 0) {
-            MEMORY.ref(1, v1).offset(-0x3L).setu(0x1L);
-            MEMORY.ref(2, v1).offset(0x0L).setu(MEMORY.ref(2, s0).offset(0x24L));
-            MEMORY.ref(2, v1).offset(0x2L).setu(MEMORY.ref(1, s0).offset(0x26L));
-            MEMORY.ref(2, v1).offset(0x4L).setu(MEMORY.ref(2, s0).offset(0x28L));
+            v1._0e9.set(1);
+            v1._0ec.set((int)MEMORY.ref(2, s0).offset(0x24L).get());
+            v1._0ee.set((int)MEMORY.ref(1, s0).offset(0x26L).get());
+            v1._0f0.set((int)MEMORY.ref(2, s0).offset(0x28L).get());
             MEMORY.ref(2, s0).offset(0x22L).setu(0);
             MEMORY.ref(2, s0).offset(0x24L).setu(0);
             MEMORY.ref(2, s0).offset(0x28L).setu(0);
             MEMORY.ref(2, s0).offset(0x26L).setu(0);
           }
 
-          return i;
+          return voiceIndex;
         }
       }
 
       //LAB_80048e74
-      v1 += 0x124L;
     }
 
     //LAB_80048e8c
@@ -4272,133 +4673,114 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048eb8L)
-  public static void FUN_80048eb8(final long voiceIndex) {
-    assert false;
+  public static void FUN_80048eb8(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+    if(a1._02a.get() != 0) {
+      a1._0e7.set(1);
+      a1._118.set(0);
+      a1._02a.set(0);
+      a1._104.set(0);
+      a1._105.set(0);
+      a1._0e9.set(0);
+      a1._0ea.set(0);
+    } else {
+      //LAB_80048f0c
+      a1._00c.set(0x110L);
+      a1._028.set(0);
+    }
+
+    //LAB_80048f18
+    //LAB_80048f30
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+      if(spu66._06.get() == voiceIndex && spu66._1a.get() == 0) {
+        spu66._14.set(0);
+        spu66._38.set(64);
+      }
+
+      //LAB_80048f74
+    }
+
+    a1._001.set(a1._000);
   }
 
   @Method(0x80048f98L)
-  public static void FUN_80048f98(final long voiceIndex) {
-    long a1;
-    long v1;
-
-    a1 = _800c4ac8.offset(voiceIndex * 0x124L).getAddress();
-    v1 = MEMORY.ref(4, a1).offset(0x10L).get();
-    v1 += MEMORY.ref(4, a1).offset(0xcL).get();
-    MEMORY.ref(4, a1).offset(0xcL).addu(0x4L);
+  public static void FUN_80048f98(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+    long v1 = a1.voicePtr_010.get() + a1._00c.get();
+    a1._00c.add(0x4L);
     v1 = MEMORY.ref(1, v1).offset(0x3L).get() << 8 | MEMORY.ref(1, v1).offset(0x2L).get();
-    MEMORY.ref(2, a1).offset(0x108L).setu(v1);
+    a1._108.set((int)v1);
   }
 
   @Method(0x80048fecL)
-  public static void FUN_80048fec(final long voiceIndex) {
-    final long a1 = _800c4ac8.offset(voiceIndex * 0x124L).getAddress();
-    if(MEMORY.ref(1, a1).offset(0x2aL).get() == 0) {
-      final long v0 = MEMORY.ref(4, a1).offset(0xcL).get() + voice00LeftPtr_800c4aa4.get();
-      _800c6680.deref(1).offset(0x2L).setu(MEMORY.ref(1, v0).offset(0x1L));
+  public static void FUN_80048fec(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+    if(a1._02a.get() == 0) {
+      _800c6680.deref(1).offset(0x2L).setu(voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).offset(0x1L));
       _800c6680.deref(1).offset(0xaL).setu(0x40L);
       _800c6680.deref(1).offset(0xbL).setu(0x40L);
     }
 
     //LAB_80049058
-    MEMORY.ref(4, a1).offset(0xcL).addu(0x2L);
+    a1._00c.add(0x2L);
   }
 
   @Method(0x8004906cL)
-  public static void FUN_8004906c(final long voiceIndex) {
+  public static void FUN_8004906c(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x80049250L)
-  public static void FUN_80049250(final long voiceIndex) {
+  public static void FUN_80049250(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x80049480L)
-  public static void FUN_80049480(final long voiceIndex) {
+  public static void FUN_80049480(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x80049638L)
-  public static void FUN_80049638(long a0) {
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s6;
+  public static void FUN_80049638(final int voiceIndex) {
     long v0;
     long v1;
     long a1;
-    long a2;
     long a3;
-    long t0;
     long t1;
 
-    s6 = a0;
-    s3 = _800c4ac8.getAddress();
-    v1 = s6 & 0xffffL;
-    v0 = v1 << 3;
-    v0 += v1;
-    v0 <<= 3;
-    v0 += v1;
-    v0 <<= 2;
-    s3 += v0;
-    v1 = MEMORY.ref(1, s3).offset(0x2aL).get();
+    final SpuStruct124 s3 = _800c4ac8.get(voiceIndex);
     t1 = _800c6630.getAddress();
-    if(v1 != 0) {
-      s4 = 0;
+    if(s3._02a.get() != 0) {
       a3 = voice00LeftPtr_800c4aa4.get();
-      t0 = 0x8888_8889L;
-      v1 = s4 & 0xffffL;
 
       //LAB_800496bc
-      do {
-        a0 = _800c3a40.offset(v1 * 0x66L).getAddress();
-        v1 = MEMORY.ref(2, a0).get();
-        if(v1 == 0x1L) {
-          a2 = MEMORY.ref(2, a0).offset(0x1aL).get();
-          if(v1 == a2) {
-            v1 = MEMORY.ref(2, a0).offset(0x22L).get();
-            v0 = MEMORY.ref(2, s3).offset(0x20L).get();
-            if(v1 == v0) {
-              v0 = MEMORY.ref(4, s3).offset(0xcL).get();
-              v1 = MEMORY.ref(2, a0).offset(0x3eL).get();
-              a1 = v0 + a3;
-              v0 = MEMORY.ref(1, a1).offset(0x4L).get();
-              if(v1 == v0) {
-                v1 = MEMORY.ref(2, a0).offset(0x2L).get();
-                v0 = MEMORY.ref(1, a1).offset(0x5L).get();
-                if(v1 == v0) {
-                  v0 = s6 & 0xffffL;
-                  v1 = MEMORY.ref(2, a0).offset(0x6L).get();
-                  if(v1 == v0) {
-                    MEMORY.ref(2, a0).offset(0x46L).setu(a2);
-                    v0 = MEMORY.ref(4, s3).offset(0xcL).get();
-                    v1 = MEMORY.ref(2, a0).offset(0x2cL).get();
-                    v0 += a3;
+      for(int s4 = 0; s4 < 24; s4++) {
+        final SpuStruct66 spu66 = _800c3a40.get(s4);
+
+        if(spu66._00.get() == 0x1L) {
+          if(spu66._1a.get() == 0x1L) {
+            if(spu66._22.get() == s3._020.get()) {
+              a1 = a3 + s3._00c.get();
+              if(spu66._3e.get() == MEMORY.ref(1, a1).offset(0x4L).get()) {
+                if(spu66._02.get() == MEMORY.ref(1, a1).offset(0x5L).get()) {
+                  if(spu66._06.get() == voiceIndex) {
+                    spu66._46.set(1);
+                    v0 = a3 + s3._00c.get();
+                    v1 = spu66._2c.get();
                     v0 = MEMORY.ref(1, v0).offset(0x3L).get();
-                    MEMORY.ref(2, a0).offset(0x52L).setu(v1);
-                    MEMORY.ref(2, a0).offset(0x50L).setu(v0);
-                    v0 = MEMORY.ref(4, s3).offset(0xcL).get();
-                    v0 += a3;
-                    v0 = MEMORY.ref(1, v0).offset(0x2L).get();
+                    spu66._52.set((int)v1);
+                    spu66._50.set((int)v0);
+                    v0 = a3 + s3._00c.get();
+                    v0 = MEMORY.ref(1, v0).offset(0x2L).get() / 0x4L;
                     v1 = MEMORY.ref(1, t1).offset(0x42L).get();
-                    v0 <<= 2;
-                    v0 = (v0 * v1) & 0xffff_ffffL;
-                    v1 = (v0 * t0) >>> 32;
-                    v0 += v1;
-                    v0 >>= 5;
-                    MEMORY.ref(2, a0).offset(0x54L).setu(v0);
-                    v0 = MEMORY.ref(4, s3).offset(0xcL).get();
-                    v0 += a3;
-                    v0 = MEMORY.ref(1, v0).offset(0x2L).get();
+                    v0 = v0 * v1 / 60;
+                    spu66._54.set((int)v0);
+                    v0 = a3 + s3._00c.get();
+                    v0 = MEMORY.ref(1, v0).offset(0x2L).get() / 0x4L;
                     v1 = MEMORY.ref(2, t1).offset(0x42L).get();
-                    v0 <<= 2;
-                    v0 = (v0 * v1) & 0xffff_ffffL;
-                    v1 = (v0 * t0) >>> 32;
-                    v0 += v1;
-                    v0 >>= 5;
-                    MEMORY.ref(2, a0).offset(0x56L).setu(v0);
+                    v0 = v0 * v1 / 60;
+                    spu66._56.set((int)v0);
                   }
                 }
               }
@@ -4407,43 +4789,28 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_800497dc
-        s4++;
-        v0 = s4 & 0xffffL;
-        v1 = s4 & 0xffffL;
-      } while(v0 < 0x18L);
+      }
 
-      v0 = MEMORY.ref(4, s3).offset(0xcL).get() + 0x6L;
+      v0 = s3._00c.get() + 0x6L;
     } else {
       //LAB_800497fc
-      v0 = MEMORY.ref(4, s3).offset(0xcL).get() + voice00LeftPtr_800c4aa4.get();
+      v0 = voice00LeftPtr_800c4aa4.get() + s3._00c.get();
       _800c6680.deref(1).offset(0x3L).setu(MEMORY.ref(1, v0).offset(0x2L));
-      v1 = _800c667c.deref(1).get();
-      v0 = _800c6680.deref(1).offset(0x3L).get();
-      _800c6680.deref(1).offset(0xeL).setu((v1 * v0) >> 7);
-
-      s4 = 0;
+      _800c6680.deref(1).offset(0xeL).setu((_800c667c.deref(1).get() * _800c6680.deref(1).offset(0x3L).get()) >> 7);
 
       //LAB_8004985c
-      do {
-        s0 = s4 & 0xffffL;
-        s1 = _800c3a40.offset(s0 * 0x66L).getAddress();
-        a0 = MEMORY.ref(2, s1).get();
-        if(a0 == 0x1L) {
-          if(MEMORY.ref(2, s1).offset(0x4L).get() == MEMORY.ref(1, s3).get(0xfL)) {
-            if(MEMORY.ref(2, s3).offset(0x20L).get() == MEMORY.ref(2, s1).offset(0x22L).get()) {
-              if(MEMORY.ref(2, s1).offset(0x8L).get() != a0) {
-                s2 = MEMORY.ref(2, s1).offset(0x6L).get();
-                if(s2 == (s6 & 0xffffL)) {
-                  MEMORY.ref(1, s3).offset(0x3L).setu(MEMORY.ref(1, s1).offset(0x2cL));
-                  v0 = FUN_80048b90(0, MEMORY.ref(2, s1).offset(0xeL).get());
-                  v0 = FUN_80048ab8(s2, v0 & 0xffffL, 0);
-                  s0 = s0 * 0x10L;
-                  v1 = _800c4ac4.get() + s0;
-                  MEMORY.ref(2, v1).setu(v0);
-                  v0 = FUN_80048b90(0, MEMORY.ref(2, s1).offset(0xeL).get());
-                  v0 = FUN_80048ab8(s2, v0 & 0xffffL, 0x1L);
-                  v1 = _800c4ac4.get() + s0;
-                  MEMORY.ref(2, v1).offset(0x2L).setu(v0);
+      for(int s4 = 0; s4 < 24; s4++) {
+        final SpuStruct66 spu66 = _800c3a40.get(s4);
+        if(spu66._00.get() == 0x1L) {
+          if(spu66._04.get() == (s3._000.get() & 0xfL)) {
+            if(s3._020.get() == spu66._22.get()) {
+              if(spu66._08.get() != 0x1L) {
+                if(spu66._06.get() == voiceIndex) {
+                  s3._003.set(spu66._2c.get());
+                  v0 = FUN_80048ab8(voiceIndex, FUN_80048b90(0, spu66._0e.get()), 0);
+                  _800c4ac4.deref(2).offset(s4 * 0x10L).setu(v0);
+                  v0 = FUN_80048ab8(voiceIndex, FUN_80048b90(0, spu66._0e.get()), 0x1L);
+                  _800c4ac4.deref(2).offset(s4 * 0x10L).offset(0x2L).setu(v0);
                 }
               }
             }
@@ -4451,243 +4818,232 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_80049930
-        s4++;
-        v0 = s4 & 0xffffL;
-      } while(v0 < 0x18L);
+      }
 
-      v0 = MEMORY.ref(4, s3).offset(0xcL).get() + 0x3L;
+      v0 = s3._00c.get() + 0x3L;
     }
 
     //LAB_80049950
-    MEMORY.ref(4, s3).offset(0xcL).setu(v0);
+    s3._00c.set(v0);
   }
 
   @Method(0x80049980L)
-  public static void FUN_80049980(final long voiceIndex) {
-    assert false;
+  public static void FUN_80049980(final int voiceIndex) {
+    final SpuStruct124 s3 = _800c4ac8.get(voiceIndex);
+
+    final long v0;
+    if(s3._02a.get() != 0) {
+      final long a3 = voice00LeftPtr_800c4aa4.get();
+
+      //LAB_80049a08
+      for(int i = 0; i < 24; i++) {
+        final SpuStruct66 spu66 = _800c3a40.get(i);
+
+        if(spu66._00.get() == 0x1L) {
+          if(spu66._1a.get() == 0x1L) {
+            if(spu66._22.get() == s3._020.get()) {
+              long a1 = s3._00c.get() + a3;
+              if(spu66._3e.get() == MEMORY.ref(1, a1).offset(0x4L).get()) {
+                if(spu66._02.get() == MEMORY.ref(1, a1).offset(0x5L).get()) {
+                  if(spu66._06.get() == voiceIndex) {
+                    spu66._48.set(1);
+                    spu66._5a.set(spu66._4c);
+                    spu66._58.set((int)MEMORY.ref(1, a3).offset(s3._00c.get()).offset(0x3L).get());
+                    spu66._5c.set((int)(MEMORY.ref(1, a3).offset(s3._00c.get()).offset(0x2L).get() * 0x4L * _800c6630.offset(2, 0x42L).get() / 60));
+                    spu66._5e.set((int)(MEMORY.ref(1, a3).offset(s3._00c.get()).offset(0x2L).get() * 0x4L * _800c6630.offset(2, 0x42L).get() / 60));
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        //LAB_80049b28
+      }
+
+      v0 = s3._00c.get() + 0x6L;
+    } else {
+      //LAB_80049b48
+      _800c6680.deref(1).offset(0x4L).setu(voice00LeftPtr_800c4aa4.deref(1).offset(s3._00c.get()).offset(0x2L));
+
+      //LAB_80049b80
+      for(int i = 0; i < 24; i++) {
+        final SpuStruct66 spu66 = _800c3a40.get(i);
+
+        if(spu66._04.get() == (s3._000.get() & 0xfL)) {
+          if(spu66._22.get() == s3._020.get()) {
+            if(spu66._06.get() == voiceIndex) {
+              if(spu66._08.get() != 0x1L) {
+                if(spu66._00.get() == 0x1L) {
+                  spu66._4c.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(s3._00c.get()).offset(0x2L).get());
+                  s3._003.set(spu66._2c.get());
+                  _800c4ac4.deref(2).offset(i * 0x10L).offset(0x0L).setu(FUN_80048ab8(voiceIndex, FUN_80048b90(0, spu66._0e.get()), 0));
+                  _800c4ac4.deref(2).offset(i * 0x10L).offset(0x2L).setu(FUN_80048ab8(voiceIndex, FUN_80048b90(0, spu66._0e.get()), 0x1L));
+                }
+              }
+            }
+          }
+        }
+
+        //LAB_80049c68
+      }
+
+      v0 = s3._00c.get() + 0x3L;
+    }
+
+    //LAB_80049c88
+    s3._00c.set(v0);
   }
 
   @Method(0x80049cbcL)
-  public static void FUN_80049cbc(final long voiceIndex) {
+  public static void FUN_80049cbc(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x80049e2cL)
-  public static void FUN_80049e2c(final long voiceIndex) {
+  public static void FUN_80049e2c(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x80049f14L)
-  public static void FUN_80049f14(final long voiceIndex) {
+  public static void FUN_80049f14(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x8004a2c0L)
-  public static void FUN_8004a2c0(final long voiceIndex) {
+  public static void FUN_8004a2c0(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x8004a34cL)
-  public static void FUN_8004a34c(final long voiceIndex) {
+  public static void FUN_8004a34c(final int voiceIndex) {
     assert false;
   }
 
   @Method(0x8004a5e0L)
-  public static void FUN_8004a5e0(long voiceIndex) {
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    long v0;
-    long v1;
-    long lo;
-    long hi;
-    long at;
-
-    a2 = 0;
-    a1 = _800c4ac8.getAddress();
-    t0 = _800c6630.getAddress();
-    v0 = voiceIndex << 3;
-    v0 += voiceIndex;
-    v0 <<= 3;
-    v0 += voiceIndex;
-    v0 <<= 2;
-    a1 += v0;
-    a3 = voice00LeftPtr_800c4aa4.get();
+  public static void FUN_8004a5e0(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
 
     //LAB_8004a618
-    do {
-      v1 = MEMORY.ref(4, a1).offset(0xcL).get();
-      v0 = a3 + v1;
-      voiceIndex = MEMORY.ref(1, v0).get();
-      v0 = MEMORY.ref(4, a1).offset(0x118L).get();
-      v1++;
-      MEMORY.ref(4, a1).offset(0xcL).setu(v1);
-      v1 = v0 << 0x7L;
-      v0 = voiceIndex & 0x80L;
-      MEMORY.ref(4, a1).offset(0x118L).setu(v1);
-      if(v0 == 0) {
+    for(int i = 0; i < 4; i++) {
+      final long a0 = voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).get();
+      a1._00c.incr();
+      a1._118.shl(7);
+
+      if((a0 & 0x80L) == 0) {
         //LAB_8004a720
-        v0 = voiceIndex | v1;
-        MEMORY.ref(4, a1).offset(0x118L).setu(v0);
+        a1._118.or(a0);
         break;
       }
 
-      v0 = voiceIndex & 0x7fL;
-      v0 |= v1;
-      MEMORY.ref(4, a1).offset(0x118L).setu(v0);
-      a2++;
-      v0 = a2;
-    } while(v0 < 0x4L);
+      a1._118.or(a0 & 0x7fL);
+    }
 
     //LAB_8004a664
-    v0 = MEMORY.ref(1, a1).offset(0x2aL).get();
-    if(v0 != 0) {
-      v0 = 0x3cL;
-      MEMORY.ref(2, a1).offset(0x108L).setu(v0);
-      v0 = 0x1e0L;
-      MEMORY.ref(2, a1).offset(0x10aL).setu(v0);
+    if(a1._02a.get() != 0) {
+      a1._108.set(60);
+      a1._10a.set(480);
     }
 
     //LAB_8004a680
-    v0 = MEMORY.ref(2, a1).offset(0x108L).get();
-    voiceIndex = v0;
-    if(v0 == 0) {
+    if(a1._108.get() == 0) {
       return;
     }
 
-    v0 = MEMORY.ref(2, a1).offset(0x10aL).get();
-    lo = voiceIndex * v0 & 0xffff_ffffL;
-    v1 = MEMORY.ref(4, a1).offset(0x118L).get();
-    v0 = v1 << 2;
-    v0 += v1;
-    a3 = v0 << 1;
-    MEMORY.ref(4, a1).offset(0x114L).setu(a3);
-    voiceIndex = lo;
-    v1 = voiceIndex << 2;
-    v1 += voiceIndex;
-    voiceIndex = MEMORY.ref(2, t0).offset(0x42L).get();
-    v1 <<= 1;
-    v0 = voiceIndex << 4;
-    v0 -= voiceIndex;
-    v0 <<= 2;
-    voiceIndex = MEMORY.ref(1, a1).offset(0x10cL).get();
-    lo = v1 / v0;
+    a1._114.set(a1._118.get() * 0xaL);
 
     //LAB_8004a700
-    a2 = lo;
-    if(voiceIndex == 0) {
+    final long a2 = a1._108.get() * a1._10a.get() * 0xaL / (_800c6630.offset(2, 0x42L).get() * 0x3cL);
+
+    final long v1;
+    if(a1._10c.get() == 0) {
       //LAB_8004a72c
-      v0 = MEMORY.ref(4, a1).offset(0x110L).get();
-      v1 = a3 + v0;
+      v1 = a1._114.get() + a1._110.get();
     } else {
-      v0 = MEMORY.ref(4, a1).offset(0x110L).get();
-      MEMORY.ref(1, a1).offset(0x10cL).setu(0);
-      v0 = a2 - v0;
-      v1 = a3 - v0;
+      a1._10c.set(0);
+      v1 = a1._114.get() - (a2 - a1._110.get());
     }
 
     //LAB_8004a738
-    hi = v1 % a2;
-
     //LAB_8004a760
-    voiceIndex = hi;
-    v0 = voiceIndex << 1;
-    if(a2 < v0) {
-      v0 = a2 - voiceIndex;
-      v0 += v1;
-      MEMORY.ref(4, a1).offset(0x114L).setu(v0);
-      v0 = 0x1L;
-      MEMORY.ref(1, a1).offset(0x10cL).setu(v0);
+    final long a0 = v1 % a2;
+    if(a2 < a0 * 0x2L) {
+      a1._114.set(a2 - a0 + v1);
+      a1._10c.set(1);
     } else {
       //LAB_8004a78c
-      v0 = v1 - voiceIndex;
-      MEMORY.ref(4, a1).offset(0x114L).setu(v0);
+      a1._114.set(v1 - a0);
     }
 
     //LAB_8004a794
-    hi = v1 % a2;
-
     //LAB_8004a7bc
-    v1 = hi;
-    v0 = MEMORY.ref(4, a1).offset(0x114L).get();
-    lo = v0 / a2;
-
     //LAB_8004a7d8
-    v0 = lo;
-    MEMORY.ref(4, a1).offset(0x110L).setu(v1);
-    MEMORY.ref(4, a1).offset(0x118L).setu(v0);
+    a1._110.set((int)(v1 % a2));
+    a1._118.set(a1._114.get() / a2);
 
     //LAB_8004a7e4
   }
 
   @Method(0x8004a7ecL)
-  public static void FUN_8004a7ec(long voiceIndex) {
-    final long a1 = _800c4ac8.offset(voiceIndex * 292).getAddress();
-    voiceIndex = MEMORY.ref(4, a1).offset(0xcL).get();
-    long v0 = voice00LeftPtr_800c4aa4.get() + voiceIndex;
-    final long v1 = MEMORY.ref(1, v0).get();
-    if((v1 & 0x80L) == 0) {
+  public static void FUN_8004a7ec(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+
+    if((voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).get() & 0x80L) == 0) {
       //LAB_8004a854
-      MEMORY.ref(4, a1).offset(0xcL).setu(voiceIndex - 1);
-      MEMORY.ref(1, a1).setu(MEMORY.ref(1, a1).offset(0x1L));
+      a1._00c.decr();
+      a1._000.set(a1._001);
     } else {
-      MEMORY.ref(1, a1).offset(0x1L).setu(v1);
-      v0 = voice00LeftPtr_800c4aa4.get() + voiceIndex;
-      MEMORY.ref(1, a1).setu(MEMORY.ref(1, v0));
+      a1._001.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).get());
+      a1._000.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).get());
     }
 
     //LAB_8004a860
-    v0 = MEMORY.ref(4, a1).offset(0xcL).get() + voice00LeftPtr_800c4aa4.get();
-    MEMORY.ref(1, a1).offset(0x2L).setu(MEMORY.ref(1, v0).offset(0x1L));
-    v0 = MEMORY.ref(4, a1).offset(0xcL).get() + voice00LeftPtr_800c4aa4.get();
-    MEMORY.ref(1, a1).offset(0x3L).setu(MEMORY.ref(1, v0).offset(0x2L));
-    v0 = MEMORY.ref(4, a1).offset(0xcL).get() + voice00LeftPtr_800c4aa4.get();
-    MEMORY.ref(1, a1).offset(0x5L).setu(MEMORY.ref(1, v0).offset(0x3L));
+    a1._002.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).offset(0x1L).get());
+    a1._003.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).offset(0x2L).get());
+    a1._005.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a1._00c.get()).offset(0x3L).get());
   }
 
   @Method(0x8004a8b8L)
   public static void FUN_8004a8b8() {
     final long t3 = _800c6630.getAddress();
-    final long t0 = _800c3a40.getAddress();
-    long a1 = _800c4ac8.getAddress() + 0x29L;
 
     //LAB_8004a8dc
-    for(int a3 = 0; a3 < 0x18; a3++) {
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+
       Outer:
-      if(MEMORY.ref(1, a1).offset(0xbeL).get() == 0x1L && MEMORY.ref(1, a1).get() == 0x1L) {
+      if(a1._0e7.get() == 0x1L && a1._029.get() == 0x1L) {
         //LAB_8004a908
-        for(int i = 0; i < 0x18; i++) {
-          if(MEMORY.ref(2, t0).offset(i * 0x66L).offset(0x6L).get() == a3) {
+        for(int i = 0; i < 24; i++) {
+          if(_800c3a40.get(i)._06.get() == voiceIndex) {
             break Outer;
           }
         }
 
-        MEMORY.ref(4, a1).offset(0xefL).setu(0);
-        MEMORY.ref(1, a1).offset(0xbeL).setu(0);
-        MEMORY.ref(2, a1).offset(0xc7L).setu(0);
-        MEMORY.ref(2, a1).offset(0xc5L).setu(0);
-        MEMORY.ref(1, a1).offset(0xdbL).setu(0);
-        MEMORY.ref(1, a1).offset(0xdcL).setu(0);
-        MEMORY.ref(2, a1).offset(-0x9L).setu(0);
-        MEMORY.ref(1, a1).offset(0x01L).setu(0);
-        MEMORY.ref(1, a1).offset(0x00L).setu(0);
-        MEMORY.ref(1, t3).offset(0x22L).setu(0);
+        a1._020.set(0);
+        a1._029.set(0);
+        a1._02a.set(0);
+        a1._0e7.set(0);
+        a1._0ee.set(0);
+        a1._0f0.set(0);
+        a1._104.set(0);
+        a1._105.set(0);
+        a1._118.set(0);
+
+        MEMORY.ref(1, t3).offset(0x4bL).setu(0);
       }
 
       //LAB_8004a96c
-      a3++;
-      a1 += 0x124L;
+      voiceIndex++;
     }
 
-    final long t2 = _800c3a40.getAddress();
-
     //LAB_8004a99c
-    for(int i = 0; i < 0x18L; i++) {
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+
       if((SPU.voices[i].adsrVolume & 0x7fffL) < 0x10L) {
-        if(MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x8L).get() == 0x1L) {
-          if(MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x1aL).get() != 0) {
+        if(spu66._08.get() == 0x1L) {
+          if(spu66._1a.get() != 0) {
             if(MEMORY.ref(1, t3).offset(0xdL).get() > 0) {
               MEMORY.ref(1, t3).offset(0xdL).subu(0x1L);
             }
@@ -4695,24 +5051,20 @@ public final class Scus94491BpeSegment_8004 {
 
           //LAB_8004aa04;
           //LAB_8004aa0c
-          for(int n = 0; n < 0x18; n++) {
-            final long a4 = MEMORY.ref(2, t2).offset(n * 0x66L).offset(0xaL).get();
-            if(a4 > MEMORY.ref(2, t2).offset(n * 0x66L).offset(0xaL).get() && a4 != 0xffffL) {
-              MEMORY.ref(2, t2).offset(n & 0x66L).offset(0xaL).setu(a4 - 0x1L);
+          for(int n = 0; n < 24; n++) {
+            if(_800c3a40.get(n)._0a.get() > spu66._0a.get() && _800c3a40.get(n)._0a.get() != 0xffffL) {
+              _800c3a40.get(n)._0a.decr();
             }
           }
 
           //LAB_8004aa7c
-          for(int n = 0; n < 0x33; n++) {
-            MEMORY.ref(2, t2).offset(n * 0x66L).offset(n * 2L).setu(0);
-          }
-
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x06L).setu(0xffffL);
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x26L).setu(0xffffL);
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x24L).setu(0xffffL);
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x22L).setu(0xffffL);
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x0aL).setu(0xffffL);
-          MEMORY.ref(2, t2).offset(i * 0x66L).offset(0x4eL).setu(0x78L);
+          bzero(spu66.getAddress(), 0x66);
+          spu66._06.set(0xffff);
+          spu66._26.set(0xffff);
+          spu66._24.set(0xffff);
+          spu66._22.set(0xffff);
+          spu66._0a.set(0xffff);
+          spu66._4e.set(120);
 
           if(MEMORY.ref(1, t3).get() > 0) {
             MEMORY.ref(1, t3).subu(0x1L);
@@ -4805,187 +5157,112 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004af98L)
-  public static void FUN_8004af98(final long voiceIndex) {
-    long v0;
-    long v1;
+  public static void FUN_8004af98(final int voiceIndex) {
+    final SpuStruct124 s2 = _800c4ac8.get(voiceIndex);
 
-    long a1;
-    long a2;
-    long a3;
-    long s0;
-    long s1;
-    long s2;
-    long s4;
-
-    s2 = _800c4ac8.getAddress();
-    v1 = voiceIndex;
-    v0 = v1 << 0x3L;
-    v0 += v1;
-    v0 <<= 0x3L;
-    v0 += v1;
-    v0 <<= 0x2L;
-    s2 += v0;
-
-    v0 = MEMORY.ref(1, s2).offset(0x3cL).get();
-    s4 = 0;
-    if(v0 == 0) {
+    if(s2._03c.get() == 0) {
       return;
     }
 
-    v0 = MEMORY.ref(1, s2).offset(0x8eL).get();
-    if(v0 == 0) {
-      s1 = 0;
-    } else {
-      v1 = MEMORY.ref(4, s2).offset(0x10L).get();
-      _800c667c.setu(v1);
+    long s4 = 0;
+    if(s2._03e.get(5).get(0).get() != 0) {
+      final long voicePtr = s2.voicePtr_010.get();
+      _800c667c.setu(voicePtr);
 
-      long a0 = MEMORY.ref(1, s2).offset(0x9eL).get();
-      v0 = MEMORY.ref(1, v1).get();
-      s1 = 0;
-      if(v0 != a0) {
-        v0 = MEMORY.ref(1, s2).offset(0xaeL).get();
-        if(v0 != 0) {
-          a0 &= 0xffL;
-          a1 = MEMORY.ref(1, s2).offset(0xceL).get();
-          a2 = MEMORY.ref(1, s2).offset(0xbeL).get();
-          a3 = v0;
-          v0 = FUN_8004af3c(a0, a1, a2, a3);
-          v1 = _800c667c.get();
-          MEMORY.ref(1, v1).setu(v0);
-          MEMORY.ref(1, s2).offset(0xaeL).subu(0x1L);
+      final long a0 = s2._03e.get(6).get(0).get();
+      if(MEMORY.ref(1, voicePtr).get() != a0) {
+        if(s2._03e.get(7).get(0).get() != 0) {
+          final long v0 = FUN_8004af3c(a0, s2._03e.get(9).get(0).get(), s2._03e.get(8).get(0).get(), s2._03e.get(7).get(0).get());
+          _800c667c.deref(1).setu(v0);
+          s2._03e.get(7).get(0).decr();
         } else {
           //LAB_8004b064
-          MEMORY.ref(1, v1).setu(a0);
+          MEMORY.ref(1, voicePtr).setu(a0);
         }
 
         //LAB_8004b068
-        a0 = voiceIndex << 0x10L;
-        v0 = _800c667c.get();
-        a0 >>= 0x10L;
-        a1 = MEMORY.ref(1, v0).get();
-        s4++;
-        FUN_8004c8dc(a0, a1);
+        FUN_8004c8dc(voiceIndex, _800c667c.deref(1).get());
 
         //LAB_8004b084
-        s1 = 0;
+        s4++;
       }
     }
 
     //LAB_8004b088
-    v0 = MEMORY.ref(4, s2).offset(0x10L).get() + 0x10L;
-    _800c6680.setu(v0);
-    v0 = s1 & 0xffL;
+    _800c6680.setu(s2.voicePtr_010.get() + 0x10L);
 
     //LAB_8004b0a0
-    do {
-      s0 = s2 + v0;
-      a1 = _800c6680.get();
-      long a0 = MEMORY.ref(1, s0).offset(0x4eL).get();
-      v0 = MEMORY.ref(1, a1).offset(0x3L).get();
-      if(v0 != a0) {
-        v1 = MEMORY.ref(1, s0).offset(0x3eL).get();
-        if(v1 == 0x1L) {
-          v0 = MEMORY.ref(1, s0).offset(0x5eL).get();
-          if(v0 != 0) {
-            a0 &= 0xffL;
-            a1 = MEMORY.ref(1, s0).offset(0x7eL).get();
-            a2 = MEMORY.ref(1, s0).offset(0x6eL).get();
-            a3 = v0;
-            v0 = FUN_8004af3c(a0, a1, a2, a3);
-            v1 = _800c6680.get();
-            MEMORY.ref(1, v1).offset(0x3L).setu(v0);
+    for(int i = 0; i < 0x10L; i++) {
+      final long a0 = s2._03e.get(1).get(i).get();
+      if(_800c6680.deref(1).offset(0x3L).get() != a0) {
+        if(s2._03e.get(0).get(i).get() == 0x1L) {
+          if(s2._03e.get(2).get(i).get() != 0) {
+            final long v0 = FUN_8004af3c(a0, s2._03e.get(4).get(i).get(), s2._03e.get(3).get(i).get(), s2._03e.get(2).get(i).get());
+            _800c6680.deref(1).offset(0x3L).setu(v0);
 
-            MEMORY.ref(1, s0).offset(0x5eL).subu(0x1L);
+            s2._03e.get(2).get(i).decr();
           } else {
             //LAB_8004b110
-            MEMORY.ref(1, a1).offset(0x3L).setu(a0);
+            _800c6680.deref(1).offset(0x3L).setu(a0);
           }
 
           //LAB_8004b114
-          a0 = voiceIndex << 0x10L;
-          a0 >>= 0x10L;
-          v0 = _800c6680.get();
-          a1 = s1 & 0xffL;
-          a2 = MEMORY.ref(1, v0).offset(0x3L).get();
+          FUN_8004b464(voiceIndex, i, _800c6680.deref(1).offset(0x3L).get());
           s4++;
-          FUN_8004b464(a0, a1, a2);
         }
       }
 
       //LAB_8004b130
-      v0 = _800c6680.get();
-      s1 += 0x1L;
-      v0 += 0x10L;
-      _800c6680.setu(v0);
+      _800c6680.addu(0x10L);
+    }
 
-      v0 = s1 & 0xffL;
-    } while(v0 < 0x10L);
-
-    v0 = s4 << 0x10;
-    s1 = 0;
-    if(v0 == 0) {
+    if(s4 == 0) {
       //LAB_8004b15c
-      do {
-        v1 = 0;
-        v0 = s1 & 0xffL;
-        long a0 = v0 << 0x4L;
-        v0 = v1 & 0xffL;
-
+      for(int n = 0; n < 0xaL; n++) {
         //LAB_8004b16c
-        do {
-          v0 += a0;
-          v0 += s2;
-          MEMORY.ref(1, v0).offset(0x3eL).setu(0);
-          v1++;
-          v0 = v1 & 0xffL;
-        } while(v0 < 0x10L);
+        for(int i = 0; i < 0x10L; i++) {
+          s2._03e.get(n).get(i).set(0);
+        }
+      }
 
-        s1++;
-        v0 = s1 & 0xffL;
-      } while(v0 < 0xaL);
-
-      v0 = MEMORY.ref(1, s2).offset(0x3aL).get();
-      long a0 = voiceIndex << 0x10L;
-      if(v0 != 0) {
-        MEMORY.ref(1, s2).offset(0x3aL).setu(0);
-        a0 >>= 0x10L;
-        a1 = 0x1L;
-        FUN_8004d034(a0, a1);
+      if(s2._03a.get() != 0) {
+        s2._03a.set(0);
+        FUN_8004d034(voiceIndex, 0x1L);
       }
 
       //LAB_8004b1c0
-      MEMORY.ref(1, s2).offset(0x3cL).setu(0);
+      s2._03c.set(0);
     }
 
     //LAB_8004b1c4
   }
 
   @Method(0x8004b1e8L)
-  public static long FUN_8004b1e8(final long a0, final long a1, long a2, final long a3) {
+  public static long FUN_8004b1e8(final int voiceIndex, final long a1, long a2, final long a3) {
     final long v1;
 
     a2 &= 0xffffL;
     if(a2 == 0xffffL) {
-      _800c667c.setu(_800c4ac8.offset(a0 * 0x124L).offset(4, 0x10L));
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x8eL).setu(0x1L);
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x9eL).setu(a3);
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xaeL).setu(a1);
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xbeL).setu(a1);
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0xceL).setu(_800c667c.deref(1));
+      _800c667c.setu(_800c4ac8.get(voiceIndex).voicePtr_010.get());
+      _800c4ac8.get(voiceIndex)._03e.get(5).get(0).set(1);
+      _800c4ac8.get(voiceIndex)._03e.get(6).get(0).set((int)a3);
+      _800c4ac8.get(voiceIndex)._03e.get(7).get(0).set((int)a1);
+      _800c4ac8.get(voiceIndex)._03e.get(8).get(0).set((int)a1);
+      _800c4ac8.get(voiceIndex)._03e.get(9).get(0).set((int)_800c667c.deref(1).get());
       v1 = _800c667c.deref(1).get();
     } else {
       //LAB_8004b268
-      _800c6680.setu(_800c4ac8.offset(a0 * 0x124L).offset(4, 0x10L).get() + (a2 + 0x1L) * 0x10L);
-      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x3eL).setu(0x1L);
-      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x4eL).setu(a3);
-      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x5eL).setu(a1);
-      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x6eL).setu(a1);
-      _800c4ac8.offset(a0 * 0x124L).offset(a2).offset(1, 0x7eL).setu(_800c6680.deref(1).offset(0x3L));
+      _800c6680.setu(_800c4ac8.get(voiceIndex).voicePtr_010.get() + (a2 + 0x1L) * 0x10L);
+      _800c4ac8.get(voiceIndex)._03e.get(0).get((int)a2).set(1);
+      _800c4ac8.get(voiceIndex)._03e.get(1).get((int)a2).set((int)a3);
+      _800c4ac8.get(voiceIndex)._03e.get(2).get((int)a2).set((int)a1);
+      _800c4ac8.get(voiceIndex)._03e.get(3).get((int)a2).set((int)a1);
+      _800c4ac8.get(voiceIndex)._03e.get(4).get((int)a2).set((int)_800c6680.deref(1).offset(0x3L).get());
       v1 = _800c6680.deref(1).offset(0x3L).get();
     }
 
     //LAB_8004b2b8
-    _800c4ac8.offset(a0 * 0x124L).offset(1, 0x3cL).setu(0x1L);
+    _800c4ac8.get(voiceIndex)._03c.set(1);
     return v1;
   }
 
@@ -5051,19 +5328,40 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b464L)
-  public static void FUN_8004b464(final long a0, final long a1, final long a2) {
+  public static void FUN_8004b464(final int voiceIndex, final long a1, final long a2) {
     assert false;
   }
 
   @Method(0x8004b5bcL)
   public static long maxShort(final long a, final long b) {
-    return Math.max((short)(a & 0xffffL), (short)(b & 0xffffL));
+    return Math.max((short)a, (short)b);
   }
 
   @Method(0x8004b644L)
   public static long FUN_8004b644(final long a0, final long a1) {
-    assert false;
-    return 0;
+    final long v0;
+    long v1;
+    if((a0 & 0x8000L) != 0) {
+      v0 = (a0 & 0x7fL) << 7;
+      v1 = a1 & 0x7fffL;
+    } else {
+      //LAB_8004b660
+      v0 = a1 & 0x7fffL;
+      v1 = a0 & 0xffffL;
+    }
+
+    //LAB_8004b668
+    v1 = (int)(v1 * v0) >> 12;
+
+    final long a0_0;
+    if((a1 & 0x8000L) != 0) {
+      a0_0 = 0x7fffL - v1;
+    } else {
+      a0_0 = v1;
+    }
+
+    //LAB_8004b688
+    return (short)a0_0;
   }
 
   @Method(0x8004b694L)
@@ -5104,7 +5402,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004b7c0L)
   public static long FUN_8004b7c0(final long a0) {
-    if(a0 < 0x1L) {
+    if((int)a0 < 2) {
       _8005a1d0.setu(a0);
     }
 
@@ -5190,22 +5488,20 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004ba58
     for(int a1 = 0; a1 < 24; a1++) {
       //LAB_8004ba74
-      for(int a0 = 0; a0 < 50; a0++) {
-        _800c3a40.offset(a1 * 102).offset(a0 * 2).setu(0);
-      }
+      bzero(_800c3a40.get(a1).getAddress(), 0x64); //Not sure why this wasn't clearing the last one
     }
 
     //LAB_8004bab8
     for(int a1 = 0; a1 < 127; a1++) {
       //LAB_8004bacc
-      for(int a0 = 0; a0 < 3; a0++) {
-        _800c43d0.offset(a1 * 12).offset(a0 * 4).setu(0);
-      }
+      _800c43d0.get(a1).used_00.set(0);
+      _800c43d0.get(a1).sshdPtr_04.set(0);
+      _800c43d0.get(a1).soundBufferPtr_08.set(0);
     }
 
     //LAB_8004bb14
     for(int i = 0; i < 24; i++) {
-      _800c3a40.offset(0x4eL).offset(i * 102).setu(120);
+      _800c3a40.get(i)._4e.set(120);
     }
   }
 
@@ -5275,11 +5571,13 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004bfe4
     //LAB_8004bff0
     for(int i = 0; i < 0x7f; i++) {
-      if(_800c43d0.offset(i * 12).get() == 0) {
+      final SpuStruct0c spu0c = _800c43d0.get(i);
+
+      if(spu0c.used_00.get() == 0) {
         //LAB_8004bfc8
-        _800c43d0.offset(i * 12).setu(0x1L);
-        _800c43d4.offset(i * 12).setu(sshdAddress);
-        _800c43d8.offset(i * 12).setu(addressInSoundBuffer >>> 0x3L);
+        spu0c.used_00.set(0x1L);
+        spu0c.sshdPtr_04.set(sshdAddress);
+        spu0c.soundBufferPtr_08.set(addressInSoundBuffer >>> 0x3L);
         return i;
       }
     }
@@ -5289,90 +5587,71 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c114L)
-  public static long FUN_8004c114(final long a0) {
+  public static long FUN_8004c114(final int a0) {
     if((a0 & 0xff80L) != 0) {
       return -0x1L;
     }
 
-    final long v0 = _800c43d0.offset(a0 * 12).getAddress();
+    final SpuStruct0c spu0c = _800c43d0.get(a0);
 
-    if(MEMORY.ref(4, v0).get() != 0x1L) {
+    if(spu0c.used_00.get() != 0x1L) {
       return -0x1L;
     }
 
     //LAB_8004c160
-    for(int i = 0; i < 0x18; i++) {
-      if(_800c3a40.offset(i * 0x66L).get() == 0x1L && _800c3a62.offset(i * 0x66L).get() == a0) {
+    for(int i = 0; i < 24; i++) {
+      if(_800c3a40.get(i)._00.get() == 0x1L && _800c3a40.get(i)._22.get() == a0) {
         return -0x1L;
       }
     }
 
-    _800c43d0.offset(a0 * 12L).setu(0);
-    _800c43d4.offset(a0 * 12L).setu(0);
-    _800c43d8.offset(a0 * 12L).setu(0);
+    spu0c.used_00.set(0);
+    spu0c.sshdPtr_04.set(0);
+    spu0c.soundBufferPtr_08.set(0);
     return 0;
   }
 
   @Method(0x8004c1f8L)
-  public static long FUN_8004c1f8(long a0, long a1) {
-    long a3 = _800c4ac8.getAddress();
-    final long t2 = a0;
+  public static long FUN_8004c1f8(final int a0, final long a1) {
     if((a1 & 0x3L) == 0) {
       if((a0 & 0xff80L) != 0 || MEMORY.ref(4, a1).offset(0xcL).get() != 0x7173_5353L) {
         return -0x1L;
       }
 
-      long v1 = _800c43d0.offset(a0 * 12).getAddress();
-      long a2 = a3 + 0x108L;
-
       //LAB_8004c258;
-      for(long t0 = 0; t0 < 0x18L; t0++) {
-        if(MEMORY.ref(1, a2).offset(-0xe1L).get() == 0 && MEMORY.ref(1, a2).offset(-0xdfL).get() == 0) {
-          if(MEMORY.ref(4, v1).get() == 0) {
+      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+        final SpuStruct124 a3 = _800c4ac8.get(voiceIndex);
+
+        if(a3._027.get() == 0 && a3._029.get() == 0) {
+          if(_800c43d0.get(a0).used_00.get() == 0) {
             break;
           }
 
           voice00LeftPtr_800c4aa4.setu(a1);
-          MEMORY.ref(1, a2).offset(-0xe1L).setu(0x1L);
-          MEMORY.ref(1, a2).offset(-0xe0L).setu(0);
-          MEMORY.ref(1, a2).offset(-0xdfL).setu(0);
-          MEMORY.ref(1, a2).offset(-0xdeL).setu(0);
-          v1 = voice00LeftPtr_800c4aa4.get();
-          MEMORY.ref(4, a2).offset(0x10L).setu(0);
-          MEMORY.ref(4, a2).offset(-0xf8L).setu(a1);
-          MEMORY.ref(4, a2).offset(-0xfcL).setu(0x110L);
-          MEMORY.ref(1, a3).setu(MEMORY.ref(1, v1).offset(0x110L));
-          long v0 = MEMORY.ref(4, a2).offset(-0xfcL).get();
-          v0 += voice00LeftPtr_800c4aa4.get();
-          v0 = MEMORY.ref(1, v0).offset(0x1L).get();
-          MEMORY.ref(1, a2).offset(-0x106L).setu(v0);
-          v0 = MEMORY.ref(4, a2).offset(-0xfcL).get();
-          v0 += voice00LeftPtr_800c4aa4.get();
-          v0 = MEMORY.ref(1, v0).offset(0x2L).get();
-          a1 += 0x2L;
-          MEMORY.ref(1, a2).offset(-0x105L).setu(v0);
-          MEMORY.ref(2, a2).offset(-0xe8L).setu(t2);
-          MEMORY.ref(1, a2).offset(-0x107L).setu(MEMORY.ref(1, a3));
+          a3._027.set(1);
+          a3._028.set(0);
+          a3._029.set(0);
+          a3._02a.set(0);
+          a3._118.set(0);
+          a3.voicePtr_010.set(a1);
+          a3._00c.set(0x110L);
+          a3._000.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(0x110L).get());
+          a3._002.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a3._00c.get()).offset(0x1L).get());
+          a3._003.set((int)voice00LeftPtr_800c4aa4.deref(1).offset(a3._00c.get()).offset(0x2L).get());
+          a3._020.set(a0);
+          a3._001.set(a3._000.get());
 
           //LAB_8004c308
-          for(a3 = 0; a3 < 0x10L; a3++) {
-            v0 = voice00LeftPtr_800c4aa4.get();
-            a0 = (int)(a3 << 16) >> 12;
-            a0 += v0;
-            v1 = MEMORY.ref(1, v0).get();
-            v0 = MEMORY.ref(1, a0).offset(0x13L).get();
-            v1 = (v1 * v0 & 0xffff_ffffL) >> 8;
-            MEMORY.ref(1, a0).offset(0x1eL).setu(v1);
+          for(int i = 0; i < 0x10L; i++) {
+            voice00LeftPtr_800c4aa4.deref(1).offset(i * 0x10L).offset(0x1eL).setu((voice00LeftPtr_800c4aa4.deref(1).get() * voice00LeftPtr_800c4aa4.deref(1).offset(i * 0x10L).offset(0x13L).get()) >> 8);
           }
 
-          MEMORY.ref(2, a2).offset(0x2L).setu(MEMORY.ref(2, a1));
-          MEMORY.ref(2, a2).setu(MEMORY.ref(2, a1).offset(0x2L));
-          return (short)t0;
+          a3._10a.set((int)MEMORY.ref(2, a1).offset(0x2L).get());
+          a3._108.set((int)MEMORY.ref(2, a1).offset(0x4L).get());
+          return voiceIndex;
         }
 
         //LAB_8004c364
-        a2 += 0x124;
-        a3 += 0x124L;
       }
     }
 
@@ -5383,12 +5662,12 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c390L)
-  public static long FUN_8004c390(final long a0) {
-    final long v0 = _800c4af0.offset(a0 * 292).get();
+  public static long FUN_8004c390(final int voiceIndex) {
+    final long v0 = _800c4ac8.get(voiceIndex)._028.get();
 
     if(v0 == 0) {
       //LAB_8004c3d0
-      _800c4ac8.offset(a0 * 292).setu(0);
+      _800c4ac8.get(voiceIndex)._000.set(0);
       return 0;
     }
 
@@ -5406,7 +5685,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c420
     for(int a2 = 0; a2 < 0x18; a2++) {
-      if(_800c3a40.offset(a2 * 102L).offset(0x1aL).get() != 0) {
+      if(_800c3a40.get(a2)._1a.get() != 0) {
         a1++;
       }
 
@@ -5505,37 +5784,35 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static long FUN_8004c8dc(long a0, long a1) {
-    long s0;
-
-    final long a3 = a0;
+  public static long FUN_8004c8dc(final int voiceIndex, long a1) {
     final long a2 = a1;
-    a0 = (short)a0;
     a1 = (short)a1;
 
-    if(a0 >= 0x18L || a1 >= 0x80L || _800c4ac8.offset(a0 * 292L).offset(0x27L).get() == 0) {
+    if(voiceIndex >= 0x18L || a1 >= 0x80L || _800c4ac8.get(voiceIndex)._027.get() == 0) {
       //LAB_8004ca64
       return -0x1L;
     }
 
-    final long v1 = _800c4ac8.offset(4, a0 * 292L).offset(0x10L).get();
+    final long v1 = _800c4ac8.get(voiceIndex).voicePtr_010.get();
     _800c667c.setu(v1);
     final long s2 = MEMORY.ref(1, v1).get();
     MEMORY.ref(1, v1).setu(a2);
-    _800c6680.setu(_800c4ac8.offset(4, a0 * 292L).offset(0x10L).get() + 0x10L);
+    _800c6680.setu(_800c4ac8.get(voiceIndex).voicePtr_010.get() + 0x10L);
 
     //LAB_8004c97c
-    for(s0 = 0; s0 < 16; s0++) {
+    for(int s0 = 0; s0 < 16; s0++) {
       _800c6680.deref(1).offset(0xeL).setu((_800c6680.deref(1).offset(0x3L).get() * a1 & 0xffff_ffffL) >> 0x7L);
       _800c6680.addu(0x10L);
     }
 
     //LAB_8004c9d8
-    for(s0 = 0; s0 < 0x18; s0++) {
-      if(_800c3a40.offset(s0 * 102).get() == 0x1L) {
-        if(_800c3a40.offset(s0 * 102).offset(0x22L).get() == _800c4ac8.offset(2, a0 * 292L).offset(0x20L).get()) {
-          if(_800c3a40.offset(s0 * 102).offset(0x1aL).get() == 0) {
-            if(_800c3a40.offset(s0 * 102).offset(0x6L).get() == (short)a3) {
+    for(int s0 = 0; s0 < 0x18; s0++) {
+      final SpuStruct66 spu66 = _800c3a40.get(s0);
+
+      if(spu66._00.get() == 0x1L) {
+        if(spu66._22.get() == _800c4ac8.get(voiceIndex)._020.get()) {
+          if(spu66._1a.get() == 0) {
+            if(spu66._06.get() == (short)voiceIndex) {
               FUN_8004ad2c(s0);
             }
           }
@@ -5550,10 +5827,12 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cb0cL)
-  public static long FUN_8004cb0c(final long a0, final long a1) {
-    _800c4ac0.setu(_800c43d0.offset(a0 * 0xcL).offset(0x4L));
+  public static long FUN_8004cb0c(final int a0, final long a1) {
+    final SpuStruct0c spu0c = _800c43d0.get(a0);
 
-    if(_800c43d0.offset(a0 * 0xcL).get() != 0x1L) {
+    _800c4ac0.setu(spu0c.sshdPtr_04.get());
+
+    if(spu0c.used_00.get() != 0x1L) {
       return -0x1L;
     }
 
@@ -5569,11 +5848,11 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    final long v1 = _800c43d0.offset(a0 * 0xcL).offset(0x4L).get() + _800c4ac0.deref(4).offset(0x20L).get();
+    final long v1 = spu0c.sshdPtr_04.get() + _800c4ac0.deref(4).offset(0x20L).get();
     _800c667c.setu(v1);
     final long s3 = MEMORY.ref(1, v1).get();
     MEMORY.ref(1, v1).setu(a1);
-    _800c6680.setu(_800c43d0.offset(a0 * 0xcL).offset(0x4L).get() + _800c4ac0.deref(4).offset(0x20L).get() + 0x10L);
+    _800c6680.setu(spu0c.sshdPtr_04.get() + _800c4ac0.deref(4).offset(0x20L).get() + 0x10L);
 
     //LAB_8004cbc8
     for(int i = 0; i < 24; i++) {
@@ -5584,9 +5863,11 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004cc1c
     for(int i = 0; i < 24; i++) {
-      if(_800c3a40.offset(i * 0x66L).get() == 0x1L) {
-        if(_800c3a40.offset(i * 0x66L).offset(0x1aL).get() == 0x1L) {
-          if(_800c3a40.offset(i * 0x66L).offset(0x22L).get() == a0) {
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+
+      if(spu66._00.get() == 0x1L) {
+        if(spu66._1a.get() == 0x1L) {
+          if(spu66._22.get() == a0) {
             FUN_8004ad2c(i);
           }
         }
@@ -5664,56 +5945,33 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cf8cL)
-  public static void FUN_8004cf8c(long a0) {
-    long v0;
-    long v1;
-    long a1;
-    long a2;
+  public static void FUN_8004cf8c(final int voiceIndex) {
+    final SpuStruct124 a1 = _800c4ac8.get(voiceIndex);
+    final SpuStruct0c spu0c = _800c43d0.get(a1._020.get());
 
-    a1 = _800c4ac8.getAddress();
-    a0 = (short)a0;
-    v0 = a0 << 0x3L;
-    v0 += a0;
-    v0 <<= 0x3L;
-    v0 += a0;
-    v0 <<= 0x2L;
-    a1 += v0;
-    v1 = MEMORY.ref(2, a1).offset(0x20L).get();
-
-    a2 = _800c43d0.getAddress();
-    v0 = v1 << 0x1L;
-    v0 += v1;
-    v0 <<= 0x2L;
-    v0 += a2;
-    v1 = MEMORY.ref(4, v0).offset(0x4L).get();
-    _800c4ac0.setu(v1);
-    a0 = MEMORY.ref(1, a1).offset(0x27L).get();
-    if(a0 == 0x1L) {
-      v1 = MEMORY.ref(4, v1).offset(0x10L).get();
-      if(v1 != -0x1L) {
-        v1 = MEMORY.ref(2, a1).offset(0x20L).get();
-        v0 = v1 << 0x1L;
-        v0 += v1;
-        v0 <<= 0x2L;
-        v0 += a2;
-        v0 = MEMORY.ref(4, v0).get();
-        if(v0 == a0) {
-          MEMORY.ref(1, a1).offset(0x28L).setu(v0);
-          MEMORY.ref(1, a1).offset(0xe8L).setu(0);
+    _800c4ac0.setu(spu0c.sshdPtr_04.get());
+    if(a1._027.get() == 0x1L) {
+      if(_800c4ac0.deref(4).offset(0x10L).get() != -0x1L) {
+        final long v0 = spu0c.used_00.get();
+        if(v0 == 0x1L) {
+          a1._028.set((int)v0);
+          a1._0e8.set(0);
         }
       }
     }
 
     //LAB_8004d02c
-    MEMORY.ref(4, a1).offset(0x18L).setu(0);
+    a1._018.set(0);
   }
 
   @Method(0x8004d034L)
-  public static void FUN_8004d034(final long a0, final long a1) {
-    final long s1 = _800c4ac8.offset(a0 * 0x124L).getAddress();
-    _800c4ac0.setu(_800c43d4.offset(_800c4ac8.offset(a0 * 0x124L).offset(0x20L).get() * 0xcL));
+  public static void FUN_8004d034(final int voiceIndex, final long a1) {
+    final SpuStruct124 s1 = _800c4ac8.get(voiceIndex);
+    final SpuStruct0c spu0c = _800c43d0.get(s1._020.get());
 
-    if(_800c4ac8.offset(a0 * 0x124L).offset(1, 0x27L).get() != 0x1L) {
+    _800c4ac0.setu(spu0c.sshdPtr_04.get());
+
+    if(s1._027.get() != 0x1L) {
       return;
     }
 
@@ -5721,7 +5979,7 @@ public final class Scus94491BpeSegment_8004 {
       return;
     }
 
-    if(_800c43d0.offset(MEMORY.ref(2, s1).offset(0x20L).get() * 0xcL).get() != 0x1L) {
+    if(spu0c.used_00.get() != 0x1L) {
       return;
     }
 
@@ -5729,11 +5987,11 @@ public final class Scus94491BpeSegment_8004 {
     if(a1 == 0 || a1 == 0x1L) {
       //LAB_8004d134
       //LAB_8004d13c
-      MEMORY.ref(4, s1).offset(0xcL).setu(0x110L);
-      MEMORY.ref(1, s1).offset(0x28L).setu(0);
-      MEMORY.ref(4, s1).offset(0x18L).setu(0x1L);
-      MEMORY.ref(1, s1).offset(0xe8L).setu(0);
-      MEMORY.ref(1, s1).offset(0x35L).setu(0);
+      s1._00c.set(0x110L);
+      s1._028.set(0);
+      s1._018.set(0x1L);
+      s1._0e8.set(0);
+      s1._035.set(0);
 
       if(a1 == 0) {
         return;
@@ -5744,13 +6002,13 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004d11c
     } else if(a1 == 0x2L || a1 == 0x3L) {
       //LAB_8004d154
-      if(MEMORY.ref(1, s1).offset(0x28L).get() != 0) {
-        MEMORY.ref(1, s1).offset(0x28L).setu(0);
-        MEMORY.ref(1, s1).offset(0xe8L).setu(0x1L);
+      if(s1._028.get() != 0) {
+        s1._028.set(0);
+        s1._0e8.set(1);
         //LAB_8004d170
-      } else if(MEMORY.ref(4, s1).offset(0x18L).get() != 0x1L) {
-        MEMORY.ref(1, s1).offset(0x28L).setu(0x1L);
-        MEMORY.ref(1, s1).offset(0xe8L).setu(0);
+      } else if(s1._018.get() != 0x1L) {
+        s1._028.set(1);
+        s1._0e8.set(0);
       }
 
       if(a1 == 0x3L) {
@@ -5766,14 +6024,16 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004d1c4
     //LAB_8004d1d8
     for(int i = 0; i < 0x18L; i++) {
-      if(_800c3a40.offset(i * 0x66L).offset(0x6L).get() == a0) {
-        if(_800c3a40.offset(i * 0x66L).offset(0x1aL).get() == 0) {
-          _800c3a40.offset(i * 0x66L).offset(0x8L).setu(0x1L);
-          _800c3a40.offset(i * 0x66L).setu(0);
-          _800c3a40.offset(i * 0x66L).offset(0x38L).setu(0x40L);
-          _800c3a40.offset(i * 0x66L).offset(0x14L).setu(0);
-          _800c3a40.offset(i * 0x66L).offset(0x16L).setu(0);
-          FUN_800488d4(a0, i);
+      final SpuStruct66 spu66 = _800c3a40.get(i);
+
+      if(spu66._06.get() == voiceIndex) {
+        if(spu66._1a.get() == 0) {
+          spu66._08.set(1);
+          spu66._00.set(0);
+          spu66._38.set(64);
+          spu66._14.set(0);
+          spu66._16.set(0);
+          FUN_800488d4(voiceIndex, i);
 
           if(s5 != 0) {
             _800c4ac4.deref(2).offset(i * 0x10L).offset(0x8L).setu(0);
@@ -5785,7 +6045,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004d254
     }
 
-    _800c6680.setu(MEMORY.ref(4, s1).offset(0x10L).get() + 0x10L);
+    _800c6680.setu(s1.voicePtr_010.get() + 0x10L);
 
     //LAB_8004d27c
     for(int i = 0; i < 0x10L; i++) {
@@ -5793,17 +6053,17 @@ public final class Scus94491BpeSegment_8004 {
       _800c6680.addu(0x10L);
     }
 
-    _800c4ac4.deref(2).offset(0x18cL).setu(MEMORY.ref(2, s1).offset(0xe2L));
+    _800c4ac4.deref(2).offset(0x18cL).setu(s1._0e2.get());
     //wasteSomeCycles(0x2L); //TODO why?
-    _800c4ac4.deref(2).offset(0x18eL).setu(MEMORY.ref(2, s1).offset(0xe4L));
-    MEMORY.ref(2, s1).offset(0xe4L).setu(0);
-    MEMORY.ref(2, s1).offset(0xe2L).setu(0);
+    _800c4ac4.deref(2).offset(0x18eL).setu(s1._0e4.get());
+    s1._0e4.set(0);
+    s1._0e2.set(0);
 
     //LAB_8004d2d4
   }
 
   @Method(0x8004d41cL)
-  public static long FUN_8004d41c(final long a0, final long a1, final long a2) {
+  public static long FUN_8004d41c(final int voiceIndex, final long a1, final long a2) {
     if(a1 >= 0x100L) {
       //LAB_8004d49c
       return -0x1L;
@@ -5813,37 +6073,37 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(_800c4ac8.offset(a0 * 0x124L).offset(1, 0x28L).get() == 0) {
+    if(_800c4ac8.get(voiceIndex)._028.get() == 0) {
       return -0x1L;
     }
 
     if(a2 == 0) {
-      _800c4ac8.offset(a0 * 0x124L).offset(1, 0x3aL).setu(0x1L);
+      _800c4ac8.get(voiceIndex)._03a.set(1);
     }
 
     //LAB_8004d48c
     //LAB_8004d4a0
     //LAB_8004d4a4
-    return (short)FUN_8004b1e8(a0, a1, 0xffffL, a2);
+    return (short)FUN_8004b1e8(voiceIndex, a1, 0xffffL, a2);
   }
 
   @Method(0x8004d4b4L)
-  public static void FUN_8004d4b4(final long a0, final long a1) {
+  public static void FUN_8004d4b4(final int voiceIndex, final long a1) {
     if(a1 < 0x3c1L) {
-      _800c4bd0.offset(a0 * 292).setu(a1);
+      _800c4ac8.get(voiceIndex)._108.set((int)a1);
     }
   }
 
   @Method(0x8004d4f8L)
-  public static long FUN_8004d4f8(final long a0) {
-    return _800c4bd0.offset(a0 * 292).get();
+  public static long FUN_8004d4f8(final int voiceIndex) {
+    return _800c4ac8.get(voiceIndex)._108.get();
   }
 
   @Method(0x8004d52cL)
-  public static long FUN_8004d52c(final long a0) {
-    long v0 = _800c4ac8.offset(a0 * 0x124L).offset(0xe8L).get() * 0x2L;
-    long v1 = _800c4ac8.offset(a0 * 0x124L).offset(0x3cL).get();
-    long a2 = _800c4ac8.offset(a0 * 0x124L).offset(0x28L).get() | v0;
+  public static long FUN_8004d52c(final int voiceIndex) {
+    long v0 = _800c4ac8.get(voiceIndex)._0e8.get() * 0x2L;
+    long v1 = _800c4ac8.get(voiceIndex)._03c.get();
+    long a2 = _800c4ac8.get(voiceIndex)._028.get() | v0;
 
     final long a3;
     if(v1 != 0) {
@@ -5854,7 +6114,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_8004d58c
-      a3 = v1 | _800c4ac8.offset(a0 * 0x124L).offset(0x3aL).get() << 3;
+      a3 = v1 | _800c4ac8.get(voiceIndex)._03a.get() << 3;
     } else {
       a3 = a2;
     }
@@ -5864,7 +6124,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d648L)
-  public static long FUN_8004d648(final long a0, final long a1, final long a2) {
+  public static long FUN_8004d648(final int a0, final long a1, final long a2) {
     if(FUN_8004b7e0() == 0) {
       return (short)FUN_80048d44(a0, a1, a2);
     }
@@ -5884,22 +6144,24 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_8004d91c(final long a0) {
     if(FUN_8004b7e0() == 0) {
       //LAB_8004d96c
-      for(int s1 = 0; s1 < 0x18; s1++) {
-        if(_800c3a40.offset(s1 * 102L).offset(0x1aL).get() != 0) {
-          _800c3a40.offset(s1 * 102L).offset(0x8L).setu(0x1L);
+      for(int voiceIndex = 0; voiceIndex < 0x18; voiceIndex++) {
+        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+
+        if(spu66._1a.get() != 0) {
+          spu66._08.set(1);
 
           if(a0 != 0) {
-            SPU.voices[s1 * 16].adsr.lo = 0;
-            SPU.voices[s1 * 16].adsr.hi = 0;
-            _800c3a40.offset(s1 * 102L).setu(0);
+            SPU.voices[voiceIndex].adsr.lo = 0;
+            SPU.voices[voiceIndex].adsr.hi = 0;
+            spu66._00.set(0);
           }
 
           //LAB_8004d9b8
-          if(s1 < 0x10L) {
-            SPU_VOICE_KEY_OFF.offset(2, 0x0L).setu(0x1L << s1);
+          if(voiceIndex < 0x10L) {
+            SPU_VOICE_KEY_OFF.offset(2, 0x0L).setu(0x1L << voiceIndex);
           } else {
             //LAB_8004d9d4
-            SPU_VOICE_KEY_OFF.offset(2, 0x2L).setu(0x1L << s1 - 0x10L);
+            SPU_VOICE_KEY_OFF.offset(2, 0x2L).setu(0x1L << voiceIndex - 0x10L);
           }
 
           //LAB_8004d9e8
@@ -5907,21 +6169,21 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_8004d9f0
-        if(_800c4af1.offset(s1 * 0x124L).get() != 0) {
-          _800c4af1.offset(s1 * 0x124L).setu(0);
-          _800c4af2.offset(s1 * 0x124L).setu(0);
+        if(_800c4ac8.get(voiceIndex)._029.get() != 0) {
+          _800c4ac8.get(voiceIndex)._029.set(0);
+          _800c4ac8.get(voiceIndex)._02a.set(0);
 
-          _800c4baf.offset(s1 * 0x124L).setu(0);
+          _800c4ac8.get(voiceIndex)._0e7.set(0);
 
-          _800c4bb1.offset(s1 * 0x124L).setu(0);
+          _800c4ac8.get(voiceIndex)._0e9.set(0);
 
-          _800c4bb6.offset(s1 * 0x124L).setu(0);
-          _800c4bb8.offset(s1 * 0x124L).setu(0);
+          _800c4ac8.get(voiceIndex)._0ee.set(0);
+          _800c4ac8.get(voiceIndex)._0f0.set(0);
 
-          _800c4bcc.offset(s1 * 0x124L).setu(0);
-          _800c4bcd.offset(s1 * 0x124L).setu(0);
+          _800c4ac8.get(voiceIndex)._104.set(0);
+          _800c4ac8.get(voiceIndex)._105.set(0);
 
-          _800c4be0.offset(s1 * 0x124L).setu(0);
+          _800c4ac8.get(voiceIndex)._118.set(0);
         }
 
         //LAB_8004da24

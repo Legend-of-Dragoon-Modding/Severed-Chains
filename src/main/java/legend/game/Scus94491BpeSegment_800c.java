@@ -24,6 +24,9 @@ import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
 import legend.game.types.ScriptStruct;
+import legend.game.types.SpuStruct0c;
+import legend.game.types.SpuStruct124;
+import legend.game.types.SpuStruct66;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -118,17 +121,10 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c3a38 = MEMORY.ref(4, 0x800c3a38L);
   public static final Value _800c3a3c = MEMORY.ref(4, 0x800c3a3cL);
-  /**
-   * A 102-byte struct? Repeats 24 times (SPU) (0x990 long)
-   */
-  public static final Value _800c3a40 = MEMORY.ref(2, 0x800c3a40L);
-  public static final Value _800c3a62 = MEMORY.ref(2, 0x800c3a62L);
-  /**
-   * A 12-byte struct? Repeats 127 times
-   */
-  public static final Value _800c43d0 = MEMORY.ref(4, 0x800c43d0L);
-  public static final Value _800c43d4 = MEMORY.ref(4, 0x800c43d4L);
-  public static final Value _800c43d8 = MEMORY.ref(4, 0x800c43d8L);
+  /** 0x990 bytes long */
+  public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(4, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
+  /** 0x5f4 bytes long */
+  public static final ArrayRef<SpuStruct0c> _800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(SpuStruct0c.class, 127, 0xc, SpuStruct0c::new));
 
   /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... only room for 0x10 */
   public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x10, 0xc, SpuDmaTransfer::new));
@@ -147,41 +143,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
   public static final Value _800c4ac0 = MEMORY.ref(4, 0x800c4ac0L);
   public static final Value _800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
-  public static final Value _800c4ac8 = MEMORY.ref(1, 0x800c4ac8L);
-  public static final Value _800c4ac9 = MEMORY.ref(1, 0x800c4ac9L);
-  public static final Value _800c4aca = MEMORY.ref(1, 0x800c4acaL);
-
-  public static final Value _800c4ad4 = MEMORY.ref(4, 0x800c4ad4L);
-
-  public static final Value _800c4af0 = MEMORY.ref(1, 0x800c4af0L);
-  public static final Value _800c4af1 = MEMORY.ref(1, 0x800c4af1L);
-  public static final Value _800c4af2 = MEMORY.ref(1, 0x800c4af2L);
-
-  public static final Value _800c4af4 = MEMORY.ref(4, 0x800c4af4L);
-
-  public static final Value _800c4aff = MEMORY.ref(1, 0x800c4affL);
-
-  public static final Value _800c4b01 = MEMORY.ref(1, 0x800c4b01L);
-
-  public static final Value _800c4ba6 = MEMORY.ref(2, 0x800c4ba6L);
-  public static final Value _800c4ba8 = MEMORY.ref(2, 0x800c4ba8L);
-  public static final Value _800c4baa = MEMORY.ref(2, 0x800c4baaL);
-  public static final Value _800c4bac = MEMORY.ref(2, 0x800c4bacL);
-  public static final Value _800c4bae = MEMORY.ref(1, 0x800c4baeL);
-  public static final Value _800c4baf = MEMORY.ref(1, 0x800c4bafL);
-
-  public static final Value _800c4bb1 = MEMORY.ref(1, 0x800c4bb1L);
-
-  public static final Value _800c4bb6 = MEMORY.ref(2, 0x800c4bb6L);
-  public static final Value _800c4bb8 = MEMORY.ref(2, 0x800c4bb8L);
-
-  public static final Value _800c4bcc = MEMORY.ref(1, 0x800c4bccL);
-  public static final Value _800c4bcd = MEMORY.ref(1, 0x800c4bcdL);
-
-  public static final Value _800c4bd0 = MEMORY.ref(2, 0x800c4bd0L);
-
-  public static final Value _800c4be0 = MEMORY.ref(4, 0x800c4be0L);
-
+  public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
   public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
 
   public static final Value _800c6630 = MEMORY.ref(1, 0x800c6630L);

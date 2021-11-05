@@ -312,6 +312,9 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059654 = MEMORY.ref(4, 0x80059654L);
   public static final Value _80059658 = MEMORY.ref(4, 0x80059658L);
   public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = (ArrayRef<Pointer<FunctionRef<JoyData, Long>>>)MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.class, 5, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final Value _8005967c = MEMORY.ref(2, 0x8005967cL);
+
+  public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);
 
   public static final Value _80059f3c = MEMORY.ref(1, 0x80059f3cL);
 

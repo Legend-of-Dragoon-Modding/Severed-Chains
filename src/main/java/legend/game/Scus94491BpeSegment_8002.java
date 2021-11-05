@@ -385,8 +385,8 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800201c8L)
   public static void FUN_800201c8(final long a0) {
     if(_800bd610.offset(a0 * 16).get() != 0) {
-      FUN_8004d034(_800bd61c.offset(a0 * 16).get(), 0x1L);
-      FUN_8004c390(_800bd61c.offset(a0 * 16).get());
+      FUN_8004d034((int)_800bd61c.offset(a0 * 16).get(), 0x1L);
+      FUN_8004c390((int)_800bd61c.offset(a0 * 16).get());
       removeFromLinkedList(_800bd614.offset(a0 * 16).get());
       _800bd610.offset(a0 * 16).setu(0);
     }
@@ -444,7 +444,7 @@ public final class Scus94491BpeSegment_8002 {
     assert false;
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, long)} */
+  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, TmdAnimationFile)} */
   @Method(0x80020718L)
   public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     final int transferX = bigStruct.coord2_14.coord.transfer.getX();
