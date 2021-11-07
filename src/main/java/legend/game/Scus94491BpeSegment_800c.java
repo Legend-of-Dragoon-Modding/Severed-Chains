@@ -12,7 +12,6 @@ import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
@@ -23,10 +22,13 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
+import legend.game.types.PlayableSoundStruct;
 import legend.game.types.ScriptStruct;
-import legend.game.types.SpuStruct0c;
+import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct66;
+import legend.game.types.SshdFile;
+import legend.game.types.SssqFile;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -124,7 +126,7 @@ public final class Scus94491BpeSegment_800c {
   /** 0x990 bytes long */
   public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(4, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
   /** 0x5f4 bytes long */
-  public static final ArrayRef<SpuStruct0c> _800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(SpuStruct0c.class, 127, 0xc, SpuStruct0c::new));
+  public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
 
   /** TODO it appears you can queue up 0x20 of these, but that would clobber a bunch of data... only room for 0x10 */
   public static final ArrayRef<SpuDmaTransfer> queuedSpuDmaTransferArray_800c49d0 = MEMORY.ref(4, 0x800c49d0L, ArrayRef.of(SpuDmaTransfer.class, 0x10, 0xc, SpuDmaTransfer::new));
@@ -134,51 +136,19 @@ public final class Scus94491BpeSegment_800c {
   public static final Value dmaSpuChcrPtr_800c4a98 = MEMORY.ref(4, 0x800c4a98L);
   public static final Value dmaDpcrPtr_800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
   public static final Value dmaSpuDelayPtr_800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
-  public static final Value voice00LeftPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
+  public static final Pointer<SssqFile> sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L, Pointer.deferred(4, SssqFile::new));
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
   public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
   public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
-  public static final Value _800c4ac0 = MEMORY.ref(4, 0x800c4ac0L);
+  public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
   public static final Value _800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
   public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
   public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
 
-  public static final Value _800c6630 = MEMORY.ref(1, 0x800c6630L);
-
-  public static final Value _800c6633 = MEMORY.ref(1, 0x800c6633L);
-  public static final Value _800c6634 = MEMORY.ref(1, 0x800c6634L);
-
-  public static final Value _800c6638 = MEMORY.ref(4, 0x800c6638L);
-
-  public static final Value _800c663d = MEMORY.ref(1, 0x800c663dL);
-
-  public static final Value _800c6642 = MEMORY.ref(2, 0x800c6642L);
-
-  public static final Value _800c6646 = MEMORY.ref(2, 0x800c6646L);
-
-  public static final Value eventSpuIrq_800c664c = MEMORY.ref(4, 0x800c664cL);
-  public static final BoolRef spuDmaTransferInProgress_800c6650 = MEMORY.ref(2, 0x800c6650L, BoolRef::new);
-
-  public static final Value _800c665a = MEMORY.ref(1, 0x800c665aL);
-  public static final Value _800c665b = MEMORY.ref(1, 0x800c665bL);
-  public static final Value _800c665c = MEMORY.ref(2, 0x800c665cL);
-  public static final Value _800c665e = MEMORY.ref(2, 0x800c665eL);
-  public static final Value _800c6660 = MEMORY.ref(2, 0x800c6660L);
-  public static final Value _800c6662 = MEMORY.ref(2, 0x800c6662L);
-  public static final Value _800c6664 = MEMORY.ref(2, 0x800c6664L);
-  public static final Value spuMono_800c6666 = MEMORY.ref(2, 0x800c6666L);
-  public static final Value _800c6668 = MEMORY.ref(1, 0x800c6668L);
-  public static final Value spuDmaIndex_800c6669 = MEMORY.ref(1, 0x800c6669L);
-  public static final Value _800c666a = MEMORY.ref(2, 0x800c666aL);
-  public static final Value _800c666c = MEMORY.ref(2, 0x800c666cL);
-  public static final Value _800c666e = MEMORY.ref(2, 0x800c666eL);
-  public static final Value _800c6670 = MEMORY.ref(2, 0x800c6670L);
-
-  public static final Value _800c6672 = MEMORY.ref(2, 0x800c6672L);
-
+  public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
   public static final Value _800c6678 = MEMORY.ref(4, 0x800c6678L);
   public static final Value _800c667c = MEMORY.ref(4, 0x800c667cL);

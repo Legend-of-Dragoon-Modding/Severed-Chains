@@ -4,6 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -18,8 +19,8 @@ public class SpuStruct124 implements MemoryRef {
 
   public final UnsignedByteRef _005;
 
-  public final UnsignedIntRef _00c;
-  public final UnsignedIntRef voicePtr_010;
+  public final UnsignedIntRef sssqOffset_00c;
+  public final Pointer<SssqFile> sssqPtr_010;
 
   public final UnsignedIntRef _018;
 
@@ -83,8 +84,8 @@ public class SpuStruct124 implements MemoryRef {
 
     this._005 = ref.offset(1, 0x005L).cast(UnsignedByteRef::new);
 
-    this._00c = ref.offset(4, 0x00cL).cast(UnsignedIntRef::new);
-    this.voicePtr_010 = ref.offset(4, 0x010L).cast(UnsignedIntRef::new);
+    this.sssqOffset_00c = ref.offset(4, 0x00cL).cast(UnsignedIntRef::new);
+    this.sssqPtr_010 = ref.offset(4, 0x010L).cast(Pointer.deferred(4, SssqFile::new));
 
     this._018 = ref.offset(4, 0x018L).cast(UnsignedIntRef::new);
 

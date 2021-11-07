@@ -3436,14 +3436,14 @@ public final class Scus94491BpeSegment_8002 {
     HwCARD_EvSpTIMOUT_EventId_800bf268.setu(OpenEvent(HwCARD, EvSpTIMOUT, EvMdINTR, getMethodAddress(Scus94491BpeSegment_8002.class, "handleCardErrorBusyLow")));
     HwCARD_EvSpNEW_EventId_800bf26c.setu(OpenEvent(HwCARD, EvSpNEW, EvMdINTR, getMethodAddress(Scus94491BpeSegment_8002.class, "handleCardError2000")));
 
-    EnableEvent((int)SwCARD_EvSpIOE_EventId_800bf250.get());
-    EnableEvent((int)SwCARD_EvSpERROR_EventId_800bf254.get());
-    EnableEvent((int)SwCARD_EvSpTIMOUT_EventId_800bf258.get());
-    EnableEvent((int)SwCARD_EvSpNEW_EventId_800bf25c.get());
-    EnableEvent((int)HwCARD_EvSpIOE_EventId_800bf260.get());
-    EnableEvent((int)HwCARD_EvSpERROR_EventId_800bf264.get());
-    EnableEvent((int)HwCARD_EvSpTIMOUT_EventId_800bf268.get());
-    EnableEvent((int)HwCARD_EvSpNEW_EventId_800bf26c.get());
+    EnableEvent(SwCARD_EvSpIOE_EventId_800bf250.get());
+    EnableEvent(SwCARD_EvSpERROR_EventId_800bf254.get());
+    EnableEvent(SwCARD_EvSpTIMOUT_EventId_800bf258.get());
+    EnableEvent(SwCARD_EvSpNEW_EventId_800bf25c.get());
+    EnableEvent(HwCARD_EvSpIOE_EventId_800bf260.get());
+    EnableEvent(HwCARD_EvSpERROR_EventId_800bf264.get());
+    EnableEvent(HwCARD_EvSpTIMOUT_EventId_800bf268.get());
+    EnableEvent(HwCARD_EvSpNEW_EventId_800bf26c.get());
 
     testEvents();
 
@@ -3454,14 +3454,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002fbe0L)
   public static void testEvents() {
-    TestEvent((int)SwCARD_EvSpIOE_EventId_800bf250.get());
-    TestEvent((int)SwCARD_EvSpERROR_EventId_800bf254.get());
-    TestEvent((int)SwCARD_EvSpTIMOUT_EventId_800bf258.get());
-    TestEvent((int)SwCARD_EvSpNEW_EventId_800bf25c.get());
-    TestEvent((int)HwCARD_EvSpIOE_EventId_800bf260.get());
-    TestEvent((int)HwCARD_EvSpERROR_EventId_800bf264.get());
-    TestEvent((int)HwCARD_EvSpTIMOUT_EventId_800bf268.get());
-    TestEvent((int)HwCARD_EvSpNEW_EventId_800bf26c.get());
+    TestEvent(SwCARD_EvSpIOE_EventId_800bf250.get());
+    TestEvent(SwCARD_EvSpERROR_EventId_800bf254.get());
+    TestEvent(SwCARD_EvSpTIMOUT_EventId_800bf258.get());
+    TestEvent(SwCARD_EvSpNEW_EventId_800bf25c.get());
+    TestEvent(HwCARD_EvSpIOE_EventId_800bf260.get());
+    TestEvent(HwCARD_EvSpERROR_EventId_800bf264.get());
+    TestEvent(HwCARD_EvSpTIMOUT_EventId_800bf268.get());
+    TestEvent(HwCARD_EvSpNEW_EventId_800bf26c.get());
 
     cardDoneRead_800bf270.set(false);
     cardErrorWrite_800bf274.set(false);
@@ -3482,10 +3482,10 @@ public final class Scus94491BpeSegment_8002 {
       DebugHelper.sleep(1);
     } while(s0 == 0);
 
-    TestEvent((int)HwCARD_EvSpIOE_EventId_800bf260.get());
-    TestEvent((int)HwCARD_EvSpERROR_EventId_800bf264.get());
-    TestEvent((int)HwCARD_EvSpTIMOUT_EventId_800bf268.get());
-    TestEvent((int)HwCARD_EvSpNEW_EventId_800bf26c.get());
+    TestEvent(HwCARD_EvSpIOE_EventId_800bf260.get());
+    TestEvent(HwCARD_EvSpERROR_EventId_800bf264.get());
+    TestEvent(HwCARD_EvSpTIMOUT_EventId_800bf268.get());
+    TestEvent(HwCARD_EvSpNEW_EventId_800bf26c.get());
 
     cardDoneRead_800bf270.set(false);
     cardErrorWrite_800bf274.set(false);
@@ -3504,10 +3504,10 @@ public final class Scus94491BpeSegment_8002 {
       DebugHelper.sleep(1);
     } while(s0 == 0);
 
-    TestEvent((int)SwCARD_EvSpIOE_EventId_800bf250.get());
-    TestEvent((int)SwCARD_EvSpERROR_EventId_800bf254.get());
-    TestEvent((int)SwCARD_EvSpTIMOUT_EventId_800bf258.get());
-    TestEvent((int)SwCARD_EvSpNEW_EventId_800bf25c.get());
+    TestEvent(SwCARD_EvSpIOE_EventId_800bf250.get());
+    TestEvent(SwCARD_EvSpERROR_EventId_800bf254.get());
+    TestEvent(SwCARD_EvSpTIMOUT_EventId_800bf258.get());
+    TestEvent(SwCARD_EvSpNEW_EventId_800bf25c.get());
 
     cardFinishedOkay_800bf280.set(false);
     cardError8000_800bf284.set(false);
@@ -3528,17 +3528,17 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002ff10L)
-  public static int OpenEvent(final long desc, final int spec, final int mode, final long func) {
-    return (int)functionVectorB_000000b0.run(0x8L, new Object[] {desc, spec, mode, func});
+  public static long OpenEvent(final long desc, final int spec, final int mode, final long func) {
+    return (long)functionVectorB_000000b0.run(0x8L, new Object[] {desc, spec, mode, func});
   }
 
   @Method(0x8002ff30L)
-  public static int TestEvent(final int event) {
+  public static int TestEvent(final long event) {
     return (int)functionVectorB_000000b0.run(0xbL, new Object[] {event});
   }
 
   @Method(0x8002ff40L)
-  public static boolean EnableEvent(final int event) {
+  public static boolean EnableEvent(final long event) {
     return (boolean)functionVectorB_000000b0.run(0xcL, new Object[] {event});
   }
 }

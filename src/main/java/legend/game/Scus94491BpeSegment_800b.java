@@ -31,6 +31,8 @@ import legend.game.types.JoyStruct;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptStruct;
+import legend.game.types.SshdFile;
+import legend.game.types.SssqFile;
 
 import java.util.function.Function;
 
@@ -159,7 +161,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
 
   public static final Value _800bcf80 = MEMORY.ref(2, 0x800bcf80L);
-
   /**
    * 0: unknown, 2-byte file (00 00)
    * 1: unknown, 0x64 byte file, counts up from 0000 to 0033
@@ -178,9 +179,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd000 = MEMORY.ref(2, 0x800bd000L);
 
   public static final Value _800bd060 = MEMORY.ref(2, 0x800bd060L);
-
-  public static final Value _800bd064 = MEMORY.ref(4, 0x800bd064L);
-
+  public static final Value _800bd062 = MEMORY.ref(2, 0x800bd062L);
+  public static final Pointer<MrgFile> soundMrgPtr_800bd064 = MEMORY.ref(4, 0x800bd064L, Pointer.deferred(4, MrgFile::new));
+  public static final Value _800bd068 = MEMORY.ref(4, 0x800bd068L);
+  public static final Value _800bd06c = MEMORY.ref(4, 0x800bd06cL);
   public static final Value _800bd070 = MEMORY.ref(2, 0x800bd070L);
 
   public static final Value _800bd07c = MEMORY.ref(2, 0x800bd07cL);
@@ -197,9 +199,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd0b4 = MEMORY.ref(2, 0x800bd0b4L);
   public static final Value _800bd0b6 = MEMORY.ref(2, 0x800bd0b6L);
-  public static final Value _800bd0b8 = MEMORY.ref(4, 0x800bd0b8L);
+  public static final Pointer<MrgFile> soundMrg_800bd0b8 = MEMORY.ref(4, 0x800bd0b8L, Pointer.deferred(4, MrgFile::new));
 
-  public static final Value _800bd0c4 = MEMORY.ref(2, 0x800bd0c4L);
+  public static final Value playableSoundIndex_800bd0c4 = MEMORY.ref(2, 0x800bd0c4L);
 
   public static final Value _800bd0c8 = MEMORY.ref(4, 0x800bd0c8L);
   public static final Value _800bd0cc = MEMORY.ref(1, 0x800bd0ccL);
@@ -256,9 +258,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
 
-  public static final Value _800bd748 = MEMORY.ref(4, 0x800bd748L);
+  public static final Pointer<MrgFile> soundMrgPtr_800bd748 = MEMORY.ref(4, 0x800bd748L, Pointer.deferred(4, MrgFile::new));
 
-  public static final Value linkedListEntry_800bd76c = MEMORY.ref(4, 0x800bd76cL);
+  public static final Pointer<MrgFile> soundMrgPtr_800bd76c = MEMORY.ref(4, 0x800bd76cL, Pointer.deferred(4, MrgFile::new));
 
   public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
 
@@ -266,8 +268,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd781 = MEMORY.ref(1, 0x800bd781L);
   public static final Value _800bd782 = MEMORY.ref(1, 0x800bd782L);
 
-  public static final Value linkedListEntry_800bd784 = MEMORY.ref(4, 0x800bd784L);
-  public static final Value linkedListEntry_800bd788 = MEMORY.ref(4, 0x800bd788L);
+  public static final Pointer<SshdFile> soundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
+  public static final Pointer<SssqFile> soundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
 
   public static final Value _800bd7a0 = MEMORY.ref(4, 0x800bd7a0L);
   public static final Value _800bd7a4 = MEMORY.ref(4, 0x800bd7a4L);
