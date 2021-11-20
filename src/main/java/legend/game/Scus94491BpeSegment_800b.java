@@ -134,11 +134,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc960 = MEMORY.ref(1, 0x800bc960L);
 
   //TODO structure @ 800bc980... 4 * 12?
-  public static final Value _800bc981 = MEMORY.ref(1, 0x800bc981L);
-
-  public static final Value linkedListEntry_800bc984 = MEMORY.ref(4, 0x800bc984L);
-  public static final Value _800bc988 = MEMORY.ref(4, 0x800bc988L);
-  //TODO
+  public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
 
   public static final Value _800bc9a0 = MEMORY.ref(2, 0x800bc9a0L);
 
@@ -174,7 +170,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bcff0 = MEMORY.ref(2, 0x800bcff0L);
 
-  public static final Value _800bcff4 = MEMORY.ref(2, 0x800bcff4L);
+  public static final Value _800bcff4 = MEMORY.ref(4, 0x800bcff4L);
 
   public static final Value _800bd000 = MEMORY.ref(2, 0x800bd000L);
 

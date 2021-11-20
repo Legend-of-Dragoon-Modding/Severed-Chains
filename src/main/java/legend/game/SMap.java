@@ -77,7 +77,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
-import static legend.game.Scus94491BpeSegment.FUN_8001f3d0;
+import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
@@ -2409,7 +2409,7 @@ public final class SMap {
         }
 
         //LAB_800e15c0
-        FUN_8001f3d0(ret, 0);
+        loadMusicPackage(ret, 0);
         loadingStage_800c68e4.addu(0x1L);
         break;
 

@@ -24,11 +24,10 @@ import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.ScriptStruct;
-import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct124;
+import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
-import legend.game.types.SssqFile;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -136,7 +135,8 @@ public final class Scus94491BpeSegment_800c {
   public static final Value dmaSpuChcrPtr_800c4a98 = MEMORY.ref(4, 0x800c4a98L);
   public static final Value dmaDpcrPtr_800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
   public static final Value dmaSpuDelayPtr_800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
-  public static final Pointer<SssqFile> sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L, Pointer.deferred(4, SssqFile::new));
+  /** NOTE: this pointer can be misaligned, hence being a Value */
+  public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
   public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
@@ -144,7 +144,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
   public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
-  public static final Value _800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
+  public static final Value voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
   public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
   public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
 

@@ -2,7 +2,6 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.UnsignedIntRef;
 
 public class SshdFile implements MemoryRef {
@@ -19,7 +18,7 @@ public class SshdFile implements MemoryRef {
   public final UnsignedIntRef ptr_14;
   public final UnsignedIntRef ptr_18;
   public final UnsignedIntRef ptr_1c;
-  public final RelativePointer<SssqFile> sssqPtr_20;
+  public final UnsignedIntRef ptr_20;
 
   public SshdFile(final Value ref) {
     this.ref = ref;
@@ -33,7 +32,7 @@ public class SshdFile implements MemoryRef {
     this.ptr_14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
     this.ptr_18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
     this.ptr_1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this.sssqPtr_20 = ref.offset(4, 0x20L).cast(RelativePointer.deferred(4, ref.getAddress(), SssqFile::new, 0xffff_ffffL));
+    this.ptr_20 = ref.offset(4, 0x20L).cast(UnsignedIntRef::new);
   }
 
   @Override

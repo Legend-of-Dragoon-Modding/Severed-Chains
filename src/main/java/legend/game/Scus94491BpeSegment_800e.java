@@ -809,7 +809,7 @@ public final class Scus94491BpeSegment_800e {
     gameLoop();
   }
 
-  @Method(0x800e5d64L)
+  @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void FUN_800e5d64() {
     ResetCallback();
     SetMem(2);

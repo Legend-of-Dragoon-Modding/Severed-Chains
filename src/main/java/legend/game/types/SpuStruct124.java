@@ -29,7 +29,6 @@ public class SpuStruct124 implements MemoryRef {
   public final UnsignedShortRef _020;
   public final UnsignedShortRef _022;
   public final UnsignedShortRef _024;
-
   public final UnsignedByteRef _026;
   public final UnsignedByteRef _027;
   public final UnsignedByteRef _028;
@@ -48,10 +47,10 @@ public class SpuStruct124 implements MemoryRef {
   public final UnsignedByteRef _03c;
 
   public final ArrayRef<ArrayRef<UnsignedByteRef>> _03e;
-  public final UnsignedShortRef _0de;
-  public final UnsignedShortRef _0e0;
-  public final UnsignedShortRef _0e2;
-  public final UnsignedShortRef _0e4;
+  public final UnsignedShortRef keyOnLo_0de;
+  public final UnsignedShortRef keyOnHi_0e0;
+  public final UnsignedShortRef keyOffLo_0e2;
+  public final UnsignedShortRef keyOffHi_0e4;
   public final UnsignedByteRef _0e6;
   public final UnsignedByteRef _0e7;
   public final UnsignedByteRef _0e8;
@@ -85,7 +84,7 @@ public class SpuStruct124 implements MemoryRef {
     this._005 = ref.offset(1, 0x005L).cast(UnsignedByteRef::new);
 
     this.sssqOffset_00c = ref.offset(4, 0x00cL).cast(UnsignedIntRef::new);
-    this.sssqPtr_010 = ref.offset(4, 0x010L).cast(Pointer.deferred(4, SssqFile::new));
+    this.sssqPtr_010 = ref.offset(4, 0x010L).cast(Pointer.deferred(1, SssqFile::new));
 
     this._018 = ref.offset(4, 0x018L).cast(UnsignedIntRef::new);
 
@@ -94,7 +93,6 @@ public class SpuStruct124 implements MemoryRef {
     this._020 = ref.offset(2, 0x020L).cast(UnsignedShortRef::new);
     this._022 = ref.offset(2, 0x022L).cast(UnsignedShortRef::new);
     this._024 = ref.offset(2, 0x024L).cast(UnsignedShortRef::new);
-
     this._026 = ref.offset(1, 0x026L).cast(UnsignedByteRef::new);
     this._027 = ref.offset(1, 0x027L).cast(UnsignedByteRef::new);
     this._028 = ref.offset(1, 0x028L).cast(UnsignedByteRef::new);
@@ -113,10 +111,10 @@ public class SpuStruct124 implements MemoryRef {
     this._03c = ref.offset(1, 0x03cL).cast(UnsignedByteRef::new);
 
     this._03e = ref.offset(1, 0x03eL).cast(ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 10, 1, ArrayRef.of(UnsignedByteRef.class, 0x10, 1, UnsignedByteRef::new)));
-    this._0de = ref.offset(2, 0x0deL).cast(UnsignedShortRef::new);
-    this._0e0 = ref.offset(2, 0x0e0L).cast(UnsignedShortRef::new);
-    this._0e2 = ref.offset(2, 0x0e2L).cast(UnsignedShortRef::new);
-    this._0e4 = ref.offset(2, 0x0e4L).cast(UnsignedShortRef::new);
+    this.keyOnLo_0de = ref.offset(2, 0x0deL).cast(UnsignedShortRef::new);
+    this.keyOnHi_0e0 = ref.offset(2, 0x0e0L).cast(UnsignedShortRef::new);
+    this.keyOffLo_0e2 = ref.offset(2, 0x0e2L).cast(UnsignedShortRef::new);
+    this.keyOffHi_0e4 = ref.offset(2, 0x0e4L).cast(UnsignedShortRef::new);
     this._0e6 = ref.offset(1, 0x0e6L).cast(UnsignedByteRef::new);
     this._0e7 = ref.offset(1, 0x0e7L).cast(UnsignedByteRef::new);
     this._0e8 = ref.offset(1, 0x0e8L).cast(UnsignedByteRef::new);
