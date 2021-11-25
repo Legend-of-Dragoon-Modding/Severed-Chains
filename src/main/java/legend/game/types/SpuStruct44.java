@@ -22,6 +22,7 @@ public class SpuStruct44 implements MemoryRef {
   public final UnsignedByteRef _0c;
   public final UnsignedByteRef _0d;
 
+  /** May be -1 */
   public final ShortRef voiceIndex_10;
   public final UnsignedShortRef reverbModeLo_12;
   public final UnsignedShortRef reverbModeHi_14;

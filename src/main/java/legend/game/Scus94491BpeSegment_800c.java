@@ -151,7 +151,7 @@ public final class Scus94491BpeSegment_800c {
   public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
   public static final Value _800c6678 = MEMORY.ref(4, 0x800c6678L);
-  public static final Value _800c667c = MEMORY.ref(4, 0x800c667cL);
+  public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value _800c6680 = MEMORY.ref(4, 0x800c6680L);
 
   public static final Value _800c6688 = MEMORY.ref(4, 0x800c6688L);
