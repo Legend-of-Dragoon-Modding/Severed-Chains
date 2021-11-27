@@ -1339,7 +1339,7 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6e6cL)
   public static void FUN_800e6e6c() {
     FUN_8004cdbc(0x1L, 0x1L);
-    setCdVolume(0x7fL, 0x7fL);
+    setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
 
     _800bf0b4.setu(0);

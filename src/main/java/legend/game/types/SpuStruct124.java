@@ -12,6 +12,7 @@ import legend.core.memory.types.UnsignedShortRef;
 public class SpuStruct124 implements MemoryRef {
   private final Value ref;
 
+  /** These byte values appear to be the current several bytes of the SSsq file */
   public final UnsignedByteRef _000;
   public final UnsignedByteRef _001;
   public final UnsignedByteRef _002;

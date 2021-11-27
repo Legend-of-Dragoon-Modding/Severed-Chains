@@ -19,6 +19,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.spu.Spu;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
@@ -144,7 +145,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
   public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
-  public static final Value voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L);
+  public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
   public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
   public static final Pointer<RunnableRef> _800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
 
@@ -152,7 +153,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
   public static final Value _800c6678 = MEMORY.ref(4, 0x800c6678L);
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
-  public static final Value _800c6680 = MEMORY.ref(4, 0x800c6680L);
+  public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
   public static final Value _800c6688 = MEMORY.ref(4, 0x800c6688L);
   public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(0x18, 0x800c668cL, CdlFILE::new);

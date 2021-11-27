@@ -3256,7 +3256,7 @@ public final class Scus94491BpeSegment {
     FUN_8004ccb0(0, 0);
     FUN_8004c3f0(0x8L);
     FUN_8004c494(0x3L);
-    SsSetRVol(0x30L, 0x30L);
+    SsSetRVol(0x30, 0x30);
 
     //LAB_80019548
     for(int i = 0; i < 0xd; i++) {
@@ -3318,7 +3318,7 @@ public final class Scus94491BpeSegment {
     //LAB_80019828
     switch((int)mainCallbackIndex_8004dd20.get()) {
       case 2 -> {
-        setMainVolume(0x7fL, 0x7fL);
+        setMainVolume(0x7f, 0x7f);
         FUN_80020008();
         FUN_8001aa90();
 

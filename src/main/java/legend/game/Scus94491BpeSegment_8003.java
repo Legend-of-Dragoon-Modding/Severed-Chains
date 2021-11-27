@@ -63,6 +63,7 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
+import static legend.core.Hardware.SPU;
 import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
 import static legend.core.LibDs.DSL_MAX_COMMAND;
@@ -87,13 +88,6 @@ import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
 import static legend.core.memory.segments.MemoryControl1Segment.CDROM_DELAY;
 import static legend.core.memory.segments.MemoryControl1Segment.COMMON_DELAY;
-import static legend.core.spu.Spu.CD_VOL_L;
-import static legend.core.spu.Spu.CD_VOL_R;
-import static legend.core.spu.Spu.CURR_MAIN_VOL_L;
-import static legend.core.spu.Spu.CURR_MAIN_VOL_R;
-import static legend.core.spu.Spu.SPU_CTRL_REG_CPUCNT;
-import static legend.core.spu.Spu.SPU_MAIN_VOL_L;
-import static legend.core.spu.Spu.SPU_MAIN_VOL_R;
 import static legend.game.Scus94491BpeSegment._80011394;
 import static legend.game.Scus94491BpeSegment._8001139c;
 import static legend.game.Scus94491BpeSegment._800113c0;
@@ -308,10 +302,10 @@ import static legend.game.Scus94491BpeSegment_800c._800c34d8;
 import static legend.game.Scus94491BpeSegment_800c._800c34dc;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
 import static legend.game.Scus94491BpeSegment_800c._800c35a4;
-import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallbackPtr_800c1bb4;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
+import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.doubleBufferOffsetMode_800c34d6;
 import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObjPtr_800c1c14;
@@ -1292,17 +1286,17 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800329f4L)
   public static void setCdAndSpuVolume() {
-    if(CURR_MAIN_VOL_L.get() == 0 && CURR_MAIN_VOL_R.get() == 0) {
-      SPU_MAIN_VOL_L.setu(0x3fffL);
-      SPU_MAIN_VOL_R.setu(0x3fffL);
+    if(SPU.CURR_MAIN_VOL_L.get() == 0 && SPU.CURR_MAIN_VOL_R.get() == 0) {
+      SPU.MAIN_VOL_L.set(0x3fff);
+      SPU.MAIN_VOL_R.set(0x3fff);
     }
 
     //LAB_80032a30
     //LAB_80032a34
-    CD_VOL_L.setu(0x3fffL);
-    CD_VOL_R.setu(0x3fffL);
+    SPU.CD_VOL_L.set(0x3fff);
+    SPU.CD_VOL_R.set(0x3fff);
 
-    SPU_CTRL_REG_CPUCNT.setu(0xc001L);
+    SPU.SPUCNT.set(0xc001);
     CDROM_REG0.setu(0b010L);      // Index2
     CDROM_REG2.setu(0x80L);       // Audio Volume for Left-CD-Out to Left-SPU-Input
     CDROM_REG3.setu(0x00L);       // Audio Volume for Left-CD-Out to Right-SPU-Input

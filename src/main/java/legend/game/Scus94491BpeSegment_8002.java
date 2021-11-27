@@ -2635,7 +2635,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002c8c4
-      setCdVolume(_800bf0ce.get(), _800bf0ce.get());
+      setCdVolume((int)_800bf0ce.get(), (int)_800bf0ce.get());
       setCdMix(0x3fL);
     }
 

@@ -115,15 +115,15 @@ public final class SStrm {
     resetMdec_800fe7a4.setu(0);
     _800fe7a8.setu(0);
     FUN_8004cdbc(0x1L, 0x1L);
-    setCdVolume(0x7fL, 0x7fL);
+    setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
-    setMainVolume(0x7fL, 0x7fL);
+    setMainVolume(0x7f, 0x7f);
 
     if(a1 == 0) {
       FUN_8004cdbc(0x1L, 0x1L);
-      setCdVolume(0x7aL, 0x7aL);
+      setCdVolume(0x7a, 0x7a);
       setCdMix(0x3dL);
-      setMainVolume(0x7aL, 0x7aL);
+      setMainVolume(0x7a, 0x7a);
     }
 
     //LAB_800fb8f4
@@ -347,9 +347,9 @@ public final class SStrm {
     removeFromLinkedList(mdecOutDoubleBufferFrame1_8010f7e0.get());
     removeFromLinkedList(linkedListEntry_8010f7d0.get());
     FUN_8004cdbc(0x1L, 0x1L);
-    setCdVolume(0x7fL, 0x7fL);
+    setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
-    setMainVolume(0x7fL, 0x7fL);
+    setMainVolume(0x7f, 0x7f);
   }
 
   @Method(0x800fc038L)
