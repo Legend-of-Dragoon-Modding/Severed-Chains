@@ -123,7 +123,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c3a38 = MEMORY.ref(4, 0x800c3a38L);
   public static final Value _800c3a3c = MEMORY.ref(4, 0x800c3a3cL);
-  /** 0x990 bytes long */
+  /** 0x990 bytes long, I think these map to voices, not channels */
   public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(4, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
   /** 0x5f4 bytes long */
   public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));

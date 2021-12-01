@@ -179,7 +179,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<MrgFile> soundMrgPtr_800bd064 = MEMORY.ref(4, 0x800bd064L, Pointer.deferred(4, MrgFile::new));
   public static final Value _800bd068 = MEMORY.ref(4, 0x800bd068L);
   public static final Value _800bd06c = MEMORY.ref(4, 0x800bd06cL);
-  public static final Value _800bd070 = MEMORY.ref(2, 0x800bd070L);
+  public static final Value playableSoundIndex_800bd070 = MEMORY.ref(2, 0x800bd070L);
 
   public static final Value _800bd07c = MEMORY.ref(2, 0x800bd07cL);
 
@@ -199,7 +199,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value playableSoundIndex_800bd0c4 = MEMORY.ref(2, 0x800bd0c4L);
 
-  public static final Value _800bd0c8 = MEMORY.ref(4, 0x800bd0c8L);
+  public static final Value spuRamOffset_800bd0c8 = MEMORY.ref(4, 0x800bd0c8L);
   public static final Value _800bd0cc = MEMORY.ref(1, 0x800bd0ccL);
 
   public static final Value _800bd0d0 = MEMORY.ref(2, 0x800bd0d0L);
@@ -210,11 +210,11 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
-  public static final Value _800bd0f8 = MEMORY.ref(2, 0x800bd0f8L);
+  public static final Value sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L);
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
   public static final Value _800bd100 = MEMORY.ref(4, 0x800bd100L);
-  public static final Value _800bd104 = MEMORY.ref(4, 0x800bd104L);
+  public static final Value sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L);
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final Value _800bd110 = MEMORY.ref(1, 0x800bd110L);

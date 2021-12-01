@@ -13,7 +13,7 @@ public class SpuStruct44 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef voiceIndex_00;
-  public final UnsignedByteRef voiceIndex_01;
+  public final UnsignedByteRef channelIndex_01;
 
   public final UnsignedByteRef _03;
   public final UnsignedByteRef _04;
@@ -31,18 +31,18 @@ public class SpuStruct44 implements MemoryRef {
 
   public final UnsignedIntRef eventSpuIrq_1c;
   public final BoolRef spuDmaTransferInProgress_20;
-  public final UnsignedByteRef _22;
+  public final UnsignedByteRef pitchShifted_22;
   public final UnsignedByteRef _23;
-  public final UnsignedShortRef _24;
-  public final UnsignedShortRef _26;
-  public final UnsignedShortRef _28;
-  public final UnsignedByteRef _2a;
-  public final UnsignedByteRef _2b;
-  public final UnsignedShortRef _2c;
-  public final UnsignedShortRef _2e;
-  public final UnsignedShortRef _30;
-  public final UnsignedShortRef _32;
-  public final UnsignedShortRef _34;
+  public final UnsignedShortRef pitch_24;
+  public final UnsignedShortRef pitchShiftVolLeft_26;
+  public final UnsignedShortRef pitchShiftVolRight_28;
+  public final UnsignedByteRef fadingIn_2a;
+  public final UnsignedByteRef fadingOut_2b;
+  public final UnsignedShortRef fadeTime_2c;
+  public final UnsignedShortRef fadeInVol_2e;
+  public final UnsignedShortRef fadeOutVolL_30;
+  public final UnsignedShortRef fadeOutVolR_32;
+  public final UnsignedShortRef reverbType_34;
   public final UnsignedShortRef mono_36;
   public final UnsignedByteRef hasCallback_38;
   public final UnsignedByteRef dmaIndex_39;
@@ -56,7 +56,7 @@ public class SpuStruct44 implements MemoryRef {
     this.ref = ref;
 
     this.voiceIndex_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this.voiceIndex_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
+    this.channelIndex_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
 
     this._03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
@@ -73,18 +73,18 @@ public class SpuStruct44 implements MemoryRef {
 
     this.eventSpuIrq_1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
     this.spuDmaTransferInProgress_20 = ref.offset(2, 0x20L).cast(BoolRef::new);
-    this._22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
+    this.pitchShifted_22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
     this._23 = ref.offset(1, 0x23L).cast(UnsignedByteRef::new);
-    this._24 = ref.offset(2, 0x24L).cast(UnsignedShortRef::new);
-    this._26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
-    this._28 = ref.offset(2, 0x28L).cast(UnsignedShortRef::new);
-    this._2a = ref.offset(1, 0x2aL).cast(UnsignedByteRef::new);
-    this._2b = ref.offset(1, 0x2bL).cast(UnsignedByteRef::new);
-    this._2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);
-    this._2e = ref.offset(2, 0x2eL).cast(UnsignedShortRef::new);
-    this._30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
-    this._32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
-    this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
+    this.pitch_24 = ref.offset(2, 0x24L).cast(UnsignedShortRef::new);
+    this.pitchShiftVolLeft_26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
+    this.pitchShiftVolRight_28 = ref.offset(2, 0x28L).cast(UnsignedShortRef::new);
+    this.fadingIn_2a = ref.offset(1, 0x2aL).cast(UnsignedByteRef::new);
+    this.fadingOut_2b = ref.offset(1, 0x2bL).cast(UnsignedByteRef::new);
+    this.fadeTime_2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);
+    this.fadeInVol_2e = ref.offset(2, 0x2eL).cast(UnsignedShortRef::new);
+    this.fadeOutVolL_30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
+    this.fadeOutVolR_32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
+    this.reverbType_34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
     this.mono_36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
     this.hasCallback_38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
     this.dmaIndex_39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);

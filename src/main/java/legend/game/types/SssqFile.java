@@ -15,8 +15,8 @@ public class SssqFile implements MemoryRef {
 
   public final UnsignedByteRef _00;
 
-  public final UnsignedShortRef _02;
-  public final UnsignedShortRef _04;
+  public final UnsignedShortRef deltaTime_02;
+  public final UnsignedShortRef tempo_04;
 
   public final UnsignedIntRef magic_0c;
   public final ArrayRef<SssqEntry> entries_10;
@@ -27,8 +27,8 @@ public class SssqFile implements MemoryRef {
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
 
-    this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
+    this.deltaTime_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
+    this.tempo_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
 
     this.magic_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this.entries_10 = ref.offset(4, 0x10L).cast(ArrayRef.of(SssqEntry.class, 0x10, 0x10, SssqEntry::new));

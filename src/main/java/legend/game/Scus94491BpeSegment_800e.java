@@ -83,7 +83,7 @@ import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
 import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
+import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
@@ -1338,7 +1338,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6e6cL)
   public static void FUN_800e6e6c() {
-    FUN_8004cdbc(0x1L, 0x1L);
+    enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
 

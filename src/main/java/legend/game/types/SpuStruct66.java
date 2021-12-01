@@ -9,8 +9,8 @@ public class SpuStruct66 implements MemoryRef {
 
   public final UnsignedShortRef _00;
   public final UnsignedShortRef _02;
-  public final UnsignedShortRef _04;
-  public final UnsignedShortRef _06;
+  public final UnsignedShortRef channel_04;
+  public final UnsignedShortRef channelIndex_06;
   public final UnsignedShortRef _08;
   public final UnsignedShortRef _0a;
   public final UnsignedShortRef _0c;
@@ -24,7 +24,7 @@ public class SpuStruct66 implements MemoryRef {
   public final UnsignedShortRef _1c;
   public final UnsignedShortRef _1e;
   public final UnsignedShortRef _20;
-  public final UnsignedShortRef _22;
+  public final UnsignedShortRef playableSoundIndex_22;
   public final UnsignedShortRef _24;
   public final UnsignedShortRef _26;
   public final UnsignedShortRef _28;
@@ -64,8 +64,8 @@ public class SpuStruct66 implements MemoryRef {
 
     this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.channel_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
+    this.channelIndex_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
     this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
@@ -79,7 +79,7 @@ public class SpuStruct66 implements MemoryRef {
     this._1c = ref.offset(2, 0x1cL).cast(UnsignedShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(UnsignedShortRef::new);
     this._20 = ref.offset(2, 0x20L).cast(UnsignedShortRef::new);
-    this._22 = ref.offset(2, 0x22L).cast(UnsignedShortRef::new);
+    this.playableSoundIndex_22 = ref.offset(2, 0x22L).cast(UnsignedShortRef::new);
     this._24 = ref.offset(2, 0x24L).cast(UnsignedShortRef::new);
     this._26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
     this._28 = ref.offset(2, 0x28L).cast(UnsignedShortRef::new);

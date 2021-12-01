@@ -40,7 +40,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.disableCdromDmaCallbacksAndClearDataFifo;
 import static legend.game.Scus94491BpeSegment_8003.getCdlPacketIndex800bf700;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004cdbc;
+import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
@@ -114,13 +114,13 @@ public final class SStrm {
     FUN_800fc0b4(_800fe7b0.getAddress());
     resetMdec_800fe7a4.setu(0);
     _800fe7a8.setu(0);
-    FUN_8004cdbc(0x1L, 0x1L);
+    enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
     setMainVolume(0x7f, 0x7f);
 
     if(a1 == 0) {
-      FUN_8004cdbc(0x1L, 0x1L);
+      enableAudioSource(0x1L, 0x1L);
       setCdVolume(0x7a, 0x7a);
       setCdMix(0x3dL);
       setMainVolume(0x7a, 0x7a);
@@ -346,7 +346,7 @@ public final class SStrm {
     removeFromLinkedList(mdecOutDoubleBufferFrame0_8010f7dc.get());
     removeFromLinkedList(mdecOutDoubleBufferFrame1_8010f7e0.get());
     removeFromLinkedList(linkedListEntry_8010f7d0.get());
-    FUN_8004cdbc(0x1L, 0x1L);
+    enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
     setCdMix(0x3fL);
     setMainVolume(0x7f, 0x7f);
