@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
-import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
@@ -373,12 +373,12 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020008L)
   public static void FUN_80020008() {
     FUN_8001ad18();
-    FUN_8001e29c(0x1L);
-    FUN_8001e29c(0x3L);
-    FUN_8001e29c(0x4L);
-    FUN_8001e29c(0x5L);
-    FUN_8001e29c(0x6L);
-    FUN_8001e29c(0x7L);
+    unloadSoundFile(1);
+    unloadSoundFile(3);
+    unloadSoundFile(4);
+    unloadSoundFile(5);
+    unloadSoundFile(6);
+    unloadSoundFile(7);
     FUN_800201c8(0x6L);
   }
 

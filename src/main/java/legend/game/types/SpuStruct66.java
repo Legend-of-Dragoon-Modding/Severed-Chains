@@ -7,7 +7,7 @@ import legend.core.memory.types.UnsignedShortRef;
 public class SpuStruct66 implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedShortRef _00;
+  public final UnsignedShortRef used_00;
   public final UnsignedShortRef _02;
   public final UnsignedShortRef channel_04;
   public final UnsignedShortRef channelIndex_06;
@@ -62,7 +62,7 @@ public class SpuStruct66 implements MemoryRef {
   public SpuStruct66(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+    this.used_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.channel_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this.channelIndex_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);

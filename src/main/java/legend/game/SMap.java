@@ -75,7 +75,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
-import static legend.game.Scus94491BpeSegment.FUN_8001e29c;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
@@ -2366,7 +2366,7 @@ public final class SMap {
         //LAB_800e15b8
         if(_800bd808.get() != old) {
           FUN_8001ad18();
-          FUN_8001e29c(0x4L);
+          unloadSoundFile(4);
           FUN_8001eadc(_800bd808.get());
         } else {
           //LAB_800e1550
@@ -4695,7 +4695,7 @@ public final class SMap {
       return 0;
     }
 
-    FUN_8001e29c(0x8L);
+    unloadSoundFile(8);
     FUN_800fb7cc(_800f970c.offset(_800bf0dc.get() * 16).getAddress(), _800bf0dc.get());
 
     _800bf0d8.setu(0x2L);

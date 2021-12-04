@@ -325,7 +325,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059f7e = MEMORY.ref(2, 0x80059f7eL);
 
   public static final Value sssqFadeCurrent_8005a1ce = MEMORY.ref(2, 0x8005a1ceL);
-  public static final Value _8005a1d0 = MEMORY.ref(4, 0x8005a1d0L);
+  public static final Value sssqStatus_8005a1d0 = MEMORY.ref(4, 0x8005a1d0L);
 
   public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
 

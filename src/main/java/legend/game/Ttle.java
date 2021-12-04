@@ -33,7 +33,7 @@ import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.FUN_80019a60;
+import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
@@ -700,8 +700,8 @@ public final class Ttle {
   public static void FUN_800c8484() {
     if(_800c672c.get() < 3) {
       if(_8007a398.get(0x20L) == 0 || fileCount_8004ddc8.get() != 0) {
-        if(_8007a398.get(0x1000L) != 0) {
-          FUN_80019a60(0, 1, 0, 0, 0, 0);
+        if(_8007a398.get(0x1000L) != 0) { // Menu button up
+          playSound(0, 1, 0, 0, (short)0, (short)0);
 
           selectedMenuOption_800ce774.subu(1);
           if(selectedMenuOption_800ce774.getSigned() < 0) {
@@ -710,8 +710,8 @@ public final class Ttle {
           _800c672c.setu(2);
         }
 
-        if(_8007a398.get(0x4000L) != 0) {
-          FUN_80019a60(0, 1, 0, 0, 0, 0);
+        if(_8007a398.get(0x4000L) != 0) { // Menu button down
+          playSound(0, 1, 0, 0, (short)0, (short)0);
 
           selectedMenuOption_800ce774.addu(1);
           if(selectedMenuOption_800ce774.get() > 2) {
@@ -719,8 +719,8 @@ public final class Ttle {
           }
           _800c672c.setu(2);
         }
-      } else {
-        FUN_80019a60(0, 2, 0, 0, 0, 0);
+      } else { // Menu button X
+        playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c.setu(3);
         if(selectedMenuOption_800ce774.get() == 2) {
@@ -914,19 +914,19 @@ public final class Ttle {
   public static void FUN_800c93b0() {
     if(_800c6728.get() == 1 && _800c6738.get() < 3) {
       if(_8007a398.get(0x5000L) != 0) {
-        FUN_80019a60(0, 1, 0, 0, 0, 0);
+        playSound(0, 1, 0, 0, (short)0, (short)0);
         _800ce778.xoru(0b11);
         _800c6738.setu(2);
       }
 
       if(_8007a398.get(0x40L) != 0) {
-        FUN_80019a60(0, 3, 0, 0, 0, 0);
+        playSound(0, 3, 0, 0, (short)0, (short)0);
         _800c6738.setu(3);
         _800c672c.setu(0);
       }
 
       if(_8007a398.get(0xa000L) != 0) {
-        FUN_80019a60(0, 1, 0, 0, 0, 0);
+        playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(_800ce778.get() == 0) {
           mono_800bb0a8.xoru(0b1);

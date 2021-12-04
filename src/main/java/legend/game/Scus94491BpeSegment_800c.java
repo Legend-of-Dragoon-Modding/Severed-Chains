@@ -29,6 +29,7 @@ import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
+import legend.game.types.SshdStruct10;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -151,7 +152,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
-  public static final Value _800c6678 = MEMORY.ref(4, 0x800c6678L);
+  public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 

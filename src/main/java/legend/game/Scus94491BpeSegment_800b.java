@@ -31,6 +31,8 @@ import legend.game.types.JoyStruct;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptStruct;
+import legend.game.types.SpuStruct1c;
+import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
 
@@ -156,57 +158,7 @@ public final class Scus94491BpeSegment_800b {
    */
   public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
 
-  public static final Value _800bcf80 = MEMORY.ref(2, 0x800bcf80L);
-  /**
-   * 0: unknown, 2-byte file (00 00)
-   * 1: unknown, 0x64 byte file, counts up from 0000 to 0033
-   * 2: SSHD file
-   * There is another file in the MRG but it is not copied here: 3: Soundbank (has some map and battle sounds)
-   */
-  public static final Pointer<MrgFile> DRGN0_mrg_62802_800bcf84 = MEMORY.ref(4, 0x800bcf84L, Pointer.deferred(4, MrgFile::new));
-  public static final Value _800bcf88 = MEMORY.ref(4, 0x800bcf88L);
-
-  public static final Value _800bcf90 = MEMORY.ref(2, 0x800bcf90L);
-
-  public static final Value _800bcff0 = MEMORY.ref(2, 0x800bcff0L);
-
-  public static final Value _800bcff4 = MEMORY.ref(4, 0x800bcff4L);
-
-  public static final Value _800bd000 = MEMORY.ref(2, 0x800bd000L);
-
-  public static final Value _800bd060 = MEMORY.ref(2, 0x800bd060L);
-  public static final Value _800bd062 = MEMORY.ref(2, 0x800bd062L);
-  public static final Pointer<MrgFile> soundMrgPtr_800bd064 = MEMORY.ref(4, 0x800bd064L, Pointer.deferred(4, MrgFile::new));
-  public static final Value _800bd068 = MEMORY.ref(4, 0x800bd068L);
-  public static final Value _800bd06c = MEMORY.ref(4, 0x800bd06cL);
-  public static final Value playableSoundIndex_800bd070 = MEMORY.ref(2, 0x800bd070L);
-
-  public static final Value _800bd07c = MEMORY.ref(2, 0x800bd07cL);
-
-  public static final Value _800bd080 = MEMORY.ref(4, 0x800bd080L);
-
-  public static final Value _800bd08c = MEMORY.ref(2, 0x800bd08cL);
-
-  public static final Value _800bd098 = MEMORY.ref(2, 0x800bd098L);
-
-  public static final Value _800bd09c = MEMORY.ref(4, 0x800bd09cL);
-
-  public static final Value _800bd0a8 = MEMORY.ref(2, 0x800bd0a8L);
-
-  public static final Value _800bd0b4 = MEMORY.ref(2, 0x800bd0b4L);
-  public static final Value _800bd0b6 = MEMORY.ref(2, 0x800bd0b6L);
-  public static final Pointer<MrgFile> soundMrg_800bd0b8 = MEMORY.ref(4, 0x800bd0b8L, Pointer.deferred(4, MrgFile::new));
-
-  public static final Value playableSoundIndex_800bd0c4 = MEMORY.ref(2, 0x800bd0c4L);
-
-  public static final Value spuRamOffset_800bd0c8 = MEMORY.ref(4, 0x800bd0c8L);
-  public static final Value _800bd0cc = MEMORY.ref(1, 0x800bd0ccL);
-
-  public static final Value _800bd0d0 = MEMORY.ref(2, 0x800bd0d0L);
-
-  public static final Value _800bd0d4 = MEMORY.ref(4, 0x800bd0d4L);
-
-  public static final Value _800bd0e0 = MEMORY.ref(2, 0x800bd0e0L);
+  public static final ArrayRef<SpuStruct1c> spu1cArr_800bcf80 = MEMORY.ref(2, 0x800bcf80L, ArrayRef.of(SpuStruct1c.class, 13, 0x1c, SpuStruct1c::new));
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
@@ -217,18 +169,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L);
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
-  public static final Value _800bd110 = MEMORY.ref(1, 0x800bd110L);
-
-  public static final Value _800bd114 = MEMORY.ref(4, 0x800bd114L);
-  public static final Value _800bd118 = MEMORY.ref(4, 0x800bd118L);
-  public static final Value _800bd11c = MEMORY.ref(4, 0x800bd11cL);
-  public static final Value _800bd120 = MEMORY.ref(2, 0x800bd120L);
-  public static final Value _800bd122 = MEMORY.ref(2, 0x800bd122L);
-  public static final Value _800bd124 = MEMORY.ref(2, 0x800bd124L);
-  public static final Value _800bd126 = MEMORY.ref(2, 0x800bd126L);
-  public static final Value _800bd128 = MEMORY.ref(2, 0x800bd128L);
-  public static final Value _800bd12a = MEMORY.ref(2, 0x800bd12aL);
-  public static final Value _800bd12c = MEMORY.ref(4, 0x800bd12cL);
+  public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
 
   public static final Value _800bd600 = MEMORY.ref(2, 0x800bd600L);
 
