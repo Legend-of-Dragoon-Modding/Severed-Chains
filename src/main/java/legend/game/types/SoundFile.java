@@ -9,7 +9,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class SpuStruct1c implements MemoryRef {
+public class SoundFile implements MemoryRef {
   private final Value ref;
 
   public final BoolRef used_00;
@@ -22,7 +22,7 @@ public class SpuStruct1c implements MemoryRef {
   public final UnsignedIntRef spuRamOffset_14;
   public final UnsignedByteRef _18;
 
-  public SpuStruct1c(final Value ref) {
+  public SoundFile(final Value ref) {
     this.ref = ref;
 
     this.used_00 = ref.offset(2, 0x00L).cast(BoolRef::new);

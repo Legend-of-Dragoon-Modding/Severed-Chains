@@ -31,7 +31,8 @@ import legend.game.types.JoyStruct;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptStruct;
-import legend.game.types.SpuStruct1c;
+import legend.game.types.SpuStruct08;
+import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
@@ -135,22 +136,16 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc960 = MEMORY.ref(1, 0x800bc960L);
 
-  //TODO structure @ 800bc980... 4 * 12?
+  //TODO structure @ 800bc980... 3 * 12?
   public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
 
-  public static final Value _800bc9a0 = MEMORY.ref(2, 0x800bc9a0L);
-
-  public static final Value _800bc9aa = MEMORY.ref(1, 0x800bc9aaL);
-  public static final Value _800bc9ab = MEMORY.ref(1, 0x800bc9abL);
-  public static final Value _800bc9ac = MEMORY.ref(4, 0x800bc9acL);
+  public static final ArrayRef<SpuStruct08> _800bc9a8 = MEMORY.ref(4, 0x800bc9a8L, ArrayRef.of(SpuStruct08.class, 24, 0x8, SpuStruct08::new));
 
   public static final Value _800bca68 = MEMORY.ref(1, 0x800bca68L);
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
 
-  public static final Value _800bca78 = MEMORY.ref(1, 0x800bca78L);
-
-  public static final Value _800bcf64 = MEMORY.ref(2, 0x800bcf64L);
+  public static final ArrayRef<SpuStruct28> spu28Arr_800bca78 = MEMORY.ref(1, 0x800bca78L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
 
   /**
    * Bits:
@@ -158,21 +153,18 @@ public final class Scus94491BpeSegment_800b {
    */
   public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
 
-  public static final ArrayRef<SpuStruct1c> spu1cArr_800bcf80 = MEMORY.ref(2, 0x800bcf80L, ArrayRef.of(SpuStruct1c.class, 13, 0x1c, SpuStruct1c::new));
+  public static final ArrayRef<SoundFile> soundFileArr_800bcf80 = MEMORY.ref(2, 0x800bcf80L, ArrayRef.of(SoundFile.class, 13, 0x1c, SoundFile::new));
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
   public static final Value sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L);
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
-  public static final Value _800bd100 = MEMORY.ref(4, 0x800bd100L);
+  public static final Value sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L);
   public static final Value sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L);
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
-
-  public static final Value _800bd600 = MEMORY.ref(2, 0x800bd600L);
-
   public static final Value _800bd610 = MEMORY.ref(2, 0x800bd610L);
 
   public static final Value _800bd614 = MEMORY.ref(4, 0x800bd614L);

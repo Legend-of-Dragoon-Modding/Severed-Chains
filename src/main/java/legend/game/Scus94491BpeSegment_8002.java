@@ -34,6 +34,7 @@ import legend.game.types.JoyStruct;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.RotateTranslateStruct;
+import legend.game.types.SpuStruct28;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,7 +88,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
@@ -97,11 +97,13 @@ import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
@@ -371,7 +373,7 @@ public final class Scus94491BpeSegment_8002 {
   private static final Object[] EMPTY_OBJ_ARRAY = {};
 
   @Method(0x80020008L)
-  public static void FUN_80020008() {
+  public static void sssqResetStuff() {
     FUN_8001ad18();
     unloadSoundFile(1);
     unloadSoundFile(3);
@@ -395,43 +397,23 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void FUN_80020360(long a0, long a1) {
-    long a2;
-    long a3;
-    long v0;
-    long v1;
-
-    a3 = a1 + 0x500L;
-
+  public static void FUN_80020360(final ArrayRef<SpuStruct28> a0, final ArrayRef<SpuStruct28> a1) {
     //LAB_8002036c
-    do {
-      v1 = a1;
-      v0 = a0;
-      a2 = a0 + 0x20L;
+    for(int i = 0; i < 32; i++) {
+      final SpuStruct28 a0_0 = a0.get(i);
+      final SpuStruct28 a1_0 = a1.get(i);
 
       //LAB_80020378
-      do {
-        MEMORY.ref(4, v1).offset(0x0L).setu(MEMORY.ref(4, v0).offset(0x0L));
-        MEMORY.ref(4, v1).offset(0x4L).setu(MEMORY.ref(4, v0).offset(0x4L));
-        MEMORY.ref(4, v1).offset(0x8L).setu(MEMORY.ref(4, v0).offset(0x8L));
-        MEMORY.ref(4, v1).offset(0xcL).setu(MEMORY.ref(4, v0).offset(0xcL));
-        v0 += 0x10L;
-        v1 += 0x10L;
-      } while(v0 != a2);
+      memcpy(a1_0.getAddress(), a0_0.getAddress(), 0x28);
 
-      MEMORY.ref(4, v1).offset(0x0L).setu(MEMORY.ref(4, v0).offset(0x0L));
-      MEMORY.ref(4, v1).offset(0x4L).setu(MEMORY.ref(4, v0).offset(0x4L));
-
-      if(MEMORY.ref(1, a1).get() == 0x4L) {
-        if(MEMORY.ref(4, a1).offset(0x1cL).get() != 0) {
-          MEMORY.ref(1, a1).setu(0x3L);
+      if(a1_0._00.get() == 4) {
+        if(a1_0._1c.get() != 0) {
+          a1_0._00.set(3);
         }
       }
 
       //LAB_800203d8
-      a1 += 0x28L;
-      a0 += 0x28L;
-    } while(a1 < a3);
+    }
   }
 
   @Method(0x80020460L)

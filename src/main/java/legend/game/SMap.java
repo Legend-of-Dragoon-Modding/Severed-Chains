@@ -4775,6 +4775,11 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800edb8cL)
+  public static void FUN_800edb8c() {
+    assert false;
+  }
+
   @Method(0x800edc50L)
   public static void FUN_800edc50(final long a0) {
     if(_800bf0d8.get() >= 0x3L) {
