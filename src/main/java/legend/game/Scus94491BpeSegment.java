@@ -1622,6 +1622,11 @@ public final class Scus94491BpeSegment {
     if(v1 == 0x2L) {
       //LAB_8001491c
       transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
+
+      if(transferDest < 0x8000_0000L) {
+        throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
+      }
+
       fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
 
       final long address = FUN_80012444(transferDest, fileSize_800bb464.get());
@@ -1633,6 +1638,11 @@ public final class Scus94491BpeSegment {
     } else if(v1 == 0x4L) {
       //LAB_80014954
       transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
+
+      if(transferDest < 0x8000_0000L) {
+        throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
+      }
+
       fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
 
       final long address = FUN_80012244(transferDest, fileSize_800bb464.get());
@@ -1655,6 +1665,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_800149a4
     //LAB_800149a8
+    if(transferDest < 0x8000_0000L) {
+      throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
+    }
+
     transferDest_800bb460.setu(transferDest);
     file.used.set(false);
 
@@ -1783,6 +1797,10 @@ public final class Scus94491BpeSegment {
 
     switch(file.unknown3.get() & 0b111) {
       case 0 -> {
+        if(file.transferDest.get() < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(file.transferDest.get()));
+        }
+
         fileTransferDest_800bb488.setu(file.transferDest);
         return 0;
       }
@@ -1793,6 +1811,10 @@ public final class Scus94491BpeSegment {
 
         if(transferDest == 0) {
           return -0x1L;
+        }
+
+        if(transferDest < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
         }
 
         fileTransferDest_800bb488.setu(transferDest);
@@ -1812,6 +1834,11 @@ public final class Scus94491BpeSegment {
         transferDest += size - s1;
         MEMORY.ref(4, transferDest).offset(0xfff8L).setu(transferDest);
         MEMORY.ref(4, transferDest).offset(0xfffcL).setu(size);
+
+        if(transferDest < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
+        }
+
         fileTransferDest_800bb488.setu(transferDest);
         return 0;
       }
@@ -1829,6 +1856,11 @@ public final class Scus94491BpeSegment {
         transferDest += size - s1;
         MEMORY.ref(4, transferDest).offset(0xfff8L).setu(transferDest);
         MEMORY.ref(4, transferDest).offset(0xfffcL).setu(size);
+
+        if(transferDest < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
+        }
+
         fileTransferDest_800bb488.setu(transferDest);
         return 0;
       }
@@ -1840,6 +1872,10 @@ public final class Scus94491BpeSegment {
         //LAB_80014cd0
         if(transferDest == 0) {
           return -0x1L;
+        }
+
+        if(transferDest < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
         }
 
         fileTransferDest_800bb488.setu(transferDest);
@@ -1930,6 +1966,10 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80014ef4L)
   public static long FUN_80014ef4() {
+    if(fileTransferDest_800bb488.get() < 0x8000_0000L) {
+      throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(fileTransferDest_800bb488.get()));
+    }
+
     transferDest_800bb460.setu(fileTransferDest_800bb488);
     fileSize_800bb464.setu(fileSize_800bb48c);
     currentlyLoadingFileInfo_800bb468.set(fileLoadingInfoArray_800bbad8.get(0));

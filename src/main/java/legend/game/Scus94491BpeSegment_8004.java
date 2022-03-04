@@ -1091,6 +1091,35 @@ public final class Scus94491BpeSegment_8004 {
     LOGGER.warn("Skipping bios patch");
   }
 
+  @Method(0x80041070L)
+  public static long FUN_80041070(final long a0, final long a1, final long a2, final long a3) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800412e0L)
+  public static long FUN_800412e0(final long a0, final long a1, final long a2) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80041420L)
+  public static long FUN_80041420(final long a0) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800414a0L)
+  public static void FUN_800414a0(final long a0) {
+    assert false;
+  }
+
+  @Method(0x80041600L)
+  public static long FUN_80041600(final long a0, final long a1, final long a2) {
+    assert false;
+    return 0;
+  }
+
   // Joypad handling code begins here
 
   private static final boolean SKIP_JOYPAD_INTERRUPT_CHECKS = true;
@@ -1204,6 +1233,12 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x800421a0L)
   public static void FUN_800421a0() {
     assert false;
+  }
+
+  @Method(0x800426c4L)
+  public static long FUN_800426c4(final long a0, final long a1, final long a2) {
+    assert false;
+    return 0;
   }
 
   @Method(0x80042b60L)

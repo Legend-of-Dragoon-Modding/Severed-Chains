@@ -64,6 +64,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
 
+  public static final Value _800badae = MEMORY.ref(2, 0x800badaeL);
+
   public static final Value _800baf02 = MEMORY.ref(2, 0x800baf02L);
 
   public static final Value _800baf07 = MEMORY.ref(1, 0x800baf07L);
@@ -237,6 +239,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc38 = MEMORY.ref(4, 0x800bdc38L);
 
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
+  public static final Value _800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
   public static final Value linkedListEntry_800bdc50 = MEMORY.ref(4, 0x800bdc50L);
 

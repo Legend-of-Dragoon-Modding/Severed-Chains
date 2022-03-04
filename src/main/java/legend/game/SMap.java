@@ -2878,6 +2878,11 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800e3facL)
+  public static void FUN_800e3fac() {
+    assert false;
+  }
+
   @Method(0x800e4018L)
   public static void FUN_800e4018() {
     if(_800bb0ab.get() != 0) {

@@ -162,6 +162,8 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8007._8007a398;
+import static legend.game.Scus94491BpeSegment_8007._8007a3a0;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpNEW_EventId_800bf26c;
@@ -1420,6 +1422,53 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  @Method(0x80022afcL)
+  public static long FUN_80022afc(final long a0) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80022b50L)
+  public static long FUN_80022b50(final long a0, final long a1) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80022c08L)
+  public static long FUN_80022c08(final long a0, final long a1) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80022d88L)
+  public static long FUN_80022d88(final long a0, final long a1, final long a2) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80023148L)
+  public static void FUN_80023148() {
+    assert false;
+  }
+
+  @Method(0x800232dcL)
+  public static long FUN_800232dc(final long a0) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x800233d8L)
+  public static long FUN_800233d8(final long a0) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x80023484L)
+  public static long FUN_80023484(final long a0) {
+    assert false;
+    return 0;
+  }
+
   @Method(0x8002379cL)
   public static void FUN_8002379c() {
     // empty
@@ -1458,6 +1507,95 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023860
     return 0x1L;
+  }
+
+  @Method(0x80023870L)
+  public static void FUN_80023870(final long a0) {
+    assert false;
+  }
+
+  @Method(0x800238a4L)
+  public static long FUN_800238a4() {
+    long v1 = _8007a3a0.get();
+
+    if((v1 & 0x4L) != 0) {
+      return 0x4L;
+    }
+
+    //LAB_800238c4
+    if((v1 & 0x8L) != 0) {
+      return 0x8L;
+    }
+
+    //LAB_800238d4
+    if((v1 & 0x1L) != 0) {
+      return 0x1L;
+    }
+
+    //LAB_800238e4
+    if((v1 & 0x2L) != 0) {
+      return 0x2L;
+    }
+
+    //LAB_800238f4
+    if((v1 & 0x1000L) != 0) {
+      return 0x1000L;
+    }
+
+    //LAB_80023904
+    if((v1 & 0x4000L) != 0) {
+      return 0x4000L;
+    }
+
+    //LAB_80023914
+    if((v1 & 0x8000L) != 0) {
+      return 0x8000L;
+    }
+
+    //LAB_80023924
+    if((v1 & 0x2000L) != 0) {
+      return 0x2000L;
+    }
+
+    //LAB_80023934
+    v1 = _8007a398.get();
+
+    if((v1 & 0x10L) != 0) {
+      return 0x10L;
+    }
+
+    //LAB_80023950
+    if((v1 & 0x40L) != 0) {
+      return 0x40L;
+    }
+
+    //LAB_80023960
+    if((v1 & 0x80L) != 0) {
+      return 0x80L;
+    }
+
+    //LAB_80023970
+    return v1 & 0x20L;
+  }
+
+  @Method(0x800239e0L)
+  public static void FUN_800239e0(final long a0, final long a1, final long a2) {
+    assert false;
+  }
+
+  @Method(0x80023a2cL)
+  public static void FUN_80023a2c(final long a0, final long a1, final long a2) {
+    assert false;
+  }
+
+  @Method(0x800242e8L)
+  public static void FUN_800242e8(final long a0) {
+    assert false;
+  }
+
+  @Method(0x8002437cL)
+  public static void FUN_8002437c(final long a0) {
+    assert false;
   }
 
   @Method(0x80024654L)
@@ -2785,6 +2923,36 @@ public final class Scus94491BpeSegment_8002 {
     GATE.acquire();
     _0000641c.set(Scus94491BpeSegment_8002::early_card_irq_vector_patched);
     GATE.release();
+  }
+
+  @Method(0x8002dbdcL)
+  public static long FUN_8002dbdc(final long a0) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x8002e908L)
+  public static long FUN_8002e908(final long a0, final long a1, final long a2, final long a3, final long a4) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x8002eb28L)
+  public static long FUN_8002eb28(final long a0, final long a1, final long a2, final long a3, final long a4) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x8002f0d4L)
+  public static long FUN_8002f0d4(final long a0, final long a1, final long a2) {
+    assert false;
+    return 0;
+  }
+
+  @Method(0x8002f1d0L)
+  public static long FUN_8002f1d0(final long a0) {
+    assert false;
+    return 0;
   }
 
   static {
