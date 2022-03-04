@@ -1614,12 +1614,13 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Decompressing file %s...", file.namePtr.deref().get());
 
-    final long v1 = file.unknown3.get() & 0b110;
+    final long v1 = file.unknown3.get() & 0b110L;
 
-    //LAB_800148b8
     long transferDest = 0;
-    //LAB_800148dc
-    if(v1 == 0x2L) {
+    if((file.unknown3.get() & 0x1L) == 0) {
+      transferDest = transferDest_800bb460.get();
+      //LAB_800148b8
+    } else if(v1 == 0x2L) {
       //LAB_8001491c
       transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
 
@@ -1635,21 +1636,24 @@ public final class Scus94491BpeSegment {
       if(address != 0) {
         transferDest = address;
       }
-    } else if(v1 == 0x4L) {
-      //LAB_80014954
-      transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
+    } else if((int)v1 >= 0x3L) {
+      //LAB_800148dc
+      if(v1 == 0x4L) {
+        //LAB_80014954
+        transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
 
-      if(transferDest < 0x8000_0000L) {
-        throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
-      }
+        if(transferDest < 0x8000_0000L) {
+          throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
+        }
 
-      fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
+        fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
 
-      final long address = FUN_80012244(transferDest, fileSize_800bb464.get());
+        final long address = FUN_80012244(transferDest, fileSize_800bb464.get());
 
-      //LAB_80014984
-      if(address != 0) {
-        transferDest = address;
+        //LAB_80014984
+        if(address != 0) {
+          transferDest = address;
+        }
       }
     } else if(v1 == 0) {
       //LAB_800148ec
@@ -1677,7 +1681,8 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\S_STRM.OV_" -> MEMORY.addFunctions(SStrm.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
-      default -> throw new RuntimeException("Loaded unknown file");
+      case "\\SECT\\DRGN0.BIN" -> { }
+      default -> throw new RuntimeException("Loaded unknown file " + file.namePtr.deref().get());
     }
 
     //LAB_800149b4
@@ -1825,15 +1830,15 @@ public final class Scus94491BpeSegment {
       case 5 -> {
         final long s1 = numberOfTransfers_800bb490.get() * 0x0800L;
         final long size = numberOfTransfers_800bb490.get() * 0x1000L + 0x100L;
-        long transferDest = addToLinkedListHead(size);
+        final long dest = addToLinkedListHead(size);
 
-        if(transferDest == 0) {
+        if(dest == 0) {
           return -0x1L;
         }
 
-        transferDest += size - s1;
-        MEMORY.ref(4, transferDest).offset(0xfff8L).setu(transferDest);
-        MEMORY.ref(4, transferDest).offset(0xfffcL).setu(size);
+        final long transferDest = dest + size - s1;
+        MEMORY.ref(4, transferDest).offset(-0x8L).setu(dest);
+        MEMORY.ref(4, transferDest).offset(-0x4L).setu(size);
 
         if(transferDest < 0x8000_0000L) {
           throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
@@ -1846,16 +1851,16 @@ public final class Scus94491BpeSegment {
       case 3 -> {
         final long s1 = numberOfTransfers_800bb490.get() * 0x0800L;
         final long size = numberOfTransfers_800bb490.get() * 0x1000L + 0x100L;
-        long transferDest = addToLinkedListTail(size);
+        final long dest = addToLinkedListTail(size);
 
         //LAB_80014c98
-        if(transferDest == 0) {
+        if(dest == 0) {
           return -0x1L;
         }
 
-        transferDest += size - s1;
-        MEMORY.ref(4, transferDest).offset(0xfff8L).setu(transferDest);
-        MEMORY.ref(4, transferDest).offset(0xfffcL).setu(size);
+        final long transferDest = dest + size - s1;
+        MEMORY.ref(4, transferDest).offset(-0x8L).setu(dest);
+        MEMORY.ref(4, transferDest).offset(-0x4L).setu(size);
 
         if(transferDest < 0x8000_0000L) {
           throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(transferDest));
