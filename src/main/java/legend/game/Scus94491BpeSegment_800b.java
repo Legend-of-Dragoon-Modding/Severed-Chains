@@ -231,13 +231,30 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
+  public static final Value _800bdb94 = MEMORY.ref(4, 0x800bdb94L);
+  public static final Value _800bdb98 = MEMORY.ref(4, 0x800bdb98L);
+  public static final Value _800bdb9c = MEMORY.ref(4, 0x800bdb9cL);
+  public static final Value _800bdba0 = MEMORY.ref(4, 0x800bdba0L);
+  public static final Value _800bdba4 = MEMORY.ref(4, 0x800bdba4L);
+  public static final Value _800bdba8 = MEMORY.ref(4, 0x800bdba8L);
 
+  public static final Value _800bdbb8 = MEMORY.ref(4, 0x800bdbb8L);
+
+  public static final Value _800bdbe0 = MEMORY.ref(4, 0x800bdbe0L);
+  public static final Value _800bdbe4 = MEMORY.ref(4, 0x800bdbe4L);
+  public static final Value _800bdbe8 = MEMORY.ref(4, 0x800bdbe8L);
+  public static final Value _800bdbec = MEMORY.ref(4, 0x800bdbecL);
+  public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
+
+  public static final Value _800bdbf8 = MEMORY.ref(4, 0x800bdbf8L);
+
+  public static final Value _800bdc20 = MEMORY.ref(4, 0x800bdc20L);
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final Value _800bdc28 = MEMORY.ref(4, 0x800bdc28L);
 
   public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
   public static final Value _800bdc38 = MEMORY.ref(4, 0x800bdc38L);
-
+  public static final Value _800bdc3c = MEMORY.ref(4, 0x800bdc3cL);
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
   public static final Value _800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 

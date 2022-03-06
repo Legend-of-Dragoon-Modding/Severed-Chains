@@ -180,6 +180,7 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<CallbackStruct> callback_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
+  public static final Value _8004dd00 = MEMORY.ref(4, 0x8004dd00L);
   public static final Value _8004dd04 = MEMORY.ref(4, 0x8004dd04L);
   public static final Value loadingSmapOvl_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
