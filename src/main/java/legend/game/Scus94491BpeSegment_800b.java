@@ -72,6 +72,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
   public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
+  public static final Value _800bb0aa = MEMORY.ref(1, 0x800bb0aaL);
 
   public static final Value _800bb0ab = MEMORY.ref(1, 0x800bb0abL);
   public static final Value _800bb0ac = MEMORY.ref(1, 0x800bb0acL);
@@ -240,6 +241,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdbb8 = MEMORY.ref(4, 0x800bdbb8L);
 
+  /** Pointer */
   public static final Value _800bdbe0 = MEMORY.ref(4, 0x800bdbe0L);
   public static final Value _800bdbe4 = MEMORY.ref(4, 0x800bdbe4L);
   public static final Value _800bdbe8 = MEMORY.ref(4, 0x800bdbe8L);
@@ -250,13 +252,22 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdc20 = MEMORY.ref(4, 0x800bdc20L);
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
-  public static final Value _800bdc28 = MEMORY.ref(4, 0x800bdc28L);
+  public static final Value inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L);
+  public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
+  public static final Value _800bdc30 = MEMORY.ref(4, 0x800bdc30L);
 
   public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
-  public static final Value _800bdc38 = MEMORY.ref(4, 0x800bdc38L);
-  public static final Value _800bdc3c = MEMORY.ref(4, 0x800bdc3cL);
+  /**
+   * 0xe - load game
+   * 0x13 - also load game (maybe save game...?)
+   * 0x18 - char swap
+   *
+   * Seems any other value shows the inventory
+   */
+  public static final Value whichMenu_800bdc38 = MEMORY.ref(4, 0x800bdc38L);
+  public static final Value drgn0File6666Address_800bdc3c = MEMORY.ref(4, 0x800bdc3cL);
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
-  public static final Value _800bdc44 = MEMORY.ref(4, 0x800bdc44L);
+  public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
   public static final Value linkedListEntry_800bdc50 = MEMORY.ref(4, 0x800bdc50L);
 

@@ -163,8 +163,8 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007._8007a398;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a0;
+import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadButtons_8007a3a0;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpNEW_EventId_800bf26c;
@@ -199,8 +199,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bdbe8;
 import static legend.game.Scus94491BpeSegment_800b._800bdbec;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc20;
-import static legend.game.Scus94491BpeSegment_800b._800bdc28;
-import static legend.game.Scus94491BpeSegment_800b._800bdc38;
+import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b._800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
@@ -1343,16 +1343,16 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022520L)
   public static void FUN_80022520(final long unused) {
-    _800bdc38.setu(0x4L);
+    whichMenu_800bdc38.setu(0x4L);
   }
 
   @Method(0x80022590L)
   public static void FUN_80022590() {
-    switch((int)_800bdc38.get()) {
+    switch((int)whichMenu_800bdc38.get()) {
       case 0x1 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x2L);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x2L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1360,8 +1360,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x6 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x7L);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x7L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1369,8 +1369,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0xb -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0xcL);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0xcL);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1378,8 +1378,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x10 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x11L);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x11L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1387,8 +1387,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x15 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x16L);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x16L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1396,8 +1396,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x1f -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x20);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x20);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
         }
@@ -1405,14 +1405,14 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x1a -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          _800bdc28.setu(0);
-          _800bdc38.setu(0x1bL);
+          inventoryMenuState_800bdc28.setu(0);
+          whichMenu_800bdc38.setu(0x1bL);
         }
       }
 
       case 0x2, 0x7, 0xc, 0x11, 0x16, 0x1b, 0x20 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          _800bdc38.addu(0x1L);
+          whichMenu_800bdc38.addu(0x1L);
           FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", long.class), 0);
         }
       }
@@ -1426,13 +1426,13 @@ public final class Scus94491BpeSegment_8002 {
         FUN_80012bb4();
         FUN_8001e010(-0x1L);
         _800bc0b9.setu(0);
-        _800bdc38.setu(0);
+        whichMenu_800bdc38.setu(0);
       }
 
       case 0x1e, 0x14 -> {
         FUN_80012bb4();
         _800bc0b9.setu(0);
-        _800bdc38.setu(0);
+        whichMenu_800bdc38.setu(0);
       }
     }
   }
@@ -1604,72 +1604,75 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023870L)
-  public static void FUN_80023870(final long a0) {
-    assert false;
+  public static void playSound(final long soundIndex) {
+    Scus94491BpeSegment.playSound(0, (int)soundIndex, 0, 0, (short)0, (short)0);
   }
 
+  /**
+   * Gets the highest priority button on the joypad that is currently pressed. "Priority" is likely arbitrary.
+   */
   @Method(0x800238a4L)
-  public static long FUN_800238a4() {
-    long v1 = _8007a3a0.get();
+  public static long getJoypadInputByPriority() {
+    final long buttons = joypadButtons_8007a3a0.get();
 
-    if((v1 & 0x4L) != 0) {
+    if((buttons & 0x4L) != 0) {
       return 0x4L;
     }
 
     //LAB_800238c4
-    if((v1 & 0x8L) != 0) {
+    if((buttons & 0x8L) != 0) {
       return 0x8L;
     }
 
     //LAB_800238d4
-    if((v1 & 0x1L) != 0) {
+    if((buttons & 0x1L) != 0) {
       return 0x1L;
     }
 
     //LAB_800238e4
-    if((v1 & 0x2L) != 0) {
+    if((buttons & 0x2L) != 0) {
       return 0x2L;
     }
 
     //LAB_800238f4
-    if((v1 & 0x1000L) != 0) {
+    if((buttons & 0x1000L) != 0) {
       return 0x1000L;
     }
 
     //LAB_80023904
-    if((v1 & 0x4000L) != 0) {
+    if((buttons & 0x4000L) != 0) {
       return 0x4000L;
     }
 
     //LAB_80023914
-    if((v1 & 0x8000L) != 0) {
+    if((buttons & 0x8000L) != 0) {
       return 0x8000L;
     }
 
     //LAB_80023924
-    if((v1 & 0x2000L) != 0) {
+    if((buttons & 0x2000L) != 0) {
       return 0x2000L;
     }
 
     //LAB_80023934
-    v1 = _8007a398.get();
+    final long dpad = joypadDpad_8007a398.get();
 
-    if((v1 & 0x10L) != 0) {
+    if((dpad & 0x10L) != 0) {
       return 0x10L;
     }
 
     //LAB_80023950
-    if((v1 & 0x40L) != 0) {
+    if((dpad & 0x40L) != 0) {
       return 0x40L;
     }
 
     //LAB_80023960
-    if((v1 & 0x80L) != 0) {
+    if((dpad & 0x80L) != 0) {
       return 0x80L;
     }
 
     //LAB_80023970
-    return v1 & 0x20L;
+    return dpad & 0x20L;
   }
 
   @Method(0x800239e0L)
@@ -2271,7 +2274,7 @@ public final class Scus94491BpeSegment_8002 {
       while(MEMORY.ref(4, s0).offset(0x54L).get() != 0) {
         final long a0_0 = s0;
         s0 = MEMORY.ref(4, s0).offset(0x54L).get();
-        if(a0 >= MEMORY.ref(1, a0_0).offset(0x28L).get()) {
+        if(MEMORY.ref(1, a0_0).offset(0x28L).get() <= a0) {
           FUN_800242e8(a0_0);
         }
 
@@ -2279,7 +2282,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_800243e0
-      if(a0 >= MEMORY.ref(1, s0).offset(0x28L).get()) {
+      if(MEMORY.ref(1, s0).offset(0x28L).get() <= a0) {
         FUN_800242e8(s0);
       }
 

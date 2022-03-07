@@ -160,9 +160,9 @@ import static legend.game.Scus94491BpeSegment_8005.linkedListTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007._8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a0;
+import static legend.game.Scus94491BpeSegment_8007.joypadButtons_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007._8007a3ac;
 import static legend.game.Scus94491BpeSegment_8007._8007a3c0;
@@ -3296,9 +3296,9 @@ public final class Scus94491BpeSegment {
 
     FUN_8002ae0c(a0);
 
-    _8007a398.setu(_800bee94);
+    joypadDpad_8007a398.setu(_800bee94);
     _8007a39c.setu(_800bee90);
-    _8007a3a0.setu(_800bee98);
+    joypadButtons_8007a3a0.setu(_800bee98);
   }
 
   @Method(0x800194dcL)

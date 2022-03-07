@@ -74,7 +74,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
-import static legend.game.Scus94491BpeSegment_8007._8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
@@ -89,7 +89,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bb134;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bdc38;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
@@ -546,7 +546,7 @@ public final class Ttle {
 
     if(_800c6754.get() >= 0x10L) {
       if(_800c6728.get() == 0x2L) {
-        _800bdc38.setu(0xbL);
+        whichMenu_800bdc38.setu(0xbL);
         FUN_800cb5c4();
         deallocateFire();
         _800c6728.setu(0x3L);
@@ -556,7 +556,7 @@ public final class Ttle {
     //LAB_800c8038
     FUN_80022590();
 
-    if(_800bdc38.get() != 0) {
+    if(whichMenu_800bdc38.get() != 0) {
       return;
     }
 
@@ -699,8 +699,8 @@ public final class Ttle {
   @Method(0x800c8484L)
   public static void FUN_800c8484() {
     if(_800c672c.get() < 3) {
-      if(_8007a398.get(0x20L) == 0 || fileCount_8004ddc8.get() != 0) {
-        if(_8007a398.get(0x1000L) != 0) { // Menu button up
+      if(joypadDpad_8007a398.get(0x20L) == 0 || fileCount_8004ddc8.get() != 0) {
+        if(joypadDpad_8007a398.get(0x1000L) != 0) { // Menu button up
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           selectedMenuOption_800ce774.subu(1);
@@ -710,7 +710,7 @@ public final class Ttle {
           _800c672c.setu(2);
         }
 
-        if(_8007a398.get(0x4000L) != 0) { // Menu button down
+        if(joypadDpad_8007a398.get(0x4000L) != 0) { // Menu button down
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           selectedMenuOption_800ce774.addu(1);
@@ -913,19 +913,19 @@ public final class Ttle {
   @Method(0x800c93b0L)
   public static void FUN_800c93b0() {
     if(_800c6728.get() == 1 && _800c6738.get() < 3) {
-      if(_8007a398.get(0x5000L) != 0) {
+      if(joypadDpad_8007a398.get(0x5000L) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
         _800ce778.xoru(0b11);
         _800c6738.setu(2);
       }
 
-      if(_8007a398.get(0x40L) != 0) {
+      if(joypadDpad_8007a398.get(0x40L) != 0) {
         playSound(0, 3, 0, 0, (short)0, (short)0);
         _800c6738.setu(3);
         _800c672c.setu(0);
       }
 
-      if(_8007a398.get(0xa000L) != 0) {
+      if(joypadDpad_8007a398.get(0xa000L) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(_800ce778.get() == 0) {

@@ -183,7 +183,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007._8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
@@ -202,7 +202,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd818;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bdc38;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b._800bed50;
 import static legend.game.Scus94491BpeSegment_800b._800bed54;
 import static legend.game.Scus94491BpeSegment_800b._800bed58;
@@ -3426,7 +3426,7 @@ public final class SMap {
       case 0xc:
         _80052c44.setu(0);
         FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
-        if(_8007a398.get(0x10L) != 0 && _800bb0ab.get() == 0) {
+        if(joypadDpad_8007a398.get(0x10L) != 0 && _800bb0ab.get() == 0) {
           FUN_800e5534(-0x1L, 0x3ffL);
         }
 
@@ -3456,11 +3456,11 @@ public final class SMap {
         break;
 
       case 0xe:
-        _800caaf0.setu(_800bdc38);
+        _800caaf0.setu(whichMenu_800bdc38);
         _80052c44.setu(0x2L);
 
-        if(_800bdc38.get() == 0 || _800bdc38.get() == 0) {
-          if(_800bdc38.get() != 0) {
+        if(whichMenu_800bdc38.get() == 0 || whichMenu_800bdc38.get() == 0) {
+          if(whichMenu_800bdc38.get() != 0) {
             FUN_80022590();
           }
 
@@ -4718,7 +4718,7 @@ public final class SMap {
 
     //LAB_800eda0c
     final long s0;
-    if(_800bf0dc.get() == 0 && _8007a398.get(0x800L) != 0) {
+    if(_800bf0dc.get() == 0 && joypadDpad_8007a398.get(0x800L) != 0) {
       s0 = 0x1L;
     } else {
       s0 = 0;
@@ -5756,7 +5756,7 @@ public final class SMap {
     }
 
     //LAB_800f321c
-    if((_8007a398.get() & 0x8L) != 0) {
+    if((joypadDpad_8007a398.get() & 0x8L) != 0) {
       if(a0 == 0) {
         _800babc8.offset(4, 0x4e8L).setu(0x1L);
         //LAB_800f3244
@@ -5767,7 +5767,7 @@ public final class SMap {
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
-    } else if((_8007a398.get() & 0x4) != 0) {
+    } else if((joypadDpad_8007a398.get() & 0x4) != 0) {
       if(a0 == 0) {
         //LAB_800f3274
         _800babc8.offset(4, 0x4e8L).setu(0x2L);
