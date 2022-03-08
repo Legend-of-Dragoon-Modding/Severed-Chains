@@ -532,6 +532,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0a8 = MEMORY.ref(1, 0x800bf0a8L);
   public static final Value _800bf0ac = MEMORY.ref(4, 0x800bf0acL);
 
+  public static final Value _800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
   public static final Value _800bf0b4 = MEMORY.ref(4, 0x800bf0b4L);
 
   public static final Value _800bf0c0 = MEMORY.ref(4, 0x800bf0c0L);
