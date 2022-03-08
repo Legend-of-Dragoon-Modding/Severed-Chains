@@ -1346,6 +1346,11 @@ public final class Scus94491BpeSegment_8002 {
     whichMenu_800bdc38.setu(0x4L);
   }
 
+  @Method(0x80022540L)
+  public static void FUN_80022540(final long unused) {
+    whichMenu_800bdc38.setu(0xeL);
+  }
+
   @Method(0x80022590L)
   public static void FUN_80022590() {
     switch((int)whichMenu_800bdc38.get()) {
@@ -1358,12 +1363,26 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
+      case 0x2 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", long.class), 0);
+        }
+      }
+
       case 0x6 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.setu(0);
           whichMenu_800bdc38.setu(0x7L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
+        }
+      }
+
+      case 0x7 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022530", long.class), 0);
         }
       }
 
@@ -1376,6 +1395,13 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
+      case 0xc -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022540", long.class), 0);
+        }
+      }
+
       case 0x10 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.setu(0);
@@ -1385,12 +1411,26 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
+      case 0x11 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022550", long.class), 0);
+        }
+      }
+
       case 0x15 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.setu(0);
           whichMenu_800bdc38.setu(0x16L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
+        }
+      }
+
+      case 0x16 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022560", long.class), 0);
         }
       }
 
@@ -1410,10 +1450,17 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case 0x2, 0x7, 0xc, 0x11, 0x16, 0x1b, 0x20 -> {
+      case 0x1b -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", long.class), 0);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022570", long.class), 0);
+        }
+      }
+
+      case 0x20 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38.addu(0x1L);
+          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022580", long.class), 0);
         }
       }
 
