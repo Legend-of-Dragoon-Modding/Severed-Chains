@@ -15,6 +15,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.FUN_800133ac;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -32,8 +33,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_800233d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023484;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023674;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
-import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a2c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023b54;
@@ -55,6 +54,8 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002ed48;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002efb8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002f0d4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002f1d0;
+import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
+import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80041070;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800412e0;
@@ -88,19 +89,19 @@ import static legend.game.Scus94491BpeSegment_800b._800bdbec;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc30;
-import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800b.drgn0File6666Address_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800be5d8;
 import static legend.game.Scus94491BpeSegment_800b._800be5f8;
+import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.drgn0File6666Address_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
+import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class SItem {
   private SItem() { }
@@ -2791,10 +2792,11 @@ public final class SItem {
         break;
 
       case 0x29: // Part of load game menu
-        FUN_8010ecec(_8011dc90.getAddress());
+        s0 = _8011dc90.getAddress();
+        FUN_8010ecec(s0);
         FUN_801030c0(_8011d744.get(), 0, 0);
 
-        if(_8011dc90.offset(4, 0x10L).get() < 0x3L) {
+        if(MEMORY.ref(4, s0).offset(0x10L).get() < 0x3L) {
           break;
         }
 
@@ -2802,30 +2804,28 @@ public final class SItem {
           break;
         }
 
-        // This method seems to do the memcard loading in stages
+        s1 = _8011d768.getAddress();
         s2 = _8011dd10.getAddress();
-        FUN_80109b08(_8011d768.getAddress(), s2);
+        FUN_80109b08(s1, s2);
 
-        // Keep executing stage 0x29 until the previous method sets this to 0
         if(_8011e0d4.get() != 0) {
           break;
         }
 
-        // Memcard state
-        a0 = _8011d768.offset(4, 0x8L).get();
+        a0 = MEMORY.ref(4, s1).offset(0x8L).get();
 
-        if(a0 == 0x1L) { // Not inserted
+        if(a0 == 0x1L) {
           //LAB_801008d0
           inventoryMenuState_800bdc28.setu(0x37L);
-          _8011dc90.offset(1, 0xcL).addu(0x1L);
+          MEMORY.ref(1, s0).offset(0xcL).addu(0x1L);
           break;
         }
 
         //LAB_800ff0c8
-        if(a0 == 0x2L) { // Problem with card
+        if(a0 == 0x2L) {
           //LAB_801008d0
           inventoryMenuState_800bdc28.setu(0x39L);
-          _8011dc90.offset(1, 0xcL).addu(0x1L);
+          MEMORY.ref(1, s0).offset(0xcL).addu(0x1L);
           break;
         }
 
@@ -2840,47 +2840,49 @@ public final class SItem {
           }
 
           inventoryMenuState_800bdc28.setu(0x3cL);
-          _8011dc90.offset(1, 0xcL).addu(0x1L);
+          _8011dc9c.addu(0x1L);
           break;
         }
 
         //LAB_800ff12c
         //LAB_800ff130
-        if(whichMenu_800bdc38.get() == 0xeL) {
-          inventoryMenuState_800bdc28.setu(0x3cL);
-          _8011dc90.offset(1, 0xcL).addu(0x1L);
-          break;
-        }
+        if(_8011d768.offset(1, 0x4L).get() != 0 || whichMenu_800bdc38.get() != 0xeL) {
+          //LAB_800ff16c
+          if(_8011d768.offset(1, 0x4L).get() != 0 || _8011d768.offset(1, 0x6L).get() != 0) {
+            //LAB_800ff194
+            if(_8011d768.offset(1, 0x10L).get() >= 0xdL) {
+              v1 = _8011d768.offset(1, 0x10L).get() - 0xcL;
+              _8011d740.setu(v1);
+              v0 = _8011d768.offset(1, 0x10L).get() - v1; //TODO this is just 0xc...? Why the math?
+              _8011d744.setu(v0);
+            } else {
+              //LAB_800ff1d0
+              _8011d740.setu(0);
+              _8011d744.setu(_8011d768.offset(1, 0x10L));
+            }
 
-        //LAB_800ff16c
-        if(_8011d768.offset(1, 0x4L).get() != 0 || _8011d768.offset(1, 0x6L).get() != 0) {
-          //LAB_800ff194
-          if(_8011d768.offset(1, 0x10L).get() >= 0xdL) {
-            v1 = _8011d768.offset(1, 0x10L).get() - 0xcL;
-            _8011d740.setu(v1);
-            v0 = _8011d768.offset(1, 0x10L).get() - v1; //TODO this is just 0xc...? Why the math?
-            _8011d744.setu(v0);
-          } else {
-            //LAB_800ff1d0
-            _8011d740.setu(0);
-            _8011d744.setu(_8011d768.offset(1, 0x10L).get());
+            //LAB_800ff1e0
+            _800bdbe8.setu(FUN_80103818(0x81L, 0x81L, 0x10L, FUN_800fc84c(_8011d740.get())));
+            _800bdbec.setu(FUN_80103818(0x82L, 0x82L, 0xc0L, FUN_800fc84c(_8011d740.get())));
+            FUN_80104b60(_800bdbe8.get());
+            FUN_80104b60(_800bdbec.get());
+            FUN_8010361c(_8011d744.get(), 0xeL);
+
+            inventoryMenuState_800bdc28.setu(0x2aL);
+            _8011dc9c.addu(0x1L);
+            break;
           }
 
-          //LAB_800ff1e0
-          _800bdbe8.setu(FUN_80103818(0x81L, 0x81L, 0x10L, FUN_800fc84c(_8011d740.get())));
-          _800bdbec.setu(FUN_80103818(0x82L, 0x82L, 0xc0L, FUN_800fc84c(_8011d740.get())));
-          FUN_80104b60(_800bdbe8.get());
-          FUN_80104b60(_800bdbec.get());
-          FUN_8010361c(_8011d744.get(), 0xeL);
-
-          inventoryMenuState_800bdc28.setu(0x2aL);
-          _8011dc90.offset(1, 0xcL).addu(0x1L);
-          break;
+          if(_8011d768.offset(1, 0x4L).get() == 0) {
+            inventoryMenuState_800bdc28.setu(0x3aL);
+            _8011dc9c.addu(0x1L);
+            break;
+          }
         }
 
         //LAB_801004ac
-        inventoryMenuState_800bdc28.setu(0x3aL);
-        _8011dc90.offset(1, 0xcL).addu(0x1L);
+        inventoryMenuState_800bdc28.setu(0x3cL);
+        _8011dc9c.addu(0x1L);
         break;
 
       case 0x2a:
@@ -7192,6 +7194,24 @@ public final class SItem {
     FUN_801033cc(a0_0);
   }
 
+  @Method(0x80103444L)
+  public static void FUN_80103444(final long a0, final long a1, final long a2, final long a3, final long a4) {
+    if(a0 != 0) {
+      if(MEMORY.ref(4, a0).offset(0x18L).get() == 0) {
+        if((FUN_800133ac() & 0x3000L) != 0) {
+          MEMORY.ref(4, a0).offset(0x18L).setu(a1);
+          MEMORY.ref(4, a0).offset(0x1cL).setu(a2);
+        } else {
+          //LAB_801034a0
+          MEMORY.ref(4, a0).offset(0x18L).setu(a3);
+          MEMORY.ref(4, a0).offset(0x1cL).setu(a4);
+        }
+      }
+    }
+
+    //LAB_801034b0
+  }
+
   @Method(0x801034ccL)
   public static void FUN_801034cc(final long a0, final long a1) {
     assert false;
@@ -7199,7 +7219,39 @@ public final class SItem {
 
   @Method(0x8010361cL)
   public static void FUN_8010361c(final long a0, final long a1) {
-    assert false;
+    FUN_80103444(_800bdb94.get(), 0xc2L, 0xc9L, 0xcaL, 0xd1L);
+    FUN_80103444(_800bdb98.get(), 0xb2L, 0xb9L, 0xbaL, 0xc1L);
+
+    if(a0 != 0) {
+      if(_800bdb94.get() == 0) {
+        final long a0_0 = FUN_80103818(0x6fL, 0x6cL, 0xb6L, 0x10L);
+        MEMORY.ref(4, a0_0).offset(0x18L).setu(0xc2L);
+        _800bdb94.setu(a0_0);
+        MEMORY.ref(4, a0_0).offset(0x1cL).setu(0xc9L);
+        FUN_801033cc(a0_0);
+      }
+      //LAB_801036c8
+    } else if(_800bdb94.get() != 0) {
+      FUN_801033e8(_800bdb94.get());
+      _800bdb94.setu(0);
+    }
+
+    //LAB_801036e8
+    if((int)a0 < a1 - 0x2L) {
+      if(_800bdb98.get() == 0) {
+        final long a0_0 = FUN_80103818(0x6fL, 0x6cL, 0xb6L, 0xd0L);
+        MEMORY.ref(4, a0_0).offset(0x18L).setu(0xb2L);
+        _800bdb98.setu(a0_0);
+        MEMORY.ref(4, a0_0).offset(0x1cL).setu(0xb9L);
+        FUN_801033cc(a0_0);
+      }
+      //LAB_80103738
+    } else if(_800bdb98.get() != 0) {
+      FUN_801033e8(_800bdb98.get());
+      _800bdb98.setu(0);
+    }
+
+    //LAB_80103754
   }
 
   @Method(0x8010376cL)
@@ -7364,9 +7416,81 @@ public final class SItem {
   }
 
   @Method(0x80103f00L)
-  public static long FUN_80103f00(final long a0, final long a1, final long a2, final long a3, final long a4) {
-    assert false;
-    return 0;
+  public static long FUN_80103f00(final long a0, final long a1, final long a2, long a3, final long a4) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0) {
+      if(MEMORY.ref(4, a0).get() == 0) {
+        //LAB_80103f44
+        if(MEMORY.ref(4, a1).get() < (int)a4) {
+          return 0x1L;
+        }
+
+        MEMORY.ref(4, a1).subu(a4);
+      } else {
+        MEMORY.ref(4, a0).subu(0x1L);
+      }
+      //LAB_80103f64
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0) {
+      if(MEMORY.ref(4, a0).get() < a2 - 0x1L) {
+        MEMORY.ref(4, a0).addu(0x1L);
+      } else {
+        //LAB_80103f8c
+        if(a3 <= MEMORY.ref(4, a1).get() + a2 * a4) {
+          return 0x1L;
+        }
+
+        MEMORY.ref(4, a1).addu(a4);
+      }
+      //LAB_80103fb0
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x4L) != 0) {
+      if(MEMORY.ref(4, a0).get() != 0) {
+        playSound(0x1L);
+        MEMORY.ref(4, a0).setu(0);
+      }
+
+      return 0x1L;
+      //LAB_80103fdc
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x1L) != 0) {
+      if(MEMORY.ref(4, a0).get() >= a2 - 0x1L) {
+        return 0x1L;
+      }
+
+      playSound(0x1L);
+      MEMORY.ref(4, a0).setu(a2 - 0x1L);
+      return 0x1L;
+      //LAB_80104008
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x8L) == 0 || MEMORY.ref(4, a1).get() < a4) {
+      //LAB_8010404c
+      if((inventoryJoypadInput_800bdc44.get() & 0x2L) == 0) {
+        return 0;
+      }
+
+      if(a2 >= a3) {
+        return 0;
+      }
+
+      final long v1 = MEMORY.ref(4, a1).get() + a2 * a4;
+      a3 -= a2 * a4;
+      if(v1 < a3) {
+        MEMORY.ref(4, a1).setu(v1);
+        //LAB_8010408c
+      } else if(MEMORY.ref(4, a1).get() < a3) {
+        MEMORY.ref(4, a1).setu(a3);
+      } else {
+        return 0;
+      }
+    } else if(MEMORY.ref(4, a1).get() >= a2 * a4) {
+      MEMORY.ref(4, a1).subu(a2 * a4);
+    } else {
+      //LAB_80104044
+      MEMORY.ref(4, a1).setu(0);
+    }
+
+    //LAB_80104098
+    playSound(0x1L);
+
+    //LAB_801040a0
+    //LAB_801040ac
+    return 0x1L;
   }
 
   @Method(0x801040c0L)
