@@ -304,6 +304,8 @@ public final class Scus94491BpeSegment {
 
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
 
+  public static final Value _80011174 = MEMORY.ref(4, 0x80011174L);
+
   /**
    * String: CD_sync
    */

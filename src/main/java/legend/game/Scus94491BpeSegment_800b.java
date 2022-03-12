@@ -18,6 +18,7 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.EnumRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -567,18 +568,24 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf178 = MEMORY.ref(4, 0x800bf178L);
   public static final Value _800bf17c = MEMORY.ref(4, 0x800bf17cL);
   public static final Value cardPort_800bf180 = MEMORY.ref(4, 0x800bf180L);
-  public static final Value _800bf184 = MEMORY.ref(4, 0x800bf184L);
+  public static final IntRef memcardFileHandle_800bf184 = MEMORY.ref(4, 0x800bf184L, IntRef::new);
 
   public static final Pointer<BiConsumerRef<Long, Long>> _800bf1b4 = MEMORY.ref(4, 0x800bf1b4L, Pointer.of(4, BiConsumerRef::new));
   public static final Value _800bf1b8 = MEMORY.ref(4, 0x800bf1b8L);
   public static final Value _800bf1bc = MEMORY.ref(4, 0x800bf1bcL);
   public static final Value _800bf1c0 = MEMORY.ref(4, 0x800bf1c0L);
   public static final Value _800bf1c4 = MEMORY.ref(4, 0x800bf1c4L);
+  public static final Pointer<BiConsumerRef<Long, Long>> _800bf1c8 = MEMORY.ref(4, 0x800bf1c8L, Pointer.deferred(4, BiConsumerRef::new));
+
+  public static final Value deviceCallback_800bf1d0 = MEMORY.ref(4, 0x800bf1d0L);
+
+  /** A string */
+  public static final Value _800bf1d8 = MEMORY.ref(1, 0x800bf1d8L);
 
   public static final Value _800bf200 = MEMORY.ref(4, 0x800bf200L);
 
   public static final Value _800bf23c = MEMORY.ref(4, 0x800bf23cL);
-  public static final Value _800bf240 = MEMORY.ref(4, 0x800bf240L);
+  public static final Value memcardVsyncCallbacks_800bf240 = MEMORY.ref(4, 0x800bf240L);
 
   public static final Value SwCARD_EvSpIOE_EventId_800bf250 = MEMORY.ref(4, 0x800bf250L);
   public static final Value SwCARD_EvSpERROR_EventId_800bf254 = MEMORY.ref(4, 0x800bf254L);
