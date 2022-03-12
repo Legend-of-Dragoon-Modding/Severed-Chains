@@ -5,7 +5,7 @@ plugins {
 group 'legend'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = targetCompatibility = 1.16
+sourceCompatibility = targetCompatibility = 1.17
 
 repositories {
   mavenCentral()
