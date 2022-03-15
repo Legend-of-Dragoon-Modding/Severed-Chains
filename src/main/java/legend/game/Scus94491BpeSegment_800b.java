@@ -27,8 +27,10 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.BiggerStruct;
+import legend.game.types.Drgn0_6666Struct58;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
+import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptStruct;
@@ -53,7 +55,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bac50 = MEMORY.ref(4, 0x800bac50L);
   public static final Value _800bac54 = MEMORY.ref(4, 0x800bac54L);
   public static final Value _800bac58 = MEMORY.ref(4, 0x800bac58L);
-
+  public static final Value _800bac5c = MEMORY.ref(4, 0x800bac5cL);
   public static final Value _800bac60 = MEMORY.ref(4, 0x800bac60L);
 
   public static final Value _800bac68 = MEMORY.ref(1, 0x800bac68L);
@@ -65,7 +67,15 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
 
+  public static final Value _800badac = MEMORY.ref(2, 0x800badacL);
   public static final Value _800badae = MEMORY.ref(2, 0x800badaeL);
+  public static final Value _800badb0 = MEMORY.ref(1, 0x800badb0L);
+
+  public static final Value _800bae00 = MEMORY.ref(4, 0x800bae00L);
+
+  public static final Value _800baef4 = MEMORY.ref(4, 0x800baef4L);
+
+  public static final Value _800baefc = MEMORY.ref(2, 0x800baefcL);
 
   public static final Value _800baf02 = MEMORY.ref(2, 0x800baf02L);
 
@@ -233,25 +243,24 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
-  public static final Value _800bdb94 = MEMORY.ref(4, 0x800bdb94L);
-  public static final Value _800bdb98 = MEMORY.ref(4, 0x800bdb98L);
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Drgn0_6666Struct58::new));
   public static final Value _800bdb9c = MEMORY.ref(4, 0x800bdb9cL);
   public static final Value _800bdba0 = MEMORY.ref(4, 0x800bdba0L);
-  public static final Value _800bdba4 = MEMORY.ref(4, 0x800bdba4L);
-  public static final Value _800bdba8 = MEMORY.ref(4, 0x800bdba8L);
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Drgn0_6666Struct58::new));
 
   public static final Value _800bdbb8 = MEMORY.ref(4, 0x800bdbb8L);
 
-  /** Pointer */
-  public static final Value _800bdbe0 = MEMORY.ref(4, 0x800bdbe0L);
-  public static final Value _800bdbe4 = MEMORY.ref(4, 0x800bdbe4L);
-  public static final Value _800bdbe8 = MEMORY.ref(4, 0x800bdbe8L);
-  public static final Value _800bdbec = MEMORY.ref(4, 0x800bdbecL);
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Drgn0_6666Struct58::new));
   public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
 
   public static final Value _800bdbf8 = MEMORY.ref(4, 0x800bdbf8L);
 
-  public static final Value _800bdc20 = MEMORY.ref(4, 0x800bdc20L);
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Drgn0_6666Struct58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final Value inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L);
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
@@ -270,9 +279,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
-  public static final Value linkedListEntry_800bdc50 = MEMORY.ref(4, 0x800bdc50L);
+  public static final Pointer<ArrayRef<MemcardStruct28>> memcardStruct28ArrPtr_800bdc50 = MEMORY.ref(4, 0x800bdc50L, Pointer.deferred(4, ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)));
 
-  public static final Value _800bdc5c = MEMORY.ref(4, 0x800bdc5cL);
+  public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
+  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Drgn0_6666Struct58::new));
 
   public static final Value _800bdea0 = MEMORY.ref(4, 0x800bdea0L);
 
@@ -363,8 +373,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800be663 = MEMORY.ref(1, 0x800be663L);
   public static final Value _800be664 = MEMORY.ref(1, 0x800be664L);
   public static final Value _800be665 = MEMORY.ref(1, 0x800be665L);
-  public static final Value _800be666 = MEMORY.ref(1, 0x800be666L);
-  public static final Value _800be667 = MEMORY.ref(1, 0x800be667L);
+  public static final Value _800be666 = MEMORY.ref(2, 0x800be666L);
   public static final Value _800be668 = MEMORY.ref(1, 0x800be668L);
   public static final Value _800be669 = MEMORY.ref(1, 0x800be669L);
   public static final Value _800be66a = MEMORY.ref(1, 0x800be66aL);
@@ -569,6 +578,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf17c = MEMORY.ref(4, 0x800bf17cL);
   public static final Value cardPort_800bf180 = MEMORY.ref(4, 0x800bf180L);
   public static final IntRef memcardFileHandle_800bf184 = MEMORY.ref(4, 0x800bf184L, IntRef::new);
+  public static final Value memcardPos_800bf188 = MEMORY.ref(4, 0x800bf188L);
+  public static final Value memcardLength_800bf18c = MEMORY.ref(4, 0x800bf18cL);
+  public static final Value memcardDest_800bf190 = MEMORY.ref(4, 0x800bf190L);
 
   public static final Pointer<BiConsumerRef<Long, Long>> _800bf1b4 = MEMORY.ref(4, 0x800bf1b4L, Pointer.of(4, BiConsumerRef::new));
   public static final Value _800bf1b8 = MEMORY.ref(4, 0x800bf1b8L);

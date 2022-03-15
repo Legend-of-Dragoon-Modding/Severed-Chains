@@ -47,7 +47,7 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800237a4;
+import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -104,7 +104,7 @@ public final class Ttle {
 
   public static final Pointer<TmdRenderingStruct> _800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.of(4, TmdRenderingStruct::new));
   public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(16, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
-  public static final Value _800c66e4 = MEMORY.ref(4, 0x800c66e4L);
+  public static final Value hasSavedGames_800c66e4 = MEMORY.ref(4, 0x800c66e4L);
   public static final Value menuLoadingStage_800c66e8 = MEMORY.ref(4, 0x800c66e8L);
   public static final Value logoFadeInAmount_800c66ec = MEMORY.ref(4, 0x800c66ecL);
   public static final Value logoFlashStage_800c66f0 = MEMORY.ref(4, 0x800c66f0L);
@@ -383,9 +383,9 @@ public final class Ttle {
     _800c6754.setu(0);
     _800c6758.setu(100L);
 
-    FUN_800237a4(0);
+    hasSavedGames(0);
 
-    _800c66e4.setu(0);
+    hasSavedGames_800c66e4.setu(0);
     selectedMenuOption_800ce774.setu(0);
     _800ce778.setu(0);
 
@@ -734,9 +734,9 @@ public final class Ttle {
 
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
-    if(_800c66e4.get() == 0) {
-      _800c66e4.setu(FUN_800237a4(0x1L));
-      selectedMenuOption_800ce774.setu(_800c66e4.get() == 1 ? 1 : 0);
+    if(hasSavedGames_800c66e4.get() == 0) {
+      hasSavedGames_800c66e4.setu(hasSavedGames(0x1L));
+      selectedMenuOption_800ce774.setu(hasSavedGames_800c66e4.get() == 1 ? 1 : 0);
       return;
     }
 
