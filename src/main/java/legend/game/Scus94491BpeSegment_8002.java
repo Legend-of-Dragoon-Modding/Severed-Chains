@@ -1750,7 +1750,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023b7c
     a1._00.set(0);
-    a1._04.set(0);
+    a1.charIndex_04.set(0);
     a1._08.set((int)MEMORY.ref(1, a0).offset(0xaL).get());
     a1._0c.set(0);
     a1._10.set(0);
@@ -1764,8 +1764,8 @@ public final class Scus94491BpeSegment_8002 {
     a1._34.set(0x1000L);
     a1._38.set(0x1000L);
     a1._3c.set(0x24);
-    a1._40.set(0);
-    a1._44.set(0);
+    a1.x_40.set(0);
+    a1.y_44.set(0);
     a1._48.set(0);
     a1.child_50.clear();
 
@@ -1813,9 +1813,9 @@ public final class Scus94491BpeSegment_8002 {
         if(s0._08.get() < 0) {
           if((s0._00.get() & 0x20L) == 0) {
             //LAB_80023d6c
-            s0._04.incr();
+            s0.charIndex_04.incr();
 
-            if(s0._14.get() < s0._04.get()) {
+            if(s0._14.get() < s0.charIndex_04.get()) {
               if((s0._00.get() & 0x10L) != 0) {
                 sp10 = 0x1L;
                 s0._00.or(0x40L);
@@ -1840,13 +1840,13 @@ public final class Scus94491BpeSegment_8002 {
 
               //LAB_80023df4
               //LAB_80023e00
-              s0._04.set(s0._10);
+              s0.charIndex_04.set(s0._10);
               s0._0c.incr();
             }
           } else {
-            s0._04.decr();
+            s0.charIndex_04.decr();
 
-            if(s0._04.get() < s0._10.get()) {
+            if(s0.charIndex_04.get() < s0._10.get()) {
               if((s0._00.get() & 0x10L) != 0) {
                 sp10 = 0x1L;
                 s0._00.or(0x40L);
@@ -1872,18 +1872,18 @@ public final class Scus94491BpeSegment_8002 {
 
               //LAB_80023d5c
               //LAB_80023e00
-              s0._04.set(s0._14);
+              s0.charIndex_04.set(s0._14);
               s0._0c.incr();
             }
           }
 
           //LAB_80023e08
-          s0._08.set((int)(MEMORY.ref(1, a0).offset(s0._04.get() * 0x8L).offset(0x2L).get() - 0x1L));
+          s0._08.set((int)(MEMORY.ref(1, a0).offset(s0.charIndex_04.get() * 0x8L).offset(0x2L).get() - 0x1L));
         }
       }
 
       //LAB_80023e28
-      v1 = s0._20.get() + MEMORY.ref(4, s0._24.get()).offset(MEMORY.ref(2, a0).offset(s0._04.get() * 0x8L).get() * 0x4L).get();
+      v1 = s0._20.get() + MEMORY.ref(4, s0._24.get()).offset(MEMORY.ref(2, a0).offset(s0.charIndex_04.get() * 0x8L).get() * 0x4L).get();
       s7 = MEMORY.ref(1, v1).get();
       v1 = v1 + s7 * 0x14L;
 
@@ -1905,10 +1905,10 @@ public final class Scus94491BpeSegment_8002 {
           if(s0._34.get() == 0x1000L) {
             if(MEMORY.ref(2, s1).offset(0xaL).getSigned() >= 0) {
               //LAB_80023f20
-              s3 = s0._40.get() + MEMORY.ref(1, s1).offset(-0x4L).get() - fp;
+              s3 = s0.x_40.get() + MEMORY.ref(1, s1).offset(-0x4L).get() - fp;
               s4 = s3 + MEMORY.ref(2, s1).offset(0x2L).get();
             } else {
-              s4 = s0._40.get() + MEMORY.ref(1, s1).offset(-0x4L).get() - fp;
+              s4 = s0.x_40.get() + MEMORY.ref(1, s1).offset(-0x4L).get() - fp;
               s3 = s4 + MEMORY.ref(2, s1).offset(0x2L).get();
             }
           } else {
@@ -1935,7 +1935,7 @@ public final class Scus94491BpeSegment_8002 {
             a1 = v0;
             if((int)v1 < 0) {
               v0 = MEMORY.ref(2, s1).offset(0x2L).get();
-              v1 = s0._40.get();
+              v1 = s0.x_40.get();
               a0 = MEMORY.ref(1, s1).offset(-0x4L).get();
               v0 = v0 >>> 1;
               v1 = v1 + v0;
@@ -1949,7 +1949,7 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               //LAB_80023fb4
               v0 = MEMORY.ref(2, s1).offset(0x2L).get();
-              v1 = s0._40.get();
+              v1 = s0.x_40.get();
               a0 = MEMORY.ref(1, s1).offset(-0x4L).get();
               v0 = v0 >>> 1;
               v1 = v1 + v0;
@@ -1969,14 +1969,14 @@ public final class Scus94491BpeSegment_8002 {
             if(MEMORY.ref(2, s1).offset(0xcL).getSigned() >= 0) {
               //LAB_80024024
               v0 = MEMORY.ref(1, s1).offset(-0x3L).get();
-              v1 = s0._44.get();
+              v1 = s0.y_44.get();
               v1 = v1 + v0;
               v0 = MEMORY.ref(2, s1).offset(0x4L).get();
               v1 = v1 - 0x78L;
               a0 = v1 + v0;
             } else {
               v0 = MEMORY.ref(1, s1).offset(-0x3L).get();
-              v1 = s0._44.get();
+              v1 = s0.y_44.get();
               v1 = v1 + v0;
               v0 = MEMORY.ref(2, s1).offset(0x4L).get();
               a0 = v1 - 0x78L;
@@ -2006,7 +2006,7 @@ public final class Scus94491BpeSegment_8002 {
             a1 = v0;
             if((int)v1 < 0) {
               v0 = MEMORY.ref(2, s1).offset(0x4L).get();
-              v1 = s0._44.get();
+              v1 = s0.y_44.get();
               a0 = MEMORY.ref(1, s1).offset(-0x3L).get();
               v0 = v0 >>> 1;
               v1 = v1 + v0;
@@ -2020,7 +2020,7 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               //LAB_800240b8
               v0 = MEMORY.ref(2, s1).offset(0x4L).get();
-              v1 = s0._44.get();
+              v1 = s0.y_44.get();
               a0 = MEMORY.ref(1, s1).offset(-0x3L).get();
               v0 = v0 >>> 1;
               v1 = v1 + v0;

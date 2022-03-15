@@ -11,6 +11,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.Drgn0_6666Struct58;
+import legend.game.types.MemcardDataStruct3c;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MenuStruct20;
@@ -599,7 +600,7 @@ public final class SItem {
           //LAB_800fcdd4
           if(FUN_801040c0(_8011d738.getAddress(), 0x7L) != 0) {
             _8011d73c.setu(0);
-            drgn0_6666StructPtr_800bdbe0.deref()._44.set(FUN_800fc78c(_8011d738.get()));
+            drgn0_6666StructPtr_800bdbe0.deref().y_44.set(FUN_800fc78c(_8011d738.get()));
           }
 
           //LAB_800fce08
@@ -697,7 +698,7 @@ public final class SItem {
 
         //LAB_800fcfc0
         if(FUN_801040c0(_8011d73c.getAddress(), 0x4L) != 0) {
-          drgn0_6666StructPtr_800bdbe4.deref()._44.set(FUN_800fc7a4(_8011d73c.get()) - 0x2L);
+          drgn0_6666StructPtr_800bdbe4.deref().y_44.set(FUN_800fc7a4(_8011d73c.get()) - 0x2L);
         }
 
         //LAB_800fcff0
@@ -742,7 +743,7 @@ public final class SItem {
 
           //LAB_800fd100
           if(FUN_801040c0(_8011d73c.getAddress(), 0x4L) != 0) {
-            drgn0_6666StructPtr_800bdbe4.deref()._44.set(FUN_800fc7ec(_8011d73c.get()) - 0x2L);
+            drgn0_6666StructPtr_800bdbe4.deref().y_44.set(FUN_800fc7ec(_8011d73c.get()) - 0x2L);
           }
 
           //LAB_800fd130
@@ -855,7 +856,7 @@ public final class SItem {
 
         if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && _8011d740.get() >= 0x2L) {
           _8011d740.subu(0x1L);
-          drgn0_6666StructPtr_800bdbe8.deref()._44.set(FUN_800fc84c(_8011d740.get()));
+          drgn0_6666StructPtr_800bdbe8.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
           playSound(0x1L);
         }
 
@@ -863,7 +864,7 @@ public final class SItem {
         //LAB_800fd4e8
         if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && _8011d740.get() < 0x2L) {
           _8011d740.addu(0x1L);
-          drgn0_6666StructPtr_800bdbe8.deref()._44.set(FUN_800fc84c(_8011d740.get()));
+          drgn0_6666StructPtr_800bdbe8.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
           playSound(0x1L);
         }
 
@@ -905,24 +906,24 @@ public final class SItem {
 
         if((inventoryJoypadInput_800bdc44.get() & 0x8000L) != 0 && _8011d744.get() % 3 > 0) {
           _8011d744.subu(0x1L);
-          drgn0_6666StructPtr_800bdbec.deref()._40.set(FUN_800fc880(_8011d744.get()));
-          drgn0_6666StructPtr_800bdbec.deref()._44.set(FUN_800fc8a8(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().x_40.set(FUN_800fc880(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().y_44.set(FUN_800fc8a8(_8011d744.get()));
           playSound(0x1L);
         }
 
         //LAB_800fd6b8
         if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && _8011d744.get() % 3 < 0x2L) {
           _8011d744.addu(0x1L);
-          drgn0_6666StructPtr_800bdbec.deref()._40.set(FUN_800fc880(_8011d744.get()));
-          drgn0_6666StructPtr_800bdbec.deref()._44.set(FUN_800fc8a8(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().x_40.set(FUN_800fc880(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().y_44.set(FUN_800fc8a8(_8011d744.get()));
           playSound(0x1L);
         }
 
         //LAB_800fd730
         if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && _8011d744.get() >= 0x3L) {
           _8011d744.subu(0x3L);
-          drgn0_6666StructPtr_800bdbec.deref()._40.set(FUN_800fc880(_8011d744.get()));
-          drgn0_6666StructPtr_800bdbec.deref()._44.set(FUN_800fc8a8(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().x_40.set(FUN_800fc880(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().y_44.set(FUN_800fc8a8(_8011d744.get()));
           playSound(0x1L);
         }
 
@@ -930,8 +931,8 @@ public final class SItem {
         //LAB_800fd790
         if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && _8011d744.get() < 0x3L) {
           _8011d744.addu(0x3L);
-          drgn0_6666StructPtr_800bdbec.deref()._40.set(FUN_800fc880(_8011d744.get()));
-          drgn0_6666StructPtr_800bdbec.deref()._44.set(FUN_800fc8a8(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().x_40.set(FUN_800fc880(_8011d744.get()));
+          drgn0_6666StructPtr_800bdbec.deref().y_44.set(FUN_800fc8a8(_8011d744.get()));
           playSound(0x1L);
         }
 
@@ -987,7 +988,7 @@ public final class SItem {
         }
 
         //LAB_800fd964
-        drgn0_6666StructPtr_800bdbe8.deref()._44.set(FUN_800fc804(_8011d740.get()));
+        drgn0_6666StructPtr_800bdbe8.deref().y_44.set(FUN_800fc804(_8011d740.get()));
         _8011d750.setu(FUN_801045fc(_800bdbb8.offset(_8011d734.get() * 0x4L).get()));
         FUN_80102660(_8011d734.get(), _8011d740.get(), _8011d744.get(), 0xffL);
         inventoryMenuState_800bdc28.setu(0xfL);
@@ -1002,7 +1003,7 @@ public final class SItem {
         }
 
         if(FUN_80103f00(_8011d740.getAddress(), _8011d744.getAddress(), 0x4L, _8011d750.get(), 0x1L) != 0) {
-          drgn0_6666StructPtr_800bdbe8.deref()._44.set(FUN_800fc804(_8011d740.get()));
+          drgn0_6666StructPtr_800bdbe8.deref().y_44.set(FUN_800fc804(_8011d740.get()));
         }
 
         //LAB_800fda58
@@ -6089,7 +6090,8 @@ public final class SItem {
       //LAB_80103108
       for(int s0 = 0; s0 < 3; s0++) {
         final long v1 = a0 + s0;
-        FUN_80108a6c(v1 & 0xffL, a1 + v1 * 0x3cL, FUN_800fc84c(s0), a2 == 0xffL ? 1 : 0);
+        //TODO memcard struct
+        FUN_80108a6c(v1 & 0xffL, MEMORY.ref(4, a1 + v1 * 0x3cL, MemcardDataStruct3c::new), FUN_800fc84c(s0), a2 == 0xffL ? 1 : 0);
       }
     }
 
@@ -6113,8 +6115,8 @@ public final class SItem {
 
   @Method(0x801033e8L)
   public static void FUN_801033e8(final Drgn0_6666Struct58 a0) {
-    final long s0 = a0._40.get();
-    final long s1 = a0._44.get();
+    final long s0 = a0.x_40.get();
+    final long s1 = a0.y_44.get();
 
     unloadDrgn0_6666Struct(a0);
 
@@ -6191,8 +6193,8 @@ public final class SItem {
 
       FUN_80104b1c(s0, s1);
 
-      s0._40.add(a1);
-      s0._44.add(a2);
+      s0.x_40.add(a1);
+      s0.y_44.add(a2);
     }
 
     //LAB_801037f4
@@ -6203,12 +6205,12 @@ public final class SItem {
     final Drgn0_6666Struct58 v1 = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
 
     if((int)a1 >= (int)a0) {
-      v1._04.set(a0);
+      v1.charIndex_04.set(a0);
       v1._10.set(a0);
       v1._14.set(a1);
     } else {
       //LAB_80103870
-      v1._04.set(a0);
+      v1.charIndex_04.set(a0);
       v1._10.set(a1);
       v1._14.set(a0);
       v1._00.or(0x20L);
@@ -6222,8 +6224,8 @@ public final class SItem {
     //LAB_801038a4
     v1._2c.set(0x19L);
     v1._30.set(0);
-    v1._40.set(a2);
-    v1._44.set(a3);
+    v1.x_40.set(a2);
+    v1.y_44.set(a3);
 
     return v1;
   }
@@ -6513,15 +6515,15 @@ public final class SItem {
   @Method(0x80104b1cL)
   public static void FUN_80104b1c(final Drgn0_6666Struct58 a0, final long a1) {
     if(MEMORY.ref(1, a1).get() != 0xffL) {
-      a0._04.set(MEMORY.ref(1, a1).get());
+      a0.charIndex_04.set(MEMORY.ref(1, a1).get());
       a0._00.or(0x4L);
     }
 
     //LAB_80104b40
     a0._2c.set(0x19L);
     a0._30.set(0);
-    a0._40.set(MEMORY.ref(2, a1).offset(0x2L).get());
-    a0._44.set(MEMORY.ref(2, a1).offset(0x4L).get());
+    a0.x_40.set(MEMORY.ref(2, a1).offset(0x2L).get());
+    a0.y_44.set(MEMORY.ref(2, a1).offset(0x4L).get());
   }
 
   @Method(0x80104b60L)
@@ -6558,7 +6560,7 @@ public final class SItem {
     if(v0 != 0) {
       final Drgn0_6666Struct58 drgn = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = drgn._00.get();
-      drgn._04.set(s0);
+      drgn.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6569,8 +6571,8 @@ public final class SItem {
       //LAB_80104cdc
       drgn._00.set(v0);
       drgn._2c.set(0x19L);
-      drgn._40.set(s3 & 0xffffL);
-      drgn._44.set(a1 & 0xffffL);
+      drgn.x_40.set(s3 & 0xffffL);
+      drgn.y_44.set(a1 & 0xffffL);
       drgn._30.set(0);
       drgn._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6586,7 +6588,7 @@ public final class SItem {
     s0 = s1 - v0;
     final Drgn0_6666Struct58 drgn = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0 = drgn._00.get();
-    drgn._04.set(s0);
+    drgn.charIndex_04.set(s0);
     if((sp10 & 0x2L) != 0) {
       v0 = v0 | 0xcL;
     } else {
@@ -6597,8 +6599,8 @@ public final class SItem {
     //LAB_80104d7c
     drgn._00.set(v0);
     drgn._2c.set(0x19L);
-    drgn._40.set(s3 & 0xffffL);
-    drgn._44.set(a1 & 0xffffL);
+    drgn.x_40.set(s3 & 0xffffL);
+    drgn.y_44.set(a1 & 0xffffL);
     drgn._30.set(0);
     drgn._3c.set(0x21);
     sp10 |= 0x1L;
@@ -6631,7 +6633,7 @@ public final class SItem {
     if(v0 != 0) {
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6642,8 +6644,8 @@ public final class SItem {
       //LAB_80104e88
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6662,7 +6664,7 @@ public final class SItem {
       //LAB_80104f18
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6673,8 +6675,8 @@ public final class SItem {
       //LAB_80104f4c
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6690,7 +6692,7 @@ public final class SItem {
     s0 = s1 - v0;
     final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0 = struct._00.get();
-    struct._04.set(s0);
+    struct.charIndex_04.set(s0);
     if((sp10 & 0x2L) != 0) {
       v0 = v0 | 0xcL;
     } else {
@@ -6701,8 +6703,8 @@ public final class SItem {
     //LAB_80104fec
     struct._00.set(v0);
     struct._2c.set(0x19L);
-    struct._40.set(s3 & 0xffffL);
-    struct._44.set(s4 & 0xffffL);
+    struct.x_40.set(s3 & 0xffffL);
+    struct.y_44.set(s4 & 0xffffL);
     struct._30.set(0);
     struct._3c.set(0x21);
     sp10 |= 0x1L;
@@ -6736,7 +6738,7 @@ public final class SItem {
     if(v0 != 0) {
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6747,8 +6749,8 @@ public final class SItem {
       //LAB_80105404
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6767,7 +6769,7 @@ public final class SItem {
       //LAB_80105498
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6778,8 +6780,8 @@ public final class SItem {
       //LAB_801054cc
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s4 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s4 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6798,7 +6800,7 @@ public final class SItem {
       //LAB_8010555c
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6809,8 +6811,8 @@ public final class SItem {
       //LAB_80105590
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s4 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s4 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6826,7 +6828,7 @@ public final class SItem {
     s0 = s1 - v0;
     final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0 = struct._00.get();
-    struct._04.set(s0);
+    struct.charIndex_04.set(s0);
     if((sp10 & 0x2L) != 0) {
       v0 = v0 | 0xcL;
     } else {
@@ -6837,8 +6839,8 @@ public final class SItem {
     //LAB_80105630
     struct._00.set(v0);
     struct._2c.set(0x19L);
-    struct._40.set(s3 & 0xffffL);
-    struct._44.set(s5 & 0xffffL);
+    struct.x_40.set(s3 & 0xffffL);
+    struct.y_44.set(s5 & 0xffffL);
     struct._30.set(0);
     struct._3c.set(0x21);
     sp10 |= 0x1L;
@@ -6893,7 +6895,7 @@ public final class SItem {
     if(v0 != 0) {
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6904,8 +6906,8 @@ public final class SItem {
       //LAB_80105788
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s6 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s6 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6930,7 +6932,7 @@ public final class SItem {
       //LAB_80105830
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6941,8 +6943,8 @@ public final class SItem {
       //LAB_80105864
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s6 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s6 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -6967,7 +6969,7 @@ public final class SItem {
       //LAB_80105908
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -6978,8 +6980,8 @@ public final class SItem {
       //LAB_8010593c
       struct._00.set(v0);
       struct._2c.set(0x19L);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s6 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s6 & 0xffffL);
       struct._30.set(0);
       struct._3c.set(0x21);
       sp10 |= 0x1L;
@@ -7000,7 +7002,7 @@ public final class SItem {
     s0 = s1 - v0;
     final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0 = struct._00.get();
-    struct._04.set(s0);
+    struct.charIndex_04.set(s0);
     if((sp10 & 0x2L) != 0) {
       v0 = v0 | 0xcL;
     } else {
@@ -7013,8 +7015,8 @@ public final class SItem {
     struct._2c.set(0x19L);
     struct._30.set(s4);
     struct._3c.set(0x21);
-    struct._40.set(s3 & 0xffffL);
-    struct._44.set(s6 & 0xffffL);
+    struct.x_40.set(s3 & 0xffffL);
+    struct.y_44.set(s6 & 0xffffL);
     sp10 |= 0x1L;
   }
 
@@ -7046,7 +7048,7 @@ public final class SItem {
     if(v0 != 0) {
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7059,8 +7061,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s4 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s4 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       sp10 |= 0x1L;
     }
 
@@ -7077,7 +7079,7 @@ public final class SItem {
       //LAB_80105ba8
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7090,8 +7092,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       sp10 |= 0x1L;
     }
 
@@ -7108,7 +7110,7 @@ public final class SItem {
       //LAB_80105c70
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7121,8 +7123,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       sp10 |= 0x1L;
     }
 
@@ -7139,7 +7141,7 @@ public final class SItem {
       //LAB_80105d38
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7152,8 +7154,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       sp10 |= 0x1L;
     }
 
@@ -7170,7 +7172,7 @@ public final class SItem {
       //LAB_80105dfc
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp10 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7183,8 +7185,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s5 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s5 & 0xffffL);
       sp10 |= 0x1L;
     }
 
@@ -7198,7 +7200,7 @@ public final class SItem {
     s0 = s1 - v0;
     final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0 = struct._00.get();
-    struct._04.set(s0);
+    struct.charIndex_04.set(s0);
     if((sp10 & 0x2L) != 0) {
       v0 = v0 | 0xcL;
     } else {
@@ -7211,8 +7213,8 @@ public final class SItem {
     struct._2c.set(0x19L);
     struct._30.set(0);
     struct._3c.set(0x21);
-    struct._40.set(s3 & 0xffffL);
-    struct._44.set(s5 & 0xffffL);
+    struct.x_40.set(s3 & 0xffffL);
+    struct.y_44.set(s5 & 0xffffL);
     sp10 |= 0x1L;
   }
 
@@ -7245,7 +7247,7 @@ public final class SItem {
       //LAB_80105fc4
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7258,8 +7260,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s2 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s2 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7276,7 +7278,7 @@ public final class SItem {
       //LAB_8010608c
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7289,8 +7291,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7308,7 +7310,7 @@ public final class SItem {
       //LAB_80106158
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7321,8 +7323,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7339,7 +7341,7 @@ public final class SItem {
       //LAB_80106220
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7352,8 +7354,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7370,7 +7372,7 @@ public final class SItem {
       //LAB_801062e8
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7383,8 +7385,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7401,7 +7403,7 @@ public final class SItem {
       //LAB_801063b0
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7414,8 +7416,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7432,7 +7434,7 @@ public final class SItem {
       //LAB_80106474
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7445,8 +7447,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s5 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s5 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7464,7 +7466,7 @@ public final class SItem {
       //LAB_8010652c
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7477,8 +7479,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(s4 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(s4 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7523,7 +7525,7 @@ public final class SItem {
       //LAB_801077f0
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7536,8 +7538,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s2 & 0xffffL);
-      struct._44.set(a1 & 0xffffL);
+      struct.x_40.set(s2 & 0xffffL);
+      struct.y_44.set(a1 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7554,7 +7556,7 @@ public final class SItem {
       //LAB_801078b4
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7567,8 +7569,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s4 & 0xffffL);
-      struct._44.set(a1 & 0xffffL);
+      struct.x_40.set(s4 & 0xffffL);
+      struct.y_44.set(a1 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7586,7 +7588,7 @@ public final class SItem {
       //LAB_8010796c
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp3c & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7599,8 +7601,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(a1 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(a1 & 0xffffL);
       sp3c |= 0x1L;
     }
 
@@ -7633,7 +7635,7 @@ public final class SItem {
       //LAB_80107a80
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp34 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7646,8 +7648,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(a1 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(a1 & 0xffffL);
       sp34 |= 0x1L;
     }
 
@@ -7666,7 +7668,7 @@ public final class SItem {
       //LAB_80107b38
       final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0 = struct._00.get();
-      struct._04.set(s0);
+      struct.charIndex_04.set(s0);
       if((sp34 & 0x2L) != 0) {
         v0 = v0 | 0xcL;
       } else {
@@ -7679,8 +7681,8 @@ public final class SItem {
       struct._2c.set(0x19L);
       struct._30.set(0);
       struct._3c.set(0x21);
-      struct._40.set(s3 & 0xffffL);
-      struct._44.set(a1 & 0xffffL);
+      struct.x_40.set(s3 & 0xffffL);
+      struct.y_44.set(a1 & 0xffffL);
       sp34 |= 0x1L;
     }
 
@@ -7691,12 +7693,12 @@ public final class SItem {
   public static void FUN_80107cb4(long a0, long a1, long a2) {
     final Drgn0_6666Struct58 v0 = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
     v0._00.or(0x4L);
-    v0._04.set(a2);
+    v0.charIndex_04.set(a2);
     v0._2c.set(0x19L);
     v0._30.set(0x7ca9L);
     v0._3c.set(0x21);
-    v0._40.set(a0 & 0xffffL);
-    v0._44.set(a1 & 0xffffL);
+    v0.x_40.set(a0 & 0xffffL);
+    v0.y_44.set(a1 & 0xffffL);
   }
 
   @Method(0x80107dd4L)
@@ -7707,12 +7709,12 @@ public final class SItem {
       //LAB_80107e08
       final Drgn0_6666Struct58 v0 = FUN_80023b54(drgn0File6666Address_800bdc3c.get(), null);
       v0._00.or(0x4L);
-      v0._04.set(0xdaL);
+      v0.charIndex_04.set(0xdaL);
       v0._2c.set(0x19L);
       v0._30.set(0x7ca9L);
       v0._3c.set(0x21);
-      v0._40.set((a0 + 0x1eL) & 0xffffL);
-      v0._44.set(a1 & 0xffffL);
+      v0.x_40.set((a0 + 0x1eL) & 0xffffL);
+      v0.y_44.set(a1 & 0xffffL);
     }
 
     //LAB_80107e58
@@ -7787,11 +7789,11 @@ public final class SItem {
         if(a2 < 0x9L) {
           final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
-          struct._04.set(a2);
+          struct.charIndex_04.set(a2);
           struct._2c.add(0x1L);
           struct._3c.set(0x21);
-          struct._40.set((short)a0 + 0x8L);
-          struct._44.set((short)a1 + 0x8L);
+          struct.x_40.set((short)a0 + 0x8L);
+          struct.y_44.set((short)a1 + 0x8L);
         }
 
         //LAB_80108098
@@ -7833,37 +7835,32 @@ public final class SItem {
   }
 
   @Method(0x80108a6cL)
-  public static void FUN_80108a6c(long a0, long a1, long a2, long a3) {
-    //TODO a1 struct (I think it's straight up memcard data)
-
+  public static void FUN_80108a6c(final long a0, final MemcardDataStruct3c a1, final long a2, final long a3) {
     if((a3 & 0xffL) != 0) {
       FUN_80104c30(0x15L, a2 & 0xffffL, (a0 & 0xffL) + 0x1L);
     }
 
     //LAB_80108ab8
-    long v1 = MEMORY.ref(1, a1).offset(0x4L).get();
-    if(v1 == 0xfcL) {
+    if(a1._04.get() == 0xfcL) {
       //LAB_80108b04
       //LAB_80108b20
       FUN_80103cc4(_8011d04c, 0x20L, (short)a2, 0x4L);
       //LAB_80108ae8
-    } else if(v1 == 0xfeL) {
+    } else if(a1._04.get() == 0xfeL) {
       //LAB_80108b10
       //LAB_80108b20
       FUN_80103cc4(_8011c88c, 0x20L, (short)a2, 0x4L);
-    } else if(v1 == 0xffL) {
+    } else if(a1._04.get() == 0xffL) {
       //LAB_80108b1c
       //LAB_80108b20
       FUN_80103cc4(_8011c7d8, 0x20L, (short)a2, 0x4L);
-    } else if((int)v1 >= 0 && (int)v1 < 0xfL) {
+    } else if(a1._04.get() >= 0 && a1._04.get() < 0xfL) {
       //LAB_80108b3c
-      v1 = MEMORY.ref(1, a1).offset(0x2dL).get();
-
       final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> v1_0;
-      if(v1 == 0x1L) {
+      if(a1._2d.get() == 0x1L) {
         //LAB_80108b5c
         v1_0 = _8011c1ec;
-      } else if(v1 == 0x3L) {
+      } else if(a1._2d.get() == 0x3L) {
         //LAB_80108b78
         v1_0 = _80114248;
       } else {
@@ -7872,65 +7869,63 @@ public final class SItem {
       }
 
       //LAB_80108ba0
-      FUN_80103e90(v1_0.get((int)MEMORY.ref(1, a1).offset(0x2cL).get()).deref(), 0x116L, (a2 + 0x2fL) & 0xffffL, 0x4L);
+      FUN_80103e90(v1_0.get(a1._2c.get()).deref(), 0x116L, (a2 + 0x2fL) & 0xffffL, 0x4L);
 
       if((a3 & 0xffL) != 0) {
         FUN_80103818(0x4cL, 0x4cL, 0x10L, a2)._3c.set(0x21);
         FUN_80103818(0x4dL, 0x4dL, 0xc0L, a2)._3c.set(0x21);
-        long s2 = MEMORY.ref(4, a1).offset(0x8L).get();
 
-        if(s2 < 0x9L) {
+        // Load char 0
+        if(a1.char0Index_08.get() < 0x9L) {
           final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
-          struct._04.set(s2);
+          struct.charIndex_04.set(a1.char0Index_08);
           struct._2c.add(0x1L);
           struct._3c.set(0x21);
-          struct._40.set(0x26L);
-          struct._44.set(a2 + 0x8L);
+          struct.x_40.set(0x26L);
+          struct.y_44.set(a2 + 0x8L);
         }
 
+        // Load char 1
         //LAB_80108c78
-        s2 = MEMORY.ref(4, a1).offset(0xcL).get();
-
-        if(s2 < 0x9L) {
+        if(a1.char1Index_0c.get() < 0x9L) {
           final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
-          struct._04.set(s2);
+          struct.charIndex_04.set(a1.char1Index_0c);
           struct._2c.add(0x1L);
           struct._3c.set(0x21);
-          struct._40.set(0x5aL);
-          struct._44.set(a2 + 0x8L);
+          struct.x_40.set(0x5aL);
+          struct.y_44.set(a2 + 0x8L);
         }
 
+        // Load char 2
         //LAB_80108cd4
-        s2 = MEMORY.ref(4, a1).offset(0x10L).get();
-
-        if(s2 < 0x9L) {
+        if(a1.char2Index_10.get() < 0x9L) {
           final Drgn0_6666Struct58 struct = FUN_80023b54(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
-          struct._04.set(s2);
+          struct.charIndex_04.set(a1.char2Index_10);
           struct._2c.add(0x1L);
           struct._3c.set(0x21);
-          struct._40.set(0x8eL);
-          struct._44.set(a2 + 0x8L);
+          struct.x_40.set(0x8eL);
+          struct.y_44.set(a2 + 0x8L);
         }
 
         //LAB_80108d30
         long s0 = (a2 + 0x6L) & 0xffffL;
-        FUN_80104c30(0x0e0L, s0, MEMORY.ref(1, a1).offset(0x14L).get());
-        FUN_80104c30(0x10dL, s0, MEMORY.ref(1, a1).offset(0x15L).get());
-        FUN_80105350(0x12eL, s0, MEMORY.ref(2, a1).offset(0x16L).getSigned());
-        FUN_80105350(0x14cL, s0, MEMORY.ref(2, a1).offset(0x18L).getSigned());
+        FUN_80104c30(0x0e0L, s0, a1._14.get());
+        FUN_80104c30(0x10dL, s0, a1._15.get());
+        FUN_80105350(0x12eL, s0, a1._16.get());
+        FUN_80105350(0x14cL, s0, a1._18.get());
 
         s0 = (a2 + 0x11L) & 0xffffL;
-        FUN_80105f2c(0x0f5L, s0, MEMORY.ref(4, a1).offset(0x1cL).get(), 0);
-        FUN_80107764(0x132L, s0, FUN_80023674(MEMORY.ref(4, a1).offset(0x20L).get(), 0), 0x1L);
+        FUN_80105f2c(0x0f5L, s0, a1._1c.get(), 0);
+        FUN_80107764(0x132L, s0, FUN_80023674(a1._20.get(), 0), 0x1L);
         FUN_80107cb4(0x144L, s0, 0xaL);
-        FUN_801079fc(0x14aL, s0, FUN_80023674(MEMORY.ref(4, a1).offset(0x20L).get(), 0x1L), 0x1L);
+        FUN_801079fc(0x14aL, s0, FUN_80023674(a1._20.get(), 0x1L), 0x1L);
         FUN_80107cb4(0x156L, s0, 0xaL);
-        FUN_801079fc(0x15cL, s0, FUN_80023674(MEMORY.ref(4, a1).offset(0x20L).get(), 0x2L), 0x1L);
-        FUN_80104c30(0x158L, (a2 + 0x22L) & 0xffffL, MEMORY.ref(4, a1).offset(0x28L).get());
-        FUN_801098c0(a1 + 0x24L, 0xdfL, (a2 + 0x1bL) & 0xffL);
+        FUN_801079fc(0x15cL, s0, FUN_80023674(a1._20.get(), 0x2L), 0x1L);
+        FUN_80104c30(0x158L, (a2 + 0x22L) & 0xffffL, a1._28.get());
+        FUN_801098c0(a1._24.getAddress() /*TODO*/, 0xdfL, (a2 + 0x1bL) & 0xffL);
       }
     }
 
@@ -7946,14 +7941,14 @@ public final class SItem {
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x28);
     final Value sp18 = tmp.get();
 
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x00L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x04L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x08L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x0cL));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x10L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x14L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x18L));
-    sp18.offset(4, 0x0L).setu(_800fbabc.offset(0x1cL));
+    sp18.offset(4, 0x00L).setu(_800fbabc.offset(0x00L));
+    sp18.offset(4, 0x04L).setu(_800fbabc.offset(0x04L));
+    sp18.offset(4, 0x08L).setu(_800fbabc.offset(0x08L));
+    sp18.offset(4, 0x0cL).setu(_800fbabc.offset(0x0cL));
+    sp18.offset(4, 0x10L).setu(_800fbabc.offset(0x10L));
+    sp18.offset(4, 0x14L).setu(_800fbabc.offset(0x14L));
+    sp18.offset(4, 0x18L).setu(_800fbabc.offset(0x18L));
+    sp18.offset(4, 0x1cL).setu(_800fbabc.offset(0x1cL));
 
     //LAB_80109934
     for(long s1 = 0; s1 < 8; s1++) {
@@ -8365,7 +8360,7 @@ public final class SItem {
           }
         } else if(v1 == 0x1L) {
           //LAB_8010f014
-          a0.drgn0_6666_04.deref()._44.set(a0._18.get() * 0xeL + s4 + 0x5L);
+          a0.drgn0_6666_04.deref().y_44.set(a0._18.get() * 0xeL + s4 + 0x5L);
         }
 
         break;
