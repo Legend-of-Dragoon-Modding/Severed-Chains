@@ -68,7 +68,7 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004c6f8;
+import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
@@ -930,7 +930,7 @@ public final class Ttle {
 
         if(_800ce778.get() == 0) {
           mono_800bb0a8.xoru(0b1);
-          FUN_8004c6f8(mono_800bb0a8.get());
+          setMonoOrStereo(mono_800bb0a8.get());
         } else {
           vibrationEnabled_800bb0a9.xor(0b1);
           FUN_8002379c();

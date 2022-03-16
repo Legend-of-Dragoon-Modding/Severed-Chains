@@ -194,20 +194,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
-import static legend.game.Scus94491BpeSegment_800b._800bdc58;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba4;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe4;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdc20;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
@@ -359,15 +349,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bf170;
 import static legend.game.Scus94491BpeSegment_800b._800bf174;
 import static legend.game.Scus94491BpeSegment_800b._800bf178;
 import static legend.game.Scus94491BpeSegment_800b._800bf17c;
-import static legend.game.Scus94491BpeSegment_800b.memcardDest_800bf190;
-import static legend.game.Scus94491BpeSegment_800b.memcardFileHandle_800bf184;
 import static legend.game.Scus94491BpeSegment_800b._800bf1b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf1b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf1bc;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c0;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c4;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c8;
-import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
 import static legend.game.Scus94491BpeSegment_800b._800bf1d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf200;
 import static legend.game.Scus94491BpeSegment_800b.cardDoneRead_800bf270;
@@ -379,11 +366,24 @@ import static legend.game.Scus94491BpeSegment_800b.cardErrorEject_800bf27c;
 import static legend.game.Scus94491BpeSegment_800b.cardErrorWrite_800bf274;
 import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
+import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb98;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba4;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba8;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe0;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe4;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe8;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
+import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
+import static legend.game.Scus94491BpeSegment_800b.memcardDest_800bf190;
+import static legend.game.Scus94491BpeSegment_800b.memcardFileHandle_800bf184;
 import static legend.game.Scus94491BpeSegment_800b.memcardLength_800bf18c;
 import static legend.game.Scus94491BpeSegment_800b.memcardPos_800bf188;
 import static legend.game.Scus94491BpeSegment_800b.memcardStruct28ArrPtr_800bdc50;
-import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.memcardVsyncCallbacks_800bf240;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
@@ -3904,9 +3904,21 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002dbdcL)
-  public static long FUN_8002dbdc(final long a0) {
-    assert false;
-    return 0;
+  public static long FUN_8002dbdc(final long port) {
+    if((int)_800bf170.get() > 0) {
+      //LAB_8002dc24
+      LOGGER.error("Access denied: multiple events open");
+      throw new RuntimeException("Access denied: multiple events open");
+    }
+
+    _800bf170.setu(0x1L);
+    _800bf174.setu(0);
+    _800bf178.setu(0);
+    cardPort_800bf180.setu(port);
+    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dc44", long.class));
+
+    //LAB_8002dc34
+    return 0x1L;
   }
 
   @Method(0x8002e4f4L)
@@ -3969,7 +3981,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002e654
-      _800bf170.offset(0x4L).setu(FUN_8002f244(a0_0));
+      _800bf174.setu(FUN_8002f244(a0_0));
       return 0x1L;
     }
 
@@ -3989,7 +4001,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002e908L)
-  public static long FUN_8002e908(final long port, final String saveName, final long memcardDest, final long memcardPos, final long memcardLength) {
+  public static long FUN_8002e908(final long port, final String saveName, long memcardDest, long memcardPos, long memcardLength) {
     if((int)_800bf170.get() > 0) {
       LOGGER.error("Access denied: system busy");
       throw new RuntimeException("Access denied: system busy");
@@ -4019,15 +4031,33 @@ public final class Scus94491BpeSegment_8002 {
     FUN_8002f344(port, s0);
     strcat(MEMORY.ref(0x20, s0).cast(CString::new), saveName);
 
-    _800bf170.setu(0x3L);
-    _800bf174.setu(0);
-    _800bf178.setu(0);
+//    _800bf170.setu(0x3L);
+//    _800bf174.setu(0);
+//    _800bf178.setu(0);
     cardPort_800bf180.setu(port);
     memcardPos_800bf188.setu(memcardPos);
     memcardLength_800bf18c.setu(memcardLength);
     memcardDest_800bf190.setu(memcardDest);
 
-    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002ea20", long.class));
+//    MEMCARD.directRead((int)memcardPos / 0x80, memcardDest, (int)memcardLength / 0x80);
+
+    final int file = open(_800bf170.offset(1, 0x24L).getString(), 0x8001);
+
+    while(lseek(file, memcardPos, 0) != memcardPos) {
+      DebugHelper.sleep(1);
+    }
+
+    while(read(file, memcardDest, (int)memcardLength) != 0) {
+      DebugHelper.sleep(1);
+    }
+
+    close(file);
+
+    _800bf170.setu(0);
+    _800bf174.setu(0);
+    _800bf178.setu(1);
+
+//    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002ea20", long.class));
 
     //LAB_8002e9f8
     return 0x1L;
@@ -4047,15 +4077,13 @@ public final class Scus94491BpeSegment_8002 {
 
     if(v1 == 0xaL) {
       //LAB_8002ea90
-      if(_800bf170.offset(0x4L).get() != 0) {
+      if(_800bf174.get() != 0) {
         return 0x1L;
       }
 
-      _800bf170.offset(0x14L).setu(0x1L);
-
       memcardFileHandle_800bf184.set(open(_800bf170.offset(1, 0x24L).getString(), 0x8001));
       if(memcardFileHandle_800bf184.get() < 0) {
-        _800bf170.offset(0x4L).setu(0x5L);
+        _800bf174.setu(0x5L);
         return 0x1L;
       }
 

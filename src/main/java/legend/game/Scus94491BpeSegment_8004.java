@@ -5910,8 +5910,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c6f8L)
-  public static void FUN_8004c6f8(final long mono) {
-    assert false;
+  public static void setMonoOrStereo(final long mono) {
+    _800c6630.mono_36.set((int)mono);
   }
 
   @Method(0x8004c894L)
