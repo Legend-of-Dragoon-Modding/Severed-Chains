@@ -20,8 +20,4 @@ public final class NotYetLoaded {
   public static void FUN_800ec0b0() {
     assert false;
   }
-
-  public static void FUN_800c8af4() {
-    assert false;
-  }
 }

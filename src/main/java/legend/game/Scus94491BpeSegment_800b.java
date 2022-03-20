@@ -65,6 +65,8 @@ public final class Scus94491BpeSegment_800b {
   public static final ArrayRef<UnsignedIntRef> scriptFlags2_800bac84 = MEMORY.ref(4, 0x800bac84L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
   public static final ArrayRef<UnsignedIntRef> scriptFlags1_800bad04 = MEMORY.ref(4, 0x800bad04L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
 
+  public static final Value _800bad24 = MEMORY.ref(4, 0x800bad24L);
+
   public static final Value _800bad64 = MEMORY.ref(1, 0x800bad64L);
 
   public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
@@ -297,6 +299,11 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdf38 = MEMORY.ref(4, 0x800bdf38L);
 
   public static final Value _800be358 = MEMORY.ref(4, 0x800be358L);
+
+  public static final Value _800be578 = MEMORY.ref(4, 0x800be578L);
+
+  public static final Value _800be584 = MEMORY.ref(2, 0x800be584L);
+  public static final Value _800be586 = MEMORY.ref(2, 0x800be586L);
 
   public static final Value _800be5b8 = MEMORY.ref(4, 0x800be5b8L);
   public static final Value _800be5bc = MEMORY.ref(4, 0x800be5bcL);

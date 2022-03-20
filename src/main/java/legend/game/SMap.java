@@ -1023,7 +1023,7 @@ public final class SMap {
       CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 3);
       CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 4);
       CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 5);
-      CPU.COP2(0x28_0030L);
+      CPU.COP2(0x28_0030L); // Perspective transform triple
       length--;
 
       if((int)CPU.CFC2(31) >= 0) {
@@ -1116,7 +1116,7 @@ public final class SMap {
       CPU.MTC2(MEMORY.ref(4, vert1).offset(0x4L).get(), 3);
       CPU.MTC2(MEMORY.ref(4, vert2).offset(0x0L).get(), 4);
       CPU.MTC2(MEMORY.ref(4, vert2).offset(0x4L).get(), 5);
-      CPU.COP2(0x28_0030L);
+      CPU.COP2(0x28_0030L); // Perspective transform triple
 
       if((int)CPU.CFC2(31) >= 0) {
         CPU.COP2(0x140_0006L);
@@ -1322,7 +1322,7 @@ public final class SMap {
         CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 3);
         CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 4);
         CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 5);
-        CPU.COP2(0x28_0030L);
+        CPU.COP2(0x28_0030L); // Perspective transform triple
         MEMORY.ref(4, t0-0x16L).setu(MEMORY.ref(4, t3).offset(-0x8L));
         MEMORY.ref(4, t0-0x0aL).setu(MEMORY.ref(4, t3).offset(-0x4L));
         length--;
@@ -1409,7 +1409,7 @@ public final class SMap {
       CPU.MTC2(MEMORY.ref(4, vert1).offset(0x4L).get(), 3);
       CPU.MTC2(MEMORY.ref(4, vert2).offset(0x0L).get(), 4);
       CPU.MTC2(MEMORY.ref(4, vert2).offset(0x4L).get(), 5);
-      CPU.COP2(0x28_0030L);
+      CPU.COP2(0x28_0030L); // Perspective transform triple
 
       if((int)CPU.CFC2(31) >= 0) {
         CPU.COP2(0x140_0006L);

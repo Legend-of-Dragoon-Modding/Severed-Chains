@@ -1011,6 +1011,7 @@ public final class Scus94491BpeSegment_8004 {
     matrix.set(5, (short)(t7 - t5));
   }
 
+  /** Seems to calculate a Y value for something */
   @Method(0x80040b90L)
   public static long FUN_80040b90(long a0, long a1) {
     final long v0;
@@ -1090,6 +1091,12 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80040d10L)
   public static void patchC0TableAgain() {
     LOGGER.warn("Skipping bios patch");
+  }
+
+  @Method(0x80040ea0L)
+  public static long Lzc(final long a0) {
+    CPU.MTC2(a0, 30);
+    return CPU.MFC2(31);
   }
 
   @Method(0x80041070L)

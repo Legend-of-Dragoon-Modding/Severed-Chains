@@ -1732,6 +1732,7 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\S_STRM.OV_" -> MEMORY.addFunctions(SStrm.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
+      case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
       case "\\SECT\\DRGN0.BIN" -> { }
       default -> throw new RuntimeException("Loaded unknown file " + file.namePtr.deref().get());
     }
@@ -3526,6 +3527,11 @@ public final class Scus94491BpeSegment {
     //LAB_80019c70
   }
 
+  @Method(0x80019c80L)
+  public static void FUN_80019c80(long a0, long a1, long a2) {
+    assert false;
+  }
+
   @Method(0x8001a4e8L)
   public static void FUN_8001a4e8() {
     //LAB_8001a50c
@@ -4820,6 +4826,44 @@ public final class Scus94491BpeSegment {
     _800bd782.addu(0x1L);
   }
 
+  @Method(0x8001eea8L)
+  public static void FUN_8001eea8(final long a0) {
+    loadedDrgnFiles_800bcf78.oru(0x8000L);
+    loadDrgnBinFile(0, 5740L + a0, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eefc", Value.class, long.class, long.class), 0, 0x4L);
+  }
+
+  @Method(0x8001eefcL)
+  public static void FUN_8001eefc(Value address, long size, long param) {
+    long v0;
+    long a0 = address.get();
+    long s0;
+    long s1;
+
+    soundMrgPtr_800bd748.set(address.deref(4).cast(MrgFile::new));
+    v0 = addToLinkedListTail(MEMORY.ref(4, a0).offset(0x28L).get());
+    s1 = soundFileArr_800bcf80.getAddress();
+    MEMORY.ref(4, s1).offset(0x154L).setu(v0);
+    memcpy(v0, a0, (int)MEMORY.ref(4, a0).offset(0x28L).get());
+    s0 = MEMORY.ref(4, s1).offset(0x154L).get();
+
+    v0 = s0 + MEMORY.ref(4, s0).offset(0x18L).get();
+    MEMORY.ref(4, s1).offset(0x158L).setu(v0);
+    v0 = s0 + MEMORY.ref(4, s0).offset(0x8L).get();
+    v0 = MEMORY.ref(2, v0).offset(0x0L).get();
+    MEMORY.ref(2, s1).offset(0x152L).setu(v0);
+    setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001efcc"));
+    v0 = loadSshdAndSoundbank(a0 + MEMORY.ref(4, a0).offset(0x28L).get(), MEMORY.ref(4, s0 + MEMORY.ref(4, s0).offset(0x20L).get(), SshdFile::new), 0x4_de90L);
+    MEMORY.ref(2, s1).offset(0x160L).setu(v0);
+    FUN_8004cb0c((short)v0, 0x7fL);
+    MEMORY.ref(2, s1).offset(0x150L).setu(0x1L);
+  }
+
+  @Method(0x8001efccL)
+  public static void FUN_8001efcc() {
+    removeFromLinkedList(soundMrgPtr_800bd748.getPointer());
+    loadedDrgnFiles_800bcf78.and(0xffff_7fffL);
+  }
+
   /**
    * Loads an audio MRG from DRGN0. File index is 5815 + index * 5.
    *
@@ -4838,6 +4882,14 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final long fileIndex = 5815 + index * 5;
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
+  }
+
+  @Method(0x8001f708L)
+  public static void FUN_8001f708(final long index, final long a1) {
+    unloadSoundFile(8);
+    loadedDrgnFiles_800bcf78.oru(0x80L);
+    final long fileIndex = 5850 + index * 5;
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class), fileIndex << 8 | a1, 0x4L);
   }
 
   @Method(0x8001f810L)

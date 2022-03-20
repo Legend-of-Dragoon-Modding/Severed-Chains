@@ -95,7 +95,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L);
   public static final EnumRef<GsOffsetType> doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L, EnumRef.of(GsOffsetType::getValue, GsOffsetType.values()));
   public static final Value _800c34d8 = MEMORY.ref(4, 0x800c34d8L);
-  public static final Value _800c34dc = MEMORY.ref(4, 0x800c34dcL);
+  public static final Value lightMode_800c34dc = MEMORY.ref(4, 0x800c34dcL);
   public static final Value _800c34e0 = MEMORY.ref(4, 0x800c34e0L);
 
   public static final MATRIX lightDirectionMatrix_800c34e8 = MEMORY.ref(4, 0x800c34e8L, MATRIX::new);

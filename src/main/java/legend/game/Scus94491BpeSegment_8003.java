@@ -31,6 +31,7 @@ import legend.core.gte.VECTOR;
 import legend.core.kernel.jmp_buf;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
+import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.BiFunctionRef;
@@ -51,6 +52,7 @@ import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.RenderStruct20;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -110,6 +112,7 @@ import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
+import static legend.game.Scus94491BpeSegment_8004.Lzc;
 import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
 import static legend.game.Scus94491BpeSegment_8005.CD_debug_80052f4c;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
@@ -299,7 +302,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c3437;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
-import static legend.game.Scus94491BpeSegment_800c._800c34dc;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
 import static legend.game.Scus94491BpeSegment_800c._800c35a4;
 import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallbackPtr_800c1bb4;
@@ -315,6 +317,7 @@ import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallback_800c1c10;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.Scus94491BpeSegment_800c.lightMode_800c34dc;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3588;
@@ -5136,6 +5139,12 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.ref(1, a0).offset(0x7L).setu(0x2cL);
   }
 
+  @Method(0x8003b5b0L)
+  public static void FUN_8003b5b0(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x8L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x38L);
+  }
+
   @Method(0x8003b630L)
   public static void FUN_8003b630(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
@@ -5670,7 +5679,7 @@ public final class Scus94491BpeSegment_8003 {
     centreScreenY_1f8003de.setu(displayHeight_1f8003e4.get() / 2);
     GsSetDrawBuffOffset();
     _800c34d8.setu(0x3fff);
-    _800c34dc.setu(0);
+    lightMode_800c34dc.setu(0);
     _800c34e0.setu(10);
   }
 
@@ -5774,6 +5783,15 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cc0cL)
   public static void getLightColour(final MATRIX mat) {
     mat.set(lightColourMatrix_800c3508);
+  }
+
+  @Method(0x8003cc60L)
+  public static void setLightMode(final long a0) {
+    if(a0 < 0 || a0 > 3) {
+      throw new RuntimeException("Invalid lighting mode " + a0);
+    }
+
+    lightMode_800c34dc.setu(a0);
   }
 
   @Method(0x8003cce0L)
@@ -6330,6 +6348,177 @@ public final class Scus94491BpeSegment_8003 {
     GsMulCoord2(matrix_800c3548, ls);
   }
 
+  @Method(0x8003dfc0L)
+  public static long FUN_8003dfc0(final RenderStruct20 s2) {
+    long v0;
+    long v1;
+    long a0;
+    long a1;
+    long a3;
+    long s0;
+    long s1;
+    long s3;
+
+    matrix_800c3548.set(matrix_800c3588);
+    FUN_8003d5d0(matrix_800c3548, -s2._18.get());
+
+    v0 = s2._0c.get() - s2._00.get();
+    a3 = v0 * v0;
+
+    v0 = s2._10.get() - s2._04.get();
+    a0 = v0 * v0;
+
+    v0 = s2._14.get() - s2._08.get();
+    v1 = v0 * v0;
+
+    s0 = a3 + a0 + v1;
+    if(s0 == 0) {
+      return 0x1L;
+    }
+
+    v0 = s2._04.get() - s2._10.get();
+    s1 = v0 * v0;
+    a1 = 0xcL - Lzc(s1);
+    if((int)a1 < 0) {
+      //LAB_8003e0e4
+      //LAB_8003e0fc
+      s3 = (s2._04.get() - s2._10.get()) * -0x1000L / SquareRoot0(s0);
+      //LAB_8003e108
+    } else if(s2._04.get() - s2._10.get() >= 0) {
+      v0 = s0 >>> a1;
+      a0 = 0xcL - a1;
+      a0 = s1 << a0;
+
+      //LAB_8003e138
+      s3 = -FUN_8003e8b4(a0 / v0);
+    } else {
+      v0 = s0 >>> a1;
+
+      //LAB_8003e14c
+      a0 = 0xcL - a1;
+      a0 = s1 << a0;
+
+      //LAB_8003e164
+      s3 = FUN_8003e8b4(a0 / v0);
+    }
+
+    //LAB_8003e174
+    v0 = s2._0c.get() - s2._00.get();
+    a0 = v0 * v0;
+
+    v0 = s2._14.get() - s2._08.get();
+    v1 = v0 * v0;
+
+    s1 = a0 + v1;
+    a1 = 0xcL - Lzc(s1);
+
+    if((int)a1 < 0) {
+      //LAB_8003e1e8
+      //LAB_8003e200
+      v0 = SquareRoot0(s1) * 0x1000L / SquareRoot0(s0);
+    } else {
+      a0 = 0xcL - a1;
+
+      //LAB_8003e20c
+      a0 = s1 << a0;
+      v0 = s0 >>> a1;
+
+      //LAB_8003e224
+      v0 = FUN_8003e8b4(a0 / v0);
+    }
+
+    //LAB_8003e230
+    final MATRIX sp0x30 = new MATRIX();
+    FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x78L);
+    MulMatrix(matrix_800c3548, sp0x30);
+
+    if(s1 != 0) {
+      s0 = s1;
+      v0 = s2._0c.get() - s2._00.get();
+      s1 = v0 * v0;
+      a1 = 0xcL - Lzc(s1);
+      if((int)a1 < 0) {
+        //LAB_8003e2c8
+        //LAB_8003e2e0
+        s3 = (s2._0c.get() - s2._00.get()) * -0x1000L / SquareRoot0(s0);
+        //LAB_8003e2ec
+      } else if(s2._0c.get() - s2._00.get() >= 0) {
+        v0 = s0 >>> a1;
+        a0 = 0xcL - a1;
+        a0 = s1 << a0;
+
+        //LAB_8003e31c
+        s3 = -FUN_8003e8b4(a0 / v0);
+      } else {
+        v0 = s0 >>> a1;
+
+        //LAB_8003e330
+        a0 = 0xcL - a1;
+        a0 = s1 << a0;
+
+        //LAB_8003e348
+        s3 = FUN_8003e8b4(a0 / v0);
+      }
+
+      //LAB_8003e358
+      v0 = s2._14.get() - s2._08.get();
+      s1 = v0 * v0;
+      a1 = 0xcL - Lzc(s1);
+      if((int)a1 < 0) {
+        //LAB_8003e3b4
+        //LAB_8003e3cc
+        v0 = (s2._14.get() - s2._08.get()) * 0x1000L / SquareRoot0(s0);
+        //LAB_8003e3d8
+      } else if(s2._14.get() - s2._08.get() >= 0) {
+        v0 = s0 >>> a1;
+        a0 = 0xcL - a1;
+        a0 = s1 << a0;
+
+        //LAB_8003e408
+        v0 = FUN_8003e8b4(a0 / v0);
+      } else {
+        v0 = s0 >>> a1;
+        //LAB_8003e41c
+        a0 = 0xcL - a1;
+        a0 = s1 << a0;
+
+        //LAB_8003e434
+        v0 = -FUN_8003e8b4(a0 / v0);
+      }
+
+      //LAB_8003e444
+      //LAB_8003e448
+      FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x79L);
+      MulMatrix(matrix_800c3548, sp0x30);
+    }
+
+    //LAB_8003e474
+    final VECTOR sp0x90 = new VECTOR();
+    sp0x90.setX((int)-s2._00.get());
+    sp0x90.setY((int)-s2._04.get());
+    sp0x90.setZ((int)-s2._08.get());
+    matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, sp0x90));
+
+    if(!s2._1c.isNull()) {
+      GsGetLw(s2._1c.deref(), sp0x30);
+
+      final MATRIX sp0x50 = new MATRIX();
+      TransposeMatrix(sp0x30, sp0x50);
+      sp0x90.set(ApplyMatrixLV(sp0x50, sp0x30.transfer));
+      sp0x50.transfer.setX(-sp0x90.getX());
+      sp0x50.transfer.setY(-sp0x90.getY());
+      sp0x50.transfer.setZ(-sp0x90.getZ());
+      GsMulCoord2(matrix_800c3548, sp0x50);
+      matrix_800c3548.set(sp0x50);
+    }
+
+    //LAB_8003e55c
+    matrix_800c3528.set(matrix_800c3548);
+
+    //LAB_8003e5a8
+    return 0;
+  }
+
   /**
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
@@ -6446,6 +6635,95 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003e724
     objTable.primitives_10.deref().get(packetStartIndex / 4).and(0xffff_0000L).or(bytesSinceModeOrFlagChange);
+  }
+
+  @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?
+  public static long FUN_8003e760(long a0) {
+    final long[] sp0x04 = new long[7];
+    final long[] sp0x24 = new long[7];
+    sp0x04[0] = a0 + 0x5d_50adL;
+    sp0x24[0] = a0 - 0x5d_50adL;
+
+    //LAB_8003e790
+    for(int a3 = 1; a3 < 7; a3++) {
+      if(a3 != 4) {
+        final long v0 = (sp0x04[a3 - 1] >> a3);
+
+        if((int)sp0x24[a3 - 1] < 0) {
+          //LAB_8003e7d0
+          sp0x04[a3] = sp0x04[a3 - 1] + (sp0x24[a3 - 1] >> a3);
+          sp0x24[a3] = sp0x24[a3 - 1] + v0;
+        } else {
+          sp0x04[a3] = sp0x04[a3 - 1] - (sp0x24[a3 - 1] >> a3);
+          sp0x24[a3] = sp0x24[a3 - 1] - v0;
+        }
+      } else {
+        //LAB_8003e7fc
+        final long v0 = (int)sp0x24[3] / 0x10L;
+
+        //LAB_8003e87c
+        if((int)sp0x24[3] >= 0) {
+          sp0x24[3] -= (int)sp0x04[3] / 0x10L;
+          sp0x04[3] -= v0;
+        } else {
+          //LAB_8003e844
+          sp0x24[3] += (int)sp0x04[3] / 0x10L;
+          sp0x04[3] += v0;
+        }
+
+        if((int)sp0x24[3] < 0) {
+          //LAB_8003e87c
+          sp0x04[4] = sp0x04[3] + (int)sp0x24[3] / 0x10L;
+          sp0x24[4] = sp0x24[3] + (int)sp0x04[3] / 0x10L;
+        } else {
+          sp0x04[4] = sp0x04[3] - (int)sp0x24[3] / 0x10L;
+          sp0x24[4] = sp0x24[3] - (int)sp0x04[3] / 0x10L;
+        }
+
+        //LAB_8003e890
+      }
+
+      //LAB_8003e894
+    }
+
+    return sp0x04[6];
+  }
+
+  @Method(0x8003e8b4L)
+  public static long FUN_8003e8b4(long a0) {
+    long v0;
+    long s0;
+
+    if(a0 == 0) {
+      return 0;
+    }
+
+    //LAB_8003e8d4
+    v0 = 0x8 - Lzc(a0);
+    if((int)v0 >= 0) {
+      s0 = (int)v0 >> 1;
+      v0 = s0 << 1;
+      a0 = (int)a0 >> v0;
+    } else {
+      //LAB_8003e8f8
+      v0 = (int)v0 >> 1;
+      s0 = v0 + 0x1L;
+      v0 = s0 << 1;
+      v0 = -v0;
+      a0 = a0 << v0;
+    }
+
+    //LAB_8003e90c
+    s0 = s0 - 0x6L;
+    if((int)s0 < 0) {
+      v0 = FUN_8003e760(a0) >> -s0;
+    } else {
+      //LAB_8003e92c
+      v0 = FUN_8003e760(a0) << s0;
+    }
+
+    //LAB_8003e938
+    return v0;
   }
 
   @Method(0x8003e958L)
@@ -6779,9 +7057,20 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(b * 16L, 0x17);
   }
 
-  @Method(0x8003f8f0L)
+  @Method(0x8003f8f0L) //Also 0x8003c6d0
   public static void setProjectionPlaneDistance(final int distance) {
     CPU.CTC2(distance, 0x1a);
+  }
+
+  @Method(0x8003f900L)
+  public static long FUN_8003f900(final SVECTOR a0, final SVECTOR sxy2, final Ref<Long> ir0, final Ref<Long> flags) {
+    CPU.MTC2(a0.getXY(), 0);
+    CPU.MTC2(a0.getZ() & 0xffffL, 1);
+    CPU.COP2(0x18_0001L); // Perspective transform single
+    sxy2.setXY(CPU.MFC2(14)); // SXY2
+    ir0.set(CPU.MFC2(8)); // IR0
+    flags.set(CPU.CFC2(31)); // Flags
+    return  CPU.MFC2(19) / 4; // SZ3
   }
 
   /**
@@ -6804,7 +7093,7 @@ public final class Scus94491BpeSegment_8003 {
    *
    * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
    */
-  @Method(0x8003f9c0L)
+  @Method(0x8003f9c0L) //TODO do these getZ's need to be & 0xffff?
   public static long RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, final UnsignedIntRef ir0, final UnsignedIntRef flags) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(),  1); // VZ0
