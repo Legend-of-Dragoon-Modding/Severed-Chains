@@ -1040,7 +1040,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80040bc8
     if(a0 < a1) {
-      if((0x7fe0_0000L & a0) == 0) {
+      if((a0 & 0x7fe0_0000L) == 0) {
         //LAB_80040c10
         //LAB_80040c3c
         a0 = Math.floorDiv(a0 << 0xaL, a1);
@@ -1054,7 +1054,7 @@ public final class Scus94491BpeSegment_8004 {
       v1 = _80058d0c.offset(v0).get();
     } else {
       //LAB_80040c58
-      if((0x7fe0_0000L & a1) == 0) {
+      if((a1 & 0x7fe0_0000L) == 0) {
         //LAB_80040c98
         //LAB_80040cc4
         a0 = Math.floorDiv(a1 << 0xaL, a0);
