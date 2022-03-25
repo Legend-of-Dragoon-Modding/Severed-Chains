@@ -508,7 +508,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001223c
-    assert false : "Failed to allocate entry on linked list";
+    assert false : "Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')';
     return 0;
   }
 
@@ -808,7 +808,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800127ccL)
-  public static long FUN_800127cc(final Value address, final long a1, long a2) {
+  public static long FUN_800127cc(final long address, final long a1, long a2) {
     _8004dd00.addu(0x1L);
 
     if(_8004dd00.get() >= 0x10L) {
@@ -828,7 +828,7 @@ public final class Scus94491BpeSegment {
         }
 
         //LAB_80012894
-        MEMORY.ref(4, v1).offset(0x0L).setu(address.getAddress());
+        MEMORY.ref(4, v1).offset(0x0L).setu(address);
         MEMORY.ref(4, v1).offset(0x4L).setu(a1);
         MEMORY.ref(2, v1).offset(0xaL).setu(a2);
         return a3;
@@ -849,7 +849,7 @@ public final class Scus94491BpeSegment {
         }
 
         //LAB_80012894
-        MEMORY.ref(4, v1).offset(0x0L).setu(address.getAddress());
+        MEMORY.ref(4, v1).offset(0x0L).setu(address);
         MEMORY.ref(4, v1).offset(0x4L).setu(a1);
         MEMORY.ref(2, v1).offset(0xaL).setu(a2);
         return a3;
@@ -1972,6 +1972,7 @@ public final class Scus94491BpeSegment {
     final FileLoadingInfo file = currentlyLoadingFileInfo_800bb468;
 
     if(!file.callback.isNull()) {
+      LOGGER.info("Executing file callback %08x (param %08x)", file.callback.getPointer(), file.callbackParam.get());
       file.callback.deref().run(transferDest_800bb460, fileSize_800bb464.get(), (long)file.callbackParam.get());
       file.callback.clear();
     }
@@ -1988,7 +1989,7 @@ public final class Scus94491BpeSegment {
 
     final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(0);
 
-    LOGGER.info("Loading file %s", file.namePtr.deref().get());
+    LOGGER.info("Loading file %s to %08x", file.namePtr.deref().get(), fileTransferDest_800bb488.get());
 
     CDROM.readFromDisk(file.pos, (int)numberOfTransfers_800bb490.get(), fileTransferDest_800bb488.get());
     FUN_80014f64(SyncCode.COMPLETE, null);
@@ -3154,7 +3155,7 @@ public final class Scus94491BpeSegment {
     _800bc308.setu(0x3fe8L);
 
     if(param_3 != 0) {
-      FUN_800127cc(address, 0, 1);
+      FUN_800127cc(address.get(), 0, 1);
     }
   }
 

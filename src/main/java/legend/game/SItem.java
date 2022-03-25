@@ -439,7 +439,7 @@ public final class SItem {
       FUN_80022a94(a0.offset(0x6200L));
       FUN_80022a94(a0.offset(0x1_0460L));
       FUN_80022a94(a0.offset(0x1_0580L));
-      FUN_800127cc(a0, 0, 0x1L);
+      FUN_800127cc(a0.getAddress(), 0, 0x1L);
     } else if(param == 0x1L) {
       //LAB_800fc9e4
       drgn0File6666Address_800bdc3c.setu(address);

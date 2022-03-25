@@ -61,6 +61,7 @@ public class WMapStruct19c0 implements MemoryRef {
 
   public final ArrayRef<GsF_LIGHT> lights_11c;
 
+  public final SVECTOR svec_14c;
   public final UnboundedArrayRef<WMapSubStruct18> _154; //TODO unknown size
 
   public WMapStruct19c0(final Value ref) {
@@ -109,6 +110,7 @@ public class WMapStruct19c0 implements MemoryRef {
 
     this.lights_11c = ref.offset(4, 0x11cL).cast(ArrayRef.of(GsF_LIGHT.class, 0x10, 3, GsF_LIGHT::new));
 
+    this.svec_14c = ref.offset(2, 0x14cL).cast(SVECTOR::new);
     this._154 = ref.offset(4, 0x154L).cast(UnboundedArrayRef.of(0x18, WMapSubStruct18::new));
   }
 

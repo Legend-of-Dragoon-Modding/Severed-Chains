@@ -392,7 +392,9 @@ import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
 import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
-import static legend.game.WMap.FUN_800c8af4;
+import static legend.game.WMap.FUN_800c8844;
+import static legend.game.WMap.renderWmapDobj2;
+import static legend.game.WMap.FUN_800c925c;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -532,7 +534,7 @@ public final class Scus94491BpeSegment_8002 {
       if(mainCallbackIndex_8004dd20.get() == 0x8L) {
         //LAB_80020990
         for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-          NotYetLoaded.FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
+          FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
         }
 
         //LAB_800209ac
@@ -582,7 +584,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020b40
     bigStruct.coord2ArrPtr_04.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    bigStruct.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x10, GsCOORD2PARAM::new)));
+    bigStruct.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
     FUN_80020718(bigStruct, extendedTmd, tmdAnimFile);
   }
 
@@ -603,7 +605,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020c08
     }
 
-    if(a0.ub_9c.get() != 0x2L) {
+    if(a0.ub_9c.get() == 0x2L) {
       return;
     }
 
@@ -627,7 +629,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c90
     if((a0.us_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
-      UnboundedArrayRef<RotateTranslateStruct> sp10 = a0.rotateTranslateArrPtr_94.deref();
+      final UnboundedArrayRef<RotateTranslateStruct> sp10 = a0.rotateTranslateArrPtr_94.deref();
 
       if(a0.ub_a3.get() == 0) {
         final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
@@ -670,7 +672,7 @@ public final class Scus94491BpeSegment_8002 {
       a0.rotateTranslateArrPtr_94.set(sp10);
     } else {
       //LAB_80020e0c
-      UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
+      final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
       //LAB_80020e24
       for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
@@ -792,7 +794,7 @@ public final class Scus94491BpeSegment_8002 {
     } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_8002120c
       //LAB_80021240
-      NotYetLoaded.FUN_800c925c();
+      FUN_800c925c(a0);
     }
 
     //LAB_80021248
@@ -815,7 +817,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002128c
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_800212c0
-      FUN_800c8af4(dobj2);
+      renderWmapDobj2(dobj2);
     }
 
     //LAB_800212c8
@@ -829,7 +831,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
+    final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
     //LAB_80021320
     for(int i = 0; i < count; i++) {

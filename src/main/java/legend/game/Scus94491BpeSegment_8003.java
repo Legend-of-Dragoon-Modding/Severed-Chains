@@ -5133,6 +5133,12 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  @Method(0x8003b530L)
+  public static void FUN_8003b530(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x6L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x30L);
+  }
+
   @Method(0x8003b590L)
   public static void FUN_8003b590(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x9L);
@@ -7071,6 +7077,26 @@ public final class Scus94491BpeSegment_8003 {
     ir0.set(CPU.MFC2(8)); // IR0
     flags.set(CPU.CFC2(31)); // Flags
     return  CPU.MFC2(19) / 4; // SZ3
+  }
+
+  @Method(0x8003f930L)
+  public static long FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final long a3, final long a4, final long a5, final Ref<Long> a6, final Ref<Long> a7) {
+    CPU.MTC2(a0.getXY(), 0);
+    CPU.MTC2(a0.getZ(), 1);
+    CPU.MTC2(a1.getXY(), 2);
+    CPU.MTC2(a1.getZ(), 3);
+    CPU.MTC2(a2.getXY(), 4);
+    CPU.MTC2(a2.getZ(), 5);
+
+    CPU.COP2(0x280030L);
+
+    MEMORY.ref(4, a3).setu(CPU.MFC2(12));
+    MEMORY.ref(4, a4).setu(CPU.MFC2(13));
+    MEMORY.ref(4, a5).setu(CPU.MFC2(14));
+    a6.set(CPU.MFC2(8));
+    a7.set(CPU.CFC2(31));
+
+    return (int)CPU.MFC2(19) >> 2;
   }
 
   /**
