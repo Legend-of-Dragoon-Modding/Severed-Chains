@@ -6334,19 +6334,18 @@ public final class Scus94491BpeSegment_8003 {
     } while(true);
 
     //LAB_8003dec4
-    if((int)s1 > 0) {
-      long s0 = _800c35a4.offset(s1 * 4).getAddress();
+    long s0 = _800c35a4.offset(s1 * 4).getAddress();
 
-      //LAB_8003ded8
-      do {
-        GsMulCoord3(lw, MEMORY.ref(4, s0).cast(GsCOORDINATE2::new).coord);
+    //LAB_8003ded8
+    while((int)s1 > 0) {
+      final GsCOORDINATE2 c = MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new); //TODO
 
-        final GsCOORDINATE2 c = MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new);
-        c.flg.set((int)PSDCNT_800c34d0.get());
-        c.workm.set(lw);
-        s0 -= 0x4L;
-        s1--;
-      } while((int)s1 > 0);
+      GsMulCoord3(lw, c.coord);
+
+      c.flg.set((int)PSDCNT_800c34d0.get());
+      c.workm.set(lw);
+      s0 -= 0x4L;
+      s1--;
     }
 
     //LAB_8003df48
