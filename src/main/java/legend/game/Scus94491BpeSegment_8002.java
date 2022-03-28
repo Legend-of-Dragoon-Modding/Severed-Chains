@@ -39,6 +39,7 @@ import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.RotateTranslateStruct;
+import legend.game.types.ScriptStruct;
 import legend.game.types.SpuStruct28;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
@@ -2786,6 +2787,13 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800299d4L)
   public static void FUN_800299d4(final long a0) {
     assert false;
+  }
+
+  @Method(0x80029c98L)
+  public static long FUN_80029c98(final ScriptStruct a0) {
+    final long a2 = a0.params_20.get(0).deref().get();
+    a0.params_20.get(1).deref().set(_800be358.offset(a2 * 0x4cL).get() | _800bdf38.offset(a2 * 0x84L).get());
+    return 0;
   }
 
   @Method(0x8002a058L)

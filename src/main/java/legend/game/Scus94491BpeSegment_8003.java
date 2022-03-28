@@ -42,7 +42,6 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
@@ -7022,6 +7021,24 @@ public final class Scus94491BpeSegment_8003 {
     return m1;
   }
 
+  @Method(0x8003f6d0L)
+  public static SVECTOR FUN_8003f6d0(final MATRIX a0, final SVECTOR a1, final SVECTOR a2) {
+    CPU.CTC2((a0.get(1) & 0xffffL) << 16 | a0.get(0) & 0xffffL, 0);
+    CPU.CTC2((a0.get(3) & 0xffffL) << 16 | a0.get(2) & 0xffffL, 1);
+    CPU.CTC2((a0.get(5) & 0xffffL) << 16 | a0.get(4) & 0xffffL, 2);
+    CPU.CTC2((a0.get(7) & 0xffffL) << 16 | a0.get(6) & 0xffffL, 3);
+    CPU.CTC2(                              a0.get(8) & 0xffffL, 4);
+    CPU.MTC2(a1.getXY(), 0);
+    CPU.MTC2(a1.getZ(), 1);
+
+    final long t0 = CPU.CFC2(12);
+
+    a2.setX((short)CPU.MFC2(9));
+    a2.setY((short)CPU.MFC2(10));
+    a2.setZ((short)CPU.MFC2(11));
+    return a2;
+  }
+
   /**
    * Gives an amount of parallel transfer expressed by v to the matrix m.
    *
@@ -7116,10 +7133,10 @@ public final class Scus94491BpeSegment_8003 {
    * @param ir0 Interpolated value for depth cueing (out)
    * @param flags Flags (out)
    *
-   * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
+   * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3. TODO should this be signed since it's the Z coord?
    */
-  @Method(0x8003f9c0L) //TODO do these getZ's need to be & 0xffff?
-  public static long RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, final UnsignedIntRef ir0, final UnsignedIntRef flags) {
+  @Method(0x8003f9c0L)
+  public static long RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, final Ref<Long> ir0, final Ref<Long> flags) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(),  1); // VZ0
     CPU.MTC2(v1.getXY(), 2); // VXY1

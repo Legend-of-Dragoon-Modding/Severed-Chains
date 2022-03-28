@@ -2464,139 +2464,137 @@ public final class Scus94491BpeSegment {
           ScriptStruct_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
           ScriptStruct_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-          System.err.println("-- " + Long.toHexString(parentCommand));
+          System.err.println("-- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
 
-          if(ScriptStruct_800bc070.childCount_14.get() != 0) {
-            //LAB_80016050
-            for(int childIndex = 0; childIndex < ScriptStruct_800bc070.childCount_14.get(); childIndex++) {
-              final long childCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
-              final int operation = (int)(childCommand >>> 24);
-              final int param0 = (int)(childCommand >>> 16 & 0xff);
-              final int param1 = (int)(childCommand >>> 8 & 0xff);
-              final int param2 = (int)(childCommand & 0xff);
+          //LAB_80016050
+          for(int childIndex = 0; childIndex < ScriptStruct_800bc070.childCount_14.get(); childIndex++) {
+            final long childCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
+            final int operation = (int)(childCommand >>> 24);
+            final int param0 = (int)(childCommand >>> 16 & 0xff);
+            final int param1 = (int)(childCommand >>> 8 & 0xff);
+            final int param2 = (int)(childCommand & 0xff);
 
-              System.err.println(Long.toHexString(childCommand) + ", " + Long.toHexString(operation));
+            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
 
+            ScriptStruct_800bc070.commandPtr_0c.incr();
+            final long commandPtr = ScriptStruct_800bc070.commandPtr_0c.getPointer();
+
+            if(operation == 0) {
+              //LAB_80016574
+              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref()).decr();
+            } else if(operation == 0x1L) {
+              //LAB_800161f4
+              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref());
               ScriptStruct_800bc070.commandPtr_0c.incr();
-              final long commandPtr = ScriptStruct_800bc070.commandPtr_0c.getPointer();
+            } else if(operation == 0x2L) {
+              //LAB_80016200
+              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2));
+            } else if(operation == 0x3L) {
+              //LAB_800160cc
+              //LAB_8001620c
+              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
+              final long a1_0 = biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get(param1).get();
+              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a1_0).deref().ui_44.get(param0));
+            } else if(operation == 0x4L) {
+              //LAB_80016258
+              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
+              final long a1_0 = param1 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
+              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get((int)a1_0));
+            } else if(operation == 0x5L) {
+              //LAB_80016290
+              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
+            } else if(operation == 0x6L) {
+              //LAB_800162a4
+              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() + param2)).deref());
+            } else if(operation == 0x7) {
+              //LAB_800162d0
+              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
+            } else if(operation == 0x8L) {
+              //LAB_800160e8
+              //LAB_800162f4
+              v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
+              final long a1_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
+            } else if(operation == 0x9L) {
+              //LAB_80016328
+              v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+            } else if(operation == 0xaL) {
+              //LAB_80016118
+              //LAB_80016334
+              v0 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get()) * 0x4L;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+            } else if(operation == 0xbL) {
+              //LAB_80016360
+//              v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
+//              final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
+//              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
+              assert false;
+            } else if(operation == 0xcL) {
+              //LAB_800163a0
+              ScriptStruct_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+            } else if(operation == 0xdL) {
+              //LAB_800163e8
+              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get()).deref().ui_44.get(param1 + param0));
+            } else if(operation == 0xeL) {
+              //LAB_80016418
+              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
+            } else if(operation == 0xfL) {
+              //LAB_8001642c
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
+            } else if(operation == 0x10L) {
+              //LAB_80016180
+              //LAB_8001643c
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
+            } else if(operation == 0x11L) {
+              //LAB_80016468
+//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+              assert false;
+            } else if(operation == 0x12L) {
+              //LAB_80016138
+              //LAB_8001648c
+//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+              assert false;
+            } else if(operation == 0x13L) {
+              //LAB_800164a4
+              v1 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + param0) * 4;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+            } else if(operation == 0x14L) {
+              //LAB_800164b4
+              v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)parentCommand * 0x4L;
 
-              if(operation == 0) {
-                //LAB_80016574
-                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref()).decr();
-              } else if(operation == 0x1L) {
-                //LAB_800161f4
-                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref());
-                ScriptStruct_800bc070.commandPtr_0c.incr();
-              } else if(operation == 0x2L) {
-                //LAB_80016200
-                ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2));
-              } else if(operation == 0x3L) {
-                //LAB_800160cc
-                //LAB_8001620c
-                final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
-                final long a1_0 = biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get(param1).get();
-                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a1_0).deref().ui_44.get(param0));
-              } else if(operation == 0x4L) {
-                //LAB_80016258
-                final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
-                final long a1_0 = param1 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get((int)a1_0));
-              } else if(operation == 0x5L) {
-                //LAB_80016290
-                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
-              } else if(operation == 0x6L) {
-                //LAB_800162a4
-                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() + param2)).deref());
-              } else if(operation == 0x7) {
-                //LAB_800162d0
-                final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
-              } else if(operation == 0x8L) {
-                //LAB_800160e8
-                //LAB_800162f4
-                v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
-                final long a1_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
-              } else if(operation == 0x9L) {
-                //LAB_80016328
-                v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
-              } else if(operation == 0xaL) {
-                //LAB_80016118
-                //LAB_80016334
-                v0 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get()) * 0x4L;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-              } else if(operation == 0xbL) {
-                //LAB_80016360
-//                v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
-//                final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
-//                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
-                assert false;
-              } else if(operation == 0xcL) {
-                //LAB_800163a0
-                ScriptStruct_800bc070.commandPtr_0c.incr();
-                v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-              } else if(operation == 0xdL) {
-                //LAB_800163e8
-                ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get()).deref().ui_44.get(param1 + param0));
-              } else if(operation == 0xeL) {
-                //LAB_80016418
-                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
-              } else if(operation == 0xfL) {
-                //LAB_8001642c
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
-              } else if(operation == 0x10L) {
-                //LAB_80016180
-                //LAB_8001643c
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
-              } else if(operation == 0x11L) {
-                //LAB_80016468
-//                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
-                assert false;
-              } else if(operation == 0x12L) {
-                //LAB_80016138
-                //LAB_8001648c
-//                ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
-                assert false;
-              } else if(operation == 0x13L) {
-                //LAB_800164a4
-                v1 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)parentCommand + param0) / 4;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
-              } else if(operation == 0x14L) {
-                //LAB_800164b4
-                v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)parentCommand * 0x4L;
+              //LAB_800164cc
+              v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
 
-                //LAB_800164cc
-                v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
+              //LAB_800164d4
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
+            } else if(operation == 0x15L) {
+              //LAB_800161a0
+              //LAB_800164e0
+              ScriptStruct_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
 
-                //LAB_800164d4
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
-              } else if(operation == 0x15L) {
-                //LAB_800161a0
-                //LAB_800164e0
-                ScriptStruct_800bc070.commandPtr_0c.incr();
-                v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
-
-                //LAB_80016580
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-              } else if(operation == 0x16L) {
-                //LAB_80016518
-                ScriptStruct_800bc070.commandPtr_0c.incr();
-                v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-              } else if(operation == 0x17L) {
-                //LAB_800161d4
-                //LAB_8001654c
-                ScriptStruct_800bc070.commandPtr_0c.incr();
-                v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-                ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-              } else {
-                assert false : "Unknown op";
-              }
-
-              //LAB_80016584
+              //LAB_80016580
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+            } else if(operation == 0x16L) {
+              //LAB_80016518
+              ScriptStruct_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+            } else if(operation == 0x17L) {
+              //LAB_800161d4
+              //LAB_8001654c
+              ScriptStruct_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
+              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+            } else {
+              assert false : "Unknown op";
             }
+
+            //LAB_80016584
           }
 
           //LAB_80016598
@@ -2741,6 +2739,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016854L)
+  public static long FUN_80016854(final ScriptStruct a0) {
+    a0.params_20.get(0).deref().set(0);
+    return 0;
+  }
+
   /**
    * Shift work array value 1 left by value 0 bits
    *
@@ -2792,7 +2796,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800169d4L)
   public static long scriptIncrementBy1(final ScriptStruct a0) {
-    a0.params_20.get(0).deref().incr();
+    a0.params_20.get(0).deref().incrOverflow();
     return 0;
   }
 
@@ -3067,6 +3071,20 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017640
+    return 0;
+  }
+
+  @Method(0x80017648L)
+  public static long FUN_80017648(final ScriptStruct a0) {
+    long v0;
+    long a2;
+
+    v0 = a0.params_20.get(1).deref().get();
+    a2 = v0 & 0x1fL;
+    v0 = v0 >>> 5;
+    v0 = a0.params_20.get(0).getPointer() + v0 * 0x4L;
+    v0 = MEMORY.ref(4, v0).get() & (0x1L << a2);
+    a0.params_20.get(2).deref().set(v0 > 0 ? 1 : 0);
     return 0;
   }
 
@@ -3697,6 +3715,19 @@ public final class Scus94491BpeSegment {
     }
 
     FUN_8004d91c(0x1L);
+  }
+
+  @Method(0x8001ad5cL)
+  public static long FUN_8001ad5c(final ScriptStruct a0) {
+    //LAB_8001ad70
+    for(int i = 0; i < 32; i++) {
+      final SpuStruct28 struct = spu28Arr_800bd110.get(i);
+      struct._00.set(0);
+      struct._1c.set(0);
+    }
+
+    FUN_8004d91c(0x1L);
+    return 0;
   }
 
   @Method(0x8001ada0L)

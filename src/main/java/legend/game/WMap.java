@@ -33,6 +33,8 @@ import legend.game.types.WMapRender40;
 import legend.game.types.WMapStruct19c0;
 import legend.game.types.WMapStruct258;
 import legend.game.types.WMapTmdRenderingStruct18;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
@@ -133,6 +135,8 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public class WMap {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(WMap.class);
+
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
 
   private static final Value _800c6698 = MEMORY.ref(4, 0x800c6698L);
@@ -401,6 +405,10 @@ public class WMap {
 
       count -= primitiveCount;
 
+      if(count < 0) {
+        LOGGER.warn("renderDobj2 count less than 0! %d", count);
+      }
+
       //LAB_800c8b8c
       if(cmd == 0x3000_0000L) {
         // 3-vert poly, light calc, gourad, no tex (solid)
@@ -482,7 +490,7 @@ public class WMap {
         //LAB_800c8c3c
       } else if(cmd == 0x3e00_0000L) {
         // 4-vert poly, light calc, tex, transparent, gradation
-        // 0x2c bytes long
+        // 0x24 bytes long
         //LAB_800c8d3c
         primitives = renderPrimitive3e(primitives, vertices, normals);
       } else if(cmd == 0x3f00_0000L) {
@@ -640,7 +648,6 @@ public class WMap {
     long t8;
     long t9;
     long s8;
-    long sp;
 
     v0 = 0x1f80_0000L;
     t1 = MEMORY.ref(4, v0).offset(0x3d8L).get();
@@ -1373,7 +1380,6 @@ public class WMap {
 
   @Method(0x800ca360L)
   public static long renderPrimitive3004(long a0, long a1, long a2, long a3) {
-    long at;
     long v0;
     long v1;
     long t0;
@@ -13825,7 +13831,7 @@ public class WMap {
         CPU.MTC2(sp0x30.getZ(), 1);
 
 
-        t8 = CPU.MFC2(0);
+        CPU.COP2(0x18_0001L);
         sp58 = CPU.MFC2(14);
         sp60 = CPU.MFC2(8);
         sp5c = CPU.CFC2(31);
