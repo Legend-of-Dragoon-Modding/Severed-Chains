@@ -3774,12 +3774,12 @@ public final class Scus94491BpeSegment_8002 {
     joyStruct2.s02.not();
 
     if((joyStruct2.s02.get() & 0x5000L) == 0x5000L) {
-      joyStruct2.s02.set(joyStruct2.s02.get() & 0xafff);
+      joyStruct2.s02.and(0xafff);
     }
 
     //LAB_8002c1b4
     if((joyStruct2.s02.get() & 0xa000L) == 0xa000L) {
-      joyStruct2.s02.set(joyStruct2.s02.get() & 0x5fff);
+      joyStruct2.s02.and(0x5fff);
     }
 
     //LAB_8002c1cc
@@ -3792,7 +3792,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002c1f4
-    if(joyStruct2.s02.get() == 0 || joyStruct2.s08.sub(a1).get() << 16 > 0) {
+    if(joyStruct2.s02.get() == 0 || (short)joyStruct2.s08.sub(a1).get() > 0) {
       //LAB_8002c220
       joyStruct2.s06.set(0);
       return;

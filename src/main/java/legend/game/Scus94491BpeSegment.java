@@ -87,6 +87,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d41c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d52c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d648;
+import static legend.game.Scus94491BpeSegment_8004.FUN_8004d78c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
 import static legend.game.Scus94491BpeSegment_8004.SsSetRVol;
 import static legend.game.Scus94491BpeSegment_8004._8004db88;
@@ -295,7 +296,7 @@ public final class Scus94491BpeSegment {
   public static final ExtendedTmd extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
   public static final TmdAnimationFile tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL, TmdAnimationFile::new);
 
-  /** unknown size */
+  /** TIM */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
 
   public static final Value ovalBlobTimHeader_80010548 = MEMORY.ref(4, 0x80010548L);
@@ -2745,6 +2746,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016868L)
+  public static long FUN_80016868(final ScriptStruct a0) {
+    a0.params_20.get(1).deref().and(a0.params_20.get(0).deref());
+    return 0;
+  }
+
   /**
    * Shift work array value 1 left by value 0 bits
    *
@@ -2811,6 +2818,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016a14L)
+  public static long FUN_80016a14(final ScriptStruct a0) {
+    a0.params_20.get(0).deref().set(-(int)a0.params_20.get(0).deref().get() & 0xffff_ffffL);
+    return 0;
+  }
+
   /**
    * Multiply work array value 1 by value 0 (overflow allowed)
    *
@@ -2833,6 +2846,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016b2cL)
+  public static long FUN_80016b2c(final ScriptStruct a0) {
+    a0.params_20.get(1).deref().set(((int)a0.params_20.get(1).deref().get() >> 4) * ((int)a0.params_20.get(0).deref().get() >> 4) >> 4);
+    return 0;
+  }
+
   /**
    * Calculate square root of work array value 0 and store in value 1
    *
@@ -2841,6 +2860,24 @@ public final class Scus94491BpeSegment {
   @Method(0x80016bbcL)
   public static long scriptSquareRoot(final ScriptStruct a0) {
     a0.params_20.get(1).deref().set(SquareRoot0(a0.params_20.get(0).deref().get()));
+    return 0;
+  }
+
+  @Method(0x80016c00L)
+  public static long FUN_80016c00(final ScriptStruct a0) {
+    a0.params_20.get(1).deref().set(((int)a0.params_20.get(0).deref().get() * FUN_800133ac()) >>> 16);
+    return 0;
+  }
+
+  @Method(0x80016c4cL)
+  public static long FUN_80016c4c(final ScriptStruct a0) {
+    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).get()); // Needs to be stored as unsigned
+    return 0;
+  }
+
+  @Method(0x80016c80L)
+  public static long FUN_80016c80(final ScriptStruct a0) {
+    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).offset(0x2L).get()); // Needs to be stored as unsigned
     return 0;
   }
 
@@ -3547,8 +3584,75 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80019c80L)
-  public static void FUN_80019c80(long a0, long a1, long a2) {
-    assert false;
+  public static void FUN_80019c80(final long a0, final long a1, final long a2) {
+    long v0;
+    long v1;
+    long s0;
+    long s1;
+    long s2;
+    long s5;
+    s1 = 0;
+    s5 = -0x8000L;
+    s2 = a2 & 0x1L;
+    v0 = 0x800c_0000L;
+    s0 = v0 + -0x3658L;
+
+    //LAB_80019cc4
+    do {
+      if(MEMORY.ref(1, s0).offset(0x2L).get() == a0 && MEMORY.ref(1, s0).offset(0x3L).get() == a1) {
+        FUN_8004d78c((short)(s1 | s5));
+        if(s2 == 0) {
+          break;
+        }
+      }
+
+      //LAB_80019cfc
+      s1 = s1 + 0x1L;
+      s0 = s0 + 0x8L;
+    } while((int)s1 < 0x18L);
+
+    //LAB_80019d0c
+    s1 = 0;
+    v0 = 0x800c_0000L;
+    v1 = v0 + -0x2ef0L;
+
+    //LAB_80019d1c
+    do {
+      if(MEMORY.ref(1, v1).offset(0x0L).get() == 0x4L && MEMORY.ref(4, v1).offset(0xcL).get() == a1 && MEMORY.ref(4, v1).offset(0x8L).get() == a0) {
+        MEMORY.ref(1, v1).offset(0x0L).setu(0);
+        MEMORY.ref(4, v1).offset(0x1cL).setu(0);
+      }
+
+      //LAB_80019d54
+      s1 = s1 + 0x1L;
+      v1 = v1 + 0x28L;
+    } while((int)s1 < 0x20L);
+
+    v0 = (int)a2 >> 1;
+    v0 = v0 & 0x1L;
+    if(v0 != 0) {
+      v0 = 0x800c_0000L;
+      v0 = v0 + -0x2ef0L;
+      v1 = v0;
+      final long a0_0 = v1 + 0x500L;
+
+      //LAB_80019d84
+      do {
+        //LAB_80019db4
+        if(MEMORY.ref(1, v1).offset(0x0L).get() == 0x3L && (MEMORY.ref(2, v1).offset(0x20L).getSigned() != 0 || MEMORY.ref(2, v1).offset(0x24L).getSigned() != 0) || MEMORY.ref(4, v1).offset(0x1cL).get() != 0) {
+          //LAB_80019dc4
+          if(MEMORY.ref(4, v1).offset(0xcL).get() == a1 && MEMORY.ref(4, v1).offset(0x8L).get() == a0) {
+            MEMORY.ref(1, v1).offset(0x0L).setu(0);
+            MEMORY.ref(4, v1).offset(0x1cL).setu(0);
+          }
+        }
+
+        //LAB_80019dec
+        v1 = v1 + 0x28L;
+      } while((int)v1 < (int)a0_0);
+    }
+
+    //LAB_80019dfc
   }
 
   @Method(0x8001a4e8L)
@@ -3703,6 +3807,12 @@ public final class Scus94491BpeSegment {
   @Method(0x8001ab34L) // Button press (actually I think this is sound?)
   public static long FUN_8001ab34(final ScriptStruct a0) {
     playSound((int)a0.params_20.get(0).deref().get(), (int)a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), (short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get());
+    return 0;
+  }
+
+  @Method(0x8001ab98L)
+  public static long FUN_8001ab98(final ScriptStruct a0) {
+    FUN_80019c80(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
 

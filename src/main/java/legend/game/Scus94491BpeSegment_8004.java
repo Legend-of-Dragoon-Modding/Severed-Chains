@@ -6336,6 +6336,11 @@ public final class Scus94491BpeSegment_8004 {
     return 0;
   }
 
+  @Method(0x8004d78cL)
+  public static void FUN_8004d78c(long a0) {
+    assert false;
+  }
+
   @Method(0x8004d91cL)
   public static void FUN_8004d91c(final long a0) {
     if(sssqWaitForTickToFinish() == 0) {
