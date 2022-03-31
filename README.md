@@ -7,12 +7,13 @@ A project to reverse engineer Legend of Dragoon into a high-level language with 
 - PS1 bios reverse engineered
 - PS1 kernel reverse engineered
 - Hardware emulation layer
-  - GPU (currently a simple software renderer, about 60% support)
+  - GPU (currently a simple software renderer, about 65% support)
   - SPU (supports most simple ops, no reverb)
   - MDEC (functional but colour output is wrong; major syncing issues)
   - CDROM (good support)
-  - GTE (partially functional)
+  - GTE (mostly functional)
   - Joypad (support in progress, getting fairly good)
+  - Memcard (some support, mostly rewritten and unnecessary in game)
 
 The kernel and bios are functional and fully capable of bootstrapping the LoD executable. The game boots and the intro FMV plays with major glitches. The main menu loads but is non-functional due to controller input not yet being functional.
 
@@ -25,7 +26,21 @@ The Java version is still in early development and not ready for playing. A stro
 4. Copy a PS1 bios into the root directory and rename it to `bios.rom` (the no$psx bios is recommended, I'm not sure if official bioses will work)
 5. Copy an ISO of the first LoD disk into the `isos` directory and rename it to `1.iso`
 
-Note: Java 16 is required and both repositories use gradle. It is **strongly** recommended to run with assertions enabled.
+Note: Java 17 is required and both repositories use gradle. It is **strongly** recommended to run with assertions enabled.
+
+### Controls ###
+
+Controls are currently hardcoded to the keyboard.
+- D-pad - arrow keys
+- Shape buttons - WASD
+- Start - enter
+- Select - space
+- L1 - Q
+- L2 - 1
+- L3 - Z
+- R1 - E
+- R2 - 3
+- R3 - C
 
 ### Copyright Information
 
