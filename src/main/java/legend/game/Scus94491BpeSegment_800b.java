@@ -85,6 +85,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800baf07 = MEMORY.ref(1, 0x800baf07L);
 
+  public static final Value _800bb080 = MEMORY.ref(4, 0x800bb080L);
+
+  public static final Value _800bb0a0 = MEMORY.ref(2, 0x800bb0a0L);
+  public static final Value _800bb0a2 = MEMORY.ref(2, 0x800bb0a2L);
+  public static final Value _800bb0a4 = MEMORY.ref(1, 0x800bb0a4L);
+  public static final Value _800bb0a5 = MEMORY.ref(1, 0x800bb0a5L);
+  public static final Value _800bb0a6 = MEMORY.ref(2, 0x800bb0a6L);
   public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
   public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
   public static final Value _800bb0aa = MEMORY.ref(1, 0x800bb0aaL);
@@ -106,6 +113,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bb114 = MEMORY.ref(2, 0x800bb114L);
   public static final Value _800bb116 = MEMORY.ref(2, 0x800bb116L);
   public static final Value _800bb118 = MEMORY.ref(2, 0x800bb118L);
+  public static final Value _800bb11a = MEMORY.ref(2, 0x800bb11aL);
 
   public static final Value _800bb120 = MEMORY.ref(2, 0x800bb120L);
 

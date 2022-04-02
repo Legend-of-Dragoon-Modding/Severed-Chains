@@ -18,7 +18,7 @@ public class WMapRender40 implements MemoryRef {
   public final ArrayRef<UnsignedIntRef> _04;
   public final ArrayRef<UnsignedIntRef> _0c;
   public final ArrayRef<Pointer<UnboundedArrayRef<WMapRender28>>> _14;
-  public final Pointer<UnboundedArrayRef<WMapRender08_2>> _1c;
+  public final Pointer<UnboundedArrayRef<WMapRender08_2>> _1c; //TODO maybe a RECT?
   public final ArrayRef<UnsignedIntRef> _20;
 
   public final UnsignedIntRef _28;

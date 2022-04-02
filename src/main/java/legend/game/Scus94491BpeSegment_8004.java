@@ -1013,10 +1013,9 @@ public final class Scus94491BpeSegment_8004 {
 
   /** Seems to calculate a Y value for something */
   @Method(0x80040b90L)
-  public static long FUN_80040b90(long a0, long a1) {
-    final long v0;
-    long v1;
-
+  public static long FUN_80040b90(final long x, final long y) {
+    long a0 = x;
+    long a1 = y;
     long a2 = 0;
     long a3 = 0;
 
@@ -1032,13 +1031,12 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80040bb4
-    if(a1 == 0) {
-      if(a0 >= a1) {
-        return 0;
-      }
+    if(a1 == 0 && a0 >= a1) {
+      return 0;
     }
 
     //LAB_80040bc8
+    long v1;
     if(a0 < a1) {
       if((a0 & 0x7fe0_0000L) == 0) {
         //LAB_80040c10
@@ -1048,10 +1046,8 @@ public final class Scus94491BpeSegment_8004 {
         a0 = Math.floorDiv(a0, a1 >> 0xaL);
       }
 
-      v0 = a0 << 0x1L;
-
       //LAB_80040c44
-      v1 = _80058d0c.offset(v0).get();
+      v1 = _80058d0c.offset(a0 * 0x2L).get();
     } else {
       //LAB_80040c58
       if((a1 & 0x7fe0_0000L) == 0) {
@@ -1063,10 +1059,8 @@ public final class Scus94491BpeSegment_8004 {
         a0 = Math.floorDiv(a1, a0 >> 0xaL);
       }
 
-      v0 = a0 << 0x1L;
-
       //LAB_80040ccc
-      v1 = 0x400L - _80058d0c.offset(v0).get();
+      v1 = 0x400L - _80058d0c.offset(a0 * 0x2L).get();
     }
 
     //LAB_80040ce0

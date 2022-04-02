@@ -20,7 +20,8 @@ public class WMapStruct19c0 implements MemoryRef {
 
   public final RenderStruct20 _00;
   public final GsCOORDINATE2 coord2_20;
-  public final SVECTOR svec_70;
+  public final SVECTOR rotation_70;
+
   public final UnsignedShortRef _7a;
   public final ShortRef _7c;
   public final ShortRef _7e;
@@ -69,7 +70,8 @@ public class WMapStruct19c0 implements MemoryRef {
 
     this._00 = ref.offset(4, 0x00L).cast(RenderStruct20::new);
     this.coord2_20 = ref.offset(4, 0x20L).cast(GsCOORDINATE2::new);
-    this.svec_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
+    this.rotation_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
+
     this._7a = ref.offset(2, 0x7aL).cast(UnsignedShortRef::new);
     this._7c = ref.offset(2, 0x7cL).cast(ShortRef::new);
     this._7e = ref.offset(2, 0x7eL).cast(ShortRef::new);

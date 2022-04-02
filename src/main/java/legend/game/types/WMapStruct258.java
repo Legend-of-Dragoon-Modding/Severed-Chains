@@ -30,7 +30,7 @@ public class WMapStruct258 implements MemoryRef {
   public final GsCOORDINATE2 coord2_34;
   public final VECTOR vec_84;
   public final VECTOR vec_94;
-  public final SVECTOR svec_a4;
+  public final SVECTOR rotation_a4;
 
   public final ArrayRef<WMapStruct258Sub40> _b4;
 
@@ -67,7 +67,7 @@ public class WMapStruct258 implements MemoryRef {
     this.coord2_34 = ref.offset(4, 0x34L).cast(GsCOORDINATE2::new);
     this.vec_84 = ref.offset(4, 0x84L).cast(VECTOR::new);
     this.vec_94 = ref.offset(4, 0x94L).cast(VECTOR::new);
-    this.svec_a4 = ref.offset(2, 0xa4L).cast(SVECTOR::new);
+    this.rotation_a4 = ref.offset(2, 0xa4L).cast(SVECTOR::new);
 
     this._b4 = ref.offset(4, 0xb4L).cast(ArrayRef.of(WMapStruct258Sub40.class, 4, 0x40, WMapStruct258Sub40::new));
 

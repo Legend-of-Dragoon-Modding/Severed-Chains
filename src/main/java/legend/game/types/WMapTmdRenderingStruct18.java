@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
+import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
@@ -14,7 +15,7 @@ public class WMapTmdRenderingStruct18 implements MemoryRef {
 
   public final Pointer<UnboundedArrayRef<GsDOBJ2>> dobj2s_00;
   public final Pointer<UnboundedArrayRef<GsCOORDINATE2>> coord2s_04;
-  public final Pointer<UnboundedArrayRef<WMapRender08>> _08;
+  public final Pointer<UnboundedArrayRef<SVECTOR>> rotations_08;
   public final UnsignedIntRef count_0c;
   public final Pointer<UnboundedArrayRef<UnsignedIntRef>> _10;
   public final Pointer<TmdWithId> tmd_14;
@@ -24,7 +25,7 @@ public class WMapTmdRenderingStruct18 implements MemoryRef {
 
     this.dobj2s_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(4, GsDOBJ2::new)));
     this.coord2s_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, UnboundedArrayRef.of(4, GsCOORDINATE2::new)));
-    this._08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, UnboundedArrayRef.of(8, WMapRender08::new)));
+    this.rotations_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, UnboundedArrayRef.of(8, SVECTOR::new)));
     this.count_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, UnboundedArrayRef.of(4, UnsignedIntRef::new)));
     this.tmd_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, TmdWithId::new));

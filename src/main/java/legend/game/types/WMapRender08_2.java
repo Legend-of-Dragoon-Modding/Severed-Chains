@@ -3,6 +3,7 @@ package legend.game.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 
+//TODO maybe a RECT?
 public class WMapRender08_2 implements MemoryRef {
   private final Value ref;
 
