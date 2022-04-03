@@ -39,6 +39,7 @@ import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
+import legend.game.types.Struct4c;
 
 import java.util.function.Function;
 
@@ -66,6 +67,8 @@ public final class Scus94491BpeSegment_800b {
   public static final ArrayRef<UnsignedIntRef> scriptFlags1_800bad04 = MEMORY.ref(4, 0x800bad04L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
 
   public static final Value _800bad24 = MEMORY.ref(4, 0x800bad24L);
+
+  public static final Value _800bad44 = MEMORY.ref(4, 0x800bad44L);
 
   public static final Value _800bad64 = MEMORY.ref(1, 0x800bad64L);
 
@@ -304,9 +307,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
 
+  /** TODO array of 0x84-byte structs */
   public static final Value _800bdf38 = MEMORY.ref(4, 0x800bdf38L);
 
-  public static final Value _800be358 = MEMORY.ref(4, 0x800be358L);
+  public static final ArrayRef<Struct4c> _800be358 = MEMORY.ref(4, 0x800be358L, ArrayRef.of(Struct4c.class, 8, 0x4c, Struct4c::new));
 
   public static final Value _800be578 = MEMORY.ref(4, 0x800be578L);
 

@@ -12,7 +12,8 @@ public class WMapStruct14 implements MemoryRef {
   public final ShortRef _02;
   public final ShortRef _04;
   public final ShortRef _06;
-
+  public final ShortRef _08;
+  public final ShortRef _0a;
   public final UnsignedByteRef _0e;
 
   public final UnsignedByteRef _12;
@@ -24,7 +25,8 @@ public class WMapStruct14 implements MemoryRef {
     this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-
+    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
 
     this._12 = ref.offset(1, 0x12L).cast(UnsignedByteRef::new);
