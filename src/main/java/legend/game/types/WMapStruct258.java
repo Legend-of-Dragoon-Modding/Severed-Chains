@@ -9,6 +9,7 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 
@@ -43,6 +44,17 @@ public class WMapStruct258 implements MemoryRef {
   public final Pointer<WMapRender40> _1fc;
 
   public final ByteRef _220;
+
+  public final Pointer<UnboundedArrayRef<VECTOR>> vecs_224;
+  public final Pointer<UnboundedArrayRef<VECTOR>> vecs_228;
+  /** TODO pointer */
+  public final UnsignedIntRef ptr_22c;
+  public final UnsignedIntRef _230;
+  public final UnsignedIntRef _234;
+  public final UnsignedIntRef _238;
+  public final UnsignedIntRef _23c;
+
+  public final UnsignedByteRef _244;
 
   public final UnsignedIntRef _248;
 
@@ -80,6 +92,16 @@ public class WMapStruct258 implements MemoryRef {
     this._1fc = ref.offset(4, 0x1fcL).cast(Pointer.deferred(4, WMapRender40::new));
 
     this._220 = ref.offset(1, 0x220L).cast(ByteRef::new);
+
+    this.vecs_224 = ref.offset(4, 0x224L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
+    this.vecs_228 = ref.offset(4, 0x228L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
+    this.ptr_22c = ref.offset(4, 0x22cL).cast(UnsignedIntRef::new);
+    this._230 = ref.offset(4, 0x230L).cast(UnsignedIntRef::new);
+    this._234 = ref.offset(4, 0x234L).cast(UnsignedIntRef::new);
+    this._238 = ref.offset(4, 0x238L).cast(UnsignedIntRef::new);
+    this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
+
+    this._244 = ref.offset(1, 0x244L).cast(UnsignedByteRef::new);
 
     this._248 = ref.offset(4, 0x248L).cast(UnsignedIntRef::new);
 
