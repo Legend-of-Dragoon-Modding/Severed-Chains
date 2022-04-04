@@ -79,7 +79,7 @@ import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2220;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
-import static legend.game.SMap.FUN_800e4b20;
+import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
 import static legend.game.SMap.FUN_800e519c;
@@ -172,8 +172,8 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007.joypadButtons_8007a3a0;
-import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
+import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpNEW_EventId_800bf26c;
@@ -1675,7 +1675,7 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x800238a4L)
   public static long getJoypadInputByPriority() {
-    final long buttons = joypadButtons_8007a3a0.get();
+    final long buttons = joypadRepeat_8007a3a0.get();
 
     if((buttons & 0x4L) != 0) {
       return 0x4L;
@@ -1717,7 +1717,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023934
-    final long dpad = joypadDpad_8007a398.get();
+    final long dpad = joypadPress_8007a398.get();
 
     if((dpad & 0x10L) != 0) {
       return 0x10L;
@@ -3033,7 +3033,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //caseD_6
     if(_800f7e54.get(0x1L) == 0) {
-      if(FUN_800e4b20() != 0) {
+      // If an encounter should start
+      if(handleEncounters() != 0) {
         FUN_800e5534(-0x1L, 0);
       }
     }

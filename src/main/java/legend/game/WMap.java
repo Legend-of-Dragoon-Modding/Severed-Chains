@@ -117,8 +117,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007._8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
+import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bac60;
 import static legend.game.Scus94491BpeSegment_800b._800bad24;
@@ -2169,7 +2169,7 @@ public class WMap {
     }
 
     if(_800c6690.get() == 0) {
-      if((_8007a39c.get() & 0x1afL) == 0) {
+      if((joypadInput_8007a39c.get() & 0x1afL) == 0) {
         final WMapStruct19c0 v1 = _800c66b0.deref();
 
         if(v1._c5.get() == 0) {
@@ -2180,7 +2180,7 @@ public class WMap {
               if(a0._220.get() == 0) {
                 if(_800c6698.get() >= 0x3L || _800c669c.get() >= 0x3L) {
                   //LAB_800cc900
-                  if((joypadDpad_8007a398.get() & 0x10L) != 0) {
+                  if((joypadPress_8007a398.get() & 0x10L) != 0) {
                     if(_800c6798.offset(0xfcL).get() != 0x1L) {
                       if(a0._05.get() == 0) {
                         if(_800c6798.offset(0xd8L).get() == 0) {
@@ -3660,13 +3660,13 @@ public class WMap {
             final long v0 = _800c66b0.deref()._80.get();
             if(v0 == 0) {
               //LAB_800d30d8
-              if((joypadDpad_8007a398.get() & 0x8L) != 0) {
+              if((joypadPress_8007a398.get() & 0x8L) != 0) {
                 FUN_800d4ed8(0x1L);
                 _800c66b0.deref()._80.set(1);
               }
 
               //LAB_800d310c
-              if((joypadDpad_8007a398.get() & 0x4L) != 0) {
+              if((joypadPress_8007a398.get() & 0x4L) != 0) {
                 FUN_800d4ed8(-0x1L);
                 _800c66b0.deref()._80.set(1);
               }
@@ -3773,7 +3773,7 @@ public class WMap {
             if(_800c66b0.deref()._80.get() == 0) {
               if(struct258_800c66a8.deref()._05.get() == 0) {
                 if(_800c66b0.deref()._110.get() == 0) {
-                  if((joypadDpad_8007a398.get() & 0x2L) != 0) {
+                  if((joypadPress_8007a398.get() & 0x2L) != 0) {
                     if(struct258_800c66a8.deref()._1f8.get() == 0) {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
                       _800c66b0.deref()._9e.set((short)-9000);
@@ -3786,7 +3786,7 @@ public class WMap {
                   }
 
                   //LAB_800d37bc
-                  if((joypadDpad_8007a398.get() & 0x1L) != 0) {
+                  if((joypadPress_8007a398.get() & 0x1L) != 0) {
                     if(struct258_800c66a8.deref()._1f8.get() == 0x1L || struct258_800c66a8.deref()._1f8.get() == 0x6L) {
                       //LAB_800d3814
                       FUN_8002a3ec(7, 0);
@@ -7189,7 +7189,7 @@ public class WMap {
           }
 
           //LAB_800d9a70
-          if((_8007a39c.get() & 0x800L) != 0) {
+          if((joypadInput_8007a39c.get() & 0x800L) != 0) {
             //LAB_800d9a8c
             for(sp20 = 0; sp20 < 8; sp20++) {
               //LAB_800d9aa8
@@ -7224,7 +7224,7 @@ public class WMap {
         break;
 
       case 6:
-        if((joypadDpad_8007a398.get() & 0x2L) != 0) {
+        if((joypadPress_8007a398.get() & 0x2L) != 0) {
           playSound(0, 4, 0, 0, (short)0, (short)0);
 
           struct258_800c66a8.deref().svec_1e8.setX((short)_800c66b0.deref().coord2_20.coord.transfer.getX());
@@ -8296,7 +8296,7 @@ public class WMap {
         FUN_800e774c(_800effb0, (short)(0xf0L - sp0x28.get() * 3), 0x49L, 0, 0);
         FUN_800dc178(0, 0);
 
-        if((joypadDpad_8007a398.get() & 0x40L) != 0) {
+        if((joypadPress_8007a398.get() & 0x40L) != 0) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
           FUN_8002a3ec(6, 1);
           struct258_800c66a8.deref()._220.set(3);
@@ -10404,7 +10404,7 @@ public class WMap {
       v0 = MEMORY.ref(2, v0).offset(-0x124aL).get();
 
       //LAB_800e11b0
-      if(v0 >= 0x7fL && _800beebc.get() != 0 || (_8007a39c.get() & 0x40L) != 0) {
+      if(v0 >= 0x7fL && _800beebc.get() != 0 || (joypadInput_8007a39c.get() & 0x40L) != 0) {
         //LAB_800e11d0
         v0 = 0x800c_0000L;
         v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
@@ -11283,7 +11283,7 @@ public class WMap {
           FUN_800e7624(_800f01ec.get((int)sp3c).deref(), sp0x40, sp0x44);
           FUN_800e774c(_800f01ec.get((int)sp3c).deref(), (short)(0xf0L - sp0x40.get() * 3), 0xc8L, 0, 0);
 
-          if((joypadDpad_8007a398.get() & 0x1000L) != 0) {
+          if((joypadPress_8007a398.get() & 0x1000L) != 0) {
             _800c86d2.subu(0x1L);
 
             if(_800c86d2.getSigned() < 0) {
@@ -11295,7 +11295,7 @@ public class WMap {
           }
 
           //LAB_800e5970
-          if((joypadDpad_8007a398.get() & 0x4000L) != 0) {
+          if((joypadPress_8007a398.get() & 0x4000L) != 0) {
             _800c86d2.addu(0x1L);
 
             if(_800c86d2.getSigned() >= 0x3L) {
@@ -11315,7 +11315,7 @@ public class WMap {
           FUN_800e7624(_800f01e8.deref(), sp0x40, sp0x44);
           FUN_800e774c(_800f01e8.deref(), (short)(0xf0L - sp0x40.get() * 3), 0xbeL, 0, 0);
 
-          if((joypadDpad_8007a398.get() & 0x5000L) != 0) {
+          if((joypadPress_8007a398.get() & 0x5000L) != 0) {
             _800c86d2.xoru(0x1L);
 
             playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -11389,12 +11389,12 @@ public class WMap {
 
           insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x38L, sp4c);
 
-          if((joypadDpad_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
+          if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
             playSound(0, 2, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e60d0
-          if((_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
+          if((joypadInput_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
             _800c86d0.subu(0x80L);
 
             if(_800c86d0.getSigned() < 0x80L) {
@@ -11434,7 +11434,7 @@ public class WMap {
         }
 
         //LAB_800e62d4
-        if((joypadDpad_8007a398.get() & 0x20L) != 0) {
+        if((joypadPress_8007a398.get() & 0x20L) != 0) {
           if(_800c86d2.getSigned() == 0) {
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
@@ -11480,7 +11480,7 @@ public class WMap {
           //LAB_800e651c
         } else {
           //LAB_800e6524
-          if((joypadDpad_8007a398.get() & 0x40L) != 0) {
+          if((joypadPress_8007a398.get() & 0x40L) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
 
             //LAB_800e6560
@@ -11615,7 +11615,7 @@ public class WMap {
 
     //LAB_800e6a50
     if(_800c68a8.get() == 0) {
-      if((joypadDpad_8007a398.get() & 0x800L) != 0) {
+      if((joypadPress_8007a398.get() & 0x800L) != 0) {
         playSound(0, 2, 0, 0, (short)0, (short)0);
         _800c68a8.setu(0x1L);
 
@@ -11629,7 +11629,7 @@ public class WMap {
       //LAB_800e6afc
     } else {
       //LAB_800e6b04
-      if((_8007a39c.get() & 0x800L) == 0) {
+      if((joypadInput_8007a39c.get() & 0x800L) == 0) {
         //LAB_800e6b20
         for(int i = 0; i < 7; i++) {
           //LAB_800e6b3c
@@ -11641,7 +11641,7 @@ public class WMap {
       }
 
       //LAB_800e6b74
-      if((_8007a39c.get() & 0x10L) != 0) {
+      if((joypadInput_8007a39c.get() & 0x10L) != 0) {
         //LAB_800e6b90
         for(int i = 0; i < 7; i++) {
           //LAB_800e6bac
@@ -12308,7 +12308,7 @@ public class WMap {
                         //LAB_800e905c
                         if(_800c6690.get() == 0) {
                           //LAB_800e9078
-                          if((joypadDpad_8007a398.get() & 0x80L) != 0) {
+                          if((joypadPress_8007a398.get() & 0x80L) != 0) {
                             if(_800c6894.get() != 0x1L) {
                               _800c6860.setu(_800f1580.get());
                               _800c6862.setu(_800f1582.get());
@@ -12410,7 +12410,7 @@ public class WMap {
 
     //LAB_800e9330
     //LAB_800e9364
-    if((_800bed60.get(0).sArr54.get(1).get() >= 0x7fL && _800beebc.get() != 0) || (_8007a39c.get() & 0x40L) != 0) {
+    if((_800bed60.get(0).sArr54.get(1).get() >= 0x7fL && _800beebc.get() != 0) || (joypadInput_8007a39c.get() & 0x40L) != 0) {
       //LAB_800e9384
       sp4 *= 2;
     }

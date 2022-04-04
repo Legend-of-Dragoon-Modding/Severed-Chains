@@ -82,7 +82,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
 import static legend.game.Scus94491BpeSegment_800b._800bac5c;
 import static legend.game.Scus94491BpeSegment_800b._800bac6c;
@@ -753,7 +753,7 @@ public final class SItem {
           }
 
           //LAB_800fd130
-          if((joypadDpad_8007a398.get() & 0x8000L) != 0) {
+          if((joypadPress_8007a398.get() & 0x8000L) != 0) {
             playSound(0x2L);
             a0 = _8011d73c.get();
 
@@ -779,7 +779,7 @@ public final class SItem {
 
           //LAB_800fd1e0
           //LAB_800fd1e4
-          if((joypadDpad_8007a398.get() & 0x2000L) != 0) {
+          if((joypadPress_8007a398.get() & 0x2000L) != 0) {
             playSound(0x2L);
             v1 = _8011d73c.get();
 

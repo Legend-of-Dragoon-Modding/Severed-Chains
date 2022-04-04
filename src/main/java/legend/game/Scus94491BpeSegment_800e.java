@@ -93,7 +93,7 @@ import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandle
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._8005a398;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
-import static legend.game.Scus94491BpeSegment_8007.joypadDpad_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -966,7 +966,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e626cL)
   public static void checkForSceaLogoTimeout() {
-    if(joypadDpad_8007a398.get() != 0 || VSync(-1) - sceaLogoDisplayTime_800c6730.get() > 210L) {
+    if(joypadPress_8007a398.get() != 0 || VSync(-1) - sceaLogoDisplayTime_800c6730.get() > 210L) {
       pregameLoadingStage_800bb10c.add(0x1L);
     }
   }

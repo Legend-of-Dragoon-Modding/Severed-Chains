@@ -437,9 +437,9 @@ public final class Scus94491BpeSegment_800b {
   //TODO
 
   public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
-  public static final Value _800bed50 = MEMORY.ref(4, 0x800bed50L);
-  public static final Value _800bed54 = MEMORY.ref(4, 0x800bed54L);
-  public static final Value _800bed58 = MEMORY.ref(4, 0x800bed58L);
+  public static final Value screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L);
+  public static final Value screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L);
+  public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);
 
   public static final ArrayRef<JoyStruct> _800bed60 = MEMORY.ref(4, 0x800bed60L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
 
