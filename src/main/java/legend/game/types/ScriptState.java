@@ -9,46 +9,47 @@ import legend.core.memory.types.UnsignedIntRef;
 
 import java.util.function.Function;
 
-public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
-  public static <T extends MemoryRef> Function<Value, BiggerStruct<T>> of(final Function<Value, T> constructor) {
-    return ref -> new BiggerStruct<>(ref, constructor);
+/** Holds persistent data for scripts */
+public class ScriptState<T extends MemoryRef> implements MemoryRef {
+  public static <T extends MemoryRef> Function<Value, ScriptState<T>> of(final Function<Value, T> constructor) {
+    return ref -> new ScriptState<>(ref, constructor);
   }
 
-  public static <T extends MemoryRef> Class<BiggerStruct<T>> classFor(final Class<T> t) {
+  public static <T extends MemoryRef> Class<ScriptState<T>> classFor(final Class<T> t) {
     //noinspection unchecked
-    return (Class<BiggerStruct<T>>)(Class<?>)BiggerStruct.class;
+    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
   }
 
   private final Value ref;
 
   public final Pointer<T> innerStruct_00;
-  public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_04;
-  public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_08;
-  public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_0c;
+  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_04;
+  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_08;
+  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_0c;
   /** If the callback returns non-zero, it's set to null */
-  public final Pointer<TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long>> callback_10;
+  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_10;
   /** Pointer to the script file */
   public final Pointer<ScriptFile> scriptPtr_14;
   /** Pointer to the current script command */
-  public final Pointer<UnsignedIntRef> scriptCommandPtr_18;
+  public final Pointer<UnsignedIntRef> commandPtr_18;
   public final ArrayRef<Pointer<UnsignedIntRef>> commandStack_1c;
-  public final ArrayRef<UnsignedIntRef> ui_44;
+  public final ArrayRef<UnsignedIntRef> storage_44;
   /**
    * <p>Bit set - which of the pointers at the start of the struct are set</p>
    *
    * <ul>
-   *   <li>Bit 17 - {@link BiggerStruct#scriptPtr_14} is unset</li>
-   *   <li>Bit 18 - {@link BiggerStruct#callback_04} is unset</li>
-   *   <li>Bit 19 - {@link BiggerStruct#callback_08} is unset</li>
-   *   <li>Bit 26 - {@link BiggerStruct#callback_10} is set (note: not sure why this is backwards from the others)</li>
-   *   <li>Bit 27 - {@link BiggerStruct#callback_0c} is unset</li>
+   *   <li>Bit 17 - {@link ScriptState#scriptPtr_14} is unset</li>
+   *   <li>Bit 18 - {@link ScriptState#callback_04} is unset</li>
+   *   <li>Bit 19 - {@link ScriptState#callback_08} is unset</li>
+   *   <li>Bit 26 - {@link ScriptState#callback_10} is set (note: not sure why this is backwards from the others)</li>
+   *   <li>Bit 27 - {@link ScriptState#callback_0c} is unset</li>
    * </ul>
    *
    * <ul>
    *   <li>If bits 17 and 20 are not set, the script will be executed</li>
-   *   <li>If bits 18 and 20 are not set, {@link BiggerStruct#callback_04} will be executed</li>
-   *   <li>If bits 19 and 20 are not set, {@link BiggerStruct#callback_08} will be executed</li>
-   *   <li>If bit 26 is set and bit 20 is not set, {@link BiggerStruct#callback_10} will be executed</li>
+   *   <li>If bits 18 and 20 are not set, {@link ScriptState#callback_04} will be executed</li>
+   *   <li>If bits 19 and 20 are not set, {@link ScriptState#callback_08} will be executed</li>
+   *   <li>If bit 26 is set and bit 20 is not set, {@link ScriptState#callback_10} will be executed</li>
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
@@ -56,7 +57,7 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
   public final UnsignedIntRef ui_f8;
   public final UnsignedIntRef ui_fc;
 
-  public BiggerStruct(final Value ref, final Function<Value, T> innerStructConstructor) {
+  public ScriptState(final Value ref, final Function<Value, T> innerStructConstructor) {
     this.ref = ref;
 
     this.innerStruct_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, innerStructConstructor));
@@ -65,9 +66,9 @@ public class BiggerStruct<T extends MemoryRef> implements MemoryRef {
     this.callback_0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(4, TriFunctionRef::new));
     this.callback_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, TriFunctionRef::new));
     this.scriptPtr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, ScriptFile::new));
-    this.scriptCommandPtr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnsignedIntRef::new));
+    this.commandPtr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnsignedIntRef::new));
     this.commandStack_1c = ref.offset(4, 0x1cL).cast(ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 10, 4, Pointer.deferred(4, UnsignedIntRef::new)));
-    this.ui_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new)); // Dunno how long this should be
+    this.storage_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new)); // Dunno how long this should be
     this.ui_60 = ref.offset(4, 0x60L).cast(UnsignedIntRef::new);
 
     this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);

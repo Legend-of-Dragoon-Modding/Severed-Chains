@@ -21,13 +21,13 @@ import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
-import legend.game.types.BiggerStruct;
+import legend.game.types.ScriptState;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptFile;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
@@ -108,7 +108,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd8;
-import static legend.game.Scus94491BpeSegment_8004._8004e098;
+import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
 import static legend.game.Scus94491BpeSegment_8004._8004f65c;
 import static legend.game.Scus94491BpeSegment_8004._8004f664;
 import static legend.game.Scus94491BpeSegment_8004._8004f6a4;
@@ -124,7 +124,7 @@ import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.fileNamePtr_8004dda4;
-import static legend.game.Scus94491BpeSegment_8004.index_8004de4c;
+import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
 import static legend.game.Scus94491BpeSegment_8004.initSound;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
@@ -171,7 +171,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_8009._8009a7c0;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
-import static legend.game.Scus94491BpeSegment_800b.ScriptStruct_800bc070;
+import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bac68;
 import static legend.game.Scus94491BpeSegment_800b._800bad64;
@@ -223,8 +223,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0e0;
-import static legend.game.Scus94491BpeSegment_800b.biggerStructPtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.biggerStruct_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.currentlyLoadingFileInfo_800bb468;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -2215,7 +2215,7 @@ public final class Scus94491BpeSegment {
 //    sp = temporaryStack_1f8003b4.getAddress();
     executeScriptFrame();
     executeScriptCallbacks1();
-    index_8004de4c.setu(0x9L);
+    scriptStateUpperBound_8004de4c.setu(0x9L);
     isStackPointerModified_1f8003bc.set(false);
 //    sp = oldStackPointer_1f8003b8.get();
   }
@@ -2231,29 +2231,29 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015800L)
-  public static long findFreeBiggerStructIndex() {
-    index_8004de4c.addu(0x1L);
+  public static long findFreeScriptState() {
+    scriptStateUpperBound_8004de4c.addu(0x1L);
 
-    if(index_8004de4c.get() >= 0x48L) {
-      index_8004de4c.setu(0x9L);
+    if(scriptStateUpperBound_8004de4c.get() >= 0x48L) {
+      scriptStateUpperBound_8004de4c.setu(0x9L);
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = (int)index_8004de4c.get(); i < 0x48; i++) {
-      if(biggerStructPtrArr_800bc1c0.get(i).getPointer() == biggerStruct_800bc0c0.getAddress()) {
+    for(int i = (int)scriptStateUpperBound_8004de4c.get(); i < 0x48; i++) {
+      if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == scriptState_800bc0c0.getAddress()) {
         //LAB_800158c0
-        index_8004de4c.setu(i);
+        scriptStateUpperBound_8004de4c.setu(i);
         return i;
       }
     }
 
     //LAB_8001586c
     //LAB_80015898
-    for(int i = 0x9; i < index_8004de4c.get(); i++) {
-      if(biggerStructPtrArr_800bc1c0.get(i).getPointer() == biggerStruct_800bc0c0.getAddress()) {
+    for(int i = 0x9; i < scriptStateUpperBound_8004de4c.get(); i++) {
+      if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == scriptState_800bc0c0.getAddress()) {
         //LAB_800158c0
-        index_8004de4c.setu(i);
+        scriptStateUpperBound_8004de4c.setu(i);
         return i;
       }
     }
@@ -2263,21 +2263,21 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800158ccL)
-  public static long allocateBiggerStruct(final long innerStructSize) {
-    final long index = findFreeBiggerStructIndex();
+  public static long allocateScriptState(final long innerStructSize) {
+    final long index = findFreeScriptState();
 
     if(index < 0) {
       return -0x1L;
     }
 
-    return allocateBiggerStruct(index, innerStructSize, false, 0, 0);
+    return allocateScriptState(index, innerStructSize, false, 0, 0);
   }
 
   /**
    * @return index, or -1 on failure to allocate memory
    */
   @Method(0x80015918L)
-  public static long allocateBiggerStruct(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4) {
+  public static long allocateScriptState(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4) {
     final long linkedListAddress;
     if(allocateOnHead) {
       linkedListAddress = addToLinkedListHead(innerStructSize + 0x100L);
@@ -2295,10 +2295,10 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Can only handle BigStruct as inner struct");
     }
 
-    final BiggerStruct<BigStruct> biggerStruct = MEMORY.ref(4, linkedListAddress, BiggerStruct.of(BigStruct::new));
+    final ScriptState<BigStruct> scriptState = MEMORY.ref(4, linkedListAddress, ScriptState.of(BigStruct::new));
 
     //LAB_80015978
-    biggerStructPtrArr_800bc1c0.get((int)index).set(biggerStruct);
+    scriptStatePtrArr_800bc1c0.get((int)index).set(scriptState);
 
     if(innerStructSize != 0) {
       final BigStruct innerStruct = MEMORY.ref(4, linkedListAddress).offset(0x100L).cast(BigStruct::new);
@@ -2308,54 +2308,54 @@ public final class Scus94491BpeSegment {
         MEMORY.ref(4, innerStruct.getAddress()).offset(i).setu(0);
       }
 
-      biggerStruct.innerStruct_00.set(innerStruct);
+      scriptState.innerStruct_00.set(innerStruct);
     } else {
-      biggerStruct.innerStruct_00.clear();
+      scriptState.innerStruct_00.clear();
     }
 
     //LAB_800159c0
-    for(int i = 0; i < biggerStruct.commandStack_1c.length(); i++) {
-      biggerStruct.commandStack_1c.get(i).clear();
+    for(int i = 0; i < scriptState.commandStack_1c.length(); i++) {
+      scriptState.commandStack_1c.get(i).clear();
     }
 
-    biggerStruct.ui_44.get(0).set(index);
-    biggerStruct.ui_44.get(1).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(2).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(3).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(4).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(5).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(6).set(0xffff_ffffL);
-    biggerStruct.ui_60.set(0x080f_0000L);
-    biggerStruct.ui_44.get(8).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(9).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(10).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(11).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(12).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(13).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(14).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(15).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(16).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(17).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(18).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(19).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(20).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(21).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(22).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(23).set(0xffff_ffffL);
-    biggerStruct.ui_44.get(24).set(0xffff_ffffL);
+    scriptState.storage_44.get(0).set(index);
+    scriptState.storage_44.get(1).set(0xffff_ffffL);
+    scriptState.storage_44.get(2).set(0xffff_ffffL);
+    scriptState.storage_44.get(3).set(0xffff_ffffL);
+    scriptState.storage_44.get(4).set(0xffff_ffffL);
+    scriptState.storage_44.get(5).set(0xffff_ffffL);
+    scriptState.storage_44.get(6).set(0xffff_ffffL);
+    scriptState.ui_60.set(0x080f_0000L);
+    scriptState.storage_44.get(8).set(0xffff_ffffL);
+    scriptState.storage_44.get(9).set(0xffff_ffffL);
+    scriptState.storage_44.get(10).set(0xffff_ffffL);
+    scriptState.storage_44.get(11).set(0xffff_ffffL);
+    scriptState.storage_44.get(12).set(0xffff_ffffL);
+    scriptState.storage_44.get(13).set(0xffff_ffffL);
+    scriptState.storage_44.get(14).set(0xffff_ffffL);
+    scriptState.storage_44.get(15).set(0xffff_ffffL);
+    scriptState.storage_44.get(16).set(0xffff_ffffL);
+    scriptState.storage_44.get(17).set(0xffff_ffffL);
+    scriptState.storage_44.get(18).set(0xffff_ffffL);
+    scriptState.storage_44.get(19).set(0xffff_ffffL);
+    scriptState.storage_44.get(20).set(0xffff_ffffL);
+    scriptState.storage_44.get(21).set(0xffff_ffffL);
+    scriptState.storage_44.get(22).set(0xffff_ffffL);
+    scriptState.storage_44.get(23).set(0xffff_ffffL);
+    scriptState.storage_44.get(24).set(0xffff_ffffL);
 
     //LAB_800159f8
     //LAB_80015a14
-    biggerStruct.ui_f8.set(a3);
-    biggerStruct.ui_fc.set(a4);
+    scriptState.ui_f8.set(a3);
+    scriptState.ui_fc.set(a4);
 
     //LAB_80015a34
     return index;
   }
 
   @Method(0x80015a68L)
-  public static void setCallback04(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
-    final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
+  public static void setCallback04(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
+    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015aa0
@@ -2368,8 +2368,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015ab4L)
-  public static void setCallback08(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
-    final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
+  public static void setCallback08(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
+    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015aec
@@ -2382,8 +2382,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b00L)
-  public static void setCallback0c(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
-    final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
+  public static void setCallback0c(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
+    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015b38
@@ -2396,8 +2396,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b4cL)
-  public static void setCallback10(final long index, @Nullable final TriFunctionRef<Integer, BiggerStruct<BigStruct>, BigStruct, Long> callback) {
-    final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
+  public static void setCallback10(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
+    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015b80
@@ -2416,21 +2416,21 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015bb8L)
   public static void loadScriptFile(final long index, @Nullable final ScriptFile script, final long offsetIndex) {
-    final BiggerStruct<?> struct = biggerStructPtrArr_800bc1c0.get((int)index).deref();
+    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(script != null) {
       struct.scriptPtr_14.set(script);
-      struct.scriptCommandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
+      struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
     } else {
       struct.scriptPtr_14.clear();
-      struct.scriptCommandPtr_18.clear();
+      struct.commandPtr_18.clear();
       struct.ui_60.or(0x0002_0000L);
     }
   }
 
   @Method(0x80015f64L)
-  public static long scriptNotImplemented(final ScriptStruct a0) {
+  public static long scriptNotImplemented(final RunningScript a0) {
     assert false;
     return 0x2L;
   }
@@ -2444,32 +2444,33 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    ScriptStruct_800bc070.ui_1c.set(0);
+    RunningScript_800bc070.ui_1c.set(0);
 
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
-      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(index).derefAs(BiggerStruct.classFor(BigStruct.class));
+      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BigStruct.class));
 
-      if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress() && (biggerStruct.ui_60.get() & 0x12_0000L) == 0) {
-        ScriptStruct_800bc070.index_00.set(index);
-        ScriptStruct_800bc070.biggerStruct_04.set(biggerStruct);
-        ScriptStruct_800bc070.commandPtr_0c.set(biggerStruct.scriptCommandPtr_18.deref());
-        ScriptStruct_800bc070.ui_08.set(biggerStruct.scriptCommandPtr_18.deref());
+      if(scriptState.getAddress() != scriptState_800bc0c0.getAddress() && (scriptState.ui_60.get() & 0x12_0000L) == 0) {
+        RunningScript_800bc070.scriptStateIndex_00.set(index);
+        RunningScript_800bc070.scriptState_04.set(scriptState);
+        RunningScript_800bc070.commandPtr_0c.set(scriptState.commandPtr_18.deref());
+        RunningScript_800bc070.parentPtr_08.set(scriptState.commandPtr_18.deref());
 
         long ret;
         //LAB_80016018
         do {
-          final long parentCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
-          ScriptStruct_800bc070.commandPtr_0c.incr();
-          ScriptStruct_800bc070.parentCallbackIndex_10.set(parentCommand & 0xffL);
-          ScriptStruct_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
-          ScriptStruct_800bc070.parentParam_18.set(parentCommand >>> 16);
+          final long parentCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
+          RunningScript_800bc070.parentCallbackIndex_10.set(parentCommand & 0xffL);
+          RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
+          RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-          System.err.println("-- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+
+          RunningScript_800bc070.commandPtr_0c.incr();
 
           //LAB_80016050
-          for(int childIndex = 0; childIndex < ScriptStruct_800bc070.childCount_14.get(); childIndex++) {
-            final long childCommand = ScriptStruct_800bc070.commandPtr_0c.deref().get();
+          for(int childIndex = 0; childIndex < RunningScript_800bc070.childCount_14.get(); childIndex++) {
+            final long childCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
             final int operation = (int)(childCommand >>> 24);
             final int param0 = (int)(childCommand >>> 16 & 0xff);
             final int param1 = (int)(childCommand >>> 8 & 0xff);
@@ -2477,82 +2478,82 @@ public final class Scus94491BpeSegment {
 
             System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
 
-            ScriptStruct_800bc070.commandPtr_0c.incr();
-            final long commandPtr = ScriptStruct_800bc070.commandPtr_0c.getPointer();
+            RunningScript_800bc070.commandPtr_0c.incr();
+            final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
 
             if(operation == 0) {
               //LAB_80016574
-              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref()).decr();
+              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref()).decr();
             } else if(operation == 0x1L) {
               //LAB_800161f4
-              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.commandPtr_0c.deref());
-              ScriptStruct_800bc070.commandPtr_0c.incr();
+              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref());
+              RunningScript_800bc070.commandPtr_0c.incr();
             } else if(operation == 0x2L) {
               //LAB_80016200
-              ScriptStruct_800bc070.params_20.get(childIndex).set(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2));
+              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2));
             } else if(operation == 0x3L) {
               //LAB_800160cc
               //LAB_8001620c
-              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
-              final long a1_0 = biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get(param1).get();
-              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a1_0).deref().ui_44.get(param0));
+              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
+              final long a1_0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(param1).get();
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0));
             } else if(operation == 0x4L) {
               //LAB_80016258
-              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get();
-              final long a1_0 = param1 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)a0_0).deref().ui_44.get((int)a1_0));
+              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
+              final long a1_0 = param1 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0));
             } else if(operation == 0x5L) {
               //LAB_80016290
-              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
             } else if(operation == 0x6L) {
               //LAB_800162a4
-              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() + param2)).deref());
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2)).deref());
             } else if(operation == 0x7) {
               //LAB_800162d0
-              final long a0_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
+              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
             } else if(operation == 0x8L) {
               //LAB_800160e8
               //LAB_800162f4
-              v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get();
-              final long a1_0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get();
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
+              v0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
+              final long a1_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
             } else if(operation == 0x9L) {
               //LAB_80016328
-              v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
             } else if(operation == 0xaL) {
               //LAB_80016118
               //LAB_80016334
-              v0 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get()) * 0x4L;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              v0 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else if(operation == 0xbL) {
               //LAB_80016360
-//              v0 = ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L;
+//              v0 = ScriptStruct_800bc070.scriptState_04.deref().storage_44.get(param0).get() * 0x4L;
 //              final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
 //              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
               assert false;
             } else if(operation == 0xcL) {
               //LAB_800163a0
-              ScriptStruct_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              RunningScript_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else if(operation == 0xdL) {
               //LAB_800163e8
-              ScriptStruct_800bc070.params_20.get(childIndex).set(biggerStructPtrArr_800bc1c0.get((int)ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get()).deref().ui_44.get(param1 + param0));
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0));
             } else if(operation == 0xeL) {
               //LAB_80016418
-              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
+              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
             } else if(operation == 0xfL) {
               //LAB_8001642c
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
             } else if(operation == 0x10L) {
               //LAB_80016180
               //LAB_8001643c
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
             } else if(operation == 0x11L) {
               //LAB_80016468
-//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
               assert false;
             } else if(operation == 0x12L) {
               //LAB_80016138
@@ -2561,36 +2562,36 @@ public final class Scus94491BpeSegment {
               assert false;
             } else if(operation == 0x13L) {
               //LAB_800164a4
-              v1 = ScriptStruct_800bc070.ui_08.getPointer() + ((short)childCommand + param0) * 4;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + param0) * 4;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
             } else if(operation == 0x14L) {
               //LAB_800164b4
-              v1 = ScriptStruct_800bc070.ui_08.getPointer() + (short)parentCommand * 0x4L;
+              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)parentCommand * 0x4L;
 
               //LAB_800164cc
               v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
 
               //LAB_800164d4
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
             } else if(operation == 0x15L) {
               //LAB_800161a0
               //LAB_800164e0
-              ScriptStruct_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
+              RunningScript_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
 
               //LAB_80016580
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else if(operation == 0x16L) {
               //LAB_80016518
-              ScriptStruct_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + ScriptStruct_800bc070.biggerStruct_04.deref().ui_44.get(param1).get() * 0x4L;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              RunningScript_800bc070.commandPtr_0c.incr();
+              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else if(operation == 0x17L) {
               //LAB_800161d4
               //LAB_8001654c
-              ScriptStruct_800bc070.commandPtr_0c.incr();
+              RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else {
               assert false : "Unknown op";
             }
@@ -2599,17 +2600,20 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80016598
-          ret = _8004e098.get((int)ScriptStruct_800bc070.parentCallbackIndex_10.get()).deref().run(ScriptStruct_800bc070);
+          ret = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref().run(RunningScript_800bc070);
 
+          // Returning 0 continues execution
+          // Returning 1 pauses execution until the next frame
+          // Returning anything else pauses execution and repeats the same instruction next frame
           if(ret == 0 || ret == 0x1L) {
             //LAB_800165e8
-            ScriptStruct_800bc070.ui_08.set(ScriptStruct_800bc070.commandPtr_0c.deref());
+            RunningScript_800bc070.parentPtr_08.set(RunningScript_800bc070.commandPtr_0c.deref());
           }
         } while(ret == 0);
 
         //LAB_800165f4
-        if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
-          biggerStruct.scriptCommandPtr_18.set(ScriptStruct_800bc070.ui_08.deref());
+        if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
+          scriptState.commandPtr_18.set(RunningScript_800bc070.parentPtr_08.deref());
         }
       }
 
@@ -2620,7 +2624,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001664cL)
-  public static long scriptCompare(final ScriptStruct a0, final long operandA, final long operandB, final long op) {
+  public static long scriptCompare(final RunningScript a0, final long operandA, final long operandB, final long op) {
     return switch((int)op) {
       case 0x0 -> (int)operandA <= (int)operandB ? 1 : 0;
       case 0x1 -> (int)operandA < (int)operandB ? 1 : 0;
@@ -2634,23 +2638,25 @@ public final class Scus94491BpeSegment {
     };
   }
 
+  /** Stop execution for this frame, resume next frame */
   @Method(0x800166d0L)
-  public static long scriptReturnOne(final ScriptStruct a0) {
+  public static long scriptPause(final RunningScript a0) {
     return 0x1L;
   }
 
+  /** Stop execution for this frame, resume next frame and repeat same command */
   @Method(0x800166d8L)
-  public static long scriptReturnTwo(final ScriptStruct a0) {
+  public static long scriptRewindAndPause(final RunningScript a0) {
     return 0x2L;
   }
 
   /**
    * Subtracts 1 from work array value 0 if nonzero
    *
-   * @return 0 if value is already 0; returns 2 if value was decremented
+   * @return 0 if value is already 0; 2 if value was decremented
    */
   @Method(0x800166e0L)
-  public static long scriptDecrementIfPossible(final ScriptStruct a0) {
+  public static long scriptWait(final RunningScript a0) {
     if(a0.params_20.get(0).deref().get() != 0) {
       a0.params_20.get(0).deref().sub(0x1L);
       return 0x2L;
@@ -2679,7 +2685,7 @@ public final class Scus94491BpeSegment {
    * @return 0 if comparison succeeds, otherwise return 2
    */
   @Method(0x8001670cL)
-  public static long scriptCompare(final ScriptStruct a0) {
+  public static long scriptCompare(final RunningScript a0) {
     return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 0x2L : 0;
   }
 
@@ -2689,7 +2695,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016774L)
-  public static long scriptMove(final ScriptStruct a0) {
+  public static long scriptMove(final RunningScript a0) {
     a0.params_20.get(1).deref().set(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2700,10 +2706,9 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800167bcL)
-  public static long scriptMemCopy(final ScriptStruct a0) {
+  public static long scriptMemCopy(final RunningScript a0) {
     Pointer<UnsignedIntRef> dest = a0.params_20.get(2);
     Pointer<UnsignedIntRef> src = a0.params_20.get(1);
-
     long count = (int)(a0.params_20.get(0).deref().get() << 2) >> 2;
 
     if(dest.getPointer() < src.getPointer()) {
@@ -2741,13 +2746,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80016854L)
-  public static long FUN_80016854(final ScriptStruct a0) {
+  public static long scriptSetZero(final RunningScript a0) {
     a0.params_20.get(0).deref().set(0);
     return 0;
   }
 
   @Method(0x80016868L)
-  public static long FUN_80016868(final ScriptStruct a0) {
+  public static long scriptAnd(final RunningScript a0) {
     a0.params_20.get(1).deref().and(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2758,7 +2763,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016920L)
-  public static long scriptShiftLeft(final ScriptStruct a0) {
+  public static long scriptShiftLeft(final RunningScript a0) {
     a0.params_20.get(1).deref().shl(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2769,8 +2774,8 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016944L)
-  public static long scriptShiftRightArithmetic(final ScriptStruct a0) {
-    a0.params_20.get(1).deref().set((int)a0.params_20.get(1).deref().get() >> a0.params_20.get(0).deref().get());
+  public static long scriptShiftRightArithmetic(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(((int)a0.params_20.get(1).deref().get() >> a0.params_20.get(0).deref().get()) & 0xffff_ffffL);
     return 0;
   }
 
@@ -2780,7 +2785,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016968L)
-  public static long scriptAdd(final ScriptStruct a0) {
+  public static long scriptAdd(final RunningScript a0) {
     a0.params_20.get(1).deref().addOverflow(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2791,7 +2796,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x8001698cL)
-  public static long scriptSubtract(final ScriptStruct a0) {
+  public static long scriptSubtract(final RunningScript a0) {
     a0.params_20.get(1).deref().subOverflow(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2802,7 +2807,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800169d4L)
-  public static long scriptIncrementBy1(final ScriptStruct a0) {
+  public static long scriptIncrementBy1(final RunningScript a0) {
     a0.params_20.get(0).deref().incrOverflow();
     return 0;
   }
@@ -2813,13 +2818,13 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800169f4L)
-  public static long scriptDecrementBy1(final ScriptStruct a0) {
+  public static long scriptDecrementBy1(final RunningScript a0) {
     a0.params_20.get(0).deref().decr();
     return 0;
   }
 
   @Method(0x80016a14L)
-  public static long FUN_80016a14(final ScriptStruct a0) {
+  public static long scriptNegate(final RunningScript a0) {
     a0.params_20.get(0).deref().set(-(int)a0.params_20.get(0).deref().get() & 0xffff_ffffL);
     return 0;
   }
@@ -2830,7 +2835,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016a5cL)
-  public static long scriptMultiply(final ScriptStruct a0) {
+  public static long scriptMultiply(final RunningScript a0) {
     a0.params_20.get(1).deref().mulOverflow(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2841,14 +2846,14 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016a84L)
-  public static long scriptDivide(final ScriptStruct a0) {
+  public static long scriptDivide(final RunningScript a0) {
     a0.params_20.get(1).deref().div(a0.params_20.get(0).deref());
     return 0;
   }
 
   @Method(0x80016b2cL)
-  public static long FUN_80016b2c(final ScriptStruct a0) {
-    a0.params_20.get(1).deref().set(((int)a0.params_20.get(1).deref().get() >> 4) * ((int)a0.params_20.get(0).deref().get() >> 4) >> 4);
+  public static long FUN_80016b2c(final RunningScript a0) {
+    a0.params_20.get(1).deref().set((((int)a0.params_20.get(1).deref().get() >> 4) * ((int)a0.params_20.get(0).deref().get() >> 4) >> 4) & 0xffff_ffffL);
     return 0;
   }
 
@@ -2858,26 +2863,26 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016bbcL)
-  public static long scriptSquareRoot(final ScriptStruct a0) {
+  public static long scriptSquareRoot(final RunningScript a0) {
     a0.params_20.get(1).deref().set(SquareRoot0(a0.params_20.get(0).deref().get()));
     return 0;
   }
 
   @Method(0x80016c00L)
-  public static long FUN_80016c00(final ScriptStruct a0) {
+  public static long FUN_80016c00(final RunningScript a0) {
     a0.params_20.get(1).deref().set(((int)a0.params_20.get(0).deref().get() * FUN_800133ac()) >>> 16);
     return 0;
   }
 
   @Method(0x80016c4cL)
-  public static long FUN_80016c4c(final ScriptStruct a0) {
-    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).get()); // Needs to be stored as unsigned
+  public static long scriptSin(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).getSigned() & 0xffff_ffffL); // Needs to be stored as unsigned
     return 0;
   }
 
   @Method(0x80016c80L)
-  public static long FUN_80016c80(final ScriptStruct a0) {
-    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).offset(0x2L).get()); // Needs to be stored as unsigned
+  public static long scriptCos(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).offset(0x2L).getSigned() & 0xffff_ffffL); // Needs to be stored as unsigned
     return 0;
   }
 
@@ -2887,7 +2892,7 @@ public final class Scus94491BpeSegment {
    * @return The value that the sub-function returns
    */
   @Method(0x80016cfcL)
-  public static long scriptExecuteSubFunc(final ScriptStruct a0) {
+  public static long scriptExecuteSubFunc(final RunningScript a0) {
     return scriptSubFunctions_8004e29c.get((int)a0.parentParam_18.get()).deref().run(a0);
   }
 
@@ -2897,7 +2902,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016d38L)
-  public static long scriptJump(final ScriptStruct a0) {
+  public static long scriptJump(final RunningScript a0) {
     a0.commandPtr_0c.set(a0.params_20.get(0).deref());
     return 0;
   }
@@ -2922,7 +2927,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016d4cL)
-  public static long scriptConditionalJump(final ScriptStruct a0) {
+  public static long scriptConditionalJump(final RunningScript a0) {
     if(scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(2).deref());
     }
@@ -2952,7 +2957,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016da0L)
-  public static long scriptConditionalJump0(final ScriptStruct a0) {
+  public static long scriptConditionalJump0(final RunningScript a0) {
     if(scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(1).deref());
     }
@@ -2967,8 +2972,8 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016e50L)
-  public static long scriptJumpAndLink(final ScriptStruct a0) {
-    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
+  public static long scriptJumpAndLink(final RunningScript a0) {
+    final ScriptState<?> struct = a0.scriptState_04.deref();
 
     for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
       struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
@@ -2986,8 +2991,8 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016f28L)
-  public static long scriptJumpReturn(final ScriptStruct a0) {
-    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
+  public static long scriptJumpReturn(final RunningScript a0) {
+    final ScriptState<?> struct = a0.scriptState_04.deref();
 
     a0.commandPtr_0c.set(struct.commandStack_1c.get(0).deref());
 
@@ -3001,8 +3006,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80016ffcL)
-  public static long FUN_80016ffc(final ScriptStruct a0) {
-    final BiggerStruct<?> struct = a0.biggerStruct_04.deref();
+  public static long scriptJumpAndLinkTable(final RunningScript a0) {
+    final ScriptState<?> struct = a0.scriptState_04.deref();
 
     for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
       struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
@@ -3010,18 +3015,19 @@ public final class Scus94491BpeSegment {
 
     struct.commandStack_1c.get(0).set(a0.commandPtr_0c.deref());
 
+    // Equivalent to a + a[b] * 4
     final long v1 = a0.params_20.get(1).getPointer();
-    a0.commandPtr_0c.set(MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20.get(0).deref().get() * 0x4L).get() * 0x4L, UnsignedIntRef::new));
+    a0.commandPtr_0c.set(MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20.get(0).deref().get() * 0x4L).getSigned() * 0x4L, UnsignedIntRef::new));
     return 0;
   }
 
   @Method(0x8001734cL)
-  public static long scriptSubNotImplemented(final ScriptStruct a0) {
+  public static long scriptRewindAndPause2(final RunningScript a0) {
     return 0x2L;
   }
 
   @Method(0x80017354L)
-  public static long FUN_80017354(final ScriptStruct a0) {
+  public static long FUN_80017354(final RunningScript a0) {
     _800bb0ab.setu(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
     return 0;
   }
@@ -3034,7 +3040,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80017390L)
-  public static long scriptSetGlobalFlag1(final ScriptStruct a0) {
+  public static long scriptSetGlobalFlag1(final RunningScript a0) {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
@@ -3057,7 +3063,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800173fcL)
-  public static long scriptReadGlobalFlag1(final ScriptStruct a0) {
+  public static long scriptReadGlobalFlag1(final RunningScript a0) {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
@@ -3074,7 +3080,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800174d8L)
-  public static long scriptReadGlobalFlag2(final ScriptStruct a0) {
+  public static long scriptReadGlobalFlag2(final RunningScript a0) {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
@@ -3084,13 +3090,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001751cL)
-  public static long scriptStartEffect(final ScriptStruct a0) {
+  public static long scriptStartEffect(final RunningScript a0) {
     scriptStartEffect(a0.params_20.get(0).deref().get(), Math.max(1, a0.params_20.get(1).deref().get()));
     return 0;
   }
 
   @Method(0x800175b4L)
-  public static long FUN_800175b4(final ScriptStruct a0) {
+  public static long FUN_800175b4(final RunningScript a0) {
     final long shift = a0.params_20.get(1).deref().get() & 0x1fL;
     final long index = a0.params_20.get(1).deref().get() >>> 5;
 
@@ -3112,16 +3118,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80017648L)
-  public static long FUN_80017648(final ScriptStruct a0) {
-    long v0;
-    long a2;
+  public static long FUN_80017648(final RunningScript a0) {
+    final long shift = a0.params_20.get(1).deref().get() & 0x1fL;
+    final long index = a0.params_20.get(1).deref().get() >>> 5;
 
-    v0 = a0.params_20.get(1).deref().get();
-    a2 = v0 & 0x1fL;
-    v0 = v0 >>> 5;
-    v0 = a0.params_20.get(0).getPointer() + v0 * 0x4L;
-    v0 = MEMORY.ref(4, v0).get() & (0x1L << a2);
-    a0.params_20.get(2).deref().set(v0 > 0 ? 1 : 0);
+    a0.params_20.get(2).deref().set((MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).get() & (0x1L << shift)) > 0 ? 1 : 0);
+
     return 0;
   }
 
@@ -3133,10 +3135,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017750
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
-      if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
-        if((biggerStruct.ui_60.get() & 0x14_0000L) == 0) {
-          biggerStruct.callback_04.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref());
+      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
+        if((scriptState.ui_60.get() & 0x14_0000L) == 0) {
+          scriptState.callback_04.deref().run(i, scriptState, scriptState.innerStruct_00.deref());
         }
       }
 
@@ -3145,10 +3147,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_800177ac
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
-      if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
-        if((biggerStruct.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
-          if(biggerStruct.callback_10.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref()) != 0) {
+      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
+        if((scriptState.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
+          if(scriptState.callback_10.deref().run(i, scriptState, scriptState.innerStruct_00.deref()) != 0) {
             setCallback10(i, null);
           }
         }
@@ -3168,10 +3170,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017854
     for(int i = 0; i < 0x48; i++) {
-      final BiggerStruct<BigStruct> biggerStruct = biggerStructPtrArr_800bc1c0.get(i).derefAs(BiggerStruct.classFor(BigStruct.class));
-      if(biggerStruct.getAddress() != biggerStruct_800bc0c0.getAddress()) {
-        if((biggerStruct.ui_60.get() & 0x18_0000L) == 0) {
-          biggerStruct.callback_08.deref().run(i, biggerStruct, biggerStruct.innerStruct_00.deref());
+      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
+        if((scriptState.ui_60.get() & 0x18_0000L) == 0) {
+          scriptState.callback_08.deref().run(i, scriptState, scriptState.innerStruct_00.deref());
         }
       }
 
@@ -3805,13 +3807,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ab34L) // Button press (actually I think this is sound?)
-  public static long FUN_8001ab34(final ScriptStruct a0) {
+  public static long FUN_8001ab34(final RunningScript a0) {
     playSound((int)a0.params_20.get(0).deref().get(), (int)a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), (short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get());
     return 0;
   }
 
   @Method(0x8001ab98L)
-  public static long FUN_8001ab98(final ScriptStruct a0) {
+  public static long FUN_8001ab98(final RunningScript a0) {
     FUN_80019c80(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
@@ -3828,7 +3830,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ad5cL)
-  public static long FUN_8001ad5c(final ScriptStruct a0) {
+  public static long FUN_8001ad5c(final RunningScript a0) {
     //LAB_8001ad70
     for(int i = 0; i < 32; i++) {
       final SpuStruct28 struct = spu28Arr_800bd110.get(i);
@@ -3862,7 +3864,7 @@ public final class Scus94491BpeSegment {
    * Something to do with sequenced audio
    */
   @Method(0x8001b33cL)
-  public static long FUN_8001b33c(final ScriptStruct a0) {
+  public static long FUN_8001b33c(final RunningScript a0) {
     //TODO GH#3
     if(true) {
       return 0;

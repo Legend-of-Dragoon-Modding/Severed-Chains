@@ -68,7 +68,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_12c;
   public final UnsignedShortRef mrgAnimGroup_12e;
   /** TODO possibly file index? */
-  public final UnsignedShortRef us_130;
+  public final UnsignedShortRef scriptFileIndex_130;
   public final UnsignedShortRef mrgAnimGroupIndex_132;
   public final UnsignedShortRef us_134;
 
@@ -155,7 +155,7 @@ public class BigStruct implements MemoryRef {
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
     this.mrgAnimGroup_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
-    this.us_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
+    this.scriptFileIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
     this.mrgAnimGroupIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.us_134 = ref.offset(2, 0x134L).cast(UnsignedShortRef::new);
 

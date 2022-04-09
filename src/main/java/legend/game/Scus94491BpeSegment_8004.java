@@ -21,7 +21,7 @@ import legend.core.spu.Voice;
 import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -229,7 +229,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
-  public static final Value index_8004de4c = MEMORY.ref(4, 0x8004de4cL);
+  public static final Value scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
   /**
    * Table of pointers to variables accessible by scripting engine
@@ -299,9 +299,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc95c}</li>
    *   <li>null</li>
    *   <li>null</li>
-   *   <li>{@link legend.game.SMap#index_800c6880}</li>
+   *   <li>{@link legend.game.SMap#scriptStateIndices_800c6880}</li>
    *   <li>{@link legend.game.SMap#_800c6740}</li>
-   *   <li>{@link legend.game.SMap#_800c6730}</li>
+   *   <li>{@link legend.game.SMap#scriptCount_800c6730}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bd7b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bda08}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8005#submapCut_80052c30}</li>
@@ -387,9 +387,9 @@ public final class Scus94491BpeSegment_8004 {
    * This is the world's largest jump table
    *
    * <ol start="0">
-   *   <li>{@link legend.game.Scus94491BpeSegment#scriptReturnOne}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#scriptReturnTwo}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementIfPossible}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptPause}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptRewindAndPause}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptWait}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptCompare}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016744}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -399,11 +399,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016790}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMemCopy}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016854}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptSetZero}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016868}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptAnd}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001688c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168d4}</li>
@@ -416,7 +416,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800169b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptIncrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementBy1}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a14}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNegate}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a34}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMultiply}</li>
@@ -437,8 +437,8 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptSquareRoot}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c00}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c4c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c80}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptSin}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptCos}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016cb4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -461,7 +461,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptJumpAndLink}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptJumpReturn}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ffc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptJumpAndLinkTable}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -517,12 +517,12 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> _8004e098 = MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 0x81, 4, Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptFunctions_8004e098 = MEMORY.ref(4, 0x8004e098L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 0x81, 4, Pointer.of(4, FunctionRef::new)));
 
   /**
    * <p>Actually this is</p>
    *
-   * <p>All methods that are skipped are {@link Scus94491BpeSegment#scriptSubNotImplemented}</p>
+   * <p>All methods that are skipped are {@link Scus94491BpeSegment#scriptRewindAndPause2}</p>
    *
    * <p>Many methods are copied into this table at runtime.</p>
    *
@@ -557,9 +557,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>800cb534</li>
    *   <li>800cc948</li>
    *   <li>800cb578</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>800cb5d8</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>800cb618</li>
    *   <li>800cb674</li>
    *   <li>800cb6bc</li>
@@ -583,9 +583,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>800cc784</li>
    *   <li>800cc8f4</li>
    *   <li>800cca34</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>800ccb3c</li>
    *   <li>800ccb70</li>
    *   <li>800ccba4</li>
@@ -605,10 +605,10 @@ public final class Scus94491BpeSegment_8004 {
    * ...
    * <ol start="320">
    *   <li>800cc9d8</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>800cb84c</li>
    *   <li>800cb95c</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li value="352">800cd3b4</li>
    *   <li>800ee210</li>
    *   <li>800cd468</li>
@@ -633,10 +633,10 @@ public final class Scus94491BpeSegment_8004 {
    * </ol>
    * ...
    * <ol start="1023">
-   *   <li>{@link Scus94491BpeSegment#scriptSubNotImplemented}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
   // 8004f29c end of jump table
 
   public static final Value _8004f5ac = MEMORY.ref(2, 0x8004f5acL);
@@ -2291,12 +2291,13 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_800446f4
     if(joypadCallbackIndex_80059618.get() == 0x2L) {
-      setJoypadTimeout(60L);
+      //TODO shouldn't need this
+//      setJoypadTimeout(60L);
 
       //LAB_80044720
-      while(!checkJoypadTimeout()) {
-        DebugHelper.sleep(1);
-      }
+//      while(!checkJoypadTimeout()) {
+//        DebugHelper.sleep(1);
+//      }
     }
 
     //LAB_80044730

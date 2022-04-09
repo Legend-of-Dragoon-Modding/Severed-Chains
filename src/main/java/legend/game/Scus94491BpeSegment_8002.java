@@ -39,7 +39,7 @@ import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.RotateTranslateStruct;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
 import legend.game.types.TmdAnimationFile;
@@ -1675,66 +1675,66 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x800238a4L)
   public static long getJoypadInputByPriority() {
-    final long buttons = joypadRepeat_8007a3a0.get();
+    final long repeat = joypadRepeat_8007a3a0.get();
 
-    if((buttons & 0x4L) != 0) {
+    if((repeat & 0x4L) != 0) {
       return 0x4L;
     }
 
     //LAB_800238c4
-    if((buttons & 0x8L) != 0) {
+    if((repeat & 0x8L) != 0) {
       return 0x8L;
     }
 
     //LAB_800238d4
-    if((buttons & 0x1L) != 0) {
+    if((repeat & 0x1L) != 0) {
       return 0x1L;
     }
 
     //LAB_800238e4
-    if((buttons & 0x2L) != 0) {
+    if((repeat & 0x2L) != 0) {
       return 0x2L;
     }
 
     //LAB_800238f4
-    if((buttons & 0x1000L) != 0) {
+    if((repeat & 0x1000L) != 0) {
       return 0x1000L;
     }
 
     //LAB_80023904
-    if((buttons & 0x4000L) != 0) {
+    if((repeat & 0x4000L) != 0) {
       return 0x4000L;
     }
 
     //LAB_80023914
-    if((buttons & 0x8000L) != 0) {
+    if((repeat & 0x8000L) != 0) {
       return 0x8000L;
     }
 
     //LAB_80023924
-    if((buttons & 0x2000L) != 0) {
+    if((repeat & 0x2000L) != 0) {
       return 0x2000L;
     }
 
     //LAB_80023934
-    final long dpad = joypadPress_8007a398.get();
+    final long press = joypadPress_8007a398.get();
 
-    if((dpad & 0x10L) != 0) {
+    if((press & 0x10L) != 0) {
       return 0x10L;
     }
 
     //LAB_80023950
-    if((dpad & 0x40L) != 0) {
+    if((press & 0x40L) != 0) {
       return 0x40L;
     }
 
     //LAB_80023960
-    if((dpad & 0x80L) != 0) {
+    if((press & 0x80L) != 0) {
       return 0x80L;
     }
 
     //LAB_80023970
-    return dpad & 0x20L;
+    return press & 0x20L;
   }
 
   @Method(0x800239e0L)
@@ -2321,7 +2321,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800250ec
     for(int i = 0; i < 8; i++) {
       _800be358.get(i)._00.set(0);
-      _800bdf38.offset(i * 0x84L).setu(0);
+      _800bdf38.get(i)._00.set(0);
     }
 
     //LAB_80025118
@@ -2337,9 +2337,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800257e0L)
   public static void FUN_800257e0(int a0) {
-    final long v1 = _800bdf38.offset(a0 * 0x84L).getAddress();
-    if(MEMORY.ref(4, v1).get() != 0) {
-      removeFromLinkedList(MEMORY.ref(4, v1).offset(0x58L).get());
+    if(_800bdf38.get(a0)._00.get() != 0) {
+      removeFromLinkedList(_800bdf38.get(a0).ptr_58.get());
     }
 
     //LAB_80025824
@@ -2772,9 +2771,9 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029c98L)
-  public static long FUN_80029c98(final ScriptStruct a0) {
-    final long a2 = a0.params_20.get(0).deref().get();
-    a0.params_20.get(1).deref().set(_800be358.get((int)a2)._00.get() | _800bdf38.offset(a2 * 0x84L).get());
+  public static long FUN_80029c98(final RunningScript a0) {
+    final int a2 = (int)a0.params_20.get(0).deref().get();
+    a0.params_20.get(1).deref().set(_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
     return 0;
   }
 
@@ -2787,7 +2786,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a098
-      if(_800bdf38.offset(i * 0x84L).get() != 0) {
+      if(_800bdf38.get(i)._00.get() != 0) {
         FUN_800264b0(i);
       }
     }
@@ -2806,7 +2805,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a134
-      if(_800bdf38.offset(i * 0x84L).get() != 0) {
+      if(_800bdf38.get(i)._00.get() != 0) {
         FUN_800282ac(i);
         FUN_800299d4(i);
       }
@@ -2834,7 +2833,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a3ec(final int a0, final long a1) {
     if((a1 & 0x1L) == 0) {
       //LAB_8002a40c
-      _800bdf38.offset(a0 * 0x84L).setu(0);
+      _800bdf38.get(a0)._00.set(0);
       _800be358.get(a0)._00.set(0);
     } else {
       //LAB_8002a458

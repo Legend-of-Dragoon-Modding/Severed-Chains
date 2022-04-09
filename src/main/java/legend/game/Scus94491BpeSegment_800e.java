@@ -13,7 +13,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,8 +121,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.biggerStructPtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.biggerStruct_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
@@ -203,7 +203,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800d4580</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e6f64 = MEMORY.ref(4, 0x800e6f64L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6f64 = MEMORY.ref(4, 0x800e6f64L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 832</p>
    *
@@ -233,7 +233,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x801079a4</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e6fe4 = MEMORY.ref(4, 0x800e6fe4L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6fe4 = MEMORY.ref(4, 0x800e6fe4L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 896</p>
    *
@@ -242,7 +242,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x8010b1d8</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 32</p>
    *
@@ -268,7 +268,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800d8dec</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7048 = MEMORY.ref(4, 0x800e7048L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 19, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7048 = MEMORY.ref(4, 0x800e7048L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 19, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 224</p>
    *
@@ -307,7 +307,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001b27c}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7094 = MEMORY.ref(4, 0x800e7094L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7094 = MEMORY.ref(4, 0x800e7094L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 704</p>
    *
@@ -329,7 +329,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001f560}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7114 = MEMORY.ref(4, 0x800e7114L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7114 = MEMORY.ref(4, 0x800e7114L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 800</p>
    *
@@ -344,7 +344,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001c604}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7150 = MEMORY.ref(4, 0x800e7150L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 8, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7150 = MEMORY.ref(4, 0x800e7150L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 8, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 416</p>
    *
@@ -383,7 +383,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>null</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7170 = MEMORY.ref(4, 0x800e7170L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7170 = MEMORY.ref(4, 0x800e7170L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 544</p>
    *
@@ -422,7 +422,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x80113c6c</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e71f0 = MEMORY.ref(4, 0x800e71f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e71f0 = MEMORY.ref(4, 0x800e71f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 576</p>
    *
@@ -461,7 +461,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800e99bc</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7270 = MEMORY.ref(4, 0x800e7270L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7270 = MEMORY.ref(4, 0x800e7270L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 608</p>
    *
@@ -500,7 +500,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800e727c</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e72f0 = MEMORY.ref(4, 0x800e72f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e72f0 = MEMORY.ref(4, 0x800e72f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 640</p>
    *
@@ -539,7 +539,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>null</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7370 = MEMORY.ref(4, 0x800e7370L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7370 = MEMORY.ref(4, 0x800e7370L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 96</p>
    *
@@ -578,7 +578,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800dfb44}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e73f0 = MEMORY.ref(4, 0x800e73f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e73f0 = MEMORY.ref(4, 0x800e73f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 288</p>
    *
@@ -617,7 +617,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e0cb8}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7470 = MEMORY.ref(4, 0x800e7470L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7470 = MEMORY.ref(4, 0x800e7470L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 672</p>
    *
@@ -656,7 +656,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e0c9c}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e74f0 = MEMORY.ref(4, 0x800e74f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e74f0 = MEMORY.ref(4, 0x800e74f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 512</p>
    *
@@ -678,7 +678,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800ee5f0</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7570 = MEMORY.ref(4, 0x800e7570L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7570 = MEMORY.ref(4, 0x800e7570L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 864</p>
    *
@@ -688,7 +688,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80024480}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75ac = MEMORY.ref(4, 0x800e75acL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 3, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e75ac = MEMORY.ref(4, 0x800e75acL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 3, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 192</p>
    *
@@ -711,7 +711,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80025718}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75b8 = MEMORY.ref(4, 0x800e75b8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e75b8 = MEMORY.ref(4, 0x800e75b8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 480</p>
    *
@@ -748,7 +748,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>0x800f9d7c</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e75f8 = MEMORY.ref(4, 0x800e75f8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 30, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e75f8 = MEMORY.ref(4, 0x800e75f8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 30, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 256</p>
    *
@@ -771,7 +771,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e6ce0}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e7670 = MEMORY.ref(4, 0x800e7670L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7670 = MEMORY.ref(4, 0x800e7670L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 16, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 768</p>
    *
@@ -801,7 +801,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800f1274}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<FunctionRef<ScriptStruct, Long>>> scriptSubFunctions_800e76b0 = MEMORY.ref(4, 0x800e76b0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(ScriptStruct.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e76b0 = MEMORY.ref(4, 0x800e76b0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
 
   @Method(0x800e5d44L)
   public static void main() {
@@ -1104,7 +1104,7 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6654() {
     //LAB_800e666c
     for(int i = 0; i < 0x48; i++) {
-      biggerStructPtrArr_800bc1c0.get(i).set(biggerStruct_800bc0c0);
+      scriptStatePtrArr_800bc1c0.get(i).set(scriptState_800bc0c0);
     }
   }
 

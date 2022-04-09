@@ -24,7 +24,7 @@ import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -172,5 +172,5 @@ public final class Scus94491BpeSegment_800c {
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 
   /** TODO this is in an overlay that we don't have yet */
-  public static final FunctionRef<ScriptStruct, Long> scriptSubFunction_800ca734 = MEMORY.ref(4, 0x800ca734L, FunctionRef::new);
+  public static final FunctionRef<RunningScript, Long> scriptSubFunction_800ca734 = MEMORY.ref(4, 0x800ca734L, FunctionRef::new);
 }

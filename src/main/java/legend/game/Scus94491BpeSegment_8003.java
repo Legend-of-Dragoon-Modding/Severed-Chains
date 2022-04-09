@@ -7022,21 +7022,21 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f6d0L)
-  public static SVECTOR FUN_8003f6d0(final MATRIX a0, final SVECTOR a1, final SVECTOR a2) {
-    CPU.CTC2((a0.get(1) & 0xffffL) << 16 | a0.get(0) & 0xffffL, 0);
-    CPU.CTC2((a0.get(3) & 0xffffL) << 16 | a0.get(2) & 0xffffL, 1);
-    CPU.CTC2((a0.get(5) & 0xffffL) << 16 | a0.get(4) & 0xffffL, 2);
-    CPU.CTC2((a0.get(7) & 0xffffL) << 16 | a0.get(6) & 0xffffL, 3);
-    CPU.CTC2(                              a0.get(8) & 0xffffL, 4);
-    CPU.MTC2(a1.getXY(), 0);
-    CPU.MTC2(a1.getZ(), 1);
+  public static SVECTOR ApplyMatrixSV(final MATRIX mat, final SVECTOR in, final SVECTOR out) {
+    CPU.CTC2((mat.get(1) & 0xffffL) << 16 | mat.get(0) & 0xffffL, 0); //
+    CPU.CTC2((mat.get(3) & 0xffffL) << 16 | mat.get(2) & 0xffffL, 1); //
+    CPU.CTC2((mat.get(5) & 0xffffL) << 16 | mat.get(4) & 0xffffL, 2); // Rotation matrix
+    CPU.CTC2((mat.get(7) & 0xffffL) << 16 | mat.get(6) & 0xffffL, 3); //
+    CPU.CTC2(                               mat.get(8) & 0xffffL, 4); //
+    CPU.MTC2(in.getXY(), 0); // VXY0
+    CPU.MTC2(in.getZ(),  1); // VZ0
 
-    final long t0 = CPU.CFC2(12);
+    CPU.COP2(0x48_6012L); // MVMVA - Multiply vector by matrix and add vector
 
-    a2.setX((short)CPU.MFC2(9));
-    a2.setY((short)CPU.MFC2(10));
-    a2.setZ((short)CPU.MFC2(11));
-    return a2;
+    out.setX((short)CPU.MFC2( 9)); // IR1
+    out.setY((short)CPU.MFC2(10)); // IR2
+    out.setZ((short)CPU.MFC2(11)); // IR3
+    return out;
   }
 
   /**

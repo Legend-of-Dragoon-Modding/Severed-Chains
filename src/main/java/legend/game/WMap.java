@@ -139,9 +139,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be358;
-import static legend.game.Scus94491BpeSegment_800b._800be578;
-import static legend.game.Scus94491BpeSegment_800b._800be584;
-import static legend.game.Scus94491BpeSegment_800b._800be586;
 import static legend.game.Scus94491BpeSegment_800b._800bed60;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800beebc;
@@ -4398,17 +4395,17 @@ public class WMap {
     if(v0 == 0x1L) {
       //LAB_800d49e4
       _800bdf00.setu(0xeL);
-      _800be578.setu(0xeL);
+      _800be358.get(7)._0c.set(0xeL);
 
       if(sp0x28.get().intValue() < 0x4L) {
-        _800be584.setu(0x4L);
+        _800be358.get(7)._18.set(0x4);
       } else {
         assert false : "sp28?";
         //_800be584.setu(sp28); //2b
       }
 
       //LAB_800d4a28
-      _800be586.setu(sp0x2c.get().intValue()); //2b
+      _800be358.get(7)._1a.set(sp0x2c.get().intValue());
       _800c86f0.setu(0x2L);
       //LAB_800d4974
     } else if(v0 == 0) {
@@ -4427,16 +4424,16 @@ public class WMap {
 
       //LAB_800d49e4
       _800bdf00.setu(0xeL);
-      _800be578.setu(0xeL);
+      _800be358.get(7)._0c.set(0xeL);
 
       if((int)sp28 < 0x4L) {
-        _800be584.setu(0x4L);
+        _800be358.get(7)._18.set(0x4);
       } else {
-        _800be584.setu(sp28);
+        _800be358.get(7)._18.set((int)sp28);
       }
 
       //LAB_800d4a28
-      _800be586.setu(sp2c);
+      _800be358.get(7)._1a.set((int)sp2c);
       _800c86f0.setu(0x2L);
     } else if(v0 == 0x2L) {
       assert false : "sp28?"; sp28 = 0;

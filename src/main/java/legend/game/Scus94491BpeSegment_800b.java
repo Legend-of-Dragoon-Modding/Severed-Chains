@@ -26,20 +26,21 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
-import legend.game.types.BiggerStruct;
+import legend.game.types.ScriptState;
 import legend.game.types.Drgn0_6666Struct58;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptEffectStruct;
-import legend.game.types.ScriptStruct;
+import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
 import legend.game.types.Struct4c;
+import legend.game.types.Struct84;
 
 import java.util.function.Function;
 
@@ -150,13 +151,13 @@ public final class Scus94491BpeSegment_800b {
   public static final Value drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
-  public static final ScriptStruct ScriptStruct_800bc070 = MEMORY.ref(4, 0x800bc070L, ScriptStruct::new);
+  public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
 
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
 
-  public static final BiggerStruct<VoidRef> biggerStruct_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, BiggerStruct.of(VoidRef::new));
-  public static final ArrayRef<Pointer<BiggerStruct<? extends MemoryRef>>> biggerStructPtrArr_800bc1c0 = (ArrayRef<Pointer<BiggerStruct<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(BiggerStruct.class), 0x48, 4, (Function)Pointer.deferred(4, BiggerStruct.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
+  public static final ScriptState<VoidRef> scriptState_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, ScriptState.of(VoidRef::new));
+  public static final ArrayRef<Pointer<ScriptState<? extends MemoryRef>>> scriptStatePtrArr_800bc1c0 = (ArrayRef<Pointer<ScriptState<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(ScriptState.class), 0x48, 4, (Function)Pointer.deferred(4, ScriptState.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
 
   public static final Value _800bc300 = MEMORY.ref(4, 0x800bc300L);
@@ -307,18 +308,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
 
-  /** TODO array of 0x84-byte structs */
-  public static final Value _800bdf38 = MEMORY.ref(4, 0x800bdf38L);
-
+  public static final ArrayRef<Struct84> _800bdf38 = MEMORY.ref(4, 0x800bdf38L, ArrayRef.of(Struct84.class, 8, 0x84, Struct84::new));
   public static final ArrayRef<Struct4c> _800be358 = MEMORY.ref(4, 0x800be358L, ArrayRef.of(Struct4c.class, 8, 0x4c, Struct4c::new));
-
-  public static final Value _800be52c = MEMORY.ref(4, 0x800be52cL);
-
-  public static final Value _800be578 = MEMORY.ref(4, 0x800be578L);
-
-  public static final Value _800be584 = MEMORY.ref(2, 0x800be584L);
-  public static final Value _800be586 = MEMORY.ref(2, 0x800be586L);
-
   public static final Value _800be5b8 = MEMORY.ref(4, 0x800be5b8L);
   public static final Value _800be5bc = MEMORY.ref(4, 0x800be5bcL);
   public static final Value _800be5c0 = MEMORY.ref(4, 0x800be5c0L);
