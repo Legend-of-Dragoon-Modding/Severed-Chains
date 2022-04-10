@@ -42,6 +42,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
@@ -159,6 +160,7 @@ import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005._800546c4;
+import static legend.game.Scus94491BpeSegment_8005._8005475c;
 import static legend.game.Scus94491BpeSegment_8005._8005477c;
 import static legend.game.Scus94491BpeSegment_8005._80054790;
 import static legend.game.Scus94491BpeSegment_8005._80054792;
@@ -4231,6 +4233,24 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003a16c
     //LAB_8003a170
     return 0;
+  }
+
+  @Method(0x80038878L)
+  public static long MoveImage(final RECT rect, final int x, final int y) {
+    validateRect("MoveImage", rect);
+
+    if(rect.w.get() == 0 || rect.h.get() == 0) {
+      return -0x1L;
+    }
+
+    //LAB_800388d0
+    final long v1 = _8005475c.getAddress();
+    MEMORY.ref(4, v1).offset(0x0L).setu((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL);
+    MEMORY.ref(4, v1).offset(0x4L).setu((y & 0xffffL) << 16 | x & 0xffffL);
+    MEMORY.ref(4, v1).offset(0x8L).setu((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL);
+
+    //LAB_80038918
+    return (int)_800546b4.deref(4).offset(0x8L).deref(4).call(_800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new), _8005475c.offset(-0x8L).cast(UnsignedIntRef::new), 0x14L, 0L);
   }
 
   /**

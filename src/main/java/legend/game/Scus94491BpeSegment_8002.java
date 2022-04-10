@@ -42,6 +42,7 @@ import legend.game.types.RotateTranslateStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
+import legend.game.types.Struct84;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2775,6 +2776,24 @@ public final class Scus94491BpeSegment_8002 {
     final int a2 = (int)a0.params_20.get(0).deref().get();
     a0.params_20.get(1).deref().set(_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
     return 0;
+  }
+
+  @Method(0x80029e04L)
+  public static void FUN_80029e04() {
+    //LAB_80029e2c
+    for(int i = 0; i < 8; i++) {
+      final Struct4c s2 = _800be358.get(i);
+      final Struct84 s0 = _800bdf38.get(i);
+
+      if(s0._00.get() != 0) {
+        removeFromLinkedList(s0.ptr_58.get());
+      }
+
+      //LAB_80029e48
+      s0._00.set(0);
+      s2._00.set(0);
+      FUN_80029920(i, 0);
+    }
   }
 
   @Method(0x8002a058L)

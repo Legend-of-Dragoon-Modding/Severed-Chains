@@ -77,6 +77,7 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetDmaTransfer;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
+import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c3f0;
@@ -2429,6 +2430,43 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  @Method(0x80015c20L)
+  public static void FUN_80015c20(final long a0) {
+    final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BigStruct.class));
+    final BigStruct struct = scriptState.innerStruct_00.derefNullableAs(BigStruct.class);
+    if((scriptState.ui_60.get() & 0x810_0000L) == 0) {
+      scriptState.callback_0c.deref().run((int)a0, scriptState, struct);
+    }
+
+    //LAB_80015c70
+    scriptStatePtrArr_800bc1c0.get((int)a0).set(scriptState_800bc0c0);
+    removeFromLinkedList(scriptState.getAddress());
+  }
+
+  @Method(0x80015c9cL)
+  public static void FUN_80015c9c(final long a0) {
+    final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0.get((int)a0).deref();
+
+    long a0_0 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().storage_44.get(6).get();
+
+    //LAB_80015cdc
+    while((int)a0_0 >= 0) {
+      final long s0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(6).get();
+      FUN_80015c20(a0_0);
+      a0_0 = s0;
+    }
+
+    //LAB_80015d04
+    scriptState.storage_44.get(6).set(0xffff_ffffL);
+    scriptState.storage_44.get(7).and(0xffdf_ffffL);
+  }
+
+  @Method(0x80015d38L)
+  public static void FUN_80015d38(final long a0) {
+    FUN_80015c9c(a0);
+    FUN_80015c20(a0);
+  }
+
   @Method(0x80015f64L)
   public static long scriptNotImplemented(final RunningScript a0) {
     assert false;
@@ -2886,6 +2924,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016cb4L)
+  public static long FUN_80016cb4(final RunningScript a0) {
+    a0.params_20.get(2).deref().set(FUN_80040b90(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()) & 0xffff_ffffL);
+    return 0;
+  }
+
   /**
    * Executes the sub-function at {@link legend.game.Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} denoted by the parent param
    *
@@ -2963,6 +3007,18 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80016dd8
+    return 0;
+  }
+
+  @Method(0x80016decL)
+  public static long FUN_80016dec(final RunningScript a0) {
+    a0.params_20.get(0).deref().decr();
+
+    if(a0.params_20.get(0).deref().get() != 0) {
+      a0.commandPtr_0c.set(a0.params_20.get(1).deref());
+    }
+
+    //LAB_80016e14
     return 0;
   }
 
