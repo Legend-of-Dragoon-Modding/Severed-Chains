@@ -2159,11 +2159,12 @@ public final class Scus94491BpeSegment_8004 {
 
     if(joypadCallbackIndex_80059618.get() != 0 && (joypadCallbackIndex_80059618.get() != 0x3L || joyData.responseBufferPtr_bytePtr3c.deref().get(0).get() != 0x80L)) {
       //LAB_800442c8
-      setJoypadTimeout(60L);
-
-      if(!acknowledgeJoypadInterrupt()) {
-        _800595d4.deref().run(-0x3L);
-      }
+      //TODO probably not necessary
+//      setJoypadTimeout(60L);
+//
+//      if(!acknowledgeJoypadInterrupt()) {
+//        _800595d4.deref().run(-0x3L);
+//      }
     }
 
     //LAB_80044300
@@ -4469,7 +4470,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80048e8c
     //LAB_80048e90
-    assert false : "Error";
+//TODO    assert false : "Error";
     return -0x1L;
   }
 
@@ -6333,7 +6334,112 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d78cL)
   public static void FUN_8004d78c(long a0) {
-    assert false;
+    long v0;
+    long v1;
+    long a1;
+    long s0;
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+
+    s1 = a0;
+    v0 = 0x800c_0000L;
+    s0 = v0 + 0x4ac8L;
+    v0 = sssqWaitForTickToFinish();
+    if(v0 == 0) {
+      v1 = s1 & 0x7fffL;
+      if((int)v1 < 0x18L) {
+        v0 = s1 << 16;
+        a0 = (int)v0 >> 16;
+        if((int)a0 < 0x18L) {
+          v0 = v1 << 3;
+          v0 = v0 + v1;
+          v0 = v0 << 3;
+          v0 = v0 + v1;
+          v0 = v0 << 2;
+          s0 = v0 + s0;
+          v0 = MEMORY.ref(1, s0).offset(0x29L).get();
+
+          if(v0 != 0) {
+            MEMORY.ref(4, s0).offset(0x118L).setu(0);
+            MEMORY.ref(1, s0).offset(0x2aL).setu(0);
+            MEMORY.ref(1, s0).offset(0x29L).setu(0);
+            MEMORY.ref(1, s0).offset(0xe7L).setu(0);
+            MEMORY.ref(1, s0).offset(0x105L).setu(0);
+            MEMORY.ref(1, s0).offset(0x104L).setu(0);
+            MEMORY.ref(1, s0).offset(0xe6L).setu(0);
+            MEMORY.ref(1, s0).offset(0x35L).setu(0);
+            MEMORY.ref(1, s0).offset(0x37L).setu(0);
+          }
+
+          //LAB_8004d824
+          s0 = 0;
+          v0 = 0x800c_0000L;
+          s4 = v0 + 0x3a40L;
+          s3 = v1;
+          s1 = a0;
+          s2 = s1 & 0x8000L;
+
+          //LAB_8004d83c
+          do {
+            a0 = s0 & 0xffffL;
+            v0 = a0 << 1;
+            v0 = v0 + a0;
+            v1 = v0 << 4;
+            v0 = v0 + v1;
+            v0 = v0 << 1;
+            a1 = v0 + s4;
+            v0 = MEMORY.ref(2, a1).offset(0x1aL).get();
+
+            if(v0 != 0) {
+              v0 = MEMORY.ref(2, a1).offset(0x6L).get();
+
+              if(v0 == s1 || v0 == s3) {
+                //LAB_8004d880
+                if(s2 != 0) {
+                  v0 = 0x800c_0000L;
+                  v1 = MEMORY.ref(4, v0).offset(0x4ac4L).get();
+                  v0 = a0 << 4;
+                  v1 = v1 + v0;
+                  MEMORY.ref(2, v1).offset(0x8L).setu(0);
+                  MEMORY.ref(2, v1).offset(0xaL).setu(0);
+                  MEMORY.ref(2, a1).offset(0x0L).setu(0);
+                }
+
+                //LAB_8004d8a0
+                v0 = 0x1L;
+                MEMORY.ref(2, a1).offset(0x8L).setu(v0);
+                if(a0 < 0x10L) {
+                  v0 = 0x800c_0000L;
+                  v1 = 0x1L;
+                  v0 = MEMORY.ref(4, v0).offset(0x4ac4L).get();
+                  v1 = v1 << a0;
+                  MEMORY.ref(2, v0).offset(0x18cL).setu(v1);
+                } else {
+                  //LAB_8004d8c8
+                  v1 = 0x800c_0000L;
+                  a0 = a0 + -0x10L;
+                  v0 = 0x1L;
+                  v1 = MEMORY.ref(4, v1).offset(0x4ac4L).get();
+                  v0 = v0 << a0;
+                  MEMORY.ref(2, v1).offset(0x18eL).setu(v0);
+                }
+
+                //LAB_8004d8e0
+//                wasteSomeCycles(2);
+              }
+            }
+
+            //LAB_8004d8e8
+            s0 = s0 + 0x1L;
+            v0 = s0 & 0xffffL;
+          } while(v0 < 0x18L);
+        }
+      }
+    }
+
+    //LAB_8004d8fc
   }
 
   @Method(0x8004d91cL)

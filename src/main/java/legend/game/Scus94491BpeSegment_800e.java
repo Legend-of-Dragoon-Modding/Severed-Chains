@@ -279,7 +279,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001eb30}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001eccc}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f070}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001f450}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptLoadMusicPackage}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001fe28}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ffdc}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8002013c}</li>
@@ -586,8 +586,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800dfb74}</li>
    *   <li>{@link SMap#FUN_800dfba4}</li>
    *   <li>{@link SMap#FUN_800dfbd4}</li>
-   *   <li>{@link SMap#FUN_800dfc00}</li>
-   *   <li>{@link SMap#FUN_800dfc60}</li>
+   *   <li>{@link SMap#scriptScaleXyz}</li>
+   *   <li>{@link SMap#scriptScaleUniform}</li>
    *   <li>{@link SMap#FUN_800dfca0}</li>
    *   <li>{@link SMap#FUN_800dfcd8}</li>
    *   <li>{@link SMap#FUN_800dfd10}</li>
@@ -1031,7 +1031,7 @@ public final class Scus94491BpeSegment_800e {
 //
 //      if(remainingDmaTransfers == 0) {
 //        FUN_80017c44(0, SInitOvlData_800c66a4.get(), _80010004.get());
-//        FUN_80012764(SInitOvlData_800c66a4.getAddress());
+//        removeFromLinkedList(SInitOvlData_800c66a4.getAddress());
 //        loadingStage_800bb10c.addu(0x1L);
 //      }
 //    }

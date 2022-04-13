@@ -306,6 +306,10 @@ public final class Scus94491BpeSegment {
 
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
 
+  public static final Value _80010868 = MEMORY.ref(4, 0x80010868L);
+
+  public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
+
   public static final Value _80011174 = MEMORY.ref(4, 0x80011174L);
 
   /**
@@ -2567,10 +2571,9 @@ public final class Scus94491BpeSegment {
               RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
             } else if(operation == 0xbL) {
               //LAB_80016360
-//              v0 = ScriptStruct_800bc070.scriptState_04.deref().storage_44.get(param0).get() * 0x4L;
-//              final long a0_0 = ScriptStruct_800bc070.ui_08.getPointer() + (short)childCommand * 0x4L + MEMORY.ref(4, v0).offset(parentCommand).get() * 0x4L; //TODO I think this is wrong, looks like neither a0 nor v0 are base addresses
-//              ScriptStruct_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
-              assert false;
+              v0 = RunningScript_800bc070.parentPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
+              final long a0_0 = RunningScript_800bc070.parentPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
+              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
             } else if(operation == 0xcL) {
               //LAB_800163a0
               RunningScript_800bc070.commandPtr_0c.incr();
@@ -5082,6 +5085,15 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final long fileIndex = 5815 + index * 5;
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
+  }
+
+  @Method(0x8001f450L)
+  public static long scriptLoadMusicPackage(final RunningScript a0) {
+    unloadSoundFile(8);
+    loadedDrgnFiles_800bcf78.oru(0x80L);
+    final long fileIndex = 5815 + a0.params_20.get(0).deref().get() * 5;
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
+    return 0;
   }
 
   @Method(0x8001f708L)

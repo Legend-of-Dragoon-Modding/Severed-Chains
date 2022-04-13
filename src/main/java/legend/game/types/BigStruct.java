@@ -83,9 +83,12 @@ public class BigStruct implements MemoryRef {
 
   public final UnsignedShortRef us_178;
 
-  public final Pointer<UnsignedShortRef> usPtr_17c;
-  public final Pointer<UnsignedShortRef> usPtr_180;
-  public final Pointer<UnsignedShortRef> usPtr_184;
+  public final UnsignedShortRef us_17c;
+
+  public final UnsignedShortRef us_180;
+
+  public final UnsignedShortRef us_184;
+
   public final UnsignedIntRef ui_188;
   public final UnsignedIntRef ui_18c;
   public final UnsignedIntRef ui_190;
@@ -170,9 +173,12 @@ public class BigStruct implements MemoryRef {
 
     this.us_178 = ref.offset(2, 0x178L).cast(UnsignedShortRef::new);
 
-    this.usPtr_17c = ref.offset(4, 0x17cL).cast(Pointer.deferred(4, UnsignedShortRef::new));
-    this.usPtr_180 = ref.offset(4, 0x180L).cast(Pointer.deferred(4, UnsignedShortRef::new));
-    this.usPtr_184 = ref.offset(4, 0x184L).cast(Pointer.deferred(4, UnsignedShortRef::new));
+    this.us_17c = ref.offset(2, 0x17cL).cast(UnsignedShortRef::new);
+
+    this.us_180 = ref.offset(2, 0x180L).cast(UnsignedShortRef::new);
+
+    this.us_184 = ref.offset(2, 0x184L).cast(UnsignedShortRef::new);
+
     this.ui_188 = ref.offset(4, 0x188L).cast(UnsignedIntRef::new);
     this.ui_18c = ref.offset(4, 0x18cL).cast(UnsignedIntRef::new);
     this.ui_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);

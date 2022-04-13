@@ -23,6 +23,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
@@ -53,6 +54,14 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80050424 = MEMORY.ref(2, 0x80050424L);
 
   public static final Value _80052ae0 = MEMORY.ref(2, 0x80052ae0L);
+
+  public static final ArrayRef<Pointer<UnsignedShortRef>> _80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(UnsignedShortRef.class), 10, 4, Pointer.deferred(2, UnsignedShortRef::new)));
+
+  public static final Value _80052b68 = MEMORY.ref(2, 0x80052ba8L);
+
+  public static final Value _80052b88 = MEMORY.ref(2, 0x80052ba8L);
+
+  public static final Value _80052ba8 = MEMORY.ref(2, 0x80052ba8L);
 
   public static final Value submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
