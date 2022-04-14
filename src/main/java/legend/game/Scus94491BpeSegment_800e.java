@@ -30,7 +30,6 @@ import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
-import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment._8011e210;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.allocateLinkedList;
@@ -46,6 +45,7 @@ import static legend.game.Scus94491BpeSegment.processControllerInput;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
@@ -83,17 +83,16 @@ import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
 import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
-import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
+import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.registerJoypadVblankIrqHandler;
+import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._8005a398;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -110,7 +109,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
@@ -121,10 +119,11 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
 import static legend.game.Scus94491BpeSegment_800c._800c6740;
@@ -946,29 +945,29 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e61fcL)
   public static void incrementSceaLogoAlpha() {
-    sceaLogoAlpha_800c6734.addu(0x3L);
+//    sceaLogoAlpha_800c6734.addu(0x3L);
 
-    if(sceaLogoAlpha_800c6734.get() > 0x80L) {
+//    if(sceaLogoAlpha_800c6734.get() > 0x80L) {
       sceaLogoAlpha_800c6734.setu(0x80L);
       pregameLoadingStage_800bb10c.addu(0x1L);
-    }
+//    }
   }
 
   @Method(0x800e6238L)
   public static void decrementSceaLogoAlpha() {
-    sceaLogoAlpha_800c6734.subu(0x3L);
+//    sceaLogoAlpha_800c6734.subu(0x3L);
 
-    if(sceaLogoAlpha_800c6734.getSigned() < 0) {
+//    if(sceaLogoAlpha_800c6734.getSigned() < 0) {
       sceaLogoAlpha_800c6734.set(0);
       pregameLoadingStage_800bb10c.add(0x1L);
-    }
+//    }
   }
 
   @Method(0x800e626cL)
   public static void checkForSceaLogoTimeout() {
-    if(joypadPress_8007a398.get() != 0 || VSync(-1) - sceaLogoDisplayTime_800c6730.get() > 210L) {
+//    if(joypadPress_8007a398.get() != 0 || VSync(-1) - sceaLogoDisplayTime_800c6730.get() > 210L) {
       pregameLoadingStage_800bb10c.add(0x1L);
-    }
+//    }
   }
 
   @Method(0x800e62ccL)
