@@ -93,7 +93,7 @@ public class JoyStruct implements MemoryRef {
     public final UnsignedShortRef s02;
     public final UnsignedShortRef s04;
     public final UnsignedShortRef s06;
-    public final UnsignedShortRef s08;
+    public final ShortRef s08;
     public final UnsignedShortRef s0a;
     public final UnsignedShortRef s0c;
     public final UnsignedShortRef s0e;
@@ -105,7 +105,7 @@ public class JoyStruct implements MemoryRef {
       this.s02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
       this.s04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
       this.s06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-      this.s08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
+      this.s08 = ref.offset(2, 0x08L).cast(ShortRef::new);
       this.s0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
       this.s0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
       this.s0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);

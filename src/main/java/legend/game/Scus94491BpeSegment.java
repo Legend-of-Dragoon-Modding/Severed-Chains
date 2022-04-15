@@ -77,7 +77,7 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetDmaTransfer;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
+import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c3f0;
@@ -2798,6 +2798,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x8001688cL)
+  public static long scriptOr(final RunningScript a0) {
+    a0.params_20.get(1).deref().or(a0.params_20.get(0).deref());
+    return 0;
+  }
+
   /**
    * Shift work array value 1 left by value 0 bits
    *
@@ -2929,7 +2935,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80016cb4L)
   public static long FUN_80016cb4(final RunningScript a0) {
-    a0.params_20.get(2).deref().set(FUN_80040b90(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()) & 0xffff_ffffL);
+    a0.params_20.get(2).deref().set(ratan2(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()) & 0xffff_ffffL);
     return 0;
   }
 

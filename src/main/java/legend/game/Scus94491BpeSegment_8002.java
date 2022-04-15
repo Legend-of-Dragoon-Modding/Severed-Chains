@@ -141,7 +141,7 @@ import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040b90;
+import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042b60;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042ba0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042d10;
@@ -6798,9 +6798,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a488L)
-  public static long FUN_8002a488(long a0) {
-    assert false;
-    return 0;
+  public static long FUN_8002a488(final long a0) {
+    return _800be358.get((int)a0)._00.get() == 6 ? 1 : 0;
   }
 
   @Method(0x8002a4c4L)
@@ -7442,7 +7441,7 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_8002b4dc
         for(int i = 0; i < 2; i++) {
-          long v0 = 0x800L - FUN_80040b90((short)MathHelper.get(sp18, i * 4, 2), (short)MathHelper.get(sp18, i * 4 + 2, 2));
+          long v0 = 0x800L - ratan2((short)MathHelper.get(sp18, i * 4, 2), (short)MathHelper.get(sp18, i * 4 + 2, 2));
           MathHelper.set(sp20, i * 2, 2, v0);
           if(MathHelper.get(sp18, i * 4, 2) != 0 || MathHelper.get(sp18, i * 4 + 2, 2) != 0) {
             //LAB_8002b51c
@@ -7645,7 +7644,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002ba08
     for(int i = 0; i < 2; i++) {
-      long v0 = 0x800L - FUN_80040b90(joyStruct.sArr48.get(i * 2).get(), joyStruct.sArr48.get(i * 2 + 1).get());
+      long v0 = 0x800L - ratan2(joyStruct.sArr48.get(i * 2).get(), joyStruct.sArr48.get(i * 2 + 1).get());
       joyStruct.sArr50.get(i).set((int)v0);
       joyStruct.iArr38.get(i).set(rsin(v0 & 0xffffL));
       joyStruct.iArr40.get(i).set(rcos(joyStruct.sArr50.get(i).get()));
@@ -7810,12 +7809,12 @@ public final class Scus94491BpeSegment_8002 {
     joyStruct2.s04.set(v1);
     if(v1 != 0) {
       joyStruct2.s06.set(v1);
-      joyStruct2.s08.set(joyStruct2.s0c);
+      joyStruct2.s08.set((short)joyStruct2.s0c.get());
       return;
     }
 
     //LAB_8002c1f4
-    if(joyStruct2.s02.get() == 0 || (short)joyStruct2.s08.sub(a1).get() > 0) {
+    if(joyStruct2.s02.get() == 0 || joyStruct2.s08.sub((short)a1).get() > 0) {
       //LAB_8002c220
       joyStruct2.s06.set(0);
       return;
@@ -7823,7 +7822,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002c228
     joyStruct2.s06.set(joyStruct2.s02);
-    joyStruct2.s08.set(joyStruct2.s0e);
+    joyStruct2.s08.set((short)joyStruct2.s0e.get());
   }
 
   @Method(0x8002c23cL)

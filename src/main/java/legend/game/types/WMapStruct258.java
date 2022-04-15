@@ -22,7 +22,7 @@ public class WMapStruct258 implements MemoryRef {
 
   public final Pointer<WMapTmdRenderingStruct18> tmdRendering_08;
   public final ArrayRef<Pointer<BigStruct>> bigStructs_0c; //TODO doesn't use the whole BigStruct? Only 0x124 bytes? Is BigStruct too big?
-  public final UnsignedIntRef _1c;
+  public final UnsignedIntRef _1c; //TODO pointer to a struct
   public final ShortRef _20;
 
   public final UnsignedIntRef _28;

@@ -1011,70 +1011,74 @@ public final class Scus94491BpeSegment_8004 {
     matrix.set(5, (short)(t7 - t5));
   }
 
-  /** Seems to calculate a Y value for something */
+  /**
+   * Uses PlayStation format (4096 = 360 degrees = 2pi) to finish the x/y arctan function (-180 degrees and +180 degrees, -pi...pi).
+   *
+   *  1-bit sign
+   * 19-bit whole
+   * 12-bit decimal
+   */
   @Method(0x80040b90L)
-  public static long FUN_80040b90(final long x, final long y) {
-    long a0 = x;
-    long a1 = y;
-    long a2 = 0;
-    long a3 = 0;
+  public static long ratan2(long x, long y) {
+    boolean negativeY = false;
+    boolean negativeX = false;
 
-    if(a1 < 0) {
-      a2 = 0x1L;
-      a1 = -a1;
+    if(y < 0) {
+      negativeY = true;
+      y = -y;
     }
 
     //LAB_80040ba4
-    if(a0 < 0) {
-      a3 = 0x1L;
-      a0 = -a0;
+    if(x < 0) {
+      negativeX = true;
+      x = -x;
     }
 
     //LAB_80040bb4
-    if(a1 == 0 && a0 >= a1) {
+    if(y == 0 && x >= y) {
       return 0;
     }
 
     //LAB_80040bc8
-    long v1;
-    if(a0 < a1) {
-      if((a0 & 0x7fe0_0000L) == 0) {
+    long atan;
+    if(x < y) {
+      if((x & 0x7fe0_0000L) == 0) {
         //LAB_80040c10
         //LAB_80040c3c
-        a0 = Math.floorDiv(a0 << 0xaL, a1);
+        x = Math.floorDiv(x << 10, y);
       } else {
-        a0 = Math.floorDiv(a0, a1 >> 0xaL);
+        x = Math.floorDiv(x, y >> 10);
       }
 
       //LAB_80040c44
-      v1 = _80058d0c.offset(a0 * 0x2L).get();
+      atan = _80058d0c.offset(x * 0x2L).get();
     } else {
       //LAB_80040c58
-      if((a1 & 0x7fe0_0000L) == 0) {
+      if((y & 0x7fe0_0000L) == 0) {
         //LAB_80040c98
         //LAB_80040cc4
-        a0 = Math.floorDiv(a1 << 0xaL, a0);
+        x = Math.floorDiv(y << 10, x);
       } else {
         //LAB_80040c8c
-        a0 = Math.floorDiv(a1, a0 >> 0xaL);
+        x = Math.floorDiv(y, x >> 10);
       }
 
       //LAB_80040ccc
-      v1 = 0x400L - _80058d0c.offset(a0 * 0x2L).get();
+      atan = 0x400L - _80058d0c.offset(x * 0x2L).get();
     }
 
     //LAB_80040ce0
-    if(a2 != 0) {
-      v1 = 0x800L - v1;
+    if(negativeY) {
+      atan = 0x800L - atan;
     }
 
     //LAB_80040cec
-    if(a3 == 0) {
-      return v1;
+    if(negativeX) {
+      return -atan;
     }
 
     //LAB_80040cfc
-    return -v1;
+    return atan;
   }
 
   /**

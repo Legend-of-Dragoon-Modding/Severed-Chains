@@ -24,7 +24,7 @@ public class WMapRender40 implements MemoryRef {
   public final UnsignedIntRef _28;
   public final UnsignedIntRef _2c;
   public final UnsignedIntRef _30;
-  public final UnsignedShortRef _34;
+  public final ShortRef _34;
   public final ShortRef _36;
   public final UnsignedShortRef _38;
   public final UnsignedShortRef _3a;
@@ -46,7 +46,7 @@ public class WMapRender40 implements MemoryRef {
     this._28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
     this._2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
     this._30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
-    this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
+    this._34 = ref.offset(2, 0x34L).cast(ShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(ShortRef::new);
     this._38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
     this._3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
