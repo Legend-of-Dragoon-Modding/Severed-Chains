@@ -179,6 +179,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052c64;
 import static legend.game.Scus94491BpeSegment_8005._80052dbc;
 import static legend.game.Scus94491BpeSegment_8005._80052dc0;
 import static legend.game.Scus94491BpeSegment_8005._80052e1c;
+import static legend.game.Scus94491BpeSegment_8005._80052e2c;
+import static legend.game.Scus94491BpeSegment_8005._80052e30;
 import static legend.game.Scus94491BpeSegment_8005._80052e34;
 import static legend.game.Scus94491BpeSegment_8005._80052e3c;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
@@ -357,15 +359,17 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b._800bf140;
+import static legend.game.Scus94491BpeSegment_800b.memcardStatus_800bf144;
 import static legend.game.Scus94491BpeSegment_800b._800bf148;
 import static legend.game.Scus94491BpeSegment_800b._800bf14c;
 import static legend.game.Scus94491BpeSegment_800b._800bf150;
 import static legend.game.Scus94491BpeSegment_800b._800bf154;
 import static legend.game.Scus94491BpeSegment_800b._800bf158;
 import static legend.game.Scus94491BpeSegment_800b._800bf160;
-import static legend.game.Scus94491BpeSegment_800b._800bf164;
+import static legend.game.Scus94491BpeSegment_800b.previousMemcardState_800bf164;
 import static legend.game.Scus94491BpeSegment_800b._800bf170;
-import static legend.game.Scus94491BpeSegment_800b._800bf174;
+import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
 import static legend.game.Scus94491BpeSegment_800b._800bf178;
 import static legend.game.Scus94491BpeSegment_800b._800bf17c;
 import static legend.game.Scus94491BpeSegment_800b._800bf1b4;
@@ -1059,7 +1063,7 @@ public final class Scus94491BpeSegment_8002 {
     GsDOBJ2 struct = table.top.deref().get(0);
     int i;
     for(i = 0; i < size; i++) {
-      if(struct.id_0c.get() == -0x1L) {
+      if((int)struct.id_0c.get() == -0x1L) {
         break;
       }
 
@@ -8022,7 +8026,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     _800bf170.setu(0x1L);
-    _800bf174.setu(0);
+    memcardState_800bf174.setu(0);
     _800bf178.setu(0);
     cardPort_800bf180.setu(port);
     setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dc44", long.class));
@@ -8045,7 +8049,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(v1 == 0xaL) {
       //LAB_8002e568
-      if(_800bf174.get() != 0) {
+      if(memcardState_800bf174.get() != 0) { // Not okay
         return 0x1L;
       }
 
@@ -8072,8 +8076,8 @@ public final class Scus94491BpeSegment_8002 {
         return 0;
       }
 
-      final long a0_0 = FUN_8002fce8();
-      if(a0_0 != 0) {
+      final long memcardStatus = awaitMemcard();
+      if(memcardStatus != 0) { // Problem
         _80052e34.addu(0x1L);
 
         if(_80052e34.getSigned() < 0x4L) {
@@ -8082,7 +8086,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_8002e628
-        if(a0_0 == 0x4L) {
+        if(memcardStatus == 0x4L) { // Ejected
           testEvents();
           FUN_8002f6f0((int)cardPort_800bf180.get());
           MEMORY.ref(4, a0).setu(0x20L);
@@ -8091,7 +8095,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002e654
-      _800bf174.setu(FUN_8002f244(a0_0));
+      memcardState_800bf174.setu(getMemcardState(memcardStatus));
       return 0x1L;
     }
 
@@ -8164,7 +8168,7 @@ public final class Scus94491BpeSegment_8002 {
     close(file);
 
     _800bf170.setu(0);
-    _800bf174.setu(0);
+    memcardState_800bf174.setu(0); // Okay
     _800bf178.setu(1);
 
 //    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002ea20", long.class));
@@ -8187,13 +8191,13 @@ public final class Scus94491BpeSegment_8002 {
 
     if(v1 == 0xaL) {
       //LAB_8002ea90
-      if(_800bf174.get() != 0) {
+      if(memcardState_800bf174.get() != 0) { // Not okay
         return 0x1L;
       }
 
       memcardFileHandle_800bf184.set(open(_800bf170.offset(1, 0x24L).getString(), 0x8001));
       if(memcardFileHandle_800bf184.get() < 0) {
-        _800bf174.setu(0x5L);
+        memcardState_800bf174.setu(0x5L); // Failed to open file
         return 0x1L;
       }
 
@@ -8328,7 +8332,7 @@ public final class Scus94491BpeSegment_8002 {
     resetMemcardEventIndex();
 
     _800bf170.setu(0);
-    _800bf174.setu(0);
+    memcardState_800bf174.setu(0); // Okay
     _800bf178.setu(0);
     _800bf17c.setu(0);
     memcardFileHandle_800bf184.set(-1);
@@ -8344,267 +8348,132 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002dc44L)
-  public static long FUN_8002dc44(long a0) {
-    long at;
+  public static long FUN_8002dc44(final long a0) {
     long v0;
     long v1;
-    long a1;
     long a2;
-    long a3;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
 
-    s0 = a0;
-    v1 = MEMORY.ref(4, s0).offset(0x0L).get();
-    s2 = 0xaL;
-    if(v1 == s2) {
+    System.out.println("The 2 thing ------------------------------------------------ " + MEMORY.ref(4, a0));
+
+    v1 = MEMORY.ref(4, a0).get();
+
+    if(v1 == 0) {
+      //LAB_8002dca0
+      memcardStatus_800bf144.setu(0);
+      _800bf140.setu(0);
+      MEMORY.ref(4, a0).setu(0xaL);
+      v1 = _800bf1c0.offset((cardPort_800bf180.get() >> 4) * 0x4L).getAddress();
+      _80052e2c.setu(MEMORY.ref(4, v1).get());
+      MEMORY.ref(4, v1).setu(0);
+
       //LAB_8002dce0
       testEvents();
-      a0 = 0x800c_0000L;
-      a0 = MEMORY.ref(4, a0).offset(-0xe80L).get();
-
-      _card_info((int)a0);
-      v0 = MEMORY.ref(4, s0).offset(0x0L).get();
-
-      v0 = v0 + 0x1L;
-      MEMORY.ref(4, s0).offset(0x0L).setu(v0);
+      _card_info((int)cardPort_800bf180.get());
+      MEMORY.ref(4, a0).addu(0x1L);
       return 0;
     }
-    v0 = 0xbL;
-    if((int)v1 < 0xbL) {
-      if(v1 == 0) {
-        //LAB_8002dca0
-        v0 = 0x800c_0000L;
-        v0 = v0 - 0xe80L;
-        at = 0x800c_0000L;
-        MEMORY.ref(4, at).offset(-0xebcL).setu(0);
-        at = 0x800c_0000L;
-        MEMORY.ref(4, at).offset(-0xec0L).setu(0);
-        MEMORY.ref(4, s0).offset(0x0L).setu(s2);
-        v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-        v0 = v0 + 0x40L;
-        v1 = (int)v1 >> 4;
-        v1 = v1 << 2;
-        v1 = v1 + v0;
-        v0 = MEMORY.ref(4, v1).offset(0x0L).get();
-        MEMORY.ref(4, v1).offset(0x0L).setu(0);
-        at = 0x8005_0000L;
-        MEMORY.ref(4, at).offset(0x2e2cL).setu(v0);
 
-        //LAB_8002dce0
-        testEvents();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(-0xe80L).get();
-
-        _card_info((int)a0);
-        v0 = MEMORY.ref(4, s0).offset(0x0L).get();
-
-        v0 = v0 + 0x1L;
-        MEMORY.ref(4, s0).offset(0x0L).setu(v0);
-        return 0;
-      }
-
-      //LAB_8002df34
-      LOGGER.error("error");
-      throw new RuntimeException("error");
+    if(v1 == 0xaL) {
+      //LAB_8002dce0
+      testEvents();
+      _card_info((int)cardPort_800bf180.get());
+      MEMORY.ref(4, a0).addu(0x1L);
+      return 0;
     }
 
     //LAB_8002dc88
-    if(v1 == v0) {
+    if(v1 == 0xbL) {
       //LAB_8002dd0c
       // Shouldn't be needed anymore since memcards are instant
       if(false) {
-        v0 = FUN_8002fe98();
-        if(v0 == 0) {
+        if(FUN_8002fe98() == 0) {
           return 0;
         }
 
-        v0 = FUN_8002fce8();
+        v0 = awaitMemcard();
       } else {
         v0 = 0;
       }
 
-      s1 = 0x800c_0000L;
-      s1 = s1 - 0xe80L;
-      s3 = s1 + 0x38L;
-      a3 = MEMORY.ref(4, s1).offset(0x0L).get();
-      a0 = v0;
-      at = 0x800c_0000L;
-      MEMORY.ref(4, at).offset(-0xebcL).setu(v0);
-      v1 = (int)a3 >> 4;
-      v1 = v1 << 2;
-      a1 = v1 + s3;
-      a2 = MEMORY.ref(4, a1).offset(0x0L).get();
-      v1 = 0x1L;
-      at = 0x8005_0000L;
-      MEMORY.ref(4, at).offset(0x2e30L).setu(a2);
-      if(a0 == v1) {
-        //LAB_8002de7c
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(-0xec0L).get();
+      memcardStatus_800bf144.setu(v0);
+      a2 = _800bf1b8.offset((cardPort_800bf180.get() >> 4) * 0x4L).get();
+      _80052e30.setu(a2);
 
-        v0 = v0 + 0x1L;
-        at = 0x800c_0000L;
-        MEMORY.ref(4, at).offset(-0xec0L).setu(v0);
-        if((int)v0 < 0x11L) {
+      if(v0 == 0) {
+        //LAB_8002de0c
+        if((_800bf17c.get() & (1L << cardPort_800bf180.get())) == 0) {
+          memcardStatus_800bf144.setu(0x4L); // Ejected
+        }
+
+        //LAB_8002de28
+        _800bf1b8.offset((cardPort_800bf180.get() >> 4) * 0x4L).setu(0);
+
+        //LAB_8002de60
+        memcardState_800bf174.setu(getMemcardState(memcardStatus_800bf144.get()));
+        return 0x1L;
+      }
+
+      if(v0 == 0x1L) { // Write error
+        //LAB_8002de7c
+        _800bf140.addu(0x1L);
+
+        if(_800bf140.get() < 0x11L) {
           //LAB_8002dea0
-          MEMORY.ref(4, s0).offset(0x0L).setu(s2);
+          MEMORY.ref(4, a0).setu(0xaL);
           return 0;
         }
 
         //LAB_8002dea8
-        a0 = 0x1L;
-        v0 = FUN_8002f244(a0);
-        v1 = v0;
-        v0 = 0x1L;
-        a0 = MEMORY.ref(4, s1).offset(0x0L).get();
-        a1 = s1 - 0x10L;
-        MEMORY.ref(4, a1).offset(0x4L).setu(v1);
-        a0 = (int)a0 >> 4;
-        a0 = a0 << 2;
-        a0 = a0 + s3;
-        MEMORY.ref(4, a0).offset(0x0L).setu(0);
-        return v0;
-      }
-
-      if((int)a0 < 0x2L) {
-        if(a0 == 0) {
-          //LAB_8002de0c
-          v0 = MEMORY.ref(4, s1).offset(-0x4L).get();
-          v1 = v1 << a3;
-          v0 = v0 & v1;
-          if(v0 == 0) {
-            v0 = 0x4L;
-            at = 0x800c_0000L;
-            MEMORY.ref(4, at).offset(-0xebcL).setu(v0);
-          }
-
-          //LAB_8002de28
-          a0 = 0x800c_0000L;
-          a0 = MEMORY.ref(4, a0).offset(-0xebcL).get();
-          MEMORY.ref(4, a1).offset(0x0L).setu(0);
-
-          //LAB_8002de60
-          v0 = FUN_8002f244(a0);
-          a0 = v0;
-          v0 = 0x1L;
-          v1 = s1 - 0x10L;
-          MEMORY.ref(4, v1).offset(0x4L).setu(a0);
-          return v0;
-        }
-
-        //LAB_8002ded8
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(-0xebcL).get();
-
-        v0 = FUN_8002f244(a0);
-        a1 = v0;
-        a0 = 0x800c_0000L;
-        a0 = a0 - 0xe90L;
-        v1 = MEMORY.ref(4, a0).offset(0x10L).get();
-        v0 = 0x1L;
-        MEMORY.ref(4, a0).offset(0x4L).setu(a1);
-        v1 = (int)v1 >> 4;
-        v1 = v1 << 2;
-        a0 = a0 + v1;
-        MEMORY.ref(4, a0).offset(0x48L).setu(0);
-        return v0;
+        memcardState_800bf174.setu(getMemcardState(0x1L)); // Write error
+        _800bf1b8.offset((cardPort_800bf180.get() >> 4) * 0x4L).setu(0);
+        return 0x1L;
       }
 
       //LAB_8002dd7c
-      if(a0 != 0x2L) {
-        if(a0 != 0x4L) {
-          //LAB_8002ded8
-          a0 = 0x800c_0000L;
-          a0 = MEMORY.ref(4, a0).offset(-0xebcL).get();
+      if(v0 == 0x2L) { // Busy
+        //LAB_8002de38
+        _800bf140.addu(0x1L);
 
-          v0 = FUN_8002f244(a0);
-          a1 = v0;
-          a0 = 0x800c_0000L;
-          a0 = a0 - 0xe90L;
-          v1 = MEMORY.ref(4, a0).offset(0x10L).get();
-          v0 = 0x1L;
-          MEMORY.ref(4, a0).offset(0x4L).setu(a1);
-          v1 = (int)v1 >> 4;
-          v1 = v1 << 2;
-          a0 = a0 + v1;
-          MEMORY.ref(4, a0).offset(0x48L).setu(0);
-          return v0;
+        if(_800bf140.get() < 0x3L) {
+          //LAB_8002dea0
+          MEMORY.ref(4, a0).setu(0xaL);
+          return 0;
         }
 
+        _800bf1b8.offset((cardPort_800bf180.get() >> 4) * 0x4L).setu(0x1L);
+
+        //LAB_8002de60
+        memcardState_800bf174.setu(getMemcardState(0x2L)); // Busy
+        return 0x1L;
+      }
+
+      if(v0 == 0x4L) { // Ejected
         if(a2 == 0) {
-          v0 = 0x8005_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x2e2cL).get();
-
-          if(v0 < 0x80L) {
+          if(_80052e2c.get() < 0x80L) {
             testEvents();
-            a0 = MEMORY.ref(4, s1).offset(0x0L).get();
-
-            FUN_8002f6f0((int)a0);
-            v0 = 0x15L;
-            MEMORY.ref(4, s0).offset(0x0L).setu(v0);
+            FUN_8002f6f0((int)cardPort_800bf180.get());
+            MEMORY.ref(4, a0).setu(0x15L);
             return 0;
           }
         }
 
         //LAB_8002ddcc
-        s0 = 0x800c_0000L;
-        s0 = s0 - 0xe80L;
-        v1 = 0x1L;
-        v0 = MEMORY.ref(4, s0).offset(0x0L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(-0xebcL).get();
-        v0 = (int)v0 >> 4;
-        v0 = v0 << 2;
-        v0 = s0 + v0;
-        MEMORY.ref(4, v0).offset(0x38L).setu(v1);
-        v0 = FUN_8002f244(a0);
-        v1 = v0;
-        v0 = 0x1L;
-        s0 = s0 - 0x10L;
-        MEMORY.ref(4, s0).offset(0x4L).setu(v1);
-        return v0;
+        _800bf1b8.offset((cardPort_800bf180.getSigned() >> 4) * 0x4L).setu(0x1L);
+        memcardState_800bf174.setu(getMemcardState(memcardStatus_800bf144.get()));
+        return 0x1L;
       }
 
-      //LAB_8002de38
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(-0xec0L).get();
-
-      v0 = v0 + 0x1L;
-      at = 0x800c_0000L;
-      MEMORY.ref(4, at).offset(-0xec0L).setu(v0);
-      if((int)v0 < 0x3L) {
-        a0 = 0x2L;
-        //LAB_8002dea0
-        MEMORY.ref(4, s0).offset(0x0L).setu(s2);
-        return 0;
-      }
-      a0 = 0x2L;
-      MEMORY.ref(4, a1).offset(0x0L).setu(v1);
-
-      //LAB_8002de60
-      v0 = FUN_8002f244(a0);
-      a0 = v0;
-      v0 = 0x1L;
-      v1 = s1 - 0x10L;
-      MEMORY.ref(4, v1).offset(0x4L).setu(a0);
-      return v0;
+      assert false : "Invalid memcard status";
     }
 
-    v0 = 0x15L;
-    if(v1 == v0) {
+    if(v1 == 0x15L) {
       //LAB_8002df14
-
-      v0 = FUN_8002fed4();
-      if(v0 == 0) {
+      if(FUN_8002fed4() == 0) {
         return 0;
       }
-      v0 = 0;
 
-      v0 = FUN_8002fdc0();
-      MEMORY.ref(4, s0).offset(0x0L).setu(0);
+      FUN_8002fdc0();
+      MEMORY.ref(4, a0).setu(0);
       return 0;
     }
 
@@ -8622,7 +8491,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     _800bf170.setu(0x2L);
-    _800bf174.setu(0);
+    memcardState_800bf174.setu(0); // Okay
     _800bf178.setu(0);
     cardPort_800bf180.setu(cardPort);
     setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dfc8", long.class));
@@ -8651,13 +8520,13 @@ public final class Scus94491BpeSegment_8002 {
         return 0;
 
       case 0xa:
-        if(_800bf174.get() == 0x1L) {
+        if(memcardState_800bf174.get() == 0x1L) { // Busy
           return 0x1L;
         }
 
-        if(_800bf174.get() >= 0x2L) {
+        if(memcardState_800bf174.get() >= 0x2L) { // Some error occurred
           //LAB_8002e084
-          if(_800bf174.get() == 0x3L) {
+          if(memcardState_800bf174.get() == 0x3L) { // Ejected
             _800bf158.setu(0x1L);
             _800bf17c.oru(0x1L << cardPort_800bf180.get());
             testEvents();
@@ -8670,7 +8539,7 @@ public final class Scus94491BpeSegment_8002 {
           return 0x1L;
         }
 
-        if(_800bf174.get() != 0) {
+        if(memcardState_800bf174.get() != 0) { // Not okay
           return 0x1L;
         }
 
@@ -8705,7 +8574,7 @@ public final class Scus94491BpeSegment_8002 {
             return 0;
           }
 
-          _800bf154.setu(FUN_8002fce8());
+          _800bf154.setu(awaitMemcard());
         } else {
           _800bf154.setu(0);
         }
@@ -8724,9 +8593,9 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_8002e170
             //LAB_8002e188
             if(_800bf158.get() == 0) {
-              _800bf174.setu(0);
+              memcardState_800bf174.setu(0); // Okay
             } else {
-              _800bf174.setu(0x3L);
+              memcardState_800bf174.setu(0x3L); // Ejected
             }
 
             //LAB_8002e194
@@ -8747,7 +8616,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_8002e1e8
-        _800bf174.setu(FUN_8002f244(_800bf154.get()));
+        memcardState_800bf174.setu(getMemcardState(_800bf154.get()));
         return 0x1L;
 
       case 0x32:
@@ -8757,13 +8626,13 @@ public final class Scus94491BpeSegment_8002 {
             return 0;
           }
 
-          _800bf154.setu(FUN_8002fce8());
+          _800bf154.setu(awaitMemcard());
         } else {
           _800bf154.setu(0);
         }
 
         if(_800bf154.get() == 0) {
-          _800bf174.setu(0x4L);
+          memcardState_800bf174.setu(0x4L);
           return 0x1L;
         }
 
@@ -8777,25 +8646,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002ed48L)
-  public static long FUN_8002ed48(long a0, long a1, ArrayRef<MemcardStruct28> s7, @Nullable final Ref<Long> fileCountRef, long a4, long a5) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long fileCount;
-    long s6;
-    long fp;
-
-    s6 = a0;
-    s1 = a1;
-    s0 = _800bf170.getAddress();
-    v0 = MEMORY.ref(4, s0).offset(0x0L).get();
-    fp = a4;
-    a0 = s6;
-    if(v0 != 0) {
+  public static long FUN_8002ed48(final long a0, final long filename, final ArrayRef<MemcardStruct28> s7, @Nullable final Ref<Long> fileCountRef, final long a4, final long a5) {
+    if(_800bf170.get() != 0) {
       LOGGER.error("Access denied: system busy");
       throw new RuntimeException("Access denied: system busy");
     }
@@ -8804,102 +8656,85 @@ public final class Scus94491BpeSegment_8002 {
     final Memory.TemporaryReservation tmpStr = MEMORY.temp(25);
     final CString str = tmpStr.get().offset(25, 0x0L).cast(CString::new);
     FUN_8002f344(a0, str.getAddress());
-    final String sp0x10 = strcat(str, MEMORY.ref(1, s1).getString());
+    final String sp0x10 = strcat(str, MEMORY.ref(1, filename).getString());
     tmpStr.release();
 
-    s2 = 0;
-    s1 = 0;
-    v1 = MEMORY.ref(4, s0).offset(0xcL).get();
-    v0 = 0x1L << s6;
-    v1 = v1 | v0;
-    MEMORY.ref(4, s0).offset(0xcL).setu(v1);
+    _800bf17c.oru(1L << a0);
 
-    v0 = fp + a5;
-    fileCount = 0;
-    if((int)v0 > 0) {
-      s3 = s0;
-      s4 = 0;
+    long fileCount = 0;
 
-      //LAB_8002ee08
-      do {
-        final Memory.TemporaryReservation sp0x30tmp = MEMORY.temp(0x34);
-        final DIRENTRY dir = sp0x30tmp.get().cast(DIRENTRY::new);
+    //LAB_8002ee08
+    for(int i = 0; i < a4 + a5; i++) {
+      final Memory.TemporaryReservation sp0x30tmp = MEMORY.temp(0x34);
+      final DIRENTRY dir = sp0x30tmp.get().cast(DIRENTRY::new);
 
-        jump_8002eee8:
-        {
-          if(s1 == 0) {
-            //LAB_8002ee10
-            do {
-              testEvents();
-              final DIRENTRY s0_0 = FUN_8002f400(sp0x10, dir);
-              if(s0_0 != null) {
-                break jump_8002eee8;
-              }
-
-              v0 = FUN_8002f244(FUN_8002fdc0());
-
-              if(v0 == 0) {
-                //LAB_8002eee0
-                if(s0_0 == null) {
-                  break;
-                }
-
-                break jump_8002eee8;
-              }
-
-              s2++;
-            } while((int)s2 < 0x4L);
-
-            _800bf1c8.setNullable(FUN_8002efa4(null));
-
-            if((int)MEMORY.ref(4, s3).offset(0x0L).get() > 0) {
-              LOGGER.error("Access denied: multiple events open");
-              throw new RuntimeException("Access denied: multiple events open");
+      jump_8002eee8:
+      {
+        if(i == 0) {
+          //LAB_8002ee10
+          for(int s2 = 0; s2 < 4; s2++) {
+            testEvents();
+            final DIRENTRY s0_0 = FUN_8002f400(sp0x10, dir);
+            if(s0_0 != null) {
+              break jump_8002eee8;
             }
 
-            //LAB_8002ee88
-            MEMORY.ref(4, s3).offset(0x0L).setu(0x2L);
-            MEMORY.ref(4, s3).offset(0x4L).setu(0);
-            MEMORY.ref(4, s3).offset(0x8L).setu(0);
-            cardPort_800bf180.setu(s6);
-            setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dfc8", long.class));
+            if(getMemcardState(FUN_8002fdc0()) == 0) {
+              //LAB_8002eee0
+              if(s0_0 == null) {
+                break;
+              }
 
-            //LAB_8002eeac
-            final Ref<Long> ref = new Ref<>();
-            FUN_8002efb8(0, null, ref);
-            FUN_8002efa4(_800bf1c8.derefNullable());
-
-            sp0x30tmp.release();
-
-            return ref.get();
+              break jump_8002eee8;
+            }
           }
 
-          //LAB_8002eed4
-          final DIRENTRY s0_0 = nextfile(dir);
+          _800bf1c8.setNullable(FUN_8002efa4(null));
 
-          //LAB_8002eee0
-          if(s0_0 == null) {
-            sp0x30tmp.release();
-            break;
+          if((int)_800bf170.get() > 0) {
+            LOGGER.error("Access denied: multiple events open");
+            throw new RuntimeException("Access denied: multiple events open");
           }
+
+          //LAB_8002ee88
+          _800bf170.setu(0x2L);
+          memcardState_800bf174.setu(0); // Okay
+          _800bf178.setu(0);
+          cardPort_800bf180.setu(a0);
+          setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dfc8", long.class));
+
+          //LAB_8002eeac
+          final Ref<Long> ref = new Ref<>();
+          FUN_8002efb8(0, null, ref);
+          FUN_8002efa4(_800bf1c8.derefNullable());
+
+          sp0x30tmp.release();
+
+          return ref.get();
         }
 
-        //LAB_8002eee8
-        if((int)s1 >= (int)fp) {
-          if(s7 != null) {
-            //LAB_8002eefc
-            memcpy(s7.get((int)s4).getAddress(), dir.getAddress(), 0x28);
-            s4++;
-            fileCount = fileCount + 0x1L;
-          }
+        //LAB_8002eed4
+        final DIRENTRY s0_0 = nextfile(dir);
+
+        //LAB_8002eee0
+        if(s0_0 == null) {
+          sp0x30tmp.release();
+          break;
         }
+      }
 
-        sp0x30tmp.release();
+      //LAB_8002eee8
+      if(i >= (int)a4) {
+        if(s7 != null) {
+          //LAB_8002eefc
+          memcpy(s7.get((int)fileCount).getAddress(), dir.getAddress(), 0x28);
+          fileCount++;
+        }
+      }
 
-        //LAB_8002ef48
-        v0 = fp + a5;
-        s1++;
-      } while((int)s1 < (int)v0);
+      sp0x30tmp.release();
+
+      //LAB_8002ef48
     }
 
     //LAB_8002ef60
@@ -8919,7 +8754,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002efb8L)
-  public static long FUN_8002efb8(final long a0, @Nullable final Ref<Long> a1, @Nullable final Ref<Long> a2) {
+  public static long FUN_8002efb8(final long a0, @Nullable final Ref<Long> a1, @Nullable final Ref<Long> memcardState) {
     if(_800bf170.get() == 0) {
       if(_800bf178.get() == 0) {
         return -0x1L;
@@ -8934,8 +8769,8 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002f014
-      if(a2 != null) {
-        a2.set(_800bf164.get());
+      if(memcardState != null) {
+        memcardState.set(previousMemcardState_800bf164.get());
       }
 
       //LAB_8002f030
@@ -8950,8 +8785,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002f060
     if(_800bf178.get() == 0) {
-      if(a2 != null) {
-        a2.set(_800bf174.get());
+      if(memcardState != null) {
+        memcardState.set(memcardState_800bf174.get());
       }
 
       //LAB_8002f07c
@@ -8963,8 +8798,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002f08c
-    if(a2 != null) {
-      a2.set(_800bf164.get());
+    if(memcardState != null) {
+      memcardState.set(previousMemcardState_800bf164.get());
     }
 
     //LAB_8002f0a8
@@ -8980,25 +8815,25 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002f244L)
-  public static long FUN_8002f244(final long a0) {
-    if(a0 == 0) {
+  public static long getMemcardState(final long memcardStatus) {
+    if(memcardStatus == 0) { // Done
       return 0;
     }
 
-    if(a0 == 0x1L) {
+    if(memcardStatus == 0x1L) { // Write error
       return 0x2L;
     }
 
     //LAB_8002f26c
-    if(a0 == 0x2L) {
+    if(memcardStatus == 0x2L) { // Busy
       return 0x1L;
     }
 
-    if(a0 == 0x4L) {
+    if(memcardStatus == 0x4L) { // Ejected
       return 0x3L;
     }
 
-    return a0 | 0x8000L;
+    return memcardStatus | 0x8000L;
 
     //LAB_8002f28c
     //LAB_8002f290
@@ -9011,13 +8846,13 @@ public final class Scus94491BpeSegment_8002 {
 
       if(noMemcardEventPending() != 0) {
         _800bf160.setu(_800bf170);
-        _800bf164.setu(_800bf174);
+        previousMemcardState_800bf164.setu(memcardState_800bf174);
         _800bf170.setu(0);
-        _800bf174.setu(0);
+        memcardState_800bf174.setu(0);
         _800bf178.setu(0x1L);
 
         if(!_800bf1b4.isNull()) {
-          _800bf1b4.deref().run(_800bf160.get(), _800bf164.get());
+          _800bf1b4.deref().run(_800bf160.get(), previousMemcardState_800bf164.get());
         }
       }
     }
@@ -9354,7 +9189,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002fce8L)
-  public static long FUN_8002fce8() {
+  public static long awaitMemcard() {
     long s0;
 
     do {

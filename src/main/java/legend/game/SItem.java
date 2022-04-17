@@ -139,14 +139,14 @@ public final class SItem {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SItem.class);
 
   /** String: "BASCUS-94491drgnpda" */
-  public static final Value _800fb7a0 = MEMORY.ref(1, 0x800fb7a0L);
+  public static final Value drgnpda_800fb7a0 = MEMORY.ref(1, 0x800fb7a0L);
 
   public static final ArrayRef<MenuStruct08> _800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStruct08.class, 8, 8, MenuStruct08::new));
 
   public static final Value _800fbabc = MEMORY.ref(4, 0x800fbabcL);
 
   /** String "*" */
-  public static final Value _800fbadc = MEMORY.ref(1, 0x800fbadcL);
+  public static final Value asterisk_800fbadc = MEMORY.ref(1, 0x800fbadcL);
 
   public static final ArrayRef<UnsignedIntRef> _800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
   public static final ArrayRef<UnsignedIntRef> _800fbd30 = MEMORY.ref(4, 0x800fbd30L, ArrayRef.of(UnsignedIntRef.class, 9, 4, UnsignedIntRef::new));
@@ -306,7 +306,7 @@ public final class SItem {
 
   @Method(0x800fc698L)
   public static long FUN_800fc698(final long a0) {
-    if(a0 == -0x1L || a0 >= 9) {
+    if((int)a0 == -0x1L || a0 >= 9) {
       //LAB_800fc6a4
       return 0;
     }
@@ -879,7 +879,7 @@ public final class SItem {
           v1 = _800babc8.getAddress();
           v0 = _800babc8.offset(_8011d740.get() * 0x4L).getAddress();
           a0 = MEMORY.ref(4, v0).offset(0x88L).get();
-          if(a0 == -0x1L || (MEMORY.ref(4, v1).offset(0x330L).offset(a0 * 0x2cL).get() & 0x20L) != 0) {
+          if((int)a0 == -0x1L || (MEMORY.ref(4, v1).offset(0x330L).offset(a0 * 0x2cL).get() & 0x20L) != 0) {
             //LAB_800fd590
             playSound(0x28L);
           } else {
@@ -952,7 +952,7 @@ public final class SItem {
         //LAB_800fd820
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
           v1 = _800bdbf8.offset(_8011d744.get() * 0x4L).get();
-          if(v1 == -0x1L) {
+          if((int)v1 == -0x1L) {
             //LAB_800fd888
             playSound(0x28L);
             break;
@@ -2330,7 +2330,7 @@ public final class SItem {
 
         s1 = _8011d768.getAddress();
         s2 = memcardData_8011dd10.getAddress();
-        FUN_80109b08(s1, s2);
+        executeMemcardLoadingStage(s1, s2);
 
         if(memcardSaveLoadingStage_8011e0d4.get() != 0) {
           break;
@@ -2374,11 +2374,9 @@ public final class SItem {
           //LAB_800ff16c
           if(_8011d768.offset(1, 0x4L).get() != 0 || _8011d768.offset(1, 0x6L).get() != 0) {
             //LAB_800ff194
-            if(_8011d768.offset(1, 0x10L).get() >= 0xdL) {
-              v1 = _8011d768.offset(1, 0x10L).get() - 0xcL;
-              _8011d740.setu(v1);
-              v0 = _8011d768.offset(1, 0x10L).get() - v1; //TODO this is just 0xc...? Why the math?
-              _8011d744.setu(v0);
+            if(_8011d768.offset(1, 0x10L).get() > 0xcL) {
+              _8011d740.setu(_8011d768.offset(1, 0x10L).get() - 0xcL);
+              _8011d744.setu(0xcL);
             } else {
               //LAB_800ff1d0
               _8011d740.setu(0);
@@ -3807,7 +3805,7 @@ public final class SItem {
         a2 = MEMORY.ref(4, s1).offset(-0x2840L).get();
         v0 = 0x80L;
         a4 = v0;
-        FUN_8002e908(a0, _800fb7a0.getString(), a2, a3, a4);
+        FUN_8002e908(a0, drgnpda_800fb7a0.getString(), a2, a3, a4);
         a0 = 0;
         a1 = 0x8012_0000L;
         a1 = a1 - 0x2844L;
@@ -4248,7 +4246,7 @@ public final class SItem {
         a1 = 0x8012_0000L;
         a1 = a1 - 0x22f0L;
         a2 = 0x1L;
-        v0 = FUN_80109b08(a0, a1);
+        v0 = executeMemcardLoadingStage(a0, a1);
         v0 = 0x8012_0000L;
         v0 = MEMORY.ref(1, v0).offset(-0x1f2cL).get();
 
@@ -4563,7 +4561,7 @@ public final class SItem {
 
         final Memory.TemporaryReservation tmpA2 = MEMORY.temp(0x280); // Does this need to be this big? It's the size of the regular array of files
         final Ref<Long> fileCount = new Ref<>();
-        FUN_8002ed48(0, _800fb7a0.getAddress(), tmpA2.get().cast(ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)), fileCount, 0, 0x1L);
+        FUN_8002ed48(0, drgnpda_800fb7a0.getAddress(), tmpA2.get().cast(ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)), fileCount, 0, 0x1L);
         fileCount_8011d7b8.setu(fileCount.get());
 
         final Ref<Long> refA1_7 = new Ref<>(_8011d7bc.get());
@@ -4799,7 +4797,7 @@ public final class SItem {
             //LAB_80100f50
             final Memory.TemporaryReservation tmpA2_1 = MEMORY.temp(0x30); // Does this need to be this big? It's the size of the regular array of files
             final Ref<Long> fileCount_1 = new Ref<>();
-            FUN_8002ed48(0, _800fb7a0.getAddress(), tmpA2_1.get().cast(ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)), fileCount_1, 0, t0);
+            FUN_8002ed48(0, drgnpda_800fb7a0.getAddress(), tmpA2_1.get().cast(ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)), fileCount_1, 0, t0);
             fileCount_8011d7b8.setu(fileCount_1.get());
 
             a0 = 0;
@@ -7687,7 +7685,7 @@ public final class SItem {
 
   @Method(0x80107f9cL)
   public static void FUN_80107f9c(long a0, long a1, long a2, long a3, long a4) {
-    if(a2 != -0x1L) {
+    if((int)a2 != -0x1L) {
       if((a3 & 0xffL) != 0) {
         FUN_80103818(0x4aL, 0x4aL, (short)a0, (short)a1)._3c.set(0x21);
         FUN_80103818(0x99L, 0x99L, (short)a0, (short)a1);
@@ -7879,15 +7877,15 @@ public final class SItem {
   }
 
   @Method(0x80109b08L)
-  public static long FUN_80109b08(long a0, long memcardData) {
+  public static long executeMemcardLoadingStage(final long a0, final long memcardData) {
+    long v0;
     long v1;
+    long a1;
     long a2;
     long a3;
     long s0;
 
-    long v0;
-    long s4 = a0;
-    long a1;
+    LOGGER.info("Memcard loading stage %d", memcardSaveLoadingStage_8011e0d4.get());
 
     switch((int)memcardSaveLoadingStage_8011e0d4.get()) {
       case 1 -> {
@@ -7932,7 +7930,7 @@ public final class SItem {
         } else {
           //LAB_80109c30
           final Ref<Long> fileCount = new Ref<>(memcardSaveCount_8011e0c0.get());
-          v0 = FUN_8002ed48(0, _800fbadc.getAddress(), _8011e0b4.deref(), fileCount, 0, 0xfL);
+          v0 = FUN_8002ed48(0, asterisk_800fbadc.getAddress(), _8011e0b4.deref(), fileCount, 0, 0xfL);
           memcardSaveCount_8011e0c0.setu(fileCount.get());
           _8011e0c8.setu(v0);
           if(v0 != 0) {
@@ -7950,10 +7948,7 @@ public final class SItem {
       }
 
       case 4 -> {
-        final int memcardSaveIndex = memcardSaveIndex_8011e0b8.get();
-        if(memcardSaveIndex >= memcardSaveCount_8011e0c0.get()) { // File count
-          memcardSaveLoadingStage_8011e0d4.setu(0x7L);
-        } else {
+        for(int memcardSaveIndex = memcardSaveIndex_8011e0b8.get(); memcardSaveIndex < memcardSaveCount_8011e0c0.get(); memcardSaveIndex++) {
           //LAB_80109cb4
           final MemcardStruct28 struct = _8011e0b4.deref().get(memcardSaveIndex);
 
@@ -7964,66 +7959,51 @@ public final class SItem {
           }
 
           //LAB_80109ce0
-          a3 = a3 / 0x2000;
+          a3 = a3 >> 13;
           s0 = a3 + (struct._18.get() & 0x1fffL) > 0 ? 1 : 0;
           _8011e0c6.subu(s0);
           if(strncmp(struct.name_00.get(), "BASCUS-94491drgnpda", 19) == 0) {
             _8011e0c5.setu(s0);
-            memcardSaveLoadingStage_8011e0d4.setu(0x6L);
             //LAB_80109d28
           } else if(strncmp(struct.name_00.get(), "BASCUS-94491drgn00", 18) != 0) {
             _8011e0bc.addu(s0);
-            memcardSaveLoadingStage_8011e0d4.setu(0x6L);
           } else {
             //LAB_80109d70
             FUN_8002e908(0, struct.name_00.get(), memcardDataPtr_8011e0b0.get(), 0x180L, 0x80L);
-            memcardSaveLoadingStage_8011e0d4.setu(0x5L);
-          }
-        }
 
-        //LAB_8010a098
-      }
+            final Ref<Long> sp50 = new Ref<>();
+            final Ref<Long> sp54 = new Ref<>();
+            if(FUN_8002efb8(0x1L, sp50, sp54) != 0) {
+              if(sp54.get() == 0) {
+                s0 = memcardDataPtr_8011e0b0.deref(1).offset(0x4L).get();
 
-      case 5 -> {
-        final Ref<Long> sp50 = new Ref<>();
-        final Ref<Long> sp54 = new Ref<>();
-        if(FUN_8002efb8(0x1L, sp50, sp54) != 0) {
-          if(sp54.get() == 0) {
-            s0 = memcardDataPtr_8011e0b0.deref(1).offset(0x4L).get();
+                if(s0 < 0xfL && MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).get() == 0xffL) {
+                  //LAB_80109e38
+                  if(memcardDataPtr_8011e0b0.deref(4).get() == 0x5a02_0006L) {
+                    memcpy(memcardData + s0 * 0x3cL, memcardDataPtr_8011e0b0.get(), 0x3c);
 
-            if(s0 < 0xfL && MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).get() == 0xffL) {
-              //LAB_80109e38
-              if(memcardDataPtr_8011e0b0.deref(4).get() == 0x5a02_0006L) {
-                memcpy(memcardData + s0 * 0x3cL, memcardDataPtr_8011e0b0.get(), 0x3c);
+                    final long a0_0 = MEMORY.ref(4, memcardData).offset(s0 * 0x3cL).offset(0x30L).get();
+                    if(_8011e0cc.get() < a0_0) { //TODO maybe selects the newest save?
+                      _8011e0cc.setu(a0_0);
+                      _8011e0d0.setu(s0);
+                    }
 
-                a0 = MEMORY.ref(4, memcardData).offset(s0 * 0x3cL).offset(0x30L).get();
-                if(_8011e0cc.get() < a0) { //TODO maybe selects the newest save?
-                  _8011e0cc.setu(a0);
-                  _8011e0d0.setu(s0);
+                    //LAB_80109e7c
+                    _8011e0c4.addu(0x1L);
+                  } else {
+                    //LAB_80109e90
+                    MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfdL);
+                  }
+                } else {
+                  //LAB_80109e1c
+                  MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfeL);
                 }
-
-                //LAB_80109e7c
-                _8011e0c4.addu(0x1L);
-              } else {
-                //LAB_80109e90
-                MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfdL);
               }
-            } else {
-              //LAB_80109e1c
-              MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfeL);
             }
           }
-
-          //LAB_80109e94
-          memcardSaveLoadingStage_8011e0d4.setu(0x6L);
         }
 
-        //LAB_8010a098
-      }
-
-      case 6 -> {
-        memcardSaveLoadingStage_8011e0d4.setu(0x4L);
-        memcardSaveIndex_8011e0b8.incr();
+        memcardSaveLoadingStage_8011e0d4.setu(0x7L);
 
         //LAB_8010a098
       }
@@ -8100,8 +8080,8 @@ public final class SItem {
     }
 
     //LAB_8010a09c
-    memcpy(s4, memcardSaveCount_8011e0c0.getAddress(), 0x14);
-    return s4;
+    memcpy(a0, memcardSaveCount_8011e0c0.getAddress(), 0x14);
+    return a0;
   }
 
   @Method(0x8010a0ecL)

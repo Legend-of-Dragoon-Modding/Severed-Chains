@@ -576,7 +576,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
 
   public static final Value _800bf140 = MEMORY.ref(4, 0x800bf140L);
-  public static final Value _800bf144 = MEMORY.ref(4, 0x800bf144L);
+  public static final Value memcardStatus_800bf144 = MEMORY.ref(4, 0x800bf144L);
   public static final Value _800bf148 = MEMORY.ref(4, 0x800bf148L);
   public static final Value _800bf14c = MEMORY.ref(4, 0x800bf14cL);
   public static final Value _800bf150 = MEMORY.ref(4, 0x800bf150L);
@@ -584,10 +584,18 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf158 = MEMORY.ref(4, 0x800bf158L);
 
   public static final Value _800bf160 = MEMORY.ref(4, 0x800bf160L);
-  public static final Value _800bf164 = MEMORY.ref(4, 0x800bf164L);
+  public static final Value previousMemcardState_800bf164 = MEMORY.ref(4, 0x800bf164L);
 
   public static final Value _800bf170 = MEMORY.ref(4, 0x800bf170L);
-  public static final Value _800bf174 = MEMORY.ref(4, 0x800bf174L);
+  /**
+   * 0 - okay
+   * 1 - busy
+   * 2 - error
+   * 3 - ejected
+   * 4 - ?
+   * 5 - failed to open memcard file
+   */
+  public static final Value memcardState_800bf174 = MEMORY.ref(4, 0x800bf174L);
   public static final Value _800bf178 = MEMORY.ref(4, 0x800bf178L);
   public static final Value _800bf17c = MEMORY.ref(4, 0x800bf17cL);
   public static final Value cardPort_800bf180 = MEMORY.ref(4, 0x800bf180L);
