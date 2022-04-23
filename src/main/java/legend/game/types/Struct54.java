@@ -15,9 +15,9 @@ public class Struct54 implements MemoryRef {
   public final ShortRef _02;
   public final ShortRef _04;
   public final ShortRef _06;
-  public final UnsignedIntRef _08;
-  public final UnsignedIntRef _0c;
-  public final UnsignedIntRef _10;
+  public final IntRef _08;
+  public final IntRef _0c;
+  public final IntRef _10;
 
   public final IntRef x_18;
   public final IntRef y_1c;
@@ -38,9 +38,9 @@ public class Struct54 implements MemoryRef {
     this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
-    this._0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
-    this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
+    this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
+    this._0c = ref.offset(4, 0x0cL).cast(IntRef::new);
+    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
 
     this.x_18 = ref.offset(4, 0x18L).cast(IntRef::new);
     this.y_1c = ref.offset(4, 0x1cL).cast(IntRef::new);

@@ -52,6 +52,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022518;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a0e4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ae0c;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c0c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c86c;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -1253,20 +1254,14 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(3, previousElement).setu(newElement);
   }
 
-  /**
-   * Maybe sin/cos
-   */
   @Method(0x80013598L)
   public static long rsin(final long angleDiv360Maybe) {
-    return sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
+    return sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
   }
 
-  /**
-   * Maybe sin/cos
-   */
   @Method(0x800135b8L)
   public static long rcos(final long angleDiv360Maybe) {
-    return sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).get();
+    return sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
   }
 
   /**
@@ -2866,7 +2861,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800169f4L)
   public static long scriptDecrementBy1(final RunningScript a0) {
-    a0.params_20.get(0).deref().decr();
+    a0.params_20.get(0).deref().decrOverflow();
     return 0;
   }
 
@@ -3157,6 +3152,12 @@ public final class Scus94491BpeSegment {
   @Method(0x8001751cL)
   public static long scriptStartEffect(final RunningScript a0) {
     scriptStartEffect(a0.params_20.get(0).deref().get(), Math.max(1, a0.params_20.get(1).deref().get()));
+    return 0;
+  }
+
+  @Method(0x80017584L)
+  public static long FUN_80017584(final RunningScript a0) {
+    FUN_8002bb38((int)a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
 

@@ -113,8 +113,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef ambientRed_1ca;
   public final UnsignedShortRef ambientGreen_1cc;
   public final UnsignedShortRef ambientBlue_1ce;
-  /** TODO unknown type */
-  public final Value v_1d0;
+  public final BigSubStruct _1d0;
 
   public BigStruct(final Value ref) {
     this.ref = ref;
@@ -203,7 +202,7 @@ public class BigStruct implements MemoryRef {
     this.ambientRed_1ca = ref.offset(2, 0x1caL).cast(UnsignedShortRef::new);
     this.ambientGreen_1cc = ref.offset(2, 0x1ccL).cast(UnsignedShortRef::new);
     this.ambientBlue_1ce = ref.offset(2, 0x1ceL).cast(UnsignedShortRef::new);
-    this.v_1d0 = ref.offset(4, 0x1d0L);
+    this._1d0 = ref.offset(4, 0x1d0L).cast(BigSubStruct::new);
   }
 
   @Override

@@ -583,10 +583,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf154 = MEMORY.ref(4, 0x800bf154L);
   public static final Value _800bf158 = MEMORY.ref(4, 0x800bf158L);
 
-  public static final Value _800bf160 = MEMORY.ref(4, 0x800bf160L);
+  public static final Value previousMemcardEvent_800bf160 = MEMORY.ref(4, 0x800bf160L);
   public static final Value previousMemcardState_800bf164 = MEMORY.ref(4, 0x800bf164L);
 
-  public static final Value _800bf170 = MEMORY.ref(4, 0x800bf170L);
+  public static final Value activeMemcardEvent_800bf170 = MEMORY.ref(4, 0x800bf170L);
   /**
    * 0 - okay
    * 1 - busy

@@ -1035,7 +1035,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80040bb4
-    if(y == 0 && x >= y) {
+    if(y == 0 && x == 0) {
       return 0;
     }
 
