@@ -169,6 +169,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052b40;
 import static legend.game.Scus94491BpeSegment_8005._80052b68;
 import static legend.game.Scus94491BpeSegment_8005._80052b88;
 import static legend.game.Scus94491BpeSegment_8005._80052ba8;
+import static legend.game.Scus94491BpeSegment_8005._80052bc8;
+import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
@@ -201,6 +203,7 @@ import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpNEW_EventId_800bf2
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpTIMOUT_EventId_800bf258;
 import static legend.game.Scus94491BpeSegment_800b._800babc8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
 import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
@@ -1809,7 +1812,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023c28L)
-  public static void FUN_80023c28() {
+  public static void uploadRenderables() {
     long v0;
     long v1;
     long a0;
@@ -1990,7 +1993,6 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_80023fe4
-          v1 = s0._38.get();
           if(s0._38.get() == 0x1000L) {
             if(MEMORY.ref(2, s1).offset(0xcL).getSigned() >= 0) {
               //LAB_80024024
@@ -6385,56 +6387,26 @@ public final class Scus94491BpeSegment_8002 {
         v1 = (int)v1 >> 4;
         v0 = v0 | v1;
         MEMORY.ref(2, s0).offset(0xeL).setu(v0);
-        v0 = 0x8L;
-        MEMORY.ref(2, s0).offset(0x10L).setu(v0);
-        v0 = a3 & 0xffL;
+        MEMORY.ref(2, s0).offset(0x10L).setu(0x8L);
         MEMORY.ref(1, s0).offset(0xdL).setu(a2);
-        MEMORY.ref(2, s0).offset(0x12L).setu(v0);
+        MEMORY.ref(2, s0).offset(0x12L).setu(a3 & 0xffL);
         gpuLinkedListSetCommandTransparency(a0_0, false);
-        a1 = s0;
-        s1 = 0x1f80_0000L;
-        s0 = 0x800c_0000L;
-        a0_0 = MEMORY.ref(4, s0).offset(-0x2100L).get();
-        v0 = MEMORY.ref(4, s1).offset(0x3d0L).get();
-        a0_0 = a0_0 << 2;
-        a0_0 = v0 + a0_0;
-        insertElementIntoLinkedList(a0_0, a1);
-        t0 = 0xe100_0000L;
-        v1 = 0x1f80_0000L;
-        t0 = t0 | 0x200L;
-        a3 = 0x800c_0000L;
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), s0);
         a2 = fp & 0xffffL;
-        a2 = a2 << 2;
-        a1 = MEMORY.ref(4, v1).offset(0x3d8L).get();
-        a3 = a3 - 0x4ef0L;
-        v0 = a1 + 0x8L;
-        MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
-        v0 = 0x1L;
-        MEMORY.ref(1, a1).offset(0x3L).setu(v0);
-        a0_0 = MEMORY.ref(4, s0).offset(-0x2100L).get();
-        v0 = MEMORY.ref(4, s1).offset(0x3d0L).get();
-        a0_0 = a0_0 << 2;
-        a0_0 = v0 + a0_0;
-        v0 = 0x8005_0000L;
-        v0 = v0 + 0x2bf4L;
-        v0 = a2 + v0;
-        v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-        v0 = 0x8005_0000L;
-        v0 = v0 + 0x2bc8L;
-        a2 = a2 + v0;
-        a2 = MEMORY.ref(4, a2).offset(0x0L).get();
-        v1 = v1 & 0x100L;
+        a2 = a2 * 0x4L;
+        a1 = linkedListAddress_1f8003d8.get();
+        linkedListAddress_1f8003d8.addu(0x8L);
+        MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
+        v1 = _80052bf4.offset(a2).get() & 0x100L;
         v1 = (int)v1 >> 8;
-        v1 = v1 << 1;
-        v1 = v1 + a3;
-        a2 = a2 & 0x3c0L;
-        v0 = MEMORY.ref(2, v1).offset(0x0L).get();
+        v1 = _800bb110.offset(v1 * 0x2L).getAddress();
+        a2 = _80052bc8.offset(a2).get() & 0x3c0L;
         a2 = (int)a2 >> 6;
-        v0 = v0 | a2;
+        v0 = MEMORY.ref(2, v1).offset(0x0L).get() | a2;
         v0 = v0 & 0x9ffL;
-        v0 = v0 | t0;
+        v0 = v0 | 0xe100_0200L;
         MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-        insertElementIntoLinkedList(a0_0, a1);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), a1);
       }
 
       //LAB_80029760

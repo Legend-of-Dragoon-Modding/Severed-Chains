@@ -12,11 +12,11 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.types.Renderable58;
 import legend.game.types.MemcardDataStruct3c;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MenuStruct20;
+import legend.game.types.Renderable58;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,12 +43,9 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80023148;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800232dc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800233d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023484;
-import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a2c;
-import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80023c28;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002437c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029300;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a6fc;
@@ -65,11 +62,14 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002ed48;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002efb8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002f0d4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002f1d0;
+import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.executeMemcardVsyncCallback;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
+import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
+import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80041070;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800412e0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80041420;
@@ -119,19 +119,19 @@ import static legend.game.Scus94491BpeSegment_800b._800be65e;
 import static legend.game.Scus94491BpeSegment_800b._800be666;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.drgn0File6666Address_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
+import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
+import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
-import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
-import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
@@ -385,8 +385,8 @@ public final class SItem {
   }
 
   @Method(0x800fc84cL)
-  public static long FUN_800fc84c(final long a0) {
-    return a0 * 0x48 + 0x10L;
+  public static long getSlotY(final long slot) {
+    return 16 + slot * 72;
   }
 
   @Method(0x800fc860L)
@@ -850,7 +850,7 @@ public final class SItem {
       case 0x9:
         FUN_8002437c(0xffL);
         FUN_8010376c(_80114160.getAddress(), 0, 0);
-        renderablePtr_800bdbe8.set(FUN_80103818(0x7fL, 0x7fL, 0x10L, FUN_800fc84c(_8011d740.get())));
+        renderablePtr_800bdbe8.set(FUN_80103818(0x7fL, 0x7fL, 0x10L, getSlotY(_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
         FUN_801024c4(0xffL);
         inventoryMenuState_800bdc28.setu(0xaL);
@@ -865,7 +865,7 @@ public final class SItem {
 
         if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && _8011d740.get() >= 0x2L) {
           _8011d740.subu(0x1L);
-          renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
+          renderablePtr_800bdbe8.deref().y_44.set(getSlotY(_8011d740.get()));
           playSound(0x1L);
         }
 
@@ -873,7 +873,7 @@ public final class SItem {
         //LAB_800fd4e8
         if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && _8011d740.get() < 0x2L) {
           _8011d740.addu(0x1L);
-          renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
+          renderablePtr_800bdbe8.deref().y_44.set(getSlotY(_8011d740.get()));
           playSound(0x1L);
         }
 
@@ -2395,8 +2395,8 @@ public final class SItem {
             }
 
             //LAB_800ff1e0
-            renderablePtr_800bdbe8.set(FUN_80103818(0x81L, 0x81L, 0x10L, FUN_800fc84c(_8011d740.get())));
-            renderablePtr_800bdbec.set(FUN_80103818(0x82L, 0x82L, 0xc0L, FUN_800fc84c(_8011d740.get())));
+            renderablePtr_800bdbe8.set(FUN_80103818(0x81L, 0x81L, 0x10L, getSlotY(_8011d740.get())));
+            renderablePtr_800bdbec.set(FUN_80103818(0x82L, 0x82L, 0xc0L, getSlotY(_8011d740.get())));
             FUN_80104b60(renderablePtr_800bdbe8.deref());
             FUN_80104b60(renderablePtr_800bdbec.deref());
             FUN_8010361c(fileScroll_8011d744.get(), 0xeL);
@@ -2439,8 +2439,8 @@ public final class SItem {
 
       case 0x2b:
         if(FUN_80103f00(_8011d740.getAddress(), fileScroll_8011d744.getAddress(), 0x3L, 0xfL, 0x1L) != 0) {
-          renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
-          renderablePtr_800bdbec.deref().y_44.set(FUN_800fc84c(_8011d740.get()));
+          renderablePtr_800bdbe8.deref().y_44.set(getSlotY(_8011d740.get()));
+          renderablePtr_800bdbec.deref().y_44.set(getSlotY(_8011d740.get()));
           inventoryMenuState_800bdc28.setu(0x2aL);
         }
 
@@ -5779,7 +5779,7 @@ public final class SItem {
     renderCentredText(_8011cf10, 0x3eL, (FUN_800fc78c(0x6L) + 0x2L) & 0xffffL, a3);
 
     if(s4 == 0) {
-      FUN_80023c28();
+      uploadRenderables();
     }
 
     //LAB_80102040
@@ -5862,13 +5862,12 @@ public final class SItem {
       //LAB_80103108
       for(int i = 0; i < 3; i++) {
         final long fileIndex = fileScroll + i;
-        renderSaveGameSlot(fileIndex, saveData.get((int)fileIndex), FUN_800fc84c(i), a2 == 0xffL ? 1 : 0);
+        renderSaveGameSlot(fileIndex, saveData.get((int)fileIndex), getSlotY(i), a2 == 0xffL ? 1 : 0);
       }
     }
 
     //LAB_80103144
-    // Build GP0 packets
-    FUN_80023c28();
+    uploadRenderables();
   }
 
   @Method(0x80103168L)
@@ -7439,12 +7438,8 @@ public final class SItem {
   public static long FUN_8010ecec(final MenuStruct20 a0) {
     Renderable58 renderable;
     long a3;
-    long t0;
     int s0;
     long s1;
-    long s3;
-    long s4;
-    long s5;
     long v1;
 
     LOGGER.info("FUN_8010ecec %d", a0._0c.get());
@@ -7470,29 +7465,31 @@ public final class SItem {
 
       case 3:
         _800bdf00.setu(0x1fL);
-        s5 = a0.x_1c.get() + 60;
-        s4 = a0.y_1e.get() +  7;
-        a0._10.incr();
-        if(!a0._00.isNull()) {
-          t0 = textLength(a0._00.deref()) & 0xffffL;
-          final Memory.TemporaryReservation sp0x38tmp = MEMORY.temp((int)((t0 + 0x1L) * 0x2L));
-          final ArrayRef<UnsignedShortRef> sp0x38 = sp0x38tmp.get().cast(ArrayRef.of(UnsignedShortRef.class, (int)t0 + 1, 2, UnsignedShortRef::new));
+        long x = a0.x_1c.get() + 60;
+        long y = a0.y_1e.get() + 7;
 
-          final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp((int)((t0 + 0x1L) * 0x4L));
-          final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> sp0x10 = sp0x10tmp.get().cast(ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), (int)t0 + 1, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, (int)t0 + 1, 2, UnsignedShortRef::new))));
+        a0._10.incr();
+
+        if(!a0._00.isNull()) {
+          final int textLength = (int)textLength(a0._00.deref());
+          final Memory.TemporaryReservation sp0x38tmp = MEMORY.temp((textLength + 1) * 2);
+          final ArrayRef<UnsignedShortRef> sp0x38 = sp0x38tmp.get().cast(ArrayRef.of(UnsignedShortRef.class, textLength + 1, 2, UnsignedShortRef::new));
+
+          final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp((textLength + 1) * 4);
+          final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> sp0x10 = sp0x10tmp.get().cast(ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), textLength + 1, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, textLength + 1, 2, UnsignedShortRef::new))));
 
           sp0x10.get(0).set(sp0x38);
 
-          s3 = 0x1L;
+          int lines = 1;
 
           //LAB_8010ee1c
-          for(s0 = 0; s0 < (int)t0; s0++) {
+          for(s0 = 0; s0 < textLength; s0++) {
             sp0x38.get(s0).set(a0._00.deref().get(s0).get());
 
             if(sp0x38.get(s0).get() == 0xa1ffL) {
-              sp0x10.get((int)s3).set(MEMORY.ref(2, sp0x38.get(s0 + 1).getAddress(), ArrayRef.of(UnsignedShortRef.class, (int)t0 + 1, 2, UnsignedShortRef::new))); //TODO
+              sp0x10.get(lines).set(MEMORY.ref(2, sp0x38.get(s0 + 1).getAddress(), ArrayRef.of(UnsignedShortRef.class, textLength + 1, 2, UnsignedShortRef::new))); //TODO
               sp0x38.get(s0).set(0xa0ff);
-              s3++;
+              lines++;
             }
 
             //LAB_8010ee50
@@ -7502,9 +7499,9 @@ public final class SItem {
           sp0x38.get(s0).set(0xa0ff);
 
           //LAB_8010ee80
-          for(int i = 0; i < s3; i++) {
-            renderCentredText(sp0x10.get(i).deref(), s5, s4, 0x4L);
-            s4 = s4 + 14;
+          for(int i = 0; i < lines; i++) {
+            renderCentredText(sp0x10.get(i).deref(), x, y, 0x4L);
+            y = y + 14;
           }
 
           sp0x10tmp.release();
@@ -7526,56 +7523,54 @@ public final class SItem {
           break;
         }
 
-        if(s1 != 0x2L) {
-          break;
-        }
-
-        //LAB_8010ef10
-        if(a0.renderable_04.isNull()) {
-          renderable = FUN_80103818(0x7dL, 0x7dL, a0.x_1c.get() + 0x2dL, a0._18.get() * 0xeL + s4 + 0x5L);
-          a0.renderable_04.set(renderable);
-          renderable._38.set(0);
-          renderable._34.set(0);
-          a0.renderable_04.deref()._3c.set(0x20);
-        }
-
-        //LAB_8010ef64
-        _800bdf00.setu(0x1fL);
-
-        if(a0._18.get() != 0) {
-          a3 = 0x4L;
-        } else {
-          a3 = 0x5L;
-        }
-
-        //LAB_8010ef98
-        renderCentredText(_8011c20c, (a0.x_1c.get() + 0x3cL) & 0xffffL, s4 + 0x7L, a3);
-
-        if(a0._18.get() != 0) {
-          a3 = 0x5L;
-        } else {
-          a3 = 0x4L;
-        }
-
-        //LAB_8010efc8
-        renderCentredText(_8011c214, (a0.x_1c.get() + 0x3cL) & 0xffffL, s4 + 0x15L, a3);
-
-        _800bdf00.setu(0x21L);
-        v1 = FUN_801041d8(a0._18.getAddress()); //TODO address
-        if(v1 == 0x2L) {
-          //LAB_8010f040
-          a0._0c.set(0x4);
-          _8011e1e8.setu(a0._18.get() + 0x1L);
-        } else if((int)v1 >= 0x3L) {
-          //LAB_8010f000
-          if((int)v1 < 0x5L) {
-            //LAB_8010f05c
-            a0._0c.set(0x4);
-            _8011e1e8.setu(0x2L);
+        if(s1 == 0x2L) {
+          //LAB_8010ef10
+          if(a0.renderable_04.isNull()) {
+            renderable = FUN_80103818(0x7dL, 0x7dL, a0.x_1c.get() + 0x2dL, a0._18.get() * 0xeL + y + 0x5L);
+            a0.renderable_04.set(renderable);
+            renderable._38.set(0);
+            renderable._34.set(0);
+            a0.renderable_04.deref()._3c.set(0x20);
           }
-        } else if(v1 == 0x1L) {
-          //LAB_8010f014
-          a0.renderable_04.deref().y_44.set(a0._18.get() * 0xeL + s4 + 0x5L);
+
+          //LAB_8010ef64
+          _800bdf00.setu(0x1fL);
+
+          if(a0._18.get() != 0) {
+            a3 = 0x4L;
+          } else {
+            a3 = 0x5L;
+          }
+
+          //LAB_8010ef98
+          renderCentredText(_8011c20c, (a0.x_1c.get() + 0x3cL) & 0xffffL, y + 0x7L, a3);
+
+          if(a0._18.get() != 0) {
+            a3 = 0x5L;
+          } else {
+            a3 = 0x4L;
+          }
+
+          //LAB_8010efc8
+          renderCentredText(_8011c214, (a0.x_1c.get() + 0x3cL) & 0xffffL, y + 0x15L, a3);
+
+          _800bdf00.setu(0x21L);
+          v1 = FUN_801041d8(a0._18.getAddress()); //TODO address
+          if(v1 == 0x2L) {
+            //LAB_8010f040
+            a0._0c.set(0x4);
+            _8011e1e8.setu(a0._18.get() + 0x1L);
+          } else if((int)v1 >= 0x3L) {
+            //LAB_8010f000
+            if((int)v1 < 0x5L) {
+              //LAB_8010f05c
+              a0._0c.set(0x4);
+              _8011e1e8.setu(0x2L);
+            }
+          } else if(v1 == 0x1L) {
+            //LAB_8010f014
+            a0.renderable_04.deref().y_44.set(a0._18.get() * 0xeL + y + 0x5L);
+          }
         }
 
         break;
