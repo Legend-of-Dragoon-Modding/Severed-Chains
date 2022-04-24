@@ -7,11 +7,12 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 
-public class Drgn0_6666Struct58 implements MemoryRef {
+/** Main menu renderable? */
+public class Renderable58 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef _00;
-  public final UnsignedIntRef charIndex_04;
+  public final UnsignedIntRef char_04;
   public final IntRef _08;
   public final UnsignedIntRef _0c;
   public final UnsignedIntRef _10;
@@ -29,14 +30,14 @@ public class Drgn0_6666Struct58 implements MemoryRef {
   public final UnsignedIntRef x_40;
   public final UnsignedIntRef y_44;
   public final UnsignedIntRef _48;
-  public final Pointer<Drgn0_6666Struct58> child_50;
-  public final Pointer<Drgn0_6666Struct58> parent_54;
+  public final Pointer<Renderable58> child_50;
+  public final Pointer<Renderable58> parent_54;
 
-  public Drgn0_6666Struct58(final Value ref) {
+  public Renderable58(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this.charIndex_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.char_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this._0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
@@ -54,8 +55,8 @@ public class Drgn0_6666Struct58 implements MemoryRef {
     this.x_40 = ref.offset(4, 0x40L).cast(UnsignedIntRef::new);
     this.y_44 = ref.offset(4, 0x44L).cast(UnsignedIntRef::new);
     this._48 = ref.offset(4, 0x48L).cast(UnsignedIntRef::new);
-    this.child_50 = ref.offset(4, 0x50L).cast(Pointer.deferred(4, Drgn0_6666Struct58::new));
-    this.parent_54 = ref.offset(4, 0x54L).cast(Pointer.deferred(4, Drgn0_6666Struct58::new));
+    this.child_50 = ref.offset(4, 0x50L).cast(Pointer.deferred(4, Renderable58::new));
+    this.parent_54 = ref.offset(4, 0x54L).cast(Pointer.deferred(4, Renderable58::new));
   }
 
   @Override

@@ -119,7 +119,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -1306,7 +1306,7 @@ public final class Scus94491BpeSegment_800e {
     _800bdb90.setu(0);
     _800bdc24.setu(0);
     _800bdc40.setu(0);
-    drgn0_6666Ptr_800bdc5c.clear();
+    renderablePtr_800bdc5c.clear();
     FUN_800e6d9c();
   }
 

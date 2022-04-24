@@ -32,7 +32,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MOVE;
-import legend.game.types.Drgn0_6666Struct58;
+import legend.game.types.Renderable58;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.JoyStruct;
 import legend.game.types.MemcardStruct28;
@@ -81,7 +81,6 @@ import static legend.game.SMap.FUN_800e2220;
 import static legend.game.SMap.FUN_800e2428;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
-import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
 import static legend.game.SMap.FUN_800e519c;
@@ -91,6 +90,7 @@ import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
+import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.renderDobj2;
 import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
@@ -141,7 +141,6 @@ import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042b60;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042ba0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80042d10;
@@ -159,6 +158,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
@@ -189,8 +189,8 @@ import static legend.game.Scus94491BpeSegment_8005.maxJoypadIndex_80059628;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpNEW_EventId_800bf26c;
@@ -360,16 +360,11 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf140;
-import static legend.game.Scus94491BpeSegment_800b.memcardStatus_800bf144;
 import static legend.game.Scus94491BpeSegment_800b._800bf148;
 import static legend.game.Scus94491BpeSegment_800b._800bf14c;
 import static legend.game.Scus94491BpeSegment_800b._800bf150;
 import static legend.game.Scus94491BpeSegment_800b._800bf154;
 import static legend.game.Scus94491BpeSegment_800b._800bf158;
-import static legend.game.Scus94491BpeSegment_800b.previousMemcardEvent_800bf160;
-import static legend.game.Scus94491BpeSegment_800b.previousMemcardState_800bf164;
-import static legend.game.Scus94491BpeSegment_800b.activeMemcardEvent_800bf170;
-import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
 import static legend.game.Scus94491BpeSegment_800b._800bf178;
 import static legend.game.Scus94491BpeSegment_800b._800bf17c;
 import static legend.game.Scus94491BpeSegment_800b._800bf1b4;
@@ -380,6 +375,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf1c4;
 import static legend.game.Scus94491BpeSegment_800b._800bf1c8;
 import static legend.game.Scus94491BpeSegment_800b._800bf1d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf200;
+import static legend.game.Scus94491BpeSegment_800b.activeMemcardEvent_800bf170;
 import static legend.game.Scus94491BpeSegment_800b.cardDoneRead_800bf270;
 import static legend.game.Scus94491BpeSegment_800b.cardError2000_800bf28c;
 import static legend.game.Scus94491BpeSegment_800b.cardError8000_800bf284;
@@ -390,25 +386,29 @@ import static legend.game.Scus94491BpeSegment_800b.cardErrorWrite_800bf274;
 import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
 import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdb98;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba4;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666Ptr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe4;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdbec;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666StructPtr_800bdc20;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb98;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe0;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe4;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.memcardDest_800bf190;
 import static legend.game.Scus94491BpeSegment_800b.memcardFileHandle_800bf184;
 import static legend.game.Scus94491BpeSegment_800b.memcardLength_800bf18c;
 import static legend.game.Scus94491BpeSegment_800b.memcardPos_800bf188;
+import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
+import static legend.game.Scus94491BpeSegment_800b.memcardStatus_800bf144;
 import static legend.game.Scus94491BpeSegment_800b.memcardStruct28ArrPtr_800bdc50;
 import static legend.game.Scus94491BpeSegment_800b.memcardVsyncCallbacks_800bf240;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
+import static legend.game.Scus94491BpeSegment_800b.previousMemcardEvent_800bf160;
+import static legend.game.Scus94491BpeSegment_800b.previousMemcardState_800bf164;
 import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
@@ -416,8 +416,8 @@ import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
 import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
-import static legend.game.WMap.renderWmapDobj2;
 import static legend.game.WMap.FUN_800c925c;
+import static legend.game.WMap.renderWmapDobj2;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1619,32 +1619,31 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
+  /**
+   * @param part 0: second, 1: minute, 2: hour
+   */
   @Method(0x80023674L)
-  public static long FUN_80023674(long a0, final long a1) {
-    if(a0 > 215999999L) {
-      a0 = 215999999L;
+  public static long getTimestampPart(long timestamp, final long part) {
+    if(timestamp >= 216000000L) { // Clamp to 1000 hours
+      timestamp = 215999999L;
     }
 
-    if(a1 == 1) {
-      a0 = a0 / 3600L;
-    } else {
-      if(a1 < 2) {
-        if(a1 != 0) {
-          return 0;
-        }
-
-        a0 = a0 / 216000L;
-        return a0 - a0 / 1000L * 1000L;
-      }
-
-      if(a1 != 2) {
-        return 0;
-      }
-
-      a0 = a0 / 60L;
+    // Hours
+    if(part == 0) {
+      return timestamp / 216000L % 1000L;
     }
 
-    return a0 - a0 / 60L * 60L;
+    // Minutes
+    if(part == 1) {
+      return timestamp / 3600L % 60L;
+    }
+
+    // Seconds
+    if(part == 2) {
+      return timestamp / 60L % 60L;
+    }
+
+    return 0;
   }
 
   @Method(0x8002379cL)
@@ -1769,14 +1768,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023b54L)
-  public static Drgn0_6666Struct58 FUN_80023b54(final long a0, @Nullable Drgn0_6666Struct58 a1) {
+  public static Renderable58 allocateRenderable(final long a0, @Nullable Renderable58 a1) {
     if(a1 == null) {
-      a1 = MEMORY.ref(4, addToLinkedListTail(0x58L), Drgn0_6666Struct58::new);
+      a1 = MEMORY.ref(4, addToLinkedListTail(0x58L), Renderable58::new);
     }
 
     //LAB_80023b7c
     a1._00.set(0);
-    a1.charIndex_04.set(0);
+    a1.char_04.set(0);
     a1._08.set((int)MEMORY.ref(1, a0).offset(0xaL).get());
     a1._0c.set(0);
     a1._10.set(0);
@@ -1795,16 +1794,17 @@ public final class Scus94491BpeSegment_8002 {
     a1._48.set(0);
     a1.child_50.clear();
 
-    if(!drgn0_6666Ptr_800bdc5c.isNull()) {
-      a1.parent_54.set(drgn0_6666Ptr_800bdc5c.deref());
-      drgn0_6666Ptr_800bdc5c.deref().child_50.set(a1);
+    if(!renderablePtr_800bdc5c.isNull()) {
+      a1.parent_54.set(renderablePtr_800bdc5c.deref());
+      renderablePtr_800bdc5c.deref().child_50.set(a1);
     } else {
       //LAB_80023c08
       a1.parent_54.clear();
+      renderablePtr_800bdc5c.set(a1);
     }
 
     //LAB_80023c0c
-    drgn0_6666Ptr_800bdc5c.set(a1);
+    renderablePtr_800bdc5c.set(a1);
     return a1;
   }
 
@@ -1822,7 +1822,7 @@ public final class Scus94491BpeSegment_8002 {
     long s6;
     long s7;
 
-    Drgn0_6666Struct58 s0 = drgn0_6666Ptr_800bdc5c.derefNullable();
+    Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
 
     _800bdc58.addu(0x1L);
 
@@ -1839,9 +1839,9 @@ public final class Scus94491BpeSegment_8002 {
         if(s0._08.get() < 0) {
           if((s0._00.get() & 0x20L) == 0) {
             //LAB_80023d6c
-            s0.charIndex_04.incr();
+            s0.char_04.incr();
 
-            if(s0._14.get() < s0.charIndex_04.get()) {
+            if(s0._14.get() < s0.char_04.get()) {
               if((s0._00.get() & 0x10L) != 0) {
                 sp10 = 0x1L;
                 s0._00.or(0x40L);
@@ -1866,13 +1866,13 @@ public final class Scus94491BpeSegment_8002 {
 
               //LAB_80023df4
               //LAB_80023e00
-              s0.charIndex_04.set(s0._10);
+              s0.char_04.set(s0._10);
               s0._0c.incr();
             }
           } else {
-            s0.charIndex_04.decr();
+            s0.char_04.decr();
 
-            if(s0.charIndex_04.get() < s0._10.get()) {
+            if(s0.char_04.get() < s0._10.get()) {
               if((s0._00.get() & 0x10L) != 0) {
                 sp10 = 0x1L;
                 s0._00.or(0x40L);
@@ -1898,18 +1898,18 @@ public final class Scus94491BpeSegment_8002 {
 
               //LAB_80023d5c
               //LAB_80023e00
-              s0.charIndex_04.set(s0._14);
+              s0.char_04.set(s0._14);
               s0._0c.incr();
             }
           }
 
           //LAB_80023e08
-          s0._08.set((int)(MEMORY.ref(1, a0).offset(s0.charIndex_04.get() * 0x8L).offset(0x2L).get() - 0x1L));
+          s0._08.set((int)(MEMORY.ref(1, a0).offset(s0.char_04.get() * 0x8L).offset(0x2L).get() - 0x1L));
         }
       }
 
       //LAB_80023e28
-      v1 = s0._20.get() + MEMORY.ref(4, s0._24.get()).offset(MEMORY.ref(2, a0).offset(s0.charIndex_04.get() * 0x8L).get() * 0x4L).get();
+      v1 = s0._20.get() + MEMORY.ref(4, s0._24.get()).offset(MEMORY.ref(2, a0).offset(s0.char_04.get() * 0x8L).get() * 0x4L).get();
       s7 = MEMORY.ref(1, v1).get();
       v1 = v1 + s7 * 0x14L;
 
@@ -2149,12 +2149,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80024280
-      final Drgn0_6666Struct58 struct = s0;
+      final Renderable58 struct = s0;
       s0 = s0.parent_54.derefNullable();
 
       if((struct._00.get() & 0x8L) != 0 || sp10 != 0) {
         //LAB_800242a8
-        unloadDrgn0_6666Struct(struct);
+        unloadRenderable(struct);
       }
 
       //LAB_800242b0
@@ -2164,16 +2164,16 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800242e8L)
-  public static void unloadDrgn0_6666Struct(final Drgn0_6666Struct58 a0) {
-    Drgn0_6666Struct58 v0 = a0.child_50.derefNullable();
-    Drgn0_6666Struct58 v1 = a0.parent_54.derefNullable();
+  public static void unloadRenderable(final Renderable58 a0) {
+    final Renderable58 v0 = a0.child_50.derefNullable();
+    final Renderable58 v1 = a0.parent_54.derefNullable();
 
     if(v0 == null) {
       if(v1 == null) {
-        drgn0_6666Ptr_800bdc5c.clear();
+        renderablePtr_800bdc5c.clear();
       } else {
         //LAB_80024320
-        drgn0_6666Ptr_800bdc5c.set(v1);
+        renderablePtr_800bdc5c.set(v1);
         v1.child_50.clear();
       }
       //LAB_80024334
@@ -2182,9 +2182,7 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       //LAB_80024350
       v0.parent_54.set(v1);
-      v1 = a0.parent_54.deref();
-      v0 = a0.child_50.derefNullable();
-      v1.child_50.setNullable(v0);
+      v1.child_50.setNullable(a0.child_50.derefNullable());
     }
 
     //LAB_80024364
@@ -2193,16 +2191,16 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002437cL)
   public static void FUN_8002437c(final long a0) {
-    Drgn0_6666Struct58 s0 = drgn0_6666Ptr_800bdc5c.derefNullable();
+    Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
 
     if(s0 != null) {
       //LAB_800243b4
       while(!s0.parent_54.isNull()) {
-        final Drgn0_6666Struct58 a0_0 = s0;
+        final Renderable58 a0_0 = s0;
         s0 = s0.parent_54.deref();
 
         if(a0_0._28.get() <= a0) {
-          unloadDrgn0_6666Struct(a0_0);
+          unloadRenderable(a0_0);
         }
 
         //LAB_800243d0
@@ -2210,25 +2208,25 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_800243e0
       if(s0._28.get() <= a0) {
-        unloadDrgn0_6666Struct(s0);
+        unloadRenderable(s0);
       }
 
       //LAB_800243fc
       if(a0 != 0) {
-        drgn0_6666Ptr_800bdb94.clear();
-        drgn0_6666Ptr_800bdb98.clear();
+        renderablePtr_800bdb94.clear();
+        renderablePtr_800bdb98.clear();
         _800bdb9c.setu(0);
         _800bdba0.setu(0);
-        drgn0_6666Ptr_800bdba4.clear();
-        drgn0_6666Ptr_800bdba8.clear();
+        renderablePtr_800bdba4.clear();
+        renderablePtr_800bdba8.clear();
 
-        drgn0_6666StructPtr_800bdbe0.clear();
-        drgn0_6666StructPtr_800bdbe4.clear();
-        drgn0_6666StructPtr_800bdbe8.clear();
-        drgn0_6666StructPtr_800bdbec.clear();
+        renderablePtr_800bdbe0.clear();
+        renderablePtr_800bdbe4.clear();
+        renderablePtr_800bdbe8.clear();
+        renderablePtr_800bdbec.clear();
         _800bdbf0.setu(0);
 
-        drgn0_6666StructPtr_800bdc20.clear();
+        renderablePtr_800bdc20.clear();
       }
     }
 

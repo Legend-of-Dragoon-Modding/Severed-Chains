@@ -27,7 +27,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.ScriptState;
-import legend.game.types.Drgn0_6666Struct58;
+import legend.game.types.Renderable58;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
 import legend.game.types.MemcardStruct28;
@@ -259,24 +259,24 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Drgn0_6666Struct58::new));
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdb9c = MEMORY.ref(4, 0x800bdb9cL);
   public static final Value _800bdba0 = MEMORY.ref(4, 0x800bdba0L);
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Drgn0_6666Struct58::new));
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Renderable58::new));
 
   public static final Value _800bdbb8 = MEMORY.ref(4, 0x800bdbb8L);
 
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Drgn0_6666Struct58::new));
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Drgn0_6666Struct58::new));
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Drgn0_6666Struct58::new));
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
 
   public static final Value _800bdbf8 = MEMORY.ref(4, 0x800bdbf8L);
 
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666StructPtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final Value inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L);
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
@@ -298,7 +298,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<ArrayRef<MemcardStruct28>> memcardStruct28ArrPtr_800bdc50 = MEMORY.ref(4, 0x800bdc50L, Pointer.deferred(4, ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)));
 
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
-  public static final Pointer<Drgn0_6666Struct58> drgn0_6666Ptr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Drgn0_6666Struct58::new));
+  public static final Pointer<Renderable58> renderablePtr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Renderable58::new));
 
   public static final Value _800bdea0 = MEMORY.ref(4, 0x800bdea0L);
 
