@@ -26,6 +26,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
+import legend.game.types.Drgn0_6666File;
 import legend.game.types.ScriptState;
 import legend.game.types.Renderable58;
 import legend.game.types.GsRVIEW2;
@@ -291,7 +292,7 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static final Value whichMenu_800bdc38 = MEMORY.ref(4, 0x800bdc38L);
-  public static final Value drgn0File6666Address_800bdc3c = MEMORY.ref(4, 0x800bdc3cL);
+  public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 

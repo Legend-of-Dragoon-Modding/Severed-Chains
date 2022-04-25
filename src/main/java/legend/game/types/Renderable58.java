@@ -19,7 +19,7 @@ public class Renderable58 implements MemoryRef {
   public final UnsignedIntRef _14;
   public final UnsignedIntRef _18;
   public final UnsignedIntRef _1c;
-  public final UnsignedIntRef _20;
+  public final Pointer<Drgn0_6666Struct> _20;
   public final UnsignedIntRef _24;
   public final UnsignedByteRef _28;
   public final UnsignedIntRef _2c;
@@ -44,7 +44,7 @@ public class Renderable58 implements MemoryRef {
     this._14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
     this._18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
     this._1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this._20 = ref.offset(4, 0x20L).cast(UnsignedIntRef::new);
+    this._20 = ref.offset(4, 0x20L).cast(Pointer.deferred(4, Drgn0_6666Struct::new));
     this._24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
     this._28 = ref.offset(1, 0x28L).cast(UnsignedByteRef::new);
     this._2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);

@@ -119,7 +119,7 @@ import static legend.game.Scus94491BpeSegment_800b._800be607;
 import static legend.game.Scus94491BpeSegment_800b._800be65e;
 import static legend.game.Scus94491BpeSegment_800b._800be666;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0File6666Address_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
@@ -446,7 +446,7 @@ public final class SItem {
       FUN_800127cc(a0.getAddress(), 0, 0x1L);
     } else if(param == 0x1L) {
       //LAB_800fc9e4
-      drgn0File6666Address_800bdc3c.setu(address);
+      drgn0_6666FilePtr_800bdc3c.setPointer(address.get());
     } else if(param == 0x4L) {
       //LAB_800fc978
       //LAB_800fc9f0
@@ -520,7 +520,7 @@ public final class SItem {
     switch((int)inventoryMenuState_800bdc28.get()) {
       case 0: // Initialize, loads some files (unknown contents)
         _800bdc34.setu(0);
-        drgn0File6666Address_800bdc3c.setu(0);
+        drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
         _8011dc90._0c.set(0);
         setWidthAndFlags(0x180L, 0);
@@ -547,7 +547,7 @@ public final class SItem {
         break;
 
       case 0x1:
-        if(drgn0File6666Address_800bdc3c.get() == 0) {
+        if(drgn0_6666FilePtr_800bdc3c.isNull()) {
           break;
         }
 
@@ -5956,7 +5956,7 @@ public final class SItem {
   public static void FUN_8010376c(final long a0, final long x, final long y) {
     //LAB_801037ac
     for(long s1 = a0; MEMORY.ref(1, s1).get() != 0xffL; s1 += 0x6L) {
-      final Renderable58 s0 = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 s0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
 
       FUN_80104b1c(s0, s1);
 
@@ -5969,7 +5969,7 @@ public final class SItem {
 
   @Method(0x80103818L)
   public static Renderable58 FUN_80103818(final long a0, final long a1, final long x, final long y) {
-    final Renderable58 v1 = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+    final Renderable58 v1 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
 
     if((int)a1 >= (int)a0) {
       v1.char_04.set(a0);
@@ -6336,7 +6336,7 @@ public final class SItem {
     s0 = a0 - v0;
     v0 = s0 & 0xffL;
     if(v0 != 0) {
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6367,7 +6367,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80104f18
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6395,7 +6395,7 @@ public final class SItem {
     v0 = v0 + v1;
     v0 = v0 << 1;
     s0 = s1 - v0;
-    final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+    final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
     v0 = struct._00.get();
     struct.char_04.set(s0);
     if((sp10 & 0x2L) != 0) {
@@ -6467,7 +6467,7 @@ public final class SItem {
     s0 = a0 - v0;
     v0 = s0 & 0xffL;
     if(v0 != 0) {
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6504,7 +6504,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105830
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6541,7 +6541,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105908
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6574,7 +6574,7 @@ public final class SItem {
     v0 = v0 + v1;
     v0 = v0 << 1;
     s0 = s1 - v0;
-    final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+    final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
     v0 = struct._00.get();
     struct.char_04.set(s0);
     if((sp10 & 0x2L) != 0) {
@@ -6620,7 +6620,7 @@ public final class SItem {
     s0 = a0 - v0;
     v0 = s0 & 0xffL;
     if(v0 != 0) {
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6651,7 +6651,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105ba8
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6682,7 +6682,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105c70
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6713,7 +6713,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105d38
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6744,7 +6744,7 @@ public final class SItem {
     v0 = s0 & 0xffL;
     if(v0 != 0 || (sp10 & 0x1L) != 0) {
       //LAB_80105dfc
-      final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0 = struct._00.get();
       struct.char_04.set(s0);
       if((sp10 & 0x2L) != 0) {
@@ -6772,7 +6772,7 @@ public final class SItem {
     v0 = v0 + v1;
     v0 = v0 << 1;
     s0 = s1 - v0;
-    final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+    final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
     v0 = struct._00.get();
     struct.char_04.set(s0);
     if((sp10 & 0x2L) != 0) {
@@ -6819,7 +6819,7 @@ public final class SItem {
       long digit = value / (long)Math.pow(10, digitCount - (i + 1)) % 10;
 
       if(digit != 0 || i == digitCount - 1 || (flags & 0x1L) != 0) {
-        final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+        final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
         struct._00.or((flags & 0x2L) != 0 ? 0xcL : 0x4L);
         struct.char_04.set(digit);
         struct._2c.set(0x19L);
@@ -6906,7 +6906,7 @@ public final class SItem {
 
   @Method(0x80107cb4L)
   public static void renderCharacter(final long x, final long y, final long character) {
-    final Renderable58 v0 = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+    final Renderable58 v0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
     v0._00.or(0x4L);
     v0.char_04.set(character);
     v0._2c.set(0x19L);
@@ -6922,7 +6922,7 @@ public final class SItem {
       FUN_80105a50(a0 & 0xffffL, a1 & 0xffffL, a2);
     } else {
       //LAB_80107e08
-      final Renderable58 v0 = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+      final Renderable58 v0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
       v0._00.or(0x4L);
       v0.char_04.set(0xdaL);
       v0._2c.set(0x19L);
@@ -7002,7 +7002,7 @@ public final class SItem {
         FUN_80103818(0x99L, 0x99L, (short)a0, (short)a1);
 
         if(a2 < 0x9L) {
-          final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
+          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
           struct.char_04.set(a2);
           struct._2c.add(0x1L);
@@ -7092,7 +7092,7 @@ public final class SItem {
 
         // Load char 0
         if(saveData.char0Index_08.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
+          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
           struct.char_04.set(saveData.char0Index_08);
           struct._2c.add(0x1L);
@@ -7104,7 +7104,7 @@ public final class SItem {
         // Load char 1
         //LAB_80108c78
         if(saveData.char1Index_0c.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
+          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
           struct.char_04.set(saveData.char1Index_0c);
           struct._2c.add(0x1L);
@@ -7116,7 +7116,7 @@ public final class SItem {
         // Load char 2
         //LAB_80108cd4
         if(saveData.char2Index_10.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get() + 0xcfacL, null);
+          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
           struct.char_04.set(saveData.char2Index_10);
           struct._2c.add(0x1L);
@@ -7162,7 +7162,7 @@ public final class SItem {
     for(int i = 0; i < 8; i++) {
       final long v0 = sp18.offset(i * 0x4L).get();
       if((MEMORY.ref(4, a0).offset((v0 >>> 5) * 0x4L).get() & 0x1L << (v0 & 0x1fL)) != 0) {
-        final Renderable58 struct = allocateRenderable(drgn0File6666Address_800bdc3c.get(), null);
+        final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
         sp18.offset(1, 0x0L).setu(i + 0xdL);
         sp18.offset(2, 0x2L).setu(x + i * 0xcL);
         sp18.offset(2, 0x4L).setu(y);
