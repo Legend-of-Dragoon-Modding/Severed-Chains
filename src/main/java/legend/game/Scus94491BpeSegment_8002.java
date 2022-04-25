@@ -2325,7 +2325,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
-    loadDrgnBinFile(0, 0x1a0dL, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 6669, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", Value.class, long.class, long.class), 0, 0x4L);
     noop_8002498c();
 
     _800bdf00.setu(0xdL);

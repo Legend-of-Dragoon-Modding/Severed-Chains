@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.CpuRegisterType;
 import legend.core.DebugHelper;
+import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.Tuple;
@@ -3644,6 +3645,10 @@ public final class Scus94491BpeSegment_8003 {
         if((s0 ^ GPU_REG1.get()) >= 0) {
           //LAB_8003759c
           do {
+            if(Hardware.isGpuThread()) {
+              GPU.tick();
+            }
+
             DebugHelper.sleep(1);
           } while(((s0 ^ GPU_REG1.get()) & 0x80000000L) == 0);
         }
@@ -3669,6 +3674,10 @@ public final class Scus94491BpeSegment_8003 {
       return;
     }
 
+    if(Hardware.isGpuThread()) {
+      GPU.tick();
+    }
+
     //LAB_80037630
     long a2 = a1 << 0xfL;
 
@@ -3682,6 +3691,10 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       DebugHelper.sleep(1);
+
+      if(Hardware.isGpuThread()) {
+        GPU.tick();
+      }
 
       //LAB_80037678
     } while(Vcount.get() < a0);
@@ -4143,12 +4156,14 @@ public final class Scus94491BpeSegment_8003 {
   public static int ClearImage(final RECT rect, final byte r, final byte g, final byte b) {
     validateRect("ClearImage", rect);
 
-    return (int)_800546b4.deref(4).offset(0x8L).deref(4).call(
-      _800546b4.deref(4).offset(0xcL).deref(4).cast(BiFunctionRef::new),
-      rect,
-      0x8L,
-      (b & 0xffL) << 16 | (g & 0xffL) << 8 | r & 0xffL
-    );
+//    return (int)_800546b4.deref(4).offset(0x8L).deref(4).call(
+//      _800546b4.deref(4).offset(0xcL).deref(4).cast(BiFunctionRef::new),
+//      rect,
+//      0x8L,
+//      (b & 0xffL) << 16 | (g & 0xffL) << 8 | r & 0xffL
+//    );
+
+    return (int)ClearImage_Impl(rect, (b & 0xffL) << 16 | (g & 0xffL) << 8 | r & 0xffL);
   }
 
   @Method(0x800387b8L)
@@ -4182,6 +4197,10 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_80039fe4
     //LAB_8003a014
     while(GPU_REG1.get(0x400_0000L) == 0) {
+      if(Hardware.isGpuThread()) {
+        GPU.tick();
+      }
+
       if(checkForGpuTimeout() != 0) {
         return -0x1L;
       }
@@ -4346,12 +4365,13 @@ public final class Scus94491BpeSegment_8003 {
 
     SetDrawEnv(env.dr_env, env);
     env.dr_env.tag.set((int)(env.dr_env.tag.get() | 0xff_ffff));
-    _800546b4.deref(4).offset(0x8L).deref(4).call(
-      _800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new),
-      env.dr_env,
-      0x40L,
-      0L
-    );
+//    _800546b4.deref(4).offset(0x8L).deref(4).call(
+//      _800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new),
+//      env.dr_env,
+//      0x40L,
+//      0L
+//    );
+    uploadLinkedListToGpu(env.dr_env);
     DRAWENV_800546cc.set(env);
     return env;
   }
@@ -4668,6 +4688,8 @@ public final class Scus94491BpeSegment_8003 {
     rect.w.set(clamp(rect.w.get(), (short)0, (short)(_800546c0.get() - 1)));
     rect.h.set(clamp(rect.h.get(), (short)0, (short)(_800546c2.get() - 1)));
 
+    LOGGER.info("Clearing screen %s %08x", rect, colour);
+
     if((rect.x.get() & 0x3fL) != 0 || (rect.w.get() & 0x3fL) != 0) {
       //LAB_80039b64
       _800c1bc0.build(builder -> builder
@@ -4723,6 +4745,10 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80039de0
     while(GPU_REG1.get(0x400_0000L) == 0) {
+      if(Hardware.isGpuThread()) {
+        GPU.tick();
+      }
+
       if(checkForGpuTimeout() != 0) {
         return -0x1L;
       }
@@ -4794,6 +4820,10 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003a2bc
     while((gpuQueueIndex_800547e4.get() + 0x1L & 0x3fL) == gpuQueueTotal_800547e8.get()) {
+      if(Hardware.isGpuThread()) {
+        GPU.tick();
+      }
+
       if(checkForGpuTimeout() != 0) {
         return 0xffff_ffff;
       }
@@ -4936,6 +4966,10 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003a8f4
       while(gpuQueueIndex_800547e4.get() != gpuQueueTotal_800547e8.get()) {
+        if(Hardware.isGpuThread()) {
+          GPU.tick();
+        }
+
         gpuDmaCallback();
 
         if(checkForGpuTimeout() != 0) {
@@ -4952,6 +4986,10 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003a930
       while(v0 == 0) {
+        if(Hardware.isGpuThread()) {
+          GPU.tick();
+        }
+
         if(checkForGpuTimeout() != 0) {
           return 0xffff_ffff;
         }
