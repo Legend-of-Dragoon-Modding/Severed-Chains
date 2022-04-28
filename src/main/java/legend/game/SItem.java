@@ -2318,16 +2318,14 @@ public final class SItem {
         break;
 
       case 0x29: // Part of load game menu
-        FUN_8010ecec(menu_8011dc90);
         renderSavedGames(fileScroll_8011d744.get(), null, 0);
 
-        if(menu_8011dc90._10.get() < 0x3L || _800bb168.get() != 0) {
+        if(_800bb168.get() != 0) {
           break;
         }
 
         s1 = _8011d768.getAddress();
         s2 = memcardData_8011dd10.getAddress();
-//        executeMemcardLoadingStage(s1, s2);
 
         while(memcardSaveLoadingStage_8011e0d4.get() != 0) {
           executeMemcardLoadingStage(s1, s2);
@@ -2413,15 +2411,7 @@ public final class SItem {
         break;
 
       case 0x2a:
-        FUN_8010ecec(menu_8011dc90);
         FUN_8010361c(fileScroll_8011d744.get(), 0xeL);
-
-        if(menu_8011dc90._0c.get() != 0) {
-          //LAB_800fff8c
-          //LAB_800fff94
-          renderSavedGames(fileScroll_8011d744.get(), memcardData_8011dd10, 0);
-          break;
-        }
 
         //LAB_800ff2a8
         FUN_8002437c(0);
