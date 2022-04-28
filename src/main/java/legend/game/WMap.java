@@ -21,11 +21,11 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 import legend.game.types.Coord2AndThenSomeStruct_60;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.WMapRender08_2;
@@ -84,12 +84,12 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021258;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800257e0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80029300;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
@@ -115,10 +115,10 @@ import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
+import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -286,16 +286,16 @@ public class WMap {
 
   private static final Value _800ef694 = MEMORY.ref(1, 0x800ef694L);
 
-  private static final ArrayRef<UnsignedShortRef> _800effa4 = MEMORY.ref(4, 0x800effa4L, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new));
-  private static final ArrayRef<UnsignedShortRef> _800effb0 = MEMORY.ref(4, 0x800effb0L, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new));
-  private static final ArrayRef<UnsignedShortRef> _800f00e8 = MEMORY.ref(4, 0x800f00e8L, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new));
+  private static final LodString _800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
+  private static final LodString _800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
+  private static final LodString _800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
-  private static final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> _800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), 3, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new))));
+  private static final ArrayRef<Pointer<LodString>> _800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
-  private static final Pointer<ArrayRef<UnsignedShortRef>> _800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new)));
-  private static final Pointer<ArrayRef<UnsignedShortRef>> _800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new)));
-  private static final Pointer<ArrayRef<UnsignedShortRef>> _800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new)));
-  private static final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> _800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), 3, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new))));
+  private static final Pointer<LodString> _800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
+  private static final Pointer<LodString> _800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
+  private static final Pointer<LodString> _800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
+  private static final ArrayRef<Pointer<LodString>> _800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private static final Value _800f01fc = MEMORY.ref(4, 0x800f01fcL);
 
@@ -3733,7 +3733,7 @@ public class WMap {
     int sp14 = 0;
     for(int i = 0; i < _800c67a0.get(); i++) {
       //LAB_800d1e38
-      if(!_800f0234.get(_800f0e34.get(i)._02.get())._00.isNull()) {
+      if(!_800f0234.get(_800f0e34.get(i)._02.get()).text_00.isNull()) {
         //LAB_800d1e90
         if(FUN_800eb09c(i, 1, _800c66b0.deref()._154.get(sp14).vec_08) == 0) {
           //LAB_800d1ee0
@@ -4674,7 +4674,7 @@ public class WMap {
 
     final Ref<Long> sp0x28 = new Ref<>();
     final Ref<Long> sp0x2c = new Ref<>();
-    FUN_800e7624(_800f0234.get((int)v0)._00.deref(), sp0x28, sp0x2c);
+    FUN_800e7624(_800f0234.get((int)v0).text_00.deref(), sp0x28, sp0x2c);
     v0 = 0x800d_0000L;
     v0 = MEMORY.ref(4, v0).offset(-0x7910L).get();
     if(v0 == 0x1L) {
@@ -11768,7 +11768,7 @@ public class WMap {
         _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
         _800c68a4.setu(0x1L);
 
-        if(_800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._00.isNull()) {
+        if(_800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get()).text_00.isNull()) {
           _800c68a4.setu(0x8L);
         }
 
@@ -11874,8 +11874,8 @@ public class WMap {
         FUN_800ce4dc(_800c689c.deref());
 
         sp30 = _800f0e34.get((int)_800c67a8.get())._02.get();
-        FUN_800e7624(_800f0234.get((int)sp30)._00.deref(), sp0x3c, sp0x38);
-        FUN_800e774c(_800f0234.get((int)sp30)._00.deref(), (short)(0xf0L - sp0x3c.get() * 3), (short)(0x8cL - sp0x38.get() * 7), 0, 0);
+        FUN_800e7624(_800f0234.get((int)sp30).text_00.deref(), sp0x3c, sp0x38);
+        FUN_800e774c(_800f0234.get((int)sp30).text_00.deref(), (short)(0xf0L - sp0x3c.get() * 3), (short)(0x8cL - sp0x38.get() * 7), 0, 0);
 
         if((_800c66b8.get() & 0x800L) != 0) {
           long sp4c = linkedListAddress_1f8003d8.get();
@@ -12210,7 +12210,7 @@ public class WMap {
     long sp1c = 0;
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
-      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get())._00.isNull()) {
+      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get()).text_00.isNull()) {
         //LAB_800e6ccc
         sp0x30.setX((short)_800c74b8.offset(i * 0x10L).offset(0x0L).get());
         sp0x30.setY((short)_800c74b8.offset(i * 0x10L).offset(0x4L).get());
@@ -12263,9 +12263,9 @@ public class WMap {
       final long sp6e = _800c68b4.offset(i * 0xcL).offset(2, 0x2L).getSigned() + 0x68L;
       final long sp24 = _800f0e34.get((int)_800c68b0.offset(i * 0xcL).get())._02.get();
 
-      if(!_800f0234.get((int)sp24)._00.isNull()) {
+      if(!_800f0234.get((int)sp24).text_00.isNull()) {
         //LAB_800e70f4
-        FUN_800e7624(_800f0234.get((int)sp24)._00.deref(), sp0x70, sp0x74);
+        FUN_800e7624(_800f0234.get((int)sp24).text_00.deref(), sp0x70, sp0x74);
 
         final long v0 = _800c86d4.offset(i * 0x4L).get();
         if(v0 == 0x1L) {
@@ -12352,7 +12352,7 @@ public class WMap {
         _800bdf00.setu(i + 0x77L);
         _800be358.get(i)._0c.set(i + 0x77L);
 
-        FUN_800e774c(_800f0234.get((int)sp24)._00.deref(), (short)(sp6c - sp0x70.get() * 3), (short)(sp6e - sp0x74.get() * 7), 0, 0);
+        FUN_800e774c(_800f0234.get((int)sp24).text_00.deref(), (short)(sp6c - sp0x70.get() * 3), (short)(sp6e - sp0x74.get() * 7), 0, 0);
       }
 
       //LAB_800e7590
@@ -12369,15 +12369,15 @@ public class WMap {
   }
 
   @Method(0x800e7624L)
-  public static void FUN_800e7624(final ArrayRef<UnsignedShortRef> a0, final Ref<Long> a1, final Ref<Long> a2) {
+  public static void FUN_800e7624(final LodString a0, final Ref<Long> a1, final Ref<Long> a2) {
     long sp0 = 0;
     long sp4 = 0x1L;
     long sp8 = 0;
 
     //LAB_800e7648
-    for(int sp18 = 0; a0.get(sp18).get() != 0xa0ffL; sp18++) {
+    for(int sp18 = 0; a0.charAt(sp18) != 0xa0ffL; sp18++) {
       //LAB_800e7668
-      if(a0.get(sp18).get() == 0xa1ffL) {
+      if(a0.charAt(sp18) == 0xa1ffL) {
         sp4++;
 
         if((int)sp8 < (int)sp0) {
@@ -12403,12 +12403,12 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final ArrayRef<UnsignedShortRef> a0, final long a1, final long a2, final long a3, final long a4) {
+  public static void FUN_800e774c(final LodString a0, final long a1, final long a2, final long a3, final long a4) {
     final Ref<Long> sp0x28 = new Ref<>();
     final Ref<Long> sp0x2c = new Ref<>();
     FUN_800e7624(a0, sp0x28, sp0x2c);
-    FUN_80029300(a0, a1 - sp0x28.get() + 0x3L, (short)a2, (short)a3, (short)a4);
-    FUN_80029300(a0, a1 - (sp0x28.get() - 0x1L) + 0x3L, a2 + 0x1L, 0x9L, (short)a4);
+    renderText(a0, a1 - sp0x28.get() + 0x3L, (short)a2, (short)a3, (short)a4);
+    renderText(a0, a1 - (sp0x28.get() - 0x1L) + 0x3L, a2 + 0x1L, 0x9L, (short)a4);
   }
 
   @Method(0x800e7888L)
@@ -13804,11 +13804,11 @@ public class WMap {
                 //LAB_800eb530
                 final long sp2c = _800f0e34.get(sp1c)._02.get();
 
-                if(!_800f0234.get((int)sp28)._00.isNull() || !_800f0234.get((int)sp2c)._00.isNull()) {
+                if(!_800f0234.get((int)sp28).text_00.isNull() || !_800f0234.get((int)sp2c).text_00.isNull()) {
                   // Added this check since these pointers can be null
-                  if(!_800f0234.get((int)sp28)._00.isNull() && !_800f0234.get((int)sp2c)._00.isNull()) {
+                  if(!_800f0234.get((int)sp28).text_00.isNull() && !_800f0234.get((int)sp2c).text_00.isNull()) {
                     //LAB_800eb5d8
-                    if(strcmp(MEMORY.ref(1, _800f0234.get((int)sp28)._00.getPointer()).getString(), MEMORY.ref(1, _800f0234.get((int)sp2c)._00.getPointer()).getString()) == 0) {
+                    if(strcmp(MEMORY.ref(1, _800f0234.get((int)sp28).text_00.getPointer()).getString(), MEMORY.ref(1, _800f0234.get((int)sp2c).text_00.getPointer()).getString()) == 0) {
                       FUN_800eb09c(sp1c, 1, sp0x60[sp20]);
 
                       sp20++;
@@ -14009,7 +14009,7 @@ public class WMap {
       final Coord2AndThenSomeStruct_60 struct = _800c86f8.deref().get(i);
 
       //LAB_800edccc
-      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get())._00.isNull()) {
+      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get()).text_00.isNull()) {
         //LAB_800edd3c
         final long sp18 = _800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._12.get() & 0xcL;
 

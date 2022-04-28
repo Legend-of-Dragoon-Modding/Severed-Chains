@@ -27,6 +27,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.BigStruct;
 import legend.game.types.Drgn0_6666File;
+import legend.game.types.LodString;
 import legend.game.types.ScriptState;
 import legend.game.types.Renderable58;
 import legend.game.types.GsRVIEW2;
@@ -300,6 +301,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
   public static final Pointer<Renderable58> renderablePtr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Renderable58::new));
+
+  public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
 
   public static final Value _800bdea0 = MEMORY.ref(4, 0x800bdea0L);
 

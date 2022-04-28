@@ -1,7 +1,6 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
@@ -11,7 +10,7 @@ import legend.core.memory.types.UnsignedShortRef;
 public class MenuStruct20 implements MemoryRef {
   private final Value ref;
 
-  public final Pointer<ArrayRef<UnsignedShortRef>> _00;
+  public final Pointer<LodString> text_00;
   public final Pointer<Renderable58> renderable_04;
   public final Pointer<Renderable58> renderable_08;
   public final UnsignedByteRef _0c;
@@ -27,7 +26,7 @@ public class MenuStruct20 implements MemoryRef {
   public MenuStruct20(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new)));
+    this.text_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, LodString::new));
     this.renderable_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, Renderable58::new));
     this.renderable_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, Renderable58::new));
     this._0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);

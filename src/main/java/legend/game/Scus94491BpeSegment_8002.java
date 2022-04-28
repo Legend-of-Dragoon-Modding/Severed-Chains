@@ -32,13 +32,16 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MOVE;
+import legend.game.types.Drgn0_6666Entry;
 import legend.game.types.Drgn0_6666Struct;
+import legend.game.types.LodString;
 import legend.game.types.Renderable58;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.JoyStruct;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
+import legend.game.types.RenderableMetrics14;
 import legend.game.types.RotateTranslateStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
@@ -223,6 +226,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
+import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
@@ -1778,18 +1782,18 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023b7c
-    a1._00.set(0);
-    a1.char_04.set(0);
+    a1.flags_00.set(0);
+    a1.glyph_04.set(0);
     a1._08.set(a0._0a.get());
     a1._0c.set(0);
-    a1._10.set(0);
-    a1._14.set(a0._06.get() - 0x1L);
+    a1.startGlyph_10.set(0);
+    a1.endGlyph_14.set(a0.entryCount_06.get() - 0x1L);
     a1._18.set(0);
     a1._1c.set(0);
-    a1._20.set(a0);
-    a1._24.set(a0.getAddress() + (a0._06.get() + 1) * 0x8L);
+    a1.drgn0_6666_20.set(a0);
+    a1.drgn0_6666_data_24.set(MEMORY.ref(4, a0.entries_08.get(a0.entryCount_06.get()).getAddress()).cast(UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
     a1._28.set(0);
-    a1._2c.set(0);
+    a1.tpage.set(0);
     a1._34.set(0x1000L);
     a1._38.set(0x1000L);
     a1._3c.set(0x24);
@@ -1814,278 +1818,228 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long s2;
-    long s3;
-    long s4;
-    long s6;
-    long s7;
-
-    Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
+    Renderable58 renderable = renderablePtr_800bdc5c.derefNullable();
 
     _800bdc58.addu(0x1L);
 
-    long fp = displayWidth_1f8003e0.get() / 2 + 0x8L;
-
     //LAB_80023c8c
-    while(s0 != null) {
-      long sp10 = 0;
-      a0 = s0._20.getPointer() + 0x8L;
+    while(renderable != null) {
+      boolean forceUnload = false;
+      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.deref().entries_08;
 
-      if((s0._00.get() & 0x4L) == 0) {
-        s0._08.decr();
+      if((renderable.flags_00.get() & 0x4L) == 0) {
+        renderable._08.decr();
 
-        if(s0._08.get() < 0) {
-          if((s0._00.get() & 0x20L) == 0) {
-            //LAB_80023d6c
-            s0.char_04.incr();
+        if(renderable._08.get() < 0) {
+          if((renderable.flags_00.get() & 0x20L) != 0) {
+            renderable.glyph_04.decr();
 
-            if(s0._14.get() < s0.char_04.get()) {
-              if((s0._00.get() & 0x10L) != 0) {
-                sp10 = 0x1L;
-                s0._00.or(0x40L);
-              }
-
-              //LAB_80023da4
-              if(s0._18.get() != 0) {
-                s0._10.set(s0._18);
-
-                if(s0._1c.get() != 0) {
-                  s0._14.set(s0._1c);
-                } else {
-                  //LAB_80023dcc
-                  s0._14.set(s0._18);
-                  s0._00.or(0x4L);
-                }
-
-                //LAB_80023de0
-                s0._18.set(0);
-                s0._00.and(0xffff_ffdfL);
-              }
-
-              //LAB_80023df4
-              //LAB_80023e00
-              s0.char_04.set(s0._10);
-              s0._0c.incr();
-            }
-          } else {
-            s0.char_04.decr();
-
-            if(s0.char_04.get() < s0._10.get()) {
-              if((s0._00.get() & 0x10L) != 0) {
-                sp10 = 0x1L;
-                s0._00.or(0x40L);
+            if(renderable.glyph_04.get() < renderable.startGlyph_10.get()) {
+              if((renderable.flags_00.get() & 0x10L) != 0) {
+                forceUnload = true;
+                renderable.flags_00.or(0x40L);
               }
 
               //LAB_80023d0c
+              if(renderable._18.get() != 0) {
+                renderable.startGlyph_10.set(renderable._18);
 
-              if(s0._18.get() != 0) {
-                s0._10.set(s0._18);
-
-                if(s0._1c.get() != 0) {
-                  s0._14.set(s0._1c);
+                if(renderable._1c.get() != 0) {
+                  renderable.endGlyph_14.set(renderable._1c);
                 } else {
                   //LAB_80023d34
-                  s0._14.set(s0._18);
-                  s0._00.or(0x4L);
+                  renderable.endGlyph_14.set(renderable._18);
+                  renderable.flags_00.or(0x4L);
                 }
 
                 //LAB_80023d48
-                s0._18.set(0);
-                s0._00.and(0xffff_ffdfL);
+                renderable._18.set(0);
+                renderable.flags_00.and(0xffff_ffdfL);
               }
 
               //LAB_80023d5c
               //LAB_80023e00
-              s0.char_04.set(s0._14);
-              s0._0c.incr();
+              renderable.glyph_04.set(renderable.endGlyph_14);
+              renderable._0c.incr();
+            }
+          } else {
+            //LAB_80023d6c
+            renderable.glyph_04.incr();
+
+            if(renderable.endGlyph_14.get() < renderable.glyph_04.get()) {
+              if((renderable.flags_00.get() & 0x10L) != 0) {
+                forceUnload = true;
+                renderable.flags_00.or(0x40L);
+              }
+
+              //LAB_80023da4
+              if(renderable._18.get() != 0) {
+                renderable.startGlyph_10.set(renderable._18);
+
+                if(renderable._1c.get() != 0) {
+                  renderable.endGlyph_14.set(renderable._1c);
+                } else {
+                  //LAB_80023dcc
+                  renderable.endGlyph_14.set(renderable._18);
+                  renderable.flags_00.or(0x4L);
+                }
+
+                //LAB_80023de0
+                renderable._18.set(0);
+                renderable.flags_00.and(0xffff_ffdfL);
+              }
+
+              //LAB_80023df4
+              //LAB_80023e00
+              renderable.glyph_04.set(renderable.startGlyph_10);
+              renderable._0c.incr();
             }
           }
 
           //LAB_80023e08
-          s0._08.set((int)(MEMORY.ref(1, a0).offset(s0.char_04.get() * 0x8L).offset(0x2L).get() - 0x1L));
+          renderable._08.set(entries.get((int)renderable.glyph_04.get())._02.get() - 1);
         }
       }
 
       //LAB_80023e28
-      v1 = s0._20.getPointer() + MEMORY.ref(4, s0._24.get()).offset(MEMORY.ref(2, a0).offset(s0.char_04.get() * 0x8L).get() * 0x4L).get();
-      s7 = MEMORY.ref(1, v1).get();
+      if((renderable.flags_00.get() & 0x40L) == 0) {
+        final long centreX = displayWidth_1f8003e0.get() / 2 + 0x8L;
 
-      if((s0._00.get() & 0x40L) == 0) {
-        long s5 = v1 + (s7 - 1) * 0x14L + 0x4L;
+        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.deref().getMetrics((int)renderable.drgn0_6666_data_24.deref().get(entries.get((int)renderable.glyph_04.get())._00.get()).get());
 
         //LAB_80023e94
-        for(s6 = 0; s6 < (int)s7; s6++) {
-          s2 = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x28L);
-          MEMORY.ref(1, s2).offset(0x3L).setu(0x9L);
-          MEMORY.ref(4, s2).offset(0x4L).setu(0x2c80_8080L);
-          MEMORY.ref(1, s2).offset(0x4L).setu(0x80L);
-          MEMORY.ref(1, s2).offset(0x5L).setu(0x80L);
-          MEMORY.ref(1, s2).offset(0x6L).setu(0x80L);
-          MEMORY.ref(1, s2).offset(0x7L).oru((MEMORY.ref(2, s5).offset(0x4L).get() & 0x8000L) >>> 14);
+        for(int i = metricses.length() - 1; i >= 0; i--) {
+          final RenderableMetrics14 metrics = metricses.get(i);
 
-          if(s0._34.get() == 0x1000L) {
-            if(MEMORY.ref(2, s5).offset(0x10L).getSigned() < 0) {
-              s4 = s0.x_40.get() + MEMORY.ref(1, s5).offset(0x2L).get() - fp;
-              s3 = s4 + MEMORY.ref(2, s5).offset(0x8L).get();
+          final long packet = linkedListAddress_1f8003d8.get();
+          linkedListAddress_1f8003d8.addu(0x28L);
+          MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
+          MEMORY.ref(4, packet).offset(0x4L).setu(0x2c80_8080L);
+          MEMORY.ref(1, packet).offset(0x4L).setu(0x80L); // R
+          MEMORY.ref(1, packet).offset(0x5L).setu(0x80L); // G
+          MEMORY.ref(1, packet).offset(0x6L).setu(0x80L); // B
+          MEMORY.ref(1, packet).offset(0x7L).oru((metrics.clut_04.get() & 0x8000L) >>> 14); // Command
+
+          final long x1;
+          final long x2;
+          if(renderable._34.get() == 0x1000L) {
+            if(metrics._10.get() < 0) {
+              x2 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x1 = x2 + metrics.width_08.get();
             } else {
               //LAB_80023f20
-              s3 = s0.x_40.get() + MEMORY.ref(1, s5).offset(0x2L).get() - fp;
-              s4 = s3 + MEMORY.ref(2, s5).offset(0x8L).get();
+              x1 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x2 = x1 + metrics.width_08.get();
             }
           } else {
             //LAB_80023f40
-            if(s0._34.get() != 0) {
-              a0 = s0._34.get();
-            } else {
-              a0 = MEMORY.ref(2, s5).offset(0x10L).getSigned();
-            }
+            final long a0_0 = renderable._34.get() != 0 ? renderable._34.get() : metrics._10.get();
 
             //LAB_80023f4c
             //LAB_80023f68
-            a1 = abs((int)(MEMORY.ref(2, s5).offset(0x8L).get() * a0 / 0x1000));
-            if(MEMORY.ref(2, s5).offset(0x10L).getSigned() < 0) {
-              v1 = s0.x_40.get() + MEMORY.ref(2, s5).offset(0x8L).get() / 2 + MEMORY.ref(1, s5).offset(0x2L).get() - fp;
-              v0 = (int)a1 >> 1;
-              s4 = v1 - v0;
-              s3 = s4 + a1;
+            final long a1 = abs((int)(metrics.width_08.get() * a0_0 / 0x1000));
+            if(metrics._10.get() < 0) {
+              x2 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x1 = x2 + a1;
             } else {
               //LAB_80023fb4
-              v1 = s0.x_40.get() + MEMORY.ref(2, s5).offset(0x8L).get() / 2 + MEMORY.ref(1, s5).offset(0x2L).get() - fp;
-              v0 = (int)a1 >> 1;
-              s3 = v1 - v0;
-              s4 = s3 + a1;
+              x1 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x2 = x1 + a1;
             }
           }
 
           //LAB_80023fe4
-          if(s0._38.get() == 0x1000L) {
-            if(MEMORY.ref(2, s5).offset(0x12L).getSigned() < 0) {
-              a0 = s0.y_44.get() + MEMORY.ref(1, s5).offset(0x3L).get() - 0x78L;
-              v1 = a0 + MEMORY.ref(2, s5).offset(0xaL).get();
+          final long y1;
+          final long y2;
+          if(renderable._38.get() == 0x1000L) {
+            if(metrics._12.get() < 0) {
+              y2 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y1 = y2 + metrics.height_0a.get();
             } else {
               //LAB_80024024
-              v1 = s0.y_44.get() + MEMORY.ref(1, s5).offset(0x3L).get() - 0x78L;
-              a0 = v1 + MEMORY.ref(2, s5).offset(0xaL).get();
+              y1 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y2 = y1 + metrics.height_0a.get();
             }
           } else {
             //LAB_80024044
-            if(s0._38.get() != 0) {
-              a0 = s0._38.get();
-            } else {
-              a0 = MEMORY.ref(2, s5).offset(0x12L).getSigned();
-            }
+            final long a0_0 = renderable._38.get() != 0 ? renderable._38.get() : metrics._12.get();
 
             //LAB_80024050
             //LAB_8002406c
-            a1 = abs((int)(MEMORY.ref(2, s5).offset(0xaL).get() * a0 / 0x1000));
-            if(MEMORY.ref(2, s5).offset(0x12L).getSigned() < 0) {
-              v1 = s0.y_44.get() + MEMORY.ref(2, s5).offset(0xaL).get() / 2 + MEMORY.ref(1, s5).offset(0x3L).get();
-              v0 = ((int)a1 >> 1) + 0x78L;
-              a0 = v1 - v0;
-              v1 = a0 + a1;
+            final long a1 = abs((int)(metrics.height_0a.get() * a0_0 / 0x1000));
+            if(metrics._12.get() < 0) {
+              y2 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y1 = y2 + a1;
             } else {
               //LAB_800240b8
-              v1 = s0.y_44.get() + MEMORY.ref(2, s5).offset(0xaL).get() / 2 + MEMORY.ref(1, s5).offset(0x3L).get();
-              v0 = ((int)a1 >> 1) + 0x78L;
-              v1 = v1 - v0;
-              a0 = v1 + a1;
+              y1 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y2 = y1 + a1;
             }
           }
 
           //LAB_800240e8
-          MEMORY.ref(2, s2).offset(0x08L).setu(s3);
-          MEMORY.ref(2, s2).offset(0x0aL).setu(v1);
-          MEMORY.ref(1, s2).offset(0x0cL).setu(MEMORY.ref(1, s5));
-          MEMORY.ref(1, s2).offset(0x0dL).setu(MEMORY.ref(1, s5).offset(0x1L));
-          MEMORY.ref(2, s2).offset(0x10L).setu(s4);
-          MEMORY.ref(2, s2).offset(0x12L).setu(v1);
-          MEMORY.ref(2, s2).offset(0x18L).setu(s3);
-          MEMORY.ref(2, s2).offset(0x1aL).setu(a0);
-          MEMORY.ref(2, s2).offset(0x20L).setu(s4);
-          MEMORY.ref(2, s2).offset(0x22L).setu(a0);
+          MEMORY.ref(2, packet).offset(0x08L).setu(x1); // V0 X
+          MEMORY.ref(2, packet).offset(0x0aL).setu(y1); // V0 Y
+          MEMORY.ref(1, packet).offset(0x0cL).setu(metrics.u_00.get()); // V0 U
+          MEMORY.ref(1, packet).offset(0x0dL).setu(metrics.v_01.get()); // V0 V
+          MEMORY.ref(2, packet).offset(0x10L).setu(x2); // V1 X
+          MEMORY.ref(2, packet).offset(0x12L).setu(y1); // V1 Y
+          MEMORY.ref(2, packet).offset(0x18L).setu(x1); // V2 X
+          MEMORY.ref(2, packet).offset(0x1aL).setu(y2); // V2 Y
+          MEMORY.ref(2, packet).offset(0x20L).setu(x2); // V3 X
+          MEMORY.ref(2, packet).offset(0x22L).setu(y2); // V4 Y
 
-          v1 = MEMORY.ref(1, s5).offset(0x0L).get() + MEMORY.ref(2, s5).offset(0x8L).get();
-          if((int)v1 < 0xffL) {
-            //LAB_80024144
-            v0 = v1;
-          } else {
-            v0 = v1 - 0x1L;
-          }
+          //LAB_80024144
+          //LAB_800241b4
+          long v1 = metrics.u_00.get() + metrics.width_08.get();
+          final long u = v1 < 0xffL ? v1 : v1 - 0x1L;
+
+          //LAB_80024188
+          //LAB_800241b8
+          //LAB_800241e0
+          v1 = metrics.v_01.get() + metrics.height_0a.get();
+          final long v = v1 < 0xffL ? v1 : v1 - 0x1L;
 
           //LAB_80024148
-          MEMORY.ref(1, s2).offset(0x14L).setu(v0);
-          MEMORY.ref(1, s2).offset(0x15L).setu(MEMORY.ref(1, s5).offset(0x1L));
-          MEMORY.ref(1, s2).offset(0x1cL).setu(MEMORY.ref(1, s5));
-
-          v1 = MEMORY.ref(1, s5).offset(0x1L).get() + MEMORY.ref(2, s5).offset(0xaL).get();
-          if((int)v1 < 0xffL) {
-            //LAB_80024188
-            v0 = v1;
-          } else {
-            v0 = v1 - 0x1L;
-          }
+          MEMORY.ref(1, packet).offset(0x14L).setu(u); // V1 U
+          MEMORY.ref(1, packet).offset(0x15L).setu(metrics.v_01.get()); // V1 V
 
           //LAB_8002418c
-          MEMORY.ref(1, s2).offset(0x1dL).setu(v0);
-
-          v1 = MEMORY.ref(1, s5).offset(0x0L).get() + MEMORY.ref(2, s5).offset(0x8L).get();
-          if((int)v1 < 0xffL) {
-            //LAB_800241b4
-            v0 = v1;
-          } else {
-            v0 = v1 - 0x1L;
-          }
-
-          //LAB_800241b8
-          MEMORY.ref(1, s2).offset(0x24L).setu(v0);
-
-          v1 = MEMORY.ref(1, s5).offset(0x1L).get() + MEMORY.ref(2, s5).offset(0xaL).get();
-          if((int)v1 < 0xffL) {
-            //LAB_800241e0
-            v0 = v1;
-          } else {
-            v0 = v1 - 0x1L;
-          }
+          MEMORY.ref(1, packet).offset(0x1cL).setu(metrics.u_00.get()); // V2 U
+          MEMORY.ref(1, packet).offset(0x1dL).setu(v); // V2 V
 
           //LAB_800241e4
-          MEMORY.ref(1, s2).offset(0x25L).setu(v0);
+          MEMORY.ref(1, packet).offset(0x24L).setu(u); // V3 U
+          MEMORY.ref(1, packet).offset(0x25L).setu(v); // V3 V
 
-          if(s0._30.get() != 0) {
-            MEMORY.ref(2, s2).offset(0xeL).setu(s0._30.get());
+          if(renderable.clut_30.get() != 0) {
+            MEMORY.ref(2, packet).offset(0xeL).setu(renderable.clut_30.get()); // CLUT
           } else {
             //LAB_80024204
-            MEMORY.ref(2, s2).offset(0xeL).setu(MEMORY.ref(2, s5).offset(0x4L).get() & 0x7fffL);
+            MEMORY.ref(2, packet).offset(0xeL).setu(metrics.clut_04.get() & 0x7fffL); // CLUT
           }
 
           //LAB_80024214
-          if(s0._2c.get() != 0) {
-            MEMORY.ref(2, s2).offset(0x16L).setu(MEMORY.ref(2, s5).offset(0x6L).get() & 0x60L | s0._2c.get());
+          if(renderable.tpage.get() != 0) {
+            MEMORY.ref(2, packet).offset(0x16L).setu(metrics.tpage_06.get() & 0x60L | renderable.tpage.get()); // TPAGE
           } else {
             //LAB_8002423c
-            MEMORY.ref(2, s2).offset(0x16L).setu(MEMORY.ref(2, s5).offset(0x6L).get() & 0x7fL);
+            MEMORY.ref(2, packet).offset(0x16L).setu(metrics.tpage_06.get() & 0x7fL); // TPAGE
           }
 
           //LAB_8002424c
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get(s0._3c.get()).getAddress(), s2);
-          s5 = s5 - 0x14L;
+          insertElementIntoLinkedList(tags_1f8003d0.deref().get(renderable._3c.get()).getAddress(), packet);
         }
       }
 
       //LAB_80024280
-      final Renderable58 struct = s0;
-      s0 = s0.parent_54.derefNullable();
-
-      if((struct._00.get() & 0x8L) != 0 || sp10 != 0) {
+      if((renderable.flags_00.get() & 0x8L) != 0 || forceUnload) {
         //LAB_800242a8
-        unloadRenderable(struct);
+        unloadRenderable(renderable);
       }
 
       //LAB_800242b0
+      renderable = renderable.parent_54.derefNullable();
     }
 
     //LAB_800242b8
@@ -6006,339 +5960,133 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029300L)
-  public static void FUN_80029300(final ArrayRef<UnsignedShortRef> a0, long a1, long a2, long a3, long a4) {
-    long a0_0 = 0;
-    long v0;
-    long v1;
-    long t0;
-    long t1;
-    long t2;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
-    long fp;
-    s3 = 0;
-    s6 = 0;
-    final long sp10 = a1;
-    a1 = 0x1L;
-    long sp20 = a3;
-    long sp18 = a2;
-    v0 = 0x800c_0000L;
-    s7 = a4;
-    v0 = v0 - 0x2360L;
-
+  public static void renderText(final LodString text, final long x, long y, final long a3, final long a4) {
     //LAB_80029358
-    do {
-      v1 = a0.get((int)a0_0).get();
+    int length;
+    for(length = 0; ; length++) {
+      final long c = text.charAt(length);
 
-      if(v1 == 0xa0ffL) {
-        a1 = 0;
-        MEMORY.ref(2, v0).offset(0x0L).setu(0xffffL);
-      } else {
-        //LAB_80029374
-        MEMORY.ref(2, v0).offset(0x0L).setu(v1);
-        v0 = v0 + 0x2L;
-        s6 = s6 + 0x1L;
-        a0_0++;
+      if(c == 0xa0ffL) {
+        currentText_800bdca0.charAt(length, 0xffffL);
+        break;
       }
 
+      //LAB_80029374
+      currentText_800bdca0.charAt(length, c);
+
       //LAB_80029384
-    } while(a1 != 0);
-
-    v0 = s7 << 16;
-    v0 = (int)v0 >> 16;
-    if((int)v0 >= 0xdL) {
-      s7 = 0xcL;
     }
 
-    //LAB_800293a8
-    v0 = s7 << 16;
-    v0 = (int)v0 >> 16;
-    if((int)v0 < -0xcL) {
-      s7 = -0xcL;
-    }
-    s4 = 0;
+    final long s7 = MathHelper.clamp(a4, -0xcL, 0xcL);
 
     //LAB_800293bc
-    if((int)s6 <= 0) {
-      return;
-    }
-    s5 = s4;
-    final long sp28 = s7;
-    t2 = s7 + 0xcL;
-    v0 = 0x800c_0000L;
-    s2 = v0 - 0x2360L;
-    final long sp30 = t2;
-
     //LAB_800293d8
-    do {
-      a1 = MEMORY.ref(2, s2).offset(0x0L).get();
-      a0_0 = a1 & 0xffffL;
-      if(a0_0 == 0xa1ffL) {
-        s4 = 0;
-        t2 = sp18;
-        s3 = s4;
-        t2 = t2 + 0xcL;
-        sp18 = t2;
+    long lineIndex = 0;
+    long glyphNudge = 0;
+
+    for(int i = 0; i < length; i++) {
+      final long c = currentText_800bdca0.charAt(i);
+
+      if(c == 0xa1ffL) {
+        lineIndex = 0;
+        glyphNudge = 0;
+        y += 0xcL;
       } else {
         //LAB_80029404
-        t2 = 0x800c_0000L;
-        if(a0_0 < 0x340L) {
-          v0 = a1 & 0xfL;
-          MEMORY.ref(4, t2).offset(-0x1a44L).setu(0);
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a40L).setu(v0);
-          v1 = a0_0 / 208;
-          v1 = v1 & 0xffffL;
-          v0 = v1 << 1;
-          v0 = v0 + v1;
-          v0 = v0 << 2;
-          v0 = v0 + v1;
-          v0 = v0 << 4;
-          v0 = a0_0 - v0;
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a48L).setu(v1);
-          if((int)v0 < 0) {
-            v0 = v0 + 0xfL;
-          }
-
+        if(c < 0x340L) {
           //LAB_8002945c
-          v0 = (int)v0 >> 4;
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a38L).setu(v0);
+          _800be5b8.setu(c / 208);
+          _800be5bc.setu(0);
+          _800be5c0.setu(c & 0xfL);
+          _800be5c8.setu(c % 208 / 16);
         } else {
           //LAB_8002946c
-          v0 = a0_0 - 0x340L;
-          a0_0 = (int)v0 >> 4;
-          if((int)a0_0 >= 0) {
-            v0 = a0_0;
-          } else {
-            v0 = a0_0 + 0x3L;
-          }
+          final long a0_0 = (c - 832) / 16;
 
           //LAB_80029480
-          v0 = (int)v0 >> 2;
-          v1 = v0 + 0x1L;
-          t2 = 0x800c_0000L;
-          v0 = v0 << 2;
-          v0 = a0_0 - v0;
-          MEMORY.ref(4, t2).offset(-0x1a44L).setu(v1);
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a48L).setu(v0);
-          v0 = a1 & 0xfL;
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a40L).setu(v0);
-          t2 = 0x800c_0000L;
-          MEMORY.ref(4, t2).offset(-0x1a38L).setu(0);
+          _800be5b8.setu(a0_0 % 4);
+          _800be5bc.setu(a0_0 / 4 + 1);
+          _800be5c0.setu(c & 0xfL);
+          _800be5c8.setu(0);
         }
 
         //LAB_800294b4
-        a1 = 0x6480_0000L;
-        v1 = 0x1f80_0000L;
-        a1 = a1 | 0x8080L;
-        t2 = 0x800c_0000L;
-        fp = MEMORY.ref(2, t2).offset(-0x1a44L).get();
-        t2 = 0x800c_0000L;
-        t1 = MEMORY.ref(2, t2).offset(-0x1a48L).get();
-        t2 = 0x800c_0000L;
-        a2 = MEMORY.ref(2, t2).offset(-0x1a38L).get();
-        t2 = 0x800c_0000L;
-        a0_0 = MEMORY.ref(4, v1).offset(0x3d8L).get();
-        t0 = MEMORY.ref(2, t2).offset(-0x1a40L).get();
-        v0 = a0_0 + 0x14L;
-        s0 = a0_0;
-        MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
-        v0 = 0x4L;
-        MEMORY.ref(1, s0).offset(0x3L).setu(v0);
-        MEMORY.ref(4, s0).offset(0x4L).setu(a1);
-        if(s4 == 0) {
-          s3 = 0;
+        final long fp = _800be5bc.get();
+
+        final long packet1 = linkedListAddress_1f8003d8.get();
+        linkedListAddress_1f8003d8.addu(0x14L);
+
+        MEMORY.ref(1, packet1).offset(0x03L).setu(0x4L);
+        MEMORY.ref(4, packet1).offset(0x04L).setu(0x6480_8080L); // Textured rect, variable size, opaque, texture-blending
+
+        if(lineIndex == 0) {
+          glyphNudge = 0;
         }
 
         //LAB_80029504
-        v1 = MEMORY.ref(2, s2).offset(0x0L).get();
-
-        if((int)v1 >= 0x7L) {
-          a0_0 = 0;
-
-          //LAB_80029534
-          v0 = 0x45L;
-          if(v1 == v0) {
-            a0_0 = 0x1L;
-          }
-        } else {
-          a0_0 = 0;
-          if((int)v1 >= 0x5L) {
-            //LAB_80029550
-            a0_0 = 0x3L;
-          } else {
-            v0 = 0x2L;
-            if(v1 == v0) {
-              //LAB_80029548
-              a0_0 = 0x2L;
-            }
-          }
+        //LAB_80029534
+        if(c == 0x45L) {
+          glyphNudge -= 0x1L;
+        } else if(c == 0x2L) {
+          //LAB_80029548
+          glyphNudge -= 0x2L;
+        } else if(c >= 0x5L && c < 0x7L) {
+          //LAB_80029550
+          glyphNudge -= 0x3L;
         }
 
         //LAB_80029554
-        a0_0 = s3 - a0_0;
-
         //LAB_80029558
-        s3 = a0_0;
-        v0 = s4 << 3;
-        v1 = 0x1f80_0000L;
-        t2 = sp10;
-        v1 = MEMORY.ref(2, v1).offset(0x3dcL).get();
-        v0 = t2 + v0;
-        v0 = v0 - v1;
-        v0 = v0 - a0_0;
-        MEMORY.ref(2, s0).offset(0x8L).setu(v0);
-        v0 = MEMORY.ref(2, s2).offset(0x0L).get();
+        MEMORY.ref(2, packet1).offset(0x08L).setu(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge); // x
 
-        a0_0 = 0;
-
-        switch((int)v0) {
-          case 0x5:
-          case 0x23:
-          case 0x24:
-          case 0x2a:
-          case 0x37:
-          case 0x38:
-          case 0x3a:
-          case 0x3b:
-          case 0x3c:
-          case 0x3d:
-          case 0x3f:
-          case 0x40:
-          case 0x43:
-          case 0x46:
-          case 0x47:
-          case 0x48:
-          case 0x49:
-          case 0x4a:
-          case 0x4b:
-          case 0x4d:
-          case 0x4e:
-          case 0x51:
-          case 0x52:
-            a0_0 = 0x1L;
-            break;
-
-          case 0x2:
-          case 0x8:
-          case 0x3e:
-          case 0x4c:
-            a0_0 = 0x2L;
-            break;
-
-          case 0xb:
-          case 0xc:
-          case 0x42:
-            a0_0 = 0x3L;
-            break;
-
-          case 0x1:
-          case 0x3:
-          case 0x4:
-          case 0x9:
-          case 0x16:
-          case 0x41:
-          case 0x44:
-            a0_0 = 0x4L;
-            break;
-
-          case 0x6:
-          case 0x27:
-            a0_0 = 0x5L;
-            break;
-        }
+        glyphNudge += switch((int)c) {
+          case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 0x1L;
+          case 0x2, 0x8, 0x3e, 0x4c -> 0x2L;
+          case 0xb, 0xc, 0x42 -> 0x3L;
+          case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 0x4L;
+          case 0x6, 0x27 -> 0x5L;
+          default -> 0;
+        };
 
         //LAB_800295d8
-        s3 = a0_0 + s3;
-        s4 = s4 + 0x1L;
-        t2 = 0x1f80_0000L;
-        t2 = t2 + 0x3dcL;
-        v0 = MEMORY.ref(2, t2).offset(0x2L).get();
-        t2 = sp18;
+        lineIndex++;
 
-        v0 = t2 - v0;
-        MEMORY.ref(2, s0).offset(0xaL).setu(v0);
-        v0 = fp & 0xffffL;
-        if(v0 == 0) {
-          a0_0 = 0;
-        } else if(v0 < 0x6L) {
-          a0_0 = 0;
+        MEMORY.ref(2, packet1).offset(0x0aL).setu(y - centreScreenY_1f8003de.get()); // y
+
+        final long v1;
+        if(fp < 0x6L) {
+          v1 = _800be5c8.get() * 0xcL;
         } else {
-          a0_0 = 0xf0L;
+          v1 = 0xf0L + _800be5c8.get() * 0xcL;
         }
 
         //LAB_80029618
-        v0 = a2 & 0xffffL;
-        v1 = v0 << 1;
-        v1 = v1 + v0;
-        v1 = v1 << 2;
-        v1 = a0_0 + v1;
-        v0 = s7 << 16;
-        a2 = v1;
-        if((int)v0 >= 0) {
-          t2 = sp28;
-          v0 = 0xcL;
-          a3 = v0 - t2;
+        if((short)s7 >= 0) {
+          MEMORY.ref(1, packet1).offset(0x0dL).setu(v1); // v
+          MEMORY.ref(2, packet1).offset(0x12L).setu(0xcL - s7); // height
         } else {
           //LAB_80029648
-          v0 = v1 + 0xcL;
-          t2 = sp30;
-          a3 = sp30;
-          a2 = v0 - t2;
+          MEMORY.ref(1, packet1).offset(0x0dL).setu(v1 - s7); // v
+          MEMORY.ref(2, packet1).offset(0x12L).setu(s7 + 0xcL); // height
         }
 
         //LAB_80029658
-        a0_0 = s0;
-        v0 = t0 & 0xffffL;
-        t2 = sp20;
-        v0 = v0 << 4;
-        v1 = t2 & 0xfL;
-        sp20 = v1;
-        MEMORY.ref(1, s0).offset(0xcL).setu(v0);
-        v0 = t1 + 0x1e0L;
-        v0 = v0 << 6;
-        v1 = v1 << 4;
-        v1 = v1 + 0x340L;
-        v1 = v1 & 0x3f0L;
-        v1 = (int)v1 >> 4;
-        v0 = v0 | v1;
-        MEMORY.ref(2, s0).offset(0xeL).setu(v0);
-        MEMORY.ref(2, s0).offset(0x10L).setu(0x8L);
-        MEMORY.ref(1, s0).offset(0xdL).setu(a2);
-        MEMORY.ref(2, s0).offset(0x12L).setu(a3 & 0xffL);
-        gpuLinkedListSetCommandTransparency(a0_0, false);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), s0);
-        a2 = fp & 0xffffL;
-        a2 = a2 * 0x4L;
-        a1 = linkedListAddress_1f8003d8.get();
+        MEMORY.ref(1, packet1).offset(0x0cL).setu(_800be5c0.get() * 0x10L); // u
+        MEMORY.ref(2, packet1).offset(0x0eL).setu((_800be5b8.get() + 0x1e0L) * 0x40L | (((a3 & 0xfL) * 0x10L + 0x340L) & 0x3f0L) >> 4); // clut
+        MEMORY.ref(2, packet1).offset(0x10L).setu(0x8L); // width
+        gpuLinkedListSetCommandTransparency(packet1, false);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet1);
+
+        final long packet2 = linkedListAddress_1f8003d8.get();
         linkedListAddress_1f8003d8.addu(0x8L);
-        MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
-        v1 = _80052bf4.offset(a2).get() & 0x100L;
-        v1 = (int)v1 >> 8;
-        v1 = _800bb110.offset(v1 * 0x2L).getAddress();
-        a2 = _80052bc8.offset(a2).get() & 0x3c0L;
-        a2 = (int)a2 >> 6;
-        v0 = MEMORY.ref(2, v1).offset(0x0L).get() | a2;
-        v0 = v0 & 0x9ffL;
-        v0 = v0 | 0xe100_0200L;
-        MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), a1);
+
+        MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
+        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (_800bb110.offset(((_80052bf4.offset(fp * 0x4L).get() & 0x100L) >> 8) * 0x2L).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet2);
       }
 
       //LAB_80029760
-      s5 = s5 + 0x1L;
-      s2 = s2 + 0x2L;
-    } while((int)s5 < (int)s6);
+    }
 
     //LAB_80029770
   }
