@@ -5891,7 +5891,7 @@ public final class SMap {
       return 1;
     }
 
-    if(newCut < 0x2L) {
+    if(newCut >= 0 && newCut < 0x2L) {
       _800cb430.setu(0x12L);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -5962,7 +5962,7 @@ public final class SMap {
     if(newScene == 0) {
       scene = submapScene_800bb0f8.get();
     } else {
-      if(0x1ff < newScene) {
+      if(newScene > 0x1ff) {
         _800bc0b8.setu(0x1L);
         _800f7e4c.setu(0x1L);
         return 1;
@@ -6193,37 +6193,39 @@ public final class SMap {
         _800caaf0.setu(whichMenu_800bdc38);
         _80052c44.setu(0x2L);
 
-        if(whichMenu_800bdc38.get() == 0 || whichMenu_800bdc38.get() == 0) {
+        if(whichMenu_800bdc38.get() != 0) {
+          FUN_80022590();
+
           if(whichMenu_800bdc38.get() != 0) {
-            FUN_80022590();
+            break;
           }
+        }
 
-          //LAB_800e6018
-          _800c6aac.setu(0xaL);
+        //LAB_800e6018
+        _800c6aac.setu(0xaL);
 
-          switch((int)_800caaf0.get()) {
-            case 0x5:
-              if(_800bb0ac.get() != 0) {
-                _800cb430.setu(0x12L);
-                _800f7e4c.setu(0);
-                break;
-              }
-
-              // Fall through
-
-            case 0x19:
-            case 0x23:
-            case 0xa:
-              _800cb430.setu(0xfL);
-              break;
-
-            case 0x14:
-              _800cb430.setu(0xcL);
+        switch((int)_800caaf0.get()) {
+          case 0x5:
+            if(_800bb0ac.get() != 0) {
+              _800cb430.setu(0x12L);
               _800f7e4c.setu(0);
-              FUN_800e5534(_800f7e2c.offset(_800bac60.get() * 8).get(), _800f7e30.offset(_800bac60.get() * 8).get());
-              index_80052c38.set(_800f7e30.get());
               break;
-          }
+            }
+
+            // Fall through
+
+          case 0x19:
+          case 0x23:
+          case 0xa:
+            _800cb430.setu(0xfL);
+            break;
+
+          case 0x14:
+            _800cb430.setu(0xcL);
+            _800f7e4c.setu(0);
+            FUN_800e5534(_800f7e2c.offset(_800bac60.get() * 8).get(), _800f7e30.offset(_800bac60.get() * 8).get());
+            index_80052c38.set(_800f7e30.get());
+            break;
         }
 
         break;
