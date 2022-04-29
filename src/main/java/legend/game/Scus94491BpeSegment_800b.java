@@ -91,6 +91,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800baf07 = MEMORY.ref(1, 0x800baf07L);
 
+  public static final Value _800baf0d = MEMORY.ref(1, 0x800baf0dL);
+
   public static final Value _800bb080 = MEMORY.ref(4, 0x800bb080L);
 
   public static final Value _800bb0a0 = MEMORY.ref(2, 0x800bb0a0L);
@@ -261,8 +263,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
-  public static final Pointer<Renderable58> renderablePtr_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> saveListUpArrow_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> saveListDownArrow_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdb9c = MEMORY.ref(4, 0x800bdb9cL);
   public static final Value _800bdba0 = MEMORY.ref(4, 0x800bdba0L);
   public static final Pointer<Renderable58> renderablePtr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Renderable58::new));
@@ -295,6 +297,12 @@ public final class Scus94491BpeSegment_800b {
   public static final Value whichMenu_800bdc38 = MEMORY.ref(4, 0x800bdc38L);
   public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
+  /**
+   * 0x20 - cross
+   * 0x40 - circle
+   * 0x1000 - up
+   * 0x2000 - down
+   */
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
   public static final Pointer<ArrayRef<MemcardStruct28>> memcardStruct28ArrPtr_800bdc50 = MEMORY.ref(4, 0x800bdc50L, Pointer.deferred(4, ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)));

@@ -394,8 +394,8 @@ import static legend.game.Scus94491BpeSegment_800b.cardErrorWrite_800bf274;
 import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
 import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdb98;
+import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -2095,8 +2095,8 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_800243fc
       if(a0 != 0) {
-        renderablePtr_800bdb94.clear();
-        renderablePtr_800bdb98.clear();
+        saveListUpArrow_800bdb94.clear();
+        saveListDownArrow_800bdb98.clear();
         _800bdb9c.setu(0);
         _800bdba0.setu(0);
         renderablePtr_800bdba4.clear();
@@ -7842,7 +7842,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002e908L)
-  public static long FUN_8002e908(final long port, final String saveName, long memcardDest, long memcardPos, long memcardLength) {
+  public static long readMemcardFile(final long port, final String saveName, long memcardDest, long memcardPos, long memcardLength) {
     if((int)activeMemcardEvent_800bf170.get() > 0) {
       LOGGER.error("Access denied: system busy");
       throw new RuntimeException("Access denied: system busy");

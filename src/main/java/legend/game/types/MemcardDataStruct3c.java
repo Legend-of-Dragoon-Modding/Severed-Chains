@@ -9,7 +9,7 @@ import legend.core.memory.types.UnsignedIntRef;
 public class MemcardDataStruct3c implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedByteRef _04;
+  public final UnsignedByteRef fileIndex_04;
 
   public final UnsignedIntRef char0Index_08;
   public final UnsignedIntRef char1Index_0c;
@@ -24,13 +24,18 @@ public class MemcardDataStruct3c implements MemoryRef {
   public final UnsignedIntRef time_20;
   public final UnsignedIntRef dragoonSpirits_24;
   public final UnsignedIntRef stardust_28;
-  public final UnsignedByteRef _2c;
-  public final UnsignedByteRef _2d;
+  public final UnsignedByteRef locationIndex_2c;
+  /**
+   * 1 - world map
+   * 3 - chapter title
+   * other - submap
+   */
+  public final UnsignedByteRef saveType_2d;
 
   public MemcardDataStruct3c(final Value ref) {
     this.ref = ref;
 
-    this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
+    this.fileIndex_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
 
     this.char0Index_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this.char1Index_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
@@ -45,8 +50,8 @@ public class MemcardDataStruct3c implements MemoryRef {
     this.time_20 = ref.offset(4, 0x20L).cast(UnsignedIntRef::new);
     this.dragoonSpirits_24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
     this.stardust_28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
-    this._2c = ref.offset(1, 0x2cL).cast(UnsignedByteRef::new);
-    this._2d = ref.offset(1, 0x2dL).cast(UnsignedByteRef::new);
+    this.locationIndex_2c = ref.offset(1, 0x2cL).cast(UnsignedByteRef::new);
+    this.saveType_2d = ref.offset(1, 0x2dL).cast(UnsignedByteRef::new);
   }
 
   @Override
