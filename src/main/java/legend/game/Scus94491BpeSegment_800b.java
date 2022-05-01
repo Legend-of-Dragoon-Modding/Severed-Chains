@@ -272,8 +272,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdbb8 = MEMORY.ref(4, 0x800bdbb8L);
 
-  public static final Pointer<Renderable58> renderablePtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
@@ -298,10 +298,18 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
   /**
-   * 0x20 - cross
-   * 0x40 - circle
-   * 0x1000 - up
-   * 0x2000 - down
+   * 0x01 - L1
+   * 0x02 - R2
+   * 0x04 - L2
+   * 0x08 - R2
+   * 0x10 - Triangle
+   * 0x20 - Cross
+   * 0x40 - Circle
+   * 0x80 - Square
+   * 0x1000 - Up
+   * 0x2000 - Right
+   * 0x4000 - Down
+   * 0x8000 - Left
    */
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
