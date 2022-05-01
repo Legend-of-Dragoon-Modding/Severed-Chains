@@ -27,6 +27,7 @@ import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -39,6 +40,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022a10;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022b50;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80022b898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022c08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022d88;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023148;
@@ -78,6 +80,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_800414a0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80041600;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800426c4;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
+import static legend.game.Scus94491BpeSegment_8004._8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
@@ -98,6 +101,7 @@ import static legend.game.Scus94491BpeSegment_800b._800badac;
 import static legend.game.Scus94491BpeSegment_800b._800badae;
 import static legend.game.Scus94491BpeSegment_800b._800badb0;
 import static legend.game.Scus94491BpeSegment_800b._800bae00;
+import static legend.game.Scus94491BpeSegment_800b._800baeb1;
 import static legend.game.Scus94491BpeSegment_800b._800baef4;
 import static legend.game.Scus94491BpeSegment_800b._800baefc;
 import static legend.game.Scus94491BpeSegment_800b._800baf0d;
@@ -107,6 +111,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bb0b0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
+import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
@@ -180,6 +186,8 @@ public final class SItem {
 
   public static final Value _801141c4 = MEMORY.ref(1, 0x801141c4L);
 
+  public static final Value _801141fc = MEMORY.ref(1, 0x801141fcL);
+
   public static final Value _80114258 = MEMORY.ref(1, 0x80114258L);
 
   public static final Value _80114290 = MEMORY.ref(1, 0x80114290L);
@@ -190,15 +198,26 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> _801142dc = MEMORY.ref(4, 0x801142dcL, ArrayRef.of(Pointer.classFor(LodString.class), 9, 4, Pointer.deferred(4, LodString::new)));
 
+  public static final ArrayRef<Pointer<LodString>> _80114300 = MEMORY.ref(4, 0x80114300L, ArrayRef.of(Pointer.classFor(LodString.class), 4, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final ArrayRef<Pointer<LodString>> _80117a10 = MEMORY.ref(4, 0x80117a10L, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
+
   public static final ArrayRef<Pointer<LodString>> _8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
+  public static final ArrayRef<Pointer<LodString>> _8011b75c = MEMORY.ref(4, 0x8011b75cL, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final ArrayRef<Pointer<LodString>> _8011c008 = MEMORY.ref(4, 0x8011c008L, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> submapNames_8011c108 = MEMORY.ref(4, 0x8011c108L, ArrayRef.of(Pointer.classFor(LodString.class), 57, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> worldMapNames_8011c1ec = MEMORY.ref(4, 0x8011c1ecL, ArrayRef.of(Pointer.classFor(LodString.class), 8, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final LodString _8011c254 = MEMORY.ref(4, 0x8011c254L, LodString::new);
 
   /** "Yes" */
   public static final LodString Yes_8011c20c = MEMORY.ref(2, 0x8011c20cL, LodString::new);
   /** "No" */
   public static final LodString No_8011c214 = MEMORY.ref(2, 0x8011c214L, LodString::new);
+  public static final LodString _8011c314 = MEMORY.ref(2, 0x8011c314L, LodString::new);
+  public static final LodString _8011c32c = MEMORY.ref(2, 0x8011c32cL, LodString::new);
   /** "Do you want to save now?" */
   public static final LodString Do_you_want_to_save_now_8011c370 = MEMORY.ref(2, 0x8011c370L, LodString::new);
   /** "" */
@@ -348,6 +367,7 @@ public final class SItem {
   public static final LodString Goods_8011cf48 = MEMORY.ref(2, 0x8011cf48L, LodString::new);
   /** "" */
   public static final LodString _8011cf54 = MEMORY.ref(2, 0x8011cf54L, LodString::new);
+  public static final LodString _8011d024 = MEMORY.ref(2, 0x8011d024L, LodString::new);
   /** "" */
   public static final LodString _8011d044 = MEMORY.ref(2, 0x8011d044L, LodString::new);
   /** "" */
@@ -492,14 +512,16 @@ public final class SItem {
 
   @Method(0x800fc814L)
   public static long FUN_800fc814(final long a0) {
-    assert false;
-    return 0;
+    return 9 + a0 * 17;
   }
 
   @Method(0x800fc824L)
   public static long FUN_800fc824(final long a0) {
-    assert false;
-    return 0;
+    if(a0 == 0) {
+      return 43;
+    }
+
+    return 221;
   }
 
   @Method(0x800fc838L)
@@ -515,8 +537,7 @@ public final class SItem {
 
   @Method(0x800fc860L)
   public static long FUN_800fc860(final long a0) {
-    assert false;
-    return 0;
+    return 180 + a0 * 17;
   }
 
   @Method(0x800fc880L)
@@ -533,14 +554,12 @@ public final class SItem {
 
   @Method(0x800fc8c0L)
   public static long FUN_800fc8c0(final long a0) {
-    assert false;
-    return 0;
+    return 21 + a0 * 50;
   }
 
   @Method(0x800fc8dcL)
   public static long FUN_800fc8dc(final long a0) {
-    assert false;
-    return 0;
+    return 18 + a0 * 17;
   }
 
   @Method(0x800fc8ecL)
@@ -1230,7 +1249,7 @@ public final class SItem {
         break;
 
       case 0x12:
-      case 0x21:
+      case 0x21: // Discard items menu
         if(_8011d734.get() != 0) {
           a0 = _800badae.getSigned();
         } else {
@@ -1240,6 +1259,7 @@ public final class SItem {
 
         //LAB_800fde10
         _8011d750.setu(a0);
+
         if(_8011d734.get() != 0) {
           s1 = fileIndex_8011d740.get() + _8011d748.get();
         } else {
@@ -1248,200 +1268,77 @@ public final class SItem {
         }
 
         //LAB_800fde50
-        if((inventoryJoypadInput_800bdc44.get() & 0x40L) == 0) {
-          v0 = 0x800c_0000L;
-        } else {
-          v0 = 0x800c_0000L;
-          a0 = 0x3L;
-          playSound(a0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2460L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2464L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2468L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x246cL).setu(0);
-          v0 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v0).offset(-0x23c8L).get();
-          v0 = 0x24L;
-          if(v1 != v0) {
-            a0 = 0x7L;
-          } else {
-            a0 = 0x7L;
-            a0 = 0x13L;
-          }
+        if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
+          playSound(0x3L);
+          _800bdba0.clear();
+          _800bdb9c.clear();
+          saveListDownArrow_800bdb98.clear();
+          saveListUpArrow_800bdb94.clear();
 
           //LAB_800fdea8
-          a1 = 0x8L;
-          FUN_800fca0c(a0, a1);
-          v0 = 0x800c_0000L;
+          if(whichMenu_800bdc38.get() != 0x24L) {
+            FUN_800fca0c(0x7L, 0x8L);
+          } else {
+            FUN_800fca0c(0x13L, 0x8L);
+          }
         }
 
         //LAB_800fdeb4
-        v0 = MEMORY.ref(4, v0).offset(-0x23bcL).get();
-
-        v0 = v0 & 0x10L;
-        if(v0 == 0) {
-          v0 = 0x8012_0000L;
-        } else {
-          v0 = 0x8012_0000L;
-          a0 = 0x2L;
-          playSound(a0);
-          v1 = 0x8012_0000L;
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, v0).offset(-0x28ccL).get();
-          v1 = v1 - 0x2348L;
-          v0 = a0 << 2;
-          v1 = v0 + v1;
-          if(a0 != 0) {
-            v0 = 0x800c_0000L;
-            a1 = v0 - 0x514fL;
+        if((inventoryJoypadInput_800bdc44.get() & 0x10L) != 0) { // Discard items menu - sort items
+          playSound(0x2L);
+          if(_8011d734.get() != 0) {
+            a1 = _800baeb1.getAddress();
           } else {
             //LAB_800fdef8
-            v0 = 0x800c_0000L;
-            a1 = v0 - 0x5250L;
+            a1 = _800badb0.getAddress();
           }
 
           //LAB_800fdf00
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, v1).offset(0x0L).get();
-          a2 = MEMORY.ref(4, v0).offset(-0x28b0L).get();
-
-          FUN_80023a2c(a0, a1, a2);
-          v0 = 0x8012_0000L;
+          FUN_80023a2c(_8011dcb8.offset(_8011d734.get() * 0x4L).get(), a1, _8011d750.get());
         }
 
         //LAB_800fdf18
-        v1 = 0x8012_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x28ccL).get();
-
-        a0 = v0 - 0x28c0L;
-        if(v1 != 0) {
-          v0 = 0x8012_0000L;
-          a1 = v0 - 0x28b8L;
+        if(_8011d734.get() != 0) {
+          a1 = _8011d748.getAddress();
         } else {
           //LAB_800fdf38
-          v0 = 0x8012_0000L;
-          a1 = v0 - 0x28bcL;
+          a1 = fileScroll_8011d744.getAddress();
         }
 
         //LAB_800fdf40
-        a2 = 0x7L;
-        v0 = 0x8012_0000L;
-        a3 = MEMORY.ref(4, v0).offset(-0x28b0L).get();
-        v0 = 0x1L;
-        a4 = v0;
-        v0 = FUN_80103f00(a0, a1, a2, a3, a4);
-        if(v0 == 0) {
-          v0 = 0x8012_0000L;
-        } else {
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, v0).offset(-0x28c0L).get();
-
-          v0 = FUN_800fc814(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(-0x2418L).get();
-          v0 = v0 + 0x20L;
-          MEMORY.ref(4, v1).offset(0x44L).setu(v0);
+        if(FUN_80103f00(fileIndex_8011d740.getAddress(), a1, 0x7L, _8011d750.get(), 0x1L) != 0) {
+          renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc814(fileIndex_8011d740.get()) + 0x20L);
         }
 
         //LAB_800fdf7c
-        s0 = 0x8012_0000L;
-        a0 = s0 - 0x28ccL;
-        a1 = 0x2L;
-        v0 = FUN_8010415c(a0, a1);
-        if(v0 == 0) {
-          v0 = 0x800c_0000L;
-        } else {
-          v0 = 0x800c_0000L;
-          a0 = MEMORY.ref(4, s0).offset(-0x28ccL).get();
-
-          v0 = FUN_800fc824(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(-0x2418L).get();
-
-          MEMORY.ref(4, v1).offset(0x40L).setu(v0);
-          v0 = 0x800c_0000L;
+        if(FUN_8010415c(_8011d734.getAddress(), 0x2L) != 0) {
+          renderablePtr_800bdbe8.deref().x_40.set(FUN_800fc824(_8011d734.get()));
         }
 
         //LAB_800fdfb4
-        v0 = MEMORY.ref(4, v0).offset(-0x23bcL).get();
-
-        v0 = v0 & 0x20L;
-        if(v0 == 0) {
-          s2 = 0x800c_0000L;
-        } else {
-          s2 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, s2).offset(-0x23d8L).get();
-          v0 = 0x21L;
-          if(v1 == v0) {
-            v0 = 0x8012_0000L;
-            v1 = 0x8012_0000L;
-            v0 = MEMORY.ref(4, s0).offset(-0x28ccL).get();
-            v1 = v1 - 0x2348L;
-            v0 = v0 << 2;
-            v0 = v0 + v1;
-            v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-            v0 = s1 << 2;
-            v1 = v0 + v1;
-            v0 = MEMORY.ref(2, v1).offset(0x2L).get();
-
-            v0 = v0 & 0x2000L;
-            if(v0 != 0) {
-              //LAB_800fe064
-              a0 = 0x28L;
-              playSound(a0);
-            } else {
-              v1 = MEMORY.ref(1, v1).offset(0x0L).get();
-
-              if(v1 == 0xffL) {
-                //LAB_800fe064
-                a0 = 0x28L;
-                playSound(a0);
-              } else {
-                a0 = 0x2L;
-                playSound(a0);
-                a0 = 0;
-                v0 = 0x8012_0000L;
-                MEMORY.ref(4, v0).offset(-0x28b4L).setu(0);
-                v0 = FUN_800fc860(a0);
-                a0 = 0x7dL;
-                a1 = a0;
-                a2 = 0x13aL;
-                a3 = v0;
-                renderablePtr_800bdc20.set(allocateUiElement(a0, a1, a2, a3));
-                FUN_80104b60(renderablePtr_800bdc20.deref());
-                inventoryMenuState_800bdc28.setu(0x22L);
-              }
-            }
+        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0 && inventoryMenuState_800bdc28.get() == 0x21L) {
+          if((_8011dcb8.offset(_8011d734.get() * 0x4L).deref(2).offset(s1 * 0x4L).offset(0x2L).get() & 0x2000L) != 0) {
+            //LAB_800fe064
+            playSound(0x28L);
+          } else if(_8011dcb8.offset(_8011d734.get() * 0x4L).deref(1).offset(s1 * 0x4L).get() == 0xffL) {
+            //LAB_800fe064
+            playSound(0x28L);
+          } else {
+            playSound(0x2L);
+            _8011d74c.setu(0);
+            renderablePtr_800bdc20.set(allocateUiElement(0x7dL, 0x7dL, 0x13aL, FUN_800fc860(0)));
+            FUN_80104b60(renderablePtr_800bdc20.deref());
+            inventoryMenuState_800bdc28.setu(0x22L);
           }
         }
 
         //LAB_800fe06c
-        v0 = 0x8012_0000L;
-
         //LAB_800fe070
-        a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        v0 = 0x8012_0000L;
-        v1 = 0x8012_0000L;
-        a1 = MEMORY.ref(4, v0).offset(-0x28b8L).get();
-        v0 = 0x8012_0000L;
-        v0 = MEMORY.ref(4, v0).offset(-0x28ccL).get();
-        v1 = v1 - 0x2348L;
-
         //LAB_800fe08c
-        v0 = v0 << 2;
-        v0 = v0 + v1;
-        v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-        v0 = s1 << 2;
-        v0 = v0 + v1;
-        a2 = MEMORY.ref(1, v0).offset(0x0L).get();
-        a3 = 0;
-        FUN_80102840(a0, a1, a2, a3);
+        FUN_80102840(fileScroll_8011d744.get(), _8011d748.get(), _8011dcb8.offset(_8011d734.get() * 0x4L).deref(1).offset(s1 * 0x4L).get(), 0);
         break;
 
-      case 0x22:
+      case 0x22: // Discard item confirm
         if(_8011d734.get() != 0) {
           s1 = fileIndex_8011d740.get() + _8011d748.get();
         } else {
@@ -1450,10 +1347,7 @@ public final class SItem {
         }
 
         //LAB_800fe0f0
-        renderText(Really_want_to_throw_this_away_8011c8d4, 0xc0L, 0xb4L, 0x4L);
-        v0 = FUN_800fc860(0) + 0x2L;
-        a2 = v0 & 0xffffL;
-        s2 = _8011d74c.getAddress();
+        renderText(Really_want_to_throw_this_away_8011c8d4, 192, 180, 0x4L);
 
         if(_8011d74c.get() != 0) {
           a3 = 0x6L;
@@ -1462,9 +1356,7 @@ public final class SItem {
         }
 
         //LAB_800fe13c
-        renderCentredText(Yes_8011c20c, 0x148L, a2, a3);
-        v0 = FUN_800fc860(0x1L) + 0x2L;
-        a2 = v0 & 0xffffL;
+        renderCentredText(Yes_8011c20c, 328, FUN_800fc860(0) + 2, a3);
 
         if(_8011d74c.get() != 0) {
           a3 = 0x5L;
@@ -1473,73 +1365,30 @@ public final class SItem {
         }
 
         //LAB_800fe170
-        renderCentredText(No_8011c214, 0x148L, a2, a3);
-        a0 = s2;
-        v0 = FUN_801041d8(a0);
-        v1 = v0;
+        renderCentredText(No_8011c214, 328, FUN_800fc860(1) + 2, a3);
+
+        v1 = FUN_801041d8(_8011d74c.getAddress());
         if(v1 == 0x1L) {
           //LAB_800fe1bc
-          a0 = _8011d74c.get();
-
-          v0 = FUN_800fc860(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(-0x23e0L).get();
-          MEMORY.ref(4, v1).offset(0x44L).setu(v0);
+          renderablePtr_800bdc20.deref().y_44.set(FUN_800fc860(_8011d74c.get()));
         } else if(v1 == 0x2L) {
           //LAB_800fe1d8
-          a1 = 0x8012_0000L;
-          v0 = MEMORY.ref(4, a1).offset(-0x28b0L).get();
-          s0 = s1;
-          if((int)s0 >= (int)v0) {
-            v0 = 0x8012_0000L;
-          } else {
-            v0 = 0x8012_0000L;
-            a3 = v0 - 0x2348L;
-            a2 = 0x8012_0000L;
-            a0 = s0 << 2;
-
-            //LAB_800fe1fc
-            do {
-              v0 = MEMORY.ref(4, a2).offset(-0x28ccL).get();
-              s0 = s0 + 0x1L;
-              v0 = v0 << 2;
-              v0 = v0 + a3;
-              v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-              v0 = MEMORY.ref(4, a1).offset(-0x28b0L).get();
-              a0 = a0 + v1;
-              t3 = MEMORY.ref(4, a0).offset(0x4L).get();
-              MEMORY.ref(4, a0).setu(t3);
-              a0 = s0 << 2;
-            } while((int)s0 < (int)v0);
+          //LAB_800fe1fc
+          for(s0 = s1; s0 < _8011d750.get(); s0++) {
+            _8011dcb8.offset(_8011d734.get() * 0x4L).deref(4).offset(s0 * 0x4L).setu(_8011dcb8.offset(_8011d734.get() * 0x4L).deref(4).offset(s0 * 0x4L).offset(0x4L).get());
           }
 
           //LAB_800fe238
-          v1 = 0x8012_0000L;
-          v0 = MEMORY.ref(4, v1).offset(-0x28b0L).get();
-
-          v0 = v0 - 0x1L;
-          MEMORY.ref(4, v1).offset(-0x28b0L).setu(v0);
-          v1 = 0x8012_0000L;
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, v0).offset(-0x28ccL).get();
-          v1 = v1 - 0x2348L;
-          v0 = a0 << 2;
-          v1 = v0 + v1;
-          if(a0 != 0) {
-            v0 = 0x800c_0000L;
-            a1 = v0 - 0x514fL;
+          _8011d750.subu(0x1L);
+          if(_8011d734.get() != 0) {
+            a1 = _800baeb1.getAddress();
           } else {
             //LAB_800fe274
-            v0 = 0x800c_0000L;
-            a1 = v0 - 0x5250L;
+            a1 = _800badb0.getAddress();
           }
 
           //LAB_800fe27c
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, v1).offset(0x0L).get();
-          a2 = MEMORY.ref(4, v0).offset(-0x28b0L).get();
-
-          FUN_800239e0(a0, a1, a2);
+          FUN_800239e0(_8011dcb8.offset(_8011d734.get() * 0x4L).get(), a1, _8011d750.get());
           FUN_80023148();
 
           //LAB_800fe29c
@@ -1552,15 +1401,8 @@ public final class SItem {
         }
 
         //LAB_800fe2b4
-        a2 = 0xffL;
-        v0 = 0x8012_0000L;
-
         //LAB_800fe2bc
-        a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        v0 = 0x8012_0000L;
-        a1 = MEMORY.ref(4, v0).offset(-0x28b8L).get();
-        a3 = 0x1L;
-        FUN_80102840(a0, a1, a2, a3);
+        FUN_80102840(fileScroll_8011d744.get(), _8011d748.get(), 0xffL, 0x1L);
         break;
 
       case 0x13:
@@ -1829,165 +1671,73 @@ public final class SItem {
         MEMORY.ref(4, v1).offset(-0x23d8L).setu(v0);
         break;
 
-      case 0x1b:
-        a0 = 0xffL;
-        FUN_8002437c(a0);
-        a0 = 0x8011_0000L;
-        a0 = a0 + 0x41fcL;
-        a1 = 0;
-        a2 = a1;
-        renderBackground(a0, a1, a2);
-        s0 = 0x8012_0000L;
-        a0 = MEMORY.ref(4, s0).offset(-0x28c0L).get();
-
-        v0 = FUN_800fc8dc(a0);
-        a0 = 0x77L;
-        a1 = a0;
-        a2 = 0x2aL;
-        a3 = v0;
-        renderablePtr_800bdbec.set(allocateUiElement(a0, a1, a2, a3));
+      case 0x1b: // Item sub-menu
+        FUN_8002437c(0xffL);
+        renderBackground(_801141fc.getAddress(), 0, 0);
+        renderablePtr_800bdbec.set(allocateUiElement(0x77L, 0x77L, 0x2aL, FUN_800fc8dc(fileIndex_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbec.deref());
-
-        v0 = FUN_80104448();
-        a3 = 0xffL;
-        v1 = 0x8012_0000L;
-        a0 = MEMORY.ref(4, v1).offset(-0x28ccL).get();
-        v1 = 0x8012_0000L;
-        a1 = MEMORY.ref(4, s0).offset(-0x28c0L).get();
-        a2 = MEMORY.ref(4, v1).offset(-0x28bcL).get();
-        v1 = 0x8012_0000L;
-        MEMORY.ref(4, v1).offset(-0x28b0L).setu(v0);
-        FUN_80102dfc(a0, a1, a2, a3);
-        v1 = 0x800c_0000L;
-        v0 = 0x1cL;
-        MEMORY.ref(4, v1).offset(-0x23d8L).setu(v0);
+        _8011d750.setu(FUN_80104448());
+        FUN_80102dfc(_8011d734.get(), fileIndex_8011d740.get(), fileScroll_8011d744.get(), 0xffL);
+        inventoryMenuState_800bdc28.setu(0x1cL);
         break;
 
-      case 0x1c:
-        v0 = 0x8012_0000L;
-        a0 = MEMORY.ref(4, v0).offset(-0x28ccL).get();
-        v0 = 0x8012_0000L;
-        a1 = MEMORY.ref(4, v0).offset(-0x28c0L).get();
-        v0 = 0x8012_0000L;
-        a2 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        a3 = 0;
-        FUN_80102dfc(a0, a1, a2, a3);
-        v0 = messageBox(messageBox_8011dc90);
-        if(v0 == 0) {
-          v1 = 0x800c_0000L;
-        } else {
-          v1 = 0x800c_0000L;
-          v0 = 0x1dL;
-          MEMORY.ref(4, v1).offset(-0x23d8L).setu(v0);
+      case 0x1c: // Transition from item sub-menu to item list
+        FUN_80102dfc(_8011d734.get(), fileIndex_8011d740.get(), fileScroll_8011d744.get(), 0);
+
+        if(messageBox(messageBox_8011dc90) != 0) {
+          inventoryMenuState_800bdc28.setu(0x1dL);
         }
 
         break;
 
-      case 0x1d:
-        s0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, s0).offset(-0x23bcL).get();
-
-        v0 = v0 & 0x40L;
-        if(v0 != 0) {
-          a0 = 0x3L;
-          playSound(a0);
-          a0 = 0x7L;
-          a1 = 0xaL;
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2460L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2464L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x2468L).setu(0);
-          v0 = 0x800c_0000L;
-          MEMORY.ref(4, v0).offset(-0x246cL).setu(0);
-          FUN_800fca0c(a0, a1);
+      case 0x1d: // Item list
+        if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
+          playSound(0x3L);
+          _800bdb9c.clear();
+          _800bdba0.clear();
+          saveListDownArrow_800bdb98.clear();
+          saveListUpArrow_800bdb94.clear();
+          FUN_800fca0c(0x7L, 0xaL);
         }
 
         //LAB_800fe824
-        v0 = MEMORY.ref(4, s0).offset(-0x23bcL).get();
+        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
+          a0 = FUN_80022afc(_8011d7c8.offset((fileIndex_8011d740.get() + fileScroll_8011d744.get()) * 0x4L).get()) & 0xffL;
+          fileCount_8011d7b8.setu(a0);
 
-        v0 = v0 & 0x20L;
-        if(v0 == 0) {
-          a0 = 0x8012_0000L;
-        } else {
-          a0 = 0x8012_0000L;
-          s1 = 0x8012_0000L;
-          s2 = 0x8012_0000L;
-          v0 = MEMORY.ref(4, s1).offset(-0x28c0L).get();
-          v1 = MEMORY.ref(4, s2).offset(-0x28bcL).get();
-          s0 = a0 - 0x2838L;
-          v0 = v0 + v1;
-          v0 = v0 << 2;
-          v0 = v0 + s0;
-          a0 = MEMORY.ref(1, v0).offset(0x0L).get();
-
-          v0 = FUN_80022afc(a0);
-          v1 = 0x8012_0000L;
-          a0 = v0 & 0xffL;
           if(a0 == 0) {
-            MEMORY.ref(4, v1).offset(-0x2848L).setu(a0);
             //LAB_800fe93c
             playSound(0x28L);
-          } else {
-            MEMORY.ref(4, v1).offset(-0x2848L).setu(a0);
-
-            if((MEMORY.ref(2, s0).offset((fileIndex_8011d740.get() + fileScroll_8011d744.get()) * 0x4L).offset(0x2L).get() & 0x4000L) == 0) {
-              if((a0 & 0x2L) != 0) {
-                //LAB_800fe8b0
-                for(int i = 0; i < 7; i++) {
-                  _8011d718.get(i).set(allocateUiElement(0x7eL, 0x7eL, FUN_800fc8c0(i), 0x6eL));
-                  FUN_80104b60(_8011d718.get(i).deref());
-                }
-              } else {
-                //LAB_800fe8f0
-                renderablePtr_800bdbe8.set(allocateUiElement(0x7eL, 0x7eL, FUN_800fc8c0(_8011d734.get()), 0x6eL));
-                FUN_80104b60(renderablePtr_800bdbe8.deref());
+          } else if((_8011d7c8.offset((fileIndex_8011d740.get() + fileScroll_8011d744.get()) * 0x4L).offset(2, 0x2L).get() & 0x4000L) == 0) {
+            if((a0 & 0x2L) != 0) {
+              //LAB_800fe8b0
+              for(int i = 0; i < 7; i++) {
+                _8011d718.get(i).set(allocateUiElement(0x7eL, 0x7eL, FUN_800fc8c0(i), 0x6eL));
+                FUN_80104b60(_8011d718.get(i).deref());
               }
-
-              //LAB_800fe924
-              playSound(0x2L);
-              inventoryMenuState_800bdc28.setu(0x1eL);
             } else {
-              //LAB_800fe93c
-              playSound(0x28L);
+              //LAB_800fe8f0
+              renderablePtr_800bdbe8.set(allocateUiElement(0x7eL, 0x7eL, FUN_800fc8c0(_8011d734.get()), 0x6eL));
+              FUN_80104b60(renderablePtr_800bdbe8.deref());
             }
+
+            //LAB_800fe924
+            playSound(0x2L);
+            inventoryMenuState_800bdc28.setu(0x1eL);
+          } else {
+            //LAB_800fe93c
+            playSound(0x28L);
           }
         }
 
         //LAB_800fe944
-        s0 = 0x8012_0000L;
-        a0 = s0 - 0x28c0L;
-        s1 = 0x8012_0000L;
-        a1 = s1 - 0x28bcL;
-        a2 = 0x5L;
-        v0 = 0x8012_0000L;
-        a3 = MEMORY.ref(4, v0).offset(-0x28b0L).get();
-        v0 = 0x1L;
-        a4 = v0;
-        v0 = FUN_80103f00(a0, a1, a2, a3, a4);
-        if(v0 == 0) {
-          v0 = 0x8012_0000L;
-        } else {
-          v0 = 0x8012_0000L;
-          a0 = MEMORY.ref(4, s0).offset(-0x28c0L).get();
-
-          v0 = FUN_800fc8dc(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(-0x2414L).get();
-
-          MEMORY.ref(4, v1).offset(0x44L).setu(v0);
-          v0 = 0x8012_0000L;
+        if(FUN_80103f00(fileIndex_8011d740.getAddress(), fileScroll_8011d744.getAddress(), 0x5L, _8011d750.get(), 0x1L) != 0) {
+          renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8dc(fileIndex_8011d740.get()));
         }
 
         //LAB_800fe994
-        a0 = MEMORY.ref(4, v0).offset(-0x28ccL).get();
-        a1 = MEMORY.ref(4, s0).offset(-0x28c0L).get();
-        a2 = MEMORY.ref(4, s1).offset(-0x28bcL).get();
-
         //LAB_800fec18
-        a3 = 0;
-        FUN_80102dfc(a0, a1, a2, a3);
+        FUN_80102dfc(_8011d734.get(), fileIndex_8011d740.get(), fileScroll_8011d744.get(), 0);
         break;
 
       case 0x1e:
@@ -2158,91 +1908,35 @@ public final class SItem {
         FUN_80102dfc(a0, a1, a2, a3);
         break;
 
-      case 0x23:
-        a0 = 0x2L;
-        a1 = 0xaL;
-        scriptStartEffect(a0, a1);
-        a0 = 0xffL;
-        FUN_8002437c(a0);
-        a0 = 0x8011_0000L;
-        a0 = a0 + 0x41c4L;
-        a1 = 0;
-        a2 = a1;
-        renderBackground(a0, a1, a2);
-        v1 = 0x8012_0000L;
-        MEMORY.ref(4, v1).offset(-0x28b0L).setu(0);
-        s0 = 0;
-        t1 = 0xffL;
-        v0 = 0x800c_0000L;
-        t0 = v0 - 0x529cL;
-        a3 = 0x1L;
-        a1 = v1;
-        v0 = 0x8012_0000L;
-        a2 = v0 - 0x2838L;
-        a0 = a2;
+      case 0x23: // Goods menu
+        scriptStartEffect(0x2L, 0xaL);
+        FUN_8002437c(0xffL);
+        renderBackground(_801141c4.getAddress(), 0, 0);
+        _8011d750.setu(0);
 
         //LAB_800fec7c
-        do {
-          MEMORY.ref(1, a0).offset(0x0L).setu(t1);
-          if((int)s0 < 0x40L) {
-            v0 = s0 & 0x1fL;
-            v1 = s0 >>> 5;
-            v1 = v1 << 2;
-            v1 = v1 + t0;
-            v1 = MEMORY.ref(4, v1).offset(0x0L).get();
-            v0 = a3 << v0;
-            v1 = v1 & v0;
-            if(v1 != 0) {
-              v0 = MEMORY.ref(4, a1).offset(-0x28b0L).get();
+        for(s0 = 0; s0 < 70; s0++) {
+          _8011d7c8.offset(s0 * 0x4L).setu(0xffL);
 
-              v0 = v0 << 2;
-              v0 = v0 + a2;
-              MEMORY.ref(1, v0).offset(0x0L).setu(s0);
-              v0 = MEMORY.ref(4, a1).offset(-0x28b0L).get();
-
-              v0 = v0 << 2;
-              v0 = v0 + a2;
-              MEMORY.ref(1, v0).offset(0x1L).setu(s0);
-              v1 = MEMORY.ref(4, a1).offset(-0x28b0L).get();
-
-              v0 = v1 << 2;
-              v1 = v1 + 0x1L;
-              v0 = v0 + a2;
-              MEMORY.ref(2, v0).offset(0x2L).setu(0);
-              MEMORY.ref(4, a1).offset(-0x28b0L).setu(v1);
+          if(s0 < 0x40L) {
+            if((_800bad64.offset(4, (s0 >>> 5) * 0x4L).get() & (0x1L << (s0 & 0x1fL))) != 0) {
+              _8011d7c8.offset(_8011d750.get() * 0x4L).offset(1, 0x0L).setu(s0);
+              _8011d7c8.offset(_8011d750.get() * 0x4L).offset(1, 0x1L).setu(s0);
+              _8011d7c8.offset(_8011d750.get() * 0x4L).offset(2, 0x2L).setu(0);
+              _8011d750.addu(0x1L);
             }
           }
 
           //LAB_800fecf0
-          s0 = s0 + 0x1L;
-          a0 = a0 + 0x4L;
-        } while((int)s0 < 0x46L);
+        }
 
-        a0 = 0;
-        s3 = 0x8012_0000L;
-        s1 = 0x8012_0000L;
-        s2 = 0x8012_0000L;
-        MEMORY.ref(4, s3).offset(-0x28bcL).setu(0);
-        MEMORY.ref(4, s1).offset(-0x28c0L).setu(0);
-        MEMORY.ref(4, s2).offset(-0x28ccL).setu(0);
-        v0 = FUN_800fc824(a0);
-        a0 = MEMORY.ref(4, s1).offset(-0x28c0L).get();
-        s0 = v0;
-        v0 = FUN_800fc814(a0);
-        a0 = 0x76L;
-        a1 = a0;
-        a2 = s0;
-        a3 = v0 + 0x20L;
-        renderablePtr_800bdbe8.set(allocateUiElement(a0, a1, a2, a3));
+        fileScroll_8011d744.setu(0);
+        fileIndex_8011d740.setu(0);
+        _8011d734.setu(0);
+        renderablePtr_800bdbe8.set(allocateUiElement(0x76L, 0x76L, FUN_800fc824(0), FUN_800fc814(fileIndex_8011d740.get()) + 0x20L));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
-        a0 = MEMORY.ref(4, s2).offset(-0x28ccL).get();
-        a1 = MEMORY.ref(4, s1).offset(-0x28c0L).get();
-        a2 = MEMORY.ref(4, s3).offset(-0x28bcL).get();
-        a3 = 0xffL;
-        FUN_80102f74(a0, a1, a2, a3);
-        v1 = 0x800c_0000L;
-        v0 = 0x24L;
-        MEMORY.ref(4, v1).offset(-0x23d8L).setu(v0);
+        FUN_80102f74(_8011d734.get(), fileIndex_8011d740.get(), fileScroll_8011d744.get(), 0xffL);
+        inventoryMenuState_800bdc28.setu(0x24L);
         break;
 
       case 0x24:
@@ -2270,8 +1964,7 @@ public final class SItem {
           v1 = a2 << 2;
           a2 = a2 + 0x1L;
           v1 = v1 + v0;
-          assert false : "Undefined s0";
-          //          MEMORY.ref(1, v1).offset(0x1L).setu(s0); //TODO This seems like a legit error?
+          MEMORY.ref(1, v1).offset(0x1L).setu(0x30L); // This is a bug - it's set to s0 but s0 is undefined. The value of s0 at this point is an address with the lower byte of 0x30. Unknown if this value needs to be set or not, and if it's just chance that 0x30 is a valid value.
           MEMORY.ref(4, a3).offset(-0x28b0L).setu(a2);
           FUN_800fca0c(a0, a1);
         }
@@ -5583,7 +5276,37 @@ public final class SItem {
 
   @Method(0x80102840L)
   public static void FUN_80102840(final long a0, final long a1, final long a2, final long a3) {
-    assert false;
+    FUN_80109410(0x10L, 0x21L, _8011dcb8.get(), a0, 0x7L, saveListUpArrow_800bdb94.derefNullable(), saveListDownArrow_800bdb98.derefNullable());
+    FUN_80109410(0xc2L, 0x21L, _8011dcbc.get(), a1, 0x7L, _800bdb9c.derefNullable(), _800bdba0.derefNullable());
+    renderThreeDigitNumber(0x88L, 0x18L, _800babc8.offset(2, 0x1e4L).getSigned(), 0x2L);
+    renderTwoDigitNumber(0x146L, 0x18L, _800babc8.offset(2, 0x1e6L).getSigned(), 0x2L);
+
+    final long s1 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+    if(s1 != 0) {
+      allocateUiElement(0xbL, 0xbL, 0x9aL, 0x18L);
+      renderThreeDigitNumber(0xa0L, 0x18L, 0xffL);
+      allocateUiElement(0xbL, 0xbL, 0x152L, 0x18L);
+      renderTwoDigitNumber(0x158L, 0x18L, 0x20L);
+      allocateUiElement(0x55L, 0x55L, 0x10L, 0x10L);
+      saveListUpArrow_800bdb94.set(allocateUiElement(0x3dL, 0x44L, 0xb4L, FUN_800fc814(0x2L)));
+      saveListDownArrow_800bdb98.set(allocateUiElement(0x35L, 0x3cL, 0xb4L, FUN_800fc814(0x8L)));
+      allocateUiElement(0x55L, 0x55L, 0xc2L, 0x10L);
+      _800bdb9c.set(allocateUiElement(0x3dL, 0x44L, 0x166L, FUN_800fc814(0x2L)));
+      _800bdba0.set(allocateUiElement(0x35L, 0x3cL, 0x166L, FUN_800fc814(0x8L)));
+    }
+
+    //LAB_80102a1c
+    renderText(_8011c314, 0x20L, 0x16L, 0x4L);
+    renderText(_8011c32c, 0xd2L, 0x16L, 0x4L);
+
+    if(a3 != 0x1L) {
+      FUN_801038d4(0x89L, 0x54L, 0xb2L).clut_30.set(0x7cebL);
+      renderText(_8011d024, 0x25L, 0xb2L, 0x4L);
+    }
+
+    //LAB_80102a88
+    FUN_80109074(0, 0xc2L, 0xb2L, a2, s1);
+    uploadRenderables();
   }
 
   @Method(0x80102ad8L)
@@ -5593,12 +5316,43 @@ public final class SItem {
 
   @Method(0x80102dfcL)
   public static void FUN_80102dfc(final long a0, final long a1, final long a2, final long a3) {
-    assert false;
+    final long s2 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+
+    //LAB_80102e48
+    for(int i = 0; i < _8011d7c4.get(); i++) {
+      FUN_80108464(FUN_800fc8c0(i) - 0x5L, 0x78L, _800bdbb8.offset(i * 0x4L).get(), 0x1L, s2);
+    }
+
+    //LAB_80102e88
+    if(s2 != 0) {
+      allocateUiElement(84, 84, 16, 16);
+      saveListUpArrow_800bdb94.set(allocateUiElement(61, 68, 180, FUN_800fc8dc(0) + 2));
+      saveListDownArrow_800bdb98.set(allocateUiElement(53, 60, 180, FUN_800fc8dc(0x4L) + 2));
+    }
+
+    //LAB_80102ee8
+    FUN_80109410(0x10L, 0xaL, _8011d7c8.getAddress(), a2, 0x5L, saveListUpArrow_800bdb94.derefNullable(), saveListDownArrow_800bdb98.derefNullable());
+    FUN_80109074(0, 0xc2L, 0x10L, _8011d7c8.offset((a1 + a2) * 0x4L).get(), s2);
+    uploadRenderables();
   }
 
   @Method(0x80102f74L)
   public static void FUN_80102f74(final long a0, final long a1, final long a2, final long a3) {
-    assert false;
+    final long s1 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+
+    if(s1 != 0) {
+      allocateUiElement(0x55L, 0x55L, 0x10L, 0x10L);
+      allocateUiElement(0x55L, 0x55L, 0xc2L, 0x10L);
+      _800bdb9c.set(allocateUiElement(0x3dL, 0x44L, 0x166L, FUN_800fc814(0x2L)));
+      _800bdba0.set(allocateUiElement(0x35L, 0x3cL, 0x166L, FUN_800fc814(0x8L)));
+    }
+
+    //LAB_8010301c
+    renderText(Goods_8011cf48, 0x20L, 0x16L, 0x4L);
+    renderText(Goods_8011cf48, 0xd2L, 0x16L, 0x4L);
+    FUN_8010965c(a2, _800bdb9c.derefNullable(), _800bdba0.derefNullable());
+    FUN_80109074(0x1L, 0xc2L, 0xb2L, _8011d7c8.offset((a0 + (a1 << 0x1L) + a2) * 0x4L).get(), s1);
+    uploadRenderables();
   }
 
   /**
@@ -5792,7 +5546,7 @@ public final class SItem {
   }
 
   @Method(0x80103910L)
-  public static void FUN_80103910(final long glyph, final long x, final long y, final long flags) {
+  public static Renderable58 FUN_80103910(final long glyph, final long x, final long y, final long flags) {
     final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._c6a4, null);
     renderable.flags_00.or(flags | 0x4L);
     renderable.glyph_04.set(glyph);
@@ -5802,6 +5556,7 @@ public final class SItem {
     renderable.clut_30.set(0);
     renderable.x_40.set(x);
     renderable.y_44.set(y);
+    return renderable;
   }
 
   @Method(0x80103a5cL)
@@ -5894,7 +5649,7 @@ public final class SItem {
   }
 
   @Method(0x80103dd4L)
-  public static long textLength(final LodString text) {
+  public static int textLength(final LodString text) {
     //LAB_80103ddc
     int v1;
     for(v1 = 0; v1 < 0xff; v1++) {
@@ -6075,15 +5830,52 @@ public final class SItem {
   }
 
   @Method(0x801038d4L)
-  public static void FUN_801038d4(final long glyph, final long x, final long y) {
-    final Renderable58 v0 = allocateUiElement(glyph, glyph, x, y);
-    v0.flags_00.or(0x8L);
+  public static Renderable58 FUN_801038d4(final long glyph, final long x, final long y) {
+    final Renderable58 renderable = allocateUiElement(glyph, glyph, x, y);
+    renderable.flags_00.or(0x8L);
+    return renderable;
   }
 
   @Method(0x80104448L)
   public static long FUN_80104448() {
-    assert false;
-    return 0;
+    //LAB_8010449c
+    long s5 = 0;
+    for(int i = 0; i < _8011d7c4.get(); i++) {
+      s5 |= _800babc8.offset(_800bdbb8.offset(i * 0x4L).get() * 0x2cL).offset(2, 0x33cL).get();
+    }
+
+    //LAB_801044d4
+    //LAB_801044e8
+    for(int i = 0; i < 32; i++) {
+      _8011d7c8.offset(i * 0x4L).setu(0xffL);
+    }
+
+    //LAB_80104530
+    long s4 = 0;
+    for(int i = 0; i < _800babc8.offset(2, 0x1e6L).getSigned(); i++) {
+      final long s0 = _800babc8.offset(1, i).offset(1, 0x2e9L).get();
+
+      if((FUN_80022afc(s0) & 0xffL) != 0) {
+        final long a0 = _8004f2ac.offset((s0 - 0xc0L) * 0xcL).getAddress();
+        final long s3 = _8011d7c8.offset(s4 * 0x4L).getAddress();
+        MEMORY.ref(1, s3).offset(0x0L).setu(s0);
+        MEMORY.ref(1, s3).offset(0x1L).setu(i);
+        MEMORY.ref(2, s3).offset(0x2L).setu(0);
+
+        if(MEMORY.ref(1, a0).offset(0xbL).get() == 0x8L && (MEMORY.ref(1, a0).offset(0x8L).get() & s5) == 0) {
+          MEMORY.ref(2, s3).offset(0x2L).setu(0x4000L);
+        }
+
+        //LAB_80104594
+        s4++;
+      }
+
+      //LAB_8010459c
+    }
+
+    //LAB_801045b0
+    FUN_80013434(_8011d7c8.getAddress(), s4, 0x4L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80023978", long.class, long.class));
+    return s4;
   }
 
   @Method(0x801045fcL)
@@ -6094,8 +5886,63 @@ public final class SItem {
 
   @Method(0x80104738L)
   public static long FUN_80104738(final long a0) {
-    assert false;
-    return 0;
+    //LAB_8010476c
+    for(int i = 0; i < 304; i++) {
+      _8011dcb8.deref(1).offset(i * 0x4L).setu(0xffL);
+      _8011dcbc.deref(1).offset(i * 0x4L).setu(0xffL);
+    }
+
+    //LAB_801047bc
+    for(int i = 0; i < _800babc8.offset(2, 0x1e6L).getSigned(); i++) {
+      _8011dcbc.deref(1).offset(i * 0x4L).offset(0x0L).setu(_800babc8.offset(1, 0x2e9L).offset(i).get());
+      _8011dcbc.deref(1).offset(i * 0x4L).offset(0x1L).setu(i);
+      _8011dcbc.deref(2).offset(i * 0x4L).offset(0x2L).setu(0);
+    }
+
+    //LAB_8010480c
+    //LAB_8010482c
+    long s1;
+    for(s1 = 0; s1 < _800babc8.offset(2, 0x1e4L).getSigned(); s1++) {
+      _8011dcb8.deref(1).offset(s1 * 0x4L).offset(0x0L).setu(_800babc8.offset(s1).offset(1, 0x1e8L).get());
+      _8011dcb8.deref(1).offset(s1 * 0x4L).offset(0x1L).setu(s1);
+      _8011dcb8.deref(2).offset(s1 * 0x4L).offset(0x2L).setu(0);
+
+      if(a0 != 0 && FUN_80022b898(_800babc8.offset(s1).offset(1, 0x1e8L).get()) != 0) {
+        _8011dcb8.deref(2).offset(s1 * 0x4L).offset(0x2L).oru(0x2000L);
+      }
+
+      //LAB_80104898
+    }
+
+    //LAB_801048ac
+    if(a0 != 0) {
+      return 0;
+    }
+
+    long s2 = s1;
+    long t0 = 0;
+
+    //LAB_801048e0
+    for(int i = 0; i < _8011d7c4.get(); i++) {
+      //LAB_801048e8
+      for(long a1 = 0; a1 < 5; a1++) {
+        if(_800babc8.offset(1, 0x340L).offset(_800bdbb8.offset(i * 0x4L).get() * 0x2cL).offset(a1).get() != 0xffL) {
+          _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x0L).setu(_800babc8.offset(1, 0x340L).offset(_800bdbb8.offset(i * 0x4L).get() * 0x2cL).offset(a1).get());
+          _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x1L).setu(s2);
+          _8011dcb8.deref(2).offset(s2 * 0x4L).offset(0x2L).setu(_800bdbb8.offset(i * 0x4L).get());
+          _8011dcb8.deref(2).offset(s2 * 0x4L).offset(0x2L).oru(0x3000L);
+
+          t0 = t0 + 0x1L;
+          s2 = s2 + 0x1L;
+        }
+
+        //LAB_80104968
+      }
+    }
+
+    //LAB_8010498c
+    //LAB_80104990
+    return t0;
   }
 
   @Method(0x801049b4L)
@@ -6695,6 +6542,36 @@ public final class SItem {
     //LAB_80108270
   }
 
+  @Method(0x80108464L)
+  public static void FUN_80108464(final long x, final long y, final long a2, final long a3, final long a4) {
+    if((int)a2 != -0x1L) {
+      FUN_80107e70(x - 4, y - 6, a2);
+
+      if(a4 != 0) {
+        allocateUiElement(112, 112, x, y)._3c.set(0x21);
+
+        if(a2 < 0x9L) {
+          final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+          FUN_80104b1c(renderable, _801142d4.getAddress());
+          renderable.glyph_04.set(a2);
+          renderable.tpage_2c.add(0x1L);
+          renderable._3c.set(0x21);
+          renderable.x_40.set(x + 2);
+          renderable.y_44.set(y + 8);
+        }
+
+        //LAB_80108544
+        final long s0 = _800be5f8.offset(a2 * 0xa0L).getAddress();
+        renderFourDigitNumber(x + 25, y + 57, MEMORY.ref(2, s0).offset(0x4L).getSigned(), MEMORY.ref(2, s0).offset(0x66L).get());
+        renderFourDigitNumber(x + 25, y + 68, MEMORY.ref(2, s0).offset(0x66L).get());
+        renderFourDigitNumber(x + 25, y + 79, MEMORY.ref(2, s0).offset(0x6L).getSigned());
+        renderFourDigitNumber(x + 25, y + 90, MEMORY.ref(2, s0).offset(0x6eL).getSigned());
+      }
+    }
+
+    //LAB_801085b8
+  }
+
   @Method(0x801085e0L)
   public static void FUN_801085e0(final long a0, final long a1, final long a2) {
     if((int)a0 != -0x1L) {
@@ -6934,6 +6811,78 @@ public final class SItem {
     //LAB_8010905c
   }
 
+  @Method(0x80109074L)
+  public static void FUN_80109074(final long a0, final long x, final long y, final long a3, final long a4) {
+    if(a4 != 0) {
+      allocateUiElement(0x5bL, 0x5bL, x, y);
+    }
+
+    //LAB_801090e0
+    LodString s0 = null;
+    if(a0 == 0) {
+      //LAB_80109118
+      if(a3 == 0xffL) {
+        return;
+      }
+
+      s0 = _80117a10.get((int)a3).deref();
+    } else if(a0 == 0x1L) {
+      //LAB_8010912c
+      if((int)a3 >= 0xffL) {
+        //LAB_80109140
+        s0 = _8011c254;
+      } else {
+        //LAB_80109154
+        s0 = _8011b75c.get((int)a3).deref();
+      }
+      //LAB_80109108
+    } else if(a0 == 0x2L) {
+      //LAB_8010914c
+      s0 = _80114300.get((int)a3).deref();
+    }
+
+    //LAB_80109160
+    //LAB_80109168
+    //LAB_80109188
+    for(int i = 0; i < 4; i++) {
+      int s4 = 0;
+      final int len = Math.min(textLength(s0), 20);
+
+      final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp((len + 1) * 2);
+      final LodString s3 = sp0x10tmp.get().cast(LodString::new);
+
+      //LAB_801091bc
+      //LAB_801091cc
+      int a1;
+      for(a1 = 0; a1 < len; a1++) {
+        if(s0.charAt(a1) == 0xa1ffL) {
+          //LAB_8010924c
+          s4 = 1;
+          break;
+        }
+
+        s3.charAt(a1, s0.charAt(a1));
+      }
+
+      //LAB_801091fc
+      s3.charAt(a1, 0xa0ffL);
+
+      renderText(s3, x + 2, y + i * 14 + 4, 0x4L);
+
+      if(textLength(s3) > len) {
+        //LAB_80109270
+        break;
+      }
+
+      //LAB_80109254
+      s0 = s0.slice(textLength(s3) + s4);
+
+      sp0x10tmp.release();
+    }
+
+    //LAB_80109284
+  }
+
   @Method(0x801092b4L)
   public static void FUN_801092b4(final long a0, final long a1) {
     if((int)a0 == -0x1L) {
@@ -6973,6 +6922,98 @@ public final class SItem {
     }
 
     //LAB_801093e0
+  }
+
+  @Method(0x80109410L)
+  public static void FUN_80109410(final long a0, final long a1, final long a2, final long a3, final long a4, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
+    long s3 = a3;
+
+    //LAB_8010947c
+    int i;
+    for(i = 0; i < a4 && MEMORY.ref(1, a2).offset(s3 * 0x4L).get() != 0xffL; i++) {
+      final long s1 = a2 + s3 * 0x4L;
+
+      long s0;
+      if((MEMORY.ref(2, s1).offset(0x2L).get() & 0x6000L) == 0) {
+        s0 = 0x4L;
+      } else {
+        s0 = 0x6L;
+      }
+
+      //LAB_801094ac
+      renderText(_8011972c.get((int)MEMORY.ref(1, s1).get()).deref(), a0 + 21, a1 + FUN_800fc814(i) + 2, s0);
+      FUN_80103910(FUN_800228d0(MEMORY.ref(1, s1).get()), a0 + 4, a1 + FUN_800fc814(i), 0x8L);
+
+      s0 = MEMORY.ref(2, s1).offset(0x2L).get();
+      if((s0 & 0x1000L) != 0) {
+        FUN_80103910(48 | (s0 & 0xfL), a0 + 148, a1 + FUN_800fc814(i) - 1, 0x8L).clut_30.set((s0 + 0x1f4L << 6) | 0x2bL);
+        //LAB_80109574
+      } else if((s0 & 0x2000L) != 0) {
+        FUN_80103910(58, a0 + 148, a1 + FUN_800fc814(i) - 1, 0x8L).clut_30.set(0x7eaaL);
+      }
+
+      //LAB_801095a4
+      s3++;
+    }
+
+    //LAB_801095c0
+    //LAB_801095d4
+    //LAB_801095e0
+    if(a5 != null) { // There was an NPE here when fading out item list
+      if(a3 != 0) {
+        a5.flags_00.and(0xffff_ffbfL);
+      } else {
+        a5.flags_00.or(0x40L);
+      }
+    }
+
+    //LAB_80109614
+    //LAB_80109628
+    if(a6 != null) { // There was an NPE here when fading out item list
+      if(MEMORY.ref(1, a2).offset((i + a3) * 0x4L).get() != 0xffL) {
+        a6.flags_00.and(0xffff_ffbfL);
+      } else {
+        a6.flags_00.or(0x40L);
+      }
+    }
+  }
+
+  @Method(0x8010965cL)
+  public static void FUN_8010965c(final long a0, @Nullable final Renderable58 a1, @Nullable final Renderable58 a2) {
+    //LAB_801096c8
+    long s1 = a0;
+    int i;
+    for(i = 0; i < 14 && _8011d7c8.offset(s1 * 0x4L).get() != 0xffL; i += 0x2L) {
+      renderText(_8011c008.get((int)_8011d7c8.offset(s1 * 0x4L).get()).deref(), 0x25L, FUN_800fc814(i / 2) + 34, 0x4L);
+
+      if(_8011d7c8.offset((s1 + 1) * 0x4L).get() != 0xffL) {
+        renderText(_8011c008.get((int)_8011d7c8.offset((s1 + 1) * 0x4L).get()).deref(), 0xd6L, FUN_800fc814(i / 2) + 34, 0x4L);
+      }
+
+      //LAB_80109760
+      s1 += 0x2L;
+    }
+
+    //LAB_8010977c
+    //LAB_80109790
+    //LAB_8010979c
+    if(a1 != null) { // There was an NPE here
+      if(a0 != 0) {
+        a1.flags_00.and(0xffff_ffbfL);
+      } else {
+        a1.flags_00.or(0x40L);
+      }
+    }
+
+    //LAB_801097d8
+    //LAB_801097ec
+    if(a2 != null) { // There was an NPE here
+      if(_8011d7c8.offset((i + a0) * 0x4L).get() != 0xffL) {
+        a2.flags_00.and(0xffff_ffbfL);
+      } else {
+        a2.flags_00.or(0x40L);
+      }
+    }
   }
 
   @Method(0x801098c0L)

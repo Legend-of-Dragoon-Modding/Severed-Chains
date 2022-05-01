@@ -101,6 +101,7 @@ import static legend.game.SMap.renderDobj2;
 import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment._80010868;
@@ -1533,6 +1534,16 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  @Method(0x80022898L)
+  public static long FUN_80022b898(final long a0) {
+    if(a0 >= 0xc0L) {
+      return 0;
+    }
+
+    //LAB_800228b0
+    return _80111ff0.offset(a0 * 0x1cL).get() & 0x4L;
+  }
+
   @Method(0x800228d0L)
   public static long FUN_800228d0(final long a0) {
     if(a0 >= 0xc0L) {
@@ -1629,8 +1640,19 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022afcL)
   public static long FUN_80022afc(final long a0) {
-    assert false;
-    return 0;
+    if(a0 < 0xc0L || a0 == 0xffL) {
+      return 0;
+    }
+
+    long v1 = _8004f2ac.offset((a0 - 0xc0L) * 0xcL).get();
+
+    if((v1 & 0x10L) == 0) {
+      //LAB_80022b40
+      return 0;
+    }
+
+    //LAB_80022b48
+    return v1 & 0x12L;
   }
 
   @Method(0x80022b50L)
@@ -1847,14 +1869,40 @@ public final class Scus94491BpeSegment_8002 {
     return press & 0x20L;
   }
 
+  @Method(0x80023978L)
+  public static long FUN_80023978(final long a0, final long a1) {
+    final long s0 = FUN_800228d0(MEMORY.ref(1, a0).get()) & 0xffL;
+    final long v0 = FUN_800228d0(MEMORY.ref(1, a1).get()) & 0xffL;
+
+    if(s0 != v0) {
+      return s0 - v0;
+    }
+
+    //LAB_800239c8
+    return MEMORY.ref(1, a0).get() - MEMORY.ref(1, a1).get();
+  }
+
   @Method(0x800239e0L)
   public static void FUN_800239e0(final long a0, final long a1, final long a2) {
-    assert false;
+    //LAB_800239ec
+    long a3 = 0;
+    for(int i = 0; i < a2; i++) {
+      if((MEMORY.ref(2, a0).offset(i * 0x4L).offset(0x2L).get() & 0x1000L) == 0) {
+        MEMORY.ref(1, a1).offset(a3).setu(MEMORY.ref(1, a0).offset(i * 0x4L).get());
+        a3++;
+      }
+
+      //LAB_80023a0c
+    }
+
+    //LAB_80023a1c
+    MEMORY.ref(1, a1).offset(a3).setu(0xffL);
   }
 
   @Method(0x80023a2cL)
   public static void FUN_80023a2c(final long a0, final long a1, final long a2) {
-    assert false;
+    FUN_80013434(a0, a2, 0x4L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80023978", long.class, long.class));
+    FUN_800239e0(a0, a1, a2);
   }
 
   @Method(0x80023b54L)
@@ -2179,8 +2227,8 @@ public final class Scus94491BpeSegment_8002 {
       if(a0 != 0) {
         saveListUpArrow_800bdb94.clear();
         saveListDownArrow_800bdb98.clear();
-        _800bdb9c.setu(0);
-        _800bdba0.setu(0);
+        _800bdb9c.clear();
+        _800bdba0.clear();
         renderablePtr_800bdba4.clear();
         renderablePtr_800bdba8.clear();
 

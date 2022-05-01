@@ -83,6 +83,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bae00 = MEMORY.ref(4, 0x800bae00L);
 
+  public static final Value _800baeb1 = MEMORY.ref(1, 0x800baeb1L);
+
   public static final Value _800baef4 = MEMORY.ref(4, 0x800baef4L);
 
   public static final Value _800baefc = MEMORY.ref(2, 0x800baefcL);
@@ -265,8 +267,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
   public static final Pointer<Renderable58> saveListUpArrow_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> saveListDownArrow_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
-  public static final Value _800bdb9c = MEMORY.ref(4, 0x800bdb9cL);
-  public static final Value _800bdba0 = MEMORY.ref(4, 0x800bdba0L);
+  public static final Pointer<Renderable58> _800bdb9c = MEMORY.ref(4, 0x800bdb9cL, Pointer.deferred(4, Renderable58::new));
+  public static final Pointer<Renderable58> _800bdba0 = MEMORY.ref(4, 0x800bdba0L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Renderable58::new));
 
