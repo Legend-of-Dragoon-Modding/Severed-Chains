@@ -190,6 +190,8 @@ public final class SItem {
 
   public static final Value _80114258 = MEMORY.ref(1, 0x80114258L);
 
+  public static final Value _80114284 = MEMORY.ref(1, 0x80114284L);
+
   public static final Value _80114290 = MEMORY.ref(1, 0x80114290L);
 
   public static final Value _801142d4 = MEMORY.ref(1, 0x801142d4L);
@@ -506,8 +508,7 @@ public final class SItem {
 
   @Method(0x800fc804L)
   public static long FUN_800fc804(final long a0) {
-    assert false;
-    return 0;
+    return 99 + a0 * 17;
   }
 
   @Method(0x800fc814L)
@@ -5259,7 +5260,23 @@ public final class SItem {
 
   @Method(0x80102660L)
   public static void FUN_80102660(final long a0, final long a1, final long a2, final long a3) {
-    assert false;
+    final long s0 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+
+    FUN_80107f9c(0x10L, 0x15L, _800bdbb8.offset(a0 * 0x4L).get(), s0, 0);
+    FUN_801085e0(_800bdbb8.offset(a0 * 0x4L).get(), _8011d7c8.offset((a1 + a2) * 0x4L).get(), s0);
+    FUN_80108e60(_800bdbb8.offset(a0 * 0x4L).get(), s0);
+
+    if(s0 != 0) {
+      allocateUiElement(0x5aL, 0x5aL, 0xc2L, 0x60L);
+      _800bdb9c.set(allocateUiElement(0x3dL, 0x44L, 0x166L, FUN_800fc804(0)));
+      _800bdba0.set(allocateUiElement(0x35L, 0x3cL, 0x166L, FUN_800fc804(0x3L)));
+    }
+
+    //LAB_80102748
+    FUN_80109410(0xc2L, 0x5cL, _8011d7c8.getAddress(), a2, 0x4L, _800bdb9c.deref(), _800bdba0.deref());
+    FUN_80109074(0, 0xc2L, 0xb2L, _8011d7c8.offset((a1 + a2) * 0x4L).get(), s0);
+
+    uploadRenderables();
   }
 
   @Method(0x801027bcL)
@@ -5557,6 +5574,40 @@ public final class SItem {
     renderable.x_40.set(x);
     renderable.y_44.set(y);
     return renderable;
+  }
+
+  @Method(0x801039a0L)
+  public static long FUN_801039a0(final long a0, final long a1) {
+    if((int)a1 == -0x1L) {
+      return 0;
+    }
+
+    //LAB_801039b4
+    if(a0 < 0xc0L) {
+      return _80114284.offset(a1).get() & _80111ff0.offset(a0 * 0x1cL).offset(0x3L).get();
+    }
+
+    //LAB_801039f0
+    return 0;
+  }
+
+  @Method(0x801039f8L)
+  public static long FUN_801039f8(final long a0) {
+    if(a0 < 0xc0L) {
+      final long a0_0 = _80111ff0.offset(a0 * 0x1cL).offset(0x1L).get();
+
+      //LAB_80103a2c
+      for(int i = 0; i < 5; i++) {
+        if((a0_0 & (0x80L >> i)) != 0) {
+          return i;
+        }
+
+        //LAB_80103a44
+      }
+    }
+
+    //LAB_80103a54
+    return 0xffL;
   }
 
   @Method(0x80103a5cL)
@@ -5879,9 +5930,82 @@ public final class SItem {
   }
 
   @Method(0x801045fcL)
-  public static long FUN_801045fc(final long a0) {
-    assert false;
-    return 0;
+  public static long FUN_801045fc(long a0) {
+    long v0;
+    long a1;
+    long s1;
+    long s2;
+    long s3;
+    long s5;
+    long s7;
+    long s6 = a0;
+    long s4 = 0;
+    long v1 = 0xffL;
+    long s0 = 0xffL;
+    v0 = _8011d7c8.getAddress();
+    v0 = v0 + 0x3fcL;
+
+    //LAB_80104640
+    do {
+      MEMORY.ref(1, v0).offset(0x0L).setu(v1);
+      s0 = s0 - 0x1L;
+      v0 = v0 - 0x4L;
+    } while((int)s0 >= 0);
+
+    v0 = 0x800c_0000L;
+    v1 = _800babc8.getAddress();
+    v0 = _800babc8.offset(2, 0x1e4L).getSigned();
+
+    if((int)v0 > 0) {
+      s0 = 0;
+      s5 = v1;
+      v0 = s6 << 1;
+      v0 = v0 + s6;
+      v0 = v0 << 2;
+      v0 = v0 - s6;
+      s7 = v0 << 2;
+      v0 = _8011d7c8.getAddress();
+      v1 = s4 << 2;
+      s2 = v1 + v0;
+
+      //LAB_80104694
+      do {
+        v0 = s0 + s5;
+        s3 = MEMORY.ref(1, v0).offset(0x1e8L).get();
+        a1 = s6;
+        s1 = s3 & 0xffL;
+        a0 = s1;
+        v0 = FUN_801039a0(a0, a1);
+        v0 = v0 & 0xffL;
+        if(v0 != 0) {
+          a0 = s1;
+          v0 = FUN_801039f8(a0);
+          v1 = v0 & 0xffL;
+          v0 = 0xffL;
+          if(v1 != v0) {
+            v0 = v1 + s7;
+            v0 = v0 + s5;
+            v0 = MEMORY.ref(1, v0).offset(0x340L).get();
+
+            if(s1 != v0) {
+              MEMORY.ref(1, s2).offset(0x0L).setu(s3);
+              MEMORY.ref(1, s2).offset(0x1L).setu(s0);
+              MEMORY.ref(2, s2).offset(0x2L).setu(0);
+              s2 = s2 + 0x4L;
+              s4 = s4 + 0x1L;
+            }
+          }
+        }
+
+        //LAB_801046f4
+        v0 = MEMORY.ref(2, s5).offset(0x1e4L).getSigned();
+        s0 = s0 + 0x1L;
+      } while((int)s0 < (int)v0);
+    }
+
+    //LAB_80104708
+    v0 = s4;
+    return v0;
   }
 
   @Method(0x80104738L)
