@@ -1727,7 +1727,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(FUN_80022afc(s0) == 0) {
       //LAB_80022dd8
-      memcpy(s3, sp0x10.address, 0x40);
+      memcpy(s3, sp0x10.address, 0x30);
       sp0x10.release();
 
       return s3;
@@ -1747,7 +1747,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80022e54
       //LAB_80022e60
-      memcpy(s3, sp0x10.address, 0x40);
+      memcpy(s3, sp0x10.address, 0x30);
       sp0x10.release();
 
       return s3;
@@ -1834,7 +1834,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800230f0
     //LAB_800230fc
-    memcpy(s3, sp0x10.address, 0x40);
+    memcpy(s3, sp0x10.address, 0x30);
     sp0x10.release();
 
     //LAB_8002312c
