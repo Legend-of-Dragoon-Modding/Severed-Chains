@@ -24,7 +24,7 @@ public class LodString implements MemoryRef {
         case 0x00 -> ' ';
         case 0x01 -> ',';
         case 0x02 -> '.';
-        case 0x03 -> '·';
+        case 0x03 -> '\u00b7';
         case 0x04 -> ':';
         case 0x05 -> '?';
         case 0x06 -> '!';

@@ -281,6 +281,11 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
 
   public static final Value _800bdbf8 = MEMORY.ref(4, 0x800bdbf8L);
+  public static final Value _800bdbfc = MEMORY.ref(4, 0x800bdbfcL);
+  public static final Value _800bdc00 = MEMORY.ref(4, 0x800bdc00L);
+  public static final Value _800bdc04 = MEMORY.ref(4, 0x800bdc04L);
+  public static final Value _800bdc08 = MEMORY.ref(4, 0x800bdc08L);
+  public static final Value _800bdc0c = MEMORY.ref(4, 0x800bdc0cL);
 
   public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);

@@ -5381,7 +5381,12 @@ public final class SMap {
 
   @Method(0x800e3facL)
   public static void FUN_800e3fac() {
-    assert false;
+    if(_800bd7b8.get() == 0) {
+      loadTimImage(mrg0Addr_800c6878.deref().getFile((int)_800c69f0.get()));
+      loadTimImage(mrg0Addr_800c6878.deref().getFile((int)_800c69f4.get()));
+    }
+
+    //LAB_800e4008
   }
 
   @Method(0x800e4018L)
