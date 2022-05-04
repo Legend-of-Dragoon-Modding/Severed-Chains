@@ -14,6 +14,7 @@ import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -641,9 +642,8 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004f2ac = MEMORY.ref(1, 0x8004f2acL);
 
-  public static final Value _8004f5ac = MEMORY.ref(2, 0x8004f5acL);
-
-  public static final Value _8004f5c0 = MEMORY.ref(2, 0x8004f5c0L);
+  public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
+  public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
 
   public static final Value _8004f65c = MEMORY.ref(2, 0x8004f65cL);
 

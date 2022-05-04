@@ -71,7 +71,7 @@ import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
-import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -267,7 +267,7 @@ public final class Ttle {
       for(int i = 1; i < a2; i++) {
         final long a1_0 = MEMORY.ref(1, a1).offset(i * 0x8L).offset(0x2L).get();
         if(a1_0 != 0xffL) {
-          v0 = _8004f5ac.offset(t5).get();
+          v0 = additionOffsets_8004f5ac.get((int)t5).get();
           v0 = a1_0 - v0 + t3 + t2;
           MEMORY.ref(1, v0).offset(0x346L).setu(0x1L);
         }
@@ -276,7 +276,7 @@ public final class Ttle {
       }
 
       //LAB_800c730c
-      MEMORY.ref(1, a3).offset(0x345L).setu(_800ce758.offset(t5));
+      MEMORY.ref(1, a3).offset(0x345L).setu(_800ce758.offset(t5 * 0x2L));
 
       //LAB_800c7334
       for(int i = 0; i < 0x5; i++) {
@@ -286,7 +286,7 @@ public final class Ttle {
 
       t9 += 0xaL;
       t3 += 0x2cL;
-      t5 += 0x2L;
+      t5++;
       a3 += 0x2cL;
       t4 += 0x4L;
       t8 += 0x2L;

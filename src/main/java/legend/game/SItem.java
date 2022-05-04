@@ -82,8 +82,8 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80041600;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800426c4;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004._8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004._8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004._8004f5c0;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
@@ -210,7 +210,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> chapterNames_80114248 = MEMORY.ref(4, 0x80114248L, ArrayRef.of(Pointer.classFor(LodString.class), 4, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> _801142dc = MEMORY.ref(4, 0x801142dcL, ArrayRef.of(Pointer.classFor(LodString.class), 9, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> characterNames_801142dc = MEMORY.ref(4, 0x801142dcL, ArrayRef.of(Pointer.classFor(LodString.class), 9, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> _80114300 = MEMORY.ref(4, 0x80114300L, ArrayRef.of(Pointer.classFor(LodString.class), 4, 4, Pointer.deferred(4, LodString::new)));
 
@@ -218,7 +218,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> _8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> _8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> additions_8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> _8011b75c = MEMORY.ref(4, 0x8011b75cL, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
 
@@ -497,14 +497,14 @@ public final class SItem {
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
 
   @Method(0x800fc698L)
-  public static long FUN_800fc698(final long a0) {
-    if((int)a0 == -0x1L || a0 >= 9) {
+  public static long FUN_800fc698(final int charIndex) {
+    if(charIndex == -1 || charIndex > 8) {
       //LAB_800fc6a4
       return 0;
     }
 
     //LAB_800fc6ac
-    long v1 = _800babc8.offset(1, 0x33eL).offset(a0 * 0x2cL).get();
+    long v1 = _800babc8.offset(1, 0x33eL).offset(charIndex * 0x2cL).get();
 
     if(v1 >= 60L) {
       return 0;
@@ -512,7 +512,7 @@ public final class SItem {
 
     final long a1 = v1 + 0x1L;
 
-    v1 = switch((int)a0) {
+    v1 = switch(charIndex) {
       case 0    -> 0x801135e4L; //TODO
       case 1, 5 -> 0x801138c0L;
       case 2, 8 -> 0x80113aa8L;
@@ -572,7 +572,7 @@ public final class SItem {
   }
 
   @Method(0x800fc838L)
-  public static long FUN_800fc838(final long a0) {
+  public static long getAdditionSlotY(final long a0) {
     return 113 + a0 * 14;
   }
 
@@ -1517,10 +1517,10 @@ public final class SItem {
 
       case 0x18:
         FUN_8002437c(0);
-        FUN_801049b4(_800bdbb8.offset(_8011d734.get() * 0x4L).get(), _8011e098.getAddress());
+        FUN_801049b4((int)_800bdbb8.offset(_8011d734.get() * 0x4L).get(), _8011e098.getAddress());
 
         if(_8011e098.get() != 0xffL) {
-          renderablePtr_800bdbe8.set(allocateUiElement(0x75L, 0x75L, 0x27L, FUN_800fc838(fileIndex_8011d740.get()) - 4));
+          renderablePtr_800bdbe8.set(allocateUiElement(0x75L, 0x75L, 0x27L, getAdditionSlotY(fileIndex_8011d740.get()) - 4));
           FUN_80104b60(renderablePtr_800bdbe8.deref());
         }
 
@@ -1531,96 +1531,36 @@ public final class SItem {
         inventoryMenuState_800bdc28.setu(0x19L);
         break;
 
-      case 0x19:
-        s1 = 0x8012_0000L;
-        s2 = 0x8012_0000L;
-        a0 = MEMORY.ref(4, s1).offset(-0x28ccL).get();
-        a1 = MEMORY.ref(1, s2).offset(-0x283cL).get();
-        s3 = 0x8012_0000L;
-        FUN_801034cc(a0, a1);
-        s6 = s3 - 0x1f68L;
-        s4 = 0x8012_0000L;
-        a3 = 0x800c_0000L;
-        v0 = 0x800c_0000L;
-        s5 = v0 - 0x2448L;
-        a0 = MEMORY.ref(4, s1).offset(-0x28ccL).get();
-        s7 = a3 - 0x5438L;
-        v0 = a0 << 2;
-        v0 = v0 + s5;
-        v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-        a1 = MEMORY.ref(4, s4).offset(-0x28c0L).get();
-        v0 = v1 << 1;
-        v0 = v0 + v1;
-        v0 = v0 << 2;
-        v0 = v0 - v1;
-        v0 = v0 << 2;
-        v0 = v0 + s7;
-        a3 = MEMORY.ref(1, v0).offset(0x345L).get();
-        a2 = s6;
-        a4 = 0;
-        FUN_80102ad8(a0, a1, a2, a3, a4);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(-0x4e98L).get();
+      case 0x19: // Additions
+        FUN_801034cc(_8011d734.get(), _8011d7c4.get());
+        FUN_80102ad8(_8011d734.get(), fileIndex_8011d740.get(), _8011e098.getAddress(), _800babc8.offset(_800bdbb8.offset(_8011d734.get() * 0x4L).get() * 0x2cL).offset(1, 0x345L).get(), 0);
 
-        if(v0 != 0) {
-          s0 = s1 - 0x28ccL;
+        if(_800bb168.get() != 0) {
           break;
         }
-        s0 = s1 - 0x28ccL;
-        a1 = MEMORY.ref(1, s2).offset(-0x283cL).get();
-        a0 = s0;
-        v0 = FUN_8010415c(a0, a1);
-        if(v0 != 0) {
+
+        if(FUN_8010415c(_8011d734.getAddress(), _8011d7c4.get()) != 0) {
           inventoryMenuState_800bdc28.setu(0x18L);
           unloadRenderable(renderablePtr_800bdbe8.deref());
         }
 
         //LAB_800fe5b8
-        s0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, s0).offset(-0x23bcL).get();
-
-        v0 = v0 & 0x40L;
-        if(v0 != 0) {
-          a0 = 0x3L;
-          playSound(a0);
-          a0 = 0x2L;
-          a1 = 0x9L;
-          FUN_800fca0c(a0, a1);
+        if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
+          playSound(0x3L);
+          FUN_800fca0c(0x2L, 0x9L);
         }
 
         //LAB_800fe5e4
-        v0 = MEMORY.ref(1, s3).offset(-0x1f68L).get();
-        v1 = 0xffL;
-        if(v0 == v1) {
+        if(_8011e098.get() == 0xffL) {
           break;
         }
 
-        v0 = MEMORY.ref(4, s0).offset(-0x23bcL).get();
+        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
+          a1 = _8011e098.offset(fileIndex_8011d740.get() * 0x2L).get();
 
-        v0 = v0 & 0x20L;
-        if(v0 != 0) {
-          v0 = MEMORY.ref(4, s4).offset(-0x28c0L).get();
-
-          v0 = v0 << 1;
-          v0 = v0 + s6;
-          a1 = MEMORY.ref(1, v0).offset(0x0L).get();
-
-          a0 = 0x2L;
-          if(a1 != v1) {
-            v0 = MEMORY.ref(4, s1).offset(-0x28ccL).get();
-
-            v0 = v0 << 2;
-            v0 = v0 + s5;
-            v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-            v0 = v1 << 1;
-            v0 = v0 + v1;
-            v0 = v0 << a0;
-            v0 = v0 - v1;
-            v0 = v0 << a0;
-            v0 = v0 + s7;
-            MEMORY.ref(1, v0).offset(0x345L).setu(a1);
-            playSound(a0);
+          if(a1 != 0xffL) {
+            _800babc8.offset(_800bdbb8.offset(_8011d734.get() * 0x4L).get() * 0x2cL).offset(1, 0x345L).setu(a1);
+            playSound(0x2L);
             unloadRenderable(renderablePtr_800bdbe8.deref());
             inventoryMenuState_800bdc28.setu(0x18L);
           } else {
@@ -1629,20 +1569,9 @@ public final class SItem {
           }
         }
 
-        s0 = 0x8012_0000L;
-
         //LAB_800fe68c
-        a0 = s0 - 0x28c0L;
-        a1 = 0x7L;
-        v0 = handleMenuUpDown(a0, a1);
-        if(v0 != 0) {
-          a0 = MEMORY.ref(4, s0).offset(-0x28c0L).get();
-
-          v0 = FUN_800fc838(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(-0x2418L).get();
-          v0 = v0 - 0x4L;
-          MEMORY.ref(4, v1).offset(0x44L).setu(v0);
+        if(handleMenuUpDown(fileIndex_8011d740.getAddress(), 0x7L) != 0) {
+          renderablePtr_800bdbe8.deref().y_44.set(getAdditionSlotY(fileIndex_8011d740.get()) - 0x4L);
         }
 
         break;
@@ -5077,9 +5006,9 @@ public final class SItem {
     renderThreeDigitNumber(128, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 0), 0x3L);
     renderTwoDigitNumber(152, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 1), 0x3L);
     renderTwoDigitNumber(170, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 2), 0x3L);
-    FUN_80107f9c(194,  16, _800babc8.offset(0x88L).get(), s4, 0);
-    FUN_80107f9c(194,  88, _800babc8.offset(0x8cL).get(), s4, 0);
-    FUN_80107f9c(194, 160, _800babc8.offset(0x90L).get(), s4, 0);
+    FUN_80107f9c(194,  16, (int)_800babc8.offset(0x88L).get(), s4, 0);
+    FUN_80107f9c(194,  88, (int)_800babc8.offset(0x8cL).get(), s4, 0);
+    FUN_80107f9c(194, 160, (int)_800babc8.offset(0x90L).get(), s4, 0);
     renderCentredText(chapterNames_80114248.get((int)_800babc8.offset(0x98L).get()).deref(), 94, 24, 0x4L);
 
     final LodString v1;
@@ -5173,21 +5102,21 @@ public final class SItem {
     long v1 = _800babc8.offset(4, 0x88L).get();
 
     if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0x10L, v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+      FUN_80107f9c(0x10L, 0x10L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
     }
 
     //LAB_801025b4
     v1 = _800babc8.offset(4, 0x8cL).get();
 
     if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0x58L, v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+      FUN_80107f9c(0x10L, 0x58L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
     }
 
     //LAB_801025f8
     v1 = _800babc8.offset(4, 0x90L).get();
 
     if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0xa0L, v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+      FUN_80107f9c(0x10L, 0xa0L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
     }
 
     //LAB_8010263c
@@ -5198,7 +5127,7 @@ public final class SItem {
   public static void FUN_80102660(final long a0, final long a1, final long a2, final long a3) {
     final long s0 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
 
-    FUN_80107f9c(0x10L, 0x15L, _800bdbb8.offset(a0 * 0x4L).get(), s0, 0);
+    FUN_80107f9c(0x10L, 0x15L, (int)_800bdbb8.offset(a0 * 0x4L).get(), s0, 0);
     FUN_801085e0(_800bdbb8.offset(a0 * 0x4L).get(), _8011d7c8.offset((a1 + a2) * 0x4L).get(), s0);
     FUN_80108e60(_800bdbb8.offset(a0 * 0x4L).get(), s0);
 
@@ -5220,7 +5149,7 @@ public final class SItem {
     final long s0 = (a1 ^ 0xffL) < 0x1L ? 1 : 0;
 
     FUN_801085e0(_800bdbb8.offset(a0 * 0x4L).get(), 0xffL, s0);
-    FUN_80107f9c(16, 21, _800bdbb8.offset(a0 * 0x4L).get(), s0, 0);
+    FUN_80107f9c(16, 21, (int)_800bdbb8.offset(a0 * 0x4L).get(), s0, 0);
     FUN_80108e60(_800bdbb8.offset(a0 * 0x4L).get(), s0);
     FUN_801092b4(_800bdbb8.offset(a0 * 0x4L).get(), s0);
 
@@ -5265,7 +5194,7 @@ public final class SItem {
   @Method(0x80102ad8L)
   public static void FUN_80102ad8(long a0, long a1, long a2, long a3, long a4) {
     long sp2c = (a4 ^ 0xffL) < 0x1L ? 1 : 0;
-    long sp30 = _800bdbb8.offset(a0 * 0x4L).get();
+    final int charIndex = (int)_800bdbb8.offset(a0 * 0x4L).get();
 
     if(MEMORY.ref(1, a2).get() == 0xffL) {
       renderText(_8011c340, 106, 150, 0x4L);
@@ -5279,11 +5208,11 @@ public final class SItem {
       long fp = a2;
 
       //LAB_80102bf0
-      for(long s7 = 0; s7 < 8; s7++) {
-        final long y = FUN_800fc838(s7);
+      for(long i = 0; i < 8; i++) {
+        final long y = getAdditionSlotY(i);
 
-        if(sp2c != 0 && (int)s7 <  _8004f5c0.offset(sp30 * 0x2L).getSigned()) {
-          renderCharacter(24, y, s7 + 0x1L);
+        if(sp2c != 0 && i <  additionCounts_8004f5c0.get(charIndex).get()) { // Total number of additions
+          renderCharacter(24, y, i + 1); // Addition number
         }
 
         //LAB_80102c30
@@ -5292,22 +5221,21 @@ public final class SItem {
 
         if(s3 != 0xffL) {
           //LAB_80102c58
-          renderText(_8011a064.get((int)s3).deref(), 33, y - 2, s3 != a3 ? 0x4L : 0x5L);
+          renderText(additions_8011a064.get((int)s3).deref(), 33, y - 2, s3 != a3 ? 0x4L : 0x5L);
 
           if(sp2c != 0) {
-            long s6 = _800babc8.offset(1, 0x346L).offset(s2).offset(sp30 * 0x2cL).get();
-            renderThreeDigitNumber(197, y, s6);
-            renderThreeDigitNumber(230, y, _80052884.offset(s3 * 0xeL).offset(0x1L).get());
-            renderThreeDigitNumber(263, y, _80052884.offset(s3 * 0xeL).offset((s6 - 1) * 0x2L).offset(2, 0x2L).getSigned());
-            renderThreeDigitNumber(297, y, _80052884.offset(s3 * 0xeL).offset(2, 0xcL).getSigned() * (ptrTable_80114070.offset(s3 * 0x4L).deref(1).offset(s6 * 0x4L).offset(0x3L).get() + 100) / 100);
-            renderThreeDigitNumber(322, y, _800babc8.offset(1, 0x34eL).offset(s2).offset(sp30 * 0x2cL).get());
+            final long s6 = _800babc8.offset(1, 0x346L).offset(s2).offset(charIndex * 0x2cL).get();
+            renderThreeDigitNumber(197, y, s6); // Addition level
+            renderThreeDigitNumber(230, y, _80052884.offset(s3 * 0xeL).offset(0x1L).get()); // Number of attacks
+            renderThreeDigitNumber(263, y, _80052884.offset(s3 * 0xeL).offset((s6 - 1) * 0x2L).offset(2, 0x2L).getSigned()); // SP
+            renderThreeDigitNumber(297, y, _80052884.offset(s3 * 0xeL).offset(2, 0xcL).getSigned() * (ptrTable_80114070.offset(s3 * 0x4L).deref(1).offset(s6 * 0x4L).offset(0x3L).get() + 100) / 100); // Damage
+            renderThreeDigitNumber(322, y, _800babc8.offset(1, 0x34eL).offset(s2).offset(charIndex * 0x2cL).get()); // Current XP
 
             if(s6 < 0x5L) {
-              // 9 bytes at 800fba2c was copied to the stack (sp+0x18), not sure why, hopefully using it directly works
-              renderThreeDigitNumber(342, y, _800fba2c.offset(1, s6).get());
+              renderThreeDigitNumber(342, y, _800fba2c.offset(1, s6).get()); // Max XP
             } else {
               //LAB_80102d8c
-              renderCharacter(354, y, 218);
+              renderCharacter(354, y, 218); // Dash if at max XP
             }
           }
         }
@@ -5320,7 +5248,7 @@ public final class SItem {
     }
 
     //LAB_80102db0
-    FUN_80107f9c(0x10L, 0x15L, sp30, sp2c, 0);
+    FUN_80107f9c(16, 21, charIndex, sp2c, 0);
     uploadRenderables();
   }
 
@@ -6156,19 +6084,19 @@ public final class SItem {
     return t0;
   }
 
-  @Method(0x801049b4L)
-  public static long FUN_801049b4(final long a0, final long a1) {
+  @Method(0x801049b4L) // Sets up memory for additions?
+  public static long FUN_801049b4(final int charIndex, final long a1) {
     //LAB_801049c8
     for(int i = 0; i < 9; i++) {
-      MEMORY.ref(1, a1).offset(i * 0x2L).offset(0x1L).setu(0xffL);
       MEMORY.ref(1, a1).offset(i * 0x2L).offset(0x0L).setu(0xffL);
+      MEMORY.ref(1, a1).offset(i * 0x2L).offset(0x1L).setu(0xffL);
     }
 
-    if((int)a0 == -0x1L) {
+    if(charIndex == -0x1L) {
       return 0;
     }
 
-    if(_8004f5ac.offset(a0 * 0x2L).getSigned() == -0x1L) {
+    if(additionOffsets_8004f5ac.get(charIndex).get() == -1) { // No additions (Shiranda)
       //LAB_80104a08
       return 0;
     }
@@ -6177,25 +6105,25 @@ public final class SItem {
     //LAB_80104a54
     long t5 = 0;
     long t0 = 0;
-    for(int i = 0; i < _8004f5c0.offset(a0 * 0x2L).getSigned(); i++) {
-      final long a0_0 = _80052884.offset((_8004f5ac.offset(a0 * 0x2L).getSigned() + i) * 0xeL).getSigned();
+    for(int i = 0; i < additionCounts_8004f5c0.get(charIndex).get(); i++) {
+      final long a0_0 = _80052884.offset((additionOffsets_8004f5ac.get(charIndex).get() + i) * 0xeL).getSigned();
 
-      if(a0_0 == -0x1L && (_800babc8.offset(a0 * 0x2cL).offset(4, 0x330L).get() & 0x40L) != 0) {
-        MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x0L).setu(_8004f5ac.offset(a0 * 0x2L).get());
+      if(a0_0 == -1 && (_800babc8.offset(charIndex * 0x2cL).offset(4, 0x330L).get() & 0x40L) != 0) {
+        MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x0L).setu(additionOffsets_8004f5ac.get(charIndex).get() + i);
         MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x1L).setu(i);
         t0++;
         //LAB_80104aa4
-      } else if((int)a0_0 > 0 && _800babc8.offset(a0 * 0x2cL).offset(1, 0x33eL).get() >= (int)a0_0) {
-        MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x0L).setu(_8004f5ac.offset(a0 * 0x2L).get());
+      } else if(a0_0 > 0 && a0_0 <= _800babc8.offset(charIndex * 0x2cL).offset(1, 0x33eL).get()) {
+        MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x0L).setu(additionOffsets_8004f5ac.get(charIndex).get() + i);
         MEMORY.ref(1, a1).offset(t0 * 0x2L).offset(0x1L).setu(i);
 
-        if(_800babc8.offset(1, 0x346L).offset(a0 * 0x2cL).offset(i).get() == 0) {
-          _800babc8.offset(1, 0x346L).offset(a0 * 0x2cL).offset(i).setu(0x1L);
+        if(_800babc8.offset(1, 0x346L).offset(charIndex * 0x2cL).offset(i).get() == 0) {
+          _800babc8.offset(1, 0x346L).offset(charIndex * 0x2cL).offset(i).setu(0x1L);
         }
 
         //LAB_80104aec
-        if(a0_0 == _800babc8.offset(a0 * 0x2cL).offset(1, 0x33eL).get()) {
-          t5 = _8004f5ac.offset(a0 * 0x2L).get() + i + 0x1L;
+        if(a0_0 == _800babc8.offset(charIndex * 0x2cL).offset(1, 0x33eL).get()) {
+          t5 = additionOffsets_8004f5ac.get(charIndex).get() + i + 0x1L;
         }
 
         t0++;
@@ -6694,9 +6622,9 @@ public final class SItem {
   }
 
   @Method(0x80107e70L)
-  public static long FUN_80107e70(final long x, final long y, final long a2) {
+  public static long FUN_80107e70(final long x, final long y, final long charIndex) {
     //LAB_80107e90
-    final long a0_0 = _800babc8.offset(2, 0x33cL).offset(a2 * 0x2cL).get();
+    final long a0_0 = _800babc8.offset(2, 0x33cL).offset(charIndex * 0x2cL).get();
 
     if((_800bb0fc.get() & 0x10L) == 0) {
       return 0;
@@ -6753,16 +6681,16 @@ public final class SItem {
   }
 
   @Method(0x80107f9cL)
-  public static void FUN_80107f9c(final long x, final long y, final long a2, final long a3, final long a4) {
-    if((int)a2 != -0x1L) {
+  public static void FUN_80107f9c(final long x, final long y, final int charIndex, final long a3, final long a4) {
+    if(charIndex != -1) {
       if(a3 != 0) {
         allocateUiElement(74, 74, x, y)._3c.set(0x21);
         allocateUiElement(153, 153, x, y);
 
-        if(a2 < 0x9L) {
+        if(charIndex < 9) {
           final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(struct, _801142d4.getAddress());
-          struct.glyph_04.set(a2);
+          struct.glyph_04.set(charIndex);
           struct.tpage_2c.add(0x1L);
           struct._3c.set(0x21);
           struct.x_40.set(x + 8);
@@ -6771,18 +6699,18 @@ public final class SItem {
 
         //LAB_80108098
         //TODO array of structs
-        renderTwoDigitNumber(x + 154, y + 6, _800be606.offset(a2 * 0xa0L).get());
-        renderTwoDigitNumber(x + 112, y + 17, _800be607.offset(a2 * 0xa0L).get());
-        renderThreeDigitNumber(x + 148, y + 17, _800be600.offset(a2 * 0xa0L).getSigned());
-        renderFourDigitNumber(x + 100, y + 28, _800baefc.offset(a2 * 0x2cL).getSigned(), _800be65e.offset(a2 * 0xa0L).get());
+        renderTwoDigitNumber(x + 154, y + 6, _800be606.offset(charIndex * 0xa0L).get());
+        renderTwoDigitNumber(x + 112, y + 17, _800be607.offset(charIndex * 0xa0L).get());
+        renderThreeDigitNumber(x + 148, y + 17, _800be600.offset(charIndex * 0xa0L).getSigned());
+        renderFourDigitNumber(x + 100, y + 28, _800baefc.offset(charIndex * 0x2cL).getSigned(), _800be65e.offset(charIndex * 0xa0L).get());
         renderCharacter(x + 124, y + 28, 11);
-        renderFourDigitNumber(x + 142, y + 28, _800be65e.offset(a2 * 0xa0L).get());
-        renderThreeDigitNumber(x + 106, y + 39, _800be5fe.offset(a2 * 0xa0L).getSigned());
+        renderFourDigitNumber(x + 142, y + 28, _800be65e.offset(charIndex * 0xa0L).get());
+        renderThreeDigitNumber(x + 106, y + 39, _800be5fe.offset(charIndex * 0xa0L).getSigned());
         renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 124, y + 39, _800be666.offset(a2 * 0xa0L).getSigned());
-        renderSixDigitNumber(x + 88, y + 50, _800baef4.offset(a2 * 0x2cL).get());
+        renderThreeDigitNumber(x + 124, y + 39, _800be666.offset(charIndex * 0xa0L).getSigned());
+        renderSixDigitNumber(x + 88, y + 50, _800baef4.offset(charIndex * 0x2cL).get());
         renderCharacter(x + 124, y + 50, 11);
-        FUN_80107dd4(x + 130, y + 50, FUN_800fc698(a2));
+        FUN_80107dd4(x + 130, y + 50, FUN_800fc698(charIndex));
 
         if(a4 != 0) {
           final Renderable58 struct = allocateUiElement(0x71L, 0x71L, (short)x + 0x38L, (short)y + 0x18L);
@@ -6791,8 +6719,8 @@ public final class SItem {
       }
 
       //LAB_80108218
-      if(FUN_80107e70(x + 48, y + 3, a2) == 0) {
-        renderText(_801142dc.get((int)a2).deref(), x + 48, y + 3, 0x4L);
+      if(FUN_80107e70(x + 48, y + 3, charIndex) == 0) {
+        renderText(characterNames_801142dc.get(charIndex).deref(), x + 48, y + 3, 0x4L);
       }
     }
 
@@ -7865,7 +7793,7 @@ public final class SItem {
 
       a2 = MEMORY.ref(1, s0).offset(0x35L).getSigned();
       if(a2 != -0x1L) {
-        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(_800be5f8.offset(1, a2 - _8004f5ac.offset(t1).getSigned()).offset(s5).offset(0x36L).get() * 0x4L).getAddress();
+        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(_800be5f8.offset(1, a2 - additionOffsets_8004f5ac.get((int)t1).get()).offset(s5).offset(0x36L).get() * 0x4L).getAddress();
 
         MEMORY.ref(2, s0).offset(0x9cL).setu(MEMORY.ref(2, a0).offset(0x0L));
         MEMORY.ref(1, s0).offset(0x9eL).setu(MEMORY.ref(1, a0).offset(0x2L));
@@ -7948,7 +7876,7 @@ public final class SItem {
       //LAB_80110654
       s0 = s0 + 0xa0L;
       s5 = s5 + 0xa0L;
-      t1 = t1 + 0x2L;
+      t1++;
       fp = fp + 0x2cL;
       s2 = s2 + 0x2cL;
     }
