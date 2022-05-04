@@ -1559,18 +1559,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022928L)
-  public static long FUN_80022928(final byte[] a0, final long a1) {
+  public static long FUN_80022928(final byte[] a0, final int charIndex) {
     //LAB_80022940
     for(int a2 = 0; a2 < 8; a2++) {
       a0[a2] = (byte)0xff;
     }
 
-    if(a1 == -0x1L) {
+    if(charIndex == -1) {
       //LAB_80022a08
       return 0;
     }
 
-    if(a1 == 0 && _800bad64.get() >>> 7 != 0) {
+    if(charIndex == 0 && _800bad64.get() >>> 7 != 0) {
       a0[0] = 9;
       a0[1] = 4;
       return 0x2L;
@@ -1578,11 +1578,11 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022994
     //LAB_80022998
-    long a0_0 = _80111d20.offset(a1 * 0x4L).get();
+    long a0_0 = _80111d20.offset(charIndex * 0x4L).get();
 
     //LAB_800229d0
     int a3 = 0;
-    for(int i = 0; i < _800be5f8.offset(a1 * 0xa0L).offset(1, 0xfL).get() + 0x1L; i++) {
+    for(int i = 0; i < _800be5f8.offset(charIndex * 0xa0L).offset(1, 0xfL).get() + 0x1L; i++) {
       final long v1 = MEMORY.ref(1, a0_0).offset(0x2L).get();
 
       if(v1 != 0xffL) {
@@ -1599,19 +1599,19 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022a10L)
-  public static long FUN_80022a10(final long a0) {
-    if((int)a0 == -0x1L) {
+  public static long FUN_80022a10(final int charIndex) {
+    if(charIndex == -0x1L) {
       return 0;
     }
 
     //LAB_80022a24
-    if(a0 == 0 && _800bad64.get() >>> 7 != 0) {
+    if(charIndex == 0 && _800bad64.get() >>> 7 != 0) {
       return 0x2L;
     }
 
     //LAB_80022a4c
     //LAB_80022a50
-    final long v1 = _80111d20.offset(a0 * 0x4L).get();
+    final long v1 = _80111d20.offset(charIndex * 0x4L).get();
 
     //LAB_80022a64
     long a2 = 0;
@@ -1660,11 +1660,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022b50L)
-  public static long FUN_80022b50(long a0, long a1) {
-    long a2 = _800babc8.offset(a0 * 0x2cL).getAddress();
-    long a3 = _800be5f8.offset(a0 * 0xa0L).getAddress();
+  public static long FUN_80022b50(final long charIndex, final long a1) {
+    long a2 = _800babc8.offset(charIndex * 0x2cL).getAddress();
+    long a3 = _800be5f8.offset(charIndex * 0xa0L).getAddress();
 
-    a0 = MEMORY.ref(2, a3).offset(0x66L).get();
+    final long a0 = MEMORY.ref(2, a3).offset(0x66L).get();
 
     if(MEMORY.ref(2, a2).offset(0x334L).getSigned() == a0) {
       return -0x2L;
@@ -1709,16 +1709,16 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  /** TODO why does this method copy 0x40 bytes from the stack but only sets 8? */
+  /** TODO why does this method copy 0x30 bytes from the stack but only sets 8? */
   @Method(0x80022d88L)
-  public static long FUN_80022d88(long a0, long a1, long a2) {
+  public static long FUN_80022d88(long a0, long a1, final long charIndex) {
     long v0;
     long v1;
     long s3 = a0;
     long s1 = a1;
     long s0 = s1 & 0xffL;
 
-    final Memory.TemporaryReservation sp0x10 = MEMORY.temp(0x40);
+    final Memory.TemporaryReservation sp0x10 = MEMORY.temp(0x30);
     final Value sp10 = sp0x10.get();
     final Value sp14 = sp0x10.get().offset(0x4L);
 
@@ -1771,11 +1771,11 @@ public final class Scus94491BpeSegment_8002 {
         v0 = -0x1L;
       } else {
         //LAB_80022ef0
-        v0 = _800be5f8.offset(a2 * 0xa0L).offset(2, 0x66L).get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = _800be5f8.offset(charIndex * 0xa0L).offset(2, 0x66L).get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
       }
 
       //LAB_80022f3c
-      sp14.setu(FUN_80022b50(a2, v0));
+      sp14.setu(FUN_80022b50(charIndex, v0));
     }
 
     //LAB_80022f50
@@ -1795,11 +1795,11 @@ public final class Scus94491BpeSegment_8002 {
         v0 = -0x1L;
       } else {
         //LAB_80022fac
-        v0 = _800be5f8.offset(a2 * 0xa0L).offset(2, 0x6eL).getSigned() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = _800be5f8.offset(charIndex * 0xa0L).offset(2, 0x6eL).getSigned() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
       }
 
       //LAB_80022ff8
-      sp14.setu(FUN_80022c08(a2, v0));
+      sp14.setu(FUN_80022c08(charIndex, v0));
     }
 
     //LAB_8002300c
@@ -1813,14 +1813,14 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80023050
-      sp14.setu(FUN_80022cd0(a2, v0));
+      sp14.setu(FUN_80022cd0(charIndex, v0));
     }
 
     //LAB_80023068
     a1 = _8004f2ac.offset(s0 * 0xcL).getAddress();
 
     if((MEMORY.ref(1, a1).offset(0xbL).get() & 0x8L) != 0) {
-      a0 = _800babc8.offset(a2 * 0x2cL).getAddress();
+      a0 = _800babc8.offset(charIndex * 0x2cL).getAddress();
       v1 = MEMORY.ref(2, a0).offset(0x33cL).getSigned();
 
       if((MEMORY.ref(1, a1).offset(0x8L).get() & v1) != 0) {
