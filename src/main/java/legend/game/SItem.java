@@ -6666,7 +6666,7 @@ public final class SItem {
         renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66.get());
         renderThreeDigitNumber(x + 106, y + 39, stats.mp_06.get());
         renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 124, y + 39, stats.maxMp_6e.get());
+        renderThreeDigitNumber(x + 148, y + 39, stats.maxMp_6e.get());
         renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c.get(charIndex).xp_00.get());
         renderCharacter(x + 124, y + 50, 11);
         renderXp(x + 130, y + 50, getXpToNextLevel(charIndex));
