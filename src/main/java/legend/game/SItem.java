@@ -568,15 +568,19 @@ public final class SItem {
   }
 
   @Method(0x800fc880L)
-  public static long FUN_800fc880(final long a0) {
-    assert false;
-    return 0;
+  public static long FUN_800fc880(long a0) {
+    if((int)a0 >= 0x3L) {
+      a0 -= 0x3L;
+    }
+
+    //LAB_800fc890
+    return 198 + a0 * 57;
   }
 
   @Method(0x800fc8a8L)
   public static long FUN_800fc8a8(final long a0) {
-    assert false;
-    return 0;
+    //LAB_800fc8b8
+    return a0 >= 0x3L ? 0x7aL : 0x10L;
   }
 
   @Method(0x800fc8c0L)
