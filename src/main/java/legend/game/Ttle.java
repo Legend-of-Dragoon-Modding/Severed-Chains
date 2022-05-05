@@ -32,8 +32,6 @@ import static legend.game.SItem._80111cfc;
 import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
@@ -41,16 +39,18 @@ import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
-import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
+import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -68,35 +68,28 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
+import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
+import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc8;
-import static legend.game.Scus94491BpeSegment_800b._800bac50;
-import static legend.game.Scus94491BpeSegment_800b._800bac54;
-import static legend.game.Scus94491BpeSegment_800b._800bac58;
-import static legend.game.Scus94491BpeSegment_800b._800bb0ac;
-import static legend.game.Scus94491BpeSegment_800b._800bb0b0;
 import static legend.game.Scus94491BpeSegment_800b._800bb114;
 import static legend.game.Scus94491BpeSegment_800b._800bb116;
 import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bb134;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public final class Ttle {
@@ -210,13 +203,13 @@ public final class Ttle {
     long t8;
     long t9;
 
-    v0 = _800babc8.getAddress();
+    v0 = gameState_800babc8.getAddress();
     t2 = v0;
     a0 = t2;
     a3 = 0;
     v1 = 0x14aL;
-    a2 = vibrationEnabled_800bb0a9.get();
-    a1 = mono_800bb0a8.get();
+    a2 = gameState_800babc8.vibrationEnabled_4e1.get();
+    a1 = gameState_800babc8.mono_4e0.get();
 
     //LAB_800c71c4
     do {
@@ -234,12 +227,12 @@ public final class Ttle {
     t8 = _800ce6c4.getAddress();
     t7 = _80111d20.getAddress();
     t6 = _80111cfc.getAddress();
-    vibrationEnabled_800bb0a9.setu(a2);
-    mono_800bb0a8.setu(a1);
-    _800bb0b0.setu(0x2L);
-    _800bac50.setu(0);
-    _800bac54.setu(-0x1L);
-    _800bac58.setu(-0x1L);
+    gameState_800babc8.vibrationEnabled_4e1.set((int)a2);
+    gameState_800babc8.mono_4e0.set((int)a1);
+    gameState_800babc8.indicatorMode_4e8.set(0x2L);
+    gameState_800babc8.charIndex_88.get(0).set(0);
+    gameState_800babc8.charIndex_88.get(1).set(-1);
+    gameState_800babc8.charIndex_88.get(2).set(-1);
 
     //LAB_800c723c
     do {
@@ -561,7 +554,7 @@ public final class Ttle {
     }
 
     if(_800bdc34.get() != 0) {
-      if(_800bb0ac.get() != 0) {
+      if(gameState_800babc8._4e4.get() != 0) {
         _8004dd24.setu(0x8L);
       } else {
         //LAB_800c80a4
@@ -929,13 +922,13 @@ public final class Ttle {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(_800ce778.get() == 0) {
-          mono_800bb0a8.xoru(0b1);
-          setMonoOrStereo(mono_800bb0a8.get());
+          gameState_800babc8.mono_4e0.xor(0b1);
+          setMonoOrStereo(gameState_800babc8.mono_4e0.get());
         } else {
-          vibrationEnabled_800bb0a9.xor(0b1);
+          gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
           FUN_8002379c();
 
-          if(vibrationEnabled_800bb0a9.get() != 0) {
+          if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
             FUN_8002bcc8(0, 0x100);
             FUN_8002bda4(0, 0, 0x3c);
           }
@@ -953,10 +946,10 @@ public final class Ttle {
     }
 
     //LAB_800c95c4
-    long sp18 = mono_800bb0a8.get() + 0x1L;
+    long sp18 = gameState_800babc8.mono_4e0.get() + 0x1L;
 
     long sp1c;
-    if(vibrationEnabled_800bb0a9.get() == 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       //LAB_800c95f8
       sp1c = 0x5L;
     } else {
@@ -1146,11 +1139,11 @@ public final class Ttle {
       //LAB_800ca59c
       final long sp14;
       if(i == 0) {
-        sp14 = mono_800bb0a8.get() + 0x4L;
-        sp1c = mono_800bb0a8.get() + 0x1L;
+        sp14 = gameState_800babc8.mono_4e0.get() + 0x4L;
+        sp1c = gameState_800babc8.mono_4e0.get() + 0x1L;
       } else {
         //LAB_800ca5dc
-        if(vibrationEnabled_800bb0a9.get() == 0) {
+        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
           //LAB_800ca5fc
           sp14 = 0x8L;
         } else {
@@ -1158,7 +1151,7 @@ public final class Ttle {
         }
 
         //LAB_800ca600
-        if(vibrationEnabled_800bb0a9.get() == 0) {
+        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
           //LAB_800ca624
           sp1c = 0x5L;
         } else {

@@ -30,17 +30,19 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
+import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MOVE;
 import legend.game.types.Drgn0_6666Entry;
 import legend.game.types.Drgn0_6666Struct;
-import legend.game.types.LodString;
-import legend.game.types.Renderable58;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.JoyStruct;
+import legend.game.types.LodString;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
+import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.RotateTranslateStruct;
 import legend.game.types.RunningScript;
@@ -212,8 +214,6 @@ import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpERROR_EventId_800b
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpIOE_EventId_800bf250;
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpNEW_EventId_800bf25c;
 import static legend.game.Scus94491BpeSegment_800b.SwCARD_EvSpTIMOUT_EventId_800bf258;
-import static legend.game.Scus94491BpeSegment_800b._800babc8;
-import static legend.game.Scus94491BpeSegment_800b._800bad64;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
@@ -234,7 +234,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
-import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
@@ -276,78 +275,6 @@ import static legend.game.Scus94491BpeSegment_800b._800be5f0;
 import static legend.game.Scus94491BpeSegment_800b._800be5f1;
 import static legend.game.Scus94491BpeSegment_800b._800be5f2;
 import static legend.game.Scus94491BpeSegment_800b._800be5f3;
-import static legend.game.Scus94491BpeSegment_800b._800be5f8;
-import static legend.game.Scus94491BpeSegment_800b._800be5fc;
-import static legend.game.Scus94491BpeSegment_800b._800be5fe;
-import static legend.game.Scus94491BpeSegment_800b._800be600;
-import static legend.game.Scus94491BpeSegment_800b._800be602;
-import static legend.game.Scus94491BpeSegment_800b._800be604;
-import static legend.game.Scus94491BpeSegment_800b._800be606;
-import static legend.game.Scus94491BpeSegment_800b._800be607;
-import static legend.game.Scus94491BpeSegment_800b._800be628;
-import static legend.game.Scus94491BpeSegment_800b._800be62d;
-import static legend.game.Scus94491BpeSegment_800b._800be62e;
-import static legend.game.Scus94491BpeSegment_800b._800be636;
-import static legend.game.Scus94491BpeSegment_800b._800be63e;
-import static legend.game.Scus94491BpeSegment_800b._800be640;
-import static legend.game.Scus94491BpeSegment_800b._800be642;
-import static legend.game.Scus94491BpeSegment_800b._800be644;
-import static legend.game.Scus94491BpeSegment_800b._800be646;
-import static legend.game.Scus94491BpeSegment_800b._800be648;
-import static legend.game.Scus94491BpeSegment_800b._800be64a;
-import static legend.game.Scus94491BpeSegment_800b._800be64c;
-import static legend.game.Scus94491BpeSegment_800b._800be64e;
-import static legend.game.Scus94491BpeSegment_800b._800be650;
-import static legend.game.Scus94491BpeSegment_800b._800be652;
-import static legend.game.Scus94491BpeSegment_800b._800be654;
-import static legend.game.Scus94491BpeSegment_800b._800be656;
-import static legend.game.Scus94491BpeSegment_800b._800be658;
-import static legend.game.Scus94491BpeSegment_800b._800be65a;
-import static legend.game.Scus94491BpeSegment_800b._800be65c;
-import static legend.game.Scus94491BpeSegment_800b._800be65e;
-import static legend.game.Scus94491BpeSegment_800b._800be660;
-import static legend.game.Scus94491BpeSegment_800b._800be661;
-import static legend.game.Scus94491BpeSegment_800b._800be662;
-import static legend.game.Scus94491BpeSegment_800b._800be663;
-import static legend.game.Scus94491BpeSegment_800b._800be664;
-import static legend.game.Scus94491BpeSegment_800b._800be665;
-import static legend.game.Scus94491BpeSegment_800b._800be666;
-import static legend.game.Scus94491BpeSegment_800b._800be668;
-import static legend.game.Scus94491BpeSegment_800b._800be669;
-import static legend.game.Scus94491BpeSegment_800b._800be66a;
-import static legend.game.Scus94491BpeSegment_800b._800be66b;
-import static legend.game.Scus94491BpeSegment_800b._800be66c;
-import static legend.game.Scus94491BpeSegment_800b._800be66e;
-import static legend.game.Scus94491BpeSegment_800b._800be66f;
-import static legend.game.Scus94491BpeSegment_800b._800be670;
-import static legend.game.Scus94491BpeSegment_800b._800be671;
-import static legend.game.Scus94491BpeSegment_800b._800be672;
-import static legend.game.Scus94491BpeSegment_800b._800be673;
-import static legend.game.Scus94491BpeSegment_800b._800be674;
-import static legend.game.Scus94491BpeSegment_800b._800be675;
-import static legend.game.Scus94491BpeSegment_800b._800be676;
-import static legend.game.Scus94491BpeSegment_800b._800be677;
-import static legend.game.Scus94491BpeSegment_800b._800be678;
-import static legend.game.Scus94491BpeSegment_800b._800be679;
-import static legend.game.Scus94491BpeSegment_800b._800be67a;
-import static legend.game.Scus94491BpeSegment_800b._800be67b;
-import static legend.game.Scus94491BpeSegment_800b._800be67c;
-import static legend.game.Scus94491BpeSegment_800b._800be67e;
-import static legend.game.Scus94491BpeSegment_800b._800be680;
-import static legend.game.Scus94491BpeSegment_800b._800be682;
-import static legend.game.Scus94491BpeSegment_800b._800be684;
-import static legend.game.Scus94491BpeSegment_800b._800be686;
-import static legend.game.Scus94491BpeSegment_800b._800be688;
-import static legend.game.Scus94491BpeSegment_800b._800be68a;
-import static legend.game.Scus94491BpeSegment_800b._800be68c;
-import static legend.game.Scus94491BpeSegment_800b._800be68e;
-import static legend.game.Scus94491BpeSegment_800b._800be690;
-import static legend.game.Scus94491BpeSegment_800b._800be691;
-import static legend.game.Scus94491BpeSegment_800b._800be692;
-import static legend.game.Scus94491BpeSegment_800b._800be693;
-import static legend.game.Scus94491BpeSegment_800b._800be694;
-import static legend.game.Scus94491BpeSegment_800b._800be696;
-import static legend.game.Scus94491BpeSegment_800b._800be697;
 import static legend.game.Scus94491BpeSegment_800b._800bed60;
 import static legend.game.Scus94491BpeSegment_800b._800bee80;
 import static legend.game.Scus94491BpeSegment_800b._800bee88;
@@ -401,18 +328,10 @@ import static legend.game.Scus94491BpeSegment_800b.cardErrorEject_800bf27c;
 import static legend.game.Scus94491BpeSegment_800b.cardErrorWrite_800bf274;
 import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
+import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
-import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.memcardDest_800bf190;
@@ -423,10 +342,19 @@ import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
 import static legend.game.Scus94491BpeSegment_800b.memcardStatus_800bf144;
 import static legend.game.Scus94491BpeSegment_800b.memcardStruct28ArrPtr_800bdc50;
 import static legend.game.Scus94491BpeSegment_800b.memcardVsyncCallbacks_800bf240;
-import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
 import static legend.game.Scus94491BpeSegment_800b.previousMemcardEvent_800bf160;
 import static legend.game.Scus94491BpeSegment_800b.previousMemcardState_800bf164;
-import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
+import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
+import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
@@ -1539,7 +1467,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022898L)
-  public static long FUN_80022b898(final long a0) {
+  public static long FUN_80022898(final long a0) {
     if(a0 >= 0xc0L) {
       return 0;
     }
@@ -1570,7 +1498,7 @@ public final class Scus94491BpeSegment_8002 {
       return 0;
     }
 
-    if(charIndex == 0 && _800bad64.get() >>> 7 != 0) {
+    if(charIndex == 0 && gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
       a0[0] = 9;
       a0[1] = 4;
       return 0x2L;
@@ -1582,7 +1510,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800229d0
     int a3 = 0;
-    for(int i = 0; i < _800be5f8.offset(charIndex * 0xa0L).offset(1, 0xfL).get() + 0x1L; i++) {
+    for(int i = 0; i < stats_800be5f8.get(charIndex).dlevel_0f.get() + 1; i++) {
       final long v1 = MEMORY.ref(1, a0_0).offset(0x2L).get();
 
       if(v1 != 0xffL) {
@@ -1605,7 +1533,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022a24
-    if(charIndex == 0 && _800bad64.get() >>> 7 != 0) {
+    if(charIndex == 0 && gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
       return 0x2L;
     }
 
@@ -1660,32 +1588,27 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022b50L)
-  public static long FUN_80022b50(final long charIndex, final long a1) {
-    long a2 = _800babc8.offset(charIndex * 0x2cL).getAddress();
-    long a3 = _800be5f8.offset(charIndex * 0xa0L).getAddress();
+  public static long FUN_80022b50(final int charIndex, final long a1) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
-    final long a0 = MEMORY.ref(2, a3).offset(0x66L).get();
-
-    if(MEMORY.ref(2, a2).offset(0x334L).getSigned() == a0) {
+    if(charData.hp_08.get() == stats.maxHp_66.get()) {
       return -0x2L;
     }
 
     //LAB_80022bb4
     long s0;
     if((int)a1 == -0x1L) {
-      MEMORY.ref(2, a2).offset(0x334L).setu(a0);
+      charData.hp_08.set(stats.maxHp_66.get());
       s0 = -0x1L;
     } else {
-      long v0 = MEMORY.ref(2, a2).offset(0x334L).get() + a1;
-
       //LAB_80022bc8
-      MEMORY.ref(2, a2).offset(0x334L).setu(v0);
-      long v1 = MEMORY.ref(2, a3).offset(0x66L).get();
+      charData.hp_08.add((int)a1);
 
-      if(v0 < v1) {
+      if(charData.hp_08.get() < stats.maxHp_66.get()) {
         s0 = a1;
       } else {
-        MEMORY.ref(2, a2).offset(0x334L).setu(v1);
+        charData.hp_08.set(stats.maxHp_66.get());
         s0 = -0x1L;
       }
     }
@@ -1711,7 +1634,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** TODO why does this method copy 0x30 bytes from the stack but only sets 8? */
   @Method(0x80022d88L)
-  public static long FUN_80022d88(long a0, long a1, final long charIndex) {
+  public static long FUN_80022d88(long a0, long a1, final int charIndex) {
     long v0;
     long v1;
     long s3 = a0;
@@ -1755,7 +1678,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022e94
     s0 = s1 + 0x40L & 0xffL;
-    a1 = _8004f2ac.offset(s0 * 0xcL).getAddress();
+    a1 = _8004f2ac.offset(s0 * 0xcL).getAddress(); //TODO struct
     s1 = MEMORY.ref(1, a1).offset(0x9L).get();
     if((MEMORY.ref(1, a1).offset(0xbL).get() & 0x80L) != 0) {
       if((MEMORY.ref(1, a1).offset(0x0L).get() & 0x2L) == 0) {
@@ -1771,7 +1694,7 @@ public final class Scus94491BpeSegment_8002 {
         v0 = -0x1L;
       } else {
         //LAB_80022ef0
-        v0 = _800be5f8.offset(charIndex * 0xa0L).offset(2, 0x66L).get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = stats_800be5f8.get(charIndex).maxHp_66.get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
       }
 
       //LAB_80022f3c
@@ -1795,7 +1718,7 @@ public final class Scus94491BpeSegment_8002 {
         v0 = -0x1L;
       } else {
         //LAB_80022fac
-        v0 = _800be5f8.offset(charIndex * 0xa0L).offset(2, 0x6eL).getSigned() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = stats_800be5f8.get(charIndex).maxMp_6e.get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
       }
 
       //LAB_80022ff8
@@ -1820,12 +1743,11 @@ public final class Scus94491BpeSegment_8002 {
     a1 = _8004f2ac.offset(s0 * 0xcL).getAddress();
 
     if((MEMORY.ref(1, a1).offset(0xbL).get() & 0x8L) != 0) {
-      a0 = _800babc8.offset(charIndex * 0x2cL).getAddress();
-      v1 = MEMORY.ref(2, a0).offset(0x33cL).getSigned();
+      v1 = gameState_800babc8.charData_32c.get(charIndex)._10.get();
 
       if((MEMORY.ref(1, a1).offset(0x8L).get() & v1) != 0) {
         sp14.setu(v1);
-        MEMORY.ref(2, a0).offset(0x33cL).and(~sp14.get());
+        gameState_800babc8.charData_32c.get(charIndex)._10.not();
       }
 
       //LAB_800230ec
@@ -1843,39 +1765,39 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023148L)
   public static void FUN_80023148() {
-    _800babc8.offset(2, 0x1e4L).setu(0);
+    gameState_800babc8._1e4.set((short)0);
 
     //LAB_80023164
-    while(_800babc8.offset(1, _800babc8.offset(2, 0x1e4L)).offset(0x1e8L).get() != 0xffL) {
-      if(_800babc8.offset(2, 0x1e4L).getSigned() >= 0xffL) {
+    while(gameState_800babc8._1e8.get(gameState_800babc8._1e4.get()).get() != 0xff) {
+      if(gameState_800babc8._1e4.get() >= 0xff) {
         break;
       }
 
-      _800babc8.offset(2, 0x1e4L).addu(0x1L);
+      gameState_800babc8._1e4.incr();
     }
 
     //LAB_80023198
     //LAB_800231c0
-    for(long v1 = _800babc8.offset(2, 0x1e4L).getSigned(); v1 < 0x101L; v1++) {
-      _800babc8.offset(1, v1).offset(0x1e8L).setu(0xffL);
+    for(int i = gameState_800babc8._1e4.get(); i <= 0x100; i++) {
+      gameState_800babc8._1e8.get(i).set(0xff);
     }
 
     //LAB_800231d8
-    _800babc8.offset(2, 0x1e6L).setu(0);
+    gameState_800babc8._1e6.set((short)0);
 
     //LAB_800231f0
-    while(_800babc8.offset(1, _800babc8.offset(2, 0x1e6L)).offset(0x2e9L).get() != 0xffL) {
-      if(_800babc8.offset(2, 0x1e6L).getSigned() >= 0x20L) {
+    while(gameState_800babc8._2e9.get(gameState_800babc8._1e6.get()).get() != 0xff) {
+      if(gameState_800babc8._1e6.get() >= 0x20) {
         break;
       }
 
-      _800babc8.offset(2, 0x1e6L).addu(0x1L);
+      gameState_800babc8._1e6.incr();
     }
 
     //LAB_80023224
     //LAB_80023248
-    for(long v1 = _800babc8.offset(2, 0x1e6L).getSigned(); v1 < 0x21L; v1++) {
-      _800babc8.offset(1, v1).offset(0x2e9L).setu(0xffL);
+    for(int i = gameState_800babc8._1e6.get(); i <= 0x20; i++) {
+      gameState_800babc8._2e9.get(i).set(0xff);
     }
 
     //LAB_8002325c
@@ -1886,7 +1808,7 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_800232dc(final long a0) {
     FUN_80023148();
 
-    final long a2 = _800babc8.getAddress();
+    final long a2 = gameState_800babc8.getAddress();
 
     if(MEMORY.ref(2, a2).offset(0x1e6L).getSigned() == 0) {
       return 0xffL;
@@ -1903,7 +1825,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80023358
-      final long v1 = _800babc8.getAddress();
+      final long v1 = gameState_800babc8.getAddress();
       MEMORY.ref(1, v1).offset(0x308L).setu(0xffL);
       MEMORY.ref(2, v1).offset(0x1e6L).subu(0x1L);
       return 0;
@@ -2089,12 +2011,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void FUN_800239e0(final long a0, final long a1, final long a2) {
+  public static void FUN_800239e0(final long a0, final ArrayRef<UnsignedByteRef> a1, final long a2) {
     //LAB_800239ec
-    long a3 = 0;
+    int a3 = 0;
     for(int i = 0; i < a2; i++) {
       if((MEMORY.ref(2, a0).offset(i * 0x4L).offset(0x2L).get() & 0x1000L) == 0) {
-        MEMORY.ref(1, a1).offset(a3).setu(MEMORY.ref(1, a0).offset(i * 0x4L).get());
+        a1.get(a3).set((int)MEMORY.ref(1, a0).offset(i * 0x4L).get());
         a3++;
       }
 
@@ -2102,11 +2024,11 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023a1c
-    MEMORY.ref(1, a1).offset(a3).setu(0xffL);
+    a1.get(a3).set(0xff);
   }
 
   @Method(0x80023a2cL)
-  public static void FUN_80023a2c(final long a0, final long a1, final long a2) {
+  public static void FUN_80023a2c(final long a0, final ArrayRef<UnsignedByteRef> a1, final long a2) {
     FUN_80013434(a0, a2, 0x4L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80023978", long.class, long.class));
     FUN_800239e0(a0, a1, a2);
   }
@@ -6880,67 +6802,68 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a6fcL)
   public static void FUN_8002a6fc() {
-    long s0 = 0;
-
     //LAB_8002a730
-    for(int s2 = 0; s2 < 9; s2++) {
-      _800be5f8.offset(4, s0).setu(0);
-      _800be5fc.offset(2, s0).setu(0);
-      _800be5fe.offset(2, s0).setu(0);
-      _800be600.offset(2, s0).setu(0);
-      _800be602.offset(2, s0).setu(0);
-      _800be604.offset(2, s0).setu(0);
-      _800be606.offset(1, s0).setu(0);
-      _800be607.offset(1, s0).setu(0);
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+
+      stats.xp_00.set(0);
+      stats.hp_04.set(0);
+      stats.mp_06.set(0);
+      stats.sp_08.set(0);
+      stats._0a.set(0);
+      stats._0c.set(0);
+      stats.level_0e.set(0);
+      stats.dlevel_0f.set(0);
 
       //LAB_8002a758
       for(int i = 0; i < 5; i++) {
-        _800be628.offset(1, s0).offset(i).setu(0xffL);
+        stats.equipment_30.get(i).set(-1);
       }
 
-      _800be62d.offset(1, s0).setu(0);
+      stats.selectedAddition_35.set(0);
 
       //LAB_8002a780;
       for(int i = 0; i < 8; i++) {
-        _800be62e.offset(1, s0).offset(i).setu(0);
-        _800be636.offset(1, s0).offset(i).setu(0);
+        stats.additionLevels_36.get(i).set(0);
+        stats.additionXp_3e.get(i).set(0);
       }
 
-      _800be63e.offset(2, s0).setu(0);
-      _800be640.offset(2, s0).setu(0);
-      _800be642.offset(2, s0).setu(0);
-      _800be644.offset(2, s0).setu(0);
-      _800be646.offset(2, s0).setu(0);
-      _800be648.offset(2, s0).setu(0);
-      _800be64a.offset(2, s0).setu(0);
-      _800be64c.offset(2, s0).setu(0);
-      _800be64e.offset(2, s0).setu(0);
-      _800be650.offset(2, s0).setu(0);
-      _800be652.offset(2, s0).setu(0);
-      _800be654.offset(2, s0).setu(0);
-      _800be656.offset(2, s0).setu(0);
-      _800be658.offset(2, s0).setu(0);
-      _800be65a.offset(2, s0).setu(0);
-      _800be65c.offset(2, s0).setu(0);
-      _800be65e.offset(2, s0).setu(0);
-      _800be660.offset(1, s0).setu(0);
-      _800be661.offset(1, s0).setu(0);
-      _800be662.offset(1, s0).setu(0);
-      _800be663.offset(1, s0).setu(0);
-      _800be664.offset(1, s0).setu(0);
-      _800be665.offset(1, s0).setu(0);
-      _800be666.offset(2, s0).setu(0);
-      _800be668.offset(1, s0).setu(0);
-      _800be669.offset(1, s0).setu(0);
-      _800be66a.offset(1, s0).setu(0);
-      _800be66b.offset(1, s0).setu(0);
-      _800be66c.offset(1, s0).setu(0);
-      FUN_8002a86c(s2);
-      _800be694.offset(2, s0).setu(0);
-      _800be696.offset(1, s0).setu(0);
-      _800be697.offset(1, s0).setu(0);
+      stats._46.set(0);
+      stats._48.set(0);
+      stats._4a.set(0);
+      stats._4c.set(0);
+      stats._4e.set(0);
+      stats._50.set(0);
+      stats._52.set(0);
+      stats._54.set(0);
+      stats._56.set(0);
+      stats._58.set(0);
+      stats._5a.set(0);
+      stats._5c.set(0);
+      stats._5e.set(0);
+      stats._60.set(0);
+      stats._62.set((short)0);
+      stats._64.set((short)0);
+      stats.maxHp_66.set(0);
+      stats._68.set(0);
+      stats.bodySpeed_69.set(0);
+      stats.bodyAttack_6a.set(0);
+      stats.bodyMagicAttack_6b.set(0);
+      stats.bodyDefence_6c.set(0);
+      stats.bodyMagicDefence_6d.set(0);
+      stats.maxMp_6e.set(0);
+      stats._70.set(0);
+      stats._71.set(0);
+      stats.dragoonAttack_72.set(0);
+      stats.dragoonMagicAttack_73.set(0);
+      stats.dragoonDefence_74.set(0);
+      stats.dragoonMagicDefence_75.set(0);
 
-      s0 += 0xa0L;
+      FUN_8002a86c(charIndex);
+
+      stats._9c.set(0);
+      stats._9e.set(0);
+      stats._9f.set(0);
     }
 
     FUN_8002a8f8();
@@ -6948,37 +6871,38 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a86cL)
-  public static void FUN_8002a86c(final long a0) {
-    final long v0 = a0 * 0xa0;
+  public static void FUN_8002a86c(final int charIndex) {
+    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
-    _800be66e.offset(1, v0).setu(0);
-    _800be66f.offset(1, v0).setu(0);
-    _800be670.offset(1, v0).setu(0);
-    _800be671.offset(1, v0).setu(0);
-    _800be672.offset(1, v0).setu(0);
-    _800be673.offset(1, v0).setu(0);
-    _800be674.offset(1, v0).setu(0);
-    _800be675.offset(1, v0).setu(0);
-    _800be676.offset(1, v0).setu(0);
-    _800be677.offset(1, v0).setu(0);
-    _800be678.offset(1, v0).setu(0);
-    _800be679.offset(1, v0).setu(0);
-    _800be67a.offset(1, v0).setu(0);
-    _800be67b.offset(1, v0).setu(0);
-    _800be67c.offset(1, v0).setu(0);
-    _800be67e.offset(2, v0).setu(0);
-    _800be680.offset(2, v0).setu(0);
-    _800be682.offset(2, v0).setu(0);
-    _800be684.offset(2, v0).setu(0);
-    _800be686.offset(2, v0).setu(0);
-    _800be688.offset(2, v0).setu(0);
-    _800be68a.offset(2, v0).setu(0);
-    _800be68c.offset(2, v0).setu(0);
-    _800be68e.offset(2, v0).setu(0);
-    _800be690.offset(1, v0).setu(0);
-    _800be691.offset(1, v0).setu(0);
-    _800be692.offset(1, v0).setu(0);
-    _800be693.offset(1, v0).setu(0);
+    stats._76.set(0);
+    stats._77.set(0);
+    stats._78.set(0);
+    stats._79.set(0);
+    stats._7a.set(0);
+    stats._7b.set(0);
+    stats._7c.set(0);
+    stats._7d.set(0);
+    stats._7e.set(0);
+    stats._7f.set(0);
+    stats._80.set(0);
+    stats._81.set(0);
+    stats._82.set(0);
+    stats._83.set(0);
+    stats._84.set(0);
+
+    stats.gearSpeed_86.set((short)0);
+    stats.gearAttack_88.set((short)0);
+    stats.gearMagicAttack_8a.set((short)0);
+    stats.gearDefence_8c.set((short)0);
+    stats.gearMagicDefence_8e.set((short)0);
+    stats.attackHit_90.set((short)0);
+    stats.magicHit_92.set((short)0);
+    stats.attackAvoid_94.set((short)0);
+    stats.magicAvoid_96.set((short)0);
+    stats._98.set(0);
+    stats._99.set(0);
+    stats._9a.set(0);
+    stats._9b.set(0);
   }
 
   @Method(0x8002a8f8L)
@@ -7181,7 +7105,7 @@ public final class Scus94491BpeSegment_8002 {
           break;
         }
 
-        if(vibrationEnabled_800bb0a9.get() == 0) {
+        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
           break;
         }
 
@@ -7276,7 +7200,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //caseD_8
-    if(vibrationEnabled_800bb0a9.get() == 0 || _800bee80.get(0).get() != 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0 || _800bee80.get(0).get() != 0) {
       //LAB_8002b17c
       joyStruct.bArr58.get(0).set(0);
       joyStruct.bArr58.get(1).set(0);
@@ -7672,7 +7596,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002bb38L)
   public static void FUN_8002bb38(final int joypadIndex, long a1) {
-    if(vibrationEnabled_800bb0a9.get() == 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       return;
     }
 
@@ -7755,7 +7679,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002bcc8L)
   public static void FUN_8002bcc8(long a0, long a1) {
-    if(vibrationEnabled_800bb0a9.get() != 0 && _800bee80.get((int)a0).get() == 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0 && _800bee80.get((int)a0).get() == 0) {
       final JoyStruct a2 = _800bed60.get((int)a0);
 
       a2.b34.set(0);
@@ -7805,7 +7729,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002bda4L)
   public static void FUN_8002bda4(long a0, long a1, long a2) {
-    if(vibrationEnabled_800bb0a9.get() == 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       return;
     }
 
@@ -7862,7 +7786,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    if(vibrationEnabled_800bb0a9.get() == 0 || _800bee80.get(0).get() != 0) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0 || _800bee80.get(0).get() != 0) {
       //LAB_8002bf30
       joyStruct.bArr58.get(0).set(0);
       joyStruct.bArr58.get(1).set(0);
@@ -7929,7 +7853,7 @@ public final class Scus94491BpeSegment_8002 {
 
     FUN_80043120();
 
-    vibrationEnabled_800bb0a9.setu((byte)0x1L);
+    gameState_800babc8.vibrationEnabled_4e1.set(1);
     _800bee88.setu(0);
     _800bee8c.setu(0);
     _800bf0a8.setu(0);
@@ -8022,7 +7946,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002c904L)
   public static void setCdMix(final long volume) {
-    if(mono_800bb0a8.get() == 0) {
+    if(gameState_800babc8.mono_4e0.get() == 0) {
       //LAB_8002c95c
       CdMix(volume, 0, volume, 0);
     } else {

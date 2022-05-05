@@ -241,7 +241,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb0fc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee90}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee94}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac5c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#gold_94}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800babd0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#_8007a3a8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb104}</li>
@@ -253,13 +253,13 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#red1_18}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#green1_10}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#blue1_0c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac50}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac60}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac64}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac68}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac6c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac70}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac6c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charIndex_88}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#chapterIndex_98}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_9c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#timestamp_a0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_a4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#submapCut_a8}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_a4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac78}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#vsyncMode_8007a3b8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee98}</li>
@@ -348,9 +348,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800f#_800fa6dc}</li>
    *   <li>null</li>
    *   <li>null</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad24}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad44}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad64}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_15c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_17c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#dragoonSpirits_19c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baef8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baf24}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baf50}</li>
@@ -362,7 +362,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb058}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8005#_8005a368}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#_8007a3b4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad6c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1a4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad8c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e3b8}</li>

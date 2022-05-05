@@ -176,13 +176,6 @@ import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bac68;
-import static legend.game.Scus94491BpeSegment_800b._800bad64;
-import static legend.game.Scus94491BpeSegment_800b._800bad6c;
-import static legend.game.Scus94491BpeSegment_800b._800baf02;
-import static legend.game.Scus94491BpeSegment_800b._800baf07;
-import static legend.game.Scus94491BpeSegment_800b._800bb0ab;
-import static legend.game.Scus94491BpeSegment_800b._800bb0ac;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
@@ -234,12 +227,11 @@ import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb464;
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb48c;
 import static legend.game.Scus94491BpeSegment_800b.fileTransferDest_800bb488;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.numberOfTransfers_800bb490;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
-import static legend.game.Scus94491BpeSegment_800b.scriptFlags1_800bad04;
-import static legend.game.Scus94491BpeSegment_800b.scriptFlags2_800bac84;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.soundFileArr_800bcf80;
@@ -342,9 +334,9 @@ public final class Scus94491BpeSegment {
     FUN_8002c0c8();
 
     if(mainCallbackIndex_8004dd20.get() == 0x3L) {
-      _800bac68.setu(0);
+      gameState_800babc8.timestamp_a0.set(0);
     } else {
-      _800bac68.addu(0x1L);
+      gameState_800babc8.timestamp_a0.incr();
     }
   }
 
@@ -3039,6 +3031,12 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016e1cL)
+  public static long FUN_80016e1c(final RunningScript a0) {
+    a0.commandPtr_0c.set(MEMORY.ref(4, a0.params_20.get(1).getPointer()).offset(MEMORY.ref(4, a0.params_20.get(1).getPointer()).offset(a0.params_20.get(0).deref().get() * 0x4L).get() * 0x4L).cast(UnsignedIntRef::new));
+    return 0;
+  }
+
   /**
    * Pushes the current command to the command stack and jumps to the value at work array element 0.
    *
@@ -3101,12 +3099,12 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80017354L)
   public static long FUN_80017354(final RunningScript a0) {
-    _800bb0ab.setu(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
+    gameState_800babc8._4e3.set(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
     return 0;
   }
 
   /**
-   * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#scriptFlags1_800bad04}.</p>
+   * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If work array element 1 is non-zero, the bit is set. If it's 0, the bit is cleared.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to set (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
    *
@@ -3118,10 +3116,10 @@ public final class Scus94491BpeSegment {
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
     if(a0.params_20.get(1).deref().get() != 0) {
-      scriptFlags1_800bad04.get(index).or(0x1L << shift);
+      gameState_800babc8.scriptFlags1_13c.get(index).or(0x1L << shift);
     } else {
       //LAB_800173dc
-      scriptFlags1_800bad04.get(index).and(~(0x1L << shift));
+      gameState_800babc8.scriptFlags1_13c.get(index).and(~(0x1L << shift));
     }
 
     //LAB_800173f4
@@ -3129,7 +3127,7 @@ public final class Scus94491BpeSegment {
   }
 
   /**
-   * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#scriptFlags1_800bad04}.</p>
+   * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
    *
@@ -3140,13 +3138,13 @@ public final class Scus94491BpeSegment {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
-    a0.params_20.get(1).deref().set((scriptFlags1_800bad04.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
     return 0;
   }
 
   /**
-   * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#scriptFlags2_800bac84}.</p>
+   * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags2_bc}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
    *
@@ -3157,7 +3155,7 @@ public final class Scus94491BpeSegment {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = (int)(a0.params_20.get(0).deref().get() >>> 5);
 
-    a0.params_20.get(1).deref().set((scriptFlags2_800bac84.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
     return 0;
   }
@@ -3187,9 +3185,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if(_800bad64.getSigned() < 0) {
-      _800baf07.setu(0x5L);
-      _800baf02.setu(0x7fffL);
+    if((int)gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
+      gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
+      gameState_800babc8.charData_32c.get(0)._0e.set(0x7fff);
     }
 
     //LAB_80017640
@@ -4645,7 +4643,7 @@ public final class Scus94491BpeSegment {
           do {
             if(_800bd808.get() != 0x39L || _8004fb00.offset(4, a3 * 0x8L).offset(0x4L).deref(2).offset(v1).getSigned() == submapCut_80052c30.get()) {
               //LAB_8001c6ac
-              if((_800bad6c.get() & 0x1L) == 0 || (_8004fb00.offset(4, a3 * 0x8L).offset(0x4L).deref(2).offset(v1).getSigned() == submapCut_80052c30.get() && (_800bad6c.offset(a3 / 0x20L * 0x4L).get() & 0x1L << a3) != 0)) {
+              if((gameState_800babc8._1a4.get(0).get() & 0x1L) == 0 || (_8004fb00.offset(4, a3 * 0x8L).offset(0x4L).deref(2).offset(v1).getSigned() == submapCut_80052c30.get() && (gameState_800babc8._1a4.get((int)(a3 / 0x20)).get() & 0x1L << a3) != 0)) {
                 //LAB_8001c7c0
                 a1 = _8004fb00.offset(2, a3 * 0x8L).offset(0x2L).getSigned();
                 break jmp_8001c7a0;
@@ -4825,7 +4823,7 @@ public final class Scus94491BpeSegment {
     } else if((int)a0 == -0x1L) {
       //LAB_8001e0f8
       if(_800bdc34.get() != 0) {
-        if(mainCallbackIndex_8004dd20.get() == 0x8L && _800bb0ac.get() != 0) {
+        if(mainCallbackIndex_8004dd20.get() == 0x8L && gameState_800babc8._4e4.get() != 0) {
           sssqResetStuff();
           unloadSoundFile(8);
 
@@ -5117,10 +5115,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f708L)
-  public static void FUN_8001f708(final long index, final long a1) {
+  public static void FUN_8001f708(final long chapterIndex, final long a1) {
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.oru(0x80L);
-    final long fileIndex = 5850 + index * 5;
+    final long fileIndex = 5850 + chapterIndex * 5;
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class), fileIndex << 8 | a1, 0x4L);
   }
 

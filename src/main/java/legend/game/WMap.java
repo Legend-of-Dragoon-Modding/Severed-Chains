@@ -126,15 +126,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bac60;
-import static legend.game.Scus94491BpeSegment_800b._800bad24;
-import static legend.game.Scus94491BpeSegment_800b._800bad44;
-import static legend.game.Scus94491BpeSegment_800b._800bb080;
-import static legend.game.Scus94491BpeSegment_800b._800bb0a0;
-import static legend.game.Scus94491BpeSegment_800b._800bb0a2;
-import static legend.game.Scus94491BpeSegment_800b._800bb0a4;
-import static legend.game.Scus94491BpeSegment_800b._800bb0a5;
-import static legend.game.Scus94491BpeSegment_800b._800bb0a6;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
 import static legend.game.Scus94491BpeSegment_800b._800bb114;
@@ -150,9 +141,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800beebc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.scriptFlags1_800bad04;
-import static legend.game.Scus94491BpeSegment_800b.scriptFlags2_800bac84;
 import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -2251,7 +2241,7 @@ public class WMap {
     setWidthAndFlags(0x140L, 0);
     vsyncMode_8007a3b8.setu(0x3L);
     unloadSoundFile((int)0x9L);
-    FUN_8001f708(_800bac60.get(), 0);
+    FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
     pregameLoadingStage_800bb10c.setu(0x1L);
   }
 
@@ -2269,7 +2259,7 @@ public class WMap {
     setProjectionPlaneDistance(1100);
 
     long v1 = 0x7L;
-    long v0 = scriptFlags1_800bad04.getAddress() + 0x1cL;
+    long v0 = gameState_800babc8.scriptFlags1_13c.getAddress() + 0x1cL;
 
     //LAB_800ccc84
     do {
@@ -11077,11 +11067,11 @@ public class WMap {
 
       //LAB_800e3a38
       // Store data when transitioning to combat?
-      _800bb0a6.setu(_800c67aa.get());
-      _800bb0a0.setu(pathIndex_800c67ac.get());
-      _800bb0a2.setu(dotIndex_800c67ae.get());
-      _800bb0a4.setu(dotOffset_800c67b0.get() & 0xff);
-      _800bb0a5.setu(facing_800c67b4.get() & 0xff);
+      gameState_800babc8._4de.set((int)_800c67aa.get());
+      gameState_800babc8.pathIndex_4d8.set((int)pathIndex_800c67ac.get());
+      gameState_800babc8.dotIndex_4da.set((int)dotIndex_800c67ae.get());
+      gameState_800babc8.dotOffset_4dc.set((int)dotOffset_800c67b0.get());
+      gameState_800babc8.facing_4dd.set((int)facing_800c67b4.get());
       pregameLoadingStage_800bb10c.setu(0x8L);
     }
 
@@ -11891,7 +11881,7 @@ public class WMap {
           sp54 = 0x1L << (sp50 & 0x1fL);
           sp50 = sp50 >>> 5;
 
-          if((_800bad44.offset(sp50 * 0x4L).get() & sp54) > 0) {
+          if((gameState_800babc8._17c.get((int)sp50).get() & sp54) > 0) {
             //LAB_800e5e98
             MEMORY.ref(1, sp4c).offset(0x4L).setu(_800c86d0.getSigned() / 2);
             MEMORY.ref(1, sp4c).offset(0x5L).setu(_800c86d0.getSigned() / 2);
@@ -12107,7 +12097,7 @@ public class WMap {
         sp58 = _800c67a8.get();
         sp54 = 0x1L << (sp58 & 0x1fL);
         sp58 = sp58 >>> 5;
-        _800bad44.offset(sp58 * 0x4L).oru(sp54);
+        gameState_800babc8._17c.get((int)sp58).or(sp54);
 
         //LAB_800e6900
         if(_800c6860.get() != 999L) {
@@ -12422,7 +12412,7 @@ public class WMap {
     //LAB_800e78d4
     for(int i = 0; i < 8; i++) {
       //LAB_800e78f0
-      _800bb080.offset(i * 0x4L).setu(_800bad24.offset(i * 0x4L).get());
+      gameState_800babc8._4b8.get(i).set(gameState_800babc8._15c.get(i).get());
     }
 
     //LAB_800e7940
@@ -12433,12 +12423,12 @@ public class WMap {
       long sp4c = 0x1L << (sp48 & 0x1fL);
       sp48 = sp48 >>> 5;
 
-      if((scriptFlags2_800bac84.get((int)sp48).get() & sp4c) > 0) {
+      if((gameState_800babc8.scriptFlags2_bc.get((int)sp48).get() & sp4c) > 0) {
         //LAB_800e7a38
         //LAB_800e7a3c
-        for(int sp24 = 0; sp24 < 0x8L; sp24++) {
+        for(int sp24 = 0; sp24 < 8; sp24++) {
           //LAB_800e7a58
-          _800bad24.offset(sp24 * 0x4L).setu(_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get());
+          gameState_800babc8._15c.get(sp24).set(_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get());
         }
       }
 
@@ -12479,7 +12469,7 @@ public class WMap {
     long sp4c = 0x1L << (sp1c & 0x1fL);
     long sp50 = sp1c >>> 5;
 
-    if((_800bad24.offset(sp50 * 0x4L).get() & sp4c) <= 0) {
+    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) <= 0) {
       _800c685c.setu(0xdL);
       _800c685e.setu(0x11L);
       sp1c = 5;
@@ -12535,11 +12525,11 @@ public class WMap {
       _800c686c.setu(0x1L);
       _800c6868.setu(0x1L);
     } else {
-      _800c67aa.setu(_800bb0a6.get());
-      pathIndex_800c67ac.setu(_800bb0a0.get());
-      dotIndex_800c67ae.setu(_800bb0a2.get());
-      dotOffset_800c67b0.setu(_800bb0a4.get());
-      facing_800c67b4.setu(_800bb0a5.getSigned());
+      _800c67aa.setu(gameState_800babc8._4de.get());
+      pathIndex_800c67ac.setu(gameState_800babc8.pathIndex_4d8.get());
+      dotIndex_800c67ae.setu(gameState_800babc8.dotIndex_4da.get());
+      dotOffset_800c67b0.setu(gameState_800babc8.dotOffset_4dc.get());
+      facing_800c67b4.setu(gameState_800babc8.facing_4dd.get());
       _800c686c.setu(0);
       _800c6868.setu(0);
 
@@ -12639,7 +12629,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((scriptFlags2_800bac84.get((int)sp50).get() & sp4c) > 0) {
+        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) > 0) {
           _800c686c.setu(0);
           _800c6870.setu(0x1L);
           _800c6868.setu(0x1L);
@@ -12650,7 +12640,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((scriptFlags2_800bac84.get((int)sp50).get() & sp4c) > 0) {
+        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) > 0) {
           _800c6868.setu(0x1L);
           _800c686c.setu(0x1L);
           _800c6870.setu(0);
@@ -12676,11 +12666,10 @@ public class WMap {
           struct258_800c66a8.deref()._250.set(0x2L);
           struct258_800c66a8.deref()._254.set(0x1L);
 
-          sp48 = _800bad44.getAddress();
           sp50 = _800c67a8.get();
           sp4c = 0x1L << (sp50 & 0x1fL);
           sp50 = sp50 >>> 5;
-          MEMORY.ref(4, sp48).offset(sp50 * 0x4L).oru(sp4c);
+          gameState_800babc8._17c.get((int)sp50).or(sp4c);
         }
       }
     }
@@ -12837,7 +12826,7 @@ public class WMap {
     long sp14 = 0x1L << (sp10 & 0x1fL);
     sp10 = sp10 >>> 5;
 
-    if((scriptFlags2_800bac84.get((int)sp10).get() & sp14) > 0) {
+    if((gameState_800babc8.scriptFlags2_bc.get((int)sp10).get() & sp14) > 0) {
       //LAB_800e8f24
       if(struct258_800c66a8.deref()._1e4.get() == 0x1L) {
         //LAB_800e8f48
@@ -13726,7 +13715,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((_800bad24.offset((a0 >>> 5) * 0x4L).get() & (0x1L << (a0 & 0x1fL))) <= 0) {
+    if((gameState_800babc8._15c.get((int)(a0 >>> 5)).get() & (0x1L << (a0 & 0x1fL))) <= 0) {
       return 0x1L;
     }
 

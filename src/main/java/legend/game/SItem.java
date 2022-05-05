@@ -11,6 +11,8 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.ActiveStatsa0;
+import legend.game.types.CharacterData2c;
 import legend.game.types.LodString;
 import legend.game.types.MemcardDataStruct3c;
 import legend.game.types.MemcardStruct28;
@@ -36,13 +38,13 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80022898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800228d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022928;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a10;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022b50;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022b898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022c08;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022d88;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023148;
@@ -62,7 +64,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002dbdc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002df60;
-import static legend.game.Scus94491BpeSegment_8002.readMemcardFile;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002eb28;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ed48;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002efb8;
@@ -73,6 +74,7 @@ import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.memcardVsyncInterruptHandler;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_8002.readMemcardFile;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -84,41 +86,24 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80041600;
 import static legend.game.Scus94491BpeSegment_8004.FUN_800426c4;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004._8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
-import static legend.game.Scus94491BpeSegment_8005._80052734;
-import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
+import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
+import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_800b._800babc8;
-import static legend.game.Scus94491BpeSegment_800b._800bac5c;
-import static legend.game.Scus94491BpeSegment_800b._800bac6c;
-import static legend.game.Scus94491BpeSegment_800b._800bac70;
-import static legend.game.Scus94491BpeSegment_800b._800bad64;
-import static legend.game.Scus94491BpeSegment_800b._800badac;
-import static legend.game.Scus94491BpeSegment_800b._800badae;
-import static legend.game.Scus94491BpeSegment_800b._800badb0;
-import static legend.game.Scus94491BpeSegment_800b._800bae00;
-import static legend.game.Scus94491BpeSegment_800b._800baeb1;
-import static legend.game.Scus94491BpeSegment_800b._800baef4;
-import static legend.game.Scus94491BpeSegment_800b._800baefc;
-import static legend.game.Scus94491BpeSegment_800b._800baf0d;
-import static legend.game.Scus94491BpeSegment_800b._800bb0aa;
-import static legend.game.Scus94491BpeSegment_800b._800bb0ac;
-import static legend.game.Scus94491BpeSegment_800b._800bb0b0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
-import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b._800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b._800bdbfc;
 import static legend.game.Scus94491BpeSegment_800b._800bdc00;
@@ -131,29 +116,23 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800be5d8;
-import static legend.game.Scus94491BpeSegment_800b._800be5f8;
-import static legend.game.Scus94491BpeSegment_800b._800be5fe;
-import static legend.game.Scus94491BpeSegment_800b._800be600;
-import static legend.game.Scus94491BpeSegment_800b._800be606;
-import static legend.game.Scus94491BpeSegment_800b._800be607;
-import static legend.game.Scus94491BpeSegment_800b._800be65e;
-import static legend.game.Scus94491BpeSegment_800b._800be666;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
-import static legend.game.Scus94491BpeSegment_800b.mono_800bb0a8;
-import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.vibrationEnabled_800bb0a9;
+import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
+import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
+import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class SItem {
@@ -218,7 +197,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> _80117a10 = MEMORY.ref(4, 0x80117a10L, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> _8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> equipment_8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> additions_8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
 
@@ -259,10 +238,10 @@ public final class SItem {
   public static final LodString Saved_data_for_this_game_does_not_exist_8011c788 = MEMORY.ref(2, 0x8011c788L, LodString::new);
   /** "File not used" */
   public static final LodString File_not_used_8011c7d8 = MEMORY.ref(2, 0x8011c7d8L, LodString::new);
-  public static final LodString _8011c814 = MEMORY.ref(2, 0x8011c814L, LodString::new);
-  public static final LodString _8011c820 = MEMORY.ref(2, 0x8011c820L, LodString::new);
-  public static final LodString _8011c82c = MEMORY.ref(2, 0x8011c82cL, LodString::new);
-  public static final LodString _8011c838 = MEMORY.ref(2, 0x8011c838L, LodString::new);
+  public static final LodString Note_8011c814 = MEMORY.ref(2, 0x8011c814L, LodString::new);
+  public static final LodString Stay_8011c820 = MEMORY.ref(2, 0x8011c820L, LodString::new);
+  public static final LodString Half_8011c82c = MEMORY.ref(2, 0x8011c82cL, LodString::new);
+  public static final LodString Off_8011c838 = MEMORY.ref(2, 0x8011c838L, LodString::new);
   /**
    * "Data from another"
    * "game"
@@ -390,15 +369,15 @@ public final class SItem {
   public static final LodString Goods_8011cf48 = MEMORY.ref(2, 0x8011cf48L, LodString::new);
   /** "" */
   public static final LodString _8011cf54 = MEMORY.ref(2, 0x8011cf54L, LodString::new);
-  public static final LodString _8011cf58 = MEMORY.ref(2, 0x8011cf58L, LodString::new);
-  public static final LodString _8011cf6c = MEMORY.ref(2, 0x8011cf6cL, LodString::new);
-  public static final LodString _8011cf74 = MEMORY.ref(2, 0x8011cf74L, LodString::new);
-  public static final LodString _8011cf7c = MEMORY.ref(2, 0x8011cf7cL, LodString::new);
-  public static final LodString _8011cf88 = MEMORY.ref(2, 0x8011cf88L, LodString::new);
-  public static final LodString _8011cf98 = MEMORY.ref(2, 0x8011cf98L, LodString::new);
-  public static final LodString _8011cfa4 = MEMORY.ref(2, 0x8011cfa4L, LodString::new);
-  public static final LodString _8011cfb0 = MEMORY.ref(2, 0x8011cfb0L, LodString::new);
-  public static final LodString _8011cfc0 = MEMORY.ref(2, 0x8011cfc0L, LodString::new);
+  public static final LodString Vibrate_8011cf58 = MEMORY.ref(2, 0x8011cf58L, LodString::new);
+  public static final LodString Off_8011cf6c = MEMORY.ref(2, 0x8011cf6cL, LodString::new);
+  public static final LodString On_8011cf74 = MEMORY.ref(2, 0x8011cf74L, LodString::new);
+  public static final LodString Sound_8011cf7c = MEMORY.ref(2, 0x8011cf7cL, LodString::new);
+  public static final LodString Stereo_8011cf88 = MEMORY.ref(2, 0x8011cf88L, LodString::new);
+  public static final LodString Mono_8011cf98 = MEMORY.ref(2, 0x8011cf98L, LodString::new);
+  public static final LodString Morph_8011cfa4 = MEMORY.ref(2, 0x8011cfa4L, LodString::new);
+  public static final LodString Normal_8011cfb0 = MEMORY.ref(2, 0x8011cfb0L, LodString::new);
+  public static final LodString Short_8011cfc0 = MEMORY.ref(2, 0x8011cfc0L, LodString::new);
   public static final LodString _8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
   public static final LodString _8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
   public static final LodString _8011d024 = MEMORY.ref(2, 0x8011d024L, LodString::new);
@@ -499,17 +478,17 @@ public final class SItem {
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
 
   @Method(0x800fc698L)
-  public static long FUN_800fc698(final int charIndex) {
+  public static long getXpToNextLevel(final int charIndex) {
     if(charIndex == -1 || charIndex > 8) {
       //LAB_800fc6a4
       return 0;
     }
 
     //LAB_800fc6ac
-    long v1 = _800babc8.offset(1, 0x33eL).offset(charIndex * 0x2cL).get();
+    long v1 = gameState_800babc8.charData_32c.get(charIndex).level_12.get();
 
     if(v1 >= 60L) {
-      return 0;
+      return 0; // Max level
     }
 
     final long a1 = v1 + 0x1L;
@@ -550,7 +529,7 @@ public final class SItem {
   }
 
   @Method(0x800fc7ecL)
-  public static long FUN_800fc7ec(final long a0) {
+  public static long menuOptionY(final long a0) {
     return 107 + a0 * 13;
   }
 
@@ -699,10 +678,6 @@ public final class SItem {
     long s1;
     long s2;
     long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
@@ -722,11 +697,11 @@ public final class SItem {
         _800bdf00.setu(0x21L);
 
         if(mainCallbackIndex_8004dd20.get() == 0x8L) {
-          _800bb0ac.setu(0x1L);
+          gameState_800babc8._4e4.set(1);
           canSave_8011dc88.setu(0x1L);
         } else {
           //LAB_800fcbfc
-          _800bb0ac.setu(0);
+          gameState_800babc8._4e4.set(0);
           canSave_8011dc88.setu(_8005a368);
         }
 
@@ -743,10 +718,8 @@ public final class SItem {
         }
 
         inventoryMenuState_800bdc28.setu(0x2L);
-        v0 = _800bad64.getAddress();
-        v0 = v0 - 0x19cL;
-        _8011dcfc.set(0 < (_800bad64.offset(4, 0x4L).get() & 0x4L));
-        MEMORY.ref(1, v0).offset(0x4e1L).and(0x1L);
+        _8011dcfc.set(0 < (gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4L));
+        gameState_800babc8.vibrationEnabled_4e1.and(1);
         break;
 
       case 0x2:
@@ -937,14 +910,14 @@ public final class SItem {
 
         if(messageBox_8011dc90.ticks_10.get() >= 0x2L) {
           if(selectedMenuOptionRenderablePtr_800bdbe4.isNull()) {
-            selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x74L, 0x74L, FUN_800fc7bc(0) - 0x22L, FUN_800fc7ec(0) - 0x2L));
+            selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x74L, 0x74L, FUN_800fc7bc(0) - 0x22L, menuOptionY(0) - 0x2L));
             FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
             selectedMenuOptionRenderablePtr_800bdbe4.deref()._3c.set(0x20);
           }
 
           //LAB_800fd100
           if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c.getAddress(), 0x4L) != 0) {
-            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_800fc7ec(selectedItemSubmenuOption_8011d73c.get()) - 0x2L);
+            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(menuOptionY(selectedItemSubmenuOption_8011d73c.get()) - 0x2L);
           }
 
           //LAB_800fd130
@@ -955,19 +928,19 @@ public final class SItem {
             //LAB_800fd174
             if(a0 == 0) {
               //LAB_800fd18c
-              vibrationEnabled_800bb0a9.setu(0);
+              gameState_800babc8.vibrationEnabled_4e1.set(0);
               FUN_8002379c();
             } else if(a0 == 0x1L) {
               //LAB_800fd1a0
-              mono_800bb0a8.setu(0);
+              gameState_800babc8.mono_4e0.set(0);
               setMonoOrStereo(0);
             } else if(a0 == 0x2L) {
               //LAB_800fd1b8
-              _800bb0aa.setu(0);
+              gameState_800babc8.morphMode_4e2.set(0);
             } else if(a0 == 0x3L) {
               //LAB_800fd1c4
-              if(_800bb0b0.get() != 0) {
-                _800bb0b0.subu(0x1L);
+              if(gameState_800babc8.indicatorMode_4e8.get() != 0) {
+                gameState_800babc8.indicatorMode_4e8.decr();
               }
             }
           }
@@ -981,21 +954,21 @@ public final class SItem {
             //LAB_800fd22c
             if(v1 == 0) {
               //LAB_800fd244
-              vibrationEnabled_800bb0a9.setu(0x1L);
+              gameState_800babc8.vibrationEnabled_4e1.set(1);
               FUN_8002bcc8(0, 0x100L);
               FUN_8002bda4(0, 0, 0x3cL);
               FUN_8002379c();
             } else if(v1 == 0x1L) {
               //LAB_800fd278
-              mono_800bb0a8.setu(0x1L);
+              gameState_800babc8.mono_4e0.set(1);
               setMonoOrStereo(0x1L);
             } else if(v1 == 0x2L) {
               //LAB_800fd290
-              _800bb0aa.setu(0x1L);
+              gameState_800babc8.morphMode_4e2.set(1);
             } else if(v1 == 0x3L) {
               //LAB_800fd29c
-              if(_800bb0b0.get() < 0x2L) {
-                _800bb0b0.addu(0x1L);
+              if(gameState_800babc8.indicatorMode_4e8.get() < 0x2L) {
+                gameState_800babc8.indicatorMode_4e8.incr();
               }
             }
           }
@@ -1010,7 +983,7 @@ public final class SItem {
           }
 
           //LAB_800fd30c
-          FUN_8010214c(selectedItemSubmenuOption_8011d73c.get(), vibrationEnabled_800bb0a9.get(), mono_800bb0a8.get(), _800bb0aa.get(), _800bb0b0.get());
+          renderOptionsMenu(selectedItemSubmenuOption_8011d73c.get(), gameState_800babc8.vibrationEnabled_4e1.get(), gameState_800babc8.mono_4e0.get(), gameState_800babc8.morphMode_4e2.get(), gameState_800babc8.indicatorMode_4e8.get());
         }
 
         //LAB_800fd330
@@ -1071,10 +1044,8 @@ public final class SItem {
 
         //LAB_800fd52c
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          v1 = _800babc8.getAddress();
-          v0 = _800babc8.offset(selectedSlot_8011d740.get() * 0x4L).getAddress();
-          a0 = MEMORY.ref(4, v0).offset(0x88L).get();
-          if((int)a0 == -0x1L || (MEMORY.ref(4, v1).offset(0x330L).offset(a0 * 0x2cL).get() & 0x20L) != 0) {
+          final int charIndex = gameState_800babc8.charIndex_88.get((int)selectedSlot_8011d740.get()).get();
+          if(charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex)._04.get() & 0x20L) != 0) {
             //LAB_800fd590
             playSound(0x28L);
           } else {
@@ -1153,7 +1124,7 @@ public final class SItem {
             break;
           }
 
-          if((_800babc8.offset(v1 * 0x2cL).offset(0x330L).get() & 0x2L) == 0) {
+          if((gameState_800babc8.charData_32c.get((int)v1)._04.get() & 0x2L) == 0) {
             //LAB_800fd888
             playSound(0x28L);
             break;
@@ -1161,11 +1132,10 @@ public final class SItem {
 
           //LAB_800fd898
           playSound(0x2L);
-          a3 = _800babc8.offset(selectedSlot_8011d740.get() * 0x4L).offset(0x88L).get();
-          a2 = _800bdbf8.offset(slotScroll_8011d744.get() * 0x4L).get();
-          inventoryMenuState_800bdc28.setu(0x9L);
-          _800babc8.offset(selectedSlot_8011d740.get() * 0x4L).offset(0x88L).setu(a2);
+          a3 = gameState_800babc8.charIndex_88.get((int)selectedSlot_8011d740.get()).get();
+          gameState_800babc8.charIndex_88.get((int)selectedSlot_8011d740.get()).set((int)_800bdbf8.offset(slotScroll_8011d744.get() * 0x4L).get());
           _800bdbf8.offset(slotScroll_8011d744.get() * 0x4L).setu(a3);
+          inventoryMenuState_800bdc28.setu(0x9L);
         }
 
         break;
@@ -1216,7 +1186,7 @@ public final class SItem {
         //LAB_800fda80
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
           a0 = selectedSlot_8011d740.get() + slotScroll_8011d744.get();
-          if((int)a0 < _800badac.getSigned()) {
+          if(a0 < gameState_800babc8._1e4.get()) {
             v1 = _8011d7c8.offset(a0 * 0x4L).get();
             if(v1 != 0xffL) {
               v0 = FUN_80103a5c(v1, characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
@@ -1240,7 +1210,7 @@ public final class SItem {
           _8011dcb8.setu(addToLinkedListTail(0x4c0L));
           _8011dcbc.setu(addToLinkedListTail(0x4c0L));
           _8011d754.setu(FUN_80104738(0x1L));
-          FUN_80023a2c(_8011dcb8.get(), _800badb0.getAddress(), _800badac.getSigned());
+          FUN_80023a2c(_8011dcb8.get(), gameState_800babc8._1e8, gameState_800babc8._1e4.get());
           removeFromLinkedList(_8011dcb8.get());
           removeFromLinkedList(_8011dcbc.get());
           MEMORY.ref(4, 0x800bdc28L).setu(0xeL);
@@ -1299,10 +1269,10 @@ public final class SItem {
       case 0x12:
       case 0x21: // Discard items menu
         if(charSlot_8011d734.get() != 0) {
-          a0 = _800badae.getSigned();
+          a0 = gameState_800babc8._1e6.get();
         } else {
           //LAB_800fddf4
-          a0 = _800badac.getSigned() + _8011d754.get();
+          a0 = gameState_800babc8._1e4.get() + _8011d754.get();
         }
 
         //LAB_800fde10
@@ -1334,15 +1304,17 @@ public final class SItem {
         //LAB_800fdeb4
         if((inventoryJoypadInput_800bdc44.get() & 0x10L) != 0) { // Discard items menu - sort items
           playSound(0x2L);
+
+          final ArrayRef<UnsignedByteRef> a1_0;
           if(charSlot_8011d734.get() != 0) {
-            a1 = _800baeb1.getAddress();
+            a1_0 = gameState_800babc8._2e9;
           } else {
             //LAB_800fdef8
-            a1 = _800badb0.getAddress();
+            a1_0 = gameState_800babc8._1e8;
           }
 
           //LAB_800fdf00
-          FUN_80023a2c(_8011dcb8.offset(charSlot_8011d734.get() * 0x4L).get(), a1, _8011d750.get());
+          FUN_80023a2c(_8011dcb8.offset(charSlot_8011d734.get() * 0x4L).get(), a1_0, _8011d750.get());
         }
 
         //LAB_800fdf18
@@ -1428,15 +1400,17 @@ public final class SItem {
 
           //LAB_800fe238
           _8011d750.subu(0x1L);
+
+          final ArrayRef<UnsignedByteRef> a1_0;
           if(charSlot_8011d734.get() != 0) {
-            a1 = _800baeb1.getAddress();
+            a1_0 = gameState_800babc8._2e9;
           } else {
             //LAB_800fe274
-            a1 = _800badb0.getAddress();
+            a1_0 = gameState_800babc8._1e8;
           }
 
           //LAB_800fe27c
-          FUN_800239e0(_8011dcb8.offset(charSlot_8011d734.get() * 0x4L).get(), a1, _8011d750.get());
+          FUN_800239e0(_8011dcb8.offset(charSlot_8011d734.get() * 0x4L).get(), a1_0, _8011d750.get());
           FUN_80023148();
 
           //LAB_800fe29c
@@ -1473,13 +1447,13 @@ public final class SItem {
       case 0x15: // Status menu
         FUN_8002437c(0);
         renderBackground(_801141a4.getAddress(), 0, 0);
-        FUN_801027bc(charSlot_8011d734.get(), 0xffL);
+        renderStatusMenu(charSlot_8011d734.get(), 0xffL);
         inventoryMenuState_800bdc28.setu(0x16L);
         break;
 
       case 0x16: // Status menu
         FUN_801034cc(charSlot_8011d734.get(), _8011d7c4.get());
-        FUN_801027bc(charSlot_8011d734.get(), 0);
+        renderStatusMenu(charSlot_8011d734.get(), 0);
 
         if(_800bb168.get() == 0) {
           if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
@@ -1529,13 +1503,13 @@ public final class SItem {
         //LAB_800fe490
         allocateUiElement(69, 69, 0, 0);
         allocateUiElement(70, 70, 192, 0);
-        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, _800babc8.offset(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get() * 0x2cL).offset(1, 0x345L).get(), 0xffL);
+        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xffL);
         inventoryMenuState_800bdc28.setu(0x19L);
         break;
 
       case 0x19: // Additions
         FUN_801034cc(charSlot_8011d734.get(), _8011d7c4.get());
-        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, _800babc8.offset(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get() * 0x2cL).offset(1, 0x345L).get(), 0);
+        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0);
 
         if(_800bb168.get() != 0) {
           break;
@@ -1558,10 +1532,10 @@ public final class SItem {
         }
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          a1 = additions_8011e098.get((int)selectedSlot_8011d740.get()).offset_00.get();
+          final int a1_0 = additions_8011e098.get((int)selectedSlot_8011d740.get()).offset_00.get();
 
-          if(a1 != -1) {
-            _800babc8.offset(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get() * 0x2cL).offset(1, 0x345L).setu(a1);
+          if(a1_0 != -1) {
+            gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.set(a1_0);
             playSound(0x2L);
             unloadRenderable(renderablePtr_800bdbe8.deref());
             inventoryMenuState_800bdc28.setu(0x18L);
@@ -1741,7 +1715,7 @@ public final class SItem {
           _8011d7c8.offset(s0 * 0x4L).setu(0xffL);
 
           if(s0 < 0x40L) {
-            if((_800bad64.offset(4, (s0 >>> 5) * 0x4L).get() & (0x1L << (s0 & 0x1fL))) != 0) {
+            if((gameState_800babc8.dragoonSpirits_19c.get((int)(s0 >>> 5)).get() & (0x1L << (s0 & 0x1fL))) != 0) {
               _8011d7c8.offset(_8011d750.get() * 0x4L).offset(1, 0x0L).setu(s0);
               _8011d7c8.offset(_8011d750.get() * 0x4L).offset(1, 0x1L).setu(s0);
               _8011d7c8.offset(_8011d750.get() * 0x4L).offset(2, 0x2L).setu(0);
@@ -2221,17 +2195,17 @@ public final class SItem {
         if(v1 == 0) {
           //LAB_800ff6ec
           _800bdc34.setu(0x1L);
-          _80052c34.setu(_800bac6c);
-          submapCut_80052c30.setu(_800bac70);
-          index_80052c38.set(_800bac70.get());
+          _80052c34.setu(gameState_800babc8.submapScene_a4.get());
+          submapCut_80052c30.setu(gameState_800babc8.submapCut_a8.get());
+          index_80052c38.set(gameState_800babc8.submapCut_a8.get());
 
-          if(_800bac70.get() == 0x108L) {
+          if(gameState_800babc8.submapCut_a8.get() == 0x108L) {
             _80052c34.setu(0x35L);
           }
 
           //LAB_800ff730
           FUN_8002379c();
-          setMonoOrStereo(mono_800bb0a8.get());
+          setMonoOrStereo(gameState_800babc8.mono_4e0.get());
           v0 = 0x46L;
         } else if(v1 != 0x5L) { // v1 can only be 0, 1, 3?
           v0 = 0x38L;
@@ -4271,7 +4245,7 @@ public final class SItem {
             v0 = v0 + a2;
 
             //LAB_80101070
-            if((int)v0 >= 0x100L && a2 != 0 || _800badae.getSigned() + a3 > 0x20L && a3 != 0) {
+            if((int)v0 >= 0x100L && a2 != 0 || gameState_800babc8._1e6.get() + a3 > 0x20L && a3 != 0) {
               //LAB_80101090
               setMessageBoxText(_8011cf54, 0);
               v1 = 0x8012_0000L;
@@ -4904,7 +4878,7 @@ public final class SItem {
 
           case 0x5 -> FUN_801024c4(0xfeL);
           case 0x6 -> FUN_80102660(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
-          case 0x7 -> FUN_801027bc(charSlot_8011d734.get(), 0xfeL);
+          case 0x7 -> renderStatusMenu(charSlot_8011d734.get(), 0xfeL);
 
           case 0x8 -> {
             if(charSlot_8011d734.get() != 0) {
@@ -4925,7 +4899,7 @@ public final class SItem {
             removeFromLinkedList(_8011dcbc.get());
           }
 
-          case 0x9 -> renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, _800baf0d.offset(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get() * 0x2cL).get(), 0xfeL);
+          case 0x9 -> renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xfeL);
           case 0xa -> FUN_80102dfc(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0);
           case 0xb -> FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
           //LAB_80101af4
@@ -4995,21 +4969,21 @@ public final class SItem {
     //LAB_80101d54
     final long s4 = a2 < 0x1L ? 1 : 0;
     if(s4 != 0) {
-      renderDragoonSpirits(_800bad64.getAddress(), 40, 197);
-      renderEightDigitNumber(67, 184, _800bac5c.get(), 0);
+      renderDragoonSpirits(gameState_800babc8.dragoonSpirits_19c, 40, 197);
+      renderEightDigitNumber(67, 184, gameState_800babc8.gold_94.get(), 0); // Gold
       renderCharacter(146, 184, 10);
       renderCharacter(164, 184, 10);
-      renderTwoDigitNumber(166, 204, _800bae00.get());
+      renderTwoDigitNumber(166, 204, gameState_800babc8.stardust_9c.get()); // Stardust
     }
 
     //LAB_80101db8
-    renderThreeDigitNumber(128, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 0), 0x3L);
-    renderTwoDigitNumber(152, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 1), 0x3L);
-    renderTwoDigitNumber(170, 184, getTimestampPart(_800babc8.offset(0xa0L).get(), 2), 0x3L);
-    FUN_80107f9c(194,  16, (int)_800babc8.offset(0x88L).get(), s4, 0);
-    FUN_80107f9c(194,  88, (int)_800babc8.offset(0x8cL).get(), s4, 0);
-    FUN_80107f9c(194, 160, (int)_800babc8.offset(0x90L).get(), s4, 0);
-    renderCentredText(chapterNames_80114248.get((int)_800babc8.offset(0x98L).get()).deref(), 94, 24, 0x4L);
+    renderThreeDigitNumber(128, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 0), 0x3L);
+    renderTwoDigitNumber(152, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 1), 0x3L);
+    renderTwoDigitNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 2), 0x3L);
+    renderCharacterSlot(194,  16, gameState_800babc8.charIndex_88.get(0).get(), s4, 0);
+    renderCharacterSlot(194,  88, gameState_800babc8.charIndex_88.get(1).get(), s4, 0);
+    renderCharacterSlot(194, 160, gameState_800babc8.charIndex_88.get(2).get(), s4, 0);
+    renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98.get()).deref(), 94, 24, 0x4L);
 
     final LodString v1;
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
@@ -5062,22 +5036,22 @@ public final class SItem {
   }
 
   @Method(0x8010214cL)
-  public static void FUN_8010214c(final long a0, final long a1, final long a2, final long a3, final long a4) {
+  public static void renderOptionsMenu(final long optionIndex, final long vibrateMode, final long soundMode, final long morphMode, final long noteMode) {
     _800bdf00.setu(0x20L);
 
-    renderCentredText(_8011cf58, FUN_800fc7bc(0) - 0xfL, FUN_800fc7ec(0), a0 == 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cf6c, FUN_800fc7bc(1), FUN_800fc7ec(0), a1 == 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cf74, FUN_800fc7bc(2), FUN_800fc7ec(0), a1 != 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cf7c, FUN_800fc7bc(0) - 0xfL, FUN_800fc7ec(1), a0 == 0x1L ? 0x5L : 0x4L);
-    renderCentredText(_8011cf88, FUN_800fc7bc(1), FUN_800fc7ec(1), a2 == 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cf98, FUN_800fc7bc(2), FUN_800fc7ec(1), a2 != 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cfa4, FUN_800fc7bc(0) - 0xfL, FUN_800fc7ec(2), a0 == 0x2L ? 0x5L : 0x4L);
-    renderCentredText(_8011cfb0, FUN_800fc7bc(1), FUN_800fc7ec(2), a3 == 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011cfc0, FUN_800fc7bc(2), FUN_800fc7ec(2), a3 != 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011c814, FUN_800fc7bc(0) - 0xfL, FUN_800fc7ec(3), a0 != 0x3L ? 0x4L : 0x5L);
-    renderCentredText(_8011c838, FUN_800fc7d0(1), FUN_800fc7ec(3), a4 == 0 ? 0x5L : 0x4L);
-    renderCentredText(_8011c82c, FUN_800fc7d0(2), FUN_800fc7ec(3), a4 == 0x1L ? 0x5L : 0x4L);
-    renderCentredText(_8011c820, FUN_800fc7d0(3), FUN_800fc7ec(3), a4 == 0x2L ? 0x5L : 0x4L);
+    renderCentredText(Vibrate_8011cf58, FUN_800fc7bc(0) - 0xfL, menuOptionY(0), optionIndex == 0 ? 0x5L : 0x4L);
+    renderCentredText(Off_8011cf6c, FUN_800fc7bc(1), menuOptionY(0), vibrateMode == 0 ? 0x5L : 0x4L);
+    renderCentredText(On_8011cf74, FUN_800fc7bc(2), menuOptionY(0), vibrateMode != 0 ? 0x5L : 0x4L);
+    renderCentredText(Sound_8011cf7c, FUN_800fc7bc(0) - 0xfL, menuOptionY(1), optionIndex == 1 ? 0x5L : 0x4L);
+    renderCentredText(Stereo_8011cf88, FUN_800fc7bc(1), menuOptionY(1), soundMode == 0 ? 0x5L : 0x4L);
+    renderCentredText(Mono_8011cf98, FUN_800fc7bc(2), menuOptionY(1), soundMode != 0 ? 0x5L : 0x4L);
+    renderCentredText(Morph_8011cfa4, FUN_800fc7bc(0) - 0xfL, menuOptionY(2), optionIndex == 2 ? 0x5L : 0x4L);
+    renderCentredText(Normal_8011cfb0, FUN_800fc7bc(1), menuOptionY(2), morphMode == 0 ? 0x5L : 0x4L);
+    renderCentredText(Short_8011cfc0, FUN_800fc7bc(2), menuOptionY(2), morphMode != 0 ? 0x5L : 0x4L);
+    renderCentredText(Note_8011c814, FUN_800fc7bc(0) - 0xfL, menuOptionY(3), optionIndex != 3 ? 0x4L : 0x5L);
+    renderCentredText(Off_8011c838, FUN_800fc7d0(1), menuOptionY(3), noteMode == 0 ? 0x5L : 0x4L);
+    renderCentredText(Half_8011c82c, FUN_800fc7d0(2), menuOptionY(3), noteMode == 1 ? 0x5L : 0x4L);
+    renderCentredText(Stay_8011c820, FUN_800fc7d0(3), menuOptionY(3), noteMode == 2 ? 0x5L : 0x4L);
 
     _800bdf00.setu(0x21L);
   }
@@ -5092,31 +5066,25 @@ public final class SItem {
   public static void FUN_801024c4(final long a0) {
     final long s1 = (a0 ^ 0xffL) < 0x1L ? 1 : 0;
 
-    FUN_801082a0(198,  16, _800bdbf8.get(), s1);
-    FUN_801082a0(255,  16, _800bdbfc.get(), s1);
-    FUN_801082a0(312,  16, _800bdc00.get(), s1);
-    FUN_801082a0(198, 122, _800bdc04.get(), s1);
-    FUN_801082a0(255, 122, _800bdc08.get(), s1);
-    FUN_801082a0(312, 122, _800bdc0c.get(), s1);
+    FUN_801082a0(198,  16, (int)_800bdbf8.get(), s1);
+    FUN_801082a0(255,  16, (int)_800bdbfc.get(), s1);
+    FUN_801082a0(312,  16, (int)_800bdc00.get(), s1);
+    FUN_801082a0(198, 122, (int)_800bdc04.get(), s1);
+    FUN_801082a0(255, 122, (int)_800bdc08.get(), s1);
+    FUN_801082a0(312, 122, (int)_800bdc0c.get(), s1);
 
-    long v1 = _800babc8.offset(4, 0x88L).get();
-
-    if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0x10L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+    if(gameState_800babc8.charIndex_88.get(0).get() != -1) {
+      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get())._04.get() & 0x20L);
     }
 
     //LAB_801025b4
-    v1 = _800babc8.offset(4, 0x8cL).get();
-
-    if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0x58L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+    if(gameState_800babc8.charIndex_88.get(1).get() != -1) {
+      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get())._04.get() & 0x20L);
     }
 
     //LAB_801025f8
-    v1 = _800babc8.offset(4, 0x90L).get();
-
-    if((int)v1 != -0x1L) {
-      FUN_80107f9c(0x10L, 0xa0L, (int)v1, s1, _800babc8.offset(1, 0x330L).offset(v1 * 0x2cL).get() & 0x20L);
+    if(gameState_800babc8.charIndex_88.get(2).get() != -1) {
+      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get())._04.get() & 0x20L);
     }
 
     //LAB_8010263c
@@ -5127,9 +5095,9 @@ public final class SItem {
   public static void FUN_80102660(final int charSlot, final long slotIndex, final long slotScroll, final long a3) {
     final long s0 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
 
-    FUN_80107f9c(0x10L, 0x15L, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
-    FUN_801085e0(characterIndices_800bdbb8.get(charSlot).get(), _8011d7c8.offset((slotIndex + slotScroll) * 0x4L).get(), s0);
-    FUN_80108e60(characterIndices_800bdbb8.get(charSlot).get(), s0);
+    renderCharacterSlot(0x10L, 0x15L, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), _8011d7c8.offset((slotIndex + slotScroll) * 0x4L).get(), s0);
+    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
 
     if(s0 != 0) {
       allocateUiElement(0x5aL, 0x5aL, 0xc2L, 0x60L);
@@ -5145,23 +5113,23 @@ public final class SItem {
   }
 
   @Method(0x801027bcL)
-  public static void FUN_801027bc(final int charSlot, final long a1) {
+  public static void renderStatusMenu(final int charSlot, final long a1) {
     final long s0 = (a1 ^ 0xffL) < 0x1L ? 1 : 0;
 
-    FUN_801085e0(characterIndices_800bdbb8.get(charSlot).get(), 0xffL, s0);
-    FUN_80107f9c(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
-    FUN_80108e60(characterIndices_800bdbb8.get(charSlot).get(), s0);
-    FUN_801092b4(characterIndices_800bdbb8.get(charSlot).get(), s0);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xffL, s0);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
+    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
+    renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), s0);
 
     uploadRenderables();
   }
 
   @Method(0x80102840L)
-  public static void FUN_80102840(final long a0, final long a1, final long a2, final long a3) {
-    FUN_80109410(0x10L, 0x21L, _8011dcb8.get(), a0, 0x7L, saveListUpArrow_800bdb94.derefNullable(), saveListDownArrow_800bdb98.derefNullable());
+  public static void FUN_80102840(final long slotScroll, final long a1, final long a2, final long a3) {
+    FUN_80109410(0x10L, 0x21L, _8011dcb8.get(), slotScroll, 0x7L, saveListUpArrow_800bdb94.derefNullable(), saveListDownArrow_800bdb98.derefNullable());
     FUN_80109410(0xc2L, 0x21L, _8011dcbc.get(), a1, 0x7L, _800bdb9c.derefNullable(), _800bdba0.derefNullable());
-    renderThreeDigitNumber(0x88L, 0x18L, _800babc8.offset(2, 0x1e4L).getSigned(), 0x2L);
-    renderTwoDigitNumber(0x146L, 0x18L, _800babc8.offset(2, 0x1e6L).getSigned(), 0x2L);
+    renderThreeDigitNumber(0x88L, 0x18L, gameState_800babc8._1e4.get(), 0x2L);
+    renderTwoDigitNumber(0x146L, 0x18L, gameState_800babc8._1e6.get(), 0x2L);
 
     final long s1 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
     if(s1 != 0) {
@@ -5222,12 +5190,12 @@ public final class SItem {
           renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? 0x4L : 0x5L);
 
           if(sp2c != 0) {
-            final int level = (int)_800babc8.offset(1, 0x346L).offset(index).offset(charIndex * 0x2cL).get();
+            final int level = gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(index).get();
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
             renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
             renderThreeDigitNumber(297, y, additionData_80052884.get(offset).damage_0c.get() * (ptrTable_80114070.offset(offset * 0x4L).deref(1).offset(level * 0x4L).offset(0x3L).get() + 100) / 100); // Damage
-            renderThreeDigitNumber(322, y, _800babc8.offset(1, 0x34eL).offset(index).offset(charIndex * 0x2cL).get()); // Current XP
+            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c.get(charIndex).additionXp_22.get(index).get()); // Current XP
 
             if(level < 5) {
               renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
@@ -5244,7 +5212,7 @@ public final class SItem {
     }
 
     //LAB_80102db0
-    FUN_80107f9c(16, 21, charIndex, sp2c, 0);
+    renderCharacterSlot(16, 21, charIndex, sp2c, 0);
     uploadRenderables();
   }
 
@@ -5544,17 +5512,13 @@ public final class SItem {
       _800bdbf8.offset(slot * 0x4L).setu(-0x1L);
       characterIndices_800bdbb8.get(slot).set(-1);
 
-      if((_800babc8.offset(0x330L).offset(slot * 0x2cL).get() & 0x1L) != 0) {
+      if((gameState_800babc8.charData_32c.get(slot)._04.get() & 0x1L) != 0) {
         characterIndices_800bdbb8.get((int)_8011d7c4.get()).set(slot);
         _8011d7c4.addu(0x1L);
 
-        if(_800babc8.offset(0x88L).get() != slot) {
-          if(_800babc8.offset(0x8cL).get() != slot) {
-            if(_800babc8.offset(0x90L).get() != slot) {
-              _800bdbf8.offset(a2).setu(slot);
-              a2 = a2 + 0x4L;
-            }
-          }
+        if(gameState_800babc8.charIndex_88.get(0).get() != slot && gameState_800babc8.charIndex_88.get(1).get() != slot && gameState_800babc8.charIndex_88.get(2).get() != slot) {
+          _800bdbf8.offset(a2).setu(slot);
+          a2 = a2 + 0x4L;
         }
       }
 
@@ -5565,19 +5529,19 @@ public final class SItem {
   @Method(0x80103bd4L)
   public static void FUN_80103bd4(final long unused) {
     //LAB_80103be8
-    for(long a1 = 0; a1 < 0x3L; a1++) {
-      _8011dcc0.offset(0x8L).offset(a1 * 0x4L).setu(_800babc8.offset(0x88L).offset(a1 * 0x4L));
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
+      _8011dcc0.offset(0x8L).offset(charSlot * 0x4L).setu(gameState_800babc8.charIndex_88.get(charSlot).get());
     }
 
     _8011dcc0.setu(0x5a02_0006L);
-    _8011dcc0.offset(1, 0x14L).setu(_800babc8.offset(1, 0x33eL));
-    _8011dcc0.offset(1, 0x15L).setu(_800be5f8.offset(1, 0xfL));
-    _8011dcc0.offset(2, 0x16L).setu(_800babc8.offset(2, 0x334L));
-    _8011dcc0.offset(2, 0x18L).setu(_800be5f8.offset(2, 0x66L));
-    _8011dcc0.offset(4, 0x1cL).setu(_800babc8.offset(4, 0x94L));
-    _8011dcc0.offset(4, 0x20L).setu(_800babc8.offset(4, 0xa0L));
-    _8011dcc0.offset(4, 0x24L).setu(_800babc8.offset(4, 0x19cL).get() & 0x1ffL);
-    _8011dcc0.offset(4, 0x28L).setu(_800babc8.offset(4, 0x9cL));
+    _8011dcc0.offset(1, 0x14L).setu(gameState_800babc8.charData_32c.get(0).level_12.get());
+    _8011dcc0.offset(1, 0x15L).setu(stats_800be5f8.get(0).dlevel_0f.get());
+    _8011dcc0.offset(2, 0x16L).setu(gameState_800babc8.charData_32c.get(0).hp_08.get());
+    _8011dcc0.offset(2, 0x18L).setu(stats_800be5f8.get(0).maxHp_66.get());
+    _8011dcc0.offset(4, 0x1cL).setu(gameState_800babc8.gold_94.get());
+    _8011dcc0.offset(4, 0x20L).setu(gameState_800babc8.timestamp_a0.get());
+    _8011dcc0.offset(4, 0x24L).setu(gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0x1ffL);
+    _8011dcc0.offset(4, 0x28L).setu(gameState_800babc8.stardust_9c.get());
 
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_80103c8c
@@ -5587,7 +5551,7 @@ public final class SItem {
     } else if(whichMenu_800bdc38.get() == 0x13L) {
       //LAB_80103c8c
       _8011dcc0.offset(1, 0x2dL).setu(0x3L);
-      _8011dcc0.offset(1, 0x2cL).setu(_800babc8.offset(1, 0x98L));
+      _8011dcc0.offset(1, 0x2cL).setu(gameState_800babc8.chapterIndex_98.get());
     } else {
       //LAB_80103cb4
       _8011dcc0.offset(1, 0x2dL).setu(0);
@@ -5903,7 +5867,7 @@ public final class SItem {
     //LAB_8010449c
     long s5 = 0;
     for(int i = 0; i < _8011d7c4.get(); i++) {
-      s5 |= _800babc8.offset(characterIndices_800bdbb8.get(i).get() * 0x2cL).offset(2, 0x33cL).get();
+      s5 |= gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get())._10.get();
     }
 
     //LAB_801044d4
@@ -5914,8 +5878,8 @@ public final class SItem {
 
     //LAB_80104530
     long s4 = 0;
-    for(int i = 0; i < _800babc8.offset(2, 0x1e6L).getSigned(); i++) {
-      final long s0 = _800babc8.offset(1, i).offset(1, 0x2e9L).get();
+    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
+      final long s0 = gameState_800babc8._2e9.get(i).get();
 
       if((FUN_80022afc(s0) & 0xffL) != 0) {
         final long a0 = _8004f2ac.offset((s0 - 0xc0L) * 0xcL).getAddress();
@@ -5964,8 +5928,8 @@ public final class SItem {
     } while((int)s0 >= 0);
 
     v0 = 0x800c_0000L;
-    v1 = _800babc8.getAddress();
-    v0 = _800babc8.offset(2, 0x1e4L).getSigned();
+    v1 = gameState_800babc8.getAddress();
+    v0 = gameState_800babc8._1e4.get();
 
     if((int)v0 > 0) {
       s0 = 0;
@@ -6028,21 +5992,21 @@ public final class SItem {
     }
 
     //LAB_801047bc
-    for(int i = 0; i < _800babc8.offset(2, 0x1e6L).getSigned(); i++) {
-      _8011dcbc.deref(1).offset(i * 0x4L).offset(0x0L).setu(_800babc8.offset(1, 0x2e9L).offset(i).get());
+    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
+      _8011dcbc.deref(1).offset(i * 0x4L).offset(0x0L).setu(gameState_800babc8._2e9.get(i).get());
       _8011dcbc.deref(1).offset(i * 0x4L).offset(0x1L).setu(i);
       _8011dcbc.deref(2).offset(i * 0x4L).offset(0x2L).setu(0);
     }
 
     //LAB_8010480c
     //LAB_8010482c
-    long s1;
-    for(s1 = 0; s1 < _800babc8.offset(2, 0x1e4L).getSigned(); s1++) {
-      _8011dcb8.deref(1).offset(s1 * 0x4L).offset(0x0L).setu(_800babc8.offset(s1).offset(1, 0x1e8L).get());
+    int s1;
+    for(s1 = 0; s1 < gameState_800babc8._1e4.get(); s1++) {
+      _8011dcb8.deref(1).offset(s1 * 0x4L).offset(0x0L).setu(gameState_800babc8._1e8.get(s1).get());
       _8011dcb8.deref(1).offset(s1 * 0x4L).offset(0x1L).setu(s1);
       _8011dcb8.deref(2).offset(s1 * 0x4L).offset(0x2L).setu(0);
 
-      if(a0 != 0 && FUN_80022b898(_800babc8.offset(s1).offset(1, 0x1e8L).get()) != 0) {
+      if(a0 != 0 && FUN_80022898(gameState_800babc8._1e8.get(s1).get()) != 0) {
         _8011dcb8.deref(2).offset(s1 * 0x4L).offset(0x2L).oru(0x2000L);
       }
 
@@ -6060,9 +6024,9 @@ public final class SItem {
     //LAB_801048e0
     for(int i = 0; i < _8011d7c4.get(); i++) {
       //LAB_801048e8
-      for(long a1 = 0; a1 < 5; a1++) {
-        if(_800babc8.offset(1, 0x340L).offset(characterIndices_800bdbb8.get(i).get() * 0x2cL).offset(a1).get() != 0xffL) {
-          _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x0L).setu(_800babc8.offset(1, 0x340L).offset(characterIndices_800bdbb8.get(i).get() * 0x2cL).offset(a1).get());
+      for(int a1 = 0; a1 < 5; a1++) {
+        if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get() != -1) {
+          _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x0L).setu(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get());
           _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x1L).setu(s2);
           _8011dcb8.deref(2).offset(s2 * 0x4L).offset(0x2L).setu(characterIndices_800bdbb8.get(i).get());
           _8011dcb8.deref(2).offset(s2 * 0x4L).offset(0x2L).oru(0x3000L);
@@ -6104,21 +6068,21 @@ public final class SItem {
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
       final long a0_0 = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex)._00.get();
 
-      if(a0_0 == -1 && (_800babc8.offset(charIndex * 0x2cL).offset(4, 0x330L).get() & 0x40L) != 0) {
+      if(a0_0 == -1 && (gameState_800babc8.charData_32c.get(charIndex)._04.get() & 0x40L) != 0) {
         additions.get(t0).offset_00.set(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex);
         additions.get(t0).index_01.set(additionIndex);
         t0++;
         //LAB_80104aa4
-      } else if(a0_0 > 0 && a0_0 <= _800babc8.offset(charIndex * 0x2cL).offset(1, 0x33eL).get()) {
+      } else if(a0_0 > 0 && a0_0 <= gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
         additions.get(t0).offset_00.set(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex);
         additions.get(t0).index_01.set(additionIndex);
 
-        if(_800babc8.offset(1, 0x346L).offset(charIndex * 0x2cL).offset(additionIndex).get() == 0) {
-          _800babc8.offset(1, 0x346L).offset(charIndex * 0x2cL).offset(additionIndex).setu(0x1L);
+        if(gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(additionIndex).get() == 0) {
+          gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(additionIndex).set(1);
         }
 
         //LAB_80104aec
-        if(a0_0 == _800babc8.offset(charIndex * 0x2cL).offset(1, 0x33eL).get()) {
+        if(a0_0 == gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
           t5 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex + 0x1L;
         }
 
@@ -6267,7 +6231,7 @@ public final class SItem {
 
   /** Does something different with CLUT */
   @Method(0x8010568cL)
-  public static void renderFourDigitNumber(final long x, final long y, long value, final long a3) {
+  public static void renderFourDigitNumber(final long x, final long y, long value, final long max) {
     long clut = 0;
     long flags = 0;
 
@@ -6276,17 +6240,17 @@ public final class SItem {
     }
 
     //LAB_801056d0
-    if(a3 > 9999) {
+    if(max > 9999) {
       value = 9999;
     }
 
     //LAB_801056e0
-    if(value < a3 / 2) {
+    if(value < max / 2) {
       clut = 0x7cabL;
     }
 
     //LAB_801056f0
-    if(value < a3 / 10) {
+    if(value < max / 10) {
       clut = 0x7c2bL;
     }
 
@@ -6599,9 +6563,9 @@ public final class SItem {
   }
 
   @Method(0x80107dd4L)
-  public static void FUN_80107dd4(final long x, final long y, final long a2) {
-    if(a2 != 0) {
-      renderSixDigitNumber(x, y, a2);
+  public static void renderXp(final long x, final long y, final long xp) {
+    if(xp != 0) {
+      renderSixDigitNumber(x, y, xp);
     } else {
       //LAB_80107e08
       final Renderable58 v0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
@@ -6620,7 +6584,7 @@ public final class SItem {
   @Method(0x80107e70L)
   public static long FUN_80107e70(final long x, final long y, final int charIndex) {
     //LAB_80107e90
-    final long a0_0 = _800babc8.offset(2, 0x33cL).offset(charIndex * 0x2cL).get();
+    final long a0_0 = gameState_800babc8.charData_32c.get(charIndex)._10.get();
 
     if((_800bb0fc.get() & 0x10L) == 0) {
       return 0;
@@ -6676,7 +6640,7 @@ public final class SItem {
   }
 
   @Method(0x80107f9cL)
-  public static void FUN_80107f9c(final long x, final long y, final int charIndex, final long a3, final long a4) {
+  public static void renderCharacterSlot(final long x, final long y, final int charIndex, final long a3, final long a4) {
     if(charIndex != -1) {
       if(a3 != 0) {
         allocateUiElement(74, 74, x, y)._3c.set(0x21);
@@ -6693,19 +6657,19 @@ public final class SItem {
         }
 
         //LAB_80108098
-        //TODO array of structs
-        renderTwoDigitNumber(x + 154, y + 6, _800be606.offset(charIndex * 0xa0L).get());
-        renderTwoDigitNumber(x + 112, y + 17, _800be607.offset(charIndex * 0xa0L).get());
-        renderThreeDigitNumber(x + 148, y + 17, _800be600.offset(charIndex * 0xa0L).getSigned());
-        renderFourDigitNumber(x + 100, y + 28, _800baefc.offset(charIndex * 0x2cL).getSigned(), _800be65e.offset(charIndex * 0xa0L).get());
+        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+        renderTwoDigitNumber(x + 154, y + 6, stats.level_0e.get());
+        renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f.get());
+        renderThreeDigitNumber(x + 148, y + 17, stats.sp_08.get());
+        renderFourDigitNumber(x + 100, y + 28, gameState_800babc8.charData_32c.get(charIndex).hp_08.get(), stats.maxHp_66.get());
         renderCharacter(x + 124, y + 28, 11);
-        renderFourDigitNumber(x + 142, y + 28, _800be65e.offset(charIndex * 0xa0L).get());
-        renderThreeDigitNumber(x + 106, y + 39, _800be5fe.offset(charIndex * 0xa0L).getSigned());
+        renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66.get());
+        renderThreeDigitNumber(x + 106, y + 39, stats.mp_06.get());
         renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 124, y + 39, _800be666.offset(charIndex * 0xa0L).getSigned());
-        renderSixDigitNumber(x + 88, y + 50, _800baef4.offset(charIndex * 0x2cL).get());
+        renderThreeDigitNumber(x + 124, y + 39, stats.maxMp_6e.get());
+        renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c.get(charIndex).xp_00.get());
         renderCharacter(x + 124, y + 50, 11);
-        FUN_80107dd4(x + 130, y + 50, FUN_800fc698(charIndex));
+        renderXp(x + 130, y + 50, getXpToNextLevel(charIndex));
 
         if(a4 != 0) {
           final Renderable58 struct = allocateUiElement(113, 113, x + 56, y + 24);
@@ -6723,13 +6687,13 @@ public final class SItem {
   }
 
   @Method(0x801082a0L)
-  public static void FUN_801082a0(final long x, final long y, final long a2, final long a3) {
-    if((int)a2 != -0x1L) {
+  public static void FUN_801082a0(final long x, final long y, final int charIndex, final long a3) {
+    if(charIndex != -0x1L) {
       if(a3 != 0) {
-        if(a2 < 0x9L) {
+        if(charIndex < 9) {
           final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           FUN_80104b1c(renderable, _801142d4.getAddress());
-          renderable.glyph_04.set(a2);
+          renderable.glyph_04.set(charIndex);
           renderable.tpage_2c.add(0x1L);
           renderable._3c.set(0x21);
           renderable.x_40.set(x + 0x2L);
@@ -6740,16 +6704,16 @@ public final class SItem {
         allocateUiElement(0x50L, 0x50L, x, y)._3c.set(0x21);
         allocateUiElement(0x9cL, 0x9cL, x, y);
 
-        if((_800babc8.offset(a2 * 0x2cL).offset(0x330L).get() & 0x2L) == 0) {
+        if((gameState_800babc8.charData_32c.get(charIndex)._04.get() & 0x2L) == 0) {
           allocateUiElement(0x72L, 0x72L, x, y + 0x18L)._3c.set(0x21);
         }
 
         //LAB_801083c4
-        final long s0 = _800be5f8.offset(a2 * 0xa0L).getAddress();
-        renderFourDigitNumber(x + 0x19L, y + 0x39L, MEMORY.ref(1, s0).offset(0xeL).get());
-        renderFourDigitNumber(x + 0x19L, y + 0x44L, MEMORY.ref(1, s0).offset(0xfL).get());
-        renderFourDigitNumber(x + 0x19L, y + 0x4fL, MEMORY.ref(2, s0).offset(0x4L).getSigned(), MEMORY.ref(2, s0).offset(0x66L).get());
-        renderFourDigitNumber(x + 0x19L, y + 0x5aL, MEMORY.ref(2, s0).offset(0x6L).getSigned());
+        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+        renderFourDigitNumber(x + 0x19L, y + 0x39L, stats.level_0e.get());
+        renderFourDigitNumber(x + 0x19L, y + 0x44L, stats.dlevel_0f.get());
+        renderFourDigitNumber(x + 0x19L, y + 0x4fL, stats.hp_04.get(), stats.maxHp_66.get());
+        renderFourDigitNumber(x + 0x19L, y + 0x5aL, stats.mp_06.get());
       }
     }
 
@@ -6775,11 +6739,11 @@ public final class SItem {
         }
 
         //LAB_80108544
-        final long s0 = _800be5f8.offset(charIndex * 0xa0L).getAddress();
-        renderFourDigitNumber(x + 25, y + 57, MEMORY.ref(2, s0).offset(0x4L).getSigned(), MEMORY.ref(2, s0).offset(0x66L).get());
-        renderFourDigitNumber(x + 25, y + 68, MEMORY.ref(2, s0).offset(0x66L).get());
-        renderFourDigitNumber(x + 25, y + 79, MEMORY.ref(2, s0).offset(0x6L).getSigned());
-        renderFourDigitNumber(x + 25, y + 90, MEMORY.ref(2, s0).offset(0x6eL).getSigned());
+        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+        renderFourDigitNumber(x + 25, y + 57, stats.hp_04.get(), stats.maxHp_66.get());
+        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66.get());
+        renderFourDigitNumber(x + 25, y + 79, stats.mp_06.get());
+        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e.get());
       }
     }
 
@@ -6787,25 +6751,25 @@ public final class SItem {
   }
 
   @Method(0x801085e0L)
-  public static void FUN_801085e0(final int charIndex, final long a1, final long a2) {
+  public static void renderCharacterStats(final int charIndex, final long a1, final long a2) {
     if(charIndex != -1) {
       final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xa0);
-      final Value sp0x10 = sp0x10tmp.get();
+      final ActiveStatsa0 statsTmp = sp0x10tmp.get().cast(ActiveStatsa0::new);
 
       if(a1 != 0xffL) {
         final Memory.TemporaryReservation sp0xb0tmp = MEMORY.temp(0x5);
 
         //LAB_80108638
-        memcpy(sp0xb0tmp.address, _800babc8.offset(0x340L).offset(charIndex * 0x2cL).getAddress(), 5);
+        memcpy(sp0xb0tmp.address, gameState_800babc8.charData_32c.get(charIndex).equipment_14.getAddress(), 5);
 
         FUN_80103a5c(a1 & 0xffL, charIndex);
         FUN_80110030(0);
 
         //LAB_80108694
-        memcpy(sp0x10.getAddress(), _800be5f8.offset(charIndex * 0xa0L).getAddress(), 0xa0);
+        memcpy(statsTmp.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
 
         //LAB_801086e8
-        memcpy(_800babc8.offset(charIndex * 0x2cL).offset(0x340L).getAddress(), sp0xb0tmp.address, 5);
+        memcpy(gameState_800babc8.charData_32c.get(charIndex).equipment_14.getAddress(), sp0xb0tmp.address, 5);
 
         sp0xb0tmp.release();
 
@@ -6813,59 +6777,59 @@ public final class SItem {
       } else {
         //LAB_80108720
         //LAB_80108740
-        memcpy(sp0x10.getAddress(), _800be5f8.offset(charIndex * 0xa0L).getAddress(), 0xa0);
+        memcpy(statsTmp.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
       }
 
       //LAB_80108770
-      final long s0 = _800be5f8.offset(charIndex * 0xa0L).getAddress();
-      FUN_80105048(0x3aL, 0x74L, MEMORY.ref(1, s0).offset(0x6aL).get(), sp0x10.offset(1, 0x6aL).get());
-      FUN_80105048(0x5aL, 0x74L, MEMORY.ref(2, s0).offset(0x88L).getSigned(), sp0x10.offset(2, 0x88L).getSigned());
-      FUN_80105048(0x7aL, 0x74L, MEMORY.ref(1, s0).offset(0x6aL).get() + MEMORY.ref(2, s0).offset(0x88L).getSigned(), sp0x10.offset(1, 0x6aL).get() + sp0x10.offset(2, 0x88L).getSigned());
+      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+      FUN_80105048(0x3aL, 0x74L, stats.bodyAttack_6a.get(), statsTmp.bodyAttack_6a.get());
+      FUN_80105048(0x5aL, 0x74L, stats.gearAttack_88.get(), statsTmp.gearAttack_88.get());
+      FUN_80105048(0x7aL, 0x74L, stats.bodyAttack_6a.get() + stats.gearAttack_88.get(), statsTmp.bodyAttack_6a.get() + statsTmp.gearAttack_88.get());
 
-      if(FUN_80104b7c(_800babc8.offset(0x19cL).get(), charIndex) != 0) {
-        FUN_80107d34(0x9fL, 0x74L, MEMORY.ref(1, s0).offset(0x72L).get(), sp0x10.offset(1, 0x72L).get());
+      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
+        FUN_80107d34(0x9fL, 0x74L, stats.dragoonAttack_72.get(), statsTmp.dragoonAttack_72.get());
       }
 
       //LAB_801087fc
-      FUN_80105048(0x3aL, 0x80L, MEMORY.ref(1, s0).offset(0x6cL).get(), sp0x10.offset(1, 0x6cL).get());
-      FUN_80105048(0x5aL, 0x80L, MEMORY.ref(2, s0).offset(0x8cL).getSigned(), sp0x10.offset(2, 0x8cL).getSigned());
-      FUN_80105048(0x7aL, 0x80L, MEMORY.ref(1, s0).offset(0x6cL).get() + MEMORY.ref(2, s0).offset(0x8cL).getSigned(), sp0x10.offset(1, 0x6cL).get() + sp0x10.offset(2, 0x8cL).getSigned());
+      FUN_80105048(0x3aL, 0x80L, stats.bodyDefence_6c.get(), statsTmp.bodyDefence_6c.get());
+      FUN_80105048(0x5aL, 0x80L, stats.gearDefence_8c.get(), statsTmp.gearDefence_8c.get());
+      FUN_80105048(0x7aL, 0x80L, stats.bodyDefence_6c.get() + stats.gearDefence_8c.get(), statsTmp.bodyDefence_6c.get() + statsTmp.gearDefence_8c.get());
 
-      if(FUN_80104b7c(_800babc8.offset(0x19cL).get(), charIndex) != 0) {
-        FUN_80107d34(0x9fL, 0x80L, MEMORY.ref(1, s0).offset(0x74L).get(), sp0x10.offset(1, 0x74L).get());
+      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
+        FUN_80107d34(0x9fL, 0x80L, stats.dragoonDefence_74.get(), statsTmp.dragoonDefence_74.get());
       }
 
       //LAB_8010886c
-      FUN_80105048(0x3aL, 0x8cL, MEMORY.ref(1, s0).offset(0x6bL).get(), sp0x10.offset(1, 0x6bL).get());
-      FUN_80105048(0x5aL, 0x8cL, MEMORY.ref(2, s0).offset(0x8aL).getSigned(), sp0x10.offset(2, 0x8aL).getSigned());
-      FUN_80105048(0x7aL, 0x8cL, MEMORY.ref(1, s0).offset(0x6bL).get() + MEMORY.ref(2, s0).offset(0x8aL).getSigned(), sp0x10.offset(1, 0x6bL).get() + sp0x10.offset(2, 0x8aL).getSigned());
+      FUN_80105048(0x3aL, 0x8cL, stats.bodyMagicAttack_6b.get(), statsTmp.bodyMagicAttack_6b.get());
+      FUN_80105048(0x5aL, 0x8cL, stats.gearMagicAttack_8a.get(), statsTmp.gearMagicAttack_8a.get());
+      FUN_80105048(0x7aL, 0x8cL, stats.bodyMagicAttack_6b.get() + stats.gearMagicAttack_8a.get(), statsTmp.bodyMagicAttack_6b.get() + statsTmp.gearMagicAttack_8a.get());
 
-      if(FUN_80104b7c(_800babc8.offset(0x19cL).get(), charIndex) != 0) {
-        FUN_80107d34(0x9fL, 0x8cL, MEMORY.ref(1, s0).offset(0x73L).get(), sp0x10.offset(1, 0x73L).get());
+      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
+        FUN_80107d34(0x9fL, 0x8cL, stats.dragoonMagicAttack_73.get(), statsTmp.dragoonMagicAttack_73.get());
       }
 
       //LAB_801088dc
-      FUN_80105048(0x3aL, 0x98L, MEMORY.ref(1, s0).offset(0x6dL).get(), sp0x10.offset(1, 0x6dL).get());
-      FUN_80105048(0x5aL, 0x98L, MEMORY.ref(2, s0).offset(0x8eL).getSigned(), sp0x10.offset(2, 0x8eL).getSigned());
-      FUN_80105048(0x7aL, 0x98L, MEMORY.ref(1, s0).offset(0x6dL).get() + MEMORY.ref(2, s0).offset(0x8eL).getSigned(), sp0x10.offset(1, 0x6dL).get() + sp0x10.offset(2, 0x8eL).getSigned());
+      FUN_80105048(0x3aL, 0x98L, stats.bodyMagicDefence_6d.get(), statsTmp.bodyMagicDefence_6d.get());
+      FUN_80105048(0x5aL, 0x98L, stats.gearMagicDefence_8e.get(), statsTmp.gearMagicDefence_8e.get());
+      FUN_80105048(0x7aL, 0x98L, stats.bodyMagicDefence_6d.get() + stats.gearMagicDefence_8e.get(), statsTmp.bodyMagicDefence_6d.get() + statsTmp.gearMagicDefence_8e.get());
 
-      if(FUN_80104b7c(_800babc8.offset(0x19cL).get(), charIndex) != 0) {
-        FUN_80107d34(0x9fL, 0x98L, MEMORY.ref(1, s0).offset(0x75L).get(), sp0x10.offset(1, 0x75L).get());
+      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
+        FUN_80107d34(0x9fL, 0x98L, stats.dragoonMagicDefence_75.get(), statsTmp.dragoonMagicDefence_75.get());
       }
 
       //LAB_8010894c
-      FUN_80105048(0x3aL, 0xa4L, MEMORY.ref(1, s0).offset(0x69L).get(), sp0x10.offset(1, 0x69L).get());
-      FUN_80105048(0x5aL, 0xa4L, MEMORY.ref(2, s0).offset(0x86L).getSigned(), sp0x10.offset(2, 0x86L).getSigned());
-      FUN_80105048(0x7aL, 0xa4L, MEMORY.ref(1, s0).offset(0x69L).get() + MEMORY.ref(2, s0).offset(0x86L).getSigned(), sp0x10.offset(1, 0x69L).get() + sp0x10.offset(2, 0x86L).getSigned());
+      FUN_80105048(0x3aL, 0xa4L, stats.bodySpeed_69.get(), statsTmp.bodySpeed_69.get());
+      FUN_80105048(0x5aL, 0xa4L, stats.gearSpeed_86.get(), statsTmp.gearSpeed_86.get());
+      FUN_80105048(0x7aL, 0xa4L, stats.bodySpeed_69.get() + stats.gearSpeed_86.get(), statsTmp.bodySpeed_69.get() + statsTmp.gearSpeed_86.get());
 
-      FUN_80107d34(0x5aL, 0xb0L, MEMORY.ref(2, s0).offset(0x90L).getSigned(), sp0x10.offset(2, 0x90L).getSigned());
-      FUN_80107d34(0x7aL, 0xb0L, MEMORY.ref(2, s0).offset(0x90L).getSigned(), sp0x10.offset(2, 0x90L).getSigned());
-      FUN_80107d34(0x5aL, 0xbcL, MEMORY.ref(2, s0).offset(0x92L).getSigned(), sp0x10.offset(2, 0x92L).getSigned());
-      FUN_80107d34(0x7aL, 0xbcL, MEMORY.ref(2, s0).offset(0x92L).getSigned(), sp0x10.offset(2, 0x92L).getSigned());
-      FUN_80107d34(0x5aL, 0xc8L, MEMORY.ref(2, s0).offset(0x94L).getSigned(), sp0x10.offset(2, 0x94L).getSigned());
-      FUN_80107d34(0x7aL, 0xc8L, MEMORY.ref(2, s0).offset(0x94L).getSigned(), sp0x10.offset(2, 0x94L).getSigned());
-      FUN_80107d34(0x5aL, 0xd4L, MEMORY.ref(2, s0).offset(0x96L).getSigned(), sp0x10.offset(2, 0x96L).getSigned());
-      FUN_80107d34(0x7aL, 0xd4L, MEMORY.ref(2, s0).offset(0x96L).getSigned(), sp0x10.offset(2, 0x96L).getSigned());
+      FUN_80107d34(0x5aL, 0xb0L, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
+      FUN_80107d34(0x7aL, 0xb0L, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
+      FUN_80107d34(0x5aL, 0xbcL, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
+      FUN_80107d34(0x7aL, 0xbcL, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
+      FUN_80107d34(0x5aL, 0xc8L, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
+      FUN_80107d34(0x7aL, 0xc8L, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
+      FUN_80107d34(0x5aL, 0xd4L, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
+      FUN_80107d34(0x7aL, 0xd4L, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
 
       sp0x10tmp.release();
 
@@ -6965,7 +6929,7 @@ public final class SItem {
         renderCharacter(342, y + 17, 10); // Minute-second colon
         renderTwoDigitNumber(348, y + 17, getTimestampPart(saveData.time_20.get(), 2), 0x1L); // Time played second
         renderTwoDigitNumber(344, y + 34, saveData.stardust_28.get()); // Stardust
-        renderDragoonSpirits(saveData.dragoonSpirits_24.getAddress() /*TODO*/, 223, y + 27);
+        renderDragoonSpirits(saveData.dragoonSpirits_24, 223, y + 27);
       }
     }
 
@@ -6973,54 +6937,48 @@ public final class SItem {
   }
 
   @Method(0x80108e60L)
-  public static void FUN_80108e60(final int charIndex, final long a1) {
+  public static void renderCharacterEquipment(final int charIndex, final long a1) {
     if(charIndex == -0x1L) {
       return;
     }
 
-    long s0;
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+
     if(a1 != 0) {
       allocateUiElement(0x59L, 0x59L, 0xc2L, 0x10L);
-      s0 = _800babc8.offset(charIndex * 0x2cL).getAddress();
 
-      long v0 = MEMORY.ref(1, s0).offset(0x340L).get();
-      if(v0 != 0xffL) {
-        FUN_80103910(FUN_800228d0(v0), 0xcaL, 0x11L, 0);
+      if(charData.equipment_14.get(0).get() != -1) {
+        FUN_80103910(FUN_800228d0(charData.equipment_14.get(0).get()), 0xcaL, 0x11L, 0);
       }
 
       //LAB_80108ee4
-      v0 = MEMORY.ref(1, s0).offset(0x341L).get();
-      if(MEMORY.ref(1, s0).offset(0x341L).get() != 0xffL) {
-        FUN_80103910(FUN_800228d0(v0), 0xcaL, 0x1fL, 0);
+      if(charData.equipment_14.get(1).get() != -1) {
+        FUN_80103910(FUN_800228d0(charData.equipment_14.get(1).get()), 0xcaL, 0x1fL, 0);
       }
 
       //LAB_80108f10
-      v0 = MEMORY.ref(1, s0).offset(0x342L).get();
-      if(v0 != 0xffL) {
-        FUN_80103910(FUN_800228d0(v0), 0xcaL, 0x2dL, 0);
+      if(charData.equipment_14.get(2).get() != -1) {
+        FUN_80103910(FUN_800228d0(charData.equipment_14.get(2).get()), 0xcaL, 0x2dL, 0);
       }
 
       //LAB_80108f3c
-      v0 = MEMORY.ref(1, s0).offset(0x343L).get();
-      if(v0 != 0xffL) {
-        FUN_80103910(FUN_800228d0(v0), 0xcaL, 0x3bL, 0);
+      if(charData.equipment_14.get(3).get() != -1) {
+        FUN_80103910(FUN_800228d0(charData.equipment_14.get(3).get()), 0xcaL, 0x3bL, 0);
       }
 
       //LAB_80108f68
-      v0 = MEMORY.ref(1, s0).offset(0x344L).get();
-      if(v0 != 0xffL) {
-        FUN_80103910(FUN_800228d0(v0), 0xcaL, 0x49L, 0);
+      if(charData.equipment_14.get(4).get() != -1) {
+        FUN_80103910(FUN_800228d0(charData.equipment_14.get(4).get()), 0xcaL, 0x49L, 0);
       }
     }
 
     //LAB_80108f94
     //LAB_80108f98
-    s0 = _800babc8.offset(charIndex * 0x2cL).getAddress();
-    renderText(_8011972c.get((int)MEMORY.ref(1, s0).offset(0x340L).get()).deref(), 0xdcL, 0x13L, 0x4L);
-    renderText(_8011972c.get((int)MEMORY.ref(1, s0).offset(0x341L).get()).deref(), 0xdcL, 0x21L, 0x4L);
-    renderText(_8011972c.get((int)MEMORY.ref(1, s0).offset(0x342L).get()).deref(), 0xdcL, 0x2fL, 0x4L);
-    renderText(_8011972c.get((int)MEMORY.ref(1, s0).offset(0x343L).get()).deref(), 0xdcL, 0x3dL, 0x4L);
-    renderText(_8011972c.get((int)MEMORY.ref(1, s0).offset(0x344L).get()).deref(), 0xdcL, 0x4bL, 0x4L);
+    renderText(equipment_8011972c.get(charData.equipment_14.get(0).get()).deref(), 0xdcL, 0x13L, 0x4L);
+    renderText(equipment_8011972c.get(charData.equipment_14.get(1).get()).deref(), 0xdcL, 0x21L, 0x4L);
+    renderText(equipment_8011972c.get(charData.equipment_14.get(2).get()).deref(), 0xdcL, 0x2fL, 0x4L);
+    renderText(equipment_8011972c.get(charData.equipment_14.get(3).get()).deref(), 0xdcL, 0x3dL, 0x4L);
+    renderText(equipment_8011972c.get(charData.equipment_14.get(4).get()).deref(), 0xdcL, 0x4bL, 0x4L);
 
     //LAB_8010905c
   }
@@ -7098,7 +7056,7 @@ public final class SItem {
   }
 
   @Method(0x801092b4L)
-  public static void FUN_801092b4(final int charIndex, final long a1) {
+  public static void renderCharacterSpells(final int charIndex, final long a1) {
     if(charIndex == -0x1L) {
       return;
     }
@@ -7108,7 +7066,7 @@ public final class SItem {
     }
 
     //LAB_80109308
-    if(FUN_80104b7c(_800bad64.offset(4, 0x0L).get(), charIndex) == 0) {
+    if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) == 0) {
       return;
     }
 
@@ -7125,7 +7083,7 @@ public final class SItem {
       //LAB_80109370
       final int v1 = sp0x10[i] & 0xff;
       if(v1 != 0xffL) {
-        renderText(_80052734.get(v1).deref(), 210, 125 + i * 14, 0x4L);
+        renderText(spells_80052734.get(v1).deref(), 210, 125 + i * 14, 0x4L);
 
         if(a1 != 0) {
           renderThreeDigitNumber(342, 128 + i * 14, _80114290.offset(v1).get());
@@ -7155,7 +7113,7 @@ public final class SItem {
       }
 
       //LAB_801094ac
-      renderText(_8011972c.get((int)MEMORY.ref(1, s1).get()).deref(), a0 + 21, a1 + FUN_800fc814(i) + 2, s0);
+      renderText(equipment_8011972c.get((int)MEMORY.ref(1, s1).get()).deref(), a0 + 21, a1 + FUN_800fc814(i) + 2, s0);
       FUN_80103910(FUN_800228d0(MEMORY.ref(1, s1).get()), a0 + 4, a1 + FUN_800fc814(i), 0x8L);
 
       s0 = MEMORY.ref(2, s1).offset(0x2L).get();
@@ -7231,7 +7189,7 @@ public final class SItem {
   }
 
   @Method(0x801098c0L)
-  public static void renderDragoonSpirits(final long a0, final long x, final long y) {
+  public static void renderDragoonSpirits(final ArrayRef<UnsignedIntRef> spirits, final long x, final long y) {
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x28);
     final Value sp18 = tmp.get();
 
@@ -7247,12 +7205,17 @@ public final class SItem {
     //LAB_80109934
     for(int i = 0; i < 8; i++) {
       final long v0 = sp18.offset(i * 0x4L).get();
-      if((MEMORY.ref(4, a0).offset((v0 >>> 5) * 0x4L).get() & 0x1L << (v0 & 0x1fL)) != 0) {
+      if((spirits.get((int)(v0 >>> 5)).get() & 0x1L << (v0 & 0x1fL)) != 0) {
         final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
-        sp18.offset(1, 0x0L).setu(i + 0xdL);
-        sp18.offset(2, 0x2L).setu(x + i * 0xcL);
-        sp18.offset(2, 0x4L).setu(y);
-        FUN_80104b1c(struct, sp18.getAddress());
+
+        final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(6);
+        final Value sp10 = sp0x10tmp.get();
+        sp10.offset(1, 0x0L).setu(i + 0xdL);
+        sp10.offset(2, 0x2L).setu(x + i * 0xcL);
+        sp10.offset(2, 0x4L).setu(y);
+        FUN_80104b1c(struct, sp10.getAddress());
+        sp0x10tmp.release();
+
         struct._3c.set(0x21);
       }
 
@@ -7483,7 +7446,7 @@ public final class SItem {
     if(state == 0) {
       //LAB_8010a178
       //LAB_8010a17c
-      memcpy(_800babc8.getAddress(), memcardData, 0x52c);
+      memcpy(gameState_800babc8.getAddress(), memcardData, 0x52c);
       return 0;
     }
 
@@ -7708,172 +7671,160 @@ public final class SItem {
     long v0;
     long v1;
     long a1;
-    long a2;
-    long s1;
 
     final long spc0 = a0;
 
     //LAB_80110070
     final long[] sp10 = new long[10];
-    for(int i = 0; i < 10; i++) {
-      sp10[i] = _800fbd08.get(i).get();
+    for(int charIndex = 0; charIndex < 10; charIndex++) {
+      sp10[charIndex] = _800fbd08.get(charIndex).get();
     }
 
     //LAB_801100bc
     final long[] sp38 = new long[9];
-    for(int i = 0; i < 9; i++) {
-      sp38[i] = _800fbd30.get(i).get();
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      sp38[charIndex] = _800fbd30.get(charIndex).get();
     }
 
     //LAB_80110104
     final long[] sp60 = new long[9];
-    for(int i = 0; i < 9; i++) {
-      sp60[i] = _800fbd54.get(i).get();
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      sp60[charIndex] = _800fbd54.get(charIndex).get();
     }
 
     FUN_8002a6fc();
 
-    long s5 = 0;
-    long t1 = 0;
-    long fp = 0;
-    long s2 = _800babc8.getAddress();
-    long s0 = _800be5f8.getAddress();
-
     //LAB_80110174
-    for(int s7 = 0; s7 < 9; s7++) {
-      a2 = sp38[s7];
-      s1 = sp60[s7];
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
-      MEMORY.ref(4, s0).offset(0x0L).setu(MEMORY.ref(4, s2).offset(0x32cL));
-      MEMORY.ref(2, s0).offset(0x4L).setu(MEMORY.ref(2, s2).offset(0x334L));
-      MEMORY.ref(2, s0).offset(0x6L).setu(MEMORY.ref(2, s2).offset(0x336L));
-      MEMORY.ref(2, s0).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x338L));
-      MEMORY.ref(2, s0).offset(0xaL).setu(MEMORY.ref(2, s2).offset(0x33aL));
-      MEMORY.ref(2, s0).offset(0xcL).setu(MEMORY.ref(2, s2).offset(0x33cL));
-      MEMORY.ref(1, s0).offset(0xeL).setu(MEMORY.ref(1, s2).offset(0x33eL));
-      MEMORY.ref(1, s0).offset(0xfL).setu(MEMORY.ref(1, s2).offset(0x33fL));
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+
+      stats.xp_00.set(charData.xp_00.get());
+      stats.hp_04.set(charData.hp_08.get());
+      stats.mp_06.set(charData.mp_0a.get());
+      stats.sp_08.set(charData.sp_0c.get());
+      stats._0a.set(charData._0e.get());
+      stats._0c.set(charData._10.get());
+      stats.level_0e.set(charData.level_12.get());
+      stats.dlevel_0f.set(charData.dlevel_13.get());
 
       //LAB_801101e4
-      for(int i = 0; i < 0x5L; i++) {
-        _800be5f8.offset(1, i).offset(s5).offset(0x30L).setu(_800babc8.offset(1, i).offset(fp).offset(0x340L));
+      for(int i = 0; i < 5; i++) {
+        stats.equipment_30.get(i).set(charData.equipment_14.get(i).get());
       }
 
-      MEMORY.ref(1, s0).offset(0x35L).setu(MEMORY.ref(1, s2).offset(0x345L));
+      stats.selectedAddition_35.set(charData.selectedAddition_19.get());
 
       //LAB_80110220
-      for(int i = 0; i < 0x8L; i++) {
-        _800be5f8.offset(1, i).offset(s5).offset(0x36L).setu(_800babc8.offset(1, i).offset(fp).offset(0x346L));
-        _800be5f8.offset(1, i).offset(s5).offset(0x3eL).setu(_800babc8.offset(1, i).offset(fp).offset(0x34eL));
+      for(int i = 0; i < 8; i++) {
+        stats.additionLevels_36.get(i).set(charData.additionLevels_1a.get(i).get());
+        stats.additionXp_3e.get(i).set(charData.additionXp_22.get(i).get());
       }
 
-      v0 = a2 + MEMORY.ref(1, s0).offset(0xeL).get() * 0x8L;
-      MEMORY.ref(2, s0).offset(0x66L).setu(MEMORY.ref(2, v0).offset(0x0L));
-      MEMORY.ref(1, s0).offset(0x68L).setu(MEMORY.ref(1, v0).offset(0x2L));
-      MEMORY.ref(1, s0).offset(0x69L).setu(MEMORY.ref(1, v0).offset(0x3L));
-      MEMORY.ref(1, s0).offset(0x6aL).setu(MEMORY.ref(1, v0).offset(0x4L));
-      MEMORY.ref(1, s0).offset(0x6bL).setu(MEMORY.ref(1, v0).offset(0x5L));
-      MEMORY.ref(1, s0).offset(0x6cL).setu(MEMORY.ref(1, v0).offset(0x6L));
-      MEMORY.ref(1, s0).offset(0x6dL).setu(MEMORY.ref(1, v0).offset(0x7L));
+      v0 = sp38[charIndex] + stats.level_0e.get() * 0x8L;
+      stats.maxHp_66.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+      stats._68.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
+      stats.bodySpeed_69.set((int)MEMORY.ref(1, v0).offset(0x3L).get());
+      stats.bodyAttack_6a.set((int)MEMORY.ref(1, v0).offset(0x4L).get());
+      stats.bodyMagicAttack_6b.set((int)MEMORY.ref(1, v0).offset(0x5L).get());
+      stats.bodyDefence_6c.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
+      stats.bodyMagicDefence_6d.set((int)MEMORY.ref(1, v0).offset(0x7L).get());
 
-      v0 = s1 + MEMORY.ref(1, s0).offset(0xfL).get() * 0x8L;
-      MEMORY.ref(2, s0).offset(0x6eL).setu(MEMORY.ref(2, v0).offset(0x0L));
-      MEMORY.ref(1, s0).offset(0x70L).setu(MEMORY.ref(1, v0).offset(0x2L));
-      MEMORY.ref(1, s0).offset(0x71L).setu(MEMORY.ref(1, v0).offset(0x3L));
-      MEMORY.ref(1, s0).offset(0x72L).setu(MEMORY.ref(1, v0).offset(0x4L));
-      MEMORY.ref(1, s0).offset(0x73L).setu(MEMORY.ref(1, v0).offset(0x5L));
+      v0 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+      stats.maxMp_6e.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+      stats._70.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
+      stats._71.set((int)MEMORY.ref(1, v0).offset(0x3L).get());
+      stats.dragoonAttack_72.set((int)MEMORY.ref(1, v0).offset(0x4L).get());
+      stats.dragoonMagicAttack_73.set((int)MEMORY.ref(1, v0).offset(0x5L).get());
+      stats.dragoonDefence_74.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
+      stats.dragoonMagicDefence_75.set((int)MEMORY.ref(1, v0).offset(0x7L).get());
 
-      v0 = s1 + MEMORY.ref(1, s0).offset(0xfL).get() * 0x8L;
-      MEMORY.ref(1, s0).offset(0x74L).setu(MEMORY.ref(1, v0).offset(0x6L));
-      MEMORY.ref(1, s0).offset(0x75L).setu(MEMORY.ref(1, v0).offset(0x7L));
+      final int a2 = stats.selectedAddition_35.get();
+      if(a2 != -1) {
+        //TODO straighten this out
+        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(MEMORY.ref(1, stats.additionLevels_36.getAddress()).offset(a2 - additionOffsets_8004f5ac.get(charIndex).get()).get() * 0x4L).getAddress();
 
-      a2 = MEMORY.ref(1, s0).offset(0x35L).getSigned();
-      if(a2 != -0x1L) {
-        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(_800be5f8.offset(1, a2 - additionOffsets_8004f5ac.get((int)t1).get()).offset(s5).offset(0x36L).get() * 0x4L).getAddress();
-
-        MEMORY.ref(2, s0).offset(0x9cL).setu(MEMORY.ref(2, a0).offset(0x0L));
-        MEMORY.ref(1, s0).offset(0x9eL).setu(MEMORY.ref(1, a0).offset(0x2L));
-        MEMORY.ref(1, s0).offset(0x9fL).setu(MEMORY.ref(1, a0).offset(0x3L));
+        stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
+        stats._9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
+        stats._9f.set((int)MEMORY.ref(1, a0).offset(0x3L).get());
       }
 
       //LAB_8011042c
-      FUN_8011085c(s7);
+      FUN_8011085c(charIndex);
 
-      v0 = sp10[s7];
+      v0 = sp10[charIndex];
       a0 = v0 & 0x1fL;
       v0 = v0 >>> 5;
-      if((_800bad64.offset(4, v0 * 0x4L).get() & 0x1L << a0) != 0) {
-        MEMORY.ref(2, s0).offset(0xcL).oru(0x2000L);
-        a0 = sp10[s7];
+      if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1L << a0) != 0) {
+        stats._0c.or(0x2000);
+        a0 = sp10[charIndex];
 
-        if((_800babc8.offset(2, 0x4e6L).getSigned() >> a0 & 0x1L) == 0) {
-          _800babc8.offset(2, 0x4e6L).oru(0x1L << a0);
+        if((gameState_800babc8._4e6.get() >> a0 & 1) == 0) {
+          gameState_800babc8._4e6.or(1 << a0);
 
-          v0 = s1 + MEMORY.ref(1, s0).offset(0xfL).get() * 0x8L;
-          MEMORY.ref(2, s0).offset(0x6L).setu(MEMORY.ref(2, v0));
-          MEMORY.ref(2, s0).offset(0x6eL).setu(MEMORY.ref(2, v0));
+          v0 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+          stats.mp_06.set((int)MEMORY.ref(2, v0).get());
+          stats.maxMp_6e.set((int)MEMORY.ref(2, v0).get());
         }
       } else {
         //LAB_801104ec
-        MEMORY.ref(2, s0).offset(0x6L).setu(0);
-        MEMORY.ref(2, s0).offset(0x6eL).setu(0);
-        MEMORY.ref(1, s0).offset(0xfL).setu(0);
+        stats.mp_06.set(0);
+        stats.maxMp_6e.set(0);
+        stats.dlevel_0f.set(0);
       }
 
       //LAB_801104f8
-      if(s7 == 0) {
+      if(charIndex == 0) {
         v0 = sp10[9];
 
         a0 = v0 & 0x1fL;
         v0 = v0 >>> 5;
-        if((_800bad64.offset(4, v0 * 0x4L).get() & 0x1L << a0) != 0) {
-          _800be5f8.offset(2, 0xcL).oru(0x6000L);
-          _800be5f8.offset(1, 0xfL).setu(_800babc8.offset(1, 0x33fL));
+        if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1L << a0) != 0) {
+          stats._0c.or(0x6000);
+          stats.dlevel_0f.set(gameState_800babc8.charData_32c.get(0).dlevel_13.get());
 
           a1 = sp10[0];
 
-          if((_800babc8.offset(2, 0x4e6L).getSigned() >> a1 & 0x1L) == 0) {
-            _800babc8.offset(2, 0x4e6L).oru(0x1L << a1);
-            v1 = s1 + _800be5f8.offset(1, 0xfL).get() * 0x8L;
-            _800be5f8.offset(2, 0x6L).setu(MEMORY.ref(2, v1));
-            _800be5f8.offset(2, 0x6eL).setu(MEMORY.ref(2, v1));
+          if((gameState_800babc8._4e6.get() >> a1 & 1) == 0) {
+            gameState_800babc8._4e6.or(1 << a1);
+            v1 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+            stats.mp_06.set((int)MEMORY.ref(2, v1).get());
+            stats.maxMp_6e.set((int)MEMORY.ref(2, v1).get());
           } else {
             //LAB_80110590
-            v1 = s1 + _800be5f8.offset(1, 0xfL).get() * 0x8L;
-            _800be5f8.offset(2, 0x6L).setu(_800babc8.offset(2, 0x336L));
-            _800be5f8.offset(2, 0x6eL).setu(MEMORY.ref(2, v1));
+            v1 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+            stats.mp_06.set(gameState_800babc8.charData_32c.get(0).mp_0a.get());
+            stats.maxMp_6e.set((int)MEMORY.ref(2, v1).get());
           }
         }
       }
 
       //LAB_801105b0
-      a1 = MEMORY.ref(2, s0).offset(0x66L).get() * (MEMORY.ref(2, s0).offset(0x62L).getSigned() + 0x64L) / 100;
+      int maxHp = stats.maxHp_66.get() * (stats._62.get() / 100 + 1);
 
-      if(a1 >= 9999L) {
-        a1 = 9999L;
+      //TODO remove HP cap
+      if(maxHp >= 9999) {
+        maxHp = 9999;
       }
 
       //LAB_801105f0
-      MEMORY.ref(2, s0).offset(0x66L).setu(a1);
+      stats.maxHp_66.set(maxHp);
 
-      if(MEMORY.ref(2, s0).offset(0x4L).getSigned() > a1) {
-        MEMORY.ref(2, s0).offset(0x4L).setu(a1);
+      if(stats.hp_04.get() > maxHp) {
+        stats.hp_04.set(maxHp);
       }
 
       //LAB_80110608
-      a1 = MEMORY.ref(2, s0).offset(0x6eL).getSigned() * (MEMORY.ref(2, s0).offset(0x64L).getSigned() + 0x64L) / 100;
+      final int maxMp = stats.maxMp_6e.get() * (stats._64.get() / 100 + 1);
 
-      MEMORY.ref(2, s0).offset(0x6eL).setu(a1);
+      stats.maxMp_6e.set(maxMp);
 
-      if((short)a1 < MEMORY.ref(2, s0).offset(0x6L).getSigned()) {
-        MEMORY.ref(2, s0).offset(0x6L).setu(a1);
+      if(stats.mp_06.get() > maxMp) {
+        stats.mp_06.set(maxMp);
       }
 
       //LAB_80110654
-      s0 = s0 + 0xa0L;
-      s5 = s5 + 0xa0L;
-      t1++;
-      fp = fp + 0x2cL;
-      s2 = s2 + 0x2cL;
     }
 
     if(spc0 == 0x1L) {
@@ -7933,7 +7884,7 @@ public final class SItem {
     long s6;
 
     s0 = a0;
-    FUN_8002a86c(a0);
+    FUN_8002a86c((int)a0);
     s3 = 0;
     v0 = 0x800c_0000L;
     s6 = v0 - 0x1a08L;

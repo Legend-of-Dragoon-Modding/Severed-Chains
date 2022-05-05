@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -22,7 +23,7 @@ public class MemcardDataStruct3c implements MemoryRef {
 
   public final UnsignedIntRef gold_1c;
   public final UnsignedIntRef time_20;
-  public final UnsignedIntRef dragoonSpirits_24;
+  public final ArrayRef<UnsignedIntRef> dragoonSpirits_24;
   public final UnsignedIntRef stardust_28;
   public final UnsignedByteRef locationIndex_2c;
   /**
@@ -48,7 +49,7 @@ public class MemcardDataStruct3c implements MemoryRef {
 
     this.gold_1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
     this.time_20 = ref.offset(4, 0x20L).cast(UnsignedIntRef::new);
-    this.dragoonSpirits_24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
+    this.dragoonSpirits_24 = ref.offset(4, 0x24L).cast(ArrayRef.of(UnsignedIntRef.class, 1, 4, UnsignedIntRef::new));
     this.stardust_28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
     this.locationIndex_2c = ref.offset(1, 0x2cL).cast(UnsignedByteRef::new);
     this.saveType_2d = ref.offset(1, 0x2dL).cast(UnsignedByteRef::new);

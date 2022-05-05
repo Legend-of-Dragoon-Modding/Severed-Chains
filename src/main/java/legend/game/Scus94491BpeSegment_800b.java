@@ -25,8 +25,10 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
 import legend.game.types.Drgn0_6666File;
+import legend.game.types.GameState52c;
 import legend.game.types.LodString;
 import legend.game.types.ScriptState;
 import legend.game.types.Renderable58;
@@ -54,62 +56,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800babc0 = MEMORY.ref(1, 0x800babc0L);
 
-  public static final Value _800babc8 = MEMORY.ref(4, 0x800babc8L);
+  public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
 
-  public static final Value _800bac50 = MEMORY.ref(4, 0x800bac50L);
-  public static final Value _800bac54 = MEMORY.ref(4, 0x800bac54L);
-  public static final Value _800bac58 = MEMORY.ref(4, 0x800bac58L);
-  public static final Value _800bac5c = MEMORY.ref(4, 0x800bac5cL);
-  public static final Value _800bac60 = MEMORY.ref(4, 0x800bac60L);
-
-  public static final Value _800bac68 = MEMORY.ref(4, 0x800bac68L);
-  public static final Value _800bac6c = MEMORY.ref(4, 0x800bac6cL);
-  public static final Value _800bac70 = MEMORY.ref(4, 0x800bac70L);
-
-  public static final ArrayRef<UnsignedIntRef> scriptFlags2_800bac84 = MEMORY.ref(4, 0x800bac84L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
-  public static final ArrayRef<UnsignedIntRef> scriptFlags1_800bad04 = MEMORY.ref(4, 0x800bad04L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-
-  public static final Value _800bad24 = MEMORY.ref(4, 0x800bad24L);
-
-  public static final Value _800bad44 = MEMORY.ref(4, 0x800bad44L);
-
-  public static final Value _800bad64 = MEMORY.ref(1, 0x800bad64L);
-
-  public static final Value _800bad6c = MEMORY.ref(4, 0x800bad6cL);
-
-  public static final Value _800badac = MEMORY.ref(2, 0x800badacL);
-  public static final Value _800badae = MEMORY.ref(2, 0x800badaeL);
-  public static final Value _800badb0 = MEMORY.ref(1, 0x800badb0L);
-
-  public static final Value _800bae00 = MEMORY.ref(4, 0x800bae00L);
-
-  public static final Value _800baeb1 = MEMORY.ref(1, 0x800baeb1L);
-
-  public static final Value _800baef4 = MEMORY.ref(4, 0x800baef4L);
-
-  public static final Value _800baefc = MEMORY.ref(2, 0x800baefcL);
-
-  public static final Value _800baf02 = MEMORY.ref(2, 0x800baf02L);
-
-  public static final Value _800baf07 = MEMORY.ref(1, 0x800baf07L);
-
-  public static final Value _800baf0d = MEMORY.ref(1, 0x800baf0dL);
-
-  public static final Value _800bb080 = MEMORY.ref(4, 0x800bb080L);
-
-  public static final Value _800bb0a0 = MEMORY.ref(2, 0x800bb0a0L);
-  public static final Value _800bb0a2 = MEMORY.ref(2, 0x800bb0a2L);
-  public static final Value _800bb0a4 = MEMORY.ref(1, 0x800bb0a4L);
-  public static final Value _800bb0a5 = MEMORY.ref(1, 0x800bb0a5L);
-  public static final Value _800bb0a6 = MEMORY.ref(2, 0x800bb0a6L);
-  public static final Value mono_800bb0a8 = MEMORY.ref(1, 0x800bb0a8L);
-  public static final Value vibrationEnabled_800bb0a9 = MEMORY.ref(1, 0x800bb0a9L);
-  public static final Value _800bb0aa = MEMORY.ref(1, 0x800bb0aaL);
-
-  public static final Value _800bb0ab = MEMORY.ref(1, 0x800bb0abL);
-  public static final Value _800bb0ac = MEMORY.ref(1, 0x800bb0acL);
-
-  public static final Value _800bb0b0 = MEMORY.ref(4, 0x800bb0b0L);
+  // End of game state 800bb0f4
 
   public static final Value submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
   public static final Value submapScene_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
@@ -374,85 +323,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800be5f2 = MEMORY.ref(1, 0x800be5f2L);
   public static final Value _800be5f3 = MEMORY.ref(1, 0x800be5f3L);
 
-  //TODO This is a giant structure
-  public static final Value _800be5f8 = MEMORY.ref(4, 0x800be5f8L);
-  public static final Value _800be5fc = MEMORY.ref(2, 0x800be5fcL);
-  public static final Value _800be5fe = MEMORY.ref(2, 0x800be5feL);
-  public static final Value _800be600 = MEMORY.ref(2, 0x800be600L);
-  public static final Value _800be602 = MEMORY.ref(2, 0x800be602L);
-  public static final Value _800be604 = MEMORY.ref(2, 0x800be604L);
-  public static final Value _800be606 = MEMORY.ref(1, 0x800be606L);
-  public static final Value _800be607 = MEMORY.ref(1, 0x800be607L);
-
-  public static final Value _800be628 = MEMORY.ref(1, 0x800be628L);
-
-  public static final Value _800be62d = MEMORY.ref(1, 0x800be62dL);
-  public static final Value _800be62e = MEMORY.ref(1, 0x800be62eL);
-
-  public static final Value _800be636 = MEMORY.ref(1, 0x800be636L);
-
-  public static final Value _800be63e = MEMORY.ref(2, 0x800be63eL);
-  public static final Value _800be640 = MEMORY.ref(2, 0x800be640L);
-  public static final Value _800be642 = MEMORY.ref(2, 0x800be642L);
-  public static final Value _800be644 = MEMORY.ref(2, 0x800be644L);
-  public static final Value _800be646 = MEMORY.ref(2, 0x800be646L);
-  public static final Value _800be648 = MEMORY.ref(2, 0x800be648L);
-  public static final Value _800be64a = MEMORY.ref(2, 0x800be64aL);
-  public static final Value _800be64c = MEMORY.ref(2, 0x800be64cL);
-  public static final Value _800be64e = MEMORY.ref(2, 0x800be64eL);
-  public static final Value _800be650 = MEMORY.ref(2, 0x800be650L);
-  public static final Value _800be652 = MEMORY.ref(2, 0x800be652L);
-  public static final Value _800be654 = MEMORY.ref(2, 0x800be654L);
-  public static final Value _800be656 = MEMORY.ref(2, 0x800be656L);
-  public static final Value _800be658 = MEMORY.ref(2, 0x800be658L);
-  public static final Value _800be65a = MEMORY.ref(2, 0x800be65aL);
-  public static final Value _800be65c = MEMORY.ref(2, 0x800be65cL);
-  public static final Value _800be65e = MEMORY.ref(2, 0x800be65eL);
-  public static final Value _800be660 = MEMORY.ref(1, 0x800be660L);
-  public static final Value _800be661 = MEMORY.ref(1, 0x800be661L);
-  public static final Value _800be662 = MEMORY.ref(1, 0x800be662L);
-  public static final Value _800be663 = MEMORY.ref(1, 0x800be663L);
-  public static final Value _800be664 = MEMORY.ref(1, 0x800be664L);
-  public static final Value _800be665 = MEMORY.ref(1, 0x800be665L);
-  public static final Value _800be666 = MEMORY.ref(2, 0x800be666L);
-  public static final Value _800be668 = MEMORY.ref(1, 0x800be668L);
-  public static final Value _800be669 = MEMORY.ref(1, 0x800be669L);
-  public static final Value _800be66a = MEMORY.ref(1, 0x800be66aL);
-  public static final Value _800be66b = MEMORY.ref(1, 0x800be66bL);
-  public static final Value _800be66c = MEMORY.ref(1, 0x800be66cL);
-  public static final Value _800be66d = MEMORY.ref(1, 0x800be66dL);
-  public static final Value _800be66e = MEMORY.ref(1, 0x800be66eL);
-  public static final Value _800be66f = MEMORY.ref(1, 0x800be66fL);
-  public static final Value _800be670 = MEMORY.ref(1, 0x800be670L);
-  public static final Value _800be671 = MEMORY.ref(1, 0x800be671L);
-  public static final Value _800be672 = MEMORY.ref(1, 0x800be672L);
-  public static final Value _800be673 = MEMORY.ref(1, 0x800be673L);
-  public static final Value _800be674 = MEMORY.ref(1, 0x800be674L);
-  public static final Value _800be675 = MEMORY.ref(1, 0x800be675L);
-  public static final Value _800be676 = MEMORY.ref(1, 0x800be676L);
-  public static final Value _800be677 = MEMORY.ref(1, 0x800be677L);
-  public static final Value _800be678 = MEMORY.ref(1, 0x800be678L);
-  public static final Value _800be679 = MEMORY.ref(1, 0x800be679L);
-  public static final Value _800be67a = MEMORY.ref(1, 0x800be67aL);
-  public static final Value _800be67b = MEMORY.ref(1, 0x800be67bL);
-  public static final Value _800be67c = MEMORY.ref(1, 0x800be67cL);
-  public static final Value _800be67e = MEMORY.ref(2, 0x800be67eL);
-  public static final Value _800be680 = MEMORY.ref(2, 0x800be680L);
-  public static final Value _800be682 = MEMORY.ref(2, 0x800be682L);
-  public static final Value _800be684 = MEMORY.ref(2, 0x800be684L);
-  public static final Value _800be686 = MEMORY.ref(2, 0x800be686L);
-  public static final Value _800be688 = MEMORY.ref(2, 0x800be688L);
-  public static final Value _800be68a = MEMORY.ref(2, 0x800be68aL);
-  public static final Value _800be68c = MEMORY.ref(2, 0x800be68cL);
-  public static final Value _800be68e = MEMORY.ref(2, 0x800be68eL);
-  public static final Value _800be690 = MEMORY.ref(1, 0x800be690L);
-  public static final Value _800be691 = MEMORY.ref(1, 0x800be691L);
-  public static final Value _800be692 = MEMORY.ref(1, 0x800be692L);
-  public static final Value _800be693 = MEMORY.ref(1, 0x800be693L);
-  public static final Value _800be694 = MEMORY.ref(2, 0x800be694L);
-  public static final Value _800be696 = MEMORY.ref(1, 0x800be696L);
-  public static final Value _800be697 = MEMORY.ref(1, 0x800be697L);
-  //TODO
+  public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
 
   public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);
