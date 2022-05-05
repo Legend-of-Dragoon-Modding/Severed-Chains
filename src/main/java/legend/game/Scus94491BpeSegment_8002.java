@@ -1490,7 +1490,7 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_80022928(final byte[] a0, final int charIndex) {
     //LAB_80022940
     for(int a2 = 0; a2 < 8; a2++) {
-      a0[a2] = (byte)0xff;
+      a0[a2] = -1;
     }
 
     if(charIndex == -1) {
@@ -1498,7 +1498,7 @@ public final class Scus94491BpeSegment_8002 {
       return 0;
     }
 
-    if(charIndex == 0 && gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
+    if(charIndex == 0 && (byte)gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
       a0[0] = 9;
       a0[1] = 4;
       return 0x2L;
@@ -1533,7 +1533,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022a24
-    if(charIndex == 0 && gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
+    if(charIndex == 0 && (byte)gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
       return 0x2L;
     }
 
