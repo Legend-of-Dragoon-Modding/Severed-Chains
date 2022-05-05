@@ -1477,13 +1477,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800228d0L)
-  public static long FUN_800228d0(final long a0) {
-    if(a0 >= 0xc0L) {
-      return _8004f2ac.offset((a0 - 0xc0L) * 0xcL).offset(0x7L).getSigned();
+  public static long FUN_800228d0(final int itemId) {
+    if(itemId >= 0xc0) {
+      return _8004f2ac.offset((itemId - 0xc0L) * 0xcL).offset(0x7L).getSigned();
     }
 
     //LAB_80022908
-    return _80111ff0.offset(a0 * 0x1cL).offset(0xeL).getSigned();
+    return _80111ff0.offset(itemId * 0x1cL).offset(0xeL).getSigned();
   }
 
   @Method(0x80022928L)
@@ -1620,10 +1620,41 @@ public final class Scus94491BpeSegment_8002 {
     return s0;
   }
 
+  /**
+   * @param amount Amount of MP to restore, -1 restores all MP
+   * @return The amount of MP restored, or -1 if all MP is restored
+   */
   @Method(0x80022c08L)
-  public static long FUN_80022c08(final long a0, final long a1) {
-    assert false;
-    return 0;
+  public static int addMp(final int charIndex, final int amount) {
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+
+    if(stats.maxMp_6e.get() == 0 || charData.mp_0a.get() == stats.maxMp_6e.get()) {
+      return -2;
+    }
+
+    //LAB_80022c78
+    final int ret;
+    if(amount == -1) {
+      charData.mp_0a.set(stats.maxMp_6e.get());
+      ret = -1;
+    } else {
+      //LAB_80022c8c
+      charData.mp_0a.add(amount);
+
+      if(charData.mp_0a.get() < stats.maxMp_6e.get()) {
+        ret = amount;
+      } else {
+        charData.mp_0a.set(stats.maxMp_6e.get());
+        ret = -1;
+      }
+    }
+
+    //LAB_80022cb4
+    FUN_80110030(0);
+
+    //LAB_80022cc0
+    return ret;
   }
 
   @Method(0x80022cd0L)
@@ -1722,7 +1753,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022ff8
-      sp14.setu(FUN_80022c08(charIndex, v0));
+      sp14.setu(addMp(charIndex, (int)v0));
     }
 
     //LAB_8002300c
@@ -1849,13 +1880,73 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800233d8L)
   public static long FUN_800233d8(final long a0) {
-    assert false;
+    FUN_80023148();
+
+    if(gameState_800babc8._1e4.get() == 0) {
+      return 0xffL;
+    }
+
+    //LAB_8002340c
+    if(gameState_800babc8._1e8.get((int)a0).get() == 0xffL) {
+      return 0xffL;
+    }
+
+    //LAB_80023430
+    for(int s0 = (int)a0; s0 < 0xff; s0++) {
+      gameState_800babc8._1e8.get(s0).set(gameState_800babc8._1e8.get(s0 + 1).get());
+    }
+
+    //LAB_80023454
+    gameState_800babc8._1e8.get(0x99).set(0xff);
+    gameState_800babc8._1e4.decr();
+
+    //LAB_80023474
     return 0;
   }
 
   @Method(0x80023484L)
-  public static long FUN_80023484(final long a0) {
-    assert false;
+  public static long FUN_80023484(final int itemId) {
+    FUN_80023148();
+
+    if(itemId == 0xff) {
+      return 0xff;
+    }
+
+    if(itemId >= 0x100) {
+      return 0;
+    }
+
+    if(itemId < 0xc0) {
+      final int a0_0 = gameState_800babc8._1e4.get();
+
+      if(a0_0 >= 0xff) {
+        return 0xff;
+      }
+
+      if(itemId < 0xffL) {
+        gameState_800babc8._1e8.get(a0_0).set(itemId);
+        gameState_800babc8._1e4.incr();
+      }
+
+      return 0;
+    }
+
+    //LAB_800234f4
+    final int a0_0 = gameState_800babc8._1e6.get();
+
+    if(a0_0 >= 0x20) {
+      //LAB_8002350c
+      return 0xff;
+    }
+
+    //LAB_80023514
+    if(itemId < 0xff) {
+      gameState_800babc8._2e9.get(a0_0).set(itemId);
+      gameState_800babc8._1e6.incr();
+    }
+
+    //LAB_80023530
+    //LAB_80023534
     return 0;
   }
 
@@ -1999,8 +2090,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023978L)
   public static long FUN_80023978(final long a0, final long a1) {
-    final long s0 = FUN_800228d0(MEMORY.ref(1, a0).get()) & 0xffL;
-    final long v0 = FUN_800228d0(MEMORY.ref(1, a1).get()) & 0xffL;
+    final long s0 = FUN_800228d0((int)MEMORY.ref(1, a0).get()) & 0xffL;
+    final long v0 = FUN_800228d0((int)MEMORY.ref(1, a1).get()) & 0xffL;
 
     if(s0 != v0) {
       return s0 - v0;
@@ -6817,7 +6908,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_8002a758
       for(int i = 0; i < 5; i++) {
-        stats.equipment_30.get(i).set(-1);
+        stats.equipment_30.get(i).set(0xff);
       }
 
       stats.selectedAddition_35.set(0);

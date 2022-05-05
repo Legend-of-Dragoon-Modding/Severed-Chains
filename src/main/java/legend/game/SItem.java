@@ -45,7 +45,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022a10;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022b50;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022c08;
+import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022d88;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023148;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800232dc;
@@ -1184,18 +1184,18 @@ public final class SItem {
         }
 
         //LAB_800fda80
-        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) { // Equip item
           a0 = selectedSlot_8011d740.get() + slotScroll_8011d744.get();
           if(a0 < gameState_800babc8._1e4.get()) {
-            v1 = _8011d7c8.offset(a0 * 0x4L).get();
-            if(v1 != 0xffL) {
-              v0 = FUN_80103a5c(v1, characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
+            final int equipmentId = (int)_8011d7c8.offset(a0 * 0x4L).get();
+            if(equipmentId != 0xffL) {
+              final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
               FUN_800233d8(_8011d7c8.offset((selectedSlot_8011d740.get() + slotScroll_8011d744.get()) * 0x4L).offset(0x1L).get());
-              FUN_80023484(v0 & 0xffffL);
+              FUN_80023484(previousEquipmentId);
               playSound(0x2L);
               FUN_80110030(0);
               FUN_80022b50(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
-              FUN_80022c08(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
+              addMp(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
               inventoryMenuState_800bdc28.setu(0xeL);
             } else {
               //LAB_800fdb6c
@@ -4267,7 +4267,7 @@ public final class SItem {
               a0 = MEMORY.ref(1, s1).offset(0x0L).get();
               s1 = s1 + 0x4L;
               s0 = s0 + 0x1L;
-              v0 = FUN_80023484(a0);
+              FUN_80023484((int)a0);
             } while((int)s0 < 0x7L);
 
             v0 = 0x8012_0000L;
@@ -5096,7 +5096,7 @@ public final class SItem {
     final long s0 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
 
     renderCharacterSlot(0x10L, 0x15L, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), _8011d7c8.offset((slotIndex + slotScroll) * 0x4L).get(), s0);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), (int)_8011d7c8.offset((slotIndex + slotScroll) * 0x4L).get(), s0);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
 
     if(s0 != 0) {
@@ -5116,7 +5116,7 @@ public final class SItem {
   public static void renderStatusMenu(final int charSlot, final long a1) {
     final long s0 = (a1 ^ 0xffL) < 0x1L ? 1 : 0;
 
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xffL, s0);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xff, s0);
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
     renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), s0);
@@ -5462,14 +5462,14 @@ public final class SItem {
   }
 
   @Method(0x801039a0L)
-  public static long FUN_801039a0(final long a0, final long a1) {
-    if((int)a1 == -0x1L) {
+  public static long FUN_801039a0(final long equipmentId, final int charIndex) {
+    if(charIndex == -1) {
       return 0;
     }
 
     //LAB_801039b4
-    if(a0 < 0xc0L) {
-      return _80114284.offset(a1).get() & _80111ff0.offset(a0 * 0x1cL).offset(0x3L).get();
+    if(equipmentId < 0xc0L) {
+      return _80114284.offset(charIndex).get() & _80111ff0.offset(equipmentId * 0x1cL).offset(0x3L).get();
     }
 
     //LAB_801039f0
@@ -5477,9 +5477,9 @@ public final class SItem {
   }
 
   @Method(0x801039f8L)
-  public static long FUN_801039f8(final long a0) {
-    if(a0 < 0xc0L) {
-      final long a0_0 = _80111ff0.offset(a0 * 0x1cL).offset(0x1L).get();
+  public static int getEquipmentSlot(final int itemId) {
+    if(itemId < 0xc0) {
+      final long a0_0 = _80111ff0.offset(itemId * 0x1cL).offset(0x1L).get();
 
       //LAB_80103a2c
       for(int i = 0; i < 5; i++) {
@@ -5492,13 +5492,40 @@ public final class SItem {
     }
 
     //LAB_80103a54
-    return 0xffL;
+    return -1;
   }
 
+  /**
+   * @return Item ID of previously-equipped item, 0xff if invalid, 0x100 if no item was equipped
+   */
   @Method(0x80103a5cL)
-  public static long FUN_80103a5c(final long a0, final long a1) {
-    assert false;
-    return 0;
+  public static int equipItem(final int equipmentId, final int charIndex) {
+    if(charIndex == -1) {
+      return 0xff;
+    }
+
+    if((FUN_801039a0(equipmentId, charIndex) & 0xffL) == 0) {
+      return 0xff;
+    }
+
+    final int slot = getEquipmentSlot(equipmentId);
+    if(slot == -1) {
+      //LAB_80103ab8
+      return 0xff;
+    }
+
+    //LAB_80103ac0
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+    int previousId = charData.equipment_14.get(slot).get();
+    charData.equipment_14.get(slot).set(equipmentId);
+
+    if(previousId == -1) {
+      previousId = 0x100;
+    }
+
+    //LAB_80103af4
+    //LAB_80103af8
+    return previousId;
   }
 
   @Method(0x80103b10L)
@@ -5947,14 +5974,13 @@ public final class SItem {
       do {
         v0 = s0 + s5;
         s3 = MEMORY.ref(1, v0).offset(0x1e8L).get();
-        a1 = s6;
         s1 = s3 & 0xffL;
         a0 = s1;
-        v0 = FUN_801039a0(a0, a1);
+        v0 = FUN_801039a0(a0, (int)s6);
         v0 = v0 & 0xffL;
         if(v0 != 0) {
           a0 = s1;
-          v0 = FUN_801039f8(a0);
+          v0 = getEquipmentSlot((int)a0);
           v1 = v0 & 0xffL;
           v0 = 0xffL;
           if(v1 != v0) {
@@ -6025,7 +6051,7 @@ public final class SItem {
     for(int i = 0; i < _8011d7c4.get(); i++) {
       //LAB_801048e8
       for(int a1 = 0; a1 < 5; a1++) {
-        if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get() != -1) {
+        if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get() != 0xff) {
           _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x0L).setu(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get());
           _8011dcb8.deref(1).offset(s2 * 0x4L).offset(0x1L).setu(s2);
           _8011dcb8.deref(2).offset(s2 * 0x4L).offset(0x2L).setu(characterIndices_800bdbb8.get(i).get());
@@ -6751,18 +6777,18 @@ public final class SItem {
   }
 
   @Method(0x801085e0L)
-  public static void renderCharacterStats(final int charIndex, final long a1, final long a2) {
+  public static void renderCharacterStats(final int charIndex, final int equipmentId, final long a2) {
     if(charIndex != -1) {
       final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xa0);
       final ActiveStatsa0 statsTmp = sp0x10tmp.get().cast(ActiveStatsa0::new);
 
-      if(a1 != 0xffL) {
+      if(equipmentId != 0xff) {
         final Memory.TemporaryReservation sp0xb0tmp = MEMORY.temp(0x5);
 
         //LAB_80108638
         memcpy(sp0xb0tmp.address, gameState_800babc8.charData_32c.get(charIndex).equipment_14.getAddress(), 5);
 
-        FUN_80103a5c(a1 & 0xffL, charIndex);
+        equipItem(equipmentId, charIndex);
         FUN_80110030(0);
 
         //LAB_80108694
@@ -6947,27 +6973,27 @@ public final class SItem {
     if(a1 != 0) {
       allocateUiElement(0x59L, 0x59L, 0xc2L, 0x10L);
 
-      if(charData.equipment_14.get(0).get() != -1) {
+      if(charData.equipment_14.get(0).get() != 0xff) {
         FUN_80103910(FUN_800228d0(charData.equipment_14.get(0).get()), 0xcaL, 0x11L, 0);
       }
 
       //LAB_80108ee4
-      if(charData.equipment_14.get(1).get() != -1) {
+      if(charData.equipment_14.get(1).get() != 0xff) {
         FUN_80103910(FUN_800228d0(charData.equipment_14.get(1).get()), 0xcaL, 0x1fL, 0);
       }
 
       //LAB_80108f10
-      if(charData.equipment_14.get(2).get() != -1) {
+      if(charData.equipment_14.get(2).get() != 0xff) {
         FUN_80103910(FUN_800228d0(charData.equipment_14.get(2).get()), 0xcaL, 0x2dL, 0);
       }
 
       //LAB_80108f3c
-      if(charData.equipment_14.get(3).get() != -1) {
+      if(charData.equipment_14.get(3).get() != 0xff) {
         FUN_80103910(FUN_800228d0(charData.equipment_14.get(3).get()), 0xcaL, 0x3bL, 0);
       }
 
       //LAB_80108f68
-      if(charData.equipment_14.get(4).get() != -1) {
+      if(charData.equipment_14.get(4).get() != 0xff) {
         FUN_80103910(FUN_800228d0(charData.equipment_14.get(4).get()), 0xcaL, 0x49L, 0);
       }
     }
@@ -7114,7 +7140,7 @@ public final class SItem {
 
       //LAB_801094ac
       renderText(equipment_8011972c.get((int)MEMORY.ref(1, s1).get()).deref(), a0 + 21, a1 + FUN_800fc814(i) + 2, s0);
-      FUN_80103910(FUN_800228d0(MEMORY.ref(1, s1).get()), a0 + 4, a1 + FUN_800fc814(i), 0x8L);
+      FUN_80103910(FUN_800228d0((int)MEMORY.ref(1, s1).get()), a0 + 4, a1 + FUN_800fc814(i), 0x8L);
 
       s0 = MEMORY.ref(2, s1).offset(0x2L).get();
       if((s0 & 0x1000L) != 0) {

@@ -21,7 +21,7 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef level_0e;
   public final UnsignedByteRef dlevel_0f;
 
-  public final ArrayRef<ByteRef> equipment_30;
+  public final ArrayRef<UnsignedByteRef> equipment_30;
   public final ByteRef selectedAddition_35;
   public final ArrayRef<UnsignedByteRef> additionLevels_36;
   public final ArrayRef<UnsignedByteRef> additionXp_3e;
@@ -100,7 +100,7 @@ public class ActiveStatsa0 implements MemoryRef {
     this.level_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
     this.dlevel_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
 
-    this.equipment_30 = ref.offset(1, 0x30L).cast(ArrayRef.of(ByteRef.class, 5, 1, ByteRef::new));
+    this.equipment_30 = ref.offset(1, 0x30L).cast(ArrayRef.of(UnsignedByteRef.class, 5, 1, UnsignedByteRef::new));
     this.selectedAddition_35 = ref.offset(1, 0x35L).cast(ByteRef::new);
     this.additionLevels_36 = ref.offset(1, 0x36L).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
     this.additionXp_3e = ref.offset(1, 0x3eL).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
