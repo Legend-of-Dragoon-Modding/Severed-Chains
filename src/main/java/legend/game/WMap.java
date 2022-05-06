@@ -266,6 +266,7 @@ public class WMap {
   private static final Value _800ef19c = MEMORY.ref(1, 0x800ef19cL);
 
   private static final Value _800ef1a4 = MEMORY.ref(2, 0x800ef1a4L);
+  private static final ArrayRef<VECTOR> vec_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
 
   private static final Value _800ef364 = MEMORY.ref(2, 0x800ef364L);
   private static final Value _800ef366 = MEMORY.ref(2, 0x800ef366L);
@@ -7323,7 +7324,7 @@ public class WMap {
 
     v1 = MEMORY.ref(1, v0).offset(0x1f8L).get();
 
-    switch((int)v1) {
+    switch((int)v1) { //TODO Zoom level? 1 gets executed when you zoom out once, 2 gets executed when you zoom out again, not sure about the other branches
       case 1:
         v1 = 0x8008_0000L;
         v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
@@ -7604,13 +7605,18 @@ public class WMap {
   }
 
   @Method(0x800d9d24L)
-  public static void FUN_800d9d24(long a0) {
-    assert false;
+  public static void FUN_800d9d24(final long a0) {
+    final VECTOR vec = vec_800ef1a8.get((int)_800c6798.get());
+    final WMapStruct258 wmap = struct258_800c66a8.deref();
+    wmap.svec_1f0.setX((short)((vec.getX() - wmap.svec_1e8.getX()) * a0 / 6));
+    wmap.svec_1f0.setY((short)((vec.getY() - wmap.svec_1e8.getY()) * a0 / 6));
+    wmap.svec_1f0.setZ((short)((vec.getZ() - wmap.svec_1e8.getZ()) * a0 / 6));
+    wmap._1f9.set(0);
   }
 
   @Method(0x800d9eb0L)
   public static void FUN_800d9eb0() {
-    assert false;
+    _800c66b0.deref().coord2_20.coord.transfer.add(struct258_800c66a8.deref().svec_1f0);
   }
 
   @Method(0x800da248L)

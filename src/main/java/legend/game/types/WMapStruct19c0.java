@@ -110,7 +110,7 @@ public class WMapStruct19c0 implements MemoryRef {
     this._118 = ref.offset(2, 0x118L).cast(ShortRef::new);
     this._11a = ref.offset(1, 0x11aL).cast(UnsignedByteRef::new);
 
-    this.lights_11c = ref.offset(4, 0x11cL).cast(ArrayRef.of(GsF_LIGHT.class, 0x10, 3, GsF_LIGHT::new));
+    this.lights_11c = ref.offset(4, 0x11cL).cast(ArrayRef.of(GsF_LIGHT.class, 3, 0x10, GsF_LIGHT::new));
 
     this.svec_14c = ref.offset(2, 0x14cL).cast(SVECTOR::new);
     this._154 = ref.offset(4, 0x154L).cast(UnboundedArrayRef.of(0x18, WMapSubStruct18::new));
