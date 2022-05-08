@@ -22,6 +22,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
+import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT_TAG;
@@ -187,6 +188,7 @@ public class WMap {
 
   /** +1 - left, -1 - right */
   private static final Value facing_800c67b4 = MEMORY.ref(4, 0x800c67b4L);
+  /** Not the canonical player pos, just a copy (for animation purposes?) */
   private static final VECTOR playerPos_800c67b8 = MEMORY.ref(4, 0x800c67b8L, VECTOR::new);
   private static final VECTOR nextDotPos_800c67c8 = MEMORY.ref(4, 0x800c67c8L, VECTOR::new);
 
@@ -267,6 +269,7 @@ public class WMap {
 
   private static final Value _800ef1a4 = MEMORY.ref(2, 0x800ef1a4L);
   private static final ArrayRef<VECTOR> vec_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
+  private static final ArrayRef<CoolonWarpDestination20> coolonWarpDest_800ef228 = MEMORY.ref(4, 0x800ef228L, ArrayRef.of(CoolonWarpDestination20.class, 9, 0x20, CoolonWarpDestination20::new));
 
   private static final Value _800ef364 = MEMORY.ref(2, 0x800ef364L);
   private static final Value _800ef366 = MEMORY.ref(2, 0x800ef366L);
@@ -7180,7 +7183,7 @@ public class WMap {
     //LAB_800d9030
   }
 
-  @Method(0x800d9044L) // Renders the map (anything else?)
+  @Method(0x800d9044L) // Renders the map and map objects
   public static void FUN_800d9044() {
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
@@ -7272,195 +7275,60 @@ public class WMap {
 
   @Method(0x800d94ccL)
   public static void FUN_800d94cc() {
-    long at;
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    long sp14;
-    long sp10;
-    long sp20;
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x66b8L).get();
-
-    v0 = v1 & 0x1L;
-    if(v0 == 0) {
+    if((_800c66b8.get() & 0x1L) == 0) {
       return;
     }
 
     //LAB_800d94f8
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x1f8L).get();
-
-    if(v1 == 0) {
+    if(struct258_800c66a8.deref()._1f8.get() == 0) {
       return;
     }
 
     //LAB_800d951c
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(4, v0).offset(0x250L).get();
-
-    if(v1 != 0) {
+    if(struct258_800c66a8.deref()._250.get() != 0) {
       return;
     }
 
     //LAB_800d9540
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x6798L).get();
-    v1 = 0x7L;
-    if(v0 == v1) {
+    if(_800c6798.get() == 0x7L) {
       return;
     }
 
     //LAB_800d955c
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x1f8L).get();
-
-    switch((int)v1) { //TODO Zoom level? 1 gets executed when you zoom out once, 2 gets executed when you zoom out again, not sure about the other branches
+    System.out.println(struct258_800c66a8.deref()._1f8.get());
+    switch(struct258_800c66a8.deref()._1f8.get()) { //TODO Zoom level? 1 gets executed when you zoom out once, 2 gets executed when you zoom out again, not sure about the other branches
       case 1:
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
+        if((joypadPress_8007a398.get() & 0x2L) != 0) { // Zoom out
+          playSound(0, 4, 0, 0, (short)0, (short)0);
 
-        v0 = v1 & 0x2L;
-        if(v0 != 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0;
-          a1 = 0x4L;
-          a2 = 0;
-          a3 = 0;
+          struct258_800c66a8.deref().svec_1e8.setX((short)_800c66b0.deref().coord2_20.coord.transfer.getX());
+          struct258_800c66a8.deref().svec_1e8.setY((short)_800c66b0.deref().coord2_20.coord.transfer.getY());
+          struct258_800c66a8.deref().svec_1e8.setZ((short)_800c66b0.deref().coord2_20.coord.transfer.getZ());
 
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+          FUN_800d9d24(0x1L);
 
-          v0 = v1 + 0x1e8L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          a0 = MEMORY.ref(2, v1).offset(0x38L).get();
-
-          MEMORY.ref(2, v0).offset(0x0L).setu(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-          v0 = v1 + 0x1e8L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          a0 = MEMORY.ref(2, v1).offset(0x3cL).get();
-
-          MEMORY.ref(2, v0).offset(0x2L).setu(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-          v0 = v1 + 0x1e8L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          a0 = MEMORY.ref(2, v1).offset(0x40L).get();
-
-          MEMORY.ref(2, v0).offset(0x4L).setu(a0);
-          a0 = 0x1L;
-
-          FUN_800d9d24(a0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x2L;
-          MEMORY.ref(1, v0).offset(0x1f8L).setu(v1);
-          at = 0x800f_0000L;
-          MEMORY.ref(2, at).offset(-0xe5cL).setu(0);
+          struct258_800c66a8.deref()._1f8.set(2);
+          _800ef1a4.setu(0);
         }
 
         //LAB_800d9674
         break;
 
       case 2:
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).get();
+        _800ef1a4.addu(0x10L);
 
-        v1 = v0 + 0x10L;
-        at = 0x800f_0000L;
-        MEMORY.ref(2, at).offset(-0xe5cL).setu(v1);
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).getSigned();
-
-        if((int)v0 >= 0x81L) {
-          v0 = 0x80L;
-          at = 0x800f_0000L;
-          MEMORY.ref(2, at).offset(-0xe5cL).setu(v0);
+        if(_800ef1a4.getSigned() > 0x80L) {
+          _800ef1a4.setu(0x80L);
         }
 
         //LAB_800d96b8
         FUN_800d9eb0();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
 
-        a0 = MEMORY.ref(1, v1).offset(0x1f9L).get();
+        struct258_800c66a8.deref()._1f9.incr();
 
-        v1 = a0 + 0x1L;
-        a0 = v1;
-        MEMORY.ref(1, v0).offset(0x1f9L).setu(a0);
-        v0 = a0 & 0xffL;
-        if(v0 >= 0x6L) {
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          v0 = v1 + 0x20L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x6798L).get();
-
-          a0 = v1;
-          v1 = a0 << 4;
-          at = 0x800f_0000L;
-          at = at + v1;
-          a0 = MEMORY.ref(4, at).offset(-0xe58L).get();
-
-          MEMORY.ref(4, v0).offset(0x18L).setu(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          v0 = v1 + 0x20L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x6798L).get();
-
-          a0 = v1;
-          v1 = a0 << 4;
-          at = 0x800f_0000L;
-          at = at + v1;
-          a0 = MEMORY.ref(4, at).offset(-0xe54L).get();
-
-          MEMORY.ref(4, v0).offset(0x1cL).setu(a0);
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-          v0 = v1 + 0x20L;
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x6798L).get();
-
-          a0 = v1;
-          v1 = a0 << 4;
-          at = 0x800f_0000L;
-          at = at + v1;
-          a0 = MEMORY.ref(4, at).offset(-0xe50L).get();
-
-          MEMORY.ref(4, v0).offset(0x20L).setu(a0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x3L;
-          MEMORY.ref(1, v0).offset(0x1f8L).setu(v1);
+        if(struct258_800c66a8.deref()._1f9.get() >= 6) {
+          _800c66b0.deref().coord2_20.coord.transfer.set(vec_800ef1a8.get((int)_800c6798.get()));
+          struct258_800c66a8.deref()._1f8.set(3);
 
           //LAB_800d97bc
           for(int i = 0; i < 7; i++) {
@@ -7473,25 +7341,11 @@ public class WMap {
         break;
 
       case 3:
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x4L;
-        MEMORY.ref(1, v0).offset(0x1f8L).setu(v1);
+        struct258_800c66a8.deref()._1f8.set(4);
 
       case 4:
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0x2L;
-        if(v0 != 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0;
-          a1 = 0x28L;
-          a2 = 0;
-          a3 = 0;
-
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
+        if((joypadPress_8007a398.get() & 0x2L) != 0) { // Can't zoom out more
+          playSound(0, 40, 0, 0, (short)0, (short)0);
         }
 
         //LAB_800d9858
@@ -7502,11 +7356,7 @@ public class WMap {
         }
 
         //LAB_800d98a8
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0x1L;
-        if(v0 != 0) {
+        if((joypadPress_8007a398.get() & 0x1L) != 0) { // Zoom in
           playSound(0, 4, 0, 0, (short)0, (short)0);
           FUN_800d9d24(-0x1L);
 
@@ -7515,32 +7365,12 @@ public class WMap {
           //LAB_800d9900
           for(int i = 0; i < 3; i++) {
             //LAB_800d991c
-            v1 = _800c66b0.deref().colour_8c.get(i).r.get();
-
-            if((int)v1 < 0) {
-              v1 = v1 + 0x3L;
-            }
-
             //LAB_800d996c
-            _800c66b0.deref().lights_11c.get(i).r_0c.set((int)(v1 / 4));
-
-            v1 = _800c66b0.deref().colour_8c.get(i).g.get();
-
-            if((int)v1 < 0) {
-              v1 = v1 + 0x3L;
-            }
-
             //LAB_800d99c4
-            _800c66b0.deref().lights_11c.get(i).g_0d.set((int)(v1 / 4));
-
-            v1 = _800c66b0.deref().colour_8c.get(i).b.get();
-
-            if((int)v1 < 0) {
-              v1 = v1 + 0x3L;
-            }
-
             //LAB_800d9a1c
-            _800c66b0.deref().lights_11c.get(i).b_0e.set((int)(v1 / 4));
+            _800c66b0.deref().lights_11c.get(i).r_0c.set(_800c66b0.deref().colour_8c.get(i).r.get() / 4);
+            _800c66b0.deref().lights_11c.get(i).g_0d.set(_800c66b0.deref().colour_8c.get(i).g.get() / 4);
+            _800c66b0.deref().lights_11c.get(i).b_0e.set(_800c66b0.deref().colour_8c.get(i).b.get() / 4);
 
             GsSetFlatLight(i, _800c66b0.deref().lights_11c.get(i));
           }
@@ -7548,9 +7378,9 @@ public class WMap {
           //LAB_800d9a70
           if((joypadInput_8007a39c.get() & 0x800L) != 0) {
             //LAB_800d9a8c
-            for(sp20 = 0; sp20 < 8; sp20++) {
+            for(int i = 0; i < 8; i++) {
               //LAB_800d9aa8
-              _800c86d4.offset(sp20 * 0x4L).setu(0);
+              _800c86d4.offset(i * 0x4L).setu(0);
             }
           }
         }
@@ -7570,7 +7400,7 @@ public class WMap {
 
         struct258_800c66a8.deref()._1f9.incr();
 
-        if(struct258_800c66a8.deref()._1f9.get() >= 0x6L) {
+        if(struct258_800c66a8.deref()._1f9.get() >= 6) {
           _800c66b0.deref().coord2_20.coord.transfer.setX(struct258_800c66a8.deref().svec_1e8.getX());
           _800c66b0.deref().coord2_20.coord.transfer.setY(struct258_800c66a8.deref().svec_1e8.getY());
           _800c66b0.deref().coord2_20.coord.transfer.setZ(struct258_800c66a8.deref().svec_1e8.getZ());
@@ -7604,13 +7434,16 @@ public class WMap {
     //LAB_800d9d10
   }
 
+  /**
+   * @param zoomDirection -1 or +1
+   */
   @Method(0x800d9d24L)
-  public static void FUN_800d9d24(final long a0) {
+  public static void FUN_800d9d24(final long zoomDirection) {
     final VECTOR vec = vec_800ef1a8.get((int)_800c6798.get());
     final WMapStruct258 wmap = struct258_800c66a8.deref();
-    wmap.svec_1f0.setX((short)((vec.getX() - wmap.svec_1e8.getX()) * a0 / 6));
-    wmap.svec_1f0.setY((short)((vec.getY() - wmap.svec_1e8.getY()) * a0 / 6));
-    wmap.svec_1f0.setZ((short)((vec.getZ() - wmap.svec_1e8.getZ()) * a0 / 6));
+    wmap.svec_1f0.setX((short)((vec.getX() - wmap.svec_1e8.getX()) * zoomDirection / 6));
+    wmap.svec_1f0.setY((short)((vec.getY() - wmap.svec_1e8.getY()) * zoomDirection / 6));
+    wmap.svec_1f0.setZ((short)((vec.getZ() - wmap.svec_1e8.getZ()) * zoomDirection / 6));
     wmap._1f9.set(0);
   }
 
@@ -7619,20 +7452,12 @@ public class WMap {
     _800c66b0.deref().coord2_20.coord.transfer.add(struct258_800c66a8.deref().svec_1f0);
   }
 
+  /**
+   * Handles Coolon fast travel, probably other things
+   */
   @Method(0x800da248L)
   public static void FUN_800da248() {
-    long at;
-    long v0;
-    long v1;
     long a0;
-    long a1;
-    long a2;
-    long a3;
-    long sp10;
-    long sp14;
-    long sp18;
-    long sp1c;
-    long sp20;
     long sp24;
     Ref<Long> sp0x28 = new Ref<>();
     Ref<Long> sp0x2c = new Ref<>();
@@ -7641,125 +7466,55 @@ public class WMap {
     long sp58;
     long sp5c;
     long sp60;
-    long sp68;
-    long sp6c;
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x6894L).get();
-    v1 = 0x1L;
-    if(v0 == v1) {
+
+    if(_800c6894.get() == 0x1L) {
       return;
     }
 
     //LAB_800da270
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x5L).get();
-
-    if(v1 != 0) {
+    if(struct258_800c66a8.deref()._05.get() != 0) {
       return;
     }
 
     //LAB_800da294
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x110L).get();
-
-    if(v1 != 0) {
+    if(_800c66b0.deref()._110.get() != 0) {
       return;
     }
 
     //LAB_800da2b8
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x1f8L).get();
-
-    if(v1 != 0) {
+    if(struct258_800c66a8.deref()._1f8.get() != 0) {
       return;
     }
 
     //LAB_800da2dc
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0xc5L).get();
-
-    if(v1 != 0) {
+    if(_800c66b0.deref()._c5.get() != 0) {
       return;
     }
 
     //LAB_800da300
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0xc4L).getSigned();
-
-    if(v1 != 0) {
+    if(_800c66b0.deref()._c4.get() != 0) {
       return;
     }
 
     //LAB_800da324
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x66b8L).get();
-
-    v0 = v1 & 0x1L;
-    if(v0 == 0) {
+    if((_800c66b8.get() & 0x1L) == 0) {
       return;
     }
 
     //LAB_800da344
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x6690L).get();
-
-    if(v0 != 0) {
+    if(_800c6690.get() != 0) {
       return;
     }
 
     //LAB_800da360
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
+    if(struct258_800c66a8.deref()._1e4.get() == 0x1L) {
+      sp58 = 0x97L;
+      sp5c = 1 << (sp58 & 0x1fL);
+      sp58 = sp58 >>> 5;
 
-    v1 = MEMORY.ref(4, v0).offset(0x1e4L).get();
-    v0 = 0x1L;
-    if(v1 == v0) {
-      v0 = 0x800c_0000L;
-      v0 = v0 - 0x537cL;
-      sp60 = v0;
-      v0 = 0x97L;
-      sp58 = v0;
-      v1 = sp58;
-
-      v0 = v1 & 0x1fL;
-      v1 = 0x1L;
-      v0 = v1 << v0;
-      v1 = v0;
-      sp5c = v1;
-      v1 = sp58;
-
-      v0 = v1 >>> 5;
-      v1 = v0;
-      sp58 = v1;
-      v0 = sp58;
-
-      v1 = v0;
-      v0 = v1 << 2;
-      v1 = sp60;
-
-      v0 = v0 + v1;
-      v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-      a0 = sp5c;
-
-      v0 = v1 & a0;
-      if(v0 > 0) {
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x6870L).get();
-
-        if(v0 == 0) {
-          a0 = 0x1L;
-
-          FUN_800d7208(a0);
+      if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0) {
+        if(_800c6870.get() == 0) {
+          FUN_800d7208(0x1L);
         }
       }
 
@@ -7768,286 +7523,63 @@ public class WMap {
     }
 
     //LAB_800da420
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(4, v0).offset(0x250L).get();
-    v0 = 0x1L;
-    if(v1 == v0) {
+    if(struct258_800c66a8.deref()._250.get() == 0x1L) {
       return;
     }
 
     //LAB_800da444
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(4, v0).offset(0x1e4L).get();
-    v0 = 0x1L;
-    if(v1 == v0) {
+    if(struct258_800c66a8.deref()._1e4.get() == 0x1L) {
       return;
     }
 
     //LAB_800da468
-    v0 = 0x800c_0000L;
-    v0 = v0 - 0x537cL;
-    sp58 = v0;
-    v0 = 0x15aL;
-    sp60 = v0;
-    v1 = sp60;
+    sp60 = 0x15aL;
+    sp5c = 1 << (sp60 & 0x1fL);
+    sp60 = sp60 >>> 5;
 
-    v0 = v1 & 0x1fL;
-    v1 = 0x1L;
-    v0 = v1 << v0;
-    v1 = v0;
-    sp5c = v1;
-    v1 = sp60;
-
-    v0 = v1 >>> 5;
-    v1 = v0;
-    sp60 = v1;
-    v0 = sp60;
-
-    v1 = v0;
-    v0 = v1 << 2;
-    v1 = sp58;
-
-    v0 = v0 + v1;
-    v1 = MEMORY.ref(4, v0).offset(0x0L).get();
-    a0 = sp5c;
-
-    v0 = v1 & a0;
-    if(v0 <= 0) {
+    if((gameState_800babc8.scriptFlags2_bc.get((int)sp60).get() & sp5c) == 0) {
       return;
     }
 
     //LAB_800da4ec
-    a0 = 0;
+    FUN_800d7208(0);
 
-    FUN_800d7208(a0);
-    v1 = 0x8008_0000L;
-    v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-    v0 = v1 & 0x80L;
-    if(v0 != 0) {
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-      v1 = 0x2L;
-      MEMORY.ref(4, v0).offset(0x250L).setu(v1);
+    if((joypadPress_8007a398.get() & 0x80L) != 0) {
+      struct258_800c66a8.deref()._250.set(0x2L);
     }
 
     //LAB_800da520
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(4, v0).offset(0x250L).get();
-    v0 = 0x2L;
-    if(v1 != v0) {
+    if(struct258_800c66a8.deref()._250.get() != 0x2L) {
       return;
     }
 
     //LAB_800da544
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0x220L).get();
-
-    switch((int)v1) {
+    switch(struct258_800c66a8.deref()._220.get()) {
       case 1:
-        sp10 = 0;
-        sp14 = 0;
-        a0 = 0;
-        a1 = 0x4L;
-        a2 = 0;
-        a3 = 0;
+        playSound(0, 4, 0, 0, (short)0, (short)0);
 
-        playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().svec_200.setX((short)_800c66b0.deref().coord2_20.coord.transfer.getX());
+        struct258_800c66a8.deref().svec_200.setY((short)_800c66b0.deref().coord2_20.coord.transfer.getY());
+        struct258_800c66a8.deref().svec_200.setZ((short)_800c66b0.deref().coord2_20.coord.transfer.getZ());
 
-        v0 = v1 + 0x200L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
+        struct258_800c66a8.deref().svec_208.setX((short)(struct258_800c66a8.deref().vec_94.getX() >> 12));
+        struct258_800c66a8.deref().svec_208.setY((short)(struct258_800c66a8.deref().vec_94.getY() >> 12));
+        struct258_800c66a8.deref().svec_208.setZ((short)(struct258_800c66a8.deref().vec_94.getZ() >> 12));
 
-        a0 = MEMORY.ref(2, v1).offset(0x38L).get();
-
-        MEMORY.ref(2, v0).offset(0x0L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x200L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x3cL).get();
-
-        MEMORY.ref(2, v0).offset(0x2L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x200L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x40L).get();
-
-        MEMORY.ref(2, v0).offset(0x4L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x208L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x94L).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(2, v0).offset(0x0L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x208L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x98L).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(2, v0).offset(0x2L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x208L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x9cL).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(2, v0).offset(0x4L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0xa6L).get();
-
-        MEMORY.ref(2, v0).offset(0x21cL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x72L).get();
-
-        MEMORY.ref(2, v0).offset(0x21eL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        MEMORY.ref(1, v0).offset(0x223L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x1L;
-        MEMORY.ref(1, v0).offset(0x220L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        MEMORY.ref(2, v1).offset(0x74L).setu(0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0xa6L).get();
-
-        MEMORY.ref(2, v0).offset(0x76L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        MEMORY.ref(2, v1).offset(0x78L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-        v0 = 0x400L;
-        MEMORY.ref(4, v1).offset(0xfcL).setu(v0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x34L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x94L).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(4, v0).offset(0x18L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x34L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x98L).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(4, v0).offset(0x1cL).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x34L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x9cL).get();
-
-        v1 = (int)a0 >> 12;
-        MEMORY.ref(4, v0).offset(0x20L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = v1 + 0x14L;
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = a0 + 0x34L;
-        a0 = MEMORY.ref(4, v1).offset(0x18L).get();
-
-        MEMORY.ref(4, v0).offset(0x18L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = v1 + 0x14L;
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = a0 + 0x34L;
-        a0 = MEMORY.ref(4, v1).offset(0x1cL).get();
-
-        MEMORY.ref(4, v0).offset(0x1cL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = v1 + 0x14L;
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = a0 + 0x34L;
-        a0 = MEMORY.ref(4, v1).offset(0x20L).get();
-
-        MEMORY.ref(4, v0).offset(0x20L).setu(a0);
+        struct258_800c66a8.deref()._21c.set(struct258_800c66a8.deref().rotation_a4.getY());
+        struct258_800c66a8.deref()._21e.set(_800c66b0.deref().rotation_70.getY());
+        struct258_800c66a8.deref()._223.set(0);
+        struct258_800c66a8.deref()._220.set(1);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x400);
+        struct258_800c66a8.deref().coord2_34.coord.transfer.setX(struct258_800c66a8.deref().vec_94.getX() >> 12);
+        struct258_800c66a8.deref().coord2_34.coord.transfer.setY(struct258_800c66a8.deref().vec_94.getY() >> 12);
+        struct258_800c66a8.deref().coord2_34.coord.transfer.setZ(struct258_800c66a8.deref().vec_94.getZ() >> 12);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setX(struct258_800c66a8.deref().coord2_34.coord.transfer.getX());
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setY(struct258_800c66a8.deref().coord2_34.coord.transfer.getY());
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ());
 
         //LAB_800da8a0
         for(int i = 0; i < 8; i++) {
@@ -8056,44 +7588,15 @@ public class WMap {
         }
 
         //LAB_800da8ec
-        sp20 = 0;
-
         //LAB_800da8f0
-        do {
-          v0 = sp20;
-
-          if((int)v0 >= 0x8L) {
-            break;
-          }
-
+        for(int i = 0; i < 8; i++) {
           //LAB_800da90c
-          v0 = sp20;
-
-          v1 = v0;
-          v0 = v1 << 2;
-          at = 0x800d_0000L;
-          at = at + v0;
-          MEMORY.ref(4, at).offset(-0x792cL).setu(0);
-          v0 = sp20;
-
-          v1 = v0 + 0x1L;
-          sp20 = v1;
-        } while(true);
+          _800c86d4.offset(i * 0x4L).setu(0);
+        }
 
         //LAB_800da940
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(-0x4f04L).get();
-
-        v1 = v0 & 0x3L;
-        if(v1 == 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0xcL;
-          a1 = 0x1L;
-          a2 = 0;
-          a3 = 0;
-
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
+        if((_800bb0fc.get() & 0x3L) == 0) {
+          playSound(12, 1, 0, 0, (short)0, (short)0);
         }
 
         //LAB_800da978
@@ -8101,366 +7604,97 @@ public class WMap {
 
       case 2:
         FUN_800e3304();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.y.add(0x40);
 
-        a0 = MEMORY.ref(4, v1).offset(0x14L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0xfcL).get();
-
-        a0 = v1 + 0x40L;
-        MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0xfcL).get();
-
-        if((int)v0 >= 0x601L) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-          v0 = 0x600L;
-          MEMORY.ref(4, v1).offset(0xfcL).setu(v0);
+        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() > 0x600L) {
+          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x600);
         }
 
         //LAB_800da9fc
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        struct258_800c66a8.deref().vec_94.y.add(0xfffa_0000);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
+        _800c66b0.deref().coord2_20.coord.transfer.y.sub(96);
 
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        a0 = MEMORY.ref(4, a1).offset(0xfcL).get();
-
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x98L).get();
-        v1 = 0xfffa_0000L;
-        a0 = a0 + v1;
-        MEMORY.ref(4, v0).offset(0x98L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x3cL).get();
-
-        v1 = a0 - 0x60L;
-        MEMORY.ref(4, v0).offset(0x3cL).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x3cL).get();
-
-        if((int)v1 < -0x5dcL) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-          v1 = -0x5dcL;
-          MEMORY.ref(4, v0).offset(0x3cL).setu(v1);
+        if(_800c66b0.deref().coord2_20.coord.transfer.getY() < -1500) {
+          _800c66b0.deref().coord2_20.coord.transfer.setY(-1500);
         }
 
         //LAB_800daab8
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x98L).get();
-        v0 = 0xff63_0000L;
-        v0 = v0 | 0xc000L;
-        if((int)v1 < (int)v0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0xff63_0000L;
-          v1 = v1 | 0xc000L;
-          MEMORY.ref(4, v0).offset(0x98L).setu(v1);
+        if(struct258_800c66a8.deref().vec_94.getY() < -2512) {
+          struct258_800c66a8.deref().vec_94.setY(-2500);
         }
 
         //LAB_800daaf0
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x98L).get();
-        v0 = 0xff63_0000L;
-        v0 = v0 | 0xc000L;
-        if((int)v0 >= (int)v1) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x3cL).get();
-
-          if((int)v1 < -0x5dbL) {
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0x2L;
-            MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+        if(struct258_800c66a8.deref().vec_94.getY() <= -2500) {
+          if(_800c66b0.deref().coord2_20.coord.transfer.getY() < -1499) {
+            struct258_800c66a8.deref()._220.set(2);
           }
         }
 
         //LAB_800dab44
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).get();
+        _800ef1a4.addu(0x1L);
 
-        v1 = v0 + 0x1L;
-        at = 0x800f_0000L;
-        MEMORY.ref(2, at).offset(-0xe5cL).setu(v1);
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).getSigned();
-
-        if((int)v0 >= 0x21L) {
-          v0 = 0x20L;
-          at = 0x800f_0000L;
-          MEMORY.ref(2, at).offset(-0xe5cL).setu(v0);
+        if(_800ef1a4.getSigned() > 0x20L) {
+          _800ef1a4.setu(0x20L);
         }
 
         //LAB_800dab80
         break;
 
       case 3:
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.set(0, 0, 0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0x400);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY((short)0x800);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
+        _800c66b0.deref().rotation_70.setY((short)0);
+        _800c66b0.deref().coord2_20.coord.transfer.setX(720);
+        _800c66b0.deref().coord2_20.coord.transfer.setY(-1500);
+        _800c66b0.deref().coord2_20.coord.transfer.setZ(628);
+        _800c66b0.deref()._11a.set(3);
 
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        MEMORY.ref(4, a1).offset(0xfcL).setu(0);
-        MEMORY.ref(4, v1).offset(0x104L).setu(0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-        v0 = 0x400L;
-        MEMORY.ref(2, v1).offset(0x74L).setu(v0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-        v0 = 0x800L;
-        MEMORY.ref(2, v1).offset(0x76L).setu(v0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        MEMORY.ref(2, v1).offset(0x78L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-        MEMORY.ref(2, v0).offset(0x72L).setu(0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = 0x2d0L;
-        MEMORY.ref(4, v0).offset(0x18L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = -0x5dcL;
-        MEMORY.ref(4, v0).offset(0x1cL).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = 0x274L;
-        MEMORY.ref(4, v0).offset(0x20L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x3L;
-        MEMORY.ref(1, v0).offset(0x11aL).setu(v1);
         sp24 = 0;
-        sp20 = 0;
 
         //LAB_800dac80
-        do {
-          v0 = sp20;
-
-          if((int)v0 >= 0x9L) {
-            break;
-          }
-
+        for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          v0 = sp20;
-
-          v1 = v0;
-          a0 = v1 << 5;
-          at = 0x800f_0000L;
-          at = at + a0;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          a0 = v0;
-          v1 = a0 << 2;
-          v1 = v1 + v0;
-          a0 = v1 << 2;
-          at = 0x800f_0000L;
-          at = at + a0;
-          v0 = MEMORY.ref(1, at).offset(0xe42L).get();
-          a0 = 0x800c_0000L;
-          a0 = MEMORY.ref(4, a0).offset(0x6798L).get();
-
-          v1 = a0 + 0x1L;
-          if(v0 == v1) {
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = sp20;
-
-            MEMORY.ref(1, v0).offset(0x221L).setu(v1);
-            v0 = 0x1L;
-            sp24 = v0;
+          if(_800f0e34.get((int)coolonWarpDest_800ef228.get(i)._10.get())._0e.get() == _800c6798.get() + 0x1L) {
+            struct258_800c66a8.deref().coolonWarpIndex_221.set(i);
+            sp24 = 0x1L;
             break;
           }
 
           //LAB_800dad14
-          v0 = sp20;
-
-          v1 = v0 + 0x1L;
-          sp20 = v1;
-        } while(true);
+        }
 
         //LAB_800dad2c
-        v0 = sp24;
-
-        if(v0 == 0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x8L;
-          MEMORY.ref(1, v0).offset(0x221L).setu(v1);
+        if(sp24 == 0) {
+          struct258_800c66a8.deref().coolonWarpIndex_221.set(8);
         }
 
         //LAB_800dad4c
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x6798L).get();
-        v1 = 0x4L;
-        if(v0 == v1) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x9cL).get();
-
-          v0 = (int)v1 >> 12;
-          if((int)v0 < -0x190L) {
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0x5L;
-            MEMORY.ref(1, v0).offset(0x221L).setu(v1);
+        if(_800c6798.get() == 0x4L) {
+          if(struct258_800c66a8.deref().vec_94.getZ() >> 12 < -400) {
+            struct258_800c66a8.deref().coolonWarpIndex_221.set(5);
           } else {
             //LAB_800dad9c
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0x6L;
-            MEMORY.ref(1, v0).offset(0x221L).setu(v1);
+            struct258_800c66a8.deref().coolonWarpIndex_221.set(6);
           }
         }
 
         //LAB_800dadac
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(1, v1).offset(0x221L).getSigned();
-
-        v1 = a0;
-        a0 = v1 << 5;
-        at = 0x800f_0000L;
-        at = at + a0;
-        v1 = MEMORY.ref(1, at).offset(-0xdc4L).get();
-
-        MEMORY.ref(1, v0).offset(0x222L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x3L;
-        MEMORY.ref(1, v0).offset(0x220L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(1, v1).offset(0x221L).getSigned();
-
-        v1 = a0;
-        a0 = v1 << 5;
-        at = 0x800f_0000L;
-        at = at + a0;
-        v1 = MEMORY.ref(4, at).offset(-0xdd8L).get();
-
-        MEMORY.ref(4, v0).offset(0x0L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(1, v1).offset(0x221L).getSigned();
-
-        v1 = a0;
-        a0 = v1 << 5;
-        at = 0x800f_0000L;
-        at = at + a0;
-        v1 = MEMORY.ref(4, at).offset(-0xdd4L).get();
-
-        MEMORY.ref(4, v0).offset(0x4L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(1, v1).offset(0x221L).getSigned();
-
-        v1 = a0;
-        a0 = v1 << 5;
-        at = 0x800f_0000L;
-        at = at + a0;
-        v1 = MEMORY.ref(4, at).offset(-0xdd0L).get();
-
-        MEMORY.ref(4, v0).offset(0x8L).setu(v1);
+        struct258_800c66a8.deref().coolonWarpIndex_222.set(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_221.get())._14.get());
+        struct258_800c66a8.deref()._220.set(3);
+        struct258_800c66a8.deref().vec_94.set(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_221.get()).vec_00);
         break;
 
       case 4:
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0xc0L;
-        if(v0 != 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0;
-          a1 = 0x3L;
-          a2 = 0;
-          a3 = 0;
-
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
+        if((joypadPress_8007a398.get() & 0xc0L) != 0) {
+          playSound(0, 3, 0, 0, (short)0, (short)0);
 
           //LAB_800daef8
           for(int i = 0; i < 8; i++) {
@@ -8469,52 +7703,16 @@ public class WMap {
           }
 
           //LAB_800daf44
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x254L).get();
-
-          if(v1 != 0) {
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(2, v0).offset(0x67a8L).get();
-
-            a0 = v0;
-            v1 = a0 << 2;
-            v1 = v1 + v0;
-            v0 = v1 << 2;
-            at = 0x800f_0000L;
-            at = at + v0;
-            v1 = MEMORY.ref(2, at).offset(0xe3cL).get();
-            at = 0x800c_0000L;
-            MEMORY.ref(2, at).offset(0x6860L).setu(v1);
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(2, v0).offset(0x67a8L).get();
-
-            a0 = v0;
-            v1 = a0 << 2;
-            v1 = v1 + v0;
-            v0 = v1 << 2;
-            at = 0x800f_0000L;
-            at = at + v0;
-            v1 = MEMORY.ref(2, at).offset(0xe3eL).get();
-            at = 0x800c_0000L;
-            MEMORY.ref(2, at).offset(0x6862L).setu(v1);
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(2, v0).offset(0x6860L).get();
-            at = 0x8005_0000L;
-            MEMORY.ref(4, at).offset(0x2c30L).setu(v0);
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(2, v0).offset(0x6862L).get();
-            at = 0x8005_0000L;
-            MEMORY.ref(4, at).offset(0x2c34L).setu(v0);
+          if(struct258_800c66a8.deref()._254.get() != 0) {
+            _800c6860.setu(_800f0e34.get((int)_800c67a8.get())._08.get());
+            _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
+            submapCut_80052c30.setu(_800c6860.get());
+            _80052c34.setu(_800c6862.get());
 
             FUN_800e3fac(1);
           } else {
             //LAB_800daff4
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0xaL;
-            MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+            struct258_800c66a8.deref()._220.set(10);
           }
 
           //LAB_800db004
@@ -8522,130 +7720,38 @@ public class WMap {
         }
 
         //LAB_800db00c
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0x20L;
-        if(v0 != 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0;
-          a1 = 0x2L;
-          a2 = 0;
-          a3 = 0;
-
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-          v0 = 0x9L;
-          sp10 = v0;
-          v0 = 0x4L;
-          sp14 = v0;
-          a1 = 0x1L;
-          a2 = 0xf0L;
-          a3 = 0x40L;
-
-          FUN_8002a32c(6, a1, a2, a3, sp10, sp14);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x4L;
-          MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+          FUN_8002a32c(6, 0x1L, 0xf0L, 0x40L, 0x9L, 0x4L);
+          struct258_800c66a8.deref()._220.set(4);
         }
 
         //LAB_800db07c
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.add(0x200);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x14L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0xfcL).get();
-
-        a0 = v1 + 0x200L;
-        MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0xfcL).get();
-
-        if((int)v0 >= 0x801L) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-          v0 = 0x800L;
-          MEMORY.ref(4, v1).offset(0xfcL).setu(v0);
+        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() > 0x800) {
+          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x800);
         }
 
         //LAB_800db0f0
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        a0 = MEMORY.ref(4, a1).offset(0xfcL).get();
-
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(a0);
-        a0 = 0x1L;
-        a1 = 0x1L;
-
-        FUN_800dc178(a0, a1);
+        FUN_800dc178(0x1L, 0x1L);
         break;
 
       case 5:
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.set(0x800, 0x800, 0x800);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800L;
-        MEMORY.ref(4, a1).offset(0xfcL).setu(a0);
-        a0 = 0x800L;
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        v1 = 0x800L;
-        MEMORY.ref(4, v0).offset(0x100L).setu(v1);
-        a0 = 0x6L;
-
-        v0 = FUN_8002a488(a0);
-        if(v0 != 0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x5L;
-          MEMORY.ref(1, v0).offset(0x220L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          MEMORY.ref(1, v0).offset(0x223L).setu(0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          MEMORY.ref(4, v0).offset(0x218L).setu(0);
+        if(FUN_8002a488(0x6L) != 0) {
+          struct258_800c66a8.deref()._220.set(5);
+          struct258_800c66a8.deref()._223.set(0);
+          struct258_800c66a8.deref()._218.set(0);
         }
 
         //LAB_800db1d8
-        a0 = 0;
-        a1 = 0;
-
-        FUN_800dc178(a0, a1);
+        FUN_800dc178(0, 0);
         break;
 
       case 6:
@@ -8665,880 +7771,196 @@ public class WMap {
         }
 
         //LAB_800db39c
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0x5000L;
-        if(v0 != 0) {
-          sp10 = 0;
-          sp14 = 0;
-          a0 = 0;
-          a1 = 0x1L;
-          a2 = 0;
-          a3 = 0;
-
-          playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-          a0 = MEMORY.ref(1, v1).offset(0x223L).get();
-
-          v1 = a0 ^ 0x1L;
-          MEMORY.ref(1, v0).offset(0x223L).setu(v1);
+        if((joypadPress_8007a398.get() & 0x5000L) != 0) {
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+          struct258_800c66a8.deref()._223.xor(1);
         }
 
         //LAB_800db3f8
-        v1 = 0x8008_0000L;
-        v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-        v0 = v1 & 0x20L;
-        if(v0 != 0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x223L).get();
-
-          if(v1 == 0) {
-            sp10 = 0;
-            sp14 = 0;
-            a0 = 0;
-            a1 = 0x3L;
-            a2 = 0;
-            a3 = 0;
-
-            playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-            a1 = 0x1L;
-
-            FUN_8002a3ec(6, a1);
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0x3L;
-            MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          if(struct258_800c66a8.deref()._223.get() == 0) {
+            playSound(0, 3, 0, 0, (short)0, (short)0);
+            FUN_8002a3ec(6, 1);
+            struct258_800c66a8.deref()._220.set(3);
           } else {
             //LAB_800db474
-            sp10 = 0;
-            sp14 = 0;
-            a0 = 0;
-            a1 = 0x2L;
-            a2 = 0;
-            a3 = 0;
-
-            playSound((int)a0, (int)a1, a2, a3, (short)sp10, (short)sp14);
-            a1 = 0x1L;
-
-            FUN_8002a3ec(6, a1);
-            v0 = 0x800c_0000L;
-            v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-            v1 = 0x6L;
-            MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+            playSound(0, 2, 0, 0, (short)0, (short)0);
+            FUN_8002a3ec(6, 1);
+            struct258_800c66a8.deref()._220.set(6);
           }
         }
 
         //LAB_800db4b4
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0x1fcL).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(1, v1).offset(0x223L).get();
-
-        v1 = a0;
-        a0 = v1 << 4;
-        MEMORY.ref(2, v0).offset(0x3aL).setu(a0);
+        struct258_800c66a8.deref()._1fc.deref()._3a.set(struct258_800c66a8.deref()._223.get() * 0x10);
 
         FUN_800ce4dc(struct258_800c66a8.deref()._1fc.deref());
         break;
 
       case 7:
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
+        sp0x38.setX(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_221.get()).vec_00.getX() >> 12);
+        sp0x38.setY(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_221.get()).vec_00.getY() >> 12);
+        sp0x38.setZ(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_221.get()).vec_00.getZ() >> 12);
+        sp0x48.setX(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get()).vec_00.getX() >> 12);
+        sp0x48.setY(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get()).vec_00.getY() >> 12);
+        sp0x48.setZ(coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get()).vec_00.getZ() >> 12);
 
-        v1 = MEMORY.ref(1, v0).offset(0x221L).getSigned();
+        struct258_800c66a8.deref()._218.incr();
 
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd8L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x38.setX((int)v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x221L).getSigned();
-
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd4L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x38.setY((int)v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x221L).getSigned();
-
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd0L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x38.setZ((int)v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd8L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x48.setX((int)v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd4L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x48.setY((int)v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-        v0 = v1;
-        v1 = v0 << 5;
-        at = 0x800f_0000L;
-        at = at + v1;
-        v0 = MEMORY.ref(4, at).offset(-0xdd0L).get();
-
-        v1 = (int)v0 >> 12;
-        sp0x48.setZ((int)v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x218L).get();
-
-        v1 = a0 + 0x1L;
-        a0 = v1;
-        MEMORY.ref(4, v0).offset(0x218L).setu(a0);
-        if((int)a0 >= 0xdL) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0xcL;
-          MEMORY.ref(4, v0).offset(0x218L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x7L;
-          MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+        if(struct258_800c66a8.deref()._218.get() > 0xcL) {
+          struct258_800c66a8.deref()._218.set(0xcL);
+          struct258_800c66a8.deref()._220.set(7);
         }
 
         //LAB_800db698
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        FUN_800dcc20(struct258_800c66a8.deref().vec_94, sp0x38, sp0x48, 0xcL, struct258_800c66a8.deref()._218.get());
 
-        v0 = v1 + 0x94L;
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.sub(170);
 
-        a1 = MEMORY.ref(4, a0).offset(0x218L).get();
-
-        sp10 = a1;
-        a0 = v0;
-        a3 = 0xcL;
-
-        FUN_800dcc20(a0, sp0x38, sp0x48, a3, sp10);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x14L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0xfcL).get();
-
-        a0 = v1 - 0xaaL;
-        MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0xfcL).get();
-
-        if((int)v0 < 0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-          MEMORY.ref(4, v1).offset(0xfcL).setu(0);
+        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() < 0) {
+          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0);
         }
 
         //LAB_800db74c
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        a0 = MEMORY.ref(4, a1).offset(0xfcL).get();
-
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(a0);
-        a0 = 0;
-        a1 = 0;
-
-        FUN_800dc178(a0, a1);
+        FUN_800dc178(0, 0);
         break;
 
       case 8:
-        a0 = 0xcL;
-        a1 = 0x1L;
-        a2 = 0x1L;
+        FUN_80019c80(0xcL, 0x1L, 0x1L);
 
-        FUN_80019c80(a0, a1, a2);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-        v0 = 0x8L;
-        if(v1 == v0) {
-          v0 = 0x800c_0000L;
-          v0 = v0 - 0x52bcL;
-          sp58 = v0;
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-          v0 = v1;
-          v1 = v0 << 5;
-          at = 0x800f_0000L;
-          at = at + v1;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          sp60 = v0;
-          v1 = sp60;
-
-          v0 = v1 & 0x1fL;
-          v1 = 0x1L;
-          v0 = v1 << v0;
-          v1 = v0;
-          sp5c = v1;
-          v1 = sp60;
-
-          v0 = v1 >>> 5;
-          v1 = v0;
-          sp60 = v1;
-          v0 = sp60;
-
-          v1 = v0;
-          v0 = v1 << 2;
-          v1 = sp58;
-
-          v0 = v0 + v1;
-          v1 = sp60;
-
-          a0 = v1;
-          v1 = a0 << 2;
-          a0 = sp58;
-
-          v1 = v1 + a0;
-          a0 = MEMORY.ref(4, v1).offset(0x0L).get();
-          a1 = sp5c;
-
-          v1 = a0 | a1;
-          a0 = v1;
-          MEMORY.ref(4, v0).offset(0x0L).setu(a0);
+        if(struct258_800c66a8.deref().coolonWarpIndex_222.get() == 8) {
+          sp60 = coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get();
+          gameState_800babc8._17c.get((int)(sp60 >>> 5)).or(1 << (sp60 & 0x1fL));
 
           //LAB_800db8f4
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-          v0 = v1;
-          v1 = v0 << 5;
-          at = 0x800f_0000L;
-          at = at + v1;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          a0 = v0;
-          v1 = a0 << 2;
-          v1 = v1 + v0;
-          v0 = v1 << 2;
-          at = 0x800f_0000L;
-          at = at + v0;
-          v1 = MEMORY.ref(2, at).offset(0xe3cL).get();
-          at = 0x800c_0000L;
-          MEMORY.ref(2, at).offset(0x6860L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-          v0 = v1;
-          v1 = v0 << 5;
-          at = 0x800f_0000L;
-          at = at + v1;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          a0 = v0;
-          v1 = a0 << 2;
-          v1 = v1 + v0;
-          v0 = v1 << 2;
-          at = 0x800f_0000L;
-          at = at + v0;
-          v1 = MEMORY.ref(2, at).offset(0xe3eL).get();
-          at = 0x800c_0000L;
-          MEMORY.ref(2, at).offset(0x6862L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(2, v0).offset(0x6860L).get();
-          at = 0x8005_0000L;
-          MEMORY.ref(4, at).offset(0x2c30L).setu(v0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(2, v0).offset(0x6862L).get();
-          at = 0x8005_0000L;
-          MEMORY.ref(4, at).offset(0x2c34L).setu(v0);
+          _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._08.get());
+          _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._0a.get());
+          submapCut_80052c30.setu(_800c6860.get());
+          _80052c34.setu(_800c6862.get());
         } else {
           //LAB_800db9bc
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-          v0 = v1;
-          v1 = v0 << 5;
-          at = 0x800f_0000L;
-          at = at + v1;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          a0 = v0;
-          v1 = a0 << 2;
-          v1 = v1 + v0;
-          v0 = v1 << 2;
-          at = 0x800f_0000L;
-          at = at + v0;
-          v1 = MEMORY.ref(2, at).offset(0xe38L).get();
-          at = 0x800c_0000L;
-          MEMORY.ref(2, at).offset(0x6860L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(1, v0).offset(0x222L).getSigned();
-
-          v0 = v1;
-          v1 = v0 << 5;
-          at = 0x800f_0000L;
-          at = at + v1;
-          v0 = MEMORY.ref(4, at).offset(-0xdc8L).get();
-
-          a0 = v0;
-          v1 = a0 << 2;
-          v1 = v1 + v0;
-          v0 = v1 << 2;
-          at = 0x800f_0000L;
-          at = at + v0;
-          v1 = MEMORY.ref(2, at).offset(0xe3aL).get();
-          at = 0x800c_0000L;
-          MEMORY.ref(2, at).offset(0x6862L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(2, v0).offset(0x6860L).get();
-          at = 0x8005_0000L;
-          MEMORY.ref(4, at).offset(0x2c30L).setu(v0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(2, v0).offset(0x6862L).get();
-          at = 0x8005_0000L;
-          MEMORY.ref(4, at).offset(0x2c38L).setu(v0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x3L;
-          MEMORY.ref(4, v0).offset(0x250L).setu(v1);
-          v0 = -0x1L;
-          at = 0x8005_0000L;
-          MEMORY.ref(4, at).offset(-0x22d8L).setu(v0);
+          _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._04.get());
+          _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._06.get());
+          submapCut_80052c30.setu(_800c6860.get());
+          index_80052c38.set(_800c6862.get());
+          struct258_800c66a8.deref()._250.set(0x3L);
+          _8004dd28.setu(-0x1L);
         }
 
         //LAB_800dba98
 
         FUN_800e3fac(1);
-        a0 = 0;
-        a1 = 0;
-
-        FUN_800dc178(a0, a1);
+        FUN_800dc178(0, 0);
         break;
 
       case 0xb:
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
+        _800c66b0.deref().coord2_20.coord.transfer.setX(struct258_800c66a8.deref().svec_200.getX());
+        _800c66b0.deref().coord2_20.coord.transfer.setY(struct258_800c66a8.deref().svec_200.getY());
+        _800c66b0.deref().coord2_20.coord.transfer.setZ(struct258_800c66a8.deref().svec_200.getZ());
+        _800c66b0.deref().coord2_20.coord.transfer.setY(-1500);
+        struct258_800c66a8.deref().vec_94.setX(struct258_800c66a8.deref().svec_208.getX() << 12);
+        struct258_800c66a8.deref().vec_94.setY(struct258_800c66a8.deref().svec_208.getY() << 12);
+        struct258_800c66a8.deref().vec_94.setZ(struct258_800c66a8.deref().svec_208.getZ() << 12);
+        struct258_800c66a8.deref().vec_94.setY(-5000 << 12);
+        struct258_800c66a8.deref().rotation_a4.setY((short)struct258_800c66a8.deref()._21c.get());
+        _800c66b0.deref().rotation_70.setY((short)struct258_800c66a8.deref()._21e.get());
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x600);
+        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        struct258_800c66a8.deref()._220.set(11);
 
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        FUN_80019c80(0xcL, 0x1L, 0x1L);
 
-        a0 = MEMORY.ref(2, v1).offset(0x200L).getSigned();
-
-        MEMORY.ref(4, v0).offset(0x18L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x202L).getSigned();
-
-        MEMORY.ref(4, v0).offset(0x1cL).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x204L).getSigned();
-
-        MEMORY.ref(4, v0).offset(0x20L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = -0x5dcL;
-        MEMORY.ref(4, v0).offset(0x3cL).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x208L).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x0L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20aL).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x4L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20cL).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x8L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0xfec7_0000L;
-        v1 = v1 | 0x8000L;
-        MEMORY.ref(4, v0).offset(0x98L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x21cL).get();
-
-        MEMORY.ref(2, v0).offset(0xa6L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x21eL).get();
-
-        MEMORY.ref(2, v0).offset(0x72L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        MEMORY.ref(2, v1).offset(0x74L).setu(0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0xa6L).get();
-
-        MEMORY.ref(2, v0).offset(0x76L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        MEMORY.ref(2, v1).offset(0x78L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-        v0 = 0x600L;
-        MEMORY.ref(4, v1).offset(0xfcL).setu(v0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        a0 = MEMORY.ref(4, a1).offset(0xfcL).get();
-
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0xbL;
-        MEMORY.ref(1, v0).offset(0x220L).setu(v1);
-        a0 = 0xcL;
-        a1 = 0x1L;
-        a2 = 0x1L;
-
-        FUN_80019c80(a0, a1, a2);
+        // Fall through
 
       case 0xc:
         FUN_800e3304();
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
 
-        a0 = MEMORY.ref(4, v1).offset(0x3cL).get();
+        _800c66b0.deref().coord2_20.coord.transfer.y.add(0x70);
 
-        v1 = a0 + 0x70L;
-        MEMORY.ref(4, v0).offset(0x3cL).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x202L).getSigned();
-        v0 = MEMORY.ref(4, v0).offset(0x3cL).get();
-
-        if((int)a0 < (int)v0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-          a0 = MEMORY.ref(2, v1).offset(0x202L).getSigned();
-
-          MEMORY.ref(4, v0).offset(0x3cL).setu(a0);
+        if(_800c66b0.deref().coord2_20.coord.transfer.getY() < struct258_800c66a8.deref().svec_200.getY()) {
+          _800c66b0.deref().coord2_20.coord.transfer.setY(struct258_800c66a8.deref().svec_200.getY());
         }
 
         //LAB_800dbd6c
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x202L).getSigned();
-        v0 = MEMORY.ref(4, v0).offset(0x3cL).get();
-
-        if((int)v0 >= (int)a0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0xcL;
-          MEMORY.ref(1, v0).offset(0x220L).setu(v1);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0xffe7_0000L;
-          MEMORY.ref(4, v0).offset(0x98L).setu(v1);
+        if(_800c66b0.deref().coord2_20.coord.transfer.getY() >= struct258_800c66a8.deref().svec_200.getY()) {
+          struct258_800c66a8.deref()._220.set(12);
+          struct258_800c66a8.deref().vec_94.setY(-400);
         }
 
         //LAB_800dbdb8
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).get();
+        _800ef1a4.subu(0x1L);
 
-        v1 = v0 - 0x1L;
-        at = 0x800f_0000L;
-        MEMORY.ref(2, at).offset(-0xe5cL).setu(v1);
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).getSigned();
-
-        if((int)v0 < 0) {
-          at = 0x800f_0000L;
-          MEMORY.ref(2, at).offset(-0xe5cL).setu(0);
+        if(_800ef1a4.getSigned() < 0) {
+          _800ef1a4.setu(0);
         }
 
         //LAB_800dbdec
         break;
 
       case 0xd:
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().vec_94.y.add(0x1_0000);
 
-        a0 = MEMORY.ref(4, v1).offset(0x98L).get();
-        v1 = 0x1_0000L;
-        a0 = a0 + v1;
-        MEMORY.ref(4, v0).offset(0x98L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20aL).getSigned();
-
-        v1 = a0 << 12;
-        v0 = MEMORY.ref(4, v0).offset(0x98L).get();
-
-        if((int)v1 < (int)v0) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = 0x800c_0000L;
-          v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-          a0 = MEMORY.ref(2, v1).offset(0x20aL).getSigned();
-
-          v1 = a0 << 12;
-          MEMORY.ref(4, v0).offset(0x98L).setu(v1);
+        if(struct258_800c66a8.deref().svec_208.getY() << 12 < struct258_800c66a8.deref().vec_94.getY()) {
+          struct258_800c66a8.deref().vec_94.setY(struct258_800c66a8.deref().svec_208.getY() << 12);
         }
 
         //LAB_800dbe70
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20aL).getSigned();
-
-        v1 = a0 << 12;
-        v0 = MEMORY.ref(4, v0).offset(0x98L).get();
-
-        if((int)v0 >= (int)v1) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-          v1 = -0x1L;
-          MEMORY.ref(1, v0).offset(0x220L).setu(v1);
+        if(struct258_800c66a8.deref().svec_208.getY() << 12 <= struct258_800c66a8.deref().vec_94.getY()) {
+          struct258_800c66a8.deref()._220.set(-1);
         }
 
         //LAB_800dbeb4
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.sub(16);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(4, v1).offset(0x14L).get();
-
-        v1 = MEMORY.ref(4, a0).offset(0xfcL).get();
-
-        a0 = v1 - 0x10L;
-        MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-
-        v0 = MEMORY.ref(4, v1).offset(0xfcL).get();
-
-        if((int)v0 < 0x400L) {
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-          v1 = MEMORY.ref(4, v0).offset(0x14L).get();
-          v0 = 0x400L;
-          MEMORY.ref(4, v1).offset(0xfcL).setu(v0);
+        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() < 1024) {
+          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ(1024);
         }
 
         //LAB_800dbf28
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        final int x = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY(x);
+        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ(x);
 
-        v0 = MEMORY.ref(4, v1).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
+        _800ef1a4.subu(0x1L);
 
-        v1 = MEMORY.ref(4, a0).offset(0x14L).get();
-        a0 = 0x800c_0000L;
-        a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
-
-        a1 = MEMORY.ref(4, a0).offset(0x14L).get();
-
-        a0 = MEMORY.ref(4, a1).offset(0xfcL).get();
-
-        MEMORY.ref(4, v1).offset(0x104L).setu(a0);
-        MEMORY.ref(4, v0).offset(0x100L).setu(a0);
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).get();
-
-        v1 = v0 - 0x1L;
-        at = 0x800f_0000L;
-        MEMORY.ref(2, at).offset(-0xe5cL).setu(v1);
-        v0 = 0x800f_0000L;
-        v0 = MEMORY.ref(2, v0).offset(-0xe5cL).getSigned();
-
-        if((int)v0 < 0) {
-          at = 0x800f_0000L;
-          MEMORY.ref(2, at).offset(-0xe5cL).setu(0);
+        if(_800ef1a4.getSigned() < 0) {
+          _800ef1a4.setu(0);
         }
 
         //LAB_800dbfa0
         break;
 
       case 0:
-        at = 0x800f_0000L;
-        MEMORY.ref(2, at).offset(-0xe5cL).setu(0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
+        _800ef1a4.setu(0);
 
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        final WMapStruct258 wmap = struct258_800c66a8.deref();
 
-        a0 = MEMORY.ref(2, v1).offset(0x200L).getSigned();
+        _800c66b0.deref().coord2_20.coord.transfer.setX(wmap.svec_200.getX());
+        _800c66b0.deref().coord2_20.coord.transfer.setY(wmap.svec_200.getY());
+        _800c66b0.deref().coord2_20.coord.transfer.setZ(wmap.svec_200.getZ());
 
-        MEMORY.ref(4, v0).offset(0x18L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
+        wmap.vec_94.setX(wmap.svec_208.getX() << 12);
+        wmap.vec_94.setY(wmap.svec_208.getY() << 12);
+        wmap.vec_94.setZ(wmap.svec_208.getZ() << 12);
+        wmap.rotation_a4.setY((short)wmap._21c.get());
 
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
+        _800c66b0.deref().rotation_70.setY((short)wmap._21e.get());
 
-        a0 = MEMORY.ref(2, v1).offset(0x202L).getSigned();
-
-        MEMORY.ref(4, v0).offset(0x1cL).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-        v0 = v1 + 0x20L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x204L).getSigned();
-
-        MEMORY.ref(4, v0).offset(0x20L).setu(a0);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x208L).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x0L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20aL).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x4L).setu(v1);
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        v0 = v1 + 0x94L;
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x20cL).getSigned();
-
-        v1 = a0 << 12;
-        MEMORY.ref(4, v0).offset(0x8L).setu(v1);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x21cL).get();
-
-        MEMORY.ref(2, v0).offset(0xa6L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-        v1 = 0x800c_0000L;
-        v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-        a0 = MEMORY.ref(2, v1).offset(0x21eL).get();
-
-        MEMORY.ref(2, v0).offset(0x72L).setu(a0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        MEMORY.ref(4, v0).offset(0x250L).setu(0);
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
-
-        MEMORY.ref(1, v0).offset(0x220L).setu(0);
+        wmap._250.set(0);
+        wmap._220.set(0);
         return;
     }
 
     //LAB_800dc114
-    v0 = -0x78L;
-    sp10 = v0;
-    v0 = 0x1f80_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x3c8L).get();
-
-    v1 = v0 - 0x4L;
-    sp14 = v1;
-    v0 = 0x1L;
-    sp18 = v0;
-    v0 = 0x800f_0000L;
-    v0 = MEMORY.ref(1, v0).offset(-0xe5cL).get();
-
-    sp1c = v0;
-    a1 = 0x140L;
-    a2 = 0;
-    a3 = -0xa0L;
-
-    FUN_800e4934(mcqHeader_800c6768, a1, a2, a3, sp10, sp14, sp18, sp1c);
+    FUN_800e4934(mcqHeader_800c6768, 0x140L, 0, -160, -120, _1f8003c8.get() - 0x4L, 0x1L, _800ef1a4.get());
 
     //LAB_800dc164
   }
@@ -9549,7 +7971,7 @@ public class WMap {
   }
 
   @Method(0x800dcc20L)
-  public static void FUN_800dcc20(long a0, VECTOR a1, VECTOR a2, long a3, long a4) {
+  public static void FUN_800dcc20(VECTOR a0, VECTOR a1, VECTOR a2, long a3, long a4) {
     assert false;
   }
 
@@ -10171,7 +8593,7 @@ public class WMap {
     //LAB_800e0260
   }
 
-  @Method(0x800e0274L)
+  @Method(0x800e0274L) // Pretty sure this renders the player
   public static void FUN_800e0274() {
     final WMapStruct258 struct = struct258_800c66a8.deref();
 
@@ -13253,7 +11675,7 @@ public class WMap {
     final VECTOR nextDotPos = new VECTOR();
 
     getPathPositions(playerPos, nextDotPos);
-    System.out.println(dotOffset_800c67b0 + ", " + playerPos + ", " + nextDotPos);
+//    System.out.println(dotOffset_800c67b0 + ", " + playerPos + ", " + nextDotPos);
     weightedAvg(0x4L - dotOffset_800c67b0.getSigned(), dotOffset_800c67b0.getSigned(), struct258_800c66a8.deref().vec_94, playerPos, nextDotPos);
     struct258_800c66a8.deref().vec_94.y.sub(0x2000);
     playerPos_800c67b8.set(playerPos);
@@ -13721,7 +12143,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get((int)(a0 >>> 5)).get() & (0x1L << (a0 & 0x1fL))) <= 0) {
+    if((gameState_800babc8._15c.get(a0 >>> 5).get() & (0x1L << (a0 & 0x1fL))) <= 0) {
       return 0x1L;
     }
 

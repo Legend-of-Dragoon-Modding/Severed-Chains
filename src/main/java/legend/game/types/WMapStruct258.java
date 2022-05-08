@@ -12,6 +12,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 
 public class WMapStruct258 implements MemoryRef {
   private final Value ref;
@@ -42,9 +43,16 @@ public class WMapStruct258 implements MemoryRef {
   public final UnsignedByteRef _1f9;
 
   public final Pointer<WMapRender40> _1fc;
+  public final SVECTOR svec_200;
+  public final SVECTOR svec_208;
 
+  public final UnsignedIntRef _218;
+  public final UnsignedShortRef _21c;
+  public final UnsignedShortRef _21e;
   public final ByteRef _220;
-
+  public final UnsignedByteRef coolonWarpIndex_221;
+  public final UnsignedByteRef coolonWarpIndex_222;
+  public final UnsignedByteRef _223;
   public final Pointer<UnboundedArrayRef<VECTOR>> vecs_224;
   public final Pointer<UnboundedArrayRef<VECTOR>> vecs_228;
   /** TODO pointer */
@@ -90,9 +98,16 @@ public class WMapStruct258 implements MemoryRef {
     this._1f9 = ref.offset(1, 0x1f9L).cast(UnsignedByteRef::new);
 
     this._1fc = ref.offset(4, 0x1fcL).cast(Pointer.deferred(4, WMapRender40::new));
+    this.svec_200 = ref.offset(2, 0x200L).cast(SVECTOR::new);
+    this.svec_208 = ref.offset(2, 0x208L).cast(SVECTOR::new);
 
+    this._218 = ref.offset(4, 0x218L).cast(UnsignedIntRef::new);
+    this._21c = ref.offset(2, 0x21cL).cast(UnsignedShortRef::new);
+    this._21e = ref.offset(2, 0x21eL).cast(UnsignedShortRef::new);
     this._220 = ref.offset(1, 0x220L).cast(ByteRef::new);
-
+    this.coolonWarpIndex_221 = ref.offset(1, 0x221L).cast(UnsignedByteRef::new);
+    this.coolonWarpIndex_222 = ref.offset(1, 0x222L).cast(UnsignedByteRef::new);
+    this._223 = ref.offset(1, 0x223L).cast(UnsignedByteRef::new);
     this.vecs_224 = ref.offset(4, 0x224L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
     this.vecs_228 = ref.offset(4, 0x228L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
     this.ptr_22c = ref.offset(4, 0x22cL).cast(UnsignedIntRef::new);
