@@ -20,6 +20,8 @@ dependencies {
   implementation group: 'legend', name: 'lod-core', version: '0.1'
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 jar {
@@ -34,4 +36,8 @@ jar {
   } {
     exclude "META-INF/**"
   }
+}
+
+test {
+  useJUnitPlatform()
 }
