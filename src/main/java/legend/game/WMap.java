@@ -7227,7 +7227,6 @@ public class WMap {
     }
 
     //LAB_800d955c
-    System.out.println(struct258_800c66a8.deref().zoomState_1f8.get());
     switch(struct258_800c66a8.deref().zoomState_1f8.get()) {
       case 1:
         if((joypadPress_8007a398.get() & 0x2L) != 0) { // Zoom out
@@ -9837,14 +9836,9 @@ public class WMap {
     //LAB_800e4924
   }
 
-  //TODO What is this rendering? Currently disabled since it's broken
+  //TODO see GH#19
   @Method(0x800e4934L)
   public static void FUN_800e4934(final McqHeader mcq, long a1, long a2, long x, long y, long a5, long a6, long colour) {
-    boolean a = true;
-    if(a) {
-      return;
-    }
-
     long sp18;
 
     long v0 = linkedListAddress_1f8003d8.get();
