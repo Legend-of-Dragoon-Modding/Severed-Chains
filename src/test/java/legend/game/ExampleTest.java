@@ -11,6 +11,6 @@ public class ExampleTest {
 
     @Test
     void shouldFail() {
-        Assertions.assertTrue(true);
+        Assertions.assertTrue(false);
     }
 }
