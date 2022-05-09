@@ -39,7 +39,7 @@ public class WMapStruct258 implements MemoryRef {
   public final UnsignedIntRef _1e4;
   public final SVECTOR svec_1e8;
   public final SVECTOR svec_1f0;
-  public final UnsignedByteRef _1f8;
+  public final UnsignedByteRef zoomState_1f8;
   public final UnsignedByteRef _1f9;
 
   public final Pointer<WMapRender40> _1fc;
@@ -94,7 +94,7 @@ public class WMapStruct258 implements MemoryRef {
     this._1e4 = ref.offset(4, 0x1e4L).cast(UnsignedIntRef::new);
     this.svec_1e8 = ref.offset(2, 0x1e8L).cast(SVECTOR::new);
     this.svec_1f0 = ref.offset(2, 0x1f0L).cast(SVECTOR::new);
-    this._1f8 = ref.offset(1, 0x1f8L).cast(UnsignedByteRef::new);
+    this.zoomState_1f8 = ref.offset(1, 0x1f8L).cast(UnsignedByteRef::new);
     this._1f9 = ref.offset(1, 0x1f9L).cast(UnsignedByteRef::new);
 
     this._1fc = ref.offset(4, 0x1fcL).cast(Pointer.deferred(4, WMapRender40::new));

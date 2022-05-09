@@ -20,12 +20,12 @@ public class WMapStruct19c0 implements MemoryRef {
 
   public final RenderStruct20 _00;
   public final GsCOORDINATE2 coord2_20;
-  public final SVECTOR rotation_70;
-
-  public final UnsignedShortRef _7a;
-  public final ShortRef _7c;
-  public final ShortRef _7e;
-  public final UnsignedByteRef _80;
+  public final SVECTOR mapRotation_70;
+  public final ShortRef mapRotationStartAngle_78;
+  public final UnsignedShortRef mapRotationEndAngle_7a;
+  public final ShortRef mapRotationStep_7c;
+  public final ShortRef mapRotationCounter_7e;
+  public final UnsignedByteRef mapRotating_80;
 
   public final UnsignedIntRef _84;
   public final UnsignedIntRef _88;
@@ -70,12 +70,12 @@ public class WMapStruct19c0 implements MemoryRef {
 
     this._00 = ref.offset(4, 0x00L).cast(RenderStruct20::new);
     this.coord2_20 = ref.offset(4, 0x20L).cast(GsCOORDINATE2::new);
-    this.rotation_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
-
-    this._7a = ref.offset(2, 0x7aL).cast(UnsignedShortRef::new);
-    this._7c = ref.offset(2, 0x7cL).cast(ShortRef::new);
-    this._7e = ref.offset(2, 0x7eL).cast(ShortRef::new);
-    this._80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
+    this.mapRotation_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
+    this.mapRotationStartAngle_78 = ref.offset(2, 0x78L).cast(ShortRef::new);
+    this.mapRotationEndAngle_7a = ref.offset(2, 0x7aL).cast(UnsignedShortRef::new);
+    this.mapRotationStep_7c = ref.offset(2, 0x7cL).cast(ShortRef::new);
+    this.mapRotationCounter_7e = ref.offset(2, 0x7eL).cast(ShortRef::new);
+    this.mapRotating_80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
 
     this._84 = ref.offset(4, 0x84L).cast(UnsignedIntRef::new);
     this._88 = ref.offset(4, 0x88L).cast(UnsignedIntRef::new);

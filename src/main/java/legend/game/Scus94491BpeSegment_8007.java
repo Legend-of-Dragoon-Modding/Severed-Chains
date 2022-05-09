@@ -11,7 +11,7 @@ public final class Scus94491BpeSegment_8007 {
    * Only set for an instant after buttons are pressed
    *
    * 0x01 - L1
-   * 0x02 - R2
+   * 0x02 - R1
    * 0x04 - L2
    * 0x08 - R2
    * 0x10 - Triangle
@@ -24,7 +24,7 @@ public final class Scus94491BpeSegment_8007 {
    * Remains set for the duration of the button press
    *
    * 0x01 - L1
-   * 0x02 - R2
+   * 0x02 - R1
    * 0x04 - L2
    * 0x08 - R2
    * 0x10 - Triangle
@@ -37,7 +37,7 @@ public final class Scus94491BpeSegment_8007 {
    * Only set for an instant after buttons are pressed, but repeats while button is held
    *
    * 0x01 - L1
-   * 0x02 - R2
+   * 0x02 - R1
    * 0x04 - L2
    * 0x08 - R2
    * 0x10 - Triangle
