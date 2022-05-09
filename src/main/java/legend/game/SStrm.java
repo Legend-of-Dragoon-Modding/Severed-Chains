@@ -339,9 +339,6 @@ public final class SStrm {
     //LAB_800fbf88
     CDROM.sendCommand(CdlCOMMAND.PAUSE_09);
     CDROM.acknowledgeInterrupts();
-//    while(!DsControl(CdlCOMMAND.PAUSE_09, 0, 0)) {
-//      DebugHelper.sleep(1);
-//    }
 
     removeFromLinkedList(mdecInDoubleBufferFrame0_8010f7d4.get());
     removeFromLinkedList(mdecInDoubleBufferFrame1_8010f7d8.get());

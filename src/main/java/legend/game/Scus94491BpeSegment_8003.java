@@ -1116,11 +1116,6 @@ public final class Scus94491BpeSegment_8003 {
     CDROM_REG0.setu(0);
 
     //LAB_80032604
-//    for(long param = 0; param < command.paramCount; param++) {
-//      CDROM_REG2.setu(MEMORY.ref(1, paramAddress).offset(param));
-//    }
-//
-//    CDROM_REG1.setu(command.command);
     final long[] params = new long[command.paramCount];
     for(int param = 0; param < command.paramCount; param++) {
       params[param] = MEMORY.ref(1, paramAddress).offset(param).get();
@@ -1301,30 +1296,18 @@ public final class Scus94491BpeSegment_8003 {
 
     CDROM.sendCommand(CdlCOMMAND.GET_STAT_01);
     CDROM.acknowledgeInterrupts();
-//    DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
 
     if(_80052f50.get(0x10L) == 0) {
       CDROM.sendCommand(CdlCOMMAND.GET_STAT_01);
       CDROM.acknowledgeInterrupts();
-//      DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
     }
 
     //LAB_80032ca4
     CDROM.sendCommand(CdlCOMMAND.INIT_0A);
     CDROM.acknowledgeInterrupts();
-//    if(DsControl(CdlCOMMAND.INIT_0A, 0, 0, false) != 0) {
-//      return -0x1L;
-//    }
 
     CDROM.sendCommand(CdlCOMMAND.DEMUTE_0C);
     CDROM.acknowledgeInterrupts();
-//    if(DsControl(CdlCOMMAND.DEMUTE_0C, 0, 0, false) != 0) {
-//      return -0x1L;
-//    }
-
-//    if(FUN_80031f44(0, 0) != SyncCode.COMPLETE) {
-//      return -0x1L;
-//    }
 
     //LAB_80032cfc
     //LAB_80032d00
