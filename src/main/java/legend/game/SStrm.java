@@ -12,6 +12,7 @@ import legend.core.memory.Value;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.MEMORY;
@@ -26,7 +27,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
-import static legend.game.Scus94491BpeSegment_8003.DsControl;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030a10;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030b20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030bb0;
@@ -337,9 +337,8 @@ public final class SStrm {
     disableCdromDmaCallbacksAndClearDataFifo();
 
     //LAB_800fbf88
-    while(!DsControl(CdlCOMMAND.PAUSE_09, 0, 0)) {
-      DebugHelper.sleep(1);
-    }
+    CDROM.sendCommand(CdlCOMMAND.PAUSE_09);
+    CDROM.acknowledgeInterrupts();
 
     removeFromLinkedList(mdecInDoubleBufferFrame0_8010f7d4.get());
     removeFromLinkedList(mdecInDoubleBufferFrame1_8010f7d8.get());
