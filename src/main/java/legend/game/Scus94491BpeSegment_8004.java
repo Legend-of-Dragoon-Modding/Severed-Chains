@@ -644,10 +644,13 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
+  public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
   public static final Value _8004f65c = MEMORY.ref(2, 0x8004f65cL);
 
   public static final Value _8004f664 = MEMORY.ref(1, 0x8004f664L);
+
+  public static final ArrayRef<UnsignedByteRef> _8004f698 = MEMORY.ref(1, 0x8004f698L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
 
   public static final Value _8004f6a4 = MEMORY.ref(4, 0x8004f6a4L);
 

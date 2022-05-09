@@ -2304,6 +2304,21 @@ public class WMap {
     vsyncMode_8007a3b8.setu(0x2L);
   }
 
+  @Method(0x800cce1cL)
+  public static void transitionToCombat() {
+    gameState_800babc8._4de.set((int)_800c67aa.get());
+    gameState_800babc8.pathIndex_4d8.set((int)pathIndex_800c67ac.get());
+    gameState_800babc8.dotIndex_4da.set((int)dotIndex_800c67ae.get());
+    gameState_800babc8.dotOffset_4dc.set((int)dotOffset_800c67b0.get());
+    gameState_800babc8.facing_4dd.set((int)facing_800c67b4.get());
+    FUN_800cd030();
+    FUN_800cd278();
+    _80052c6c.setu(0);
+    _8004dd24.setu(0x6L);
+    pregameLoadingStage_800bb10c.setu(0);
+    vsyncMode_8007a3b8.setu(0x2L);
+  }
+
   @Method(0x800ccf04L)
   public static void FUN_800ccf04() {
     struct258_800c66a8.set(MEMORY.ref(4, addToLinkedListTail(0x258L), WMapStruct258::new));
