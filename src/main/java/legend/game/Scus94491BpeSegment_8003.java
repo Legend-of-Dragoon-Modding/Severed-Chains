@@ -123,7 +123,6 @@ import static legend.game.Scus94491BpeSegment_8005.Vcount;
 import static legend.game.Scus94491BpeSegment_8005._80052f24;
 import static legend.game.Scus94491BpeSegment_8005._80052f50;
 import static legend.game.Scus94491BpeSegment_8005._80052f54;
-import static legend.game.Scus94491BpeSegment_8005._80052f58;
 import static legend.game.Scus94491BpeSegment_8005._80053008;
 import static legend.game.Scus94491BpeSegment_8005._80053088;
 import static legend.game.Scus94491BpeSegment_8005._80053108;
@@ -784,9 +783,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x800319e0L)
   public static long processCdromInterrupt() {
-    CDROM_REG0.setu(0x1L); // Index 1
-
-    SyncCode syncCode = SyncCode.fromLong(CDROM_REG3.get(0b111L)); // Read interrupt response
+    SyncCode syncCode = CDROM.readSyncCode(); // Read interrupt response
 
     if(syncCode == SyncCode.NO_INTERRUPT) {
       return 0;
@@ -794,8 +791,8 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80031a44
     //LAB_80031a34
-    while(syncCode != SyncCode.fromLong(CDROM_REG3.get(0b111L))) {
-      syncCode = SyncCode.fromLong(CDROM_REG3.get(0b111L)); // Read interrupt response
+    while(syncCode != CDROM.readSyncCode()) {
+      syncCode = CDROM.readSyncCode(); // Read interrupt response
     }
 
     int resultIndex;
@@ -807,38 +804,27 @@ public final class Scus94491BpeSegment_8003 {
         break;
       }
 
-      results[resultIndex] = CDROM_REG1.get(); // Read response to stack
+      results[resultIndex] = CDROM.readResponse(); // Read response to stack
     }
 
     //LAB_80031ac8
-    CDROM_REG0.setu(0x1L); // Index 1
-    CDROM_REG3.setu(0x7L); // Acknowledge interrupts
-    CDROM_REG2.setu(0x7L); // Enable interrupts
-
-    final long errors;
+    CDROM.acknowledgeInterrupts(0x7L); // Acknowledge interrupts
+    CDROM.enableInterrupts(0x7L); // Enable interrupts
 
     if(syncCode != SyncCode.ACKNOWLEDGE || _80053108.get(previousCdromCommand_80052f61.get().command).get() != 0) {
       //LAB_80031b30
-      if(_80052f50.get(0x10L) == 0) {
-        if((results[0] & 0x10L) != 0) {
-          _80052f58.addu(0x1L);
-        }
-      }
-
       //LAB_80031b74
-      errors = results[0] & 0b1_1101L; // error, seek error, ID error, or shell open
-      _80052f50.setu(results[0]);
-      _80052f54.setu(results[1]);
-    } else {
-      errors = 0;
+      // error, seek error, ID error, or shell open
+      final long errors = results[0] & 0b1_1101L;
+
+      if(errors != 0) {
+        throw new RuntimeException("CDROM errors " + Long.toHexString(errors));
+      }
     }
 
     //LAB_80031b94
     if(syncCode == SyncCode.DISK_ERROR) {
-      if(CD_debug_80052f4c.get() >= 0x3L) {
-        LOGGER.error("DiskError:");
-        LOGGER.error("com=%s,code=(%02x:%02x)", previousCdromCommand_80052f61.get().name(), _80052f50.get(), _80052f54.get());
-      }
+      throw new RuntimeException("com=%s,code=(%02x:%02x)".formatted(previousCdromCommand_80052f61.get().name(), _80052f50.get(), _80052f54.get()));
     }
 
     //LAB_80031c14
@@ -846,18 +832,6 @@ public final class Scus94491BpeSegment_8003 {
 
     switch(syncCode) {
       case ACKNOWLEDGE -> {
-        if(errors != 0) {
-          cdromSyncCode_80053220.set(SyncCode.DISK_ERROR);
-
-          //LAB_80031c70
-          for(int i = 0; i < DSL_MAX_RESULTS; i++) {
-            cdromResponses_800bf5c0.get(i).set((byte)results[i]);
-          }
-
-          assert false : "Disk error";
-          return 0x2L;
-        }
-
         //LAB_80031c90
         if(_80053008.get(previousCdromCommand_80052f61.get().command).get() != 0) {
           cdromSyncCode_80053220.set(SyncCode.ACKNOWLEDGE);
@@ -884,11 +858,7 @@ public final class Scus94491BpeSegment_8003 {
 
       case COMPLETE -> {
         //LAB_80031d50
-        if(errors == 0) {
-          cdromSyncCode_80053220.set(SyncCode.COMPLETE);
-        } else {
-          cdromSyncCode_80053220.set(SyncCode.DISK_ERROR);
-        }
+        cdromSyncCode_80053220.set(SyncCode.COMPLETE);
 
         //LAB_80031d70
         for(int i = 0; i < DSL_MAX_RESULTS; i++) {
@@ -902,12 +872,7 @@ public final class Scus94491BpeSegment_8003 {
       case DATA_READY -> {
         //LAB_80031da4
         //LAB_80031db0
-        if(errors == 0 || resultIndex == 0x1L) {
-          cdromDataSyncCode_80053221.set(SyncCode.DATA_READY);
-        } else {
-          cdromDataSyncCode_80053221.set(SyncCode.DISK_ERROR);
-          assert false : "Disk error";
-        }
+        cdromDataSyncCode_80053221.set(SyncCode.DATA_READY);
 
         //LAB_80031dd4
         for(int i = 0; i < DSL_MAX_RESULTS; i++) {
@@ -937,25 +902,6 @@ public final class Scus94491BpeSegment_8003 {
 
         //LAB_80031e88
         return 0x4L;
-      }
-
-      case DISK_ERROR -> {
-        cdromDataSyncCode_80053221.set(SyncCode.DISK_ERROR);
-        cdromSyncCode_80053220.set(SyncCode.DISK_ERROR);
-
-        //LAB_80031ec0
-        for(int i = 0; i < DSL_MAX_RESULTS; i++) {
-          cdromResponses_800bf5c0.get(i).set((byte)results[i]);
-        }
-
-        //LAB_80031ed8
-        //LAB_80031ef0
-        for(int i = 0; i < DSL_MAX_RESULTS; i++) {
-          cdromResponses_800bf5c8.get(i).set((byte)results[i]);
-        }
-
-        //LAB_80031f08
-        return 0x6L;
       }
     }
 
@@ -1133,11 +1079,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_800324f0
     if(command.paramCount != 0 && paramAddress == 0) {
-      if(CD_debug_80052f4c.get() > 0) {
-        LOGGER.info("%s: no param", command.toString());
-      }
-
-      return 0xffff_fffeL;
+      throw new RuntimeException("Param count set but no param address specified");
     }
 
     //LAB_8003254c
@@ -1164,13 +1106,20 @@ public final class Scus94491BpeSegment_8003 {
     CDROM_REG0.setu(0);
 
     //LAB_80032604
-    for(long param = 0; param < command.paramCount; param++) {
-      CDROM_REG2.setu(MEMORY.ref(1, paramAddress).offset(param));
+//    for(long param = 0; param < command.paramCount; param++) {
+//      CDROM_REG2.setu(MEMORY.ref(1, paramAddress).offset(param));
+//    }
+//
+//    CDROM_REG1.setu(command.command);
+    final long[] params = new long[command.paramCount];
+    for(int param = 0; param < command.paramCount; param++) {
+      params[param] = MEMORY.ref(1, paramAddress).offset(param).get();
     }
+
+    CDROM.sendCommand(command, params);
 
     //LAB_8003262c
     previousCdromCommand_80052f61.set(command);
-    CDROM_REG1.setu(command.command);
 
     if(async) {
       return 0;
@@ -1205,12 +1154,8 @@ public final class Scus94491BpeSegment_8003 {
         final long oldIndex = CDROM_REG0.get(0x3L);
 
         //LAB_80032788
-        do {
-          final long callbacks = processCdromInterrupt();
-          if(callbacks == 0) {
-            break;
-          }
-
+        long callbacks;
+        while((callbacks = processCdromInterrupt()) != 0) {
           if((callbacks & 0x4L) != 0 && !cdromDataInterruptCallbackPtr_80052f48.isNull()) {
             cdromDataInterruptCallbackPtr_80052f48.deref().run(cdromDataSyncCode_80053221.get(), MEMORY.getBytes(cdromResponses_800bf5c8.getAddress(), DSL_MAX_RESULTS));
           }
@@ -1220,7 +1165,7 @@ public final class Scus94491BpeSegment_8003 {
           if((callbacks & 0x2L) != 0 && !cdromCompleteInterruptCallbackPtr_80052f44.isNull()) {
             cdromCompleteInterruptCallbackPtr_80052f44.deref().run(cdromSyncCode_80053220.get(), MEMORY.getBytes(cdromResponses_800bf5c0.getAddress(), DSL_MAX_RESULTS));
           }
-        } while(true);
+        }
 
         //LAB_80032800
         CDROM_REG0.setu(oldIndex);
@@ -1344,24 +1289,32 @@ public final class Scus94491BpeSegment_8003 {
     CDROM_REG3.setu(0b000);
     COMMON_DELAY.setu(0x1325L);
 
-    DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
+    CDROM.sendCommand(CdlCOMMAND.GET_STAT_01);
+    CDROM.acknowledgeInterrupts();
+//    DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
 
     if(_80052f50.get(0x10L) == 0) {
-      DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
+      CDROM.sendCommand(CdlCOMMAND.GET_STAT_01);
+      CDROM.acknowledgeInterrupts();
+//      DsControl(CdlCOMMAND.GET_STAT_01, 0, 0, false);
     }
 
     //LAB_80032ca4
-    if(DsControl(CdlCOMMAND.INIT_0A, 0, 0, false) != 0) {
-      return -0x1L;
-    }
+    CDROM.sendCommand(CdlCOMMAND.INIT_0A);
+    CDROM.acknowledgeInterrupts();
+//    if(DsControl(CdlCOMMAND.INIT_0A, 0, 0, false) != 0) {
+//      return -0x1L;
+//    }
 
-    if(DsControl(CdlCOMMAND.DEMUTE_0C, 0, 0, false) != 0) {
-      return -0x1L;
-    }
+    CDROM.sendCommand(CdlCOMMAND.DEMUTE_0C);
+    CDROM.acknowledgeInterrupts();
+//    if(DsControl(CdlCOMMAND.DEMUTE_0C, 0, 0, false) != 0) {
+//      return -0x1L;
+//    }
 
-    if(FUN_80031f44(0, 0) != SyncCode.COMPLETE) {
-      return -0x1L;
-    }
+//    if(FUN_80031f44(0, 0) != SyncCode.COMPLETE) {
+//      return -0x1L;
+//    }
 
     //LAB_80032cfc
     //LAB_80032d00
