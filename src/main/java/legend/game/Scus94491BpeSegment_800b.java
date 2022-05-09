@@ -54,7 +54,7 @@ import static legend.core.LibDs.DSL_MAX_COMMAND;
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final Value _800babc0 = MEMORY.ref(1, 0x800babc0L);
+  public static final Value _800babc0 = MEMORY.ref(4, 0x800babc0L);
 
   public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
 
@@ -119,7 +119,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc304 = MEMORY.ref(4, 0x800bc304L);
   public static final Value _800bc308 = MEMORY.ref(4, 0x800bc308L);
 
-  public static final Value _800bc960 = MEMORY.ref(1, 0x800bc960L);
+  public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
+
+  public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
 
   //TODO structure @ 800bc980... 3 * 12?
   public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
@@ -160,6 +162,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd684 = MEMORY.ref(4, 0x800bd684L);
 
   public static final Value _800bd690 = MEMORY.ref(4, 0x800bd690L);
+
+  public static final ArrayRef<UnsignedIntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6f8L, ArrayRef.of(UnsignedIntRef.class, 3, 4, UnsignedIntRef::new));
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
@@ -255,7 +259,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
   /**
    * 0x01 - L1
-   * 0x02 - R2
+   * 0x02 - R1
    * 0x04 - L2
    * 0x08 - R2
    * 0x10 - Triangle

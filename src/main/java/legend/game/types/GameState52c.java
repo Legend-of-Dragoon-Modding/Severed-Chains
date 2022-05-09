@@ -41,8 +41,7 @@ public class GameState52c implements MemoryRef {
   public final UnsignedShortRef dotIndex_4da;
   public final UnsignedByteRef dotOffset_4dc;
   public final ByteRef facing_4dd;
-  public final UnsignedByteRef _4de;
-
+  public final UnsignedShortRef _4de;
   public final UnsignedByteRef mono_4e0;
   public final UnsignedByteRef vibrationEnabled_4e1;
   public final UnsignedByteRef morphMode_4e2;
@@ -83,8 +82,7 @@ public class GameState52c implements MemoryRef {
     this.dotIndex_4da = ref.offset(2, 0x4daL).cast(UnsignedShortRef::new);
     this.dotOffset_4dc = ref.offset(1, 0x4dcL).cast(UnsignedByteRef::new);
     this.facing_4dd = ref.offset(1, 0x4dfL).cast(ByteRef::new);
-    this._4de = ref.offset(1, 0x4deL).cast(UnsignedByteRef::new);
-
+    this._4de = ref.offset(2, 0x4deL).cast(UnsignedShortRef::new);
     this.mono_4e0 = ref.offset(1, 0x4e0L).cast(UnsignedByteRef::new);
     this.vibrationEnabled_4e1 = ref.offset(1, 0x4e1L).cast(UnsignedByteRef::new);
     this.morphMode_4e2 = ref.offset(1, 0x4e2L).cast(UnsignedByteRef::new);
