@@ -123,6 +123,7 @@ import static legend.game.Scus94491BpeSegment_8005.Vcount;
 import static legend.game.Scus94491BpeSegment_8005._80052f24;
 import static legend.game.Scus94491BpeSegment_8005._80052f50;
 import static legend.game.Scus94491BpeSegment_8005._80052f54;
+import static legend.game.Scus94491BpeSegment_8005._80052f58;
 import static legend.game.Scus94491BpeSegment_8005._80053008;
 import static legend.game.Scus94491BpeSegment_8005._80053088;
 import static legend.game.Scus94491BpeSegment_8005._80053108;
@@ -820,6 +821,15 @@ public final class Scus94491BpeSegment_8003 {
       if(errors != 0) {
         throw new RuntimeException("CDROM errors " + Long.toHexString(errors));
       }
+
+      if(_80052f50.get(0x10L) == 0) {
+        if((results[0] & 0x10L) != 0) {
+          _80052f58.addu(0x1L);
+        }
+      }
+
+      _80052f50.setu(results[0]);
+      _80052f54.setu(results[1]);
     }
 
     //LAB_80031b94
