@@ -4,6 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnsignedIntRef;
 
@@ -23,11 +24,11 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
   private final Value ref;
 
   public final Pointer<T> innerStruct_00;
-  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_04;
-  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_08;
-  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_0c;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<T>, T>> callback_04;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<T>, T>> callback_08;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<T>, T>> callback_0c;
   /** If the callback returns non-zero, it's set to null */
-  public final Pointer<TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long>> callback_10;
+  public final Pointer<TriFunctionRef<Integer, ScriptState<T>, T, Long>> callback_10;
   /** Pointer to the script file */
   public final Pointer<ScriptFile> scriptPtr_14;
   /** Pointer to the current script command */
@@ -61,9 +62,9 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
     this.ref = ref;
 
     this.innerStruct_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, innerStructConstructor));
-    this.callback_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, TriFunctionRef::new));
-    this.callback_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, TriFunctionRef::new));
-    this.callback_0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(4, TriFunctionRef::new));
+    this.callback_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, TriConsumerRef::new));
+    this.callback_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, TriConsumerRef::new));
+    this.callback_0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(4, TriConsumerRef::new));
     this.callback_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, TriFunctionRef::new));
     this.scriptPtr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, ScriptFile::new));
     this.commandPtr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnsignedIntRef::new));

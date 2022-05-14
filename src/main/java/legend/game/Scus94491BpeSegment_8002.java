@@ -74,6 +74,7 @@ import static legend.core.kernel.Kernel.EvSpNEW;
 import static legend.core.kernel.Kernel.EvSpTIMOUT;
 import static legend.core.kernel.Kernel.HwCARD;
 import static legend.core.kernel.Kernel.SwCARD;
+import static legend.game.Bttl.FUN_800ec0b0;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
@@ -778,7 +779,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(mainCallbackIndex_8004dd20.get() == 0x6L) {
       //LAB_800212a0
-      NotYetLoaded.FUN_800ec0b0();
+      FUN_800ec0b0(dobj2);
       return;
     }
 
@@ -866,6 +867,13 @@ public final class Scus94491BpeSegment_8002 {
 
     ScaleMatrix(bigStruct.coord2_14.coord, bigStruct.scaleVector_fc);
     bigStruct.coord2_14.flg.set(0);
+  }
+
+  @Method(0x800218a4L)
+  public static void FUN_800218a4() {
+    _800bd7a8.setu(0x7L);
+    _800bd7a4.setu(0x4968L);
+    _800bd7a0.setu(addToLinkedListHead(0x4968L));
   }
 
   @Method(0x800218f0L)
@@ -1056,12 +1064,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021ca0L)
-  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long a3, final long a4) {
+  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long count, final long a4) {
     long s1 = 0x801_0000L;
 
     //LAB_80021d08
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, tmd, coord2, (short)a3, s1 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, count, s1 / 0x1_0000L);
       s1 += 0x1_0000L;
     }
 
@@ -1071,8 +1079,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021d64
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, tmd, coord2, (short)a3, s1 / 0x1_0000L);
-      FUN_80021918(table, tmd, coord2, (short)a3, s2 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, count, s1 / 0x1_0000L);
+      FUN_80021918(table, tmd, coord2, count, s2 / 0x1_0000L);
       s2 += 0x1_0000L;
       s1 += 0x1_0000L;
     }
@@ -1834,6 +1842,22 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002325c
   }
 
+  @Method(0x80023264L)
+  public static void FUN_80023264() {
+    gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
+
+    //LAB_800232a4
+    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
+      if(gameState_800babc8._2e9.get(i).get() == 0xfaL) {
+        gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
+      }
+
+      //LAB_800232c4
+    }
+
+    //LAB_800232d4
+  }
+
   /** Pretty sure this moves all the items in the inv up one when you use one */
   @Method(0x800232dcL)
   public static long FUN_800232dc(final long a0) {
@@ -2122,6 +2146,26 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80023a2c(final long a0, final ArrayRef<UnsignedByteRef> a1, final long a2) {
     FUN_80013434(a0, a2, 0x4L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80023978", long.class, long.class));
     FUN_800239e0(a0, a1, a2);
+  }
+
+  @Method(0x80023a88L)
+  public static void FUN_80023a88() {
+    final long s0 = addToLinkedListTail(0x4c0L);
+
+    //LAB_80023ab4
+    for(int i = 0; i < 0x130; i++) {
+      MEMORY.ref(1, s0).offset(i * 0x4L).offset(0x0L).setu(0xffL);
+      MEMORY.ref(2, s0).offset(i * 0x4L).offset(0x2L).setu(0);
+    }
+
+    //LAB_80023aec
+    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
+      MEMORY.ref(1, s0).offset(i * 0x4L).setu(gameState_800babc8._2e9.get(i).get());
+    }
+
+    //LAB_80023b10
+    FUN_80023a2c(s0, gameState_800babc8._2e9, gameState_800babc8._1e6.get());
+    removeFromLinkedList(s0);
   }
 
   @Method(0x80023b54L)
@@ -8092,6 +8136,11 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002d230L)
   public static int strncmp(final String s1, final String s2, final int length) {
     return (int)functionVectorA_000000a0.run(0x18L, new Object[] {s1, s2, length});
+  }
+
+  @Method(0x8002d240L)
+  public static CString strcpy(final CString dest, final String src) {
+    return (CString)functionVectorA_000000a0.run(0x19L, new Object[] {dest, src});
   }
 
   @Method(0x8002d260L)

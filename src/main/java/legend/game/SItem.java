@@ -8,10 +8,12 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.BtldScriptData27c;
 import legend.game.types.CharacterData2c;
 import legend.game.types.LodString;
 import legend.game.types.MemcardDataStruct3c;
@@ -20,6 +22,7 @@ import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
 import legend.game.types.Renderable58;
+import legend.game.types.ScriptState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,16 +30,30 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.game.Bttl.FUN_800c8f24;
+import static legend.game.Bttl.FUN_800c8f50;
+import static legend.game.Bttl.FUN_800c9290;
+import static legend.game.Bttl.FUN_800ca75c;
+import static legend.game.Bttl.FUN_800f863c;
+import static legend.game.Bttl._800c66a0;
+import static legend.game.Bttl._800c66d0;
+import static legend.game.Bttl._800c677c;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
+import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
+import static legend.game.Scus94491BpeSegment.FUN_80017fe4;
+import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.setCallback04;
+import static legend.game.Scus94491BpeSegment.setCallback0c;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800228d0;
@@ -91,6 +108,7 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
+import static legend.game.Scus94491BpeSegment_8005._8005e398;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
@@ -98,9 +116,12 @@ import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_8006._8006f280;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
+import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
@@ -130,9 +151,11 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class SItem {
@@ -161,6 +184,10 @@ public final class SItem {
   public static final Value _80111cfc = MEMORY.ref(4, 0x80111cfcL);
 
   public static final Value _80111d20 = MEMORY.ref(4, 0x80111d20L);
+
+  public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
+
+  public static final Value _80111d68 = MEMORY.ref(1, 0x80111d68L);
 
   public static final Value _80111ff0 = MEMORY.ref(1, 0x80111ff0L);
 
@@ -476,6 +503,311 @@ public final class SItem {
   public static final Value memcardSaveLoadingStage_8011e0d4 = MEMORY.ref(1, 0x8011e0d4L);
 
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
+
+  @Method(0x800fbd78L)
+  public static void FUN_800fbd78(final long a0) {
+    //LAB_800fbdb8
+    for(_800c677c.setu(0); _800c677c.get() < 3; _800c677c.addu(0x1L)) {
+      if(gameState_800babc8.charIndex_88.get((int)_800c677c.get()).get() < 0) {
+        break;
+      }
+    }
+
+    //LAB_800fbde8
+    final long fp = _80111d38.offset(_800c677c.get() * 0xcL).getAddress();
+    final long[] sp0x18 = new long[(int)_800c677c.get()];
+
+    //LAB_800fbe18
+    for(int i = 0; i < _800c677c.get(); i++) {
+      sp0x18[i] = FUN_800c8f50(0x200L + gameState_800babc8.charIndex_88.get(i).get() * 0x2L, i);
+    }
+
+    //LAB_800fbe4c
+    //LAB_800fbe70
+    for(int i = 0; i < _800c677c.get(); i++) {
+      final long s2 = gameState_800babc8.charIndex_88.get(i).get();
+      final long s0 = allocateScriptState(i + 0x6L, 0x27cL, false, 0, 0, BtldScriptData27c::new);
+      setCallback04(s0, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback0c(s0, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(s0);
+      _8006e398.offset(4, 0xe40L).offset(i * 0x4L).setu(s0);
+      final long s1 = scriptStatePtrArr_800bc1c0.get((int)s0).deref().innerStruct_00.getPointer(); //TODO
+      MEMORY.ref(4, s1).offset(0x0L).setu(0x4a42_4f42L);
+      MEMORY.ref(4, s1).offset(0x144L).setu(FUN_800c8f24((short)sp0x18[i]));
+      MEMORY.ref(2, s1).offset(0x272L).setu(s2);
+      MEMORY.ref(2, s1).offset(0x276L).setu(i);
+      MEMORY.ref(2, s1).offset(0x26cL).setu(sp0x18[i]);
+      MEMORY.ref(2, s1).offset(0x274L).setu(_800c66d0.get());
+      MEMORY.ref(4, s1).offset(0x178L).setu(0);
+      MEMORY.ref(4, s1).offset(0x174L).setu(MEMORY.ref(2, fp).offset(i * 0x4L).offset(0x0L).getSigned());
+      MEMORY.ref(2, s1).offset(0x1bcL).setu(0);
+      MEMORY.ref(2, s1).offset(0x1beL).setu(0x400L);
+      MEMORY.ref(2, s1).offset(0x1c0L).setu(0);
+      MEMORY.ref(4, s1).offset(0x17cL).setu(MEMORY.ref(2, fp).offset(i * 0x4L).offset(0x2L).getSigned());
+      _800c66d0.addu(0x1L);
+    }
+
+    //LAB_800fbf6c
+    _8006e398.offset(_800c66d0.get() * 0x4L).offset(4, 0xe0cL).setu(-0x1L);
+    _8006e398.offset(_800c677c.get() * 0x4L).offset(4, 0xe40L).setu(-0x1L);
+
+    FUN_800f863c();
+    FUN_80012bb4();
+  }
+
+  @Method(0x800fbfe0L)
+  public static void FUN_800fbfe0(final long a0) {
+    FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "FUN_800fc3c0", long.class), submapScene_800bb0f8.get() + 0xa41L);
+
+    //LAB_800fc030
+    for(int i = 0; i < _800c66a0.get(); i++) {
+      if(MEMORY.ref(2, FUN_800c8f24(i)).offset(0x19cL).getSigned() < 0) {
+        FUN_800c9290(i);
+      }
+
+      //LAB_800fc050
+    }
+
+    //LAB_800fc064
+    //LAB_800fc09c
+    for(int i = 0; i < _800c677c.get(); i++) {
+      final long v0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
+      _8005e398.offset(MEMORY.ref(2, v0).offset(0x26cL).getSigned() * 0x1a8L).offset(2, 0x19eL).oru(0x2aL);
+    }
+
+    //LAB_800fc104
+    final long v1 = _800c677c.get();
+    final long s2;
+    if(v1 == 1) {
+      //LAB_800fc140
+      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).getAddress();
+    } else if(v1 == 2) {
+      //LAB_800fc164
+      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(1).get() * 0x8L).getAddress();
+      //LAB_800fc12c
+    } else if(v1 == 3) {
+      //LAB_800fc174
+      //LAB_800fc180
+      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(1).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(2).get() * 0x8L).getAddress();
+    } else {
+      throw new RuntimeException("Invalid value " + v1);
+    }
+
+    //LAB_800fc19c
+    //LAB_800fc1a4
+    _8006f280.setu(s2);
+    FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "FUN_800fc504", long.class), MEMORY.ref(2, s2).getSigned());
+    FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "FUN_800fc654", long.class), MEMORY.ref(2, s2).getSigned() + 0x1L);
+    _800bc960.oru(0x400L);
+    FUN_80012bb4();
+  }
+
+  @Method(0x800fc210L)
+  public static void FUN_800fc210(final Value address, final long fileSize, final long param) {
+    long v0;
+    long v1;
+    long a0 = address.get();
+    long a1;
+    long a2;
+    long a3;
+    long t0;
+    long t1;
+    long s0 = 0; //TODO this was uninitialized
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+    long s5;
+    long sp10;
+    v0 = 0x8007_0000L;
+    v1 = v0 + -0x1c68L;
+    v0 = 0x800c_0000L;
+    v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
+    s2 = a0;
+    s3 = MEMORY.ref(4, v1).offset(0xee8L).get();
+    if((int)v0 > 0) {
+      s1 = 0;
+      s5 = v1;
+      v0 = 0x800c_0000L;
+      s4 = v0 + -0x3e40L;
+
+      //LAB_800fc260
+      do {
+        v0 = s1 << 2;
+        v0 = v0 + s5;
+        v0 = MEMORY.ref(4, v0).offset(0xe40L).get();
+
+        v0 = v0 << 2;
+        v0 = v0 + s4;
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+        a1 = 0;
+        t0 = MEMORY.ref(4, v0).offset(0x0L).get();
+        a3 = s2;
+        v0 = MEMORY.ref(4, t0).offset(0x144L).get();
+        a0 = s3;
+        v1 = MEMORY.ref(2, v0).offset(0x19cL).getSigned();
+        a2 = MEMORY.ref(2, t0).offset(0x272L).getSigned();
+        t1 = v1 & 0x7fL;
+
+        //LAB_800fc298
+        do {
+          v0 = MEMORY.ref(2, a0).offset(0x2L).getSigned();
+
+          if(v0 == a2) {
+            v0 = -0x80L;
+            s0 = s0 & v0;
+            s0 = s0 | t1;
+            v0 = -0x7e01L;
+            s0 = s0 & v0;
+            a2 = 0x800d_0000L;
+            a2 = a2 + -0x6be4L;
+            a0 = MEMORY.ref(4, a3).offset(0x8L).get();
+            v1 = v1 * 0x4L;
+            v0 = MEMORY.ref(2, t0).offset(0x26cL).getSigned() & 0x3fL;
+            v0 = v0 << 9;
+            s0 = s0 | v0;
+            s0 = s0 & 0xffff_ff7fL;
+            s0 = s0 & 0xffff_feffL;
+            a0 = s2 + a0;
+            a1 = _1f8003f4.deref()._9cdc.offset(v1).get();
+            FUN_80017fe4(a0, a1, a2, s0, 0);
+            break;
+          }
+
+          //LAB_800fc324
+          a1 = a1 + 0x1L;
+          a3 = a3 + 0x8L;
+          a0 = a0 + 0x2L;
+        } while((int)a1 < 0x3L);
+
+        //LAB_800fc338
+        s1 = s1 + 0x1L;
+      } while((int)s1 < _800c677c.get());
+    }
+
+    //LAB_800fc34c
+    _800bc960.oru(0x4L);
+    FUN_800127cc(s2, 0, 0x1L);
+    FUN_80012bb4();
+  }
+
+  @Method(0x800fc3c0L)
+  public static void FUN_800fc3c0(final long fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc404", Value.class, long.class, long.class), 0, 0x5L);
+  }
+
+  @Method(0x800fc404L)
+  public static void FUN_800fc404(final Value address, final long fileSize, final long param) {
+    final long s2 = _1f8003f4.getPointer(); //TODO
+    final long s1 = address.get();
+
+    //LAB_800fc434
+    for(int s0 = 0; s0 < _800c66a0.get(); s0++) {
+      final long a0 = FUN_800c8f24(s0);
+
+      if(MEMORY.ref(2, a0).offset(0x19cL).getSigned() < 0) {
+        final long a2 = MEMORY.ref(2, a0).offset(0x1a2L).get() & 0x1ffL;
+
+        //LAB_800fc464
+        for(int a1 = 0; a1 < 3; a1++) {
+          if((MEMORY.ref(2, s2).offset(a1 * 0x2L).get() & 0x1ffL) == a2 && MEMORY.ref(4, s1).offset(a1 * 0x8L).offset(0xcL).get() != 0) {
+            FUN_800ca75c(s0, MEMORY.ref(4, s1).offset(a1 * 0x8L).offset(0x8L).get() + s1);
+            break;
+          }
+
+          //LAB_800fc4a0
+        }
+      }
+
+      //LAB_800fc4b8
+    }
+
+    //LAB_800fc4cc
+    FUN_800127cc(s1, 0, 0x1L);
+    FUN_80012bb4();
+  }
+
+  @Method(0x800fc504L)
+  public static void FUN_800fc504(final long fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", Value.class, long.class, long.class), 0, 0x5L);
+  }
+
+  @Method(0x800fc548L)
+  public static void FUN_800fc548(final Value address, final long fileSize, final long param) {
+    long v0;
+    long v1;
+    long a0 = address.get();
+    long a1;
+    long a2;
+    long a3;
+    long s0;
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+    v0 = 0x8007_0000L;
+    v1 = v0 + -0x1c68L;
+    v0 = 0x800c_0000L;
+    v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
+    s2 = a0;
+    s3 = MEMORY.ref(4, v1).offset(0xee8L).get();
+    if((int)v0 > 0) {
+      s0 = 0;
+      v0 = 0x800c_0000L;
+      s4 = v0 + -0x3e40L;
+      s1 = v1;
+
+      //LAB_800fc590
+      do {
+        v0 = MEMORY.ref(4, s1).offset(0xe40L).get();
+        a1 = 0;
+        v0 = v0 << 2;
+        v0 = v0 + s4;
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+        a0 = s2;
+        a3 = MEMORY.ref(4, v0).offset(0x0L).get();
+        v1 = s3;
+        a2 = MEMORY.ref(2, a3).offset(0x272L).getSigned();
+
+        //LAB_800fc5b4
+        do {
+          v0 = MEMORY.ref(2, v1).offset(0x2L).getSigned();
+
+          if(v0 == a2) {
+            a1 = MEMORY.ref(4, a0).offset(0x8L).get();
+
+            a1 = s2 + a1;
+            v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+            a0 = MEMORY.ref(2, a3).offset(0x26cL).getSigned();
+            a1 = a1 + v0;
+            FUN_800ca75c(a0, a1);
+            break;
+          }
+          a1 = a1 + 0x1L;
+
+          //LAB_800fc5e8
+          a0 = a0 + 0x8L;
+          v1 = v1 + 0x2L;
+        } while((int)a1 < 0x3L);
+
+        s1 = s1 + 0x4L;
+
+        //LAB_800fc5fc
+        v0 = 0x800c_0000L;
+        v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
+        s0 = s0 + 0x1L;
+      } while((int)s0 < (int)v0);
+    }
+
+    //LAB_800fc614
+    FUN_800127cc(s2, 0, 0x1L);
+    FUN_80012bb4();
+  }
+
+  @Method(0x800fc654L)
+  public static void FUN_800fc654(final long fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", Value.class, long.class, long.class), 0, 0x4L);
+  }
 
   @Method(0x800fc698L)
   public static long getXpToNextLevel(final int charIndex) {

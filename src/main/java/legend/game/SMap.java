@@ -22,6 +22,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -3779,7 +3780,7 @@ public final class SMap {
   }
 
   @Method(0x800e0ff0L)
-  public static long FUN_800e0ff0(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
+  public static void FUN_800e0ff0(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
     BigStruct puVar1 = scriptState.innerStruct_00.deref();
 
     if(puVar1.us_178.get() != 0) {
@@ -3842,12 +3843,10 @@ public final class SMap {
     if((puVar1.ui_190.get() & 0x20_0000L) != 0) {
       FUN_800e450c(puVar1, 0x40_0000L);
     }
-
-    return 0;
   }
 
   @Method(0x800e123cL)
-  public static long FUN_800e123c(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
+  public static void FUN_800e123c(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
     final BigStruct struct = scriptState.innerStruct_00.deref();
 
     if(struct.us_128.get() == 0) {
@@ -3904,7 +3903,6 @@ public final class SMap {
     }
 
     //LAB_800e139c
-    return 0;
   }
 
   @Method(0x800e13b0L)
@@ -4161,9 +4159,9 @@ public final class SMap {
         for(int i = 0; i < scriptCount_800c6730.get(); i++) {
           final long index2 = allocateScriptState(0x210L);
           scriptStateIndices_800c6880.get(i).set(index2);
-          setCallback04(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
-          setCallback08(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
-          setCallback0c(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
+          setCallback04(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
+          setCallback08(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
+          setCallback0c(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
           loadScriptFile(index2, mrg1Addr_800c68d8.deref().getFile(i + 1, ScriptFile::new));
 
           final BigStruct struct = scriptStatePtrArr_800bc1c0.get((int)index2).deref().innerStruct_00.derefAs(BigStruct.class);

@@ -26,20 +26,21 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.BattleRenderStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.GameState52c;
-import legend.game.types.LodString;
-import legend.game.types.ScriptState;
-import legend.game.types.Renderable58;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
+import legend.game.types.LodString;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MrgFile;
-import legend.game.types.ScriptEffectStruct;
+import legend.game.types.Renderable58;
 import legend.game.types.RunningScript;
-import legend.game.types.SpuStruct08;
+import legend.game.types.ScriptEffectStruct;
+import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
+import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
@@ -121,7 +122,22 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
 
+  /** TODO vec3 or maybe 3 values indexed by char slot? */
+  public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
+  public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
+  public static final Value _800bc918 = MEMORY.ref(4, 0x800bc914L);
+
+  public static final Value _800bc920 = MEMORY.ref(4, 0x800bc920L);
+
+  /** TODO vec3 or maybe 3 values indexed by char slot? */
+  public static final Value _800bc950 = MEMORY.ref(4, 0x800bc950L);
+  public static final Value _800bc954 = MEMORY.ref(4, 0x800bc954L);
+  public static final Value _800bc958 = MEMORY.ref(4, 0x800bc954L);
+  public static final Value _800bc95c = MEMORY.ref(4, 0x800bc95cL);
   public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
+
+  public static final Value _800bc974 = MEMORY.ref(4, 0x800bc974L);
+  public static final Value _800bc978 = MEMORY.ref(4, 0x800bc978L);
 
   //TODO structure @ 800bc980... 3 * 12?
   public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
@@ -178,8 +194,12 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Pointer<MrgFile> soundMrgPtr_800bd748 = MEMORY.ref(4, 0x800bd748L, Pointer.deferred(4, MrgFile::new));
 
+  public static final Value _800bd758 = MEMORY.ref(4, 0x800bd758L);
+
+  public static final Value _800bd768 = MEMORY.ref(4, 0x800bd768L);
   public static final Pointer<MrgFile> soundMrgPtr_800bd76c = MEMORY.ref(4, 0x800bd76cL, Pointer.deferred(4, MrgFile::new));
 
+  public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
   public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
 
   public static final Value _800bd780 = MEMORY.ref(1, 0x800bd780L);
@@ -210,7 +230,7 @@ public final class Scus94491BpeSegment_800b {
   public static final UnboundedArrayRef<GsDOBJ2> _800bd9f8 = MEMORY.ref(4, 0x800bd9f8L, UnboundedArrayRef.of(0x10, GsDOBJ2::new));
 
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
-
+  public static final Pointer<BattleRenderStruct> _800bda0c = MEMORY.ref(4, 0x800bda0cL, Pointer.deferred(4, BattleRenderStruct::new));
   public static final BigStruct bigStruct_800bda10 = MEMORY.ref(4, 0x800bda10L, BigStruct::new);
 
   public static final UnboundedArrayRef<GsCOORDINATE2> _800bdb38 = MEMORY.ref(4, 0x800bdb38L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new));

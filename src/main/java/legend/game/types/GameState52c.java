@@ -22,6 +22,8 @@ public class GameState52c implements MemoryRef {
   public final UnsignedIntRef submapScene_a4;
   public final UnsignedIntRef submapCut_a8;
 
+  public final UnsignedIntRef _b4;
+
   public final ArrayRef<UnsignedIntRef> scriptFlags2_bc;
   public final ArrayRef<UnsignedIntRef> scriptFlags1_13c;
 
@@ -62,6 +64,8 @@ public class GameState52c implements MemoryRef {
     this.timestamp_a0 = ref.offset(4, 0xa0L).cast(UnsignedIntRef::new);
     this.submapScene_a4 = ref.offset(4, 0xa4L).cast(UnsignedIntRef::new);
     this.submapCut_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
+
+    this._b4 = ref.offset(4, 0xb4L).cast(UnsignedIntRef::new);
 
     this.scriptFlags2_bc = ref.offset(4, 0xbcL).cast(ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
     this.scriptFlags1_13c = ref.offset(4, 0x13cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));

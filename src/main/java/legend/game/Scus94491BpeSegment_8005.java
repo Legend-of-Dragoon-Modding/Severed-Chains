@@ -45,6 +45,12 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
 
+  public static final Value _80050104 = MEMORY.ref(4, 0x80050104L);
+
+  public static final Value _8005019c = MEMORY.ref(4, 0x8005019cL);
+
+  public static final ArrayRef<UnsignedIntRef> _800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
+
   public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);
 
   public static final Value _800503b0 = MEMORY.ref(2, 0x800503b0L);
@@ -372,4 +378,9 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
 
   public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
+
+  public static final Value _8005e398 = MEMORY.ref(4, 0x8005e398L);
+
+  /** TODO huge structure related to combat */
+  public static final Value _8005f428 = MEMORY.ref(1, 0x8005f428L);
 }

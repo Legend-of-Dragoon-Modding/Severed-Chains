@@ -5118,6 +5118,12 @@ public final class Scus94491BpeSegment_8003 {
     return (y << 6 | x >> 4 & 0x3fL) & 0xffffL;
   }
 
+  @Method(0x8003b450L)
+  public static void FUN_8003b450(final long a0, final long a1, final long a2) {
+    MEMORY.ref(4, a2).and(0xff00_0000L).oru(MEMORY.ref(4, a0).get() & 0xff_ffffL);
+    MEMORY.ref(4, a0).and(0xff00_0000L).oru(a1 & 0xff_ffffL);
+  }
+
   @Method(0x8003b490L)
   public static void gpuLinkedListSetCommandTransparency(final long entryAddress, final boolean transparency) {
     if(transparency) {
@@ -6874,6 +6880,17 @@ public final class Scus94491BpeSegment_8003 {
     return out;
   }
 
+  @Method(0x8003ef50L)
+  public static VECTOR FUN_8003ef50(final SVECTOR vec, final VECTOR out) {
+    CPU.MTC2(vec.getXY(), 0); // VXY0
+    CPU.MTC2(vec.getZ(), 1); // VZ0
+    CPU.COP2(0x48_6012L);
+    out.setX((int)CPU.MFC2( 9));
+    out.setY((int)CPU.MFC2(10));
+    out.setZ((int)CPU.MFC2(11));
+    return out;
+  }
+
   @Method(0x8003ef80L)
   public static void PushMatrix() {
     final int i = (int)matrixStackIndex_80054a08.get();
@@ -7082,6 +7099,11 @@ public final class Scus94491BpeSegment_8003 {
     return matrix;
   }
 
+  @Method(0x8003f8c0L)
+  public static long getProjectionPlaneDistance() {
+    return CPU.CFC2(26);
+  }
+
   @Method(0x8003f8d0L)
   public static void SetFarColour(final int r, final int g, final int b) {
     CPU.CTC2(r * 16L, 0x15);
@@ -7091,7 +7113,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f8f0L) //Also 0x8003c6d0
   public static void setProjectionPlaneDistance(final int distance) {
-    CPU.CTC2(distance, 0x1a);
+    CPU.CTC2(distance, 26);
   }
 
   @Method(0x8003f900L)
@@ -7123,6 +7145,17 @@ public final class Scus94491BpeSegment_8003 {
     a7.set(CPU.CFC2(31));
 
     return (int)CPU.MFC2(19) >> 2;
+  }
+
+  @Method(0x8003f990L)
+  public static void FUN_8003f990(final SVECTOR v0, final VECTOR out, final UnsignedIntRef flags) {
+    CPU.MTC2(v0.getXY(), 0); // VXY0
+    CPU.MTC2(v0.getZ(), 1); // VZ0
+    CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)
+    out.setX((int)CPU.MFC2(25)); // MAC1
+    out.setY((int)CPU.MFC2(26)); // MAC2
+    out.setZ((int)CPU.MFC2(27)); // MAC3
+    flags.set(CPU.CFC2(31)); // Flags
   }
 
   /**

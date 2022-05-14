@@ -14,12 +14,14 @@ import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ConsumerRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.BattleStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
@@ -37,12 +39,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.game.Bttl.FUN_800c7304;
+import static legend.game.Bttl.FUN_800c882c;
+import static legend.game.Bttl.FUN_800c8cf0;
+import static legend.game.Bttl.FUN_800c90b0;
+import static legend.game.Bttl.FUN_800d8f10;
+import static legend.game.SBtld._80109a98;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SMap.FUN_800edb8c;
 import static legend.game.SMap.mrg10Addr_800c6710;
@@ -65,6 +74,7 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -155,6 +165,9 @@ import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._80050068;
 import static legend.game.Scus94491BpeSegment_8005._800500e8;
 import static legend.game.Scus94491BpeSegment_8005._800500f8;
+import static legend.game.Scus94491BpeSegment_8005._80050104;
+import static legend.game.Scus94491BpeSegment_8005._8005019c;
+import static legend.game.Scus94491BpeSegment_8005._800501bc;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
@@ -213,6 +226,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bd70c;
 import static legend.game.Scus94491BpeSegment_800b._800bd710;
 import static legend.game.Scus94491BpeSegment_800b._800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
+import static legend.game.Scus94491BpeSegment_800b._800bd758;
+import static legend.game.Scus94491BpeSegment_800b._800bd768;
+import static legend.game.Scus94491BpeSegment_800b._800bd774;
 import static legend.game.Scus94491BpeSegment_800b._800bd780;
 import static legend.game.Scus94491BpeSegment_800b._800bd781;
 import static legend.game.Scus94491BpeSegment_800b._800bd782;
@@ -285,7 +301,10 @@ public final class Scus94491BpeSegment {
   public static final Value displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L);
   public static final Value _1f8003e8 = MEMORY.ref(4, 0x1f8003e8L);
   public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
+  public static final Value _1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
 
+  public static final Pointer<BattleStruct> _1f8003f4 = MEMORY.ref(4, 0x1f8003f4L, Pointer.deferred(4, BattleStruct::new));
+  public static final Value _1f8003f8 = MEMORY.ref(4, 0x1f8003f8L);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
   public static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
@@ -952,18 +971,18 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012b1cL)
-  public static void FUN_80012b1c(final long a0, final long a1, final long a2) {
+  public static void FUN_80012b1c(final long a0, final long callback, final long callbackParam) {
     if(_8004dd10.get() == a0 && loadingSstrmOvl_8004dd1e.get() == 0) {
       _8004dd1c.addu(0x1L);
-      MEMORY.ref(4, a1).cast(ConsumerRef::new).run(a2);
+      MEMORY.ref(4, callback).cast(ConsumerRef::new).run(callbackParam);
       return;
     }
 
     //LAB_80012b6c
     //LAB_80012b70
     _8005a2a8.offset(_8004dd14.get() * 12).setu(a0);
-    _8005a2ac.offset(_8004dd14.get() * 12).setu(a1);
-    _8005a2b0.offset(_8004dd14.get() * 12).setu(a2);
+    _8005a2ac.offset(_8004dd14.get() * 12).setu(callback);
+    _8005a2b0.offset(_8004dd14.get() * 12).setu(callbackParam);
     _8004dd14.addu(0x1L).and(0xfL);
 
     //LAB_80012ba4
@@ -1188,6 +1207,16 @@ public final class Scus94491BpeSegment {
       width_8004dd34.setu(width);
       renderFlags_8004dd36.setu(flags);
     }
+  }
+
+  @Method(0x8001324cL)
+  public static void FUN_8001324c(final long a0) {
+    if(_1f8003c0.get() != a0) {
+      syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
+      _8004dd38.setu(a0);
+    }
+
+    //LAB_80013274
   }
 
   @Method(0x800133acL)
@@ -1744,6 +1773,8 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
+      case "\\OVL\\BTTL.OV_" -> MEMORY.addFunctions(Bttl.class);
+      case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
       case "\\SECT\\DRGN0.BIN" -> { }
       default -> throw new RuntimeException("Loaded unknown file " + file.namePtr.deref().get());
     }
@@ -2133,7 +2164,7 @@ public final class Scus94491BpeSegment {
       return -0x1L;
     }
 
-    LOGGER.info("Queueing DRGN%d file %d...", index, fileIndex);
+    LOGGER.info("Queueing DRGN%d file %d (if you're a programmer), %d (if you're a zamboni)", index, fileIndex, fileIndex + 1);
 
     final FileLoadingInfo file = addFile();
     if(file == null) {
@@ -2218,6 +2249,30 @@ public final class Scus94491BpeSegment {
     _8004ddcc.setu(a0 == 0 ? 0 : 1);
   }
 
+  @Method(0x80015704L)
+  public static long FUN_80015704(long a0, long a1) {
+    a1 = a1 - 0x1L;
+    long a2 = MEMORY.ref(4, a0).offset(0x4L).get() * 0x8L + 0x8L;
+    a0 = a0 + a1 * 0x8L;
+
+    //LAB_80015724
+    while((int)a1 >= 0) {
+      final long v0 = (MEMORY.ref(4, a0).offset(0xcL).get() + 0x3L) & 0xffff_fffcL;
+      final long v1 = MEMORY.ref(4, a0).offset(0x8L).get() + v0;
+
+      if((int)a2 < (int)v1) {
+        a2 = v1;
+      }
+
+      //LAB_80015748
+      a0 = a0 - 0x8L;
+      a1 = a1 - 0x1L;
+    }
+
+    //LAB_80015754
+    return a2;
+  }
+
   @Method(0x8001575cL)
   public static void executeScripts1() {
     isStackPointerModified_1f8003bc.set(true);
@@ -2274,20 +2329,31 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800158ccL)
   public static long allocateScriptState(final long innerStructSize) {
+    return allocateScriptState(innerStructSize, BigStruct::new);
+  }
+
+  public static <T extends MemoryRef> long allocateScriptState(final long innerStructSize, final Function<Value, T> type) {
     final long index = findFreeScriptState();
 
     if(index < 0) {
       return -0x1L;
     }
 
-    return allocateScriptState(index, innerStructSize, false, 0, 0);
+    return allocateScriptState(index, innerStructSize, false, 0, 0, type);
   }
 
   /**
    * @return index, or -1 on failure to allocate memory
    */
   @Method(0x80015918L)
-  public static long allocateScriptState(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4) {
+  public static <T extends MemoryRef> long allocateScriptState(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4) {
+    return allocateScriptState(index, innerStructSize, allocateOnHead, a3, a4, BigStruct::new);
+  }
+
+  /**
+   * @return index, or -1 on failure to allocate memory
+   */
+  public static <T extends MemoryRef> long allocateScriptState(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4, final Function<Value, T> type) {
     final long linkedListAddress;
     if(allocateOnHead) {
       linkedListAddress = addToLinkedListHead(innerStructSize + 0x100L);
@@ -2301,24 +2367,18 @@ public final class Scus94491BpeSegment {
       return -0x1L;
     }
 
-    if(innerStructSize != 0 && innerStructSize != 0x210L) {
-      throw new RuntimeException("Can only handle BigStruct as inner struct");
-    }
-
-    final ScriptState<BigStruct> scriptState = MEMORY.ref(4, linkedListAddress, ScriptState.of(BigStruct::new));
+    final ScriptState<T> scriptState = MEMORY.ref(4, linkedListAddress, ScriptState.of(type));
 
     //LAB_80015978
     scriptStatePtrArr_800bc1c0.get((int)index).set(scriptState);
 
     if(innerStructSize != 0) {
-      final BigStruct innerStruct = MEMORY.ref(4, linkedListAddress).offset(0x100L).cast(BigStruct::new);
-
       //LAB_800159ac
       for(int i = 0; i < innerStructSize; i += 4) {
-        MEMORY.ref(4, innerStruct.getAddress()).offset(i).setu(0);
+        MEMORY.ref(4, linkedListAddress).offset(0x100L).offset(i).setu(0);
       }
 
-      scriptState.innerStruct_00.set(innerStruct);
+      scriptState.innerStruct_00.setPointer(linkedListAddress + 0x100L);
     } else {
       scriptState.innerStruct_00.clear();
     }
@@ -2364,8 +2424,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015a68L)
-  public static void setCallback04(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
+  public static <T extends MemoryRef> void setCallback04(final long index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
+    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015aa0
@@ -2378,8 +2438,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015ab4L)
-  public static void setCallback08(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
+  public static <T extends MemoryRef> void setCallback08(final long index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
+    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015aec
@@ -2392,8 +2452,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b00L)
-  public static void setCallback0c(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
+  public static <T extends MemoryRef> void setCallback0c(final long index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
+    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015b38
@@ -2406,8 +2466,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b4cL)
-  public static void setCallback10(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<BigStruct>, BigStruct, Long> callback) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
+  public static <T extends MemoryRef> void setCallback10(final long index, @Nullable final TriFunctionRef<Integer, ScriptState<T>, T, Long> callback) {
+    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(callback == null) {
       //LAB_80015b80
@@ -2429,10 +2489,14 @@ public final class Scus94491BpeSegment {
     final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(script != null) {
+      LOGGER.info("Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
+
       struct.scriptPtr_14.set(script);
       struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
     } else {
+      LOGGER.info("Clearing script index %d", index);
+
       struct.scriptPtr_14.clear();
       struct.commandPtr_18.clear();
       struct.ui_60.or(0x0002_0000L);
@@ -2498,6 +2562,8 @@ public final class Scus94491BpeSegment {
       final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BigStruct.class));
 
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress() && (scriptState.ui_60.get() & 0x12_0000L) == 0) {
+        System.err.println("Exec script index " + index);
+
         RunningScript_800bc070.scriptStateIndex_00.set(index);
         RunningScript_800bc070.scriptState_04.set(scriptState);
         RunningScript_800bc070.commandPtr_0c.set(scriptState.commandPtr_18.deref());
@@ -2511,7 +2577,7 @@ public final class Scus94491BpeSegment {
           RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
           RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-//          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
 
           RunningScript_800bc070.commandPtr_0c.incr();
 
@@ -2523,7 +2589,7 @@ public final class Scus94491BpeSegment {
             final int param1 = (int)(childCommand >>> 8 & 0xff);
             final int param2 = (int)(childCommand & 0xff);
 
-//            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
+            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
 
             RunningScript_800bc070.commandPtr_0c.incr();
             final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
@@ -2806,6 +2872,12 @@ public final class Scus94491BpeSegment {
   @Method(0x8001688cL)
   public static long scriptOr(final RunningScript a0) {
     a0.params_20.get(1).deref().or(a0.params_20.get(0).deref());
+    return 0;
+  }
+
+  @Method(0x800168b0L)
+  public static long FUN_800168b0(final RunningScript a0) {
+    a0.params_20.get(1).deref().xor(a0.params_20.get(0).deref().get());
     return 0;
   }
 
@@ -3097,6 +3169,11 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x800172f4L)
+  public static long FUN_800172f4(final RunningScript a0) {
+    return 0;
+  }
+
   @Method(0x8001734cL)
   public static long scriptRewindAndPause2(final RunningScript a0) {
     return 0x2L;
@@ -3217,10 +3294,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017750
     for(int i = 0; i < 0x48; i++) {
-      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x14_0000L) == 0) {
-          scriptState.callback_04.deref().run(i, scriptState, scriptState.innerStruct_00.deref());
+          scriptState.callback_04.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
         }
       }
 
@@ -3229,10 +3306,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_800177ac
     for(int i = 0; i < 0x48; i++) {
-      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
-          if(scriptState.callback_10.deref().run(i, scriptState, scriptState.innerStruct_00.deref()) != 0) {
+          if(scriptState.callback_10.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable()) != 0) {
             setCallback10(i, null);
           }
         }
@@ -3252,10 +3329,10 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017854
     for(int i = 0; i < 0x48; i++) {
-      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(i).derefAs(ScriptState.classFor(BigStruct.class));
+      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x18_0000L) == 0) {
-          scriptState.callback_08.deref().run(i, scriptState, scriptState.innerStruct_00.deref());
+          scriptState.callback_08.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
         }
       }
 
@@ -3429,6 +3506,310 @@ public final class Scus94491BpeSegment {
     // empty
   }
 
+  @Method(0x80017fe4L)
+  public static long FUN_80017fe4(final long archiveAddress, final long destinationAddress, final long callback, final long callbackParam, final long a4) {
+    final long s0;
+    if(destinationAddress == 0) {
+      if((a4 & 0x4L) != 0) {
+        s0 = addToLinkedListHead(MEMORY.ref(4, archiveAddress).get());
+      } else {
+        //LAB_8001803c
+        s0 = addToLinkedListTail(MEMORY.ref(4, archiveAddress).get());
+      }
+
+      //LAB_8001804c
+      if(s0 == 0) {
+        return -0x1L;
+      }
+    } else {
+      s0 = destinationAddress;
+    }
+
+    //LAB_8001805c
+    //LAB_80018060
+    final long size = FUN_80017c44(0, archiveAddress, s0);
+
+    if((a4 & 0x1L) != 0) {
+      removeFromLinkedList(archiveAddress);
+    }
+
+    //LAB_80018088
+    MEMORY.ref(4, callback).call(s0, size, callbackParam);
+
+    //LAB_8001809c
+    return 0;
+  }
+
+  @Method(0x800180c0L)
+  public static long FUN_800180c0(final long a0, final long x, final long y) {
+    if((x & 0x3fL) != 0 || (y & 0xffL) != 0) {
+      //LAB_800180e0
+      return 0x1L;
+    }
+
+    //LAB_800180e8
+    long v1 = MEMORY.ref(4, a0).offset(0x0L).get();
+    if(v1 != 0x151_434dL && v1 != 0x251_434dL) {
+      return 0x1L;
+    }
+
+    //LAB_80018104
+    v1 = MEMORY.ref(2, a0).offset(0xaL).get();
+    if(v1 != 0x100L) {
+      return 0x1L;
+    }
+
+    LoadImage(new RECT((short)x, (short)y, (short)MEMORY.ref(2, a0).offset(0x8L).get(), (short)v1), a0 + MEMORY.ref(4, a0).offset(0x4L).get());
+
+    //LAB_8001813c
+    return 0;
+  }
+
+  @Method(0x8001814cL)
+  public static void FUN_8001814c(long a0, long a1, long a2, long a3, long a4, long a5, long a6) {
+    long v0;
+    long v1;
+    long t0;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    long t6;
+    long t7;
+    long s0;
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+    long s5;
+    long s6;
+    long t8;
+    long t9;
+    long s8;
+    t0 = a0;
+    t3 = a2;
+    s0 = a3;
+    a0 = 0x251_0000L;
+    s8 = a4;
+    a0 = a0 | 0x434dL;
+    v0 = MEMORY.ref(2, t0).offset(0xcL).get();
+    v1 = MEMORY.ref(2, t0).offset(0xeL).get();
+    t9 = a6;
+    s2 = MEMORY.ref(2, t0).offset(0x14L).get();
+    t8 = MEMORY.ref(2, t0).offset(0x16L).get();
+    t6 = a1 + v0;
+    t2 = t3 + v1;
+    v0 = MEMORY.ref(2, t0).offset(0x10L).get();
+    v1 = MEMORY.ref(2, t0).offset(0x12L).get();
+    a1 = a1 + v0;
+    t3 = t3 + v1;
+    t5 = a1 & 0x3c0L;
+    a1 = a1 << 2;
+    v0 = 0x1f80_0000L;
+    s4 = MEMORY.ref(4, v0).offset(0x3d8L).get();
+    v0 = MEMORY.ref(4, t0).offset(0x0L).get();
+
+    if(v0 == a0) {
+      v0 = MEMORY.ref(2, t0).offset(0x28L).getSigned();
+      v1 = MEMORY.ref(2, t0).offset(0x2aL).getSigned();
+      s0 = s0 + v0;
+      s8 = s8 + v1;
+    }
+    a3 = t3 & 0x100L;
+
+    //LAB_800181e4
+    a0 = 0xe100_0000L;
+    a0 = a0 | 0x200L;
+    a2 = s4;
+    t0 = a2 + 0x8L;
+    v0 = 0x1L;
+    MEMORY.ref(1, s4).offset(0x3L).setu(v0);
+    v0 = 0x800c_0000L;
+    t1 = v0 + -0x4ef0L;
+    v0 = (int)a3 >> 8;
+    v0 = v0 << 1;
+    v0 = v0 + t1;
+    v1 = t5 & 0x3c0L;
+    v0 = MEMORY.ref(2, v0).offset(0x0L).get();
+    v1 = (int)v1 >> 6;
+    v0 = v0 | v1;
+    v0 = v0 & 0x9ffL;
+    v0 = v0 | a0;
+    MEMORY.ref(4, s4).offset(0x4L).setu(v0);
+    v0 = t0 << 8;
+    MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
+    v0 = 0x80L;
+    if(t9 != v0) {
+      //LAB_80018350
+      if(s2 != 0) {
+        t4 = 0;
+        s3 = 0x3L;
+        s1 = 0x7c80_0000L;
+        s1 = s1 | 0x8080L;
+        s6 = t1;
+        s5 = t3 & 0x100L;
+
+        //LAB_8001836c
+        do {
+          if(t8 != 0) {
+            t1 = 0;
+            v0 = (int)s5 >> 8;
+            v0 = v0 << 1;
+            t7 = v0 + s6;
+
+            //LAB_80018380
+            do {
+              a2 = t0;
+              v0 = t4 + s0;
+              MEMORY.ref(2, a2).offset(0x8L).setu(v0);
+              v0 = t1 + s8;
+              v1 = t2 << 6;
+              MEMORY.ref(2, a2).offset(0xaL).setu(v0);
+              v0 = t6 & 0x3f0L;
+              v0 = (int)v0 >> 4;
+              v1 = v1 | v0;
+              MEMORY.ref(1, a2).offset(0x3L).setu(s3);
+              MEMORY.ref(4, a2).offset(0x4L).setu(s1);
+              MEMORY.ref(1, a2).offset(0x4L).setu(t9);
+              MEMORY.ref(1, a2).offset(0x5L).setu(t9);
+              MEMORY.ref(1, a2).offset(0x6L).setu(t9);
+              MEMORY.ref(1, a2).offset(0xcL).setu(a1);
+              MEMORY.ref(1, a2).offset(0xdL).setu(t3);
+              MEMORY.ref(2, a2).offset(0xeL).setu(v1);
+              t0 = a2 + 0x10L;
+              v0 = t0 << 8;
+              MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
+              v0 = t3 + 0x10L;
+              t3 = v0 & 0xf0L;
+              if(t3 == 0) {
+                v0 = a1 + 0x10L;
+                a1 = v0 & 0xf0L;
+                if(a1 == 0) {
+                  t5 = t5 + 0x40L;
+                  a0 = 0xe100_0000L;
+                  a0 = a0 | 0x200L;
+                  a2 = t0;
+                  v0 = 0x1L;
+                  v1 = t5 & 0x3c0L;
+                  MEMORY.ref(1, a2).offset(0x3L).setu(v0);
+                  v0 = MEMORY.ref(2, t7).offset(0x0L).get();
+                  v1 = (int)v1 >> 6;
+                  v0 = v0 | v1;
+                  v0 = v0 & 0x9ffL;
+                  v0 = v0 | a0;
+                  MEMORY.ref(4, a2).offset(0x4L).setu(v0);
+                  t0 = a2 + 0x8L;
+                  v0 = t0 << 8;
+                  MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
+                }
+              }
+              v0 = t2 + 0x1L;
+
+              //LAB_80018434
+              t2 = v0 & 0xffL;
+              if(t2 == 0) {
+                t6 = t6 + 0x10L;
+              }
+
+              //LAB_80018444
+              t1 = t1 + 0x10L;
+              t2 = t2 | a3;
+            } while((int)t1 < (int)t8);
+          }
+
+          //LAB_80018454
+          t4 = t4 + 0x10L;
+        } while((int)t4 < (int)s2);
+      }
+    } else {
+      if(s2 != 0) {
+        t4 = 0;
+        s3 = 0x3L;
+        s1 = 0x7c80_0000L;
+        s1 = s1 | 0x8080L;
+        s6 = t1;
+        s5 = t3 & 0x100L;
+
+        //LAB_8001825c
+        do {
+          if(t8 != 0) {
+            t1 = 0;
+            t9 = t4 + s0;
+            v0 = (int)s5 >> 8;
+            v0 = v0 << 1;
+            t7 = v0 + s6;
+
+            //LAB_80018274
+            do {
+              a2 = t0;
+              v0 = t1 + s8;
+              v1 = t2 << 6;
+              MEMORY.ref(2, a2).offset(0xaL).setu(v0);
+              v0 = t6 & 0x3f0L;
+              v0 = (int)v0 >> 4;
+              v1 = v1 | v0;
+              MEMORY.ref(1, a2).offset(0x3L).setu(s3);
+              MEMORY.ref(4, a2).offset(0x4L).setu(s1);
+              MEMORY.ref(2, a2).offset(0x8L).setu(t9);
+              MEMORY.ref(1, a2).offset(0xcL).setu(a1);
+              MEMORY.ref(1, a2).offset(0xdL).setu(t3);
+              MEMORY.ref(2, a2).offset(0xeL).setu(v1);
+              t0 = a2 + 0x10L;
+              v0 = t0 << 8;
+              MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
+              v0 = t3 + 0x10L;
+              t3 = v0 & 0xf0L;
+              if(t3 == 0) {
+                v0 = a1 + 0x10L;
+                a1 = v0 & 0xf0L;
+                if(a1 == 0) {
+                  t5 = t5 + 0x40L;
+                  a0 = 0xe100_0000L;
+                  a0 = a0 | 0x200L;
+                  a2 = t0;
+                  v0 = 0x1L;
+                  v1 = t5 & 0x3c0L;
+                  MEMORY.ref(1, a2).offset(0x3L).setu(v0);
+                  v0 = MEMORY.ref(2, t7).offset(0x0L).get();
+                  v1 = (int)v1 >> 6;
+                  v0 = v0 | v1;
+                  v0 = v0 & 0x9ffL;
+                  v0 = v0 | a0;
+                  MEMORY.ref(4, a2).offset(0x4L).setu(v0);
+                  t0 = a2 + 0x8L;
+                  v0 = t0 << 8;
+                  MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
+                }
+              }
+              v0 = t2 + 0x1L;
+
+              //LAB_80018318
+              t2 = v0 & 0xffL;
+              if(t2 == 0) {
+                t6 = t6 + 0x10L;
+              }
+
+              //LAB_80018328
+              t1 = t1 + 0x10L;
+              t2 = t2 | a3;
+            } while((int)t1 < (int)t8);
+          }
+
+          //LAB_80018338
+          t4 = t4 + 0x10L;
+        } while((int)t4 < (int)s2);
+      }
+    }
+
+    //LAB_80018464
+    v0 = 0x1f80_0000L;
+    MEMORY.ref(4, v0).offset(0x3d8L).setu(t0);
+
+    //LAB_8001846c
+    FUN_8003b450(tags_1f8003d0.getPointer() + a5 * 0x4L, s4, a2);
+  }
+
   @Method(0x800184b0L)
   public static void processControllerInput() {
     int a0 = (int)vsyncMode_8007a3b8.get();
@@ -3481,6 +3862,118 @@ public final class Scus94491BpeSegment {
 
     //LAB_800187b0
     FUN_800c7304();
+  }
+
+  @Method(0x800187ccL)
+  public static long FUN_800187cc() {
+    long v0;
+    long a0;
+    long s0;
+    long s1;
+    long s2;
+    v0 = 0x800c_0000L;
+    v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
+    s0 = 0;
+    if((int)v0 > 0) {
+      v0 = 0x800c_0000L;
+      s2 = v0 - 0x3e40L;
+      v0 = 0x8007_0000L;
+      s1 = v0 - 0x1c68L;
+
+      //LAB_80018800
+      do {
+        v0 = MEMORY.ref(4, s1).offset(0xe40L).get();
+
+        v0 = v0 << 2;
+        v0 = v0 + s2;
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+
+        a0 = MEMORY.ref(2, v0).offset(0x26cL).getSigned();
+
+        if(FUN_800c90b0(a0) == 0) {
+          return 0;
+        }
+
+        //LAB_8001883c
+        v0 = 0x800c_0000L;
+        v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
+        s0 = s0 + 0x1L;
+        s1 = s1 + 0x4L;
+      } while((int)s0 < (int)v0);
+    }
+
+    //LAB_80018850
+    //LAB_80018854
+    return 1;
+  }
+
+  @Method(0x8001886cL)
+  public static long FUN_8001886c() {
+    long v0;
+    long a0;
+    long s0;
+    long s1;
+    long s2;
+    v0 = 0x800c_0000L;
+    v0 = MEMORY.ref(4, v0).offset(0x6768L).get();
+    s0 = 0;
+    if((int)v0 > 0) {
+      v0 = 0x800c_0000L;
+      s2 = v0 - 0x3e40L;
+      v0 = 0x8007_0000L;
+      s1 = v0 - 0x1c68L;
+
+      //LAB_800188a0
+      do {
+        v0 = MEMORY.ref(4, s1).offset(0xe50L).get();
+
+        v0 = v0 << 2;
+        v0 = v0 + s2;
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+
+        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
+
+        a0 = MEMORY.ref(2, v0).offset(0x26cL).getSigned();
+
+        if(FUN_800c90b0(a0) == 0) {
+          return 0;
+        }
+
+        //LAB_800188dc
+        v0 = 0x800c_0000L;
+        v0 = MEMORY.ref(4, v0).offset(0x6768L).get();
+        s0 = s0 + 0x1L;
+        s1 = s1 + 0x4L;
+      } while((int)s0 < (int)v0);
+    }
+
+    //LAB_800188f0
+    //LAB_800188f4
+    return 1;
+  }
+
+  @Method(0x8001890cL)
+  public static void FUN_8001890c() {
+    FUN_800d8f10();
+    FUN_800c7304();
+    FUN_800c8cf0();
+    FUN_800c882c();
+  }
+
+  @Method(0x80018944L)
+  public static void FUN_80018944() {
+    if(fileCount_8004ddc8.get() == 0 && _8004dd14.get() == _8004dd18.get() && loadingSmapOvl_8004dd08.get() == 0) {
+      pregameLoadingStage_800bb10c.addu(0x1L);
+    }
+
+    //LAB_80018990
+  }
+
+  @Method(0x80018998L)
+  public static void FUN_80018998() {
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800194dcL)
@@ -4868,6 +5361,349 @@ public final class Scus94491BpeSegment {
     return _80050068.offset(_800bd808.get() * 0x2L).getSigned();
   }
 
+  @Method(0x8001cae0L)
+  public static void FUN_8001cae0(final Value address, final long fileSize, final long param) {
+    long v0;
+    long v1;
+    long a0 = address.get();
+    long a1 = fileSize;
+    long a2 = param;
+    long s0;
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+    long s5;
+    long s6;
+    long s7;
+    long sp;
+    long ra;
+    long sp18;
+    long sp14;
+    long sp28;
+    long sp10;
+    long sp1c;
+    long sp24;
+    long sp2c;
+    long sp20;
+    long sp30;
+    s7 = a0;
+    v0 = 0x800c_0000L;
+    s3 = 0;
+    MEMORY.ref(4, v0).offset(-0x2898L).setu(s7);
+    v0 = 0x800c_0000L;
+    s4 = v0 - 0x3080L;
+    v0 = 0x8005_0000L;
+    s1 = v0 + 0xf8L;
+    s6 = s3;
+    v0 = 0x800c_0000L;
+    s5 = v0 - 0x3680L;
+
+    //LAB_8001cb34
+    do {
+      a1 = 0x3L;
+      v0 = s3 << a1;
+      v0 = s7 + v0;
+      v0 = MEMORY.ref(4, v0).offset(0x8L).get();
+      v1 = MEMORY.ref(4, s1).offset(0x0L).get();
+      s2 = s7 + v0;
+      v0 = v1 << a1;
+      v0 = v0 - v1;
+      v1 = MEMORY.ref(4, s2).offset(0x8L).get();
+      v0 = v0 << 2;
+      v1 = s2 + v1;
+      v1 = MEMORY.ref(2, v1).offset(0x0L).get();
+      v0 = v0 + s4;
+      MEMORY.ref(2, v0).offset(0x2L).setu(v1);
+      v1 = MEMORY.ref(4, s1).offset(0x0L).get();
+      a0 = s2;
+      v0 = v1 << a1;
+      v0 = v0 - v1;
+      v0 = v0 << 2;
+      v1 = MEMORY.ref(4, s5).offset(0x4L).get();
+      v0 = v0 + s4;
+      MEMORY.ref(4, v0).offset(0x4L).setu(v1);
+      v0 = FUN_80015704(a0, a1);
+      a0 = MEMORY.ref(4, s1).offset(0x0L).get();
+      a1 = s2;
+      v1 = a0 << 3;
+      v1 = v1 - a0;
+      v1 = v1 << 2;
+      v1 = v1 + s4;
+      a0 = MEMORY.ref(4, v1).offset(0x4L).get();
+      a2 = v0;
+      memcpy(a0, a1, (int)a2);
+      v0 = MEMORY.ref(4, s1).offset(0x0L).get();
+
+      v1 = v0 << 3;
+      v1 = v1 - v0;
+      v1 = v1 << 2;
+      v1 = v1 + s4;
+      s0 = MEMORY.ref(4, v1).offset(0x4L).get();
+
+      v0 = MEMORY.ref(4, s0).offset(0x10L).get();
+
+      v0 = s0 + v0;
+      MEMORY.ref(4, v1).offset(0x8L).setu(v0);
+      v1 = MEMORY.ref(4, s1).offset(0x0L).get();
+
+      v0 = v1 << 3;
+      v0 = v0 - v1;
+      v1 = MEMORY.ref(4, s0).offset(0x8L).get();
+      v0 = v0 << 2;
+      v1 = s0 + v1;
+      v1 = MEMORY.ref(2, v1).offset(0x0L).get();
+      v0 = v0 + s4;
+      MEMORY.ref(2, v0).offset(0x2L).setu(v1);
+
+      if((int)s3 >= 0) {
+        if((int)s3 < 0x2L) {
+          a0 = 0x8002_0000L;
+
+          //LAB_8001cc30
+          a0 = a0 - 0x1734L;
+          setSpuDmaCompleteCallback(a0);
+        } else {
+          a0 = 0x8002_0000L;
+          v0 = 0x2L;
+          if(s3 == v0) {
+            //LAB_8001cc38
+            a0 = 0x8002_0000L;
+            a0 = a0 - 0x172cL;
+
+            //LAB_8001cc40
+            setSpuDmaCompleteCallback(a0);
+          }
+        }
+      }
+
+      //LAB_8001cc48
+      v0 = 0x8005_0000L;
+      v0 = v0 + 0x190L;
+
+      //LAB_8001cc50
+      v0 = s6 + v0;
+      s6 = s6 + 0x4L;
+      s5 = s5 + 0xcL;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      a0 = MEMORY.ref(4, s2).offset(0x20L).get();
+      a1 = MEMORY.ref(4, s0).offset(0x18L).get();
+      a0 = s2 + a0;
+      a1 = s0 + a1;
+      v0 = loadSshdAndSoundbank(a0, MEMORY.ref(4, a1, SshdFile::new), a2);
+      a0 = MEMORY.ref(4, s1).offset(0x0L).get();
+      s3 = s3 + 0x1L;
+      v1 = a0 << 3;
+      v1 = v1 - a0;
+      v1 = v1 << 2;
+      v1 = v1 + s4;
+      MEMORY.ref(2, v1).offset(0x10L).setu(v0);
+      v1 = MEMORY.ref(4, s1).offset(0x0L).get();
+
+      v0 = v1 << 3;
+      v0 = v0 - v1;
+      v0 = v0 << 2;
+      v0 = v0 + s4;
+      v1 = 0x1L;
+      MEMORY.ref(2, v0).offset(0x0L).setu(v1);
+      s1 = s1 + 0x4L;
+    } while((int)s3 < 0x3L);
+  }
+
+  @Method(0x8001d1c4L)
+  public static void FUN_8001d1c4() {
+    loadedDrgnFiles_800bcf78.oru(0x10L);
+
+    final long v1 = submapScene_800bb0f8.get();
+    final long a1;
+    if(v1 == 0x186L) {
+      //LAB_8001d21c
+      a1 = 0x50aL;
+    } else if(v1 == 0x1afL) {
+      //LAB_8001d244
+      a1 = 0x510L;
+      //LAB_8001d208
+    } else if(v1 == 0x1bbL) {
+      //LAB_8001d270
+      a1 = 0x50cL;
+    } else {
+      //LAB_8001d298
+      a1 = submapScene_800bb0f8.get() + 0x30aL;
+    }
+
+    //LAB_8001d2c0
+    loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", Value.class, long.class, long.class), 0, 0x4L);
+  }
+
+  @Method(0x8001d51cL)
+  public static void FUN_8001d51c(final Value address, final long fileSize, final long param) {
+    long v0;
+    long v1;
+    long a0 = address.get();
+    long a1;
+    long a2;
+    long s0;
+    long s1;
+    long s2;
+    long s3;
+    long s4;
+    long s5;
+    long s6;
+
+    final byte[] sp0x10 = new byte[4];
+    final byte[] sp0x18 = new byte[4];
+
+    s5 = a0;
+    s6 = 0x5_a1e0L;
+    a1 = soundFileArr_800bcf80.getAddress();
+
+    //LAB_8001d588
+    for(int i = 0; i < 4; i++) {
+      MEMORY.ref(2, a1).offset(_800500e8.offset(i * 0x4L).get() * 0x1cL).offset(0x2L).setu(-0x1L);
+      MEMORY.ref(2, a1).offset(_800500e8.offset(i * 0x4L).get() * 0x1cL).setu(0);
+    }
+
+    a0 = 0x800c_0000L;
+    v1 = MEMORY.ref(4, s5).offset(0x4L).get();
+    v0 = 0x800c_0000L;
+    MEMORY.ref(4, v0).offset(-0x28a8L).setu(s5);
+    MEMORY.ref(4, a0).offset(-0x2884L).setu(v1);
+
+    //LAB_8001d5f8
+    for(int i = 0; i < MEMORY.ref(4, s5).offset(0x4L).get(); i++) {
+      s2 = s5 + MEMORY.ref(4, s5).offset(i * 0x8L).offset(0x8L).get();
+
+      if(MEMORY.ref(4, s2).offset(0x24L).get() >= 0xbL) {
+        sp0x10[i] = 1;
+      }
+
+      //LAB_8001d624
+    }
+
+    //LAB_8001d63c
+
+    //LAB_8001d658
+    s1 = MEMORY.ref(4, s5).offset(0x4L).get();
+    while((int)s1 > 0) {
+      v1 = s1 - 0x1L;
+
+      if(sp0x10[(int)v1] == 1) {
+        sp0x18[(int)v1] = 1;
+        break;
+      }
+
+      //LAB_8001d678
+      if(s1 == 0x1L) {
+        FUN_8001eaa0();
+        return;
+      }
+
+      //LAB_8001d690
+      s1 = v1;
+    }
+
+    //LAB_8001d698
+    s4 = soundFileArr_800bcf80.getAddress();
+    s3 = _800500e8.getAddress();
+
+    //LAB_8001d6c0
+    for(int i = 0; i < MEMORY.ref(4, s5).offset(0x4L).get(); i++) {
+      s2 = s5 + MEMORY.ref(4, s5).offset(i * 0x8L).offset(0x8L).get();
+      a1 = MEMORY.ref(4, s2).offset(0x24L).get();
+
+      if(a1 <= 0x30L) {
+        if(sp0x18[i] == 1) {
+          FUN_8001eaa0();
+        }
+      } else {
+        //LAB_8001d704
+        a0 = 0x3L;
+        v1 = 0xc750L;
+        a2 = MEMORY.ref(4, s2).offset(0x24L).get();
+        _800bd774.setu(a1);
+
+        //LAB_8001d718
+        do {
+          if(a2 >= v1) {
+            break;
+          }
+          a0 = a0 - 0x1L;
+          v1 = v1 - 0x4270L;
+        } while((int)a0 >= 0);
+
+        //LAB_8001d72c
+        v0 = FUN_80015704(s2, 0x3L);
+        v0 = addToLinkedListTail(v0);
+        MEMORY.ref(4, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x4L).setu(v0);
+        v0 = FUN_80015704(s2, 0x3L);
+        a0 = MEMORY.ref(4, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x4L).get();
+        memcpy(a0, s2, (int)v0);
+
+        v1 = s4 + MEMORY.ref(4, s3).get() * 0x1cL;
+        s0 = MEMORY.ref(4, v1).offset(0x4L).get();
+        MEMORY.ref(4, v1).offset(0x8L).setu(s0 + MEMORY.ref(4, s0).offset(0x10L).get());
+
+        v1 = s0 + MEMORY.ref(4, s0).offset(0x8L).get();
+        v1 = MEMORY.ref(2, v1).offset(0x0L).get();
+        MEMORY.ref(2, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x2L).setu(v1);
+
+        if(sp0x18[i] != 1) {
+          a0 = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ea98");
+        } else {
+          //LAB_8001d804
+          a0 = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eaa0");
+        }
+
+        //LAB_8001d80c
+        setSpuDmaCompleteCallback(a0);
+        a0 = s2 + MEMORY.ref(4, s2).offset(0x20L).get();
+        a1 = s0 + MEMORY.ref(4, s0).offset(0x18L).get();
+        v0 = loadSshdAndSoundbank(a0, MEMORY.ref(4, a1, SshdFile::new), s6);
+        MEMORY.ref(2, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x10L).setu(v0);
+        v1 = MEMORY.ref(4, s2).offset(0x24L).get();
+        v1 += (v1 & 0xfL);
+        s6 = s6 + v1;
+        FUN_8004cb0c(MEMORY.ref(2, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x10L).getSigned(), 0x7fL);
+        MEMORY.ref(2, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).setu(0x1L);
+      }
+
+      //LAB_8001d894
+      //LAB_8001d898
+      s3 = s3 + 0x4L;
+    }
+
+    //LAB_8001d8ac
+  }
+
+  @Method(0x8001d9d0L)
+  public static void FUN_8001d9d0() {
+    final long struct = _80109a98.offset(submapScene_800bb0f8.get() * 0x10L).getAddress();
+
+    if(MEMORY.ref(1, struct).offset(0x1L).get() != 0xffL) {
+      loadedDrgnFiles_800bcf78.oru(0x80L);
+
+      final long fileIndex;
+      final long callback;
+      final long callbackParam;
+      if((MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL) == 0x13L) {
+        unloadSoundFile(8);
+        fileIndex = 0x2dcL;
+        callback = getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", Value.class, long.class, long.class);
+        callbackParam = 0x2_dc00L;
+      } else {
+        //LAB_8001da58
+        fileIndex = _800501bc.get((int)(MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL)).get();
+        callback = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fb44", Value.class, long.class, long.class);
+        callbackParam = 0;
+      }
+
+      //LAB_8001daa4
+      loadDrgnBinFile(0, fileIndex, 0, callback, callbackParam, 0x4L);
+    }
+
+    //LAB_8001daac
+  }
+
   @Method(0x8001dabcL)
   public static void musicPackageLoadedCallback(final Value addressPtr, final long fileSize, final long a2) {
     LOGGER.info("Music package %d loaded", a2 >> 8);
@@ -4934,6 +5770,63 @@ public final class Scus94491BpeSegment {
     //LAB_8001dda0
     FUN_8001b1a8(0x28L);
     _800bd0f0.setu(0x2L);
+  }
+
+  @Method(0x8001ddd8L)
+  public static void FUN_8001ddd8() {
+    removeFromLinkedList(soundMrgPtr_800bd76c.getPointer());
+    FUN_8004cf8c((int)sssqChannelIndex_800bd0f8.getSigned());
+    _800bd610.offset(2, 0x60L).setu(0x2L);
+    final long a2 = _800bd610.offset(4, 0x64L).get();
+    final long v0 = a2 + MEMORY.ref(4, a2).offset(0x10L).get();
+    final long a1 = a2 + MEMORY.ref(4, a2).offset(0x18L).get();
+    _800bd610.offset(2, 0x6cL).setu(FUN_8004c1f8(soundFileArr_800bcf80.get((int)MEMORY.ref(2, v0).getSigned()).playableSoundIndex_10.get(), MEMORY.ref(4, a1, SssqFile::new)));
+    _800bd782.addu(0x1L);
+    loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
+  }
+
+  @Method(0x8001de84L)
+  public static void FUN_8001de84(final long a0) {
+    unloadSoundFile(1);
+    unloadSoundFile(3);
+    unloadSoundFile(4);
+    unloadSoundFile(5);
+    unloadSoundFile(6);
+
+    if(_80109a98.offset(submapScene_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() != 0xffL) {
+      FUN_800201c8(0x6L);
+
+      final long v1 = _8005019c.offset(_80109a98.offset(submapScene_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() & 0x1fL).offset(1, 0x0L).get();
+      if(v1 == 0xcL) {
+        FUN_8001fcf4(696);
+      } else if(v1 == 0xdL) {
+        //LAB_8001df68
+        FUN_8001fcf4(697);
+      } else if(v1 == 0xeL) {
+        //LAB_8001df70
+        FUN_8001fcf4(698);
+      } else if(v1 == 0xfL) {
+        //LAB_8001df78
+        FUN_8001fcf4(699);
+        //LAB_8001df44
+      } else if(v1 == 0x56L) {
+        //LAB_8001df84
+        FUN_8001fcf4(700);
+      } else if(v1 == 0x58L) {
+        //LAB_8001df80
+        FUN_8001fcf4(701);
+      }
+
+      //LAB_8001df8c
+      unloadSoundFile(8);
+      FUN_8001d9d0();
+    }
+
+    //LAB_8001df9c
+    loadDrgnBinFile(0, _80050104.offset(FUN_8001a810() * 0x4L).get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001cae0", Value.class, long.class, long.class), 0, 0x4L);
+    loadedDrgnFiles_800bcf78.oru(0x8L);
+    FUN_8001d1c4();
+    FUN_80012bb4();
   }
 
   //TODO verify this method
@@ -5157,6 +6050,23 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_fffeL);
   }
 
+  @Method(0x8001e8ccL)
+  public static void FUN_8001e8cc() {
+    // empty
+  }
+
+  @Method(0x8001e8d4L)
+  public static void FUN_8001e8d4() {
+    removeFromLinkedList(_800bd768.get());
+    loadedDrgnFiles_800bcf78.and(0xffff_fff7L);
+  }
+
+  @Method(0x8001eaa0L)
+  public static void FUN_8001eaa0() {
+    removeFromLinkedList(_800bd758.get());
+    loadedDrgnFiles_800bcf78.and(0xffff_ffefL);
+  }
+
   @Method(0x8001eadcL)
   public static void FUN_8001eadc(final long a0) {
     loadedDrgnFiles_800bcf78.oru(0x2L);
@@ -5325,6 +6235,68 @@ public final class Scus94491BpeSegment {
 
     _800bd782.addu(0x1L);
     loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
+  }
+
+  @Method(0x8001fb44L)
+  public static void FUN_8001fb44(final Value address, final long fileSize, final long param) {
+    long v0;
+    long v1;
+    long a0;
+    long s0;
+    long s2;
+    long s3 = address.get();
+    soundMrgPtr_800bd76c.setPointer(s3);
+    v0 = addToLinkedListTail(MEMORY.ref(4, s3).offset(0x20L).get());
+    s0 = soundFileArr_800bcf80.getAddress();
+    MEMORY.ref(4, s0).offset(0x138L).setu(v0);
+    memcpy(v0, s3, (int)MEMORY.ref(4, s3).offset(0x20L).get());
+
+    s2 = MEMORY.ref(4, s0).offset(0x138L).get();
+    v0 = s2 + MEMORY.ref(4, s2).offset(0x8L).get();
+    v0 = MEMORY.ref(2, v0).offset(0x0L).get();
+    MEMORY.ref(2, s0).offset(0x136L).setu(v0);
+    if(param == 0) {
+      a0 = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ddd8");
+    } else {
+      //LAB_8001fbc4
+      a0 = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fc54");
+    }
+
+    //LAB_8001fbcc
+    setSpuDmaCompleteCallback(a0);
+    v0 = loadSshdAndSoundbank(s3 + MEMORY.ref(4, s3).offset(0x20L).get(), MEMORY.ref(4, s2 + MEMORY.ref(4, s2).offset(0x18L).get(), SshdFile::new), 0x2_1f70L);
+    v1 = soundFileArr_800bcf80.getAddress();
+    MEMORY.ref(2, v1).offset(0x144L).setu(v0);
+    MEMORY.ref(2, v1).offset(0x134L).setu(0x1L);
+    v0 = FUN_8004c1f8((short)v0, MEMORY.ref(4, s2 + MEMORY.ref(4, s2).offset(0x10L).get(), SssqFile::new));
+    v1 = _800bd0f0.getAddress();
+    MEMORY.ref(2, v1).offset(0x8L).setu(v0);
+    FUN_8001b1a8(0x28L);
+    _800bd781.setu(0);
+    _800bd0f0.setu(0x2L);
+  }
+
+  @Method(0x8001fcf4L)
+  public static void FUN_8001fcf4(final long fileIndex) {
+    loadedDrgnFiles_800bcf78.oru(0x4000L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fd4c", Value.class, long.class, long.class), 0x6L, 0x2L);
+  }
+
+  @Method(0x8001fd4cL)
+  public static void FUN_8001fd4c(Value address, long fileSize, long param) {
+    final long a0 = address.get();
+    final long s0 = _800bd610.offset(param * 0x10L).getAddress();
+    MEMORY.ref(4, s0).offset(0x4L).setu(a0);
+    MEMORY.ref(2, s0).offset(0x0L).setu(0x2L);
+    MEMORY.ref(4, s0).offset(0x8L).setu(a0 + MEMORY.ref(4, a0).offset(0x18L).get());
+    FUN_8004c8dc((int)MEMORY.ref(2, s0).offset(0xcL).getSigned(), 0x28L);
+    MEMORY.ref(2, s0).offset(0x0L).setu(0x2L);
+    loadedDrgnFiles_800bcf78.and(0xffff_bfffL);
+  }
+
+  @Method(0x8001ff74L)
+  public static void FUN_8001ff74() {
+    FUN_80012b1c(1, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001de84", long.class), 0);
   }
 
   @Method(0x8001ffb0L)
