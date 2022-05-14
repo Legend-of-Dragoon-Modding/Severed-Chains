@@ -69,7 +69,7 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef _81;
   public final UnsignedByteRef _82;
   public final UnsignedByteRef _83;
-  public final UnsignedByteRef _84;
+  public final ByteRef _84;
 
   public final ShortRef gearSpeed_86;
   public final ShortRef gearAttack_88;
@@ -148,7 +148,7 @@ public class ActiveStatsa0 implements MemoryRef {
     this._81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
     this._82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
     this._83 = ref.offset(1, 0x83L).cast(UnsignedByteRef::new);
-    this._84 = ref.offset(1, 0x84L).cast(UnsignedByteRef::new);
+    this._84 = ref.offset(1, 0x84L).cast(ByteRef::new);
 
     this.gearSpeed_86 = ref.offset(2, 0x86L).cast(ShortRef::new);
     this.gearAttack_88 = ref.offset(2, 0x88L).cast(ShortRef::new);
