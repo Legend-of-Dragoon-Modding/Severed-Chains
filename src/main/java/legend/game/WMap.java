@@ -5298,8 +5298,8 @@ public class WMap {
   }
 
   @Method(0x800d562cL)
-  public static void FUN_800d562c(final Value address, final long size, final long param) {
-    final McqHeader mcq = address.deref(4).cast(McqHeader::new);
+  public static void FUN_800d562c(final long address, final long size, final long param) {
+    final McqHeader mcq = MEMORY.ref(4, address, McqHeader::new);
     final long sp20 = (param & 0xffff_fffeL) * 0x40L + 0x140L;
 
     final long sp24;
@@ -5321,13 +5321,13 @@ public class WMap {
     LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
     DrawSync(0);
     memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
-    FUN_800127cc(address.get(), 0, 0x1L);
+    FUN_800127cc(address, 0, 0x1L);
 
     _800c66b8.oru(0x1L);
   }
 
   @Method(0x800d5768L)
-  public static void FUN_800d5768(final Value address, long size, long param) {
+  public static void FUN_800d5768(final long address, long size, long param) {
     long at;
     long v0;
     long v1;
@@ -5342,7 +5342,7 @@ public class WMap {
     long sp10;
     long sp24;
     long sp20;
-    sp20 = address.get();
+    sp20 = address;
     sp24 = size;
     sp28 = param;
     v0 = sp28;
@@ -5399,15 +5399,13 @@ public class WMap {
   }
 
   @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
-  public static void FUN_800d5858(final Value address, long size, long param) {
-    final long a0 = address.get();
-
+  public static void FUN_800d5858(final long address, long size, long param) {
     //LAB_800d5874
-    for(int i = 0; i < MEMORY.ref(4, a0).offset(0x4L).get(); i++) {
+    for(int i = 0; i < MEMORY.ref(4, address).offset(0x4L).get(); i++) {
       //LAB_800d5898
-      if(MEMORY.ref(4, a0).offset(i * 0x8L).offset(0xcL).get() != 0) {
+      if(MEMORY.ref(4, address).offset(i * 0x8L).offset(0xcL).get() != 0) {
         //LAB_800d58c8
-        FUN_800d5d98(a0 + MEMORY.ref(4, a0).offset((i + 1) * 0x8L).get());
+        FUN_800d5d98(address + MEMORY.ref(4, address).offset((i + 1) * 0x8L).get());
         DrawSync(0);
       }
 
@@ -5415,7 +5413,7 @@ public class WMap {
     }
 
     //LAB_800d5938
-    removeFromLinkedList(a0);
+    removeFromLinkedList(address);
 
     _800c66b8.oru(param);
 
@@ -5423,8 +5421,8 @@ public class WMap {
   }
 
   @Method(0x800d5984L)
-  public static void loadTmdCallback(final Value address, final long size, final long param) {
-    final TmdWithId tmd = address.deref(4).cast(TmdWithId::new);
+  public static void loadTmdCallback(final long address, final long size, final long param) {
+    final TmdWithId tmd = MEMORY.ref(4, address, TmdWithId::new);
 
     struct258_800c66a8.deref().tmdRendering_08.set(loadTmd(tmd));
     initTmdTransforms(struct258_800c66a8.deref().tmdRendering_08.deref(), null);
@@ -5434,11 +5432,11 @@ public class WMap {
   }
 
   @Method(0x800d5a30L)
-  public static void FUN_800d5a30(Value address, long size, long param) {
+  public static void FUN_800d5a30(final long address, final long size, final long param) {
     long at;
     long v0;
     long v1;
-    long a0 = address.get();
+    long a0 = address;
     long a1 = size;
     long a2 = param;
     long sp18;
@@ -5890,7 +5888,7 @@ public class WMap {
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
     _800c66b8.and(0xffff_efffL);
-    loadDrgnBinFile(0, 0x163fL, 0, getMethodAddress(WMap.class, "FUN_800d5858", Value.class, long.class, long.class), 0x1_1000L, 0x4L);
+    loadDrgnBinFile(0, 0x163fL, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x1_1000L, 0x4L);
     struct258_800c66a8.deref()._20.set((short)0);
   }
 
@@ -7046,8 +7044,8 @@ public class WMap {
   @Method(0x800d8e4cL)
   public static void FUN_800d8e4c(final long a0) {
     _800c66b8.and(0xffff_fffdL);
-    loadDrgnBinFile(0, 5697L + a0, 0, getMethodAddress(WMap.class, "FUN_800d5858", Value.class, long.class, long.class), 0x2L, 0x4L);
-    loadDrgnBinFile(0, 5705L + a0, 0, getMethodAddress(WMap.class, "loadTmdCallback", Value.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 5697L + a0, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2L, 0x4L);
+    loadDrgnBinFile(0, 5705L + a0, 0, getMethodAddress(WMap.class, "loadTmdCallback", long.class, long.class, long.class), 0, 0x2L);
   }
 
   @Method(0x800d8efcL)
@@ -8305,13 +8303,13 @@ public class WMap {
   public static void FUN_800dfa70() {
     _800c66b8.and(0xffff_fd57L);
 
-    loadDrgnBinFile(0, 5713L, 0, getMethodAddress(WMap.class, "FUN_800d5858", Value.class, long.class, long.class), 0x2a8L, 0x4L);
+    loadDrgnBinFile(0, 5713L, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2a8L, 0x4L);
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.deref().bigStructs_0c.get(i).set(MEMORY.ref(4, addToLinkedListTail(0x124L), BigStruct::new));
-      loadDrgnBinFile(0, 5714L + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", Value.class, long.class, long.class), i, 0x2L);
+      loadDrgnBinFile(0, 5714L + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 0x2L);
       struct258_800c66a8.deref().bigStructs_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
@@ -9936,7 +9934,7 @@ public class WMap {
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
     _800c66b8.and(0xffff_fffeL);
-    loadDrgnBinFile(0, 5696L, 0, getMethodAddress(WMap.class, "FUN_800d562c", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5696L, 0, getMethodAddress(WMap.class, "FUN_800d562c", long.class, long.class, long.class), 0, 0x4L);
     _800c6794.setu(0);
   }
 
@@ -10140,7 +10138,7 @@ public class WMap {
       case 1:
         _800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", Value.class, long.class, long.class), 0x1L, 0x4L);
+        loadDrgnBinFile(0, 5655 + _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
         FUN_8002a32c(7, 0x1L, 0xf0L, 0x78L, 0xeL, 0x10L);
 
         _800c68a4.setu(0x2L);

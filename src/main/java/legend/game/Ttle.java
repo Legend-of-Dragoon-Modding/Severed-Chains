@@ -434,22 +434,22 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final Value transferDest, final long fileSize, final long unknown) {
-    for(int i = 0; i < transferDest.deref(4).offset(0x4L).get(); i++) {
-      if(transferDest.deref(4).offset(i * 8L).offset(0xcL).get() != 0) {
-        loadTimImage(transferDest.deref(4).offset(transferDest.deref(4).offset(i * 8L).offset(0x8L)).getAddress());
+  public static void menuTexturesMrgLoaded(final long transferDest, final long fileSize, final long unknown) {
+    for(int i = 0; i < MEMORY.ref(4, transferDest).offset(0x4L).get(); i++) {
+      if(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0xcL).get() != 0) {
+        loadTimImage(MEMORY.ref(4, transferDest).offset(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0x8L)).getAddress());
         DrawSync(0);
       }
     }
 
     //LAB_800c7bd0
-    removeFromLinkedList(transferDest.get());
+    removeFromLinkedList(transferDest);
     _800c6724.addu(1);
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final Value tmdAddressPtr, final long fileSize, final long unknown) {
-    final TmdWithId tmd = tmdAddressPtr.deref(4).cast(TmdWithId::new);
+  public static void menuFireTmdLoaded(final long tmdAddressPtr, final long fileSize, final long unknown) {
+    final TmdWithId tmd = MEMORY.ref(4, tmdAddressPtr).cast(TmdWithId::new);
     _800c66d0.set(parseTmdFile(tmd));
     FUN_800cc0b0(_800c66d0.deref(), null);
     _800c66d0.deref().tmd_0c.set(tmd);
@@ -462,10 +462,10 @@ public final class Ttle {
     _800c6724.setu(0);
 
     // MRG @ sector 61510
-    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", long.class, long.class, long.class), 0, 0x4L);
 
     // TMD @ sector 61622
-    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", Value.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", long.class, long.class, long.class), 0, 0x2L);
 
     pregameLoadingStage_800bb10c.setu(0x2L);
 

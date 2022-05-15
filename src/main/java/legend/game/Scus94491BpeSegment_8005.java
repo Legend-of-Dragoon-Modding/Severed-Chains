@@ -25,6 +25,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.AdditionData0e;
+import legend.game.types.BattleStruct1a8;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
@@ -381,7 +382,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
 
-  public static final Value _8005e398 = MEMORY.ref(4, 0x8005e398L);
+  public static final ArrayRef<BattleStruct1a8> _8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(BattleStruct1a8.class, 10, 0x1a8, BattleStruct1a8::new));
 
   /** TODO huge structure related to combat */
   public static final Value _8005f428 = MEMORY.ref(1, 0x8005f428L);

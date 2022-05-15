@@ -13,6 +13,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.BattleStruct1a8;
 import legend.game.types.BtldScriptData27c;
 import legend.game.types.CharacterData2c;
 import legend.game.types.LodString;
@@ -30,12 +31,12 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Bttl.FUN_800c8f24;
+import static legend.game.Bttl.getBattleStruct1a8;
 import static legend.game.Bttl.FUN_800c8f50;
 import static legend.game.Bttl.FUN_800c9290;
 import static legend.game.Bttl.FUN_800ca75c;
 import static legend.game.Bttl.FUN_800f863c;
-import static legend.game.Bttl._800c66a0;
+import static legend.game.Bttl.battleStruct1a8Count_800c66a0;
 import static legend.game.Bttl._800c66d0;
 import static legend.game.Bttl._800c677c;
 import static legend.game.SMap.FUN_800e3fac;
@@ -532,8 +533,8 @@ public final class SItem {
       _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(s0);
       _8006e398.offset(4, 0xe40L).offset(i * 0x4L).setu(s0);
       final long s1 = scriptStatePtrArr_800bc1c0.get((int)s0).deref().innerStruct_00.getPointer(); //TODO
-      MEMORY.ref(4, s1).offset(0x0L).setu(0x4a42_4f42L);
-      MEMORY.ref(4, s1).offset(0x144L).setu(FUN_800c8f24((short)sp0x18[i]));
+      MEMORY.ref(4, s1).offset(0x0L).setu(0x4a42_4f42L); // BOBJ
+      MEMORY.ref(4, s1).offset(0x144L).setu(getBattleStruct1a8((short)sp0x18[i]).getAddress()); //TODO
       MEMORY.ref(2, s1).offset(0x272L).setu(s2);
       MEMORY.ref(2, s1).offset(0x276L).setu(i);
       MEMORY.ref(2, s1).offset(0x26cL).setu(sp0x18[i]);
@@ -560,8 +561,8 @@ public final class SItem {
     FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "FUN_800fc3c0", long.class), submapScene_800bb0f8.get() + 0xa41L);
 
     //LAB_800fc030
-    for(int i = 0; i < _800c66a0.get(); i++) {
-      if(MEMORY.ref(2, FUN_800c8f24(i)).offset(0x19cL).getSigned() < 0) {
+    for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
+      if(getBattleStruct1a8(i)._19c.get() < 0) {
         FUN_800c9290(i);
       }
 
@@ -572,7 +573,7 @@ public final class SItem {
     //LAB_800fc09c
     for(int i = 0; i < _800c677c.get(); i++) {
       final long v0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
-      _8005e398.offset(MEMORY.ref(2, v0).offset(0x26cL).getSigned() * 0x1a8L).offset(2, 0x19eL).oru(0x2aL);
+      _8005e398.get((int)MEMORY.ref(2, v0).offset(0x26cL).getSigned())._19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -603,27 +604,25 @@ public final class SItem {
   }
 
   @Method(0x800fc210L)
-  public static void FUN_800fc210(final Value address, final long fileSize, final long param) {
-    final long a0 = address.get();
+  public static void FUN_800fc210(final long address, final long fileSize, final long param) {
     final long s3 = _8006e398.offset(4, 0xee8L).get();
 
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
     for(int s1 = 0; s1 < _800c677c.get(); s1++) {
       final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-      final long v0 = data._144.get();
-      final long v1 = MEMORY.ref(2, v0).offset(0x19cL).getSigned();
+      final BattleStruct1a8 v0 = data._144.deref();
 
       //LAB_800fc298
       for(int a1 = 0; a1 < 3; a1++) {
         if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == data._272.get()) {
           s0 = s0 & 0xffff_ff80L;
-          s0 = s0 | (v1 & 0x7fL);
+          s0 = s0 | (v0._19c.get() & 0x7fL);
           s0 = s0 & 0xffff_81ffL;
           s0 = s0 | ((data._26c.get() & 0x3fL) << 9);
           s0 = s0 & 0xffff_ff7fL;
           s0 = s0 & 0xffff_feffL;
-          FUN_80017fe4(a0 + a1 * 0x8L + MEMORY.ref(4, a0).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(v1 * 0x4L).get(), getMethodAddress(Bttl.class, "FUN_800c941c", Value.class, long.class, long.class), s0, 0);
+          FUN_80017fe4(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(v0._19c.get() * 0x4L).get(), getMethodAddress(Bttl.class, "FUN_800c941c", long.class, long.class, long.class), s0, 0);
           break;
         }
 
@@ -635,31 +634,30 @@ public final class SItem {
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
-    FUN_800127cc(a0, 0, 0x1L);
+    FUN_800127cc(address, 0, 0x1L);
     FUN_80012bb4();
   }
 
   @Method(0x800fc3c0L)
   public static void FUN_800fc3c0(final long fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc404", Value.class, long.class, long.class), 0, 0x5L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc404", long.class, long.class, long.class), 0, 0x5L);
   }
 
   @Method(0x800fc404L)
-  public static void FUN_800fc404(final Value address, final long fileSize, final long param) {
+  public static void FUN_800fc404(final long address, final long fileSize, final long param) {
     final long s2 = _1f8003f4.getPointer(); //TODO
-    final long s1 = address.get();
 
     //LAB_800fc434
-    for(int s0 = 0; s0 < _800c66a0.get(); s0++) {
-      final long a0 = FUN_800c8f24(s0);
+    for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
+      final BattleStruct1a8 a0 = getBattleStruct1a8(i);
 
-      if(MEMORY.ref(2, a0).offset(0x19cL).getSigned() < 0) {
-        final long a2 = MEMORY.ref(2, a0).offset(0x1a2L).get() & 0x1ffL;
+      if(a0._19c.get() < 0) {
+        final long a2 = a0._1a2.get() & 0x1ffL;
 
         //LAB_800fc464
         for(int a1 = 0; a1 < 3; a1++) {
-          if((MEMORY.ref(2, s2).offset(a1 * 0x2L).get() & 0x1ffL) == a2 && MEMORY.ref(4, s1).offset(a1 * 0x8L).offset(0xcL).get() != 0) {
-            FUN_800ca75c(s0, MEMORY.ref(4, s1).offset(a1 * 0x8L).offset(0x8L).get() + s1);
+          if((MEMORY.ref(2, s2).offset(a1 * 0x2L).get() & 0x1ffL) == a2 && MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0xcL).get() != 0) {
+            FUN_800ca75c(i, address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get());
             break;
           }
 
@@ -671,90 +669,46 @@ public final class SItem {
     }
 
     //LAB_800fc4cc
-    FUN_800127cc(s1, 0, 0x1L);
+    FUN_800127cc(address, 0, 0x1L);
     FUN_80012bb4();
   }
 
   @Method(0x800fc504L)
   public static void FUN_800fc504(final long fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", Value.class, long.class, long.class), 0, 0x5L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), 0, 0x5L);
   }
 
   @Method(0x800fc548L)
-  public static void FUN_800fc548(final Value address, final long fileSize, final long param) {
-    long v0;
-    long v1;
-    long a0 = address.get();
-    long a1;
-    long a2;
-    long a3;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    v0 = 0x8007_0000L;
-    v1 = v0 + -0x1c68L;
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
-    s2 = a0;
-    s3 = MEMORY.ref(4, v1).offset(0xee8L).get();
-    if((int)v0 > 0) {
-      s0 = 0;
-      v0 = 0x800c_0000L;
-      s4 = v0 + -0x3e40L;
-      s1 = v1;
+  public static void FUN_800fc548(final long address, final long fileSize, final long param) {
+    long s3 = _8006e398.offset(0xee8L).get();
 
-      //LAB_800fc590
-      do {
-        v0 = MEMORY.ref(4, s1).offset(0xe40L).get();
-        a1 = 0;
-        v0 = v0 << 2;
-        v0 = v0 + s4;
-        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-        a0 = s2;
-        a3 = MEMORY.ref(4, v0).offset(0x0L).get();
-        v1 = s3;
-        a2 = MEMORY.ref(2, a3).offset(0x272L).getSigned();
+    //LAB_800fc590
+    for(long s0 = 0; s0 < _800c677c.get(); s0++) {
+      final long a3 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(s0 * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
 
-        //LAB_800fc5b4
-        do {
-          v0 = MEMORY.ref(2, v1).offset(0x2L).getSigned();
+      //LAB_800fc5b4
+      for(long a1 = 0; a1 < 3; a1++) {
+        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == MEMORY.ref(2, a3).offset(0x272L).getSigned()) {
+          a1 = address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get();
+          a1 = a1 + MEMORY.ref(4, a1).offset(0x8L).get();
+          FUN_800ca75c((int)MEMORY.ref(2, a3).offset(0x26cL).getSigned(), a1);
+          break;
+        }
 
-          if(v0 == a2) {
-            a1 = MEMORY.ref(4, a0).offset(0x8L).get();
+        //LAB_800fc5e8
+      }
 
-            a1 = s2 + a1;
-            v0 = MEMORY.ref(4, a1).offset(0x8L).get();
-            a0 = MEMORY.ref(2, a3).offset(0x26cL).getSigned();
-            a1 = a1 + v0;
-            FUN_800ca75c(a0, a1);
-            break;
-          }
-          a1 = a1 + 0x1L;
-
-          //LAB_800fc5e8
-          a0 = a0 + 0x8L;
-          v1 = v1 + 0x2L;
-        } while((int)a1 < 0x3L);
-
-        s1 = s1 + 0x4L;
-
-        //LAB_800fc5fc
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
-        s0 = s0 + 0x1L;
-      } while((int)s0 < (int)v0);
+      //LAB_800fc5fc
     }
 
     //LAB_800fc614
-    FUN_800127cc(s2, 0, 0x1L);
+    FUN_800127cc(address, 0, 0x1L);
     FUN_80012bb4();
   }
 
   @Method(0x800fc654L)
   public static void FUN_800fc654(final long fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x800fc698L)
@@ -887,20 +841,18 @@ public final class SItem {
   }
 
   @Method(0x800fc944L)
-  public static void fileLoadedCallback6665And6666(final Value address, final long size, final long param) {
-    final Value a0 = address.deref(4);
-
+  public static void fileLoadedCallback6665And6666(final long address, final long size, final long param) {
     if(param == 0) {
       //LAB_800fc98c
-      FUN_80022a94(a0.offset(0x83e0L)); // Character textures
-      FUN_80022a94(a0); // Menu textures
-      FUN_80022a94(a0.offset(0x6200L)); // Item textures
-      FUN_80022a94(a0.offset(0x1_0460L));
-      FUN_80022a94(a0.offset(0x1_0580L));
-      FUN_800127cc(a0.getAddress(), 0, 0x1L);
+      FUN_80022a94(MEMORY.ref(4, address).offset(0x83e0L)); // Character textures
+      FUN_80022a94(MEMORY.ref(4, address)); // Menu textures
+      FUN_80022a94(MEMORY.ref(4, address).offset(0x6200L)); // Item textures
+      FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0460L));
+      FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0580L));
+      FUN_800127cc(MEMORY.ref(4, address).getAddress(), 0, 0x1L);
     } else if(param == 0x1L) {
       //LAB_800fc9e4
-      drgn0_6666FilePtr_800bdc3c.setPointer(address.get());
+      drgn0_6666FilePtr_800bdc3c.setPointer(address);
     } else if(param == 0x4L) {
       //LAB_800fc978
       //LAB_800fc9f0
@@ -974,7 +926,7 @@ public final class SItem {
         renderablePtr_800bdc5c.clear();
         messageBox_8011dc90._0c.set(0);
         setWidthAndFlags(0x180L, 0);
-        s0 = getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", Value.class, long.class, long.class);
+        s0 = getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class);
         loadDrgnBinFile(0, 6665L, 0, s0, 0, 0x5L);
         loadDrgnBinFile(0, 6666L, 0, s0, 0x1L, 0x3L);
         FUN_80110030(0);
