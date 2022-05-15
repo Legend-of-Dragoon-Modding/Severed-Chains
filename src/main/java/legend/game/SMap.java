@@ -4046,8 +4046,8 @@ public final class SMap {
           //LAB_800e1720
           //LAB_800e17c4
           //LAB_800e17d8
-          loadDrgnBinFile(drgnIndex.get() + 0x2L, fileIndex.get() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0, 0x2L);
-          loadDrgnBinFile(drgnIndex.get() + 0x2L, fileIndex.get() + 0x2L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x1L, 0x2L);
+          loadDrgnBinFile(drgnIndex.get() + 0x2L, fileIndex.get() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0, 0x2L);
+          loadDrgnBinFile(drgnIndex.get() + 0x2L, fileIndex.get() + 0x2L, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0x1L, 0x2L);
         }
 
         loadingStage_800c68e4.addu(0x1L);
@@ -4576,20 +4576,20 @@ public final class SMap {
       if(v1 == 0x1L) {
         //LAB_800e2700
         //LAB_800e2794
-        loadDrgnBinFile(0, 6670, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x10L, 0x4L);
+        loadDrgnBinFile(0, 6670, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0x10L, 0x4L);
       } else if(v1 == 0x2L) {
         //LAB_800e2728
         //LAB_800e2794
-        loadDrgnBinFile(0, 6671, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x10L, 0x4L);
+        loadDrgnBinFile(0, 6671, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0x10L, 0x4L);
         //LAB_800e26e8
       } else if(v1 == 0x3L) {
         //LAB_800e2750
         //LAB_800e2794
-        loadDrgnBinFile(0, 6672, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x10L, 0x4L);
+        loadDrgnBinFile(0, 6672, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0x10L, 0x4L);
       } else if(v1 == 0x4L) {
         //LAB_800e2778
         //LAB_800e2794
-        loadDrgnBinFile(0, 6673, 0, getMethodAddress(SMap.class, "FUN_800e3d80", Value.class, long.class, long.class), 0x10L, 0x4L);
+        loadDrgnBinFile(0, 6673, 0, getMethodAddress(SMap.class, "FUN_800e3d80", long.class, long.class, long.class), 0x10L, 0x4L);
       }
 
       //LAB_800e27a4
@@ -5333,21 +5333,21 @@ public final class SMap {
 
   /** Callback for two different MRG files (sectors 136752 and 136849) */
   @Method(0x800e3d80L)
-  public static void FUN_800e3d80(final Value fileAddress, final long fileSize, final long a2) {
+  public static void FUN_800e3d80(final long fileAddress, final long fileSize, final long a2) {
     switch((int)a2) {
       case 0x0 -> {
         mrg0Loaded_800c6874.setu(0x1);
-        mrg0Addr_800c6878.set(fileAddress.deref(4).cast(MrgFile::new));
+        mrg0Addr_800c6878.set(MEMORY.ref(4, fileAddress, MrgFile::new));
       }
 
       case 0x1 -> {
         mrg1Loaded_800c68d0.setu(0x1);
-        mrg1Addr_800c68d8.set(fileAddress.deref(4).cast(MrgFile::new));
+        mrg1Addr_800c68d8.set(MEMORY.ref(4, fileAddress, MrgFile::new));
       }
 
       case 0x10 -> {
         mrg10Loaded_800c68e0.setu(0x1);
-        mrg10Addr_800c6710.set(fileAddress.deref(4).cast(MrgFile::new));
+        mrg10Addr_800c6710.set(MEMORY.ref(4, fileAddress, MrgFile::new));
       }
     }
   }
@@ -5806,10 +5806,10 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final Value address, final long fileSize, final long param) {
+  public static void loadBackground(final long address, final long fileSize, final long param) {
     backgroundLoaded_800cab10.offset(param * 0x4L).setu(0x1L);
 
-    final MrgFile mrg = address.deref(4).cast(MrgFile::new);
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_800e5374
     for(int i = 3; i < mrg.count.get(); i++) {
@@ -5835,10 +5835,10 @@ public final class SMap {
   }
 
   @Method(0x800e54a4L)
-  public static void newrootCallback_800e54a4(final Value address, final long fileSize, final long param) {
+  public static void newrootCallback_800e54a4(final long address, final long fileSize, final long param) {
     newrootPtr_800cab04.set(newroot_800c6af0);
-    memcpy(newroot_800c6af0.getAddress(), address.get(), (int)fileSize);
-    removeFromLinkedList(address.get());
+    memcpy(newroot_800c6af0.getAddress(), address, (int)fileSize);
+    removeFromLinkedList(address);
     FUN_800e6640(newrootPtr_800cab04.deref());
     newrootLoaded_800cab1c.setu(0x1L);
   }
@@ -6050,7 +6050,7 @@ public final class SMap {
 
       case 0x1: // Load newroot
         newrootLoaded_800cab1c.setu(0);
-        loadFile(_80052c4c.getAddress(), 0, getMethodAddress(SMap.class, "newrootCallback_800e54a4", Value.class, long.class, long.class), 0x63L, 0);
+        loadFile(_80052c4c.getAddress(), 0, getMethodAddress(SMap.class, "newrootCallback_800e54a4", long.class, long.class, long.class), 0x63L, 0);
         _800cb430.setu(0x2L);
         break;
 
@@ -6082,7 +6082,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         backgroundLoaded_800cab10.setu(0);
-        loadDrgnBinFile(0x2L, fileIndex.get(), 0, getMethodAddress(SMap.class, "loadBackground", Value.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(0x2L, fileIndex.get(), 0, getMethodAddress(SMap.class, "loadBackground", long.class, long.class, long.class), 0, 0x4L);
         noop_800e4fec();
         _800cb430.setu(0x6L);
         break;
@@ -8271,7 +8271,7 @@ public final class SMap {
     switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0x0:
         creditsLoaded_800d1cb8.setu(0);
-        loadDrgnBinFile(0, 5721, 0, getMethodAddress(SMap.class, "loadCreditsMrg", Value.class, long.class, long.class), _800bf0dc.get(), 0x4L);
+        loadDrgnBinFile(0, 5721, 0, getMethodAddress(SMap.class, "loadCreditsMrg", long.class, long.class, long.class), _800bf0dc.get(), 0x4L);
 
         //LAB_800ed644
         for(int s2 = 0; s2 < 3; s2++) {
@@ -8482,8 +8482,8 @@ public final class SMap {
   }
 
   @Method(0x800edc7cL)
-  public static void loadCreditsMrg(final Value address, final long fileSize, final long fileIndex) {
-    final MrgFile mrg = address.deref(4).cast(MrgFile::new);
+  public static void loadCreditsMrg(final long address, final long fileSize, final long fileIndex) {
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     if(fileIndex > mrg.count.get()) {
       return;
@@ -8505,7 +8505,7 @@ public final class SMap {
       a3 += 0x4L;
     }
 
-    removeFromLinkedList(address.get());
+    removeFromLinkedList(address);
     creditsLoaded_800d1cb8.setu(0x1L);
 
     //LAB_800edcf0
@@ -8587,11 +8587,11 @@ public final class SMap {
         _800d4bf0.setu(0);
 
         if(drgnFileIndices_800f982c.offset(submapCut_80052c30.get() * 0x2L).getSigned() != 0) {
-          loadDrgnBinFile(0, drgnFileIndices_800f982c.offset(submapCut_80052c30.get() * 0x2L).getSigned(), 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0, 0x2L);
-          loadDrgnBinFile(0, drgnFileIndices_800f982c.offset(submapCut_80052c30.get() * 0x2L).getSigned() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x1L, 0x4L);
+          loadDrgnBinFile(0, drgnFileIndices_800f982c.offset(submapCut_80052c30.get() * 0x2L).getSigned(), 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 0, 0x2L);
+          loadDrgnBinFile(0, drgnFileIndices_800f982c.offset(submapCut_80052c30.get() * 0x2L).getSigned() + 0x1L, 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 0x1L, 0x4L);
 
           if(submapCut_80052c30.get() == 0x2a1L) {
-            loadDrgnBinFile(0, 7610, 0, getMethodAddress(SMap.class, "FUN_800eeddc", Value.class, long.class, long.class), 0x2L, 0x4L);
+            loadDrgnBinFile(0, 7610, 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 0x2L, 0x4L);
           }
         }
 
@@ -8799,7 +8799,7 @@ public final class SMap {
   }
 
   @Method(0x800eeddcL)
-  public static void FUN_800eeddc(final Value address, final long fileSize, final long a2) {
+  public static void FUN_800eeddc(final long address, final long fileSize, final long a2) {
     if(a2 == 0) {
       _800d4bdc.setu(0x1L);
       _800d4be8.setu(address);

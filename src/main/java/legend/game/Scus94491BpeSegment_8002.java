@@ -2734,7 +2734,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final Value address, final long fileSize, final long unused) {
+  public static void basicUiTexturesLoaded(final long address, final long fileSize, final long unused) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2752,7 +2752,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final int[] indexOffsets = {0, 20, 22, 24, 26};
 
-    final MrgFile mrg = address.deref(4).cast(MrgFile::new);
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_80024e88
     for(int i = 0; i < mrg.count.get(); i++) {
@@ -2797,7 +2797,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
-    loadDrgnBinFile(0, 6669, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", Value.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 6669, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", long.class, long.class, long.class), 0, 0x4L);
     noop_8002498c();
 
     _800bdf00.setu(0xdL);

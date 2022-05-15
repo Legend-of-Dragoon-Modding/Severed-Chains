@@ -3,6 +3,7 @@ package legend.game.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -13,8 +14,7 @@ public class BtldScriptData27c implements MemoryRef {
 
   public final UnsignedIntRef _00;
 
-  /** TODO ptr */
-  public final UnsignedIntRef _144;
+  public final Pointer<BattleStruct1a8> _144;
   public final Value _148; //TODO
 
   public final IntRef _174;
@@ -40,7 +40,7 @@ public class BtldScriptData27c implements MemoryRef {
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
 
-    this._144 = ref.offset(4, 0x144L).cast(UnsignedIntRef::new);
+    this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
     this._148 = ref.offset(4, 0x148L);
 
     this._174 = ref.offset(4, 0x174L).cast(IntRef::new);

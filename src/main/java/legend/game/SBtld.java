@@ -3,13 +3,14 @@ package legend.game;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.TriConsumerRef;
+import legend.game.types.BattleStruct1a8;
 import legend.game.types.BtldScriptData27c;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Bttl.FUN_800c8f24;
+import static legend.game.Bttl.getBattleStruct1a8;
 import static legend.game.Bttl.FUN_800c8f50;
 import static legend.game.Bttl.FUN_800c9060;
 import static legend.game.Bttl.FUN_800e5768;
@@ -67,7 +68,7 @@ public class SBtld {
     MEMORY.ref(4, a0).offset(0x28L).setu(MEMORY.ref(2, v1).offset(0xeL).get());
 
     FUN_80017fe4(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "FUN_80109164", long.class, long.class, long.class), 0, 0);
-    loadDrgnBinFile(1, 401, 0, getMethodAddress(SBtld.class, "FUN_80109170", Value.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(1, 401, 0, getMethodAddress(SBtld.class, "FUN_80109170", long.class, long.class, long.class), 0, 0x2L);
   }
 
   @Method(0x80109164L)
@@ -76,8 +77,8 @@ public class SBtld {
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final Value address, final long fileSize, final long param) {
-    script_800c670c.set(address.deref(4).cast(ScriptFile::new));
+  public static void FUN_80109170(final long address, final long fileSize, final long param) {
+    script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
     scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, 0, 0));
     loadScriptFile(scriptIndex_800c674c.get(), script_800c670c.deref());
 
@@ -296,7 +297,7 @@ public class SBtld {
         break;
       }
 
-      final long s4 = FUN_800c9060(s2);
+      final int s4 = FUN_800c9060(s2);
       long index = allocateScriptState(0x27cL, BtldScriptData27c::new);
       setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
@@ -308,7 +309,7 @@ public class SBtld {
       data._272.set((short)s2);
       data._274.set((int)_800c66d0.get());
       data._276.set((int)_800c6768.get());
-      data._144.set(FUN_800c8f24(s4));
+      data._144.set(getBattleStruct1a8(s4));
       data._26c.set((short)s4);
       data._174.set((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
       data._178.set((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
@@ -338,18 +339,17 @@ public class SBtld {
   public static void FUN_80109808(final long param) {
     final long fileIndex = param & 0xffffL;
     final long s0 = param >>> 16;
-    final long v0 = FUN_800c8f24(s0);
-    final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress();
-    MEMORY.ref(4, v0).offset(0x194L).setu(MEMORY.ref(4, v1).offset(0x0L).get());
-    MEMORY.ref(4, v0).offset(0x198L).setu(MEMORY.ref(4, v1).offset(0x4L).get());
-    loadDrgnBinFile(1, fileIndex + 1, 0, getMethodAddress(SBtld.class, "FUN_8010989c", Value.class, long.class, long.class), s0, 0x2L);
+    final BattleStruct1a8 v0 = getBattleStruct1a8((int)s0);
+    final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
+    v0._194.set(MEMORY.ref(4, v1).offset(0x0L).get());
+    v0._198.set(MEMORY.ref(4, v1).offset(0x4L).get());
+    loadDrgnBinFile(1, fileIndex + 1, 0, getMethodAddress(SBtld.class, "FUN_8010989c", long.class, long.class, long.class), s0, 0x2L);
   }
 
   @Method(0x8010989cL)
-  public static void FUN_8010989c(final Value address, final long fileSize, final long param) {
-    final long a0 = address.get();
-    MEMORY.ref(4, FUN_800c8f24(param)).offset(0x10L).setu(a0);
-    _800c66d8.offset(_800c6698.get() * 0x4L).setu(a0);
+  public static void FUN_8010989c(final long address, final long fileSize, final long index) {
+    getBattleStruct1a8((int)index)._10.set(address);
+    _800c66d8.offset(_800c6698.get() * 0x4L).setu(address);
     _800c6698.addu(0x1L);
     FUN_80012bb4();
   }
