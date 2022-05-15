@@ -2577,7 +2577,7 @@ public final class Scus94491BpeSegment {
           RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
           RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer()) + ": " + Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
 
           RunningScript_800bc070.commandPtr_0c.incr();
 
