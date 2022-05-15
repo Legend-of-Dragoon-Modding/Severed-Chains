@@ -898,6 +898,16 @@ public final class Scus94491BpeSegment {
     return -0x1L;
   }
 
+  @Method(0x800128a8L)
+  public static long FUN_800128a8(final long a0) {
+    if(a0 != 0) {
+      return MEMORY.ref(4, a0).offset(-0x8L).get() - 0xcL;
+    }
+
+    //LAB_800128bc
+    return 0;
+  }
+
   @Method(0x800128c4L)
   public static long loadSstrmAndSmap() {
     if(loadingSstrmOvl_8004dd1e.get() == 0) {
@@ -3626,7 +3636,7 @@ public final class Scus94491BpeSegment {
     v0 = 0x1L;
     MEMORY.ref(1, s4).offset(0x3L).setu(v0);
     v0 = 0x800c_0000L;
-    t1 = v0 + -0x4ef0L;
+    t1 = v0 - 0x4ef0L;
     v0 = (int)a3 >> 8;
     v0 = v0 << 1;
     v0 = v0 + t1;

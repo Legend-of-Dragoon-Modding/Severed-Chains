@@ -19,6 +19,7 @@ public class BattleStruct implements MemoryRef {
   public final Value _9cdc;
   public final Value _9ce0;
   public final Value _9ce4;
+  public final Value _9ce8;
 
   //TODO unknown size
   public final Value _d4b0;
@@ -35,6 +36,7 @@ public class BattleStruct implements MemoryRef {
     this._9cdc = ref.offset(4, 0x9cdcL);
     this._9ce0 = ref.offset(4, 0x9ce0L);
     this._9ce4 = ref.offset(4, 0x9ce4L);
+    this._9ce8 = ref.offset(4, 0x9ce8L);
 
     this._d4b0 = ref.offset(4, 0xd4b0L);
   }
