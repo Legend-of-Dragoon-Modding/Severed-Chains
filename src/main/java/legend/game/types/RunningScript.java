@@ -32,7 +32,7 @@ public class RunningScript implements MemoryRef {
     this.childCount_14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
     this.parentParam_18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
     this.ui_1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this.params_20 = ref.offset(4, 0x20L).cast(ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 8, 4, Pointer.deferred(4, UnsignedIntRef::new))); //TODO unsure how many elements
+    this.params_20 = ref.offset(4, 0x20L).cast(ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 9, 4, Pointer.deferred(4, UnsignedIntRef::new))); //TODO unsure how many elements
   }
 
   @Override

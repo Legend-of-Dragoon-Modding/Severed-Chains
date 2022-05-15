@@ -305,7 +305,7 @@ public class SBtld {
       final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get((int)index).derefAs(ScriptState.classFor(BtldScriptData27c.class));
       final BtldScriptData27c data = state.innerStruct_00.deref();
       data._00.set(0x4a42_4f42L);
-      data._272.set((int)s2);
+      data._272.set((short)s2);
       data._274.set((int)_800c66d0.get());
       data._276.set((int)_800c6768.get());
       data._144.set(FUN_800c8f24(s4));

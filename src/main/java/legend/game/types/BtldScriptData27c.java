@@ -13,6 +13,7 @@ public class BtldScriptData27c implements MemoryRef {
 
   public final UnsignedIntRef _00;
 
+  /** TODO ptr */
   public final UnsignedIntRef _144;
   public final Value _148; //TODO
 
@@ -29,7 +30,7 @@ public class BtldScriptData27c implements MemoryRef {
   public final ShortRef _26c;
   public final UnsignedShortRef _26e;
   public final ShortRef _270;
-  public final UnsignedShortRef _272;
+  public final ShortRef _272;
   public final UnsignedShortRef _274;
   public final UnsignedShortRef _276;
   public final UnsignedByteRef _278;
@@ -55,7 +56,7 @@ public class BtldScriptData27c implements MemoryRef {
     this._26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
     this._26e = ref.offset(2, 0x26eL).cast(UnsignedShortRef::new);
     this._270 = ref.offset(2, 0x270L).cast(ShortRef::new);
-    this._272 = ref.offset(2, 0x272L).cast(UnsignedShortRef::new);
+    this._272 = ref.offset(2, 0x272L).cast(ShortRef::new);
     this._274 = ref.offset(2, 0x274L).cast(UnsignedShortRef::new);
     this._276 = ref.offset(2, 0x276L).cast(UnsignedShortRef::new);
     this._278 = ref.offset(1, 0x278L).cast(UnsignedByteRef::new);
