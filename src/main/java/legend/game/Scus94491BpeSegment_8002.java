@@ -397,6 +397,11 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020220
   }
 
+  @Method(0x80020308L)
+  public static void FUN_80020308() {
+    assert false;
+  }
+
   @Method(0x80020360L)
   public static void FUN_80020360(final ArrayRef<SpuStruct28> a0, final ArrayRef<SpuStruct28> a1) {
     //LAB_8002036c
@@ -1068,11 +1073,21 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.coord2_14.flg.set(0);
   }
 
+  @Method(0x80021868L)
+  public static void FUN_80021868() {
+    if(_800bd7a0.get() != 0) {
+      removeFromLinkedList(_800bd7a0.get());
+      _800bd7a0.setu(0);
+    }
+
+    //LAB_80021894
+  }
+
   @Method(0x800218a4L)
   public static void FUN_800218a4() {
     _800bd7a8.setu(0x7L);
     _800bd7a4.setu(0x4968L);
-    _800bd7a0.setu(addToLinkedListHead(0x4968L));
+    _800bd7a0.setu(addToLinkedListHead(0x4968L)); //TODO struct
   }
 
   @Method(0x800218f0L)
@@ -7065,6 +7080,17 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002a554
+  }
+
+  @Method(0x8002a55cL)
+  public static void FUN_8002a55c(LodString a0) {
+    assert false;
+  }
+
+  @Method(0x8002a59cL)
+  public static long FUN_8002a59c(LodString a0) {
+    assert false;
+    return 0;
   }
 
   @Method(0x8002a63cL)
