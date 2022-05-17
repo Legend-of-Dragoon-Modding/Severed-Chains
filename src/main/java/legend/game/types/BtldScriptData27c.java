@@ -14,6 +14,12 @@ public class BtldScriptData27c implements MemoryRef {
 
   public final UnsignedIntRef _00;
 
+  public final ShortRef _0a;
+
+  public final UnsignedShortRef _0e;
+
+  public final ShortRef _1c;
+
   public final Pointer<BattleStruct1a8> _144;
   public final Value _148; //TODO
 
@@ -39,6 +45,12 @@ public class BtldScriptData27c implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+
+    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+
+    this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
+
+    this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
 
     this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
     this._148 = ref.offset(4, 0x148L);

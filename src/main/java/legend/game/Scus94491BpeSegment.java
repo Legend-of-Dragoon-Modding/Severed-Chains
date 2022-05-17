@@ -1785,6 +1785,7 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
       case "\\OVL\\BTTL.OV_" -> MEMORY.addFunctions(Bttl.class);
       case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
+      case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
       case "\\SECT\\DRGN0.BIN" -> { }
       default -> throw new RuntimeException("Loaded unknown file " + file.namePtr.deref().get());
     }
@@ -4560,6 +4561,11 @@ public final class Scus94491BpeSegment {
     if(_800bd0f0.get() == 0x2L) {
       FUN_8004d034((int)sssqChannelIndex_800bd0f8.get(), 0);
     }
+  }
+
+  @Method(0x8001af00L)
+  public static void FUN_8001af00(long a0) {
+    assert false;
   }
 
   @Method(0x8001b1a8L)
