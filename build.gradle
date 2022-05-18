@@ -17,11 +17,16 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
   implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
 
+  implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.4.0'
+
   implementation group: 'legend', name: 'lod-core', version: '0.1'
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+  // For script debugger
+  implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1';
 }
 
 jar {

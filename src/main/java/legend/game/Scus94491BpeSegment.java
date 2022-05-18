@@ -20,6 +20,7 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.scriptdebugger.ScriptDebugger;
 import legend.game.types.BattleStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
@@ -278,14 +279,12 @@ public final class Scus94491BpeSegment {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
 
-  private static final Object[] EMPTY_OBJ_ARRAY = new Object[0];
+  private static ScriptDebugger scriptDebugger = null;
 
   public static final BiFunctionRef<Long, Object[], Object> functionVectorA_000000a0 = MEMORY.ref(4, 0x000000a0L, BiFunctionRef::new);
   public static final BiFunctionRef<Long, Object[], Object> functionVectorB_000000b0 = MEMORY.ref(4, 0x000000b0L, BiFunctionRef::new);
   public static final BiFunctionRef<Long, Object[], Object> functionVectorC_000000c0 = MEMORY.ref(4, 0x000000c0L, BiFunctionRef::new);
 
-  public static final Value temporaryStack_1f8003b4 = MEMORY.ref(4, 0x1f8003b4L);
-  public static final Value oldStackPointer_1f8003b8 = MEMORY.ref(4, 0x1f8003b8L);
   public static final BoolRef isStackPointerModified_1f8003bc = MEMORY.ref(2, 0x1f8003bcL, BoolRef::new);
   public static final Value _1f8003c0 = MEMORY.ref(4, 0x1f8003c0L);
   public static final Value _1f8003c4 = MEMORY.ref(4, 0x1f8003c4L);
@@ -367,6 +366,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
+    if("true".equalsIgnoreCase(System.getProperty("scriptdebug"))) {
+      try {
+        scriptDebugger = new ScriptDebugger(12345);
+      } catch(final Exception e) {
+        LOGGER.info("Failed to start script debugger", e);
+      }
+    }
+
     final Runnable r = () -> {
       FUN_80012d58();
       processControllerInput();
