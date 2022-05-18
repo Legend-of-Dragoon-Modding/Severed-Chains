@@ -6,7 +6,6 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -1708,20 +1707,23 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    if((file.unknown3.get() & 1) == 0) {
+    if((file.type.get() & 1) == 0) {
       file.used.set(false);
       return;
     }
 
     LOGGER.info("Decompressing file %s...", file.namePtr.deref().get());
 
-    final long v1 = file.unknown3.get() & 0b110L;
+    final long v1 = file.type.get() & 0b110L;
 
-    long transferDest = 0;
-    if((file.unknown3.get() & 0x1L) == 0) {
-      transferDest = transferDest_800bb460.get();
-      //LAB_800148b8
-    } else if(v1 == 0x2L) {
+    long transferDest;
+    //LAB_800148b8
+    if(v1 == 0) { // Decompress to file transfer dest
+      //LAB_800148ec
+      transferDest = file.transferDest.get();
+      fileSize_800bb464.setu(decompress(transferDest_800bb460.get(), transferDest));
+      removeFromLinkedList(transferDest_800bb460.get());
+    } else {
       //LAB_8001491c
       transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
 
@@ -1729,7 +1731,7 @@ public final class Scus94491BpeSegment {
         throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
       }
 
-      fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
+      fileSize_800bb464.setu(decompress(transferDest_800bb460.get(), transferDest));
 
       final long address = FUN_80012444(transferDest, fileSize_800bb464.get());
 
@@ -1737,35 +1739,6 @@ public final class Scus94491BpeSegment {
       if(address != 0) {
         transferDest = address;
       }
-    } else if((int)v1 >= 0x3L) {
-      //LAB_800148dc
-      if(v1 == 0x4L) {
-        //LAB_80014954
-        transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
-
-        if(transferDest < 0x8000_0000L) {
-          throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
-        }
-
-        fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
-
-        final long address = FUN_80012244(transferDest, fileSize_800bb464.get());
-
-        //LAB_80014984
-        if(address != 0) {
-          transferDest = address;
-        }
-      }
-    } else if(v1 == 0) {
-      //LAB_800148ec
-      transferDest = file.transferDest.get();
-      fileSize_800bb464.setu(FUN_80017c44(fileSize_800bb464.get(), transferDest_800bb460.get(), transferDest));
-      removeFromLinkedList(transferDest_800bb460.get());
-    } else {
-      //LAB_80014994
-      file.used.set(false);
-      popFirstFileIfUnused();
-      callbackIndex_8004ddc4.setu(0);
     }
 
     //LAB_800149a4
@@ -1895,7 +1868,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80014ba0L)
-  public static long FUN_80014ba0() {
+  public static long allocateFileTransferDest() {
     if(FUN_80036f20() != 0x1L) {
       return -0x1L;
     }
@@ -1905,7 +1878,7 @@ public final class Scus94491BpeSegment {
     fileSize_800bb48c.setu(file.size.get());
     numberOfTransfers_800bb490.setu((file.size.get() + 0x7ffL) / 0x800L);
 
-    switch(file.unknown3.get() & 0b111) {
+    switch(file.type.get() & 0b111) {
       case 0 -> {
         if(file.transferDest.get() < 0x8000_0000L) {
           throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(file.transferDest.get()));
@@ -1929,7 +1902,6 @@ public final class Scus94491BpeSegment {
 
         fileTransferDest_800bb488.setu(transferDest);
         return 0;
-
       }
 
       case 5 -> {
@@ -2032,13 +2004,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80014df0L)
-  public static long FUN_80014df0() {
-    if(FUN_80014ba0() != 0) {
+  public static long loadQueuedFile() {
+    if(allocateFileTransferDest() != 0) {
       return 0;
     }
 
     transferIndex_800bb494.setu(0);
-//    DsPacket(new CdlMODE().doubleSpeed().readEntireSector(), new CdlLOC(_800bbad8), CdlCOMMAND.READ_N_06, _80014f64.getAddress(), -0x1L);
 
     final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(0);
 
@@ -2155,7 +2126,7 @@ public final class Scus94491BpeSegment {
     file.transferDest.setu(transferDest);
     file.namePtr.set(MEMORY.ref(4, param_1).offset(0x4L).deref(20).cast(CString::new));
     file.callbackParam.set((int)callbackParam);
-    file.unknown3.set((short)s0);
+    file.type.set((short)s0);
     file.used.set(true);
     setLoadingFilePosAndSizeFromFile(file, param_1);
 
@@ -2189,7 +2160,7 @@ public final class Scus94491BpeSegment {
     file.transferDest.setu(fileTransferDest);
     file.namePtr.set(fileNamePtr_8004dda4.offset(drgnIndex * 8).deref(16).cast(CString::new));
     file.callbackParam.set((int)callbackParam);
-    file.unknown3.set((short)s2);
+    file.type.set((short)s2);
     file.used.set(true);
     getDrgnFilePos(file, drgnIndex, fileIndex);
 
@@ -3452,53 +3423,28 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80017c44L)
   public static long FUN_80017c44(final long unused, final long archiveAddress, final long destinationAddress) {
-//    MEMORY.ref(4, sp).offset(0x10L).setu(sp);
-
-    final Memory.TemporaryReservation size = MEMORY.temp();
-
-    //LAB_80017c94
-//    if(!isStackPointerModified_1f8003bc.get()) {
-      //LAB_80017cc4
-//      FUN_80017ce0(archiveAddress, destinationAddress, size.address);
-//    } else if(sp > _1f800300.getAddress()) {
-      FUN_80017d28(archiveAddress, destinationAddress, size.address);
-//    } else if(sp > _1f800200.getAddress()) {
-//      FUN_80017d58(archiveAddress, destinationAddress, size.address);
-//    } else {
-    //LAB_80017cb4
-//      FUN_80017d8c(archiveAddress, destinationAddress, size.address);
-//    }
-
-    final long ret = size.get().get();
-    size.release();
-
-    //LAB_80017ccc
-    return ret;
+    assert false : "Use decompress";
+    return 0;
   }
 
   @Method(0x80017ce0L)
   public static void FUN_80017ce0(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    isStackPointerModified_1f8003bc.set(true);
-//    oldStackPointer_1f8003b8.setu(sp);
-//    sp = temporaryStack_1f8003b4.getAddress();
-    FUN_80017d28(archiveAddress, destinationAddress, sizePtr);
-    isStackPointerModified_1f8003bc.set(false);
-//    sp = oldStackPointer_1f8003b8.get();
+    assert false : "Use decompress";
   }
 
   @Method(0x80017d28L)
   public static void FUN_80017d28(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    MEMORY.ref(4, sizePtr).setu(decompress(archiveAddress, destinationAddress));
+    assert false : "Use decompress";
   }
 
   @Method(0x80017d58L)
   public static void FUN_80017d58(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false;
+    assert false : "Use decompress";
   }
 
   @Method(0x80017d8cL)
   public static void FUN_80017d8c(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false;
+    assert false : "Use decompress";
   }
 
   @Method(0x80017f94L)
@@ -3538,7 +3484,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001805c
     //LAB_80018060
-    final long size = FUN_80017c44(0, archiveAddress, s0);
+    final long size = decompress(archiveAddress, s0);
 
     if((a4 & 0x1L) != 0) {
       removeFromLinkedList(archiveAddress);

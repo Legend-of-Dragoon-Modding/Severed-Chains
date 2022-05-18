@@ -22,7 +22,7 @@ import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
-import static legend.game.Scus94491BpeSegment.FUN_80017c44;
+import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
@@ -119,9 +119,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
@@ -1008,7 +1008,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_8003429c(0);
     handleCdromDmaTimeout(1);
 
-    FUN_80017c44(0, SInitOvlData_800c66a4.get(), _80010004.get());
+    decompress(SInitOvlData_800c66a4.get(), _80010004.get());
     removeFromLinkedList(SInitOvlData_800c66a4.get());
     pregameLoadingStage_800bb10c.addu(0x1L);
 
