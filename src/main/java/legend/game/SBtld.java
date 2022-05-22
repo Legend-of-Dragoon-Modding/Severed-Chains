@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Tuple;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.TriConsumerRef;
@@ -10,7 +11,6 @@ import legend.game.types.ScriptState;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Bttl.getBattleStruct1a8;
 import static legend.game.Bttl.FUN_800c8f50;
 import static legend.game.Bttl.FUN_800c9060;
 import static legend.game.Bttl.FUN_800e5768;
@@ -19,28 +19,31 @@ import static legend.game.Bttl._800c6698;
 import static legend.game.Bttl._800c66b0;
 import static legend.game.Bttl._800c66d0;
 import static legend.game.Bttl._800c66d8;
-import static legend.game.Bttl.script_800c66fc;
 import static legend.game.Bttl._800c6718;
 import static legend.game.Bttl._800c6748;
 import static legend.game.Bttl._800c6768;
 import static legend.game.Bttl._800c6780;
+import static legend.game.Bttl.getBattleStruct1a8;
 import static legend.game.Bttl.scriptIndex_800c674c;
+import static legend.game.Bttl.script_800c66fc;
+import static legend.game.Bttl.script_800c66fc_length;
 import static legend.game.Bttl.script_800c670c;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
-import static legend.game.Scus94491BpeSegment.FUN_80017fe4;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
+import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setCallback0c;
+import static legend.game.Scus94491BpeSegment_8005._8005e398_SCRIPT_SIZES;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
 
 public class SBtld {
   private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
@@ -53,34 +56,34 @@ public class SBtld {
 
   @Method(0x80109050L)
   public static void FUN_80109050(final long param) {
-    final long v1 = _80109a98.offset(submapScene_800bb0f8.get() * 0x10L).getAddress();
-    final long a0 = _800c6718.getAddress();
-    _800c6718.setu(MEMORY.ref(1, v1).offset(0x0L).get());
-    MEMORY.ref(4, a0).offset(0x4L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
-    MEMORY.ref(4, a0).offset(0x8L).setu(MEMORY.ref(1, v1).offset(0x2L).get());
-    MEMORY.ref(4, a0).offset(0xcL).setu(MEMORY.ref(1, v1).offset(0x3L).get());
-    MEMORY.ref(4, a0).offset(0x10L).setu(MEMORY.ref(1, v1).offset(0x4L).get());
-    MEMORY.ref(4, a0).offset(0x14L).setu(MEMORY.ref(1, v1).offset(0x5L).get());
-    MEMORY.ref(4, a0).offset(0x18L).setu(MEMORY.ref(2, v1).offset(0x6L).getSigned());
-    MEMORY.ref(4, a0).offset(0x1cL).setu(MEMORY.ref(2, v1).offset(0x8L).getSigned());
-    MEMORY.ref(4, a0).offset(0x20L).setu(MEMORY.ref(2, v1).offset(0xaL).getSigned());
-    MEMORY.ref(4, a0).offset(0x24L).setu(MEMORY.ref(2, v1).offset(0xcL).getSigned());
-    MEMORY.ref(4, a0).offset(0x28L).setu(MEMORY.ref(2, v1).offset(0xeL).get());
+    final long v1 = _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).getAddress();
+    _800c6718.offset(0x00L).setu(MEMORY.ref(1, v1).offset(0x0L).get());
+    _800c6718.offset(0x04L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
+    _800c6718.offset(0x08L).setu(MEMORY.ref(1, v1).offset(0x2L).get());
+    _800c6718.offset(0x0cL).setu(MEMORY.ref(1, v1).offset(0x3L).get());
+    _800c6718.offset(0x10L).setu(MEMORY.ref(1, v1).offset(0x4L).get());
+    _800c6718.offset(0x14L).setu(MEMORY.ref(1, v1).offset(0x5L).get());
+    _800c6718.offset(0x18L).setu(MEMORY.ref(2, v1).offset(0x6L).getSigned());
+    _800c6718.offset(0x1cL).setu(MEMORY.ref(2, v1).offset(0x8L).getSigned());
+    _800c6718.offset(0x20L).setu(MEMORY.ref(2, v1).offset(0xaL).getSigned());
+    _800c6718.offset(0x24L).setu(MEMORY.ref(2, v1).offset(0xcL).getSigned());
+    _800c6718.offset(0x28L).setu(MEMORY.ref(2, v1).offset(0xeL).get());
 
-    FUN_80017fe4(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "FUN_80109164", long.class, long.class, long.class), 0, 0);
+    decompress(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "btldBpeDecompressed", long.class, long.class, long.class), 0, 0);
     loadDrgnBinFile(1, 401, 0, getMethodAddress(SBtld.class, "FUN_80109170", long.class, long.class, long.class), 0, 0x2L);
   }
 
   @Method(0x80109164L)
-  public static void FUN_80109164(final long address, final long fileSize, final long param) {
+  public static void btldBpeDecompressed(final long address, final long fileSize, final long param) {
     script_800c66fc.setPointer(address);
+    script_800c66fc_length = (int)fileSize;
   }
 
   @Method(0x80109170L)
   public static void FUN_80109170(final long address, final long fileSize, final long param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
     scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, 0, 0));
-    loadScriptFile(scriptIndex_800c674c.get(), script_800c670c.deref());
+    loadScriptFile(scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
 
     final long v1;
     if((FUN_800133ac() & 0x8000L) == 0) {
@@ -307,8 +310,8 @@ public class SBtld {
       final BtldScriptData27c data = state.innerStruct_00.deref();
       data._00.set(0x4a42_4f42L);
       data._272.set((short)s2);
-      data._274.set((int)_800c66d0.get());
-      data._276.set((int)_800c6768.get());
+      data._274.set((short)_800c66d0.get());
+      data._276.set((short)_800c6768.get());
       data._144.set(getBattleStruct1a8(s4));
       data._26c.set((short)s4);
       data._174.set((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
@@ -348,8 +351,12 @@ public class SBtld {
 
   @Method(0x8010989cL)
   public static void FUN_8010989c(final long address, final long fileSize, final long index) {
-    getBattleStruct1a8((int)index)._10.set(address);
-    _800c66d8.offset(_800c6698.get() * 0x4L).setu(address);
+    final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
+
+    getBattleStruct1a8((int)index).script_10.set(script);
+    _8005e398_SCRIPT_SIZES.remove((int)index);
+    _8005e398_SCRIPT_SIZES.put((int)index, new Tuple<>("S_BTLD Script %d".formatted(index), (int)fileSize));
+    _800c66d8.offset(_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
     _800c6698.addu(0x1L);
     FUN_80012bb4();
   }

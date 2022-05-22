@@ -2,20 +2,20 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.Pointer;
 
 /** 0x18cb0 bytes */
 public class BattleStruct implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedIntRef _638; //TODO pointer
-  public final UnsignedIntRef _63c; //TODO pointer
+  /** This reference is only valid while it's loading */
+  public final Pointer<MrgFile> stageMrg_638;
+  public final Pointer<MrgFile> stageTmdMrg_63c;
 
   public final BattleRenderStruct render_963c;
   //TODO don't know where this struct ends
 
-  //TODO 0x2c-bytes long
-  public final Value _9cb0;
+  public final McqHeader stageMcq_9cb0;
   public final Value _9cdc;
   public final Value _9ce0;
   public final Value _9ce4;
@@ -27,12 +27,12 @@ public class BattleStruct implements MemoryRef {
   public BattleStruct(final Value ref) {
     this.ref = ref;
 
-    this._638 = ref.offset(4, 0x638L).cast(UnsignedIntRef::new);
-    this._63c = ref.offset(4, 0x63cL).cast(UnsignedIntRef::new);
+    this.stageMrg_638 = ref.offset(4, 0x638L).cast(Pointer.deferred(4, MrgFile::new));
+    this.stageTmdMrg_63c = ref.offset(4, 0x63cL).cast(Pointer.deferred(4, MrgFile::new));
 
     this.render_963c = ref.offset(4, 0x963cL).cast(BattleRenderStruct::new);
 
-    this._9cb0 = ref.offset(4, 0x9cb0L);
+    this.stageMcq_9cb0 = ref.offset(4, 0x9cb0L).cast(McqHeader::new);
     this._9cdc = ref.offset(4, 0x9cdcL);
     this._9ce0 = ref.offset(4, 0x9ce0L);
     this._9ce4 = ref.offset(4, 0x9ce4L);

@@ -232,7 +232,7 @@ import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -847,7 +847,7 @@ public final class SMap {
     GsInitCoordinate2(param_1.coord2_14, bigStruct_800bda10.coord2_14);
 
     bigStruct_800bda10.coord2_14.coord.transfer.set(param_1.vector_118);
-    bigStruct_800bda10.us_a0.set(param_1.us_a0.get() + 0x10);
+    bigStruct_800bda10.us_a0.set((short)(param_1.us_a0.get() + 0x10));
 
     bigStruct_800bda10.scaleVector_fc.setX(param_1.vector_10c.x.get() >> 6);
     bigStruct_800bda10.scaleVector_fc.setY(param_1.vector_10c.y.get() >> 6);
@@ -3361,7 +3361,7 @@ public final class SMap {
 
   @Method(0x800dfca0L)
   public static long FUN_800dfca0(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_a0.set((int)a0.params_20.get(1).deref().get());
+    scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_a0.set((short)a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -3762,11 +3762,11 @@ public final class SMap {
     GsInitCoordinate2(null, struct.coord2_14);
     FUN_80021ca0(struct.ObjTable_0c, struct.tmd_8c.deref(), struct.coord2_14, struct.count_c8.get(), (short)(struct.tmdNobj_ca.get() + 1));
 
+    struct.us_a0.set((short)0);
     struct.ub_a2.set(0);
     struct.ub_a3.set(0);
     struct.ui_f4.set(0);
     struct.ui_f8.set(0);
-    struct.us_a0.set(0);
 
     FUN_80021584(struct, tmdAnimFile);
 
@@ -4119,7 +4119,7 @@ public final class SMap {
 
         final long scriptStateIndex = allocateScriptState(0, 0, false, 0, 0);
         _800c6740.setu(scriptStateIndex);
-        loadScriptFile(scriptStateIndex, mrg1Addr_800c68d8.deref().getFile(0, ScriptFile::new));
+        loadScriptFile(scriptStateIndex, mrg1Addr_800c68d8.deref().getFile(0, ScriptFile::new), "SMAP MRG1 File 0", (int)mrg1Addr_800c68d8.deref().entries.get(0).size.get());
 
         //LAB_800e1a38
         for(int i = 0; i < scriptCount_800c6730.get(); i++) {
@@ -4162,7 +4162,7 @@ public final class SMap {
           setCallback04(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
           setCallback08(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
           setCallback0c(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
-          loadScriptFile(index2, mrg1Addr_800c68d8.deref().getFile(i + 1, ScriptFile::new));
+          loadScriptFile(index2, mrg1Addr_800c68d8.deref().getFile(i + 1, ScriptFile::new), "SMAP MRG1 File %d".formatted(i + 1), (int)mrg1Addr_800c68d8.deref().entries.get(i + 1).size.get());
 
           final BigStruct struct = scriptStatePtrArr_800bc1c0.get((int)index2).deref().innerStruct_00.derefAs(BigStruct.class);
           struct.ub_9d.set((int)_800c6a50.offset(1, i * 0x4L).get());
@@ -5580,7 +5580,7 @@ public final class SMap {
 
     if(encounterAccumulator_800c6ae8.get() > 0x1400L) {
       // Start combat
-      submapScene_800bb0f8.setu(_800f74c4.offset(2, encounterData_800f64c4.get((int)submapCut_80052c30.get()).scene_00.get() * 0x8L).offset(FUN_800e49a4() * 0x2L).getSigned());
+      encounterId_800bb0f8.setu(_800f74c4.offset(2, encounterData_800f64c4.get((int)submapCut_80052c30.get()).scene_00.get() * 0x8L).offset(FUN_800e49a4() * 0x2L).getSigned());
       submapStage_800bb0f4.setu(encounterData_800f64c4.get((int)submapCut_80052c30.get()).stage_03.get());
       return 0x1L;
     }
@@ -5959,7 +5959,7 @@ public final class SMap {
 
     final long scene;
     if(newScene == 0) {
-      scene = submapScene_800bb0f8.get();
+      scene = encounterId_800bb0f8.get();
     } else {
       if(newScene > 0x1ff) {
         _800bc0b8.setu(0x1L);
@@ -5970,7 +5970,7 @@ public final class SMap {
       scene = newScene;
     }
 
-    submapScene_800bb0f8.setu(scene);
+    encounterId_800bb0f8.setu(scene);
 
     if(isScriptLoaded(0)) {
       final BigStruct struct = scriptStatePtrArr_800bc1c0.get((int)scriptStateIndices_800c6880.get(0).get()).deref().innerStruct_00.derefAs(BigStruct.class);

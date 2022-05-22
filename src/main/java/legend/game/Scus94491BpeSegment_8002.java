@@ -75,6 +75,7 @@ import static legend.core.kernel.Kernel.EvSpTIMOUT;
 import static legend.core.kernel.Kernel.HwCARD;
 import static legend.core.kernel.Kernel.SwCARD;
 import static legend.game.Bttl.FUN_800ec0b0;
+import static legend.game.Bttl.FUN_800ec974;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
@@ -473,7 +474,7 @@ public final class Scus94491BpeSegment_8002 {
       } else if(command == 0x3000_0000L || command == 0x3200_0000L) {
         FUN_80021048(primitives, MEMORY.ref(2, primitives).get());
         count -= primitiveCount;
-        primitives += primitiveCount * 0xcL;
+        primitives += primitiveCount * 0x14L;
       }
 
       //LAB_800206f8
@@ -485,6 +486,8 @@ public final class Scus94491BpeSegment_8002 {
   /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, TmdAnimationFile)} */
   @Method(0x80020718L)
   public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+    LOGGER.info("Loading scripted TMD %08x (animation %08x)", extendedTmd.getAddress(), tmdAnimFile.getAddress());
+
     final int transferX = bigStruct.coord2_14.coord.transfer.getX();
     final int transferY = bigStruct.coord2_14.coord.transfer.getY();
     final int transferZ = bigStruct.coord2_14.coord.transfer.getZ();
@@ -508,7 +511,7 @@ public final class Scus94491BpeSegment_8002 {
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_80020818
-      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress());
+      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress()); //TODO
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
@@ -533,7 +536,7 @@ public final class Scus94491BpeSegment_8002 {
     GsInitCoordinate2(null, bigStruct.coord2_14);
     FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
 
-    bigStruct.us_a0.set(0);
+    bigStruct.us_a0.set((short)0);
     bigStruct.ub_a2.set(0);
     bigStruct.ub_a3.set(0);
     bigStruct.ui_f4.set(0);
@@ -546,24 +549,21 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.coord2_14.coord.transfer.setZ(transferZ);
 
     int s1 = 0;
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x8L) {
-      //LAB_80020940
-      if(mainCallbackIndex_8004dd20.get() == 0x5L) {
-        //LAB_80020958
-        for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-          FUN_800d9e64(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
-        }
+    //LAB_80020940
+    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+      //LAB_80020958
+      for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
+        FUN_800d9e64(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
       }
 
       //LAB_80020978
-      if(mainCallbackIndex_8004dd20.get() == 0x8L) {
-        //LAB_80020990
-        for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-          FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
-        }
-
-        //LAB_800209ac
+    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+      //LAB_80020990
+      for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
+        FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
       }
+
+      //LAB_800209ac
     } else {
       //LAB_8002091c
       for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
@@ -951,7 +951,7 @@ public final class Scus94491BpeSegment_8002 {
       FUN_800daa3c(a0);
     } else if(mainCallbackIndex_8004dd20.get() == 0x6L) {
       //LAB_80021220
-      NotYetLoaded.FUN_800ec974();
+      FUN_800ec974(a0);
     } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_8002120c
       //LAB_80021240
@@ -1100,7 +1100,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021918L)
   public static void FUN_80021918(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long maxSize, final long a4) {
-    final long s2 = (short)a4 >> 8 & 0xffL;
+    final long s2 = (short)a4 >> 8;
     final long dobj2Id = a4 & 0xffL;
 
     GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
@@ -1279,24 +1279,24 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021ca0L)
   public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long count, final long a4) {
-    long s1 = 0x801_0000L;
+    long s1 = 0x801L;
 
     //LAB_80021d08
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, tmd, coord2, count, s1 / 0x1_0000L);
-      s1 += 0x1_0000L;
+      FUN_80021918(table, tmd, coord2, count, s1);
+      s1++;
     }
 
     //LAB_80021d3c
-    long s2 = 0x101_0000L;
-    s1 = 0x201_0000L;
+    long s2 = 0x101L;
+    s1 = 0x201L;
 
     //LAB_80021d64
     for(int s0 = 1; s0 < a4; s0++) {
-      FUN_80021918(table, tmd, coord2, count, s1 / 0x1_0000L);
-      FUN_80021918(table, tmd, coord2, count, s2 / 0x1_0000L);
-      s2 += 0x1_0000L;
-      s1 += 0x1_0000L;
+      FUN_80021918(table, tmd, coord2, count, s1);
+      FUN_80021918(table, tmd, coord2, count, s2);
+      s1++;
+      s2++;
     }
 
     //LAB_80021db4

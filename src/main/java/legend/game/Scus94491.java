@@ -201,6 +201,9 @@ public final class Scus94491 {
       archiveOffset += 4;
     }
 
+    //TODO not 100% sure this is the actual archive size
+    LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
+
     return totalSize;
   }
 

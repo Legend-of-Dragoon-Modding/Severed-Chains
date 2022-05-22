@@ -144,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
@@ -8585,7 +8585,7 @@ public class WMap {
     }
 
     //LAB_800e04fc
-    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().us_a0.set(0x4e);
+    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().us_a0.set((short)0x4e);
     FUN_800211d8(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
     GsSetAmbient(_800c66b0.deref().svec_14c.getX(), _800c66b0.deref().svec_14c.getY(), _800c66b0.deref().svec_14c.getZ());
     FUN_800e06d0();
@@ -9414,25 +9414,25 @@ public class WMap {
       final long sp10 = _800f224d.offset(_800c67aa.get() * 0x8L).get();
 
       if((byte)sp10 == -0x1L) {
-        submapScene_800bb0f8.setu(0);
+        encounterId_800bb0f8.setu(0);
       } else {
         //LAB_800e38dc
         final long sp14 = FUN_800133ac() % 100;
 
         if((int)sp14 < 0x23L) {
-          submapScene_800bb0f8.setu(_800ef364.offset(sp10 * 0x8L).getSigned());
+          encounterId_800bb0f8.setu(_800ef364.offset(sp10 * 0x8L).getSigned());
         } else {
           //LAB_800e396c
           if((int)sp14 < 0x23L || (int)sp14 >= 0x46L) {
             //LAB_800e39c0
             if((int)sp14 < 0x46L || (int)sp14 >= 0x5aL) {
               //LAB_800e3a14
-              submapScene_800bb0f8.setu(_800ef36a.offset(sp10 * 0x8L).getSigned());
+              encounterId_800bb0f8.setu(_800ef36a.offset(sp10 * 0x8L).getSigned());
             } else {
-              submapScene_800bb0f8.setu(_800ef368.offset(sp10 * 0x8L).getSigned());
+              encounterId_800bb0f8.setu(_800ef368.offset(sp10 * 0x8L).getSigned());
             }
           } else {
-            submapScene_800bb0f8.setu(_800ef366.offset(sp10 * 0x8L).getSigned());
+            encounterId_800bb0f8.setu(_800ef366.offset(sp10 * 0x8L).getSigned());
           }
         }
       }

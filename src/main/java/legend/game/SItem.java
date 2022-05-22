@@ -22,6 +22,7 @@ import legend.game.types.MemcardStruct28;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
+import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.ScriptState;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
-import static legend.game.Scus94491BpeSegment.FUN_80017fe4;
+import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
@@ -156,7 +157,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class SItem {
@@ -188,7 +189,8 @@ public final class SItem {
 
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
-  public static final Value _80111d68 = MEMORY.ref(1, 0x80111d68L);
+  /** Contains data for every combination of party members (like a DRGN0 file index that contains the textures and models of each char */
+  public static final Value partyPermutations_80111d68 = MEMORY.ref(1, 0x80111d68L);
 
   public static final Value _80111ff0 = MEMORY.ref(1, 0x80111ff0L);
 
@@ -557,8 +559,8 @@ public final class SItem {
   }
 
   @Method(0x800fbfe0L)
-  public static void FUN_800fbfe0(final long a0) {
-    FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "FUN_800fc3c0", long.class), submapScene_800bb0f8.get() + 0xa41L);
+  public static void loadEncounterAssets(final long param) {
+    FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "loadEnemyTextures", long.class), 2625 + encounterId_800bb0f8.get());
 
     //LAB_800fc030
     for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
@@ -572,8 +574,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < _800c677c.get(); i++) {
-      final long v0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
-      _8005e398.get((int)MEMORY.ref(2, v0).offset(0x26cL).getSigned())._19e.or(0x2a);
+      _8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._26c.get())._19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -581,15 +582,15 @@ public final class SItem {
     final long s2;
     if(v1 == 1) {
       //LAB_800fc140
-      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).getAddress();
+      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).getAddress();
     } else if(v1 == 2) {
       //LAB_800fc164
-      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(1).get() * 0x8L).getAddress();
+      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(1).get() * 0x8L).getAddress();
       //LAB_800fc12c
     } else if(v1 == 3) {
       //LAB_800fc174
       //LAB_800fc180
-      s2 = _80111d68.offset(gameState_800babc8.charIndex_88.get(1).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(2).get() * 0x8L).getAddress();
+      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(1).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(2).get() * 0x8L).getAddress();
     } else {
       throw new RuntimeException("Invalid value " + v1);
     }
@@ -622,7 +623,7 @@ public final class SItem {
           s0 = s0 | ((data._26c.get() & 0x3fL) << 9);
           s0 = s0 & 0xffff_ff7fL;
           s0 = s0 & 0xffff_feffL;
-          FUN_80017fe4(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(v0._19c.get() * 0x4L).get(), getMethodAddress(Bttl.class, "FUN_800c941c", long.class, long.class, long.class), s0, 0);
+          decompress(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(v0._19c.get() * 0x4L).get(), getMethodAddress(Bttl.class, "FUN_800c941c", long.class, long.class, long.class), s0, 0);
           break;
         }
 
@@ -639,12 +640,14 @@ public final class SItem {
   }
 
   @Method(0x800fc3c0L)
-  public static void FUN_800fc3c0(final long fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc404", long.class, long.class, long.class), 0, 0x5L);
+  public static void loadEnemyTextures(final long fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "enemyTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x5L);
   }
 
   @Method(0x800fc404L)
-  public static void FUN_800fc404(final long address, final long fileSize, final long param) {
+  public static void enemyTexturesLoadedCallback(final long address, final long fileSize, final long param) {
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+
     final long s2 = _1f8003f4.getPointer(); //TODO
 
     //LAB_800fc434
@@ -655,9 +658,9 @@ public final class SItem {
         final long a2 = a0._1a2.get() & 0x1ffL;
 
         //LAB_800fc464
-        for(int a1 = 0; a1 < 3; a1++) {
-          if((MEMORY.ref(2, s2).offset(a1 * 0x2L).get() & 0x1ffL) == a2 && MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0xcL).get() != 0) {
-            FUN_800ca75c(i, address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get());
+        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
+          if((MEMORY.ref(2, s2).offset(enemySlot * 0x2L).get() & 0x1ffL) == a2 && mrg.entries.get(enemySlot).size.get() != 0) {
+            FUN_800ca75c(i, mrg.getFile(enemySlot));
             break;
           }
 

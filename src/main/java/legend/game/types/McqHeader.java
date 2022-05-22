@@ -8,8 +8,12 @@ import legend.core.memory.types.UnsignedShortRef;
 
 /** 0x2c bytes */
 public class McqHeader implements MemoryRef {
+  public static final long MAGIC_1 = 0x151_434dL;
+  public static final long MAGIC_2 = 0x251_434dL;
+
   private final Value ref;
 
+  public final UnsignedIntRef magic_00;
   public final UnsignedIntRef imageDataOffset_04;
   public final ShortRef width_08;
   public final ShortRef height_0a;
@@ -23,6 +27,7 @@ public class McqHeader implements MemoryRef {
   public McqHeader(final Value ref) {
     this.ref = ref;
 
+    this.magic_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this.imageDataOffset_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this.width_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this.height_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
@@ -32,6 +37,10 @@ public class McqHeader implements MemoryRef {
     this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
+  }
+
+  public long getImageDataAddress() {
+    return this.getAddress() + this.imageDataOffset_04.get();
   }
 
   @Override

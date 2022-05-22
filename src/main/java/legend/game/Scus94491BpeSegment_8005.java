@@ -1,5 +1,8 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import legend.core.Tuple;
 import legend.core.cdrom.CdlCOMMAND;
 import legend.core.cdrom.CdlLOC;
 import legend.core.cdrom.SyncCode;
@@ -381,6 +384,9 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
 
   public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
+
+  //TODO hack to record script names/sizes
+  public static Int2ObjectMap<Tuple<String, Integer>> _8005e398_SCRIPT_SIZES = new Int2ObjectOpenHashMap<>();
 
   public static final ArrayRef<BattleStruct1a8> _8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(BattleStruct1a8.class, 10, 0x1a8, BattleStruct1a8::new));
 

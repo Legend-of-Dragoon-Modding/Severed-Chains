@@ -58,6 +58,14 @@ public class ScriptDebugger {
     LOGGER.info("Debugger listening on port %d", port);
   }
 
+  public void addScript(final int index, final String name, final int length) {
+    //TODO use this info for what scripts are loaded
+  }
+
+  public void removeScript(final int index) {
+    //TODO use this info for what scripts are loaded
+  }
+
   private void acceptConnection(final AsynchronousSocketChannel channel) {
     try {
       LOGGER.info("Accepting connection from %s", channel.getRemoteAddress());

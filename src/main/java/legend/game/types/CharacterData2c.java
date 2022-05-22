@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -21,7 +22,7 @@ public class CharacterData2c implements MemoryRef {
   public final UnsignedByteRef dlevel_13;
   public final ArrayRef<UnsignedByteRef> equipment_14;
 
-  public final UnsignedByteRef selectedAddition_19;
+  public final ByteRef selectedAddition_19;
   public final ArrayRef<UnsignedByteRef> additionLevels_1a;
   public final ArrayRef<UnsignedByteRef> additionXp_22;
 
@@ -39,7 +40,7 @@ public class CharacterData2c implements MemoryRef {
     this.dlevel_13 = ref.offset(1, 0x13L).cast(UnsignedByteRef::new);
     this.equipment_14 = ref.offset(1, 0x14L).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
-    this.selectedAddition_19 = ref.offset(1, 0x19L).cast(UnsignedByteRef::new);
+    this.selectedAddition_19 = ref.offset(1, 0x19L).cast(ByteRef::new);
     this.additionLevels_1a = ref.offset(1, 0x1aL).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
     this.additionXp_22 = ref.offset(1, 0x22L).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
   }

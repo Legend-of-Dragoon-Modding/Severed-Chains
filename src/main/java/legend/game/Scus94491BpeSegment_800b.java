@@ -62,7 +62,7 @@ public final class Scus94491BpeSegment_800b {
   // End of game state 800bb0f4
 
   public static final Value submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
-  public static final Value submapScene_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
+  public static final Value encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);

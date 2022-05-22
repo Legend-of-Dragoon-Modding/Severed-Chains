@@ -25,6 +25,7 @@ import legend.game.types.BattleStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.McqHeader;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
@@ -55,7 +56,6 @@ import static legend.game.SBtld._80109a98;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SMap.FUN_800edb8c;
 import static legend.game.SMap.mrg10Addr_800c6710;
-import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
@@ -266,7 +266,7 @@ import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.sssqChannelIndex_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
-import static legend.game.Scus94491BpeSegment_800b.submapScene_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.transferIndex_800bb494;
@@ -1728,7 +1728,7 @@ public final class Scus94491BpeSegment {
     if(v1 == 0) { // Decompress to file transfer dest
       //LAB_800148ec
       transferDest = file.transferDest.get();
-      fileSize_800bb464.setu(decompress(transferDest_800bb460.get(), transferDest));
+      fileSize_800bb464.setu(Scus94491.decompress(transferDest_800bb460.get(), transferDest));
       removeFromLinkedList(transferDest_800bb460.get());
     } else {
       //LAB_8001491c
@@ -1738,7 +1738,7 @@ public final class Scus94491BpeSegment {
         throw new RuntimeException("Illegal transfer destination 0x" + Long.toHexString(transferDest));
       }
 
-      fileSize_800bb464.setu(decompress(transferDest_800bb460.get(), transferDest));
+      fileSize_800bb464.setu(Scus94491.decompress(transferDest_800bb460.get(), transferDest));
 
       final long address = FUN_80012444(transferDest, fileSize_800bb464.get());
 
@@ -2469,12 +2469,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b98L)
-  public static void loadScriptFile(final long index, @Nullable final ScriptFile script) {
-    loadScriptFile(index, script, 0);
+  public static void loadScriptFile(final long index, @Nullable final ScriptFile script, final String friendlyName, final int length) {
+    loadScriptFile(index, script, 0, friendlyName, length);
   }
 
   @Method(0x80015bb8L)
-  public static void loadScriptFile(final long index, @Nullable final ScriptFile script, final long offsetIndex) {
+  public static void loadScriptFile(final long index, @Nullable final ScriptFile script, final long offsetIndex, final String friendlyName, final int length) {
     final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get((int)index).deref();
 
     if(script != null) {
@@ -2483,8 +2483,16 @@ public final class Scus94491BpeSegment {
       struct.scriptPtr_14.set(script);
       struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
+
+      if(scriptDebugger != null) {
+        scriptDebugger.addScript((int)index, friendlyName, length);
+      }
     } else {
       LOGGER.info("Clearing script index %d", index);
+
+      if(scriptDebugger != null) {
+        scriptDebugger.removeScript((int)index);
+      }
 
       struct.scriptPtr_14.clear();
       struct.commandPtr_18.clear();
@@ -2583,10 +2591,7 @@ public final class Scus94491BpeSegment {
             RunningScript_800bc070.commandPtr_0c.incr();
             final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
 
-            if(operation == 0) {
-              //LAB_80016574
-              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref()).decr();
-            } else if(operation == 0x1L) {
+            if(operation == 0x1L) {
               //LAB_800161f4
               RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref());
               RunningScript_800bc070.commandPtr_0c.incr();
@@ -2693,8 +2698,9 @@ public final class Scus94491BpeSegment {
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
               RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
-            } else {
-              assert false : "Unknown op";
+            } else { // Treated as an immediate if not a valid op
+              //LAB_80016574
+              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref()).decr();
             }
 
             //LAB_80016584
@@ -3470,60 +3476,63 @@ public final class Scus94491BpeSegment {
     // empty
   }
 
+  /**
+   * Flags:
+   * bit 1: deallocate archive after decompression
+   * bit 3: allocate on head instead of tail
+   */
   @Method(0x80017fe4L)
-  public static long FUN_80017fe4(final long archiveAddress, final long destinationAddress, final long callback, final long callbackParam, final long a4) {
-    final long s0;
+  public static long decompress(final long archiveAddress, final long destinationAddress, final long callback, final long callbackParam, final long flags) {
+    final long address;
     if(destinationAddress == 0) {
-      if((a4 & 0x4L) != 0) {
-        s0 = addToLinkedListHead(MEMORY.ref(4, archiveAddress).get());
+      if((flags & 0x4L) != 0) {
+        address = addToLinkedListHead(MEMORY.ref(4, archiveAddress).get());
       } else {
         //LAB_8001803c
-        s0 = addToLinkedListTail(MEMORY.ref(4, archiveAddress).get());
+        address = addToLinkedListTail(MEMORY.ref(4, archiveAddress).get());
       }
 
       //LAB_8001804c
-      if(s0 == 0) {
+      if(address == 0) {
         return -0x1L;
       }
     } else {
-      s0 = destinationAddress;
+      address = destinationAddress;
     }
 
     //LAB_8001805c
     //LAB_80018060
-    final long size = decompress(archiveAddress, s0);
+    final long size = Scus94491.decompress(archiveAddress, address);
 
-    if((a4 & 0x1L) != 0) {
+    if((flags & 0x1L) != 0) {
       removeFromLinkedList(archiveAddress);
     }
 
     //LAB_80018088
-    MEMORY.ref(4, callback).call(s0, size, callbackParam);
+    MEMORY.ref(4, callback).call(address, size, callbackParam);
 
     //LAB_8001809c
     return 0;
   }
 
   @Method(0x800180c0L)
-  public static long FUN_800180c0(final long a0, final long x, final long y) {
+  public static long loadMcq(final McqHeader mcq, final long x, final long y) {
     if((x & 0x3fL) != 0 || (y & 0xffL) != 0) {
       //LAB_800180e0
-      return 0x1L;
+      throw new RuntimeException("Invalid MCQ");
     }
 
     //LAB_800180e8
-    long v1 = MEMORY.ref(4, a0).offset(0x0L).get();
-    if(v1 != 0x151_434dL && v1 != 0x251_434dL) {
-      return 0x1L;
+    if(mcq.magic_00.get() != McqHeader.MAGIC_1 && mcq.magic_00.get() != McqHeader.MAGIC_2) {
+      throw new RuntimeException("Invalid MCQ");
     }
 
     //LAB_80018104
-    v1 = MEMORY.ref(2, a0).offset(0xaL).get();
-    if(v1 != 0x100L) {
-      return 0x1L;
+    if(mcq.height_0a.get() != 256) {
+      throw new RuntimeException("Invalid MCQ");
     }
 
-    LoadImage(new RECT((short)x, (short)y, (short)MEMORY.ref(2, a0).offset(0x8L).get(), (short)v1), a0 + MEMORY.ref(4, a0).offset(0x4L).get());
+    LoadImage(new RECT((short)x, (short)y, mcq.width_08.get(), mcq.height_0a.get()), mcq.getImageDataAddress());
 
     //LAB_8001813c
     return 0;
@@ -4056,7 +4065,7 @@ public final class Scus94491BpeSegment {
           _800bc980.offset(i * 0xcL).offset(4, 0x8L).setu(_8004f6a4.offset(_800bc980.offset(i * 0xcL).offset(1, 0x1L).get() * 0x4L));
         }
 
-        if(_800bd780.get() != 0x1L && submapScene_800bb0f8.get() == 0x1bbL) {
+        if(_800bd780.get() != 0x1L && encounterId_800bb0f8.get() == 0x1bbL) {
           //LAB_80019978
           soundMrgSshdPtr_800bd784.set(MEMORY.ref(4, addToLinkedListTail(0x650L), SshdFile::new));
           soundMrgSssqPtr_800bd788.set(MEMORY.ref(4, addToLinkedListTail(0x5c30L), SssqFile::new));
@@ -4525,6 +4534,12 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001b1a8(final long a0) {
     FUN_8004c8dc((int)sssqChannelIndex_800bd0f8.get(), (short)a0);
     _800bd108.setu(a0);
+  }
+
+  @Method(0x8001b1ecL)
+  public static long FUN_8001b1ec(final RunningScript a0) {
+    a0.params_20.get(0).deref().set(_800bd108.getSigned() & 0xffffL);
+    return 0;
   }
 
   /**
@@ -5472,7 +5487,7 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001d1c4() {
     loadedDrgnFiles_800bcf78.oru(0x10L);
 
-    final long v1 = submapScene_800bb0f8.get();
+    final long v1 = encounterId_800bb0f8.get();
     final long a1;
     if(v1 == 0x186L) {
       //LAB_8001d21c
@@ -5486,7 +5501,7 @@ public final class Scus94491BpeSegment {
       a1 = 0x50cL;
     } else {
       //LAB_8001d298
-      a1 = submapScene_800bb0f8.get() + 0x30aL;
+      a1 = encounterId_800bb0f8.get() + 0x30aL;
     }
 
     //LAB_8001d2c0
@@ -5635,7 +5650,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001d9d0L)
   public static void FUN_8001d9d0() {
-    final long struct = _80109a98.offset(submapScene_800bb0f8.get() * 0x10L).getAddress();
+    final long struct = _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).getAddress();
 
     if(MEMORY.ref(1, struct).offset(0x1L).get() != 0xffL) {
       loadedDrgnFiles_800bcf78.oru(0x80L);
@@ -5669,7 +5684,7 @@ public final class Scus94491BpeSegment {
     final MrgFile soundMrg = MEMORY.ref(4, addressPtr, MrgFile::new);
     soundMrgPtr_800bd76c.set(soundMrg);
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && submapScene_800bb0f8.get() == 0x1bbL) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && encounterId_800bb0f8.get() == 0x1bbL) {
       //LAB_8001db1c
       memcpy(soundMrgSshdPtr_800bd784.getPointer(), soundMrg.getFile(3), (int)soundMrg.entries.get(3).size.get());
       memcpy(soundMrgSssqPtr_800bd788.getPointer(), soundMrg.getFile(2), (int)soundMrg.entries.get(2).size.get());
@@ -5751,10 +5766,10 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    if(_80109a98.offset(submapScene_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() != 0xffL) {
+    if(_80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() != 0xffL) {
       FUN_800201c8(0x6L);
 
-      final long v1 = _8005019c.offset(_80109a98.offset(submapScene_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() & 0x1fL).offset(1, 0x0L).get();
+      final long v1 = _8005019c.offset(_80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() & 0x1fL).offset(1, 0x0L).get();
       if(v1 == 0xcL) {
         FUN_8001fcf4(696);
       } else if(v1 == 0xdL) {
