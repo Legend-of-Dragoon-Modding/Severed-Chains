@@ -5169,7 +5169,13 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003b630L)
   public static void FUN_8003b630(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x64);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x64L);
+  }
+
+  @Method(0x8003b690L)
+  public static void FUN_8003b690(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x50L);
   }
 
   @Method(0x8003b750L)
