@@ -21,8 +21,14 @@ public class BttlScriptData6c implements MemoryRef {
   public final UnsignedIntRef _14;
   public final UnsignedIntRef _18;
 
+  public final UnsignedIntRef _44; //TODO ptr
   public final Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>> _48;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>> _4c;
 
+  public final ShortRef _50;
+  public final ShortRef _52;
+  public final ShortRef _54;
+  public final ShortRef _56;
   public final Pointer<BttlScriptData6c> _58;
 
   public BttlScriptData6c(final Value ref) {
@@ -37,8 +43,14 @@ public class BttlScriptData6c implements MemoryRef {
     this._14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
     this._18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
 
+    this._44 = ref.offset(4, 0x44L).cast(UnsignedIntRef::new);
     this._48 = ref.offset(4, 0x48L).cast(Pointer.deferred(4, TriConsumerRef::new));
+    this._4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TriConsumerRef::new));
 
+    this._50 = ref.offset(2, 0x50L).cast(ShortRef::new);
+    this._52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+    this._54 = ref.offset(2, 0x54L).cast(ShortRef::new);
+    this._56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this._58 = ref.offset(4, 0x58L).cast(Pointer.deferred(4, BttlScriptData6c::new));
   }
 

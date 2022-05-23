@@ -6261,6 +6261,12 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004d2d4
   }
 
+  @Method(0x8004d2fcL)
+  public static long FUN_8004d2fc(final int channelIndex, final long a1, final long a2) {
+    assert false;
+    return 0;
+  }
+
   @Method(0x8004d41cL)
   public static long FUN_8004d41c(final int channelIndex, final long a1, final long a2) {
     assert (short)channelIndex >= 0;

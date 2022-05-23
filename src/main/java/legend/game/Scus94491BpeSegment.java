@@ -97,6 +97,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004c8dc;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cb0c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cf8c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
+import static legend.game.Scus94491BpeSegment_8004.FUN_8004d2fc;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d41c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d52c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d648;
@@ -2342,7 +2343,9 @@ public final class Scus94491BpeSegment {
   /**
    * @return index, or -1 on failure to allocate memory
    */
-  public static <T extends MemoryRef> long allocateScriptState(final long index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4, final Function<Value, T> type) {
+  public static <T extends MemoryRef> long allocateScriptState(final long index, final long innerStructSize, final boolean allocateOnHead, final long a3, final long a4, final Function<Value, T> type) {
+    LOGGER.info("Allocating script index %d (0x%x bytes)", index, innerStructSize);
+
     final long linkedListAddress;
     if(allocateOnHead) {
       linkedListAddress = addToLinkedListHead(innerStructSize + 0x100L);
@@ -2502,10 +2505,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015c20L)
   public static void FUN_80015c20(final long a0) {
-    final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BigStruct.class));
-    final BigStruct struct = scriptState.innerStruct_00.derefNullableAs(BigStruct.class);
+    final ScriptState<MemoryRef> scriptState = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(MemoryRef.class));
     if((scriptState.ui_60.get() & 0x810_0000L) == 0) {
-      scriptState.callback_0c.deref().run((int)a0, scriptState, struct);
+      scriptState.callback_0c.deref().run((int)a0, scriptState, scriptState.innerStruct_00.derefNullableAs(MemoryRef.class));
     }
 
     //LAB_80015c70
@@ -3162,6 +3164,13 @@ public final class Scus94491BpeSegment {
     final long v1 = a0.params_20.get(1).getPointer();
     a0.commandPtr_0c.set(MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20.get(0).deref().get() * 0x4L).getSigned() * 0x4L, UnsignedIntRef::new));
     return 0;
+  }
+
+  @Method(0x80017160L)
+  public static long FUN_80017160(final RunningScript a0) {
+    FUN_80015c9c(a0.params_20.get(0).deref().get());
+    FUN_80015c20(a0.params_20.get(0).deref().get());
+    return a0.params_20.get(0).deref().get() == a0.scriptStateIndex_00.get() ? 2 : 0;
   }
 
   @Method(0x800172f4L)
@@ -4539,6 +4548,18 @@ public final class Scus94491BpeSegment {
   @Method(0x8001b1ecL)
   public static long FUN_8001b1ec(final RunningScript a0) {
     a0.params_20.get(0).deref().set(_800bd108.getSigned() & 0xffffL);
+    return 0;
+  }
+
+  @Method(0x8001b2acL)
+  public static long FUN_8001b2ac(final RunningScript a0) {
+    //TODO GH#3
+    if(true) {
+      return 0;
+    }
+
+    FUN_8004d2fc((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
+    _800bd0f0.offset(2, 0x18L).setu(a0.params_20.get(1).deref().get());
     return 0;
   }
 
