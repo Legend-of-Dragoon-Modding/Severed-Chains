@@ -314,9 +314,9 @@ public class SBtld {
       data._276.set((short)_800c6768.get());
       data._144.set(getBattleStruct1a8(s4));
       data._26c.set((short)s4);
-      data._174.set((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
-      data._178.set((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
-      data._17c.set((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
+      data._148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
+      data._148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
+      data._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
       data._1bc.set(0);
       data._1be.set(0xc01);
       data._1c0.set(0);

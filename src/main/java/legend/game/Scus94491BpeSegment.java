@@ -1250,6 +1250,19 @@ public final class Scus94491BpeSegment {
     return _8004dd44.get() / 0x2L & 0xffffL;
   }
 
+  @Method(0x80013404L)
+  public static long FUN_80013404(final long a0, final long a1, final long a2) {
+    long v0;
+    long v1;
+    v1 = ((long)(int)a0 * (int)a2) & 0xffff_ffffL;
+    v0 = 0x1L - a2;
+    v1 = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+    v0 = v1 + a1 * 0x2L;
+    v0 = (int)v0 / (int)a2;
+    v0 = (int)v0 >> 1;
+    return v0;
+  }
+
   @Method(0x80013434L)
   public static void FUN_80013434(final long a0, final long a1, final long a2, final long a3) {
     long s4 = 0;

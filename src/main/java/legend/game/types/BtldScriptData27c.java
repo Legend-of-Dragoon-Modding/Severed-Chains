@@ -1,8 +1,8 @@
 package legend.game.types;
 
+import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -19,16 +19,18 @@ public class BtldScriptData27c implements MemoryRef {
   public final ShortRef _0a;
 
   public final UnsignedShortRef _0e;
+  public final UnsignedShortRef _10;
+
+  public final UnsignedShortRef _14;
 
   public final ShortRef _1c;
 
+  public final SVECTOR _78;
+
   public final Pointer<BattleStruct1a8> _144;
-  public final Value _148; //TODO
+  public final BigStruct _148;
 
-  public final IntRef _174;
-  public final IntRef _178;
-  public final IntRef _17c;
-
+  //TODO maybe part of previous struct
   public final UnsignedShortRef _1bc;
   public final UnsignedShortRef _1be;
   public final UnsignedShortRef _1c0;
@@ -61,15 +63,16 @@ public class BtldScriptData27c implements MemoryRef {
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
 
     this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
+    this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
+
+    this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
 
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
 
-    this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
-    this._148 = ref.offset(4, 0x148L);
+    this._78 = ref.offset(2, 0x78L).cast(SVECTOR::new);
 
-    this._174 = ref.offset(4, 0x174L).cast(IntRef::new);
-    this._178 = ref.offset(4, 0x178L).cast(IntRef::new);
-    this._17c = ref.offset(4, 0x17cL).cast(IntRef::new);
+    this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
+    this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
 
     this._1bc = ref.offset(2, 0x1bcL).cast(UnsignedShortRef::new);
     this._1be = ref.offset(2, 0x1beL).cast(UnsignedShortRef::new);

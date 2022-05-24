@@ -13,7 +13,7 @@ public class BattleStruct1a8 implements MemoryRef {
 
   public final Pointer<MrgFile> mrg_00;
   public final UnsignedIntRef _04;
-  public final UnsignedIntRef _08;
+  public final Pointer<ExtendedTmd> tmd_08;
 
   public final Pointer<ScriptFile> script_10;
   public final ArrayRef<BattleStruct1a8_c> _14;
@@ -31,7 +31,7 @@ public class BattleStruct1a8 implements MemoryRef {
 
     this.mrg_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, MrgFile::new));
     this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
+    this.tmd_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, ExtendedTmd::new));
 
     this.script_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, ScriptFile::new));
     this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(BattleStruct1a8_c.class, 32, 0xc, BattleStruct1a8_c::new));
