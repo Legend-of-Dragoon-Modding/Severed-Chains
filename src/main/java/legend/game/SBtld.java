@@ -317,9 +317,7 @@ public class SBtld {
       data._148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
       data._148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
       data._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
-      data._1bc.set(0);
-      data._1be.set(0xc01);
-      data._1c0.set(0);
+      data._148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
       state.ui_60.or(0x4L);
       _800c66d0.addu(0x1L);
       _800c6768.addu(0x1L);

@@ -7083,14 +7083,36 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a55cL)
-  public static void FUN_8002a55c(LodString a0) {
-    assert false;
+  public static long FUN_8002a55c(LodString str) {
+    //LAB_8002a568
+    int i;
+    for(i = 0; str.charAt(i) <= 0x9fffL; i++) {
+      // Empty
+    }
+
+    return i;
   }
 
   @Method(0x8002a59cL)
-  public static long FUN_8002a59c(LodString a0) {
-    assert false;
-    return 0;
+  public static long FUN_8002a59c(final LodString a0) {
+    //LAB_8002a5b4
+    long a3 = 0;
+    int v1;
+    for(v1 = 0; a0.charAt(v1) <= 0x9fffL; v1++) {
+      a3 += switch((int)a0.charAt(v1)) {
+        case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
+        case 0x2, 0x8, 0x3e, 0x4c -> 2;
+        case 0xb, 0xc, 0x42 -> 3;
+        case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 4;
+        case 0x6, 0x27 -> 5;
+        default -> 0;
+      };
+
+      //LAB_8002a618
+      //LAB_8002a624
+    }
+
+    return v1 * 0x8L - (short)a3;
   }
 
   @Method(0x8002a63cL)

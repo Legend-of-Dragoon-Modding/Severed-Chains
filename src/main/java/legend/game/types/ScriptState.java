@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
@@ -56,16 +57,16 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
   public final UnsignedIntRef _c8;
   public final UnsignedIntRef _cc;
-  public final UnsignedIntRef _d0;
-  public final UnsignedIntRef _d4;
-  public final UnsignedIntRef _d8;
-  public final UnsignedIntRef _dc;
-  public final UnsignedIntRef _e0;
-  public final UnsignedIntRef _e4;
-  public final UnsignedIntRef _e8;
-  public final UnsignedIntRef _ec;
-  public final UnsignedIntRef _f0;
-  public final UnsignedIntRef _f4;
+  public final IntRef _d0;
+  public final IntRef _d4;
+  public final IntRef _d8;
+  public final IntRef _dc;
+  public final IntRef _e0;
+  public final IntRef _e4;
+  public final IntRef _e8;
+  public final IntRef _ec;
+  public final IntRef _f0;
+  public final IntRef _f4;
   public final UnsignedIntRef ui_f8;
   public final UnsignedIntRef ui_fc;
 
@@ -84,16 +85,16 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
     this.ui_60 = ref.offset(4, 0x60L).cast(UnsignedIntRef::new);
     this._c8 = ref.offset(4, 0xc8L).cast(UnsignedIntRef::new);
     this._cc = ref.offset(4, 0xccL).cast(UnsignedIntRef::new);
-    this._d0 = ref.offset(4, 0xd0L).cast(UnsignedIntRef::new);
-    this._d4 = ref.offset(4, 0xd4L).cast(UnsignedIntRef::new);
-    this._d8 = ref.offset(4, 0xd8L).cast(UnsignedIntRef::new);
-    this._dc = ref.offset(4, 0xdcL).cast(UnsignedIntRef::new);
-    this._e0 = ref.offset(4, 0xe0L).cast(UnsignedIntRef::new);
-    this._e4 = ref.offset(4, 0xe4L).cast(UnsignedIntRef::new);
-    this._e8 = ref.offset(4, 0xe8L).cast(UnsignedIntRef::new);
-    this._ec = ref.offset(4, 0xecL).cast(UnsignedIntRef::new);
-    this._f0 = ref.offset(4, 0xf0L).cast(UnsignedIntRef::new);
-    this._f4 = ref.offset(4, 0xf4L).cast(UnsignedIntRef::new);
+    this._d0 = ref.offset(4, 0xd0L).cast(IntRef::new);
+    this._d4 = ref.offset(4, 0xd4L).cast(IntRef::new);
+    this._d8 = ref.offset(4, 0xd8L).cast(IntRef::new);
+    this._dc = ref.offset(4, 0xdcL).cast(IntRef::new);
+    this._e0 = ref.offset(4, 0xe0L).cast(IntRef::new);
+    this._e4 = ref.offset(4, 0xe4L).cast(IntRef::new);
+    this._e8 = ref.offset(4, 0xe8L).cast(IntRef::new);
+    this._ec = ref.offset(4, 0xecL).cast(IntRef::new);
+    this._f0 = ref.offset(4, 0xf0L).cast(IntRef::new);
+    this._f4 = ref.offset(4, 0xf4L).cast(IntRef::new);
     this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);
     this.ui_fc = ref.offset(4, 0xfcL).cast(UnsignedIntRef::new);
   }

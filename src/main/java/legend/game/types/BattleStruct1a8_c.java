@@ -6,11 +6,18 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 
 public class BattleStruct1a8_c implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedIntRef _00;
+  /** This can either be a pointer to a BPE, or 2-byte x, 1-byte Y, 1-byte H */
+  public final UnsignedIntRef bpe_00;
+  public final UnsignedShortRef x_00;
+  public final UnsignedByteRef y_02;
+  public final UnsignedByteRef h_03;
+  // Overlap ends here
+
   public final ShortRef _04;
   public final ShortRef _06;
   public final ByteRef _08;
@@ -21,7 +28,11 @@ public class BattleStruct1a8_c implements MemoryRef {
   public BattleStruct1a8_c(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+    this.bpe_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+    this.x_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+    this.y_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
+    this.h_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
+
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(1, 0x08L).cast(ByteRef::new);

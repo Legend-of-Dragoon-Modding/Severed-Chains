@@ -31,10 +31,6 @@ public class BtldScriptData27c implements MemoryRef {
   public final BigStruct _148;
 
   //TODO maybe part of previous struct
-  public final UnsignedShortRef _1bc;
-  public final UnsignedShortRef _1be;
-  public final UnsignedShortRef _1c0;
-
   public final UnsignedByteRef _1e4;
   public final UnsignedByteRef _1e5;
   public final ShortRef _1e6;
@@ -73,10 +69,6 @@ public class BtldScriptData27c implements MemoryRef {
 
     this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
     this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
-
-    this._1bc = ref.offset(2, 0x1bcL).cast(UnsignedShortRef::new);
-    this._1be = ref.offset(2, 0x1beL).cast(UnsignedShortRef::new);
-    this._1c0 = ref.offset(2, 0x1c0L).cast(UnsignedShortRef::new);
 
     this._1e4 = ref.offset(1, 0x1e4L).cast(UnsignedByteRef::new);
     this._1e5 = ref.offset(1, 0x1e5L).cast(UnsignedByteRef::new);
