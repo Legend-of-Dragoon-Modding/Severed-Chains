@@ -33,6 +33,7 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
+import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
@@ -4326,6 +4327,39 @@ public final class Scus94491BpeSegment {
     //LAB_80019f9c
   }
 
+  @Method(0x8001a164L)
+  public static void FUN_8001a164(final long a0, final long a1, final long soundIndex, final long a3) {
+    //LAB_8001a1a8
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct08 s0 = _800bc9a8.get(i);
+      if(s0.soundIndex_03.get() == soundIndex && s0._04.get() == a1) {
+        FUN_8004d78c(0xffff_8000L | i);
+        if((a3 & 0x1L) == 0) {
+          break;
+        }
+      }
+
+      //LAB_8001a1e0
+    }
+
+    //LAB_8001a1f4
+    if((a3 >> 1 & 0x1L) != 0) {
+      //LAB_8001a208
+      for(int i = 0; i < 32; i++) {
+        final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
+        //LAB_8001a238
+        if(v1._00.get() != 0 && (v1._20.get() != 0 || v1._24.get() != 0) && v1.soundIndex_0c.get() == soundIndex && v1._04.get() == a1) {
+          v1._00.set(0);
+          v1._1c.set(0);
+        }
+
+        //LAB_8001a260
+      }
+    }
+
+    //LAB_8001a270
+  }
+
   @Method(0x8001a4e8L)
   public static void FUN_8001a4e8() {
     //LAB_8001a50c
@@ -4574,6 +4608,12 @@ public final class Scus94491BpeSegment {
   @Method(0x8001abd0L)
   public static long FUN_8001abd0(final RunningScript a0) {
     FUN_80019e24(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get());
+    return 0;
+  }
+
+  @Method(0x8001ac48L)
+  public static long FUN_8001ac48(final RunningScript a0) {
+    FUN_8001a164(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
     return 0;
   }
 

@@ -5,6 +5,7 @@ import legend.core.dma.DmaChannelType;
 import legend.core.dma.DmaManager;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.VECTOR;
 import legend.core.kernel.PriorityChainEntry;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -1102,6 +1103,83 @@ public final class Scus94491BpeSegment_8004 {
   public static long Lzc(final long a0) {
     CPU.MTC2(a0, 30);
     return CPU.MFC2(31);
+  }
+
+  @Method(0x80040ec0L)
+  public static VECTOR FUN_80040ec0(final MATRIX a0, final VECTOR a1, final VECTOR a2) {
+    CPU.CTC2((a0.get(3) & 0xffffL) << 16 | a0.get(0) & 0xffffL, 0);
+    CPU.CTC2((a0.get(1) & 0xffffL) << 16 | a0.get(6) & 0xffffL, 1);
+    CPU.CTC2((a0.get(7) & 0xffffL) << 16 | a0.get(4) & 0xffffL, 2);
+    CPU.CTC2((a0.get(5) & 0xffffL) << 16 | a0.get(2) & 0xffffL, 3);
+    CPU.CTC2(a0.get(8), 4);
+
+    long t0;
+    long t3;
+    if(a1.getX() < 0) {
+      t0 = -a1.getX();
+      t3 = (int)t0 >> 15;
+      t3 = -t3;
+      t0 = t0 & 0x7fffL;
+      t0 = -t0;
+    } else {
+      //LAB_80040f54
+      t3 = a1.getX() >> 15;
+      t0 = a1.getX() & 0x7fffL;
+    }
+
+    //LAB_80040f5c
+    long t1;
+    long t4;
+    if(a1.getY() < 0) {
+      t1 = -a1.getY();
+      t4 = (int)t1 >> 15;
+      t4 = -t4;
+      t1 = t1 & 0x7fffL;
+      t1 = -t1;
+    } else {
+      //LAB_80040f7c
+      t4 = a1.getY() >> 15;
+      t1 = a1.getY() & 0x7fffL;
+    }
+
+    //LAB_80040f84
+    long t2;
+    long t5;
+    if(a1.getZ() < 0) {
+      t2 = -a1.getZ();
+      t5 = (int)t2 >> 15;
+      t5 = -t5;
+      t2 = t2 & 0x7fffL;
+      t2 = -t2;
+    } else {
+      //LAB_80040fa4
+      t5 = a1.getZ() >> 15;
+      t2 = a1.getZ() & 0x7fffL;
+    }
+
+    //LAB_80040fac
+    CPU.MTC2((t4 & 0xffffL) << 16 | t3 & 0xffffL, 0);
+    CPU.MTC2(t5, 1);
+
+    CPU.COP2(0x406012L);
+    t3 = CPU.MFC2(25);
+    t4 = CPU.MFC2(26);
+    t5 = CPU.MFC2(27);
+
+    CPU.MTC2((t1 & 0xffffL) << 16 | t0 & 0xffffL, 0);
+    CPU.MTC2(t2, 1);
+    CPU.COP2(0x486012L);
+
+    //LAB_80041008
+    //LAB_8004100c
+    //LAB_80041024
+    //LAB_80041028
+    //LAB_80041040
+    //LAB_80041044
+    a2.setX((int)(CPU.MFC2(25) + t3 * 0x8L));
+    a2.setY((int)(CPU.MFC2(26) + t4 * 0x8L));
+    a2.setZ((int)(CPU.MFC2(27) + t5 * 0x8L));
+    return a2;
   }
 
   @Method(0x80041070L)
