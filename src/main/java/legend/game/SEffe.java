@@ -1915,8 +1915,39 @@ public final class SEffe {
   }
 
   @Method(0x80110740L)
-  public static void FUN_80110740(BttlScriptData6c a0, BttlScriptData6cSub34 a1) {
-    assert false;
+  public static long FUN_80110740(final BttlScriptData6c s2, final BttlScriptData6cSub34 s1) {
+    s1._18.add(s1._24);
+    s1._0c.add(s1._18);
+
+    if(s1._30.get() == -1) {
+      s2.vec_14.set(s1._0c).div(0x100);
+    } else {
+      //LAB_80110814
+      final Ref<SVECTOR> sp0x40 = new Ref<>();
+      final Ref<VECTOR> sp0x44 = new Ref<>();
+      FUN_801100b8(s1._30.get(), sp0x40, sp0x44);
+
+      final MATRIX sp0x10 = new MATRIX();
+      RotMatrix_8003faf0(sp0x40.get(), sp0x10);
+
+      final VECTOR sp0x30 = new VECTOR().set(s1._0c).div(0x100);
+      s2.vec_14.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
+    }
+
+    //LAB_801108bc
+    if(s1._32.get() == -1) {
+      return 0x1L;
+    }
+
+    s1._32.decr();
+
+    if(s1._32.get() > 0) {
+      //LAB_801108e0
+      return 0x1L;
+    }
+
+    //LAB_801108e4
+    return 0;
   }
 
   @Method(0x801108fcL)
@@ -2255,8 +2286,22 @@ public final class SEffe {
   }
 
   @Method(0x801196bcL)
-  public static void FUN_801196bc(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data6c) {
-    assert false;
+  public static void FUN_801196bc(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+    final BttlScriptData6c a1 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final long s0 = a1._44.get();
+
+    if(MEMORY.ref(4, s0).offset(0x8L).get() != 0) {
+      assert false;
+//      FUN_800e8594(sp0x10);
+//      final long v1 = MEMORY.ref(4, s0).offset(0x18L).get() + (MEMORY.ref(4, s0).offset(0x14L).get() % MEMORY.ref(4, s0).offset(0x8L).get()) * 0x10L;
+//      MEMORY.ref(4, v1).offset(0x0L).setu(sp24);
+//      MEMORY.ref(4, v1).offset(0x4L).setu(sp28);
+//      MEMORY.ref(4, v1).offset(0x8L).setu(sp2c);
+//      MEMORY.ref(4, v1).offset(0xcL).setu(sp30);
+//      MEMORY.ref(4, s0).offset(0x14L).addu(0x1L);
+    }
+
+    //LAB_80119778
   }
 
   @Method(0x80119788L)

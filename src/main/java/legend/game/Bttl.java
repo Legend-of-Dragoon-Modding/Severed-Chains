@@ -2288,6 +2288,13 @@ public final class Bttl {
     //LAB_800caf38
   }
 
+  @Method(0x800cb674L)
+  public static long FUN_800cb674(final RunningScript a0) {
+    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    v1._1ea.set(a0.params_20.get(1).deref().get() < 1 ? 1 : 0);
+    return 0;
+  }
+
   @Method(0x800cbb00L)
   public static long FUN_800cbb00(final RunningScript t1) {
     final long s0 = t1.params_20.get(0).deref().get();
@@ -3683,6 +3690,19 @@ public final class Bttl {
     MEMORY.ref(4, v0).offset(0x11cL).and(0xffff_fffeL);
   }
 
+  @Method(0x800dbf70L)
+  public static void FUN_800dbf70() {
+    final long s0 = rview2_800c67f0.getAddress();
+    MEMORY.ref(1, s0).offset(0x122L).setu(0);
+
+    final long v0 = FUN_800dd02c(MEMORY.ref(4, s0).offset(0xf4L).get());
+    setViewpoint(
+      (int)(MEMORY.ref(4, v0).offset(0x0L).get() + MEMORY.ref(4, s0).offset(0x94L).get() / 0x100),
+      (int)(MEMORY.ref(4, v0).offset(0x4L).get() + MEMORY.ref(4, s0).offset(0x98L).get() / 0x100),
+      (int)(MEMORY.ref(4, v0).offset(0x8L).get() + MEMORY.ref(4, s0).offset(0x9cL).get() / 0x100)
+    );
+  }
+
   @Method(0x800dc090L)
   public static void FUN_800dc090() {
     final long v0 = rview2_800c67f0.getAddress();
@@ -3994,7 +4014,6 @@ public final class Bttl {
   @Method(0x800dd02cL)
   public static long FUN_800dd02c(long a0) {
     long v0;
-    long v1;
     v0 = 0x800c_0000L;
     v0 = v0 + -0x3e40L;
     a0 = a0 << 2;
