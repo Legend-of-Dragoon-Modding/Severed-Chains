@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
@@ -14,6 +14,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.RotateTranslateStruct;
 
 public class BattleRenderStruct implements MemoryRef {
   private final Value ref;

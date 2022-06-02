@@ -20,10 +20,16 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.combat.Bttl_800c;
+import legend.game.combat.Bttl_800d;
+import legend.game.combat.Bttl_800e;
+import legend.game.combat.Bttl_800f;
+import legend.game.combat.SBtld;
+import legend.game.combat.SEffe;
+import legend.game.combat.types.BattleStruct;
+import legend.game.combat.types.BtldScriptData27c;
 import legend.game.scriptdebugger.ScriptDebugger;
-import legend.game.types.BattleStruct;
 import legend.game.types.BigStruct;
-import legend.game.types.BtldScriptData27c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.McqHeader;
@@ -49,12 +55,6 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Bttl.FUN_800c7304;
-import static legend.game.Bttl.FUN_800c882c;
-import static legend.game.Bttl.FUN_800c8cf0;
-import static legend.game.Bttl.FUN_800c90b0;
-import static legend.game.Bttl.FUN_800d8f10;
-import static legend.game.SBtld._80109a98;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SMap.FUN_800edb8c;
 import static legend.game.SMap.mrg10Addr_800c6710;
@@ -77,7 +77,9 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003b590;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
+import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
@@ -247,6 +249,7 @@ import static legend.game.Scus94491BpeSegment_800b.currentlyLoadingFileInfo_800b
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb464;
 import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb48c;
@@ -269,13 +272,18 @@ import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.sssqChannelIndex_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.transferIndex_800bb494;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
 import static legend.game.Scus94491BpeSegment_800d.sceaTexture_800d05c4;
+import static legend.game.combat.Bttl_800c.FUN_800c7304;
+import static legend.game.combat.Bttl_800c.FUN_800c882c;
+import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
+import static legend.game.combat.Bttl_800c.FUN_800c90b0;
+import static legend.game.combat.Bttl_800d.FUN_800d8f10;
+import static legend.game.combat.SBtld._80109a98;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -1778,7 +1786,12 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
-      case "\\OVL\\BTTL.OV_" -> MEMORY.addFunctions(Bttl.class);
+      case "\\OVL\\BTTL.OV_" -> {
+        MEMORY.addFunctions(Bttl_800c.class);
+        MEMORY.addFunctions(Bttl_800d.class);
+        MEMORY.addFunctions(Bttl_800e.class);
+        MEMORY.addFunctions(Bttl_800f.class);
+      }
       case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
       case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
       case "\\SECT\\DRGN0.BIN" -> { }
@@ -2553,6 +2566,36 @@ public final class Scus94491BpeSegment {
     FUN_80015c20(a0);
   }
 
+  @Method(0x80015d74L)
+  public static long FUN_80015d74(final long a0) {
+    final long s1 = findFreeScriptState();
+
+    if((int)s1 < 0 || allocateScriptState(s1, 0, false, 0, 0) < 0) {
+      //LAB_80015dd4
+      return -0x1L;
+    }
+
+    //LAB_80015ddc
+    final ScriptState<?> s0 = scriptStatePtrArr_800bc1c0.get((int)a0).deref();
+    final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0.get((int)s1).deref();
+    s0.ui_60.or(0x20_0000L);
+    a3.ui_60.set(s0.ui_60.get());
+
+    //LAB_80015e0c
+    for(int i = 0; i < 25; i++) {
+      a3.storage_44.get(8 + i).set(s0.storage_44.get(8 + i).get());
+    }
+
+    a3.storage_44.get(5).set(a0);
+    a3.storage_44.get(6).set(s0.storage_44.get(6).get());
+    s0.storage_44.get(6).set(s1);
+    a3.scriptPtr_14.set(s0.scriptPtr_14.deref());
+    a3.commandPtr_18.set(s0.commandPtr_18.deref());
+
+    //LAB_80015e4c
+    return s1;
+  }
+
   @Method(0x80015f64L)
   public static long scriptNotImplemented(final RunningScript a0) {
     assert false;
@@ -3185,6 +3228,16 @@ public final class Scus94491BpeSegment {
     FUN_80015c9c(a0.params_20.get(0).deref().get());
     FUN_80015c20(a0.params_20.get(0).deref().get());
     return a0.params_20.get(0).deref().get() == a0.scriptStateIndex_00.get() ? 2 : 0;
+  }
+
+  @Method(0x80017234L)
+  public static long FUN_80017234(final RunningScript s0) {
+    FUN_80015d74(s0.params_20.get(0).deref().get());
+    final ScriptState<?> a0 = scriptStatePtrArr_800bc1c0.get((int)s0.params_20.get(0).deref().get()).deref();
+    final long scriptPtr = a0.scriptPtr_14.getPointer();
+    a0.commandPtr_18.setPointer(scriptPtr + MEMORY.ref(4, scriptPtr).offset(s0.params_20.get(1).deref().get() * 0x4L).get());
+    a0._c4.set(s0.params_20.get(2).deref().get());
+    return 0;
   }
 
   @Method(0x800172f4L)
@@ -3970,6 +4023,184 @@ public final class Scus94491BpeSegment {
   @Method(0x80018998L)
   public static void FUN_80018998() {
     pregameLoadingStage_800bb10c.addu(0x1L);
+  }
+
+  @Method(0x80018a5cL)
+  public static void FUN_80018a5c(long a0, long a1, long a2, long a3, long a4, long a5, long a6, long a7, byte[] a8, long a9, long a10) {
+    long v0;
+    long v1;
+    long s0;
+    long fp;
+    long lo;
+    long sp10;
+    long sp12;
+    long sp30;
+    long s1 = a0;
+    long s2 = a1;
+    long s4 = a2;
+    long t0;
+
+    v0 = a4 & 0xffL;
+    a0 = s4 & 0xffL;
+    a0 = v0 - a0;
+    v0 = Math.abs(a0);
+    fp = v0;
+    v0 = a5 & 0xffL;
+    a0 = a3 & 0xffL;
+    a0 = v0 - a0;
+    v0 = Math.abs(a0);
+    sp30 = v0;
+    v1 = 0x1f80_0000L;
+    a0 = MEMORY.ref(4, v1).offset(0x3d8L).get();
+
+    v0 = a0 + 0x28L;
+    MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
+    s0 = a0;
+    FUN_8003b590(a0);
+    v0 = -0x1L;
+    t0 = a7;
+
+    if((int)t0 == v0) {
+      gpuLinkedListSetCommandTransparency(s0, false);
+      a7 = 0;
+    } else {
+      //LAB_80018b30
+      gpuLinkedListSetCommandTransparency(s0, true);
+    }
+
+    //LAB_80018b38
+    v0 = a8[0] & 0xff;
+
+    MEMORY.ref(1, s0).offset(0x4L).setu(v0);
+    v0 = a8[1] & 0xff;
+
+    MEMORY.ref(1, s0).offset(0x5L).setu(v0);
+    v0 = a8[2] & 0xff;
+
+    MEMORY.ref(1, s0).offset(0x6L).setu(v0);
+    t0 = a9;
+
+    v0 = t0 << 16;
+    v1 = (int)v0 >> 16;
+    v0 = 0x1000L;
+    if(v1 != v0 || (short)a10 != v1) {
+      //LAB_80018b90
+      v1 = fp << 16;
+      a2 = (int)v1 >> 16;
+      t0 = a9;
+
+      v0 = t0 << 16;
+      v0 = (int)v0 >> 16;
+      lo = ((long)(int)a2 * (int)v0) & 0xffff_ffffL;
+      a2 = lo;
+      a2 = (int)a2 >> 13;
+      t0 = sp30;
+
+      a0 = t0 << 16;
+      a1 = (int)a0 >> 16;
+      t0 = a10;
+
+      v0 = t0 << 16;
+      v0 = (int)v0 >> 16;
+      lo = ((long)(int)a1 * (int)v0) & 0xffff_ffffL;
+      a1 = lo;
+      a1 = (int)a1 >> 13;
+      v1 = (int)v1 >> 17;
+      v1 = s1 + v1;
+      sp10 = v1;
+      a0 = (int)a0 >> 17;
+      a0 = s2 + a0;
+      sp12 = a0;
+      v1 = v1 - a2;
+      MEMORY.ref(2, s0).offset(0x18L).setu(v1);
+      MEMORY.ref(2, s0).offset(0x8L).setu(v1);
+      v0 = sp10;
+
+      v0 = v0 + a2;
+      MEMORY.ref(2, s0).offset(0x20L).setu(v0);
+      MEMORY.ref(2, s0).offset(0x10L).setu(v0);
+      v0 = sp12;
+
+      v0 = v0 - a1;
+      MEMORY.ref(2, s0).offset(0x12L).setu(v0);
+      MEMORY.ref(2, s0).offset(0xaL).setu(v0);
+      v0 = sp12;
+      v0 = v0 + a1;
+    } else {
+      //LAB_80018c38
+      MEMORY.ref(2, s0).offset(0x18L).setu(s1);
+      MEMORY.ref(2, s0).offset(0x8L).setu(s1);
+      v0 = s1 + fp;
+      MEMORY.ref(2, s0).offset(0x20L).setu(v0);
+      MEMORY.ref(2, s0).offset(0x10L).setu(v0);
+      MEMORY.ref(2, s0).offset(0x12L).setu(s2);
+      MEMORY.ref(2, s0).offset(0xaL).setu(s2);
+      t0 = sp30;
+      v0 = s2 + t0;
+    }
+
+    //LAB_80018c60
+    MEMORY.ref(2, s0).offset(0x22L).setu(v0);
+    MEMORY.ref(2, s0).offset(0x1aL).setu(v0);
+    MEMORY.ref(1, s0).offset(0x1cL).setu(s4);
+    MEMORY.ref(1, s0).offset(0xcL).setu(s4);
+    MEMORY.ref(1, s0).offset(0x24L).setu(a4);
+    MEMORY.ref(1, s0).offset(0x14L).setu(a4);
+    MEMORY.ref(1, s0).offset(0x15L).setu(a3);
+    MEMORY.ref(1, s0).offset(0xdL).setu(a3);
+    MEMORY.ref(1, s0).offset(0x25L).setu(a5);
+    MEMORY.ref(1, s0).offset(0x1dL).setu(a5);
+    t0 = a6;
+
+    v0 = t0 << 16;
+    a1 = (int)v0 >> 16;
+    a2 = a1;
+    if((int)a2 >= 0) {
+      v0 = a2;
+    } else {
+      v0 = a2 + 0xfL;
+    }
+
+    //LAB_80018ca8
+    a2 = (int)v0 >> 4;
+    if((int)a1 >= 0) {
+      v0 = a1;
+    } else {
+      v0 = a1 + 0xfL;
+    }
+
+    //LAB_80018cb8
+    v0 = (int)v0 >> 4;
+    v0 = v0 << 4;
+    a1 = a1 - v0;
+    if((int)a2 >= 0x4L) {
+      v1 = a1 + 0x130L;
+      v1 = v1 << 6;
+      v0 = a2 << 4;
+      v0 = v0 + 0x340L;
+    } else {
+      v1 = a1 + 0x1f0L;
+
+      //LAB_80018ce4
+      v1 = v1 << 6;
+      v0 = a2 << 4;
+      v0 = v0 + 0x2c0L;
+    }
+
+    //LAB_80018cf0
+    v0 = v0 & 0x3f0L;
+    v0 = (int)v0 >> 4;
+    v1 = v1 | v0;
+    MEMORY.ref(2, s0).offset(0xeL).setu(v1);
+    v0 = GetTPage(0, a7, 0x2c0L, 0x100L);
+    MEMORY.ref(2, s0).offset(0x16L).setu(v0);
+    v0 = 0x1f80_0000L;
+    insertElementIntoLinkedList(MEMORY.ref(4, v0).offset(0x3d0L).get() + 0x8L, s0);
+  }
+
+  @Method(0x80018d60L)
+  public static void FUN_80018d60(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final byte[] a8, final long a9) {
+    FUN_80018a5c((short)a0, (short)a1, a2 & 0xffL, a3 & 0xffL, (a2 + a4) & 0xffL, (a5 + a3) & 0xffL, (short)a6, a7, a8, (short)a9, (short)a9);
   }
 
   @Method(0x800194dcL)

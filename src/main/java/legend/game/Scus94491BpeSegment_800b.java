@@ -26,7 +26,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.BattleRenderStruct;
+import legend.game.combat.types.BattleRenderStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.GameState52c;

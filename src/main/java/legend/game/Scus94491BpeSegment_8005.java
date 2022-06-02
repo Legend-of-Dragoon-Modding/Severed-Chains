@@ -28,7 +28,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.AdditionData0e;
-import legend.game.types.BattleStruct1a8;
+import legend.game.combat.types.BattleStruct1a8;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;

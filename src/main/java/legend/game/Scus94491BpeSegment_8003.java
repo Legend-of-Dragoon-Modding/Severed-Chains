@@ -6775,6 +6775,124 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(0, 25);
   }
 
+  @Method(0x8003eae0L)
+  public static void FUN_8003eae0(final Ref<Long> t0, final Ref<Long> t1, final Ref<Long> t2) {
+    long at;
+    long v0;
+    long v1;
+    long t3;
+    long t4;
+    long t5;
+    long t6;
+    CPU.MTC2(t0.get(), 9);
+    CPU.MTC2(t1.get(), 10);
+    CPU.MTC2(t2.get(), 11);
+    CPU.COP2(0xa00428L);
+    t3 = CPU.MFC2(25);
+    t4 = CPU.MFC2(26);
+    t5 = CPU.MFC2(27);
+    t3 = t3 + t4;
+    v0 = t3 + t5;
+    CPU.MTC2(v0, 30);
+    v1 = CPU.MFC2(31);
+    at = -0x2L;
+    v1 = v1 & at;
+    t6 = 0x1fL;
+    t6 = t6 - v1;
+    t6 = (int)t6 >> 1;
+    t3 = v1 - 0x18L;
+    if((int)t3 >= 0) {
+      t4 = v0 << t3;
+    } else {
+      //LAB_8003eb40
+      t3 = 0x18L;
+      t3 = t3 - v1;
+      t4 = (int)v0 >> t3;
+    }
+
+    //LAB_8003eb4c
+    t4 = t4 - 0x80L;
+    t4 = t4 << 1;
+    t5 = 0x8005_0000L;
+    t5 = t5 + t4;
+    t5 = MEMORY.ref(2, t5).offset(0x4870L).getSigned();
+
+    CPU.MTC2(t5, 8);
+    CPU.MTC2(t0.get(), 9);
+    CPU.MTC2(t1.get(), 10);
+    CPU.MTC2(t2.get(), 11);
+    CPU.COP2(0x190003dL);
+    t0.set(CPU.MFC2(25) >> t6);
+    t1.set(CPU.MFC2(26) >> t6);
+    t2.set(CPU.MFC2(27) >> t6);
+  }
+
+  @Method(0x8003eba0L)
+  public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
+    long v0;
+    long v1;
+    long a2;
+    long t0;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    long t7;
+    long t8;
+    long t9;
+    t0 = a0.get(0);
+    t1 = a0.get(1);
+    t2 = a0.get(2);
+    t3 = a0.get(3);
+    t4 = a0.get(4);
+    t5 = a0.get(5);
+    v0 = CPU.CFC2(0);
+    v1 = CPU.CFC2(2);
+    a2 = CPU.CFC2(4);
+    CPU.CTC2(t0, 0);
+    CPU.CTC2(t1, 2);
+    CPU.CTC2(t2, 4);
+    CPU.MTC2(t5, 11);
+    CPU.MTC2(t3, 9);
+    CPU.MTC2(t4, 10);
+    CPU.COP2(0x178000cL);
+    t7 = CPU.MFC2(25);
+    t8 = CPU.MFC2(26);
+    t9 = CPU.MFC2(27);
+    CPU.CTC2(t3, 0);
+    CPU.CTC2(t4, 2);
+    CPU.CTC2(t5, 4);
+    CPU.COP2(0x178000cL);
+    CPU.MTC2(t3, 0);
+    CPU.MTC2(t4, 1);
+    CPU.MTC2(t5, 2);
+    final Ref<Long> t0Ref = new Ref<>(CPU.MFC2(25));
+    final Ref<Long> t1Ref = new Ref<>(CPU.MFC2(26));
+    final Ref<Long> t2Ref = new Ref<>(CPU.MFC2(27));
+    CPU.CTC2(v0, 0);
+    CPU.CTC2(v1, 2);
+    CPU.CTC2(a2, 4);
+    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    a1.set(0, t0Ref.get().shortValue());
+    a1.set(1, t1Ref.get().shortValue());
+    a1.set(2, t2Ref.get().shortValue());
+    t0Ref.set(CPU.MFC2(0));
+    t1Ref.set(CPU.MFC2(1));
+    t2Ref.set(CPU.MFC2(2));
+    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    a1.set(3, t0Ref.get().shortValue());
+    a1.set(4, t1Ref.get().shortValue());
+    a1.set(5, t2Ref.get().shortValue());
+    t0Ref.set(t7);
+    t1Ref.set(t8);
+    t2Ref.set(t9);
+    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    a1.set(6, t0Ref.get().shortValue());
+    a1.set(7, t1Ref.get().shortValue());
+    a1.set(8, t2Ref.get().shortValue());
+  }
+
   /**
    * NOTE: a2 moved to return
    */
@@ -6969,6 +7087,89 @@ public final class Scus94491BpeSegment_8003 {
     mat.set(7, (short)(mat.get(7) * vector.z.get() >> 12));
     mat.set(8, (short)(mat.get(8) * vector.z.get() >> 12));
     return mat;
+  }
+
+  @Method(0x8003f210L)
+  public static MATRIX FUN_8003f210(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
+    long t0;
+    long t1;
+    long t2;
+    long t3;
+    long t4;
+    long t5;
+    CPU.CTC2((a0.get(1) & 0xffff) << 16 | a0.get(0) & 0xffff, 0);
+    CPU.CTC2((a0.get(3) & 0xffff) << 16 | a0.get(2) & 0xffff, 1);
+    CPU.CTC2((a0.get(5) & 0xffff) << 16 | a0.get(4) & 0xffff, 2);
+    CPU.CTC2((a0.get(7) & 0xffff) << 16 | a0.get(6) & 0xffff, 3);
+    CPU.CTC2(                             a0.get(8) & 0xffff, 4);
+    CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0);
+    CPU.MTC2(                             a1.get(6) & 0xffff, 1);
+    CPU.COP2(0x486012L);
+    a2.set(0, (short)CPU.MFC2( 9));
+    a2.set(3, (short)CPU.MFC2(10));
+    a2.set(6, (short)CPU.MFC2(11));
+
+    CPU.MTC2((a1.get(4) & 0xffff) << 16 | a1.get(1) & 0xffff, 0);
+    CPU.MTC2(                             a1.get(7) & 0xffff, 1);
+    CPU.COP2(0x486012L);
+    a2.set(1, (short)CPU.MFC2(9));
+    a2.set(4, (short)CPU.MFC2(10));
+    a2.set(7, (short)CPU.MFC2(11));
+
+    CPU.MTC2((a1.get(5) & 0xffff) << 16 | a1.get(2) & 0xffff, 0);
+    CPU.MTC2(                             a1.get(8) & 0xffff, 1);
+    CPU.COP2(0x486012L);
+    a2.set(2, (short)CPU.MFC2(9));
+    a2.set(5, (short)CPU.MFC2(10));
+    a2.set(8, (short)CPU.MFC2(11));
+
+    if(a1.transfer.getX() < 0) {
+      t0 = -(-a1.transfer.getX() & 0x7fffL);
+    } else {
+      //LAB_8003f33c
+      t0 = a1.transfer.getX() & 0x7fffL;
+    }
+
+    //LAB_8003f344
+    if(a1.transfer.getY() < 0) {
+      t1 = -(-a1.transfer.getY() & 0x7fffL);
+    } else {
+      //LAB_8003f364
+      t1 = a1.transfer.getY() & 0x7fffL;
+    }
+
+    //LAB_8003f36c
+    if(a1.transfer.getZ() < 0) {
+      t2 = -(-a1.transfer.getZ() & 0x7fffL);
+    } else {
+      //LAB_8003f38c
+      t2 = a1.transfer.getZ() & 0x7fffL;
+    }
+
+    //LAB_8003f394
+    CPU.MTC2(a1.transfer.getX() / 0x8000, 9);
+    CPU.MTC2(a1.transfer.getY() / 0x8000, 10);
+    CPU.MTC2(a1.transfer.getZ() / 0x8000, 11);
+    CPU.COP2(0x41e012L);
+    t3 = CPU.MFC2(25);
+    t4 = CPU.MFC2(26);
+    t5 = CPU.MFC2(27);
+
+    CPU.MTC2(t0, 9);
+    CPU.MTC2(t1, 10);
+    CPU.MTC2(t2, 11);
+    CPU.COP2(0x49e012L);
+
+    //LAB_8003f3e0
+    //LAB_8003f3e4
+    //LAB_8003f3fc
+    //LAB_8003f400
+    //LAB_8003f418
+    //LAB_8003f41c
+    a2.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
+    a2.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
+    a2.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    return a2;
   }
 
   /**

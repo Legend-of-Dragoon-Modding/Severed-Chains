@@ -1,10 +1,10 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.gpu.RECT;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 
-public class BttlScriptData6cSub1c extends BttlScriptData6cSubBase {
+public class BttlScriptData6cSub1c extends BttlScriptData6cSubBase2 {
   public final RECT _0c;
   public final IntRef _14;
   public final IntRef _18;

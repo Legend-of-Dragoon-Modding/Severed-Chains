@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -7,6 +7,9 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.ExtendedTmd;
+import legend.game.types.MrgFile;
+import legend.game.types.ScriptFile;
 
 public class BattleStruct1a8 implements MemoryRef {
   private final Value ref;

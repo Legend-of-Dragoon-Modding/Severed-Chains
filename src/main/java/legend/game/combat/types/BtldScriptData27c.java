@@ -1,19 +1,17 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.gte.SVECTOR;
+import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.BigStruct;
 
-public class BtldScriptData27c implements MemoryRef {
-  private final Value ref;
-
-  public final UnsignedIntRef _00;
+public class BtldScriptData27c extends BattleScriptDataBase {
   public final ArrayRef<ShortRef> _04; // Note: overlaps all the way to _144
   public final UnsignedShortRef _08;
   public final ShortRef _0a;
@@ -25,7 +23,13 @@ public class BtldScriptData27c implements MemoryRef {
 
   public final ShortRef _1c;
 
+  public final UnsignedShortRef _72;
+
   public final SVECTOR _78;
+
+  public final UnsignedShortRef _a4;
+
+  public final ShortRef _b8;
 
   public final Pointer<BattleStruct1a8> _144;
   public final BigStruct _148;
@@ -40,6 +44,8 @@ public class BtldScriptData27c implements MemoryRef {
   public final UnsignedByteRef _214;
   public final UnsignedByteRef _215;
 
+  public final VECTOR _244;
+
   public final UnsignedIntRef _254;
 
   public final UnsignedIntRef _25c;
@@ -53,9 +59,8 @@ public class BtldScriptData27c implements MemoryRef {
   public final UnsignedByteRef _278;
 
   public BtldScriptData27c(final Value ref) {
-    this.ref = ref;
+    super(ref);
 
-    this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ArrayRef.of(ShortRef.class, 0xa0, 2, ShortRef::new));
     this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
@@ -67,7 +72,13 @@ public class BtldScriptData27c implements MemoryRef {
 
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
 
+    this._72 = ref.offset(2, 0x72L).cast(UnsignedShortRef::new);
+
     this._78 = ref.offset(2, 0x78L).cast(SVECTOR::new);
+
+    this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
+
+    this._b8 = ref.offset(2, 0xb8L).cast(ShortRef::new);
 
     this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
     this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
@@ -81,6 +92,8 @@ public class BtldScriptData27c implements MemoryRef {
     this._214 = ref.offset(1, 0x214L).cast(UnsignedByteRef::new);
     this._215 = ref.offset(1, 0x215L).cast(UnsignedByteRef::new);
 
+    this._244 = ref.offset(4, 0x244L).cast(VECTOR::new);
+
     this._254 = ref.offset(4, 0x254L).cast(UnsignedIntRef::new);
 
     this._25c = ref.offset(4, 0x25cL).cast(UnsignedIntRef::new);
@@ -92,10 +105,5 @@ public class BtldScriptData27c implements MemoryRef {
     this._274 = ref.offset(2, 0x274L).cast(ShortRef::new);
     this._276 = ref.offset(2, 0x276L).cast(ShortRef::new);
     this._278 = ref.offset(1, 0x278L).cast(UnsignedByteRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
   }
 }

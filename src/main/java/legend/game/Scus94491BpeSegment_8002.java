@@ -74,8 +74,6 @@ import static legend.core.kernel.Kernel.EvSpNEW;
 import static legend.core.kernel.Kernel.EvSpTIMOUT;
 import static legend.core.kernel.Kernel.HwCARD;
 import static legend.core.kernel.Kernel.SwCARD;
-import static legend.game.Bttl.FUN_800ec0b0;
-import static legend.game.Bttl.FUN_800ec974;
 import static legend.game.SInit.FUN_800fbec8;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
@@ -366,6 +364,8 @@ import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
 import static legend.game.WMap.FUN_800c925c;
 import static legend.game.WMap.renderWmapDobj2;
+import static legend.game.combat.Bttl_800e.FUN_800ec0b0;
+import static legend.game.combat.Bttl_800e.FUN_800ec974;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }

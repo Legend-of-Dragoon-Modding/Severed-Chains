@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;

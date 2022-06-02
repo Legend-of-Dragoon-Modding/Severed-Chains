@@ -1,11 +1,11 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.ShortRef;
 
-public class BttlScriptData6cSub34 extends BttlScriptData6cSubBase {
+public class BttlScriptData6cSub34 extends BttlScriptData6cSubBase2 {
   public final VECTOR _0c;
   public final VECTOR _18;
   public final VECTOR _24;

@@ -1,8 +1,10 @@
-package legend.game.types;
+package legend.game.combat.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
+import legend.game.types.McqHeader;
+import legend.game.types.MrgFile;
 
 /** 0x18cb0 bytes */
 public class BattleStruct implements MemoryRef {

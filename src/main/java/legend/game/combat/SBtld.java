@@ -1,33 +1,16 @@
-package legend.game;
+package legend.game.combat;
 
 import legend.core.Tuple;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.TriConsumerRef;
-import legend.game.types.BattleStruct1a8;
-import legend.game.types.BtldScriptData27c;
+import legend.game.combat.types.BattleStruct1a8;
+import legend.game.combat.types.BtldScriptData27c;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Bttl.FUN_800c8f50;
-import static legend.game.Bttl.FUN_800c9060;
-import static legend.game.Bttl.FUN_800e5768;
-import static legend.game.Bttl.FUN_800f8670;
-import static legend.game.Bttl._800c6698;
-import static legend.game.Bttl._800c66b0;
-import static legend.game.Bttl._800c66d0;
-import static legend.game.Bttl._800c66d8;
-import static legend.game.Bttl._800c6718;
-import static legend.game.Bttl._800c6748;
-import static legend.game.Bttl._800c6768;
-import static legend.game.Bttl._800c6780;
-import static legend.game.Bttl.getBattleStruct1a8;
-import static legend.game.Bttl.scriptIndex_800c674c;
-import static legend.game.Bttl.script_800c66fc;
-import static legend.game.Bttl.script_800c66fc_length;
-import static legend.game.Bttl.script_800c670c;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_800133ac;
@@ -44,6 +27,23 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.combat.Bttl_800c.FUN_800c8f50;
+import static legend.game.combat.Bttl_800c.FUN_800c9060;
+import static legend.game.combat.Bttl_800c._800c6698;
+import static legend.game.combat.Bttl_800c._800c66b0;
+import static legend.game.combat.Bttl_800c._800c66d0;
+import static legend.game.combat.Bttl_800c._800c66d8;
+import static legend.game.combat.Bttl_800c._800c6718;
+import static legend.game.combat.Bttl_800c._800c6748;
+import static legend.game.combat.Bttl_800c._800c6768;
+import static legend.game.combat.Bttl_800c._800c6780;
+import static legend.game.combat.Bttl_800c.getBattleStruct1a8;
+import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
+import static legend.game.combat.Bttl_800c.script_800c66fc;
+import static legend.game.combat.Bttl_800c.script_800c66fc_length;
+import static legend.game.combat.Bttl_800c.script_800c670c;
+import static legend.game.combat.Bttl_800e.FUN_800e5768;
+import static legend.game.combat.Bttl_800f.FUN_800f8670;
 
 public class SBtld {
   private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
@@ -302,13 +302,13 @@ public class SBtld {
 
       final int s4 = FUN_800c9060(s2);
       long index = allocateScriptState(0x27cL, BtldScriptData27c::new);
-      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(index);
       _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(index);
       final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get((int)index).derefAs(ScriptState.classFor(BtldScriptData27c.class));
       final BtldScriptData27c data = state.innerStruct_00.deref();
-      data._00.set(0x4a42_4f42L);
+      data.magic_00.set(0x4a42_4f42L);
       data._272.set((short)s2);
       data._274.set((short)_800c66d0.get());
       data._276.set((short)_800c6768.get());

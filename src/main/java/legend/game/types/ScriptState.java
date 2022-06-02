@@ -55,6 +55,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
+  public final UnsignedIntRef _c4;
   public final UnsignedIntRef _c8;
   public final UnsignedIntRef _cc;
   public final IntRef _d0;
@@ -81,8 +82,9 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
     this.scriptPtr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, ScriptFile::new));
     this.commandPtr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnsignedIntRef::new));
     this.commandStack_1c = ref.offset(4, 0x1cL).cast(ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 10, 4, Pointer.deferred(4, UnsignedIntRef::new)));
-    this.storage_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new)); // Dunno how long this should be
+    this.storage_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(UnsignedIntRef.class, 33, 4, UnsignedIntRef::new)); // Dunno how long this should be
     this.ui_60 = ref.offset(4, 0x60L).cast(UnsignedIntRef::new);
+    this._c4 = ref.offset(4, 0xc4L).cast(UnsignedIntRef::new);
     this._c8 = ref.offset(4, 0xc8L).cast(UnsignedIntRef::new);
     this._cc = ref.offset(4, 0xccL).cast(UnsignedIntRef::new);
     this._d0 = ref.offset(4, 0xd0L).cast(IntRef::new);
