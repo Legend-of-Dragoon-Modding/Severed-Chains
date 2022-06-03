@@ -2272,6 +2272,31 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cb6bcL)
+  public static long FUN_800cb6bc(final RunningScript a0) {
+    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref();
+    if((v0.ui_60.get() & 0x1L) != 0) {
+      return 0x2L;
+    }
+
+    final BtldScriptData27c s0 = v0.innerStruct_00.derefAs(BtldScriptData27c.class);
+    final long s1 = a0.params_20.get(1).deref().get();
+
+    if(s0._270.get() < 0) {
+      FUN_800c9e10(s0._26c.get(), s1);
+      s0._270.set((short)s1);
+    } else if(s0._270.get() != s1) {
+      FUN_800ca194(s0._26c.get(), s0._270.get());
+
+      //LAB_800cb73c
+      FUN_800c9e10(s0._26c.get(), s1);
+      s0._270.set((short)s1);
+    }
+
+    //LAB_800cb750
+    return 0x1L;
+  }
+
   @Method(0x800cbb00L)
   public static long FUN_800cbb00(final RunningScript t1) {
     final long s0 = t1.params_20.get(0).deref().get();

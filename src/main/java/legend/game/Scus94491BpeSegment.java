@@ -2855,6 +2855,11 @@ public final class Scus94491BpeSegment {
     return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 0x2L : 0;
   }
 
+  @Method(0x80016744L)
+  public static long FUN_80016744(final RunningScript a0) {
+    return scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) < 1 ? 2 : 0;
+  }
+
   /**
    * Set work array value 1 to value 0
    *

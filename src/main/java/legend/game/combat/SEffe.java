@@ -893,6 +893,90 @@ public final class SEffe {
     return v0;
   }
 
+  @Method(0x800ff5c4L)
+  public static void FUN_800ff5c4(long a0, long a1, long a2, long a3) {
+    long v0;
+    long v1;
+    long t0;
+    long t1;
+    long t2;
+    long t4;
+    long ra;
+    long hi;
+    long lo;
+    v1 = 0x4325_0000L;
+    t0 = 0x8010_0000L;
+    v0 = MEMORY.ref(4, t0).offset(-0x58acL).get();
+    v1 = v1 | 0xc53fL;
+    v0 = v0 + 0x1L;
+    a0 = v0 << 5;
+    a0 = a0 + v0;
+    a0 = a0 << 2;
+    a0 = a0 - v0;
+    a0 = a0 << 2;
+    a0 = a0 - v0;
+    a0 = a0 << 2;
+    a0 = a0 + v0;
+    v0 = a0 << 5;
+    a0 = a0 + v0;
+    hi = ((a0 & 0xffff_ffffL) * (v1 & 0xffff_ffffL)) >>> 32;
+    v0 = hi;
+    v1 = v0 >>> 4;
+    v0 = v1 << 4;
+    v0 = v0 - v1;
+    v0 = v0 << 2;
+    v0 = v0 + v1;
+    v0 = a0 - v0;
+    v0 = v0 + 0x3cL;
+    v0 = -v0;
+    v0 = v0 << 16;
+    v1 = MEMORY.ref(2, a3).offset(0x18L).get();
+    v0 = (int)v0 >> 16;
+    v1 = v1 & 0xffffL;
+    lo = ((long)(int)v0 * (int)v1) & 0xffff_ffffL;
+    t1 = MEMORY.ref(2, a3).offset(0x10L).get();
+    v0 = lo;
+    v0 = (int)v0 >> 8;
+    MEMORY.ref(2, a2).offset(0x5aL).setu(v0);
+    a1 = MEMORY.ref(2, a2).offset(0x5aL).getSigned();
+    v0 = MEMORY.ref(2, a2).offset(0x12L).getSigned();
+    a1 = -a1;
+    lo = (int)a1 / (int)v0;
+    a1 = lo;
+    a3 = 0xff_0000L;
+    a3 = a3 | 0xf001L;
+    v1 = a0 + 0x1L;
+    v0 = v1 << 5;
+    v0 = v0 + v1;
+    v0 = v0 << 2;
+    v0 = v0 - v1;
+    v0 = v0 << 2;
+    v0 = v0 - v1;
+    v0 = v0 << 2;
+    v0 = v0 + v1;
+    v1 = v0 << 5;
+    v0 = v0 + v1;
+    hi = ((v0 & 0xffff_ffffL) * (a3 & 0xffff_ffffL)) >>> 32;
+    MEMORY.ref(4, t0).offset(-0x58acL).setu(a0);
+    MEMORY.ref(2, a2).offset(0x16L).setu(t1);
+    v1 = 0x64L;
+    MEMORY.ref(2, a2).offset(0x18L).setu(v1);
+
+    assert false : "Undefined t2";
+    t2 = 0;
+
+    v1 = t2 << 2;
+    MEMORY.ref(2, a2).offset(0x1aL).setu(v1);
+    MEMORY.ref(4, t0).offset(-0x58acL).setu(v0);
+    t4 = hi;
+    a0 = t4 >>> 4;
+    v1 = a0 << 12;
+    v1 = v1 + a0;
+    v0 = v0 - v1;
+    MEMORY.ref(2, a2).offset(0x14L).setu(v0);
+    MEMORY.ref(2, a2).offset(0x62L).setu(a1);
+  }
+
   @Method(0x80100d58L)
   public static void FUN_80100d58(final long a0, final BttlScriptData6c a1, final BttlScriptData6cSub98 a2, final long a3) {
     // no-op
@@ -2729,8 +2813,8 @@ public final class SEffe {
   }
 
   @Method(0x80113624L)
-  public static SVECTOR FUN_80113624(final long a0, final long a1, final SVECTOR a2) {
-    ScriptState<BattleScriptDataBase> a3 = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
+  public static SVECTOR FUN_80113624(final int scriptIndex, final int a1, final SVECTOR a2) {
+    ScriptState<BattleScriptDataBase> a3 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
     BattleScriptDataBase t0 = a3.innerStruct_00.deref();
 
     final SVECTOR t1;
@@ -2742,11 +2826,11 @@ public final class SEffe {
     }
 
     //LAB_801136a0
-    if((int)a1 == -0x1L) {
+    if(a1 == -0x1L) {
       a2.set(t1);
     } else {
       //LAB_801136d0
-      a3 = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
+      a3 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
       t0 = a3.innerStruct_00.deref();
 
       final SVECTOR svec;
@@ -2783,8 +2867,8 @@ public final class SEffe {
   }
 
   @Method(0x801137f8L)
-  public static SVECTOR FUN_801137f8(final long a0, final long a1, final SVECTOR a2) {
-    ScriptState<BattleScriptDataBase> a0_0 = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
+  public static SVECTOR FUN_801137f8(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+    ScriptState<BattleScriptDataBase> a0_0 = scriptStatePtrArr_800bc1c0.get(scriptIndex1).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
     BattleScriptDataBase a3 = a0_0.innerStruct_00.deref();
 
     final SVECTOR t0;
@@ -2796,11 +2880,11 @@ public final class SEffe {
     }
 
     //LAB_80113874
-    if((int)a1 == -0x1L) {
+    if(scriptIndex2 == -0x1L) {
       a2.set(t0);
     } else {
       //LAB_801138a4
-      a0_0 = scriptStatePtrArr_800bc1c0.get((int)a1).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
+      a0_0 = scriptStatePtrArr_800bc1c0.get(scriptIndex2).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
       a3 = a0_0.innerStruct_00.deref();
 
       final SVECTOR a0_1;
@@ -2895,15 +2979,15 @@ public final class SEffe {
 
   @Method(0x80113db8L)
   public static long FUN_80113db8(long a0, final RunningScript a1) {
-    final long s7 = a1.params_20.get(0).deref().get();
-    final long s3 = a1.params_20.get(1).deref().get();
+    final int s7 = (int)a1.params_20.get(0).deref().get();
+    final int s3 = (int)a1.params_20.get(1).deref().get();
     final long s2 = a1.params_20.get(2).deref().get();
     final long s4 = a1.params_20.get(3).deref().get();
     final long s5 = a1.params_20.get(4).deref().get();
     final long s6 = a1.params_20.get(5).deref().get();
 
     if((int)s2 >= 0) {
-      final BttlScriptData6c s1 = scriptStatePtrArr_800bc1c0.get((int)s7).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+      final BttlScriptData6c s1 = scriptStatePtrArr_800bc1c0.get(s7).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
 
       if((s1._04.get() & 0x8L) != 0) {
         FUN_800e8d04(s1, 0x3L);
@@ -2923,7 +3007,7 @@ public final class SEffe {
         if(s3 != -0x1L) {
           //LAB_80113f04
           final SVECTOR sp0x28 = new SVECTOR();
-          FUN_80113624(s3, -0x1L, sp0x28);
+          FUN_80113624(s3, -1, sp0x28);
 
           //LAB_80113f2c
           //LAB_80113f50
@@ -3011,6 +3095,26 @@ public final class SEffe {
   public static long FUN_801152b0(final RunningScript a0) {
     final BttlScriptData6cSub1c v0 = FUN_800e8dd4(scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class), 0, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115288", BttlScriptData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
     MEMORY.ref(2, v0.getAddress()).offset(0x1aL).setu(a0.params_20.get(1).deref().get()); //TODO
+    return 0;
+  }
+
+  @Method(0x80115388L)
+  public static long FUN_80115388(final RunningScript a0) {
+    long v0;
+    long v1;
+    long a1;
+    v1 = a0.params_20.get(0).deref().get();
+    v0 = 0x800c_0000L;
+    v0 = v0 + -0x3e40L;
+    v1 = v1 << 2;
+    v1 = v1 + v0;
+    v0 = MEMORY.ref(4, v1).offset(0x0L).get();
+    a1 = MEMORY.ref(4, v0).offset(0x0L).get();
+    v0 = MEMORY.ref(4, a1).offset(0x10L).get();
+    v1 = 0xbfff_0000L;
+    v1 = v1 | 0xffffL;
+    v0 = v0 & v1;
+    MEMORY.ref(4, a1).offset(0x10L).setu(a0.params_20.get(1).deref().get() << 30 | v0);
     return 0;
   }
 
