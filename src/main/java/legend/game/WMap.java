@@ -24,6 +24,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.BigStruct;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
+import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
@@ -173,6 +174,7 @@ public class WMap {
 
   private static final Value _800c6794 = MEMORY.ref(2, 0x800c6794L);
 
+  /** TODO struct */
   private static final Value _800c6798 = MEMORY.ref(4, 0x800c6798L);
   private static final Value _800c679c = MEMORY.ref(4, 0x800c679cL);
   private static final Value _800c67a0 = MEMORY.ref(4, 0x800c67a0L);
@@ -2281,6 +2283,25 @@ public class WMap {
   public static void FUN_800cccbc() {
     FUN_800cd030();
     FUN_800cc83c();
+  }
+
+  @Method(0x800ccce4L)
+  public static void FUN_800ccce4() {
+    final long v0 = _800c6798.getAddress();
+    final GameState52c state = gameState_800babc8;
+    state._4de.set((int)MEMORY.ref(2, v0).offset(0x12L).get());
+    state.pathIndex_4d8.set((int)MEMORY.ref(2, v0).offset(0x14L).get());
+    state.dotIndex_4da.set((int)MEMORY.ref(2, v0).offset(0x16L).get());
+    state.dotOffset_4dc.set((int)MEMORY.ref(1, v0).offset(0x18L).get());
+    state.facing_4dd.set((int)MEMORY.ref(1, v0).offset(0x1cL).get());
+
+    //LAB_800ccd30
+    for(int i = 0; i < 8; i++) {
+      FUN_8002a3ec((short)i, 0);
+    }
+
+    _800c68a8.setu(0);
+    pregameLoadingStage_800bb10c.setu(0x5L);
   }
 
   @Method(0x800ccda4L)
@@ -9043,10 +9064,9 @@ public class WMap {
       v0 = MEMORY.ref(4, at).offset(-0x938L).get();
 
       if(v1 == v0) {
-        a0 = 0x800f_0000L;
-        a0 = a0 - 0x934L;
+        a0 = 0x800f_0000L - 0x934L;
         v1 = a0 + sp0 * 12;
-        a1.set(MEMORY.ref(4, v1).cast(SVECTOR::new));
+        a1.set((SVECTOR)MEMORY.ref(4, v1).cast(SVECTOR::new));
         break;
       }
 

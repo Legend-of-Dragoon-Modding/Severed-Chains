@@ -3228,6 +3228,13 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x800170f4L)
+  public static long FUN_800170f4(final RunningScript a0) {
+    FUN_80015c9c(a0.scriptStateIndex_00.get());
+    FUN_80015c20(a0.scriptStateIndex_00.get());
+    return 0x2L;
+  }
+
   @Method(0x80017160L)
   public static long FUN_80017160(final RunningScript a0) {
     FUN_80015c9c(a0.params_20.get(0).deref().get());

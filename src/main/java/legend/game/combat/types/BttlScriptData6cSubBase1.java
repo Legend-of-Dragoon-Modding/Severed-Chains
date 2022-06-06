@@ -7,6 +7,7 @@ import legend.core.memory.types.UnsignedIntRef;
 public class BttlScriptData6cSubBase1 implements MemoryRef {
   private final Value ref;
 
+  //TODO don't think these are actually part of the base
   public final UnsignedIntRef scriptIndex_00;
   public final UnsignedIntRef scriptIndex_04;
 
