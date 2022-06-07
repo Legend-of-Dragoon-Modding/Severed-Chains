@@ -1463,7 +1463,7 @@ public final class SEffe {
   @Method(0x80101c74L)
   public static void FUN_80101c74(final BttlScriptData6cSub98 a0, final BttlScriptData6cSub98Sub94 a1, final BttlScriptData6cSub98Inner24 a2, final long a3) {
     a0._60.set((int)a3 >> 20);
-    a0._54.set((int)a3);
+    a0._54.set((short)a3);
 
     //LAB_80101cb0
     for(int s3 = 0; s3 < a0._50.get(); s3++) {

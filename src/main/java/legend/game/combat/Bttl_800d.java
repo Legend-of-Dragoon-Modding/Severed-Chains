@@ -1165,6 +1165,25 @@ public final class Bttl_800d {
     //LAB_800d9e1c
   }
 
+  @Method(0x800da058L)
+  public static void FUN_800da058() {
+    final long s0 = rview2_800c67f0.getAddress();
+    MEMORY.ref(4, s0).offset(0x20L).addu(MEMORY.ref(4, s0).offset(0x3cL).get());
+    MEMORY.ref(4, s0).offset(0x24L).addu(MEMORY.ref(4, s0).offset(0x48L).get());
+    MEMORY.ref(4, s0).offset(0x28L).addu(MEMORY.ref(4, s0).offset(0x54L).get());
+
+    final ScriptState<?> a2 = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, s0).offset(0x80L).get()).deref();
+    final BtldScriptData27c v0 = a2.innerStruct_00.derefAs(BtldScriptData27c.class);
+    setRefpoint((int)(v0._148.coord2_14.coord.transfer.getX() + MEMORY.ref(4, s0).offset(0x20L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getY() + MEMORY.ref(4, s0).offset(0x24L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getY() + MEMORY.ref(4, s0).offset(0x28L).getSigned() / 0x100));
+    MEMORY.ref(4, s0).offset(0x5cL).subu(0x1L);
+    if((int)MEMORY.ref(4, s0).offset(0x5cL).get() <= 0) {
+      MEMORY.ref(1, s0).offset(0x123L).setu(0);
+      MEMORY.ref(1, s0).offset(0x121L).setu(0x6L);
+    }
+
+    //LAB_800da100
+  }
+
   @Method(0x800da1f0L)
   public static void FUN_800da1f0() {
     long v0;

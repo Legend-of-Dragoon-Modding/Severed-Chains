@@ -209,7 +209,6 @@ public final class Bttl_800e {
   @Method(0x800e3e6cL)
   public static void FUN_800e3e6c(final long[] a0) {
     long v0;
-    long v1;
     long a2;
     long s0;
     long s1;
@@ -1910,8 +1909,7 @@ public final class Bttl_800e {
     v0 = FUN_800e80c4(-0x1L, 0, null, null, null, null);
     long a0 = _800c693c.get();
     MEMORY.ref(4, a0).offset(0x1cL).setu(v0);
-    long v1 = scriptStatePtrArr_800bc1c0.getAddress();
-    v0 = MEMORY.ref(4, v1).offset(v0 * 0x4L).deref(4).get();
+    v0 = scriptStatePtrArr_800bc1c0.get((int)v0).deref().innerStruct_00.getPointer(); //TODO
     MEMORY.ref(4, v0).offset(0x4L).setu(0x600_0400L);
     MEMORY.ref(4, a0).offset(0x2cL).setu(0);
     MEMORY.ref(4, a0).offset(0x30L).setu(0);
@@ -2550,14 +2548,7 @@ public final class Bttl_800e {
     long t5;
     long t6;
     long t7;
-    long ra;
-    long hi;
     long lo;
-    long sp18;
-    long sp14;
-    long sp16;
-    long sp10;
-    long sp12;
     v0 = 0x800c_0000L;
     v0 = MEMORY.ref(2, v0).offset(0x695cL).getSigned();
     t2 = 0;
