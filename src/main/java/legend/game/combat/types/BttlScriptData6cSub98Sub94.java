@@ -21,14 +21,15 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
   public final ShortRef _04;
   public final ShortRef _06;
   public final ShortRef _08;
-  public final UnsignedShortRef _0a;
-  public final UnsignedShortRef _0c;
+  public final ShortRef _0a;
+  public final ShortRef _0c;
   public final ShortRef _0e;
   public final ShortRef _10;
   public final ShortRef _12;
   public final ShortRef _14;
   public final ShortRef _16;
-  public final UnsignedShortRef _18;
+  public final ShortRef _18;
+  public final SVECTOR _1a;
 
   public final VECTOR _2c;
 
@@ -61,14 +62,15 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
+    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
     this._10 = ref.offset(2, 0x10L).cast(ShortRef::new);
     this._12 = ref.offset(2, 0x12L).cast(ShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(ShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(ShortRef::new);
-    this._18 = ref.offset(2, 0x18L).cast(UnsignedShortRef::new);
+    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
+    this._1a = ref.offset(2, 0x1aL).cast(SVECTOR::new);
 
     this._2c = ref.offset(4, 0x2cL).cast(VECTOR::new);
 

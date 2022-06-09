@@ -9754,8 +9754,8 @@ public final class SMap {
     final Memory.TemporaryReservation sp0x78ref = MEMORY.temp(0x50);
 
     final MATRIX sp0x28 = new MATRIX();
-    final SVECTOR sp0x48 = new SVECTOR();
-    final SVECTOR sp0x50 = new SVECTOR();
+    final DVECTOR sp0x48 = new DVECTOR();
+    final DVECTOR sp0x50 = new DVECTOR();
     final SVECTOR sp0x58 = new SVECTOR();
     final SVECTOR sp0x60 = new SVECTOR();
     final SVECTOR sp0x68 = new SVECTOR();

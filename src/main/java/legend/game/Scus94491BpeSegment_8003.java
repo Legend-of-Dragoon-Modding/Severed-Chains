@@ -7324,7 +7324,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f900L)
-  public static long FUN_8003f900(final SVECTOR vxyz0, final SVECTOR sxy2, final Ref<Long> ir0, final Ref<Long> flags) {
+  public static long FUN_8003f900(final SVECTOR vxyz0, final DVECTOR sxy2, final Ref<Long> ir0, final Ref<Long> flags) {
     CPU.MTC2(vxyz0.getXY(), 0);
     CPU.MTC2(vxyz0.getZ() & 0xffffL, 1);
     CPU.COP2(0x18_0001L); // Perspective transform single

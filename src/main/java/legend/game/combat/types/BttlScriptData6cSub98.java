@@ -15,6 +15,8 @@ import legend.core.memory.types.UnsignedShortRef;
 public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
   public final BttlScriptData6cSub98Inner24 _08;
 
+  public final UnsignedIntRef _24;
+
   public final UnsignedShortRef _34;
   public final UnsignedShortRef _36;
 
@@ -48,6 +50,8 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
     super(ref);
 
     this._08 = ref.offset(4, 0x08L).cast(BttlScriptData6cSub98Inner24::new);
+
+    this._24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
 
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);

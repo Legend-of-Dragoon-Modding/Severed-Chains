@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -16,9 +17,11 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.CString;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct1a8;
@@ -31,11 +34,13 @@ import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub34;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
+import legend.game.combat.types.BttlStruct50;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MOVE;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
 import legend.game.types.MrgFile;
 import legend.game.types.RotateTranslateStruct;
@@ -112,6 +117,7 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
+import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
@@ -119,6 +125,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bc950;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
@@ -130,9 +137,8 @@ import static legend.game.combat.Bttl_800c._800c66c8;
 import static legend.game.combat.Bttl_800c._800c6758;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800c._800c677c;
+import static legend.game.combat.Bttl_800c._800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
-import static legend.game.combat.Bttl_800c._800fadbc;
-import static legend.game.combat.Bttl_800c.dontUse_800c6920;
 import static legend.game.combat.Bttl_800c._800c692c;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
@@ -162,7 +168,6 @@ import static legend.game.combat.Bttl_800c._800c6c38;
 import static legend.game.combat.Bttl_800c._800c6c3c;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6cf4;
-import static legend.game.combat.Bttl_800c.light_800c6ddc;
 import static legend.game.combat.Bttl_800c._800c6e18;
 import static legend.game.combat.Bttl_800c._800c6e34;
 import static legend.game.combat.Bttl_800c._800c6e48;
@@ -171,6 +176,7 @@ import static legend.game.combat.Bttl_800c._800c6e9c;
 import static legend.game.combat.Bttl_800c._800c6ecc;
 import static legend.game.combat.Bttl_800c._800c6ef0;
 import static legend.game.combat.Bttl_800c._800c6f04;
+import static legend.game.combat.Bttl_800c._800fadbc;
 import static legend.game.combat.Bttl_800c._800faec4;
 import static legend.game.combat.Bttl_800c._800fafe8;
 import static legend.game.combat.Bttl_800c._800fb148;
@@ -184,8 +190,10 @@ import static legend.game.combat.Bttl_800c._800fb46c;
 import static legend.game.combat.Bttl_800c._800fb47c;
 import static legend.game.combat.Bttl_800c.battleStruct1a8Count_800c66a0;
 import static legend.game.combat.Bttl_800c.getBattleStruct1a8;
+import static legend.game.combat.Bttl_800c.light_800c6ddc;
 import static legend.game.combat.Bttl_800c.script_800faebc;
 import static legend.game.combat.Bttl_800d.FUN_800de76c;
+import static legend.game.combat.Bttl_800d.FUN_800de840;
 import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
 import static legend.game.combat.Bttl_800f.FUN_800f1268;
 import static legend.game.combat.Bttl_800f.FUN_800f1550;
@@ -206,6 +214,352 @@ import static legend.game.combat.SEffe.FUN_80115cac;
 public final class Bttl_800e {
   private Bttl_800e() { }
 
+  @Method(0x800e16a0L)
+  public static long FUN_800e16a0(long a0, long a1, long a2, long a3) {
+    long v0;
+    long v1;
+    long s3;
+    long s5;
+    long s6 = a1;
+    long fp = a2;
+    long s7 = a3;
+    a3 = a0 + 0x4L;
+    long s1 = linkedListAddress_1f8003d8.get();
+    long sp3c = 0xe100_0200L | _1f8003ec.getSigned();
+    long t0 = _1f8003ee.get() & 0xffL;
+
+    final UnboundedArrayRef<GsOT_TAG> sp38 = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+
+    //LAB_800e1748
+    final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x20);
+    final Value sp0x10 = sp0x10tmp.get();
+    while(s7 != 0) {
+      v0 = FUN_800de840(sp0x10.getAddress(), a3, 0x20L);
+      a3 = v0;
+      a1 = MEMORY.ref(4, s6).offset(sp0x10.offset(2, 0x12L).get() * 0x4L).get();
+      v0 = a1 >>> 24;
+      a2 = MEMORY.ref(4, s6).offset(v0 * 0x4L).get();
+      v1 = (short)a1 << 8;
+      v0 = a2 << 8;
+      a0 = (byte)a1 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = (a2 & 0xff00L) << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 0);
+      CPU.MTC2(v1, 1);
+      v0 = sp0x10.offset(2, 0x16L).get();
+      v0 = v0 << 2;
+      v0 = v0 + s6;
+      a1 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v0 = a1 >>> 24;
+      v0 = v0 << 2;
+      v0 = v0 + s6;
+      a0 = a1 << 24;
+      a0 = (int)a0 >> 24;
+      v1 = a1 << 16;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v1 = (int)v1 >> 8;
+      v0 = a2 << 8;
+      a0 = a0 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = a2 & 0xff00L;
+      v0 = v0 << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 2);
+      CPU.MTC2(v1, 3);
+      v0 = sp0x10.offset(2, 0x1aL).get();
+      v0 = v0 << 2;
+      v0 = v0 + s6;
+      a1 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v0 = a1 >>> 24;
+      v0 = v0 << 2;
+      v0 = v0 + s6;
+      a0 = a1 << 24;
+      a0 = (int)a0 >> 24;
+      v1 = a1 << 16;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v1 = (int)v1 >> 8;
+      v0 = a2 << 8;
+      a0 = a0 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = a2 & 0xff00L;
+      v0 = v0 << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 4);
+      CPU.MTC2(v1, 5);
+      CPU.COP2(0x280030L);
+      s7 = s7 - 0x1L;
+      s5 = CPU.CFC2(31);
+      if((int)s5 >= 0) {
+        CPU.COP2(0x1400006L);
+        s5 = CPU.MFC2(24);
+
+        if((int)s5 > 0 || (t0 & 0x2L) != 0 && s5 != 0) {
+          final SVECTOR sp0x30 = new SVECTOR();
+
+          //LAB_800e191c
+          MEMORY.ref(4, s1).offset(0xcL).setu(CPU.MFC2(12));
+          MEMORY.ref(4, s1).offset(0x14L).setu(CPU.MFC2(13));
+          MEMORY.ref(4, s1).offset(0x1cL).setu(CPU.MFC2(14));
+          a1 = MEMORY.ref(4, s6).offset(sp0x10.offset(2, 0x1eL).get() * 0x4L).get();
+          v0 = a1 >>> 24;
+          v0 = v0 << 2;
+          v0 = v0 + s6;
+          v1 = a1 << 24;
+          a0 = MEMORY.ref(4, v0).offset(0x0L).get();
+          v1 = (int)v1 >> 24;
+          v0 = a0 << 24;
+          v0 = (int)v0 >> 16;
+          v1 = v1 + v0;
+          sp0x30.setX((short)v1);
+          v1 = (short)a1 >> 8;
+          v0 = (int)a0 >> 8;
+          v0 = (byte)v0 << 8;
+          v1 = v1 + v0;
+          a1 = a1 << 8;
+          a1 = (int)a1 >> 24;
+          a0 = (int)a0 >> 16;
+          a0 = a0 << 24;
+          a0 = (int)a0 >> 16;
+          a1 = a1 + a0;
+          sp0x30.setY((short)v1);
+          sp0x30.setZ((short)a1);
+          CPU.MTC2(sp0x30.getXY(), 0);
+          CPU.MTC2(sp0x30.getZ(),  1);
+          CPU.COP2(0x180001L);
+          s5 = CPU.CFC2(31);
+          MEMORY.ref(4, s1).offset(0x24L).setu(CPU.MFC2(14));
+          CPU.COP2(0x168002eL);
+          s3 = (int)(CPU.MFC2(7) + _1f8003e8.get()) / 4;
+
+          if((int)s3 >= 0xbL) {
+            if((int)s3 >= 0xffeL) {
+              s3 = 0xffeL;
+            }
+
+            //LAB_800e19fc
+            CPU.MTC2(sp0x10.offset(4, 0x0L).get(), 6);
+            v1 = MEMORY.ref(4, fp).offset(sp0x10.offset(2, 0x10L).get() * 0x4L).get();
+            sp0x30.setX((short)((int)(v1 << 20) >> 19 & 0xffff_fffcL));
+            sp0x30.setY((short)((int)(v1 << 10) >> 19 & 0xffff_fffcL));
+            sp0x30.setZ((short)((int)v1 >> 19 & 0xffff_fffcL));
+            CPU.MTC2(sp0x30.getXY(), 0);
+            CPU.MTC2(sp0x30.getZ(),  1);
+            CPU.COP2(0x108041bL);
+            MEMORY.ref(4, s1).offset(0x8L).setu(CPU.MFC2(22));
+            MEMORY.ref(1, s1).offset(0xbL).setu(t0);
+            CPU.MTC2(sp0x10.offset(4, 0x4L).get(), 6);
+            v1 = MEMORY.ref(4, fp).offset(sp0x10.offset(2, 0x14L).get() * 0x4L).get();
+            sp0x30.setX((short)((int)(v1 << 20) >> 19 & 0xffff_fffcL));
+            sp0x30.setY((short)((int)(v1 << 10) >> 19 & 0xffff_fffcL));
+            sp0x30.setZ((short)((int)v1 >> 19 & 0xffff_fffcL));
+            CPU.MTC2(sp0x30.getXY(), 0);
+            CPU.MTC2(sp0x30.getZ(),  1);
+            CPU.COP2(0x108041bL);
+            MEMORY.ref(4, s1).offset(0x10L).setu(CPU.MFC2(22));
+            CPU.MTC2(sp0x10.offset(4, 0x8L).get(), 6);
+            v1 = MEMORY.ref(4, fp).offset(sp0x10.offset(2, 0x18L).get() * 0x4L).get();
+            sp0x30.setX((short)((int)(v1 << 20) >> 19 & 0xffff_fffcL));
+            sp0x30.setY((short)((int)(v1 << 10) >> 19 & 0xffff_fffcL));
+            sp0x30.setZ((short)((int)v1 >> 19 & 0xffff_fffcL));
+            CPU.MTC2(sp0x30.getXY(), 0);
+            CPU.MTC2(sp0x30.getZ(),  1);
+            CPU.COP2(0x108041bL);
+            MEMORY.ref(4, s1).offset(0x18L).setu(CPU.MFC2(22));
+            CPU.MTC2(sp0x10.offset(4, 0xcL).get(), 6);
+            v1 = MEMORY.ref(4, fp).offset(sp0x10.offset(2, 0x1cL).get() * 0x4L).get();
+            sp0x30.setX((short)((int)(v1 << 20) >> 19 & 0xffff_fffcL));
+            sp0x30.setY((short)((int)(v1 << 10) >> 19 & 0xffff_fffcL));
+            sp0x30.setZ((short)((int)v1 >> 19 & 0xffff_fffcL));
+            CPU.MTC2(sp0x30.getXY(), 0);
+            CPU.MTC2(sp0x30.getZ(),  1);
+            CPU.COP2(0x108041bL);
+            MEMORY.ref(4, s1).offset(0x20L).setu(CPU.MFC2(22));
+            MEMORY.ref(4, s1).offset(0x4L).setu(sp3c);
+            final GsOT_TAG tag = sp38.get((int)s3);
+            MEMORY.ref(4, s1).offset(0x0L).setu(0x900_0000L | tag.p.get());
+            tag.p.set(s1 & 0xff_ffffL);
+            s1 = s1 + 0x28L;
+          }
+        }
+      }
+
+      //LAB_800e1bd8
+    }
+
+    sp0x10tmp.release();
+
+    //LAB_800e1be0
+    linkedListAddress_1f8003d8.setu(s1);
+    return (a3 + 0x3L) & 0xffff_fffcL;
+  }
+
+  @Method(0x800e2620L)
+  public static long FUN_800e2620(long a0, long s7, long a2, long s6) {
+    long v0;
+    long v1;
+    long a1;
+    long s2;
+    long s4;
+    long s5 = a0 + 0x4L;
+    long s3 = linkedListAddress_1f8003d8.get();
+    final long sp50 = _1f8003ee.get() & 0xff;
+    final UnboundedArrayRef<GsOT_TAG> sp48 = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final IntRef sp0x30 = new IntRef();
+    final IntRef sp0x34 = new IntRef();
+    final IntRef sp0x38 = new IntRef();
+    FUN_800e4d74(sp0x30, sp0x34, sp0x38);
+    long s1 = s3 + 0x1eL;
+
+    //LAB_800e26c0
+    final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x20);
+    final Value sp0x10 = sp0x10tmp.get();
+    while(s6 != 0) {
+      v0 = FUN_800de840(sp0x10.getAddress(), s5, 0x20L);
+      s5 = v0;
+      a1 = MEMORY.ref(4, s7).offset(sp0x10.offset(2, 0x18L).get() * 0x4L).get();
+      v0 = a1 >>> 24;
+      v0 = v0 << 2;
+      v0 = v0 + s7;
+      a0 = a1 << 24;
+      a0 = (int)a0 >> 24;
+      v1 = a1 << 16;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v1 = (int)v1 >> 8;
+      v0 = a2 << 8;
+      a0 = a0 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = a2 & 0xff00L;
+      v0 = v0 << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 0);
+      CPU.MTC2(v1, 1);
+      a1 = MEMORY.ref(4, s7).offset(sp0x10.offset(2, 0x1aL).get() * 0x4L).get();
+      v0 = a1 >>> 24;
+      v0 = s7 + v0 * 0x4L;
+      a0 = a1 << 24;
+      a0 = (int)a0 >> 24;
+      v1 = a1 << 16;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v1 = (int)v1 >> 8;
+      v0 = a2 << 8;
+      a0 = a0 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = a2 & 0xff00L;
+      v0 = v0 << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 2);
+      CPU.MTC2(v1, 3);
+      a1 = MEMORY.ref(4, s7).offset(sp0x10.offset(2, 0x1cL).get() * 0x4L).get();
+      v0 = a1 >>> 24;
+      v0 = s7 + v0 * 0x4L;
+      a0 = a1 << 24;
+      a0 = (int)a0 >> 24;
+      v1 = a1 << 16;
+      a2 = MEMORY.ref(4, v0).offset(0x0L).get();
+      v1 = (int)v1 >> 8;
+      v0 = a2 << 8;
+      a0 = a0 + v0;
+      a0 = a0 & 0xffffL;
+      v0 = a2 & 0xff00L;
+      v0 = v0 << 16;
+      v1 = v1 + v0;
+      v1 = v1 & 0xffff_0000L;
+      a0 = a0 | v1;
+      v1 = a1 << 8;
+      v1 = (int)v1 >> 24;
+      v0 = a2 & 0xff_0000L;
+      v0 = (int)v0 >> 8;
+      v1 = v1 + v0;
+      CPU.MTC2(a0, 4);
+      CPU.MTC2(v1, 5);
+      CPU.COP2(0x280030L);
+      MEMORY.ref(4, s1-0x12L).setu(sp0x10.offset(4, 0x0L).get());
+      MEMORY.ref(4, s1-0x6L).setu(sp0x10.offset(4, 0x4L).get());
+      s6 = s6 - 0x1L;
+
+      if((int)CPU.CFC2(31) >= 0) {
+        CPU.COP2(0x1400006L);
+        MEMORY.ref(4, s1+0x6L).setu(sp0x10.offset(4, 0x8L).get());
+        s4 = CPU.MFC2(24);
+
+        if((int)s4 > 0 || (sp50 & 0x2L) != 0 && s4 != 0) {
+          //LAB_800e28c4
+          MEMORY.ref(4, s3).offset(0x8L).setu(CPU.MFC2(12));
+          MEMORY.ref(4, s3).offset(0x14L).setu(CPU.MFC2(13));
+          MEMORY.ref(4, s3).offset(0x20L).setu(CPU.MFC2(14));
+          s4 = CPU.CFC2(31);
+          CPU.COP2(0x158002dL);
+          MEMORY.ref(1, s1).offset(-0x17L).setu(sp50);
+          MEMORY.ref(1, s1).offset(-0x1aL).setu((sp0x10.offset(1, 0x0cL).get() * sp0x30.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x19L).setu((sp0x10.offset(1, 0x0dL).get() * sp0x34.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x18L).setu((sp0x10.offset(1, 0x0eL).get() * sp0x38.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x0eL).setu((sp0x10.offset(1, 0x10L).get() * sp0x30.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x0dL).setu((sp0x10.offset(1, 0x11L).get() * sp0x34.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x0cL).setu((sp0x10.offset(1, 0x12L).get() * sp0x38.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x02L).setu((sp0x10.offset(1, 0x14L).get() * sp0x30.get()) >> 12);
+          MEMORY.ref(1, s1).offset(-0x01L).setu((sp0x10.offset(1, 0x15L).get() * sp0x34.get()) >> 12);
+          MEMORY.ref(1, s1).offset( 0x00L).setu((sp0x10.offset(1, 0x16L).get() * sp0x38.get()) >> 12);
+          s2 = (CPU.MFC2(7) + _1f8003e8.get()) / 4;
+          if((int)s2 >= 0xbL) {
+            if((int)s2 >= 0xffeL) {
+              s2 = 0xffeL;
+            }
+
+            //LAB_800e2a18
+            MEMORY.ref(4, s3).offset(0x0L).setu(sp48.get((int)s2).p.get() | 0x900_0000L);
+            sp48.get((int)s2).p.set(s3 & 0xff_ffffL);
+            s3 = s3 + 0x28L;
+            s1 = s1 + 0x28L;
+          }
+        }
+      }
+
+      //LAB_800e2a4c
+    }
+
+    sp0x10tmp.release();
+
+    //LAB_800e2a54
+    linkedListAddress_1f8003d8.setu(s3);
+    return (s5 + 0x3L) & 0xffff_fffcL;
+  }
+
   @Method(0x800e3e6cL)
   public static void FUN_800e3e6c(final long[] a0) {
     long v0;
@@ -214,11 +568,12 @@ public final class Bttl_800e {
     long s1;
     long s2;
     long s3;
-    long sp10;
 
-    assert false;
-//    dontUse_800c6920.setu(sp0x10);
-    sp10 = 0;
+    final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x50);
+    final BttlStruct50 sp0x10 = sp0x10tmp.get().cast(BttlStruct50::new);
+    _800c6920.set(sp0x10);
+    sp0x10._00.set(0);
+
     if((a0[0] & 0x4000_0000L) == 0) {
       s1 = 0;
     } else {
@@ -234,16 +589,18 @@ public final class Bttl_800e {
 
     //LAB_800e3ee4
     while(s0 != 0) {
-      v0 = dontUse_800c6920.get();
-      MEMORY.ref(4, v0).offset(0x8L).setu(0);
-      MEMORY.ref(4, v0).offset(0xcL).setu(0);
-      MEMORY.ref(4, v0).offset(0x4L).setu(MEMORY.ref(4, v0).offset(0x0L).get());
+      final BttlStruct50 v0_0 = _800c6920.deref();
+      v0_0._0c.set(0);
+      v0_0._08.set(0);
+      v0_0._04.set(v0_0._00.get());
       s0 = s0 - MEMORY.ref(2, a2).offset(0x0L).get();
       long a1 = MEMORY.ref(4, a2).offset(0x0L).get();
       _1f8003ee.setu(((int)a1 >> 24 | s1) & 0x3eL);
       a1 = (a1 >>> 14 & 0x20L) | (a1 >>> 24 & 0xfL) | (a1 >>> 18 & 0x1L) | s1;
       a2 = (long)_800fadbc.offset(a1 * 0x4L).deref(4).call(a2, s3, s2, MEMORY.ref(2, a2).get());
     }
+
+    sp0x10tmp.release();
 
     //LAB_800e3f64
   }
@@ -301,10 +658,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4d74L)
-  public static void FUN_800e4d74(final long a0, final long a1, final long a2) {
-    MEMORY.ref(4, a0).setu(_800c6930.deref(4).offset(0x0L).get());
-    MEMORY.ref(4, a1).setu(_800c6930.deref(4).offset(0x4L).get());
-    MEMORY.ref(4, a2).setu(_800c6930.deref(4).offset(0x8L).get());
+  public static void FUN_800e4d74(final IntRef a0, final IntRef a1, final IntRef a2) {
+    a0.set((int)_800c6930.deref(4).offset(0x0L).get());
+    a1.set((int)_800c6930.deref(4).offset(0x4L).get());
+    a2.set((int)_800c6930.deref(4).offset(0x8L).get());
   }
 
   @Method(0x800e5768L)
@@ -786,7 +1143,8 @@ public final class Bttl_800e {
   @Method(0x800e60e0L)
   public static void FUN_800e60e0(final long a0, final long a1, final long a2) {
     final long s0 = _800c6930.get();
-    FUN_800e4d74(s0 + 0x30L + MEMORY.ref(4, s0).offset(0x60L).get() * 0xcL, s0 + 0x4L, s0 + 0x8L);
+    //TODO
+    FUN_800e4d74(MEMORY.ref(4, s0 + 0x30L + MEMORY.ref(4, s0).offset(0x60L).get() * 0xcL, IntRef::new), MEMORY.ref(4, s0 + 0x4L, IntRef::new), MEMORY.ref(4, s0 + 0x8L, IntRef::new));
 
     final long v1 = _800c6930.get();
     MEMORY.ref(4, v1).offset(0x0L).setu(a0);
@@ -2648,7 +3006,7 @@ public final class Bttl_800e {
     v0 = 0x800c_0000L;
     t0 = MEMORY.ref(4, v0).offset(0x6958L).get();
     v0 = 0x8010_0000L;
-    t1 = v0 + -0x4eb8L;
+    t1 = v0 - 0x4eb8L;
     a3 = 0;
 
     //LAB_800ebca4
@@ -2979,15 +3337,15 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec7e4L)
-  public static long FUN_800ec7e4(final BigStruct a0, final short x, final short y, final short z) {
+  public static DVECTOR FUN_800ec7e4(final BigStruct a0, final short x, final short y, final short z) {
     final MATRIX sp0x20 = new MATRIX();
     GsGetLs(a0.coord2_14, sp0x20);
     setRotTransMatrix(sp0x20);
 
     final SVECTOR vxyz0 = new SVECTOR().set(x, y, z);
-    final SVECTOR sxy2 = new SVECTOR();
+    final DVECTOR sxy2 = new DVECTOR();
     FUN_8003f900(vxyz0, sxy2, new Ref<>(), new Ref<>());
-    return sxy2.getXY();
+    return sxy2;
   }
 
   @Method(0x800ec86cL)
@@ -3236,7 +3594,7 @@ public final class Bttl_800e {
     a3 = a3 << 16;
     a2 = (int)a2 >> 16;
     a3 = (int)a3 >> 16;
-    v0 = FUN_800ec7e4(a0, (short)a1, (short)a2, (short)a3);
+    final DVECTOR v0_0 = FUN_800ec7e4(a0, (short)a1, (short)a2, (short)a3);
     a2 = 0x6680_0000L;
     a1 = linkedListAddress_1f8003d8.get();
     a2 = a2 | 0x8080L;
@@ -3248,12 +3606,12 @@ public final class Bttl_800e {
     MEMORY.ref(2, a1).offset(0x10L).setu(v1);
     v1 = 0x18L;
     MEMORY.ref(2, a1).offset(0x12L).setu(v1);
-    v1 = v0 - 0x8L;
+    v1 = v0_0.getX() - 0x8L;
     MEMORY.ref(2, a1).offset(0x8L).setu(v1);
     v1 = 0x800c_0000L;
     MEMORY.ref(1, a1).offset(0xdL).setu(0);
     v1 = MEMORY.ref(4, v1).offset(-0x4f04L).get();
-    v0 = (int)v0 >> 16;
+    v0 = v0_0.getY();
     v1 = v1 & 0x7L;
     MEMORY.ref(1, a1).offset(0x3L).setu(0x4L);
     MEMORY.ref(4, a1).offset(0x4L).setu(a2);

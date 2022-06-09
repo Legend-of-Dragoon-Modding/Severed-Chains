@@ -4,6 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.COLOUR;
+import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
@@ -143,9 +144,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800beebc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
+import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
@@ -4302,7 +4303,7 @@ public class WMap {
     sp0x58.setY((short)struct258_800c66a8.deref().coord2_34.coord.transfer.getY());
     sp0x58.setZ((short)struct258_800c66a8.deref().coord2_34.coord.transfer.getZ());
 
-    final SVECTOR sp0x60 = new SVECTOR(); // sxy2
+    final DVECTOR sp0x60 = new DVECTOR(); // sxy2
     final Ref<Long> sp0x68 = new Ref<>(); // ir0
     final Ref<Long> sp0x64 = new Ref<>(); // flags
     sp6c = FUN_8003f900(sp0x58, sp0x60, sp0x68, sp0x64);
