@@ -4649,6 +4649,25 @@ public final class Bttl_800f {
     return 0;
   }
 
+  @Method(0x800f9b2cL)
+  public static long FUN_800f9b2c(final RunningScript a0) {
+    //LAB_800f9b3c
+    final long v1 = _800c6b5c.get();
+    long a2 = 0;
+    for(int i = 0; i < 12; i++) {
+      if(MEMORY.ref(2, v1).offset(i * 0xc4L).getSigned() != 0) {
+        a2 = 0x1L;
+        break;
+      }
+
+      //LAB_800f9b58
+    }
+
+    //LAB_800f9b64
+    a0.params_20.get(0).deref().set(a2);
+    return 0;
+  }
+
   @Method(0x800f9b78L)
   public static long FUN_800f9b78(final RunningScript a0) {
     _800c6b64.setu(a0.params_20.get(0).deref().get());

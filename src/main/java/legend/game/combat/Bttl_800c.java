@@ -2323,6 +2323,12 @@ public final class Bttl_800c {
     return 0x1L;
   }
 
+  @Method(0x800cb9f0L)
+  public static long FUN_800cb9f0(final RunningScript a0) {
+    scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._1e4.set(2);
+    return 0;
+  }
+
   @Method(0x800cbb00L)
   public static long FUN_800cbb00(final RunningScript t1) {
     final long s0 = t1.params_20.get(0).deref().get();

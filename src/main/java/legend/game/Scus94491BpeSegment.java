@@ -13,6 +13,7 @@ import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ConsumerRef;
+import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -185,6 +186,7 @@ import static legend.game.Scus94491BpeSegment_8005.linkedListTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007._8007a3ac;
 import static legend.game.Scus94491BpeSegment_8007._8007a3c0;
@@ -682,14 +684,6 @@ public final class Scus94491BpeSegment {
     long s2;
     long s3;
     long s4;
-    long sp;
-    long ra;
-    long sp18;
-    long sp14;
-    long sp10;
-    long sp24;
-    long sp1c;
-    long sp20;
     s1 = a0;
     if(s1 == 0) {
       return 0;
@@ -710,13 +704,8 @@ public final class Scus94491BpeSegment {
     //LAB_80012494
     s4 = v1;
     a0 = s2 - 0xcL;
-    a1 = 0;
-    a2 = a1;
-    v0 = addToLinkedListTail(a0);
-    s0 = v0;
-    if(s0 == 0) {
-      s0 = s0 - 0xcL;
-    } else {
+    s0 = addToLinkedListTail(a0);
+    if(s0 != 0) {
       s0 = s0 - 0xcL;
       a1 = s0 + 0xcL;
       if(s1 < s0) {
@@ -2771,7 +2760,7 @@ public final class Scus94491BpeSegment {
       final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BigStruct.class));
 
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress() && (scriptState.ui_60.get() & 0x12_0000L) == 0) {
-        System.err.println("Exec script index " + index);
+        System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer());
 
         RunningScript_800bc070.scriptStateIndex_00.set(index);
         RunningScript_800bc070.scriptState_04.set(scriptState);
@@ -2786,7 +2775,7 @@ public final class Scus94491BpeSegment {
           RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
           RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer()) + ": " + Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- Parent callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
 
           RunningScript_800bc070.commandPtr_0c.incr();
 
@@ -2798,77 +2787,109 @@ public final class Scus94491BpeSegment {
             final int param1 = (int)(childCommand >>> 8 & 0xff);
             final int param2 = (int)(childCommand & 0xff);
 
-            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
+//            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
 
             RunningScript_800bc070.commandPtr_0c.incr();
             final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
 
             if(operation == 0x1L) {
               //LAB_800161f4
-              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref());
+              final UnsignedIntRef p = RunningScript_800bc070.commandPtr_0c.deref();
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
               RunningScript_800bc070.commandPtr_0c.incr();
             } else if(operation == 0x2L) {
               //LAB_80016200
-              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2));
+              final UnsignedIntRef p = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x3L) {
               //LAB_800160cc
               //LAB_8001620c
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(param1).get();
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0));
+              final UnsignedIntRef p = scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x4L) {
               //LAB_80016258
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = param1 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0));
+              final UnsignedIntRef p = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x5L) {
               //LAB_80016290
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param2).deref());
+              final UnsignedIntRef p = scriptPtrs_8004de58.get(param2).deref();
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x6L) {
               //LAB_800162a4
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get((int)(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2)).deref());
+              final UnsignedIntRef p = scriptPtrs_8004de58.get((int)(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2)).deref();
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x7) {
               //LAB_800162d0
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x8L) {
               //LAB_800160e8
               //LAB_800162f4
               v0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
               final long a1_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x9L) {
               //LAB_80016328
               v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v1, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xaL) {
               //LAB_80016118
               //LAB_80016334
               v0 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xbL) {
               //LAB_80016360
               v0 = RunningScript_800bc070.parentPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
               final long a0_0 = RunningScript_800bc070.parentPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, a0_0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, a0_0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xcL) {
               //LAB_800163a0
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xdL) {
               //LAB_800163e8
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptStatePtrArr_800bc1c0.get((int)RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0));
+              final UnsignedIntRef p = scriptStatePtrArr_800bc1c0.get((int)RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xeL) {
               //LAB_80016418
-              RunningScript_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(param1 + param2).deref());
+              final UnsignedIntRef p = scriptPtrs_8004de58.get(param1 + param2).deref();
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xfL) {
               //LAB_8001642c
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x10L) {
               //LAB_80016180
               //LAB_8001643c
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get())).getPointer() + param0 * 0x4L, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x11L) {
               //LAB_80016468
 //              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
@@ -2881,7 +2902,9 @@ public final class Scus94491BpeSegment {
             } else if(operation == 0x13L) {
               //LAB_800164a4
               v1 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + param0) * 4;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v1, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x14L) {
               //LAB_800164b4
               v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)parentCommand * 0x4L;
@@ -2890,7 +2913,9 @@ public final class Scus94491BpeSegment {
               v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
 
               //LAB_800164d4
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v1 + v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v1 + v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x15L) {
               //LAB_800161a0
               //LAB_800164e0
@@ -2898,28 +2923,46 @@ public final class Scus94491BpeSegment {
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
 
               //LAB_80016580
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x16L) {
               //LAB_80016518
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x17L) {
               //LAB_800161d4
               //LAB_8001654c
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-              RunningScript_800bc070.params_20.get(childIndex).set(MEMORY.ref(4, v0, UnsignedIntRef::new));
+              final UnsignedIntRef p = MEMORY.ref(4, v0, UnsignedIntRef::new);
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else { // Treated as an immediate if not a valid op
               //LAB_80016574
-              RunningScript_800bc070.params_20.get(childIndex).set(RunningScript_800bc070.commandPtr_0c.deref()).decr();
+              final UnsignedIntRef p = RunningScript_800bc070.commandPtr_0c.deref();
+              System.err.printf("work[%d] = %s%n", childIndex, p);
+              RunningScript_800bc070.params_20.get(childIndex).set(p).decr();
             }
 
             //LAB_80016584
           }
 
+          final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref();
+
+          System.err.printf("Running callback %08x%n", callback.getAddress());
+
           //LAB_80016598
-          ret = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref().run(RunningScript_800bc070);
+          ret = callback.run(RunningScript_800bc070);
+
+          if(ret == 1) {
+            System.err.println("Pausing");
+          } else if(ret != 0) {
+            System.err.println("Rewinding and pausing");
+          }
 
           // Returning 0 continues execution
           // Returning 1 pauses execution until the next frame
@@ -6025,29 +6068,107 @@ public final class Scus94491BpeSegment {
     } while((int)s3 < 0x3L);
   }
 
+  @Method(0x8001d068L)
+  public static void FUN_8001d068(long a0, long a1) {
+    final BtldScriptData27c s1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+
+    unloadSoundFile(3);
+    unloadSoundFile(6);
+
+    if(a1 == 0) {
+      //LAB_8001d0e0
+      loadedDrgnFiles_800bcf78.oru(0x40L);
+      if(s1._272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+        //LAB_8001d134
+        loadDrgnBinFile(0, 1317 + s1._272.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
+      } else {
+        loadDrgnBinFile(0, 1328, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
+      }
+    } else if(a1 == 0x1L) {
+      //LAB_8001d164
+      FUN_8001d2d8();
+    } else if(a1 == 0x2L) {
+      //LAB_8001d174
+      loadedDrgnFiles_800bcf78.oru(0x40L);
+
+      //LAB_8001d1a8
+      loadDrgnBinFile(0, 1327, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
+    }
+
+    //LAB_8001d1b0
+  }
+
   @Method(0x8001d1c4L)
   public static void FUN_8001d1c4() {
     loadedDrgnFiles_800bcf78.oru(0x10L);
 
-    final long v1 = encounterId_800bb0f8.get();
+    final long encounterId = encounterId_800bb0f8.get();
     final long a1;
-    if(v1 == 0x186L) {
+    if(encounterId == 0x186L) {
       //LAB_8001d21c
-      a1 = 0x50aL;
-    } else if(v1 == 0x1afL) {
+      a1 = 1290;
+    } else if(encounterId == 0x1afL) {
       //LAB_8001d244
-      a1 = 0x510L;
+      a1 = 1296;
       //LAB_8001d208
-    } else if(v1 == 0x1bbL) {
+    } else if(encounterId == 0x1bbL) {
       //LAB_8001d270
-      a1 = 0x50cL;
+      a1 = 1292;
     } else {
       //LAB_8001d298
-      a1 = encounterId_800bb0f8.get() + 0x30aL;
+      a1 = 778 + encounterId_800bb0f8.get();
     }
 
     //LAB_8001d2c0
     loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+  }
+
+  @Method(0x8001d2d8L)
+  public static void FUN_8001d2d8() {
+    loadedDrgnFiles_800bcf78.oru(0x10L);
+    final long encounterId = encounterId_800bb0f8.get();
+    if(encounterId == 0x1afL) {
+      //LAB_8001d394
+      if(_8006f284.get() == 0) {
+        loadDrgnBinFile(0, 1296, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+      } else {
+        //LAB_8001d3d0
+        loadDrgnBinFile(0, 1297, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+      }
+    } else {
+      if(encounterId == 0x186L) {
+        //LAB_8001d330
+        if(_8006f284.get() != 0) {
+          //LAB_8001d370
+          loadDrgnBinFile(0, 1291, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        } else {
+          loadDrgnBinFile(0, 1290, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        }
+        //LAB_8001d31c
+      } else if(encounterId == 0x1bbL) {
+        //LAB_8001d3f8
+        final long v1 = _8006f284.get();
+        if(v1 == 0) {
+          //LAB_8001d43c
+          loadDrgnBinFile(0, 1292, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+          //LAB_8001d424
+        } else if(v1 == 0x1L) {
+          //LAB_8001d464
+          loadDrgnBinFile(0, 1293, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        } else if(v1 == 0x4L) {
+          //LAB_8001d490
+          loadDrgnBinFile(0, 1294, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        } else if(v1 == 0x6L) {
+          //LAB_8001d4b8
+          loadDrgnBinFile(0, 1295, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        }
+      } else {
+        //LAB_8001d4dc
+        loadDrgnBinFile(0, 778 + encounterId_800bb0f8.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+      }
+    }
+
+    //LAB_8001d50c
   }
 
   @Method(0x8001d51cL)
@@ -6574,6 +6695,30 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001e8d4() {
     removeFromLinkedList(_800bd768.get());
     loadedDrgnFiles_800bcf78.and(0xffff_fff7L);
+  }
+
+  @Method(0x8001e98cL)
+  public static void FUN_8001e98c(final long address, final long fileSize, final long param) {
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+    soundMrgPtr_800bd748.set(mrg);
+    soundFileArr_800bcf80.get(4).soundMrgPtr_04.setPointer(addToLinkedListTail(mrg.getFile(3)));
+    memcpy(soundFileArr_800bcf80.get(4).soundMrgPtr_04.getPointer(), mrg.getAddress(), (int)mrg.getFile(3));
+
+    final MrgFile s0 = soundFileArr_800bcf80.get(4).soundMrgPtr_04.deref();
+    soundFileArr_800bcf80.get(4).ptr_08.set(s0.getFile(1));
+    soundFileArr_800bcf80.get(4)._02.set((short)MEMORY.ref(2, s0.getFile(0)).get());
+    setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ea5c"));
+
+    final short soundIndex = loadSshdAndSoundbank(mrg.getFile(3), mrg.getFile(2, SshdFile::new), 0x5_a1e0);
+    soundFileArr_800bcf80.get(4).playableSoundIndex_10.set(soundIndex);
+    FUN_8004cb0c(soundIndex, 0x7fL);
+    soundFileArr_800bcf80.get(4).used_00.set(true);
+  }
+
+  @Method(0x8001ea5cL)
+  public static void FUN_8001ea5c() {
+    removeFromLinkedList(soundMrgPtr_800bd748.getPointer());
+    loadedDrgnFiles_800bcf78.and(0xffff_ffbfL);
   }
 
   @Method(0x8001eaa0L)

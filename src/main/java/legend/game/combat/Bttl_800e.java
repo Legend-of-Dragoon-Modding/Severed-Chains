@@ -60,6 +60,7 @@ import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80015d38;
+import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
@@ -131,6 +132,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
@@ -1188,8 +1190,39 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6314L)
-  public static void FUN_800e6314(long a0) {
-    assert false;
+  public static void FUN_800e6314(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+    removeFromLinkedList(_800c693c.deref(4).offset(0x5a8L).get());
+    _800c693c.deref(4).offset(0x5a8L).setu(0);
+    _800c693c.deref(4).offset(0x5acL).setu(0);
+    FUN_80012bb4();
+    _800fafe8.setu(0x4L);
+
+    if((_800c693c.deref(4).offset(0x20L).get() & 0x4_0000L) != 0) {
+      FUN_8001d068(_800c6938.deref(4).offset(0x4L).get(), 0x1L);
+    }
+
+    //LAB_800e638c
+    FUN_800e883c(_800c693c.deref(4).offset(0x1cL).get(), index);
+
+    if((_800c693c.deref(4).offset(0x20L).get() & 0x10_0000L) != 0) {
+      //LAB_800e63d0
+      for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
+        final BattleStruct1a8 v1 = getBattleStruct1a8(i);
+        if((v1._19e.get() & 0x1L) != 0 && v1._1a2.get() >= 0) {
+          FUN_800c9708(i);
+        }
+
+        //LAB_800e6408
+      }
+    }
+
+    //LAB_800e641c
+    if((_800c693c.deref(4).offset(0x20L).get() & 0x60_0000L) != 0) {
+      FUN_80115cac(0);
+    }
+
+    //LAB_800e6444
+    _800c693c.deref(4).offset(0x20L).and(0xff80_ffffL);
   }
 
   @Method(0x800e6470L)
@@ -1218,7 +1251,7 @@ public final class Bttl_800e {
       0,
       getMethodAddress(Bttl_800e.class, "FUN_800e70bc", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e71dc", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new),
-      getMethodAddress(Bttl_800e.class, "FUN_800e6314", long.class)
+      getMethodAddress(Bttl_800e.class, "FUN_800e6314", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class)
     );
 
     long v0 = scriptStatePtrArr_800bc1c0.get((int)s2).deref().innerStruct_00.getPointer(); //TODO
