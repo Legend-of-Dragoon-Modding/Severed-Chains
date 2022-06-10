@@ -83,7 +83,7 @@ public class SBtld {
   public static void FUN_80109170(final long address, final long fileSize, final long param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
     scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, 0, 0));
-    loadScriptFile(scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
+    loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
 
     final long v1;
     if((FUN_800133ac() & 0x8000L) == 0) {
@@ -118,11 +118,11 @@ public class SBtld {
     s1 = v0 + 0x38L;
     s2 = 0;
     v0 = 0x800c_0000L;
-    s5 = v0 + -0x5438L;
+    s5 = v0 - 0x5438L;
     v0 = 0x8011_0000L;
     s4 = v0 + 0x34e8L;
     v0 = 0x8011_0000L;
-    s3 = v0 + -0x19a8L;
+    s3 = v0 - 0x19a8L;
 
     //LAB_801092a0
     do {
@@ -301,12 +301,12 @@ public class SBtld {
       }
 
       final int s4 = FUN_800c9060(s2);
-      long index = allocateScriptState(0x27cL, BtldScriptData27c::new);
+      final int index = allocateScriptState(0x27cL, BtldScriptData27c::new);
       setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(index);
       _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(index);
-      final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get((int)index).derefAs(ScriptState.classFor(BtldScriptData27c.class));
+      final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BtldScriptData27c.class));
       final BtldScriptData27c data = state.innerStruct_00.deref();
       data.magic_00.set(0x4a42_4f42L);
       data._272.set((short)s2);
@@ -403,7 +403,7 @@ public class SBtld {
       a0 = a0 + 0x4L;
       a1 = a1 + 0x4L;
       v0 = v1;
-      v1 = v1 + -0x1L;
+      v1 = v1 - 0x1L;
     } while((int)v0 > 0);
 
     s0 = 0x800c_0000L;
@@ -424,7 +424,7 @@ public class SBtld {
       a0 = a0 + 0x4L;
       a1 = a1 + 0x4L;
       v0 = v1;
-      v1 = v1 + -0x1L;
+      v1 = v1 - 0x1L;
     } while((int)v0 > 0);
 
     v0 = 0x800c_0000L;
@@ -441,7 +441,7 @@ public class SBtld {
     MEMORY.ref(2, a0).offset(0x4L).setu(MEMORY.ref(2, v0).offset(0x4L).get());
     MEMORY.ref(2, a0).offset(0x6L).setu(MEMORY.ref(2, v0).offset(0x6L).get());
     v0 = 0x8010_0000L;
-    t1 = v0 + -0x4f9cL;
+    t1 = v0 - 0x4f9cL;
     t0 = 0xffL;
     v0 = 0x800c_0000L;
     a3 = MEMORY.ref(4, v0).offset(0x693cL).get();

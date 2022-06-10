@@ -13,12 +13,12 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.FunctionRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.spu.Voice;
 import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
@@ -122,7 +122,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c4ab4;
 import static legend.game.Scus94491BpeSegment_800c._800c4ab8;
 import static legend.game.Scus94491BpeSegment_800c._800c4abc;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
-import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
 import static legend.game.Scus94491BpeSegment_800c._800c6674;
 import static legend.game.Scus94491BpeSegment_800c.dmaDpcrPtr_800c4a9c;
@@ -140,6 +139,7 @@ import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.queuedSpuDmaTransferArray_800c49d0;
 import static legend.game.Scus94491BpeSegment_800c.responseBuffer0_800c3998;
 import static legend.game.Scus94491BpeSegment_800c.responseBuffer1_800c39bb;
+import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshd10Ptr_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqDataPointer_800c6680;
@@ -383,7 +383,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<UnsignedIntRef>> scriptPtrs_8004de58 = MEMORY.ref(4, 0x8004de58L, ArrayRef.of(Pointer.classFor(UnsignedIntRef.class), 0x90, 4, Pointer.deferred(4, UnsignedIntRef::new)));
+  public static final ArrayRef<Pointer<IntRef>> scriptPtrs_8004de58 = MEMORY.ref(4, 0x8004de58L, ArrayRef.of(Pointer.classFor(IntRef.class), 0x90, 4, Pointer.deferred(4, IntRef::new)));
 
   /**
    * This is the world's largest jump table
@@ -1167,7 +1167,7 @@ public final class Scus94491BpeSegment_8004 {
    * 12-bit decimal
    */
   @Method(0x80040b90L)
-  public static long ratan2(long x, long y) {
+  public static int ratan2(long x, long y) {
     boolean negativeY = false;
     boolean negativeX = false;
 
@@ -1222,11 +1222,11 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80040cec
     if(negativeX) {
-      return -atan;
+      return (int)-atan;
     }
 
     //LAB_80040cfc
-    return atan;
+    return (int)atan;
   }
 
   /**

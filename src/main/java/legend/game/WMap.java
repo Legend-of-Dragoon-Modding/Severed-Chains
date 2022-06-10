@@ -4307,7 +4307,7 @@ public class WMap {
     final Ref<Long> sp0x68 = new Ref<>(); // ir0
     final Ref<Long> sp0x64 = new Ref<>(); // flags
     sp6c = FUN_8003f900(sp0x58, sp0x60, sp0x68, sp0x64);
-    sp70 = sp0x60.getXY() & 0xffff_ffffL;
+    sp70 = sp0x60.getXY();
     v1 = sp0x60.getXY();
 
     v0 = (int)v1 >> 16;

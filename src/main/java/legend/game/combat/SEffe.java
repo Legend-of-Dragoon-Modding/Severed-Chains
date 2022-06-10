@@ -1955,13 +1955,13 @@ public final class SEffe {
 
   @Method(0x80102088L)
   public static long FUN_80102088(final RunningScript s2) {
-    long v0 = (int)s2.params_20.get(2).deref().get() / 0x100000;
-    long s6 = FUN_800e80c4(s2.scriptStateIndex_00.get(), 0x98L, null, _80119b7c.offset(v0 * 0x4L).deref(4).cast(TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_800fe8b8", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), BttlScriptData6cSub98::new);
+    long v0 = s2.params_20.get(2).deref().get() / 0x100000;
+    int s6 = FUN_800e80c4(s2.scriptStateIndex_00.get(), 0x98L, null, _80119b7c.offset(v0 * 0x4L).deref(4).cast(TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_800fe8b8", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), BttlScriptData6cSub98::new);
     long v1 = s2.params_20.get(3).deref().get() & 0xffffL;
     long s0 = v1 * 0x94L;
-    final BttlScriptData6c s3 = scriptStatePtrArr_800bc1c0.get((int)s6).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final BttlScriptData6c s3 = scriptStatePtrArr_800bc1c0.get(s6).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     final BttlScriptData6cSub98 s1 = s3._44.derefAs(BttlScriptData6cSub98.class);
-    s1._50.set((int)s2.params_20.get(3).deref().get());
+    s1._50.set(s2.params_20.get(3).deref().get());
     s1._68.setPointer(addToLinkedListHead(s0));
 
     if(_8011a00c.isNull()) {
@@ -1977,15 +1977,15 @@ public final class SEffe {
     s1.size_64.set(s0);
     s1.scriptIndex_04.set(s2.params_20.get(1).deref().get());
     s1.scriptIndex_00.set(s6);
-    s1._84.set(_80119bac.get((int)s2.params_20.get(8).deref().get()).deref());
-    s1._88.set(_80119cb0.get((int)s2.params_20.get(8).deref().get()).deref());
+    s1._84.set(_80119bac.get(s2.params_20.get(8).deref().get()).deref());
+    s1._88.set(_80119cb0.get(s2.params_20.get(8).deref().get()).deref());
     _8011a010.set(s1);
     s1._52.set(0);
     s1._34.set(0);
     s1._36.set(0);
     s1._6c.set(0);
     s1._94.clear();
-    s1._8c.set(_80119db4.get((int)s2.params_20.get(8).deref().get()).deref());
+    s1._8c.set(_80119db4.get(s2.params_20.get(8).deref().get()).deref());
     s2.params_20.get(0).deref().set(s6);
 
     //LAB_8010223c
@@ -2015,7 +2015,7 @@ public final class SEffe {
     }
 
     //LAB_801022d4
-    v0 = (int)s2.params_20.get(2).deref().get() / 0x100000;
+    v0 = s2.params_20.get(2).deref().get() / 0x100000;
     s1._54.set(0);
     _80119b94.offset(v0 * 4).deref(4).call(s1, s2_0, s1._08, s2.params_20.get(2).deref().get());
     s3._10._00.or(0x5000_0000L);
@@ -2026,7 +2026,7 @@ public final class SEffe {
 
   @Method(0x80102364L)
   public static long FUN_80102364(final RunningScript a0) {
-    final long a0_0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class)._44.getPointer(); //TODO
+    final long a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class)._44.getPointer(); //TODO
 
     final long a2 = a0.params_20.get(0).deref().get();
     if(a2 == 0) {
@@ -2128,7 +2128,7 @@ public final class SEffe {
   }
 
   @Method(0x801062a8L)
-  public static void FUN_801062a8(final int scriptIndex, final long a1, final BttlScriptData6cSub44 a2, final long a3) {
+  public static void FUN_801062a8(final int scriptIndex, final int a1, final BttlScriptData6cSub44 a2, final long a3) {
     long v0;
     long s3;
     long s6;
@@ -2840,13 +2840,13 @@ public final class SEffe {
 
   @Method(0x801077bcL)
   public static long FUN_801077bc(final RunningScript a0) {
-    a0.params_20.get(2).deref().set(_8011a014.offset(a0.params_20.get(1).deref().get()).getSigned() & 0xffff_ffffL);
+    a0.params_20.get(2).deref().set((int)_8011a014.offset(a0.params_20.get(1).deref().get()).getSigned());
     return 0;
   }
 
   @Method(0x801077e8L)
   public static long FUN_801077e8(final RunningScript s1) {
-    final long s2 = FUN_800e80c4(
+    final int s2 = FUN_800e80c4(
       s1.scriptStateIndex_00.get(),
       0x44L,
       MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_801073d4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new),
@@ -2855,8 +2855,8 @@ public final class SEffe {
       BttlScriptData6cSub44::new
     );
 
-    final ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get((int)s2).derefAs(ScriptState.classFor(BttlScriptData6c.class));
-    FUN_801062a8((int)s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), v0.innerStruct_00.deref()._44.derefAs(BttlScriptData6cSub44.class), s1.params_20.get(2).deref().get());
+    final ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get(s2).derefAs(ScriptState.classFor(BttlScriptData6c.class));
+    FUN_801062a8(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), v0.innerStruct_00.deref()._44.derefAs(BttlScriptData6cSub44.class), s1.params_20.get(2).deref().get());
     v0.storage_44.get(8).set(0);
     s1.params_20.get(4).deref().set(s2);
     _80119f41.setu(0x1L);
@@ -3113,29 +3113,29 @@ public final class SEffe {
   @Method(0x801115ecL)
   public static long FUN_801115ec(final RunningScript s0) {
     final VECTOR sp0x10 = new VECTOR();
-    FUN_8011035c((int)s0.params_20.get(0).deref().get(), (int)s0.params_20.get(1).deref().get(), sp0x10);
-    s0.params_20.get(2).deref().set(sp0x10.getX() & 0xffff_ffffL);
-    s0.params_20.get(3).deref().set(sp0x10.getY() & 0xffff_ffffL);
-    s0.params_20.get(4).deref().set(sp0x10.getZ() & 0xffff_ffffL);
+    FUN_8011035c(s0.params_20.get(0).deref().get(), s0.params_20.get(1).deref().get(), sp0x10);
+    s0.params_20.get(2).deref().set(sp0x10.getX());
+    s0.params_20.get(3).deref().set(sp0x10.getY());
+    s0.params_20.get(4).deref().set(sp0x10.getZ());
     return 0;
   }
 
   @Method(0x80111c2cL)
   public static long FUN_80111c2c(final RunningScript a0) {
-    FUN_801108fc(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), (int)a0.params_20.get(2).deref().get(), (int)a0.params_20.get(3).deref().get(), (int)a0.params_20.get(4).deref().get(), (int)a0.params_20.get(5).deref().get(), (int)a0.params_20.get(6).deref().get(), (int)a0.params_20.get(7).deref().get());
+    FUN_801108fc(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get());
     return 0;
   }
 
   @Method(0x80111ae4L)
   public static long FUN_80111ae4(final RunningScript a0) {
-    final VECTOR sp0x10 = new VECTOR().set((int)a0.params_20.get(2).deref().get(), (int)a0.params_20.get(3).deref().get(), (int)a0.params_20.get(4).deref().get());
-    FUN_8011066c((int)a0.params_20.get(0).deref().get(), (int)a0.params_20.get(1).deref().get(), sp0x10);
+    final VECTOR sp0x10 = new VECTOR().set(a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get());
+    FUN_8011066c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), sp0x10);
     return 0;
   }
 
   @Method(0x801121fcL)
   public static long FUN_801121fc(final RunningScript a0) {
-    FUN_80110aa8(0x1L, (int)a0.params_20.get(0).deref().get(), (int)a0.params_20.get(1).deref().get(), (int)a0.params_20.get(2).deref().get(), (int)a0.params_20.get(3).deref().get(), (int)a0.params_20.get(4).deref().get(), (int)a0.params_20.get(5).deref().get());
+    FUN_80110aa8(0x1L, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get());
     return 0;
   }
 
@@ -3176,7 +3176,7 @@ public final class SEffe {
   @Method(0x80112900L)
   public static long FUN_80112900(final RunningScript s0) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_80110228(sp0x10, FUN_80110030((int)s0.params_20.get(0).deref().get()), FUN_80110030((int)s0.params_20.get(1).deref().get()));
+    FUN_80110228(sp0x10, FUN_80110030(s0.params_20.get(0).deref().get()), FUN_80110030(s0.params_20.get(1).deref().get()));
     s0.params_20.get(2).deref().set(sp0x10.getX());
     s0.params_20.get(3).deref().set(sp0x10.getZ());
     s0.params_20.get(4).deref().set(sp0x10.getY());
@@ -3185,13 +3185,13 @@ public final class SEffe {
 
   @Method(0x8011299cL)
   public static long FUN_8011299c(final RunningScript a0) {
-    final int s0 = (int)a0.params_20.get(1).deref().get();
+    final int s0 = a0.params_20.get(1).deref().get();
 
-    final VECTOR sp0x10 = new VECTOR().set((int)a0.params_20.get(2).deref().get(), (int)a0.params_20.get(3).deref().get(), (int)a0.params_20.get(4).deref().get());
+    final VECTOR sp0x10 = new VECTOR().set(a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get());
     final Ref<SVECTOR> sp0x50 = new Ref<>(new SVECTOR());
     final Ref<VECTOR> sp0x54 = new Ref<>(new VECTOR());
 
-    FUN_801100b8((int)a0.params_20.get(0).deref().get(), sp0x50, sp0x54);
+    FUN_801100b8(a0.params_20.get(0).deref().get(), sp0x50, sp0x54);
 
     if(s0 != -0x1L) {
       final Ref<SVECTOR> sp0x58 = new Ref<>(new SVECTOR());
@@ -3376,7 +3376,7 @@ public final class SEffe {
 
   @Method(0x80113c6cL)
   public static long FUN_80113c6c(final RunningScript a0) {
-    final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
 
     if((s0._04.get() & 0x8L) != 0) {
       FUN_800e8d04(s0, 0x3L);
@@ -3387,15 +3387,15 @@ public final class SEffe {
     v0._30.set(-1);
     v0._32.set((short)-1);
     v0._0c.set(s0._10.svec_16);
-    v0._18.set((int)a0.params_20.get(1).deref().get(), (int)a0.params_20.get(2).deref().get(), (int)a0.params_20.get(3).deref().get());
-    v0._24.set((int)a0.params_20.get(4).deref().get(), (int)a0.params_20.get(5).deref().get(), (int)a0.params_20.get(6).deref().get());
+    v0._18.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    v0._24.set(a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get());
     return 0;
   }
 
   @Method(0x80113db8L)
   public static long FUN_80113db8(final long a0, final RunningScript a1) {
-    final int s7 = (int)a1.params_20.get(0).deref().get();
-    final int s3 = (int)a1.params_20.get(1).deref().get();
+    final int s7 = a1.params_20.get(0).deref().get();
+    final int s3 = a1.params_20.get(1).deref().get();
     final long s2 = a1.params_20.get(2).deref().get();
     final long s4 = a1.params_20.get(3).deref().get();
     final long s5 = a1.params_20.get(4).deref().get();
@@ -3487,7 +3487,7 @@ public final class SEffe {
 
   @Method(0x80114598L)
   public static long FUN_80114598(final RunningScript a0) {
-    long a1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
 
     final SVECTOR a3;
     if(MEMORY.ref(4, a1).offset(0x0L).get() != 0x2020_4d45L) {
@@ -3497,13 +3497,13 @@ public final class SEffe {
     }
 
     //LAB_80114614
-    if((int)a0.params_20.get(1).deref().get() == -0x1L) {
+    if(a0.params_20.get(1).deref().get() == -0x1L) {
       a3.setX((short)a0.params_20.get(2).deref().get());
       a3.setY((short)a0.params_20.get(3).deref().get());
       a3.setZ((short)a0.params_20.get(4).deref().get());
     } else {
       //LAB_80114668
-      a1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(1).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+      a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.getPointer(); //TODO
 
       final SVECTOR a2;
       if(MEMORY.ref(4, a1).offset(0x0L).get() != 0x2020_4d45L) {
@@ -3545,13 +3545,13 @@ public final class SEffe {
 
   @Method(0x80114920L)
   public static long FUN_80114920(final RunningScript a0) {
-    final int scriptIndex1 = (int)a0.params_20.get(0).deref().get();
-    final int scriptIndex2 = (int)a0.params_20.get(1).deref().get();
-    final int scale = (int)a0.params_20.get(2).deref().get();
+    final int scriptIndex1 = a0.params_20.get(0).deref().get();
+    final int scriptIndex2 = a0.params_20.get(1).deref().get();
+    final int scale = a0.params_20.get(2).deref().get();
     final VECTOR vec = new VECTOR().set(
-      (int)a0.params_20.get(3).deref().get(),
-      (int)a0.params_20.get(4).deref().get(),
-      (int)a0.params_20.get(5).deref().get()
+      a0.params_20.get(3).deref().get(),
+      a0.params_20.get(4).deref().get(),
+      a0.params_20.get(5).deref().get()
     );
 
     if(scale >= 0) {
@@ -3577,7 +3577,7 @@ public final class SEffe {
 
   @Method(0x80114e60L)
   public static long FUN_80114e60(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
     MEMORY.ref(4, v0).offset(0x34L).offset(a0.params_20.get(1).deref().get() * 0x4L).setu(a0.params_20.get(2).deref().get());
     return 0;
   }
@@ -3592,7 +3592,7 @@ public final class SEffe {
 
   @Method(0x801152b0L)
   public static long FUN_801152b0(final RunningScript a0) {
-    final BttlScriptData6cSub1c v0 = FUN_800e8dd4(scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class), 0, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115288", BttlScriptData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
+    final BttlScriptData6cSub1c v0 = FUN_800e8dd4(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class), 0, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115288", BttlScriptData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
     MEMORY.ref(2, v0.getAddress()).offset(0x1aL).setu(a0.params_20.get(1).deref().get()); //TODO
     return 0;
   }
@@ -3619,22 +3619,22 @@ public final class SEffe {
 
   @Method(0x801153e4L)
   public static long FUN_801153e4(final RunningScript a0) {
-    final BttlScriptData6c a1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final BttlScriptData6c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     a1._10._00.and(0xcfff_ffffL).or(a0.params_20.get(1).deref().get() << 28);
     return 0;
   }
 
   @Method(0x80115690L)
   public static long FUN_80115690(final RunningScript a0) {
-    final long s0 = a0.params_20.get(0).deref().get();
+    final int s0 = a0.params_20.get(0).deref().get();
     loadScriptFile(s0, a0.scriptState_04.deref().scriptPtr_14.deref(), 0, "S_EFFE Script", 0); //TODO unknown size
-    scriptStatePtrArr_800bc1c0.get((int)s0).deref().commandPtr_18.set(a0.params_20.get(1).deref());
+    scriptStatePtrArr_800bc1c0.get(s0).deref().commandPtr_18.set(a0.params_20.get(1).deref());
     return 0;
   }
 
   @Method(0x801156f8L)
   public static long FUN_801156f8(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
     MEMORY.ref(1, v0).offset(0xcL).setu(a0.params_20.get(1).deref().get());
     MEMORY.ref(1, v0).offset(0xdL).setu(a0.params_20.get(2).deref().get());
     return 0;
@@ -3670,8 +3670,8 @@ public final class SEffe {
   }
 
   @Method(0x80115c2cL)
-  public static void FUN_80115c2c(final long a0, final long a1) {
-    final int scriptIndex = (int)FUN_800e80c4(_800c693c.deref(4).offset(0x1cL).get(), 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115b2c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115bf0", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null);
+  public static void FUN_80115c2c(final int a0, final int a1) {
+    final int scriptIndex = FUN_800e80c4((int)_800c693c.deref(4).offset(0x1cL).get(), 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115b2c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115bf0", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null);
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
     state.storage_44.get(8).set(a0);
     state.storage_44.get(9).set(a1);
@@ -3709,7 +3709,7 @@ public final class SEffe {
       if(a0 == 0) {
         //LAB_80115dc0
         if((_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
-          FUN_80115c2c(0x6L, 0x10L);
+          FUN_80115c2c(6, 16);
         }
 
         //LAB_80115de8
@@ -3722,7 +3722,7 @@ public final class SEffe {
         //LAB_80115e34
         _800bda0c.deref()._5e4.or(sp14);
         if((_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
-          FUN_80115c2c(0x10L, 0x6L);
+          FUN_80115c2c(16, 6);
         }
       } else if(a0 == 0x3L) {
         //LAB_80115e70
@@ -3796,8 +3796,8 @@ public final class SEffe {
   @Method(0x801183c0L)
   public static long FUN_801183c0(final RunningScript s3) {
     final long s1 = s3.params_20.get(1).deref().get();
-    final long s4 = FUN_800e80c4(s3.scriptStateIndex_00.get(), 0x14L, null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8011826c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, BttlScriptData6cSub14::new);
-    final BttlScriptData6c s2 = scriptStatePtrArr_800bc1c0.get((int)s4).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final int s4 = FUN_800e80c4(s3.scriptStateIndex_00.get(), 0x14L, null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8011826c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, BttlScriptData6cSub14::new);
+    final BttlScriptData6c s2 = scriptStatePtrArr_800bc1c0.get(s4).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     s2._04.set(0x300_0000L);
     final long s0 = s2._44.getPointer(); //TODO
     MEMORY.ref(4, s0).offset(0x0L).setu(s1 | 0x300_0000L);
@@ -4028,13 +4028,13 @@ public final class SEffe {
 
   @Method(0x80119484L)
   public static long FUN_80119484(final RunningScript a0) {
-    long s4 = a0.params_20.get(1).deref().get();
-    long s2 = a0.params_20.get(2).deref().get();
-    long s6 = a0.params_20.get(3).deref().get();
-    long s0 = a0.params_20.get(4).deref().get();
-    long s1 = a0.params_20.get(5).deref().get();
+    int s4 = a0.params_20.get(1).deref().get();
+    int s2 = a0.params_20.get(2).deref().get();
+    int s6 = a0.params_20.get(3).deref().get();
+    int s0 = a0.params_20.get(4).deref().get();
+    int s1 = a0.params_20.get(5).deref().get();
 
-    long fp = FUN_800e80c4(
+    final int fp = FUN_800e80c4(
       a0.scriptStateIndex_00.get(),
       0x30L,
       MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_801196bc", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new),
@@ -4043,7 +4043,7 @@ public final class SEffe {
       BttlScriptData6cSub30::new
     );
 
-    ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get((int)fp).derefAs(ScriptState.classFor(BttlScriptData6c.class));
+    ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get(fp).derefAs(ScriptState.classFor(BttlScriptData6c.class));
     final BttlScriptData6c data = v0.innerStruct_00.deref();
     strcpy(data._5c, _800fb954.get());
 

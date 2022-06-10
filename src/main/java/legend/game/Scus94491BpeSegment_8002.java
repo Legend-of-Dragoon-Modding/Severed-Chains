@@ -1352,8 +1352,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021fc4L)
-  public static long SquareRoot0(final long n) {
-    return (long)Math.sqrt(n);
+  public static int SquareRoot0(final long n) {
+    return (int)Math.sqrt(n);
   }
 
   /**
@@ -6840,14 +6840,14 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80029bb0
     }
 
-    a0.params_20.get(0).deref().set(0xffff_ffffL);
+    a0.params_20.get(0).deref().set(-1);
     return 0;
   }
 
   @Method(0x80029c98L)
   public static long FUN_80029c98(final RunningScript a0) {
-    final int a2 = (int)a0.params_20.get(0).deref().get();
-    a0.params_20.get(1).deref().set(_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
+    final int a2 = a0.params_20.get(0).deref().get();
+    a0.params_20.get(1).deref().set((int)(_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get()));
     return 0;
   }
 
@@ -7945,7 +7945,7 @@ public final class Scus94491BpeSegment_8002 {
       joyStruct.iArr40.get(i).set(rcos(joyStruct.sArr50.get(i).get()) & 0xffff);
       long v1 = joyStruct.sArr48.get(i * 2).get();
       v0 = joyStruct.sArr48.get(i * 2 + 1).get();
-      joyStruct.sArr54.get(i).set((int)SquareRoot0(v1 * v1 + v0 * v0));
+      joyStruct.sArr54.get(i).set(SquareRoot0(v1 * v1 + v0 * v0));
 
       if(joyStruct.sArr48.get(i * 2).get() != 0 || joyStruct.sArr48.get(i * 2 + 1).get() != 0) {
         //LAB_8002ba90

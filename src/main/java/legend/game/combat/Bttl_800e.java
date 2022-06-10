@@ -1278,7 +1278,7 @@ public final class Bttl_800e {
     sp20 = (short)a0.params_20.get(0).deref().get();
     s1 = a0.params_20.get(0).deref().get() & 0xff_0000L;
     if(sp20 == -0x1L) {
-      final BtldScriptData27c v0 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BtldScriptData27c v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
       assert false : "?"; //a0.params_20.get(0).set(sp0x20);
       sp20 = getBattleStruct1a8(v0._26c.get())._1a2.get();
     }
@@ -1402,8 +1402,8 @@ public final class Bttl_800e {
 
   @Method(0x800e74acL)
   public static long FUN_800e74ac(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(_800c6938.deref(4).offset(0x4L).get());
-    a0.params_20.get(1).deref().set(_800c6938.deref(4).offset(0x8L).get());
+    a0.params_20.get(0).deref().set((int)_800c6938.deref(4).offset(0x4L).get());
+    a0.params_20.get(1).deref().set((int)_800c6938.deref(4).offset(0x8L).get());
     return 0;
   }
 
@@ -1752,8 +1752,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e80c4L)
-  public static long FUN_800e80c4(final long a0, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> a2, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> callback08, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> a4, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
-    final long index = allocateScriptState(0x6cL, BttlScriptData6c::new);
+  public static int FUN_800e80c4(final int a0, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> a2, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> callback08, @Nullable final TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c> a4, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
+    final int index = allocateScriptState(0x6cL, BttlScriptData6c::new);
 
     loadScriptFile(index, script_800faebc, "BTTL Script 800faebc", 0); //TODO unknown size
     setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e8e9c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
@@ -1765,7 +1765,7 @@ public final class Bttl_800e {
     //LAB_800e8150
     setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
 
-    final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get((int)index).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     s0._08.set(subStructSize);
     if(subStructSize != 0) {
       s0._44.set(MEMORY.ref(4, addToLinkedListTail(subStructSize), subStructConstructor));
@@ -1776,7 +1776,7 @@ public final class Bttl_800e {
 
     //LAB_800e8188
     s0._48.setNullable(a2);
-    s0._0e.set((int)index);
+    s0._0e.set(index);
     s0._10.vec_04.set(0, 0, 0);
     s0._10.svec_10.set((short)0, (short)0, (short)0);
     s0._10._22.set((short)0);
@@ -1795,12 +1795,12 @@ public final class Bttl_800e {
     s0.scriptIndex_54.set((short)-1);
     s0.scriptIndex_56.set((short)-1);
     s0._58.clear();
-    long s3 = scriptStatePtrArr_800bc1c0.get((int)index).deref().getAddress();
+    long s3 = scriptStatePtrArr_800bc1c0.get(index).deref().getAddress();
     MEMORY.ref(4, s3).offset(0xf8L).setu(s0._5c.getAddress()); //TODO
     strcpy(s0._5c, _800c6e18.get());
 
-    if((int)a0 != -0x1L) {
-      long v0 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().getAddress(); //TODO
+    if(a0 != -1) {
+      long v0 = scriptStatePtrArr_800bc1c0.get(a0).deref().getAddress(); //TODO
       v0 = MEMORY.ref(4, v0).offset(0x0L).get();
       v0 = MEMORY.ref(4, v0).offset(0x0L).get();
       final long a0_0;
@@ -1812,7 +1812,7 @@ public final class Bttl_800e {
 
       //LAB_800e8294
       long v1 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().getAddress(); //TODO
-      v0 = scriptStatePtrArr_800bc1c0.get((int)index).deref().getAddress(); //TODO
+      v0 = scriptStatePtrArr_800bc1c0.get(index).deref().getAddress(); //TODO
       v1 = MEMORY.ref(4, v1).offset(0x0L).get();
       long a1_0 = MEMORY.ref(4, v0).offset(0x0L).get();
 
@@ -1838,8 +1838,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e832cL)
-  public static <T extends MemoryRef> long FUN_800e832c(long a0, long a1, long a2, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback08, long a4) {
-    final long index = allocateScriptState(0x6cL, BttlScriptData6c::new);
+  public static <T extends MemoryRef> int FUN_800e832c(int a0, long a1, long a2, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback08, long a4) {
+    final int index = allocateScriptState(0x6cL, BttlScriptData6c::new);
     loadScriptFile(index, script_800faebc, "BTTL Script FUN_800e832c", 0); //TODO
     setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e8e9c", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
 
@@ -1850,8 +1850,8 @@ public final class Bttl_800e {
     //LAB_800e83b8
     setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
 
-    final ScriptState<BttlScriptData6c> s3 = scriptStatePtrArr_800bc1c0.get((int)index).derefAs(ScriptState.classFor(BttlScriptData6c.class));
-    final long s0 = s3.innerStruct_00.derefAs(BttlScriptData6c.class).getAddress();
+    final ScriptState<BttlScriptData6c> s3 = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BttlScriptData6c.class));
+    final long s0 = s3.innerStruct_00.derefAs(BttlScriptData6c.class).getAddress(); //TODO
 
     MEMORY.ref(4, s0).offset(0x08L).setu(a1);
 
@@ -1899,7 +1899,7 @@ public final class Bttl_800e {
     MEMORY.ref(4, s0).offset(0x58L).setu(0);
     s3.ui_f8.set(s0 + 0x5cL);
     strcpy(MEMORY.ref(7, s0 + 0x5cL, CString::new), _800c6e18.get()); //TODO
-    if((int)a0 != -0x1L) {
+    if(a0 != -1) {
       final long a0_0;
       if(scriptStatePtrArr_800bc1c0.get((short)a0).deref().innerStruct_00.derefAs(BtldScriptData27c.class).magic_00.get() == 0x2020_4d45L) {
         a0_0 = a0;
@@ -2297,7 +2297,7 @@ public final class Bttl_800e {
     _800c693c.setu(v0);
     MEMORY.ref(4, v0).offset(0x1cL).setu(0);
     _800c6948.setu(v0 + 0x39cL);
-    v0 = FUN_800e80c4(-0x1L, 0, null, null, null, null);
+    v0 = FUN_800e80c4(-1, 0, null, null, null, null);
     long a0 = _800c693c.get();
     MEMORY.ref(4, a0).offset(0x1cL).setu(v0);
     v0 = scriptStatePtrArr_800bc1c0.get((int)v0).deref().innerStruct_00.getPointer(); //TODO
@@ -2421,8 +2421,8 @@ public final class Bttl_800e {
 
   @Method(0x800e96ccL)
   public static long FUN_800e96cc(final RunningScript s1) {
-    final long s2 = FUN_800e80c4(s1.scriptStateIndex_00.get(), 0xcL, null, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e9590", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, BttlScriptData6cSub0c::new);
-    final ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get((int)s2).derefAs(ScriptState.classFor(BttlScriptData6c.class));
+    final int s2 = FUN_800e80c4(s1.scriptStateIndex_00.get(), 0xcL, null, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e9590", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), null, BttlScriptData6cSub0c::new);
+    final ScriptState<BttlScriptData6c> v0 = scriptStatePtrArr_800bc1c0.get(s2).derefAs(ScriptState.classFor(BttlScriptData6c.class));
     final BttlScriptData6c s0 = v0.innerStruct_00.deref();
     s0._04.set(0x400_0000L);
     FUN_800e95f0(s0._44.getPointer(), s1.params_20.get(1).deref().get()); //TODO
@@ -5098,15 +5098,15 @@ public final class Bttl_800e {
 
   @Method(0x800ee3c0L)
   public static long FUN_800ee3c0(final RunningScript a0) {
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
     v1._214.set(0x3);
-    v1._215.set((int)a0.params_20.get(1).deref().get());
+    v1._215.set(a0.params_20.get(1).deref().get());
     return 0;
   }
 
   @Method(0x800ee49cL)
   public static long FUN_800ee49c(final RunningScript a0) {
-    final BtldScriptData27c a1 = scriptStatePtrArr_800bc1c0.get((int)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BtldScriptData27c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
     a1._254.set(a0.params_20.get(1).deref().get());
     a1._25c.set(a0.params_20.get(2).deref().get());
     return 0;

@@ -1509,7 +1509,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dbb50
-    a0.params_20.get(1).deref().set(a1);
+    a0.params_20.get(1).deref().set((int)a1);
     return 0;
   }
 
@@ -1592,7 +1592,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dc344
-    s0.params_20.get(4).deref().set((long)MEMORY.ref(4, v1).offset(s0.params_20.get(1).deref().get() * 0x4L).deref(4).call(s0.params_20.get(2).deref().get(), s0.params_20.get(3).deref().get(), x, y, z) & 0xffff_ffffL);
+    s0.params_20.get(4).deref().set((int)(long)MEMORY.ref(4, v1).offset(s0.params_20.get(1).deref().get() * 0x4L).deref(4).call(s0.params_20.get(2).deref().get(), s0.params_20.get(3).deref().get(), x, y, z));
     return 0;
   }
 

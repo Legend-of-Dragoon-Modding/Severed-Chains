@@ -530,7 +530,7 @@ public final class SItem {
     //LAB_800fbe70
     for(int i = 0; i < _800c677c.get(); i++) {
       final long s2 = gameState_800babc8.charIndex_88.get(i).get();
-      final long s0 = allocateScriptState(i + 0x6L, 0x27cL, false, 0, 0, BtldScriptData27c::new);
+      final int s0 = allocateScriptState(i + 6, 0x27cL, false, 0, 0, BtldScriptData27c::new);
       setCallback04(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       setCallback0c(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
       _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(s0);
