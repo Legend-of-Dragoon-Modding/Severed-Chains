@@ -7,7 +7,7 @@ import legend.game.types.McqHeader;
 import legend.game.types.MrgFile;
 
 /** 0x18cb0 bytes */
-public class BattleStruct implements MemoryRef {
+public class BattleStruct18cb0 implements MemoryRef {
   private final Value ref;
 
   /** This reference is only valid while it's loading */
@@ -26,7 +26,7 @@ public class BattleStruct implements MemoryRef {
   //TODO unknown size
   public final Value _d4b0;
 
-  public BattleStruct(final Value ref) {
+  public BattleStruct18cb0(final Value ref) {
     this.ref = ref;
 
     this.stageMrg_638 = ref.offset(4, 0x638L).cast(Pointer.deferred(4, MrgFile::new));

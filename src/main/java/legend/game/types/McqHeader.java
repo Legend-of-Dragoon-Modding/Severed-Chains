@@ -3,6 +3,7 @@ package legend.game.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
@@ -24,6 +25,17 @@ public class McqHeader implements MemoryRef {
   public final UnsignedShortRef _14;
   public final UnsignedShortRef _16;
 
+  public final UnsignedByteRef _18;
+  public final UnsignedByteRef _19;
+  public final UnsignedByteRef _1a;
+
+  public final UnsignedByteRef _20;
+  public final UnsignedByteRef _21;
+  public final UnsignedByteRef _22;
+
+  public final ShortRef _28;
+  public final ShortRef _2a;
+
   public McqHeader(final Value ref) {
     this.ref = ref;
 
@@ -37,6 +49,17 @@ public class McqHeader implements MemoryRef {
     this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
+
+    this._18 = ref.offset(1, 0x18L).cast(UnsignedByteRef::new);
+    this._19 = ref.offset(1, 0x19L).cast(UnsignedByteRef::new);
+    this._1a = ref.offset(1, 0x1aL).cast(UnsignedByteRef::new);
+
+    this._20 = ref.offset(1, 0x20L).cast(UnsignedByteRef::new);
+    this._21 = ref.offset(1, 0x21L).cast(UnsignedByteRef::new);
+    this._22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
+
+    this._28 = ref.offset(2, 0x28L).cast(ShortRef::new);
+    this._2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
   }
 
   public long getImageDataAddress() {
