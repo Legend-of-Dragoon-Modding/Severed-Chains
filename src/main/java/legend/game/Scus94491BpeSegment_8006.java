@@ -10,6 +10,7 @@ public final class Scus94491BpeSegment_8006 {
   /** TODO huge structure related to combat */
   public static final Value _8006e398 = MEMORY.ref(4, 0x8006e398L);
 
+  /** TODO array of 0x8 structs */
   public static final Value _8006e918 = MEMORY.ref(4, 0x8006e918L);
 
   public static final Value _8006f1a4 = MEMORY.ref(4, 0x8006f1a4L);

@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.ShortRef;
@@ -8,6 +9,9 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class BttlScriptData6cSub44 extends BttlScriptData6cSubBase1 {
+  public final VECTOR vec_10;
+  public final VECTOR vec_20;
+
   public final UnsignedByteRef _30;
   public final UnsignedByteRef _31;
   public final ByteRef _32;
@@ -23,6 +27,9 @@ public class BttlScriptData6cSub44 extends BttlScriptData6cSubBase1 {
 
   public BttlScriptData6cSub44(final Value ref) {
     super(ref);
+
+    this.vec_10 = ref.offset(4, 0x10L).cast(VECTOR::new);
+    this.vec_20 = ref.offset(4, 0x20L).cast(VECTOR::new);
 
     this._30 = ref.offset(1, 0x30L).cast(UnsignedByteRef::new);
     this._31 = ref.offset(1, 0x31L).cast(UnsignedByteRef::new);

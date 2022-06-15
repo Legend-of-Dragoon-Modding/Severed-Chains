@@ -4117,7 +4117,7 @@ public final class SMap {
         LoadImage(imageRect, tim.imageAddress.get());
         DrawSync(0);
 
-        final int scriptStateIndex = allocateScriptState(0, 0, false, 0, 0);
+        final int scriptStateIndex = allocateScriptState(0, 0, false, null, 0);
         _800c6740.setu(scriptStateIndex);
         loadScriptFile(scriptStateIndex, mrg1Addr_800c68d8.deref().getFile(0, ScriptFile::new), "SMAP MRG1 File 0", (int)mrg1Addr_800c68d8.deref().entries.get(0).size.get());
 
@@ -7478,7 +7478,7 @@ public final class SMap {
 
     //LAB_800e937c
     for(int i = 0; i < count; i++) {
-      out.add(MEMORY.ref(4, ss.verts_04.get()).offset(MEMORY.ref(2, t0).offset(i * 0x2L).get() * 0x8L).cast(SVECTOR::new)); //TODO
+      out.add((SVECTOR)MEMORY.ref(4, ss.verts_04.get()).offset(MEMORY.ref(2, t0).offset(i * 0x2L).get() * 0x8L).cast(SVECTOR::new)); //TODO
     }
 
     //LAB_800e93e0

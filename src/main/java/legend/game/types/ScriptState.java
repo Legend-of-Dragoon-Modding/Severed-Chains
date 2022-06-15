@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -68,7 +69,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
   public final IntRef _ec;
   public final IntRef _f0;
   public final IntRef _f4;
-  public final UnsignedIntRef ui_f8;
+  public final Pointer<CString> typePtr_f8;
   public final UnsignedIntRef ui_fc;
 
   public ScriptState(final Value ref, final Function<Value, T> innerStructConstructor) {
@@ -97,7 +98,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
     this._ec = ref.offset(4, 0xecL).cast(IntRef::new);
     this._f0 = ref.offset(4, 0xf0L).cast(IntRef::new);
     this._f4 = ref.offset(4, 0xf4L).cast(IntRef::new);
-    this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);
+    this.typePtr_f8 = ref.offset(4, 0xf8L).cast(Pointer.deferred(4, CString::new));
     this.ui_fc = ref.offset(4, 0xfcL).cast(UnsignedIntRef::new);
   }
 

@@ -1435,13 +1435,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013598L)
-  public static long rsin(final long angleDiv360Maybe) {
-    return sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
+  public static short rsin(final long angleDiv360Maybe) {
+    return (short)sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
   }
 
   @Method(0x800135b8L)
-  public static long rcos(final long angleDiv360Maybe) {
-    return sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
+  public static short rcos(final long angleDiv360Maybe) {
+    return (short)sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
   }
 
   /**
@@ -2458,21 +2458,21 @@ public final class Scus94491BpeSegment {
       return -1;
     }
 
-    return allocateScriptState(index, innerStructSize, false, 0, 0, type);
+    return allocateScriptState(index, innerStructSize, false, null, 0, type);
   }
 
   /**
    * @return index, or -1 on failure to allocate memory
    */
   @Method(0x80015918L)
-  public static <T extends MemoryRef> int allocateScriptState(final int index, long innerStructSize, final boolean allocateOnHead, final long a3, final long a4) {
+  public static <T extends MemoryRef> int allocateScriptState(final int index, long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4) {
     return allocateScriptState(index, innerStructSize, allocateOnHead, a3, a4, BigStruct::new);
   }
 
   /**
    * @return index, or -1 on failure to allocate memory
    */
-  public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, final long a3, final long a4, final Function<Value, T> type) {
+  public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
     LOGGER.info("Allocating script index %d (0x%x bytes)", index, innerStructSize);
 
     final long linkedListAddress;
@@ -2537,7 +2537,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_800159f8
     //LAB_80015a14
-    scriptState.ui_f8.set(a3);
+    scriptState.typePtr_f8.setNullable(a3);
     scriptState.ui_fc.set(a4);
 
     //LAB_80015a34
@@ -2672,7 +2672,7 @@ public final class Scus94491BpeSegment {
   public static int FUN_80015d74(final int a0) {
     final int index = findFreeScriptState();
 
-    if(index < 0 || allocateScriptState(index, 0, false, 0, 0) < 0) {
+    if(index < 0 || allocateScriptState(index, 0, false, null, 0) < 0) {
       //LAB_80015dd4
       return -1;
     }

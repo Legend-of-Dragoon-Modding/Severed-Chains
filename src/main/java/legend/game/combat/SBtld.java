@@ -3,9 +3,12 @@ package legend.game.combat;
 import legend.core.Tuple;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
+import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.game.combat.types.BattleStruct1a8;
 import legend.game.combat.types.BtldScriptData27c;
+import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 
@@ -51,6 +54,11 @@ public class SBtld {
   /** TODO 0x10-byte struct */
   public static final Value _80109a98 = MEMORY.ref(4, 0x80109a98L);
 
+  /** TODO 0x1c-byte struct */
+  public static final Value _8010ba98 = MEMORY.ref(4, 0x8010ba98L);
+
+  public static final ArrayRef<Pointer<LodString>> _80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
+
   /** TODO 0x8-byte struct */
   public static final Value _80112868 = MEMORY.ref(4, 0x80112868L);
 
@@ -82,7 +90,7 @@ public class SBtld {
   @Method(0x80109170L)
   public static void FUN_80109170(final long address, final long fileSize, final long param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
-    scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, 0, 0));
+    scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0));
     loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
 
     final long v1;

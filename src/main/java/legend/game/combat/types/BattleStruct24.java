@@ -16,18 +16,18 @@ public class BattleStruct24 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef _00;
-  public final ShortRef _04;
-  public final ShortRef _06;
-  public final UnsignedShortRef _08;
-  public final UnsignedShortRef _0a;
+  public final ShortRef x_04;
+  public final ShortRef y_06;
+  public final UnsignedShortRef w_08;
+  public final UnsignedShortRef h_0a;
   public final UnsignedShortRef _0c;
-  public final UnsignedByteRef _0e;
-  public final UnsignedByteRef _0f;
-  public final UnsignedShortRef _10;
-  public final UnsignedShortRef _12;
-  public final ByteRef _14;
-  public final ByteRef _15;
-  public final ByteRef _16;
+  public final UnsignedByteRef u_0e;
+  public final UnsignedByteRef v_0f;
+  public final UnsignedShortRef clutX_10;
+  public final UnsignedShortRef clutY_12;
+  public final ByteRef r_14;
+  public final ByteRef g_15;
+  public final ByteRef b_16;
 
   public final ShortRef _1c;
   public final ShortRef _1e;
@@ -37,18 +37,18 @@ public class BattleStruct24 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
+    this.x_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
+    this.y_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    this.w_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
+    this.h_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this._0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
-    this._0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
-    this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
-    this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
-    this._14 = ref.offset(1, 0x14L).cast(ByteRef::new);
-    this._15 = ref.offset(1, 0x15L).cast(ByteRef::new);
-    this._16 = ref.offset(1, 0x16L).cast(ByteRef::new);
+    this.u_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
+    this.v_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
+    this.clutX_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
+    this.clutY_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
+    this.r_14 = ref.offset(1, 0x14L).cast(ByteRef::new);
+    this.g_15 = ref.offset(1, 0x15L).cast(ByteRef::new);
+    this.b_16 = ref.offset(1, 0x16L).cast(ByteRef::new);
 
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
@@ -59,18 +59,18 @@ public class BattleStruct24 implements MemoryRef {
     this.ref = null;
 
     this._00 = new UnsignedIntRef();
-    this._04 = new ShortRef();
-    this._06 = new ShortRef();
-    this._08 = new UnsignedShortRef();
-    this._0a = new UnsignedShortRef();
+    this.x_04 = new ShortRef();
+    this.y_06 = new ShortRef();
+    this.w_08 = new UnsignedShortRef();
+    this.h_0a = new UnsignedShortRef();
     this._0c = new UnsignedShortRef();
-    this._0e = new UnsignedByteRef();
-    this._0f = new UnsignedByteRef();
-    this._10 = new UnsignedShortRef();
-    this._12 = new UnsignedShortRef();
-    this._14 = new ByteRef();
-    this._15 = new ByteRef();
-    this._16 = new ByteRef();
+    this.u_0e = new UnsignedByteRef();
+    this.v_0f = new UnsignedByteRef();
+    this.clutX_10 = new UnsignedShortRef();
+    this.clutY_12 = new UnsignedShortRef();
+    this.r_14 = new ByteRef();
+    this.g_15 = new ByteRef();
+    this.b_16 = new ByteRef();
 
     this._1c = new ShortRef();
     this._1e = new ShortRef();
