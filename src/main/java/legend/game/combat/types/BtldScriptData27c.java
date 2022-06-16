@@ -12,13 +12,15 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 
 public class BtldScriptData27c extends BattleScriptDataBase {
-  public final ArrayRef<ShortRef> _04; // Note: overlaps all the way to _144
-  public final UnsignedShortRef _08;
-  public final ShortRef _0a;
-  public final UnsignedShortRef _0c;
+  public final ArrayRef<ShortRef> all_04; // Note: overlaps all the way to _144
+  public final UnsignedShortRef level_04;
+  public final UnsignedShortRef dlevel_06;
+  public final UnsignedShortRef hp_08;
+  public final ShortRef sp_0a;
+  public final UnsignedShortRef mp_0c;
   public final UnsignedShortRef _0e;
-  public final UnsignedShortRef _10;
-  public final UnsignedShortRef _12;
+  public final UnsignedShortRef maxHp_10;
+  public final UnsignedShortRef maxMp_12;
   public final UnsignedShortRef _14;
   public final UnsignedShortRef _16;
   public final UnsignedShortRef _18;
@@ -34,22 +36,23 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final UnsignedShortRef _2c;
   public final UnsignedShortRef _2e;
   public final UnsignedShortRef _30;
-  public final ShortRef _32;
-  public final UnsignedShortRef _34;
-  public final UnsignedShortRef _36;
-  public final UnsignedShortRef _38;
-  public final UnsignedShortRef _3a;
-  public final UnsignedShortRef _3c;
-  public final UnsignedShortRef _3e;
-  public final UnsignedShortRef _40;
-  public final UnsignedShortRef _42;
+  public final UnsignedShortRef speed_32;
+  public final UnsignedShortRef attack_34;
+  public final UnsignedShortRef magicAttack_36;
+  public final UnsignedShortRef defence_38;
+  public final UnsignedShortRef magicDefence_3a;
+  public final UnsignedShortRef attackHit_3c;
+  public final UnsignedShortRef magicHit_3e;
+  public final UnsignedShortRef attackAvoid_40;
+  public final UnsignedShortRef magicAvoid_42;
   public final UnsignedShortRef _44;
   public final UnsignedShortRef _46;
   public final UnsignedShortRef _48;
   public final UnsignedShortRef _4a;
   public final ShortRef _4c;
+  public final UnsignedShortRef _4e;
 
-  public final ShortRef _58;
+  public final ShortRef selectedAddition_58;
 
   public final UnsignedShortRef _5c;
   public final UnsignedShortRef _5e;
@@ -76,11 +79,39 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
   public final UnsignedShortRef _a4;
 
+  public final UnsignedShortRef dragoonAttack_ac;
+  public final UnsignedShortRef dragoonMagic_ae;
+  public final UnsignedShortRef dragoonDefence_b0;
+  public final UnsignedShortRef dragoonMagicDefence_b2;
+
   public final ShortRef _b8;
 
   public final UnsignedShortRef _110;
   public final UnsignedShortRef _112;
+  public final UnsignedShortRef _114;
+  public final UnsignedShortRef _116;
+  public final UnsignedShortRef _118;
+  public final UnsignedShortRef _11a;
+  public final UnsignedShortRef _11c;
+  public final UnsignedShortRef equipment0_11e;
+  public final UnsignedShortRef equipment1_120;
+  public final UnsignedShortRef equipment2_122;
+  public final UnsignedShortRef equipment3_124;
+  public final UnsignedShortRef equipment4_126;
+  public final UnsignedShortRef _128;
+  public final UnsignedShortRef _12a;
+  public final UnsignedShortRef _12c;
+  public final UnsignedShortRef _12e;
+  public final UnsignedShortRef _130;
+  public final UnsignedShortRef _132;
+  public final UnsignedShortRef _134;
+  public final UnsignedShortRef _136;
+  public final UnsignedShortRef _138;
+  public final UnsignedShortRef _13a;
+  public final UnsignedShortRef _13c;
+  public final UnsignedShortRef _13e;
 
+  public final UnsignedShortRef _142;
   public final Pointer<BattleStruct1a8> _144;
   public final BigStruct _148;
 
@@ -111,13 +142,15 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public BtldScriptData27c(final Value ref) {
     super(ref);
 
-    this._04 = ref.offset(2, 0x04L).cast(ArrayRef.of(ShortRef.class, 0xa0, 2, ShortRef::new));
-    this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
+    this.all_04 = ref.offset(2, 0x04L).cast(ArrayRef.of(ShortRef.class, 0xa0, 2, ShortRef::new));
+    this.level_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
+    this.dlevel_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.hp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
+    this.sp_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this.mp_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
-    this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
-    this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
+    this.maxHp_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
+    this.maxMp_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
     this._18 = ref.offset(2, 0x18L).cast(UnsignedShortRef::new);
@@ -133,22 +166,23 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);
     this._2e = ref.offset(2, 0x2eL).cast(UnsignedShortRef::new);
     this._30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
-    this._32 = ref.offset(2, 0x32L).cast(ShortRef::new);
-    this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
-    this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
-    this._38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
-    this._3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
-    this._3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);
-    this._3e = ref.offset(2, 0x3eL).cast(UnsignedShortRef::new);
-    this._40 = ref.offset(2, 0x40L).cast(UnsignedShortRef::new);
-    this._42 = ref.offset(2, 0x42L).cast(UnsignedShortRef::new);
+    this.speed_32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
+    this.attack_34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
+    this.magicAttack_36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
+    this.defence_38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
+    this.magicDefence_3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
+    this.attackHit_3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);
+    this.magicHit_3e = ref.offset(2, 0x3eL).cast(UnsignedShortRef::new);
+    this.attackAvoid_40 = ref.offset(2, 0x40L).cast(UnsignedShortRef::new);
+    this.magicAvoid_42 = ref.offset(2, 0x42L).cast(UnsignedShortRef::new);
     this._44 = ref.offset(2, 0x44L).cast(UnsignedShortRef::new);
     this._46 = ref.offset(2, 0x46L).cast(UnsignedShortRef::new);
     this._48 = ref.offset(2, 0x48L).cast(UnsignedShortRef::new);
     this._4a = ref.offset(2, 0x4aL).cast(UnsignedShortRef::new);
     this._4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
+    this._4e = ref.offset(2, 0x4eL).cast(UnsignedShortRef::new);
 
-    this._58 = ref.offset(2, 0x58L).cast(ShortRef::new);
+    this.selectedAddition_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
 
     this._5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);
     this._5e = ref.offset(2, 0x5eL).cast(UnsignedShortRef::new);
@@ -175,11 +209,39 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
     this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
 
+    this.dragoonAttack_ac = ref.offset(2, 0xacL).cast(UnsignedShortRef::new);
+    this.dragoonMagic_ae = ref.offset(2, 0xaeL).cast(UnsignedShortRef::new);
+    this.dragoonDefence_b0 = ref.offset(2, 0xb0L).cast(UnsignedShortRef::new);
+    this.dragoonMagicDefence_b2 = ref.offset(2, 0xb2L).cast(UnsignedShortRef::new);
+
     this._b8 = ref.offset(2, 0xb8L).cast(ShortRef::new);
 
     this._110 = ref.offset(2, 0x110L).cast(UnsignedShortRef::new);
     this._112 = ref.offset(2, 0x112L).cast(UnsignedShortRef::new);
+    this._114 = ref.offset(2, 0x114L).cast(UnsignedShortRef::new);
+    this._116 = ref.offset(2, 0x116L).cast(UnsignedShortRef::new);
+    this._118 = ref.offset(2, 0x118L).cast(UnsignedShortRef::new);
+    this._11a = ref.offset(2, 0x11aL).cast(UnsignedShortRef::new);
+    this._11c = ref.offset(2, 0x11cL).cast(UnsignedShortRef::new);
+    this.equipment0_11e = ref.offset(2, 0x11eL).cast(UnsignedShortRef::new);
+    this.equipment1_120 = ref.offset(2, 0x120L).cast(UnsignedShortRef::new);
+    this.equipment2_122 = ref.offset(2, 0x122L).cast(UnsignedShortRef::new);
+    this.equipment3_124 = ref.offset(2, 0x124L).cast(UnsignedShortRef::new);
+    this.equipment4_126 = ref.offset(2, 0x126L).cast(UnsignedShortRef::new);
+    this._128 = ref.offset(2, 0x128L).cast(UnsignedShortRef::new);
+    this._12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
+    this._12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
+    this._12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
+    this._130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
+    this._132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
+    this._134 = ref.offset(2, 0x134L).cast(UnsignedShortRef::new);
+    this._136 = ref.offset(2, 0x136L).cast(UnsignedShortRef::new);
+    this._138 = ref.offset(2, 0x138L).cast(UnsignedShortRef::new);
+    this._13a = ref.offset(2, 0x13aL).cast(UnsignedShortRef::new);
+    this._13c = ref.offset(2, 0x13cL).cast(UnsignedShortRef::new);
+    this._13e = ref.offset(2, 0x13eL).cast(UnsignedShortRef::new);
 
+    this._142 = ref.offset(2, 0x142L).cast(UnsignedShortRef::new);
     this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
     this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
 

@@ -7083,10 +7083,10 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a55cL)
-  public static long FUN_8002a55c(LodString str) {
+  public static long textLen(final LodString str) {
     //LAB_8002a568
     int i;
-    for(i = 0; str.charAt(i) <= 0x9fffL; i++) {
+    for(i = 0; str.charAt(i) < 0xa000L; i++) {
       // Empty
     }
 
@@ -7094,7 +7094,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a59cL)
-  public static long FUN_8002a59c(final LodString a0) {
+  public static long textWidth(final LodString a0) {
     //LAB_8002a5b4
     long a3 = 0;
     int v1;

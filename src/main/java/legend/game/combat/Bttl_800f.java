@@ -1896,28 +1896,28 @@ public final class Bttl_800f {
 
     //LAB_800f4430
     final BtldScriptData27c struct = scriptStatePtrArr_800bc1c0.get(a3.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-    struct._0a.add((short)a3.params_20.get(1).deref().get());
+    struct.sp_0a.add((short)a3.params_20.get(1).deref().get());
     _800bc950.offset(a2 * 0x4L).addu(a3.params_20.get(1).deref().get());
 
-    if(struct._0a.get() < struct._04.get(1).get() * 100) {
+    if(struct.sp_0a.get() < struct.all_04.get(1).get() * 100) {
       //LAB_800f44d4
-      if(struct._0a.get() < 500) {
-        struct._0a.set((short)500);
+      if(struct.sp_0a.get() < 500) {
+        struct.sp_0a.set((short)500);
       }
     } else {
-      struct._0a.set((short)(struct._04.get(1).get() * 100));
-      if(struct._04.get(1).get() * 100 >= 500) {
-        struct._0a.set((short)500);
+      struct.sp_0a.set((short)(struct.all_04.get(1).get() * 100));
+      if(struct.all_04.get(1).get() * 100 >= 500) {
+        struct.sp_0a.set((short)500);
       }
     }
 
     //LAB_800f44ec
-    if(struct._0a.get() < 0) {
-      struct._0a.set((short)0);
+    if(struct.sp_0a.get() < 0) {
+      struct.sp_0a.set((short)0);
     }
 
     //LAB_800f4500
-    a3.params_20.get(2).deref().set(struct._0a.get());
+    a3.params_20.get(2).deref().set(struct.sp_0a.get());
     return 0;
   }
 
@@ -4142,7 +4142,7 @@ public final class Bttl_800f {
     final BtldScriptData27c s1 = a2_0.innerStruct_00.deref();
     long fp = a2_0.ui_60.get() & 0x4L;
     long v1 = (fp != 0 ? 0xcL : 0) + a2 * 0x4L;
-    long s2 = s1._04.get((int)_800c7284.offset(v1).get()).get();
+    long s2 = s1.all_04.get((int)_800c7284.offset(v1).get()).get();
     final ScriptState<BtldScriptData27c> a2_1 = scriptStatePtrArr_800bc1c0.get((int)a1).derefAs(ScriptState.classFor(BtldScriptData27c.class));
     long spa8 = a2_1.ui_60.get() & 0x4L;
     final BtldScriptData27c s4 = a2_1.innerStruct_00.deref();
@@ -4156,7 +4156,7 @@ public final class Bttl_800f {
 
     //LAB_800f7e98
     if(FUN_800133ac() * 0x65 / 0x100 < (int)s2) {
-      final long a1_0 = s1._04.get((int)s3).get();
+      final long a1_0 = s1.all_04.get((int)s3).get();
 
       if((a1_0 & 0xffL) != 0) {
         //LAB_800f7eec
@@ -4172,7 +4172,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f7f14
-      long v1_0 = s1._04.get((int)s6).get() & s7;
+      long v1_0 = s1.all_04.get((int)s6).get() & s7;
       if(v1_0 != 0) {
         if(fp != 0 || a2 != 0) {
           //LAB_800f7f40
