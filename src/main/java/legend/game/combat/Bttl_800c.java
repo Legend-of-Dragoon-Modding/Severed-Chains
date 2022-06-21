@@ -34,6 +34,8 @@ import legend.game.combat.types.BttlScriptData6c;
 import legend.game.combat.types.BttlScriptData6cSub3c;
 import legend.game.combat.types.BttlScriptData6cSub3cSub2c;
 import legend.game.combat.types.BttlStruct50;
+import legend.game.combat.types.BttlStruct58;
+import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MODE;
@@ -56,7 +58,7 @@ import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_800128a8;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
-import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
@@ -270,8 +272,9 @@ public final class Bttl_800c {
 
   public static final ArrayRef<LodString> _800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
+  /** TODO obj */
   public static final Value _800c6b5c = MEMORY.ref(4, 0x800c6b5cL);
-  public static final Value _800c6b60 = MEMORY.ref(4, 0x800c6b60L);
+  public static final Pointer<BttlStructa4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, BttlStructa4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
@@ -280,13 +283,16 @@ public final class Bttl_800c {
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 
   public static final Value _800c6b9c = MEMORY.ref(4, 0x800c6b9cL);
+  public static final Value _800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
+  public static final Value _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> _800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
 
   public static final Value _800c6c2c = MEMORY.ref(4, 0x800c6c2cL);
+  public static final Value _800c6c30 = MEMORY.ref(1, 0x800c6c30L);
 
-  public static final Value _800c6c34 = MEMORY.ref(4, 0x800c6c34L);
+  public static final Pointer<BttlStruct58> _800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BttlStruct58::new));
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
   public static final Value _800c6c3c = MEMORY.ref(2, 0x800c6c3cL);
 
@@ -358,6 +364,10 @@ public final class Bttl_800c {
   public static final Value _800c729c = MEMORY.ref(4, 0x800c729cL);
 
   public static final Value _800c72b4 = MEMORY.ref(4, 0x800c72b4L);
+
+  public static final Value _800d66b0 = MEMORY.ref(1, 0x800d66b0L);
+
+  public static final Value _800d6c30 = MEMORY.ref(1, 0x800d6c30L);
 
   public static final Value _800fa0b8 = MEMORY.ref(1, 0x800fa0b8L);
 
@@ -678,10 +688,10 @@ public final class Bttl_800c {
         final BtldScriptData27c s1 = v0.innerStruct_00.derefAs(BtldScriptData27c.class);
 
         if((v0.ui_60.get() & 0x4L) != 0) {
-          s1._4c.set((short)(FUN_800133ac() * 0xd9 / 0x10000));
+          s1._4c.set((short)(simpleRand() * 0xd9 / 0x10000));
         } else {
           //LAB_800c7b3c
-          s1._4c.set((short)(FUN_800133ac() * 0xa7 / 0x10000 + 0x32));
+          s1._4c.set((short)(simpleRand() * 0xa7 / 0x10000 + 0x32));
         }
 
         //LAB_800c7b68
@@ -833,7 +843,7 @@ public final class Bttl_800c {
       //LAB_800c7fb0
       for(int s1 = 0; s1 < _800c669c.get(); s1++) {
         final BtldScriptData27c s0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe78L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-        v0 = FUN_800133ac() + 0x4_4925L;
+        v0 = simpleRand() + 0x4_4925L;
         lo = s0.speed_32.get() * (int)v0 & 0xffff_ffffL;
         a0 = lo;
         v0 = 0x35c2_9183L; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)

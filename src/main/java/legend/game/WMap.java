@@ -50,7 +50,7 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
-import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
@@ -9438,7 +9438,7 @@ public class WMap {
         encounterId_800bb0f8.setu(0);
       } else {
         //LAB_800e38dc
-        final long sp14 = FUN_800133ac() % 100;
+        final long sp14 = simpleRand() % 100;
 
         if((int)sp14 < 0x23L) {
           encounterId_800bb0f8.setu(_800ef364.offset(sp10 * 0x8L).getSigned());

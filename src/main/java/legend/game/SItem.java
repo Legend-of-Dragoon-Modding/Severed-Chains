@@ -37,7 +37,7 @@ import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
@@ -5548,7 +5548,7 @@ public final class SItem {
   public static void FUN_80103444(@Nullable final Renderable58 a0, final long a1, final long a2, final long a3, final long a4) {
     if(a0 != null) {
       if(a0._18.get() == 0) {
-        if((FUN_800133ac() & 0x3000L) != 0) {
+        if((simpleRand() & 0x3000L) != 0) {
           a0._18.set(a1);
           a0._1c.set(a2);
         } else {

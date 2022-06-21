@@ -16,7 +16,7 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
@@ -94,7 +94,7 @@ public class SBtld {
     loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
 
     final long v1;
-    if((FUN_800133ac() & 0x8000L) == 0) {
+    if((simpleRand() & 0x8000L) == 0) {
       v1 = 0x14L;
     } else {
       v1 = 0x10L;
@@ -102,7 +102,7 @@ public class SBtld {
 
     //LAB_801091dc
     _800c6748.setu(_800c6718.offset(v1).get() + 0x1L);
-    _800c66b0.setu(FUN_800133ac() & 0x3L);
+    _800c66b0.setu(simpleRand() & 0x3L);
     _800c6780.setu(_800c6718.offset((_800c66b0.get() + 0x6L) * 0x4L).get());
     _800bc960.oru(0x2L);
     FUN_80012bb4();

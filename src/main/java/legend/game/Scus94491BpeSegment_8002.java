@@ -133,9 +133,9 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b570;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b590;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b5b0;
+import static legend.game.Scus94491BpeSegment_8003.setGp0_28;
+import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
+import static legend.game.Scus94491BpeSegment_8003.setGp0_38;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -3498,7 +3498,7 @@ public final class Scus94491BpeSegment_8002 {
       if(MEMORY.ref(4, s1).offset(0x0L).get() != 0x1L) {
         final long s0 = linkedListAddress_1f8003d8.get();
         linkedListAddress_1f8003d8.addu(0x24L);
-        FUN_8003b5b0(s0);
+        setGp0_38(s0);
         gpuLinkedListSetCommandTransparency(s0, true);
         v0 = MEMORY.ref(2, s1).offset(0x14L).get() - MEMORY.ref(2, s1).offset(0x1cL).get() - centreScreenX_1f8003dc.get();
         MEMORY.ref(2, s0).offset(0x18L).setu(v0);
@@ -3581,7 +3581,7 @@ public final class Scus94491BpeSegment_8002 {
     for(s3 = 0; s3 < 8; s3++) {
       s0 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.setu(s0 + 0x28L);
-      FUN_8003b590(s0);
+      setGp0_2c(s0);
       gpuLinkedListSetCommandTransparency(s0, false);
       MEMORY.ref(1, s0).offset(0x6L).setu(0x80L);
       MEMORY.ref(1, s0).offset(0x5L).setu(0x80L);
@@ -6475,7 +6475,7 @@ public final class Scus94491BpeSegment_8002 {
     a0 = s1;
     v0 = s1 + 0x18L;
     MEMORY.ref(4, s4).offset(0x3d8L).setu(v0);
-    FUN_8003b570(a0);
+    setGp0_28(a0);
     a0 = s1;
     v0 = 0x800c_0000L;
     v0 = v0 - 0x1ca8L;
@@ -6757,7 +6757,7 @@ public final class Scus94491BpeSegment_8002 {
         a0 = s0;
         v0 = s0 + 0x28L;
         MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
-        FUN_8003b590(a0);
+        setGp0_2c(a0);
         a0 = s0;
         a1 = 0x1L;
         gpuLinkedListSetCommandTransparency(a0, true);

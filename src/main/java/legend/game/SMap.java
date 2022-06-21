@@ -75,7 +75,7 @@ import static legend.game.SStrm.FUN_800fb90c;
 import static legend.game.SStrm.stopFmv;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_800133ac;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.FUN_80015d38;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
@@ -10825,7 +10825,7 @@ public final class SMap {
           MEMORY.ref(2, s0).offset(0x6L).setu(MEMORY.ref(2, s1).offset(0x6L));
           MEMORY.ref(2, s0).offset(0xcL).setu(MEMORY.ref(2, s1).offset(0x24L));
           MEMORY.ref(2, s0).offset(0xeL).setu(MEMORY.ref(2, s1).offset(0x28L));
-          MEMORY.ref(4, s0).offset(0x10L).setu((MEMORY.ref(4, s1).offset(0x1cL).get() << 16) - (FUN_800133ac() * MEMORY.ref(2, s1).offset(0x18L).get() & 0xffff_ffffL));
+          MEMORY.ref(4, s0).offset(0x10L).setu((MEMORY.ref(4, s1).offset(0x1cL).get() << 16) - (simpleRand() * MEMORY.ref(2, s1).offset(0x18L).get() & 0xffff_ffffL));
           MEMORY.ref(4, s0).offset(0x14L).setu(MEMORY.ref(4, s1).offset(0x20L).get() << 16);
           MEMORY.ref(4, s0).offset(0x1cL).setu(0x8_0000L / MEMORY.ref(4, s1).offset(0xcL).get());
           MEMORY.ref(4, s0).offset(0x20L).setu((MEMORY.ref(4, s1).offset(0x14L).get() << 16) / MEMORY.ref(2, s1).offset(0x6L).get());
@@ -10851,7 +10851,7 @@ public final class SMap {
             MEMORY.ref(2, s0).offset(0x6L).setu(MEMORY.ref(2, s1).offset(0x6L));
             MEMORY.ref(2, s0).offset(0xcL).setu(MEMORY.ref(2, s1).offset(0x24L));
             MEMORY.ref(2, s0).offset(0xeL).setu(MEMORY.ref(2, s1).offset(0x28L));
-            MEMORY.ref(4, s0).offset(0x10L).setu((MEMORY.ref(4, s1).offset(0x1cL).get() << 16) - FUN_800133ac() * MEMORY.ref(2, s1).offset(0x18L).getSigned());
+            MEMORY.ref(4, s0).offset(0x10L).setu((MEMORY.ref(4, s1).offset(0x1cL).get() << 16) - simpleRand() * MEMORY.ref(2, s1).offset(0x18L).getSigned());
             MEMORY.ref(4, s0).offset(0x14L).setu(MEMORY.ref(4, s1).offset(0x20L).get() << 16);
             MEMORY.ref(4, s0).offset(0x1cL).setu(0x8_0000L / MEMORY.ref(4, s1).offset(0xcL).get());
             MEMORY.ref(4, s0).offset(0x20L).setu((MEMORY.ref(4, s1).offset(0x14L).get() << 16) / MEMORY.ref(2, s1).offset(0x6L).getSigned());

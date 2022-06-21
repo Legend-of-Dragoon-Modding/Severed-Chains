@@ -78,7 +78,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b590;
+import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
@@ -120,7 +120,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
 import static legend.game.Scus94491BpeSegment_8004._8004dd38;
-import static legend.game.Scus94491BpeSegment_8004._8004dd44;
+import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004dda0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
@@ -1349,17 +1349,17 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800133acL)
-  public static int FUN_800133ac() {
+  public static int simpleRand() {
     final long v1;
-    if(_8004dd44.get(0xfffL) == 0) {
-      v1 = VSync(-1) * 9;
+    if(simpleRandSeed_8004dd44.get(0xfffL) == 0) {
+      v1 = VSync(-1) * 9; // If seed is 0, seed with vblanks
     } else {
-      v1 = _8004dd44.get();
+      v1 = simpleRandSeed_8004dd44.get();
     }
 
     //LAB_800133dc
-    _8004dd44.setu(v1 * 9 + 0x3711);
-    return (int)(_8004dd44.get() / 2 & 0xffff);
+    simpleRandSeed_8004dd44.setu(v1 * 9 + 0x3711);
+    return (int)(simpleRandSeed_8004dd44.get() / 2 & 0xffff);
   }
 
   @Method(0x80013404L)
@@ -3248,7 +3248,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80016c00L)
   public static long FUN_80016c00(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((a0.params_20.get(0).deref().get() * FUN_800133ac()) >>> 16);
+    a0.params_20.get(1).deref().set((a0.params_20.get(0).deref().get() * simpleRand()) >>> 16);
     return 0;
   }
 
@@ -4200,7 +4200,7 @@ public final class Scus94491BpeSegment {
     v0 = a0 + 0x28L;
     MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
     s0 = a0;
-    FUN_8003b590(a0);
+    setGp0_2c(a0);
     v0 = -0x1L;
     t0 = a7;
 
