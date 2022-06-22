@@ -90,6 +90,13 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
   public final ShortRef _b8;
 
+  public final ShortRef _c8;
+  public final ShortRef _ca;
+  public final ShortRef _cc;
+  public final ShortRef _ce;
+  public final ShortRef _d0;
+  public final ShortRef _d2;
+
   public final ShortRef _d8;
 
   public final UnsignedShortRef _110;
@@ -225,6 +232,13 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._b4 = ref.offset(2, 0xb4L).cast(ShortRef::new);
 
     this._b8 = ref.offset(2, 0xb8L).cast(ShortRef::new);
+
+    this._c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
+    this._ca = ref.offset(2, 0xcaL).cast(ShortRef::new);
+    this._cc = ref.offset(2, 0xccL).cast(ShortRef::new);
+    this._ce = ref.offset(2, 0xceL).cast(ShortRef::new);
+    this._d0 = ref.offset(2, 0xd0L).cast(ShortRef::new);
+    this._d2 = ref.offset(2, 0xd2L).cast(ShortRef::new);
 
     this._d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
 

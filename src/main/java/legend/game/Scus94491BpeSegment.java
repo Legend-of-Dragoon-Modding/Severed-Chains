@@ -6,6 +6,7 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -67,6 +68,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a0e4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ae0c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c0c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c86c;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -3567,6 +3569,12 @@ public final class Scus94491BpeSegment {
 
     a0.params_20.get(2).deref().set((MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).get() & (0x1L << shift)) > 0 ? 1 : 0);
 
+    return 0;
+  }
+
+  @Method(0x80017688L)
+  public static long FUN_80017688(final RunningScript a0) {
+    FUN_8002bda4(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
 
