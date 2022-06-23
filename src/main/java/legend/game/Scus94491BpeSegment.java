@@ -1,12 +1,12 @@
 package legend.game;
 
 import legend.core.DebugHelper;
+import legend.core.Hardware;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -50,6 +50,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.function.Function;
 
 import static legend.core.Hardware.CDROM;
@@ -80,7 +83,6 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
-import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
@@ -96,6 +98,7 @@ import static legend.game.Scus94491BpeSegment_8003.drawOTag;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.resetDmaTransfer;
+import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
@@ -122,7 +125,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
 import static legend.game.Scus94491BpeSegment_8004._8004dd38;
-import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004dda0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
@@ -160,6 +162,7 @@ import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
+import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8004.sssqGetTempo;
 import static legend.game.Scus94491BpeSegment_8004.sssqPitchShift;
@@ -378,6 +381,8 @@ public final class Scus94491BpeSegment {
   }
 
   public static final boolean SYNCHRONOUS = true;
+  private static boolean dumping;
+  private static boolean loading;
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -388,6 +393,16 @@ public final class Scus94491BpeSegment {
         LOGGER.info("Failed to start script debugger", e);
       }
     }
+
+    Hardware.GPU.events().onKeyPress((window, key, scancode, mods) -> {
+      if(key == 83 && (mods & 0x2) != 0) { // GLFW_KEY_S, GLFW_MOD_CONTROL
+        dumping = true;
+      }
+
+      if(key == 76 && (mods & 0x2) != 0) { // GLFW_KEY_L, GLFW_MOD_CONTROL
+        loading = true;
+      }
+    });
 
     final Runnable r = () -> {
       FUN_80012d58();
@@ -407,6 +422,30 @@ public final class Scus94491BpeSegment {
       FUN_80017f94();
       _800bb0fc.addu(0x1L);
       endFrame();
+
+      if(dumping) {
+        try {
+          LOGGER.info("Pausing execution to dump save state...");
+          Hardware.dump(Files.newOutputStream(Paths.get("./state.ddmp")));
+          LOGGER.info("Save state complete");
+        } catch(final IOException e) {
+          LOGGER.error("Failed to dump save state", e);
+        }
+
+        dumping = false;
+      }
+
+      if(loading) {
+        try {
+          LOGGER.info("Pausing execution to load save state...");
+          Hardware.load(Files.newInputStream(Paths.get("./state.ddmp")));
+          LOGGER.info("Load state complete");
+        } catch(final IOException e) {
+          LOGGER.error("Failed to load save state", e);
+        }
+
+        loading = false;
+      }
     };
 
     if(SYNCHRONOUS) {
