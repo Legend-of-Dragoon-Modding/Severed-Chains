@@ -3330,7 +3330,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80016a34L)
-  public static long FUN_80016a34(final RunningScript a0) {
+  public static long scriptAbs(final RunningScript a0) {
     //LAB_80016a50
     a0.params_20.get(0).deref().abs();
     return 0;

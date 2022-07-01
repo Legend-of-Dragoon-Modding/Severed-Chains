@@ -419,7 +419,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptIncrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNegate}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016a34}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptAbs}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMultiply}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDivide}</li>
