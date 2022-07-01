@@ -344,6 +344,8 @@ public final class Bttl_800c {
 
   public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
 
+  public static final Value _800c7124 = MEMORY.ref(2, 0x800c7124L);
+
   public static final Value _800c7190 = MEMORY.ref(1, 0x800c7190L);
   public static final Value _800c7191 = MEMORY.ref(1, 0x800c7191L);
   public static final Value _800c7192 = MEMORY.ref(1, 0x800c7192L);
@@ -352,6 +354,10 @@ public final class Bttl_800c {
   public static final Value _800c71ec = MEMORY.ref(1, 0x800c71ecL);
 
   public static final Value _800c71f0 = MEMORY.ref(4, 0x800c71f0L);
+
+  public static final Value _800c71fc = MEMORY.ref(4, 0x800c71fcL);
+
+  public static final Value _800c721c = MEMORY.ref(4, 0x800c721cL);
 
   public static final Value _800c726c = MEMORY.ref(4, 0x800c726cL);
 
@@ -378,6 +384,9 @@ public final class Bttl_800c {
 
   /** Mersenne Twister seed */
   public static final MersenneTwisterSeed seed_800fa754 = MEMORY.ref(4, 0x800fa754L, MersenneTwisterSeed::new);
+  public static final Value _800fa758 = MEMORY.ref(4, 0x800fa758L);
+
+  public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
   public static final Value _800faaa0 = MEMORY.ref(4, 0x800faaa0L);
 
@@ -413,6 +422,10 @@ public final class Bttl_800c {
   public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);
 
   public static final Value _800fafe8 = MEMORY.ref(4, 0x800fafe8L);
+  public static final Value _800fafec = MEMORY.ref(1, 0x800fafecL);
+  public static final Value _800fb040 = MEMORY.ref(1, 0x800fb040L);
+
+  public static final Value _800fb05c = MEMORY.ref(1, 0x800fb05cL);
 
   public static final Value _800fb064 = MEMORY.ref(1, 0x800fb064L);
 
@@ -427,6 +440,8 @@ public final class Bttl_800c {
   public static final ArrayRef<Pointer<LodString>> _800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> _800fb378 = MEMORY.ref(4, 0x800fb378L, ArrayRef.of(Pointer.classFor(LodString.class), 11, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> _800fb3a0 = MEMORY.ref(4, 0x800fb3a0L, ArrayRef.of(Pointer.classFor(LodString.class),  7, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> _800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
   /** TODO array of pointers to shorts? */
   public static final Value _800fb444 = MEMORY.ref(4, 0x800fb444L);
@@ -1940,77 +1955,14 @@ public final class Bttl_800c {
       }
 
       //LAB_800caf2c
-      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800caf2c", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800caf50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
     }
 
     //LAB_800caf38
   }
 
-  @Method(0x800cb674L)
-  public static long FUN_800cb674(final RunningScript a0) {
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-    v1._1ea.set(a0.params_20.get(1).deref().get() < 1 ? 1 : 0);
-    return 0;
-  }
-
-  @Method(0x800cb6bcL)
-  public static long FUN_800cb6bc(final RunningScript a0) {
-    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
-    if((v0.ui_60.get() & 0x1L) != 0) {
-      return 0x2L;
-    }
-
-    final BtldScriptData27c s0 = v0.innerStruct_00.derefAs(BtldScriptData27c.class);
-    final long s1 = a0.params_20.get(1).deref().get();
-
-    if(s0._270.get() < 0) {
-      FUN_800c9e10(s0._26c.get(), s1);
-      s0._270.set((short)s1);
-    } else if(s0._270.get() != s1) {
-      FUN_800ca194(s0._26c.get(), s0._270.get());
-
-      //LAB_800cb73c
-      FUN_800c9e10(s0._26c.get(), s1);
-      s0._270.set((short)s1);
-    }
-
-    //LAB_800cb750
-    return 0x1L;
-  }
-
-  @Method(0x800cb9f0L)
-  public static long FUN_800cb9f0(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._1e4.set(2);
-    return 0;
-  }
-
-  @Method(0x800cbb00L)
-  public static long FUN_800cbb00(final RunningScript t1) {
-    final int s0 = t1.params_20.get(0).deref().get();
-    final ScriptState<BtldScriptData27c> a0 = scriptStatePtrArr_800bc1c0.get(s0).derefAs(ScriptState.classFor(BtldScriptData27c.class));
-    BtldScriptData27c v1 = a0.innerStruct_00.derefAs(BtldScriptData27c.class);
-
-    int x = v1._148.coord2_14.coord.transfer.getX();
-    int y = v1._148.coord2_14.coord.transfer.getY();
-    int z = v1._148.coord2_14.coord.transfer.getZ();
-
-    final int t0 = t1.params_20.get(1).deref().get();
-    if(t0 >= 0) {
-      v1 = scriptStatePtrArr_800bc1c0.get(t0).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-      x -= v1._148.coord2_14.coord.transfer.getX();
-      y -= v1._148.coord2_14.coord.transfer.getY();
-      z -= v1._148.coord2_14.coord.transfer.getZ();
-    }
-
-    //LAB_800cbb98
-    a0.scriptIndex_c8.set(t0);
-    FUN_800cdc1c(a0, x, y, z, t1.params_20.get(3).deref().get(), t1.params_20.get(4).deref().get(), t1.params_20.get(5).deref().get(), 0, t1.params_20.get(2).deref().get());
-    setCallback10(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriFunctionRef::new));
-    return 0;
-  }
-
   @Method(0x800caf2cL)
-  public static void FUN_800caf2c(final int index, final ScriptState<BtldScriptData27c> state, final BtldScriptData27c data) {
+  public static void FUN_800caf50(final int index, final ScriptState<BtldScriptData27c> state, final BtldScriptData27c data) {
     setCallback08(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb024", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
     setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cafb4", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
     FUN_800cafb4(index, state, data);
@@ -2105,6 +2057,38 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cb674L)
+  public static long FUN_800cb674(final RunningScript a0) {
+    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    v1._1ea.set(a0.params_20.get(1).deref().get() < 1 ? 1 : 0);
+    return 0;
+  }
+
+  @Method(0x800cb6bcL)
+  public static long FUN_800cb6bc(final RunningScript a0) {
+    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
+    if((v0.ui_60.get() & 0x1L) != 0) {
+      return 0x2L;
+    }
+
+    final BtldScriptData27c s0 = v0.innerStruct_00.derefAs(BtldScriptData27c.class);
+    final long s1 = a0.params_20.get(1).deref().get();
+
+    if(s0._270.get() < 0) {
+      FUN_800c9e10(s0._26c.get(), s1);
+      s0._270.set((short)s1);
+    } else if(s0._270.get() != s1) {
+      FUN_800ca194(s0._26c.get(), s0._270.get());
+
+      //LAB_800cb73c
+      FUN_800c9e10(s0._26c.get(), s1);
+      s0._270.set((short)s1);
+    }
+
+    //LAB_800cb750
+    return 0x1L;
+  }
+
   @Method(0x800cb76cL)
   public static long FUN_800cb76c(final RunningScript a0) {
     final ScriptState<BtldScriptData27c> s2 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).derefAs(ScriptState.classFor(BtldScriptData27c.class));
@@ -2176,6 +2160,12 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cb9f0L)
+  public static long FUN_800cb9f0(final RunningScript a0) {
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._1e4.set(2);
+    return 0;
+  }
+
   @Method(0x800cba60L)
   public static long FUN_800cba60(final RunningScript a0) {
     //LAB_800cbab0
@@ -2192,6 +2182,54 @@ public final class Bttl_800c {
   @Method(0x800cbabcL)
   public static long FUN_800cbabc(final RunningScript a0) {
     a0.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._1e6.get() < 0x1L ? 1 : 0);
+    return 0;
+  }
+
+  @Method(0x800cbb00L)
+  public static long FUN_800cbb00(final RunningScript t1) {
+    final int s0 = t1.params_20.get(0).deref().get();
+    final ScriptState<BtldScriptData27c> a0 = scriptStatePtrArr_800bc1c0.get(s0).derefAs(ScriptState.classFor(BtldScriptData27c.class));
+    BtldScriptData27c v1 = a0.innerStruct_00.derefAs(BtldScriptData27c.class);
+
+    int x = v1._148.coord2_14.coord.transfer.getX();
+    int y = v1._148.coord2_14.coord.transfer.getY();
+    int z = v1._148.coord2_14.coord.transfer.getZ();
+
+    final int t0 = t1.params_20.get(1).deref().get();
+    if(t0 >= 0) {
+      v1 = scriptStatePtrArr_800bc1c0.get(t0).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      x -= v1._148.coord2_14.coord.transfer.getX();
+      y -= v1._148.coord2_14.coord.transfer.getY();
+      z -= v1._148.coord2_14.coord.transfer.getZ();
+    }
+
+    //LAB_800cbb98
+    a0.scriptIndex_c8.set(t0);
+    FUN_800cdc1c(a0, x, y, z, t1.params_20.get(3).deref().get(), t1.params_20.get(4).deref().get(), t1.params_20.get(5).deref().get(), 0, t1.params_20.get(2).deref().get());
+    setCallback10(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriFunctionRef::new));
+    return 0;
+  }
+
+  @Method(0x800cbde0L)
+  public static long FUN_800cbde0(final RunningScript t1) {
+    final ScriptState<BtldScriptData27c> a0 = scriptStatePtrArr_800bc1c0.get(t1.params_20.get(0).deref().get()).derefAs(ScriptState.classFor(BtldScriptData27c.class));
+    BtldScriptData27c v1 = a0.innerStruct_00.deref();
+    int a1 = v1._148.coord2_14.coord.transfer.getX();
+    int a2 = v1._148.coord2_14.coord.transfer.getY();
+    int a3 = v1._148.coord2_14.coord.transfer.getZ();
+
+    if(t1.params_20.get(1).deref().get() >= 0) {
+      final ScriptState<BtldScriptData27c> v0 = scriptStatePtrArr_800bc1c0.get(t1.params_20.get(1).deref().get()).derefAs(ScriptState.classFor(BtldScriptData27c.class));
+      v1 = v0.innerStruct_00.deref();
+      a1 -= v1._148.coord2_14.coord.transfer.getX();
+      a2 -= v1._148.coord2_14.coord.transfer.getY();
+      a3 -= v1._148.coord2_14.coord.transfer.getZ();
+    }
+
+    //LAB_800cbe78
+    a0.scriptIndex_c8.set(t1.params_20.get(1).deref().get());
+    FUN_800cdc1c(a0, a1, a2, a3, t1.params_20.get(3).deref().get(), t1.params_20.get(4).deref().get(), t1.params_20.get(5).deref().get(), 0x20, t1.params_20.get(2).deref().get());
+    setCallback10(t1.params_20.get(0).deref().get(), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -2319,6 +2357,12 @@ public final class Bttl_800c {
   public static long FUN_800ccec8(final RunningScript a0) {
     FUN_800f1a00(a0.params_20.get(0).deref().get() > 0 ? 1 : 0);
     return 0;
+  }
+
+  @Method(0x800ccf0cL)
+  public static long FUN_800ccf0c(final RunningScript a0) {
+    _800bc974.setu(a0.params_20.get(0).deref().get());
+    return 0x2L;
   }
 
   @Method(0x800cd0ecL)
@@ -2823,6 +2867,13 @@ public final class Bttl_800c {
     outX.set((long)sp0x20.getX());
     outY.set((long)sp0x20.getY());
     return CPU.MFC2(19); // SZ3
+  }
+
+  @Method(0x800cfb14L)
+  public static long FUN_800cfb14(final BttlScriptData6c a0, final VECTOR a1, final Ref<Long> a2, final Ref<Long> a3) {
+    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10);
+    final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
+    return FUN_800cf7d4(sp0x18, sp0x20, a1, a2, a3);
   }
 
   @Method(0x800cfc20L)

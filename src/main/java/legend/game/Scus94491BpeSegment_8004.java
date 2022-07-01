@@ -641,6 +641,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
   // 8004f29c end of jump table
 
+  /** TODO 0xc-byte array */
   public static final Value _8004f2ac = MEMORY.ref(1, 0x8004f2acL);
 
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));

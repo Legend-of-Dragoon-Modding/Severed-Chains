@@ -178,6 +178,14 @@ public final class SEffe {
     a2._58.y.add((short)(a2._14.get() / 0x100));
   }
 
+  @Method(0x800fc42cL)
+  public static void FUN_800fc42c(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2) {
+    a2._50.setX((short)(a2._14.get() + ((rcos(a2._1a.getX()) * a2._1a.getZ()) >> 12)));
+    a2._50.setY((short)(a2._18.get() + ((rsin(a2._1a.getX()) * a2._1a.getZ()) >> 12)));
+    a2._1a.z.add((short)16);
+    a2._1a.x.add(a2._1a.getY());
+  }
+
   @Method(0x800fc8f8L)
   public static void FUN_800fc8f8(@Nullable VECTOR a0, @Nullable final SVECTOR a1) {
     if(a0 == null) {
@@ -1081,6 +1089,33 @@ public final class SEffe {
     FUN_800ff890(a0, a1, a2, a3);
     a2._58.setY((short)-Math.abs(a2._58.getY()));
     a2._14.set((short)(a3._18.get() * 0x300 / 0x100));
+  }
+
+  @Method(0x80100150L)
+  public static void FUN_80100150(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    seed_800fa754.advance();
+    a2._1a.setX((short)(seed_800fa754.get() % 4097));
+    a2._14.set(a2._50.getX());
+    a2._16.set(a2._50.getY());
+    a2._18.set(a2._50.getZ());
+    a2._1a.setZ((short)(a3._10.get() >>> 2));
+    a2._58.setY((short)((a3._18.get() * -64) >> 8));
+    seed_800fa754.advance();
+    a2._1a.setY((short)((int)((seed_800fa754.get() % 513 - 256) * a3._18.get()) >> 8));
+  }
+
+  @Method(0x80100364L)
+  public static void FUN_80100364(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    FUN_800ff890(a0, a1, a2, a3);
+    a2._14.set((short)0);
+    a2._58.setY((short)-Math.abs(a2._58.getY()));
+    a2._60.set(a2._58).negate().div(a2._12.get());
+  }
+
+  @Method(0x80100bb4L)
+  public static void FUN_80100bb4(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    seed_800fa754.advance();
+    a2._58.setY((short)(seed_800fa754.get() % 33 + 16));
   }
 
   @Method(0x80100d58L)
@@ -2288,6 +2323,28 @@ public final class SEffe {
     return scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.getPointer(); //TODO
   }
 
+  @Method(0x80110488L)
+  public static long FUN_80110488(final int scriptIndex1, final int scriptIndex2, final VECTOR s1) {
+    final MATRIX sp0x10 = new MATRIX();
+    FUN_800e8594(sp0x10, scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BttlScriptData6c.class));
+
+    if(scriptIndex2 == -0x1L) {
+      s1.set(sp0x10.transfer);
+    } else {
+      //LAB_80110500
+      final MATRIX sp0x30 = new MATRIX();
+      FUN_800e8594(sp0x30, scriptStatePtrArr_800bc1c0.get(scriptIndex2).deref().innerStruct_00.derefAs(BttlScriptData6c.class));
+      sp0x10.transfer.sub(sp0x30.transfer);
+
+      final VECTOR sp0x50 = new VECTOR();
+      FUN_80040ec0(sp0x30, sp0x10.transfer, sp0x50);
+      s1.set(sp0x50);
+    }
+
+    //LAB_80110594
+    return scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.getPointer();
+  }
+
   @Method(0x801105ccL)
   public static void FUN_801105cc(final VECTOR a0, final int scriptIndex, final VECTOR a2) {
     final Ref<SVECTOR> sp0x30 = new Ref<>();
@@ -2463,6 +2520,16 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80111658L)
+  public static long FUN_80111658(final RunningScript s0) {
+    final VECTOR sp0x10 = new VECTOR();
+    FUN_80110488(s0.params_20.get(0).deref().get(), s0.params_20.get(1).deref().get(), sp0x10);
+    s0.params_20.get(2).deref().set(sp0x10.getX());
+    s0.params_20.get(3).deref().set(sp0x10.getY());
+    s0.params_20.get(4).deref().set(sp0x10.getZ());
+    return 0;
+  }
+
   @Method(0x80111c2cL)
   public static long FUN_80111c2c(final RunningScript a0) {
     FUN_801108fc(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get());
@@ -2498,6 +2565,27 @@ public final class SEffe {
     }
 
     //LAB_8011261c
+    return 0;
+  }
+
+  @Method(0x80112638L)
+  public static long FUN_80112638(final BttlScriptData6c a0, final BttlScriptData6cSub34 a1) {
+    a1._18.add(a1._24);
+    a1._0c.add(a1._18);
+    a0._10.svec_10.set(a1._0c);
+
+    if(a1._32.get() == -1) {
+      return 0x1L;
+    }
+
+    a1._32.decr();
+
+    if(a1._32.get() > 0) {
+      //LAB_801126f8
+      return 0x1L;
+    }
+
+    //LAB_801126fc
     return 0;
   }
 
@@ -2551,6 +2639,27 @@ public final class SEffe {
 
     //LAB_80112a80
     FUN_80110228(sp0x50.get(), sp0x54.get(), sp0x10);
+    return 0;
+  }
+
+  @Method(0x80112aa4L)
+  public static long FUN_80112aa4(final RunningScript a0) {
+    final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    if((s0._04.get() & 0x4L) != 0) {
+      FUN_800e8d04(s0, 0x2L);
+    }
+
+    //LAB_80112b58
+    final BttlScriptData6cSub34 v0 = FUN_800e8dd4(s0, 0x2L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80112638", BttlScriptData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
+    v0._30.set(-1);
+    v0._32.set((short)-1);
+    v0._0c.set(s0._10.svec_10);
+    v0._18.setX(a0.params_20.get(2).deref().get());
+    v0._18.setY(a0.params_20.get(3).deref().get());
+    v0._18.setZ(a0.params_20.get(4).deref().get());
+    v0._24.setX(a0.params_20.get(5).deref().get());
+    v0._24.setY(a0.params_20.get(6).deref().get());
+    v0._24.setZ(a0.params_20.get(7).deref().get());
     return 0;
   }
 
@@ -2944,6 +3053,12 @@ public final class SEffe {
   public static long FUN_801153e4(final RunningScript a0) {
     final BttlScriptData6c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     a1._10._00.and(0xcfff_ffffL).or(a0.params_20.get(1).deref().get() << 28);
+    return 0;
+  }
+
+  @Method(0x8011554cL)
+  public static long FUN_8011554c(final RunningScript a0) {
+    FUN_800e8d04(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class), (byte)a0.params_20.get(1).deref().get());
     return 0;
   }
 

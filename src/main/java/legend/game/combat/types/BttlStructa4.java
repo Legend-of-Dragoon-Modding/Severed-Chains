@@ -22,7 +22,7 @@ public class BttlStructa4 implements MemoryRef {
   public final UnsignedShortRef _12;
   public final UnsignedShortRef _14;
   public final UnsignedShortRef _16;
-  public final UnsignedShortRef _18;
+  public final ShortRef _18;
   public final ShortRef _1a;
   public final ShortRef _1c;
   public final ShortRef _1e;
@@ -39,7 +39,7 @@ public class BttlStructa4 implements MemoryRef {
   public final IntRef _80;
   public final UnsignedIntRef _84;
   public final IntRef _88;
-  public final UnsignedIntRef _8c;
+  public final IntRef _8c;
   public final UnsignedIntRef _90;
   public final UnsignedIntRef _94;
 
@@ -60,7 +60,7 @@ public class BttlStructa4 implements MemoryRef {
     this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
-    this._18 = ref.offset(2, 0x18L).cast(UnsignedShortRef::new);
+    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
@@ -77,7 +77,7 @@ public class BttlStructa4 implements MemoryRef {
     this._80 = ref.offset(4, 0x80L).cast(IntRef::new);
     this._84 = ref.offset(4, 0x84L).cast(UnsignedIntRef::new);
     this._88 = ref.offset(4, 0x88L).cast(IntRef::new);
-    this._8c = ref.offset(4, 0x8cL).cast(UnsignedIntRef::new);
+    this._8c = ref.offset(4, 0x8cL).cast(IntRef::new);
     this._90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
     this._94 = ref.offset(4, 0x94L).cast(UnsignedIntRef::new);
 

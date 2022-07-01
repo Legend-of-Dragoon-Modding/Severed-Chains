@@ -78,6 +78,11 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final ShortRef _88;
   public final ShortRef _8a;
 
+  public final UnsignedShortRef _94;
+  public final UnsignedShortRef _96;
+
+  public final ShortRef _9c;
+
   public final UnsignedShortRef _a4;
 
   public final ShortRef _a8;
@@ -87,8 +92,9 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final UnsignedShortRef dragoonDefence_b0;
   public final UnsignedShortRef dragoonMagicDefence_b2;
   public final ShortRef _b4;
-
+  public final ShortRef _b6;
   public final ShortRef _b8;
+  public final ShortRef _ba;
 
   public final ShortRef _c8;
   public final ShortRef _ca;
@@ -97,7 +103,16 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final ShortRef _d0;
   public final ShortRef _d2;
 
+  public final ShortRef _d6;
   public final ShortRef _d8;
+  public final ShortRef _da;
+  public final ShortRef _dc;
+  public final ShortRef _de;
+  public final UnsignedByteRef _e0;
+
+  public final ShortRef _e6;
+
+  public final ShortRef _ea;
 
   public final UnsignedShortRef _110;
   public final UnsignedShortRef _112;
@@ -221,6 +236,11 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._88 = ref.offset(2, 0x88L).cast(ShortRef::new);
     this._8a = ref.offset(2, 0x8aL).cast(ShortRef::new);
 
+    this._94 = ref.offset(2, 0x94L).cast(UnsignedShortRef::new);
+    this._96 = ref.offset(2, 0x96L).cast(UnsignedShortRef::new);
+
+    this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
+
     this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
 
     this._a8 = ref.offset(2, 0xa8L).cast(ShortRef::new);
@@ -230,8 +250,9 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this.dragoonDefence_b0 = ref.offset(2, 0xb0L).cast(UnsignedShortRef::new);
     this.dragoonMagicDefence_b2 = ref.offset(2, 0xb2L).cast(UnsignedShortRef::new);
     this._b4 = ref.offset(2, 0xb4L).cast(ShortRef::new);
-
+    this._b6 = ref.offset(2, 0xb6L).cast(ShortRef::new);
     this._b8 = ref.offset(2, 0xb8L).cast(ShortRef::new);
+    this._ba = ref.offset(2, 0xbaL).cast(ShortRef::new);
 
     this._c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
     this._ca = ref.offset(2, 0xcaL).cast(ShortRef::new);
@@ -240,7 +261,16 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._d0 = ref.offset(2, 0xd0L).cast(ShortRef::new);
     this._d2 = ref.offset(2, 0xd2L).cast(ShortRef::new);
 
+    this._d6 = ref.offset(2, 0xd6L).cast(ShortRef::new);
     this._d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
+    this._da = ref.offset(2, 0xdaL).cast(ShortRef::new);
+    this._dc = ref.offset(2, 0xdcL).cast(ShortRef::new);
+    this._de = ref.offset(2, 0xdeL).cast(ShortRef::new);
+    this._e0 = ref.offset(1, 0xe0L).cast(UnsignedByteRef::new);
+
+    this._e6 = ref.offset(2, 0xe6L).cast(ShortRef::new);
+
+    this._ea = ref.offset(2, 0xeaL).cast(ShortRef::new);
 
     this._110 = ref.offset(2, 0x110L).cast(UnsignedShortRef::new);
     this._112 = ref.offset(2, 0x112L).cast(UnsignedShortRef::new);

@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.DebugHelper;
 import legend.core.Hardware;
+import legend.core.IoHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
@@ -30,6 +31,9 @@ import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BttlScriptData6c;
+import legend.game.combat.types.BttlScriptData6cSubBase1;
+import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.scriptdebugger.ScriptDebugger;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
@@ -50,9 +54,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.function.Function;
 
 import static legend.core.Hardware.CDROM;
@@ -424,24 +430,99 @@ public final class Scus94491BpeSegment {
       endFrame();
 
       if(dumping) {
-        try {
-          LOGGER.info("Pausing execution to dump save state...");
-          Hardware.dump(Files.newOutputStream(Paths.get("./state.ddmp")));
+        LOGGER.info("Pausing execution to dump save state...");
+        try(final FileChannel channel = FileChannel.open(Paths.get("./state.ddmp"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
+          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 10 * 1024 * 1024);
+          Hardware.dump(buf);
+
+          for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
+            final Pointer<?> ptr = scriptStatePtrArr_800bc1c0.get(i).deref().innerStruct_00;
+
+            if(ptr.isNull()) {
+              IoHelper.write(buf, "");
+            } else {
+              IoHelper.write(buf, ptr.deref().getClass().getName());
+
+              if(ptr.deref() instanceof BttlScriptData6c) {
+                final Pointer<BttlScriptData6cSubBase1> ptr1 = ((BttlScriptData6c)ptr.deref())._44;
+
+                if(ptr1.isNull()) {
+                  IoHelper.write(buf, "");
+                } else {
+                  IoHelper.write(buf, ptr1.deref().getClass().getName());
+                }
+
+                Pointer<BttlScriptData6cSubBase2> ptr2 = ((BttlScriptData6c)ptr.deref())._58;
+
+                while(!ptr2.isNull()) {
+                  IoHelper.write(buf, ptr2.deref().getClass().getName());
+                  ptr2 = ptr2.deref()._00;
+                }
+
+                IoHelper.write(buf, "");
+              }
+            }
+          }
+
           LOGGER.info("Save state complete");
-        } catch(final IOException e) {
-          LOGGER.error("Failed to dump save state", e);
+        } catch(final Throwable throwable) {
+          LOGGER.error("Failed to dump save state", throwable);
         }
 
         dumping = false;
       }
 
       if(loading) {
-        try {
+        try(final FileChannel channel = FileChannel.open(Paths.get("./state.ddmp"), StandardOpenOption.READ)) {
           LOGGER.info("Pausing execution to load save state...");
-          Hardware.load(Files.newInputStream(Paths.get("./state.ddmp")));
+          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, 10 * 1024 * 1024);
+          Hardware.load(buf);
+
+          for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
+            final Pointer<ScriptState<?>> ptr = scriptStatePtrArr_800bc1c0.get(i);
+
+            final String clsName = IoHelper.readString(buf);
+
+            if(!clsName.isEmpty()) {
+              final Class<?> cls = Class.forName(clsName);
+              final Constructor<?> ctor = cls.getConstructor(Value.class);
+              ptr.set(ScriptState.of(ref -> {
+                try {
+                  return (MemoryRef)ctor.newInstance(ref);
+                } catch(Exception e) {
+                  throw new RuntimeException(e);
+                }
+              }).apply(MEMORY.ref(4, ptr.getPointer())));
+
+              if(BttlScriptData6c.class.equals(cls)) {
+                final BttlScriptData6c data6c = ptr.deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+
+                final String clsName1 = IoHelper.readString(buf);
+
+                if(!clsName1.isEmpty()) {
+                  final Class<?> cls1 = Class.forName(clsName1);
+                  final Constructor<?> ctor1 = cls1.getConstructor(Value.class);
+                  data6c._44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c._44.getPointer())));
+                }
+
+                Pointer<BttlScriptData6cSubBase2> ptr2 = data6c._58;
+                String clsName2 = IoHelper.readString(buf);
+
+                while(!clsName2.isEmpty()) {
+                  final Class<?> cls2 = Class.forName(clsName2);
+                  final Constructor<?> ctor2 = cls2.getConstructor(Value.class);
+                  ptr2.set((BttlScriptData6cSubBase2)ctor2.newInstance(MEMORY.ref(4, ptr2.getPointer())));
+
+                  ptr2 = ptr2.deref()._00;
+                  clsName2 = IoHelper.readString(buf);
+                }
+              }
+            }
+          }
+
           LOGGER.info("Load state complete");
-        } catch(final IOException e) {
-          LOGGER.error("Failed to load save state", e);
+        } catch(final Throwable throwable) {
+          LOGGER.error("Failed to load save state", throwable);
         }
 
         loading = false;
@@ -3245,6 +3326,13 @@ public final class Scus94491BpeSegment {
   @Method(0x80016a14L)
   public static long scriptNegate(final RunningScript a0) {
     a0.params_20.get(0).deref().set(-a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x80016a34L)
+  public static long FUN_80016a34(final RunningScript a0) {
+    //LAB_80016a50
+    a0.params_20.get(0).deref().abs();
     return 0;
   }
 

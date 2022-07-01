@@ -3,18 +3,29 @@ package legend.game.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 
+import javax.annotation.Nullable;
+
 public class LodString implements MemoryRef {
+  @Nullable
   private final Value ref;
+  @Nullable
+  private final int[] chars;
 
   public LodString(final Value ref) {
     this.ref = ref;
+    this.chars = null;
+  }
+
+  public LodString(final int length) {
+    this.ref = null;
+    this.chars = new int[length];
   }
 
   public String get() {
     final StringBuilder sb = new StringBuilder();
 
-    for(int offset = 0; offset < 0xff; offset += 2) {
-      final long c = this.ref.offset(2, offset).get();
+    for(int i = 0; i < 0x80; i++) {
+      final long c = this.charAt(i);
 
       if(c == 0xa0ffL || c == 0xffffL) {
         break;
@@ -116,19 +127,42 @@ public class LodString implements MemoryRef {
   }
 
   public long charAt(final int index) {
+    if(this.ref == null) {
+      return this.chars[index];
+    }
+
     return this.ref.offset(2, index * 0x2L).get();
   }
 
   public void charAt(final int index, final long c) {
+    if(this.ref == null) {
+      this.chars[index] = (int)c;
+      return;
+    }
+
     this.ref.offset(2, index * 0x2L).setu(c);
   }
 
   public LodString slice(final int index) {
+    if(this.ref == null) {
+      final LodString str = new LodString(this.chars.length - index);
+
+      for(int i = 0; i < this.chars.length - index; i++) {
+        str.charAt(i, this.charAt(index + i));
+      }
+
+      return str;
+    }
+
     return this.ref.offset(2, index * 0x2L).cast(LodString::new);
   }
 
   @Override
   public long getAddress() {
+    if(this.ref == null) {
+      return 0;
+    }
+
     return this.ref.getAddress();
   }
 

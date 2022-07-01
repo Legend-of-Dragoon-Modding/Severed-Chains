@@ -4943,7 +4943,7 @@ public final class Scus94491BpeSegment_8002 {
           a1 = MEMORY.ref(4, v0).offset(0x0L).get();
           a3 = 1_000_000_000L;
 
-          final long[] sp0x18 = new long[(int)s4];
+          final long[] sp0x18 = new long[(int)s4]; //TODO LodString
 
           if(s7 != 0) {
             //LAB_800279dc
@@ -4951,7 +4951,7 @@ public final class Scus94491BpeSegment_8002 {
               v0 = a1 / a3;
               a1 = a1 % a3;
               a3 = a3 / 10;
-              sp0x18[(int)a2] = _80052b40.get((int)v0).deref().get();
+              sp0x18[(int)a2] = _80052b40.get((int)v0).deref().charAt(0);
             }
           }
 
@@ -6699,8 +6699,41 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800297a0L)
-  public static void FUN_800297a0(long a0, LodString a1) {
-    assert false;
+  public static LodString FUN_800297a0(final long a3, final LodString t3) {
+    final LodString sp0x00 = new LodString(11);
+
+    //LAB_800297b4
+    for(int i = 0; i < 11; i++) {
+      sp0x00.charAt(i, 0xa0ff);
+      t3.charAt(i, 0xa0ff);
+    }
+
+    long t0 = a3;
+    int divisor = 1_000_000_000;
+
+    //LAB_8002980c
+    for(int i = 0; i < 10; i++) {
+      sp0x00.charAt(i, _80052b40.get((int)(t0 / divisor)).deref().charAt(0));
+      t0 = t0 % divisor;
+      divisor = divisor / 10;
+    }
+
+    //LAB_80029888
+    int a1;
+    for(a1 = 0; a1 < 9; a1++) {
+      if(sp0x00.charAt(a1) != _80052b40.get(0).deref().charAt(0)) {
+        break;
+      }
+    }
+
+    //LAB_800298b8
+    //LAB_800298c4
+    for(int a2 = 0; a1 < 10 && a2 < 8; a1++, a2++) {
+      t3.charAt(a2, sp0x00.charAt(a1));
+    }
+
+    //LAB_80029914
+    return t3;
   }
 
   @Method(0x80029920L)
