@@ -95,7 +95,7 @@ import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 public final class Ttle {
   private Ttle() { }
 
-  public static final Pointer<TmdRenderingStruct> _800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.of(4, TmdRenderingStruct::new));
+  public static final Pointer<TmdRenderingStruct> _800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.deferred(4, TmdRenderingStruct::new));
   public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(16, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
   public static final Value hasSavedGames_800c66e4 = MEMORY.ref(4, 0x800c66e4L);
   public static final Value menuLoadingStage_800c66e8 = MEMORY.ref(4, 0x800c66e8L);
@@ -137,7 +137,7 @@ public final class Ttle {
    *   <li>{@link Ttle#FUN_800c7500()}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.deferred(4, RunnableRef::new)));
 
   public static final SVECTOR _800c68f0 = MEMORY.ref(8, 0x800c68f0L, SVECTOR::new);
   public static final VECTOR _800c68f8 = MEMORY.ref(16, 0x800c68f8L, VECTOR::new);
@@ -165,12 +165,12 @@ public final class Ttle {
    *   <li>{@link Ttle#FUN_800c8148()}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(0x1c, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.deferred(4, RunnableRef::new)));
 
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(24, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(4, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.classFor(ConsumerRef.classFor(Long.class)), 17, 4, Pointer.of(4, ConsumerRef::new)));
+  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.classFor(ConsumerRef.classFor(Long.class)), 17, 4, Pointer.deferred(4, ConsumerRef::new)));
 
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
 

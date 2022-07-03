@@ -11,25 +11,32 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.MrgFile;
 import legend.game.types.ScriptFile;
 
-public class BattleStruct1a8 implements MemoryRef {
+/** Data related to a combatant (player or enemy) */
+public class CombatantStruct1a8 implements MemoryRef {
   private final Value ref;
 
   public final Pointer<MrgFile> mrg_00;
   public final UnsignedIntRef _04;
+  /** TODO pretty sure this is an animation, not a TMD */
   public final Pointer<ExtendedTmd> tmd_08;
 
   public final Pointer<ScriptFile> script_10;
   public final ArrayRef<BattleStruct1a8_c> _14;
   public final UnsignedIntRef _194;
   public final UnsignedIntRef _198;
-  public final ShortRef _19c;
-  public final UnsignedShortRef _19e;
+  public final ShortRef charSlot_19c;
+  /**
+   * 0x1 - used?
+   * 0x4 - player (not NPC)
+   */
+  public final UnsignedShortRef flags_19e;
   public final ShortRef _1a0;
-  public final ShortRef _1a2;
+  /** Maybe not strictly char index? */
+  public final ShortRef charIndex_1a2;
   public final ShortRef _1a4;
   public final ShortRef _1a6;
 
-  public BattleStruct1a8(final Value ref) {
+  public CombatantStruct1a8(final Value ref) {
     this.ref = ref;
 
     this.mrg_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, MrgFile::new));
@@ -40,10 +47,10 @@ public class BattleStruct1a8 implements MemoryRef {
     this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(BattleStruct1a8_c.class, 32, 0xc, BattleStruct1a8_c::new));
     this._194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
     this._198 = ref.offset(4, 0x198L).cast(UnsignedIntRef::new);
-    this._19c = ref.offset(2, 0x19cL).cast(ShortRef::new);
-    this._19e = ref.offset(2, 0x19eL).cast(UnsignedShortRef::new);
+    this.charSlot_19c = ref.offset(2, 0x19cL).cast(ShortRef::new);
+    this.flags_19e = ref.offset(2, 0x19eL).cast(UnsignedShortRef::new);
     this._1a0 = ref.offset(2, 0x1a0L).cast(ShortRef::new);
-    this._1a2 = ref.offset(2, 0x1a2L).cast(ShortRef::new);
+    this.charIndex_1a2 = ref.offset(2, 0x1a2L).cast(ShortRef::new);
     this._1a4 = ref.offset(2, 0x1a4L).cast(ShortRef::new);
     this._1a6 = ref.offset(2, 0x1a6L).cast(ShortRef::new);
   }

@@ -298,7 +298,7 @@ public final class SMap {
   public static final Value _800c69f4 = MEMORY.ref(4, 0x800c69f4L);
   public static final Value _800c69f8 = MEMORY.ref(4, 0x800c69f8L);
   public static final Value _800c69fc = MEMORY.ref(4, 0x800c69fcL);
-  public static final UnboundedArrayRef<Pointer<ExtendedTmd>> extendedTmdArr_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.of(4, ExtendedTmd::new)));
+  public static final UnboundedArrayRef<Pointer<ExtendedTmd>> extendedTmdArr_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.deferred(4, ExtendedTmd::new)));
 
   /** Written as int, read as bytes? TODO array */
   public static final Value _800c6a50 = MEMORY.ref(4, 0x800c6a50L);
@@ -555,12 +555,12 @@ public final class SMap {
    *
    * All other indices are {@link SMap#FUN_800e4994()}
    */
-  public static final ArrayRef<Pointer<RunnableRef>> callbackArr_800f5ad4 = MEMORY.ref(4, 0x800f5ad4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 0x80, 4, Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> callbackArr_800f5ad4 = MEMORY.ref(4, 0x800f5ad4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 0x80, 4, Pointer.deferred(4, RunnableRef::new)));
   public static final Value _800f5cd4 = MEMORY.ref(2, 0x800f5cd4L);
 
   public static final Value _800f64ac = MEMORY.ref(4, 0x800f64acL);
 
-  public static final Pointer<GsOT> GsOTPtr_800f64c0 = MEMORY.ref(4, 0x800f64c0L, Pointer.of(4, GsOT::new));
+  public static final Pointer<GsOT> GsOTPtr_800f64c0 = MEMORY.ref(4, 0x800f64c0L, Pointer.deferred(4, GsOT::new));
   /** Indexed by submap cut */
   public static final UnboundedArrayRef<SubmapEncounterData_04> encounterData_800f64c4 = MEMORY.ref(1, 0x800f64c4L, UnboundedArrayRef.of(0x4, SubmapEncounterData_04::new));
 

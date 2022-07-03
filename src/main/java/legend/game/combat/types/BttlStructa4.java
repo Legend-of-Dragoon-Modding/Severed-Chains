@@ -14,7 +14,7 @@ public class BttlStructa4 implements MemoryRef {
   public final UnsignedShortRef _02;
   public final UnsignedShortRef _04;
   public final UnsignedShortRef _06;
-  public final ShortRef _08;
+  public final ShortRef charIndex_08;
   public final ShortRef _0a;
   public final UnsignedShortRef _0c;
   public final UnsignedShortRef _0e;
@@ -52,7 +52,7 @@ public class BttlStructa4 implements MemoryRef {
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this.charIndex_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);

@@ -26,7 +26,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.combat.types.BattleStruct1a8;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
@@ -389,7 +389,7 @@ public final class Scus94491BpeSegment_8005 {
   //TODO hack to record script names/sizes
   public static Int2ObjectMap<Tuple<String, Integer>> _8005e398_SCRIPT_SIZES = new Int2ObjectOpenHashMap<>();
 
-  public static final ArrayRef<BattleStruct1a8> _8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(BattleStruct1a8.class, 10, 0x1a8, BattleStruct1a8::new));
+  public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 
   /** TODO huge structure related to combat */
   public static final Value _8005f428 = MEMORY.ref(1, 0x8005f428L);

@@ -52,6 +52,8 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final ShortRef _4c;
   public final ShortRef _4e;
 
+  public final ShortRef _52;
+
   public final ShortRef _56;
   public final ShortRef selectedAddition_58;
 
@@ -83,6 +85,8 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
   public final ShortRef _9c;
 
+  public final UnsignedShortRef _a0;
+
   public final UnsignedShortRef _a4;
 
   public final ShortRef _a8;
@@ -102,7 +106,7 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final ShortRef _ce;
   public final ShortRef _d0;
   public final ShortRef _d2;
-
+  public final ShortRef _d4;
   public final ShortRef _d6;
   public final ShortRef _d8;
   public final ShortRef _da;
@@ -140,7 +144,7 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final UnsignedShortRef _13e;
 
   public final UnsignedShortRef _142;
-  public final Pointer<BattleStruct1a8> _144;
+  public final Pointer<CombatantStruct1a8> combatant_144;
   public final BigStruct _148;
 
   //TODO maybe part of previous struct
@@ -159,12 +163,12 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
   public final UnsignedIntRef _25c;
 
-  public final ShortRef _26c;
-  public final ShortRef _26e;
-  public final ShortRef _270;
-  public final ShortRef _272;
+  public final ShortRef combatantIndex_26c;
+  public final ShortRef animIndex_26e;
+  public final ShortRef animIndex_270;
+  public final ShortRef charIndex_272;
   public final ShortRef _274;
-  public final ShortRef _276;
+  public final ShortRef charSlot_276;
   public final UnsignedByteRef _278;
 
   public BtldScriptData27c(final Value ref) {
@@ -210,6 +214,8 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
     this._4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
 
+    this._52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+
     this._56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this.selectedAddition_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
 
@@ -241,6 +247,8 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
     this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
 
+    this._a0 = ref.offset(2, 0xa0L).cast(UnsignedShortRef::new);
+
     this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
 
     this._a8 = ref.offset(2, 0xa8L).cast(ShortRef::new);
@@ -260,7 +268,7 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._ce = ref.offset(2, 0xceL).cast(ShortRef::new);
     this._d0 = ref.offset(2, 0xd0L).cast(ShortRef::new);
     this._d2 = ref.offset(2, 0xd2L).cast(ShortRef::new);
-
+    this._d4 = ref.offset(2, 0xd4L).cast(ShortRef::new);
     this._d6 = ref.offset(2, 0xd6L).cast(ShortRef::new);
     this._d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
     this._da = ref.offset(2, 0xdaL).cast(ShortRef::new);
@@ -298,7 +306,7 @@ public class BtldScriptData27c extends BattleScriptDataBase {
     this._13e = ref.offset(2, 0x13eL).cast(UnsignedShortRef::new);
 
     this._142 = ref.offset(2, 0x142L).cast(UnsignedShortRef::new);
-    this._144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, BattleStruct1a8::new));
+    this.combatant_144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, CombatantStruct1a8::new));
     this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
 
     this._1e4 = ref.offset(1, 0x1e4L).cast(UnsignedByteRef::new);
@@ -316,12 +324,12 @@ public class BtldScriptData27c extends BattleScriptDataBase {
 
     this._25c = ref.offset(4, 0x25cL).cast(UnsignedIntRef::new);
 
-    this._26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
-    this._26e = ref.offset(2, 0x26eL).cast(ShortRef::new);
-    this._270 = ref.offset(2, 0x270L).cast(ShortRef::new);
-    this._272 = ref.offset(2, 0x272L).cast(ShortRef::new);
+    this.combatantIndex_26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
+    this.animIndex_26e = ref.offset(2, 0x26eL).cast(ShortRef::new);
+    this.animIndex_270 = ref.offset(2, 0x270L).cast(ShortRef::new);
+    this.charIndex_272 = ref.offset(2, 0x272L).cast(ShortRef::new);
     this._274 = ref.offset(2, 0x274L).cast(ShortRef::new);
-    this._276 = ref.offset(2, 0x276L).cast(ShortRef::new);
+    this.charSlot_276 = ref.offset(2, 0x276L).cast(ShortRef::new);
     this._278 = ref.offset(1, 0x278L).cast(UnsignedByteRef::new);
   }
 }

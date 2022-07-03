@@ -8,6 +8,7 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -2886,7 +2887,9 @@ public final class Scus94491BpeSegment {
         RunningScript_800bc070.commandPtr_0c.set(scriptState.commandPtr_18.deref());
         RunningScript_800bc070.parentPtr_08.set(scriptState.commandPtr_18.deref());
 
-        System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer());
+        if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+          System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer());
+        }
 
         long ret;
         //LAB_80016018
@@ -2896,7 +2899,9 @@ public final class Scus94491BpeSegment {
           RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
           RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
 
-          System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+            System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+          }
 
           RunningScript_800bc070.commandPtr_0c.incr();
 
@@ -2916,13 +2921,17 @@ public final class Scus94491BpeSegment {
             if(operation == 0x1L) {
               //LAB_800161f4
               final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
               RunningScript_800bc070.commandPtr_0c.incr();
             } else if(operation == 0x2L) {
               //LAB_80016200
               final IntRef p = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x3L) {
               //LAB_800160cc
@@ -2930,30 +2939,40 @@ public final class Scus94491BpeSegment {
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(param1).get();
               final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x4L) {
               //LAB_80016258
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = param1 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
               final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x5L) {
               //LAB_80016290
               final IntRef p = scriptPtrs_8004de58.get(param2).deref();
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x6L) {
               //LAB_800162a4
               final IntRef p = scriptPtrs_8004de58.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2).deref();
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x7) {
               //LAB_800162d0
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x8L) {
               //LAB_800160e8
@@ -2961,55 +2980,73 @@ public final class Scus94491BpeSegment {
               v0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
               final long a1_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x9L) {
               //LAB_80016328
               v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
               final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xaL) {
               //LAB_80016118
               //LAB_80016334
               v0 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xbL) {
               //LAB_80016360
               v0 = RunningScript_800bc070.parentPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
               final long a0_0 = RunningScript_800bc070.parentPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
               final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xcL) {
               //LAB_800163a0
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xdL) {
               //LAB_800163e8
               final IntRef p = scriptStatePtrArr_800bc1c0.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xeL) {
               //LAB_80016418
               final IntRef p = scriptPtrs_8004de58.get(param1 + param2).deref();
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0xfL) {
               //LAB_8001642c
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x10L) {
               //LAB_80016180
               //LAB_8001643c
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get()).getPointer() + param0 * 0x4L, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x11L) {
               //LAB_80016468
@@ -3024,7 +3061,9 @@ public final class Scus94491BpeSegment {
               //LAB_800164a4
               v1 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + param0) * 4;
               final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x14L) {
               //LAB_800164b4
@@ -3035,7 +3074,9 @@ public final class Scus94491BpeSegment {
 
               //LAB_800164d4
               final IntRef p = MEMORY.ref(4, v1 + v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x15L) {
               //LAB_800161a0
@@ -3045,14 +3086,18 @@ public final class Scus94491BpeSegment {
 
               //LAB_80016580
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x16L) {
               //LAB_80016518
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x17L) {
               //LAB_800161d4
@@ -3060,12 +3105,16 @@ public final class Scus94491BpeSegment {
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else { // Treated as an immediate if not a valid op
               //LAB_80016574
               final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
-              System.err.printf("work[%d] = %s%n", childIndex, p);
+              if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+                System.err.printf("work[%d] = %s%n", childIndex, p);
+              }
               RunningScript_800bc070.params_20.get(childIndex).set(p).decr();
             }
 
@@ -3074,15 +3123,19 @@ public final class Scus94491BpeSegment {
 
           final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref();
 
-          System.err.printf("Running callback %08x%n", callback.getAddress());
+          if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+            System.err.printf("Running callback %08x%n", callback.getAddress());
+          }
 
           //LAB_80016598
           ret = callback.run(RunningScript_800bc070);
 
-          if(ret == 1) {
-            System.err.println("Pausing");
-          } else if(ret != 0) {
-            System.err.println("Rewinding and pausing");
+          if("true".equalsIgnoreCase(System.getProperty("scriptlog"))) {
+            if(ret == 1) {
+              System.err.println("Pausing");
+            } else if(ret != 0) {
+              System.err.println("Rewinding and pausing");
+            }
           }
 
           // Returning 0 continues execution
@@ -4785,7 +4838,7 @@ public final class Scus94491BpeSegment {
     if(a0 == 0x1L) {
       //LAB_80019e68
       for(int i = 0; i < 3; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get())._02.get() == v1._272.get()) {
+        if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get())._02.get() == v1.charIndex_272.get()) {
           //LAB_80019ea4
           t1 = _800500f8.offset(i * 0x4L).get();
           break;
@@ -4795,7 +4848,7 @@ public final class Scus94491BpeSegment {
       //LAB_80019f18
       //LAB_80019f30
       for(int i = 0; i < 4; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get())._02.get() == v1._272.get()) {
+        if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get())._02.get() == v1.charIndex_272.get()) {
           //LAB_80019ea4
           t1 = _800500e8.offset(i * 0x4L).get();
           break;
@@ -6143,9 +6196,9 @@ public final class Scus94491BpeSegment {
     if(a1 == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
-      if(s1._272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+      if(s1.charIndex_272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
         //LAB_8001d134
-        loadDrgnBinFile(0, 1317 + s1._272.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(0, 1317 + s1.charIndex_272.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       } else {
         loadDrgnBinFile(0, 1328, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       }

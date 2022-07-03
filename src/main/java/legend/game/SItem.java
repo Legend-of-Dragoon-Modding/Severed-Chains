@@ -13,7 +13,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.Bttl_800c;
-import legend.game.combat.types.BattleStruct1a8;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BtldScriptData27c;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -105,7 +105,7 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
-import static legend.game.Scus94491BpeSegment_8005._8005e398;
+import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.memcardEventIndex_80052e4c;
@@ -152,13 +152,13 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.FUN_800c8f50;
-import static legend.game.combat.Bttl_800c.FUN_800c9290;
+import static legend.game.combat.Bttl_800c.addCombatant;
+import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
 import static legend.game.combat.Bttl_800c.FUN_800ca75c;
 import static legend.game.combat.Bttl_800c._800c66d0;
-import static legend.game.combat.Bttl_800c._800c677c;
-import static legend.game.combat.Bttl_800c.battleStruct1a8Count_800c66a0;
-import static legend.game.combat.Bttl_800c.getBattleStruct1a8;
+import static legend.game.combat.Bttl_800c.charCount_800c677c;
+import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
+import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800f.FUN_800f863c;
 
 public final class SItem {
@@ -511,49 +511,47 @@ public final class SItem {
   @Method(0x800fbd78L)
   public static void FUN_800fbd78(final long a0) {
     //LAB_800fbdb8
-    for(_800c677c.setu(0); _800c677c.get() < 3; _800c677c.addu(0x1L)) {
-      if(gameState_800babc8.charIndex_88.get((int)_800c677c.get()).get() < 0) {
+    for(charCount_800c677c.setu(0); charCount_800c677c.get() < 3; charCount_800c677c.addu(0x1L)) {
+      if(gameState_800babc8.charIndex_88.get((int)charCount_800c677c.get()).get() < 0) {
         break;
       }
     }
 
     //LAB_800fbde8
-    final long fp = _80111d38.offset(_800c677c.get() * 0xcL).getAddress();
-    final long[] sp0x18 = new long[(int)_800c677c.get()];
+    final long fp = _80111d38.offset(charCount_800c677c.get() * 0xcL).getAddress();
+    final long[] charIndices = new long[(int)charCount_800c677c.get()];
 
     //LAB_800fbe18
-    for(int i = 0; i < _800c677c.get(); i++) {
-      sp0x18[i] = FUN_800c8f50(0x200L + gameState_800babc8.charIndex_88.get(i).get() * 0x2L, i);
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      charIndices[charSlot] = addCombatant(0x200L + gameState_800babc8.charIndex_88.get(charSlot).get() * 0x2L, charSlot);
     }
 
     //LAB_800fbe4c
     //LAB_800fbe70
-    for(int i = 0; i < _800c677c.get(); i++) {
-      final long s2 = gameState_800babc8.charIndex_88.get(i).get();
-      final int s0 = allocateScriptState(i + 6, 0x27cL, false, null, 0, BtldScriptData27c::new);
-      setCallback04(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      setCallback0c(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(s0);
-      _8006e398.offset(4, 0xe40L).offset(i * 0x4L).setu(s0);
-      final long s1 = scriptStatePtrArr_800bc1c0.get((int)s0).deref().innerStruct_00.getPointer(); //TODO
-      MEMORY.ref(4, s1).offset(0x0L).setu(0x4a42_4f42L); // BOBJ
-      MEMORY.ref(4, s1).offset(0x144L).setu(getBattleStruct1a8((short)sp0x18[i]).getAddress()); //TODO
-      MEMORY.ref(2, s1).offset(0x272L).setu(s2);
-      MEMORY.ref(2, s1).offset(0x276L).setu(i);
-      MEMORY.ref(2, s1).offset(0x26cL).setu(sp0x18[i]);
-      MEMORY.ref(2, s1).offset(0x274L).setu(_800c66d0.get());
-      MEMORY.ref(4, s1).offset(0x178L).setu(0);
-      MEMORY.ref(4, s1).offset(0x174L).setu(MEMORY.ref(2, fp).offset(i * 0x4L).offset(0x0L).getSigned());
-      MEMORY.ref(2, s1).offset(0x1bcL).setu(0);
-      MEMORY.ref(2, s1).offset(0x1beL).setu(0x400L);
-      MEMORY.ref(2, s1).offset(0x1c0L).setu(0);
-      MEMORY.ref(4, s1).offset(0x17cL).setu(MEMORY.ref(2, fp).offset(i * 0x4L).offset(0x2L).getSigned());
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
+      final int scriptIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BtldScriptData27c::new);
+      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(scriptIndex);
+      _8006e398.offset(4, 0xe40L).offset(charSlot * 0x4L).setu(scriptIndex);
+      final BtldScriptData27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      s1.magic_00.set(0x4a42_4f42L); // BOBJ
+      s1.combatant_144.set(getCombatant((short)charIndices[charSlot]));
+      s1.charIndex_272.set((short)charIndex);
+      s1.charSlot_276.set((short)charSlot);
+      s1.combatantIndex_26c.set((short)charIndices[charSlot]);
+      s1._274.set((short)_800c66d0.get());
+      s1._148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
+      s1._148.coord2_14.coord.transfer.setY(0);
+      s1._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
+      s1._148.coord2Param_64.rotate.set((short)0, (short)0x400, (short)0);
       _800c66d0.addu(0x1L);
     }
 
     //LAB_800fbf6c
     _8006e398.offset(_800c66d0.get() * 0x4L).offset(4, 0xe0cL).setu(-0x1L);
-    _8006e398.offset(_800c677c.get() * 0x4L).offset(4, 0xe40L).setu(-0x1L);
+    _8006e398.offset(charCount_800c677c.get() * 0x4L).offset(4, 0xe40L).setu(-0x1L);
 
     FUN_800f863c();
     FUN_80012bb4();
@@ -564,9 +562,9 @@ public final class SItem {
     FUN_80012b1c(0x2L, getMethodAddress(SItem.class, "loadEnemyTextures", long.class), 2625 + encounterId_800bb0f8.get());
 
     //LAB_800fc030
-    for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
-      if(getBattleStruct1a8(i)._19c.get() < 0) {
-        FUN_800c9290(i);
+    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
+      if(getCombatant(i).charSlot_19c.get() < 0) { // I think this means it's not a player
+        loadCombatantTmdAndAnims(i);
       }
 
       //LAB_800fc050
@@ -574,12 +572,12 @@ public final class SItem {
 
     //LAB_800fc064
     //LAB_800fc09c
-    for(int i = 0; i < _800c677c.get(); i++) {
-      _8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._26c.get())._19e.or(0x2a);
+    for(int i = 0; i < charCount_800c677c.get(); i++) {
+      combatants_8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
     }
 
     //LAB_800fc104
-    final long v1 = _800c677c.get();
+    final long v1 = charCount_800c677c.get();
     final long s2;
     if(v1 == 1) {
       //LAB_800fc140
@@ -611,20 +609,20 @@ public final class SItem {
 
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
-    for(int s1 = 0; s1 < _800c677c.get(); s1++) {
+    for(int s1 = 0; s1 < charCount_800c677c.get(); s1++) {
       final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-      final BattleStruct1a8 v0 = data._144.deref();
+      final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
       //LAB_800fc298
       for(int a1 = 0; a1 < 3; a1++) {
-        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == data._272.get()) {
+        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == data.charIndex_272.get()) {
           s0 = s0 & 0xffff_ff80L;
-          s0 = s0 | (v0._19c.get() & 0x7fL);
+          s0 = s0 | (combatant.charSlot_19c.get() & 0x7fL);
           s0 = s0 & 0xffff_81ffL;
-          s0 = s0 | ((data._26c.get() & 0x3fL) << 9);
+          s0 = s0 | ((data.combatantIndex_26c.get() & 0x3fL) << 9);
           s0 = s0 & 0xffff_ff7fL;
           s0 = s0 & 0xffff_feffL;
-          decompress(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(v0._19c.get() * 0x4L).get(), getMethodAddress(Bttl_800c.class, "FUN_800c941c", long.class, long.class, long.class), s0, 0);
+          decompress(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get(), getMethodAddress(Bttl_800c.class, "combatantTmdAndAnimLoadedCallback", long.class, long.class, long.class), s0, 0);
           break;
         }
 
@@ -652,11 +650,11 @@ public final class SItem {
     final long s2 = _1f8003f4.getPointer(); //TODO
 
     //LAB_800fc434
-    for(int i = 0; i < battleStruct1a8Count_800c66a0.get(); i++) {
-      final BattleStruct1a8 a0 = getBattleStruct1a8(i);
+    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
+      final CombatantStruct1a8 a0 = getCombatant(i);
 
-      if(a0._19c.get() < 0) {
-        final long a2 = a0._1a2.get() & 0x1ffL;
+      if(a0.charSlot_19c.get() < 0) {
+        final long a2 = a0.charIndex_1a2.get() & 0x1ffL;
 
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
@@ -687,7 +685,7 @@ public final class SItem {
     long s3 = _8006e398.offset(0xee8L).get();
 
     //LAB_800fc590
-    for(long s0 = 0; s0 < _800c677c.get(); s0++) {
+    for(long s0 = 0; s0 < charCount_800c677c.get(); s0++) {
       final long a3 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(s0 * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
 
       //LAB_800fc5b4

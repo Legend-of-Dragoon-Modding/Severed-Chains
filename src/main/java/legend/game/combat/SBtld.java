@@ -6,7 +6,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
-import legend.game.combat.types.BattleStruct1a8;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BtldScriptData27c;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
@@ -30,8 +30,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.combat.Bttl_800c.FUN_800c8f50;
-import static legend.game.combat.Bttl_800c.FUN_800c9060;
+import static legend.game.combat.Bttl_800c.addCombatant;
+import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c._800c6698;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c66d0;
@@ -40,7 +40,7 @@ import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800c._800c6780;
-import static legend.game.combat.Bttl_800c.getBattleStruct1a8;
+import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.script_800c66fc_length;
@@ -57,7 +57,7 @@ public class SBtld {
   /** TODO 0x1c-byte struct */
   public static final Value _8010ba98 = MEMORY.ref(4, 0x8010ba98L);
 
-  public static final ArrayRef<Pointer<LodString>> _80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> enemyNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
 
   /** TODO 0x8-byte struct */
   public static final Value _80112868 = MEMORY.ref(4, 0x80112868L);
@@ -296,32 +296,32 @@ public class SBtld {
         break;
       }
 
-      FUN_80012b1c(0x1L, getMethodAddress(SBtld.class, "FUN_80109808", long.class), FUN_800c8f50(s2, -0x1L) * 0x10000 + s2);
+      FUN_80012b1c(0x1L, getMethodAddress(SBtld.class, "FUN_80109808", long.class), addCombatant(s2, -1) * 0x10000 + s2);
     }
 
     //LAB_801095ec
     //LAB_801095fc
     for(int i = 0; i < 6; i++) {
       final long s5 = fp + i * 0x8L;
-      final long s2 = MEMORY.ref(2, s5).offset(0x8L).get() & 0x1ffL;
-      if(s2 == 0x1ffL) {
+      final int charIndex = (int)(MEMORY.ref(2, s5).offset(0x8L).get() & 0x1ff);
+      if(charIndex == 0x1ff) {
         break;
       }
 
-      final int s4 = FUN_800c9060(s2);
-      final int index = allocateScriptState(0x27cL, BtldScriptData27c::new);
-      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(index);
-      _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(index);
-      final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BtldScriptData27c.class));
+      final int combatantIndex = getCombatantIndex(charIndex);
+      final int scriptIndex = allocateScriptState(0x27cL, BtldScriptData27c::new);
+      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(scriptIndex);
+      _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(scriptIndex);
+      final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BtldScriptData27c.class));
       final BtldScriptData27c data = state.innerStruct_00.deref();
       data.magic_00.set(0x4a42_4f42L);
-      data._272.set((short)s2);
+      data.charIndex_272.set((short)charIndex);
       data._274.set((short)_800c66d0.get());
-      data._276.set((short)_800c6768.get());
-      data._144.set(getBattleStruct1a8(s4));
-      data._26c.set((short)s4);
+      data.charSlot_276.set((short)_800c6768.get());
+      data.combatant_144.set(getCombatant(combatantIndex));
+      data.combatantIndex_26c.set((short)combatantIndex);
       data._148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
       data._148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
       data._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
@@ -348,7 +348,7 @@ public class SBtld {
   public static void FUN_80109808(final long param) {
     final long fileIndex = param & 0xffffL;
     final long s0 = param >>> 16;
-    final BattleStruct1a8 v0 = getBattleStruct1a8((int)s0);
+    final CombatantStruct1a8 v0 = getCombatant((int)s0);
     final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
     v0._194.set(MEMORY.ref(4, v1).offset(0x0L).get());
     v0._198.set(MEMORY.ref(4, v1).offset(0x4L).get());
@@ -359,7 +359,7 @@ public class SBtld {
   public static void FUN_8010989c(final long address, final long fileSize, final long index) {
     final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
 
-    getBattleStruct1a8((int)index).script_10.set(script);
+    getCombatant((int)index).script_10.set(script);
     _8005e398_SCRIPT_SIZES.remove((int)index);
     _8005e398_SCRIPT_SIZES.put((int)index, new Tuple<>("S_BTLD Script %d".formatted(index), (int)fileSize));
     _800c66d8.offset(_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
