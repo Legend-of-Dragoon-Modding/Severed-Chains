@@ -10,8 +10,6 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.SupplierRef;
 import legend.game.types.MrgFile;
 
-import java.util.function.Function;
-
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
@@ -42,8 +40,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052db0;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800bbac8;
-import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bbacc;
 
@@ -63,7 +61,7 @@ public final class SInit {
    *   <li>{@link SInit#FUN_800fbcc0()}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = (ArrayRef<Pointer<SupplierRef<Long>>>)MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.class, 6, 4, (Function)Pointer.of(4, SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 6, 4, Pointer.deferred(4, SupplierRef::new)));
 
   public static final Value _800fd334 = MEMORY.ref(2, 0x800fd334L);
 

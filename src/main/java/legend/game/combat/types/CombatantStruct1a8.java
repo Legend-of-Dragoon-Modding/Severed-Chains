@@ -9,7 +9,6 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.MrgFile;
-import legend.game.types.ScriptFile;
 
 /** Data related to a combatant (player or enemy) */
 public class CombatantStruct1a8 implements MemoryRef {
@@ -17,10 +16,10 @@ public class CombatantStruct1a8 implements MemoryRef {
 
   public final Pointer<MrgFile> mrg_00;
   public final UnsignedIntRef _04;
-  /** TODO pretty sure this is an animation, not a TMD */
   public final Pointer<ExtendedTmd> tmd_08;
 
-  public final Pointer<ScriptFile> script_10;
+  /** This seems to be either a script or an extended TMD */
+  public final UnsignedIntRef filePtr_10;
   public final ArrayRef<BattleStruct1a8_c> _14;
   public final UnsignedIntRef _194;
   public final UnsignedIntRef _198;
@@ -43,7 +42,7 @@ public class CombatantStruct1a8 implements MemoryRef {
     this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this.tmd_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, ExtendedTmd::new));
 
-    this.script_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, ScriptFile::new));
+    this.filePtr_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(BattleStruct1a8_c.class, 32, 0xc, BattleStruct1a8_c::new));
     this._194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
     this._198 = ref.offset(4, 0x198L).cast(UnsignedIntRef::new);

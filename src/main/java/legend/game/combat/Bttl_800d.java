@@ -2314,7 +2314,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de3f4L)
-  public static void FUN_800de3f4(final long a0, final BttlScriptData6cInner a1, final MATRIX a2) {
+  public static void FUN_800de3f4(final TmdObjTable a0, final BttlScriptData6cInner a1, final MATRIX a2) {
     long s0 = _800c693c.deref(4).offset(0x20L).get() & 0x4L;
     s0 = (s0 >> 1) | (s0 >> 2);
 
@@ -2338,8 +2338,13 @@ public final class Bttl_800d {
     if((s0 & (sp0x10.transfer.getZ() ^ _800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800L && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800L && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800L && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800L) {
       //LAB_800de50c
       setRotTransMatrix(sp0x10);
-      final long[] sp0x30 = {a1._00.get(), 0, a0};
-      FUN_800e3e6c(sp0x30);
+
+      final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
+      final GsDOBJ2 dobj2 = new GsDOBJ2(tmp.get());
+      dobj2.attribute_00.set(a1._00.get());
+      dobj2.tmd_08.set(a0);
+      FUN_800e3e6c(dobj2);
+      tmp.release();
     }
 
     //LAB_800de528
@@ -2378,21 +2383,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de840L)
-  public static long FUN_800de840(final long a0, final long a1, final long a2) {
+  public static long FUN_800de840(final long a0, final long a1, long a2) {
     final BttlStruct50 a3 = _800c6920.deref();
 
     MEMORY.ref(4, a0).offset(0x0L).setu(a3._10.get((int)a3._04.get()).getAddress());
     long t1 = a1;
 
     //LAB_800de878
-    while(a3._0c.get() < a2 / 2) {
+    a2 = (int)a2 >> 1;
+    while(a3._0c.get() < (int)a2) {
       if((a3._08.get() & 0x100L) == 0) {
         a3._08.set(MEMORY.ref(1, t1).offset(0x0L).get() | 0xff00L);
         t1 = t1 + 0x1L;
-      }
-
-      if(t1 >= 0x80200000L) {
-        throw new RuntimeException();
       }
 
       //LAB_800de89c
@@ -2404,10 +2406,11 @@ public final class Bttl_800d {
       } else {
         //LAB_800de8ec
         long a1_0 = MEMORY.ref(1, t1).offset(0x0L).get();
+        final long t2 = (a1_0 >>> 5) + 0x1L;
 
         //LAB_800de904
         int i;
-        for(i = 0; i < (a1_0 >>> 5) + 0x1L; i++) {
+        for(i = 0; i < t2; i++) {
           a1_0 = a1_0 & 0x1fL;
           a3._10.get((int)a3._00.get()).set(a3._10.get((int)a1_0).get());
           a3._00.incr().and(0x1fL);
@@ -2420,15 +2423,15 @@ public final class Bttl_800d {
       }
 
       //LAB_800de94c
-      a3._08.div(2);
+      a3._08.set(a3._08.get() >> 1);
     }
 
     //LAB_800de968
     //LAB_800de970
-    for(int i = 0; i < a2 / 2; i++) {
+    for(int i = 0; i < a2; i++) {
       MEMORY.ref(2, a0).offset(i * 0x2L).setu(a3._10.get((int)a3._04.get()).get());
-      a3._04.add(0x1L).and(0x1fL);
-      a3._0c.sub(0x1L);
+      a3._04.incr().and(0x1fL);
+      a3._0c.decr();
     }
 
     //LAB_800de9b4

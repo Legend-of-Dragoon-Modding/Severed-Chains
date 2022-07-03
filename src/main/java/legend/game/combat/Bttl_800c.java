@@ -16,6 +16,7 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
+import legend.core.memory.types.QuadFunctionRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -426,8 +427,75 @@ public final class Bttl_800c {
   public static final Value _800fad90 = MEMORY.ref(4, 0x800fad90L);
   /** TODO jump table */
   public static final Value _800fad9c = MEMORY.ref(4, 0x800fad9cL);
-  /** TODO jump table */
-  public static final Value _800fadbc = MEMORY.ref(4, 0x800fadbcL);
+  /**
+   * <ol start="0">
+   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
+   *   <li>{@link Bttl_800d#FUN_800df130}</li>
+   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
+   *   <li>{@link Bttl_800d#FUN_800df130}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4184}</li>
+   *   <li>{@link Bttl_800d#FUN_800df6f0}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4184}</li>
+   *   <li>{@link Bttl_800d#FUN_800df6f0}</li>
+   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
+   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
+   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
+   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
+   *   <li>{@link Bttl_800d#FUN_800dec14}</li>
+   *   <li>{@link Bttl_800d#FUN_800df370}</li>
+   *   <li>{@link Bttl_800d#FUN_800dec14}</li>
+   *   <li>{@link Bttl_800d#FUN_800df370}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
+   *   <li>{@link Bttl_800d#FUN_800df130}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e43a8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dffe4}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
+   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800d#FUN_800df9e8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dfc5c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
+   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
+   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
+   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
+   *   <li>{@link Bttl_800e#FUN_800e121c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e2620}</li>
+   *   <li>{@link Bttl_800e#FUN_800e121c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e2620}</li>
+   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
+   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
+   *   <li>{@link Bttl_800e#FUN_800e0c98}</li>
+   *   <li>{@link Bttl_800e#FUN_800e20bc}</li>
+   *   <li>{@link Bttl_800e#FUN_800e0c98}</li>
+   *   <li>{@link Bttl_800e#FUN_800e20bc}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
+   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e300c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e39e8}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>{@link Bttl_800e#FUN_800e2a98}</li>
+   *   <li>{@link Bttl_800e#FUN_800e3478}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<QuadFunctionRef<Long, Long, Long, Long, Long>>> _800fadbc = MEMORY.ref(4, 0x800fadbcL, ArrayRef.of(Pointer.classFor(QuadFunctionRef.classFor(Long.class, Long.class, Long.class, Long.class, Long.class)), 0x40, 4, Pointer.deferred(4, QuadFunctionRef::new)));
 
   public static final ScriptFile script_800faebc = MEMORY.ref(4, 0x800faebcL, ScriptFile::new);
 
@@ -1215,8 +1283,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c913cL)
-  public static ScriptFile getCombatantScript(final int index) {
-    return combatants_8005e398.get(index).script_10.deref();
+  public static long getCombatantFile(final int index) {
+    return combatants_8005e398.get(index).filePtr_10.get();
   }
 
   @Method(0x800c9290L)
@@ -1297,10 +1365,7 @@ public final class Bttl_800c {
     final MrgFile mrg = combatant.mrg_00.deref();
 
     if(mrg.entries.get(34).size.get() != 0) {
-      //TODO file 34 is a scripted TMD...? Not a script file?
-      combatant.script_10.set(mrg.getFile(34, ScriptFile::new));
-      _8005e398_SCRIPT_SIZES.remove(combatantIndex);
-      _8005e398_SCRIPT_SIZES.put(combatantIndex, new Tuple<>("BTTL %d script MRG file 34".formatted(combatantIndex), (int)fileSize));
+      combatant.filePtr_10.set(mrg.getFile(34)); // This should be an extended TMD
     }
 
     //LAB_800c94a0
@@ -1320,26 +1385,25 @@ public final class Bttl_800c {
   public static void FUN_800c952c(final BigStruct a0, final int combatantIndex) {
     final CombatantStruct1a8 s0 = combatants_8005e398.get(combatantIndex);
 
-    //TODO pretty sure this is an animation, not a TMD
-    final ExtendedTmd s2;
+    final ExtendedTmd tmd;
     if(s0._1a4.get() >= 0) {
-      s2 = MEMORY.ref(4, FUN_800cad34(s0._1a4.get()), ExtendedTmd::new); //TODO
+      tmd = MEMORY.ref(4, FUN_800cad34(s0._1a4.get()), ExtendedTmd::new);
     } else {
       //LAB_800c9590
       final MrgFile mrg = s0.mrg_00.derefNullable();
 
       if(mrg != null && mrg.entries.get(32).size.get() != 0) {
-        s2 = mrg.getFile(32, ExtendedTmd::new);
+        tmd = mrg.getFile(32, ExtendedTmd::new);
       } else {
-        throw new RuntimeException("s2 undefined");
+        throw new RuntimeException("anim undefined");
       }
     }
 
     //LAB_800c95bc
-    s0.tmd_08.set(s2);
+    s0.tmd_08.set(tmd);
 
+    final TmdAnimationFile anim = FUN_800ca31c(combatantIndex, 0);
     if((s0.flags_19e.get() & 0x4L) != 0) {
-      final TmdAnimationFile v0 = FUN_800ca31c(combatantIndex, 0);
       final long a0_0 = _1f8003f4.deref()._9ce8.offset(s0.charSlot_19c.get() * 0x1298L).getAddress(); //TODO
 
       a0.dobj2ArrPtr_00.setPointer(a0_0);
@@ -1355,10 +1419,10 @@ public final class Bttl_800c {
       }
 
       //LAB_800c9650
-      FUN_80021520(a0, s2, v0, a3);
+      FUN_80021520(a0, tmd, anim, a3);
     } else {
       //LAB_800c9664
-      FUN_80020a00(a0, s2, FUN_800ca31c(combatantIndex, 0));
+      FUN_80020a00(a0, tmd, anim);
     }
 
     //LAB_800c9680
@@ -1702,7 +1766,7 @@ public final class Bttl_800c {
 
           if((int)s0 >= 0) {
             //LAB_800ca3f4
-            yield MEMORY.ref(4, FUN_800cad34(s0), TmdAnimationFile::new); //TODO
+            yield MEMORY.ref(4, FUN_800cad34(s0), TmdAnimationFile::new);
           }
         }
 
@@ -1931,12 +1995,12 @@ public final class Bttl_800c {
   public static void FUN_800cae50(final int index, final ScriptState<BtldScriptData27c> state, final BtldScriptData27c data) {
     data._278.set(0);
 
-    long v1 = _800bc960.get();
+    final long v1;
     if((state.ui_60.get() & 0x4L) != 0) {
-      v1 = v1 & 0x110L;
+      v1 = _800bc960.get() & 0x110L;
     } else {
       //LAB_800cae94
-      v1 = v1 & 0x210L;
+      v1 = _800bc960.get() & 0x210L;
     }
 
     //LAB_800cae98
@@ -1947,13 +2011,12 @@ public final class Bttl_800c {
       data._278.set(1);
       data.animIndex_270.set((short)-1);
 
-      v1 = state.ui_60.get();
-      if((v1 & 0x800L) == 0) {
+      if((state.ui_60.get() & 0x800L) == 0) {
         final ScriptFile script;
         final String scriptName;
         final int scriptLength;
-        if((v1 & 0x4L) != 0) {
-          script = getCombatantScript(data.combatantIndex_26c.get());
+        if((state.ui_60.get() & 0x4L) != 0) {
+          script = MEMORY.ref(4, getCombatantFile(data.combatantIndex_26c.get()), ScriptFile::new);
 
           final Tuple<String, Integer> tuple = _8005e398_SCRIPT_SIZES.get(data.combatantIndex_26c.get());
           scriptName = tuple.a();
@@ -2690,9 +2753,9 @@ public final class Bttl_800c {
     //LAB_800ce650
   }
 
-  @Method(0x800ce678L) // BttlScriptData6cSub3c
-  public static void FUN_800ce678(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data6c) {
-    assert false;
+  @Method(0x800ce678L)
+  public static void FUN_800ce678(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+    removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub3c.class)._34.getPointer());
   }
 
   @Method(0x800ce6a8L)

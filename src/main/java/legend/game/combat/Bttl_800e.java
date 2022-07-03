@@ -1260,43 +1260,40 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e3e6cL)
-  public static void FUN_800e3e6c(final long[] a0) {
-    long v0;
-    long a2;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-
+  public static void FUN_800e3e6c(final GsDOBJ2 dobj2) {
     final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x50);
     final BttlStruct50 sp0x10 = sp0x10tmp.get().cast(BttlStruct50::new);
     _800c6920.set(sp0x10);
     sp0x10._00.set(0);
 
-    if((a0[0] & 0x4000_0000L) == 0) {
+    final long s1;
+    if((dobj2.attribute_00.get() & 0x4000_0000L) == 0) {
       s1 = 0;
     } else {
       s1 = 0x12L;
     }
 
     //LAB_800e3eb4
-    v0 = a0[2];
-    a2 = MEMORY.ref(4, v0).offset(0x10L).get();
-    s0 = MEMORY.ref(4, v0).offset(0x14L).get();
-    s3 = MEMORY.ref(4, v0).offset(0x0L).get();
-    s2 = MEMORY.ref(4, v0).offset(0x8L).get();
+    final TmdObjTable objTable = dobj2.tmd_08.deref();
+    final long vertices = objTable.vert_top_00.get();
+    final long normals = objTable.normal_top_08.get();
+    long primitives = objTable.primitives_10.getPointer();
+    long count = objTable.n_primitive_14.get();
 
     //LAB_800e3ee4
-    while(s0 != 0) {
+    while(count != 0) {
       final BttlStruct50 v0_0 = _800c6920.deref();
       v0_0._0c.set(0);
       v0_0._08.set(0);
       v0_0._04.set(v0_0._00.get());
-      s0 = s0 - MEMORY.ref(2, a2).offset(0x0L).get();
-      long a1 = MEMORY.ref(4, a2).offset(0x0L).get();
-      _1f8003ee.setu(((int)a1 >> 24 | s1) & 0x3eL);
-      a1 = (a1 >>> 14 & 0x20L) | (a1 >>> 24 & 0xfL) | (a1 >>> 18 & 0x1L) | s1;
-      a2 = (long)_800fadbc.offset(a1 * 0x4L).deref(4).call(a2, s3, s2, MEMORY.ref(2, a2).get());
+
+      final long length = MEMORY.ref(2, primitives).get();
+      final long command = MEMORY.ref(4, primitives).get();
+
+      _1f8003ee.setu((int)command >> 24 & 0x3eL | s1);
+      final long index = (command >>> 14 & 0x20L) | (command >>> 24 & 0xfL) | (command >>> 18 & 0x1L) | s1;
+      primitives = _800fadbc.get((int)index).deref().run(primitives, vertices, normals, length);
+      count -= length;
     }
 
     sp0x10tmp.release();
