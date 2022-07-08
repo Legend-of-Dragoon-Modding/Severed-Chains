@@ -24,6 +24,7 @@ import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.RunningScript;
+import legend.game.types.ScriptFile;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -302,7 +303,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    *   <li>null</li>
    *   <li>{@link legend.game.SMap#scriptStateIndices_800c6880}</li>
-   *   <li>{@link legend.game.SMap#_800c6740}</li>
+   *   <li>{@link legend.game.SMap#scriptIndex_800c6740}</li>
    *   <li>{@link legend.game.SMap#scriptCount_800c6730}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bd7b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bda08}</li>
@@ -424,7 +425,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMultiply}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDivide}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ab0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016adc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -432,7 +433,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b2c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b5c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b8c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016adc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -641,6 +642,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
   // 8004f29c end of jump table
 
+  public static final Value _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L);
   /** TODO 0xc-byte array */
   public static final Value _8004f2ac = MEMORY.ref(1, 0x8004f2acL);
 
@@ -648,6 +650,9 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
+  public static final ScriptFile _8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
+
+  public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
   public static final Value _8004f65c = MEMORY.ref(2, 0x8004f65cL);
 
   public static final Value _8004f664 = MEMORY.ref(1, 0x8004f664L);
@@ -691,7 +696,7 @@ public final class Scus94491BpeSegment_8004 {
     t7 = vector.getX();
     if(t7 < 0) {
       //LAB_8004002c
-      t7 = -t7 * 0xfffL;
+      t7 = -t7 & 0xfffL;
       t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
       t6 = (short)t9;
       t3 = -t6;
@@ -5971,6 +5976,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c1f8L)
   public static long FUN_8004c1f8(final int playableSoundIndex, final SssqFile sssq) {
+    //TODO GH#3
+    if(true) {
+      return 0;
+    }
+
     if((playableSoundIndex & 0xff80L) != 0) {
       assert false : "Error";
       return -0x1L;
@@ -6173,6 +6183,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c8dcL)
   public static long FUN_8004c8dc(final int channelIndex, long a1) {
+    //TODO GH#3
+    if(true) {
+      return 0;
+    }
+
     assert channelIndex >= 0;
 
     if(channelIndex >= 24) {
@@ -6307,6 +6322,21 @@ public final class Scus94491BpeSegment_8004 {
     return 0;
   }
 
+  @Method(0x8004cd50L)
+  public static long FUN_8004cd50(final short fadeTime) {
+    if(fadeTime < 0x100 && _800c6630.fadingIn_2a.get() == 0) {
+      final long v1 = voicePtr_800c4ac4.getPointer();
+      _800c6630.fadingOut_2b.set(1);
+      _800c6630.fadeTime_2c.set(fadeTime);
+      _800c6630.fadeOutVolL_30.set((int)(MEMORY.ref(2, v1).offset(0x1b8L).get() >>> 8));
+      _800c6630.fadeOutVolR_32.set((int)(MEMORY.ref(2, v1).offset(0x1baL).get() >>> 8));
+      return 0;
+    }
+
+    //LAB_8004cdb0
+    return -1;
+  }
+
   @Method(0x8004cdbcL)
   public static void enableAudioSource(final long enabled, final long useCdAudio) {
     if(enabled != 0) {
@@ -6354,7 +6384,7 @@ public final class Scus94491BpeSegment_8004 {
     final SpuStruct124 spu124 = _800c4ac8.get(channelIndex);
     final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020.get());
 
-    sshdPtr_800c4ac0.set(sound.sshdPtr_04.deref());
+    sshdPtr_800c4ac0.setNullable(sound.sshdPtr_04.derefNullable());
 
     if(spu124._027.get() == 1) {
       if((int)sshdPtr_800c4ac0.deref()._10.get() != -1) {

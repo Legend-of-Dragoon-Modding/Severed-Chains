@@ -86,6 +86,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_800211d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021258;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800257e0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
@@ -2167,6 +2168,32 @@ public class WMap {
   @Method(0x800cc738L) // Pretty sure this is the entry point to WMap
   public static void FUN_800cc738() {
     FUN_800ccb98();
+  }
+
+  @Method(0x800cc758L)
+  public static void FUN_800cc758() {
+    FUN_80022590();
+
+    if(whichMenu_800bdc38.get() == 0) {
+      if(_800bdc34.get() != 0) {
+        final WMapStruct258 struct258 = struct258_800c66a8.deref();
+
+        //LAB_800cc7d0
+        removeFromLinkedList(struct258._2c.get());
+        removeFromLinkedList(struct258._30.get());
+
+        pregameLoadingStage_800bb10c.setu(gameState_800babc8._4e4.get() != 0 ? 0x9L : 0x7L);
+      } else {
+        //LAB_800cc804
+        setWidthAndFlags(320, 0);
+        FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
+        pregameLoadingStage_800bb10c.setu(0xcL);
+      }
+
+      //LAB_800cc828
+    }
+
+    //LAB_800cc82c
   }
 
   @Method(0x800cc83cL)
@@ -10672,8 +10699,8 @@ public class WMap {
           _800be358.get(i)._1a.set(sp0x74.get().shortValue());
           _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
           _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
-          _800be358.get(i)._14.set((int)sp6c);
-          _800be358.get(i)._16.set((int)sp6e);
+          _800be358.get(i)._14.set((short)sp6c);
+          _800be358.get(i)._16.set((short)sp6e);
         } else if((int)v0 >= 0x2L) {
           //LAB_800e7154
           if(v0 == 0x2L) {
@@ -10688,8 +10715,8 @@ public class WMap {
             _800be358.get(i)._1a.set(sp0x74.get().shortValue());
             _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
             _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
-            _800be358.get(i)._14.set((int)sp6c);
-            _800be358.get(i)._16.set((int)sp6e);
+            _800be358.get(i)._14.set((short)sp6c);
+            _800be358.get(i)._16.set((short)sp6e);
           }
         } else if(v0 == 0) {
           //LAB_800e7168
@@ -10722,8 +10749,8 @@ public class WMap {
           _800be358.get(i)._1a.set(sp0x74.get().shortValue());
           _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
           _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
-          _800be358.get(i)._14.set((int)sp6c);
-          _800be358.get(i)._16.set((int)sp6e);
+          _800be358.get(i)._14.set((short)sp6c);
+          _800be358.get(i)._16.set((short)sp6e);
         }
 
         //LAB_800e74d8
@@ -10913,6 +10940,7 @@ public class WMap {
       _800c686c.setu(0x1L);
       _800c6868.setu(0x1L);
     } else {
+      // Transition from combat to world map (maybe also from smap?)
       _800c67aa.setu(gameState_800babc8._4de.get());
       pathIndex_800c67ac.setu(gameState_800babc8.pathIndex_4d8.get());
       dotIndex_800c67ae.setu(gameState_800babc8.dotIndex_4da.get());

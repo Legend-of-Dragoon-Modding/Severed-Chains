@@ -125,20 +125,24 @@ public final class Scus94491BpeSegment_800b {
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
   public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
-  public static final Value _800bc918 = MEMORY.ref(4, 0x800bc914L);
-
+  public static final Value _800bc918 = MEMORY.ref(4, 0x800bc918L);
+  public static final Value _800bc91c = MEMORY.ref(4, 0x800bc91cL);
   public static final Value _800bc920 = MEMORY.ref(4, 0x800bc920L);
+
+  public static final Value _800bc928 = MEMORY.ref(4, 0x800bc928L);
 
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc950 = MEMORY.ref(4, 0x800bc950L);
   public static final Value _800bc954 = MEMORY.ref(4, 0x800bc954L);
-  public static final Value _800bc958 = MEMORY.ref(4, 0x800bc954L);
+  public static final Value _800bc958 = MEMORY.ref(4, 0x800bc958L);
   public static final Value _800bc95c = MEMORY.ref(4, 0x800bc95cL);
   public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
 
+  public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
+
   public static final Value _800bc974 = MEMORY.ref(4, 0x800bc974L);
   public static final Value _800bc978 = MEMORY.ref(4, 0x800bc978L);
-
+  public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
   //TODO structure @ 800bc980... 3 * 12?
   public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
 
@@ -253,12 +257,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<Renderable58> renderablePtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
 
-  public static final Value _800bdbf8 = MEMORY.ref(4, 0x800bdbf8L);
-  public static final Value _800bdbfc = MEMORY.ref(4, 0x800bdbfcL);
-  public static final Value _800bdc00 = MEMORY.ref(4, 0x800bdc00L);
-  public static final Value _800bdc04 = MEMORY.ref(4, 0x800bdc04L);
-  public static final Value _800bdc08 = MEMORY.ref(4, 0x800bdc08L);
-  public static final Value _800bdc0c = MEMORY.ref(4, 0x800bdc0cL);
+  public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
   public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
@@ -348,6 +347,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800be5f3 = MEMORY.ref(1, 0x800be5f3L);
 
   public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
+
+  public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
+  public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
 
   public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);

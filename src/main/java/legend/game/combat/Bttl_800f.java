@@ -16,6 +16,7 @@ import legend.game.types.ScriptState;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
+import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
@@ -4234,6 +4235,14 @@ public final class Bttl_800f {
     return 0;
   }
 
+  @Method(0x800f9bd4L)
+  public static long FUN_800f9bd4(final RunningScript a0) {
+    final long v1 = _800c6b6c.get();
+    MEMORY.ref(2, v1).offset(0x0L).setu(0x4L);
+    MEMORY.ref(2, v1).offset(0x8L).setu(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
   @Method(0x800f9c00L)
   public static long FUN_800f9c00(final RunningScript a0) {
     FUN_800fa018(a0.params_20.get(0).deref().get());
@@ -4333,5 +4342,10 @@ public final class Bttl_800f {
   @Method(0x800fa090L)
   public static long clampY(final long a0) {
     return MathHelper.clamp(a0, 20, 220);
+  }
+
+  @Method(0x800fc3a0L)
+  public static void FUN_800fc3a0(final long a0) {
+    FUN_80012bb4();
   }
 }

@@ -29,6 +29,8 @@ public class BattleStruct24 implements MemoryRef {
   public final ByteRef g_15;
   public final ByteRef b_16;
 
+  public final ShortRef _18;
+  public final ShortRef _1a;
   public final ShortRef _1c;
   public final ShortRef _1e;
   public final IntRef _20;
@@ -50,6 +52,8 @@ public class BattleStruct24 implements MemoryRef {
     this.g_15 = ref.offset(1, 0x15L).cast(ByteRef::new);
     this.b_16 = ref.offset(1, 0x16L).cast(ByteRef::new);
 
+    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
+    this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this._20 = ref.offset(4, 0x20L).cast(IntRef::new);
@@ -72,6 +76,8 @@ public class BattleStruct24 implements MemoryRef {
     this.g_15 = new ByteRef();
     this.b_16 = new ByteRef();
 
+    this._18 = new ShortRef();
+    this._1a = new ShortRef();
     this._1c = new ShortRef();
     this._1e = new ShortRef();
     this._20 = new IntRef();

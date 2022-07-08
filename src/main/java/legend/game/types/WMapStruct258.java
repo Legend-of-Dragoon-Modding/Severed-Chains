@@ -27,7 +27,9 @@ public class WMapStruct258 implements MemoryRef {
   public final ShortRef _20;
 
   public final UnsignedIntRef _28;
+  /** TODO ptr */
   public final UnsignedIntRef _2c;
+  /** TODO ptr */
   public final UnsignedIntRef _30;
   public final GsCOORDINATE2 coord2_34;
   public final VECTOR vec_84;

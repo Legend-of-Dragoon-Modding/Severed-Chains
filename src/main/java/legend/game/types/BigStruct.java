@@ -9,6 +9,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -32,7 +33,7 @@ public class BigStruct implements MemoryRef {
   public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> ptr_ui_90;
   /** One entry for each TMD object (tmdNobj_ca) */
   public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotateTranslateArrPtr_94;
-  public final UnsignedShortRef us_98;
+  public final UnsignedShortRef animCount_98;
   public final UnsignedShortRef us_9a;
   public final UnsignedByteRef ub_9c;
   public final UnsignedByteRef ub_9d;
@@ -77,7 +78,7 @@ public class BigStruct implements MemoryRef {
   public final VECTOR vec_148;
   public final VECTOR vec_154;
   public final VECTOR vec_160;
-  public final UnsignedIntRef ui_16c;
+  public final IntRef ui_16c;
   public final UnsignedShortRef us_170;
   public final UnsignedShortRef us_172;
 
@@ -127,7 +128,7 @@ public class BigStruct implements MemoryRef {
     this.tmd_8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, Tmd::new));
     this.ptr_ui_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.rotateTranslateArrPtr_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
-    this.us_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
+    this.animCount_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
     this.us_9a = ref.offset(2, 0x9aL).cast(UnsignedShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
     this.ub_9d = ref.offset(1, 0x9dL).cast(UnsignedByteRef::new);
@@ -166,7 +167,7 @@ public class BigStruct implements MemoryRef {
     this.vec_148 = ref.offset(4, 0x148L).cast(VECTOR::new);
     this.vec_154 = ref.offset(4, 0x154L).cast(VECTOR::new);
     this.vec_160 = ref.offset(4, 0x160L).cast(VECTOR::new);
-    this.ui_16c = ref.offset(4, 0x16cL).cast(UnsignedIntRef::new);
+    this.ui_16c = ref.offset(4, 0x16cL).cast(IntRef::new);
     this.us_170 = ref.offset(2, 0x170L).cast(UnsignedShortRef::new);
     this.us_172 = ref.offset(2, 0x172L).cast(UnsignedShortRef::new);
 

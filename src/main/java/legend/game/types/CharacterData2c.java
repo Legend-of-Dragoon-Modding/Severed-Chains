@@ -16,7 +16,7 @@ public class CharacterData2c implements MemoryRef {
   public final UnsignedShortRef hp_08;
   public final UnsignedShortRef mp_0a;
   public final UnsignedShortRef sp_0c;
-  public final UnsignedShortRef _0e;
+  public final UnsignedShortRef dlevelXp_0e;
   public final UnsignedShortRef _10;
   public final UnsignedByteRef level_12;
   public final UnsignedByteRef dlevel_13;
@@ -34,7 +34,7 @@ public class CharacterData2c implements MemoryRef {
     this.hp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this.mp_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this.sp_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
+    this.dlevelXp_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
     this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
     this.level_12 = ref.offset(1, 0x12L).cast(UnsignedByteRef::new);
     this.dlevel_13 = ref.offset(1, 0x13L).cast(UnsignedByteRef::new);

@@ -53,6 +53,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    *   <li>If bits 18 and 20 are not set, {@link ScriptState#callback_04} will be executed</li>
    *   <li>If bits 19 and 20 are not set, {@link ScriptState#callback_08} will be executed</li>
    *   <li>If bit 26 is set and bit 20 is not set, {@link ScriptState#callback_10} will be executed</li>
+   *   <li>If bits 27 and 20 are not set, {@link ScriptState#callback_0c} will be executed</li>
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
