@@ -83,7 +83,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
-  public static final UnsignedIntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, UnsignedIntRef::new);
+  public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
   public static final Value _80052c3c = MEMORY.ref(4, 0x80052c3cL);
   public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
   public static final Value _80052c44 = MEMORY.ref(4, 0x80052c44L);

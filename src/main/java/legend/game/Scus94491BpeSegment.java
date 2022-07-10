@@ -36,6 +36,7 @@ import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.scriptdebugger.ScriptDebugger;
 import legend.game.types.BigStruct;
+import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.McqHeader;
@@ -159,6 +160,7 @@ import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.fileNamePtr_8004dda4;
 import static legend.game.Scus94491BpeSegment_8004.initSound;
+import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.loadingSstrmOvl_8004dd1e;
@@ -3717,6 +3719,29 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80017440L)
+  public static long FUN_80017440(final RunningScript a0) {
+    final long a1 = a0.params_20.get(0).deref().get() & 0x1fL;
+    final long a2 = a0.params_20.get(0).deref().get() >>> 5;
+
+    if(a0.params_20.get(1).deref().get() != 0) {
+      gameState_800babc8.scriptFlags2_bc.get((int)a2).or(0x1L << a1);
+    } else {
+      //LAB_8001748c
+      gameState_800babc8.scriptFlags2_bc.get((int)a2).and(~(0x1L << a1));
+    }
+
+    //LAB_800174a4
+    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(0);
+      charData.dlevelXp_0e.set(0x7fff);
+      charData.dlevel_13.set(0x5);
+    }
+
+    //LAB_800174d0
+    return 0;
+  }
+
   /**
    * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags2_bc}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
@@ -4785,7 +4810,7 @@ public final class Scus94491BpeSegment {
             MEMORY.ref(1, s0).offset(0xbL).get() + 0x7L,
             0x4fL,
             MEMORY.ref(1, s0).offset(0xcL).get(),
-            ((MEMORY.ref(2, s0).offset(0xcL).get() >>> 12) & 0x7L) - 0x1L,
+            (MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7L) - 0x1L,
             sp0x40,
             MEMORY.ref(2, s0).offset(0x4L).get() + 0x1000,
             MEMORY.ref(2, s0).offset(0x6L).get() + 0x1000
@@ -7161,6 +7186,11 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_ffbfL);
   }
 
+  @Method(0x8001ea98L)
+  public static void FUN_8001ea98() {
+    // no-op
+  }
+
   @Method(0x8001eaa0L)
   public static void FUN_8001eaa0() {
     removeFromLinkedList(_800bd758.get());
@@ -7234,6 +7264,38 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001efcc() {
     removeFromLinkedList(soundMrgPtr_800bd748.getPointer());
     loadedDrgnFiles_800bcf78.and(0xffff_7fffL);
+  }
+
+  @Method(0x8001f070L)
+  public static long FUN_8001f070(final RunningScript a0) {
+    loadedDrgnFiles_800bcf78.oru(0x20L);
+    unloadSoundFile(6);
+    loadDrgnBinFile(0, 1841 + a0.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001f0dc", long.class, long.class, long.class), 0, 0x4L);
+    return 0;
+  }
+
+  @Method(0x8001f0dcL)
+  public static void FUN_8001f0dc(final long address, final long fileSize, final long param) {
+    final MrgFile mrg1 = MEMORY.ref(4, address, MrgFile::new);
+    soundMrgPtr_800bd748.set(mrg1);
+    soundFileArr_800bcf80.get(10).soundMrgPtr_04.setPointer(addToLinkedListTail(mrg1.entries.get(3).offset.get()));
+    memcpy(soundFileArr_800bcf80.get(10).soundMrgPtr_04.getPointer(), mrg1.getAddress(), (int)mrg1.entries.get(3).offset.get());
+    final MrgFile mrg2 = soundFileArr_800bcf80.get(10).soundMrgPtr_04.deref();
+    soundFileArr_800bcf80.get(10).ptr_08.set(mrg2.getFile(1));
+    soundFileArr_800bcf80.get(10)._02.set((short)MEMORY.ref(2, mrg2.getFile(0)).get());
+    setSpuDmaCompleteCallback(0);
+    soundFileArr_800bcf80.get(10).playableSoundIndex_10.set(loadSshdAndSoundbank(mrg1.getFile(3), mrg2.getFile(2, SshdFile::new), 0x6_6930L));
+
+    //LAB_8001f17c
+    while(isSpuDmaTransferInProgress()) {
+      DebugHelper.sleep(1);
+    }
+
+    final long s0 = soundFileArr_800bcf80.getAddress();
+    FUN_8004cb0c(MEMORY.ref(2, s0).offset(0x128L).getSigned(), 0x7fL);
+    MEMORY.ref(2, s0).offset(0x118L).setu(0x1L);
+    removeFromLinkedList(soundMrgPtr_800bd748.getPointer());
+    loadedDrgnFiles_800bcf78.and(0xffff_ffdfL);
   }
 
   @Method(0x8001f250L)

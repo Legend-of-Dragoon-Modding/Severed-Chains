@@ -26,10 +26,10 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
+import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct18cb0;
-import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BattleStruct1a8_c;
 import legend.game.combat.types.BtldScriptData27c;
 import legend.game.combat.types.BttlLightStruct84;
@@ -38,8 +38,8 @@ import legend.game.combat.types.BttlScriptData6cSub14;
 import legend.game.combat.types.BttlScriptData6cSub3c;
 import legend.game.combat.types.BttlScriptData6cSub3cSub2c;
 import legend.game.combat.types.BttlStruct50;
-import legend.game.combat.types.BttlStruct58;
 import legend.game.combat.types.BttlStructa4;
+import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
@@ -66,12 +66,11 @@ import static legend.game.Scus94491BpeSegment.FUN_800128a8;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
-import static legend.game.Scus94491BpeSegment.FUN_80015d38;
-import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
-import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
+import static legend.game.Scus94491BpeSegment.FUN_80015d38;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
+import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
@@ -93,6 +92,7 @@ import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setCallback08;
 import static legend.game.Scus94491BpeSegment.setCallback10;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020a00;
@@ -126,9 +126,9 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005._8005e398_SCRIPT_SIZES;
 import static legend.game.Scus94491BpeSegment_8005._8005f428;
+import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006e918;
@@ -167,7 +167,6 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c._800c6740;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
@@ -236,6 +235,8 @@ public final class Bttl_800c {
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
 
   public static final Value _800c6724 = MEMORY.ref(4, 0x800c6724L);
+
+  public static final Value _800c6740 = MEMORY.ref(4, 0x800c6740L);
 
   public static final Value _800c6748 = MEMORY.ref(4, 0x800c6748L);
   public static final Value scriptIndex_800c674c = MEMORY.ref(4, 0x800c674cL);
@@ -309,7 +310,7 @@ public final class Bttl_800c {
 
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
-  public static final ArrayRef<LodString> _800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
+  public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
   /** TODO obj */
   public static final Value _800c6b5c = MEMORY.ref(4, 0x800c6b5cL);
@@ -331,7 +332,7 @@ public final class Bttl_800c {
   public static final Value _800c6c2c = MEMORY.ref(4, 0x800c6c2cL);
   public static final Value _800c6c30 = MEMORY.ref(1, 0x800c6c30L);
 
-  public static final Pointer<BttlStruct58> _800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BttlStruct58::new));
+  public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
   public static final Value _800c6c3c = MEMORY.ref(2, 0x800c6c3cL);
 
@@ -590,11 +591,14 @@ public final class Bttl_800c {
   /** TODO array of unsigned shorts */
   public static final Value _800fb198 = MEMORY.ref(2, 0x800fb198L);
 
-  public static final ArrayRef<Pointer<LodString>> _800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
-  public static final ArrayRef<Pointer<LodString>> _800fb378 = MEMORY.ref(4, 0x800fb378L, ArrayRef.of(Pointer.classFor(LodString.class), 11, 4, Pointer.deferred(4, LodString::new)));
-  public static final ArrayRef<Pointer<LodString>> _800fb3a0 = MEMORY.ref(4, 0x800fb3a0L, ArrayRef.of(Pointer.classFor(LodString.class),  7, 4, Pointer.deferred(4, LodString::new)));
+  /** Targeting ("All allies", "All players", "All") */
+  public static final ArrayRef<Pointer<LodString>> targeting_800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> playerNames_800fb378 = MEMORY.ref(4, 0x800fb378L, ArrayRef.of(Pointer.classFor(LodString.class), 11, 4, Pointer.deferred(4, LodString::new)));
+  /** Poisoned, etc */
+  public static final ArrayRef<Pointer<LodString>> ailments_800fb3a0 = MEMORY.ref(4, 0x800fb3a0L, ArrayRef.of(Pointer.classFor(LodString.class),  7, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> _800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
+  /** Player names, player names, item names, dragoon spells, item descriptions, spell descriptions */
+  public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
   /** TODO array of pointers to shorts? */
   public static final Value _800fb444 = MEMORY.ref(4, 0x800fb444L);
@@ -2433,6 +2437,15 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cb4c8L)
+  public static long FUN_800cb4c8(final RunningScript a0) {
+    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    v1._148.coord2Param_64.rotate.setX((short)a0.params_20.get(1).deref().get());
+    v1._148.coord2Param_64.rotate.setY((short)a0.params_20.get(2).deref().get());
+    v1._148.coord2Param_64.rotate.setZ((short)a0.params_20.get(3).deref().get());
+    return 0;
+  }
+
   @Method(0x800cb534L)
   public static long FUN_800cb534(final RunningScript a0) {
     scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._148.coord2Param_64.rotate.setY((short)a0.params_20.get(1).deref().get());
@@ -2493,6 +2506,11 @@ public final class Bttl_800c {
 
     //LAB_800cb750
     return 0x1L;
+  }
+
+  @Method(0x800cb764L)
+  public static long FUN_800cb764(final RunningScript a0) {
+    return 0;
   }
 
   @Method(0x800cb76cL)

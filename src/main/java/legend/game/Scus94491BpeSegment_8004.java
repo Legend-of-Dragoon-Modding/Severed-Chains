@@ -167,7 +167,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link Ttle#FUN_800c75fc()}</li>
-   *   <li>0x800cc738 (TODO)</li>
+   *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#executeSmapPregameLoadingStage()}</li>
    *   <li>{@link SMap#FUN_800d92a0()}</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
@@ -271,7 +271,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeac}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeb4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1a4}</li>
-   *   <li>{@link legend.game.SMap#_800c66d0}</li>
+   *   <li>{@link legend.game.SMap#mcqs_800c66d0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1d8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800c#_800c677c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>

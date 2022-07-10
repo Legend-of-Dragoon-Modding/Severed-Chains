@@ -7838,7 +7838,7 @@ public class WMap {
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._04.get());
           _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._06.get());
           submapCut_80052c30.setu(_800c6860.get());
-          index_80052c38.set(_800c6862.get());
+          index_80052c38.set((int)_800c6862.get());
           struct258_800c66a8.deref()._250.set(0x3L);
           _8004dd28.setu(-0x1L);
         }
@@ -10530,7 +10530,7 @@ public class WMap {
           }
 
           //LAB_800e69b8
-          index_80052c38.set(sp20);
+          index_80052c38.set((int)sp20);
         }
 
         //LAB_800e69c4

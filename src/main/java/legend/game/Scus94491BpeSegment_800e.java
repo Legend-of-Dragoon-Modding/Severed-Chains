@@ -207,7 +207,7 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 832</p>
    *
    * <ol start="0">
-   *   <li>0x800d46d4</li>
+   *   <li>{@link legend.game.combat.Bttl_800d#FUN_800d46d4}</li>
    *   <li>0x80108df8</li>
    *   <li>0x80102610</li>
    *   <li>0x800cfdf8</li>

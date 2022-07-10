@@ -8,24 +8,24 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlStruct58 implements MemoryRef {
+public class BattleMenuStruct58 implements MemoryRef {
   private final Value ref;
 
   public final ShortRef _00;
   public final UnsignedShortRef _02;
-  public final ShortRef _04;
-  public final ShortRef _06;
-  public final ShortRef _08;
+  public final ShortRef charIndex_04;
+  public final ShortRef x_06;
+  public final ShortRef y_08;
   public final ShortRef _0a;
   public final ShortRef _0c;
-  public final ShortRef _0e;
-  public final ArrayRef<ShortRef> _10;
-  public final ShortRef _22;
+  public final ShortRef iconCount_0e;
+  public final ArrayRef<ShortRef> iconFlags_10;
+  public final ShortRef selectedIcon_22;
   public final ShortRef _24;
   public final ShortRef _26;
   public final ShortRef _28;
   public final ShortRef _2a;
-  public final ShortRef _2c;
+  public final ShortRef colour_2c;
 
   /** Overlaps to end of struct */
   public final ArrayRef<UnsignedIntRef> all_30;
@@ -40,24 +40,24 @@ public class BttlStruct58 implements MemoryRef {
   public final UnsignedIntRef _50;
   public final IntRef _54;
 
-  public BttlStruct58(final Value ref) {
+  public BattleMenuStruct58(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this.charIndex_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
+    this.x_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    this.y_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this._10 = ref.offset(2, 0x10L).cast(ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
-    this._22 = ref.offset(2, 0x22L).cast(ShortRef::new);
+    this.iconCount_0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
+    this.iconFlags_10 = ref.offset(2, 0x10L).cast(ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
+    this.selectedIcon_22 = ref.offset(2, 0x22L).cast(ShortRef::new);
     this._24 = ref.offset(2, 0x24L).cast(ShortRef::new);
     this._26 = ref.offset(2, 0x26L).cast(ShortRef::new);
     this._28 = ref.offset(2, 0x28L).cast(ShortRef::new);
     this._2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
-    this._2c = ref.offset(2, 0x2cL).cast(ShortRef::new);
+    this.colour_2c = ref.offset(2, 0x2cL).cast(ShortRef::new);
 
     this.all_30 = ref.offset(4, 0x30L).cast(ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
     this._30 = ref.offset(4, 0x30L).cast(IntRef::new);

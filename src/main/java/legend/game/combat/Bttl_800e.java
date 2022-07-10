@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.MemoryHelper;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -37,7 +38,7 @@ import legend.game.combat.types.BttlScriptData6cSub34;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.combat.types.BttlStruct50;
-import legend.game.combat.types.BttlStruct58;
+import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
@@ -163,7 +164,7 @@ import static legend.game.combat.Bttl_800c._800c6960;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800c69c8;
-import static legend.game.combat.Bttl_800c._800c69d0;
+import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c._800c6b5c;
 import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
@@ -173,7 +174,7 @@ import static legend.game.combat.Bttl_800c._800c6b78;
 import static legend.game.combat.Bttl_800c._800c6b9c;
 import static legend.game.combat.Bttl_800c._800c6ba8;
 import static legend.game.combat.Bttl_800c._800c6c2c;
-import static legend.game.combat.Bttl_800c._800c6c34;
+import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c._800c6c38;
 import static legend.game.combat.Bttl_800c._800c6c3c;
 import static legend.game.combat.Bttl_800c._800c6c40;
@@ -196,9 +197,9 @@ import static legend.game.combat.Bttl_800c._800fb05c;
 import static legend.game.combat.Bttl_800c._800fb148;
 import static legend.game.combat.Bttl_800c._800fb188;
 import static legend.game.combat.Bttl_800c._800fb198;
-import static legend.game.combat.Bttl_800c._800fb36c;
-import static legend.game.combat.Bttl_800c._800fb378;
-import static legend.game.combat.Bttl_800c._800fb3a0;
+import static legend.game.combat.Bttl_800c.targeting_800fb36c;
+import static legend.game.combat.Bttl_800c.playerNames_800fb378;
+import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c._800fb444;
 import static legend.game.combat.Bttl_800c._800fb46c;
 import static legend.game.combat.Bttl_800c._800fb47c;
@@ -2143,6 +2144,36 @@ public final class Bttl_800e {
     // empty
   }
 
+  @Method(0x800e71e4L)
+  public static long FUN_800e71e4(final RunningScript a0) {
+    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref(4).offset(0xcL).get()) {
+      return 0x2L;
+    }
+
+    //LAB_800e721c
+    //LAB_800e7220
+    final long v1 = _800fafe8.get();
+
+    if(v1 < 0x4L) {
+      //LAB_800e7244
+      if(v1 == 0) {
+        FUN_800e6844(a0);
+      }
+
+      return 0x2L;
+    }
+
+    if(v1 == 0x4L) {
+      //LAB_800e725c
+      _800fafe8.setu(0);
+      _800c6938.deref(4).offset(0x18L).setu(0);
+      return 0;
+    }
+
+    //LAB_800e726c
+    throw new RuntimeException("Undefined v0");
+  }
+
   @Method(0x800e727cL)
   public static long FUN_800e727c(final RunningScript a0) {
     if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref(4).offset(0xcL).get()) {
@@ -2682,15 +2713,19 @@ public final class Bttl_800e {
         }
 
         //LAB_800e8a50
-        final long addr1 = addToLinkedListTail(0x16cL); //TODO gonna have to initialize BttlScriptData6c?
+        //TODO how to copy this properly...?
+        final long addr1 = addToLinkedListTail(0x16cL);
         final long addr2 = scriptStatePtrArr_800bc1c0.get(a0).getPointer();
 
         if(addr2 < addr1) {
+          final ScriptState<?> oldState = scriptStatePtrArr_800bc1c0.get(a0).deref();
+
           //LAB_800e8a88
           memcpy(addr1, addr2, 0x16c);
           removeFromLinkedList(scriptStatePtrArr_800bc1c0.get(a0).getPointer());
-          scriptStatePtrArr_800bc1c0.get(a0).setPointer(addr1);
-          MEMORY.ref(4, addr1).offset(0x0L).setu(addr1 + 0x100L);
+          MEMORY.ref(4, addr1).setu(addr1 + 0x100L);
+          scriptStatePtrArr_800bc1c0.get(a0).set(MEMORY.ref(4, addr1, ScriptState.of(BttlScriptData6c::new)));
+          MemoryHelper.copyPointerTypes(scriptStatePtrArr_800bc1c0.get(a0).deref(), oldState);
         } else {
           //LAB_800e8ad4
           removeFromLinkedList(addr1);
@@ -2699,6 +2734,24 @@ public final class Bttl_800e {
     }
 
     //LAB_800e8ae4
+  }
+
+  @Method(0x800e8c84L)
+  public static BttlScriptData6cSubBase2 FUN_800e8c84(final BttlScriptData6c a0, final long a1) {
+    var v1 = a0._58.derefNullable();
+
+    //LAB_800e8c98
+    while(v1 != null) {
+      if(v1._05.get() == a1) {
+        //LAB_800e8cc0
+        return v1;
+      }
+
+      v1 = v1._00.derefNullable();
+    }
+
+    //LAB_800e8cb8
+    return null;
   }
 
   @Method(0x800e8d04L)
@@ -2731,7 +2784,7 @@ public final class Bttl_800e {
     final T struct = MEMORY.ref(4, addToLinkedListTail(size), constructor);
     struct.size_04.set((int)size);
     struct._05.set((int)a1);
-    struct._06.set((int)a2);
+    struct._06.set((short)a2);
     struct._08.set(callback);
     struct._00.setNullable(a0._58.derefNullable());
     a0._58.set(struct);
@@ -4638,7 +4691,7 @@ public final class Bttl_800e {
     _800c6c2c.setu(addToLinkedListTail(0x3ccL));
     _800c6b5c.setu(addToLinkedListTail(0x930L));
     _800c6b60.setPointer(addToLinkedListTail(0xa4L));
-    _800c6c34.setPointer(addToLinkedListTail(0x58L));
+    battleMenu_800c6c34.setPointer(addToLinkedListTail(0x58L));
     _800c6b6c.setu(addToLinkedListTail(0x3cL));
 
     FUN_800ef7c4();
@@ -4664,7 +4717,7 @@ public final class Bttl_800e {
 
       //LAB_800ee770
       for(int v1 = 0; v1 < 22; v1++) {
-        _800c69d0.get(i).charAt(v1, 0xa0ffL);
+        currentEnemyNames_800c69d0.get(i).charAt(v1, 0xa0ffL);
       }
     }
 
@@ -4832,7 +4885,7 @@ public final class Bttl_800e {
     removeFromLinkedList(_800c6c2c.get());
     removeFromLinkedList(_800c6b5c.get());
     removeFromLinkedList(_800c6b60.getPointer());
-    removeFromLinkedList(_800c6c34.getPointer());
+    removeFromLinkedList(battleMenu_800c6c34.getPointer());
     removeFromLinkedList(_800c6b6c.get());
   }
 
@@ -4867,7 +4920,7 @@ public final class Bttl_800e {
 
     //LAB_800eef7c
     for(int charIndex = 0; ; charIndex++) {
-      _800c69d0.get((int)_800c6b9c.get()).charAt(charIndex, name.charAt(charIndex));
+      currentEnemyNames_800c69d0.get((int)_800c6b9c.get()).charAt(charIndex, name.charAt(charIndex));
 
       if(name.charAt(charIndex) >= 0xa0ffL) {
         break;
@@ -5555,13 +5608,13 @@ public final class Bttl_800e {
       FUN_800f3dbc();
       FUN_800f5c94();
 
-      final BttlStruct58 struct58 = _800c6c34.deref();
+      final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
       if(struct58._4c.get() != 0) {
         FUN_800eca98(struct58._50.get(), struct58._54.get());
         a1 = struct58._54.get();
         LodString str;
         if((int)a1 == -0x1L) {
-          str = _800fb36c.get((int)struct58._50.get()).deref();
+          str = targeting_800fb36c.get((int)struct58._50.get()).deref();
           spf0 = 0x3L;
           textLen(str);
         } else {
@@ -5580,12 +5633,12 @@ public final class Bttl_800e {
             }
 
             //LAB_800f0d10
-            str = FUN_800f8568(data, _800c69d0.get((int)s4));
+            str = FUN_800f8568(data, currentEnemyNames_800c69d0.get((int)s4));
             textLen(str);
             spf0 = FUN_800f8ca0(data._1c.get());
           } else if(struct58._50.get() == 0) {
             data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1 * 0x4L).offset(0xe40L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-            str = _800fb378.get(data.charIndex_272.get()).deref();
+            str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
             textLen(str);
 
             if(data.charIndex_272.get() != 0) {
@@ -5604,7 +5657,7 @@ public final class Bttl_800e {
             a1 = _8006e398.offset(s4 * 0x4L).getAddress();
             data = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe0cL).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
             if((scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe0cL).get()).deref().ui_60.get() & 0x4L) == 0) {
-              str = _800fb378.get(data.charIndex_272.get()).deref();
+              str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
               spf0 = sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();
 
               if(data.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe40L).get()).deref().ui_60.get() & 0x2L) != 0) {
@@ -5612,7 +5665,7 @@ public final class Bttl_800e {
               }
             } else {
               //LAB_800f0e24
-              str = FUN_800f8568(data, _800c69d0.get((int)s4));
+              str = FUN_800f8568(data, currentEnemyNames_800c69d0.get((int)s4));
               spf0 = FUN_800f8ca0(data._1c.get());
             }
 
@@ -5642,7 +5695,7 @@ public final class Bttl_800e {
               }
 
               //LAB_800f0ec0
-              str = _800fb3a0.get((int)s4).deref();
+              str = ailments_800fb3a0.get((int)s4).deref();
 
               //LAB_800f0ed0
               textLen(str);

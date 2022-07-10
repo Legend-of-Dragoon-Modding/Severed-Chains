@@ -2478,7 +2478,7 @@ public final class SItem {
           _800bdc34.setu(0x1L);
           _80052c34.setu(gameState_800babc8.submapScene_a4.get());
           submapCut_80052c30.setu(gameState_800babc8.submapCut_a8.get());
-          index_80052c38.set(gameState_800babc8.submapCut_a8.get());
+          index_80052c38.set((int)gameState_800babc8.submapCut_a8.get());
 
           if(gameState_800babc8.submapCut_a8.get() == 0x108L) {
             _80052c34.setu(0x35L);
@@ -8107,13 +8107,11 @@ public final class SItem {
 
   @Method(0x8010d614L)
   public static void FUN_8010d614() {
-    long v1;
     long a0;
     long a1;
     long a2;
     long a3;
     long t0;
-    long t1;
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
@@ -8195,21 +8193,18 @@ public final class SItem {
           }
 
           //LAB_8010d9d4
-          t1 = pendingXp_8011e180.getAddress();
-          a2 = secondaryCharIndices_800bdbf8.getAddress();
           t0 = _800bc95c.get();
           a3 = _8011e174.get();
 
           //LAB_8010d9f8
           for(int i = 0; i < 6; i++) {
-            a0 = MEMORY.ref(4, a2).offset(0x0L).get();
+            final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(i).get();
 
-            if((int)a0 != -1) {
-              MEMORY.ref(4, t1).offset(a0 * 0x4L).setu(t0 / a3 / 2);
+            if(secondaryCharIndex != -1) {
+              pendingXp_8011e180.get(secondaryCharIndex).set(t0 / a3 / 2);
             }
 
             //LAB_8010da24
-            a2 = a2 + 0x4L;
           }
 
           inventoryMenuState_800bdc28.setu(0x3L);
@@ -8220,14 +8215,12 @@ public final class SItem {
 
       case 3:
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
-          if(_800bc920.get() == 0) {
-            v1 = 0x5L;
-          } else {
-            v1 = 0x4L;
-          }
-
           //LAB_8010da84
-          inventoryMenuState_800bdc28.setu(v1);
+          if(_800bc920.get() == 0) {
+            inventoryMenuState_800bdc28.setu(0x5L);
+          } else {
+            inventoryMenuState_800bdc28.setu(0x4L);
+          }
         }
 
         FUN_8010e9a8(0, _8011e174.get());
@@ -8307,7 +8300,7 @@ public final class SItem {
         break;
 
       case 6:
-        if((int)_8011e178.get() >= 0x14L) {
+        if((int)_8011e178.get() < 0x14L) {
           _8011e178.addu(0x2L);
         } else {
           //LAB_8010dcc8

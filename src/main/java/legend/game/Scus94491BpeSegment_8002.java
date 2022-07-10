@@ -2163,7 +2163,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023484L)
-  public static long FUN_80023484(final int itemId) {
+  public static int FUN_80023484(final int itemId) {
     FUN_80023148();
 
     if(itemId == 0xff) {
@@ -2218,12 +2218,13 @@ public final class Scus94491BpeSegment_8002 {
       } else {
         //LAB_800235a4
         //LAB_800235c0
-        for(int i = s0; i < MEMORY.ref(4, a1).get() - 0x1L; i++) {
+        int i;
+        for(i = s0; i < MEMORY.ref(4, a1).get() - 0x1L; i++) {
           MEMORY.ref(4, a0).offset(i * 0x4L).setu(MEMORY.ref(4, a0).offset((i + 1) * 0x4L).get());
         }
 
         //LAB_800235e4
-        MEMORY.ref(4, a0).offset(a0 * 0x4L).setu(0xffL);
+        MEMORY.ref(4, a0).offset(i * 0x4L).setu(0xffL);
         MEMORY.ref(4, a1).subu(0x1L);
         s0--;
       }
@@ -2233,6 +2234,18 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023618
     return s3;
+  }
+
+  @Method(0x8002363cL)
+  public static int addGold(final long amount) {
+    gameState_800babc8.gold_94.add(amount);
+
+    if(gameState_800babc8.gold_94.get() > 99999999) {
+      gameState_800babc8.gold_94.set(99999999);
+    }
+
+    //LAB_8002366c
+    return 0;
   }
 
   /**
@@ -2767,6 +2780,24 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80024460
+  }
+
+  @Method(0x800244c4L)
+  public static long FUN_800244c4(final RunningScript s0) {
+    final int a0 = switch(s0.params_20.get(0).deref().get()) {
+      case 0xfb -> addGold(20);
+      case 0xfc -> addGold(50);
+      case 0xfd -> addGold(100);
+      case 0xfe -> addGold(200);
+      case 0xff -> 0xff;
+      default -> FUN_80023484(s0.params_20.get(0).deref().get());
+    };
+
+    //LAB_80024574
+    s0.params_20.get(1).deref().set(a0);
+
+    //LAB_80024580
+    return 0;
   }
 
   @Method(0x80024654L)
@@ -6962,6 +6993,19 @@ public final class Scus94491BpeSegment_8002 {
       s2._00.set(0);
       FUN_80029920(i, 0);
     }
+  }
+
+  @Method(0x80029eccL)
+  public static long FUN_80029ecc(final RunningScript a0) {
+    final Struct84 v1 = _800bdf38.get(a0.params_20.get(0).deref().get());
+    if(v1._00.get() == 0x10L && (v1._08.get() & 0x20L) != 0) {
+      v1._08.xor(0x20L);
+    }
+
+    //LAB_80029f18
+    //LAB_80029f1c
+    v1._08.or(0x40L);
+    return 0;
   }
 
   @Method(0x8002a058L)
