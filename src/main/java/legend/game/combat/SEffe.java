@@ -17,7 +17,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BttlScriptData6c;
 import legend.game.combat.types.BttlScriptData6cInner;
 import legend.game.combat.types.BttlScriptData6cSub08_2;
@@ -143,6 +143,7 @@ public final class SEffe {
   private static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>>> _80119fe0 = MEMORY.ref(4, 0x80119fe0L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(Integer.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
 
   private static final Value _80119f41 = MEMORY.ref(1, 0x80119f41L);
+  private static final Value _80119f42 = MEMORY.ref(1, 0x80119f42L);
 
   private static final Value _8011a008 = MEMORY.ref(4, 0x8011a008L);
   private static final Pointer<BttlScriptData6cSub98> _8011a00c = MEMORY.ref(4, 0x8011a00cL, Pointer.deferred(4, BttlScriptData6cSub98::new));
@@ -271,14 +272,12 @@ public final class SEffe {
     long sp50;
     long sp52;
     long sp48;
-    long sp1c;
     long sp5a;
     long sp60;
     long sp68;
     long sp40;
     long sp62;
     long sp42;
-    long sp18;
     long sp58;
     long sp6a;
     long sp4a;
@@ -300,8 +299,8 @@ public final class SEffe {
 
         //LAB_800fcb90
         //LAB_800fcbd4
-        sp18 = (s1._48.getZ() - s2.getZ()) * -Math.abs(rsin(sp0x38.getY() - s3._10.svec_10.getY())) / 0x1000 - (s2.getX() - s1._48.getX()) * -Math.abs(rcos(sp0x38.getY() + s3._10.svec_10.getY())) / 0x1000;
-        sp1c = s2.getY() - s1._48.getY();
+        final int sp18 = (s1._48.getZ() - s2.getZ()) * -Math.abs(rsin(sp0x38.getY() - s3._10.svec_10.getY())) / 0x1000 - (s2.getX() - s1._48.getX()) * -Math.abs(rcos(sp0x38.getY() + s3._10.svec_10.getY())) / 0x1000;
+        final int sp1c = s2.getY() - s1._48.getY();
         s0 = -ratan2(sp1c, sp18) + 0x400L;
         s1._48.set(s2);
       }
@@ -708,10 +707,7 @@ public final class SEffe {
         sp54._90.set(v1);
         if((data._10._00.get() & 0x400_0000L) == 0) {
           assert false : "This seems wrong";
-          v0 = FUN_800dc408(0, 0, 0, 0, 0); //TODO last three params were undefined
-          s0 = v0 - sp54._50.getX();
-          v0 = FUN_800dc408(0x2L, 0, 0, 0, 0); //TODO last three params were undefined
-          sp54._68.setY((short)(ratan2(s0, v0 - sp54._50.getZ()) + 0x400));
+          sp54._68.setY((short)(ratan2(FUN_800dc408(0, 0, 0, 0, 0) - sp54._50.getX(), FUN_800dc408(2, 0, 0, 0, 0) - sp54._50.getZ()) + 0x400)); //TODO last three params of both functions were undefined
         }
 
         //LAB_800fe300
@@ -1610,7 +1606,7 @@ public final class SEffe {
     final MATRIX sp0x10 = new MATRIX();
     final VECTOR sp0x30 = new VECTOR();
 
-    final BtldScriptData27c v0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c v0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     final GsCOORDINATE2 coord2;
     if(a2 == 0) {
@@ -1662,7 +1658,7 @@ public final class SEffe {
     long s3;
     long s6;
     long s7;
-    final BtldScriptData27c s5 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c s5 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     //LAB_8010633c
     for(s3 = 0; s3 < 8; s3++) {
@@ -2301,6 +2297,19 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x801079a4L)
+  public static long FUN_801079a4(final RunningScript a0) {
+    if(a0.params_20.get(0).deref().get() == 0) {
+      a0.params_20.get(1).deref().set((int)_80119f41.getSigned());
+    } else {
+      //LAB_801079d0
+      a0.params_20.get(1).deref().set((int)_80119f42.getSigned());
+    }
+
+    //LAB_801079e0
+    return 0;
+  }
+
   /** TODO there's no way this method is right */
   @Method(0x80109358L)
   public static void FUN_80109358(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
@@ -2490,18 +2499,18 @@ public final class SEffe {
   public static VECTOR FUN_80110030(final int scriptIndex) {
     final BattleScriptDataBase a0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a0.magic_00.get() == 0x2020_4d45L) {
+    if(a0.magic_00.get() == BattleScriptDataBase.EM__) {
       return ((BttlScriptData6c)a0)._10.vec_04;
     }
 
     //LAB_8011006c
-    return ((BtldScriptData27c)a0)._148.coord2_14.coord.transfer;
+    return ((BattleObject27c)a0)._148.coord2_14.coord.transfer;
   }
 
   @Method(0x80110074L)
   public static SVECTOR FUN_80110074(final long a0) {
     final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
-    return data.magic_00.get() != 0x2020_4d45L ? ((BtldScriptData27c)data)._148.coord2Param_64.rotate : ((BttlScriptData6c)data)._10.svec_10;
+    return data.magic_00.get() != BattleScriptDataBase.EM__ ? ((BattleObject27c)data)._148.coord2Param_64.rotate : ((BttlScriptData6c)data)._10.svec_10;
   }
 
   @Method(0x801100b8L)
@@ -2509,7 +2518,7 @@ public final class SEffe {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
     final BattleScriptDataBase a3 = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a3.magic_00.get() == 0x2020_4d45L) {
+    if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
       final BttlScriptData6c a3_0 = state.innerStruct_00.derefAs(BttlScriptData6c.class);
       a2.set(a3_0._10.vec_04);
       a1.set(a3_0._10.svec_10);
@@ -2517,7 +2526,7 @@ public final class SEffe {
     }
 
     //LAB_801100fc
-    final BtldScriptData27c a3_0 = state.innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c a3_0 = state.innerStruct_00.derefAs(BattleObject27c.class);
     a2.set(a3_0._148.coord2_14.coord.transfer);
     a1.set(a3_0._148.coord2Param_64.rotate);
   }
@@ -2630,7 +2639,7 @@ public final class SEffe {
   public static BttlScriptData6c FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
     final BttlScriptData6c data = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
 
-    if(data.magic_00.get() == 0x2020_4d45L && (data._04.get() & 0x2L) != 0) {
+    if(data.magic_00.get() == BattleScriptDataBase.EM__ && (data._04.get() & 0x2L) != 0) {
       FUN_800e8d04(data, 0x1L);
     }
 
@@ -2869,7 +2878,7 @@ public final class SEffe {
   public static long FUN_80112530(final long a0, final long a1, final SVECTOR a2) {
     final BttlScriptData6c data = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
 
-    if(data.magic_00.get() == 0x2020_4d45L && (data._04.get() & 0x4L) != 0) {
+    if(data.magic_00.get() == BattleScriptDataBase.EM__ && (data._04.get() & 0x4L) != 0) {
       FUN_800e8d04(data, 0x2L);
     }
 
@@ -2985,11 +2994,11 @@ public final class SEffe {
     BattleScriptDataBase t0 = a3.innerStruct_00.deref();
 
     final SVECTOR t1;
-    if(t0.magic_00.get() == 0x2020_4d45L) {
+    if(t0.magic_00.get() == BattleScriptDataBase.EM__) {
       t1 = ((BttlScriptData6c)t0)._10.svec_16;
     } else {
       //LAB_80113660
-      t1 = new SVECTOR().set(((BtldScriptData27c)t0)._244);
+      t1 = new SVECTOR().set(((BattleObject27c)t0)._244);
     }
 
     //LAB_801136a0
@@ -3001,11 +3010,11 @@ public final class SEffe {
       t0 = a3.innerStruct_00.deref();
 
       final SVECTOR svec;
-      if(t0.magic_00.get() == 0x2020_4d45L) {
+      if(t0.magic_00.get() == BattleScriptDataBase.EM__) {
         svec = ((BttlScriptData6c)t0)._10.svec_16;
       } else {
         //LAB_80113708
-        svec = new SVECTOR().set(((BtldScriptData27c)t0)._244);
+        svec = new SVECTOR().set(((BattleObject27c)t0)._244);
       }
 
       //LAB_80113744
@@ -3039,11 +3048,11 @@ public final class SEffe {
     BattleScriptDataBase a3 = a0_0.innerStruct_00.deref();
 
     final SVECTOR t0;
-    if(a3.magic_00.get() == 0x2020_4d45L) {
+    if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
       t0 = ((BttlScriptData6c)a3)._10.svec_16;
     } else {
       //LAB_80113834
-      t0 = new SVECTOR().set(((BtldScriptData27c)a3)._244);
+      t0 = new SVECTOR().set(((BattleObject27c)a3)._244);
     }
 
     //LAB_80113874
@@ -3055,11 +3064,11 @@ public final class SEffe {
       a3 = a0_0.innerStruct_00.deref();
 
       final SVECTOR a0_1;
-      if(a3.magic_00.get() == 0x2020_4d45L) {
+      if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
         a0_1 = ((BttlScriptData6c)a3)._10.svec_16;
       } else {
         //LAB_801138dc
-        a0_1 = new SVECTOR().set(((BtldScriptData27c)a3)._244);
+        a0_1 = new SVECTOR().set(((BattleObject27c)a3)._244);
       }
 
       //LAB_8011391c
@@ -3086,11 +3095,11 @@ public final class SEffe {
       final BattleScriptDataBase a1_0 = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
       final SVECTOR v1;
-      if(a1_0.magic_00.get() == 0x2020_4d45L) {
+      if(a1_0.magic_00.get() == BattleScriptDataBase.EM__) {
         v1 = ((BttlScriptData6c)a1_0)._10.svec_16;
       } else {
         //LAB_80113a64
-        v1 = new SVECTOR().set(((BtldScriptData27c)a1_0)._244);
+        v1 = new SVECTOR().set(((BattleObject27c)a1_0)._244);
       }
 
       //LAB_80113aa0
@@ -3104,11 +3113,11 @@ public final class SEffe {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(t1).deref();
     final BattleScriptDataBase a0_0 = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a0_0.magic_00.get() == 0x2020_4d45L) {
+    if(a0_0.magic_00.get() == BattleScriptDataBase.EM__) {
       ((BttlScriptData6c)a0_0)._10.svec_16.set(sp0x00);
     } else {
       //LAB_80113b64
-      ((BtldScriptData27c)a0_0)._148.scaleVector_fc.set(sp0x00);
+      ((BattleObject27c)a0_0)._148.scaleVector_fc.set(sp0x00);
     }
 
     //LAB_80113b94
@@ -3219,7 +3228,7 @@ public final class SEffe {
   public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
     final BattleScriptDataBase data1 = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
     final SVECTOR svec1;
-    if(data1.magic_00.get() != 0x2020_4d45L) {
+    if(data1.magic_00.get() != BattleScriptDataBase.EM__) {
       svec1 = _800fb94c;
     } else {
       svec1 = ((BttlScriptData6c)data1)._10.svec_1c;
@@ -3232,7 +3241,7 @@ public final class SEffe {
       //LAB_801144b0
       final BattleScriptDataBase data2 = scriptStatePtrArr_800bc1c0.get(scriptIndex2).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
       final SVECTOR svec2;
-      if(data2.magic_00.get() == 0x2020_4d45L) {
+      if(data2.magic_00.get() == BattleScriptDataBase.EM__) {
         svec2 = ((BttlScriptData6c)data2)._10.svec_1c;
       } else {
         svec2 = _800fb94c;
@@ -3251,7 +3260,7 @@ public final class SEffe {
     BattleScriptDataBase a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     final SVECTOR a3;
-    if(a1.magic_00.get() == 0x2020_4d45L) {
+    if(a1.magic_00.get() == BattleScriptDataBase.EM__) {
       a3 = ((BttlScriptData6c)a1)._10.svec_1c;
     } else {
       a3 = new SVECTOR().set(_800fb94c);
@@ -3267,7 +3276,7 @@ public final class SEffe {
       a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
       final SVECTOR a2;
-      if(a1.magic_00.get() == 0x2020_4d45L) {
+      if(a1.magic_00.get() == BattleScriptDataBase.EM__) {
         a2 = ((BttlScriptData6c)a1)._10.svec_1c;
       } else {
         a2 = _800fb94c;

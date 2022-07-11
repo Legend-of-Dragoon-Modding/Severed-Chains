@@ -10984,22 +10984,22 @@ public class WMap {
       //LAB_800e8068
       sp48 = pathPosPtrArr_800f591c.offset(pathIndex_800c67ac.get() * 0x4L).get();
 
-      final long sp58;
-      final long sp60;
+      final int sp58;
+      final int sp60;
       if((int)sp4c > 0) {
         struct258_800c66a8.deref().coord2_34.coord.transfer.setX((int)MEMORY.ref(4, sp48).offset(0x0L).get());
         struct258_800c66a8.deref().coord2_34.coord.transfer.setY((int)MEMORY.ref(4, sp48).offset(0x4L).get() - 2);
         struct258_800c66a8.deref().coord2_34.coord.transfer.setZ((int)MEMORY.ref(4, sp48).offset(0x8L).get());
 
-        sp58 = MEMORY.ref(4, sp48).offset(0x00L).get() - MEMORY.ref(4, sp48).offset(0x10L).get();
-        sp60 = MEMORY.ref(4, sp48).offset(0x08L).get() - MEMORY.ref(4, sp48).offset(0x18L).get();
+        sp58 = (int)(MEMORY.ref(4, sp48).offset(0x00L).getSigned() - MEMORY.ref(4, sp48).offset(0x10L).getSigned());
+        sp60 = (int)(MEMORY.ref(4, sp48).offset(0x08L).getSigned() - MEMORY.ref(4, sp48).offset(0x18L).getSigned());
 
         _800c6858.setu(0);
       } else {
         //LAB_800e8190
         sp50 = _800f5810.offset((Math.abs(_800f2248.offset(_800c67aa.get() * 0x8L).getSigned()) - 0x1L) * 0x4L).get() - 0x1L;
-        sp58 = MEMORY.ref(4, sp48).offset(sp50 * 0x10L).get() - MEMORY.ref(4, sp48).offset((sp50 - 1) * 0x10L).get();
-        sp60 = MEMORY.ref(4, sp48).offset(sp50 * 0x10L).offset(0x8L).get() - MEMORY.ref(4, sp48).offset((sp50 - 1) * 0x10L).offset(0x8L).get();
+        sp58 = (int)(MEMORY.ref(4, sp48).offset(sp50 * 0x10L).offset(0x0L).getSigned() - MEMORY.ref(4, sp48).offset((sp50 - 1) * 0x10L).offset(0x0L).getSigned());
+        sp60 = (int)(MEMORY.ref(4, sp48).offset(sp50 * 0x10L).offset(0x8L).getSigned() - MEMORY.ref(4, sp48).offset((sp50 - 1) * 0x10L).offset(0x8L).getSigned());
 
         struct258_800c66a8.deref().coord2_34.coord.transfer.setX((int)MEMORY.ref(4, sp48).offset(sp50 * 0x10L).offset(0x0L).get());
         struct258_800c66a8.deref().coord2_34.coord.transfer.setY((int)MEMORY.ref(4, sp48).offset(sp50 * 0x10L).offset(0x4L).get() - 2);
@@ -11010,7 +11010,6 @@ public class WMap {
 
       //LAB_800e838c
       struct258_800c66a8.deref().rotation_a4.set((short)0, (short)0, (short)0);
-
       struct258_800c66a8.deref().rotation_a4.setY((short)ratan2(sp58, sp60));
       previousPlayerRotation_800c685a.setu(struct258_800c66a8.deref().rotation_a4.getY());
       struct258_800c66a8.deref().rotation_a4.y.add((short)_800c6858.get());
@@ -11732,15 +11731,15 @@ public class WMap {
     //LAB_800ea790
     final long sp18 = pathPosPtrArr_800f591c.offset(pathIndex_800c67ac.get() * 0x4L).get();
 
-    final long sp20;
-    final long sp28;
+    final int sp20;
+    final int sp28;
     if(sign > 0) {
       struct258_800c66a8.deref().coord2_34.coord.transfer.setX((int)MEMORY.ref(4, sp18).offset(0x0L).get());
       struct258_800c66a8.deref().coord2_34.coord.transfer.setY((int)MEMORY.ref(4, sp18).offset(0x4L).get() - 2);
       struct258_800c66a8.deref().coord2_34.coord.transfer.setZ((int)MEMORY.ref(4, sp18).offset(0x8L).get());
 
-      sp20 = MEMORY.ref(4, sp18).offset(0x0L).get() - MEMORY.ref(4, sp18).offset(0x10L).get();
-      sp28 = MEMORY.ref(4, sp18).offset(0x8L).get() - MEMORY.ref(4, sp18).offset(0x18L).get();
+      sp20 = (int)(MEMORY.ref(4, sp18).offset(0x0L).getSigned() - MEMORY.ref(4, sp18).offset(0x10L).getSigned());
+      sp28 = (int)(MEMORY.ref(4, sp18).offset(0x8L).getSigned() - MEMORY.ref(4, sp18).offset(0x18L).getSigned());
 
       dotIndex_800c67ae.setu(0);
       dotOffset_800c67b0.setu(0);
@@ -11751,8 +11750,8 @@ public class WMap {
       final long v1 = _800f2248.offset(_800c67aa.get() * 0x8L).getSigned();
 
       final long sp10 = _800f5810.offset((Math.abs(v1) - 0x1L) * 0x4L).get() - 0x1L;
-      sp20 = MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x0L).get() - MEMORY.ref(4, sp18).offset((sp10 - 1) * 0x10L).offset(0x0L).get();
-      sp28 = MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x8L).get() - MEMORY.ref(4, sp18).offset((sp10 - 1) * 0x10L).offset(0x8L).get();
+      sp20 = (int)(MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x0L).getSigned() - MEMORY.ref(4, sp18).offset((sp10 - 1) * 0x10L).offset(0x0L).getSigned());
+      sp28 = (int)(MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x8L).getSigned() - MEMORY.ref(4, sp18).offset((sp10 - 1) * 0x10L).offset(0x8L).getSigned());
 
       struct258_800c66a8.deref().coord2_34.coord.transfer.setX((int)MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x0L).get());
       struct258_800c66a8.deref().coord2_34.coord.transfer.setY((int)MEMORY.ref(4, sp18).offset(sp10 * 0x10L).offset(0x4L).get() - 2);
@@ -11768,7 +11767,6 @@ public class WMap {
     struct258_800c66a8.deref().rotation_a4.setX((short)0);
     struct258_800c66a8.deref().rotation_a4.setY((short)0);
     struct258_800c66a8.deref().rotation_a4.setZ((short)0);
-
     struct258_800c66a8.deref().rotation_a4.setY((short)ratan2(sp20, sp28));
 
     previousPlayerRotation_800c685a.setu(struct258_800c66a8.deref().rotation_a4.getY());
@@ -12094,10 +12092,8 @@ public class WMap {
 
     v0 = v1 + 0xa4L;
     MEMORY.ref(2, v0).offset(0x4L).setu(0);
-    a0 = sp18;
-    a1 = sp20;
 
-    v0 = ratan2(a0, a1);
+    v0 = ratan2((int)sp18, (int)sp20);
     v1 = 0x800c_0000L;
     v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
 

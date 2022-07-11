@@ -13,7 +13,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.Bttl_800c;
-import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -552,7 +553,7 @@ public final class SItem {
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
 
   @Method(0x800fbd78L)
-  public static void FUN_800fbd78(final long a0) {
+  public static void allocatePlayerBattleObjects(final long a0) {
     //LAB_800fbdb8
     for(charCount_800c677c.setu(0); charCount_800c677c.get() < 3; charCount_800c677c.addu(0x1L)) {
       if(gameState_800babc8.charIndex_88.get((int)charCount_800c677c.get()).get() < 0) {
@@ -573,13 +574,13 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final int scriptIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BtldScriptData27c::new);
-      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      final int scriptIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BattleObject27c::new);
+      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(scriptIndex);
       _8006e398.offset(4, 0xe40L).offset(charSlot * 0x4L).setu(scriptIndex);
-      final BtldScriptData27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-      s1.magic_00.set(0x4a42_4f42L); // BOBJ
+      final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+      s1.magic_00.set(BattleScriptDataBase.BOBJ);
       s1.combatant_144.set(getCombatant((short)charIndices[charSlot]));
       s1.charIndex_272.set((short)charIndex);
       s1.charSlot_276.set((short)charSlot);
@@ -616,7 +617,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
+      combatants_8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -653,7 +654,7 @@ public final class SItem {
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
     for(int s1 = 0; s1 < charCount_800c677c.get(); s1++) {
-      final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BattleObject27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
       final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
       //LAB_800fc298

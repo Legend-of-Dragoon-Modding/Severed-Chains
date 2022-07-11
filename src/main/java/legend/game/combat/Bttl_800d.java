@@ -16,8 +16,9 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.Scus94491BpeSegment_800c;
+import legend.game.combat.types.BattleCamera;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BtldScriptData27c;
 import legend.game.combat.types.BttlScriptData1c;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.BttlScriptData6c;
@@ -88,12 +89,8 @@ import static legend.game.combat.Bttl_800c._800c67b8;
 import static legend.game.combat.Bttl_800c._800c67c4;
 import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
-import static legend.game.combat.Bttl_800c._800c67dc;
-import static legend.game.combat.Bttl_800c._800c67e0;
 import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
-import static legend.game.combat.Bttl_800c._800c6878;
-import static legend.game.combat.Bttl_800c._800c68ec;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
 import static legend.game.combat.Bttl_800c._800c6920;
@@ -122,12 +119,15 @@ import static legend.game.combat.Bttl_800c._800fabfc;
 import static legend.game.combat.Bttl_800c._800fac3c;
 import static legend.game.combat.Bttl_800c._800fac5c;
 import static legend.game.combat.Bttl_800c._800fac9c;
+import static legend.game.combat.Bttl_800c._800facbc;
+import static legend.game.combat.Bttl_800c._800fad1c;
 import static legend.game.combat.Bttl_800c._800fad7c;
-import static legend.game.combat.Bttl_800c._800fad90;
 import static legend.game.combat.Bttl_800c._800fad9c;
 import static legend.game.combat.Bttl_800c.additionNames_800fa8d4;
+import static legend.game.combat.Bttl_800c.callbackIndex_800c6878;
+import static legend.game.combat.Bttl_800c.callbackIndex_800c68ec;
+import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.effectRenderers_800fa758;
-import static legend.game.combat.Bttl_800c.rview2_800c67f0;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.x_800c67bc;
 import static legend.game.combat.Bttl_800c.y_800c67c0;
@@ -141,7 +141,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0094L)
   public static void FUN_800d0094(final int scriptIndex, final int animIndex, final long a2) {
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     final UnsignedIntRef a0;
     final long a3;
@@ -169,12 +169,12 @@ public final class Bttl_800d {
     final ScriptState<?> a2 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
     final BattleScriptDataBase a1 = a2.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a1.magic_00.get() == 0x2020_4d45L) {
+    if(a1.magic_00.get() == BattleScriptDataBase.EM__) {
       final long v1 = ((BttlScriptData6c)a1)._44.getPointer(); //TODO
       a0.params_20.get(1).deref().set((int)MEMORY.ref(2, v1).offset(0xa8L).getSigned());
     } else {
       //LAB_800d017c
-      a0.params_20.get(1).deref().set(((BtldScriptData27c)a1)._148.animCount_98.get());
+      a0.params_20.get(1).deref().set(((BattleObject27c)a1)._148.animCount_98.get());
     }
 
     //LAB_800d0194
@@ -393,10 +393,10 @@ public final class Bttl_800d {
         MEMORY.ref(4, s2).offset(0x08L).addu(MEMORY.ref(4, s2).offset(0x28L).get());
         MEMORY.ref(4, s2).offset(0x0cL).addu(MEMORY.ref(4, s2).offset(0x2cL).get());
         MEMORY.ref(4, s2).offset(0x10L).addu(MEMORY.ref(4, s2).offset(0x30L).get());
-        final Ref<Long> sp0x18 = new Ref<>();
-        final Ref<Long> sp0x1c = new Ref<>();
-        final Ref<Long> sp0x20 = new Ref<>();
-        final Ref<Long> sp0x24 = new Ref<>();
+        final IntRef sp0x18 = new IntRef();
+        final IntRef sp0x1c = new IntRef();
+        final IntRef sp0x20 = new IntRef();
+        final IntRef sp0x24 = new IntRef();
         s1 = FUN_800cf244(MEMORY.ref(4, s2 + 0x8L, VECTOR::new), sp0x18, sp0x1c);
         FUN_800cf244(MEMORY.ref(4, s2 + 0x18L, VECTOR::new), sp0x20, sp0x24);
 
@@ -537,10 +537,10 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d1194L)
-  public static void FUN_800d1194(final BttlScriptData6c a0, final BttlScriptData6cSub10 a1, final Ref<Long>[] a2) {
-    if(a1._00.get() == -0x1L) {
-      a2[0].set(0L);
-      a2[1].set(0L);
+  public static void FUN_800d1194(final BttlScriptData6c a0, final BttlScriptData6cSub10 a1, final IntRef[] a2) {
+    if(a1._00.get() == -1) {
+      a2[0].set(0);
+      a2[1].set(0);
     } else {
       //LAB_800d11c4
       final VECTOR sp0x10 = new VECTOR();
@@ -575,7 +575,7 @@ public final class Bttl_800d {
           long sp2c = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0) >> 12;
           long sp24 = (int)(rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
           long sp34 = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
-          final Ref<Long>[] sp0x50 = new Ref[] {new Ref<>(), new Ref<>()};
+          final IntRef[] sp0x50 = {new IntRef(), new IntRef()};
           FUN_800d1194(data, s7, sp0x50);
           sp18 = sp18 + sp0x50[0].get();
           sp28 = sp28 + sp0x50[1].get();
@@ -634,7 +634,7 @@ public final class Bttl_800d {
 
         //LAB_800d1728
         for(int s7 = 0; s7 < 4; s7++) {
-          final Ref<Long>[] sp0x38 = new Ref[] {new Ref<>(), new Ref<>()};
+          final IntRef[] sp0x38 = {new IntRef(), new IntRef()};
           FUN_800d1194(data, sp80, sp0x38);
 
           //LAB_800d174c
@@ -710,15 +710,11 @@ public final class Bttl_800d {
     //LAB_800d1ac4
     for(int i = 0; i < count; i++) {
       MEMORY.ref(1, t4).offset(0x0L).setu(0x1L);
-      seed_800fa754.advance();
-      MEMORY.ref(2, t4).offset(0x2L).setu(seed_800fa754.get() % 4097);
+      MEMORY.ref(2, t4).offset(0x2L).setu(seed_800fa754.advance().get() % 4097);
       MEMORY.ref(2, t4).offset(0x4L).setu(0x10L);
-      seed_800fa754.advance();
-      MEMORY.ref(2, t4).offset(0x6L).setu(seed_800fa754.get() % 31);
-      seed_800fa754.advance();
-      MEMORY.ref(2, t4).offset(0x8L).setu(seed_800fa754.get() % 21 + 10);
-      seed_800fa754.advance();
-      MEMORY.ref(2, t4).offset(0xaL).setu(seed_800fa754.get() % 11 - 5);
+      MEMORY.ref(2, t4).offset(0x6L).setu(seed_800fa754.advance().get() % 31);
+      MEMORY.ref(2, t4).offset(0x8L).setu(seed_800fa754.advance().get() % 21 + 10);
+      MEMORY.ref(2, t4).offset(0xaL).setu(seed_800fa754.advance().get() % 11 - 5);
       MEMORY.ref(4, t4).offset(0xcL).setu(0);
       t4 = t4 + 0x10L;
     }
@@ -895,15 +891,15 @@ public final class Bttl_800d {
     long sp84;
 
     final VECTOR sp0x58 = new VECTOR();
-    final Ref<Long>[] sp0x18 = new Ref[7];
-    final Ref<Long>[] sp0x38 = new Ref[7];
+    final IntRef[] sp0x18 = new IntRef[7];
+    final IntRef[] sp0x38 = new IntRef[7];
 
-    Arrays.setAll(sp0x18, Ref::new);
-    Arrays.setAll(sp0x38, Ref::new);
+    Arrays.setAll(sp0x18, i -> new IntRef());
+    Arrays.setAll(sp0x38, i -> new IntRef());
 
-    final long s7 = data._44.getPointer(); //TODO
-    MEMORY.ref(2, s7).offset(0x2L).addu(0x1L);
-    MEMORY.ref(2, s7).offset(0x4L).addu(0x400L);
+    final BttlScriptData6cSub06 s7 = data._44.derefAs(BttlScriptData6cSub06.class);
+    s7._02.incr();
+    s7._04.add((short)0x400);
     v0 = _800fa76c.getAddress();
     s1 = v0 + 0x18L;
 
@@ -987,7 +983,7 @@ public final class Bttl_800d {
     //LAB_800d2cfc
     long s7_0 = 0;
     for(int i = 0; i < 4; i++) {
-      s6 = s6 + MEMORY.ref(2, s7).offset(0x4L).getSigned() / 4;
+      s6 = s6 + s7._04.get() / 4;
       s7_0 = s7_0 + data._10.svec_16.getX() / 4;
       t1 = _800fa76c.getAddress();
       s1 = t1 + 0x4L;
@@ -1062,7 +1058,7 @@ public final class Bttl_800d {
     final BttlScriptData6cSub06 v0 = a0._44.derefAs(BttlScriptData6cSub06.class);
     v0._00.set(1);
     v0._02.set(0);
-    v0._04.set(0);
+    v0._04.set((short)0);
     a0._10.svec_1c.setX((short)255);
     a0._10.svec_1c.setY((short)0);
     a0._10.svec_1c.setZ((short)0);
@@ -1174,7 +1170,7 @@ public final class Bttl_800d {
       BttlScriptData6cSub34_2::new
     );
 
-    final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._148.animCount_98.get();
+    final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.animCount_98.get();
     final BttlScriptData6c data = scriptStatePtrArr_800bc1c0.get((int)fp).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     final BttlScriptData6cSub34_2 sub = data._44.derefAs(BttlScriptData6cSub34_2.class);
     long s4 = addToLinkedListTail(animCount * 0x30L);
@@ -1471,14 +1467,13 @@ public final class Bttl_800d {
 
   @Method(0x800d3f98L)
   public static void FUN_800d3f98(final short a0, final short a1, final long a2, final short a3, final byte a4) {
-    FUN_80018d60(a0, a1, (a2 * 8 + 16) & 0xf8L, 0x28L, 0x8L, 0x10L, a3, 0x1L, new byte[] {a4, a4, a4}, 0x1000L);
+    FUN_80018d60(a0, a1, a2 * 8 + 16 & 0xf8L, 0x28L, 0x8L, 0x10L, a3, 0x1L, new byte[] {a4, a4, a4}, 0x1000L);
   }
 
   @Method(0x800d4018L)
   public static void FUN_800d4018(final int index, final ScriptState<BttlScriptData40> state, final BttlScriptData40 data) {
     long v0;
     long v1;
-    long a3;
     long t0;
     long s2;
     long s4;
@@ -1560,8 +1555,7 @@ public final class Bttl_800d {
         s5 = (int)MEMORY.ref(4, sp30).offset(0x0L).get() >> 8;
 
         if(s3._01.get() != 0) {
-          a3 = (int)sp28 >> 16;
-          FUN_800d3f98((short)s2, (short)s5, 0xaL, (short)a3, (byte)(fp & 0xffL));
+          FUN_800d3f98((short)s2, (short)s5, 0xaL, (short)sp28, (byte)(fp & 0xffL));
           s2 = s2 + 0x8L;
         }
 
@@ -1715,916 +1709,472 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d47dcL)
-  public static void FUN_800d47dc(long a0, long a1, long a2, long a3, long a4, long a5, long a6) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long lo;
-    s1 = a3;
-    s2 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, s2).offset(0x67f0L).get();
-    a3 = a5;
-    s4 = a0;
-    s5 = a1;
-    s3 = a2;
-    s0 = s2 + 0x67f0L;
-    v1 = MEMORY.ref(4, s0).offset(0x8L).get();
-    a0 = v0 << 8;
-    v0 = MEMORY.ref(4, s0).offset(0x4L).get();
-    a1 = v1 << 8;
-    MEMORY.ref(4, s0).offset(0x94L).setu(a0);
-    MEMORY.ref(4, s0).offset(0x9cL).setu(a1);
-    a2 = v0 << 8;
-    MEMORY.ref(4, s0).offset(0x98L).setu(a2);
-    if(a3 == 0) {
+  public static void FUN_800d47dc(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.set(cam.rview2_00.viewpoint_00);
+
+    if(a5 == 0) {
       //LAB_800d4854
-      a0 = s4 - a0;
-      lo = (int)a0 / (int)s1;
-      a0 = lo;
-      v1 = s5 - a2;
-
-      lo = (int)v1 / (int)s1;
-      v1 = lo;
-      v0 = s3 - a1;
-
-      lo = (int)v0 / (int)s1;
-      v0 = lo;
-      MEMORY.ref(4, s0).offset(0xd0L).setu(s1);
-      MEMORY.ref(4, s0).offset(0xb0L).setu(a0);
-      MEMORY.ref(4, s0).offset(0xbcL).setu(v1);
-      MEMORY.ref(4, s0).offset(0xc8L).setu(v0);
-    } else assert a3 != 0x1L : "Undefined t0/t1";
+      cam._d0.set(a3);
+      cam._b0.set((a0 - cam.vec_94.getX()) / a3);
+      cam._bc.set((a1 - cam.vec_94.getY()) / a3);
+      cam._c8.set((a2 - cam.vec_94.getZ()) / a3);
+    } else assert a5 != 0x1L : "Undefined t0/t1";
 
     //LAB_800d492c
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x67f0L;
-
     //LAB_800d4934
-    v1 = MEMORY.ref(4, v0).offset(0x11cL).get();
-    a0 = 0x8L;
-    MEMORY.ref(1, v0).offset(0x120L).setu(a0);
-    v1 = v1 | 0x1L;
-    MEMORY.ref(4, v0).offset(0x11cL).setu(v1);
+    cam._11c.or(0x1L);
+    cam._120.set(8);
   }
 
   @Method(0x800d4bacL)
-  public static void FUN_800d4bac(long a0, long a1, long a2, long a3, long a4, long a5, long a6) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    long s2;
-    long s6;
-    long s7;
-    long lo;
-    s6 = a0;
-    s7 = a1;
-    s2 = a2;
-    s1 = a3;
-    a0 = 0;
-    a1 = 0x4L;
-    a2 = a0;
-    a3 = a0;
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    a0 = 0;
-    a1 = 0x4L;
-    a2 = 0x1L;
-    a3 = a0;
-    v1 = 0x800c_0000L;
-    s0 = v1 + 0x67f0L;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s0).offset(0x94L).setu(v0);
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    a0 = 0;
-    a1 = 0x4L;
-    a2 = 0x2L;
-    a3 = a0;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s0).offset(0x98L).setu(v0);
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    v1 = v0 << 8;
-    MEMORY.ref(4, s0).offset(0x9cL).setu(v1);
+  public static void FUN_800d4bac(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.setX(FUN_800dc384(0, 0x4L, 0, 0) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 0x4L, 1, 0) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 0x4L, 2, 0) << 8);
+
     if(a5 == 0) {
       //LAB_800d4c5c
-      a0 = MEMORY.ref(4, s0).offset(0x94L).get();
-
-      a0 = s6 - a0;
-      lo = (int)a0 / (int)s1;
-      a0 = lo;
-      v1 = s2 - v1;
-
-      lo = (int)v1 / (int)s1;
-      v1 = lo;
-      v0 = MEMORY.ref(4, s0).offset(0x98L).get();
-
-      v0 = s7 - v0;
-      lo = (int)v0 / (int)s1;
-      v0 = lo;
-      MEMORY.ref(4, s0).offset(0xd0L).setu(s1);
-      MEMORY.ref(4, s0).offset(0xc8L).setu(v1);
-      MEMORY.ref(4, s0).offset(0xb0L).setu(a0);
-      MEMORY.ref(4, s0).offset(0xbcL).setu(v0);
+      cam._d0.set(a3);
+      cam._b0.set((a0 - cam.vec_94.getX()) / a3);
+      cam._bc.set((a1 - cam.vec_94.getY()) / a3);
+      cam._c8.set((a2 - cam.vec_94.getZ()) / a3);
     } else assert a5 != 0x1L : "Undefined s3/s5";
 
     //LAB_800d4d34
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x67f0L;
-
     //LAB_800d4d3c
-    MEMORY.ref(1, v0).offset(0x120L).setu(0xcL);
-    MEMORY.ref(4, v0).offset(0x11cL).oru(0x1L);
+    cam._11c.or(0x1L);
+    cam._120.set(12);
   }
 
   @Method(0x800d4d7cL)
-  public static void FUN_800d4d7c(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6) {
-    final long s4 = rview2_800c67f0.getAddress();
+  public static void FUN_800d4d7c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
 
-    MEMORY.ref(4, s4).offset(0xacL).setu(FUN_800dc384(0, 0x5L, 0, 0) << 8);
-    MEMORY.ref(4, s4).offset(0xb8L).setu(FUN_800dc384(0, 0x5L, 1, 0) << 8);
-    MEMORY.ref(4, s4).offset(0xa0L).setu(FUN_800dc384(0, 0x5L, 2, 0) << 8);
+    cam._ac.set(FUN_800dc384(0, 0x5L, 0, 0) << 8);
+    cam._b8.set(FUN_800dc384(0, 0x5L, 1, 0) << 8);
+    cam._a0.set(FUN_800dc384(0, 0x5L, 2, 0) << 8);
 
     if(a5 == 0) {
       //LAB_800d4e34
-      MEMORY.ref(4, s4).offset(0xd0L).setu(a3);
-      MEMORY.ref(4, s4).offset(0xb0L).setu(FUN_800dcf10(0, MEMORY.ref(4, s4).offset(0xacL).getSigned(), a0, a3, a4 & 0x3L));
-      MEMORY.ref(4, s4).offset(0xbcL).setu(FUN_800dcf10(1, MEMORY.ref(4, s4).offset(0xb8L).getSigned(), a1, a3, ((int)a4 >> 2) & 0x3L));
-      MEMORY.ref(4, s4).offset(0xc8L).setu(FUN_800dcf10(2, MEMORY.ref(4, s4).offset(0xa0L).getSigned(), a2, a3, 0));
-    } else if(a5 == 0x1L) {
+      cam._d0.set(a3);
+      cam._b0.set(FUN_800dcf10(0, cam._ac.get(), a0, a3, a4 & 0x3));
+      cam._bc.set(FUN_800dcf10(1, cam._b8.get(), a1, a3, a4 >> 2 & 0x3));
+      cam._c8.set(FUN_800dcf10(2, cam._a0.get(), a2, a3, 0));
+    } else if(a5 == 1) {
       //LAB_800d4e8c
-      final long s1 = FUN_800dcfb8(0, MEMORY.ref(4, s4).offset(0xacL).getSigned(), a0, a4 & 0x3L);
-      final long s0 = FUN_800dcfb8(1, MEMORY.ref(4, s4).offset(0xb8L).getSigned(), a1, ((int)a4 >> 2) & 0x3L);
-      final long v0 = FUN_800dcfb8(2, MEMORY.ref(4, s4).offset(0xa0L).getSigned(), a2, 0);
-      MEMORY.ref(4, s4).offset(0xd0L).setu(SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3);
-      MEMORY.ref(4, s4).offset(0xb0L).setu(FUN_800dcf10(0, MEMORY.ref(4, s4).offset(0xacL).getSigned(), a0, MEMORY.ref(4, s4).offset(0xd0L).getSigned(), a4 & 0x3L));
-      MEMORY.ref(4, s4).offset(0xbcL).setu(FUN_800dcf10(1, MEMORY.ref(4, s4).offset(0xb8L).getSigned(), a1, MEMORY.ref(4, s4).offset(0xd0L).getSigned(), ((int)a4 >> 2) & 0x3L));
-      MEMORY.ref(4, s4).offset(0xc8L).setu(FUN_800dcf10(2, MEMORY.ref(4, s4).offset(0xa0L).getSigned(), a2, MEMORY.ref(4, s4).offset(0xd0L).getSigned(), 0));
+      final int s1 = FUN_800dcfb8(0, cam._ac.get(), a0, a4 & 0x3);
+      final int s0 = FUN_800dcfb8(1, cam._b8.get(), a1, a4 >> 2 & 0x3);
+      final int v0 = FUN_800dcfb8(2, cam._a0.get(), a2, 0);
+      cam._d0.set(SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3);
+      cam._b0.set(FUN_800dcf10(0, cam._ac.get(), a0, cam._d0.get(), a4 & 0x3));
+      cam._bc.set(FUN_800dcf10(1, cam._b8.get(), a1, cam._d0.get(), a4 >> 2 & 0x3));
+      cam._c8.set(FUN_800dcf10(2, cam._a0.get(), a2, cam._d0.get(), 0));
     }
 
     //LAB_800d4f78
-    MEMORY.ref(1, s4).offset(0x120L).setu(0xdL);
-    MEMORY.ref(4, s4).offset(0x11cL).oru(0x1L);
+    cam._11c.or(0x1L);
+    cam._120.set(13);
   }
 
   @Method(0x800d4fbcL)
-  public static void FUN_800d4fbc(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6) {
-    final long s1 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s1).offset(0xf4L).setu(a6);
-    MEMORY.ref(4, s1).offset(0x94L).setu(FUN_800dc384(0, 0x6L, 0, a6) << 8);
-    MEMORY.ref(4, s1).offset(0x98L).setu(FUN_800dc384(0, 0x6L, 0x1L, a6) << 8);
-    MEMORY.ref(4, s1).offset(0x9cL).setu(FUN_800dc384(0, 0x6L, 0x2L, a6) << 8);
+  public static void FUN_800d4fbc(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_f4.set(scriptIndex);
+    cam.vec_94.setX(FUN_800dc384(0, 0x6L, 0, scriptIndex) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 0x6L, 1, scriptIndex) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 0x6L, 2, scriptIndex) << 8);
 
     if(a5 == 0) {
       //LAB_800d5078
-      MEMORY.ref(4, s1).offset(0xd0L).setu(a3);
-      MEMORY.ref(4, s1).offset(0xb0L).setu((a0 - MEMORY.ref(4, s1).offset(0x94L).get()) / a3);
-      MEMORY.ref(4, s1).offset(0xbcL).setu((a1 - MEMORY.ref(4, s1).offset(0x98L).get()) / a3);
-      MEMORY.ref(4, s1).offset(0xc8L).setu((a2 - MEMORY.ref(4, s1).offset(0x9cL).get()) / a3);
-    } else if(a5 == 0x1L) {
+      cam._d0.set(a3);
+      cam._b0.set((a0 - cam.vec_94.getX()) / a3);
+      cam._bc.set((a1 - cam.vec_94.getY()) / a3);
+      cam._c8.set((a2 - cam.vec_94.getZ()) / a3);
+    } else if(a5 == 1) {
       //LAB_800d50c4
-      long v0 = a2 - MEMORY.ref(4, s1).offset(0x9cL).get();
-      long s5 = a1 - MEMORY.ref(4, s1).offset(0x98L).get();
-      long s6 = a0 - MEMORY.ref(4, s1).offset(0x94L).get();
+      int s6 = a0 - cam.vec_94.getX();
+      int s5 = a1 - cam.vec_94.getY();
+      int v0 = a2 - cam.vec_94.getZ();
       v0 = SquareRoot0(v0 * v0 + s5 * s5 + s6 * s6) / a3;
-      MEMORY.ref(4, s1).offset(0xd0L).setu(v0);
-      MEMORY.ref(4, s1).offset(0xb0L).setu((a0 - MEMORY.ref(4, s1).offset(0x94L).get()) / v0);
-      MEMORY.ref(4, s1).offset(0xbcL).setu((a1 - MEMORY.ref(4, s1).offset(0x98L).get()) / v0);
-      MEMORY.ref(4, s1).offset(0xc8L).setu((a2 - MEMORY.ref(4, s1).offset(0x9cL).get()) / v0);
+      cam._d0.set(v0);
+      cam._b0.set((a0 - cam.vec_94.getX()) / v0);
+      cam._bc.set((a1 - cam.vec_94.getY()) / v0);
+      cam._c8.set((a2 - cam.vec_94.getZ()) / v0);
     }
 
     //LAB_800d5150
     //LAB_800d5158
-    MEMORY.ref(1, s1).offset(0x120L).setu(0xeL);
-    MEMORY.ref(4, s1).offset(0x11cL).oru(0x1L);
+    cam._11c.or(0x1L);
+    cam._120.set(14);
   }
 
   @Method(0x800d5ec8L)
-  public static void FUN_800d5ec8(long a0, long a1, long a2, long a3, long a4, long a5, long a6, long a7) {
-    long v0;
-    long v1;
-    long t0;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
-    long fp;
-    long lo;
-    long sp40;
-    long sp38;
-    long sp3c;
-    v1 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v1).offset(0x67f0L).get();
-    sp38 = a0;
-    s3 = (int)a0 >> 8;
-    s5 = v1 + 0x67f0L;
-    s3 = s3 - v0;
-    s2 = s3 >>> 31;
-    s2 = s3 + s2;
-    s2 = (int)s2 >> 1;
-    lo = (long)(int)s2 * (int)s2 & 0xffff_ffffL;
-    sp3c = a1;
-    sp40 = a2;
-    v0 = MEMORY.ref(4, s5).offset(0x4L).get();
-    s4 = (int)a1 >> 8;
-    s4 = s4 - v0;
-    v0 = s4 >>> 31;
-    s2 = lo;
-    v0 = s4 + v0;
-    v0 = (int)v0 >> 1;
-    lo = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
-    v0 = MEMORY.ref(4, s5).offset(0x8L).get();
-    s1 = (int)a2 >> 8;
-    s1 = s1 - v0;
-    s0 = s1 >>> 31;
-    v1 = lo;
-    s0 = s1 + s0;
-    s0 = (int)s0 >> 1;
-    lo = (long)(int)s0 * (int)s1 & 0xffff_ffffL;
-    fp = a3;
-    v1 = s2 + v1;
-    a0 = lo;
-    v0 = a0 >>> 31;
-    a0 = a0 + v0;
-    a0 = (int)a0 >> 1;
-    a0 = v1 + a0;
-    v0 = SquareRoot0(a0);
-    a0 = s1;
-    a1 = s3;
-    v0 = v0 << 9;
-    MEMORY.ref(4, s5).offset(0xdcL).setu(v0);
-    v0 = ratan2(a0, a1);
-    lo = (long)(int)s0 * (int)s0 & 0xffff_ffffL;
-    v0 = v0 & 0xfffL;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s5).offset(0xd4L).setu(v0);
-    v1 = lo;
-    a0 = s2 + v1;
-    v0 = SquareRoot0(a0);
-    a0 = s4;
-    a1 = v0 << 1;
-    v0 = ratan2(a0, a1);
-    v0 = v0 & 0xfffL;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s5).offset(0xd8L).setu(v0);
-    MEMORY.ref(4, s5).offset(0xd0L).setu(fp);
-    t0 = a4;
+  public static void FUN_800d5ec8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    final int s3 = (a0 >> 8) - cam.rview2_00.viewpoint_00.getX();
+    final int s4 = (a1 >> 8) - cam.rview2_00.viewpoint_00.getY();
+    final int s1 = (a2 >> 8) - cam.rview2_00.viewpoint_00.getZ();
+    final int s2 = s3 / 2;
+    final int v0 = s4 / 2;
+    final int s0 = s1 / 2;
+    cam._d0.set(a3);
+    cam._d4.set((ratan2(s1, s3) & 0xfff) << 8);
+    cam._d8.set((ratan2(s4, SquareRoot0(s2 * s2 + s0 * s0) * 2) & 0xfff) << 8);
+    cam._dc.set(SquareRoot0(s2 * s2 + v0 * v0 + s0 * s0) << 9);
 
-    if(t0 == 0) {
+    final int s6;
+    final int s7;
+    if(a4 == 0) {
       //LAB_800d5ff0
-      v0 = MEMORY.ref(4, s5).offset(0xdcL).get();
-
-      v0 = v0 << 1;
-      lo = (int)v0 / (int)fp;
-      v0 = lo;
       s6 = a5;
-      s7 = v0 - s6;
-    } else if(t0 == 0x1L) {
+      s7 = cam._dc.get() * 2 / a3 - a5;
+    } else if(a4 == 0x1L) {
       //LAB_800d6010
-      v0 = MEMORY.ref(4, s5).offset(0xdcL).get();
-
-      v0 = v0 << 1;
-      lo = (int)v0 / (int)fp;
-      v0 = lo;
+      s6 = cam._dc.get() * 2 / a3 - a5;
       s7 = a5;
-      s6 = v0 - s7;
     } else {
       throw new RuntimeException("Undefined s6/s7");
     }
 
     //LAB_800d6030
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x67f0L;
-
     //LAB_800d6038
-    v1 = MEMORY.ref(4, v0).offset(0xd0L).get();
-    a1 = s7 - s6;
-    lo = (int)a1 / (int)v1;
-    a1 = lo;
-    MEMORY.ref(4, v0).offset(0xa4L).setu(s6);
-    t0 = sp38;
-
-    MEMORY.ref(4, v0).offset(0xe8L).setu(t0);
-    t0 = sp3c;
-    v1 = MEMORY.ref(4, v0).offset(0x11cL).get();
-    a0 = 0x10L;
-    MEMORY.ref(4, v0).offset(0xecL).setu(t0);
-    t0 = sp40;
-    v1 = v1 | 0x1L;
-    MEMORY.ref(4, v0).offset(0xf0L).setu(t0);
-    MEMORY.ref(1, v0).offset(0x120L).setu(a0);
-    MEMORY.ref(4, v0).offset(0x11cL).setu(v1);
-    MEMORY.ref(4, v0).offset(0xb4L).setu(a1);
+    cam._a4.set(s6);
+    cam._b4.set((s7 - s6) / cam._d0.get());
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._11c.or(0x1L);
+    cam._120.set(16);
   }
 
   @Method(0x800d62d8L)
-  public static void FUN_800d62d8(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    long v0;
-    long v1;
-    long t1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long lo;
-    s2 = 0x800c_0000L;
-    s2 = s2 + 0x67f0L;
-    v0 = FUN_800dc384(0, 0x4L, 0, 0) * 0x100;
-    MEMORY.ref(4, s2).offset(0x94L).setu(v0);
-    _800c67d8.setu(v0);
-    v0 = FUN_800dc384(0, 0x4L, 0x1L, 0) * 0x100;
-    MEMORY.ref(4, s2).offset(0x98L).setu(v0);
-    _800c67dc.setu(v0);
-    v0 = FUN_800dc384(0, 0x4L, 0x2L, 0);
-    s1 = a0 - MEMORY.ref(4, s2).offset(0x94L).get();
-    s4 = (int)s1 >> 8;
-    s1 = (int)s4 / 2;
-    lo = (long)(int)s1 * (int)s1 & 0xffff_ffffL;
-    v1 = a1 - MEMORY.ref(4, s2).offset(0x98L).get();
-    s5 = (int)v1 >> 8;
-    s1 = lo;
-    v1 = (int)s5 / 2;
-    lo = (long)(int)v1 * (int)v1 & 0xffff_ffffL;
-    v0 = v0 << 8;
-    s0 = a2 - v0;
-    s3 = (int)s0 >> 8;
-    t1 = lo;
-    s0 = (int)s3 / 2;
-    lo = (long)(int)s0 * (int)s3 & 0xffff_ffffL;
-    MEMORY.ref(4, s2).offset(0x9cL).setu(v0);
-    _800c67e0.setu(v0);
-    MEMORY.ref(4, s2).offset(0xdcL).setu(SquareRoot0(s1 + t1 + (int)lo / 2) * 0x200);
-    MEMORY.ref(4, s2).offset(0xd4L).setu((ratan2(s3, s4) & 0xfffL) * 0x100);
-    lo = (long)(int)s0 * (int)s0 & 0xffff_ffffL;
-    v1 = lo;
-    v0 = ratan2(s5, SquareRoot0(s1 + v1) * 2) & 0xfffL;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s2).offset(0xd8L).setu(v0);
-    MEMORY.ref(4, s2).offset(0xd0L).setu(a3);
+  public static void FUN_800d62d8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.setX(FUN_800dc384(0, 0x4L, 0, 0) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 0x4L, 1, 0) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 0x4L, 2, 0) << 8);
+    _800c67d8.set(cam.vec_94);
+    final int s4 = a0 - cam.vec_94.getX() >> 8;
+    final int s5 = a1 - cam.vec_94.getY() >> 8;
+    final int s3 = a2 - cam.vec_94.getZ() >> 8;
+    final int s1 = s4 / 2;
+    final int v1 = s5 / 2;
+    final int s0 = s3 / 2;
+    cam._d0.set(a3);
+    cam._d4.set((ratan2(s3, s4) & 0xfff) * 0x100);
+    cam._d8.set((ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8);
+    cam._dc.set(SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) * 0x200);
     final Ref<Long> sp0x18 = new Ref<>();
     final Ref<Long> sp0x1c = new Ref<>();
-    FUN_800dcebc(a4, a5, MEMORY.ref(4, s2).offset(0xdcL).get(), a3, sp0x18, sp0x1c);
-    MEMORY.ref(4, s2).offset(0xe8L).setu(a0);
-    MEMORY.ref(4, s2).offset(0xecL).setu(a1);
-    MEMORY.ref(4, s2).offset(0xf0L).setu(a2);
-    MEMORY.ref(1, s2).offset(0x120L).setu(0x14L);
-    MEMORY.ref(4, s2).offset(0xa4L).setu(sp0x18.get());
-    MEMORY.ref(4, s2).offset(0x11cL).oru(0x1L);
-    MEMORY.ref(4, s2).offset(0xb4L).setu((int)(sp0x1c.get() - sp0x18.get()) / (int)MEMORY.ref(4, s2).offset(0xd0L).get());
+    FUN_800dcebc(a4, a5, cam._dc.get(), a3, sp0x18, sp0x1c);
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._a4.set(sp0x18.get().intValue());
+    cam._b4.set((int)(sp0x1c.get() - sp0x18.get()) / cam._d0.get());
+    cam._11c.or(0x1L);
+    cam._120.set(20);
   }
 
   @Method(0x800d64e4L)
-  public static void FUN_800d64e4(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    final long s2 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s2).offset(0xacL).setu(FUN_800dc384(0, 0x5L, 0, 0) << 8);
-    MEMORY.ref(4, s2).offset(0xb8L).setu(FUN_800dc384(0, 0x5L, 0x1L, 0) << 8);
-    MEMORY.ref(4, s2).offset(0xa0L).setu(FUN_800dc384(0, 0x5L, 0x2L, 0) << 8);
-    final long s1 = (int)FUN_800dcfb8(0, MEMORY.ref(4, s2).offset(0xacL).get(), a0, a6 & 0x3L) >> 8;
-    final long s0 = (int)FUN_800dcfb8(0x1L, MEMORY.ref(4, s2).offset(0xb8L).get(), a1, (int)a6 >> 2 & 0x3L) >> 8;
-    FUN_800dcfb8(0x2L, MEMORY.ref(4, s2).offset(0xa0L).get(), a2, 0);
-    MEMORY.ref(4, s2).offset(0xdcL).setu(SquareRoot0(s1 * s1 + s0 * s0) << 8);
-    MEMORY.ref(4, s2).offset(0xd4L).setu((ratan2(s0, s1) & 0xfffL) << 8);
-    MEMORY.ref(4, s2).offset(0xd8L).setu(0);
-    MEMORY.ref(4, s2).offset(0xd0L).setu(a3);
+  public static void FUN_800d64e4(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam._ac.set(FUN_800dc384(0, 0x5L, 0, 0) << 8);
+    cam._b8.set(FUN_800dc384(0, 0x5L, 1, 0) << 8);
+    cam._a0.set(FUN_800dc384(0, 0x5L, 2, 0) << 8);
+    final int s1 = FUN_800dcfb8(0, cam._ac.get(), a0, a6 & 0x3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._b8.get(), a1, a6 >> 2 & 0x3) >> 8;
+    FUN_800dcfb8(2, cam._a0.get(), a2, 0);
+    cam._dc.set(SquareRoot0(s1 * s1 + s0 * s0) << 8);
+    cam._d4.set((ratan2(s0, s1) & 0xfff) << 8);
+    cam._d8.set(0);
+    cam._d0.set(a3);
 
-    final long s4;
-    final long s3;
+    final int s3;
+    final int s4;
     if(a4 == 0) {
       //LAB_800d6630
       s3 = a5;
-      s4 = MEMORY.ref(4, s2).offset(0xdcL).get() * 2 / a3 - s3;
+      s4 = cam._dc.get() * 2 / a3 - a5;
     } else if(a4 == 0x1L) {
       //LAB_800d6650
+      s3 = cam._dc.get() * 2 / a3 - a5;
       s4 = a5;
-      s3 = MEMORY.ref(4, s2).offset(0xdcL).get() * 2 / a3 - s4;
     } else {
       throw new RuntimeException("Undefined s3");
     }
 
     //LAB_800d666c
     //LAB_800d6674
-    MEMORY.ref(4, s2).offset(0xe0L).setu(s3);
-    MEMORY.ref(4, s2).offset(0xe8L).setu(a0);
-    MEMORY.ref(4, s2).offset(0xecL).setu(a1);
-    MEMORY.ref(4, s2).offset(0xf0L).setu(a2);
-    MEMORY.ref(4, s2).offset(0xe4L).setu((int)(s4 - s3) / (int)MEMORY.ref(4, s2).offset(0xd0L).get());
-    MEMORY.ref(1, s2).offset(0x120L).setu(0x15L);
-    MEMORY.ref(4, s2).offset(0x11cL).oru(0x1L);
-    MEMORY.ref(4, s2).offset(0xa4L).setu((int)FUN_800dcfb8(0x2L, MEMORY.ref(4, s2).offset(0xa0L).get(), a2, 0) / (int)MEMORY.ref(4, s2).offset(0xd0L).get());
+    cam._e0.set(s3);
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._e4.set((s4 - s3) / cam._d0.get());
+    cam._a4.set(FUN_800dcfb8(2, cam._a0.get(), a2, 0) / cam._d0.get());
+    cam._11c.or(0x1L);
+    cam._120.set(21);
   }
 
   @Method(0x800d670cL)
-  public static void FUN_800d670c(long a0, long a1, long a2, long a3, long a4, long a5, long a6, long a7) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
-    long lo;
-    s5 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s5).offset(0xf4L).setu(a7);
-    v0 = FUN_800dc384(0, 0x6L, 0, a7) << 8;
-    MEMORY.ref(4, s5).offset(0x94L).setu(v0);
-    v0 = FUN_800dc384(0, 0x6L, 1, a7) << 8;
-    MEMORY.ref(4, s5).offset(0x98L).setu(v0);
-    v0 = FUN_800dc384(0, 0x6L, 2, a7) << 8;
-    s1 = a0 - MEMORY.ref(4, s5).offset(0x94L).get();
-    s3 = (int)s1 >> 8;
-    s1 = s3;
-    s1 = (int)s1 / 2;
-    lo = (long)(int)s1 * (int)s1 & 0xffff_ffffL;
-    s1 = lo;
-    v1 = a1 - MEMORY.ref(4, s5).offset(0x98L).get();
-    s4 = (int)v1 >> 8;
-    v1 = s4;
-    v1 = (int)v1 / 2;
-    lo = (long)(int)v1 * (int)v1 & 0xffff_ffffL;
-    s2 = (int)(a2 - v0) >> 8;
-    v1 = lo;
-    s0 = (int)s2 / 2;
-    lo = (long)(int)s0 * (int)s2 & 0xffff_ffffL;
-    MEMORY.ref(4, s5).offset(0x9cL).setu(v0);
-    v1 = s1 + v1;
-    MEMORY.ref(4, s5).offset(0xdcL).setu(SquareRoot0(v1 + (int)lo / 2) * 0x200);
-    MEMORY.ref(4, s5).offset(0xd4L).setu((ratan2(s2, s3) & 0xfffL) * 0x100);
-    lo = (long)(int)s0 * (int)s0 & 0xffff_ffffL;
-    v1 = lo;
-    MEMORY.ref(4, s5).offset(0xd8L).setu((ratan2(s4, SquareRoot0(s1 + v1) * 2) & 0xfffL) * 0x100);
-    MEMORY.ref(4, s5).offset(0xd0L).setu(a3);
+  public static void FUN_800d670c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_f4.set(scriptIndex);
+    cam.vec_94.setX(FUN_800dc384(0, 0x6L, 0, scriptIndex) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 0x6L, 1, scriptIndex) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 0x6L, 2, scriptIndex) << 8);
+    final int s3 = a0 - cam.vec_94.getX() >> 8;
+    final int s4 = a1 - cam.vec_94.getY() >> 8;
+    final int s2 = a2 - cam.vec_94.getZ() >> 8;
+    final int s1 = s3 / 2;
+    final int v1 = s4 / 2;
+    final int s0 = s2 / 2;
+    cam._d0.set(a3);
+    cam._d4.set((ratan2(s2, s3) & 0xfff) * 0x100);
+    cam._d8.set((ratan2(s4, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) * 0x100);
+    cam._dc.set(SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) * 0x200);
 
+    final int s6;
+    final int s7;
     if(a4 == 0) {
       //LAB_800d68a0
       s6 = a5;
-      s7 = (int)(MEMORY.ref(4, s5).offset(0xdcL).get() * 0x2L) / (int)a3 - s6;
+      s7 = (cam._dc.get() * 2) / a3 - a5;
     } else if(a4 == 0x1L) {
       //LAB_800d68c0
+      s6 = (cam._dc.get() * 2) / a3 - a5;
       s7 = a5;
-      s6 = (int)(MEMORY.ref(4, s5).offset(0xdcL).get() * 0x2L) / (int)a3 - s7;
     } else {
       throw new RuntimeException("Undefined s6/s7");
     }
 
     //LAB_800d68e0
-    v0 = rview2_800c67f0.getAddress();
-
     //LAB_800d68e8
-    MEMORY.ref(4, v0).offset(0xa4L).setu(s6);
-    MEMORY.ref(4, v0).offset(0xe8L).setu(a0);
-    MEMORY.ref(4, v0).offset(0xecL).setu(a1);
-    MEMORY.ref(4, v0).offset(0xf0L).setu(a2);
-    MEMORY.ref(1, v0).offset(0x120L).setu(0x16L);
-    MEMORY.ref(4, v0).offset(0x11cL).oru(0x1L);
-    MEMORY.ref(4, v0).offset(0xb4L).setu((int)(s7 - s6) / (int)MEMORY.ref(4, v0).offset(0xd0L).get());
+    cam._a4.set(s6);
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._b4.set((s7 - s6) / cam._d0.get());
+    cam._11c.or(0x1L);
+    cam._120.set(22);
   }
 
   @Method(0x800d6960L)
-  public static void FUN_800d6960(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    final long s2 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s2).offset(0xf4L).setu(a7);
-    MEMORY.ref(4, s2).offset(0xacL).setu(FUN_800dc384(0, 0x7L, 0, a7) << 8);
-    MEMORY.ref(4, s2).offset(0xb8L).setu(FUN_800dc384(0, 0x7L, 1, a7) << 8);
-    MEMORY.ref(4, s2).offset(0xa0L).setu(FUN_800dc384(0, 0x7L, 2, a7) << 8);
-    final long s1 = (int)FUN_800dcfb8(0, MEMORY.ref(4, s2).offset(0xacL).get(), a0, a6 & 0x3L) >> 8;
-    final long s0 = (int)FUN_800dcfb8(1, MEMORY.ref(4, s2).offset(0xb8L).get(), a1, ((int)a6 >> 2) & 0x3L) >> 8;
-    FUN_800dcfb8(2, MEMORY.ref(4, s2).offset(0xa0L).get(), a2, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
-    MEMORY.ref(4, s2).offset(0xdcL).setu(SquareRoot0(s1 * s1 + s0 * s0) << 8);
-    MEMORY.ref(4, s2).offset(0xd4L).setu(ratan2(s0, s1) & 0xfffL << 8);
-    MEMORY.ref(4, s2).offset(0xd8L).setu(0);
-    MEMORY.ref(4, s2).offset(0xd0L).setu(a3);
-    long s3;
-    long s4;
+  public static void FUN_800d6960(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_f4.set(scriptIndex);
+    cam._ac.set(FUN_800dc384(0, 0x7L, 0, scriptIndex) << 8);
+    cam._b8.set(FUN_800dc384(0, 0x7L, 1, scriptIndex) << 8);
+    cam._a0.set(FUN_800dc384(0, 0x7L, 2, scriptIndex) << 8);
+    final int s1 = FUN_800dcfb8(0, cam._ac.get(), a0, a6 & 0x3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._b8.get(), a1, a6 >> 2 & 0x3) >> 8;
+    FUN_800dcfb8(2, cam._a0.get(), a2, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
+    cam._d0.set(a3);
+    cam._d4.set(ratan2(s0, s1) & 0xfff << 8);
+    cam._d8.set(0);
+    cam._dc.set(SquareRoot0(s1 * s1 + s0 * s0) << 8);
+    final int s3;
+    final int s4;
     if(a4 == 0) {
       //LAB_800d6ab4
       s3 = a5;
-      s4 = MEMORY.ref(4, s2).offset(0xdcL).getSigned() * 2 / (int)a3 - s3;
-    } else if(a4 == 0x1L) {
+      s4 = cam._dc.get() * 2 / a3 - a5;
+    } else if(a4 == 1) {
       //LAB_800d6ad4
+      s3 = cam._dc.get() * 2 / a3 - a5;
       s4 = a5;
-      s3 = MEMORY.ref(4, s2).offset(0xdcL).getSigned() * 2 / (int)a3 - s4;
     } else {
       throw new RuntimeException("s3/s4 undefined");
     }
 
     //LAB_800d6af0
     //LAB_800d6af8
-    MEMORY.ref(4, s2).offset(0xe0L).setu(s3);
-    MEMORY.ref(4, s2).offset(0xe8L).setu(a0);
-    MEMORY.ref(4, s2).offset(0xecL).setu(a1);
-    MEMORY.ref(4, s2).offset(0xf0L).setu(a2);
-    MEMORY.ref(4, s2).offset(0xe4L).setu((s4 - s3) / MEMORY.ref(4, s2).offset(0xd0L).getSigned());
-    MEMORY.ref(1, s2).offset(0x120L).setu(0x17L);
-    MEMORY.ref(4, s2).offset(0x11cL).oru(0x1L);
-    MEMORY.ref(4, s2).offset(0xa4L).setu(FUN_800dcfb8(0x2L, MEMORY.ref(4, s2).offset(0xa0L).get(), a2, 0) / MEMORY.ref(4, s2).offset(0xd0L).getSigned());
+    cam._e0.set(s3);
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._e4.set((s4 - s3) / cam._d0.get());
+    cam._a4.set(FUN_800dcfb8(2, cam._a0.get(), a2, 0) / cam._d0.get());
+    cam._11c.or(0x1L);
+    cam._120.set(23);
   }
 
   @Method(0x800d6b90L)
-  public static void FUN_800d6b90(long a0, long a1, long a2, long a3, long a4, long a5, long a6) {
-    long v0;
-    long v1;
-    long t0;
-    long t1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long lo;
-    s3 = a0;
-    s4 = a1;
-    s2 = a2;
-    s1 = a3;
-    v0 = 0x800c_0000L;
-    s0 = v0 + 0x67f0L;
-    v0 = MEMORY.ref(4, s0).offset(0xcL).get();
-    a3 = a5;
-    v1 = MEMORY.ref(4, s0).offset(0x14L).get();
-    a0 = v0 << 8;
-    v0 = MEMORY.ref(4, s0).offset(0x10L).get();
-    a1 = v1 << 8;
-    MEMORY.ref(4, s0).offset(0x20L).setu(a0);
-    MEMORY.ref(4, s0).offset(0x28L).setu(a1);
-    a2 = v0 << 8;
-    if(a3 == 0) {
-      MEMORY.ref(4, s0).offset(0x24L).setu(a2);
+  public static void FUN_800d6b90(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.set(cam.rview2_00.refpoint_0c);
+
+    if(a5 == 0) {
       //LAB_800d6c04
-      a0 = s3 - a0;
-      lo = (int)a0 / (int)s1;
-      a0 = lo;
-      v1 = s4 - a2;
-
-      lo = (int)v1 / (int)s1;
-      v1 = lo;
+      cam._5c.set(a3);
+      cam._3c.set((a0 - cam.vec_20.getX()) / a3);
+      cam._48.set((a1 - cam.vec_20.getY()) / a3);
+      cam._54.set((a2 - cam.vec_20.getZ()) / a3);
+    } else if(a5 == 0x1L) {
+      //LAB_800d6c44
+      //TODO undefined t0/t1
+/*
       v0 = s2 - a1;
-
+      lo = ((long)(int)v0 * (int)v0) & 0xffff_ffffL;
+      v1 = lo;
+      lo = ((long)(int)t0 * (int)t0) & 0xffff_ffffL;
+      t0 = lo;
+      lo = ((long)(int)t1 * (int)t1) & 0xffff_ffffL;
+      a0 = v1 + t0;
+      v0 = lo;
+      a0 = a0 + v0;
+      v0 = SquareRoot0(a0);
       lo = (int)v0 / (int)s1;
       v0 = lo;
-      MEMORY.ref(4, s0).offset(0x5cL).setu(s1);
-      MEMORY.ref(4, s0).offset(0x3cL).setu(a0);
-      MEMORY.ref(4, s0).offset(0x48L).setu(v1);
-      MEMORY.ref(4, s0).offset(0x54L).setu(v0);
-    } else {
-      MEMORY.ref(4, s0).offset(0x24L).setu(a2);
-      v0 = 0x1L;
-      if(a3 == v0) {
-        //LAB_800d6c44
-        //TODO undefined t0/t1
-/*
-        v0 = s2 - a1;
-        lo = ((long)(int)v0 * (int)v0) & 0xffff_ffffL;
-        v1 = lo;
-        lo = ((long)(int)t0 * (int)t0) & 0xffff_ffffL;
-        t0 = lo;
-        lo = ((long)(int)t1 * (int)t1) & 0xffff_ffffL;
-        a0 = v1 + t0;
-        v0 = lo;
-        a0 = a0 + v0;
-        v0 = SquareRoot0(a0);
-        lo = (int)v0 / (int)s1;
-        v0 = lo;
-        a1 = MEMORY.ref(4, s0).offset(0xcL).get();
-        a1 = a1 << 8;
-        a1 = s3 - a1;
-        lo = (int)a1 / (int)v0;
-        a1 = lo;
-        a0 = MEMORY.ref(4, s0).offset(0x10L).get();
-        a0 = a0 << 8;
-        a0 = s4 - a0;
-        lo = (int)a0 / (int)v0;
-        a0 = lo;
-        v1 = MEMORY.ref(4, s0).offset(0x14L).get();
-        v1 = v1 << 8;
-        v1 = s2 - v1;
-        lo = (int)v1 / (int)v0;
-        v1 = lo;
-        MEMORY.ref(4, s0).offset(0x5cL).setu(v0);
-        MEMORY.ref(4, s0).offset(0x3cL).setu(a1);
-        MEMORY.ref(4, s0).offset(0x48L).setu(a0);
-        MEMORY.ref(4, s0).offset(0x54L).setu(v1);
+      a1 = MEMORY.ref(4, s0).offset(0xcL).get();
+      a1 = a1 << 8;
+      a1 = s3 - a1;
+      lo = (int)a1 / (int)v0;
+      a1 = lo;
+      a0 = MEMORY.ref(4, s0).offset(0x10L).get();
+      a0 = a0 << 8;
+      a0 = s4 - a0;
+      lo = (int)a0 / (int)v0;
+      a0 = lo;
+      v1 = MEMORY.ref(4, s0).offset(0x14L).get();
+      v1 = v1 << 8;
+      v1 = s2 - v1;
+      lo = (int)v1 / (int)v0;
+      v1 = lo;
+      MEMORY.ref(4, s0).offset(0x5cL).setu(v0);
+      MEMORY.ref(4, s0).offset(0x3cL).setu(a1);
+      MEMORY.ref(4, s0).offset(0x48L).setu(a0);
+      MEMORY.ref(4, s0).offset(0x54L).setu(v1);
 */
-      }
     }
 
     //LAB_800d6cdc
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x67f0L;
-
     //LAB_800d6ce4
-    MEMORY.ref(1, v0).offset(0x121L).setu(0x8L);
-    MEMORY.ref(4, v0).offset(0x11cL).oru(0x2L);
+    cam._11c.or(0x2L);
+    cam._121.set(8);
   }
 
   @Method(0x800d7368L)
-  public static void FUN_800d7368(long a0, long a1, long a2, long a3, long a4, long a5, long a6) {
-    long v0;
-    long v1;
-    long t1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
-    long fp;
-    long lo;
-    s7 = a0;
-    fp = a1;
-    s3 = a2;
-    s2 = a3;
-    a0 = 0x1L;
-    a1 = 0x6L;
-    s0 = a6;
-    a2 = 0;
-    s4 = a5;
-    v0 = 0x800c_0000L;
-    s1 = v0 + 0x67f0L;
-    a3 = s0;
-    MEMORY.ref(4, s1).offset(0x80L).setu(s0);
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    a0 = 0x1L;
-    a1 = 0x6L;
-    a2 = a0;
-    a3 = s0;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s1).offset(0x20L).setu(v0);
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    a0 = 0x1L;
-    a1 = 0x6L;
-    a2 = 0x2L;
-    a3 = s0;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s1).offset(0x24L).setu(v0);
-    v0 = FUN_800dc384(a0, a1, a2, a3);
-    v1 = v0 << 8;
-    if(s4 == 0) {
-      MEMORY.ref(4, s1).offset(0x28L).setu(v1);
+  public static void FUN_800d7368(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_80.set(scriptIndex);
+    cam.vec_20.setX(FUN_800dc384(0x1L, 0x6L, 0, scriptIndex) << 8);
+    cam.vec_20.setY(FUN_800dc384(0x1L, 0x6L, 1, scriptIndex) << 8);
+    cam.vec_20.setZ(FUN_800dc384(0x1L, 0x6L, 2, scriptIndex) << 8);
+
+    if(a5 == 0) {
       //LAB_800d7424
-      a0 = MEMORY.ref(4, s1).offset(0x20L).get();
-      a0 = s7 - a0;
-      lo = (int)a0 / (int)s2;
-      a0 = lo;
-      v1 = s3 - v1;
-      lo = (int)v1 / (int)s2;
-      v1 = lo;
-      v0 = MEMORY.ref(4, s1).offset(0x24L).get();
-      v0 = fp - v0;
-      lo = (int)v0 / (int)s2;
-      v0 = lo;
-      MEMORY.ref(4, s1).offset(0x5cL).setu(s2);
-      MEMORY.ref(4, s1).offset(0x54L).setu(v1);
-      MEMORY.ref(4, s1).offset(0x3cL).setu(a0);
-      MEMORY.ref(4, s1).offset(0x48L).setu(v0);
-    } else {
-      MEMORY.ref(4, s1).offset(0x28L).setu(v1);
-      v0 = 0x1L;
-      if(s4 == v0) {
-        assert false : "Undefined s5/s6";
-        s5 = 0;
-        s6 = 0;
-        //LAB_800d7470
-        v0 = s3 - v1;
-        lo = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
-        v1 = lo;
-        lo = (long)(int)s5 * (int)s5 & 0xffff_ffffL;
-        t1 = lo;
-        lo = (long)(int)s6 * (int)s6 & 0xffff_ffffL;
-        a0 = v1 + t1;
-        v0 = lo;
-        a0 = a0 + v0;
-        v0 = SquareRoot0(a0);
-        lo = (int)v0 / (int)s2;
-        v0 = lo;
-        a1 = MEMORY.ref(4, s1).offset(0x20L).get();
-        a1 = s7 - a1;
-        lo = (int)a1 / (int)v0;
-        a1 = lo;
-        a0 = MEMORY.ref(4, s1).offset(0x24L).get();
-        a0 = fp - a0;
-        lo = (int)a0 / (int)v0;
-        a0 = lo;
-        v1 = MEMORY.ref(4, s1).offset(0x28L).get();
-        v1 = s3 - v1;
-        lo = (int)v1 / (int)v0;
-        v1 = lo;
-        MEMORY.ref(4, s1).offset(0x5cL).setu(v0);
-        MEMORY.ref(4, s1).offset(0x3cL).setu(a1);
-        MEMORY.ref(4, s1).offset(0x48L).setu(a0);
-        MEMORY.ref(4, s1).offset(0x54L).setu(v1);
-      }
+      cam._5c.set(a3);
+      cam._3c.set((a0 - cam.vec_20.getX()) / a3);
+      cam._48.set((a1 - cam.vec_20.getY()) / a3);
+      cam._54.set((a2 - cam.vec_20.getZ()) / a3);
+    } else if(a5 == 0x1L) {
+      assert false : "Undefined s5/s6";
+      final int s5 = 0;
+      final int s6 = 0;
+      //LAB_800d7470
+      int v0 = a2 - cam.vec_20.getZ();
+      v0 = SquareRoot0(v0 * v0) / a3;
+      cam._5c.set(v0);
+      cam._3c.set((a0 - cam.vec_20.getX()) / v0);
+      cam._48.set((a1 - cam.vec_20.getY()) / v0);
+      cam._54.set((a2 - cam.vec_20.getZ()) / v0);
     }
 
     //LAB_800d74fc
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x67f0L;
-
     //LAB_800d7504
-    v1 = MEMORY.ref(4, v0).offset(0x11cL).get();
-    a0 = 0xeL;
-    MEMORY.ref(1, v0).offset(0x121L).setu(a0);
-    v1 = v1 | 0x2L;
-    MEMORY.ref(4, v0).offset(0x11cL).setu(v1);
+    cam._11c.or(0x2L);
+    cam._121.set(14);
   }
 
   @Method(0x800d8274L)
-  public static void FUN_800d8274(long a0, long a1, long a2, long a3, long a4, long a5, long a6, long a7) {
-    long v0;
-    long v1;
-    long t0;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long s6;
-    long s7;
-    long fp;
-    long lo;
-    long sp4c;
-    long sp50;
-    long sp54;
-    fp = a0;
-    s1 = 0x800c_0000L;
-    s1 = s1 + 0x67f0L;
-    sp4c = a1;
-    sp50 = a2;
-    sp54 = a3;
-    v0 = MEMORY.ref(4, s1).offset(0xcL).get();
-    s4 = (int)fp >> 8;
-    s4 = s4 - v0;
-    s3 = s4 >>> 31;
-    s3 = s4 + s3;
-    s3 = (int)s3 >> 1;
-    lo = (long)(int)s3 * (int)s3 & 0xffff_ffffL;
-    v0 = MEMORY.ref(4, s1).offset(0x10L).get();
-    s5 = (int)a1 >> 8;
-    s5 = s5 - v0;
-    v0 = s5 >>> 31;
-    s3 = lo;
-    v0 = s5 + v0;
-    v0 = (int)v0 >> 1;
-    lo = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
-    v0 = MEMORY.ref(4, s1).offset(0x14L).get();
-    s2 = (int)a2 >> 8;
-    s2 = s2 - v0;
-    s0 = s2 >>> 31;
-    v1 = lo;
-    s0 = s2 + s0;
-    s0 = (int)s0 >> 1;
-    lo = (long)(int)s0 * (int)s2 & 0xffff_ffffL;
-    s6 = a4;
-    s7 = a5;
-    v1 = s3 + v1;
-    a0 = lo;
-    v0 = a0 >>> 31;
-    a0 = a0 + v0;
-    a0 = (int)a0 >> 1;
-    a0 = v1 + a0;
-    v0 = SquareRoot0(a0);
-    a0 = s2;
-    a1 = s4;
-    v0 = v0 << 9;
-    MEMORY.ref(4, s1).offset(0x68L).setu(v0);
-    v0 = ratan2(a0, a1);
-    lo = (long)(int)s0 * (int)s0 & 0xffff_ffffL;
-    v0 = v0 & 0xfffL;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s1).offset(0x60L).setu(v0);
-    v1 = lo;
-    a0 = s3 + v1;
-    v0 = SquareRoot0(a0);
-    a0 = s5;
-    a1 = v0 << 1;
-    v0 = ratan2(a0, a1);
-    a0 = s6;
-    a1 = s7;
-    v0 = v0 & 0xfffL;
-    v0 = v0 << 8;
-    MEMORY.ref(4, s1).offset(0x64L).setu(v0);
-    t0 = sp54;
-    MEMORY.ref(4, s1).offset(0x5cL).setu(t0);
-    a2 = MEMORY.ref(4, s1).offset(0x68L).get();
-    a3 = MEMORY.ref(4, s1).offset(0x5cL).get();
+  public static void FUN_800d8274(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    final int s4 = (a0 >> 8) - cam.rview2_00.refpoint_0c.getX();
+    final int s5 = (a1 >> 8) - cam.rview2_00.refpoint_0c.getY();
+    final int s2 = (a2 >> 8) - cam.rview2_00.refpoint_0c.getZ();
+    final int s3 = s4 / 2;
+    final int v0 = s5 / 2;
+    final int s0 = s2 / 2;
+    cam._5c.set(a3);
+    cam.vec_60.setX((ratan2(s2, s4) & 0xfff) << 8);
+    cam.vec_60.setY((ratan2(s5, SquareRoot0(s3 * s3 + s0 * s0) * 2) & 0xfff) << 8);
+    cam.vec_60.setZ(SquareRoot0(s3 * s3 + v0 * v0 + s0 * s0) << 9);
     final Ref<Long> sp0x18 = new Ref<>();
     final Ref<Long> sp0x1c = new Ref<>();
-    FUN_800dcebc(a0, a1, a2, a3, sp0x18, sp0x1c);
-    a1 = sp0x18.get();
-    a0 = sp0x1c.get();
-    v0 = MEMORY.ref(4, s1).offset(0x5cL).get();
-    a0 = a0 - a1;
-    lo = (int)a0 / (int)v0;
-    a0 = lo;
-    MEMORY.ref(4, s1).offset(0x74L).setu(fp);
-    t0 = sp4c;
-    v1 = MEMORY.ref(4, s1).offset(0x11cL).get();
-    v0 = 0x10L;
-    MEMORY.ref(4, s1).offset(0x78L).setu(t0);
-    t0 = sp50;
-    v1 = v1 | 0x2L;
-    MEMORY.ref(4, s1).offset(0x7cL).setu(t0);
-    MEMORY.ref(1, s1).offset(0x121L).setu(v0);
-    MEMORY.ref(4, s1).offset(0x30L).setu(a1);
-    MEMORY.ref(4, s1).offset(0x11cL).setu(v1);
-    MEMORY.ref(4, s1).offset(0x40L).setu(a0);
+    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), cam._5c.get(), sp0x18, sp0x1c);
+    cam._30.set(sp0x18.get().intValue());
+    cam._40.set((sp0x1c.get().intValue() - sp0x18.get().intValue()) / cam._5c.get());
+    cam.vec_74.setX(a0);
+    cam.vec_74.setY(a1);
+    cam.vec_74.setZ(a2);
+    cam._11c.or(0x2L);
+    cam._121.set(16);
   }
 
   @Method(0x800d89f8L)
-  public static void FUN_800d89f8(long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
-    long s5;
-    long lo;
-    s2 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s2).offset(0x80L).setu(a7);
-    MEMORY.ref(4, s2).offset(0x20L).setu(FUN_800dc384(0x1L, 0x6L, 0, a7) << 8);
-    MEMORY.ref(4, s2).offset(0x24L).setu(FUN_800dc384(0x1L, 0x6L, 1, a7) << 8);
-    v0 = FUN_800dc384(0x1L, 0x6L, 2, a7) << 8;
-    s1 = a0 - MEMORY.ref(4, s2).offset(0x20L).get();
-    s4 = (int)s1 >> 8;
-    s1 = (int)s4 / 2;
-    lo = ((long)(int)s1 * (int)s1) & 0xffff_ffffL;
-    v1 = a1 - MEMORY.ref(4, s2).offset(0x24L).get();
-    s5 = (int)v1 >> 8;
-    s1 = lo;
-    v1 = (int)s5 / 2;
-    lo = ((long)(int)v1 * (int)v1) & 0xffff_ffffL;
-    s0 = a2 - v0;
-    s3 = (int)s0 >> 8;
-    v1 = lo;
-    s0 = (int)s3 / 2;
-    lo = ((long)(int)s0 * (int)s3) & 0xffff_ffffL;
-    MEMORY.ref(4, s2).offset(0x28L).setu(v0);
-    v1 = s1 + v1;
-    a0 = v1 + (int)lo / 2;
-    MEMORY.ref(4, s2).offset(0x68L).setu(SquareRoot0(a0) << 9);
-    MEMORY.ref(4, s2).offset(0x60L).setu((ratan2(s3, s4) & 0xfffL) << 8);
-    MEMORY.ref(4, s2).offset(0x64L).setu((ratan2(s5, SquareRoot0(s1 + s0 * s0) * 2) & 0xfffL) << 8);
-    MEMORY.ref(4, s2).offset(0x5cL).setu(a3);
+  public static void FUN_800d89f8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_80.set(scriptIndex);
+    cam.vec_20.setX(FUN_800dc384(0x1L, 0x6L, 0, scriptIndex) << 8);
+    cam.vec_20.setY(FUN_800dc384(0x1L, 0x6L, 1, scriptIndex) << 8);
+    cam.vec_20.setZ(FUN_800dc384(0x1L, 0x6L, 2, scriptIndex) << 8);
+    final int s4 = a0 - cam.vec_20.getX() >> 8;
+    final int s5 = a1 - cam.vec_20.getY() >> 8;
+    final int s3 = a2 - cam.vec_20.getZ() >> 8;
+    final int s1 = s4 / 2;
+    final int v1 = s5 / 2;
+    final int s0 = s3 / 2;
+    cam._5c.set(a3);
+    cam.vec_60.setX((ratan2(s3, s4) & 0xfff) << 8);
+    cam.vec_60.setY((ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8);
+    cam.vec_60.setZ(SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) << 9);
     final Ref<Long> sp0x18 = new Ref<>();
     final Ref<Long> sp0x1c = new Ref<>();
-    FUN_800dcebc(a4, a5, MEMORY.ref(4, s2).offset(0x68L).get(), a3, sp0x18, sp0x1c);
-    MEMORY.ref(4, s2).offset(0x74L).setu(a0);
-    MEMORY.ref(4, s2).offset(0x78L).setu(a1);
-    MEMORY.ref(4, s2).offset(0x7cL).setu(a2);
-    MEMORY.ref(1, s2).offset(0x121L).setu(0x16L);
-    MEMORY.ref(4, s2).offset(0x30L).setu(sp0x18.get());
-    MEMORY.ref(4, s2).offset(0x11cL).oru(0x2L);
-    MEMORY.ref(4, s2).offset(0x40L).setu((sp0x1c.get() - sp0x18.get()) / MEMORY.ref(4, s2).offset(0x5cL).getSigned());
+    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
+    cam.vec_74.setX(a0);
+    cam.vec_74.setY(a1);
+    cam.vec_74.setZ(a2);
+    cam._30.set(sp0x18.get().intValue());
+    cam._40.set((sp0x1c.get().intValue() - sp0x18.get().intValue()) / cam._5c.get());
+    cam._11c.or(0x2L);
+    cam._121.set(22);
   }
 
   @Method(0x800d8decL)
   public static long FUN_800d8dec(final RunningScript a0) {
-    final long s3 = a0.params_20.get(0).deref().get();
-    final long s0 = a0.params_20.get(1).deref().get();
-    final long s1 = a0.params_20.get(2).deref().get();
-    final long s4 = a0.params_20.get(3).deref().get();
+    final int s3 = a0.params_20.get(0).deref().get();
+    final int s0 = a0.params_20.get(1).deref().get();
+    final int s1 = a0.params_20.get(2).deref().get();
+    final int s4 = a0.params_20.get(3).deref().get();
 
-    final long s2 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, s2).offset(0x118L).setu(0x1L);
-    MEMORY.ref(4, s2).offset(0x100L).setu(getProjectionPlaneDistance() << 16);
-    MEMORY.ref(4, s2).offset(0x104L).setu(s0 << 16);
-    if((int)s0 < getProjectionPlaneDistance()) {
+    final BattleCamera cam = camera_800c67f0;
+    cam._100.set(getProjectionPlaneDistance() << 16);
+    cam._104.set(s0 << 16);
+    cam._118.set(1);
+
+    if(s0 < getProjectionPlaneDistance()) {
       //LAB_800d8e64
-      MEMORY.ref(4, s2).offset(0x114L).setu(0x1L);
+      cam._114.set(1);
     } else {
-      MEMORY.ref(4, s2).offset(0x114L).setu(0);
+      cam._114.set(0);
     }
 
     //LAB_800d8e68
-    final long a2 = Math.abs(s0 - getProjectionPlaneDistance()) << 16;
+    final int a2 = Math.abs(s0 - getProjectionPlaneDistance()) << 16;
+    cam._108.set(s1);
     if(s3 == 0) {
-      MEMORY.ref(4, s2).offset(0x108L).setu(s1);
-      MEMORY.ref(4, s2).offset(0x110L).setu(0);
-      MEMORY.ref(4, s2).offset(0x10cL).setu((int)a2 / (int)s1);
+      cam._10c.set(a2 / s1);
+      cam._110.set(0);
     } else {
       //LAB_800d8ea0
-      MEMORY.ref(4, s2).offset(0x108L).setu(s1);
-
       final Ref<Long> sp0x18 = new Ref<>();
       final Ref<Long> sp0x1c = new Ref<>();
       FUN_800dcebc(s3 - 0x1L, s4 << 8, a2, s1, sp0x18, sp0x1c);
-      MEMORY.ref(4, s2).offset(0x10cL).setu(sp0x18.get());
-      MEMORY.ref(4, s2).offset(0x110L).setu((sp0x1c.get() - sp0x18.get()) / s1);
+      cam._10c.set(sp0x18.get().intValue());
+      cam._110.set((sp0x1c.get().intValue() - sp0x18.get().intValue()) / s1);
     }
 
     //LAB_800d8eec
@@ -2633,70 +2183,51 @@ public final class Bttl_800d {
 
   @Method(0x800d8f10L)
   public static void FUN_800d8f10() {
-    long v0;
-    long v1;
-    long t0;
-    long s0;
-    v0 = 0x800c_0000L;
-    s0 = v0 + 0x67f0L;
-    v0 = 0x800c_0000L;
-    t0 = v0 + 0x6dd4L;
-    long a1 = MEMORY.ref(4, t0).offset(0x0L).get();
-    long a2 = MEMORY.ref(4, t0).offset(0x4L).get();
-    long sp10 = a1;
-    long sp14 = a2;
+    final BattleCamera cam = camera_800c67f0;
 
-    if(MEMORY.ref(4, s0).offset(0x11cL).get() != 0) {
-      if((MEMORY.ref(4, s0).offset(0x11cL).get() & 0x1L) != 0) {
-        v0 = 0x8010_0000L;
-        v0 = v0 - 0x5344L;
-        v1 = MEMORY.ref(1, s0).offset(0x120L).get() * 0x4L;
-        v1 = v1 + v0;
-        MEMORY.ref(4, v1).offset(0x0L).deref(4).call();
+    if(cam._11c.get() != 0) {
+      if((cam._11c.get() & 0x1L) != 0) {
+        _800facbc.offset(cam._120.get() * 0x4L).deref(4).call();
       }
 
       //LAB_800d8f80
-      if((MEMORY.ref(4, s0).offset(0x11cL).get() & 0x2L) != 0) {
-        v0 = 0x8010_0000L;
-        v0 = v0 - 0x52e4L;
-        v1 = MEMORY.ref(1, s0).offset(0x121L).get() * 0x4L;
-        v1 = v1 + v0;
-        MEMORY.ref(4, v1).offset(0x0L).deref(4).call();
+      if((cam._11c.get() & 0x2L) != 0) {
+        _800fad1c.offset(cam._121.get() * 0x4L).deref(4).call();
       }
     }
 
     //LAB_800d8fb4
-    GsSetRefView2(rview2_800c67f0);
+    GsSetRefView2(camera_800c67f0.rview2_00);
     FUN_800daa80();
     FUN_800d8fe0();
   }
 
   @Method(0x800d8fe0L)
   public static void FUN_800d8fe0() {
-    final long s0 = rview2_800c67f0.getAddress();
+    final BattleCamera cam = camera_800c67f0;
 
-    if(MEMORY.ref(1, s0).offset(0x118L).get() != 0 && MEMORY.ref(4, s0).offset(0x108L).get() == 0) {
-      setProjectionPlaneDistance((int)MEMORY.ref(2, s0).offset(0x102L).getSigned());
-      MEMORY.ref(1, s0).offset(0x118L).setu(0);
+    if(cam._118.get() != 0 && cam._108.get() == 0) {
+      setProjectionPlaneDistance(cam._100.get() >> 16);
+      cam._118.set(0);
     }
 
     //LAB_800d9028
-    if(MEMORY.ref(1, s0).offset(0x118L).get() != 0) {
-      if(MEMORY.ref(4, s0).offset(0x108L).get() != 0) {
-        if(MEMORY.ref(4, s0).offset(0x114L).get() == 0) {
-          MEMORY.ref(4, s0).offset(0x100L).addu(MEMORY.ref(4, s0).offset(0x10cL).get());
+    if(cam._118.get() != 0) {
+      if(cam._108.get() != 0) {
+        if(cam._114.get() == 0) {
+          cam._100.add(cam._10c.get());
         } else {
           //LAB_800d906c
-          MEMORY.ref(4, s0).offset(0x100L).subu(MEMORY.ref(4, s0).offset(0x10cL).get());
+          cam._100.sub(cam._10c.get());
         }
 
         //LAB_800d907c
-        MEMORY.ref(4, s0).offset(0x10cL).addu(MEMORY.ref(4, s0).offset(0x110L).get());
-        setProjectionPlaneDistance((int)MEMORY.ref(2, s0).offset(0x102L).getSigned());
+        cam._10c.add(cam._110.get());
+        setProjectionPlaneDistance(cam._100.get() >> 16);
 
-        MEMORY.ref(4, s0).offset(0x108L).subu(0x1L);
-        if(MEMORY.ref(4, s0).offset(0x108L).get() == 0) {
-          MEMORY.ref(1, s0).offset(0x118L).setu(0);
+        cam._108.decr();
+        if(cam._108.get() == 0) {
+          cam._118.set(0);
         }
       }
     }
@@ -2706,42 +2237,16 @@ public final class Bttl_800d {
 
   @Method(0x800d90c8L)
   public static void FUN_800d90c8() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long s0;
-    v0 = 0x800c_0000L;
-    s0 = v0 + 0x67f0L;
-    a0 = MEMORY.ref(4, s0).offset(0x94L).get();
-    v0 = MEMORY.ref(4, s0).offset(0xb0L).get();
-    a1 = MEMORY.ref(4, s0).offset(0x98L).get();
-    a2 = MEMORY.ref(4, s0).offset(0x9cL).get();
-    v1 = MEMORY.ref(4, s0).offset(0xc8L).get();
-    a0 = a0 + v0;
-    v0 = MEMORY.ref(4, s0).offset(0xbcL).get();
-    a2 = a2 + v1;
-    MEMORY.ref(4, s0).offset(0x94L).setu(a0);
-    a0 = (int)a0 >> 8;
-    MEMORY.ref(4, s0).offset(0x9cL).setu(a2);
-    a2 = (int)a2 >> 8;
-    a1 = a1 + v0;
-    MEMORY.ref(4, s0).offset(0x98L).setu(a1);
-    a1 = (int)a1 >> 8;
-    setViewpoint((int)a0, (int)a1, (int)a2);
-    v0 = MEMORY.ref(4, s0).offset(0xd0L).get();
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.x.add(cam._b0.get());
+    cam.vec_94.y.add(cam._bc.get());
+    cam.vec_94.z.add(cam._c8.get());
+    setViewpoint(cam.vec_94.getX() >> 8, cam.vec_94.getY() >> 8, cam.vec_94.getZ() >> 8);
 
-    v0 = v0 - 0x1L;
-    if((int)v0 > 0) {
-      MEMORY.ref(4, s0).offset(0xd0L).setu(v0);
-    } else {
-      MEMORY.ref(4, s0).offset(0xd0L).setu(v0);
-      v0 = MEMORY.ref(4, s0).offset(0x11cL).get();
-      v1 = -0x2L;
-      MEMORY.ref(1, s0).offset(0x122L).setu(0);
-      v0 = v0 & v1;
-      MEMORY.ref(4, s0).offset(0x11cL).setu(v0);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._11c.and(0xffff_fffeL);
+      cam._122.set(0);
     }
 
     //LAB_800d9144
@@ -2749,44 +2254,21 @@ public final class Bttl_800d {
 
   @Method(0x800d9220L)
   public static void FUN_800d9220() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long s0;
-    v0 = 0x800c_0000L;
-    s0 = v0 + 0x67f0L;
-    a1 = MEMORY.ref(4, s0).offset(0x94L).get();
-    v0 = MEMORY.ref(4, s0).offset(0xb0L).get();
-    v1 = MEMORY.ref(4, s0).offset(0x98L).get();
-    a2 = MEMORY.ref(4, s0).offset(0x9cL).get();
-    a0 = MEMORY.ref(4, s0).offset(0xc8L).get();
-    a1 = a1 + v0;
-    a2 = a2 + a0;
-    MEMORY.ref(4, s0).offset(0x94L).setu(a1);
-    a1 = (int)a1 >> 8;
-    MEMORY.ref(4, s0).offset(0x9cL).setu(a2);
-    a2 = (int)a2 >> 8;
-    v0 = MEMORY.ref(4, s0).offset(0xbcL).get();
-    a0 = MEMORY.ref(4, s0).offset(0xcL).get();
-    v1 = v1 + v0;
-    MEMORY.ref(4, s0).offset(0x98L).setu(v1);
-    v1 = (int)v1 >> 8;
-    a0 = a0 + a1;
-    a1 = MEMORY.ref(4, s0).offset(0x10L).get();
-    v0 = MEMORY.ref(4, s0).offset(0x14L).get();
-    a1 = a1 + v1;
-    a2 = v0 + a2;
-    setViewpoint((int)a0, (int)a1, (int)a2);
-    v0 = MEMORY.ref(4, s0).offset(0xd0L).get();
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.x.add(cam._b0.get());
+    cam.vec_94.y.add(cam._bc.get());
+    cam.vec_94.z.add(cam._c8.get());
 
-    v0 = v0 - 0x1L;
-    MEMORY.ref(4, s0).offset(0xd0L).setu(v0);
-    if((int)v0 <= 0) {
-      v0 = 0x4L;
-      MEMORY.ref(1, s0).offset(0x122L).setu(0);
-      MEMORY.ref(1, s0).offset(0x120L).setu(v0);
+    setViewpoint(
+      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
+      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
+      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
+    );
+
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._120.set(4);
+      cam._122.set(0);
     }
 
     //LAB_800d92ac
@@ -2794,21 +2276,21 @@ public final class Bttl_800d {
 
   @Method(0x800d92bcL)
   public static void FUN_800d92bc() {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0xacL).addu(MEMORY.ref(4, s0).offset(0xb0L).get());
-    MEMORY.ref(4, s0).offset(0xa0L).addu(MEMORY.ref(4, s0).offset(0xc8L).get());
-    MEMORY.ref(4, s0).offset(0xb8L).addu(MEMORY.ref(4, s0).offset(0xbcL).get());
+    final BattleCamera cam = camera_800c67f0;
+    cam._a0.add(cam._c8.get());
+    cam._ac.add(cam._b0.get());
+    cam._b8.add(cam._bc.get());
 
-    final Ref<Long> sp0x18 = new Ref<>(MEMORY.ref(4, s0).offset(0xacL).getSigned() >> 8);
-    final Ref<Long> sp0x1c = new Ref<>(MEMORY.ref(4, s0).offset(0xb8L).getSigned() >> 8);
-    final Ref<Long> sp0x20 = new Ref<>(MEMORY.ref(4, s0).offset(0xa0L).getSigned() >> 8);
-    FUN_800dcc94(MEMORY.ref(4, s0).offset(0x0cL).get(), MEMORY.ref(4, s0).offset(0x10L).get(), MEMORY.ref(4, s0).offset(0x14L).get(), sp0x18, sp0x1c, sp0x20);
-    setViewpoint(sp0x18.get().intValue(), sp0x1c.get().intValue(), sp0x20.get().intValue());
+    final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
+    setViewpoint(refX.get(), refY.get(), refZ.get());
 
-    MEMORY.ref(4, s0).offset(0xd0L).subu(0x1L);
-    if(MEMORY.ref(4, s0).offset(0xd0L).getSigned() <= 0) {
-      MEMORY.ref(1, s0).offset(0x122L).setu(0);
-      MEMORY.ref(1, s0).offset(0x120L).setu(0x5L);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._120.set(5);
+      cam._122.set(0);
     }
 
     //LAB_800d9370
@@ -2816,23 +2298,24 @@ public final class Bttl_800d {
 
   @Method(0x800d9380L)
   public static void FUN_800d9380() {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x94L).addu(MEMORY.ref(4, s0).offset(0xb0L).get());
-    MEMORY.ref(4, s0).offset(0x98L).addu(MEMORY.ref(4, s0).offset(0xbcL).get());
-    MEMORY.ref(4, s0).offset(0x9cL).addu(MEMORY.ref(4, s0).offset(0xc8L).get());
+    final BattleCamera cam = camera_800c67f0;
 
-    final BtldScriptData27c v0 = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, s0).offset(0xf4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    cam.vec_94.x.add(cam._b0.get());
+    cam.vec_94.y.add(cam._bc.get());
+    cam.vec_94.z.add(cam._c8.get());
+
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+
     setViewpoint(
-      (int)(v0._148.coord2_14.coord.transfer.getX() + (MEMORY.ref(4, s0).offset(0x94L).getSigned() >> 8)),
-      (int)(v0._148.coord2_14.coord.transfer.getY() + (MEMORY.ref(4, s0).offset(0x98L).getSigned() >> 8)),
-      (int)(v0._148.coord2_14.coord.transfer.getZ() + (MEMORY.ref(4, s0).offset(0x9cL).getSigned() >> 8))
+      bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8),
+      bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8),
+      bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8)
     );
 
-    MEMORY.ref(4, s0).offset(0xd0L).subu(0x1L);
-
-    if(MEMORY.ref(4, s0).offset(0xd0L).getSigned() <= 0) {
-      MEMORY.ref(1, s0).offset(0x122L).setu(0);
-      MEMORY.ref(1, s0).offset(0x120L).setu(0x6L);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._120.set(6);
+      cam._122.set(0);
     }
 
     //LAB_800d9428
@@ -2840,73 +2323,29 @@ public final class Bttl_800d {
 
   @Method(0x800d9518L)
   public static void FUN_800d9518() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    long s0;
-    long s1;
-    long s2;
-    a2 = 0x8010_0000L;
-    a0 = _800fab98.getAddress();
-    s2 = rview2_800c67f0.getAddress();
-    MEMORY.ref(2, a0).offset(0x4L).setu(0);
-    v0 = MEMORY.ref(4, s2).offset(0xd4L).get();
-    v1 = MEMORY.ref(4, s2).offset(0xd8L).get();
-    v0 = (int)v0 >> 8;
-    v1 = (int)v1 >> 8;
-    MEMORY.ref(2, a2).offset(-0x5468L).setu(v0);
-    MEMORY.ref(2, a0).offset(0x2L).setu(v1);
+    final BattleCamera cam = camera_800c67f0;
+    _800fab98.setX((short)(cam._d4.get() >> 8));
+    _800fab98.setY((short)(cam._d8.get() >> 8));
+    _800fab98.setZ((short)0);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
-    v0 = 0x8010_0000L;
-    a0 = _800faba0.getAddress();
-    s1 = 0x8010_0000L;
-    s0 = _800faba8.getAddress();
-    MEMORY.ref(2, v0).offset(-0x5460L).setu(0);
-    MEMORY.ref(2, a0).offset(0x2L).setu(0);
-    v1 = MEMORY.ref(4, s2).offset(0xa4L).get();
-    a3 = MEMORY.ref(4, s2).offset(0xb4L).get();
-    v0 = MEMORY.ref(4, s2).offset(0xdcL).get();
-    v1 = v1 + a3;
-    v0 = v0 - v1;
-    MEMORY.ref(4, s2).offset(0xdcL).setu(v0);
-    v0 = (int)v0 >> 8;
-    MEMORY.ref(4, s2).offset(0xa4L).setu(v1);
-    MEMORY.ref(2, a0).offset(0x4L).setu(v0);
+    cam._a4.add(cam._b4.get());
+    cam._dc.sub(cam._a4.get());
+    _800faba0.setX((short)0);
+    _800faba0.setY((short)0);
+    _800faba0.setZ((short)(cam._dc.get() >> 8));
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
-    v0 = MEMORY.ref(4, s0).offset(0x8L).get();
-    a3 = MEMORY.ref(4, s2).offset(0xe8L).get();
-    v1 = MEMORY.ref(4, s2).offset(0xecL).get();
-    a2 = MEMORY.ref(4, s2).offset(0xf0L).get();
-    v0 = v0 << 8;
-    a3 = a3 - v0;
-    v0 = MEMORY.ref(4, s1).offset(-0x5458L).get();
-    a0 = (int)a3 >> 8;
-    v0 = v0 << 8;
-    v1 = v1 - v0;
-    v0 = MEMORY.ref(4, s0).offset(0x4L).get();
-    a1 = (int)v1 >> 8;
-    MEMORY.ref(4, s2).offset(0x94L).setu(a3);
-    MEMORY.ref(4, s2).offset(0x98L).setu(v1);
-    v0 = v0 << 8;
-    v0 = v0 + a2;
-    a2 = (int)v0 >> 8;
-    MEMORY.ref(4, s2).offset(0x9cL).setu(v0);
-    setViewpoint((int)a0, (int)a1, (int)a2);
-    v0 = MEMORY.ref(4, s2).offset(0xd0L).get();
+    cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
+    cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
+    cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
 
-    v0 = v0 - 0x1L;
-    MEMORY.ref(4, s2).offset(0xd0L).setu(v0);
-    if((int)v0 <= 0) {
-      v0 = MEMORY.ref(4, s2).offset(0x11cL).get();
-      v1 = -0x2L;
-      MEMORY.ref(1, s2).offset(0x122L).setu(0);
-      v0 = v0 & v1;
-      MEMORY.ref(4, s2).offset(0x11cL).setu(v0);
+    setViewpoint(cam.vec_94.getX() >> 8, cam.vec_94.getY() >> 8, cam.vec_94.getZ() >> 8);
+
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._11c.and(0xffff_fffeL);
+      cam._122.set(0);
     }
 
     //LAB_800d9638
@@ -2914,38 +2353,34 @@ public final class Bttl_800d {
 
   @Method(0x800d9788L)
   public static void FUN_800d9788() {
-    final long s2 = rview2_800c67f0.getAddress();
-    _800fab98.setX((short)(MEMORY.ref(4, s2).offset(0xd4L).get() / 0x100));
-    _800fab98.setY((short)(MEMORY.ref(4, s2).offset(0xd8L).get() / 0x100));
+    final BattleCamera cam = camera_800c67f0;
+    _800fab98.setX((short)(cam._d4.get() >> 8));
+    _800fab98.setY((short)(cam._d8.get() >> 8));
     _800fab98.setZ((short)0);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
-    final long v1 = MEMORY.ref(4, s2).offset(0xa4L).get() + MEMORY.ref(4, s2).offset(0xb4L).get();
-    MEMORY.ref(4, s2).offset(0xdcL).subu(v1);
-    MEMORY.ref(4, s2).offset(0xa4L).setu(v1);
-    _800faba0.setZ((short)(MEMORY.ref(4, s2).offset(0xdcL).get() / 0x100));
+    cam._a4.add(cam._b4.get());
+    cam._dc.sub(cam._a4.get());
+    _800faba0.setZ((short)(cam._dc.get() >> 8));
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
 
-    final long t0 = MEMORY.ref(4, s2).offset(0xe8L).get() - _800faba8.getZ() * 0x100;
-    MEMORY.ref(4, s2).offset(0x94L).setu(t0);
-    final long a3 = MEMORY.ref(4, s2).offset(0xecL).get() - _800faba8.getX() * 0x100;
-    MEMORY.ref(4, s2).offset(0x98L).setu(a3);
-    final long v0 = MEMORY.ref(4, s2).offset(0xf0L).get() + _800faba8.getY() * 0x100;
-    MEMORY.ref(4, s2).offset(0x9cL).setu(v0);
+    cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
+    cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
+    cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
 
     setViewpoint(
-      (int)(MEMORY.ref(4, s2).offset(0x0cL).get() + (int)t0 / 0x100),
-      (int)(MEMORY.ref(4, s2).offset(0x10L).get() + (int)a3 / 0x100),
-      (int)(MEMORY.ref(4, s2).offset(0x14L).get() + (int)v0 / 0x100)
+      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
+      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
+      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
     );
 
-    MEMORY.ref(4, s2).offset(0xd0L).subu(0x1L);
-    if((int)MEMORY.ref(4, s2).offset(0xd0L).get() <= 0) {
-      MEMORY.ref(1, s2).offset(0x122L).setu(0);
-      MEMORY.ref(1, s2).offset(0x120L).setu(0x4L);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._120.set(4);
+      cam._122.set(0);
     }
 
     //LAB_800d98b8
@@ -2953,30 +2388,27 @@ public final class Bttl_800d {
 
   @Method(0x800d98d0L)
   public static void FUN_800d98d0() {
-    final Ref<Long> sp0x18 = new Ref<>();
-    final Ref<Long> sp0x1c = new Ref<>();
-    final Ref<Long> sp0x20 = new Ref<>();
+    final BattleCamera cam = camera_800c67f0;
+    final IntRef refX = new IntRef().set(cam._d4.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._d8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._dc.get() >> 8);
+    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
+    cam._a0.add(cam._a4.get());
+    refX.add(cam._e8.get() >> 8);
+    refY.add(cam._ec.get() >> 8);
+    refZ.set(cam._a0.get() >> 8);
+    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
+    setViewpoint(cam.rview2_00.refpoint_0c.getX() + refX.get(), cam.rview2_00.refpoint_0c.getY() + refY.get(), cam.rview2_00.refpoint_0c.getZ() + refZ.get());
+    cam._e0.add(cam._e4.get());
+    cam._dc.sub(cam._e0.get());
 
-    final long s3 = rview2_800c67f0.getAddress();
-    sp0x18.set((long)((int)MEMORY.ref(4, s3).offset(0xd4L).get() >> 8));
-    sp0x1c.set((long)((int)MEMORY.ref(4, s3).offset(0xd8L).get() >> 8));
-    sp0x20.set((long)((int)MEMORY.ref(4, s3).offset(0xdcL).get() >> 8));
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    MEMORY.ref(4, s3).offset(0xa0L).addu(MEMORY.ref(4, s3).offset(0xa4L).get());
-    sp0x18.set(sp0x18.get() + ((int)MEMORY.ref(4, s3).offset(0xe8L).get() >> 8));
-    sp0x1c.set(sp0x20.get() + ((int)MEMORY.ref(4, s3).offset(0xecL).get() >> 8));
-    sp0x20.set((long)((int)MEMORY.ref(4, s3).offset(0xa0L).get() >> 8));
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setViewpoint((int)(MEMORY.ref(4, s3).offset(0x0cL).get() + sp0x18.get()), (int)(MEMORY.ref(4, s3).offset(0x10L).get() + sp0x1c.get()), (int)(MEMORY.ref(4, s3).offset(0x14L).get() + sp0x20.get()));
-    MEMORY.ref(4, s3).offset(0xe0L).addu(MEMORY.ref(4, s3).offset(0xe4L).get());
-    MEMORY.ref(4, s3).offset(0xd0L).subu(0x1L);
-    MEMORY.ref(4, s3).offset(0xdcL).subu(MEMORY.ref(4, s3).offset(0xe0L).get());
-    if((int)MEMORY.ref(4, s3).offset(0xd0L).get() <= 0) {
-      MEMORY.ref(1, s3).offset(0x122L).setu(0);
-      MEMORY.ref(4, s3).offset(0xacL).setu(FUN_800dc384(0, 0x5L, 0, 0) << 8);
-      MEMORY.ref(4, s3).offset(0xb8L).setu(FUN_800dc384(0, 0x5L, 0x1L, 0) << 8);
-      MEMORY.ref(4, s3).offset(0xa0L).setu(FUN_800dc384(0, 0x5L, 0x2L, 0) << 8);
-      MEMORY.ref(1, s3).offset(0x120L).setu(0x5L);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._ac.set(FUN_800dc384(0, 0x5L, 0, 0) << 8);
+      cam._b8.set(FUN_800dc384(0, 0x5L, 1, 0) << 8);
+      cam._a0.set(FUN_800dc384(0, 0x5L, 2, 0) << 8);
+      cam._120.set(5);
+      cam._122.set(0);
     }
 
     //LAB_800d9a4c
@@ -2984,30 +2416,29 @@ public final class Bttl_800d {
 
   @Method(0x800d9a68L)
   public static void FUN_800d9a68() {
-    final long s3 = rview2_800c67f0.getAddress();
-    final ScriptState<BtldScriptData27c> s2 = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, s3).offset(0xf4L).get()).derefAs(ScriptState.classFor(BtldScriptData27c.class));
-    _800fab98.setX((short)(MEMORY.ref(4, s3).offset(0xd4L).getSigned() / 0x100));
-    _800fab98.setY((short)(MEMORY.ref(4, s3).offset(0xd8L).getSigned() / 0x100));
+    final BattleCamera cam = camera_800c67f0;
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    _800fab98.setX((short)(cam._d4.get() >> 8));
+    _800fab98.setY((short)(cam._d8.get() >> 8));
     _800fab98.setZ((short)0);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
-    MEMORY.ref(4, s3).offset(0xa4L).addu(MEMORY.ref(4, s3).offset(0xb4L).get());
-    MEMORY.ref(4, s3).offset(0xdcL).subu(MEMORY.ref(4, s3).offset(0xa4L).get());
-    _800faba0.setZ((short)(MEMORY.ref(4, s3).offset(0xdcL).get() / 0x100));
+    cam._a4.add(cam._b4.get());
+    cam._dc.sub(cam._a4.get());
+    _800faba0.setZ((short)(cam._dc.get() >> 8));
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
-    MEMORY.ref(4, s3).offset(0x94L).setu(MEMORY.ref(4, s3).offset(0xe8L).getSigned() - _800faba8.getZ() * 0x100);
-    MEMORY.ref(4, s3).offset(0x98L).setu(MEMORY.ref(4, s3).offset(0xecL).getSigned() - _800faba8.getX() * 0x100);
-    MEMORY.ref(4, s3).offset(0x9cL).setu(MEMORY.ref(4, s3).offset(0xf0L).getSigned() + _800faba8.getY() * 0x100);
-    final BtldScriptData27c v0 = s2.innerStruct_00.deref();
-    setViewpoint((int)(v0._148.coord2_14.coord.transfer.getX() + MEMORY.ref(4, s3).offset(0x94L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getY() + MEMORY.ref(4, s3).offset(0x98L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getZ() + MEMORY.ref(4, s3).offset(0x9cL).getSigned() / 0x100));
+    cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
+    cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
+    cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
+    setViewpoint(bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8), bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8));
 
-    MEMORY.ref(4, s3).offset(0xd0L).subu(0x1L);
-    if((int)MEMORY.ref(4, s3).offset(0xd0L).get() <= 0) {
-      MEMORY.ref(1, s3).offset(0x122L).setu(0);
-      MEMORY.ref(1, s3).offset(0x120L).setu(0x6L);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      cam._120.set(6);
+      cam._122.set(0);
     }
 
     //LAB_800d9bb8
@@ -3016,39 +2447,32 @@ public final class Bttl_800d {
   /** TODO I might have messed this up */
   @Method(0x800d9bd4L)
   public static void FUN_800d9bd4() {
-    long v0;
-    long s0;
-    long s4;
-    s0 = rview2_800c67f0.getAddress();
-    final Ref<Long> sp0x18 = new Ref<>(MEMORY.ref(4, s0).offset(0xd4L).getSigned() >> 8);
-    final Ref<Long> sp0x1c = new Ref<>(MEMORY.ref(4, s0).offset(0xd8L).getSigned() >> 8);
-    final Ref<Long> sp0x20 = new Ref<>(MEMORY.ref(4, s0).offset(0xdcL).getSigned() >> 8);
-    v0 = MEMORY.ref(4, s0).offset(0xf4L).get();
-    v0 = scriptStatePtrArr_800bc1c0.get((int)v0).getAddress();
-    s4 = MEMORY.ref(4, v0).offset(0x0L).get();
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    sp0x18.set(sp0x18.get() + (MEMORY.ref(4, s0).offset(0xe8L).getSigned() >> 8));
-    sp0x1c.set(sp0x20.get() + (MEMORY.ref(4, s0).offset(0xecL).getSigned() >> 8));
-    MEMORY.ref(4, s0).offset(0xa0L).addu(MEMORY.ref(4, s0).offset(0xa4L).get());
-    sp0x20.set(MEMORY.ref(4, s0).offset(0xa0L).getSigned() >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    v0 = MEMORY.ref(4, s4).offset(0x0L).get();
-    setViewpoint((int)(MEMORY.ref(4, v0).offset(0x174L).get() + sp0x18.get()), (int)(MEMORY.ref(4, v0).offset(0x178L).get() + sp0x1c.get()), (int)(MEMORY.ref(4, v0).offset(0x17cL).get() + sp0x20.get()));
-    MEMORY.ref(4, s0).offset(0xe0L).addu(MEMORY.ref(4, s0).offset(0xe4L).get());
-    MEMORY.ref(4, s0).offset(0xd0L).subu(0x1L);
-    MEMORY.ref(4, s0).offset(0xdcL).subu(MEMORY.ref(4, s0).offset(0xe0L).get());
+    final BattleCamera cam = camera_800c67f0;
+    final IntRef refX = new IntRef().set(cam._d4.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._d8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._dc.get() >> 8);
+    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
+    cam._a0.add(cam._a4.get());
+    refX.add(cam._e8.get() >> 8);
+    refY.add(cam._ec.get() >> 8);
+    refZ.set(cam._a0.get() >> 8);
+    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    setViewpoint(bobj._148.coord2_14.coord.transfer.getX() + refX.get(), bobj._148.coord2_14.coord.transfer.getY() + refY.get(), bobj._148.coord2_14.coord.transfer.getZ() + refZ.get());
+    cam._e0.add(cam._e4.get());
+    cam._dc.sub(cam._e0.get());
 
-    if(MEMORY.ref(4, s0).offset(0xd0L).getSigned() <= 0) {
-      MEMORY.ref(1, s0).offset(0x122L).setu(0);
-      v0 = MEMORY.ref(4, s4).offset(0x0L).get();
-      sp0x18.set(MEMORY.ref(4, s0).offset(0x0L).get());
-      sp0x1c.set(MEMORY.ref(4, s0).offset(0x4L).get());
-      sp0x20.set(MEMORY.ref(4, s0).offset(0x8L).get());
-      FUN_800dcd9c(MEMORY.ref(4, v0).offset(0x174L).get(), MEMORY.ref(4, v0).offset(0x178L).get(), MEMORY.ref(4, v0).offset(0x17cL).get(), sp0x18, sp0x1c, sp0x20);
-      MEMORY.ref(1, s0).offset(0x120L).setu(0x7L);
-      MEMORY.ref(4, s0).offset(0xacL).setu(sp0x18.get() << 8);
-      MEMORY.ref(4, s0).offset(0xb8L).setu(sp0x1c.get() << 8);
-      MEMORY.ref(4, s0).offset(0xa0L).setu(sp0x20.get() << 8);
+    cam._d0.decr();
+    if(cam._d0.get() <= 0) {
+      refX.set(cam.rview2_00.viewpoint_00.getX());
+      refY.set(cam.rview2_00.viewpoint_00.getY());
+      refZ.set(cam.rview2_00.viewpoint_00.getZ());
+      FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+      cam._ac.set(refX.get() << 8);
+      cam._b8.set(refY.get() << 8);
+      cam._a0.set(refZ.get() << 8);
+      cam._120.set(7);
+      cam._122.set(0);
     }
 
     //LAB_800d9d7c
@@ -3056,40 +2480,16 @@ public final class Bttl_800d {
 
   @Method(0x800d9da0L)
   public static void FUN_800d9da0() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long s0;
-    v0 = 0x800c_0000L;
-    s0 = v0 + 0x67f0L;
-    a0 = MEMORY.ref(4, s0).offset(0x20L).get();
-    v0 = MEMORY.ref(4, s0).offset(0x3cL).get();
-    a1 = MEMORY.ref(4, s0).offset(0x24L).get();
-    a2 = MEMORY.ref(4, s0).offset(0x28L).get();
-    v1 = MEMORY.ref(4, s0).offset(0x54L).get();
-    a0 = a0 + v0;
-    v0 = MEMORY.ref(4, s0).offset(0x48L).get();
-    a2 = a2 + v1;
-    MEMORY.ref(4, s0).offset(0x20L).setu(a0);
-    a0 = (int)a0 >> 8;
-    MEMORY.ref(4, s0).offset(0x28L).setu(a2);
-    a2 = (int)a2 >> 8;
-    a1 = a1 + v0;
-    MEMORY.ref(4, s0).offset(0x24L).setu(a1);
-    a1 = (int)a1 >> 8;
-    setRefpoint((int)a0, (int)a1, (int)a2);
-    v0 = MEMORY.ref(4, s0).offset(0x5cL).get();
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.x.add(cam._3c.get());
+    cam.vec_20.y.add(cam._48.get());
+    cam.vec_20.z.add(cam._54.get());
+    setRefpoint(cam.vec_20.getX() >> 8, cam.vec_20.getY() >> 8, cam.vec_20.getZ() >> 8);
 
-    v0 = v0 - 0x1L;
-    MEMORY.ref(4, s0).offset(0x5cL).setu(v0);
-    if((int)v0 <= 0) {
-      v0 = MEMORY.ref(4, s0).offset(0x11cL).get();
-      v1 = -0x3L;
-      MEMORY.ref(1, s0).offset(0x123L).setu(0);
-      v0 = v0 & v1;
-      MEMORY.ref(4, s0).offset(0x11cL).setu(v0);
+    cam._5c.decr();
+    if(cam._5c.get() <= 0) {
+      cam._11c.and(0xffff_fffdL);
+      cam._123.set(0);
     }
 
     //LAB_800d9e1c
@@ -3097,18 +2497,18 @@ public final class Bttl_800d {
 
   @Method(0x800da058L)
   public static void FUN_800da058() {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x20L).addu(MEMORY.ref(4, s0).offset(0x3cL).get());
-    MEMORY.ref(4, s0).offset(0x24L).addu(MEMORY.ref(4, s0).offset(0x48L).get());
-    MEMORY.ref(4, s0).offset(0x28L).addu(MEMORY.ref(4, s0).offset(0x54L).get());
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.x.add(cam._3c.get());
+    cam.vec_20.y.add(cam._48.get());
+    cam.vec_20.z.add(cam._54.get());
 
-    final ScriptState<?> a2 = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, s0).offset(0x80L).get()).deref();
-    final BtldScriptData27c v0 = a2.innerStruct_00.derefAs(BtldScriptData27c.class);
-    setRefpoint((int)(v0._148.coord2_14.coord.transfer.getX() + MEMORY.ref(4, s0).offset(0x20L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getY() + MEMORY.ref(4, s0).offset(0x24L).getSigned() / 0x100), (int)(v0._148.coord2_14.coord.transfer.getY() + MEMORY.ref(4, s0).offset(0x28L).getSigned() / 0x100));
-    MEMORY.ref(4, s0).offset(0x5cL).subu(0x1L);
-    if((int)MEMORY.ref(4, s0).offset(0x5cL).get() <= 0) {
-      MEMORY.ref(1, s0).offset(0x123L).setu(0);
-      MEMORY.ref(1, s0).offset(0x121L).setu(0x6L);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    setRefpoint(bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+
+    cam._5c.decr();
+    if(cam._5c.get() <= 0) {
+      cam._121.set(6);
+      cam._123.set(0);
     }
 
     //LAB_800da100
@@ -3116,72 +2516,28 @@ public final class Bttl_800d {
 
   @Method(0x800da1f0L)
   public static void FUN_800da1f0() {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    long s0;
-    long s1;
-    long s2;
-    a2 = 0x8010_0000L;
-    v0 = 0x800c_0000L;
-    s2 = v0 + 0x67f0L;
+    final BattleCamera cam = camera_800c67f0;
+    _800fab98.setX((short)(cam.vec_60.getX() >> 8));
+    _800fab98.setY((short)(cam.vec_60.getY() >> 8));
     _800fab98.setZ((short)0);
-    v0 = MEMORY.ref(4, s2).offset(0x60L).get();
-    v1 = MEMORY.ref(4, s2).offset(0x64L).get();
-    v0 = (int)v0 >> 8;
-    v1 = (int)v1 >> 8;
-    MEMORY.ref(2, a2).offset(-0x5468L).setu(v0);
-    _800fab98.setY((short)v1);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
-    v0 = 0x8010_0000L;
-    s1 = 0x8010_0000L;
-    s0 = _800faba8.getAddress();
-    MEMORY.ref(2, v0).offset(-0x5460L).setu(0);
+    cam._30.add(cam._40.get());
+    cam.vec_60.z.sub(cam._30.get());
+    _800faba0.setX((short)0);
     _800faba0.setY((short)0);
-    v1 = MEMORY.ref(4, s2).offset(0x30L).get();
-    a3 = MEMORY.ref(4, s2).offset(0x40L).get();
-    v0 = MEMORY.ref(4, s2).offset(0x68L).get();
-    v1 = v1 + a3;
-    v0 = v0 - v1;
-    MEMORY.ref(4, s2).offset(0x68L).setu(v0);
-    v0 = (int)v0 >> 8;
-    MEMORY.ref(4, s2).offset(0x30L).setu(v1);
-    _800faba0.setZ((short)v0);
+    _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
-    v0 = MEMORY.ref(4, s0).offset(0x8L).get();
-    a3 = MEMORY.ref(4, s2).offset(0x74L).get();
-    v1 = MEMORY.ref(4, s2).offset(0x78L).get();
-    a2 = MEMORY.ref(4, s2).offset(0x7cL).get();
-    v0 = v0 << 8;
-    a3 = a3 - v0;
-    v0 = MEMORY.ref(4, s1).offset(-0x5458L).get();
-    a0 = (int)a3 >> 8;
-    v0 = v0 << 8;
-    v1 = v1 - v0;
-    v0 = MEMORY.ref(4, s0).offset(0x4L).get();
-    a1 = (int)v1 >> 8;
-    MEMORY.ref(4, s2).offset(0x20L).setu(a3);
-    MEMORY.ref(4, s2).offset(0x24L).setu(v1);
-    v0 = v0 << 8;
-    v0 = v0 + a2;
-    a2 = (int)v0 >> 8;
-    MEMORY.ref(4, s2).offset(0x28L).setu(v0);
-    setRefpoint((int)a0, (int)a1, (int)a2);
-    v0 = MEMORY.ref(4, s2).offset(0x5cL).get();
+    cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
+    cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
+    cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
+    setRefpoint(cam.vec_20.getX() >> 8, cam.vec_20.getY() >> 8, cam.vec_20.getZ() >> 8);
 
-    v0 = v0 - 0x1L;
-    MEMORY.ref(4, s2).offset(0x5cL).setu(v0);
-    if((int)v0 <= 0) {
-      v0 = MEMORY.ref(4, s2).offset(0x11cL).get();
-      v1 = -0x3L;
-      MEMORY.ref(1, s2).offset(0x123L).setu(0);
-      v0 = v0 & v1;
-      MEMORY.ref(4, s2).offset(0x11cL).setu(v0);
+    cam._5c.decr();
+    if(cam._5c.get() <= 0) {
+      cam._11c.and(0xffff_fffdL);
+      cam._123.set(0);
     }
 
     //LAB_800da310
@@ -3189,14 +2545,14 @@ public final class Bttl_800d {
 
   @Method(0x800da750L)
   public static void FUN_800da750() {
-    final long s3 = rview2_800c67f0.getAddress();
-    final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, s3).offset(0x80L).get()).deref();
+    final BattleCamera cam = camera_800c67f0;
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
-    MEMORY.ref(4, s3).offset(0x30L).addu(MEMORY.ref(4, s3).offset(0x40L).getSigned());
-    MEMORY.ref(4, s3).offset(0x68L).subu(MEMORY.ref(4, s3).offset(0x30L).getSigned());
+    cam._30.add(cam._40.get());
+    cam.vec_60.z.sub(cam._30.get());
 
-    _800fab98.setX((short)(MEMORY.ref(4, s3).offset(0x60L).getSigned() >> 8));
-    _800fab98.setY((short)(MEMORY.ref(4, s3).offset(0x64L).getSigned() >> 8));
+    _800fab98.setX((short)(cam.vec_60.getX() >> 8));
+    _800fab98.setY((short)(cam.vec_60.getY() >> 8));
     _800fab98.setZ((short)0);
 
     RotMatrix_8003faf0(_800fab98, _800c6798);
@@ -3205,26 +2561,24 @@ public final class Bttl_800d {
 
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
-    _800faba0.setZ((short)(MEMORY.ref(4, s3).offset(0x68L).getSigned() >> 8));
+    _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
 
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
 
-    MEMORY.ref(4, s3).offset(0x20L).setu(MEMORY.ref(4, s3).offset(0x74L).getSigned() - (_800faba8.getZ() << 8));
-    MEMORY.ref(4, s3).offset(0x24L).setu(MEMORY.ref(4, s3).offset(0x78L).getSigned() - (_800faba8.getX() << 8));
-    MEMORY.ref(4, s3).offset(0x28L).setu(MEMORY.ref(4, s3).offset(0x7cL).getSigned() + (_800faba8.getY() << 8));
+    cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
+    cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
+    cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
 
-    final BtldScriptData27c v0 = s2.innerStruct_00.derefAs(BtldScriptData27c.class);
     setRefpoint(
-      (int)(v0._148.coord2_14.coord.transfer.getX() + (MEMORY.ref(4, s3).offset(0x20L).getSigned() >> 8)),
-      (int)(v0._148.coord2_14.coord.transfer.getY() + (MEMORY.ref(4, s3).offset(0x24L).getSigned() >> 8)),
-      (int)(v0._148.coord2_14.coord.transfer.getZ() + (MEMORY.ref(4, s3).offset(0x28L).getSigned() >> 8))
+      bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8),
+      bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8),
+      bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8)
     );
 
-    MEMORY.ref(4, s3).offset(0x5cL).subu(0x1L);
-
-    if(MEMORY.ref(4, s3).offset(0x5cL).getSigned() <= 0) {
-      MEMORY.ref(1, s3).offset(0x123L).setu(0);
-      MEMORY.ref(1, s3).offset(0x121L).setu(0x6L);
+    cam._5c.decr();
+    if(cam._5c.get() <= 0) {
+      cam._121.set(6);
+      cam._123.set(0);
     }
 
     //LAB_800da8a0
@@ -3263,12 +2617,12 @@ public final class Bttl_800d {
 
       //LAB_800dab70
       //LAB_800dab78
-      SetGeomOffset((int)(x_800c67bc.get() + x), (int)(y_800c67c0.get() + y));
+      SetGeomOffset((int)(x_800c67bc.getSigned() + x), (int)(y_800c67c0.getSigned() + y));
 
       _800c67c4.subu(0x1L);
-      if((int)_800c67c4.get() <= 0) {
-        _800fabb8.setu(0); //1b
-        SetGeomOffset((int)x_800c67bc.get(), (int)y_800c67c0.get());
+      if(_800c67c4.getSigned() <= 0) {
+        _800fabb8.setu(0);
+        SetGeomOffset((int)x_800c67bc.getSigned(), (int)y_800c67c0.getSigned());
       }
     }
 
@@ -3283,17 +2637,17 @@ public final class Bttl_800d {
 
   @Method(0x800dabecL)
   public static void FUN_800dabec() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(2, v0).offset(0x8cL).setu(0);
-    MEMORY.ref(2, v0).offset(0x8eL).setu(0);
-    MEMORY.ref(2, v0).offset(0x90L).setu(0);
-    MEMORY.ref(4, v0).offset(0x108L).setu(0);
-    MEMORY.ref(1, v0).offset(0x118L).setu(0);
-    MEMORY.ref(4, v0).offset(0x11cL).setu(0);
-    MEMORY.ref(1, v0).offset(0x120L).setu(0);
-    MEMORY.ref(1, v0).offset(0x121L).setu(0);
-    MEMORY.ref(1, v0).offset(0x122L).setu(0);
-    MEMORY.ref(1, v0).offset(0x123L).setu(0);
+    final BattleCamera cam = camera_800c67f0;
+    cam.svec_8c.setX((short)0);
+    cam.svec_8c.setY((short)0);
+    cam.svec_8c.setZ((short)0);
+    cam._108.set(0);
+    cam._118.set(0);
+    cam._11c.set(0);
+    cam._120.set(0);
+    cam._121.set(0);
+    cam._122.set(0);
+    cam._123.set(0);
   }
 
   @Method(0x800dac20L)
@@ -3303,102 +2657,105 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dac70L)
-  public static void FUN_800dac70(final long index, final long a1, final long a2, final long a3, final long a4) {
-    _800fabbc.offset(index * 0x4L).deref(4).call(a1, a2, a3, a4);
-    _800c68ec.setu(index);
+  public static void FUN_800dac70(final int index, final int x, final int y, final int z, final int scriptIndex) {
+    _800fabbc.get(index).deref().run(x, y, z, scriptIndex);
+    callbackIndex_800c68ec.setu(index);
   }
 
   @Method(0x800dacc4L)
-  public static void FUN_800dacc4(final long x, final long y, final long z, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x94L).setu(x);
-    MEMORY.ref(4, s0).offset(0x98L).setu(y);
-    MEMORY.ref(4, s0).offset(0x9cL).setu(z);
-    setViewpoint((int)x >> 8, (int)y >> 8, (int)z >> 8);
-    MEMORY.ref(1, s0).offset(0x120L).setu(0);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+  public static void FUN_800dacc4(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.setX(x);
+    cam.vec_94.setY(y);
+    cam.vec_94.setZ(z);
+    setViewpoint(x >> 8, y >> 8, z >> 8);
+    cam._11c.or(0x1L);
+    cam._120.set(0);
   }
 
   @Method(0x800dad14L)
-  public static void FUN_800dad14(final long x, final long y, final long z, final long a3) {
-    final Ref<Long> refX = new Ref<>(x);
-    final Ref<Long> refY = new Ref<>(y);
-    final Ref<Long> refZ = new Ref<>(z);
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0xacL).setu(x);
-    MEMORY.ref(4, s0).offset(0xb8L).setu(y);
-    MEMORY.ref(4, s0).offset(0xa0L).setu(z);
+  public static void FUN_800dad14(final int x, final int y, final int z, final int scriptIndex) {
+    final IntRef refX = new IntRef().set(x);
+    final IntRef refY = new IntRef().set(y);
+    final IntRef refZ = new IntRef().set(z);
+    final BattleCamera cam = camera_800c67f0;
+    cam._a0.set(z);
+    cam._ac.set(x);
+    cam._b8.set(y);
     FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    setViewpoint(refX.get().intValue() >> 8, refY.get().intValue() >> 8, refZ.get().intValue() >> 8);
+    setViewpoint(refX.get() >> 8, refY.get() >> 8, refZ.get() >> 8);
 
-    MEMORY.ref(1, s0).offset(0x120L).setu(0x1L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+    cam._11c.or(0x1L);
+    cam._120.set(1);
   }
 
   @Method(0x800dadd0L)
-  public static void FUN_800dadd0(final long x, final long y, final long z, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x94L).setu(x);
-    MEMORY.ref(4, s0).offset(0x98L).setu(y);
-    MEMORY.ref(4, s0).offset(0x9cL).setu(z);
+  public static void FUN_800dadd0(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.setX(x);
+    cam.vec_94.setY(y);
+    cam.vec_94.setZ(z);
 
     setViewpoint(
-      (int)(MEMORY.ref(4, s0).offset(0x0cL).get() + ((int)x >> 8)),
-      (int)(MEMORY.ref(4, s0).offset(0x10L).get() + ((int)y >> 8)),
-      (int)(MEMORY.ref(4, s0).offset(0x14L).get() + ((int)z >> 8))
+      cam.rview2_00.refpoint_0c.getX() + (x >> 8),
+      cam.rview2_00.refpoint_0c.getY() + (y >> 8),
+      cam.rview2_00.refpoint_0c.getZ() + (z >> 8)
     );
 
-    MEMORY.ref(1, s0).offset(0x120L).setu(0x4L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+    cam._11c.or(0x1L);
+    cam._120.set(4);
   }
 
   @Method(0x800dae3cL)
-  public static void FUN_800dae3c(final long x, final long y, final long z, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0xacL).setu(x);
-    MEMORY.ref(4, s0).offset(0xb8L).setu(y);
-    MEMORY.ref(4, s0).offset(0xa0L).setu(z);
-    final Ref<Long> refX = new Ref<>(MEMORY.ref(4, s0).offset(0xacL).getSigned() >> 8);
-    final Ref<Long> refY = new Ref<>(MEMORY.ref(4, s0).offset(0xb8L).getSigned() >> 8);
-    final Ref<Long> refZ = new Ref<>(MEMORY.ref(4, s0).offset(0xa0L).getSigned() >> 8);
-    FUN_800dcc94(MEMORY.ref(4, s0).offset(0xc0L).get(), MEMORY.ref(4, s0).offset(0x10L).get(), MEMORY.ref(4, s0).offset(0x14L).get(), refX, refY, refZ);
-    setViewpoint(refX.get().intValue(), refY.get().intValue(), refZ.get().intValue());
-    MEMORY.ref(1, s0).offset(0x120L).setu(0x5L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+  public static void FUN_800dae3c(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam._a0.set(z);
+    cam._ac.set(x);
+    cam._b8.set(y);
+    final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
+    setViewpoint(refX.get(), refY.get(), refZ.get());
+    cam._11c.or(0x1L);
+    cam._120.set(5);
   }
 
   @Method(0x800daedcL)
-  public static void FUN_800daedc(long x, long y, long z, long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x94L).setu(x);
-    MEMORY.ref(4, s0).offset(0x98L).setu(y);
-    MEMORY.ref(4, s0).offset(0x9cL).setu(z);
-    final long v0 = FUN_800dd02c(a3);
+  public static void FUN_800daedc(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_94.setX(x);
+    cam.vec_94.setY(y);
+    cam.vec_94.setZ(z);
+
+    final VECTOR v0 = FUN_800dd02c(scriptIndex);
+
     setViewpoint(
-      (int)(MEMORY.ref(4, v0).offset(0x0L).get() + ((int)MEMORY.ref(4, s0).offset(0x94L).get() >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x4L).get() + ((int)MEMORY.ref(4, s0).offset(0x98L).get() >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x8L).get() + ((int)MEMORY.ref(4, s0).offset(0x9cL).get() >> 8))
+      v0.getX() + (cam.vec_94.getX() >> 8),
+      v0.getY() + (cam.vec_94.getY() >> 8),
+      v0.getZ() + (cam.vec_94.getZ() >> 8)
     );
-    MEMORY.ref(4, s0).offset(0xf4L).setu(a3);
-    MEMORY.ref(1, s0).offset(0x120L).setu(0x6L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+
+    cam.bobjIndex_f4.set(scriptIndex);
+    cam._11c.or(0x1L);
+    cam._120.set(6);
   }
 
   @Method(0x800daf6cL)
-  public static void FUN_800daf6c(final long a0, final long a1, final long a2, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0xacL).setu(a0);
-    MEMORY.ref(4, s0).offset(0xb8L).setu(a1);
-    MEMORY.ref(4, s0).offset(0xa0L).setu(a2);
-    final Ref<Long> refX = new Ref<>((long)(int)a0 >> 8);
-    final Ref<Long> refY = new Ref<>((long)(int)a1 >> 8);
-    final Ref<Long> refZ = new Ref<>((long)(int)a2 >> 8);
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get((int)a3).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-    FUN_800dcc94(v1._148.coord2_14.coord.transfer.getX(), v1._148.coord2_14.coord.transfer.getY(), v1._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get().intValue(), refY.get().intValue(), refZ.get().intValue());
-    MEMORY.ref(4, s0).offset(0xf4L).setu(a3);
-    MEMORY.ref(1, s0).offset(0x120L).setu(0x7L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x1L);
+  public static void FUN_800daf6c(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam._a0.set(z);
+    cam._ac.set(x);
+    cam._b8.set(y);
+    final IntRef refX = new IntRef().set(x >> 8);
+    final IntRef refY = new IntRef().set(y >> 8);
+    final IntRef refZ = new IntRef().set(z >> 8);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    setViewpoint(refX.get(), refY.get(), refZ.get());
+    cam.bobjIndex_f4.set(scriptIndex);
+    cam._11c.or(0x1L);
+    cam._120.set(7);
   }
 
   @Method(0x800db034L)
@@ -3408,55 +2765,54 @@ public final class Bttl_800d {
   }
 
   @Method(0x800db084L)
-  public static void FUN_800db084(final long index, final long a1, final long a2, final long a3, final long a4) {
-    _800fabdc.offset(index * 0x4L).deref(4).call(a1, a2, a3, a4);
-    _800c6878.setu(index);
+  public static void FUN_800db084(final int index, final int x, final int y, final int z, final int scriptIndex) {
+    _800fabdc.get(index).deref().run(x, y, z, scriptIndex);
+    callbackIndex_800c6878.setu(index);
   }
 
   @Method(0x800db0d8L)
-  public static void FUN_800db0d8(final long x, final long y, final long z, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x20L).setu(x);
-    MEMORY.ref(4, s0).offset(0x24L).setu(y);
-    MEMORY.ref(4, s0).offset(0x28L).setu(z);
-    setRefpoint((int)x >> 8, (int)y >> 8, (int)z >> 8);
-    MEMORY.ref(1, s0).offset(0x121L).setu(0);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x2L);
+  public static void FUN_800db0d8(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.setX(x);
+    cam.vec_20.setY(y);
+    cam.vec_20.setZ(z);
+    setRefpoint(x >> 8, y >> 8, z >> 8);
+    cam._11c.or(0x2L);
+    cam._121.set(0);
   }
 
   @Method(0x800db128L)
-  public static void FUN_800db128(final long x, final long y, final long z, final long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x38L).setu(x);
-    MEMORY.ref(4, s0).offset(0x44L).setu(y);
-    MEMORY.ref(4, s0).offset(0x2cL).setu(z);
-    final Ref<Long> refX = new Ref<>((long)((int)x >> 8));
-    final Ref<Long> refY = new Ref<>((long)((int)y >> 8));
-    final Ref<Long> refZ = new Ref<>((long)((int)z >> 8));
+  public static void FUN_800db128(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam._2c.set(z);
+    cam._38.set(x);
+    cam._44.set(y);
+    final IntRef refX = new IntRef().set(x >> 8);
+    final IntRef refY = new IntRef().set(y >> 8);
+    final IntRef refZ = new IntRef().set(z >> 8);
     FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    setRefpoint(refX.get().intValue(), refY.get().intValue(), refZ.get().intValue());
-    MEMORY.ref(1, s0).offset(0x121L).setu(0x1L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x2L);
+    setRefpoint(refX.get(), refY.get(), refZ.get());
+    cam._11c.or(0x2L);
+    cam._121.set(1);
   }
 
   @Method(0x800db2f0L)
-  public static long FUN_800db2f0(long a0, long a1, long a2, long a3) {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, s0).offset(0x20L).setu(a0);
-    MEMORY.ref(4, s0).offset(0x24L).setu(a1);
-    MEMORY.ref(4, s0).offset(0x28L).setu(a2);
+  public static void FUN_800db2f0(final int x, final int y, final int z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.setX(x);
+    cam.vec_20.setY(y);
+    cam.vec_20.setZ(z);
 
-    final long v0 = FUN_800dd02c(a3);
+    final VECTOR v0 = FUN_800dd02c(scriptIndex);
     setRefpoint(
-      (int)(MEMORY.ref(4, v0).offset(0x0L).get() + ((int)a0 >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x4L).get() + ((int)a1 >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x8L).get() + ((int)a2 >> 8))
+      v0.getX() + (x >> 8),
+      v0.getY() + (y >> 8),
+      v0.getZ() + (z >> 8)
     );
 
-    MEMORY.ref(4, s0).offset(0x80L).setu(a3);
-    MEMORY.ref(1, s0).offset(0x121L).setu(0x6L);
-    MEMORY.ref(4, s0).offset(0x11cL).oru(0x2L);
-    return MEMORY.ref(4, s0).offset(0x11cL).get();
+    cam.bobjIndex_80.set(scriptIndex);
+    cam._11c.or(0x2L);
+    cam._121.set(6);
   }
 
   @Method(0x800db460L)
@@ -3466,11 +2822,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800db4ecL)
-  public static void FUN_800db4ec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    _800fabfc.offset(a0 * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, a7);
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-    MEMORY.ref(1, v0).offset(0x122L).setu(0x1L);
+  public static void FUN_800db4ec(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    _800fabfc.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
+    final BattleCamera cam = camera_800c67f0;
+    cam.callbackIndex_fc.set(callbackIndex);
+    cam._122.set(1);
   }
 
   @Method(0x800db574L)
@@ -3480,11 +2836,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800db600L)
-  public static void FUN_800db600(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    _800fac5c.offset(a0 * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, a7);
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, v0).offset(0x88L).setu(a0);
-    MEMORY.ref(1, v0).offset(0x123L).setu(0x1L);
+  public static void FUN_800db600(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    _800fac5c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
+    final BattleCamera cam = camera_800c67f0;
+    cam.callbackIndex_88.set(callbackIndex);
+    cam._123.set(1);
   }
 
   @Method(0x800db8b0L)
@@ -3494,11 +2850,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800db950L)
-  public static void FUN_800db950(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final long a8) {
-    _800fac3c.offset(a0 * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, a8);
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, v0).offset(0xfcL).setu(a0);
-    MEMORY.ref(1, v0).offset(0x122L).setu(0x1L);
+  public static void FUN_800db950(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
+    _800fac3c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+    final BattleCamera cam = camera_800c67f0;
+    cam.callbackIndex_fc.set(callbackIndex);
+    cam._122.set(1);
   }
 
   @Method(0x800db9e0L)
@@ -3508,11 +2864,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dba80L)
-  public static void FUN_800dba80(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final long a8) {
-    _800fac9c.offset(a0 * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, a8);
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, v0).offset(0x88L).setu(a0);
-    MEMORY.ref(1, v0).offset(0x123L).setu(0x1L);
+  public static void FUN_800dba80(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
+    _800fac9c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+    final BattleCamera cam = camera_800c67f0;
+    cam.callbackIndex_88.set(callbackIndex);
+    cam._123.set(1);
   }
 
   @Method(0x800dbb10L)
@@ -3536,451 +2892,410 @@ public final class Bttl_800d {
 
   @Method(0x800dbcc8L)
   public static long FUN_800dbcc8(final RunningScript a0) {
-    final long v1 = rview2_800c67f0.getAddress();
-    MEMORY.ref(4, v1).offset(0x100L).setu(a0.params_20.get(0).deref().get() << 16);
-    MEMORY.ref(4, v1).offset(0x108L).setu(0);
-    MEMORY.ref(1, v1).offset(0x118L).setu(0x1L);
+    final BattleCamera cam = camera_800c67f0;
+    cam._100.set(a0.params_20.get(0).deref().get() << 16);
+    cam._108.set(0);
+    cam._118.set(1);
     return 0;
   }
 
   @Method(0x800dbe40L)
   public static void FUN_800dbe40() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x122L).setu(0);
-    MEMORY.ref(4, v0).offset(0x11cL).and(0xffff_fffeL);
+    final BattleCamera cam = camera_800c67f0;
+    cam._11c.and(0xffff_fffeL);
+    cam._122.set(0);
   }
 
   @Method(0x800dbe60L)
   public static void FUN_800dbe60() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x122L).setu(0);
-    MEMORY.ref(4, v0).offset(0x11cL).and(0xffff_fffeL);
+    final BattleCamera cam = camera_800c67f0;
+    cam._11c.and(0xffff_fffeL);
+    cam._122.set(0);
   }
 
   @Method(0x800dbe98L)
   public static void FUN_800dbe98() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x122L).setu(0);
+    final BattleCamera cam = camera_800c67f0;
+    cam._122.set(0);
 
     setViewpoint(
-      (int)(MEMORY.ref(4, v0).offset(0x0cL).get() + (int)MEMORY.ref(4, v0).offset(0x94L).get() / 0x100),
-      (int)(MEMORY.ref(4, v0).offset(0x10L).get() + (int)MEMORY.ref(4, v0).offset(0x98L).get() / 0x100),
-      (int)(MEMORY.ref(4, v0).offset(0x14L).get() + (int)MEMORY.ref(4, v0).offset(0x9cL).get() / 0x100)
+      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
+      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
+      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
     );
   }
 
   @Method(0x800dbef0L)
   public static void FUN_800dbef0() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x122L).setu(0);
-    final Ref<Long> refX = new Ref<>(MEMORY.ref(4, v0).offset(0xacL).getSigned() >> 8);
-    final Ref<Long> refY = new Ref<>(MEMORY.ref(4, v0).offset(0xb8L).getSigned() >> 8);
-    final Ref<Long> refZ = new Ref<>(MEMORY.ref(4, v0).offset(0xa0L).getSigned() >> 8);
-    FUN_800dcc94(MEMORY.ref(4, v0).offset(0x0cL).get(), MEMORY.ref(4, v0).offset(0x10L).get(), MEMORY.ref(4, v0).offset(0x14L).get(), refX, refY, refZ);
-    setViewpoint(refX.get().intValue(), refY.get().intValue(), refZ.get().intValue());
+    final BattleCamera cam = camera_800c67f0;
+    cam._122.set(0);
+    final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
+    setViewpoint(refX.get(), refY.get(), refZ.get());
   }
 
   @Method(0x800dbf70L)
   public static void FUN_800dbf70() {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, s0).offset(0x122L).setu(0);
+    final BattleCamera cam = camera_800c67f0;
+    cam._122.set(0);
 
-    final long v0 = FUN_800dd02c(MEMORY.ref(4, s0).offset(0xf4L).get());
-    setViewpoint(
-      (int)(MEMORY.ref(4, v0).offset(0x0L).get() + MEMORY.ref(4, s0).offset(0x94L).get() / 0x100),
-      (int)(MEMORY.ref(4, v0).offset(0x4L).get() + MEMORY.ref(4, s0).offset(0x98L).get() / 0x100),
-      (int)(MEMORY.ref(4, v0).offset(0x8L).get() + MEMORY.ref(4, s0).offset(0x9cL).get() / 0x100)
-    );
+    final VECTOR v0 = FUN_800dd02c(cam.bobjIndex_f4.get());
+    setViewpoint(v0.getX() + (cam.vec_94.getX() >> 8), v0.getY() + (cam.vec_94.getY() >> 8), v0.getZ() + (cam.vec_94.getZ() >> 8));
   }
 
   @Method(0x800dbfd4L)
   public static void FUN_800dbfd4() {
-    final long v1 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v1).offset(0x122L).setu(0);
+    final BattleCamera cam = camera_800c67f0;
+    cam._122.set(0);
 
-    final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, v1).offset(0xf4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-    final Ref<Long> refX = new Ref<>((long)(int)MEMORY.ref(4, v1).offset(0xacL).get() >> 8);
-    final Ref<Long> refY = new Ref<>((long)(int)MEMORY.ref(4, v1).offset(0xb8L).get() >> 8);
-    final Ref<Long> refZ = new Ref<>((long)(int)MEMORY.ref(4, v1).offset(0xa0L).get() >> 8);
-    FUN_800dcc94(data._148.coord2_14.coord.transfer.getX(), data._148.coord2_14.coord.transfer.getY(), data._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get().intValue(), refY.get().intValue(), refZ.get().intValue());
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
+    final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
+    final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
+    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    setViewpoint(refX.get(), refY.get(), refZ.get());
   }
 
   @Method(0x800dc090L)
   public static void FUN_800dc090() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x123L).setu(0);
-    MEMORY.ref(4, v0).offset(0x11cL).and(0xffff_fffdL);
+    final BattleCamera cam = camera_800c67f0;
+    cam._11c.and(0xffff_fffdL);
+    cam._123.set(0);
   }
 
   @Method(0x800dc0b0L)
   public static void FUN_800dc0b0() {
-    final long v0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, v0).offset(0x123L).setu(0);
-    MEMORY.ref(4, v0).offset(0x11cL).and(0xffff_fffdL);
+    final BattleCamera cam = camera_800c67f0;
+    cam._11c.and(0xffff_fffdL);
+    cam._123.set(0);
   }
 
   @Method(0x800dc1b8L)
   public static void FUN_800dc1b8() {
-    final long s0 = rview2_800c67f0.getAddress();
-    MEMORY.ref(1, s0).offset(0x123L).setu(0);
+    final BattleCamera cam = camera_800c67f0;
+    cam._123.set(0);
 
-    final long v0 = FUN_800dd02c(MEMORY.ref(4, s0).offset(0x80L).get());
+    final VECTOR v0 = FUN_800dd02c(cam.bobjIndex_80.get());
     setRefpoint(
-      (int)(MEMORY.ref(4, v0).offset(0x0L).get() + ((int)MEMORY.ref(4, s0).offset(0x20L).get() >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x4L).get() + ((int)MEMORY.ref(4, s0).offset(0x24L).get() >> 8)),
-      (int)(MEMORY.ref(4, v0).offset(0x8L).get() + ((int)MEMORY.ref(4, s0).offset(0x28L).get() >> 8))
+      v0.getX() + (cam.vec_20.getX() >> 8),
+      v0.getY() + (cam.vec_20.getY() >> 8),
+      v0.getZ() + (cam.vec_20.getZ() >> 8)
     );
   }
 
   @Method(0x800dc2d8L)
   public static long FUN_800dc2d8(final RunningScript s0) {
-    final long x;
-    final long y;
-    final long z;
+    final BattleCamera cam = camera_800c67f0;
+
+    final int x;
+    final int y;
+    final int z;
     final long v1;
     if(s0.params_20.get(0).deref().get() == 0) {
-      x = rview2_800c67f0.viewpoint_00.getX();
-      y = rview2_800c67f0.viewpoint_00.getY();
-      z = rview2_800c67f0.viewpoint_00.getZ();
+      x = cam.rview2_00.viewpoint_00.getX();
+      y = cam.rview2_00.viewpoint_00.getY();
+      z = cam.rview2_00.viewpoint_00.getZ();
       v1 = _800fad7c.getAddress();
     } else {
       //LAB_800dc32c
-      x = rview2_800c67f0.refpoint_0c.getX();
-      y = rview2_800c67f0.refpoint_0c.getY();
-      z = rview2_800c67f0.refpoint_0c.getZ();
+      x = cam.rview2_00.refpoint_0c.getX();
+      y = cam.rview2_00.refpoint_0c.getY();
+      z = cam.rview2_00.refpoint_0c.getZ();
       v1 = _800fad9c.getAddress();
     }
 
     //LAB_800dc344
-    s0.params_20.get(4).deref().set((int)(long)MEMORY.ref(4, v1).offset(s0.params_20.get(1).deref().get() * 0x4L).deref(4).call(s0.params_20.get(2).deref().get(), s0.params_20.get(3).deref().get(), x, y, z));
+    s0.params_20.get(4).deref().set((int)MEMORY.ref(4, v1).offset(s0.params_20.get(1).deref().get() * 0x4L).deref(4).call(s0.params_20.get(2).deref().get(), s0.params_20.get(3).deref().get(), x, y, z));
     return 0;
   }
 
   @Method(0x800dc384L)
-  public static long FUN_800dc384(long a0, long a1, long a2, long a3) {
-    long v0;
-    long v1 = a2;
-    long t0 = a3;
+  public static int FUN_800dc384(final long a0, final long callbackIndex, final int component, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+
+    final int x;
+    final int y;
+    final int z;
+    final long v1;
     if(a0 != 0) {
-      v0 = 0x800c_0000L;
-      v0 = v0 + 0x67f0L;
-      a0 = v1;
-      a2 = MEMORY.ref(4, v0).offset(0xcL).get();
-      a3 = MEMORY.ref(4, v0).offset(0x10L).get();
-      v0 = MEMORY.ref(4, v0).offset(0x14L).get();
-      v1 = 0x8010_0000L;
-      v1 = v1 - 0x5264L;
+      x = cam.rview2_00.refpoint_0c.getX();
+      y = cam.rview2_00.refpoint_0c.getY();
+      z = cam.rview2_00.refpoint_0c.getZ();
+      v1 = _800fad9c.getAddress();
     } else {
       //LAB_800dc3bc
-      v0 = 0x800c_0000L;
-      a2 = MEMORY.ref(4, v0).offset(0x67f0L).get();
-      v0 = v0 + 0x67f0L;
-      a0 = v1;
-      a3 = MEMORY.ref(4, v0).offset(0x4L).get();
-      v0 = MEMORY.ref(4, v0).offset(0x8L).get();
-      v1 = 0x8010_0000L;
-      v1 = v1 - 0x5284L;
+      x = cam.rview2_00.viewpoint_00.getX();
+      y = cam.rview2_00.viewpoint_00.getY();
+      z = cam.rview2_00.viewpoint_00.getZ();
+      v1 = _800fad7c.getAddress();
     }
 
     //LAB_800dc3dc
-    return (long)MEMORY.ref(4, v1).offset(a1 * 0x4L).deref(4).call(a0, t0, a2, a3, v0);
+    return (int)MEMORY.ref(4, v1).offset(callbackIndex * 0x4L).deref(4).call(component, scriptIndex, x, y, z);
   }
 
   @Method(0x800dc408L)
-  public static long FUN_800dc408(final long a0, final long a1, final long x, final long y, final long z) {
-    if(a0 == 0) {
+  public static int FUN_800dc408(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    if(component == 0) {
       //LAB_800dc440
       return x;
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc448
       return y;
     }
 
     //LAB_800dc42c
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc450
       return z;
     }
 
-    if((int)a0 > 0x2L) {
-      return 0x2L;
-    }
-
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc45cL)
-  public static long FUN_800dc45c(final long a0, final long a1, final long x, final long y, final long z) {
-    final Ref<Long> refX = new Ref<>(x);
-    final Ref<Long> refY = new Ref<>(y);
-    final Ref<Long> refZ = new Ref<>(z);
+  public static int FUN_800dc45c(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final IntRef refX = new IntRef().set(x);
+    final IntRef refY = new IntRef().set(y);
+    final IntRef refZ = new IntRef().set(z);
     FUN_800dcd9c(0, 0, 0, refX, refY, refZ);
 
-    if(a0 == 0) {
+    if(component == 0) {
       //LAB_800dc4d8
       return refX.get();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc4e4
       return refY.get();
     }
 
     //LAB_800dc4c4
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc4f0
       return refZ.get();
     }
 
-    if((int)a0 > 0x2L) {
-      return 0x2L;
-    }
-
-    //LAB_800dc4f4
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc514L)
-  public static long FUN_800dc514(final long a0, final long a1, final long x, final long y, final long z) {
-    if(a0 == 0) {
+  public static int FUN_800dc514(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final BattleCamera cam = camera_800c67f0;
+
+    if(component == 0) {
       //LAB_800dc550
-      return x - rview2_800c67f0.refpoint_0c.getX();
+      return x - cam.rview2_00.refpoint_0c.getX();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc560
-      return y - rview2_800c67f0.refpoint_0c.getY();
+      return y - cam.rview2_00.refpoint_0c.getY();
     }
 
     //LAB_800dc53c
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc56c
-      return z - rview2_800c67f0.refpoint_0c.getZ();
+      return z - cam.rview2_00.refpoint_0c.getZ();
     }
 
-    if((int)a0 > 0x2L) {
-      return 0x2L;
-    }
-
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc580L)
-  public static long FUN_800dc580(final long a0, final long a1, final long x, final long y, final long z) {
-    final Ref<Long> refX = new Ref<>(x);
-    final Ref<Long> refY = new Ref<>(y);
-    final Ref<Long> refZ = new Ref<>(z);
-    FUN_800dcd9c(rview2_800c67f0.refpoint_0c.getX(), rview2_800c67f0.refpoint_0c.getY(), rview2_800c67f0.refpoint_0c.getZ(), refX, refY, refZ);
+  public static int FUN_800dc580(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final BattleCamera cam = camera_800c67f0;
 
-    if(a0 == 0) {
+    final IntRef refX = new IntRef().set(x);
+    final IntRef refY = new IntRef().set(y);
+    final IntRef refZ = new IntRef().set(z);
+    FUN_800dcd9c(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
+
+    if(component == 0) {
       //LAB_800dc604
       return refX.get();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc610
       return refY.get();
     }
 
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc61c
       return refZ.get();
     }
 
-    if((int)a0 > 0x2L) {
-      //LAB_800dc5f0
-      return 0x2L;
-    }
-
-    //LAB_800dc620
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc630L)
-  public static long FUN_800dc630(final long a0, final long a1, final long x, final long y, final long z) {
-    final long v1 = FUN_800dd02c(a1);
+  public static int FUN_800dc630(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final VECTOR vec = FUN_800dd02c(scriptIndex);
 
-    if(a0 == 0) {
+    if(component == 0) {
       //LAB_800dc698
-      return x - MEMORY.ref(4, v1).offset(0x0L).get();
+      return x - vec.getX();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc6a4
-      return y - MEMORY.ref(4, v1).offset(0x4L).get();
+      return y - vec.getY();
     }
 
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc6b0
-      return z - MEMORY.ref(4, v1).offset(0x8L).get();
+      return z - vec.getZ();
     }
 
-    if((int)a0 > 0x2L) {
-      //LAB_800dc684
-      return 2;
-    }
-
-    //LAB_800dc6c0
-    return 1;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc6d8L)
-  public static long FUN_800dc6d8(final long a0, final long a1, final long x, final long y, final long z) {
-    final Ref<Long> refX = new Ref<>(x);
-    final Ref<Long> refY = new Ref<>(y);
-    final Ref<Long> refZ = new Ref<>(z);
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get((int)a1).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
-    FUN_800dcd9c(v1._148.coord2_14.coord.transfer.getX(), v1._148.coord2_14.coord.transfer.getY(), v1._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+  public static int FUN_800dc6d8(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final IntRef refX = new IntRef().set(x);
+    final IntRef refY = new IntRef().set(y);
+    final IntRef refZ = new IntRef().set(z);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
 
-    if(a0 == 0) {
+    if(component == 0) {
       //LAB_800dc76c
       return refX.get();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc778
       return refY.get();
       //LAB_800dc758
     }
 
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc784
       return refZ.get();
     }
 
-    //LAB_800dc788
-    throw new RuntimeException("Invalid component");
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc798L)
-  public static long FUN_800dc798(final long a0, final long a1, final long x, final long y, final long z) {
-    if(a0 == 0) {
+  public static int FUN_800dc798(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    if(component == 0) {
       //LAB_800dc7d0
       return x;
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc7d8
       return y;
     }
 
     //LAB_800dc7bc
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc7e0
       return z;
     }
 
-    if((int)a0 > 0x2L) {
-      return 0x2L;
-    }
-
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc7ecL)
-  public static long FUN_800dc7ec(final long a0, final long a1, final long x, final long y, final long z) {
-    final Ref<Long> refX = new Ref<>(x);
-    final Ref<Long> refY = new Ref<>(y);
-    final Ref<Long> refZ = new Ref<>(z);
+  public static int FUN_800dc7ec(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final IntRef refX = new IntRef().set(x);
+    final IntRef refY = new IntRef().set(y);
+    final IntRef refZ = new IntRef().set(z);
     FUN_800dcd9c(0, 0, 0, refX, refY, refZ);
 
-    if(a0 == 0) {
+    if(component == 0) {
       //LAB_800dc868
       return refX.get();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 1) {
       //LAB_800dc874
       return refY.get();
     }
 
-    if(a0 == 0x2L) {
+    if(component == 2) {
       //LAB_800dc880
       return refZ.get();
     }
 
-    if((int)a0 > 0x2L) {
-      //LAB_800dc854
-      return 0x2L;
-    }
-
-    //LAB_800dc884
-    return 0x1L;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc9c0L)
-  public static long FUN_800dc9c0(final long a0, final long a1, final long x, final long y, final long z) {
-    final long v1 = FUN_800dd02c(a1);
+  public static int FUN_800dc9c0(final int component, final int scriptIndex, final int x, final int y, final int z) {
+    final VECTOR vec = FUN_800dd02c(scriptIndex);
 
-    if(a0 == 0) {
+    if(component == 0) {
       //LAB_800dca28
-      return x - MEMORY.ref(4, v1).offset(0x0L).get();
+      return x - vec.getX();
     }
 
-    if(a0 == 0x1L) {
+    if(component == 0x1L) {
       //LAB_800dca34
-      return y - MEMORY.ref(4, v1).offset(0x4L).get();
+      return y - vec.getY();
     }
 
-    if(a0 == 0x2L) {
+    if(component == 0x2L) {
       //LAB_800dca40
-      return z - MEMORY.ref(4, v1).offset(0x8L).get();
+      return z - vec.getZ();
     }
 
-    if((int)a0 > 0x2L) {
-      //LAB_800dca14
-      return 2;
-    }
-
-    //LAB_800dca50
-    return 1;
+    throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dcc64L)
   public static void setViewpoint(final int x, final int y, final int z) {
-    rview2_800c67f0.viewpoint_00.setX(x);
-    rview2_800c67f0.viewpoint_00.setY(y);
-    rview2_800c67f0.viewpoint_00.setZ(z);
+    final BattleCamera cam = camera_800c67f0;
+
+    cam.rview2_00.viewpoint_00.setX(x);
+    cam.rview2_00.viewpoint_00.setY(y);
+    cam.rview2_00.viewpoint_00.setZ(z);
   }
 
   @Method(0x800dcc7cL)
   public static void setRefpoint(final int x, final int y, final int z) {
-    rview2_800c67f0.refpoint_0c.setX(x);
-    rview2_800c67f0.refpoint_0c.setY(y);
-    rview2_800c67f0.refpoint_0c.setZ(z);
+    final BattleCamera cam = camera_800c67f0;
+
+    cam.rview2_00.refpoint_0c.setX(x);
+    cam.rview2_00.refpoint_0c.setY(y);
+    cam.rview2_00.refpoint_0c.setZ(z);
   }
 
   @Method(0x800dcc94L)
-  public static void FUN_800dcc94(final long a0, final long a1, final long a2, final Ref<Long> x, final Ref<Long> y, final Ref<Long> z) {
-    _800fab98.set(x.get().shortValue(), y.get().shortValue(), (short)0);
+  public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, IntRef y, final IntRef z) {
+    _800fab98.set((short)x.get(), (short)y.get(), (short)0);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
-    _800faba0.set((short)0, (short)0, z.get().shortValue());
+    _800faba0.set((short)0, (short)0, (short)z.get());
     FUN_8003f990(_800faba0, _800faba8, _800c67b8);
     x.set(a0 - _800faba8.getZ());
     y.set(a1 - _800faba8.getX());
-    z.set(_800faba8.getY() + a2);
+    z.set(a2 + _800faba8.getY());
   }
 
   @Method(0x800dcd9cL)
-  public static void FUN_800dcd9c(final long a0, final long a1, final long a2, final Ref<Long> x, final Ref<Long> y, final Ref<Long> z) {
-    final long dx = a0 - x.get();
-    final long dy = a1 - y.get();
-    final long dz = a2 - z.get();
+  public static void FUN_800dcd9c(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
+    final int dx = a0 - x.get();
+    final int dy = a1 - y.get();
+    final int dz = a2 - z.get();
 
-    long s1 = (int)dx / 2;
+    int s1 = dx / 2;
     s1 = s1 * s1;
 
-    final long halfDx = (int)dy / 2;
-    final long halfDy = (int)dz / 2;
+    final long halfDx = dy / 2;
+    final long halfDy = dz / 2;
 
-    x.set(ratan2(dz, dx) & 0xfffL);
-    y.set(ratan2(dy, SquareRoot0(s1 + halfDy * halfDy) * 0x2L) & 0xfffL);
-    z.set(SquareRoot0(s1 + halfDx * halfDx + (int)(halfDy * dz) / 2) * 0x2L);
+    x.set(ratan2(dz, dx) & 0xfff);
+    y.set(ratan2(dy, SquareRoot0(s1 + halfDy * halfDy) * 2) & 0xfff);
+    z.set(SquareRoot0(s1 + halfDx * halfDx + (int)(halfDy * dz) / 2) * 2);
   }
 
   @Method(0x800dcebcL)
@@ -4012,12 +3327,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcf10L)
-  public static long FUN_800dcf10(final long a0, final long a1, final long a2, final long a3, final long a4) {
+  public static int FUN_800dcf10(final int a0, final int a1, final int a2, final int a3, final int a4) {
     if(a0 < 0) {
       throw new RuntimeException("Undefined v0");
     }
 
-    if(a0 < 0x2L) {
+    if(a0 < 2) {
       //LAB_800dcf38
       if(a4 == 0) {
         return 0;
@@ -4042,30 +3357,30 @@ public final class Bttl_800d {
       return -(a1 + 0x10_0000 - a2) / a3;
     }
 
-    if(a0 != 0x2L) {
-      return 0x2L;
+    if(a0 == 2) {
+      //LAB_800dcfa4
+      //LAB_800dcfb0
+      return (a2 - a1) / a3;
     }
 
-    //LAB_800dcfa4
-    //LAB_800dcfb0
-    return (a2 - a1) / a3;
+    throw new IllegalArgumentException("Invalid a0");
   }
 
   @Method(0x800dcfb8L)
-  public static long FUN_800dcfb8(long a0, long a1, long a2, long a3) {
-    if((int)a0 < 0) {
-      throw new RuntimeException("Undefined v0");
+  public static int FUN_800dcfb8(final int a0, final int a1, final int a2, final int a3) {
+    if(a0 < 0) {
+      throw new IllegalArgumentException("Invalid a0");
     }
 
-    if((int)a0 < 0x2L) {
+    if(a0 < 0x2L) {
       //LAB_800dcfdc
       if(a3 == 0) {
         return 0;
       }
 
       //LAB_800dcfec
-      if(a3 == 0x1L) {
-        if((int)a2 >= (int)a1) {
+      if(a3 == 1) {
+        if(a2 >= a1) {
           //LAB_800dcffc
           return a2 - a1;
         }
@@ -4076,48 +3391,43 @@ public final class Bttl_800d {
       }
 
       //LAB_800dd010
-      if((int)a2 < (int)a1) {
+      if(a2 < a1) {
         return a2 - a1;
       }
 
       return a2 - (a1 + 0x10_0000);
     }
 
-    if(a0 != 0x2L) {
-      return 0x2L;
+    if(a0 == 2) {
+      //LAB_800dd020
+      //LAB_800dd024
+      return a2 - a1;
     }
 
-    //LAB_800dd020
-    //LAB_800dd024
-    return a2 - a1;
+    throw new IllegalArgumentException("Invalid a0");
   }
 
   @Method(0x800dd02cL)
-  public static long FUN_800dd02c(long a0) { //TODO
-    long v0;
-    v0 = 0x800c_0000L;
-    v0 = v0 - 0x3e40L;
-    a0 = a0 << 2;
-    a0 = a0 + v0;
-    v0 = MEMORY.ref(4, a0).offset(0x0L).get();
+  public static VECTOR FUN_800dd02c(int scriptIndex) {
+    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    a0 = MEMORY.ref(4, v0).offset(0x0L).get();
-    v0 = MEMORY.ref(4, a0).offset(0x0L).get();
-    if(v0 != 0x2020_4d45L) {
-      return a0 + 0x174L;
+    if(data.magic_00.get() == BattleScriptDataBase.EM__) {
+      return ((BttlScriptData6c)data)._10.vec_04;
     }
 
-    return a0 + 0x14L;
+    return ((BattleObject27c)data)._148.coord2_14.coord.transfer;
   }
 
   @Method(0x800dd0d4L)
   public static long FUN_800dd0d4() {
-    return (long)_800fad90.deref(4).call(1, 0, rview2_800c67f0.viewpoint_00.getX(), rview2_800c67f0.viewpoint_00.getY(), rview2_800c67f0.viewpoint_00.getZ());
+    final BattleCamera cam = camera_800c67f0;
+    return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd118L)
   public static long FUN_800dd118() {
-    return (long)_800fad90.deref(4).call(0, 0, rview2_800c67f0.viewpoint_00.getX(), rview2_800c67f0.viewpoint_00.getY(), rview2_800c67f0.viewpoint_00.getZ());
+    final BattleCamera cam = camera_800c67f0;
+    return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800de3f4L)
@@ -4978,73 +4288,73 @@ public final class Bttl_800d {
             CPU.COP2(0x168002eL);
             v1 = MEMORY.ref(1, a2).offset(-0xeL).get();
             v0 = sp10;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x26L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0xdL).get();
             v0 = sp14;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x25L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0xcL).get();
             v0 = sp18;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x24L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0xaL).get();
             v0 = sp10;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x1aL).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x9L).get();
             v0 = sp14;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x19L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x8L).get();
             v0 = sp18;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x18L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x6L).get();
             v0 = sp10;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0xeL).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x5L).get();
             v0 = sp14;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0xdL).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x4L).get();
             v0 = sp18;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0xcL).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x2L).get();
             v0 = sp10;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x2L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(-0x1L).get();
             v0 = sp14;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(-0x1L).setu(v0);
             v1 = MEMORY.ref(1, a2).offset(0x0L).get();
             v0 = sp18;
-            lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+            lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
             t1 = lo;
             v0 = (int)t1 >> 12;
             MEMORY.ref(1, a1).offset(0x0L).setu(v0);
@@ -5198,73 +4508,73 @@ public final class Bttl_800d {
               CPU.COP2(0x168002eL);
               v1 = MEMORY.ref(1, a2).offset(-0xeL).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x26L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0xdL).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x25L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0xcL).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x24L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0xaL).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x1aL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x9L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x19L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x8L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x18L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x6L).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xeL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x5L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xdL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x4L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xcL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x2L).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x2L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x1L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x1L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(0x0L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(0x0L).setu(v0);
@@ -5404,55 +4714,55 @@ public final class Bttl_800d {
               CPU.COP2(0x158002dL);
               v1 = MEMORY.ref(1, a2).offset(-0xaL).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x1aL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x9L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x19L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x8L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x18L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x6L).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xeL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x5L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xdL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x4L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0xcL).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x2L).get();
               v0 = sp10;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x2L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(-0x1L).get();
               v0 = sp14;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(-0x1L).setu(v0);
               v1 = MEMORY.ref(1, a2).offset(0x0L).get();
               v0 = sp18;
-              lo = ((long)(int)v1 * (int)v0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
               t1 = lo;
               v0 = (int)t1 >> 12;
               MEMORY.ref(1, a1).offset(0x0L).setu(v0);

@@ -27,7 +27,7 @@ import legend.game.combat.types.BattleRenderStruct;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub3c;
 import legend.game.combat.types.BttlScriptData6c;
@@ -91,7 +91,7 @@ import static legend.game.Scus94491BpeSegment.setCallback08;
 import static legend.game.Scus94491BpeSegment.setCallback0c;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021b08;
+import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022928;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023264;
@@ -1621,7 +1621,7 @@ public final class Bttl_800e {
       } else if(v1 == 0x2L) {
         //LAB_800e5bf0
         final SVECTOR sp0x10 = new SVECTOR();
-        sp0x10.set(scriptStatePtrArr_800bc1c0.get(a2.scriptIndex_38.get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._148.coord2Param_64.rotate).add(a2.vec_04);
+        sp0x10.set(scriptStatePtrArr_800bc1c0.get(a2.scriptIndex_38.get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.coord2Param_64.rotate).add(a2.vec_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 0x3L) {
         //LAB_800e5bdc
@@ -1883,7 +1883,7 @@ public final class Bttl_800e {
     short sp20 = (short)a0.params_20.get(0).deref().get();
     s1 = a0.params_20.get(0).deref().get() & 0xff_0000L;
     if(sp20 == -1) {
-      final BtldScriptData27c v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BattleObject27c v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
       assert false : "?"; //a0.params_20.get(0).set(sp0x20);
       sp20 = getCombatant(v0.combatantIndex_26c.get()).charIndex_1a2.get();
     }
@@ -2453,7 +2453,7 @@ public final class Bttl_800e {
     s0._10._24.set(0);
     s0._10.vec_28.set(0, 0, 0);
     s0._4c.setNullable(a4);
-    s0.magic_00.set(0x2020_4d45L);
+    s0.magic_00.set(BattleScriptDataBase.EM__);
     s0._04.set(0xff00_0000L);
     s0.scriptIndex_0c.set(-1);
     s0.coord2Index_0d.set(-1);
@@ -2470,7 +2470,7 @@ public final class Bttl_800e {
 
     if(a0 != -1) {
       final int a0_0;
-      if(scriptStatePtrArr_800bc1c0.get(a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() != 0x2020_4d45L) {
+      if(scriptStatePtrArr_800bc1c0.get(a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() != BattleScriptDataBase.EM__) {
         a0_0 = (int)_800c693c.deref(2).offset(0x1cL).get();
       } else {
         a0_0 = a0;
@@ -2528,7 +2528,7 @@ public final class Bttl_800e {
     s0._10._24.set(0);
     s0._10.vec_28.set(0, 0, 0);
     s0._4c.set(MEMORY.ref(4, a4, TriConsumerRef::new));
-    s0.magic_00.set(0x2020_4d45L);
+    s0.magic_00.set(BattleScriptDataBase.EM__);
     s0._04.set(0xff00_0000L);
     s0.scriptIndex_0c.set(-1);
     s0.coord2Index_0d.set(-1);
@@ -2545,7 +2545,7 @@ public final class Bttl_800e {
 
     if(a0 != -1) {
       final int a0_0;
-      if(scriptStatePtrArr_800bc1c0.get(a0).deref().innerStruct_00.derefAs(BtldScriptData27c.class).magic_00.get() == 0x2020_4d45L) {
+      if(scriptStatePtrArr_800bc1c0.get(a0).deref().innerStruct_00.derefAs(BattleObject27c.class).magic_00.get() == BattleScriptDataBase.EM__) {
         a0_0 = a0;
       } else {
         a0_0 = (int)_800c693c.deref(4).offset(0x1cL).get();
@@ -2591,8 +2591,8 @@ public final class Bttl_800e {
       final MATRIX sp0x10 = new MATRIX();
 
       final BattleScriptDataBase base = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
-      if(base.magic_00.get() == 0x4a42_4f42L) { // "BOBJ"
-        final BtldScriptData27c s0 = state.innerStruct_00.derefAs(BtldScriptData27c.class);
+      if(base.magic_00.get() == BattleScriptDataBase.BOBJ) { // "BOBJ"
+        final BattleObject27c s0 = state.innerStruct_00.derefAs(BattleObject27c.class);
         final BigStruct s1 = s0._148;
         FUN_800214bc(s1);
 
@@ -2611,7 +2611,7 @@ public final class Bttl_800e {
         break;
       }
 
-      if(base.magic_00.get() == 0x2020_4d45L) { // "EM  "
+      if(base.magic_00.get() == BattleScriptDataBase.EM__) {
         final BttlScriptData6c s0 = state.innerStruct_00.derefAs(BttlScriptData6c.class);
         RotMatrix_8003faf0(s0._10.svec_10, sp0x10);
         TransMatrix(sp0x10, s0._10.vec_04);
@@ -2864,8 +2864,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9100L)
-  public static void FUN_800e9100() {
-    FUN_800eacf4();
+  public static void loadBattleHudDeff_() {
+    loadBattleHudDeff();
   }
 
   @Method(0x800e9120L)
@@ -3145,7 +3145,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eaa24L)
-  public static void FUN_800eaa24(final long address, final long fileSize, final long param) {
+  public static void loadBattleHudDeff(final long address, final long fileSize, final long param) {
     long size = MEMORY.ref(4, address).offset(0x1cL).get();
     long addr = addToLinkedListTail(size);
 
@@ -3222,8 +3222,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eacf4L)
-  public static void FUN_800eacf4() {
-    loadDrgnBinFile(0, 4114, 0, getMethodAddress(Bttl_800e.class, "FUN_800eaa24", long.class, long.class, long.class), _800c693c.get() + 0x2cL, 0x4L);
+  public static void loadBattleHudDeff() {
+    loadDrgnBinFile(0, 4114, 0, getMethodAddress(Bttl_800e.class, "loadBattleHudDeff", long.class, long.class, long.class), _800c693c.get() + 0x2cL, 0x4L);
   }
 
   @Method(0x800ead44L)
@@ -3347,7 +3347,7 @@ public final class Bttl_800e {
 
     //LAB_800eba8c
     adjustTmdPointers(s2.tmd_5d0.deref());
-    FUN_80021b08(s2.objtable2_550, s2.dobj2s_00, s2.coord2s_a0, s2.params_3c0, 10);
+    initObjTable2(s2.objtable2_550, s2.dobj2s_00, s2.coord2s_a0, s2.params_3c0, 10);
     s2.coord2_558.param.set(s2.param_5a8);
     GsInitCoordinate2(null, s2.coord2_558);
     FUN_80021ca0(s2.objtable2_550, s2.tmd_5d0.deref(), s2.coord2_558, 10, extTmd.tmdPtr_00.deref().tmd.header.nobj.get() + 0x1L);
@@ -3853,7 +3853,7 @@ public final class Bttl_800e {
 
       //LAB_800ecb50
       //LAB_800ecb54
-      final BtldScriptData27c a3 = scriptStatePtrArr_800bc1c0.get((int)s1).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BattleObject27c a3 = scriptStatePtrArr_800bc1c0.get((int)s1).deref().innerStruct_00.derefAs(BattleObject27c.class);
       if(a3.hp_08.get() > a3.maxHp_10.get() / 4) {
         a1 = a3.hp_08.get() > a3.maxHp_10.get() / 2 ? 0 : 1;
       } else {
@@ -3895,8 +3895,8 @@ public final class Bttl_800e {
 
         //LAB_800ecc74
         //LAB_800ecc78
-        final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get((int)s1).derefAs(ScriptState.classFor(BtldScriptData27c.class));
-        final BtldScriptData27c data = state.innerStruct_00.deref();
+        final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get((int)s1).derefAs(ScriptState.classFor(BattleObject27c.class));
+        final BattleObject27c data = state.innerStruct_00.deref();
 
         if(data.hp_08.get() > data.maxHp_10.get() / 4) {
           a1 = data.hp_08.get() > data.maxHp_10.get() / 2 ? 0 : 1;
@@ -3917,7 +3917,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eccfcL)
-  public static void FUN_800eccfc(final BigStruct a0, long a1, long a2, final BtldScriptData27c data) {
+  public static void FUN_800eccfc(final BigStruct a0, long a1, long a2, final BattleObject27c data) {
     final long v0;
     final long a3;
     final long v1 = scriptStatePtrArr_800bc1c0.get((int)a2).deref().ui_60.get();
@@ -4659,7 +4659,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee3c0L)
   public static long FUN_800ee3c0(final RunningScript a0) {
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
     v1._214.set(0x3);
     v1._215.set(a0.params_20.get(1).deref().get());
     return 0;
@@ -4667,13 +4667,13 @@ public final class Bttl_800e {
 
   @Method(0x800ee468L)
   public static long FUN_800ee468(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class)._214.set(0);
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._214.set(0);
     return 0;
   }
 
   @Method(0x800ee49cL)
   public static long FUN_800ee49c(final RunningScript a0) {
-    final BtldScriptData27c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
     a1._254.set(a0.params_20.get(1).deref().get());
     a1._25c.set(a0.params_20.get(2).deref().get());
     return 0;
@@ -4762,7 +4762,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void FUN_800ee8c4(final long address, final long fileSize, final long param) {
+  public static void battleHudTexturesLoadedCallback(final long address, final long fileSize, final long param) {
     final short[] sp0x38 = new short[12];
     for(int i = 0; i < sp0x38.length; i++) {
       sp0x38[i] = (short)_800c6e48.offset(i * 0x2L).get();
@@ -4815,7 +4815,7 @@ public final class Bttl_800e {
     //LAB_800eebb4
     //LAB_800eebd8
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      final BtldScriptData27c a2 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BattleObject27c a2 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(a2.charIndex_272.get());
 
       //LAB_800eec10
@@ -4915,7 +4915,7 @@ public final class Bttl_800e {
       //LAB_800eef0c
     }
 
-    final BtldScriptData27c a1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleObject27c.class);
     final LodString name = enemyNames_80112068.get(a1.charIndex_272.get()).deref();
 
     //LAB_800eef7c
@@ -5025,7 +5025,7 @@ public final class Bttl_800e {
     //LAB_800ef36c
     //LAB_800ef38c
     for(int charIndex = 0; charIndex < Math.min(charCount_800c677c.get(), 3); charIndex++) {
-      final BtldScriptData27c s0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(charIndex * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+      final BattleObject27c s0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(charIndex * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
       final byte[] sp0x10 = new byte[9];
       FUN_80022928(sp0x10, s0.charIndex_272.get());
       _800c6960.offset(charIndex * 0x9L).offset(1, 0x0L).setu(s0.charIndex_272.get());
@@ -5179,7 +5179,7 @@ public final class Bttl_800e {
   public static void FUN_800ef8d8(long a0) {
     final long a0_0 = _800c6c40.offset(a0 * 0x3cL).getAddress();
     MEMORY.ref(2, a0_0).offset(0x00L).setu(a0);
-    MEMORY.ref(2, a0_0).offset(0x02L).setu(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(a0 * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class).charIndex_272.get());
+    MEMORY.ref(2, a0_0).offset(0x02L).setu(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(a0 * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get());
     MEMORY.ref(2, a0_0).offset(0x04L).setu(0);
     MEMORY.ref(2, a0_0).offset(0x06L).oru(0x2L);
     MEMORY.ref(2, a0_0).offset(0x08L).setu(a0 * 0x5eL + 0x3fL);
@@ -5228,7 +5228,7 @@ public final class Bttl_800e {
           v1 = MEMORY.ref(2, s2).offset(0x6L).get();
 
           if((v1 & 0x1L) != 0 && (v1 & 0x2L) != 0) {
-            final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+            final BattleObject27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             v1 = data.maxHp_10.get();
             if(data.hp_08.get() > v1 / 2) {
               a3 = 1;
@@ -5379,7 +5379,7 @@ public final class Bttl_800e {
       for(s4 = 0; s4 < spe8; s4++) {
         if(MEMORY.ref(2, s7).offset(0x0L).getSigned() != -0x1L && (MEMORY.ref(2, s7).offset(0x6L).get() & 0x1L) != 0 && (MEMORY.ref(2, s7).offset(0x6L).get() & 0x2L) != 0) {
           a2 = _8006e398.offset(0xe40L).offset(spfc).get();
-          final BtldScriptData27c data = scriptStatePtrArr_800bc1c0.get((int)a2).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+          final BattleObject27c data = scriptStatePtrArr_800bc1c0.get((int)a2).deref().innerStruct_00.derefAs(BattleObject27c.class);
           if((scriptStatePtrArr_800bc1c0.get((int)_800c66c8.get()).deref().ui_60.get() & 0x4L) != 0x1L && _800c66c8.get() == a2) {
             spec = 0x2L;
             s5 = 0x2L;
@@ -5618,12 +5618,12 @@ public final class Bttl_800e {
           spf0 = 0x3L;
           textLen(str);
         } else {
-          final BtldScriptData27c data;
+          final BattleObject27c data;
 
           //LAB_800f0bb0
           if(struct58._50.get() == 0x1L) {
             //LAB_800f0ca4
-            data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1 * 0x4L).offset(0xebcL).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+            data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1 * 0x4L).offset(0xebcL).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
             //LAB_800f0cf0
             for(s4 = 0; s4 < _800c6768.get(); s4++) {
@@ -5637,7 +5637,7 @@ public final class Bttl_800e {
             textLen(str);
             spf0 = FUN_800f8ca0(data._1c.get());
           } else if(struct58._50.get() == 0) {
-            data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1 * 0x4L).offset(0xe40L).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+            data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1 * 0x4L).offset(0xe40L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
             textLen(str);
 
@@ -5655,7 +5655,7 @@ public final class Bttl_800e {
             //LAB_800f0d5c
             s4 = struct58._54.get();
             a1 = _8006e398.offset(s4 * 0x4L).getAddress();
-            data = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe0cL).get()).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+            data = scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe0cL).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             if((scriptStatePtrArr_800bc1c0.get((int)MEMORY.ref(4, a1).offset(0xe0cL).get()).deref().ui_60.get() & 0x4L) == 0) {
               str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
               spf0 = sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();

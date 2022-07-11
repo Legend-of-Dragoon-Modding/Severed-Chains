@@ -30,7 +30,7 @@ import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleStruct18cb0;
-import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BttlScriptData6c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
@@ -4443,7 +4443,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018944L)
-  public static void FUN_80018944() {
+  public static void waitForFilesToLoad() {
     if(fileCount_8004ddc8.get() == 0 && _8004dd14.get() == _8004dd18.get() && loadingSmapOvl_8004dd08.get() == 0) {
       pregameLoadingStage_800bb10c.addu(0x1L);
     }
@@ -5179,7 +5179,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019e24L)
   public static void FUN_80019e24(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6) {
-    final BtldScriptData27c v1 = scriptStatePtrArr_800bc1c0.get((int)a1).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get((int)a1).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     long t1 = 0;
     if(a0 == 0x1L) {
@@ -6535,7 +6535,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001d068L)
   public static void FUN_8001d068(long a0, long a1) {
-    final BtldScriptData27c s1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BtldScriptData27c.class);
+    final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     unloadSoundFile(3);
     unloadSoundFile(6);

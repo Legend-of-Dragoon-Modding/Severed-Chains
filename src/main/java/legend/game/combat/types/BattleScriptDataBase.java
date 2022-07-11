@@ -5,6 +5,9 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 
 public class BattleScriptDataBase implements MemoryRef {
+  public static long EM__ = 0x2020_4d45L;
+  public static long BOBJ = 0x4a42_4f42L;
+
   private final Value ref;
 
   public final UnsignedIntRef magic_00;

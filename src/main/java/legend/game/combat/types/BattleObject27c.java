@@ -11,7 +11,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.BigStruct;
 
-public class BtldScriptData27c extends BattleScriptDataBase {
+public class BattleObject27c extends BattleScriptDataBase {
   public final ArrayRef<ShortRef> all_04; // Note: overlaps all the way to _144
   public final UnsignedShortRef level_04;
   public final UnsignedShortRef dlevel_06;
@@ -171,7 +171,7 @@ public class BtldScriptData27c extends BattleScriptDataBase {
   public final ShortRef charSlot_276;
   public final UnsignedByteRef _278;
 
-  public BtldScriptData27c(final Value ref) {
+  public BattleObject27c(final Value ref) {
     super(ref);
 
     this.all_04 = ref.offset(2, 0x04L).cast(ArrayRef.of(ShortRef.class, 0xa0, 2, ShortRef::new));

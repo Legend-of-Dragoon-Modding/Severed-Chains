@@ -681,101 +681,90 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is probably one of the RotMatrix* methods */
   @Method(0x80040010L)
-  public static MATRIX RotMatrix_80040010(final SVECTOR vector, final MATRIX matrix) {
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
+  public static MATRIX RotMatrix_80040010(final SVECTOR r, final MATRIX matrix) {
     long t8;
     long t9;
 
-    t7 = vector.getX();
-    if(t7 < 0) {
+    final int x = r.getX();
+    final short sinX;
+    if(x < 0) {
       //LAB_8004002c
-      t7 = -t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t6 = (short)t9;
-      t3 = -t6;
+      t9 = sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
+      sinX = (short)-(short)t9;
     } else {
       //LAB_80040054
-      t7 = t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t3 = (short)t9;
+      t9 = sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
+      sinX = (short)t9;
     }
 
-    t0 = t9 >> 16;
+    final short cosX = (short)((int)t9 >> 16);
 
     //LAB_80040074
-    t7 = vector.getY();
-    if(t7 < 0) {
+    final int y = r.getY();
+    final short sinYP;
+    final short sinYN;
+    if(y < 0) {
       //LAB_80040090
-      t7 = -t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t6 = (short)t9;
-      t4 = -t6;
+      t9 = sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
+      sinYP = (short)-(short)t9;
+      sinYN = (short)t9;
     } else {
       //LAB_800400b8
-      t7 = t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t4 = (short)t9;
-      t6 = -t4;
+      t9 = sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
+      sinYP = (short)t9;
+      sinYN = (short)-(short)t9;
     }
 
-    t1 = (int)t9 >> 16;
+    final short cosY = (short)((int)t9 >> 16);
 
     //LAB_800400dc
-    matrix.set(2, 0, (short)t6);
-    matrix.set(2, 1, (short)((t3 * t1) >> 12));
-    matrix.set(2, 2, (short)((t0 * t1) >> 12));
+    matrix.set(2, 0, sinYN);
+    matrix.set(2, 1, (short)(sinX * cosY >> 12));
+    matrix.set(2, 2, (short)(cosX * cosY >> 12));
 
-    t7 = vector.getZ();
-    if(t7 < 0) {
+    final int z = r.getZ();
+    final short sinZ;
+    if(z < 0) {
       //LAB_8004011c
-      t7 = -t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t5 = -(short)t9;
+      t9 = sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
+      sinZ = (short)-(short)t9;
     } else {
       //LAB_80040144
-      t7 = t7 & 0xfffL;
-      t9 = sin_cos_80054d0c.offset(t7 * 0x4L).get();
-      t5 = (short)t9;
+      t9 = sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
+      sinZ = (short)t9;
     }
 
-    t2 = (int)t9 >> 16;
+    final short cosZ = (short)((int)t9 >> 16);
 
     //LAB_80040170
-    matrix.set(0, 0, (short)((t1 * t2) >> 12));
-    matrix.set(1, 0, (short)((t5 * t1) >> 12));
-    t8 = (t3 * t4) >> 12;
-    matrix.set(0, 1, (short)(((t8 * t2) >> 12) - ((t5 * t0) >> 12)));
-    matrix.set(1, 1, (short)(((t8 * t5) >> 12) + ((t0 * t2) >> 12)));
-    t8 = (t4 * t0) >> 12;
-    matrix.set(0, 2, (short)(((t8 * t2) >> 12) + ((t3 * t5) >> 12)));
-    matrix.set(1, 2, (short)(((t8 * t5) >> 12) - ((t3 * t2) >> 12)));
+    matrix.set(0, 0, (short)(cosY * cosZ >> 12));
+    matrix.set(1, 0, (short)(sinZ * cosY >> 12));
+    t8 = sinX * sinYP >> 12;
+    matrix.set(0, 1, (short)((t8 * cosZ >> 12) - (sinZ * cosX >> 12)));
+    matrix.set(1, 1, (short)((t8 * sinZ >> 12) + (cosX * cosZ >> 12)));
+    t8 = sinYP * cosX >> 12;
+    matrix.set(0, 2, (short)((t8 * cosZ >> 12) + (sinX * sinZ >> 12)));
+    matrix.set(1, 2, (short)((t8 * sinZ >> 12) - (sinX * cosZ >> 12)));
 
     return matrix;
   }
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final long r, final MATRIX matrix) {
-    final long t1;
-    final long t9;
+    final int sinCos;
+    final short sin;
 
     if(r < 0) {
       //LAB_800402bc
-      t9 = sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
-      t1 = -(short)t9;
+      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
+      sin = (short)-(short)sinCos;
     } else {
       //LAB_800402e4
-      t9 = sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
-      t1 = (short)t9;
+      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
+      sin = (short)sinCos;
     }
 
-    final long t0 = (int)t9 >> 16;
+    final short cos = (short)(sinCos >> 16);
 
     //LAB_80040304
     final long m10 = matrix.get(1, 0);
@@ -785,113 +774,62 @@ public final class Scus94491BpeSegment_8004 {
     final long m21 = matrix.get(2, 1);
     final long m22 = matrix.get(2, 2);
 
-    matrix.set(1, 0, (short)((t0 * m10 - t1 * m20) >> 12));
-    matrix.set(1, 1, (short)((t0 * m11 - t1 * m21) >> 12));
-    matrix.set(1, 2, (short)((t0 * m12 - t1 * m22) >> 12));
-    matrix.set(2, 0, (short)((t1 * m10 + t0 * m20) >> 12));
-    matrix.set(2, 1, (short)((t1 * m11 + t0 * m21) >> 12));
-    matrix.set(2, 2, (short)((t1 * m12 + t0 * m22) >> 12));
+    matrix.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
+    matrix.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
+    matrix.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
+    matrix.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
+    matrix.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
+    matrix.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
   }
 
   @Method(0x80040440L)
   public static void RotMatrixY(final long r, final MATRIX matrix) {
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t8;
-    long lo;
+    final int sinCos;
+    final short sin;
 
-    long t7 = r;
-    long t9 = t7 & 0xfffL;
-    if(t7 < 0) {
-      t7 = -t7;
-      t7 &= 0xfffL;
-
+    if(r < 0) {
       //LAB_8004045c
-      t8 = t7 << 0x2L;
-      t9 = sin_cos_80054d0c.offset(t8).get();
-      t1 = (short)t9;
-      t0 = (int)t9 >> 16;
+      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfff) * 4).get();
+      sin = (short)sinCos;
     } else {
       //LAB_80040480
-      t8 = t9 * 4L;
-      t9 = sin_cos_80054d0c.offset(t8).get();
-      t7 = (short)t9;
-      t1 = -t7;
-      t0 = (int)t9 >> 16;
+      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
+      sin = (short)-(short)sinCos;
     }
 
+    final short cos = (short)(sinCos >> 16);
+
     //LAB_800404a4
-    t2 = matrix.get(0);
-    t5 = matrix.get(6);
-    lo = t0 * t2;
-    t3 = matrix.get(1);
-    t6 = matrix.get(7);
-    t8 = lo;
-    t4 = matrix.get(1);
-    t7 = matrix.get(8);
-    lo = t1 * t5;
-    t9 = lo;
-    t9 = t8 - t9;
-    t8 = t9 >> 0xcL;
-    lo = t0 * t3;
-    matrix.set(0, (short)t8);
-    t8 = lo;
-    lo = t1 * t6;
-    t9 = lo;
-    t9 = t8 - t9;
-    t8 = t9 >> 0xcL;
-    lo = t0 * t4;
-    matrix.set(1, (short)t8);
-    t8 = lo;
-    lo = t1 * t7;
-    t9 = lo;
-    t9 = t8 - t9;
-    t8 = t9 >> 0xcL;
-    lo = t1 * t2;
-    matrix.set(2, (short)t8);
-    t8 = lo;
-    lo = t0 * t5;
-    t9 = lo;
-    t9 = t8 + t9;
-    t8 = t9 >> 0xcL;
-    lo = t1 * t3;
-    matrix.set(6, (short)t8);
-    t8 = lo;
-    lo = t0 * t6;
-    t9 = lo;
-    t9 = t8 + t9;
-    t8 = t9 >> 0xcL;
-    lo = t1 * t4;
-    matrix.set(7, (short)t8);
-    t8 = lo;
-    lo = t0 * t7;
-    t9 = lo;
-    t9 = t8 + t9;
-    t8 = t9 >> 0xcL;
-    matrix.set(8, (short)t8);
+    final short m0 = matrix.get(0);
+    final short m1 = matrix.get(1);
+    final short m2 = matrix.get(2);
+    final short m6 = matrix.get(6);
+    final short m7 = matrix.get(7);
+    final short m8 = matrix.get(8);
+    matrix.set(0, (short)(cos * m0 - sin * m6 >> 12));
+    matrix.set(1, (short)(cos * m1 - sin * m7 >> 12));
+    matrix.set(2, (short)(cos * m2 - sin * m8 >> 12));
+    matrix.set(6, (short)(sin * m0 + cos * m6 >> 12));
+    matrix.set(7, (short)(sin * m1 + cos * m7 >> 12));
+    matrix.set(8, (short)(sin * m2 + cos * m8 >> 12));
   }
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final long r, final MATRIX matrix) {
-    final long t1;
-    final long t9;
+    final int sinCos;
+    final short sin;
 
     if(r < 0) {
       //LAB_800405fc
-      t9 = sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
-      t1 = -(short)t9;
+      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfff) * 4).get();
+      sin = (short)-(short)sinCos;
     } else {
       //LAB_80040624
-      t9 = sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
-      t1 = (short)t9;
+      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfff) * 4).get();
+      sin = (short)sinCos;
     }
 
-    final long t0 = (int)t9 >> 16;
+    final short cos = (short)(sinCos >> 16);
 
     //LAB_80040644
     final long m00 = matrix.get(0, 0);
@@ -901,17 +839,17 @@ public final class Scus94491BpeSegment_8004 {
     final long m11 = matrix.get(1, 1);
     final long m12 = matrix.get(1, 2);
 
-    matrix.set(0, 0, (short)((t0 * m00 - t1 * m10) >> 12));
-    matrix.set(0, 1, (short)((t0 * m01 - t1 * m11) >> 12));
-    matrix.set(0, 2, (short)((t0 * m02 - t1 * m12) >> 12));
-    matrix.set(1, 0, (short)((t1 * m00 + t0 * m10) >> 12));
-    matrix.set(1, 1, (short)((t1 * m01 + t0 * m11) >> 12));
-    matrix.set(1, 2, (short)((t1 * m02 + t0 * m12) >> 12));
+    matrix.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
+    matrix.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
+    matrix.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
+    matrix.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
+    matrix.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
+    matrix.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
   }
 
   /** TODO RotMatrix_gte? */
   @Method(0x80040780L)
-  public static void RotMatrix_80040780(SVECTOR vector, MATRIX matrix) {
+  public static void RotMatrix_80040780(final SVECTOR vector, final MATRIX matrix) {
     long v1;
     long t0;
     long t1;
@@ -926,34 +864,23 @@ public final class Scus94491BpeSegment_8004 {
     long at;
     long lo;
 
-    t0 = vector.getZ();
-    v1 = sin_cos_80054d0c.getAddress();
-    t4 = vector.getXY();
     long a0;
     long a1;
-    t3 = t0 >> 0x1fL;
+    t0 = vector.getZ();
+    t3 = t0 >> 31;
     t0 += t3;
     t0 ^= t3;
-    t0 <<= 2;
-    t0 &= 0x3ffcL;
-    t0 += v1;
-    a2 = MEMORY.ref(4, t0).get();
-    t0 = t4 >> 16;
-    t2 = t0 >> 0x1f;
+    a2 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
+    t0 = vector.getY();
+    t2 = t0 >> 31;
     t0 += t2;
     t0 ^= t2;
-    t0 <<= 2;
-    t0 &= 0x3ffcL;
-    t0 += v1;
-    a1 = MEMORY.ref(4, t0).get();
-    t0 = (short)t4;
-    t1 = t0 >> 0x1fL;
+    a1 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
+    t0 = vector.getX();
+    t1 = t0 >> 31;
     t0 += t1;
     t0 ^= t1;
-    t0 <<= 2;
-    t0 &= 0x3ffcL;
-    t0 += v1;
-    a0 = MEMORY.ref(4, t0).get();
+    a0 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
     at = a2 << 16;
     a2 &= 0xffff_0000L;
     at += t3;
@@ -1006,7 +933,7 @@ public final class Scus94491BpeSegment_8004 {
     a2 = CPU.MFC2(11);
 
     matrix.set(6, (short)(-a3 & 0xffffL));
-    matrix.set(7, (short)(at * t6 / 0x1000L));
+    matrix.set(7, (short)(at * (t6 >> 16)));
     matrix.set(0, (short)a0);
     matrix.set(1, (short)(a1 - t1));
 
@@ -1015,14 +942,11 @@ public final class Scus94491BpeSegment_8004 {
     CPU.MTC2(t3, 10);
     CPU.MTC2(t0, 11);
     CPU.COP2(0x198_003dL);
-    at = CPU.MFC2(9);
-    t6 = CPU.MFC2(10);
-    t7 = CPU.MFC2(11);
 
     matrix.set(2, (short)(a2 + t4));
-    matrix.set(3, (short)at);
-    matrix.set(4, (short)(t6 + t2));
-    matrix.set(5, (short)(t7 - t5));
+    matrix.set(3, (short)CPU.MFC2(9));
+    matrix.set(4, (short)(CPU.MFC2(10) + t2));
+    matrix.set(5, (short)(CPU.MFC2(11) - t5));
   }
 
   @Method(0x80040980L)
@@ -1102,7 +1026,7 @@ public final class Scus94491BpeSegment_8004 {
     CPU.MTC2(at, 11);
     CPU.COP2(0x198003dL);
     at = (int)a1 >> 16;
-    lo = ((long)(int)at * (int)t0) & 0xffff_ffffL;
+    lo = (long)(int)at * (int)t0 & 0xffff_ffffL;
     t0 = CPU.MFC2(9);
     t1 = CPU.MFC2(10);
     t6 = a0_0 << 16;
@@ -1124,7 +1048,7 @@ public final class Scus94491BpeSegment_8004 {
     CPU.MTC2(at, 8);
     at = (int)a1 >> 16;
     CPU.MTC2(at, 9);
-    lo = ((long)(int)at * (int)t6) & 0xffff_ffffL;
+    lo = (long)(int)at * (int)t6 & 0xffff_ffffL;
     CPU.MTC2(t3, 10);
     CPU.MTC2(t0, 11);
     CPU.COP2(0x198003dL);
@@ -1173,7 +1097,7 @@ public final class Scus94491BpeSegment_8004 {
    * 12-bit decimal
    */
   @Method(0x80040b90L)
-  public static int ratan2(long x, long y) {
+  public static int ratan2(int x, int y) {
     boolean negativeY = false;
     boolean negativeX = false;
 
@@ -1194,9 +1118,9 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80040bc8
-    long atan;
+    int atan;
     if(x < y) {
-      if((x & 0x7fe0_0000L) == 0) {
+      if((x & 0x7fe0_0000) == 0) {
         //LAB_80040c10
         //LAB_80040c3c
         x = Math.floorDiv(x << 10, y);
@@ -1205,10 +1129,10 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040c44
-      atan = _80058d0c.offset(x * 0x2L).get();
+      atan = (int)_80058d0c.offset(x * 0x2L).getSigned();
     } else {
       //LAB_80040c58
-      if((y & 0x7fe0_0000L) == 0) {
+      if((y & 0x7fe0_0000) == 0) {
         //LAB_80040c98
         //LAB_80040cc4
         x = Math.floorDiv(y << 10, x);
@@ -1218,21 +1142,21 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040ccc
-      atan = 0x400L - _80058d0c.offset(x * 0x2L).get();
+      atan = 0x400 - (int)_80058d0c.offset(x * 0x2L).getSigned();
     }
 
     //LAB_80040ce0
     if(negativeY) {
-      atan = 0x800L - atan;
+      atan = 0x800 - atan;
     }
 
     //LAB_80040cec
     if(negativeX) {
-      return (int)-atan;
+      return -atan;
     }
 
     //LAB_80040cfc
-    return (int)atan;
+    return atan;
   }
 
   /**
@@ -1620,7 +1544,7 @@ public final class Scus94491BpeSegment_8004 {
     final JoyData joyData = ptrGetJoyDataForPort_800595e8.deref().run(port);
 
     //LAB_80042ecc
-    if(joyData.command_byte37.get() != 0 || joyData.byte38.get() != 0 || (joyData.joyDataPtr10.getPointer() != joyData.getAddress() && joyData.byte39.getUnsigned() != 0) || joyData.bytePtr30.deref().get(0).get() != 0) {//LAB_80042ee4
+    if(joyData.command_byte37.get() != 0 || joyData.byte38.get() != 0 || joyData.joyDataPtr10.getPointer() != joyData.getAddress() && joyData.byte39.getUnsigned() != 0 || joyData.bytePtr30.deref().get(0).get() != 0) {//LAB_80042ee4
       final int byte49 = joyData.byte49.get();
 
       if(byte49 == 0x2 || byte49 == 0x3) {
@@ -2680,7 +2604,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       joyData.byte47.incr();
-      joyData.shortec.add(((joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() + 0x3 & 0x1fc) + 0x8));
+      joyData.shortec.add((joyData.responseBufferPtr_bytePtr3c.deref().get(4).get() + 0x3 & 0x1fc) + 0x8);
 
       if(joyData.byte47.get() < joyData.byteea.get()) {
         return 0;
@@ -3550,8 +3474,8 @@ public final class Scus94491BpeSegment_8004 {
     struct66._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
     struct66._2c.set((int)_800c4ab0.deref(1).offset(spu124._003.get()).offset(0x2L).get());
     struct66._2e.set(sshd10Ptr_800c6678.deref()._0b.get());
-    struct66._30.set((int)_80059f3c.offset((FUN_80048b90(0x4L, 0) / 0x2L) & 0x7ffeL).offset(0x0L).get());
-    struct66._32.set((int)_80059f3c.offset((FUN_80048b90(0x4L, 0) / 0x2L) & 0x7ffeL).offset(0x1L).get());
+    struct66._30.set((int)_80059f3c.offset(FUN_80048b90(0x4L, 0) / 0x2L & 0x7ffeL).offset(0x0L).get());
+    struct66._32.set((int)_80059f3c.offset(FUN_80048b90(0x4L, 0) / 0x2L & 0x7ffeL).offset(0x1L).get());
     struct66._34.set((int)sssqDataPointer_800c6680.deref(1).offset(0x3L).get());
 
     long v1 = sshd10Ptr_800c6678.deref()._03.get();
@@ -3739,8 +3663,8 @@ public final class Scus94491BpeSegment_8004 {
           s1._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
           s1._2c.set((int)_800c4ab0.deref(1).offset(s2._003.get()).offset(0x2L).get());
           s1._2e.set(sshd10Ptr_800c6678.deref()._0b.get());
-          s1._30.set((int)_80059f3c.offset((FUN_80048b90(0, 0) / 0x2L) & 0x7ffeL).offset(0x0L).get());
-          s1._32.set((int)_80059f3c.offset((FUN_80048b90(0, 0) / 0x2L) & 0x7ffeL).offset(0x1L).get());
+          s1._30.set((int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x0L).get());
+          s1._32.set((int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x1L).get());
           s1._34.set((int)sssqDataPointer_800c6680.deref(1).offset(0x3L).get());
 
           //LAB_80046d08
@@ -3891,7 +3815,7 @@ public final class Scus94491BpeSegment_8004 {
               //LAB_80047220
               if(a1 < t2) {
                 //LAB_80047244
-                t2 = (t2 - a1) + 120;
+                t2 = t2 - a1 + 120;
               } else {
                 t2 = 120 - (a1 - t2);
               }
@@ -3975,14 +3899,14 @@ public final class Scus94491BpeSegment_8004 {
                   }
 
                   //LAB_8004748c
-                  a2 = a2 + (v0 - v1);
+                  a2 = a2 + v0 - v1;
                   t3 = 0x1L;
                 }
 
                 //LAB_80047498
                 v0 = spu66._16.get();
 
-                v1 = ((long)(int)a3 * (int)v0) & 0xffff_ffffL;
+                v1 = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
                 a3 = v1 / 255 - (v0 + 1) / 2 - 0x40L;
               }
 
@@ -3992,12 +3916,12 @@ public final class Scus94491BpeSegment_8004 {
 
                 a0 = spu66._64.get() - spu66._62.get();
                 if((spu66._60.get() & 0x80L) != 0) {
-                  v0 = ((long)(int)a0 * (-spu66._60.get() & 0xffL)) & 0xffff_ffffL;
+                  v0 = (long)(int)a0 * (-spu66._60.get() & 0xffL) & 0xffff_ffffL;
 
                   //LAB_800475a4
                   t1 = (int)(v0 * 192) / (spu66._64.get() * 120);
                   v0 = 0x100L - spu66._60.get();
-                  a0 = ((long)(int)a0 * (int)v0) & 0xffff_ffffL;
+                  a0 = (long)(int)a0 * (int)v0 & 0xffff_ffffL;
 
                   //LAB_80047600
                   a1 = spu66._4e.get() - (int)(a0 / 10) / spu66._64.get();
@@ -4011,7 +3935,7 @@ public final class Scus94491BpeSegment_8004 {
                   a2 -= t1 - (a0 & ~0xfL);
                 } else {
                   //LAB_8004762c
-                  a0 = ((long)(int)a0 * spu66._60.get()) & 0xffff_ffffL;
+                  a0 = (long)(int)a0 * spu66._60.get() & 0xffff_ffffL;
 
                   //LAB_80047684
                   t1 = (int)(a0 * 192) / (spu66._64.get() * 120);
@@ -4534,7 +4458,7 @@ public final class Scus94491BpeSegment_8004 {
       a2.keyOffLo_0e2.or(1 << voiceIndex);
     } else {
       //LAB_80048920
-      a2.keyOffHi_0e4.or(1 << (voiceIndex - 16));
+      a2.keyOffHi_0e4.or(1 << voiceIndex - 16);
     }
   }
 
@@ -4932,7 +4856,7 @@ public final class Scus94491BpeSegment_8004 {
     } else {
       //LAB_800497fc
       sssqDataPointer_800c6680.deref(1).offset(0x3L).setu(sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get()).offset(0x2L).get());
-      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu((sssqPtr_800c667c.deref(1).offset(0x0L).get() * sssqDataPointer_800c6680.deref(1).offset(0x3L).get()) / 0x80L);
+      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(sssqPtr_800c667c.deref(1).offset(0x0L).get() * sssqDataPointer_800c6680.deref(1).offset(0x3L).get() / 0x80L);
 
       //LAB_8004985c
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -5054,12 +4978,12 @@ public final class Scus94491BpeSegment_8004 {
       case 4 ->
         sshd10Ptr_800c6678.deref()._06
           .and(0xff)
-          .or((0x7f - spu124._003.get()) << 8);
+          .or(0x7f - spu124._003.get() << 8);
 
       case 5 ->
         sshd10Ptr_800c6678.deref()._06
           .and(0xff)
-          .or((0x7f - spu124._003.get()) << 8)
+          .or(0x7f - spu124._003.get() << 8)
           .or(0x8000);
 
       case 6 ->
@@ -5480,7 +5404,7 @@ public final class Scus94491BpeSegment_8004 {
   public static int FUN_8004af3c(final long a0, final long a1, final long a2, final long a3) {
     //LAB_8004af6c
     //LAB_8004af84
-    return (int)((a0 + (((a1 & 0xffL) - (a0 & 0xffL)) * a3 & 0xffL) / a2 & 0xffL) & 0xffL);
+    return (int)(a0 + (((a1 & 0xffL) - (a0 & 0xffL)) * a3 & 0xffL) / a2 & 0xffL & 0xffL);
   }
 
   @Method(0x8004af98L)
@@ -6212,7 +6136,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c97c
     for(int i = 0; i < 16; i++) {
-      final long t0 = (sssqDataPointer_800c6680.deref(1).offset(0x3L).get() * (int)a1) & 0xffff_ffffL;
+      final long t0 = sssqDataPointer_800c6680.deref(1).offset(0x3L).get() * (int)a1 & 0xffff_ffffL;
       final long v0 = (int)t0 >> 7;
       sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(v0);
       sssqDataPointer_800c6680.addu(0x10L);
@@ -6270,7 +6194,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004cbc8
     for(int i = 0; i < 24; i++) {
       final long v0 = sssqDataPointer_800c6680.deref(1).offset(0x3L).get();
-      final long t3 = ((long)(int)v0 * (int)a1) & 0xffff_ffffL;
+      final long t3 = (long)(int)v0 * (int)a1 & 0xffff_ffffL;
       sssqDataPointer_800c6680.deref(1).offset(0xeL).setu((int)t3 / 0x80L);
       sssqDataPointer_800c6680.addu(0x10L);
     }

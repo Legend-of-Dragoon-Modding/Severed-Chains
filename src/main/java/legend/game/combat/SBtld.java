@@ -6,8 +6,9 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
+import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.BtldScriptData27c;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -196,7 +197,7 @@ public class SBtld {
   }
 
   @Method(0x8010955cL)
-  public static void FUN_8010955c(final long a0) {
+  public static void allocateEnemyBattleObjects(final long a0) {
     final long fp = _1f8003f4.getPointer(); //TODO
 
     //LAB_801095a0
@@ -219,14 +220,14 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final int scriptIndex = allocateScriptState(0x27cL, BtldScriptData27c::new);
-      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
-      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BtldScriptData27c.class), BtldScriptData27c.class), TriConsumerRef::new));
+      final int scriptIndex = allocateScriptState(0x27cL, BattleObject27c::new);
+      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(scriptIndex);
       _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(scriptIndex);
-      final ScriptState<BtldScriptData27c> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BtldScriptData27c.class));
-      final BtldScriptData27c data = state.innerStruct_00.deref();
-      data.magic_00.set(0x4a42_4f42L);
+      final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
+      final BattleObject27c data = state.innerStruct_00.deref();
+      data.magic_00.set(BattleScriptDataBase.BOBJ);
       data.charIndex_272.set((short)charIndex);
       data._274.set((short)_800c66d0.get());
       data.charSlot_276.set((short)_800c6768.get());
