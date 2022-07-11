@@ -9,12 +9,14 @@ import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
+import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.QuadFunctionRef;
@@ -3528,24 +3530,27 @@ public final class Bttl_800c {
     return 0;
   }
 
+  /**
+   * Holy crap this method was complicated... the way the stack is set up, all params after a3 are part of the sp0x90 array. Count is the number of parameters.
+   * It's basically a variadic method so I'm changing the signature to that.
+   */
   @Method(0x800cff54L)
-  public static long FUN_800cff54(final long callback, final long count, final long a2, final long a3, final long a4, final long a5, final long a6) {
-    final Ref<Long>[] sp0x10 = new Ref[8 + (int)count];
-    final long[] sp0x58 = new long[(int)count];
-    final long[] sp0x94 = new long[(int)count];
-    sp0x94[0] = a3;
-    sp0x58[0] = a2;
-    sp0x10[8] = new Ref<>(sp0x58[0]);
+  public static long FUN_800cff54(final long callback, final int... params) {
+    final Memory.TemporaryReservation tmp = MEMORY.temp(0x44);
+    final RunningScript sp0x10 = new RunningScript(tmp.get());
+    final IntRef[] sp0x58 = new IntRef[params.length];
 
     //LAB_800cff90
-    for(int i = 1; i < count; i++) {
-      sp0x58[i] = sp0x94[i];
-      sp0x10[8 + i] = new Ref<>(sp0x58[i]);
+    for(int i = 0; i < params.length; i++) {
+      sp0x58[i] = new IntRef().set(params[i]);
+      sp0x10.params_20.get(i).set(sp0x58[i]);
     }
 
     //LAB_800cffbc
-    MEMORY.ref(4, callback).call((Object)sp0x10);
-    return sp0x58[0];
+    MEMORY.ref(4, callback).call(sp0x10);
+    tmp.release();
+
+    return sp0x58[0].get();
   }
 
   @Method(0x800cffd8L)

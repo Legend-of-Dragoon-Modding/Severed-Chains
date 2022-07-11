@@ -3543,6 +3543,21 @@ public final class SMap {
     return FUN_800e02fc(a0);
   }
 
+  @Method(0x800df6a4L)
+  public static long FUN_800df6a4(final RunningScript s1) {
+    SetRotMatrix(matrix_800c3548);
+    SetTransMatrix(matrix_800c3548);
+    FUN_800e8104(new SVECTOR().set((short)s1.params_20.get(0).deref().get(), (short)s1.params_20.get(0).deref().get(), (short)s1.params_20.get(0).deref().get()));
+
+    //LAB_800df744
+    for(int i = 0; i < scriptCount_800c6730.get(); i++) {
+      scriptStatePtrArr_800bc1c0.get(scriptStateIndices_800c6880.get(i).get()).deref().innerStruct_00.derefAs(BigStruct.class).us_178.set(0);
+    }
+
+    //LAB_800df774
+    return 0;
+  }
+
   @Method(0x800df788L)
   public static long FUN_800df788(final RunningScript a0) {
     long v0;
@@ -4474,7 +4489,7 @@ public final class SMap {
           final BigStruct struct = scriptStatePtrArr_800bc1c0.get(index2).deref().innerStruct_00.derefAs(BigStruct.class);
           struct.ub_9d.set((int)_800c6a50.offset(1, i * 0x4L).get());
 
-          FUN_80020a00(struct, extendedTmdArr_800c6a00.get(i).deref(), mrg0Addr_800c6878.deref().getFile(i * 21 + 1, TmdAnimationFile::new));
+          FUN_80020a00(struct, extendedTmdArr_800c6a00.get(i).deref(), mrg0Addr_800c6878.deref().getFile(i * 33 + 1, TmdAnimationFile::new));
 
           if(i == 0) {
             FUN_800e0d18(bigStruct_800c6748, extendedTmdArr_800c6a00.get(0).deref(), mrg0Addr_800c6878.deref().getFile(1, TmdAnimationFile::new));

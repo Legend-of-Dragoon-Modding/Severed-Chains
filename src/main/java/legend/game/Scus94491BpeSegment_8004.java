@@ -6401,6 +6401,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d034L) //TODO unsure of this restructure
   public static void FUN_8004d034(final int voiceIndex, final long a1) {
+    //TODO GH#3
+    if(true) {
+      return;
+    }
+
     final SpuStruct124 spu124 = _800c4ac8.get(voiceIndex);
 
     sshdPtr_800c4ac0.set(playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020.get()).sshdPtr_04.deref());

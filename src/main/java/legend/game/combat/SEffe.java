@@ -1627,16 +1627,16 @@ public final class SEffe {
 
   @Method(0x80106050L)
   public static void FUN_80106050(final long a0, final long a1) {
-    final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", Ref[].class);
+    final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
 
     if(Math.abs((byte)a0) >= 0x2L) {
-      FUN_800cff54(callback, 0x5L, 0x24L, 0x77L, 0x2bL, 0x1L, 0x80L);
-      FUN_800cff54(callback, 0x5L, _800fb7bc.offset(1, 0x0L).offset(a1).get(), 0x73L, 0x30L, 0x1L, 0x80L);
+      FUN_800cff54(callback, 0x24, 0x77, 0x2b, 0x1, 0x80);
+      FUN_800cff54(callback, (int)_800fb7bc.offset(1, 0x0L).offset(a1).get(), 0x73, 0x30, 0x1, 0x80);
     } else {
       //LAB_80106114
-      FUN_800cff54(callback, 0x5L, 0x24L, 0x77L, 0x33L, 0x1L, 0x80L);
-      FUN_800cff54(callback, 0x5L, _800fb7bc.offset(1, 0x2L).offset(a1).get(), 0x73L, 0x30L, 0x1L, 0x80L);
-      FUN_800cff54(callback, 0x5L, 0x25L, 0x73L, 0x32L, 0x1L, 0x80L);
+      FUN_800cff54(callback, 0x24, 0x77, 0x33, 0x1, 0x80);
+      FUN_800cff54(callback, (int)_800fb7bc.offset(1, 0x2L).offset(a1).get(), 0x73, 0x30, 0x1, 0x80);
+      FUN_800cff54(callback, 0x25, 0x73, 0x32, 0x1, 0x80);
     }
   }
 
