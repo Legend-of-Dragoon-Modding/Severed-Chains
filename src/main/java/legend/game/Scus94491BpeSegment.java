@@ -3089,10 +3089,10 @@ public final class Scus94491BpeSegment {
               RunningScript_800bc070.params_20.get(childIndex).set(p);
             } else if(operation == 0x14L) {
               //LAB_800164b4
-              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)parentCommand * 0x4L;
+              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
 
               //LAB_800164cc
-              v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).get() / 4;
+              v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).getSigned() * 0x4L;
 
               //LAB_800164d4
               final IntRef p = MEMORY.ref(4, v1 + v0, IntRef::new);
