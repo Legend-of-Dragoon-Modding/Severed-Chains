@@ -2936,8 +2936,8 @@ public final class Scus94491BpeSegment_8002 {
     struct4c._06.set((short)_80052b68.offset((a0.params_20.get(2).deref().get() & 0xfL) * 0x2L).get());
     struct4c._14.set((short)0);
     struct4c._16.set((short)0);
-    struct4c._18.set((short)(a0.params_20.get(3).deref().get() + 0x1L));
-    struct4c._1a.set((short)(a0.params_20.get(4).deref().get() + 0x1L));
+    struct4c.width_18.set((short)(a0.params_20.get(3).deref().get() + 0x1L));
+    struct4c.lines_1a.set((short)(a0.params_20.get(4).deref().get() + 0x1L));
     FUN_800258a8(s2);
 
     final Struct84 struct84 = _800bdf38.get((int)s2);
@@ -3099,6 +3099,26 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800256f0
+    return 0;
+  }
+
+  @Method(0x80025718L)
+  public static long FUN_80025718(final RunningScript a0) {
+    final Struct84 s0 = _800bdf38.get(a0.params_20.get(0).deref().get());
+
+    s0._6c.set(-1);
+    s0._70.set((short)a0.params_20.get(2).deref().get());
+    s0._72.set((short)a0.params_20.get(1).deref().get());
+
+    if(s0._00.get() == 0xdL) {
+      s0._00.set(0x17L);
+      s0._64.set(0x0aL);
+      s0._78.set(0x16L);
+      Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
+    }
+
+    //LAB_800257bc
+    s0._08.or(0x800L);
     return 0;
   }
 
@@ -5643,32 +5663,19 @@ public final class Scus94491BpeSegment_8002 {
     long s5;
     long s6;
     long s7;
-    long sp;
     long fp;
-    long ra;
-    long hi;
     long lo;
-    long sp60;
-    long sp70;
     long sp22;
     long sp44;
-    long sp54;
     long sp10;
-    long sp68;
     long sp40;
-    long sp50;
-    long sp64;
     long sp20;
-    long sp74;
     long sp30;
     long sp18;
     long sp48;
-    long sp58;
     long sp14;
     long sp28;
     long sp38;
-    long sp5c;
-    long sp6c;
     v1 = 0x800c_0000L;
     v1 = v1 - 0x20c8L;
     v0 = a0 << 5;
@@ -6075,25 +6082,13 @@ public final class Scus94491BpeSegment_8002 {
     long s5;
     long s6;
     long s7;
-    long sp;
     long fp;
-    long ra;
-    long sp44;
-    long sp54;
     long sp10;
     long sp24;
-    long sp34;
-    long sp40;
-    long sp50;
     long sp20;
-    long sp30;
     long sp18;
-    long sp48;
     long sp58;
     long sp14;
-    long sp38;
-    long sp3c;
-    long sp4c;
     long sp1c;
 
     sp58 = a0;
@@ -6520,10 +6515,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028fc0
     //LAB_80028fd4
     if(
-      a1 - _800be358.get((int)a0)._18.get() * 9 / 2 < 0xaL ||
-      a1 + _800be358.get((int)a0)._18.get() * 9 / 2 > (int)t1 ||
-      a2 - _800be358.get((int)a0)._1a.get() * 6 < 0x12L ||
-      a2 + _800be358.get((int)a0)._1a.get() * 6 > 0xdeL
+      a1 - _800be358.get((int)a0).width_18.get() * 9 / 2 < 0xaL ||
+      a1 + _800be358.get((int)a0).width_18.get() * 9 / 2 > (int)t1 ||
+      a2 - _800be358.get((int)a0).lines_1a.get() * 6 < 0x12L ||
+      a2 + _800be358.get((int)a0).lines_1a.get() * 6 > 0xdeL
     ) {
       return 0;
     }
@@ -6827,7 +6822,7 @@ public final class Scus94491BpeSegment_8002 {
     final long v1 = _800bdea0.offset(a0 * 0xcL).getAddress();
     MEMORY.ref(2, v1).offset(0x4L).setu(struct._14.get());
     MEMORY.ref(2, v1).offset(0x8L).setu(0);
-    MEMORY.ref(2, v1).offset(0x6L).setu(struct._16.get() + struct._1a.get() * 6L);
+    MEMORY.ref(2, v1).offset(0x6L).setu(struct._16.get() + struct.lines_1a.get() * 6L);
   }
 
   @Method(0x800299d4L)
@@ -7008,6 +7003,12 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
+  @Method(0x80029f48L)
+  public static long FUN_80029f48(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(_800bdf38.get(a0.params_20.get(0).deref().get())._6c.get());
+    return 0;
+  }
+
   @Method(0x8002a058L)
   public static void FUN_8002a058() {
     //LAB_8002a080
@@ -7164,8 +7165,8 @@ public final class Scus94491BpeSegment_8002 {
 
     struct._14.set((short)a2);
     struct._16.set((short)a3);
-    struct._18.set((short)(a4 + 1));
-    struct._1a.set((short)(a5 + 1));
+    struct.width_18.set((short)(a4 + 1));
+    struct.lines_1a.set((short)(a5 + 1));
   }
 
   @Method(0x8002a3ecL)

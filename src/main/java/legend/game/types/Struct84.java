@@ -37,7 +37,7 @@ public class Struct84 implements MemoryRef {
   public final UnsignedIntRef _64;
   public final IntRef _68;
   public final IntRef _6c;
-
+  public final ShortRef _70;
   public final ShortRef _72;
 
   public final UnsignedIntRef _78;
@@ -72,7 +72,7 @@ public class Struct84 implements MemoryRef {
     this._64 = ref.offset(4, 0x64L).cast(UnsignedIntRef::new);
     this._68 = ref.offset(4, 0x68L).cast(IntRef::new);
     this._6c = ref.offset(4, 0x6cL).cast(IntRef::new);
-
+    this._70 = ref.offset(2, 0x70L).cast(ShortRef::new);
     this._72 = ref.offset(2, 0x72L).cast(ShortRef::new);
 
     this._78 = ref.offset(4, 0x78L).cast(UnsignedIntRef::new);

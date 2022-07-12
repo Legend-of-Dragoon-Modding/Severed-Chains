@@ -18,6 +18,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ConsumerRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -287,16 +288,17 @@ public class WMap {
 
   private static final Value _800ef694 = MEMORY.ref(1, 0x800ef694L);
 
-  private static final LodString _800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
-  private static final LodString _800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
-  private static final LodString _800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
+  private static final LodString No_800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
+  private static final LodString Yes_800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
+  /** "Move?" */
+  private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
   private static final ArrayRef<Pointer<LodString>> _800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private static final Pointer<LodString> _800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> _800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> _800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
-  private static final ArrayRef<Pointer<LodString>> _800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
+  private static final Pointer<LodString> No_Entry_800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
+  private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
+  private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private static final Value _800f01fc = MEMORY.ref(4, 0x800f01fcL);
 
@@ -306,7 +308,7 @@ public class WMap {
 
   private static final Value _800f021c = MEMORY.ref(2, 0x800f021cL);
 
-  private static final UnboundedArrayRef<WMapStruct0c> _800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, WMapStruct0c::new));
+  private static final UnboundedArrayRef<WMapStruct0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, WMapStruct0c::new));
 
   private static final UnboundedArrayRef<WMapStruct14> _800f0e34 = MEMORY.ref(2, 0x800f0e34L, UnboundedArrayRef.of(0x14, WMapStruct14::new));
 
@@ -2337,7 +2339,6 @@ public class WMap {
 
   @Method(0x800ccda4L)
   public static void FUN_800ccda4() {
-    final long v0 = _800c6798.getAddress();
     gameState_800babc8._4de.set((int)_800c67aa.get());
     gameState_800babc8.pathIndex_4d8.set((int)pathIndex_800c67ac.get());
     gameState_800babc8.dotIndex_4da.set((int)dotIndex_800c67ae.get());
@@ -3570,7 +3571,7 @@ public class WMap {
     int sp14 = 0;
     for(int i = 0; i < _800c67a0.get(); i++) {
       //LAB_800d1e38
-      if(!_800f0234.get(_800f0e34.get(i)._02.get()).text_00.isNull()) {
+      if(!places_800f0234.get(_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800d1e90
         if(FUN_800eb09c(i, 1, _800c66b0.deref()._154.get(sp14).vec_08) == 0) {
           //LAB_800d1ee0
@@ -3976,8 +3977,6 @@ public class WMap {
     long sp1c;
     long sp20;
     long sp24;
-    long sp28;
-    long sp2c;
     long sp30;
     long sp34;
     long sp6c;
@@ -4473,9 +4472,9 @@ public class WMap {
     at = 0x800f_0000L;
     v0 = MEMORY.ref(4, at).offset(0x5a94L).offset(sp24 * 0x2cL).get();
 
-    final Ref<Long> sp0x28 = new Ref<>();
-    final Ref<Long> sp0x2c = new Ref<>();
-    FUN_800e7624(_800f0234.get((int)v0).text_00.deref(), sp0x28, sp0x2c);
+    final IntRef width = new IntRef();
+    final IntRef lines = new IntRef();
+    measureText(places_800f0234.get((int)v0).name_00.deref(), width, lines);
     v0 = 0x800d_0000L;
     v0 = MEMORY.ref(4, v0).offset(-0x7910L).get();
     if(v0 == 0x1L) {
@@ -4483,25 +4482,20 @@ public class WMap {
       _800bdf00.setu(0xeL);
       _800be358.get(7)._0c.set(0xeL);
 
-      if(sp0x28.get().intValue() < 0x4L) {
-        _800be358.get(7)._18.set((short)4);
+      if(width.get() < 4) {
+        _800be358.get(7).width_18.set((short)4);
       } else {
-        assert false : "sp28?";
-        //_800be584.setu(sp28); //2b
+        _800be358.get(7).width_18.set((short)width.get());
       }
 
       //LAB_800d4a28
-      _800be358.get(7)._1a.set(sp0x2c.get().shortValue());
+      _800be358.get(7).lines_1a.set((short)lines.get());
       _800c86f0.setu(0x2L);
       //LAB_800d4974
     } else if(v0 == 0) {
-      sp28 = 0;
-      sp2c = 0;
-      assert false : "sp28/sp2c?";
-
       //LAB_800d4988
-      sp10 = sp28 - 0x1L;
-      sp14 = sp2c - 0x1L;
+      sp10 = width.get() - 0x1L;
+      sp14 = lines.get() - 0x1L;
 
       FUN_8002a32c(7, 0, sp70, sp72, sp10, sp14);
       v0 = 0x1L;
@@ -4512,23 +4506,21 @@ public class WMap {
       _800bdf00.setu(0xeL);
       _800be358.get(7)._0c.set(0xeL);
 
-      if((int)sp28 < 0x4L) {
-        _800be358.get(7)._18.set((short)4);
+      if(width.get() < 0x4L) {
+        _800be358.get(7).width_18.set((short)4);
       } else {
-        _800be358.get(7)._18.set((short)sp28);
+        _800be358.get(7).width_18.set((short)width.get());
       }
 
       //LAB_800d4a28
-      _800be358.get(7)._1a.set((short)sp2c);
+      _800be358.get(7).lines_1a.set((short)lines.get());
       _800c86f0.setu(0x2L);
     } else if(v0 == 0x2L) {
-      assert false : "sp28?"; sp28 = 0;
-
       //LAB_800d4a40
-      v0 = sp28;
+      v0 = width.get();
       at = 0x800c_0000L;
       MEMORY.ref(2, at).offset(-0x1a7cL).setu(v0);
-      v0 = sp28;
+      v0 = width.get();
 
       if((int)v0 < 0x4L) {
         v0 = 0x4L;
@@ -4536,10 +4528,8 @@ public class WMap {
         MEMORY.ref(2, at).offset(-0x1a7cL).setu(v0);
       }
 
-      assert false : "sp2c?"; sp2c = 0;
-
       //LAB_800d4a6c
-      v0 = sp2c;
+      v0 = lines.get();
       at = 0x800c_0000L;
       MEMORY.ref(2, at).offset(-0x1a7aL).setu(v0);
       v1 = 0x800c_0000L;
@@ -4596,8 +4586,8 @@ public class WMap {
     v0 = v1 << 2;
 
     assert false : "Can't figure this out";
-//    v1 = sp70 - sp28 * 3;
-//    a0 = sp72 - sp2c * 7;
+//    v1 = sp70 - width * 3;
+//    a0 = sp72 - lines * 7;
 //    FUN_800e774c(_800f0234.offset(v0).deref(4).cast(ArrayRef.of(UnsignedShortRef.class, 0xff, 2, UnsignedShortRef::new)), v1, (short)a0, 0, 0); //TODO
 
     //LAB_800d4bb4
@@ -7195,8 +7185,6 @@ public class WMap {
   public static void FUN_800da248() {
     long a0;
     long sp24;
-    Ref<Long> sp0x28 = new Ref<>();
-    Ref<Long> sp0x2c = new Ref<>();
     VECTOR sp0x38 = new VECTOR();
     VECTOR sp0x48 = new VECTOR();
     long sp58;
@@ -7492,12 +7480,15 @@ public class WMap {
 
       case 6:
         _800be358.get(6)._0c.set(0x12L);
-        FUN_800e7624(_800f00e8, sp0x28, sp0x2c);
-        FUN_800e774c(_800f00e8, (short)(0xf0L - sp0x28.get() * 3), 0x29L, 0, 0);
-        FUN_800e7624(_800effa4, sp0x28, sp0x2c);
-        FUN_800e774c(_800effa4, (short)(0xf0L - sp0x28.get() * 3), 0x39L, 0, 0);
-        FUN_800e7624(_800effb0, sp0x28, sp0x2c);
-        FUN_800e774c(_800effb0, (short)(0xf0L - sp0x28.get() * 3), 0x49L, 0, 0);
+
+        final IntRef width = new IntRef();
+        final IntRef lines = new IntRef();
+        measureText(Move_800f00e8, width, lines);
+        FUN_800e774c(Move_800f00e8, (short)(240 - width.get() * 3), 41, 0, 0);
+        measureText(No_800effa4, width, lines);
+        FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, 0, 0);
+        measureText(Yes_800effb0, width, lines);
+        FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, 0, 0);
         FUN_800dc178(0, 0);
 
         if((joypadPress_8007a398.get() & 0x40L) != 0) {
@@ -8335,6 +8326,8 @@ public class WMap {
 
     if(struct._250.get() != 0x2L) {
       struct._1e4.set(_800f224e.offset(_800c67aa.get() * 0x8L).get());
+
+      assert struct._1e4.get() < 4;
     } else {
       //LAB_800e02d0
       struct._1e4.set(0x2L);
@@ -9494,7 +9487,7 @@ public class WMap {
       v0 = 0x800c_0000L;
       v0 = MEMORY.ref(2, v0).offset(0x6794L).get();
 
-      v1 = v0 + -0x10L;
+      v1 = v0 - 0x10L;
       at = 0x800c_0000L;
       MEMORY.ref(2, at).offset(0x6794L).setu(v1);
       v0 = 0x800c_0000L;
@@ -9538,7 +9531,7 @@ public class WMap {
 
         a0 = MEMORY.ref(2, v1).offset(0x20L).get();
 
-        v1 = a0 + -0x40L;
+        v1 = a0 - 0x40L;
         MEMORY.ref(2, v0).offset(0x20L).setu(v1);
         v0 = 0x800c_0000L;
         v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
@@ -9828,20 +9821,15 @@ public class WMap {
   }
 
   @Method(0x800e5150L)
-  public static void FUN_800e5150() {
+  public static void handleMapTransitions() {
     long v1;
     long a0;
     long sp20;
     long sp28;
     long sp2c;
-    long sp30;
     long sp34;
     long sp38;
     long sp3c;
-    final Ref<Long> sp0x38 = new Ref<>();
-    final Ref<Long> sp0x3c = new Ref<>();
-    final Ref<Long> sp0x40 = new Ref<>();
-    final Ref<Long> sp0x44 = new Ref<>();
     long sp50;
     long sp54;
     long sp58;
@@ -9916,7 +9904,7 @@ public class WMap {
         _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
         _800c68a4.setu(0x1L);
 
-        if(_800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get()).text_00.isNull()) {
+        if(places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).name_00.isNull()) {
           _800c68a4.setu(0x8L);
         }
 
@@ -9929,7 +9917,7 @@ public class WMap {
       case 1:
         _800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
+        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
         FUN_8002a32c(7, 0x1L, 0xf0L, 0x78L, 0xeL, 0x10L);
 
         _800c68a4.setu(0x2L);
@@ -9939,7 +9927,7 @@ public class WMap {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          v1 = _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._06.get(i).get();
+          v1 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
 
           if(v1 > 0) {
             playSound(0xc, (int)v1, 0, 0, (short)0, (short)0);
@@ -9960,21 +9948,23 @@ public class WMap {
         //LAB_800e5700
         break;
 
-      case 3:
+      case 3: // Trying to enter an area
         _800c6898.deref()._34.add((short)0x40);
 
         FUN_800ce4dc(_800c6898.deref());
 
-        if(_800c6860.get() == 999L) {
+        if(_800c6860.get() == 999L) { // Going to a different region
           sp38 = (_800c6862.get() >>> 4) & 0xffffL;
           sp3c = _800c6862.get() & 0xfL;
 
-          FUN_800e7624(_800f01e4.deref(), sp0x40, sp0x44);
-          FUN_800e774c(_800f01e4.deref(), (short)(0xf0L - sp0x40.get() * 3), 0xa4L, 0, 0);
-          FUN_800e7624(_800f01ec.get((int)sp38).deref(), sp0x40, sp0x44);
-          FUN_800e774c(_800f01ec.get((int)sp38).deref(), (short)(0xf0L - sp0x40.get() * 3), 0xb6L, 0, 0);
-          FUN_800e7624(_800f01ec.get((int)sp3c).deref(), sp0x40, sp0x44);
-          FUN_800e774c(_800f01ec.get((int)sp3c).deref(), (short)(0xf0L - sp0x40.get() * 3), 0xc8L, 0, 0);
+          final IntRef width = new IntRef();
+          final IntRef height = new IntRef();
+          measureText(No_Entry_800f01e4.deref(), width, height);
+          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 164, 0, 0);
+          measureText(regions_800f01ec.get((int)sp38).deref(), width, height);
+          FUN_800e774c(regions_800f01ec.get((int)sp38).deref(), 240 - width.get() * 3, 182, 0, 0);
+          measureText(regions_800f01ec.get((int)sp3c).deref(), width, height);
+          FUN_800e774c(regions_800f01ec.get((int)sp3c).deref(), 240 - width.get() * 3, 200, 0, 0);
 
           if((joypadPress_8007a398.get() & 0x1000L) != 0) {
             _800c86d2.subu(0x1L);
@@ -10001,12 +9991,14 @@ public class WMap {
 
           //LAB_800e59e0
           _800c689c.deref()._3a.set((short)_800c86d2.getSigned() * 18 + 8);
-        } else {
+        } else { // Entering a town, etc.
           //LAB_800e5a18
-          FUN_800e7624(_800f01e4.deref(), sp0x40, sp0x44);
-          FUN_800e774c(_800f01e4.deref(), (short)(0xf0L - sp0x40.get() * 3), 0xaaL, 0, 0);
-          FUN_800e7624(_800f01e8.deref(), sp0x40, sp0x44);
-          FUN_800e774c(_800f01e8.deref(), (short)(0xf0L - sp0x40.get() * 3), 0xbeL, 0, 0);
+          final IntRef width = new IntRef();
+          final IntRef lines = new IntRef();
+          measureText(No_Entry_800f01e4.deref(), width, lines);
+          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 170, 0, 0);
+          measureText(Enter_800f01e8.deref(), width, lines);
+          FUN_800e774c(Enter_800f01e8.deref(), 240 - width.get() * 3, 190, 0, 0);
 
           if((joypadPress_8007a398.get() & 0x5000L) != 0) {
             _800c86d2.xoru(0x1L);
@@ -10021,9 +10013,11 @@ public class WMap {
         //LAB_800e5b68
         FUN_800ce4dc(_800c689c.deref());
 
-        sp30 = _800f0e34.get((int)_800c67a8.get())._02.get();
-        FUN_800e7624(_800f0234.get((int)sp30).text_00.deref(), sp0x3c, sp0x38);
-        FUN_800e774c(_800f0234.get((int)sp30).text_00.deref(), (short)(0xf0L - sp0x3c.get() * 3), (short)(0x8cL - sp0x38.get() * 7), 0, 0);
+        long placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
+        final IntRef width = new IntRef();
+        final IntRef lines = new IntRef();
+        measureText(places_800f0234.get((int)placeIndex).name_00.deref(), width, lines);
+        FUN_800e774c(places_800f0234.get((int)placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
 
         if((_800c66b8.get() & 0x800L) != 0) {
           long sp4c = linkedListAddress_1f8003d8.get();
@@ -10095,8 +10089,8 @@ public class WMap {
             }
 
             //LAB_800e6138
-            sp30 = _800f0e34.get((int)_800c67a8.get())._02.get();
-            sp5c = _800f0234.get((int)sp30)._05.get();
+            placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
+            sp5c = places_800f0234.get((int)placeIndex)._05.get();
 
             //LAB_800e619c
             sp50 = 0;
@@ -10138,7 +10132,7 @@ public class WMap {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              sp34 = _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._06.get(i).get();
+              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
 
               if((int)sp34 > 0) {
                 FUN_80019c80(0xcL, sp34, 0x1L);
@@ -10160,7 +10154,7 @@ public class WMap {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              sp34 = _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._06.get(i).get();
+              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
 
               if((int)sp34 > 0) {
                 FUN_80019c80(0xcL, sp34, 0x1L);
@@ -10179,7 +10173,7 @@ public class WMap {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              sp34 = _800f0234.get(_800f0e34.get((int)_800c67a8.get())._02.get())._06.get(i).get();
+              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
 
               if((int)sp34 > 0) {
                 FUN_80019c80(0xcL, sp34, 0x1L);
@@ -10289,8 +10283,6 @@ public class WMap {
     final SVECTOR sp0x30 = new SVECTOR();
     final MATRIX sp0x38 = new MATRIX();
     final SVECTOR sp58 = new SVECTOR();
-    final Ref<Long> sp0x70 = new Ref<>();
-    final Ref<Long> sp0x74 = new Ref<>();
 
     if(_800c6690.get() != 0) {
       return;
@@ -10358,7 +10350,7 @@ public class WMap {
     long sp1c = 0;
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
-      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get()).text_00.isNull()) {
+      if(!places_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
         sp0x30.setX((short)_800c74b8.offset(i * 0x10L).offset(0x0L).get());
         sp0x30.setY((short)_800c74b8.offset(i * 0x10L).offset(0x4L).get());
@@ -10409,11 +10401,13 @@ public class WMap {
       //LAB_800e6ff4
       final long sp6c = _800c68b4.offset(i * 0xcL).offset(2, 0x0L).getSigned() + 0xa0L;
       final long sp6e = _800c68b4.offset(i * 0xcL).offset(2, 0x2L).getSigned() + 0x68L;
-      final long sp24 = _800f0e34.get((int)_800c68b0.offset(i * 0xcL).get())._02.get();
+      final long sp24 = _800f0e34.get((int)_800c68b0.offset(i * 0xcL).get()).placeIndex_02.get();
 
-      if(!_800f0234.get((int)sp24).text_00.isNull()) {
+      if(!places_800f0234.get((int)sp24).name_00.isNull()) {
         //LAB_800e70f4
-        FUN_800e7624(_800f0234.get((int)sp24).text_00.deref(), sp0x70, sp0x74);
+        final IntRef width = new IntRef();
+        final IntRef lines = new IntRef();
+        measureText(places_800f0234.get((int)sp24).name_00.deref(), width, lines);
 
         final long v0 = _800c86d4.offset(i * 0x4L).get();
         if(v0 == 0x1L) {
@@ -10421,49 +10415,49 @@ public class WMap {
           _800bdf00.setu(i + 0xeL);
           _800be358.get(i)._0c.set(i + 0xeL);
 
-          if(sp0x70.get().intValue() >= 0x4L) {
-            _800be358.get(i)._18.set(sp0x70.get().shortValue());
+          if(width.get() >= 4) {
+            _800be358.get(i).width_18.set((short)width.get());
           } else {
-            _800be358.get(i)._18.set((short)4);
+            _800be358.get(i).width_18.set((short)4);
           }
 
           //LAB_800e7298
-          _800be358.get(i)._1a.set(sp0x74.get().shortValue());
+          _800be358.get(i).lines_1a.set((short)lines.get());
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
-          if(sp0x70.get().intValue() >= 0x4L) {
-            _800be358.get(i)._18.set(sp0x70.get().shortValue());
+          if(width.get() >= 4) {
+            _800be358.get(i).width_18.set((short)width.get());
           } else {
-            _800be358.get(i)._18.set((short)4);
+            _800be358.get(i).width_18.set((short)4);
           }
 
           //LAB_800e735c
-          _800be358.get(i)._1a.set(sp0x74.get().shortValue());
-          _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
-          _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
+          _800be358.get(i).lines_1a.set((short)lines.get());
+          _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
+          _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
           _800be358.get(i)._14.set((short)sp6c);
           _800be358.get(i)._16.set((short)sp6e);
         } else if((int)v0 >= 0x2L) {
           //LAB_800e7154
           if(v0 == 0x2L) {
             //LAB_800e72e8
-            if(sp0x70.get().intValue() >= 0x4L) {
-              _800be358.get(i)._18.set(sp0x70.get().shortValue());
+            if(width.get() >= 4) {
+              _800be358.get(i).width_18.set((short)width.get());
             } else {
-              _800be358.get(i)._18.set((short)4);
+              _800be358.get(i).width_18.set((short)4);
             }
 
             //LAB_800e735c
-            _800be358.get(i)._1a.set(sp0x74.get().shortValue());
-            _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
-            _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
+            _800be358.get(i).lines_1a.set((short)lines.get());
+            _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
+            _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
             _800be358.get(i)._14.set((short)sp6c);
             _800be358.get(i)._16.set((short)sp6e);
           }
         } else if(v0 == 0) {
           //LAB_800e7168
-          FUN_8002a32c(i, 0, (short)sp6c, (short)sp6e, (short)(sp0x70.get() - 1), (short)(sp0x74.get() - 1));
+          FUN_8002a32c(i, 0, (short)sp6c, (short)sp6e, (short)(width.get() - 1), (short)(lines.get() - 1));
 
           _800c86d4.offset(i * 0x4L).setu(0x1L);
 
@@ -10471,27 +10465,27 @@ public class WMap {
           _800bdf00.setu(i + 0xeL);
           _800be358.get(i)._0c.set(i + 0xeL);
 
-          if(sp0x70.get().intValue() >= 0x4L) {
-            _800be358.get(i)._18.set(sp0x70.get().shortValue());
+          if(width.get() >= 4) {
+            _800be358.get(i).width_18.set((short)width.get());
           } else {
-            _800be358.get(i)._18.set((short)4);
+            _800be358.get(i).width_18.set((short)4);
           }
 
           //LAB_800e7298
-          _800be358.get(i)._1a.set(sp0x74.get().shortValue());
+          _800be358.get(i).lines_1a.set((short)lines.get());
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
-          if(sp0x70.get().intValue() >= 0x4L) {
-            _800be358.get(i)._18.set(sp0x70.get().shortValue());
+          if(width.get() >= 4) {
+            _800be358.get(i).width_18.set((short)width.get());
           } else {
-            _800be358.get(i)._18.set((short)4);
+            _800be358.get(i).width_18.set((short)4);
           }
 
           //LAB_800e735c
-          _800be358.get(i)._1a.set(sp0x74.get().shortValue());
-          _800be358.get(i)._1c.set(_800be358.get(i)._18.get() * 9 / 2);
-          _800be358.get(i)._1e.set(_800be358.get(i)._1a.get() * 6);
+          _800be358.get(i).lines_1a.set((short)lines.get());
+          _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
+          _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
           _800be358.get(i)._14.set((short)sp6c);
           _800be358.get(i)._16.set((short)sp6e);
         }
@@ -10500,7 +10494,7 @@ public class WMap {
         _800bdf00.setu(i + 0x77L);
         _800be358.get(i)._0c.set(i + 0x77L);
 
-        FUN_800e774c(_800f0234.get((int)sp24).text_00.deref(), (short)(sp6c - sp0x70.get() * 3), (short)(sp6e - sp0x74.get() * 7), 0, 0);
+        FUN_800e774c(places_800f0234.get((int)sp24).name_00.deref(), (short)(sp6c - width.get() * 3), (short)(sp6e - lines.get() * 7), 0, 0);
       }
 
       //LAB_800e7590
@@ -10517,46 +10511,46 @@ public class WMap {
   }
 
   @Method(0x800e7624L)
-  public static void FUN_800e7624(final LodString a0, final Ref<Long> a1, final Ref<Long> a2) {
-    long sp0 = 0;
-    long sp4 = 0x1L;
-    long sp8 = 0;
+  public static void measureText(final LodString text, final IntRef widthRef, final IntRef linesRef) {
+    int lines = 1;
+    int lineWidth = 0;
+    int longestLineWidth = 0;
 
     //LAB_800e7648
-    for(int sp18 = 0; a0.charAt(sp18) != 0xa0ffL; sp18++) {
+    for(int charIndex = 0; text.charAt(charIndex) != 0xa0ff; charIndex++) {
       //LAB_800e7668
-      if(a0.charAt(sp18) == 0xa1ffL) {
-        sp4++;
+      if(text.charAt(charIndex) == 0xa1ff) { // New line
+        lines++;
 
-        if((int)sp8 < (int)sp0) {
-          sp8 = sp0;
+        if(longestLineWidth < lineWidth) {
+          longestLineWidth = lineWidth;
         }
 
         //LAB_800e76c4
-        sp0 = 0;
+        lineWidth = 0;
       } else {
         //LAB_800e76d0
-        sp0++;
+        lineWidth++;
       }
     }
 
     //LAB_800e76f8
-    if((int)sp0 < (int)sp8) {
-      sp0 = sp8;
+    if(lineWidth < longestLineWidth) {
+      lineWidth = longestLineWidth;
     }
 
     //LAB_800e771c
-    a1.set(sp0);
-    a2.set(sp4);
+    widthRef.set(lineWidth);
+    linesRef.set(lines);
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString a0, final long a1, final long a2, final long a3, final long a4) {
-    final Ref<Long> sp0x28 = new Ref<>();
-    final Ref<Long> sp0x2c = new Ref<>();
-    FUN_800e7624(a0, sp0x28, sp0x2c);
-    renderText(a0, a1 - sp0x28.get() + 0x3L, (short)a2, (short)a3, (short)a4);
-    renderText(a0, a1 - (sp0x28.get() - 0x1L) + 0x3L, a2 + 0x1L, 0x9L, (short)a4);
+  public static void FUN_800e774c(final LodString text, final long x, final long y, final long a3, final long a4) {
+    final IntRef width = new IntRef();
+    final IntRef lines = new IntRef();
+    measureText(text, width, lines);
+    renderText(text, x - width.get() + 3, (short)y, (short)a3, (short)a4);
+    renderText(text, x - (width.get() - 1) + 3, y + 1, 0x9L, (short)a4);
   }
 
   @Method(0x800e7888L)
@@ -10855,7 +10849,7 @@ public class WMap {
       FUN_800e8cb0();
       FUN_800e975c();
       FUN_800e9d68();
-      FUN_800e5150();
+      handleMapTransitions();
       updatePlayer();
     }
 
@@ -11163,12 +11157,6 @@ public class WMap {
 
   @Method(0x800e975cL)
   public static void FUN_800e975c() {
-    long v0;
-    long v1;
-    long a0;
-    final VECTOR sp0x10 = new VECTOR();
-    final VECTOR sp0x20 = new VECTOR();
-    final VECTOR sp0x30 = new VECTOR();
     long sp40;
     long sp4c;
     long sp50;
@@ -11185,6 +11173,10 @@ public class WMap {
       //LAB_800e97a4
       _800c6874.offset(i * 0x4L).setu(-0x1L);
     }
+
+    final VECTOR sp0x10 = new VECTOR();
+    final VECTOR sp0x20 = new VECTOR();
+    final VECTOR sp0x30 = new VECTOR();
 
     //LAB_800e97dc
     getPathPositions(sp0x10, sp0x20);
@@ -11204,45 +11196,28 @@ public class WMap {
       //LAB_800e9888
       if(FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800e98a8
-        if(_800f0e34.get(i)._06.get() != -0x1L) {
+        if(_800f0e34.get(i)._0c.get() != -1) {
           //LAB_800e98e0
           sp54 = _800f0e34.get(i)._00.get();
           sp50 = _800f2248.offset(sp54 * 0x8L).getSigned();
 
-          if((int)facing_800c67b4.get() <= 0 || (int)sp50 >= 0) {
+          if(facing_800c67b4.getSigned() <= 0 || sp50 >= 0) {
             //LAB_800e995c
-            if((int)facing_800c67b4.get() >= 0 || (int)sp50 <= 0) {
+            if(facing_800c67b4.getSigned() >= 0 || sp50 <= 0) {
               //LAB_800e9988
-              sp58 = Math.abs(sp50) - 0x1L;
+              sp58 = Math.abs(sp50) - 1;
               sp40 = pathPosPtrArr_800f591c.offset(sp58 * 0x4L).get();
-
-              v1 = sp40 + (_800f5810.offset(sp58 * 0x4L).get() - 1) * 0x10L;
-              sp0x10.set((VECTOR)MEMORY.ref(4, v1, VECTOR::new));
-
-              v0 = sp40;
-              sp0x20.set((VECTOR)MEMORY.ref(4, v0, VECTOR::new));
+              sp0x10.set((VECTOR)MEMORY.ref(4, sp40).offset((_800f5810.offset(sp58 * 0x4L).get() - 1) * 0x10L).cast(VECTOR::new));
+              sp0x20.set((VECTOR)MEMORY.ref(4, sp40, VECTOR::new));
 
               if(sp0x30.getX() == sp0x10.getX() && sp0x30.getY() == sp0x10.getY() && sp0x30.getZ() == sp0x10.getZ()) {
-                a0 = sp40 + _800f5810.offset(sp58 * 0x4L).get() * 0x10L - 0x20L;
-                _800c67d8.get((int)sp4c).setX((int)MEMORY.ref(4, a0).offset(0x0L).get());
-
-                a0 = sp40 + _800f5810.offset(sp58 * 0x4L).get() * 0x10L - 0x20L;
-                _800c67d8.get((int)sp4c).setY((int)MEMORY.ref(4, a0).offset(0x4L).get());
-
-                a0 = sp40 + _800f5810.offset(sp58 * 0x4L).get() * 0x10L - 0x20L;
-                _800c67d8.get((int)sp4c).setZ((int)MEMORY.ref(4, a0).offset(0x8L).get());
-
+                _800c67d8.get((int)sp4c).set((VECTOR)MEMORY.ref(4, sp40).offset(_800f5810.offset(sp58 * 0x4L).get() * 0x10L).offset(-0x20L).cast(VECTOR::new));
                 _800c6874.offset(sp4c * 0x4L).setu(sp54);
-
                 sp4c++;
                 //LAB_800e9bd8
               } else if(sp0x30.getX() == sp0x20.getX() && sp0x30.getY() == sp0x20.getY() && sp0x30.getZ() == sp0x20.getZ()) {
-                _800c67d8.get((int)sp4c).setX((int)MEMORY.ref(4, sp40).offset(0x10L).get());
-                _800c67d8.get((int)sp4c).setY((int)MEMORY.ref(4, sp40).offset(0x14L).get());
-                _800c67d8.get((int)sp4c).setZ((int)MEMORY.ref(4, sp40).offset(0x18L).get());
-
+                _800c67d8.get((int)sp4c).set((VECTOR)MEMORY.ref(4, sp40 + 0x10L, VECTOR::new));
                 _800c6874.offset(sp4c * 0x4L).setu(sp54);
-
                 sp4c++;
               }
             }
@@ -11461,7 +11436,7 @@ public class WMap {
     //LAB_800ea6dc
     _800c67a8.setu(a0);
     _800c67aa.setu(_800f0e34.get(a0)._00.get());
-    pathIndex_800c67ac.setu(Math.abs(_800f2248.offset(_800c67aa.get() * 0x8L).getSigned()) - 0x1L);
+    pathIndex_800c67ac.setu(Math.abs(_800f2248.offset(_800c67aa.get() * 0x8L).getSigned()) - 0x1L); // Transition to a different path
 
     final int sign;
     if(_800f2248.offset(_800c67aa.get() * 0x8L).getSigned() < 0) {
@@ -11602,7 +11577,7 @@ public class WMap {
 
     v0 = Math.abs(a0);
     v1 = v0;
-    v0 = v1 + -0x1L;
+    v0 = v1 - 0x1L;
     at = 0x800c_0000L;
     MEMORY.ref(2, at).offset(0x67acL).setu(v0);
     v0 = 0x800c_0000L;
@@ -11631,14 +11606,14 @@ public class WMap {
       a0 = v1;
 
       v0 = Math.abs(a0);
-      v1 = v0 + -0x1L;
+      v1 = v0 - 0x1L;
       v0 = v1;
       v1 = v0 << 2;
       at = 0x800f_0000L;
       at = at + v1;
       v0 = MEMORY.ref(4, at).offset(0x5810L).get();
 
-      v1 = v0 + -0x1L;
+      v1 = v0 - 0x1L;
       sp10 = v1;
       v0 = sp10;
 
@@ -11654,7 +11629,7 @@ public class WMap {
       a0 = sp14;
 
       v1 = v1 + a0;
-      a0 = v1 + -0x10L;
+      a0 = v1 - 0x10L;
       v0 = MEMORY.ref(4, v0).offset(0x0L).get();
       v1 = MEMORY.ref(4, a0).offset(0x0L).get();
 
@@ -11674,7 +11649,7 @@ public class WMap {
       a0 = sp14;
 
       v1 = v1 + a0;
-      a0 = v1 + -0x10L;
+      a0 = v1 - 0x10L;
       v0 = MEMORY.ref(4, v0).offset(0x4L).get();
       v1 = MEMORY.ref(4, a0).offset(0x4L).get();
 
@@ -11694,7 +11669,7 @@ public class WMap {
       a0 = sp14;
 
       v1 = v1 + a0;
-      a0 = v1 + -0x10L;
+      a0 = v1 - 0x10L;
       v0 = MEMORY.ref(4, v0).offset(0x8L).get();
       v1 = MEMORY.ref(4, a0).offset(0x8L).get();
 
@@ -11727,7 +11702,7 @@ public class WMap {
       v1 = v1 + a0;
       a0 = MEMORY.ref(4, v1).offset(0x4L).get();
 
-      v1 = a0 + -0x2L;
+      v1 = a0 - 0x2L;
       MEMORY.ref(4, v0).offset(0x1cL).setu(v1);
       v1 = 0x800c_0000L;
       v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
@@ -11745,7 +11720,7 @@ public class WMap {
       MEMORY.ref(4, v0).offset(0x20L).setu(a0);
       v0 = sp10;
 
-      v1 = v0 + -0x1L;
+      v1 = v0 - 0x1L;
       at = 0x800c_0000L;
       MEMORY.ref(2, at).offset(0x67aeL).setu(v1);
       v0 = 0x3L;
@@ -11772,7 +11747,7 @@ public class WMap {
 
       a0 = MEMORY.ref(4, v1).offset(0x4L).get();
 
-      v1 = a0 + -0x2L;
+      v1 = a0 - 0x2L;
       MEMORY.ref(4, v0).offset(0x1cL).setu(v1);
       v1 = 0x800c_0000L;
       v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
@@ -11936,7 +11911,7 @@ public class WMap {
         //LAB_800eb468
         if(sp0xd0[i] == 0) {
           //LAB_800eb48c
-          final long sp28 = _800f0e34.get(i)._02.get();
+          final long sp28 = _800f0e34.get(i).placeIndex_02.get();
           int sp20 = 0;
 
           //LAB_800eb4c8
@@ -11946,13 +11921,13 @@ public class WMap {
               //LAB_800eb50c
               if(sp0xd0[sp1c] == 0) {
                 //LAB_800eb530
-                final long sp2c = _800f0e34.get(sp1c)._02.get();
+                final long sp2c = _800f0e34.get(sp1c).placeIndex_02.get();
 
-                if(!_800f0234.get((int)sp28).text_00.isNull() || !_800f0234.get((int)sp2c).text_00.isNull()) {
+                if(!places_800f0234.get((int)sp28).name_00.isNull() || !places_800f0234.get((int)sp2c).name_00.isNull()) {
                   // Added this check since these pointers can be null
-                  if(!_800f0234.get((int)sp28).text_00.isNull() && !_800f0234.get((int)sp2c).text_00.isNull()) {
+                  if(!places_800f0234.get((int)sp28).name_00.isNull() && !places_800f0234.get((int)sp2c).name_00.isNull()) {
                     //LAB_800eb5d8
-                    if(strcmp(MEMORY.ref(1, _800f0234.get((int)sp28).text_00.getPointer()).getString(), MEMORY.ref(1, _800f0234.get((int)sp2c).text_00.getPointer()).getString()) == 0) {
+                    if(strcmp(MEMORY.ref(1, places_800f0234.get((int)sp28).name_00.getPointer()).getString(), MEMORY.ref(1, places_800f0234.get((int)sp2c).name_00.getPointer()).getString()) == 0) {
                       FUN_800eb09c(sp1c, 1, sp0x60[sp20]);
 
                       sp20++;
@@ -12153,7 +12128,7 @@ public class WMap {
       final Coord2AndThenSomeStruct_60 struct = _800c86f8.deref().get(i);
 
       //LAB_800edccc
-      if(!_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._02.get()).text_00.isNull()) {
+      if(!places_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800edd3c
         final long sp18 = _800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned())._12.get() & 0xcL;
 

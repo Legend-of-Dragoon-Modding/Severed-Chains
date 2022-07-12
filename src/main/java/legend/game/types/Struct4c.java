@@ -19,8 +19,8 @@ public class Struct4c implements MemoryRef {
   public final UnsignedIntRef _10;
   public final ShortRef _14;
   public final ShortRef _16;
-  public final ShortRef _18;
-  public final ShortRef _1a;
+  public final ShortRef width_18;
+  public final ShortRef lines_1a;
   public final UnsignedShortRef _1c;
   public final UnsignedShortRef _1e;
   public final ShortRef _20;
@@ -38,8 +38,8 @@ public class Struct4c implements MemoryRef {
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(2, 0x14L).cast(ShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(ShortRef::new);
-    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
+    this.width_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
+    this.lines_1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
     this._1c = ref.offset(2, 0x1cL).cast(UnsignedShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(UnsignedShortRef::new);
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
