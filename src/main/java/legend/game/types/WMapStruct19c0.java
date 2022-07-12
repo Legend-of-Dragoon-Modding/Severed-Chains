@@ -62,8 +62,15 @@ public class WMapStruct19c0 implements MemoryRef {
 
   public final ArrayRef<GsF_LIGHT> lights_11c;
 
-  public final SVECTOR svec_14c;
-  public final UnboundedArrayRef<WMapSubStruct18> _154; //TODO unknown size
+  public final SVECTOR ambientLight_14c;
+  public final UnboundedArrayRef<WMapSubStruct18> _154; //TODO unknown length
+
+  public final IntRef _196c;
+  public final IntRef _1970;
+  public final IntRef _1974;
+
+  public final ArrayRef<ShortRef> _19a8;
+  public final ArrayRef<ShortRef> _19ae;
 
   public WMapStruct19c0(final Value ref) {
     this.ref = ref;
@@ -112,8 +119,15 @@ public class WMapStruct19c0 implements MemoryRef {
 
     this.lights_11c = ref.offset(4, 0x11cL).cast(ArrayRef.of(GsF_LIGHT.class, 3, 0x10, GsF_LIGHT::new));
 
-    this.svec_14c = ref.offset(2, 0x14cL).cast(SVECTOR::new);
+    this.ambientLight_14c = ref.offset(2, 0x14cL).cast(SVECTOR::new);
     this._154 = ref.offset(4, 0x154L).cast(UnboundedArrayRef.of(0x18, WMapSubStruct18::new));
+
+    this._196c = ref.offset(4, 0x196cL).cast(IntRef::new);
+    this._1970 = ref.offset(4, 0x1970L).cast(IntRef::new);
+    this._1974 = ref.offset(4, 0x1974L).cast(IntRef::new);
+
+    this._19a8 = ref.offset(2, 0x19a8L).cast(ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
+    this._19ae = ref.offset(2, 0x19aeL).cast(ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
   }
 
   @Override

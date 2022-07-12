@@ -127,10 +127,13 @@ import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
 import static legend.game.Scus94491BpeSegment_800b._800bb114;
 import static legend.game.Scus94491BpeSegment_800b._800bb116;
@@ -640,7 +643,7 @@ public class WMap {
     long nobj = a0.ObjTable_0c.nobj.get();
     long fp = a0.ui_f8.get();
 
-    _1f8003e8.setu((short)a0.us_a0.get());
+    _1f8003e8.setu(a0.us_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800c92c8
@@ -652,11 +655,11 @@ public class WMap {
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04.deref(), lw, ls);
         GsSetLightMatrix(lw);
-        CPU.CTC2((ls.get(1) & 0xffffL) << 16 | ls.get(0) & 0xffffL, 0);
-        CPU.CTC2((ls.get(3) & 0xffffL) << 16 | ls.get(2) & 0xffffL, 1);
-        CPU.CTC2((ls.get(5) & 0xffffL) << 16 | ls.get(4) & 0xffffL, 2);
-        CPU.CTC2((ls.get(7) & 0xffffL) << 16 | ls.get(6) & 0xffffL, 3);
-        CPU.CTC2(                              ls.get(8) & 0xffffL, 4);
+        CPU.CTC2(ls.getPacked(0), 0);
+        CPU.CTC2(ls.getPacked(2), 1);
+        CPU.CTC2(ls.getPacked(4), 2);
+        CPU.CTC2(ls.getPacked(6), 3);
+        CPU.CTC2(ls.getPacked(8), 4);
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
@@ -2334,19 +2337,15 @@ public class WMap {
 
   @Method(0x800ccda4L)
   public static void FUN_800ccda4() {
-    long v0;
-    long v1;
+    final long v0 = _800c6798.getAddress();
+    gameState_800babc8._4de.set((int)_800c67aa.get());
+    gameState_800babc8.pathIndex_4d8.set((int)pathIndex_800c67ac.get());
+    gameState_800babc8.dotIndex_4da.set((int)dotIndex_800c67ae.get());
+    gameState_800babc8.dotOffset_4dc.set((int)dotOffset_800c67b0.get());
+    gameState_800babc8.facing_4dd.set((int)facing_800c67b4.get());
 
-    v1 = 0x800c_0000L; //TODO
-    v0 = 0x800c_0000L;
-    v0 = v0 + 0x6798L;
-    v1 = v1 + -0x5438L;
-    MEMORY.ref(2, v1).offset(0x4deL).setu(MEMORY.ref(2, v0).offset(0x12L).get());
-    MEMORY.ref(2, v1).offset(0x4d8L).setu(MEMORY.ref(2, v0).offset(0x14L).get());
-    MEMORY.ref(2, v1).offset(0x4daL).setu(MEMORY.ref(2, v0).offset(0x16L).get());
-    MEMORY.ref(1, v1).offset(0x4dcL).setu(MEMORY.ref(1, v0).offset(0x18L).get());
-    MEMORY.ref(1, v1).offset(0x4ddL).setu(MEMORY.ref(1, v0).offset(0x1cL).get());
     FUN_800cd278();
+
     _80052c6c.setu(0);
     _8004dd24.setu(0x5L);
     pregameLoadingStage_800bb10c.setu(0);
@@ -2360,8 +2359,10 @@ public class WMap {
     gameState_800babc8.dotIndex_4da.set((int)dotIndex_800c67ae.get());
     gameState_800babc8.dotOffset_4dc.set((int)dotOffset_800c67b0.get());
     gameState_800babc8.facing_4dd.set((int)facing_800c67b4.get());
+
     FUN_800cd030();
     FUN_800cd278();
+
     _80052c6c.setu(0);
     _8004dd24.setu(0x6L);
     pregameLoadingStage_800bb10c.setu(0);
@@ -3502,265 +3503,43 @@ public class WMap {
 
   @Method(0x800d1914L)
   public static void FUN_800d1914() {
-    long at;
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    long hi;
-    at = 0x8008_0000L;
-    MEMORY.ref(4, at).offset(-0x5c58L).setu(0);
-    at = 0x800c_0000L;
-    MEMORY.ref(4, at).offset(-0x4efcL).setu(0);
-    at = 0x800c_0000L;
-    MEMORY.ref(4, at).offset(-0x5440L).setu(0);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-    v1 = -0x1L;
-    MEMORY.ref(4, v0).offset(0x154L).setu(v1);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-    v1 = -0x1L;
-    MEMORY.ref(4, v0).offset(0x1974L).setu(v1);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
+    final WMapStruct19c0 v0 = _800c66b0.deref();
 
-    MEMORY.ref(4, v0).offset(0x1970L).setu(0);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
+    _8007a3a8.setu(0);
+    _800bb104.setu(0);
+    _800babc0.setu(0);
 
-    MEMORY.ref(4, v0).offset(0x196cL).setu(0);
+    v0._154.get(0).index_00.set(-1);
+    v0._196c.set(0);
+    v0._1970.set(0);
+    v0._1974.set(-1);
 
     FUN_800d1db8();
-    long sp10 = 0;
 
     //LAB_800d1984
-    do {
-      v0 = sp10;
-
-      if((int)v0 >= 0x3L) {
-        break;
-      }
-
+    for(int i = 0; i < 3; i++) {
       //LAB_800d19a0
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
+      v0._19a8.get(i).set((short)15);
+      v0._19ae.get(i).set((short)315);
 
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      v1 = 0x20L;
-      MEMORY.ref(1, v0).offset(0x128L).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      v1 = 0x20L;
-      MEMORY.ref(1, v0).offset(0x129L).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      v1 = 0x20L;
-      MEMORY.ref(1, v0).offset(0x12aL).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 1;
-      v0 = v0 + v1;
-      v1 = 0xfL;
-      MEMORY.ref(2, v0).offset(0x19a8L).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 1;
-      v0 = v0 + v1;
-      v1 = 0x13bL;
-      MEMORY.ref(2, v0).offset(0x19aeL).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 1;
-      v0 = v0 + v1;
-      v1 = MEMORY.ref(2, v0).offset(0x19a8L).getSigned();
-
-      a0 = v1;
-      v0 = a0 << 12;
-      v1 = 0xb60b_0000L;
-      v1 = v1 | 0x60b7L;
-      hi = ((long)(int)v0 * (int)v1) >>> 32;
-      a3 = hi;
-      v1 = a3 + v0;
-      a0 = (int)v1 >> 8;
-      v1 = (int)v0 >> 31;
-      v0 = a0 - v1;
-      a0 = v0;
-
-      v0 = rcos(a0);
-      v1 = 0x800c_0000L;
-      v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-      a0 = sp10;
-
-      a1 = a0;
-      a0 = a1 << 4;
-      v1 = v1 + a0;
-      a0 = v0 << 12;
-      v0 = (int)a0 >> 12;
-      MEMORY.ref(4, v1).offset(0x124L).setu(v0);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 1;
-      v0 = v0 + v1;
-      v1 = MEMORY.ref(2, v0).offset(0x19a8L).getSigned();
-
-      a0 = v1;
-      v0 = a0 << 12;
-      v1 = 0xb60b_60b7L;
-      a3 = ((long)(int)v0 * (int)v1) >>> 32; //TODO
-      v1 = a3 + v0;
-      a0 = (int)v1 >> 8;
-      v1 = (int)v0 >> 31;
-      v0 = a0 - v1;
-      a0 = v0;
-
-      v0 = rsin(a0);
-      v1 = 0x800c_0000L;
-      v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-      a0 = sp10;
-
-      a1 = a0;
-      a0 = a1 << 4;
-      v1 = v1 + a0;
-      a0 = v0 << 12;
-      v0 = (int)a0 >> 12;
-      MEMORY.ref(4, v1).offset(0x11cL).setu(v0);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 1;
-      v0 = v0 + v1;
-      v1 = MEMORY.ref(2, v0).offset(0x19aeL).getSigned();
-
-      a0 = v1;
-      v0 = a0 << 12;
-      v1 = 0xb60b_60b7L;
-      a3 = ((long)(int)v0 * (int)v1) >>> 32; //TODO
-      v1 = a3 + v0;
-      a0 = (int)v1 >> 8;
-      v1 = (int)v0 >> 31;
-      v0 = a0 - v1;
-      a0 = v0;
-
-      v0 = rcos(a0);
-      v1 = 0x800c_0000L;
-      v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-      a0 = sp10;
-
-      a1 = a0;
-      a0 = a1 << 4;
-      v1 = v1 + a0;
-      a0 = v0 << 12;
-      v0 = (int)a0 >> 12;
-      MEMORY.ref(4, v1).offset(0x120L).setu(v0);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      MEMORY.ref(4, v0).offset(0x124L).setu(0);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      v1 = 0x3e8L;
-      MEMORY.ref(4, v0).offset(0x11cL).setu(v1);
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-      v1 = sp10;
-
-      a0 = v1;
-      v1 = a0 << 4;
-      v0 = v0 + v1;
-      v1 = 0x64L;
-      MEMORY.ref(4, v0).offset(0x120L).setu(v1);
-      v0 = sp10;
-
-      v1 = v0;
-      v0 = v1 << 4;
-      v1 = v0 + 0x11cL;
-      a0 = 0x800c_0000L;
-      a0 = MEMORY.ref(4, a0).offset(0x66b0L).get();
-
-      v0 = v1 + a0;
-      a0 = sp10;
-      a1 = v0;
-
-      GsSetFlatLight(a0, MEMORY.ref(4, a1, GsF_LIGHT::new)); //TODO
-      v0 = sp10;
-
-      v1 = v0 + 0x1L;
-      sp10 = v1;
-    } while(true);
+      final GsF_LIGHT light = v0.lights_11c.get(i);
+      light.r_0c.set(0x20);
+      light.g_0d.set(0x20);
+      light.b_0e.set(0x20);
+      light.direction_00.setX(rsin((v0._19a8.get(i).get() << 12) / 360) << 12 >> 12);
+      light.direction_00.setY(rcos((v0._19ae.get(i).get() << 12) / 360) << 12 >> 12);
+      light.direction_00.setZ(rcos((v0._19a8.get(i).get() << 12) / 360) << 12 >> 12);
+      light.direction_00.setX(1000);
+      light.direction_00.setY(100);
+      light.direction_00.setZ(0);
+      GsSetFlatLight(i, light);
+    }
 
     //LAB_800d1c88
     setLightMode(0);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-    a0 = 0x800c_0000L;
-    a0 = MEMORY.ref(4, a0).offset(0x66b0L).get();
-    a1 = 0x600L;
-    MEMORY.ref(2, a0).offset(0x150L).setu(a1);
-    a0 = 0x600L;
-    MEMORY.ref(2, v1).offset(0x14eL).setu(a0);
-    v1 = 0x600L;
-    MEMORY.ref(2, v0).offset(0x14cL).setu(v1);
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x66b0L).get();
-
-    v0 = MEMORY.ref(2, v1).offset(0x14cL).getSigned();
-    a0 = 0x800c_0000L;
-    a0 = MEMORY.ref(4, a0).offset(0x66b0L).get();
-
-    v1 = MEMORY.ref(2, a0).offset(0x14eL).getSigned();
-    a0 = 0x800c_0000L;
-    a0 = MEMORY.ref(4, a0).offset(0x66b0L).get();
-
-    a2 = MEMORY.ref(2, a0).offset(0x150L).getSigned();
-    a0 = v0;
-    a1 = v1;
-
-    GsSetAmbient(a0, a1, a2);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-    MEMORY.ref(4, v0).offset(0x88L).setu(0);
+    v0.ambientLight_14c.set((short)0x600, (short)0x600, (short)0x600);
+    GsSetAmbient(v0.ambientLight_14c.getX(), v0.ambientLight_14c.getY(), v0.ambientLight_14c.getZ());
+    v0._88.set(0);
   }
 
   @Method(0x800d1d28L)
@@ -3830,7 +3609,7 @@ public class WMap {
     }
 
     //LAB_800d21cc
-    if(struct258_800c66a8.deref().zoomState_1f8.get() == 0x2L || struct258_800c66a8.deref().zoomState_1f8.get() == 0x3L || struct258_800c66a8.deref().zoomState_1f8.get() == 0x4L) {
+    if(struct258_800c66a8.deref().zoomState_1f8.get() == 2 || struct258_800c66a8.deref().zoomState_1f8.get() == 3 || struct258_800c66a8.deref().zoomState_1f8.get() == 4) {
       //LAB_800d2228
       v0 = _800c66b0.deref()._88.get();
 
@@ -3838,7 +3617,7 @@ public class WMap {
         if(v0 == 0) {
           //LAB_800d2258
           //LAB_800d225c
-          for(int i = 0; i < 0x3L; i++) {
+          for(int i = 0; i < 3; i++) {
             //LAB_800d2278
             final WMapStruct19c0 struct = _800c66b0.deref();
             struct.colour_8c.get(i).setR(struct.lights_11c.get(i).r_0c.get());
@@ -3865,30 +3644,12 @@ public class WMap {
           final GsF_LIGHT light = _800c66b0.deref().lights_11c.get(i);
 
           //LAB_800d2400
-          v1 = _800c66b0.deref().colour_8c.get(i).getR() * _800c66b0.deref()._84.get();
-          if((int)v1 < 0) {
-            v1 = v1 + 0xffL;
-          }
-
           //LAB_800d2464
-          light.r_0c.set((int)v1 / 0x100);
-
-          v1 = _800c66b0.deref().colour_8c.get(i).getG() * _800c66b0.deref()._84.get();
-          if((int)v1 < 0) {
-            v1 = v1 + 0xffL;
-          }
-
           //LAB_800d24d0
-          light.g_0d.set((int)v1 / 0x100);
-
-          v1 = _800c66b0.deref().colour_8c.get(i).getB() * _800c66b0.deref()._84.get();
-          if((int)v1 < 0) {
-            v1 = v1 + 0xffL;
-          }
-
           //LAB_800d253c
-          light.b_0e.set((int)v1 / 0x100);
-
+          light.r_0c.set((int)(_800c66b0.deref().colour_8c.get(i).getR() * _800c66b0.deref()._84.get()) / 0x100);
+          light.g_0d.set((int)(_800c66b0.deref().colour_8c.get(i).getG() * _800c66b0.deref()._84.get()) / 0x100);
+          light.b_0e.set((int)(_800c66b0.deref().colour_8c.get(i).getB() * _800c66b0.deref()._84.get()) / 0x100);
           GsSetFlatLight(i, _800c66b0.deref().lights_11c.get(i));
         }
       }
@@ -3913,7 +3674,7 @@ public class WMap {
     //LAB_800d2628
     _800c66b0.deref()._84.add(0x24L);
 
-    if((int)_800c66b0.deref()._84.get() >= 0x100L) {
+    if((int)_800c66b0.deref()._84.get() > 0xffL) {
       _800c66b0.deref()._84.set(0xffL);
       _800c66b0.deref()._88.set(0);
     }
@@ -3924,30 +3685,12 @@ public class WMap {
       final GsF_LIGHT light = _800c66b0.deref().lights_11c.get(i);
 
       //LAB_800d26ac
-      v1 = _800c66b0.deref().colour_8c.get(i).getR() * _800c66b0.deref()._84.get();
-      if((int)v1 < 0) {
-        v1 = v1 + 0xffL;
-      }
-
       //LAB_800d2710
-      light.r_0c.set((int)v1 / 0x100);
-
-      v1 = _800c66b0.deref().colour_8c.get(i).getG() * _800c66b0.deref()._84.get();
-      if((int)v1 < 0) {
-        v1 = v1 + 0xffL;
-      }
-
       //LAB_800d277c
-      light.g_0d.set((int)v1 / 0x100);
-
-      v1 = _800c66b0.deref().colour_8c.get(i).getB() * _800c66b0.deref()._84.get();
-      if((int)v1 < 0) {
-        v1 = v1 + 0xffL;
-      }
-
       //LAB_800d27e8
-      light.b_0e.set((int)v1 / 0x100);
-
+      light.r_0c.set((int)(_800c66b0.deref().colour_8c.get(i).getR() * _800c66b0.deref()._84.get()) / 0x100);
+      light.g_0d.set((int)(_800c66b0.deref().colour_8c.get(i).getG() * _800c66b0.deref()._84.get()) / 0x100);
+      light.b_0e.set((int)(_800c66b0.deref().colour_8c.get(i).getB() * _800c66b0.deref()._84.get()) / 0x100);
       GsSetFlatLight(i, _800c66b0.deref().lights_11c.get(i));
     }
 
@@ -3988,12 +3731,12 @@ public class WMap {
 
   @Method(0x800d2fa8L)
   public static void FUN_800d2fa8() {
-    if(struct258_800c66a8.deref()._250.get() == 0x1L) {
+    if(struct258_800c66a8.deref()._250.get() == 1) {
       return;
     }
 
     //LAB_800d2fd4
-    if(struct258_800c66a8.deref()._250.get() == 0x2L && struct258_800c66a8.deref()._05.get() == 0) {
+    if(struct258_800c66a8.deref()._250.get() == 2 && struct258_800c66a8.deref()._05.get() == 0) {
       return;
     }
 
@@ -4041,11 +3784,11 @@ public class WMap {
     FUN_800d35fc();
 
     final long v0 = _800c66b0.deref()._110.get();
-    if(v0 == 0x1L) {
+    if(v0 == 1) {
       //LAB_800d3250
       FUN_800d5018();
       _800c66b0.deref()._110.set(2);
-    } else if(v0 == 0x3L) {
+    } else if(v0 == 3) {
       //LAB_800d3434
       _800c66b0.deref()._00._04.set(_800c66b0.deref()._c8._04.get() + _800c66b0.deref()._ec.get() * _800c66b0.deref()._10e.get());
       _800c66b0.deref()._00._08.set(_800c66b0.deref()._c8._08.get() + _800c66b0.deref()._f0.get() * _800c66b0.deref()._10e.get());
@@ -4060,7 +3803,7 @@ public class WMap {
       }
 
       return;
-    } else if((int)v0 < 0x2L) {
+    } else if((int)v0 < 2) {
       //LAB_800d3248
       return;
     }
@@ -4102,7 +3845,7 @@ public class WMap {
       _800c66b0.deref().coord2_20.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ() - _800c66b0.deref().vec_b4.getZ() / 0x100);
       _800c66b0.deref()._a0.incr();
 
-      if((short)_800c66b0.deref()._a0.get() >= 0x6L) {
+      if((short)_800c66b0.deref()._a0.get() >= 6) {
         _800c66b0.deref()._00._04.set(_800c66b0.deref()._9e.get());
         _800c66b0.deref()._00._10.set(-_800c66b0.deref()._9e.get());
         _800c66b0.deref().mapRotation_70.setY((short)_800c66b0.deref()._98.get());
@@ -4112,7 +3855,7 @@ public class WMap {
         _800c66b0.deref()._c5.set(0);
         struct258_800c66a8.deref().zoomState_1f8.set(1);
       }
-    } else if((int)v0 < 0x2L) {
+    } else if((int)v0 < 2) {
       if(v0 == 0) {
         //LAB_800d3654
         //LAB_800d3670
@@ -4137,7 +3880,7 @@ public class WMap {
 
                   //LAB_800d37bc
                   if((joypadPress_8007a398.get() & 0x1L) != 0) { // L1
-                    if(struct258_800c66a8.deref().zoomState_1f8.get() == 0x1L || struct258_800c66a8.deref().zoomState_1f8.get() == 0x6L) {
+                    if(struct258_800c66a8.deref().zoomState_1f8.get() == 1 || struct258_800c66a8.deref().zoomState_1f8.get() == 6) {
                       //LAB_800d3814
                       FUN_8002a3ec(7, 0);
                       playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -7220,7 +6963,7 @@ public class WMap {
         //LAB_800d9264
         if(i >= 0x2L && i < 0x9L || i >= 0xfL && i < 0x11L) {
           //LAB_800d9294
-          final int sin = (int)(rsin(sp60.get()) * 0x20) / 0x1000;
+          final int sin = (rsin(sp60.get()) * 0x20) / 0x1000;
           if((i & 0x1L) != 0) {
             coord2.coord.transfer.setY(sin);
           } else {
@@ -8636,7 +8379,7 @@ public class WMap {
     //LAB_800e04fc
     struct.bigStructs_0c.get((int)struct._1e4.get()).deref().us_a0.set((short)0x4e);
     FUN_800211d8(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
-    GsSetAmbient(_800c66b0.deref().svec_14c.getX(), _800c66b0.deref().svec_14c.getY(), _800c66b0.deref().svec_14c.getZ());
+    GsSetAmbient(_800c66b0.deref().ambientLight_14c.getX(), _800c66b0.deref().ambientLight_14c.getY(), _800c66b0.deref().ambientLight_14c.getZ());
     FUN_800e06d0();
     FUN_800e1364();
   }

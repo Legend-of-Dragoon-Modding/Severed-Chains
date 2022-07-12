@@ -3,9 +3,9 @@ package legend.game.types;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.UnsignedIntRef;
 
 /** 0x20 long */
 public class GsRVIEW2 implements MemoryRef {
@@ -13,7 +13,7 @@ public class GsRVIEW2 implements MemoryRef {
 
   public final VECTOR viewpoint_00;
   public final VECTOR refpoint_0c;
-  public final UnsignedIntRef viewpointTwist_18;
+  public final IntRef viewpointTwist_18;
   public final Pointer<GsCOORDINATE2> super_1c;
 
   public GsRVIEW2(final Value ref) {
@@ -21,7 +21,7 @@ public class GsRVIEW2 implements MemoryRef {
 
     this.viewpoint_00 = this.ref.offset(4, 0x00L).cast(VECTOR::new);
     this.refpoint_0c = this.ref.offset(4, 0x0cL).cast(VECTOR::new);
-    this.viewpointTwist_18 = this.ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
+    this.viewpointTwist_18 = this.ref.offset(4, 0x18L).cast(IntRef::new);
     this.super_1c = this.ref.offset(4, 0x1cL).cast(Pointer.deferred(4, GsCOORDINATE2::new));
   }
 

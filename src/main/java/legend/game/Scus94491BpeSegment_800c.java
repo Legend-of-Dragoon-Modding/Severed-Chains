@@ -105,7 +105,6 @@ public final class Scus94491BpeSegment_800c {
   public static final MATRIX identityMatrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
   public static final MATRIX matrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
 
-  public static final Value _800c35a4 = MEMORY.ref(4, 0x800c35a4L);
   public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
 
   public static final Value _800c3658 = MEMORY.ref(4, 0x800c3658L);

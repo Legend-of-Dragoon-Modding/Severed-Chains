@@ -305,7 +305,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
 import static legend.game.Scus94491BpeSegment_800c._800c34e0;
-import static legend.game.Scus94491BpeSegment_800c._800c35a4;
 import static legend.game.Scus94491BpeSegment_800c.cdromReadCompleteSubSubCallbackPtr_800c1bb4;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
@@ -4610,7 +4609,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x80039910L)
   public static long makeSetDrawingOffsetCommand(final long x, final long y) {
-    return 0xe500_0000L | (y & 0x7ffL) << 0xbL | x & 0x7ffL;
+    return 0xe500_0000L | (y & 0x7ffL) << 11 | x & 0x7ffL;
   }
 
   @Method(0x8003992cL)
@@ -4620,10 +4619,10 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003993c
-    final long y = rect.y.get() / 8L << 15;
-    final long x = rect.x.get() / 8L << 10;
-    final long h = (-rect.h.get() & 0xffL) / 8L << 5;
-    final long w = (-rect.w.get() & 0xffL) / 8L;
+    final long y = rect.y.get() >> 3 << 15;
+    final long x = rect.x.get() >> 3 << 10;
+    final long h = (-rect.h.get() & 0xffL) >> 3 << 5;
+    final long w = (-rect.w.get() & 0xffL) >> 3;
 
     //LAB_800399a4
     return 0xe200_0000L | y | x | h | w;
@@ -5284,8 +5283,8 @@ public final class Scus94491BpeSegment_8003 {
       drawMode.code.get(1).set(0);
     } else {
       final long val = 0xe200_0000L |
-        textureWindow.y.get() / 8 << 15 | // Texture window offset Y
-        textureWindow.x.get() / 8 << 10 | // Texture window offset X
+        textureWindow.y.get() >> 3 << 15 | // Texture window offset Y
+        textureWindow.x.get() >> 3 << 10 | // Texture window offset X
         (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y
         (-textureWindow.w.get() & 0xffL) >> 3; // Texture window mask X
       drawMode.code.get(1).set(val);
@@ -5546,11 +5545,11 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c1c0L)
   public static void GsSetDrawBuffOffset() {
-    final long x = centreScreenX_1f8003dc.get();
-    final long y = centreScreenY_1f8003de.get();
+    final short x = (short)centreScreenX_1f8003dc.get();
+    final short y = (short)centreScreenY_1f8003de.get();
 
-    final long clipX;
-    final long clipY;
+    final short clipX;
+    final short clipY;
     if(PSDIDX_800c34d4.get() == 0) {
       clipX = clip_800c3440.x1.get();
       clipY = clip_800c3440.y1.get();
@@ -5560,7 +5559,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     if(doubleBufferOffsetMode_800c34d6.get() == GsOffsetType.GsOFSGTE) {
-      SetGeomOffset((int)(x + clipX), (int)(y + clipY));
+      SetGeomOffset(x + clipX, y + clipY);
 
       _800c34c4.setu(x + clipX);
       _800c34c6.setu(y + clipY);
@@ -5765,32 +5764,32 @@ public final class Scus94491BpeSegment_8003 {
 
     if(id == 0) {
       //LAB_8003c7ec
-      directionMatrix.set(0, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
-      directionMatrix.set(1, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
-      directionMatrix.set(2, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
+      directionMatrix.set(0, (short)((-light.direction_00.getX() << 12) / mag));
+      directionMatrix.set(1, (short)((-light.direction_00.getY() << 12) / mag));
+      directionMatrix.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(0, (short)(r * 0x1000L / 0xff));
-      colourMatrix.set(3, (short)(g * 0x1000L / 0xff));
-      colourMatrix.set(6, (short)(b * 0x1000L / 0xff));
+      colourMatrix.set(0, (short)((r << 12) / 0xff));
+      colourMatrix.set(3, (short)((g << 12) / 0xff));
+      colourMatrix.set(6, (short)((b << 12) / 0xff));
     } else if(id == 0x1L) {
       //LAB_8003c904
-      directionMatrix.set(3, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
-      directionMatrix.set(4, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
-      directionMatrix.set(5, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
+      directionMatrix.set(3, (short)((-light.direction_00.getX() << 12) / mag));
+      directionMatrix.set(4, (short)((-light.direction_00.getY() << 12) / mag));
+      directionMatrix.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(1, (short)(r * 0x1000L / 0xff));
-      colourMatrix.set(4, (short)(g * 0x1000L / 0xff));
-      colourMatrix.set(7, (short)(b * 0x1000L / 0xff));
+      colourMatrix.set(1, (short)((r << 12) / 0xff));
+      colourMatrix.set(4, (short)((g << 12) / 0xff));
+      colourMatrix.set(7, (short)((b << 12) / 0xff));
       //LAB_8003c7dc
     } else if(id == 0x2L) {
       //LAB_8003ca20
-      directionMatrix.set(6, (short)((int)(-light.direction_00.getX() * 0x1000L) / mag));
-      directionMatrix.set(7, (short)((int)(-light.direction_00.getY() * 0x1000L) / mag));
-      directionMatrix.set(8, (short)((int)(-light.direction_00.getZ() * 0x1000L) / mag));
+      directionMatrix.set(6, (short)((-light.direction_00.getX() << 12) / mag));
+      directionMatrix.set(7, (short)((-light.direction_00.getY() << 12) / mag));
+      directionMatrix.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(2, (short)(r * 0x1000L / 0xff));
-      colourMatrix.set(5, (short)(g * 0x1000L / 0xff));
-      colourMatrix.set(8, (short)(b * 0x1000L / 0xff));
+      colourMatrix.set(2, (short)((r << 12) / 0xff));
+      colourMatrix.set(5, (short)((g << 12) / 0xff));
+      colourMatrix.set(8, (short)((b << 12) / 0xff));
     }
 
     //LAB_8003cb34
@@ -5823,7 +5822,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003cce0L)
   public static void GsSetAmbient(final long r, final long g, final long b) {
-    SetBackColor(r / 0x10L, g / 0x10L, b / 0x10L);
+    SetBackColor(r >> 4, g >> 4, b >> 4);
   }
 
   @Method(0x8003cd10L)
@@ -5965,7 +5964,7 @@ public final class Scus94491BpeSegment_8003 {
     matrix_800c3548.set(matrix_800c3588);
 
     FUN_8003d5d0(matrix_800c3548, -struct.viewpointTwist_18.get());
-    final long[] sp10 = new long[6];
+    final int[] sp10 = new int[6];
     FUN_8003d380(struct, sp10);
 
     long a0;
@@ -5984,7 +5983,7 @@ public final class Scus94491BpeSegment_8003 {
       return 0x1L;
     }
 
-    s0 = (sp10[1] - sp10[4]) * 0x1000L;
+    s0 = (sp10[1] - sp10[4]) << 12;
 
     //LAB_8003d0dc
     v0 = sp10[3] - sp10[0];
@@ -5994,7 +5993,7 @@ public final class Scus94491BpeSegment_8003 {
     a0 += v0 * v0;
 
     s1 = SquareRoot0(a0);
-    a2 = s1 * 0x1000L;
+    a2 = s1 << 12;
 
     //LAB_8003d134
     final MATRIX sp30 = new MATRIX();
@@ -6002,10 +6001,10 @@ public final class Scus94491BpeSegment_8003 {
     MulMatrix(matrix_800c3548, sp30);
 
     if(s1 != 0) {
-      a1 = (sp10[3] - sp10[0]) * 0x1000L;
+      a1 = (sp10[3] - sp10[0]) << 12;
 
       //LAB_8003d1c0
-      a2 = (sp10[5] - sp10[2]) * 0x1000L;
+      a2 = (sp10[5] - sp10[2]) << 12;
 
       //LAB_8003d200
       FUN_8003cee0(sp30, -(short)(a1 / s1), (short)(a2 / s1), 0x79L);
@@ -6034,8 +6033,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003d380L)
-  public static void FUN_8003d380(final GsRVIEW2 a0, final long[] a1) {
-    long longestComponentBits = log2(getLongestComponent(a0));
+  public static void FUN_8003d380(final GsRVIEW2 a0, final int[] a1) {
+    int longestComponentBits = log2(getLongestComponent(a0));
 
     if(longestComponentBits < 16) {
       a1[0] = a0.viewpoint_00.getX();
@@ -6045,7 +6044,7 @@ public final class Scus94491BpeSegment_8003 {
       a1[4] = a0.refpoint_0c.getY();
       a1[5] = a0.refpoint_0c.getZ();
     } else {
-      longestComponentBits -= 0xfL;
+      longestComponentBits -= 15;
 
       a1[0] = a0.viewpoint_00.getX() >> longestComponentBits;
       a1[1] = a0.viewpoint_00.getY() >> longestComponentBits;
@@ -6088,7 +6087,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003d534L)
-  public static long log2(final long a0) {
+  public static int log2(final long a0) {
     if(a0 == 0) {
       return 0;
     }
@@ -6110,16 +6109,16 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003d5d0L)
   public static void FUN_8003d5d0(final MATRIX matrix, final long angle) {
-    final long cos = rcos(angle / 360L);
-    final long sin = rsin(angle / 360L);
-
     if(angle != 0) {
+      final short cos = rcos(angle / 360);
+      final short sin = rsin(angle / 360);
+
       final MATRIX rot = new MATRIX();
-      rot.set(0, 0, (short)cos);
+      rot.set(0, 0, cos);
       rot.set(0, 1, (short)-sin);
       rot.set(0, 2, (short)0);
-      rot.set(1, 0, (short)sin);
-      rot.set(1, 1, (short)cos);
+      rot.set(1, 0, sin);
+      rot.set(1, 1, cos);
       rot.set(1, 2, (short)0);
       rot.set(2, 0, (short)0);
       rot.set(2, 1, (short)0);
@@ -6146,12 +6145,12 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d690L)
   public static void GsGetLw(final GsCOORDINATE2 coord, final MATRIX matrix) {
     GsCOORDINATE2 a3 = coord;
-    long s1 = 0;
-    long a1_0 = 0x64L;
+    int s1 = 0;
+    int a1_0 = 100;
 
     //LAB_8003d6c0
     do {
-      coord2s_800c35a8.get((int)s1).set(a3);
+      coord2s_800c35a8.get(s1).set(a3);
 
       if(a3.super_.isNull()) {
         if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
@@ -6163,15 +6162,15 @@ public final class Scus94491BpeSegment_8003 {
         }
 
         //LAB_8003d78c
-        if(a1_0 == 0x64L) {
+        if(a1_0 == 100) {
           matrix.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003d7e8
-        s1 = a1_0 + 0x1L;
-        matrix.set(coord2s_800c35a8.get((int)s1).deref().workm);
+        s1 = a1_0 + 1;
+        matrix.set(coord2s_800c35a8.get(s1).deref().workm);
         break;
       }
 
@@ -6193,12 +6192,12 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003d8ac
     //LAB_8003d8c0
-    while((int)s1 > 0) {
-      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get((int)(s1 - 0x1L)).deref();
+    while(s1 > 0) {
+      s1--;
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get(s1).deref();
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
       coord2.flg.set(PSDCNT_800c34d0.get());
-      s1--;
     }
 
     //LAB_8003d930
@@ -6234,12 +6233,12 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d9d0L)
   public static void GsGetLs(final GsCOORDINATE2 coord, final MATRIX matrix) {
     GsCOORDINATE2 a3 = coord;
-    long s1 = 0;
-    long a1 = 0x64L;
+    int s1 = 0;
+    int a1 = 100;
 
     //LAB_8003da00
     do {
-      coord2s_800c35a8.get((int)s1).set(a3);
+      coord2s_800c35a8.get(s1).set(a3);
       if(a3.super_.isNull()) {
         if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
           //LAB_8003da3c
@@ -6250,16 +6249,16 @@ public final class Scus94491BpeSegment_8003 {
         }
 
         //LAB_8003dacc
-        s1 = a1 + 0x1L;
+        s1 = a1 + 1;
 
-        if(a1 == 0x64L) {
+        if(a1 == 100) {
           matrix.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003db28
-        matrix.set(coord2s_800c35a8.get((int)s1).deref().workm);
+        matrix.set(coord2s_800c35a8.get(s1).deref().workm);
         break;
       }
 
@@ -6280,17 +6279,13 @@ public final class Scus94491BpeSegment_8003 {
     } while(true);
 
     //LAB_8003dbec
-    if((int)s1 > 0) {
-      long s0 = _800c35a4.offset(s1 * 0x4L).getAddress();
-
-      //LAB_8003dc00
-      do {
-        GsMulCoord3(matrix, MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).coord);
-        MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new).workm.set(matrix);
-        MEMORY.ref(4, s0).deref(4).setu(PSDCNT_800c34d0);
-        s0 -= 0x4L;
-        s1--;
-      } while((int)s1 > 0);
+    //LAB_8003dc00
+    while(s1 > 0) {
+      s1--;
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get(s1).deref();
+      GsMulCoord3(matrix, coord2.coord);
+      coord2.workm.set(matrix);
+      coord2.flg.set(PSDCNT_800c34d0.get());
     }
 
     //LAB_8003dc70
@@ -6309,12 +6304,12 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003dca0L)
   public static void GsGetLws(GsCOORDINATE2 coord, final MATRIX lw, final MATRIX ls) {
-    long s1 = 0;
-    long a = 0x64;
+    int s1 = 0;
+    int a = 100;
 
     //LAB_8003dcd8
     do {
-      coord2s_800c35a8.get((int)s1).set(coord);
+      coord2s_800c35a8.get(s1).set(coord);
 
       if(coord.super_.isNull()) {
         if(coord.flg.get() == PSDCNT_800c34d0.get() || coord.flg.get() == 0) {
@@ -6326,15 +6321,15 @@ public final class Scus94491BpeSegment_8003 {
         }
 
         //LAB_8003dda4
-        s1 = a + 0x1L;
-        if(a == 0x64) {
+        s1 = a + 1;
+        if(a == 100) {
           lw.set(coord2s_800c35a8.get(0).deref().workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003de00
-        lw.set(coord2s_800c35a8.get((int)s1).deref().workm);
+        lw.set(coord2s_800c35a8.get(s1).deref().workm);
         break;
       }
 
@@ -6355,18 +6350,15 @@ public final class Scus94491BpeSegment_8003 {
     } while(true);
 
     //LAB_8003dec4
-    long s0 = _800c35a4.offset(s1 * 4).getAddress();
-
     //LAB_8003ded8
-    while((int)s1 > 0) {
-      final GsCOORDINATE2 c = MEMORY.ref(4, s0).deref(4).cast(GsCOORDINATE2::new); //TODO
+    while(s1 > 0) {
+      s1--;
+      final GsCOORDINATE2 c = coord2s_800c35a8.get(s1).deref();
 
       GsMulCoord3(lw, c.coord);
 
       c.flg.set((int)PSDCNT_800c34d0.get());
       c.workm.set(lw);
-      s0 -= 0x4L;
-      s1--;
     }
 
     //LAB_8003df48
