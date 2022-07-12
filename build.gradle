@@ -40,6 +40,7 @@ jar {
     configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
   } {
     exclude "META-INF/**"
+    duplicatesStrategy "exclude"
   }
 }
 
