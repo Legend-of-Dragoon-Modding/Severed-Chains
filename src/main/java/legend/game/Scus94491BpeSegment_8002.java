@@ -235,7 +235,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
-import static legend.game.Scus94491BpeSegment_800b._800bdbf0;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
@@ -1560,9 +1560,24 @@ public final class Scus94491BpeSegment_8002 {
     whichMenu_800bdc38.setu(0x4L);
   }
 
+  @Method(0x80022530L)
+  public static void FUN_80022530(final long unused) {
+    whichMenu_800bdc38.setu(0x9L);
+  }
+
   @Method(0x80022540L)
   public static void FUN_80022540(final long unused) {
     whichMenu_800bdc38.setu(0xeL);
+  }
+
+  @Method(0x80022550L)
+  public static void FUN_80022550(final long unused) {
+    whichMenu_800bdc38.setu(0x13L);
+  }
+
+  @Method(0x80022560L)
+  public static void FUN_80022560(final long unused) {
+    whichMenu_800bdc38.setu(0x18L);
   }
 
   @Method(0x80022570L)
@@ -2038,39 +2053,39 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023148L)
   public static void FUN_80023148() {
-    gameState_800babc8._1e4.set((short)0);
+    gameState_800babc8.equipmentCount_1e4.set((short)0);
 
     //LAB_80023164
-    while(gameState_800babc8._1e8.get(gameState_800babc8._1e4.get()).get() != 0xff) {
-      if(gameState_800babc8._1e4.get() >= 0xff) {
+    while(gameState_800babc8.equipment_1e8.get(gameState_800babc8.equipmentCount_1e4.get()).get() != 0xff) {
+      if(gameState_800babc8.equipmentCount_1e4.get() >= 0xff) {
         break;
       }
 
-      gameState_800babc8._1e4.incr();
+      gameState_800babc8.equipmentCount_1e4.incr();
     }
 
     //LAB_80023198
     //LAB_800231c0
-    for(int i = gameState_800babc8._1e4.get(); i <= 0x100; i++) {
-      gameState_800babc8._1e8.get(i).set(0xff);
+    for(int i = gameState_800babc8.equipmentCount_1e4.get(); i <= 0x100; i++) {
+      gameState_800babc8.equipment_1e8.get(i).set(0xff);
     }
 
     //LAB_800231d8
-    gameState_800babc8._1e6.set((short)0);
+    gameState_800babc8.itemCount_1e6.set((short)0);
 
     //LAB_800231f0
-    while(gameState_800babc8._2e9.get(gameState_800babc8._1e6.get()).get() != 0xff) {
-      if(gameState_800babc8._1e6.get() >= 0x20) {
+    while(gameState_800babc8.items_2e9.get(gameState_800babc8.itemCount_1e6.get()).get() != 0xff) {
+      if(gameState_800babc8.itemCount_1e6.get() >= 0x20) {
         break;
       }
 
-      gameState_800babc8._1e6.incr();
+      gameState_800babc8.itemCount_1e6.incr();
     }
 
     //LAB_80023224
     //LAB_80023248
-    for(int i = gameState_800babc8._1e6.get(); i <= 0x20; i++) {
-      gameState_800babc8._2e9.get(i).set(0xff);
+    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= 0x20; i++) {
+      gameState_800babc8.items_2e9.get(i).set(0xff);
     }
 
     //LAB_8002325c
@@ -2081,8 +2096,8 @@ public final class Scus94491BpeSegment_8002 {
     gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
 
     //LAB_800232a4
-    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
-      if(gameState_800babc8._2e9.get(i).get() == 0xfaL) {
+    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
+      if(gameState_800babc8.items_2e9.get(i).get() == 0xfaL) {
         gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
       }
 
@@ -2140,23 +2155,23 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_800233d8(final long a0) {
     FUN_80023148();
 
-    if(gameState_800babc8._1e4.get() == 0) {
+    if(gameState_800babc8.equipmentCount_1e4.get() == 0) {
       return 0xffL;
     }
 
     //LAB_8002340c
-    if(gameState_800babc8._1e8.get((int)a0).get() == 0xffL) {
+    if(gameState_800babc8.equipment_1e8.get((int)a0).get() == 0xffL) {
       return 0xffL;
     }
 
     //LAB_80023430
     for(int s0 = (int)a0; s0 < 0xff; s0++) {
-      gameState_800babc8._1e8.get(s0).set(gameState_800babc8._1e8.get(s0 + 1).get());
+      gameState_800babc8.equipment_1e8.get(s0).set(gameState_800babc8.equipment_1e8.get(s0 + 1).get());
     }
 
     //LAB_80023454
-    gameState_800babc8._1e8.get(0x99).set(0xff);
-    gameState_800babc8._1e4.decr();
+    gameState_800babc8.equipment_1e8.get(0x99).set(0xff);
+    gameState_800babc8.equipmentCount_1e4.decr();
 
     //LAB_80023474
     return 0;
@@ -2175,22 +2190,22 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     if(itemId < 0xc0) {
-      final int a0_0 = gameState_800babc8._1e4.get();
+      final int a0_0 = gameState_800babc8.equipmentCount_1e4.get();
 
       if(a0_0 >= 0xff) {
         return 0xff;
       }
 
       if(itemId < 0xffL) {
-        gameState_800babc8._1e8.get(a0_0).set(itemId);
-        gameState_800babc8._1e4.incr();
+        gameState_800babc8.equipment_1e8.get(a0_0).set(itemId);
+        gameState_800babc8.equipmentCount_1e4.incr();
       }
 
       return 0;
     }
 
     //LAB_800234f4
-    final int a0_0 = gameState_800babc8._1e6.get();
+    final int a0_0 = gameState_800babc8.itemCount_1e6.get();
 
     if(a0_0 >= 0x20) {
       //LAB_8002350c
@@ -2199,8 +2214,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023514
     if(itemId < 0xff) {
-      gameState_800babc8._2e9.get(a0_0).set(itemId);
-      gameState_800babc8._1e6.incr();
+      gameState_800babc8.items_2e9.get(a0_0).set(itemId);
+      gameState_800babc8.itemCount_1e6.incr();
     }
 
     //LAB_80023530
@@ -2433,12 +2448,12 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023aec
-    for(int i = 0; i < gameState_800babc8._1e6.get(); i++) {
-      MEMORY.ref(1, s0).offset(i * 0x4L).setu(gameState_800babc8._2e9.get(i).get());
+    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
+      MEMORY.ref(1, s0).offset(i * 0x4L).setu(gameState_800babc8.items_2e9.get(i).get());
     }
 
     //LAB_80023b10
-    FUN_80023a2c(s0, gameState_800babc8._2e9, gameState_800babc8._1e6.get());
+    FUN_80023a2c(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
     removeFromLinkedList(s0);
   }
 
@@ -2773,7 +2788,7 @@ public final class Scus94491BpeSegment_8002 {
         selectedMenuOptionRenderablePtr_800bdbe4.clear();
         renderablePtr_800bdbe8.clear();
         renderablePtr_800bdbec.clear();
-        _800bdbf0.setu(0);
+        renderablePtr_800bdbf0.clear();
 
         renderablePtr_800bdc20.clear();
       }

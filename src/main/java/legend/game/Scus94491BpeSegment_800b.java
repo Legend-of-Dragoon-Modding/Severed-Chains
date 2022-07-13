@@ -255,7 +255,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderablePtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
-  public static final Value _800bdbf0 = MEMORY.ref(4, 0x800bdbf0L);
+  public static final Pointer<Renderable58> renderablePtr_800bdbf0 = MEMORY.ref(4, 0x800bdbf0L, Pointer.deferred(4, Renderable58::new));
 
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 

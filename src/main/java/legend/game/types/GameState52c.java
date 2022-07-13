@@ -32,10 +32,10 @@ public class GameState52c implements MemoryRef {
   public final ArrayRef<UnsignedIntRef> dragoonSpirits_19c;
   public final ArrayRef<UnsignedIntRef> _1a4;
 
-  public final ShortRef _1e4;
-  public final ShortRef _1e6;
-  public final ArrayRef<UnsignedByteRef> _1e8;
-  public final ArrayRef<UnsignedByteRef> _2e9;
+  public final ShortRef equipmentCount_1e4;
+  public final ShortRef itemCount_1e6;
+  public final ArrayRef<UnsignedByteRef> equipment_1e8;
+  public final ArrayRef<UnsignedByteRef> items_2e9;
 
   public final ArrayRef<CharacterData2c> charData_32c;
   public final ArrayRef<UnsignedIntRef> _4b8;
@@ -75,10 +75,10 @@ public class GameState52c implements MemoryRef {
     this.dragoonSpirits_19c = ref.offset(4, 0x19cL).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
     this._1a4 = ref.offset(4, 0x1a4L).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
 
-    this._1e4 = ref.offset(2, 0x1e4L).cast(ShortRef::new);
-    this._1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
-    this._1e8 = ref.offset(1, 0x1e8L).cast(ArrayRef.of(UnsignedByteRef.class, 0x101, 1, UnsignedByteRef::new));
-    this._2e9 = ref.offset(1, 0x2e9L).cast(ArrayRef.of(UnsignedByteRef.class, 0x21, 1, UnsignedByteRef::new));
+    this.equipmentCount_1e4 = ref.offset(2, 0x1e4L).cast(ShortRef::new);
+    this.itemCount_1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
+    this.equipment_1e8 = ref.offset(1, 0x1e8L).cast(ArrayRef.of(UnsignedByteRef.class, 0x101, 1, UnsignedByteRef::new));
+    this.items_2e9 = ref.offset(1, 0x2e9L).cast(ArrayRef.of(UnsignedByteRef.class, 0x21, 1, UnsignedByteRef::new));
 
     this.charData_32c = ref.offset(4, 0x32cL).cast(ArrayRef.of(CharacterData2c.class, 9, 0x2c, CharacterData2c::new));
     this._4b8 = ref.offset(4, 0x4b8L).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));

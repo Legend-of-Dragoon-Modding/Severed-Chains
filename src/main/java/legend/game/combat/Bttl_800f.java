@@ -1949,7 +1949,7 @@ public final class Bttl_800f {
       //LAB_800f4a6c
       //LAB_800f4a7c
       for(int i = 0; i < 32; i++) {
-        if(gameState_800babc8._2e9.get(i).get() == 0xff) {
+        if(gameState_800babc8.items_2e9.get(i).get() == 0xff) {
           break;
         }
       }
@@ -3693,10 +3693,10 @@ public final class Bttl_800f {
     _800c6b70.setu(0);
 
     //LAB_800f8420
-    for(int a3 = 0; a3 < gameState_800babc8._1e6.get(); a3++) {
+    for(int a3 = 0; a3 < gameState_800babc8.itemCount_1e6.get(); a3++) {
       //LAB_800f843c
-      for(int a2 = 0; a2 < gameState_800babc8._1e6.get(); a2++) {
-        final long a0 = gameState_800babc8._2e9.get(a3).get();
+      for(int a2 = 0; a2 < gameState_800babc8.itemCount_1e6.get(); a2++) {
+        final long a0 = gameState_800babc8.items_2e9.get(a3).get();
         final long v0 = _800c6988.offset(a2 * 0x2L).get();
 
         if(v0 == a0) {
