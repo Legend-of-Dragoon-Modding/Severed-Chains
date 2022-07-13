@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -11,8 +12,8 @@ public class Struct20 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef _00;
-  public final UnsignedIntRef _04;
-  public final UnsignedIntRef _08;
+  public final IntRef _04;
+  public final IntRef scale_08;
   public final VECTOR transfer;
   public final ShortRef _18;
 
@@ -22,8 +23,8 @@ public class Struct20 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
+    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
+    this.scale_08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this.transfer = ref.offset(4, 0x0cL).cast(VECTOR::new);
     this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
 

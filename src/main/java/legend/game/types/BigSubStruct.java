@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -19,7 +20,7 @@ public class BigSubStruct implements MemoryRef {
   public final ShortRef _1c;
   public final SVECTOR _1e;
 
-  public final UnsignedIntRef _28;
+  public final IntRef _28;
 
   public final UnsignedIntRef _30;
   public final UnsignedIntRef _34;
@@ -38,7 +39,7 @@ public class BigSubStruct implements MemoryRef {
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(SVECTOR::new);
 
-    this._28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
+    this._28 = ref.offset(4, 0x28L).cast(IntRef::new);
 
     this._30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
     this._34 = ref.offset(4, 0x34L).cast(UnsignedIntRef::new);

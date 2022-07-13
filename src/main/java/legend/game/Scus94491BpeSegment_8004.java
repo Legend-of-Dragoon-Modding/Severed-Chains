@@ -244,7 +244,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee90}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee94}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#gold_94}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800babd0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_08}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#_8007a3a8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb104}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800babc0}</li>
@@ -262,7 +262,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_a4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#submapCut_a8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_a4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac78}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#vsyncMode_8007a3b8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee98}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beebc}</li>
@@ -273,7 +273,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1a4}</li>
    *   <li>{@link legend.game.SMap#mcqs_800c66d0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1d8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800c#_800c677c}</li>
+   *   <li>{@link legend.game.combat.Bttl_800c#charCount_800c677c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>
    *   <li>{@link legend.game.SMap#_800c6768}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f27c}</li>
@@ -407,10 +407,10 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptAnd}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_8001688c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168b0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800168d4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016900}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptOr(RunningScript)}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptXor}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptAndOr}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptNot}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptShiftLeft}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptShiftRightArithmetic}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -424,9 +424,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMultiply}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDivide}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016ab0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDivide2}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod2}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -434,7 +434,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b5c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b8c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016b04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptMod2}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -534,7 +534,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_80017374}</li>
    *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag1}</li>
    *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag1}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017440}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptStartEffect}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017564}</li>
@@ -545,10 +545,10 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link SMap#FUN_800d9bc0}</li>
    *   <li>{@link SMap#FUN_800d9bf4}</li>
    *   <li>{@link SMap#FUN_800d9c1c}</li>
-   *   <li>{@link SMap#FUN_800d9ce4}</li>
+   *   <li>{@link SMap#scriptSetCharAddition}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800176c0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800176ec}</li>
-   *   <li>{@link SMap#FUN_800d9d20}</li>
+   *   <li>{@link SMap#scriptGetCharAddition}</li>
    *   <li>{@link SMap#FUN_800d9d60}</li>
    * </ol>
    * ...

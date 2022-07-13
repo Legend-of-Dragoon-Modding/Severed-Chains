@@ -8392,6 +8392,16 @@ public final class Scus94491BpeSegment_8002 {
     _800bed60.get(joypadIndex).bArr58.get(1).set(0);
   }
 
+  @Method(0x8002c178L)
+  public static void FUN_8002c178(final int a0) {
+    _800bee88.setu(a0);
+  }
+
+  @Method(0x8002c184L)
+  public static void FUN_8002c184() {
+    _800bee88.setu(0);
+  }
+
   @Method(0x8002c190L)
   public static void FUN_8002c190(final JoyStruct.JoyStruct2 joyStruct2, final int a1) {
     joyStruct2.s02.not();

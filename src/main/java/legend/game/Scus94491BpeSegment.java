@@ -82,6 +82,8 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002ae0c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c0c8;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c86c;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -3263,6 +3265,15 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /** Pretty sure this is _supposed_ to be a swap */
+  @Method(0x80016790L)
+  public static long FUN_80016790(final RunningScript a0) {
+    final int v1 = a0.params_20.get(0).deref().get();
+    a0.params_20.get(1).deref().set(v1);
+    a0.params_20.get(0).deref().set(v1);
+    return 0;
+  }
+
   /**
    * Copy block of memory at work array parameter 1 to block of memory at work array parameter 2. Word count is at work array parameter 0.
    *
@@ -3327,8 +3338,22 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800168b0L)
-  public static long FUN_800168b0(final RunningScript a0) {
+  public static long scriptXor(final RunningScript a0) {
     a0.params_20.get(1).deref().xor(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800168d4L)
+  public static long scriptAndOr(final RunningScript a0) {
+    a0.params_20.get(2).deref()
+      .and(a0.params_20.get(0).deref().get())
+      .or(a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x80016900L)
+  public static long scriptNot(final RunningScript a0) {
+    a0.params_20.get(0).deref().not();
     return 0;
   }
 
@@ -3373,6 +3398,12 @@ public final class Scus94491BpeSegment {
   @Method(0x8001698cL)
   public static long scriptSubtract(final RunningScript a0) {
     a0.params_20.get(1).deref().sub(a0.params_20.get(0).deref());
+    return 0;
+  }
+
+  @Method(0x800169b0L)
+  public static long FUN_800169b0(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() - a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -3433,15 +3464,39 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80016ab0L)
+  public static long scriptDivide2(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() / a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
   @Method(0x80016adcL)
   public static long scriptMod(final RunningScript a0) {
     a0.params_20.get(1).deref().mod(a0.params_20.get(0).deref().get());
     return 0;
   }
 
+  @Method(0x80016b04L)
+  public static long scriptMod2(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() % a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
   @Method(0x80016b2cL)
   public static long FUN_80016b2c(final RunningScript a0) {
     a0.params_20.get(1).deref().set((a0.params_20.get(1).deref().get() >> 4) * (a0.params_20.get(0).deref().get() >> 4) >> 4);
+    return 0;
+  }
+
+  @Method(0x80016b5cL)
+  public static long FUN_80016b5c(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(((a0.params_20.get(1).deref().get() << 4) / a0.params_20.get(0).deref().get()) << 8);
+    return 0;
+  }
+
+  @Method(0x80016b8cL)
+  public static long FUN_80016b8c(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(((a0.params_20.get(0).deref().get() << 4) / a0.params_20.get(1).deref().get()) << 8);
     return 0;
   }
 
@@ -3640,11 +3695,26 @@ public final class Scus94491BpeSegment {
     return 0x2L;
   }
 
+  @Method(0x80017138L)
+  public static long FUN_80017138(final RunningScript a0) {
+    FUN_80015d38(a0.scriptStateIndex_00.get());
+    return 2;
+  }
+
   @Method(0x80017160L)
   public static long FUN_80017160(final RunningScript a0) {
     FUN_80015c9c(a0.params_20.get(0).deref().get());
     FUN_80015c20(a0.params_20.get(0).deref().get());
     return a0.params_20.get(0).deref().get() == a0.scriptStateIndex_00.get() ? 2 : 0;
+  }
+
+  @Method(0x800171c0L)
+  public static long FUN_800171c0(final RunningScript a0) {
+    FUN_80015d74(a0.params_20.get(0).deref().get());
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
+    state.commandPtr_18.set(a0.params_20.get(1).deref());
+    state._c4.set(a0.params_20.get(2).deref().get());
+    return 0;
   }
 
   @Method(0x80017234L)
@@ -3668,14 +3738,45 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x800172fcL)
+  public static long FUN_800172fc(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x80017304L)
+  public static long FUN_80017304(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x8001730cL)
+  public static long FUN_8001730c(final RunningScript a0) {
+    //LAB_80017314
+    int i;
+    for(i = 0; i < 10; i++) {
+      if(a0.scriptState_04.deref().commandStack_1c.get(i).isNull()) {
+        break;
+      }
+    }
+
+    //LAB_80017338
+    a0.params_20.get(0).deref().set(i);
+    return 0;
+  }
+
   @Method(0x8001734cL)
   public static long scriptRewindAndPause2(final RunningScript a0) {
-    return 0x2L;
+    return 2;
   }
 
   @Method(0x80017354L)
   public static long FUN_80017354(final RunningScript a0) {
     gameState_800babc8._4e3.set(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
+    return 0;
+  }
+
+  @Method(0x80017374L)
+  public static long FUN_80017374(final RunningScript a0) {
+    a0.params_20.get(0).deref().set(gameState_800babc8._4e3.get() != 0 ? 1 : 0);
     return 0;
   }
 
@@ -3720,7 +3821,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80017440L)
-  public static long FUN_80017440(final RunningScript a0) {
+  public static long scriptSetGlobalFlag2(final RunningScript a0) {
     final long a1 = a0.params_20.get(0).deref().get() & 0x1fL;
     final long a2 = a0.params_20.get(0).deref().get() >>> 5;
 
@@ -3765,6 +3866,15 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  @Method(0x80017564L)
+  public static long FUN_80017564(final RunningScript a0) {
+    if(fileCount_8004ddc8.get() == 0) {
+      return 1;
+    }
+
+    return 2;
+  }
+
   @Method(0x80017584L)
   public static long FUN_80017584(final RunningScript a0) {
     FUN_8002bb38(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
@@ -3806,6 +3916,18 @@ public final class Scus94491BpeSegment {
   @Method(0x80017688L)
   public static long FUN_80017688(final RunningScript a0) {
     FUN_8002bda4(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
+    return 0;
+  }
+
+  @Method(0x800176c0L)
+  public static long FUN_800176c0(final RunningScript a0) {
+    FUN_8002c178(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800176ecL)
+  public static long FUN_800176ec(final RunningScript a0) {
+    FUN_8002c184();
     return 0;
   }
 
