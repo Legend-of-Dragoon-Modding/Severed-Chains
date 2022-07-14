@@ -4283,7 +4283,7 @@ public final class Scus94491BpeSegment_8003 {
       LOGGER.info("DrawOTag(%08x)...", address.getAddress());
     }
 
-    uploadLinkedListToGpu(address);
+    lastOtSize[(int)PSDIDX_800c34d4.get()] = uploadLinkedListToGpu(address);
 
     // Pre-optimisation:
 //    FUN_8003a288(LibGpu::uploadLinkedList, address, 0, 0);
@@ -4738,9 +4738,11 @@ public final class Scus94491BpeSegment_8003 {
     GPU_REG1.setu(command);
   }
 
+  private static final int[] lastOtSize = new int[2];
+
   @Method(value = 0x8003a1ecL, ignoreExtraParams = true)
-  public static void uploadLinkedListToGpu(final MemoryRef address) {
-    GPU.uploadLinkedList(address.getAddress());
+  public static int uploadLinkedListToGpu(final MemoryRef address) {
+    return GPU.uploadLinkedList(address.getAddress());
 
     // Pre-optimization
 //    GPU_REG1.setu(0x400_0002L); // DMA direction: CPU to GP0
@@ -5848,7 +5850,11 @@ public final class Scus94491BpeSegment_8003 {
     ot.point_0c.set(point);
     ot.tag_10.set(ot.org_04.deref().get((1 << ot.length_00.get()) - 1));
 
-    ClearOTagR(ot.org_04.deref(), 1 << ot.length_00.get());
+    if(lastOtSize[(int)PSDIDX_800c34d4.get()] == 0) {
+      lastOtSize[(int)PSDIDX_800c34d4.get()] = 1 << (int)ot.length_00.get();
+    }
+
+    ClearOTagR(ot.org_04.deref(), Math.min(lastOtSize[(int)PSDIDX_800c34d4.get()], 1 << ot.length_00.get()));
   }
 
   /**
