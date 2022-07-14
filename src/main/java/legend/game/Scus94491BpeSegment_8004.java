@@ -230,7 +230,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
   public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);
 
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(0x70, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
   public static final Value scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 
@@ -667,14 +667,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004fa98 = MEMORY.ref(1, 0x8004fa98L);
 
-  public static final Value _8004fa9a = MEMORY.ref(2, 0x8004fa9aL);
-  public static final Value _8004fa9c = MEMORY.ref(4, 0x8004fa9cL);
-
-
   public static final Value _8004fb00 = MEMORY.ref(1, 0x8004fb00L);
-
-  public static final Value _8004fb02 = MEMORY.ref(2, 0x8004fb02L);
-  public static final Value _8004fb04 = MEMORY.ref(4, 0x8004fb04L);
 
   public static final Value _8004ff10 = MEMORY.ref(4, 0x8004ff10L);
   public static final Value _8004ff14 = MEMORY.ref(4, 0x8004ff14L);
@@ -4573,6 +4566,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048d44L)
   public static long FUN_80048d44(final int playableSoundIndex, final long a1, final long a2) {
+    //TODO GH#3
+    if(true) {
+      return 0;
+    }
+
     final long v0 = FUN_80048c38(playableSoundIndex, a1, a2);
     if(v0 == 0) {
       assert false : "Error";

@@ -99,11 +99,11 @@ public class JoyData implements MemoryRef {
 
     this.counter_int4c = ref.offset(4, 0x4cL).cast(IntRef::new);
     this.byte50 = ref.offset(1, 0x50L).cast(ByteRef::new);
-    this.setAnalogState44Params_byteArr51 = ref.offset(2, 0x51L).cast(ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new));
+    this.setAnalogState44Params_byteArr51 = ref.offset(1, 0x51L).cast(ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new));
     this.byte53 = ref.offset(1, 0x53L).cast(ByteRef::new);
 
-    this.byteArr57 = ref.offset(6, 0x57L).cast(ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new));
-    this.getJoypadState46Params_byteArr5d = ref.offset(6, 0x5dL).cast(ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new));
+    this.byteArr57 = ref.offset(1, 0x57L).cast(ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new));
+    this.getJoypadState46Params_byteArr5d = ref.offset(1, 0x5dL).cast(ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new));
 
     this.bytee3 = ref.offset(1, 0xe3L).cast(UnsignedByteRef::new);
     this.bytee4 = ref.offset(1, 0xe4L).cast(UnsignedByteRef::new);

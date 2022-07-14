@@ -111,7 +111,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c37a4 = MEMORY.ref(4, 0x800c37a4L);
 
-  public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(480, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
+  public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(4, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
   public static final ArrayRef<UnsignedByteRef> responseBuffer0_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedByteRef> responseBuffer1_800c39bb = MEMORY.ref(1, 0x800c39bbL, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
   public static final ArrayRef<ByteRef> inputBuffer_800c39e0 = MEMORY.ref(1, 0x800c39e0L, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
@@ -124,7 +124,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c3a38 = MEMORY.ref(4, 0x800c3a38L);
   public static final Value _800c3a3c = MEMORY.ref(4, 0x800c3a3cL);
   /** 0x990 bytes long, I think these map to voices, not channels */
-  public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(4, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
+  public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(2, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
   /** 0x5f4 bytes long */
   public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
 
@@ -156,7 +156,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
   public static final Value _800c6688 = MEMORY.ref(4, 0x800c6688L);
-  public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(0x18, 0x800c668cL, CdlFILE::new);
+  public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(4, 0x800c668cL, CdlFILE::new);
 
   public static final Value SInitOvlData_800c66a4 = MEMORY.ref(4, 0x800c66a4L);
 

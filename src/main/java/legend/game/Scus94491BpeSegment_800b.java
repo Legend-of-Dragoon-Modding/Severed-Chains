@@ -179,9 +179,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd61c = MEMORY.ref(2, 0x800bd61cL);
 
   public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
-  public static final Value _800bd684 = MEMORY.ref(4, 0x800bd684L);
-
-  public static final Value _800bd690 = MEMORY.ref(4, 0x800bd690L);
 
   public static final ArrayRef<UnsignedIntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6f8L, ArrayRef.of(UnsignedIntRef.class, 3, 4, UnsignedIntRef::new));
 
@@ -542,7 +539,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bf200 = MEMORY.ref(4, 0x800bf200L);
 
-  public static final Value _800bf23c = MEMORY.ref(4, 0x800bf23cL);
   public static final Value memcardVsyncCallbacks_800bf240 = MEMORY.ref(4, 0x800bf240L);
 
   public static final Value SwCARD_EvSpIOE_EventId_800bf250 = MEMORY.ref(4, 0x800bf250L);
@@ -588,9 +584,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf5b0 = MEMORY.ref(4, 0x800bf5b0L);
   public static final Value _800bf5b4 = MEMORY.ref(4, 0x800bf5b4L);
 
-  public static final ArrayRef<ByteRef> cdromResponses_800bf5c0 = MEMORY.ref(8, 0x800bf5c0L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> cdromResponses_800bf5c8 = MEMORY.ref(8, 0x800bf5c8L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> cdromResponses_800bf5d0 = MEMORY.ref(8, 0x800bf5d0L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> cdromResponses_800bf5c0 = MEMORY.ref(1, 0x800bf5c0L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> cdromResponses_800bf5c8 = MEMORY.ref(1, 0x800bf5c8L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> cdromResponses_800bf5d0 = MEMORY.ref(1, 0x800bf5d0L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
 
   public static final Pointer<CString> _800bf5e0 = MEMORY.ref(4, 0x800bf5e0L, Pointer.of(4, CString::new));
 
@@ -640,7 +636,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bfd84 = MEMORY.ref(4, 0x800bfd84L);
   //
 
-  public static final ArrayRef<CdlDIR> CdlDIR_800bfda8 = MEMORY.ref(1600, 0x800bfda8L, ArrayRef.of(CdlDIR.class, 0x80, 0x2c, CdlDIR::new));
+  public static final ArrayRef<CdlDIR> CdlDIR_800bfda8 = MEMORY.ref(4, 0x800bfda8L, ArrayRef.of(CdlDIR.class, 0x80, 0x2c, CdlDIR::new));
 
   public static final Value _800bfdd8 = MEMORY.ref(4, 0x800bfdd8L);
 }

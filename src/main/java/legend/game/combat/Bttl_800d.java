@@ -1693,7 +1693,7 @@ public final class Bttl_800d {
 
   @Method(0x800d46d4L)
   public static long FUN_800d46d4(final RunningScript a0) {
-    final long v1 = _800faaa0.offset(a0.params_20.get(0).deref().get() * 0x6L).getAddress();
+    final long v1 = _800faaa0.offset(1, a0.params_20.get(0).deref().get() * 0x6L).getAddress();
 
     final byte[] sp0x30 = {(byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get()};
 

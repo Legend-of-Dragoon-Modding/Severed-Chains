@@ -33,8 +33,6 @@ import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
 import legend.game.types.LodString;
 
-import java.util.function.Function;
-
 import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.LibDs.DSL_MAX_RESULTS;
@@ -128,7 +126,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80052f50 = MEMORY.ref(4, 0x80052f50L);
   public static final Value _80052f54 = MEMORY.ref(4, 0x80052f54L);
   public static final Value _80052f58 = MEMORY.ref(4, 0x80052f58L);
-  public static final ArrayRef<ByteRef> cdromParamBuffer_80052f5c = MEMORY.ref(4, 0x80052f5cL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> cdromParamBuffer_80052f5c = MEMORY.ref(1, 0x80052f5cL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
   public static final Value cdromMode_80052f60 = MEMORY.ref(1, 0x80052f60L);
   public static final EnumRef<CdlCOMMAND> previousCdromCommand_80052f61 = MEMORY.ref(1, 0x80052f61L, EnumRef.of(CdlCOMMAND::getCommand, CdlCOMMAND.values()));
 
@@ -151,8 +149,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800532e4 = MEMORY.ref(4, 0x800532e4L);
   public static final EnumRef<CdlCOMMAND> cdromCommand_800532e8 = MEMORY.ref(1, 0x800532e8L, EnumRef.of(CdlCOMMAND::getCommand, CdlCOMMAND.values()));
   public static final ArrayRef<ByteRef> cdromParams_800532e9 = MEMORY.ref(1, 0x800532e9L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final Pointer<ArrayRef<ByteRef>> ptrCdromParams_800532f0 = MEMORY.ref(4, 0x800532f0L, Pointer.of(4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
-  public static final ArrayRef<ByteRef> cdromResponse_800532f4 = MEMORY.ref(DSL_MAX_RESULTS, 0x800532f4L, ArrayRef.of(ByteRef.class, DSL_MAX_RESULTS, 1, ByteRef::new));
+  public static final Pointer<ArrayRef<ByteRef>> ptrCdromParams_800532f0 = MEMORY.ref(4, 0x800532f0L, Pointer.of(1, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
+  public static final ArrayRef<ByteRef> cdromResponse_800532f4 = MEMORY.ref(1, 0x800532f4L, ArrayRef.of(ByteRef.class, DSL_MAX_RESULTS, 1, ByteRef::new));
   public static final Value cdromStat_800532fc = MEMORY.ref(1, 0x800532fcL);
   public static final Value _80053300 = MEMORY.ref(4, 0x80053300L);
   public static final Value _80053304 = MEMORY.ref(4, 0x80053304L);
@@ -179,12 +177,12 @@ public final class Scus94491BpeSegment_8005 {
   /**
    * An array containing one int per command - unsure of purpose
    */
-  public static final ArrayRef<UnsignedIntRef> cdromCommandSomethingArray_80053338 = MEMORY.ref(0x80, 0x80053338L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
+  public static final ArrayRef<UnsignedIntRef> cdromCommandSomethingArray_80053338 = MEMORY.ref(4, 0x80053338L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
 
   /**
    * The response byte that holds the cdrom status
    */
-  public static final ArrayRef<UnsignedIntRef> cdromCommandResponseStatOffsetArray_800533b8 = MEMORY.ref(0x80, 0x800533b8L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
+  public static final ArrayRef<UnsignedIntRef> cdromCommandResponseStatOffsetArray_800533b8 = MEMORY.ref(4, 0x800533b8L, ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
 
   public static final Value _80053438 = MEMORY.ref(4, 0x80053438L);
 
@@ -226,11 +224,11 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = MEMORY.ref(32, 0x8005460cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = MEMORY.ref(4, 0x8005460cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final Value Vcount = MEMORY.ref(4, 0x8005462cL);
 
-  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(28, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
+  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(4, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
@@ -252,8 +250,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800546c4 = MEMORY.ref(4, 0x800546c4L);
   public static final Value drawSyncCallback_800546c8 = MEMORY.ref(4, 0x800546c8L);
 
-  public static final DRAWENV DRAWENV_800546cc = MEMORY.ref(92, 0x800546ccL, DRAWENV::new);
-  public static final DISPENV DISPENV_80054728 = MEMORY.ref(20, 0x80054728L, DISPENV::new);
+  public static final DRAWENV DRAWENV_800546cc = MEMORY.ref(4, 0x800546ccL, DRAWENV::new);
+  public static final DISPENV DISPENV_80054728 = MEMORY.ref(4, 0x80054728L, DISPENV::new);
 
   public static final Value array_8005473c = MEMORY.ref(2, 0x8005473cL);
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
@@ -285,7 +283,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
 
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
-  public static final ArrayRef<MATRIX> matrixStack_80054a0c = MEMORY.ref(640, 0x80054a0cL, ArrayRef.of(MATRIX.class, 20, 32, MATRIX::new));
+  public static final ArrayRef<MATRIX> matrixStack_80054a0c = MEMORY.ref(4, 0x80054a0cL, ArrayRef.of(MATRIX.class, 20, 32, MATRIX::new));
 
   /** Precomputed sin/cos table */
   public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);
@@ -306,7 +304,7 @@ public final class Scus94491BpeSegment_8005 {
     GATE.acquire();
   }
 
-  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(0x20, ArrayRef.of(Pointer.classFor(PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, PriorityChainEntry::new)))));
+  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(4, ArrayRef.of(Pointer.classFor(PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, PriorityChainEntry::new)))));
 
   static {
     GATE.release();
@@ -337,7 +335,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059624 = MEMORY.ref(4, 0x80059624L);
   /** The number of joypads to use (0-indexed) (default: 1, changed to 0) */
   public static final Value maxJoypadIndex_80059628 = MEMORY.ref(4, 0x80059628L);
-  public static final ArrayRef<IntRef> joySomething_8005962c = MEMORY.ref(8, 0x8005962cL, ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
+  public static final ArrayRef<IntRef> joySomething_8005962c = MEMORY.ref(4, 0x8005962cL, ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
 
   public static final PriorityChainEntry joypadVblankIrqHandler_80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
   public static final Value _80059644 = MEMORY.ref(4, 0x80059644L);
@@ -345,7 +343,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059650 = MEMORY.ref(4, 0x80059650L);
   public static final Value _80059654 = MEMORY.ref(4, 0x80059654L);
   public static final Value _80059658 = MEMORY.ref(4, 0x80059658L);
-  public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = (ArrayRef<Pointer<FunctionRef<JoyData, Long>>>)MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.class, 5, 4, (Function)Pointer.of(4, FunctionRef::new)));
+  public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(JoyData.class, Long.class)), 5, 4, Pointer.of(4, FunctionRef::new)));
   public static final Value _8005967c = MEMORY.ref(2, 0x8005967cL);
 
   public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);

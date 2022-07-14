@@ -567,9 +567,9 @@ public final class SMap {
    */
   public static final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
 
-  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48d0 = MEMORY.ref(4, 0x800f48d0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48d8 = MEMORY.ref(4, 0x800f48d8L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48e0 = MEMORY.ref(4, 0x800f48e0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48d0 = MEMORY.ref(2, 0x800f48d0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48d8 = MEMORY.ref(2, 0x800f48d8L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> drgn0Indices_800f48e0 = MEMORY.ref(2, 0x800f48e0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
   /**
    * <ol start="0">
    *   <li>{@link SMap#FUN_800d93dc}</li>
@@ -611,7 +611,7 @@ public final class SMap {
 
   public static final Pointer<GsOT> GsOTPtr_800f64c0 = MEMORY.ref(4, 0x800f64c0L, Pointer.deferred(4, GsOT::new));
   /** Indexed by submap cut */
-  public static final UnboundedArrayRef<SubmapEncounterData_04> encounterData_800f64c4 = MEMORY.ref(1, 0x800f64c4L, UnboundedArrayRef.of(0x4, SubmapEncounterData_04::new));
+  public static final UnboundedArrayRef<SubmapEncounterData_04> encounterData_800f64c4 = MEMORY.ref(1, 0x800f64c4L, UnboundedArrayRef.of(4, SubmapEncounterData_04::new));
 
   public static final Value _800f74c4 = MEMORY.ref(1, 0x800f74c4L);
 
@@ -636,7 +636,7 @@ public final class SMap {
 
   public static final Value _800f9374 = MEMORY.ref(4, 0x800f9374L);
 
-  public static final ArrayRef<RECT> rectArray3_800f96f4 = MEMORY.ref(8, 0x800f96f4L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
+  public static final ArrayRef<RECT> rectArray3_800f96f4 = MEMORY.ref(2, 0x800f96f4L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final Value _800f970c = MEMORY.ref(4, 0x800f970cL);
 

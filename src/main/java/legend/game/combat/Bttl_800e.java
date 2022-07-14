@@ -5428,20 +5428,20 @@ public final class Bttl_800e {
 
             final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(0x8);
             final Value sp0x28 = sp0x28tmp.get();
-            sp0x28.offset(0x0L).setu(v0);
-            sp0x28.offset(0x2L).setu(a0);
-            sp0x28.offset(0x4L).setu(v0);
-            sp0x28.offset(0x6L).setu(a0);
+            sp0x28.offset(2, 0x0L).setu(v0);
+            sp0x28.offset(2, 0x2L).setu(a0);
+            sp0x28.offset(2, 0x4L).setu(v0);
+            sp0x28.offset(2, 0x6L).setu(a0);
             a1 = MEMORY.ref(2, t1).offset(0x2L).get() - centreScreenY_1f8003de.get() + MEMORY.ref(1, s0).offset(0x7L).get() / 2 - 22;
             v1 = (MEMORY.ref(1, s0).offset(0x7L).get() + 2) * v1_0 / 100 / 2;
             v0 = a1 - v1;
             a1 = a1 + v1 - 0x1L;
             final Memory.TemporaryReservation sp0x30tmp = MEMORY.temp(0x8);
             final Value sp0x30 = sp0x30tmp.get();
-            sp0x30.offset(0x0L).setu(v0);
-            sp0x30.offset(0x2L).setu(v0);
-            sp0x30.offset(0x4L).setu(a1);
-            sp0x30.offset(0x6L).setu(a1);
+            sp0x30.offset(2, 0x0L).setu(v0);
+            sp0x30.offset(2, 0x2L).setu(v0);
+            sp0x30.offset(2, 0x4L).setu(a1);
+            sp0x30.offset(2, 0x6L).setu(a1);
 
             //LAB_800f0438
             for(s2 = 0; s2 < 8; s2++) {

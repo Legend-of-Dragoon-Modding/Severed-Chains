@@ -138,8 +138,8 @@ public class BigStruct implements MemoryRef {
     this.ub_a3 = ref.offset(1, 0xa3L).cast(UnsignedByteRef::new);
     this.smallerStructPtr_a4 = ref.offset(4, 0xa4L).cast(Pointer.deferred(4, SmallerStruct::new));
     this.ptr_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
-    this.usArr_ac = ref.offset(4, 0xacL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
-    this.usArr_ba = ref.offset(4, 0xbaL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
+    this.usArr_ac = ref.offset(2, 0xacL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
+    this.usArr_ba = ref.offset(2, 0xbaL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
     this.count_c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
     this.tmdNobj_ca = ref.offset(2, 0xcaL).cast(UnsignedShortRef::new);
     this.ub_cc = ref.offset(1, 0xccL).cast(UnsignedByteRef::new);

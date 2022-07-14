@@ -22,10 +22,10 @@ public class SmallerStruct implements MemoryRef {
     this.ref = ref;
 
     this.tmdExt_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, TmdExtension::new));
-    this.uba_04 = ref.offset(4, 0x04L).cast(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
-    this.sa_08 = ref.offset(4, 0x08L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
-    this.sa_10 = ref.offset(4, 0x10L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
-    this.sa_18 = ref.offset(4, 0x18L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+    this.uba_04 = ref.offset(1, 0x04L).cast(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
+    this.sa_08 = ref.offset(2, 0x08L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+    this.sa_10 = ref.offset(2, 0x10L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+    this.sa_18 = ref.offset(2, 0x18L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
     this.tmdSubExtensionArr_20 = ref.offset(4, 0x20L).cast(ArrayRef.of(Pointer.classFor(TmdSubExtension.class), 4, 4, Pointer.deferred(4, TmdSubExtension::new)));
   }
 

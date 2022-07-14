@@ -14,10 +14,10 @@ public class Drgn0_6666File implements MemoryRef {
   public Drgn0_6666File(final Value ref) {
     this.ref = ref;
 
-    this._0000 = ref.offset(0, 0x0000L).cast(Drgn0_6666Struct::new);
-    this._c6a4 = ref.offset(0, 0xc6a4L).cast(Drgn0_6666Struct::new);
-    this._cfac = ref.offset(0, 0xcfacL).cast(Drgn0_6666Struct::new);
-    this._d2d8 = ref.offset(0, 0xd2d8L).cast(Drgn0_6666Struct::new);
+    this._0000 = ref.offset(4, 0x0000L).cast(Drgn0_6666Struct::new);
+    this._c6a4 = ref.offset(4, 0xc6a4L).cast(Drgn0_6666Struct::new);
+    this._cfac = ref.offset(4, 0xcfacL).cast(Drgn0_6666Struct::new);
+    this._d2d8 = ref.offset(4, 0xd2d8L).cast(Drgn0_6666Struct::new);
   }
 
   @Override

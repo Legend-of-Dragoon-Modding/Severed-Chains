@@ -713,9 +713,9 @@ public final class Bttl_800c {
 
   public static final Value _800fb674 = MEMORY.ref(4, 0x800fb674L);
 
-  public static final Value _800fb6bc = MEMORY.ref(4, 0x800fb6bcL);
+  public static final Value _800fb6bc = MEMORY.ref(2, 0x800fb6bcL);
 
-  public static final Value _800fb6f4 = MEMORY.ref(4, 0x800fb6f4L);
+  public static final Value _800fb6f4 = MEMORY.ref(1, 0x800fb6f4L);
 
   public static final Value _800fb72c = MEMORY.ref(4, 0x800fb72cL);
 
