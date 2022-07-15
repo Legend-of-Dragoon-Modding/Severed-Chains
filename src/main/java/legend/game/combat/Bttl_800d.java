@@ -8,9 +8,9 @@ import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.QuadConsumerRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -203,8 +203,8 @@ public final class Bttl_800d {
         MEMORY.ref(2, s4).offset(0x38L).subu(MEMORY.ref(2, s4).offset(0x3eL).get());
 
         //LAB_800d0254
-        final Ref<Long>[] sp0x18 = new Ref[] {new Ref<>(), new Ref<>()};
-        final Ref<Long>[] sp0x20 = new Ref[] {new Ref<>(), new Ref<>()};
+        final ShortRef[] sp0x18 = {new ShortRef(), new ShortRef()};
+        final ShortRef[] sp0x20 = {new ShortRef(), new ShortRef()};
         long s1;
         long a1;
         for(int s3 = 0; s3 < 2; s3++) {
@@ -733,8 +733,8 @@ public final class Bttl_800d {
         a0._10.vec_28.getY()
       );
 
-      final Ref<Long> sp0x10 = new Ref<>();
-      final Ref<Long> sp0x14 = new Ref<>();
+      final ShortRef sp0x10 = new ShortRef();
+      final ShortRef sp0x14 = new ShortRef();
       FUN_800cfb14(a0, sp0x20, sp0x10, sp0x14);
 
       final VECTOR sp0x30 = new VECTOR().set(
@@ -743,8 +743,8 @@ public final class Bttl_800d {
         a0._10.vec_28.getY()
       );
 
-      final Ref<Long> sp0x18 = new Ref<>();
-      final Ref<Long> sp0x1c = new Ref<>();
+      final ShortRef sp0x18 = new ShortRef();
+      final ShortRef sp0x1c = new ShortRef();
       FUN_800cfb14(a0, sp0x30, sp0x18, sp0x1c);
 
       final long addr = linkedListAddress_1f8003d8.get();
@@ -790,8 +790,8 @@ public final class Bttl_800d {
     final BttlScriptData6cSub14 s0 = data._44.derefAs(BttlScriptData6cSub14.class);
     s0._08.set(0x1000L / (0x4L << s0._00.get()));
     final VECTOR sp0x18 = new VECTOR();
-    final Ref<Long> sp0x48 = new Ref<>();
-    final Ref<Long> sp0x4c = new Ref<>();
+    final ShortRef sp0x48 = new ShortRef();
+    final ShortRef sp0x4c = new ShortRef();
     s0._04.set(FUN_800cfb14(data, sp0x18, sp0x48, sp0x4c) / 4);
     a0 = data._10._22.get();
     v1 = s0._04.get() + a0;
@@ -807,8 +807,8 @@ public final class Bttl_800d {
         0
       );
 
-      final Ref<Long> sp0x58 = new Ref<>();
-      final Ref<Long> sp0x5c = new Ref<>();
+      final ShortRef sp0x58 = new ShortRef();
+      final ShortRef sp0x5c = new ShortRef();
       FUN_800cfb14(data, sp0x38, sp0x58, sp0x5c);
       s0._0c.set((int)(data._10._24.get() >> 16 & 0xff));
       s0._0d.set((int)(data._10._24.get() >>  8 & 0xff));
@@ -2109,9 +2109,17 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d6c04
       cam._5c.set(a3);
-      cam._3c.set((a0 - cam.vec_20.getX()) / a3);
-      cam._48.set((a1 - cam.vec_20.getY()) / a3);
-      cam._54.set((a2 - cam.vec_20.getZ()) / a3);
+
+      // Retail bug: divide by 0 is possible here - the processor sets LO to -1 in this case
+      if(a3 != 0) {
+        cam._3c.set((a0 - cam.vec_20.getX()) / a3);
+        cam._48.set((a1 - cam.vec_20.getY()) / a3);
+        cam._54.set((a2 - cam.vec_20.getZ()) / a3);
+      } else {
+        cam._3c.set(-1);
+        cam._48.set(-1);
+        cam._54.set(-1);
+      }
     } else if(a5 == 0x1L) {
       //LAB_800d6c44
       //TODO undefined t0/t1

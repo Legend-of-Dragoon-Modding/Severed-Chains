@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
@@ -17,13 +18,14 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
 
   public final UnsignedIntRef _24;
 
+  public final Pointer<TmdObjTable> _30;
   public final UnsignedShortRef _34;
   public final UnsignedShortRef _36;
 
   public final UnsignedShortRef _50;
   public final UnsignedShortRef _52;
   public final UnsignedShortRef _54;
-
+  public final UnsignedShortRef _56;
   public final UnsignedShortRef _58;
   public final UnsignedShortRef _5a;
   public final UnsignedShortRef clut_5c;
@@ -53,13 +55,14 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
 
     this._24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
 
+    this._30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
 
     this._50 = ref.offset(2, 0x50L).cast(UnsignedShortRef::new);
     this._52 = ref.offset(2, 0x52L).cast(UnsignedShortRef::new);
     this._54 = ref.offset(2, 0x54L).cast(UnsignedShortRef::new);
-
+    this._56 = ref.offset(2, 0x56L).cast(UnsignedShortRef::new);
     this._58 = ref.offset(2, 0x58L).cast(UnsignedShortRef::new);
     this._5a = ref.offset(2, 0x5aL).cast(UnsignedShortRef::new);
     this.clut_5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);

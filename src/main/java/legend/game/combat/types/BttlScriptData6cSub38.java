@@ -3,10 +3,10 @@ package legend.game.combat.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
@@ -30,7 +30,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef _29;
   public final UnsignedByteRef _2a;
 
-  public final UnsignedIntRef callback_2c;
+  public final Pointer<QuadConsumerRef<BttlScriptData6c, BttlScriptData6cSub38, BttlScriptData6cSub38Sub14, Integer>> callback_2c;
 
   public final Pointer<UnboundedArrayRef<BttlScriptData6cSub38Sub14>> _34;
 
@@ -57,7 +57,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
     this._29 = ref.offset(1, 0x29L).cast(UnsignedByteRef::new);
     this._2a = ref.offset(1, 0x2aL).cast(UnsignedByteRef::new);
 
-    this.callback_2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
+    this.callback_2c = ref.offset(4, 0x2cL).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._34 = ref.offset(4, 0x34L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x14, BttlScriptData6cSub38Sub14::new)));
   }
 }

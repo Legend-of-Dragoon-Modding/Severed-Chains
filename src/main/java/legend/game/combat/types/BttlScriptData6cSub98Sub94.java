@@ -30,6 +30,9 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
   public final ShortRef _16;
   public final ShortRef _18;
   public final SVECTOR _1a;
+  public final ShortRef _20;
+  public final ShortRef _22;
+  public final ShortRef _24;
 
   public final VECTOR _2c;
 
@@ -71,6 +74,9 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
     this._16 = ref.offset(2, 0x16L).cast(ShortRef::new);
     this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(SVECTOR::new);
+    this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
+    this._22 = ref.offset(2, 0x22L).cast(ShortRef::new);
+    this._24 = ref.offset(2, 0x24L).cast(ShortRef::new);
 
     this._2c = ref.offset(4, 0x2cL).cast(VECTOR::new);
 

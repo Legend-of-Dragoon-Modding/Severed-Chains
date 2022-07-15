@@ -11,7 +11,6 @@ import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
@@ -20,6 +19,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.QuadFunctionRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -70,7 +70,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
-import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
@@ -80,6 +79,7 @@ import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
+import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -175,7 +175,6 @@ import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
 import static legend.game.combat.Bttl_800e.FUN_800e80c4;
 import static legend.game.combat.Bttl_800e.FUN_800e8ffc;
-import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
 import static legend.game.combat.Bttl_800e.FUN_800e9120;
 import static legend.game.combat.Bttl_800e.FUN_800eb9ac;
 import static legend.game.combat.Bttl_800e.FUN_800ec4bc;
@@ -187,15 +186,16 @@ import static legend.game.combat.Bttl_800e.FUN_800ee610;
 import static legend.game.combat.Bttl_800e.FUN_800eeaec;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.FUN_800efd34;
+import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f6134;
 import static legend.game.combat.Bttl_800f.FUN_800f6330;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 import static legend.game.combat.Bttl_800f.FUN_800f8aa4;
 import static legend.game.combat.Bttl_800f.FUN_800f8c38;
+import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 
 public final class Bttl_800c {
   private Bttl_800c() { }
@@ -2971,6 +2971,22 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cd078L)
+  public static long FUN_800cd078(final RunningScript a0) {
+    final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
+
+    //LAB_800cd0d0
+    if(a0.params_20.get(1).deref().get() != 0) {
+      a1.ui_60.or(0x40L);
+    } else {
+      //LAB_800cd0c4
+      a1.ui_60.and(0xffff_ffbfL);
+    }
+
+    FUN_800c7304();
+    return 0;
+  }
+
   @Method(0x800cd0ecL)
   public static long FUN_800cd0ec(final RunningScript a0) {
     a0.params_20.get(3).deref().set(FUN_800c7488(
@@ -3523,8 +3539,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf7d4L)
-  public static long FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final Ref<Long> outX, final Ref<Long> outY) {
-    final SVECTOR sp0x30 = new SVECTOR().set((short)a1.getX(), (short)a1.getY(), (short)a1.getZ());
+  public static int FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR sp0x30 = new SVECTOR().set(a1);
     CPU.CTC2(matrix_800c3548.getPacked(0), 0);
     CPU.CTC2(matrix_800c3548.getPacked(2), 1);
     CPU.CTC2(matrix_800c3548.getPacked(4), 2);
@@ -3600,20 +3616,27 @@ public final class Bttl_800c {
 
     final DVECTOR sp0x20 = new DVECTOR();
     sp0x20.setXY(CPU.MFC2(14)); // SXY1
-    outX.set((long)sp0x20.getX());
-    outY.set((long)sp0x20.getY());
-    return CPU.MFC2(19); // SZ3
+    outX.set(sp0x20.getX());
+    outY.set(sp0x20.getY());
+    return (int)CPU.MFC2(19); // SZ3
   }
 
   @Method(0x800cfb14L)
-  public static long FUN_800cfb14(final BttlScriptData6c a0, final VECTOR a1, final Ref<Long> a2, final Ref<Long> a3) {
+  public static int FUN_800cfb14(final BttlScriptData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10);
     final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
-    return FUN_800cf7d4(sp0x18, sp0x20, a1, a2, a3);
+    return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
+  }
+
+  @Method(0x800cfb94L)
+  public static int FUN_800cfb94(final BttlScriptData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10).add(a1);
+    final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
+    return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
   }
 
   @Method(0x800cfc20L)
-  public static long FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final Ref<Long> outX, final Ref<Long> outY) {
+  public static int FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0);
     final VECTOR sp0x20 = new VECTOR().set(a1);
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
