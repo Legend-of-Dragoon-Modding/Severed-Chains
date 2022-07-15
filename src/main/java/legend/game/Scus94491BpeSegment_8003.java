@@ -101,6 +101,7 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
 import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
 import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
+import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
@@ -4341,7 +4342,7 @@ public final class Scus94491BpeSegment_8003 {
     long s0 = 0;
     long v1;
 
-    if(DISPENV_80054728.isinter != env.isinter || DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
+    if(DISPENV_80054728.isinter.get() != env.isinter.get() || DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
       //LAB_80038e34
       env.pad0.set((byte)GsGetWorkBase());
 
@@ -4540,6 +4541,8 @@ public final class Scus94491BpeSegment_8003 {
       sendDisplayCommand(0x600_0000L | (v1 & 0xfffL) << 12 | a0 & 0xfffL); // Horizontal display range
       sendDisplayCommand(0x700_0000L | (a1 & 0x3ffL) << 10 | s0 & 0x3ffL); // Vertical display range
     }
+
+    memcpy(DISPENV_80054728.getAddress(), env.getAddress(), 0x14);
 
     //LAB_80039204
     return env;
