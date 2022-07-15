@@ -29,7 +29,8 @@ public class BattleCamera implements MemoryRef {
 
   public final IntRef _5c;
   public final VECTOR vec_60;
-
+  public final IntRef _6c;
+  public final IntRef _70;
   public final VECTOR vec_74;
 
   public final IntRef bobjIndex_80;
@@ -95,7 +96,8 @@ public class BattleCamera implements MemoryRef {
 
     this._5c = ref.offset(4, 0x5cL).cast(IntRef::new);
     this.vec_60 = ref.offset(4, 0x60L).cast(VECTOR::new);
-
+    this._6c = ref.offset(4, 0x6cL).cast(IntRef::new);
+    this._70 = ref.offset(4, 0x70L).cast(IntRef::new);
     this.vec_74 = ref.offset(4, 0x74L).cast(VECTOR::new);
 
     this.bobjIndex_80 = ref.offset(4, 0x80L).cast(IntRef::new);

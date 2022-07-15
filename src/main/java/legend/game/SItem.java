@@ -55,7 +55,7 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setCallback04;
-import static legend.game.Scus94491BpeSegment.setCallback0c;
+import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
@@ -615,7 +615,7 @@ public final class SItem {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
       final int scriptIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BattleObject27c::new);
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(scriptIndex);
       _8006e398.offset(4, 0xe40L).offset(charSlot * 0x4L).setu(scriptIndex);
       final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);

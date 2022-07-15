@@ -25,7 +25,7 @@ import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.setCallback04;
-import static legend.game.Scus94491BpeSegment.setCallback0c;
+import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment_8005._8005e398_SCRIPT_SIZES;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
@@ -222,7 +222,7 @@ public class SBtld {
       final int combatantIndex = getCombatantIndex(charIndex);
       final int scriptIndex = allocateScriptState(0x27cL, BattleObject27c::new);
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setCallback0c(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.offset(_800c66d0.get() * 0x4L).offset(0xe0cL).setu(scriptIndex);
       _8006e398.offset(_800c6768.get() * 0x4L).offset(0xe50L).setu(scriptIndex);
       final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BattleObject27c.class));

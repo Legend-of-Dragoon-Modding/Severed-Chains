@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.DebugHelper;
+import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
@@ -8503,7 +8504,7 @@ public final class Scus94491BpeSegment_8002 {
 
     main();
 
-    assert false : "Shouldn't get here";
+    assert !Hardware.isAlive() : "Shouldn't get here";
   }
 
   @Method(0x8002d060L)

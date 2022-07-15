@@ -28,9 +28,9 @@ public class WMapStruct258 implements MemoryRef {
 
   public final UnsignedIntRef _28;
   /** TODO ptr */
-  public final UnsignedIntRef _2c;
+  public final UnsignedIntRef imageData_2c;
   /** TODO ptr */
-  public final UnsignedIntRef _30;
+  public final UnsignedIntRef imageData_30;
   public final GsCOORDINATE2 coord2_34;
   public final VECTOR vec_84;
   public final VECTOR vec_94;
@@ -84,8 +84,8 @@ public class WMapStruct258 implements MemoryRef {
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
 
     this._28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
-    this._2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
-    this._30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
+    this.imageData_2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
+    this.imageData_30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
     this.coord2_34 = ref.offset(4, 0x34L).cast(GsCOORDINATE2::new);
     this.vec_84 = ref.offset(4, 0x84L).cast(VECTOR::new);
     this.vec_94 = ref.offset(4, 0x94L).cast(VECTOR::new);

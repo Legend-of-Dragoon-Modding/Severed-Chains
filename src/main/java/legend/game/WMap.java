@@ -2184,8 +2184,8 @@ public class WMap {
         final WMapStruct258 struct258 = struct258_800c66a8.deref();
 
         //LAB_800cc7d0
-        removeFromLinkedList(struct258._2c.get());
-        removeFromLinkedList(struct258._30.get());
+        removeFromLinkedList(struct258.imageData_2c.get());
+        removeFromLinkedList(struct258.imageData_30.get());
 
         pregameLoadingStage_800bb10c.setu(gameState_800babc8._4e4.get() != 0 ? 0x9L : 0x7L);
       } else {
@@ -2259,15 +2259,38 @@ public class WMap {
 
     final RECT rect = new RECT().set(_800c8700);
     long v0 = addToLinkedListTail(0x1_0000L);
-    struct258_800c66a8.deref()._2c.set(v0);
+    struct258_800c66a8.deref().imageData_2c.set(v0);
     StoreImage(rect, v0);
 
     rect.set((short)320, (short)64, (short)0, (short)512);
     v0 = addToLinkedListTail(0x1_0000L);
-    struct258_800c66a8.deref()._30.set(v0);
+    struct258_800c66a8.deref().imageData_30.set(v0);
     StoreImage(rect, v0);
 
     //LAB_800cca5c
+  }
+
+  @Method(0x800cca74L)
+  public static void FUN_800cca74() {
+    final WMapStruct258 struct = struct258_800c66a8.deref();
+    vsyncMode_8007a3b8.setu(0x3L);
+    scriptStartEffect(0x2L, 0xfL);
+    LoadImage(_800c8700, struct.imageData_2c.get());
+    DrawSync(0);
+    removeFromLinkedList(struct.imageData_2c.get());
+    LoadImage(_800c8700, struct.imageData_30.get());
+    DrawSync(0);
+    removeFromLinkedList(struct.imageData_30.get());
+    FUN_800d1914();
+
+    if(struct.zoomState_1f8.get() == 0) {
+      _800c6868.setu(0);
+    }
+
+    //LAB_800ccb6c
+    _800c6690.setu(0);
+    setProjectionPlaneDistance(1100);
+    pregameLoadingStage_800bb10c.setu(0x3L);
   }
 
   @Method(0x800ccb98L)
@@ -2337,6 +2360,15 @@ public class WMap {
     pregameLoadingStage_800bb10c.setu(0x5L);
   }
 
+  @Method(0x800ccd70L)
+  public static void FUN_800ccd70() {
+    if((getLoadedDrgnFiles() & 0x80L) == 0) {
+      FUN_800cca74();
+    }
+
+    //LAB_800ccd94
+  }
+
   @Method(0x800ccda4L)
   public static void FUN_800ccda4() {
     gameState_800babc8._4de.set((int)_800c67aa.get());
@@ -2368,6 +2400,11 @@ public class WMap {
     _8004dd24.setu(0x6L);
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.setu(0x2L);
+  }
+
+  @Method(0x800ccef4L)
+  public static void FUN_800ccef4() {
+    pregameLoadingStage_800bb10c.setu(6);
   }
 
   @Method(0x800ccf04L)

@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.dma.DmaChannelType;
 import legend.core.kernel.EXEC;
@@ -237,7 +238,7 @@ public final class Scus94491 {
 
     main();
 
-    assert false : "Shouldn't get here";
+    assert !Hardware.isAlive() : "Shouldn't get here";
   }
 
   @Method(0x801bf588L)

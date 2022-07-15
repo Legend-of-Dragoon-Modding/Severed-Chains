@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.FUN_80015d38;
+import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment._1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
@@ -1727,6 +1727,11 @@ public final class SEffe {
     removeFromLinkedList(s2._34.getPointer());
   }
 
+  @Method(0x801052d4L)
+  public static void FUN_801052d4(final BttlScriptData6c a0, final BttlScriptData6cSub38 a1, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    // no-op
+  }
+
   @Method(0x801052dcL)
   public static long FUN_801052dc(final RunningScript fp) {
     final int s0 = fp.params_20.get(6).deref().get();
@@ -1748,7 +1753,7 @@ public final class SEffe {
     s6._23.set(s0 >>> 24 & 0x2);
     s6._24.set(s0 >>> 24 & 0x4);
     s6._26.set(s0 & 0xff);
-    s6._28.set(s0 >> 8);
+    s6._28.set(s0 >> 8 & 0xff);
     s6._29.set(s0 >>> 24 & 0x20);
     s6._2a.set(0);
     s6.callback_2c.set(_80119ee8.get(s1).getPointer()); //TODO
@@ -2359,7 +2364,7 @@ public final class SEffe {
         }
 
         //LAB_80107554
-        FUN_80015d38(index);
+        deallocateScriptAndChildren(index);
       } else {
         //LAB_8010756c
         if(s3._34.get() >= 0x9L) {
@@ -3609,7 +3614,7 @@ public final class SEffe {
     final int s1 = v0.storage_44.get(9).get();
 
     if(s1 == s0) {
-      FUN_80015d38(index);
+      deallocateScriptAndChildren(index);
     } else {
       //LAB_80115b80
       FUN_800ebb58(s0);

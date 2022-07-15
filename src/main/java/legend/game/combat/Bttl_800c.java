@@ -70,7 +70,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
-import static legend.game.Scus94491BpeSegment.FUN_80015d38;
+import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
@@ -561,13 +561,64 @@ public final class Bttl_800c {
    * </ol>
    */
   public static final Value _800fac9c = MEMORY.ref(4, 0x800fac9cL);
-
-  /** TODO jump table */
+  /**
+   * <ol start="0">
+   *   <li>{@link Bttl_800d#FUN_800dbe40}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbe60}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbe80}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbe8c}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbe98}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbef0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbf70}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbfd4}</li>
+   *   <li>{@link Bttl_800d#FUN_800d90c8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9154}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc070}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc078}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9220}</li>
+   *   <li>{@link Bttl_800d#FUN_800d92bc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9380}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9438}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9518}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9650}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc080}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc088}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9788}</li>
+   *   <li>{@link Bttl_800d#FUN_800d98d0}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9a68}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9bd4}</li>
+   * </ol>
+   */
   public static final Value _800facbc = MEMORY.ref(4, 0x800facbcL);
-
-  /** TODO jump table */
+  /**
+   * <ol start="0">
+   *   <li>{@link Bttl_800d#FUN_800dc090}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc0b0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc0d0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc128}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc1a8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dcab0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc1b8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc21c}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9da0}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9e2c}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9ef8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d9f94}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc2b8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc2c0}</li>
+   *   <li>{@link Bttl_800d#FUN_800da058}</li>
+   *   <li>{@link Bttl_800d#FUN_800da110}</li>
+   *   <li>{@link Bttl_800d#FUN_800da1f0}</li>
+   *   <li>{@link Bttl_800d#FUN_800da328}</li>
+   *   <li>{@link Bttl_800d#FUN_800da460}</li>
+   *   <li>{@link Bttl_800d#FUN_800da5b0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc2c8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc2d0}</li>
+   *   <li>{@link Bttl_800d#FUN_800da750}</li>
+   *   <li>{@link Bttl_800d#FUN_800da8bc}</li>
+   * </ol>
+   */
   public static final Value _800fad1c = MEMORY.ref(4, 0x800fad1cL);
-
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc408}</li>
@@ -1194,7 +1245,7 @@ public final class Bttl_800c {
 
       //LAB_800c8314
       FUN_80029e04();
-      FUN_80015d38((int)scriptIndex_800c674c.get());
+      deallocateScriptAndChildren((int)scriptIndex_800c674c.get());
       removeFromLinkedList(script_800c670c.getPointer());
 
       //LAB_800c8368
@@ -1207,7 +1258,7 @@ public final class Bttl_800c {
 
       //LAB_800c83b8
       while(_800c66d0.get() > 0) {
-        FUN_80015d38((int)_8006e398.offset(0xe0cL).get());
+        deallocateScriptAndChildren((int)_8006e398.offset(0xe0cL).get());
       }
 
       //LAB_800c83d8

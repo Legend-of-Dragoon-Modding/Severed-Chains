@@ -470,15 +470,15 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800170f4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDeallocateSelf}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017138}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017160}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDeallocateChildren}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptDeallocateOther}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800171c0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80017234}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800172c0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptForkAndJump}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptForkAndReenter}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptConsumeChild}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>

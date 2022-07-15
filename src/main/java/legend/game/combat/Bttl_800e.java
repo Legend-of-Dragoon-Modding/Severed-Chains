@@ -64,7 +64,7 @@ import static legend.game.SItem.FUN_80110030;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_80015d38;
+import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003cc;
@@ -88,7 +88,7 @@ import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setCallback08;
-import static legend.game.Scus94491BpeSegment.setCallback0c;
+import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -2063,7 +2063,7 @@ public final class Bttl_800e {
 
           case 2:
           case 3:
-            FUN_80015d38((int)_800c6938.deref(4).offset(0x18L).get());
+            deallocateScriptAndChildren((int)_800c6938.deref(4).offset(0x18L).get());
 
           case 4:
             _800fafe8.setu(0);
@@ -2395,7 +2395,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800e8020
-      FUN_80015d38(a0.scriptIndex_0e.get());
+      deallocateScriptAndChildren(a0.scriptIndex_0e.get());
     }
 
     //LAB_800e8040
@@ -2433,7 +2433,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e8150
-    setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
 
     final BttlScriptData6c s0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
     s0.size_08.set(subStructSize);
@@ -2505,7 +2505,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e83b8
-    setCallback0c(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e7ec4", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new));
 
     final ScriptState<BttlScriptData6c> s3 = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BttlScriptData6c.class));
     final BttlScriptData6c s0 = s3.innerStruct_00.derefAs(BttlScriptData6c.class);
@@ -2822,7 +2822,7 @@ public final class Bttl_800e {
           //LAB_800e8f1c
         } else if(v1 == 0x2L) {
           //LAB_800e8f78
-          FUN_80015d38(index);
+          deallocateScriptAndChildren(index);
           return;
         }
 
@@ -2870,9 +2870,9 @@ public final class Bttl_800e {
 
   @Method(0x800e9120L)
   public static void FUN_800e9120() {
-    FUN_80015d38(1);
+    deallocateScriptAndChildren(1);
     FUN_800eab8c();
-    FUN_80015d38((int)_800c693c.deref(4).offset(0x1cL).get());
+    deallocateScriptAndChildren((int)_800c693c.deref(4).offset(0x1cL).get());
     removeFromLinkedList(_800c693c.get());
   }
 

@@ -78,7 +78,7 @@ import static legend.game.SStrm.stopFmv;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_80015d38;
+import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
@@ -113,7 +113,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setCallback08;
-import static legend.game.Scus94491BpeSegment.setCallback0c;
+import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setCallback10;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -4725,7 +4725,7 @@ public final class SMap {
           scriptStateIndices_800c6880.get(i).set(index2);
           setCallback04(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e0ff0", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
           setCallback08(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e123c", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
-          setCallback0c(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3df4", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
+          setScriptDestructor(index2, MEMORY.ref(4, getMethodAddress(SMap.class, "scriptDestructor", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriConsumerRef::new));
           loadScriptFile(index2, mrg1Addr_800c68d8.deref().getFile(i + 1, ScriptFile::new), "SMAP MRG1 File %d".formatted(i + 1), (int)mrg1Addr_800c68d8.deref().entries.get(i + 1).size.get());
 
           final BigStruct struct = scriptStatePtrArr_800bc1c0.get(index2).deref().innerStruct_00.derefAs(BigStruct.class);
@@ -4987,7 +4987,7 @@ public final class SMap {
 
   @Method(0x800e2220L)
   public static void FUN_800e2220() {
-    FUN_80015d38(scriptIndex_800c6740.get());
+    deallocateScriptAndChildren(scriptIndex_800c6740.get());
 
     if(!mrg10Addr_800c6710.isNull()) {
       removeFromLinkedList(mrg10Addr_800c6710.getPointer());
@@ -5001,16 +5001,16 @@ public final class SMap {
 
     //LAB_800e229c
     for(int i = 0; i < scriptCount_800c6730.get(); i++) {
-      final long v1 = scriptStateIndices_800c6880.get(i).get();
-      if((int)v1 != -0x1L) {
-        final BigStruct struct = scriptStatePtrArr_800bc1c0.get((int)v1).deref().innerStruct_00.derefAs(BigStruct.class);
+      final int v1 = scriptStateIndices_800c6880.get(i).get();
+      if(v1 != -1) {
+        final BigStruct struct = scriptStatePtrArr_800bc1c0.get(v1).deref().innerStruct_00.derefAs(BigStruct.class);
         MEMORY.ref(4, s0).offset(0x00L).setu(struct.coord2_14.coord.transfer.getX());
         MEMORY.ref(4, s0).offset(0x04L).setu(struct.coord2_14.coord.transfer.getY());
         MEMORY.ref(4, s0).offset(0x08L).setu(struct.coord2_14.coord.transfer.getZ());
         MEMORY.ref(2, s0).offset(0x0cL).setu(struct.coord2Param_64.rotate.getX());
         MEMORY.ref(2, s0).offset(0x0eL).setu(struct.coord2Param_64.rotate.getY());
         MEMORY.ref(2, s0).offset(0x10L).setu(struct.coord2Param_64.rotate.getZ());
-        FUN_80015d38(scriptStateIndices_800c6880.get(i).get());
+        deallocateScriptAndChildren(scriptStateIndices_800c6880.get(i).get());
       } else {
         //LAB_800e231c
         MEMORY.ref(4, s0).offset(0x0L).setu(0);
@@ -5917,7 +5917,7 @@ public final class SMap {
   }
 
   @Method(0x800e3df4L)
-  public static void FUN_800e3df4(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
+  public static void scriptDestructor(final int index, final ScriptState<BigStruct> scriptState, final BigStruct bigStruct) {
     //LAB_800e3e24
     for(int i = 0; i < scriptCount_800c6730.get(); i++) {
       if(scriptStateIndices_800c6880.get(i).get() == index) {
@@ -6516,7 +6516,7 @@ public final class SMap {
 
   @Method(0x800e5518L)
   public static boolean isScriptLoaded(final int index) {
-    return scriptStateIndices_800c6880.get(index).get() < 0x40L;
+    return scriptStateIndices_800c6880.get(index).get() >= 0 && scriptStateIndices_800c6880.get(index).get() < 0x40;
   }
 
   /** Part of map transitioning */
