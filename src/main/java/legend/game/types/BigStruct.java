@@ -80,7 +80,7 @@ public class BigStruct implements MemoryRef {
   public final VECTOR vec_160;
   public final IntRef ui_16c;
   public final UnsignedShortRef us_170;
-  public final UnsignedShortRef us_172;
+  public final ShortRef us_172;
 
   public final UnsignedShortRef us_178;
 
@@ -169,7 +169,7 @@ public class BigStruct implements MemoryRef {
     this.vec_160 = ref.offset(4, 0x160L).cast(VECTOR::new);
     this.ui_16c = ref.offset(4, 0x16cL).cast(IntRef::new);
     this.us_170 = ref.offset(2, 0x170L).cast(UnsignedShortRef::new);
-    this.us_172 = ref.offset(2, 0x172L).cast(UnsignedShortRef::new);
+    this.us_172 = ref.offset(2, 0x172L).cast(ShortRef::new);
 
     this.us_178 = ref.offset(2, 0x178L).cast(UnsignedShortRef::new);
 

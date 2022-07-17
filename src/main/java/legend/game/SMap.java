@@ -4063,9 +4063,27 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800e0148L)
+  public static long FUN_800e0148(final RunningScript a0) {
+    a0.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_172.get());
+    return 0;
+  }
+
   @Method(0x800e0184L)
   public static long FUN_800e0184(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_172.set(a0.params_20.get(1).deref().get());
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_172.set((short)a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x800e01bcL)
+  public static long FUN_800e01bc(final RunningScript a0) {
+    FUN_800de138(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class), a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x800e0204L)
+  public static long FUN_800e0204(final RunningScript a0) {
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).smallerStructPtr_a4.deref().uba_04.get(a0.params_20.get(1).deref().get()).set(0);
     return 0;
   }
 
@@ -4806,7 +4824,7 @@ public final class SMap {
           struct.ui_144.set(0);
           struct.ui_16c.set(-1);
           struct.us_170.set(0);
-          struct.us_172.set(0);
+          struct.us_172.set((short)0);
           struct.ui_188.set(0);
           struct.ui_194.set(0);
           struct.ui_19c.set(0xffff_ffffL);
@@ -4990,7 +5008,7 @@ public final class SMap {
     //LAB_800e20d8
     s1.ui_144.decr();
 
-    if((short)s1.us_172.get() == 0) {
+    if(s1.us_172.get() == 0) {
       final SVECTOR sp0x20 = new SVECTOR();
 
       if((s1.ui_190.get() & 0x1L) != 0) {

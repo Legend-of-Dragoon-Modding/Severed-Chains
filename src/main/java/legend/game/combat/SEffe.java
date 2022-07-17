@@ -1771,6 +1771,37 @@ public final class SEffe {
     a2._1a.setY((short)((int)((seed_800fa754.get() % 513 - 256) * a3._18.get()) >> 8));
   }
 
+  @Method(0x8010025cL)
+  public static void FUN_8010025c(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._58.setY((short)64);
+    final long theta = seed_800fa754.advance().get() % 4097;
+    if(a3._20.get() == 0x2a) {
+      final int s0 = (a3._10.get() & 0xffff) >>> 5;
+      a2._58.setX((short)(rcos(theta) * s0 >> 12));
+      a2._58.setY((short)(rsin(theta) * s0 >> 12));
+    } else {
+      //LAB_80100328
+      a2._58.setX((short)(rcos(theta) >>> 7));
+      a2._58.setY((short)(rsin(theta) >>> 7));
+    }
+  }
+
+  @Method(0x801003e8L)
+  public static void FUN_801003e8(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    final long s4 = a3._10.get(); //TODO read with lw here but as a short everywhere else? Is this a bug?
+    FUN_800ff890(a0, a1, a2, a3);
+
+    final long s1 = seed_800fa754.advance().get() % 4097;
+    final long s0 = seed_800fa754.advance().get() % 2049;
+    a2._12.set((short)(a3._1c.get() >>> 16 & 0xff));
+    a2._50.setX((short)((rcos(s1) * rsin(s0) >> 12) * s4 >> 12));
+    a2._50.setY((short)(rcos(s0) * s4 >> 12));
+    a2._50.setZ((short)((rsin(s1) * rsin(s0) >> 12) * s4 >> 12));
+    a2._58.setX((short)(rcos(s1) * rsin(s0) >> 18));
+    a2._58.setY((short)(rcos(s0) >> 6));
+    a2._58.setZ((short)(rsin(s1) * rsin(s0) >> 18));
+  }
+
   @Method(0x80100364L)
   public static void FUN_80100364(final BttlScriptData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
     FUN_800ff890(a0, a1, a2, a3);
@@ -2619,25 +2650,25 @@ public final class SEffe {
             sp0x80.offset(0x04L).setu(sp34);
             sp0x80.offset(0x10L).setu(sp0x20.get());
             sp0x80.offset(0x14L).setu(sp0x24.get());
-            FUN_80102f7c(MEMORY.ref(4, s4 + 0x16L, SVECTOR::new), MEMORY.ref(4, s4 + 0x46L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
+            FUN_80102f7c(MEMORY.ref(2, s4 + 0x16L, SVECTOR::new), MEMORY.ref(2, s4 + 0x46L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
 
             sp0x80.offset(0x00L).setu((sp0x80.offset(0x00L).getSigned() - sp0x80.offset(0x08L).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x08L).getSigned());
             sp0x80.offset(0x04L).setu((sp0x80.offset(0x04L).getSigned() - sp0x80.offset(0x0cL).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x0cL).getSigned());
             sp0x80.offset(0x10L).setu((sp0x80.offset(0x10L).getSigned() - sp0x80.offset(0x18L).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x18L).getSigned());
             sp0x80.offset(0x14L).setu((sp0x80.offset(0x14L).getSigned() - sp0x80.offset(0x1cL).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x1cL).getSigned());
-            FUN_80102f7c(MEMORY.ref(4, s4 + 0x10L, SVECTOR::new), MEMORY.ref(4, s4 + 0x40L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
+            FUN_80102f7c(MEMORY.ref(2, s4 + 0x10L, SVECTOR::new), MEMORY.ref(2, s4 + 0x40L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
 
             sp0x80.offset(0x00L).setu(sp38);
             sp0x80.offset(0x04L).setu(sp3c);
             sp0x80.offset(0x10L).setu(sp0x28.get());
             sp0x80.offset(0x14L).setu(sp0x2c.get());
-            FUN_80102f7c(MEMORY.ref(4, s4 + 0x16L, SVECTOR::new), MEMORY.ref(4, s4 + 0x46L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
+            FUN_80102f7c(MEMORY.ref(2, s4 + 0x16L, SVECTOR::new), MEMORY.ref(2, s4 + 0x46L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
 
             sp0x80.offset(0x00L).setu((sp0x80.offset(0x00L).getSigned() - sp0x80.offset(0x08L).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x08L).getSigned());
             sp0x80.offset(0x04L).setu((sp0x80.offset(0x04L).getSigned() - sp0x80.offset(0x0cL).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x0cL).getSigned());
             sp0x80.offset(0x10L).setu((sp0x80.offset(0x10L).getSigned() - sp0x80.offset(0x18L).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x18L).getSigned());
             sp0x80.offset(0x14L).setu((sp0x80.offset(0x14L).getSigned() - sp0x80.offset(0x1cL).getSigned()) / data._10.vec_28.getZ() + sp0x80.offset(0x1cL).getSigned());
-            FUN_80102f7c(MEMORY.ref(4, s4 + 0x10L, SVECTOR::new), MEMORY.ref(4, s4 + 0x40L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
+            FUN_80102f7c(MEMORY.ref(2, s4 + 0x10L, SVECTOR::new), MEMORY.ref(2, s4 + 0x40L, SVECTOR::new), sp0x80.getAddress(), sp18, data._10._22.get());
 
             sp0x20.set((short)sp30);
             sp0x24.set((short)sp34);
