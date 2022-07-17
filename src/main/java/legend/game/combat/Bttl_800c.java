@@ -597,7 +597,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dc0d0}</li>
    *   <li>{@link Bttl_800d#FUN_800dc128}</li>
    *   <li>{@link Bttl_800d#FUN_800dc1a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dcab0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc1b0}</li>
    *   <li>{@link Bttl_800d#FUN_800dc1b8}</li>
    *   <li>{@link Bttl_800d#FUN_800dc21c}</li>
    *   <li>{@link Bttl_800d#FUN_800d9da0}</li>
@@ -1244,7 +1244,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c8314
-      FUN_80029e04();
+      FUN_80029e04(null);
       deallocateScriptAndChildren((int)scriptIndex_800c674c.get());
       removeFromLinkedList(script_800c670c.getPointer());
 
@@ -3424,8 +3424,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cea1cL)
-  public static VECTOR FUN_800cea1c(final long a0, final VECTOR a1) {
-    final ScriptState<BattleScriptDataBase> state = scriptStatePtrArr_800bc1c0.get((int)a0).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
+  public static VECTOR FUN_800cea1c(final int scriptIndex, final VECTOR a1) {
+    final ScriptState<BattleScriptDataBase> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(BattleScriptDataBase.class));
     final BattleScriptDataBase data = state.innerStruct_00.deref();
 
     final VECTOR s0;

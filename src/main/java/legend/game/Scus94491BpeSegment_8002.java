@@ -6989,7 +6989,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029e04L)
-  public static void FUN_80029e04() {
+  public static long FUN_80029e04(final RunningScript a0) {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
       final Struct4c s2 = _800be358.get(i);
@@ -7004,6 +7004,8 @@ public final class Scus94491BpeSegment_8002 {
       s2._00.set(0);
       FUN_80029920(i, 0);
     }
+
+    return 0;
   }
 
   @Method(0x80029eccL)

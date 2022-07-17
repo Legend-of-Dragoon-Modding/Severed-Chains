@@ -3874,6 +3874,43 @@ public final class SMap {
     return FUN_800deba0(a0);
   }
 
+  @Method(0x800df9a8L)
+  public static long FUN_800df9a8(final RunningScript a0) {
+    final DVECTOR sp0x18 = new DVECTOR();
+    final MATRIX sp0x20 = new MATRIX();
+    final MATRIX sp0x40 = new MATRIX();
+    GsGetLws(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).coord2_14, sp0x40, sp0x20);
+    CPU.CTC2(sp0x20.getPacked(0), 0);
+    CPU.CTC2(sp0x20.getPacked(2), 1);
+    CPU.CTC2(sp0x20.getPacked(4), 2);
+    CPU.CTC2(sp0x20.getPacked(6), 3);
+    CPU.CTC2(sp0x20.getPacked(8), 4);
+    CPU.CTC2(sp0x20.transfer.getX(), 5);
+    CPU.CTC2(sp0x20.transfer.getY(), 6);
+    CPU.CTC2(sp0x20.transfer.getZ(), 7);
+    // 0, 0, 0
+    CPU.MTC2(0, 0);
+    CPU.MTC2(0, 1);
+    CPU.COP2(0x180001L);
+    sp0x18.setXY(CPU.MFC2(14));
+    long sp60 = CPU.MFC2(8);
+    long sp64 = CPU.CFC2(31);
+    long sp68 = (int)CPU.MFC2(19) >> 2;
+    a0.params_20.get(1).deref().set(sp0x18.getX() + 192);
+    a0.params_20.get(2).deref().set(sp0x18.getY() + 128);
+    // 0, -130, 0
+    CPU.MTC2(-130 << 16, 0);
+    CPU.MTC2(0, 1);
+    CPU.COP2(0x180001L);
+    sp0x18.setXY(CPU.MFC2(14));
+    sp60 = CPU.MFC2(8);
+    sp64 = CPU.CFC2(31);
+    sp68 = (int)CPU.MFC2(19) >> 2;
+    a0.params_20.get(3).deref().set(sp0x18.getX() + 192);
+    a0.params_20.get(4).deref().set(sp0x18.getY() + 128);
+    return 0;
+  }
+
   @Method(0x800dfb44L)
   public static long FUN_800dfb44(final RunningScript a0) {
     a0.params_20.get(1).set(a0.params_20.get(0).deref());
@@ -3893,6 +3930,12 @@ public final class SMap {
     a0.params_20.get(1).set(a0.params_20.get(0).deref());
     a0.params_20.get(0).set(a0.scriptState_04.deref().storage_44.get(0));
     return FUN_800e0448(a0);
+  }
+
+  @Method(0x800dfbd4L)
+  public static long FUN_800dfbd4(final RunningScript a0) {
+    a0.params_20.get(0).set(a0.scriptState_04.deref().storage_44.get(0));
+    return FUN_800e04b4(a0);
   }
 
   @Method(0x800dfc00L)
@@ -4089,6 +4132,14 @@ public final class SMap {
     }
 
     //LAB_800e04ac
+    return 0;
+  }
+
+  @Method(0x800e04b4L)
+  public static long FUN_800e04b4(final RunningScript a0) {
+    final BigStruct s0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
+    s0.coord2Param_64.rotate.setY((short)(-ratan2((int)_800c6aa8.get(), (int)_800c6aa0.get()) + 0xc01 & 0xfff));
+    s0.ui_188.set(0);
     return 0;
   }
 
@@ -5029,7 +5080,7 @@ public final class SMap {
     _800bd7b0.setu(0x1L);
     removeFromLinkedList(mrg0Addr_800c6878.getPointer());
     removeFromLinkedList(mrg1Addr_800c68d8.getPointer());
-    FUN_80029e04();
+    FUN_80029e04(null);
 
     _800c6870.setu(-0x1L);
     callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
@@ -7183,6 +7234,11 @@ public final class SMap {
     return arr_800cb460.get((int)a0).get();
   }
 
+  @Method(0x800e675cL)
+  public static void FUN_800e675c(final long a0) {
+    arr_800cb460.get((int)((a0 >> 8 & 0xfc) >> 2)).set(a0);
+  }
+
   @Method(0x800e6798L)
   public static long FUN_800e6798(final long a0, final long a1, final long x, final long y, final long z, final SVECTOR playerMovement) {
     final long v1 = FUN_800e6730(a0);
@@ -7260,6 +7316,29 @@ public final class SMap {
 
     //LAB_800e6988
     _800f7e50.setu(0);
+    return 0;
+  }
+
+  @Method(0x800e69a4L)
+  public static long FUN_800e69a4(final RunningScript a0) {
+    a0.params_20.get(0).deref().set((int)FUN_800e6730(a0.params_20.get(1).deref().get()));
+    return 0;
+  }
+
+  @Method(0x800e69e8L)
+  public static long FUN_800e69e8(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x800e69f0L)
+  public static long FUN_800e69f0(final RunningScript a0) {
+    FUN_800e675c(FUN_800e6730(a0.params_20.get(0).deref().get()) | 0x8L);
+    return 0;
+  }
+
+  @Method(0x800e6a28L)
+  public static long FUN_800e6a28(final RunningScript a0) {
+    FUN_800e675c(FUN_800e6730(a0.params_20.get(0).deref().get()) & 0xffff_fff7L);
     return 0;
   }
 

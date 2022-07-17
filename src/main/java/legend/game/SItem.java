@@ -6124,20 +6124,20 @@ public final class SItem {
     final LodString a0_0;
     final LodString a1_0;
     if((int)v1 == -0x2L) {
-      a0_0 = MEMORY.ref(4, a1 + 0x8L, LodString::new);
+      a0_0 = MEMORY.ref(2, a1 + 0x8L, LodString::new);
       a1_0 = _8011d618;
       //LAB_8010428c
     } else if((int)v1 == -0x1L) {
-      a0_0 = FUN_80103e04(MEMORY.ref(4, a1 + 0x8L, LodString::new), a0);
+      a0_0 = FUN_80103e04(MEMORY.ref(2, a1 + 0x8L, LodString::new), a0);
       a1_0 = _8011d534;
       //LAB_801042b4
     } else if(v1 != 0) {
       FUN_800297a0(v1, FUN_80103e04(MEMORY.ref(4, a1 + 0x8L, LodString::new), a0));
-      a0_0 = MEMORY.ref(4, a1 + 0x8L + textLength(MEMORY.ref(4, a1 + 0x8L, LodString::new)) * 0x2L, LodString::new);
+      a0_0 = MEMORY.ref(2, a1 + 0x8L + textLength(MEMORY.ref(2, a1 + 0x8L, LodString::new)) * 0x2L, LodString::new);
       a1_0 = _8011d560;
     } else {
       //LAB_801042fc
-      a0_0 = MEMORY.ref(4, a1 + 0x8L, LodString::new);
+      a0_0 = MEMORY.ref(2, a1 + 0x8L, LodString::new);
       a1_0 = a0;
     }
 

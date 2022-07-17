@@ -13,7 +13,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
   public final UnsignedShortRef count_00;
 
   public final IntRef _04;
-  public final IntRef _08;
+  public final IntRef scriptIndex_08;
   public final IntRef _0c;
   public final IntRef _10;
   public final IntRef _14;
@@ -40,7 +40,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
     this.count_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
 
     this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
+    this.scriptIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this._0c = ref.offset(4, 0x0cL).cast(IntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
