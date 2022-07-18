@@ -3484,6 +3484,22 @@ public final class Bttl_800e {
     //LAB_800e7d8c
   }
 
+  @Method(0x800e7dbcL)
+  public static int FUN_800e7dbc(final DVECTOR a0, final VECTOR a1) {
+    final VECTOR sp0x10 = ApplyMatrixLV(matrix_800c3548, a1);
+    sp0x10.add(matrix_800c3548.transfer);
+
+    if(sp0x10.getZ() >= 160) {
+      a0.setX((short)(sp0x10.getX() * _1f8003f8.getSigned() / sp0x10.getZ()));
+      a0.setY((short)(sp0x10.getY() * _1f8003f8.getSigned() / sp0x10.getZ()));
+      return sp0x10.getZ() >> 2;
+    }
+
+    //LAB_800e7e8c
+    //LAB_800e7e90
+    return 0;
+  }
+
   @Method(0x800e7ea4L)
   public static void FUN_800e7ea4(final BattleStruct24 a0, final VECTOR a1) {
     FUN_800e7944(a0, a1, 0);

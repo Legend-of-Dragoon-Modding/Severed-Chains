@@ -12,7 +12,9 @@ import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.game.combat.Bttl_800c;
+import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
+import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
@@ -170,38 +172,38 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 736</p>
    *
    * <ol start="0">
-   *   <li>0x800d0309</li>
-   *   <li>0x800cec8c</li>
-   *   <li>0x800cee50</li>
-   *   <li>0x800ceecc</li>
-   *   <li>0x800d3098</li>
-   *   <li>0x800d30a0</li>
-   *   <li>0x800d30a8</li>
-   *   <li>0x800d30b0</li>
-   *   <li>0x800cef00</li>
-   *   <li>0x800cf0b4</li>
-   *   <li>0x80102088</li>
-   *   <li>0x80102364</li>
-   *   <li>0x800d30b8</li>
-   *   <li>0x800d0564</li>
-   *   <li>0x800d09b8</li>
-   *   <li>0x800d0dec</li>
-   *   <li>0x80102608</li>
-   *   <li>0x801077e8</li>
-   *   <li>0x801077bc</li>
-   *   <li>0x80108de8</li>
-   *   <li>0x800d19ec</li>
-   *   <li>0x800d1cac</li>
-   *   <li>0x800d1cf4</li>
-   *   <li>0x801078c0</li>
-   *   <li>0x80108df0</li>
-   *   <li>0x800d2ff4</li>
-   *   <li>0x800ce6a8</li>
-   *   <li>0x800d2734</li>
-   *   <li>0x800d3d74</li>
-   *   <li>0x800cfccc</li>
-   *   <li>0x800d4338</li>
-   *   <li>0x800d4580</li>
+   *   <li>{@link Bttl_800d#FUN_800d0309}</li>
+   *   <li>{@link Bttl_800c#FUN_800cec8c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cee50}</li>
+   *   <li>{@link Bttl_800c#FUN_800ceecc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d3098}</li>
+   *   <li>{@link Bttl_800d#FUN_800d30a0}</li>
+   *   <li>{@link Bttl_800d#FUN_800d30a8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d30b0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cef00}</li>
+   *   <li>{@link Bttl_800c#FUN_800cf0b4}</li>
+   *   <li>{@link SEffe#FUN_80102088}</li>
+   *   <li>{@link SEffe#FUN_80102364}</li>
+   *   <li>{@link Bttl_800d#FUN_800d30b8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d0564}</li>
+   *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d0dec}</li>
+   *   <li>{@link SEffe#FUN_80102608}</li>
+   *   <li>{@link SEffe#FUN_801077e8}</li>
+   *   <li>{@link SEffe#FUN_801077bc}</li>
+   *   <li>{@link SEffe#FUN_80108de8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d19ec}</li>
+   *   <li>{@link Bttl_800d#FUN_800d1cac}</li>
+   *   <li>{@link Bttl_800d#FUN_800d1cf4}</li>
+   *   <li>{@link SEffe#FUN_801078c0}</li>
+   *   <li>{@link SEffe#FUN_80108df0}</li>
+   *   <li>{@link Bttl_800d#FUN_800d2ff4}</li>
+   *   <li>{@link Bttl_800c#FUN_800ce6a8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d2734}</li>
+   *   <li>{@link Bttl_800d#FUN_800d3d74}</li>
+   *   <li>{@link Bttl_800c#FUN_800cfccc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d4338}</li>
+   *   <li>{@link Bttl_800d#FUN_800d4580}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6f64 = MEMORY.ref(4, 0x800e6f64L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -209,29 +211,29 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 832</p>
    *
    * <ol start="0">
-   *   <li>{@link legend.game.combat.Bttl_800d#FUN_800d46d4}</li>
-   *   <li>0x80108df8</li>
-   *   <li>0x80102610</li>
-   *   <li>0x800cfdf8</li>
-   *   <li>0x80109158</li>
-   *   <li>0x800ce9b0</li>
-   *   <li>0x801052dc</li>
-   *   <li>0x80105604</li>
-   *   <li>0x801087f8</li>
-   *   <li>0x80105c38</li>
-   *   <li>0x800c6968</li>
-   *   <li>0x80109a7c</li>
-   *   <li>0x801089cc</li>
-   *   <li>0x801023f4</li>
-   *   <li>0x800cfec8</li>
-   *   <li>0x801023fc</li>
-   *   <li>0x8010246c</li>
-   *   <li>0x800cff24</li>
-   *   <li>0x80109d30</li>
-   *   <li>0x8010a3fc</li>
-   *   <li>0x800d34bc</li>
-   *   <li>0x800d0124</li>
-   *   <li>0x801079a4</li>
+   *   <li>{@link Bttl_800d#FUN_800d46d4}</li>
+   *   <li>{@link SEffe#FUN_80108df8}</li>
+   *   <li>{@link SEffe#FUN_80102610}</li>
+   *   <li>{@link Bttl_800c#FUN_800cfdf8}</li>
+   *   <li>{@link SEffe#FUN_80109158}</li>
+   *   <li>{@link Bttl_800c#FUN_800ce9b0}</li>
+   *   <li>{@link SEffe#FUN_801052dc}</li>
+   *   <li>{@link SEffe#FUN_80105604}</li>
+   *   <li>{@link SEffe#FUN_801087f8}</li>
+   *   <li>{@link SEffe#FUN_80105c38}</li>
+   *   <li>{@link Bttl_800c#FUN_800c6968}</li>
+   *   <li>{@link SEffe#FUN_80109a7c}</li>
+   *   <li>{@link SEffe#FUN_801089cc}</li>
+   *   <li>{@link SEffe#FUN_801023f4}</li>
+   *   <li>{@link Bttl_800c#FUN_800cfec8}</li>
+   *   <li>{@link SEffe#FUN_801023fc}</li>
+   *   <li>{@link SEffe#FUN_8010246c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cff24}</li>
+   *   <li>{@link SEffe#FUN_80109d30}</li>
+   *   <li>{@link SEffe#FUN_8010a3fc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d34bc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d0124}</li>
+   *   <li>{@link SEffe#FUN_801079a4}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6fe4 = MEMORY.ref(4, 0x800e6fe4L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -239,8 +241,8 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 896</p>
    *
    * <ol start="0">
-   *   <li>0x8010a610</li>
-   *   <li>0x8010b1d8</li>
+   *   <li>{@link SEffe#FUN_8010a610}</li>
+   *   <li>{@link SEffe#FUN_8010b1d8}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -248,25 +250,25 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 32</p>
    *
    * <ol start="0">
-   *   <li>0x800dabcc</li>
-   *   <li>0x800dac20</li>
-   *   <li>0x800db034</li>
-   *   <li>0x800db460</li>
-   *   <li>0x800db574</li>
-   *   <li>0x800db688</li>
-   *   <li>0x800db79c</li>
-   *   <li>0x800db8b0</li>
-   *   <li>0x800db9e0</li>
-   *   <li>0x800dbb10</li>
-   *   <li>0x800dc2d8</li>
-   *   <li>0x800dbb9c</li>
-   *   <li>0x800dcbec</li>
-   *   <li>0x800dcb84</li>
-   *   <li>0x800dbc2c</li>
-   *   <li>0x800dbc80</li>
-   *   <li>0x800dbcc8</li>
-   *   <li>0x800dbcfc</li>
-   *   <li>0x800d8dec</li>
+   *   <li>{@link Bttl_800d#FUN_800dabcc}</li>
+   *   <li>{@link Bttl_800d#FUN_800dac20}</li>
+   *   <li>{@link Bttl_800d#FUN_800db034}</li>
+   *   <li>{@link Bttl_800d#FUN_800db460}</li>
+   *   <li>{@link Bttl_800d#FUN_800db574}</li>
+   *   <li>{@link Bttl_800d#FUN_800db688}</li>
+   *   <li>{@link Bttl_800d#FUN_800db79c}</li>
+   *   <li>{@link Bttl_800d#FUN_800db8b0}</li>
+   *   <li>{@link Bttl_800d#FUN_800db9e0}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbb10}</li>
+   *   <li>{@link Bttl_800d#FUN_800dc2d8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbb9c}</li>
+   *   <li>{@link Bttl_800d#FUN_800dcbec}</li>
+   *   <li>{@link Bttl_800d#FUN_800dcb84}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbc2c}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbc80}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbcc8}</li>
+   *   <li>{@link Bttl_800d#FUN_800dbcfc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d8dec}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7048 = MEMORY.ref(4, 0x800e7048L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 19, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -335,12 +337,12 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 800</p>
    *
    * <ol start="0">
-   *   <li>{@link NotYetLoaded#FUN_8010c378}</li>
-   *   <li>{@link NotYetLoaded#FUN_8010d1dc}</li>
-   *   <li>{@link NotYetLoaded#FUN_8010d7dc}</li>
-   *   <li>{@link NotYetLoaded#FUN_8010e04c}</li>
-   *   <li>{@link NotYetLoaded#FUN_8010edc8}</li>
-   *   <li>{@link NotYetLoaded#FUN_8010e89c}</li>
+   *   <li>{@link SEffe#FUN_8010c378}</li>
+   *   <li>{@link SEffe#FUN_8010d1dc}</li>
+   *   <li>{@link SEffe#FUN_8010d7dc}</li>
+   *   <li>{@link SEffe#FUN_8010e04c}</li>
+   *   <li>{@link SEffe#FUN_8010edc8}</li>
+   *   <li>{@link SEffe#FUN_8010e89c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001c5fc}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001c604}</li>
    * </ol>
@@ -353,32 +355,32 @@ public final class Scus94491BpeSegment_800e {
    *   <li>null</li>
    *   <li>null</li>
    *   <li>null</li>
-   *   <li>0x800e473c</li>
-   *   <li>0x800e4788</li>
-   *   <li>0x800e47c8</li>
-   *   <li>0x800e48a8</li>
-   *   <li>0x800e48e8</li>
-   *   <li>0x800e4964</li>
-   *   <li>0x800e4abc</li>
-   *   <li>0x800e4c10</li>
-   *   <li>0x800e4c90</li>
-   *   <li>0x800e4d2c</li>
-   *   <li>0x800e4db4</li>
-   *   <li>0x800e4dfc</li>
-   *   <li>0x800e4e2c</li>
-   *   <li>0x800e4e64</li>
-   *   <li>0x800e4ea0</li>
-   *   <li>0x800e4fa0</li>
-   *   <li>0x800e50e8</li>
-   *   <li>0x800e52f8</li>
-   *   <li>0x800e540c</li>
-   *   <li>0x800e54f8</li>
-   *   <li>0x800e5528</li>
-   *   <li>0x800e5560</li>
-   *   <li>0x800e559c</li>
-   *   <li>0x800e569c</li>
-   *   <li>0x800e596c</li>
-   *   <li>0x800e59d8</li>
+   *   <li>{@link Bttl_800e#FUN_800e473c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4788}</li>
+   *   <li>{@link Bttl_800e#FUN_800e47c8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e48a8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e48e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4964}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4abc}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4c10}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4c90}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4d2c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4db4}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4dfc}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4e2c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4e64}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4ea0}</li>
+   *   <li>{@link Bttl_800e#FUN_800e4fa0}</li>
+   *   <li>{@link Bttl_800e#FUN_800e50e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e52f8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e540c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e54f8}</li>
+   *   <li>{@link Bttl_800e#FUN_800e5528}</li>
+   *   <li>{@link Bttl_800e#FUN_800e5560}</li>
+   *   <li>{@link Bttl_800e#FUN_800e559c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e569c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e596c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e59d8}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>null</li>
@@ -467,38 +469,38 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 608</p>
    *
    * <ol start="0">
-   *   <li>0x801181a8</li>
+   *   <li>{@link SEffe#FUN_801181a8}</li>
    *   <li>null</li>
-   *   <li>0x800ea200</li>
-   *   <li>0x801156f8</li>
-   *   <li>0x800ea13c</li>
-   *   <li>0x800ea19c</li>
-   *   <li>0x800eb84c</li>
-   *   <li>0x800eb188</li>
-   *   <li>0x800eb01c</li>
-   *   <li>0x800caae4</li>
-   *   <li>0x80115690</li>
-   *   <li>0x80118df4</li>
-   *   <li>0x80111a58</li>
-   *   <li>0x800ea384</li>
-   *   <li>0x80119484</li>
-   *   <li>0x800e73ac</li>
-   *   <li>0x800e6db4</li>
-   *   <li>0x800e7490</li>
-   *   <li>0x8011574c</li>
-   *   <li>0x8011578c</li>
-   *   <li>0x801184e4</li>
-   *   <li>0x801157d0</li>
-   *   <li>0x801127e0</li>
-   *   <li>0x801181f0</li>
-   *   <li>0x801114b8</li>
+   *   <li>{@link Bttl_800e#FUN_800ea200}</li>
+   *   <li>{@link SEffe#FUN_801156f8}</li>
+   *   <li>{@link Bttl_800e#FUN_800ea13c}</li>
+   *   <li>{@link Bttl_800e#FUN_800ea19c}</li>
+   *   <li>{@link Bttl_800e#FUN_800eb84c}</li>
+   *   <li>{@link Bttl_800e#FUN_800eb188}</li>
+   *   <li>{@link Bttl_800e#FUN_800eb01c}</li>
+   *   <li>{@link Bttl_800c#FUN_800caae4}</li>
+   *   <li>{@link SEffe#FUN_80115690}</li>
+   *   <li>{@link SEffe#FUN_80118df4}</li>
+   *   <li>{@link SEffe#FUN_80111a58}</li>
+   *   <li>{@link Bttl_800e#FUN_800ea384}</li>
+   *   <li>{@link SEffe#FUN_80119484}</li>
+   *   <li>{@link Bttl_800e#FUN_800e73ac}</li>
+   *   <li>{@link Bttl_800e#FUN_800e6db4}</li>
+   *   <li>{@link Bttl_800e#FUN_800e7490}</li>
+   *   <li>{@link SEffe#FUN_8011574c}</li>
+   *   <li>{@link SEffe#FUN_8011578c}</li>
+   *   <li>{@link SEffe#FUN_801184e4}</li>
+   *   <li>{@link SEffe#FUN_801157d0}</li>
+   *   <li>{@link SEffe#FUN_801127e0}</li>
+   *   <li>{@link SEffe#FUN_801181f0}</li>
+   *   <li>{@link SEffe#FUN_801114b8}</li>
    *   <li>null</li>
-   *   <li>0x80115ab0</li>
-   *   <li>0x80115a94</li>
-   *   <li>0x80115a58</li>
-   *   <li>0x800e7314</li>
-   *   <li>0x800e71e4</li>
-   *   <li>0x800e727c</li>
+   *   <li>{@link SEffe#FUN_80115ab0}</li>
+   *   <li>{@link SEffe#FUN_80115a94}</li>
+   *   <li>{@link SEffe#FUN_80115a58}</li>
+   *   <li>{@link Bttl_800e#FUN_800e7314}</li>
+   *   <li>{@link Bttl_800e#FUN_800e71e4}</li>
+   *   <li>{@link Bttl_800e#FUN_800e727c}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e72f0 = MEMORY.ref(4, 0x800e72f0L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -506,18 +508,18 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 640</p>
    *
    * <ol start="0">
-   *   <li>0x8011357c</li>
-   *   <li>0x80115a28</li>
-   *   <li>0x8011287c</li>
-   *   <li>0x800e9798</li>
-   *   <li>0x800ea2a0</li>
-   *   <li>0x800ea30c</li>
-   *   <li>0x801188ec</li>
-   *   <li>0x80115ad8</li>
-   *   <li>0x80115ea4</li>
-   *   <li>0x80115ed4</li>
-   *   <li>0x801154f4</li>
-   *   <li>0x80116160</li>
+   *   <li>{@link SEffe#FUN_8011357c}</li>
+   *   <li>{@link SEffe#FUN_80115a28}</li>
+   *   <li>{@link SEffe#FUN_8011287c}</li>
+   *   <li>{@link Bttl_800e#FUN_800e9798}</li>
+   *   <li>{@link Bttl_800e#FUN_800ea2a0}</li>
+   *   <li>{@link Bttl_800e#FUN_800ea30c}</li>
+   *   <li>{@link SEffe#FUN_801188ec}</li>
+   *   <li>{@link SEffe#FUN_80115ad8}</li>
+   *   <li>{@link SEffe#FUN_80115ea4}</li>
+   *   <li>{@link SEffe#FUN_80115ed4}</li>
+   *   <li>{@link SEffe#FUN_801154f4}</li>
+   *   <li>{@link SEffe#FUN_80116160}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>null</li>
@@ -662,21 +664,21 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 512</p>
    *
    * <ol start="0">
-   *   <li>0x800ee2ac</li>
-   *   <li>0x800ee2e4</li>
-   *   <li>0x800ee324</li>
-   *   <li>0x800ee384</li>
-   *   <li>0x800ee468</li>
-   *   <li>0x800ee49c</li>
-   *   <li>0x800ee4e8</li>
-   *   <li>0x800ee548</li>
-   *   <li>0x800ee384</li>
-   *   <li>0x800ee574</li>
-   *   <li>0x800ee594</li>
-   *   <li>0x800ee5c0</li>
-   *   <li>0x800ee3c0</li>
-   *   <li>0x800ee408</li>
-   *   <li>0x800ee5f0</li>
+   *   <li>{@link Bttl_800e#FUN_800ee2ac}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee2e4}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee324}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee384}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee468}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee49c}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee4e8}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee548}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee384}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee574}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee594}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee5c0}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee3c0}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee408}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee5f0}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7570 = MEMORY.ref(4, 0x800e7570L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -717,36 +719,36 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 480</p>
    *
    * <ol start="0">
-   *   <li>0x800f95d0</li>
-   *   <li>0x800f2500</li>
-   *   <li>0x800f96d4</li>
-   *   <li>0x800f9730</li>
-   *   <li>0x800f95d0</li>
-   *   <li>0x800f95d0</li>
-   *   <li>0x800f95d0</li>
-   *   <li>0x800f43dc</li>
-   *   <li>0x800f4518</li>
-   *   <li>0x800f97d8</li>
-   *   <li>0x800f4600</li>
-   *   <li>0x800f480c</li>
-   *   <li>0x800f2694</li>
-   *   <li>0x800f96a8</li>
-   *   <li>0x800f984c</li>
-   *   <li>0x800f2838</li>
-   *   <li>0x800f9884</li>
-   *   <li>0x800f98b0</li>
-   *   <li>0x800f99ec</li>
-   *   <li>0x800f9a50</li>
-   *   <li>0x800f9b2c</li>
-   *   <li>0x800f9b78</li>
-   *   <li>0x800f9b94</li>
-   *   <li>0x800f9bd4</li>
-   *   <li>0x800f9c00</li>
-   *   <li>0x800f9c2c</li>
-   *   <li>0x800f9cac</li>
-   *   <li>0x800f9618</li>
-   *   <li>0x800f9660</li>
-   *   <li>0x800f9d7c</li>
+   *   <li>{@link Bttl_800f#FUN_800f95d0}</li>
+   *   <li>{@link Bttl_800f#FUN_800f2500}</li>
+   *   <li>{@link Bttl_800f#FUN_800f96d4}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9730}</li>
+   *   <li>{@link Bttl_800f#FUN_800f95d0}</li>
+   *   <li>{@link Bttl_800f#FUN_800f95d0}</li>
+   *   <li>{@link Bttl_800f#FUN_800f95d0}</li>
+   *   <li>{@link Bttl_800f#FUN_800f43dc}</li>
+   *   <li>{@link Bttl_800f#FUN_800f4518}</li>
+   *   <li>{@link Bttl_800f#FUN_800f97d8}</li>
+   *   <li>{@link Bttl_800f#FUN_800f4600}</li>
+   *   <li>{@link Bttl_800f#FUN_800f480c}</li>
+   *   <li>{@link Bttl_800f#FUN_800f2694}</li>
+   *   <li>{@link Bttl_800f#FUN_800f96a8}</li>
+   *   <li>{@link Bttl_800f#FUN_800f984c}</li>
+   *   <li>{@link Bttl_800f#FUN_800f2838}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9884}</li>
+   *   <li>{@link Bttl_800f#FUN_800f98b0}</li>
+   *   <li>{@link Bttl_800f#FUN_800f99ec}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9a50}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9b2c}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9b78}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9b94}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9bd4}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9c00}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9c2c}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9cac}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9618}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9660}</li>
+   *   <li>{@link Bttl_800f#FUN_800f9d7c}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e75f8 = MEMORY.ref(4, 0x800e75f8L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 30, 4, Pointer.deferred(4, FunctionRef::new)));

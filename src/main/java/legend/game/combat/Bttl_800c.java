@@ -40,6 +40,7 @@ import legend.game.combat.types.BttlScriptData6c;
 import legend.game.combat.types.BttlScriptData6cSub14;
 import legend.game.combat.types.BttlScriptData6cSub3c;
 import legend.game.combat.types.BttlScriptData6cSub3cSub2c;
+import legend.game.combat.types.BttlScriptData6cSub44;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -3421,6 +3422,13 @@ public final class Bttl_800c {
     a0.set(a1).add(sp0x10);
     sp0x10.set(sp0x00).mul(a3).div(0x1000);
     a1.add(sp0x10);
+  }
+
+  @Method(0x800ce9b0L)
+  public static long FUN_800ce9b0(final RunningScript a0) {
+    final BttlScriptData6cSub44 a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class)._44.derefAs(BttlScriptData6cSub44.class);
+    FUN_800ce880(a1.vec_10, a1.vec_20, a0.params_20.get(2).deref().get(), a0.params_20.get(1).deref().get());
+    return 0;
   }
 
   @Method(0x800cea1cL)
