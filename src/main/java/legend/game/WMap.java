@@ -269,6 +269,12 @@ public class WMap {
   private static final Value _800ef0d8 = MEMORY.ref(2, 0x800ef0d8L);
   private static final Value _800ef0da = MEMORY.ref(2, 0x800ef0daL);
 
+  /** array of 8-byte structs */
+  private static final Value imageX_800ef0cc = MEMORY.ref(2, 0x800ef0ccL);
+  private static final Value imageY_800ef0ce = MEMORY.ref(2, 0x800ef0ceL);
+  private static final Value clutX_800ef0d0 = MEMORY.ref(2, 0x800ef0d0L);
+  private static final Value clutY_800ef0d2 = MEMORY.ref(2, 0x800ef0d2L);
+
   private static final Value _800ef104 = MEMORY.ref(1, 0x800ef104L);
 
   private static final Value _800ef194 = MEMORY.ref(1, 0x800ef194L);
@@ -3810,7 +3816,7 @@ public class WMap {
 
               if(_800c66b0.deref().mapRotationCounter_7e.get() > 5) {
                 _800c66b0.deref().mapRotating_80.set(0);
-                _800c66b0.deref().mapRotation_70.setY((short)_800c66b0.deref().mapRotationEndAngle_7a.get());
+                _800c66b0.deref().mapRotation_70.setY(_800c66b0.deref().mapRotationEndAngle_7a.get());
               }
             }
           }
@@ -4206,7 +4212,7 @@ public class WMap {
     a0 = v1 & 0x7L;
     v1 = sp1c;
 
-    lo = ((long)(int)a0 * (int)v1) & 0xffff_ffffL;
+    lo = (long)(int)a0 * (int)v1 & 0xffff_ffffL;
     t0 = lo;
     MEMORY.ref(1, v0).offset(0xcL).setu(t0);
     v0 = sp30;
@@ -4430,7 +4436,7 @@ public class WMap {
     a0 = v1 & 0x7L;
     v1 = sp1c;
 
-    lo = ((long)(int)a0 * (int)v1) & 0xffff_ffffL;
+    lo = (long)(int)a0 * (int)v1 & 0xffff_ffffL;
     t0 = lo;
     MEMORY.ref(1, v0).offset(0xcL).setu(t0);
     v0 = sp30;
@@ -4753,7 +4759,7 @@ public class WMap {
     v1 = a0 << 8;
     a0 = 0x2aaa_0000L;
     a0 = a0 | 0xaaabL;
-    hi = ((long)(int)v1 * (int)a0) >>> 32;
+    hi = (long)(int)v1 * (int)a0 >>> 32;
     v1 = (int)v1 >> 31;
     a1 = hi;
     a0 = a1 - v1;
@@ -4768,7 +4774,7 @@ public class WMap {
     v1 = a0 << 8;
     a0 = 0x2aaa_0000L;
     a0 = a0 | 0xaaabL;
-    hi = ((long)(int)v1 * (int)a0) >>> 32;
+    hi = (long)(int)v1 * (int)a0 >>> 32;
     v1 = (int)v1 >> 31;
     a1 = hi;
     a0 = a1 - v1;
@@ -4783,7 +4789,7 @@ public class WMap {
     v1 = a0 << 8;
     a0 = 0x2aaa_0000L;
     a0 = a0 | 0xaaabL;
-    hi = ((long)(int)v1 * (int)a0) >>> 32;
+    hi = (long)(int)v1 * (int)a0 >>> 32;
     v1 = (int)v1 >> 31;
     a1 = hi;
     a0 = a1 - v1;
@@ -4821,7 +4827,7 @@ public class WMap {
     v1 = sp10;
     a0 = 0x2aaa_0000L;
     a0 = a0 | 0xaaabL;
-    hi = ((long)(int)v1 * (int)a0) >>> 32;
+    hi = (long)(int)v1 * (int)a0 >>> 32;
     a0 = (int)v1 >> 31;
     a1 = hi;
     v1 = a1 - a0;
@@ -4836,7 +4842,7 @@ public class WMap {
   public static void startMapRotation(final int direction) {
     _800c66b0.deref().mapRotationCounter_7e.set((short)0);
     _800c66b0.deref().mapRotationStartAngle_78.set(_800c66b0.deref().mapRotation_70.getY());
-    _800c66b0.deref().mapRotationEndAngle_7a.set(_800c66b0.deref().mapRotation_70.getY() + direction * 512);
+    _800c66b0.deref().mapRotationEndAngle_7a.set((short)(_800c66b0.deref().mapRotation_70.getY() + direction * 512));
     int sp10 = direction * 512;
     int sp14 = direction * 512 + 4096;
 
@@ -5146,73 +5152,15 @@ public class WMap {
   }
 
   @Method(0x800d5768L)
-  public static void FUN_800d5768(final long address, long size, long param) {
-    long at;
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    long sp;
-    long ra;
-    long sp18;
-    long sp28;
-    long sp10;
-    long sp24;
-    long sp20;
-    sp20 = address;
-    sp24 = size;
-    sp28 = param;
-    v0 = sp28;
-
-    v1 = v0;
-    a0 = v1 << 3;
-    at = 0x800f_0000L;
-    at = at + a0;
-    v0 = MEMORY.ref(2, at).offset(-0xf34L).getSigned();
-    v1 = sp28;
-
-    a0 = v1;
-    a1 = a0 << 3;
-    at = 0x800f_0000L;
-    at = at + a1;
-    v1 = MEMORY.ref(2, at).offset(-0xf32L).getSigned();
-    a0 = sp28;
-
-    a1 = a0;
-    a0 = a1 << 3;
-    at = 0x800f_0000L;
-    at = at + a0;
-    a3 = MEMORY.ref(2, at).offset(-0xf30L).getSigned();
-    a0 = sp28;
-
-    a1 = a0;
-    a0 = a1 << 3;
-    at = 0x800f_0000L;
-    at = at + a0;
-    a1 = MEMORY.ref(2, at).offset(-0xf2eL).getSigned();
-
-    sp10 = a1;
-    a0 = sp20;
-    a1 = v0;
-    a2 = v1;
-
-    FUN_800d5c50(a0, a1, a2, a3, sp10);
-    a0 = 0;
-
-    v0 = DrawSync(0);
-    a0 = sp20;
-    a1 = 0;
-    a2 = 0;
-
-    removeFromLinkedList(a0);
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b8L).get();
-
-    v1 = v0 | 0x800L;
-    at = 0x800c_0000L;
-    MEMORY.ref(4, at).offset(0x66b8L).setu(v1);
+  public static void FUN_800d5768(final long address, final long size, final long param) {
+    long ix = imageX_800ef0cc.offset(param * 0x8L).getSigned();
+    long iy = imageY_800ef0ce.offset(param * 0x8L).getSigned();
+    long cx = clutX_800ef0d0.offset(param * 0x8L).getSigned();
+    long cy = clutY_800ef0d2.offset(param * 0x8L).getSigned();
+    FUN_800d5c50(address, ix, iy, cx, cy);
+    DrawSync(0);
+    removeFromLinkedList(address);
+    _800c66b8.oru(0x800L);
 
     //LAB_800d5848
   }
@@ -5487,7 +5435,7 @@ public class WMap {
 
     a0 = sp28.h.get();
 
-    lo = ((long)(int)v0 * (int)a0) & 0xffff_ffffL;
+    lo = (long)(int)v0 * (int)a0 & 0xffff_ffffL;
     t0 = lo;
     sp18 = t0;
     a0 = sp18;
@@ -5507,7 +5455,7 @@ public class WMap {
 
     a0 = sp28.h.get();
 
-    lo = ((long)(int)v0 * (int)a0) & 0xffff_ffffL;
+    lo = (long)(int)v0 * (int)a0 & 0xffff_ffffL;
     t0 = lo;
     sp18 = t0;
     a0 = sp18;
@@ -5972,13 +5920,13 @@ public class WMap {
               v0 = sp50;
               v1 = sp50;
 
-              lo = ((long)(int)v0 * (int)v1) & 0xffff_ffffL;
+              lo = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
               t0 = lo;
               sp1c4 = t0;
               v0 = sp54;
               a0 = sp54;
 
-              lo = ((long)(int)v0 * (int)a0) & 0xffff_ffffL;
+              lo = (long)(int)v0 * (int)a0 & 0xffff_ffffL;
               v1 = lo;
               t0 = sp1c4;
 
@@ -5986,7 +5934,7 @@ public class WMap {
               v1 = sp58;
               a0 = sp58;
 
-              lo = ((long)(int)v1 * (int)a0) & 0xffff_ffffL;
+              lo = (long)(int)v1 * (int)a0 & 0xffff_ffffL;
               t0 = lo;
               sp1c4 = t0;
               t0 = sp1c4;
@@ -6559,13 +6507,13 @@ public class WMap {
                     v0 = sp50;
                     v1 = sp50;
 
-                    lo = ((long)(int)v0 * (int)v1) & 0xffff_ffffL;
+                    lo = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
                     t0 = lo;
                     sp1c4 = t0;
                     v0 = sp54;
                     a0 = sp54;
 
-                    lo = ((long)(int)v0 * (int)a0) & 0xffff_ffffL;
+                    lo = (long)(int)v0 * (int)a0 & 0xffff_ffffL;
                     v1 = lo;
                     t0 = sp1c4;
 
@@ -6573,7 +6521,7 @@ public class WMap {
                     v1 = sp58;
                     a0 = sp58;
 
-                    lo = ((long)(int)v1 * (int)a0) & 0xffff_ffffL;
+                    lo = (long)(int)v1 * (int)a0 & 0xffff_ffffL;
                     t0 = lo;
                     sp1c4 = t0;
                     t0 = sp1c4;
@@ -6922,7 +6870,7 @@ public class WMap {
         v0 = sp1c;
         a0 = 0x8008_0000L;
         a0 = a0 | 0x81L;
-        hi = ((long)(int)v1 * (int)a0) >>> 32; //TODO
+        hi = (long)(int)v1 * (int)a0 >>> 32; //TODO
         t0 = hi;
         a0 = t0 + v1;
         a1 = (int)a0 >> 11;
@@ -6990,7 +6938,7 @@ public class WMap {
         //LAB_800d9264
         if(i >= 0x2L && i < 0x9L || i >= 0xfL && i < 0x11L) {
           //LAB_800d9294
-          final int sin = (rsin(sp60.get()) * 0x20) / 0x1000;
+          final int sin = rsin(sp60.get()) * 0x20 / 0x1000;
           if((i & 0x1L) != 0) {
             coord2.coord.transfer.setY(sin);
           } else {
@@ -8894,13 +8842,13 @@ public class WMap {
       a0.setZ(a2.getZ() * 0x1000);
     } else {
       //LAB_800e0ed8
-      sp18 = ((long)((a2.getX() - a1.getX()) * 0x1000 / (int)a3) * (int)a4) & 0xffff_ffffL;
+      sp18 = (long)((a2.getX() - a1.getX()) * 0x1000 / (int)a3) * (int)a4 & 0xffff_ffffL;
 
       v1 = a1.getX() + (int)sp18 / 0x1000;
       a0.setX((int)(v1 * 0x1000));
 
       v1 = (a2.getY() - a1.getY()) * 0x1000 / (int)a3;
-      sp18 = ((long)(int)v1 * (int)a4) & 0xffff_ffffL;
+      sp18 = (long)(int)v1 * (int)a4 & 0xffff_ffffL;
 
       v1 = (int)sp18 >> 12;
       v0 = a1.getY() + v1;
@@ -8908,11 +8856,11 @@ public class WMap {
       sp10 = v1;
 
       v0 = 0x800L / (int)a3;
-      sp18 = ((long)(int)v0 * (int)a4) & 0xffff_ffffL;
+      sp18 = (long)(int)v0 * (int)a4 & 0xffff_ffffL;
 
       a0.setY((int)(sp10 + rsin(sp18) * -200));
 
-      sp18 = ((long)(((a2.getZ() - a1.getZ()) * 0x1000) / (int)a3) * (int)a4) & 0xffff_ffffL;
+      sp18 = (long)((a2.getZ() - a1.getZ()) * 0x1000 / (int)a3) * (int)a4 & 0xffff_ffffL;
 
       v1 = a1.getZ() + (int)sp18 / 0x1000;
       a0.setZ((int)(v1 * 0x1000));
@@ -9121,9 +9069,9 @@ public class WMap {
       );
 
       sp0x58.set(
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c4L).offset(((i + 1) & 0x7L) * 0x4L).get(),
+        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c4L).offset((i + 1 & 0x7L) * 0x4L).get(),
         (short)0,
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c6L).offset(((i + 1) & 0x7L) * 0x4L).get()
+        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c6L).offset((i + 1 & 0x7L) * 0x4L).get()
       );
 
       final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, sp70 + 0x8L, sp70 + 0x10L, sp70 + 0x18L, sp0x68, sp0x64);
@@ -9689,7 +9637,7 @@ public class WMap {
     long sp34 = v & 0x100L;
     u = u * 0x4L;
     MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (_800bb114.offset((sp34 & 0x100L) / 0x100L * 0x2L).get() | (sp30 & 0x3c0L) / 0x40L) & 0x9ffL);
+    MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (_800bb114.offset(((sp34 & 0x100) >> 8) * 0x2L).get() | (sp30 & 0x3c0) >> 6) & 0x9ff);
     sp18 = sp1c;
     sp1c = sp1c + 0x8L;
     MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
@@ -9708,22 +9656,22 @@ public class WMap {
         MEMORY.ref(2, sp1c).offset(0xaL).setu(y + offsetY); // Y
         MEMORY.ref(1, sp1c).offset(0xcL).setu(u); // U
         MEMORY.ref(1, sp1c).offset(0xdL).setu(v); // V
-        MEMORY.ref(2, sp1c).offset(0xeL).setu(clutXDiv16 << 6 | (clutY & 0x3f0L) / 0x10L);
+        MEMORY.ref(2, sp1c).offset(0xeL).setu(clutXDiv16 << 6 | (clutY & 0x3f0L) >> 4);
         MEMORY.ref(1, sp1c).offset(0x4L).setu(colour); // R
         MEMORY.ref(1, sp1c).offset(0x5L).setu(colour); // G
         MEMORY.ref(1, sp1c).offset(0x6L).setu(colour); // B
         sp18 = sp1c;
         sp1c = sp1c + 0x10L;
         MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
-        v = (v + 0x10L) & 0xf0L;
+        v = v + 0x10L & 0xf0L;
 
         if(v == 0) {
-          u = (u + 0x10L) & 0xfcL;
+          u = u + 0x10L & 0xfcL;
 
           if(u == 0) {
             sp30 = sp30 + 0x40L;
             MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (_800bb114.offset((sp34 & 0x100L) / 0x100L * 0x2L).get() | ((sp30 & 0x3c0L) / 0x40L)) & 0x9ffL);
+            MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (_800bb114.offset(((sp34 & 0x100L) >> 8) * 0x2L).get() | (sp30 & 0x3c0L) >> 6) & 0x9ffL);
 
             sp18 = sp1c;
             sp1c = sp1c + 0x8L;
@@ -9732,7 +9680,7 @@ public class WMap {
         }
 
         //LAB_800e4d18
-        clutXDiv16 = (clutXDiv16 + 0x1L) & 0xffL;
+        clutXDiv16 = clutXDiv16 + 0x1L & 0xffL;
 
         if(clutXDiv16 == 0) {
           clutY = clutY + 0x10L;
@@ -9991,7 +9939,7 @@ public class WMap {
         FUN_800ce4dc(_800c6898.deref());
 
         if(_800c6860.get() == 999L) { // Going to a different region
-          sp38 = (_800c6862.get() >>> 4) & 0xffffL;
+          sp38 = _800c6862.get() >>> 4 & 0xffffL;
           sp3c = _800c6862.get() & 0xfL;
 
           final IntRef width = new IntRef();
@@ -10133,7 +10081,7 @@ public class WMap {
             sp50 = 0;
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
-              if((sp5c & (1L << i)) != 0) {
+              if((sp5c & 1L << i) != 0) {
                 FUN_800e774c(_800f01cc.get(i).deref(), 0xcdL, (short)(sp50 * 0x10L + 0x1eL), 0, 0);
                 sp50++;
               }
@@ -10297,7 +10245,7 @@ public class WMap {
           submapCut_80052c30.setu(_800f0e34.get((int)_800c67a8.get())._04.get());
 
           if(_800c86d2.getSigned() == 0x1L) {
-            sp20 = (_800c6862.get() >>> 4) & 0xffffL;
+            sp20 = _800c6862.get() >>> 4 & 0xffffL;
           } else {
             //LAB_800e69a0
             sp20 = _800c6862.get() & 0xfL;
@@ -11104,7 +11052,7 @@ public class WMap {
     }
 
     //LAB_800e91cc
-    sp0 = (_800c66b0.deref().mapRotation_70.getY() - previousPlayerRotation_800c685a.get() - 0x700L) & 0xfffL;
+    sp0 = _800c66b0.deref().mapRotation_70.getY() - previousPlayerRotation_800c685a.get() - 0x700L & 0xfffL;
     sp10 = (_800bee90.get() & 0xffffL) >>> 12;
 
     if(sp10 != 0) {
@@ -11139,7 +11087,7 @@ public class WMap {
 
     //LAB_800e9330
     //LAB_800e9364
-    if((_800bed60.get(0).sArr54.get(1).get() >= 0x7fL && _800beebc.get() != 0) || (joypadInput_8007a39c.get() & 0x40L) != 0) {
+    if(_800bed60.get(0).sArr54.get(1).get() >= 0x7fL && _800beebc.get() != 0 || (joypadInput_8007a39c.get() & 0x40L) != 0) {
       //LAB_800e9384
       sp4 *= 2; // Running
     }
@@ -11333,8 +11281,8 @@ public class WMap {
       sp0xb0.setY(spa4 - _800c67d8.get(i).getY());
       sp0xb0.setZ(spa8 - _800c67d8.get(i).getZ());
 
-      sp0xc8[i] = (short)((_800c66b0.deref().mapRotation_70.getY() - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800) & 0xfff);
-      v0 = (sp0xc8[i] + 0x100L) & 0xfffL;
+      sp0xc8[i] = (short)(_800c66b0.deref().mapRotation_70.getY() - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
+      v0 = sp0xc8[i] + 0x100L & 0xfffL;
       if((int)v0 < 0) {
         v0 = v0 + 0x1ffL;
       }
@@ -11882,7 +11830,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get(a0 >>> 5).get() & (0x1L << (a0 & 0x1fL))) <= 0) {
+    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1L << (a0 & 0x1fL)) <= 0) {
       return 0x1L;
     }
 
