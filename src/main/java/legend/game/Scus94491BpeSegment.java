@@ -5807,13 +5807,7 @@ public final class Scus94491BpeSegment {
     long sp10x4 = -displayWidth_1f8003e0.get() / 2;
     long sp14x4 = -displayHeight_1f8003e4.get() / 2;
 
-    long a0 = displayHeight_1f8003e4.getSigned();
-    if(a0 < 0) {
-      a0 += 0x7L;
-    }
-
-    //LAB_8001b5c0
-    a0 /= 8;
+    long a0 = displayHeight_1f8003e4.getSigned() / 8;
     if(0x64L / a0 == _800bd714.get()) {
       _800bd714.setu(0);
       _800bd710.addu(0x1L);

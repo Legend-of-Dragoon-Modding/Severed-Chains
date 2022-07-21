@@ -65,9 +65,9 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022928;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a10;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022b50;
+import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022d88;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80023148;
+import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800232dc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800233d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023484;
@@ -1064,14 +1064,14 @@ public final class SItem {
         //LAB_800fccbc
         if(v1 == 0x18L) { // Character swap screen
           //LAB_800fcce0
-          FUN_80023148();
+          recalcInventory();
           FUN_80103b10();
           inventoryMenuState_800bdc28.setu(0x8L);
           break;
         }
 
         //LAB_800fcd00
-        FUN_80023148();
+        recalcInventory();
         FUN_80103b10();
         scriptStartEffect(0x2L, 0xaL);
         inventoryMenuState_800bdc28.setu(0x3L);
@@ -1462,7 +1462,7 @@ public final class SItem {
         break;
 
       case 0xc:
-        FUN_80023148();
+        recalcInventory();
         scriptStartEffect(0x2L, 0xaL);
         FUN_8002437c(0xffL);
 
@@ -1511,11 +1511,11 @@ public final class SItem {
             final int equipmentId = (int)_8011d7c8.offset(a0 * 0x4L).get();
             if(equipmentId != 0xffL) {
               final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
-              FUN_800233d8(_8011d7c8.offset((selectedSlot_8011d740.get() + slotScroll_8011d744.get()) * 0x4L).offset(0x1L).get());
+              FUN_800233d8((int)_8011d7c8.offset((selectedSlot_8011d740.get() + slotScroll_8011d744.get()) * 0x4L).offset(0x1L).get());
               FUN_80023484(previousEquipmentId);
               playSound(0x2L);
               FUN_80110030(0);
-              FUN_80022b50(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
+              addHp(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
               addMp(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), 0);
               inventoryMenuState_800bdc28.setu(0xeL);
             } else {
@@ -1551,7 +1551,7 @@ public final class SItem {
         renderBackground(_801141c4.getAddress(), 0, 0);
         _8011dcb8.setu(addToLinkedListTail(0x4c0L));
         _8011dcbc.setu(addToLinkedListTail(0x4c0L));
-        FUN_80023148();
+        recalcInventory();
         charSlot_8011d734.set(0);
         selectedSlot_8011d740.setu(0);
         slotScroll_8011d744.setu(0);
@@ -1732,7 +1732,7 @@ public final class SItem {
 
           //LAB_800fe27c
           FUN_800239e0(_8011dcb8.offset(charSlot_8011d734.get() * 0x4L).get(), a1_0, _8011d750.get());
-          FUN_80023148();
+          recalcInventory();
 
           //LAB_800fe29c
           unloadRenderable(renderablePtr_800bdc20.deref());
@@ -2007,7 +2007,7 @@ public final class SItem {
 
           //LAB_800feb40
           playSound(0x2L);
-          FUN_800232dc(_8011d7c8.offset((selectedSlot_8011d740.get() + slotScroll_8011d744.get()) * 0x4L).get());
+          FUN_800232dc((int)_8011d7c8.offset((selectedSlot_8011d740.get() + slotScroll_8011d744.get()) * 0x4L).get());
           _8011d750.setu(FUN_80104448());
           FUN_80110030(0);
           FUN_80104324(_8011d788.getAddress());
@@ -8048,7 +8048,7 @@ public final class SItem {
         v1 = 0xffL;
         MEMORY.ref(1, v0).offset(0x40L).setu(v1);
         MEMORY.ref(2, v0).offset(0x42L).setu(0);
-        FUN_80023148();
+        recalcInventory();
         s1 = 0;
         FUN_80103b10();
         v0 = 0x8012_0000L;
@@ -8939,7 +8939,7 @@ public final class SItem {
             v0 = v0 + v1;
             s0 = MEMORY.ref(1, v0).offset(0x2e9L).get();
             a0 = a0 & 0xffL;
-            v0 = FUN_800232dc(a0);
+            v0 = FUN_800232dc((int)a0);
             v0 = v0 & 0xffL;
           } else {
             a1 = 0x8012_0000L;
@@ -8957,7 +8957,7 @@ public final class SItem {
             v0 = v0 + v1;
             s0 = MEMORY.ref(1, v0).offset(0x1e8L).get();
             a0 = a0 & 0xffL;
-            v0 = FUN_800233d8(a0);
+            v0 = FUN_800233d8((int)a0);
             v0 = v0 & 0xffL;
           }
 
@@ -10128,7 +10128,7 @@ public final class SItem {
           }
 
           FUN_80103b10();
-          FUN_80023148();
+          recalcInventory();
 
           //LAB_8010d87c
           for(int i = 0; i < 10; i++) {

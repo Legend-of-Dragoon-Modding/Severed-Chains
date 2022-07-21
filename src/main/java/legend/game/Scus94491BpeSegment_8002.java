@@ -1067,7 +1067,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final BigStruct bigStruct) {
-    if(bigStruct.coord2Param_64.rotate.pad.get() == -0x1L) {
+    if(bigStruct.coord2Param_64.rotate.pad.get() == -1) {
       final MATRIX mat = new MATRIX();
       RotMatrix_8003fd80(bigStruct.coord2Param_64.rotate, mat);
       TransposeMatrix(mat, bigStruct.coord2_14.coord);
@@ -1241,7 +1241,7 @@ public final class Scus94491BpeSegment_8002 {
     GsDOBJ2 struct = table.top.deref().get(0);
     int i;
     for(i = 0; i < size; i++) {
-      if((int)struct.id_0c.get() == -0x1L) {
+      if((int)struct.id_0c.get() == -1) {
         break;
       }
 
@@ -1289,11 +1289,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021ca0L)
-  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long count, final long a4) {
+  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long count, final long nobj) {
     long s1 = 0x801L;
 
     //LAB_80021d08
-    for(int s0 = 1; s0 < a4; s0++) {
+    for(int s0 = 1; s0 < nobj; s0++) {
       FUN_80021918(table, tmd, coord2, count, s1);
       s1++;
     }
@@ -1303,7 +1303,7 @@ public final class Scus94491BpeSegment_8002 {
     s1 = 0x201L;
 
     //LAB_80021d64
-    for(int s0 = 1; s0 < a4; s0++) {
+    for(int i = 1; i < nobj; i++) {
       FUN_80021918(table, tmd, coord2, count, s1);
       FUN_80021918(table, tmd, coord2, count, s2);
       s1++;
@@ -1315,29 +1315,29 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021edcL)
   public static void SetRotMatrix(final MATRIX m) {
-    CPU.CTC2((m.get(1) & 0xffffL) << 16 | m.get(0) & 0xffffL, 0); //
-    CPU.CTC2((m.get(3) & 0xffffL) << 16 | m.get(2) & 0xffffL, 1); //
-    CPU.CTC2((m.get(5) & 0xffffL) << 16 | m.get(4) & 0xffffL, 2); // Rotation matrix
-    CPU.CTC2((m.get(7) & 0xffffL) << 16 | m.get(6) & 0xffffL, 3); //
-    CPU.CTC2(m.get(8) & 0xffffL, 4); //
+    CPU.CTC2(m.getPacked(0), 0); //
+    CPU.CTC2(m.getPacked(2), 1); //
+    CPU.CTC2(m.getPacked(4), 2); // Rotation matrix
+    CPU.CTC2(m.getPacked(6), 3); //
+    CPU.CTC2(m.getPacked(8), 4); //
   }
 
   @Method(0x80021f0cL)
   public static void SetLightMatrix(final MATRIX m) {
-    CPU.CTC2((m.get(1) & 0xffffL) << 16 | m.get(0) & 0xffffL,  8); //
-    CPU.CTC2((m.get(3) & 0xffffL) << 16 | m.get(2) & 0xffffL,  9); //
-    CPU.CTC2((m.get(5) & 0xffffL) << 16 | m.get(4) & 0xffffL, 10); // Light source matrix
-    CPU.CTC2((m.get(7) & 0xffffL) << 16 | m.get(6) & 0xffffL, 11); //
-    CPU.CTC2(m.get(8) & 0xffffL, 12); //
+    CPU.CTC2(m.get(0),  8); //
+    CPU.CTC2(m.get(2),  9); //
+    CPU.CTC2(m.get(4), 10); // Light source matrix
+    CPU.CTC2(m.get(6), 11); //
+    CPU.CTC2(m.get(8), 12); //
   }
 
   @Method(0x80021f3cL)
   public static void SetColorMatrix(final MATRIX m) {
-    CPU.CTC2((m.get(1) & 0xffffL) << 16 | m.get(0) & 0xffffL, 16); //
-    CPU.CTC2((m.get(3) & 0xffffL) << 16 | m.get(2) & 0xffffL, 17); //
-    CPU.CTC2((m.get(5) & 0xffffL) << 16 | m.get(4) & 0xffffL, 18); // Light color matrix
-    CPU.CTC2((m.get(7) & 0xffffL) << 16 | m.get(6) & 0xffffL, 19); //
-    CPU.CTC2(m.get(8) & 0xffffL, 20); //
+    CPU.CTC2(m.get(0), 16); //
+    CPU.CTC2(m.get(2), 17); //
+    CPU.CTC2(m.get(4), 18); // Light color matrix
+    CPU.CTC2(m.get(6), 19); //
+    CPU.CTC2(m.get(8), 20); //
   }
 
   @Method(0x80021f6cL)
@@ -1357,9 +1357,9 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021facL)
   public static void SetGeomOffset(final int x, final int y) {
     // cop2r56, OFX - Screen offset X
-    CPU.CTC2(x << 0x10, 24);
+    CPU.CTC2(x << 16, 24);
     // cop2r57, OFY - Screen offset Y
-    CPU.CTC2(y << 0x10, 25);
+    CPU.CTC2(y << 16, 25);
   }
 
   @Method(0x80021fc4L)
@@ -1385,7 +1385,7 @@ public final class Scus94491BpeSegment_8002 {
     long v0;
     if((v1 & 0x80L) == 0) {
       v1 <<= 1;
-      t2 = _800503b0.offset(v1).get();
+      t2 = _800503b0.offset(v1).getSigned();
       v0 = _800503d4.getAddress();
     } else {
       //LAB_80022098
@@ -1395,12 +1395,12 @@ public final class Scus94491BpeSegment_8002 {
 
       v1 &= 0x7fL;
       v1 <<= 1;
-      t2 = _800503f8.offset(v1).get();
+      t2 = _800503f8.offset(v1).getSigned();
       v0 = _80050424.getAddress();
     }
 
     //LAB_800220c0
-    long t1 = MEMORY.ref(2, v0).offset(v1).get();
+    long t1 = MEMORY.ref(2, v0).offset(v1).getSigned();
     long s1;
     if(a0.usArr_ba.get(index).get() != 0x5678L) {
       a0.usArr_ba.get(index).decr();
@@ -1411,13 +1411,13 @@ public final class Scus94491BpeSegment_8002 {
       s1 = a0.aui_d0.get(index).get();
       a0.usArr_ba.get(index).set((int)MEMORY.ref(2, s1).get(0x7fffL));
       s1 += 0x2L;
-      long a2 = MEMORY.ref(2, s1).get() + t2;
+      long a2 = MEMORY.ref(2, s1).getSigned() + t2;
       s1 += 0x2L;
-      long a0_1 = MEMORY.ref(2, s1).get() + t1;
+      long a0_1 = MEMORY.ref(2, s1).getSigned() + t1;
       s1 += 0x2L;
-      rect.w.set((short)(MEMORY.ref(2, s1).get() / 0x4L));
+      rect.w.set((short)(MEMORY.ref(2, s1).getSigned() / 4));
       s1 += 0x2L;
-      rect.h.set((short)MEMORY.ref(2, s1).get());
+      rect.h.set((short)MEMORY.ref(2, s1).getSigned());
       s1 += 0x2L;
 
       //LAB_80022154
@@ -1426,9 +1426,9 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      rect.x.set((short)(MEMORY.ref(2, s1).get() + t2));
+      rect.x.set((short)(MEMORY.ref(2, s1).getSigned() + t2));
       s1 += 0x2L;
-      rect.y.set((short)(MEMORY.ref(2, s1).get() + t1));
+      rect.y.set((short)(MEMORY.ref(2, s1).getSigned() + t1));
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, a2 & 0xffffL, a0_1 & 0xffffL);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
@@ -1454,18 +1454,18 @@ public final class Scus94491BpeSegment_8002 {
     s1 = a0.aui_d0.get(index).get();
     long a1_0 = a0.usArr_ac.get(index).get();
     s1 += 0x2L;
-    long a0_0 = MEMORY.ref(2, s1).get();
+    long a0_0 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
-    v0 = MEMORY.ref(2, s1).get();
+    v0 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
-    v1 = MEMORY.ref(2, s1).get();
+    v1 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
-    long s3 = MEMORY.ref(2, s1).get();
+    long s3 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
     long s0_0 = MEMORY.ref(2, s1).offset(0x2L).get();
     long s7 = v0 + t1;
     long s5 = v1 >>> 2;
-    v1 = MEMORY.ref(2, s1).get();
+    v1 = MEMORY.ref(2, s1).getSigned();
     long s6 = a0_0 + t2;
 
     if((a1_0 & 0xfL) != 0) {
@@ -1495,7 +1495,7 @@ public final class Scus94491BpeSegment_8002 {
     s3 -= s0_0;
 
     long a3;
-    if((int)(v1 << 16) == 0) {
+    if((int)v1 == 0) {
       rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, 256L);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
@@ -1786,7 +1786,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022a10L)
   public static long FUN_80022a10(final int charIndex) {
-    if(charIndex == -0x1L) {
+    if(charIndex == -1) {
       return 0;
     }
 
@@ -1845,29 +1845,33 @@ public final class Scus94491BpeSegment_8002 {
     return v1 & 0x12L;
   }
 
+  /**
+   * @param amount Amount of HP to restore, -1 restores all hP
+   * @return The amount of HP restored, -1 if all HP is restored, or -2 if HP was already full
+   */
   @Method(0x80022b50L)
-  public static long FUN_80022b50(final int charIndex, final long a1) {
+  public static int addHp(final int charIndex, final int amount) {
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
     final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
     if(charData.hp_08.get() == stats.maxHp_66.get()) {
-      return -0x2L;
+      return -2;
     }
 
     //LAB_80022bb4
-    long s0;
-    if((int)a1 == -0x1L) {
+    final int ret;
+    if(amount == -1) {
       charData.hp_08.set(stats.maxHp_66.get());
-      s0 = -0x1L;
+      ret = -1;
     } else {
       //LAB_80022bc8
-      charData.hp_08.add((int)a1);
+      charData.hp_08.add(amount);
 
       if(charData.hp_08.get() < stats.maxHp_66.get()) {
-        s0 = a1;
+        ret = amount;
       } else {
         charData.hp_08.set(stats.maxHp_66.get());
-        s0 = -0x1L;
+        ret = -1;
       }
     }
 
@@ -1875,12 +1879,12 @@ public final class Scus94491BpeSegment_8002 {
     FUN_80110030(0);
 
     //LAB_80022bf8
-    return s0;
+    return ret;
   }
 
   /**
    * @param amount Amount of MP to restore, -1 restores all MP
-   * @return The amount of MP restored, or -1 if all MP is restored
+   * @return The amount of MP restored, -1 if all MP is restored, or -2 if MP was already full
    */
   @Method(0x80022c08L)
   public static int addMp(final int charIndex, final int amount) {
@@ -1926,7 +1930,6 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_80022d88(long a0, long a1, final int charIndex) {
     long v0;
     long v1;
-    long s3 = a0;
     long s1 = a1;
     long s0 = s1 & 0xffL;
 
@@ -1939,10 +1942,10 @@ public final class Scus94491BpeSegment_8002 {
 
     if(FUN_80022afc(s0) == 0) {
       //LAB_80022dd8
-      memcpy(s3, sp0x10.address, 0x30);
+      memcpy(a0, sp0x10.address, 0x30);
       sp0x10.release();
 
-      return s3;
+      return a0;
     }
 
     //LAB_80022e0c
@@ -1959,10 +1962,10 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80022e54
       //LAB_80022e60
-      memcpy(s3, sp0x10.address, 0x30);
+      memcpy(a0, sp0x10.address, 0x30);
       sp0x10.release();
 
-      return s3;
+      return a0;
     }
 
     //LAB_80022e94
@@ -1979,15 +1982,15 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80022edc
       sp10.setu(v1);
 
-      if(s1 == 0x64L) {
-        v0 = -0x1L;
+      if(s1 == 100) {
+        v0 = -1;
       } else {
         //LAB_80022ef0
-        v0 = stats_800be5f8.get(charIndex).maxHp_66.get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = stats_800be5f8.get(charIndex).maxHp_66.get() * s1 / 100;
       }
 
       //LAB_80022f3c
-      sp14.setu(FUN_80022b50(charIndex, v0));
+      sp14.setu(addHp(charIndex, (int)v0));
     }
 
     //LAB_80022f50
@@ -2003,11 +2006,11 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80022f98
       sp10.setu(v1);
 
-      if(s1 == 0x64L) {
-        v0 = -0x1L;
+      if(s1 == 100) {
+        v0 = -1;
       } else {
         //LAB_80022fac
-        v0 = stats_800be5f8.get(charIndex).maxMp_6e.get() * MEMORY.ref(1, a1).offset(0x9L).get() / 100;
+        v0 = stats_800be5f8.get(charIndex).maxMp_6e.get() * s1 / 100;
       }
 
       //LAB_80022ff8
@@ -2018,10 +2021,10 @@ public final class Scus94491BpeSegment_8002 {
     if((_8004f2ac.offset(s0 * 0xcL).offset(0xbL).get() & 0x20L) != 0) {
       sp10.setu(0x6L);
 
-      if(s1 == 0x64L) {
-        v0 = -0x1L;
+      if(s1 == 100) {
+        v0 = -1;
       } else {
-        v0 = _8004f2ac.offset(s0 * 0xcL).offset(0x9L).get();
+        v0 = s1;
       }
 
       //LAB_80023050
@@ -2045,20 +2048,21 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800230f0
     //LAB_800230fc
-    memcpy(s3, sp0x10.address, 0x30);
+    memcpy(a0, sp0x10.address, 0x30);
     sp0x10.release();
 
     //LAB_8002312c
-    return s3;
+    return a0;
   }
 
+  /** Recalculates item/equipment counts and removes invalid entries */
   @Method(0x80023148L)
-  public static void FUN_80023148() {
+  public static void recalcInventory() {
     gameState_800babc8.equipmentCount_1e4.set((short)0);
 
     //LAB_80023164
     while(gameState_800babc8.equipment_1e8.get(gameState_800babc8.equipmentCount_1e4.get()).get() != 0xff) {
-      if(gameState_800babc8.equipmentCount_1e4.get() >= 0xff) {
+      if(gameState_800babc8.equipmentCount_1e4.get() >= 255) {
         break;
       }
 
@@ -2067,7 +2071,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023198
     //LAB_800231c0
-    for(int i = gameState_800babc8.equipmentCount_1e4.get(); i <= 0x100; i++) {
+    for(int i = gameState_800babc8.equipmentCount_1e4.get(); i <= 256; i++) {
       gameState_800babc8.equipment_1e8.get(i).set(0xff);
     }
 
@@ -2076,7 +2080,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800231f0
     while(gameState_800babc8.items_2e9.get(gameState_800babc8.itemCount_1e6.get()).get() != 0xff) {
-      if(gameState_800babc8.itemCount_1e6.get() >= 0x20) {
+      if(gameState_800babc8.itemCount_1e6.get() >= 32) {
         break;
       }
 
@@ -2085,7 +2089,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023224
     //LAB_80023248
-    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= 0x20; i++) {
+    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= 32; i++) {
       gameState_800babc8.items_2e9.get(i).set(0xff);
     }
 
@@ -2110,37 +2114,34 @@ public final class Scus94491BpeSegment_8002 {
 
   /** Pretty sure this moves all the items in the inv up one when you use one */
   @Method(0x800232dcL)
-  public static long FUN_800232dc(final long a0) {
-    FUN_80023148();
+  public static int FUN_800232dc(final int itemIndex) {
+    recalcInventory();
 
-    final long a2 = gameState_800babc8.getAddress();
-
-    if(MEMORY.ref(2, a2).offset(0x1e6L).getSigned() == 0) {
-      return 0xffL;
+    if(gameState_800babc8.itemCount_1e6.get() == 0) {
+      return 0xff;
     }
 
-    if(a0 < 0x20L) {
-      if(MEMORY.ref(1, a2).offset(0x2e9L).offset(a0).get() == 0xffL) {
-        return 0xffL;
+    if(itemIndex < 0x20) {
+      if(gameState_800babc8.items_2e9.get(itemIndex).get() == 0xff) {
+        return 0xff;
       }
 
       //LAB_80023334
-      for(long s0 = a0; s0 < 0x1fL; s0++) {
-        MEMORY.ref(1, a2).offset(0x2e9L).offset(s0).setu(MEMORY.ref(1, a2).offset(0x2eaL).offset(s0).get());
+      for(int i = itemIndex; i < 31; i++) {
+        gameState_800babc8.items_2e9.get(i).set(gameState_800babc8.items_2e9.get(i + 1).get());
       }
 
       //LAB_80023358
-      final long v1 = gameState_800babc8.getAddress();
-      MEMORY.ref(1, v1).offset(0x308L).setu(0xffL);
-      MEMORY.ref(2, v1).offset(0x1e6L).subu(0x1L);
+      gameState_800babc8.items_2e9.get(31).set(0xff);
+      gameState_800babc8.itemCount_1e6.decr();
       return 0;
     }
 
     //LAB_8002338c
-    if(a0 >= 0xc0L) {
+    if(itemIndex >= 192) {
       //LAB_800233a4
       for(int i = 0; i < 32; i++) {
-        if(MEMORY.ref(1, a2).offset(0x2e9L).offset(i).get() == a0) {
+        if(gameState_800babc8.items_2e9.get(i).get() == itemIndex) {
           //LAB_8002337c
           return FUN_800232dc(i);
         }
@@ -2149,24 +2150,24 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800233c4
     //LAB_800233c8
-    return 0xffL;
+    return 0xff;
   }
 
   @Method(0x800233d8L)
-  public static long FUN_800233d8(final long a0) {
-    FUN_80023148();
+  public static int FUN_800233d8(final int equipmentIndex) {
+    recalcInventory();
 
     if(gameState_800babc8.equipmentCount_1e4.get() == 0) {
-      return 0xffL;
+      return 0xff;
     }
 
     //LAB_8002340c
-    if(gameState_800babc8.equipment_1e8.get((int)a0).get() == 0xffL) {
-      return 0xffL;
+    if(gameState_800babc8.equipment_1e8.get(equipmentIndex).get() == 0xff) {
+      return 0xff;
     }
 
     //LAB_80023430
-    for(int s0 = (int)a0; s0 < 0xff; s0++) {
+    for(int s0 = equipmentIndex; s0 < 0xff; s0++) {
       gameState_800babc8.equipment_1e8.get(s0).set(gameState_800babc8.equipment_1e8.get(s0 + 1).get());
     }
 
@@ -2180,44 +2181,39 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023484L)
   public static int FUN_80023484(final int itemId) {
-    FUN_80023148();
+    recalcInventory();
 
     if(itemId == 0xff) {
       return 0xff;
     }
 
-    if(itemId >= 0x100) {
+    if(itemId >= 256) {
       return 0;
     }
 
-    if(itemId < 0xc0) {
-      final int a0_0 = gameState_800babc8.equipmentCount_1e4.get();
+    if(itemId < 192) {
+      final int count = gameState_800babc8.equipmentCount_1e4.get();
 
-      if(a0_0 >= 0xff) {
+      if(count >= 255) {
         return 0xff;
       }
 
-      if(itemId < 0xffL) {
-        gameState_800babc8.equipment_1e8.get(a0_0).set(itemId);
-        gameState_800babc8.equipmentCount_1e4.incr();
-      }
-
+      gameState_800babc8.equipment_1e8.get(count).set(itemId);
+      gameState_800babc8.equipmentCount_1e4.incr();
       return 0;
     }
 
     //LAB_800234f4
-    final int a0_0 = gameState_800babc8.itemCount_1e6.get();
+    final int count = gameState_800babc8.itemCount_1e6.get();
 
-    if(a0_0 >= 0x20) {
+    if(count >= 32) {
       //LAB_8002350c
       return 0xff;
     }
 
     //LAB_80023514
-    if(itemId < 0xff) {
-      gameState_800babc8.items_2e9.get(a0_0).set(itemId);
-      gameState_800babc8.itemCount_1e6.incr();
-    }
+    gameState_800babc8.items_2e9.get(count).set(itemId);
+    gameState_800babc8.itemCount_1e6.incr();
 
     //LAB_80023530
     //LAB_80023534
@@ -3269,25 +3265,22 @@ public final class Scus94491BpeSegment_8002 {
               v0 = (int)a0 >> 2;
               MEMORY.ref(4, a2).offset(0x24L).setu(v0);
               v1 = v1 & 0x2L;
-              if(v1 == 0) {
-                MEMORY.ref(4, a2).offset(0x0L).setu(a1);
-                break;
-              }
               MEMORY.ref(4, a2).offset(0x0L).setu(a1);
-              a0 = MEMORY.ref(4, a2).offset(0x28L).get();
-              v1 = MEMORY.ref(4, a2).offset(0x38L).get();
-
-              a0 = a0 - v1;
-              lo = (int)a0 / (int)v0;
-              a0 = lo;
-              a1 = MEMORY.ref(4, a2).offset(0x3cL).get();
-              v0 = MEMORY.ref(4, a2).offset(0x2cL).get();
-              v1 = MEMORY.ref(4, a2).offset(0x24L).get();
-              v0 = v0 - a1;
-              lo = (int)v0 / (int)v1;
-              v0 = lo;
-              MEMORY.ref(4, a2).offset(0x30L).setu(a0);
-              MEMORY.ref(4, a2).offset(0x34L).setu(v0);
+              if(v1 != 0) {
+                a0 = MEMORY.ref(4, a2).offset(0x28L).get();
+                v1 = MEMORY.ref(4, a2).offset(0x38L).get();
+                a0 = a0 - v1;
+                lo = (int)a0 / (int)v0;
+                a0 = lo;
+                a1 = MEMORY.ref(4, a2).offset(0x3cL).get();
+                v0 = MEMORY.ref(4, a2).offset(0x2cL).get();
+                v1 = MEMORY.ref(4, a2).offset(0x24L).get();
+                v0 = v0 - a1;
+                lo = (int)v0 / (int)v1;
+                v0 = lo;
+                MEMORY.ref(4, a2).offset(0x30L).setu(a0);
+                MEMORY.ref(4, a2).offset(0x34L).setu(v0);
+              }
               break;
             }
           }
@@ -3462,13 +3455,11 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80025d84
         v0 = MEMORY.ref(4, a2).offset(0x8L).get();
         v0 = v0 & 0x4L;
-        if(v0 == 0) {
-          MEMORY.ref(4, a2).offset(0x0L).setu(v1);
-          break;
-        }
         MEMORY.ref(4, a2).offset(0x0L).setu(v1);
-        v0 = 0x6L;
-        MEMORY.ref(4, a2).offset(0x0L).setu(v0);
+        if(v0 != 0) {
+          v0 = 0x6L;
+          MEMORY.ref(4, a2).offset(0x0L).setu(v0);
+        }
       }
       case 3 -> {
         v1 = 0x800c_0000L;
@@ -3527,17 +3518,15 @@ public final class Scus94491BpeSegment_8002 {
           v1 = (int)v1 >> 12;
           MEMORY.ref(2, a1).offset(0x1eL).setu(v1);
           v0 = v0 - 0x1L;
-          if((int)v0 > 0) {
-            MEMORY.ref(4, a1).offset(0x10L).setu(v0);
-            break;
-          }
           MEMORY.ref(4, a1).offset(0x10L).setu(v0);
-          v0 = MEMORY.ref(4, a1).offset(0x8L).get();
-          MEMORY.ref(2, a1).offset(0x1eL).setu(0);
-          MEMORY.ref(2, a1).offset(0x1cL).setu(0);
-          MEMORY.ref(4, a1).offset(0x0L).setu(0);
-          v0 = v0 ^ 0x1L;
-          MEMORY.ref(4, a1).offset(0x8L).setu(v0);
+          if((int)v0 <= 0) {
+            v0 = MEMORY.ref(4, a1).offset(0x8L).get();
+            MEMORY.ref(2, a1).offset(0x1eL).setu(0);
+            MEMORY.ref(2, a1).offset(0x1cL).setu(0);
+            MEMORY.ref(4, a1).offset(0x0L).setu(0);
+            v0 = v0 ^ 0x1L;
+            MEMORY.ref(4, a1).offset(0x8L).setu(v0);
+          }
           break;
         }
 
@@ -3553,7 +3542,6 @@ public final class Scus94491BpeSegment_8002 {
         v1 = v1 + v0;
         v0 = MEMORY.ref(4, v1).offset(0x0L).get();
         if(v0 != 0) {
-          v1 = 0x800c_0000L;
           break;
         }
         v1 = 0x800c_0000L;

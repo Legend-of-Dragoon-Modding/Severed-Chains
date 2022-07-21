@@ -2331,7 +2331,7 @@ public final class Bttl_800f {
         s0 = (int)FUN_800f7768(a0, a1);
         if(s0 == 0x1L) {
           if(structa4._0a.get() == 0) {
-            FUN_800232dc(((structa4._1c.get() & 0xff) - 0x40L) & 0xffL);
+            FUN_800232dc(((structa4._1c.get() & 0xff) - 0x40) & 0xff);
           }
 
           //LAB_800f545c
