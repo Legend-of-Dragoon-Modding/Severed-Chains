@@ -31,7 +31,7 @@ import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct18cb0;
-import legend.game.combat.types.BttlScriptData6c;
+import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.scriptdebugger.ScriptDebugger;
@@ -463,8 +463,8 @@ public final class Scus94491BpeSegment {
             } else {
               IoHelper.write(buf, ptr.deref().getClass().getName());
 
-              if(ptr.deref() instanceof BttlScriptData6c) {
-                final Pointer<BttlScriptData6cSubBase1> ptr1 = ((BttlScriptData6c)ptr.deref())._44;
+              if(ptr.deref() instanceof EffectManagerData6c) {
+                final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref())._44;
 
                 if(ptr1.isNull()) {
                   IoHelper.write(buf, "");
@@ -472,7 +472,7 @@ public final class Scus94491BpeSegment {
                   IoHelper.write(buf, ptr1.deref().getClass().getName());
                 }
 
-                Pointer<BttlScriptData6cSubBase2> ptr2 = ((BttlScriptData6c)ptr.deref())._58;
+                Pointer<BttlScriptData6cSubBase2> ptr2 = ((EffectManagerData6c)ptr.deref())._58;
 
                 while(!ptr2.isNull()) {
                   IoHelper.write(buf, ptr2.deref().getClass().getName());
@@ -514,8 +514,8 @@ public final class Scus94491BpeSegment {
                 }
               }).apply(MEMORY.ref(4, ptr.getPointer())));
 
-              if(BttlScriptData6c.class.equals(cls)) {
-                final BttlScriptData6c data6c = ptr.deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+              if(EffectManagerData6c.class.equals(cls)) {
+                final EffectManagerData6c data6c = ptr.deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
                 final String clsName1 = IoHelper.readString(buf);
 
@@ -6666,8 +6666,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001d068L)
-  public static void FUN_8001d068(long a0, long a1) {
-    final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleObject27c.class);
+  public static void FUN_8001d068(final int scriptIndex, final long a1) {
+    final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     unloadSoundFile(3);
     unloadSoundFile(6);
@@ -6681,10 +6681,10 @@ public final class Scus94491BpeSegment {
       } else {
         loadDrgnBinFile(0, 1328, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       }
-    } else if(a1 == 0x1L) {
+    } else if(a1 == 1) {
       //LAB_8001d164
       FUN_8001d2d8();
-    } else if(a1 == 0x2L) {
+    } else if(a1 == 2) {
       //LAB_8001d174
       loadedDrgnFiles_800bcf78.oru(0x40L);
 

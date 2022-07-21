@@ -15,7 +15,7 @@ public class BttlScriptData6cSubBase2 implements MemoryRef {
   public final UnsignedByteRef size_04;
   public final ByteRef _05;
   public final ShortRef _06;
-  public final Pointer<BiFunctionRef<BttlScriptData6c, ? extends BttlScriptData6cSubBase2, Long>> _08;
+  public final Pointer<BiFunctionRef<EffectManagerData6c, ? extends BttlScriptData6cSubBase2, Long>> _08;
 
   public BttlScriptData6cSubBase2(final Value ref) {
     this.ref = ref;

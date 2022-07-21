@@ -9,7 +9,7 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.types.ScriptState;
 
-public class BttlScriptData6c extends BattleScriptDataBase {
+public class EffectManagerData6c extends BattleScriptDataBase {
   public final UnsignedIntRef _04;
   public final UnsignedIntRef size_08;
   public final ByteRef scriptIndex_0c;
@@ -18,16 +18,18 @@ public class BttlScriptData6c extends BattleScriptDataBase {
 
   public final BttlScriptData6cInner _10;
   public final Pointer<BttlScriptData6cSubBase1> _44;
-  public final Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>> _48;
-  public final Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>> _4c;
-  public final ShortRef scriptIndex_50;
-  public final ShortRef scriptIndex_52;
-  public final ShortRef scriptIndex_54;
-  public final ShortRef scriptIndex_56;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>> _48;
+  public final Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>> destructor_4c;
+  public final ShortRef parentScriptIndex_50;
+  public final ShortRef childScriptIndex_52;
+  /** If replacing a child, this is the old child's ID */
+  public final ShortRef oldChildScriptIndex_54;
+  /** If replaced as a child, this is the new child's ID */
+  public final ShortRef newChildScriptIndex_56;
   public final Pointer<BttlScriptData6cSubBase2> _58;
   public final CString type_5c;
 
-  public BttlScriptData6c(final Value ref) {
+  public EffectManagerData6c(final Value ref) {
     super(ref);
 
     this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
@@ -39,11 +41,11 @@ public class BttlScriptData6c extends BattleScriptDataBase {
     this._10 = ref.offset(4, 0x10L).cast(BttlScriptData6cInner::new);
     this._44 = ref.offset(4, 0x44L).cast(Pointer.deferred(4, BttlScriptData6cSubBase1::new));
     this._48 = ref.offset(4, 0x48L).cast(Pointer.deferred(4, TriConsumerRef::new));
-    this._4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TriConsumerRef::new));
-    this.scriptIndex_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
-    this.scriptIndex_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
-    this.scriptIndex_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
-    this.scriptIndex_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
+    this.destructor_4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TriConsumerRef::new));
+    this.parentScriptIndex_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
+    this.childScriptIndex_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+    this.oldChildScriptIndex_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
+    this.newChildScriptIndex_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this._58 = ref.offset(4, 0x58L).cast(Pointer.deferred(4, BttlScriptData6cSubBase2::new));
     this.type_5c = ref.offset(0x10, 0x5cL).cast(CString::new);
   }

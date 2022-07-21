@@ -42,10 +42,10 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
   public final VECTOR vec_70;
 
   public final IntRef _80;
-  public final Pointer<TriConsumerRef<BttlScriptData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _84;
-  public final Pointer<QuadConsumerRef<Long, BttlScriptData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _88;
-  public final Pointer<QuadConsumerRef<BttlScriptData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94, BttlScriptData6cSub98Inner24>> _8c;
-  public final Pointer<QuadConsumerRef<Long, BttlScriptData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _90;
+  public final Pointer<TriConsumerRef<EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _84;
+  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _88;
+  public final Pointer<QuadConsumerRef<EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94, BttlScriptData6cSub98Inner24>> _8c;
+  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _90;
   public final Pointer<BttlScriptData6cSub98> _94;
 
   public BttlScriptData6cSub98(final Value ref) {

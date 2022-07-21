@@ -20,6 +20,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.Voice;
+import legend.game.combat.Bttl_800c;
 import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
@@ -273,7 +274,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1a4}</li>
    *   <li>{@link legend.game.SMap#mcqs_800c66d0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1d8}</li>
-   *   <li>{@link legend.game.combat.Bttl_800c#charCount_800c677c}</li>
+   *   <li>{@link Bttl_800c#charCount_800c677c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>
    *   <li>{@link legend.game.SMap#_800c6768}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f27c}</li>
@@ -553,86 +554,86 @@ public final class Scus94491BpeSegment_8004 {
    * </ol>
    * ...
    * <ol start="128">
-   *   <li>800cb3fc</li>
-   *   <li>800cb468</li>
-   *   <li>800cb4c8</li>
-   *   <li>800cc7d8</li>
-   *   <li>800cb534</li>
-   *   <li>800cc948</li>
-   *   <li>800cb578</li>
+   *   <li>{@link Bttl_800c#FUN_800cb3fc}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb468}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb4c8}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc7d8}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb534}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc948}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb578}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>800cb5d8</li>
+   *   <li>{@link Bttl_800c#FUN_800cb5d8}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>800cb618</li>
-   *   <li>800cb674</li>
-   *   <li>800cb6bc</li>
-   *   <li>800cb764</li>
-   *   <li>800cb76c</li>
-   *   <li>800cb9b0</li>
-   *   <li>800cb9f0</li>
-   *   <li>800cba28</li>
-   *   <li>800cba60</li>
-   *   <li>800cbabc</li>
-   *   <li>800cbb00</li>
-   *   <li>800cbc14</li>
-   *   <li>800cbde0</li>
-   *   <li>800cbef8</li>
-   *   <li>800cc0c8</li>
-   *   <li>800cc1cc</li>
-   *   <li>800cc364</li>
-   *   <li>800cc46c</li>
-   *   <li>800cc608</li>
-   *   <li>800cc698</li>
-   *   <li>800cc784</li>
-   *   <li>800cc8f4</li>
-   *   <li>800cca34</li>
+   *   <li>{@link Bttl_800c#FUN_800cb618}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb674}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb6bc}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb764}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb76c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb9b0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb9f0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cba28}</li>
+   *   <li>{@link Bttl_800c#FUN_800cba60}</li>
+   *   <li>{@link Bttl_800c#FUN_800cbabc}</li>
+   *   <li>{@link Bttl_800c#FUN_800cbb00}</li>
+   *   <li>{@link Bttl_800c#FUN_800cbc14}</li>
+   *   <li>{@link Bttl_800c#FUN_800cbde0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cbef8}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc0c8}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc1cc}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc364}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc46c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc608}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc698}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc784}</li>
+   *   <li>{@link Bttl_800c#FUN_800cc8f4}</li>
+   *   <li>{@link Bttl_800c#FUN_800cca34}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>800ccb3c</li>
-   *   <li>800ccb70</li>
-   *   <li>800ccba4</li>
-   *   <li>800cccf4</li>
-   *   <li>800ccd34</li>
-   *   <li>800cce04</li>
-   *   <li>800ccf0c</li>
-   *   <li>800ccec8</li>
-   *   <li>800ccef8</li>
-   *   <li>800ccf2c</li>
-   *   <li>800cd0ec</li>
-   *   <li>800cd078</li>
-   *   <li>800cd160</li>
-   *   <li>800cce70</li>
-   *   <li>800ccda0</li>
+   *   <li>{@link Bttl_800c#FUN_800ccb3c}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccb70}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
+   *   <li>{@link Bttl_800c#FUN_800cccf4}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccd34}</li>
+   *   <li>{@link Bttl_800c#FUN_800cce04}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccf0c}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccec8}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccef8}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccf2c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd0ec}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd078}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd160}</li>
+   *   <li>{@link Bttl_800c#FUN_800cce70}</li>
+   *   <li>{@link Bttl_800c#FUN_800ccda0}</li>
    * </ol>
    * ...
    * <ol start="320">
-   *   <li>800cc9d8</li>
+   *   <li>{@link Bttl_800c#FUN_800cc9d8}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>800cb84c</li>
-   *   <li>800cb95c</li>
+   *   <li>{@link Bttl_800c#FUN_800cb84c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cb95c}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li value="352">800cd3b4</li>
-   *   <li>800ee210</li>
-   *   <li>800cd468</li>
-   *   <li>800cd4b0</li>
-   *   <li>800cd4f0</li>
-   *   <li>800cd52c</li>
-   *   <li>800cd570</li>
-   *   <li>800cda78</li>
-   *   <li>800cd5b4</li>
-   *   <li>800cd740</li>
-   *   <li>800cd7a8</li>
-   *   <li>800cd810</li>
-   *   <li>800cd8a4</li>
-   *   <li>800cd9fc</li>
-   *   <li>800cda3c</li>
-   *   <li>800cdb18</li>
-   *   <li>800cdb44</li>
-   *   <li>800cd910</li>
-   *   <li>800cd958</li>
-   *   <li>800cd998</li>
-   *   <li>800cdb74</li>
+   *   <li value="352">{@link Bttl_800c#FUN_800cd3b4}</li>
+   *   <li>{@link Bttl_800e#FUN_800ee210}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd468}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd4b0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd4f0}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd52c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd570}</li>
+   *   <li>{@link Bttl_800c#FUN_800cda78}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd5b4}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd740}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd7a8}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd810}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd8a4}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd9fc}</li>
+   *   <li>{@link Bttl_800c#FUN_800cda3c}</li>
+   *   <li>{@link Bttl_800c#FUN_800cdb18}</li>
+   *   <li>{@link Bttl_800c#FUN_800cdb44}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd910}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd958}</li>
+   *   <li>{@link Bttl_800c#FUN_800cd998}</li>
+   *   <li>{@link Bttl_800c#FUN_800cdb74}</li>
    * </ol>
    * ...
    * <ol start="1023">

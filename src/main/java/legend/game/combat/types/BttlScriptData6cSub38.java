@@ -30,7 +30,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef _29;
   public final UnsignedByteRef _2a;
 
-  public final Pointer<QuadConsumerRef<BttlScriptData6c, BttlScriptData6cSub38, BttlScriptData6cSub38Sub14, Integer>> callback_2c;
+  public final Pointer<QuadConsumerRef<EffectManagerData6c, BttlScriptData6cSub38, BttlScriptData6cSub38Sub14, Integer>> callback_2c;
 
   public final Pointer<UnboundedArrayRef<BttlScriptData6cSub38Sub14>> _34;
 

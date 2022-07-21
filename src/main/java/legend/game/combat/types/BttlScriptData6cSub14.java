@@ -16,7 +16,7 @@ public class BttlScriptData6cSub14 extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef _0d;
   public final UnsignedByteRef _0e;
 
-  public final Pointer<QuadConsumerRef<BttlScriptData6c, Long, long[], BttlScriptData6cSub14>> renderer_10;
+  public final Pointer<QuadConsumerRef<EffectManagerData6c, Long, long[], BttlScriptData6cSub14>> renderer_10;
 
   public BttlScriptData6cSub14(final Value ref) {
     super(ref);

@@ -35,8 +35,12 @@ import legend.game.combat.types.BattleRenderStruct;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BattleStruct1a8_c;
+import legend.game.combat.types.BattleStruct24_2;
+import legend.game.combat.types.BattleStruct3c;
+import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.BttlScriptData6c;
+import legend.game.combat.types.DeffFile;
+import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.BttlScriptData6cSub14;
 import legend.game.combat.types.BttlScriptData6cSub3c;
 import legend.game.combat.types.BttlScriptData6cSub3cSub2c;
@@ -174,7 +178,7 @@ import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
-import static legend.game.combat.Bttl_800e.FUN_800e80c4;
+import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.FUN_800e8ffc;
 import static legend.game.combat.Bttl_800e.FUN_800e9120;
 import static legend.game.combat.Bttl_800e.FUN_800eb9ac;
@@ -287,14 +291,13 @@ public final class Bttl_800c {
   public static final Pointer<ArrayRef<BttlLightStruct84>> lights_800c692c = MEMORY.ref(4, 0x800c692cL, Pointer.deferred(4, ArrayRef.of(BttlLightStruct84.class, 3, 0x84, BttlLightStruct84::new)));
   public static final Value _800c6930 = MEMORY.ref(4, 0x800c6930L);
 
-  public static final Value _800c6938 = MEMORY.ref(4, 0x800c6938L);
-  /** TODO struct ptr */
-  public static final Value _800c693c = MEMORY.ref(4, 0x800c693cL);
+  public static final Pointer<BattleStruct24_2> _800c6938 = MEMORY.ref(4, 0x800c6938L, Pointer.deferred(4, BattleStruct24_2::new));
+  public static final Pointer<BattleStruct7cc> struct7cc_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, BattleStruct7cc::new));
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
   public static final Value _800c6944 = MEMORY.ref(4, 0x800c6944L);
   public static final Value _800c6948 = MEMORY.ref(4, 0x800c6948L);
 
-  public static final Value _800c6950 = MEMORY.ref(4, 0x800c6950L);
+  public static final Pointer<DeffFile> deff_800c6950 = MEMORY.ref(4, 0x800c6950L, Pointer.deferred(4, DeffFile::new));
 
   public static final Value _800c6958 = MEMORY.ref(4, 0x800c6958L);
   public static final Value _800c695c = MEMORY.ref(2, 0x800c695cL);
@@ -335,8 +338,7 @@ public final class Bttl_800c {
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
   public static final Value _800c6c3c = MEMORY.ref(2, 0x800c6c3cL);
 
-  /** TODO array of 0x3c-byte structs */
-  public static final Value _800c6c40 = MEMORY.ref(2, 0x800c6c40L);
+  public static final ArrayRef<BattleStruct3c> _800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleStruct3c.class, 3, 0x3c, BattleStruct3c::new));
 
   public static final Value _800c6cf4 = MEMORY.ref(4, 0x800c6cf4L);
 
@@ -350,7 +352,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d15d8}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<BttlScriptData6c>, BttlScriptData6c>>> _800c6dc4 = MEMORY.ref(4, 0x800c6dc4L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
+  public static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>>> _800c6dc4 = MEMORY.ref(4, 0x800c6dc4L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
 
   public static final GsF_LIGHT light_800c6ddc = MEMORY.ref(4, 0x800c6ddcL, GsF_LIGHT::new);
 
@@ -456,7 +458,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d21b8}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuadConsumerRef<BttlScriptData6c, Long, long[], BttlScriptData6cSub14>>> effectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(BttlScriptData6c.class, long.class, long[].class, BttlScriptData6cSub14.class)), 5, 4, Pointer.deferred(4, QuadConsumerRef::new)));
+  public static final ArrayRef<Pointer<QuadConsumerRef<EffectManagerData6c, Long, long[], BttlScriptData6cSub14>>> effectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(EffectManagerData6c.class, long.class, long[].class, BttlScriptData6cSub14.class)), 5, 4, Pointer.deferred(4, QuadConsumerRef::new)));
 
   public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
@@ -726,7 +728,7 @@ public final class Bttl_800c {
 
   public static final Value _800fb05c = MEMORY.ref(1, 0x800fb05cL);
 
-  public static final Value _800fb064 = MEMORY.ref(1, 0x800fb064L);
+  public static final Value stageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L);
 
   public static final ArrayRef<UnsignedByteRef> _800fb148 = MEMORY.ref(1, 0x800fb148L, ArrayRef.of(UnsignedByteRef.class, 0x40, 1, UnsignedByteRef::new));
 
@@ -1045,12 +1047,12 @@ public final class Bttl_800c {
         _800bc974.setu(0x2L);
       } else {
         //LAB_800c7c98
-        final long a1 = FUN_800c7e24();
-        _800c66bc.setu(a1);
+        final int scriptIndex = FUN_800c7e24();
+        _800c66bc.setu(scriptIndex);
 
-        if((int)a1 >= 0) {
-          scriptStatePtrArr_800bc1c0.get((int)a1).deref().ui_60.or(0x1008L).and(0xffff_ffdfL);
-          _800c66c8.setu(a1);
+        if(scriptIndex >= 0) {
+          scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().ui_60.or(0x1008L).and(0xffff_ffdfL);
+          _800c66c8.setu(scriptIndex);
         } else {
           //LAB_800c7ce8
           if((int)_800c6758.get() > 0) {
@@ -1100,19 +1102,19 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7e24L)
-  public static long FUN_800c7e24() {
+  public static int FUN_800c7e24() {
     //LAB_800c7e54
     for(int i = 0; i < _800c669c.get(); i++) {
-      final long v1 = _8006e398.offset(4, 0xe78L).offset(i * 0x4L).get();
-      if((scriptStatePtrArr_800bc1c0.get((int)v1).deref().ui_60.get() & 0x20L) != 0) {
-        return v1;
+      final int scriptIndex = (int)_8006e398.offset(4, 0xe78L).offset(i * 0x4L).get();
+      if((scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().ui_60.get() & 0x20L) != 0) {
+        return scriptIndex;
       }
 
       //LAB_800c7e8c
     }
 
     //LAB_800c7e98
-    return -0x1L;
+    return -1;
   }
 
   @Method(0x800c7ea0L)
@@ -2734,6 +2736,12 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cba28L)
+  public static long FUN_800cba28(final RunningScript a0) {
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._1e4.set(1);
+    return 0;
+  }
+
   @Method(0x800cba60L)
   public static long FUN_800cba60(final RunningScript a0) {
     //LAB_800cbab0
@@ -3095,7 +3103,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void FUN_800cdcec(final BigStruct a0, final int a1, final VECTOR a2, final VECTOR a3, final BttlScriptData6c a4, final UnsignedShortRef a5, final UnsignedShortRef a6) {
+  public static void FUN_800cdcec(final BigStruct a0, final int a1, final VECTOR a2, final VECTOR a3, final EffectManagerData6c a4, final UnsignedShortRef a5, final UnsignedShortRef a6) {
     short t4 = 0x7fff;
     short t3 = -1;
     int t7 = 0;
@@ -3170,7 +3178,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cde94L) // BttlScriptData6cSub3c
-  public static void FUN_800cde94(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+  public static void FUN_800cde94(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     long v1;
     long a0;
     long a1;
@@ -3264,7 +3272,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce254L)
-  public static void FUN_800ce254(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+  public static void FUN_800ce254(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     long s5;
     long s6;
 
@@ -3359,14 +3367,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce678L)
-  public static void FUN_800ce678(final int index, final ScriptState<BttlScriptData6c> state, final BttlScriptData6c data) {
+  public static void FUN_800ce678(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub3c.class)._34.getPointer());
   }
 
   @Method(0x800ce6a8L)
   public static long FUN_800ce6a8(final RunningScript a0) {
-    final int s4 = FUN_800e80c4(a0.scriptStateIndex_00.get(), 0x3cL, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce254", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cde94", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce678", int.class, ScriptState.classFor(BttlScriptData6c.class), BttlScriptData6c.class), TriConsumerRef::new), BttlScriptData6cSub3c::new);
-    final BttlScriptData6c s1 = scriptStatePtrArr_800bc1c0.get(s4).deref().innerStruct_00.derefAs(BttlScriptData6c.class);
+    final int s4 = allocateEffectManager(a0.scriptStateIndex_00.get(), 0x3cL, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce254", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cde94", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce678", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), BttlScriptData6cSub3c::new);
+    final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(s4).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub3c s0 = s1._44.derefAs(BttlScriptData6cSub3c.class);
     s0._34.setPointer(addToLinkedListTail(0x2c * 65));
 
@@ -3390,7 +3398,7 @@ public final class Bttl_800c {
     final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(a0_0.magic_00.get() == BattleScriptDataBase.EM__) {
-      s0._30.set(MEMORY.ref(4, ((BttlScriptData6c)a0_0)._44.getPointer() + 0x10, BigStruct::new)); //TODO
+      s0._30.set(MEMORY.ref(4, ((EffectManagerData6c)a0_0)._44.getPointer() + 0x10, BigStruct::new)); //TODO
     } else {
       //LAB_800ce7f8
       s0._30.set(((BattleObject27c)a0_0)._148);
@@ -3403,7 +3411,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce83cL)
   public static void FUN_800ce83c(final long a0, long a1) {
-    final long v1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BttlScriptData6c.class)._44.getPointer(); //TODO
+    final long v1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.getPointer(); //TODO
     a1 = a1 * 0x4L;
     if((a1 & 0xffL) > 0x40L) {
       a1 = 0x40L;
@@ -3426,7 +3434,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce9b0L)
   public static long FUN_800ce9b0(final RunningScript a0) {
-    final BttlScriptData6cSub44 a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BttlScriptData6c.class)._44.derefAs(BttlScriptData6cSub44.class);
+    final BttlScriptData6cSub44 a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub44.class);
     FUN_800ce880(a1.vec_10, a1.vec_20, a0.params_20.get(2).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
@@ -3439,7 +3447,7 @@ public final class Bttl_800c {
     final VECTOR s0;
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
       //LAB_800cea78
-      s0 = ((BttlScriptData6c)data)._10.vec_04;
+      s0 = ((EffectManagerData6c)data)._10.vec_04;
     } else {
       s0 = ((BattleObject27c)data)._148.coord2_14.coord.transfer;
     }
@@ -3477,7 +3485,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf37cL)
-  public static void FUN_800cf37c(final BttlScriptData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf37c(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
     final VECTOR sp0x10 = new VECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
@@ -3512,7 +3520,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf4f4L)
-  public static void FUN_800cf4f4(final BttlScriptData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
     final VECTOR sp0x10 = new VECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
@@ -3630,14 +3638,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final BttlScriptData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cfb14(final EffectManagerData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10);
     final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
     return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
   }
 
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final BttlScriptData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cfb94(final EffectManagerData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10).add(a1);
     final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
@@ -3657,7 +3665,7 @@ public final class Bttl_800c {
 
     final BigStruct v0;
     if(a0.magic_00.get() == BattleScriptDataBase.EM__) {
-      v0 = MEMORY.ref(4, ((BttlScriptData6c)a0)._44.getPointer() + 0x10L, BigStruct::new); //TODO
+      v0 = MEMORY.ref(4, ((EffectManagerData6c)a0)._44.getPointer() + 0x10L, BigStruct::new); //TODO
     } else {
       //LAB_800cfd34
       v0 = ((BattleObject27c)a0)._148;

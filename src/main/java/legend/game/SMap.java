@@ -6563,7 +6563,7 @@ public final class SMap {
 
     //LAB_800e5430
     loadEnvironment(mrg.getFile(0, EnvironmentFile::new));
-    FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), (int)mrg.entries.get(2).size.get(), mrg.getFile(1), mrg.entries.get(1).size.get());
+    FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), (int)mrg.entries.get(2).size.get(), mrg.getFile(1, UnboundedArrayRef.of(0xc, SomethingStruct2::new)), mrg.entries.get(1).size.get());
 
     DrawSync(0);
 
@@ -8040,11 +8040,11 @@ public final class SMap {
   }
 
   @Method(0x800e8990L)
-  public static long FUN_800e8990(final long x, final long y) {
+  public static int FUN_800e8990(final int x, final int z) {
     final SVECTOR vec = new SVECTOR();
 
-    long farthestIndex = 0;
-    long farthest = 0x7fff_ffffL;
+    int farthestIndex = 0;
+    int farthest = 0x7fff_ffff;
     final SomethingStruct struct = SomethingStructPtr_800d1a88.deref();
 
     //LAB_800e89b8
@@ -8058,7 +8058,7 @@ public final class SMap {
       } else {
         //LAB_800e89f8
         final SomethingStruct2 struct2 = struct.ptr_14.deref().get(i);
-        final long t1 = struct2.ptr_04.get() + struct.primitives_10.get() + 0x6L;
+        final long t1 = struct.primitives_10.get() + struct2.ptr_04.get() + 0x6L;
 
         vec.setX((short)0);
         vec.setY((short)0);
@@ -8067,9 +8067,7 @@ public final class SMap {
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
           final long a0_0 = struct.verts_04.get() + MEMORY.ref(2, t1).offset(t0 * 0x2L).get() * 0x8L;
-          vec.x.add((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
-          vec.y.add((short)MEMORY.ref(2, a0_0).offset(0x2L).get());
-          vec.z.add((short)MEMORY.ref(2, a0_0).offset(0x4L).get());
+          vec.add((SVECTOR)MEMORY.ref(2, a0_0, SVECTOR::new));
         }
 
         //LAB_800e8a9c
@@ -8077,9 +8075,9 @@ public final class SMap {
       }
 
       //LAB_800e8ae4
-      final long dx = x - vec.getX();
-      final long dy = y - vec.getZ();
-      final long distSqr = dx * dx + dy * dy;
+      final int dx = x - vec.getX();
+      final int dz = z - vec.getZ();
+      final int distSqr = dx * dx + dz * dz;
       if(distSqr < farthest) {
         farthest = distSqr;
         farthestIndex = i;
@@ -8093,11 +8091,11 @@ public final class SMap {
   }
 
   @Method(0x800e8b40L)
-  public static void FUN_800e8b40(final SomethingStruct a0, final long a1) {
+  public static void FUN_800e8b40(final SomethingStruct a0, final UnboundedArrayRef<SomethingStruct2> a1) {
     final int count = (int)a0.count_0c.get();
 
-    memcpy(SomethingStruct2Arr_800cbe78.getAddress(), a1, count * 0xc);
-    memcpy(_800cca78.getAddress(), a1 + count * 0xcL, count * 0x40);
+    memcpy(SomethingStruct2Arr_800cbe78.getAddress(), a1.getAddress(), count * 0xc);
+    memcpy(_800cca78.getAddress(), a1.get(count).getAddress(), count * 0x40);
 
     a0.ptr_14.set(SomethingStruct2Arr_800cbe78);
     a0.ptr_18.set(_800cca78.getAddress());
@@ -8129,7 +8127,7 @@ public final class SMap {
   }
 
   @Method(0x800e8cd0L)
-  public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final long a2, final long a3) {
+  public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final UnboundedArrayRef<SomethingStruct2> a2, final long a3) {
     SomethingStructPtr_800d1a88.set(SomethingStruct_800cbe08);
     SomethingStruct_800cbe08.dobj2Ptr_20.set(GsDOBJ2_800cbdf8);
     SomethingStruct_800cbe08.coord2Ptr_24.set(GsCOORDINATE2_800cbda8);
@@ -8281,9 +8279,12 @@ public final class SMap {
 
   /** TODO collision? */
   @Method(0x800e9430L) //TODO this is almost definitely wrong
-  public static long FUN_800e9430(long a0, long a1, long a2, long a3, SVECTOR playerMovement) {
+  public static long FUN_800e9430(long a0, final int x, final int y, final int z, final SVECTOR playerMovement) {
     long v0;
     long v1;
+    long a1;
+    long a2;
+    long a3;
     long t0;
     long t3;
     long t4;
@@ -8304,10 +8305,6 @@ public final class SMap {
     long sp38 = 0; //TODO was uninitialized
     long sp3c;
 
-    int fp = (int)a1;
-    long sp78 = a2;
-    int sp7c = (int)a3;
-
     if(_800cb430.get() != 0xcL) {
       return -0x1L;
     }
@@ -8326,10 +8323,10 @@ public final class SMap {
     }
 
     //LAB_800e94ec
-    s6 = (int)(a1 + playerMovement.getX());
-    sp3c = a2;
-    s5 = (int)(a3 + playerMovement.getZ());
-    t6 = a2 - 0x14L;
+    s6 = x + playerMovement.getX();
+    sp3c = y;
+    s5 = z + playerMovement.getZ();
+    t6 = y - 20;
     t0 = 0;
     long t1;
     long t2 = _800cbe48.getAddress();
@@ -8343,7 +8340,7 @@ public final class SMap {
         //LAB_800e9594
         v0 = 0x1L;
         for(a2 = 0; a2 < a1; a2++) {
-          if(MEMORY.ref(2, a0).offset(0x0L).getSigned() * fp + MEMORY.ref(2, a0).offset(0x2L).getSigned() * sp7c + MEMORY.ref(4, a0).offset(0x4L).getSigned() < 0) {
+          if(MEMORY.ref(2, a0).offset(0x0L).getSigned() * x + MEMORY.ref(2, a0).offset(0x2L).getSigned() * z + MEMORY.ref(4, a0).offset(0x4L).getSigned() < 0) {
             //LAB_800e9604
             v0 = 0;
             break;
@@ -8378,7 +8375,7 @@ public final class SMap {
         //LAB_800e965c
         for(int i = 0; i < t0; i++) {
           a2 = _800cbe48.offset(i * 0x4L).get();
-          v1 = (-MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x0L).getSigned() * fp - MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x4L).getSigned() * sp7c - struct.ptr_14.deref().get((int)a2)._08.get()) / MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x2L).getSigned() - t6;
+          v1 = (-MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x0L).getSigned() * x - MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x4L).getSigned() * z - struct.ptr_14.deref().get((int)a2)._08.get()) / MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x2L).getSigned() - t6;
 
           if((int)v1 > 0 && (int)v1 < (int)t1) {
             t2 = a2;
@@ -8402,7 +8399,7 @@ public final class SMap {
 
     //LAB_800e9710
     if((int)s4 < 0) {
-      s4 = FUN_800e8990(fp, sp7c);
+      s4 = FUN_800e8990(x, z);
 
       if(_800f7f14.get() != 0 && (int)s4 >= 0 && (int)s4 < SomethingStructPtr_800d1a88.deref().count_0c.get()) {
         v0 = 1;
@@ -8433,8 +8430,8 @@ public final class SMap {
       }
 
       //LAB_800e9870
-      playerMovement.setX((short)(sp0x28.getX() - fp));
-      playerMovement.setY((short)(sp0x28.getZ() - sp7c));
+      playerMovement.setX((short)(sp0x28.getX() - x));
+      playerMovement.setZ((short)(sp0x28.getZ() - z));
 
       a1 = SomethingStructPtr_800d1a88.deref().normals_08.get() + s4 * 0x8L;
       playerMovement.setY((short)((-MEMORY.ref(2, a1).offset(0x0L).getSigned() * sp0x28.getX() - MEMORY.ref(2, a1).offset(0x4L).getSigned() * sp0x28.getZ() - SomethingStructPtr_800d1a88.deref().ptr_14.deref().get((int)s4)._08.get()) / MEMORY.ref(2, a1).offset(0x2L).getSigned()));
@@ -8545,7 +8542,7 @@ public final class SMap {
           a0 = SomethingStructPtr_800d1a88.deref().normals_08.get() + s3 * 0x8L;
           a1 = SomethingStructPtr_800d1a88.deref().ptr_14.getPointer() + s3 * 0xcL;
 
-          v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (fp + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (sp7c + playerMovement.getZ()) - MEMORY.ref(4, a1).offset(0x8L).get();
+          v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (x + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (z + playerMovement.getZ()) - MEMORY.ref(4, a1).offset(0x8L).get();
 
           //LAB_800e9e64
           playerMovement.setY((short)((int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned()));
@@ -8571,13 +8568,13 @@ public final class SMap {
       t1 = SomethingStructPtr_800d1a88.deref().ptr_14.deref().get((int)s4).count_00.get();
 
       //LAB_800e9ca0
+      a1 = -0x1L;
       for(a2 = 1; a2 < 4; a2++) {
-        t0 = fp + playerMovement.getX() * a2;
-        a3 = sp7c + playerMovement.getZ() * a2;
+        t0 = x + playerMovement.getX() * a2;
+        a3 = z + playerMovement.getZ() * a2;
         a0 = t3 + SomethingStructPtr_800d1a88.deref().ptr_14.deref().get((int)s4)._02.get() * 0xcL;
 
         //LAB_800e9ce8
-        a1 = -0x1L;
         for(long a1_0 = 0; a1_0 < t1; a1_0++) {
           if(MEMORY.ref(4, a0).offset(0x8L).get() != 0) {
             v0 = MEMORY.ref(2, a0).offset(0x0L).getSigned() * t0 + MEMORY.ref(2, a0).offset(0x2L).getSigned() * a3 + MEMORY.ref(4, a0).offset(0x4L).getSigned() >> 10;
@@ -8604,7 +8601,7 @@ public final class SMap {
 
         //LAB_800e9e7c
         v1 = SomethingStructPtr_800d1a88.deref().ptr_18.get() + SomethingStructPtr_800d1a88.deref().ptr_14.deref().get((int)s2)._02.get() * 0xcL + a1 * 0xcL;
-        s3 = ratan2(s5 - sp7c, s6 - fp);
+        s3 = ratan2(s5 - z, s6 - x);
         s0 = ratan2((int)-MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
         v1 = Math.abs(s3 - s0);
         if((int)v1 >= 0x801L) {
@@ -8667,19 +8664,19 @@ public final class SMap {
 
             t7 = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
             v0 = (int)t7 >> 12;
-            s0 = fp + v0;
+            s0 = x + v0;
             v0 = rsin(sp38);
             v1 = _800cbe30.get();
 
             t7 = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
             v0 = (int)t7 >> 12;
             s1 = s1 - 0x1L;
-            t5 = sp7c + v0;
+            t5 = z + v0;
             if((int)s1 <= 0) {
               break;
             }
 
-            t6 = sp78 - 0x14L;
+            t6 = y - 20;
             t0 = 0;
             t1 = SomethingStructPtr_800d1a88.getPointer(); //TODO
 
@@ -8821,7 +8818,7 @@ public final class SMap {
 
         lo = (int)a0 / (int)v0;
         a0 = lo;
-        t7 = sp78;
+        t7 = y;
         a0 = t7 - a0;
         v0 = Math.abs(a0);
         if((int)v0 >= 0x32L) {
@@ -8836,9 +8833,9 @@ public final class SMap {
         v0 = (int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned();
 
         playerMovement.setY((short)v0);
-        v0 = sp30 - fp;
+        v0 = sp30 - x;
         playerMovement.setX((short)v0);
-        v0 = sp34 - sp7c;
+        v0 = sp34 - z;
         playerMovement.setZ((short)v0);
       } else {
         if((int)s3 < 0) {
@@ -8865,7 +8862,7 @@ public final class SMap {
         a0 = s1 + SomethingStructPtr_800d1a88.deref().normals_08.get();
         a1 = s0 + SomethingStructPtr_800d1a88.deref().ptr_14.getPointer();
 
-        v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (fp + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (sp7c + playerMovement.getZ()) - MEMORY.ref(4, a1).offset(0x8L).get();
+        v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (x + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (z + playerMovement.getZ()) - MEMORY.ref(4, a1).offset(0x8L).get();
 
         //LAB_800e9e64
         playerMovement.setY((short)((int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned()));
