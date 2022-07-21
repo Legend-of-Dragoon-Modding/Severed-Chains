@@ -2007,7 +2007,7 @@ public final class Scus94491BpeSegment {
 
       fileSize_800bb464.setu(Scus94491.decompress(transferDest_800bb460.get(), transferDest));
 
-      final long address = FUN_80012444(transferDest, fileSize_800bb464.get());
+      final long address = FUN_80012244(transferDest, fileSize_800bb464.get());
 
       //LAB_80014984
       if(address != 0) {
