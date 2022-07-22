@@ -302,6 +302,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);
   public static final Value _800bdf08 = MEMORY.ref(4, 0x800bdf08L);
 
+  public static final Value _800bdf10 = MEMORY.ref(4, 0x800bdf10L);
+
   public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
 
   public static final ArrayRef<Struct84> _800bdf38 = MEMORY.ref(4, 0x800bdf38L, ArrayRef.of(Struct84.class, 8, 0x84, Struct84::new));
