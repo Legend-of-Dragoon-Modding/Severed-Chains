@@ -8636,7 +8636,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002ed48L)
-  public static long FUN_8002ed48(final long port, final long filename, final ArrayRef<MemcardStruct28> s7, @Nullable final Ref<Long> fileCountRef, final long a4, final long a5) {
+  public static long FUN_8002ed48(final long port, final long filename, final ArrayRef<MemcardStruct28> s7, @Nullable final Ref<Long> fileCountRef, final long minFileIndex, final long maxFiles) {
     if(activeMemcardEvent_800bf170.get() != 0) {
       LOGGER.error("Access denied: system busy");
       throw new RuntimeException("Access denied: system busy");
@@ -8654,7 +8654,7 @@ public final class Scus94491BpeSegment_8002 {
     long fileCount = 0;
 
     //LAB_8002ee08
-    for(int i = 0; i < a4 + a5; i++) {
+    for(int i = 0; i < minFileIndex + maxFiles; i++) {
       final Memory.TemporaryReservation sp0x30tmp = MEMORY.temp(0x34);
       final DIRENTRY dir = sp0x30tmp.get().cast(DIRENTRY::new);
 
@@ -8671,11 +8671,7 @@ public final class Scus94491BpeSegment_8002 {
 
             if(getMemcardState(FUN_8002fdc0()) == 0) {
               //LAB_8002eee0
-              if(s0_0 == null) {
-                break;
-              }
-
-              break jump_8002eee8;
+              break;
             }
           }
 
@@ -8714,12 +8710,10 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002eee8
-      if(i >= (int)a4) {
-        if(s7 != null) {
-          //LAB_8002eefc
-          memcpy(s7.get((int)fileCount).getAddress(), dir.getAddress(), 0x28);
-          fileCount++;
-        }
+      if(i >= (int)minFileIndex) {
+        //LAB_8002eefc
+        memcpy(s7.get((int)fileCount).getAddress(), dir.getAddress(), 0x28);
+        fileCount++;
       }
 
       sp0x30tmp.release();
