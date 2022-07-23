@@ -2,7 +2,7 @@
   <configuration default="false" name="game" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
     <module name="lod-game.main" />
-    <option name="VM_PARAMETERS" value="-Xms512m -Xmx512m -ea -Dscriptdebug=true -Dscriptlog=false" />
+    <option name="VM_PARAMETERS" value="-Xms512m -Xmx512m -ea -Dscriptdebug=true -Dscriptlog=false -Dentrypoint=legend.game.Scus94491" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
