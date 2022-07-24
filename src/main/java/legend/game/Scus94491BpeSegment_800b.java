@@ -526,7 +526,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value memcardPos_800bf188 = MEMORY.ref(4, 0x800bf188L);
   public static final Value memcardLength_800bf18c = MEMORY.ref(4, 0x800bf18cL);
   public static final Value memcardDest_800bf190 = MEMORY.ref(4, 0x800bf190L);
-
+  public static final CString memcardFilename_800bf194 = MEMORY.ref(0x20, 0x800bf194L, CString::new);
   public static final Pointer<BiConsumerRef<Long, Long>> _800bf1b4 = MEMORY.ref(4, 0x800bf1b4L, Pointer.of(4, BiConsumerRef::new));
   public static final Value _800bf1b8 = MEMORY.ref(4, 0x800bf1b8L);
   public static final Value _800bf1bc = MEMORY.ref(4, 0x800bf1bcL);
@@ -559,6 +559,9 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef cardError8000_800bf284 = MEMORY.ref(4, 0x800bf284L, BoolRef::new);
   public static final BoolRef cardErrorBusyLow_800bf288 = MEMORY.ref(4, 0x800bf288L, BoolRef::new);
   public static final BoolRef cardError2000_800bf28c = MEMORY.ref(4, 0x800bf28cL, BoolRef::new);
+  public static final Value _800bf290 = MEMORY.ref(1, 0x800bf290L);
+  public static final Value _800bf4c0 = MEMORY.ref(1, 0x800bf4c0L);
+  public static final Value _800bf4d0 = MEMORY.ref(1, 0x800bf4d0L);
 
   public static final Value _800bf550 = MEMORY.ref(4, 0x800bf550L);
   public static final Value _800bf554 = MEMORY.ref(2, 0x800bf554L);

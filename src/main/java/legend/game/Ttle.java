@@ -700,6 +700,11 @@ public final class Ttle {
           if(selectedMenuOption_800ce774.getSigned() < 0) {
             selectedMenuOption_800ce774.setu(2);
           }
+
+          if(selectedMenuOption_800ce774.get() == 1 && hasSavedGames_800c66e4.get() != 1) {
+            selectedMenuOption_800ce774.subu(1);
+          }
+
           _800c672c.setu(2);
         }
 
@@ -710,6 +715,11 @@ public final class Ttle {
           if(selectedMenuOption_800ce774.get() > 2) {
             selectedMenuOption_800ce774.setu(0);
           }
+
+          if(selectedMenuOption_800ce774.get() == 1 && hasSavedGames_800c66e4.get() != 1) {
+            selectedMenuOption_800ce774.addu(1);
+          }
+
           _800c672c.setu(2);
         }
       } else { // Menu button X

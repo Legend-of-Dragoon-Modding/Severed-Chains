@@ -36,6 +36,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.BiFunctionRef;
+import legend.core.memory.types.CString;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -105,6 +106,8 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002f6f0;
+import static legend.game.Scus94491BpeSegment_8002.FUN_8002fdc0;
 import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -112,8 +115,12 @@ import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002._card_load;
+import static legend.game.Scus94491BpeSegment_8002._card_write;
+import static legend.game.Scus94491BpeSegment_8002.awaitMemcard;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
+import static legend.game.Scus94491BpeSegment_8002.testEvents;
 import static legend.game.Scus94491BpeSegment_8004.Lzc;
 import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
 import static legend.game.Scus94491BpeSegment_8005.CD_debug_80052f4c;
@@ -227,6 +234,9 @@ import static legend.game.Scus94491BpeSegment_8005.vsyncCallbacks_8005460c;
 import static legend.game.Scus94491BpeSegment_800b.CdlDIR_800bfda8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bf7a8;
 import static legend.game.Scus94491BpeSegment_800b.CdlPacket_800bf638;
+import static legend.game.Scus94491BpeSegment_800b._800bf290;
+import static legend.game.Scus94491BpeSegment_800b._800bf4c0;
+import static legend.game.Scus94491BpeSegment_800b._800bf4d0;
 import static legend.game.Scus94491BpeSegment_800b._800bf550;
 import static legend.game.Scus94491BpeSegment_800b._800bf554;
 import static legend.game.Scus94491BpeSegment_800b._800bf558;
@@ -331,9 +341,242 @@ public final class Scus94491BpeSegment_8003 {
 
   private static final Object[] EMPTY_OBJ_ARRAY = {};
 
+  @Method(0x80030320L)
+  public static long FUN_80030320(final int port, final String file, final long a2) {
+    long v0;
+    long v1;
+    long s0 = 0;
+    long s5 = 0;
+
+    bzero(_800bf4d0.getAddress(), 0x80);
+
+    //LAB_80030388
+    for(int i = 0; i < 8; i++) {
+      testEvents();
+      _card_read(port, 0, _800bf4d0.getAddress());
+
+      s0 = FUN_8002fdc0();
+      if(s0 == 0) {
+        break;
+      }
+
+      if(s0 == 0x4L) {
+        testEvents();
+        FUN_8002f6f0(port);
+        FUN_8002fdc0();
+      }
+
+      //LAB_800303d8
+    }
+
+    //LAB_800303e8
+    if(s0 != 0) {
+      return s0;
+    }
+
+    if(_800bf4d0.offset(1, 0x0L).get() != 'M' || _800bf4d0.offset(1, 0x1L).get() != 'C') {
+      return -0x2L;
+    }
+
+    //LAB_80030430
+    for(int sector = 0; sector < 15; sector++) {
+      _800bf4c0.offset(sector).setu(0); //1b
+      bzero(_800bf4d0.getAddress(), 0x80);
+
+      //LAB_80030458
+      for(int i = 0; i < 8; i++) {
+        testEvents();
+        _card_read(port, sector + 1, _800bf4d0.getAddress());
+
+        s0 = FUN_8002fdc0();
+        if(s0 == 0) {
+          break;
+        }
+
+        if(s0 == 0x4L) {
+          testEvents();
+          FUN_8002f6f0(port);
+          FUN_8002fdc0();
+        }
+
+        //LAB_800304a8
+      }
+
+      //LAB_800304b8
+      if(s0 != 0) {
+        return s0;
+      }
+
+      memcpy(_800bf290.offset(sector * 0x20L).getAddress(), _800bf4d0.getAddress(), 0x20);
+    }
+
+    //LAB_8003056c
+    for(int sector = 0; sector < 15; sector++) {
+      if(_800bf290.offset(sector * 0x20L).get() == 0x51L) {
+        _800bf4c0.offset(sector).setu(0x1L); //1b
+
+        v1 = sector;
+
+        //LAB_800305b0
+        while(_800bf290.offset(v1 * 0x20L).offset(2, 0x8L).get() != 0xffffL) {
+          v1 = _800bf290.offset(v1 * 0x20L).offset(2, 0x8L).get();
+
+          if(v1 >= 15) {
+            break;
+          }
+
+          _800bf4c0.offset(v1).setu(0x1L); //1b
+        }
+      }
+
+      //LAB_800305f0
+    }
+
+    //LAB_80030608
+    for(int sector = 0; sector < 15; sector++) {
+      if(_800bf4c0.offset(sector).getSigned() == 0) { //1b
+        _800bf290.offset(sector * 0x20L).setu(0xa0L);
+      }
+
+      //LAB_8003062c
+    }
+
+
+    //LAB_8003064c
+    for(int sector = 0; sector < 15; sector++) {
+      final CString str = _800bf290.offset(sector * 0x20L).offset(0xaL).cast(CString.maxLength(0x14));
+
+      if(_800bf290.offset(sector * 0x20L).get() == 0x51L && strcmp(str.get(), file) == 0) {
+        //LAB_800306ec
+        throw new RuntimeException("[%s] [%s]".formatted(str, file));
+      }
+
+      //LAB_8003067c
+    }
+
+    //LAB_80030698
+    for(int sector = 0; sector < 15; sector++) {
+      _800bf4c0.offset(sector).setu(0); //1b
+      if((_800bf290.offset(sector * 0x20L).get() & 0xf0L) == 0xa0L) {
+        s5 = s5 + 0x1L;
+      }
+
+      //LAB_800306c0
+    }
+
+    if((int)s5 < (int)a2) {
+      return -0x1L;
+    }
+
+    //LAB_80030708
+    s5 = 0;
+    v1 = 0;
+
+    //LAB_8003073c
+    for(int sector = 0; sector < 15; sector++) {
+      s0 = _800bf290.offset(sector * 0x20L).getAddress();
+
+      if((MEMORY.ref(4, s0).get() & 0xf0L) == 0xa0L) {
+        if(s5 == 0) {
+          MEMORY.ref(4, s0).setu(0x51L);
+          _800bf290.offset(sector * 0x20L).offset(4, 0x4L).setu(a2 * 0x2000L);
+          _800bf290.offset(sector * 0x20L).offset(0xaL).cast(CString.maxLength(0x14)).set(file);
+        } else {
+          //LAB_80030784
+          _800bf290.offset(v1 * 0x20L).offset(2, 0x8L).setu(sector);
+          MEMORY.ref(4, s0).setu(0x52L);
+        }
+        v1 = sector;
+
+        //LAB_8003079c
+        _800bf4c0.offset(sector).setu(0x1L); // 1b
+
+        s5++;
+        if(s5 >= (int)a2) {
+          _800bf290.offset(sector * 0x20L).offset(2, 0x8L).setu(0xffffL);
+          if(s5 >= 0x2L) {
+            MEMORY.ref(4, s0).setu(0x53L);
+          }
+          break;
+        }
+      }
+
+      //LAB_800307d4
+      s0 = s0 + 0x20L;
+    }
+
+    //LAB_800307f0
+    s5 = _800bf4d0.getAddress();
+
+    //LAB_80030808
+    for(int sector = 14; sector >= 0; sector--) {
+      if(_800bf4c0.offset(sector).getSigned() != 0) { //1b
+        bzero(s5, 0x80);
+        memcpy(s5, _800bf290.offset(sector).getAddress(), 0x20);
+
+        //LAB_800308bc
+        v0 = 0;
+        for(v1 = 0; v1 < 0x7f; v1++) {
+          v0 = v0 ^ MEMORY.ref(1, s5).offset(v1).get();
+        }
+
+        MEMORY.ref(1, s5).offset(0x80L).setu(v0);
+
+        //LAB_800308d8
+        for(int i = 0; i < 8; i++) {
+          testEvents();
+          _card_write(port, sector + 1, _800bf4d0.getAddress());
+          s0 = FUN_8002fdc0();
+          if(s0 == 0) {
+            break;
+          }
+
+          if(s0 == 0x4L) {
+            testEvents();
+            FUN_8002f6f0(port);
+            FUN_8002fdc0();
+          }
+
+          //LAB_80030928
+        }
+
+        //LAB_80030938
+        if(s0 != 0) {
+          return s0;
+        }
+      }
+
+      //LAB_80030940
+    }
+
+    //LAB_8003094c
+    for(int i = 0; i < 8; i++) {
+      testEvents();
+      _card_load(port);
+
+      s0 = awaitMemcard();
+      if(s0 == 0) {
+        return 0;
+      }
+
+      testEvents();
+      FUN_8002f6f0(port);
+      FUN_8002fdc0();
+    }
+
+    //LAB_800309a0
+    //LAB_800309a4
+    return s0;
+  }
+
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {
     functionVectorA_000000a0.run(0x28L, new Object[] {address, size});
+  }
+
+  @Method(0x80030a00L)
+  public static boolean _card_read(final int port, final int sector, final long src) {
+    return (boolean)functionVectorB_000000b0.run(0x4fL, new Object[] {port, sector, src});
   }
 
   @Method(0x80030a10L)
@@ -6680,25 +6923,23 @@ public final class Scus94491BpeSegment_8003 {
         }
       } else {
         //LAB_8003e7fc
-        final long v0 = (int)sp0x24[3] / 0x10L;
-
         //LAB_8003e87c
         if((int)sp0x24[3] >= 0) {
-          sp0x24[3] -= (int)sp0x04[3] / 0x10L;
-          sp0x04[3] -= v0;
+          sp0x24[3] -= (int)sp0x04[3] >> 4;
+          sp0x04[3] -= (int)sp0x24[3] >> 4;
         } else {
           //LAB_8003e844
-          sp0x24[3] += (int)sp0x04[3] / 0x10L;
-          sp0x04[3] += v0;
+          sp0x24[3] += (int)sp0x04[3] >> 4;
+          sp0x04[3] += (int)sp0x24[3] >> 4;
         }
 
         if((int)sp0x24[3] < 0) {
           //LAB_8003e87c
-          sp0x04[4] = sp0x04[3] + (int)sp0x24[3] / 0x10L;
-          sp0x24[4] = sp0x24[3] + (int)sp0x04[3] / 0x10L;
+          sp0x04[4] = sp0x04[3] + ((int)sp0x24[3] >> 4);
+          sp0x24[4] = sp0x24[3] + ((int)sp0x04[3] >> 4);
         } else {
-          sp0x04[4] = sp0x04[3] - (int)sp0x24[3] / 0x10L;
-          sp0x24[4] = sp0x24[3] - (int)sp0x04[3] / 0x10L;
+          sp0x04[4] = sp0x04[3] - ((int)sp0x24[3] >> 4);
+          sp0x24[4] = sp0x24[3] - ((int)sp0x04[3] >> 4);
         }
 
         //LAB_8003e890
@@ -6755,9 +6996,9 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC0(CpuRegisterType.SR, CPU.MFC0(CpuRegisterType.SR) | 0x40000000);
 
     // cop2r61 = 0x155, 61 = ZSF3 - Z3 avg scale factor (normally 1/3)
-    CPU.CTC2(341, 29);
+    CPU.CTC2(0x155, 29);
     // cop2r62 = 0x100, 62 = ZSF4 - Z4 avg scale factor (normally 1/4)
-    CPU.CTC2(256, 30);
+    CPU.CTC2(0x100, 30);
     // cop2r58 = 0x3e8, 58 = H - Projection plane distance
     CPU.CTC2(1000, 26);
     // cop2r59 = 0xffffef9e, 59 = DQA - Depth queueing param A (coefficient)

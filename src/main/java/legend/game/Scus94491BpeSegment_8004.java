@@ -852,7 +852,6 @@ public final class Scus94491BpeSegment_8004 {
     long t4;
     long t5;
     long t6;
-    long t7;
     long a2;
     long a3;
     long at;

@@ -370,7 +370,8 @@ public final class Scus94491BpeSegment {
 
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
 
-  public static final Value _80011174 = MEMORY.ref(4, 0x80011174L);
+  /** String: "bu00:" */
+  public static final CString bu00_80011174 = MEMORY.ref(6, 0x80011174L, CString::new);
 
   /**
    * String: CD_sync

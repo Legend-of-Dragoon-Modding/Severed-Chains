@@ -113,8 +113,9 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80052e2c = MEMORY.ref(4, 0x80052e2cL);
   public static final Value _80052e30 = MEMORY.ref(4, 0x80052e30L);
   public static final Value _80052e34 = MEMORY.ref(4, 0x80052e34L);
-
+  public static final Value _80052e38 = MEMORY.ref(4, 0x80052e38L);
   public static final Value _80052e3c = MEMORY.ref(4, 0x80052e3cL);
+  public static final Value _80052e40 = MEMORY.ref(4, 0x80052e40L);
 
   public static final Value memcardEventIndex_80052e4c = MEMORY.ref(4, 0x80052e4cL);
 
