@@ -112,9 +112,9 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
-import static legend.game.Scus94491BpeSegment.bu00_80011174;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.bu00_80011174;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -239,14 +239,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
-import static legend.game.Scus94491BpeSegment_800b._800bdf10;
-import static legend.game.Scus94491BpeSegment_800b.memcardFilename_800bf194;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
+import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
 import static legend.game.Scus94491BpeSegment_800b._800bdf38;
 import static legend.game.Scus94491BpeSegment_800b._800be358;
@@ -347,6 +345,7 @@ import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.memcardDest_800bf190;
 import static legend.game.Scus94491BpeSegment_800b.memcardFileHandle_800bf184;
+import static legend.game.Scus94491BpeSegment_800b.memcardFilename_800bf194;
 import static legend.game.Scus94491BpeSegment_800b.memcardLength_800bf18c;
 import static legend.game.Scus94491BpeSegment_800b.memcardPos_800bf188;
 import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
@@ -359,6 +358,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
@@ -8536,7 +8536,7 @@ public final class Scus94491BpeSegment_8002 {
       testEvents();
 
       //LAB_8002e818
-      while(read(memcardFileHandle_800bf184.get(), memcardDest_800bf190.get(), (int)memcardLength_800bf18c.get()) != 0) {
+      while(write(memcardFileHandle_800bf184.get(), memcardDest_800bf190.get(), (int)memcardLength_800bf18c.get()) != 0) {
         DebugHelper.sleep(1);
       }
 
@@ -8709,7 +8709,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002eb80
-    if((int)activeMemcardEvent_800bf170.offset(0x14L).get() >= 0) {
+    if(memcardFileHandle_800bf184.get() >= 0) {
       throw new RuntimeException("Access denied: file already open");
     }
 
@@ -8734,7 +8734,31 @@ public final class Scus94491BpeSegment_8002 {
     memcardPos_800bf188.setu(pos);
     memcardLength_800bf18c.setu(length);
     memcardDest_800bf190.setu(dest);
-    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002ec40", long.class));
+
+//    setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002ec40", long.class));
+
+    memcardFileHandle_800bf184.set(open(memcardFilename_800bf194.get(), 0x8001));
+    if(memcardFileHandle_800bf184.get() < 0) {
+      throw new RuntimeException("Failed to open memcard");
+    }
+
+    while(lseek(memcardFileHandle_800bf184.get(), memcardPos_800bf188.get(), 0) != memcardPos_800bf188.get()) {
+      DebugHelper.sleep(1);
+    }
+
+    testEvents();
+
+    //LAB_8002e818
+    while(write(memcardFileHandle_800bf184.get(), memcardDest_800bf190.get(), (int)memcardLength_800bf18c.get()) != 0) {
+      DebugHelper.sleep(1);
+    }
+
+    close(memcardFileHandle_800bf184.get());
+    memcardFileHandle_800bf184.set(-1);
+
+    activeMemcardEvent_800bf170.setu(0);
+    _800bf178.setu(0x1L);
+
     return 1;
   }
 
@@ -8956,8 +8980,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002f138
-    final Memory.TemporaryReservation tmp = MEMORY.temp(0x6);
-    final CString device = tmp.get().cast(CString::new);
+    final Memory.TemporaryReservation tmp = MEMORY.temp(0x1a);
+    final CString device = tmp.get().cast(CString.maxLength(0x1a));
     getDevice(port, device);
     strcat(device, file);
     _800bf17c.oru(0x1L << port);
@@ -9073,9 +9097,14 @@ public final class Scus94491BpeSegment_8002 {
     return (int)functionVectorB_000000b0.run(0x33L, new Object[] {fd, pos, seektype});
   }
 
-  @Method(0x8002f3d0L)
+  @Method(0x8002f3c0L)
   public static int read(final int fd, final long dest, final int length) {
     return (int)functionVectorB_000000b0.run(0x34L, new Object[] {fd, dest, length});
+  }
+
+  @Method(0x8002f3d0L)
+  public static int write(final int fd, final long data, final int length) {
+    return (int)functionVectorB_000000b0.run(0x35L, new Object[] {fd, data, length});
   }
 
   @Method(0x8002f3e0L)

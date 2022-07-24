@@ -448,7 +448,8 @@ public final class Scus94491BpeSegment_8003 {
 
       if(_800bf290.offset(sector * 0x20L).get() == 0x51L && strcmp(str.get(), file) == 0) {
         //LAB_800306ec
-        throw new RuntimeException("[%s] [%s]".formatted(str, file));
+        LOGGER.info("[%s] [%s]".formatted(str.get(), file));
+        return -3;
       }
 
       //LAB_8003067c
@@ -575,8 +576,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80030a00L)
-  public static boolean _card_read(final int port, final int sector, final long src) {
-    return (boolean)functionVectorB_000000b0.run(0x4fL, new Object[] {port, sector, src});
+  public static int _card_read(final int port, final int sector, final long src) {
+    return (int)functionVectorB_000000b0.run(0x4fL, new Object[] {port, sector, src});
   }
 
   @Method(0x80030a10L)

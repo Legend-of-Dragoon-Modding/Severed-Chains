@@ -6,6 +6,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
@@ -198,6 +199,8 @@ public final class SItem {
 
   /** String "*" */
   public static final Value asterisk_800fbadc = MEMORY.ref(1, 0x800fbadcL);
+
+  public static final Value _800fbb44 = MEMORY.ref(1, 0x800fbb44L);
 
   public static final Value _800fbbf0 = MEMORY.ref(4, 0x800fbbf0L);
 
@@ -7818,17 +7821,17 @@ public final class SItem {
 
   @Method(0x8010a1d0L)
   public static long FUN_8010a1d0(final String file, final long dest, final long pos, final long length) {
-    final Ref<Long> sp0x18 = new Ref<>();
-    final Ref<Long> sp0x1c = new Ref<>();
+    final Ref<Long> event = new Ref<>();
+    final Ref<Long> state = new Ref<>();
     FUN_8002eb28(0, file, dest, pos, length);
-    FUN_8002efb8(0, sp0x18, sp0x1c);
+    FUN_8002efb8(0, event, state);
 
-    if(sp0x1c.get() == 0) {
+    if(state.get() == 0) {
       //LAB_8010a22c
       return 0;
     }
 
-    if(sp0x1c.get() == 1) {
+    if(state.get() == 1) {
       //LAB_8010a234
       return 1;
     }
@@ -7864,26 +7867,27 @@ public final class SItem {
   @Method(0x8010a344L)
   public static long FUN_8010a344(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5) {
     long s0;
-    long s4;
     long s5;
     long s7;
-    long s2 = 0;
+    long s2;
 
     //LAB_8010a3f0
     //LAB_8010a3f4
     //LAB_8010a424
-    memcpy(sp0x48, _800fbb44.getAddress(), 0x3d);
+    final Memory.TemporaryReservation sp0x48tmp = MEMORY.temp(0x4c);
+    final Value sp0x48 = sp0x48tmp.get();
+    memcpy(sp0x48.getAddress(), _800fbb44.getAddress(), 0x3d);
 
-    long s3 = addToLinkedListTail(0x2000L);
-    s4 = addToLinkedListTail(0x680L);
+    final long s3 = addToLinkedListTail(0x2000L);
+    final long s4 = addToLinkedListTail(0x680L);
     memcpy(s4, gameState_800babc8.getAddress(), 0x52c);
-    MEMORY.ref(1, s3).offset(0x0L).setu(0x53L);
-    MEMORY.ref(1, s3).offset(0x2L).setu(0x11L);
-    MEMORY.ref(1, s3).offset(0x3L).setu(0x1L);
-    MEMORY.ref(2, s3).offset(0x50L).setu(0x1L);
+    MEMORY.ref(1, s3).offset(0x00L).setu(0x53L);
+    MEMORY.ref(1, s3).offset(0x01L).setu(0x43L);
+    MEMORY.ref(1, s3).offset(0x02L).setu(0x11L);
+    MEMORY.ref(1, s3).offset(0x03L).setu(0x01L);
+    MEMORY.ref(2, s3).offset(0x50L).setu(0x01L);
     MEMORY.ref(1, s3).offset(0x53L).setu(0x52L);
     MEMORY.ref(1, s3).offset(0x54L).setu(0x44L);
-    MEMORY.ref(1, s3).offset(0x1L).setu(0x43L);
     MEMORY.ref(1, s3).offset(0x52L).setu(0x43L);
     MEMORY.ref(1, s3).offset(0x55L).setu(0x30L);
     MEMORY.ref(1, s3).offset(0x57L).setu(0);
@@ -7900,76 +7904,59 @@ public final class SItem {
     }
 
     s5 = a0 & 0xffL;
-    FUN_8010a248(sp0x58, s5 + 0x1L);
-    FUN_8010a248(sp0x62, MEMORY.ref(1, s4).offset(0x33eL).get());
-    FUN_8010a2b0(sp0x72, getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 0));
-    FUN_8010a248(sp0x7a, getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 1));
-    FUN_8010a248(sp0x80, getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 2));
+    FUN_8010a248(sp0x48.offset(0x10L).getAddress(), s5 + 0x1L);
+    FUN_8010a248(sp0x48.offset(0x1aL).getAddress(), MEMORY.ref(1, s4).offset(0x33eL).get());
+    FUN_8010a2b0(sp0x48.offset(0x2aL).getAddress(), getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 0));
+    FUN_8010a248(sp0x48.offset(0x32L).getAddress(), getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 1));
+    FUN_8010a248(sp0x48.offset(0x48L).getAddress(), getTimestampPart(MEMORY.ref(4, s4).offset(0xa0L).get(), 2));
     s7 = _8011dcc0.getAddress();
     MEMORY.ref(4, s7).offset(0x20L).setu(MEMORY.ref(4, s4).offset(0xa0L).get());
-    strcpy(s3 + 0x004L, sp0x48);
+    strcpy(MEMORY.ref(0x3d, s3 + 0x4L, CString::new), sp0x48.offset(1, 0x0L).getString());
     memcpy(s3 + 0x060L, drgn0_6666FilePtr_800bdc3c.getPointer() + 0xdf30L + s5 * 0x20, 0x20); //TODO
     memcpy(s3 + 0x080L, drgn0_6666FilePtr_800bdc3c.getPointer() + 0xe11cL + s5 * 0x80, 0x80);
     memcpy(s3 + 0x100L, drgn0_6666FilePtr_800bdc3c.getPointer() + 0xe91cL + s5 * 0x80, 0x80);
 
     if(_800bdc40.get() != 0) {
-      strcpy(sp0x10, _800fbb84);
-      FUN_80013f94(sp0x10 + FUN_8002d250(_800fbb84), _800fbb90.getAddress(), s5);
-      FUN_80045bb0(FUN_80045bc0(sp0x10, 0));
-      s0 = FUN_80045b90(sp0x10, 0x1L, 0);
-      if((int)s0 != -1) {
-        MEMORY.ref(1, s7).offset(0x4L).setu(a0);
-        FUN_80045be0(s0, s7, 0x3cL);
-        s2 = FUN_80045be0(s0, s4, 0x52cL);
-      }
+      throw new RuntimeException("Dev code?");
+    }
 
-      //LAB_8010a690
-      FUN_80045bb0(s0);
+    //LAB_8010a6a8
+    MEMORY.ref(4, s4).offset(0x4L).setu(0);
 
-      if(s2 != 0) {
-        s2 = 0;
-      } else {
-        s2 = 0x3L;
-      }
+    //LAB_8010a6b8
+    long a1_0 = 0;
+    for(int i = 0; i < 331; i++) {
+      a1_0 = a1_0 + MEMORY.ref(4, s4).offset(i * 0x4L).get();
+    }
+
+    MEMORY.ref(4, s4).offset(0x4L).setu(a1_0);
+
+    final String file = "BASCUS-94491drgn00%02d".formatted(a0);
+
+    s2 = FUN_8002f0d4(0, file, 0x1L);
+    if(s2 == 0x2L) {
+      s2 = 0x3L;
     } else {
-      //LAB_8010a6a8
-      MEMORY.ref(4, s4).offset(0x4L).setu(0);
-
-      //LAB_8010a6b8
-      long a1_0 = 0;
-      for(int i = 0; i < 331; i++) {
-        a1_0 = a1_0 + MEMORY.ref(4, s4).offset(i * 0x4L).get();
-      }
-
-      MEMORY.ref(4, s4).offset(0x4L).setu(a1_0);
-
-      final String file = "BASCUS-94491drgn00%02d".formatted(a0);
-
-      s2 = FUN_8002f0d4(0, file, 0x1L);
-      if(s2 == 0x2L) {
-        s2 = 0x3L;
+      //LAB_8010a720
+      if(s2 == 0x4L) {
+        //LAB_8010a73c
+        s2 = 0x2L;
       } else {
-        //LAB_8010a720
-        if(s2 == 0x4L) {
-          //LAB_8010a73c
-          s2 = 0x2L;
+        if(s2 == 0x7L) {
+          //LAB_8010a744
+          s2 = 0x3L;
         } else {
-          if(s2 == 0x7L) {
-            //LAB_8010a744
-            s2 = 0x3L;
-          } else {
-            if(s2 != 0x1L) {
-              s0 = _8011dcc0.getAddress();
+          if(s2 != 0x1L) {
+            s0 = _8011dcc0.getAddress();
 
-              //LAB_8010a74c
-              MEMORY.ref(1, s0).offset(0x4L).setu(a0);
-              s2 = FUN_8010a1d0(file, s3, 0, 0x180L);
+            //LAB_8010a74c
+            MEMORY.ref(1, s0).offset(0x4L).setu(a0);
+            s2 = FUN_8010a1d0(file, s3, 0, 0x180L);
+            if(s2 == 0) {
+              s2 = FUN_8010a1d0(file, s0, 0x180L, 0x80L);
               if(s2 == 0) {
-                s2 = FUN_8010a1d0(file, s0, 0x180L, 0x80L);
-                if(s2 == 0) {
-                  //LAB_8010a7a4
-                  s2 = FUN_8010a1d0(file, s4, 0x200L, 0x580L);
-                }
+                //LAB_8010a7a4
+                s2 = FUN_8010a1d0(file, s4, 0x200L, 0x580L);
               }
             }
           }
@@ -7981,6 +7968,9 @@ public final class SItem {
     //LAB_8010a7ac
     removeFromLinkedList(s3);
     removeFromLinkedList(s4);
+
+    sp0x48tmp.release();
+
     return s2;
   }
 
