@@ -954,7 +954,7 @@ public final class SItem {
   }
 
   @Method(0x800fca0cL)
-  public static void FUN_800fca0c(long a0, final long a1) {
+  public static void FUN_800fca0c(final long a0, final long a1) {
     if(!renderablePtr_800bdba4.isNull()) {
       fadeOutArrow(renderablePtr_800bdba4.deref());
       renderablePtr_800bdba4.clear();
@@ -2333,6 +2333,7 @@ public final class SItem {
         //LAB_800ff330
         if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
           playSound(0x3L);
+          messageBox_8011dc90._0c.set(0);
           inventoryMenuState_800bdc28.setu(0x47L);
         }
 
