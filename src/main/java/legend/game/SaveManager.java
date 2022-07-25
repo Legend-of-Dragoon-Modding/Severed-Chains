@@ -12,8 +12,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,12 +34,19 @@ public final class SaveManager {
     return Files.exists(dir.resolve(getFilename(slot)));
   }
 
-  private static Set<Path> getSaves() {
+  private static List<Path> getSaves() {
     try(Stream<Path> stream = Files.list(dir)) {
       return stream
         .filter(file -> !Files.isDirectory(file) && matcher.matches(file.getFileName()))
+        .sorted(Comparator.comparingLong((Path path) -> {
+          try {
+            return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
+          } catch(IOException e) {
+            throw new RuntimeException(e);
+          }
+        }).reversed())
         .map(Path::getFileName)
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
     } catch(IOException e) {
       throw new RuntimeException("Failed to get save files", e);
     }
