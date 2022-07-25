@@ -21,6 +21,11 @@ public class LodString implements MemoryRef {
     this.chars = new int[length];
   }
 
+  public LodString(final String text) {
+    this(text.length() + 1);
+    this.set(text);
+  }
+
   public String get() {
     final StringBuilder sb = new StringBuilder();
 
@@ -141,6 +146,103 @@ public class LodString implements MemoryRef {
     }
 
     this.ref.offset(2, index * 0x2L).setu(c);
+  }
+
+  public void set(final String text) {
+    for(int i = 0; i < text.length(); i++) {
+      this.charAt(i, switch(text.charAt(i)) {
+        case ' ' -> 0x00;
+        case ',' -> 0x01;
+        case '.' -> 0x02;
+        case '\u00b7' -> 0x03;
+        case ':' -> 0x04;
+        case '?' -> 0x05;
+        case '!' -> 0x06;
+        case '_' -> 0x07;
+        case '/' -> 0x08;
+        case '\'' -> 0x09;
+        case '"' -> 0x0a;
+        case '(' -> 0x0b;
+        case ')' -> 0x0c;
+        case '-' -> 0x0d;
+        case '`' -> 0x0e;
+        case '%' -> 0x0f;
+        case '&' -> 0x10;
+        case '*' -> 0x11;
+        case '@' -> 0x12;
+        case '+' -> 0x13;
+        case '~' -> 0x14;
+        case '0' -> 0x15;
+        case '1' -> 0x16;
+        case '2' -> 0x17;
+        case '3' -> 0x18;
+        case '4' -> 0x19;
+        case '5' -> 0x1a;
+        case '6' -> 0x1b;
+        case '7' -> 0x1c;
+        case '8' -> 0x1d;
+        case '9' -> 0x1e;
+        case 'A' -> 0x1f;
+        case 'B' -> 0x20;
+        case 'C' -> 0x21;
+        case 'D' -> 0x22;
+        case 'E' -> 0x23;
+        case 'F' -> 0x24;
+        case 'G' -> 0x25;
+        case 'H' -> 0x26;
+        case 'I' -> 0x27;
+        case 'J' -> 0x28;
+        case 'K' -> 0x29;
+        case 'L' -> 0x2a;
+        case 'M' -> 0x2b;
+        case 'N' -> 0x2c;
+        case 'O' -> 0x2d;
+        case 'P' -> 0x2e;
+        case 'Q' -> 0x2f;
+        case 'R' -> 0x30;
+        case 'S' -> 0x31;
+        case 'T' -> 0x32;
+        case 'U' -> 0x33;
+        case 'V' -> 0x34;
+        case 'W' -> 0x35;
+        case 'X' -> 0x36;
+        case 'Y' -> 0x37;
+        case 'Z' -> 0x38;
+        case 'a' -> 0x39;
+        case 'b' -> 0x3a;
+        case 'c' -> 0x3b;
+        case 'd' -> 0x3c;
+        case 'e' -> 0x3d;
+        case 'f' -> 0x3e;
+        case 'g' -> 0x3f;
+        case 'h' -> 0x40;
+        case 'i' -> 0x41;
+        case 'j' -> 0x42;
+        case 'k' -> 0x43;
+        case 'l' -> 0x44;
+        case 'm' -> 0x45;
+        case 'n' -> 0x46;
+        case 'o' -> 0x47;
+        case 'p' -> 0x48;
+        case 'q' -> 0x49;
+        case 'r' -> 0x4a;
+        case 's' -> 0x4b;
+        case 't' -> 0x4c;
+        case 'u' -> 0x4d;
+        case 'v' -> 0x4e;
+        case 'w' -> 0x4f;
+        case 'x' -> 0x50;
+        case 'y' -> 0x51;
+        case 'z' -> 0x52;
+        case '[' -> 0x53;
+        case ']' -> 0x54;
+        case ';' -> 0x55;
+        case '\n' -> 0xa1ff;
+        default -> 0x05;
+      });
+    }
+
+    this.charAt(text.length(), 0xa0ff);
   }
 
   public LodString slice(final int index) {

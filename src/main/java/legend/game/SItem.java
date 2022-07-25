@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Tuple;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
@@ -10,7 +11,6 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.Bttl_800c;
@@ -21,18 +21,20 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.LodString;
-import legend.game.types.MemcardDataStruct3c;
 import legend.game.types.MemcardStruct28;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
+import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
@@ -50,7 +52,6 @@ import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -543,7 +544,8 @@ public final class SItem {
   public static final Value _8011dd04 = MEMORY.ref(4, 0x8011dd04L);
   public static final Value _8011dd08 = MEMORY.ref(4, 0x8011dd08L);
 
-  public static final UnboundedArrayRef<MemcardDataStruct3c> memcardData_8011dd10 = MEMORY.ref(4, 0x8011dd10L, UnboundedArrayRef.of(0x3c, MemcardDataStruct3c::new));
+  @Deprecated
+  public static final Value REFACTORED_memcardData_8011dd10 = MEMORY.ref(4, 0x8011dd10L);
 
   public static final ArrayRef<MenuAdditionInfo> additions_8011e098 = MEMORY.ref(1, 0x8011e098L, ArrayRef.of(MenuAdditionInfo.class, 9, 0x2, MenuAdditionInfo::new));
 
@@ -595,6 +597,8 @@ public final class SItem {
   public static final Value _8011e1d8 = MEMORY.ref(1, 0x8011e1d8L);
 
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
+
+  private static final List<Tuple<String, SavedGameDisplayData>> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
   public static void allocatePlayerBattleObjects(final long a0) {
@@ -1354,7 +1358,7 @@ public final class SItem {
           break;
         }
 
-        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && selectedSlot_8011d740.get() >= 0x2L) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && selectedSlot_8011d740.get() > 1) {
           selectedSlot_8011d740.subu(0x1L);
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           playSound(0x1L);
@@ -1362,7 +1366,7 @@ public final class SItem {
 
         //LAB_800fd4e4
         //LAB_800fd4e8
-        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && selectedSlot_8011d740.get() < 0x2L) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && selectedSlot_8011d740.get() < 2) {
           selectedSlot_8011d740.addu(0x1L);
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           playSound(0x1L);
@@ -1410,7 +1414,7 @@ public final class SItem {
         }
 
         //LAB_800fd6b8
-        if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && slotScroll_8011d744.get() % 3 < 0x2L) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && slotScroll_8011d744.get() % 3 < 2) {
           slotScroll_8011d744.addu(0x1L);
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1418,7 +1422,7 @@ public final class SItem {
         }
 
         //LAB_800fd730
-        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && slotScroll_8011d744.get() >= 0x3L) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && slotScroll_8011d744.get() > 2) {
           slotScroll_8011d744.subu(0x3L);
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1427,7 +1431,7 @@ public final class SItem {
 
         //LAB_800fd78c
         //LAB_800fd790
-        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && slotScroll_8011d744.get() < 0x3L) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && slotScroll_8011d744.get() < 3) {
           slotScroll_8011d744.addu(0x3L);
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -2188,7 +2192,7 @@ public final class SItem {
         //LAB_800fef54
         inventoryMenuState_800bdc28.setu(v0);
         FUN_8002437c(0xffL);
-        renderSavedGames(slotScroll_8011d744.get(), null, 0xffL);
+        renderSavedGames((int)slotScroll_8011d744.get(), false, 0xffL);
         break;
 
       case 0x27: // Part of load game menu
@@ -2204,7 +2208,7 @@ public final class SItem {
         //LAB_800fefc4
         //LAB_800fefc8
         //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), null, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), false, 0);
         break;
 
       case 0x28: // Part of load game menu
@@ -2214,27 +2218,20 @@ public final class SItem {
         memcardSaveLoadingStage_8011e0d4.setu(0x1L);
         slotScroll_8011d744.setu(0);
         selectedSlot_8011d740.setu(0);
-        renderSavedGames(0, null, 0);
+        renderSavedGames(0, false, 0);
         inventoryMenuState_800bdc28.setu(0x29L);
         break;
 
       case 0x29: // Part of load game menu
         messageBox(messageBox_8011dc90);
-        renderSavedGames(slotScroll_8011d744.get(), null, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), false, 0);
 
         if(_800bb168.get() != 0) {
           break;
         }
 
-        for(int saveSlot = 0; saveSlot < SaveManager.MAX_SAVES; saveSlot++) {
-          if(SaveManager.hasSavedGame(saveSlot)) {
-            final byte[] data = SaveManager.loadGame(saveSlot);
-            MEMORY.setBytes(memcardData_8011dd10.get(saveSlot).getAddress(), data, 0x180, 0x3c);
-            saveCount_8011d768.addu(0x1L);
-          } else {
-            fillMemory(memcardData_8011dd10.get(saveSlot).getAddress(), 0xffffffffL, 0x3c);
-          }
-        }
+        saves.clear();
+        saves.addAll(SaveManager.loadAllDisplayData());
 
         //LAB_800ff194
         if(saveCount_8011d768.offset(1, 0x10L).get() > 0xcL) {
@@ -2251,25 +2248,25 @@ public final class SItem {
         renderablePtr_800bdbec.set(allocateUiElement(130, 130, 192, getSlotY(selectedSlot_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
         FUN_80104b60(renderablePtr_800bdbec.deref());
-        renderSaveListArrows(slotScroll_8011d744.get(), 14);
+        renderSaveListArrows(slotScroll_8011d744.get());
 
         inventoryMenuState_800bdc28.setu(0x2aL);
         messageBox_8011dc90._0c.incr();
         break;
 
       case 0x2a:
-        renderSaveListArrows(slotScroll_8011d744.get(), 0xeL);
+        renderSaveListArrows(slotScroll_8011d744.get());
 
         //LAB_800ff2a8
         FUN_8002437c(0);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0xffL);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0xffL);
 
         //LAB_800ff4f8
         inventoryMenuState_800bdc28.setu(0x2bL);
         break;
 
       case 0x2b: // Load game screen - ready to use
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 0x3L, 0xfL, 0x1L) != 0) {
+        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 3, whichMenu_800bdc38.get() == 0xeL ? saves.size() : saves.size() + 1, 1) != 0) {
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           renderablePtr_800bdbec.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           inventoryMenuState_800bdc28.setu(0x2aL);
@@ -2299,50 +2296,38 @@ public final class SItem {
           }
         } else {
           //LAB_800ff3c8
-          renderSaveListArrows(slotScroll_8011d744.get(), 0xeL);
+          renderSaveListArrows(slotScroll_8011d744.get());
         }
 
         //LAB_800fff80
         //LAB_800fff84
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         break;
 
       case 0x2c:
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
 
         //LAB_800ff440
-        a3 = memcardData_8011dd10.get((int)(selectedSlot_8011d740.get() + slotScroll_8011d744.get())).fileIndex_04.get();
         if(whichMenu_800bdc38.get() == 0xeL) { // Load game menu
-          if((int)a3 < 0xfL) {
-            setMessageBoxText(Load_this_data_8011ca08, 0x2);
-            inventoryMenuState_800bdc28.setu(0x2dL);
-            break;
-          }
+          setMessageBoxText(Load_this_data_8011ca08, 0x2);
+          inventoryMenuState_800bdc28.setu(0x2dL);
         } else {
           //LAB_800ff4a0
-          if((int)a3 < 0xfL || a3 == 0xffL) {
-            //LAB_800ff4b0
-            //LAB_800ff4c8
-            if(a3 == 0xeL) {
-              setMessageBoxText(Save_new_game_8011c9c8, 0x2);
-            } else {
-              //LAB_800ff4c0
-              setMessageBoxText(Overwrite_save_8011c9e8, 0x2);
-            }
-
-            messageBox_8011dc90._18.set(0x1L);
-            inventoryMenuState_800bdc28.setu(0x31L);
-            break;
+          //LAB_800ff4b0
+          //LAB_800ff4c8
+          if(slotScroll_8011d744.get() + selectedSlot_8011d740.get() < saves.size()) {
+            //LAB_800ff4c0
+            setMessageBoxText(Overwrite_save_8011c9e8, 0x2);
+          } else {
+            setMessageBoxText(Save_new_game_8011c9c8, 0x2);
           }
+
+          messageBox_8011dc90._18.set(0x1L);
+          inventoryMenuState_800bdc28.setu(0x31L);
         }
 
-        //LAB_800ff4ec
-        playSound(0x28L);
-
-        //LAB_800ff4f8
-        inventoryMenuState_800bdc28.setu(0x2bL);
         break;
 
       case 0x2d: // Do you want to load this save?
@@ -2361,18 +2346,18 @@ public final class SItem {
         //LAB_800fff84
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         break;
 
       case 0x2e:
         messageBox(messageBox_8011dc90);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         inventoryMenuState_800bdc28.setu(0x2fL);
         break;
 
       case 0x2f:
         messageBox(messageBox_8011dc90);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
 
         _8011d7bc.setu(0);
         memcardState_8011d7b8.setu(0);
@@ -2382,7 +2367,7 @@ public final class SItem {
         break;
 
       case 0x30:
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
 
         loadSaveFile((int)(slotScroll_8011d744.get() + selectedSlot_8011d740.get()));
 
@@ -2435,14 +2420,14 @@ public final class SItem {
 
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         break;
 
       case 0x32:
         messageBox(messageBox_8011dc90);
         v0 = 0x8012_0000L;
         a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         a0 = 0;
         FUN_8002df60(a0);
         v1 = 0x800c_0000L;
@@ -2466,12 +2451,12 @@ public final class SItem {
         //LAB_800fff84
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         break;
 
       case 0x34:
         messageBox(messageBox_8011dc90);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
 
         if(messageBox_8011dc90.ticks_10.get() < 0x3L) {
           break;
@@ -2498,20 +2483,20 @@ public final class SItem {
         break;
 
       case 0x35:
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         if(messageBox(messageBox_8011dc90) == 0) {
           //LAB_800fff8c
           //LAB_800fff94
-          renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+          renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
           break;
         }
 
         //LAB_800ff9cc
         //LAB_800ff9f4
-        memcpy(memcardData_8011dd10.get((int)(selectedSlot_8011d740.get() + slotScroll_8011d744.get())).getAddress(), tempSaveData_8011dcc0.getAddress(), 0x3c);
+//        memcpy(REFACTORED_memcardData_8011dd10.get((int)(selectedSlot_8011d740.get() + slotScroll_8011d744.get())).getAddress(), tempSaveData_8011dcc0.getAddress(), 0x3c);
 
         FUN_8002437c(0xffL);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0xffL);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0xffL);
         setMessageBoxText(Saved_8011cb2c, 0);
         inventoryMenuState_800bdc28.setu(0x36L);
         break;
@@ -2519,7 +2504,7 @@ public final class SItem {
       case 0x36:
         v0 = 0x8012_0000L;
         a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         v0 = messageBox(messageBox_8011dc90);
         if(v0 == 0) {
           break;
@@ -2546,7 +2531,7 @@ public final class SItem {
       case 0x3d:
         v0 = 0x8012_0000L;
         a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         v0 = messageBox(messageBox_8011dc90);
         if(v0 == 0) {
           break;
@@ -2580,13 +2565,13 @@ public final class SItem {
 
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         break;
 
       case 0x40:
         v0 = 0x8012_0000L;
         a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         v0 = messageBox(messageBox_8011dc90);
         if(v0 != 0) {
           setMessageBoxText(The_MEMORY_CARD_in_MEMORY_CARD_slot_1_is_not_formatted_8011ccb8, 0);
@@ -2610,7 +2595,7 @@ public final class SItem {
         } else {
           //LAB_800ffce4
           a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-          renderSavedGames(a0, memcardData_8011dd10, 0);
+          renderSavedGames((int)a0, true, 0);
         }
 
         //LAB_800ffcfc
@@ -2702,7 +2687,7 @@ public final class SItem {
 
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(a0, memcardData_8011dd10, 0);
+        renderSavedGames((int)a0, true, 0);
         break;
 
       case 0x43:
@@ -2716,7 +2701,7 @@ public final class SItem {
         } else {
           //LAB_800ffe14
           a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-          renderSavedGames(a0, memcardData_8011dd10, 0);
+          renderSavedGames((int)a0, true, 0);
         }
 
         //LAB_800ffe2c
@@ -2759,7 +2744,7 @@ public final class SItem {
         } else {
           //LAB_800ffeb0
           a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-          renderSavedGames(a0, memcardData_8011dd10, 0);
+          renderSavedGames((int)a0, true, 0);
         }
 
         //LAB_800ffec8
@@ -2786,7 +2771,7 @@ public final class SItem {
         } else {
           //LAB_800fff0c
           a0 = MEMORY.ref(4, v0).offset(-0x28bcL).get();
-          renderSavedGames(a0, memcardData_8011dd10, 0);
+          renderSavedGames((int)a0, true, 0);
         }
 
         //LAB_800fff24
@@ -2820,7 +2805,7 @@ public final class SItem {
         //LAB_800fff84
         //LAB_800fff8c
         //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
         break;
 
       case 0x47:
@@ -2833,7 +2818,7 @@ public final class SItem {
 
         //LAB_800fffd0
         _8004dd30.setu(0);
-        renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0);
+        renderSavedGames((int)slotScroll_8011d744.get(), true, 0);
 
         v1 = whichMenu_800bdc38.get();
 
@@ -4830,10 +4815,10 @@ public final class SItem {
           case 0xa -> FUN_80102dfc(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0);
           case 0xb -> FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
           //LAB_80101af4
-          case 0xc -> renderSavedGames(slotScroll_8011d744.get(), memcardData_8011dd10, 0xfeL);
+          case 0xc -> renderSavedGames((int)slotScroll_8011d744.get(), true, 0xfeL);
           case 0xd -> FUN_80103168(selectedSlot_8011d740.get());
           //LAB_80101af4
-          case 0xe -> renderSavedGames(slotScroll_8011d744.get(), null, 0xfeL);
+          case 0xe -> renderSavedGames((int)slotScroll_8011d744.get(), false, 0xfeL);
         }
 
         //LAB_80101afc
@@ -4896,7 +4881,7 @@ public final class SItem {
     //LAB_80101d54
     final long s4 = a2 < 0x1L ? 1 : 0;
     if(s4 != 0) {
-      renderDragoonSpirits(gameState_800babc8.dragoonSpirits_19c, 40, 197);
+      renderDragoonSpirits((int)gameState_800babc8.dragoonSpirits_19c.get(0).get(), 40, 197);
       renderEightDigitNumber(67, 184, gameState_800babc8.gold_94.get(), 0); // Gold
       renderCharacter(146, 184, 10);
       renderCharacter(164, 184, 10);
@@ -5188,17 +5173,26 @@ public final class SItem {
    * @param fileScroll The first save game do display on the screen
    */
   @Method(0x801030c0L)
-  public static void renderSavedGames(final long fileScroll, @Nullable final UnboundedArrayRef<MemcardDataStruct3c> saveData, final long a2) {
+  public static void renderSavedGames(final int fileScroll, final boolean renderSaves, final long a2) {
     if(a2 == 0xffL) {
       renderBackground(_80114258.getAddress(), 0, 0);
     }
 
     //LAB_80103100
-    if(saveData != null) {
+    if(renderSaves) {
       //LAB_80103108
       for(int i = 0; i < 3; i++) {
-        final long fileIndex = fileScroll + i;
-        renderSaveGameSlot(fileIndex, saveData.get((int)fileIndex), getSlotY(i), a2 == 0xffL ? 1 : 0);
+        final int fileIndex = fileScroll + i;
+
+        if(fileIndex < saves.size()) {
+          renderSaveGameSlot(fileIndex, getSlotY(i), a2 == 0xffL ? 1 : 0);
+        } else {
+          if(whichMenu_800bdc38.get() != 0xeL) {
+            renderCentredText(new LodString("New save"), 188, getSlotY(i) + 25, 0x4L);
+          }
+
+          break;
+        }
       }
     }
 
@@ -5289,7 +5283,7 @@ public final class SItem {
   }
 
   @Method(0x8010361cL)
-  public static void renderSaveListArrows(final long scroll, final long maxSaves) {
+  public static void renderSaveListArrows(final long scroll) {
     FUN_80103444(saveListUpArrow_800bdb94.derefNullable(), 194, 201, 202, 209);
     FUN_80103444(saveListDownArrow_800bdb98.derefNullable(), 178, 185, 186, 193);
 
@@ -5310,7 +5304,7 @@ public final class SItem {
     }
 
     //LAB_801036e8
-    if(scroll < maxSaves - 2) {
+    if(scroll < saves.size() - 2 && ((whichMenu_800bdc38.get() == 0x13L && saves.size() > 2) || saves.size() > 3)) {
       if(saveListDownArrow_800bdb98.isNull()) {
         // Allocate down arrow
         final Renderable58 renderable = allocateUiElement(111, 108, 182, 208);
@@ -5567,73 +5561,75 @@ public final class SItem {
   }
 
   @Method(0x80103f00L)
-  public static long FUN_80103f00(final long a0, final long a1, final long a2, long a3, final long a4) {
+  public static long FUN_80103f00(final long selectedSlot, final long scroll, long slotsDisplayed, long slotCount, final long a4) {
+    slotsDisplayed = Math.min(slotsDisplayed, slotCount);
+
     if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0) {
-      if(MEMORY.ref(4, a0).get() == 0) {
+      if(MEMORY.ref(4, selectedSlot).get() == 0) {
         //LAB_80103f44
-        if(MEMORY.ref(4, a1).get() < (int)a4) {
+        if(MEMORY.ref(4, scroll).get() < (int)a4) {
           return 0x1L;
         }
 
-        MEMORY.ref(4, a1).subu(a4);
+        MEMORY.ref(4, scroll).subu(a4);
       } else {
-        MEMORY.ref(4, a0).subu(0x1L);
+        MEMORY.ref(4, selectedSlot).subu(0x1L);
       }
       //LAB_80103f64
     } else if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0) {
-      if(MEMORY.ref(4, a0).get() < a2 - 0x1L) {
-        MEMORY.ref(4, a0).addu(0x1L);
+      if(MEMORY.ref(4, selectedSlot).get() < slotsDisplayed - 1) {
+        MEMORY.ref(4, selectedSlot).addu(0x1L);
       } else {
         //LAB_80103f8c
-        if(a3 <= MEMORY.ref(4, a1).get() + a2 * a4) {
+        if(slotCount <= MEMORY.ref(4, scroll).get() + slotsDisplayed * a4) {
           return 0x1L;
         }
 
-        MEMORY.ref(4, a1).addu(a4);
+        MEMORY.ref(4, scroll).addu(a4);
       }
       //LAB_80103fb0
     } else if((inventoryJoypadInput_800bdc44.get() & 0x4L) != 0) {
-      if(MEMORY.ref(4, a0).get() != 0) {
+      if(MEMORY.ref(4, selectedSlot).get() != 0) {
         playSound(0x1L);
-        MEMORY.ref(4, a0).setu(0);
+        MEMORY.ref(4, selectedSlot).setu(0);
       }
 
       return 0x1L;
       //LAB_80103fdc
     } else if((inventoryJoypadInput_800bdc44.get() & 0x1L) != 0) {
-      if(MEMORY.ref(4, a0).get() >= a2 - 0x1L) {
+      if(MEMORY.ref(4, selectedSlot).get() >= slotsDisplayed - 0x1L) {
         return 0x1L;
       }
 
       playSound(0x1L);
-      MEMORY.ref(4, a0).setu(a2 - 0x1L);
+      MEMORY.ref(4, selectedSlot).setu(slotsDisplayed - 0x1L);
       return 0x1L;
       //LAB_80104008
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x8L) == 0 || MEMORY.ref(4, a1).get() < a4) {
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x8L) == 0 || MEMORY.ref(4, scroll).get() < a4) {
       //LAB_8010404c
       if((inventoryJoypadInput_800bdc44.get() & 0x2L) == 0) {
         return 0;
       }
 
-      if(a2 >= a3) {
+      if(slotsDisplayed >= slotCount) {
         return 0;
       }
 
-      final long v1 = MEMORY.ref(4, a1).get() + a2 * a4;
-      a3 -= a2 * a4;
-      if(v1 < a3) {
-        MEMORY.ref(4, a1).setu(v1);
+      final long v1 = MEMORY.ref(4, scroll).get() + slotsDisplayed * a4;
+      slotCount -= slotsDisplayed * a4;
+      if(v1 < slotCount) {
+        MEMORY.ref(4, scroll).setu(v1);
         //LAB_8010408c
-      } else if(MEMORY.ref(4, a1).get() < a3) {
-        MEMORY.ref(4, a1).setu(a3);
+      } else if(MEMORY.ref(4, scroll).get() < slotCount) {
+        MEMORY.ref(4, scroll).setu(slotCount);
       } else {
         return 0;
       }
-    } else if(MEMORY.ref(4, a1).get() >= a2 * a4) {
-      MEMORY.ref(4, a1).subu(a2 * a4);
+    } else if(MEMORY.ref(4, scroll).get() >= slotsDisplayed * a4) {
+      MEMORY.ref(4, scroll).subu(slotsDisplayed * a4);
     } else {
       //LAB_80104044
-      MEMORY.ref(4, a1).setu(0);
+      MEMORY.ref(4, scroll).setu(0);
     }
 
     //LAB_80104098
@@ -6805,95 +6801,81 @@ public final class SItem {
   }
 
   @Method(0x80108a6cL)
-  public static void renderSaveGameSlot(final long fileIndex, final MemcardDataStruct3c saveData, final long y, final long a3) {
+  public static void renderSaveGameSlot(final int fileIndex, final long y, final long a3) {
+    final SavedGameDisplayData saveData = saves.get(fileIndex).b();
+
     if((a3 & 0xffL) != 0) {
       renderTwoDigitNumber(21, y, fileIndex + 1); // File number
     }
 
-    //LAB_80108ab8
-    if(saveData.fileIndex_04.get() == 0xfcL) {
-      //LAB_80108b04
-      //LAB_80108b20
-      renderText(_8011d04c, 32, y, 0x4L);
-      //LAB_80108ae8
-    } else if(saveData.fileIndex_04.get() == 0xfeL) {
-      //LAB_80108b10
-      //LAB_80108b20
-      renderText(Data_from_another_game_8011c88c, 32, y, 0x4L);
-    } else if(saveData.fileIndex_04.get() == 0xffL) {
-      //LAB_80108b1c
-      //LAB_80108b20
-      renderText(File_not_used_8011c7d8, 32, y, 0x4L);
-    } else if(saveData.fileIndex_04.get() >= 0 && saveData.fileIndex_04.get() < 0xfL) {
-      //LAB_80108b3c
-      final ArrayRef<Pointer<LodString>> locationNames;
-      if(saveData.saveType_2d.get() == 1) {
-        //LAB_80108b5c
-        locationNames = worldMapNames_8011c1ec;
-      } else if(saveData.saveType_2d.get() == 3) {
-        //LAB_80108b78
-        locationNames = chapterNames_80114248;
-      } else {
-        //LAB_80108b90
-        locationNames = submapNames_8011c108;
+    //LAB_80108b3c
+    final ArrayRef<Pointer<LodString>> locationNames;
+    if(saveData.saveType == 1) {
+      //LAB_80108b5c
+      locationNames = worldMapNames_8011c1ec;
+    } else if(saveData.saveType == 3) {
+      //LAB_80108b78
+      locationNames = chapterNames_80114248;
+    } else {
+      //LAB_80108b90
+      locationNames = submapNames_8011c108;
+    }
+
+    //LAB_80108ba0
+    renderCentredText(locationNames.get(saveData.locationIndex).deref(), 278, y + 47, 0x4L); // Location text
+
+    if((a3 & 0xffL) != 0) {
+      allocateUiElement(0x4cL, 0x4cL,  16, y)._3c.set(0x21); // Left half of border
+      allocateUiElement(0x4dL, 0x4dL, 192, y)._3c.set(0x21); // Right half of border
+
+      // Load char 0
+      if(saveData.char0Index >= 0 && saveData.char0Index < 9) {
+        final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+        FUN_80104b1c(struct, _801142d4.getAddress());
+        struct.glyph_04.set(saveData.char0Index);
+        struct.tpage_2c.add(0x1L);
+        struct._3c.set(0x21);
+        struct.x_40.set(38);
+        struct.y_44.set(y + 8);
       }
 
-      //LAB_80108ba0
-      renderCentredText(locationNames.get(saveData.locationIndex_2c.get()).deref(), 278, y + 47, 0x4L); // Location text
-
-      if((a3 & 0xffL) != 0) {
-        allocateUiElement(0x4cL, 0x4cL,  16, y)._3c.set(0x21); // Left half of border
-        allocateUiElement(0x4dL, 0x4dL, 192, y)._3c.set(0x21); // Right half of border
-
-        // Load char 0
-        if(saveData.char0Index_08.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
-          FUN_80104b1c(struct, _801142d4.getAddress());
-          struct.glyph_04.set(saveData.char0Index_08);
-          struct.tpage_2c.add(0x1L);
-          struct._3c.set(0x21);
-          struct.x_40.set(38);
-          struct.y_44.set(y + 8);
-        }
-
-        // Load char 1
-        //LAB_80108c78
-        if(saveData.char1Index_0c.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
-          FUN_80104b1c(struct, _801142d4.getAddress());
-          struct.glyph_04.set(saveData.char1Index_0c);
-          struct.tpage_2c.add(0x1L);
-          struct._3c.set(0x21);
-          struct.x_40.set(90);
-          struct.y_44.set(y + 8);
-        }
-
-        // Load char 2
-        //LAB_80108cd4
-        if(saveData.char2Index_10.get() < 9) {
-          final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
-          FUN_80104b1c(struct, _801142d4.getAddress());
-          struct.glyph_04.set(saveData.char2Index_10);
-          struct.tpage_2c.add(0x1L);
-          struct._3c.set(0x21);
-          struct.x_40.set(142);
-          struct.y_44.set(y + 8);
-        }
-
-        //LAB_80108d30
-        renderTwoDigitNumber(224, y + 6, saveData.level_14.get()); // Level
-        renderTwoDigitNumber(269, y + 6, saveData.dlevel_15.get()); // Dragoon level
-        renderFourDigitNumber(302, y + 6, saveData.currentHp_16.get()); // Current HP
-        renderFourDigitNumber(332, y + 6, saveData.maxHp_18.get()); // Max HP
-        renderEightDigitNumber(245, y + 17, saveData.gold_1c.get(), 0); // Gold
-        renderThreeDigitNumber(306, y + 17, getTimestampPart(saveData.time_20.get(), 0), 0x1L); // Time played hour
-        renderCharacter(324, y + 17, 10); // Hour-minute colon
-        renderTwoDigitNumber(330, y + 17, getTimestampPart(saveData.time_20.get(), 1), 0x1L); // Time played minute
-        renderCharacter(342, y + 17, 10); // Minute-second colon
-        renderTwoDigitNumber(348, y + 17, getTimestampPart(saveData.time_20.get(), 2), 0x1L); // Time played second
-        renderTwoDigitNumber(344, y + 34, saveData.stardust_28.get()); // Stardust
-        renderDragoonSpirits(saveData.dragoonSpirits_24, 223, y + 27);
+      // Load char 1
+      //LAB_80108c78
+      if(saveData.char1Index >= 0 && saveData.char1Index < 9) {
+        final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+        FUN_80104b1c(struct, _801142d4.getAddress());
+        struct.glyph_04.set(saveData.char1Index);
+        struct.tpage_2c.add(0x1L);
+        struct._3c.set(0x21);
+        struct.x_40.set(90);
+        struct.y_44.set(y + 8);
       }
+
+      // Load char 2
+      //LAB_80108cd4
+      if(saveData.char2Index >= 0 && saveData.char2Index < 9) {
+        final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+        FUN_80104b1c(struct, _801142d4.getAddress());
+        struct.glyph_04.set(saveData.char2Index);
+        struct.tpage_2c.add(0x1L);
+        struct._3c.set(0x21);
+        struct.x_40.set(142);
+        struct.y_44.set(y + 8);
+      }
+
+      //LAB_80108d30
+      renderTwoDigitNumber(224, y + 6, saveData.level); // Level
+      renderTwoDigitNumber(269, y + 6, saveData.dlevel); // Dragoon level
+      renderFourDigitNumber(302, y + 6, saveData.currentHp); // Current HP
+      renderFourDigitNumber(332, y + 6, saveData.maxHp); // Max HP
+      renderEightDigitNumber(245, y + 17, saveData.gold, 0); // Gold
+      renderThreeDigitNumber(306, y + 17, getTimestampPart(saveData.time, 0), 0x1L); // Time played hour
+      renderCharacter(324, y + 17, 10); // Hour-minute colon
+      renderTwoDigitNumber(330, y + 17, getTimestampPart(saveData.time, 1), 0x1L); // Time played minute
+      renderCharacter(342, y + 17, 10); // Minute-second colon
+      renderTwoDigitNumber(348, y + 17, getTimestampPart(saveData.time, 2), 0x1L); // Time played second
+      renderTwoDigitNumber(344, y + 34, saveData.stardust); // Stardust
+      renderDragoonSpirits(saveData.dragoonSpirits, 223, y + 27);
     }
 
     //LAB_80108e3c
@@ -7171,7 +7153,7 @@ public final class SItem {
   }
 
   @Method(0x801098c0L)
-  public static void renderDragoonSpirits(final ArrayRef<UnsignedIntRef> spirits, final long x, final long y) {
+  public static void renderDragoonSpirits(final int spirits, final long x, final long y) {
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x28);
     final Value sp18 = tmp.get();
 
@@ -7187,7 +7169,7 @@ public final class SItem {
     //LAB_80109934
     for(int i = 0; i < 8; i++) {
       final long v0 = sp18.offset(i * 0x4L).get();
-      if((spirits.get((int)(v0 >>> 5)).get() & 0x1L << (v0 & 0x1fL)) != 0) {
+      if((spirits & 0x1L << (v0 & 0x1fL)) != 0) {
         final Renderable58 struct = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
 
         final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(6);
@@ -7417,7 +7399,7 @@ public final class SItem {
 
   @Method(0x8010a0ecL)
   public static void loadSaveFile(final int saveSlot) {
-    final byte[] data = SaveManager.loadGame(saveSlot);
+    final byte[] data = SaveManager.loadGame(saves.get(saveSlot).a());
     MEMORY.setBytes(gameState_800babc8.getAddress(), data, 0x200, 0x52c);
   }
 
@@ -7534,7 +7516,11 @@ public final class SItem {
     MEMORY.getBytes(s0, data, 0x180, 0x080);
     MEMORY.getBytes(s4, data, 0x200, 0x580);
 
-    SaveManager.saveGame((int)slot, data);
+    if(slot < saves.size()) {
+      SaveManager.overwriteSave(saves.get((int)slot).a(), data);
+    } else {
+      SaveManager.newSave(data);
+    }
 
     //LAB_8010a7a8
     //LAB_8010a7ac
