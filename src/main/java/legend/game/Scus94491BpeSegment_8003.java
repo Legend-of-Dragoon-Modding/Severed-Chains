@@ -480,8 +480,8 @@ public final class Scus94491BpeSegment_8003 {
       if((MEMORY.ref(4, s0).get() & 0xf0L) == 0xa0L) {
         if(s5 == 0) {
           MEMORY.ref(4, s0).setu(0x51L);
-          _800bf290.offset(sector * 0x20L).offset(4, 0x4L).setu(a2 * 0x2000L);
-          _800bf290.offset(sector * 0x20L).offset(0xaL).cast(CString.maxLength(0x14)).set(file);
+          _800bf290.offset(sector * 0x20L).offset(4, 0x4L).setu(a2 * 0x2000L); // File size in bytes
+          _800bf290.offset(sector * 0x20L).offset(0xaL).cast(CString.maxLength(0x15)).set(file);
         } else {
           //LAB_80030784
           _800bf290.offset(v1 * 0x20L).offset(2, 0x8L).setu(sector);
@@ -494,7 +494,7 @@ public final class Scus94491BpeSegment_8003 {
 
         s5++;
         if(s5 >= (int)a2) {
-          _800bf290.offset(sector * 0x20L).offset(2, 0x8L).setu(0xffffL);
+          _800bf290.offset(sector * 0x20L).offset(2, 0x8L).setu(0xffffL); // Ptr to next block (0xffff means last/only block)
           if(s5 >= 0x2L) {
             MEMORY.ref(4, s0).setu(0x53L);
           }

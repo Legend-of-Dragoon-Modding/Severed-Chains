@@ -103,7 +103,6 @@ import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.renderDobj2;
-import static legend.game.Scus94491BpeSegment.BASCUS_94491drgn00_80010734;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
@@ -350,7 +349,6 @@ import static legend.game.Scus94491BpeSegment_800b.memcardLength_800bf18c;
 import static legend.game.Scus94491BpeSegment_800b.memcardPos_800bf188;
 import static legend.game.Scus94491BpeSegment_800b.memcardState_800bf174;
 import static legend.game.Scus94491BpeSegment_800b.memcardStatus_800bf144;
-import static legend.game.Scus94491BpeSegment_800b.memcardStruct28ArrPtr_800bdc50;
 import static legend.game.Scus94491BpeSegment_800b.memcardVsyncCallbacks_800bf240;
 import static legend.game.Scus94491BpeSegment_800b.previousMemcardEvent_800bf160;
 import static legend.game.Scus94491BpeSegment_800b.previousMemcardState_800bf164;
@@ -2299,36 +2297,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800237a4L)
   public static long hasSavedGames(final long initializeMemcard) {
-    if(initializeMemcard == 0) {
-      FUN_8002df60(0);
-      return 0;
-    }
-
-    final Ref<Long> sp18 = new Ref<>(0L);
-    final Ref<Long> sp1c = new Ref<>(0L);
-    final Ref<Long> fileCount = new Ref<>(0L);
-
-    //LAB_800237c8
-    if(FUN_8002efb8(0x1L, sp18, sp1c) == 0) {
-      return 0;
-    }
-
-    if(sp1c.get() != 0 && sp1c.get() != 0x3L) {
-      return 0x2L;
-    }
-
-    //LAB_800237fc
-    memcardStruct28ArrPtr_800bdc50.setPointer(addToLinkedListTail(0x280L));
-    FUN_8002ed48(0, BASCUS_94491drgn00_80010734.getAddress(), memcardStruct28ArrPtr_800bdc50.deref(), fileCount, 0, 0xfL);
-    removeFromLinkedList(memcardStruct28ArrPtr_800bdc50.getPointer());
-
-    if(fileCount.get() == 0) {
-      //LAB_80023854
-      return 0x2L;
-    }
-
-    //LAB_80023860
-    return 0x1L;
+    return SaveManager.hasSavedGames() ? 1 : 2;
   }
 
   @Method(0x80023870L)
@@ -9102,7 +9071,7 @@ public final class Scus94491BpeSegment_8002 {
     return (int)functionVectorB_000000b0.run(0x34L, new Object[] {fd, dest, length});
   }
 
-  @Method(0x8002f3d0L)
+  @Method(0x8002f3d0L) /** {@link legend.core.kernel.Kernel#FileWrite_Impl_B35} */
   public static int write(final int fd, final long data, final int length) {
     return (int)functionVectorB_000000b0.run(0x35L, new Object[] {fd, data, length});
   }
