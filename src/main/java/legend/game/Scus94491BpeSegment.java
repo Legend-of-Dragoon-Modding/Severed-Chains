@@ -3824,8 +3824,16 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800173fcL)
   public static long scriptReadGlobalFlag1(final RunningScript a0) {
-    final int shift = a0.params_20.get(0).deref().get() & 0x1f;
-    final int index = a0.params_20.get(0).deref().get() >>> 5;
+    final int value = a0.params_20.get(0).deref().get();
+
+    // This is a fix for a bug in one of the game scripts - it ends up reading a flag that's massively out of bounds
+    if(value == -1) {
+      a0.params_20.get(1).deref().set(0);
+      return 0;
+    }
+
+    final int shift = value & 0x1f;
+    final int index = value >>> 5;
 
     a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
