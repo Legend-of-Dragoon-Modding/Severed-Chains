@@ -2030,6 +2030,7 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\S_STRM.OV_" -> MEMORY.addFunctions(SStrm.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
+      case "\\OVL\\S_INIT.OV_" -> MEMORY.addFunctions(SInit.class);
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
       case "\\OVL\\BTTL.OV_" -> {
         MEMORY.addFunctions(Bttl_800c.class);
@@ -3823,7 +3824,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800173fcL)
   public static long scriptReadGlobalFlag1(final RunningScript a0) {
-    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
+    final int shift = a0.params_20.get(0).deref().get() & 0x1f;
     final int index = a0.params_20.get(0).deref().get() >>> 5;
 
     a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
@@ -5694,6 +5695,16 @@ public final class Scus94491BpeSegment {
     if(_800bd0f0.get() == 0x2L) {
       FUN_8004d034((int)sssqChannelIndex_800bd0f8.get(), 0);
     }
+  }
+
+  @Method(0x8001aec8L)
+  public static long FUN_8001aec8(final RunningScript a0) {
+    if(_800bd0f0.getSigned() == 0x2L) {
+      FUN_8004d034((int)sssqChannelIndex_800bd0f8.getSigned(), 0);
+    }
+
+    //LAB_8001aef0
+    return 0;
   }
 
   @Method(0x8001af00L)
