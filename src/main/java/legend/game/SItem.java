@@ -730,6 +730,11 @@ public final class SItem {
     FUN_80012bb4();
   }
 
+  @Method(0x800fc3a0L)
+  public static void FUN_800fc3a0(final long a0) {
+    FUN_80012bb4();
+  }
+
   @Method(0x800fc3c0L)
   public static void loadEnemyTextures(final long fileIndex) {
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "enemyTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x5L);
@@ -1000,10 +1005,6 @@ public final class SItem {
     long a5;
     long t0;
     long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
     long s0;
     long s1;
     long s2;

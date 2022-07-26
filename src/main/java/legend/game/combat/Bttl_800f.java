@@ -5,8 +5,8 @@ import legend.core.gte.DVECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
-import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleMenuStruct58;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.types.ActiveStatsa0;
@@ -17,7 +17,6 @@ import legend.game.types.ScriptState;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
-import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
@@ -59,7 +58,6 @@ import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6758;
-import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c._800c6960;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -77,7 +75,6 @@ import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6ba8;
 import static legend.game.combat.Bttl_800c._800c6c2c;
 import static legend.game.combat.Bttl_800c._800c6c30;
-import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
@@ -106,7 +103,6 @@ import static legend.game.combat.Bttl_800c._800c72b4;
 import static legend.game.combat.Bttl_800c._800d66b0;
 import static legend.game.combat.Bttl_800c._800d6c30;
 import static legend.game.combat.Bttl_800c._800fa0b8;
-import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c._800fb4b4;
 import static legend.game.combat.Bttl_800c._800fb534;
 import static legend.game.combat.Bttl_800c._800fb548;
@@ -117,6 +113,9 @@ import static legend.game.combat.Bttl_800c._800fb674;
 import static legend.game.combat.Bttl_800c._800fb6bc;
 import static legend.game.combat.Bttl_800c._800fb6f4;
 import static legend.game.combat.Bttl_800c._800fb72c;
+import static legend.game.combat.Bttl_800c.allText_800fb3c0;
+import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
+import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800e.FUN_800ec7e4;
 import static legend.game.combat.Bttl_800e.FUN_800ef8d8;
 
@@ -4339,10 +4338,5 @@ public final class Bttl_800f {
   @Method(0x800fa090L)
   public static long clampY(final long a0) {
     return MathHelper.clamp(a0, 20, 220);
-  }
-
-  @Method(0x800fc3a0L)
-  public static void FUN_800fc3a0(final long a0) {
-    FUN_80012bb4();
   }
 }
