@@ -85,6 +85,7 @@ import static legend.game.SItem._80111d20;
 import static legend.game.SItem._80111ff0;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
+import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800daa3c;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2220;
@@ -370,9 +371,11 @@ import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
 import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
+import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.FUN_800c925c;
 import static legend.game.WMap.renderWmapDobj2;
 import static legend.game.combat.Bttl_800e.FUN_800ec0b0;
+import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.FUN_800ec974;
 
 public final class Scus94491BpeSegment_8002 {
@@ -1027,6 +1030,27 @@ public final class Scus94491BpeSegment_8002 {
     a0.rotateTranslateArrPtr_94.set(rotateTranslate);
   }
 
+  @Method(0x800213c4L)
+  public static void FUN_800213c4(final BigStruct a0) {
+    long s5 = a0.rotateTranslateArrPtr_94.getPointer(); //TODO
+
+    //LAB_80021404
+    for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
+      final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
+      final MATRIX s1 = coord2.coord;
+      final GsCOORD2PARAM s0 = coord2.param.deref();
+      RotMatrix_80040010(s0.rotate, s1);
+      s0.trans.setX((int)((MEMORY.ref(2, s5).offset(0x6L).getSigned() + s0.trans.getX()) / 2));
+      s0.trans.setY((int)((MEMORY.ref(2, s5).offset(0x8L).getSigned() + s0.trans.getY()) / 2));
+      s0.trans.setZ((int)((MEMORY.ref(2, s5).offset(0xaL).getSigned() + s0.trans.getZ()) / 2));
+      TransMatrix(s1, s0.trans);
+      s5 = s5 + 0xcL;
+    }
+
+    //LAB_80021490
+    a0.rotateTranslateArrPtr_94.setPointer(s5);
+  }
+
   @Method(0x800214bcL)
   public static void FUN_800214bc(final BigStruct a0) {
     RotMatrix_8003faf0(a0.coord2Param_64.rotate, a0.coord2_14.coord);
@@ -1066,6 +1090,48 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021608
     bigStruct.ub_9c.set(1);
     bigStruct.rotateTranslateArrPtr_94.set(bigStruct.ptr_ui_90.deref());
+  }
+
+  @Method(0x80021628L)
+  public static void FUN_80021628(final BigStruct a0) {
+    if(mainCallbackIndex_8004dd20.get() != 0x5L && mainCallbackIndex_8004dd20.get() != 0x8L) {
+      //LAB_80021678
+      for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
+        FUN_80020468(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
+      }
+      //LAB_8002169c
+    } else if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+      //LAB_800216b4
+      for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
+        FUN_800d9e64(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
+      }
+      //LAB_800216d4
+    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+      //LAB_800216ec
+      for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
+        FUN_800c8844(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
+      }
+    }
+
+    //LAB_80021708
+  }
+
+  @Method(0x80021724L)
+  public static void FUN_80021724(final BigStruct a0) {
+    final long v1 = mainCallbackIndex_8004dd20.get();
+    if(v1 == 0x5) {
+      //LAB_8002177c
+      FUN_800da524(a0);
+      //LAB_80021758
+    } else if(v1 == 0x6L) {
+      //LAB_8002176c
+      FUN_800ec258(a0);
+    } else if(v1 == 0x8L) {
+      //LAB_8002178c
+      FUN_800c8d90(a0);
+    }
+
+    //LAB_80021794
   }
 
   @Method(0x800217a4L)

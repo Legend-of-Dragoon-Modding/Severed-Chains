@@ -4780,6 +4780,44 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80114f3cL)
+  public static void FUN_80114f3c(final int scriptIndex, final int a1, final int a2, final int a3) {
+    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+    if((1L << (a1 + 5) & s0._04.get()) != 0) {
+      FUN_800e8d04(s0, a1 + 5);
+    }
+
+    //LAB_80114fa8
+    final BttlScriptData6cSub1c v0 = FUN_800e8dd4(s0, a1 + 0x5L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80114d98", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
+    MEMORY.ref(4, v0.getAddress()).offset(0x0cL).setu(MEMORY.ref(4, s0._10._24.getAddress()).offset(a1 * 0x4L).get() << 8); //TODO
+    MEMORY.ref(4, v0.getAddress()).offset(0x10L).setu(a2);
+    MEMORY.ref(4, v0.getAddress()).offset(0x14L).setu(a3);
+    MEMORY.ref(1, v0.getAddress()).offset(0x18L).setu(-0x1L);
+    MEMORY.ref(2, v0.getAddress()).offset(0x1aL).setu(-0x1L);
+  }
+
+  @Method(0x80114d98L)
+  public static long FUN_80114d98(final EffectManagerData6c a0, final BttlScriptData6cSub1c a1) {
+    //TODO
+    MEMORY.ref(4, a1.getAddress()).offset(0x10L).addu(MEMORY.ref(4, a1.getAddress()).offset(0x14L).get());
+    MEMORY.ref(4, a1.getAddress()).offset(0xcL).addu(MEMORY.ref(4, a1.getAddress()).offset(0x10L).get());
+    MEMORY.ref(4, a0._10._24.getAddress()).offset((MEMORY.ref(1, a1.getAddress()).offset(0x5L).getSigned() - 5) * 0x4L).setu(MEMORY.ref(4, a1.getAddress()).offset(0xcL).getSigned() >> 8);
+
+    if(MEMORY.ref(2, a1.getAddress()).offset(0x1aL).getSigned() == -1) {
+      return 1;
+    }
+
+    MEMORY.ref(2, a1.getAddress()).offset(0x1aL).subu(0x1L);
+    if(MEMORY.ref(2, a1.getAddress()).offset(0x1aL).getSigned() > 0) {
+      //LAB_80114e00
+      return 1;
+    }
+
+    //LAB_80114e04
+    return 0;
+  }
+
   @Method(0x80115288L)
   public static long FUN_80115288(final EffectManagerData6c a0, final BttlScriptData6cSub1c a1) {
     MEMORY.ref(2, a1.getAddress()).offset(0x1aL).subu(0x1L); //TODO
