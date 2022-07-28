@@ -635,12 +635,55 @@ public final class Scus94491BpeSegment {
 
   private static int allocations;
 
+  static {
+    Hardware.registerLoadStateListener(Scus94491BpeSegment::recalculateAllocations);
+  }
+
+  public static void recalculateAllocations() {
+    allocations = 0;
+
+    Value entry = linkedListHead_8005a2a0.deref(4);
+    long entryType = entry.offset(2, 0x8L).get();
+
+    do {
+      final long size = entry.offset(4, 0x4L).get();
+
+      if(entryType != 0) {
+        allocations++;
+      }
+
+      entry = entry.offset(size);
+      entryType = entry.offset(2, 0x8L).get();
+    } while(entryType != 3);
+
+    LOGGER.info("Recalculated allocations: %d", allocations);
+  }
+
+  public static void dumpLinkedList() {
+    Value entry = linkedListHead_8005a2a0.deref(4);
+    long entryType = entry.offset(2, 0x8L).get();
+
+    do {
+      final long size = entry.offset(4, 0x4L).get();
+
+      final String type = switch((int)entryType) {
+        case 0 -> "free space";
+        case 1 -> "allocated on head";
+        case 2 -> "allocated on tail";
+        case 3 -> "end of list";
+        default -> "unknown type " + entryType;
+      };
+
+      LOGGER.error("%08x (0x%x bytes), %s", entry.getAddress() + 0xcL, size, type);
+
+      entry = entry.offset(size);
+      entryType = entry.offset(2, 0x8L).get();
+    } while(entryType != 3);
+  }
+
   @Method(0x800120f0L)
   public static long addToLinkedListHead(long size) {
     size = size + 0xfL & 0xffff_fffcL;
-
-    allocations++;
-    LOGGER.info("Allocating 0x%x bytes on head (%d total)", size, allocations);
 
     long currentEntry = linkedListHead_8005a2a0.get();
     long entryType = MEMORY.ref(2, currentEntry).offset(0x8L).get();
@@ -661,6 +704,8 @@ public final class Scus94491BpeSegment {
             MEMORY.ref(4, currentEntry).offset(spaceAvailable).setu(currentEntry + size);
           }
 
+          allocations++;
+          LOGGER.info("Allocating 0x%x bytes on head @ %08x (%d total)", size, currentEntry + 0xcL, allocations);
           return currentEntry + 0xcL;
         }
       }
@@ -671,20 +716,17 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001218c
-    assert false : "Failed to allocate entry on linked list";
-    return 0;
+    dumpLinkedList();
+    throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
   }
 
   @Method(0x80012194L)
   public static long addToLinkedListTail(long size) {
     size = size + 0xfL & 0xffff_fffcL;
 
-    allocations++;
-    LOGGER.info("Allocating 0x%x bytes on tail (%d total)", size, allocations);
-
     Value currentEntry = linkedListTail_8005a2a4;
     Value nextEntry = linkedListTail_8005a2a4.deref(4);
-    long entryType = linkedListTail_8005a2a4.deref(4).deref(2).offset(0x8L).get();
+    long entryType = nextEntry.deref(2).offset(0x8L).get();
     // Known entry types:
     // 0: empty space?
     // 2: used?
@@ -701,11 +743,17 @@ public final class Scus94491BpeSegment {
           nextEntry.deref(4).offset(-size).offset(spaceAvailable).setu(nextEntry);
           currentEntry.deref(4).offset(-size).offset(0x4L).setu(size);
           currentEntry.deref(4).setu(currentEntry.get() - size);
+
+          allocations++;
+          LOGGER.info("Allocating 0x%x bytes on tail @ %08x (%d total)", size, currentEntry.get() - size + 0xcL, allocations);
           return currentEntry.get() - size + 0xcL;
         }
 
         //LAB_80012214
         nextEntry.deref(2).offset(0x8L).setu(0x2L); // Mark as used
+
+        allocations++;
+        LOGGER.info("Allocating 0x%x bytes on tail @ %08x (%d total)", size, nextEntry.get() + 0xcL, allocations);
         return nextEntry.get() + 0xcL;
       }
 
@@ -716,8 +764,8 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001223c
-    assert false : "Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')';
-    return 0;
+    dumpLinkedList();
+    throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
   }
 
   @Method(0x80012244L)
@@ -1097,6 +1145,10 @@ public final class Scus94491BpeSegment {
   public static void removeFromLinkedList(long address) {
     allocations--;
     LOGGER.info("Deallocating %08x (%d remaining)", address, allocations);
+
+    if(allocations < 0) {
+      LOGGER.error("Negative allocations!", new Throwable());
+    }
 
     address -= 0xcL;
     long a1 = MEMORY.ref(4, address).offset(0x4L).get(); // Remaining size?
