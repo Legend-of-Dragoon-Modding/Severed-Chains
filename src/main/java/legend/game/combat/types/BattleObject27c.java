@@ -6,6 +6,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -157,6 +158,10 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedByteRef _214;
   public final UnsignedByteRef _215;
 
+  public final UnboundedArrayRef<UnsignedByteRef> _234;
+
+  public final UnsignedIntRef _23c;
+  public final UnsignedIntRef _240;
   public final VECTOR _244;
 
   public final UnsignedIntRef _254;
@@ -318,6 +323,10 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._214 = ref.offset(1, 0x214L).cast(UnsignedByteRef::new);
     this._215 = ref.offset(1, 0x215L).cast(UnsignedByteRef::new);
 
+    this._234 = ref.offset(1, 0x234L).cast(UnboundedArrayRef.of(1, UnsignedByteRef::new));
+
+    this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
+    this._240 = ref.offset(4, 0x240L).cast(UnsignedIntRef::new);
     this._244 = ref.offset(4, 0x244L).cast(VECTOR::new);
 
     this._254 = ref.offset(4, 0x254L).cast(UnsignedIntRef::new);

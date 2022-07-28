@@ -21,6 +21,7 @@ import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
+import legend.game.combat.Bttl_800e;
 import legend.game.types.CallbackStruct;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
@@ -602,7 +603,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800ccf2c}</li>
    *   <li>{@link Bttl_800c#FUN_800cd0ec}</li>
    *   <li>{@link Bttl_800c#FUN_800cd078}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd160}</li>
+   *   <li>{@link Bttl_800c#levelUpAddition}</li>
    *   <li>{@link Bttl_800c#FUN_800cce70}</li>
    *   <li>{@link Bttl_800c#FUN_800ccda0}</li>
    * </ol>

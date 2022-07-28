@@ -7102,7 +7102,7 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
       unloadSoundFile(8);
 
-      loadedDrgnFiles_800bcf78.oru(0x80L);
+//      loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
       loadDrgnBinFile(0, 5815, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5815 * 0x100L, 0x4L);
 
       //LAB_8001e044
@@ -7113,7 +7113,7 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
 
       //LAB_8001e0bc
-      loadedDrgnFiles_800bcf78.oru(0x80L);
+//      loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
       loadDrgnBinFile(0, 5900, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5900 * 0x100L, 0x4L);
     } else if((int)a0 == -0x1L) {
       //LAB_8001e0f8
@@ -7123,7 +7123,7 @@ public final class Scus94491BpeSegment {
           unloadSoundFile(8);
 
           //LAB_8001e23c
-          loadedDrgnFiles_800bcf78.oru(0x80L);
+//          loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
           loadDrgnBinFile(0, 5850, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5850 * 0x100L, 0x4L);
         }
       } else {
@@ -7146,7 +7146,7 @@ public final class Scus94491BpeSegment {
             a1 = 5815 + s0 * 5;
 
             //LAB_8001e23c
-            loadedDrgnFiles_800bcf78.oru(0x80L);
+//            loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
             loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), a1 * 0x100L, 0x4L);
           } else {
             FUN_8001ae90();
@@ -7527,7 +7527,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f708L)
   public static void FUN_8001f708(final long chapterIndex, final long a1) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
     final long fileIndex = 5850 + chapterIndex * 5;
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a1, 0x4L);
   }

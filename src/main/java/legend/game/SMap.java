@@ -28,10 +28,12 @@ import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.BigSubStruct;
+import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
@@ -72,6 +74,7 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.game.SItem.FUN_80110030;
 import static legend.game.SStrm.FUN_800fb7cc;
 import static legend.game.SStrm.FUN_800fb90c;
 import static legend.game.SStrm.stopFmv;
@@ -247,6 +250,7 @@ import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -752,6 +756,54 @@ public final class SMap {
     loadMcq(mcq, 640, 0);
   }
 
+  @Method(0x800d9b08L)
+  public static void FUN_800d9b08(final long a0) {
+    FUN_80110030(0);
+
+    if((int)a0 >= 0) {
+      final ActiveStatsa0 stats = stats_800be5f8.get((int)a0);
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get((int)a0);
+      charData.hp_08.set(stats.maxHp_66.get());
+      charData.mp_0a.set(stats.maxMp_6e.get());
+    } else {
+      //LAB_800d9b70
+      //LAB_800d9b84
+      for(int charSlot = 0; charSlot < 9; charSlot++) {
+        final var stats = stats_800be5f8.get(charSlot);
+        final var charData = gameState_800babc8.charData_32c.get(charSlot);
+        charData.hp_08.set(stats.maxHp_66.get());
+        charData.mp_0a.set(stats.maxMp_6e.get());
+      }
+    }
+
+    //LAB_800d9ba8
+    FUN_80012bb4();
+  }
+
+  @Method(0x800d9bc0L)
+  public static long FUN_800d9bc0(final RunningScript a0) {
+    FUN_80012b1c(2, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), -1);
+    return 0;
+  }
+
+  @Method(0x800d9bf4L)
+  public static long FUN_800d9bf4(final RunningScript a0) {
+    //LAB_800d9c04
+    for(int i = 0; i < 9; i++) {
+      gameState_800babc8.charData_32c.get(i)._10.set(0);
+    }
+
+    return 0;
+  }
+
+  @Method(0x800d9c1cL)
+  public static long FUN_800d9c1c(final RunningScript a0) {
+    //LAB_800d9c78
+    memcpy(gameState_800babc8.charData_32c.get(a0.params_20.get(1).deref().get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).getAddress(), 0x2c);
+    FUN_80012b1c(0x2L, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
   @Method(0x800d9ce4L)
   public static long scriptSetCharAddition(final RunningScript a0) {
     gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.set(a0.params_20.get(1).deref().get());
@@ -762,6 +814,25 @@ public final class SMap {
   public static long scriptGetCharAddition(final RunningScript a0) {
     a0.params_20.get(1).deref().set(gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get());
     return 0;
+  }
+
+  @Method(0x800d9d60L)
+  public static long FUN_800d9d60(final RunningScript a0) {
+    if(gameState_800babc8.charData_32c.get(0).dlevelXp_0e.get() < 63901) {
+      gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(63901);
+    }
+
+    //LAB_800d9d90
+    gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
+
+    FUN_80012b1c(2, getMethodAddress(SMap.class, "FUN_800d9dc0", long.class), 0);
+    return 0;
+  }
+
+  @Method(0x800d9dc0L)
+  public static void FUN_800d9dc0(final long charIndex) {
+    gameState_800babc8.charData_32c.get((int)charIndex).sp_0c.set(500);
+    FUN_800d9b08(-1);
   }
 
   @Method(0x800d9e64L)

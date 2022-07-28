@@ -1051,12 +1051,12 @@ public final class SEffe {
         sp0x68.offset(0x38L).setu(s3._70.getX() + s3._68.getX());
         sp0x68.offset(0x3aL).setu(s3._70.getY() + s3._68.getY());
         sp0x68.offset(0x3cL).setu(s3._70.getZ() + s3._68.getZ());
-        sp0x68.offset(0x40L).setu(sp0x48.getX() >> 8);
-        sp0x68.offset(0x41L).setu(sp0x48.getY() >> 8);
-        sp0x68.offset(0x42L).setu(sp0x48.getZ() >> 8);
-        sp0x68.offset(0x44L).setu(0);
-        sp0x68.offset(0x45L).setu(0);
-        sp0x68.offset(0x46L).setu(0);
+        sp0x68.offset(1, 0x40L).setu(sp0x48.getX() >> 8);
+        sp0x68.offset(1, 0x41L).setu(sp0x48.getY() >> 8);
+        sp0x68.offset(1, 0x42L).setu(sp0x48.getZ() >> 8);
+        sp0x68.offset(1, 0x44L).setu(0);
+        sp0x68.offset(1, 0x45L).setu(0);
+        sp0x68.offset(1, 0x46L).setu(0);
         FUN_800fcf20(data, s1._30.deref(), sp0x68.getAddress(), s1._56.get());
         tmp.release();
       }
@@ -4773,6 +4773,19 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80114eb4L)
+  public static long FUN_80114eb4(final RunningScript script) {
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final int a0 = script.params_20.get(1).deref().get() + 5;
+
+    if((1L << a0 & manager._04.get()) != 0) {
+      FUN_800e8d04(manager, (byte)a0);
+    }
+
+    //LAB_80114f24
+    return 0;
+  }
+
   @Method(0x80114e60L)
   public static long FUN_80114e60(final RunningScript a0) {
     final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
@@ -4784,7 +4797,7 @@ public final class SEffe {
   public static void FUN_80114f3c(final int scriptIndex, final int a1, final int a2, final int a3) {
     final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
-    if((1L << (a1 + 5) & s0._04.get()) != 0) {
+    if((1L << a1 + 5 & s0._04.get()) != 0) {
       FUN_800e8d04(s0, a1 + 5);
     }
 
@@ -4815,6 +4828,34 @@ public final class SEffe {
     }
 
     //LAB_80114e04
+    return 0;
+  }
+
+  @Method(0x80115014L)
+  public static long FUN_80115014(final RunningScript a0) {
+    FUN_80114f3c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    return 0;
+  }
+
+  @Method(0x80115058L)
+  public static long FUN_80115058(final RunningScript a0) {
+    final int s1 = a0.params_20.get(1).deref().get();
+    final int s3 = a0.params_20.get(2).deref().get();
+    final int s2 = a0.params_20.get(3).deref().get();
+
+    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+    if((0x1L << s1 + 5 & s0._04.get()) != 0) {
+      FUN_800e8d04(s0, s1 + 5);
+    }
+
+    //LAB_801150e8
+    final long v0 = FUN_800e8dd4(s0, s1 + 0x5L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80114d98", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new).getAddress(); //TODO
+    MEMORY.ref(1, v0).offset(0x18L).setu(-0x1L);
+    MEMORY.ref(2, v0).offset(0x1aL).setu(s2);
+    MEMORY.ref(4, v0).offset(0xcL).setu(MEMORY.ref(4, s0._10._24.getAddress()).offset(s1 * 0x4L).get() << 8); //TODO
+    MEMORY.ref(4, v0).offset(0x10L).setu((int)(s3 * 0x100 - MEMORY.ref(4, v0).offset(0xcL).get()) / s2);
+    MEMORY.ref(4, v0).offset(0x14L).setu(0);
     return 0;
   }
 

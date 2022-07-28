@@ -15,6 +15,7 @@ public class CombatantStruct1a8 implements MemoryRef {
   private final Value ref;
 
   public final Pointer<MrgFile> mrg_00;
+  /** TODO ptr */
   public final UnsignedIntRef _04;
   public final Pointer<ExtendedTmd> tmd_08;
 
