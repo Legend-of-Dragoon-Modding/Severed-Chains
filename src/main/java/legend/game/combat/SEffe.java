@@ -71,11 +71,15 @@ import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040ec0;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
+import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -5148,6 +5152,51 @@ public final class SEffe {
     }
 
     //LAB_80118780
+  }
+
+  @Method(0x80118790L)
+  public static void FUN_80118790(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+    if((int)s1._10._00.get() >= 0) {
+      final int y = s1._10.vec_04.getY();
+      s1._10.vec_04.setY(0);
+      final MATRIX sp0x10 = new MATRIX();
+      FUN_800e8594(sp0x10, s1);
+      sp0x10.transfer.setY(y);
+      s1._10.vec_04.setY(y);
+
+      final short rotY = (short)ratan2(-sp0x10.get(6), sp0x10.get(0));
+      RotMatrixY(-rotY, sp0x10);
+      final short rotZ = (short)ratan2(sp0x10.get(3), sp0x10.get(0));
+      RotMatrixZ(-rotZ, sp0x10);
+      final short rotX = (short)ratan2(-sp0x10.get(5), sp0x10.get(8));
+      RotMatrixX(-rotX, sp0x10);
+      RotMatrixY(rotY, sp0x10);
+      sp0x10.set(3, (short)0);
+      sp0x10.set(4, (short)0);
+      sp0x10.set(5, (short)0);
+      _1f8003ec.setu(s1._10._00.get() >>> 23 & 0x60L);
+      _1f8003e8.setu(s1._10._22.get());
+      FUN_800e60e0(s1._10.svec_1c.getX() << 5, s1._10.svec_1c.getY() << 5, s1._10.svec_1c.getZ() << 5);
+      FUN_800de3f4(bigStruct_800bda10.dobj2ArrPtr_00.deref().get(0).tmd_08.deref(), s1._10, sp0x10);
+      FUN_800e6170();
+    }
+
+    //LAB_801188d8
+  }
+
+  @Method(0x801188ecL)
+  public static long FUN_801188ec(final RunningScript a0) {
+    final int scriptIndex = allocateEffectManager(a0.scriptStateIndex_00.get(), 0, null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80118790", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null, null);
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
+    final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
+    manager._04.set(0x600_0000L);
+    manager._10.svec_16.set((short)0x400, (short)0x400, (short)0x400);
+    manager._10._24.set(0);
+    manager._10._00.set(0x6400_0040L);
+    a0.params_20.get(0).deref().set(scriptIndex);
+    return 0;
   }
 
   @Method(0x80118e98L)

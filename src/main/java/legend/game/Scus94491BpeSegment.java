@@ -34,7 +34,7 @@ import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.combat.types.EffectManagerData6c;
-import legend.game.scriptdebugger.ScriptDebugger;
+import legend.game.scriptdebugger.Debugger;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
@@ -105,6 +105,7 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.beginCdromTransfer;
+import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.drawOTag;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -314,7 +315,7 @@ public final class Scus94491BpeSegment {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
 
-  private static ScriptDebugger scriptDebugger = null;
+  private static Debugger debugger = null;
 
   public static final BiFunctionRef<Long, Object[], Object> functionVectorA_000000a0 = MEMORY.ref(4, 0x000000a0L, BiFunctionRef::new);
   public static final BiFunctionRef<Long, Object[], Object> functionVectorB_000000b0 = MEMORY.ref(4, 0x000000b0L, BiFunctionRef::new);
@@ -415,7 +416,7 @@ public final class Scus94491BpeSegment {
   public static void gameLoop() {
     if("true".equalsIgnoreCase(System.getProperty("scriptdebug"))) {
       try {
-        scriptDebugger = new ScriptDebugger(12345);
+        new Thread(() -> debugger = new Debugger()).start();
       } catch(final Exception e) {
         LOGGER.info("Failed to start script debugger", e);
       }
@@ -2697,27 +2698,20 @@ public final class Scus94491BpeSegment {
       return -1;
     }
 
+    bzero(linkedListAddress, (int)(innerStructSize + 0x100));
+
     final ScriptState<T> scriptState = MEMORY.ref(4, linkedListAddress, ScriptState.of(type));
 
     //LAB_80015978
     scriptStatePtrArr_800bc1c0.get(index).set(scriptState);
 
     if(innerStructSize != 0) {
-      //LAB_800159ac
-      for(int i = 0; i < innerStructSize; i += 4) {
-        MEMORY.ref(4, linkedListAddress).offset(0x100L).offset(i).setu(0);
-      }
-
       scriptState.innerStruct_00.setPointer(linkedListAddress + 0x100L);
     } else {
       scriptState.innerStruct_00.clear();
     }
 
     //LAB_800159c0
-    for(int i = 0; i < scriptState.commandStack_1c.length(); i++) {
-      scriptState.commandStack_1c.get(i).clear();
-    }
-
     scriptState.storage_44.get(0).set(index);
     scriptState.storage_44.get(1).set(-1);
     scriptState.storage_44.get(2).set(-1);
@@ -2824,16 +2818,8 @@ public final class Scus94491BpeSegment {
       struct.scriptPtr_14.set(script);
       struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
-
-      if(scriptDebugger != null) {
-        scriptDebugger.addScript(index, friendlyName, length);
-      }
     } else {
       LOGGER.info("Clearing script index %d", index);
-
-      if(scriptDebugger != null) {
-        scriptDebugger.removeScript(index);
-      }
 
       struct.scriptPtr_14.clear();
       struct.commandPtr_18.clear();
@@ -5785,6 +5771,33 @@ public final class Scus94491BpeSegment {
     FUN_8004cf8c((int)_800bd610.offset(a0 * 0x10L).offset(0xcL).getSigned());
   }
 
+  @Method(0x8001b134L)
+  public static long FUN_8001b134(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x8001b13cL)
+  public static long FUN_8001b13c(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x8001b144L)
+  public static long FUN_8001b144(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x8001b14cL)
+  public static long FUN_8001b14c(final RunningScript a0) {
+    setMainVolume((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x8001b17cL)
+  public static long FUN_8001b17c(final RunningScript a0) {
+    FUN_8001b1a8((short)a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
   @Method(0x8001b1a8L)
   public static void FUN_8001b1a8(final long a0) {
     FUN_8004c8dc((int)sssqChannelIndex_800bd0f8.get(), (short)a0);
@@ -5794,6 +5807,28 @@ public final class Scus94491BpeSegment {
   @Method(0x8001b1ecL)
   public static long FUN_8001b1ec(final RunningScript a0) {
     a0.params_20.get(0).deref().set((int)_800bd108.getSigned());
+    return 0;
+  }
+
+  @Method(0x8001b208L)
+  public static long FUN_8001b208(final RunningScript a0) {
+    //LAB_8001b22c
+    for(int i = 0; i < 13; i++) {
+      final SoundFile s0 = soundFileArr_800bcf80.get(i);
+
+      if(s0.used_00.get()) {
+        FUN_8004cb0c(s0.playableSoundIndex_10.get(), (short)a0.params_20.get(0).deref().get());
+      }
+
+      //LAB_8001b250
+    }
+
+    return 0;
+  }
+
+  @Method(0x8001b27cL)
+  public static long FUN_8001b27c(final RunningScript a0) {
+    sssqFadeIn((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
     return 0;
   }
 

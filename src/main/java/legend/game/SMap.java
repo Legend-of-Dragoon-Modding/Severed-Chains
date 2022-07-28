@@ -3543,7 +3543,7 @@ public final class SMap {
 
     s0.us_170.set(1);
 
-    s0.vec_148.set(s0.vec_138).sub(s0.coord2_14.coord.transfer).div((int)s0.ui_144.get());
+    s0.vec_148.set(s0.vec_138).sub(s0.coord2_14.coord.transfer).div(s0.ui_144.get());
 
     if(s0.vec_148.x.get() == 0) {
       if(s0.vec_138.x.get() < s0.coord2_14.coord.transfer.getX()) {
@@ -3569,7 +3569,7 @@ public final class SMap {
     int v0;
     v0 = s0.vec_138.x.get() - s0.coord2_14.coord.transfer.getX();
     v0 = v0 << 16;
-    v0 = v0 / (int)s0.ui_144.get();
+    v0 = v0 / s0.ui_144.get();
 
     if(s0.vec_148.x.get() < 0) {
       //LAB_800de7e0
@@ -3581,7 +3581,7 @@ public final class SMap {
 
     v0 = s0.vec_138.y.get() - s0.coord2_14.coord.transfer.getY();
     v0 = v0 << 16;
-    v0 = v0 / (int)s0.ui_144.get();
+    v0 = v0 / s0.ui_144.get();
 
     if(s0.vec_148.y.get() < 0) {
       //LAB_800de84c
@@ -3593,7 +3593,7 @@ public final class SMap {
 
     v0 = s0.vec_138.z.get() - s0.coord2_14.coord.transfer.getZ();
     v0 = v0 << 16;
-    v0 = v0 / (int)s0.ui_144.get();
+    v0 = v0 / s0.ui_144.get();
 
     if(s0.vec_148.z.get() < 0) {
       //LAB_800de8b8
@@ -3610,6 +3610,72 @@ public final class SMap {
     setCallback10(scriptStateIndices_800c6880.get(s0.scriptFileIndex_130.get()).get(), MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e1f90", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
 
     s0.ui_190.and(0x7fff_ffffL);
+    return 0;
+  }
+
+  @Method(0x800de944L)
+  public static long FUN_800de944(final RunningScript a0) {
+    final BigStruct a2 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class);
+    a2.vec_138.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    final int a3 = a0.params_20.get(4).deref().get();
+    a2.ui_144.set(a3);
+    a2.vec_148.setX((a2.vec_138.getX() - a2.coord2_14.coord.transfer.getX()) / a3);
+    a2.vec_148.setZ((a2.vec_138.getZ() - a2.coord2_14.coord.transfer.getZ()) / a3);
+
+    if(a2.vec_148.getX() == 0 && a2.vec_138.getX() < a2.coord2_14.coord.transfer.getX()) {
+      a2.vec_148.setX(0x8000_0000);
+    }
+
+    //LAB_800dea08
+    if(a2.vec_148.getZ() == 0 && a2.vec_138.getZ() < a2.coord2_14.coord.transfer.getZ()) {
+      a2.vec_148.setZ(0x8000_0000);
+    }
+
+    //LAB_800dea34
+    int v0;
+    if(a2.vec_148.getX() >= 0) {
+      v0 = a2.vec_138.getX() - a2.coord2_14.coord.transfer.getX();
+      v0 = v0 << 16;
+      v0 = v0 / a2.ui_144.get();
+      v0 = v0 & 0xffff;
+    } else {
+      //LAB_800dea6c
+      v0 = a2.vec_138.getX() - a2.coord2_14.coord.transfer.getX();
+      v0 = v0 << 16;
+      v0 = v0 / a2.ui_144.get();
+      v0 = ~v0;
+      v0 = v0 + 1;
+      v0 = v0 & 0xffff;
+    }
+
+    //LAB_800dea9c
+    a2.vec_154.setX(v0);
+
+    if(a2.vec_148.getZ() >= 0) {
+      v0 = a2.vec_138.getZ() - a2.coord2_14.coord.transfer.getZ();
+      v0 = v0 << 16;
+      v0 = v0 / a2.ui_144.get();
+      v0 = v0 & 0xffff;
+    } else {
+      //LAB_800dead8
+      v0 = a2.vec_138.getZ() - a2.coord2_14.coord.transfer.getZ();
+      v0 = v0 << 16;
+      v0 = v0 / a2.ui_144.get();
+      v0 = ~v0;
+      v0 = v0 + 1;
+      v0 = v0 & 0xffff;
+    }
+
+    //LAB_800deb08
+    a2.vec_154.setZ(v0);
+
+    a2.us_134.set((short)(((a2.vec_138.getY() - a2.coord2_14.coord.transfer.getY()) * 2 - a3 * 7 * (a3 - 1)) / (a3 * 2)));
+    a2.vec_160.setX(0);
+    a2.vec_160.setZ(0);
+    a2.us_170.set(2);
+    a2.us_172.set((short)1);
+    a2.ui_18c.set(0x7L);
+    setCallback10(scriptStateIndices_800c6880.get(a2.scriptFileIndex_130.get()).get(), MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800e3e74", int.class, ScriptState.classFor(BigStruct.class), BigStruct.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3969,6 +4035,16 @@ public final class SMap {
     a0.params_20.get(1).set(a0.params_20.get(0).deref());
     a0.params_20.get(0).set(a0.scriptState_04.deref().storage_44.get(0));
     return FUN_800de668(a0);
+  }
+
+  @Method(0x800df488L)
+  public static long FUN_800df488(final RunningScript a0) {
+    a0.params_20.get(4).set(a0.params_20.get(3).deref());
+    a0.params_20.get(3).set(a0.params_20.get(2).deref());
+    a0.params_20.get(2).set(a0.params_20.get(1).deref());
+    a0.params_20.get(1).set(a0.params_20.get(0).deref());
+    a0.params_20.get(0).set(a0.scriptState_04.deref().storage_44.get(0));
+    return FUN_800de944(a0);
   }
 
   @Method(0x800df4d0L)
@@ -5045,7 +5121,7 @@ public final class SMap {
           struct.mrgAnimGroup_12e.set(i);
           struct.scriptFileIndex_130.set(i);
           struct.mrgAnimGroupIndex_132.set(0);
-          struct.us_134.set(0);
+          struct.us_134.set((short)0);
           struct.ui_144.set(0);
           struct.ui_16c.set(-1);
           struct.us_170.set(0);
