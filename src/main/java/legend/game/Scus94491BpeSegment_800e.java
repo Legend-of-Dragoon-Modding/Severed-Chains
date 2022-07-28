@@ -871,7 +871,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e60d8();
     loadSystemFont();
     FUN_800e6654();
-    allocateLinkedList(_8011e210.getAddress(), 0xdedf0L);
+    allocateLinkedList(_8011e210.getAddress(), 0x1d_edf0L);
     loadOvalBlobTexture();
     FUN_800e6dd4();
     FUN_800e6e3c();
