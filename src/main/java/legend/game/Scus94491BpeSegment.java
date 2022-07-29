@@ -1,5 +1,7 @@
 package legend.game;
 
+import javafx.application.Application;
+import javafx.application.Platform;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.IoHelper;
@@ -34,7 +36,11 @@ import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.combat.types.EffectManagerData6c;
-import legend.game.scriptdebugger.Debugger;
+import legend.game.debugger.Debugger;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.scripting.ScriptAllocatedEvent;
+import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
+import legend.game.modding.events.scripting.ScriptTickEvent;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
@@ -309,13 +315,15 @@ import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
 import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
-
-  private static Debugger debugger = null;
 
   public static final BiFunctionRef<Long, Object[], Object> functionVectorA_000000a0 = MEMORY.ref(4, 0x000000a0L, BiFunctionRef::new);
   public static final BiFunctionRef<Long, Object[], Object> functionVectorB_000000b0 = MEMORY.ref(4, 0x000000b0L, BiFunctionRef::new);
@@ -414,21 +422,26 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    if("true".equalsIgnoreCase(System.getProperty("scriptdebug"))) {
-      try {
-        new Thread(() -> debugger = new Debugger()).start();
-      } catch(final Exception e) {
-        LOGGER.info("Failed to start script debugger", e);
-      }
-    }
-
     Hardware.GPU.events().onKeyPress((window, key, scancode, mods) -> {
-      if(key == 83 && (mods & 0x2) != 0) { // GLFW_KEY_S, GLFW_MOD_CONTROL
+      if(key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL) != 0) {
         dumping = true;
       }
 
-      if(key == 76 && (mods & 0x2) != 0) { // GLFW_KEY_L, GLFW_MOD_CONTROL
+      if(key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL) != 0) {
         loading = true;
+      }
+
+      if(key == GLFW_KEY_F12) {
+        if(!Debugger.isRunning()) {
+          try {
+            Platform.setImplicitExit(false);
+            new Thread(() -> Application.launch(Debugger.class)).start();
+          } catch(final Exception e) {
+            LOGGER.info("Failed to start script debugger", e);
+          }
+        } else {
+          Platform.runLater(Debugger::show);
+        }
       }
     });
 
@@ -562,6 +575,8 @@ public final class Scus94491BpeSegment {
 
       DebugHelper.sleep(1);
     }
+
+    Platform.exit();
   }
 
   @Method(0x80011ec0L)
@@ -2743,6 +2758,8 @@ public final class Scus94491BpeSegment {
     scriptState.typePtr_f8.setNullable(a3);
     scriptState.ui_fc.set(a4);
 
+    EventManager.INSTANCE.postEvent(new ScriptAllocatedEvent(index));
+
     //LAB_80015a34
     return index;
   }
@@ -2830,6 +2847,8 @@ public final class Scus94491BpeSegment {
   @Method(0x80015c20L)
   public static void deallocateScriptState(final int scriptIndex) {
     LOGGER.info("Deallocating script state %d", scriptIndex);
+
+    EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(scriptIndex));
 
     final ScriptState<MemoryRef> scriptState = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(MemoryRef.class));
     if((scriptState.ui_60.get() & 0x810_0000L) == 0) {
@@ -3206,6 +3225,8 @@ public final class Scus94491BpeSegment {
 
             //LAB_80016584
           }
+
+          EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
 
           final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref();
 

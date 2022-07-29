@@ -1,2 +1,3 @@
 rootProject.name = 'lod-game'
+include 'resources'
 

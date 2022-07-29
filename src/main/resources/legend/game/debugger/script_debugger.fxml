@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.ScriptDebugger">
+   <children>
+      <Pane prefHeight="52.0" prefWidth="600.0">
+         <children>
+            <ComboBox fx:id="scriptSelector" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="200.0" />
+         </children>
+      </Pane>
+      <HBox prefHeight="346.0" prefWidth="600.0">
+         <children>
+            <VBox prefHeight="346.0" prefWidth="182.0">
+               <children>
+                  <Label text="Storage" />
+                  <ListView fx:id="scriptStorage" prefHeight="346.0" prefWidth="182.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>
