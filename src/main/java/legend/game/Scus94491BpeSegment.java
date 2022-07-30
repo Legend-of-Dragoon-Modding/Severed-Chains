@@ -1,5 +1,7 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.DebugHelper;
@@ -405,6 +407,12 @@ public final class Scus94491BpeSegment {
   public static final Value _8011e210 = MEMORY.ref(4, 0x8011e210L);
 
   public static boolean[] scriptLog = new boolean[0x48];
+
+  private static final Int2ObjectMap<Function<RunningScript, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
+
+  static {
+    scriptFunctionDescriptions.put(0, r -> "pause");
+  }
 
   @Method(0x80011dc0L)
   public static void spuTimerInterruptCallback() {
@@ -2994,7 +3002,7 @@ public final class Scus94491BpeSegment {
         RunningScript_800bc070.scriptStateIndex_00.set(index);
         RunningScript_800bc070.scriptState_04.set(scriptState);
         RunningScript_800bc070.commandPtr_0c.set(scriptState.commandPtr_18.deref());
-        RunningScript_800bc070.parentPtr_08.set(scriptState.commandPtr_18.deref());
+        RunningScript_800bc070.opPtr_08.set(scriptState.commandPtr_18.deref());
 
         if(scriptLog[index]) {
           System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer());
@@ -3003,180 +3011,179 @@ public final class Scus94491BpeSegment {
         long ret;
         //LAB_80016018
         do {
-          final long parentCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
-          RunningScript_800bc070.parentCallbackIndex_10.set(parentCommand & 0xffL);
-          RunningScript_800bc070.childCount_14.set(parentCommand >>> 8 & 0xffL);
-          RunningScript_800bc070.parentParam_18.set(parentCommand >>> 16);
+          final long opCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
+          RunningScript_800bc070.opIndex_10.set(opCommand & 0xffL);
+          RunningScript_800bc070.paramCount_14.set(opCommand >>> 8 & 0xffL);
+          RunningScript_800bc070.opParam_18.set(opCommand >>> 16);
 
           if(scriptLog[index]) {
-            System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " -- callback: " + Long.toHexString(parentCommand & 0xffL) + ", children: " + Long.toHexString(parentCommand >>> 8 & 0xffL) + ", params: " + Long.toHexString(parentCommand >>> 16) + " (" + Long.toHexString(parentCommand) + ')');
+            System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " (" + RunningScript_800bc070.commandPtr_0c.deref() + ')');
+            System.err.printf("param[p] = %x%n", opCommand >>> 16);
           }
 
           RunningScript_800bc070.commandPtr_0c.incr();
 
           //LAB_80016050
-          for(int childIndex = 0; childIndex < RunningScript_800bc070.childCount_14.get(); childIndex++) {
+          for(int paramIndex = 0; paramIndex < RunningScript_800bc070.paramCount_14.get(); paramIndex++) {
             final int childCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
-            final int operation = childCommand >>> 24;
+            final int paramType = childCommand >>> 24;
             final int param0 = childCommand >>> 16 & 0xff;
             final int param1 = childCommand >>> 8 & 0xff;
             final int param2 = childCommand & 0xff;
 
-//            System.err.println("Op: " + Long.toHexString(operation) + ", params: " + Long.toHexString(childCommand & 0xff_ffffL) + " (" + Long.toHexString(childCommand) + ')');
-
             RunningScript_800bc070.commandPtr_0c.incr();
             final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
 
-            if(operation == 0x1L) {
+            if(paramType == 0x1) {
               //LAB_800161f4
               final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
               RunningScript_800bc070.commandPtr_0c.incr();
-            } else if(operation == 0x2L) {
+            } else if(paramType == 0x2) {
               //LAB_80016200
               final IntRef p = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x3L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x3) {
               //LAB_800160cc
               //LAB_8001620c
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(param1).get();
               final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x4L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x4) {
               //LAB_80016258
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
               final long a1_0 = param1 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
               final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x5L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x5) {
               //LAB_80016290
               final IntRef p = scriptPtrs_8004de58.get(param2).deref();
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x6L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x6) {
               //LAB_800162a4
               final IntRef p = scriptPtrs_8004de58.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2).deref();
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x7) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x7) {
               //LAB_800162d0
               final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x8L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x8) {
               //LAB_800160e8
               //LAB_800162f4
               v0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
               final long a1_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x9L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x9) {
               //LAB_80016328
-              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
+              v1 = RunningScript_800bc070.opPtr_08.getPointer() + (short)childCommand * 0x4L;
               final IntRef p = MEMORY.ref(4, v1, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xaL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xa) {
               //LAB_80016118
               //LAB_80016334
-              v0 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
+              v0 = RunningScript_800bc070.opPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xbL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xb) {
               //LAB_80016360
-              v0 = RunningScript_800bc070.parentPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
-              final long a0_0 = RunningScript_800bc070.parentPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
+              v0 = RunningScript_800bc070.opPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
+              final long a0_0 = RunningScript_800bc070.opPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
               final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xcL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xc) {
               //LAB_800163a0
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xdL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xd) {
               //LAB_800163e8
               final IntRef p = scriptStatePtrArr_800bc1c0.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xeL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xe) {
               //LAB_80016418
               final IntRef p = scriptPtrs_8004de58.get(param1 + param2).deref();
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0xfL) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0xf) {
               //LAB_8001642c
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x10L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x10) {
               //LAB_80016180
               //LAB_8001643c
               final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get()).getPointer() + param0 * 0x4L, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x11L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x11) {
               //LAB_80016468
-//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.get(parentCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.get(opCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
               assert false;
-            } else if(operation == 0x12L) {
+            } else if(paramType == 0x12) {
               //LAB_80016138
               //LAB_8001648c
-//              ScriptStruct_800bc070.params_20.get(childIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
               assert false;
-            } else if(operation == 0x13L) {
+            } else if(paramType == 0x13) {
               //LAB_800164a4
-              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + ((short)childCommand + param0) * 4;
+              v1 = RunningScript_800bc070.opPtr_08.getPointer() + ((short)childCommand + param0) * 4;
               final IntRef p = MEMORY.ref(4, v1, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x14L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x14) {
               //LAB_800164b4
-              v1 = RunningScript_800bc070.parentPtr_08.getPointer() + (short)childCommand * 0x4L;
+              v1 = RunningScript_800bc070.opPtr_08.getPointer() + (short)childCommand * 0x4L;
 
               //LAB_800164cc
               v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).getSigned() * 0x4L;
@@ -3184,10 +3191,10 @@ public final class Scus94491BpeSegment {
               //LAB_800164d4
               final IntRef p = MEMORY.ref(4, v1 + v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x15L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x15) {
               //LAB_800161a0
               //LAB_800164e0
               RunningScript_800bc070.commandPtr_0c.incr();
@@ -3196,35 +3203,35 @@ public final class Scus94491BpeSegment {
               //LAB_80016580
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x16L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x16) {
               //LAB_80016518
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
-            } else if(operation == 0x17L) {
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
+            } else if(paramType == 0x17) {
               //LAB_800161d4
               //LAB_8001654c
               RunningScript_800bc070.commandPtr_0c.incr();
               v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
               final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p);
+              RunningScript_800bc070.params_20.get(paramIndex).set(p);
             } else { // Treated as an immediate if not a valid op
               //LAB_80016574
               final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
               if(scriptLog[index]) {
-                System.err.printf("work[%d] = %s%n", childIndex, p);
+                System.err.printf("params[%d] = %s%n", paramIndex, p);
               }
-              RunningScript_800bc070.params_20.get(childIndex).set(p).decr();
+              RunningScript_800bc070.params_20.get(paramIndex).set(p).decr();
             }
 
             //LAB_80016584
@@ -3232,10 +3239,15 @@ public final class Scus94491BpeSegment {
 
           EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
 
-          final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get((int)RunningScript_800bc070.parentCallbackIndex_10.get()).deref();
+          final int opIndex = (int)RunningScript_800bc070.opIndex_10.get();
+          final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get(opIndex).deref();
 
           if(scriptLog[index]) {
-            System.err.printf("Running callback %08x%n", callback.getAddress());
+            if(scriptFunctionDescriptions.containsKey(opIndex)) {
+              System.err.println(scriptFunctionDescriptions.get(opIndex).run(RunningScript_800bc070));
+            } else {
+              System.err.printf("Running callback %d (%08x)%n", opIndex, callback.getAddress());
+            }
           }
 
           //LAB_80016598
@@ -3254,13 +3266,13 @@ public final class Scus94491BpeSegment {
           // Returning anything else pauses execution and repeats the same instruction next frame
           if(ret == 0 || ret == 0x1L) {
             //LAB_800165e8
-            RunningScript_800bc070.parentPtr_08.set(RunningScript_800bc070.commandPtr_0c.deref());
+            RunningScript_800bc070.opPtr_08.set(RunningScript_800bc070.commandPtr_0c.deref());
           }
         } while(ret == 0);
 
         //LAB_800165f4
         if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
-          scriptState.commandPtr_18.set(RunningScript_800bc070.parentPtr_08.deref());
+          scriptState.commandPtr_18.set(RunningScript_800bc070.opPtr_08.deref());
         }
       }
 
@@ -3333,12 +3345,12 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x8001670cL)
   public static long scriptCompare(final RunningScript a0) {
-    return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) == 0 ? 2 : 0;
+    return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.opParam_18.get()) == 0 ? 2 : 0;
   }
 
   @Method(0x80016744L)
   public static long FUN_80016744(final RunningScript a0) {
-    return scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) < 1 ? 2 : 0;
+    return scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.opParam_18.get()) < 1 ? 2 : 0;
   }
 
   /**
@@ -3629,7 +3641,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016cfcL)
   public static long scriptExecuteSubFunc(final RunningScript a0) {
-    return scriptSubFunctions_8004e29c.get((int)a0.parentParam_18.get()).deref().run(a0);
+    return scriptSubFunctions_8004e29c.get((int)a0.opParam_18.get()).deref().run(a0);
   }
 
   /**
@@ -3664,7 +3676,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016d4cL)
   public static long scriptConditionalJump(final RunningScript a0) {
-    if(scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.parentParam_18.get()) != 0) {
+    if(scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.opParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(2).deref());
     }
 
@@ -3694,7 +3706,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016da0L)
   public static long scriptConditionalJump0(final RunningScript a0) {
-    if(scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.parentParam_18.get()) != 0) {
+    if(scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.opParam_18.get()) != 0) {
       a0.commandPtr_0c.set(a0.params_20.get(1).deref());
     }
 

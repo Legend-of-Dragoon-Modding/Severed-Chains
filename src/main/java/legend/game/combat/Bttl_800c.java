@@ -3252,7 +3252,7 @@ public final class Bttl_800c {
       final int a1 = s1.params_20.get(0).deref().get();
       final int a2;
 
-      if(s1.childCount_14.get() == 0x2L) {
+      if(s1.paramCount_14.get() == 0x2L) {
         a2 = 0;
       } else {
         //LAB_800ccaa0
