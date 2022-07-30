@@ -446,6 +446,8 @@ public final class Scus94491BpeSegment {
     });
 
     final Runnable r = () -> {
+      EventManager.INSTANCE.clearStaleRefs();
+
       startFrame();
       processControllerInput();
       FUN_80011f24();

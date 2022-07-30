@@ -18,6 +18,8 @@ public class Debugger extends Application {
 
   @FXML
   private MenuItem menuDebuggersScript;
+  @FXML
+  private MenuItem menuDebuggersCombat;
 
   public static boolean isRunning() {
     return stage != null;
@@ -28,7 +30,7 @@ public class Debugger extends Application {
   }
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(final Stage stage) throws Exception {
     final Parent root = FXMLLoader.load(getClass().getResource("debugger.fxml"));
     final Scene scene = new Scene(root);
     scene.getStylesheets().add(getClass().getResource("debugger.css").toExternalForm());
@@ -42,5 +44,10 @@ public class Debugger extends Application {
   @FXML
   private void showScriptDebugger(final ActionEvent event) throws Exception {
     new ScriptDebugger().start(new Stage());
+  }
+
+  @FXML
+  private void showCombatDebugger(final ActionEvent event) throws Exception {
+    new CombatDebugger().start(new Stage());
   }
 }

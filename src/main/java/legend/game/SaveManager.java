@@ -35,6 +35,12 @@ public final class SaveManager {
   }
 
   private static List<Path> getSaves() {
+    try {
+      Files.createDirectories(dir);
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
+
     try(Stream<Path> stream = Files.list(dir)) {
       return stream
         .filter(file -> !Files.isDirectory(file) && matcher.matches(file.getFileName()))

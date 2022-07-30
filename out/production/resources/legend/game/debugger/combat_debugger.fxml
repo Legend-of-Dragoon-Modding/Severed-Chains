@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CombatDebugger">
+   <children>
+      <HBox prefHeight="402.0" prefWidth="600.0" stylesheets="@combat_debugger.css">
+         <children>
+            <VBox prefHeight="346.0" prefWidth="182.0">
+               <children>
+                  <Label text="Battle Objects" />
+                  <ListView fx:id="bobjList" prefHeight="398.0" prefWidth="182.0" />
+               </children>
+               <HBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox prefHeight="401.0" prefWidth="186.0">
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding>
+               <children>
+                  <Button fx:id="scriptIndex" mnemonicParsing="false" onAction="#openScriptDebugger" text="Script" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+   </children>
+</VBox>

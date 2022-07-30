@@ -15,6 +15,7 @@
             <Menu mnemonicParsing="false" text="Debuggers">
                <items>
                   <MenuItem fx:id="menuDebuggersScript" mnemonicParsing="false" onAction="#showScriptDebugger" text="Script" />
+                  <MenuItem fx:id="menuDebuggersCombat" mnemonicParsing="false" onAction="#showCombatDebugger" text="Combat" />
                </items>
             </Menu>
          </menus>
