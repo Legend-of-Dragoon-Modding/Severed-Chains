@@ -14,6 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -36,11 +38,24 @@ public class CombatDebugger extends Application {
   @FXML
   private Button scriptIndex;
 
+  @FXML
+  public Spinner<Integer> level;
+  @FXML
+  public Spinner<Integer> dlevel;
+  @FXML
+  public Spinner<Integer> hp;
+  @FXML
+  public Spinner<Integer> maxHp;
+  @FXML
+  public Spinner<Integer> mp;
+  @FXML
+  public Spinner<Integer> maxMp;
+
   @Override
   public void start(final Stage stage) throws Exception {
-    final Parent root = FXMLLoader.load(getClass().getResource("combat_debugger.fxml"));
+    final Parent root = FXMLLoader.load(this.getClass().getResource("combat_debugger.fxml"));
     final Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("combat_debugger.css").toExternalForm());
+    scene.getStylesheets().add(this.getClass().getResource("combat_debugger.css").toExternalForm());
 
     stage.setTitle("Combat Debugger");
     stage.setScene(scene);
@@ -77,8 +92,25 @@ public class CombatDebugger extends Application {
         return;
       }
 
-      scriptIndex.setText("View script %d".formatted(bobjIndex));
+      final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get(bobjIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
+      final BattleObject27c bobj = state.innerStruct_00.deref();
+
+      this.scriptIndex.setText("View script %d".formatted(bobjIndex));
+
+      this.level.getValueFactory().setValue(bobj.level_04.get());
+      this.dlevel.getValueFactory().setValue(bobj.dlevel_06.get());
+      this.hp.getValueFactory().setValue(bobj.hp_08.get());
+      this.maxHp.getValueFactory().setValue(bobj.maxHp_10.get());
+      this.mp.getValueFactory().setValue(bobj.mp_0c.get());
+      this.maxMp.getValueFactory().setValue(bobj.maxMp_12.get());
     });
+
+    this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60));
+    this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
+    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
+    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
+    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
 
     this.bobjList.getSelectionModel().select(0);
 
@@ -131,7 +163,7 @@ public class CombatDebugger extends Application {
     }
 
     public void update() {
-      this.prop.set(this.index + ": " + nameFunc.get(index));
+      this.prop.set(this.index + ": " + this.nameFunc.get(this.index));
     }
 
     public String getName() {

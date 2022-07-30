@@ -6,8 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +23,9 @@ public class Debugger extends Application {
   @FXML
   private MenuItem menuDebuggersCombat;
 
+  @FXML
+  private CheckBox scriptLog;
+
   public static boolean isRunning() {
     return stage != null;
   }
@@ -31,9 +36,9 @@ public class Debugger extends Application {
 
   @Override
   public void start(final Stage stage) throws Exception {
-    final Parent root = FXMLLoader.load(getClass().getResource("debugger.fxml"));
+    final Parent root = FXMLLoader.load(this.getClass().getResource("debugger.fxml"));
     final Scene scene = new Scene(root);
-    scene.getStylesheets().add(getClass().getResource("debugger.css").toExternalForm());
+    scene.getStylesheets().add(this.getClass().getResource("debugger.css").toExternalForm());
 
     stage.setTitle("Debugger");
     stage.setScene(scene);
@@ -49,5 +54,9 @@ public class Debugger extends Application {
   @FXML
   private void showCombatDebugger(final ActionEvent event) throws Exception {
     new CombatDebugger().start(new Stage());
+  }
+
+  public void scriptLogClick(final ActionEvent event) {
+    Scus94491BpeSegment.scriptLog = this.scriptLog.isSelected();
   }
 }
