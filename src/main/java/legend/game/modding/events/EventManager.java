@@ -5,18 +5,24 @@ import org.apache.logging.log4j.Logger;
 import org.reflections8.Reflections;
 import org.reflections8.util.ClasspathHelper;
 
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class EventManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(EventManager.class);
 
   public static final EventManager INSTANCE = new EventManager();
 
-  private final Map<Method, Class<?>> listeners = new HashMap<>();
+  private final Map<Consumer<Event>, Class<?>> listeners = new HashMap<>();
+  private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
   public EventManager() {
     LOGGER.info("Scanning for entry point class...");
@@ -24,38 +30,71 @@ public class EventManager {
     final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
 
     for(final Class<?> listener : listeners) {
-      for(final Method method : listener.getDeclaredMethods()) {
-        if(method.isAnnotationPresent(EventListener.class)) {
-          if(!method.canAccess(null)) {
-            LOGGER.warn("Event listener %s must be static", listener);
-            continue;
-          }
+      this.register(listener, null);
+    }
+  }
 
-          if(method.getParameterCount() != 1) {
-            LOGGER.warn("Event listener %s must have one parameter", listener);
-            continue;
-          }
+  private void register(final Class<?> listener, @Nullable final Object instance) {
+    for(final Method method : listener.getDeclaredMethods()) {
+      if(method.isAnnotationPresent(EventListener.class)) {
+        if(!method.canAccess(instance)) {
+          LOGGER.warn("Event listener %s must be static", listener);
+          continue;
+        }
 
-          if(!Event.class.isAssignableFrom(method.getParameters()[0].getType())) {
-            LOGGER.warn("Event listener %s must have event parameter", listener);
-            continue;
-          }
+        if(method.getParameterCount() != 1) {
+          LOGGER.warn("Event listener %s must have one parameter", listener);
+          continue;
+        }
 
-          this.listeners.put(method, method.getParameters()[0].getType());
+        if(!Event.class.isAssignableFrom(method.getParameters()[0].getType())) {
+          LOGGER.warn("Event listener %s must have event parameter", listener);
+          continue;
+        }
+
+        if(instance == null) {
+          this.listeners.put(event -> {
+            try {
+              method.invoke(null, event);
+            } catch(IllegalAccessException | InvocationTargetException e) {
+              LOGGER.error("Failed to deliver event", e);
+            }
+          }, method.getParameters()[0].getType());
+        } else {
+          final WeakReference<Object> ref = new WeakReference<>(instance);
+          this.listeners.put(new Consumer<>() {
+            @Override
+            public void accept(final Event event) {
+              if(ref.get() == null) {
+                EventManager.this.staleListeners.add(this);
+              } else {
+                try {
+                  method.invoke(ref.get(), event);
+                } catch(IllegalAccessException | InvocationTargetException e) {
+                  LOGGER.error("Failed to deliver event", e);
+                }
+              }
+            }
+          }, method.getParameters()[0].getType());
         }
       }
     }
   }
 
+  public void register(final Object listener) {
+    this.register(listener.getClass(), listener);
+  }
+
   public void postEvent(final Event event) {
     for(final var entry : this.listeners.entrySet()) {
       if(entry.getValue().isInstance(event)) {
-        try {
-          entry.getKey().invoke(null, event);
-        } catch(IllegalAccessException | InvocationTargetException e) {
-          LOGGER.error("Failed to deliver event", e);
-        }
+        entry.getKey().accept(event);
       }
     }
+  }
+
+  public void clearStaleRefs() {
+    this.listeners.keySet().removeAll(this.staleListeners);
+    this.staleListeners.clear();
   }
 }
