@@ -10594,7 +10594,7 @@ public final class SItem {
       stats.mp_06.set(charData.mp_0a.get());
       stats.sp_08.set(charData.sp_0c.get());
       stats._0a.set(charData.dlevelXp_0e.get());
-      stats._0c.set(charData._10.get());
+      stats.dragoonFlag_0c.set(charData._10.get());
       stats.level_0e.set(charData.level_12.get());
       stats.dlevel_0f.set(charData.dlevel_13.get());
 
@@ -10635,8 +10635,8 @@ public final class SItem {
         a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(MEMORY.ref(1, stats.additionLevels_36.getAddress()).offset(a2 - additionOffsets_8004f5ac.get(charIndex).get()).get() * 0x4L).getAddress();
 
         stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
-        stats._9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
-        stats._9f.set((int)MEMORY.ref(1, a0).offset(0x3L).get());
+        stats.additionSpMultiplier_9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
+        stats.additionDamageMultiplier_9f.set((int)MEMORY.ref(1, a0).offset(0x3L).get());
       }
 
       //LAB_8011042c
@@ -10646,7 +10646,7 @@ public final class SItem {
       a0 = v0 & 0x1fL;
       v0 = v0 >>> 5;
       if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1L << a0) != 0) {
-        stats._0c.or(0x2000);
+        stats.dragoonFlag_0c.or(0x2000);
         a0 = sp10[charIndex];
 
         if((gameState_800babc8._4e6.get() >> a0 & 1) == 0) {
@@ -10670,7 +10670,7 @@ public final class SItem {
         a0 = v0 & 0x1fL;
         v0 = v0 >>> 5;
         if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1L << a0) != 0) {
-          stats._0c.or(0x6000);
+          stats.dragoonFlag_0c.or(0x6000);
           stats.dlevel_0f.set(gameState_800babc8.charData_32c.get(0).dlevel_13.get());
 
           a1 = sp10[0];

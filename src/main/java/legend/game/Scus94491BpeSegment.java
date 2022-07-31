@@ -3244,7 +3244,7 @@ public final class Scus94491BpeSegment {
 
           if(scriptLog[index]) {
             if(scriptFunctionDescriptions.containsKey(opIndex)) {
-              System.err.println(scriptFunctionDescriptions.get(opIndex).run(RunningScript_800bc070));
+              System.err.println(scriptFunctionDescriptions.get(opIndex).apply(RunningScript_800bc070));
             } else {
               System.err.printf("Running callback %d (%08x)%n", opIndex, callback.getAddress());
             }

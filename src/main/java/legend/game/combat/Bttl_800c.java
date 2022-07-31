@@ -1007,10 +1007,10 @@ public final class Bttl_800c {
         final BattleObject27c s1 = v0.innerStruct_00.derefAs(BattleObject27c.class);
 
         if((v0.ui_60.get() & 0x4L) != 0) {
-          s1._4c.set((short)(simpleRand() * 0xd9 / 0x10000));
+          s1.turnValue_4c.set((short)(simpleRand() * 0xd9 / 0x10000));
         } else {
           //LAB_800c7b3c
-          s1._4c.set((short)(simpleRand() * 0xa7 / 0x10000 + 0x32));
+          s1.turnValue_4c.set((short)(simpleRand() * 0xa7 / 0x10000 + 0x32));
         }
 
         //LAB_800c7b68
@@ -1134,10 +1134,10 @@ public final class Bttl_800c {
       //LAB_800c7ef0
       a0 = 0;
       for(int s1 = 0; s1 < _800c669c.get(); s1++) {
-        v1 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe78L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._4c.get();
+        final int turnValue = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe78L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).turnValue_4c.get();
 
-        if(v1 >= a0) {
-          a0 = v1;
+        if(turnValue >= a0) {
+          a0 = turnValue;
           s6 = s1;
         }
 
@@ -1148,7 +1148,7 @@ public final class Bttl_800c {
       if(a0 > 0xd9L) {
         a1 = _8006e398.offset(0xe78L).offset(s6 * 0x4L).get();
         final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get((int)a1).deref();
-        state.innerStruct_00.derefAs(BattleObject27c.class)._4c.set((short)(a0 - 0xd9));
+        state.innerStruct_00.derefAs(BattleObject27c.class).turnValue_4c.set((short)(a0 - 0xd9));
 
         if((state.ui_60.get() & 0x4L) == 0) {
           gameState_800babc8._b8.incr();
@@ -1171,7 +1171,7 @@ public final class Bttl_800c {
         v1 = (int)v1 >> 16;
         a0 = (int)a0 >> 31;
         v1 = v1 - a0;
-        s0._4c.add((short)v1);
+        s0.turnValue_4c.add((short)v1);
       }
 
       //LAB_800c8028
@@ -2608,7 +2608,7 @@ public final class Bttl_800c {
 
     //LAB_800cae98
     if(v1 != 0 && FUN_800c90b0(data.combatantIndex_26c.get()) != 0) {
-      data._1e5.set((int)FUN_800ca938(data.combatantIndex_26c.get()));
+      data.colourMap_1e5.set((int)FUN_800ca938(data.combatantIndex_26c.get()));
       data.animIndex_26e.set((short)0);
       FUN_800c952c(data._148, data.combatantIndex_26c.get());
       data._278.set(1);

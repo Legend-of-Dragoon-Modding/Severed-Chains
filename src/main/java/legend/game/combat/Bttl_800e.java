@@ -6050,7 +6050,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800eecb8
-      charData._10.set((int)(a2._0e.get() & 0xc8L));
+      charData._10.set((int)(a2.dragoonFlag_0e.get() & 0xc8L));
       charData.sp_0c.set(a2.sp_0a.get());
     }
 
@@ -6160,15 +6160,15 @@ public final class Bttl_800e {
     a1.mp_0c.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
     a1.maxHp_10.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
     a1.maxMp_12.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    a1._14.set((int)MEMORY.ref(1, v1).offset(0xdL).get());
+    a1.specialEffectFlag_14.set((int)MEMORY.ref(1, v1).offset(0xdL).get());
     a1._16.set(0);
     a1._18.set(0);
     a1._1a.set(0);
-    a1._1c.set((short)MEMORY.ref(1, v1).offset(0xfL).get());
+    a1.elementFlag_1c.set((short)MEMORY.ref(1, v1).offset(0xfL).get());
     a1._1e.set((int)MEMORY.ref(1, v1).offset(0xeL).get());
-    a1._20.set(0);
-    a1._22.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
-    a1._24.set((int)MEMORY.ref(1, v1).offset(0x11L).get());
+    a1.elementalResistanceFlag_20.set(0);
+    a1.elementalImmunityFlag_22.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
+    a1.statusResistFlag_24.set((int)MEMORY.ref(1, v1).offset(0x11L).get());
     a1._26.set(0);
     a1._28.set(0);
     a1._2a.set(0);
@@ -6180,28 +6180,28 @@ public final class Bttl_800e {
     a1.magicAttack_36.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
     a1.defence_38.set((int)MEMORY.ref(1, v1).offset(0x9L).get());
     a1.magicDefence_3a.set((int)MEMORY.ref(1, v1).offset(0xaL).get());
-    a1.attackHit_3c.set(0);
-    a1.magicHit_3e.set(0);
-    a1.attackAvoid_40.set((int)MEMORY.ref(1, v1).offset(0xbL).get());
-    a1.magicAvoid_42.set((int)MEMORY.ref(1, v1).offset(0xcL).get());
-    a1._44.set(0);
+    a1.attackHit_3c.set((short)0);
+    a1.magicHit_3e.set((short)0);
+    a1.attackAvoid_40.set((short)MEMORY.ref(1, v1).offset(0xbL).get());
+    a1.magicAvoid_42.set((short)MEMORY.ref(1, v1).offset(0xcL).get());
+    a1.onHitStatusChance_44.set(0);
     a1._46.set(0);
     a1._48.set(0);
-    a1._4a.set(0);
+    a1.onHitStatus_4a.set(0);
     a1.selectedAddition_58.set((short)-1);
     a1._5c.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
     a1._5e.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    a1._60.set((int)MEMORY.ref(2, v1).offset(0x4L).get());
-    a1._62.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
-    a1._64.set((int)MEMORY.ref(1, v1).offset(0x8L).get());
-    a1._66.set((int)MEMORY.ref(1, v1).offset(0x9L).get());
-    a1._68.set((int)MEMORY.ref(1, v1).offset(0xaL).get());
+    a1.originalAttack_60.set((int)MEMORY.ref(2, v1).offset(0x4L).get());
+    a1.originalMagicAttack_62.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
+    a1.originalSpeed_64.set((int)MEMORY.ref(1, v1).offset(0x8L).get());
+    a1.originalDefence_66.set((int)MEMORY.ref(1, v1).offset(0x9L).get());
+    a1.originalMagicDefence_68.set((int)MEMORY.ref(1, v1).offset(0xaL).get());
     a1._6a.set((int)MEMORY.ref(1, v1).offset(0xbL).get());
     a1._6c.set((int)MEMORY.ref(1, v1).offset(0xcL).get());
     a1._6e.set((int)MEMORY.ref(1, v1).offset(0xdL).get());
     a1._70.set((int)MEMORY.ref(1, v1).offset(0xeL).get());
     a1._72.set((int)MEMORY.ref(1, v1).offset(0xfL).get());
-    a1._74.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
+    a1.monsterElement_74.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
     a1._76.set((int)MEMORY.ref(1, v1).offset(0x11L).get());
     a1._78.set((short)MEMORY.ref(1, v1).offset(0x12L).getSigned(), (short)MEMORY.ref(1, v1).offset(0x13L).getSigned(), (short)MEMORY.ref(1, v1).offset(0x14L).getSigned());
     a1._7e.set((int)MEMORY.ref(1, v1).offset(0x15L).get());
@@ -6213,12 +6213,12 @@ public final class Bttl_800e {
     a1._8a.set((short)MEMORY.ref(1, v1).offset(0x1bL).getSigned());
 
     if((a1._6e.get() & 0x8L) != 0) {
-      a1._110.set(1);
+      a1.physicalImmunity_110.set(1);
     }
 
     //LAB_800ef25c
     if((a1._6e.get() & 0x4L) != 0) {
-      a1._112.set(1);
+      a1.magicalImmunity_112.set(1);
     }
 
     //LAB_800ef274
@@ -6265,18 +6265,18 @@ public final class Bttl_800e {
       s0.hp_08.set(stats.hp_04.get());
       s0.sp_0a.set((short)stats.sp_08.get());
       s0.mp_0c.set(stats.mp_06.get());
-      s0._0e.set(stats._0c.get());
+      s0.dragoonFlag_0e.set(stats.dragoonFlag_0c.get());
       s0.maxHp_10.set(stats.maxHp_66.get());
       s0.maxMp_12.set(stats.maxMp_6e.get());
-      s0._14.set(stats._76.get());
+      s0.specialEffectFlag_14.set(stats.specialEffectFlag_76.get());
       s0._16.set(stats._77.get());
       s0._18.set(stats._78.get());
       s0._1a.set(stats._79.get());
-      s0._1c.set((short)stats._7a.get());
+      s0.elementFlag_1c.set((short)stats.elementFlag_7a.get());
       s0._1e.set(stats._7b.get());
-      s0._20.set(stats._7c.get());
-      s0._22.set(stats._7d.get());
-      s0._24.set(stats._7e.get());
+      s0.elementalResistanceFlag_20.set(stats.elementalResistanceFlag_7c.get());
+      s0.elementalImmunityFlag_22.set(stats.elementalImmunityFlag_7d.get());
+      s0.statusResistFlag_24.set(stats.statusResistFlag_7e.get());
       s0._26.set(stats._7f.get());
       s0._28.set(stats._80.get());
       s0._2a.set(stats._81.get());
@@ -6292,41 +6292,41 @@ public final class Bttl_800e {
       s0.magicHit_3e.set(stats.magicHit_92.get());
       s0.attackAvoid_40.set(stats.attackAvoid_94.get());
       s0.magicAvoid_42.set(stats.magicAvoid_96.get());
-      s0._44.set(stats._98.get());
+      s0.onHitStatusChance_44.set(stats.onHitStatusChance_98.get());
       s0._46.set(stats._99.get());
       s0._48.set(stats._9a.get());
-      s0._4a.set(stats._9b.get());
-      s0._4e.set((short)stats._9b.get());
+      s0.onHitStatus_4a.set(stats.onHitStatus_9b.get());
+      s0._4e.set((short)stats.onHitStatus_9b.get());
       s0.selectedAddition_58.set(stats.selectedAddition_35.get());
       s0.dragoonAttack_ac.set(stats.dragoonAttack_72.get());
       s0.dragoonMagic_ae.set(stats.dragoonMagicAttack_73.get());
       s0.dragoonDefence_b0.set(stats.dragoonDefence_74.get());
       s0.dragoonMagicDefence_b2.set(stats.dragoonMagicDefence_75.get());
-      s0._110.set(stats._46.get());
-      s0._112.set(stats._48.get());
-      s0._114.set(stats._4a.get());
-      s0._116.set(stats._60.get());
+      s0.physicalImmunity_110.set(stats.physicalImmunity_46.get());
+      s0.magicalImmunity_112.set(stats.magicalImmunity_48.get());
+      s0.physicalResistance_114.set(stats.physicalResistance_4a.get());
+      s0.magicalResistance_116.set(stats.magicalResistance_60.get());
       s0._118.set(stats._9c.get());
-      s0._11a.set(stats._9e.get());
-      s0._11c.set((short)stats._9f.get());
+      s0.additionSpMultiplier_11a.set((short)stats.additionSpMultiplier_9e.get());
+      s0.additionDamageMultiplier_11c.set((short)stats.additionDamageMultiplier_9f.get());
       s0.equipment0_11e.set(stats.equipment_30.get(0).get());
       s0.equipment1_120.set(stats.equipment_30.get(1).get());
       s0.equipment2_122.set(stats.equipment_30.get(2).get());
       s0.equipment3_124.set(stats.equipment_30.get(3).get());
       s0.equipment4_126.set(stats.equipment_30.get(4).get());
-      s0._128.set(stats._4c.get());
-      s0._12a.set(stats._4e.get());
-      s0._12c.set(stats._50.get());
-      s0._12e.set(stats._52.get());
-      s0._130.set(stats._54.get());
-      s0._132.set(stats._56.get());
-      s0._134.set(stats._58.get());
-      s0._136.set(stats._5a.get());
-      s0._138.set(stats._5c.get());
+      s0.spMultiplier_128.set(stats.spMultiplier_4c.get());
+      s0.spPerPhysicalHit_12a.set(stats.spPerPhysicalHit_4e.get());
+      s0.mpPerPhysicalHit_12c.set(stats.mpPerPhysicalHit_50.get());
+      s0.spPerMagicalHit_12e.set(stats.spPerPhysicalHit_52.get());
+      s0.mpPerMagicalHit_130.set(stats.mpPerPhysicalHit_54.get());
+      s0.hpRegen_132.set(stats.hpRegen_56.get());
+      s0.mpRegen_134.set(stats.mpRegen_58.get());
+      s0.spRegen_136.set(stats.spRegen_5a.get());
+      s0.revive_138.set(stats._5c.get());
       s0._13a.set(stats._5e.get());
       s0._13c.set(stats._62.get());
       s0._13e.set(stats._64.get());
-      s0._142.set(stats._9b.get());
+      s0._142.set(stats.onHitStatus_9b.get());
     }
 
     //LAB_800ef798
@@ -6581,7 +6581,7 @@ public final class Bttl_800e {
           }
 
           //LAB_800f0108
-          if((data._0e.get() & 0x2000L) == 0) {
+          if((data.dragoonFlag_0e.get() & 0x2000L) == 0) {
             s2 = 0x4L;
           } else {
             s2 = 0x5L;
@@ -6677,7 +6677,7 @@ public final class Bttl_800e {
           //LAB_800f05d4
           s3 = 0;
           s0 = 0;
-          s1 = (data._0e.get() & 0x2000L) > 0 ? 1 : 0;
+          s1 = (data.dragoonFlag_0e.get() & 0x2000L) > 0 ? 1 : 0;
 
           //LAB_800f05f4
           for(int i = 0; i < 3; i++) {
@@ -6825,7 +6825,7 @@ public final class Bttl_800e {
             //LAB_800f0d10
             str = FUN_800f8568(data, currentEnemyNames_800c69d0.get((int)s4));
             textLen(str);
-            spf0 = FUN_800f8ca0(data._1c.get());
+            spf0 = FUN_800f8ca0(data.elementFlag_1c.get());
           } else if(menu._50.get() == 0) {
             data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(a1_0 * 0x4L).offset(0xe40L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
@@ -6856,7 +6856,7 @@ public final class Bttl_800e {
             } else {
               //LAB_800f0e24
               str = FUN_800f8568(data, currentEnemyNames_800c69d0.get((int)s4));
-              spf0 = FUN_800f8ca0(data._1c.get());
+              spf0 = FUN_800f8ca0(data.elementFlag_1c.get());
             }
 
             //LAB_800f0e58
@@ -6864,7 +6864,7 @@ public final class Bttl_800e {
           }
 
           //LAB_800f0e60
-          a0 = data._0e.get();
+          a0 = data.dragoonFlag_0e.get();
 
           if((a0 & 0xffL) != 0) {
             if((_800bb0fc.get() & 0x10L) != 0) {
@@ -6888,7 +6888,7 @@ public final class Bttl_800e {
               str = ailments_800fb3a0.get((int)s4).deref();
 
               //LAB_800f0ed0
-              textLen(str);
+              textLen(str); //TODO why?
             }
           }
         }

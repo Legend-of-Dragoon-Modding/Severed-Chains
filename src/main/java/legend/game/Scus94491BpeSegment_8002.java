@@ -3039,7 +3039,7 @@ public final class Scus94491BpeSegment_8002 {
     long a3;
     long s0;
     long s1;
-    long s2;
+    int s2;
     long s4;
     long s5;
 
@@ -3067,7 +3067,7 @@ public final class Scus94491BpeSegment_8002 {
       s1 = MEMORY.ref(2, a1).offset(0x0L).get();
       s4 = MEMORY.ref(2, v1).offset(0x0L).get();
       s5 = 0 < a2 ? 1 : 0;
-      FUN_800257e0((int)s2);
+      FUN_800257e0(s2);
       v0 = 0x800c_0000L;
       v0 = v0 - 0x1ca8L;
       v1 = s2 << 2;
@@ -3092,7 +3092,7 @@ public final class Scus94491BpeSegment_8002 {
       v0 = a0.params_20.get(5).deref().get() & 0xffffL;
       v0 = v0 + 0x1L;
       MEMORY.ref(2, v1).offset(0x1aL).setu(v0);
-      FUN_800258a8((int)s2);
+      FUN_800258a8(s2);
       v1 = 0x800c_0000L;
       v1 = v1 - 0x20c8L;
       v0 = s2 << 5;
@@ -6602,45 +6602,17 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a2b4L)
-  public static void FUN_8002a2b4(long a0) {
-    long v0;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long lo;
+  public static void FUN_8002a2b4(final int a0) {
+    final Struct84 a2 = _800bdf38.get(a0);
+    long a0_0 = a2.ptr_58.get();
 
-    v1 = 0x800c_0000L;
-    v1 = v1 - 0x20c8L;
-    v0 = a0 << 5;
-    v0 = v0 + a0;
-    v0 = v0 << 2;
-    v0 = v0 + v1;
-    a2 = v0;
-    v0 = MEMORY.ref(2, a2).offset(0x1eL).getSigned();
-    v1 = MEMORY.ref(2, a2).offset(0x1cL).getSigned();
-    v0 = v0 + 0x1L;
-    lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-    a0 = MEMORY.ref(4, a2).offset(0x58L).get();
-    a3 = lo;
-
-    if((int)a3 > 0) {
-      a1 = 0;
-
-      //LAB_8002a2f0
-      do {
-        MEMORY.ref(2, a0).offset(0x0L).setu(0);
-        MEMORY.ref(2, a0).offset(0x2L).setu(0);
-        MEMORY.ref(1, a0).offset(0x4L).setu(0);
-        MEMORY.ref(2, a0).offset(0x6L).setu(0);
-        v0 = MEMORY.ref(2, a2).offset(0x1eL).getSigned();
-        v1 = MEMORY.ref(2, a2).offset(0x1cL).getSigned();
-        v0 = v0 + 0x1L;
-        lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-        a1 = a1 + 0x1L;
-        a3 = lo;
-        a0 = a0 + 0x8L;
-      } while((int)a1 < (int)a3);
+    //LAB_8002a2f0
+    for(int a1 = 0; a1 < a2._1c.get() * (a2._1e.get() + 1); a1++) {
+      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
+      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
+      a0_0 = a0_0 + 0x8L;
     }
 
     //LAB_8002a324
@@ -6809,7 +6781,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.mp_06.set(0);
       stats.sp_08.set(0);
       stats._0a.set(0);
-      stats._0c.set(0);
+      stats.dragoonFlag_0c.set(0);
       stats.level_0e.set(0);
       stats.dlevel_0f.set(0);
 
@@ -6826,20 +6798,20 @@ public final class Scus94491BpeSegment_8002 {
         stats.additionXp_3e.get(i).set(0);
       }
 
-      stats._46.set(0);
-      stats._48.set(0);
-      stats._4a.set(0);
-      stats._4c.set(0);
-      stats._4e.set(0);
-      stats._50.set(0);
-      stats._52.set(0);
-      stats._54.set(0);
-      stats._56.set(0);
-      stats._58.set(0);
-      stats._5a.set(0);
+      stats.physicalImmunity_46.set(0);
+      stats.magicalImmunity_48.set(0);
+      stats.physicalResistance_4a.set(0);
+      stats.spMultiplier_4c.set((short)0);
+      stats.spPerPhysicalHit_4e.set((short)0);
+      stats.mpPerPhysicalHit_50.set((short)0);
+      stats.spPerPhysicalHit_52.set((short)0);
+      stats.mpPerPhysicalHit_54.set((short)0);
+      stats.hpRegen_56.set((short)0);
+      stats.mpRegen_58.set((short)0);
+      stats.spRegen_5a.set((short)0);
       stats._5c.set(0);
       stats._5e.set(0);
-      stats._60.set(0);
+      stats.magicalResistance_60.set(0);
       stats._62.set((short)0);
       stats._64.set((short)0);
       stats.maxHp_66.set(0);
@@ -6860,8 +6832,8 @@ public final class Scus94491BpeSegment_8002 {
       FUN_8002a86c(charIndex);
 
       stats._9c.set(0);
-      stats._9e.set(0);
-      stats._9f.set(0);
+      stats.additionSpMultiplier_9e.set(0);
+      stats.additionDamageMultiplier_9f.set(0);
     }
 
     FUN_8002a8f8();
@@ -6872,15 +6844,15 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a86c(final int charIndex) {
     final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
-    stats._76.set(0);
+    stats.specialEffectFlag_76.set(0);
     stats._77.set(0);
     stats._78.set(0);
     stats._79.set(0);
-    stats._7a.set(0);
+    stats.elementFlag_7a.set(0);
     stats._7b.set(0);
-    stats._7c.set(0);
-    stats._7d.set(0);
-    stats._7e.set(0);
+    stats.elementalResistanceFlag_7c.set(0);
+    stats.elementalImmunityFlag_7d.set(0);
+    stats.statusResistFlag_7e.set(0);
     stats._7f.set(0);
     stats._80.set(0);
     stats._81.set(0);
@@ -6897,10 +6869,10 @@ public final class Scus94491BpeSegment_8002 {
     stats.magicHit_92.set((short)0);
     stats.attackAvoid_94.set((short)0);
     stats.magicAvoid_96.set((short)0);
-    stats._98.set(0);
+    stats.onHitStatusChance_98.set(0);
     stats._99.set(0);
     stats._9a.set(0);
-    stats._9b.set(0);
+    stats.onHitStatus_9b.set(0);
   }
 
   @Method(0x8002a8f8L)
