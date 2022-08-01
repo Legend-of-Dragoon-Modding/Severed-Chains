@@ -411,7 +411,123 @@ public final class Scus94491BpeSegment {
   private static final Int2ObjectMap<Function<RunningScript, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
 
   static {
-    scriptFunctionDescriptions.put(0, r -> "pause");
+    scriptFunctionDescriptions.put(0, r -> "pause;");
+    scriptFunctionDescriptions.put(1, r -> "rewind;");
+    scriptFunctionDescriptions.put(2, r -> {
+      final int waitFrames = r.params_20.get(0).deref().get();
+
+      if(waitFrames != 0) {
+        return "wait %d (p0) frames;".formatted(waitFrames);
+      } else {
+        return "wait complete - continue;";
+      }
+    });
+    scriptFunctionDescriptions.put(3, r -> {
+      final int operandA = r.params_20.get(0).deref().get();
+      final int operandB = r.params_20.get(1).deref().get();
+      final int op = (int)r.opParam_18.get();
+
+      return (switch(op) {
+        case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
+        case 1 -> "if 0x%x (p0) = 0x%x (p1)? %s;";
+        case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
+        case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
+        case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
+        case 5 -> "if 0x%x (p0) >= 0x%x (p1)? %s;";
+        case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
+        case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
+        default -> "illegal cmp 3";
+      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) == 1 ? "yes - continue" : "no - rewind");
+    });
+    scriptFunctionDescriptions.put(4, r -> {
+      final int operandB = r.params_20.get(0).deref().get();
+      final int op = (int)r.opParam_18.get();
+
+      return (switch(op) {
+        case 0 -> "if 0 <= 0x%x (p1)? %s;";
+        case 1 -> "if 0 = 0x%x (p1)? %s;";
+        case 2 -> "if 0 == 0x%x (p1)? %s;";
+        case 3 -> "if 0 != 0x%x (p1)? %s;";
+        case 4 -> "if 0 > 0x%x (p1)? %s;";
+        case 5 -> "if 0 >= 0x%x (p1)? %s;";
+        case 6 -> "if 0 & 0x%x (p1)? %s;";
+        case 7 -> "if 0 !& 0x%x (p1)? %s;";
+        default -> "illegal cmp 4";
+      }).formatted(operandB, scriptCompare(r, 0, operandB, op) == 1 ? "yes - continue" : "no - rewind");
+    });
+    scriptFunctionDescriptions.put(8, r -> "*0x%08x (p1) = 0x%x (p0);".formatted(r.params_20.get(0).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(10, r -> "memcpy(0x%08x (p1), 0x%08x (p2), %d (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(12, r -> "*0x%08x (p0) = 0;".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(16, r -> "*0x%08x (p1) &= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(17, r -> "*0x%08x (p1) |= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(18, r -> "*0x%08x (p1) ^= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(19, r -> "*0x%08x (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(20, r -> "~*0x%08x (p0);".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(21, r -> "*0x%08x (p1) <<= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(22, r -> "*0x%08x (p1) >>= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(24, r -> "*0x%08x (p1) += 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(25, r -> "*0x%08x (p1) -= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(26, r -> "*0x%08x (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(27, r -> "*0x%08x (p0) ++;".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(28, r -> "*0x%08x (p0) --;".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(29, r -> "-*0x%08x (p0);".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(30, r -> "|*0x%08x| (p0);".formatted(r.params_20.get(0).getPointer()));
+    scriptFunctionDescriptions.put(32, r -> "*0x%08x (p1) *= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(33, r -> "*0x%08x (p1) /= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(34, r -> "*0x%08x (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(35, r -> "*0x%08x (p1) %%= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(36, r -> "*0x%08x (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(43, scriptFunctionDescriptions.get(35));
+    scriptFunctionDescriptions.put(44, scriptFunctionDescriptions.get(36));
+    scriptFunctionDescriptions.put(48, r -> "*0x%08x (p1) = sqrt(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(50, r -> "*0x%08x (p1) = sin(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(51, r -> "*0x%08x (p1) = cos(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
+    scriptFunctionDescriptions.put(52, r -> "*0x%08x (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp));".formatted(r.opParam_18.get()));
+    scriptFunctionDescriptions.put(64, r -> "jmp 0x%x (p0);".formatted(r.params_20.get(0).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer()));
+    scriptFunctionDescriptions.put(65, r -> {
+      final int operandA = r.params_20.get(0).deref().get();
+      final int operandB = r.params_20.get(1).deref().get();
+      final int op = (int)r.opParam_18.get();
+      final long dest = r.params_20.get(2).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer();
+
+      return (switch(op) {
+        case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
+        case 1 -> "if 0x%x (p0) = 0x%x (p1)? %s;";
+        case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
+        case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
+        case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
+        case 5 -> "if 0x%x (p0) >= 0x%x (p1)? %s;";
+        case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
+        case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
+        default -> "illegal cmp 65";
+      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) == 1 ? "yes - jmp 0x%x (p2)".formatted(dest) : "no - continue");
+    });
+    scriptFunctionDescriptions.put(66, r -> {
+      final int operandB = r.params_20.get(0).deref().get();
+      final int op = (int)r.opParam_18.get();
+      final long dest = r.params_20.get(1).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer();
+
+      return (switch(op) {
+        case 0 -> "if 0 <= 0x%x (p1)? %s;";
+        case 1 -> "if 0 = 0x%x (p1)? %s;";
+        case 2 -> "if 0 == 0x%x (p1)? %s;";
+        case 3 -> "if 0 != 0x%x (p1)? %s;";
+        case 4 -> "if 0 > 0x%x (p1)? %s;";
+        case 5 -> "if 0 >= 0x%x (p1)? %s;";
+        case 6 -> "if 0 & 0x%x (p1)? %s;";
+        case 7 -> "if 0 !& 0x%x (p1)? %s;";
+        default -> "illegal cmp 66";
+      }).formatted(operandB, scriptCompare(r, 0, operandB, op) == 1 ? "yes - jmp 0x%x (p1)".formatted(dest) : "no - continue");
+    });
+    scriptFunctionDescriptions.put(72, r -> "func 0x%x (p0);".formatted(r.params_20.get(0).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer()));
+    scriptFunctionDescriptions.put(73, r -> "return;");
+    scriptFunctionDescriptions.put(74, r -> {
+      final long a = r.params_20.get(1).getPointer();
+      final int b = r.params_20.get(0).deref().get();
+      final long ptr = a + MEMORY.ref(4, a + b * 4).getSigned() * 4;
+      return "func 0x%x (p1 + p1[p0 * 4] * 4);".formatted(ptr - r.scriptState_04.deref().scriptPtr_14.getPointer());
+    });
   }
 
   @Method(0x80011dc0L)
@@ -3348,8 +3464,9 @@ public final class Scus94491BpeSegment {
     return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.opParam_18.get()) == 0 ? 2 : 0;
   }
 
+  /** Same as {@link Scus94491BpeSegment#scriptCompare(RunningScript)} with first param set to 0 */
   @Method(0x80016744L)
-  public static long FUN_80016744(final RunningScript a0) {
+  public static long scriptCompare0(final RunningScript a0) {
     return scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.opParam_18.get()) < 1 ? 2 : 0;
   }
 
@@ -3501,7 +3618,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800169b0L)
-  public static long FUN_800169b0(final RunningScript a0) {
+  public static long scriptSubtract2(final RunningScript a0) {
     a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() - a0.params_20.get(1).deref().get());
     return 0;
   }
@@ -3629,7 +3746,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80016cb4L)
-  public static long FUN_80016cb4(final RunningScript a0) {
+  public static long scriptRatan2(final RunningScript a0) {
     a0.params_20.get(2).deref().set(ratan2(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()));
     return 0;
   }
@@ -3714,6 +3831,9 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /**
+   * Decrements param0 and jumps to param1 if param0 > 0... maybe used for do...while loops?
+   */
   @Method(0x80016decL)
   public static long FUN_80016dec(final RunningScript a0) {
     a0.params_20.get(0).deref().decr();

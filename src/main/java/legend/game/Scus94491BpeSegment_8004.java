@@ -396,7 +396,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptRewindAndPause}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptWait}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptCompare}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016744}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptCompare0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
@@ -418,7 +418,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptAdd}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptSubtract}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_800169b0}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptSubtract2}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptIncrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptDecrementBy1}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNegate}</li>
@@ -444,7 +444,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016c00}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptSin}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptCos}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment#FUN_80016cb4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment#scriptRatan2}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment#scriptNotImplemented}</li>
