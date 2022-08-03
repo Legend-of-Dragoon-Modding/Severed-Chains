@@ -632,7 +632,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cdb18}</li>
    *   <li>{@link Bttl_800c#FUN_800cdb44}</li>
    *   <li>{@link Bttl_800c#FUN_800cd910}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd958}</li>
+   *   <li>{@link Bttl_800c#scriptGetCombatantIndex}</li>
    *   <li>{@link Bttl_800c#FUN_800cd998}</li>
    *   <li>{@link Bttl_800c#FUN_800cdb74}</li>
    * </ol>

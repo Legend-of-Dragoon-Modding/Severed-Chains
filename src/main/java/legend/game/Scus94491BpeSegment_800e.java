@@ -264,10 +264,10 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800d#FUN_800dbb9c}</li>
    *   <li>{@link Bttl_800d#FUN_800dcbec}</li>
    *   <li>{@link Bttl_800d#FUN_800dcb84}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbc2c}</li>
+   *   <li>{@link Bttl_800d#scriptSetViewportTwist}</li>
    *   <li>{@link Bttl_800d#FUN_800dbc80}</li>
    *   <li>{@link Bttl_800d#FUN_800dbcc8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbcfc}</li>
+   *   <li>{@link Bttl_800d#scriptGetProjectionPlaneDistance}</li>
    *   <li>{@link Bttl_800d#FUN_800d8dec}</li>
    * </ol>
    */
@@ -325,9 +325,9 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ac88}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001acd8}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80020060}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_80020060}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f250}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800203f0}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_800203f0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f674}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f560}</li>
    * </ol>
@@ -607,8 +607,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e0710}</li>
    *   <li>{@link SMap#FUN_800e0894}</li>
    *   <li>{@link SMap#FUN_800e08f4}</li>
-   *   <li>{@link SMap#FUN_800e0930}</li>
-   *   <li>{@link SMap#FUN_800e09a0}</li>
+   *   <li>{@link SMap#scriptSetAmbientColour}</li>
+   *   <li>{@link SMap#scriptResetAmbientColour}</li>
    *   <li>{@link SMap#FUN_800e09e0}</li>
    *   <li>{@link SMap#FUN_800e0a14}</li>
    *   <li>{@link SMap#FUN_800e0a48}</li>
@@ -871,7 +871,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e60d8();
     loadSystemFont();
     FUN_800e6654();
-    allocateLinkedList(_8011e210.getAddress(), 0x1d_edf0L);
+    allocateLinkedList(_8011e210.getAddress(), 0x3d_edf0L);
     loadOvalBlobTexture();
     FUN_800e6dd4();
     FUN_800e6e3c();
@@ -1204,7 +1204,7 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6a18
-    for(int i = 0; i < 14; i++) {
+    for(int i = 0; i < 15; i++) {
       scriptSubFunctions_8004e29c.get(512 + i).set(scriptSubFunctions_800e7570.get(i).deref());
     }
 

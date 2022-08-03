@@ -27,6 +27,7 @@ import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800232dc;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80023484;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800297a0;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
@@ -40,6 +41,8 @@ import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006f1d8;
+import static legend.game.Scus94491BpeSegment_8006._8006f210;
+import static legend.game.Scus94491BpeSegment_8006._8006f254;
 import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -100,6 +103,7 @@ import static legend.game.combat.Bttl_800c._800c726c;
 import static legend.game.combat.Bttl_800c._800c7284;
 import static legend.game.combat.Bttl_800c._800c729c;
 import static legend.game.combat.Bttl_800c._800c72b4;
+import static legend.game.combat.Bttl_800c._800c72cc;
 import static legend.game.combat.Bttl_800c._800d66b0;
 import static legend.game.combat.Bttl_800c._800d6c30;
 import static legend.game.combat.Bttl_800c._800fa0b8;
@@ -612,7 +616,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f204cL)
-  public static long FUN_800f204c(final int scriptIndex1, final int scriptIndex2, final long a2) {
+  public static int FUN_800f204c(final int scriptIndex1, final int scriptIndex2, final long a2) {
     long s1;
     long s2;
     long s4;
@@ -754,7 +758,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f24d0
-    return s4;
+    return (int)s4;
   }
 
   @Method(0x800f2500L)
@@ -764,7 +768,7 @@ public final class Bttl_800f {
     final BattleObject27c s2 = v0.innerStruct_00.derefAs(BattleObject27c.class);
     long s1 = FUN_800f1d88(s3.params_20.get(0).deref().get(), s3.params_20.get(1).deref().get());
     if((v0.ui_60.get() & 0x4L) != 0) {
-      s1 = FUN_800f946c(s2, s1, 0);
+      s1 = FUN_800f946c(s2, (int)s1, 0);
       FUN_800f9380(s2, s2);
     }
 
@@ -812,6 +816,44 @@ public final class Bttl_800f {
     return 0;
   }
 
+  @Method(0x800f2694L)
+  public static long FUN_800f2694(final RunningScript s1) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(s1.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    bobj._4e.set((short)s1.params_20.get(2).deref().get());
+    FUN_800f9e10(bobj);
+    FUN_800f7b68(s1.params_20.get(0).deref().get());
+
+    int damage = Math.max(1, FUN_800f946c(bobj, FUN_800f204c(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), 1), 0));
+
+    //LAB_800f272c
+    if((bobj.dragoonFlag_0e.get() & 0x800) != 0) {
+      bobj.dragoonFlag_0e.and(0xf7ff);
+    } else {
+      //LAB_800f2748
+      damage = FUN_800f29d4(s1.params_20.get(1).deref().get(), damage, 1);
+      final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0.get(s1.params_20.get(1).deref().get()).deref();
+      final BattleObject27c v1 = a3.innerStruct_00.derefAs(BattleObject27c.class);
+      final long element = _800fa0b8.offset(scriptStatePtrArr_800bc1c0.get(s1.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._4e.get() * 0xcL).offset(0x8L).get();
+
+      //LAB_800f27c8
+      if((a3.ui_60.get() & 0x4L) == 0 && (v1.elementalResistanceFlag_20.get() & element) != 0) {
+        damage = damage >> 1;
+      }
+
+      //LAB_800f27dc
+      if((v1.elementalImmunityFlag_22.get() & element) != 0) {
+        damage = 0;
+      }
+
+      //LAB_800f27e8
+    }
+
+    //LAB_800f27ec
+    s1.params_20.get(3).deref().set(damage);
+    s1.params_20.get(4).deref().set(FUN_800f7c5c(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), 1));
+    return 0;
+  }
+
   @Method(0x800f2838L)
   public static long FUN_800f2838(final RunningScript s1) {
     final long a0;
@@ -820,7 +862,7 @@ public final class Bttl_800f {
     final BattleObject27c s0 = scriptStatePtrArr_800bc1c0.get(s1.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800f9e10(s0);
     FUN_800f7a74(s1.params_20.get(0).deref().get());
-    a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), 0), 0x1L));
+    a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), 0), 1));
 
     //LAB_800f28c8
     if((s0.dragoonFlag_0e.get() & 0x800L) != 0) {
@@ -852,7 +894,7 @@ public final class Bttl_800f {
 
   /** TODO applying damage? */
   @Method(0x800f29d4L)
-  public static long FUN_800f29d4(final int scriptIndex, long a1, final long a2) {
+  public static int FUN_800f29d4(final int scriptIndex, long a1, final long a2) {
     final long[] sp0x00 = {0x02L, 0x01L};
     final long[] sp0x08 = {0x88L, 0x89L};
     final long[] sp0x10 = {0x86L, 0x87L};
@@ -860,7 +902,7 @@ public final class Bttl_800f {
     final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
     final long a0_0 = v1.innerStruct_00.getPointer();
     if((v1.ui_60.get() & 0x4L) != 0 && (MEMORY.ref(2, a0_0).offset(0x6eL).getSigned() & sp0x00[(int)a2]) != 0) {
-      a1 = 0x1L;
+      a1 = 1;
     }
 
     //LAB_800f2a64
@@ -885,7 +927,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2aec
-    return a1;
+    return (int)a1;
   }
 
   @Method(0x800f2af4L)
@@ -4073,7 +4115,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f946cL)
-  public static long FUN_800f946c(final BattleObject27c a0, final long a1, final long a2) {
+  public static int FUN_800f946c(final BattleObject27c a0, final int a1, final int a2) {
     final long a0_0;
     if(a2 == 0) {
       a0_0 = _800fa0b8.offset(a0._4e.get() * 0xcL).offset(0x3L).get();
@@ -4155,6 +4197,12 @@ public final class Bttl_800f {
     return 0;
   }
 
+  @Method(0x800f9618L)
+  public static long FUN_800f9618(final RunningScript a0) {
+    a0.params_20.get(2).deref().set(FUN_800f1aa8(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 1));
+    return 0;
+  }
+
   @Method(0x800f9660L)
   public static long FUN_800f9660(final RunningScript a0) {
     a0.params_20.get(2).deref().set(FUN_800f1aa8(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 0x2L));
@@ -4176,6 +4224,22 @@ public final class Bttl_800f {
     return 0;
   }
 
+  @Method(0x800f9730L)
+  public static long FUN_800f9730(final RunningScript a0) {
+    //LAB_800f9758
+    for(int i = 0; i < 12; i++) {
+      if(_800c6b5c.deref(2).offset(i * 0xc4L).getSigned() == 0) {
+        FUN_800f3354(i, 0, 0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
+        break;
+      }
+
+      //LAB_800f97b8
+    }
+
+    //LAB_800f97c8
+    return 0;
+  }
+
   @Method(0x800f97d8L)
   public static long FUN_800f97d8(final RunningScript a0) {
     FUN_800f4964();
@@ -4192,6 +4256,99 @@ public final class Bttl_800f {
   @Method(0x800f9884L)
   public static long FUN_800f9884(final RunningScript a0) {
     FUN_800f7a74(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800f98b0L)
+  public static long FUN_800f98b0(final RunningScript s3) {
+    int itemId = s3.params_20.get(0).deref().get();
+
+    if(gameState_800babc8.itemCount_1e6.get() == 0) {
+      s3.params_20.get(1).deref().set(-1);
+      return 0;
+    }
+
+    if(itemId == -1) {
+      itemId = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.itemCount_1e6.get()) >> 16).get();
+
+      //LAB_800f996c
+      for(int i = 0; i < 10; i++) {
+        //TODO maybe protected item IDs that can't be dropped?
+        if(itemId == _800c72cc.get(i).get()) {
+          //LAB_800f999c
+          itemId = -1;
+          break;
+        }
+      }
+    }
+
+    //LAB_800f9988
+    if(itemId != -1) {
+      //LAB_800f99a4
+      if(FUN_800232dc(itemId) != 0) {
+        itemId = -1;
+      }
+    }
+
+    //LAB_800f99c0
+    s3.params_20.get(1).deref().set(itemId);
+    return 0;
+  }
+
+  @Method(0x800f99ecL)
+  public static long FUN_800f99ec(final RunningScript a0) {
+    final int s1;
+    if(FUN_80023484(a0.params_20.get(0).deref().get()) == 0) {
+      s1 = a0.params_20.get(0).deref().get();
+    } else {
+      s1 = -1;
+    }
+
+    //LAB_800f9a2c
+    a0.params_20.get(1).deref().set(s1);
+    return 0;
+  }
+
+  @Method(0x800f9a50L)
+  public static long FUN_800f9a50(final RunningScript a0) {
+    final long a2 = a0.params_20.get(0).deref().get();
+    final long v1 = a0.params_20.get(1).deref().get();
+
+    final long a0_0;
+    final long v0;
+    if(a2 == 1) {
+      //LAB_800f9a94
+      a0_0 = _8006f254.getAddress();
+      v0 = _800c6758.get();
+    } else if(a2 != 0) {
+      //LAB_800f9aac
+      a0_0 = _8006f210.getAddress();
+
+      //LAB_800f9ab0
+      v0 = _800c669c.get();
+    } else {
+      a0_0 = _8006f1d8.getAddress();
+      v0 = charCount_800c677c.get();
+    }
+
+    //LAB_800f9abc
+    //LAB_800f9adc
+    for(int i = 0; i < (short)v0; i++) {
+      if(v1 == MEMORY.ref(4, a0_0).offset(i * 0x4L).get()) {
+        if(a2 == 1) {
+          //LAB_800f9b0c
+          _800c697e.setu(i);
+        } else if(a2 < 2 && a2 != 0) {
+          _800c6980.setu(i);
+        }
+
+        break;
+      }
+
+      //LAB_800f9b14
+    }
+
+    //LAB_800f9b24
     return 0;
   }
 

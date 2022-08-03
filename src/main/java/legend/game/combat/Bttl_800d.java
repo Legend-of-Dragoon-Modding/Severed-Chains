@@ -3635,12 +3635,45 @@ public final class Bttl_800d {
     return 0;
   }
 
+  @Method(0x800dbc2cL)
+  public static long scriptSetViewportTwist(final RunningScript a0) {
+    camera_800c67f0.rview2_00.viewpointTwist_18.set(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800dbc80L)
+  public static long FUN_800dbc80(final RunningScript a0) {
+    final int v1 = a0.params_20.get(0).deref().get();
+
+    if((v1 & 0x1) != 0) {
+      final long v0 = camera_800c67f0.getAddress();
+      MEMORY.ref(4, v0).offset(0xe4L).setu(0);
+      MEMORY.ref(4, v0).offset(0xb4L).setu(0);
+    }
+
+    //LAB_800dbca8
+    if((v1 & 0x2) != 0) {
+      final long v0 = camera_800c67f0.getAddress();
+      MEMORY.ref(4, v0).offset(0x70L).setu(0);
+      MEMORY.ref(4, v0).offset(0x40L).setu(0);
+    }
+
+    //LAB_800dbcc0
+    return 0;
+  }
+
   @Method(0x800dbcc8L)
   public static long FUN_800dbcc8(final RunningScript a0) {
     final BattleCamera cam = camera_800c67f0;
     cam._100.set(a0.params_20.get(0).deref().get() << 16);
     cam._108.set(0);
     cam._118.set(1);
+    return 0;
+  }
+
+  @Method(0x800dbcfcL)
+  public static long scriptGetProjectionPlaneDistance(final RunningScript a0) {
+    a0.params_20.get(0).deref().set(getProjectionPlaneDistance());
     return 0;
   }
 

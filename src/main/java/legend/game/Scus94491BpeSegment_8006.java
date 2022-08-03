@@ -19,7 +19,13 @@ public final class Scus94491BpeSegment_8006 {
 
   public static final Value _8006f1e8 = MEMORY.ref(4, 0x8006f1e8L);
 
+  /** The same type as {@link Scus94491BpeSegment_8006#_8006f1d8} */
+  public static final Value _8006f210 = MEMORY.ref(4, 0x8006f210L);
+
   public static final Value _8006f244 = MEMORY.ref(4, 0x8006f244L);
+
+  /** The same type as {@link Scus94491BpeSegment_8006#_8006f1d8} */
+  public static final Value _8006f254 = MEMORY.ref(4, 0x8006f254L);
 
   public static final Value _8006f280 = MEMORY.ref(4, 0x8006f280L);
   public static final Value _8006f284 = MEMORY.ref(4, 0x8006f284L);

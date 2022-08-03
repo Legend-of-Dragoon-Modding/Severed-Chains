@@ -61,6 +61,13 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    *   <li>If bit 26 is set and bit 20 is not set, {@link ScriptState#callback_10} will be executed</li>
    *   <li>If bits 27 and 20 are not set, {@link ScriptState#destructor_0c} will be executed</li>
    * </ul>
+   *
+   * <p>In combat this variable is used for a few different things:</p>
+   * <ul>
+   *   <li>0x2 - dragoon</li>
+   *   <li>0x8 - it is this character's turn</li>
+   *   <li>0x20 - ?</li>
+   * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
   public final IntRef _c4;

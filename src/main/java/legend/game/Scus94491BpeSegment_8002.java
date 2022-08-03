@@ -397,6 +397,19 @@ public final class Scus94491BpeSegment_8002 {
     FUN_800201c8(0x6L);
   }
 
+  @Method(0x80020060L)
+  public static long FUN_80020060(final RunningScript a0) {
+    FUN_8001ad18();
+    unloadSoundFile(1);
+    unloadSoundFile(3);
+    unloadSoundFile(4);
+    unloadSoundFile(5);
+    unloadSoundFile(6);
+    unloadSoundFile(8);
+    FUN_800201c8(6);
+    return 0;
+  }
+
   @Method(0x800201c8L)
   public static void FUN_800201c8(final long a0) {
     if(_800bd610.offset(a0 * 16).get() != 0) {

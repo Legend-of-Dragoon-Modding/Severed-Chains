@@ -6,6 +6,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -272,7 +273,9 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedIntRef _254;
 
   public final UnsignedIntRef _25c;
-
+  public final IntRef _260;
+  public final IntRef _264;
+  public final IntRef _268;
   public final ShortRef combatantIndex_26c;
   public final ShortRef animIndex_26e;
   public final ShortRef animIndex_270;
@@ -454,7 +457,9 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._254 = ref.offset(4, 0x254L).cast(UnsignedIntRef::new);
 
     this._25c = ref.offset(4, 0x25cL).cast(UnsignedIntRef::new);
-
+    this._260 = ref.offset(4, 0x260L).cast(IntRef::new);
+    this._264 = ref.offset(4, 0x264L).cast(IntRef::new);
+    this._268 = ref.offset(4, 0x268L).cast(IntRef::new);
     this.combatantIndex_26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
     this.animIndex_26e = ref.offset(2, 0x26eL).cast(ShortRef::new);
     this.animIndex_270 = ref.offset(2, 0x270L).cast(ShortRef::new);

@@ -4015,6 +4015,27 @@ public final class Bttl_800e {
     removeFromLinkedList(struct7cc_800c693c.getPointer());
   }
 
+  @Method(0x800e9178L)
+  public static void FUN_800e9178(final int a0) {
+    if(a0 == 1) {
+      //LAB_800e91a0
+      FUN_800e8d04(scriptStatePtrArr_800bc1c0.get(struct7cc_800c693c.deref().scriptIndex_1c.get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class), 10);
+    } else if(a0 == 2) {
+      //LAB_800e91d8
+      FUN_800e8d04(scriptStatePtrArr_800bc1c0.get(struct7cc_800c693c.deref().scriptIndex_1c.get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class), 10);
+      FUN_800eab8c();
+    } else {
+      //LAB_800e9214
+      FUN_800eab8c();
+      deallocateScriptAndChildren(struct7cc_800c693c.deref().scriptIndex_1c.get());
+      final int scriptIndex = allocateEffectManager(-1, 0, null, null, null, null);
+      struct7cc_800c693c.deref().scriptIndex_1c.set(scriptIndex);
+      scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._04.set(0x600_0400L);
+    }
+
+    //LAB_800e9278
+  }
+
   @Method(0x800e9288L)
   public static <T extends MemoryRef> void FUN_800e9288(final T obj, final long a1, @Nullable final Pointer<T> ptr) {
     if(ptr != null) {
@@ -5870,6 +5891,14 @@ public final class Bttl_800e {
     return primitives;
   }
 
+  @Method(0x800ee384L)
+  public static long FUN_800ee384(final RunningScript a0) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    bobj._214.set(2);
+    bobj._215.set(0xff);
+    return 0;
+  }
+
   @Method(0x800ee3c0L)
   public static long FUN_800ee3c0(final RunningScript a0) {
     final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
@@ -5892,9 +5921,24 @@ public final class Bttl_800e {
     return 0;
   }
 
+  @Method(0x800ee4e8L)
+  public static long FUN_800ee4e8(final RunningScript a0) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    bobj._260.set(a0.params_20.get(1).deref().get());
+    bobj._264.set(a0.params_20.get(2).deref().get());
+    bobj._268.set(a0.params_20.get(3).deref().get());
+    return 0;
+  }
+
   @Method(0x800ee548L)
   public static long FUN_800ee548(final RunningScript a0) {
     FUN_800ebb58(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800ee5f0L)
+  public static long FUN_800ee5f0(final RunningScript a0) {
+    _800bda0c.deref()._5e8.set((short)a0.params_20.get(0).deref().get());
     return 0;
   }
 
