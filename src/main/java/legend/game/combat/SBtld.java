@@ -11,7 +11,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BattleStruct7cc;
-import legend.game.combat.types.BattleStruct98;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.types.LodString;
@@ -82,7 +81,7 @@ public class SBtld {
 
   public static final UnboundedArrayRef<BattleStruct4c> _801134fc = MEMORY.ref(4, 0x801134fcL, UnboundedArrayRef.of(0x4c, BattleStruct4c::new));
 
-  public static final ArrayRef<BattleStruct98> _80114a10 = MEMORY.ref(4, 0x80114a10L, ArrayRef.of(BattleStruct98.class, 4, 0x98, BattleStruct98::new));
+  public static final ArrayRef<BattleStruct4c> _80114a10 = MEMORY.ref(4, 0x80114a10L, ArrayRef.of(BattleStruct4c.class, 8, 0x4c, BattleStruct4c::new));
 
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 

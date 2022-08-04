@@ -5906,6 +5906,24 @@ public final class Scus94491BpeSegment {
     FUN_8004cf8c((int)sssqChannelIndex_800bd0f8.get());
   }
 
+  @Method(0x8001adc8L)
+  public static long FUN_8001adc8(final RunningScript a0) {
+    FUN_8004cf8c((int)sssqChannelIndex_800bd0f8.get());
+    return 0;
+  }
+
+  @Method(0x8001ae18L)
+  public static long FUN_8001ae18(final RunningScript a0) {
+    FUN_8004d034((int)sssqChannelIndex_800bd0f8.get(), 2);
+    return 0;
+  }
+
+  @Method(0x8001ae68L)
+  public static long FUN_8001ae68(final RunningScript a0) {
+    FUN_8004d034((int)sssqChannelIndex_800bd0f8.get(), 2);
+    return 0;
+  }
+
   @Method(0x8001ae90L)
   public static void FUN_8001ae90() {
     if(_800bd0f0.get() == 0x2L) {
