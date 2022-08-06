@@ -3888,10 +3888,8 @@ public final class SMap {
     MEMORY.ref(4, a1).offset(0x10L).setu(v0);
     v0 = sp0x20.getZ() + s2.coord2_14.coord.transfer.getZ();
     MEMORY.ref(4, a1).offset(0x14L).setu(v0);
-    t5 = rsin(s0) * -s2.ui_1c0.get();
-    s0 = (int)t5 >> 12;
-    t5 = rcos(s0) * -s2.ui_1c0.get();
-    t3 = (int)t5 >> 12;
+    final int sin = rsin(s0) * -s2.ui_1c0.get() >> 12;
+    final int cos = rcos(s0) * -s2.ui_1c0.get() >> 12;
     t2 = sp0x20.getY() - s2.ui_1bc.get();
     final long a0_0 = sp0x20.getY() + s2.ui_1bc.get();
 
@@ -3911,9 +3909,9 @@ public final class SMap {
 
       if(struct.getAddress() != s2.getAddress()) {
         if((struct.ui_190.get() & 0x10_0000L) != 0) {
-          v0 = struct.coord2_14.coord.transfer.getX() - (s2.coord2_14.coord.transfer.getX() + sp0x20.getX() + s0);
+          v0 = struct.coord2_14.coord.transfer.getX() - (s2.coord2_14.coord.transfer.getX() + sp0x20.getX() + sin);
           t0 = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
-          v0 = struct.coord2_14.coord.transfer.getZ() - (s2.coord2_14.coord.transfer.getZ() + sp0x20.getZ() + t3);
+          v0 = struct.coord2_14.coord.transfer.getZ() - (s2.coord2_14.coord.transfer.getZ() + sp0x20.getZ() + cos);
           a3 = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
           v0 = s2.ui_1b8.get() + struct.ui_1b8.get();
           t6 = (long)(int)v0 * (int)v0 & 0xffff_ffffL;
@@ -5162,7 +5160,7 @@ public final class SMap {
           struct.ui_1b4.set(0x32L);
           struct.ui_1b8.set(0x14L);
           struct.ui_1bc.set(0x14L);
-          struct.ui_1c0.set(0x32L);
+          struct.ui_1c0.set(50);
           struct.flatLightingEnabled_1c4.set(false);
           struct.flatLightRed_1c5.set(0x80);
           struct.flatLightGreen_1c6.set(0x80);

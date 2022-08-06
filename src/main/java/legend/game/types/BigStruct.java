@@ -104,7 +104,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedIntRef ui_1b4;
   public final UnsignedIntRef ui_1b8;
   public final UnsignedIntRef ui_1bc;
-  public final UnsignedIntRef ui_1c0;
+  public final IntRef ui_1c0;
   public final BoolRef flatLightingEnabled_1c4;
   public final UnsignedByteRef flatLightRed_1c5;
   public final UnsignedByteRef flatLightGreen_1c6;
@@ -193,7 +193,7 @@ public class BigStruct implements MemoryRef {
     this.ui_1b4 = ref.offset(4, 0x1b4L).cast(UnsignedIntRef::new);
     this.ui_1b8 = ref.offset(4, 0x1b8L).cast(UnsignedIntRef::new);
     this.ui_1bc = ref.offset(4, 0x1bcL).cast(UnsignedIntRef::new);
-    this.ui_1c0 = ref.offset(4, 0x1c0L).cast(UnsignedIntRef::new);
+    this.ui_1c0 = ref.offset(4, 0x1c0L).cast(IntRef::new);
     this.flatLightingEnabled_1c4 = ref.offset(1, 0x1c4L).cast(BoolRef::new);
     this.flatLightRed_1c5 = ref.offset(1, 0x1c5L).cast(UnsignedByteRef::new);
     this.flatLightGreen_1c6 = ref.offset(1, 0x1c6L).cast(UnsignedByteRef::new);
