@@ -82,7 +82,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedShortRef us_170;
   public final ShortRef us_172;
 
-  public final UnsignedShortRef us_178;
+  public final ShortRef s_178;
 
   public final ShortRef s_17c;
 
@@ -90,7 +90,7 @@ public class BigStruct implements MemoryRef {
 
   public final ShortRef s_184;
 
-  public final UnsignedIntRef ui_188;
+  public final IntRef ui_188;
   public final UnsignedIntRef ui_18c;
   public final UnsignedIntRef ui_190;
   public final UnsignedIntRef ui_194;
@@ -171,7 +171,7 @@ public class BigStruct implements MemoryRef {
     this.us_170 = ref.offset(2, 0x170L).cast(UnsignedShortRef::new);
     this.us_172 = ref.offset(2, 0x172L).cast(ShortRef::new);
 
-    this.us_178 = ref.offset(2, 0x178L).cast(UnsignedShortRef::new);
+    this.s_178 = ref.offset(2, 0x178L).cast(ShortRef::new);
 
     this.s_17c = ref.offset(2, 0x17cL).cast(ShortRef::new);
 
@@ -179,7 +179,7 @@ public class BigStruct implements MemoryRef {
 
     this.s_184 = ref.offset(2, 0x184L).cast(ShortRef::new);
 
-    this.ui_188 = ref.offset(4, 0x188L).cast(UnsignedIntRef::new);
+    this.ui_188 = ref.offset(4, 0x188L).cast(IntRef::new);
     this.ui_18c = ref.offset(4, 0x18cL).cast(UnsignedIntRef::new);
     this.ui_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
     this.ui_194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);

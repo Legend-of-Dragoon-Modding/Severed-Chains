@@ -172,7 +172,7 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 736</p>
    *
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d0309}</li>
+   *   <li>{@link Bttl_800d#FUN_800d3090}</li>
    *   <li>{@link Bttl_800c#FUN_800cec8c}</li>
    *   <li>{@link Bttl_800c#FUN_800cee50}</li>
    *   <li>{@link Bttl_800c#FUN_800ceecc}</li>
