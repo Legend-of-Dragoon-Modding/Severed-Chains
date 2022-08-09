@@ -69,6 +69,8 @@ import static legend.game.Scus94491BpeSegment.setCallback08;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
+import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
+import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
@@ -83,6 +85,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
+import static legend.game.Scus94491BpeSegment_8004.FUN_80040e10;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040ec0;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
@@ -101,6 +104,7 @@ import static legend.game.combat.Bttl_800c.FUN_800c7488;
 import static legend.game.combat.Bttl_800c.FUN_800cea1c;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
+import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.FUN_800cff54;
@@ -112,8 +116,10 @@ import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
+import static legend.game.combat.Bttl_800d.FUN_800de36c;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
 import static legend.game.combat.Bttl_800d.FUN_800de544;
+import static legend.game.combat.Bttl_800d.FUN_800de618;
 import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800e.FUN_800e3e6c;
@@ -994,23 +1000,23 @@ public final class SEffe {
     }
 
     if((a1._08._1c.get() & 0x400_0000L) != 0) {
-      a2._84.set(a0._10.svec_1c.getX() << 8);
-      a2._86.set(a0._10.svec_1c.getY() << 8);
-      a2._88.set(a0._10.svec_1c.getZ() << 8);
+      a2._84.set((short)(a0._10.svec_1c.getX() << 8));
+      a2._86.set((short)(a0._10.svec_1c.getY() << 8));
+      a2._88.set((short)(a0._10.svec_1c.getZ() << 8));
 
       if((a0._10._24.get() & 0x1L) == 0) {
-        a2._8a.set(0);
-        a2._8c.set(0);
-        a2._8e.set(0);
+        a2._8a.set((short)0);
+        a2._8c.set((short)0);
+        a2._8e.set((short)0);
         return;
       }
     }
 
     //LAB_800fd18c
     //LAB_800fd0dc
-    a2._8a.set(a2._84.get() / a2._12.get());
-    a2._8c.set(a2._86.get() / a2._12.get());
-    a2._8e.set(a2._88.get() / a2._12.get());
+    a2._8a.set((short)(a2._84.get() / a2._12.get()));
+    a2._8c.set((short)(a2._86.get() / a2._12.get()));
+    a2._8e.set((short)(a2._88.get() / a2._12.get()));
 
     //LAB_800fd1d4
   }
@@ -1023,9 +1029,9 @@ public final class SEffe {
       a2._86.sub(a2._8c.get());
       a2._88.sub(a2._8e.get());
     } else {
-      a2._84.set(a0._10.svec_1c.getX() << 8);
-      a2._86.set(a0._10.svec_1c.getY() << 8);
-      a2._88.set(a0._10.svec_1c.getZ() << 8);
+      a2._84.set((short)(a0._10.svec_1c.getX() << 8));
+      a2._86.set((short)(a0._10.svec_1c.getY() << 8));
+      a2._88.set((short)(a0._10.svec_1c.getZ() << 8));
     }
 
     //LAB_800fd26c
@@ -1707,9 +1713,9 @@ public final class SEffe {
 
     seed_800fa754.advance();
     final long a0_0 = seed_800fa754.get() % 101 - 50 << 8;
-    a2._84.add((int)a0_0);
-    a2._86.add((int)a0_0);
-    a2._88.add((int)a0_0);
+    a2._84.add((short)a0_0);
+    a2._86.add((short)a0_0);
+    a2._88.add((short)a0_0);
 
     return theta;
   }
@@ -1913,9 +1919,9 @@ public final class SEffe {
     a2._14.set((short)(seed_800fa754.advance().get() % 4097));
     final int v0 = -a3._10.get() >> 5;
     final int a0 = a3._18.get();
-    a2._84.set(0);
-    a2._86.set(0);
-    a2._88.set(0);
+    a2._84.set((short)0);
+    a2._86.set((short)0);
+    a2._88.set((short)0);
     a2._16.set(a3._10.get());
     a2._18.set((short)(v0 * a0 >> 8));
     a2._1a.setX((short)(a0 >>> 1));
@@ -2053,9 +2059,9 @@ public final class SEffe {
   @Method(0x80100e28L)
   public static void FUN_80100e28(final long a0, final EffectManagerData6c a1, final BttlScriptData6cSub98 a2, final BttlScriptData6cSub98Sub94 a3) {
     if(a3._04.get() == 0) {
-      a3._8a.set(0);
-      a3._8c.set(0);
-      a3._8e.set(0);
+      a3._8a.set((short)0);
+      a3._8c.set((short)0);
+      a3._8e.set((short)0);
     }
 
     //LAB_80100e44
@@ -2064,9 +2070,9 @@ public final class SEffe {
   @Method(0x80100e4cL)
   public static void FUN_80100e4c(final long a0, final EffectManagerData6c a1, final BttlScriptData6cSub98 a2, final BttlScriptData6cSub98Sub94 a3) {
     if(a3._04.get() == 0) {
-      a3._8a.set(-0x8000 / a3._12.get());
-      a3._8c.set(-0x8000 / a3._12.get());
-      a3._8e.set(-0x8000 / a3._12.get());
+      a3._8a.set((short)(-0x8000 / a3._12.get()));
+      a3._8c.set((short)(-0x8000 / a3._12.get()));
+      a3._8e.set((short)(-0x8000 / a3._12.get()));
     }
 
     //LAB_80100e98
@@ -2213,18 +2219,18 @@ public final class SEffe {
     s3._0a.set((short)0);
     s3._0c.set((short)0);
     s3._60.set((short)0, (short)0, (short)0);
-    s3._8c.set(0);
-    s3._8e.set(0);
+    s3._8a.set((short)0);
+    s3._8c.set((short)0);
+    s3._8e.set((short)0);
     t2 = a4._20.get() * 10;
     seed_800fa754.advance();
     s3._04.set((short)(seed_800fa754.get() % (a4._14.get() + 0x1L) + 0x1L));
     seed_800fa754.advance();
-    s3._8a.set(0);
     s3._12.set((short)((a4._1c.get() & 0xff_0000L) >>> 16));
     a0 = (a4._1c.get() & 0xff00L) >>> 8;
-    s3._84.set((int)a0);
-    s3._86.set((int)a0);
-    s3._88.set((int)a0);
+    s3._84.set((short)a0);
+    s3._86.set((short)a0);
+    s3._88.set((short)a0);
     s3._90.or(0x90L);
     s3._0e.set((short)(seed_800fa754.get() % 4097));
     seed_800fa754.advance();
@@ -2498,6 +2504,39 @@ public final class SEffe {
     }
 
     //LAB_801023ec
+    return 0;
+  }
+
+  @Method(0x801023f4L)
+  public static long FUN_801023f4(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x801023fcL)
+  public static long FUN_801023fc(final RunningScript script) {
+    final BttlScriptData6cSub98 a2 = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub98.class);
+    final long a1 = script.params_20.get(1).getPointer();
+
+    //LAB_8010243c
+    for(int i = 0; i < a2._50.get(); i++) {
+      final BttlScriptData6cSub98Sub94 a0 = a2._68.deref().get(i);
+      MEMORY.ref(4, a1).offset(i * 0x4L).setu(a0._90.get() & 0x1L);
+    }
+
+    //LAB_80102464
+    return 0;
+  }
+
+  @Method(0x8010246cL)
+  public static long FUN_8010246c(final RunningScript a0) {
+    final BttlScriptData6cSub98 effect = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub98.class);
+    final BttlScriptData6cSub98Sub94 a1 = effect._68.deref().get(a0.params_20.get(1).deref().get());
+
+    final VECTOR sp0x20 = new VECTOR();
+    FUN_800cf684(a1._68, a1._2c, new VECTOR().set(a1._50), sp0x20);
+    a0.params_20.get(2).deref().set(sp0x20.getX());
+    a0.params_20.get(3).deref().set(sp0x20.getY());
+    a0.params_20.get(4).deref().set(sp0x20.getZ());
     return 0;
   }
 
@@ -4376,13 +4415,13 @@ public final class SEffe {
     s1._18.add(s1._24);
     s1._0c.add(s1._18);
 
-    if(s1._30.get() == -1) {
+    if(s1.scriptIndex_30.get() == -1) {
       s2._10.vec_04.set(s1._0c).div(0x100);
     } else {
       //LAB_80110814
       final Ref<SVECTOR> sp0x40 = new Ref<>();
       final Ref<VECTOR> sp0x44 = new Ref<>();
-      FUN_801100b8(s1._30.get(), sp0x40, sp0x44);
+      FUN_801100b8(s1.scriptIndex_30.get(), sp0x40, sp0x44);
 
       final MATRIX sp0x10 = new MATRIX();
       RotMatrix_8003faf0(sp0x40.get(), sp0x10);
@@ -4417,7 +4456,7 @@ public final class SEffe {
     //LAB_80110980
     final BttlScriptData6cSub34 s2 = FUN_800e8dd4(s0, 0x1L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80110740", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
     s2._0c.set(s0._10.vec_04.getX() << 8, s0._10.vec_04.getY() << 8, s0._10.vec_04.getZ() << 8);
-    s2._30.set(-1);
+    s2.scriptIndex_30.set(-1);
     s2._32.set((short)-1);
 
     final int transformedX1;
@@ -4491,7 +4530,7 @@ public final class SEffe {
     }
 
     //LAB_80110c6c
-    s0._30.set(-1);
+    s0.scriptIndex_30.set(-1);
     s0._32.set((short)a3);
     s0._0c.set(s2._10.vec_04).mul(0x100);
     s0._18.set(sp0x18).mul(0x100).div(a3);
@@ -4499,6 +4538,83 @@ public final class SEffe {
 
     //LAB_80110d04
     return s0;
+  }
+
+  @Method(0x80110d34L)
+  public static BttlScriptData6cSub34 FUN_80110d34(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
+    final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    if((s1._04.get() & 0x2L) != 0) {
+      FUN_800e8d04(s1, 1);
+    }
+
+    //LAB_80110db8
+    final BttlScriptData6cSub34 s0 = FUN_800e8dd4(s1, 1, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80110740", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
+    s0._0c.setX(s1._10.vec_04.getX() << 8);
+    s0._0c.setY(s1._10.vec_04.getY() << 8);
+    s0._0c.setZ(s1._10.vec_04.getZ() << 8);
+    s0.scriptIndex_30.set(-1);
+
+    if(a3 <= 0) {
+      s0._32.set((short)-1);
+      s0._18.set(0, 0, 0);
+    } else {
+      //LAB_80110e30
+      final VECTOR v1 = FUN_80110030(scriptIndex1);
+      final VECTOR sp0x18 = new VECTOR();
+
+      if(scriptIndex2 == -1) {
+        sp0x18.set(x, y, z).sub(v1);
+        //LAB_80110e70
+      } else if(a0 == 0) {
+        //LAB_80110e94
+        final VECTOR v2 = FUN_80110030(scriptIndex2);
+        sp0x18.set(x, y, z).add(v2).sub(v1);
+      } else if(a0 == 1) {
+        //LAB_80110ee0
+        final VECTOR sp0x28 = new VECTOR().set(x, y, z);
+        FUN_801105cc(sp0x18, scriptIndex2, sp0x28);
+        sp0x18.sub(v1);
+      }
+
+      //LAB_80110f38
+      final VECTOR sp0x28 = new VECTOR();
+      FUN_80040e10(sp0x18, sp0x28);
+
+      s0._32.set((short)((SquareRoot0(sp0x28.getX() + sp0x28.getY() + sp0x28.getZ()) << 8) / a3));
+      if(s0._32.get() == 0) {
+        s0._32.set((short)1);
+      }
+
+      //LAB_80110f80
+      s0._18.setX((sp0x18.getX() << 8) / s0._32.get());
+      s0._18.setY((sp0x18.getY() << 8) / s0._32.get());
+      s0._18.setZ((sp0x18.getZ() << 8) / s0._32.get());
+    }
+
+    //LAB_80110fec
+    s0._24.set(0, 0, 0);
+    return s0;
+  }
+
+  @Method(0x8011102cL)
+  public static BttlScriptData6cSub34 FUN_8011102c(final int scriptIndex1, final int scriptIndex2) {
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+    if((manager._04.get() & 0x2L) != 0) {
+      FUN_800e8d04(manager, 1);
+    }
+
+    //LAB_80111084
+    final BttlScriptData6cSub34 effect = FUN_800e8dd4(manager, 1, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80110740", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34, BttlScriptData6cSub34::new);
+    final VECTOR v1 = FUN_80110030(scriptIndex1);
+    final VECTOR v2 = FUN_80110030(scriptIndex2);
+    final VECTOR sp0x18 = new VECTOR().set(v1).sub(v2);
+    effect._0c.set(sp0x18);
+    effect.scriptIndex_30.set(scriptIndex2);
+    effect._32.set((short)-1);
+    effect._18.set(0, 0, 0);
+    effect._24.set(0, 0, 0);
+    return effect;
   }
 
   @Method(0x801115ecL)
@@ -4646,6 +4762,54 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80111cc4L)
+  public static long FUN_80111cc4(final RunningScript a0) {
+    final int a1 = a0.params_20.get(0).deref().get();
+    final int s0 = a0.params_20.get(1).deref().get();
+    int s4 = a0.params_20.get(2).deref().get();
+    int s6 = a0.params_20.get(3).deref().get();
+    int s3 = a0.params_20.get(4).deref().get();
+    int s5 = a0.params_20.get(5).deref().get();
+    int s7 = a0.params_20.get(6).deref().get();
+    int fp = a0.params_20.get(7).deref().get();
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(a1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    if((manager._04.get() & 0x2L) == 0) {
+      FUN_801108fc(a1, s0, s4, s6, s3, s5, s7, fp);
+    } else {
+      //LAB_80111dac
+      final BttlScriptData6cSub34 s2 = (BttlScriptData6cSub34)FUN_800e8c84(manager, 1);
+
+      if(s2._06.get() == 0) {
+        if(s0 != -1) {
+          final MATRIX sp0x20 = new MATRIX();
+          RotMatrix_8003faf0(FUN_80110074(s0), sp0x20);
+
+          VECTOR sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s4, s6, s3));
+          s4 = sp0x50.getX();
+          s6 = sp0x50.getY();
+          s3 = sp0x50.getZ();
+
+          sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s5, s7, fp));
+          s5 = sp0x50.getX();
+          s7 = sp0x50.getY();
+          fp = sp0x50.getZ();
+        }
+
+        //LAB_80111e40
+        s2._18.x.add(s4);
+        s2._18.y.add(s6);
+        s2._18.z.add(s3);
+        s2._24.x.add(s5);
+        s2._24.y.add(s7);
+        s2._24.z.add(fp);
+      }
+    }
+
+    //LAB_80111ea4
+    return 0;
+  }
+
   @Method(0x80111ed4L)
   public static long FUN_80111ed4(final RunningScript a0) {
     final int scriptIndex = a0.params_20.get(0).deref().get();
@@ -4698,6 +4862,24 @@ public final class SEffe {
   @Method(0x801121fcL)
   public static long FUN_801121fc(final RunningScript a0) {
     FUN_80110aa8(0x1L, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get());
+    return 0;
+  }
+
+  @Method(0x80112274L)
+  public static long FUN_80112274(final RunningScript a0) {
+    FUN_80110d34(0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get());
+    return 0;
+  }
+
+  @Method(0x801122ecL)
+  public static long FUN_801122ec(final RunningScript a0) {
+    FUN_80110d34(1, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get());
+    return 0;
+  }
+
+  @Method(0x80112364L)
+  public static long FUN_80112364(final RunningScript a0) {
+    FUN_8011102c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -4847,7 +5029,7 @@ public final class SEffe {
 
     //LAB_80112b58
     final BttlScriptData6cSub34 v0 = FUN_800e8dd4(s0, 0x2L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80112638", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
-    v0._30.set(-1);
+    v0.scriptIndex_30.set(-1);
     v0._32.set((short)-1);
     v0._0c.set(s0._10.svec_10);
     v0._18.setX(a0.params_20.get(2).deref().get());
@@ -4856,6 +5038,51 @@ public final class SEffe {
     v0._24.setX(a0.params_20.get(5).deref().get());
     v0._24.setY(a0.params_20.get(6).deref().get());
     v0._24.setZ(a0.params_20.get(7).deref().get());
+    return 0;
+  }
+
+  @Method(0x80112bf0L)
+  public static long FUN_80112bf0(final RunningScript a0) {
+    final int s0 = a0.params_20.get(0).deref().get();
+    final int s4 = a0.params_20.get(1).deref().get();
+    final int s2 = a0.params_20.get(2).deref().get();
+    final int s5 = a0.params_20.get(3).deref().get();
+    final int s6 = a0.params_20.get(4).deref().get();
+    final int s7 = a0.params_20.get(5).deref().get();
+
+    if(s2 >= 0) {
+      final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(s0).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+      final BttlScriptData6cSub34 effect = FUN_800e8dd4(manager, 2, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80112638", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34, BttlScriptData6cSub34::new);
+
+      final SVECTOR v1 = FUN_80110074(s0);
+      final int sp18;
+      final int sp1c;
+      final int sp20;
+      if(s4 == -1) {
+        sp18 = s5 - v1.getX();
+        sp1c = s6 - v1.getY();
+        sp20 = s7 - v1.getZ();
+      } else {
+        //LAB_80112ce4
+        final SVECTOR v2 = FUN_80110074(s4);
+        sp18 = v2.getX() + s5 - v1.getX();
+        sp1c = v2.getY() + s6 - v1.getY();
+        sp20 = v2.getZ() + s7 - v1.getZ();
+      }
+
+      //LAB_80112d48
+      effect.scriptIndex_30.set(-1);
+      effect._32.set((short)s2);
+      effect._0c.set(manager._10.svec_10);
+      effect._0c.set(manager._10.svec_10);
+      effect._0c.set(manager._10.svec_10);
+      effect._18.setX(sp18 / s2);
+      effect._18.setY(sp1c / s2);
+      effect._18.setZ(sp20 / s2);
+      effect._24.set(0, 0, 0);
+    }
+
+    //LAB_80112dd0
     return 0;
   }
 
@@ -5035,7 +5262,7 @@ public final class SEffe {
 
     //LAB_80113d20
     final BttlScriptData6cSub34 v0 = FUN_800e8dd4(s0, 0x3L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80113ba0", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
-    v0._30.set(-1);
+    v0.scriptIndex_30.set(-1);
     v0._32.set((short)-1);
     v0._0c.set(s0._10.svec_16);
     v0._18.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
@@ -5089,7 +5316,7 @@ public final class SEffe {
       }
 
       //LAB_80113fc0
-      s0._30.set(-1);
+      s0.scriptIndex_30.set(-1);
       s0._32.set((short)s2);
       s0._0c.set(s1._10.svec_16);
       s0._18.set(sp0x18).div((int)s2);
@@ -5225,7 +5452,7 @@ public final class SEffe {
       final BttlScriptData6cSub34 s0 = FUN_800e8dd4(s2, 0x4L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_801146fc", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
       final SVECTOR sp0x28 = new SVECTOR();
       FUN_8011441c(scriptIndex1, scriptIndex2, sp0x28);
-      s0._30.set(-1);
+      s0.scriptIndex_30.set(-1);
       s0._32.set((short)scale);
       s0._0c.set(s2._10.svec_1c).mul(0x100);
       s0._18.set(vec).sub(sp0x28).mul(0x100).div(scale);
@@ -5365,6 +5592,13 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80115440L)
+  public static long FUN_80115440(final RunningScript a0) {
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    manager._10._00.and(0xfbff_ffffL).or(a0.params_20.get(1).deref().get() << 26);
+    return 0;
+  }
+
   @Method(0x8011549cL)
   public static long FUN_8011549c(final RunningScript a0) {
     final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
@@ -5382,6 +5616,16 @@ public final class SEffe {
   public static long FUN_801155a0(final RunningScript a0) {
     final long v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
     a0.params_20.get(1).deref().set((int)(1 << a0.params_20.get(2).deref().get() & MEMORY.ref(4, v1).offset(0x4L).get()));
+    return 0;
+  }
+
+  @Method(0x801155f8L)
+  public static long FUN_801155f8(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x80115600L)
+  public static long FUN_80115600(final RunningScript a0) {
     return 0;
   }
 
@@ -5429,6 +5673,58 @@ public final class SEffe {
   @Method(0x8011578cL)
   public static long FUN_8011578c(final RunningScript a0) {
     scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._10._22.set((short)a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x801157d0L)
+  public static long FUN_801157d0(final RunningScript a0) {
+    final int scriptIndex = a0.params_20.get(1).deref().get();
+    final int coord2Index = a0.params_20.get(2).deref().get();
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+    final MATRIX sp0x10 = new MATRIX();
+    final MATRIX sp0x30 = new MATRIX();
+    FUN_800e8594(sp0x10, manager);
+
+    if(scriptIndex == -1) {
+      sp0x30.set(sp0x10);
+    } else {
+      //LAB_8011588c
+      final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x6c);
+      final EffectManagerData6c sp0x50 = new EffectManagerData6c(sp0x50tmp.get());
+
+      sp0x50._10.vec_04.set(0, 0, 0);
+      sp0x50._10.svec_10.set((short)0, (short)0, (short)0);
+      sp0x50._10.svec_16.set((short)0x1000, (short)0x1000, (short)0x1000);
+
+      sp0x50.scriptIndex_0c.set(scriptIndex);
+      sp0x50.coord2Index_0d.set(coord2Index);
+
+      final MATRIX sp0xc0 = new MATRIX();
+      FUN_800e8594(sp0xc0, sp0x50);
+
+      final SVECTOR sp0xe0 = new SVECTOR();
+      final SVECTOR sp0xe8 = new SVECTOR();
+      FUN_800de618(sp0xe0, sp0xe8, sp0xc0);
+      sp0xe0.negate();
+      RotMatrix_80040010(sp0xe0, sp0xc0);
+
+      final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(sp0xe8);
+      ScaleMatrixL(sp0xc0, sp0xf0);
+      FUN_80021de4(sp0xc0, sp0x10, sp0x30);
+
+      final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(sp0xc0.transfer);
+      sp0x30.transfer.set(ApplyMatrixLV(sp0xc0, sp0x100));
+
+      sp0x50tmp.release();
+    }
+
+    //LAB_801159cc
+    FUN_800de618(manager._10.svec_10, manager._10.svec_16, sp0x30);
+    manager._10.vec_04.set(sp0x30.transfer);
+    manager.scriptIndex_0c.set(scriptIndex);
+    manager.coord2Index_0d.set(coord2Index);
     return 0;
   }
 
@@ -5774,6 +6070,20 @@ public final class SEffe {
     manager._10._24.set(0);
     manager._10._00.set(0x6400_0040L);
     a0.params_20.get(0).deref().set(scriptIndex);
+    return 0;
+  }
+
+  @Method(0x80118984L)
+  public static long FUN_80118984(final RunningScript a0) {
+    final int effectIndex = a0.params_20.get(0).deref().get();
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub13c effect = manager._44.derefAs(BttlScriptData6cSub13c.class);
+    long v0 = FUN_800eac58(a0.params_20.get(1).deref().get() | 0x500_0000L).getAddress();
+    v0 = v0 + MEMORY.ref(4, v0).offset(0x14L).get();
+    effect.ptr_0c.set(v0);
+    FUN_800de36c(effect._134.deref(), v0);
+    manager._10._24.set(0);
+    FUN_80114f3c(effectIndex, 0, 0x100, 0);
     return 0;
   }
 

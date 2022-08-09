@@ -75,6 +75,7 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003f8a0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f990;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -92,6 +93,7 @@ import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004._8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -594,17 +596,17 @@ public final class Bttl_800d {
           long sp30 = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
           s1 = sp0x48[s5] + MEMORY.ref(2, s6).offset(0xaL).get();
           s0 = 210 + MEMORY.ref(2, s6).offset(0x6L).get();
-          long sp1c = (int)(rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0) >> 12;
-          long sp2c = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0) >> 12;
-          long sp24 = (int)(rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
-          long sp34 = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
+          final long sp1c = (int)(rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0) >> 12;
+          final long sp2c = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0) >> 12;
+          final long sp24 = (int)(rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
+          final long sp34 = (int)(rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0) >> 12;
           final IntRef[] sp0x50 = {new IntRef(), new IntRef()};
           FUN_800d1194(data, s7, sp0x50);
           sp18 = sp18 + sp0x50[0].get();
           sp28 = sp28 + sp0x50[1].get();
           sp20 = sp20 + sp0x50[0].get();
           sp30 = sp30 + sp0x50[1].get();
-          long a1 = linkedListAddress_1f8003d8.get();
+          final long a1 = linkedListAddress_1f8003d8.get();
           MEMORY.ref(1, a1).offset(0x03L).setu(0x8L);
           MEMORY.ref(1, a1).offset(0x04L).setu(0);
           MEMORY.ref(1, a1).offset(0x05L).setu(0);
@@ -747,6 +749,34 @@ public final class Bttl_800d {
     return 0;
   }
 
+  @Method(0x800d1d3cL)
+  public static void FUN_800d1d3c(final EffectManagerData6c a0, final long angle, final long[] a2, final BttlScriptData6cSub14 a3) {
+    if((int)a0._10._00.get() >= 0) {
+      final long packet = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.set(packet + 0x1cL);
+      MEMORY.ref(1, packet).offset(0x03L).setu(0x6L);
+      MEMORY.ref(1, packet).offset(0x04L).setu(a0._10.svec_1c.getX()); // R1
+      MEMORY.ref(1, packet).offset(0x05L).setu(a0._10.svec_1c.getY()); // G1
+      MEMORY.ref(1, packet).offset(0x06L).setu(a0._10.svec_1c.getZ()); // B1
+      MEMORY.ref(1, packet).offset(0x07L).setu(0x32L); // Shaded three-point poly, translucent
+      MEMORY.ref(2, packet).offset(0x08L).setu(a2[0]); // X1
+      MEMORY.ref(2, packet).offset(0x0aL).setu(a2[1]); // Y1
+      MEMORY.ref(1, packet).offset(0x0cL).setu(a3._0c.get()); // R2
+      MEMORY.ref(1, packet).offset(0x0dL).setu(a3._0d.get()); // G2
+      MEMORY.ref(1, packet).offset(0x0eL).setu(a3._0e.get()); // B2
+      MEMORY.ref(2, packet).offset(0x10L).setu(a2[2]); // X2
+      MEMORY.ref(2, packet).offset(0x12L).setu(a2[3]); // Y2
+      MEMORY.ref(1, packet).offset(0x14L).setu(a3._0c.get()); // R3
+      MEMORY.ref(1, packet).offset(0x15L).setu(a3._0d.get()); // G3
+      MEMORY.ref(1, packet).offset(0x16L).setu(a3._0e.get()); // B3
+      MEMORY.ref(2, packet).offset(0x18L).setu(a2[4]); // X3
+      MEMORY.ref(2, packet).offset(0x1aL).setu(a2[5]); // Y3
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10._22.get()) / 4 * 0x4L, packet);
+    }
+
+    //LAB_800d1e70
+  }
+
   @Method(0x800d21b8L)
   public static void FUN_800d21b8(final EffectManagerData6c a0, final long angle, final long[] a2, final BttlScriptData6cSub14 a3) {
     if((int)a0._10._00.get() >= 0) {
@@ -802,8 +832,8 @@ public final class Bttl_800d {
 
   @Method(0x800d247cL)
   public static void FUN_800d247c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v1;
-    long a0;
+    final long v1;
+    final long a0;
     long s1;
     long sp54;
     long sp50;
@@ -897,7 +927,7 @@ public final class Bttl_800d {
 
   @Method(0x800d2810L)
   public static void FUN_800d2810(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v0;
+    final long v0;
     long v1;
     long a0;
     long a1;
@@ -909,9 +939,9 @@ public final class Bttl_800d {
     long sp78;
     long sp7a;
     long sp7c;
-    long sp80;
-    long sp82;
-    long sp84;
+    final long sp80;
+    final long sp82;
+    final long sp84;
 
     final VECTOR sp0x58 = new VECTOR();
     final IntRef[] sp0x18 = new IntRef[7];
@@ -1091,7 +1121,7 @@ public final class Bttl_800d {
 
   @Method(0x800d30c0L)
   public static void FUN_800d30c0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    BttlScriptData6cSub34_2 s1 = data._44.derefAs(BttlScriptData6cSub34_2.class);
+    final BttlScriptData6cSub34_2 s1 = data._44.derefAs(BttlScriptData6cSub34_2.class);
     long s2 = s1.ptr_30.get();
 
     //LAB_800d30fc
@@ -1351,7 +1381,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d3ab8
-    long s2 = a2 & 0xffL;
+    final long s2 = a2 & 0xffL;
 
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
@@ -1467,7 +1497,7 @@ public final class Bttl_800d {
       long s1_0 = s0._18.get();
       long s2_0 = -160;
       long sp10 = sp0x10.get();
-      long sp12 = sp0x12.get();
+      final long sp12 = sp0x12.get();
 
       //LAB_800d3f18
       for(int s4 = 0; s4 < s2; s4++) {
@@ -1503,10 +1533,10 @@ public final class Bttl_800d {
     long s5;
     long s6;
     long fp;
-    long sp20;
+    final long sp20;
     long sp30;
-    long sp28;
-    long sp2c;
+    final long sp28;
+    final long sp2c;
     final BttlScriptData40 s3 = state.innerStruct_00.deref();
 
     if(_800faa94.get() == 0 && s3._00.get() == 0) {
@@ -1847,8 +1877,8 @@ public final class Bttl_800d {
       cam._c8.set((a2 - cam.vec_94.getZ()) / a3);
     } else if(a5 == 1) {
       //LAB_800d50c4
-      int s6 = a0 - cam.vec_94.getX();
-      int s5 = a1 - cam.vec_94.getY();
+      final int s6 = a0 - cam.vec_94.getX();
+      final int s5 = a1 - cam.vec_94.getY();
       int v0 = a2 - cam.vec_94.getZ();
       v0 = SquareRoot0(v0 * v0 + s5 * s5 + s6 * s6) / a3;
       cam._d0.set(v0);
@@ -2475,8 +2505,8 @@ public final class Bttl_800d {
     cam._38.set(FUN_800dc384(1, 7, 0, scriptIndex) << 8);
     cam._44.set(FUN_800dc384(1, 7, 1, scriptIndex) << 8);
     cam._2c.set(FUN_800dc384(1, 7, 2, scriptIndex) << 8);
-    int s2 = FUN_800dcfb8(0, cam._38.get(), a0, a6 & 3) >> 8;
-    int s0 = FUN_800dcfb8(1, cam._44.get(), a1, a6 >> 2 & 3) >> 8;
+    final int s2 = FUN_800dcfb8(0, cam._38.get(), a0, a6 & 3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._44.get(), a1, a6 >> 2 & 3) >> 8;
     FUN_800dcfb8(2, cam._2c.get(), a2, 0);
     cam.vec_60.setX((ratan2(s0, s2) & 0xfff) << 8);
     cam.vec_60.setY(0);
@@ -4227,6 +4257,39 @@ public final class Bttl_800d {
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
+  @Method(0x800dcb84L)
+  public static long FUN_800dcb84(final RunningScript a0) {
+    final BattleCamera cam = camera_800c67f0;
+    final int a1 = a0.params_20.get(0).deref().get();
+
+    if((a1 & 0x1L) != 0) {
+      cam._120.set(0);
+      cam._122.set(0);
+      cam._11c.add(0xffff_fffeL);
+    }
+
+    //LAB_800dcbbc
+    if((a1 & 0x2L) != 0) {
+      cam._121.set(0);
+      cam._123.set(0);
+      cam._11c.and(0xffff_fffdL);
+    }
+
+    //LAB_800dcbe4
+    return 0;
+  }
+
+  @Method(0x800dcbecL)
+  public static long FUN_800dcbec(final RunningScript a0) {
+    _800c67c4.setu(a0.params_20.get(0).deref().get());
+    _800c67d4.setu(a0.params_20.get(1).deref().get());
+    _800c67e4.setu(a0.params_20.get(2).deref().get());
+    _800c67e8.setu(a0.params_20.get(3).deref().get());
+    _800fabb8.setu(0x1L);
+    FUN_8003f8a0(x_800c67bc.getAddress(), y_800c67c0.getAddress());
+    return 0;
+  }
+
   @Method(0x800dcc64L)
   public static void setViewpoint(final int x, final int y, final int z) {
     final BattleCamera cam = camera_800c67f0;
@@ -4246,7 +4309,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcc94L)
-  public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, IntRef y, final IntRef z) {
+  public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
     _800fab98.set((short)x.get(), (short)y.get(), (short)0);
     RotMatrix_8003faf0(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
@@ -4370,7 +4433,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd02cL)
-  public static VECTOR FUN_800dd02c(int scriptIndex) {
+  public static VECTOR FUN_800dd02c(final int scriptIndex) {
     final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4436,10 +4499,10 @@ public final class Bttl_800d {
   public static long FUN_800dd4cc(final BigStruct a0, final long a1) {
     long v0;
     long v1;
-    long s0;
-    long s2;
-    long hi;
-    long lo;
+    final long s0;
+    final long s2;
+    final long hi;
+    final long lo;
     v1 = a0.ub_9c.get();
     if(v1 == 0x2L) {
       return v1;
@@ -4508,11 +4571,11 @@ public final class Bttl_800d {
   @Method(0x800dd638L)
   public static long FUN_800dd638(final BigStruct a0, final long a1) {
     long v0;
-    long v1;
+    final long v1;
     long s3;
-    long s4;
-    long s5;
-    long s6;
+    final long s4;
+    final long s5;
+    final long s6;
     if(a0.ub_9c.get() == 0x2L) {
       return 0x2L;
     }
@@ -4590,14 +4653,14 @@ public final class Bttl_800d {
 
   @Method(0x800dd89cL)
   public static void FUN_800dd89c(final BigStruct a0, final long a1) {
-    long v0;
-    long v1;
+    final long v0;
+    final long v1;
     long s0;
     long s4;
     long s6;
     long s7;
-    long fp;
-    long sp50;
+    final long fp;
+    final long sp50;
     s4 = 0x1L;
     s7 = a0.ui_f4.get();
     fp = a0.ObjTable_0c.nobj.get();
@@ -4741,15 +4804,15 @@ public final class Bttl_800d {
     long v0;
     long v1;
     long a2;
-    long a3;
+    final long a3;
     long t0;
-    long t1;
-    long t2;
-    long t3;
+    final long t1;
+    final long t2;
+    final long t3;
     long s0;
     long s3;
     long s4;
-    long fp;
+    final long fp;
     if(a0.ub_9c.get() == 0x2L) {
       return 0x2L;
     }
@@ -4884,7 +4947,7 @@ public final class Bttl_800d {
   public static void FUN_800de210(final BigStruct a0, final long a1) {
     long v1;
     long a2;
-    long a3;
+    final long a3;
     final UnboundedArrayRef<GsCOORD2PARAM> t0 = a0.coord2ParamArrPtr_08.deref();
     t0.get(0).scale.setY((int)a1); //TODO ?? a1 is a pointer
     a0.ptr_ui_90.setPointer(0x2L); //TODO ??
@@ -4999,6 +5062,18 @@ public final class Bttl_800d {
     return a0;
   }
 
+  @Method(0x800de618L)
+  public static void FUN_800de618(final SVECTOR a0, final SVECTOR a1, final MATRIX a2) {
+    final MATRIX sp0x10 = new MATRIX().set(a2);
+    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
+    RotMatrixX(-(short)a0.getX(), sp0x10);
+    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
+    RotMatrixY(-(short)a0.getY(), sp0x10);
+    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0))); //TODO is this a retail bug? Should it be 4?
+    RotMatrixZ(-(short)a0.getZ(), sp0x10);
+    a1.set(sp0x10.get(0), sp0x10.get(4), sp0x10.get(8));
+  }
+
   @Method(0x800de72cL)
   public static void ScaleVectorL_SVEC(final MATRIX a0, final SVECTOR a1) {
     ScaleMatrixL(a0, new VECTOR().set(a1));
@@ -5088,12 +5163,12 @@ public final class Bttl_800d {
     long t5;
     long t6;
     long t7;
-    long s0;
-    long s1;
-    long s2;
-    long t8;
-    long t9;
-    long s8;
+    final long s0;
+    final long s1;
+    final long s2;
+    final long t8;
+    final long t9;
+    final long s8;
     t9 = a1;
     s8 = a2;
     v1 = 0xe100_0000L;
@@ -5233,7 +5308,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dec14L)
-  public static long FUN_800dec14(long a0, long a1, long a2, long a3) {
+  public static long FUN_800dec14(long a0, long a1, final long a2, long a3) {
     long v0;
     long v1;
     long t0;
@@ -5244,10 +5319,10 @@ public final class Bttl_800d {
     long t5;
     long t6;
     long t7;
-    long s0;
+    final long s0;
     long t8;
-    long t9;
-    long s8;
+    final long t9;
+    final long s8;
     t4 = a0;
     t9 = a1;
     v0 = 0x1f80_0000L;
@@ -5404,16 +5479,16 @@ public final class Bttl_800d {
     long t1;
     long t2;
     long t3;
-    long t4;
+    final long t4;
     long t5;
     long t6;
     long t7;
-    long s0;
-    long s1;
-    long s2;
+    final long s0;
+    final long s1;
+    final long s2;
     long t8;
-    long t9;
-    long s8;
+    final long t9;
+    final long s8;
     s8 = a1;
     t4 = a2;
     v1 = 0xe100_0000L;
@@ -5574,12 +5649,12 @@ public final class Bttl_800d {
     long t5;
     long t6;
     long t7;
-    long s0;
-    long s1;
-    long s2;
-    long t8;
-    long t9;
-    long s8;
+    final long s0;
+    final long s1;
+    final long s2;
+    final long t8;
+    final long t9;
+    final long s8;
     s2 = a1;
     t9 = a2;
     v1 = 0xe100_0000L;
@@ -5717,7 +5792,7 @@ public final class Bttl_800d {
     long a1;
     long a2;
     long a3;
-    long t0;
+    final long t0;
     long t1;
     long t5;
     long t6;
@@ -5725,8 +5800,8 @@ public final class Bttl_800d {
     long s0;
     long s1;
     long s2;
-    long s5;
-    long s7;
+    final long s5;
+    final long s7;
     long lo;
     long s3 = primitives;
     long s4 = count;
@@ -5924,7 +5999,7 @@ public final class Bttl_800d {
     long a1;
     long a2;
     long a3;
-    long t0;
+    final long t0;
     long t1;
     long t5;
     long t6;
@@ -5934,11 +6009,11 @@ public final class Bttl_800d {
     long s2;
     long s3;
     long s4;
-    long s5;
+    final long s5;
     long lo;
-    long b;
-    long g;
-    long r;
+    final long b;
+    final long g;
+    final long r;
     s3 = primitives;
     s4 = count;
     s1 = linkedListAddress_1f8003d8.get();
@@ -6101,8 +6176,8 @@ public final class Bttl_800d {
     long t5;
     long t6;
     long t7;
-    long s0;
-    long s8;
+    final long s0;
+    final long s8;
     t3 = primitives;
     a2 = 0x3e80_0000L;
     a2 = a2 | 0x8080L;
@@ -6256,7 +6331,7 @@ public final class Bttl_800d {
     long a1 = vertices;
     long a2;
     long a3 = count;
-    long t0;
+    final long t0;
     long t1;
     long t5;
     long t6;
@@ -6266,8 +6341,8 @@ public final class Bttl_800d {
     long s2;
     long s3;
     long s4;
-    long s5;
-    long s6;
+    final long s5;
+    final long s6;
     long lo;
     s3 = a0;
     s5 = a1;
@@ -6287,9 +6362,9 @@ public final class Bttl_800d {
     final IntRef sp0x14 = new IntRef();
     final IntRef sp0x18 = new IntRef();
     FUN_800e4d74(sp0x10, sp0x14, sp0x18);
-    long sp10 = sp0x10.get();
-    long sp14 = sp0x14.get();
-    long sp18 = sp0x18.get();
+    final long sp10 = sp0x10.get();
+    final long sp14 = sp0x14.get();
+    final long sp18 = sp0x18.get();
     v0 = 0x1f80_0000L;
     v0 = MEMORY.ref(2, v0).offset(0x3ecL).getSigned();
     if(s4 != 0) {
@@ -6477,7 +6552,7 @@ public final class Bttl_800d {
     long a1;
     long a2;
     long a3;
-    long t0;
+    final long t0;
     long t1;
     long t5;
     long t6;
@@ -6485,7 +6560,7 @@ public final class Bttl_800d {
     long s0;
     long s1;
     long s2;
-    long s5;
+    final long s5;
     long lo;
     long s3 = primitives;
     long s4 = count;

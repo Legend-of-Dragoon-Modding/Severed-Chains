@@ -1725,7 +1725,13 @@ public final class Scus94491BpeSegment {
     v0 = 0x1L - a2;
     v1 = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
     v0 = v1 + a1 * 0x2L;
-    v0 = (int)v0 / (int)a2;
+
+    if(a2 > 0) {
+      v0 = (int)v0 / (int)a2;
+    } else {
+      v0 = (int)v0 >= 0 ? -1 : 1;
+    }
+
     return (int)v0 >> 1;
   }
 
@@ -4473,7 +4479,7 @@ public final class Scus94491BpeSegment {
       s5 = t3 & 0x100L;
 
       //LAB_8001836c
-      for(t4 = 0; t4 < s2; t4++) {
+      for(t4 = 0; t4 < s2; t4 += 0x10L) {
         v0 = (int)s5 >> 8;
         t7 = _800bb110.offset(v0 * 0x2L).getAddress();
 
@@ -7846,9 +7852,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001f250L)
   public static long FUN_8001f250(final RunningScript a0) {
-    loadedDrgnFiles_800bcf78.oru(0x1_0000L);
+    //TODO GH#3
+
+//    loadedDrgnFiles_800bcf78.oru(0x1_0000L);
     unloadSoundFile(7);
-    loadDrgnBinFile(0, 1897 + a0.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001f2c0", long.class, long.class, long.class), 0, 0x4L);
+//    loadDrgnBinFile(0, 1897 + a0.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001f2c0", long.class, long.class, long.class), 0, 0x4L);
     return 0;
   }
 

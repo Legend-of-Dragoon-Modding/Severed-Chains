@@ -1398,6 +1398,36 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021db4
   }
 
+  @Method(0x80021de4L)
+  public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
+    CPU.CTC2(a0.getPacked(0), 0);
+    CPU.CTC2(a0.getPacked(2), 1);
+    CPU.CTC2(a0.getPacked(4), 2);
+    CPU.CTC2(a0.getPacked(6), 3);
+    CPU.CTC2(a0.getPacked(8), 4);
+    CPU.MTC2(a1.get(0),  9);
+    CPU.MTC2(a1.get(3), 10);
+    CPU.MTC2(a1.get(6), 11);
+    CPU.COP2(0x49e012L);
+    a2.set(0, (short)CPU.MFC2( 9));
+    a2.set(3, (short)CPU.MFC2(10));
+    a2.set(6, (short)CPU.MFC2(11));
+    CPU.MTC2(a1.get(1),  9);
+    CPU.MTC2(a1.get(4), 10);
+    CPU.MTC2(a1.get(7), 11);
+    CPU.COP2(0x49e012L);
+    a2.set(1, (short)CPU.MFC2( 9));
+    a2.set(4, (short)CPU.MFC2(10));
+    a2.set(7, (short)CPU.MFC2(11));
+    CPU.MTC2(a1.get(2),  9);
+    CPU.MTC2(a1.get(5), 10);
+    CPU.MTC2(a1.get(8), 11);
+    CPU.COP2(0x49e012L);
+    a2.set(2, (short)CPU.MFC2( 9));
+    a2.set(5, (short)CPU.MFC2(10));
+    a2.set(8, (short)CPU.MFC2(11));
+  }
+
   @Method(0x80021edcL)
   public static void SetRotMatrix(final MATRIX m) {
     CPU.CTC2(m.getPacked(0), 0); //
@@ -5170,12 +5200,10 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800282acL)
-  public static void FUN_800282ac(long a0) {
+  public static void FUN_800282ac(final int a0) {
     long v0;
     long v1;
     long a1;
-    long a2;
-    long a3;
     long s0;
     long s1;
     long s2;
@@ -5183,9 +5211,7 @@ public final class Scus94491BpeSegment_8002 {
     long s4;
     long s5;
     long s6;
-    final long s7;
     long fp;
-    long lo;
     long sp22;
     long sp44;
     long sp10;
@@ -5193,365 +5219,153 @@ public final class Scus94491BpeSegment_8002 {
     long sp20;
     long sp30;
     long sp18;
-    long sp48;
     long sp14;
     long sp28;
     long sp38;
-    v1 = 0x800c_0000L;
-    v1 = v1 - 0x20c8L;
-    v0 = a0 << 5;
-    v0 = v0 + a0;
-    v0 = v0 << 2;
-    a0 = v0 + v1;
-    sp10 = 0;
-    v0 = MEMORY.ref(2, a0).offset(0x1cL).get();
-    sp38 = 0;
-    v1 = v0 << 16;
-    v0 = MEMORY.ref(4, a0).offset(0x8L).get();
-    a3 = (int)v1 >> 16;
-    sp14 = a3;
-    a1 = MEMORY.ref(4, a0).offset(0x58L).get();
-    v0 = v0 & 0x200L;
-    if(v0 == 0) {
-      s7 = a0;
+
+    final Struct84 s7 = _800bdf38.get(a0);
+
+    if((s7._08.get() & 0x200L) != 0) {
+      sp10 = s7._1c.get();
+      sp14 = s7._1c.get() * 2;
     } else {
-      s7 = a0;
-      sp10 = a3;
-      a3 = a3 << 1;
-      sp14 = a3;
+      sp10 = 0;
+      sp14 = s7._1c.get();
     }
 
+    sp38 = 0;
+
     //LAB_80028328
-    v0 = MEMORY.ref(2, s7).offset(0x1eL).getSigned();
-    v1 = (int)v1 >> 16;
-    v0 = v0 + 0x1L;
-    lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-    fp = a1;
-    a3 = lo;
-    if((int)a3 <= 0) {
-      s5 = 0;
-    } else {
-      s5 = 0;
+    fp = s7.ptr_58.get();
 
-      //LAB_80028348
-      do {
-        v0 = MEMORY.ref(2, fp).offset(0x0L).getSigned();
+    //LAB_80028348
+    for(s5 = 0; s5 < s7._1c.get() * (s7._1e.get() + 1); s5++) {
+      if(MEMORY.ref(2, fp).offset(0x0L).getSigned() == 0) {
+        sp38 = 0;
+      }
 
-        if(v0 == 0) {
-          sp38 = 0;
-        }
-
-        //LAB_8002835c
-        v0 = MEMORY.ref(2, fp).offset(0x6L).getSigned();
-
-        if(v0 == 0) {
-          s3 = 0;
-        } else {
-          s3 = 0;
-          s2 = s3;
-          v0 = MEMORY.ref(4, s7).offset(0x8L).get();
-
-          v0 = v0 & 0x1L;
-          if(v0 == 0) {
-            s1 = s3;
-          } else {
-            s1 = s3;
-            a3 = sp10;
-
-            if((int)s5 >= (int)a3) {
-              a3 = sp14;
-
-              if((int)s5 < (int)a3) {
-                v1 = MEMORY.ref(2, s7).offset(0x2cL).get();
-                v0 = -v1;
-                s1 = v0;
-                s2 = v0;
-                s3 = v1;
-              }
-            }
-
-            //LAB_800283c4
-            a0 = MEMORY.ref(2, s7).offset(0x1cL).getSigned();
-            v1 = MEMORY.ref(2, s7).offset(0x1eL).getSigned();
-
-            lo = (long)(int)a0 * (int)v1 & 0xffff_ffffL;
-            a3 = lo;
-            if((int)s5 < (int)a3) {
-              v0 = v1 + 0x1L;
-            } else {
-              v0 = v1 + 0x1L;
-              lo = (long)(int)a0 * (int)v0 & 0xffff_ffffL;
-              a3 = lo;
-              if((int)s5 >= (int)a3) {
-                v0 = 0xcL;
-              } else {
-                v0 = 0xcL;
-                s1 = 0;
-                s2 = s1;
-                v1 = MEMORY.ref(2, s7).offset(0x2cL).get();
-                s3 = v0 - v1;
-              }
-            }
+      //LAB_8002835c
+      if(MEMORY.ref(2, fp).offset(0x6L).getSigned() != 0) {
+        s3 = 0;
+        s2 = 0;
+        s1 = 0;
+        if((s7._08.get() & 0x1L) != 0) {
+          if((int)s5 >= (int)sp10 && (int)s5 < (int)sp14) {
+            v1 = s7._2c.get();
+            s1 = -v1;
+            s2 = -v1;
+            s3 = v1;
           }
 
-          //LAB_8002840c
-          a0 = MEMORY.ref(2, fp).offset(0x6L).get();
-          FUN_8002a63c(a0);
-          a2 = 0x6480_0000L;
-          a3 = 0x1f80_0000L;
-          v1 = 0x800c_0000L;
-          a0 = 0x800c_0000L;
-          a1 = 0x800c_0000L;
-          v0 = MEMORY.ref(4, a3).offset(0x3d8L).get();
-          v1 = MEMORY.ref(2, v1).offset(-6728L).get();
-          a0 = MEMORY.ref(2, a0).offset(-6712L).get();
-          s4 = MEMORY.ref(2, a1).offset(-6720L).get();
-          s6 = v0;
-          v0 = s6 + 0x14L;
-          MEMORY.ref(4, a3).offset(0x3d8L).setu(v0);
-          v0 = 0x800c_0000L;
-          v0 = MEMORY.ref(2, v0).offset(-6724L).get();
-          a2 = a2 | 0x8080L;
-          sp18 = v1;
-          sp20 = a0;
-          sp22 = v0;
-          v0 = 0x4L;
-          MEMORY.ref(1, s6).offset(0x3L).setu(v0);
-          MEMORY.ref(4, s6).offset(0x4L).setu(a2);
-          a0 = MEMORY.ref(2, fp).offset(0x6L).get();
-          v0 = FUN_8002a25c(a0);
-          a3 = sp38;
-          a0 = MEMORY.ref(2, fp).offset(0x0L).getSigned();
-          s0 = a3 - v0;
-          v1 = a0 << 3;
-          v1 = v1 + a0;
-          a0 = 0x1f80_0000L;
-          v0 = MEMORY.ref(2, s7).offset(0x18L).get();
-          a0 = MEMORY.ref(2, a0).offset(0x3dcL).get();
-          v0 = v0 + v1;
-          v0 = v0 - a0;
-          v0 = v0 - s0;
-          MEMORY.ref(2, s6).offset(0x8L).setu(v0);
-          a0 = MEMORY.ref(2, fp).offset(0x6L).get();
-          v0 = FUN_8002a1fc(a0);
-          a3 = 0x1f80_0000L;
-          v1 = MEMORY.ref(2, fp).offset(0x2L).getSigned();
-          a3 = a3 + 0x3dcL;
-          a0 = v1 << 1;
-          a0 = a0 + v1;
-          v1 = MEMORY.ref(2, s7).offset(0x1aL).get();
-          a0 = a0 << 2;
-          v1 = v1 + a0;
-          a0 = MEMORY.ref(2, a3).offset(0x2L).get();
-          a1 = MEMORY.ref(2, s7).offset(0x2cL).get();
-          v1 = v1 - a0;
-          v1 = v1 - a1;
-          v1 = v1 - s1;
-          MEMORY.ref(2, s6).offset(0xaL).setu(v1);
-          v1 = MEMORY.ref(4, s7).offset(0x8L).get();
-          s0 = s0 + v0;
-          v1 = v1 & 0x200L;
-          if(v1 == 0) {
-            sp38 = s0;
-          } else {
-            sp38 = s0;
-            if((int)s5 >= 0) {
-              v0 = MEMORY.ref(2, s7).offset(0x1cL).getSigned();
-
-              if((int)s5 < (int)v0) {
-                v0 = MEMORY.ref(2, fp).offset(0x2L).getSigned();
-                a0 = MEMORY.ref(2, a3).offset(0x2L).get();
-                v1 = v0 << 1;
-                v1 = v1 + v0;
-                v0 = MEMORY.ref(2, s7).offset(0x1aL).get();
-                v1 = v1 << 2;
-                v0 = v0 + v1;
-                v0 = v0 - a0;
-                v0 = v0 - s1;
-                MEMORY.ref(2, s6).offset(0xaL).setu(v0);
-              }
-            }
-          }
-
-          //LAB_80028544
-          v0 = sp22;
-
-          if(v0 < 0x6L) {
-            a0 = 0;
-          } else {
-            a0 = 0xf0L;
-          }
-
-          //LAB_80028564
-          v0 = s4 & 0xffffL;
-          v0 = v0 << 4;
-          sp40 = v0;
-          a3 = sp40;
-
-          MEMORY.ref(1, s6).offset(0xcL).setu(a3);
-          v1 = sp20;
-
-          v0 = v1 << 1;
-          v0 = v0 + v1;
-          v0 = v0 << 2;
-          v0 = a0 + v0;
-          v0 = v0 - s2;
-          sp44 = v0;
-          a3 = sp44;
-
-          MEMORY.ref(1, s6).offset(0xdL).setu(a3);
-          a3 = sp18;
-          v0 = MEMORY.ref(1, fp).offset(0x4L).get();
-          v1 = a3 + 0x1e0L;
-          s4 = v1 << 6;
-          v0 = v0 << 4;
-          v0 = v0 + 0x340L;
-          v0 = v0 & 0x3f0L;
-          v0 = (int)v0 >> 4;
-          v0 = s4 | v0;
-          MEMORY.ref(2, s6).offset(0xeL).setu(v0);
-          v0 = s3 << 16;
-          a3 = MEMORY.ref(2, s6).offset(0x8L).get();
-          v0 = (int)v0 >> 16;
-          sp28 = a3;
-          a3 = MEMORY.ref(2, s6).offset(0xaL).get();
-          if((int)v0 >= 0xdL) {
-            sp30 = a3;
-          } else {
-            sp30 = a3;
-            a0 = s6;
-            a1 = 0;
-            a3 = 0x8L;
-            s2 = 0xcL;
-            s2 = s2 - s3;
-            MEMORY.ref(2, s6).offset(0x10L).setu(a3);
-            MEMORY.ref(2, s6).offset(0x12L).setu(s2);
-            gpuLinkedListSetCommandTransparency(a0, false);
-            a1 = s6;
-            a3 = 0xe100_0000L;
-            sp48 = a3;
-            a3 = 0x1f80_0000L;
-            a0 = MEMORY.ref(4, s7).offset(0xcL).get();
-            v0 = MEMORY.ref(4, a3).offset(0x3d0L).get();
-            a0 = a0 << 2;
-            a0 = v0 + a0;
-            insertElementIntoLinkedList(a0, a1);
-            a3 = 0x1f80_0000L;
-            s3 = 0x800c_0000L;
-            s1 = 0x8005_0000L;
-            s1 = s1 + 0x2bf4L;
-            a1 = MEMORY.ref(4, a3).offset(0x3d8L).get();
-            a3 = sp48;
-            s3 = s3 - 0x4ef0L;
-            a3 = a3 | 0x200L;
-            v0 = a1 + 0x8L;
-            sp48 = a3;
-            a3 = 0x1f80_0000L;
-            MEMORY.ref(4, a3).offset(0x3d8L).setu(v0);
-            a3 = 0x1L;
-            v0 = 0x8005_0000L;
-            v0 = v0 + 0x2bc8L;
-            MEMORY.ref(1, a1).offset(0x3L).setu(a3);
-            s0 = sp22;
-            a3 = sp48;
-            s0 = s0 << 2;
-            s1 = s0 + s1;
-            s0 = s0 + v0;
-            v1 = MEMORY.ref(4, s1).offset(0x0L).get();
-            a0 = MEMORY.ref(4, s0).offset(0x0L).get();
-            v1 = v1 & 0x100L;
-            v1 = (int)v1 >> 8;
-            v1 = v1 << 1;
-            v1 = v1 + s3;
-            a0 = a0 & 0x3c0L;
-            v0 = MEMORY.ref(2, v1).offset(0x0L).get();
-            a0 = (int)a0 >> 6;
-            v0 = v0 | a0;
-            v0 = v0 & 0x9ffL;
-            v0 = v0 | a3;
-            a3 = 0x1f80_0000L;
-            MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-            a0 = MEMORY.ref(4, s7).offset(0xcL).get();
-            v0 = MEMORY.ref(4, a3).offset(0x3d0L).get();
-            a0 = a0 << 2;
-            a0 = v0 + a0;
-            insertElementIntoLinkedList(a0, a1);
-            v1 = 0x6480_0000L;
-            a3 = 0x1f80_0000L;
-            v0 = MEMORY.ref(4, a3).offset(0x3d8L).get();
-            v1 = v1 | 0x8080L;
-            s6 = v0;
-            v0 = s6 + 0x14L;
-            MEMORY.ref(4, a3).offset(0x3d8L).setu(v0);
-            v0 = 0x4L;
-            MEMORY.ref(1, s6).offset(0x3L).setu(v0);
-            MEMORY.ref(4, s6).offset(0x4L).setu(v1);
-            a3 = sp28;
-            a1 = 0;
-            v0 = a3 + 0x1L;
-            MEMORY.ref(2, s6).offset(0x8L).setu(v0);
-            a3 = sp30;
-            a0 = s6;
-            v0 = a3 + 0x1L;
-            MEMORY.ref(2, s6).offset(0xaL).setu(v0);
-            a3 = sp40;
-            v0 = s4 | 0x3dL;
-            MEMORY.ref(1, s6).offset(0xcL).setu(a3);
-            a3 = sp44;
-            MEMORY.ref(2, s6).offset(0xeL).setu(v0);
-            MEMORY.ref(2, s6).offset(0x12L).setu(s2);
-            MEMORY.ref(1, s6).offset(0xdL).setu(a3);
-            a3 = 0x8L;
-            MEMORY.ref(2, s6).offset(0x10L).setu(a3);
-            gpuLinkedListSetCommandTransparency(a0, false);
-            a1 = s6;
-            a3 = 0x1f80_0000L;
-            a0 = MEMORY.ref(4, s7).offset(0xcL).get();
-            v0 = MEMORY.ref(4, a3).offset(0x3d0L).get();
-            a0 = a0 << 2;
-            a0 = a0 + 0x4L;
-            a0 = v0 + a0;
-            insertElementIntoLinkedList(a0, a1);
-            a3 = 0x1f80_0000L;
-            a1 = MEMORY.ref(4, a3).offset(0x3d8L).get();
-
-            v0 = a1 + 0x8L;
-            MEMORY.ref(4, a3).offset(0x3d8L).setu(v0);
-            a3 = 0x1L;
-            MEMORY.ref(1, a1).offset(0x3L).setu(a3);
-            v0 = MEMORY.ref(4, s1).offset(0x0L).get();
-            v1 = MEMORY.ref(4, s0).offset(0x0L).get();
-            a3 = sp48;
-            v0 = v0 & 0x100L;
-            v0 = (int)v0 >> 8;
-            v0 = v0 << 1;
-            v0 = v0 + s3;
-            v1 = v1 & 0x3c0L;
-            v0 = MEMORY.ref(2, v0).offset(0x0L).get();
-            v1 = (int)v1 >> 6;
-            v0 = v0 | v1;
-            v0 = v0 & 0x9ffL;
-            v0 = v0 | a3;
-            a3 = 0x1f80_0000L;
-            MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-            a0 = MEMORY.ref(4, s7).offset(0xcL).get();
-            v0 = MEMORY.ref(4, a3).offset(0x3d0L).get();
-            a0 = a0 << 2;
-            a0 = a0 + 0x4L;
-            a0 = v0 + a0;
-            insertElementIntoLinkedList(a0, a1);
+          //LAB_800283c4
+          if((int)s5 >= s7._1c.get() * s7._1e.get() && (int)s5 < s7._1c.get() * (s7._1e.get() + 1)) {
+            s1 = 0;
+            s2 = 0;
+            s3 = 0xcL - s7._2c.get();
           }
         }
 
-        //LAB_800287d4
-        v0 = MEMORY.ref(2, s7).offset(0x1eL).getSigned();
-        v1 = MEMORY.ref(2, s7).offset(0x1cL).getSigned();
-        v0 = v0 + 0x1L;
-        lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-        s5 = s5 + 0x1L;
-        a3 = lo;
-        fp = fp + 0x8L;
-      } while((int)s5 < (int)a3);
+        //LAB_8002840c
+        FUN_8002a63c(MEMORY.ref(2, fp).offset(0x6L).get());
+        s4 = _800be5c0.get() & 0xffff;
+        s6 = linkedListAddress_1f8003d8.get();
+        linkedListAddress_1f8003d8.addu(0x14L);
+        sp18 = _800be5b8.get() & 0xffff;
+        sp20 = _800be5c8.get() & 0xffff;
+        sp22 = _800be5bc.get() & 0xffff;
+        MEMORY.ref(1, s6).offset(0x3L).setu(0x4L);
+        MEMORY.ref(4, s6).offset(0x4L).setu(0x6480_8080L);
+        s0 = sp38 - FUN_8002a25c(MEMORY.ref(2, fp).offset(0x6L).get());
+        MEMORY.ref(2, s6).offset(0x8L).setu(s7._18.get() + MEMORY.ref(2, fp).offset(0x0L).getSigned() * 9 - centreScreenX_1f8003dc.get() - s0);
+        MEMORY.ref(2, s6).offset(0xaL).setu(s7._1a.get() + MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s7._2c.get() - s1);
+        s0 = s0 + FUN_8002a1fc(MEMORY.ref(2, fp).offset(0x6L).get());
+        sp38 = s0;
+        if((s7._08.get() & 0x200L) != 0) {
+          if((int)s5 >= 0) {
+            if(s5 < s7._1c.get()) {
+              MEMORY.ref(2, s6).offset(0xaL).setu(s7._1a.get() + MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1);
+            }
+          }
+        }
+
+        //LAB_80028544
+        //LAB_80028564
+        v0 = s4 & 0xffffL;
+        v0 = v0 << 4;
+        sp40 = v0;
+
+        MEMORY.ref(1, s6).offset(0xcL).setu(sp40);
+
+        sp44 = (sp22 < 0x6L ? 0 : 0xf0L) + sp20 * 0xc - s2;
+
+        MEMORY.ref(1, s6).offset(0xdL).setu(sp44);
+        v1 = sp18 + 0x1e0L;
+        s4 = v1 << 6;
+        v0 = MEMORY.ref(1, fp).offset(0x4L).get() * 16;
+        v0 = v0 + 0x340L;
+        v0 = v0 & 0x3f0L;
+        v0 = (int)v0 >> 4;
+        v0 = s4 | v0;
+        MEMORY.ref(2, s6).offset(0xeL).setu(v0);
+        v0 = s3 << 16;
+        v0 = (int)v0 >> 16;
+        sp28 = MEMORY.ref(2, s6).offset(0x8L).get();
+        if((int)v0 < 0xdL) {
+          sp30 = MEMORY.ref(2, s6).offset(0xaL).get();
+          s2 = 0xcL - s3;
+          MEMORY.ref(2, s6).offset(0x10L).setu(0x8L);
+          MEMORY.ref(2, s6).offset(0x12L).setu(s2);
+          gpuLinkedListSetCommandTransparency(s6, false);
+          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, s6);
+
+          a1 = linkedListAddress_1f8003d8.get();
+          linkedListAddress_1f8003d8.addu(0x8L);
+          MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
+          s1 = _80052bf4.offset(sp22 * 0x4L).getAddress();
+          s0 = _80052bc8.offset(sp22 * 0x4L).getAddress();
+          v1 = MEMORY.ref(4, s1).offset(0x0L).get() & 0x100L;
+          v1 = (int)v1 >> 8;
+          v1 = _800bb110.offset(v1 * 0x2L).getAddress();
+          v0 = MEMORY.ref(2, v1).offset(0x0L).get();
+          v0 = v0 | (MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L) >> 6;
+          v0 = v0 & 0x9ffL;
+          v0 = v0 | 0xe100_0200L;
+          MEMORY.ref(4, a1).offset(0x4L).setu(v0);
+          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, a1);
+
+          s6 = linkedListAddress_1f8003d8.get();
+          linkedListAddress_1f8003d8.addu(0x14L);
+          MEMORY.ref(1, s6).offset(0x3L).setu(0x4L);
+          MEMORY.ref(4, s6).offset(0x4L).setu(0x6480_8080L);
+          MEMORY.ref(2, s6).offset(0x8L).setu(sp28 + 0x1L);
+          MEMORY.ref(2, s6).offset(0xaL).setu(sp30 + 0x1L);
+          MEMORY.ref(1, s6).offset(0xcL).setu(sp40);
+          MEMORY.ref(2, s6).offset(0xeL).setu(s4 | 0x3dL);
+          MEMORY.ref(2, s6).offset(0x12L).setu(s2);
+          MEMORY.ref(1, s6).offset(0xdL).setu(sp44);
+          MEMORY.ref(2, s6).offset(0x10L).setu(0x8L);
+          gpuLinkedListSetCommandTransparency(s6, false);
+          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, s6);
+          a1 = linkedListAddress_1f8003d8.get();
+          linkedListAddress_1f8003d8.addu(0x8L);
+          MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
+          v0 = MEMORY.ref(4, s1).offset(0x0L).get() & 0x100L;
+          v0 = (int)v0 >> 8;
+          v0 = v0 << 1;
+          v0 = _800bb110.offset(v0).getAddress();
+          v1 = MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L;
+          v0 = MEMORY.ref(2, v0).offset(0x0L).get();
+          v1 = (int)v1 >> 6;
+          v0 = v0 | v1;
+          v0 = v0 & 0x9ffL;
+          v0 = v0 | 0xe100_0200L;
+          MEMORY.ref(4, a1).offset(0x4L).setu(v0);
+          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, a1);
+        }
+      }
+
+      //LAB_800287d4
+      fp = fp + 0x8L;
     }
 
     //LAB_800287f8

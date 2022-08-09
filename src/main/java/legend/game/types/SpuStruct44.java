@@ -34,8 +34,8 @@ public class SpuStruct44 implements MemoryRef {
   public final UnsignedByteRef pitchShifted_22;
   public final UnsignedByteRef _23;
   public final UnsignedShortRef pitch_24;
-  public final UnsignedShortRef pitchShiftVolLeft_26;
-  public final UnsignedShortRef pitchShiftVolRight_28;
+  public final ShortRef pitchShiftVolLeft_26;
+  public final ShortRef pitchShiftVolRight_28;
   public final UnsignedByteRef fadingIn_2a;
   public final UnsignedByteRef fadingOut_2b;
   public final UnsignedShortRef fadeTime_2c;
@@ -76,8 +76,8 @@ public class SpuStruct44 implements MemoryRef {
     this.pitchShifted_22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
     this._23 = ref.offset(1, 0x23L).cast(UnsignedByteRef::new);
     this.pitch_24 = ref.offset(2, 0x24L).cast(UnsignedShortRef::new);
-    this.pitchShiftVolLeft_26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
-    this.pitchShiftVolRight_28 = ref.offset(2, 0x28L).cast(UnsignedShortRef::new);
+    this.pitchShiftVolLeft_26 = ref.offset(2, 0x26L).cast(ShortRef::new);
+    this.pitchShiftVolRight_28 = ref.offset(2, 0x28L).cast(ShortRef::new);
     this.fadingIn_2a = ref.offset(1, 0x2aL).cast(UnsignedByteRef::new);
     this.fadingOut_2b = ref.offset(1, 0x2bL).cast(UnsignedByteRef::new);
     this.fadeTime_2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);

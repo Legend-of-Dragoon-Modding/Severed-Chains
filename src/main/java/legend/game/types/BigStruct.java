@@ -18,7 +18,11 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-/** Might be 0x210 bytes long */
+/**
+ * Might be 0x210 bytes long
+ *
+ * TODO update - probably only 0x124-bytes long, and the other struct holds one of these and some more data?
+ */
 public class BigStruct implements MemoryRef {
   private final Value ref;
 

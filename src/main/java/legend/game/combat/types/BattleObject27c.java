@@ -258,11 +258,11 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedByteRef _1e4;
   public final UnsignedByteRef colourMap_1e5;
   public final ShortRef _1e6;
-
+  public final ShortRef _1e8;
   public final UnsignedByteRef _1ea;
 
   public final UnsignedByteRef _214;
-  public final UnsignedByteRef _215;
+  public final ByteRef _215;
 
   public final UnboundedArrayRef<UnsignedByteRef> _234;
 
@@ -442,11 +442,11 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._1e4 = ref.offset(1, 0x1e4L).cast(UnsignedByteRef::new);
     this.colourMap_1e5 = ref.offset(1, 0x1e5L).cast(UnsignedByteRef::new);
     this._1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
-
+    this._1e8 = ref.offset(2, 0x1e8L).cast(ShortRef::new);
     this._1ea = ref.offset(1, 0x1eaL).cast(UnsignedByteRef::new);
 
     this._214 = ref.offset(1, 0x214L).cast(UnsignedByteRef::new);
-    this._215 = ref.offset(1, 0x215L).cast(UnsignedByteRef::new);
+    this._215 = ref.offset(1, 0x215L).cast(ByteRef::new);
 
     this._234 = ref.offset(1, 0x234L).cast(UnboundedArrayRef.of(1, UnsignedByteRef::new));
 

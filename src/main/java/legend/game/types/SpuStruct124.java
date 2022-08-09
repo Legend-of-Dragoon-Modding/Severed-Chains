@@ -5,6 +5,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -60,8 +61,8 @@ public class SpuStruct124 implements MemoryRef {
 
   /** 0x1000 is normal pitch */
   public final UnsignedShortRef pitch_0ec;
-  public final UnsignedShortRef pitchShiftVolLeft_0ee;
-  public final UnsignedShortRef pitchShiftVolRight_0f0;
+  public final ShortRef pitchShiftVolLeft_0ee;
+  public final ShortRef pitchShiftVolRight_0f0;
 
   public final UnsignedByteRef _104;
   public final UnsignedByteRef _105;
@@ -130,8 +131,8 @@ public class SpuStruct124 implements MemoryRef {
     this._0ea = ref.offset(1, 0x0eaL).cast(UnsignedByteRef::new);
 
     this.pitch_0ec = ref.offset(2, 0x0ecL).cast(UnsignedShortRef::new);
-    this.pitchShiftVolLeft_0ee = ref.offset(2, 0x0eeL).cast(UnsignedShortRef::new);
-    this.pitchShiftVolRight_0f0 = ref.offset(2, 0x0f0L).cast(UnsignedShortRef::new);
+    this.pitchShiftVolLeft_0ee = ref.offset(2, 0x0eeL).cast(ShortRef::new);
+    this.pitchShiftVolRight_0f0 = ref.offset(2, 0x0f0L).cast(ShortRef::new);
 
     this._104 = ref.offset(1, 0x104L).cast(UnsignedByteRef::new);
     this._105 = ref.offset(1, 0x105L).cast(UnsignedByteRef::new);

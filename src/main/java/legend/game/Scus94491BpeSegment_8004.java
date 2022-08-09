@@ -627,10 +627,10 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cd7a8}</li>
    *   <li>{@link Bttl_800c#FUN_800cd810}</li>
    *   <li>{@link Bttl_800c#FUN_800cd8a4}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd9fc}</li>
+   *   <li>{@link Bttl_800c#scriptGetBobjNobj}</li>
    *   <li>{@link Bttl_800c#FUN_800cda3c}</li>
    *   <li>{@link Bttl_800c#FUN_800cdb18}</li>
-   *   <li>{@link Bttl_800c#FUN_800cdb44}</li>
+   *   <li>{@link Bttl_800c#scriptLoadStage}</li>
    *   <li>{@link Bttl_800c#FUN_800cd910}</li>
    *   <li>{@link Bttl_800c#scriptGetCombatantIndex}</li>
    *   <li>{@link Bttl_800c#FUN_800cd998}</li>
@@ -1161,6 +1161,18 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80040d10L)
   public static void patchC0TableAgain() {
     LOGGER.warn("Skipping bios patch");
+  }
+
+  @Method(0x80040e10L)
+  public static VECTOR FUN_80040e10(final VECTOR a0, final VECTOR a1) {
+    CPU.MTC2(a0.getX(),  9);
+    CPU.MTC2(a0.getY(), 10);
+    CPU.MTC2(a0.getZ(), 11);
+    CPU.COP2(0xa00428L);
+    a1.setX((int)CPU.MFC2(25));
+    a1.setY((int)CPU.MFC2(26));
+    a1.setZ((int)CPU.MFC2(27));
+    return a1;
   }
 
   @Method(0x80040ea0L)
@@ -4578,7 +4590,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    SpuStruct44 spu44 = _800c6630;
+    final SpuStruct44 spu44 = _800c6630;
 
     //LAB_80048dac
     for(int channelIndex = 0; channelIndex < 24; channelIndex++) {
@@ -4605,9 +4617,9 @@ public final class Scus94491BpeSegment_8004 {
         spu124._035.set(0);
         spu124._037.set(0);
         spu124._0e6.set(0);
-        spu124.pitchShiftVolLeft_0ee.set(0);
+        spu124.pitchShiftVolLeft_0ee.set((short)0);
         spu124.pitchShifted_0e9.set(0);
-        spu124.pitchShiftVolRight_0f0.set(0);
+        spu124.pitchShiftVolRight_0f0.set((short)0);
 
         if(spu44.pitchShifted_22.get() != 0) {
           spu124.pitchShifted_0e9.set(1);
@@ -4616,8 +4628,8 @@ public final class Scus94491BpeSegment_8004 {
           spu124.pitchShiftVolRight_0f0.set(spu44.pitchShiftVolRight_28);
           spu44.pitchShifted_22.set(0);
           spu44.pitch_24.set(0);
-          spu44.pitchShiftVolLeft_26.set(0);
-          spu44.pitchShiftVolRight_28.set(0);
+          spu44.pitchShiftVolLeft_26.set((short)0);
+          spu44.pitchShiftVolRight_28.set((short)0);
         }
 
         return channelIndex;
@@ -5283,8 +5295,8 @@ public final class Scus94491BpeSegment_8004 {
 
         spu124._118.set(0);
         spu124._0e7.set(0);
-        spu124.pitchShiftVolRight_0f0.set(0);
-        spu124.pitchShiftVolLeft_0ee.set(0);
+        spu124.pitchShiftVolRight_0f0.set((short)0);
+        spu124.pitchShiftVolLeft_0ee.set((short)0);
         spu124._104.set(0);
         spu124._105.set(0);
         spu124.playableSoundIndex_020.set(0);
@@ -5557,6 +5569,26 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004b5bcL)
   public static long maxShort(final long a, final long b) {
     return Math.max((short)a, (short)b);
+  }
+
+  @Method(0x8004b5e4L)
+  public static short FUN_8004b5e4(final short a0, final short a1) {
+    short a2 = a1;
+    if(a1 < 0) {
+      a2 = (short)-a1;
+      if(a0 < a2) {
+        a2 = a0;
+      }
+
+      //LAB_8004b618
+      a2 = (short)-a2;
+      //LAB_8004b620
+    } else if(a0 < a1) {
+      a2 = a0;
+    }
+
+    //LAB_8004b638
+    return a2;
   }
 
   @Method(0x8004b644L)
@@ -6521,9 +6553,29 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d6a8L)
-  public static long sssqPitchShift(final int playableSoundIndex, final long a1, final long a2, final long pitchShiftVolLeft, final long pitchShiftVolRight, final long pitch) {
-    assert false;
-    return 0;
+  public static long sssqPitchShift(final int playableSoundIndex, final long a1, final long a2, final short pitchShiftVolLeft, final short pitchShiftVolRight, final short pitch) {
+    final SpuStruct44 s1 = _800c6630;
+
+    if(sssqWaitForTickToFinish() != 0) {
+      return -1;
+    }
+
+    final int soundIndex;
+    if((playableSoundIndex & 0x80) == 0) {
+      soundIndex = playableSoundIndex;
+    } else {
+      soundIndex = playableSoundIndex & 0x7f;
+      s1._23.set(1);
+    }
+
+    //LAB_8004d714
+    s1.pitchShiftVolLeft_26.set(FUN_8004b5e4((short)0x1000, pitchShiftVolLeft));
+    s1.pitchShiftVolRight_28.set(FUN_8004b5e4((short)0x1000, pitchShiftVolRight));
+    s1.pitch_24.set(pitch);
+    s1.pitchShifted_22.set(1);
+
+    //LAB_8004d760
+    return (short)FUN_80048d44(soundIndex, a1 & 0xffff, a2 & 0xffff);
   }
 
   @Method(0x8004d78cL)
@@ -6668,8 +6720,8 @@ public final class Scus94491BpeSegment_8004 {
           spu124._02a.set(0);
           spu124._105.set(0);
           spu124._104.set(0);
-          spu124.pitchShiftVolRight_0f0.set(0);
-          spu124.pitchShiftVolLeft_0ee.set(0);
+          spu124.pitchShiftVolRight_0f0.set((short)0);
+          spu124.pitchShiftVolLeft_0ee.set((short)0);
           spu124.pitchShifted_0e9.set(0);
           spu124._0e7.set(0);
         }

@@ -39,6 +39,7 @@ import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
+import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.BttlScriptData6cSub14;
@@ -1558,6 +1559,11 @@ public final class Bttl_800c {
     }
 
     //LAB_800c8ec8
+  }
+
+  @Method(0x800c8ed8L)
+  public static void FUN_800c8ed8() {
+    _800c66d4.setu(0);
   }
 
   @Method(0x800c8ee4L)
@@ -3559,7 +3565,7 @@ public final class Bttl_800c {
 
       //LAB_800cd240
       //LAB_800cd288
-      while(additionXp >= additionNextLevelXp_800fa744.get(charData.additionLevels_1a.get(additionIndex).get()).get()) {
+      while(charData.additionLevels_1a.get(additionIndex).get() < 5 && additionXp >= additionNextLevelXp_800fa744.get(charData.additionLevels_1a.get(additionIndex).get()).get()) {
         charData.additionLevels_1a.get(additionIndex).incr();
       }
 
@@ -3750,6 +3756,12 @@ public final class Bttl_800c {
     return 0x1L;
   }
 
+  @Method(0x800cd910L)
+  public static long FUN_800cd910(final RunningScript a0) {
+    a0.params_20.get(2).deref().set(FUN_800cac38(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()));
+    return 0;
+  }
+
   @Method(0x800cd958L)
   public static long scriptGetCombatantIndex(final RunningScript a0) {
     a0.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get());
@@ -3768,6 +3780,54 @@ public final class Bttl_800c {
     }
 
     //LAB_800cd9f4
+    return 0;
+  }
+
+  @Method(0x800cd9fcL)
+  public static long scriptGetBobjNobj(final RunningScript a0) {
+    a0.params_20.get(1).deref().set((int)scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.ObjTable_0c.nobj.get());
+    return 0;
+  }
+
+  @Method(0x800cda3cL)
+  public static long FUN_800cda3c(final RunningScript a0) {
+    FUN_800c9170(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800cda78L)
+  public static long FUN_800cda78(final RunningScript a0) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+
+    if(FUN_800c90b0(bobj.combatantIndex_26c.get()) == 0) {
+      return 2;
+    }
+
+    //LAB_800cdacc
+    bobj.combatant_144.deref().charIndex_1a2.set((short)-1);
+
+    if(bobj._278.get() != 0) {
+      FUN_800c96ac(bobj._148, bobj.combatantIndex_26c.get());
+    }
+
+    //LAB_800cdaf4
+    bobj.animIndex_26e.set((short)0);
+    FUN_800c952c(bobj._148, bobj.combatantIndex_26c.get());
+
+    //LAB_800cdb08
+    return 0;
+  }
+
+  @Method(0x800cdb18L)
+  public static long FUN_800cdb18(final RunningScript a0) {
+    FUN_800c8ce4();
+    FUN_800c8ed8();
+    return 0;
+  }
+
+  @Method(0x800cdb44L)
+  public static long scriptLoadStage(final RunningScript a0) {
+    loadStage(a0.params_20.get(0).deref().get());
     return 0;
   }
 
@@ -3804,9 +3864,17 @@ public final class Bttl_800c {
     s1._d0.set(v0);
     s1._d4.set(v1);
     s1._d8.set(s0);
-    s1._dc.set(v0 / a8);
+
+    // Fix for retail /0 bug
+    if(a8 > 0) {
+      s1._dc.set(v0 / a8);
+      s1._e4.set(s0 / a8);
+    } else {
+      s1._dc.set(v0 >= 0 ? -1 : 1);
+      s1._e4.set(s0 >= 0 ? -1 : 1);
+    }
+
     s1._e0.set(FUN_80013404(s3, v1, a8));
-    s1._e4.set(s0 / a8);
     s1._f4.set(s3);
   }
 
@@ -4166,6 +4234,77 @@ public final class Bttl_800c {
     return s0;
   }
 
+  @Method(0x800cea9cL)
+  public static void FUN_800cea9c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub0e effect = manager._44.derefAs(BttlScriptData6cSub0e.class);
+
+    if(effect.scale_0c.get() != 0) {
+      effect.svec_00.add(effect.svec_06);
+      effect.scale_0c.decr();
+    }
+
+    //LAB_800ceb20
+  }
+
+  @Method(0x800ceb28L)
+  public static void FUN_800ceb28(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub0e a0 = manager._44.derefAs(BttlScriptData6cSub0e.class);
+
+    final long a1 = linkedListAddress_1f8003d8.get();
+    MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
+    MEMORY.ref(4, a1).offset(0x4L).setu(0x6280_8080L);
+    MEMORY.ref(1, a1).offset(0x4L).setu(a0.svec_00.getX() >>> 8);
+    MEMORY.ref(1, a1).offset(0x5L).setu(a0.svec_00.getY() >>> 8);
+    MEMORY.ref(1, a1).offset(0x6L).setu(a0.svec_00.getZ() >>> 8);
+    MEMORY.ref(1, a1).offset(0x7L).setu(0x62);
+    MEMORY.ref(2, a1).offset(0x8L).setu(-160);
+    MEMORY.ref(2, a1).offset(0xaL).setu(-120);
+    MEMORY.ref(2, a1).offset(0xcL).setu(320);
+    MEMORY.ref(2, a1).offset(0xeL).setu(280);
+    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
+    linkedListAddress_1f8003d8.addu(0x10L);
+
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, manager._10._00.get() >>> 28 & 0x3L, 0, 0), null);
+    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
+    linkedListAddress_1f8003d8.addu(0xcL);
+  }
+
+  @Method(0x800cec84L)
+  public static void FUN_800cec84(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    // no-op
+  }
+
+  @Method(0x800cec8cL)
+  public static long FUN_800cec8c(final RunningScript a0) {
+    final short sp18 = (short)(a0.params_20.get(1).deref().get() << 8);
+    final short sp1a = (short)(a0.params_20.get(2).deref().get() << 8);
+    final short sp1c = (short)(a0.params_20.get(3).deref().get() << 8);
+    final short sp20 = (short)(a0.params_20.get(4).deref().get() << 8);
+    final short sp22 = (short)(a0.params_20.get(5).deref().get() << 8);
+    final short sp24 = (short)(a0.params_20.get(6).deref().get() << 8);
+    final short s1 = (short)a0.params_20.get(7).deref().get();
+
+    final int managerIndex = allocateEffectManager(
+      a0.scriptStateIndex_00.get(),
+      0xe,
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cea9c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ceb28", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cec84", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      BttlScriptData6cSub0e::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(managerIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    manager._10._00.set(0x5000_0000L);
+
+    final BttlScriptData6cSub0e a2 = manager._44.derefAs(BttlScriptData6cSub0e.class);
+    a2.svec_00.set(sp18, sp1a, sp1c);
+    a2.svec_06.set((short)((sp20 - sp18) / s1), (short)((sp22 - sp1a) / s1), (short)((sp24 - sp1c) / s1));
+    a2.scale_0c.set(s1);
+
+    a0.params_20.get(0).deref().set(managerIndex);
+    return 0;
+  }
+
   @Method(0x800ceeccL)
   public static long FUN_800ceecc(final RunningScript a0) {
     FUN_800ce83c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
@@ -4259,6 +4398,29 @@ public final class Bttl_800c {
     sp0x10.setX((int)CPU.MFC2(25));
     sp0x10.setY((int)CPU.MFC2(26));
     sp0x10.setZ((int)CPU.MFC2(27));
+    a3.set(sp0x10);
+  }
+
+  @Method(0x800cf684L)
+  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR a3) {
+    final SVECTOR sp0x20 = new SVECTOR().set(a0);
+    final VECTOR sp0x10 = new VECTOR().set(a1);
+    final MATRIX sp0x28 = new MATRIX();
+    FUN_80040980(sp0x20, sp0x28);
+    TransMatrix(sp0x28, sp0x10);
+    CPU.CTC2(sp0x28.getPacked(0), 0);
+    CPU.CTC2(sp0x28.getPacked(2), 1);
+    CPU.CTC2(sp0x28.getPacked(4), 2);
+    CPU.CTC2(sp0x28.getPacked(6), 3);
+    CPU.CTC2(sp0x28.getPacked(8), 4);
+    CPU.CTC2(sp0x28.transfer.getX(), 5);
+    CPU.CTC2(sp0x28.transfer.getY(), 6);
+    CPU.CTC2(sp0x28.transfer.getZ(), 7);
+    sp0x20.set(a2);
+    CPU.MTC2(sp0x20.getXY(), 0);
+    CPU.MTC2(sp0x20.getZ(),  1);
+    CPU.COP2(0x480012L);
+    sp0x10.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
     a3.set(sp0x10);
   }
 
@@ -4415,6 +4577,17 @@ public final class Bttl_800c {
 
     //LAB_800cfe9c
     a0.params_20.get(2).deref().set(a2 - a3);
+    return 0;
+  }
+
+  @Method(0x800cfed0L)
+  public static void setMtSeed(final long seed) {
+    seed_800fa754.set(seed ^ 0x75b_d924L);
+  }
+
+  @Method(0x800cff24L)
+  public static long scriptSetMtSeed(final RunningScript a0) {
+    setMtSeed(a0.params_20.get(0).deref().get());
     return 0;
   }
 

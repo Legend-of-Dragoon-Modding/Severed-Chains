@@ -7532,6 +7532,12 @@ public final class Scus94491BpeSegment_8003 {
     return matrix;
   }
 
+  @Method(0x8003f8a0L)
+  public static void FUN_8003f8a0(final long refX, final long refY) {
+    MEMORY.ref(4, refX).setu((int)CPU.CFC2(24) >> 16);
+    MEMORY.ref(4, refY).setu((int)CPU.CFC2(25) >> 16);
+  }
+
   @Method(0x8003f8c0L)
   public static int getProjectionPlaneDistance() {
     return (int)CPU.CFC2(26);

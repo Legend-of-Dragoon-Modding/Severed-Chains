@@ -9,7 +9,6 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 
 public class BttlScriptData6cSub98Sub94 implements MemoryRef {
   private final Value ref;
@@ -47,12 +46,12 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
   public final SVECTOR _78;
   /** TODO ptr */
   public final UnsignedIntRef _80;
-  public final UnsignedShortRef _84;
-  public final UnsignedShortRef _86;
-  public final UnsignedShortRef _88;
-  public final UnsignedShortRef _8a;
-  public final UnsignedShortRef _8c;
-  public final UnsignedShortRef _8e;
+  public final ShortRef _84;
+  public final ShortRef _86;
+  public final ShortRef _88;
+  public final ShortRef _8a;
+  public final ShortRef _8c;
+  public final ShortRef _8e;
   public final UnsignedIntRef _90;
 
   public BttlScriptData6cSub98Sub94(final Value ref) {
@@ -90,12 +89,12 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
     this._70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
     this._78 = ref.offset(2, 0x78L).cast(SVECTOR::new);
     this._80 = ref.offset(4, 0x80L).cast(UnsignedIntRef::new);
-    this._84 = ref.offset(2, 0x84L).cast(UnsignedShortRef::new);
-    this._86 = ref.offset(2, 0x86L).cast(UnsignedShortRef::new);
-    this._88 = ref.offset(2, 0x88L).cast(UnsignedShortRef::new);
-    this._8a = ref.offset(2, 0x8aL).cast(UnsignedShortRef::new);
-    this._8c = ref.offset(2, 0x8cL).cast(UnsignedShortRef::new);
-    this._8e = ref.offset(2, 0x8eL).cast(UnsignedShortRef::new);
+    this._84 = ref.offset(2, 0x84L).cast(ShortRef::new);
+    this._86 = ref.offset(2, 0x86L).cast(ShortRef::new);
+    this._88 = ref.offset(2, 0x88L).cast(ShortRef::new);
+    this._8a = ref.offset(2, 0x8aL).cast(ShortRef::new);
+    this._8c = ref.offset(2, 0x8cL).cast(ShortRef::new);
+    this._8e = ref.offset(2, 0x8eL).cast(ShortRef::new);
     this._90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
   }
 
