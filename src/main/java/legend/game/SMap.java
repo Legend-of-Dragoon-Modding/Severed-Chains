@@ -1314,7 +1314,7 @@ public final class SMap {
     }
 
     //LAB_800dab34
-    if(a0.ub_cc.get() != 0) {
+    if(a0.b_cc.get() != 0) {
       FUN_800da524(a0);
     }
 
@@ -4555,13 +4555,13 @@ public final class SMap {
 
   @Method(0x800e09e0L)
   public static long FUN_800e09e0(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).ub_cc.set(1);
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).b_cc.set(1);
     return 0;
   }
 
   @Method(0x800e0a14L)
   public static long FUN_800e0a14(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).ub_cc.set(0);
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).b_cc.set(0);
     return 0;
   }
 

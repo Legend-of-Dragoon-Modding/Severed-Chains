@@ -685,7 +685,7 @@ public class WMap {
     }
 
     //LAB_800c9354
-    if(a0.ub_cc.get() != 0) {
+    if(a0.b_cc.get() != 0) {
       FUN_800c8d90(a0);
     }
 

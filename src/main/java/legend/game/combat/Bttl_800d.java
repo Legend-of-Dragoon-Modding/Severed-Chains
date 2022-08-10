@@ -4724,7 +4724,7 @@ public final class Bttl_800d {
       //LAB_800dda70
     }
 
-    if(a0.ub_cc.get() != 0) {
+    if(a0.b_cc.get() != 0) {
       FUN_80021724(a0);
     }
 
@@ -4794,7 +4794,7 @@ public final class Bttl_800d {
 
     //LAB_800ddce8
     a0.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    a0.ub_cc.set(0);
+    a0.b_cc.set(0);
     a0.vector_10c.set(0x1000, 0x1000, 0x1000);
     a0.vector_118.set(0, 0, 0);
   }

@@ -9,6 +9,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -53,8 +54,8 @@ public class BigStruct implements MemoryRef {
   public final ArrayRef<UnsignedShortRef> usArr_ba;
   public final ShortRef count_c8;
   public final UnsignedShortRef tmdNobj_ca;
-  public final UnsignedByteRef ub_cc;
-  public final UnsignedByteRef ub_cd;
+  public final ByteRef b_cc;
+  public final ByteRef b_cd;
 
   /** 7 ints long */
   public final ArrayRef<UnsignedIntRef> aui_d0;
@@ -146,8 +147,8 @@ public class BigStruct implements MemoryRef {
     this.usArr_ba = ref.offset(2, 0xbaL).cast(ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
     this.count_c8 = ref.offset(2, 0xc8L).cast(ShortRef::new);
     this.tmdNobj_ca = ref.offset(2, 0xcaL).cast(UnsignedShortRef::new);
-    this.ub_cc = ref.offset(1, 0xccL).cast(UnsignedByteRef::new);
-    this.ub_cd = ref.offset(1, 0xcdL).cast(UnsignedByteRef::new);
+    this.b_cc = ref.offset(1, 0xccL).cast(ByteRef::new);
+    this.b_cd = ref.offset(1, 0xcdL).cast(ByteRef::new);
 
     this.aui_d0 = ref.offset(4, 0xd0L).cast(ArrayRef.of(UnsignedIntRef.class, 7, 4, UnsignedIntRef::new));
     this.aub_ec = ref.offset(1, 0xecL).cast(ArrayRef.of(UnsignedByteRef.class, 7, 1, UnsignedByteRef::new));

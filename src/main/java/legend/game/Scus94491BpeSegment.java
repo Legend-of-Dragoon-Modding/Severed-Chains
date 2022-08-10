@@ -3767,7 +3767,11 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016cfcL)
   public static long scriptExecuteSubFunc(final RunningScript a0) {
-    return scriptSubFunctions_8004e29c.get((int)a0.opParam_18.get()).deref().run(a0);
+    try {
+      return scriptSubFunctions_8004e29c.get((int)a0.opParam_18.get()).deref().run(a0);
+    } catch(final UnsupportedOperationException e) {
+      throw new RuntimeException("Script subfunc %d error".formatted(a0.opParam_18.get()), e);
+    }
   }
 
   /**
@@ -7057,12 +7061,59 @@ public final class Scus94491BpeSegment {
     } while((int)s3 < 0x3L);
   }
 
+  @Method(0x8001cce8L)
+  public static void FUN_8001cce8(final int bobjIndex, final int type) {
+    //TODO GH#3
+    if(true) return;
+
+    final BattleObject27c s2 = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+
+    //LAB_8001cd3c
+    int i;
+    for(i = 0; i < 3; i++) {
+      final SoundFile soundFile = soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get());
+
+      if(soundFile._02.get() == s2.charIndex_272.get()) {
+        break;
+      }
+    }
+
+    //LAB_8001cd78
+    final SoundFile soundFile = soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get());
+    sssqUnloadPlayableSound(soundFile.playableSoundIndex_10.get());
+    soundFile.used_00.set(false);
+
+    loadedDrgnFiles_800bcf78.oru(0x8L);
+
+    final long fileIndex;
+    if(type != 0) {
+      //LAB_8001ce44
+      fileIndex = 1298 + s2.charIndex_272.get();
+    } else if(s2.charIndex_272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+      //LAB_8001ce18
+      fileIndex = 1307 + s2.charIndex_272.get();
+    } else {
+      fileIndex = 1307;
+    }
+
+    //LAB_8001ce70
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ce98", long.class, long.class, long.class), i, 0x4L);
+  }
+
+  @Method(0x8001ce98L)
+  public static void FUN_8001ce98(final long address, final long fileSize, final long param) {
+    assert false;
+  }
+
   @Method(0x8001d068L)
   public static void FUN_8001d068(final int scriptIndex, final long a1) {
     final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     unloadSoundFile(3);
     unloadSoundFile(6);
+
+    //TODO GH#3
+    if(true) return;
 
     if(a1 == 0) {
       //LAB_8001d0e0
@@ -7696,12 +7747,23 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_fff7L);
   }
 
+  @Method(0x8001e918L)
+  public static long FUN_8001e918(final RunningScript a0) {
+    return 0;
+  }
+
+  @Method(0x8001e920L)
+  public static long FUN_8001e920(final RunningScript script) {
+    FUN_8001cce8(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get());
+    return 0;
+  }
+
   @Method(0x8001e98cL)
   public static void FUN_8001e98c(final long address, final long fileSize, final long param) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
     soundMrgPtr_800bd748.set(mrg);
-    soundFileArr_800bcf80.get(4).soundMrgPtr_04.setPointer(addToLinkedListTail(mrg.getFile(3)));
-    memcpy(soundFileArr_800bcf80.get(4).soundMrgPtr_04.getPointer(), mrg.getAddress(), (int)mrg.getFile(3));
+    soundFileArr_800bcf80.get(4).soundMrgPtr_04.setPointer(addToLinkedListTail(mrg.entries.get(3).offset.get()));
+    memcpy(soundFileArr_800bcf80.get(4).soundMrgPtr_04.getPointer(), mrg.getAddress(), (int)mrg.entries.get(3).offset.get());
 
     final MrgFile s0 = soundFileArr_800bcf80.get(4).soundMrgPtr_04.deref();
     soundFileArr_800bcf80.get(4).ptr_08.set(s0.getFile(1));

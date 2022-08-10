@@ -14,7 +14,6 @@ public class BttlScriptData6cSub13c extends BttlScriptData6cSubBase1 {
   /** TODO */
   public final UnsignedIntRef ptr_0c;
   public final BigStruct _10;
-
   public final Pointer<BigStruct> _134;
 
   public BttlScriptData6cSub13c(final Value ref) {
@@ -25,7 +24,6 @@ public class BttlScriptData6cSub13c extends BttlScriptData6cSubBase1 {
     this.ptr_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this.ptr_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(BigStruct::new);
-
     this._134 = ref.offset(4, 0x134L).cast(Pointer.deferred(4, BigStruct::new));
   }
 }

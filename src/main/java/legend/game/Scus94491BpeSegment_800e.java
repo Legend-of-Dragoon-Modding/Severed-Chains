@@ -352,7 +352,7 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 416</p>
    *
    * <ol start="0">
-   *   <li>null</li>
+   *   <li>{@link Bttl_800e#FUN_800e6fb4}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>{@link Bttl_800e#FUN_800e473c}</li>
@@ -1231,7 +1231,7 @@ public final class Scus94491BpeSegment_800e {
     bigStruct_800bda10.coord2Param_64.rotate.y.set((short)0);
     bigStruct_800bda10.coord2Param_64.rotate.z.set((short)0);
     bigStruct_800bda10.ub_9d.set(0);
-    bigStruct_800bda10.ub_cc.set(0);
+    bigStruct_800bda10.b_cc.set(0);
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
@@ -1293,7 +1293,7 @@ public final class Scus94491BpeSegment_800e {
     bigStruct.coord2_14.coord.transfer.setX(x);
     bigStruct.coord2_14.coord.transfer.setY(y);
     bigStruct.coord2_14.coord.transfer.setZ(z);
-    bigStruct.ub_cc.set(0);
+    bigStruct.b_cc.set(0);
     bigStruct.scaleVector_fc.setX(0x1000);
     bigStruct.scaleVector_fc.setY(0x1000);
     bigStruct.scaleVector_fc.setZ(0x1000);

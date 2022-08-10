@@ -2028,6 +2028,13 @@ public final class SEffe {
     a2._60.set(a2._58).negate().div(a2._12.get());
   }
 
+  @Method(0x80100af4L)
+  public static void FUN_80100af4(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    FUN_800ff890(a0, a1, a2, a3);
+    a2._58.mul(a3._18.get()).shra(8);
+    a2._60.set(a2._58).negate().div(a2._12.get());
+  }
+
   @Method(0x80100bb4L)
   public static void FUN_80100bb4(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
     seed_800fa754.advance();

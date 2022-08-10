@@ -605,8 +605,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800209b0
-    bigStruct.ub_cc.set(0);
-    bigStruct.ub_cd.set(0xfe);
+    bigStruct.b_cc.set(0);
+    bigStruct.b_cd.set(-2);
     bigStruct.scaleVector_fc.setX(0x1000);
     bigStruct.scaleVector_fc.setY(0x1000);
     bigStruct.scaleVector_fc.setZ(0x1000);

@@ -13,7 +13,7 @@ public class BattleStruct24_2 implements MemoryRef {
   public final UnsignedIntRef _00;
   public final IntRef scriptIndex_04;
   public final IntRef _08;
-  public final IntRef _0c;
+  public final IntRef scriptIndex_0c;
   public final IntRef scriptOffsetIndex_10;
   public final Pointer<ScriptFile> script_14;
   public final IntRef scriptIndex_18;
@@ -26,7 +26,7 @@ public class BattleStruct24_2 implements MemoryRef {
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
-    this._0c = ref.offset(4, 0x0cL).cast(IntRef::new);
+    this.scriptIndex_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
     this.scriptOffsetIndex_10 = ref.offset(4, 0x10L).cast(IntRef::new);
     this.script_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, ScriptFile::new));
     this.scriptIndex_18 = ref.offset(4, 0x18L).cast(IntRef::new);

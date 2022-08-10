@@ -737,6 +737,8 @@ public final class Bttl_800c {
 
   public static final Value stageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L);
 
+  public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
+
   public static final ArrayRef<UnsignedByteRef> _800fb148 = MEMORY.ref(1, 0x800fb148L, ArrayRef.of(UnsignedByteRef.class, 0x40, 1, UnsignedByteRef::new));
 
   /** TODO array of unsigned shorts */
