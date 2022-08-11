@@ -20,13 +20,13 @@ public class BattleStruct14 implements MemoryRef {
   public BattleStruct14(final Value ref) {
     this.ref = ref;
 
-    this.lightDirection_00 = ref.offset(2, 0x10L).cast(SVECTOR::new);
-    this._06 = ref.offset(2, 0x16L).cast(ShortRef::new);
-    this._08 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this.lightColour_0a = ref.offset(1, 0x1aL).cast(COLOUR::new);
-    this._0d = ref.offset(1, 0x1dL).cast(COLOUR::new);
-    this._10 = ref.offset(2, 0x20L).cast(ShortRef::new);
-    this._12 = ref.offset(2, 0x22L).cast(ShortRef::new);
+    this.lightDirection_00 = ref.offset(2, 0x00L).cast(SVECTOR::new);
+    this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this.lightColour_0a = ref.offset(1, 0x0aL).cast(COLOUR::new);
+    this._0d = ref.offset(1, 0x0dL).cast(COLOUR::new);
+    this._10 = ref.offset(2, 0x10L).cast(ShortRef::new);
+    this._12 = ref.offset(2, 0x12L).cast(ShortRef::new);
   }
 
   @Override
