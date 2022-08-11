@@ -29,6 +29,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.combat.types.BattleCamera;
+import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleRenderStruct;
@@ -294,7 +295,7 @@ public final class Bttl_800c {
 
   public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
   public static final Pointer<ArrayRef<BttlLightStruct84>> lights_800c692c = MEMORY.ref(4, 0x800c692cL, Pointer.deferred(4, ArrayRef.of(BttlLightStruct84.class, 3, 0x84, BttlLightStruct84::new)));
-  public static final Value _800c6930 = MEMORY.ref(4, 0x800c6930L);
+  public static final Pointer<BattleLightStruct64> _800c6930 = MEMORY.ref(4, 0x800c6930L, Pointer.deferred(4, BattleLightStruct64::new));
 
   public static final Pointer<BattleStruct24_2> _800c6938 = MEMORY.ref(4, 0x800c6938L, Pointer.deferred(4, BattleStruct24_2::new));
   public static final Pointer<BattleStruct7cc> struct7cc_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, BattleStruct7cc::new));
@@ -4596,9 +4597,11 @@ public final class Bttl_800c {
   /**
    * Holy crap this method was complicated... the way the stack is set up, all params after a3 are part of the sp0x90 array. Count is the number of parameters.
    * It's basically a variadic method so I'm changing the signature to that.
+   * <p>
+   * This method allows you to call a script function from the main game engine. Variadic params get passed in as the param array.
    */
   @Method(0x800cff54L)
-  public static long FUN_800cff54(final long callback, final int... params) {
+  public static long callScriptFunction(final long func, final int... params) {
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x44);
     final RunningScript sp0x10 = new RunningScript(tmp.get());
     final IntRef[] sp0x58 = new IntRef[params.length];
@@ -4610,7 +4613,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cffbc
-    MEMORY.ref(4, callback).call(sp0x10);
+    MEMORY.ref(4, func).call(sp0x10);
     tmp.release();
 
     return sp0x58[0].get();

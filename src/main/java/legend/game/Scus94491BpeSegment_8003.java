@@ -6068,7 +6068,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cce0L)
-  public static void GsSetAmbient(final long r, final long g, final long b) {
+  public static void GsSetAmbient(final int r, final int g, final int b) {
     SetBackColor(r >> 4, g >> 4, b >> 4);
   }
 

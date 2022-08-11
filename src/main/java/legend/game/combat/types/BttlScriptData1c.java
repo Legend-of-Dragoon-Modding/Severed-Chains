@@ -16,6 +16,7 @@ public class BttlScriptData1c implements MemoryRef {
   public final UnsignedIntRef _04;
   public final UnsignedIntRef _08;
   public final UnsignedByteRef _0c;
+
   public final UnsignedIntRef _10;
   public final Pointer<QuadConsumerRef<BttlScriptData1c, Long, Long, Long>> _14;
   /** TODO ptr */
@@ -29,6 +30,7 @@ public class BttlScriptData1c implements MemoryRef {
     this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this._0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
+
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);

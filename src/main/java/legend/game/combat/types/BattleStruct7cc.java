@@ -42,8 +42,7 @@ public class BattleStruct7cc implements MemoryRef {
   public final Pointer<DeffFile> deff_5ac;
 
   public final BattleStruct24_2 _5b8;
-  public final Value _5dc;
-
+  public final BattleLightStruct64 _5dc;
   public final Value _640;
 
   public BattleStruct7cc(final Value ref) {
@@ -72,8 +71,7 @@ public class BattleStruct7cc implements MemoryRef {
     this.deff_5ac = ref.offset(4, 0x5acL).cast(Pointer.deferred(4, DeffFile::new));
 
     this._5b8 = ref.offset(4, 0x5b8L).cast(BattleStruct24_2::new);
-    this._5dc = ref.offset(4, 0x5dcL);
-
+    this._5dc = ref.offset(4, 0x5dcL).cast(BattleLightStruct64::new);
     this._640 = ref.offset(4, 0x640L);
   }
 

@@ -5015,6 +5015,11 @@ public final class Scus94491BpeSegment {
     FUN_80018a5c((short)a0, (short)a1, a2 & 0xffL, a3 & 0xffL, a2 + a4 & 0xffL, a5 + a3 & 0xffL, (short)a6, a7, a8, (short)a9, (short)a9);
   }
 
+  @Method(0x80018decL)
+  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final byte[] a8, final long a9, final long a10) {
+    FUN_80018a5c(a0, a1, a2, a3, a2 + a4, a5 + a3, a6, a7, a8, a9, a10);
+  }
+
   @Method(0x80018e84L)
   public static void FUN_80018e84() {
     long v0;

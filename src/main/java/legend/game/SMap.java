@@ -4852,7 +4852,7 @@ public final class SMap {
 
       //LAB_800e1374
       if(struct.ambientColourEnabled_1c8.get()) {
-        GsSetAmbient(0x800L, 0x800L, 0x800L);
+        GsSetAmbient(0x800, 0x800, 0x800);
       }
 
       //LAB_800e1390
@@ -4896,7 +4896,7 @@ public final class SMap {
         GsF_LIGHT_2_800c66f8.b_0e.set(0);
         GsSetFlatLight(0x2L, GsF_LIGHT_2_800c66f8);
 
-        GsSetAmbient(0x800L, 0x800L, 0x800L);
+        GsSetAmbient(0x800, 0x800, 0x800);
         loadingStage_800c68e4.addu(0x1L);
         break;
 

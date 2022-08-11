@@ -8325,7 +8325,7 @@ public class WMap {
     final long v0 = struct._1e4.get();
     if(v0 == 0x1L) {
       //LAB_800e0404
-      GsSetAmbient(0x800L, 0x800L, 0x800L);
+      GsSetAmbient(0x800, 0x800, 0x800);
 
       struct.bigStructs_0c.get(1).deref().scaleVector_fc.setX(0x2000);
       struct.bigStructs_0c.get(1).deref().scaleVector_fc.setY(0x2000);
@@ -8341,13 +8341,13 @@ public class WMap {
       //LAB_800e0380
     } else if(v0 == 0x2L) {
       //LAB_800e04c4
-      GsSetAmbient(0x800L, 0x800L, 0x800L);
+      GsSetAmbient(0x800, 0x800, 0x800);
     } else if(v0 == 0x3L) {
       //LAB_800e04e0
-      GsSetAmbient(0x800L, 0x800L, 0x800L);
+      GsSetAmbient(0x800, 0x800, 0x800);
     } else if(v0 == 0) {
       //LAB_800e03a0
-      GsSetAmbient(0xc80L, 0xc80L, 0xc80L);
+      GsSetAmbient(0xc80, 0xc80, 0xc80);
 
       struct.bigStructs_0c.get(0).deref().scaleVector_fc.setX(0x800);
       struct.bigStructs_0c.get(0).deref().scaleVector_fc.setY(0x666);
