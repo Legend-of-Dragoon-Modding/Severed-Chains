@@ -176,7 +176,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public final ShortRef _9c;
 
-  public final UnsignedShortRef _a0;
+  public final ShortRef _a0;
 
   public final UnsignedShortRef _a4;
 
@@ -361,7 +361,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
     this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
 
-    this._a0 = ref.offset(2, 0xa0L).cast(UnsignedShortRef::new);
+    this._a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
 
     this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
 

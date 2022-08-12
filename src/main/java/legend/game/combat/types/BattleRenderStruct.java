@@ -30,9 +30,9 @@ public class BattleRenderStruct implements MemoryRef {
   public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotTrans_5d4;
   public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotTrans_5d8;
   public final ShortRef rotTransCount_5dc;
-  public final UnsignedShortRef _5de;
-  public final UnsignedShortRef _5e0;
-  public final UnsignedShortRef _5e2;
+  public final ShortRef _5de;
+  public final ShortRef _5e0;
+  public final ShortRef _5e2;
   public final UnsignedIntRef _5e4;
   public final ShortRef _5e8;
 
@@ -58,9 +58,9 @@ public class BattleRenderStruct implements MemoryRef {
     this.rotTrans_5d4 = ref.offset(4, 0x5d4L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.rotTrans_5d8 = ref.offset(4, 0x5d8L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.rotTransCount_5dc = ref.offset(2, 0x5dcL).cast(ShortRef::new);
-    this._5de = ref.offset(2, 0x5deL).cast(UnsignedShortRef::new);
-    this._5e0 = ref.offset(2, 0x5e0L).cast(UnsignedShortRef::new);
-    this._5e2 = ref.offset(2, 0x5e2L).cast(UnsignedShortRef::new);
+    this._5de = ref.offset(2, 0x5deL).cast(ShortRef::new);
+    this._5e0 = ref.offset(2, 0x5e0L).cast(ShortRef::new);
+    this._5e2 = ref.offset(2, 0x5e2L).cast(ShortRef::new);
     this._5e4 = ref.offset(4, 0x5e4L).cast(UnsignedIntRef::new);
     this._5e8 = ref.offset(2, 0x5e8L).cast(ShortRef::new);
 

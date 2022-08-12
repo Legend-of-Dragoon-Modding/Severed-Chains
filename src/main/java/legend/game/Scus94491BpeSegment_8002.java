@@ -569,7 +569,7 @@ public final class Scus94491BpeSegment_8002 {
     GsInitCoordinate2(null, bigStruct.coord2_14);
     FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 1));
 
-    bigStruct.us_a0.set((short)0);
+    bigStruct.s_a0.set((short)0);
     bigStruct.ub_a2.set(0);
     bigStruct.ub_a3.set(0);
     bigStruct.ui_f4.set(0);
@@ -667,17 +667,17 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    if(a0.us_9e.get() == 0) {
+    if(a0.s_9e.get() == 0) {
       a0.ub_9c.set(0);
     }
 
     //LAB_80020c3c
     if(a0.ub_9c.get() == 0) {
       if(a0.ub_a2.get() == 0) {
-        a0.us_9e.set(a0.us_9a);
+        a0.s_9e.set(a0.s_9a);
       } else {
         //LAB_80020c68
-        a0.us_9e.set((short)a0.us_9a.get() / 2);
+        a0.s_9e.set((short)(a0.s_9a.get() / 2));
       }
 
       //LAB_80020c7c
@@ -686,7 +686,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020c90
-    if((a0.us_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
+    if((a0.s_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
       final UnboundedArrayRef<RotateTranslateStruct> sp10 = a0.rotateTranslateArrPtr_94.deref();
 
       if(a0.ub_a3.get() == 0) {
@@ -749,7 +749,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020e98
-    a0.us_9e.decr();
+    a0.s_9e.decr();
 
     //LAB_80020ea8
   }
@@ -1091,16 +1091,16 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.ptr_ui_90.set(tmdAnimFile.rotateTranslateArr_10);
     bigStruct.rotateTranslateArrPtr_94.set(tmdAnimFile.rotateTranslateArr_10);
     bigStruct.animCount_98.set(tmdAnimFile.count_0c);
-    bigStruct.us_9a.set(tmdAnimFile._0e);
+    bigStruct.s_9a.set(tmdAnimFile._0e);
     bigStruct.ub_9c.set(0);
 
     FUN_800212d8(bigStruct);
 
     if(bigStruct.ub_a2.get() == 0) {
-      bigStruct.us_9e.set(bigStruct.us_9a);
+      bigStruct.s_9e.set(bigStruct.s_9a);
     } else {
       //LAB_800215e8
-      bigStruct.us_9e.set(bigStruct.us_9a.get() / 2);
+      bigStruct.s_9e.set((short)(bigStruct.s_9a.get() / 2));
     }
 
     //LAB_80021608

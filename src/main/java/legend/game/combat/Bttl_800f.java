@@ -2256,9 +2256,9 @@ public final class Bttl_800f {
             }
           } else {
             //LAB_800f5134
-            final long s1 = FUN_800f9e50(structa4._1c.get());
+            final BattleObject27c s1 = FUN_800f9e50(structa4._1c.get());
 
-            if(MEMORY.ref(2, s1).offset(0xcL).getSigned() < MEMORY.ref(2, s1).offset(0xa0L).getSigned()) {
+            if(s1.mp_0c.get() < s1._a0.get()) {
               //LAB_800f5160
               //LAB_800f5168
               playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2408,8 +2408,7 @@ public final class Bttl_800f {
         //LAB_800f5588
         if(structa4._0a.get() != 0) {
           structa4._1c.set((short)FUN_800f56c4());
-          v0 = FUN_800f9e50(structa4._1c.get());
-          FUN_800f3354(0, 0x1L, 0, MEMORY.ref(2, v0).offset(0xa0L).getSigned(), 0x118L, 0x87L, 0, 0x1L);
+          FUN_800f3354(0, 0x1L, 0, FUN_800f9e50(structa4._1c.get())._a0.get(), 0x118L, 0x87L, 0, 0x1L);
         }
       }
 
@@ -2595,9 +2594,9 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5acc
-        v0 = FUN_800f9e50(a0);
+        final BattleObject27c bobj = FUN_800f9e50((short)a0);
 
-        if(MEMORY.ref(2, v0).offset(0xcL).getSigned() < MEMORY.ref(2, v0).offset(0xa0L).getSigned()) {
+        if(bobj.mp_0c.get() < bobj._a0.get()) {
           s2 = 0xaL;
         }
       } else {
@@ -2714,8 +2713,8 @@ public final class Bttl_800f {
           //LAB_800f5f94
           s1 = 0x5L;
           if((structa4._02.get() & 0x2L) != 0) {
-            final long v0 = FUN_800f9e50(structa4._1c.get());
-            FUN_800f3354(0, 0x1L, 0, MEMORY.ref(2, v0).offset(0xa0L).getSigned(), 0x118L, 0x87L, 0, structa4._0a.get());
+            final BattleObject27c bobj = FUN_800f9e50(structa4._1c.get());
+            FUN_800f3354(0, 0x1L, 0, bobj._a0.get(), 0x118L, 0x87L, 0, structa4._0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 0x10L, 0x80L, 0x18L, 0x10L, 0x2cL, -0x1L);
             FUN_800f1268(0xecL, 0x82L, 0x40L, 0xeL, 0x8L);
           }
@@ -4439,9 +4438,23 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9e50L)
-  public static long FUN_800f9e50(final long a0) {
-    assert false;
-    return 0;
+  public static BattleObject27c FUN_800f9e50(final short a0) {
+    final int charIndex = _800c6b60.deref().charIndex_08.get();
+
+    //LAB_800f9e8c
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int bobjIndex = (int)_8006e398.offset(0xe40L).offset(charSlot * 0x4L).get();
+      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+
+      if(charIndex == bobj.charIndex_272.get()) {
+        //LAB_800f9ec8
+        bobj._4e.set(a0);
+        FUN_800f7b68(bobjIndex);
+        return bobj;
+      }
+    }
+
+    throw new IllegalStateException();
   }
 
   @Method(0x800f9ee8L)

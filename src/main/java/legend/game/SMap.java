@@ -944,10 +944,10 @@ public final class SMap {
     if(v1 != 0x2L) {
       if(v1 == 0) {
         if(struct.ub_a2.get() == 0) {
-          struct.us_9e.set(struct.us_9a);
+          struct.s_9e.set(struct.s_9a.get());
         } else {
           //LAB_800da1d0
-          struct.us_9e.set((short)struct.us_9a.get() / 2);
+          struct.s_9e.set((short)(struct.s_9a.get() / 2));
         }
 
         //LAB_800da1e4
@@ -956,7 +956,7 @@ public final class SMap {
       }
 
       //LAB_800da1f8
-      if((struct.us_9e.get() & 0x1L) != 0 || struct.ub_a2.get() != 0) {
+      if((struct.s_9e.get() & 0x1L) != 0 || struct.ub_a2.get() != 0) {
         //LAB_800da24c
         FUN_800212d8(struct);
       } else {
@@ -973,9 +973,9 @@ public final class SMap {
       }
 
       //LAB_800da254
-      struct.us_9e.decr();
+      struct.s_9e.decr();
 
-      if(struct.us_9e.get() == 0) {
+      if(struct.s_9e.get() == 0) {
         struct.ub_9c.set(0);
       }
     }
@@ -1074,7 +1074,7 @@ public final class SMap {
     GsInitCoordinate2(param_1.coord2_14, bigStruct_800bda10.coord2_14);
 
     bigStruct_800bda10.coord2_14.coord.transfer.set(param_1.vector_118);
-    bigStruct_800bda10.us_a0.set((short)(param_1.us_a0.get() + 0x10));
+    bigStruct_800bda10.s_a0.set((short)(param_1.s_a0.get() + 0x10));
 
     bigStruct_800bda10.scaleVector_fc.setX(param_1.vector_10c.x.get() >> 6);
     bigStruct_800bda10.scaleVector_fc.setY(param_1.vector_10c.y.get() >> 6);
@@ -1280,7 +1280,7 @@ public final class SMap {
     long s0 = 0x1L;
     long s6 = a0.ui_f4.get();
 
-    _1f8003e8.setu(a0.us_a0.get());
+    _1f8003e8.setu(a0.s_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800daaa8
@@ -3849,7 +3849,7 @@ public final class SMap {
     final long t3;
     long t5;
     long t6;
-    long s0;
+    final long s0;
     final SVECTOR deltaMovement = new SVECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
 
@@ -4274,7 +4274,7 @@ public final class SMap {
 
   @Method(0x800dfca0L)
   public static long FUN_800dfca0(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).us_a0.set((short)a0.params_20.get(1).deref().get());
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).s_a0.set((short)a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -4719,7 +4719,7 @@ public final class SMap {
     GsInitCoordinate2(null, struct.coord2_14);
     FUN_80021ca0(struct.ObjTable_0c, struct.tmd_8c.deref(), struct.coord2_14, struct.count_c8.get(), (short)(struct.tmdNobj_ca.get() + 1));
 
-    struct.us_a0.set((short)0);
+    struct.s_a0.set((short)0);
     struct.ub_a2.set(0);
     struct.ub_a3.set(0);
     struct.ui_f4.set(0);
@@ -4771,7 +4771,7 @@ public final class SMap {
       }
     }
 
-    if(puVar1.us_9e.get() == 0) {
+    if(puVar1.s_9e.get() == 0) {
       puVar1.us_12c.set(1);
 
       if((puVar1.ui_190.get() & 0x4000_0000L) != 0) {
@@ -9966,7 +9966,7 @@ public final class SMap {
 
   @Method(0x800eee48L)
   public static void FUN_800eee48(final BigStruct a0, final MATRIX matrix) {
-    _1f8003e8.setu(a0.us_a0.get());
+    _1f8003e8.setu(a0.s_a0.get());
     _1f8003ec.setu(a0.scaleVector_fc.pad.get());
 
     final MATRIX lw = new MATRIX();
@@ -10233,7 +10233,7 @@ public final class SMap {
         FUN_800214bc(_800d4d40);
         FUN_800211d8(_800d4d40);
 
-        _800d4d40.us_9e.set(0);
+        _800d4d40.s_9e.set((short)0);
         _800d4d40.coord2ArrPtr_04.deref().get(0).flg.sub(0x1L);
         s0._00.incr();
 

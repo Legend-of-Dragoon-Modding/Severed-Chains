@@ -39,11 +39,11 @@ public class BigStruct implements MemoryRef {
   /** One entry for each TMD object (tmdNobj_ca) */
   public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotateTranslateArrPtr_94;
   public final UnsignedShortRef animCount_98;
-  public final UnsignedShortRef us_9a;
+  public final ShortRef s_9a;
   public final UnsignedByteRef ub_9c;
   public final UnsignedByteRef ub_9d;
-  public final UnsignedShortRef us_9e;
-  public final ShortRef us_a0;
+  public final ShortRef s_9e;
+  public final ShortRef s_a0;
   public final UnsignedByteRef ub_a2;
   public final UnsignedByteRef ub_a3;
   /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link ExtendedTmd#ext_04} */
@@ -134,11 +134,11 @@ public class BigStruct implements MemoryRef {
     this.ptr_ui_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.rotateTranslateArrPtr_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
     this.animCount_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
-    this.us_9a = ref.offset(2, 0x9aL).cast(UnsignedShortRef::new);
+    this.s_9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
     this.ub_9d = ref.offset(1, 0x9dL).cast(UnsignedByteRef::new);
-    this.us_9e = ref.offset(2, 0x9eL).cast(UnsignedShortRef::new);
-    this.us_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
+    this.s_9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
+    this.s_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
     this.ub_a2 = ref.offset(1, 0xa2L).cast(UnsignedByteRef::new);
     this.ub_a3 = ref.offset(1, 0xa3L).cast(UnsignedByteRef::new);
     this.smallerStructPtr_a4 = ref.offset(4, 0xa4L).cast(Pointer.deferred(4, SmallerStruct::new));

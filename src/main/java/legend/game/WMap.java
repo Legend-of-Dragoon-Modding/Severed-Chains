@@ -651,7 +651,7 @@ public class WMap {
     long nobj = a0.ObjTable_0c.nobj.get();
     long fp = a0.ui_f8.get();
 
-    _1f8003e8.setu(a0.us_a0.get());
+    _1f8003e8.setu(a0.s_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800c92c8
@@ -8355,7 +8355,7 @@ public class WMap {
     }
 
     //LAB_800e04fc
-    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().us_a0.set((short)0x4e);
+    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().s_a0.set((short)0x4e);
     FUN_800211d8(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
     GsSetAmbient(_800c66b0.deref().ambientLight_14c.getX(), _800c66b0.deref().ambientLight_14c.getY(), _800c66b0.deref().ambientLight_14c.getZ());
     FUN_800e06d0();
