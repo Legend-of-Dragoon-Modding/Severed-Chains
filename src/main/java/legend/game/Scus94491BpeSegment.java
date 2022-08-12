@@ -2085,7 +2085,7 @@ public final class Scus94491BpeSegment {
           s0 = _1f8003d4.get() - 0x44L;
 
           a0 = (v1 & 0xe0L) << 0x6L | (v1 & 0x1fL) << 0x3L;
-          v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1 << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
+          v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1L << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
           MEMORY.ref(1, s0).offset(0x03L).setu(0xcL);
           MEMORY.ref(4, s0).offset(0x04L).setu(0x7480_8080L);
           MEMORY.ref(4, s0).offset(0x08L).setu(v1 + 1);
@@ -2125,7 +2125,7 @@ public final class Scus94491BpeSegment {
         s0 = _1f8003d4.get() - 0x44L;
 
         a0 = (v1 & 0xe0L) << 0x6L | (v1 & 0x1fL) << 0x3L;
-        v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1 << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
+        v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1L << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
         MEMORY.ref(1, s0).offset(0x3L).setu(0xcL);
         MEMORY.ref(1, s0).offset(0x37L).setu(0x3L);
         MEMORY.ref(4, s0).offset(0x38L).setu(0x7480_8080L);
@@ -4074,7 +4074,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800174a4
-    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
+    if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(0);
       charData.dlevelXp_0e.set(0x7fff);
       charData.dlevel_13.set(0x5);
@@ -7094,7 +7094,7 @@ public final class Scus94491BpeSegment {
     if(type != 0) {
       //LAB_8001ce44
       fileIndex = 1298 + s2.charIndex_272.get();
-    } else if(s2.charIndex_272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+    } else if(s2.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
       //LAB_8001ce18
       fileIndex = 1307 + s2.charIndex_272.get();
     } else {
@@ -7123,7 +7123,7 @@ public final class Scus94491BpeSegment {
     if(a1 == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
-      if(s1.charIndex_272.get() != 0 || gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+      if(s1.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         loadDrgnBinFile(0, 1317 + s1.charIndex_272.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       } else {

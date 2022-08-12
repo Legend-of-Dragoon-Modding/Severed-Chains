@@ -690,7 +690,7 @@ public final class Bttl_800f {
 
         //LAB_800f22b8
         if((state2.ui_60.get() & 0x4L) == 0) {
-          if(data2.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7) != 0 && (scriptStatePtrArr_800bc1c0.get(scriptIndex2).deref().ui_60.get() & 0x2L) != 0) {
+          if(data2.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0.get(scriptIndex2).deref().ui_60.get() & 0x2L) != 0) {
             s1 = sp0x18[1];
           } else {
             s1 = sp0x18[data2.charIndex_272.get()];

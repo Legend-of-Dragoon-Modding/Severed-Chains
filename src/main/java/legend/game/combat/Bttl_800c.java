@@ -41,6 +41,7 @@ import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
+import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.BttlScriptData6cSub14;
@@ -1743,7 +1744,7 @@ public final class Bttl_800c {
             callbackParam = a2 & 0xffff_feffL;
             int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
             if(combatant.charIndex_1a2.get() != 0) {
-              if(charIndex == 0 && gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) {
+              if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
                 charIndex = 18; // Divine dragoon
               } else {
                 //LAB_800c93b4
@@ -1899,7 +1900,7 @@ public final class Bttl_800c {
           // Additions
           fileIndex = 4031 + gameState_800babc8.charData_32c.get((int)charIndex).selectedAddition_19.get() + charIndex * 0x8L - additionOffsets_8004f5ac.get((int)charIndex).get();
           //LAB_800c983c
-        } else if(charIndex == 0 && (byte)gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 != 0) { // Divine dragoon
+        } else if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) { // Divine dragoon
           // Divine dragoon addition
           fileIndex = 4112;
         } else {
@@ -2357,7 +2358,7 @@ public final class Bttl_800c {
       v1 = a2 & 0xffff_feffL;
       if(a0 != 0) {
         if(a1 == 0) {
-          if(gameState_800babc8.dragoonSpirits_19c.get(0).get() >>> 7 == 0) {
+          if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
             a1 = a1 + 9;
           } else {
             a1 = 18;
@@ -4177,7 +4178,7 @@ public final class Bttl_800c {
     final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(a0_0.magic_00.get() == BattleScriptDataBase.EM__) {
-      s0._30.set(MEMORY.ref(4, ((EffectManagerData6c)a0_0)._44.getPointer() + 0x10, BigStruct::new)); //TODO
+      s0._30.set(((EffectManagerData6c)a0_0)._44.derefAs(BttlScriptData6cSub13c.class)._10);
     } else {
       //LAB_800ce7f8
       s0._30.set(((BattleObject27c)a0_0)._148);

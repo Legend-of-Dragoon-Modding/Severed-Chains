@@ -7062,12 +7062,12 @@ public final class Bttl_800e {
       //LAB_800eec10
       charData.hp_08.set(Math.max(1, a2.hp_08.get()));
 
-      if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 1 << characterDragoonIndices_800c6e68.get(a2.charIndex_272.get()).get()) != 0) {
+      if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 1L << characterDragoonIndices_800c6e68.get(a2.charIndex_272.get()).get()) != 0) {
         charData.mp_0a.set(a2.mp_0c.get());
       }
 
       //LAB_800eec78
-      if(a2.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
+      if(a2.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 1L << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
         charData.mp_0a.set(a2.mp_0c.get());
       }
 

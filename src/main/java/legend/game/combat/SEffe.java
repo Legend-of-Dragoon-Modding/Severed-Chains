@@ -2073,7 +2073,9 @@ public final class SEffe {
   @Method(0x80100af4L)
   public static void FUN_80100af4(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
     FUN_800ff890(a0, a1, a2, a3);
-    a2._58.mul(a3._18.get()).shra(8);
+    a2._58.setX((short)(a2._58.getX() * a3._18.get() >> 8));
+    a2._58.setY((short)(a2._58.getY() * a3._18.get() >> 8));
+    a2._58.setZ((short)(a2._58.getZ() * a3._18.get() >> 8));
     a2._60.set(a2._58).negate().div(a2._12.get());
   }
 
@@ -2349,7 +2351,9 @@ public final class SEffe {
 
     a1 = _801198f0.offset(s7 * 0xaL).getAddress();
     if(MEMORY.ref(1, a1).offset(0x6L).get() == 0x1L) {
-      s3._58.mul(a4._18.get()).shra(8);
+      s3._58.setX((short)(s3._58.getX() * a4._18.get() >> 8));
+      s3._58.setY((short)(s3._58.getY() * a4._18.get() >> 8));
+      s3._58.setZ((short)(s3._58.getZ() * a4._18.get() >> 8));
     }
 
     //LAB_80101ba4
@@ -4256,6 +4260,12 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x801089ccL)
+  public static long FUN_801089cc(final RunningScript a0) {
+    a0.params_20.get(1).deref().set((byte)_80119f40.getSigned());
+    return 0;
+  }
+
   @Method(0x801089e8L)
   public static void FUN_801089e8(final int index, final ScriptState<EffeScriptData30> state, final EffeScriptData30 data) {
     //LAB_80108a38
@@ -5702,7 +5712,7 @@ public final class SEffe {
       //LAB_80113abc
       //LAB_80113ae0
       //LAB_80113b04
-      sp0x00.set(x, y, z).mul(v1).div(0x1000);
+      sp0x00.set((short)(x * v1.getX() >> 12), (short)(y * v1.getY() >> 12), (short)(z * v1.getZ() >> 12));
     }
 
     //LAB_80113b0c
