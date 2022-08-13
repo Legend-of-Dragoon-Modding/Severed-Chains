@@ -4,7 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 
-public class BttlScriptData6cSubBase1 implements MemoryRef {
+public abstract class BttlScriptData6cSubBase1 implements MemoryRef {
   private final Value ref;
 
   //TODO don't think these are actually part of the base

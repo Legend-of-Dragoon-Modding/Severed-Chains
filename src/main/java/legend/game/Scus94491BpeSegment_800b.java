@@ -481,6 +481,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
   public static final Value _800bf0b4 = MEMORY.ref(4, 0x800bf0b4L);
+  public static final Value _800bf0b8 = MEMORY.ref(4, 0x800bf0b8L);
+  public static final Value xaArchiveIndex_800bf0bc = MEMORY.ref(4, 0x800bf0bcL);
 
   public static final Value _800bf0c0 = MEMORY.ref(4, 0x800bf0c0L);
   public static final Value _800bf0c4 = MEMORY.ref(4, 0x800bf0c4L);
@@ -491,11 +493,13 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
   public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);
 
+  public static final Value _800bf0d4 = MEMORY.ref(4, 0x800bf0d4L);
   public static final Value _800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
 
   public static final Value _800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
   public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);
-
+  public static final Value xaFileIndex_800bf0e4 = MEMORY.ref(4, 0x800bf0e4L);
+  public static final Value _800bf0e8 = MEMORY.ref(4, 0x800bf0e8L);
   public static final Value _800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
 
   public static final Value _800bf140 = MEMORY.ref(4, 0x800bf140L);

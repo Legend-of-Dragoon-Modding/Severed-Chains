@@ -232,6 +232,38 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
   public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);
 
+  /**
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment#FUN_800149cc}</li>
+   *   <li>{@link Scus94491BpeSegment#loadQueuedFile}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80014e54}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80014eb4}</li>
+   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex1}</li>
+   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex2}</li>
+   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex3}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing1}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing2}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing3}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing4}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing5}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing6}</li>
+   *   <li>{@link Scus94491BpeSegment#doNothing7}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cc28}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c268}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cca0}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cd18}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c33c}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cb24}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c4f0}</li>
+   *   <li>{@link SMap#FUN_800ed960}</li>
+   *   <li>{@link SMap#FUN_800ed9e4}</li>
+   *   <li>{@link SMap#stopIntroFmv}</li>
+   *   <li>{@link SMap#FUN_800ed7e4}</li>
+   *   <li>{@link SMap#FUN_800edb44}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800150b4}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_8001511c}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
   public static final Value scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL);

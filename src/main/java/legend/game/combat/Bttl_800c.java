@@ -43,6 +43,7 @@ import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.DeffFile;
+import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.BttlScriptData6cSub14;
 import legend.game.combat.types.BttlScriptData6cSub3c;
@@ -309,7 +310,7 @@ public final class Bttl_800c {
   public static final Value _800c6958 = MEMORY.ref(4, 0x800c6958L);
   public static final Value _800c695c = MEMORY.ref(2, 0x800c695cL);
 
-  public static final Value _800c6960 = MEMORY.ref(1, 0x800c6960L);
+  public static final ArrayRef<DragoonSpells09> dragoonSpells_800c6960 = MEMORY.ref(1, 0x800c6960L, ArrayRef.of(DragoonSpells09.class, 3, 9, DragoonSpells09::new));
 
   public static final Value _800c697c = MEMORY.ref(2, 0x800c697cL);
   public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
@@ -740,6 +741,8 @@ public final class Bttl_800c {
   public static final Value stageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L);
 
   public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
+
+  public static final Value _800fb0ec = MEMORY.ref(4, 0x800fb0ecL);
 
   public static final ArrayRef<UnsignedByteRef> _800fb148 = MEMORY.ref(1, 0x800fb148L, ArrayRef.of(UnsignedByteRef.class, 0x40, 1, UnsignedByteRef::new));
 
@@ -4309,9 +4312,37 @@ public final class Bttl_800c {
     return 0;
   }
 
+  @Method(0x800cee50L)
+  public static long FUN_800cee50(final RunningScript script) {
+    final int a2 = script.params_20.get(1).deref().get();
+    script.params_20.get(0).deref().set((int)(seed_800fa754.advance().get() % (script.params_20.get(2).deref().get() - a2 + 1) + a2));
+    return 0;
+  }
+
   @Method(0x800ceeccL)
   public static long FUN_800ceecc(final RunningScript a0) {
     FUN_800ce83c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
+    return 0;
+  }
+
+  @Method(0x800cef00L)
+  public static long FUN_800cef00(final RunningScript script) {
+    final long a1 = linkedListAddress_1f8003d8.get();
+    MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
+    MEMORY.ref(1, a1).offset(0x4L).setu(script.params_20.get(0).deref().get());
+    MEMORY.ref(1, a1).offset(0x5L).setu(script.params_20.get(1).deref().get());
+    MEMORY.ref(1, a1).offset(0x6L).setu(script.params_20.get(2).deref().get());
+    MEMORY.ref(1, a1).offset(0x7L).setu(0x62L);
+    MEMORY.ref(2, a1).offset(0x8L).setu(-160);
+    MEMORY.ref(2, a1).offset(0xaL).setu(-120);
+    MEMORY.ref(2, a1).offset(0xcL).setu(320);
+    MEMORY.ref(2, a1).offset(0xeL).setu(280);
+    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
+    linkedListAddress_1f8003d8.addu(0x10L);
+
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, script.params_20.get(3).deref().get() + 1, 0, 0), null);
+    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
+    linkedListAddress_1f8003d8.addu(0xcL);
     return 0;
   }
 

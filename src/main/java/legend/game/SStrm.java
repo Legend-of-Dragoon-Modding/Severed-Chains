@@ -116,13 +116,13 @@ public final class SStrm {
     _800fe7a8.setu(0);
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3fL);
+    setCdMix(0x3f);
     setMainVolume(0x7f, 0x7f);
 
     if(a1 == 0) {
       enableAudioSource(0x1L, 0x1L);
       setCdVolume(0x7a, 0x7a);
-      setCdMix(0x3dL);
+      setCdMix(0x3d);
       setMainVolume(0x7a, 0x7a);
     }
 
@@ -347,7 +347,7 @@ public final class SStrm {
     removeFromLinkedList(linkedListEntry_8010f7d0.get());
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3fL);
+    setCdMix(0x3f);
     setMainVolume(0x7f, 0x7f);
   }
 

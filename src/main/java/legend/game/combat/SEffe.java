@@ -79,6 +79,7 @@ import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
+import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
@@ -105,6 +106,7 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
+import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -116,6 +118,7 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
+import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c._800c6944;
 import static legend.game.combat.Bttl_800c._800c6948;
@@ -4888,11 +4891,11 @@ public final class SEffe {
   }
 
   @Method(0x8011066cL)
-  public static EffectManagerData6c FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
-    final EffectManagerData6c data = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+  public static BattleScriptDataBase FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
+    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(data.magic_00.get() == BattleScriptDataBase.EM__ && (data._04.get() & 0x2L) != 0) {
-      FUN_800e8d04(data, 0x1L);
+    if(data.magic_00.get() == BattleScriptDataBase.EM__ && (((EffectManagerData6c)data)._04.get() & 0x2L) != 0) {
+      FUN_800e8d04((EffectManagerData6c)data, 0x1L);
     }
 
     //LAB_801106dc
@@ -6232,6 +6235,23 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80115a58L)
+  public static long scriptPlayXaAudio(final RunningScript a0) {
+    playXaAudio(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
+    return 0;
+  }
+
+  @Method(0x80115a94L)
+  public static long FUN_80115a94(final RunningScript a0) {
+    a0.params_20.get(0).deref().set((int)_800bf0cf.get());
+    return 0;
+  }
+
+  @Method(0x80115ab0L)
+  public static long FUN_80115ab0(final RunningScript a0) {
+    return (_800bf0cf.get() != a0.params_20.get(0).deref().get()) ? 2 : 0;
+  }
+
   @Method(0x80115ad8L)
   public static long FUN_80115ad8(final RunningScript a0) {
     final BattleStruct7cc v1 = struct7cc_800c693c.deref();
@@ -6348,6 +6368,100 @@ public final class SEffe {
   @Method(0x80115ea4L)
   public static long FUN_80115ea4(final RunningScript a0) {
     FUN_80115cac(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x80115ed4L)
+  public static long FUN_80115ed4(final RunningScript script) {
+    long v0;
+    final int a1;
+    final int a3;
+    final int t0;
+    final int t1;
+    final int a2 = script.params_20.get(0).deref().get();
+    final int s0 = script.params_20.get(1).deref().get();
+    long v1 = a2 & 0xff00_0000L;
+    if(v1 == 0) {
+      //LAB_80115f54
+      final BattleScriptDataBase a0 = scriptStatePtrArr_800bc1c0.get(a2).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+      if(a0.magic_00.get() != BattleScriptDataBase.EM__) {
+        //LAB_8011604c
+        v0 = _800fb0ec.offset(((BattleObject27c)a0).colourMap_1e5.get() * 0x4L).get();
+        t1 = (int)((v0 & 0xf) << 6);
+        a3 = (int)((v0 & 0x10) << 4);
+        a1 = 0x100;
+        t0 = 0x100;
+      } else {
+        final EffectManagerData6c manager = (EffectManagerData6c)a0;
+        v1 = manager._04.get() & 0xff00_0000L;
+        if(v1 == 0x200_0000L) {
+          //LAB_80115fd8
+          v0 = _800fb0ec.offset(manager._44.derefAs(BttlScriptData6cSub13c.class)._134.deref().ub_9d.get() * 0x4L).get();
+          t1 = (int)((v0 & 0xf) << 6);
+          a3 = (int)((v0 & 0x10) << 4);
+          a1 = 0x100;
+          t0 = 0x100;
+        } else if(v1 == 0x300_0000L) {
+          //LAB_80116014
+          throw new RuntimeException("ASM is bugged");
+//          v0 = manager._44.deref();
+//          MEMORY.ref(4, v0).offset(0x4L).setu(0);
+//          v0 = t2 + MEMORY.ref(4, t2).offset(0x8L).get() + s0 * 0x10L;
+//          t1 = MEMORY.ref(2, v0).offset(0x0L).getSigned();
+//          a3 = MEMORY.ref(2, v0).offset(0x2L).getSigned();
+//          a1 = MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4;
+//          t0 = MEMORY.ref(2, v0).offset(0x6L).getSigned();
+          //LAB_80115fc8
+        } else if(v1 == 0x400_0000L) {
+          //LAB_8011602c
+          v0 = manager._44.getPointer(); //TODO
+          t1 = (int)MEMORY.ref(2, v0).offset(0x4L).get();
+          a3 = (int)MEMORY.ref(2, v0).offset(0x6L).get();
+          a1 = (int)MEMORY.ref(1, v0).offset(0x8L).get();
+          t0 = (int)MEMORY.ref(1, v0).offset(0x9L).get();
+        } else {
+          throw new RuntimeException("Invalid state");
+        }
+      }
+    } else if(v1 == 0x200_0000L) {
+      //LAB_80116098
+      v0 = FUN_800eac58(a2).getAddress();
+      v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
+      t1 = (int)MEMORY.ref(2, v0).offset(0x0L).getSigned();
+      a3 = (int)MEMORY.ref(2, v0).offset(0x2L).getSigned();
+
+      //LAB_801160b4
+      a1 = 0x100;
+      t0 = 0x100;
+    } else if(v1 == 0x100_0000L || v1 == 0x300_0000L) {
+      //LAB_801160c0
+      //LAB_801160d4
+      v0 = FUN_800eac58(a2).getAddress();
+      v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get() + s0 * 0x10L;
+      t1 = (int)MEMORY.ref(2, v0).offset(0x0L).getSigned();
+      a3 = (int)MEMORY.ref(2, v0).offset(0x2L).getSigned();
+      a1 = (int)(MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4);
+      t0 = (int)MEMORY.ref(2, v0).offset(0x6L).getSigned();
+      //LAB_80115f34
+    } else if(v1 == 0x400_0000L) {
+      //LAB_801160f4
+      final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xc);
+      final Value sp0x10 = sp0x10tmp.get();
+      FUN_800e95f0(sp0x10.getAddress(), a2 & 0xff_ffffL);
+      t1 = (int)sp0x10.offset(2, 0x4L).get();
+      a3 = (int)sp0x10.offset(2, 0x6L).get();
+      a1 = (int)sp0x10.offset(1, 0x8L).get();
+      t0 = (int)sp0x10.offset(1, 0x9L).get();
+      sp0x10tmp.release();
+    } else {
+      throw new RuntimeException("Invalid state");
+    }
+
+    //LAB_80116118
+    script.params_20.get(2).deref().set(t1);
+    script.params_20.get(3).deref().set(a3);
+    script.params_20.get(4).deref().set(a1);
+    script.params_20.get(5).deref().set(t0);
     return 0;
   }
 

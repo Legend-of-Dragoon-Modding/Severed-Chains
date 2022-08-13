@@ -65,7 +65,7 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800228d0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022928;
+import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a10;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
@@ -7016,8 +7016,8 @@ public final class SItem {
       return;
     }
 
-    final byte[] sp0x10 = new byte[8];
-    FUN_80022928(sp0x10, charIndex);
+    final byte[] spellIndices = new byte[8];
+    getUnlockedDragoonSpells(spellIndices, charIndex);
     final long s6 = FUN_80022a10(charIndex);
 
     //LAB_80109354
@@ -7027,12 +7027,12 @@ public final class SItem {
       }
 
       //LAB_80109370
-      final int v1 = sp0x10[i] & 0xff;
-      if(v1 != 0xffL) {
-        renderText(spells_80052734.get(v1).deref(), 210, 125 + i * 14, 0x4L);
+      final byte spellIndex = spellIndices[i];
+      if(spellIndex != -1) {
+        renderText(spells_80052734.get(spellIndex).deref(), 210, 125 + i * 14, 0x4L);
 
         if(a1 != 0) {
-          renderThreeDigitNumber(342, 128 + i * 14, _80114290.offset(v1).get());
+          renderThreeDigitNumber(342, 128 + i * 14, _80114290.offset(spellIndex).get());
         }
       }
 
@@ -9501,14 +9501,15 @@ public final class SItem {
       //LAB_8010cecc
       while(gameState_800babc8.charData_32c.get(charIndex).dlevelXp_0e.get() >= _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c.get(charIndex).dlevel_13.get() * 0x2L).offset(0x2L).get() && gameState_800babc8.charData_32c.get(charIndex).dlevel_13.get() < 5) {
         FUN_80110030(0);
+        final byte[] spellIndices = new byte[8];
+        final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
+
         gameState_800babc8.charData_32c.get(charIndex).dlevel_13.incr();
         _8011e1d8.offset(a1).addu(0x1L);
-        FUN_80110030(0);
 
-        final byte[] sp0x10 = new byte[8];
-        final long v1 = FUN_80022928(sp0x10, charIndex);
-        if(v1 != FUN_80022928(sp0x10, charIndex)) {
-          _8011e1a8.offset(a1).setu(sp0x10[(int)(v1 - 1)] + 0x1L);
+        FUN_80110030(0);
+        if(spellCount != getUnlockedDragoonSpells(spellIndices, charIndex)) {
+          _8011e1a8.offset(a1).setu(spellIndices[spellCount - 1] + 1);
         }
 
         //LAB_8010cf70

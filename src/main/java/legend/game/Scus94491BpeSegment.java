@@ -2310,8 +2310,8 @@ public final class Scus94491BpeSegment {
       }
 
       //LAB_80014aac
-      if(_800bf0cf.get() >= 0x2L) {
-        _800bf0cf.setu(0x1L);
+      if(_800bf0cf.get() >= 2) {
+        _800bf0cf.setu(1);
 
         //LAB_80014ad0
         setCdVolume(0, 0);
@@ -2342,8 +2342,8 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80014a10
-    if(_800bf0cf.get() >= 0x2L) {
-      _800bf0cf.setu(0x1L);
+    if(_800bf0cf.get() >= 2) {
+      _800bf0cf.setu(1);
       setCdVolume(0, 0);
       _800bf0e0.setu(0);
       return 0x1L;
@@ -2485,7 +2485,12 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    callbackArray_8004dddc.get((int)callbackIndex_8004ddc4.get()).deref().run();
+    final int callbackIndex = (int)callbackIndex_8004ddc4.get();
+    if(callbackIndex != 0) {
+      LOGGER.info("File loading callback index %d", callbackIndex);
+    }
+
+    callbackArray_8004dddc.get(callbackIndex).deref().run();
     FUN_8002c86c();
 
     //LAB_80014d94

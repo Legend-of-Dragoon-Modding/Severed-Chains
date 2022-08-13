@@ -61,7 +61,7 @@ import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6758;
-import static legend.game.combat.Bttl_800c._800c6960;
+import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
@@ -1953,7 +1953,7 @@ public final class Bttl_800f {
     v0._18.set((short)0);
     v0._1a.set((short)0);
     v0._1c.set((short)-1);
-    v0._22.set((short)0);
+    v0.count_22.set((short)0);
     v0._24.set((short)0);
   }
 
@@ -1991,33 +1991,31 @@ public final class Bttl_800f {
 
       //LAB_800f4a9c
       FUN_800f83c8();
-      a2._22.set((short)_800c6b70.getSigned());
+      a2.count_22.set((short)_800c6b70.getSigned());
     } else if(v1 == 0x1L) {
       //LAB_800f4abc
       //LAB_800f4ae0
-      int v1_0;
-      for(v1_0 = 0; v1_0 < charCount_800c677c.get(); v1_0++) {
-        if(_800c6960.offset(v1_0 * 0x9L).get() == (a2.charIndex_08.get() & 0xff)) {
+      int charSlot;
+      for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == a2.charIndex_08.get()) {
           break;
         }
       }
 
       //LAB_800f4b00
-      v1_0 = v1_0 * 9;
-
       //LAB_800f4b18
-      int i;
-      for(i = 1; i < 9; i++) {
-        if(_800c6960.offset(v1_0).offset(i).get() == 0xffL) {
+      short spellIndex;
+      for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+        if(dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellIndex).get() == -1) {
           break;
         }
       }
 
       //LAB_800f4b3c
-      a2._22.set((short)i);
+      a2.count_22.set(spellIndex);
     } else if(v1 == 0x2L) {
       //LAB_800f4b4c
-      a2._22.set((short)0);
+      a2.count_22.set((short)0);
     }
 
     //LAB_800f4b50
@@ -2062,7 +2060,7 @@ public final class Bttl_800f {
           structa4._20.set(structa4._2a.get());
           structa4._94.set(structa4._2c.get());
 
-          if(structa4._22.get() - 1 < structa4._24.get() + structa4._1e.get()) {
+          if(structa4.count_22.get() - 1 < structa4._24.get() + structa4._1e.get()) {
             structa4._24.decr();
 
             if(structa4._24.get() < 0) {
@@ -2104,11 +2102,11 @@ public final class Bttl_800f {
         if((joypadPress_8007a398.get() & 0x1L) != 0) {
           s0 = structa4._24.get();
 
-          if(structa4._22.get() - 1 >= structa4._1e.get() + 6) {
+          if(structa4.count_22.get() - 1 >= structa4._1e.get() + 6) {
             structa4._24.set((short)6);
           } else {
             //LAB_800f4d8c
-            structa4._24.set((short)(structa4._22.get() - (structa4._1e.get() + 1)));
+            structa4._24.set((short)(structa4.count_22.get() - (structa4._1e.get() + 1)));
           }
 
           //LAB_800f4d90
@@ -2148,14 +2146,14 @@ public final class Bttl_800f {
 
         //LAB_800f4e40
         if((joypadPress_8007a398.get() & 0x2L) != 0) {
-          if(structa4._1e.get() + 6 >= structa4._22.get() - 1) {
+          if(structa4._1e.get() + 6 >= structa4.count_22.get() - 1) {
             break;
           }
 
           structa4._1e.add((short)7);
           structa4._20.sub((short)98);
 
-          if(structa4._1e.get() + 6 >= structa4._22.get() - 1) {
+          if(structa4._1e.get() + 6 >= structa4.count_22.get() - 1) {
             structa4._24.set((short)0);
           }
 
@@ -2193,8 +2191,8 @@ public final class Bttl_800f {
 
         //LAB_800f4f74
         if((joypadInput_8007a39c.get() & 0x4000L) != 0) {
-          if(structa4._24.get() != structa4._22.get() - 1) {
-            if(structa4._1e.get() + structa4._24.get() + 1 < structa4._22.get()) {
+          if(structa4._24.get() != structa4.count_22.get() - 1) {
+            if(structa4._1e.get() + structa4._24.get() + 1 < structa4.count_22.get()) {
               playSound(0, 1, 0, 0, (short)0, (short)0);
 
               if(structa4._24.get() != 6) {
@@ -2448,68 +2446,65 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f56c4L)
-  public static long FUN_800f56c4() {
+  public static int FUN_800f56c4() {
     final BttlStructa4 a1 = _800c6b60.deref();
-    final long v1 = a1._0a.get();
+    final short v1 = a1._0a.get();
 
-    long a0;
     if(v1 == 0) {
       //LAB_800f56f0
-      a0 = _800c6988.offset((a1._24.get() + a1._1e.get()) * 0x2L).get() - 0xc0L;
-    } else if(v1 == 0x1L) {
+      return (int)(_800c6988.offset((a1._24.get() + a1._1e.get()) * 0x2L).get() - 0xc0);
+    }
+
+    if(v1 == 1) {
       //LAB_800f5718
       //LAB_800f5740
-      int a3;
-      for(a3 = 0; a3 < charCount_800c677c.get(); a3++) {
-        if(_800c6960.offset(a3 * 9).get() == (a1.charIndex_08.get() & 0xff)) {
+      int charSlot;
+      for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == a1.charIndex_08.get()) {
           break;
         }
       }
 
       //LAB_800f5778
       final BttlStructa4 a2 = _800c6b60.deref();
-      a0 = _800c6960.offset(a2._24.get() + a2._1e.get() + (short)a3 * 9 + 1).get();
+      int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(a2._24.get() + a2._1e.get()).get();
       if(a2.charIndex_08.get() == 8) {
-        if(a0 == 0x41L) {
-          a0 = 0xaL;
+        if(spellIndex == 65) {
+          spellIndex = 10;
         }
 
         //LAB_800f57d4
-        if(a0 == 0x42L) {
-          a0 = 0xbL;
+        if(spellIndex == 66) {
+          spellIndex = 11;
         }
 
         //LAB_800f57e0
-        if(a0 == 0x43L) {
-          a0 = 0xcL;
+        if(spellIndex == 67) {
+          spellIndex = 12;
         }
       }
-    } else {
-      throw new RuntimeException("Undefined a0");
+
+      return spellIndex;
     }
 
-    //LAB_800f57ec
-    //LAB_800f57f0
-    return a0;
+    throw new RuntimeException("Undefined a0");
   }
 
   @Method(0x800f57f8L)
-  public static void FUN_800f57f8(long a0) {
+  public static void FUN_800f57f8(final int a0) {
     long v0;
     long a1;
-    long s6;
-    long sp70;
 
     final BttlStructa4 structa4 = _800c6b60.deref();
 
-    final long spa8 = a0;
     long s5 = structa4._20.get();
     final long sp60 = structa4._1a.get();
     final long sp68 = structa4._06.get();
 
     //LAB_800f5860
-    for(sp70 = 0; sp70 < charCount_800c677c.get(); sp70++) {
-      if(_800c6960.offset(sp70 * 9).get() == (structa4.charIndex_08.get() & 0xff)) {
+    int charSlot;
+    for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == structa4.charIndex_08.get()) {
         break;
       }
     }
@@ -2523,14 +2518,14 @@ public final class Bttl_800f {
     final LodString sp0x48 = new LodString(12);
 
     //LAB_800f58e0
-    for(s6 = 0; s6 < structa4._22.get(); s6++) {
+    for(int spellSlot = 0; spellSlot < structa4.count_22.get(); spellSlot++) {
       if(s5 >= sp68) {
         break;
       }
 
       long s2 = 0;
       LodString s3;
-      if(spa8 == 0) {
+      if(a0 == 0) {
         //LAB_800f5918
         s3 = _80050ae8.get((int)(_800c6988.offset(sp7c).get() - 0xc0)).deref();
         FUN_800297a0(_800c6988.offset(s7).get(), sp0x48);
@@ -2572,29 +2567,29 @@ public final class Bttl_800f {
 
         //LAB_800f5a38
         sp0x40.charAt((int)(a1 + 1), 0xa0ff);
-      } else if(spa8 == 0x1L) {
+      } else if(a0 == 1) {
         //LAB_800f5a4c
-        a0 = _800c6960.offset(s6 + sp70 * 9 + 1).get();
-        s3 = spells_80052734.get((int)a0).deref();
+        int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).get();
+        s3 = spells_80052734.get(spellIndex).deref();
 
         if(structa4.charIndex_08.get() == 8) {
-          if(a0 == 0x41L) {
-            a0 = 0xaL;
+          if(spellIndex == 65) {
+            spellIndex = 10;
           }
 
           //LAB_800f5ab4
-          if(a0 == 0x42L) {
-            a0 = 0xbL;
+          if(spellIndex == 66) {
+            spellIndex = 11;
           }
 
           //LAB_800f5ac0
-          if(a0 == 0x43L) {
-            a0 = 0xcL;
+          if(spellIndex == 67) {
+            spellIndex = 12;
           }
         }
 
         //LAB_800f5acc
-        final BattleObject27c bobj = FUN_800f9e50((short)a0);
+        final BattleObject27c bobj = FUN_800f9e50((short)spellIndex);
 
         if(bobj.mp_0c.get() < bobj._a0.get()) {
           s2 = 0xaL;
@@ -2620,9 +2615,8 @@ public final class Bttl_800f {
         //LAB_800f5bd8
         renderText(s3, structa4._18.get(), s5, s2, a1);
 
-        if(spa8 == 0) {
-          s3 = sp0x40;
-          renderText(s3, structa4._18.get() + 0x80, s5, s2, a1);
+        if(a0 == 0) {
+          renderText(sp0x40, structa4._18.get() + 0x80, s5, s2, a1);
         }
       } else if(sp60 < s5 + 0xcL) {
         if((structa4._02.get() & 0x4L) != 0) {
@@ -2634,9 +2628,8 @@ public final class Bttl_800f {
         //LAB_800f5b40
         renderText(s3, structa4._18.get(), sp60, s2, a1);
 
-        if(spa8 == 0) {
-          s3 = sp0x40;
-          renderText(s3, structa4._18.get() + 0x80, sp60, s2, a1);
+        if(a0 == 0) {
+          renderText(sp0x40, structa4._18.get() + 0x80, sp60, s2, a1);
         }
       }
 
@@ -2692,7 +2685,7 @@ public final class Bttl_800f {
           }
 
           //LAB_800f5e7c
-          if(structa4._1e.get() + 6 < structa4._22.get() - 1) {
+          if(structa4._1e.get() + 6 < structa4.count_22.get() - 1) {
             FUN_800f74f4(_800c7190.getAddress(), structa4._04.get() + s0 + 0x38L, structa4._06.get() + s1 - 0x7L, _800c7192.get(), _800c7193.get(), 0xdL, -0x1L, 0x1L);
           }
         }
@@ -2993,22 +2986,24 @@ public final class Bttl_800f {
                 s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
               } else {
                 //LAB_800f67b8
-                for(a2 = 0; a2 < charCount_800c677c.get(); a2++) {
-                  if(_800c6960.offset(a2 * 0x9L).get() == (struct58.charIndex_04.get() & 0xff)) {
+                int charSlot;
+                for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+                  if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == struct58.charIndex_04.get()) {
                     break;
                   }
                 }
 
                 //LAB_800f67d8
                 //LAB_800f67f4
-                for(a0 = 1; a0 < 9; a0++) {
-                  if(_800c6960.offset(a2 * 9).offset(a0).get() != 0xffL) {
+                int spellIndex;
+                for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+                  if(dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellIndex).get() != -1) {
                     break;
                   }
                 }
 
                 //LAB_800f681c
-                if(a0 == 0x9L) {
+                if(spellIndex == 8) {
                   playSound(0, 3, 0, 0, (short)0, (short)0);
                 } else {
                   playSound(0, 2, 0, 0, (short)0, (short)0);

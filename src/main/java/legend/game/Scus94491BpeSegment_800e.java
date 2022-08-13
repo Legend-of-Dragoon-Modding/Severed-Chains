@@ -497,7 +497,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>null</li>
    *   <li>{@link SEffe#FUN_80115ab0}</li>
    *   <li>{@link SEffe#FUN_80115a94}</li>
-   *   <li>{@link SEffe#FUN_80115a58}</li>
+   *   <li>{@link SEffe#scriptPlayXaAudio}</li>
    *   <li>{@link Bttl_800e#FUN_800e7314}</li>
    *   <li>{@link Bttl_800e#FUN_800e71e4}</li>
    *   <li>{@link Bttl_800e#FUN_800e727c}</li>
@@ -1343,7 +1343,7 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6e6c() {
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3fL);
+    setCdMix(0x3f);
 
     _800bf0b4.setu(0);
     _800bf0cd.setu(0);

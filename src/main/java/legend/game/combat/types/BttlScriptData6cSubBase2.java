@@ -8,7 +8,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class BttlScriptData6cSubBase2 implements MemoryRef {
+public abstract class BttlScriptData6cSubBase2 implements MemoryRef {
   private final Value ref;
 
   public final Pointer<BttlScriptData6cSubBase2> _00;
@@ -20,7 +20,7 @@ public class BttlScriptData6cSubBase2 implements MemoryRef {
   public BttlScriptData6cSubBase2(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, BttlScriptData6cSubBase2::new));
+    this._00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, value -> {throw new RuntimeException("Can't be instantiated");}));
     this.size_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
     this._05 = ref.offset(1, 0x05L).cast(ByteRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);

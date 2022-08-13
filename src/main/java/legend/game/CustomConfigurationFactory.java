@@ -24,7 +24,7 @@ public class CustomConfigurationFactory extends ConfigurationFactory {
     builder.add(builder.newFilter("ThresholdFilter", Filter.Result.ACCEPT, Filter.Result.NEUTRAL).addAttribute("level", Level.INFO));
     final AppenderComponentBuilder appenderBuilder = builder.newAppender("Stdout", "CONSOLE").addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT);
     appenderBuilder.add(builder.newLayout("PatternLayout").addAttribute("pattern", "%d{HH:mm:ss.SSS} [%t %c:%L] %highlight{%-5level}: %msg%n%throwable"));
-    appenderBuilder.add(builder.newFilter("MarkerFilter", Filter.Result.DENY, Filter.Result.NEUTRAL).addAttribute("marker", "CDROM_DRIVE"));
+    appenderBuilder.add(builder.newFilter("MarkerFilter", Filter.Result.ACCEPT, Filter.Result.NEUTRAL).addAttribute("marker", "CDROM_DRIVE"));
     builder.add(appenderBuilder);
     builder.add(builder.newLogger("legend", Level.INFO).add(builder.newAppenderRef("Stdout")).addAttribute("additivity", false));
     builder.add(builder.newRootLogger(Level.INFO).add(builder.newAppenderRef("Stdout")));

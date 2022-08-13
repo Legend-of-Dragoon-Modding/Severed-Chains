@@ -1442,16 +1442,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80032898L)
-  public static void CdMix_Impl(final long cdLeftToSpuLeft, final long cdLeftToSpuRight, final long cdRightToSpuRight, final long cdRightToSpuLeft) {
-    CDROM_REG0.setu(0x2L); // Index 2
-    CDROM_REG2.setu(cdLeftToSpuLeft); // Audio Volume for Left-CD-Out to Left-SPU-Input
-    CDROM_REG3.setu(cdLeftToSpuRight); // Audio Volume for Left-CD-Out to Right-SPU-Input
-
-    CDROM_REG0.setu(0x3L); // Index 3
-    CDROM_REG1.setu(cdRightToSpuRight); // Audio Volume for Right-CD-Out to Right-SPU-Input
-    CDROM_REG2.setu(cdRightToSpuLeft); // Audio Volume for Right-CD-Out to Left-SPU-Input
-
-    CDROM_REG3.setu(0x20L); // Commit
+  public static void CdMix_Impl(final int cdLeftToSpuLeft, final int cdLeftToSpuRight, final int cdRightToSpuRight, final int cdRightToSpuLeft) {
+    CDROM.setAudioMix(cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
   }
 
   /**
@@ -1992,7 +1984,7 @@ public final class Scus94491BpeSegment_8003 {
     packets[numberOfCommands++] = new Tuple<>(CdlCOMMAND.SET_MODE_0E, new byte[] {(byte)mode.toLong(), (byte)0, (byte)0, (byte)0});
 
     if(pos.pack() < 0) {
-      assert false : "CDROM position was < 0 (" + pos + ')';
+      LOGGER.warn("CDROM position was < 0 (%s)", pos);
       return 0;
     }
 
@@ -2003,7 +1995,7 @@ public final class Scus94491BpeSegment_8003 {
       case SEEK_P_16, SEEK_L_15 -> {
         packets[numberOfCommands++] = new Tuple<>(command, new byte[0]);
         if(cdlPacketIndex_800bf700.get() + numberOfCommands > DSL_MAX_COMMAND) {
-          assert false : "CDROM packet queue overflow";
+//          assert false : "CDROM packet queue overflow";
           return 0;
         }
         cdlPacketBatch_800532cc.add(0x1L);
@@ -3087,8 +3079,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80035630L)
-  public static void CdMix(final long cdLeftToSpuLeft, final long cdLeftToSpuRight, final long cdRightToSpuRight, final long cdRightToSpuLeft) {
+  public static void CdMix(final int cdLeftToSpuLeft, final int cdLeftToSpuRight, final int cdRightToSpuRight, final int cdRightToSpuLeft) {
     CdMix_Impl(cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
+  }
+
+  @Method(0x80035650L)
+  public static long FUN_80035650(final CdlCOMMAND command, final long params) {
+    return DsCommand(command, params, 0, 0);
   }
 
   @Method(0x80035ad4L)

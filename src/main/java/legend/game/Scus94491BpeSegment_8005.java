@@ -108,6 +108,17 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052d7c = MEMORY.ref(4, 0x80052d7cL);
 
+  public static final Value _80052d90 = MEMORY.ref(4, 0x80052d90L);
+  /**
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cb78}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cdb8}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c268}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002ce4c}</li>
+   * </ol>
+   */
+  public static final Value xaLoadingStages_80052da0 = MEMORY.ref(4, 0x80052da0L);
+
   public static final Value _80052db0 = MEMORY.ref(2, 0x80052db0L);
 
   public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);

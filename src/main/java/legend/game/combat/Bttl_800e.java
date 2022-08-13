@@ -105,7 +105,7 @@ import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022928;
+import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023264;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023484;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
@@ -172,7 +172,7 @@ import static legend.game.combat.Bttl_800c._800c6944;
 import static legend.game.combat.Bttl_800c._800c6948;
 import static legend.game.combat.Bttl_800c._800c6958;
 import static legend.game.combat.Bttl_800c._800c695c;
-import static legend.game.combat.Bttl_800c._800c6960;
+import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800c69c8;
@@ -4697,45 +4697,45 @@ public final class Bttl_800e {
     //LAB_800e88cc
     if(scriptIndex != struct7cc_800c693c.deref().scriptIndex_1c.get() && scriptIndex != a1) {
       if((s3._04.get() & 0x4_0000L) == 0 && (s3._04.get() & 0xff00_0000L) != 0x200_0000L) {
-        if(!s3._58.isNull()) {
-          Pointer<BttlScriptData6cSubBase2> s2 = s3._58;
+        Pointer<BttlScriptData6cSubBase2> s2 = s3._58;
 
-          //LAB_800e892c
-          do {
-            final int size = s2.deref().size_04.get();
-            final long addr1 = addToLinkedListTail(size);
-            final long addr2 = s2.getPointer();
+        //LAB_800e892c
+        while(!s2.isNull()) {
+          final int size = s2.deref().size_04.get();
+          final long addr1 = addToLinkedListTail(size);
+          final BttlScriptData6cSubBase2 addr2 = s2.deref();
 
-            if(addr2 < addr1) {
-              //LAB_800e8968
-              memcpy(addr1, addr2, size);
+          if(addr2.getAddress() < addr1) {
+            //LAB_800e8968
+            memcpy(addr1, addr2.getAddress(), size);
 
-              //LAB_800e8984
-              removeFromLinkedList(s2.getPointer());
-              s2.setPointer(addr1);
-            } else {
-              //LAB_800e899c
-              removeFromLinkedList(addr1);
-            }
+            //LAB_800e8984
+            removeFromLinkedList(s2.getPointer());
+            s2.set(addr1, addr2.getClass());
+            MemoryHelper.copyPointerTypes(s2.deref(), addr2);
+          } else {
+            //LAB_800e899c
+            removeFromLinkedList(addr1);
+          }
 
-            //LAB_800e89ac
-            s2 = s2.deref()._00;
-          } while(!s2.isNull());
+          //LAB_800e89ac
+          s2 = s2.deref()._00;
         }
 
         //LAB_800e89c4
         if(!s3._44.isNull()) {
           final int size = (int)s3.size_08.get();
           final long addr1 = addToLinkedListTail(size);
-          final long addr2 = s3._44.getPointer();
+          final BttlScriptData6cSubBase1 addr2 = s3._44.deref();
 
-          if(addr2 < addr1) {
+          if(addr2.getAddress() < addr1) {
             //LAB_800e8a0c
-            memcpy(addr1, addr2, size);
+            memcpy(addr1, addr2.getAddress(), size);
 
             //LAB_800e8a28
-            removeFromLinkedList(s3._44.getPointer());
-            s3._44.setPointer(addr1);
+            removeFromLinkedList(addr2.getAddress());
+            s3._44.set(addr1, addr2.getClass());
+            MemoryHelper.copyPointerTypes(s3._44.deref(), addr2);
           } else {
             //LAB_800e8a40
             removeFromLinkedList(addr1);
@@ -4853,7 +4853,7 @@ public final class Bttl_800e {
       do {
         final BttlScriptData6cSubBase2 sub = subPtr.deref();
 
-        final long v1 = sub._08.derefAs(BiFunctionRef.classFor(EffectManagerData6c.class, BttlScriptData6cSubBase2.class, Long.class)).run(data, subPtr.deref());
+        final long v1 = sub._08.derefAs(BiFunctionRef.classFor(EffectManagerData6c.class, BttlScriptData6cSubBase2.class, long.class)).run(data, subPtr.deref());
         if(v1 == 0) {
           //LAB_800e8f2c
           data._04.and(~(1 << sub._05.get()));
@@ -5028,7 +5028,7 @@ public final class Bttl_800e {
       final long v1 = (a1 & 0xffL) * 0x8L;
       MEMORY.ref(4, a0).offset(0x4L).set(struct7cc_800c693c.deref()._39c.offset(v1).offset(0x0L).get());
       MEMORY.ref(4, a0).offset(0x8L).set(struct7cc_800c693c.deref()._39c.offset(v1).offset(0x4L).get());
-    } else{
+    } else {
       //LAB_800e9658
       long v0 = FUN_800eac58(a1 | 0x400_0000L).getAddress(); //TODO
       v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
@@ -7742,24 +7742,24 @@ public final class Bttl_800e {
     FUN_80110030(0x1L);
 
     //LAB_800ef31c
-    for(int charIndex = 0; charIndex < 3; charIndex++) {
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
       //LAB_800ef328
       for(int i = 0; i < 9; i++) {
-        _800c6960.offset(charIndex * 0x9L).offset(1, i).setu(0xffL);
+        dragoonSpells_800c6960.get(charSlot).charIndex_00.set(-1);
       }
     }
 
     //LAB_800ef36c
     //LAB_800ef38c
-    for(int charIndex = 0; charIndex < Math.min(charCount_800c677c.get(), 3); charIndex++) {
-      final BattleObject27c s0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(charIndex * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-      final byte[] sp0x10 = new byte[9];
-      FUN_80022928(sp0x10, s0.charIndex_272.get());
-      _800c6960.offset(charIndex * 0x9L).offset(1, 0x0L).setu(s0.charIndex_272.get());
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final BattleObject27c s0 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(charSlot * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+      final byte[] spellIndices = new byte[8];
+      getUnlockedDragoonSpells(spellIndices, s0.charIndex_272.get());
+      dragoonSpells_800c6960.get(charSlot).charIndex_00.set(s0.charIndex_272.get());
 
       //LAB_800ef3d8
-      for(int i = 1; i < 9; i++) {
-        _800c6960.offset(charIndex * 0x9L).offset(1, i).setu(sp0x10[i - 1]);
+      for(int spellIndex = 0; spellIndex < 8; spellIndex++) {
+        dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellIndex).set(spellIndices[spellIndex]);
       }
 
       //LAB_800ef400

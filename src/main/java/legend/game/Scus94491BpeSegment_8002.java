@@ -4,7 +4,10 @@ import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
+import legend.core.cdrom.CdlCOMMAND;
 import legend.core.cdrom.CdlFILE;
+import legend.core.cdrom.CdlLOC;
+import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
@@ -56,6 +59,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
+import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
@@ -136,7 +140,9 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
+import static legend.game.Scus94491BpeSegment_8003.DsSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030320;
+import static legend.game.Scus94491BpeSegment_8003.FUN_80035650;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -152,6 +158,7 @@ import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
+import static legend.game.Scus94491BpeSegment_8003.setCdromDmaInterruptSubSubCallbackPtr_800c1bb4;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_28;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_38;
@@ -198,6 +205,9 @@ import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005._80052c5c;
 import static legend.game.Scus94491BpeSegment_8005._80052c64;
+import static legend.game.Scus94491BpeSegment_8005._80052c74;
+import static legend.game.Scus94491BpeSegment_8005._80052c94;
+import static legend.game.Scus94491BpeSegment_8005._80052d90;
 import static legend.game.Scus94491BpeSegment_8005._80052dbc;
 import static legend.game.Scus94491BpeSegment_8005._80052dc0;
 import static legend.game.Scus94491BpeSegment_8005._80052e1c;
@@ -216,6 +226,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpERROR_EventId_800bf264;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpIOE_EventId_800bf260;
 import static legend.game.Scus94491BpeSegment_800b.HwCARD_EvSpNEW_EventId_800bf26c;
@@ -307,13 +318,19 @@ import static legend.game.Scus94491BpeSegment_800b._800bf064;
 import static legend.game.Scus94491BpeSegment_800b._800bf068;
 import static legend.game.Scus94491BpeSegment_800b._800bf0a8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ac;
+import static legend.game.Scus94491BpeSegment_800b._800bf0b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0c0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0c4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0c8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
+import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
+import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
+import static legend.game.Scus94491BpeSegment_800b._800bf0d4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b._800bf0e0;
+import static legend.game.Scus94491BpeSegment_800b._800bf0e8;
 import static legend.game.Scus94491BpeSegment_800b._800bf140;
 import static legend.game.Scus94491BpeSegment_800b._800bf148;
 import static legend.game.Scus94491BpeSegment_800b._800bf14c;
@@ -342,6 +359,8 @@ import static legend.game.Scus94491BpeSegment_800b.cardFinishedOkay_800bf280;
 import static legend.game.Scus94491BpeSegment_800b.cardPort_800bf180;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.deviceCallback_800bf1d0;
+import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -369,6 +388,8 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.Scus94491BpeSegment_800b.xaArchiveIndex_800bf0bc;
+import static legend.game.Scus94491BpeSegment_800b.xaFileIndex_800bf0e4;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
@@ -1860,10 +1881,10 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022928L)
-  public static long FUN_80022928(final byte[] a0, final int charIndex) {
+  public static int getUnlockedDragoonSpells(final byte[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
-    for(int a2 = 0; a2 < 8; a2++) {
-      a0[a2] = -1;
+    for(int spellIndex = 0; spellIndex < 8; spellIndex++) {
+      spellIndicesOut[spellIndex] = -1;
     }
 
     if(charIndex == -1) {
@@ -1872,31 +1893,30 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
-      a0[0] = 9;
-      a0[1] = 4;
-      return 0x2L;
+      spellIndicesOut[0] = 9;
+      spellIndicesOut[1] = 4;
+      return 2;
     }
 
     //LAB_80022994
     //LAB_80022998
-    long a0_0 = _80111d20.offset(charIndex * 0x4L).get();
+    final long a0 = _80111d20.offset(charIndex * 0x4L).get();
 
     //LAB_800229d0
-    int a3 = 0;
-    for(int i = 0; i < stats_800be5f8.get(charIndex).dlevel_0f.get() + 1; i++) {
-      final long v1 = MEMORY.ref(1, a0_0).offset(0x2L).get();
+    int spellCount = 0;
+    for(int dlevel = 0; dlevel < stats_800be5f8.get(charIndex).dlevel_0f.get() + 1; dlevel++) {
+      final long v1 = MEMORY.ref(1, a0).offset(dlevel * 0x8L).offset(0x2L).get();
 
       if(v1 != 0xffL) {
-        a0[a3] = (byte)v1;
-        a3++;
+        spellIndicesOut[spellCount] = (byte)v1;
+        spellCount++;
       }
 
       //LAB_800229e8
-      a0_0 += 0x8L;
     }
 
     //LAB_80022a00
-    return a3;
+    return spellCount;
   }
 
   @Method(0x80022a10L)
@@ -7822,6 +7842,112 @@ public final class Scus94491BpeSegment_8002 {
     a0.set(a0.get() & 0xff9f | (a0.get() & 0x40) / 2 | (a0.get() & 0x20) * 2);
   }
 
+  @Method(0x8002c268L)
+  public static long FUN_8002c268() {
+    if(_800bf0cd.get() == 0) {
+      _800bf0ce.setu(0x7f);
+      setCdVolume(0x7f, 0x7f);
+      setCdMix(0x3f);
+    }
+
+    //LAB_8002c2a4
+    final long v1 = _800bf0cf.get();
+    if(v1 >= 3 && v1 != 7) {
+      return 0;
+    }
+
+    //LAB_8002c2c8
+    //LAB_8002c2dc
+    CDROM.sendCommand(CdlCOMMAND.SET_MODE_0E, xaArchiveIndex_800bf0bc.get() != 3 ? 0xd8L : 0x58L); // 3 uses normal speed, all others use double speed
+
+    //LAB_8002c314
+    _800bf0cf.setu(5);
+    callbackIndex_8004ddc4.setu(0x12L);
+    return 1;
+  }
+
+  @Method(0x8002c33cL)
+  public static long FUN_8002c33c() {
+    CDROM.sendCommand(CdlCOMMAND.SET_FILTER_0D, 1, xaFileIndex_800bf0e4.get());
+
+    final long xaFileIndex = xaFileIndex_800bf0e4.get();
+    final long v0 = _80052d90.offset(xaArchiveIndex_800bf0bc.get() * 0x4L).get() + xaFileIndex / 2 * 0x4L;
+    final long a1;
+    if((xaFileIndex & 0x1L) == 0) {
+      //LAB_8002c3b8
+      a1 = MEMORY.ref(2, v0).offset(0x0L).get();
+    } else {
+      a1 = MEMORY.ref(2, v0).offset(0x2L).get();
+    }
+
+    //LAB_8002c3d0
+    _800bf0d4.setu(a1);
+
+    if(_800bf0d0.get() != 0) {
+      _800bf0cf.setu(6);
+      callbackIndex_8004ddc4.setu(0x11L);
+    } else {
+      //LAB_8002c400
+      _800bf0cf.setu(8);
+      _800bf0e0.setu(0);
+
+      final long v1;
+      if(drgnBinIndex_800bc058.get() == 0x4L) {
+        v1 = _80052c94.getAddress();
+      } else {
+        //LAB_8002c438
+        v1 = _80052c74.getAddress();
+      }
+
+      //LAB_8002c448
+      _800bf0e8.cast(CdlLOC::new).set(CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex_800bf0bc.get() * 0x8L).getSigned()).pos);
+      callbackIndex_8004ddc4.setu(0xeL);
+    }
+
+    //LAB_8002c4e0
+    return 1;
+  }
+
+  @Method(0x8002c750L)
+  public static void FUN_8002c750(final SyncCode syncCode, final byte[] responses) {
+    if(syncCode == SyncCode.DATA_READY) {
+      if(_800bf0e0.get() == 0) {
+        final int vol = (int)_800bf0ce.get();
+        setCdVolume(vol, vol);
+        setCdMix(0x3f);
+      }
+
+      //LAB_8002c79c
+      _800bf0e0.addu(0x1L);
+      if((int)_800bf0d4.get() < (int)_800bf0e0.get()) {
+        setCdVolume(0, 0);
+        setCdMix(0);
+
+        if(_800bf0cf.get() != syncCode.ordinal()) {
+          setCdVolume(0, 0);
+          setCdMix(0);
+          _800bf0cf.setu(syncCode.ordinal());
+          _800bf0d0.setu(0);
+          _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
+
+          if(_800bf0b8.get() != 0) {
+            callbackIndex_8004ddc4.setu(0x10L);
+            _800bf0e0.setu(0);
+          } else {
+            //LAB_8002c824
+            callbackIndex_8004ddc4.setu(0x14L);
+          }
+        }
+
+        //LAB_8002c848
+        //LAB_8002c84c
+        _800bf0e0.setu(_800bf0d4.get());
+      }
+    }
+
+    //LAB_8002c858
+  }
+
   @Method(0x8002c86cL)
   public static void FUN_8002c86c() {
     if(_800bf0cd.get() != 0) {
@@ -7836,7 +7962,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_8002c8c4
       setCdVolume((int)_800bf0ce.get(), (int)_800bf0ce.get());
-      setCdMix(0x3fL);
+      setCdMix(0x3f);
     }
 
     //LAB_8002c8dc
@@ -7848,14 +7974,184 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002c904L)
-  public static void setCdMix(final long volume) {
+  public static void setCdMix(final int volume) {
     if(gameState_800babc8.mono_4e0.get() == 0) {
       //LAB_8002c95c
       CdMix(volume, 0, volume, 0);
     } else {
-      final long mixedVol = volume * 70 / 100;
+      final int mixedVol = volume * 70 / 100;
       CdMix(mixedVol, mixedVol, mixedVol, mixedVol);
     }
+  }
+
+  @Method(0x8002c984L)
+  public static long playXaAudio(final int xaLoadingStage, final int xaArchiveIndex, final int xaFileIndex) {
+    //LAB_8002c9f0
+    if(callbackIndex_8004ddc4.get() != 0 || fileLoadingInfoArray_800bbad8.get(0).used.get() || xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
+      return 0;
+    }
+
+    if(xaLoadingStage == 3) {
+      LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
+
+      setCdVolume(0x7f, 0x7f);
+      setCdMix(0x3f);
+
+      final long v1;
+      if(drgnBinIndex_800bc058.get() == 0x4L) {
+        v1 = _80052c94.getAddress();
+      } else {
+        //LAB_8002c438
+        v1 = _80052c74.getAddress();
+      }
+
+      //LAB_8002c448
+      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
+
+      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
+      _800bf0cf.setu(4);
+    }
+
+    if(xaLoadingStage == 2) {
+      _800bf0cf.setu(4);
+    }
+
+    return 0;
+
+//    xaArchiveIndex_800bf0bc.setu(xaArchiveIndex);
+//    xaFileIndex_800bf0e4.setu(xaFileIndex);
+//
+//    LOGGER.info("Script XA callback %d", xaLoadingStage);
+//
+//    return (long)xaLoadingStages_80052da0.offset(xaLoadingStage * 0x4L).deref(4).call();
+  }
+
+  @Method(0x8002cb24L)
+  public static long FUN_8002cb24() {
+    if(DsSync(_800bf0b8.get(), 0) == SyncCode.COMPLETE) {
+      callbackIndex_8004ddc4.setu(0);
+      _800bf0cf.setu(0);
+      return 1;
+    }
+
+    //LAB_8002cb5c
+    callbackIndex_8004ddc4.setu(0x14L);
+    return 0;
+  }
+
+  @Method(0x8002cb78L)
+  public static long FUN_8002cb78() {
+    if(_800bf0cf.get() == 1) {
+      return 0;
+    }
+
+    //LAB_8002cba8
+    setCdVolume(0, 0);
+    setCdMix(0);
+    _800bf0cf.setu(1);
+    _800bf0d0.setu(0);
+
+    _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
+
+    if(_800bf0b8.get() != 0) {
+      callbackIndex_8004ddc4.setu(0x10L);
+      _800bf0e0.setu(0);
+      return 1;
+    }
+
+    //LAB_8002cbec
+    callbackIndex_8004ddc4.setu(0x14L);
+    return 0;
+  }
+
+  @Method(0x8002cc28L)
+  public static long FUN_8002cc28() {
+//    if(!DsControl(CdlCOMMAND.READ_S_1B, _800bf0e8.getAddress(), 0)) {
+      //LAB_8002cc74
+//      _800bf0cf.setu(8);
+//      callbackIndex_8004ddc4.setu(0x14L);
+
+      //LAB_8002cc90
+//      return 0;
+//    }
+
+    CDROM.sendCommand(CdlCOMMAND.SET_LOC_02, _800bf0e8.offset(1, 0x0L).get(), _800bf0e8.offset(1, 0x1L).get(), _800bf0e8.offset(1, 0x2L).get(), _800bf0e8.offset(1, 0x3L).get());
+    CDROM.sendCommand(CdlCOMMAND.READ_S_1B);
+
+    _800bf0cf.setu(4);
+    setCdromDmaInterruptSubSubCallbackPtr_800c1bb4(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002c750", SyncCode.class, byte[].class), BiConsumerRef::new));
+    callbackIndex_8004ddc4.setu(0);
+    return 1;
+  }
+
+  @Method(0x8002cca0L)
+  public static long FUN_8002cca0() {
+    if(DsSync(_800bf0b8.get(), 0) != SyncCode.COMPLETE) {
+      //LAB_8002ccf8
+      //LAB_8002ccfc
+      callbackIndex_8004ddc4.setu(0x14L);
+      return 0;
+    }
+
+    CDROM.sendCommand(CdlCOMMAND.SET_MODE_0E, 0x80L);
+
+    callbackIndex_8004ddc4.setu(0);
+    _800bf0cf.setu(0);
+
+    //LAB_8002cd08
+    return 1;
+  }
+
+  @Method(0x8002cdb8L)
+  public static long FUN_8002cdb8() {
+    if(_800bf0d0.get() != 0) {
+      return 0;
+    }
+
+    setCdVolume(0, 0);
+    setCdMix(0);
+    _800bf0cf.setu(2);
+    _800bf0d0.setu(1);
+
+    _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
+
+    if(_800bf0b8.get() != 0) {
+      callbackIndex_8004ddc4.setu(0x10L);
+      return 0x1L;
+    }
+
+    //LAB_8002ce2c
+    callbackIndex_8004ddc4.setu(0x14L);
+
+    //LAB_8002ce3c
+    return 0;
+  }
+
+  @Method(0x8002ce4cL)
+  public static long FUN_8002ce4c() {
+    if(_800bf0cf.get() >= 3) {
+      return 0;
+    }
+
+    //LAB_8002ce78
+    //LAB_8002ce84
+//    do {
+//      _800bf0b8.setu(DsPacket(new CdlMODE(0x90), _800bf0e8.cast(CdlLOC::new), CdlCOMMAND.SEEK_L_15, 0, -1));
+//    } while(_800bf0b8.get() > 0);
+
+    CDROM.sendCommand(CdlCOMMAND.PAUSE_09);
+    CDROM.sendCommand(CdlCOMMAND.SET_MODE_0E, 0x90L);
+
+    if(_800bf0e8.cast(CdlLOC::new).pack() >= 0) {
+      CDROM.sendCommand(CdlCOMMAND.SET_LOC_02, _800bf0e8.offset(1, 0x0L).get(), _800bf0e8.offset(1, 0x1L).get(), _800bf0e8.offset(1, 0x2L).get(), _800bf0e8.offset(1, 0x3L).get());
+//      CDROM.sendCommand(CdlCOMMAND.SEEK_L_15);
+    }
+
+    _800bf0cf.setu(3);
+    callbackIndex_8004ddc4.setu(0x13L);
+
+    //LAB_8002cec0
+    return 1;
   }
 
   @Method(0x8002ced8L)
