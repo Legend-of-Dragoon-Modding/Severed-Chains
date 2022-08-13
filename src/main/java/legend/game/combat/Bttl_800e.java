@@ -5686,7 +5686,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eaf54L)
-  public static BttlScriptData6cSub1c FUN_800eaf54(EffectManagerData6c a0, final SVECTOR a1) {
+  public static BttlScriptData6cSub1c FUN_800eaf54(EffectManagerData6c a0, final RECT a1) {
     //LAB_800eaf80
     while((a0._04.get() & 0x400L) == 0) {
       final int parentIndex = a0.parentScriptIndex_50.get();
@@ -5703,7 +5703,7 @@ public final class Bttl_800e {
 
     //LAB_800eafcc
     while(a0_0 != null) {
-      if(a0_0._0c.x.get() == a1.getX() && a0_0._0c.y.get() == a1.getY()) {
+      if(a0_0._0c.x.get() == a1.x.get() && a0_0._0c.y.get() == a1.y.get()) {
         break;
       }
 
@@ -5768,7 +5768,7 @@ public final class Bttl_800e {
 
     final long v1 = effect._04.get();
     long v0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20.get(1).deref().get() * 0x10L;
-    final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, MEMORY.ref(4, v0, SVECTOR::new));
+    final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, MEMORY.ref(4, v0, RECT::new));
 
     if(a0 != null) {
       long a1 = -a0._14.get();
@@ -5793,6 +5793,20 @@ public final class Bttl_800e {
 
     //LAB_800eb270
     return 0;
+  }
+
+  @Method(0x800eb280L)
+  public static void FUN_800eb280(final EffectManagerData6c a0, final RECT a1, final int a2) {
+    BttlScriptData6cSub1c v0 = FUN_800eaf54(a0, a1);
+
+    if(v0 == null) {
+      v0 = FUN_800e8dd4(a0, 0xa, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1c, BttlScriptData6cSub1c::new);
+      v0._0c.set(a1);
+      v0._14.set(0);
+    }
+
+    //LAB_800eb2ec
+    v0._18.set(a2);
   }
 
   @Method(0x800eb308L)
@@ -5843,6 +5857,22 @@ public final class Bttl_800e {
     }
 
     //LAB_800eb46c
+  }
+
+  @Method(0x800eb48cL)
+  public static void FUN_800eb48c(final int scriptIndex, final int a1, final int a2) {
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
+    final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub14_2 effect = manager._44.derefAs(BttlScriptData6cSub14_2.class);
+    final long v0 = effect._04.get();
+    final RECT sp0x10 = new RECT().set(MEMORY.ref(2, v0 + MEMORY.ref(4, v0).offset(0x8L).get() + a1 * 0x10L, RECT::new));
+    FUN_800eb280(manager, sp0x10, a2);
+  }
+
+  @Method(0x800eb518L)
+  public static long FUN_800eb518(final RunningScript script) {
+    FUN_800eb48c(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get());
+    return 0;
   }
 
   @Method(0x800eb554L)
