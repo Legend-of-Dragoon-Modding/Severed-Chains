@@ -1874,10 +1874,19 @@ public final class SEffe {
     a2._20.set((short)10);
   }
 
+  /**
+   * {@link SEffe#FUN_800ff5c4} uses t2 which isn't set... assuming the value even matters, this is to pass in t2 from the previous method
+   */
+  private static Long brokenT2For800ff5c4;
+
   @Method(0x800ff5c4L)
   public static void FUN_800ff5c4(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
-    assert false : "Undefined t2";
-    final long t2 = 0;
+    if(brokenT2For800ff5c4 == null) {
+      throw new RuntimeException("t2 was not set");
+    }
+
+    final long t2 = brokenT2For800ff5c4;
+    brokenT2For800ff5c4 = null;
 
     seed_800fa754.advance();
     a2._58.setY((short)(-(seed_800fa754.get() % 61 + 60) * a3._18.get() / 256));
@@ -2014,6 +2023,41 @@ public final class SEffe {
     a2._14.set((short)(seed_800fa754.get() % 4097));
   }
 
+  @Method(0x800ffefcL)
+  public static void FUN_800ffefc(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    // no-op
+  }
+
+  @Method(0x800fff04L)
+  public static void FUN_800fff04(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._14.set((short)0);
+    a2._18.set((short)0);
+    a2._1a.setZ((short)0);
+    final short v0 = (short)((a3._18.get() & 0xffff) >>> 2);
+    a2._16.set(v0);
+    a2._1a.setX(v0);
+    a2._1a.setY(a3._10.get());
+  }
+
+  @Method(0x800fff30L)
+  public static void FUN_800fff30(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._58.setX((short)(seed_800fa754.advance().get() % 769 + 256));
+  }
+
+  @Method(0x800fffa0L)
+  public static void FUN_800fffa0(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._1a.setX(a3._10.get());
+    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._16.set((short)((seed_800fa754.advance().get() % 123 + 64) * a3._18.get() >> 8));
+    a2._18.set((short)(0x800 / a1._50.get() * (_8011a008.get() & 0xffff)));
+  }
+
+  @Method(0x801000b8L)
+  public static void FUN_801000b8(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._58.setX((short)(-a2._50.getX() / 32));
+    a2._58.setZ((short)(-a2._50.getZ() / 32));
+  }
+
   @Method(0x801000f8L)
   public static void FUN_801000f8(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
     FUN_800ff890(a0, a1, a2, a3);
@@ -2071,6 +2115,11 @@ public final class SEffe {
     a2._14.set((short)0);
     a2._58.setY((short)-Math.abs(a2._58.getY()));
     a2._60.set(a2._58).negate().div(a2._12.get());
+  }
+
+  @Method(0x801007b4L)
+  public static void FUN_801007b4(final EffectManagerData6c a0, final BttlScriptData6cSub98 a1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
+    a2._58.set(a2._50).negate().div(a2._12.get());
   }
 
   @Method(0x80100af4L)
@@ -2277,6 +2326,7 @@ public final class SEffe {
     s3._8c.set((short)0);
     s3._8e.set((short)0);
     t2 = a4._20.get() * 10;
+    brokenT2For800ff5c4 = t2;
     seed_800fa754.advance();
     s3._04.set((short)(seed_800fa754.get() % (a4._14.get() + 0x1L) + 0x1L));
     seed_800fa754.advance();
