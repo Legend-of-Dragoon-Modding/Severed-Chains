@@ -1746,7 +1746,7 @@ public final class Bttl_800c {
             a2 = a2 | (combatant.charIndex_1a2.get() & 0x1) << 7;
             callbackParam = a2 & 0xffff_feffL;
             int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
-            if(combatant.charIndex_1a2.get() != 0) {
+            if((combatant.charIndex_1a2.get() & 0x1) != 0) {
               if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
                 charIndex = 18; // Divine dragoon
               } else {
