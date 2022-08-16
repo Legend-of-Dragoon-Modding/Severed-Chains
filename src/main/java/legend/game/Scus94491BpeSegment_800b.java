@@ -108,7 +108,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
   public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
-
+  /** Note: I think these two vars are overlapped by the params of RunningScript? */
   public static final Value _800bc0b8 = MEMORY.ref(1, 0x800bc0b8L);
   public static final Value _800bc0b9 = MEMORY.ref(1, 0x800bc0b9L);
 

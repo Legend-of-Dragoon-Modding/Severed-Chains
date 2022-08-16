@@ -15,6 +15,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
@@ -35,6 +36,8 @@ import legend.game.combat.types.BttlScriptData6cSub34;
 import legend.game.combat.types.BttlScriptData6cSub38;
 import legend.game.combat.types.BttlScriptData6cSub38Sub14;
 import legend.game.combat.types.BttlScriptData6cSub44;
+import legend.game.combat.types.BttlScriptData6cSub50;
+import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub98;
 import legend.game.combat.types.BttlScriptData6cSub98Inner24;
 import legend.game.combat.types.BttlScriptData6cSub98Sub94;
@@ -65,6 +68,8 @@ import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
+import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
+import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -81,6 +86,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
@@ -149,6 +155,7 @@ import static legend.game.combat.Bttl_800e.FUN_800e9428;
 import static legend.game.combat.Bttl_800e.FUN_800e95f0;
 import static legend.game.combat.Bttl_800e.FUN_800eac58;
 import static legend.game.combat.Bttl_800e.FUN_800ebb58;
+import static legend.game.combat.Bttl_800e.FUN_800ec7e4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 
 public final class SEffe {
@@ -173,6 +180,10 @@ public final class SEffe {
   private static final Value _800fb840 = MEMORY.ref(1, 0x800fb840L);
 
   private static final Value _800fb84c = MEMORY.ref(1, 0x800fb84cL);
+
+  private static final Value _800fb8fc = MEMORY.ref(4, 0x800fb8fcL);
+  private static final Value _800fb910 = MEMORY.ref(4, 0x800fb910L);
+  private static final Value _800fb930 = MEMORY.ref(1, 0x800fb930L);
 
   private static final SVECTOR _800fb94c = MEMORY.ref(2, 0x800fb94cL, SVECTOR::new);
 
@@ -509,6 +520,8 @@ public final class SEffe {
   private static final Value _8011a024 = MEMORY.ref(4, 0x8011a024L);
   private static final Value _8011a028 = MEMORY.ref(4, 0x8011a028L);
   private static final Value _8011a02c = MEMORY.ref(4, 0x8011a02cL);
+
+  private static final ArrayRef<IntRef> _8011a034 = MEMORY.ref(4, 0x8011a034L, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
 
   @Method(0x800fb95cL)
   public static void FUN_800fb95c(final BttlScriptData6cSub98Sub94 a0) {
@@ -4798,6 +4811,260 @@ public final class SEffe {
 
     //LAB_80109f90
     return 0;
+  }
+
+  @Method(0x8010c378L)
+  public static long FUN_8010c378(final RunningScript a0) {
+    final int sp18 = a0.params_20.get(1).deref().get();
+    final int sp1c = a0.params_20.get(1).deref().get();
+    final int sp20 = a0.params_20.get(3).deref().get();
+    final int sp24 = a0.params_20.get(4).deref().get();
+    _8011a034.get(0).set(a0.params_20.get(5).deref().get());
+    _8011a034.get(1).set(a0.params_20.get(6).deref().get());
+    _8011a034.get(2).set(a0.params_20.get(7).deref().get());
+    _8011a034.get(3).set(a0.params_20.get(8).deref().get());
+    _8011a034.get(4).set(a0.params_20.get(9).deref().get());
+
+    final int effectIndex = allocateEffectManager(
+      a0.scriptStateIndex_00.get(),
+      0x50L,
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010c69c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010c8f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010f94c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      BttlScriptData6cSub50::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub50 effect = manager._44.derefAs(BttlScriptData6cSub50.class);
+    effect._00.set(5);
+    effect._02.set(0);
+    effect._38.setPointer(addToLinkedListTail(0x12cL));
+
+    //LAB_8010c4a4
+    for(int i = 0; i < 5; i++) {
+      final BttlScriptData6cSub50Sub3c s0 = effect._38.deref().get(i);
+      s0._03.set(1);
+      s0.x_04.set((short)0);
+      s0.y_06.set((short)0);
+      s0._08.set(0);
+      s0._0c.set(0);
+      s0._0e.set(0);
+      s0._10.set(0);
+      s0._14.set(0);
+      s0._16.set(0);
+      s0._18.set(0);
+      s0._28.set(0);
+      s0._2e.set((short)0x1600);
+      s0._30.set((short)0x1600);
+      s0._32.set(0);
+      s0._34.set(0);
+
+      final int a1 = _8011a034.get(i).get();
+      if(a1 == -1) {
+        s0._02.set(0);
+      } else {
+        //LAB_8010c500
+        s0._02.set(1);
+
+        long v0;
+        if((a1 & 0xf_ff00L) == 0xf_ff00L) {
+          v0 = _800c6948.get() + (a1 & 0xff) * 0x8L;
+          effect._04.get(i).set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+          effect._0e.get(i).set((int)MEMORY.ref(2, v0).offset(0x2L).get());
+          effect._18.get(i).set((int)MEMORY.ref(1, v0).offset(0x4L).get());
+          effect._22.get(i).set((int)MEMORY.ref(1, v0).offset(0x5L).get());
+          effect._2c.get(i).set((int)MEMORY.ref(2, v0).offset(0x6L).get());
+        } else {
+          //LAB_8010c5a8
+          v0 = FUN_800eac58(a1 | 0x400_0000L).getAddress(); //TODO
+          v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
+          effect._04.get(i).set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+          effect._0e.get(i).set((int)MEMORY.ref(2, v0).offset(0x2L).get());
+          effect._18.get(i).set((int)MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4);
+          effect._22.get(i).set((int)MEMORY.ref(2, v0).offset(0x6L).get());
+          effect._2c.get(i).set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+        }
+      }
+
+      //LAB_8010c608
+    }
+
+    effect.bobjIndex_3c.set(sp18);
+    effect._40.set((short)sp1c);
+    effect._42.set((short)sp20);
+    effect._44.set((short)sp24);
+    effect._48.set((short)0);
+    manager._10._00.or(0x5000_0000L);
+    a0.params_20.get(0).deref().set(effectIndex);
+    return 0;
+  }
+
+  @Method(0x8010c69cL)
+  public static void FUN_8010c69c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub50 effect = manager._44.derefAs(BttlScriptData6cSub50.class);
+    effect._4a.set((short)(rand() % 30));
+
+    if(effect._4a.get() != 0) {
+      final DVECTOR t1 = FUN_800ec7e4(scriptStatePtrArr_800bc1c0.get(effect.bobjIndex_3c.get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148, effect._40.get(), effect._42.get(), effect._44.get());
+      final int t4 = (int)-(t1.getX() * 2.5f);
+      final int t3 = (int)-(t1.getY() * 2.5f);
+
+      //LAB_8010c7c0
+      for(int i = 0; i < 5; i++) {
+        final BttlScriptData6cSub50Sub3c s2 = effect._38.deref().get(i);
+        final int dispW = (int)displayWidth_1f8003e0.get();
+        final int dispH = (int)displayHeight_1f8003e4.get();
+        s2.x_04.set((short)(t1.getX() + dispW / 2));
+        s2.y_06.set((short)(t1.getY() + dispH / 2));
+
+        if(s2.x_04.get() > 0 && s2.x_04.get() < dispW && s2.y_06.get() > 0 && s2.y_06.get() < dispH) {
+          s2._03.set(1);
+
+          final int scale = (int)_800fb8fc.offset(i * 0x4L).get();
+          s2.x_04.add((short)(t4 * scale >> 8));
+          s2.y_06.add((short)(t3 * scale >> 8));
+        } else {
+          //LAB_8010c870
+          s2._03.set(0);
+        }
+
+        //LAB_8010c874
+      }
+
+      int a0 = Math.abs(t1.getX());
+      final int v1 = (int)(displayWidth_1f8003e0.get() / 2);
+      if(v1 < a0) {
+        a0 = v1;
+      }
+
+      //LAB_8010c8b8
+      effect._48.set((short)(0xff - ((0xff00 / v1 * a0) >> 8)));
+    }
+
+    //LAB_8010c8e0
+  }
+
+  @Method(0x8010c8f8L)
+  public static void FUN_8010c8f8(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub50 s5 = manager._44.derefAs(BttlScriptData6cSub50.class);
+
+    if(s5._4a.get() != 0) {
+      s5._02.incr();
+      final long sp10 = manager._10._00.get();
+
+      //LAB_8010c9fc
+      for(int s6 = 0; s6 < 5; s6++) {
+        final BttlScriptData6cSub50Sub3c s0 = s5._38.deref().get(s6);
+
+        if(s0._03.get() != 0 && s0._02.get() == 1) {
+          final int sp14 = -s5._18.get(s6).get() / 2;
+          final int sp16 = -s5._22.get(s6).get() / 2;
+          final int sp18 = s5._18.get(s6).get();
+          final int sp1a = s5._22.get(s6).get();
+          final int sp1c = (s5._0e.get(s6).get() & 0x100) >>> 4 | (s5._04.get(s6).get() & 0x3ff) >>> 6;
+          final int sp1e = (s5._04.get(s6).get() & 0x3f) << 2;
+          final int sp1f = s5._0e.get(s6).get() & 0xff;
+          final int sp20 = s5._2c.get(s6).get() << 4 & 0x3ff;
+          final int sp22 = s5._2c.get(s6).get() >>> 6 & 0x1ff;
+          final int sp24 = manager._10.svec_1c.getX() * s5._48.get() >> 8;
+          final int sp25 = manager._10.svec_1c.getY() * s5._48.get() >> 8;
+          final int sp26 = manager._10.svec_1c.getZ() * s5._48.get() >> 8;
+
+          int a0;
+          int a1;
+          int a3;
+          int t0;
+          if(s6 == 0) {
+            //LAB_8010cb38
+            for(int s3 = 0; s3 < 4; s3++) {
+              final long addr = linkedListAddress_1f8003d8.get();
+              linkedListAddress_1f8003d8.addu(0x28L);
+              MEMORY.ref(1, addr).offset(0x3L).setu(0x9L);
+              MEMORY.ref(4, addr).offset(0x4L).setu(0x2c80_8080L);
+              MEMORY.ref(1, addr).offset(0x7L).oru((sp10 >>> 29) & 0x2L);
+              MEMORY.ref(1, addr).offset(0x4L).setu(sp24);
+              MEMORY.ref(1, addr).offset(0x5L).setu(sp25);
+              MEMORY.ref(1, addr).offset(0x6L).setu(sp26);
+              a3 = (s0._2e.get() * s5._18.get(s6).get() >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x0L).get();
+              t0 = (s0._30.get() * s5._22.get(s6).get() >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x4L).get();
+              a0 = (int)displayWidth_1f8003e0.get() / 2;
+              a1 = (int)displayHeight_1f8003e4.get() / 2;
+              final int[] sp0x48 = new int[8];
+              sp0x48[0] = s0.x_04.get() - a0 + a3;
+              sp0x48[1] = s0.y_06.get() - a1 + t0;
+              sp0x48[2] = s0.x_04.get() - a0 + a3 + (s5._18.get(s6).get() * s0._2e.get() >> 12);
+              sp0x48[3] = s0.y_06.get() - a1 + t0;
+              sp0x48[4] = s0.x_04.get() - a0 + a3;
+              sp0x48[5] = s0.y_06.get() - a1 + t0 + (s5._22.get(s6).get() * s0._30.get() >> 12);
+              sp0x48[6] = s0.x_04.get() - a0 + a3 + (s5._18.get(s6).get() * s0._2e.get() >> 12);
+              sp0x48[7] = s0.y_06.get() - a1 + t0 + (s5._22.get(s6).get() * s0._30.get() >> 12);
+              MEMORY.ref(2, addr).offset(0x08L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x0L).get() * 2    ]);
+              MEMORY.ref(2, addr).offset(0x0aL).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x0L).get() * 2 + 1]);
+              MEMORY.ref(1, addr).offset(0x0cL).setu(sp1e);
+              MEMORY.ref(1, addr).offset(0x0dL).setu(sp1f);
+              MEMORY.ref(2, addr).offset(0x0eL).setu(sp22 << 6 | (sp20 & 0x3f0L) >>> 4);
+              MEMORY.ref(2, addr).offset(0x10L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x1L).get() * 2    ]);
+              MEMORY.ref(2, addr).offset(0x12L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x1L).get() * 2 + 1]);
+              MEMORY.ref(1, addr).offset(0x14L).setu(sp18 + sp1e - 1);
+              MEMORY.ref(1, addr).offset(0x15L).setu(sp1f);
+              MEMORY.ref(2, addr).offset(0x16L).setu(sp1c | (sp10 >>> 23) & 0x60L);
+              MEMORY.ref(2, addr).offset(0x18L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x2L).get() * 2    ]);
+              MEMORY.ref(2, addr).offset(0x1aL).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x2L).get() * 2 + 1]);
+              MEMORY.ref(1, addr).offset(0x1cL).setu(sp1e);
+              MEMORY.ref(1, addr).offset(0x1dL).setu(sp1a + sp1f - 1);
+              MEMORY.ref(2, addr).offset(0x20L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x3L).get() * 2    ]);
+              MEMORY.ref(2, addr).offset(0x22L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x3L).get() * 2 + 1]);
+              MEMORY.ref(1, addr).offset(0x24L).setu(sp18 + sp1e - 1);
+              MEMORY.ref(1, addr).offset(0x25L).setu(sp1a + sp1f - 1);
+              insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
+            }
+          } else {
+            //LAB_8010ceec
+            final long addr = linkedListAddress_1f8003d8.get();
+            linkedListAddress_1f8003d8.addu(0x28L);
+            MEMORY.ref(1, addr).offset(0x03L).setu(0x9L);
+            MEMORY.ref(4, addr).offset(0x04L).setu(0x2c80_8080L);
+            MEMORY.ref(1, addr).offset(0x07L).oru(sp10 >>> 29 & 0x2L);
+            MEMORY.ref(1, addr).offset(0x04L).setu(sp24);
+            MEMORY.ref(1, addr).offset(0x05L).setu(sp25);
+            MEMORY.ref(1, addr).offset(0x06L).setu(sp26);
+            a3 = -(s0._2e.get() * s5._18.get(s6).get() >> 12) / 2;
+            t0 = -(s0._30.get() * s5._22.get(s6).get() >> 12) / 2;
+            a0 = (int)displayWidth_1f8003e0.get() / 2;
+            a1 = (int)displayHeight_1f8003e4.get() / 2;
+            MEMORY.ref(2, addr).offset(0x08L).setu(s0.x_04.get() - a0 + a3);
+            MEMORY.ref(2, addr).offset(0x0aL).setu(s0.y_06.get() - a1 + t0);
+            MEMORY.ref(1, addr).offset(0x0cL).setu(sp1e);
+            MEMORY.ref(1, addr).offset(0x0dL).setu(sp1f);
+            MEMORY.ref(2, addr).offset(0x0eL).setu(sp22 << 6 | (sp20 & 0x3f0L) >>> 4);
+            MEMORY.ref(2, addr).offset(0x10L).setu(s0.x_04.get() - a0 + a3 + (s5._18.get(s6).get() * s0._2e.get() >> 12));
+            MEMORY.ref(2, addr).offset(0x12L).setu(s0.y_06.get() - a1 + t0);
+            MEMORY.ref(1, addr).offset(0x14L).setu(sp18 + sp1e - 1);
+            MEMORY.ref(1, addr).offset(0x15L).setu(sp1f);
+            MEMORY.ref(2, addr).offset(0x16L).setu(sp1c | (sp10 >>> 23) & 0x60L);
+            MEMORY.ref(2, addr).offset(0x18L).setu(s0.x_04.get() - a0 + a3);
+            MEMORY.ref(2, addr).offset(0x1aL).setu(s0.y_06.get() - a1 + t0 + (s5._22.get(s6).get() * s0._30.get() >> 12));
+            MEMORY.ref(1, addr).offset(0x1cL).setu(sp1e);
+            MEMORY.ref(1, addr).offset(0x1dL).setu(sp1a + sp1f - 1);
+            MEMORY.ref(2, addr).offset(0x20L).setu(s0.x_04.get() - a0 + a3 + (s5._18.get(s6).get() * s0._2e.get() >> 12));
+            MEMORY.ref(2, addr).offset(0x22L).setu(s0.y_06.get() - a1 + t0 + (s5._22.get(s6).get() * s0._30.get() >> 12));
+            MEMORY.ref(1, addr).offset(0x24L).setu(sp18 + sp1e - 1);
+            MEMORY.ref(1, addr).offset(0x25L).setu(sp1a + sp1f - 1);
+            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
+          }
+        }
+
+        //LAB_8010d198
+        //LAB_8010d19c
+      }
+    }
+
+    //LAB_8010d1ac
+  }
+
+  @Method(0x8010f94cL)
+  public static void FUN_8010f94c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub50.class)._38.getPointer());
   }
 
   @Method(0x80110030L)
