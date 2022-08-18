@@ -1,6 +1,7 @@
 package legend.game.combat.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
@@ -23,7 +24,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
   public final ShortRef _20;
   public final UnsignedByteRef _22;
   public final UnsignedByteRef _23;
-  public final UnsignedByteRef _24;
+  public final ByteRef _24;
 
   public final UnsignedShortRef _26;
   public final UnsignedByteRef _28;
@@ -50,7 +51,7 @@ public class BttlScriptData6cSub38 extends BttlScriptData6cSubBase1 {
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
     this._22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
     this._23 = ref.offset(1, 0x23L).cast(UnsignedByteRef::new);
-    this._24 = ref.offset(1, 0x24L).cast(UnsignedByteRef::new);
+    this._24 = ref.offset(1, 0x24L).cast(ByteRef::new);
 
     this._26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
     this._28 = ref.offset(1, 0x28L).cast(UnsignedByteRef::new);

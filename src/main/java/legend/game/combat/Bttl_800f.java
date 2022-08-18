@@ -1792,13 +1792,11 @@ public final class Bttl_800f {
 
   @Method(0x800f4518L)
   public static long FUN_800f4518(final RunningScript a0) {
-    final long a3 = Math.min(charCount_800c677c.get(), 3);
-
     //LAB_800f4534
     //LAB_800f454c
     int i;
-    for(i = 0; i < a3; i++) {
-      if(_8006e398.offset(0xe40L).offset(i * 0x2L).get() == a0.params_20.get(0).deref().get()) {
+    for(i = 0; i < charCount_800c677c.get(); i++) {
+      if(_8006e398.offset(0xe40L).offset(i * 0x4L).get() == a0.params_20.get(0).deref().get()) {
         break;
       }
     }

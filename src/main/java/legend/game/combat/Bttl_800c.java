@@ -533,7 +533,19 @@ public final class Bttl_800c {
    * </ol>
    */
   public static final Value _800fabfc = MEMORY.ref(4, 0x800fabfcL);
-
+  /**
+   * <ol start="0">
+   *   <li>{@link Bttl_800d#FUN_800d53e4}</li>
+   *   <li>{@link Bttl_800d#FUN_800d5574}</li>
+   *   <li>{@link Bttl_800d#FUN_800db78c}</li>
+   *   <li>{@link Bttl_800d#FUN_800db794}</li>
+   *   <li>{@link Bttl_800d#FUN_800d5740}</li>
+   *   <li>{@link Bttl_800d#FUN_800d5930}</li>
+   *   <li>{@link Bttl_800d#FUN_800d5afc}</li>
+   *   <li>{@link Bttl_800d#FUN_800d5cf4}</li>
+   * </ol>
+   */
+  public static final Value _800fac1c = MEMORY.ref(4, 0x800fac1cL);
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d5ec8}</li>
@@ -560,7 +572,19 @@ public final class Bttl_800c {
    * </ol>
    */
   public static final Value _800fac5c = MEMORY.ref(4, 0x800fac5cL);
-
+  /**
+   * <ol start="0">
+   *   <li>{@link Bttl_800d#FUN_800d7790}</li>
+   *   <li>{@link Bttl_800d#FUN_800d7920}</li>
+   *   <li>{@link Bttl_800d#FUN_800d7aec}</li>
+   *   <li>{@link Bttl_800d#FUN_800d7cdc}</li>
+   *   <li>{@link Bttl_800d#FUN_800db8a0}</li>
+   *   <li>{@link Bttl_800d#FUN_800db8a8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d7ea8}</li>
+   *   <li>{@link Bttl_800d#FUN_800d80a0}</li>
+   * </ol>
+   */
+  public static final Value _800fac7c = MEMORY.ref(4, 0x800fac7cL);
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d8274}</li>

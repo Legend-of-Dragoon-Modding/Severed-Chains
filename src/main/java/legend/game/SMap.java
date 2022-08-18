@@ -8590,7 +8590,7 @@ public final class SMap {
         final long a3_0 = _800cbe48.offset(i * 0x4L).get();
 
         v1 = -MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x0L).getSigned() * x - MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x4L).getSigned() * z - MEMORY.ref(4, t5).offset(a3_0 * 0xcL).offset(0x8L).get();
-        v1 = (int)v1 / MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x2L).getSigned();
+        v1 = (int)v1 / MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x2L).getSigned(); //TODO /0
 
         v1 = v1 - (y - 0x14L);
         if((int)v1 > 0 && (int)v1 < (int)t0) {

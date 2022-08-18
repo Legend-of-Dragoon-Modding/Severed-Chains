@@ -116,6 +116,7 @@ import static legend.game.Scus94491BpeSegment_8002.textLen;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ef50;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f900;
@@ -4600,6 +4601,77 @@ public final class Bttl_800e {
     //LAB_800e759c
   }
 
+  @Method(0x800e75acL)
+  public static void FUN_800e75ac(final BattleStruct24 a0, final MATRIX a1) {
+    final MATRIX sp0x40 = new MATRIX();
+    FUN_8003ec90(matrix_800c3548, a1, sp0x40);
+    final long a2 = Math.min(0x3ff8, _1f8003e8.get() + sp0x40.transfer.getZ() / 4);
+    if(a2 >= 0x28) {
+      //LAB_800e7610
+      CPU.CTC2(sp0x40.getPacked(0), 0);
+      CPU.CTC2(sp0x40.getPacked(2), 1);
+      CPU.CTC2(sp0x40.getPacked(4), 2);
+      CPU.CTC2(sp0x40.getPacked(6), 3);
+      CPU.CTC2(sp0x40.getPacked(8), 4);
+      CPU.CTC2(sp0x40.transfer.getX(), 5);
+      CPU.CTC2(sp0x40.transfer.getY(), 6);
+      CPU.CTC2(sp0x40.transfer.getZ(), 7);
+      final SVECTOR sp0x10 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)(a0.y_06.get() * 64), (short)0);
+      final SVECTOR sp0x18 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)0, (short)(a0.y_06.get() * 64));
+      final SVECTOR sp0x20 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
+      final SVECTOR sp0x28 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
+      CPU.MTC2(sp0x10.getXY(), 0);
+      CPU.MTC2(sp0x10.getZ(),  1);
+      CPU.MTC2(sp0x18.getXY(), 2);
+      CPU.MTC2(sp0x18.getZ(),  3);
+      CPU.MTC2(sp0x20.getXY(), 4);
+      CPU.MTC2(sp0x20.getZ(),  5);
+      CPU.COP2(0x280030L);
+      final DVECTOR sp0x30 = new DVECTOR().setXY(CPU.MFC2(12));
+      final DVECTOR sp0x34 = new DVECTOR().setXY(CPU.MFC2(13));
+      final DVECTOR sp0x38 = new DVECTOR().setXY(CPU.MFC2(14));
+      long sp60 = CPU.MFC2(8);
+      long sp64 = CPU.CFC2(31);
+      long sp68 = (int)CPU.MFC2(19) >> 2;
+      CPU.MTC2(sp0x28.getXY(), 0);
+      CPU.MTC2(sp0x28.getZ(), 1);
+      CPU.COP2(0x180001L);
+      final DVECTOR sp0x3c = new DVECTOR().setXY(CPU.MFC2(14));
+      sp60 = CPU.MFC2(8);
+      sp64 = CPU.CFC2(31);
+      sp68 = (int)CPU.MFC2(19) >> 2;
+      final long s0 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x28L);
+      MEMORY.ref(1, s0).offset(0x03L).setu(0x9L);
+      MEMORY.ref(4, s0).offset(0x04L).setu(0x2c80_8080L);
+      MEMORY.ref(1, s0).offset(0x04L).setu(a0.r_14.get());
+      MEMORY.ref(1, s0).offset(0x05L).setu(a0.g_15.get());
+      MEMORY.ref(1, s0).offset(0x06L).setu(a0.b_16.get());
+      MEMORY.ref(1, s0).offset(0x07L).oru(a0._00.get() >>> 29 & 0x2L);
+      MEMORY.ref(2, s0).offset(0x08L).setu(sp0x30.getX());
+      MEMORY.ref(2, s0).offset(0x0aL).setu(sp0x30.getY());
+      MEMORY.ref(1, s0).offset(0x0cL).setu(a0.u_0e.get());
+      MEMORY.ref(1, s0).offset(0x0dL).setu(a0.v_0f.get());
+      MEMORY.ref(2, s0).offset(0x0eL).setu(a0.clutY_12.get() << 6 | (a0.clutX_10.get() & 0x3f0L) >>> 4);
+      MEMORY.ref(2, s0).offset(0x10L).setu(sp0x34.getX());
+      MEMORY.ref(2, s0).offset(0x12L).setu(sp0x30.getY());
+      MEMORY.ref(1, s0).offset(0x14L).setu(a0.u_0e.get() + a0.w_08.get());
+      MEMORY.ref(1, s0).offset(0x15L).setu(a0.v_0f.get());
+      MEMORY.ref(2, s0).offset(0x16L).setu(a0._0c.get() | a0._00.get() >>> 23 & 0x60L);
+      MEMORY.ref(2, s0).offset(0x18L).setu(sp0x38.getX());
+      MEMORY.ref(2, s0).offset(0x1aL).setu(sp0x38.getY());
+      MEMORY.ref(1, s0).offset(0x1cL).setu(a0.u_0e.get());
+      MEMORY.ref(1, s0).offset(0x1dL).setu(a0.v_0f.get() + a0.h_0a.get());
+      MEMORY.ref(2, s0).offset(0x20L).setu(sp0x3c.getX());
+      MEMORY.ref(2, s0).offset(0x22L).setu(sp0x3c.getY());
+      MEMORY.ref(1, s0).offset(0x24L).setu(a0.u_0e.get() + a0.w_08.get());
+      MEMORY.ref(1, s0).offset(0x25L).setu(a0.v_0f.get() + a0.h_0a.get());
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + a2 / 4 * 4, s0);
+    }
+
+    //LAB_800e7930
+  }
+
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR a1, long s2) {
     long v0;
@@ -5323,8 +5395,7 @@ public final class Bttl_800e {
       sp0x10._20.set(a1.svec_10.getZ()); // This is correct, different svec for Z
       if((a1._00.get() & 0x400_0000L) != 0) {
         _1f8003e8.setu(a1._22.get());
-        assert false;
-//        FUN_800e75ac(sp0x10);
+        FUN_800e75ac(sp0x10, a2);
       } else {
         //LAB_800e9574
         FUN_800e7944(sp0x10, a2.transfer, a1._22.get());
