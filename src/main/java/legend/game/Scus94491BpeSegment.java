@@ -336,9 +336,9 @@ public final class Scus94491BpeSegment {
 
   public static final BoolRef isStackPointerModified_1f8003bc = MEMORY.ref(2, 0x1f8003bcL, BoolRef::new);
   public static final Value _1f8003c0 = MEMORY.ref(4, 0x1f8003c0L);
-  public static final Value _1f8003c4 = MEMORY.ref(4, 0x1f8003c4L);
+  public static final Value zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L);
   public static final Value _1f8003c8 = MEMORY.ref(4, 0x1f8003c8L);
-  public static final Value _1f8003cc = MEMORY.ref(4, 0x1f8003ccL);
+  public static final Value zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL);
   public static final Pointer<UnboundedArrayRef<GsOT_TAG>> tags_1f8003d0 = MEMORY.ref(4, 0x1f8003d0L, Pointer.of(4, UnboundedArrayRef.of(4, GsOT_TAG::new)));
   public static final Value _1f8003d4 = MEMORY.ref(4, 0x1f8003d4L);
   public static final Value linkedListAddress_1f8003d8 = MEMORY.ref(4, 0x1f8003d8L);
@@ -346,7 +346,7 @@ public final class Scus94491BpeSegment {
   public static final Value centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL);
   public static final Value displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L);
   public static final Value displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L);
-  public static final Value _1f8003e8 = MEMORY.ref(4, 0x1f8003e8L);
+  public static final Value zOffset_1f8003e8 = MEMORY.ref(4, 0x1f8003e8L);
   public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
   public static final Value _1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
 
@@ -1619,9 +1619,9 @@ public final class Scus94491BpeSegment {
     orderingTables_8005a370.get(1).length_00.set(length);
 
     _1f8003c0.setu(length);
-    _1f8003c4.setu(0xeL - length);
+    zShift_1f8003c4.setu(0xeL - length);
     _1f8003c8.setu(0x1L << length);
-    _1f8003cc.setu((0x1L << length) - 0x2L);
+    zMax_1f8003cc.setu((0x1L << length) - 0x2L);
 
     VSync(0);
     SetDispMask(0);

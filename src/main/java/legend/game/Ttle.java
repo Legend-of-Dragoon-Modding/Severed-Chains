@@ -32,9 +32,9 @@ import static legend.game.SItem._80111cfc;
 import static legend.game.SItem._80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment._1f8003c4;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
-import static legend.game.Scus94491BpeSegment._1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -1724,9 +1724,9 @@ public final class Ttle {
                     MEMORY.ref(1, address).offset(0x1eL).setu(MEMORY.ref(1, sp18).offset(0x1aL).get() * sp00 / 0xffL);
 
                     // OTZ - Average Z value (for ordering table)
-                    long a3 = (int)(CPU.MFC2(7L) + _800c6758.get()) >> _1f8003c4.get(0x1fL);
-                    if(a3 > _1f8003cc.get()) {
-                      a3 = _1f8003cc.get();
+                    long a3 = (int)(CPU.MFC2(7L) + _800c6758.get()) >> zShift_1f8003c4.get(0x1fL);
+                    if(a3 > zMax_1f8003cc.get()) {
+                      a3 = zMax_1f8003cc.get();
                     }
 
                     //LAB_800ccaf4

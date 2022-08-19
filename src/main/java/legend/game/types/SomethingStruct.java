@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
+import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Value;
@@ -14,7 +15,7 @@ public class SomethingStruct implements MemoryRef {
   private final Value ref;
 
   public final Pointer<UnboundedArrayRef<TmdObjTable>> objTableArrPtr_00;
-  public final UnsignedIntRef verts_04;
+  public final Pointer<UnboundedArrayRef<SVECTOR>> verts_04;
   public final UnsignedIntRef normals_08;
   public final UnsignedIntRef count_0c;
   public final UnsignedIntRef primitives_10;
@@ -29,7 +30,7 @@ public class SomethingStruct implements MemoryRef {
     this.ref = ref;
 
     this.objTableArrPtr_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x1c, TmdObjTable::new)));
-    this.verts_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.verts_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, UnboundedArrayRef.of(8, SVECTOR::new)));
     this.normals_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this.count_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this.primitives_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);

@@ -46,7 +46,7 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment._1f8003e8;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
@@ -4828,7 +4828,7 @@ public final class Bttl_800d {
     s4 = 0x1L;
     s7 = a0.ui_f4.get();
     fp = a0.ObjTable_0c.nobj.get();
-    _1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.s_a0.get());
     sp50 = a0.ui_f8.get();
     _1f8003ec.setu(a0.ui_108.get());
     s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;

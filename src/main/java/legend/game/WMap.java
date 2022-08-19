@@ -56,10 +56,10 @@ import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment._1f8003c4;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
-import static legend.game.Scus94491BpeSegment._1f8003cc;
-import static legend.game.Scus94491BpeSegment._1f8003e8;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.fillMemory;
@@ -651,7 +651,7 @@ public class WMap {
     long nobj = a0.ObjTable_0c.nobj.get();
     long fp = a0.ui_f8.get();
 
-    _1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.s_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800c92c8
@@ -1058,9 +1058,9 @@ public class WMap {
                   MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L));
 
                   t2 = CPU.MFC2(7); // Average Z value
-                  t2 = t2 + _1f8003e8.get();
-                  v1 = _1f8003cc.get();
-                  t2 = (int)t2 >> _1f8003c4.get();
+                  t2 = t2 + zOffset_1f8003e8.get();
+                  v1 = zMax_1f8003cc.get();
+                  t2 = (int)t2 >> zShift_1f8003c4.get();
                   if((int)t2 >= (int)v1) {
                     t2 = v1;
                   }
@@ -2421,7 +2421,7 @@ public class WMap {
     _800c66a0.setu(0x2L);
     _800c66a4.setu(0x2L);
     _800c66b8.setu(0);
-    _1f8003e8.setu(0);
+    zOffset_1f8003e8.setu(0);
     _1f8003ec.setu(0x20L);
     _800c66d8.setu(0);
     _800c66dc.setu(_800bb114);
@@ -6924,10 +6924,10 @@ public class WMap {
       if(_800c6798.get() != 0x7L) {
         //LAB_800d91cc
         if(_800ef194.offset(_800c6798.get()).get() == i || _800ef19c.offset(_800c6798.get()).get() == i) {
-          _1f8003e8.setu(500L);
+          zOffset_1f8003e8.setu(500L);
         } else {
           //LAB_800d9204
-          _1f8003e8.setu(100L);
+          zOffset_1f8003e8.setu(100L);
         }
       }
 

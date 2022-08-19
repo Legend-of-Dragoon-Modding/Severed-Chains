@@ -30,9 +30,9 @@ import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003c0;
-import static legend.game.Scus94491BpeSegment._1f8003c4;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
-import static legend.game.Scus94491BpeSegment._1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment._8011e210;
@@ -845,9 +845,9 @@ public final class Scus94491BpeSegment_800e {
     orderingTables_8005a370.get(1).org_04.set(_8005a398.get(1));
 
     _1f8003c0.setu(0xeL);
-    _1f8003c4.setu(0);
+    zShift_1f8003c4.setu(0);
     _1f8003c8.setu(0x4000L);
-    _1f8003cc.setu(0x3ffeL);
+    zMax_1f8003cc.setu(0x3ffeL);
 
     FUN_8003c5e0();
 

@@ -64,7 +64,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.FUN_80018dec;
-import static legend.game.Scus94491BpeSegment._1f8003e8;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
@@ -1032,7 +1032,7 @@ public final class SEffe {
 
       //LAB_800fcff8
       setRotTransMatrix(sp0x30);
-      _1f8003e8.setu(0);
+      zOffset_1f8003e8.setu(0);
       if((a0._10._00.get() & 0x4000_0000L) != 0) {
         _1f8003ec.setu(a0._10._00.get() >>> 23 & 0x60L);
       } else {
@@ -7303,7 +7303,7 @@ public final class SEffe {
       }
 
       //LAB_801182c8
-      _1f8003e8.setu(data._10._22.get());
+      zOffset_1f8003e8.setu(data._10._22.get());
       if((data._10._00.get() & 0x40L) == 0) {
         FUN_800e61e4(data._10.svec_1c.getX() << 5, data._10.svec_1c.getY() << 5, data._10.svec_1c.getZ() << 5);
       } else {
@@ -7486,7 +7486,7 @@ public final class SEffe {
       sp0x10.set(4, (short)0);
       sp0x10.set(5, (short)0);
       _1f8003ec.setu(s1._10._00.get() >>> 23 & 0x60L);
-      _1f8003e8.setu(s1._10._22.get());
+      zOffset_1f8003e8.setu(s1._10._22.get());
       FUN_800e60e0(s1._10.svec_1c.getX() << 5, s1._10.svec_1c.getY() << 5, s1._10.svec_1c.getZ() << 5);
       FUN_800de3f4(bigStruct_800bda10.dobj2ArrPtr_00.deref().get(0).tmd_08.deref(), s1._10, sp0x10);
       FUN_800e6170();
@@ -7562,7 +7562,7 @@ public final class SEffe {
         }
 
         //LAB_80118f68
-        _1f8003e8.setu(fp._10._22.get());
+        zOffset_1f8003e8.setu(fp._10._22.get());
 
         if((fp._10._00.get() & 0x40L) == 0) {
           FUN_800e61e4(fp._10.svec_1c.getX() << 5, fp._10.svec_1c.getY() << 5, fp._10.svec_1c.getZ() << 5);

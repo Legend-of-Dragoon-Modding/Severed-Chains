@@ -75,9 +75,9 @@ import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
-import static legend.game.Scus94491BpeSegment._1f8003c4;
-import static legend.game.Scus94491BpeSegment._1f8003cc;
-import static legend.game.Scus94491BpeSegment._1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
@@ -677,7 +677,7 @@ public final class Bttl_800e {
           MEMORY.ref(4, s0).offset(0x1cL).setu(CPU.MFC2(14));
           CPU.COP2(0x158002dL);
 
-          s1 = _1f8003e8.get() + CPU.MFC2(7) >> 2;
+          s1 = zOffset_1f8003e8.get() + CPU.MFC2(7) >> 2;
           if((int)s1 >= 0xbL) {
             if((int)s1 >= 0xffeL) {
               s1 = 0xffeL;
@@ -1453,7 +1453,7 @@ public final class Bttl_800e {
           s5 = CPU.CFC2(31);
           MEMORY.ref(4, s1).offset(0x24L).setu(CPU.MFC2(14));
           CPU.COP2(0x168002eL);
-          s3 = (int)(CPU.MFC2(7) + _1f8003e8.get()) / 4;
+          s3 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) / 4;
 
           if((int)s3 >= 0xbL) {
             if((int)s3 >= 0xffeL) {
@@ -1612,7 +1612,7 @@ public final class Bttl_800e {
           MEMORY.ref(4, s0).offset(0x1cL).setu(CPU.MFC2(14));
           CPU.COP2(0x158002dL);
 
-          s2 = (int)(_1f8003e8.get() + CPU.MFC2(7)) >> 2;
+          s2 = (int)(zOffset_1f8003e8.get() + CPU.MFC2(7)) >> 2;
           if((int)s2 >= 0xbL) {
             if((int)s2 >= 0xffeL) {
               s2 = 0xffeL;
@@ -1831,7 +1831,7 @@ public final class Bttl_800e {
           MEMORY.ref(1, s1).offset(-0x1L).setu(sp0x10.offset(1, 0x1dL).get() * sp3c >> 12);
           MEMORY.ref(1, s1).offset(0x0L).setu(sp0x10.offset(1, 0x1eL).get() * sp40 >> 12);
 
-          s2 = CPU.MFC2(7) + _1f8003e8.get() >> 2;
+          s2 = CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2;
           if((int)s2 >= 0xbL) {
             if((int)s2 >= 0xffeL) {
               s2 = 0xffeL;
@@ -1974,7 +1974,7 @@ public final class Bttl_800e {
           MEMORY.ref(1, s1).offset(-0x02L).setu(sp0x10.offset(1, 0x14L).get() * sp0x30.get() >> 12);
           MEMORY.ref(1, s1).offset(-0x01L).setu(sp0x10.offset(1, 0x15L).get() * sp0x34.get() >> 12);
           MEMORY.ref(1, s1).offset( 0x00L).setu(sp0x10.offset(1, 0x16L).get() * sp0x38.get() >> 12);
-          s2 = (CPU.MFC2(7) + _1f8003e8.get()) / 4;
+          s2 = (CPU.MFC2(7) + zOffset_1f8003e8.get()) / 4;
           if((int)s2 >= 0xbL) {
             if((int)s2 >= 0xffeL) {
               s2 = 0xffeL;
@@ -2629,7 +2629,7 @@ public final class Bttl_800e {
 
             CPU.COP2(0x168_002eL); // Average of four Z values
             // OTZ - avg Z val, capped to 0xffe
-            final int avgZ = Math.min(0xffe, (int)(CPU.MFC2(7) + _1f8003e8.get()) >> 2);
+            final int avgZ = Math.min(0xffe, (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> 2);
             if(avgZ >= 11) { // Probably near clipping
               //LAB_800e3968
               final GsOT_TAG tag = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref().get(avgZ);
@@ -4605,7 +4605,7 @@ public final class Bttl_800e {
   public static void FUN_800e75ac(final BattleStruct24 a0, final MATRIX a1) {
     final MATRIX sp0x40 = new MATRIX();
     FUN_8003ec90(matrix_800c3548, a1, sp0x40);
-    final long a2 = Math.min(0x3ff8, _1f8003e8.get() + sp0x40.transfer.getZ() / 4);
+    final long a2 = Math.min(0x3ff8, zOffset_1f8003e8.get() + sp0x40.transfer.getZ() / 4);
     if(a2 >= 0x28) {
       //LAB_800e7610
       CPU.CTC2(sp0x40.getPacked(0), 0);
@@ -5394,7 +5394,7 @@ public final class Bttl_800e {
       sp0x10._1e.set(a1.svec_16.getY());
       sp0x10._20.set(a1.svec_10.getZ()); // This is correct, different svec for Z
       if((a1._00.get() & 0x400_0000L) != 0) {
-        _1f8003e8.setu(a1._22.get());
+        zOffset_1f8003e8.setu(a1._22.get());
         FUN_800e75ac(sp0x10, a2);
       } else {
         //LAB_800e9574
@@ -6715,7 +6715,7 @@ public final class Bttl_800e {
     }
 
     _1f8003ec.setu(0);
-    _1f8003e8.setu(a0._5e8.get());
+    zOffset_1f8003e8.setu(a0._5e8.get());
 
     //LAB_800ec5a0
     long s4 = 0x1L;
@@ -6842,7 +6842,7 @@ public final class Bttl_800e {
   @Method(0x800ec974L)
   public static void FUN_800ec974(final BigStruct a0) {
     _1f8003ec.setu(a0.ui_108.get());
-    _1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.s_a0.get());
 
     //LAB_800ec9d0
     long s6 = a0.ui_f4.get();
@@ -7066,9 +7066,9 @@ public final class Bttl_800e {
             MEMORY.ref(4, t0).offset(0x20L).setu(CPU.MFC2(14));
             CPU.COP2(0x168002eL);
 
-            long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+            long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
             if((int)t1 >= 0xbL) {
-              final long v1 = _1f8003cc.get();
+              final long v1 = zMax_1f8003cc.get();
 
               if((int)t1 >= (int)v1) {
                 t1 = v1;
@@ -7157,14 +7157,14 @@ public final class Bttl_800e {
           if((int)CPU.CFC2(31) >= 0) {
             MEMORY.ref(4, t1).offset(0x20L).setu(CPU.MFC2(14));
             CPU.COP2(0x168002eL);
-            t0 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+            t0 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
             if((int)t0 >= 0xbL) {
               CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6);
               v0 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
               CPU.MTC2(MEMORY.ref(4, v0).offset(0x0L).get(), 0);
               CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 1);
 
-              final long v1 = _1f8003cc.get();
+              final long v1 = zMax_1f8003cc.get();
               if((int)t0 >= (int)v1) {
                 t0 = v1;
               }
@@ -7248,9 +7248,9 @@ public final class Bttl_800e {
           MEMORY.ref(4, t0).offset(0x18L).setu(CPU.MFC2(14));
           CPU.COP2(0x158002dL);
 
-          long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+          long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
           if((int)t1 >= 0xbL) {
-            final long v1 = _1f8003cc.get();
+            final long v1 = zMax_1f8003cc.get();
 
             if((int)t1 >= (int)v1) {
               t1 = v1;
@@ -7356,10 +7356,10 @@ public final class Bttl_800e {
             MEMORY.ref(1, t2).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get());
             MEMORY.ref(1, t2).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get());
 
-            long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+            long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
 
             if((int)t1 >= 0xbL) {
-              final long v1 = _1f8003cc.get();
+              final long v1 = zMax_1f8003cc.get();
 
               if((int)t1 >= (int)v1) {
                 t1 = v1;
@@ -7432,9 +7432,9 @@ public final class Bttl_800e {
             MEMORY.ref(1, t2).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x19L).get());
             MEMORY.ref(1, t2).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get());
 
-            long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+            long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
             if((int)t1 >= 0xbL) {
-              final long v1 = _1f8003cc.get();
+              final long v1 = zMax_1f8003cc.get();
 
               if((int)t1 >= (int)v1) {
                 t1 = v1;
@@ -7489,10 +7489,10 @@ public final class Bttl_800e {
           MEMORY.ref(4, t0).offset(0x10L).setu(CPU.MFC2(13));
           MEMORY.ref(4, t0).offset(0x18L).setu(CPU.MFC2(14));
           CPU.COP2(0x158002dL);
-          long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+          long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
 
           if((int)t1 >= 0xbL) {
-            final long v1 = _1f8003cc.get();
+            final long v1 = zMax_1f8003cc.get();
 
             if((int)t1 >= (int)v1) {
               t1 = v1;
@@ -7577,9 +7577,9 @@ public final class Bttl_800e {
           MEMORY.ref(4, t0).offset(0x20L).setu(CPU.MFC2(14));
           CPU.COP2(0x158002dL);
 
-          long t1 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+          long t1 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
           if((int)t1 >= 0xbL) {
-            final long v1 = _1f8003cc.get();
+            final long v1 = zMax_1f8003cc.get();
 
             if((int)t1 >= (int)v1) {
               t1 = v1;
@@ -7664,9 +7664,9 @@ public final class Bttl_800e {
             CPU.COP2(0x168002eL);
             MEMORY.ref(4, t1).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
 
-            long t2 = (int)(CPU.MFC2(7) + _1f8003e8.get()) >> _1f8003c4.get();
+            long t2 = (int)(CPU.MFC2(7) + zOffset_1f8003e8.get()) >> zShift_1f8003c4.get();
             if((int)t2 >= 0xbL) {
-              final long v1 = _1f8003cc.get();
+              final long v1 = zMax_1f8003cc.get();
 
               if((int)t2 >= (int)v1) {
                 t2 = v1;
