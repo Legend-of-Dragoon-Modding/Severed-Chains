@@ -1873,6 +1873,10 @@ public final class SMap {
                 if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80) {
                   //LAB_800dc054
                   CPU.COP2(0x168002eL);
+
+                  final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+
                   MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get());
                   MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get());
                   MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get());
@@ -1885,9 +1889,6 @@ public final class SMap {
                   MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get());
                   MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get());
                   MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get());
-
-                  final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
@@ -2423,6 +2424,9 @@ public final class SMap {
                     //LAB_800dda7c
                     CPU.COP2(0x168_002eL); // Average Z
 
+                    final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+
                     MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L));
                     MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L));
                     MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L));
@@ -2435,9 +2439,6 @@ public final class SMap {
                     MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L));
                     MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L));
                     MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L));
-
-                    final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                     //LAB_800ddb3c
                     MEMORY.ref(4, packet).setu(0xc00_0000L | tag.p.get());

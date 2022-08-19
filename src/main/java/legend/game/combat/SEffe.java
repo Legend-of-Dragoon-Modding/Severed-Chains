@@ -147,7 +147,7 @@ import static legend.game.combat.Bttl_800d.FUN_800de544;
 import static legend.game.combat.Bttl_800d.FUN_800de618;
 import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800e.FUN_800e3e6c;
+import static legend.game.combat.Bttl_800e.renderCtmd;
 import static legend.game.combat.Bttl_800e.FUN_800e60e0;
 import static legend.game.combat.Bttl_800e.FUN_800e6170;
 import static legend.game.combat.Bttl_800e.FUN_800e61e4;
@@ -1045,7 +1045,7 @@ public final class SEffe {
       final GsDOBJ2 sp0x60 = new GsDOBJ2(tmp.get());
       sp0x60.attribute_00.set(MEMORY.ref(4, a2).offset(0x0L).get());
       sp0x60.tmd_08.set(a1);
-      FUN_800e3e6c(sp0x60);
+      renderCtmd(sp0x60);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
         FUN_800e62a8();
       }
@@ -7325,7 +7325,7 @@ public final class SEffe {
         final GsDOBJ2 dobj2 = new GsDOBJ2(tmp.get());
         dobj2.attribute_00.set(data._10._00.get());
         dobj2.tmd_08.set(s1.tmd_08.deref());
-        FUN_800e3e6c(dobj2);
+        renderCtmd(dobj2);
         tmp.release();
       } else {
         //LAB_80118370

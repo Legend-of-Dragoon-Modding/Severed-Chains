@@ -365,7 +365,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800e#FUN_800e4c10}</li>
    *   <li>{@link Bttl_800e#FUN_800e4c90}</li>
    *   <li>{@link Bttl_800e#FUN_800e4d2c}</li>
-   *   <li>{@link Bttl_800e#FUN_800e4db4}</li>
+   *   <li>{@link Bttl_800e#scriptGetLightColour}</li>
    *   <li>{@link Bttl_800e#FUN_800e4dfc}</li>
    *   <li>{@link Bttl_800e#FUN_800e4e2c}</li>
    *   <li>{@link Bttl_800e#FUN_800e4e64}</li>

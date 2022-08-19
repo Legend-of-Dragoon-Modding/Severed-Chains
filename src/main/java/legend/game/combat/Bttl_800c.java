@@ -750,7 +750,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800e#FUN_800e3478}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuadFunctionRef<Long, Long, Long, Long, Long>>> _800fadbc = MEMORY.ref(4, 0x800fadbcL, ArrayRef.of(Pointer.classFor(QuadFunctionRef.classFor(Long.class, Long.class, Long.class, Long.class, Long.class)), 0x40, 4, Pointer.deferred(4, QuadFunctionRef::new)));
+  public static final ArrayRef<Pointer<QuadFunctionRef<Long, Long, Long, Long, Long>>> ctmdRenderers_800fadbc = MEMORY.ref(4, 0x800fadbcL, ArrayRef.of(Pointer.classFor(QuadFunctionRef.classFor(Long.class, Long.class, Long.class, Long.class, Long.class)), 0x40, 4, Pointer.deferred(4, QuadFunctionRef::new)));
 
   public static final ScriptFile script_800faebc = MEMORY.ref(4, 0x800faebcL, ScriptFile::new);
 
@@ -3910,40 +3910,36 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void FUN_800cdcec(final BigStruct a0, final int a1, final VECTOR a2, final VECTOR a3, final EffectManagerData6c a4, final UnsignedShortRef a5, final UnsignedShortRef a6) {
-    short t4 = 0x7fff;
-    short t3 = -1;
-    int t7 = 0;
-    int t5 = 0;
-    final TmdObjTable v0 = a0.dobj2ArrPtr_00.deref().get(a1).tmd_08.deref();
-    long verts = v0.vert_top_00.get();
+  public static void FUN_800cdcec(final BigStruct a0, final int dobjIndex, final VECTOR largestVertRef, final VECTOR smallestVertRef, final EffectManagerData6c manager, final UnsignedShortRef largestIndexRef, final UnsignedShortRef smallestIndexRef) {
+    short largest = 0x7fff;
+    short smallest = -1;
+    int largestIndex = 0;
+    int smallestIndex = 0;
+    final TmdObjTable v0 = a0.dobj2ArrPtr_00.deref().get(dobjIndex).tmd_08.deref();
 
     //LAB_800cdd24
     for(int i = 0; i < v0.n_vert_04.get(); i++) {
-      final long a1_0 = verts + a4._10._24.get() * 0x2L;
-      final long v1 = MEMORY.ref(2, a1_0).offset(0x0L).getSigned();
-      if(v1 <= t4) {
-        t4 = (short)MEMORY.ref(2, a1_0).offset(0x0L).getSigned();
-        t7 = i;
-        a2.setX((int)MEMORY.ref(2, verts).offset(0x0L).getSigned());
-        a2.setY((int)MEMORY.ref(2, verts).offset(0x2L).getSigned());
-        a2.setZ((int)MEMORY.ref(2, verts).offset(0x4L).getSigned());
+      final SVECTOR vert = v0.vert_top_00.deref().get(i);
+      final ShortRef component = vert.component((int)manager._10._24.get());
+      final short val = component.get();
+
+      if(val <= largest) {
+        largest = component.get();
+        largestIndex = i;
+        largestVertRef.set(vert);
         //LAB_800cdd7c
-      } else if(v1 >= t3) {
-        t3 = (short)MEMORY.ref(2, a1_0).offset(0x0L).get();
-        t5 = i;
-        a3.setX((int)MEMORY.ref(2, verts).offset(0x0L).getSigned());
-        a3.setY((int)MEMORY.ref(2, verts).offset(0x2L).getSigned());
-        a3.setZ((int)MEMORY.ref(2, verts).offset(0x4L).getSigned());
+      } else if(val >= smallest) {
+        smallest = component.get();
+        smallestIndex = i;
+        smallestVertRef.set(vert);
       }
 
       //LAB_800cddbc
-      verts = verts + 0x8L;
     }
 
     //LAB_800cddcc
-    a5.set(t7);
-    a6.set(t5);
+    largestIndexRef.set(largestIndex);
+    smallestIndexRef.set(smallestIndex);
   }
 
   @Method(0x800cdde4L)
@@ -4086,7 +4082,7 @@ public final class Bttl_800c {
     final BttlScriptData6cSub3c s3 = data._44.derefAs(BttlScriptData6cSub3c.class);
     s3._00.incr();
     if(s3._00.get() == 0) {
-      FUN_800cdcec(s3._30.deref(), s3._08.get(), s3._20, s3._10, data, s3._0c, s3._0a);
+      FUN_800cdcec(s3._30.deref(), s3.dobjIndex_08.get(), s3.largestVertex_20, s3.smallestVertex_10, data, s3.largestVertexIndex_0c, s3.smallestVertexIndex_0a);
       return;
     }
 
@@ -4109,8 +4105,8 @@ public final class Bttl_800c {
     //LAB_800ce320
     for(int i = 0; i < 2; i++) {
       final MATRIX sp0x20 = new MATRIX();
-      GsGetLw(s3._30.deref().coord2ArrPtr_04.deref().get(s3._08.get()), sp0x20);
-      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, s3._10);
+      GsGetLw(s3._30.deref().coord2ArrPtr_04.deref().get(s3.dobjIndex_08.get()), sp0x20);
+      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, s3.smallestVertex_10);
       sp0x40.add(sp0x20.transfer);
       s0._04.get(i).set(sp0x40);
     }
@@ -4199,7 +4195,7 @@ public final class Bttl_800c {
     s0._38.clear();
     s0._00.set(-1);
     s0._04.set(a0.params_20.get(1).deref().get());
-    s0._08.set((short)a0.params_20.get(2).deref().get());
+    s0.dobjIndex_08.set((short)a0.params_20.get(2).deref().get());
     s0._0e.set(0x14);
     s1._10.svec_1c.set((short)255, (short)128, (short)96);
     final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
