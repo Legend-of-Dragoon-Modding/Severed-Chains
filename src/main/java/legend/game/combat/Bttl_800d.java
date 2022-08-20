@@ -5261,43 +5261,43 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de840L)
-  public static long FUN_800de840(final long a0, final long a1, long a2) {
+  public static long unpackCtmdData(final long unpackedData, long packedData, final int unpackedSize) {
     final BttlStruct50 a3 = _800c6920.deref();
 
-    MEMORY.ref(4, a0).offset(0x0L).setu(a3._10.get((int)a3._04.get()).getAddress());
-    long t1 = a1;
+    //TODO isn't this just getting overwritten below?
+    MEMORY.ref(4, unpackedData).setu(a3._10.get((int)a3._04.get()).getAddress());
 
     //LAB_800de878
-    a2 = (int)a2 >> 1;
-    while(a3._0c.get() < (int)a2) {
+    final int unpackedCount = unpackedSize / 2;
+    while(a3._0c.get() < unpackedCount) {
       if((a3._08.get() & 0x100L) == 0) {
-        a3._08.set(MEMORY.ref(1, t1).offset(0x0L).get() | 0xff00L);
-        t1 = t1 + 0x1L;
+        a3._08.set(MEMORY.ref(1, packedData).get() | 0xff00L);
+        packedData++;
       }
 
       //LAB_800de89c
       if((a3._08.get() & 0x1L) != 0) {
-        a3._10.get((int)a3._00.get()).set((int)(MEMORY.ref(1, t1).offset(0x1L).get() << 8 | MEMORY.ref(1, t1).offset(0x0L).get()));
+        a3._10.get((int)a3._00.get()).set((int)(MEMORY.ref(1, packedData).offset(0x1L).get() << 8 | MEMORY.ref(1, packedData).offset(0x0L).get()));
         a3._00.incr().and(0x1fL);
         a3._0c.incr();
-        t1 = t1 + 0x2L;
+        packedData += 2;
       } else {
         //LAB_800de8ec
-        long a1_0 = MEMORY.ref(1, t1).offset(0x0L).get();
-        final long t2 = (a1_0 >>> 5) + 0x1L;
+        long a1 = MEMORY.ref(1, packedData).get();
+        final long t2 = (a1 >>> 5) + 1;
 
         //LAB_800de904
         int i;
         for(i = 0; i < t2; i++) {
-          a1_0 = a1_0 & 0x1fL;
-          a3._10.get((int)a3._00.get()).set(a3._10.get((int)a1_0).get());
+          a1 &= 0x1fL;
+          a3._10.get((int)a3._00.get()).set(a3._10.get((int)a1).get());
           a3._00.incr().and(0x1fL);
-          a1_0 = a1_0 + 0x1L;
+          a1++;
         }
 
         //LAB_800de940
         a3._0c.add(i);
-        t1 = t1 + 0x1L;
+        packedData++;
       }
 
       //LAB_800de94c
@@ -5306,14 +5306,14 @@ public final class Bttl_800d {
 
     //LAB_800de968
     //LAB_800de970
-    for(int i = 0; i < a2; i++) {
-      MEMORY.ref(2, a0).offset(i * 0x2L).setu(a3._10.get((int)a3._04.get()).get());
+    for(int i = 0; i < unpackedCount; i++) {
+      MEMORY.ref(2, unpackedData).offset(i * 0x2L).setu(a3._10.get((int)a3._04.get()).get());
       a3._04.incr().and(0x1fL);
       a3._0c.decr();
     }
 
     //LAB_800de9b4
-    return t1;
+    return packedData;
   }
 
   @Method(0x800de9bcL)
