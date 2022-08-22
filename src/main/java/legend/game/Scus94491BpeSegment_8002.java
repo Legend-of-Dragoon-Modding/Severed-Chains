@@ -590,7 +590,7 @@ public final class Scus94491BpeSegment_8002 {
     GsInitCoordinate2(null, bigStruct.coord2_14);
     FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 1));
 
-    bigStruct.s_a0.set((short)0);
+    bigStruct.zOffset_a0.set((short)0);
     bigStruct.ub_a2.set(0);
     bigStruct.ub_a3.set(0);
     bigStruct.ui_f4.set(0);

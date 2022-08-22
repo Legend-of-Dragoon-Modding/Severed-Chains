@@ -207,7 +207,7 @@ public final class Scus94491BpeSegment_8004 {
    * Bit 2 - 24-bit colour
    */
   public static final Value renderFlags_8004dd36 = MEMORY.ref(2, 0x8004dd36L);
-  public static final Value _8004dd38 = MEMORY.ref(2, 0x8004dd38L);
+  public static final Value orderingTableLength_8004dd38 = MEMORY.ref(2, 0x8004dd38L);
 
   public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
   public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));

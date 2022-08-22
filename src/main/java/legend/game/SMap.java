@@ -1073,7 +1073,7 @@ public final class SMap {
     GsInitCoordinate2(param_1.coord2_14, bigStruct_800bda10.coord2_14);
 
     bigStruct_800bda10.coord2_14.coord.transfer.set(param_1.vector_118);
-    bigStruct_800bda10.s_a0.set((short)(param_1.s_a0.get() + 0x10));
+    bigStruct_800bda10.zOffset_a0.set((short)(param_1.zOffset_a0.get() + 0x10));
 
     bigStruct_800bda10.scaleVector_fc.setX(param_1.vector_10c.x.get() >> 6);
     bigStruct_800bda10.scaleVector_fc.setY(param_1.vector_10c.y.get() >> 6);
@@ -1279,7 +1279,7 @@ public final class SMap {
     long s0 = 0x1L;
     long s6 = a0.ui_f4.get();
 
-    zOffset_1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800daaa8
@@ -2442,8 +2442,7 @@ public final class SMap {
 
                     //LAB_800ddb3c
                     MEMORY.ref(4, packet).setu(0xc00_0000L | tag.p.get());
-                    tag.num.set(0);
-                    tag.p.set(packet & 0xff_ffffL);
+                    tag.set(packet & 0xff_ffffL);
                     packet += 0x34L;
                   }
                 }
@@ -3495,7 +3494,7 @@ public final class SMap {
 
   @Method(0x800dfca0L)
   public static long FUN_800dfca0(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).s_a0.set((short)a0.params_20.get(1).deref().get());
+    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BigStruct.class).zOffset_a0.set((short)a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -3940,7 +3939,7 @@ public final class SMap {
     GsInitCoordinate2(null, struct.coord2_14);
     FUN_80021ca0(struct.ObjTable_0c, struct.tmd_8c.deref(), struct.coord2_14, struct.count_c8.get(), (short)(struct.tmdNobj_ca.get() + 1));
 
-    struct.s_a0.set((short)0);
+    struct.zOffset_a0.set((short)0);
     struct.ub_a2.set(0);
     struct.ub_a3.set(0);
     struct.ui_f4.set(0);
@@ -9183,7 +9182,7 @@ public final class SMap {
 
   @Method(0x800eee48L)
   public static void FUN_800eee48(final BigStruct a0, final MATRIX matrix) {
-    zOffset_1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.scaleVector_fc.pad.get());
 
     final MATRIX lw = new MATRIX();

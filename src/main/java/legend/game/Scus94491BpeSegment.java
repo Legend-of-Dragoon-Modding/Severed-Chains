@@ -145,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd18;
 import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
-import static legend.game.Scus94491BpeSegment_8004._8004dd38;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004dda0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
@@ -177,6 +176,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.loadingSstrmOvl_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.orderingTableLength_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.renderFlags_8004dd36;
 import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
@@ -1606,7 +1606,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012f5c
     final long use24BitColour = renderFlags_8004dd36.get() >>> 0x2L & 0x1L;
     final long height480 = renderFlags_8004dd36.get() & 0x2L;
-    final long length = _8004dd38.get();
+    final long length = orderingTableLength_8004dd38.get();
 
     _800babc0.setu(0);
     _800bb104.setu(0);
@@ -1694,10 +1694,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001324cL)
-  public static void FUN_8001324c(final long a0) {
-    if(_1f8003c0.get() != a0) {
+  public static void FUN_8001324c(final long orderingTableLength) {
+    if(_1f8003c0.get() != orderingTableLength) {
       syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
-      _8004dd38.setu(a0);
+      orderingTableLength_8004dd38.setu(orderingTableLength);
     }
 
     //LAB_80013274

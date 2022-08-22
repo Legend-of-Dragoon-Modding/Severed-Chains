@@ -749,6 +749,8 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800e#FUN_800e2a98}</li>
    *   <li>{@link Bttl_800e#FUN_800e3478}</li>
    * </ol>
+   *
+   * Note: blank lines are probably impossible combinations
    */
   public static final ArrayRef<Pointer<QuadFunctionRef<Long, UnboundedArrayRef<SVECTOR>, Long, Long, Long>>> ctmdRenderers_800fadbc = MEMORY.ref(4, 0x800fadbcL, ArrayRef.of(Pointer.classFor(QuadFunctionRef.classFor(Long.class, UnboundedArrayRef.classFor(SVECTOR.class), Long.class, Long.class, Long.class)), 0x40, 4, Pointer.deferred(4, QuadFunctionRef::new)));
 

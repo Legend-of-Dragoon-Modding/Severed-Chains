@@ -286,7 +286,7 @@ public class WMap {
   private static final ArrayRef<VECTOR> vec_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
   private static final ArrayRef<CoolonWarpDestination20> coolonWarpDest_800ef228 = MEMORY.ref(4, 0x800ef228L, ArrayRef.of(CoolonWarpDestination20.class, 9, 0x20, CoolonWarpDestination20::new));
 
-  private static final Value _800ef348 = MEMORY.ref(2, 0x800ef384L);
+  private static final Value _800ef348 = MEMORY.ref(2, 0x800ef348L);
 
   private static final Value _800ef364 = MEMORY.ref(2, 0x800ef364L);
   private static final Value _800ef366 = MEMORY.ref(2, 0x800ef366L);
@@ -654,7 +654,7 @@ public class WMap {
     final long nobj = a0.ObjTable_0c.nobj.get();
     final long fp = a0.ui_f8.get();
 
-    zOffset_1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800c92c8
@@ -719,10 +719,12 @@ public class WMap {
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
           MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(13));
           MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(14));
+
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x16L).get());
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
           CPU.COP2(0x18_0001L);
+
           final long t8 = CPU.CFC2(31);
 
           MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
@@ -738,7 +740,6 @@ public class WMap {
                   CPU.COP2(0x168_002eL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6);
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x08L).get() * 0x8L;
@@ -755,15 +756,16 @@ public class WMap {
                   MEMORY.ref(4, packet).offset(0x0cL).setu(CPU.MFC2(21));
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22));
 
-                  MEMORY.ref(4, packet).offset(0x0L).setu(0x800_0000L | tag.p.get());
                   final long norm3 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
                   CPU.MTC2(MEMORY.ref(4, norm3).offset(0x0L).get(), 0);
                   CPU.MTC2(MEMORY.ref(4, norm3).offset(0x4L).get(), 1);
                   CPU.COP2(0x108_041bL);
-
-                  tag.set(packet & 0xff_ffffL);
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22));
-                  packet = packet + 0x24L;
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+                  MEMORY.ref(4, packet).offset(0x0L).setu(0x800_0000L | tag.p.get());
+                  tag.set(packet & 0xff_ffffL);
+                  packet += 0x24L;
                 }
               }
             }
@@ -772,7 +774,7 @@ public class WMap {
       }
 
       //LAB_800c96b4
-      primitives = primitives + 0x18L;
+      primitives += 0x18L;
     }
 
     //LAB_800c96c0
@@ -816,7 +818,6 @@ public class WMap {
                   CPU.COP2(0x158_002dL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0x04L).get(), 6);
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x08L).get() * 0x8L;
@@ -829,11 +830,13 @@ public class WMap {
                   CPU.MTC2(MEMORY.ref(4, norm2).offset(0x0L).get(), 4);
                   CPU.MTC2(MEMORY.ref(4, norm2).offset(0x4L).get(), 5);
                   CPU.COP2(0x118_043fL);
-                  MEMORY.ref(4, packet).offset(0x0L).setu(0x600_0000L | tag.p.get());
-                  tag.set(packet & 0xff_ffffL);
                   MEMORY.ref(4, packet).offset(0x04L).setu(CPU.MFC2(20));
                   MEMORY.ref(4, packet).offset(0x0cL).setu(CPU.MFC2(21));
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22));
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+                  MEMORY.ref(4, packet).offset(0x0L).setu(0x600_0000L | tag.p.get());
+                  tag.set(packet & 0xff_ffffL);
                   packet += 0x1cL;
                 }
               }
@@ -872,7 +875,7 @@ public class WMap {
       CPU.MTC2(vert2.getZ(),  5);
       CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      MEMORY.ref(4, packet).offset(0xcL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
+      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
       MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get());
 
       if((int)CPU.CFC2(31) >= 0) { // Flags
@@ -889,24 +892,23 @@ public class WMap {
           CPU.MTC2(vert3.getXY(), 0); // VXY0
           CPU.MTC2(vert3.getZ(),  1); // VZ0
           CPU.COP2(0x18_0001L); // Perspective transform single
-          // Flags
-          final long t3 = CPU.CFC2(31);
+
+          final long t3 = CPU.CFC2(31); // Flags
           MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // SXY2
 
-          if(MEMORY.ref(2, packet).offset(0x8L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x2cL).getSigned() >= -0xc0L) {
+          if(MEMORY.ref(2, packet).offset(0x8L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() >= -0xc0) {
             //LAB_800c9b00
-            if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x80L) {
+            if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x80) {
               //LAB_800c9b50
-              if(MEMORY.ref(2, packet).offset(0x8L).getSigned() < 0xc1L || MEMORY.ref(2, packet).offset(0x14L).getSigned() < 0xc1L || MEMORY.ref(2, packet).offset(0x20L).getSigned() < 0xc1L || MEMORY.ref(2, packet).offset(0x2cL).getSigned() < 0xc1L) {
+              if(MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() <= 0xc0) {
                 //LAB_800c9ba0
-                if(MEMORY.ref(2, packet).offset(0xaL).getSigned() < 0x81L || MEMORY.ref(2, packet).offset(0x16L).getSigned() < 0x81L || MEMORY.ref(2, packet).offset(0x22L).getSigned() < 0x81L || MEMORY.ref(2, packet).offset(0x2eL).getSigned() < 0x81L) {
+                if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80) {
                   //LAB_800c9bf0
                   CPU.COP2(0x168_002eL); // Average of four Z values
 
                   MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L));
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
                   final long norm1 = normals + MEMORY.ref(2, primitives).offset(0x18L).get() * 0x8L;
@@ -928,6 +930,7 @@ public class WMap {
                   CPU.COP2(0x108_041bL); // Normal colour colour single vector (NCCS)
                   MEMORY.ref(4, packet).offset(0x28L).setu(CPU.MFC2(22)); // RGB2
 
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
                   packet += 0x34L;
@@ -993,7 +996,6 @@ public class WMap {
                   CPU.COP2(0x158_002dL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x10L).get() * 0x8L;
                   final long norm1 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
@@ -1008,9 +1010,11 @@ public class WMap {
                   MEMORY.ref(4, packet).offset(0x04L).setu(CPU.MFC2(20));
                   MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(21));
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22));
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x900_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
-                  packet = packet + 0x28L;
+                  packet += 0x28L;
                 }
               }
             }
@@ -1019,7 +1023,7 @@ public class WMap {
       }
 
       //LAB_800c9fa8
-      primitives = primitives + 0x1cL;
+      primitives += 0x1cL;
     }
 
     //LAB_800c9fb4
@@ -1051,6 +1055,7 @@ public class WMap {
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
           MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(13));
           MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(14));
+
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x22L).get());
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
@@ -1062,14 +1067,13 @@ public class WMap {
             //LAB_800ca120
             if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x12L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x1aL).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80) {
               //LAB_800ca170
-              if(MEMORY.ref(2, packet).offset(-0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(-0xcL).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(-0x4L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x4L).getSigned() <= 0xc0) {
+              if(MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x10L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x18L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0) {
                 //LAB_800ca1c0
-                if(MEMORY.ref(2, packet).offset(-0x12L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(-0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(-0x2L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x6L).getSigned() <= 0x80) {
+                if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x12L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x1aL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80) {
                   //LAB_800ca210
                   CPU.COP2(0x168_002eL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6);
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
@@ -1098,6 +1102,8 @@ public class WMap {
                   CPU.MTC2(MEMORY.ref(4, norm3).offset(0x4L).get(), 1);
                   CPU.COP2(0x108_041bL);
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22));
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x800_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
                   packet += 0x24L;
@@ -1153,7 +1159,6 @@ public class WMap {
                   CPU.COP2(0x158002dL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6);
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x10L).get() * 0x8L;
@@ -1161,18 +1166,22 @@ public class WMap {
                   CPU.MTC2(MEMORY.ref(4, norm0).offset(0x4L).get(), 1);
                   CPU.COP2(0x108041bL);
                   MEMORY.ref(4, packet).offset(0x4L).setu(CPU.MFC2(22));
+
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0x8L).get(), 6);
                   final long norm1 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
                   CPU.MTC2(MEMORY.ref(4, norm1).offset(0x0L).get(), 0);
                   CPU.MTC2(MEMORY.ref(4, norm1).offset(0x4L).get(), 1);
                   CPU.COP2(0x108041bL);
                   MEMORY.ref(4, packet).offset(0xcL).setu(CPU.MFC2(22));
+
                   CPU.MTC2(MEMORY.ref(4, primitives).offset(0xcL).get(), 6);
                   final long norm2 = normals + MEMORY.ref(2, primitives).offset(0x18L).get() * 0x8L;
                   CPU.MTC2(MEMORY.ref(4, norm2).offset(0x0L).get(), 0);
                   CPU.MTC2(MEMORY.ref(4, norm2).offset(0x4L).get(), 1);
                   CPU.COP2(0x108041bL);
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22));
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x600_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
                   packet += 0x1cL;
@@ -1198,6 +1207,13 @@ public class WMap {
 
     //LAB_800ca688
     for(int i = 0; i < count; i++) {
+      MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
+      MEMORY.ref(4, packet).offset(0x04L).setu(0x3c80_8080L);
+      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x04L).get()); // UV0, CLUT
+      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x08L).get()); // UV1, TPAGE
+      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL).get()); // UV2
+      MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get()); // UV3
+
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
       final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
       final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x28L).get());
@@ -1209,27 +1225,19 @@ public class WMap {
       CPU.MTC2(vert2.getZ(),  5);
       CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get());
-      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
+      if((int)CPU.CFC2(31) >= 0) { // No errors
+        CPU.COP2(0x140_0006L); // Normal clipping
 
-      if((int)CPU.CFC2(31) >= 0) {
-        CPU.COP2(0x140_0006L);
-
-        if((int)CPU.MFC2(24) > 0) {
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
+        if((int)CPU.MFC2(24) > 0) { // Is visible
+          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
+          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13)); // Screen XY1
+          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14)); // Screen XY2
 
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
-          CPU.COP2(0x18_0001L);
-
-          MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
-          MEMORY.ref(4, packet).offset(0x04L).setu(0x3c80_8080L);
-          MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
-          MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14));
+          CPU.COP2(0x18_0001L); // Perspective transform single
+          MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // Screen XY3
 
           if(MEMORY.ref(2, packet).offset(0x8L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() >= -0xc0) {
             //LAB_800ca7c8
@@ -1239,27 +1247,26 @@ public class WMap {
                 //LAB_800ca868
                 if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80) {
                   //LAB_800ca8b8
-                  CPU.COP2(0x168_002eL);
+                  CPU.COP2(0x168_002eL); // Avg Z
 
-                  MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get());
-                  MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get());
-                  MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get());
-                  MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get());
-                  MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get());
-                  MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get());
-                  MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get());
-                  MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get());
-                  MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get());
-                  MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get());
-                  MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get());
-                  MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get());
+                  MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get()); // R0
+                  MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get()); // G0
+                  MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get()); // B0
+                  MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get()); // R1
+                  MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get()); // G1
+                  MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get()); // B1
+                  MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get()); // R2
+                  MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get()); // G2
+                  MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get()); // B2
+                  MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get()); // R3
+                  MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get()); // G3
+                  MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get()); // B3
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
-
                   MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
-                  packet = packet + 0x34L;
+                  packet += 0x34L;
                 }
               }
             }
@@ -1268,7 +1275,7 @@ public class WMap {
       }
 
       //LAB_800ca9a0
-      primitives = primitives + 0x2cL;
+      primitives += 0x2cL;
     }
 
     //LAB_800ca9ac
@@ -1319,7 +1326,6 @@ public class WMap {
                   CPU.COP2(0x158_002dL);
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x10L).get());
                   MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x11L).get());
@@ -1331,6 +1337,7 @@ public class WMap {
                   MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x19L).get());
                   MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get());
 
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x900_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
                   packet += 0x28L;
@@ -1431,9 +1438,9 @@ public class WMap {
               //LAB_800cc244
               if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x80) {
                 //LAB_800cc294
-                if(MEMORY.ref(2, packet).offset(-0x22L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(-0x16L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(-0xaL).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x2L).getSigned() <= 0xc0) {
+                if(MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() <= 0xc0) {
                   //LAB_800cc2e4
-                  if(MEMORY.ref(2, packet).offset(-0x20L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(-0x14L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(-0x8L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x4L).getSigned() <= 0x80) {
+                  if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80) {
                     //LAB_800cc334
                     CPU.COP2(0x168_002eL);
 
@@ -1452,7 +1459,6 @@ public class WMap {
 
                     final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
                     final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
-
                     MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                     tag.set(packet & 0xff_ffffL);
                     packet += 0x34L;
@@ -7127,6 +7133,15 @@ public class WMap {
 
     //LAB_800deee8
     for(int i = 0; i < count; i++) {
+      MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
+      MEMORY.ref(4, packet).offset(0x04L).setu(0x3c80_8080L);
+      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x04L).get()); // UV0, CLUT
+      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x08L).get()); // UV1, TPAGE
+      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL).get()); // UV2
+      MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get()); // UV3
+
+      MEMORY.ref(2, packet).offset(0x0eL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL); // CLUT
+
       //LAB_800def00
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
       final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
@@ -7137,46 +7152,39 @@ public class WMap {
       CPU.MTC2(vert1.getZ(),  3);
       CPU.MTC2(vert2.getXY(), 4);
       CPU.MTC2(vert2.getZ(),  5);
-      CPU.COP2(0x28_0030L);
+      CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get());
-      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
-
-      if((int)CPU.CFC2(31) >= 0) {
+      if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800defac
-        CPU.COP2(0x140_0006L);
+        CPU.COP2(0x140_0006L); // Normal clipping
 
-        if((int)CPU.MFC2(24) > 0) {
+        if((int)CPU.MFC2(24) > 0) { // Is visible
           //LAB_800defe8
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
+          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
+          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13)); // Screen XY1
+          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14)); // Screen XY2
 
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
-          CPU.COP2(0x18_0001L);
-          MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
-          MEMORY.ref(1, packet).offset(0x3L).setu(0xcL);
-          MEMORY.ref(4, packet).offset(0x4L).setu(0x3c80_8080L);
-          MEMORY.ref(2, packet).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
+          CPU.COP2(0x18_0001L); // Perspective transform single
 
-          if((int)CPU.CFC2(31) >= 0) {
+          if((int)CPU.CFC2(31) >= 0) { // No errors
             //LAB_800df0ac
-            MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14));
-            MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get());
-            MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get());
-            MEMORY.ref(1, packet).offset(0x60L).setu(MEMORY.ref(1, primitives).offset(0x16L).get());
-            MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get());
-            MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get());
-            MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get());
-            MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get());
-            MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get());
-            MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get());
-            MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get());
-            MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get());
-            MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get());
+            MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // Screen XY3
+
+            MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get()); // R0
+            MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get()); // G0
+            MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get()); // B0
+            MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get()); // R1
+            MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get()); // G1
+            MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get()); // B1
+            MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get()); // R2
+            MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get()); // G2
+            MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get()); // B2
+            MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get()); // R3
+            MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get()); // G3
+            MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get()); // B3
 
             final GsOT_TAG tag = tags.get((int)_800c66d8.get());
             MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
@@ -7497,7 +7505,7 @@ public class WMap {
     }
 
     //LAB_800e04fc
-    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().s_a0.set((short)0x4e);
+    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().zOffset_a0.set((short)0x4e);
     FUN_800211d8(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
     GsSetAmbient(_800c66b0.deref().ambientLight_14c.getX(), _800c66b0.deref().ambientLight_14c.getY(), _800c66b0.deref().ambientLight_14c.getZ());
     FUN_800e06d0();

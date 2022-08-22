@@ -43,7 +43,7 @@ public class BigStruct implements MemoryRef {
   public final UnsignedByteRef ub_9c;
   public final UnsignedByteRef ub_9d;
   public final ShortRef s_9e;
-  public final ShortRef s_a0;
+  public final ShortRef zOffset_a0;
   public final UnsignedByteRef ub_a2;
   public final UnsignedByteRef ub_a3;
   /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link ExtendedTmd#ext_04} */
@@ -138,7 +138,7 @@ public class BigStruct implements MemoryRef {
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
     this.ub_9d = ref.offset(1, 0x9dL).cast(UnsignedByteRef::new);
     this.s_9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
-    this.s_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
+    this.zOffset_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
     this.ub_a2 = ref.offset(1, 0xa2L).cast(UnsignedByteRef::new);
     this.ub_a3 = ref.offset(1, 0xa3L).cast(UnsignedByteRef::new);
     this.smallerStructPtr_a4 = ref.offset(4, 0xa4L).cast(Pointer.deferred(4, SmallerStruct::new));

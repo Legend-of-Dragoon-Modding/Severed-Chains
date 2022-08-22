@@ -1722,8 +1722,7 @@ public final class Ttle {
                     final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                     MEMORY.ref(4, packet).setu(0x900_0000L | tag.p.get());
-                    tag.num.set(0);
-                    tag.p.set(packet & 0xff_ffffL);
+                    tag.set(packet & 0xff_ffffL);
                     packet += 0x28L;
                   }
                 }

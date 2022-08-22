@@ -4829,7 +4829,7 @@ public final class Bttl_800d {
     s4 = 0x1L;
     s7 = a0.ui_f4.get();
     fp = a0.ObjTable_0c.nobj.get();
-    zOffset_1f8003e8.setu(a0.s_a0.get());
+    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
     sp50 = a0.ui_f8.get();
     _1f8003ec.setu(a0.ui_108.get());
     s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;
@@ -4950,7 +4950,7 @@ public final class Bttl_800d {
     a0.ub_a3.set(0);
     a0.ui_f4.set(0);
     a0.ui_f8.set(0);
-    a0.s_a0.set((short)0);
+    a0.zOffset_a0.set((short)0);
     a0.coord2_14.coord.transfer.set(sp0x18);
 
     if((a0.tmd_8c.deref().header.flags.get() & 0x2L) == 0 && a0.ub_9d.get() != 0) {
@@ -5645,7 +5645,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800df370L)
-  public static long FUN_800df370(long primitives, final long vertices, final long normals, final long count) {
+  public static long FUN_800df370(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
@@ -5661,15 +5661,15 @@ public final class Bttl_800d {
 
     //LAB_800df404
     for(int i = 0; i < count; i++) {
-      final long t5 = vertices + MEMORY.ref(2, primitives).offset(0x24L).get() * 0x8L;
-      final long t6 = vertices + MEMORY.ref(2, primitives).offset(0x26L).get() * 0x8L;
-      final long t7 = vertices + MEMORY.ref(2, primitives).offset(0x28L).get() * 0x8L;
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x0L).get(), 0);
-      CPU.MTC2(MEMORY.ref(4, t5).offset(0x4L).get(), 1);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x0L).get(), 2);
-      CPU.MTC2(MEMORY.ref(4, t6).offset(0x4L).get(), 3);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x0L).get(), 4);
-      CPU.MTC2(MEMORY.ref(4, t7).offset(0x4L).get(), 5);
+      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
+      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
+      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x28L).get());
+      CPU.MTC2(vert0.getXY(), 0);
+      CPU.MTC2(vert0.getZ(),  1);
+      CPU.MTC2(vert1.getXY(), 2);
+      CPU.MTC2(vert1.getZ(),  3);
+      CPU.MTC2(vert2.getXY(), 4);
+      CPU.MTC2(vert2.getZ(),  5);
       CPU.COP2(0x280030L);
       MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
       MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get());
@@ -5681,12 +5681,13 @@ public final class Bttl_800d {
         long s2 = CPU.MFC2(24);
         if((int)s2 > 0 || (s5 & 0x2L) != 0 && s2 != 0) {
           //LAB_800df4ac
-          MEMORY.ref(4, packet).offset(0x8L).setu(CPU.MFC2(12));
+          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
           MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
           MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
-          final long v0 = vertices + MEMORY.ref(2, primitives).offset(0x2aL).get() * 0x8L;
-          CPU.MTC2(MEMORY.ref(4, v0).offset(0x0L).get(), 0);
-          CPU.MTC2(MEMORY.ref(4, v0).offset(0x4L).get(), 1);
+
+          final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
+          CPU.MTC2(vert3.getXY(), 0);
+          CPU.MTC2(vert3.getZ(),  1);
           CPU.COP2(0x180001L);
           MEMORY.ref(1, packet).offset(0x07L).setu(s5);
           MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
