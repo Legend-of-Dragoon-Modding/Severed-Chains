@@ -5153,7 +5153,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec0b0L)
-  public static void FUN_800ec0b0(final GsDOBJ2 dobj2) {
+  public static void renderBttlDobj2(final GsDOBJ2 dobj2) {
     final TmdObjTable tmd = dobj2.tmd_08.deref();
     long primitives = tmd.primitives_10.getPointer();
     long count = tmd.n_primitive_14.get();
@@ -5262,7 +5262,7 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    FUN_800ec0b0(s2.ObjTable_0c.top.deref().get(0));
+    renderBttlDobj2(s2.ObjTable_0c.top.deref().get(0));
     s2.coord2ArrPtr_04.deref().get(0).flg.decr();
   }
 
@@ -5307,7 +5307,7 @@ public final class Bttl_800e {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        FUN_800ec0b0(dobj2);
+        renderBttlDobj2(dobj2);
       }
 
       //LAB_800ec608
@@ -5436,7 +5436,7 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        FUN_800ec0b0(s2);
+        renderBttlDobj2(s2);
       }
 
       //LAB_800eca38

@@ -107,7 +107,7 @@ import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.renderDobj2;
+import static legend.game.SMap.renderSmapDobj2;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
@@ -398,7 +398,7 @@ import static legend.game.WMap.FUN_800c8844;
 import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.FUN_800c925c;
 import static legend.game.WMap.renderWmapDobj2;
-import static legend.game.combat.Bttl_800e.FUN_800ec0b0;
+import static legend.game.combat.Bttl_800e.renderBttlDobj2;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.FUN_800ec974;
 
@@ -555,7 +555,7 @@ public final class Scus94491BpeSegment_8002 {
     bigStruct.tmd_8c.set(tmd);
     bigStruct.tmdNobj_ca.set((int)tmd.header.nobj.get());
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       FUN_800de004(bigStruct, extendedTmd);
     }
 
@@ -604,14 +604,14 @@ public final class Scus94491BpeSegment_8002 {
 
     int s1 = 0;
     //LAB_80020940
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       //LAB_80020958
       for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
         FUN_800d9e64(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
       }
 
       //LAB_80020978
-    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
       //LAB_80020990
       for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
         FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
@@ -628,15 +628,9 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800209b0
     bigStruct.b_cc.set(0);
     bigStruct.b_cd.set(-2);
-    bigStruct.scaleVector_fc.setX(0x1000);
-    bigStruct.scaleVector_fc.setY(0x1000);
-    bigStruct.scaleVector_fc.setZ(0x1000);
-    bigStruct.vector_10c.setX(0x1000);
-    bigStruct.vector_10c.setY(0x1000);
-    bigStruct.vector_10c.setZ(0x1000);
-    bigStruct.vector_118.setX(0);
-    bigStruct.vector_118.setY(0);
-    bigStruct.vector_118.setZ(0);
+    bigStruct.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    bigStruct.vector_10c.set(0x1000, 0x1000, 0x1000);
+    bigStruct.vector_118.set(0, 0, 0);
   }
 
   @Method(0x80020a00L)
@@ -669,14 +663,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void FUN_80020b98(final BigStruct a0) {
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       FUN_800da114(a0);
       return;
     }
 
     //LAB_80020be8
     //LAB_80020bf0
-    for(int i = 0; i < 0x7L; i++) {
+    for(int i = 0; i < 7; i++) {
       if(a0.aub_ec.get(i).get() != 0) {
         FUN_80022018(a0, i);
       }
@@ -695,10 +689,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020c3c
     if(a0.ub_9c.get() == 0) {
       if(a0.ub_a2.get() == 0) {
-        a0.s_9e.set(a0.s_9a);
+        a0.s_9e.set(a0.s_9a.get());
       } else {
         //LAB_80020c68
-        a0.s_9e.set((short)(a0.s_9a.get() / 2));
+        a0.s_9e.set((short)(a0.s_9a.get() >> 1));
       }
 
       //LAB_80020c7c
@@ -708,31 +702,27 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c90
     if((a0.s_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
-      final UnboundedArrayRef<RotateTranslateStruct> sp10 = a0.rotateTranslateArrPtr_94.deref();
+      final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
       if(a0.ub_a3.get() == 0) {
-        final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
-
         //LAB_80020ce0
-        for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
+        for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
           RotMatrix_80040010(params.rotate, coord2.coord);
-
-          params.trans.add(rotateTranslate.get(i).translate_06);
-          params.trans.div(2);
-
+          params.trans.set(
+            (params.trans.getX() + rotateTranslate.get(i).translate_06.getX()) / 2,
+            (params.trans.getY() + rotateTranslate.get(i).translate_06.getY()) / 2,
+            (params.trans.getZ() + rotateTranslate.get(i).translate_06.getZ()) / 2
+          );
           TransMatrix(coord2.coord, params.trans);
         }
 
         //LAB_80020d6c
-        a0.rotateTranslateArrPtr_94.set(rotateTranslate.slice(a0.tmdNobj_ca.get()));
       } else {
         //LAB_80020d74
-        final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
-
         //LAB_80020d8c
-        for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
+        for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
 
@@ -744,17 +734,15 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80020dfc
-        a0.rotateTranslateArrPtr_94.set(rotateTranslate.slice(a0.tmdNobj_ca.get()));
       }
 
       //LAB_80020e00
-      a0.rotateTranslateArrPtr_94.set(sp10);
     } else {
       //LAB_80020e0c
       final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
 
       //LAB_80020e24
-      for(int i = 0; i < a0.tmdNobj_ca.get() - 0x1L; i++) {
+      for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
         final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
         final GsCOORD2PARAM params = coord2.param.deref();
 
@@ -1016,16 +1004,16 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021258L)
-  public static void FUN_80021258(final GsDOBJ2 dobj2) {
+  public static void renderDobj2(final GsDOBJ2 dobj2) {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
       //LAB_800212b0
-      renderDobj2(dobj2);
+      renderSmapDobj2(dobj2);
       return;
     }
 
     if(mainCallbackIndex_8004dd20.get() == 0x6L) {
       //LAB_800212a0
-      FUN_800ec0b0(dobj2);
+      renderBttlDobj2(dobj2);
       return;
     }
 
@@ -1460,20 +1448,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021f0cL)
   public static void SetLightMatrix(final MATRIX m) {
-    CPU.CTC2(m.get(0),  8); //
-    CPU.CTC2(m.get(2),  9); //
-    CPU.CTC2(m.get(4), 10); // Light source matrix
-    CPU.CTC2(m.get(6), 11); //
-    CPU.CTC2(m.get(8), 12); //
+    CPU.CTC2(m.getPacked(0),  8); //
+    CPU.CTC2(m.getPacked(2),  9); //
+    CPU.CTC2(m.getPacked(4), 10); // Light source matrix
+    CPU.CTC2(m.getPacked(6), 11); //
+    CPU.CTC2(m.getPacked(8), 12); //
   }
 
   @Method(0x80021f3cL)
   public static void SetColorMatrix(final MATRIX m) {
-    CPU.CTC2(m.get(0), 16); //
-    CPU.CTC2(m.get(2), 17); //
-    CPU.CTC2(m.get(4), 18); // Light color matrix
-    CPU.CTC2(m.get(6), 19); //
-    CPU.CTC2(m.get(8), 20); //
+    CPU.CTC2(m.getPacked(0), 16); //
+    CPU.CTC2(m.getPacked(2), 17); //
+    CPU.CTC2(m.getPacked(4), 18); // Light color matrix
+    CPU.CTC2(m.getPacked(6), 19); //
+    CPU.CTC2(m.getPacked(8), 20); //
   }
 
   @Method(0x80021f6cL)

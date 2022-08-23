@@ -35,9 +35,11 @@ public class WMapStruct258 implements MemoryRef {
   public final VECTOR vec_84;
   public final VECTOR vec_94;
   public final SVECTOR rotation_a4;
-
+  public final UnsignedIntRef _ac;
+  public final UnsignedIntRef _b0;
   public final ArrayRef<WMapStruct258Sub40> _b4;
-
+  public final ArrayRef<UnsignedIntRef> _1b4;
+  public final ArrayRef<ShortRef> _1c4;
   public final UnsignedIntRef _1e4;
   public final SVECTOR svec_1e8;
   public final SVECTOR svec_1f0;
@@ -90,9 +92,11 @@ public class WMapStruct258 implements MemoryRef {
     this.vec_84 = ref.offset(4, 0x84L).cast(VECTOR::new);
     this.vec_94 = ref.offset(4, 0x94L).cast(VECTOR::new);
     this.rotation_a4 = ref.offset(2, 0xa4L).cast(SVECTOR::new);
-
+    this._ac = ref.offset(4, 0xacL).cast(UnsignedIntRef::new);
+    this._b0 = ref.offset(4, 0xb0L).cast(UnsignedIntRef::new);
     this._b4 = ref.offset(4, 0xb4L).cast(ArrayRef.of(WMapStruct258Sub40.class, 4, 0x40, WMapStruct258Sub40::new));
-
+    this._1b4 = ref.offset(4, 0x1b4L).cast(ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
+    this._1c4 = ref.offset(2, 0x1c4L).cast(ArrayRef.of(ShortRef.class, 16, 2, ShortRef::new));
     this._1e4 = ref.offset(4, 0x1e4L).cast(UnsignedIntRef::new);
     this.svec_1e8 = ref.offset(2, 0x1e8L).cast(SVECTOR::new);
     this.svec_1f0 = ref.offset(2, 0x1f0L).cast(SVECTOR::new);

@@ -129,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800211d8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021258;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800212d8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
@@ -150,6 +149,7 @@ import static legend.game.Scus94491BpeSegment_8002.abs;
 import static legend.game.Scus94491BpeSegment_8002.getTimerValue;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
@@ -267,11 +267,8 @@ public final class SMap {
   public static final McqHeader mcq_800c66a0 = MEMORY.ref(4, 0x800c66a0L, McqHeader::new);
   public static final ArrayRef<Pointer<McqHeader>> mcqs_800c66d0 = MEMORY.ref(4, 0x800c66d0L, ArrayRef.of(Pointer.classFor(McqHeader.class), 2, 4, Pointer.deferred(4, McqHeader::new)));
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
-
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
-
   public static final GsF_LIGHT GsF_LIGHT_2_800c66f8 = MEMORY.ref(4, 0x800c66f8L, GsF_LIGHT::new);
-
   public static final Value _800c6708 = MEMORY.ref(2, 0x800c6708L);
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
   public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
@@ -983,7 +980,7 @@ public final class SMap {
   }
 
   @Method(0x800da288L)
-  public static void renderDobj2(final GsDOBJ2 dobj2) {
+  public static void renderSmapDobj2(final GsDOBJ2 dobj2) {
     final TmdObjTable objTable = dobj2.tmd_08.deref();
     final UnboundedArrayRef<SVECTOR> vertices = objTable.vert_top_00.deref();
     final long normals = objTable.normal_top_08.get();
@@ -1068,7 +1065,7 @@ public final class SMap {
     //LAB_800da50c
   }
 
-  @Method(0x800da524L) /*TODO this method is rendering the glitchy shadows*/
+  @Method(0x800da524L)
   public static void FUN_800da524(final BigStruct param_1) {
     GsInitCoordinate2(param_1.coord2_14, bigStruct_800bda10.coord2_14);
 
@@ -1112,7 +1109,7 @@ public final class SMap {
     CPU.CTC2(ls.transfer.getY(), 6);
     CPU.CTC2(ls.transfer.getZ(), 7);
 
-    renderDobj2(bigStruct_800bda10.ObjTable_0c.top.deref().get(0));
+    renderSmapDobj2(bigStruct_800bda10.ObjTable_0c.top.deref().get(0));
     bigStruct_800bda10.coord2ArrPtr_04.deref().get(0).flg.decr();
   }
 
@@ -1291,15 +1288,15 @@ public final class SMap {
         final MATRIX ls = new MATRIX();
         GsGetLws(dobj2.coord2_04.deref(), lw, ls);
         GsSetLightMatrix(lw);
-        CPU.CTC2((ls.get(1) & 0xffffL) << 16 | ls.get(0) & 0xffffL, 0);
-        CPU.CTC2((ls.get(3) & 0xffffL) << 16 | ls.get(2) & 0xffffL, 1);
-        CPU.CTC2((ls.get(5) & 0xffffL) << 16 | ls.get(4) & 0xffffL, 2);
-        CPU.CTC2((ls.get(7) & 0xffffL) << 16 | ls.get(6) & 0xffffL, 3);
-        CPU.CTC2(                              ls.get(8) & 0xffffL, 4);
+        CPU.CTC2(ls.getPacked(0), 0);
+        CPU.CTC2(ls.getPacked(2), 1);
+        CPU.CTC2(ls.getPacked(4), 2);
+        CPU.CTC2(ls.getPacked(6), 3);
+        CPU.CTC2(ls.getPacked(8), 4);
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        renderDobj2(dobj2);
+        renderSmapDobj2(dobj2);
       }
 
       //LAB_800dab10
@@ -2547,7 +2544,7 @@ public final class SMap {
       //LAB_800ddeac
       final long v1 = (struct.ub_9d.get() & 0x7fL) * 0x2L;
       final long t2 = _80050424.offset(v1).get() + 0x70L;
-      final long t1 = _800503f8.offset(v1).get();
+      final long t1 = _800503f8.offset(v1).getSigned();
 
       long a1 = smallerStruct.tmdSubExtensionArr_20.get(index).getPointer() + 0x4L; //TODO
 
@@ -2562,7 +2559,7 @@ public final class SMap {
 
       smallerStruct.sa_10.get(index).incr();
 
-      if(smallerStruct.sa_10.get(index).get() == (MEMORY.ref(2, a1).get() & 0xffffL)) {
+      if(smallerStruct.sa_10.get(index).get() == (short)MEMORY.ref(2, a1).get()) {
         smallerStruct.sa_10.get(index).set((short)0);
 
         if(MEMORY.ref(2, a1).offset(0x2L).get() == 0xffffL) {
@@ -9193,16 +9190,16 @@ public final class SMap {
       GsSetLightMatrix(lw);
 
       PushMatrix();
-      CPU.CTC2((matrix.get(1) & 0xffffL) << 16 | matrix.get(0) & 0xffffL, 0); //
-      CPU.CTC2((matrix.get(3) & 0xffffL) << 16 | matrix.get(2) & 0xffffL, 1); //
-      CPU.CTC2((matrix.get(5) & 0xffffL) << 16 | matrix.get(4) & 0xffffL, 2); // Rotation matrix
-      CPU.CTC2((matrix.get(7) & 0xffffL) << 16 | matrix.get(6) & 0xffffL, 3); //
-      CPU.CTC2(                                  matrix.get(8) & 0xffffL, 4); //
+      CPU.CTC2(matrix.getPacked(0), 0); //
+      CPU.CTC2(matrix.getPacked(2), 1); //
+      CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
+      CPU.CTC2(matrix.getPacked(6), 3); //
+      CPU.CTC2(matrix.getPacked(8), 4); //
 
       CPU.CTC2(matrix.transfer.getX(), 5); //
       CPU.CTC2(matrix.transfer.getY(), 6); // Translation vector
       CPU.CTC2(matrix.transfer.getZ(), 7); //
-      FUN_80021258(a0.ObjTable_0c.top.deref().get(i));
+      renderDobj2(a0.ObjTable_0c.top.deref().get(i));
       PopMatrix();
     }
 
@@ -10060,11 +10057,11 @@ public final class SMap {
       GsGetLs(sp0x40, sp0x20);
 
       PushMatrix();
-      CPU.CTC2((sp0x20.get(1) & 0xffffL) << 16 | sp0x20.get(0) & 0xffffL, 0);
-      CPU.CTC2((sp0x20.get(3) & 0xffffL) << 16 | sp0x20.get(2) & 0xffffL, 1);
-      CPU.CTC2((sp0x20.get(5) & 0xffffL) << 16 | sp0x20.get(4) & 0xffffL, 2);
-      CPU.CTC2((sp0x20.get(7) & 0xffffL) << 16 | sp0x20.get(6) & 0xffffL, 3);
-      CPU.CTC2(                                  sp0x20.get(8) & 0xffffL, 4);
+      CPU.CTC2(sp0x20.getPacked(0), 0);
+      CPU.CTC2(sp0x20.getPacked(2), 1);
+      CPU.CTC2(sp0x20.getPacked(4), 2);
+      CPU.CTC2(sp0x20.getPacked(6), 3);
+      CPU.CTC2(sp0x20.getPacked(8), 4);
       CPU.CTC2(sp0x20.transfer.getX(), 5);
       CPU.CTC2(sp0x20.transfer.getY(), 6);
       CPU.CTC2(sp0x20.transfer.getZ(), 7);
@@ -10917,34 +10914,34 @@ public final class SMap {
       return;
     }
 
-    final long a0 = gameState_800babc8.indicatorMode_4e8.get();
-    if(a0 != 0x1L) {
+    final long indicatorMode = gameState_800babc8.indicatorMode_4e8.get();
+    if(indicatorMode != 1) {
       _800f9e9c.setu(0);
     }
 
     //LAB_800f321c
     if((joypadPress_8007a398.get() & 0x8L) != 0) {
-      if(a0 == 0) {
-        gameState_800babc8.indicatorMode_4e8.set(0x1L);
+      if(indicatorMode == 0) {
+        gameState_800babc8.indicatorMode_4e8.set(1);
         //LAB_800f3244
-      } else if(a0 == 0x1L) {
-        gameState_800babc8.indicatorMode_4e8.set(0x2L);
-      } else if(a0 == 0x2L) {
+      } else if(indicatorMode == 1) {
+        gameState_800babc8.indicatorMode_4e8.set(2);
+      } else if(indicatorMode == 2) {
         gameState_800babc8.indicatorMode_4e8.set(0);
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
     } else if((joypadPress_8007a398.get() & 0x4) != 0) {
-      if(a0 == 0) {
+      if(indicatorMode == 0) {
         //LAB_800f3274
-        gameState_800babc8.indicatorMode_4e8.set(0x2L);
+        gameState_800babc8.indicatorMode_4e8.set(2);
         //LAB_800f3280
-      } else if(a0 == 0x1L) {
+      } else if(indicatorMode == 1) {
         gameState_800babc8.indicatorMode_4e8.set(0);
         _800f9e9c.setu(0);
         //LAB_800f3294
-      } else if(a0 == 0x2L) {
-        gameState_800babc8.indicatorMode_4e8.set(0x1L);
+      } else if(indicatorMode == 2) {
+        gameState_800babc8.indicatorMode_4e8.set(1);
 
         //LAB_800f32a4
         _800f9e9c.setu(0);
@@ -10975,20 +10972,20 @@ public final class SMap {
       scriptStateTmp.offset(i * 0x10L).offset(0xcL).setu(MEMORY.ref(4, scriptStateAddr).offset(i * 0x10L).offset(0xcL));
     }
 
-    final MATRIX sp0x120 = new MATRIX();
-    GsGetLs(sp10.innerStruct_00.derefAs(BigStruct.class).coord2_14, sp0x120);
+    final MATRIX ls = new MATRIX();
+    GsGetLs(sp10.innerStruct_00.derefAs(BigStruct.class).coord2_14, ls);
 
     //TODO what's up with all the unused vars? Did I miss something?
 
     PushMatrix();
-    CPU.CTC2((sp0x120.get(1) & 0xffffL) << 16 | sp0x120.get(0) & 0xffffL, 0); //
-    CPU.CTC2((sp0x120.get(3) & 0xffffL) << 16 | sp0x120.get(2) & 0xffffL, 1); //
-    CPU.CTC2((sp0x120.get(5) & 0xffffL) << 16 | sp0x120.get(4) & 0xffffL, 2); // Rotation matrix
-    CPU.CTC2((sp0x120.get(7) & 0xffffL) << 16 | sp0x120.get(6) & 0xffffL, 3); //
-    CPU.CTC2(sp0x120.get(8) & 0xffffL, 4); //
-    CPU.CTC2(sp0x120.transfer.getX(), 5); //
-    CPU.CTC2(sp0x120.transfer.getY(), 6); // Translation vector
-    CPU.CTC2(sp0x120.transfer.getZ(), 7); //
+    CPU.CTC2(ls.getPacked(0), 0); //
+    CPU.CTC2(ls.getPacked(2), 1); //
+    CPU.CTC2(ls.getPacked(4), 2); // Rotation matrix
+    CPU.CTC2(ls.getPacked(6), 3); //
+    CPU.CTC2(ls.getPacked(8), 4); //
+    CPU.CTC2(ls.transfer.getX(), 5); //
+    CPU.CTC2(ls.transfer.getY(), 6); // Translation vector
+    CPU.CTC2(ls.transfer.getZ(), 7); //
     CPU.MTC2(sp140, 0); // Vector XY 0
     CPU.MTC2(sp144, 1); // Vector Z 0
     CPU.COP2(0x180001L); // Perspective transform
