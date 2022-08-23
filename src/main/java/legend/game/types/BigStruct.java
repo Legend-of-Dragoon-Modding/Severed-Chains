@@ -35,9 +35,9 @@ public class BigStruct implements MemoryRef {
   public final GsCOORDINATE2 coord2_14;
   public final GsCOORD2PARAM coord2Param_64;
   public final Pointer<Tmd> tmd_8c;
-  public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> ptr_ui_90;
+  public final Pointer<UnboundedArrayRef<ModelPartTransforms>> partTransforms_90;
   /** One entry for each TMD object (tmdNobj_ca) */
-  public final Pointer<UnboundedArrayRef<RotateTranslateStruct>> rotateTranslateArrPtr_94;
+  public final Pointer<UnboundedArrayRef<ModelPartTransforms>> partTransforms_94;
   public final UnsignedShortRef animCount_98;
   public final ShortRef s_9a;
   public final UnsignedByteRef ub_9c;
@@ -131,8 +131,8 @@ public class BigStruct implements MemoryRef {
     this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);
     this.coord2Param_64 = ref.offset(4, 0x64L).cast(GsCOORD2PARAM::new);
     this.tmd_8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, Tmd::new));
-    this.ptr_ui_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
-    this.rotateTranslateArrPtr_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, RotateTranslateStruct::new)));
+    this.partTransforms_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
+    this.partTransforms_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
     this.animCount_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
     this.s_9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);

@@ -48,7 +48,7 @@ import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.RotateTranslateStruct;
+import legend.game.types.ModelPartTransforms;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
@@ -384,6 +384,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -678,7 +679,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020c08
     }
 
-    if(a0.ub_9c.get() == 0x2L) {
+    if(a0.ub_9c.get() == 2) {
       return;
     }
 
@@ -697,12 +698,12 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80020c7c
       a0.ub_9c.incr();
-      a0.rotateTranslateArrPtr_94.set(a0.ptr_ui_90.deref());
+      a0.partTransforms_94.set(a0.partTransforms_90.deref());
     }
 
     //LAB_80020c90
     if((a0.s_9e.get() & 0x1L) == 0 && a0.ub_a2.get() == 0) {
-      final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
+      final UnboundedArrayRef<ModelPartTransforms> transforms = a0.partTransforms_94.deref();
 
       if(a0.ub_a3.get() == 0) {
         //LAB_80020ce0
@@ -711,9 +712,9 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param.deref();
           RotMatrix_80040010(params.rotate, coord2.coord);
           params.trans.set(
-            (params.trans.getX() + rotateTranslate.get(i).translate_06.getX()) / 2,
-            (params.trans.getY() + rotateTranslate.get(i).translate_06.getY()) / 2,
-            (params.trans.getZ() + rotateTranslate.get(i).translate_06.getZ()) / 2
+            (params.trans.getX() + transforms.get(i).translate_06.getX()) / 2,
+            (params.trans.getY() + transforms.get(i).translate_06.getY()) / 2,
+            (params.trans.getZ() + transforms.get(i).translate_06.getZ()) / 2
           );
           TransMatrix(coord2.coord, params.trans);
         }
@@ -726,10 +727,10 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
           final GsCOORD2PARAM params = coord2.param.deref();
 
-          params.rotate.set(rotateTranslate.get(i).rotate_00);
+          params.rotate.set(transforms.get(i).rotate_00);
           RotMatrix_80040010(params.rotate, coord2.coord);
 
-          params.trans.set(rotateTranslate.get(i).translate_06);
+          params.trans.set(transforms.get(i).translate_06);
           TransMatrix(coord2.coord, params.trans);
         }
 
@@ -739,22 +740,22 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020e00
     } else {
       //LAB_80020e0c
-      final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
+      final UnboundedArrayRef<ModelPartTransforms> transforms = a0.partTransforms_94.deref();
 
       //LAB_80020e24
       for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
         final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
         final GsCOORD2PARAM params = coord2.param.deref();
 
-        params.rotate.set(rotateTranslate.get(i).rotate_00);
+        params.rotate.set(transforms.get(i).rotate_00);
         RotMatrix_80040010(params.rotate, coord2.coord);
 
-        params.trans.set(rotateTranslate.get(i).translate_06);
+        params.trans.set(transforms.get(i).translate_06);
         TransMatrix(coord2.coord, params.trans);
       }
 
       //LAB_80020e94
-      a0.rotateTranslateArrPtr_94.set(rotateTranslate);
+      a0.partTransforms_94.set(transforms.slice(a0.tmdNobj_ca.get()));
     }
 
     //LAB_80020e98
@@ -831,22 +832,22 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021048L)
-  public static void FUN_80021048(final long a0, final long a1) {
+  public static void FUN_80021048(final long primitives, final long count) {
     // empty
   }
 
   @Method(0x80021050L)
-  public static void FUN_80021050(final long a0, final long a1) {
+  public static void FUN_80021050(final long primitives, final long count) {
     // empty
   }
 
   @Method(0x80021058L)
-  public static void FUN_80021058(final long a0, final long a1) {
+  public static void FUN_80021058(final long primitives, final long count) {
     // empty
   }
 
   @Method(0x80021060L)
-  public static void FUN_80021060(final long a0, final long a1) {
+  public static void FUN_80021060(final long primitives, final long count) {
     // empty
   }
 
@@ -1027,53 +1028,55 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800212d8L)
-  public static void FUN_800212d8(final BigStruct a0) {
-    final long count = a0.tmdNobj_ca.get();
+  public static void applyModelPartTransforms(final BigStruct a0) {
+    final int count = a0.tmdNobj_ca.get();
 
     if(count == 0) {
       return;
     }
 
-    final UnboundedArrayRef<RotateTranslateStruct> rotateTranslate = a0.rotateTranslateArrPtr_94.deref();
+    if(scriptStatePtrArr_800bc1c0.get(10).deref().innerStruct_00.getPointer() == a0.getAddress()) {
+//      return;
+    }
+
+    final UnboundedArrayRef<ModelPartTransforms> transforms = a0.partTransforms_94.deref();
 
     //LAB_80021320
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 obj2 = a0.dobj2ArrPtr_00.deref().get(i);
 
       final GsCOORDINATE2 coord2 = obj2.coord2_04.deref();
-      final GsCOORD2PARAM coord2param = coord2.param.deref();
+      final GsCOORD2PARAM params = coord2.param.deref();
       final MATRIX matrix = coord2.coord;
 
-      coord2param.rotate.set(rotateTranslate.get(i).rotate_00);
-      RotMatrix_80040010(coord2param.rotate, matrix);
+      params.rotate.set(transforms.get(i).rotate_00);
+      RotMatrix_80040010(params.rotate, matrix);
 
-      coord2param.trans.set(rotateTranslate.get(i).translate_06);
-      TransMatrix(matrix, coord2param.trans);
+      params.trans.set(transforms.get(i).translate_06);
+      TransMatrix(matrix, params.trans);
     }
 
     //LAB_80021390
-    a0.rotateTranslateArrPtr_94.set(rotateTranslate);
+    a0.partTransforms_94.set(transforms.slice(count));
   }
 
   @Method(0x800213c4L)
   public static void FUN_800213c4(final BigStruct a0) {
-    long s5 = a0.rotateTranslateArrPtr_94.getPointer(); //TODO
-
     //LAB_80021404
     for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
+      final ModelPartTransforms transforms = a0.partTransforms_94.deref().get(i);
       final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref();
-      final MATRIX s1 = coord2.coord;
-      final GsCOORD2PARAM s0 = coord2.param.deref();
-      RotMatrix_80040010(s0.rotate, s1);
-      s0.trans.setX((int)((MEMORY.ref(2, s5).offset(0x6L).getSigned() + s0.trans.getX()) / 2));
-      s0.trans.setY((int)((MEMORY.ref(2, s5).offset(0x8L).getSigned() + s0.trans.getY()) / 2));
-      s0.trans.setZ((int)((MEMORY.ref(2, s5).offset(0xaL).getSigned() + s0.trans.getZ()) / 2));
-      TransMatrix(s1, s0.trans);
-      s5 = s5 + 0xcL;
+      final MATRIX coord = coord2.coord;
+      final GsCOORD2PARAM params = coord2.param.deref();
+      RotMatrix_80040010(params.rotate, coord);
+      params.trans.setX((params.trans.getX() + transforms.translate_06.getX()) / 2);
+      params.trans.setY((params.trans.getY() + transforms.translate_06.getY()) / 2);
+      params.trans.setZ((params.trans.getZ() + transforms.translate_06.getZ()) / 2);
+      TransMatrix(coord, params.trans);
     }
 
     //LAB_80021490
-    a0.rotateTranslateArrPtr_94.setPointer(s5);
+    a0.partTransforms_94.set(a0.partTransforms_94.deref().slice(a0.tmdNobj_ca.get()));
   }
 
   @Method(0x800214bcL)
@@ -1097,13 +1100,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021584L)
   public static void FUN_80021584(final BigStruct bigStruct, final TmdAnimationFile tmdAnimFile) {
-    bigStruct.ptr_ui_90.set(tmdAnimFile.rotateTranslateArr_10);
-    bigStruct.rotateTranslateArrPtr_94.set(tmdAnimFile.rotateTranslateArr_10);
+    bigStruct.partTransforms_90.set(tmdAnimFile.partTransforms_10);
+    bigStruct.partTransforms_94.set(tmdAnimFile.partTransforms_10);
     bigStruct.animCount_98.set(tmdAnimFile.count_0c);
     bigStruct.s_9a.set(tmdAnimFile._0e);
     bigStruct.ub_9c.set(0);
 
-    FUN_800212d8(bigStruct);
+    applyModelPartTransforms(bigStruct);
 
     if(bigStruct.ub_a2.get() == 0) {
       bigStruct.s_9e.set(bigStruct.s_9a);
@@ -1114,7 +1117,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021608
     bigStruct.ub_9c.set(1);
-    bigStruct.rotateTranslateArrPtr_94.set(bigStruct.ptr_ui_90.deref());
+    bigStruct.partTransforms_94.set(bigStruct.partTransforms_90.deref());
   }
 
   @Method(0x80021628L)
@@ -1125,13 +1128,13 @@ public final class Scus94491BpeSegment_8002 {
         FUN_80020468(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
       }
       //LAB_8002169c
-    } else if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    } else if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       //LAB_800216b4
       for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
         FUN_800d9e64(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
       }
       //LAB_800216d4
-    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
       //LAB_800216ec
       for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
         FUN_800c8844(a0.ObjTable_0c.top.deref().get(i), a0.ub_9d.get());
@@ -5222,12 +5225,12 @@ public final class Scus94491BpeSegment_8002 {
     long fp;
     long sp22;
     long sp44;
-    long sp10;
+    final long sp10;
     long sp40;
     long sp20;
     long sp30;
     long sp18;
-    long sp14;
+    final long sp14;
     long sp28;
     long sp38;
 

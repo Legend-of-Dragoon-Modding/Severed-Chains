@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800212d8;
+import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021628;
@@ -4684,10 +4684,10 @@ public final class Bttl_800d {
       v0 = s2 << 1;
       v0 = v0 + s2;
       lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-      a0.rotateTranslateArrPtr_94.setPointer(a0.ptr_ui_90.getPointer()); //TODO
+      a0.partTransforms_94.setPointer(a0.partTransforms_90.getPointer()); //TODO
       v1 = lo;
-      a0.rotateTranslateArrPtr_94.setPointer(a0.ptr_ui_90.deref().get((int)v1).getAddress()); //TODO
-      FUN_800212d8(a0);
+      a0.partTransforms_94.setPointer(a0.partTransforms_90.deref().get((int)v1).getAddress()); //TODO
+      applyModelPartTransforms(a0);
       v0 = a0.s_9a.get();
       v0 = v0 << 16;
       v0 = (int)v0 >> 17;
@@ -4700,16 +4700,16 @@ public final class Bttl_800d {
       v0 = v1 << 1;
       v0 = v0 + v1;
       lo = a0.animCount_98.get() * (int)v0 & 0xffff_ffffL;
-      a0.rotateTranslateArrPtr_94.setPointer(a0.ptr_ui_90.getPointer()); //TODO
+      a0.partTransforms_94.setPointer(a0.partTransforms_90.getPointer()); //TODO
       v1 = lo;
-      a0.rotateTranslateArrPtr_94.setPointer(a0.ptr_ui_90.deref().get((int)v1).getAddress()); //TODO
-      FUN_800212d8(a0);
+      a0.partTransforms_94.setPointer(a0.partTransforms_90.deref().get((int)v1).getAddress()); //TODO
+      applyModelPartTransforms(a0);
       if((s2 & 0x1L) != 0) {
         if(s2 != a0.s_9a.get() - 1) {
           if(a0.ub_a3.get() == 0) {
-            s0 = a0.rotateTranslateArrPtr_94.getPointer();
+            s0 = a0.partTransforms_94.getPointer();
             FUN_800213c4(a0);
-            a0.rotateTranslateArrPtr_94.setPointer(s0); //TODO
+            a0.partTransforms_94.setPointer(s0); //TODO
           }
         }
       }
@@ -5115,8 +5115,8 @@ public final class Bttl_800d {
     final long a3;
     final UnboundedArrayRef<GsCOORD2PARAM> t0 = a0.coord2ParamArrPtr_08.deref();
     t0.get(0).scale.setY((int)a1); //TODO ?? a1 is a pointer
-    a0.ptr_ui_90.setPointer(0x2L); //TODO ??
-    a0.rotateTranslateArrPtr_94.clear();
+    a0.partTransforms_90.setPointer(0x2L); //TODO ??
+    a0.partTransforms_94.clear();
     a0.animCount_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
     a0.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xeL).get() * 2));
     a0.ub_9c.set(1);
@@ -5142,7 +5142,7 @@ public final class Bttl_800d {
 
   @Method(0x800de2e8L)
   public static void FUN_800de2e8(final BigStruct a0, final long a1) {
-    final long v1 = a0.ptr_ui_90.getPointer(); //TODO ??
+    final long v1 = a0.partTransforms_90.getPointer(); //TODO ??
     if(v1 == 1) {
       //LAB_800de318
       FUN_800dd638(a0, a1);
@@ -5165,8 +5165,8 @@ public final class Bttl_800d {
       //LAB_800de398
     } else if(v1 == 0x42_4d4cL) { // "LMB"
       a0.coord2ParamArrPtr_08.deref().get(0).scale.setX((int)a1); //TODO ?? a1 is a pointer
-      a0.ptr_ui_90.setPointer(0x1L); //TODO ??
-      a0.rotateTranslateArrPtr_94.clear();
+      a0.partTransforms_90.setPointer(0x1L); //TODO ??
+      a0.partTransforms_94.clear();
       a0.animCount_98.set((int)MEMORY.ref(2, a1).offset(0x4L).get());
       a0.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xcL).getSigned() * 2));
       a0.ub_9c.set(1);

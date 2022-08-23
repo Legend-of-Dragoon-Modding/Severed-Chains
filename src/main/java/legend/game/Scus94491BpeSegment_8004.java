@@ -877,102 +877,64 @@ public final class Scus94491BpeSegment_8004 {
   /** TODO RotMatrix_gte? */
   @Method(0x80040780L)
   public static void RotMatrix_80040780(final SVECTOR vector, final MATRIX matrix) {
-    long v1;
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long a2;
-    long a3;
-    long at;
-    long lo;
+    final int x = vector.getX();
+    final int y = vector.getY();
+    final int z = vector.getZ();
 
-    long a0;
-    long a1;
-    t0 = vector.getZ();
-    t3 = t0 >> 31;
-    t0 += t3;
-    t0 ^= t3;
-    a2 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
-    t0 = vector.getY();
-    t2 = t0 >> 31;
-    t0 += t2;
-    t0 ^= t2;
-    a1 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
-    t0 = vector.getX();
-    t1 = t0 >> 31;
-    t0 += t1;
-    t0 ^= t1;
-    a0 = sin_cos_80054d0c.offset((t0 * 4) & 0x3ffc).get();
-    at = a2 << 16;
-    a2 &= 0xffff_0000L;
-    at += t3;
-    at ^= t3;
-    at >>>= 16;
-    a2 |= at;
-    at = a1 << 16;
-    a1 &= 0xffff_0000L;
-    at += t2;
-    at ^= t2;
-    at >>>= 16;
-    a1 |= at;
-    at = a0 << 16;
-    a0 &= 0xffff_0000L;
-    at += t1;
-    at ^= t1;
-    at >>>= 16;
-    a0 |= at;
-    t0 = a0 >> 16;
-    CPU.MTC2(t0, 8);
-    a3 = (short)a1;
-    CPU.MTC2(a3, 9);
-    v1 = (short)a2;
-    CPU.MTC2(v1, 10);
-    CPU.MTC2(a2 >> 16, 11);
-    CPU.COP2(0x198_003dL);
-    lo = (a1 >> 16) * t0;
-    t0 = CPU.MFC2(9);
-    t1 = CPU.MFC2(10);
-    t2 = CPU.MFC2(11);
-    t6 = (short)a0;
-    CPU.MTC2(t6, 8);
-    CPU.MTC2(a3, 9);
-    CPU.MTC2(v1, 10);
-    CPU.MTC2(a2 >> 16, 11);
-    CPU.COP2(0x198_003dL);
-    matrix.set(8, (short)(lo >> 12));
-    t3 = CPU.MFC2(9);
-    t4 = CPU.MFC2(10);
-    t5 = CPU.MFC2(11);
+    final long signX = x >> 31;
+    final long signY = y >> 31;
+    final long signZ = z >> 31;
 
-    CPU.MTC2(a2 >> 16, 8);
-    at = a1 >> 16;
-    CPU.MTC2(at, 9);
+    final long sinCosX = sin_cos_80054d0c.offset((x + signX ^ signX) * 0x4L & 0x3ffcL).get();
+    final long sinCosY = sin_cos_80054d0c.offset((y + signY ^ signY) * 0x4L & 0x3ffcL).get();
+    final long sinCosZ = sin_cos_80054d0c.offset((z + signZ ^ signZ) * 0x4L & 0x3ffcL).get();
+
+    final short sinX = (short)(((int)(sinCosX << 16) + signX ^ signX) >>> 16);
+    final short sinY = (short)(((int)(sinCosY << 16) + signY ^ signY) >>> 16);
+    final short sinZ = (short)(((int)(sinCosZ << 16) + signZ ^ signZ) >>> 16);
+
+    final short cosX = (short)(sinCosX >> 16);
+    final short cosY = (short)(sinCosY >> 16);
+    final short cosZ = (short)(sinCosZ >> 16);
+
+    CPU.MTC2(cosX,  8);
+    CPU.MTC2(sinY,  9);
+    CPU.MTC2(sinZ, 10);
+    CPU.MTC2(cosZ, 11);
+    CPU.COP2(0x198003dL);
+    final long t0 = CPU.MFC2( 9);
+    final long t1 = CPU.MFC2(10);
+    final long t2 = CPU.MFC2(11);
+    CPU.MTC2(sinX,  8);
+    CPU.MTC2(sinY,  9);
+    CPU.MTC2(sinZ, 10);
+    CPU.MTC2(cosZ, 11);
+    CPU.COP2(0x198003dL);
+    final long t3 = CPU.MFC2( 9);
+    final long t4 = CPU.MFC2(10);
+    final long t5 = CPU.MFC2(11);
+    CPU.MTC2(cosZ, 8);
+    CPU.MTC2(cosY, 9);
     CPU.MTC2(t3, 10);
     CPU.MTC2(t0, 11);
-    CPU.COP2(0x198_003dL);
-    a0 = CPU.MFC2(9);
-    a1 = CPU.MFC2(10);
-    a2 = CPU.MFC2(11);
-
-    matrix.set(6, (short)(-a3 & 0xffffL));
-    matrix.set(7, (short)(at * (t6 >> 16)));
+    CPU.COP2(0x198003dL);
+    final long a0 = CPU.MFC2( 9);
+    final long a1 = CPU.MFC2(10);
+    final long a2 = CPU.MFC2(11);
+    CPU.MTC2(cosY, 9);
+    CPU.MTC2(sinZ, 8);
+    CPU.MTC2(t3, 10);
+    CPU.MTC2(t0, 11);
+    CPU.COP2(0x198003dL);
     matrix.set(0, (short)a0);
     matrix.set(1, (short)(a1 - t1));
-
-    CPU.MTC2(at, 9);
-    CPU.MTC2(v1, 8);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198_003dL);
-
     matrix.set(2, (short)(a2 + t4));
-    matrix.set(3, (short)CPU.MFC2(9));
+    matrix.set(3, (short)CPU.MFC2( 9));
     matrix.set(4, (short)(CPU.MFC2(10) + t2));
     matrix.set(5, (short)(CPU.MFC2(11) - t5));
+    matrix.set(6, (short)-sinY);
+    matrix.set(7, (short)(cosY * sinX >> 12));
+    matrix.set(8, (short)(cosY * cosX >> 12));
   }
 
   @Method(0x80040980L)
@@ -989,7 +951,7 @@ public final class Scus94491BpeSegment_8004 {
     long t4;
     long t5;
     long t6;
-    long t7;
+    final long t7;
     long lo;
     t0 = a0.getZ();
     v1 = 0x8005_0000L;
@@ -3646,7 +3608,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80046a7c
     if(sssqDataPointer_800c6680.deref(1).offset(0x3L).get() != 0) {
-      long v1 = _800c6674.deref(1).get();
+      final long v1 = _800c6674.deref(1).get();
       if(v1 == 0xffL) {
         final long v0 = s2._002.get() - _800c6674.deref(1).offset(0x6L).get();
         s2._026.set((int)v0);
@@ -4474,7 +4436,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048828L)
-  public static void setKeyOn(final int channelIndex, long voiceIndex) {
+  public static void setKeyOn(final int channelIndex, final long voiceIndex) {
     if(voiceIndex < 16) {
       _800c4ac8.get(channelIndex).keyOnLo_0de.or(1 << voiceIndex);
     } else {
@@ -5447,7 +5409,7 @@ public final class Scus94491BpeSegment_8004 {
   public static int FUN_8004af3c(final long a0, final long a1, final long a2, final long a3) {
     //LAB_8004af6c
     //LAB_8004af84
-    return (int)(a0 + (((a1 & 0xffL) - (a0 & 0xffL)) * a3 & 0xffL) / a2 & 0xffL & 0xffL);
+    return (int)(a0 + (((a1 & 0xffL) - (a0 & 0xffL)) * a3 & 0xffL) / a2 & 0xffL);
   }
 
   @Method(0x8004af98L)
@@ -5651,10 +5613,10 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004b694L)
   public static long spuDmaTransfer(final long transferDirection, final long dmaAddress, final long dmaSize, final long addressInSoundBuffer) {
     long v0;
-    long v1;
-    long s1;
-    long s2;
-    long s3;
+    final long v1;
+    final long s1;
+    final long s2;
+    final long s3;
     if(transferDirection != 0) {
       s1 = 0x30L;
       s2 = 0x2200_0000L;
@@ -6169,7 +6131,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static long FUN_8004c8dc(final int channelIndex, long a1) {
+  public static long FUN_8004c8dc(final int channelIndex, final long a1) {
     //TODO GH#3
     if(true) {
       return 0;
@@ -6617,9 +6579,9 @@ public final class Scus94491BpeSegment_8004 {
     long a1;
     long s0;
     long s1;
-    long s2;
-    long s3;
-    long s4;
+    final long s2;
+    final long s3;
+    final long s4;
 
     s1 = a0;
     v0 = 0x800c_0000L;

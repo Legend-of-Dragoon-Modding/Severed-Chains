@@ -1488,13 +1488,8 @@ public final class Scus94491BpeSegment_8003 {
     SPU.CD_VOL_R.set(0x3fff);
 
     SPU.SPUCNT.set(0xc001);
-    CDROM_REG0.setu(0b010L);      // Index2
-    CDROM_REG2.setu(0x80L);       // Audio Volume for Left-CD-Out to Left-SPU-Input
-    CDROM_REG3.setu(0x00L);       // Audio Volume for Left-CD-Out to Right-SPU-Input
-    CDROM_REG0.setu(0b011L);      // Index3
-    CDROM_REG1.setu(0x80L);       // Audio Volume for Right-CD-Out to Right-SPU-Input
-    CDROM_REG2.setu(0x0L);        // Audio Volume for Right-CD-Out to Left-SPU-Input
-    CDROM_REG3.setu(0b00100000L); // Apply changes
+
+    CDROM.setAudioMix(0x80, 0, 0x80, 0);
   }
 
   @Method(0x80032b30L)

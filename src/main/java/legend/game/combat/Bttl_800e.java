@@ -59,7 +59,7 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
 import legend.game.types.MrgFile;
-import legend.game.types.RotateTranslateStruct;
+import legend.game.types.ModelPartTransforms;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -4131,8 +4131,8 @@ public final class Bttl_800e {
     memcpy(a0.coord2Param_64.getAddress(), a1.param_5a8.getAddress(), 0x28);
 
     a0.tmd_8c.set(a1.tmd_5d0.deref());
-    a0.ptr_ui_90.set(a1.rotTrans_5d4.deref());
-    a0.rotateTranslateArrPtr_94.set(a1.rotTrans_5d8.deref());
+    a0.partTransforms_90.set(a1.rotTrans_5d4.deref());
+    a0.partTransforms_94.set(a1.rotTrans_5d8.deref());
     a0.animCount_98.set(a1.rotTransCount_5dc.get());
     a0.s_9a.set(a1._5de.get());
     a0.ub_9c.set(a1._5e0.get());
@@ -5321,7 +5321,7 @@ public final class Bttl_800e {
   public static void FUN_800ec63c(final BattleRenderStruct a0) {
     //LAB_800ec688
     for(int i = 0; i < a0.rotTransCount_5dc.get(); i++) {
-      final RotateTranslateStruct rotTrans = a0.rotTrans_5d8.deref().get(i);
+      final ModelPartTransforms rotTrans = a0.rotTrans_5d8.deref().get(i);
       final GsCOORDINATE2 coord2 = a0.dobj2s_00.get(i).coord2_04.deref();
       final GsCOORD2PARAM param = coord2.param.deref();
 
@@ -5344,8 +5344,8 @@ public final class Bttl_800e {
 
   @Method(0x800ec774L)
   public static void FUN_800ec774(final BattleRenderStruct a0, final TmdAnimationFile a1) {
-    a0.rotTrans_5d4.set(a1.rotateTranslateArr_10);
-    a0.rotTrans_5d8.set(a1.rotateTranslateArr_10);
+    a0.rotTrans_5d4.set(a1.partTransforms_10);
+    a0.rotTrans_5d8.set(a1.partTransforms_10);
     a0.rotTransCount_5dc.set((short)a1.count_0c.get());
     a0._5de.set(a1._0e.get());
     a0._5e0.set((short)0);

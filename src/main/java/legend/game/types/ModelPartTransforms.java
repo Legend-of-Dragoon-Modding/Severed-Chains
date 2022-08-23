@@ -5,13 +5,13 @@ import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 
 /** 0xc bytes long */
-public class RotateTranslateStruct implements MemoryRef {
+public class ModelPartTransforms implements MemoryRef {
   private final Value ref;
 
   public final SVECTOR rotate_00;
   public final SVECTOR translate_06;
 
-  public RotateTranslateStruct(final Value ref) {
+  public ModelPartTransforms(final Value ref) {
     this.ref = ref;
 
     this.rotate_00 = ref.offset(2, 0x00L).cast(SVECTOR::new);

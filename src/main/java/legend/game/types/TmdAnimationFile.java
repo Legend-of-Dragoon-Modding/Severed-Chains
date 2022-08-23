@@ -11,14 +11,14 @@ public class TmdAnimationFile implements MemoryRef {
 
   public final UnsignedShortRef count_0c;
   public final ShortRef _0e;
-  public final UnboundedArrayRef<RotateTranslateStruct> rotateTranslateArr_10;
+  public final UnboundedArrayRef<ModelPartTransforms> partTransforms_10;
 
   public TmdAnimationFile(final Value ref) {
     this.ref = ref;
 
     this.count_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this.rotateTranslateArr_10 = ref.offset(2, 0x10L).cast(UnboundedArrayRef.of(0xc, RotateTranslateStruct::new));
+    this.partTransforms_10 = ref.offset(2, 0x10L).cast(UnboundedArrayRef.of(0xc, ModelPartTransforms::new));
   }
 
   @Override
