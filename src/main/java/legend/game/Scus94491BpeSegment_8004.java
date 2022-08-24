@@ -881,17 +881,17 @@ public final class Scus94491BpeSegment_8004 {
     final int y = vector.getY();
     final int z = vector.getZ();
 
-    final long signX = x >> 31;
-    final long signY = y >> 31;
-    final long signZ = z >> 31;
+    final int signX = x >> 31;
+    final int signY = y >> 31;
+    final int signZ = z >> 31;
 
-    final long sinCosX = sin_cos_80054d0c.offset((x + signX ^ signX) * 0x4L & 0x3ffcL).get();
-    final long sinCosY = sin_cos_80054d0c.offset((y + signY ^ signY) * 0x4L & 0x3ffcL).get();
-    final long sinCosZ = sin_cos_80054d0c.offset((z + signZ ^ signZ) * 0x4L & 0x3ffcL).get();
+    final int sinCosX = (int)sin_cos_80054d0c.offset((x + signX ^ signX) * 0x4L & 0x3ffcL).get();
+    final int sinCosY = (int)sin_cos_80054d0c.offset((y + signY ^ signY) * 0x4L & 0x3ffcL).get();
+    final int sinCosZ = (int)sin_cos_80054d0c.offset((z + signZ ^ signZ) * 0x4L & 0x3ffcL).get();
 
-    final short sinX = (short)(((int)(sinCosX << 16) + signX ^ signX) >>> 16);
-    final short sinY = (short)(((int)(sinCosY << 16) + signY ^ signY) >>> 16);
-    final short sinZ = (short)(((int)(sinCosZ << 16) + signZ ^ signZ) >>> 16);
+    final short sinX = (short)(((sinCosX << 16) + signX ^ signX) >>> 16);
+    final short sinY = (short)(((sinCosY << 16) + signY ^ signY) >>> 16);
+    final short sinZ = (short)(((sinCosZ << 16) + signZ ^ signZ) >>> 16);
 
     final short cosX = (short)(sinCosX >> 16);
     final short cosY = (short)(sinCosY >> 16);
