@@ -3145,6 +3145,12 @@ public final class Bttl_800e {
     return 0;
   }
 
+  @Method(0x800e7490L)
+  public static long FUN_800e7490(final RunningScript a0) {
+    a0.params_20.get(0).deref().set((int)_800fafe8.get());
+    return 0;
+  }
+
   @Method(0x800e74acL)
   public static long FUN_800e74ac(final RunningScript a0) {
     final BattleStruct24_2 struct24 = _800c6938.deref();
