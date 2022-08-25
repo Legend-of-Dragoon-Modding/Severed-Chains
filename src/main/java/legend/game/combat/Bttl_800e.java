@@ -3115,6 +3115,34 @@ public final class Bttl_800e {
     throw new RuntimeException("Undefined v0");
   }
 
+  @Method(0x800e7314L)
+  public static long FUN_800e7314(final RunningScript a0) {
+    if(_800fafe8.get() != 0) {
+      if(a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
+        return 2;
+      }
+    }
+
+    //LAB_800e734c
+    //LAB_800e7350
+    final long v1 = _800fafe8.get();
+
+    if(v1 == 4) {
+      //LAB_800e738c
+      _800fafe8.setu(0);
+      _800c6938.deref().scriptIndex_18.set(0);
+      return 0;
+    }
+
+    //LAB_800e7374
+    if(v1 == 0) {
+      FUN_800e6aec(a0);
+    }
+
+    //LAB_800e739c
+    return 2;
+  }
+
   @Method(0x800e73acL)
   public static long FUN_800e73ac(final RunningScript a0) {
     if(_800fafe8.get() != 0) {

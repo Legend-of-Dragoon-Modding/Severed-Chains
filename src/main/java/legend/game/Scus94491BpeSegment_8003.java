@@ -81,7 +81,6 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.Timers.TMR_HRETRACE_MODE;
 import static legend.core.Timers.TMR_HRETRACE_VAL;
 import static legend.core.cdrom.CdDrive.CDROM_REG0;
-import static legend.core.cdrom.CdDrive.CDROM_REG1;
 import static legend.core.cdrom.CdDrive.CDROM_REG2;
 import static legend.core.cdrom.CdDrive.CDROM_REG3;
 import static legend.core.dma.DmaManager.DMA_DICR;
@@ -7471,6 +7470,22 @@ public final class Scus94491BpeSegment_8003 {
     m1.set(8, (short)CPU.MFC2(11)); // IR3
 
     return m1;
+  }
+  
+  @Method(0x8003f680L)
+  public static VECTOR FUN_8003f680(final MATRIX a0, final SVECTOR a1, final VECTOR a2) {
+    CPU.CTC2(a0.getPacked(0), 0);
+    CPU.CTC2(a0.getPacked(2), 1);
+    CPU.CTC2(a0.getPacked(4), 2);
+    CPU.CTC2(a0.getPacked(6), 3);
+    CPU.CTC2(a0.getPacked(8), 4);
+    CPU.MTC2(a1.getXY(), 0);
+    CPU.MTC2(a1.getZ(),  1);
+    CPU.COP2(0x486012L);
+    a2.setX((int)CPU.MFC2(25));
+    a2.setY((int)CPU.MFC2(26));
+    a2.setZ((int)CPU.MFC2(27));
+    return a2;
   }
 
   @Method(0x8003f6d0L)

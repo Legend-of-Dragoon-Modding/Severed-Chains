@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
+import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -28,10 +29,12 @@ import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlScriptData6cInner;
 import legend.game.combat.types.BttlScriptData6cSub08_2;
 import legend.game.combat.types.BttlScriptData6cSub08_3;
+import legend.game.combat.types.BttlScriptData6cSub08_4;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlScriptData6cSub14_2;
 import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub24;
+import legend.game.combat.types.BttlScriptData6cSub24_2;
 import legend.game.combat.types.BttlScriptData6cSub30;
 import legend.game.combat.types.BttlScriptData6cSub34;
 import legend.game.combat.types.BttlScriptData6cSub38;
@@ -51,6 +54,7 @@ import legend.game.combat.types.EffeScriptData30Sub06;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.types.BigStruct;
 import legend.game.types.DR_MODE;
+import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
@@ -88,6 +92,7 @@ import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
+import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -95,6 +100,7 @@ import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003f680;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -103,6 +109,7 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
+import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
@@ -122,6 +129,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800c7488;
@@ -5981,6 +5989,146 @@ public final class SEffe {
     return effect;
   }
 
+  @Method(0x80111154L)
+  public static long FUN_80111154(final EffectManagerData6c manager, final BttlScriptData6cSub24_2 effect) {
+    long a2 = 0;
+    final long t0 = 0;
+    if(true) throw new RuntimeException("This method is completely bugged"); //TODO
+
+    long t1;
+    long a1 = effect._10.get() / 2;
+    a1 = a1 % MEMORY.ref(2, a2).offset(0xaL).getSigned();
+    t1 = a1 + 1;
+    t1 = t1 % MEMORY.ref(2, a2).offset(0xaL).getSigned();
+
+    if(t1 == 0) {
+      t1 = a1;
+      a1 = 0;
+    }
+
+    final SVECTOR sp0x10 = new SVECTOR();
+
+    //LAB_801111b4
+    final long v0 = effect.part_14.deref().getAddress(); //TODO
+    a2 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
+    final long a3 = a2 + MEMORY.ref(4, a2).offset(0xcL).get();
+    long a0;
+    if(a1 == 0) {
+      throw new RuntimeException("Bugged");
+//      v0 = t2 + t0 * 0x14L;
+//      sp10 = MEMORY.ref(2, v0).offset(0x6L).get();
+//      sp10 = MEMORY.ref(2, v0).offset(0x8L).get();
+//      sp10 = MEMORY.ref(2, v0).offset(0xaL).get();
+    } else {
+      //LAB_80111208
+      a0 = a2 + MEMORY.ref(4, a2).offset(0x14L).get() + a1 * MEMORY.ref(2, a2).offset(0x8L).getSigned();
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x8000L) == 0) {
+        a0 = a0 + 0x2L;
+      }
+
+      //LAB_80111244
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x4000L) == 0) {
+        a0 = a0 + 0x2L;
+      }
+
+      //LAB_80111264
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x2000L) == 0) {
+        a0 = a0 + 0x2L;
+      }
+
+      //LAB_80111280
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x200L) == 0) {
+        sp0x10.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
+        a0 = a0 + 0x2L;
+      }
+
+      //LAB_801112ac
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x100L) == 0) {
+        sp0x10.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
+        a0 = a0 + 0x2L;
+      }
+
+      //LAB_801112d8
+      if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x80L) == 0) {
+        sp0x10.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
+      }
+    }
+
+    //LAB_801112fc
+    a0 = a2 + MEMORY.ref(4, a2).offset(0x14L).get() + t1 * MEMORY.ref(2, a2).offset(0x8L).getSigned();
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x8000L) == 0) {
+      a0 = a0 + 0x2L;
+    }
+
+    //LAB_80111338
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x4000L) == 0) {
+      a0 = a0 + 0x2L;
+    }
+
+    //LAB_80111358
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x2000L) == 0) {
+      a0 = a0 + 0x2L;
+    }
+
+    //LAB_80111374
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x200L) == 0) {
+      sp0x10.setX((short)((MEMORY.ref(2, a0).offset(0x0L).getSigned() - sp0x10.getX()) / 2));
+      a0 = a0 + 0x2L;
+    }
+
+    //LAB_801113b4
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x100L) == 0) {
+      sp0x10.setY((short)((MEMORY.ref(2, a0).offset(0x0L).getSigned() - sp0x10.getY()) / 2));
+      a0 = a0 + 0x2L;
+    }
+
+    //LAB_801113f4
+    if((MEMORY.ref(2, a3).offset(t0 * 0x4L).get() & 0x80L) == 0) {
+      sp0x10.setZ((short)((MEMORY.ref(2, a0).offset(0x0L).getSigned() - sp0x10.getZ()) / 2));
+    }
+
+    //LAB_8011142c
+    final MATRIX sp0x28 = new MATRIX();
+    RotMatrix_8003faf0(effect._1c, sp0x28);
+    SetRotMatrix(sp0x28);
+
+    final VECTOR sp0x18 = new VECTOR();
+    FUN_8003f680(sp0x28, sp0x10, sp0x18);
+    manager._10.vec_04.add(sp0x18);
+    effect._10.incr();
+    return 1;
+  }
+
+  @Method(0x801114b8L)
+  public static long FUN_801114b8(final RunningScript a0) {
+    final int s2 = a0.params_20.get(1).deref().get();
+    final int s4 = a0.params_20.get(2).deref().get();
+    final int s3 = a0.params_20.get(3).deref().get();
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    if((manager._04.get() & 0x2L) != 0) {
+      FUN_800e8d04(manager, 1);
+    }
+
+    //LAB_80111540
+    final BttlScriptData6cSub24_2 s1 = FUN_800e8dd4(manager, 1, 1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_80111154", EffectManagerData6c.class, BttlScriptData6cSub24_2.class), BiFunctionRef::new), 0x24, BttlScriptData6cSub24_2::new);
+
+    final MATRIX sp0x18 = new MATRIX();
+    FUN_800e8594(sp0x18, manager);
+    FUN_800de544(s1._1c, sp0x18);
+    s1._0c.set(s3);
+    s1._18.set(s4);
+    if((s2 & 0xf_ff00L) == 0xf_ff00L) {
+      s1.part_14.set(struct7cc_800c693c.deref()._390.get(s2 & 0xff).deref());
+    } else {
+      //LAB_801115b4
+      s1.part_14.set(FUN_800eac58(s2));
+    }
+
+    //LAB_801115c0
+    s1._10.set(1);
+    return 0;
+  }
+
   @Method(0x801115ecL)
   public static long FUN_801115ec(final RunningScript s0) {
     final VECTOR sp0x10 = new VECTOR();
@@ -7341,6 +7489,18 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x801181f0L)
+  public static long FUN_801181f0(final RunningScript a0) {
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.getPointer(); //TODO
+
+    final int v1 = a0.params_20.get(3).deref().get() + 1;
+    MEMORY.ref(4, v0).offset(0x34L).setu(a0.params_20.get(1).deref().get());
+    MEMORY.ref(4, v0).offset(0x38L).setu(a0.params_20.get(2).deref().get() * v1);
+    MEMORY.ref(4, v0).offset(0x3cL).setu(0x1000 / v1);
+    MEMORY.ref(4, v0).offset(0x40L).setu(a0.params_20.get(4).deref().get());
+    return 0;
+  }
+
   @Method(0x8011826cL)
   public static void FUN_8011826c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BttlScriptData6cSub14_2 s1 = data._44.derefAs(BttlScriptData6cSub14_2.class);
@@ -7572,6 +7732,92 @@ public final class SEffe {
     FUN_800de36c(effect._134.deref(), v0);
     manager._10._24.set(0);
     FUN_80114f3c(effectIndex, 0, 0x100, 0);
+    return 0;
+  }
+
+  @Method(0x80118a24L)
+  public static void FUN_80118a24(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub08_4 effect = manager._44.derefAs(BttlScriptData6cSub08_4.class);
+    final int sp10 = DISPENV_800c34b0.disp.x.get() + manager._10.vec_04.getX() + 160 - (int)manager._10._24.get() / 2;
+    final int sp12 = DISPENV_800c34b0.disp.y.get() + manager._10.vec_04.getY() + 120 - manager._10.vec_28.getX() / 2;
+    final int sp34 = (manager._10.vec_04.getZ() - manager._10.vec_28.getY() / 2) / 4;
+    final int fp = (manager._10.vec_04.getZ() + manager._10.vec_28.getY() / 2) / 4;
+    final int l = DISPENV_800c34b0.disp.x.get();
+    final int r = DISPENV_800c34b0.disp.x.get() + 320;
+    final int t = DISPENV_800c34b0.disp.y.get();
+    final int b = DISPENV_800c34b0.disp.y.get() + 240;
+
+    final RECT sp0x20 = new RECT();
+    final RECT sp0x28 = new RECT();
+
+    //LAB_80118ba8
+    for(int i = 0; i < 4; i++) {
+      sp0x28.x.set((short)(sp10 + manager._10._24.get() / 2 * (i & 0x1L)));
+      sp0x28.y.set((short)(sp12 + manager._10.vec_28.getX() / 2 * (i >> 1)));
+      sp0x28.w.set((short)(manager._10._24.get() / 2));
+      sp0x28.h.set((short)(manager._10._24.get() / 2));
+      if(sp0x28.x.get() < r) {
+        if(sp0x28.x.get() < l) {
+          sp0x28.w.add((short)(sp0x28.x.get() - l));
+          sp0x28.x.set((short)l);
+        }
+
+        //LAB_80118c58
+        if(r < sp0x28.x.get() + sp0x28.w.get()) {
+          sp0x28.w.set((short)(r - sp0x28.x.get()));
+        }
+
+        //LAB_80118c7c
+        if(sp0x28.w.get() > 0) {
+          if(sp0x28.y.get() < b) {
+            if(sp0x28.y.get() < t) {
+              sp0x20.h.add((short)(sp0x28.y.get() - t));
+              sp0x28.y.set((short)t);
+            }
+
+            //LAB_80118cc0
+            if(b < sp0x28.y.get() + sp0x28.h.get()) {
+              sp0x28.h.set((short)(b - sp0x28.y.get()));
+            }
+
+            //LAB_80118ce4
+            if(sp0x28.h.get() > 0) {
+              sp0x20.x.set(effect._00.get());
+              sp0x20.y.set((short)(effect._02.get() + i * 64));
+              sp0x20.w.set(sp0x28.w.get());
+              sp0x20.h.set(sp0x28.h.get());
+
+              SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x20, sp0x28.x.get(), sp0x28.y.get());
+              insertElementIntoLinkedList(tags_1f8003d0.deref().get(sp34).getAddress(), linkedListAddress_1f8003d8.get());
+              linkedListAddress_1f8003d8.addu(0x18L);
+
+              SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x28, sp0x20.x.get(), sp0x20.y.get());
+              insertElementIntoLinkedList(tags_1f8003d0.deref().get(fp).getAddress(), linkedListAddress_1f8003d8.get());
+              linkedListAddress_1f8003d8.addu(0x18L);
+            }
+          }
+        }
+      }
+
+      //LAB_80118db4
+    }
+  }
+
+  @Method(0x80118df4L)
+  public static long FUN_80118df4(final RunningScript script) {
+    final int effectIndex = allocateEffectManager(script.scriptStateIndex_00.get(), 0x8, null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80118a24", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null, BttlScriptData6cSub08_4::new);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub08_4 effect = manager._44.derefAs(BttlScriptData6cSub08_4.class);
+    effect._00.set((short)0x300);
+    effect._02.set((short)0);
+    effect._04.set(-1);
+    effect._05.set(-1);
+    effect._06.set((short)0);
+    manager._10.vec_04.setZ(0x100);
+    manager._10._24.set(0x80L);
+    manager._10.vec_28.setX(0x80);
+    manager._10.vec_28.setZ(0x100);
+    script.params_20.get(0).deref().set(effectIndex);
     return 0;
   }
 
