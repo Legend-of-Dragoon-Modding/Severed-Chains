@@ -566,6 +566,7 @@ public final class Scus94491BpeSegment {
 
       if(key == GLFW_KEY_R && (mods & GLFW_MOD_CONTROL) != 0) {
         OLD_RENDERER = !OLD_RENDERER;
+        LOGGER.info("Old renderer: %b", OLD_RENDERER);
       }
 
       if(key == GLFW_KEY_F12) {

@@ -2,7 +2,6 @@ package legend.game.tmd;
 
 public class Polygon {
   public final Vertex[] vertices;
-  public int colour;
   public int clut;
   public int tpage;
 

@@ -1017,14 +1017,10 @@ public final class SMap {
 
     long packet = linkedListAddress_1f8003d8.get();
 
-    // Reset lighting for TL vertices
-    if(textured && lit) {
-      CPU.MTC2(0x80_8080L, 6);
-    }
-
     final Polygon poly = new Polygon(vertexCount);
     long readIndex = primitives;
 
+    outer:
     for(int i = 0; i < count; i++) {
       // Read data from TMD ---
       readIndex += 4;
@@ -1050,8 +1046,12 @@ public final class SMap {
           readIndex += 4;
         }
       } else if(!textured) {
-        poly.colour = (int)MEMORY.get(readIndex, 4);
+        final int colour = (int)MEMORY.get(readIndex, 4);
         readIndex += 4;
+
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          poly.vertices[vertexIndex].colour = colour;
+        }
       }
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
@@ -1067,30 +1067,19 @@ public final class SMap {
       readIndex = readIndex + 3 & 0xffff_fffcL; // 4-byte-align
       // ---
 
-      for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+      for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         final SVECTOR vert = vertices.get(poly.vertices[vertexIndex].vertexIndex);
-        CPU.MTC2(vert.getXY(), vertexIndex * 2);
-        CPU.MTC2(vert.getZ(),  vertexIndex * 2 + 1);
-      }
+        CPU.MTC2(vert.getXY(), 0);
+        CPU.MTC2(vert.getZ(),  1);
+        CPU.COP2(0x18_0001L); // Perspective transform single
 
-      CPU.COP2(0x28_0030L); // Perspective transform triple
+        if((int)CPU.CFC2(31) < 0) { // Errors
+          continue outer;
+        }
 
-      if((int)CPU.CFC2(31) < 0) { // Errors
-        continue;
-      }
+        MEMORY.set(packet + 0x8L + vertexIndex * packetPitch, 4, CPU.MFC2(14));
 
-      CPU.COP2(0x140_0006L); // Normal clipping
-
-      if((int)CPU.MFC2(24) <= 0) { // Not visible
-        continue;
-      }
-
-      for(int vertIndex = 0; vertIndex < 3; vertIndex++) {
-        MEMORY.set(packet + 0x8L + vertIndex * packetPitch, 4, CPU.MFC2(12 + vertIndex)); // Screen coords
-      }
-
-      if(textured) {
-        for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+        if(textured) {
           final long index = packet + 0xcL + vertexIndex * packetPitch;
 
           MEMORY.set(index,     (byte)poly.vertices[vertexIndex].u);
@@ -1104,24 +1093,6 @@ public final class SMap {
         }
       }
 
-      if(quad) {
-        final SVECTOR vert = vertices.get(poly.vertices[3].vertexIndex);
-        CPU.MTC2(vert.getXY(), 0);
-        CPU.MTC2(vert.getZ(),  1);
-        CPU.COP2(0x18_0001L); // Perspective transform single
-
-        if((int)CPU.CFC2(31) < 0) { // Errors
-          continue;
-        }
-
-        MEMORY.set(packet + 0x8L + 3 * packetPitch, 4, CPU.MFC2(14));
-
-        if(textured) {
-          MEMORY.set(packet + 0xcL + 3 * packetPitch,     (byte)poly.vertices[3].u);
-          MEMORY.set(packet + 0xcL + 3 * packetPitch + 1, (byte)poly.vertices[3].v);
-        }
-      }
-
       // Average Z
       if(quad) {
         CPU.COP2(0x168_002eL);
@@ -1131,7 +1102,11 @@ public final class SMap {
 
       final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
 
-      if(gradated) {
+      if(textured && !lit) {
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, poly.vertices[vertexIndex].colour);
+        }
+      } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
           final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[vertexIndex].normalIndex * 0x8L).cast(SVECTOR::new);
@@ -1139,36 +1114,6 @@ public final class SMap {
           CPU.MTC2(norm.getZ(),  1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector
           MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, CPU.MFC2(22));
-        }
-      } else {
-        if(!textured) {
-          CPU.MTC2(poly.colour, 6);
-        }
-
-        if(textured && !lit) {
-          for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-            MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, poly.vertices[vertexIndex].colour);
-          }
-        } else {
-          for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
-            final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[vertexIndex].normalIndex * 0x8L).cast(SVECTOR::new);
-            CPU.MTC2(norm.getXY(), vertexIndex * 2);
-            CPU.MTC2(norm.getZ(),  vertexIndex * 2 + 1);
-          }
-
-          CPU.COP2(0x118_043fL); // Normal colour colour triple vector
-
-          for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
-            MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, CPU.MFC2(20 + vertexIndex));
-          }
-
-          if(quad) {
-            final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[3].normalIndex * 0x8L).cast(SVECTOR::new);
-            CPU.MTC2(norm.getXY(), 0);
-            CPU.MTC2(norm.getZ(),  1);
-            CPU.COP2(0x108_041bL); // Normal colour colour single vector
-            MEMORY.set(packet + 0x4L + 3 * packetPitch, 4, CPU.MFC2(22));
-          }
         }
       }
 

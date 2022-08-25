@@ -6,4 +6,8 @@ public class Vertex {
   public int u;
   public int v;
   public int colour;
+
+  public Vertex() {
+    this.colour = 0x808080;
+  }
 }
