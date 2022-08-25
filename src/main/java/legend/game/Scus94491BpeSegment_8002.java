@@ -34,6 +34,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
@@ -107,7 +108,6 @@ import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.renderSmapDobj2;
 import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
@@ -398,7 +398,6 @@ import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
 import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.FUN_800c925c;
-import static legend.game.WMap.renderWmapDobj2;
 import static legend.game.combat.Bttl_800e.renderBttlDobj2;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.FUN_800ec974;
@@ -1008,7 +1007,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void renderDobj2(final GsDOBJ2 dobj2) {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
       //LAB_800212b0
-      renderSmapDobj2(dobj2);
+      Renderer.renderDobj2(dobj2);
       return;
     }
 
@@ -1021,7 +1020,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002128c
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_800212c0
-      renderWmapDobj2(dobj2);
+      Renderer.renderDobj2(dobj2);
     }
 
     //LAB_800212c8
