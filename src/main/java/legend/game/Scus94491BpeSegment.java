@@ -12,6 +12,7 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -322,6 +323,7 @@ import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
@@ -549,6 +551,8 @@ public final class Scus94491BpeSegment {
   private static boolean dumping;
   private static boolean loading;
 
+  public static boolean OLD_RENDERER;
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     Hardware.GPU.events().onKeyPress((window, key, scancode, mods) -> {
@@ -558,6 +562,10 @@ public final class Scus94491BpeSegment {
 
       if(key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL) != 0) {
         loading = true;
+      }
+
+      if(key == GLFW_KEY_R && (mods & GLFW_MOD_CONTROL) != 0) {
+        OLD_RENDERER = !OLD_RENDERER;
       }
 
       if(key == GLFW_KEY_F12) {

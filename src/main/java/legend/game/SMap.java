@@ -28,6 +28,7 @@ import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.tmd.Polygon;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmStruct;
@@ -769,8 +770,8 @@ public final class SMap {
       //LAB_800d9b70
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
-        final var stats = stats_800be5f8.get(charSlot);
-        final var charData = gameState_800babc8.charData_32c.get(charSlot);
+        final ActiveStatsa0 stats = stats_800be5f8.get(charSlot);
+        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
         charData.hp_08.set(stats.maxHp_66.get());
         charData.mp_0a.set(stats.maxMp_6e.get());
       }
@@ -885,7 +886,7 @@ public final class SMap {
 
   @Method(0x800da114L)
   public static void FUN_800da114(final BigStruct struct) {
-    if(false && !struct.smallerStructPtr_a4.isNull()) {
+    if(!struct.smallerStructPtr_a4.isNull()) {
       //LAB_800da138
       for(int i = 0; i < 4; i++) {
         if(struct.smallerStructPtr_a4.deref().uba_04.get(i).get() != 0) {
@@ -951,6 +952,245 @@ public final class SMap {
     //LAB_800da274
   }
 
+  private static long renderTmdPrimitive(final long command, final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final int count) {
+    // Read type info from command ---
+    final int primitiveId = (int)(command >>> 24);
+
+    if((primitiveId >>> 5 & 0b11) != 1) {
+      throw new RuntimeException("Unsupported primitive type");
+    }
+
+    final boolean gradated = (command & 0x4_0000) != 0;
+    final boolean shaded = (primitiveId & 0b1_0000) != 0;
+    final boolean quad = (primitiveId & 0b1000) != 0;
+    final boolean textured = (primitiveId & 0b100) != 0;
+    final boolean translucent = (primitiveId & 0b10) != 0;
+    final boolean lit = (primitiveId & 0b1) == 0;
+
+    if(textured && gradated) {
+      throw new RuntimeException("Invalid primitive type");
+    }
+
+    if(!textured && !lit) {
+      throw new RuntimeException("Invalid primitive type");
+    }
+
+    final int vertexCount = quad ? 4 : 3;
+    // ---
+
+    // The number of words per vertex in the GP0 command
+    int components = 1;
+    if(shaded) { // Has colour info
+      components++;
+    }
+
+    if(textured) { // Has texture info
+      components++;
+    }
+
+    // The length in bytes of each vertex in the GP0 packet
+    final int packetPitch = components * 4;
+
+    // The number of words total in the GP0 command
+    int gp0CommandCount = components * vertexCount;
+
+    int gp0Command = 0x20;
+    if(shaded) {
+      gp0Command |= 0x10;
+    } else {
+      gp0CommandCount++; // Unshaded commands have an extra word at the start
+    }
+
+    if(quad) {
+      gp0Command |= 0x8;
+    }
+
+    if(textured) {
+      gp0Command |= 0x4;
+    }
+
+    if(translucent) {
+      gp0Command |= 0x2;
+    }
+
+    final int packetLength = (gp0CommandCount + 1) * 4;
+
+    long packet = linkedListAddress_1f8003d8.get();
+
+    // Reset lighting for TL vertices
+    if(textured && lit) {
+      CPU.MTC2(0x80_8080L, 6);
+    }
+
+    final Polygon poly = new Polygon(vertexCount);
+    long readIndex = primitives;
+
+    for(int i = 0; i < count; i++) {
+      // Read data from TMD ---
+      readIndex += 4;
+
+      if(textured) {
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          poly.vertices[vertexIndex].u = MEMORY.get(readIndex++);
+          poly.vertices[vertexIndex].v = MEMORY.get(readIndex++);
+
+          if(vertexIndex == 0) {
+            poly.clut = (int)MEMORY.get(readIndex, 2);
+          } else if(vertexIndex == 1) {
+            poly.tpage = (int)MEMORY.get(readIndex, 2);
+          }
+
+          readIndex += 2;
+        }
+      }
+
+      if(gradated || !lit) {
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          poly.vertices[vertexIndex].colour = (int)MEMORY.get(readIndex, 4);
+          readIndex += 4;
+        }
+      } else if(!textured) {
+        poly.colour = (int)MEMORY.get(readIndex, 4);
+        readIndex += 4;
+      }
+
+      for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+        if(lit) {
+          poly.vertices[vertexIndex].normalIndex = (int)MEMORY.get(readIndex, 2);
+          readIndex += 2;
+        }
+
+        poly.vertices[vertexIndex].vertexIndex = (int)MEMORY.get(readIndex, 2);
+        readIndex += 2;
+      }
+
+      readIndex = readIndex + 3 & 0xffff_fffcL; // 4-byte-align
+      // ---
+
+      for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+        final SVECTOR vert = vertices.get(poly.vertices[vertexIndex].vertexIndex);
+        CPU.MTC2(vert.getXY(), vertexIndex * 2);
+        CPU.MTC2(vert.getZ(),  vertexIndex * 2 + 1);
+      }
+
+      CPU.COP2(0x28_0030L); // Perspective transform triple
+
+      if((int)CPU.CFC2(31) < 0) { // Errors
+        continue;
+      }
+
+      CPU.COP2(0x140_0006L); // Normal clipping
+
+      if((int)CPU.MFC2(24) <= 0) { // Not visible
+        continue;
+      }
+
+      for(int vertIndex = 0; vertIndex < 3; vertIndex++) {
+        MEMORY.set(packet + 0x8L + vertIndex * packetPitch, 4, CPU.MFC2(12 + vertIndex)); // Screen coords
+      }
+
+      if(textured) {
+        for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+          final long index = packet + 0xcL + vertexIndex * packetPitch;
+
+          MEMORY.set(index,     (byte)poly.vertices[vertexIndex].u);
+          MEMORY.set(index + 1, (byte)poly.vertices[vertexIndex].v);
+
+          if(vertexIndex == 0) {
+            MEMORY.set(index + 2, 2, poly.clut);
+          } else if(vertexIndex == 1) {
+            MEMORY.set(index + 2, 2, poly.tpage);
+          }
+        }
+      }
+
+      if(quad) {
+        final SVECTOR vert = vertices.get(poly.vertices[3].vertexIndex);
+        CPU.MTC2(vert.getXY(), 0);
+        CPU.MTC2(vert.getZ(),  1);
+        CPU.COP2(0x18_0001L); // Perspective transform single
+
+        if((int)CPU.CFC2(31) < 0) { // Errors
+          continue;
+        }
+
+        MEMORY.set(packet + 0x8L + 3 * packetPitch, 4, CPU.MFC2(14));
+
+        if(textured) {
+          MEMORY.set(packet + 0xcL + 3 * packetPitch,     (byte)poly.vertices[3].u);
+          MEMORY.set(packet + 0xcL + 3 * packetPitch + 1, (byte)poly.vertices[3].v);
+        }
+      }
+
+      // Average Z
+      if(quad) {
+        CPU.COP2(0x168_002eL);
+      } else {
+        CPU.COP2(0x168_002dL);
+      }
+
+      final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+
+      if(gradated) {
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
+          final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[vertexIndex].normalIndex * 0x8L).cast(SVECTOR::new);
+          CPU.MTC2(norm.getXY(), 0);
+          CPU.MTC2(norm.getZ(),  1);
+          CPU.COP2(0x108_041bL); // Normal colour colour single vector
+          MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, CPU.MFC2(22));
+        }
+      } else {
+        if(!textured) {
+          CPU.MTC2(poly.colour, 6);
+        }
+
+        if(textured && !lit) {
+          for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+            MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, poly.vertices[vertexIndex].colour);
+          }
+        } else {
+          for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+            final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[vertexIndex].normalIndex * 0x8L).cast(SVECTOR::new);
+            CPU.MTC2(norm.getXY(), vertexIndex * 2);
+            CPU.MTC2(norm.getZ(),  vertexIndex * 2 + 1);
+          }
+
+          CPU.COP2(0x118_043fL); // Normal colour colour triple vector
+
+          for(int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+            MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, CPU.MFC2(20 + vertexIndex));
+          }
+
+          if(quad) {
+            final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[3].normalIndex * 0x8L).cast(SVECTOR::new);
+            CPU.MTC2(norm.getXY(), 0);
+            CPU.MTC2(norm.getZ(),  1);
+            CPU.COP2(0x108_041bL); // Normal colour colour single vector
+            MEMORY.set(packet + 0x4L + 3 * packetPitch, 4, CPU.MFC2(22));
+          }
+        }
+      }
+
+      MEMORY.set(packet + 0x7L, (byte)gp0Command);
+
+      final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+      MEMORY.set(packet, 4, gp0CommandCount << 24 | tag.p.get());
+      tag.set(packet & 0xff_ffffL);
+      packet += packetLength;
+
+      if(translucent && !textured) {
+        MEMORY.set(packet, 4, 0x100_0000L | tag.p.get());
+        MEMORY.set(packet + 4, 4, 0xe100_021fL | _1f8003ec.get() & 0x9ffL);
+        tag.set(packet & 0xff_ffffL);
+        packet += 0x8L;
+      }
+    }
+
+    linkedListAddress_1f8003d8.setu(packet);
+    return readIndex;
+  }
+
   @Method(0x800da288L)
   public static void renderSmapDobj2(final GsDOBJ2 dobj2) {
     final TmdObjTable objTable = dobj2.tmd_08.deref();
@@ -969,66 +1209,100 @@ public final class SMap {
         LOGGER.warn("renderDobj2 count less than 0! %d", count);
       }
 
-      if(command == 0x3000_0000L) {
-        //LAB_800da3e8
-        primitives = renderPrimitive3000(primitives, vertices, normals, length);
-//        primitives += length * 0x14L;
-      } else if(command == 0x3004_0000L) {
-        //LAB_800da408
-        primitives = renderPrimitive3004(primitives, vertices, normals, length);
-//        primitives += length * 0x1cL;
-      } else if(command == 0x3200_0000L) {
-        //LAB_800da3f8
-        primitives = renderPrimitive3200(primitives, vertices, normals);
-      } else if(command == 0x3204_0000L) {
-        //LAB_800da41c
-        primitives = renderPrimitive3204(primitives, vertices, normals, length);
-      } else if(command == 0x3400_0000L) {
-        //LAB_800da430
-        primitives = renderPrimitive34(primitives, vertices, normals, length);
-//        primitives += length * 0x1cL;
-      } else if(command == 0x3500_0000L) {
-        //LAB_800da450
-        primitives = renderPrimitive35(primitives, vertices, length);
-      } else if(command == 0x3600_0000L) {
-        //LAB_800da440
-        primitives = renderPrimitive36(primitives, vertices, normals, length);
-//        primitives += length * 0x1cL;
-      } else if(command == 0x3700_0000L) {
-        //LAB_800da464
-        primitives = renderPrimitive37(primitives, vertices, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3800_0000L) {
-        //LAB_800da478
-        primitives = renderPrimitive3800(primitives, vertices, normals, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3804_0000L) {
-        //LAB_800da498
-        primitives = renderPrimitive3804(primitives, vertices, normals, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3a00_0000L) {
-        //LAB_800da488
-        primitives = renderPrimitive3a00(primitives, vertices, normals, length);
-//        primitives += length * 0x18L;
-      } else if(command == 0x3a04_0000L) {
-        //LAB_800da4ac
-        primitives = renderPrimitive3a04(primitives, vertices, normals, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3c00_0000L) {
-        //LAB_800da4c0
-        primitives = renderPrimitive3c(primitives, vertices, normals, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3d00_0000L) {
-        //LAB_800da4e4
-        primitives = renderPrimitive3d(primitives, vertices, length);
-      } else if(command == 0x3e00_0000L) {
-        //LAB_800da4d0
-        primitives = renderPrimitive3e(primitives, vertices, normals, length);
-//        primitives += length * 0x24L;
-      } else if(command == 0x3f00_0000L) {
-        //LAB_800da4f8
-        primitives = renderPrimitive3f(primitives, vertices, length);
-//        primitives += length * 0x2cL;
+      if(!Scus94491BpeSegment.OLD_RENDERER) {
+        primitives = renderTmdPrimitive(command, primitives, vertices, normals, (int)length);
+      } else {
+        if(command == 0x3000_0000L) {
+          // Tri, shading, solid
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13
+          //             r  g  b     n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3000(primitives, vertices, normals, length);
+          //        primitives += length * 0x14L;
+        } else if(command == 0x3004_0000L) {
+          // Tri, shading, gradation
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b
+          //             r  g  b     r  g  b     r  g  b     n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3004(primitives, vertices, normals, length);
+          //        primitives += length * 0x1cL;
+        } else if(command == 0x3200_0000L) {
+          // Tri, shading, solid, alpha
+          primitives = renderPrimitive3200(primitives, vertices, normals);
+        } else if(command == 0x3204_0000L) {
+          // Tri, shading, gradation, alpha
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b
+          //             r  g  b  c  r  g  b  c  r  g  b  c  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3204(primitives, vertices, normals, length);
+          //        primitives += length * 0x1cL;
+        } else if(command == 0x3400_0000L) {
+          // Tri, shading, textured
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b
+          //             u  v  cl ut u  v  tp ge u  v        n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive34(primitives, vertices, normals, length);
+          //        primitives += length * 0x1cL;
+        } else if(command == 0x3500_0000L) {
+          // Tri, shading, textured, no lighting
+          primitives = renderPrimitive35(primitives, vertices, length);
+        } else if(command == 0x3600_0000L) {
+          // Tri, shading, textured, alpha
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b
+          //             u  v  cl ut u  v  tp ge u  v        n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive36(primitives, vertices, normals, length);
+          //        primitives += length * 0x1cL;
+        } else if(command == 0x3700_0000L) {
+          // Tri, shading, textured, alpha, no lighting
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23
+          //             u  v  cl ut u  v  tp ge u  v        r  g  b     r  g  b     r  g  b     v  v  v  v  v  v
+          primitives = renderPrimitive37(primitives, vertices, length);
+          //        primitives += length * 0x24L;
+        } else if(command == 0x3800_0000L) {
+          // Quad, shading, solid
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17
+          //             r  g  b     n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3800(primitives, vertices, normals, length);
+          //        primitives += length * 0x18L;
+        } else if(command == 0x3804_0000L) {
+          // Quad, shading, gradation
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23
+          //             r  g  b     r  g  b     r  g  b     r  g  b     n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3804(primitives, vertices, normals, length);
+          //        primitives += length * 0x24L;
+        } else if(command == 0x3a00_0000L) {
+          // Quad, shading, solid, alpha
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17
+          //             r  g  b  c  n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3a00(primitives, vertices, normals, length);
+          //        primitives += length * 0x18L;
+        } else if(command == 0x3a04_0000L) {
+          // Quad, shading, gradation, alpha
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23
+          //             r  g  b  c  r  g  b  c  r  g  b  c  r  g  b  c  n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3a04(primitives, vertices, normals, length);
+          //        primitives += length * 0x24L;
+        } else if(command == 0x3c00_0000L) {
+          // Quad, shading, textured
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23
+          //             u  v  cl ut u  v  tp ge u  v        u  v        n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3c(primitives, vertices, normals, length);
+          //        primitives += length * 0x24L;
+        } else if(command == 0x3d00_0000L) {
+          // Quad, shading, textured, no lighting
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b
+          //             u  v  cl ut u  v  tp ge u  v        u  v        r  g  b     r  g  b     r  g  b     r  g  b     v  v  v  v  v  v  v  v
+          primitives = renderPrimitive3d(primitives, vertices, length);
+          //        primitives += length * 0x2cL;
+        } else if(command == 0x3e00_0000L) {
+          // Quad, shading, textured, alpha
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23
+          //             u  v  cl ut u  v  tp ge u  v        u  v        n  n  v  v  n  n  v  v  n  n  v  v  n  n  v  v
+          primitives = renderPrimitive3e(primitives, vertices, normals, length);
+          //        primitives += length * 0x24L;
+        } else if(command == 0x3f00_0000L) {
+          // Quad, shading, textured, alpha, no lighting
+          // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b
+          //             u  v  cl ut u  v  tp ge u  v        u  v        r  g  b  c  r  g  b  c  r  g  b  c  r  g  b  c  v  v  v  v  v  v  v  v
+          primitives = renderPrimitive3f(primitives, vertices, length);
+          //        primitives += length * 0x2cL;
+        }
       }
 
       //LAB_800da504
@@ -1286,6 +1560,9 @@ public final class SMap {
                   CPU.COP2(0x108_041bL); // Normal colour colour single vector
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
 
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0x8L);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x38L);
+
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).setu(0x800_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
@@ -1359,6 +1636,9 @@ public final class SMap {
                   MEMORY.ref(4, packet).offset(0x0cL).setu(CPU.MFC2(21)); // RGB1
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22)); // RGB2
 
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0x6L);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x30L);
+
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).setu(0x600_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
@@ -1384,10 +1664,7 @@ public final class SMap {
   public static long renderPrimitive3c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
 
-    MEMORY.ref(1, packet).offset(0x3L).setu(0xcL); // 12 words
-    MEMORY.ref(4, packet).offset(0x4L).setu(0x3c80_8080L); // Shaded textured quad, opaque, texture-blending
-
-    CPU.MTC2(MEMORY.ref(4, packet).offset(0x4L).get(), 6); // RGBC
+    CPU.MTC2(0x80_8080L, 6); // RGBC
 
     //LAB_800db1a8
     for(int i = 0; i < count; i++) {
@@ -1404,10 +1681,10 @@ public final class SMap {
 
       MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x04L));
       MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x08L));
+      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL));
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         CPU.COP2(0x140_0006L); // Normal clipping
-        MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL));
 
         if((int)CPU.MFC2(24) > 0) { // Is visible
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
@@ -1433,7 +1710,6 @@ public final class SMap {
                   MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L));
 
                   final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                   final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
                   final long norm1 = normals + MEMORY.ref(2, primitives).offset(0x18L).get() * 0x8L;
@@ -1456,6 +1732,10 @@ public final class SMap {
                   CPU.COP2(0x108_041bL); // Normal colour single vector
                   MEMORY.ref(4, packet).offset(0x28L).setu(CPU.MFC2(22)); // RGB2
 
+                  MEMORY.ref(1, packet).offset(0x3L).setu(0xcL); // 12 words
+                  MEMORY.ref(1, packet).offset(0x7L).setu(0x3cL); // Shaded textured quad, opaque, texture-blending
+
+                  final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).setu(0xc00_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
 
@@ -1480,10 +1760,7 @@ public final class SMap {
   public static long renderPrimitive34(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
 
-    MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
-    MEMORY.ref(4, packet).offset(0x4L).setu(0x3480_8080L);
-
-    CPU.MTC2(MEMORY.ref(4, packet).offset(0x4L).get(), 6); // RGBC
+    CPU.MTC2(0x80_8080L, 6); // RGBC
 
     //LAB_800db52c
     for(int i = 0; i < count; i++) {
@@ -1535,6 +1812,9 @@ public final class SMap {
                   MEMORY.ref(4, packet).offset(0x04L).setu(CPU.MFC2(20)); // RGB0
                   MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(21)); // RGB1
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
+
+                  MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
+                  MEMORY.ref(1, packet).offset(0x7L).setu(0x34L);
 
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).setu(0x900_0000L | tag.p.get());
@@ -1627,9 +1907,12 @@ public final class SMap {
                   CPU.COP2(0x108_041bL); // Normal colour colour single vector
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
 
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0x8L);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x38L);
+
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x800_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
-                  packet = packet + 0x24L;
+                  packet += 0x24L;
                 }
               }
             }
@@ -1705,6 +1988,9 @@ public final class SMap {
                   CPU.MTC2(MEMORY.ref(4, norm2).offset(0x4L).get(), 1); // VZ0
                   CPU.COP2(0x108_041bL); // Normal colour colour single vector
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22)); // RGB2
+
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0x6L);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x30L);
 
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).setu(0x600_0000L | tag.p.get());
@@ -1790,6 +2076,9 @@ public final class SMap {
                   MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get());
                   MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get());
 
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x3cL);
+
                   MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
                   packet += 0x34L;
@@ -1819,10 +2108,7 @@ public final class SMap {
   public static long renderPrimitive3e(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
 
-    MEMORY.ref(1, packet).offset(0x3L).setu(0xcL);
-    MEMORY.ref(4, packet).offset(0x4L).setu(0x3e80_8080L);
-
-    CPU.MTC2(MEMORY.ref(4, packet).offset(0x4L).get(), 6); // RGBC
+    CPU.MTC2(0x80_8080L, 6); // RGBC
 
     //LAB_800dc4a0
     for(int i = 0; i < count; i++) {
@@ -1840,12 +2126,12 @@ public final class SMap {
 
       MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
       MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get());
+      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         CPU.COP2(0x140_0006L); // Normal clip
 
         if(CPU.MFC2(24) != 0) { // Is visible
-          MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
           MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13)); // Screen XY1
           MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14)); // Screen XY2
@@ -1892,6 +2178,9 @@ public final class SMap {
                     CPU.COP2(0x108_041bL); // Normal colour colour single vector
                     MEMORY.ref(4, packet).offset(0x28L).setu(CPU.MFC2(22)); // RGB2
 
+                    MEMORY.ref(1, packet).offset(0x3L).setu(0xcL);
+                    MEMORY.ref(1, packet).offset(0x7L).setu(0x3eL);
+
                     MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
                     tag.set(packet & 0xff_ffffL);
                     packet += 0x34L;
@@ -1916,10 +2205,7 @@ public final class SMap {
   public static long renderPrimitive36(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
 
-    MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
-    MEMORY.ref(4, packet).offset(0x4L).setu(0x3680_8080L);
-
-    CPU.MTC2(MEMORY.ref(4, packet).offset(0x4L).get(), 6); // RGBC
+    CPU.MTC2(0x80_8080L, 6); // RGBC
 
     //LAB_800dc82c
     for(int i = 0; i < count; i++) {
@@ -1972,6 +2258,9 @@ public final class SMap {
                   MEMORY.ref(4, packet).offset(0x04L).setu(CPU.MFC2(20)); // RGB0
                   MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(21)); // RGB1
                   MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
+
+                  MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
+                  MEMORY.ref(1, packet).offset(0x7L).setu(0x36L);
 
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x900_0000L | tag.p.get());
@@ -2038,7 +2327,6 @@ public final class SMap {
                     CPU.COP2(0x168_002eL); // Average Z
 
                     final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                     CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6); // RGBC
                     final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x08L).get() * 0x8L;
@@ -2051,15 +2339,21 @@ public final class SMap {
                     CPU.MTC2(MEMORY.ref(4, norm2).offset(0x0L).get(), 4); // VXY2
                     CPU.MTC2(MEMORY.ref(4, norm2).offset(0x4L).get(), 5); // VZ2
                     CPU.COP2(0x118_043fL); // Normal colour colour triple vector
-                    MEMORY.ref(4, packet).offset(0x00L).setu(0x800_0000L | tag.p.get());
                     MEMORY.ref(4, packet).offset(0x04L).setu(CPU.MFC2(20)); // RGB0
                     MEMORY.ref(4, packet).offset(0x0cL).setu(CPU.MFC2(21)); // RGB1
                     MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22)); // RGB2
+
                     final long norm3 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
                     CPU.MTC2(MEMORY.ref(4, norm3).offset(0x0L).get(), 0); // VXY0
                     CPU.MTC2(MEMORY.ref(4, norm3).offset(0x4L).get(), 1); // VZ0
                     CPU.COP2(0x108_041bL); // Normal colour colour single vector
                     MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
+
+                    MEMORY.ref(1, packet).offset(0x03L).setu(0x8L);
+                    MEMORY.ref(1, packet).offset(0x07L).setu(0x3aL);
+
+                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
+                    MEMORY.ref(4, packet).offset(0x00L).setu(0x800_0000L | tag.p.get());
                     tag.set(packet & 0xff_ffffL);
                     packet += 0x24L;
 
@@ -2134,7 +2428,6 @@ public final class SMap {
                     CPU.COP2(0x168_002eL); // Average Z
 
                     final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                     CPU.MTC2(MEMORY.ref(4, primitives).offset(0x4L).get(), 6); // RGBC
                     final long norm0 = normals + MEMORY.ref(2, primitives).offset(0x14L).get() * 0x8L;
@@ -2160,6 +2453,11 @@ public final class SMap {
                     CPU.MTC2(MEMORY.ref(4, norm3).offset(0x4L).get(), 1); // VZ0
                     CPU.COP2(0x108_041bL); // Normal colour colour single vector
                     MEMORY.ref(4, packet).offset(0x1cL).setu(CPU.MFC2(22)); // RGB2
+
+                    MEMORY.ref(1, packet).offset(0x03L).setu(0x8L);
+                    MEMORY.ref(1, packet).offset(0x07L).setu(0x3aL);
+
+                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                     MEMORY.ref(4, packet).offset(0x0L).setu(0x800_0000L | tag.p.get());
                     tag.set(packet & 0xff_ffffL);
                     packet += 0x24L;
@@ -2246,6 +2544,9 @@ public final class SMap {
                   CPU.COP2(0x108_041bL); // Normal colour colour triple vector
                   MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(22)); // RGB2
 
+                  MEMORY.ref(1, packet).offset(0x03L).setu(0x6L);
+                  MEMORY.ref(1, packet).offset(0x07L).setu(0x32L);
+
                   final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
                   MEMORY.ref(4, packet).offset(0x0L).setu(0x600_0000L | tag.p.get());
                   tag.set(packet & 0xff_ffffL);
@@ -2291,11 +2592,10 @@ public final class SMap {
 
       MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x04L));
       MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x08L));
+      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL));
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         CPU.COP2(0x140_0006L); // Normal clip
-
-        MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL));
 
         if(CPU.MFC2(24) != 0) { // Is visible
           MEMORY.ref(1, packet).offset(0x03L).setu(0xcL); // 12 words
@@ -2314,13 +2614,13 @@ public final class SMap {
           if((int)CPU.CFC2(31) >= 0) { // No errors
             MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // Screen XY2
 
-            if(MEMORY.ref(2, packet).offset(0x08L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0L || MEMORY.ref(2, packet).offset(0x2cL).getSigned() >= -0xc0L) {
+            if(MEMORY.ref(2, packet).offset(0x08L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() >= -0xc0) {
               //LAB_800dd98c
-              if(MEMORY.ref(2, packet).offset(0x0aL).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80L || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x80L) {
+              if(MEMORY.ref(2, packet).offset(0x0aL).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x80) {
                 //LAB_800dd9dc
-                if(MEMORY.ref(2, packet).offset(0x08L).getSigned() <= 0xc0L || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0L || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0L || MEMORY.ref(2, packet).offset(0x2cL).getSigned() <= 0xc0L) {
+                if(MEMORY.ref(2, packet).offset(0x08L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() <= 0xc0) {
                   //LAB_800dda2c
-                  if(MEMORY.ref(2, packet).offset(0x0aL).getSigned() <= 0x80L || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80L || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80L || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80L) {
+                  if(MEMORY.ref(2, packet).offset(0x0aL).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x80 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x80) {
                     //LAB_800dda7c
                     CPU.COP2(0x168_002eL); // Average Z
 
@@ -2339,6 +2639,9 @@ public final class SMap {
                     MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L));
                     MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L));
                     MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L));
+
+                    MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
+                    MEMORY.ref(1, packet).offset(0x07L).setu(0x3eL);
 
                     //LAB_800ddb3c
                     MEMORY.ref(4, packet).setu(0xc00_0000L | tag.p.get());
@@ -2385,9 +2688,6 @@ public final class SMap {
         CPU.COP2(0x140_0006L); // Normal clip
 
         if(CPU.MFC2(24) != 0) { // Is visible
-          MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
-          MEMORY.ref(4, packet).offset(0x04L).setu(0x3680_8080L);
-
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
           MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13)); // Screen XY1
           MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14)); // Screen XY2
@@ -2412,6 +2712,9 @@ public final class SMap {
                     MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get());
 
                     CPU.COP2(0x158_002dL); // Average Z
+
+                    MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
+                    MEMORY.ref(1, packet).offset(0x07L).setu(0x36L);
 
                     final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
 
