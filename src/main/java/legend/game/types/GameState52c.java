@@ -24,6 +24,11 @@ public class GameState52c implements MemoryRef {
 
   public final UnsignedIntRef _b4;
   public final UnsignedIntRef _b8;
+  /**
+   * <ul>
+   *   <li>0x40000 - has psych bomb X</li>
+   * </ul>
+   */
   public final ArrayRef<UnsignedIntRef> scriptFlags2_bc;
   public final ArrayRef<UnsignedIntRef> scriptFlags1_13c;
 

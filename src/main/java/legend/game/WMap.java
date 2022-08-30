@@ -9,7 +9,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
@@ -75,9 +74,7 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020a00;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020b98;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
@@ -102,7 +99,7 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dfc0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f900;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -2522,7 +2519,7 @@ public class WMap {
     final DVECTOR sp0x60 = new DVECTOR(); // sxy2
     final Ref<Long> sp0x68 = new Ref<>(); // ir0
     final Ref<Long> sp0x64 = new Ref<>(); // flags
-    sp6c = FUN_8003f900(sp0x58, sp0x60, sp0x68, sp0x64);
+    sp6c = perspectiveTransform(sp0x58, sp0x60, sp0x68, sp0x64);
     sp70 = sp0x60.getXY();
     v1 = sp0x60.getXY();
 

@@ -7562,15 +7562,16 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(distance, 26);
   }
 
+  /** Returns Z */
   @Method(0x8003f900L)
-  public static long FUN_8003f900(final SVECTOR vxyz0, final DVECTOR sxy2, final Ref<Long> ir0, final Ref<Long> flags) {
-    CPU.MTC2(vxyz0.getXY(), 0);
-    CPU.MTC2(vxyz0.getZ() & 0xffffL, 1);
+  public static long perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, final Ref<Long> ir0, final Ref<Long> flags) {
+    CPU.MTC2(worldCoords.getXY(), 0);
+    CPU.MTC2(worldCoords.getZ() & 0xffffL, 1);
     CPU.COP2(0x18_0001L); // Perspective transform single
-    sxy2.setXY(CPU.MFC2(14)); // SXY2
+    screenCoords.setXY(CPU.MFC2(14)); // SXY2
     ir0.set(CPU.MFC2(8)); // IR0
     flags.set(CPU.CFC2(31)); // Flags
-    return  CPU.MFC2(19) >> 2; // SZ3
+    return CPU.MFC2(19) >> 2; // SZ3
   }
 
   @Method(0x8003f930L)

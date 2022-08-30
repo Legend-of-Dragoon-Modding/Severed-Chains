@@ -19,7 +19,7 @@ import legend.game.types.ScriptState;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
+import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -211,7 +211,7 @@ public class SBtld {
         break;
       }
 
-      FUN_80012b1c(0x1L, getMethodAddress(SBtld.class, "FUN_80109808", long.class), addCombatant(s2, -1) * 0x10000 + s2);
+      loadAndRunOverlay(1, getMethodAddress(SBtld.class, "FUN_80109808", long.class), addCombatant(s2, -1) * 0x10000 + s2);
     }
 
     //LAB_801095ec

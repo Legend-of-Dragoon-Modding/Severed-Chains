@@ -79,7 +79,7 @@ import static legend.game.SStrm.FUN_800fb7cc;
 import static legend.game.SStrm.FUN_800fb90c;
 import static legend.game.SStrm.stopFmv;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
-import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
+import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001814c;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -154,7 +154,7 @@ import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f900;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -252,7 +252,6 @@ import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 import static legend.game.Ttle._800c6724;
-import static legend.game.tmd.Renderer.renderTmdPrimitive;
 
 public final class SMap {
   private SMap() { }
@@ -712,7 +711,7 @@ public final class SMap {
     loadDrgnBinFile(0, drgn0Indices_800f48d0.get((int)(_8004ddc0.get() - 1)).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
     loadDrgnBinFile(0, drgn0Indices_800f48d8.get((int)(_8004ddc0.get() - 1)).get(), 0, getMethodAddress(SMap.class, "FUN_800d9614", long.class, long.class, long.class), 0, 0x4L);
     loadDrgnBinFile(0, drgn0Indices_800f48e0.get((int)(_8004ddc0.get() - 1)).get(), 0, getMethodAddress(SMap.class, "FUN_800d9614", long.class, long.class, long.class), 1, 0x4L);
-    FUN_80012b1c(0, getMethodAddress(SMap.class, "FUN_800d962c", long.class), 0);
+    loadAndRunOverlay(0, getMethodAddress(SMap.class, "FUN_800d962c", long.class), 0);
     return 0x1L;
   }
 
@@ -781,7 +780,7 @@ public final class SMap {
 
   @Method(0x800d9bc0L)
   public static long FUN_800d9bc0(final RunningScript a0) {
-    FUN_80012b1c(2, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), -1);
+    loadAndRunOverlay(2, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), -1);
     return 0;
   }
 
@@ -799,7 +798,7 @@ public final class SMap {
   public static long FUN_800d9c1c(final RunningScript a0) {
     //LAB_800d9c78
     memcpy(gameState_800babc8.charData_32c.get(a0.params_20.get(1).deref().get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).getAddress(), 0x2c);
-    FUN_80012b1c(0x2L, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), a0.params_20.get(1).deref().get());
+    loadAndRunOverlay(2, getMethodAddress(SMap.class, "FUN_800d9b08", long.class), a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -824,7 +823,7 @@ public final class SMap {
     //LAB_800d9d90
     gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
 
-    FUN_80012b1c(2, getMethodAddress(SMap.class, "FUN_800d9dc0", long.class), 0);
+    loadAndRunOverlay(2, getMethodAddress(SMap.class, "FUN_800d9dc0", long.class), 0);
     return 0;
   }
 
@@ -7341,7 +7340,7 @@ public final class SMap {
     _800bf0dc.setu(a0);
 
     if(_800bf0b4.get() == 0) {
-      FUN_80012b1c(0x4L, getMethodAddress(SMap.class, "FUN_800edc50", long.class), 0);
+      loadAndRunOverlay(4, getMethodAddress(SMap.class, "FUN_800edc50", long.class), 0);
     } else {
       //LAB_800ed91c
       _800bf0d8.setu(0x1L);
@@ -8880,8 +8879,8 @@ public final class SMap {
         sp0xc8.set(_800d6c48);
         sp0xd0.set(_800d6c50);
 
-        FUN_8003f900(sp0xc8, sp0x48, new Ref<>(), sp0xdc);
-        FUN_8003f900(sp0xd0, sp0x50, new Ref<>(), sp0xdc);
+        perspectiveTransform(sp0xc8, sp0x48, new Ref<>(), sp0xdc);
+        perspectiveTransform(sp0xd0, sp0x50, new Ref<>(), sp0xdc);
 
         sp0x48.setX((short)(sp0x50.getY() - sp0x48.getY()));
       }
@@ -9074,6 +9073,34 @@ public final class SMap {
     }
 
     //LAB_800f24a8
+    return 0;
+  }
+
+  @Method(0x800f2618L)
+  public static long FUN_800f2618(final RunningScript script) {
+    final IntRef refOffsetX = new IntRef();
+    final IntRef refOffsetY = new IntRef();
+    getScreenOffset(refOffsetX, refOffsetY);
+    final int x = refOffsetX.get();
+    final int y = refOffsetY.get();
+
+    long v1 = _800c69fc.get();
+    long a1 = v1;
+
+    //LAB_800f266c
+    int i = 0;
+    final UnboundedArrayRef<IntRef> a0 = script.params_20.get(0).deref().reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
+    while(a0.get(i).get() != -1) {
+      MEMORY.ref(2, v1).offset(0x18L).setu(a0.get(i++).get());
+      MEMORY.ref(2, v1).offset(0x40L).setu(a0.get(i++).get() + x);
+      MEMORY.ref(2, v1).offset(0x68L).setu(a0.get(i++).get() + y);
+      MEMORY.ref(4, a1).offset(0x90L).setu(x);
+      MEMORY.ref(4, a1).offset(0xe0L).setu(y);
+      a1 = a1 + 0x4L;
+      v1 = v1 + 0x2L;
+    }
+
+    //LAB_800f26b4
     return 0;
   }
 

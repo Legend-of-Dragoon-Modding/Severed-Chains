@@ -39,17 +39,19 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MOVE;
+import legend.game.types.MagicStuff08;
 import legend.game.types.Drgn0_6666Entry;
 import legend.game.types.Drgn0_6666Struct;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.GameState52c;
 import legend.game.types.JoyStruct;
 import legend.game.types.LodString;
 import legend.game.types.MemcardStruct28;
+import legend.game.types.ModelPartTransforms;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.ModelPartTransforms;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
@@ -86,7 +88,7 @@ import static legend.game.SItem.FUN_8010a948;
 import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
 import static legend.game.SItem.FUN_80110030;
-import static legend.game.SItem._80111d20;
+import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem._80111ff0;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
@@ -108,7 +110,7 @@ import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
+import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -398,9 +400,9 @@ import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
 import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.FUN_800c925c;
-import static legend.game.combat.Bttl_800e.renderBttlDobj2;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.FUN_800ec974;
+import static legend.game.combat.Bttl_800e.renderBttlDobj2;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1732,7 +1734,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0x2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", long.class), 0);
         }
       }
 
@@ -1748,7 +1750,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0x7 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022530", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022530", long.class), 0);
         }
       }
 
@@ -1764,7 +1766,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0xc -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022540", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022540", long.class), 0);
         }
       }
 
@@ -1780,7 +1782,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0x11 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022550", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022550", long.class), 0);
         }
       }
 
@@ -1796,7 +1798,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0x16 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022560", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022560", long.class), 0);
         }
       }
 
@@ -1819,14 +1821,14 @@ public final class Scus94491BpeSegment_8002 {
       case 0x1b -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022570", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022570", long.class), 0);
         }
       }
 
       case 0x20 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38.addu(0x1L);
-          FUN_80012b1c(0x2L, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022580", long.class), 0);
+          loadAndRunOverlay(2, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_80022580", long.class), 0);
         }
       }
 
@@ -1882,6 +1884,7 @@ public final class Scus94491BpeSegment_8002 {
       return 0;
     }
 
+    // Hardcoded Divine Dragoon spells
     if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
       spellIndicesOut[0] = 9;
       spellIndicesOut[1] = 4;
@@ -1890,15 +1893,14 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022994
     //LAB_80022998
-    final long a0 = _80111d20.offset(charIndex * 0x4L).get();
-
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8.get(charIndex).dlevel_0f.get() + 1; dlevel++) {
-      final long v1 = MEMORY.ref(1, a0).offset(dlevel * 0x8L).offset(0x2L).get();
+      final MagicStuff08 spellStuff = magicStuff_80111d20.get(charIndex).deref().get(dlevel);
+      final byte spellIndex = spellStuff.spellIndex_02.get();
 
-      if(v1 != 0xffL) {
-        spellIndicesOut[spellCount] = (byte)v1;
+      if(spellIndex != -1) {
+        spellIndicesOut[spellCount] = spellIndex;
         spellCount++;
       }
 
@@ -1910,31 +1912,30 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022a10L)
-  public static long FUN_80022a10(final int charIndex) {
+  public static int getUnlockedSpellCount(final int charIndex) {
     if(charIndex == -1) {
       return 0;
     }
 
     //LAB_80022a24
+    // Divine dragoon
     if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
-      return 0x2L;
+      return 2;
     }
 
     //LAB_80022a4c
     //LAB_80022a50
-    final long v1 = _80111d20.offset(charIndex * 0x4L).get();
-
     //LAB_80022a64
-    long a2 = 0;
+    int unlockedSpells = 0;
     for(int i = 0; i < 6; i++) {
-      if(MEMORY.ref(1, v1).offset(i * 0x8L).offset(0x2L).get() != 0xffL) {
-        a2 = a2 + 0x1L;
+      if(magicStuff_80111d20.get(charIndex).deref().get(i).spellIndex_02.get() != -1) {
+        unlockedSpells++;
       }
 
       //LAB_80022a7c
     }
 
-    return a2;
+    return unlockedSpells;
   }
 
   @Method(0x80022a94L)
@@ -2222,12 +2223,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023264L)
-  public static void FUN_80023264() {
+  public static void checkForPsychBombX() {
     gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
 
     //LAB_800232a4
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      if(gameState_800babc8.items_2e9.get(i).get() == 0xfaL) {
+      if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
         gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
       }
 
@@ -2239,7 +2240,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** Pretty sure this moves all the items in the inv up one when you use one */
   @Method(0x800232dcL)
-  public static int FUN_800232dc(final int itemIndex) {
+  public static int takeItem(final int itemIndex) {
     recalcInventory();
 
     if(gameState_800babc8.itemCount_1e6.get() == 0) {
@@ -2268,7 +2269,7 @@ public final class Scus94491BpeSegment_8002 {
       for(int i = 0; i < 32; i++) {
         if(gameState_800babc8.items_2e9.get(i).get() == itemIndex) {
           //LAB_8002337c
-          return FUN_800232dc(i);
+          return takeItem(i);
         }
       }
     }
@@ -2279,7 +2280,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800233d8L)
-  public static int FUN_800233d8(final int equipmentIndex) {
+  public static int takeEquipment(final int equipmentIndex) {
     recalcInventory();
 
     if(gameState_800babc8.equipmentCount_1e4.get() == 0) {
@@ -2305,18 +2306,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023484L)
-  public static int FUN_80023484(final int itemId) {
+  public static int giveItem(final int itemId) {
     recalcInventory();
 
     if(itemId == 0xff) {
       return 0xff;
     }
 
-    if(itemId >= 256) {
+    if(itemId >= 0x100) {
       return 0;
     }
 
-    if(itemId < 192) {
+    if(itemId < 0xc0) {
       final int count = gameState_800babc8.equipmentCount_1e4.get();
 
       if(count >= 255) {
@@ -2350,7 +2351,7 @@ public final class Scus94491BpeSegment_8002 {
     long s3 = 0;
     //LAB_80023580
     for(int s0 = 0; s0 < MEMORY.ref(4, a1).get(); s0++) {
-      if(FUN_80023484((int)MEMORY.ref(2, a0).offset(s0 * 0x4L).get()) != 0) {
+      if(giveItem((int)MEMORY.ref(2, a0).offset(s0 * 0x4L).get()) != 0) {
         s3 = s3 + 0x1L;
       } else {
         //LAB_800235a4
@@ -2890,21 +2891,54 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80024460
   }
 
+  @Method(0x80024480L)
+  public static long scriptGiveGold(final RunningScript script) {
+    script.params_20.get(1).deref().set(addGold(script.params_20.get(0).deref().get()));
+    return 0;
+  }
+
   @Method(0x800244c4L)
-  public static long FUN_800244c4(final RunningScript s0) {
+  public static long scriptGiveChestContents(final RunningScript s0) {
     final int a0 = switch(s0.params_20.get(0).deref().get()) {
       case 0xfb -> addGold(20);
       case 0xfc -> addGold(50);
       case 0xfd -> addGold(100);
       case 0xfe -> addGold(200);
       case 0xff -> 0xff;
-      default -> FUN_80023484(s0.params_20.get(0).deref().get());
+      default -> giveItem(s0.params_20.get(0).deref().get());
     };
 
     //LAB_80024574
     s0.params_20.get(1).deref().set(a0);
 
     //LAB_80024580
+    return 0;
+  }
+
+  @Method(0x80024590L)
+  public static long scriptTakeItem(final RunningScript script) {
+    final int itemId = script.params_20.get(0).deref().get() & 0xff;
+
+    final GameState52c state = gameState_800babc8;
+
+    if(itemId < 0xc0) {
+      //LAB_800245e0
+      for(int i = 0; i < state.equipmentCount_1e4.get(); i++) {
+        if(state.equipment_1e8.get(i).get() == itemId) {
+          //LAB_8002460c
+          script.params_20.get(1).deref().set(takeEquipment(i));
+          return 0;
+        }
+      }
+
+      //LAB_80024600
+      script.params_20.get(1).deref().set(0xff);
+    } else {
+      //LAB_80024628
+      script.params_20.get(1).deref().set(takeItem(itemId));
+    }
+
+    //LAB_8002463c
     return 0;
   }
 

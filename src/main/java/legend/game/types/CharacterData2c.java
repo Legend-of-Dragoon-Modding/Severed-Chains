@@ -12,7 +12,14 @@ public class CharacterData2c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef xp_00;
-  public final UnsignedIntRef _04;
+  /**
+   * <ul>
+   *   <li>0x1 - in party don't select</li>
+   *   <li>0x2 - removed from party</li>
+   *   <li>0x20 - can't remove</li>
+   * </ul>
+   */
+  public final UnsignedIntRef partyFlags_04;
   public final UnsignedShortRef hp_08;
   public final UnsignedShortRef mp_0a;
   public final UnsignedShortRef sp_0c;
@@ -30,7 +37,7 @@ public class CharacterData2c implements MemoryRef {
     this.ref = ref;
 
     this.xp_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.partyFlags_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
     this.hp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this.mp_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this.sp_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);

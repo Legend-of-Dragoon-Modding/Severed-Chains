@@ -131,10 +131,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc928 = MEMORY.ref(4, 0x800bc928L);
 
-  /** TODO vec3 or maybe 3 values indexed by char slot? */
-  public static final Value _800bc950 = MEMORY.ref(4, 0x800bc950L);
-  public static final Value _800bc954 = MEMORY.ref(4, 0x800bc954L);
-  public static final Value _800bc958 = MEMORY.ref(4, 0x800bc958L);
+  public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final Value _800bc95c = MEMORY.ref(4, 0x800bc95cL);
   public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
 

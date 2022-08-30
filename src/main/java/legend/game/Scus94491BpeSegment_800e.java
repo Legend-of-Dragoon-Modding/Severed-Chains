@@ -459,8 +459,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800e#FUN_800e9854}</li>
    *   <li>{@link Bttl_800c#FUN_800ca648}</li>
    *   <li>null</li>
-   *   <li>{@link Bttl_800e#FUN_80117eb0}</li>
-   *   <li>{@link Bttl_800e#FUN_801183c0}</li>
+   *   <li>{@link SEffe#FUN_80117eb0}</li>
+   *   <li>{@link SEffe#FUN_801183c0}</li>
    *   <li>{@link Bttl_800e#FUN_800e99bc}</li>
    * </ol>
    */
@@ -686,9 +686,9 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 864</p>
    *
    * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_800244c4}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_80024590}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_80024480}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#scriptGiveChestContents}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#scriptTakeItem}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#scriptGiveGold}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e75ac = MEMORY.ref(4, 0x800e75acL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 3, 4, Pointer.deferred(4, FunctionRef::new)));

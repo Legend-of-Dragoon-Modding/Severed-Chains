@@ -18,6 +18,8 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
+import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsRVIEW2;
@@ -28,16 +30,14 @@ import javax.annotation.Nullable;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.SItem._80111cfc;
-import static legend.game.SItem._80111d20;
-import static legend.game.Scus94491BpeSegment.FUN_80012b1c;
+import static legend.game.SItem.levelStuff_80111cfc;
+import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
@@ -45,6 +45,8 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
@@ -62,6 +64,7 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
+import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -131,7 +134,7 @@ public final class Ttle {
 
   /**
    * <ol start="0">
-   *   <li>{@link Ttle#FUN_800c7488()}</li>
+   *   <li>{@link Ttle#mainMenuStateSetUpNewGame()}</li>
    *   <li>{@link Ttle#FUN_800c74bc()}</li>
    *   <li>{@link Ttle#waitForTtleFilesToLoad()}</li>
    *   <li>{@link Ttle#FUN_800c7500()}</li>
@@ -142,7 +145,7 @@ public final class Ttle {
   public static final SVECTOR _800c68f0 = MEMORY.ref(2, 0x800c68f0L, SVECTOR::new);
   public static final VECTOR _800c68f8 = MEMORY.ref(4, 0x800c68f8L, VECTOR::new);
 
-  public static final Value _800ce6c4 = MEMORY.ref(2, 0x800ce6c4L);
+  public static final ArrayRef<UnsignedShortRef> characterStartingLevels_800ce6c4 = MEMORY.ref(2, 0x800ce6c4L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
   public static final Value _800ce6d8 = MEMORY.ref(4, 0x800ce6d8L);
 
@@ -186,136 +189,89 @@ public final class Ttle {
   public static final Value _800ce920 = MEMORY.ref(4, 0x800ce920L);
 
   @Method(0x800c7194L)
-  public static void FUN_800c7194(final long unused) {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    long a2;
-    long a3;
-    final long s0;
-    final long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
-    long t8;
-    long t9;
+  public static void setUpNewGameData(final long unused) {
+    final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
+    final int oldMono = gameState_800babc8.mono_4e0.get();
 
-    v0 = gameState_800babc8.getAddress();
-    t2 = v0;
-    a0 = t2;
-    a3 = 0;
-    v1 = 0x14aL;
-    a2 = gameState_800babc8.vibrationEnabled_4e1.get();
-    a1 = gameState_800babc8.mono_4e0.get();
+    bzero(gameState_800babc8.getAddress(), 0x52c);
 
-    //LAB_800c71c4
-    do {
-      MEMORY.ref(4, a0).setu(a3);
-      a0 += 0x4L;
-      v1--;
-    } while(v1 >= 0);
-
-    t9 = 0;
-    t3 = 0;
-    t5 = 0;
-    a3 = t2;
-    s0 = _800ce6d8.getAddress();
-    t4 = s0;
-    t8 = _800ce6c4.getAddress();
-    t7 = _80111d20.getAddress();
-    t6 = _80111cfc.getAddress();
-    gameState_800babc8.vibrationEnabled_4e1.set((int)a2);
-    gameState_800babc8.mono_4e0.set((int)a1);
+    gameState_800babc8.vibrationEnabled_4e1.set(oldVibration);
+    gameState_800babc8.mono_4e0.set(oldMono);
     gameState_800babc8.indicatorMode_4e8.set(0x2L);
     gameState_800babc8.charIndex_88.get(0).set(0);
     gameState_800babc8.charIndex_88.get(1).set(-1);
     gameState_800babc8.charIndex_88.get(2).set(-1);
 
     //LAB_800c723c
-    do {
-      a2 = MEMORY.ref(2, t8).get();
-      a1 = MEMORY.ref(4, t6).get();
-      MEMORY.ref(4, a3).offset(0x32cL).setu(MEMORY.ref(4, t4).deref(4).offset(a2 * 0x4L));
-      MEMORY.ref(2, a3).offset(0x334L).setu(MEMORY.ref(2, a1).offset(a2 * 0x8L));
-      MEMORY.ref(2, a3).offset(0x336L).setu(MEMORY.ref(4, t7).deref(2).offset(0x8L));
-      MEMORY.ref(2, a3).offset(0x338L).setu(0);
-      MEMORY.ref(2, a3).offset(0x33aL).setu(0);
-      MEMORY.ref(2, a3).offset(0x33cL).setu(0);
-      MEMORY.ref(1, a3).offset(0x33eL).setu(a2);
-      MEMORY.ref(1, a3).offset(0x33fL).setu(0x1L);
+    for(int charIndex = 0; charIndex < 9; charIndex++) {
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+      final int level = characterStartingLevels_800ce6c4.get(charIndex).get();
+      charData.xp_00.set(_800ce6d8.offset(charIndex * 0x4L).deref(4).offset(level * 0x4L).get());
+      charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
+      charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
+      charData.sp_0c.set(0);
+      charData.dlevelXp_0e.set(0);
+      charData._10.set(0);
+      charData.level_12.set(level);
+      charData.dlevel_13.set(1);
 
       //LAB_800c7294
-      for(int i = 0; i < 0x8; i++) {
-        v0 = i + t3 + t2;
-        MEMORY.ref(1, v0).offset(0x346L).setu(0);
-        MEMORY.ref(1, v0).offset(0x34eL).setu(0);
+      for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
+        charData.additionLevels_1a.get(additionIndex).set(0);
+        charData.additionXp_22.get(additionIndex).set(0);
       }
 
-      MEMORY.ref(1, a3).offset(0x346L).setu(0x1L);
+      charData.additionLevels_1a.get(0).set(1);
 
       //LAB_800c72d4
-      for(int i = 1; i < a2; i++) {
-        final long a1_0 = MEMORY.ref(1, a1).offset(i * 0x8L).offset(0x2L).get();
-        if(a1_0 != 0xffL) {
-          v0 = additionOffsets_8004f5ac.get((int)t5).get();
-          v0 = a1_0 - v0 + t3 + t2;
-          MEMORY.ref(1, v0).offset(0x346L).setu(0x1L);
+      for(int i = 1; i < level; i++) {
+        final int index = levelStuff_80111cfc.get(charIndex).deref().get(i).addition_02.get();
+
+        if(index != -1) {
+          final int offset = additionOffsets_8004f5ac.get(charIndex).get();
+          charData.additionLevels_1a.get(index - offset).set(1);
         }
 
         //LAB_800c72fc
       }
 
       //LAB_800c730c
-      MEMORY.ref(1, a3).offset(0x345L).setu(_800ce758.offset(t5 * 0x2L));
+      charData.selectedAddition_19.set((int)_800ce758.offset(charIndex * 0x2L).get());
 
       //LAB_800c7334
-      for(int i = 0; i < 0x5; i++) {
-        v0 = i + t3 + t2;
-        MEMORY.ref(1, v0).offset(0x340L).setu(_800ce6fc.offset(t9).offset(i * 0x2L));
+      for(int i = 0; i < 5; i++) {
+        charData.equipment_14.get(i).set((int)_800ce6fc.offset(charIndex * 0xaL).offset(i * 0x2L).get());
       }
+    }
 
-      t9 += 0xaL;
-      t3 += 0x2cL;
-      t5++;
-      a3 += 0x2cL;
-      t4 += 0x4L;
-      t8 += 0x2L;
-      t7 += 0x4L;
-      t6 += 0x4L;
-      v0 = s0 + 0x24L;
-    } while(t4 < v0);
-
-    MEMORY.ref(4, t2).offset(0x330L).setu(0x23L);
+    gameState_800babc8.charData_32c.get(0).partyFlags_04.set(35);
 
     //LAB_800c7398
     for(int i = 0x100; i >= 0; i--) {
-      MEMORY.ref(1, t2).offset(0x1e8L).offset(i).setu(0xffL);
+      gameState_800babc8.equipment_1e8.get(i).set(0xff);
     }
 
-    MEMORY.ref(2, t2).offset(0x1e4L).setu(0);
+    gameState_800babc8.equipmentCount_1e4.set((short)0);
 
     //LAB_800c73b8
     for(int i = 0x20; i >= 0; i--) {
-      MEMORY.ref(1, t2).offset(0x2e9L).offset(i).setu(0xffL);
+      gameState_800babc8.items_2e9.get(i).set(0xff);
     }
 
     //LAB_800c73d8
     for(int i = 0; i < 0x21; i++) {
-      a2 = _800ce76c.offset(i * 0x2L).get();
-      if(a2 == 0xffL) {
-        MEMORY.ref(2, t2).offset(0x1e6L).setu(i);
+      final int itemId = (int)_800ce76c.offset(i * 0x2L).get();
+      if(itemId == 0xff) {
+        gameState_800babc8.itemCount_1e6.set((short)i);
         break;
       }
 
       //LAB_800c73f0
-      MEMORY.ref(1, t2).offset(0x2e9L).offset(i).setu(a2);
+      gameState_800babc8.items_2e9.get(i).set(itemId);
     }
 
     //LAB_800c7404
-    MEMORY.ref(4, t2).offset(0x94L).setu(0x14L);
+    gameState_800babc8.gold_94.set(20);
     FUN_80012bb4();
   }
 
@@ -325,8 +281,8 @@ public final class Ttle {
   }
 
   @Method(0x800c7488L)
-  public static void FUN_800c7488() {
-    FUN_800c7524();
+  public static void mainMenuStateSetUpNewGame() {
+    setUpNewGameData();
     vsyncMode_8007a3b8.setu(0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
@@ -351,8 +307,8 @@ public final class Ttle {
   }
 
   @Method(0x800c7524L)
-  public static void FUN_800c7524() {
-    FUN_80012b1c(0x2L, getMethodAddress(Ttle.class, "FUN_800c7194", long.class), 0);
+  public static void setUpNewGameData() {
+    loadAndRunOverlay(2, getMethodAddress(Ttle.class, "setUpNewGameData", long.class), 0);
   }
 
   @Method(0x800c7798L)
