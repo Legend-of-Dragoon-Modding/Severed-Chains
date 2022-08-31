@@ -6934,6 +6934,11 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80114070L)
+  public static long FUN_80114070(final RunningScript script) {
+    return FUN_80113db8(0, script);
+  }
+
   @Method(0x80114094L)
   public static long FUN_80114094(final RunningScript a0) {
     return FUN_80113db8(1, a0);

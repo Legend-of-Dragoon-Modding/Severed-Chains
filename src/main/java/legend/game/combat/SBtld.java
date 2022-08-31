@@ -295,7 +295,7 @@ public class SBtld {
 
     //LAB_8010999c
     memcpy(struct7cc._98.getAddress(), _80114a10.getAddress(), 0x260);
-    memcpy(struct7cc.svec_00.getAddress(), _8011517c.offset(submapStage_800bb0f4.get() * 0x8L).getAddress(),  0x8);
+    memcpy(struct7cc.svec_00.getAddress(), _8011517c.offset(submapStage_800bb0f4.get() * 0x8L).getAddress(), 0x8);
 
     //LAB_80109a30
     for(int i = 0; stageIndices_800fb064.offset(i).get() != 0xffL; i++) {
