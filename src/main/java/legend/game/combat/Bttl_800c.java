@@ -410,6 +410,7 @@ public final class Bttl_800c {
   public static final Value _800c7191 = MEMORY.ref(1, 0x800c7191L);
   public static final Value _800c7192 = MEMORY.ref(1, 0x800c7192L);
   public static final Value _800c7193 = MEMORY.ref(1, 0x800c7193L);
+  public static final ArrayRef<ShortRef> _800c7194 = MEMORY.ref(2, 0x800c7194L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
   public static final Value _800c71ec = MEMORY.ref(1, 0x800c71ecL);
 

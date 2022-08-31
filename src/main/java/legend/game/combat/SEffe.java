@@ -102,7 +102,6 @@ import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f680;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -116,6 +115,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e10;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040ec0;
@@ -174,8 +174,8 @@ import static legend.game.combat.Bttl_800e.FUN_800e9428;
 import static legend.game.combat.Bttl_800e.FUN_800e95f0;
 import static legend.game.combat.Bttl_800e.FUN_800eac58;
 import static legend.game.combat.Bttl_800e.FUN_800ebb58;
-import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 import static legend.game.combat.Bttl_800e.renderCtmd;
 
 public final class SEffe {
@@ -3451,6 +3451,59 @@ public final class SEffe {
     }
 
     //LAB_80104c7c
+  }
+
+  @Method(0x80104c9cL)
+  public static void FUN_80104c9c(final EffectManagerData6c manager, final BttlScriptData6cSub38 effect, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    int sp10 = 0;
+    int s5 = (effect._28.get() - 2) / 2;
+    final int sp14 = (manager._10.vec_28.getX() & 0xff) << 4;
+    final int fp = (manager._10.vec_28.getX() & 0xff00) >>> 4;
+    final int s6 = manager._10.vec_28.getX() >>> 12 & 0xff0;
+
+    //LAB_80104d24
+    for(int i = 1; i < effect._28.get(); i++) {
+      final BttlScriptData6cSub38Sub14Sub30 s3 = a2.ptr_10.deref().get(i);
+      sp10 = sp10 + s5;
+      final int s4 = sp10 * effect._1e.get();
+      final int x = s4 * (rsin(fp) + rcos(s6)) >> 12;
+      final int y = s4 * (rcos(sp14) + rcos(s6)) >> 12;
+      final int z = s4 * (rcos(fp) + rsin(sp14)) >> 12;
+      s3._00.add(x, y, z);
+      s5--;
+    }
+  }
+
+  @Method(0x80104e40L)
+  public static void FUN_80104e40(final EffectManagerData6c manager, final BttlScriptData6cSub38 effect, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    final int s3 = (effect._1e.get() / effect.count_00.get()) & 0xffff;
+    final int s2 = (0x1000 / effect.count_00.get()) * a3;
+
+    //LAB_80104ec4
+    short sp10 = 0;
+    short sp12 = 0;
+    for(int i = 1; i < effect._28.get(); i++) {
+      final BttlScriptData6cSub38Sub14Sub30 s0 = a2.ptr_10.deref().get(i);
+      s0._00.x.add(sp10);
+      s0._00.z.add(sp12);
+      sp10 += (rcos(s2) * s3 >> 12);
+      sp12 += (rsin(s2) * s3 >> 12);
+    }
+  }
+
+  @Method(0x80104f70L)
+  public static void FUN_80104f70(final EffectManagerData6c manager, final BttlScriptData6cSub38 effect, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    final int step = 0x1000 / (effect._28.get() - 1);
+    int angle = 0;
+
+    //LAB_80104fb8
+    for(int i = 0; i < effect._28.get(); i++) {
+      final BttlScriptData6cSub38Sub14Sub30 s0 = a2.ptr_10.deref().get(i);
+      s0._00.x.add((rsin(angle) * effect._1e.get()) >> 12);
+      s0._00.z.add((rcos(angle) * effect._1e.get()) >> 12);
+      s0._00.y.set(0);
+      angle += step;
+    }
   }
 
   @Method(0x801052d4L)
@@ -8137,7 +8190,7 @@ public final class SEffe {
 
           //LAB_801175ec
           if((a2 & 0x800) == 0) {
-            MEMORY.ref(2, a3).offset(0x8L).setu(MEMORY.ref(2, t0).offset(0x8L).get() + ((MEMORY.ref(1, a0).offset(0x0L).getSigned() << a1) * s0) / 0x2000);
+            MEMORY.ref(2, a3).offset(0x8L).setu(MEMORY.ref(2, t0).offset(0x8L).get() + (MEMORY.ref(1, a0).offset(0x0L).getSigned() << a1) * s0 / 0x2000);
             a0 = a0 + 0x1L;
           }
 

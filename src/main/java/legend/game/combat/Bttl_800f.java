@@ -61,6 +61,7 @@ import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6758;
+import static legend.game.combat.Bttl_800c._800c7194;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -4380,6 +4381,40 @@ public final class Bttl_800f {
   @Method(0x800f9c00L)
   public static long FUN_800f9c00(final RunningScript a0) {
     FUN_800fa018(a0.params_20.get(0).deref().get());
+    return 0;
+  }
+
+  @Method(0x800f9c2cL)
+  public static long FUN_800f9c2c(final RunningScript script) {
+    FUN_800f1268(
+      (short)script.params_20.get(0).deref().get() - script.params_20.get(2).deref().get() / 2,
+      (short)script.params_20.get(1).deref().get() - script.params_20.get(3).deref().get() / 2,
+      (short)script.params_20.get(2).deref().get(),
+      (short)script.params_20.get(3).deref().get(),
+      (short)script.params_20.get(4).deref().get()
+    );
+
+    return 0;
+  }
+
+  @Method(0x800f9cacL)
+  public static long FUN_800f9cac(final RunningScript script) {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
+    final int t2 = script.params_20.get(0).deref().get();
+
+    //LAB_800f9d18
+    for(int t0 = 0; t0 < 8; t0++) {
+      if((t2 & 1 << t0) != 0) {
+        //LAB_800f9d34
+        for(int icon = 0; icon < 8; icon++) {
+          if((menu.iconFlags_10.get(icon).get() & 0xf) == _800c7194.get(t0).get()) {
+            menu.iconFlags_10.get(icon).or(0x80);
+            break;
+          }
+        }
+      }
+    }
+
     return 0;
   }
 
