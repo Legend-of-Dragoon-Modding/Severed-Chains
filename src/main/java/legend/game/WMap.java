@@ -556,7 +556,7 @@ public class WMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2);
+        Renderer.renderDobj2(dobj2, false);
       }
 
       //LAB_800c9330

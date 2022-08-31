@@ -993,7 +993,7 @@ public final class SMap {
     CPU.CTC2(ls.transfer.getY(), 6);
     CPU.CTC2(ls.transfer.getZ(), 7);
 
-    Renderer.renderDobj2(bigStruct_800bda10.ObjTable_0c.top.deref().get(0));
+    Renderer.renderDobj2(bigStruct_800bda10.ObjTable_0c.top.deref().get(0), false);
     bigStruct_800bda10.coord2ArrPtr_04.deref().get(0).flg.decr();
   }
 
@@ -1111,7 +1111,7 @@ public final class SMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2);
+        Renderer.renderDobj2(dobj2, false);
       }
 
       //LAB_800dab10
@@ -7785,7 +7785,7 @@ public final class SMap {
   @Method(0x800eee48L)
   public static void FUN_800eee48(final BigStruct a0, final MATRIX matrix) {
     zOffset_1f8003e8.setu(a0.zOffset_a0.get());
-    _1f8003ec.setu(a0.scaleVector_fc.pad.get());
+    _1f8003ec.setu(a0.ui_108.get());
 
     final MATRIX lw = new MATRIX();
 

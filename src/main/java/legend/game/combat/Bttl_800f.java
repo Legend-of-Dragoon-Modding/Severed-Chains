@@ -1798,11 +1798,11 @@ public final class Bttl_800f {
     a2._0c.set((short)0);
     a2._0e.set((short)a0.params_20.get(1).deref().get());
 
-    final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
-    MEMORY.ref(2, a1).offset(0xaL).subu(a0.params_20.get(2).deref().get());
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    bobj.sp_0a.sub((short)a0.params_20.get(2).deref().get());
 
-    if(MEMORY.ref(2, a1).offset(0xaL).getSigned() <= 0) {
-      MEMORY.ref(2, a1).offset(0xaL).setu(0);
+    if(bobj.sp_0a.get() <= 0) {
+      bobj.sp_0a.set((short)0);
       a2.flags_06.and(0xfff3);
     }
 

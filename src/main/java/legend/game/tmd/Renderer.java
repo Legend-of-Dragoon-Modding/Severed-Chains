@@ -21,7 +21,10 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 public class Renderer {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Renderer.class);
 
-  public static void renderDobj2(final GsDOBJ2 dobj2) {
+  /**
+   * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
+   */
+  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency) {
     final TmdObjTable objTable = dobj2.tmd_08.deref();
     final UnboundedArrayRef<SVECTOR> vertices = objTable.vert_top_00.deref();
     final long normals = objTable.normal_top_08.get();
@@ -38,7 +41,7 @@ public class Renderer {
       }
 
       if(!Scus94491BpeSegment.OLD_RENDERER) {
-        primitives = renderTmdPrimitive(primitives, vertices, normals, (int)length);
+        primitives = renderTmdPrimitive(primitives, vertices, normals, (int)length, useSpecialTranslucency);
       } else {
         final long command = MEMORY.ref(4, primitives).get(0xff04_0000L);
 
@@ -123,7 +126,7 @@ public class Renderer {
     }
   }
 
-  public static long renderTmdPrimitive(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final int count) {
+  public static long renderTmdPrimitive(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final int count, final boolean useSpecialTranslucency) {
     // Read type info from command ---
     final long command = MEMORY.ref(4, primitives).get(0xff04_0000L);
     final int primitiveId = (int)(command >>> 24);
@@ -146,6 +149,8 @@ public class Renderer {
     if(!textured && !lit) {
       throw new RuntimeException("Invalid primitive type");
     }
+
+    final long specialTrans = (int)_1f8003ec.get() >> 16;
 
     final int vertexCount = quad ? 4 : 3;
     // ---
@@ -183,6 +188,10 @@ public class Renderer {
 
     if(translucent) {
       gp0Command |= 0x2;
+
+      if(useSpecialTranslucency) {
+        gp0Command |= specialTrans << 25;
+      }
     }
 
     final int packetLength = (gp0CommandCount + 1) * 4;
@@ -263,6 +272,18 @@ public class Renderer {
             MEMORY.set(index + 2, 2, poly.tpage);
           }
         }
+
+        // Back-face culling
+        if(useSpecialTranslucency) {
+          if(vertexIndex == 2) {
+            CPU.COP2(0x140_0006L); // Normal clipping
+            final long winding = CPU.MFC2(24);
+
+            if(specialTrans == 0 && winding <= 0 || specialTrans != 0 && winding == 0) {
+              continue outer;
+            }
+          }
+        }
       }
 
       // Average Z
@@ -281,7 +302,7 @@ public class Renderer {
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
-          final SVECTOR norm = MEMORY.ref(2, normals).offset(poly.vertices[vertexIndex].normalIndex * 0x8L).cast(SVECTOR::new);
+          final SVECTOR norm = MEMORY.ref(2, normals + poly.vertices[vertexIndex].normalIndex * 0x8L, SVECTOR::new);
           CPU.MTC2(norm.getXY(), 0);
           CPU.MTC2(norm.getZ(),  1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector

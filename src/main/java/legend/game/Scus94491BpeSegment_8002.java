@@ -402,7 +402,6 @@ import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.FUN_800c925c;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.FUN_800ec974;
-import static legend.game.combat.Bttl_800e.renderBttlDobj2;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1009,20 +1008,20 @@ public final class Scus94491BpeSegment_8002 {
   public static void renderDobj2(final GsDOBJ2 dobj2) {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
       //LAB_800212b0
-      Renderer.renderDobj2(dobj2);
+      Renderer.renderDobj2(dobj2, false);
       return;
     }
 
     if(mainCallbackIndex_8004dd20.get() == 0x6L) {
       //LAB_800212a0
-      renderBttlDobj2(dobj2);
+      Renderer.renderDobj2(dobj2, true);
       return;
     }
 
     //LAB_8002128c
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_800212c0
-      Renderer.renderDobj2(dobj2);
+      Renderer.renderDobj2(dobj2, false);
     }
 
     //LAB_800212c8
