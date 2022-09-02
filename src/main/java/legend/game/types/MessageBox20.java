@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
@@ -20,7 +21,7 @@ public class MessageBox20 implements MemoryRef {
 
   public final UnsignedByteRef _15;
 
-  public final UnsignedIntRef _18;
+  public final IntRef _18;
   public final UnsignedShortRef x_1c;
   public final UnsignedShortRef y_1e;
 
@@ -36,7 +37,7 @@ public class MessageBox20 implements MemoryRef {
 
     this._15 = ref.offset(1, 0x15L).cast(UnsignedByteRef::new);
 
-    this._18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
+    this._18 = ref.offset(4, 0x18L).cast(IntRef::new);
     this.x_1c = ref.offset(2, 0x1cL).cast(UnsignedShortRef::new);
     this.y_1e = ref.offset(2, 0x1eL).cast(UnsignedShortRef::new);
   }

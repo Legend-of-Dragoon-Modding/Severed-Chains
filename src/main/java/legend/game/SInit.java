@@ -6,18 +6,21 @@ import legend.core.cdrom.CdlLOC;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.SupplierRef;
+import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.types.FileEntry08;
 import legend.game.types.MrgFile;
 
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
-import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012444;
-import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment._80010250;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
+import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020460;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80024654;
@@ -27,16 +30,16 @@ import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
-import static legend.game.Scus94491BpeSegment_8004._8004db58;
-import static legend.game.Scus94491BpeSegment_8004._8004db88;
 import static legend.game.Scus94491BpeSegment_8004._8004dd80;
 import static legend.game.Scus94491BpeSegment_8004._8004dd88;
-import static legend.game.Scus94491BpeSegment_8004._8004dda0;
+import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
-import static legend.game.Scus94491BpeSegment_8005._80052c74;
-import static legend.game.Scus94491BpeSegment_8005._80052c94;
-import static legend.game.Scus94491BpeSegment_8005._80052d7c;
+import static legend.game.Scus94491BpeSegment_8004.sInitOvl_8004db88;
+import static legend.game.Scus94491BpeSegment_8004.ttleOvl_8004db58;
 import static legend.game.Scus94491BpeSegment_8005._80052db0;
+import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
+import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
+import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800bbac8;
@@ -63,21 +66,20 @@ public final class SInit {
    */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> SInitLoadingStageCallbackArray_800fd31c = MEMORY.ref(4, 0x800fd31cL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 6, 4, Pointer.deferred(4, SupplierRef::new)));
 
-  public static final Value _800fd334 = MEMORY.ref(2, 0x800fd334L);
+  public static final FileEntry08 mesMvb_800fd334 = MEMORY.ref(2, 0x800fd334L, FileEntry08::new);
 
-  public static final Value _800fd344 = MEMORY.ref(2, 0x800fd344L);
+  public static final FileEntry08 _800fd344 = MEMORY.ref(2, 0x800fd344L, FileEntry08::new);
 
-  public static final Value _800fd34c = MEMORY.ref(2, 0x800fd34cL);
+  public static final FileEntry08 _800fd34c = MEMORY.ref(2, 0x800fd34cL, FileEntry08::new);
 
   public static final Value _800fd3e8 = MEMORY.ref(4, 0x800fd3e8L);
 
   public static final Value _800fd404 = MEMORY.ref(4, 0x800fd404L);
   public static final Value _800fd408 = MEMORY.ref(4, 0x800fd408L);
 
-  /** Array of 40 things */
-  public static final Value _800fd414 = MEMORY.ref(4, 0x800fd414L);
+  public static final ArrayRef<Pointer<FileEntry08>> fileEntries_800fd414 = MEMORY.ref(4, 0x800fd414L, ArrayRef.of(Pointer.classFor(FileEntry08.class), 0x40, 0x4, Pointer.deferred(4, FileEntry08::new)));
 
-  public static final Value filesCount_800fd514 = MEMORY.ref(4, 0x800fd514L);
+  public static final IntRef filesCount_800fd514 = MEMORY.ref(4, 0x800fd514L, IntRef::new);
   public static final Value linkedListEntry_800fd518 = MEMORY.ref(4, 0x800fd518L);
   public static final Value _800fd51c = MEMORY.ref(4, 0x800fd51cL);
 
@@ -158,23 +160,22 @@ public final class SInit {
 
     //LAB_800fbac0
     final long count = filesCount_800fd514.get();
-    for(int s1 = 0; s1 < count; s1++) {
-      //TODO dunno if these params are right
-      final String name = String.format("%s%s;1", _800fb7d4.getString(), _800fd414.offset(s1 * 4L).deref(4).offset(0x4L).deref(1).getString());
+    for(int fileIndex = 0; fileIndex < count; fileIndex++) {
+      final String name = String.format("%s%s;1", _800fb7d4.getString(), fileEntries_800fd414.get(fileIndex).deref().name_04.deref().get());
 
       //LAB_800fbae0
       while(FUN_80036f20() != 0x1L) {
         DebugHelper.sleep(1);
       }
 
-      final CdlFILE file = CdlFILE_800bb4c8.get(s1);
+      final CdlFILE file = CdlFILE_800bb4c8.get(fileIndex);
       if(DsSearchFile(file, name) == null) {
         //LAB_800fbb14
-        if(_800fd414.offset(s1 * 4L).deref(2).getSigned() < 0) {
+        if(fileEntries_800fd414.get(fileIndex).deref().fileIndex_00.get() < 0) {
           s3 = 0x1L;
         }
       } else {
-        _800fd414.offset(s1 * 4L).deref(2).setu(s1);
+        fileEntries_800fd414.get(fileIndex).deref().fileIndex_00.set((short)fileIndex);
       }
 
       //LAB_800fbb30
@@ -201,9 +202,9 @@ public final class SInit {
     }
 
     //LAB_800fbbc8
-    final long a0 = _8004dda0.offset(_800fd404.get() * 8).getSigned();
+    final int fileIndex = drgnFiles_8004dda0.get((int)_800fd404.get()).fileIndex_00.get();
 
-    if(a0 < 0) {
+    if(fileIndex < 0) {
       _800fd524.offset(_800fd404.get() * 4).setu(-0x1L);
 
       //LAB_800fbc9c
@@ -212,7 +213,7 @@ public final class SInit {
     }
 
     final long s0 = linkedListEntry_800fd518.get() + _800fd51c.get();
-    final CdlLOC cdPos = CdlFILE_800bb4c8.get((int)a0).pos;
+    final CdlLOC cdPos = CdlFILE_800bb4c8.get(fileIndex).pos;
     CDROM.readFromDisk(cdPos, 0x50, s0);
     FUN_8003429c(0);
     handleCdromDmaTimeout(1);
@@ -296,15 +297,15 @@ public final class SInit {
 
   @Method(0x800fbdb0L)
   public static long FUN_800fbdb0() {
-    filesCount_800fd514.setu(0);
+    filesCount_800fd514.set(0);
     FUN_800fbe28();
-    FUN_80013434(_800fd414.getAddress(), filesCount_800fd514.get(), 0x4L, getMethodAddress(SInit.class, "compareFileNames", long.class, long.class));
+    qsort(fileEntries_800fd414, filesCount_800fd514.get(), 0x4, getBiFunctionAddress(SInit.class, "compareFileNames", Pointer.classFor(FileEntry08.class), Pointer.classFor(FileEntry08.class), long.class));
     return 1;
   }
 
   @Method(0x800fbdf8L)
-  public static long compareFileNames(final long pointerToFileSomething1, final long pointerToFileSomething2) {
-    return strcmp(MEMORY.ref(4, pointerToFileSomething1).deref(4).offset(0x4L).deref(1).getString(), MEMORY.ref(4, pointerToFileSomething2).deref(4).offset(0x4L).deref(1).getString());
+  public static long compareFileNames(final Pointer<FileEntry08> entry1, final Pointer<FileEntry08> entry2) {
+    return strcmp(entry1.deref().name_04.deref().get(), entry2.deref().name_04.deref().get());
   }
 
   @Method(0x800fbe28L)
@@ -321,41 +322,40 @@ public final class SInit {
 
   @Method(0x800fbe80L)
   public static void FUN_800fbe80() {
-    FUN_800fbec8(_8004db58.getAddress());
-    FUN_800fbec8(_8004db88.getAddress());
-    FUN_800fbec8(_8004dd80.getAddress());
-    FUN_800fbec8(_8004dda0.getAddress());
+    initFileEntries(ttleOvl_8004db58.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(sInitOvl_8004db88.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(_8004dd80.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(drgnFiles_8004dda0);
   }
 
   @Method(0x800fbec8L)
-  public static void FUN_800fbec8(long a0) {
+  public static void initFileEntries(final UnboundedArrayRef<FileEntry08> entries) {
     if(SInitBinLoaded_800bbad0.get()) {
       return;
     }
 
-    while(MEMORY.ref(4, a0).offset(0x4L).get() != 0) {
-      MEMORY.ref(2, a0).setu(-0x1L);
-      _800fd414.offset(filesCount_800fd514.get() * 4).setu(a0);
-      filesCount_800fd514.addu(0x1L);
-      a0 += 0x8L;
+    for(int i = 0; !entries.get(i).name_04.isNull(); i++) {
+      entries.get(i).fileIndex_00.set((short)-1);
+      fileEntries_800fd414.get(filesCount_800fd514.get()).set(entries.get(i));
+      filesCount_800fd514.incr();
     }
   }
 
   @Method(0x800fbf30L)
   public static void FUN_800fbf30() {
-    FUN_800fbec8(_800fd334.getAddress());
-    FUN_800fbec8(_800fd344.getAddress());
-    FUN_800fbec8(_800fd34c.getAddress());
+    initFileEntries(mesMvb_800fd334.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(_800fd344.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(_800fd34c.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
   @Method(0x800fbf6cL)
   public static void FUN_800fbf6c() {
-    FUN_800fbec8((drgnBinIndex_800bc058.get() == 0x4L ? _80052c94 : _80052c74).getAddress());
-    FUN_800fbec8(_80052d7c.offset(drgnBinIndex_800bc058.get() * 4L).get());
+    initFileEntries((drgnBinIndex_800bc058.get() != 4 ? lodXa00Xa_80052c74 : lodXa00Xa_80052c94).reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
   @Method(0x800fbfd4L)
   public static void FUN_800fbfd4() {
-    FUN_800fbec8(_80052db0.getAddress());
+    initFileEntries(_80052db0.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 }

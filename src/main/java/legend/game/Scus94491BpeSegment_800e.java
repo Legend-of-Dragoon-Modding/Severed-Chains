@@ -1044,7 +1044,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6458L)
   public static void loadDrgnBin() {
-    final long drgnFileIndex = loadDRGN2xBIN();
+    final int drgnFileIndex = loadDRGN2xBIN();
 
     if(drgnFileIndex >= 0) {
       drgnBinIndex_800bc058.set(drgnFileIndex);

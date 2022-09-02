@@ -206,12 +206,12 @@ public final class Ttle {
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
       final int level = characterStartingLevels_800ce6c4.get(charIndex).get();
-      charData.xp_00.set(_800ce6d8.offset(charIndex * 0x4L).deref(4).offset(level * 0x4L).get());
+      charData.xp_00.set((int)_800ce6d8.offset(charIndex * 0x4L).deref(4).offset(level * 0x4L).get());
       charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
       charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
       charData.sp_0c.set(0);
       charData.dlevelXp_0e.set(0);
-      charData._10.set(0);
+      charData.status_10.set(0);
       charData.level_12.set(level);
       charData.dlevel_13.set(1);
 
@@ -418,10 +418,10 @@ public final class Ttle {
     _800c6724.setu(0);
 
     // MRG @ sector 61510
-    loadDrgnBinFile(0, 0x1656L, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5718, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", long.class, long.class, long.class), 0, 0x4L);
 
     // TMD @ sector 61622
-    loadDrgnBinFile(0, 0x1657L, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 5719, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", long.class, long.class, long.class), 0, 0x2L);
 
     pregameLoadingStage_800bb10c.setu(0x2L);
 

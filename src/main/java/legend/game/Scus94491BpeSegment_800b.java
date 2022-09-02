@@ -29,6 +29,7 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.types.BigStruct;
 import legend.game.types.Drgn0_6666File;
+import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.JoyStruct;
@@ -61,8 +62,8 @@ public final class Scus94491BpeSegment_800b {
 
   // End of game state 800bb0f4
 
-  public static final Value submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L);
-  public static final Value encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L);
+  public static final IntRef submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
+  public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);
@@ -104,7 +105,7 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef SInitBinLoaded_800bbad0 = MEMORY.ref(1, 0x800bbad0L, BoolRef::new);
 
   public static final ArrayRef<FileLoadingInfo> fileLoadingInfoArray_800bbad8 = MEMORY.ref(0x580, 0x800bbad8L, ArrayRef.of(FileLoadingInfo.class, 44, 32, FileLoadingInfo::new));
-  public static final Value drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L);
+  public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
   public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
@@ -127,12 +128,12 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
   public static final Value _800bc918 = MEMORY.ref(4, 0x800bc918L);
   public static final Value _800bc91c = MEMORY.ref(4, 0x800bc91cL);
-  public static final Value _800bc920 = MEMORY.ref(4, 0x800bc920L);
+  public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
   public static final Value _800bc928 = MEMORY.ref(4, 0x800bc928L);
 
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-  public static final Value _800bc95c = MEMORY.ref(4, 0x800bc95cL);
+  public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
   public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
 
   public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
@@ -313,34 +314,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
 
-  public static final Value _800be5d8 = MEMORY.ref(1, 0x800be5d8L);
-  public static final Value _800be5d9 = MEMORY.ref(1, 0x800be5d9L);
-  public static final Value _800be5da = MEMORY.ref(1, 0x800be5daL);
-  public static final Value _800be5db = MEMORY.ref(1, 0x800be5dbL);
-  public static final Value _800be5dc = MEMORY.ref(1, 0x800be5dcL);
-  public static final Value _800be5dd = MEMORY.ref(1, 0x800be5ddL);
-  public static final Value _800be5de = MEMORY.ref(1, 0x800be5deL);
-  public static final Value _800be5df = MEMORY.ref(1, 0x800be5dfL);
-  public static final Value _800be5e0 = MEMORY.ref(1, 0x800be5e0L);
-  public static final Value _800be5e1 = MEMORY.ref(1, 0x800be5e1L);
-  public static final Value _800be5e2 = MEMORY.ref(1, 0x800be5e2L);
-  public static final Value _800be5e3 = MEMORY.ref(1, 0x800be5e3L);
-  public static final Value _800be5e4 = MEMORY.ref(1, 0x800be5e4L);
-  public static final Value _800be5e5 = MEMORY.ref(1, 0x800be5e5L);
-  public static final Value _800be5e6 = MEMORY.ref(1, 0x800be5e6L);
-  public static final Value _800be5e7 = MEMORY.ref(1, 0x800be5e7L);
-  public static final Value _800be5e8 = MEMORY.ref(1, 0x800be5e8L);
-  public static final Value _800be5e9 = MEMORY.ref(1, 0x800be5e9L);
-  public static final Value _800be5ea = MEMORY.ref(1, 0x800be5eaL);
-  public static final Value _800be5eb = MEMORY.ref(1, 0x800be5ebL);
-  public static final Value _800be5ec = MEMORY.ref(1, 0x800be5ecL);
-  public static final Value _800be5ed = MEMORY.ref(1, 0x800be5edL);
-  public static final Value _800be5ee = MEMORY.ref(1, 0x800be5eeL);
-  public static final Value _800be5ef = MEMORY.ref(1, 0x800be5efL);
-  public static final Value _800be5f0 = MEMORY.ref(1, 0x800be5f0L);
-  public static final Value _800be5f1 = MEMORY.ref(1, 0x800be5f1L);
-  public static final Value _800be5f2 = MEMORY.ref(1, 0x800be5f2L);
-  public static final Value _800be5f3 = MEMORY.ref(1, 0x800be5f3L);
+  public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
 
   public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
 

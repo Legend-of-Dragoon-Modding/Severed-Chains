@@ -14,13 +14,13 @@ public class GameState52c implements MemoryRef {
   private final Value ref;
 
   public final ArrayRef<IntRef> charIndex_88;
-  public final UnsignedIntRef gold_94;
+  public final IntRef gold_94;
   public final IntRef chapterIndex_98;
-  public final UnsignedIntRef stardust_9c;
-  public final UnsignedIntRef timestamp_a0;
+  public final IntRef stardust_9c;
+  public final IntRef timestamp_a0;
   /** Not 100% sure on this */
-  public final UnsignedIntRef submapScene_a4;
-  public final UnsignedIntRef submapCut_a8;
+  public final IntRef submapScene_a4;
+  public final IntRef submapCut_a8;
 
   public final UnsignedIntRef _b4;
   public final UnsignedIntRef _b8;
@@ -63,12 +63,12 @@ public class GameState52c implements MemoryRef {
     this.ref = ref;
 
     this.charIndex_88 = ref.offset(4, 0x88L).cast(ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-    this.gold_94 = ref.offset(4, 0x94L).cast(UnsignedIntRef::new);
+    this.gold_94 = ref.offset(4, 0x94L).cast(IntRef::new);
     this.chapterIndex_98 = ref.offset(4, 0x98L).cast(IntRef::new);
-    this.stardust_9c = ref.offset(4, 0x9cL).cast(UnsignedIntRef::new);
-    this.timestamp_a0 = ref.offset(4, 0xa0L).cast(UnsignedIntRef::new);
-    this.submapScene_a4 = ref.offset(4, 0xa4L).cast(UnsignedIntRef::new);
-    this.submapCut_a8 = ref.offset(4, 0xa8L).cast(UnsignedIntRef::new);
+    this.stardust_9c = ref.offset(4, 0x9cL).cast(IntRef::new);
+    this.timestamp_a0 = ref.offset(4, 0xa0L).cast(IntRef::new);
+    this.submapScene_a4 = ref.offset(4, 0xa4L).cast(IntRef::new);
+    this.submapCut_a8 = ref.offset(4, 0xa8L).cast(IntRef::new);
 
     this._b4 = ref.offset(4, 0xb4L).cast(UnsignedIntRef::new);
     this._b8 = ref.offset(4, 0xb8L).cast(UnsignedIntRef::new);

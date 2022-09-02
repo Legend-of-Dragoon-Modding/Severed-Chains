@@ -38,9 +38,11 @@ import legend.game.types.WMapRender10;
 import legend.game.types.WMapRender28;
 import legend.game.types.WMapRender40;
 import legend.game.types.WMapStruct0c;
+import legend.game.types.WMapStruct0c_2;
 import legend.game.types.WMapStruct14;
 import legend.game.types.WMapStruct19c0;
 import legend.game.types.WMapStruct258;
+import legend.game.types.WMapSubStruct18;
 import legend.game.types.WMapTmdRenderingStruct18;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
@@ -50,9 +52,9 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
+import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
-import static legend.game.Scus94491BpeSegment.FUN_80013434;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
@@ -66,6 +68,7 @@ import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -99,7 +102,6 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dfc0;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -115,6 +117,7 @@ import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -222,10 +225,7 @@ public class WMap {
   private static final Value _800c68a4 = MEMORY.ref(4, 0x800c68a4L);
   private static final Value _800c68a8 = MEMORY.ref(4, 0x800c68a8L);
 
-  /** TODO array of 0xc-byte things */
-  private static final Value _800c68ac = MEMORY.ref(4, 0x800c68acL);
-  private static final Value _800c68b0 = MEMORY.ref(4, 0x800c68b0L);
-  private static final Value _800c68b4 = MEMORY.ref(4, 0x800c68b4L);
+  private static final UnboundedArrayRef<WMapStruct0c_2> _800c68ac = MEMORY.ref(4, 0x800c68acL, UnboundedArrayRef.of(0xc, WMapStruct0c_2::new));
 
   private static final Value _800c6ae8 = MEMORY.ref(4, 0x800c6ae8L);
 
@@ -837,11 +837,11 @@ public class WMap {
     FUN_800eb914();
     FUN_800e4e1c();
 
-    if((int)_800c6798.get() < 0x3L) {
-      FUN_8001eea8(0x1L);
+    if((int)_800c6798.get() < 3) {
+      FUN_8001eea8(1);
     } else {
       //LAB_800cd004
-      FUN_8001eea8(_800c6798.get() + 0x1L);
+      FUN_8001eea8((int)_800c6798.get() + 1);
     }
 
     //LAB_800cd020
@@ -2012,21 +2012,21 @@ public class WMap {
     final long z = v0.coord2_34.coord.transfer.getZ();
 
     //LAB_800d1e14
-    int sp14 = 0;
+    int count = 0;
     for(int i = 0; i < _800c67a0.get(); i++) {
       //LAB_800d1e38
       if(!places_800f0234.get(_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800d1e90
-        if(FUN_800eb09c(i, 1, _800c66b0.deref()._154.get(sp14).vec_08) == 0) {
+        if(FUN_800eb09c(i, 1, _800c66b0.deref()._154.get(count).vec_08) == 0) {
           //LAB_800d1ee0
-          final long dx = x - _800c66b0.deref()._154.get(sp14).vec_08.getX();
-          final long dy = y - _800c66b0.deref()._154.get(sp14).vec_08.getY();
-          final long dz = z - _800c66b0.deref()._154.get(sp14).vec_08.getZ();
+          final long dx = x - _800c66b0.deref()._154.get(count).vec_08.getX();
+          final long dy = y - _800c66b0.deref()._154.get(count).vec_08.getY();
+          final long dz = z - _800c66b0.deref()._154.get(count).vec_08.getZ();
 
-          _800c66b0.deref()._154.get(sp14).index_00.set(i);
-          _800c66b0.deref()._154.get(sp14).vecLength_04.set(SquareRoot0(dx * dx + dy * dy + dz * dz));
+          _800c66b0.deref()._154.get(count).index_00.set(i);
+          _800c66b0.deref()._154.get(count).vecLength_04.set(SquareRoot0(dx * dx + dy * dy + dz * dz));
 
-          sp14++;
+          count++;
         }
       }
 
@@ -2034,14 +2034,14 @@ public class WMap {
     }
 
     //LAB_800d2088
-    _800c66b0.deref()._154.get(sp14).index_00.set(-1);
-    FUN_80013434(_800c66b0.deref()._154.getAddress(), sp14, 0x18L, getMethodAddress(WMap.class, "FUN_800d20f4", long.class, long.class));
+    _800c66b0.deref()._154.get(count).index_00.set(-1);
+    qsort(_800c66b0.deref()._154.bound(WMapSubStruct18.class, count), count, 0x18, getBiFunctionAddress(WMap.class, "FUN_800d20f4", WMapSubStruct18.class, WMapSubStruct18.class, long.class));
   }
 
   @Method(0x800d20f4L)
-  public static long FUN_800d20f4(final long a0, final long a1) {
+  public static long FUN_800d20f4(final WMapSubStruct18 a0, final WMapSubStruct18 a1) {
     //LAB_800d2120
-    return MEMORY.ref(4, a0).offset(0x4L).get() - MEMORY.ref(4, a1).offset(0x4L).get();
+    return a0.vecLength_04.get() - a1.vecLength_04.get();
   }
 
   @Method(0x800d219cL)
@@ -3959,7 +3959,7 @@ public class WMap {
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
     _800c66b8.and(0xffff_efffL);
-    loadDrgnBinFile(0, 0x163fL, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x1_1000L, 0x4L);
+    loadDrgnBinFile(0, 5695, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x1_1000L, 0x4L);
     struct258_800c66a8.deref()._20.set((short)0);
   }
 
@@ -5069,7 +5069,7 @@ public class WMap {
 
   @Method(0x800d8d18L)
   public static void FUN_800d8d18() {
-    FUN_800d8e4c(_800c6798.get());
+    FUN_800d8e4c((int)_800c6798.get());
 
     struct258_800c66a8.deref().zoomState_1f8.set(0);
     struct258_800c66a8.deref()._220.set(0);
@@ -5113,10 +5113,10 @@ public class WMap {
   }
 
   @Method(0x800d8e4cL)
-  public static void FUN_800d8e4c(final long a0) {
+  public static void FUN_800d8e4c(final int index) {
     _800c66b8.and(0xffff_fffdL);
-    loadDrgnBinFile(0, 5697L + a0, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2L, 0x4L);
-    loadDrgnBinFile(0, 5705L + a0, 0, getMethodAddress(WMap.class, "loadTmdCallback", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 5697 + index, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2L, 0x4L);
+    loadDrgnBinFile(0, 5705 + index, 0, getMethodAddress(WMap.class, "loadTmdCallback", long.class, long.class, long.class), 0, 0x2L);
   }
 
   @Method(0x800d8efcL)
@@ -5719,7 +5719,7 @@ public class WMap {
           if(struct258_800c66a8.deref()._254.get() != 0) {
             _800c6860.setu(_800f0e34.get((int)_800c67a8.get())._08.get());
             _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
-            submapCut_80052c30.setu(_800c6860.get());
+            submapCut_80052c30.set((int)_800c6860.get());
             _80052c34.setu(_800c6862.get());
 
             FUN_800e3fac(1);
@@ -5854,13 +5854,13 @@ public class WMap {
           //LAB_800db8f4
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._08.get());
           _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._0a.get());
-          submapCut_80052c30.setu(_800c6860.get());
+          submapCut_80052c30.set((int)_800c6860.get());
           _80052c34.setu(_800c6862.get());
         } else {
           //LAB_800db9bc
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._04.get());
           _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258_800c66a8.deref().coolonWarpIndex_222.get())._10.get())._06.get());
-          submapCut_80052c30.setu(_800c6860.get());
+          submapCut_80052c30.set((int)_800c6860.get());
           index_80052c38.set((int)_800c6862.get());
           struct258_800c66a8.deref()._250.set(0x3L);
           _8004dd28.setu(-0x1L);
@@ -6217,13 +6217,13 @@ public class WMap {
   public static void FUN_800dfa70() {
     _800c66b8.and(0xffff_fd57L);
 
-    loadDrgnBinFile(0, 5713L, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2a8L, 0x4L);
+    loadDrgnBinFile(0, 5713, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2a8L, 0x4L);
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.deref().bigStructs_0c.get(i).set(MEMORY.ref(4, addToLinkedListTail(0x124L), BigStruct::new));
-      loadDrgnBinFile(0, 5714L + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
+      loadDrgnBinFile(0, 5714 + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
       struct258_800c66a8.deref().bigStructs_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
@@ -7162,35 +7162,35 @@ public class WMap {
       _800c6ae8.setu(0);
 
       if(_800f224c.offset(_800c67aa.get() * 0x8L).getSigned() == -0x1L) {
-        submapStage_800bb0f4.setu(0x1L);
+        submapStage_800bb0f4.set(1);
       } else {
         //LAB_800e386c
-        submapStage_800bb0f4.setu(_800f224c.offset(_800c67aa.get() * 0x8L).get());
+        submapStage_800bb0f4.set((int)_800f224c.offset(_800c67aa.get() * 0x8L).get());
       }
 
       //LAB_800e3894
       final long sp10 = _800f224d.offset(_800c67aa.get() * 0x8L).get();
 
       if((byte)sp10 == -0x1L) {
-        encounterId_800bb0f8.setu(0);
+        encounterId_800bb0f8.set(0);
       } else {
         //LAB_800e38dc
         final long sp14 = simpleRand() % 100;
 
         if((int)sp14 < 0x23L) {
-          encounterId_800bb0f8.setu(_800ef364.offset(sp10 * 0x8L).getSigned());
+          encounterId_800bb0f8.set((int)_800ef364.offset(sp10 * 0x8L).getSigned());
         } else {
           //LAB_800e396c
           if((int)sp14 < 0x23L || (int)sp14 >= 0x46L) {
             //LAB_800e39c0
             if((int)sp14 < 0x46L || (int)sp14 >= 0x5aL) {
               //LAB_800e3a14
-              encounterId_800bb0f8.setu(_800ef36a.offset(sp10 * 0x8L).getSigned());
+              encounterId_800bb0f8.set((int)_800ef36a.offset(sp10 * 0x8L).getSigned());
             } else {
-              encounterId_800bb0f8.setu(_800ef368.offset(sp10 * 0x8L).getSigned());
+              encounterId_800bb0f8.set((int)_800ef368.offset(sp10 * 0x8L).getSigned());
             }
           } else {
-            encounterId_800bb0f8.setu(_800ef366.offset(sp10 * 0x8L).getSigned());
+            encounterId_800bb0f8.set((int)_800ef366.offset(sp10 * 0x8L).getSigned());
           }
         }
       }
@@ -7692,7 +7692,7 @@ public class WMap {
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
     _800c66b8.and(0xffff_fffeL);
-    loadDrgnBinFile(0, 5696L, 0, getMethodAddress(WMap.class, "FUN_800d562c", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5696, 0, getMethodAddress(WMap.class, "FUN_800d562c", long.class, long.class, long.class), 0, 0x4L);
     _800c6794.setu(0);
   }
 
@@ -7804,7 +7804,7 @@ public class WMap {
     long sp34;
     final long sp38;
     final long sp3c;
-    long sp50;
+    int sp50;
     final long sp54;
     long sp58;
     final long sp5c;
@@ -8003,11 +8003,11 @@ public class WMap {
           MEMORY.ref(2, sp4c).offset(0x16L).setu(_800bb120.offset(a0 * 0x2L).get() | (_800ef0d4.get() & 0x3c0L) >> 6);
           MEMORY.ref(2, sp4c).offset(0xeL).setu(_800ef0da.get() << 6 | (_800ef0d8.get() & 0x3f0L) >> 4);
 
-          sp50 = _800c67a8.get();
+          sp50 = (int)_800c67a8.get();
           sp54 = 0x1L << (sp50 & 0x1fL);
           sp50 = sp50 >>> 5;
 
-          if((gameState_800babc8._17c.get((int)sp50).get() & sp54) > 0) {
+          if((gameState_800babc8._17c.get(sp50).get() & sp54) > 0) {
             //LAB_800e5e98
             MEMORY.ref(1, sp4c).offset(0x4L).setu(_800c86d0.getSigned() / 2);
             MEMORY.ref(1, sp4c).offset(0x5L).setu(_800c86d0.getSigned() / 2);
@@ -8071,7 +8071,7 @@ public class WMap {
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
               if((sp5c & 1L << i) != 0) {
-                FUN_800e774c(_800f01cc.get(i).deref(), 0xcdL, (short)(sp50 * 0x10L + 0x1eL), 0, 0);
+                FUN_800e774c(_800f01cc.get(i).deref(), 205, sp50 * 16 + 30, 0, 0);
                 sp50++;
               }
 
@@ -8080,7 +8080,7 @@ public class WMap {
 
             //LAB_800e6260
             if(sp50 == 0) {
-              FUN_800e774c(_800f01e0.deref(), 0xc9L, 0x3eL, 0, 0);
+              FUN_800e774c(_800f01e0.deref(), 201, 62, 0, 0);
             }
 
             //LAB_800e6290
@@ -8227,11 +8227,11 @@ public class WMap {
 
         //LAB_800e6900
         if(_800c6860.get() != 999L) {
-          submapCut_80052c30.setu(_800c6860.get());
+          submapCut_80052c30.set((int)_800c6860.get());
           _80052c34.setu(_800c6862.get());
         } else {
           //LAB_800e693c
-          submapCut_80052c30.setu(_800f0e34.get((int)_800c67a8.get())._04.get());
+          submapCut_80052c30.set(_800f0e34.get((int)_800c67a8.get())._04.get());
 
           if(_800c86d2.getSigned() == 0x1L) {
             sp20 = _800c6862.get() >>> 4 & 0xffffL;
@@ -8321,7 +8321,7 @@ public class WMap {
     rotateCoord2(struct258_800c66a8.deref().tmdRendering_08.deref().rotations_08.deref().get(0), struct258_800c66a8.deref().tmdRendering_08.deref().coord2s_04.deref().get(0));
 
     //LAB_800e6c38
-    long sp1c = 0;
+    int count = 0;
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(_800f0e34.get((int)_800c84c8.offset(i * 0x2L).getSigned()).placeIndex_02.get()).name_00.isNull()) {
@@ -8339,21 +8339,22 @@ public class WMap {
         sp58.setXY(CPU.MFC2(14)); // SXY2
         final long sp60 = CPU.MFC2(8); // IR0
         final long sp5c = CPU.CFC2(31); // FLAGS
-        final long sp64 = (int)CPU.MFC2(19) >> 2; // SZ3
-        final long sp6c = sp58.getX() + 0xa0L;
-        final long sp6e = sp58.getY() + 0x68L;
+        final int z = (int)CPU.MFC2(19) >> 2; // SZ3
+        final short x = (short)(sp58.getX() + 160);
+        final short y = (short)(sp58.getY() + 104);
 
         //LAB_800e6e24
-        if((short)sp6c >= -0x20L && (short)sp6c < 0x161L) {
+        if(x >= -32 && x < 353) {
           //LAB_800e6e2c
           //LAB_800e6e5c
-          if((short)sp6e >= -0x20L && (short)sp6e < 0x111L) {
+          if(y >= -32 && y < 273) {
             //LAB_800e6e64
-            if((int)sp64 >= 0x6L && sp64 < _1f8003c8.get() - 0x1L) {
-              _800c68ac.offset(sp1c * 0xcL).setu(sp64);
-              _800c68b0.offset(sp1c * 0xcL).setu(_800c84c8.offset(i * 0x2L).getSigned());
-              _800c68b4.offset(sp1c * 0xcL).setu(sp58.getXY());
-              sp1c++;
+            if(z >= 6 && z < _1f8003c8.get() - 1) {
+              final WMapStruct0c_2 struct = _800c68ac.get(count);
+              struct.z_00.set(z);
+              struct._04.set((int)_800c84c8.offset(i * 0x2L).getSigned());
+              struct.xy_08.setXY(sp58.getXY());
+              count++;
             }
           }
         }
@@ -8363,25 +8364,26 @@ public class WMap {
     }
 
     //LAB_800e6f54
-    _800c68b0.offset(sp1c * 0xcL).setu(-0x1L);
+    _800c68ac.get(count)._04.set(-1);
 
-    FUN_80013434(_800c68ac.getAddress(), sp1c, 0xcL, getMethodAddress(SMap.class, "FUN_800e7854", long.class, long.class)); //TODO getAddress
+    qsort(_800c68ac.bound(WMapStruct0c_2.class, count), count, 0xc, getBiFunctionAddress(WMap.class, "FUN_800e7854", WMapStruct0c_2.class, WMapStruct0c_2.class, long.class));
 
     //LAB_800e6fa0
     int i;
-    for(i = 0; i < 7 && (int)_800c68b0.offset(i * 0xcL).get() >= 0; i++) {
+    WMapStruct0c_2 struct;
+    for(i = 0, struct = _800c68ac.get(count); i < 7 && struct._04.get() >= 0; i++, struct = _800c68ac.get(count)) {
       //LAB_800e6fec
       //LAB_800e6fec
       //LAB_800e6ff4
-      final long sp6c = _800c68b4.offset(i * 0xcL).offset(2, 0x0L).getSigned() + 0xa0L;
-      final long sp6e = _800c68b4.offset(i * 0xcL).offset(2, 0x2L).getSigned() + 0x68L;
-      final long sp24 = _800f0e34.get((int)_800c68b0.offset(i * 0xcL).get()).placeIndex_02.get();
+      final int x = struct.xy_08.getX() + 160;
+      final int y = struct.xy_08.getY() + 104;
+      final int place = _800f0e34.get(struct._04.get()).placeIndex_02.get();
 
-      if(!places_800f0234.get((int)sp24).name_00.isNull()) {
+      if(!places_800f0234.get(place).name_00.isNull()) {
         //LAB_800e70f4
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
-        measureText(places_800f0234.get((int)sp24).name_00.deref(), width, lines);
+        measureText(places_800f0234.get(place).name_00.deref(), width, lines);
 
         final long v0 = _800c86d4.offset(i * 0x4L).get();
         if(v0 == 0x1L) {
@@ -8410,8 +8412,8 @@ public class WMap {
           _800be358.get(i).lines_1a.set((short)lines.get());
           _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
           _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
-          _800be358.get(i)._14.set((short)sp6c);
-          _800be358.get(i)._16.set((short)sp6e);
+          _800be358.get(i)._14.set((short)x);
+          _800be358.get(i)._16.set((short)y);
         } else if((int)v0 >= 0x2L) {
           //LAB_800e7154
           if(v0 == 0x2L) {
@@ -8426,12 +8428,12 @@ public class WMap {
             _800be358.get(i).lines_1a.set((short)lines.get());
             _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
             _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
-            _800be358.get(i)._14.set((short)sp6c);
-            _800be358.get(i)._16.set((short)sp6e);
+            _800be358.get(i)._14.set((short)x);
+            _800be358.get(i)._16.set((short)y);
           }
         } else if(v0 == 0) {
           //LAB_800e7168
-          FUN_8002a32c(i, 0, (short)sp6c, (short)sp6e, (short)(width.get() - 1), (short)(lines.get() - 1));
+          FUN_8002a32c(i, 0, (short)x, (short)y, (short)(width.get() - 1), (short)(lines.get() - 1));
 
           _800c86d4.offset(i * 0x4L).setu(0x1L);
 
@@ -8460,15 +8462,15 @@ public class WMap {
           _800be358.get(i).lines_1a.set((short)lines.get());
           _800be358.get(i)._1c.set(_800be358.get(i).width_18.get() * 9 / 2);
           _800be358.get(i)._1e.set(_800be358.get(i).lines_1a.get() * 6);
-          _800be358.get(i)._14.set((short)sp6c);
-          _800be358.get(i)._16.set((short)sp6e);
+          _800be358.get(i)._14.set((short)x);
+          _800be358.get(i)._16.set((short)y);
         }
 
         //LAB_800e74d8
         _800bdf00.setu(i + 0x77L);
         _800be358.get(i)._0c.set(i + 0x77L);
 
-        FUN_800e774c(places_800f0234.get((int)sp24).name_00.deref(), (short)(sp6c - width.get() * 3), (short)(sp6e - lines.get() * 7), 0, 0);
+        FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
       }
 
       //LAB_800e7590
@@ -8519,11 +8521,11 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final long x, final long y, final long a3, final long a4) {
+  public static void FUN_800e774c(final LodString text, final int x, final int y, final long a3, final long a4) {
     final IntRef width = new IntRef();
     final IntRef lines = new IntRef();
     measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, (short)y, (short)a3, (short)a4);
+    renderText(text, x - width.get() + 3, y, (short)a3, (short)a4);
     renderText(text, x - (width.get() - 1) + 3, y + 1, 0x9L, (short)a4);
   }
 
@@ -8732,7 +8734,7 @@ public class WMap {
 
     //LAB_800e8464
     if(_8004dd28.get() == 0x6L && _800c685c.get() == 999L) {
-      submapCut_80052c30.setu(0);
+      submapCut_80052c30.set(0);
     }
 
     //LAB_800e8494
@@ -8978,7 +8980,7 @@ public class WMap {
                             if(_800c6894.get() != 0x1L) {
                               _800c6860.setu(_800f1580.get());
                               _800c6862.setu(_800f1582.get());
-                              submapCut_80052c30.setu(_800c6860.get());
+                              submapCut_80052c30.set((int)_800c6860.get());
                               _80052c34.setu(_800c6862.get());
                               FUN_800e3fac(1);
                             }
@@ -9238,7 +9240,7 @@ public class WMap {
     if(_800c6870.get() != 0) {
       if((int)_800c6870.get() < 0x3L) {
         FUN_800e3fac(1);
-        submapCut_80052c30.setu(0x11dL);
+        submapCut_80052c30.set(285);
         _80052c34.setu(0x20L);
         _800c6870.setu(0x3L);
       }

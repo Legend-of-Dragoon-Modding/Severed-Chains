@@ -46,6 +46,7 @@ import legend.game.modding.events.scripting.ScriptTickEvent;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.FileEntry08;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.McqHeader;
 import legend.game.types.MrgEntry;
@@ -75,7 +76,7 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.SInit.FUN_800fbec8;
+import static legend.game.SInit.initFileEntries;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.FUN_800edb8c;
 import static legend.game.SMap.mrg10Addr_800c6710;
@@ -135,9 +136,8 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004d648;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d78c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
 import static legend.game.Scus94491BpeSegment_8004.SsSetRVol;
-import static legend.game.Scus94491BpeSegment_8004._8004db88;
 import static legend.game.Scus94491BpeSegment_8004._8004dd00;
-import static legend.game.Scus94491BpeSegment_8004._8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd10;
 import static legend.game.Scus94491BpeSegment_8004._8004dd14;
@@ -146,7 +146,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd28;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
-import static legend.game.Scus94491BpeSegment_8004._8004dda0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
@@ -168,15 +167,16 @@ import static legend.game.Scus94491BpeSegment_8004._8004ff14;
 import static legend.game.Scus94491BpeSegment_8004.callbackArray_8004dddc;
 import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
+import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
-import static legend.game.Scus94491BpeSegment_8004.fileNamePtr_8004dda4;
 import static legend.game.Scus94491BpeSegment_8004.initSound;
 import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
-import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
+import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.orderingTableLength_8004dd38;
+import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.renderFlags_8004dd36;
 import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
@@ -1406,7 +1406,7 @@ public final class Scus94491BpeSegment {
           if(_8004dd14.get() != _8004dd18.get()) {
             loadingOverlay_8004dd1e.setu(0x1L);
             _8004dd10.setu(_8005a2a8.offset(_8004dd18.get() * 0xcL));
-            loadFile(_8004db88.offset(_8004dd10.get() * 0x8L).getAddress(), _80010004.get(), getMethodAddress(Scus94491BpeSegment.class, "sstrmLoadedCallback", long.class, long.class, long.class), _8004dd18.get(), 0x11L);
+            loadFile(overlays_8004db88.get((int)_8004dd10.get()), _80010004.get(), getMethodAddress(Scus94491BpeSegment.class, "overlayLoadedCallback", long.class, long.class, long.class), _8004dd18.get(), 0x11L);
             _8004dd18.addu(0x1L).and(0xfL);
           }
         }
@@ -1446,9 +1446,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012a84L)
   public static long loadSmap(final int callbackIndex) {
-    final long val = callback_8004dbc0.get(callbackIndex).ptr_04.get();
+    final FileEntry08 entry = callback_8004dbc0.get(callbackIndex).entry_04.derefNullable();
 
-    if(val == 0 || val == _8004dd04.get()) {
+    if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
       //LAB_80012ac0
       FUN_80012bd4(callbackIndex);
       loadingSmapOvl_8004dd08.setu(0);
@@ -1456,9 +1456,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80012ad8
-    _8004dd04.setu(val);
+    currentlyLoadingFileEntry_8004dd04.set(entry);
     loadingSmapOvl_8004dd08.setu(0x1L);
-    loadFile(val, _80010000.get(), getMethodAddress(Scus94491BpeSegment.class, "smapLoadedCallback", long.class, long.class, long.class), callbackIndex, 0x11L);
+    loadFile(entry, _80010000.get(), getMethodAddress(Scus94491BpeSegment.class, "smapLoadedCallback", long.class, long.class, long.class), callbackIndex, 0x11L);
     return 0;
   }
 
@@ -1518,7 +1518,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012c54L)
-  public static void sstrmLoadedCallback(final long address, final long fileSize, final long a2) {
+  public static void overlayLoadedCallback(final long address, final long fileSize, final long a2) {
     loadingOverlay_8004dd1e.setu(0);
     FUN_80012c7c(a2);
   }
@@ -1744,42 +1744,42 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013434L)
-  public static void FUN_80013434(final long a0, final long a1, final long a2, final long a3) {
-    long s4 = 0;
-
+  public static <T extends MemoryRef> void qsort(final ArrayRef<T> data, final int count, final int stride, final BiFunctionRef<T, T, Long> comparator) {
     //LAB_8001347c
-    while(s4 << 0x1L < a1) {
-      s4 += s4 + 0x1L;
+    // Find the first Mersenne number >= count
+    int s4 = 0;
+    while(s4 * 2 < count) {
+      s4 += s4 + 1;
     }
 
     //LAB_80013490
-    final long s6 = a1 * a2 & 0xffff_ffffL;
-    final long s7 = a2 >>> 0x2L;
+    final int totalSize = count;
 
     //LAB_800134a4
     while(s4 > 0) {
-      final long s5 = s4 * a2 & 0xffff_ffffL;
-      long s3 = s5;
+      final int s5 = s4;
+      int s3 = s5;
 
       //LAB_800134b8
-      while(s3 < s6) {
-        long s2 = s3 - s5;
+      while(s3 < totalSize) {
+        int s2 = s3 - s5;
 
         //LAB_800134c4
         while(s2 >= 0) {
-          final long s0 = a0 + s2;
-          final long s1 = s0 + s5;
+          final T s0 = data.get(s2);
+          final T s1 = data.get(s2 + s5);
 
-          if((long)MEMORY.ref(4, a3).cast(BiFunctionRef::new).run(s0, s1) <= 0) {
+          if(comparator.run(s0, s1) <= 0) {
             break;
           }
 
           //LAB_80013500
-          for(int i = 0; i < s7; i++) {
-            final long v1 = MEMORY.ref(4, s0).offset(i * 4L).get();
-            final long v0 = MEMORY.ref(4, s1).offset(i * 4L).get();
-            MEMORY.ref(4, s0).offset(i * 4L).setu(v0);
-            MEMORY.ref(4, s1).offset(i * 4L).setu(v1);
+          // Swap values
+          for(int i = 0; i < stride; i += 4) {
+            final long v1 = MEMORY.get(s0.getAddress() + i, 4);
+            final long v0 = MEMORY.get(s1.getAddress() + i, 4);
+            MEMORY.set(s0.getAddress() + i, 4, v0);
+            MEMORY.set(s1.getAddress() + i, 4, v1);
           }
 
           //LAB_80013524
@@ -1787,11 +1787,11 @@ public final class Scus94491BpeSegment {
         }
 
         //LAB_80013530
-        s3 += a2;
+        s3 += stride;
       }
 
       //LAB_80013540
-      s4 >>= 0x1L;
+      s4 >>= 1;
     }
 
     //LAB_8001354c
@@ -2621,8 +2621,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001524cL)
-  public static long loadFile(final long param_1, final long transferDest, final long callback, final long callbackParam, final long param_5) {
-    final long s0 = FUN_800155b8(MEMORY.ref(2, param_1).getSigned(), transferDest, param_5);
+  public static long loadFile(final FileEntry08 entry, final long transferDest, final long callback, final long callbackParam, final long param_5) {
+    final long s0 = FUN_800155b8(entry.fileIndex_00.get(), transferDest, param_5);
 
     if(s0 < 0) {
       return -0x1L;
@@ -2636,11 +2636,11 @@ public final class Scus94491BpeSegment {
 
     file.callback.set(MEMORY.ref(4, callback).cast(TriConsumerRef::new));
     file.transferDest.setu(transferDest);
-    file.namePtr.set(MEMORY.ref(4, param_1).offset(0x4L).deref(20).cast(CString::new));
+    file.namePtr.set(entry.name_04.deref());
     file.callbackParam.set((int)callbackParam);
     file.type.set((short)s0);
     file.used.set(true);
-    setLoadingFilePosAndSizeFromFile(file, param_1);
+    setLoadingFilePosAndSizeFromFile(file, entry);
 
     LOGGER.info(file);
 
@@ -2648,12 +2648,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015310L)
-  public static long loadDrgnBinFile(final long index, final long fileIndex, final long fileTransferDest, final long callback, final long callbackParam, final long param_6) {
-    final long drgnIndex = Math.min(index, 2);
+  public static long loadDrgnBinFile(final int index, final int fileIndex, final long fileTransferDest, final long callback, final long callbackParam, final long param_6) {
+    final int drgnIndex = Math.min(index, 2);
 
     //LAB_80015388
     //LAB_8001538c
-    final long s2 = FUN_800155b8(_8004dda0.offset(drgnIndex * 8).getSigned(), fileTransferDest, param_6);
+    final long s2 = FUN_800155b8(drgnFiles_8004dda0.get(drgnIndex).fileIndex_00.get(), fileTransferDest, param_6);
     if(s2 < 0) {
       return -0x1L;
     }
@@ -2670,7 +2670,7 @@ public final class Scus94491BpeSegment {
     //LAB_800153dc
     file.callback.set(MEMORY.ref(4, callback).cast(TriConsumerRef::new));
     file.transferDest.setu(fileTransferDest);
-    file.namePtr.set(fileNamePtr_8004dda4.offset(drgnIndex * 8).deref(16).cast(CString::new));
+    file.namePtr.set(drgnFiles_8004dda0.get(drgnIndex).name_04.deref());
     file.callbackParam.set((int)callbackParam);
     file.type.set((short)s2);
     file.used.set(true);
@@ -2720,17 +2720,17 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015604L)
-  public static void setLoadingFilePosAndSizeFromFile(final FileLoadingInfo loadingFile, final long pointerToFileIndexMaybe) {
-    final CdlFILE file = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, pointerToFileIndexMaybe).get());
+  public static void setLoadingFilePosAndSizeFromFile(final FileLoadingInfo loadingFile, final FileEntry08 entry) {
+    final CdlFILE file = CdlFILE_800bb4c8.get(entry.fileIndex_00.get());
     loadingFile.pos.set(file.pos);
     loadingFile.size.set(file.size.get());
   }
 
   @Method(0x80015644L)
-  public static long getDrgnFilePos(final FileLoadingInfo file, final long drgnIndex, final long fileIndex) {
-    final long sector = CdlFILE_800bb4c8.get((int)_8004dda0.offset(drgnIndex * 8).get()).pos.pack();
+  public static long getDrgnFilePos(final FileLoadingInfo file, final int drgnIndex, final int fileIndex) {
+    final long sector = CdlFILE_800bb4c8.get(drgnFiles_8004dda0.get(drgnIndex).fileIndex_00.get()).pos.pack();
 
-    final MrgEntry entry = drgnMrg_800bc060.get((int)drgnIndex).deref().entries.get((int)fileIndex);
+    final MrgEntry entry = drgnMrg_800bc060.get(drgnIndex).deref().entries.get(fileIndex);
 
     file.pos.unpack(sector + entry.offset.get());
     file.size.set((int)entry.size.get());
@@ -4244,7 +4244,7 @@ public final class Scus94491BpeSegment {
   @Method(0x800178b0L)
   public static void loadSceaLogo() {
     if(SInitBinLoaded_800bbad0.get()) {
-      loadDrgnBinFile(0, 0x1669L, 0, getMethodAddress(Scus94491BpeSegment.class, "loadSceaLogoTexture", long.class, long.class, long.class), 1, 5);
+      loadDrgnBinFile(0, 5737, 0, getMethodAddress(Scus94491BpeSegment.class, "loadSceaLogoTexture", long.class, long.class, long.class), 1, 5);
     } else {
       loadSceaLogoTexture(sceaTexture_800d05c4.getAddress(), 0, 0);
     }
@@ -5265,7 +5265,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800194dcL)
   public static void FUN_800194dc() {
-    FUN_800fbec8(_8004f65c.getAddress());
+    initFileEntries(_8004f65c.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
   @Method(0x80019500L)
@@ -7103,7 +7103,7 @@ public final class Scus94491BpeSegment {
 
     loadedDrgnFiles_800bcf78.oru(0x8L);
 
-    final long fileIndex;
+    final int fileIndex;
     if(type != 0) {
       //LAB_8001ce44
       fileIndex = 1298 + s2.charIndex_272.get();
@@ -7160,32 +7160,32 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001d1c4() {
     loadedDrgnFiles_800bcf78.oru(0x10L);
 
-    final long encounterId = encounterId_800bb0f8.get();
-    final long a1;
-    if(encounterId == 0x186L) {
+    final int encounterId = encounterId_800bb0f8.get();
+    final int fileIndex;
+    if(encounterId == 0x186) {
       //LAB_8001d21c
-      a1 = 1290;
-    } else if(encounterId == 0x1afL) {
+      fileIndex = 1290;
+    } else if(encounterId == 0x1af) {
       //LAB_8001d244
-      a1 = 1296;
+      fileIndex = 1296;
       //LAB_8001d208
-    } else if(encounterId == 0x1bbL) {
+    } else if(encounterId == 0x1bb) {
       //LAB_8001d270
-      a1 = 1292;
+      fileIndex = 1292;
     } else {
       //LAB_8001d298
-      a1 = 778 + encounterId_800bb0f8.get();
+      fileIndex = 778 + encounterId_800bb0f8.get();
     }
 
     //LAB_8001d2c0
-    loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x8001d2d8L)
   public static void FUN_8001d2d8() {
     loadedDrgnFiles_800bcf78.oru(0x10L);
-    final long encounterId = encounterId_800bb0f8.get();
-    if(encounterId == 0x1afL) {
+    final int encounterId = encounterId_800bb0f8.get();
+    if(encounterId == 0x1af) {
       //LAB_8001d394
       if(_8006f284.get() == 0) {
         loadDrgnBinFile(0, 1296, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
@@ -7194,7 +7194,7 @@ public final class Scus94491BpeSegment {
         loadDrgnBinFile(0, 1297, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
       }
     } else {
-      if(encounterId == 0x186L) {
+      if(encounterId == 0x186) {
         //LAB_8001d330
         if(_8006f284.get() != 0) {
           //LAB_8001d370
@@ -7203,7 +7203,7 @@ public final class Scus94491BpeSegment {
           loadDrgnBinFile(0, 1290, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
         }
         //LAB_8001d31c
-      } else if(encounterId == 0x1bbL) {
+      } else if(encounterId == 0x1bb) {
         //LAB_8001d3f8
         final long v1 = _8006f284.get();
         if(v1 == 0) {
@@ -7222,7 +7222,7 @@ public final class Scus94491BpeSegment {
         }
       } else {
         //LAB_8001d4dc
-        loadDrgnBinFile(0, 778 + encounterId_800bb0f8.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(0, 778 + encounterId, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
       }
     }
 
@@ -7378,17 +7378,17 @@ public final class Scus94491BpeSegment {
       _800bd782.addu(0x1L);
       if(true) return;
 
-      final long fileIndex;
+      final int fileIndex;
       final long callback;
       final long callbackParam;
       if((MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL) == 0x13L) {
         unloadSoundFile(8);
-        fileIndex = 0x2dcL;
+        fileIndex = 732;
         callback = getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class);
         callbackParam = 0x2_dc00L;
       } else {
         //LAB_8001da58
-        fileIndex = _800501bc.get((int)(MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL)).get();
+        fileIndex = (int)_800501bc.get((int)(MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL)).get();
         callback = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fb44", long.class, long.class, long.class);
         callbackParam = 0;
       }
@@ -7523,7 +7523,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001df9c
-    loadDrgnBinFile(0, _80050104.offset(FUN_8001a810() * 0x4L).get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001cae0", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, (int)_80050104.offset(FUN_8001a810() * 0x4L).get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001cae0", long.class, long.class, long.class), 0, 0x4L);
     loadedDrgnFiles_800bcf78.oru(0x8L);
     FUN_8001d1c4();
     FUN_80012bb4();
@@ -7812,7 +7812,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eadcL)
-  public static void FUN_8001eadc(final long a0) {
+  public static void FUN_8001eadc(final int index) {
     loadedDrgnFiles_800bcf78.oru(0x2L);
 
     //TODO GH#3
@@ -7820,7 +7820,7 @@ public final class Scus94491BpeSegment {
     _800bd782.addu(0x1L);
     if(true) return;
 
-    loadDrgnBinFile(0, a0 + 5750L, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eb38", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5750 + index, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eb38", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x8001eb38L)
@@ -7863,9 +7863,9 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eea8L)
-  public static void FUN_8001eea8(final long a0) {
+  public static void FUN_8001eea8(final int index) {
     loadedDrgnFiles_800bcf78.oru(0x8000L);
-    loadDrgnBinFile(0, 5740L + a0, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eefc", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5740 + index, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eefc", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x8001eefcL)
@@ -8050,7 +8050,7 @@ public final class Scus94491BpeSegment {
     removeFromLinkedList(soundMrgPtr_800bd76c.getPointer());
 
     long s0 = soundFileArr_800bcf80.get(11)._18.get() - 0x1L;
-    long s1 = 0x1L;
+    int s1 = 1;
 
     //LAB_8001f860
     while((int)s0 >= 0) {
@@ -8063,7 +8063,7 @@ public final class Scus94491BpeSegment {
       }
 
       //LAB_8001f88c
-      loadDrgnBinFile(0, (_800bd0fc.get() >> 8) + s1, 0, a3, 0, 0x4L);
+      loadDrgnBinFile(0, (int)((_800bd0fc.get() >> 8) + s1), 0, a3, 0, 0x4L);
       s0--;
       s1++;
     }
@@ -8147,7 +8147,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fcf4L)
-  public static void FUN_8001fcf4(final long fileIndex) {
+  public static void FUN_8001fcf4(final int fileIndex) {
     loadedDrgnFiles_800bcf78.oru(0x4000L);
     loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fd4c", long.class, long.class, long.class), 0x6L, 0x2L);
   }

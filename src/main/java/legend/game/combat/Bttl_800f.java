@@ -5,11 +5,13 @@ import legend.core.gte.DVECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
@@ -28,15 +30,14 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800297a0;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_38;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_50;
-import static legend.game.Scus94491BpeSegment_8004._8004f2ac;
+import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
@@ -1140,8 +1141,8 @@ public final class Bttl_800f {
       final ActiveStatsa0 stats = stats_800be5f8.get(a1.charIndex_272.get());
       spPerPhysicalHit = stats.spPerPhysicalHit_4e.get();
       mpPerPhysicalHit = stats.mpPerPhysicalHit_50.get();
-      spPerMagicalHit = stats.spPerPhysicalHit_52.get();
-      mpPerMagicalHit = stats.mpPerPhysicalHit_54.get();
+      spPerMagicalHit = stats.spPerMagicalHit_52.get();
+      mpPerMagicalHit = stats.mpPerMagicalHit_54.get();
       speed = stats.gearSpeed_86.get() + stats.bodySpeed_69.get();
     }
 
@@ -2487,8 +2488,8 @@ public final class Bttl_800f {
 
     final BttlStructa4 structa4 = _800c6b60.deref();
 
-    long s5 = structa4._20.get();
-    final long sp60 = structa4._1a.get();
+    int y1 = structa4._20.get();
+    final int y2 = structa4._1a.get();
     final long sp68 = structa4._06.get();
 
     //LAB_800f5860
@@ -2509,7 +2510,7 @@ public final class Bttl_800f {
 
     //LAB_800f58e0
     for(int spellSlot = 0; spellSlot < structa4.count_22.get(); spellSlot++) {
-      if(s5 >= sp68) {
+      if(y1 >= sp68) {
         break;
       }
 
@@ -2518,7 +2519,7 @@ public final class Bttl_800f {
       if(a0 == 0) {
         //LAB_800f5918
         s3 = _80050ae8.get((int)(_800c6988.offset(sp7c).get() - 0xc0)).deref();
-        FUN_800297a0(_800c6988.offset(s7).get(), sp0x48);
+        intToStr((int)_800c6988.offset(s7).get(), sp0x48);
 
         //LAB_800f5968
         int i;
@@ -2589,12 +2590,12 @@ public final class Bttl_800f {
       }
 
       //LAB_800f5af0
-      if(s5 >= sp60) {
+      if(y1 >= y2) {
         //LAB_800f5b90
-        if(sp68 >= s5 + 0xcL) {
+        if(sp68 >= y1 + 0xcL) {
           a1 = 0;
         } else {
-          a1 = s5 - (sp68 - 0xcL);
+          a1 = y1 - (sp68 - 0xcL);
         }
 
         //LAB_800f5bb4
@@ -2603,28 +2604,28 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5bd8
-        renderText(s3, structa4._18.get(), s5, s2, a1);
+        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y1, s2, a1);
 
         if(a0 == 0) {
-          renderText(sp0x40, structa4._18.get() + 0x80, s5, s2, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y1, s2, a1);
         }
-      } else if(sp60 < s5 + 0xcL) {
+      } else if(y2 < y1 + 12) {
         if((structa4._02.get() & 0x4L) != 0) {
           a1 = structa4._8c.get();
         } else {
-          a1 = s5 - sp60;
+          a1 = y1 - y2;
         }
 
         //LAB_800f5b40
-        renderText(s3, structa4._18.get(), sp60, s2, a1);
+        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y2, s2, a1);
 
         if(a0 == 0) {
-          renderText(sp0x40, structa4._18.get() + 0x80, sp60, s2, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y2, s2, a1);
         }
       }
 
       //LAB_800f5c38
-      s5 = s5 + 0xeL;
+      y1 += 14;
       sp7c = sp7c + 0x2L;
       s7 = s7 + 0x2L;
     }
@@ -2708,7 +2709,7 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         FUN_800f1268(0x2cL, 0x9cL, 0xe8L, 0xeL, 0x8L);
-        FUN_800f8ac4((short)s1, structa4._1c.get(), 160, 163);
+        renderText((short)s1, structa4._1c.get(), 160, 163);
       }
     }
 
@@ -3578,19 +3579,19 @@ public final class Bttl_800f {
       MEMORY.ref(2, a1).offset(0xd4L).offset(i * 0x2L).setu(0);
     }
 
-    final long v1 = _8004f2ac.offset(MEMORY.ref(2, a1).offset(0x52L).getSigned() * 0xcL).getAddress();
-    MEMORY.ref(2, a1).offset(0xd4L).setu(MEMORY.ref(1, v1).offset(0x0L).get());
-    MEMORY.ref(2, a1).offset(0xd6L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
-    MEMORY.ref(2, a1).offset(0xd8L).setu(MEMORY.ref(1, v1).offset(0x2L).get());
-    MEMORY.ref(2, a1).offset(0xdaL).setu(MEMORY.ref(1, v1).offset(0x3L).get());
-    MEMORY.ref(2, a1).offset(0xdcL).setu(MEMORY.ref(1, v1).offset(0x4L).get());
-    MEMORY.ref(2, a1).offset(0xdeL).setu(MEMORY.ref(1, v1).offset(0x5L).get());
-    MEMORY.ref(2, a1).offset(0xe0L).setu(MEMORY.ref(1, v1).offset(0x6L).getSigned());
-    MEMORY.ref(2, a1).offset(0xe2L).setu(MEMORY.ref(1, v1).offset(0x7L).getSigned());
-    MEMORY.ref(2, a1).offset(0xe4L).setu(MEMORY.ref(1, v1).offset(0x8L).get());
-    MEMORY.ref(2, a1).offset(0xe6L).setu(MEMORY.ref(1, v1).offset(0x9L).get());
-    MEMORY.ref(2, a1).offset(0xe8L).setu(MEMORY.ref(1, v1).offset(0xaL).get());
-    MEMORY.ref(2, a1).offset(0xeaL).setu(MEMORY.ref(1, v1).offset(0xbL).get());
+    final ItemStats0c itemStats = itemStats_8004f2ac.get((int)MEMORY.ref(2, a1).offset(0x52L).getSigned());
+    MEMORY.ref(2, a1).offset(0xd4L).setu(itemStats.target_00.get());
+    MEMORY.ref(2, a1).offset(0xd6L).setu(itemStats.element_01.get());
+    MEMORY.ref(2, a1).offset(0xd8L).setu(itemStats.damage_02.get());
+    MEMORY.ref(2, a1).offset(0xdaL).setu(itemStats.special1_03.get());
+    MEMORY.ref(2, a1).offset(0xdcL).setu(itemStats.special2_04.get());
+    MEMORY.ref(2, a1).offset(0xdeL).setu(itemStats.uu1_05.get());
+    MEMORY.ref(2, a1).offset(0xe0L).setu(itemStats.specialAmount_06.get());
+    MEMORY.ref(2, a1).offset(0xe2L).setu(itemStats._07.get());
+    MEMORY.ref(2, a1).offset(0xe4L).setu(itemStats.status_08.get());
+    MEMORY.ref(2, a1).offset(0xe6L).setu(itemStats.percentage_09.get());
+    MEMORY.ref(2, a1).offset(0xe8L).setu(itemStats.uu2_0a.get());
+    MEMORY.ref(2, a1).offset(0xeaL).setu(itemStats.type_0b.get());
   }
 
   @Method(0x800f7b68L)
@@ -3876,9 +3877,9 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8ac4L)
-  public static void FUN_800f8ac4(final long a0, final long a1, final long x, final long y) {
-    final LodString str = allText_800fb3c0.get((int)a0).deref().get((int)a1).deref();
-    renderText(str, x - textWidth(str) / 2, y - 6, 0, 0);
+  public static void renderText(final int textType, final int textIndex, final int x, final int y) {
+    final LodString str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
+    Scus94491BpeSegment_8002.renderText(str, x - textWidth(str) / 2, y - 6, 0, 0);
   }
 
   @Method(0x800f8b74L)

@@ -31,8 +31,8 @@ public class ActiveStatsa0 implements MemoryRef {
   public final ShortRef spMultiplier_4c;
   public final ShortRef spPerPhysicalHit_4e;
   public final ShortRef mpPerPhysicalHit_50;
-  public final ShortRef spPerPhysicalHit_52;
-  public final ShortRef mpPerPhysicalHit_54;
+  public final ShortRef spPerMagicalHit_52;
+  public final ShortRef mpPerMagicalHit_54;
   public final ShortRef hpRegen_56;
   public final ShortRef mpRegen_58;
   public final ShortRef spRegen_5a;
@@ -110,8 +110,8 @@ public class ActiveStatsa0 implements MemoryRef {
     this.spMultiplier_4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
     this.spPerPhysicalHit_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
     this.mpPerPhysicalHit_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
-    this.spPerPhysicalHit_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
-    this.mpPerPhysicalHit_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
+    this.spPerMagicalHit_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+    this.mpPerMagicalHit_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
     this.hpRegen_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this.mpRegen_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
     this.spRegen_5a = ref.offset(2, 0x5aL).cast(ShortRef::new);

@@ -160,10 +160,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
 import static legend.game.Scus94491BpeSegment_800b._800bc918;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
-import static legend.game.Scus94491BpeSegment_800b._800bc920;
+import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b._800bc928;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
-import static legend.game.Scus94491BpeSegment_800b._800bc95c;
+import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc974;
@@ -880,13 +880,13 @@ public final class Bttl_800c {
     _800bc910.setu(0);
     _800bc914.setu(0);
     _800bc918.setu(0);
-    _800bc920.setu(0);
+    goldGainedFromCombat_800bc920.set(0);
 
     spGained_800bc950.get(0).set(0);
     spGained_800bc950.get(1).set(0);
     spGained_800bc950.get(2).set(0);
 
-    _800bc95c.setu(0);
+    totalXpFromCombat_800bc95c.set(0);
     _800bc960.setu(0);
     _800bc974.setu(0);
     _800bc978.setu(0);
@@ -1359,14 +1359,14 @@ public final class Bttl_800c {
       _800bc91c.setu(a1);
 
       long v1 = _800c6724.get();
-      if(v1 != 0xffL) {
+      if(v1 != 0xff) {
         _80052c34.setu(v1);
       }
 
       //LAB_800c8578
       v1 = _800c6740.get();
-      if(v1 != 0xffffL) {
-        submapCut_80052c30.setu(v1);
+      if(v1 != 0xffff) {
+        submapCut_80052c30.set((int)v1);
       }
 
       //LAB_800c8590
@@ -1490,7 +1490,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8b20L)
-  public static void loadStage(final long stage) {
+  public static void loadStage(final int stage) {
     loadDrgnBinFile(0, 2497 + stage, 0, getMethodAddress(Bttl_800c.class, "stageMrgLoadedCallback", long.class, long.class, long.class), 0, 0x2L);
     currentStage_800c66a4.setu(stage);
   }
@@ -1744,7 +1744,7 @@ public final class Bttl_800c {
 
     final CombatantStruct1a8 combatant = combatants_8005e398.get(combatantIndex);
     final long callbackParam;
-    final long fileIndex;
+    final int fileIndex;
     final long transferDest;
 
     if(combatant.charIndex_1a2.get() >= 0) {
@@ -1898,7 +1898,7 @@ public final class Bttl_800c {
 
   @Method(0x800c9708L)
   public static void FUN_800c9708(final int combatantIndex) {
-    final long fileIndex;
+    final int fileIndex;
     long a2 = 0;
     long a3 = 0;
     final CombatantStruct1a8 combatant = combatants_8005e398.get(combatantIndex);
@@ -1924,10 +1924,10 @@ public final class Bttl_800c {
         a2 = a2 & 0xffff_ff7fL;
         a2 = a2 | a0_0 << 7;
         a3 = a2 & 0xffff_feffL;
-        final long charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
+        final int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
         if(a0_0 == 0) {
           // Additions
-          fileIndex = 4031 + gameState_800babc8.charData_32c.get((int)charIndex).selectedAddition_19.get() + charIndex * 0x8L - additionOffsets_8004f5ac.get((int)charIndex).get();
+          fileIndex = 4031 + gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get() + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
           //LAB_800c983c
         } else if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) { // Divine dragoon
           // Divine dragoon addition
@@ -2365,12 +2365,11 @@ public final class Bttl_800c {
   public static void FUN_800ca55c(final int combatantIndex) {
     long v0;
     long v1;
-    long a1;
     long a2 = 0;
     final CombatantStruct1a8 combatant = combatants_8005e398.get(combatantIndex);
-    a1 = combatant.charIndex_1a2.get();
+    final int a1 = combatant.charIndex_1a2.get();
 
-    if((int)a1 >= 0) {
+    if(a1 >= 0) {
       v1 = combatant.charSlot_19c.get();
       a2 = a2 & 0xffff_ff80L;
       v0 = v1 & 0x7fL;
@@ -2383,23 +2382,23 @@ public final class Bttl_800c {
       final long a0 = a1 & 0x1L;
       v0 = a0 << 7;
       a2 = a2 | v0;
-      a1 = gameState_800babc8.charIndex_88.get((int)v1).get();
+      int fileIndex = gameState_800babc8.charIndex_88.get((int)v1).get();
       v1 = a2 & 0xffff_feffL;
       if(a0 != 0) {
-        if(a1 == 0) {
+        if(fileIndex == 0) {
           if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
-            a1 = a1 + 9;
+            fileIndex += 9;
           } else {
-            a1 = 18;
+            fileIndex = 18;
           }
         } else {
           //LAB_800ca618
-          a1 = a1 + 9;
+          fileIndex += 9;
         }
       }
 
       //LAB_800ca61c
-      loadDrgnBinFile(0, 3993 + a1 * 2, 0, getMethodAddress(Bttl_800c.class, "FUN_800ca65c", long.class, long.class, long.class), v1, 0x5L);
+      loadDrgnBinFile(0, 3993 + fileIndex * 2, 0, getMethodAddress(Bttl_800c.class, "FUN_800ca65c", long.class, long.class, long.class), v1, 0x5L);
     }
 
     //LAB_800ca64c
@@ -3525,8 +3524,8 @@ public final class Bttl_800c {
 
         if((s0 & 0x4L) != 0) {
           final long s1 = data.combatant_144.getPointer(); //TODO
-          _800bc920.addu(MEMORY.ref(2, s1).offset(0x196L).get());
-          _800bc95c.addu(MEMORY.ref(2, s1).offset(0x194L).get());
+          goldGainedFromCombat_800bc920.add((int)MEMORY.ref(2, s1).offset(0x196L).get());
+          totalXpFromCombat_800bc95c.add((int)MEMORY.ref(2, s1).offset(0x194L).get());
 
           if((s0 & 0x2000L) == 0) {
             if(simpleRand() * 100 >> 16 < MEMORY.ref(1, s1).offset(0x198L).get()) {

@@ -9,6 +9,8 @@ import legend.core.dma.DmaChannelType;
 import legend.core.gpu.RECT;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
+import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.types.FileEntry08;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +46,7 @@ import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
-import static legend.game.Scus94491BpeSegment_8005._80052d7c;
+import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b._800bed60;
 import static legend.game.Scus94491BpeSegment_800b._800bf55c;
@@ -102,13 +104,13 @@ public final class SStrm {
   public static final Value _8010f7f8 = MEMORY.ref(4, 0x8010f7f8L);
 
   @Method(0x800fb7ccL)
-  public static void FUN_800fb7cc(final long a0, final long a1) {
+  public static void FUN_800fb7cc(final long a0, final int a1) {
     linkedListEntry_8010f7d0.setu(addToLinkedListTail(0x1_0000L));
     FUN_800fba6c(a0);
 
-    final long v1 = _80052d7c.offset(4, drgnBinIndex_800bc058.get() * 4).get();
-    final long v0 = _80052d6c.offset(4, (drgnBinIndex_800bc058.get() - 1) * 4).get();
-    final CdlFILE file = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset((a1 - v0) * 8).get());
+    final UnboundedArrayRef<FileEntry08> entry = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new));
+    final int v0 = (int)_80052d6c.offset(4, (drgnBinIndex_800bc058.get() - 1) * 4).get();
+    final CdlFILE file = CdlFILE_800bb4c8.get(entry.get(a1 - v0).fileIndex_00.get());
     FUN_800fc038(file.pos, a0);
     FUN_800fc244(_800fe7b0.getAddress());
     FUN_800fc0b4(_800fe7b0.getAddress());

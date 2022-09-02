@@ -28,6 +28,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
+import legend.game.types.FileEntry08;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
@@ -69,7 +70,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<Pointer<LodString>> spells_80052734 = MEMORY.ref(4, 0x80052734L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
-  public static final Value _80052ae0 = MEMORY.ref(2, 0x80052ae0L);
+  public static final FileEntry08 _80052ae0 = MEMORY.ref(2, 0x80052ae0L, FileEntry08::new);
 
   public static final ArrayRef<Pointer<LodString>> _80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(LodString.class), 10, 4, Pointer.deferred(2, LodString::new)));
 
@@ -84,14 +85,14 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80052baa = MEMORY.ref(2, 0x80052baaL);
 
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
-  public static final Value submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L);
+  public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
   public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
   public static final Value _80052c3c = MEMORY.ref(4, 0x80052c3cL);
   public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
   public static final Value _80052c44 = MEMORY.ref(4, 0x80052c44L);
   public static final Value _80052c48 = MEMORY.ref(4, 0x80052c48L);
-  public static final Value _80052c4c = MEMORY.ref(2, 0x80052c4cL);
+  public static final FileEntry08 _80052c4c = MEMORY.ref(2, 0x80052c4cL, FileEntry08::new);
 
   public static final ArrayRef<UnsignedByteRef> _80052c5c = MEMORY.ref(1, 0x80052c5cL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
@@ -100,13 +101,13 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052c6c = MEMORY.ref(4, 0x80052c6cL);
 
-  public static final Value _80052c74 = MEMORY.ref(2, 0x80052c74L);
+  public static final FileEntry08 lodXa00Xa_80052c74 = MEMORY.ref(2, 0x80052c74L, FileEntry08::new);
 
-  public static final Value _80052c94 = MEMORY.ref(2, 0x80052c94L);
+  public static final FileEntry08 lodXa00Xa_80052c94 = MEMORY.ref(2, 0x80052c94L, FileEntry08::new);
 
   public static final Value _80052d6c = MEMORY.ref(2, 0x80052d6cL);
 
-  public static final Value _80052d7c = MEMORY.ref(4, 0x80052d7cL);
+  public static final ArrayRef<Pointer<FileEntry08>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(FileEntry08.class), 5, 0x4, Pointer.deferred(4, FileEntry08::new)));
 
   public static final Value _80052d90 = MEMORY.ref(4, 0x80052d90L);
   /**
@@ -119,7 +120,7 @@ public final class Scus94491BpeSegment_8005 {
    */
   public static final Value xaLoadingStages_80052da0 = MEMORY.ref(4, 0x80052da0L);
 
-  public static final Value _80052db0 = MEMORY.ref(2, 0x80052db0L);
+  public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
 
   public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);
   public static final Value _80052dc0 = MEMORY.ref(4, 0x80052dc0L);

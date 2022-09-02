@@ -261,7 +261,7 @@ public class SBtld {
 
   @Method(0x80109808L)
   public static void FUN_80109808(final long param) {
-    final long fileIndex = param & 0xffffL;
+    final int fileIndex = (int)(param & 0xffff);
     final long s0 = param >>> 16;
     final CombatantStruct1a8 v0 = getCombatant((int)s0);
     final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO

@@ -18,11 +18,14 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800e;
 import legend.game.types.CallbackStruct;
+import legend.game.types.FileEntry08;
+import legend.game.types.ItemStats0c;
 import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.RunningScript;
@@ -155,9 +158,10 @@ public final class Scus94491BpeSegment_8004 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
 
-  public static final Value _8004db58 = MEMORY.ref(2, 0x8004db58L);
+  public static final FileEntry08 ttleOvl_8004db58 = MEMORY.ref(2, 0x8004db58L, FileEntry08::new);
 
-  public static final Value _8004db88 = MEMORY.ref(2, 0x8004db88L);
+  public static final UnboundedArrayRef<FileEntry08> overlays_8004db88 = MEMORY.ref(2, 0x8004db88L, UnboundedArrayRef.of(0x8, FileEntry08::new));
+  public static final FileEntry08 sInitOvl_8004db88 = MEMORY.ref(2, 0x8004db88L, FileEntry08::new);
 
   /**
    * <ol start="0">
@@ -186,7 +190,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<CallbackStruct> callback_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
   public static final Value _8004dd00 = MEMORY.ref(4, 0x8004dd00L);
-  public static final Value _8004dd04 = MEMORY.ref(4, 0x8004dd04L);
+  public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
   public static final Value loadingSmapOvl_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static final Value _8004dd10 = MEMORY.ref(4, 0x8004dd10L);
@@ -214,15 +218,15 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
 
-  public static final Value _8004dd80 = MEMORY.ref(2, 0x8004dd80L);
+  public static final FileEntry08 _8004dd80 = MEMORY.ref(2, 0x8004dd80L, FileEntry08::new);
 
   /**
    * \SECT\DRGN21.BIN, also gets changed in SInitBin
    */
   public static final Value _8004dd88 = MEMORY.ref(1, 0x8004dd88L);
 
-  public static final Value _8004dda0 = MEMORY.ref(2, 0x8004dda0L);
-  public static final Value fileNamePtr_8004dda4 = MEMORY.ref(4, 0x8004dda4L);
+  public static final UnboundedArrayRef<FileEntry08> drgnFiles_8004dda0 = MEMORY.ref(2, 0x8004dda0L, UnboundedArrayRef.of(0x8, FileEntry08::new));
+  public static final FileEntry08 drgn0_8004dda0 = MEMORY.ref(2, 0x8004dda0L, FileEntry08::new);
 
   public static final Value _8004ddc0 = MEMORY.ref(4, 0x8004ddc0L);
   public static final Value callbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
@@ -332,8 +336,8 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc974}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc960}</li>
    *   <li>{@link legend.game.SMap#_800c66c8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc920}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc95c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#goldGainedFromCombat_800bc920}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#totalXpFromCombat_800bc95c}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>{@link legend.game.SMap#scriptStateIndices_800c6880}</li>
@@ -677,9 +681,7 @@ public final class Scus94491BpeSegment_8004 {
   // 8004f29c end of jump table
 
   public static final Value _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L);
-  /** TODO 0xc-byte array */
-  public static final Value _8004f2ac = MEMORY.ref(1, 0x8004f2acL);
-
+  public static final ArrayRef<ItemStats0c> itemStats_8004f2ac = MEMORY.ref(1, 0x8004f2acL, ArrayRef.of(ItemStats0c.class, 0x40, 0xc, ItemStats0c::new));
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
@@ -687,7 +689,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile _8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
 
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
-  public static final Value _8004f65c = MEMORY.ref(2, 0x8004f65cL);
+  public static final FileEntry08 _8004f65c = MEMORY.ref(2, 0x8004f65cL, FileEntry08::new);
 
   public static final Value _8004f664 = MEMORY.ref(1, 0x8004f664L);
 
