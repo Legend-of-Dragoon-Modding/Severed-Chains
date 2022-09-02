@@ -669,7 +669,7 @@ public class WMap {
     struct258_800c66a8.deref().imageData_2c.set(v0);
     StoreImage(rect, v0);
 
-    rect.set((short)320, (short)64, (short)0, (short)512);
+    rect.set((short)320, (short)0, (short)64, (short)512);
     v0 = addToLinkedListTail(0x1_0000L);
     struct258_800c66a8.deref().imageData_30.set(v0);
     StoreImage(rect, v0);
@@ -685,7 +685,7 @@ public class WMap {
     LoadImage(_800c8700, struct.imageData_2c.get());
     DrawSync(0);
     removeFromLinkedList(struct.imageData_2c.get());
-    LoadImage(_800c8700, struct.imageData_30.get());
+    LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30.get());
     DrawSync(0);
     removeFromLinkedList(struct.imageData_30.get());
     FUN_800d1914();
