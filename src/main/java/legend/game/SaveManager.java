@@ -37,23 +37,23 @@ public final class SaveManager {
   private static List<Path> getSaves() {
     try {
       Files.createDirectories(dir);
-    } catch(IOException e) {
+    } catch(final IOException e) {
       throw new RuntimeException(e);
     }
 
-    try(Stream<Path> stream = Files.list(dir)) {
+    try(final Stream<Path> stream = Files.list(dir)) {
       return stream
         .filter(file -> !Files.isDirectory(file) && matcher.matches(file.getFileName()))
         .sorted(Comparator.comparingLong((Path path) -> {
           try {
             return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
-          } catch(IOException e) {
+          } catch(final IOException e) {
             throw new RuntimeException(e);
           }
         }).reversed())
         .map(Path::getFileName)
         .collect(Collectors.toList());
-    } catch(IOException e) {
+    } catch(final IOException e) {
       throw new RuntimeException("Failed to get save files", e);
     }
   }

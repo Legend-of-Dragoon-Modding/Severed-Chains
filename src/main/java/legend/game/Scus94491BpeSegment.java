@@ -1753,15 +1753,13 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013490
-    final int totalSize = count;
-
     //LAB_800134a4
     while(s4 > 0) {
       final int s5 = s4;
-      int s3 = s5;
+      int s3 = s4;
 
       //LAB_800134b8
-      while(s3 < totalSize) {
+      while(s3 < count) {
         int s2 = s3 - s5;
 
         //LAB_800134c4
@@ -1787,7 +1785,7 @@ public final class Scus94491BpeSegment {
         }
 
         //LAB_80013530
-        s3 += stride;
+        s3++;
       }
 
       //LAB_80013540
