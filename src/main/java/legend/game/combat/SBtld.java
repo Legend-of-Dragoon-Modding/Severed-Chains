@@ -13,6 +13,7 @@ import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.types.MonsterStats1c;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -55,7 +56,7 @@ import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.script_800c66fc_length;
 import static legend.game.combat.Bttl_800c.script_800c670c;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
-import static legend.game.combat.Bttl_800f.FUN_800f8670;
+import static legend.game.combat.Bttl_800f.loadMonster;
 
 public class SBtld {
   private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
@@ -66,8 +67,7 @@ public class SBtld {
   /** TODO 0x10-byte struct */
   public static final Value _80109a98 = MEMORY.ref(4, 0x80109a98L);
 
-  /** TODO 0x1c-byte struct */
-  public static final Value _8010ba98 = MEMORY.ref(4, 0x8010ba98L);
+  public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x200, 0x1c, MonsterStats1c::new));
 
   /** TODO 0x80-byte struct array */
   public static final Value _8010e658 = MEMORY.ref(4, 0x8010e658L);
@@ -252,7 +252,7 @@ public class SBtld {
 
     //LAB_801097ac
     for(int i = 0; i < _800c6768.get(); i++) {
-      FUN_800f8670(_8006e398.bobjIndices_e50.get(i).get());
+      loadMonster(_8006e398.bobjIndices_e50.get(i).get());
     }
 
     //LAB_801097d0

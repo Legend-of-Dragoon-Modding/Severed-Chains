@@ -53,6 +53,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DeffPart;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.MonsterStats1c;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.BigStruct;
@@ -250,7 +251,7 @@ import static legend.game.combat.Bttl_800f.FUN_800f8ca0;
 import static legend.game.combat.Bttl_800f.FUN_800f8dfc;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
 import static legend.game.combat.Bttl_800f.drawLine;
-import static legend.game.combat.SBtld._8010ba98;
+import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SBtld.enemyNames_80112068;
 import static legend.game.combat.SEffe.FUN_80114f3c;
 import static legend.game.combat.SEffe.FUN_80115cac;
@@ -4290,8 +4291,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea0f4L)
   public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c a0, final long a1) {
-    final long s1 = a0._44.getPointer(); //TODO
-    final BigStruct struct = MEMORY.ref(4, s1 + 0x10L, BigStruct::new);
+    final BigStruct struct = a0._44.derefAs(BttlScriptData6cSub13c.class)._10;
     FUN_800214bc(struct);
     return struct.coord2ArrPtr_04.deref().get((int)a1);
   }
@@ -5894,7 +5894,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eee80L)
-  public static void FUN_800eee80(final long a0) {
+  public static void loadMonster(final long bobjIndex) {
     final long t8 = _800c6e90.getAddress();
 
     final long[] sp0x10 = {
@@ -5919,8 +5919,8 @@ public final class Bttl_800e {
       //LAB_800eef0c
     }
 
-    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    final LodString name = enemyNames_80112068.get(a1.charIndex_272.get()).deref();
+    final BattleObject27c monster = scriptStatePtrArr_800bc1c0.get((int)bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final LodString name = enemyNames_80112068.get(monster.charIndex_272.get()).deref();
 
     //LAB_800eef7c
     for(int charIndex = 0; ; charIndex++) {
@@ -5932,78 +5932,78 @@ public final class Bttl_800e {
     }
 
     //LAB_800eefa8
-    _800c6b78.offset(_800c6b9c.get() * 0x4L).setu(a0);
+    _800c6b78.offset(_800c6b9c.get() * 0x4L).setu(bobjIndex);
     _800c6b9c.addu(0x1L);
 
     //LAB_800eefcc
     for(int i = 0; i < 0xa0; i++) {
-      a1.all_04.get(i).set((short)0);
+      monster.all_04.get(i).set((short)0);
     }
 
-    final long v1 = _8010ba98.offset(a1.charIndex_272.get() * 0x1cL).getAddress();
-    a1.hp_08.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
-    a1.mp_0c.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    a1.maxHp_10.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
-    a1.maxMp_12.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    a1.specialEffectFlag_14.set((int)MEMORY.ref(1, v1).offset(0xdL).get());
-    a1._16.set(0);
-    a1._18.set(0);
-    a1._1a.set(0);
-    a1.elementFlag_1c.set((short)MEMORY.ref(1, v1).offset(0xfL).get());
-    a1._1e.set((int)MEMORY.ref(1, v1).offset(0xeL).get());
-    a1.elementalResistanceFlag_20.set(0);
-    a1.elementalImmunityFlag_22.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
-    a1.statusResistFlag_24.set((int)MEMORY.ref(1, v1).offset(0x11L).get());
-    a1._26.set(0);
-    a1._28.set(0);
-    a1._2a.set(0);
-    a1._2c.set(0);
-    a1._2e.set(0);
-    a1._30.set(0);
-    a1.speed_32.set((short)MEMORY.ref(1, v1).offset(0x8L).get());
-    a1.attack_34.set((int)MEMORY.ref(2, v1).offset(0x4L).get());
-    a1.magicAttack_36.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
-    a1.defence_38.set((int)MEMORY.ref(1, v1).offset(0x9L).get());
-    a1.magicDefence_3a.set((int)MEMORY.ref(1, v1).offset(0xaL).get());
-    a1.attackHit_3c.set((short)0);
-    a1.magicHit_3e.set((short)0);
-    a1.attackAvoid_40.set((short)MEMORY.ref(1, v1).offset(0xbL).get());
-    a1.magicAvoid_42.set((short)MEMORY.ref(1, v1).offset(0xcL).get());
-    a1.onHitStatusChance_44.set(0);
-    a1._46.set(0);
-    a1._48.set(0);
-    a1.onHitStatus_4a.set(0);
-    a1.selectedAddition_58.set((short)-1);
-    a1._5c.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
-    a1._5e.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    a1.originalAttack_60.set((int)MEMORY.ref(2, v1).offset(0x4L).get());
-    a1.originalMagicAttack_62.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
-    a1.originalSpeed_64.set((int)MEMORY.ref(1, v1).offset(0x8L).get());
-    a1.originalDefence_66.set((int)MEMORY.ref(1, v1).offset(0x9L).get());
-    a1.originalMagicDefence_68.set((int)MEMORY.ref(1, v1).offset(0xaL).get());
-    a1._6a.set((int)MEMORY.ref(1, v1).offset(0xbL).get());
-    a1._6c.set((int)MEMORY.ref(1, v1).offset(0xcL).get());
-    a1._6e.set((int)MEMORY.ref(1, v1).offset(0xdL).get());
-    a1._70.set((int)MEMORY.ref(1, v1).offset(0xeL).get());
-    a1._72.set((int)MEMORY.ref(1, v1).offset(0xfL).get());
-    a1.monsterElement_74.set((int)MEMORY.ref(1, v1).offset(0x10L).get());
-    a1._76.set((int)MEMORY.ref(1, v1).offset(0x11L).get());
-    a1._78.set((short)MEMORY.ref(1, v1).offset(0x12L).getSigned(), (short)MEMORY.ref(1, v1).offset(0x13L).getSigned(), (short)MEMORY.ref(1, v1).offset(0x14L).getSigned());
-    a1._7e.set((int)MEMORY.ref(1, v1).offset(0x15L).get());
-    a1._80.set((int)MEMORY.ref(1, v1).offset(0x16L).get());
-    a1._82.set((int)MEMORY.ref(1, v1).offset(0x17L).get());
-    a1._84.set((short)MEMORY.ref(1, v1).offset(0x18L).getSigned());
-    a1._86.set((short)MEMORY.ref(1, v1).offset(0x19L).getSigned());
-    a1._88.set((short)MEMORY.ref(1, v1).offset(0x1aL).getSigned());
-    a1._8a.set((short)MEMORY.ref(1, v1).offset(0x1bL).getSigned());
+    final MonsterStats1c monsterStats = monsterStats_8010ba98.get(monster.charIndex_272.get());
+    monster.hp_08.set(monsterStats.hp_00.get());
+    monster.mp_0c.set(monsterStats.mp_02.get());
+    monster.maxHp_10.set(monsterStats.hp_00.get());
+    monster.maxMp_12.set(monsterStats.mp_02.get());
+    monster.specialEffectFlag_14.set(monsterStats.specialEffectFlag_0d.get());
+    monster._16.set(0);
+    monster._18.set(0);
+    monster._1a.set(0);
+    monster.elementFlag_1c.set((short)monsterStats.elementFlag_0f.get());
+    monster._1e.set(monsterStats._0e.get());
+    monster.elementalResistanceFlag_20.set(0);
+    monster.elementalImmunityFlag_22.set(monsterStats.elementalImmunityFlag_10.get());
+    monster.statusResistFlag_24.set(monsterStats.statusResistFlag_11.get());
+    monster._26.set(0);
+    monster._28.set(0);
+    monster._2a.set(0);
+    monster._2c.set(0);
+    monster._2e.set(0);
+    monster._30.set(0);
+    monster.speed_32.set((short)monsterStats.speed_08.get());
+    monster.attack_34.set(monsterStats.attack_04.get());
+    monster.magicAttack_36.set(monsterStats.magicAttack_06.get());
+    monster.defence_38.set(monsterStats.defence_09.get());
+    monster.magicDefence_3a.set(monsterStats.magicDefence_0a.get());
+    monster.attackHit_3c.set((short)0);
+    monster.magicHit_3e.set((short)0);
+    monster.attackAvoid_40.set((short)monsterStats.attackAvoid_0b.get());
+    monster.magicAvoid_42.set((short)monsterStats.magicAvoid_0c.get());
+    monster.onHitStatusChance_44.set(0);
+    monster._46.set(0);
+    monster._48.set(0);
+    monster.onHitStatus_4a.set(0);
+    monster.selectedAddition_58.set((short)-1);
+    monster.originalHp_5c.set(monsterStats.hp_00.get());
+    monster.originalMp_5e.set(monsterStats.mp_02.get());
+    monster.originalAttack_60.set(monsterStats.attack_04.get());
+    monster.originalMagicAttack_62.set(monsterStats.magicAttack_06.get());
+    monster.originalSpeed_64.set(monsterStats.speed_08.get());
+    monster.originalDefence_66.set(monsterStats.defence_09.get());
+    monster.originalMagicDefence_68.set(monsterStats.magicDefence_0a.get());
+    monster.originalAttackAvoid_6a.set(monsterStats.attackAvoid_0b.get());
+    monster.originalMagicAvoid_6c.set(monsterStats.magicAvoid_0c.get());
+    monster.damageReductionFlags_6e.set(monsterStats.specialEffectFlag_0d.get());
+    monster._70.set(monsterStats._0e.get());
+    monster.monsterElementFlag_72.set(monsterStats.elementFlag_0f.get());
+    monster.monsterElementalImmunityFlag_74.set(monsterStats.elementalImmunityFlag_10.get());
+    monster.monsterStatusResistFlag_76.set(monsterStats.statusResistFlag_11.get());
+    monster._78.set(monsterStats.x_12.get(), monsterStats.y_13.get(), monsterStats.z_14.get());
+    monster._7e.set(monsterStats._15.get());
+    monster._80.set(monsterStats._16.get());
+    monster._82.set(monsterStats._17.get());
+    monster._84.set(monsterStats._18.get());
+    monster._86.set(monsterStats._19.get());
+    monster._88.set(monsterStats._1a.get());
+    monster._8a.set(monsterStats._1b.get());
 
-    if((a1._6e.get() & 0x8L) != 0) {
-      a1.physicalImmunity_110.set(1);
+    if((monster.damageReductionFlags_6e.get() & 0x8L) != 0) {
+      monster.physicalImmunity_110.set(1);
     }
 
     //LAB_800ef25c
-    if((a1._6e.get() & 0x4L) != 0) {
-      a1.magicalImmunity_112.set(1);
+    if((monster.damageReductionFlags_6e.get() & 0x4L) != 0) {
+      monster.magicalImmunity_112.set(1);
     }
 
     //LAB_800ef274
@@ -6020,9 +6020,11 @@ public final class Bttl_800e {
 
     //LAB_800ef31c
     for(int charSlot = 0; charSlot < 3; charSlot++) {
+      dragoonSpells_800c6960.get(charSlot).charIndex_00.set(-1);
+
       //LAB_800ef328
-      for(int i = 0; i < 9; i++) {
-        dragoonSpells_800c6960.get(charSlot).charIndex_00.set(-1);
+      for(int spellSlot = 0; spellSlot < 8; spellSlot++) {
+        dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).set(-1);
       }
     }
 

@@ -15,7 +15,7 @@ public class DragoonSpells09 implements MemoryRef {
     this.ref = ref;
 
     this.charIndex_00 = ref.offset(1, 0x00L).cast(ByteRef::new);
-    this.spellIndex_01 = ref.offset(1, 0x01L).cast(ArrayRef.of(ByteRef.class, 9, 1, ByteRef::new));
+    this.spellIndex_01 = ref.offset(1, 0x01L).cast(ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
   }
 
   @Override

@@ -2917,7 +2917,7 @@ public final class Bttl_800c {
 
   @Method(0x800cb5d8L)
   public static long FUN_800cb5d8(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((short)scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._76.get());
+    a0.params_20.get(1).deref().set((short)scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).monsterStatusResistFlag_76.get());
     return 0;
   }
 
@@ -4603,7 +4603,7 @@ public final class Bttl_800c {
 
     final BigStruct v0;
     if(a0.magic_00.get() == BattleScriptDataBase.EM__) {
-      v0 = MEMORY.ref(4, ((EffectManagerData6c)a0)._44.getPointer() + 0x10L, BigStruct::new); //TODO
+      v0 = ((EffectManagerData6c)a0)._44.derefAs(BttlScriptData6cSub13c.class)._10;
     } else {
       //LAB_800cfd34
       v0 = ((BattleObject27c)a0)._148;

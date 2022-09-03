@@ -143,8 +143,10 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef additionHits_56;
   public final ShortRef selectedAddition_58;
 
-  public final UnsignedShortRef _5c;
-  public final UnsignedShortRef _5e;
+  /** Monsters only */
+  public final UnsignedShortRef originalHp_5c;
+  /** Monsters only */
+  public final UnsignedShortRef originalMp_5e;
   /** Monsters only */
   public final UnsignedShortRef originalAttack_60;
   /** Monsters only */
@@ -155,13 +157,23 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedShortRef originalDefence_66;
   /** Monsters only */
   public final UnsignedShortRef originalMagicDefence_68;
-  public final UnsignedShortRef _6a;
-  public final UnsignedShortRef _6c;
-  public final UnsignedShortRef _6e;
+  /** Monsters only */
+  public final UnsignedShortRef originalAttackAvoid_6a;
+  /** Monsters only */
+  public final UnsignedShortRef originalMagicAvoid_6c;
+  /**
+   * <ul>
+   *   <li>0x1 - special enemy - takes one damage from magical attacks</li>
+   *   <li>0x2 - special enemy - takes one damage from physical attacks</li>
+   *   <li>0x4 - magical immunity</li>
+   *   <li>0x8 - physical immunity</li>
+   * </ul>
+   */
+  public final UnsignedShortRef damageReductionFlags_6e;
   public final UnsignedShortRef _70;
-  public final UnsignedShortRef _72;
-  public final UnsignedShortRef monsterElement_74;
-  public final UnsignedShortRef _76;
+  public final UnsignedShortRef monsterElementFlag_72;
+  public final UnsignedShortRef monsterElementalImmunityFlag_74;
+  public final UnsignedShortRef monsterStatusResistFlag_76;
   public final SVECTOR _78;
   public final UnsignedShortRef _7e;
   public final UnsignedShortRef _80;
@@ -281,6 +293,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef combatantIndex_26c;
   public final ShortRef animIndex_26e;
   public final ShortRef animIndex_270;
+  /** Also monster ID */
   public final ShortRef charIndex_272;
   public final ShortRef _274;
   public final ShortRef charSlot_276;
@@ -335,20 +348,20 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.additionHits_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this.selectedAddition_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
 
-    this._5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);
-    this._5e = ref.offset(2, 0x5eL).cast(UnsignedShortRef::new);
+    this.originalHp_5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);
+    this.originalMp_5e = ref.offset(2, 0x5eL).cast(UnsignedShortRef::new);
     this.originalAttack_60 = ref.offset(2, 0x60L).cast(UnsignedShortRef::new);
     this.originalMagicAttack_62 = ref.offset(2, 0x62L).cast(UnsignedShortRef::new);
     this.originalSpeed_64 = ref.offset(2, 0x64L).cast(UnsignedShortRef::new);
     this.originalDefence_66 = ref.offset(2, 0x66L).cast(UnsignedShortRef::new);
     this.originalMagicDefence_68 = ref.offset(2, 0x68L).cast(UnsignedShortRef::new);
-    this._6a = ref.offset(2, 0x6aL).cast(UnsignedShortRef::new);
-    this._6c = ref.offset(2, 0x6cL).cast(UnsignedShortRef::new);
-    this._6e = ref.offset(2, 0x6eL).cast(UnsignedShortRef::new);
+    this.originalAttackAvoid_6a = ref.offset(2, 0x6aL).cast(UnsignedShortRef::new);
+    this.originalMagicAvoid_6c = ref.offset(2, 0x6cL).cast(UnsignedShortRef::new);
+    this.damageReductionFlags_6e = ref.offset(2, 0x6eL).cast(UnsignedShortRef::new);
     this._70 = ref.offset(2, 0x70L).cast(UnsignedShortRef::new);
-    this._72 = ref.offset(2, 0x72L).cast(UnsignedShortRef::new);
-    this.monsterElement_74 = ref.offset(2, 0x74L).cast(UnsignedShortRef::new);
-    this._76 = ref.offset(2, 0x76L).cast(UnsignedShortRef::new);
+    this.monsterElementFlag_72 = ref.offset(2, 0x72L).cast(UnsignedShortRef::new);
+    this.monsterElementalImmunityFlag_74 = ref.offset(2, 0x74L).cast(UnsignedShortRef::new);
+    this.monsterStatusResistFlag_76 = ref.offset(2, 0x76L).cast(UnsignedShortRef::new);
     this._78 = ref.offset(2, 0x78L).cast(SVECTOR::new);
     this._7e = ref.offset(2, 0x7eL).cast(UnsignedShortRef::new);
     this._80 = ref.offset(2, 0x80L).cast(UnsignedShortRef::new);
