@@ -86,7 +86,7 @@ public class CombatDebugger extends Application {
 
     this.bobjList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
       final int index = newValue.intValue();
-      final int bobjIndex = (int)_8006e398.offset(0xe0cL).offset(index * 0x4L).get();
+      final int bobjIndex = _8006e398.bobjIndices_e0c.get(index).get();
 
       if(bobjIndex == -1) {
         return;
@@ -118,7 +118,7 @@ public class CombatDebugger extends Application {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final int bobjIndex = (int)_8006e398.offset(0xe0cL).offset(combatantIndex * 0x4L).get();
+    final int bobjIndex = _8006e398.bobjIndices_e0c.get(combatantIndex).get();
 
     if(bobjIndex == -1) {
       return "unused";
@@ -145,7 +145,7 @@ public class CombatDebugger extends Application {
       return;
     }
 
-    final int scriptIndex = (int)_8006e398.offset(0xe0cL).offset(this.bobjList.getSelectionModel().getSelectedIndex() * 0x4L).get();
+    final int scriptIndex = _8006e398.bobjIndices_e0c.get(this.bobjList.getSelectionModel().getSelectedIndex()).get();
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(scriptIndex).start(new Stage());

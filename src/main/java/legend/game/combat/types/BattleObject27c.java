@@ -135,12 +135,12 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedShortRef onHitStatus_4a;
   /** Determines turn order */
   public final ShortRef turnValue_4c;
-  public final ShortRef _4e;
+  public final ShortRef spellId_4e;
 
-  public final ShortRef _52;
+  public final ShortRef weaponId_52;
   public final BoolRef guard_54;
 
-  public final ShortRef _56;
+  public final ShortRef additionHits_56;
   public final ShortRef selectedAddition_58;
 
   public final UnsignedShortRef _5c;
@@ -173,15 +173,16 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public final UnsignedShortRef _94;
   public final UnsignedShortRef _96;
-
-  public final ShortRef _9c;
-
-  public final ShortRef _a0;
-
-  public final UnsignedShortRef _a4;
-
+  public final ShortRef _98;
+  public final ShortRef spellDamage_9a;
+  public final ShortRef spellMulti_9c;
+  public final ShortRef spellAccuracy_9e;
+  public final ShortRef spellMp_a0;
+  public final ShortRef _a2;
+  public final UnsignedShortRef spellElement_a4;
+  public final ShortRef _a6;
   public final ShortRef _a8;
-
+  public final ShortRef _aa;
   public final UnsignedShortRef dragoonAttack_ac;
   public final UnsignedShortRef dragoonMagic_ae;
   public final UnsignedShortRef dragoonDefence_b0;
@@ -189,7 +190,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ByteRef powerAttack_b4;
   public final UnsignedByteRef powerAttackTurns_b5;
   public final ByteRef powerMagicAttack_b6;
-  public final UnsignedByteRef powerMagicAttackTurns_b6;
+  public final UnsignedByteRef powerMagicAttackTurns_b7;
   public final ByteRef powerDefence_b8;
   public final UnsignedByteRef powerDefenceTurns_b9;
   public final ByteRef powerMagicDefence_ba;
@@ -213,17 +214,18 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedByteRef tempSpPerMagicalHitTurns_d1;
   public final ByteRef tempMpPerMagicalHit_d2;
   public final UnsignedByteRef tempMpPerMagicalHitTurns_d3;
-  public final ShortRef _d4;
-  public final ShortRef _d6;
-  public final ShortRef _d8;
-  public final ShortRef _da;
-  public final ShortRef _dc;
-  public final ShortRef _de;
-  public final UnsignedByteRef _e0;
-
-  public final ShortRef _e6;
-
-  public final ShortRef _ea;
+  public final ShortRef itemTarget_d4;
+  public final ShortRef itemElement_d6;
+  public final ShortRef itemDamage_d8;
+  public final ShortRef itemSpecial1_da;
+  public final ShortRef itemSpecial2_dc;
+  public final ShortRef itemUu1_de;
+  public final UnsignedByteRef itemSpecialAmount_e0;
+  public final ShortRef _e2;
+  public final ShortRef itemStatus_e4;
+  public final ShortRef itemPercentage_e6;
+  public final ShortRef itemUu2_e8;
+  public final ShortRef itemType_ea;
 
   public final UnsignedShortRef physicalImmunity_110;
   public final UnsignedShortRef magicalImmunity_112;
@@ -240,7 +242,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef spMultiplier_128;
   public final ShortRef spPerPhysicalHit_12a;
   public final ShortRef mpPerPhysicalHit_12c;
-  public final ShortRef spPerMagicalHit_12e;
+  public final ShortRef itemSpPerMagicalHit_12e;
   public final ShortRef mpPerMagicalHit_130;
   public final ShortRef hpRegen_132;
   public final ShortRef mpRegen_134;
@@ -325,12 +327,12 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._48 = ref.offset(2, 0x48L).cast(UnsignedShortRef::new);
     this.onHitStatus_4a = ref.offset(2, 0x4aL).cast(UnsignedShortRef::new);
     this.turnValue_4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
-    this._4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
+    this.spellId_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
 
-    this._52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+    this.weaponId_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
     this.guard_54 = ref.offset(1, 0x54L).cast(BoolRef::new);
 
-    this._56 = ref.offset(2, 0x56L).cast(ShortRef::new);
+    this.additionHits_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this.selectedAddition_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
 
     this._5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);
@@ -358,15 +360,16 @@ public class BattleObject27c extends BattleScriptDataBase {
 
     this._94 = ref.offset(2, 0x94L).cast(UnsignedShortRef::new);
     this._96 = ref.offset(2, 0x96L).cast(UnsignedShortRef::new);
-
-    this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
-
-    this._a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
-
-    this._a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
-
+    this._98 = ref.offset(2, 0x98L).cast(ShortRef::new);
+    this.spellDamage_9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
+    this.spellMulti_9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
+    this.spellAccuracy_9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
+    this.spellMp_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
+    this._a2 = ref.offset(2, 0xa2L).cast(ShortRef::new);
+    this.spellElement_a4 = ref.offset(2, 0xa4L).cast(UnsignedShortRef::new);
+    this._a6 = ref.offset(2, 0xa6L).cast(ShortRef::new);
     this._a8 = ref.offset(2, 0xa8L).cast(ShortRef::new);
-
+    this._aa = ref.offset(2, 0xaaL).cast(ShortRef::new);
     this.dragoonAttack_ac = ref.offset(2, 0xacL).cast(UnsignedShortRef::new);
     this.dragoonMagic_ae = ref.offset(2, 0xaeL).cast(UnsignedShortRef::new);
     this.dragoonDefence_b0 = ref.offset(2, 0xb0L).cast(UnsignedShortRef::new);
@@ -374,7 +377,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.powerAttack_b4 = ref.offset(1, 0xb4L).cast(ByteRef::new);
     this.powerAttackTurns_b5 = ref.offset(1, 0xb5L).cast(UnsignedByteRef::new);
     this.powerMagicAttack_b6 = ref.offset(1, 0xb6L).cast(ByteRef::new);
-    this.powerMagicAttackTurns_b6 = ref.offset(1, 0xb7L).cast(UnsignedByteRef::new);
+    this.powerMagicAttackTurns_b7 = ref.offset(1, 0xb7L).cast(UnsignedByteRef::new);
     this.powerDefence_b8 = ref.offset(1, 0xb8L).cast(ByteRef::new);
     this.powerDefenceTurns_b9 = ref.offset(1, 0xb9L).cast(UnsignedByteRef::new);
     this.powerMagicDefence_ba = ref.offset(1, 0xbaL).cast(ByteRef::new);
@@ -398,17 +401,18 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.tempSpPerMagicalHitTurns_d1 = ref.offset(1, 0xd1L).cast(UnsignedByteRef::new);
     this.tempMpPerMagicalHit_d2 = ref.offset(1, 0xd2L).cast(ByteRef::new);
     this.tempMpPerMagicalHitTurns_d3 = ref.offset(1, 0xd3L).cast(UnsignedByteRef::new);
-    this._d4 = ref.offset(2, 0xd4L).cast(ShortRef::new);
-    this._d6 = ref.offset(2, 0xd6L).cast(ShortRef::new);
-    this._d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
-    this._da = ref.offset(2, 0xdaL).cast(ShortRef::new);
-    this._dc = ref.offset(2, 0xdcL).cast(ShortRef::new);
-    this._de = ref.offset(2, 0xdeL).cast(ShortRef::new);
-    this._e0 = ref.offset(1, 0xe0L).cast(UnsignedByteRef::new);
-
-    this._e6 = ref.offset(2, 0xe6L).cast(ShortRef::new);
-
-    this._ea = ref.offset(2, 0xeaL).cast(ShortRef::new);
+    this.itemTarget_d4 = ref.offset(2, 0xd4L).cast(ShortRef::new);
+    this.itemElement_d6 = ref.offset(2, 0xd6L).cast(ShortRef::new);
+    this.itemDamage_d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
+    this.itemSpecial1_da = ref.offset(2, 0xdaL).cast(ShortRef::new);
+    this.itemSpecial2_dc = ref.offset(2, 0xdcL).cast(ShortRef::new);
+    this.itemUu1_de = ref.offset(2, 0xdeL).cast(ShortRef::new);
+    this.itemSpecialAmount_e0 = ref.offset(1, 0xe0L).cast(UnsignedByteRef::new);
+    this._e2 = ref.offset(2, 0xe2L).cast(ShortRef::new);
+    this.itemStatus_e4 = ref.offset(2, 0xe4L).cast(ShortRef::new);
+    this.itemPercentage_e6 = ref.offset(2, 0xe6L).cast(ShortRef::new);
+    this.itemUu2_e8 = ref.offset(2, 0xe8L).cast(ShortRef::new);
+    this.itemType_ea = ref.offset(2, 0xeaL).cast(ShortRef::new);
 
     this.physicalImmunity_110 = ref.offset(2, 0x110L).cast(UnsignedShortRef::new);
     this.magicalImmunity_112 = ref.offset(2, 0x112L).cast(UnsignedShortRef::new);
@@ -425,7 +429,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.spMultiplier_128 = ref.offset(2, 0x128L).cast(ShortRef::new);
     this.spPerPhysicalHit_12a = ref.offset(2, 0x12aL).cast(ShortRef::new);
     this.mpPerPhysicalHit_12c = ref.offset(2, 0x12cL).cast(ShortRef::new);
-    this.spPerMagicalHit_12e = ref.offset(2, 0x12eL).cast(ShortRef::new);
+    this.itemSpPerMagicalHit_12e = ref.offset(2, 0x12eL).cast(ShortRef::new);
     this.mpPerMagicalHit_130 = ref.offset(2, 0x130L).cast(ShortRef::new);
     this.hpRegen_132 = ref.offset(2, 0x132L).cast(ShortRef::new);
     this.mpRegen_134 = ref.offset(2, 0x134L).cast(ShortRef::new);

@@ -570,8 +570,8 @@ public final class SItem {
   @Method(0x800fbd78L)
   public static void allocatePlayerBattleObjects(final long a0) {
     //LAB_800fbdb8
-    for(charCount_800c677c.setu(0); charCount_800c677c.get() < 3; charCount_800c677c.addu(0x1L)) {
-      if(gameState_800babc8.charIndex_88.get((int)charCount_800c677c.get()).get() < 0) {
+    for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
+      if(gameState_800babc8.charIndex_88.get(charCount_800c677c.get()).get() < 0) {
         break;
       }
     }
@@ -589,12 +589,12 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final int scriptIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BattleObject27c::new);
-      setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      _8006e398.offset(4, 0xe0cL).offset(_800c66d0.get() * 0x4L).setu(scriptIndex);
-      _8006e398.offset(4, 0xe40L).offset(charSlot * 0x4L).setu(scriptIndex);
-      final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+      final int bobjIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BattleObject27c::new);
+      setCallback04(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
+      _8006e398.charBobjIndices_e40.get(charSlot).set(bobjIndex);
+      final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
       s1.magic_00.set(BattleScriptDataBase.BOBJ);
       s1.combatant_144.set(getCombatant((short)charIndices[charSlot]));
       s1.charIndex_272.set((short)charIndex);
@@ -605,12 +605,12 @@ public final class SItem {
       s1._148.coord2_14.coord.transfer.setY(0);
       s1._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
       s1._148.coord2Param_64.rotate.set((short)0, (short)0x400, (short)0);
-      _800c66d0.addu(0x1L);
+      _800c66d0.incr();
     }
 
     //LAB_800fbf6c
-    _8006e398.offset(_800c66d0.get() * 0x4L).offset(4, 0xe0cL).setu(-0x1L);
-    _8006e398.offset(charCount_800c677c.get() * 0x4L).offset(4, 0xe40L).setu(-0x1L);
+    _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(-1);
+    _8006e398.charBobjIndices_e40.get(charCount_800c677c.get()).set(-1);
 
     FUN_800f863c();
     FUN_80012bb4();
@@ -632,7 +632,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398.get(scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(i * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
+      combatants_8005e398.get(scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(i).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -664,12 +664,12 @@ public final class SItem {
 
   @Method(0x800fc210L)
   public static void FUN_800fc210(final long address, final long fileSize, final long param) {
-    final long s3 = _8006e398.offset(4, 0xee8L).get();
+    final long s3 = _8006e398.ptr_ee8.get();
 
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
-    for(int s1 = 0; s1 < charCount_800c677c.get(); s1++) {
-      final BattleObject27c data = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(4, 0xe40L).offset(s1 * 0x4L).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final BattleObject27c data = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
       final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
       //LAB_800fc298
@@ -746,18 +746,18 @@ public final class SItem {
 
   @Method(0x800fc548L)
   public static void FUN_800fc548(final long address, final long fileSize, final long param) {
-    final long s3 = _8006e398.offset(0xee8L).get();
+    final long s3 = _8006e398.ptr_ee8.get();
 
     //LAB_800fc590
-    for(long s0 = 0; s0 < charCount_800c677c.get(); s0++) {
-      final long a3 = scriptStatePtrArr_800bc1c0.get((int)_8006e398.offset(0xe40L).offset(s0 * 0x4L).get()).deref().innerStruct_00.getPointer(); //TODO
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
       //LAB_800fc5b4
       for(long a1 = 0; a1 < 3; a1++) {
-        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == MEMORY.ref(2, a3).offset(0x272L).getSigned()) {
+        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == bobj.charIndex_272.get()) {
           a1 = address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get();
           a1 = a1 + MEMORY.ref(4, a1).offset(0x8L).get();
-          FUN_800ca75c((int)MEMORY.ref(2, a3).offset(0x26cL).getSigned(), a1);
+          FUN_800ca75c(bobj.combatantIndex_26c.get(), a1);
           break;
         }
 

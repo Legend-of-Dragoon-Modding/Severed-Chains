@@ -487,7 +487,7 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(50, r -> "*0x%08x (p1) = sin(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
     scriptFunctionDescriptions.put(51, r -> "*0x%08x (p1) = cos(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
     scriptFunctionDescriptions.put(52, r -> "*0x%08x (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
-    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp));".formatted(r.opParam_18.get()));
+    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp) (%08x));".formatted(r.opParam_18.get(), scriptSubFunctions_8004e29c.get((int)r.opParam_18.get()).getPointer()));
     scriptFunctionDescriptions.put(64, r -> "jmp 0x%x (p0);".formatted(r.params_20.get(0).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer()));
     scriptFunctionDescriptions.put(65, r -> {
       final int operandA = r.params_20.get(0).deref().get();
@@ -5623,11 +5623,11 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019fdc
     for(int i = 0; i < _800c6768.get(); i++) {
-      final int v1 = (int)_8006e398.offset(0xe50L).offset(i * 0x4L).get();
+      final int bobjIndex = _8006e398.bobjIndices_e50.get(i).get();
 
-      if(scriptStatePtrArr_800bc1c0.get(v1).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == a1) {
+      if(scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == a1) {
         //LAB_8001a070
-        t4 = v1;
+        t4 = bobjIndex;
         break;
       }
     }

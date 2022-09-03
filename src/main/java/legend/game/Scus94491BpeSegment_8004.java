@@ -632,7 +632,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
    *   <li>{@link Bttl_800c#FUN_800cccf4}</li>
    *   <li>{@link Bttl_800c#FUN_800ccd34}</li>
-   *   <li>{@link Bttl_800c#FUN_800cce04}</li>
+   *   <li>{@link Bttl_800c#scriptGetStat}</li>
    *   <li>{@link Bttl_800c#FUN_800ccf0c}</li>
    *   <li>{@link Bttl_800c#FUN_800ccec8}</li>
    *   <li>{@link Bttl_800c#FUN_800ccef8}</li>
@@ -641,7 +641,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cd078}</li>
    *   <li>{@link Bttl_800c#levelUpAddition}</li>
    *   <li>{@link Bttl_800c#FUN_800cce70}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccda0}</li>
+   *   <li>{@link Bttl_800c#scriptSetStat}</li>
    * </ol>
    * ...
    * <ol start="320">

@@ -1,14 +1,14 @@
 package legend.game;
 
 import legend.core.memory.Value;
+import legend.game.combat.types.BattleStructEf4;
 
 import static legend.core.Hardware.MEMORY;
 
 public final class Scus94491BpeSegment_8006 {
   private Scus94491BpeSegment_8006() { }
 
-  /** TODO huge structure related to combat */
-  public static final Value _8006e398 = MEMORY.ref(4, 0x8006e398L);
+  public static final BattleStructEf4 _8006e398 = MEMORY.ref(4, 0x8006e398L, BattleStructEf4::new);
 
   /** TODO array of 0x8 structs */
   public static final Value _8006e918 = MEMORY.ref(4, 0x8006e918L);

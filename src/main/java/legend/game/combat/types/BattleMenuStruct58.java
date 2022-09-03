@@ -19,6 +19,11 @@ public class BattleMenuStruct58 implements MemoryRef {
   public final ShortRef _0a;
   public final ShortRef _0c;
   public final ShortRef iconCount_0e;
+  /**
+   * <ul>
+   *   <li>0x80 - disabled</li>
+   * </ul>
+   */
   public final ArrayRef<ShortRef> iconFlags_10;
   public final ShortRef selectedIcon_22;
   public final ShortRef _24;
@@ -38,7 +43,7 @@ public class BattleMenuStruct58 implements MemoryRef {
   public final IntRef _48;
   public final UnsignedIntRef _4c;
   public final UnsignedIntRef _50;
-  public final IntRef _54;
+  public final IntRef combatantIndex;
 
   public BattleMenuStruct58(final Value ref) {
     this.ref = ref;
@@ -69,7 +74,7 @@ public class BattleMenuStruct58 implements MemoryRef {
     this._48 = ref.offset(4, 0x48L).cast(IntRef::new);
     this._4c = ref.offset(4, 0x4cL).cast(UnsignedIntRef::new);
     this._50 = ref.offset(4, 0x50L).cast(UnsignedIntRef::new);
-    this._54 = ref.offset(4, 0x54L).cast(IntRef::new);
+    this.combatantIndex = ref.offset(4, 0x54L).cast(IntRef::new);
   }
 
   @Override

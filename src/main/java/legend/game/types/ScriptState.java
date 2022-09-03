@@ -65,6 +65,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    * <p>In combat this variable is used for a few different things:</p>
    * <ul>
    *   <li>0x2 - dragoon</li>
+   *   <li>0x4 - is enemy</li>
    *   <li>0x8 - it is this character's turn</li>
    *   <li>0x20 - ?</li>
    * </ul>
