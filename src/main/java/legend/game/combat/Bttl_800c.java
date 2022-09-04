@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -395,7 +396,7 @@ public final class Bttl_800c {
 
   public static final Value _800c703c = MEMORY.ref(4, 0x800c703cL);
 
-  public static final Value _800c706c = MEMORY.ref(2, 0x800c706cL);
+  public static final ArrayRef<UnsignedShortRef> characterElements_800c706c = MEMORY.ref(2, 0x800c706cL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   public static final Value _800c70a4 = MEMORY.ref(4, 0x800c70a4L);
 
@@ -4388,14 +4389,14 @@ public final class Bttl_800c {
     CPU.CTC2(matrix_800c3548.getPacked(8), 4);
 
     final SVECTOR a0s = new SVECTOR().set(a0);
-    CPU.MTC2(a0s.getXY(), 0);
-    CPU.MTC2(a0s.getZ(),  1);
-    CPU.COP2(0x486012L);
+    CPU.MTC2(a0s.getXY(), 0); // VXY0
+    CPU.MTC2(a0s.getZ(),  1); // VZ0
+    CPU.COP2(0x48_6012L); // MVMVA - multiply V0 by rotation matrix and add nothing
 
     final VECTOR sp0x10 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
     sp0x10.add(matrix_800c3548.transfer);
-    a1.set(getProjectionPlaneDistance() * sp0x10.getX() / sp0x10.getZ());
-    a2.set(getProjectionPlaneDistance() * sp0x10.getY() / sp0x10.getZ());
+    a1.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
+    a2.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
     return sp0x10.getZ();
   }
 

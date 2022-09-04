@@ -17,7 +17,6 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.Scus94491BpeSegment_800c;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
@@ -47,7 +46,6 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
@@ -63,7 +61,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setCallback04;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
-import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021628;
@@ -73,6 +71,7 @@ import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
@@ -159,10 +158,10 @@ import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
 import static legend.game.combat.Bttl_800c.x_800c67bc;
 import static legend.game.combat.Bttl_800c.y_800c67c0;
-import static legend.game.combat.Bttl_800e.renderCtmd;
-import static legend.game.combat.Bttl_800e.getLightColour;
 import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.getLightColour;
+import static legend.game.combat.Bttl_800e.renderCtmd;
 
 public final class Bttl_800d {
   private Bttl_800d() { }
@@ -1365,7 +1364,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3968L)
-  public static void FUN_800d3968(final UnsignedShortRef a0, final UnsignedShortRef a1, final int a2, final int addition) {
+  public static void FUN_800d3968(final ShortRef a0, final ShortRef a1, final int a2, final int addition) {
     final long s2 = FUN_800d36e0(a2, addition);
 
     int s1 = 0;
@@ -1375,8 +1374,8 @@ public final class Bttl_800d {
     }
 
     //LAB_800d39ec
-    a0.set(144 - s1);
-    a1.set(64);
+    a0.set((short)(144 - s1));
+    a1.set((short)64);
   }
 
   @Method(0x800d3a20L)
@@ -1505,14 +1504,14 @@ public final class Bttl_800d {
       s0._18.set(addToLinkedListTail(s2 * 0xcL));
       _800faa9d.setu(0x1L);
 
-      final UnsignedShortRef sp0x10 = new UnsignedShortRef();
-      final UnsignedShortRef sp0x12 = new UnsignedShortRef();
+      final ShortRef sp0x10 = new ShortRef();
+      final ShortRef sp0x12 = new ShortRef();
       FUN_800d3968(sp0x10, sp0x12, 0, addition);
       long s3_0 = FUN_800d36e0(0, addition);
       long s1_0 = s0._18.get();
-      long s2_0 = -160;
-      long sp10 = sp0x10.get();
-      final long sp12 = sp0x12.get();
+      int s2_0 = -160;
+      int sp10 = sp0x10.get();
+      final int sp12 = sp0x12.get();
 
       //LAB_800d3f18
       for(int s4 = 0; s4 < s2; s4++) {

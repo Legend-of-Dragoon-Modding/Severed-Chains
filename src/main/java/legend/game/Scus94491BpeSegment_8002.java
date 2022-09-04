@@ -456,6 +456,15 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  @Method(0x800203f0L)
+  public static long FUN_800203f0(final RunningScript script) {
+    unloadSoundFile(3);
+    //TODO GH#3
+//    loadedDrgnFiles_800bcf78.oru(0x10L);
+//    loadDrgnBinFile(0, 1290 + script.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+    return 0;
+  }
+
   @Method(0x80020460L)
   public static void FUN_80020460() {
     // empty

@@ -90,7 +90,7 @@ import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
 import static legend.game.combat.Bttl_800c._800c7028;
 import static legend.game.combat.Bttl_800c._800c703c;
-import static legend.game.combat.Bttl_800c._800c706c;
+import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c._800c70a4;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
@@ -550,11 +550,6 @@ public final class Bttl_800f {
     final long s6;
     final long s7;
 
-    final long[] sp0x10 = new long[10];
-    for(int i = 0; i < sp0x10.length; i++) {
-      sp0x10[i] = _800c706c.offset(i * 0x2L).get();
-    }
-
     ScriptState<?> a1 = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref();
     final BattleObject27c s0 = a1.innerStruct_00.derefAs(BattleObject27c.class);
     final int element;
@@ -582,9 +577,9 @@ public final class Bttl_800f {
     final long s0_0;
     if((a1.ui_60.get() & 0x4L) == 0) {
       if(s3.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0.get(scriptIndex2).deref().ui_60.get() & 0x2L) != 0) {
-        s0_0 = sp0x10[9];
+        s0_0 = characterElements_800c706c.get(9).get();
       } else {
-        s0_0 = sp0x10[s3.charIndex_272.get()];
+        s0_0 = characterElements_800c706c.get(s3.charIndex_272.get()).get();
       }
     } else {
       //LAB_800f1f1c
@@ -599,7 +594,7 @@ public final class Bttl_800f {
       s3_0 = 0;
     } else {
       //LAB_800f1f4c
-      s3_0 = sp0x10[(int)_800c6b64.get()];
+      s3_0 = characterElements_800c706c.get((int)_800c6b64.get()).get();
     }
 
     //LAB_800f1f54
@@ -618,23 +613,19 @@ public final class Bttl_800f {
   public static int FUN_800f204c(final int attackerBobjIndex, final int defenderBobjIndex, final int attackType) {
     long s1;
     long s2;
-    long s4;
     final long s6;
     final long fp;
-    final short[] sp0x18 = new short[10];
-    for(int i = 0; i < sp0x18.length; i++) {
-      sp0x18[i] = (short)_800c706c.offset(i * 0x2L).getSigned();
-    }
 
     final ScriptState<?> attackerState = scriptStatePtrArr_800bc1c0.get(attackerBobjIndex).deref();
     final BattleObject27c attacker = attackerState.innerStruct_00.derefAs(BattleObject27c.class);
     final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0.get(defenderBobjIndex).deref();
     final BattleObject27c defender = defenderState.innerStruct_00.derefAs(BattleObject27c.class);
 
+    int damage;
     if(attackType == 1 || attacker.itemType_ea.get() == 0) {
       //LAB_800f2140
       if((attacker._96.get() & 0x4L) != 0) {
-        s4 = defender.maxHp_10.get() * attacker.spellMulti_9c.get() / 100;
+        damage = defender.maxHp_10.get() * attacker.spellMulti_9c.get() / 100;
 
         if((attacker._94.get() & 0x8L) != 0) {
           // Attack all
@@ -669,18 +660,19 @@ public final class Bttl_800f {
       } else {
         //LAB_800f2238
         if((attackerState.ui_60.get() & 0x4L) == 0) {
-          s4 = playerMagicAttack(attackerBobjIndex, defenderBobjIndex, attackType);
+          damage = playerMagicAttack(attackerBobjIndex, defenderBobjIndex, attackType);
         } else {
           //LAB_800f2250
-          s4 = monsterMagicAttack(attackerBobjIndex, defenderBobjIndex, attackType);
+          damage = monsterMagicAttack(attackerBobjIndex, defenderBobjIndex, attackType);
         }
 
         //LAB_800f225c
+        final int attackElement;
         if(attackType == 0x1L) {
-          s2 = spellStats_800fa0b8.get(attacker.spellId_4e.get()).element_08.get();
+          attackElement = spellStats_800fa0b8.get(attacker.spellId_4e.get()).element_08.get();
         } else {
           //LAB_800f228c
-          s2 = attacker.itemElement_d6.get();
+          attackElement = attacker.itemElement_d6.get();
         }
 
         //LAB_800f2290
@@ -689,34 +681,35 @@ public final class Bttl_800f {
         if((int)_800c6b64.get() == -1) {
           s6 = 0;
         } else {
-          s6 = s2;
+          s6 = attackElement;
         }
 
         //LAB_800f22b8
+        final int defenderElement;
         if((defenderState.ui_60.get() & 0x4L) == 0) {
           if(defender.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0 && (defenderState.ui_60.get() & 0x2L) != 0) {
-            s1 = sp0x18[1];
+            defenderElement = characterElements_800c706c.get(1).get();
           } else {
-            s1 = sp0x18[defender.charIndex_272.get()];
+            defenderElement = characterElements_800c706c.get(defender.charIndex_272.get()).get();
           }
         } else {
           //LAB_800f2324
-          s1 = defender.monsterElementFlag_72.get();
+          defenderElement = defender.monsterElementFlag_72.get();
         }
 
         //LAB_800f2328
         final long s0 = FUN_800f89cc(defender.powerMagicDefence_ba.get());
 
-        final long s3;
+        final int s3;
         if((int)_800c6b64.get() == -1) {
           s3 = 0;
         } else {
           //LAB_800f2354
-          s3 = sp0x18[(int)_800c6b64.get()];
+          s3 = characterElements_800c706c.get((int)_800c6b64.get()).get();
         }
 
         //LAB_800f235c
-        s4 = s4 * FUN_800f2fe0(s2, s1, 0) / 100 * FUN_800f2fe0(fp, s0, 0x4L) * FUN_800f2fe0(s6, s3, 0x5L) / 6250;
+        damage = damage * FUN_800f2fe0(attackElement, defenderElement, 0) / 100 * FUN_800f2fe0(fp, s0, 4L) / 100 * FUN_800f2fe0(s6, s3, 5) / 100;
       }
     } else {
       //LAB_800f2404
@@ -728,41 +721,41 @@ public final class Bttl_800f {
       }
 
       //LAB_800f2430
-      switch((int)s1) {
+      damage = switch((int)s1) {
         case 0 -> {
           //LAB_800f2454
           attacker.dragoonFlag_0e.or(0x800);
-          s4 = defender.maxHp_10.get();
+          yield defender.maxHp_10.get();
         }
 
         case 1 -> {
           //LAB_800f2464
           attacker.dragoonFlag_0e.or(0x800);
-          s4 = defender.maxMp_12.get();
+          yield defender.maxMp_12.get();
         }
 
         //LAB_800f2478
-        case 6 -> s4 = defender.maxHp_10.get();
+        case 6 -> defender.maxHp_10.get();
 
         //LAB_800f2484
-        case 7 -> s4 = defender.maxMp_12.get();
+        case 7 -> defender.maxMp_12.get();
 
         //LAB_800f2490
-        default -> s4 = 0;
-      }
+        default -> 0;
+      };
 
       //LAB_800f2494
       //LAB_800f24bc
-      s4 = s4 * attacker.itemPercentage_e6.get() / 100;
+      damage = damage * attacker.itemPercentage_e6.get() / 100;
     }
 
     //LAB_800f24c0
-    if((int)s4 <= 0) {
-      s4 = 0;
+    if(damage < 0) {
+      damage = 0;
     }
 
     //LAB_800f24d0
-    return (int)s4;
+    return damage;
   }
 
   @Method(0x800f2500L)
@@ -3640,7 +3633,7 @@ public final class Bttl_800f {
               //LAB_800f7f7c
               final long v0;
               if(spa8 == 0) {
-                v0 = s1.spellElement_a4.get() & _800c706c.offset(s4.charIndex_272.get() * 0x2L).get();
+                v0 = s1.spellElement_a4.get() & characterElements_800c706c.get(s4.charIndex_272.get()).get();
               } else {
                 //LAB_800f7fac
                 v0 = s1.spellElement_a4.get() & s4.elementFlag_1c.get();
@@ -3749,7 +3742,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8768L)
-  public static long monsterMagicAttack(final int attackerBobjIndex, final int defenderBobjIndex, final int attackType) {
+  public static int monsterMagicAttack(final int attackerBobjIndex, final int defenderBobjIndex, final int attackType) {
     final BattleObject27c attacker = scriptStatePtrArr_800bc1c0.get(attackerBobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
     int matk = attacker.magicAttack_36.get();
     if(attackType == 1) {
@@ -3762,7 +3755,7 @@ public final class Bttl_800f {
     //LAB_800f87d0
     final BattleObject27c defender = scriptStatePtrArr_800bc1c0.get(defenderBobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
     final long a1 = scriptStatePtrArr_800bc1c0.get(defenderBobjIndex).deref().ui_60.get();
-    long mdef = defender.magicDefence_3a.get();
+    int mdef = defender.magicDefence_3a.get();
     if((a1 & 0x4L) != 0x1L && (a1 & 0x2L) != 0) {
       mdef = mdef * defender.dragoonMagicDefence_b2.get() / 100;
     }
