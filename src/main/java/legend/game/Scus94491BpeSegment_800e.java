@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
 import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004._8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
@@ -862,7 +862,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_80019500();
     setCdDebug(3); // I think 3 is the most detailed logging
 
-    _8004dd24.setu(0);
+    mainCallbackIndexOnceLoaded_8004dd24.setu(0);
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.setu(0x2L);
     _800bb0fc.setu(0);
@@ -910,10 +910,10 @@ public final class Scus94491BpeSegment_800e {
       if(drgnBinIndex_800bc058.get() == 0x1L) {
         _800bf0dc.setu(0);
         _800bf0ec.setu(0x2L);
-        _8004dd24.setu(0x9L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
       } else {
         //LAB_800e608c
-        _8004dd24.setu(mainCallbackIndex_8004dd20.get() + 1);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(mainCallbackIndex_8004dd20.get() + 1);
       }
 
       pregameLoadingStage_800bb10c.setu(0);
@@ -1066,7 +1066,7 @@ public final class Scus94491BpeSegment_800e {
 
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.setu(0x2L);
-    _8004dd24.setu(mainCallbackIndex_8004dd20).addu(0x1L);
+    mainCallbackIndexOnceLoaded_8004dd24.setu(mainCallbackIndex_8004dd20).addu(0x1L);
   }
 
   @Method(0x800e6524L)

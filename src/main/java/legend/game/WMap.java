@@ -122,8 +122,8 @@ import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004._8004dd24;
-import static legend.game.Scus94491BpeSegment_8004._8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
@@ -787,7 +787,7 @@ public class WMap {
     FUN_800cd278();
 
     _80052c6c.setu(0);
-    _8004dd24.setu(0x5L);
+    mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.setu(0x2L);
   }
@@ -804,7 +804,7 @@ public class WMap {
     FUN_800cd278();
 
     _80052c6c.setu(0);
-    _8004dd24.setu(0x6L);
+    mainCallbackIndexOnceLoaded_8004dd24.setu(0x6L);
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.setu(0x2L);
   }
@@ -5863,7 +5863,7 @@ public class WMap {
           submapCut_80052c30.set((int)_800c6860.get());
           index_80052c38.set((int)_800c6862.get());
           struct258_800c66a8.deref()._250.set(0x3L);
-          _8004dd28.setu(-0x1L);
+          previousMainCallbackIndex_8004dd28.setu(-0x1L);
         }
 
         //LAB_800dba98
@@ -8634,7 +8634,7 @@ public class WMap {
     _800c6870.setu(0);
 
     long sp2c;
-    if(_8004dd28.get() == 0x6L && _800c685c.get() != 999L) {
+    if(previousMainCallbackIndex_8004dd28.get() == 0x6L && _800c685c.get() != 999L) {
       sp2c = 0x1L;
     } else {
       sp2c = 0;
@@ -8733,7 +8733,7 @@ public class WMap {
     }
 
     //LAB_800e8464
-    if(_8004dd28.get() == 0x6L && _800c685c.get() == 999L) {
+    if(previousMainCallbackIndex_8004dd28.get() == 0x6L && _800c685c.get() == 999L) {
       submapCut_80052c30.set(0);
     }
 

@@ -81,7 +81,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
-import static legend.game.Scus94491BpeSegment.FUN_8001814c;
+import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
@@ -136,7 +136,7 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040980;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004cd50;
-import static legend.game.Scus94491BpeSegment_8004._8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
@@ -1333,7 +1333,7 @@ public final class Bttl_800c {
       FUN_800ec4f0();
       FUN_800c8748();
 
-      long a1 = _8004dd28.get();
+      long a1 = previousMainCallbackIndex_8004dd28.get();
       if(a1 == 0x9L) {
         a1 = 0x5L;
       }
@@ -1460,11 +1460,11 @@ public final class Bttl_800c {
       s2 = _800c6778.get() - (FUN_800dd0d4() + 0x800L & 0xfffL) + 0x760L - centreScreenY_1f8003de.getSigned();
       s0 = a3 - _1f8003f4.deref().stageMcq_9cb0._14.get();
       s3 = a3 + _1f8003f4.deref().stageMcq_9cb0._14.get();
-      FUN_8001814c(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
-      FUN_8001814c(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
 
       if(centreScreenX_1f8003dc.getSigned() >= (int)s3) {
-        FUN_8001814c(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
+        renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
       }
 
       //LAB_800c89d4

@@ -94,6 +94,7 @@ import static legend.core.memory.segments.MemoryControl1Segment.COMMON_DELAY;
 import static legend.game.Scus94491BpeSegment._80011394;
 import static legend.game.Scus94491BpeSegment._8001139c;
 import static legend.game.Scus94491BpeSegment._800113c0;
+import static legend.game.Scus94491BpeSegment.cdName_800115c8;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -264,8 +265,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bf6fc;
 import static legend.game.Scus94491BpeSegment_800b._800bf798;
 import static legend.game.Scus94491BpeSegment_800b._800bf79c;
 import static legend.game.Scus94491BpeSegment_800b._800bf7a4;
-import static legend.game.Scus94491BpeSegment_800b._800bfd84;
-import static legend.game.Scus94491BpeSegment_800b._800bfdd8;
 import static legend.game.Scus94491BpeSegment_800b.batch_800bf608;
 import static legend.game.Scus94491BpeSegment_800b.batch_800bf618;
 import static legend.game.Scus94491BpeSegment_800b.batch_800bf628;
@@ -3150,7 +3149,7 @@ public final class Scus94491BpeSegment_8003 {
   public static CdlFILE DsSearchFile(final CdlFILE file, final String name) {
     if(syncCode_80053470.get().ordinal() < getSyncCode80053320().ordinal()) {
       if(DsNewMedia() == 0) {
-        return null;
+        throw new RuntimeException("Failed to initialize disk");
       }
 
       syncCode_80053470.set(getSyncCode80053320());
@@ -3158,7 +3157,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80035cf8
     if(!name.startsWith("\\")) {
-      return null;
+      throw new RuntimeException("Bad path");
     }
 
     //LAB_80035d18
@@ -3199,20 +3198,17 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_80035da0
     //LAB_80035da4
     if(pathSegment >= DSL_MAX_LEVEL) {
-      LOGGER.error("%s: path level (%d) error", name, pathSegment);
-      return null;
+      throw new RuntimeException("%s: path level (%d) error".formatted(name, pathSegment));
     }
 
     //LAB_80035dd8
     if(str.isEmpty()) {
-      LOGGER.error("%s: dir was not found", name);
-      return null;
+      throw new RuntimeException("%s: dir was not found".formatted(name));
     }
 
     //LAB_80035e08
     if(DsCacheFile(fp) == 0) {
-      LOGGER.error("DsSearchFile: disc error");
-      return null;
+      throw new RuntimeException("DsSearchFile: disc error");
     }
 
     //LAB_80035e40
@@ -3258,22 +3254,19 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80035f90L)
-  private static long DsNewMedia() {
+  public static long DsNewMedia() {
     if(!DsRead(0x1L, 0x10L, _800c13a8.getAddress())) {
-      LOGGER.error("DS_newmedia: Read error in ds_read(PVD)");
-      return 0;
+      throw new RuntimeException("DS_newmedia: Read error in ds_read(PVD)");
     }
 
     //LAB_80036004
-    if(strncmp(_800c13a9.getString(0x5), "CD001", 0x5) != 0) {
-      LOGGER.error("DS_newmedia: Disc format error in ds_read(PVD)");
-      return 0;
+    if(strncmp(_800c13a9.getString(0x5), cdName_800115c8.get(), 0x5) != 0) {
+      throw new RuntimeException("DS_newmedia: Disc format error in ds_read(PVD)");
     }
 
     //LAB_80036044
     if(!DsRead(0x1L, _800c1434.get(), _800c13a8.getAddress())) {
-      LOGGER.error("DS_newmedia: Read error (PT:%08x)", _800c1434.get());
-      return 0;
+      throw new RuntimeException("DS_newmedia: Read error (PT:%08x)".formatted(_800c1434.get()));
     }
 
     //LAB_8003609c
@@ -3310,7 +3303,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_800361d4
     if(directoryId < DSL_MAX_DIR) {
-      _800bfdd8.offset(directoryId * 44L).set(0);
+      CdlDIR_800bfda8.get(directoryId).parentId.set(0);
     }
 
     //LAB_800361fc
@@ -3353,7 +3346,7 @@ public final class Scus94491BpeSegment_8003 {
       return 0x1L;
     }
 
-    if(!DsRead(0x1L, _800bfd84.offset(fp * 44L).get(), _800c13a8.getAddress())) {
+    if(!DsRead(0x1L, CdlDIR_800bfda8.get((int)fp - 1).lba.get(), _800c13a8.getAddress())) {
       LOGGER.error("DS_cachefile: dir not found");
       return -0x1L;
     }

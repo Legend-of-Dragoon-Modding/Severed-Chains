@@ -53,6 +53,8 @@ import java.util.function.Function;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.LibDs.DSL_MAX_COMMAND;
+import static legend.core.LibDs.DSL_MAX_DIR;
+import static legend.core.LibDs.DSL_MAX_FILE;
 
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
@@ -611,15 +613,6 @@ public final class Scus94491BpeSegment_800b {
    *
    * 0x800bf7a8-0x800bfda8
    */
-  public static final ArrayRef<CdlFILE> CdlFILE_800bf7a8 = MEMORY.ref(1, 0x800bf7a8L, ArrayRef.of(CdlFILE.class, 40, 24, CdlFILE::new));
-
-  /**
-   * TODO Seems to be a pointer to the CdlLOC of file #62. Not sure why.
-   */
-  public static final Value _800bfd84 = MEMORY.ref(4, 0x800bfd84L);
-  //
-
-  public static final ArrayRef<CdlDIR> CdlDIR_800bfda8 = MEMORY.ref(4, 0x800bfda8L, ArrayRef.of(CdlDIR.class, 0x80, 0x2c, CdlDIR::new));
-
-  public static final Value _800bfdd8 = MEMORY.ref(4, 0x800bfdd8L);
+  public static final ArrayRef<CdlFILE> CdlFILE_800bf7a8 = MEMORY.ref(1, 0x800bf7a8L, ArrayRef.of(CdlFILE.class, DSL_MAX_FILE, 0x18, CdlFILE::new));
+  public static final ArrayRef<CdlDIR> CdlDIR_800bfda8 = MEMORY.ref(4, 0x800bfda8L, ArrayRef.of(CdlDIR.class, DSL_MAX_DIR, 0x2c, CdlDIR::new));
 }

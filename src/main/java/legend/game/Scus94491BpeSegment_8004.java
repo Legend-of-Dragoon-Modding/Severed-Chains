@@ -175,7 +175,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Ttle#FUN_800c75fc()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#executeSmapPregameLoadingStage()}</li>
-   *   <li>{@link SMap#FUN_800d92a0()}</li>
+   *   <li>{@link SMap#swapDiskLoadingStage()}</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>{@link Ttle#FUN_800c6eb8()}</li>
    *   <li>0x800cab8c (TODO)</li>
@@ -200,8 +200,10 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value loadingOverlay_8004dd1e = MEMORY.ref(1, 0x8004dd1eL);
 
   public static final Value mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L);
-  public static final Value _8004dd24 = MEMORY.ref(4, 0x8004dd24L);
-  public static final Value _8004dd28 = MEMORY.ref(4, 0x8004dd28L);
+  /** When the overlay finishes loading, switch to this */
+  public static final Value mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L);
+  /** The previous index before the file finished loading */
+  public static final Value previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L);
 
   public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
   public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
@@ -226,9 +228,9 @@ public final class Scus94491BpeSegment_8004 {
   public static final Value _8004dd88 = MEMORY.ref(1, 0x8004dd88L);
 
   public static final UnboundedArrayRef<FileEntry08> drgnFiles_8004dda0 = MEMORY.ref(2, 0x8004dda0L, UnboundedArrayRef.of(0x8, FileEntry08::new));
-  public static final FileEntry08 drgn0_8004dda0 = MEMORY.ref(2, 0x8004dda0L, FileEntry08::new);
 
-  public static final Value _8004ddc0 = MEMORY.ref(4, 0x8004ddc0L);
+  /** The current disk number, 1-indexed */
+  public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
   public static final Value callbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
   public static final Value fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L);
   public static final Value _8004ddcc = MEMORY.ref(1, 0x8004ddccL);

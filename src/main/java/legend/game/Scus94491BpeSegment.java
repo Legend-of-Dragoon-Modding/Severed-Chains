@@ -137,14 +137,11 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004d78c;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
 import static legend.game.Scus94491BpeSegment_8004.SsSetRVol;
 import static legend.game.Scus94491BpeSegment_8004._8004dd00;
-import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd10;
 import static legend.game.Scus94491BpeSegment_8004._8004dd14;
 import static legend.game.Scus94491BpeSegment_8004._8004dd18;
 import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
-import static legend.game.Scus94491BpeSegment_8004._8004dd24;
-import static legend.game.Scus94491BpeSegment_8004._8004dd28;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
@@ -167,6 +164,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004ff14;
 import static legend.game.Scus94491BpeSegment_8004.callbackArray_8004dddc;
 import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
+import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.initSound;
@@ -174,9 +172,11 @@ import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.orderingTableLength_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
+import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.renderFlags_8004dd36;
 import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
@@ -402,6 +402,10 @@ public final class Scus94491BpeSegment {
    * String: CD_cw
    */
   public static final CString _800113c0 = MEMORY.ref(6, 0x800113c0L, CString::new);
+
+  public static final CString cdName_800115c8 = MEMORY.ref(6, 0x800115c8L, CString::new);
+
+  public static final CString cdName_80011700 = MEMORY.ref(6, 0x80011700L, CString::new);
 
   public static final Value _80011db0 = MEMORY.ref(4, 0x80011db0L);
   public static final Value _80011db4 = MEMORY.ref(4, 0x80011db4L);
@@ -1415,15 +1419,15 @@ public final class Scus94491BpeSegment {
 
     //LAB_800129c0
     //LAB_800129c4
-    if(_8004dd24.getSigned() != -1) {
+    if(mainCallbackIndexOnceLoaded_8004dd24.getSigned() != -1) {
       if(loadingSmapOvl_8004dd08.get() != 0) {
         return 0;
       }
 
       pregameLoadingStage_800bb10c.setu(0);
-      _8004dd28.setu(mainCallbackIndex_8004dd20);
-      mainCallbackIndex_8004dd20.set(_8004dd24);
-      _8004dd24.setu(-0x1L);
+      previousMainCallbackIndex_8004dd28.setu(mainCallbackIndex_8004dd20);
+      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24);
+      mainCallbackIndexOnceLoaded_8004dd24.setu(-1);
       FUN_80019710();
       vsyncMode_8007a3b8.setu(0x2L);
       loadSmap((int)mainCallbackIndex_8004dd20.getSigned());
@@ -1444,6 +1448,7 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /** TODO this isn't just SMAP */
   @Method(0x80012a84L)
   public static long loadSmap(final int callbackIndex) {
     final FileEntry08 entry = callback_8004dbc0.get(callbackIndex).entry_04.derefNullable();
@@ -1462,6 +1467,11 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
+  /**
+   * @param overlayIndex <ol start="0">
+   *                       <li>S_INIT</li>
+   *                     </ul>
+   */
   @Method(0x80012b1cL)
   public static void loadAndRunOverlay(final int overlayIndex, final long overlayMethod, final long callbackParam) {
     if(_8004dd10.get() == overlayIndex && loadingOverlay_8004dd1e.get() == 0) {
@@ -4441,7 +4451,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001814cL)
-  public static void FUN_8001814c(final McqHeader a0, long a1, long a2, long a3, final long a4, final long a5, final long a6) {
+  public static void renderMcq(final McqHeader a0, long a1, long a2, long a3, final long a4, final long a5, final long a6) {
     long v0;
     long v1;
     long t1;
@@ -4842,7 +4852,7 @@ public final class Scus94491BpeSegment {
       FUN_800201c8(0x6L);
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.setu(0x2L);
-      _8004dd24.setu(_800bc91c.get());
+      mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc91c.get());
     }
 
     //LAB_80018a4c
@@ -5306,7 +5316,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void FUN_80019710() {
-    if(mainCallbackIndex_8004dd20.get() != 0x5L && _8004dd28.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() != 0x5L && previousMainCallbackIndex_8004dd28.get() == 0x5L) {
       sssqResetStuff();
       removeFromLinkedList(soundMrgSshdPtr_800bd784.getPointer());
       removeFromLinkedList(soundMrgSssqPtr_800bd788.getPointer());
@@ -5315,7 +5325,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001978c
     //LAB_80019790
-    if(mainCallbackIndex_8004dd20.get() != 0x6L && _8004dd28.get() == 0x6L) {
+    if(mainCallbackIndex_8004dd20.get() != 0x6L && previousMainCallbackIndex_8004dd28.get() == 0x6L) {
       sssqResetStuff();
 
       //LAB_800197c0

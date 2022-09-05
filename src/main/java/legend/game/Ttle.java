@@ -33,7 +33,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.FUN_8001814c;
+import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment._1f8003c8;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
@@ -74,8 +74,8 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004._8004dd24;
-import static legend.game.Scus94491BpeSegment_8004._8004ddc0;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
@@ -308,7 +308,7 @@ public final class Ttle {
 
   @Method(0x800c7500L)
   public static void FUN_800c7500() {
-    _8004dd24.setu(0x5L);
+    mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     vsyncMode_8007a3b8.setu(0x2L);
     pregameLoadingStage_800bb10c.setu(0);
   }
@@ -328,7 +328,7 @@ public final class Ttle {
 
   @Method(0x800c75b4L)
   public static void FUN_800c75b4() {
-    FUN_8001814c(gameOverMcq_800bdc3c.deref(), 640, 0, -320, -108, 36, 128);
+    renderMcq(gameOverMcq_800bdc3c.deref(), 640, 0, -320, -108, 36, 128);
   }
 
   @Method(0x800c75fcL)
@@ -376,7 +376,7 @@ public final class Ttle {
       case 6 -> {
         FUN_8002437c(0xffL);
         removeFromLinkedList(drgn0_6666FilePtr_800bdc3c.getPointer());
-        _8004dd24.setu(0x2L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
         pregameLoadingStage_800bb10c.setu(0);
         vsyncMode_8007a3b8.setu(0x2L);
       }
@@ -540,11 +540,11 @@ public final class Ttle {
       deallocateFire();
 
       if(drgnBinIndex_800bc058.get() == 0x1L) {
-        _8004dd24.setu(0x9L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
       } else {
         //LAB_800c7f40
-        _8004dd24.setu(0xaL);
-        _8004ddc0.setu(0x1L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0xaL);
+        diskNum_8004ddc0.set(1);
         _800bc05c.setu(0x9L);
       }
 
@@ -585,10 +585,10 @@ public final class Ttle {
 
     if(_800bdc34.get() != 0) {
       if(gameState_800babc8._4e4.get() != 0) {
-        _8004dd24.setu(0x8L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L);
       } else {
         //LAB_800c80a4
-        _8004dd24.setu(0x5L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
       }
 
       pregameLoadingStage_800bb10c.setu(0);
@@ -600,7 +600,7 @@ public final class Ttle {
 
     //LAB_800c80cc
     if(_800c6728.get() == 0x3L) {
-      _8004dd24.setu(0x2L);
+      mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.setu(0x2L);
     } else {
@@ -637,7 +637,7 @@ public final class Ttle {
 
       _800bf0dc.setu(0);
       _800bf0ec.setu(0x2L);
-      _8004dd24.setu(0x9L);
+      mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
       vsyncMode_8007a3b8.setu(0x2L);
 
       pregameLoadingStage_800bb10c.setu(0);
