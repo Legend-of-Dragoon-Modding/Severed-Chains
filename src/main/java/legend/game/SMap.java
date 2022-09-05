@@ -772,7 +772,7 @@ public final class SMap {
     }
 
     //LAB_800d96a8
-    CDROM.stop();
+//    CDROM.stop();
     return 1;
   }
 
