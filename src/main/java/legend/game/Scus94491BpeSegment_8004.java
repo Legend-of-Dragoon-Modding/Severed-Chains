@@ -1173,6 +1173,26 @@ public final class Scus94491BpeSegment_8004 {
     return a1;
   }
 
+  @Method(0x80040e40L)
+  public static void FUN_80040e40(final VECTOR a0, final VECTOR a1, final VECTOR out) {
+    final long t5 = CPU.CFC2(0);
+    final long t6 = CPU.CFC2(2);
+    final long t7 = CPU.CFC2(4);
+    CPU.CTC2(a0.getX(),  0);
+    CPU.CTC2(a0.getY(),  2);
+    CPU.CTC2(a0.getZ(),  4);
+    CPU.MTC2(a1.getX(),  9);
+    CPU.MTC2(a1.getY(), 10);
+    CPU.MTC2(a1.getZ(), 11);
+    CPU.COP2(0x178000cL);
+    out.setX((int)CPU.MFC2(25));
+    out.setY((int)CPU.MFC2(26));
+    out.setZ((int)CPU.MFC2(27));
+    CPU.CTC2(t5, 0);
+    CPU.CTC2(t6, 2);
+    CPU.CTC2(t7, 4);
+  }
+
   @Method(0x80040ea0L)
   public static long Lzc(final long a0) {
     CPU.MTC2(a0, 30);

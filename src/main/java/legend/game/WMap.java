@@ -45,8 +45,6 @@ import legend.game.types.WMapStruct258;
 import legend.game.types.WMapSubStruct18;
 import legend.game.types.WMapTmdRenderingStruct18;
 import legend.game.types.WeirdTimHeader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
@@ -102,6 +100,7 @@ import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dfc0;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -112,6 +111,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
@@ -122,9 +122,10 @@ import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
+import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
+import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
@@ -160,8 +161,6 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public class WMap {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(WMap.class);
-
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
 
   private static final Value _800c6698 = MEMORY.ref(4, 0x800c6698L);
@@ -253,6 +252,7 @@ public class WMap {
   private static final Value _800c8778 = MEMORY.ref(4, 0x800c8778L);
   private static final Value _800c877c = MEMORY.ref(4, 0x800c877cL);
 
+  private static final VECTOR _800c87d8 = MEMORY.ref(4, 0x800c87d8L, VECTOR::new);
   private static final Value _800c87e8 = MEMORY.ref(4, 0x800c87e8L);
   private static final Value _800c87ec = MEMORY.ref(4, 0x800c87ecL);
 
@@ -262,6 +262,27 @@ public class WMap {
   private static final Value _800eee48 = MEMORY.ref(4, 0x800eee48L);
 
   private static final ArrayRef<Pointer<RunnableRef>> _800ef000 = MEMORY.ref(4, 0x800ef000L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 13, 4, Pointer.deferred(4, RunnableRef::new)));
+  /**
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_40}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_50}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_48}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_58}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_4c}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_5c}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_20}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_30}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_28}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_38}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_24}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_34}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_2c}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_3c}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_64}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_74}</li>
+   *   <li>{@link Scus94491BpeSegment_8003#setGp0_7c}</li>
+   * </ol>
+   */
   private static final ArrayRef<Pointer<ConsumerRef<Long>>> gpuPacketSetters_800ef034 = MEMORY.ref(4, 0x800ef034L, ArrayRef.of(Pointer.classFor(ConsumerRef.classFor(Long.class)), 17, 4, Pointer.deferred(4, ConsumerRef::new)));
 
   private static final Value _800ef0d4 = MEMORY.ref(2, 0x800ef0d4L);
@@ -292,6 +313,14 @@ public class WMap {
   private static final Value _800ef368 = MEMORY.ref(2, 0x800ef368L);
   private static final Value _800ef36a = MEMORY.ref(2, 0x800ef36aL);
 
+  /**
+   * <ol start="0">
+   *   <li>{@link WMap#FUN_800e1740}</li>
+   *   <li>{@link WMap#FUN_800e1ac4}</li>
+   *   <li>{@link WMap#FUN_800e32fc}</li>
+   *   <li>{@link WMap#FUN_800e32fc}</li>
+   * </ul>
+   */
   private static final Value _800ef684 = MEMORY.ref(4, 0x800ef684L);
 
   private static final Value _800ef694 = MEMORY.ref(1, 0x800ef694L);
@@ -4082,7 +4111,129 @@ public class WMap {
 
   @Method(0x800d7208L)
   public static void FUN_800d7208(final long a0) {
-    assert false;
+    final long packet = linkedListAddress_1f8003d8.get();
+    setGpuPacketType(0xcL, packet, false, false);
+    MEMORY.ref(2, packet).offset(0x16L).setu(_800bb116.get() | 0xaL);
+    MEMORY.ref(2, packet).offset(0xeL).setu(0x7f28L);
+    MEMORY.ref(1, packet).offset(0x4L).setu(0x80L);
+    MEMORY.ref(1, packet).offset(0x5L).setu(0x80L);
+    MEMORY.ref(1, packet).offset(0x6L).setu(0x80L);
+    MEMORY.ref(2, packet).offset(0x8L).setu(0x56L);
+    MEMORY.ref(2, packet).offset(0xaL).setu(0x58L);
+    MEMORY.ref(2, packet).offset(0x10L).setu(0x66L);
+    MEMORY.ref(2, packet).offset(0x12L).setu(0x58L);
+    MEMORY.ref(2, packet).offset(0x18L).setu(0x56L);
+    MEMORY.ref(2, packet).offset(0x1aL).setu(0x68L);
+    MEMORY.ref(2, packet).offset(0x20L).setu(0x66L);
+    MEMORY.ref(2, packet).offset(0x22L).setu(0x68L);
+    long sp14 = _800bb0fc.get() / 2 % 7;
+    long at = 0x800f_0000L;
+    at = at + sp14;
+    MEMORY.ref(1, packet).offset(0xcL).setu(MEMORY.ref(1, at).offset(-0xe98L).get() * 0x10 + 0x40L);
+    MEMORY.ref(1, packet).offset(0xdL).setu(0xa8L);
+    MEMORY.ref(1, packet).offset(0x14L).setu(MEMORY.ref(1, at).offset(-0xe98L).get() * 0x10 + 0x50L);
+    MEMORY.ref(1, packet).offset(0x15L).setu(0xa8L);
+    MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, at).offset(-0xe98L).get() * 0x10 + 0x40L);
+    MEMORY.ref(1, packet).offset(0x1dL).setu(0xb8L);
+    MEMORY.ref(1, packet).offset(0x24L).setu(MEMORY.ref(1, at).offset(-0xe98L).get() * 0x10 + 0x50L);
+    MEMORY.ref(1, packet).offset(0x25L).setu(0xb8L);
+    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, packet);
+    linkedListAddress_1f8003d8.addu(0x28L);
+
+    final long sp1c;
+    final long sp28;
+    final long sp18;
+    final long sp20;
+    final long sp22;
+    final long sp1e;
+    if(a0 == 0) {
+      sp14 = _800bb0fc.get() / 2 % 5;
+      at = 0x800f_0000L;
+      at = at + sp14;
+      sp18 = MEMORY.ref(1, at).offset(-0xeacL).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L;
+      sp1c = MEMORY.ref(1, at).offset(-0xed0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x1L;
+      sp1e = MEMORY.ref(1, at).offset(-0xed0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x2L;
+      sp20 = MEMORY.ref(1, at).offset(-0xed0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x3L;
+      sp22 = MEMORY.ref(1, at).offset(-0xed0L).get();
+      sp28 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x28L);
+      setGpuPacketType(0xcL, sp28, false, false);
+      MEMORY.ref(2, sp28).offset(0x16L).setu(_800bb116.get() | 0xaL);
+      MEMORY.ref(2, sp28).offset(0xeL).setu(0x7ea8L);
+      MEMORY.ref(1, sp28).offset(0x4L).setu(0x80L);
+      MEMORY.ref(1, sp28).offset(0x5L).setu(0x80L);
+      MEMORY.ref(1, sp28).offset(0x6L).setu(0x80L);
+      MEMORY.ref(2, sp28).offset(0x8L).setu(0x6aL);
+      MEMORY.ref(2, sp28).offset(0xaL).setu(0x50L);
+      MEMORY.ref(2, sp28).offset(0x10L).setu(sp20 + 0x6aL);
+      MEMORY.ref(2, sp28).offset(0x12L).setu(0x50L);
+      MEMORY.ref(2, sp28).offset(0x18L).setu(0x6aL);
+      MEMORY.ref(2, sp28).offset(0x1aL).setu(sp22 + 0x50L);
+      MEMORY.ref(2, sp28).offset(0x20L).setu(sp20 + 0x6aL);
+      MEMORY.ref(2, sp28).offset(0x22L).setu(sp22 + 0x50L);
+      MEMORY.ref(1, sp28).offset(0xcL).setu(sp1c);
+      MEMORY.ref(1, sp28).offset(0xdL).setu(sp1e);
+      MEMORY.ref(1, sp28).offset(0x14L).setu(sp1c + sp20);
+      MEMORY.ref(1, sp28).offset(0x15L).setu(sp1e);
+      MEMORY.ref(1, sp28).offset(0x1cL).setu(sp1c);
+      MEMORY.ref(1, sp28).offset(0x1dL).setu(sp1e + sp22);
+      MEMORY.ref(1, sp28).offset(0x24L).setu(sp1c + sp20);
+      MEMORY.ref(1, sp28).offset(0x25L).setu(sp1e + sp22);
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp28);
+    } else {
+      //LAB_800d7734
+      sp14 = _800bb0fc.get() / 3 % 15;
+      at = 0x800f_0000L;
+      at = at + sp14;
+      sp18 = MEMORY.ref(1, at).offset(-0xea8L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L;
+      sp1c = MEMORY.ref(1, at).offset(-0xec0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x1L;
+      sp1e = MEMORY.ref(1, at).offset(-0xec0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x2L;
+      sp20 = MEMORY.ref(1, at).offset(-0xec0L).get();
+      at = 0x800f_0000L;
+      at = at + sp18 * 0x4L + 0x3L;
+      sp22 = MEMORY.ref(1, at).offset(-0xec0L).get();
+      sp28 = linkedListAddress_1f8003d8.get();
+      setGpuPacketType(0xcL, sp28, false, false);
+      MEMORY.ref(2, sp28).offset(0x16L).setu(_800bb116.get() | 0xaL);
+      MEMORY.ref(2, sp28).offset(0xeL).setu(0x7ee8L);
+      MEMORY.ref(1, sp28).offset(0x4L).setu(0x80L);
+      MEMORY.ref(1, sp28).offset(0x5L).setu(0x80L);
+      MEMORY.ref(1, sp28).offset(0x6L).setu(0x80L);
+      MEMORY.ref(2, sp28).offset(0x8L).setu(0x6aL);
+      MEMORY.ref(2, sp28).offset(0xaL).setu(0x50L);
+      MEMORY.ref(2, sp28).offset(0x10L).setu(sp20 + 0x6aL);
+      MEMORY.ref(2, sp28).offset(0x12L).setu(0x50L);
+      MEMORY.ref(2, sp28).offset(0x18L).setu(0x6aL);
+      MEMORY.ref(2, sp28).offset(0x1aL).setu(sp22 + 0x50L);
+      MEMORY.ref(2, sp28).offset(0x20L).setu(sp20 + 0x6aL);
+      MEMORY.ref(2, sp28).offset(0x22L).setu(sp22 + 0x50L);
+      MEMORY.ref(1, sp28).offset(0xcL).setu(sp1c);
+      MEMORY.ref(1, sp28).offset(0xdL).setu(sp1e);
+      MEMORY.ref(1, sp28).offset(0x14L).setu(sp1c + sp20);
+      MEMORY.ref(1, sp28).offset(0x15L).setu(sp1e);
+      MEMORY.ref(1, sp28).offset(0x1cL).setu(sp1c);
+      MEMORY.ref(1, sp28).offset(0x1dL).setu(sp1e + sp22);
+      MEMORY.ref(1, sp28).offset(0x24L).setu(sp1c + sp20);
+      MEMORY.ref(1, sp28).offset(0x25L).setu(sp1e + sp22);
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp28);
+      linkedListAddress_1f8003d8.addu(0x28L);
+    }
+
+    //LAB_800d7a18
   }
 
   @Method(0x800d7a34L)
@@ -4118,7 +4269,6 @@ public class WMap {
     long spac = 0;
     long spae = 0;
     final long sp1b8;
-    long sp1c0;
     long sp1c4;
     final long sp1ba;
     final long sp1bc;
@@ -5525,10 +5675,8 @@ public class WMap {
       sp5c = 1 << (sp58 & 0x1fL);
       sp58 = sp58 >>> 5;
 
-      if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0) {
-        if(_800c6870.get() == 0) {
-          FUN_800d7208(0x1L);
-        }
+      if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0 && _800c6870.get() == 0) {
+        FUN_800d7208(0x1L);
       }
 
       //LAB_800da418
@@ -7076,6 +7224,200 @@ public class WMap {
     //LAB_800e1ab0
   }
 
+  @Method(0x800e1ac4L)
+  public static void FUN_800e1ac4() {
+    long v0;
+    long spf9;
+    long spec;
+    long spf0;
+    long sp118;
+    long spf8;
+    long sp110;
+    long sp111;
+    long sp112;
+    long spe8;
+    long spdc;
+    long sp84;
+    long sp10a;
+    long spe0;
+    long sp6c;
+    long spd8;
+    long spcc;
+    long sp78;
+    long spd0;
+    long spc8;
+    long sp68;
+    long spfa;
+    long sp108;
+    long sp109;
+    long sp100;
+    long sp101;
+    long sp102;
+
+    final MATRIX sp0x28 = new MATRIX();
+    final SVECTOR sp0x48 = new SVECTOR();
+    final SVECTOR sp0x50 = new SVECTOR();
+    final SVECTOR sp0x58 = new SVECTOR();
+    final SVECTOR sp0x60 = new SVECTOR();
+
+    final IntRef sp0x70 = new IntRef();
+    final IntRef sp0x74 = new IntRef();
+
+    final Ref<Long> sp0x7c = new Ref<>();
+    final Ref<Long> sp0x80 = new Ref<>();
+
+    final VECTOR sp0x88 = new VECTOR();
+    final VECTOR sp0x98 = new VECTOR();
+    final VECTOR sp0xa8 = new VECTOR();
+    final VECTOR sp0xb8 = new VECTOR();
+    final VECTOR sp0xc8 = new VECTOR();
+
+    sp0xb8.set(_800c87d8);
+
+    sp0xa8.setX(struct258_800c66a8.deref().vec_84.getX() - struct258_800c66a8.deref().vec_94.getX() >> 12);
+    sp0xa8.setY(struct258_800c66a8.deref().vec_84.getY() - struct258_800c66a8.deref().vec_94.getY() >> 12);
+    sp0xa8.setZ(struct258_800c66a8.deref().vec_84.getZ() - struct258_800c66a8.deref().vec_94.getZ() >> 12);
+    FUN_8003ea80(sp0xa8, sp0xa8);
+    FUN_80040e40(sp0xa8, sp0xb8, sp0xc8);
+    sp0x88.setX(struct258_800c66a8.deref().vec_94.getX() >> 12);
+    sp0x88.setY(struct258_800c66a8.deref().vec_94.getY() >> 12);
+    sp0x88.setZ(struct258_800c66a8.deref().vec_94.getZ() >> 12);
+    FUN_800e2ae4(sp0xc8, sp0x88);
+    rotateCoord2(struct258_800c66a8.deref().tmdRendering_08.deref().rotations_08.deref().get(0), struct258_800c66a8.deref().tmdRendering_08.deref().coord2s_04.deref().get(0));
+    GsGetLs(struct258_800c66a8.deref().tmdRendering_08.deref().coord2s_04.deref().get(0), sp0x28);
+    setRotTransMatrix(sp0x28);
+
+    //LAB_800e1ccc
+    for(sp68 = 0; sp68 < 39; sp68++) {
+      //LAB_800e1ce8
+      sp118 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x34L);
+      setGpuPacketType(0xdL, sp118, true, false);
+      MEMORY.ref(2, sp118).offset(0x1aL).setu(_800bb114.get() | 0x7L);
+      MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
+      MEMORY.ref(1, sp118).offset(0xcL).setu(0);
+      MEMORY.ref(1, sp118).offset(0xdL).setu(0);
+      MEMORY.ref(1, sp118).offset(0x18L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x19L).setu(0);
+      MEMORY.ref(1, sp118).offset(0x24L).setu(0);
+      MEMORY.ref(1, sp118).offset(0x25L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x30L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x31L).setu(0x3fL);
+      FUN_800e2e1c(sp68, sp0x88, sp0x98, sp0x74, sp0x70);
+      spc8 = sp0x88.getX() * sp0x70.get() >> 12;
+      spcc = sp0x88.getY() * sp0x70.get() >> 12;
+      spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
+      spd8 = -spc8;
+      spdc = -spcc;
+      spe0 = -spd0;
+      sp0x48.setX((short)(spc8 + sp0x98.getX()));
+      sp0x48.setY((short)(spcc + sp0x98.getY()));
+      sp0x48.setZ((short)(spd0 + sp0x98.getZ()));
+      sp0x50.setX((short)sp0x98.getX());
+      sp0x50.setY((short)sp0x98.getY());
+      sp0x50.setZ((short)sp0x98.getZ());
+      sp78 = 256 - sp0x74.get() * 256 / 40;
+      spf8 = sp78 * 96 / 256;
+      spf9 = sp78 * 96 / 256;
+      spfa = sp78 * 96 / 256;
+      sp100 = 0;
+      sp101 = sp78 / 8;
+      sp102 = sp78 * 96 / 256;
+      MEMORY.ref(1, sp118).offset(0x4L).setu(spf8);
+      MEMORY.ref(1, sp118).offset(0x5L).setu(spf9);
+      MEMORY.ref(1, sp118).offset(0x6L).setu(spfa);
+      MEMORY.ref(1, sp118).offset(0x10L).setu(sp100);
+      MEMORY.ref(1, sp118).offset(0x11L).setu(sp101);
+      MEMORY.ref(1, sp118).offset(0x12L).setu(sp102);
+      FUN_800e2e1c(sp68 + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
+      spc8 = sp0x88.getX() * sp0x70.get() >> 12;
+      spcc = sp0x88.getY() * sp0x70.get() >> 12;
+      spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
+      spe8 = -spc8;
+      spec = -spcc;
+      spf0 = -spd0;
+      sp0x58.setX((short)(spc8 + sp0xa8.getX()));
+      sp0x58.setY((short)(spcc + sp0xa8.getY()));
+      sp0x58.setZ((short)(spd0 + sp0xa8.getZ()));
+      sp0x60.set(sp0xa8);
+      sp78 = 256 - sp0x74.get() * 256 / 40;
+      sp108 = sp78 * 96 / 256;
+      sp109 = sp78 * 96 / 256;
+      sp10a = sp78 * 96 / 256;
+      sp110 = 0;
+      sp111 = (int)sp78 / 8;
+      sp112 = sp78 * 96 / 256;
+      MEMORY.ref(1, sp118).offset(0x1cL).setu(sp108);
+      MEMORY.ref(1, sp118).offset(0x1dL).setu(sp109);
+      MEMORY.ref(1, sp118).offset(0x1eL).setu(sp10a);
+      MEMORY.ref(1, sp118).offset(0x28L).setu(sp110);
+      MEMORY.ref(1, sp118).offset(0x29L).setu(sp111);
+      MEMORY.ref(1, sp118).offset(0x2aL).setu(sp112);
+      sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
+
+      if((int)sp84 >= 0x3L && (int)sp84 < (int)_1f8003c8.get()) {
+        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + _1f8003c8.get() * 0x4L - 0x10L, sp118);
+      }
+
+      //LAB_800e2440
+      sp118 = linkedListAddress_1f8003d8.get();
+      linkedListAddress_1f8003d8.addu(0x34L);
+      setGpuPacketType(0xdL, sp118, true, false);
+      MEMORY.ref(2, sp118).offset(0x1aL).setu(_800bb114.get() | 0x7L);
+      MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
+      MEMORY.ref(1, sp118).offset(0xcL).setu(0);
+      MEMORY.ref(1, sp118).offset(0xdL).setu(0);
+      MEMORY.ref(1, sp118).offset(0x18L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x19L).setu(0);
+      MEMORY.ref(1, sp118).offset(0x24L).setu(0);
+      MEMORY.ref(1, sp118).offset(0x25L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x30L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x31L).setu(0x3fL);
+      MEMORY.ref(1, sp118).offset(0x04L).setu(spf8);
+      MEMORY.ref(1, sp118).offset(0x05L).setu(spf9);
+      MEMORY.ref(1, sp118).offset(0x06L).setu(spfa);
+      MEMORY.ref(1, sp118).offset(0x10L).setu(sp100);
+      MEMORY.ref(1, sp118).offset(0x11L).setu(sp101);
+      MEMORY.ref(1, sp118).offset(0x12L).setu(sp102);
+      MEMORY.ref(1, sp118).offset(0x1cL).setu(sp108);
+      MEMORY.ref(1, sp118).offset(0x1dL).setu(sp109);
+      MEMORY.ref(1, sp118).offset(0x1eL).setu(sp10a);
+      MEMORY.ref(1, sp118).offset(0x28L).setu(sp110);
+      MEMORY.ref(1, sp118).offset(0x29L).setu(sp111);
+      MEMORY.ref(1, sp118).offset(0x2aL).setu(sp112);
+
+      sp0x48.setX((short)(spd8 + sp0x98.getX()));
+      sp0x48.setY((short)(spdc + sp0x98.getY()));
+      sp0x48.setZ((short)(spe0 + sp0x98.getZ()));
+      sp0x58.setX((short)(spe8 + sp0xa8.getX()));
+      sp0x58.setY((short)(spec + sp0xa8.getY()));
+      sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
+      sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
+
+      if((int)sp84 >= 3 && (int)sp84 < (int)_1f8003c8.get()) {
+        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + _1f8003c8.get() * 0x4L - 0x10L, sp118);
+      }
+    }
+
+    //LAB_800e2770
+    //LAB_800e2774
+    for(sp68 = 0; sp68 < 40; sp68++) {
+      //LAB_800e2790
+      sp6c = struct258_800c66a8.deref()._230.get() - sp68 * struct258_800c66a8.deref()._23c.get();
+
+      if((int)sp6c < 0) {
+        sp6c += struct258_800c66a8.deref()._238.get();
+      }
+
+      //LAB_800e2808
+      v0 = struct258_800c66a8.deref().ptr_22c.get() + sp6c * 0x4L;
+      MEMORY.ref(4, v0).offset(0x0L).addu(0x1L);
+    }
+
+    //LAB_800e289c
+    struct258_800c66a8.deref()._240.incr();
+  }
+
   @Method(0x800e28dcL)
   public static void FUN_800e28dc(final long a0, final long a1) {
     final long a3 = a0 * a1;
@@ -7100,6 +7442,60 @@ public class WMap {
     struct258_800c66a8.deref()._244.set(0);
   }
 
+  @Method(0x800e2ae4L)
+  public static void FUN_800e2ae4(final VECTOR a0, final VECTOR a1) {
+    final WMapStruct258 struct258 = struct258_800c66a8.deref();
+
+    if(struct258._244.get() == 0) {
+      //LAB_800e2b14
+      for(int i = 0; i < struct258._238.get(); i++) {
+        //LAB_800e2b3c
+        struct258.vecs_224.deref().get(i).set(a0);
+        struct258.vecs_228.deref().get(i).set(a1);
+      }
+
+      //LAB_800e2ca4
+      struct258._244.set(1);
+      struct258._240.set(0);
+    }
+
+    //LAB_800e2cc4
+    struct258.vecs_224.deref().get((int)struct258._230.get()).set(a0);
+    struct258.vecs_228.deref().get((int)struct258._230.get()).set(a1);
+
+    MEMORY.ref(4, struct258.ptr_22c.get()).offset(struct258._230.get() * 0x4L).setu(0);
+
+    struct258._234.set(struct258._230.get());
+    struct258._230.set((struct258._230.get() + 1) % struct258._238.get());
+  }
+
+  @Method(0x800e2e1cL)
+  public static void FUN_800e2e1c(final long a0, final VECTOR a1, final VECTOR a2, final IntRef a3, final IntRef a4) {
+    if(a0 == 0) {
+      a1.set(struct258_800c66a8.deref().vecs_224.deref().get((int)struct258_800c66a8.deref()._234.get()));
+      a2.set(struct258_800c66a8.deref().vecs_228.deref().get((int)struct258_800c66a8.deref()._234.get()));
+      a3.set((int)MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(struct258_800c66a8.deref()._234.get() * 0x4L).get());
+      final long v0 = MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(struct258_800c66a8.deref()._234.get() * 0x4L).get() - struct258_800c66a8.deref()._240.get();
+      a4.set((int)(MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(struct258_800c66a8.deref()._234.get() * 0x4L).get() + (rsin(v0 << 8 & 0x7ff) * MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(struct258_800c66a8.deref()._234.get() * 0x4L).get() >> 12)));
+    } else {
+      //LAB_800e3024
+      long sp10 = struct258_800c66a8.deref()._230.get() - a0 * struct258_800c66a8.deref()._23c.get();
+
+      if((int)sp10 < 0) {
+        sp10 += struct258_800c66a8.deref()._238.get();
+      }
+
+      //LAB_800e3090
+      a1.set(struct258_800c66a8.deref().vecs_224.deref().get((int)sp10));
+      a2.set(struct258_800c66a8.deref().vecs_228.deref().get((int)sp10));
+      a3.set((int)MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(sp10 * 0x4L).get());
+      final long v0 = MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(sp10 * 0x4L).get() - struct258_800c66a8.deref()._240.get();
+      a4.set((int)(MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(sp10 * 0x4L).get() + (rsin(v0 << 8 & 0x7ff) * MEMORY.ref(4, struct258_800c66a8.deref().ptr_22c.get()).offset(sp10 * 0x4L).get() >> 12)));
+    }
+
+    //LAB_800e321c
+  }
+
   @Method(0x800e3230L)
   public static void FUN_800e3230() {
     removeFromLinkedList(struct258_800c66a8.deref().vecs_224.getPointer());
@@ -7110,6 +7506,11 @@ public class WMap {
   @Method(0x800e32a8L)
   public static void FUN_800e32a8() {
     _800ef684.offset(struct258_800c66a8.deref()._1e4.get() * 0x4L).deref(4).call();
+  }
+
+  @Method(0x800e32fcL)
+  public static void FUN_800e32fc() {
+    // no-op
   }
 
   @Method(0x800e3304L)

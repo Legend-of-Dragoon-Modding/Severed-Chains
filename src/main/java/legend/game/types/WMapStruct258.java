@@ -65,7 +65,7 @@ public class WMapStruct258 implements MemoryRef {
   public final UnsignedIntRef _234;
   public final UnsignedIntRef _238;
   public final UnsignedIntRef _23c;
-
+  public final UnsignedIntRef _240;
   public final UnsignedByteRef _244;
 
   public final UnsignedIntRef _248;
@@ -121,7 +121,7 @@ public class WMapStruct258 implements MemoryRef {
     this._234 = ref.offset(4, 0x234L).cast(UnsignedIntRef::new);
     this._238 = ref.offset(4, 0x238L).cast(UnsignedIntRef::new);
     this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
-
+    this._240 = ref.offset(4, 0x240L).cast(UnsignedIntRef::new);
     this._244 = ref.offset(1, 0x244L).cast(UnsignedByteRef::new);
 
     this._248 = ref.offset(4, 0x248L).cast(UnsignedIntRef::new);
