@@ -1290,7 +1290,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d36e0L)
-  public static long FUN_800d36e0(final int a0, final int addition) {
+  public static long getAdditionTextAddress(final int a0, final int addition) {
     _800c6790.setu(additionNames_800fa8d4.getAddress());
 
     //LAB_800d3708
@@ -1322,50 +1322,52 @@ public final class Bttl_800d {
 
   @Method(0x800d37dcL)
   public static void FUN_800d37dc(final short a0, final short a1, final short a2, final short addition, final short a4, final byte a5) {
-    final long a1_0 = FUN_800d36e0(a2, addition) + a4;
-    long a2_0 = 0;
+    final long a1_0 = getAdditionTextAddress(a2, addition) + a4;
+    long char_idx = 0;
 
     //LAB_800d3838
     long v1;
     do {
-      v1 = _800fa788.offset(a2_0).get();
+      v1 = _800fa788.offset(char_idx).get();
 
-      if(v1 == 0) {
+      if(MEMORY.ref(1, a1_0).offset(0x0L).get() == v1) {
+        break;
+      } else if(v1 == 0) {
         //LAB_800d3860
-        a2_0 = 0x5bL;
+        char_idx = 0x5bL;
         break;
       }
 
-      a2_0++;
-    } while(MEMORY.ref(1, a1_0).offset(0x0L).get() != v1);
+      char_idx++;
+    } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(a0, a1, a2_0 % 21 * 12 & 0xfcL, a2_0 / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
+    FUN_80018d60(a0, a1, char_idx % 21 * 12 & 0xfcL, char_idx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
   }
 
   @Method(0x800d3910L)
-  public static int FUN_800d3910(final long a0) {
+  public static int FUN_800d3910(final long charAddress) {
     //LAB_800d391c
-    int a2;
-    for(a2 = 0; ; a2++) {
-      if(_800fa788.offset(a2).get() == 0) {
-        a2 = 0;
+    int charTableOffset;
+    for(charTableOffset = 0; ; charTableOffset++) {
+      if(_800fa788.offset(charTableOffset).get() == 0) {
+        charTableOffset = 0;
         break;
       }
 
-      if(MEMORY.ref(1, a0).offset(0x0L).get() == _800fa788.offset(a2).get()) {
+      if(MEMORY.ref(1, charAddress).offset(0x0L).get() == _800fa788.offset(charTableOffset).get()) {
         break;
       }
     }
 
     //LAB_800d3944
     //LAB_800d3948
-    return (int)(10 - _800fa7cc.offset(a2 * 0x4L).get());
+    return (int)(10 - _800fa7cc.offset(charTableOffset * 0x4L).get());
   }
 
   @Method(0x800d3968L)
   public static void FUN_800d3968(final ShortRef a0, final ShortRef a1, final int a2, final int addition) {
-    final long s2 = FUN_800d36e0(a2, addition);
+    final long s2 = getAdditionTextAddress(a2, addition);
 
     int s1 = 0;
     //LAB_800d39b8
@@ -1474,7 +1476,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3d74L)
-  public static long FUN_800d3d74(final RunningScript a0) {
+  public static long scriptAllocateAdditionScript(final RunningScript a0) {
     if(a0.params_20.get(1).deref().get() == -1) {
       _800faa9d.setu(0);
     } else {
@@ -1485,36 +1487,36 @@ public final class Bttl_800d {
       loadScriptFile(scriptIndex, _8004f650, "", 0); //TODO
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(BttlScriptData1c.class), BttlScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(BttlScriptData1c.class), BttlScriptData1c.class), TriConsumerRef::new));
-      final long a0_0 = FUN_800d36e0(0, addition);
+      final long textAddress = getAdditionTextAddress(0, addition);
 
       //LAB_800d3e5c
-      int s2;
-      for(s2 = 0; MEMORY.ref(1, a0_0).offset(s2).get() != 0; s2++) {
+      int textLength;
+      for(textLength = 0; MEMORY.ref(1, textAddress).offset(textLength).get() != 0; textLength++) {
         //
       }
 
       //LAB_800d3e7c
-      final BttlScriptData1c s0 = s1.innerStruct_00.deref();
-      s0._00.set(0);
-      s0.addition_02.set(addition);
-      s0._04.set(0);
-      s0._08.set(s2);
-      s0._0c.set(120);
-      s0._14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a20", BttlScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
-      s0._18.set(addToLinkedListTail(s2 * 0xcL));
+      final BttlScriptData1c additionTextStruct = s1.innerStruct_00.deref();
+      additionTextStruct._00.set(0);
+      additionTextStruct.addition_02.set(addition);
+      additionTextStruct._04.set(0);
+      additionTextStruct._08.set(textLength);
+      additionTextStruct._0c.set(120);
+      additionTextStruct._14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a20", BttlScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
+      additionTextStruct._18.set(addToLinkedListTail(textLength * 0xcL));
       _800faa9d.setu(0x1L);
 
       final ShortRef sp0x10 = new ShortRef();
       final ShortRef sp0x12 = new ShortRef();
       FUN_800d3968(sp0x10, sp0x12, 0, addition);
-      long s3_0 = FUN_800d36e0(0, addition);
-      long s1_0 = s0._18.get();
+      long s3_0 = getAdditionTextAddress(0, addition);
+      long s1_0 = additionTextStruct._18.get();
       int s2_0 = -160;
       int sp10 = sp0x10.get();
       final int sp12 = sp0x12.get();
 
       //LAB_800d3f18
-      for(int s4 = 0; s4 < s2; s4++) {
+      for(int s4 = 0; s4 < textLength; s4++) {
         MEMORY.ref(2, s1_0).offset(0x4L).setu(s2_0);
         MEMORY.ref(2, s1_0).offset(0xaL).setu(sp12);
         MEMORY.ref(2, s1_0).offset(0x6L).setu(sp12);
