@@ -270,7 +270,7 @@ public final class Bttl_800c {
   public static final IntRef charCount_800c677c = MEMORY.ref(4, 0x800c677cL, IntRef::new);
   public static final Value _800c6780 = MEMORY.ref(4, 0x800c6780L);
 
-  public static final Value _800c6790 = MEMORY.ref(4, 0x800c6790L);
+  public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
   public static final MATRIX _800c6798 = MEMORY.ref(4, 0x800c6798L, MATRIX::new);
   public static final UnsignedIntRef _800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
