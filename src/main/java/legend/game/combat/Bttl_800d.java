@@ -1129,6 +1129,36 @@ public final class Bttl_800d {
     return 0;
   }
 
+  @Method(0x800d3090L)
+  public static long FUN_800d3090(final RunningScript script) {
+    return 0;
+  }
+
+  @Method(0x800d3098L)
+  public static long FUN_800d3098(final RunningScript script) {
+    return 0;
+  }
+
+  @Method(0x800d30a0L)
+  public static long FUN_800d30a0(final RunningScript script) {
+    return 0;
+  }
+
+  @Method(0x800d30a8L)
+  public static long FUN_800d30a8(final RunningScript script) {
+    return 0;
+  }
+
+  @Method(0x800d30b0L)
+  public static long FUN_800d30b0(final RunningScript script) {
+    return 0;
+  }
+
+  @Method(0x800d30b8L)
+  public static long FUN_800d30b8(final RunningScript script) {
+    return 0;
+  }
+
   @Method(0x800d30c0L)
   public static void FUN_800d30c0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BttlScriptData6cSub34_2 s1 = data._44.derefAs(BttlScriptData6cSub34_2.class);

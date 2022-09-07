@@ -26,6 +26,7 @@ public class WMapStruct258 implements MemoryRef {
   public final UnsignedIntRef _1c; //TODO pointer to a struct
   public final ShortRef _20;
 
+  public final Pointer<UnboundedArrayRef<WMapStruct258Sub60>> _24;
   public final UnsignedIntRef _28;
   /** TODO ptr */
   public final UnsignedIntRef imageData_2c;
@@ -85,6 +86,7 @@ public class WMapStruct258 implements MemoryRef {
     this._1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
 
+    this._24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x60, WMapStruct258Sub60::new)));
     this._28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
     this.imageData_2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
     this.imageData_30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
