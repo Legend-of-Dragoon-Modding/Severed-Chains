@@ -11,13 +11,7 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.types.CString;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.QuadConsumerRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.TriConsumerRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.*;
 import legend.game.Scus94491BpeSegment_800c;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.BattleCamera;
@@ -126,8 +120,8 @@ import static legend.game.combat.Bttl_800c._800c6d94;
 import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800c6dc4;
 import static legend.game.combat.Bttl_800c._800fa76c;
-import static legend.game.combat.Bttl_800c._800fa788;
-import static legend.game.combat.Bttl_800c._800fa7cc;
+import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
+import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
 import static legend.game.combat.Bttl_800c._800faa94;
@@ -1331,7 +1325,7 @@ public final class Bttl_800d {
     //LAB_800d3838
     long chr;
     do {
-      chr = _800fa788.offset(charIdx).get();
+      chr = asciiTable_800fa788.get((int)charIdx).get();
 
       if(additionName.charAt(0) == chr) {
         break;
@@ -1356,19 +1350,19 @@ public final class Bttl_800d {
     //LAB_800d391c
     int charTableOffset;
     for(charTableOffset = 0; ; charTableOffset++) {
-      if(_800fa788.offset(charTableOffset).get() == 0) {
+      if(asciiTable_800fa788.get(charTableOffset).get() == 0) {
         charTableOffset = 0;
         break;
       }
 
-      if(chr == _800fa788.offset(charTableOffset).get()) {
+      if(chr == asciiTable_800fa788.get(charTableOffset).get()) {
         break;
       }
     }
 
     //LAB_800d3944
     //LAB_800d3948
-    return (int)(10 - _800fa7cc.offset(charTableOffset * 0x4L).get());
+    return (int)(10 - charWidthAdjustTable_800fa7cc.get(charTableOffset).get());
   }
 
   @Method(0x800d3968L)

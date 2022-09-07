@@ -475,8 +475,8 @@ public final class Bttl_800c {
   public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
   /** ASCII chars - [0-9][A-Z][a-z]'-& <null> */
-  public static final Value _800fa788 = MEMORY.ref(1, 0x800fa788L);
-  public static final Value _800fa7cc = MEMORY.ref(4, 0x800fa7ccL);
+  public static final ArrayRef<ByteRef> asciiTable_800fa788 = MEMORY.ref(1, 0x800fa788L, ArrayRef.of(ByteRef.class, 0x66, 1, ByteRef::new));
+  public static final ArrayRef<IntRef> charWidthAdjustTable_800fa7cc = MEMORY.ref(4, 0x800fa7ccL, ArrayRef.of(IntRef.class, 0x66, 4, IntRef::new));
 
   public static final Value additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L);
 
