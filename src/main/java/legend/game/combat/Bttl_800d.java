@@ -1324,8 +1324,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d37dcL)
-  public static void renderAdditionNameChar(final short displayX, final short displayY, final short a2, final short addition, final short a4, final byte a5) {
-    final CString additionName = MEMORY.ref(1, getAdditionName(a2, addition).getAddress() + a4, CString.maxLength(30)); //TODO implement string slicing in core
+  public static void renderAdditionNameChar(final short displayX, final short displayY, final short addition, final short charOffset, final byte charAlpha) {
+    final CString additionName = MEMORY.ref(1, getAdditionName(0, addition).getAddress() + charOffset, CString.maxLength(30)); //TODO implement string slicing in core
     long charIdx = 0;
 
     //LAB_800d3838
@@ -1345,7 +1345,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
+    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {charAlpha, charAlpha, charAlpha}, 0x1000L);
   }
 
   /**
@@ -1386,12 +1386,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a20L)
-  public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long a2, final long a3) {
-    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)0, (short)additionStruct.addition_02.get(), (short)a3, (byte)(a2 & 0xffL));
+  public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
+    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)additionStruct.addition_02.get(), (short)charIdx, (byte)(charAlpha));
   }
 
   @Method(0x800d3a64L)
-  public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long a2, final long a3) {
+  public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
     final String sp0x18 = String.valueOf(a0._10.get());
 
     long s4;
@@ -1402,23 +1402,21 @@ public final class Bttl_800d {
     }
 
     //LAB_800d3ab8
-    final long s2 = a2 & 0xffL;
-
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
       long s1 = a1.position_04.get();
 
       //LAB_800d3ad4
       for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (byte)s2);
+        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (byte)charAlpha);
         s1 = s1 + 0x8L;
       }
 
       //LAB_800d3b08
-      FUN_800d3f98((short) s1         , a1.offsetY_06.get(), 0x0dL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x08L), a1.offsetY_06.get(), 0x0eL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x10L), a1.offsetY_06.get(), 0x0fL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x18L), a1.offsetY_06.get(), 0x10L, (short)41, (byte)s2);
+      FUN_800d3f98((short) s1         , a1.offsetY_06.get(), 0x0dL, (short)41, (byte)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x08L), a1.offsetY_06.get(), 0x0eL, (short)41, (byte)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x10L), a1.offsetY_06.get(), 0x0fL, (short)41, (byte)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x18L), a1.offsetY_06.get(), 0x10L, (short)41, (byte)charAlpha);
     }
 
     //LAB_800d3b98
