@@ -19,7 +19,7 @@ public class AdditionScriptData1c implements MemoryRef {
   public final UnsignedByteRef _0c;
 
   public final UnsignedIntRef _10;
-  public final Pointer<QuadConsumerRef<AdditionScriptData1c, Long, Long, Long>> renderer_14;
+  public final Pointer<QuadConsumerRef<AdditionScriptData1c, AdditionCharEffectData0c, Long, Long>> renderer_14;
   public final Pointer<UnboundedArrayRef<AdditionCharEffectData0c>> ptr_18;
 
   public AdditionScriptData1c(final Value ref) {

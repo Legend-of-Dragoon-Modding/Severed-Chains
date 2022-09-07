@@ -1372,7 +1372,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3968L)
-  public static int[] setAdditionTextDisplayCoords(final int a2, final int addition) {
+  public static int[] setAdditionNameDisplayCoords(final int a2, final int addition) {
     final CString additionName = getAdditionName(a2, addition);
 
     int additionDisplayWidth = 0;
@@ -1386,8 +1386,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a20L)
-  public static void renderAdditionNameChar(final AdditionScriptData1c a0, final long a1, final long a2, final long a3) {
-    renderAdditionNameChar((short)MEMORY.ref(2, a1).offset(0x4L).getSigned(), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), (short)0, (short)a0.addition_02.get(), (short)a3, (byte)(a2 & 0xffL));
+  public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long a2, final long a3) {
+    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)0, (short)additionStruct.addition_02.get(), (short)a3, (byte)(a2 & 0xffL));
   }
 
   @Method(0x800d3a64L)
@@ -1453,7 +1453,7 @@ public final class Bttl_800d {
 
         //LAB_800d3c84
         //LAB_800d3c88
-        additionStruct.renderer_14.deref().run(additionStruct, charStruct.getAddress(), 0x80L, (long)charIdx); //TODO adjust signature of callback to take struct
+        additionStruct.renderer_14.deref().run(additionStruct, charStruct, 0x80L, (long)charIdx);
         int currPosition = charStruct.position_04.get();
         int s2 = charStruct.dupes_02.get() * 0x10;
 
@@ -1463,7 +1463,7 @@ public final class Bttl_800d {
           currPosition -= 0xa;
           final int origCharPosition = charStruct.position_04.get();
           charStruct.position_04.set((short)currPosition);
-          additionStruct.renderer_14.deref().run(additionStruct, charStruct.getAddress(), s2 & 0xffL, (long)charIdx); //TODO adjust signature of callback to take struct
+          additionStruct.renderer_14.deref().run(additionStruct, charStruct, s2 & 0xffL, (long)charIdx);
           charStruct.position_04.set((short) origCharPosition);
         }
       }
@@ -1498,32 +1498,32 @@ public final class Bttl_800d {
       }
 
       //LAB_800d3e7c
-      final AdditionScriptData1c additionTextStruct = s1.innerStruct_00.deref();
-      additionTextStruct._00.set(0);
-      additionTextStruct.addition_02.set(addition);
-      additionTextStruct._04.set(0);
-      additionTextStruct.length_08.set(textLength);
-      additionTextStruct._0c.set(120);
-      additionTextStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderAdditionNameChar", AdditionScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
-      additionTextStruct.ptr_18.setPointer(addToLinkedListTail(textLength * 0xcL));
+      final AdditionScriptData1c additionStruct = s1.innerStruct_00.deref();
+      additionStruct._00.set(0);
+      additionStruct.addition_02.set(addition);
+      additionStruct._04.set(0);
+      additionStruct.length_08.set(textLength);
+      additionStruct._0c.set(120);
+      additionStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderAdditionNameChar", AdditionScriptData1c.class, AdditionCharEffectData0c.class, long.class, long.class), QuadConsumerRef::new));
+      additionStruct.ptr_18.setPointer(addToLinkedListTail(textLength * 0xcL));
       _800faa9d.setu(0x1L);
 
-      final int[] displayOffset = setAdditionTextDisplayCoords(0, addition);
-      int charTiming = -160;
+      final int[] displayOffset = setAdditionNameDisplayCoords(0, addition);
+      int charPosition = -160;
       int displayOffsetX = displayOffset[0];
       final int displayOffsetY = displayOffset[1];
 
       //LAB_800d3f18
       for(int charIdx = 0; charIdx < textLength; charIdx++) {
-        final AdditionCharEffectData0c charStruct = additionTextStruct.ptr_18.deref().get(charIdx);
+        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18.deref().get(charIdx);
         charStruct.scrolling_00.set(1);
         charStruct.dupes_02.set((short)8);
-        charStruct.position_04.set((short)charTiming);
+        charStruct.position_04.set((short)charPosition);
         charStruct.offsetY_06.set((short)displayOffsetY);
         charStruct.offsetX_08.set((short)displayOffsetX);
         charStruct.offsetY_0a.set((short)displayOffsetY);
         displayOffsetX += getCharDisplayWidth(additionName.charAt(charIdx));
-        charTiming -= 80;
+        charPosition -= 80;
       }
     }
 
