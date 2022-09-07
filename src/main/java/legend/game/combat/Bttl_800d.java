@@ -1324,18 +1324,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d37dcL)
-  public static void FUN_800d37dc(final short a0, final short a1, final short a2, final short addition, final short a4, final byte a5) {
+  public static void renderAdditionNameChar(final short displayX, final short displayY, final short a2, final short addition, final short a4, final byte a5) {
     final CString additionName = MEMORY.ref(1, getAdditionName(a2, addition).getAddress() + a4, CString.maxLength(30)); //TODO implement string slicing in core
     long charIdx = 0;
 
     //LAB_800d3838
-    long v1;
+    long chr;
     do {
-      v1 = _800fa788.offset(charIdx).get();
+      chr = _800fa788.offset(charIdx).get();
 
-      if(additionName.charAt(0) == v1) {
+      if(additionName.charAt(0) == chr) {
         break;
-      } else if(v1 == 0) {
+      } else if(chr == 0) {
         //LAB_800d3860
         charIdx = 0x5bL;
         break;
@@ -1345,7 +1345,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(a0, a1, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
+    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
   }
 
   /**
@@ -1386,8 +1386,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a20L)
-  public static void FUN_800d3a20(final AdditionScriptData1c a0, final long a1, final long a2, final long a3) {
-    FUN_800d37dc((short)MEMORY.ref(2, a1).offset(0x4L).getSigned(), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), (short)0, (short)a0.addition_02.get(), (short)a3, (byte)(a2 & 0xffL));
+  public static void renderAdditionNameChar(final AdditionScriptData1c a0, final long a1, final long a2, final long a3) {
+    renderAdditionNameChar((short)MEMORY.ref(2, a1).offset(0x4L).getSigned(), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), (short)0, (short)a0.addition_02.get(), (short)a3, (byte)(a2 & 0xffL));
   }
 
   @Method(0x800d3a64L)
@@ -1458,13 +1458,13 @@ public final class Bttl_800d {
         int s2 = charStruct.dupes_02.get() * 0x10;
 
         //LAB_800d3cbc
-        for(int s3 = 0; s3 < charStruct.dupes_02.get() - 1; s3++) {
+        for(int dupeNum = 0; dupeNum < charStruct.dupes_02.get() - 1; dupeNum++) {
           s2 -= 0x10;
           currPosition -= 0xa;
-          final int s0 = charStruct.position_04.get();
+          final int origCharPosition = charStruct.position_04.get();
           charStruct.position_04.set((short)currPosition);
           additionStruct.renderer_14.deref().run(additionStruct, charStruct.getAddress(), s2 & 0xffL, (long)charIdx); //TODO adjust signature of callback to take struct
-          charStruct.position_04.set((short)s0);
+          charStruct.position_04.set((short) origCharPosition);
         }
       }
     }
