@@ -19,7 +19,7 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.Scus94491BpeSegment_800c;
-import legend.game.combat.types.AdditionScriptData1cSub0c;
+import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -1296,6 +1296,7 @@ public final class Bttl_800d {
     currentAddition_800c6790.setPointer(additionNames_800fa8d4.getAddress());
 
     //LAB_800d3708
+    //a0 always seems to be 0
     for(int i = 0; i < a0; i++) {
       //LAB_800d3724
       while(currentAddition_800c6790.deref().charAt(0) != 0x2fL) {
@@ -1325,33 +1326,33 @@ public final class Bttl_800d {
   @Method(0x800d37dcL)
   public static void FUN_800d37dc(final short a0, final short a1, final short a2, final short addition, final short a4, final byte a5) {
     final CString additionName = MEMORY.ref(1, getAdditionName(a2, addition).getAddress() + a4, CString.maxLength(30)); //TODO implement string slicing in core
-    long char_idx = 0;
+    long charIdx = 0;
 
     //LAB_800d3838
     long v1;
     do {
-      v1 = _800fa788.offset(char_idx).get();
+      v1 = _800fa788.offset(charIdx).get();
 
       if(additionName.charAt(0) == v1) {
         break;
       } else if(v1 == 0) {
         //LAB_800d3860
-        char_idx = 0x5bL;
+        charIdx = 0x5bL;
         break;
       }
 
-      char_idx++;
+      charIdx++;
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(a0, a1, char_idx % 21 * 12 & 0xfcL, char_idx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
+    FUN_80018d60(a0, a1, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {a5, a5, a5}, 0x1000L);
   }
 
   /**
    * NOTE: changed param from reference to value
    */
   @Method(0x800d3910L)
-  public static int FUN_800d3910(final long chr) {
+  public static int getCharDisplayWidth(final long chr) {
     //LAB_800d391c
     int charTableOffset;
     for(charTableOffset = 0; ; charTableOffset++) {
@@ -1371,18 +1372,17 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3968L)
-  public static void FUN_800d3968(final ShortRef a0, final ShortRef a1, final int a2, final int addition) {
+  public static int[] setAdditionTextDisplayCoords(final int a2, final int addition) {
     final CString additionName = getAdditionName(a2, addition);
 
-    int s1 = 0;
+    int additionDisplayWidth = 0;
     //LAB_800d39b8
     for(int i = 0; additionName.charAt(i) != 0; i++) {
-      s1 += FUN_800d3910(additionName.charAt(i));
+      additionDisplayWidth += getCharDisplayWidth(additionName.charAt(i));
     }
 
     //LAB_800d39ec
-    a0.set((short)(144 - s1));
-    a1.set((short)64);
+    return new int[] {144 - additionDisplayWidth, 64};
   }
 
   @Method(0x800d3a20L)
@@ -1426,45 +1426,45 @@ public final class Bttl_800d {
 
   @Method(0x800d3bb8L)
   public static void FUN_800d3bb8(final int index, final ScriptState<AdditionScriptData1c> state, final AdditionScriptData1c data) {
-    final AdditionScriptData1c s5 = state.innerStruct_00.deref();
-    s5._04.incr();
+    final AdditionScriptData1c additionStruct = state.innerStruct_00.deref();
+    additionStruct._04.incr();
 
     if(_800faa9d.get() == 0) {
       deallocateScriptAndChildren(index);
     } else {
       //LAB_800d3c10
       //LAB_800d3c24
-      for(int s7 = 0; s7 < s5._08.get(); s7++) {
-        final AdditionScriptData1cSub0c s6 = s5.ptr_18.deref().get(s7);
+      for(int charIdx = 0; charIdx < additionStruct.length_08.get(); charIdx++) {
+        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18.deref().get(charIdx);
 
-        if(s6._00.get() != 0) {
-          s6._04.add((short)s5._0c.get());
+        if(charStruct.scrolling_00.get() != 0) {
+          charStruct.position_04.add((short)additionStruct._0c.get());
 
-          if(s6._04.get() >= s6._08.get()) {
-            s6._04.set(s6._08.get());
-            s6._00.set(0);
+          if(charStruct.position_04.get() >= charStruct.offsetX_08.get()) {
+            charStruct.position_04.set(charStruct.offsetX_08.get());
+            charStruct.scrolling_00.set(0);
           }
         } else {
           //LAB_800d3c70
-          if(s6._02.get() > 0) {
-            s6._02.decr();
+          if(charStruct.dupes_02.get() > 0) {
+            charStruct.dupes_02.decr();
           }
         }
 
         //LAB_800d3c84
         //LAB_800d3c88
-        s5.renderer_14.deref().run(s5, s6.getAddress(), 0x80L, (long)s7); //TODO adjust signature of callback to take struct
-        int s4 = s6._04.get();
-        int s2 = s6._02.get() * 0x10;
+        additionStruct.renderer_14.deref().run(additionStruct, charStruct.getAddress(), 0x80L, (long)charIdx); //TODO adjust signature of callback to take struct
+        int currPosition = charStruct.position_04.get();
+        int s2 = charStruct.dupes_02.get() * 0x10;
 
         //LAB_800d3cbc
-        for(int s3 = 0; s3 < s6._02.get() - 1; s3++) {
+        for(int s3 = 0; s3 < charStruct.dupes_02.get() - 1; s3++) {
           s2 -= 0x10;
-          s4 -= 0xa;
-          final int s0 = s6._04.get();
-          s6._04.set((short)s4);
-          s5.renderer_14.deref().run(s5, s6.getAddress(), s2 & 0xffL, (long)s7); //TODO adjust signature of callback to take struct
-          s6._04.set((short)s0);
+          currPosition -= 0xa;
+          final int s0 = charStruct.position_04.get();
+          charStruct.position_04.set((short)currPosition);
+          additionStruct.renderer_14.deref().run(additionStruct, charStruct.getAddress(), s2 & 0xffL, (long)charIdx); //TODO adjust signature of callback to take struct
+          charStruct.position_04.set((short)s0);
         }
       }
     }
@@ -1502,30 +1502,28 @@ public final class Bttl_800d {
       additionTextStruct._00.set(0);
       additionTextStruct.addition_02.set(addition);
       additionTextStruct._04.set(0);
-      additionTextStruct._08.set(textLength);
+      additionTextStruct.length_08.set(textLength);
       additionTextStruct._0c.set(120);
       additionTextStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a20", AdditionScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
       additionTextStruct.ptr_18.setPointer(addToLinkedListTail(textLength * 0xcL));
       _800faa9d.setu(0x1L);
 
-      final ShortRef sp0x10 = new ShortRef();
-      final ShortRef sp0x12 = new ShortRef();
-      FUN_800d3968(sp0x10, sp0x12, 0, addition);
-      int s2_0 = -160;
-      int sp10 = sp0x10.get();
-      final int sp12 = sp0x12.get();
+      final int[] displayOffset = setAdditionTextDisplayCoords(0, addition);
+      int charTiming = -160;
+      int displayOffsetX = displayOffset[0];
+      final int displayOffsetY = displayOffset[1];
 
       //LAB_800d3f18
-      for(int s4 = 0; s4 < textLength; s4++) {
-        final AdditionScriptData1cSub0c struct = additionTextStruct.ptr_18.deref().get(s4);
-        struct._00.set(1);
-        struct._02.set((short)8);
-        struct._04.set((short)s2_0);
-        struct._06.set((short)sp12);
-        struct._08.set((short)sp10);
-        struct._0a.set((short)sp12);
-        sp10 += FUN_800d3910(additionName.charAt(s4));
-        s2_0 -= 80;
+      for(int charIdx = 0; charIdx < textLength; charIdx++) {
+        final AdditionCharEffectData0c charStruct = additionTextStruct.ptr_18.deref().get(charIdx);
+        charStruct.scrolling_00.set(1);
+        charStruct.dupes_02.set((short)8);
+        charStruct.position_04.set((short)charTiming);
+        charStruct.offsetY_06.set((short)displayOffsetY);
+        charStruct.offsetX_08.set((short)displayOffsetX);
+        charStruct.offsetY_0a.set((short)displayOffsetY);
+        displayOffsetX += getCharDisplayWidth(additionName.charAt(charIdx));
+        charTiming -= 80;
       }
     }
 
@@ -1741,15 +1739,15 @@ public final class Bttl_800d {
       s0._00.set(0);
       s0.addition_02.set(0);
       s0._04.set(0);
-      s0._08.set(0x1L);
+      s0.length_08.set(0x1L);
       s0._10.set(s2);
       final var struct = s0.ptr_18.deref().get(0);
-      struct._00.set(1);
-      struct._02.set((short)8);
-      struct._04.set((short)-0xa0);
-      struct._06.set((short)0x60);
-      struct._08.set((short)(0x90 - (String.valueOf(s2).length() + 4) * 8));
-      struct._0a.set((short)0x60);
+      struct.scrolling_00.set(1);
+      struct.dupes_02.set((short)8);
+      struct.position_04.set((short)-0xa0);
+      struct.offsetY_06.set((short)0x60);
+      struct.offsetX_08.set((short)(0x90 - (String.valueOf(s2).length() + 4) * 8));
+      struct.offsetY_0a.set((short)0x60);
     } else {
       //LAB_800d46b0
       _800faa9c.setu(0);

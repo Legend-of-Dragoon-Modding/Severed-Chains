@@ -15,12 +15,12 @@ public class AdditionScriptData1c implements MemoryRef {
   public final UnsignedShortRef _00;
   public final UnsignedShortRef addition_02;
   public final UnsignedIntRef _04;
-  public final UnsignedIntRef _08;
+  public final UnsignedIntRef length_08;
   public final UnsignedByteRef _0c;
 
   public final UnsignedIntRef _10;
   public final Pointer<QuadConsumerRef<AdditionScriptData1c, Long, Long, Long>> renderer_14;
-  public final Pointer<UnboundedArrayRef<AdditionScriptData1cSub0c>> ptr_18;
+  public final Pointer<UnboundedArrayRef<AdditionCharEffectData0c>> ptr_18;
 
   public AdditionScriptData1c(final Value ref) {
     this.ref = ref;
@@ -28,12 +28,12 @@ public class AdditionScriptData1c implements MemoryRef {
     this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this.addition_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
+    this.length_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this._0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
 
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this.renderer_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, QuadConsumerRef::new));
-    this.ptr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, AdditionScriptData1cSub0c::new)));
+    this.ptr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, AdditionCharEffectData0c::new)));
   }
 
   @Override
