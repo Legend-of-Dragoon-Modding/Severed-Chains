@@ -1283,7 +1283,7 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_800323b4
-      SyncCode syncCode = cdromDataEndSyncCode_80053222.get();
+      final SyncCode syncCode = cdromDataEndSyncCode_80053222.get();
       if(syncCode != SyncCode.NO_INTERRUPT) {
         cdromDataEndSyncCode_80053222.set(SyncCode.NO_INTERRUPT);
 
@@ -5372,10 +5372,28 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
+  @Method(0x8003b4f0L)
+  public static void setGp0_20(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x20L);
+  }
+
+  @Method(0x8003b510L)
+  public static void setGp0_24(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x7L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x24L);
+  }
+
   @Method(0x8003b530L)
   public static void setGp0_30(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x6L);
     MEMORY.ref(1, a0).offset(0x7L).setu(0x30L);
+  }
+
+  @Method(0x8003b550L)
+  public static void setGp0_34(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x9L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x34L);
   }
 
   @Method(0x8003b570L)
@@ -5396,16 +5414,77 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.ref(1, a0).offset(0x7L).setu(0x38L);
   }
 
+  @Method(0x8003b5d0L)
+  public static void setGp0_3c(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0xcL);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x3cL);
+  }
+
+  @Method(0x8003b5f0L)
+  public static void setGp0_74(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x74L);
+  }
+
+  @Method(0x8003b610L)
+  public static void setGp0_7c(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x7cL);
+  }
+
   @Method(0x8003b630L)
   public static void setGp0_64(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
     MEMORY.ref(1, a0).offset(0x7L).setu(0x64L);
   }
 
+  @Method(0x8003b650L)
+  public static void setGp0_60(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x60L);
+  }
+
+  @Method(0x8003b670L)
+  public static void setGp0_40(final long a0) {
+    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
+    MEMORY.ref(1, a0).offset(0x7L).setu(0x40L);
+  }
+
   @Method(0x8003b690L)
   public static void setGp0_50(final long a0) {
     MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
     MEMORY.ref(1, a0).offset(0x7L).setu(0x50L);
+  }
+
+  @Method(0x8003b6b0L)
+  public static void setGp0_48(final long a0) {
+    MEMORY.ref(1, a0).offset(0x03L).setu(0x5L);
+    MEMORY.ref(1, a0).offset(0x07L).setu(0x48L);
+    MEMORY.ref(4, a0).offset(0x14L).setu(0x5555_5555L);
+  }
+
+  @Method(0x8003b6d0L)
+  public static void setGp0_58(final long a0) {
+    MEMORY.ref(1, a0).offset(0x03L).setu(0x7L);
+    MEMORY.ref(1, a0).offset(0x07L).setu(0x58L);
+    MEMORY.ref(1, a0).offset(0x17L).setu(0x0L);
+    MEMORY.ref(4, a0).offset(0x1cL).setu(0x5555_5555L);
+  }
+
+  @Method(0x8003b700L)
+  public static void setGp0_4c(final long a0) {
+    MEMORY.ref(1, a0).offset(0x03L).setu(0x6L);
+    MEMORY.ref(1, a0).offset(0x07L).setu(0x4cL);
+    MEMORY.ref(4, a0).offset(0x18L).setu(0x5555_5555L);
+  }
+
+  @Method(0x8003b720L)
+  public static void setGp0_5c(final long a0) {
+    MEMORY.ref(1, a0).offset(0x03L).setu(0x9L);
+    MEMORY.ref(1, a0).offset(0x07L).setu(0x5cL);
+    MEMORY.ref(1, a0).offset(0x17L).setu(0x0L);
+    MEMORY.ref(1, a0).offset(0x1fL).setu(0x0L);
+    MEMORY.ref(4, a0).offset(0x24L).setu(0x5555_5555L);
   }
 
   @Method(0x8003b750L)
@@ -6185,10 +6264,10 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003cfb0L)
   public static long GsSetRefView2(final GsRVIEW2 struct) {
-    long s0;
-    long s1;
-    long s2;
-    long a1;
+    final long s0;
+    final long s1;
+    final long s2;
+    final long a1;
     long a2;
     long v0;
 
@@ -6603,7 +6682,7 @@ public final class Scus94491BpeSegment_8003 {
     long v1;
     long a0;
     long a1;
-    long a3;
+    final long a3;
     long s0;
     long s1;
     long s3;
@@ -6772,7 +6851,7 @@ public final class Scus94491BpeSegment_8003 {
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
   @Method(0x8003e5d0L)
-  public static void updateTmdPacketIlen(UnboundedArrayRef<TmdObjTable> objTables, final GsDOBJ2 dobj2, final int objIndex) {
+  public static void updateTmdPacketIlen(final UnboundedArrayRef<TmdObjTable> objTables, final GsDOBJ2 dobj2, final int objIndex) {
     long bytesSinceModeOrFlagChange = 0;
     long mode = 0;
     long flag = 0;
@@ -6785,8 +6864,8 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003e638
     for(int primitiveIndex = 0; primitiveIndex < objTable.n_primitive_14.get(); primitiveIndex++) {
-      long previousMode = mode;
-      long previousFlag = flag;
+      final long previousMode = mode;
+      final long previousFlag = flag;
 
       // Primitive: mode, flag, ilen, olen
       final long primitive = objTable.primitives_10.deref().get(packetIndex / 4).get();
@@ -6887,7 +6966,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?
-  public static long FUN_8003e760(long a0) {
+  public static long FUN_8003e760(final long a0) {
     final long[] sp0x04 = new long[7];
     final long[] sp0x24 = new long[7];
     sp0x04[0] = a0 + 0x5d_50adL;
@@ -6996,10 +7075,21 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(0, 25);
   }
 
+  @Method(0x8003ea80L)
+  public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
+    final Ref<Long> t0Ref = new Ref<>((long)a0.getX());
+    final Ref<Long> t1Ref = new Ref<>((long)a0.getY());
+    final Ref<Long> t2Ref = new Ref<>((long)a0.getZ());
+    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    a1.setX(t0Ref.get().intValue());
+    a1.setY(t1Ref.get().intValue());
+    a1.setZ(t2Ref.get().intValue());
+  }
+
   @Method(0x8003eae0L)
   public static void FUN_8003eae0(final Ref<Long> t0, final Ref<Long> t1, final Ref<Long> t2) {
-    long v0;
-    long v1;
+    final long v0;
+    final long v1;
     long t3;
     long t4;
     long t5;
@@ -7041,18 +7131,18 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003eba0L)
   public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    long v0;
-    long v1;
-    long a2;
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t7;
-    long t8;
-    long t9;
+    final long v0;
+    final long v1;
+    final long a2;
+    final long t0;
+    final long t1;
+    final long t2;
+    final long t3;
+    final long t4;
+    final long t5;
+    final long t7;
+    final long t8;
+    final long t9;
     t0 = a0.get(0);
     t1 = a0.get(1);
     t2 = a0.get(2);
@@ -7300,12 +7390,12 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f210L)
   public static MATRIX FUN_8003f210(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
+    final long t0;
+    final long t1;
+    final long t2;
+    final long t3;
+    final long t4;
+    final long t5;
     CPU.CTC2(a0.getPacked(0), 0);
     CPU.CTC2(a0.getPacked(2), 1);
     CPU.CTC2(a0.getPacked(4), 2);
