@@ -1391,7 +1391,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a64L)
-  public static void FUN_800d3a64(final AdditionScriptData1c a0, final long a1, final long a2, final long a3) {
+  public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long a2, final long a3) {
     final String sp0x18 = String.valueOf(a0._10.get());
 
     long s4;
@@ -1406,19 +1406,19 @@ public final class Bttl_800d {
 
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
-      long s1 = MEMORY.ref(2, a1).offset(0x4L).get();
+      long s1 = a1.position_04.get();
 
       //LAB_800d3ad4
       for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98((short)s1, (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), sp0x18.charAt(i) - 0x30, (short)41, (byte)s2);
+        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (byte)s2);
         s1 = s1 + 0x8L;
       }
 
       //LAB_800d3b08
-      FUN_800d3f98((short) s1         , (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), 0x0dL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x08L), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), 0x0eL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x10L), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), 0x0fL, (short)41, (byte)s2);
-      FUN_800d3f98((short)(s1 + 0x18L), (short)MEMORY.ref(2, a1).offset(0x6L).getSigned(), 0x10L, (short)41, (byte)s2);
+      FUN_800d3f98((short) s1         , a1.offsetY_06.get(), 0x0dL, (short)41, (byte)s2);
+      FUN_800d3f98((short)(s1 + 0x08L), a1.offsetY_06.get(), 0x0eL, (short)41, (byte)s2);
+      FUN_800d3f98((short)(s1 + 0x10L), a1.offsetY_06.get(), 0x0fL, (short)41, (byte)s2);
+      FUN_800d3f98((short)(s1 + 0x18L), a1.offsetY_06.get(), 0x10L, (short)41, (byte)s2);
     }
 
     //LAB_800d3b98
@@ -1735,7 +1735,7 @@ public final class Bttl_800d {
       s0.ptr_18.setPointer(addToLinkedListTail(0xcL));
       _800faa9c.setu(0x1L);
       s0._0c.set(40);
-      s0.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a64", AdditionScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
+      s0.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a64", AdditionScriptData1c.class, AdditionCharEffectData0c.class, long.class, long.class), QuadConsumerRef::new));
       s0._00.set(0);
       s0.addition_02.set(0);
       s0._04.set(0);
