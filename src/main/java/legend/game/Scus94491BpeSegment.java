@@ -320,8 +320,12 @@ import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ADD;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_SUBTRACT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
@@ -556,9 +560,13 @@ public final class Scus94491BpeSegment {
 
   public static boolean OLD_RENDERER;
 
+  private static int fpsLimit = 30;
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    Hardware.GPU.events().onKeyPress((window, key, scancode, mods) -> {
+    GPU.window().setFpsLimit(fpsLimit);
+
+    GPU.events().onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL) != 0) {
         dumping = true;
       }
@@ -570,6 +578,18 @@ public final class Scus94491BpeSegment {
       if(key == GLFW_KEY_R && (mods & GLFW_MOD_CONTROL) != 0) {
         OLD_RENDERER = !OLD_RENDERER;
         LOGGER.info("Old renderer: %b", OLD_RENDERER);
+      }
+
+      if((key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) && fpsLimit > 5) {
+        fpsLimit -= 5;
+        GPU.window().setFpsLimit(fpsLimit);
+        LOGGER.info("FPS limit set to %d", fpsLimit);
+      }
+
+      if(key == GLFW_KEY_EQUAL || key == GLFW_KEY_KP_ADD) {
+        fpsLimit += 5;
+        GPU.window().setFpsLimit(fpsLimit);
+        LOGGER.info("FPS limit set to %d", fpsLimit);
       }
 
       if(key == GLFW_KEY_F12) {
