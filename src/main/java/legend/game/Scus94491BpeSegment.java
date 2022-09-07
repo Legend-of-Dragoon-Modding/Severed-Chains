@@ -5051,9 +5051,10 @@ public final class Scus94491BpeSegment {
     insertElementIntoLinkedList(MEMORY.ref(4, v0).offset(0x3d0L).get() + 0x8L, s0);
   }
 
+  /**Some kind of intermediate rect render method**/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final byte[] a8, final long a9) {
-    FUN_80018a5c((short)a0, (short)a1, a2 & 0xffL, a3 & 0xffL, a2 + a4 & 0xffL, a5 + a3 & 0xffL, (short)a6, a7, a8, (short)a9, (short)a9);
+  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, final long a7, final byte[] a8, final long a9) {
+    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xffL, originV & 0xffL, originU + width & 0xffL, originV + height & 0xffL, (short)a6, a7, a8, (short)a9, (short)a9);
   }
 
   @Method(0x80018decL)
