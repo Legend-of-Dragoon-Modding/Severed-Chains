@@ -1504,7 +1504,7 @@ public final class Bttl_800d {
       additionTextStruct._04.set(0);
       additionTextStruct.length_08.set(textLength);
       additionTextStruct._0c.set(120);
-      additionTextStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a20", AdditionScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
+      additionTextStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderAdditionNameChar", AdditionScriptData1c.class, long.class, long.class, long.class), QuadConsumerRef::new));
       additionTextStruct.ptr_18.setPointer(addToLinkedListTail(textLength * 0xcL));
       _800faa9d.setu(0x1L);
 
