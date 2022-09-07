@@ -2214,39 +2214,42 @@ public class WMap {
       return;
     }
 
+    final WMapStruct19c0 struct = _800c66b0.deref();
+
     //LAB_800d3014
-    if(_800c66b0.deref().mapRotationStep_7c.get() == 0) {
-      _800c66b0.deref().mapRotating_80.set(0);
+    if(struct.mapRotationStep_7c.get() == 0) {
+      struct.mapRotating_80.set(0);
     }
 
     //LAB_800d3040
-    if(_800c66b0.deref()._110.get() == 0) {
+    if(struct._110.get() == 0) {
       if(struct258_800c66a8.deref().zoomState_1f8.get() == 0) {
-        if(_800c66b0.deref()._c4.get() == 0) {
+        if(struct._c4.get() == 0) {
           if(_800c6798.get() != 0x7L) {
-            final long mapRotating = _800c66b0.deref().mapRotating_80.get();
+            final long mapRotating = struct.mapRotating_80.get();
+
             if(mapRotating == 0) {
               //LAB_800d30d8
               if((joypadPress_8007a398.get() & 0x8L) != 0) { // R2
                 startMapRotation(1);
-                _800c66b0.deref().mapRotating_80.set(1);
+                struct.mapRotating_80.set(1);
               }
 
               //LAB_800d310c
               if((joypadPress_8007a398.get() & 0x4L) != 0) { // L2
                 startMapRotation(-1);
-                _800c66b0.deref().mapRotating_80.set(1);
+                struct.mapRotating_80.set(1);
               }
 
               //LAB_800d3140
             } else if(mapRotating == 1) {
               //LAB_800d3148
-              _800c66b0.deref().mapRotation_70.y.add(_800c66b0.deref().mapRotationStep_7c);
-              _800c66b0.deref().mapRotationCounter_7e.incr();
+              struct.mapRotation_70.y.add(struct.mapRotationStep_7c);
+              struct.mapRotationCounter_7e.incr();
 
-              if(_800c66b0.deref().mapRotationCounter_7e.get() > 5) {
-                _800c66b0.deref().mapRotating_80.set(0);
-                _800c66b0.deref().mapRotation_70.setY(_800c66b0.deref().mapRotationEndAngle_7a.get());
+              if(struct.mapRotationCounter_7e.get() > 5) {
+                struct.mapRotation_70.setY(struct.mapRotationEndAngle_7a.get());
+                struct.mapRotating_80.set(0);
               }
             }
           }
@@ -3270,18 +3273,19 @@ public class WMap {
 
   @Method(0x800d4ed8L)
   public static void startMapRotation(final int direction) {
-    _800c66b0.deref().mapRotationCounter_7e.set((short)0);
-    _800c66b0.deref().mapRotationStartAngle_78.set(_800c66b0.deref().mapRotation_70.getY());
-    _800c66b0.deref().mapRotationEndAngle_7a.set((short)(_800c66b0.deref().mapRotation_70.getY() + direction * 512));
-    int sp10 = direction * 512;
-    final int sp14 = direction * 512 + 4096;
+    final WMapStruct19c0 struct = _800c66b0.deref();
+    struct.mapRotationCounter_7e.set((short)0);
+    struct.mapRotationStartAngle_78.set(struct.mapRotation_70.getY());
+    struct.mapRotationEndAngle_7a.set((short)(struct.mapRotation_70.getY() + direction * 0x200));
+    int sp10 = -direction * 0x200;
+    final int sp14 = sp10 + 0x1000;
 
     if(Math.abs(sp14) < Math.abs(sp10)) {
       sp10 = sp14;
     }
 
     //LAB_800d4fd0
-    _800c66b0.deref().mapRotationStep_7c.set((short)(-sp10 / 6));
+    struct.mapRotationStep_7c.set((short)(-sp10 / 6));
   }
 
   @Method(0x800d5018L)
