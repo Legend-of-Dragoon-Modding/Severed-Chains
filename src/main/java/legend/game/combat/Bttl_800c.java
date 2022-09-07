@@ -478,7 +478,7 @@ public final class Bttl_800c {
   public static final ArrayRef<ByteRef> asciiTable_800fa788 = MEMORY.ref(1, 0x800fa788L, ArrayRef.of(ByteRef.class, 0x66, 1, ByteRef::new));
   public static final ArrayRef<IntRef> charWidthAdjustTable_800fa7cc = MEMORY.ref(4, 0x800fa7ccL, ArrayRef.of(IntRef.class, 0x66, 4, IntRef::new));
 
-  public static final Value additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L);
+  public static final CString additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L, CString.maxLength(0x1bb));
 
   public static final Value _800faa90 = MEMORY.ref(2, 0x800faa90L);
   public static final Value _800faa92 = MEMORY.ref(2, 0x800faa92L);

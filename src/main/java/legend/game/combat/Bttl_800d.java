@@ -1287,7 +1287,7 @@ public final class Bttl_800d {
 
   @Method(0x800d36e0L)
   public static CString getAdditionName(final int a0, final int addition) {
-    currentAddition_800c6790.setPointer(additionNames_800fa8d4.getAddress());
+    currentAddition_800c6790.set(additionNames_800fa8d4);
 
     //LAB_800d3708
     //a0 always seems to be 0
@@ -1456,7 +1456,7 @@ public final class Bttl_800d {
           final int origCharPosition = charStruct.position_04.get();
           charStruct.position_04.set((short)currPosition);
           additionStruct.renderer_14.deref().run(additionStruct, charStruct, s2 & 0xffL, (long)charIdx);
-          charStruct.position_04.set((short) origCharPosition);
+          charStruct.position_04.set((short)origCharPosition);
         }
       }
     }

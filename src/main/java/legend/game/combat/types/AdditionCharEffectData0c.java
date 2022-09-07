@@ -8,13 +8,23 @@ import legend.core.memory.types.UnsignedByteRef;
 public class AdditionCharEffectData0c implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedByteRef scrolling_00; /**1 when character is scrolling, 0 when set**/
+  /** 1 when character is scrolling, 0 when set **/
+  public final UnsignedByteRef scrolling_00;
 
-  public final ShortRef dupes_02; /**Number of dupe characters to render to create motion blur effect**/
-  public final ShortRef position_04; /**Character print timing, stored as a negative int**/
-  public final ShortRef offsetY_06; /**Offset from base y-coordinate**/
-  public final ShortRef offsetX_08; /**Offset from base x-coordinate**/
-  public final ShortRef offsetY_0a; /**Offset from base y-coordinate (seems to be dupe)**/
+  /** Number of dupe characters to render to create motion blur effect **/
+  public final ShortRef dupes_02;
+
+  /** Character print timing, stored as a negative int **/
+  public final ShortRef position_04;
+
+  /** Offset from base y-coordinate**/
+  public final ShortRef offsetY_06;
+
+  /** Offset from base x-coordinate **/
+  public final ShortRef offsetX_08;
+
+  /** Offset from base y-coordinate (seems to be dupe) **/
+  public final ShortRef offsetY_0a;
 
   public AdditionCharEffectData0c(final Value ref) {
     this.ref = ref;
