@@ -7715,18 +7715,21 @@ public final class SEffe {
         //LAB_80116790
         final ScriptState<EffectManagerData6c> state = scriptStatePtrArr_800bc1c0.get(a2).derefAs(ScriptState.classFor(EffectManagerData6c.class));
         final EffectManagerData6c manager2 = state.innerStruct_00.deref();
-        manager2._10.vec_04.set(sp0x10.transfer);
-        FUN_800de618(manager2._10.svec_10, manager2._10.svec_16, sp0x10);
+        manager._10.vec_04.set(sp0x10.transfer);
+        FUN_800de618(manager._10.svec_10, manager._10.svec_16, sp0x10);
 
         final int oldScriptIndex = manager2.scriptIndex_0c.get();
         final int oldCoord2Index = manager2.coord2Index_0d.get();
-        manager2.scriptIndex_0c.set(manager2.scriptIndex_0e.get());
+        manager2.scriptIndex_0c.set(manager.scriptIndex_0e.get());
         manager2.coord2Index_0d.set(-1);
 
         final SVECTOR sp0x40 = new SVECTOR().set(manager2._10.svec_1c);
-        manager2._10.svec_1c.setX((short)(manager2._10.svec_1c.getX() * manager2._10.svec_1c.getX() / 0x80));
-        manager2._10.svec_1c.setY((short)(manager2._10.svec_1c.getY() * manager2._10.svec_1c.getX() / 0x80));
-        manager2._10.svec_1c.setZ((short)(manager2._10.svec_1c.getZ() * manager2._10.svec_1c.getX() / 0x80));
+
+        // I... think these are right...? Seems very weird
+        manager2._10.svec_1c.setX((short)(manager._10.svec_1c.getX() * manager2._10.svec_1c.getX() / 0x80));
+        manager2._10.svec_1c.setY((short)(manager._10.svec_1c.getX() * manager2._10.svec_1c.getX() / 0x80));
+        manager2._10.svec_1c.setZ((short)(manager._10.svec_1c.getX() * manager2._10.svec_1c.getX() / 0x80));
+
         state.callback_08.deref().run(a2, state, manager2);
         manager2._10.svec_1c.set(sp0x40);
 
