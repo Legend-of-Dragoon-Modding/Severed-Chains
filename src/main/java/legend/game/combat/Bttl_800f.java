@@ -19,6 +19,7 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
 import legend.game.types.SpellStats0c;
 
+import static java.lang.Math.round;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
@@ -943,7 +944,7 @@ public final class Bttl_800f {
     } else if(attacker.additionHits_56.get() > 0) {
       //LAB_800f2b94
       int s1 = 0;
-      for(int i = 0; i < ((attacker.additionHits_56.get() - 1) & 7) + 1; i++) {
+      for(int i = 0; i < ((attacker.additionHits_56.get() - 1)) + 1; i++) {
         s1 = s1 + FUN_800c7488(attacker.charSlot_276.get(), i, 0x4L);
       }
 
@@ -969,7 +970,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2ccc
-    return (attacker.level_04.get() + 5) * attack * 5 / defence;
+    return round((attacker.level_04.get() + 5) * attack * 5 / (float)defence);
   }
 
   @Method(0x800f2d48L)
