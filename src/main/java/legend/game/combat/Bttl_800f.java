@@ -61,7 +61,7 @@ import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Bttl_800c.FUN_800c7488;
+import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
@@ -555,7 +555,7 @@ public final class Bttl_800f {
     final BattleObject27c s0 = a1.innerStruct_00.derefAs(BattleObject27c.class);
     final int element;
     if((a1.ui_60.get() & 0x4L) == 0) {
-      s2 = FUN_800f2af4(scriptIndex1, scriptIndex2);
+      s2 = calculateAdditionDamage(scriptIndex1, scriptIndex2);
       element = s0.elementFlag_1c.get();
     } else {
       //LAB_800f1e5c
@@ -771,7 +771,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f257c
-    if(damage < 0) {
+    if(damage <= 0) {
       damage = 1;
     }
 
@@ -927,7 +927,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f2af4L)
-  public static int FUN_800f2af4(final int attackerBobjIndex, final int defenderBobjIndex) {
+  public static int calculateAdditionDamage(final int attackerBobjIndex, final int defenderBobjIndex) {
     final ScriptState<BattleObject27c> attackerState = scriptStatePtrArr_800bc1c0.get(attackerBobjIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
     final ScriptState<BattleObject27c> defenderState = scriptStatePtrArr_800bc1c0.get(defenderBobjIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
 
@@ -943,9 +943,9 @@ public final class Bttl_800f {
       }
     } else if(attacker.additionHits_56.get() > 0) {
       //LAB_800f2b94
-      int s1 = 0;
+      int additionMultiplier = 0;
       for(int i = 0; i < ((attacker.additionHits_56.get() - 1)) + 1; i++) {
-        s1 = s1 + FUN_800c7488(attacker.charSlot_276.get(), i, 0x4L);
+        additionMultiplier = additionMultiplier + getHitMultiplier(attacker.charSlot_276.get(), i, 0x4L);
       }
 
       //LAB_800f2bb4
@@ -958,8 +958,8 @@ public final class Bttl_800f {
       }
 
       //LAB_800f2bfc
-      s1 = s1 * damageMultiplier / 100;
-      attack = attack * s1 / 100;
+      additionMultiplier = additionMultiplier * damageMultiplier / 100;
+      attack = attack * additionMultiplier / 100;
     }
 
     //LAB_800f2c6c
@@ -1183,8 +1183,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void FUN_800f3354(final long t9, long a1, long a2, final long a3, final long a4, final long a5, final long a6, final long a7) {
-    long a0;
+  public static void FUN_800f3354(final long t9, long a1, long a2, final long a3, final long a4, final long a5, long a6, final long a7) {
     long v0;
     long v1;
     long t0;
@@ -1208,17 +1207,16 @@ public final class Bttl_800f {
     final Value sp0x40 = sp0x40tmp.get();
     memcpy(sp0x40.getAddress(), _800c70f4.getAddress(), 0x1e);
 
-    long s2 = a6;
     final long t7;
-    long t3;
+    long clutNum; //TODO: confirm this
     if((int)a3 != -0x1L) {
       t7 = a1;
       s1 = a2;
-      t3 = a7 & 0xfL;
+      clutNum = a7;
     } else {
       t7 = 0x2L;
       s1 = 0x2L;
-      t3 = 0xeL;
+      clutNum = 0xeL;
     }
 
     //LAB_800f34d4
@@ -1243,7 +1241,7 @@ public final class Bttl_800f {
 
     v1 = _800c6b5c.get() + t9 * 0xc4L;
     MEMORY.ref(2, v1).offset(0x0L).setu(0x1L);
-    if(s2 == 0) {
+    if(a6 == 0) {
       MEMORY.ref(2, v1).offset(0x2L).oru(0x1L);
     }
 
@@ -1253,17 +1251,13 @@ public final class Bttl_800f {
     MEMORY.ref(4, v0).offset(0xcL).setu(0x80_8080L);
     MEMORY.ref(4, v0).offset(0x10L).setu(s1);
     MEMORY.ref(2, v0).offset(0x2L).oru(0x8000L);
-    if(s1 == 0x2L && s2 == 0) {
-      s2 = 60 / vsyncMode_8007a3b8.get() * 2;
+    if(s1 == 0x2L && a6 == 0) {
+      a6 = 60 / vsyncMode_8007a3b8.get() * 2;
     }
 
     //LAB_800f35dc
-    a0 = 0x1L;
-
     //LAB_800f35e4
-    for(t0 = 4; t0 >= 0; t0--) {
-      a0 = a0 * 10;
-    }
+    long a0 = 100000L;
 
     if((int)a3 >= (int)a0) {
       a1 = a0 - 0x1L;
@@ -1272,7 +1266,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f3608
-    if((int)a1 <= 0) {
+    if((int)a1 < 0) {
       a1 = 0;
     }
 
@@ -1291,6 +1285,7 @@ public final class Bttl_800f {
     t0 = a0 / 10;
 
     //LAB_800f36a0
+    //Sets what places to render
     for(t2 = 0; t2 < 5; t2++) {
       a0 = (int)a1 / (int)t0;
       a1 = (int)a1 % (int)t0;
@@ -1322,9 +1317,9 @@ public final class Bttl_800f {
     //LAB_800f375c
     a2 = 0x10L;
     a1 = 0;
-    final long t3_0 = t3;
+    final long t3_0 = clutNum;
     t4 = a0;
-    t3 = a0;
+    clutNum = a0;
     t5 = a0;
 
     //LAB_800f37ac
@@ -1343,7 +1338,7 @@ public final class Bttl_800f {
       if(t7 == 0x1L) {
         //LAB_800f382c
         v1 = _800c6b5c.get() + t9 * 0xc4L + a1;
-        MEMORY.ref(2, v1).offset(0x32L).setu(t3);
+        MEMORY.ref(2, v1).offset(0x32L).setu(clutNum);
         MEMORY.ref(2, v1).offset(0x3aL).setu(0x8L);
         MEMORY.ref(2, v1).offset(0x3cL).setu(0x8L);
         MEMORY.ref(2, v1).offset(0x38L).setu(0x20L);
@@ -1375,7 +1370,7 @@ public final class Bttl_800f {
       t4 = t4 + 0x24L;
       a1 = a1 + 0x20L;
       t5 = t5 + 0x8L;
-      t3 = t3 + 0x5L;
+      clutNum = clutNum + 0x5L;
       t0 = t0 + 0x1L;
       if((int)t0 >= 5) {
         break;
@@ -1384,7 +1379,7 @@ public final class Bttl_800f {
 
     //LAB_800f38e8
     v0 = _800c6b5c.get() + t9 * 0xc4L;
-    MEMORY.ref(4, v0).offset(0x18L).setu(s2 + 0x4L);
+    MEMORY.ref(4, v0).offset(0x18L).setu(a6 + 0x4L);
     MEMORY.ref(4, v0).offset(0x14L).setu(t2 + 0xcL);
 
     sp0x00tmp.release();

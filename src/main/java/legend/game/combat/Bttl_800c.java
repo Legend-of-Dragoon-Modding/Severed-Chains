@@ -865,14 +865,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7488L)
-  public static int FUN_800c7488(final int charSlot, final long a1, final long a2) {
+  public static int getHitMultiplier(final int charSlot, final long hitNum, final long a2) {
     if((scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().ui_60.get() & 0x2L) != 0) {
-      final long a0_0 = _1f8003f4.getPointer() + (charSlot + 0x3L) * 0x100L + a1 * 0x20L + a2 * 0x2L; //TODO
+      final long a0_0 = _1f8003f4.getPointer() + (charSlot + 0x3L) * 0x100L + hitNum * 0x20L + a2 * 0x2L; //TODO
       return (int)MEMORY.ref(2, a0_0).offset(0x38L).getSigned();
     }
 
     //LAB_800c74fc
-    final long a0_0 = _1f8003f4.getPointer() + charSlot * 0x100L + a1 * 0x20L + a2 * 0x2L; //TODO
+    final long a0_0 = _1f8003f4.getPointer() + charSlot * 0x100L + hitNum * 0x20L + a2 * 0x2L; //TODO
     return (int)MEMORY.ref(2, a0_0).offset(0x38L).getSigned();
   }
 
@@ -3570,7 +3570,7 @@ public final class Bttl_800c {
 
   @Method(0x800cd0ecL)
   public static long FUN_800cd0ec(final RunningScript a0) {
-    a0.params_20.get(3).deref().set(FUN_800c7488(
+    a0.params_20.get(3).deref().set(getHitMultiplier(
       scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).charSlot_276.get(),
       a0.params_20.get(1).deref().get(),
       a0.params_20.get(2).deref().get()
