@@ -1714,7 +1714,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void FUN_800f4268(final long s2, final long s3, final long s4) {
+  public static void  FUN_800f4268(final long s2, final long s3, final long s4) {
     final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0.get((int)s2).deref();
     final BattleObject27c a0 = v1.innerStruct_00.derefAs(BattleObject27c.class);
 

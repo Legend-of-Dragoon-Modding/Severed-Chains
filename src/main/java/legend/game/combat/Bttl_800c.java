@@ -303,6 +303,7 @@ public final class Bttl_800c {
   public static final Pointer<BattleStruct7cc> struct7cc_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, BattleStruct7cc::new));
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
   public static final Value _800c6944 = MEMORY.ref(4, 0x800c6944L);
+  /** TODO array of 0x8-byte structs */
   public static final Value _800c6948 = MEMORY.ref(4, 0x800c6948L);
 
   public static final Pointer<DeffFile> deff_800c6950 = MEMORY.ref(4, 0x800c6950L, Pointer.deferred(4, DeffFile::new));
