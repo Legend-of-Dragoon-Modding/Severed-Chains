@@ -53,6 +53,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
@@ -322,8 +323,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
-  /** TODO obj */
-  public static final Value _800c6b5c = MEMORY.ref(4, 0x800c6b5cL);
+  public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
   public static final Pointer<BttlStructa4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, BttlStructa4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);

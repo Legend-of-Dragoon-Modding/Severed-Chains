@@ -53,6 +53,8 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DeffPart;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.FloatingNumberC4;
+import legend.game.combat.types.FloatingNumberC4Sub20;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -179,7 +181,7 @@ import static legend.game.combat.Bttl_800c._800c695c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800c69c8;
-import static legend.game.combat.Bttl_800c._800c6b5c;
+import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
 import static legend.game.combat.Bttl_800c._800c6b68;
@@ -5698,7 +5700,7 @@ public final class Bttl_800e {
     _800c6cf4.setu(0);
     _800c6c38.setu(0x1L);
     displayStats_800c6c2c.setPointer(addToLinkedListTail(0x144 * 3));
-    _800c6b5c.setu(addToLinkedListTail(0x930L));
+    floatingNumbers_800c6b5c.setPointer(addToLinkedListTail(0xc4 * 12));
     _800c6b60.setPointer(addToLinkedListTail(0xa4L));
     battleMenu_800c6c34.setPointer(addToLinkedListTail(0x58L));
     _800c6b6c.setu(addToLinkedListTail(0x3cL));
@@ -5887,7 +5889,7 @@ public final class Bttl_800e {
     usedRepeatItems_800c6c3c.set(0);
 
     removeFromLinkedList(displayStats_800c6c2c.getPointer());
-    removeFromLinkedList(_800c6b5c.get());
+    removeFromLinkedList(floatingNumbers_800c6b5c.getPointer());
     removeFromLinkedList(_800c6b60.getPointer());
     removeFromLinkedList(battleMenu_800c6c34.getPointer());
     removeFromLinkedList(_800c6b6c.get());
@@ -6148,30 +6150,28 @@ public final class Bttl_800e {
       }
     }
 
-    long a0 = _800c6b5c.get();
-
     //LAB_800ef878
     for(int i = 0; i < 12; i++) {
-      MEMORY.ref(4, a0).offset(0x18L).setu(-0x1L);
-      MEMORY.ref(4, a0).offset(0x14L).setu(-0x1L);
-      MEMORY.ref(2, a0).offset(0x0L).setu(0);
-      MEMORY.ref(2, a0).offset(0x2L).setu(0);
-      MEMORY.ref(4, a0).offset(0x4L).setu(-0x1L);
-      MEMORY.ref(4, a0).offset(0x8L).setu(0);
-      MEMORY.ref(4, a0).offset(0xcL).setu(0x80_8080L);
+      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
+      num.state_00.set(0);
+      num.flags_02.set(0);
+      num.bobjIndex_04.set(-1);
+      num._08.set(0);
+      num.b_0c.set(0x80);
+      num.g_0d.set(0x80);
+      num.r_0e.set(0x80);
+      num._14.set(-1);
+      num._18.set(-1);
 
       //LAB_800ef89c
-      long v1 = a0;
       for(int a1 = 0; a1 < 5; a1++) {
-        MEMORY.ref(4, v1).offset(0x24L).setu(0);
-        MEMORY.ref(4, v1).offset(0x28L).setu(0);
-        MEMORY.ref(4, v1).offset(0x2cL).setu(0);
-        MEMORY.ref(2, v1).offset(0x30L).setu(-0x1L);
-        MEMORY.ref(2, v1).offset(0x40L).setu(0);
-        v1 = v1 + 0x20L;
+        final FloatingNumberC4Sub20 v1 = num._24.get(a1);
+        v1._00.set(0);
+        v1._04.set(0);
+        v1._08.set(0);
+        v1._0c.set((short)-1);
+        v1._1c.set(0);
       }
-
-      a0 = a0 + 0xc4L;
     }
   }
 
