@@ -3758,7 +3758,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8aa4L)
-  public static void FUN_800f8aa4(final long a0, final long a1) {
+  public static void renderDamage(final long a0, final long a1) {
     setFloatingNumCoordsAndRender(a0, a1, 0x8L);
   }
 
