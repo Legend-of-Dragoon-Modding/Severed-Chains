@@ -1182,25 +1182,20 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void FUN_800f3354(final int numIndex, long a1, long a2, final long a3, final int x, final int y, long a6, final long onHitClutNum) {
-    long t0;
-    long t2;
-    long t4;
-    long t5;
-    final long s1;
+  public static void calculateFloatingNumberRender(final int numIndex, long onHitTextType, long onHitClutCol, final long rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
+    final short[] damageDigits = new short[5];
 
-    final short[] sp0x00 = new short[5];
-
-    final long t7;
-    final long clutNum; //TODO: confirm this
-    if((int)a3 != -0x1L) {
-      t7 = a1;
-      s1 = a2;
-      clutNum = onHitClutNum;
+    final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
+    final byte clutCol;  //TODO: confirm this, it may not be this exactly
+    final byte clutRow; //TODO: confirm this, it may not be this exactly
+    if((int)rawDamage != -1) {
+      floatingTextType = (byte)onHitTextType;
+      clutCol = (byte)onHitClutCol;
+      clutRow = (byte)onHitClutRow;
     } else {
-      t7 = 0x2L;
-      s1 = 0x2L;
-      clutNum = 0xeL;
+      floatingTextType = 2;
+      clutCol = 2;
+      clutRow = 14;
     }
 
     //LAB_800f34d4
@@ -1220,7 +1215,7 @@ public final class Bttl_800f {
       num.digits_24.get(i)._00.set(0);
       num.digits_24.get(i)._04.set(0);
       num.digits_24.get(i)._08.set(0);
-      num.digits_24.get(i)._0c.set((short)-1);
+      num.digits_24.get(i).digit_0c.set((short)-1);
       num.digits_24.get(i)._1c.set(0);
     }
 
@@ -1235,26 +1230,17 @@ public final class Bttl_800f {
     num.b_0c.set(0x80);
     num.g_0d.set(0x80);
     num.r_0e.set(0x80);
-    num._10.set(s1);
+    num._10.set(clutCol);
 
-    if(s1 == 0x2L && a6 == 0) {
+    if(clutCol == 2 && a6 == 0) {
       a6 = 60 / vsyncMode_8007a3b8.get() * 2;
     }
 
     //LAB_800f35dc
     //LAB_800f35e4
-    long a0 = 100000L;
-
-    if((int)a3 >= (int)a0) {
-      a1 = a0 - 0x1L;
-    } else {
-      a1 = a3;
-    }
-
     //LAB_800f3608
-    if((int)a1 < 0) {
-      a1 = 0;
-    }
+    //Clamp damage to 0-max
+    int damage = Math.max(0, Math.min((int)rawDamage, 99999));
 
     //LAB_800f3614
     num.x_1c.set(x);
@@ -1262,101 +1248,99 @@ public final class Bttl_800f {
 
     //LAB_800f3654
     for(int i = 0; i < 5; i++) {
-      num.digits_24.get(i)._0c.set((short)-1);
-      sp0x00[i] = -1;
+      num.digits_24.get(i).digit_0c.set((short)-1);
+      damageDigits[i] = -1;
     }
-
-    t0 = a0 / 10;
 
     //LAB_800f36a0
     //Sets what places to render
+    int currDigitPlace = 10000;
+    int currDigit;
     for(int i = 0; i < 5; i++) {
-      a0 = (int)a1 / (int)t0;
-      a1 = (int)a1 % (int)t0;
-      sp0x00[i] = (short)a0;
-      t0 = t0 / 10;
+      currDigit = damage / currDigitPlace;
+      damage = damage % currDigitPlace;
+      damageDigits[i] = (short)currDigit;
+      currDigitPlace = currDigitPlace / 10;
     }
 
     //LAB_800f36dc
     //LAB_800f36ec
-    for(t0 = 0; t0 < 4; t0++) {
-      if(sp0x00[(int)t0] != 0) {
+    int digitIdx;
+    for(digitIdx = 0; digitIdx < 4; digitIdx++) {
+      if(damageDigits[digitIdx] != 0) {
         break;
       }
     }
 
     //LAB_800f370c
     //LAB_800f3710
-    if(t7 == 0x1L) {
+    int displayPosX;
+    if(floatingTextType == 1) {
       //LAB_800f3738
-      a0 = -(5 - t0) * 5 / 2;
-    } else if(t7 == 0x2) {
+      displayPosX = -(5 - digitIdx) * 5 / 2;
+    } else if(floatingTextType == 2) {
       //LAB_800f3758
-      a0 = -0x12L;
+      displayPosX = -18;
     } else {
       //LAB_800f372c
-      a0 = -(5 - t0) * 4;
+      displayPosX = -(5 - digitIdx) * 4;
     }
 
     //LAB_800f375c
-    a2 = 0x10L;
-    t4 = a0;
-    long backupa0 = a0;
-    t5 = a0;
-
     //LAB_800f37ac
-    for(t2 = 0; t2 < 5; t2++) {
-      final FloatingNumberC4Sub20 v1 = num.digits_24.get((int)t2);
-      v1._00.set(0x8000L);
-      v1._10.set((short)0);
+    int digitStructIdx;
+    for(digitStructIdx = 0; digitStructIdx < 5; digitStructIdx++) {
+      final FloatingNumberC4Sub20 digitStruct = num.digits_24.get(digitStructIdx);
+      digitStruct._00.set(0x8000L);
+      digitStruct._10.set((short)0);
 
-      if(s1 == 0x2L) {
-        v1._00.set(0);
-        v1._04.set(t2);
-        v1._08.set(0);
+      if(clutCol == 2) {
+        digitStruct._00.set(0);
+        digitStruct._04.set(digitStructIdx);
+        digitStruct._08.set(0);
       }
 
       //LAB_800f37d8
-      if(t7 == 0x1L) {
+      if(floatingTextType == 1) {
         //LAB_800f382c
-        v1._0e.set((short)backupa0);
-        v1._12.set((int)_800c7028.offset(sp0x00[(int)t0] * 0x2L).get());
-        v1._14.set(0x20);
-        v1._16.set(0x8);
-        v1._18.set(0x8);
-      } else if(t7 == 0x2L) {
+        digitStruct.x_0e.set((short)displayPosX);
+        digitStruct.u_12.set((int)_800c7028.offset(damageDigits[digitIdx] * 2).get());
+        digitStruct.v_14.set(0x20);
+        digitStruct.texW_16.set(0x8);
+        digitStruct.texH_18.set(0x8);
+        displayPosX += 5;
+      } else if(floatingTextType == 2) {
         //LAB_800f386c
-        v1._0e.set((short)t4);
-        v1._12.set(0x48);
-        v1._14.set(0x80);
-        v1._16.set(0x24);
-        v1._18.set((int)a2);
+        digitStruct.x_0e.set((short)displayPosX);
+        digitStruct.u_12.set(0x48);
+        digitStruct.v_14.set(0x80);
+        digitStruct.texW_16.set(0x24);
+        digitStruct.texH_18.set(0x10);
+        displayPosX += 36;
       } else {
         //LAB_800f37f4
-        v1._0e.set((short)t5);
-        v1._12.set((int)_800c70e0.offset(sp0x00[(int)t0] * 0x2L).get());
-        v1._14.set(0x28);
-        v1._16.set(0x8);
-        v1._18.set((int)a2);
+        digitStruct.x_0e.set((short)displayPosX);
+        digitStruct.u_12.set((int)_800c70e0.offset(damageDigits[digitIdx] * 2).get());
+        digitStruct.v_14.set(0x28);
+        digitStruct.texW_16.set(0x8);
+        digitStruct.texH_18.set(0x10);
+        displayPosX += 8;
       }
 
       //LAB_800f3898
-      v1._0c.set(sp0x00[(int)t0]);
-      v1._1a.set((short)_800c70f4.offset(clutNum * 0x2L).get());
-      v1._1c.set(0x1000);
+      digitStruct.digit_0c.set(damageDigits[digitIdx]);
+      digitStruct._1a.set((short)_800c70f4.offset(clutRow * 2).get());
+      digitStruct._1c.set(0x1000);
 
-      t4 = t4 + 0x24L;
-      t5 = t5 + 0x8L;
-      backupa0 = backupa0 + 0x5L;
-      t0 = t0 + 0x1L;
-      if((int)t0 >= 5) {
+      digitIdx++;
+      if(digitIdx >= 5) {
         break;
       }
     }
 
     //LAB_800f38e8
-    num._14.set((int)(t2 + 12));
-    num._18.set((int)(a6 + 4));
+    num._14.set(digitStructIdx + 12); //TODO: ID duration meaning
+    num._18.set((int)(a6 + 4)); //TODO: ID duration meaning
   }
 
   @Method(0x800f3940L)
@@ -1408,7 +1392,7 @@ public final class Bttl_800f {
             for(int n = 0; n < 5; n++) {
               final FloatingNumberC4Sub20 a1 = num.digits_24.get(n);
 
-              if(a1._0c.get() == -1) {
+              if(a1.digit_0c.get() == -1) {
                 break;
               }
 
@@ -1475,7 +1459,7 @@ public final class Bttl_800f {
               v1._00.set(0);
               v1._04.set(0);
               v1._08.set(0);
-              v1._0c.set((short)-1);
+              v1.digit_0c.set((short)-1);
               v1._1c.set(0);
             }
             //LAB_800f3b04
@@ -1531,7 +1515,7 @@ public final class Bttl_800f {
           for(int s7 = 0; s7 < 5; s7++) {
             final FloatingNumberC4Sub20 digit = num.digits_24.get(s7);
 
-            if(digit._0c.get() == -1) {
+            if(digit.digit_0c.get() == -1) {
               break;
             }
 
@@ -1549,29 +1533,29 @@ public final class Bttl_800f {
                 MEMORY.ref(1, packet).offset(0x5L).setu(g); // G
                 MEMORY.ref(1, packet).offset(0x6L).setu(b); // B
                 final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.getSigned();
-                long v0 = digit._0e.get() + a1;
+                long v0 = digit.x_0e.get() + a1;
                 MEMORY.ref(2, packet).offset(0x18L).setu(v0); // X2
                 MEMORY.ref(2, packet).offset(0x8L).setu(v0); // X0
-                long v1 = digit._0e.get() + digit._16.get() + a1;
+                long v1 = digit.x_0e.get() + digit.texW_16.get() + a1;
                 MEMORY.ref(2, packet).offset(0x20L).setu(v1); // X3
                 MEMORY.ref(2, packet).offset(0x10L).setu(v1); // X1
                 long a2 = num.y_20.get() - centreScreenY_1f8003de.getSigned();
                 v0 = digit._10.get() + a2;
                 MEMORY.ref(2, packet).offset(0x12L).setu(v0); // Y1
                 MEMORY.ref(2, packet).offset(0xaL).setu(v0); // Y0
-                v1 = digit._10.get() + digit._18.get() + a2;
+                v1 = digit._10.get() + digit.texH_18.get() + a2;
                 MEMORY.ref(2, packet).offset(0x22L).setu(v1); // Y3
                 MEMORY.ref(2, packet).offset(0x1aL).setu(v1); // Y2
-                v0 = digit._12.get();
+                v0 = digit.u_12.get();
                 MEMORY.ref(1, packet).offset(0x1cL).setu(v0); // U2
                 MEMORY.ref(1, packet).offset(0xcL).setu(v0); // U0
-                v1 = digit._12.get() + digit._16.get();
+                v1 = digit.u_12.get() + digit.texW_16.get();
                 MEMORY.ref(1, packet).offset(0x24L).setu(v1); // U3
                 MEMORY.ref(1, packet).offset(0x14L).setu(v1); // U1
-                v0 = digit._14.get();
+                v0 = digit.v_14.get();
                 MEMORY.ref(1, packet).offset(0x15L).setu(v0); // V1
                 MEMORY.ref(1, packet).offset(0xdL).setu(v0); // V0
-                v1 = digit._14.get() + digit._18.get();
+                v1 = digit.v_14.get() + digit.texH_18.get();
                 MEMORY.ref(1, packet).offset(0x25L).setu(v1); // V3
                 MEMORY.ref(1, packet).offset(0x1dL).setu(v1); // V2
                 v1 = digit._1a.get();
@@ -2333,7 +2317,7 @@ public final class Bttl_800f {
         //LAB_800f5588
         if(structa4._0a.get() != 0) {
           structa4._1c.set((short)FUN_800f56c4());
-          FUN_800f3354(0, 0x1L, 0, FUN_800f9e50(structa4._1c.get()).spellMp_a0.get(), 280, 135, 0, 0x1L);
+          calculateFloatingNumberRender(0, 0x1L, 0, FUN_800f9e50(structa4._1c.get()).spellMp_a0.get(), 280, 135, 0, 0x1L);
         }
       }
 
@@ -2634,7 +2618,7 @@ public final class Bttl_800f {
           s1 = 0x5L;
           if((structa4._02.get() & 0x2L) != 0) {
             final BattleObject27c bobj = FUN_800f9e50(structa4._1c.get());
-            FUN_800f3354(0, 0x1L, 0, bobj.spellMp_a0.get(), 280, 135, 0, structa4._0a.get());
+            calculateFloatingNumberRender(0, 0x1L, 0, bobj.spellMp_a0.get(), 280, 135, 0, structa4._0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 0x10L, 0x80L, 0x18L, 0x10L, 0x2cL, -0x1L);
             FUN_800f1268(0xecL, 0x82L, 0x40L, 0xeL, 0x8L);
           }
@@ -3761,7 +3745,7 @@ public final class Bttl_800f {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
       if(num.state_00.get() == 0) {
-        FUN_800f3354(i, a1, a2, a3, x, y, a6, a7);
+        calculateFloatingNumberRender(i, a1, a2, a3, x, y, a6, a7);
         num.bobjIndex_04.set((int)a0);
         return 0x1L;
       }
@@ -4107,7 +4091,7 @@ public final class Bttl_800f {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
       if(num.state_00.get() == 0) {
-        FUN_800f3354(i, 0, 0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
+        calculateFloatingNumberRender(i, 0, 0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
         break;
       }
 

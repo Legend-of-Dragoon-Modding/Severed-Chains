@@ -6169,7 +6169,7 @@ public final class Bttl_800e {
         v1._00.set(0);
         v1._04.set(0);
         v1._08.set(0);
-        v1._0c.set((short)-1);
+        v1.digit_0c.set((short)-1);
         v1._1c.set(0);
       }
     }
