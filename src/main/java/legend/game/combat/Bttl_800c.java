@@ -3399,7 +3399,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ccb3cL)
-  public static long renderDamage(final RunningScript a0) {
+  public static long scriptRenderDamage(final RunningScript a0) {
     Bttl_800f.renderDamage(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }

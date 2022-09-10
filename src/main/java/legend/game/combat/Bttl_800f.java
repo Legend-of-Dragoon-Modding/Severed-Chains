@@ -4110,7 +4110,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f984cL)
-  public static long renderRecover(final RunningScript a0) {
+  public static long scriptRenderRecover(final RunningScript a0) {
     setFloatingNumCoordsAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
