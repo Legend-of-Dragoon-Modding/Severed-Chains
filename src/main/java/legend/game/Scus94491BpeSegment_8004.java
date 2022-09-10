@@ -629,7 +629,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccb3c}</li>
+   *   <li>{@link Bttl_800c#renderDamage}</li>
    *   <li>{@link Bttl_800c#FUN_800ccb70}</li>
    *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
    *   <li>{@link Bttl_800c#FUN_800cccf4}</li>

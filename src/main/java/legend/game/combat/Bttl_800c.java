@@ -207,7 +207,6 @@ import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f6134;
 import static legend.game.combat.Bttl_800f.FUN_800f6330;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.renderDamage;
 import static legend.game.combat.Bttl_800f.FUN_800f8c38;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 
@@ -3400,8 +3399,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ccb3cL)
-  public static long FUN_800ccb3c(final RunningScript a0) {
-    renderDamage(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
+  public static long renderDamage(final RunningScript a0) {
+    Bttl_800f.renderDamage(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
 
