@@ -401,13 +401,13 @@ public final class Bttl_800c {
   public static final Value _800c70a4 = MEMORY.ref(4, 0x800c70a4L);
 
   /** TODO array of shorts, 0x14 bytes total */
-  public static final Value _800c7028 = MEMORY.ref(4, 0x800c7028L);
+  public static final Value _800c7028 = MEMORY.ref(2, 0x800c7028L);
 
   /** TODO array of shorts, 0x14 bytes total */
   public static final Value _800c70e0 = MEMORY.ref(2, 0x800c70e0L);
 
   /** TODO array of shorts, 0x1e bytes total */
-  public static final Value _800c70f4 = MEMORY.ref(4, 0x800c70f4L);
+  public static final Value _800c70f4 = MEMORY.ref(2, 0x800c70f4L);
 
   public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
 
