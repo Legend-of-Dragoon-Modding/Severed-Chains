@@ -3603,84 +3603,78 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8594L)
-  public static void FUN_800e8594(final MATRIX s4, final EffectManagerData6c a1) {
-    EffectManagerData6c s3 = a1;
-    RotMatrix_8003faf0(s3._10.svec_10, s4);
-    TransMatrix(s4, s3._10.vec_04);
-    ScaleVectorL_SVEC(s4, s3._10.svec_16);
+  public static void FUN_800e8594(final MATRIX a0, final EffectManagerData6c a1) {
+    RotMatrix_8003faf0(a1._10.svec_10, a0);
+    TransMatrix(a0, a1._10.vec_04);
+    ScaleVectorL_SVEC(a0, a1._10.svec_16);
 
-    int a0 = s3.scriptIndex_0c.get();
+    EffectManagerData6c s3 = a1;
+    int scriptIndex = a1.scriptIndex_0c.get();
 
     //LAB_800e8604
-    while(a0 >= 0) {
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(a0).deref();
+    while(scriptIndex >= 0) {
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
       if(state.getAddress() == scriptState_800bc0c0.getAddress()) {
-        a0 = -2;
         a1._10._00.or(0x8000_0000L);
-        s4.transfer.setZ(-0x7fff);
+        a0.transfer.setZ(-0x7fff);
+        scriptIndex = -2;
         break;
       }
-
-      final MATRIX sp0x10 = new MATRIX();
 
       final BattleScriptDataBase base = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
-      if(base.magic_00.get() == BattleScriptDataBase.BOBJ) {
-        final BattleObject27c s0 = state.innerStruct_00.derefAs(BattleObject27c.class);
-        final BigStruct s1 = s0._148;
-        FUN_800214bc(s1);
-
-        if(s3.coord2Index_0d.get() == -1) {
-          sp0x10.set(s0._148.coord2_14.coord);
-        } else {
-          //LAB_800e8738
-          final GsCOORDINATE2 coord2 = s1.coord2ArrPtr_04.deref().get(s3.coord2Index_0d.get());
-          GsGetLw(coord2, sp0x10);
-          coord2.flg.set(0);
-        }
-
-        //LAB_800e8774
-        FUN_8003f210(sp0x10, s4, s4);
-        a0 = -1;
-        break;
-      }
-
       if(base.magic_00.get() == BattleScriptDataBase.EM__) {
-        final EffectManagerData6c s0 = state.innerStruct_00.derefAs(EffectManagerData6c.class);
-        RotMatrix_8003faf0(s0._10.svec_10, sp0x10);
-        TransMatrix(sp0x10, s0._10.vec_04);
-        //LAB_800e866c
-        ScaleVectorL_SVEC(sp0x10, s0._10.svec_16);
-
+        final EffectManagerData6c manager = (EffectManagerData6c)base;
+        final MATRIX sp0x10 = new MATRIX();
+        RotMatrix_8003faf0(manager._10.svec_10, sp0x10);
+        TransMatrix(sp0x10, manager._10.vec_04);
+        ScaleVectorL_SVEC(sp0x10, manager._10.svec_16);
         if(s3.coord2Index_0d.get() != -1) {
-          FUN_8003f210(sp0x10, FUN_800ea0f4(s0, s3.coord2Index_0d.get()).coord, sp0x10);
+          //LAB_800e866c
+          FUN_8003f210(sp0x10, FUN_800ea0f4(manager, s3.coord2Index_0d.get()).coord, sp0x10);
         }
 
         //LAB_800e86ac
-        FUN_8003f210(sp0x10, s4, s4);
-        s3 = s0;
-        a0 = s3.scriptIndex_0c.get();
+        FUN_8003f210(sp0x10, a0, a0);
+        s3 = manager;
+        scriptIndex = s3.scriptIndex_0c.get();
         //LAB_800e86c8
+      } else if(base.magic_00.get() == BattleScriptDataBase.BOBJ) {
+        final BattleObject27c bobj = (BattleObject27c)base;
+        final BigStruct s1 = bobj._148;
+        FUN_800214bc(s1);
+        final int coord2Index = s3.coord2Index_0d.get();
+
+        final MATRIX sp0x10 = new MATRIX();
+        if(coord2Index == -1) {
+          sp0x10.set(s1.coord2_14.coord);
+        } else {
+          //LAB_800e8738
+          GsGetLw(s1.coord2ArrPtr_04.deref().get(coord2Index), sp0x10);
+          s1.coord2ArrPtr_04.deref().get(coord2Index).flg.set(0);
+        }
+
+        //LAB_800e8774
+        FUN_8003f210(sp0x10, a0, a0);
+        s3 = null;
+        scriptIndex = -1;
       } else {
         //LAB_800e878c
-        a0 = -2;
-
         //LAB_800e8790
         a1._10._00.or(0x8000_0000L);
-        s4.transfer.setZ(-0x7fff);
+        a0.transfer.setZ(-0x7fff);
+        scriptIndex = -2;
         break;
       }
-
-      //LAB_800e87ac
     }
 
     //LAB_800e87b4
-    if(a0 == -2) {
-      final MATRIX m0 = matrix_800c3548;
+    if(scriptIndex == -2) {
       final MATRIX sp0x10 = new MATRIX();
-      TransposeMatrix(m0, sp0x10);
-      final VECTOR sp0x30 = new VECTOR().set(m0.transfer);
+      final VECTOR sp0x30 = new VECTOR();
+      TransposeMatrix(matrix_800c3548, sp0x10);
+      sp0x30.set(matrix_800c3548.transfer).negate();
       sp0x10.transfer.set(ApplyMatrixLV(sp0x10, sp0x30));
-      FUN_8003f210(sp0x10, s4, s4);
+      FUN_8003f210(sp0x10, a0, a0);
     }
 
     //LAB_800e8814

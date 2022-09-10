@@ -11,8 +11,8 @@ public class BttlScriptData6cSub38Sub14Sub30 implements MemoryRef {
   private final Value ref;
 
   public final VECTOR _00;
-  public final SVECTOR _10;
-  public final SVECTOR _16;
+  public final SVECTOR svec_10;
+  public final SVECTOR svec_16;
   public final SVECTOR _1c;
   public final SVECTOR _22;
   public final ByteRef _28;
@@ -25,8 +25,8 @@ public class BttlScriptData6cSub38Sub14Sub30 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(VECTOR::new);
-    this._10 = ref.offset(2, 0x10L).cast(SVECTOR::new);
-    this._16 = ref.offset(2, 0x16L).cast(SVECTOR::new);
+    this.svec_10 = ref.offset(2, 0x10L).cast(SVECTOR::new);
+    this.svec_16 = ref.offset(2, 0x16L).cast(SVECTOR::new);
     this._1c = ref.offset(2, 0x1cL).cast(SVECTOR::new);
     this._22 = ref.offset(2, 0x22L).cast(SVECTOR::new);
     this._28 = ref.offset(1, 0x28L).cast(ByteRef::new);
