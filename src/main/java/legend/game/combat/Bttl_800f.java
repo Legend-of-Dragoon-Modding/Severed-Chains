@@ -1320,7 +1320,7 @@ public final class Bttl_800f {
       if(t7 == 0x1L) {
         //LAB_800f382c
         v1._0e.set((short)backupa0);
-        v1._12.set((int)_800c7028.offset(sp0x00[(int)(t0 + t2)] * 0x2L).get());
+        v1._12.set((int)_800c7028.offset(sp0x00[(int)t0] * 0x2L).get());
         v1._14.set(0x20);
         v1._16.set(0x8);
         v1._18.set(0x8);
@@ -1334,14 +1334,14 @@ public final class Bttl_800f {
       } else {
         //LAB_800f37f4
         v1._0e.set((short)t5);
-        v1._12.set((int)_800c70e0.offset(sp0x00[(int)(t0 + t2)] * 0x2L).get());
+        v1._12.set((int)_800c70e0.offset(sp0x00[(int)t0] * 0x2L).get());
         v1._14.set(0x28);
         v1._16.set(0x8);
         v1._18.set((int)a2);
       }
 
       //LAB_800f3898
-      v1._0c.set(sp0x00[(int)(t0 + t2)]);
+      v1._0c.set(sp0x00[(int)t0]);
       v1._1a.set((short)_800c70f4.offset(clutNum * 0x2L).get());
       v1._1c.set(0x1000);
 
