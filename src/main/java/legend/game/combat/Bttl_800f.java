@@ -1644,7 +1644,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void setFloatingNumPosAndRender(final long s2, final long s3, final long s4) {
+  public static void setFloatingNumCoordsAndRender(final long s2, final long s3, final long s4) {
     final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0.get((int)s2).deref();
     final BattleObject27c a0 = v1.innerStruct_00.derefAs(BattleObject27c.class);
 
@@ -3759,7 +3759,7 @@ public final class Bttl_800f {
 
   @Method(0x800f8aa4L)
   public static void FUN_800f8aa4(final long a0, final long a1) {
-    setFloatingNumPosAndRender(a0, a1, 0x8L);
+    setFloatingNumCoordsAndRender(a0, a1, 0x8L);
   }
 
   @Method(0x800f8ac4L)
@@ -4111,7 +4111,7 @@ public final class Bttl_800f {
 
   @Method(0x800f984cL)
   public static long FUN_800f984c(final RunningScript a0) {
-    setFloatingNumPosAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
+    setFloatingNumCoordsAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
 
