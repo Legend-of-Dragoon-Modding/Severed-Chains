@@ -733,13 +733,13 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800f#FUN_800f480c}</li>
    *   <li>{@link Bttl_800f#FUN_800f2694}</li>
    *   <li>{@link Bttl_800f#FUN_800f96a8}</li>
-   *   <li>{@link Bttl_800f#FUN_800f984c}</li>
+   *   <li>{@link Bttl_800f#renderRecover}</li>
    *   <li>{@link Bttl_800f#FUN_800f2838}</li>
    *   <li>{@link Bttl_800f#FUN_800f9884}</li>
    *   <li>{@link Bttl_800f#FUN_800f98b0}</li>
    *   <li>{@link Bttl_800f#FUN_800f99ec}</li>
    *   <li>{@link Bttl_800f#FUN_800f9a50}</li>
-   *   <li>{@link Bttl_800f#FUN_800f9b2c}</li>
+   *   <li>{@link Bttl_800f#scriptIsFloatingNumberOnScreen}</li>
    *   <li>{@link Bttl_800f#FUN_800f9b78}</li>
    *   <li>{@link Bttl_800f#FUN_800f9b94}</li>
    *   <li>{@link Bttl_800f#FUN_800f9bd4}</li>

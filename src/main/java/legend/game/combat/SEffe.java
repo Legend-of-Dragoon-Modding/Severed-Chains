@@ -144,7 +144,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800c7488;
+import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.FUN_800cea1c;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
@@ -3808,7 +3808,7 @@ public final class SEffe {
       v0 = _800fb7c0.offset(a1 * 0x10L).offset(1, a2).get();
     } else {
       //LAB_8010628c
-      v0 = FUN_800c7488(charSlot, a1, a2) & 0xffL;
+      v0 = getHitMultiplier(charSlot, a1, a2) & 0xffL;
     }
 
     //LAB_80106298

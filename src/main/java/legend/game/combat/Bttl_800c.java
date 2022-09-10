@@ -53,6 +53,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
@@ -201,12 +202,11 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
-import static legend.game.combat.Bttl_800f.FUN_800f4268;
+import static legend.game.combat.Bttl_800f.setFloatingNumCoordsAndRender;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f6134;
 import static legend.game.combat.Bttl_800f.FUN_800f6330;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.FUN_800f8aa4;
 import static legend.game.combat.Bttl_800f.FUN_800f8c38;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 
@@ -323,8 +323,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
-  /** TODO obj */
-  public static final Value _800c6b5c = MEMORY.ref(4, 0x800c6b5cL);
+  public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
   public static final Pointer<BttlStructa4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, BttlStructa4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
@@ -401,11 +400,14 @@ public final class Bttl_800c {
 
   public static final Value _800c70a4 = MEMORY.ref(4, 0x800c70a4L);
 
-  public static final Value _800c7028 = MEMORY.ref(4, 0x800c7028L);
+  /** TODO array of shorts, 0x14 bytes total */
+  public static final Value _800c7028 = MEMORY.ref(2, 0x800c7028L);
 
-  public static final Value _800c70e0 = MEMORY.ref(4, 0x800c70e0L);
+  /** TODO array of shorts, 0x14 bytes total */
+  public static final Value _800c70e0 = MEMORY.ref(2, 0x800c70e0L);
 
-  public static final Value _800c70f4 = MEMORY.ref(4, 0x800c70f4L);
+  /** TODO array of shorts, 0x1e bytes total */
+  public static final Value _800c70f4 = MEMORY.ref(2, 0x800c70f4L);
 
   public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
 
@@ -866,14 +868,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7488L)
-  public static int FUN_800c7488(final int charSlot, final long a1, final long a2) {
+  public static int getHitMultiplier(final int charSlot, final long hitNum, final long a2) {
     if((scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().ui_60.get() & 0x2L) != 0) {
-      final long a0_0 = _1f8003f4.getPointer() + (charSlot + 0x3L) * 0x100L + a1 * 0x20L + a2 * 0x2L; //TODO
+      final long a0_0 = _1f8003f4.getPointer() + (charSlot + 0x3L) * 0x100L + hitNum * 0x20L + a2 * 0x2L; //TODO
       return (int)MEMORY.ref(2, a0_0).offset(0x38L).getSigned();
     }
 
     //LAB_800c74fc
-    final long a0_0 = _1f8003f4.getPointer() + charSlot * 0x100L + a1 * 0x20L + a2 * 0x2L; //TODO
+    final long a0_0 = _1f8003f4.getPointer() + charSlot * 0x100L + hitNum * 0x20L + a2 * 0x2L; //TODO
     return (int)MEMORY.ref(2, a0_0).offset(0x38L).getSigned();
   }
 
@@ -3397,14 +3399,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ccb3cL)
-  public static long FUN_800ccb3c(final RunningScript a0) {
-    FUN_800f8aa4(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
+  public static long scriptRenderDamage(final RunningScript a0) {
+    Bttl_800f.renderDamage(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
 
   @Method(0x800ccb70L)
   public static long FUN_800ccb70(final RunningScript a0) {
-    FUN_800f4268(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 0xdL);
+    setFloatingNumCoordsAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 0xdL);
     return 0;
   }
 
@@ -3571,7 +3573,7 @@ public final class Bttl_800c {
 
   @Method(0x800cd0ecL)
   public static long FUN_800cd0ec(final RunningScript a0) {
-    a0.params_20.get(3).deref().set(FUN_800c7488(
+    a0.params_20.get(3).deref().set(getHitMultiplier(
       scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).charSlot_276.get(),
       a0.params_20.get(1).deref().get(),
       a0.params_20.get(2).deref().get()
