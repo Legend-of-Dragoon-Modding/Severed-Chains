@@ -2,9 +2,7 @@ package legend.game.combat;
 
 import legend.core.MathHelper;
 import legend.core.gte.DVECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleDisplayStats144Sub10;
@@ -24,19 +22,18 @@ import legend.game.types.SpellStats0c;
 import static java.lang.Math.round;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
-import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
+import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
@@ -58,25 +55,21 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
-import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6758;
-import static legend.game.combat.Bttl_800c._800c7194;
-import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800c6988;
 import static legend.game.combat.Bttl_800c._800c69c8;
-import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
 import static legend.game.combat.Bttl_800c._800c6b68;
@@ -85,7 +78,6 @@ import static legend.game.combat.Bttl_800c._800c6b70;
 import static legend.game.combat.Bttl_800c._800c6ba0;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6ba8;
-import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c._800c6c30;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
@@ -93,7 +85,6 @@ import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
 import static legend.game.combat.Bttl_800c._800c7028;
 import static legend.game.combat.Bttl_800c._800c703c;
-import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c._800c70a4;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
@@ -102,6 +93,7 @@ import static legend.game.combat.Bttl_800c._800c7124;
 import static legend.game.combat.Bttl_800c._800c7190;
 import static legend.game.combat.Bttl_800c._800c7192;
 import static legend.game.combat.Bttl_800c._800c7193;
+import static legend.game.combat.Bttl_800c._800c7194;
 import static legend.game.combat.Bttl_800c._800c71ec;
 import static legend.game.combat.Bttl_800c._800c71f0;
 import static legend.game.combat.Bttl_800c._800c71fc;
@@ -115,7 +107,6 @@ import static legend.game.combat.Bttl_800c._800c72b4;
 import static legend.game.combat.Bttl_800c._800c72cc;
 import static legend.game.combat.Bttl_800c._800d66b0;
 import static legend.game.combat.Bttl_800c._800d6c30;
-import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c._800fb4b4;
 import static legend.game.combat.Bttl_800c._800fb534;
 import static legend.game.combat.Bttl_800c._800fb548;
@@ -129,8 +120,14 @@ import static legend.game.combat.Bttl_800c._800fb72c;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
-import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
+import static legend.game.combat.Bttl_800c.characterElements_800c706c;
+import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
+import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
+import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
+import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800e.FUN_800ef8d8;
+import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
 public final class Bttl_800f {
   private Bttl_800f() { }
@@ -1192,23 +1189,10 @@ public final class Bttl_800f {
     long t5;
     final long s1;
 
-    final Memory.TemporaryReservation sp0x00tmp = MEMORY.temp(0xa);
-    final Value sp0x00 = sp0x00tmp.get();
-
-    final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x14);
-    final Value sp0x10 = sp0x10tmp.get();
-    memcpy(sp0x10.getAddress(), _800c70e0.getAddress(), 0x14);
-
-    final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(0x14);
-    final Value sp0x28 = sp0x28tmp.get();
-    memcpy(sp0x28.getAddress(), _800c7028.getAddress(), 0x14);
-
-    final Memory.TemporaryReservation sp0x40tmp = MEMORY.temp(0x1e);
-    final Value sp0x40 = sp0x40tmp.get();
-    memcpy(sp0x40.getAddress(), _800c70f4.getAddress(), 0x1e);
+    final short[] sp0x00 = new short[5];
 
     final long t7;
-    long clutNum; //TODO: confirm this
+    final long clutNum; //TODO: confirm this
     if((int)a3 != -0x1L) {
       t7 = a1;
       s1 = a2;
@@ -1277,9 +1261,9 @@ public final class Bttl_800f {
     num.y_20.set(y);
 
     //LAB_800f3654
-    for(t0 = 0; t0 < 5; t0++) {
-      num.digits_24.get((int)t0)._0c.set((short)-1);
-      sp0x00.offset(2, t0 * 0x2L).setu(-0x1L);
+    for(int i = 0; i < 5; i++) {
+      num.digits_24.get(i)._0c.set((short)-1);
+      sp0x00[i] = -1;
     }
 
     t0 = a0 / 10;
@@ -1289,14 +1273,14 @@ public final class Bttl_800f {
     for(int i = 0; i < 5; i++) {
       a0 = (int)a1 / (int)t0;
       a1 = (int)a1 % (int)t0;
-      sp0x00.offset(2, i * 0x2L).setu(a0);
+      sp0x00[i] = (short)a0;
       t0 = t0 / 10;
     }
 
     //LAB_800f36dc
     //LAB_800f36ec
     for(t0 = 0; t0 < 4; t0++) {
-      if(sp0x00.offset(2, t0 * 0x2L).getSigned() != 0) {
+      if(sp0x00[(int)t0] != 0) {
         break;
       }
     }
@@ -1336,7 +1320,7 @@ public final class Bttl_800f {
       if(t7 == 0x1L) {
         //LAB_800f382c
         v1._0e.set((short)backupa0);
-        v1._12.set((int)sp0x28.offset(2, sp0x00.offset(2, (t0 + t2) * 0x2L).getSigned() * 0x2L).get());
+        v1._12.set((int)_800c7028.offset(sp0x00[(int)(t0 + t2)] * 0x2L).get());
         v1._14.set(0x20);
         v1._16.set(0x8);
         v1._18.set(0x8);
@@ -1350,15 +1334,15 @@ public final class Bttl_800f {
       } else {
         //LAB_800f37f4
         v1._0e.set((short)t5);
-        v1._12.set((int)sp0x10.offset(2, sp0x00.offset(2, (t0 + t2) * 0x2L).getSigned() * 0x2L).get());
+        v1._12.set((int)_800c70e0.offset(sp0x00[(int)(t0 + t2)] * 0x2L).get());
         v1._14.set(0x28);
         v1._16.set(0x8);
         v1._18.set((int)a2);
       }
 
       //LAB_800f3898
-      v1._0c.set((short)sp0x00.offset(2, (t0 + t2) * 0x2L).get());
-      v1._1a.set((short)sp0x40.offset(2, clutNum * 0x2L).get());
+      v1._0c.set(sp0x00[(int)(t0 + t2)]);
+      v1._1a.set((short)_800c70f4.offset(clutNum * 0x2L).get());
       v1._1c.set(0x1000);
 
       t4 = t4 + 0x24L;
@@ -1373,11 +1357,6 @@ public final class Bttl_800f {
     //LAB_800f38e8
     num._14.set((int)(t2 + 12));
     num._18.set((int)(a6 + 4));
-
-    sp0x00tmp.release();
-    sp0x10tmp.release();
-    sp0x28tmp.release();
-    sp0x40tmp.release();
   }
 
   @Method(0x800f3940L)
