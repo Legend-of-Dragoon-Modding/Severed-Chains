@@ -2,6 +2,7 @@ package legend.game.combat.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -15,7 +16,7 @@ public class FloatingNumberC4 implements MemoryRef {
   public final UnsignedShortRef flags_02;
   /** Must be the bobj that the floating number is attached to */
   public final IntRef bobjIndex_04;
-  public final UnsignedIntRef _08;
+  public final BoolRef translucent_08;
   /**
    * TODO figure out why backgrounds are not transparent
    * TODO not 100% sure if these are actually backwards (BGR), but pretty sure
@@ -37,7 +38,7 @@ public class FloatingNumberC4 implements MemoryRef {
     this.state_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this.flags_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.bobjIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
+    this.translucent_08 = ref.offset(4, 0x08L).cast(BoolRef::new);
     this.b_0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
     this.g_0d = ref.offset(1, 0x0dL).cast(UnsignedByteRef::new);
     this.r_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);

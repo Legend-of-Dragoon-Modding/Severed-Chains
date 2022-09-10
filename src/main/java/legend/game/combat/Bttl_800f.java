@@ -1224,7 +1224,7 @@ public final class Bttl_800f {
     num.state_00.set(0);
     num.flags_02.set(0);
     num.bobjIndex_04.set(-1);
-    num._08.set(0);
+    num.translucent_08.set(false);
     num.b_0c.set(0x80);
     num.g_0d.set(0x80);
     num.r_0e.set(0x80);
@@ -1247,7 +1247,7 @@ public final class Bttl_800f {
 
     //LAB_800f3588
     num.flags_02.or(0x8000);
-    num._08.set(0);
+    num.translucent_08.set(false);
     num.b_0c.set(0x80);
     num.g_0d.set(0x80);
     num.r_0e.set(0x80);
@@ -1483,7 +1483,7 @@ public final class Bttl_800f {
             num.state_00.set(0);
             num.flags_02.set(0);
             num.bobjIndex_04.set(-1);
-            num._08.set(0);
+            num.translucent_08.set(false);
             num.b_0c.set(0x80);
             num.g_0d.set(0x80);
             num.r_0e.set(0x80);
@@ -1513,7 +1513,7 @@ public final class Bttl_800f {
 
                 if(v1 > 0 && v1 < 3) {
                   num.state_00.set(97);
-                  num._08.set(0x1L);
+                  num.translucent_08.set(true);
                   num.b_0c.set(0x60);
                   num.g_0d.set(0x60);
                   num.r_0e.set(0x60);
@@ -1543,10 +1543,10 @@ public final class Bttl_800f {
 
       if((num.flags_02.get() & 0x8000) != 0) {
         if(num.state_00.get() != 0) {
-          final long sp28 = num._08.get();
-          final long r = num.r_0e.get();
-          final long g = num.g_0d.get();
-          final long b = num.b_0c.get();
+          final boolean translucent = num.translucent_08.get();
+          final int r = num.r_0e.get();
+          final int g = num.g_0d.get();
+          final int b = num.b_0c.get();
 
           //LAB_800f3e80
           for(int s7 = 0; s7 < 5; s7++) {
@@ -1561,40 +1561,40 @@ public final class Bttl_800f {
 
               //LAB_800f3ec0
               while(true) {
-                final long s0 = linkedListAddress_1f8003d8.get();
-                setGp0_2c(s0);
-                gpuLinkedListSetCommandTransparency(s0, sp28 != 0);
+                final long packet = linkedListAddress_1f8003d8.get();
+                setGp0_2c(packet); // Textured quad, opaque, texture blending
+                gpuLinkedListSetCommandTransparency(packet, translucent); // Enable translucency?
                 linkedListAddress_1f8003d8.addu(0x28L);
 
-                MEMORY.ref(1, s0).offset(0x4L).setu(r);
-                MEMORY.ref(1, s0).offset(0x5L).setu(g);
-                MEMORY.ref(1, s0).offset(0x6L).setu(b);
+                MEMORY.ref(1, packet).offset(0x4L).setu(r); // R
+                MEMORY.ref(1, packet).offset(0x5L).setu(g); // G
+                MEMORY.ref(1, packet).offset(0x6L).setu(b); // B
                 final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.getSigned();
                 long v0 = digit._0e.get() + a1;
-                MEMORY.ref(2, s0).offset(0x18L).setu(v0);
-                MEMORY.ref(2, s0).offset(0x8L).setu(v0);
+                MEMORY.ref(2, packet).offset(0x18L).setu(v0); // X2
+                MEMORY.ref(2, packet).offset(0x8L).setu(v0); // X0
                 long v1 = digit._0e.get() + digit._16.get() + a1;
-                MEMORY.ref(2, s0).offset(0x20L).setu(v1);
-                MEMORY.ref(2, s0).offset(0x10L).setu(v1);
+                MEMORY.ref(2, packet).offset(0x20L).setu(v1); // X3
+                MEMORY.ref(2, packet).offset(0x10L).setu(v1); // X1
                 long a2 = num.y_20.get() - centreScreenY_1f8003de.getSigned();
                 v0 = digit._10.get() + a2;
-                MEMORY.ref(2, s0).offset(0x12L).setu(v0);
-                MEMORY.ref(2, s0).offset(0xaL).setu(v0);
+                MEMORY.ref(2, packet).offset(0x12L).setu(v0); // Y1
+                MEMORY.ref(2, packet).offset(0xaL).setu(v0); // Y0
                 v1 = digit._10.get() + digit._18.get() + a2;
-                MEMORY.ref(2, s0).offset(0x22L).setu(v1);
-                MEMORY.ref(2, s0).offset(0x1aL).setu(v1);
+                MEMORY.ref(2, packet).offset(0x22L).setu(v1); // Y3
+                MEMORY.ref(2, packet).offset(0x1aL).setu(v1); // Y2
                 v0 = digit._12.get();
-                MEMORY.ref(1, s0).offset(0x1cL).setu(v0);
-                MEMORY.ref(1, s0).offset(0xcL).setu(v0);
+                MEMORY.ref(1, packet).offset(0x1cL).setu(v0); // U2
+                MEMORY.ref(1, packet).offset(0xcL).setu(v0); // U0
                 v1 = digit._12.get() + digit._16.get();
-                MEMORY.ref(1, s0).offset(0x24L).setu(v1);
-                MEMORY.ref(1, s0).offset(0x14L).setu(v1);
+                MEMORY.ref(1, packet).offset(0x24L).setu(v1); // U3
+                MEMORY.ref(1, packet).offset(0x14L).setu(v1); // U1
                 v0 = digit._14.get();
-                MEMORY.ref(1, s0).offset(0x15L).setu(v0);
-                MEMORY.ref(1, s0).offset(0xdL).setu(v0);
+                MEMORY.ref(1, packet).offset(0x15L).setu(v0); // V1
+                MEMORY.ref(1, packet).offset(0xdL).setu(v0); // V0
                 v1 = digit._14.get() + digit._18.get();
-                MEMORY.ref(1, s0).offset(0x25L).setu(v1);
-                MEMORY.ref(1, s0).offset(0x1dL).setu(v1);
+                MEMORY.ref(1, packet).offset(0x25L).setu(v1); // V3
+                MEMORY.ref(1, packet).offset(0x1dL).setu(v1); // V2
                 v1 = digit._1a.get();
 
                 final long t1;
@@ -1616,15 +1616,15 @@ public final class Bttl_800f {
                 t0 = t0 / 0x10L;
 
                 //LAB_800f4068
-                a2 = (_800c7114.offset(2, (t1 * 0x2L + 0x1L) * 0x4L).get() + a3 % 0x10L) * 0x40L;
+                a2 = (_800c7114.offset(2, (t1 * 0x2L + 0x1L) * 0x4L).get() + a3 % 0x10L) * 0x40L; // TODO wtf is this
                 v0 = _800c7114.offset(4, t1 * 0x8L).get() + t0 * 0x10L;
                 v0 = v0 & 0x3f0L;
                 v0 = (int)v0 >> 4;
                 a2 = a2 | v0;
-                MEMORY.ref(2, s0).offset(0xeL).setu(a2);
+                MEMORY.ref(2, packet).offset(0xeL).setu(a2); // CLUT
                 v0 = GetTPage(0, s3, 704, 496);
-                MEMORY.ref(2, s0).offset(0x16L).setu(v0);
-                insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x1cL, s0);
+                MEMORY.ref(2, packet).offset(0x16L).setu(v0); // TPAGE
+                insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x1cL, packet);
 
                 if((num.state_00.get() & 97) == 0) {
                   //LAB_800f4118

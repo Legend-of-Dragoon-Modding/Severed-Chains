@@ -6156,7 +6156,7 @@ public final class Bttl_800e {
       num.state_00.set(0);
       num.flags_02.set(0);
       num.bobjIndex_04.set(-1);
-      num._08.set(0);
+      num.translucent_08.set(false);
       num.b_0c.set(0x80);
       num.g_0d.set(0x80);
       num.r_0e.set(0x80);
