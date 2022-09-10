@@ -29,7 +29,7 @@ public class FloatingNumberC4 implements MemoryRef {
   public final IntRef _18;
   public final IntRef x_1c;
   public final IntRef y_20;
-  public final ArrayRef<FloatingNumberC4Sub20> _24;
+  public final ArrayRef<FloatingNumberC4Sub20> digits_24;
 
   public FloatingNumberC4(final Value ref) {
     this.ref = ref;
@@ -47,7 +47,7 @@ public class FloatingNumberC4 implements MemoryRef {
     this._18 = ref.offset(4, 0x18L).cast(IntRef::new);
     this.x_1c = ref.offset(4, 0x1cL).cast(IntRef::new);
     this.y_20 = ref.offset(4, 0x20L).cast(IntRef::new);
-    this._24 = ref.offset(4, 0x24L).cast(ArrayRef.of(FloatingNumberC4Sub20.class, 5, 0x20, FloatingNumberC4Sub20::new));
+    this.digits_24 = ref.offset(4, 0x24L).cast(ArrayRef.of(FloatingNumberC4Sub20.class, 5, 0x20, FloatingNumberC4Sub20::new));
   }
 
   @Override

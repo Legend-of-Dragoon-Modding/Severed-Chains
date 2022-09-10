@@ -1185,7 +1185,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void FUN_800f3354(final int numIndex, long a1, long a2, final long a3, final int x, final int y, long a6, final long a7) {
+  public static void FUN_800f3354(final int numIndex, long a1, long a2, final long a3, final int x, final int y, long a6, final long onHitClutNum) {
     long t0;
     long t2;
     long t4;
@@ -1212,7 +1212,7 @@ public final class Bttl_800f {
     if((int)a3 != -0x1L) {
       t7 = a1;
       s1 = a2;
-      clutNum = a7;
+      clutNum = onHitClutNum;
     } else {
       t7 = 0x2L;
       s1 = 0x2L;
@@ -1233,11 +1233,11 @@ public final class Bttl_800f {
 
     //LAB_800f3528
     for(int i = 0; i < 5; i++) {
-      num._24.get(i)._00.set(0);
-      num._24.get(i)._04.set(0);
-      num._24.get(i)._08.set(0);
-      num._24.get(i)._0c.set((short)-1);
-      num._24.get(i)._1c.set(0);
+      num.digits_24.get(i)._00.set(0);
+      num.digits_24.get(i)._04.set(0);
+      num.digits_24.get(i)._08.set(0);
+      num.digits_24.get(i)._0c.set((short)-1);
+      num.digits_24.get(i)._1c.set(0);
     }
 
     num.state_00.set(1);
@@ -1248,9 +1248,9 @@ public final class Bttl_800f {
     //LAB_800f3588
     num.flags_02.or(0x8000);
     num._08.set(0);
-    num.b_0c.set(0);
-    num.g_0d.set(0);
-    num.r_0e.set(0);
+    num.b_0c.set(0x80);
+    num.g_0d.set(0x80);
+    num.r_0e.set(0x80);
     num._10.set(s1);
 
     if(s1 == 0x2L && a6 == 0) {
@@ -1278,7 +1278,7 @@ public final class Bttl_800f {
 
     //LAB_800f3654
     for(t0 = 0; t0 < 5; t0++) {
-      num._24.get((int)t0)._0c.set((short)-1);
+      num.digits_24.get((int)t0)._0c.set((short)-1);
       sp0x00.offset(2, t0 * 0x2L).setu(-0x1L);
     }
 
@@ -1316,14 +1316,13 @@ public final class Bttl_800f {
 
     //LAB_800f375c
     a2 = 0x10L;
-    final long t3_0 = clutNum;
     t4 = a0;
-    clutNum = a0;
+    long backupa0 = a0;
     t5 = a0;
 
     //LAB_800f37ac
     for(t2 = 0; t2 < 5; t2++) {
-      final FloatingNumberC4Sub20 v1 = num._24.get((int)t2);
+      final FloatingNumberC4Sub20 v1 = num.digits_24.get((int)t2);
       v1._00.set(0x8000L);
       v1._10.set((short)0);
 
@@ -1336,7 +1335,7 @@ public final class Bttl_800f {
       //LAB_800f37d8
       if(t7 == 0x1L) {
         //LAB_800f382c
-        v1._0e.set((short)clutNum);
+        v1._0e.set((short)backupa0);
         v1._12.set((int)sp0x28.offset(2, sp0x00.offset(2, (t0 + t2) * 0x2L).getSigned() * 0x2L).get());
         v1._14.set(0x20);
         v1._16.set(0x8);
@@ -1359,12 +1358,12 @@ public final class Bttl_800f {
 
       //LAB_800f3898
       v1._0c.set((short)sp0x00.offset(2, (t0 + t2) * 0x2L).get());
-      v1._1a.set((short)sp0x40.offset(2, t3_0 * 0x2L).get());
+      v1._1a.set((short)sp0x40.offset(2, clutNum * 0x2L).get());
       v1._1c.set(0x1000);
 
       t4 = t4 + 0x24L;
       t5 = t5 + 0x8L;
-      clutNum = clutNum + 0x5L;
+      backupa0 = backupa0 + 0x5L;
       t0 = t0 + 0x1L;
       if((int)t0 >= 5) {
         break;
@@ -1428,7 +1427,7 @@ public final class Bttl_800f {
           } else if(state == 2) {
             //LAB_800f3b50
             for(int n = 0; n < 5; n++) {
-              final FloatingNumberC4Sub20 a1 = num._24.get(n);
+              final FloatingNumberC4Sub20 a1 = num.digits_24.get(n);
 
               if(a1._0c.get() == -1) {
                 break;
@@ -1493,7 +1492,7 @@ public final class Bttl_800f {
 
             //LAB_800f3d60
             for(int n = 0; n < 5; n++) {
-              final FloatingNumberC4Sub20 v1 = num._24.get(n);
+              final FloatingNumberC4Sub20 v1 = num.digits_24.get(n);
               v1._00.set(0);
               v1._04.set(0);
               v1._08.set(0);
@@ -1551,13 +1550,13 @@ public final class Bttl_800f {
 
           //LAB_800f3e80
           for(int s7 = 0; s7 < 5; s7++) {
-            final FloatingNumberC4Sub20 struct = num._24.get(s7);
+            final FloatingNumberC4Sub20 digit = num.digits_24.get(s7);
 
-            if(struct._0c.get() == -1) {
+            if(digit._0c.get() == -1) {
               break;
             }
 
-            if((struct._00.get() & 0x8000) != 0) {
+            if((digit._00.get() & 0x8000) != 0) {
               long s3 = 0x1L;
 
               //LAB_800f3ec0
@@ -1571,32 +1570,32 @@ public final class Bttl_800f {
                 MEMORY.ref(1, s0).offset(0x5L).setu(g);
                 MEMORY.ref(1, s0).offset(0x6L).setu(b);
                 final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.getSigned();
-                long v0 = struct._0e.get() + a1;
+                long v0 = digit._0e.get() + a1;
                 MEMORY.ref(2, s0).offset(0x18L).setu(v0);
                 MEMORY.ref(2, s0).offset(0x8L).setu(v0);
-                long v1 = struct._0e.get() + struct._16.get() + a1;
+                long v1 = digit._0e.get() + digit._16.get() + a1;
                 MEMORY.ref(2, s0).offset(0x20L).setu(v1);
                 MEMORY.ref(2, s0).offset(0x10L).setu(v1);
                 long a2 = num.y_20.get() - centreScreenY_1f8003de.getSigned();
-                v0 = struct._10.get() + a2;
+                v0 = digit._10.get() + a2;
                 MEMORY.ref(2, s0).offset(0x12L).setu(v0);
                 MEMORY.ref(2, s0).offset(0xaL).setu(v0);
-                v1 = struct._10.get() + struct._18.get() + a2;
+                v1 = digit._10.get() + digit._18.get() + a2;
                 MEMORY.ref(2, s0).offset(0x22L).setu(v1);
                 MEMORY.ref(2, s0).offset(0x1aL).setu(v1);
-                v0 = struct._12.get();
+                v0 = digit._12.get();
                 MEMORY.ref(1, s0).offset(0x1cL).setu(v0);
                 MEMORY.ref(1, s0).offset(0xcL).setu(v0);
-                v1 = struct._12.get() + struct._16.get();
+                v1 = digit._12.get() + digit._16.get();
                 MEMORY.ref(1, s0).offset(0x24L).setu(v1);
                 MEMORY.ref(1, s0).offset(0x14L).setu(v1);
-                v0 = struct._14.get();
+                v0 = digit._14.get();
                 MEMORY.ref(1, s0).offset(0x15L).setu(v0);
                 MEMORY.ref(1, s0).offset(0xdL).setu(v0);
-                v1 = struct._14.get() + struct._18.get();
+                v1 = digit._14.get() + digit._18.get();
                 MEMORY.ref(1, s0).offset(0x25L).setu(v1);
                 MEMORY.ref(1, s0).offset(0x1dL).setu(v1);
-                v1 = struct._1a.get();
+                v1 = digit._1a.get();
 
                 final long t1;
                 long t0;
@@ -1682,7 +1681,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void FUN_800f4268(final long s2, final long s3, final long s4) {
+  public static void setFloatingNumPosAndRender(final long s2, final long s3, final long s4) {
     final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0.get((int)s2).deref();
     final BattleObject27c a0 = v1.innerStruct_00.derefAs(BattleObject27c.class);
 
@@ -3797,7 +3796,7 @@ public final class Bttl_800f {
 
   @Method(0x800f8aa4L)
   public static void FUN_800f8aa4(final long a0, final long a1) {
-    FUN_800f4268(a0, a1, 0x8L);
+    setFloatingNumPosAndRender(a0, a1, 0x8L);
   }
 
   @Method(0x800f8ac4L)
@@ -4149,7 +4148,7 @@ public final class Bttl_800f {
 
   @Method(0x800f984cL)
   public static long FUN_800f984c(final RunningScript a0) {
-    FUN_800f4268(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
+    setFloatingNumPosAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
     return 0;
   }
 

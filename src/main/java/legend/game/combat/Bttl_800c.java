@@ -202,7 +202,7 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
-import static legend.game.combat.Bttl_800f.FUN_800f4268;
+import static legend.game.combat.Bttl_800f.setFloatingNumPosAndRender;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f6134;
 import static legend.game.combat.Bttl_800f.FUN_800f6330;
@@ -3403,7 +3403,7 @@ public final class Bttl_800c {
 
   @Method(0x800ccb70L)
   public static long FUN_800ccb70(final RunningScript a0) {
-    FUN_800f4268(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 0xdL);
+    setFloatingNumPosAndRender(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), 0xdL);
     return 0;
   }
 

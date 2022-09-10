@@ -6165,7 +6165,7 @@ public final class Bttl_800e {
 
       //LAB_800ef89c
       for(int a1 = 0; a1 < 5; a1++) {
-        final FloatingNumberC4Sub20 v1 = num._24.get(a1);
+        final FloatingNumberC4Sub20 v1 = num.digits_24.get(a1);
         v1._00.set(0);
         v1._04.set(0);
         v1._08.set(0);
