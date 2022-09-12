@@ -1742,7 +1742,6 @@ public final class Bttl_800e {
     long primitives = objTable.primitives_10.getPointer();
     long count = objTable.n_primitive_14.get();
 
-
     //LAB_800e3ee4
     while(count != 0) {
       sp0x10._0c.set(0);
