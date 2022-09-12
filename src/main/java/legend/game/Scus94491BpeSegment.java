@@ -67,6 +67,8 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.function.Function;
@@ -562,6 +564,8 @@ public final class Scus94491BpeSegment {
 
   private static int fpsLimit = 30;
 
+  private static Path state = Paths.get("./state.ddmp");
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     GPU.window().setFpsLimit(fpsLimit);
@@ -580,16 +584,26 @@ public final class Scus94491BpeSegment {
         LOGGER.info("Old renderer: %b", OLD_RENDERER);
       }
 
-      if((key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) && fpsLimit > 5) {
-        fpsLimit -= 5;
-        GPU.window().setFpsLimit(fpsLimit);
-        LOGGER.info("FPS limit set to %d", fpsLimit);
+      if(key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) {
+        if((mods & GLFW_MOD_CONTROL) == 0) {
+          if(fpsLimit > 5) {
+            fpsLimit -= 5;
+            GPU.window().setFpsLimit(fpsLimit);
+          }
+        } else {
+          if(GPU.getRenderScale() > 1) {
+            GPU.rescaleVram(GPU.getRenderScale() - 1);
+          }
+        }
       }
 
       if(key == GLFW_KEY_EQUAL || key == GLFW_KEY_KP_ADD) {
-        fpsLimit += 5;
-        GPU.window().setFpsLimit(fpsLimit);
-        LOGGER.info("FPS limit set to %d", fpsLimit);
+        if((mods & GLFW_MOD_CONTROL) == 0) {
+          fpsLimit += 5;
+          GPU.window().setFpsLimit(fpsLimit);
+        } else {
+          GPU.rescaleVram(GPU.getRenderScale() + 1);
+        }
       }
 
       if(key == GLFW_KEY_F12) {
@@ -629,8 +643,8 @@ public final class Scus94491BpeSegment {
 
       if(dumping) {
         LOGGER.info("Pausing execution to dump save state...");
-        try(final FileChannel channel = FileChannel.open(Paths.get("./state.ddmp"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
-          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 12 * 0x400 * 0x400);
+        try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
+          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 32 * 1024 * 1024);
           Hardware.dump(buf);
 
           for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
@@ -671,9 +685,9 @@ public final class Scus94491BpeSegment {
       }
 
       if(loading) {
-        try(final FileChannel channel = FileChannel.open(Paths.get("./state.ddmp"), StandardOpenOption.READ)) {
+        try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.READ)) {
           LOGGER.info("Pausing execution to load save state...");
-          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, 12 * 1024 * 1024);
+          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(state));
           Hardware.load(buf);
 
           for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
