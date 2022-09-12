@@ -261,7 +261,7 @@ import static legend.game.combat.SEffe.FUN_80115cac;
 public final class Bttl_800e {
   private Bttl_800e() { }
 
-  /** Normals */
+  /** LSC 4 VERTEX GOURAUD NON-TEXTURED (SOLID) */
   @Method(0x800e02e8L)
   public static long FUN_800e02e8(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -402,7 +402,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals */
+  /** LSC 3 VERTEX GOURAUD NON-TEXTURED (SOLID) */
   @Method(0x800e0848L)
   public static long FUN_800e0848(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -515,7 +515,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals */
+  /** LSC 4 VERTEX GOURAUD TEXTURE */
   @Method(0x800e0c98L)
   public static long FUN_800e0c98(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -655,7 +655,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals */
+  /** LSC 3 VERTEX GOURAUD TEXTURED */
   @Method(0x800e121cL)
   public static long FUN_800e121c(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
@@ -773,7 +773,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals, colours */
+  /** LSC 4 VERTEX GOURAUD NON-TEXTURED (SOLID) */
   @Method(0x800e16a0L)
   public static long FUN_800e16a0(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -910,7 +910,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals, colour */
+  /** LSC 3 VERTEX GOURAUD NON-TEXTURED (SOLID) */
   @Method(0x800e1c24L)
   public static long FUN_800e1c24(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1025,7 +1025,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Colours */
+  /** NLSC 4 VERTEX GRADATION TEXTURED */
   @Method(0x800e20bcL)
   public static long FUN_800e20bc(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1142,7 +1142,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Colours */
+  /** NLSC 3 VERTEX GRADATION TEXTURED */
   @Method(0x800e2620L)
   public static long FUN_800e2620(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
@@ -1242,7 +1242,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals */
+  /** LSC 4 VERTEX GOURAUD TEXTURED 2 SEMI TRANS? */
   @Method(0x800e2a98L)
   public static long FUN_800e2a98(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1381,7 +1381,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Normals */
+  /** LSC 3 VERTEX GOURAUD TEXTURED 2 SEMI TRANS */
   @Method(0x800e300cL)
   public static long FUN_800e300c(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1498,7 +1498,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Colours */
+  /** NLSC 4 VERTEX GRADATION TEXTURED SEMI TRANS */
   @Method(0x800e3478L)
   public static long FUN_800e3478(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1616,7 +1616,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
-  /** Colours */
+  /** NLSC 3 VERTEX GRADATION TEXTURED SEMI TRANS */
   @Method(0x800e39e8L)
   public static long FUN_800e39e8(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = linkedListAddress_1f8003d8.get();
@@ -1720,6 +1720,7 @@ public final class Bttl_800e {
     return primitives + 0x3L & 0xffff_fffcL;
   }
 
+  /** Render All method **/
   @Method(0x800e3e6cL)
   public static void renderCtmd(final GsDOBJ2 dobj2) {
     final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x50);
