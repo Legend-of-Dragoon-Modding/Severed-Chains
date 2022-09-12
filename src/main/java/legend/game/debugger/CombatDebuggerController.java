@@ -46,6 +46,29 @@ public class CombatDebuggerController {
   public Spinner<Integer> mp;
   @FXML
   public Spinner<Integer> maxMp;
+  @FXML
+  public Spinner<Integer> sp;
+
+  @FXML
+  public Spinner<Integer> spd;
+  @FXML
+  public Spinner<Integer> turn;
+  @FXML
+  public Spinner<Integer> atk;
+  @FXML
+  public Spinner<Integer> def;
+  @FXML
+  public Spinner<Integer> matk;
+  @FXML
+  public Spinner<Integer> mdef;
+  @FXML
+  public Spinner<Integer> ahit;
+  @FXML
+  public Spinner<Integer> mhit;
+  @FXML
+  public Spinner<Integer> aavd;
+  @FXML
+  public Spinner<Integer> mavd;
 
   @FXML
   public Button refreshStats;
@@ -83,8 +106,20 @@ public class CombatDebuggerController {
     this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
     this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
-    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
+    this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.sp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+
+    this.spd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.turn.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.atk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.def.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.matk.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.mdef.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.ahit.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.mhit.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.aavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
+    this.mavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
 
     this.bobjList.getSelectionModel().select(0);
 
@@ -109,6 +144,18 @@ public class CombatDebuggerController {
     this.maxHp.getValueFactory().setValue(bobj.maxHp_10.get());
     this.mp.getValueFactory().setValue(bobj.mp_0c.get());
     this.maxMp.getValueFactory().setValue(bobj.maxMp_12.get());
+    this.sp.getValueFactory().setValue((int)bobj.sp_0a.get());
+
+    this.spd.getValueFactory().setValue(bobj.speed_32.get());
+    this.turn.getValueFactory().setValue((int)bobj.turnValue_4c.get());
+    this.atk.getValueFactory().setValue(bobj.attack_34.get());
+    this.def.getValueFactory().setValue(bobj.defence_38.get());
+    this.matk.getValueFactory().setValue(bobj.magicAttack_36.get());
+    this.mdef.getValueFactory().setValue(bobj.magicDefence_3a.get());
+    this.ahit.getValueFactory().setValue((int)bobj.attackHit_3c.get());
+    this.mhit.getValueFactory().setValue((int)bobj.magicHit_3e.get());
+    this.aavd.getValueFactory().setValue((int)bobj.attackAvoid_40.get());
+    this.mavd.getValueFactory().setValue((int)bobj.magicAvoid_42.get());
   }
 
   private String getCombatantName(final int combatantIndex) {
@@ -166,6 +213,18 @@ public class CombatDebuggerController {
     bobj.maxHp_10.set(this.maxHp.getValue());
     bobj.mp_0c.set(this.mp.getValue());
     bobj.maxMp_12.set(this.maxMp.getValue());
+    bobj.sp_0a.set(this.sp.getValue().shortValue());
+
+    bobj.speed_32.set(this.spd.getValue());
+    bobj.turnValue_4c.set(this.turn.getValue().shortValue());
+    bobj.attack_34.set(this.atk.getValue());
+    bobj.defence_38.set(this.def.getValue());
+    bobj.magicAttack_36.set(this.matk.getValue());
+    bobj.magicDefence_3a.set(this.mdef.getValue());
+    bobj.attackHit_3c.set(this.ahit.getValue().shortValue());
+    bobj.magicHit_3e.set(this.mhit.getValue().shortValue());
+    bobj.attackAvoid_40.set(this.aavd.getValue().shortValue());
+    bobj.magicAvoid_42.set(this.mavd.getValue().shortValue());
   }
 
   private static class ListItem {

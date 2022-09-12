@@ -47,7 +47,7 @@ public class BattleObject27c extends BattleScriptDataBase {
    * <ul>
    *   <li>0x1 - Water</li>
    *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dart</li>
+   *   <li>0x4 - Dark</li>
    *   <li>0x8 - None</li>
    *   <li>0x10 - Thunder</li>
    *   <li>0x20 - Wind</li>
@@ -61,7 +61,7 @@ public class BattleObject27c extends BattleScriptDataBase {
    * <ul>
    *   <li>0x1 - Water</li>
    *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dart</li>
+   *   <li>0x4 - Dark</li>
    *   <li>0x8 - None</li>
    *   <li>0x10 - Thunder</li>
    *   <li>0x20 - Wind</li>
@@ -74,7 +74,7 @@ public class BattleObject27c extends BattleScriptDataBase {
    * <ul>
    *   <li>0x1 - Water</li>
    *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dart</li>
+   *   <li>0x4 - Dark</li>
    *   <li>0x8 - None</li>
    *   <li>0x10 - Thunder</li>
    *   <li>0x20 - Wind</li>

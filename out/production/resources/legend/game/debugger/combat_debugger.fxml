@@ -12,87 +12,192 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@script_debugger.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.CombatDebuggerController">
    <HBox prefHeight="402.0" prefWidth="600.0" stylesheets="@combat_debugger.css">
       <VBox.margin>
-         <Insets/>
+         <Insets />
       </VBox.margin>
       <VBox prefHeight="346.0" prefWidth="182.0">
          <HBox.margin>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </HBox.margin>
-         <Label text="Battle Objects"/>
-         <ListView fx:id="bobjList" prefHeight="398.0" prefWidth="182.0"/>
+         <Label text="Battle Objects" />
+         <ListView fx:id="bobjList" prefHeight="398.0" prefWidth="182.0" />
       </VBox>
-      <VBox prefHeight="401.0" prefWidth="186.0">
+      <VBox prefHeight="400.0" prefWidth="249.0">
          <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
-         <Label text="Script"/>
-         <Button fx:id="scriptIndex" mnemonicParsing="false" onAction="#openScriptDebugger" prefHeight="26.0" prefWidth="127.0" text="Script"/>
+         <HBox prefHeight="26.0" prefWidth="224.0">
+            <children>
+               <Button fx:id="scriptIndex" mnemonicParsing="false" onAction="#openScriptDebugger" prefHeight="26.0" prefWidth="102.0" text="Script">
+                  <HBox.margin>
+                     <Insets right="3.0" />
+                  </HBox.margin>
+               </Button>
+               <Separator orientation="VERTICAL" prefHeight="200.0">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </Separator>
+               <Button fx:id="refreshStats" mnemonicParsing="false" onAction="#refreshStats" prefHeight="32.0" prefWidth="56.0" text="Refresh">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Button>
+               <Button fx:id="updateStats" mnemonicParsing="false" onAction="#updateStats" prefHeight="38.0" prefWidth="55.0" text="Update" />
+            </children>
+         </HBox>
          <Separator prefWidth="200.0">
             <opaqueInsets>
-               <Insets/>
+               <Insets />
             </opaqueInsets>
             <VBox.margin>
-               <Insets bottom="4.0" top="8.0"/>
+               <Insets bottom="4.0" top="8.0" />
             </VBox.margin>
          </Separator>
          <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
             <Label text="LVL">
                <HBox.margin>
-                  <Insets right="4.0"/>
+                  <Insets right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="level" editable="true" prefHeight="26.0" prefWidth="55.0"/>
+            <Spinner fx:id="level" editable="true" prefHeight="26.0" prefWidth="55.0" />
             <Label text="DLVL">
                <HBox.margin>
-                  <Insets left="4.0" right="4.0"/>
+                  <Insets left="4.0" right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="dlevel" editable="true" prefHeight="26.0" prefWidth="49.0"/>
+            <Spinner fx:id="dlevel" editable="true" prefHeight="26.0" prefWidth="49.0" />
          </HBox>
          <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
             <Label text="HP">
                <HBox.margin>
-                  <Insets right="4.0"/>
+                  <Insets right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="hp" editable="true" prefHeight="26.0" prefWidth="65.0"/>
+            <Spinner fx:id="hp" editable="true" prefHeight="26.0" prefWidth="65.0" />
             <Label text="/">
                <HBox.margin>
-                  <Insets left="4.0" right="4.0"/>
+                  <Insets left="4.0" right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="maxHp" editable="true" prefHeight="26.0" prefWidth="65.0"/>
+            <Spinner fx:id="maxHp" editable="true" prefHeight="26.0" prefWidth="65.0" />
          </HBox>
          <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
             <VBox.margin>
-               <Insets/>
+               <Insets />
             </VBox.margin>
             <Label text="MP">
                <HBox.margin>
-                  <Insets right="4.0"/>
+                  <Insets right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="mp" editable="true" prefHeight="26.0" prefWidth="65.0"/>
+            <Spinner fx:id="mp" editable="true" prefHeight="26.0" prefWidth="65.0" />
             <Label text="/">
                <HBox.margin>
-                  <Insets left="4.0" right="4.0"/>
+                  <Insets left="4.0" right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="maxMp" editable="true" prefHeight="26.0" prefWidth="65.0"/>
+            <Spinner fx:id="maxMp" editable="true" prefHeight="26.0" prefWidth="65.0" />
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="SP">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="sp" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
          </HBox>
          <Separator prefWidth="200.0">
             <VBox.margin>
-               <Insets bottom="4.0" top="8.0"/>
+               <Insets bottom="4.0" top="8.0" />
             </VBox.margin>
          </Separator>
-         <HBox prefHeight="100.0" prefWidth="200.0">
-            <Button fx:id="refreshStats" mnemonicParsing="false" onAction="#refreshStats" text="Refresh">
-               <HBox.margin>
-                  <Insets right="4.0"/>
-               </HBox.margin>
-            </Button>
-            <Button fx:id="updateStats" mnemonicParsing="false" onAction="#updateStats" text="Update"/>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="SPD">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="spd" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label text="Turn">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="turn" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
          </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="ATK">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="atk" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label text="MATK">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="matk" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="DEF">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="def" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label text="MDEF">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="mdef" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="AHIT">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="ahit" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label text="MHIT">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="mhit" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
+            <children>
+               <Label text="AAVD">
+                  <HBox.margin>
+                     <Insets right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="aavd" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label text="MAVD">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
+               <Spinner fx:id="mavd" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            </children>
+         </HBox>
+      </VBox>
+      <VBox prefHeight="400.0" prefWidth="163.0">
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
       </VBox>
    </HBox>
 </VBox>
