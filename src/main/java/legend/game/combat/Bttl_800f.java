@@ -1182,7 +1182,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void calculateFloatingNumberRender(final int numIndex, long onHitTextType, long onHitClutCol, final long rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
+  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final long rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
     final short[] damageDigits = new short[5];
 
     final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
@@ -1372,8 +1372,8 @@ public final class Bttl_800f {
 
             //LAB_800f3a44
             final DVECTOR screenCoords = perspectiveTransformXyz(bobj._148, x, y, z);
-            num.x_1c.set(clampX(screenCoords.getX() + (int)centreScreenX_1f8003dc.getSigned()));
-            num.y_20.set(clampY(screenCoords.getY() + (int)centreScreenY_1f8003de.getSigned()));
+            num.x_1c.set(clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()));
+            num.y_20.set(clampY(screenCoords.getY() + centreScreenY_1f8003de.get()));
           }
 
           //LAB_800f3ac8
@@ -1532,14 +1532,14 @@ public final class Bttl_800f {
                 MEMORY.ref(1, packet).offset(0x4L).setu(r); // R
                 MEMORY.ref(1, packet).offset(0x5L).setu(g); // G
                 MEMORY.ref(1, packet).offset(0x6L).setu(b); // B
-                final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.getSigned();
+                final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.get();
                 long v0 = digit.x_0e.get() + a1;
                 MEMORY.ref(2, packet).offset(0x18L).setu(v0); // X2
                 MEMORY.ref(2, packet).offset(0x8L).setu(v0); // X0
                 long v1 = digit.x_0e.get() + digit.texW_16.get() + a1;
                 MEMORY.ref(2, packet).offset(0x20L).setu(v1); // X3
                 MEMORY.ref(2, packet).offset(0x10L).setu(v1); // X1
-                long a2 = num.y_20.get() - centreScreenY_1f8003de.getSigned();
+                long a2 = num.y_20.get() - centreScreenY_1f8003de.get();
                 v0 = digit._10.get() + a2;
                 MEMORY.ref(2, packet).offset(0x12L).setu(v0); // Y1
                 MEMORY.ref(2, packet).offset(0xaL).setu(v0); // Y0
@@ -1666,7 +1666,7 @@ public final class Bttl_800f {
     final DVECTOR screenCoords = perspectiveTransformXyz(a0._148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(s2, 0, 0x2L, s3, clampX(screenCoords.getX() + (int)centreScreenX_1f8003dc.getSigned()), clampY(screenCoords.getY() + (int)centreScreenY_1f8003de.getSigned()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
+    FUN_800f89f4(s2, 0, 0x2L, s3, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
   }
 
   @Method(0x800f43dcL)

@@ -16,7 +16,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
-import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.FunctionRef;
@@ -24,6 +23,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -163,12 +163,12 @@ import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004._8004ff10;
 import static legend.game.Scus94491BpeSegment_8004._8004ff14;
-import static legend.game.Scus94491BpeSegment_8004.callbackArray_8004dddc;
-import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
+import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
+import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbacks_8004dddc;
 import static legend.game.Scus94491BpeSegment_8004.initSound;
 import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
@@ -176,7 +176,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.orderingTableLength_8004dd38;
+import static legend.game.Scus94491BpeSegment_8004.orderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -341,19 +341,18 @@ public final class Scus94491BpeSegment {
   public static final BiFunctionRef<Long, Object[], Object> functionVectorB_000000b0 = MEMORY.ref(4, 0x000000b0L, BiFunctionRef::new);
   public static final BiFunctionRef<Long, Object[], Object> functionVectorC_000000c0 = MEMORY.ref(4, 0x000000c0L, BiFunctionRef::new);
 
-  public static final BoolRef isStackPointerModified_1f8003bc = MEMORY.ref(2, 0x1f8003bcL, BoolRef::new);
-  public static final Value _1f8003c0 = MEMORY.ref(4, 0x1f8003c0L);
-  public static final Value zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L);
-  public static final Value _1f8003c8 = MEMORY.ref(4, 0x1f8003c8L);
-  public static final Value zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL);
+  public static final IntRef orderingTableBits_1f8003c0 = MEMORY.ref(4, 0x1f8003c0L, IntRef::new);
+  public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
+  public static final IntRef orderingTableSize_1f8003c8 = MEMORY.ref(4, 0x1f8003c8L, IntRef::new);
+  public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
   public static final Pointer<UnboundedArrayRef<GsOT_TAG>> tags_1f8003d0 = MEMORY.ref(4, 0x1f8003d0L, Pointer.of(4, UnboundedArrayRef.of(4, GsOT_TAG::new)));
   public static final Value _1f8003d4 = MEMORY.ref(4, 0x1f8003d4L);
   public static final Value linkedListAddress_1f8003d8 = MEMORY.ref(4, 0x1f8003d8L);
-  public static final Value centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL);
-  public static final Value centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL);
-  public static final Value displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L);
-  public static final Value displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L);
-  public static final Value zOffset_1f8003e8 = MEMORY.ref(4, 0x1f8003e8L);
+  public static final ShortRef centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL, ShortRef::new);
+  public static final ShortRef centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL, ShortRef::new);
+  public static final IntRef displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L, IntRef::new);
+  public static final IntRef displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L, IntRef::new);
+  public static final IntRef zOffset_1f8003e8 = MEMORY.ref(4, 0x1f8003e8L, IntRef::new);
   public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
   public static final Value _1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
 
@@ -564,7 +563,7 @@ public final class Scus94491BpeSegment {
 
   private static int fpsLimit = 30;
 
-  private static Path state = Paths.get("./state.ddmp");
+  private static final Path state = Paths.get("./state.ddmp");
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -625,8 +624,8 @@ public final class Scus94491BpeSegment {
 
       startFrame();
       processControllerInput();
-      FUN_80011f24();
-      FUN_80014d20();
+      FUN_80011f6c();
+      loadFiles();
       FUN_80022518();
       FUN_80011ec0();
       executeLoadersAndScripts();
@@ -641,104 +640,7 @@ public final class Scus94491BpeSegment {
       _800bb0fc.addu(0x1L);
       endFrame();
 
-      if(dumping) {
-        LOGGER.info("Pausing execution to dump save state...");
-        try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
-          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 32 * 1024 * 1024);
-          Hardware.dump(buf);
-
-          for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
-            final Pointer<?> ptr = scriptStatePtrArr_800bc1c0.get(i).deref().innerStruct_00;
-
-            if(ptr.isNull()) {
-              IoHelper.write(buf, "");
-            } else {
-              IoHelper.write(buf, ptr.deref().getClass().getName());
-
-              if(ptr.deref() instanceof EffectManagerData6c) {
-                final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref())._44;
-
-                if(ptr1.isNull()) {
-                  IoHelper.write(buf, "");
-                } else {
-                  IoHelper.write(buf, ptr1.deref().getClass().getName());
-                }
-
-                Pointer<BttlScriptData6cSubBase2> ptr2 = ((EffectManagerData6c)ptr.deref())._58;
-
-                while(!ptr2.isNull()) {
-                  IoHelper.write(buf, ptr2.deref().getClass().getName());
-                  ptr2 = ptr2.deref()._00;
-                }
-
-                IoHelper.write(buf, "");
-              }
-            }
-          }
-
-          LOGGER.info("Save state complete");
-        } catch(final Throwable throwable) {
-          LOGGER.error("Failed to dump save state", throwable);
-        }
-
-        dumping = false;
-      }
-
-      if(loading) {
-        try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.READ)) {
-          LOGGER.info("Pausing execution to load save state...");
-          final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(state));
-          Hardware.load(buf);
-
-          for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
-            final Pointer<ScriptState<?>> ptr = scriptStatePtrArr_800bc1c0.get(i);
-
-            final String clsName = IoHelper.readString(buf);
-
-            if(!clsName.isEmpty()) {
-              final Class<?> cls = Class.forName(clsName);
-              final Constructor<?> ctor = cls.getConstructor(Value.class);
-              ptr.set(ScriptState.of(ref -> {
-                try {
-                  return (MemoryRef)ctor.newInstance(ref);
-                } catch(final Exception e) {
-                  throw new RuntimeException(e);
-                }
-              }).apply(MEMORY.ref(4, ptr.getPointer())));
-
-              if(EffectManagerData6c.class.equals(cls)) {
-                final EffectManagerData6c data6c = ptr.deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-
-                final String clsName1 = IoHelper.readString(buf);
-
-                if(!clsName1.isEmpty()) {
-                  final Class<?> cls1 = Class.forName(clsName1);
-                  final Constructor<?> ctor1 = cls1.getConstructor(Value.class);
-                  data6c._44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c._44.getPointer())));
-                }
-
-                Pointer<BttlScriptData6cSubBase2> ptr2 = data6c._58;
-                String clsName2 = IoHelper.readString(buf);
-
-                while(!clsName2.isEmpty()) {
-                  final Class<?> cls2 = Class.forName(clsName2);
-                  final Constructor<?> ctor2 = cls2.getConstructor(Value.class);
-                  ptr2.set((BttlScriptData6cSubBase2)ctor2.newInstance(MEMORY.ref(4, ptr2.getPointer())));
-
-                  ptr2 = ptr2.deref()._00;
-                  clsName2 = IoHelper.readString(buf);
-                }
-              }
-            }
-          }
-
-          LOGGER.info("Load state complete");
-        } catch(final Throwable throwable) {
-          LOGGER.error("Failed to load save state", throwable);
-        }
-
-        loading = false;
-      }
+      handleSaveStates();
     };
 
     if(SYNCHRONOUS) {
@@ -756,6 +658,107 @@ public final class Scus94491BpeSegment {
     Platform.exit();
   }
 
+  private static void handleSaveStates() {
+    if(dumping) {
+      LOGGER.info("Pausing execution to dump save state...");
+      try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
+        final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 32 * 1024 * 1024);
+        Hardware.dump(buf);
+
+        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
+          final Pointer<?> ptr = scriptStatePtrArr_800bc1c0.get(i).deref().innerStruct_00;
+
+          if(ptr.isNull()) {
+            IoHelper.write(buf, "");
+          } else {
+            IoHelper.write(buf, ptr.deref().getClass().getName());
+
+            if(ptr.deref() instanceof EffectManagerData6c) {
+              final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref())._44;
+
+              if(ptr1.isNull()) {
+                IoHelper.write(buf, "");
+              } else {
+                IoHelper.write(buf, ptr1.deref().getClass().getName());
+              }
+
+              Pointer<BttlScriptData6cSubBase2> ptr2 = ((EffectManagerData6c)ptr.deref())._58;
+
+              while(!ptr2.isNull()) {
+                IoHelper.write(buf, ptr2.deref().getClass().getName());
+                ptr2 = ptr2.deref()._00;
+              }
+
+              IoHelper.write(buf, "");
+            }
+          }
+        }
+
+        LOGGER.info("Save state complete");
+      } catch(final Throwable throwable) {
+        LOGGER.error("Failed to dump save state", throwable);
+      }
+
+      dumping = false;
+    }
+
+    if(loading) {
+      try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.READ)) {
+        LOGGER.info("Pausing execution to load save state...");
+        final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(state));
+        Hardware.load(buf);
+
+        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
+          final Pointer<ScriptState<?>> ptr = scriptStatePtrArr_800bc1c0.get(i);
+
+          final String clsName = IoHelper.readString(buf);
+
+          if(!clsName.isEmpty()) {
+            final Class<?> cls = Class.forName(clsName);
+            final Constructor<?> ctor = cls.getConstructor(Value.class);
+            ptr.set(ScriptState.of(ref -> {
+              try {
+                return (MemoryRef)ctor.newInstance(ref);
+              } catch(final Exception e) {
+                throw new RuntimeException(e);
+              }
+            }).apply(MEMORY.ref(4, ptr.getPointer())));
+
+            if(EffectManagerData6c.class.equals(cls)) {
+              final EffectManagerData6c data6c = ptr.deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+
+              final String clsName1 = IoHelper.readString(buf);
+
+              if(!clsName1.isEmpty()) {
+                final Class<?> cls1 = Class.forName(clsName1);
+                final Constructor<?> ctor1 = cls1.getConstructor(Value.class);
+                data6c._44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c._44.getPointer())));
+              }
+
+              Pointer<BttlScriptData6cSubBase2> ptr2 = data6c._58;
+              String clsName2 = IoHelper.readString(buf);
+
+              while(!clsName2.isEmpty()) {
+                final Class<?> cls2 = Class.forName(clsName2);
+                final Constructor<?> ctor2 = cls2.getConstructor(Value.class);
+                ptr2.set((BttlScriptData6cSubBase2)ctor2.newInstance(MEMORY.ref(4, ptr2.getPointer())));
+
+                ptr2 = ptr2.deref()._00;
+                clsName2 = IoHelper.readString(buf);
+              }
+            }
+          }
+        }
+
+        LOGGER.info("Load state complete");
+      } catch(final Throwable throwable) {
+        LOGGER.error("Failed to load save state", throwable);
+      }
+
+      loading = false;
+    }
+  }
+
   @Method(0x80011ec0L)
   public static void FUN_80011ec0() {
     // Empty
@@ -769,18 +772,6 @@ public final class Scus94491BpeSegment {
       executeScripts1();
       executeScripts2();
     }
-  }
-
-  @Method(0x80011f24L)
-  public static void FUN_80011f24() {
-//    oldStackPointer_1f8003b8.setu(sp);
-    isStackPointerModified_1f8003bc.set(true);
-//    sp = temporaryStack_1f8003b4.getAddress();
-
-    FUN_80011f6c();
-
-    isStackPointerModified_1f8003bc.set(false);
-//    sp = oldStackPointer_1f8003b8.get();
   }
 
   @Method(0x80011f6cL)
@@ -1620,7 +1611,7 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(4, a1).offset(0x4L).setu(0xe600_0001L); // Mask bit setting - force bit 15
       MEMORY.ref(4, a1).offset(0x8L).setu(0);
 
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)(_1f8003c8.get() - 1)).getAddress(), a1);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)(orderingTableSize_1f8003c8.get() - 1)).getAddress(), a1);
       linkedListAddress_1f8003d8.addu(0xcL);
     }
 
@@ -1658,7 +1649,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012f5c
     final long use24BitColour = renderFlags_8004dd36.get() >>> 0x2L & 0x1L;
     final long height480 = renderFlags_8004dd36.get() & 0x2L;
-    final long length = orderingTableLength_8004dd38.get();
+    final int orderingTableBits = orderingTableBits_8004dd38.get();
 
     _800babc0.setu(0);
     _800bb104.setu(0);
@@ -1667,13 +1658,13 @@ public final class Scus94491BpeSegment {
     final RECT rect1 = new RECT((short)0, (short)16, (short)width_8004dd34.get(), (short)240);
     final RECT rect2 = new RECT((short)0, (short)256, (short)width_8004dd34.get(), (short)240);
 
-    orderingTables_8005a370.get(0).length_00.set(length);
-    orderingTables_8005a370.get(1).length_00.set(length);
+    orderingTables_8005a370.get(0).length_00.set(orderingTableBits);
+    orderingTables_8005a370.get(1).length_00.set(orderingTableBits);
 
-    _1f8003c0.setu(length);
-    zShift_1f8003c4.setu(0xeL - length);
-    _1f8003c8.setu(0x1L << length);
-    zMax_1f8003cc.setu((0x1L << length) - 0x2L);
+    orderingTableBits_1f8003c0.set(orderingTableBits);
+    zShift_1f8003c4.set(14 - orderingTableBits);
+    orderingTableSize_1f8003c8.set(1 << orderingTableBits);
+    zMax_1f8003cc.set((1 << orderingTableBits) - 2);
 
     VSync(0);
     SetDispMask(0);
@@ -1746,10 +1737,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001324cL)
-  public static void FUN_8001324c(final long orderingTableLength) {
-    if(_1f8003c0.get() != orderingTableLength) {
+  public static void FUN_8001324c(final int orderingTableBits) {
+    if(orderingTableBits_1f8003c0.get() != orderingTableBits) {
       syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
-      orderingTableLength_8004dd38.setu(orderingTableLength);
+      orderingTableBits_8004dd38.set(orderingTableBits);
     }
 
     //LAB_80013274
@@ -2026,8 +2017,8 @@ public final class Scus94491BpeSegment {
 
       MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
       MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
-      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L); // W
-      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L); // H
+      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // W
+      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // H
 
       gpuLinkedListSetCommandTransparency(s0, true);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
@@ -2058,8 +2049,8 @@ public final class Scus94491BpeSegment {
 
       MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
       MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
-      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 0x1L); // W
-      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 0x1L); // H
+      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // W
+      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // H
 
       gpuLinkedListSetCommandTransparency(s0, true);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
@@ -2090,8 +2081,8 @@ public final class Scus94491BpeSegment {
 
     MEMORY.ref(2, s0).offset(0x8L).set(-centreScreenX_1f8003dc.get()); // xx
     MEMORY.ref(2, s0).offset(0xaL).set(-centreScreenY_1f8003de.get()); // xx
-    MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.offset(2, 0x0L).get() + 1); // yy
-    MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + 1); // yy
+    MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // yy
+    MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // yy
 
     gpuLinkedListSetCommandTransparency(s0, true);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x1e).getAddress(), s0);
@@ -2329,13 +2320,13 @@ public final class Scus94491BpeSegment {
           }
 
           if(_8004ddd0.get() == 0x2L) {
-            callbackIndex_8004ddc4.setu(0xbL);
+            fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
             _8004ddd0.setu(0x1L);
             return 0x1L;
           }
 
           //LAB_80014b7c
-          callbackIndex_8004ddc4.setu(0x7L);
+          fileLoadingCallbackIndex_8004ddc4.setu(0x7L);
         } else {
           //LAB_80014b3c
           if(_8004ddd0.get() != 0x2L) {
@@ -2345,7 +2336,7 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80014b80
-          callbackIndex_8004ddc4.setu(0xbL);
+          fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
         }
 
         _8004ddd0.setu(_8004ddd4);
@@ -2354,7 +2345,7 @@ public final class Scus94491BpeSegment {
       }
 
       if(_8004ddd0.get() == 0x2L) {
-        callbackIndex_8004ddc4.setu(0xbL);
+        fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
         _8004ddd0.setu(0x1L);
         return 0x1L;
       }
@@ -2380,13 +2371,13 @@ public final class Scus94491BpeSegment {
 
       //LAB_80014b08
       //LAB_80014b10
-      callbackIndex_8004ddc4.setu(0x1aL);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x1aL);
       _8004ddd0.setu(0x1L);
       return 0x1L;
     }
 
     if(_8004ddd0.get() == 0x2L) {
-      callbackIndex_8004ddc4.setu(0xbL);
+      fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
       _8004ddd0.setu(0x1L);
       return 0x1L;
     }
@@ -2406,7 +2397,7 @@ public final class Scus94491BpeSegment {
     }
 
     if(_8004ddcc.get() == 0) {
-      callbackIndex_8004ddc4.setu(0x1L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
       _8004ddd0.setu(0x1L);
 
       //LAB_80014b90
@@ -2516,31 +2507,31 @@ public final class Scus94491BpeSegment {
       default -> {
         file.used.set(false);
         popFirstFileIfUnused();
-        callbackIndex_8004ddc4.setu(0);
+        fileLoadingCallbackIndex_8004ddc4.setu(0);
         return -0x1L;
       }
     }
   }
 
   @Method(0x80014d20L)
-  public static void FUN_80014d20() {
-    FUN_80014d50();
+  public static void loadFiles() {
+    executeFileLoadingStage();
     decompressCurrentFile();
     executeCurrentlyLoadingFileCallback();
   }
 
   @Method(0x80014d50L)
-  public static void FUN_80014d50() {
+  public static void executeFileLoadingStage() {
     if(!SInitBinLoaded_800bbad0.get()) {
       return;
     }
 
-    final int callbackIndex = (int)callbackIndex_8004ddc4.get();
+    final int callbackIndex = (int)fileLoadingCallbackIndex_8004ddc4.get();
     if(callbackIndex != 0) {
       LOGGER.info("File loading callback index %d", callbackIndex);
     }
 
-    callbackArray_8004dddc.get(callbackIndex).deref().run();
+    fileLoadingCallbacks_8004dddc.get(callbackIndex).deref().run();
     FUN_8002c86c();
 
     //LAB_80014d94
@@ -2573,7 +2564,7 @@ public final class Scus94491BpeSegment {
     FUN_80014f64(SyncCode.COMPLETE, null);
 
     transferIndex_800bb494.setu(-0x1L); // Mark transfer complete
-    callbackIndex_8004ddc4.setu(0x2L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x2L);
 
     return 1;
   }
@@ -2588,12 +2579,12 @@ public final class Scus94491BpeSegment {
       fileLoadingInfoArray_800bbad8.get(0).used.set(false);
 
       popFirstFileIfUnused();
-      callbackIndex_8004ddc4.setu(0);
+      fileLoadingCallbackIndex_8004ddc4.setu(0);
       return 0;
     }
 
     //LAB_80014e98
-    callbackIndex_8004ddc4.setu(0x3L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x3L);
 
     //LAB_80014ea0
     //LAB_80014ea4
@@ -2618,7 +2609,7 @@ public final class Scus94491BpeSegment {
     if(syncCode == SyncCode.COMPLETE) {
       resetDmaTransfer(getMethodAddress(Scus94491BpeSegment.class, "FUN_80014fac", SyncCode.class, byte[].class), -0x1L);
     } else {
-      callbackIndex_8004ddc4.setu(0x1L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
     }
   }
 
@@ -2635,7 +2626,7 @@ public final class Scus94491BpeSegment {
       }
     } else {
       //LAB_80015024
-      callbackIndex_8004ddc4.setu(0x1L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
     }
 
     //LAB_8001502c
@@ -2811,24 +2802,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001575cL)
   public static void executeScripts1() {
-    isStackPointerModified_1f8003bc.set(true);
-//    oldStackPointer_1f8003b8.setu(sp);
-//    sp = temporaryStack_1f8003b4.getAddress();
     executeScriptFrame();
     executeScriptCallbacks1();
     scriptStateUpperBound_8004de4c.setu(0x9L);
-    isStackPointerModified_1f8003bc.set(false);
-//    sp = oldStackPointer_1f8003b8.get();
   }
 
   @Method(0x800157b8L)
   public static void executeScripts2() {
-    isStackPointerModified_1f8003bc.set(true);
-//    oldStackPointer_1f8003b8.setu(sp);
-//    sp = temporaryStack_1f8003b4.getAddress();
     executeScriptCallbacks2();
-    isStackPointerModified_1f8003bc.set(false);
-//    sp = oldStackPointer_1f8003b8.get();
   }
 
   @Method(0x80015800L)
@@ -4408,13 +4389,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80017f94L)
   public static void FUN_80017f94() {
-    isStackPointerModified_1f8003bc.set(true);
-//    oldStackPointer_1f8003b8.setu(sp);
-//    sp = temporaryStack_1f8003b4.getAddress();
     FUN_80017fdc();
-
-    isStackPointerModified_1f8003bc.set(false);
-//    sp = oldStackPointer_1f8003b8.get();
   }
 
   @Method(0x80017fdcL)
@@ -4485,7 +4460,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001814cL)
-  public static void renderMcq(final McqHeader a0, long a1, long a2, long a3, final long a4, final long a5, final long a6) {
+  public static void renderMcq(final McqHeader mcq, long a1, long a2, long a3, final long a4, final long a5, final long a6) {
     long v0;
     long v1;
     long t1;
@@ -4503,20 +4478,20 @@ public final class Scus94491BpeSegment {
     long s8;
     s0 = a3;
     s8 = a4;
-    s2 = a0._14.get();
-    t8 = a0._16.get();
-    t6 = a1 + a0._0c.get();
-    t2 = a2 + a0._0e.get();
-    a1 = a1 + a0._10.get();
-    t3 = a2 + a0._12.get();
+    s2 = mcq._14.get();
+    t8 = mcq._16.get();
+    t6 = a1 + mcq._0c.get();
+    t2 = a2 + mcq._0e.get();
+    a1 = a1 + mcq._10.get();
+    t3 = a2 + mcq._12.get();
     t5 = a1 & 0x3c0L;
     a3 = t3 & 0x100L;
     a1 = a1 << 2;
     s4 = linkedListAddress_1f8003d8.get();
 
-    if(a0.magic_00.get() == McqHeader.MAGIC_2) {
-      s0 = s0 + a0._28.get();
-      s8 = s8 + a0._2a.get();
+    if(mcq.magic_00.get() == McqHeader.MAGIC_2) {
+      s0 = s0 + mcq._28.get();
+      s8 = s8 + mcq._2a.get();
     }
 
     //LAB_800181e4
@@ -6267,10 +6242,10 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001b54c() {
     FUN_8001b92c();
 
-    final long sp10x4 = -displayWidth_1f8003e0.get() / 2;
-    final long sp14x4 = -displayHeight_1f8003e4.get() / 2;
+    final int x = -displayWidth_1f8003e0.get() / 2;
+    final int y = -displayHeight_1f8003e4.get() / 2;
 
-    final long a0 = displayHeight_1f8003e4.getSigned() / 8;
+    final long a0 = displayHeight_1f8003e4.get() / 8;
     if(0x64L / a0 == _800bd714.get()) {
       _800bd714.setu(0);
       _800bd710.addu(0x1L);
@@ -6282,48 +6257,31 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001b608
-    long sp18x4 = 0;
     long sp30x4 = 0x200L;
 
     //LAB_8001b620
-    do {
-      long sp1cx4 = 0;
+    for(int sp18x4 = 0; sp18x4 <= _800bd710.get(); sp18x4++) {
       final long sp24x4 = sp30x4 * 0x100L;
       final long sp28x4 = sp30x4 * 0x100L + 0x8L;
-      long sp2cx4 = sp10x4;
+      long sp2cx4 = x;
 
       final long s5 = displayHeight_1f8003e4.get() - (_800bd710.get() + 1) * 8 + (sp18x4 << 0x3L);
 
       //LAB_8001b664
-      do {
-        long v0 = displayWidth_1f8003e0.get();
-        if(v0 < 0) {
-          v0 += 0x1fL;
-        }
-
-        //LAB_8001b67c
-        v0 >>= 0x5L;
-        v0 <<= 0x2L;
-        if(sp1cx4 >= v0) {
-          break;
-        }
-
-        final long s6 = sp1cx4 << 0x3L;
+      for(int i = 0; i < displayWidth_1f8003e0.get() / 32 * 4; i++) {
+        final long s6 = i * 8;
         final long sp20x4 = sp2cx4;
 
         //LAB_8001b6a4
         for(int s7 = 0; s7 < 1; s7++) {
-          v0 = rand();
-
           //LAB_8001b6bc
-          long s3 = v0 - (v0 >> 0x2L << 0x2L);
-          if((rand() & 0x1L) != 0) {
+          int s3 = rand() % 4;
+          if((rand() & 1) != 0) {
             s3 = -s3;
           }
 
           //LAB_8001b6dc
-          v0 = rand();
-          final long s2 = v0 - ((v0 * 0x2aaaaaabL & 0xffffffffL) - (v0 >> 0x1fL)) * 6; //TODO
+          final int s2 = rand() % 6;
 
           final long s4;
           if(s6 >= 0xf9L) {
@@ -6349,24 +6307,24 @@ public final class Scus94491BpeSegment {
           MEMORY.ref(1, s0).offset(0x7L).setu(0x2cL);
 
           MEMORY.ref(2, s0).offset(0x08L).setu(sp20x4 + s3);
-          MEMORY.ref(2, s0).offset(0x0aL).setu(sp14x4 + sp24x4 + s5 + s2);
+          MEMORY.ref(2, s0).offset(0x0aL).setu(y + sp24x4 + s5 + s2);
           MEMORY.ref(1, s0).offset(0x0cL).setu(s6);
           // 0xd set below
           // 0xe-f not set
 
           MEMORY.ref(2, s0).offset(0x10L).setu(sp20x4 + s3 + 0x8L);
-          MEMORY.ref(2, s0).offset(0x12L).setu(sp14x4 + sp24x4 + s5 + s2);
+          MEMORY.ref(2, s0).offset(0x12L).setu(y + sp24x4 + s5 + s2);
           MEMORY.ref(1, s0).offset(0x14L).setu(s6 + 0x7L);
           // 0x15 set below
           // 0x16-17 set below
 
           MEMORY.ref(2, s0).offset(0x18L).setu(sp20x4 + s3);
-          MEMORY.ref(2, s0).offset(0x1aL).setu(sp14x4 + sp28x4 + s5 + s2);
+          MEMORY.ref(2, s0).offset(0x1aL).setu(y + sp28x4 + s5 + s2);
           MEMORY.ref(1, s0).offset(0x1cL).setu(s6);
           // 0x1e-1f not set
 
           MEMORY.ref(2, s0).offset(0x20L).setu(sp20x4 + s3 + 0x8L);
-          MEMORY.ref(2, s0).offset(0x22L).setu(sp14x4 + sp28x4 + s5 + s2);
+          MEMORY.ref(2, s0).offset(0x22L).setu(y + sp28x4 + s5 + s2);
           MEMORY.ref(1, s0).offset(0x24L).setu(s6 + 0x7L);
           // 0x25 set below
           // 0x26-27 not set
@@ -6398,16 +6356,14 @@ public final class Scus94491BpeSegment {
         }
 
         sp2cx4 += 0x8L;
-        sp1cx4++;
-      } while(true);
+      }
 
       //LAB_8001b8b8
       sp30x4 += 0x200L;
-      sp18x4++;
-    } while(_800bd710.get() >= sp18x4);
+    }
 
     _800bd714.addu(0x1L);
-    FUN_8001bbcc(sp10x4, sp14x4);
+    FUN_8001bbcc(x, y);
   }
 
   @Method(0x8001b92cL)
@@ -6482,9 +6438,9 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(2, a1).offset(0xeL).setu(a2);
 
     MEMORY.ref(2, a1).offset(0x10L).setu(v1 - 0x20L);
-    MEMORY.ref(2, a1).offset(0x12L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a2);
+    MEMORY.ref(2, a1).offset(0x12L).setu(displayHeight_1f8003e4.get() + a2);
     MEMORY.ref(2, a1).offset(0x14L).setu(v1 + 0x4L);
-    MEMORY.ref(2, a1).offset(0x16L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a2);
+    MEMORY.ref(2, a1).offset(0x16L).setu(displayHeight_1f8003e4.get() + a2);
 
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x6).getAddress(), a1);
 
@@ -6506,15 +6462,15 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(2, a1).offset(0xeL).setu(v1);
 
     MEMORY.ref(2, a1).offset(0x10L).setu(a2 + 0x20L);
-    MEMORY.ref(2, a1).offset(0x12L).setu(displayHeight_1f8003e4.offset(2, 0x0L));
+    MEMORY.ref(2, a1).offset(0x12L).setu(displayHeight_1f8003e4.get());
     MEMORY.ref(2, a1).offset(0x14L).setu(a2 - 0x4L);
-    MEMORY.ref(2, a1).offset(0x16L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + v1);
+    MEMORY.ref(2, a1).offset(0x16L).setu(displayHeight_1f8003e4.get() + v1);
 
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x6).getAddress(), a1);
   }
 
   @Method(0x8001bbccL)
-  public static void FUN_8001bbcc(final long a0, final long a1) {
+  public static void FUN_8001bbcc(final int x, final int y) {
     FUN_8001b92c();
 
     long s0;
@@ -6531,29 +6487,29 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL); // Textured four-point polygon, opaque, texture-blending
 
       // Vertex 1
-      MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x80L); // X
-      MEMORY.ref(2, s0).offset(0x0aL).setu(a1); // Y
+      MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x80L); // X
+      MEMORY.ref(2, s0).offset(0x0aL).setu(y); // Y
       MEMORY.ref(1, s0).offset(0x0cL).setu(0); // U
       MEMORY.ref(1, s0).offset(0x0dL).setu(0x10L); // V
       MEMORY.ref(2, s0).offset(0x0eL).setu(0x102L); // CLUT palette (note: this wasn't being set... pretty sure it needs to be)
 
       // Vertex 2
-      MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x17fL); // X
-      MEMORY.ref(2, s0).offset(0x12L).setu(a1); // Y
+      MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x17fL); // X
+      MEMORY.ref(2, s0).offset(0x12L).setu(y); // Y
       MEMORY.ref(1, s0).offset(0x14L).setu(0xffL); // U
       MEMORY.ref(1, s0).offset(0x15L).setu(0x10L); // V
       MEMORY.ref(2, s0).offset(0x16L).setu(0x102L); // CLUT palette
 
       // Vertex 3
-      MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x80L); // X
-      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L); // Y
+      MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x80L); // X
+      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 0x1L); // Y
       MEMORY.ref(1, s0).offset(0x1cL).setu(0); // U
       MEMORY.ref(1, s0).offset(0x1dL).setu(0xffL); // V
       // 0x1e-1f not set (CLUT palette)
 
       // Vertex 4
-      MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x17fL); // X
-      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L); // Y
+      MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x17fL); // X
+      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 0x1L); // Y
       MEMORY.ref(1, s0).offset(0x24L).setu(0xffL); // U
       MEMORY.ref(1, s0).offset(0x25L).setu(0xffL); // V
       // 0x26-27 not set (CLUT palette)
@@ -6573,29 +6529,29 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL); // Textured four-point polygon, opaque, texture-blending
 
       // Vertex 1
-      MEMORY.ref(2, s0).offset(0x08L).setu(a0); // X
-      MEMORY.ref(2, s0).offset(0x0aL).setu(a1); // Y
+      MEMORY.ref(2, s0).offset(0x08L).setu(x); // X
+      MEMORY.ref(2, s0).offset(0x0aL).setu(y); // Y
       MEMORY.ref(1, s0).offset(0x0cL).setu(0); // U
       MEMORY.ref(1, s0).offset(0x0dL).setu(0x10L); // V
       MEMORY.ref(2, s0).offset(0x0eL).setu(0x100L); // CLUT palette (note: this wasn't being set... pretty sure it needs to be)
 
       // Vertex 2
-      MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0xffL); // X
-      MEMORY.ref(2, s0).offset(0x12L).setu(a1); // Y
+      MEMORY.ref(2, s0).offset(0x10L).setu(x + 0xffL); // X
+      MEMORY.ref(2, s0).offset(0x12L).setu(y); // Y
       MEMORY.ref(1, s0).offset(0x14L).setu(0xffL); // U
       MEMORY.ref(1, s0).offset(0x15L).setu(0x10L); // V
       MEMORY.ref(2, s0).offset(0x16L).setu(0x100L); // CLUT palette
 
       // Vertex 3
-      MEMORY.ref(2, s0).offset(0x18L).setu(a0); // X
-      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L); // Y
+      MEMORY.ref(2, s0).offset(0x18L).setu(x); // X
+      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1); // Y
       MEMORY.ref(1, s0).offset(0x1cL).setu(0); // U
       MEMORY.ref(1, s0).offset(0x1dL).setu(0xffL); // V
       // 0x1e-1f not set (CLUT palette)
 
       // Vertex 4
-      MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0xffL); // X
-      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L); // Y
+      MEMORY.ref(2, s0).offset(0x20L).setu(x + 0xffL); // X
+      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1); // Y
       MEMORY.ref(1, s0).offset(0x24L).setu(0xffL); // U
       MEMORY.ref(1, s0).offset(0x25L).setu(0xffL); // V
       // 0x26-27 not set (CLUT palette)
@@ -6614,26 +6570,26 @@ public final class Scus94491BpeSegment {
         MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
         MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-        MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x100L);
-        MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+        MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x100L);
+        MEMORY.ref(2, s0).offset(0x0aL).setu(y);
         MEMORY.ref(1, s0).offset(0x0cL).setu(0);
         MEMORY.ref(1, s0).offset(0x0dL).setu(0x10L);
         MEMORY.ref(2, s0).offset(0x0eL).setu(0x104L);
 
-        MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x1ffL);
-        MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+        MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x1ffL);
+        MEMORY.ref(2, s0).offset(0x12L).setu(y);
         MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x15L).setu(0x10L);
         MEMORY.ref(2, s0).offset(0x16L).setu(0x104L);
 
-        MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x100L);
-        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x100L);
+        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x1cL).setu(0);
         MEMORY.ref(1, s0).offset(0x1dL).setu(0xffL);
         // 0x1e-1f not set
 
-        MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x1ffL);
-        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x1ffL);
+        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x25L).setu(0xffL);
         // 0x26-27 not set
@@ -6651,26 +6607,26 @@ public final class Scus94491BpeSegment {
         MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
         MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-        MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x180L);
-        MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+        MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x180L);
+        MEMORY.ref(2, s0).offset(0x0aL).setu(y);
         MEMORY.ref(1, s0).offset(0x0cL).setu(0);
         MEMORY.ref(1, s0).offset(0x0dL).setu(0x10L);
         MEMORY.ref(2, s0).offset(0x0eL).setu(0x106L);
 
-        MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x27fL);
-        MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+        MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x27fL);
+        MEMORY.ref(2, s0).offset(0x12L).setu(y);
         MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x15L).setu(0x10L);
         MEMORY.ref(2, s0).offset(0x16L).setu(0x106L);
 
-        MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x180L);
-        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x180L);
+        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x1cL).setu(0);
         MEMORY.ref(1, s0).offset(0x1dL).setu(0xffL);
         // 0x1e-1f not set
 
-        MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x27fL);
-        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x27fL);
+        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x25L).setu(0xffL);
         // 0x26-27 not set
@@ -6689,26 +6645,26 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
       MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-      MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x80L);
-      MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+      MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x80L);
+      MEMORY.ref(2, s0).offset(0x0aL).setu(y);
       MEMORY.ref(1, s0).offset(0x0cL).setu(0);
       MEMORY.ref(1, s0).offset(0x0dL).setu(0);
       MEMORY.ref(2, s0).offset(0x0eL).setu(0x112L);
 
-      MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x17fL);
-      MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+      MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x17fL);
+      MEMORY.ref(2, s0).offset(0x12L).setu(y);
       MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
       MEMORY.ref(1, s0).offset(0x15L).setu(0);
       MEMORY.ref(2, s0).offset(0x16L).setu(0x112L);
 
-      MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x80L);
-      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+      MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x80L);
+      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
       MEMORY.ref(1, s0).offset(0x1cL).setu(0);
       MEMORY.ref(1, s0).offset(0x1dL).setu(0xefL);
       // 0x1e-1f not set
 
-      MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x17fL);
-      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+      MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x17fL);
+      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
       MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
       MEMORY.ref(1, s0).offset(0x25L).setu(0xefL);
       // 0x26-27 not set
@@ -6726,26 +6682,26 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
       MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-      MEMORY.ref(2, s0).offset(0x08L).setu(a0);
-      MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+      MEMORY.ref(2, s0).offset(0x08L).setu(x);
+      MEMORY.ref(2, s0).offset(0x0aL).setu(y);
       MEMORY.ref(1, s0).offset(0x0cL).setu(0);
       MEMORY.ref(1, s0).offset(0x0dL).setu(0);
       MEMORY.ref(2, s0).offset(0x0eL).setu(0x110L);
 
-      MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0xffL);
-      MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+      MEMORY.ref(2, s0).offset(0x10L).setu(x + 0xffL);
+      MEMORY.ref(2, s0).offset(0x12L).setu(y);
       MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
       MEMORY.ref(1, s0).offset(0x15L).setu(0);
       MEMORY.ref(2, s0).offset(0x16L).setu(0x110L);
 
-      MEMORY.ref(2, s0).offset(0x18L).setu(a0);
-      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+      MEMORY.ref(2, s0).offset(0x18L).setu(x);
+      MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
       MEMORY.ref(1, s0).offset(0x1cL).setu(0);
       MEMORY.ref(1, s0).offset(0x1dL).setu(0xefL);
       // 0x1e-1f not set
 
-      MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0xffL);
-      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+      MEMORY.ref(2, s0).offset(0x20L).setu(x + 0xffL);
+      MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
       MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
       MEMORY.ref(1, s0).offset(0x25L).setu(0xefL);
       // 0x26-27 not set
@@ -6764,26 +6720,26 @@ public final class Scus94491BpeSegment {
         MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
         MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-        MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x100L);
-        MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+        MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x100L);
+        MEMORY.ref(2, s0).offset(0x0aL).setu(y);
         MEMORY.ref(1, s0).offset(0x0cL).setu(0);
         MEMORY.ref(1, s0).offset(0x0dL).setu(0);
         MEMORY.ref(2, s0).offset(0x0eL).setu(0x114L);
 
-        MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x1ffL);
-        MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+        MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x1ffL);
+        MEMORY.ref(2, s0).offset(0x12L).setu(y);
         MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x15L).setu(0);
         MEMORY.ref(2, s0).offset(0x16L).setu(0x114L);
 
-        MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x100L);
-        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x100L);
+        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x1cL).setu(0);
         MEMORY.ref(1, s0).offset(0x1dL).setu(0xefL);
         // 0x1e-1f not set
 
-        MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x1ffL);
-        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x1ffL);
+        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x25L).setu(0xefL);
         // 0x26-27 not set
@@ -6801,26 +6757,26 @@ public final class Scus94491BpeSegment {
         MEMORY.ref(1, s0).offset(0x06L).setu(_800bd708.get() >> 0x8L);
         MEMORY.ref(1, s0).offset(0x07L).setu(0x2cL);
 
-        MEMORY.ref(2, s0).offset(0x08L).setu(a0 + 0x180L);
-        MEMORY.ref(2, s0).offset(0x0aL).setu(a1);
+        MEMORY.ref(2, s0).offset(0x08L).setu(x + 0x180L);
+        MEMORY.ref(2, s0).offset(0x0aL).setu(y);
         MEMORY.ref(1, s0).offset(0x0cL).setu(0);
         MEMORY.ref(1, s0).offset(0x0dL).setu(0);
         MEMORY.ref(2, s0).offset(0x0eL).setu(0x116L);
 
-        MEMORY.ref(2, s0).offset(0x10L).setu(a0 + 0x27fL);
-        MEMORY.ref(2, s0).offset(0x12L).setu(a1);
+        MEMORY.ref(2, s0).offset(0x10L).setu(x + 0x27fL);
+        MEMORY.ref(2, s0).offset(0x12L).setu(y);
         MEMORY.ref(1, s0).offset(0x14L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x15L).setu(0);
         MEMORY.ref(2, s0).offset(0x16L).setu(0x116L);
 
-        MEMORY.ref(2, s0).offset(0x18L).setu(a0 + 0x180L);
-        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x18L).setu(x + 0x180L);
+        MEMORY.ref(2, s0).offset(0x1aL).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x1cL).setu(0);
         MEMORY.ref(1, s0).offset(0x1dL).setu(0xefL);
         // 0x1e-1f not set
 
-        MEMORY.ref(2, s0).offset(0x20L).setu(a0 + 0x27fL);
-        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.offset(2, 0x0L).get() + a1 - 0x1L);
+        MEMORY.ref(2, s0).offset(0x20L).setu(x + 0x27fL);
+        MEMORY.ref(2, s0).offset(0x22L).setu(displayHeight_1f8003e4.get() + y - 1);
         MEMORY.ref(1, s0).offset(0x24L).setu(0xffL);
         MEMORY.ref(1, s0).offset(0x25L).setu(0xefL);
         // 0x26-27 not set

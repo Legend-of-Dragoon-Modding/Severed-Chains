@@ -20,6 +20,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800e;
@@ -213,7 +214,7 @@ public final class Scus94491BpeSegment_8004 {
    * Bit 2 - 24-bit colour
    */
   public static final Value renderFlags_8004dd36 = MEMORY.ref(2, 0x8004dd36L);
-  public static final Value orderingTableLength_8004dd38 = MEMORY.ref(2, 0x8004dd38L);
+  public static final UnsignedShortRef orderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
   public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
   public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
@@ -231,7 +232,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /** The current disk number, 1-indexed */
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
-  public static final Value callbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
+  public static final Value fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
   public static final Value fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L);
   public static final Value _8004ddcc = MEMORY.ref(1, 0x8004ddccL);
   public static final Value _8004ddd0 = MEMORY.ref(4, 0x8004ddd0L);
@@ -270,7 +271,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_8001511c}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> callbackArray_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
+  public static final ArrayRef<Pointer<SupplierRef<Long>>> fileLoadingCallbacks_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
   public static final Value scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL);
 

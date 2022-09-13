@@ -276,7 +276,7 @@ public final class Bttl_800d {
           MEMORY.ref(2, a1).offset(0x10L).setu(sp0x18[1].get());
           MEMORY.ref(2, a1).offset(0x12L).setu(sp0x20[1].get());
 
-          long a2_0 = data._10._22.get();
+          long a2_0 = data._10.z_22.get();
           v1 = s1 + a2_0;
           if(v1 >= 0xa0L) {
             if(v1 >= 0xffeL) {
@@ -291,7 +291,7 @@ public final class Bttl_800d {
           //LAB_800d0460
           SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
 
-          a2_0 = data._10._22.get();
+          a2_0 = data._10.z_22.get();
           v1 = s1 + a2_0;
           if(v1 >= 0xa0L) {
             if(v1 < 0xffeL) {
@@ -450,7 +450,7 @@ public final class Bttl_800d {
         MEMORY.ref(2, a2).offset(0xaL).setu(sp0x1c.get());
         MEMORY.ref(2, a2).offset(0x10L).setu(sp0x20.get());
         MEMORY.ref(2, a2).offset(0x12L).setu(sp0x24.get());
-        a3 = data._10._22.get();
+        a3 = data._10.z_22.get();
         v1 = s7 + a3;
         if((int)v1 >= 0xa0L) {
           if((int)v1 >= 0xffeL) {
@@ -479,7 +479,7 @@ public final class Bttl_800d {
     //LAB_800d0d10
     SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
 
-    long a2_0 = data._10._22.get();
+    long a2_0 = data._10.z_22.get();
     v1 = s7 + a2_0;
     if((int)v1 >= 0xa0L) {
       if((int)v1 >= 0xffeL) {
@@ -781,7 +781,7 @@ public final class Bttl_800d {
       MEMORY.ref(1, packet).offset(0x16L).setu(a3._0e.get()); // B3
       MEMORY.ref(2, packet).offset(0x18L).setu(a2[4]); // X3
       MEMORY.ref(2, packet).offset(0x1aL).setu(a2[5]); // Y3
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10._22.get()) / 4 * 0x4L, packet);
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10.z_22.get()) / 4 * 0x4L, packet);
     }
 
     //LAB_800d1e70
@@ -834,7 +834,7 @@ public final class Bttl_800d {
       MEMORY.ref(2, addr).offset(0x1aL).setu(a2[3]);
       MEMORY.ref(2, addr).offset(0x20L).setu(a2[4]);
       MEMORY.ref(2, addr).offset(0x22L).setu(a2[5]);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10._22.get()) / 4 * 4, addr);
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10.z_22.get()) / 4 * 4, addr);
     }
 
     //LAB_800d2460
@@ -856,7 +856,7 @@ public final class Bttl_800d {
     final ShortRef sp0x48 = new ShortRef();
     final ShortRef sp0x4c = new ShortRef();
     s0._04.set(FUN_800cfb14(data, sp0x18, sp0x48, sp0x4c) / 4);
-    a0 = data._10._22.get();
+    a0 = data._10.z_22.get();
     v1 = s0._04.get() + a0;
     if((int)v1 >= 0xa0L) {
       if((int)v1 >= 0xffeL) {
@@ -897,7 +897,7 @@ public final class Bttl_800d {
       }
 
       SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, (data._10._00.get() & 0x1000_0000L) != 0 ? 0x1L : 0x2L, 0, 0), null);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s0._04.get() + data._10._22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
+      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s0._04.get() + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0xcL);
     }
 
@@ -1005,7 +1005,7 @@ public final class Bttl_800d {
       MEMORY.ref(2, a1).offset(0x18L).setu(sp0x18[0].get());
       MEMORY.ref(2, a1).offset(0x1aL).setu(sp0x38[0].get());
 
-      a0 = data._10._22.get();
+      a0 = data._10.z_22.get();
       v1 = s3 + a0;
       if((int)v1 >= 0xa0L) {
         if((int)v1 >= 0xffeL) {
@@ -1023,7 +1023,7 @@ public final class Bttl_800d {
     linkedListAddress_1f8003d8.addu(0xcL);
     SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
 
-    v1 = data._10._22.get();
+    v1 = data._10.z_22.get();
     a0 = s3 + v1;
     if((int)a0 >= 0xa0L) {
       if((int)a0 >= 0xffeL) {
@@ -1077,7 +1077,7 @@ public final class Bttl_800d {
         MEMORY.ref(2, a1).offset(0xcL).setu(sp0x18[n + 2].get());
         MEMORY.ref(2, a1).offset(0xeL).setu(sp0x38[n + 2].get());
 
-        a0 = data._10._22.get();
+        a0 = data._10.z_22.get();
         v1 = s3 + a0;
         if((int)v1 >= 0xa0L) {
           if((int)v1 >= 0xffeL) {
@@ -1094,7 +1094,7 @@ public final class Bttl_800d {
       s0 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.addu(0xcL);
       SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
-      a0 = data._10._22.get();
+      a0 = data._10.z_22.get();
       v1 = s3 + a0;
       if((int)v1 >= 0xa0L) {
         if((int)v1 >= 0xffeL) {
@@ -4849,7 +4849,7 @@ public final class Bttl_800d {
     s4 = 0x1L;
     s7 = a0.ui_f4.get();
     fp = a0.ObjTable_0c.nobj.get();
-    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
+    zOffset_1f8003e8.set(a0.zOffset_a0.get());
     sp50 = a0.ui_f8.get();
     _1f8003ec.setu(a0.ui_108.get());
     s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;

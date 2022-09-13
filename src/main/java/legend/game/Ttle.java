@@ -34,7 +34,7 @@ import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.renderMcq;
-import static legend.game.Scus94491BpeSegment._1f8003c8;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -1310,7 +1310,7 @@ public final class Ttle {
         -80,
         _800ce91c.offset(i * 2).get(),
         88,
-        _1f8003c8.get() - 4,
+        orderingTableSize_1f8003c8.get() - 4,
         true
       );
 
@@ -1332,7 +1332,7 @@ public final class Ttle {
       -14,
       16,
       8,
-      _1f8003c8.get() - 4,
+      orderingTableSize_1f8003c8.get() - 4,
       true
     );
 
@@ -1374,7 +1374,7 @@ public final class Ttle {
         i / 3 * 255 - 120 + backgroundScrollAmount_800c6708.getSigned(),
         128,
         i / 3 * -88 + 255,
-        _1f8003c8.get() - 3,
+        orderingTableSize_1f8003c8.get() - 3,
         false
       );
 
@@ -1748,7 +1748,7 @@ public final class Ttle {
                     MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xffL);
 
                     // OTZ - Average Z value (for ordering table)
-                    final int z = (int)Math.min(CPU.MFC2(7) + _800c6758.get() >> zShift_1f8003c4.get(0x1fL), zMax_1f8003cc.get());
+                    final int z = (int)Math.min(CPU.MFC2(7) + _800c6758.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
                     final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
                     MEMORY.ref(4, packet).setu(0x900_0000L | tag.p.get());

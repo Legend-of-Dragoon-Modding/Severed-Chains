@@ -5704,7 +5704,7 @@ public final class Scus94491BpeSegment_8003 {
 
     PSDIDX_800c34d4.setu(0);
 
-    FUN_8003be28(displayWidth, displayHeight);
+    initDisplay(displayWidth, displayHeight);
     GsSetDrawBuffClip();
     GsSetDrawBuffOffset();
   }
@@ -5749,9 +5749,9 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003be28L)
-  public static void FUN_8003be28(final long displayWidth, final long displayHeight) {
-    displayWidth_1f8003e0.setu(displayWidth);
-    displayHeight_1f8003e4.setu(displayHeight);
+  public static void initDisplay(final int displayWidth, final int displayHeight) {
+    displayWidth_1f8003e0.set(displayWidth);
+    displayHeight_1f8003e4.set(displayHeight);
 
     final long a0 = (displayHeight << 14) / displayWidth / 3;
 
@@ -5786,8 +5786,8 @@ public final class Scus94491BpeSegment_8003 {
 
     clip_800c3448.clear();
 
-    centreScreenY_1f8003de.setu(0);
-    centreScreenX_1f8003dc.setu(0);
+    centreScreenX_1f8003dc.set((short)0);
+    centreScreenY_1f8003de.set((short)0);
 
     displayRect_800c34c8.set((short)0, (short)0, (short)displayWidth, (short)displayHeight);
 
@@ -5824,11 +5824,11 @@ public final class Scus94491BpeSegment_8003 {
       _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y2.get());
     }
 
-    _800c342e.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayHeight_1f8003e4);
+    _800c342e.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayHeight_1f8003e4.get());
 
     if(DISPENV_800c34b0.isrgb24.get() == 0) {
       //LAB_8003c13c
-      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0);
+      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get());
     } else {
       _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get() * 3 / 2);
     }
@@ -6011,8 +6011,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c5e0L)
   public static void FUN_8003c5e0() {
-    centreScreenX_1f8003dc.setu(displayWidth_1f8003e0.get() / 2);
-    centreScreenY_1f8003de.setu(displayHeight_1f8003e4.get() / 2);
+    centreScreenX_1f8003dc.set((short)(displayWidth_1f8003e0.get() / 2));
+    centreScreenY_1f8003de.set((short)(displayHeight_1f8003e4.get() / 2));
     GsSetDrawBuffOffset();
     _800c34d8.setu(0x3fff);
     lightMode_800c34dc.setu(0);

@@ -3492,7 +3492,7 @@ public final class Bttl_800e {
     s0._10.svec_10.set((short)0, (short)0, (short)0);
     s0._10.svec_16.set((short)0x1000, (short)0x1000, (short)0x1000);
     s0._10.svec_1c.set((short)0x80, (short)0x80, (short)0x80);
-    s0._10._22.set((short)0);
+    s0._10.z_22.set((short)0);
     s0._10._24.set(0);
     s0._10.vec_28.set(0, 0, 0);
     s0._48.setNullable(a2);
@@ -3558,7 +3558,7 @@ public final class Bttl_800e {
     s0.scriptIndex_0e.set(index);
     s0._10.vec_04.set(0, 0, 0);
     s0._10.svec_10.set((short)0, (short)0, (short)0);
-    s0._10._22.set((short)0);
+    s0._10.z_22.set((short)0);
     s0._10._24.set(0);
     s0._10.vec_28.set(0, 0, 0);
     s0.destructor_4c.set(MEMORY.ref(4, a4, TriConsumerRef::new));
@@ -3999,11 +3999,11 @@ public final class Bttl_800e {
       sp0x10._1e.set(a1.svec_16.getY());
       sp0x10._20.set(a1.svec_10.getZ()); // This is correct, different svec for Z
       if((a1._00.get() & 0x400_0000L) != 0) {
-        zOffset_1f8003e8.setu(a1._22.get());
+        zOffset_1f8003e8.set(a1.z_22.get());
         FUN_800e75ac(sp0x10, a2);
       } else {
         //LAB_800e9574
-        FUN_800e7944(sp0x10, a2.transfer, a1._22.get());
+        FUN_800e7944(sp0x10, a2.transfer, a1.z_22.get());
       }
     }
 
@@ -4387,7 +4387,7 @@ public final class Bttl_800e {
     final BigStruct v1 = s0._134.deref();
     v1.coord2Param_64.rotate.set(manager._10.svec_10);
     v1.scaleVector_fc.set(manager._10.svec_16);
-    v1.zOffset_a0.set(manager._10._22.get());
+    v1.zOffset_a0.set(manager._10.z_22.get());
     v1.coord2_14.coord.set(sp0x10);
     v1.coord2_14.flg.set(0);
 
@@ -5011,7 +5011,7 @@ public final class Bttl_800e {
     s2.coord2_558.coord.transfer.setY(y);
     s2.coord2_558.coord.transfer.setZ(z);
     s2._5e4.set(0);
-    s2._5e8.set((short)0x200);
+    s2.z_5e8.set((short)0x200);
   }
 
   @Method(0x800ebb58L)
@@ -5262,7 +5262,7 @@ public final class Bttl_800e {
     }
 
     _1f8003ec.setu(0);
-    zOffset_1f8003e8.setu(a0._5e8.get());
+    zOffset_1f8003e8.set(a0.z_5e8.get());
 
     //LAB_800ec5a0
     long s4 = 0x1L;
@@ -5388,7 +5388,7 @@ public final class Bttl_800e {
   @Method(0x800ec974L)
   public static void FUN_800ec974(final BigStruct a0) {
     _1f8003ec.setu(a0.ui_108.get());
-    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
+    zOffset_1f8003e8.set(a0.zOffset_a0.get());
 
     //LAB_800ec9d0
     long s6 = a0.ui_f4.get();
@@ -5686,7 +5686,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee5f0L)
   public static long FUN_800ee5f0(final RunningScript a0) {
-    _800bda0c.deref()._5e8.set((short)a0.params_20.get(0).deref().get());
+    _800bda0c.deref().z_5e8.set((short)a0.params_20.get(0).deref().get());
     return 0;
   }
 

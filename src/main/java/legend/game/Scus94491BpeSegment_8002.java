@@ -184,7 +184,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
-import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
+import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
@@ -7811,7 +7811,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002c314
     _800bf0cf.setu(5);
-    callbackIndex_8004ddc4.setu(0x12L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x12L);
     return 1;
   }
 
@@ -7834,7 +7834,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(_800bf0d0.get() != 0) {
       _800bf0cf.setu(6);
-      callbackIndex_8004ddc4.setu(0x11L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x11L);
     } else {
       //LAB_8002c400
       _800bf0cf.setu(8);
@@ -7850,7 +7850,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_8002c448
       _800bf0e8.cast(CdlLOC::new).set(CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex_800bf0bc.get() * 0x8L).getSigned()).pos);
-      callbackIndex_8004ddc4.setu(0xeL);
+      fileLoadingCallbackIndex_8004ddc4.setu(0xeL);
     }
 
     //LAB_8002c4e0
@@ -7880,11 +7880,11 @@ public final class Scus94491BpeSegment_8002 {
           _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
 
           if(_800bf0b8.get() != 0) {
-            callbackIndex_8004ddc4.setu(0x10L);
+            fileLoadingCallbackIndex_8004ddc4.setu(0x10L);
             _800bf0e0.setu(0);
           } else {
             //LAB_8002c824
-            callbackIndex_8004ddc4.setu(0x14L);
+            fileLoadingCallbackIndex_8004ddc4.setu(0x14L);
           }
         }
 
@@ -7916,7 +7916,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002c8dc
     if(_800bf0d8.get() == 0x1L) {
-      callbackIndex_8004ddc4.setu(0x15L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x15L);
     }
 
     //LAB_8002c8f4
@@ -7936,7 +7936,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002c984L)
   public static long playXaAudio(final int xaLoadingStage, final int xaArchiveIndex, final int xaFileIndex) {
     //LAB_8002c9f0
-    if(callbackIndex_8004ddc4.get() != 0 || fileLoadingInfoArray_800bbad8.get(0).used.get() || xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
+    if(fileLoadingCallbackIndex_8004ddc4.get() != 0 || fileLoadingInfoArray_800bbad8.get(0).used.get() || xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
       return 0;
     }
 
@@ -7978,13 +7978,13 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002cb24L)
   public static long FUN_8002cb24() {
     if(DsSync(_800bf0b8.get(), 0) == SyncCode.COMPLETE) {
-      callbackIndex_8004ddc4.setu(0);
+      fileLoadingCallbackIndex_8004ddc4.setu(0);
       _800bf0cf.setu(0);
       return 1;
     }
 
     //LAB_8002cb5c
-    callbackIndex_8004ddc4.setu(0x14L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x14L);
     return 0;
   }
 
@@ -8003,13 +8003,13 @@ public final class Scus94491BpeSegment_8002 {
     _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
 
     if(_800bf0b8.get() != 0) {
-      callbackIndex_8004ddc4.setu(0x10L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x10L);
       _800bf0e0.setu(0);
       return 1;
     }
 
     //LAB_8002cbec
-    callbackIndex_8004ddc4.setu(0x14L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x14L);
     return 0;
   }
 
@@ -8029,7 +8029,7 @@ public final class Scus94491BpeSegment_8002 {
 
     _800bf0cf.setu(4);
     setCdromDmaInterruptSubSubCallbackPtr_800c1bb4(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002c750", SyncCode.class, byte[].class), BiConsumerRef::new));
-    callbackIndex_8004ddc4.setu(0);
+    fileLoadingCallbackIndex_8004ddc4.setu(0);
     return 1;
   }
 
@@ -8038,13 +8038,13 @@ public final class Scus94491BpeSegment_8002 {
     if(DsSync(_800bf0b8.get(), 0) != SyncCode.COMPLETE) {
       //LAB_8002ccf8
       //LAB_8002ccfc
-      callbackIndex_8004ddc4.setu(0x14L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x14L);
       return 0;
     }
 
     CDROM.sendCommand(CdlCOMMAND.SET_MODE_0E, 0x80L);
 
-    callbackIndex_8004ddc4.setu(0);
+    fileLoadingCallbackIndex_8004ddc4.setu(0);
     _800bf0cf.setu(0);
 
     //LAB_8002cd08
@@ -8065,12 +8065,12 @@ public final class Scus94491BpeSegment_8002 {
     _800bf0b8.setu(FUN_80035650(CdlCOMMAND.PAUSE_09, 0));
 
     if(_800bf0b8.get() != 0) {
-      callbackIndex_8004ddc4.setu(0x10L);
+      fileLoadingCallbackIndex_8004ddc4.setu(0x10L);
       return 0x1L;
     }
 
     //LAB_8002ce2c
-    callbackIndex_8004ddc4.setu(0x14L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x14L);
 
     //LAB_8002ce3c
     return 0;
@@ -8097,7 +8097,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     _800bf0cf.setu(3);
-    callbackIndex_8004ddc4.setu(0x13L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x13L);
 
     //LAB_8002cec0
     return 1;

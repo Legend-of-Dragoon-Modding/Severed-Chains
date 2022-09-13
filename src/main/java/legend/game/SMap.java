@@ -88,7 +88,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
-import static legend.game.Scus94491BpeSegment._1f8003c0;
+import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
@@ -196,7 +196,7 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
-import static legend.game.Scus94491BpeSegment_8004.callbackIndex_8004ddc4;
+import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
@@ -708,7 +708,7 @@ public final class SMap {
     //LAB_800d9370
     //LAB_800d9374
     if(diskSwapMcqLoaded_800c6698.get() != 0) {
-      renderMcq(mcq_800c66a0, 640, 0, -centreScreenX_1f8003dc.getSigned(), -centreScreenY_1f8003de.getSigned(), 0x24L, 0x80L);
+      renderMcq(mcq_800c66a0, 640, 0, -centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), 0x24L, 0x80L);
     }
 
     //LAB_800d93c4
@@ -1260,7 +1260,7 @@ public final class SMap {
     long s0 = 0x1L;
     long s6 = a0.ui_f4.get();
 
-    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
+    zOffset_1f8003e8.set(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800daaa8
@@ -5741,7 +5741,7 @@ public final class SMap {
   @Method(0x800e6be0L)
   public static long FUN_800e6be0(final RunningScript a0) {
     final MATRIX coord = scriptStatePtrArr_800bc1c0.get(scriptStateIndices_800c6880.get(a0.params_20.get(0).deref().get()).get()).deref().innerStruct_00.derefAs(BigStruct.class).coord2_14.coord;
-    a0.params_20.get(1).deref().set((matrix_800c3548.get(6) * coord.transfer.getX() + matrix_800c3548.get(7) * coord.transfer.getY() + matrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 16 - _1f8003c0.get());
+    a0.params_20.get(1).deref().set((matrix_800c3548.get(6) * coord.transfer.getX() + matrix_800c3548.get(7) * coord.transfer.getY() + matrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
     return 0;
   }
 
@@ -5899,7 +5899,7 @@ public final class SMap {
 
       if(s0.s_06.get() == 0x4eL) {
         //LAB_800e7148
-        MEMORY.ref(2, tpagePacket).offset(0x20L).setu((0x1L << _1f8003c0.get()) - 0x1L);
+        MEMORY.ref(2, tpagePacket).offset(0x20L).setu((0x1L << orderingTableBits_1f8003c0.get()) - 0x1L);
       } else if(s0.s_06.get() == 0x4fL) {
         MEMORY.ref(2, tpagePacket).offset(0x20L).setu(0x28L);
       } else {
@@ -5910,7 +5910,7 @@ public final class SMap {
           matrix_800c3548.get(8) * s0.svec_00.getZ();
         a0 >>= 12;
         a0 += matrix_800c3548.transfer.z.get();
-        a0 >>= 16 - _1f8003c0.get();
+        a0 >>= 16 - orderingTableBits_1f8003c0.get();
         MEMORY.ref(2, tpagePacket).offset(0x20L).setu(a0);
       }
 
@@ -6068,8 +6068,8 @@ public final class SMap {
       if(a2 < 0x28L) {
         //LAB_800e78fc
         a2 = 0x28L;
-      } else if((0x1L << _1f8003c0.get()) - 0x1L < a2) {
-        a2 = (0x1L << _1f8003c0.get()) - 0x1L;
+      } else if((0x1L << orderingTableBits_1f8003c0.get()) - 0x1L < a2) {
+        a2 = (0x1L << orderingTableBits_1f8003c0.get()) - 0x1L;
       }
 
       //LAB_800e7900
@@ -6126,7 +6126,7 @@ public final class SMap {
     for(int i = 0; i < a2; i++) {
       sp10[i] = (matrix_800c3548.get(6) * a1[i].transfer.getX() +
         matrix_800c3548.get(7) * a1[i].transfer.getY() +
-        matrix_800c3548.get(8) * a1[i].transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 0x10L - _1f8003c0.get();
+        matrix_800c3548.get(8) * a1[i].transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 0x10L - orderingTableBits_1f8003c0.get();
     }
 
     //LAB_800e7b08
@@ -6196,7 +6196,7 @@ public final class SMap {
         //LAB_800e7d00
         if(t1 == 0) {
           //LAB_800e7d3c
-          sp38[i] = Math.min(a3 + 0x32L, (0x1L << _1f8003c0.get()) - 0x1L);
+          sp38[i] = Math.min(a3 + 0x32L, (0x1L << orderingTableBits_1f8003c0.get()) - 0x1L);
           continue outerForLoop;
         }
 
@@ -7508,7 +7508,7 @@ public final class SMap {
 
     //LAB_800ed820
     _800bf0d8.setu(0x5L);
-    callbackIndex_8004ddc4.setu(0x19L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x19L);
 
     ClearImage(new RECT((short)0, (short)0, (short)640, (short)511), (byte)0, (byte)0, (byte)0);
     DrawSync(0);
@@ -7553,7 +7553,7 @@ public final class SMap {
     FUN_800fb7cc(_800f970c.offset(_800bf0dc.get() * 16).getAddress(), (int)_800bf0dc.get());
 
     _800bf0d8.setu(0x2L);
-    callbackIndex_8004ddc4.set(0x16L);
+    fileLoadingCallbackIndex_8004ddc4.set(0x16L);
 
     //LAB_800ed9d4
     return 0x1L;
@@ -7580,7 +7580,7 @@ public final class SMap {
 
     //LAB_800eda50
     _800bf0d8.setu(0x3L);
-    callbackIndex_8004ddc4.setu(0x17L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x17L);
     scriptStartEffect(0x1L, 0x1L);
     ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
     DrawSync(0);
@@ -7604,7 +7604,7 @@ public final class SMap {
     stopFmv(_800f970c.offset(_800bf0dc.get() * 16).getAddress());
     FUN_80012bb4();
 
-    callbackIndex_8004ddc4.setu(0x18L);
+    fileLoadingCallbackIndex_8004ddc4.setu(0x18L);
     _800bf0d8.setu(0x4L);
 
     //LAB_800edb34
@@ -7621,7 +7621,7 @@ public final class SMap {
     if(_800bf0d8.get() == 0x5L) {
       _800bf0d8.setu(0);
       _800bf0b4.setu(0);
-      callbackIndex_8004ddc4.setu(0);
+      fileLoadingCallbackIndex_8004ddc4.setu(0);
       return 0x1L;
     }
 
@@ -7986,7 +7986,7 @@ public final class SMap {
 
   @Method(0x800eee48L)
   public static void FUN_800eee48(final BigStruct a0, final MATRIX matrix) {
-    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
+    zOffset_1f8003e8.set(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     final MATRIX lw = new MATRIX();

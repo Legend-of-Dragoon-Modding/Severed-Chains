@@ -57,7 +57,7 @@ import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment._1f8003c8;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.fillMemory;
@@ -604,7 +604,7 @@ public class WMap {
     final long nobj = a0.ObjTable_0c.nobj.get();
     final long fp = a0.ui_f8.get();
 
-    zOffset_1f8003e8.setu(a0.zOffset_a0.get());
+    zOffset_1f8003e8.set(a0.zOffset_a0.get());
     _1f8003ec.setu(a0.ui_108.get());
 
     //LAB_800c92c8
@@ -908,7 +908,7 @@ public class WMap {
     _800c66a0.setu(0x2L);
     _800c66a4.setu(0x2L);
     _800c66b8.setu(0);
-    zOffset_1f8003e8.setu(0);
+    zOffset_1f8003e8.set(0);
     _1f8003ec.setu(0x20L);
     tempZ_800c66d8.setu(0);
     _800c66dc.setu(_800bb114);
@@ -4410,7 +4410,7 @@ public class WMap {
           spa0 = CPU.CFC2(31);
           spa8 = (int)CPU.MFC2(19) >> 2;
 
-          if(spa8 >= 0x4L && spa8 < _1f8003c8.get()) {
+          if(spa8 >= 0x4L && spa8 < orderingTableSize_1f8003c8.get()) {
             setGpuPacketType(0xcL, sp10, true, false);
 
             MEMORY.ref(2, sp10).offset(0x16L).setu(_800bb116.get() | 0xaL);
@@ -5439,10 +5439,10 @@ public class WMap {
       if(_800c6798.get() != 0x7L) {
         //LAB_800d91cc
         if(_800ef194.offset(_800c6798.get()).get() == i || _800ef19c.offset(_800c6798.get()).get() == i) {
-          zOffset_1f8003e8.setu(500L);
+          zOffset_1f8003e8.set(500);
         } else {
           //LAB_800d9204
-          zOffset_1f8003e8.setu(100L);
+          zOffset_1f8003e8.set(100);
         }
       }
 
@@ -5472,7 +5472,7 @@ public class WMap {
       setRotTransMatrix(sp0x30);
 
       if((int)_800c6798.get() < 0x9L && i == 0) {
-        tempZ_800c66d8.setu(_1f8003c8.get() - 0x3L);
+        tempZ_800c66d8.setu(orderingTableSize_1f8003c8.get() - 0x3L);
         renderSpecialDobj2(dobj2);
         tempZ_800c66d8.setu(0);
         //LAB_800d93c0
@@ -6185,7 +6185,7 @@ public class WMap {
     }
 
     //LAB_800dc114
-    FUN_800e4934(mcqHeader_800c6768, 0x140L, 0, -160, -120, _1f8003c8.get() - 0x4L, 0x1L, _800ef1a4.get());
+    FUN_800e4934(mcqHeader_800c6768, 0x140L, 0, -160, -120, orderingTableSize_1f8003c8.get() - 0x4L, 0x1L, _800ef1a4.get());
 
     //LAB_800dc164
   }
@@ -7274,7 +7274,7 @@ public class WMap {
 
       final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, sp70 + 0x8L, sp70 + 0x10L, sp70 + 0x18L, sp0x68, sp0x64);
 
-      if(sp6c >= 0x3L && sp6c < _1f8003c8.get()) {
+      if(sp6c >= 0x3L && sp6c < orderingTableSize_1f8003c8.get()) {
         insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp70);
         insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp74);
       }
@@ -7416,8 +7416,8 @@ public class WMap {
       MEMORY.ref(1, sp118).offset(0x2aL).setu(sp112);
       sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
 
-      if((int)sp84 >= 0x3L && (int)sp84 < (int)_1f8003c8.get()) {
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + _1f8003c8.get() * 0x4L - 0x10L, sp118);
+      if((int)sp84 >= 0x3L && (int)sp84 < (int)orderingTableSize_1f8003c8.get()) {
+        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
       }
 
       //LAB_800e2440
@@ -7455,8 +7455,8 @@ public class WMap {
       sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
       sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
 
-      if((int)sp84 >= 3 && (int)sp84 < (int)_1f8003c8.get()) {
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + _1f8003c8.get() * 0x4L - 0x10L, sp118);
+      if((int)sp84 >= 3 && (int)sp84 < (int)orderingTableSize_1f8003c8.get()) {
+        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
       }
     }
 
@@ -8174,7 +8174,7 @@ public class WMap {
     }
 
     //LAB_800e4f04
-    FUN_800e4934(mcqHeader_800c6768, 0x140L, 0, -0xa0L, -0x78L, _1f8003c8.get() - 0x3L, 0, _800c6794.get() & 0xff);
+    FUN_800e4934(mcqHeader_800c6768, 0x140L, 0, -0xa0L, -0x78L, orderingTableSize_1f8003c8.get() - 0x3L, 0, _800c6794.get() & 0xff);
 
     //LAB_800e4f50
   }
@@ -8811,7 +8811,7 @@ public class WMap {
           //LAB_800e6e5c
           if(y >= -32 && y < 273) {
             //LAB_800e6e64
-            if(z >= 6 && z < _1f8003c8.get() - 1) {
+            if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
               final WMapStruct0c_2 struct = _800c68ac.get(count);
               struct.z_00.set(z);
               struct._04.set((int)_800c84c8.offset(i * 0x2L).getSigned());
@@ -10605,7 +10605,7 @@ public class WMap {
         MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(14));
         long sp88 = (int)CPU.MFC2(19) >> 2;
 
-        if(sp88 >= 5 && sp88 < _1f8003c8.get() - 3) {
+        if(sp88 >= 5 && sp88 < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ec534
           CPU.MTC2(sp0x68.getXY(), 0);
           CPU.MTC2(sp0x68.getZ(),  1);
@@ -10613,7 +10613,7 @@ public class WMap {
           MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(14));
           sp88 = (int)CPU.MFC2(19) >> 2;
 
-          if(sp88 >= 5 && (int)sp88 < _1f8003c8.get() - 3) {
+          if(sp88 >= 5 && (int)sp88 < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ec5b8
             if(MEMORY.ref(2, packet).offset(0x10L).getSigned() - MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0x400) {
               //LAB_800ec5ec
@@ -10623,7 +10623,7 @@ public class WMap {
               MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(14));
               sp88 = (int)CPU.MFC2(19) >> 2;
 
-              if(sp88 >= 5 && sp88 < _1f8003c8.get() - 3) {
+              if(sp88 >= 5 && sp88 < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ec670
                 if(MEMORY.ref(2, packet).offset(0x1aL).getSigned() - MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x200) {
                   //LAB_800ec6a4
@@ -10660,7 +10660,7 @@ public class WMap {
                     MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
                     sp88 = (int)CPU.MFC2(19) >> 2;
 
-                    if(sp88 >= 5 && _1f8003c8.get() - 3 < sp88) {
+                    if(sp88 >= 5 && orderingTableSize_1f8003c8.get() - 3 < sp88) {
                       //LAB_800ec83c
                       if(MEMORY.ref(2, packet).offset(0x20L).getSigned() - MEMORY.ref(2, packet).offset(0x18L).getSigned() <= 0x400) {
                         //LAB_800ec870
@@ -10676,7 +10676,7 @@ public class WMap {
                             MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get() / 3);
                             MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get() / 3);
                             MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get() / 3);
-                            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + _1f8003c8.get() * 0x4L - 0x10L, packet);
+                            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, packet);
                           }
                         }
                       }
@@ -10818,7 +10818,7 @@ public class WMap {
         MEMORY.ref(4, packet).offset(0x8L).setu(CPU.MFC2(14));
         sp90 = (int)CPU.MFC2(19) >> 2;
 
-        if(sp90 >= 5 && sp90 < _1f8003c8.get() - 3) {
+        if(sp90 >= 5 && sp90 < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ed37c
           CPU.MTC2(sp0x68.getXY(), 0);
           CPU.MTC2(sp0x68.getZ(),  1);
@@ -10826,7 +10826,7 @@ public class WMap {
           MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(14));
           sp90 = (int)CPU.MFC2(19) >> 2;
 
-          if(sp90 >= 5 && sp90 < _1f8003c8.get() - 3) {
+          if(sp90 >= 5 && sp90 < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ed400
             if(MEMORY.ref(2, packet).offset(0x10L).getSigned() - MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0x400) {
               //LAB_800ed434
@@ -10836,7 +10836,7 @@ public class WMap {
               MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(14));
               sp90 = (int)CPU.MFC2(19) >> 2;
 
-              if(sp90 >= 5 && sp90 < _1f8003c8.get() - 3) {
+              if(sp90 >= 5 && sp90 < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ed4b8
                 if(MEMORY.ref(2, packet).offset(0x1aL).getSigned() - MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x200) {
                   //LAB_800ed4ec
@@ -10846,7 +10846,7 @@ public class WMap {
                   MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
                   sp90 = (int)CPU.MFC2(19) >> 2;
 
-                  if(sp90 >= 5 && sp90 < _1f8003c8.get() - 3) {
+                  if(sp90 >= 5 && sp90 < orderingTableSize_1f8003c8.get() - 3) {
                     //LAB_800ed570
                     if(MEMORY.ref(2, packet).offset(0x20L).getSigned() - MEMORY.ref(2, packet).offset(0x18L).getSigned() <= 0x400) {
                       //LAB_800ed5a4
@@ -11113,7 +11113,7 @@ public class WMap {
               sp84 = (int)CPU.MFC2(19) >> 2;
 
               //LAB_800ee6cc
-              if((int)sp84 >= 0x5L || (int)sp84 < (int)(_1f8003c8.get() - 0x3L)) {
+              if((int)sp84 >= 0x5L || (int)sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x3L)) {
                 //LAB_800ee6d4
                 CPU.MTC2(vert1.getXY(), 0);
                 CPU.MTC2(vert1.getZ(), 1);
@@ -11122,7 +11122,7 @@ public class WMap {
                 sp84 = (int)CPU.MFC2(19) >> 2;
 
                 //LAB_800ee750
-                if((int)sp84 >= 0x5L || (int)sp84 < (int)(_1f8003c8.get() - 0x3L)) {
+                if((int)sp84 >= 0x5L || (int)sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x3L)) {
                   //LAB_800ee758
                   if(MEMORY.ref(2, packetAddr).offset(0x10L).getSigned() - MEMORY.ref(2, packetAddr).offset(0x8L).getSigned() < 0x401L) {
                     //LAB_800ee78c
@@ -11133,7 +11133,7 @@ public class WMap {
                     sp84 = (int)CPU.MFC2(19) >> 2;
 
                     //LAB_800ee808
-                    if((int)sp84 >= 0x5L && sp84 < (int)(_1f8003c8.get() - 0x3L)) {
+                    if((int)sp84 >= 0x5L && sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x3L)) {
                       //LAB_800ee810
                       if(MEMORY.ref(2, packetAddr).offset(0x1aL).getSigned() - MEMORY.ref(2, packetAddr).offset(0xaL).getSigned() < 0x201L) {
                         //LAB_800ee844
@@ -11144,13 +11144,13 @@ public class WMap {
                         sp84 = (int)CPU.MFC2(19) >> 2;
 
                         //LAB_800ee8c0
-                        if((int)sp84 >= 0x5L && sp84 < (int)(_1f8003c8.get() - 0x3L)) {
+                        if((int)sp84 >= 0x5L && sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x3L)) {
                           //LAB_800ee8c8
                           if(MEMORY.ref(2, packetAddr).offset(0x20L).getSigned() - MEMORY.ref(2, packetAddr).offset(0x18L).getSigned() < 0x401L) {
                             //LAB_800ee8fc
                             if(MEMORY.ref(2, packetAddr).offset(0x22L).getSigned() - MEMORY.ref(2, packetAddr).offset(0x12L).getSigned() < 0x201L) {
                               //LAB_800ee930
-                              if((int)sp84 >= 0x6L && (int)sp84 < (int)(_1f8003c8.get() - 0x1L)) {
+                              if((int)sp84 >= 0x6L && (int)sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x1L)) {
                                 if(sp18 == 0x8L) {
                                   MEMORY.ref(2, packetAddr).offset(0x16L).setu(_800bb11a.get() | 0xaL);
                                 } else {

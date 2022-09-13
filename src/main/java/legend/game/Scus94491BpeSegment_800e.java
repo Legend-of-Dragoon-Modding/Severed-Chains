@@ -29,9 +29,9 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
-import static legend.game.Scus94491BpeSegment._1f8003c0;
+import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment._1f8003c8;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
@@ -41,7 +41,6 @@ import static legend.game.Scus94491BpeSegment.allocateLinkedList;
 import static legend.game.Scus94491BpeSegment.drawTim;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.gameLoop;
-import static legend.game.Scus94491BpeSegment.isStackPointerModified_1f8003bc;
 import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -817,8 +816,6 @@ public final class Scus94491BpeSegment_800e {
     ResetCallback();
     SetMem(2);
 
-    isStackPointerModified_1f8003bc.set(false);
-
     initMemcard(false);
     FUN_8002db2c();
     registerJoypadVblankIrqHandler();
@@ -844,10 +841,10 @@ public final class Scus94491BpeSegment_800e {
     orderingTables_8005a370.get(1).length_00.set(0xeL);
     orderingTables_8005a370.get(1).org_04.set(_8005a398.get(1));
 
-    _1f8003c0.setu(0xeL);
-    zShift_1f8003c4.setu(0);
-    _1f8003c8.setu(0x4000L);
-    zMax_1f8003cc.setu(0x3ffeL);
+    orderingTableBits_1f8003c0.set(14);
+    zShift_1f8003c4.set(0);
+    orderingTableSize_1f8003c8.set(0x4000);
+    zMax_1f8003cc.set(0x3ffe);
 
     FUN_8003c5e0();
 
@@ -870,7 +867,7 @@ public final class Scus94491BpeSegment_800e {
     processControllerInput();
     FUN_800e60d8();
     loadSystemFont();
-    FUN_800e6654();
+    clearScriptStates();
     allocateLinkedList(_8011e210.getAddress(), 0x3d_edf0L);
     loadOvalBlobTexture();
     FUN_800e6dd4();
@@ -1104,7 +1101,7 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e6654L)
-  public static void FUN_800e6654() {
+  public static void clearScriptStates() {
     //LAB_800e666c
     for(int i = 0; i < 0x48; i++) {
       scriptStatePtrArr_800bc1c0.get(i).set(scriptState_800bc0c0);

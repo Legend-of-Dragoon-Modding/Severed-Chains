@@ -34,7 +34,7 @@ public class BattleRenderStruct implements MemoryRef {
   public final ShortRef _5e0;
   public final ShortRef _5e2;
   public final UnsignedIntRef _5e4;
-  public final ShortRef _5e8;
+  public final ShortRef z_5e8;
 
   /** TODO pointer to something? */
   public final UnsignedIntRef _5ec;
@@ -62,7 +62,7 @@ public class BattleRenderStruct implements MemoryRef {
     this._5e0 = ref.offset(2, 0x5e0L).cast(ShortRef::new);
     this._5e2 = ref.offset(2, 0x5e2L).cast(ShortRef::new);
     this._5e4 = ref.offset(4, 0x5e4L).cast(UnsignedIntRef::new);
-    this._5e8 = ref.offset(2, 0x5e8L).cast(ShortRef::new);
+    this.z_5e8 = ref.offset(2, 0x5e8L).cast(ShortRef::new);
 
     this._5ec = ref.offset(4, 0x5ecL).cast(UnsignedIntRef::new);
     this._5f0 = ref.offset(4, 0x5f0L).cast(ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));

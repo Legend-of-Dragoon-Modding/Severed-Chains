@@ -86,7 +86,7 @@ import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
-import static legend.game.Scus94491BpeSegment._1f8003c8;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
@@ -937,7 +937,7 @@ public final class Bttl_800c {
   public static void FUN_800c76a0() {
     if((_800bc960.get() & 0x3L) == 0x3L) {
       setWidthAndFlags(320, 0);
-      FUN_8001324c(0xcL);
+      FUN_8001324c(12);
       vsyncMode_8007a3b8.setu(0x3L);
       _800bc960.oru(0x40L);
       setProjectionPlaneDistance(320);
@@ -1376,7 +1376,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c8590
-      FUN_8001324c(0xeL);
+      FUN_8001324c(14);
       _800bc94c.setu(0);
 
       switch((int)_800bc974.get()) {
@@ -1459,15 +1459,15 @@ public final class Bttl_800c {
     } else {
       _800c6774.addu(_800c676c.get());
       _800c6778.addu(_800c6770.get());
-      a3 = (_800c66cc.getSigned() * FUN_800dd118() / 0x1000L + _800c6774.get()) % _1f8003f4.deref().stageMcq_9cb0._14.get() - centreScreenX_1f8003dc.getSigned();
-      s2 = _800c6778.get() - (FUN_800dd0d4() + 0x800L & 0xfffL) + 0x760L - centreScreenY_1f8003de.getSigned();
+      a3 = (_800c66cc.getSigned() * FUN_800dd118() / 0x1000L + _800c6774.get()) % _1f8003f4.deref().stageMcq_9cb0._14.get() - centreScreenX_1f8003dc.get();
+      s2 = _800c6778.get() - (FUN_800dd0d4() + 0x800L & 0xfffL) + 0x760L - centreScreenY_1f8003de.get();
       s0 = a3 - _1f8003f4.deref().stageMcq_9cb0._14.get();
       s3 = a3 + _1f8003f4.deref().stageMcq_9cb0._14.get();
-      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
-      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
 
-      if(centreScreenX_1f8003dc.getSigned() >= (int)s3) {
-        renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, _1f8003c8.get() - 0x2L, _800fa6dc.get());
+      if(centreScreenX_1f8003dc.get() >= (int)s3) {
+        renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
       }
 
       //LAB_800c89d4
@@ -1480,7 +1480,7 @@ public final class Bttl_800c {
 
       //LAB_800c8a04
       a1 = _800fa6dc.getSigned();
-      if((int)a0 >= -centreScreenY_1f8003de.getSigned()) {
+      if((int)a0 >= -centreScreenY_1f8003de.get()) {
         _8007a3a8.setu(_1f8003f4.deref().stageMcq_9cb0._18.get() * a1 / 0x80L);
         _800bb104.setu(_1f8003f4.deref().stageMcq_9cb0._19.get() * a1 / 0x80L);
         _800babc0.setu(_1f8003f4.deref().stageMcq_9cb0._1a.get() * a1 / 0x80L);
@@ -4040,7 +4040,7 @@ public final class Bttl_800c {
         MEMORY.ref(1, a1).offset(0x1eL).setu(sp0x18.getZ() >>> 8);
         MEMORY.ref(2, a1).offset(0x20L).setu(sp0x30.get());
         MEMORY.ref(2, a1).offset(0x22L).setu(sp0x34.get());
-        a0 = s1 + data._10._22.get();
+        a0 = s1 + data._10.z_22.get();
         if((int)a0 >= 0xa0L) {
           if((int)a0 >= 0xffeL) {
             a0 = s1 + 0xffeL - s1;
@@ -4062,7 +4062,7 @@ public final class Bttl_800c {
       //LAB_800ce1a4
       SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
 
-      a2 = data._10._22.get();
+      a2 = data._10.z_22.get();
       v1 = s1 + a2;
       if((int)v1 >= 0xa0L) {
         if((int)v1 >= 0xffeL) {
