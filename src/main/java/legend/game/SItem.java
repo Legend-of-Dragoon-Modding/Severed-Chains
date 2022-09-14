@@ -359,13 +359,6 @@ public final class SItem {
   public static final LodString Really_want_to_throw_this_away_8011c8d4 = MEMORY.ref(2, 0x8011c8d4L, LodString::new);
   /** "Item thrown away" */
   public static final LodString Item_thrown_away_8011c914 = MEMORY.ref(2, 0x8011c914L, LodString::new);
-  /**
-   * "Checking MEMORY CARD"
-   * "Do not remove MEMORY"
-   * "CARD or turn off the"
-   * "power"
-   */
-  public static final LodString Checking_MEMORY_CARD_Do_not_remove_MEMORY_CARD_or_turn_off_the_power_8011c93c = MEMORY.ref(2, 0x8011c93cL, LodString::new);
   /** "Save new game?" */
   public static final LodString Save_new_game_8011c9c8 = MEMORY.ref(2, 0x8011c9c8L, LodString::new);
   /** "Overwrite save?" */
@@ -968,17 +961,13 @@ public final class SItem {
   public static void FUN_800fcad4() {
     long v0;
     long v1;
-    long a0;
-    long a1;
-    long a2;
+    final long a0;
+    final long a1;
+    final long a2;
     long a3;
-    final long a4;
-    long t0;
-    final long t1;
-    long s0;
-    long s1;
-    final long s2;
-    final long s3;
+    final long t0;
+    final long s0;
+    final long s1;
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
@@ -993,7 +982,7 @@ public final class SItem {
         setWidthAndFlags(0x180L, 0);
         s0 = getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class);
         loadDrgnBinFile(0, 6665, 0, s0, 0, 0x5L);
-        loadDrgnBinFile(0, 6666, 0, s0, 0x1L, 0x3L);
+        loadDrgnBinFile(0, 6666, 0, s0, 1, 0x3L);
         FUN_80110030(0);
         _800bdf00.setu(0x21L);
 
@@ -1316,12 +1305,12 @@ public final class SItem {
         renderGlyphs(glyphs_80114160, 0, 0);
         renderablePtr_800bdbe8.set(allocateUiElement(0x7f, 0x7f, 16, getSlotY(selectedSlot_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
-        FUN_801024c4(0xffL);
+        renderCharacterSwapScreen(0xffL);
         inventoryMenuState_800bdc28.setu(0xaL);
         break;
 
       case 0xa:
-        FUN_801024c4(0);
+        renderCharacterSwapScreen(0);
 
         if(_800bb168.get() != 0) {
           break;
@@ -1373,7 +1362,7 @@ public final class SItem {
         break;
 
       case 0xb:
-        FUN_801024c4(0);
+        renderCharacterSwapScreen(0);
 
         if((inventoryJoypadInput_800bdc44.get() & 0x8000L) != 0 && slotScroll_8011d744.get() % 3 > 0) {
           slotScroll_8011d744.decr();
@@ -1691,9 +1680,9 @@ public final class SItem {
         } else if(v1 == 0x2L) {
           //LAB_800fe1d8
           //LAB_800fe1fc
-          for(s0 = s1; s0 < count_8011d750.get(); s0++) {
-            final MenuItemStruct04 a = _8011dcb8.get(charSlot_8011d734.get()).deref().get((int)s0);
-            final MenuItemStruct04 b = _8011dcb8.get(charSlot_8011d734.get()).deref().get((int)s0);
+          for(int i = (int)s1; i < count_8011d750.get(); i++) {
+            final MenuItemStruct04 a = _8011dcb8.get(charSlot_8011d734.get()).deref().get(i);
+            final MenuItemStruct04 b = _8011dcb8.get(charSlot_8011d734.get()).deref().get(i);
             a.itemId_00.set(b.itemId_00);
             a.itemSlot_01.set(b.itemSlot_01);
             a._02.set(b._02);
@@ -2057,7 +2046,7 @@ public final class SItem {
         FUN_80103bd4(0);
         scriptStartEffect(0x2L, 0xaL);
 
-      case 0x26: // Part of load game menu
+      case 0x26: // Do you want to save now?
         if(whichMenu_800bdc38.get() == 0x13L) {
           setMessageBoxText(Do_you_want_to_save_now_8011c370, 0x2);
           v0 = 0x27L;
@@ -2219,7 +2208,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
         break;
 
-      case 0x30:
+      case 0x30: // Load saved game
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         _8011d7bc.setu(0);
@@ -2351,7 +2340,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
         break;
 
-      case 0x47:
+      case 0x47: // Fade out arrows and progress to menu fade out
         if(_800bdc30.get() == 0x7aL) {
           //LAB_8010069c
           inventoryMenuState_800bdc28.setu(0x77L);
@@ -2390,10 +2379,8 @@ public final class SItem {
           menuItem._02.set(0);
         }
 
-        v0 = _8011d7c0.get();
-
         //LAB_80100098
-        bzero(v0, 0x100);
+        bzero(_8011d7c0.get(), 0x100);
 
         loadDrgnBinFile(0, 6668, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 0x4, 0x2);
         scriptStartEffect(2, 10);
@@ -2898,8 +2885,7 @@ public final class SItem {
           _8011d7bc.setu(refA1_7.get());
           memcardState_8011d7b8.setu(refA2_7.get());
 
-          a1 = tmpA2.get().offset(0x20L).get();//MEMORY.ref(4, sp).offset(0x40L).get();
-          FUN_80041600(0, a1 / 0x40L, 0x1L);
+          FUN_80041600(0, tmpA2.get().offset(0x20L).get() / 0x40L, 0x1L);
           FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
           setMessageBoxText(Blank_8011c5d8, 0);
           inventoryMenuState_800bdc28.setu(0x5dL);
@@ -3413,7 +3399,7 @@ public final class SItem {
             renderInventoryMenu(selectedMenuOption_8011d738.get(), 0x6L, 0xfeL);
           }
 
-          case 0x5 -> FUN_801024c4(0xfeL);
+          case 0x5 -> renderCharacterSwapScreen(0xfeL);
           case 0x6 -> FUN_80102660(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
           case 0x7 -> renderStatusMenu(charSlot_8011d734.get(), 0xfeL);
 
@@ -3490,10 +3476,12 @@ public final class SItem {
         //LAB_80101bf8
         //LAB_80101bfc
         _800bdf00.setu(0xdL);
+        break;
 
       case 0x72:
       case 0x3f:
         //LAB_80101c00
+        break;
     }
   }
 
@@ -3600,7 +3588,7 @@ public final class SItem {
   }
 
   @Method(0x801024c4L)
-  public static void FUN_801024c4(final long a0) {
+  public static void renderCharacterSwapScreen(final long a0) {
     final long s1 = (a0 ^ 0xffL) < 0x1L ? 1 : 0;
 
     FUN_801082a0(198,  16, secondaryCharIndices_800bdbf8.get(0).get(), s1);
@@ -6157,14 +6145,13 @@ public final class SItem {
     long v1;
     long a0;
     long a1;
-    long a2;
+    final long a2;
     long a3;
     final long t0;
     final long t3;
     long s0;
     final long s1;
     final long s2;
-    final long s3;
     final long s4;
     final long s5;
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
@@ -7335,10 +7322,9 @@ public final class SItem {
 
   @Method(0x8010d078L)
   public static void FUN_8010d078(long x, long y, final long w, final long h, final long a4) {
-    long t2 = 0;
     final long t0 = linkedListAddress_1f8003d8.get();
-    x = x - 8 - displayWidth_1f8003e0.get() / 2;
-    y = y - 120;
+    x -= (8 + displayWidth_1f8003e0.get() / 2);
+    y -= 120;
     MEMORY.ref(1, t0).offset(0x03L).setu(0x8L);
     MEMORY.ref(4, t0).offset(0x04L).setu(0x3880_8080L);
     MEMORY.ref(2, t0).offset(0x08L).setu(x);
@@ -7351,9 +7337,10 @@ public final class SItem {
     MEMORY.ref(2, t0).offset(0x22L).setu(y + h);
     linkedListAddress_1f8003d8.addu(0x24L);
 
+    final int z;
     switch((int)a4) {
       case 0 -> {
-        t2 = 0x24L;
+        z = 36;
         MEMORY.ref(1, t0).offset(0x4L).setu(0);
         MEMORY.ref(1, t0).offset(0x5L).setu(0);
         MEMORY.ref(1, t0).offset(0x6L).setu(0x1L);
@@ -7369,7 +7356,7 @@ public final class SItem {
       }
 
       case 1 -> {
-        t2 = 0x24L;
+        z = 36;
         MEMORY.ref(1, t0).offset(0x7L).oru(0x2L);
         MEMORY.ref(1, t0).offset(0xcL).setu(0);
         MEMORY.ref(1, t0).offset(0xdL).setu(0x14L);
@@ -7383,7 +7370,7 @@ public final class SItem {
       }
 
       case 2 -> {
-        t2 = 0x24L;
+        z = 36;
         MEMORY.ref(1, t0).offset(0x4L).setu(0x7fL);
         MEMORY.ref(1, t0).offset(0x5L).setu(0x7fL);
         MEMORY.ref(1, t0).offset(0x6L).setu(0x7fL);
@@ -7399,7 +7386,7 @@ public final class SItem {
       }
 
       case 3 -> {
-        t2 = 0x22L;
+        z = 34;
         MEMORY.ref(1, t0).offset(0x4L).setu(0xffL);
         MEMORY.ref(1, t0).offset(0xcL).setu(0xffL);
         MEMORY.ref(1, t0).offset(0x5L).setu(0x7aL);
@@ -7415,7 +7402,7 @@ public final class SItem {
       }
 
       case 4 -> {
-        t2 = 0x23L;
+        z = 35;
         MEMORY.ref(1, t0).offset(0x4L).setu(0xffL);
         MEMORY.ref(1, t0).offset(0x5L).setu(0x7aL);
         MEMORY.ref(1, t0).offset(0x6L).setu(0);
@@ -7431,7 +7418,7 @@ public final class SItem {
       }
 
       case 5 -> {
-        t2 = 0x22L;
+        z = 34;
         MEMORY.ref(1, t0).offset(0x5L).setu(0x84L);
         MEMORY.ref(1, t0).offset(0xdL).setu(0x84L);
         MEMORY.ref(1, t0).offset(0x6L).setu(0xfeL);
@@ -7447,7 +7434,7 @@ public final class SItem {
       }
 
       case 6 -> {
-        t2 = 0x23L;
+        z = 35;
 
         //LAB_8010d290
         MEMORY.ref(1, t0).offset(0x4L).setu(0x7fL);
@@ -7465,14 +7452,16 @@ public final class SItem {
         //LAB_8010d2c0
         MEMORY.ref(1, t0).offset(0x1eL).setu(0);
       }
+
+      default -> z = 0;
     }
 
     //LAB_8010d2c4
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + t2 * 0x4L, t0);
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(z).getAddress(), t0);
 
     if(a4 == 0x1L) {
-      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), 0, 0x1L, 0);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x90L, linkedListAddress_1f8003d8.get());
+      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, 0);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(36).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x8L);
     }
 

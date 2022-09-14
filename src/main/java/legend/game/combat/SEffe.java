@@ -5517,7 +5517,7 @@ public final class SEffe {
       MEMORY.ref(2, s0).offset(0x22L).setu(sp0x70.getY());
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, s0);
 
-      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), 0, 1, GetTPage(1, 1, 0, 0));
+      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(1, 1, 0, 0));
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x8L);
     }

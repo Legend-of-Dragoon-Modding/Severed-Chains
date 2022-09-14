@@ -5884,7 +5884,7 @@ public final class SMap {
       MEMORY.ref(2, renderPacket).offset(0x12L).setu(s0.pos_08.h.get()); // Height
 
       final long s0_0 = _800cb710.offset(i * 0x24L).getAddress();
-      SetDrawTPage(MEMORY.ref(4, s0_0, DR_TPAGE::new), 0, 0x1L, s0.tpage_20.get());
+      SetDrawTPage(MEMORY.ref(4, s0_0, DR_TPAGE::new), false, true, s0.tpage_20.get());
 
       if(s0.clutY_22.get() < 0) {
         gpuLinkedListSetCommandTransparency(s0_0, true);

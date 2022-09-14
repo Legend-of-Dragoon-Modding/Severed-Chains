@@ -4850,8 +4850,8 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003993c
-    final long y = rect.y.get() >> 3 << 15;
-    final long x = rect.x.get() >> 3 << 10;
+    final long y = (rect.y.get() & 0x1f) >> 3 << 15;
+    final long x = (rect.x.get() & 0x1f) >> 3 << 10;
     final long h = (-rect.h.get() & 0xffL) >> 3 << 5;
     final long w = (-rect.w.get() & 0xffL) >> 3;
 
@@ -5488,26 +5488,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003b750L)
-  public static void SetDrawTPage(final DR_TPAGE p, final long allowDrawing, final long dither, final long tpage) {
+  public static void SetDrawTPage(final DR_TPAGE p, final boolean allowDrawing, final boolean dither, final long tpage) {
     p.tag.and(0xff_ffffL).or(0x100_0000L);
 
     final long command = 0xe100_0000L; // Texpage/draw mode settings
 
-    final long ditherBit;
-    if(dither != 0) {
-      ditherBit = 0x200L;
-    } else {
-      ditherBit = 0;
-    }
-
-    //LAB_8003b764
-    final long drawingBit;
-    if(allowDrawing != 0) {
-      drawingBit = 0x400L;
-    } else {
-      drawingBit = 0;
-    }
-
+    final long ditherBit = dither ? 0x200L : 0;
+    final long drawingBit = allowDrawing ? 0x400L : 0;
     final long otherBits = tpage & 0x9ffL; // Texpage X/Y base; trans; texpage colours, tex disable
 
     //LAB_8003b770
@@ -5593,8 +5580,8 @@ public final class Scus94491BpeSegment_8003 {
       drawMode.code.get(1).set(0);
     } else {
       final long val = 0xe200_0000L |
-        textureWindow.y.get() >> 3 << 15 | // Texture window offset Y
-        textureWindow.x.get() >> 3 << 10 | // Texture window offset X
+        (textureWindow.y.get() >> 3 & 0x1f) << 15 | // Texture window offset Y
+        (textureWindow.x.get() >> 3 & 0x1f) << 10 | // Texture window offset X
         (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y
         (-textureWindow.w.get() & 0xffL) >> 3; // Texture window mask X
       drawMode.code.get(1).set(val);
@@ -5855,8 +5842,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c1c0L)
   public static void GsSetDrawBuffOffset() {
-    final short x = (short)centreScreenX_1f8003dc.get();
-    final short y = (short)centreScreenY_1f8003de.get();
+    final short x = centreScreenX_1f8003dc.get();
+    final short y = centreScreenY_1f8003de.get();
 
     final short clipX;
     final short clipY;
