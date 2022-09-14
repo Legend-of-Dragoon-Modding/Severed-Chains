@@ -44,6 +44,7 @@ import legend.game.types.Drgn0_6666Struct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.GameState52c;
+import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.JoyStruct;
 import legend.game.types.LodString;
@@ -1710,7 +1711,7 @@ public final class Scus94491BpeSegment_8002 {
     switch((int)whichMenu_800bdc38.get()) {
       case 0x1 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x2L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1726,7 +1727,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x6 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x7L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1742,7 +1743,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0xb -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0xcL);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1758,7 +1759,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x10 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x11L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1774,7 +1775,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x15 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x16L);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1790,7 +1791,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x1f -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x20);
           FUN_8001e010(0);
           _800bc0b9.setu(0x1L);
@@ -1799,7 +1800,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x1a -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.setu(0);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._0);
           whichMenu_800bdc38.setu(0x1bL);
         }
       }

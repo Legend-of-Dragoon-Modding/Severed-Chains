@@ -107,9 +107,27 @@ public final class Scus94491BpeSegment_800c {
 
   public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
 
+  public static final Value _800c3638 = MEMORY.ref(4, 0x800c3638L);
+  public static final Value _800c363c = MEMORY.ref(4, 0x800c363cL);
+
+  public static final Value _800c3648 = MEMORY.ref(4, 0x800c3648L);
+  public static final Value _800c364c = MEMORY.ref(4, 0x800c364cL);
+
   public static final Value _800c3658 = MEMORY.ref(4, 0x800c3658L);
 
+  public static final Value _800c3660 = MEMORY.ref(4, 0x800c3660L);
+  public static final Value _800c3664 = MEMORY.ref(4, 0x800c3664L);
+  public static final Value _800c3668 = MEMORY.ref(4, 0x800c3668L);
+
+  public static final Value _800c3670 = MEMORY.ref(1, 0x800c3670L);
+
+  public static final Value _800c3708 = MEMORY.ref(1, 0x800c3708L);
+
   public static final Value _800c37a4 = MEMORY.ref(4, 0x800c37a4L);
+  public static final Value _800c37a8 = MEMORY.ref(4, 0x800c37a8L);
+  public static final Value _800c37ac = MEMORY.ref(4, 0x800c37acL);
+  public static final Value _800c37b0 = MEMORY.ref(4, 0x800c37b0L);
+  public static final Value _800c37b4 = MEMORY.ref(4, 0x800c37b4L);
 
   public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(4, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
   public static final ArrayRef<UnsignedByteRef> responseBuffer0_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));

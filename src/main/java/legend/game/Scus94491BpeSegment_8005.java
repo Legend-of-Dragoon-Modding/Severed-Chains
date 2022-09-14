@@ -313,10 +313,21 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _8005954c = MEMORY.ref(4, 0x8005954cL);
   public static final Value _80059550 = MEMORY.ref(4, 0x80059550L);
   public static final Value _80059554 = MEMORY.ref(4, 0x80059554L);
-
+  public static final Value _80059558 = MEMORY.ref(4, 0x80059558L);
   public static final Value _8005955c = MEMORY.ref(4, 0x8005955cL);
   public static final Value _80059560 = MEMORY.ref(4, 0x80059560L);
   public static final Value _80059564 = MEMORY.ref(4, 0x80059564L);
+  public static final Value _80059568 = MEMORY.ref(4, 0x80059568L);
+
+  public static final Value joyMcdData_8005957c = MEMORY.ref(4, 0x8005957cL);
+  public static final Value iStat_80059580 = MEMORY.ref(4, 0x80059580L);
+
+  public static final Value returnAddressPROBLEM_80059590 = MEMORY.ref(4, 0x80059590L);
+  public static final Value _80059594 = MEMORY.ref(4, 0x80059594L);
+  public static final Value _80059598 = MEMORY.ref(4, 0x80059598L);
+  public static final Value _8005959c = MEMORY.ref(4, 0x8005959cL);
+
+  public static final Value _800595a4 = MEMORY.ref(4, 0x800595a4L);
 
   static {
     GATE.acquire();

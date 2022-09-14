@@ -20,6 +20,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
@@ -58,6 +59,7 @@ import static legend.core.input.MemoryCard.JOY_MCD_MODE;
 import static legend.core.input.MemoryCard.JOY_MCD_STAT;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
+import static legend.core.kernel.Bios.ProcessControlBlockPtr_a0000108;
 import static legend.core.memory.segments.MemoryControl1Segment.SPU_DELAY;
 import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment._80011db4;
@@ -74,10 +76,19 @@ import static legend.game.Scus94491BpeSegment_8005._80058d0c;
 import static legend.game.Scus94491BpeSegment_8005._8005954c;
 import static legend.game.Scus94491BpeSegment_8005._80059550;
 import static legend.game.Scus94491BpeSegment_8005._80059554;
+import static legend.game.Scus94491BpeSegment_8005._80059558;
 import static legend.game.Scus94491BpeSegment_8005._8005955c;
 import static legend.game.Scus94491BpeSegment_8005._80059560;
 import static legend.game.Scus94491BpeSegment_8005._80059564;
+import static legend.game.Scus94491BpeSegment_8005._80059568;
+import static legend.game.Scus94491BpeSegment_8005.joyMcdData_8005957c;
+import static legend.game.Scus94491BpeSegment_8005.iStat_80059580;
+import static legend.game.Scus94491BpeSegment_8005.returnAddressPROBLEM_80059590;
+import static legend.game.Scus94491BpeSegment_8005._80059594;
+import static legend.game.Scus94491BpeSegment_8005._80059598;
+import static legend.game.Scus94491BpeSegment_8005._8005959c;
 import static legend.game.Scus94491BpeSegment_8005._800595a0;
+import static legend.game.Scus94491BpeSegment_8005._800595a4;
 import static legend.game.Scus94491BpeSegment_8005._800595d4;
 import static legend.game.Scus94491BpeSegment_8005._800595e0;
 import static legend.game.Scus94491BpeSegment_8005._800595ec;
@@ -116,8 +127,21 @@ import static legend.game.Scus94491BpeSegment_8005.ptrGetJoyDataForPort_800595e8
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_8005.sssqStatus_8005a1d0;
+import static legend.game.Scus94491BpeSegment_800c._800c3638;
+import static legend.game.Scus94491BpeSegment_800c._800c363c;
+import static legend.game.Scus94491BpeSegment_800c._800c3648;
+import static legend.game.Scus94491BpeSegment_800c._800c364c;
 import static legend.game.Scus94491BpeSegment_800c._800c3658;
+import static legend.game.Scus94491BpeSegment_800c._800c3660;
+import static legend.game.Scus94491BpeSegment_800c._800c3664;
+import static legend.game.Scus94491BpeSegment_800c._800c3668;
+import static legend.game.Scus94491BpeSegment_800c._800c3670;
+import static legend.game.Scus94491BpeSegment_800c._800c3708;
 import static legend.game.Scus94491BpeSegment_800c._800c37a4;
+import static legend.game.Scus94491BpeSegment_800c._800c37a8;
+import static legend.game.Scus94491BpeSegment_800c._800c37ac;
+import static legend.game.Scus94491BpeSegment_800c._800c37b0;
+import static legend.game.Scus94491BpeSegment_800c._800c37b4;
 import static legend.game.Scus94491BpeSegment_800c._800c3a28;
 import static legend.game.Scus94491BpeSegment_800c._800c3a38;
 import static legend.game.Scus94491BpeSegment_800c._800c3a3c;
@@ -1297,7 +1321,51 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800414a0L)
   public static void FUN_800414a0(final long a0) {
-    assert false;
+    FUN_800414cc(a0, _800c3638.getAddress(), _800c363c.getAddress());
+  }
+
+  @Method(0x800414ccL)
+  public static long FUN_800414cc(final long a0, final long a1, final long a2) {
+    if(!FUN_80041e08(a0)) {
+      //LAB_8004153c
+      return 0;
+    }
+
+    _800c37a4.setu(0x13L);
+    _800c3648.setu(getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80041578", long.class));
+    _800c3660.setu(getMethodAddress(Scus94491BpeSegment_8004.class, "FUN_80041554"));
+    _800c3664.setu(a1);
+    _800c3668.setu(a2);
+    _8005954c.setu(0x2L);
+
+    //LAB_80041540
+    return 0x1L;
+  }
+
+  @Method(0x80041554L)
+  public static long FUN_80041554() {
+    //LAB_80041570
+    return _80059550.get() != 0x2L ? 0 : 0x58L;
+  }
+
+  @Method(0x80041578L)
+  public static long FUN_80041578(final long a0) {
+    final long v1 = _80059564.get();
+    if(v1 == 0x3L) {
+      //LAB_800415b8
+      _800c3658.setu(a0 & 0xff);
+    } else if(v1 == 0x4L) {
+      //LAB_800415cc
+      _800c3664.deref(4).setu(a0 & 0xff);
+      //LAB_800415a4
+    } else if(v1 == 0x5L) {
+      //LAB_800415dc
+      //LAB_800415e8
+      _800c3668.deref(4).setu(a0 & 0xff);
+    }
+
+    //LAB_800415f0
+    return 0;
   }
 
   @Method(0x80041600L)
@@ -1353,7 +1421,7 @@ public final class Scus94491BpeSegment_8004 {
     if(_8005954c.get(0x1L) == 0) {
       SysDeqIntRP(0x1, joypadPriorityChain_8005953c);
       SysEnqIntRP(0x1, joypadPriorityChain_8005953c);
-      FUN_800421a0();
+      FUN_800421a0(); // Something related to loading dabas from memcard
       I_STAT.setu(0xffff_ff7fL);
       I_MASK.oru(0x80L);
     }
@@ -1376,6 +1444,72 @@ public final class Scus94491BpeSegment_8004 {
     _800c3658.setu(0);
 
     return true;
+  }
+
+  @Method(0x80041e58L)
+  public static long FUN_80041e58() {
+    if(_80059550.get() == 0x1L) {
+      _8005954c.setu(0x4L);
+      FUN_800422e4(_80059554.getSigned() >> 4);
+      FUN_800424bc(~((_80059554.get() & 0xfL) + 0x81L));
+      _800c3708.setu((_80059554.get() & 0xfL) - 0x7fL);
+      _80059560.addu(0x1L);
+      return 0;
+    }
+
+    //LAB_80041ee0
+    _800c3658.subu(0x1L);
+    long a2 = (long)_800c3660.deref(4).call() & 0xffL;
+    _800c3708.offset(_80059560.get()).setu(a2);
+    _80059560.addu(0x1L);
+    a2 = FUN_800424bc(a2);
+    if((int)a2 < 0) {
+      return a2 - 1000;
+    }
+
+    //LAB_80041f3c
+    _800c3670.offset(_80059564.get()).setu(a2);
+    _80059564.addu(0x1L);
+    a2 = (long)_800c3648.deref(4).call(a2);
+    if(a2 != 0) {
+      return a2 - 2000;
+    }
+
+    final long v0 = _800c3658.get();
+
+    if(v0 == 0) {
+      return 1;
+    }
+
+    //LAB_80041f90
+    if(v0 != 0x1L) {
+      return 0;
+    }
+
+    //LAB_80041fc0
+    if(_800c37a4.get() != 0xeL && _800c37a4.get() != 0xfL || _80059564.get() != _800c364c.get() + 0x4L) {
+      //LAB_80041fdc
+      final long v1 = _80059568.get();
+
+      //LAB_80041fe8
+      while((MEMORY.ref(2, v1).offset(0x4L).get() & 0x2) == 0) {
+        DebugHelper.sleep(1);
+      }
+    }
+
+    //LAB_80041ffc
+    _80059550.addu(0x1L);
+    _800c3658.subu(0x1L);
+    a2 = _80059568.deref(1).get();
+    _800c3670.offset(_80059564.get()).setu(a2);
+    _80059564.addu(0x1L);
+    a2 = (long)_800c3648.deref(4).call(a2);
+    if(a2 != 0) {
+      return a2 - 3000;
+    }
+
+    //LAB_80042074
+    return 1;
   }
 
   @Method(0x80042090L)
@@ -1417,14 +1551,240 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x800421a0L)
-  public static void FUN_800421a0() {
-    assert false;
+  public static long FUN_800421a0() {
+    if(_800595a0.get() != 0) {
+      _800595a4.setu(0x1L);
+      FUN_800429e0();
+      _800595a4.setu(0);
+    } else {
+      //LAB_800421d4
+      _80059550.addu(0x1L);
+      long v1 = FUN_80041e58();
+      if(v1 != 0) {
+        final long v0;
+        if(v1 == 0x1L) {
+          _8005954c.setu(0x41L);
+          if(_80059558.get() != 0) {
+            FUN_80041e08(_80059554.get());
+            _8005954c.setu(0x2L);
+            _80059558.subu(0x1L);
+          }
+
+          //LAB_80042254
+          v0 = joyMcdData_8005957c.get();
+          v1 = iStat_80059580.get();
+          MEMORY.ref(2, v0).offset(0xaL).setu(0);
+          MEMORY.ref(2, v1).offset(0x0L).setu(0xffff_ff7fL);
+          MEMORY.ref(4, v1).offset(0x4L).and(0xffff_ff7fL);
+        } else {
+          //LAB_80042288
+          v0 = joyMcdData_8005957c.get();
+          v1 = iStat_80059580.get();
+          MEMORY.ref(2, v0).offset(0xaL).setu(0);
+          MEMORY.ref(2, v1).offset(0x0L).setu(0xffff_ff7fL);
+          MEMORY.ref(4, v1).offset(0x4L).and(0xffff_ff7fL);
+          _8005954c.setu(0x21L);
+        }
+
+        //LAB_800422c4
+        _80059550.setu(0);
+        SysDeqIntRP(1, joypadPriorityChain_8005953c);
+      }
+    }
+
+    //LAB_800422d4
+    return 0;
+  }
+
+  @Method(0x800422e4L)
+  public static long FUN_800422e4(final long a0) {
+    final long v1 = joyMcdData_8005957c.get();
+    MEMORY.ref(2, v1).offset(0xaL).setu(0);
+
+    FUN_800423b8(0x91L);
+
+    //LAB_8004231c
+    MEMORY.ref(2, v1).offset(0xaL).setu(a0 == 0 ? 0x1003L : 0x3003L);
+    if((MEMORY.ref(4, v1).offset(0x4L).get() & 0x200) != 0) {
+      MEMORY.ref(2, v1).offset(0xaL).oru(0x10L);
+      if((MEMORY.ref(4, v1).offset(0x4L).get() & 0x200) != 0) {
+        MEMORY.ref(1, v1).offset(0x0L).setu(0x1L);
+
+        //LAB_80042368
+        while((MEMORY.ref(4, v1).offset(0x4L).get() & 0x2) == 0) {
+          DebugHelper.sleep(1);
+        }
+
+        return 0;
+      }
+
+      //LAB_80042394
+      iStat_80059580.deref(2).setu(0xffff_ff7fL);
+    }
+
+    //LAB_800423a8
+    return 1;
+  }
+
+  @Method(0x800423b8L)
+  public static long FUN_800423b8(final long a0) {
+    _800c37ac.setu(TMR_SYSCLOCK_VAL.get());
+    _800c37b0.setu(a0);
+    _800c37b4.setu(0);
+    return TMR_SYSCLOCK_MODE.get();
+  }
+
+  @Method(0x800423ecL)
+  public static long FUN_800423ec() {
+    final long mode = TMR_SYSCLOCK_MODE.get() & 0xffffL;
+    final long val = TMR_SYSCLOCK_VAL.get() & 0xffffL;
+    if((mode & 0x1000) != 0) {
+      _800c37b4.addu(0x1_0000);
+      //LAB_80042424
+    } else if((mode & 0x808) == 0x808) {
+      //LAB_8004244c
+      _800c37b4.addu(TMR_SYSCLOCK_MAX.get());
+    }
+
+    //LAB_8004245c
+    final long v0;
+    if((mode & 0x200) == 0) {
+      v0 = val + _800c37b4.getSigned() - _800c37ac.getSigned() < _800c37b0.getSigned() * 8 ? 1 : 0;
+    } else {
+      //LAB_80042490
+      v0 = val + _800c37b4.getSigned() - _800c37ac.getSigned() < _800c37b0.getSigned() ? 1 : 0;
+    }
+
+    //LAB_800424b4
+    return v0 ^ 0x1L;
+  }
+
+  @Method(0x800424bcL)
+  public static long FUN_800424bc(final long a0) {
+    long a1 = joyMcdData_8005957c.get();
+    _800c37a8.setu(MEMORY.ref(1, a1).get());
+
+    if((int)a0 < 0) {
+      //LAB_800424f8
+      while((MEMORY.ref(4, a1).offset(0x4L).get() & 0x1) == 0) {
+        DebugHelper.sleep(1);
+      }
+
+      //LAB_8004250c
+      final long t0 = _800c37b0.get();
+      final long a3 = _800c37ac.get();
+
+      //LAB_8004253c
+      long v0;
+      do {
+        a1 = TMR_SYSCLOCK_MODE.get() & 0xffffL;
+        final long a2 = TMR_SYSCLOCK_VAL.get() & 0xffffL;
+        if((a1 & 0x1000) != 0) {
+          _800c37b4.addu(0x1_0000);
+          //LAB_80042564
+        } else if((a1 & 0x808) == 0x808) {
+          //LAB_80042584
+          _800c37b4.addu(TMR_SYSCLOCK_MAX.get());
+        }
+
+        //LAB_80042590
+        v0 = _800c37b4.get() + a2 - a3;
+        if((a1 & 0x200) != 0) {
+          v0 = (int)v0 < (int)t0 ? 1 : 0;
+        } else {
+          //LAB_800425b4
+          v0 = (int)v0 < (int)t0 * 8 ? 1 : 0;
+        }
+
+        //LAB_800425cc
+        v0 = v0 ^ 0x1L;
+      } while(v0 == 0);
+
+      joyMcdData_8005957c.deref(4).setu(~a0 & 0xff);
+      return _800c37a8.get();
+    }
+
+    //LAB_800425ec
+    MEMORY.ref(1, a1).offset(0x0L).setu(a0);
+    _800c37b4.setu(0);
+    iStat_80059580.deref(2).setu(0xffff_ff7fL);
+    _800c37b0.setu(0x3cL);
+    _800c37ac.setu(TMR_SYSCLOCK_VAL.get());
+
+    //LAB_80042648
+    while((joyMcdData_8005957c.deref(2).offset(0x4L).get() & 0x80) != 0) {
+      if(FUN_800423ec() != 0) {
+        return -0x300 - _800c37a8.get();
+      }
+    }
+
+    //LAB_80042678
+    //LAB_80042694
+    //LAB_800426ac
+    joyMcdData_8005957c.deref(2).offset(0xaL).oru(0x10L);
+
+    //LAB_800426b4
+    return _800c37a8.get();
   }
 
   @Method(0x800426c4L)
   public static long FUN_800426c4(final long a0, final long a1, final long a2) {
     assert false;
     return 0;
+  }
+
+  @Method(0x800429e0L)
+  public static void FUN_800429e0() {
+    final long at;
+    long v0;
+    final long v1;
+    final long k0;
+    final long ra;
+
+    if(_800595a0.get() == 0 || (I_STAT.get() & 0x80) == 0) {
+      //LAB_80042aec
+      assert false;
+      // TODO returnAddressPROBLEM_80059590.setu(ra);
+      ra = returnAddressPROBLEM_80059590.get();
+
+      //LAB_80042b10
+      return;
+    }
+
+    if(_80059594.get() != 0) {
+      JOY_MCD_DATA.get();
+      v0 = _80059598.deref(1).get();
+      JOY_MCD_DATA.setu(v0);
+      _80059598.addu(0x1L);
+    } else {
+      //LAB_80042a4c
+      v0 = JOY_MCD_DATA.get();
+      _80059598.deref(1).setu(v0);
+      JOY_MCD_DATA.setu(0);
+      _80059598.addu(0x1L);
+    }
+
+    //LAB_80042a6c
+    I_STAT.setu(0xffff_ff7fL);
+    JOY_MCD_CTRL.oru(0x10L);
+    _8005959c.deref(1).xoru(v0);
+    _800595a0.subu(0x1L);
+    _80059550.addu(0x1L);
+
+    if(_800595a4.get() != 0) {
+      return;
+    }
+
+    //LAB_80042b18
+    //TODO
+    final ArrayRef<UnsignedIntRef> registers = ProcessControlBlockPtr_a0000108.deref().threadControlBlockPtr.deref().registers;
+    at = registers.get(1).get();
+    v0 = registers.get(2).get();
+    v1 = registers.get(3).get();
+    ra = registers.get(31).get();
+    k0 = registers.get(32).get();
+
+    MEMORY.ref(4, k0).call();
   }
 
   @Method(0x80042b60L)

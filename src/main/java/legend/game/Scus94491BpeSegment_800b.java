@@ -32,6 +32,7 @@ import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.InventoryMenuState;
 import legend.game.types.JoyStruct;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -259,9 +260,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
-  public static final Value inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L);
+  public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
-  public static final Value _800bdc30 = MEMORY.ref(4, 0x800bdc30L);
+  public static final EnumRef<InventoryMenuState> _800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
 
   public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
   /**
