@@ -15,7 +15,7 @@ public class ItemStats0c implements MemoryRef {
   public final UnsignedByteRef special2_04;
   public final UnsignedByteRef uu1_05;
   public final ByteRef specialAmount_06;
-  public final ByteRef _07;
+  public final ByteRef icon_07;
   public final UnsignedByteRef status_08;
   public final UnsignedByteRef percentage_09;
   public final UnsignedByteRef uu2_0a;
@@ -41,7 +41,7 @@ public class ItemStats0c implements MemoryRef {
     this.special2_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
     this.uu1_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
     this.specialAmount_06 = ref.offset(1, 0x06L).cast(ByteRef::new);
-    this._07 = ref.offset(1, 0x07L).cast(ByteRef::new);
+    this.icon_07 = ref.offset(1, 0x07L).cast(ByteRef::new);
     this.status_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);
     this.percentage_09 = ref.offset(1, 0x09L).cast(UnsignedByteRef::new);
     this.uu2_0a = ref.offset(1, 0x0aL).cast(UnsignedByteRef::new);

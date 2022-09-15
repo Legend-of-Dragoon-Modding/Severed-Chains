@@ -1850,13 +1850,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800228d0L)
-  public static int FUN_800228d0(final int itemId) {
+  public static int getItemIcon(final int itemId) {
     if(itemId >= 0xc0) {
-      return itemStats_8004f2ac.get(itemId - 0xc0)._07.get();
+      return itemStats_8004f2ac.get(itemId - 0xc0).icon_07.get();
     }
 
     //LAB_80022908
-    return equipmentStats_80111ff0.get(itemId)._0e.get();
+    return equipmentStats_80111ff0.get(itemId).icon_0e.get();
   }
 
   @Method(0x80022928L)
@@ -2451,8 +2451,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023978L)
   public static long compareItems(final MenuItemStruct04 item1, final MenuItemStruct04 item2) {
-    final long s0 = FUN_800228d0(item1.itemId_00.get());
-    final long v0 = FUN_800228d0(item2.itemId_00.get());
+    final long s0 = getItemIcon(item1.itemId_00.get());
+    final long v0 = getItemIcon(item2.itemId_00.get());
 
     if(s0 != v0) {
       return s0 - v0;
@@ -2802,7 +2802,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002437cL)
-  public static void FUN_8002437c(final long a0) {
+  public static void deallocateRenderables(final long a0) {
     Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
 
     if(s0 != null) {

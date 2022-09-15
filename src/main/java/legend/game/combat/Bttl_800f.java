@@ -3484,7 +3484,7 @@ public final class Bttl_800f {
     bobj.itemSpecial2_dc.set((short)itemStats.special2_04.get());
     bobj.itemUu1_de.set((short)itemStats.uu1_05.get());
     bobj.itemSpecialAmount_e0.set(itemStats.specialAmount_06.get());
-    bobj._e2.set(itemStats._07.get());
+    bobj._e2.set(itemStats.icon_07.get());
     bobj.itemStatus_e4.set((short)itemStats.status_08.get());
     bobj.itemPercentage_e6.set((short)itemStats.percentage_09.get());
     bobj.itemUu2_e8.set((short)itemStats.uu2_0a.get());

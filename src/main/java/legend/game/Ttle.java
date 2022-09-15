@@ -50,7 +50,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002437c;
+import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
@@ -348,7 +348,7 @@ public final class Ttle {
       }
 
       case 3 -> {
-        FUN_8002437c(0xffL);
+        deallocateRenderables(0xffL);
         scriptStartEffect(2, 10);
         _800c66c8.setu(0xe10L);
         pregameLoadingStage_800bb10c.setu(0x4L);
@@ -374,7 +374,7 @@ public final class Ttle {
       }
 
       case 6 -> {
-        FUN_8002437c(0xffL);
+        deallocateRenderables(0xffL);
         removeFromLinkedList(drgn0_6666FilePtr_800bdc3c.getPointer());
         mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
         pregameLoadingStage_800bb10c.setu(0);

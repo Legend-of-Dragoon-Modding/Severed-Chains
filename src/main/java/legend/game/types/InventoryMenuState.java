@@ -63,9 +63,9 @@ public enum InventoryMenuState {
   _66,
 
   _71,
-  _72,
-  _73,
-  _74,
+  DABAS_INIT_72,
+  DABAS_INIT_2_73,
+  DABAS_INIT_3_74,
   _75,
   _76,
   _77,

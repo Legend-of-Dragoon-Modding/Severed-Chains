@@ -34,7 +34,7 @@ public class EquipmentStats1c implements MemoryRef {
   public final UnsignedByteRef special2_0c;
   /** Amount for MP/SP per hit or SP multiplier */
   public final UnsignedByteRef specialAmount_0d;
-  public final UnsignedByteRef _0e;
+  public final UnsignedByteRef icon_0e;
   public final ByteRef spd_0f;
   public final ByteRef atkHi_10;
   public final ByteRef matk_11;
@@ -66,7 +66,7 @@ public class EquipmentStats1c implements MemoryRef {
     this.special1_0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
     this.special2_0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
     this.specialAmount_0d = ref.offset(1, 0x0dL).cast(UnsignedByteRef::new);
-    this._0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
+    this.icon_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
     this.spd_0f = ref.offset(1, 0x0fL).cast(ByteRef::new);
     this.atkHi_10 = ref.offset(1, 0x10L).cast(ByteRef::new);
     this.matk_11 = ref.offset(1, 0x11L).cast(ByteRef::new);
