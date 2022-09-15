@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.roundUp;
@@ -1020,13 +1021,6 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
           _8011dcfc.set((gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4L) > 0);
           gameState_800babc8.vibrationEnabled_4e1.and(1);
-
-
-
-          inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_INIT_72);
-
-
-
         }
         break;
 
@@ -2951,31 +2945,14 @@ public final class SItem {
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          FUN_800412e0(0, 0x1L, 0x1L);
-          FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-          FUN_8002eb28(0, "BASCUS-94491drgnpda", dabasData_8011d7c0.getPointer(), 0x580L, 0x80L);
-          FUN_8002efb8(0, _8011d7bc, memcardState_8011d7b8);
-          FUN_80041420(0);
-
-          if(memcardState_8011d7b8.get() != 0) {
-            FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-
-            //LAB_80101204
-            inventoryMenuState_800bdc28.set(InventoryMenuState._113);
-            break;
-          }
-
-          //LAB_80101210
-          FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-
-          v1 = dabasState_8011d758.get();
-          if(v1 == 0 || v1 == 1) {
+          final long state = dabasState_8011d758.get();
+          if(state == 0 || state == 1) {
             //LAB_8010124c
             //LAB_8010125c
             for(int i = 0; i < 7; i++) {
               menuItems_8011d7c8.get(i).itemId_00.set(0xff);
             }
-          } else if(v1 == 2) {
+          } else if(state == 2) {
             //LAB_8010126c
             menuItems_8011d7c8.get(6).itemId_00.set(0xff);
           }
@@ -3004,7 +2981,11 @@ public final class SItem {
           "Dabas leaves, mumbling about\na Dragoni Plant.",
         };
 
-        setMessageBoxText(_8011c8cc, 0);
+        final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
+        final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+        string.set(response);
+
+        setMessageBoxText(string, 0);
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
         //LAB_80101650
@@ -3013,7 +2994,24 @@ public final class SItem {
       }
 
       case DABAS_DISCARD_ITEMS_FINISHED_104: {
-        setMessageBoxText(Item_thrown_away_8011c914, 0);
+        final String[] responses = {
+          "Dabas is disappointed.",
+          "Dabas isn't angry, he's\njust disappointed.",
+          "Dabas isn't angry. He swears.",
+          "You discarded all of\nDabas' hard work.",
+          "Dabas reconsiders his\nchoice of career.",
+          "Dabas used his good\npickaxe for that.",
+          "Dabas throws the items\ninto the ocean.",
+          "Dabas reconsiders his\nchoice of friends.",
+          "A lone tear rolls down\nDabas' cheek.",
+          "Dabas plays a sad song\non his accordion.",
+        };
+
+        final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
+        final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+        string.set(response);
+
+        setMessageBoxText(string, 0);
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
         //LAB_80101650
@@ -3030,7 +3028,21 @@ public final class SItem {
             break;
           }
 
-          setMessageBoxText(m_8011c66c, 0x1);
+          final String[] responses = {
+            "Dabas thanks you.",
+            "Dabas thanks you for\nhis hard work.",
+            "Dabas pats himself\non the back.",
+            "Dabas plays a happy song\non his accordion.",
+            "Dabas wonders why he is\nthe one paying you.",
+            "You thank Dabas even though\nthe items are dirty.",
+
+          };
+
+          final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
+          final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+          string.set(response);
+
+          setMessageBoxText(string, 0x1);
           renderablePtr_800bdbec.clear();
           inventoryMenuState_800bdc28.set(InventoryMenuState._106);
         }
@@ -3222,6 +3234,10 @@ public final class SItem {
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
+          if(inventoryMenuState_800bdc28.get() == InventoryMenuState._109) {
+            removeFromLinkedList(messageBox_8011dc90.text_00.getPointer());
+          }
+
           //LAB_8010175c
           inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_MENU_79);
         }
