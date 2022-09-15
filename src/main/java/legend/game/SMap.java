@@ -77,7 +77,7 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
-import static legend.game.SItem.FUN_80110030;
+import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SStrm.FUN_800fb7cc;
 import static legend.game.SStrm.FUN_800fb90c;
 import static legend.game.SStrm.stopFmv;
@@ -925,7 +925,7 @@ public final class SMap {
 
   @Method(0x800d9b08L)
   public static void FUN_800d9b08(final long a0) {
-    FUN_80110030(0);
+    loadCharacterStats(0);
 
     if((int)a0 >= 0) {
       final ActiveStatsa0 stats = stats_800be5f8.get((int)a0);

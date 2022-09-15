@@ -92,7 +92,7 @@ import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
 import static legend.game.SItem.FUN_8010d614;
 import static legend.game.SItem.FUN_8010f198;
-import static legend.game.SItem.FUN_80110030;
+import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SMap.FUN_800d9e64;
@@ -1989,7 +1989,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022bec
-    FUN_80110030(0);
+    loadCharacterStats(0);
 
     //LAB_80022bf8
     return ret;
@@ -2026,7 +2026,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022cb4
-    FUN_80110030(0);
+    loadCharacterStats(0);
 
     //LAB_80022cc0
     return ret;
@@ -2993,7 +2993,7 @@ public final class Scus94491BpeSegment_8002 {
     _800bdf04.setu(0);
     _800bdf08.setu(0);
     _800be5c4.setu(0);
-    FUN_8002a6fc();
+    clearCharacterStats();
 
     //LAB_800250c0
     for(int i = 0; i < 8; i++) {
@@ -6685,7 +6685,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a6fcL)
-  public static void FUN_8002a6fc() {
+  public static void clearCharacterStats() {
     //LAB_8002a730
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
@@ -6729,14 +6729,14 @@ public final class Scus94491BpeSegment_8002 {
       stats._62.set((short)0);
       stats._64.set((short)0);
       stats.maxHp_66.set(0);
-      stats._68.set(0);
+      stats.addition_68.set(0);
       stats.bodySpeed_69.set(0);
       stats.bodyAttack_6a.set(0);
       stats.bodyMagicAttack_6b.set(0);
       stats.bodyDefence_6c.set(0);
       stats.bodyMagicDefence_6d.set(0);
       stats.maxMp_6e.set(0);
-      stats._70.set(0);
+      stats.spellIndex_70.set(0);
       stats._71.set(0);
       stats.dragoonAttack_72.set(0);
       stats.dragoonMagicAttack_73.set(0);
@@ -9035,13 +9035,13 @@ public final class Scus94491BpeSegment_8002 {
           setMemcardVsyncCallback(getMethodAddress(Scus94491BpeSegment_8002.class, "FUN_8002dfc8", long.class));
 
           //LAB_8002eeac
-          final Ref<Long> ref = new Ref<>();
-          FUN_8002efb8(0, null, ref);
+          final UnsignedIntRef state = new UnsignedIntRef();
+          FUN_8002efb8(0, null, state);
           FUN_8002efa4(_800bf1c8.derefNullable());
 
           sp0x30tmp.release();
 
-          return ref.get();
+          return state.get();
         }
 
         //LAB_8002eed4
@@ -9083,7 +9083,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002efb8L)
-  public static long FUN_8002efb8(final long a0, @Nullable final Ref<Long> memcardEvent, @Nullable final Ref<Long> memcardState) {
+  public static long FUN_8002efb8(final long a0, @Nullable final UnsignedIntRef memcardEvent, @Nullable final UnsignedIntRef memcardState) {
     if(activeMemcardEvent_800bf170.get() == 0) {
       if(_800bf178.get() == 0) {
         return -1L;

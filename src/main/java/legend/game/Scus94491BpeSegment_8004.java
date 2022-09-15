@@ -1387,6 +1387,16 @@ public final class Scus94491BpeSegment_8004 {
     return 1;
   }
 
+  @Method(0x80041c20L)
+  public static int FUN_80041c20() {
+    if((I_MASK.get() & 0x80) != 0 && (I_STAT.get() & 0x80) != 0) {
+      return 1;
+    }
+
+    //LAB_80041c58
+    return 0;
+  }
+
   @Method(0x80041c60L)
   public static void joypadVblankIrqHandlerSecondFunction(final int firstFunctionReturn) {
     if(_80059550.get() != 0) {
@@ -1729,8 +1739,123 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800426c4L)
   public static long FUN_800426c4(final long a0, final long a1, final long a2) {
-    assert false;
-    return 0;
+    long at;
+    long v0;
+    long v1;
+    v0 = 0x800c_0000L;
+    v0 = MEMORY.ref(4, v0).offset(0x37a4L).get();
+
+    if(v0 == 0 || _8005954c.get() == 0x1L) {
+      //LAB_800426ec
+      if(a1 != 0) {
+        MEMORY.ref(4, a1).offset(0x0L).setu(0);
+      }
+
+      //LAB_800426f8
+      if(a2 != 0) {
+        MEMORY.ref(4, a2).offset(0x0L).setu(0);
+      }
+
+      return -1;
+    }
+
+    //LAB_80042708
+    if(a0 == 0) {
+      //LAB_80042710
+      do {
+        v0 = 0x8006_0000L;
+        v0 = MEMORY.ref(4, v0).offset(-0x6ab4L).get();
+      } while(v0 < 5);
+    }
+
+    //LAB_80042728
+    if(a1 != 0) {
+      v0 = 0x800c_0000L;
+      v0 = MEMORY.ref(4, v0).offset(0x37a4L).get();
+      MEMORY.ref(4, a1).offset(0x0L).setu(v0);
+    }
+
+    //LAB_80042740
+    if(a2 == 0) {
+      //LAB_800427e4
+      v1 = 0x8006_0000L;
+      v1 = MEMORY.ref(4, v1).offset(-0x6ab4L).get();
+      v0 = 0x2L;
+      if(v1 == v0) {
+        v0 = 0;
+      } else {
+        v1 = 0x8006_0000L;
+        v1 = MEMORY.ref(4, v1).offset(-0x6ab4L).get();
+        v0 = 0x4L;
+        if(v1 == v0) {
+          v0 = 0;
+        } else {
+          //LAB_8004280c
+          at = 0x800c_0000L;
+          MEMORY.ref(4, at).offset(0x37a4L).setu(0);
+          v0 = 0x1L;
+        }
+      }
+      return v0;
+    }
+
+    v1 = 0x8006_0000L;
+    v1 = MEMORY.ref(4, v1).offset(-0x6ab4L).get();
+    v0 = 0x4L;
+    if(v1 == v0) {
+      MEMORY.ref(4, a2).offset(0x0L).setu(0);
+      return 0;
+    }
+    if(v1 >= 5) {
+      //LAB_80042774
+      v0 = 0x11L;
+      if(v1 == v0) {
+        //LAB_8004279c
+        v1 = 0x8006_0000L;
+        v1 = MEMORY.ref(4, v1).offset(-0x6aa0L).get();
+        v0 = 0x1L;
+        if(v1 == v0) {
+          MEMORY.ref(4, a2).offset(0x0L).setu(v1);
+        } else {
+          v0 = 0x2L;
+
+          //LAB_800427b8
+          MEMORY.ref(4, a2).offset(0x0L).setu(v0);
+        }
+        at = 0x800c_0000L;
+        MEMORY.ref(4, at).offset(0x37a4L).setu(0);
+        return 0x1L;
+      }
+      v0 = 0x21L;
+      if(v1 == v0) {
+        v0 = 0x2L;
+        MEMORY.ref(4, a2).offset(0x0L).setu(v0);
+        at = 0x800c_0000L;
+        MEMORY.ref(4, at).offset(0x37a4L).setu(0);
+        return 0x1L;
+      }
+    } else {
+      v0 = 0x2L;
+      if(v1 == v0) {
+        //LAB_80042790
+        MEMORY.ref(4, a2).offset(0x0L).setu(0);
+        return 0;
+      }
+    }
+
+    //LAB_800427c0
+    v1 = 0x800c_0000L;
+    v1 = MEMORY.ref(1, v1).offset(0x3671L).get();
+    if(v1 == 0x8L) {
+      MEMORY.ref(4, a2).offset(0x0L).setu(0x3L);
+    } else {
+      //LAB_800427dc
+      MEMORY.ref(4, a2).offset(0x0L).setu(0);
+    }
+    _800c37a4.setu(0);
+
+    //LAB_80042818
+    return 1;
   }
 
   @Method(0x800429e0L)

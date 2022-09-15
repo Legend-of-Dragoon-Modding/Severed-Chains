@@ -77,7 +77,7 @@ import java.util.function.Function;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.SItem.FUN_80110030;
+import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
@@ -6013,7 +6013,7 @@ public final class Bttl_800e {
     //TODO sp0x18 is unused, why?
     //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);
 
-    FUN_80110030(0x1L);
+    loadCharacterStats(0x1L);
 
     //LAB_800ef31c
     for(int charSlot = 0; charSlot < 3; charSlot++) {
