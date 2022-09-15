@@ -157,7 +157,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
-import static legend.game.Scus94491BpeSegment_800b.dabasConfirmDest_800bdc30;
+import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
@@ -428,7 +428,7 @@ public final class SItem {
   public static final LodString _8011d044 = MEMORY.ref(2, 0x8011d044L, LodString::new);
   /** "" */
   public static final LodString _8011d048 = MEMORY.ref(2, 0x8011d048L, LodString::new);
-  public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas");
+  public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
   public static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
   public static final LodString SpecialItem_8011d054 = new LodString("Special Item");
   public static final LodString Send_8011d058 = new LodString("Send");
@@ -970,7 +970,7 @@ public final class SItem {
     //LAB_800fcaa4
     inventoryMenuState_800bdc28.set(InventoryMenuState._123);
     _800bdc2c.setu(a1);
-    dabasConfirmDest_800bdc30.set(nextMenuState);
+    confirmDest_800bdc30.set(nextMenuState);
   }
 
   @Method(0x800fcad4L)
@@ -1155,7 +1155,7 @@ public final class SItem {
         //LAB_800fcf54
         //LAB_800fcf58
         if(selectedMenuOption_8011d738.get() == 1) {
-          renderItemSubmenu(0xffL, 0x6L);
+          renderItemSubmenu(0xff, 0x6L);
         }
 
         //LAB_800fcf70
@@ -1173,29 +1173,31 @@ public final class SItem {
         }
 
         //LAB_800fcfc0
-        if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c, 4)) {
+        if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c, 5)) {
           selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(getItemSubmenuOptionY(selectedItemSubmenuOption_8011d73c.get()) - 2);
         }
 
         //LAB_800fcff0
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) { // Cross
           playSound(0x2L);
-          a0 = selectedItemSubmenuOption_8011d73c.get();
-          if(a0 == 0) {
+          final int menuIndex = selectedItemSubmenuOption_8011d73c.get();
+          if(menuIndex == 0) {
             //LAB_800fd058
             FUN_800fca0c(InventoryMenuState._26, 0x2L);
-          } else if(a0 == 0x1L) {
+          } else if(menuIndex == 1) {
             //LAB_800fd04c
             //LAB_800fd058
             FUN_800fca0c(InventoryMenuState._31, 0x2L);
-          } else if(a0 == 0x2L) {
+          } else if(menuIndex == 2) {
             //LAB_800fd034
             //LAB_800fd054
             //LAB_800fd058
             FUN_800fca0c(InventoryMenuState._16, 0x2L);
-          } else if(a0 == 0x3L) {
+          } else if(menuIndex == 3) {
             //LAB_800fd058
             FUN_800fca0c(InventoryMenuState._35, 0x2L);
+          } else if(menuIndex == 4) {
+            FUN_800fca0c(InventoryMenuState.DABAS_INIT_72, 0x2L);
           }
         }
 
@@ -2329,7 +2331,7 @@ public final class SItem {
         break;
 
       case _65:
-        if(dabasConfirmDest_800bdc30.get() == InventoryMenuState._122) {
+        if(confirmDest_800bdc30.get() == InventoryMenuState._122) {
           renderDabasMenu(selectedSlot_8011d740.get(), 0);
         } else {
           renderSavedGames(slotScroll_8011d744.get(), true, 0);
@@ -2347,7 +2349,7 @@ public final class SItem {
         break;
 
       case _71: // Fade out arrows and progress to menu fade out
-        if(dabasConfirmDest_800bdc30.get() == InventoryMenuState._122) {
+        if(confirmDest_800bdc30.get() == InventoryMenuState._122) {
           //LAB_8010069c
           inventoryMenuState_800bdc28.set(InventoryMenuState._119);
           renderDabasMenu(selectedSlot_8011d740.get(), 0);
@@ -2876,7 +2878,7 @@ public final class SItem {
           //LAB_80100fec
           int equipmentCount = 0;
           int itemCount = 0;
-          dabasConfirmDest_800bdc30.set(InventoryMenuState.DABAS_TAKE_ITEMS_FINISHED_105);
+          confirmDest_800bdc30.set(InventoryMenuState.DABAS_TAKE_ITEMS_FINISHED_105);
           dabasData2.gold_34.set(0);
 
           //LAB_80101014
@@ -2925,7 +2927,7 @@ public final class SItem {
           }
 
           dabasHasItems_8011dd0c.setu(0);
-          dabasConfirmDest_800bdc30.set(InventoryMenuState.DABAS_DISCARD_ITEMS_FINISHED_104);
+          confirmDest_800bdc30.set(InventoryMenuState.DABAS_DISCARD_ITEMS_FINISHED_104);
           dabasData2.specialItem_2c.set(0);
           break;
         }
@@ -2936,7 +2938,7 @@ public final class SItem {
           dabasData2._3c.set(2);
           dabasData2.specialItem_2c.set(0);
           _8011e094.setu(0);
-          dabasConfirmDest_800bdc30.set(InventoryMenuState.DABAS_NEW_DIG_FINISHED_103);
+          confirmDest_800bdc30.set(InventoryMenuState.DABAS_NEW_DIG_FINISHED_103);
         }
         break;
       }
@@ -2959,7 +2961,7 @@ public final class SItem {
 
           //LAB_80101b14
           //LAB_80101b18
-          inventoryMenuState_800bdc28.set(dabasConfirmDest_800bdc30.get());
+          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
         }
         break;
 
@@ -3259,7 +3261,7 @@ public final class SItem {
       case _121:
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
         setMessageBoxText(_8011ce18, 0);
-        dabasConfirmDest_800bdc30.set(InventoryMenuState._122);
+        confirmDest_800bdc30.set(InventoryMenuState._122);
         inventoryMenuState_800bdc28.set(InventoryMenuState._65);
         break;
 
@@ -3338,7 +3340,7 @@ public final class SItem {
         if((int)_800bb168.get() >= 0xffL) {
           //LAB_80101b14
           //LAB_80101b18
-          inventoryMenuState_800bdc28.set(dabasConfirmDest_800bdc30.get());
+          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
         }
 
         break;
@@ -3445,20 +3447,17 @@ public final class SItem {
   }
 
   @Method(0x80102064L)
-  public static void renderItemSubmenu(final long a0, final long a1) {
+  public static void renderItemSubmenu(final int selectedIndex, final long a1) {
     FUN_801038d4(150, 20, 60);
+    renderCentredText(Use_it_8011cf1c, 142, getItemSubmenuOptionY(0), selectedIndex == 0 ? 0x5L : a1);
+    renderCentredText(Discard_8011cf2c, 142, getItemSubmenuOptionY(1), selectedIndex == 1 ? 0x5L : a1);
+    renderCentredText(List_8011cf3c, 142, getItemSubmenuOptionY(2), selectedIndex == 2 ? 0x5L : a1);
+    renderCentredText(Goods_8011cf48, 142, getItemSubmenuOptionY(3), selectedIndex == 3 ? 0x5L : a1);
 
-    //LAB_801020ac
-    renderCentredText(Use_it_8011cf1c, 142, getItemSubmenuOptionY(0), a0 == 0 ? 0x5L : a1);
-
-    //LAB_801020d8
-    renderCentredText(Discard_8011cf2c, 142, getItemSubmenuOptionY(1), a0 == 0x1L ? 0x5L : a1);
-
-    //LAB_80102104
-    renderCentredText(List_8011cf3c, 142, getItemSubmenuOptionY(2), a0 == 0x2L ? 0x5L : a1);
-
-    //LAB_80102130
-    renderCentredText(Goods_8011cf48, 142, getItemSubmenuOptionY(3), a0 == 0x3L ? 0x5L : a1);
+    final LodString dabas = MEMORY.ref(2, addToLinkedListTail(12), LodString::new);
+    dabas.set("Diiig");
+    renderCentredText(dabas, 142, getItemSubmenuOptionY(4), selectedIndex == 4 ? 0x5L : a1);
+    removeFromLinkedList(dabas.getAddress());
   }
 
   @Method(0x8010214cL)
@@ -6034,7 +6033,7 @@ public final class SItem {
   public static void FUN_8010a844(final InventoryMenuState nextMenuState, final long a1) {
     inventoryMenuState_800bdc28.set(InventoryMenuState._16);
     _800bdc2c.setu(a1);
-    dabasConfirmDest_800bdc30.set(nextMenuState);
+    confirmDest_800bdc30.set(nextMenuState);
   }
 
   @Method(0x8010a864L)
@@ -6607,7 +6606,7 @@ public final class SItem {
         }
 
         if(_800bb168.get() >= 0xff) {
-          inventoryMenuState_800bdc28.set(dabasConfirmDest_800bdc30.get());
+          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
         }
 
         //LAB_8010c1e0
@@ -6940,7 +6939,7 @@ public final class SItem {
   public static void FUN_8010d050(final InventoryMenuState nextMenuState, final long a1) {
     inventoryMenuState_800bdc28.set(InventoryMenuState._16);
     _800bdc2c.setu(a1);
-    dabasConfirmDest_800bdc30.set(nextMenuState);
+    confirmDest_800bdc30.set(nextMenuState);
   }
 
   @Method(0x8010d078L)
@@ -7493,7 +7492,7 @@ public final class SItem {
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
 
         if((int)_800bb168.get() >= 0xffL) {
-          inventoryMenuState_800bdc28.set(dabasConfirmDest_800bdc30.get());
+          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
           FUN_80019470();
         }
 

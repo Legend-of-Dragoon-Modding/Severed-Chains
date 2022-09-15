@@ -262,7 +262,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
-  public static final EnumRef<InventoryMenuState> dabasConfirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
+  public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
 
   public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
   /**
