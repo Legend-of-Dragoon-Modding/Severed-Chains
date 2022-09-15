@@ -14,6 +14,7 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -267,8 +268,7 @@ public final class SItem {
   public static final ArrayRef<Pointer<LodString>> characterNames_801142dc = MEMORY.ref(4, 0x801142dcL, ArrayRef.of(Pointer.classFor(LodString.class), 9, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> _80114300 = MEMORY.ref(4, 0x80114300L, ArrayRef.of(Pointer.classFor(LodString.class), 4, 4, Pointer.deferred(4, LodString::new)));
-  public static final Value _80114310 = MEMORY.ref(2, 0x80114310L);
-
+  public static final ArrayRef<UnsignedShortRef> itemPrices_80114310 = MEMORY.ref(2, 0x80114310L, ArrayRef.of(UnsignedShortRef.class, 0x100, 2, UnsignedShortRef::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114510 = MEMORY.ref(1, 0x80114510L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114548 = MEMORY.ref(1, 0x80114548L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
 
@@ -477,7 +477,7 @@ public final class SItem {
   /** The first save game displayed on the menu, increments as you scroll down */
   public static final IntRef slotScroll_8011d744 = MEMORY.ref(4, 0x8011d744L, IntRef::new);
   public static final IntRef slotScroll_8011d748 = MEMORY.ref(4, 0x8011d748L, IntRef::new);
-  public static final IntRef _8011d74c = MEMORY.ref(4, 0x8011d74cL, IntRef::new);
+  public static final IntRef menuIndex_8011d74c = MEMORY.ref(4, 0x8011d74cL, IntRef::new);
   public static final IntRef count_8011d750 = MEMORY.ref(4, 0x8011d750L, IntRef::new);
   public static final Value _8011d754 = MEMORY.ref(4, 0x8011d754L);
   public static final Value _8011d758 = MEMORY.ref(4, 0x8011d758L);
@@ -534,12 +534,12 @@ public final class SItem {
   public static final Value _8011e0d0 = MEMORY.ref(1, 0x8011e0d0L);
 
   public static final Value memcardSaveLoadingStage_8011e0d4 = MEMORY.ref(1, 0x8011e0d4L);
-  public static final Value _8011e0d8 = MEMORY.ref(4, 0x8011e0d8L);
-  public static final Value _8011e0dc = MEMORY.ref(4, 0x8011e0dcL);
-  public static final Value _8011e0e0 = MEMORY.ref(4, 0x8011e0e0L);
-  public static final Value _8011e0e4 = MEMORY.ref(4, 0x8011e0e4L);
-  public static final Value _8011e0e8 = MEMORY.ref(4, 0x8011e0e8L);
-  public static final Value _8011e0ec = MEMORY.ref(4, 0x8011e0ecL);
+  public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
+  public static final IntRef menuIndex_8011e0dc = MEMORY.ref(4, 0x8011e0dcL, IntRef::new);
+  public static final IntRef menuIndex_8011e0e0 = MEMORY.ref(4, 0x8011e0e0L, IntRef::new);
+  public static final IntRef menuScroll_8011e0e4 = MEMORY.ref(4, 0x8011e0e4L, IntRef::new);
+  public static final IntRef menuOption_8011e0e8 = MEMORY.ref(4, 0x8011e0e8L, IntRef::new);
+  public static final IntRef menuOption_8011e0ec = MEMORY.ref(4, 0x8011e0ecL, IntRef::new);
   public static final Pointer<Renderable58> renderable_8011e0f0 = MEMORY.ref(4, 0x8011e0f0L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderable_8011e0f4 = MEMORY.ref(4, 0x8011e0f4L, Pointer.deferred(4, Renderable58::new));
   public static final UnboundedArrayRef<MenuItemStruct04> menuItems_8011e0f8 = MEMORY.ref(4, 0x8011e0f8L, UnboundedArrayRef.of(0x4, MenuItemStruct04::new));
@@ -572,10 +572,10 @@ public final class SItem {
 
   public static final Value _8011e1e8 = MEMORY.ref(4, 0x8011e1e8L);
 
-  public static final Value _8011e1f0 = MEMORY.ref(4, 0x8011e1f0L);
+  public static final IntRef menuIndex_8011e1f0 = MEMORY.ref(4, 0x8011e1f0L, IntRef::new);
   public static final IntRef slotIndex_8011e1f4 = MEMORY.ref(4, 0x8011e1f4L, IntRef::new);
   public static final IntRef slotScroll_8011e1f8 = MEMORY.ref(4, 0x8011e1f8L, IntRef::new);
-  public static final Value _8011e1fc = MEMORY.ref(4, 0x8011e1fcL);
+  public static final IntRef menuIndex_8011e1fc = MEMORY.ref(4, 0x8011e1fcL, IntRef::new);
 
   public static final Pointer<Renderable58> renderable_8011e200 = MEMORY.ref(4, 0x8011e200L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderable_8011e204 = MEMORY.ref(4, 0x8011e204L, Pointer.deferred(4, Renderable58::new));
@@ -991,7 +991,7 @@ public final class SItem {
     LOGGER.info("Inventory menu state: %s", inventoryMenuState_800bdc28.get());
 
     switch(inventoryMenuState_800bdc28.get()) {
-      case _0: // Initialize, loads some files (unknown contents)
+      case INIT_0: // Initialize, loads some files (unknown contents)
         _800bdc34.setu(0);
         drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
@@ -1015,14 +1015,14 @@ public final class SItem {
         //LAB_800fcc10
         selectedMenuOption_8011d738.set(0);
         selectedItemSubmenuOption_8011d73c.set(0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         FUN_8002c150(0);
         break;
 
-      case _1:
+      case AWAIT_INIT_1:
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-          _8011dcfc.set(0 < (gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4L));
+          _8011dcfc.set((gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4L) > 0);
           gameState_800babc8.vibrationEnabled_4e1.and(1);
         }
         break;
@@ -1034,14 +1034,14 @@ public final class SItem {
 
         if(v1 == 0xeL) { // Load game screen
           //LAB_800fccd4
-          inventoryMenuState_800bdc28.set(InventoryMenuState._37);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_LOAD_GAME_37);
           break;
         }
 
         if(v1 == 0x13L) {
           //LAB_800fccd0
           //LAB_800fccd4
-          inventoryMenuState_800bdc28.set(InventoryMenuState._37);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_LOAD_GAME_37);
           break;
         }
 
@@ -1058,18 +1058,18 @@ public final class SItem {
         recalcInventory();
         FUN_80103b10();
         scriptStartEffect(0x2L, 0xaL);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._3);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
         break;
 
-      case _3:
+      case INIT_MAIN_MENU_3:
         renderGlyphs(glyphs_80114130, 0, 0);
         selectedMenuOptionRenderablePtr_800bdbe0.set(allocateUiElement(115, 115, 29, getMenuOptionY(selectedMenuOption_8011d738.get())));
         FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe0.deref());
         renderInventoryMenu(selectedMenuOption_8011d738.get(), 0x4L, 0xffL);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
         break;
 
-      case _4: // Main inventory menu
+      case MAIN_MENU_4: // Main inventory menu
         if(messageBox(messageBox_8011dc90) != 0) {
           if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) { // Circle
             playSound(0x3L);
@@ -1077,7 +1077,7 @@ public final class SItem {
           }
 
           //LAB_800fcdd4
-          if(handleMenuUpDown(selectedMenuOption_8011d738.getAddress(), 7) != 0) {
+          if(handleMenuUpDown(selectedMenuOption_8011d738, 7)) {
             selectedItemSubmenuOption_8011d73c.set(0);
             selectedMenuOptionRenderablePtr_800bdbe0.deref().y_44.set(getMenuOptionY(selectedMenuOption_8011d738.get()));
           }
@@ -1087,7 +1087,7 @@ public final class SItem {
 
           if((v1 & 0x2020L) != 0) { // Right or cross
             if((v1 & 0x2000L) != 0) { // Right
-              v1 = selectedMenuOption_8011d738.get() + 0xaL;
+              v1 = selectedMenuOption_8011d738.get() + 10;
             } else {
               //LAB_800fce30
               v1 = selectedMenuOption_8011d738.get();
@@ -1145,7 +1145,7 @@ public final class SItem {
                   playSound(0x2L);
 
                   //LAB_800fcf3c
-                  FUN_800fca0c(InventoryMenuState._37, 0x1L);
+                  FUN_800fca0c(InventoryMenuState.INIT_LOAD_GAME_37, 0x1L);
                 } else {
                   //LAB_800fcf4c
                   playSound(0x28L);
@@ -1157,7 +1157,7 @@ public final class SItem {
 
         //LAB_800fcf54
         //LAB_800fcf58
-        if(selectedMenuOption_8011d738.get() == 0x1L) {
+        if(selectedMenuOption_8011d738.get() == 1) {
           renderItemSubmenu(0xffL, 0x6L);
         }
 
@@ -1171,12 +1171,12 @@ public final class SItem {
       case _5: // "Item" inventory submenu
         if((inventoryJoypadInput_800bdc44.get() & 0x8040L) != 0) { // Left or circle
           playSound(0x3L);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           unloadRenderable(selectedMenuOptionRenderablePtr_800bdbe4.deref());
         }
 
         //LAB_800fcfc0
-        if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c.getAddress(), 4) != 0) {
+        if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c, 4)) {
           selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(getItemSubmenuOptionY(selectedItemSubmenuOption_8011d73c.get()) - 2);
         }
 
@@ -1221,7 +1221,7 @@ public final class SItem {
           }
 
           //LAB_800fd100
-          if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c.getAddress(), 0x4L) != 0) {
+          if(handleMenuUpDown(selectedItemSubmenuOption_8011d73c, 4)) {
             selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(menuOptionY(selectedItemSubmenuOption_8011d73c.get()) - 2);
           }
 
@@ -1282,7 +1282,7 @@ public final class SItem {
           //LAB_800fd2c0
           if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
             playSound(0x2L);
-            inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
             messageBox_8011dc90._0c.incr();
             unloadRenderable(selectedMenuOptionRenderablePtr_800bdbe4.deref());
           }
@@ -1473,7 +1473,7 @@ public final class SItem {
           break;
         }
 
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 4, count_8011d750.get(), 0x1L) != 0) {
+        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 4, count_8011d750.get(), 1)) {
           renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc804(selectedSlot_8011d740.get()));
         }
 
@@ -1517,7 +1517,7 @@ public final class SItem {
         }
 
         //LAB_800fdc18
-        if(FUN_8010415c(charSlot_8011d734.getAddress(), characterCount_8011d7c4.get()) != 0) {
+        if(handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._13);
         }
 
@@ -1535,7 +1535,7 @@ public final class SItem {
         selectedSlot_8011d740.set(0);
         slotScroll_8011d744.set(0);
         slotScroll_8011d748.set(0);
-        _8011d74c.set(0);
+        menuIndex_8011d74c.set(0);
         renderablePtr_800bdbe8.set(allocateUiElement(0x76, 0x76, FUN_800fc824(0), FUN_800fc814(selectedSlot_8011d740.get()) + 32));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
         FUN_80102840(slotScroll_8011d744.get(), slotScroll_8011d748.get(), 0xff, 0xffL);
@@ -1614,20 +1614,14 @@ public final class SItem {
         }
 
         //LAB_800fdf18
-        if(charSlot_8011d734.get() != 0) {
-          a1 = slotScroll_8011d748.getAddress();
-        } else {
-          //LAB_800fdf38
-          a1 = slotScroll_8011d744.getAddress();
-        }
-
+        //LAB_800fdf38
         //LAB_800fdf40
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), a1, 7, count_8011d750.get(), 0x1L) != 0) {
+        if(scrollMenu(selectedSlot_8011d740, charSlot_8011d734.get() != 0 ? slotScroll_8011d748 : slotScroll_8011d744, 7, count_8011d750.get(), 1)) {
           renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc814(selectedSlot_8011d740.get()) + 32);
         }
 
         //LAB_800fdf7c
-        if(FUN_8010415c(charSlot_8011d734.getAddress(), 2) != 0) {
+        if(handleMenuLeftRight(charSlot_8011d734, 2)) {
           renderablePtr_800bdbe8.deref().x_40.set(FUN_800fc824(charSlot_8011d734.get()));
         }
 
@@ -1641,7 +1635,7 @@ public final class SItem {
             playSound(0x28L);
           } else {
             playSound(0x2L);
-            _8011d74c.set(0);
+            menuIndex_8011d74c.set(0);
             renderablePtr_800bdc20.set(allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0)));
             FUN_80104b60(renderablePtr_800bdc20.deref());
             inventoryMenuState_800bdc28.set(InventoryMenuState._34);
@@ -1665,7 +1659,7 @@ public final class SItem {
         //LAB_800fe0f0
         renderText(Really_want_to_throw_this_away_8011c8d4, 192, 180, 0x4L);
 
-        if(_8011d74c.get() != 0) {
+        if(menuIndex_8011d74c.get() != 0) {
           a3 = 0x6L;
         } else {
           a3 = 0x5L;
@@ -1674,7 +1668,7 @@ public final class SItem {
         //LAB_800fe13c
         renderCentredText(Yes_8011c20c, 328, FUN_800fc860(0) + 2, a3);
 
-        if(_8011d74c.get() != 0) {
+        if(menuIndex_8011d74c.get() != 0) {
           a3 = 0x5L;
         } else {
           a3 = 0x6L;
@@ -1683,10 +1677,10 @@ public final class SItem {
         //LAB_800fe170
         renderCentredText(No_8011c214, 328, FUN_800fc860(1) + 2, a3);
 
-        v1 = FUN_801041d8(_8011d74c.getAddress());
+        v1 = FUN_801041d8(menuIndex_8011d74c);
         if(v1 == 0x1L) {
           //LAB_800fe1bc
-          renderablePtr_800bdc20.deref().y_44.set(FUN_800fc860(_8011d74c.get()));
+          renderablePtr_800bdc20.deref().y_44.set(FUN_800fc860(menuIndex_8011d74c.get()));
         } else if(v1 == 0x2L) {
           //LAB_800fe1d8
           //LAB_800fe1fc
@@ -1728,7 +1722,7 @@ public final class SItem {
         break;
 
       case _19:
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         whichMenu_800bdc38.setu(0x9L);
         break;
 
@@ -1758,7 +1752,7 @@ public final class SItem {
           }
 
           //LAB_800fe3b0
-          if(FUN_8010415c(charSlot_8011d734.getAddress(), characterCount_8011d7c4.get()) != 0) {
+          if(handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
             //LAB_800fe3c4
             inventoryMenuState_800bdc28.set(InventoryMenuState._21);
           }
@@ -1801,7 +1795,7 @@ public final class SItem {
           break;
         }
 
-        if(FUN_8010415c(charSlot_8011d734.getAddress(), characterCount_8011d7c4.get()) != 0) {
+        if(handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._24);
           unloadRenderable(renderablePtr_800bdbe8.deref());
         }
@@ -1832,7 +1826,7 @@ public final class SItem {
         }
 
         //LAB_800fe68c
-        if(handleMenuUpDown(selectedSlot_8011d740.getAddress(), 7) != 0) {
+        if(handleMenuUpDown(selectedSlot_8011d740, 7)) {
           renderablePtr_800bdbe8.deref().y_44.set(getAdditionSlotY(selectedSlot_8011d740.get()) - 4);
         }
 
@@ -1911,7 +1905,7 @@ public final class SItem {
         }
 
         //LAB_800fe944
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 5, count_8011d750.get(), 0x1L) != 0) {
+        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 5, count_8011d750.get(), 1)) {
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8dc(selectedSlot_8011d740.get()));
         }
 
@@ -1973,7 +1967,7 @@ public final class SItem {
         }
 
         //LAB_800febb0
-        if((memcardState_8011d7b8.get() & 0x2L) == 0 && FUN_8010415c(charSlot_8011d734.getAddress(), characterCount_8011d7c4.get()) != 0) {
+        if((memcardState_8011d7b8.get() & 0x2L) == 0 && handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
           renderablePtr_800bdbe8.deref().x_40.set(FUN_800fc8c0(charSlot_8011d734.get()) - 3);
         }
 
@@ -2026,7 +2020,7 @@ public final class SItem {
         }
 
         //LAB_800fede4
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 7, roundUp(count_8011d750.get(), 2), 0x2L) != 0) {
+        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 7, roundUp(count_8011d750.get(), 2), 2)) {
           renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc814(selectedSlot_8011d740.get()) + 32);
         }
 
@@ -2050,21 +2044,19 @@ public final class SItem {
         FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0);
         break;
 
-      case _37: // Part of load game menu
+      case INIT_LOAD_GAME_37:
         _8004dd30.setu(0x1L);
         FUN_80110030(0);
         FUN_80103bd4(0);
         scriptStartEffect(0x2L, 0xaL);
+        inventoryMenuState_800bdc28.set(InventoryMenuState._40);
+        FUN_8002437c(0xffL);
+        renderSavedGames(slotScroll_8011d744.get(), false, 0xffL);
+        break;
 
-      case _38: // Do you want to save now?
-        if(whichMenu_800bdc38.get() == 0x13L) {
-          setMessageBoxText(Do_you_want_to_save_now_8011c370, 0x2);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._39);
-        } else {
-          //LAB_800fef50
-          inventoryMenuState_800bdc28.set(InventoryMenuState._40);
-        }
-
+      case DISK_CHANGE_DO_YOU_WANT_TO_SAVE_NOW_38:
+        setMessageBoxText(Do_you_want_to_save_now_8011c370, 0x2);
+        inventoryMenuState_800bdc28.set(InventoryMenuState._39);
         FUN_8002437c(0xffL);
         renderSavedGames(slotScroll_8011d744.get(), false, 0xffL);
         break;
@@ -2129,11 +2121,11 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0xffL);
 
         //LAB_800ff4f8
-        inventoryMenuState_800bdc28.set(InventoryMenuState._43);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.LOAD_GAME_MENU_43);
         break;
 
-      case _43: // Load game screen - ready to use
-        if(FUN_80103f00(selectedSlot_8011d740.getAddress(), slotScroll_8011d744.getAddress(), 3, whichMenu_800bdc38.get() == 0xeL ? saves.size() : saves.size() + 1, 1) != 0) {
+      case LOAD_GAME_MENU_43:
+        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 3, whichMenu_800bdc38.get() == 0xeL ? saves.size() : saves.size() + 1, 1)) {
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           renderablePtr_800bdbec.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           inventoryMenuState_800bdc28.set(InventoryMenuState._42);
@@ -2179,7 +2171,7 @@ public final class SItem {
         //LAB_800ff440
         if(whichMenu_800bdc38.get() == 0xeL) { // Load game menu
           setMessageBoxText(Load_this_data_8011ca08, 0x2);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._45);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.DO_YOU_WANT_TO_LOAD_THIS_SAVE_45);
         } else {
           //LAB_800ff4a0
           //LAB_800ff4b0
@@ -2191,22 +2183,22 @@ public final class SItem {
             setMessageBoxText(Save_new_game_8011c9c8, 0x2);
           }
 
-          messageBox_8011dc90._18.set(1);
+          messageBox_8011dc90.menuIndex_18.set(1);
           inventoryMenuState_800bdc28.set(InventoryMenuState._49);
         }
 
         break;
 
-      case _45: // Do you want to load this save?
+      case DO_YOU_WANT_TO_LOAD_THIS_SAVE_45:
         v1 = messageBox(messageBox_8011dc90);
         if(v1 == 0x1L) { // Yes
           //LAB_800ff530
           //LAB_800ffc5c
-          inventoryMenuState_800bdc28.set(InventoryMenuState._48);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.LOAD_SAVE_48);
         } else if(v1 == 0x2L) { // No
           //LAB_800ff53c
           //LAB_800ffc5c
-          inventoryMenuState_800bdc28.set(InventoryMenuState._43);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.LOAD_GAME_MENU_43);
         }
 
         //LAB_800fff80
@@ -2216,7 +2208,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
         break;
 
-      case _48: // Load saved game
+      case LOAD_SAVE_48:
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         _8011d7bc.setu(0);
@@ -2254,7 +2246,7 @@ public final class SItem {
         } else if(v1 == 0x2L) { // No
           //LAB_800ff794
           //LAB_800ffc5c
-          inventoryMenuState_800bdc28.set(InventoryMenuState._43);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.LOAD_GAME_MENU_43);
         }
 
         //LAB_800fff80
@@ -2382,7 +2374,7 @@ public final class SItem {
         v1 = whichMenu_800bdc38.get();
 
         if(v1 == 0x13L) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState._38);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.DISK_CHANGE_DO_YOU_WANT_TO_SAVE_NOW_38);
           //LAB_80100024
         } else if(v1 == 0x4L) {
           //LAB_80100018
@@ -2584,7 +2576,7 @@ public final class SItem {
         }
 
         //LAB_801004ec
-        if(handleMenuUpDown(selectedSlot_8011d740.getAddress(), 4) != 0) {
+        if(handleMenuUpDown(selectedSlot_8011d740, 4)) {
           renderablePtr_800bdbe8.deref().y_44.set(FUN_800fc8ec(selectedSlot_8011d740.get()));
         }
 
@@ -2674,7 +2666,7 @@ public final class SItem {
       case _81:
         if(messageBox(messageBox_8011dc90) != 0) {
           setMessageBoxText(_8011cdfc, 0x2);
-          messageBox_8011dc90._18.set(1);
+          messageBox_8011dc90.menuIndex_18.set(1);
           inventoryMenuState_800bdc28.set(InventoryMenuState._82);
         }
 
@@ -2765,7 +2757,7 @@ public final class SItem {
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
         if(messageBox(messageBox_8011dc90) != 0) {
           setMessageBoxText(Blank_8011c3a4, 0x2);
-          messageBox_8011dc90._18.set(1);
+          messageBox_8011dc90.menuIndex_18.set(1);
           inventoryMenuState_800bdc28.set(InventoryMenuState._88);
         }
 
@@ -2924,7 +2916,7 @@ public final class SItem {
 
         if(messageBox(messageBox_8011dc90) != 0) {
           setMessageBoxText(Really_want_to_throw_this_away_8011c8d4, 0x2);
-          messageBox_8011dc90._18.set(1);
+          messageBox_8011dc90.menuIndex_18.set(1);
 
           //LAB_80100db4
           inventoryMenuState_800bdc28.set(InventoryMenuState._99);
@@ -2942,7 +2934,7 @@ public final class SItem {
 
         if(messageBox(messageBox_8011dc90) != 0) {
           setMessageBoxText(_8011c8bc, 0x2);
-          messageBox_8011dc90._18.set(1);
+          messageBox_8011dc90.menuIndex_18.set(1);
           renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
           //LAB_80100db4
@@ -4212,76 +4204,79 @@ public final class SItem {
     renderText(text, x - textLength(text) * 4, y, a3);
   }
 
+  /**
+   * @param scrollAmount I'm pretty sure this is the amount the window scrolls when you reach the end of the elements that are currently on screen
+   */
   @Method(0x80103f00L)
-  public static long FUN_80103f00(final long selectedSlot, final long scroll, int slotsDisplayed, int slotCount, final long a4) {
+  public static boolean scrollMenu(final IntRef selectedSlot, final IntRef scroll, int slotsDisplayed, int slotCount, final int scrollAmount) {
     slotsDisplayed = Math.min(slotsDisplayed, slotCount);
 
-    if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0) {
-      if(MEMORY.ref(4, selectedSlot).get() == 0) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) {
+      if(selectedSlot.get() == 0) {
         //LAB_80103f44
-        if(MEMORY.ref(4, scroll).get() < (int)a4) {
-          return 0x1L;
+        if(scroll.get() < scrollAmount) {
+          return true;
         }
 
-        MEMORY.ref(4, scroll).subu(a4);
+        scroll.sub(scrollAmount);
       } else {
-        MEMORY.ref(4, selectedSlot).subu(0x1L);
+        selectedSlot.decr();
       }
       //LAB_80103f64
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0) {
-      if(MEMORY.ref(4, selectedSlot).get() < slotsDisplayed - 1) {
-        MEMORY.ref(4, selectedSlot).addu(0x1L);
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000) != 0) {
+      if(selectedSlot.get() < slotsDisplayed - 1) {
+        selectedSlot.incr();
       } else {
         //LAB_80103f8c
-        if(slotCount <= MEMORY.ref(4, scroll).get() + slotsDisplayed * a4) {
-          return 0x1L;
+        if(slotCount <= scroll.get() + slotsDisplayed * scrollAmount) {
+          return true;
         }
 
-        MEMORY.ref(4, scroll).addu(a4);
+        scroll.add(scrollAmount);
       }
       //LAB_80103fb0
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4L) != 0) {
-      if(MEMORY.ref(4, selectedSlot).get() != 0) {
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x4) != 0) {
+      if(selectedSlot.get() != 0) {
         playSound(0x1L);
-        MEMORY.ref(4, selectedSlot).setu(0);
+        selectedSlot.set(0);
       }
 
-      return 0x1L;
+      return true;
       //LAB_80103fdc
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x1L) != 0) {
-      if(MEMORY.ref(4, selectedSlot).get() >= slotsDisplayed - 0x1L) {
-        return 0x1L;
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x1) != 0) {
+      if(selectedSlot.get() >= slotsDisplayed - 1) {
+        return true;
       }
 
       playSound(0x1L);
-      MEMORY.ref(4, selectedSlot).setu(slotsDisplayed - 0x1L);
-      return 0x1L;
+      selectedSlot.set(slotsDisplayed - 1);
+      return true;
       //LAB_80104008
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x8L) == 0 || MEMORY.ref(4, scroll).get() < a4) {
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x8) == 0 || scroll.get() < scrollAmount) {
       //LAB_8010404c
-      if((inventoryJoypadInput_800bdc44.get() & 0x2L) == 0) {
-        return 0;
+      if((inventoryJoypadInput_800bdc44.get() & 0x2) == 0) {
+        return false;
       }
 
       if(slotsDisplayed >= slotCount) {
-        return 0;
+        return false;
       }
 
-      final long v1 = MEMORY.ref(4, scroll).get() + slotsDisplayed * a4;
-      slotCount -= slotsDisplayed * a4;
+      final int v1 = scroll.get() + slotsDisplayed * scrollAmount;
+      slotCount -= slotsDisplayed * scrollAmount;
       if(v1 < slotCount) {
-        MEMORY.ref(4, scroll).setu(v1);
+        scroll.set(v1);
         //LAB_8010408c
-      } else if(MEMORY.ref(4, scroll).get() < slotCount) {
-        MEMORY.ref(4, scroll).setu(slotCount);
+      } else if(scroll.get() < slotCount) {
+        scroll.set(slotCount);
       } else {
-        return 0;
+        return false;
       }
-    } else if(MEMORY.ref(4, scroll).get() >= slotsDisplayed * a4) {
-      MEMORY.ref(4, scroll).subu(slotsDisplayed * a4);
+    } else if(scroll.get() >= slotsDisplayed * scrollAmount) {
+      scroll.sub(slotsDisplayed * scrollAmount);
     } else {
       //LAB_80104044
-      MEMORY.ref(4, scroll).setu(0);
+      scroll.set(0);
     }
 
     //LAB_80104098
@@ -4289,78 +4284,78 @@ public final class SItem {
 
     //LAB_801040a0
     //LAB_801040ac
-    return 0x1L;
+    return true;
   }
 
   @Method(0x801040c0L)
-  public static long handleMenuUpDown(final long menuIndexPtr, final long menuOptionCount) {
-    if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0) {
+  public static boolean handleMenuUpDown(final IntRef menuIndex, final int menuOptionCount) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) { // Up
       playSound(0x1L);
 
-      if(MEMORY.ref(4, menuIndexPtr).get() != 0) {
-        MEMORY.ref(4, menuIndexPtr).subu(1);
+      if(menuIndex.get() != 0) {
+        menuIndex.decr();
       } else {
         //LAB_80104108
-        MEMORY.ref(4, menuIndexPtr).setu(menuOptionCount - 1);
+        menuIndex.set(menuOptionCount - 1);
       }
 
       //LAB_8010410c
       //LAB_80104118
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0) {
+    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000) != 0) { // Down
       playSound(0x1L);
 
-      if(MEMORY.ref(4, menuIndexPtr).get() < menuOptionCount - 1) {
-        MEMORY.ref(4, menuIndexPtr).addu(1);
+      if(menuIndex.get() < menuOptionCount - 1) {
+        menuIndex.incr();
       } else {
-        MEMORY.ref(4, menuIndexPtr).setu(0);
+        menuIndex.set(0);
       }
     } else {
-      return 0;
+      return false;
     }
 
     //LAB_80104110
     //LAB_80104148
-    return 0x1L;
+    return true;
   }
 
   @Method(0x8010415cL)
-  public static long FUN_8010415c(final long menuIndexPtr, final long menuItemCount) {
-    if((inventoryJoypadInput_800bdc44.get() & 0x8000L) != 0 && MEMORY.ref(4, menuIndexPtr).get() != 0) {
-      MEMORY.ref(4, menuIndexPtr).subu(0x1L);
+  public static boolean handleMenuLeftRight(final IntRef menuIndex, final int menuItemCount) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x8000) != 0 && menuIndex.get() != 0) { // Left
+      menuIndex.decr();
       playSound(0x1L);
-      return 0x1L;
+      return true;
     }
 
     //LAB_80104184
-    if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && MEMORY.ref(4, menuIndexPtr).get() < menuItemCount - 0x1L) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x2000) != 0 && menuIndex.get() < menuItemCount - 1) { // Right
       //LAB_801041b0
-      MEMORY.ref(4, menuIndexPtr).addu(0x1L);
+      menuIndex.incr();
       playSound(0x1L);
 
       //LAB_801041c8
-      return 0x1L;
+      return true;
     }
 
     //LAB_801041c4
-    return 0;
+    return false;
   }
 
   @Method(0x801041d8L)
-  public static long FUN_801041d8(final long menuOptionPtr) {
-    if(handleMenuUpDown(menuOptionPtr, 0x2L) != 0) {
+  public static long FUN_801041d8(final IntRef menuOption) {
+    if(handleMenuUpDown(menuOption, 2)) {
       return 0x1L;
     }
 
-    if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
       playSound(0x3L);
       return 0x4L;
     }
 
     //LAB_80104220
-    if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
+    if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
       playSound(0x2L);
 
-      if(MEMORY.ref(4, menuOptionPtr).get() == 0) {
+      if(menuOption.get() == 0) {
         return 0x2L;
       }
 
@@ -6149,7 +6144,7 @@ public final class SItem {
   }
 
   @Method(0x8010a864L)
-  public static long FUN_8010a864(final int equipmentId) {
+  public static int FUN_8010a864(final int equipmentId) {
     int s3 = -1;
 
     //LAB_8010a8a4
@@ -6180,17 +6175,13 @@ public final class SItem {
 
   @Method(0x8010a948L)
   public static void FUN_8010a948() {
-    long v0;
-    long v1;
-    long a0;
-    final long a1;
-    final long t0;
-    final long t3;
-    final long s0;
+    final long v0;
+    final long v1;
+
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     switch(inventoryMenuState_800bdc28.get()) {
-      case _0 -> {
+      case INIT_0 -> {
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
         setWidthAndFlags(384, 0);
@@ -6198,13 +6189,13 @@ public final class SItem {
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 1, 3);
         FUN_80110030(0);
         _800bdf00.set(0x21L);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
-        _8011e0dc.set(0);
-        _8011e0e0.set(0);
-        _8011e0e4.set(0);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
+        menuIndex_8011e0dc.set(0);
+        menuIndex_8011e0e0.set(0);
+        menuScroll_8011e0e4.set(0);
       }
 
-      case _1 -> {
+      case AWAIT_INIT_1 -> {
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
           scriptStartEffect(2, 10);
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
@@ -6214,7 +6205,7 @@ public final class SItem {
       case _2 -> {
         FUN_8002437c(0xffL);
         renderGlyphs(glyphs_80114510, 0, 0);
-        selectedMenuOptionRenderablePtr_800bdbe0.set(allocateUiElement(0x7a, 0x7a, 49, getShopMenuYOffset((int)_8011e0dc.get())));
+        selectedMenuOptionRenderablePtr_800bdbe0.set(allocateUiElement(0x7a, 0x7a, 49, getShopMenuYOffset(menuIndex_8011e0dc.get())));
         FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe0.deref());
         _8011e13c.set(0);
 
@@ -6226,7 +6217,7 @@ public final class SItem {
           if(itemId != 0xff) {
             final MenuItemStruct04 menuItem = menuItems_8011e0f8.get(menuItemIndex);
             menuItem.itemId_00.set(itemId);
-            menuItem._02.set((int)(_80114310.offset(itemId * 0x2L).get() * 0x2L));
+            menuItem._02.set((int)(itemPrices_80114310.get(itemId).get() * 0x2L));
             _8011e13c.incr();
           } else {
             //LAB_8010ab6c
@@ -6249,12 +6240,12 @@ public final class SItem {
 
         //LAB_8010ac00
         _8011e13d.setu(_800f4930.offset(_8007a3b4.get() * 0x40L).offset(1, 0x0L).get() & 0x1L);
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
-        inventoryMenuState_800bdc28.set(InventoryMenuState._3);
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
+        inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
       }
 
-      case _3 -> {
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+      case INIT_MAIN_MENU_3 -> {
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
 
         if(_800bb168.get() == 0) {
           if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
@@ -6263,10 +6254,10 @@ public final class SItem {
           }
 
           //LAB_8010acac
-          if(handleMenuUpDown(_8011e0dc.getAddress(), 0x4L) != 0) {
-            _8011e0e4.setu(0);
-            _8011e0e0.setu(0);
-            selectedMenuOptionRenderablePtr_800bdbe0.deref().y_44.set(getShopMenuYOffset((int)_8011e0dc.get()));
+          if(handleMenuUpDown(menuIndex_8011e0dc, 4)) {
+            menuScroll_8011e0e4.set(0);
+            menuIndex_8011e0e0.set(0);
+            selectedMenuOptionRenderablePtr_800bdbe0.deref().y_44.set(getShopMenuYOffset(menuIndex_8011e0dc.get()));
           }
 
           //LAB_8010ace4
@@ -6275,25 +6266,25 @@ public final class SItem {
 
             _8011e13d.setu(_800f4930.offset(_8007a3b4.get() * 0x40L).offset(1, 0x0L).get() & 0x1L);
 
-            v1 = _8011e0dc.get();
+            v1 = menuIndex_8011e0dc.get();
             if(v1 == 0) {
               //LAB_8010ad64
-              selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808((int)_8011e0e0.get())));
+              selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(menuIndex_8011e0e0.get())));
               FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
 
               if(_8011e13d.get() == 0) {
-                _8011e0d8.setu(FUN_8010a864(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get()));
-                renderablePtr_800bdbe8.set(allocateUiElement(0x83, 0x83, FUN_8010a818((int)_8011e0d8.get()), 174));
+                menuIndex_8011e0d8.set(FUN_8010a864(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get()));
+                renderablePtr_800bdbe8.set(allocateUiElement(0x83, 0x83, FUN_8010a818(menuIndex_8011e0d8.get()), 174));
                 FUN_80104b60(renderablePtr_800bdbe8.deref());
               }
 
               //LAB_8010ae00
               renderable_8011e0f0.set(allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0)));
               renderable_8011e0f4.set(allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5)));
-              inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+              inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
             } else if(v1 == 0x1L) {
               //LAB_8010ae58
-              _8011e0e8.setu(0);
+              menuOption_8011e0e8.set(0);
               renderable_8011e0f0.set(allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0)));
               renderable_8011e0f4.set(allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5)));
               inventoryMenuState_800bdc28.set(InventoryMenuState._8);
@@ -6308,21 +6299,21 @@ public final class SItem {
         }
       }
 
-      case _4 -> {
+      case MAIN_MENU_4 -> {
         if(_8011e13d.get() == 0) {
-          if(FUN_8010415c(_8011e0d8.getAddress(), 0x7L) != 0) {
-            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818((int)_8011e0d8.get()));
+          if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
+            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818(menuIndex_8011e0d8.get()));
           }
 
           //LAB_8010af18
-          FUN_8010c8e4(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get());
+          FUN_8010c8e4(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
         } else {
           //LAB_8010af64
-          FUN_8010cb80(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get());
+          FUN_8010cb80(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
         }
 
         //LAB_8010af94
-        FUN_80109074(0, 16, 122, menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), 0);
+        FUN_80109074(0, 16, 122, menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), 0);
 
         if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
           playSound(3);
@@ -6331,16 +6322,16 @@ public final class SItem {
 
         //LAB_8010aff8
         if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
-          if(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get() == 0xff) {
+          if(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get() == 0xff) {
             playSound(0x28);
           } else {
             //LAB_8010b044
             playSound(2);
-            _8011e0ec.setu(0);
+            menuOption_8011e0ec.set(0);
             renderablePtr_800bdbf0.set(allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0)));
             FUN_80104b60(renderablePtr_800bdbf0.deref());
 
-            if(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get() < 0xc0) {
+            if(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get() < 0xc0) {
               v0 = gameState_800babc8.equipmentCount_1e4.get() < 0xff ? 1 : 0;
             } else {
               //LAB_8010b0bc
@@ -6350,7 +6341,7 @@ public final class SItem {
             //LAB_8010b0cc
             inventoryMenuState_800bdc28.set(v0 != 0 ? InventoryMenuState._5 : InventoryMenuState._6);
 
-            if(gameState_800babc8.gold_94.get() < menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get()))._02.get()) {
+            if(gameState_800babc8.gold_94.get() < menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get())._02.get()) {
               inventoryMenuState_800bdc28.set(InventoryMenuState._7);
             }
           }
@@ -6358,40 +6349,40 @@ public final class SItem {
 
         //LAB_8010b124
         //LAB_8010b128
-        if(FUN_80103f00(_8011e0e0.getAddress(), _8011e0e4.getAddress(), 6, _8011e13c.get(), 1) != 0) {
-          selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808((int)_8011e0e0.get()));
+        if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, _8011e13c.get(), 1)) {
+          selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808(menuIndex_8011e0e0.get()));
 
           if(_8011e13d.get() == 0) {
-            _8011e0d8.setu(FUN_8010a864(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get()));
-            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818((int)_8011e0d8.get()));
+            menuIndex_8011e0d8.set(FUN_8010a864(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get()));
+            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818(menuIndex_8011e0d8.get()));
           }
         }
 
         //LAB_8010b1c4
         //LAB_8010b1c8
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), _8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _5 -> {
         renderText(Are_you_sure_you_want_to_buy_8011c3ec, 16, 128, 0x4L);
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, _8011e0ec.get() == 0 ? 0x5L : 0x4L);
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, _8011e0ec.get() == 0 ? 0x4L : 0x5L);
+        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 0x5L : 0x4L);
+        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 0x4L : 0x5L);
 
-        v1 = FUN_801041d8(_8011e0ec.getAddress());
+        v1 = FUN_801041d8(menuOption_8011e0ec);
         if(v1 == 1) {
           //LAB_8010b2bc
-          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834((int)_8011e0ec.get()));
+          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834(menuOption_8011e0ec.get()));
         } else if(v1 == 2) {
           //LAB_8010b2d8
-          gameState_800babc8.gold_94.sub(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get()))._02.get());
+          gameState_800babc8.gold_94.sub(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get())._02.get());
           unloadRenderable(renderablePtr_800bdbf0.deref());
 
           if(_8011e13d.get() != 0) {
-            giveItem(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get());
+            giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
 
             //LAB_8010b378
-            inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           } else {
             //LAB_8010b360
             inventoryMenuState_800bdc28.set(InventoryMenuState._13);
@@ -6402,26 +6393,26 @@ public final class SItem {
         } else if(v1 == 3 || v1 == 4) {
           //LAB_8010b368
           unloadRenderable(renderablePtr_800bdbf0.deref());
-          inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
         }
 
         //LAB_8010b380
         //LAB_8010b384
         if(_8011e13d.get() == 0) {
-          if(FUN_8010415c(_8011e0d8.getAddress(), 7) != 0) {
-            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818((int)_8011e0d8.get()));
+          if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
+            renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818(menuIndex_8011e0d8.get()));
           }
 
           //LAB_8010b3cc
-          FUN_8010c8e4(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get());
+          FUN_8010c8e4(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
         } else {
           //LAB_8010b418
-          FUN_8010cb80(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get());
+          FUN_8010cb80(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
         }
 
         //LAB_8010b448
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), _8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _6, _7 -> {
@@ -6437,30 +6428,30 @@ public final class SItem {
         }
 
         //LAB_8010b508
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), _8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _8 -> {
-        renderablePtr_800bdbec.set(allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834((int)_8011e0e8.get())));
+        renderablePtr_800bdbec.set(allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(menuOption_8011e0e8.get())));
         FUN_80104b60(renderablePtr_800bdbec.deref());
         renderable_8011e0f0.deref().flags_00.or(0x40L);
         renderable_8011e0f4.deref().flags_00.or(0x40L);
         FUN_8010a864(0xff);
         inventoryMenuState_800bdc28.set(InventoryMenuState._9);
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _9 -> {
         renderText(What_do_you_want_to_sell_8011c498, 16, 128, 0x4L);
-        renderCentredText(Armed_8011c4cc, 148, FUN_8010a834(0) + 2, _8011e0e8.get() == 0 ? 0x5L : 0x4L);
-        renderCentredText(item_8011c4d8, 148, FUN_8010a834(1) + 2, _8011e0e8.get() == 0 ? 0x4L : 0x5L);
+        renderCentredText(Armed_8011c4cc, 148, FUN_8010a834(0) + 2, menuOption_8011e0e8.get() == 0 ? 0x5L : 0x4L);
+        renderCentredText(item_8011c4d8, 148, FUN_8010a834(1) + 2, menuOption_8011e0e8.get() == 0 ? 0x4L : 0x5L);
 
-        v1 = FUN_801041d8(_8011e0e8.getAddress());
+        v1 = FUN_801041d8(menuOption_8011e0e8);
         if(v1 == 0x2L) {
           //LAB_8010b6b8
-          _8011e0e0.setu(0);
-          _8011e0e4.setu(0);
+          menuIndex_8011e0e0.set(0);
+          menuScroll_8011e0e4.set(0);
           _8011e13e.setu(0);
 
           if(gameState_800babc8.equipmentCount_1e4.get() != 0) {
@@ -6469,16 +6460,16 @@ public final class SItem {
             FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
             unloadRenderable(renderablePtr_800bdbec.deref());
             FUN_8010a864(gameState_800babc8.equipment_1e8.get(0).get());
-            renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+            renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
             break;
           }
         } else {
           if(v1 < 0x3L) {
             if(v1 == 0x1L) {
               //LAB_8010b69c
-              renderablePtr_800bdbec.deref().y_44.set(FUN_8010a834((int)_8011e0e8.get()));
+              renderablePtr_800bdbec.deref().y_44.set(FUN_8010a834(menuOption_8011e0e8.get()));
             }
-            renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+            renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
             break;
           }
 
@@ -6486,15 +6477,15 @@ public final class SItem {
           if(v1 == 0x3L) {
             //LAB_8010b73c
             _8011e13e.setu(0x1L);
-            _8011e0e4.setu(0);
-            _8011e0e0.setu(0);
+            menuScroll_8011e0e4.set(0);
+            menuIndex_8011e0e0.set(0);
 
             if(gameState_800babc8.itemCount_1e6.get() != 0) {
               inventoryMenuState_800bdc28.set(InventoryMenuState._10);
               selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0)));
               FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
               unloadRenderable(renderablePtr_800bdbec.deref());
-              renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+              renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
               break;
             }
           } else {
@@ -6502,33 +6493,33 @@ public final class SItem {
               //LAB_8010b7c8
               inventoryMenuState_800bdc28.set(InventoryMenuState._2);
             }
-            renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+            renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
             break;
           }
         }
 
         //LAB_8010b7b4
-        _8011e0e8.setu(0);
+        menuOption_8011e0e8.set(0);
         inventoryMenuState_800bdc28.set(InventoryMenuState._12);
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _10 -> {
         if(_8011e13e.get() == 0) {
           //LAB_8010b868
           renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, 0x4L);
-          FUN_80109074(0, 193, 122, gameState_800babc8.equipment_1e8.get((int)(_8011e0e4.get() + _8011e0e0.get())).get(), 0);
+          FUN_80109074(0, 193, 122, gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), 0);
 
-          if(FUN_80103f00(_8011e0e0.getAddress(), _8011e0e4.getAddress(), 6, gameState_800babc8.equipmentCount_1e4.get(), 1) != 0) {
-            FUN_8010a864(gameState_800babc8.equipment_1e8.get((int)(_8011e0e4.get() + _8011e0e0.get())).get());
-            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808((int)_8011e0e0.get()));
+          if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.equipmentCount_1e4.get(), 1)) {
+            FUN_8010a864(gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get());
+            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808(menuIndex_8011e0e0.get()));
           }
         } else {
           renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, 0x4L);
-          FUN_80109074(0, 193, 122, gameState_800babc8.items_2e9.get((int)(_8011e0e4.get() + _8011e0e0.get())).get(), 0);
+          FUN_80109074(0, 193, 122, gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), 0);
 
-          if(FUN_80103f00(_8011e0e0.getAddress(), _8011e0e4.getAddress(), 6, gameState_800babc8.itemCount_1e6.get(), 1) != 0) {
-            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808((int)_8011e0e0.get()));
+          if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.itemCount_1e6.get(), 1)) {
+            selectedMenuOptionRenderablePtr_800bdbe4.deref().y_44.set(FUN_8010a808(menuIndex_8011e0e0.get()));
           }
         }
 
@@ -6540,12 +6531,12 @@ public final class SItem {
         }
 
         //LAB_8010b954
-        renderItemList((int)_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13e.get());
+        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
           //LAB_8010b9e8
-          v0 = _8011e0e4.get() + _8011e0e0.get();
+          v0 = menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get();
           //TODO not sure if this condition is right
           if(_8011e13e.get() != 0 && gameState_800babc8.items_2e9.get((int)v0).get() == 0xffL || _8011e13e.get() == 0 && (gameState_800babc8.equipment_1e8.get((int)v0).get() == 0xffL || FUN_80022898(gameState_800babc8.equipment_1e8.get((int)v0).get()) != 0)) {
             //LAB_8010ba28
@@ -6553,7 +6544,7 @@ public final class SItem {
           } else {
             //LAB_8010ba38
             playSound(2);
-            _8011e0ec.setu(0);
+            menuOption_8011e0ec.set(0);
             renderablePtr_800bdbf0.set(allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0)));
             FUN_80104b60(renderablePtr_800bdbf0.deref());
             inventoryMenuState_800bdc28.set(InventoryMenuState._11);
@@ -6565,28 +6556,29 @@ public final class SItem {
         renderText(Are_you_sure_you_want_to_sell_8011c568, 16, 128, 0x4L);
 
         //LAB_8010bad0
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, _8011e0ec.get() == 0 ? 0x5L : 0x4L);
+        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 0x5L : 0x4L);
 
         //LAB_8010bb04
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, _8011e0ec.get() == 0 ? 0x4L : 0x5L);
-        v1 = FUN_801041d8(_8011e0ec.getAddress());
+        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 0x4L : 0x5L);
+        v1 = FUN_801041d8(menuOption_8011e0ec);
         if(v1 == 0x1L) {
           //LAB_8010bb50
-          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834((int)_8011e0ec.get()));
+          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834(menuOption_8011e0ec.get()));
         } else if(v1 == 0x2L) {
           //LAB_8010bb6c
+          final int itemId;
           if(_8011e13e.get() != 0) {
-            s0 = gameState_800babc8.items_2e9.get((int)(_8011e0e4.get() + _8011e0e0.get())).get();
-            v0 = takeItem((int)(_8011e0e4.get() + _8011e0e0.get()));
+            itemId = gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get();
+            v0 = takeItem(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get());
           } else {
             //LAB_8010bbc0
-            s0 = gameState_800babc8.equipment_1e8.get((int)(_8011e0e4.get() + _8011e0e0.get())).get();
-            v0 = takeEquipment((int)(_8011e0e4.get() + _8011e0e0.get()));
+            itemId = gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get();
+            v0 = takeEquipment(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get());
           }
 
           //LAB_8010bbfc
           if(v0 == 0) {
-            addGold((int)_80114310.offset(s0 * 0x2L).get());
+            addGold(itemPrices_80114310.get(itemId).get());
           }
 
           //LAB_8010bc1c
@@ -6603,8 +6595,8 @@ public final class SItem {
         //LAB_8010bcf8
         //LAB_8010bcfc
         //LAB_8010bd00
-        renderItemList((int)_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13e.get());
+        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
       }
 
       case _12 -> {
@@ -6625,33 +6617,33 @@ public final class SItem {
         //LAB_8010bcf8
         //LAB_8010bcfc
         //LAB_8010bd00
-        renderItemList((int)_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13e.get());
+        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
       }
 
       case _13, _14 -> {
         if(inventoryMenuState_800bdc28.get() == InventoryMenuState._13) {
-          _8011e0ec.setu(0);
+          menuOption_8011e0ec.set(0);
           renderablePtr_800bdbf0.set(allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0)));
           FUN_80104b60(renderablePtr_800bdbf0.deref());
           inventoryMenuState_800bdc28.set(InventoryMenuState._14);
         }
 
-        FUN_8010c8e4(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get());
+        FUN_8010c8e4(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
 
-        if(FUN_8010415c(_8011e0d8.getAddress(), 7) != 0) {
-          renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818((int)_8011e0d8.get()));
+        if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
+          renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818(menuIndex_8011e0d8.get()));
         }
 
         //LAB_8010be00
         renderText(Do_you_want_to_be_armed_with_it_8011c620, 16, 128, 0x4L);
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, _8011e0ec.get() == 0 ? 0x5L : 0x4L);
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, _8011e0ec.get() == 0 ? 0x4L : 0x5L);
+        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 0x5L : 0x4L);
+        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 0x4L : 0x5L);
 
-        v1 = FUN_801041d8(_8011e0ec.getAddress());
+        v1 = FUN_801041d8(menuOption_8011e0ec);
         if(v1 == 0x1L) {
           //LAB_8010becc
-          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834((int)_8011e0ec.get()));
+          renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834(menuOption_8011e0ec.get()));
         } else if(v1 == 0x2L) {
           //LAB_8010bee8
           inventoryMenuState_800bdc28.set(InventoryMenuState._15);
@@ -6659,30 +6651,30 @@ public final class SItem {
         } else if(v1 >= 0x3L && v1 < 0x5L) {
           //LAB_8010bef4
           unloadRenderable(renderablePtr_800bdbf0.deref());
-          giveItem(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get());
+          giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
 
           //LAB_8010bf38
-          inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
         }
 
         //LAB_8010bf3c
         //LAB_8010bf40
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), _8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _15 -> {
-        FUN_8010c8e4(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get());
+        FUN_8010c8e4(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
 
-        if(FUN_8010415c(_8011e0d8.getAddress(), 7) != 0) {
-          renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818((int)_8011e0d8.get()));
+        if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
+          renderablePtr_800bdbe8.deref().x_40.set(FUN_8010a818(menuIndex_8011e0d8.get()));
         }
 
         //LAB_8010bfe4
         renderCentredText(Conf_8011c48c, 148, FUN_8010a834(0) + 2, 0x5L);
         renderablePtr_800bdbf0.deref().y_44.set(FUN_8010a834(0));
 
-        if(FUN_801039a0(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get()) == 0) {
+        if(FUN_801039a0(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get()) == 0) {
           //LAB_8010c0fc
           renderText(Put_in_the_bag_8011c684, 16, 128, 0x4L);
 
@@ -6690,25 +6682,25 @@ public final class SItem {
             playSound(2);
 
             //LAB_8010c150
-            giveItem(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get());
+            giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
             unloadRenderable(renderablePtr_800bdbf0.deref());
-            inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           }
         } else {
-          renderText(characterNames_801142dc.get(characterIndices_800bdbb8.get((int)_8011e0d8.get()).get()).deref(), 24, 128, 0x4L);
+          renderText(characterNames_801142dc.get(characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get()).deref(), 24, 128, 0x4L);
           renderText(Is_armed_8011c670, 16, 142, 0x4L);
 
           if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
             playSound(2);
-            giveItem(equipItem(menuItems_8011e0f8.get((int)(_8011e0e4.get() + _8011e0e0.get())).itemId_00.get(), characterIndices_800bdbb8.get((int)_8011e0d8.get()).get()));
+            giveItem(equipItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get()));
             unloadRenderable(renderablePtr_800bdbf0.deref());
-            inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           }
         }
 
         //LAB_8010c174
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), _8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
-        renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
       case _16, _17 -> {
@@ -6725,7 +6717,7 @@ public final class SItem {
         if(_800bdc2c.get() == 0x1L) {
           //LAB_8010c1f0
           //LAB_8010c1f4
-          renderShopMenu(_8011e0dc.get(), _8011e13d.get());
+          renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
         }
       }
 
@@ -6753,7 +6745,7 @@ public final class SItem {
   }
 
   @Method(0x8010c2c8L)
-  public static void renderShopMenu(final long selectedMenuItem, final long a2) {
+  public static void renderShopMenu(final int selectedMenuItem, final long a2) {
     renderCentredText(Buy_8011c6a4, 72, getShopMenuYOffset(0) + 2, selectedMenuItem != 0 ? 0x4L : 0x5L);
     renderCentredText(Sell_8011c6ac, 72, getShopMenuYOffset(1) + 2, selectedMenuItem != 1 ? 0x4L : 0x5L);
     renderCentredText(Carried_8011c6b8, 72, getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? 0x4L : 0x5L);
@@ -6819,7 +6811,7 @@ public final class SItem {
 
         //LAB_8010c6b0
         renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, FUN_80022898(itemId) == 0 ? 0x4L : 0x6L);
-        FUN_801069d0(324, FUN_8010a808(i) + 4, (int)_80114310.offset(itemId * 0x2L).get());
+        FUN_801069d0(324, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
       }
 
       //LAB_8010c708
@@ -6843,7 +6835,7 @@ public final class SItem {
           FUN_80103910(58, 330, FUN_8010a808(i), 0x8L).clut_30.set(0x7eaaL);
         } else {
           //LAB_8010c814
-          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, (int)_80114310.offset(itemId * 0x2L).get());
+          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
         }
       }
 
@@ -7274,17 +7266,17 @@ public final class SItem {
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     switch(inventoryMenuState_800bdc28.get()) {
-      case _0:
+      case INIT_0:
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
         setWidthAndFlags(320, 0);
         loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 0, 0x5L);
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 1, 0x3L);
         _800bdf00.setu(0x21L);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         break;
 
-      case _1:
+      case AWAIT_INIT_1:
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
           scriptStartEffect(0x2L, 0xaL);
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
@@ -7358,26 +7350,26 @@ public final class SItem {
             //LAB_8010da24
           }
 
-          inventoryMenuState_800bdc28.set(InventoryMenuState._3);
+          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
           FUN_8010e9a8(0x1L, xpDivisor_8011e174.get());
         }
 
         break;
 
-      case _3:
+      case INIT_MAIN_MENU_3:
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
           //LAB_8010da84
           if(goldGainedFromCombat_800bc920.get() == 0) {
             inventoryMenuState_800bdc28.set(InventoryMenuState._5);
           } else {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           }
         }
 
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
-      case _4:
+      case MAIN_MENU_4:
         final int goldTick;
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
           goldTick = goldGainedFromCombat_800bc920.get();
@@ -7621,7 +7613,7 @@ public final class SItem {
       case _19:
         setWidthAndFlags(384, 0);
         FUN_8002437c(0xffL);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         whichMenu_800bdc38.setu(0x22L);
         break;
     }
@@ -7945,7 +7937,7 @@ public final class SItem {
         if(s1 == 0x2L) {
           //LAB_8010ef10
           if(menu.renderable_04.isNull()) {
-            renderable = allocateUiElement(125, 125, menu.x_1c.get() + 45, menu._18.get() * 14 + y + 5);
+            renderable = allocateUiElement(125, 125, menu.x_1c.get() + 45, menu.menuIndex_18.get() * 14 + y + 5);
             menu.renderable_04.set(renderable);
             renderable._38.set(0);
             renderable._34.set(0);
@@ -7955,7 +7947,7 @@ public final class SItem {
           //LAB_8010ef64
           _800bdf00.setu(0x1fL);
 
-          if(menu._18.get() != 0) {
+          if(menu.menuIndex_18.get() != 0) {
             a3 = 0x4L;
           } else {
             a3 = 0x5L;
@@ -7964,7 +7956,7 @@ public final class SItem {
           //LAB_8010ef98
           renderCentredText(Yes_8011c20c, menu.x_1c.get() + 60, y + 7, a3);
 
-          if(menu._18.get() != 0) {
+          if(menu.menuIndex_18.get() != 0) {
             a3 = 0x5L;
           } else {
             a3 = 0x4L;
@@ -7974,11 +7966,11 @@ public final class SItem {
           renderCentredText(No_8011c214, menu.x_1c.get() + 60, y + 21, a3);
 
           _800bdf00.setu(0x21L);
-          v1 = FUN_801041d8(menu._18.getAddress()); //TODO address
+          v1 = FUN_801041d8(menu.menuIndex_18);
           if(v1 == 0x2L) {
             //LAB_8010f040
             menu._0c.set(0x4);
-            _8011e1e8.setu(menu._18.get() + 0x1L);
+            _8011e1e8.setu(menu.menuIndex_18.get() + 1);
           } else if((int)v1 >= 0x3L) {
             //LAB_8010f000
             if((int)v1 < 0x5L) {
@@ -7988,7 +7980,7 @@ public final class SItem {
             }
           } else if(v1 == 0x1L) {
             //LAB_8010f014
-            menu.renderable_04.deref().y_44.set(menu._18.get() * 14 + y + 5);
+            menu.renderable_04.deref().y_44.set(menu.menuIndex_18.get() * 14 + y + 5);
           }
         }
 
@@ -8033,7 +8025,7 @@ public final class SItem {
     messageBox_8011dc90.x_1c.set(120);
     messageBox_8011dc90.y_1e.set(100);
     messageBox_8011dc90._15.set(a1);
-    messageBox_8011dc90._18.set(0);
+    messageBox_8011dc90.menuIndex_18.set(0);
     messageBox_8011dc90.ticks_10.set(0);
     messageBox_8011dc90._0c.set(1);
   }
@@ -8058,17 +8050,17 @@ public final class SItem {
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     switch(inventoryMenuState_800bdc28.get()) {
-      case _0:
+      case INIT_0:
         drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
         setWidthAndFlags(384, 0);
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 0x1L, 0x3L);
         loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "fileLoadedCallback6665And6666", long.class, long.class, long.class), 0, 0x5L);
         _800bdf00.setu(0x21L);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._1);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         break;
 
-      case _1:
+      case AWAIT_INIT_1:
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
           _8011dcb8.get(0).setPointer(addToLinkedListTail(0x4c0L));
           _8011dcb8.get(1).setPointer(addToLinkedListTail(0x4c0L));
@@ -8102,36 +8094,36 @@ public final class SItem {
         FUN_8002437c(0xffL);
         slotScroll_8011e1f8.set(0);
         slotIndex_8011e1f4.set(0);
-        _8011e1f0.setu(0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._3);
+        menuIndex_8011e1f0.set(0);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
         break;
 
-      case _3:
+      case INIT_MAIN_MENU_3:
         FUN_8002437c(0);
-        FUN_8010fd80(0x1L, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
-        _8011e1fc.setu(0);
+        FUN_8010fd80(0x1L, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        menuIndex_8011e1fc.set(0);
         final Renderable58 renderable = allocateUiElement(125, 125, 136, FUN_8010f188(0) - 2);
         renderable_8011e208.set(renderable);
         FUN_80104b60(renderable);
         scriptStartEffect(0x2L, 0xaL);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._4);
+        inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
         break;
 
-      case _4:
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+      case MAIN_MENU_4:
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
         if(_800bb168.get() == 0) {
           renderText(Too_many_8011c21c, 16, 151, 0x4L);
           renderText(items_8011c230, 16, 168, 0x4L);
           renderText(Replace_8011c240, 16, 185, 0x4L);
-          renderCentredText(Yes_8011c20c, 150, FUN_8010f188(0), _8011e1fc.get() == 0 ? 0x5L : 0x6L);
-          renderCentredText(No_8011c214, 150, FUN_8010f188(1), _8011e1fc.get() != 0 ? 0x5L : 0x6L);
+          renderCentredText(Yes_8011c20c, 150, FUN_8010f188(0), menuIndex_8011e1fc.get() == 0 ? 0x5L : 0x6L);
+          renderCentredText(No_8011c214, 150, FUN_8010f188(1), menuIndex_8011e1fc.get() != 0 ? 0x5L : 0x6L);
 
-          v1 = FUN_801041d8(_8011e1fc.getAddress());
+          v1 = FUN_801041d8(menuIndex_8011e1fc);
 
           if(v1 == 0x1L) {
             //LAB_8010fb4c
-            renderable_8011e208.deref().y_44.set(FUN_8010f188((int)_8011e1fc.get()) - 2);
+            renderable_8011e208.deref().y_44.set(FUN_8010f188(menuIndex_8011e1fc.get()) - 2);
           } else if(v1 == 0x2L) {
             unloadRenderable(renderable_8011e208.deref());
             inventoryMenuState_800bdc28.set(InventoryMenuState._6);
@@ -8143,25 +8135,25 @@ public final class SItem {
         break;
 
       case _6:
-        _8011e1f0.setu(0);
+        menuIndex_8011e1f0.set(0);
         final Renderable58 renderable2 = allocateUiElement(124, 124, 42, FUN_8010f178(0));
         renderable_8011e200.set(renderable2);
         FUN_80104b60(renderable2);
 
       case _7:
         FUN_8002437c(0);
-        FUN_8010fd80(0x1L, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
+        FUN_8010fd80(0x1L, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
         inventoryMenuState_800bdc28.set(InventoryMenuState._8);
         break;
 
       case _8:
-        if(FUN_80103f00(_8011e1f0.getAddress(), 0, 5, (int)_800bc978.get(), 0x1L) != 0) {
-          renderable_8011e200.deref().y_44.set(FUN_8010f178((int)_8011e1f0.get()));
+        if(scrollMenu(menuIndex_8011e1f0, null, 5, (int)_800bc978.get(), 1)) {
+          renderable_8011e200.deref().y_44.set(FUN_8010f178(menuIndex_8011e1f0.get()));
         }
 
         //LAB_8010f608
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          if(_8011d7c8.get((int)_8011e1f0.get()).itemId_00.get() != 0xff) {
+          if(_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() != 0xff) {
             slotScroll_8011e1f8.set(0);
             slotIndex_8011e1f4.set(0);
             final Renderable58 renderable3 = allocateUiElement(118, 118, 220, FUN_8010f178(0));
@@ -8183,12 +8175,12 @@ public final class SItem {
         }
 
         //LAB_8010f6d4
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
         break;
 
       case _9:
         final int slotCount;
-        if(_8011d7c8.get((int)_8011e1f0.get()).itemId_00.get() < 0xc0) {
+        if(_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() < 0xc0) {
           slotCount = gameState_800babc8.equipmentCount_1e4.get();
         } else {
           //LAB_8010f754
@@ -8196,7 +8188,7 @@ public final class SItem {
         }
 
         //LAB_8010f76c
-        if(FUN_80103f00(slotIndex_8011e1f4.getAddress(), slotScroll_8011e1f8.getAddress(), 7, slotCount, 0x1L) != 0) {
+        if(scrollMenu(slotIndex_8011e1f4, slotScroll_8011e1f8, 7, slotCount, 1)) {
           renderable_8011e204.deref().y_44.set(FUN_8010f178(slotIndex_8011e1f4.get()));
         }
 
@@ -8211,7 +8203,7 @@ public final class SItem {
         if((inventoryJoypadInput_800bdc44.get() & 0x10L) != 0) {
           playSound(0x2L);
 
-          if(_8011d7c8.get((int)_8011e1f0.get()).itemId_00.get() < 0xc0) {
+          if(_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() < 0xc0) {
             FUN_80023a2c(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
           } else {
             //LAB_8010f838
@@ -8221,7 +8213,7 @@ public final class SItem {
 
         //LAB_8010f858
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          s0 = _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get() >= 0xc0 ? 1 : 0;
+          s0 = _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() >= 0xc0 ? 1 : 0;
           final MenuItemStruct04 menuItem1 = _8011dcb8.get((int)s0).deref().get(slotIndex_8011e1f4.get() + slotScroll_8011e1f8.get());
 
           if((menuItem1._02.get() & 0x6000) != 0) {
@@ -8229,7 +8221,7 @@ public final class SItem {
           } else {
             //LAB_8010f8f4
             final MenuItemStruct04 menuItem2 = _8011dcb8.get((int)s0).deref().get(slotIndex_8011e1f4.get() + slotScroll_8011e1f8.get());
-            final MenuItemStruct04 menuItem3 = _8011d7c8.get((int)_8011e1f0.get());
+            final MenuItemStruct04 menuItem3 = _8011d7c8.get(menuIndex_8011e1f0.get());
 
             menuItem2.itemId_00.set(menuItem3.itemId_00.get());
             menuItem2.itemSlot_01.set(menuItem3.itemSlot_01.get());
@@ -8255,11 +8247,11 @@ public final class SItem {
 
         //LAB_8010f9a4
         //LAB_8010f9a8
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x3L);
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x3L);
         break;
 
       case _10:
-        _8011e1fc.setu(0);
+        menuIndex_8011e1fc.set(0);
         final Renderable58 renderable4 = allocateUiElement(125, 125, 136, FUN_8010f188(0) - 2);
         renderable_8011e208.set(renderable4);
         FUN_80104b60(renderable4);
@@ -8269,16 +8261,16 @@ public final class SItem {
         renderText(To_many_items_8011c268, 16, 151, 0x4L);
         renderText(Discard_8011c288, 16, 168, 0x4L);
         renderText(End_8011c29c, 16, 185, 0x4L);
-        renderCentredText(Yes_8011c20c, 150, FUN_8010f188(0), _8011e1fc.get() == 0 ? 0x5L : 0x6L);
-        renderCentredText(No_8011c214, 150, FUN_8010f188(1), _8011e1fc.get() != 0 ? 0x5L : 0x6L);
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        renderCentredText(Yes_8011c20c, 150, FUN_8010f188(0), menuIndex_8011e1fc.get() == 0 ? 0x5L : 0x6L);
+        renderCentredText(No_8011c214, 150, FUN_8010f188(1), menuIndex_8011e1fc.get() != 0 ? 0x5L : 0x6L);
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
-        v1 = FUN_801041d8(_8011e1fc.getAddress());
+        v1 = FUN_801041d8(menuIndex_8011e1fc);
 
         //LAB_8010fb28
         if(v1 == 1) {
           //LAB_8010fb4c
-          renderable_8011e208.deref().y_44.set(FUN_8010f188((int)_8011e1fc.get()) - 2);
+          renderable_8011e208.deref().y_44.set(FUN_8010f188(menuIndex_8011e1fc.get()) - 2);
         } else if(v1 == 2) {
           //LAB_8010fb6c
           unloadRenderable(renderable_8011e208.deref());
@@ -8312,7 +8304,7 @@ public final class SItem {
         break;
 
       case _12:
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
         if(_800bb168.get() >= 0xff) {
           scriptStartEffect(0x2L, 0xaL);
@@ -8339,7 +8331,7 @@ public final class SItem {
 
         //LAB_8010fd28
         //LAB_8010fd5c
-        FUN_8010fd80(0, _8011d7c8.get((int)_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(0, _8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
         break;
     }
 
@@ -8423,24 +8415,6 @@ public final class SItem {
 
     final long spc0 = a0;
 
-    //LAB_80110070
-    final long[] sp10 = new long[10];
-    for(int charIndex = 0; charIndex < 10; charIndex++) {
-      sp10[charIndex] = _800fbd08.get(charIndex).get();
-    }
-
-    //LAB_801100bc
-    final long[] sp38 = new long[9];
-    for(int charIndex = 0; charIndex < 9; charIndex++) {
-      sp38[charIndex] = _800fbd30.get(charIndex).get();
-    }
-
-    //LAB_80110104
-    final long[] sp60 = new long[9];
-    for(int charIndex = 0; charIndex < 9; charIndex++) {
-      sp60[charIndex] = _800fbd54.get(charIndex).get();
-    }
-
     FUN_8002a6fc();
 
     //LAB_80110174
@@ -8471,7 +8445,7 @@ public final class SItem {
         stats.additionXp_3e.get(i).set(charData.additionXp_22.get(i).get());
       }
 
-      v0 = sp38[charIndex] + stats.level_0e.get() * 0x8L;
+      v0 = _800fbd30.get(charIndex).get() + stats.level_0e.get() * 0x8L;
       stats.maxHp_66.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
       stats._68.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
       stats.bodySpeed_69.set((int)MEMORY.ref(1, v0).offset(0x3L).get());
@@ -8480,7 +8454,7 @@ public final class SItem {
       stats.bodyDefence_6c.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
       stats.bodyMagicDefence_6d.set((int)MEMORY.ref(1, v0).offset(0x7L).get());
 
-      v0 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+      v0 = _800fbd54.get(charIndex).get() + stats.dlevel_0f.get() * 0x8L;
       stats.maxMp_6e.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
       stats._70.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
       stats._71.set((int)MEMORY.ref(1, v0).offset(0x3L).get());
@@ -8502,17 +8476,17 @@ public final class SItem {
       //LAB_8011042c
       FUN_8011085c(charIndex);
 
-      v0 = sp10[charIndex];
+      v0 = _800fbd08.get(charIndex).get();
       a0 = v0 & 0x1fL;
       v0 = v0 >>> 5;
       if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1L << a0) != 0) {
         stats.dragoonFlag_0c.or(0x2000);
-        a0 = sp10[charIndex];
+        a0 = _800fbd08.get(charIndex).get();
 
         if((gameState_800babc8._4e6.get() >> a0 & 1) == 0) {
           gameState_800babc8._4e6.or(1 << a0);
 
-          v0 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+          v0 = _800fbd54.get(charIndex).get() + stats.dlevel_0f.get() * 0x8L;
           stats.mp_06.set((int)MEMORY.ref(2, v0).get());
           stats.maxMp_6e.set((int)MEMORY.ref(2, v0).get());
         }
@@ -8525,7 +8499,7 @@ public final class SItem {
 
       //LAB_801104f8
       if(charIndex == 0) {
-        v0 = sp10[9];
+        v0 = _800fbd08.get(9).get();
 
         a0 = v0 & 0x1fL;
         v0 = v0 >>> 5;
@@ -8533,16 +8507,16 @@ public final class SItem {
           stats.dragoonFlag_0c.or(0x6000);
           stats.dlevel_0f.set(gameState_800babc8.charData_32c.get(0).dlevel_13.get());
 
-          a1 = sp10[0];
+          a1 = _800fbd08.get(0).get();
 
           if((gameState_800babc8._4e6.get() >> a1 & 1) == 0) {
             gameState_800babc8._4e6.or(1 << a1);
-            v1 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+            v1 = _800fbd54.get(charIndex).get() + stats.dlevel_0f.get() * 0x8L;
             stats.mp_06.set((int)MEMORY.ref(2, v1).get());
             stats.maxMp_6e.set((int)MEMORY.ref(2, v1).get());
           } else {
             //LAB_80110590
-            v1 = sp60[charIndex] + stats.dlevel_0f.get() * 0x8L;
+            v1 = _800fbd54.get(charIndex).get() + stats.dlevel_0f.get() * 0x8L;
             stats.mp_06.set(gameState_800babc8.charData_32c.get(0).mp_0a.get());
             stats.maxMp_6e.set((int)MEMORY.ref(2, v1).get());
           }

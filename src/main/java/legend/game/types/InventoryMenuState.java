@@ -1,11 +1,11 @@
 package legend.game.types;
 
 public enum InventoryMenuState {
-  _0,
-  _1,
+  INIT_0,
+  AWAIT_INIT_1,
   _2,
-  _3,
-  _4,
+  INIT_MAIN_MENU_3,
+  MAIN_MENU_4,
   _5,
   _6,
   _7,
@@ -38,17 +38,17 @@ public enum InventoryMenuState {
   _34,
   _35,
   _36,
-  _37,
-  _38,
+  INIT_LOAD_GAME_37,
+  DISK_CHANGE_DO_YOU_WANT_TO_SAVE_NOW_38,
   _39,
   _40,
   _41,
   _42,
-  _43,
+  LOAD_GAME_MENU_43,
   _44,
-  _45,
+  DO_YOU_WANT_TO_LOAD_THIS_SAVE_45,
 
-  _48,
+  LOAD_SAVE_48,
   _49,
 
   _52,
