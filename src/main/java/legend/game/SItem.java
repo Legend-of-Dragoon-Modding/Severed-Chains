@@ -91,12 +91,10 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002dbdc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002df60;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002eb28;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ed48;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002efb8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002f0d4;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
@@ -122,11 +120,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8002.useItemInMenu;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8004.FUN_800412e0;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80041420;
-import static legend.game.Scus94491BpeSegment_8004.FUN_800414a0;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80041600;
-import static legend.game.Scus94491BpeSegment_8004.FUN_800426c4;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -157,13 +150,13 @@ import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
-import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
+import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
@@ -431,7 +424,7 @@ public final class SItem {
   public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
   public static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
   public static final LodString SpecialItem_8011d054 = new LodString("Special Item");
-  public static final LodString Send_8011d058 = new LodString("Send");
+  public static final LodString Take_8011d058 = new LodString("Take");
   public static final LodString Discard_8011d05c = new LodString("Discard");
   public static final LodString TakeItemsFromDabas_8011d060 = new LodString("Take items from Dabas?");
   public static final LodString NextDig_8011d064 = new LodString("Next Dig");
@@ -2305,49 +2298,6 @@ public final class SItem {
         }
         break;
 
-      case _61:
-        renderSavedGames(slotScroll_8011d744.get(), true, 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          //LAB_800fff38
-          setMessageBoxText(_8011d708, 0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._71);
-        }
-        break;
-
-      case _62: //TODO unused?
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(Confused_8011c3bc, 0);
-
-          //LAB_800ffc5c
-          inventoryMenuState_800bdc28.set(InventoryMenuState._71);
-        }
-
-        //LAB_800fff80
-        //LAB_800fff84
-        //LAB_800fff8c
-        //LAB_800fff94
-        renderSavedGames(slotScroll_8011d744.get(), true, 0);
-        break;
-
-      case _65:
-        if(confirmDest_800bdc30.get() == InventoryMenuState._122) {
-          renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        } else {
-          renderSavedGames(slotScroll_8011d744.get(), true, 0);
-        }
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(_8011cd28, 2);
-          _8011dca8.setu(0x1L);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._66);
-        }
-        break;
-
-      case _66:
-        assert false;
-        break;
-
       case _71: // Fade out arrows and progress to menu fade out
         if(confirmDest_800bdc30.get() == InventoryMenuState._122) {
           //LAB_8010069c
@@ -2374,7 +2324,7 @@ public final class SItem {
 
         break;
 
-      case DABAS_INIT_72: // Allocate dabas menu and fade in
+      case DABAS_INIT_72:
         _8004dd30.setu(0x1L);
         dabasData_8011d7c0.setPointer(addToLinkedListTail(0x100L));
         dabasFilePtr_8011dd00.setu(0);
@@ -2398,7 +2348,7 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_INIT_2_73);
         break;
 
-      case DABAS_INIT_2_73: // Render dabas menu
+      case DABAS_INIT_2_73:
         deallocateRenderables(0xff);
         renderGlyphs(dabasMenuGlyphs_80114228, 0, 0);
         renderablePtr_800bdbe8.set(allocateUiElement(0x9f, 0x9f, 60, getDabasMenuY(selectedSlot_8011d740.get())));
@@ -2412,8 +2362,6 @@ public final class SItem {
         _8011e094.setu(0);
         dabasGold_8011dd08.setu(0);
         dabasHasItems_8011dd0c.setu(0);
-//        FUN_8002df60(0);
-        setMessageBoxText(_8011ce14, 0x1);
 
         //LAB_801001a8
         for(int i = 0; i < 7; i++) {
@@ -2424,31 +2372,16 @@ public final class SItem {
         }
 
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._75);
-        break;
 
-      case _75:
-        messageBox(messageBox_8011dc90);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox_8011dc90.ticks_10.get() >= 0x3L) {
-          if(DabasManager.hasSave()) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_LOAD_DATA_77);
-          } else {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._78);
-            messageBox_8011dc90._0c.incr();
-          }
+        if(DabasManager.hasSave()) {
+          inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_LOAD_DATA_77);
+        } else {
+          inventoryMenuState_800bdc28.set(InventoryMenuState._78);
         }
 
         break;
 
-      case _76:
-        messageBox(messageBox_8011dc90);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
       case DABAS_LOAD_DATA_77: {
-        messageBox(messageBox_8011dc90);
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
         MEMORY.setBytes(dabasData_8011d7c0.getPointer(), DabasManager.loadSave(), 0x580, 0x80);
@@ -2496,7 +2429,6 @@ public final class SItem {
         //LAB_801004a0
         //LAB_801004ac
         inventoryMenuState_800bdc28.set(InventoryMenuState._78);
-        messageBox_8011dc90._0c.incr();
         break;
       }
 
@@ -2507,7 +2439,7 @@ public final class SItem {
         }
 
         //LAB_801004ec
-        if(handleMenuUpDown(selectedSlot_8011d740, 4)) {
+        if(handleMenuUpDown(selectedSlot_8011d740, 3)) {
           renderablePtr_800bdbe8.deref().y_44.set(getDabasMenuY(selectedSlot_8011d740.get()));
         }
 
@@ -2553,253 +2485,12 @@ public final class SItem {
               //LAB_80100650
               playSound(40);
             }
-          } else if(selectedSlot_8011d740.get() == 3) {
-            //LAB_80100660
-            playSound(2);
-            inventoryMenuState_800bdc28.set(InventoryMenuState._80);
           }
         }
 
         //LAB_8010157c
         //LAB_80101580
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
-      case _80:
-        setMessageBoxText(Blank_8011c668, 0);
-
-        //LAB_8010069c
-        inventoryMenuState_800bdc28.set(InventoryMenuState._81);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
-      case _81:
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(_8011cdfc, 0x2);
-          messageBox_8011dc90.menuIndex_18.set(1);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._82);
-        }
-
-        //LAB_8010157c
-        //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
-      case _82:
-        switch(messageBox(messageBox_8011dc90)) {
-          case YES ->
-            //LAB_80100714
-            inventoryMenuState_800bdc28.set(InventoryMenuState._83);
-
-          case NO ->
-            //LAB_80100720
-            inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_MENU_79);
-        }
-
-        //LAB_80100728
-        //LAB_8010157c
-        //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
-      case _83:
-        FUN_800414a0(0);
-        setMessageBoxText(_8011ce14, 0x1);
-        memcardSaveLoadingStage_8011e0d4.setu(1);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._84);
-        break;
-
-      case _84:
-        messageBox(messageBox_8011dc90);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox_8011dc90.ticks_10.get() >= 0x3L) {
-          if(FUN_800426c4(1, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress()) != 0) {
-            a2 = memcardState_8011d7b8.get();
-
-            if(a2 == 0 || a2 == 0x3L) {
-              //LAB_801007dc
-              inventoryMenuState_800bdc28.set(InventoryMenuState._85);
-              break;
-            }
-
-            //LAB_801007ec
-            //LAB_801007f0
-            //LAB_801007f8
-            inventoryMenuState_800bdc28.set(InventoryMenuState._117);
-            messageBox_8011dc90._0c.incr();
-          }
-        }
-        break;
-
-      case _85:
-        messageBox(messageBox_8011dc90);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        s1 = saveCount_8011d768.getAddress();
-        executeMemcardLoadingStage(s1, REFACTORED_memcardData_8011dd10.getAddress()); //TODO
-
-        if(memcardSaveLoadingStage_8011e0d4.get() == 0) {
-          v1 = MEMORY.ref(4, s1).offset(0x8L).get();
-          if(v1 == 0x1L || v1 == 0x2L) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._117);
-          } else if(MEMORY.ref(1, s1).offset(0x5L).get() != 0) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._86);
-          } else if(MEMORY.ref(1, s1).offset(0x6L).get() < 0x9L) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._115);
-          } else {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._89);
-          }
-
-          messageBox_8011dc90._0c.incr();
-        }
-        break;
-
-      case _86:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(_8011ce08, 0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._87);
-        }
-
-        break;
-
-      case _87:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(Blank_8011c3a4, 0x2);
-          messageBox_8011dc90.menuIndex_18.set(1);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._88);
-        }
-
-        break;
-
-      case _88:
-        switch(messageBox(messageBox_8011dc90)) {
-          case YES -> {
-            //LAB_80100998
-            FUN_8002dbdc(0);
-            FUN_8002efb8(0, _8011d7bc, memcardState_8011d7b8);
-
-            if(memcardState_8011d7b8.get() == 0) {
-              inventoryMenuState_800bdc28.set(InventoryMenuState._89);
-            } else {
-              //LAB_801009d0
-              inventoryMenuState_800bdc28.set(InventoryMenuState._116);
-            }
-          }
-
-          case NO ->
-            //LAB_801009d8
-            inventoryMenuState_800bdc28.set(InventoryMenuState._93);
-        }
-
-        //LAB_8010157c
-        //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        break;
-
-      case _89:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          memcardState_8011d7b8.set(FUN_8002f0d4(0, "BASCUS-94491drgnpda", 0x9L));
-
-          if(memcardState_8011d7b8.get() == 0x1L) {
-            //LAB_80100ed0
-            //LAB_80100ed4
-            inventoryMenuState_800bdc28.set(InventoryMenuState._117);
-            break;
-          }
-
-          if(memcardState_8011d7b8.get() == 0x2L) {
-            //LAB_80101854
-            //LAB_80101858
-            inventoryMenuState_800bdc28.set(InventoryMenuState._116);
-            break;
-          }
-
-          //LAB_80100a4c
-          if(memcardState_8011d7b8.get() == 0x4L) {
-            //LAB_80100a68
-            inventoryMenuState_800bdc28.set(InventoryMenuState._121);
-            break;
-          }
-
-          if(memcardState_8011d7b8.get() == 0x7L) {
-            //LAB_80101854
-            //LAB_80101858
-            inventoryMenuState_800bdc28.set(InventoryMenuState._116);
-            break;
-          }
-
-          //LAB_80100a78
-          setMessageBoxText(_8011ce00, 0x1);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._90);
-        }
-        break;
-
-      case _90:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        messageBox(messageBox_8011dc90);
-
-        if(messageBox_8011dc90.ticks_10.get() >= 0x3L) {
-          FUN_800412e0(0, 0x1L, 0x14L);
-          FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-          v1 = dabasFilePtr_8011dd00.get();
-          MEMORY.ref(4, v1).offset(0x580L).setu(gameState_800babc8.chapterIndex_98.get());
-          FUN_8002eb28(0, "BASCUS-94491drgnpda", v1, 0, dabasFileSize_8011dd04.get() + 0x7fL & 0xffff_ff80L);
-          _8011e094.setu(0);
-          dabasGold_8011dd08.setu(0);
-          dabasHasItems_8011dd0c.setu(0);
-
-          //LAB_80100b58
-          for(int i = 0; i < 7; i++) {
-            menuItems_8011d7c8.get(i + 6).itemId_00.set(0xff);
-          }
-
-          inventoryMenuState_800bdc28.set(InventoryMenuState._91);
-        }
-        break;
-
-      case _91:
-        messageBox(messageBox_8011dc90);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(FUN_8002efb8(1, _8011d7bc, memcardState_8011d7b8) != 0) {
-          if(memcardState_8011d7b8.get() != 0) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._116);
-          } else {
-            //LAB_80100bcc
-            inventoryMenuState_800bdc28.set(InventoryMenuState._92);
-          }
-
-          //LAB_80100bd0
-          FUN_80041420(0);
-          FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-
-          //LAB_80100bf4
-          messageBox_8011dc90._0c.incr();
-        }
-        break;
-
-      case _92:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          final Memory.TemporaryReservation tmpA2 = MEMORY.temp(0x280); // Does this need to be this big? It's the size of the regular array of files
-          final Ref<Long> fileCount = new Ref<>();
-          FUN_8002ed48(0, drgnpda_800fb7a0.getAddress(), tmpA2.get().cast(ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)), fileCount, 0, 0x1L);
-          memcardState_8011d7b8.set(fileCount.get());
-
-          FUN_8002efb8(0, _8011d7bc, memcardState_8011d7b8);
-          FUN_80041600(0, tmpA2.get().offset(0x20L).get() / 0x40L, 0x1L);
-          FUN_800426c4(0, _8011d7bc.getAddress(), memcardState_8011d7b8.getAddress());
-          setMessageBoxText(Blank_8011c5d8, 0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._93);
-
-          tmpA2.release();
-        }
         break;
 
       case DABAS_DISCARD_INIT_94: {
@@ -3066,8 +2757,8 @@ public final class SItem {
         }
 
         //LAB_80101380
-        FUN_801073f8(0x70L, 0x90L, dabasGold_8011dd08.get());
-        FUN_80106d10(0xe2L, 0x90L, gameState_800babc8.gold_94.get());
+        FUN_801073f8(112, 144, dabasGold_8011dd08.get());
+        FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
           //LAB_80101580
@@ -3156,48 +2847,6 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState._109);
         break;
 
-      case _111:
-        setMessageBoxText(_8011d700, 0);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._112);
-        break;
-
-      case _112:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          //LAB_80101644
-          setMessageBoxText(_8011d704, 0);
-
-          //LAB_80101650
-          inventoryMenuState_800bdc28.set(InventoryMenuState._109);
-        }
-        break;
-
-      case _113:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          //LAB_80101644
-          setMessageBoxText(_8011d70c, 0);
-
-          //LAB_80101650
-          inventoryMenuState_800bdc28.set(InventoryMenuState._109);
-        }
-
-        break;
-
-      case _115:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          //LAB_801016b0
-          setMessageBoxText(_8011ce0c, 0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._119);
-        }
-
-        break;
-
       case _116:
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
 
@@ -3209,28 +2858,7 @@ public final class SItem {
 
         break;
 
-      case _117:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          setMessageBoxText(_8011ce04, 0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._120);
-        }
-
-        break;
-
-      case _118:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          //LAB_8010172c
-          inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_INIT_2_73);
-        }
-
-        break;
-
       case _78:
-      case _93:
       case _109:
       case _119:
         renderDabasMenu(selectedSlot_8011d740.get(), 0);
@@ -3256,13 +2884,6 @@ public final class SItem {
           _8004dd30.setu(0);
         }
 
-        break;
-
-      case _121:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
-        setMessageBoxText(_8011ce18, 0);
-        confirmDest_800bdc30.set(InventoryMenuState._122);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._65);
         break;
 
       case _122:
@@ -3379,11 +3000,6 @@ public final class SItem {
         //LAB_80101bf8
         //LAB_80101bfc
         _800bdf00.setu(0xdL);
-        break;
-
-      case _114:
-      case _63:
-        //LAB_80101c00
         break;
     }
   }
@@ -3720,10 +3336,9 @@ public final class SItem {
     renderText(AcquiredItems_8011d050, 210,  28, 0x4L);
     renderText(SpecialItem_8011d054, 210, 170, 0x4L);
     renderText(AcquiredGold_8011cdd4,  30, 124, 0x4L);
-    renderCentredText(Send_8011d058, 94, getDabasMenuY(0) + 2, selectedSlot == 0 ? 0x5L : (dabasHasItems_8011dd0c.get() | dabasGold_8011dd08.get()) == 0 ? 0x6L : 0x4L);
+    renderCentredText(Take_8011d058, 94, getDabasMenuY(0) + 2, selectedSlot == 0 ? 0x5L : (dabasHasItems_8011dd0c.get() | dabasGold_8011dd08.get()) == 0 ? 0x6L : 0x4L);
     renderCentredText(Discard_8011d05c, 94, getDabasMenuY(1) + 2, selectedSlot == 1 ? 0x5L : dabasHasItems_8011dd0c.get() == 0 ? 0x6L : 0x4L);
     renderCentredText(NextDig_8011d064, 94, getDabasMenuY(2) + 2, selectedSlot == 2 ? 0x5L : _8011e094.get() == 0 ? 0x6L : 0x4L);
-    renderCentredText(Download_8011d068, 94, getDabasMenuY(3) + 2, selectedSlot == 3 ? 0x5L : 0x4L);
     renderMenuItems(194, 37, menuItems_8011d7c8, 0, 6, _800bdb9c.derefNullable(), _800bdba0.derefNullable());
     renderEightDigitNumber(100, 147, (int)dabasGold_8011dd08.get(), 0x2L);
 
@@ -5446,7 +5061,6 @@ public final class SItem {
         case 0 -> new LodString("Send gold and items\nDabas has found to\nthe main game.");
         case 1 -> new LodString("Delete items from\nthe Pocket Station.");
         case 2 -> new LodString("Leave for the\nnext adventure.");
-        case 3 -> new LodString("Download to the\nPocket Station.");
         default -> null;
       };
     }
