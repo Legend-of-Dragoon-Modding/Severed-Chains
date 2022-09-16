@@ -17,7 +17,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
-import legend.core.kernel.PriorityChainEntry;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -106,7 +105,6 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
 import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
-import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -222,8 +220,6 @@ import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bed60;
-import static legend.game.Scus94491BpeSegment_800b._800bee80;
-import static legend.game.Scus94491BpeSegment_800b._800bee88;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0c0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0c4;
@@ -6786,201 +6782,35 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    if(_800bee80.get(joypadIndex).get() != 0) {
-      return;
-    }
-
-    if(a1 == 0) {
-      //LAB_8002bbc0
-      FUN_8002c150(joypadIndex);
-      return;
-    }
-
-    _800bed60.get(joypadIndex).b34.set(0);
-
-    final long v1;
-    final int a2;
-    final int a3;
-    if(a1 == 0x1L) {
-      //LAB_8002bbd0
-      v1 = mainCallbackIndex_8004dd20.get();
-      if(v1 != 0x5L) {
-        //LAB_8002bbec
-        a3 = 0;
-        a2 = 0x80;
-      } else {
-        a3 = 0;
-        a2 = 0x78;
-      }
-      //LAB_8002bba8
-    } else if(a1 == 0x2L) {
-      //LAB_8002bbf4
-      v1 = mainCallbackIndex_8004dd20.get();
-      if(v1 == 0x5L) {
-        //LAB_8002bc18
-        a3 = 0;
-        a2 = 0x96;
-      } else if(v1 == 0x6L) {
-        //LAB_8002bc24
-        a3 = 0x1;
-        a2 = (int)(-128 - (_800bee88.get() & 0xff));
-      } else {
-        a3 = 0x1;
-        a2 = 0x80;
-      }
-    } else if(a1 == 0x3L) {
-      //LAB_8002bc38
-      v1 = mainCallbackIndex_8004dd20.get();
-      if(v1 == 0x5L) {
-        //LAB_8002bc5c
-        a3 = 0;
-        a2 = 0xc8;
-      } else if(v1 == 0x6L) {
-        //LAB_8002bc68
-        a3 = 0x1;
-        a2 = (int)~(_800bee88.get() & 0xff);
-      } else {
-        a3 = 0x1;
-        a2 = 0xff;
-      }
-    } else {
-      throw new RuntimeException("Impossible case?");
-    }
-
-    //LAB_8002bc78
-    //LAB_8002bc80
-    final JoyStruct joyStruct = _800bed60.get(joypadIndex);
-
-    if(joyStruct.s5c.get() != 0) {
-      joyStruct.bArr58.get(0).set(a3);
-      joyStruct.bArr58.get(1).set(a2);
-    } else {
-      //LAB_8002bcac
-      joyStruct.bArr58.get(0).set(0x40);
-      joyStruct.bArr58.get(1).set(0x1);
-    }
-
-    //LAB_8002bcb8
+    LOGGER.info("Rumble 8002bb38 %x %x", joypadIndex, a1);
   }
 
   @Method(0x8002bcc8L)
-  public static void FUN_8002bcc8(long a0, long a1) {
-    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0 && _800bee80.get((int)a0).get() == 0) {
-      final JoyStruct a2 = _800bed60.get((int)a0);
-
-      a2.b34.set(0);
-
-      if((int)a1 < 0) {
-        a1 = 0;
-      }
-
-      //LAB_8002bd18
-      if((int)a1 >= 0x200L) {
-        a1 = 0x1ffL;
-      }
-
-      //LAB_8002bd2c
-      if((int)a1 >= 0x81L) {
-        a1 = a1 - _800bee88.get();
-      }
-
-      //LAB_8002bd44
-      long v0;
-      if((int)a1 >= 0) {
-        v0 = a1;
-      } else {
-        v0 = a1 + 0xffL;
-      }
-
-      //LAB_8002bd50
-      a0 = v0 / 0x100;
-      v0 = a1 - a0 * 0x100;
-
-      if(a2.s5c.get() != 0) {
-        a2.bArr58.get(0).set((int)a0);
-        a2.bArr58.get(1).set((int)v0);
-        //LAB_8002bd74
-      } else if(((a0 | v0) & 0xffL) != 0) {
-        a2.bArr58.get(0).set((int)0x40L);
-        a2.bArr58.get(1).set((int)0x1L);
-      } else {
-        //LAB_8002bd94
-        a2.bArr58.get(0).set(0);
-        a2.bArr58.get(1).set(0);
-      }
-    }
-
-    //LAB_8002bd9c
-  }
-
-  @Method(0x8002bda4L)
-  public static void FUN_8002bda4(final long a0, long a1, final long a2) {
+  public static void FUN_8002bcc8(final long a0, final long a1) {
     if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       return;
     }
 
-    if(_800bee80.get((int)a0).get() != 0) {
-      return;
-    }
-
-    //LAB_8002bdf4
-    a1 = MathHelper.clamp(a1, 0, 0x1ffL);
-
-    //LAB_8002be04
-    //LAB_8002be10
-    final JoyStruct t1 = _800bed60.get((int)a0);
-    t1.b35.set((int)a1 / 0x100);
-    t1.b36.set((int)a1 % 0x100);
-
-    final long[] sp0x10 = {t1.b35.get() << 16, t1.b36.get() << 16};
-
-    if(a2 == 0) {
-      FUN_8002bcc8(a0, a1);
-      return;
-    }
-
-    //LAB_8002be54
-    t1.b34.set(1);
-
-    long a3 = vsyncMode_8007a3b8.get();
-
-    if(a3 == 0) {
-      a3 = 0x1L;
-    }
-
-    //LAB_8002be74
-    if(mainCallbackIndex_8004dd20.get() == 0x9L) {
-      a3 = 0x1L;
-    }
-
-    //LAB_8002be88
-    //LAB_8002be90
-    for(int i = 0; i < 2; i++) {
-      final long v1 = t1.bArr58.get(i).get() << 16;
-      t1.iArr20.get(i).set(v1);
-      t1.iArr28.get(i).set((sp0x10[i] - v1) / a2 * a3);
-    }
-
-    t1.i30.set((int)(a2 / a3));
-
-    //LAB_8002bef0
+    LOGGER.info("Rumble 8002bcc8 %x %x", a0, a1);
   }
 
-  @Method(0x8002c150L)
-  public static void FUN_8002c150(final int joypadIndex) {
-    _800bed60.get(joypadIndex).b34.set(0);
-    _800bed60.get(joypadIndex).bArr58.get(0).set(0);
-    _800bed60.get(joypadIndex).bArr58.get(1).set(0);
+  @Method(0x8002bda4L)
+  public static void FUN_8002bda4(final long a0, final long a1, final long a2) {
+    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
+      return;
+    }
+
+    LOGGER.info("Rumble 8002bda4 %x %x %x", a0, a1, a2);
   }
 
   @Method(0x8002c178L)
   public static void FUN_8002c178(final int a0) {
-    _800bee88.setu(a0);
+    LOGGER.info("Rumble 8002c178 %x", a0);
   }
 
   @Method(0x8002c184L)
   public static void FUN_8002c184() {
-    _800bee88.setu(0);
+    LOGGER.info("Rumble 8002c184");
   }
 
   @Method(0x8002c268L)
