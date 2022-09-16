@@ -34,7 +34,6 @@ import legend.game.types.GsOT_TAG;
 import legend.game.types.JoyData;
 import legend.game.types.LodString;
 
-import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.LibDs.DSL_MAX_RESULTS;
 
@@ -124,17 +123,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);
   public static final Value _80052dc0 = MEMORY.ref(4, 0x80052dc0L);
-
-  public static final Value _80052e1c = MEMORY.ref(4, 0x80052e1cL);
-
-  public static final Value _80052e2c = MEMORY.ref(4, 0x80052e2cL);
-  public static final Value _80052e30 = MEMORY.ref(4, 0x80052e30L);
-  public static final Value _80052e34 = MEMORY.ref(4, 0x80052e34L);
-  public static final Value _80052e38 = MEMORY.ref(4, 0x80052e38L);
-  public static final Value _80052e3c = MEMORY.ref(4, 0x80052e3cL);
-  public static final Value _80052e40 = MEMORY.ref(4, 0x80052e40L);
-
-  public static final Value memcardEventIndex_80052e4c = MEMORY.ref(4, 0x80052e4cL);
 
   public static final Value _80052f24 = MEMORY.ref(4, 0x80052f24L);
 
@@ -314,7 +302,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059550 = MEMORY.ref(4, 0x80059550L);
   public static final Value _80059554 = MEMORY.ref(4, 0x80059554L);
   public static final Value _80059558 = MEMORY.ref(4, 0x80059558L);
-  public static final Value _8005955c = MEMORY.ref(4, 0x8005955cL);
   public static final Value _80059560 = MEMORY.ref(4, 0x80059560L);
   public static final Value _80059564 = MEMORY.ref(4, 0x80059564L);
   public static final Value _80059568 = MEMORY.ref(4, 0x80059568L);
@@ -326,20 +313,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _80059594 = MEMORY.ref(4, 0x80059594L);
   public static final Value _80059598 = MEMORY.ref(4, 0x80059598L);
   public static final Value _8005959c = MEMORY.ref(4, 0x8005959cL);
-
-  public static final Value _800595a4 = MEMORY.ref(4, 0x800595a4L);
-
-  static {
-    GATE.acquire();
-  }
-
-  public static final Pointer<Pointer<ArrayRef<Pointer<PriorityChainEntry>>>> priorityChain_80059570 = MEMORY.ref(4, 0x80059570L, Pointer.of(4, Pointer.of(4, ArrayRef.of(Pointer.classFor(PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, PriorityChainEntry::new)))));
-
-  static {
-    GATE.release();
-  }
-
   public static final Value _800595a0 = MEMORY.ref(4, 0x800595a0L);
+  public static final Value _800595a4 = MEMORY.ref(4, 0x800595a4L);
 
   public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(4, FunctionRef::new));
   public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(4, ConsumerRef::new));
@@ -383,7 +358,6 @@ public final class Scus94491BpeSegment_8005 {
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
    */
   public static final Value _80059f7c = MEMORY.ref(2, 0x80059f7cL);
-  public static final Value _80059f7e = MEMORY.ref(2, 0x80059f7eL);
 
   public static final Value sssqFadeCurrent_8005a1ce = MEMORY.ref(2, 0x8005a1ceL);
   public static final Value sssqStatus_8005a1d0 = MEMORY.ref(4, 0x8005a1d0L);

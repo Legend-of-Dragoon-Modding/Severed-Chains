@@ -406,7 +406,7 @@ public final class Ttle {
     _800c6754.setu(0);
     _800c6758.setu(100L);
 
-    hasSavedGames(0);
+    hasSavedGames();
 
     hasSavedGames_800c66e4.setu(0);
     selectedMenuOption_800ce774.setu(0);
@@ -768,7 +768,7 @@ public final class Ttle {
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
     if(hasSavedGames_800c66e4.get() == 0) {
-      hasSavedGames_800c66e4.setu(hasSavedGames(0x1L));
+      hasSavedGames_800c66e4.setu(hasSavedGames());
       selectedMenuOption_800ce774.setu(hasSavedGames_800c66e4.get() == 1 ? 1 : 0);
       return;
     }

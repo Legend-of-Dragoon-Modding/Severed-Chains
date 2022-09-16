@@ -4264,9 +4264,9 @@ public final class SMap {
 
   @Method(0x800e3d68L)
   public static void FUN_800e3d68() {
-    _800bee90.setu(0);
-    _800bee94.setu(0);
-    _800bee98.setu(0);
+//    _800bee90.setu(0);
+//    _800bee94.setu(0);
+//    _800bee98.setu(0);
   }
 
   /** Callback for two different MRG files (sectors 136752 and 136849) */

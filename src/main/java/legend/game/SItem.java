@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.Tuple;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -30,7 +29,6 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.LevelStuff08;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
-import legend.game.types.MemcardStruct28;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuGlyph06;
 import legend.game.types.MenuItemStruct04;
@@ -91,10 +89,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002df60;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002eb28;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002ed48;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002efb8;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
@@ -109,10 +103,8 @@ import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.readMemcardFile;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
-import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -196,9 +188,6 @@ public final class SItem {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SItem.class);
 
-  /** String: "BASCUS-94491drgnpda" */
-  public static final Value drgnpda_800fb7a0 = MEMORY.ref(1, 0x800fb7a0L);
-
   public static final Value _800fba58 = MEMORY.ref(4, 0x800fba58L);
 
   public static final ArrayRef<UnsignedByteRef> additionXpPerLevel_800fba2c = MEMORY.ref(1, 0x800fba2cL, ArrayRef.of(UnsignedByteRef.class, 5, 1, UnsignedByteRef::new));
@@ -206,9 +195,6 @@ public final class SItem {
   public static final ArrayRef<MenuStruct08> _800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStruct08.class, 8, 8, MenuStruct08::new));
 
   public static final Value _800fbabc = MEMORY.ref(4, 0x800fbabcL);
-
-  /** String "*" */
-  public static final Value asterisk_800fbadc = MEMORY.ref(1, 0x800fbadcL);
 
   public static final Value _800fbb44 = MEMORY.ref(1, 0x800fbb44L);
 
@@ -300,8 +286,6 @@ public final class SItem {
   public static final LodString _8011c340 = MEMORY.ref(2, 0x8011c340L, LodString::new);
   /** "Do you want to save now?" */
   public static final LodString Do_you_want_to_save_now_8011c370 = MEMORY.ref(2, 0x8011c370L, LodString::new);
-  /** "" */
-  public static final LodString Blank_8011c3a4 = MEMORY.ref(2, 0x8011c3a4L, LodString::new);
   /** "Confused" */
   public static final LodString Confused_8011c3bc = MEMORY.ref(2, 0x8011c3bcL, LodString::new);
   public static final LodString Are_you_sure_you_want_to_buy_8011c3ec = MEMORY.ref(2, 0x8011c3ecL, LodString::new);
@@ -317,15 +301,9 @@ public final class SItem {
   public static final LodString Are_you_sure_you_want_to_sell_8011c568 = MEMORY.ref(2, 0x8011c568L, LodString::new);
   /** "New Addition" */
   public static final LodString New_Addition_8011c5a8 = MEMORY.ref(2, 0x8011c5a8L, LodString::new);
-  /** "" */
-  public static final LodString Blank_8011c5d8 = MEMORY.ref(2, 0x8011c5d8L, LodString::new);
   public static final LodString No_item_to_sell_8011c5dc = MEMORY.ref(2, 0x8011c5dcL, LodString::new);
   public static final LodString No_weapon_to_sell_8011c5fc = MEMORY.ref(2, 0x8011c5fcL, LodString::new);
   public static final LodString Do_you_want_to_be_armed_with_it_8011c620 = MEMORY.ref(2, 0x8011c620L, LodString::new);
-  /** "" */
-  public static final LodString Blank_8011c668 = MEMORY.ref(2, 0x8011c668L, LodString::new);
-  /** "m" */
-  public static final LodString m_8011c66c = MEMORY.ref(2, 0x8011c66cL, LodString::new);
   public static final LodString Is_armed_8011c670 = MEMORY.ref(2, 0x8011c670L, LodString::new);
   public static final LodString Put_in_the_bag_8011c684 = MEMORY.ref(2, 0x8011c684L, LodString::new);
 
@@ -340,47 +318,23 @@ public final class SItem {
   public static final LodString Stay_8011c820 = MEMORY.ref(2, 0x8011c820L, LodString::new);
   public static final LodString Half_8011c82c = MEMORY.ref(2, 0x8011c82cL, LodString::new);
   public static final LodString Off_8011c838 = MEMORY.ref(2, 0x8011c838L, LodString::new);
-  /** "" */
-  public static final LodString _8011c8bc = MEMORY.ref(2, 0x8011c8bcL, LodString::new);
-  /** "" */
-  public static final LodString _8011c8c8 = MEMORY.ref(2, 0x8011c8c8L, LodString::new);
-  /** "" */
-  public static final LodString _8011c8cc = MEMORY.ref(2, 0x8011c8ccL, LodString::new);
   /**
    * "Really want"
    * "to throw"
    * "this away?"
    */
   public static final LodString Really_want_to_throw_this_away_8011c8d4 = MEMORY.ref(2, 0x8011c8d4L, LodString::new);
-  /** "Item thrown away" */
-  public static final LodString Item_thrown_away_8011c914 = MEMORY.ref(2, 0x8011c914L, LodString::new);
   /** "Save new game?" */
   public static final LodString Save_new_game_8011c9c8 = MEMORY.ref(2, 0x8011c9c8L, LodString::new);
   /** "Overwrite save?" */
   public static final LodString Overwrite_save_8011c9e8 = MEMORY.ref(2, 0x8011c9e8L, LodString::new);
   /** "Load this data?" */
   public static final LodString Load_this_data_8011ca08 = MEMORY.ref(2, 0x8011ca08L, LodString::new);
-  /** "" */
-  public static final LodString _8011cd28 = MEMORY.ref(2, 0x8011cd28L, LodString::new);
   /** "Saved" */
   public static final LodString Saved_8011cb2c = MEMORY.ref(2, 0x8011cb2cL, LodString::new);
   public static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
   /** "" */
-  public static final LodString _8011cdfc = MEMORY.ref(2, 0x8011cdfcL, LodString::new);
-  /** "" */
-  public static final LodString _8011ce00 = MEMORY.ref(2, 0x8011ce00L, LodString::new);
-  /** "" */
-  public static final LodString _8011ce04 = MEMORY.ref(2, 0x8011ce04L, LodString::new);
-  /** "" */
-  public static final LodString _8011ce08 = MEMORY.ref(2, 0x8011ce08L, LodString::new);
-  /** "" */
-  public static final LodString _8011ce0c = MEMORY.ref(2, 0x8011ce0cL, LodString::new);
-  /** "" */
   public static final LodString _8011ce10 = MEMORY.ref(2, 0x8011ce10L, LodString::new);
-  /** "" */
-  public static final LodString _8011ce14 = MEMORY.ref(2, 0x8011ce14L, LodString::new);
-  /** "" */
-  public static final LodString _8011ce18 = MEMORY.ref(2, 0x8011ce18L, LodString::new);
   /** "Status" */
   public static final LodString Status_8011ceb4 = MEMORY.ref(2, 0x8011ceb4L, LodString::new);
   /** "Item" */
@@ -403,8 +357,6 @@ public final class SItem {
   public static final LodString List_8011cf3c = MEMORY.ref(2, 0x8011cf3cL, LodString::new);
   /** "Goods" */
   public static final LodString Goods_8011cf48 = MEMORY.ref(2, 0x8011cf48L, LodString::new);
-  /** "" */
-  public static final LodString _8011cf54 = MEMORY.ref(2, 0x8011cf54L, LodString::new);
   public static final LodString Vibrate_8011cf58 = MEMORY.ref(2, 0x8011cf58L, LodString::new);
   public static final LodString Off_8011cf6c = MEMORY.ref(2, 0x8011cf6cL, LodString::new);
   public static final LodString On_8011cf74 = MEMORY.ref(2, 0x8011cf74L, LodString::new);
@@ -426,31 +378,17 @@ public final class SItem {
   public static final LodString SpecialItem_8011d054 = new LodString("Special Item");
   public static final LodString Take_8011d058 = new LodString("Take");
   public static final LodString Discard_8011d05c = new LodString("Discard");
-  public static final LodString TakeItemsFromDabas_8011d060 = new LodString("Take items from Dabas?");
   public static final LodString NextDig_8011d064 = new LodString("Next Dig");
-  public static final LodString Download_8011d068 = new LodString("Download");
   public static final LodString _8011d534 = MEMORY.ref(2, 0x8011d534L, LodString::new);
   public static final LodString _8011d560 = MEMORY.ref(2, 0x8011d560L, LodString::new);
   public static final LodString _8011d57c = MEMORY.ref(2, 0x8011d57cL, LodString::new);
   public static final LodString _8011d584 = MEMORY.ref(2, 0x8011d584L, LodString::new);
   public static final LodString _8011d58c = MEMORY.ref(2, 0x8011d58cL, LodString::new);
   public static final LodString _8011d594 = MEMORY.ref(2, 0x8011d594L, LodString::new);
-  /** "" */
-  public static final LodString _8011d5c4 = MEMORY.ref(2, 0x8011d5c4L, LodString::new);
   public static final LodString _8011d5c8 = MEMORY.ref(2, 0x8011d5c8L, LodString::new);
   public static final LodString _8011d5e0 = MEMORY.ref(2, 0x8011d5e0L, LodString::new);
   public static final LodString _8011d604 = MEMORY.ref(2, 0x8011d604L, LodString::new);
   public static final LodString _8011d618 = MEMORY.ref(2, 0x8011d618L, LodString::new);
-  /** "" */
-  public static final LodString _8011d700 = MEMORY.ref(2, 0x8011d700L, LodString::new);
-  /** "" */
-  public static final LodString _8011d704 = MEMORY.ref(2, 0x8011d704L, LodString::new);
-  /** "" */
-  public static final LodString _8011d708 = MEMORY.ref(2, 0x8011d708L, LodString::new);
-  /** "" */
-  public static final LodString _8011d70c = MEMORY.ref(2, 0x8011d70cL, LodString::new);
-  /** "" */
-  public static final LodString _8011d710 = MEMORY.ref(2, 0x8011d710L, LodString::new);
 
   public static final ArrayRef<Pointer<Renderable58>> _8011d718 = MEMORY.ref(4, 0x8011d718L, ArrayRef.of(Pointer.classFor(Renderable58.class), 7, 4, Pointer.deferred(4, Renderable58::new)));
 
@@ -511,19 +449,6 @@ public final class SItem {
 
   public static final Value _8011e094 = MEMORY.ref(4, 0x8011e094L);
   public static final ArrayRef<MenuAdditionInfo> additions_8011e098 = MEMORY.ref(1, 0x8011e098L, ArrayRef.of(MenuAdditionInfo.class, 9, 0x2, MenuAdditionInfo::new));
-
-  public static final Value memcardDataPtr_8011e0b0 = MEMORY.ref(4, 0x8011e0b0L);
-  public static final Pointer<ArrayRef<MemcardStruct28>> _8011e0b4 = MEMORY.ref(4, 0x8011e0b4L, Pointer.of(4, ArrayRef.of(MemcardStruct28.class, 0x10, 0x28, MemcardStruct28::new)));
-  public static final IntRef memcardSaveIndex_8011e0b8 = MEMORY.ref(4, 0x8011e0b8L, IntRef::new);
-  public static final Value _8011e0bc = MEMORY.ref(4, 0x8011e0bcL);
-  public static final Value memcardSaveCount_8011e0c0 = MEMORY.ref(4, 0x8011e0c0L);
-  public static final Value _8011e0c4 = MEMORY.ref(1, 0x8011e0c4L);
-  public static final Value _8011e0c5 = MEMORY.ref(1, 0x8011e0c5L);
-  public static final Value _8011e0c6 = MEMORY.ref(1, 0x8011e0c6L);
-
-  public static final Value _8011e0c8 = MEMORY.ref(4, 0x8011e0c8L);
-  public static final Value _8011e0cc = MEMORY.ref(4, 0x8011e0ccL);
-  public static final Value _8011e0d0 = MEMORY.ref(1, 0x8011e0d0L);
 
   public static final Value memcardSaveLoadingStage_8011e0d4 = MEMORY.ref(1, 0x8011e0d4L);
   public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
@@ -2027,7 +1952,7 @@ public final class SItem {
       case INIT_LOAD_GAME_37:
         _8004dd30.setu(0x1L);
         loadCharacterStats(0);
-        FUN_80103bd4(0);
+        FUN_80103bd4();
         scriptStartEffect(0x2L, 0xaL);
         inventoryMenuState_800bdc28.set(InventoryMenuState._40);
         deallocateRenderables(0xffL);
@@ -2302,7 +2227,7 @@ public final class SItem {
         if(confirmDest_800bdc30.get() == InventoryMenuState._122) {
           //LAB_8010069c
           inventoryMenuState_800bdc28.set(InventoryMenuState._119);
-          renderDabasMenu(selectedSlot_8011d740.get(), 0);
+          renderDabasMenu(selectedSlot_8011d740.get());
           break;
         }
 
@@ -2353,7 +2278,7 @@ public final class SItem {
         renderGlyphs(dabasMenuGlyphs_80114228, 0, 0);
         renderablePtr_800bdbe8.set(allocateUiElement(0x9f, 0x9f, 60, getDabasMenuY(selectedSlot_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
-        renderDabasMenu(selectedSlot_8011d740.get(), 0xff);
+        renderDabasMenu(selectedSlot_8011d740.get());
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_INIT_3_74);
         break;
 
@@ -2371,7 +2296,7 @@ public final class SItem {
           menuItem._02.set(0);
         }
 
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(DabasManager.hasSave()) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_LOAD_DATA_77);
@@ -2382,7 +2307,7 @@ public final class SItem {
         break;
 
       case DABAS_LOAD_DATA_77: {
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         MEMORY.setBytes(dabasData_8011d7c0.getPointer(), DabasManager.loadSave(), 0x580, 0x80);
 
@@ -2490,7 +2415,7 @@ public final class SItem {
 
         //LAB_8010157c
         //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
 
       case DABAS_DISCARD_INIT_94: {
@@ -2499,7 +2424,7 @@ public final class SItem {
 
         setMessageBoxText(str, 0x2);
         messageBox_8011dc90.menuIndex_18.set(1);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80100db4
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_CONFIRM_ACTION_99);
@@ -2512,7 +2437,7 @@ public final class SItem {
 
         setMessageBoxText(str, 0x2);
         messageBox_8011dc90.menuIndex_18.set(1);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80100db4
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_CONFIRM_ACTION_99);
@@ -2526,7 +2451,7 @@ public final class SItem {
         setMessageBoxText(str, 0x2);
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_CONFIRM_ACTION_99);
         _8011dca8.setu(0x1L);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
       }
 
@@ -2552,11 +2477,11 @@ public final class SItem {
         //LAB_80100e48
         //LAB_8010157c
         //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
 
       case DABAS_PERFORM_ACTION_101: {
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         inventoryMenuState_800bdc28.set(InventoryMenuState._102);
 
         final DabasData100 dabasData2 = dabasData_8011d7c0.deref();
@@ -2637,7 +2562,7 @@ public final class SItem {
       }
 
       case _102:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           final long state = dabasState_8011d758.get();
@@ -2683,7 +2608,7 @@ public final class SItem {
         string.set(response);
 
         setMessageBoxText(string, 0);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80101650
         inventoryMenuState_800bdc28.set(InventoryMenuState._109);
@@ -2709,7 +2634,7 @@ public final class SItem {
         string.set(response);
 
         setMessageBoxText(string, 0);
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80101650
         inventoryMenuState_800bdc28.set(InventoryMenuState._109);
@@ -2717,7 +2642,7 @@ public final class SItem {
       }
 
       case DABAS_TAKE_ITEMS_FINISHED_105:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           if(dabasGold_8011dd08.get() == 0) {
             //LAB_8010175c
@@ -2751,7 +2676,7 @@ public final class SItem {
 
         if(messageBox_8011dc90.ticks_10.get() < 3) {
           //LAB_80101580
-          renderDabasMenu(selectedSlot_8011d740.get(), 0);
+          renderDabasMenu(selectedSlot_8011d740.get());
           break;
         }
 
@@ -2766,7 +2691,7 @@ public final class SItem {
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
           //LAB_80101580
-          renderDabasMenu(selectedSlot_8011d740.get(), 0);
+          renderDabasMenu(selectedSlot_8011d740.get());
           break;
         }
 
@@ -2777,7 +2702,7 @@ public final class SItem {
 
         //LAB_8010157c
         //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
 
       case _107:
@@ -2815,7 +2740,7 @@ public final class SItem {
 
         //LAB_8010157c
         //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
 
       case _108:
@@ -2834,11 +2759,11 @@ public final class SItem {
 
         //LAB_8010157c
         //LAB_80101580
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         break;
 
       case _110:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) == MessageBoxResult.AWAITING_INPUT) {
           return;
@@ -2852,7 +2777,7 @@ public final class SItem {
         break;
 
       case _116:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           //LAB_801016b0
@@ -2865,7 +2790,7 @@ public final class SItem {
       case _78:
       case _109:
       case _119:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           if(inventoryMenuState_800bdc28.get() == InventoryMenuState._109) {
@@ -2879,7 +2804,7 @@ public final class SItem {
         break;
 
       case _120:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           removeFromLinkedList(dabasFilePtr_8011dd00.get());
@@ -2891,7 +2816,7 @@ public final class SItem {
         break;
 
       case _122:
-        renderDabasMenu(selectedSlot_8011d740.get(), 0);
+        renderDabasMenu(selectedSlot_8011d740.get());
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           v1 = memcardState_8011d7b8.get();
           if(v1 == 0 || v1 == 0x3L) {
@@ -2955,7 +2880,7 @@ public final class SItem {
           case 0xb -> FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
           //LAB_80101af4
           case 0xc -> renderSavedGames(slotScroll_8011d744.get(), true, 0xfeL);
-          case 0xd -> renderDabasMenu(selectedSlot_8011d740.get(), 0xfe);
+          case 0xd -> renderDabasMenu(selectedSlot_8011d740.get());
           //LAB_80101af4
           case 0xe -> renderSavedGames(slotScroll_8011d744.get(), false, 0xfeL);
         }
@@ -3267,7 +3192,7 @@ public final class SItem {
 
     //LAB_80102e48
     for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      FUN_80108464(FUN_800fc8c0(i) - 5, 120, characterIndices_800bdbb8.get(i).get(), 0x1L, s2);
+      FUN_80108464(FUN_800fc8c0(i) - 5, 120, characterIndices_800bdbb8.get(i).get(), s2);
     }
 
     //LAB_80102e88
@@ -3334,7 +3259,7 @@ public final class SItem {
   }
 
   @Method(0x80103168L)
-  public static void renderDabasMenu(final int selectedSlot, final int a1) {
+  public static void renderDabasMenu(final int selectedSlot) {
     //LAB_801031cc
     renderText(DigDabas_8011d04c,  48,  28, 0x4L);
     renderText(AcquiredItems_8011d050, 210,  28, 0x4L);
@@ -3626,7 +3551,7 @@ public final class SItem {
   }
 
   @Method(0x80103bd4L)
-  public static void FUN_80103bd4(final long unused) {
+  public static void FUN_80103bd4() {
     //LAB_80103be8
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       tempSaveData_8011dcc0.offset(0x8L).offset(charSlot * 0x4L).setu(gameState_800babc8.charIndex_88.get(charSlot).get());
@@ -4953,7 +4878,7 @@ public final class SItem {
   }
 
   @Method(0x80108464L)
-  public static void FUN_80108464(final int x, final int y, final int charIndex, final long a3, final long a4) {
+  public static void FUN_80108464(final int x, final int y, final int charIndex, final long a4) {
     if(charIndex != -1) {
       FUN_80107e70(x - 4, y - 6, charIndex);
 
@@ -5455,237 +5380,10 @@ public final class SItem {
     tmp.release();
   }
 
-  @Method(0x80109b08L)
-  public static long executeMemcardLoadingStage(final long a0, final long memcardData) {
-    final long v0;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long s0;
-
-    LOGGER.info("Memcard loading stage %d", memcardSaveLoadingStage_8011e0d4.get());
-
-    switch((int)memcardSaveLoadingStage_8011e0d4.get()) {
-      case 1 -> {
-        _8011e0bc.setu(0);
-        memcardSaveCount_8011e0c0.setu(0);
-        _8011e0c4.setu(0);
-        _8011e0c5.setu(0);
-        _8011e0c6.setu(0xfL);
-        _8011e0c8.setu(0);
-        _8011e0cc.setu(0);
-        _8011e0d0.setu(0);
-        memcardSaveLoadingStage_8011e0d4.addu(0x1L);
-        FUN_8002df60(0);
-      }
-
-      case 2 -> {
-        final UnsignedIntRef memcardEvent = new UnsignedIntRef();
-        final UnsignedIntRef memcardState = new UnsignedIntRef();
-        FUN_8002efb8(0, memcardEvent, memcardState);
-
-        _8011e0b4.setPointer(addToLinkedListTail(0x280L));
-        memcardDataPtr_8011e0b0.setu(addToLinkedListTail(0x100L));
-
-        //LAB_80109bfc
-        a1 = memcardData + 0x348L;
-        a2 = 0xeL;
-        do {
-          MEMORY.ref(1, a1).offset(0x4L).setu(0xffL);
-          a2 = a2 - 0x1L;
-          a1 = a1 - 0x3cL;
-        } while((int)a2 >= 0);
-
-        v1 = memcardState.get();
-        if(v1 == 0x1L || v1 == 0x2L) {
-          //LAB_80109ea4
-          _8011e0c8.setu(v1);
-          memcardSaveLoadingStage_8011e0d4.setu(0x8L);
-        } else if(v1 == 0x4L) {
-          //LAB_80109ea4
-          _8011e0c8.setu(v1);
-          memcardSaveLoadingStage_8011e0d4.setu(0x8L);
-        } else {
-          //LAB_80109c30
-          final Ref<Long> fileCount = new Ref<>(memcardSaveCount_8011e0c0.get());
-          v0 = FUN_8002ed48(0, asterisk_800fbadc.getAddress(), _8011e0b4.deref(), fileCount, 0, 0xfL);
-          memcardSaveCount_8011e0c0.setu(fileCount.get());
-          _8011e0c8.setu(v0);
-          if(v0 != 0) {
-            v1 = 0x8L;
-          } else {
-            v1 = 0x4L;
-          }
-
-          //LAB_80109c70
-          memcardSaveLoadingStage_8011e0d4.setu(v1);
-          memcardSaveIndex_8011e0b8.set(0);
-        }
-
-        //LAB_8010a098
-      }
-
-      case 4 -> {
-        for(int memcardSaveIndex = memcardSaveIndex_8011e0b8.get(); memcardSaveIndex < memcardSaveCount_8011e0c0.get(); memcardSaveIndex++) {
-          //LAB_80109cb4
-          final MemcardStruct28 struct = _8011e0b4.deref().get(memcardSaveIndex);
-
-          if(struct._18.get() >= 0) {
-            a3 = struct._18.get();
-          } else {
-            a3 = struct._18.get() + 0x1fffL;
-          }
-
-          //LAB_80109ce0
-          a3 = a3 >> 13;
-          s0 = a3 + (struct._18.get() & 0x1fffL) > 0 ? 1 : 0;
-          _8011e0c6.subu(s0);
-          if(strncmp(struct.name_00.get(), "BASCUS-94491drgnpda", 19) == 0) {
-            _8011e0c5.setu(s0);
-            //LAB_80109d28
-          } else if(strncmp(struct.name_00.get(), "BASCUS-94491drgn00", 18) != 0) {
-            _8011e0bc.addu(s0);
-          } else {
-            //LAB_80109d70
-            readMemcardFile(0, struct.name_00.get(), memcardDataPtr_8011e0b0.get(), 0x180L, 0x80L);
-
-            final UnsignedIntRef memcardState = new UnsignedIntRef();
-            if(FUN_8002efb8(0x1L, new UnsignedIntRef(), memcardState) != 0) {
-              if(memcardState.get() == 0) {
-                s0 = memcardDataPtr_8011e0b0.deref(1).offset(0x4L).get();
-
-                if(s0 < 0xfL && MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).get() == 0xffL) {
-                  //LAB_80109e38
-                  if(memcardDataPtr_8011e0b0.deref(4).get() == 0x5a02_0006L) {
-                    memcpy(memcardData + s0 * 0x3cL, memcardDataPtr_8011e0b0.get(), 0x3c);
-
-                    final long a0_0 = MEMORY.ref(4, memcardData).offset(s0 * 0x3cL).offset(0x30L).get();
-                    if(_8011e0cc.get() < a0_0) { //TODO maybe selects the newest save?
-                      _8011e0cc.setu(a0_0);
-                      _8011e0d0.setu(s0);
-                    }
-
-                    //LAB_80109e7c
-                    _8011e0c4.addu(0x1L);
-                  } else {
-                    //LAB_80109e90
-                    MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfdL);
-                  }
-                } else {
-                  //LAB_80109e1c
-                  MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfeL);
-                }
-              }
-            }
-          }
-        }
-
-        memcardSaveLoadingStage_8011e0d4.setu(0x7L);
-
-        //LAB_8010a098
-      }
-
-      // Save files loaded
-      case 7 -> {
-        s0 = 0xeL;
-
-        //LAB_80109f04
-        for(a2 = 0; a2 < (int)_8011e0c5.get(); a2++) {
-          //LAB_80109f28
-          while(MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).get() != 0xffL) {
-            if(s0 != 0) {
-              s0--;
-            }
-
-            //LAB_80109f38
-          }
-
-          //LAB_80109f58
-          MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfcL);
-        }
-
-        //LAB_80109f80
-        //LAB_80109fa4
-        for(a2 = 0; a2 < (int)_8011e0bc.get(); a2++) {
-          //LAB_80109fc8
-          while(MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).get() != 0xffL) {
-            if(s0 != 0) {
-              s0--;
-            }
-
-            //LAB_80109fd8
-          }
-
-          //LAB_80109ff8
-          MEMORY.ref(1, memcardData).offset(s0 * 0x3cL).offset(0x4L).setu(0xfeL);
-        }
-
-        //LAB_8010a068
-        //LAB_8010a06c
-        removeFromLinkedList(_8011e0b4.getPointer());
-        removeFromLinkedList(memcardDataPtr_8011e0b0.get());
-        memcardSaveLoadingStage_8011e0d4.setu(0);
-
-        //LAB_8010a098
-      }
-
-      case 8 -> {
-        memcardSaveCount_8011e0c0.setu(0);
-        _8011e0c4.setu(0);
-        _8011e0c5.setu(0);
-        _8011e0c6.setu(0xfL);
-        _8011e0cc.setu(0);
-        _8011e0d0.setu(0);
-
-        //LAB_8010a058
-        a1 = memcardData + 0x348L;
-        a2 = 0xeL;
-        do {
-          MEMORY.ref(1, a1).offset(0x4L).setu(0xffL);
-          a1 -= 0x3cL;
-          a2--;
-        } while((int)a2 >= 0);
-
-        //LAB_8010a068
-        //LAB_8010a06c
-        removeFromLinkedList(_8011e0b4.getPointer());
-        removeFromLinkedList(memcardDataPtr_8011e0b0.get());
-        memcardSaveLoadingStage_8011e0d4.setu(0);
-
-        //LAB_8010a098
-      }
-    }
-
-    //LAB_8010a09c
-    memcpy(a0, memcardSaveCount_8011e0c0.getAddress(), 0x14);
-    return a0;
-  }
-
   @Method(0x8010a0ecL)
   public static void loadSaveFile(final int saveSlot) {
     final byte[] data = SaveManager.loadGame(saves.get(saveSlot).a());
     MEMORY.setBytes(gameState_800babc8.getAddress(), data, 0x200, 0x52c);
-  }
-
-  @Method(0x8010a1d0L)
-  public static long FUN_8010a1d0(final String file, final long dest, final long pos, final long length) {
-    final UnsignedIntRef state = new UnsignedIntRef();
-    FUN_8002eb28(0, file, dest, pos, length);
-    FUN_8002efb8(0, new UnsignedIntRef(), state);
-
-    if(state.get() == 0) {
-      //LAB_8010a22c
-      return 0;
-    }
-
-    if(state.get() == 1) {
-      //LAB_8010a234
-      return 1;
-    }
-
-    //LAB_8010a238
-    return 3;
   }
 
   @Method(0x8010a248L)

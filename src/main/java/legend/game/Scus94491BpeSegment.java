@@ -1,5 +1,7 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
@@ -322,14 +324,29 @@ import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ADD;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_SUBTRACT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
@@ -565,6 +582,8 @@ public final class Scus94491BpeSegment {
 
   private static final Path state = Paths.get("./state.ddmp");
 
+  private static boolean inputPulse;
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     GPU.window().setFpsLimit(fpsLimit);
@@ -619,6 +638,58 @@ public final class Scus94491BpeSegment {
       }
     });
 
+    final Int2IntMap gamepadKeyMap = new Int2IntOpenHashMap();
+    gamepadKeyMap.put(GLFW_KEY_SPACE, 0x100); // Select
+    gamepadKeyMap.put(GLFW_KEY_Z, 0x200); // L3
+    gamepadKeyMap.put(GLFW_KEY_C, 0x400); // R3
+    gamepadKeyMap.put(GLFW_KEY_ENTER, 0x800); // Start
+    gamepadKeyMap.put(GLFW_KEY_UP, 0x1000); // Up
+    gamepadKeyMap.put(GLFW_KEY_RIGHT, 0x2000); // Right
+    gamepadKeyMap.put(GLFW_KEY_DOWN, 0x4000); // Down
+    gamepadKeyMap.put(GLFW_KEY_LEFT, 0x8000); // Left
+    gamepadKeyMap.put(GLFW_KEY_1, 0x04); // L2
+    gamepadKeyMap.put(GLFW_KEY_3, 0x08); // R2
+    gamepadKeyMap.put(GLFW_KEY_Q, 0x01); // L1
+    gamepadKeyMap.put(GLFW_KEY_E, 0x02); // R1
+    gamepadKeyMap.put(GLFW_KEY_W, 0x10); // Triangle
+    gamepadKeyMap.put(GLFW_KEY_D, 0x40); // Circle
+    gamepadKeyMap.put(GLFW_KEY_S, 0x20); // Cross
+    gamepadKeyMap.put(GLFW_KEY_A, 0x80); // Square
+
+    final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
+
+    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
+      if(mods != 0) {
+        return;
+      }
+
+      final int input = gamepadKeyMap.get(key);
+
+      if(input != 0) {
+        _800bee90.oru(input);
+        _800bee94.oru(input);
+        _800bee98.oru(input);
+
+        keyRepeat.put(input, 0);
+      }
+    });
+
+    GPU.window().events.onKeyRelease((window, key, scancode, mods) -> {
+      if(mods != 0) {
+        return;
+      }
+
+      final int input = gamepadKeyMap.get(key);
+
+      if(input != 0) {
+        _800bee90.and(~input);
+        _800bee94.and(~input);
+        _800bee98.and(~input);
+
+        keyRepeat.remove(input);
+      }
+    });
+
     final Runnable r = () -> {
       EventManager.INSTANCE.clearStaleRefs();
 
@@ -639,6 +710,21 @@ public final class Scus94491BpeSegment {
       FUN_80017f94();
       _800bb0fc.addu(0x1L);
       endFrame();
+
+      _800bee94.setu(0);
+      _800bee98.setu(0);
+
+      if(inputPulse) {
+        for(final var entry : keyRepeat.int2IntEntrySet()) {
+          if(entry.getIntValue() >= 2) { //TODO adjust for frame rate
+            _800bee98.oru(entry.getIntKey());
+          }
+
+          entry.setValue(entry.getIntValue() + 1);
+        }
+      }
+
+      inputPulse = !inputPulse;
 
       handleSaveStates();
     };
