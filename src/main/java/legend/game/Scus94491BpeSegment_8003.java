@@ -104,7 +104,6 @@ import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment_8002.ChangeClearPAD;
 import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -3615,7 +3614,6 @@ public final class Scus94491BpeSegment_8003 {
       a2--;
       if(a2 == -0x1L) {
         LOGGER.error("VSync: timeout");
-        ChangeClearPAD(false);
         ChangeClearRCnt(0x3, false);
         break;
       }
@@ -3787,7 +3785,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80037b9c
     if(interrupt == InterruptType.VBLANK) {
-      ChangeClearPAD(callback == 0);
       ChangeClearRCnt(3, callback == 0);
     }
 

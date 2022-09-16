@@ -88,7 +88,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c150;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
@@ -931,7 +930,6 @@ public final class SItem {
         selectedMenuOption_8011d738.set(0);
         selectedItemSubmenuOption_8011d73c.set(0);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
-        FUN_8002c150(0);
         break;
 
       case AWAIT_INIT_1:

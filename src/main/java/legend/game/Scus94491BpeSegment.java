@@ -91,10 +91,8 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022518;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a0e4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002ae0c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c0c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c86c;
@@ -563,7 +561,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80011dc0L)
   public static void spuTimerInterruptCallback() {
     sssqTick();
-    FUN_8002c0c8();
 
     if(mainCallbackIndex_8004dd20.get() == 0x3L) {
       gameState_800babc8.timestamp_a0.set(0);
@@ -693,8 +690,11 @@ public final class Scus94491BpeSegment {
     final Runnable r = () -> {
       EventManager.INSTANCE.clearStaleRefs();
 
+      joypadPress_8007a398.setu(_800bee94);
+      joypadInput_8007a39c.setu(_800bee90);
+      joypadRepeat_8007a3a0.setu(_800bee98);
+
       startFrame();
-      processControllerInput();
       FUN_80011f6c();
       loadFiles();
       FUN_80022518();
@@ -4719,21 +4719,6 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001846c
     FUN_8003b450(tags_1f8003d0.getPointer() + a5 * 0x4L, s4, a2);
-  }
-
-  @Method(0x800184b0L)
-  public static void processControllerInput() {
-    int a0 = (int)vsyncMode_8007a3b8.get();
-
-    if(a0 == 0) {
-      a0 = 1;
-    }
-
-    FUN_8002ae0c(a0);
-
-    joypadPress_8007a398.setu(_800bee94);
-    joypadInput_8007a39c.setu(_800bee90);
-    joypadRepeat_8007a3a0.setu(_800bee98);
   }
 
   @Method(0x80018508L)

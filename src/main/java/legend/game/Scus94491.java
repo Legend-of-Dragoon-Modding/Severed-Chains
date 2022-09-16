@@ -275,19 +275,6 @@ public final class Scus94491 {
   }
 
   /**
-   * Set the control driver.
-   * <p>
-   * if val is 1, interrupt processing in a control driver started by a vertical retrace line interrupt is completed. If
-   * val is 0, processing is passed to a lower priority interrupt module without completion.
-   *
-   * @param val Vertical retrace line interruption clear flag
-   */
-  @Method(0x801c0c20L)
-  public static boolean ChangeClearPAD(final boolean val) {
-    return (boolean)functionVectorB_000000b0.run(0x5bL, new Object[] {val});
-  }
-
-  /**
    * Selects what the kernel's timer/vblank IRQ handlers shall do after they have processed an IRQ
    *
    * @param t t=0..2: timer 0..2, or t=3: vblank
@@ -422,7 +409,6 @@ public final class Scus94491 {
 
     //LAB_801c13fc
     if(interrupt == InterruptType.VBLANK) {
-      ChangeClearPAD(callback == 0);
       ChangeClearRCnt(3, callback == 0);
     }
 

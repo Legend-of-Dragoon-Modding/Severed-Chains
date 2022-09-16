@@ -43,7 +43,6 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
-import static legend.game.Scus94491BpeSegment.processControllerInput;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -53,7 +52,6 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002c008;
 import static legend.game.Scus94491BpeSegment_8002.SetMem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
@@ -812,7 +810,6 @@ public final class Scus94491BpeSegment_800e {
     ResetCallback();
     SetMem(2);
 
-    FUN_8002c008();
     VSync(0);
     SetDispMask(0);
     ResetGraph(0);
@@ -854,7 +851,6 @@ public final class Scus94491BpeSegment_800e {
     vsyncMode_8007a3b8.setu(0x2L);
     _800bb0fc.setu(0);
 
-    processControllerInput();
     FUN_800e60d8();
     loadSystemFont();
     clearScriptStates();

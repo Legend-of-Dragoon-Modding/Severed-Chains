@@ -9,17 +9,13 @@ import legend.core.cdrom.SyncCode;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
-import legend.core.kernel.PriorityChainEntry;
 import legend.core.kernel.jmp_buf;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.EnumRef;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -31,7 +27,6 @@ import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
-import legend.game.types.JoyData;
 import legend.game.types.LodString;
 
 import static legend.core.Hardware.MEMORY;
@@ -296,58 +291,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
-  public static final PriorityChainEntry joypadVblankIrqHandler_8005952c = MEMORY.ref(4, 0x8005952cL, PriorityChainEntry::new);
-  public static final PriorityChainEntry joypadPriorityChain_8005953c = MEMORY.ref(4, 0x8005953cL, PriorityChainEntry::new);
-  public static final Value _8005954c = MEMORY.ref(4, 0x8005954cL);
-  public static final Value _80059550 = MEMORY.ref(4, 0x80059550L);
-  public static final Value _80059554 = MEMORY.ref(4, 0x80059554L);
-  public static final Value _80059558 = MEMORY.ref(4, 0x80059558L);
-  public static final Value _80059560 = MEMORY.ref(4, 0x80059560L);
-  public static final Value _80059564 = MEMORY.ref(4, 0x80059564L);
-  public static final Value _80059568 = MEMORY.ref(4, 0x80059568L);
-
-  public static final Value joyMcdData_8005957c = MEMORY.ref(4, 0x8005957cL);
-  public static final Value iStat_80059580 = MEMORY.ref(4, 0x80059580L);
-
-  public static final Value returnAddressPROBLEM_80059590 = MEMORY.ref(4, 0x80059590L);
-  public static final Value _80059594 = MEMORY.ref(4, 0x80059594L);
-  public static final Value _80059598 = MEMORY.ref(4, 0x80059598L);
-  public static final Value _8005959c = MEMORY.ref(4, 0x8005959cL);
-  public static final Value _800595a0 = MEMORY.ref(4, 0x800595a0L);
-  public static final Value _800595a4 = MEMORY.ref(4, 0x800595a4L);
-
-  public static final Pointer<FunctionRef<Long, Long>> _800595d4 = MEMORY.ref(4, 0x800595d4L, Pointer.of(4, FunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> ptrClearJoyData_800595d8 = MEMORY.ref(4, 0x800595d8L, Pointer.of(4, ConsumerRef::new));
-  public static final Pointer<BiFunctionRef<JoyData, Long, Integer>> getNextJoypadCommandParam_800595dc = MEMORY.ref(4, 0x800595dcL, Pointer.of(4, BiFunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> _800595e0 = MEMORY.ref(4, 0x800595e0L, Pointer.of(4, ConsumerRef::new));
-
-  public static final Pointer<FunctionRef<Integer, JoyData>> ptrGetJoyDataForPort_800595e8 = MEMORY.ref(4, 0x800595e8L, Pointer.of(4, FunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595ec = MEMORY.ref(4, 0x800595ecL, Pointer.of(4, FunctionRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595f0 = MEMORY.ref(4, 0x800595f0L, Pointer.of(4, FunctionRef::new));
-  public static final Pointer<ConsumerRef<JoyData>> _800595f4 = MEMORY.ref(4, 0x800595f4L, Pointer.of(4, ConsumerRef::new));
-  public static final Pointer<FunctionRef<JoyData, Long>> _800595f8 = MEMORY.ref(4, 0x800595f8L, Pointer.of(4, FunctionRef::new));
-  public static final Pointer<RunnableRef> _800595fc = MEMORY.ref(4, 0x800595fcL, Pointer.of(4, RunnableRef::new));
-  public static final Pointer<RunnableRef> _80059600 = MEMORY.ref(4, 0x80059600L, Pointer.of(4, RunnableRef::new));
-  public static final Pointer<RunnableRef> _80059604 = MEMORY.ref(4, 0x80059604L, Pointer.of(4, RunnableRef::new));
-  public static final Pointer<ArrayRef<JoyData>> ptrArrJoyData_80059608 = MEMORY.ref(4, 0x80059608L, Pointer.deferred(4, ArrayRef.of(JoyData.class, 2, 240, JoyData::new)));
-  public static final BoolRef joypadsReady_8005960c = MEMORY.ref(4, 0x8005960cL, BoolRef::new);
-  public static final Value _80059610 = MEMORY.ref(4, 0x80059610L);
-  public static final IntRef joyDataIndex_80059614 = MEMORY.ref(4, 0x80059614L, IntRef::new);
-  public static final Value joypadCallbackIndex_80059618 = MEMORY.ref(4, 0x80059618L);
-  public static final Value _8005961c = MEMORY.ref(4, 0x8005961cL);
-  public static final Value _80059620 = MEMORY.ref(4, 0x80059620L);
-  public static final Value _80059624 = MEMORY.ref(4, 0x80059624L);
-  /** The number of joypads to use (0-indexed) (default: 1, changed to 0) */
-  public static final Value maxJoypadIndex_80059628 = MEMORY.ref(4, 0x80059628L);
-  public static final ArrayRef<IntRef> joySomething_8005962c = MEMORY.ref(4, 0x8005962cL, ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
-
-  public static final PriorityChainEntry joypadVblankIrqHandler_80059634 = MEMORY.ref(4, 0x80059634L, PriorityChainEntry::new);
-  public static final Value _80059644 = MEMORY.ref(4, 0x80059644L);
-
-  public static final Value _80059650 = MEMORY.ref(4, 0x80059650L);
-  public static final Value _80059654 = MEMORY.ref(4, 0x80059654L);
-  public static final Value _80059658 = MEMORY.ref(4, 0x80059658L);
-  public static final ArrayRef<Pointer<FunctionRef<JoyData, Long>>> joypadCallbacks_8005965c = MEMORY.ref(4, 0x8005965cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(JoyData.class, Long.class)), 5, 4, Pointer.of(4, FunctionRef::new)));
   public static final Value _8005967c = MEMORY.ref(2, 0x8005967cL);
 
   public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);
