@@ -101,7 +101,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052d6c = MEMORY.ref(2, 0x80052d6cL);
 
-  public static final ArrayRef<Pointer<FileEntry08>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(FileEntry08.class), 5, 0x4, Pointer.deferred(4, FileEntry08::new)));
+  public static final ArrayRef<Pointer<UnboundedArrayRef<FileEntry08>>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(FileEntry08.class)), 5, 0x4, Pointer.deferred(4, UnboundedArrayRef.of(0x8, FileEntry08::new))));
 
   public static final Value _80052d90 = MEMORY.ref(4, 0x80052d90L);
   /**

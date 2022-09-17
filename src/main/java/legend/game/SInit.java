@@ -351,7 +351,7 @@ public final class SInit {
   @Method(0x800fbf6cL)
   public static void FUN_800fbf6c() {
     initFileEntries((drgnBinIndex_800bc058.get() != 4 ? lodXa00Xa_80052c74 : lodXa00Xa_80052c94).reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
-    initFileEntries(diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
+    initFileEntries(diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref());
   }
 
   @Method(0x800fbfd4L)

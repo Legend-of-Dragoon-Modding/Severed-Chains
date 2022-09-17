@@ -79,8 +79,6 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SStrm.FUN_800fb7cc;
-import static legend.game.SStrm.FUN_800fb90c;
-import static legend.game.SStrm.stopFmv;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -7537,7 +7535,9 @@ public final class SMap {
   }
 
   @Method(0x800ed960L)
-  public static long FUN_800ed960() {
+  public static long loadFmv() {
+    // TODO skip FMVs
+    /*
     if(_800bf0d8.get() != 0x1L || doubleBufferFrame_800bb108.get() == 0) {
       //LAB_800ed9d0
       return 0;
@@ -7545,6 +7545,7 @@ public final class SMap {
 
     unloadSoundFile(8);
     FUN_800fb7cc(_800f970c.offset(_800bf0dc.get() * 16).getAddress(), (int)_800bf0dc.get());
+    */
 
     _800bf0d8.setu(0x2L);
     fileLoadingCallbackIndex_8004ddc4.set(0x16L);
@@ -7554,7 +7555,9 @@ public final class SMap {
   }
 
   @Method(0x800ed9e4L)
-  public static long FUN_800ed9e4() {
+  public static long playFmv() {
+    //TODO skip FMV
+    /*
     if(_800bf0d8.get() != 0x2) {
       return 0;
     }
@@ -7571,6 +7574,7 @@ public final class SMap {
     if(FUN_800fb90c() == 0 && s0 == 0) {
       return 0x1L;
     }
+    */
 
     //LAB_800eda50
     _800bf0d8.setu(0x3L);
@@ -7585,7 +7589,9 @@ public final class SMap {
   }
 
   @Method(0x800edac4L)
-  public static long stopIntroFmv() {
+  public static long stopFmv() {
+    //TODO skip FMV
+    /*
     if(_800bf0b4.get() == 0) {
       //LAB_800edb30
       return 0;
@@ -7595,7 +7601,8 @@ public final class SMap {
       return 0;
     }
 
-    stopFmv(_800f970c.offset(_800bf0dc.get() * 16).getAddress());
+    SStrm.stopFmv(_800f970c.offset(_800bf0dc.get() * 16).getAddress());
+    */
     FUN_80012bb4();
 
     fileLoadingCallbackIndex_8004ddc4.setu(0x18L);

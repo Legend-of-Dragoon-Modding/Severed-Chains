@@ -106,7 +106,7 @@ public final class SStrm {
     linkedListEntry_8010f7d0.setu(addToLinkedListTail(0x1_0000L));
     FUN_800fba6c(a0);
 
-    final UnboundedArrayRef<FileEntry08> entry = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new));
+    final UnboundedArrayRef<FileEntry08> entry = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref();
     final int v0 = (int)_80052d6c.offset(4, (drgnBinIndex_800bc058.get() - 1) * 4).get();
     final CdlFILE file = CdlFILE_800bb4c8.get(entry.get(a1 - v0).fileIndex_00.get());
     FUN_800fc038(file.pos, a0);
@@ -133,9 +133,7 @@ public final class SStrm {
   public static long FUN_800fb90c() {
     if(_8010f7f4.get() != 0) {
       _800fe7a1.setu(0x1L);
-      final long v0 = _800fe794.get() * 2;
-      final long mult = v0 * 0x5555_5556L;
-      _800fe794.setu((mult >>> 32) - (v0 >> 31L));
+      _800fe794.setu(_800fe794.get() * 2 / 3);
     }
 
     //LAB_800fb970
@@ -159,8 +157,7 @@ public final class SStrm {
     //LAB_800fb9e0
     FUN_800fc48c(mdecInDoubleBufferFrame0_8010f7d4.offset(mdecInDoubleBufferFrame_8010f7e4.get() * 4).get(), a1);
 
-    final long mult = _8010f7c0.w.get() * _8010f7c0.h.get();
-    startMdecOut(mdecOutDoubleBufferFrame0_8010f7dc.offset(mdecOutDoubleBufferFrame_8010f7e8.get() * 4).get(), (mult & 0xffff_ffffL) / 2);
+    startMdecOut(mdecOutDoubleBufferFrame0_8010f7dc.offset(mdecOutDoubleBufferFrame_8010f7e8.get() * 4).get(), _8010f7c0.w.get() * _8010f7c0.h.get() / 2);
 
     if(FUN_800fc0b4(_800fe7b0.getAddress()) >= 0) {
       FUN_800fc144(_800fe7b0.getAddress());

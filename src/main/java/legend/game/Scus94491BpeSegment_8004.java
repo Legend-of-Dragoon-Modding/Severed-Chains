@@ -191,9 +191,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c33c}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cb24}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c4f0}</li>
-   *   <li>{@link SMap#FUN_800ed960}</li>
-   *   <li>{@link SMap#FUN_800ed9e4}</li>
-   *   <li>{@link SMap#stopIntroFmv}</li>
+   *   <li>{@link SMap#loadFmv}</li>
+   *   <li>{@link SMap#playFmv}</li>
+   *   <li>{@link SMap#stopFmv}</li>
    *   <li>{@link SMap#FUN_800ed7e4}</li>
    *   <li>{@link SMap#FUN_800edb44}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800150b4}</li>
