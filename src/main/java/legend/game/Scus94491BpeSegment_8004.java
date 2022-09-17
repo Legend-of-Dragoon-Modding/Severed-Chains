@@ -184,13 +184,13 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#doNothing5}</li>
    *   <li>{@link Scus94491BpeSegment#doNothing6}</li>
    *   <li>{@link Scus94491BpeSegment#doNothing7}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cc28}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c268}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cca0}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cd18}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c33c}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cb24}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c4f0}</li>
+   *   <li>0x8002cc28 - XA - should not be necessary</li>
+   *   <li>0x8002c268 - XA - should not be necessary</li>
+   *   <li>0x8002cca0 - XA - should not be necessary</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cd18} probably XA</li>
+   *   <li>0x8002c33c - XA - should not be necessary</li>
+   *   <li>0x8002cb24 - XA - should not be necessary</li>
+   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c4f0} probably XA</li>
    *   <li>{@link SMap#loadFmv}</li>
    *   <li>{@link SMap#playFmv}</li>
    *   <li>{@link SMap#stopFmv}</li>

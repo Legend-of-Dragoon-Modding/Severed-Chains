@@ -95,7 +95,6 @@ import static legend.core.kernel.Bios.setjmp_Impl_A13;
 import static legend.game.Scus94491BpeSegment._80011394;
 import static legend.game.Scus94491BpeSegment._8001139c;
 import static legend.game.Scus94491BpeSegment._800113c0;
-import static legend.game.Scus94491BpeSegment.cdName_800115c8;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -324,8 +323,6 @@ public final class Scus94491BpeSegment_8003 {
   private Scus94491BpeSegment_8003() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
-
-  private static final Object[] EMPTY_OBJ_ARRAY = {};
 
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {
@@ -2891,10 +2888,7 @@ public final class Scus94491BpeSegment_8003 {
   @Nullable
   public static CdlFILE DsSearchFile(final CdlFILE file, final String name) {
     if(syncCode_80053470.get().ordinal() < getSyncCode80053320().ordinal()) {
-      if(DsNewMedia() == 0) {
-        throw new RuntimeException("Failed to initialize disk");
-      }
-
+      DsNewMedia();
       syncCode_80053470.set(getSyncCode80053320());
     }
 
@@ -2997,20 +2991,16 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80035f90L)
-  public static long DsNewMedia() {
-    if(!DsRead(0x1L, 0x10L, _800c13a8.getAddress())) {
-      throw new RuntimeException("DS_newmedia: Read error in ds_read(PVD)");
-    }
+  public static void DsNewMedia() {
+    CDROM.readFromDisk(new CdlLOC().unpack(0x10), 1, _800c13a8.getAddress());
 
     //LAB_80036004
-    if(strncmp(_800c13a9.getString(0x5), cdName_800115c8.get(), 0x5) != 0) {
-      throw new RuntimeException("DS_newmedia: Disc format error in ds_read(PVD)");
+    if(!"CD001".equals(_800c13a9.getString(0x5))) {
+      throw new RuntimeException("Invalid disk: wrong identifier");
     }
 
     //LAB_80036044
-    if(!DsRead(0x1L, _800c1434.get(), _800c13a8.getAddress())) {
-      throw new RuntimeException("DS_newmedia: Read error (PT:%08x)".formatted(_800c1434.get()));
-    }
+    CDROM.readFromDisk(new CdlLOC().unpack(_800c1434.get()), 1, _800c13a8.getAddress());
 
     //LAB_8003609c
     LOGGER.info("DS_newmedia: searching dir...");
@@ -3053,9 +3043,6 @@ public final class Scus94491BpeSegment_8003 {
     cdromFilePointer_8005346c.set(0);
 
     LOGGER.info("DS_newmedia: %d dir entries found", directoryId);
-
-    //LAB_8003622c
-    return 0x1L;
   }
 
   @Method(0x80036254L)
@@ -3089,10 +3076,7 @@ public final class Scus94491BpeSegment_8003 {
       return 0x1L;
     }
 
-    if(!DsRead(0x1L, CdlDIR_800bfda8.get((int)fp - 1).lba.get(), _800c13a8.getAddress())) {
-      LOGGER.error("DS_cachefile: dir not found");
-      return -0x1L;
-    }
+    CDROM.readFromDisk(new CdlLOC().unpack(CdlDIR_800bfda8.get((int)fp - 1).lba.get()), 1, _800c13a8.getAddress());
 
     //LAB_80036394
     LOGGER.info("DS_cachefile: searching...");
@@ -3372,18 +3356,6 @@ public final class Scus94491BpeSegment_8003 {
     clearPacketQueue();
     FUN_80036674();
     FUN_80035574();
-  }
-
-  @Method(0x80036f20L)
-  public static long FUN_80036f20() {
-    final long s0 = FUN_8003475c(0);
-
-    if(s0 == 0x1L && getCdlPacketIndex800bf700() > 0) {
-      //LAB_80036f5c
-      return 0x2L;
-    }
-
-    return s0;
   }
 
   @Method(0x80036f90L)

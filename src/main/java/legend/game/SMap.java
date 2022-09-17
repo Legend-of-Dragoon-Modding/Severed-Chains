@@ -78,7 +78,6 @@ import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.SStrm.FUN_800fb7cc;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -154,7 +153,6 @@ import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
@@ -759,13 +757,7 @@ public final class SMap {
 
   @Method(0x800d9670L)
   public static long stopCdrom() {
-    if(FUN_80036f20() != 0x1L) {
-      //LAB_800d96a4
-      return 0;
-    }
-
     //LAB_800d96a8
-//    CDROM.stop();
     return 1;
   }
 

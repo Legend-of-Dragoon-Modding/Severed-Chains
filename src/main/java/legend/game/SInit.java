@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.DebugHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
 import legend.core.memory.Method;
@@ -28,7 +27,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002ac24;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8004._8004dd80;
 import static legend.game.Scus94491BpeSegment_8004._8004dd88;
@@ -164,10 +162,6 @@ public final class SInit {
       final String name = String.format("%s%s;1", _800fb7d4.getString(), fileEntries_800fd414.get(fileIndex).deref().name_04.deref().get());
 
       //LAB_800fbae0
-      while(FUN_80036f20() != 0x1L) {
-        DebugHelper.sleep(1);
-      }
-
       final CdlFILE file = CdlFILE_800bb4c8.get(fileIndex);
       if(DsSearchFile(file, name) == null) {
         //LAB_800fbb14

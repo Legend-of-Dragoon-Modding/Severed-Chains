@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.DebugHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -57,9 +56,9 @@ import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethi
 import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
+import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -76,7 +75,6 @@ import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.resetCdromStuff;
 import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -839,7 +837,8 @@ public final class Scus94491BpeSegment_800e {
 
     InitGeom();
     setProjectionPlaneDistance(640);
-    resetCdromStuff();
+    DsNewMedia();
+//    resetCdromStuff();
     set80053498(0x1L);
     FUN_80019500();
     setCdDebug(3); // I think 3 is the most detailed logging
@@ -970,10 +969,6 @@ public final class Scus94491BpeSegment_800e {
     SInitOvlFileName_800c66ac.set(String.format("%s%s;1", _800c6740.getString(), "\\OVL\\S_INIT.OV_"));
 
     //LAB_800e635c
-    while(FUN_80036f20() != 0x1L) {
-      DebugHelper.sleep(1);
-    }
-
     if(DsSearchFile(fileSInitOvl_800c668c, SInitOvlFileName_800c66ac.getString()) == null) {
       return;
     }

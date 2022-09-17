@@ -102,7 +102,6 @@ import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
@@ -2491,10 +2490,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80014ba0L)
   public static long allocateFileTransferDest() {
-    if(FUN_80036f20() != 0x1L) {
-      return -0x1L;
-    }
-
     final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(0);
 
     fileSize_800bb48c.setu(file.size.get());
@@ -2636,16 +2631,12 @@ public final class Scus94491BpeSegment {
       return 0;
     }
 
-    transferIndex_800bb494.setu(0);
-
     final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(0);
 
     LOGGER.info("Loading file %s to %08x", file.namePtr.deref().get(), fileTransferDest_800bb488.get());
 
     CDROM.readFromDisk(file.pos, (int)numberOfTransfers_800bb490.get(), fileTransferDest_800bb488.get());
-    FUN_80014f64(SyncCode.COMPLETE, null);
 
-    transferIndex_800bb494.setu(-0x1L); // Mark transfer complete
     fileLoadingCallbackIndex_8004ddc4.setu(0x2L);
 
     return 1;
@@ -2653,28 +2644,16 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80014e54L)
   public static long FUN_80014e54() {
-    if(transferIndex_800bb494.getSigned() >= 0) {
-      return 0;
-    }
+    FUN_80014ef4();
+    fileLoadingInfoArray_800bbad8.get(0).used.set(false);
 
-    if(FUN_80014ef4() == 0) {
-      fileLoadingInfoArray_800bbad8.get(0).used.set(false);
-
-      popFirstFileIfUnused();
-      fileLoadingCallbackIndex_8004ddc4.setu(0);
-      return 0;
-    }
-
-    //LAB_80014e98
-    fileLoadingCallbackIndex_8004ddc4.setu(0x3L);
-
-    //LAB_80014ea0
-    //LAB_80014ea4
+    popFirstFileIfUnused();
+    fileLoadingCallbackIndex_8004ddc4.setu(0);
     return 0;
   }
 
   @Method(0x80014ef4L)
-  public static long FUN_80014ef4() {
+  public static void FUN_80014ef4() {
     if(fileTransferDest_800bb488.get() < 0x8000_0000L) {
       throw new RuntimeException("Illegal transfer destination for decompression 0x" + Long.toHexString(fileTransferDest_800bb488.get()));
     }
@@ -2682,8 +2661,6 @@ public final class Scus94491BpeSegment {
     transferDest_800bb460.setu(fileTransferDest_800bb488);
     fileSize_800bb464.setu(fileSize_800bb48c);
     currentlyLoadingFileInfo_800bb468.set(fileLoadingInfoArray_800bbad8.get(0));
-
-    return 0;
   }
 
   @Method(0x80014f64L)

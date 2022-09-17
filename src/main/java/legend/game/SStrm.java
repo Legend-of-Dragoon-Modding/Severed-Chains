@@ -34,7 +34,6 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_80030bb0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030ca0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80030d80;
 import static legend.game.Scus94491BpeSegment_8003.FUN_80035b90;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036f20;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
@@ -400,10 +399,6 @@ public final class SStrm {
   @Method(0x800fc1ecL)
   public static void FUN_800fc1ec(final CdlLOC pos) {
     while(getCdlPacketIndex800bf700() != 0) {
-      DebugHelper.sleep(1);
-    }
-
-    while(FUN_80036f20() != 1) {
       DebugHelper.sleep(1);
     }
 
