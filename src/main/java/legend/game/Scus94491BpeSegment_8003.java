@@ -3970,11 +3970,6 @@ public final class Scus94491BpeSegment_8003 {
     fillMemory(_800546bc.getAddress(), (byte)0, 0x80);
     ResetCallback();
 
-    // No idea what this is supposed to do. It's sending GP0 command 0 (which is supposedly NOP)
-    // with the 3 LSBs of a pointer to the system version string. I've verified this is what
-    // the code is supposed to be doing. Maybe it's just to force a GPU sync...?
-    GPU_cw((int)_800546b4.get(0xff_ffffL));
-
     _800546bc.setu(FUN_8003a798(mode));
     _800546bd.setu(0x1L);
     _800546c0.setu(array_8005473c.offset(_800546bc.get() * 4));
@@ -5010,11 +5005,6 @@ public final class Scus94491BpeSegment_8003 {
     for(int offset = 0; offset < length; offset++) {
       MEMORY.set(address + offset, fill);
     }
-  }
-
-  @Method(0x8003b094L)
-  public static void GPU_cw(final int command) {
-    Bios.GPU_cw_Impl_A49(command);
   }
 
   @Method(0x8003b0b4L)

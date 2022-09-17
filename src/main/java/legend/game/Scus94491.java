@@ -48,15 +48,6 @@ public final class Scus94491 {
 
   public static final Value _80188a88 = MEMORY.ref(4, 0x80188a88L);
 
-  public static final Value _ramsize = MEMORY.ref(4, 0x801c5220L);
-  public static final Value _stacksize = MEMORY.ref(4, 0x801c5224L);
-
-  public static final Value isInitialized_801c5228 = MEMORY.ref(4, 0x801c5228L);
-  public static final Value _801c522c = MEMORY.ref(4, 0x801c522cL);
-  public static final Value _801c5230 = MEMORY.ref(4, 0x801c5230L);
-
-  public static final Value _801c52ac = MEMORY.ref(4, 0x801c52acL);
-
   public static final BoolRef interruptHandlersInitialized_801c5424 = MEMORY.ref(2, 0x801c5424L, BoolRef::new);
   public static final Value inExceptionHandler_801c5426 = MEMORY.ref(2, 0x801c5426L);
   public static final Value interruptCallbacks_801c5428 = MEMORY.ref(4, 0x801c5428L);
@@ -78,14 +69,6 @@ public final class Scus94491 {
   public static final Value Vcount = MEMORY.ref(4, 0x801c64ecL);
 
   public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_801c6500 = MEMORY.ref(4, 0x801c6500L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
-
-  public static final Value _801c66e0 = MEMORY.ref(4, 0x801c66e0L);
-
-  public static final Value _801c66f4 = MEMORY.ref(4, 0x801c66f4L);
-
-  public static final Value _801c7f68 = MEMORY.ref(4, 0x801c7f68L);
-
-  public static final Value _bfc7ff52 = MEMORY.ref(1, 0xbfc7ff52L);
 
   @Method(0x801bf2a0L)
   public static long decompress(final long archiveAddress, final long destinationAddress) {
@@ -205,9 +188,7 @@ public final class Scus94491 {
 
   @Method(0x801bf460L)
   public static void main() {
-    setInitializedFlag();
     ResetCallback();
-    detectRegion();
     _1f800000.setu(decompress(_80188a88.getAddress(), _80010000.getAddress()));
     StopCallback();
     EnterCriticalSection();
@@ -225,44 +206,9 @@ public final class Scus94491 {
   public static void start(final int argc, final long argv) {
     LOGGER.info("--- SCUS 94491 start! ---");
 
-    for(int i = 0; i < 0x622L; i++) {
-      _801c66e0.offset(i * 4L).setu(0);
-    }
-
-    final long a0 = _801c7f68.getAddress() & 0x1fff_ffffL;
-    _801c522c.setu(0x8000_0000L | a0);
-    _801c5230.setu(_ramsize.get() - 0x8L - _stacksize.get() - a0);
-
     main();
 
     assert !Hardware.isAlive() : "Shouldn't get here";
-  }
-
-  @Method(0x801bf588L)
-  public static void setInitializedFlag() {
-    if(isInitialized_801c5228.get() == 0) {
-      isInitialized_801c5228.setu(0x1L);
-    }
-  }
-
-  @Method(0x801bf660L)
-  public static void detectRegion() {
-    GATE.acquire();
-
-    if(_bfc7ff52.get() == 0x45) {
-      _801c52ac.setu(0);
-      _801c66f4.setu(2);
-    } else {
-      if(_bfc7ff52.get() < 0x46 && _bfc7ff52.get() == 0x41) {
-        _801c52ac.setu(1);
-        _801c66f4.setu(1);
-      } else {
-        _801c52ac.setu(1);
-        _801c66f4.setu(0);
-      }
-    }
-
-    GATE.release();
   }
 
   @Method(0x801c0990L)
