@@ -43,7 +43,6 @@ import static legend.core.Hardware.SPU;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
-import static legend.core.memory.segments.MemoryControl1Segment.SPU_DELAY;
 import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment._80011db4;
 import static legend.game.Scus94491BpeSegment._80011db8;
@@ -73,7 +72,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c6674;
 import static legend.game.Scus94491BpeSegment_800c.dmaDpcrPtr_800c4a9c;
 import static legend.game.Scus94491BpeSegment_800c.dmaSpuBcrPtr_800c4a94;
 import static legend.game.Scus94491BpeSegment_800c.dmaSpuChcrPtr_800c4a98;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuDelayPtr_800c4aa0;
 import static legend.game.Scus94491BpeSegment_800c.dmaSpuMadrPtr_800c4a90;
 import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.queuedSpuDmaTransferArray_800c49d0;
@@ -3591,11 +3589,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004b6ec
     voicePtr_800c4ac4.deref().SOUND_RAM_DATA_TRANSFER_ADDR.set((int)(addressInSoundBuffer / 8));
     _800c6630.spuDmaTransferInProgress_20.set(true);
-    // wasteSomeCycles(0x1L);
     voicePtr_800c4ac4.deref().SPUCNT.and(0xffcf).or((int)s1);
-    // wasteSomeCycles(0x1L);
-    dmaSpuDelayPtr_800c4aa0.deref(4).and(0xf0ff_ffffL).oru(s2);
-    // wasteSomeCycles(0x1L);
     v1 = dmaSize & 0x3fL;
     dmaSpuMadrPtr_800c4a90.deref(4).setu(dmaAddress);
     v0 = dmaSize >>> 6;
@@ -3659,7 +3653,6 @@ public final class Scus94491BpeSegment_8004 {
     dmaSpuBcrPtr_800c4a94.setu(DMA.spu.BCR.getAddress());
     dmaSpuChcrPtr_800c4a98.setu(DMA.spu.CHCR.getAddress());
     dmaDpcrPtr_800c4a9c.setu(DmaManager.DMA_DPCR.getAddress());
-    dmaSpuDelayPtr_800c4aa0.setu(SPU_DELAY.getAddress());
     voicePtr_800c4ac4.set(SPU);
 
     SPU.SOUND_RAM_DATA_TRANSFER_CTRL.set(0b100); // Normal

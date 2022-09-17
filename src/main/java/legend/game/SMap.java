@@ -145,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002aa04;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
-import static legend.game.Scus94491BpeSegment_8002.abs;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.getTimerValue;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -5855,7 +5854,7 @@ public final class SMap {
       MEMORY.ref(1, renderPacket).offset(0x3L).setu(0x4L); // 4 words
       MEMORY.ref(4, renderPacket).offset(0x4L).setu(0x6480_8080L); // Textured rectangle, variable size, opaque, texture-blending
 
-      long clutY = abs(s0.clutY_22.get());
+      long clutY = Math.abs(s0.clutY_22.get());
       if(i < _800cb57c.get()) {
         if(clutY - 0x1f0L >= 0x10L) {
           clutY = i + 0x1f0L;
@@ -5924,7 +5923,7 @@ public final class SMap {
     for(int x = 0; x < 3; x++) {
       //LAB_800e72c4
       for(int y = 0; y < 3; y++) {
-        if(abs(matrix.get(x, y)) < 0x40L) {
+        if(Math.abs(matrix.get(x, y)) < 0x40L) {
           matrix.set(x, y, (short)0);
         }
 
@@ -6375,7 +6374,7 @@ public final class SMap {
   public static void FUN_800e866c() {
     //LAB_800e86a4
     for(int i = 0; i < SomethingStructPtr_800d1a88.deref().count_0c.get(); i++) {
-      final long v0 = abs((int)MEMORY.ref(2, SomethingStructPtr_800d1a88.deref().normals_08.get()).offset(i * 0x8L).offset(0x2L).getSigned()); //TODO
+      final long v0 = Math.abs((int)MEMORY.ref(2, SomethingStructPtr_800d1a88.deref().normals_08.get()).offset(i * 0x8L).offset(0x2L).getSigned()); //TODO
       SomethingStructPtr_800d1a88.deref().ptr_14.deref().get(i).bool_01.set(v0 > 0x400L);
     }
 

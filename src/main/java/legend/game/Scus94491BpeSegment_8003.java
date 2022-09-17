@@ -29,6 +29,8 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
+import legend.core.kernel.Bios;
+import legend.core.kernel.Kernel;
 import legend.core.kernel.jmp_buf;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
@@ -64,6 +66,7 @@ import java.util.Arrays;
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.DMA;
+import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
@@ -88,8 +91,7 @@ import static legend.core.gpu.Gpu.GPU_REG0;
 import static legend.core.gpu.Gpu.GPU_REG1;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
-import static legend.core.memory.segments.MemoryControl1Segment.CDROM_DELAY;
-import static legend.core.memory.segments.MemoryControl1Segment.COMMON_DELAY;
+import static legend.core.kernel.Bios.setjmp_Impl_A13;
 import static legend.game.Scus94491BpeSegment._80011394;
 import static legend.game.Scus94491BpeSegment._8001139c;
 import static legend.game.Scus94491BpeSegment._800113c0;
@@ -98,9 +100,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
-import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
-import static legend.game.Scus94491BpeSegment.functionVectorC_000000c0;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -330,7 +329,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {
-    functionVectorA_000000a0.run(0x28L, new Object[] {address, size});
+    Bios.bzero_Impl_A28(address, size);
   }
 
   @Method(0x80030a10L)
@@ -508,8 +507,6 @@ public final class Scus94491BpeSegment_8003 {
     CDROM_REG3.setu(0); // Reset data FIFO
     CDROM_REG0.setu(0);
     CDROM_REG3.setu(0x80L); // Want data
-    CDROM_DELAY.setu(0x2_0943);
-    COMMON_DELAY.setu(0x1323L);
 
     final byte[] sp28 = new byte[0x4];
     if(!sectorIsDataOnly_800bf5f0.get()) {
@@ -542,8 +539,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80031010
     _800bf5a0.deref(4).offset(0x1cL).setu(MathHelper.get(sp28, 0, 4));
-    CDROM_DELAY.setu(0x2_0843);
-    COMMON_DELAY.setu(0x1325L);
 
     // I think this is searching for the first sector if the FMV
     if(_800bf588.get() == 0x1L && _800bf564.get() != 0) {
@@ -671,11 +666,8 @@ public final class Scus94491BpeSegment_8003 {
     _800bf58c.setu(_800bf590.get() + _800bf574.get() * 0x7e0 + _800bf594.get() * 32);
     if(_800bf558.get() == 0) {
       //LAB_800314dc
-      CDROM_DELAY.setu(0x2102_0843L);
       t0 = 0x1140_0100L;
     } else {
-      CDROM_DELAY.setu(0x2_0943L);
-      COMMON_DELAY.setu(0x1323L);
       t0 = 0x1100_0000L;
     }
 
@@ -706,7 +698,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_80031630
-    COMMON_DELAY.setu(0x1325L);
     _800bf5a0.deref(2).setu(0x3L);
     _800bf574.addu(0x1L);
     if(_800bf580.get() != 0 && _800bf56c.get() != 0) {
@@ -1224,8 +1215,6 @@ public final class Scus94491BpeSegment_8003 {
 
     CDROM_REG0.setu(0); // Index0
     CDROM_REG3.setu(0); // Reset FIFO
-
-    COMMON_DELAY.setu(0x1325L);
   }
 
   @Method(0x800329f4L)
@@ -1276,7 +1265,6 @@ public final class Scus94491BpeSegment_8003 {
 
     CDROM_REG0.setu(0b000); // Index 0
     CDROM_REG3.setu(0b000);
-    COMMON_DELAY.setu(0x1325L);
 
     CDROM.sendCommand(CdlCOMMAND.GET_STAT_01);
     CDROM.acknowledgeInterrupts();
@@ -3411,8 +3399,6 @@ public final class Scus94491BpeSegment_8003 {
     DMA.cdrom.BCR.setu(1L << 16 | length);
     CDROM_REG0.setu(0); // Index 0
     CDROM_REG3.setu(0b1000_0000L); // Want data
-    CDROM_DELAY.setu(0x2_0943L);
-    COMMON_DELAY.setu(0x1323L);
     DMA.cdrom.enable();
 
     LOGGER.info("Waiting until data FIFO not empty...");
@@ -3436,9 +3422,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     LOGGER.info("Data transfer active");
-
-    //LAB_80037078
-    COMMON_DELAY.setu(0x1325L);
   }
 
   @Method(0x80037330L)
@@ -3632,7 +3615,10 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800376a0L)
   public static boolean ChangeClearRCnt(final int t, final boolean flag) {
-    return (boolean)functionVectorC_000000c0.run(0xaL, new Object[] {t, flag});
+    GATE.acquire();
+    final boolean res = Kernel.ChangeClearRCnt_Impl_C0a(t, flag);
+    GATE.release();
+    return res;
   }
 
   @Method(0x800376b0L)
@@ -3820,22 +3806,30 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x80037d78L)
   public static void _96_remove() {
-    functionVectorA_000000a0.run(0x72L, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    Bios._96_remove_Impl_A54();
+    GATE.release();
   }
 
   @Method(0x80037d90L)
   public static void ReturnFromException() {
-    functionVectorB_000000b0.run(0x17L, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    Kernel.ReturnFromException_Impl_B17();
+    GATE.release();
   }
 
   @Method(0x80037db0L)
   public static void SetCustomExitFromException(final jmp_buf buffer) {
-    functionVectorB_000000b0.run(0x19L, new Object[] {buffer});
+    GATE.acquire();
+    Kernel.SetCustomExitFromException_Impl_B19(buffer);
+    GATE.release();
   }
 
   @Method(0x80037dc0L)
   public static void setjmp(final jmp_buf buffer, final RunnableRef callback) {
-    functionVectorA_000000a0.run(0x13L, new Object[] {buffer, callback});
+    GATE.acquire();
+    setjmp_Impl_A13(buffer, callback);
+    GATE.release();
   }
 
   @Method(0x80037dd0L)
@@ -5020,7 +5014,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003b094L)
   public static void GPU_cw(final int command) {
-    functionVectorA_000000a0.run(0x49L, new Object[] {command});
+    Bios.GPU_cw_Impl_A49(command);
   }
 
   @Method(0x8003b0b4L)

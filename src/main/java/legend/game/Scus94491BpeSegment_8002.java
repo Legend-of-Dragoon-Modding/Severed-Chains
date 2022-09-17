@@ -17,6 +17,8 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
+import legend.core.kernel.Bios;
+import legend.core.kernel.Kernel;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -59,6 +61,7 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
+import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
@@ -103,8 +106,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.fillMemory;
-import static legend.game.Scus94491BpeSegment.functionVectorA_000000a0;
-import static legend.game.Scus94491BpeSegment.functionVectorB_000000b0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
@@ -271,8 +272,6 @@ public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
-
-  private static final Object[] EMPTY_OBJ_ARRAY = {};
 
   @Method(0x80020008L)
   public static void sssqResetStuff() {
@@ -2552,7 +2551,7 @@ public final class Scus94491BpeSegment_8002 {
 
             //LAB_80023f4c
             //LAB_80023f68
-            final long a1 = abs((int)(metrics.width_08.get() * a0_0 / 0x1000));
+            final long a1 = Math.abs((int)(metrics.width_08.get() * a0_0 / 0x1000));
             if(metrics._10.get() < 0) {
               x2 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
               x1 = x2 + a1;
@@ -2581,7 +2580,7 @@ public final class Scus94491BpeSegment_8002 {
 
             //LAB_80024050
             //LAB_8002406c
-            final long a1 = abs((int)(metrics.height_0a.get() * a0_0 / 0x1000));
+            final long a1 = Math.abs((int)(metrics.height_0a.get() * a0_0 / 0x1000));
             if(metrics._12.get() < 0) {
               y2 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
               y1 = y2 + a1;
@@ -7139,11 +7138,6 @@ public final class Scus94491BpeSegment_8002 {
     assert !Hardware.isAlive() : "Shouldn't get here";
   }
 
-  @Method(0x8002d070L)
-  public static void SetMem(final int size) {
-    functionVectorA_000000a0.run(0x9fL, new Object[] {size});
-  }
-
   @Method(0x8002d12cL)
   public static long getTimerValue(final long timerIndex) {
     if(timerIndex >= 3) {
@@ -7153,43 +7147,54 @@ public final class Scus94491BpeSegment_8002 {
     return TMR_DOTCLOCK_VAL.offset(timerIndex * 0x10L).get();
   }
 
-  @Method(0x8002d210L)
-  public static int abs(final int i) {
-    return (int)functionVectorA_000000a0.run(0xeL, new Object[] {i});
-  }
-
   @Method(0x8002d220L)
   public static int strcmp(final String s1, final String s2) {
-    return (int)functionVectorA_000000a0.run(0x17L, new Object[] {s1, s2});
+    return s1.compareToIgnoreCase(s2);
   }
 
   @Method(0x8002d230L)
   public static int strncmp(final String s1, final String s2, final int length) {
-    return (int)functionVectorA_000000a0.run(0x18L, new Object[] {s1, s2, length});
+    return s1.substring(0, Math.min(s1.length(), length)).compareToIgnoreCase(s2.substring(0, Math.min(s2.length(), length)));
   }
 
   @Method(0x8002d240L)
   public static CString strcpy(final CString dest, final String src) {
-    return (CString)functionVectorA_000000a0.run(0x19L, new Object[] {dest, src});
+    if(dest == null || src == null) {
+      return null;
+    }
+
+    dest.set(src);
+    return dest;
   }
 
   @Method(0x8002d260L)
   public static int rand() {
-    return (int)functionVectorA_000000a0.run(0x2fL, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    final int res = Bios.rand_Impl_A2f();
+    GATE.release();
+    return res;
   }
 
   @Method(0x8002d270L)
   public static void srand(final long seed) {
-    functionVectorA_000000a0.run(0x30L, new Object[] {seed});
+    GATE.acquire();
+    Bios.srand_Impl_A30(seed);
+    GATE.release();
   }
 
   @Method(0x8002ff10L)
   public static long OpenEvent(final long desc, final int spec, final int mode, final long func) {
-    return (long)functionVectorB_000000b0.run(0x8L, new Object[] {desc, spec, mode, func});
+    GATE.acquire();
+    final long res = Kernel.OpenEvent_Impl_B08(desc, spec, mode, func);
+    GATE.release();
+    return res;
   }
 
   @Method(0x8002ff40L)
   public static boolean EnableEvent(final long event) {
-    return (boolean)functionVectorB_000000b0.run(0xcL, new Object[] {event});
+    GATE.acquire();
+    final boolean res = Kernel.EnableEvent_Impl_B0c(event);
+    GATE.release();
+    return res;
   }
 }

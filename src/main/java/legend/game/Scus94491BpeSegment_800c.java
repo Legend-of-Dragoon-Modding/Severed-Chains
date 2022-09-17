@@ -153,7 +153,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value dmaSpuBcrPtr_800c4a94 = MEMORY.ref(4, 0x800c4a94L);
   public static final Value dmaSpuChcrPtr_800c4a98 = MEMORY.ref(4, 0x800c4a98L);
   public static final Value dmaDpcrPtr_800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
-  public static final Value dmaSpuDelayPtr_800c4aa0 = MEMORY.ref(4, 0x800c4aa0L);
+
   /** NOTE: this pointer can be misaligned, hence being a Value */
   public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);

@@ -52,7 +52,6 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.SetMem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
@@ -808,7 +807,6 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void FUN_800e5d64() {
     ResetCallback();
-    SetMem(2);
 
     VSync(0);
     SetDispMask(0);

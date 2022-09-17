@@ -3,7 +3,9 @@ package legend.game;
 import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.dma.DmaChannelType;
+import legend.core.kernel.Bios;
 import legend.core.kernel.EXEC;
+import legend.core.kernel.Kernel;
 import legend.core.kernel.jmp_buf;
 import legend.core.memory.EntryPoint;
 import legend.core.memory.Method;
@@ -37,12 +39,6 @@ public final class Scus94491 {
   private Scus94491() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491.class);
-
-  private static final Object[] EMPTY_OBJ_ARRAY = new Object[0];
-
-  public static final BiFunctionRef<Long, Object[], Object> functionVectorA_000000a0 = MEMORY.ref(4, 0x000000a0L, BiFunctionRef::new);
-  public static final BiFunctionRef<Long, Object[], Object> functionVectorB_000000b0 = MEMORY.ref(4, 0x000000b0L, BiFunctionRef::new);
-  public static final BiFunctionRef<Long, Object[], Object> functionVectorC_000000c0 = MEMORY.ref(4, 0x000000c0L, BiFunctionRef::new);
 
   public static final Value _1f800000 = MEMORY.ref(4, 0x1f800000L);
 
@@ -271,7 +267,10 @@ public final class Scus94491 {
 
   @Method(0x801c0990L)
   public static long Exec(final EXEC header, final int argc, final long argv) {
-    return (long)functionVectorA_000000a0.run(0x43L, new Object[] {header, argc, argv});
+    GATE.acquire();
+    final long res = Bios.Exec_Impl_A43(header, argc, argv);
+    GATE.release();
+    return res;
   }
 
   /**
@@ -283,7 +282,10 @@ public final class Scus94491 {
    */
   @Method(0x801c0c30L)
   public static boolean ChangeClearRCnt(final int t, final boolean flag) {
-    return (boolean)functionVectorC_000000c0.run(0xaL, new Object[] {t, flag});
+    GATE.acquire();
+    final boolean res = Kernel.ChangeClearRCnt_Impl_C0a(t, flag);
+    GATE.release();
+    return res;
   }
 
   @Method(0x801c0f10L)
@@ -463,22 +465,30 @@ public final class Scus94491 {
 
   @Method(0x801c15d8L)
   public static void _96_remove() {
-    functionVectorA_000000a0.run(0x72L, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    Bios._96_remove_Impl_A54();
+    GATE.release();
   }
 
   @Method(0x801c15f0L)
   public static void ReturnFromException() {
-    functionVectorB_000000b0.run(0x17L, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    Kernel.ReturnFromException_Impl_B17();
+    GATE.release();
   }
 
   @Method(0x801c1600L)
   public static void SetDefaultExitFromException() {
-    functionVectorB_000000b0.run(0x18L, EMPTY_OBJ_ARRAY);
+    GATE.acquire();
+    Kernel.SetDefaultExitFromException_Impl_B18();
+    GATE.release();
   }
 
   @Method(0x801c1610L)
   public static void SetCustomExitFromException(final jmp_buf buffer) {
-    functionVectorB_000000b0.run(0x19L, new Object[] {buffer});
+    GATE.acquire();
+    Kernel.SetCustomExitFromException_Impl_B19(buffer);
+    GATE.release();
   }
 
   @Method(0x801c1d60L)
