@@ -387,33 +387,11 @@ public final class Scus94491BpeSegment {
 
   public static final Value ovalBlobTimHeader_80010548 = MEMORY.ref(4, 0x80010548L);
 
-  public static final CString BASCUS_94491drgn00_80010734 = MEMORY.ref(20, 0x80010734L, CString::new);
-
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
 
   public static final Value _80010868 = MEMORY.ref(4, 0x80010868L);
 
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
-
-  /** String: "bu00:" */
-  public static final CString bu00_80011174 = MEMORY.ref(6, 0x80011174L, CString::new);
-
-  /**
-   * String: CD_sync
-   */
-  public static final CString _80011394 = MEMORY.ref(8, 0x80011394L, CString::new);
-
-  /**
-   * String: CD_ready
-   */
-  public static final CString _8001139c = MEMORY.ref(9, 0x8001139cL, CString::new);
-
-  /**
-   * String: CD_cw
-   */
-  public static final CString _800113c0 = MEMORY.ref(6, 0x800113c0L, CString::new);
-
-  public static final CString cdName_800115c8 = MEMORY.ref(6, 0x800115c8L, CString::new);
 
   public static final CString cdName_80011700 = MEMORY.ref(6, 0x80011700L, CString::new);
 

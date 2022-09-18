@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.cdrom.CdlFILE;
-import legend.core.cdrom.SyncCode;
 import legend.core.gpu.Box;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
@@ -11,18 +10,14 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.core.spu.Spu;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
-import legend.game.types.JoyData;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct124;
@@ -42,10 +37,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c1434 = MEMORY.ref(4, 0x800c1434L);
 
   public static final Value _800c1ba8 = MEMORY.ref(4, 0x800c1ba8L);
-
-  public static final Value _800c1bb0 = MEMORY.ref(4, 0x800c1bb0L);
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> cdromReadCompleteSubSubCallbackPtr_800c1bb4 = MEMORY.ref(4, 0x800c1bb4L, Pointer.of(4, BiConsumerRef::new));
-  public static final Pointer<BiConsumerRef<SyncCode, byte[]>> _800c1bb8 = MEMORY.ref(4, 0x800c1bb8L, Pointer.of(4, BiConsumerRef::new));
 
   public static final GpuPacket _800c1bc0 = MEMORY.ref(4, 0x800c1bc0L, GpuPacket::new);
 
@@ -107,40 +98,6 @@ public final class Scus94491BpeSegment_800c {
 
   public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
 
-  public static final Value _800c3638 = MEMORY.ref(4, 0x800c3638L);
-  public static final Value _800c363c = MEMORY.ref(4, 0x800c363cL);
-
-  public static final Value _800c3648 = MEMORY.ref(4, 0x800c3648L);
-  public static final Value _800c364c = MEMORY.ref(4, 0x800c364cL);
-
-  public static final Value _800c3658 = MEMORY.ref(4, 0x800c3658L);
-
-  public static final Value _800c3660 = MEMORY.ref(4, 0x800c3660L);
-  public static final Value _800c3664 = MEMORY.ref(4, 0x800c3664L);
-  public static final Value _800c3668 = MEMORY.ref(4, 0x800c3668L);
-
-  public static final Value _800c3670 = MEMORY.ref(1, 0x800c3670L);
-
-  public static final Value _800c3708 = MEMORY.ref(1, 0x800c3708L);
-
-  public static final Value _800c37a4 = MEMORY.ref(4, 0x800c37a4L);
-  public static final Value _800c37a8 = MEMORY.ref(4, 0x800c37a8L);
-  public static final Value _800c37ac = MEMORY.ref(4, 0x800c37acL);
-  public static final Value _800c37b0 = MEMORY.ref(4, 0x800c37b0L);
-  public static final Value _800c37b4 = MEMORY.ref(4, 0x800c37b4L);
-
-  public static final ArrayRef<JoyData> joyData_800c37b8 = MEMORY.ref(4, 0x800c37b8L, ArrayRef.of(JoyData.class, 2, 240, JoyData::new));
-  public static final ArrayRef<UnsignedByteRef> responseBuffer0_800c3998 = MEMORY.ref(1, 0x800c3998L, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
-  public static final ArrayRef<UnsignedByteRef> responseBuffer1_800c39bb = MEMORY.ref(1, 0x800c39bbL, ArrayRef.of(UnsignedByteRef.class, 35, 1, UnsignedByteRef::new));
-  public static final ArrayRef<ByteRef> inputBuffer_800c39e0 = MEMORY.ref(1, 0x800c39e0L, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> inputBuffer_800c3a03 = MEMORY.ref(1, 0x800c3a03L, ArrayRef.of(ByteRef.class, 37, 1, ByteRef::new));
-  public static final Value _800c3a28 = MEMORY.ref(4, 0x800c3a28L);
-  public static final Value joypadTimeoutCurrentTime_800c3a2c = MEMORY.ref(4, 0x800c3a2cL);
-  public static final Value joypadTimeoutTimeout_800c3a30 = MEMORY.ref(4, 0x800c3a30L);
-  public static final Value joypadTimeoutMode_800c3a34 = MEMORY.ref(4, 0x800c3a34L);
-
-  public static final Value _800c3a38 = MEMORY.ref(4, 0x800c3a38L);
-  public static final Value _800c3a3c = MEMORY.ref(4, 0x800c3a3cL);
   /** 0x990 bytes long, I think these map to voices, not channels */
   public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(2, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
   /** 0x5f4 bytes long */

@@ -317,7 +317,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.SMap#_800c6778}</li>
    *   <li>{@link legend.game.SMap#_800c676c}</li>
    *   <li>{@link legend.game.SMap#_800c6770}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800f#_800fa6dc}</li>
+   *   <li>{@link Bttl_800c#_800fa6dc}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_15c}</li>

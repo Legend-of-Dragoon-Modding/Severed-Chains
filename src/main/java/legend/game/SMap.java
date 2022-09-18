@@ -249,7 +249,6 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.Scus94491BpeSegment_800f.FUN_800fc064;
 
 public final class SMap {
   private SMap() { }
@@ -850,7 +849,7 @@ public final class SMap {
 
   @Method(0x800d9970L)
   public static long authenticateDisk() {
-    return FUN_800fc064(1) < 1 ? 1 : 0;
+    return 1;
   }
 
   @Method(0x800d9994L)

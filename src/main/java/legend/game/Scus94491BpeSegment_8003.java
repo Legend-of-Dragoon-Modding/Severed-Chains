@@ -61,9 +61,6 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
-import static legend.core.LibDs.DSL_MAX_DIR;
-import static legend.core.LibDs.DSL_MAX_FILE;
-import static legend.core.LibDs.DSL_MAX_LEVEL;
 import static legend.core.MathHelper.clamp;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.Timers.TMR_HRETRACE_MODE;
@@ -187,6 +184,10 @@ public final class Scus94491BpeSegment_8003 {
   private Scus94491BpeSegment_8003() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
+
+  public static final int DSL_MAX_DIR = 0x80;
+  public static final int DSL_MAX_FILE = 0x40;
+  public static final int DSL_MAX_LEVEL = 0x8;
 
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {

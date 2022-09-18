@@ -215,29 +215,6 @@ public final class SInit {
     //LAB_800fbc9c
     _800fd404.addu(0x1L);
 
-    // Pre-optimisation
-//    //LAB_800fbc04
-//    final long s0 = _800fd518.get() + _800fd51c.get();
-//    if(startCdromDmaTransfer(new CdlLOC(_800bb4c8.offset(a0 * 24)), 0x50L, s0, new CdlMODE().doubleSpeed()) == 0) {
-//      return 0;
-//    }
-//
-//    //LAB_800fbc44
-//    long remainingTransfers;
-//    do { //TODO this is looping infinitely --------------------------------------------------------------
-//      remainingTransfers = FUN_80035a30(0x9100_0000L); //TODO this was putting something on the stack, just a temp dumping ground by the looks of it
-//    } while(remainingTransfers > 0);
-//
-//    if(remainingTransfers == 0) {
-//      final long a2 = MEMORY.ref(4, s0).offset(0x4L).get();
-//      final long v1 = _800fd51c.get();
-//      _800fd524.offset(_800fd404.get() * 4).setu(v1);
-//      _800fd51c.setu(v1 + 0x8L + (a2 << 0x6L >>> 0x3L));
-//
-//      //LAB_800fbc9c
-//      _800fd404.addu(0x1L);
-//    }
-
     //LAB_800fbcb0
     return 0;
   }

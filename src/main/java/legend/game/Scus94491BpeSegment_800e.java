@@ -985,27 +985,6 @@ public final class Scus94491BpeSegment_800e {
 
     MEMORY.addFunctions(SInit.class);
 
-    // Pre-optimisation
-//    final long numberOfSectors = (file.size + 0x7ffL) / 0x800L;
-//    if(startCdromDmaTransfer(file.pos, numberOfSectors, SInitOvlData_800c66a4.get(), new CdlMODE().doubleSpeed()) != 0) {
-//      long remainingDmaTransfers;
-//
-//      //LAB_800e63f8
-//      do {
-//        remainingDmaTransfers = FUN_80035a30(sp + 0x10L);
-//
-//        try {
-//          Thread.sleep(1);
-//        } catch(final InterruptedException ignored) { }
-//      } while(remainingDmaTransfers > 0);
-//
-//      if(remainingDmaTransfers == 0) {
-//        FUN_80017c44(0, SInitOvlData_800c66a4.get(), _80010004.get());
-//        removeFromLinkedList(SInitOvlData_800c66a4.getAddress());
-//        loadingStage_800bb10c.addu(0x1L);
-//      }
-//    }
-
     //LAB_800e6448
   }
 

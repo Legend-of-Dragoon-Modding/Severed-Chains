@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
-import legend.core.cdrom.SyncCode;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
@@ -27,7 +26,6 @@ import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
-import legend.game.types.JoyStruct;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.MrgFile;
@@ -46,11 +44,12 @@ import legend.game.types.Struct84;
 import java.util.function.Function;
 
 import static legend.core.Hardware.MEMORY;
-import static legend.core.LibDs.DSL_MAX_DIR;
-import static legend.core.LibDs.DSL_MAX_FILE;
 
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
+
+  public static final int DSL_MAX_DIR = 0x80;
+  public static final int DSL_MAX_FILE = 0x40;
 
   public static final Value _800babc0 = MEMORY.ref(4, 0x800babc0L);
 
@@ -321,20 +320,9 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);
 
-  public static final ArrayRef<JoyStruct> _800bed60 = MEMORY.ref(4, 0x800bed60L, ArrayRef.of(JoyStruct.class, 2, 0x90, JoyStruct::new));
-
   public static final Value _800bee90 = MEMORY.ref(4, 0x800bee90L);
   public static final Value _800bee94 = MEMORY.ref(4, 0x800bee94L);
   public static final Value _800bee98 = MEMORY.ref(4, 0x800bee98L);
-  public static final Value _800bee9c = MEMORY.ref(4, 0x800bee9cL);
-
-  public static final Value _800beea4 = MEMORY.ref(4, 0x800beea8L);
-
-  public static final Value _800beeac = MEMORY.ref(4, 0x800beeacL);
-
-  public static final Value _800beeb4 = MEMORY.ref(4, 0x800beeb8L);
-
-  public static final Value _800beebc = MEMORY.ref(4, 0x800beebcL);
 
   public static final Value _800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
   public static final Value _800bf0b4 = MEMORY.ref(4, 0x800bf0b4L);
@@ -354,14 +342,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);
 
   public static final Value _800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
-
-  public static final Value batch_800bf618 = MEMORY.ref(4, 0x800bf618L);
-  public static final EnumRef<SyncCode> syncCode_800bf61c = MEMORY.ref(1, 0x800bf61cL, EnumRef.of(SyncCode.values()));
-  public static final Value response_800bf61d = MEMORY.ref(1, 0x800bf61dL);
-
-  public static final Value batch_800bf628 = MEMORY.ref(4, 0x800bf628L);
-  public static final EnumRef<SyncCode> syncCode_800bf62c = MEMORY.ref(1, 0x800bf62cL, EnumRef.of(SyncCode.values()));
-  public static final Value response_800bf62d = MEMORY.ref(1, 0x800bf62dL);
 
   /**
    * CD file list

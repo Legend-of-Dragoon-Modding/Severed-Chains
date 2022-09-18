@@ -57,7 +57,6 @@ import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.fillMemory;
@@ -66,6 +65,7 @@ import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -149,9 +149,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be358;
-import static legend.game.Scus94491BpeSegment_800b._800bed60;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800beebc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -7096,11 +7094,8 @@ public class WMap {
 
     if(v0 != v1 || struct258_800c66a8.deref().vec_84.getY() != struct258_800c66a8.deref().vec_94.getY() || struct258_800c66a8.deref().vec_84.getZ() != struct258_800c66a8.deref().vec_94.getZ()) {
       //LAB_800e117c
-      v0 = 0x800c_0000L;
-      v0 = MEMORY.ref(2, v0).offset(-0x124aL).get();
-
       //LAB_800e11b0
-      if(v0 >= 0x7fL && _800beebc.get() != 0 || (joypadInput_8007a39c.get() & 0x40L) != 0) {
+      if((joypadInput_8007a39c.get() & 0x40L) != 0) {
         //LAB_800e11d0
         v0 = 0x800c_0000L;
         v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
@@ -9540,7 +9535,7 @@ public class WMap {
 
     //LAB_800e9330
     //LAB_800e9364
-    if(_800bed60.get(0).sArr54.get(1).get() >= 0x7fL && _800beebc.get() != 0 || (joypadInput_8007a39c.get() & 0x40L) != 0) {
+    if((joypadInput_8007a39c.get() & 0x40L) != 0) {
       //LAB_800e9384
       sp4 *= 2; // Running
     }
