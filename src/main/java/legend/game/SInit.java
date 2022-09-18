@@ -26,8 +26,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80024654;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ac24;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
-import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8004._8004dd80;
 import static legend.game.Scus94491BpeSegment_8004._8004dd88;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
@@ -209,8 +207,6 @@ public final class SInit {
     final long s0 = linkedListEntry_800fd518.get() + _800fd51c.get();
     final CdlLOC cdPos = CdlFILE_800bb4c8.get(fileIndex).pos;
     CDROM.readFromDisk(cdPos, 0x50, s0);
-    FUN_8003429c(0);
-    handleCdromDmaTimeout(1);
 
     final long a2 = MEMORY.ref(4, s0).offset(0x4L).get();
     _800fd524.offset(_800fd404.get() * 4).setu(_800fd51c);

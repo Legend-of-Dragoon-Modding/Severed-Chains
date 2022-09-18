@@ -269,7 +269,6 @@ public final class Scus94491 {
     interruptHandlersInitialized_801c5424.set(true);
     _801c64ac.deref(4).offset(0x14L).setu(startInterruptVsync());
     _801c64ac.deref(4).offset(0x04L).setu(startInterruptDma());
-    _96_remove();
 
     //LAB_801c116c
     return interruptHandlersInitialized_801c5424.getAddress();
@@ -407,13 +406,6 @@ public final class Scus94491 {
     for(long i = address; i < address + words * 4L; i += 4L) {
       MEMORY.set(i, 4, 0L);
     }
-  }
-
-  @Method(0x801c15d8L)
-  public static void _96_remove() {
-    GATE.acquire();
-    Bios._96_remove_Impl_A54();
-    GATE.release();
   }
 
   @Method(0x801c15f0L)

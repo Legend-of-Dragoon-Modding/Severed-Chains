@@ -58,7 +58,6 @@ import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003429c;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -73,10 +72,7 @@ import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
 import static legend.game.Scus94491BpeSegment_8003.SetTmr0InterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
-import static legend.game.Scus94491BpeSegment_8003.handleCdromDmaTimeout;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.set80053498;
-import static legend.game.Scus94491BpeSegment_8003.setCdDebug;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
@@ -838,10 +834,7 @@ public final class Scus94491BpeSegment_800e {
     InitGeom();
     setProjectionPlaneDistance(640);
     DsNewMedia();
-//    resetCdromStuff();
-    set80053498(0x1L);
     FUN_80019500();
-    setCdDebug(3); // I think 3 is the most detailed logging
 
     mainCallbackIndexOnceLoaded_8004dd24.setu(0);
     pregameLoadingStage_800bb10c.setu(0);
@@ -985,8 +978,6 @@ public final class Scus94491BpeSegment_800e {
 
     final int numberOfSectors = (int)((file.size.get() + 0x7ffL) / 0x800L);
     CDROM.readFromDisk(file.pos, numberOfSectors, SInitOvlData_800c66a4.get());
-    FUN_8003429c(0);
-    handleCdromDmaTimeout(1);
 
     decompress(SInitOvlData_800c66a4.get(), _80010004.get());
     removeFromLinkedList(SInitOvlData_800c66a4.get());

@@ -185,7 +185,6 @@ import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8003.set80053498;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
@@ -715,7 +714,6 @@ public final class SMap {
     _8004dd30.setu(0x1L);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.setu(0);
-    set80053498(0);
     S_InitLoaded_800c6694.setu(0);
     diskSwapMcqLoaded_800c6698.setu(0);
     loadDrgnBinFile(0, mcqPleaseInsertDiskN_800f48d0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
@@ -857,11 +855,6 @@ public final class SMap {
 
   @Method(0x800d9994L)
   public static long FUN_800d9994() {
-//    if(resetCdromStuff() != 1) {
-//      return 0;
-//    }
-
-    set80053498(0x1L);
     SInitBinLoaded_800bbad0.set(true);
 
     //TODO GH#3
@@ -7529,15 +7522,6 @@ public final class SMap {
   @Method(0x800ed960L)
   public static long loadFmv() {
     // TODO skip FMVs
-    /*
-    if(_800bf0d8.get() != 0x1L || doubleBufferFrame_800bb108.get() == 0) {
-      //LAB_800ed9d0
-      return 0;
-    }
-
-    unloadSoundFile(8);
-    FUN_800fb7cc(_800f970c.offset(_800bf0dc.get() * 16).getAddress(), (int)_800bf0dc.get());
-    */
 
     _800bf0d8.setu(0x2L);
     fileLoadingCallbackIndex_8004ddc4.set(0x16L);
@@ -7549,24 +7533,6 @@ public final class SMap {
   @Method(0x800ed9e4L)
   public static long playFmv() {
     //TODO skip FMV
-    /*
-    if(_800bf0d8.get() != 0x2) {
-      return 0;
-    }
-
-    //LAB_800eda0c
-    final long s0;
-    if(_800bf0dc.get() == 0 && joypadPress_8007a398.get(0x800L) != 0) {
-      s0 = 0x1L;
-    } else {
-      s0 = 0;
-    }
-
-    //LAB_800eda38
-    if(FUN_800fb90c() == 0 && s0 == 0) {
-      return 0x1L;
-    }
-    */
 
     //LAB_800eda50
     _800bf0d8.setu(0x3L);

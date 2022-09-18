@@ -11,7 +11,6 @@ import legend.core.Hardware;
 import legend.core.IoHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
-import legend.core.cdrom.SyncCode;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.memory.Method;
@@ -101,7 +100,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
-import static legend.game.Scus94491BpeSegment_8003.FUN_80036674;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
@@ -114,12 +112,10 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
-import static legend.game.Scus94491BpeSegment_8003.beginCdromTransfer;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.drawOTag;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.resetDmaTransfer;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
@@ -309,7 +305,6 @@ import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
-import static legend.game.Scus94491BpeSegment_800b.transferIndex_800bb494;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
@@ -2661,34 +2656,6 @@ public final class Scus94491BpeSegment {
     transferDest_800bb460.setu(fileTransferDest_800bb488);
     fileSize_800bb464.setu(fileSize_800bb48c);
     currentlyLoadingFileInfo_800bb468.set(fileLoadingInfoArray_800bbad8.get(0));
-  }
-
-  @Method(0x80014f64L)
-  public static void FUN_80014f64(final SyncCode syncCode, final byte[] responses) {
-    if(syncCode == SyncCode.COMPLETE) {
-      resetDmaTransfer(getMethodAddress(Scus94491BpeSegment.class, "FUN_80014fac", SyncCode.class, byte[].class), -0x1L);
-    } else {
-      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
-    }
-  }
-
-  @Method(0x80014facL)
-  public static void FUN_80014fac(final SyncCode syncCode, final byte[] responses) {
-    if(syncCode == SyncCode.DATA_READY) {
-      beginCdromTransfer(fileTransferDest_800bb488.get() + transferIndex_800bb494.get() * 0x800L, 0x200L);
-
-      transferIndex_800bb494.addu(1);
-
-      if(transferIndex_800bb494.get() >= numberOfTransfers_800bb490.get()) {
-        FUN_80036674();
-        transferIndex_800bb494.setu(-0x1L);
-      }
-    } else {
-      //LAB_80015024
-      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
-    }
-
-    //LAB_8001502c
   }
 
   @Method(0x800151a0L)
