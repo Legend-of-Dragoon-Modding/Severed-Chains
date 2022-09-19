@@ -2190,12 +2190,6 @@ public final class SItem {
 
       case _53:
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
-        if(messageBox(messageBox_8011dc90) == MessageBoxResult.AWAITING_INPUT) {
-          //LAB_800fff8c
-          //LAB_800fff94
-          renderSavedGames(slotScroll_8011d744.get(), true, 0);
-          break;
-        }
 
         //LAB_800ff9cc
         //LAB_800ff9f4
