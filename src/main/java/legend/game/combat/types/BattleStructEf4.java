@@ -39,8 +39,7 @@ public class BattleStructEf4 implements MemoryRef {
     this.bobjIndices_e0c = ref.offset(4, 0xe0cL).cast(ArrayRef.of(IntRef.class, 12, 4, IntRef::new));
 
     this.charBobjIndices_e40 = ref.offset(4, 0xe40L).cast(ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-    this.bobjIndices_e50 = ref.offset(4, 0xe50L).cast(ArrayRef.of(IntRef.class, 6, 4, IntRef::new));
-
+    this.bobjIndices_e50 = ref.offset(4, 0xe50L).cast(ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
     this.bobjIndices_e78 = ref.offset(4, 0xe78L).cast(ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
 
     this.bobjIndices_ebc = ref.offset(4, 0xebcL).cast(ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
