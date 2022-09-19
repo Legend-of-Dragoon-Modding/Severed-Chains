@@ -106,6 +106,7 @@ import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8002.useItemInMenu;
@@ -3626,7 +3627,7 @@ public final class SItem {
 
   @Method(0x80103e90L)
   public static void renderCentredText(final LodString text, final int x, final int y, final long a3) {
-    renderText(text, x - textLength(text) * 4, y, a3);
+    renderText(text, x - textWidth(text) / 2, y, a3);
   }
 
   /**
