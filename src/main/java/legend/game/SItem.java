@@ -3373,7 +3373,7 @@ public final class SItem {
     }
 
     //LAB_801036e8
-    if(scroll < saves.size() - 2 && (whichMenu_800bdc38.get() == 0x13L && saves.size() > 2 || saves.size() > 3)) {
+    if(scroll < (whichMenu_800bdc38.get() == 0x13L ? saves.size() - 3 : saves.size() - 2) && (whichMenu_800bdc38.get() == 0x13L && saves.size() > 2 || saves.size() > 3)) {
       if(saveListDownArrow_800bdb98.isNull()) {
         // Allocate down arrow
         final Renderable58 renderable = allocateUiElement(111, 108, 182, 208);
@@ -3638,12 +3638,17 @@ public final class SItem {
 
     if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) {
       if(selectedSlot.get() == 0) {
-        //LAB_80103f44
-        if(scroll.get() < scrollAmount) {
-          return true;
-        }
+        if(scroll.get() == 0) { // Wrap around up
+          selectedSlot.set(slotsDisplayed - 1);
+          scroll.set(slotCount - slotsDisplayed);
+        } else {
+          //LAB_80103f44
+          if(scroll.get() < scrollAmount) {
+            return true;
+          }
 
-        scroll.sub(scrollAmount);
+          scroll.sub(scrollAmount);
+        }
       } else {
         selectedSlot.decr();
       }
@@ -3652,12 +3657,17 @@ public final class SItem {
       if(selectedSlot.get() < slotsDisplayed - 1) {
         selectedSlot.incr();
       } else {
-        //LAB_80103f8c
-        if(slotCount <= scroll.get() + slotsDisplayed * scrollAmount) {
-          return true;
-        }
+        if(scroll.get() + slotsDisplayed == slotCount) {
+          selectedSlot.set(0);
+          scroll.set(0);
+        } else {
+          //LAB_80103f8c
+          if(slotCount <= scroll.get() + slotsDisplayed * scrollAmount) {
+            return true;
+          }
 
-        scroll.add(scrollAmount);
+          scroll.add(scrollAmount);
+        }
       }
       //LAB_80103fb0
     } else if((inventoryJoypadInput_800bdc44.get() & 0x4) != 0) {
