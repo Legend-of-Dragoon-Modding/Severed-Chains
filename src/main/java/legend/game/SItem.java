@@ -7573,30 +7573,32 @@ public final class SItem {
 
         //LAB_8010f858
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          s0 = menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() >= 0xc0 ? 1 : 0;
-          final MenuItemStruct04 menuItem1 = _8011dcb8.get((int)s0).deref().get(slotIndex_8011e1f4.get() + slotScroll_8011e1f8.get());
+          final MenuItemStruct04 newItem = menuItems_8011d7c8.get(menuIndex_8011e1f0.get());
+          final int isItem = menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() >= 0xc0 ? 1 : 0;
+          final MenuItemStruct04 existingItem = _8011dcb8.get(isItem).deref().get(slotIndex_8011e1f4.get() + slotScroll_8011e1f8.get());
 
-          if((menuItem1._02.get() & 0x6000) != 0) {
+          if((existingItem._02.get() & 0x6000) != 0) {
             playSound(0x28L);
           } else {
             //LAB_8010f8f4
-            final MenuItemStruct04 menuItem2 = _8011dcb8.get((int)s0).deref().get(slotIndex_8011e1f4.get() + slotScroll_8011e1f8.get());
-            final MenuItemStruct04 menuItem3 = menuItems_8011d7c8.get(menuIndex_8011e1f0.get());
+            final int itemId = existingItem.itemId_00.get();
+            final int itemSlot = existingItem.itemSlot_01.get();
+            final int flags = existingItem._02.get();
 
-            menuItem2.itemId_00.set(menuItem3.itemId_00.get());
-            menuItem2.itemSlot_01.set(menuItem3.itemSlot_01.get());
-            menuItem2._02.set(menuItem3._02.get());
+            existingItem.itemId_00.set(newItem.itemId_00.get());
+            existingItem.itemSlot_01.set(newItem.itemSlot_01.get());
+            existingItem._02.set(newItem._02.get());
 
-            menuItem3.itemId_00.set(menuItem1.itemId_00.get());
-            menuItem3.itemSlot_01.set(menuItem1.itemSlot_01.get());
-            menuItem3._02.set(menuItem1._02.get());
+            newItem.itemId_00.set(itemId);
+            newItem.itemSlot_01.set(itemSlot);
+            newItem._02.set(flags);
 
             playSound(2);
             unloadRenderable(renderable_8011e204.deref());
             inventoryMenuState_800bdc28.set(InventoryMenuState._8);
 
             //LAB_8010f99c
-            if(s0 != 0) {
+            if(isItem != 0) {
               FUN_800239e0(_8011dcb8.get(1).deref(), gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
             } else {
               //LAB_8010f98c
