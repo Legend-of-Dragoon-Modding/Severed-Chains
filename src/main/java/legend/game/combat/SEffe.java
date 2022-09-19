@@ -1960,26 +1960,25 @@ public final class SEffe {
   }
 
   @Method(0x800ff6fcL)
-  public static void FUN_800ff6fc(final EffectManagerData6c u0, final BttlScriptData6cSub98 u1, final BttlScriptData6cSub98Sub94 u2, final BttlScriptData6cSub98Inner24 a3) {
-    final long a2 = a3._10.get();
+  public static void FUN_800ff6fc(final EffectManagerData6c u0, final BttlScriptData6cSub98 u1, final BttlScriptData6cSub98Sub94 a2, final BttlScriptData6cSub98Inner24 a3) {
     final long a0 = _8011a008.get();
-    MEMORY.ref(2, a2).offset(0x10L).setu(-0x80);
+    a2._10.set((short)-0x80);
     final long v1 = a0 >>> 1;
-    MEMORY.ref(2, a2).offset(0xeL).setu(v1 * 128);
-    MEMORY.ref(2, a2).offset(0x14L).setu(v1 * 128);
-    MEMORY.ref(2, a2).offset(0x16L).setu(a2);
-    MEMORY.ref(2, a2).offset(0x18L).setu(a0 & 0x1L);
-    MEMORY.ref(2, a2).offset(0x1aL).setu(v1 * 8);
+    a2._0e.set((short)(v1 * 128));
+    a2._14.set((short)(v1 * 128));
+    a2._16.set(a3._10.get());
+    a2._18.set((short)(a0 & 0x1));
+    a2._1a.setX((short)(v1 * 8));
 
     final long a1 = Math.max(0, MEMORY.ref(1, a3.getAddress()).offset(0x1dL).get() - a0 * 16); //TODO
 
     //LAB_800ff754
-    MEMORY.ref(2, a2).offset(0x84L).setu(a1 << 8);
-    MEMORY.ref(2, a2).offset(0x86L).setu(a1);
-    MEMORY.ref(2, a2).offset(0x12L).setu(-1);
-    MEMORY.ref(2, a2).offset(0x88L).setu(a1);
-    MEMORY.ref(2, a2).offset(0x86L).setu(a1 << 8);
-    MEMORY.ref(2, a2).offset(0x88L).setu(a1 << 8);
+    a2._84.set((short)(a1 << 8));
+    a2._86.set((short)a1);
+    a2._12.set((short)-1);
+    a2._88.set((short)a1);
+    a2._86.set((short)(a1 << 8));
+    a2._88.set((short)(a1 << 8));
   }
 
   @Method(0x800ff788L)
