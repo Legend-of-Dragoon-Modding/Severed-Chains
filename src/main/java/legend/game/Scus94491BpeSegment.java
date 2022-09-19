@@ -612,10 +612,10 @@ public final class Scus94491BpeSegment {
     gamepadKeyMap.put(GLFW_KEY_RIGHT, 0x2000); // Right
     gamepadKeyMap.put(GLFW_KEY_DOWN, 0x4000); // Down
     gamepadKeyMap.put(GLFW_KEY_LEFT, 0x8000); // Left
-    gamepadKeyMap.put(GLFW_KEY_1, 0x04); // L2
-    gamepadKeyMap.put(GLFW_KEY_3, 0x08); // R2
-    gamepadKeyMap.put(GLFW_KEY_Q, 0x01); // L1
-    gamepadKeyMap.put(GLFW_KEY_E, 0x02); // R1
+    gamepadKeyMap.put(GLFW_KEY_1, 0x01); // L2
+    gamepadKeyMap.put(GLFW_KEY_3, 0x02); // R2
+    gamepadKeyMap.put(GLFW_KEY_Q, 0x04); // L1
+    gamepadKeyMap.put(GLFW_KEY_E, 0x08); // R1
     gamepadKeyMap.put(GLFW_KEY_W, 0x10); // Triangle
     gamepadKeyMap.put(GLFW_KEY_D, 0x40); // Circle
     gamepadKeyMap.put(GLFW_KEY_S, 0x20); // Cross
