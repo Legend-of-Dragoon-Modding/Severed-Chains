@@ -1586,7 +1586,7 @@ public final class SItem {
             //LAB_800fe1fc
             for(int i = (int)s1; i < count_8011d750.get(); i++) {
               final MenuItemStruct04 a = _8011dcb8.get(charSlot_8011d734.get()).deref().get(i);
-              final MenuItemStruct04 b = _8011dcb8.get(charSlot_8011d734.get()).deref().get(i);
+              final MenuItemStruct04 b = _8011dcb8.get(charSlot_8011d734.get()).deref().get(i + 1);
               a.itemId_00.set(b.itemId_00);
               a.itemSlot_01.set(b.itemSlot_01);
               a._02.set(b._02);
