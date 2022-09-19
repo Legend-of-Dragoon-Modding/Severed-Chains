@@ -5554,6 +5554,8 @@ public final class SItem {
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
+    LOGGER.error("%s %s", inventoryMenuState_800bdc28.get(), inventoryJoypadInput_800bdc44.get());
+
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> {
         renderablePtr_800bdc5c.clear();
@@ -5829,7 +5831,6 @@ public final class SItem {
           case SCROLLED -> {
             //LAB_8010b69c
             renderablePtr_800bdbec.deref().y_44.set(FUN_8010a834(menuOption_8011e0e8.get()));
-            renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
           }
 
           case YES -> {
@@ -5844,7 +5845,10 @@ public final class SItem {
               FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
               unloadRenderable(renderablePtr_800bdbec.deref());
               FUN_8010a864(gameState_800babc8.equipment_1e8.get(0).get());
-              renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
+            } else {
+              //LAB_8010b7b4
+              menuOption_8011e0e8.set(0);
+              inventoryMenuState_800bdc28.set(InventoryMenuState._12);
             }
           }
 
@@ -5860,20 +5864,19 @@ public final class SItem {
               selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0)));
               FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
               unloadRenderable(renderablePtr_800bdbec.deref());
-              renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
+            } else {
+              //LAB_8010b7b4
+              menuOption_8011e0e8.set(0);
+              inventoryMenuState_800bdc28.set(InventoryMenuState._12);
             }
           }
 
           case CANCELLED -> {
             //LAB_8010b7c8
             inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-            renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
           }
         }
 
-        //LAB_8010b7b4
-        menuOption_8011e0e8.set(0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._12);
         renderShopMenu(menuIndex_8011e0dc.get(), _8011e13d.get());
       }
 
