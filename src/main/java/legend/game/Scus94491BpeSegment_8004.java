@@ -3,6 +3,7 @@ package legend.game;
 import legend.core.DebugHelper;
 import legend.core.dma.DmaChannelType;
 import legend.core.dma.DmaManager;
+import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
@@ -1089,6 +1090,15 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80040d10L)
   public static void patchC0TableAgain() {
     LOGGER.warn("Skipping bios patch");
+  }
+
+  @Method(0x80040df0L)
+  public static void FUN_80040df0(final VECTOR a0, final COLOUR in, final COLOUR out) {
+    CPU.MTC2(a0.getX(), 0); // VXY0
+    CPU.MTC2(a0.getY(),  1); // VZ0
+    CPU.MTC2(in.pack(), 6); // RGBC
+    CPU.COP2(0x108_041bL);
+    out.unpack(CPU.MFC2(22)); // RGB FIFO
   }
 
   @Method(0x80040e10L)

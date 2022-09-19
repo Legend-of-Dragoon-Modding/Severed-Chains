@@ -2236,6 +2236,13 @@ public final class Scus94491BpeSegment_8003 {
     return -0x1L;
   }
 
+  @Method(0x8003b820L)
+  public static void SetMaskBit(final long packet, final boolean forceMask) {
+    MEMORY.ref(1, packet).offset(0x3L).setu(0x2L);
+    MEMORY.ref(4, packet).offset(0x4L).setu(forceMask ? 0xe600_0001L : 0xe600_0000L);
+    MEMORY.ref(4, packet).offset(0x8L).setu(0);
+  }
+
   /**
    * Initialize content of a drawing mode primitive.
    * <p>
@@ -4336,34 +4343,43 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f930L)
-  public static long FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final long a3, final long a4, final long a5, final Ref<Long> a6, final Ref<Long> a7) {
+  public static int FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final DVECTOR a3, final DVECTOR a4, final DVECTOR a5, @Nullable Ref<Long> a6, @Nullable final Ref<Long> a7) {
     CPU.MTC2(a0.getXY(), 0);
-    CPU.MTC2(a0.getZ(), 1);
+    CPU.MTC2(a0.getZ(),  1);
     CPU.MTC2(a1.getXY(), 2);
-    CPU.MTC2(a1.getZ(), 3);
+    CPU.MTC2(a1.getZ(),  3);
     CPU.MTC2(a2.getXY(), 4);
-    CPU.MTC2(a2.getZ(), 5);
+    CPU.MTC2(a2.getZ(),  5);
 
     CPU.COP2(0x280030L);
 
-    MEMORY.ref(4, a3).setu(CPU.MFC2(12));
-    MEMORY.ref(4, a4).setu(CPU.MFC2(13));
-    MEMORY.ref(4, a5).setu(CPU.MFC2(14));
-    a6.set(CPU.MFC2(8));
-    a7.set(CPU.CFC2(31));
+    a3.setXY(CPU.MFC2(12));
+    a4.setXY(CPU.MFC2(13));
+    a5.setXY(CPU.MFC2(14));
+
+    if(a6 != null) {
+      a6.set(CPU.MFC2(8));
+    }
+
+    if(a7 != null) {
+      a7.set(CPU.CFC2(31));
+    }
 
     return (int)CPU.MFC2(19) >> 2;
   }
 
   @Method(0x8003f990L)
-  public static void FUN_8003f990(final SVECTOR v0, final VECTOR out, final UnsignedIntRef flags) {
+  public static void FUN_8003f990(final SVECTOR v0, final VECTOR out, @Nullable final UnsignedIntRef flags) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(), 1); // VZ0
     CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)
     out.setX((int)CPU.MFC2(25)); // MAC1
     out.setY((int)CPU.MFC2(26)); // MAC2
     out.setZ((int)CPU.MFC2(27)); // MAC3
-    flags.set(CPU.CFC2(31)); // Flags
+
+    if(flags != null) {
+      flags.set(CPU.CFC2(31)); // Flags
+    }
   }
 
   /**
@@ -4384,10 +4400,10 @@ public final class Scus94491BpeSegment_8003 {
    * @param ir0 Interpolated value for depth cueing (out)
    * @param flags Flags (out)
    *
-   * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3. TODO should this be signed since it's the Z coord?
+   * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
    */
   @Method(0x8003f9c0L)
-  public static long RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, final Ref<Long> ir0, final Ref<Long> flags) {
+  public static int RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(),  1); // VZ0
     CPU.MTC2(v1.getXY(), 2); // VXY1
@@ -4404,12 +4420,17 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(v3.getZ(),  1); // SZ0
     CPU.COP2(0x18_0001L); // Perspective transformation single
     sxyz3.setXY(CPU.MFC2(14)); // SXY2
-    ir0.set(CPU.MFC2(8)); // IR0
-    final long flags2 = CPU.CFC2(31); // Flags
 
-    flags.set(flags2 | flags1);
+    if(ir0 != null) {
+      ir0.set(CPU.MFC2(8)); // IR0
+    }
 
-    return CPU.MFC2(19) >> 2; // SZ3
+    if(flags != null) {
+      final long flags2 = CPU.CFC2(31); // Flags
+      flags.set(flags2 | flags1);
+    }
+
+    return (int)(CPU.MFC2(19) >> 2); // SZ3
   }
 
   /**

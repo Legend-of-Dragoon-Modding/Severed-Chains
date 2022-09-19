@@ -7267,7 +7267,7 @@ public class WMap {
         (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c6L).offset((i + 1 & 0x7L) * 0x4L).get()
       );
 
-      final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, sp70 + 0x8L, sp70 + 0x10L, sp70 + 0x18L, sp0x68, sp0x64);
+      final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, MEMORY.ref(2, sp70 + 0x8L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x10L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x18L, DVECTOR::new), sp0x68, sp0x64);
 
       if(sp6c >= 0x3L && sp6c < orderingTableSize_1f8003c8.get()) {
         insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp70);
