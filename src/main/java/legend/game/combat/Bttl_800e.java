@@ -3284,93 +3284,62 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7944L)
-  public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR a1, long s2) {
-    long v0;
-    long v1;
-    final long a1_0;
-    long a2;
-    final long t0;
-    final long t1;
-    final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
-    final long t6;
-    final long addr;
-    long s3;
-    final long s4;
-    final long s5;
-    long s6;
-    final long s7;
-    final long fp;
-
+  public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1._00.get() >= 0) {
-      final VECTOR sp0x18 = ApplyMatrixLV(matrix_800c3548, a1);
+      final VECTOR sp0x18 = ApplyMatrixLV(matrix_800c3548, trans);
+      sp0x18.add(matrix_800c3548.transfer);
 
-      v0 = sp0x18.getZ() + matrix_800c3548.transfer.getZ();
-      a2 = (sp0x18.getX() + matrix_800c3548.transfer.getX()) * _1f8003f8.getSigned() / (int)v0;
-      v1 = (sp0x18.getY() + matrix_800c3548.transfer.getY()) * _1f8003f8.getSigned() / (int)v0;
-      sp0x18.set(sp0x18.getX() + matrix_800c3548.transfer.getX(), (int)v0, sp0x18.getY() + matrix_800c3548.transfer.getY());
-
-      s3 = a2 & 0xffffL;
-      v1 = v1 << 16;
-      s3 = s3 | v1;
-      if((int)v0 < 0) {
-        v0 = v0 + 0x3L;
+      final int x;
+      final int y;
+      if(sp0x18.getZ() != 0) {
+        x = sp0x18.getX() * (int)_1f8003f8.get() / sp0x18.getZ();
+        y = sp0x18.getY() * (int)_1f8003f8.get() / sp0x18.getZ();
+      } else {
+        x = 0;
+        y = 0;
       }
 
-      //LAB_800e7a14
-      a2 = (int)v0 >> 2;
-      s6 = a2 + s2;
-      if((int)s6 >= 0x28L) {
-        if((int)s6 > 0x3ff8L) {
-          s6 = 0x3ff8L;
+      final DVECTOR xy = new DVECTOR().set((short)x, (short)y);
+      int z = a2 + sp0x18.getZ() / 4;
+      if(z >= 0x28) {
+        if(z > 0x3ff8) {
+          z = 0x3ff8;
         }
 
         //LAB_800e7a38
-        addr = linkedListAddress_1f8003d8.get();
+        final long packet = linkedListAddress_1f8003d8.get();
+        MEMORY.ref(1, packet).offset(0x3L).setu(9); // 9 words
+        MEMORY.ref(1, packet).offset(0x4L).setu(s1.r_14.get()); // R
+        MEMORY.ref(1, packet).offset(0x5L).setu(s1.g_15.get()); // G
+        MEMORY.ref(1, packet).offset(0x6L).setu(s1.b_16.get()); // B
+        MEMORY.ref(1, packet).offset(0x7L).setu(0x2cL | s1._00.get() >>> 29 & 0x2L); // Command
+        final int a1 = (int)_1f8003f8.get() * 0x400 / (sp0x18.getZ() / 4);
+        final int s5 = s1.x_04.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
+        final int s7 = s5 + s1.w_08.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
+        final int s2 = s1.y_06.get() * s1._1e.get() / 0x8 * a1 / 0x8000;
+        final int fp = s2 + s1.h_0a.get() * s1._1e.get() / 0x8 * a1 / 0x8000;
+        final int sin = rsin(s1.rotation_20.get());
+        final int cos = rcos(s1.rotation_20.get());
+        MEMORY.ref(2, packet).offset(0x08L).setu(xy.getX() + s5 * cos / 0x1000 - s2 * sin / 0x1000); // V0 X
+        MEMORY.ref(2, packet).offset(0x0aL).setu(xy.getY() + s5 * sin / 0x1000 + s2 * cos / 0x1000); // V0 Y
+        MEMORY.ref(1, packet).offset(0x0cL).setu(s1.u_0e.get()); // V0 U
+        MEMORY.ref(1, packet).offset(0x0dL).setu(s1.v_0f.get()); // V0 V
+        MEMORY.ref(2, packet).offset(0x0eL).setu(s1.clutY_12.get() << 6 | (s1.clutX_10.get() & 0x3f0) >>> 4); // CLUT
+        MEMORY.ref(2, packet).offset(0x10L).setu(xy.getX() + s7 * cos / 0x1000 - s2 * sin / 0x1000); // V1 X
+        MEMORY.ref(2, packet).offset(0x12L).setu(xy.getY() + s7 * sin / 0x1000 + s2 * cos / 0x1000); // V1 Y
+        MEMORY.ref(1, packet).offset(0x14L).setu(s1.w_08.get() + s1.u_0e.get() - 1); // V1 U
+        MEMORY.ref(1, packet).offset(0x15L).setu(s1.v_0f.get()); // V1 V
+        MEMORY.ref(2, packet).offset(0x16L).setu(s1._0c.get() | s1._00.get() >>> 23 & 0x60); // TPAGE
+        MEMORY.ref(2, packet).offset(0x18L).setu(xy.getX() + s5 * cos / 0x1000 - fp * sin / 0x1000); // V2 X
+        MEMORY.ref(2, packet).offset(0x1aL).setu(xy.getY() + s5 * sin / 0x1000 + fp * cos / 0x1000); // V2 Y
+        MEMORY.ref(1, packet).offset(0x1cL).setu(s1.u_0e.get()); // V2 U
+        MEMORY.ref(1, packet).offset(0x1dL).setu(s1.h_0a.get() + s1.v_0f.get() - 1); // V2 V
+        MEMORY.ref(2, packet).offset(0x20L).setu(xy.getX() + s7 * cos / 0x1000 - fp * sin / 0x1000); // V3 X
+        MEMORY.ref(2, packet).offset(0x22L).setu(xy.getY() + s7 * sin / 0x1000 + fp * cos / 0x1000); // V3 Y
+        MEMORY.ref(1, packet).offset(0x24L).setu(s1.w_08.get() + s1.u_0e.get() - 1); // V3 U
+        MEMORY.ref(1, packet).offset(0x25L).setu(s1.h_0a.get() + s1.v_0f.get() - 1); // V3 V
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get(z >> 2).getAddress(), packet);
         linkedListAddress_1f8003d8.addu(0x28L);
-        MEMORY.ref(1, addr).offset(0x03L).setu(0x9L);
-        MEMORY.ref(4, addr).offset(0x04L).setu(0x2c80_8080L);
-        MEMORY.ref(1, addr).offset(0x07L).oru(s1._00.get() >>> 29 & 0x2L);
-        MEMORY.ref(1, addr).offset(0x04L).setu(s1.r_14.get()); // R
-        MEMORY.ref(1, addr).offset(0x05L).setu(s1.g_15.get()); // G
-        MEMORY.ref(1, addr).offset(0x06L).setu(s1.b_16.get()); // B
-        a1_0 = _1f8003f8.getSigned() * 0x400 / (int)a2;
-        s5 = s1.x_04.get() * s1._1c.get() / 0x8 * a1_0 / 0x8000;
-        s7 = s1.w_08.get() * s1._1c.get() / 0x8 * a1_0 / 0x8000 + s5;
-        s2 = s1.y_06.get() * s1._1e.get() / 0x8 * a1_0 / 0x8000;
-        fp = s1.h_0a.get() * s1._1e.get() / 0x8 * a1_0 / 0x8000 + s2;
-        s4 = rsin(s1._20.get());
-        t2 = rcos(s1._20.get());
-        t6 = s3 + s5 * t2 / 0x1000;
-        a2 = s2 * s4 / 0x1000;
-        MEMORY.ref(2, addr).offset(0x08L).setu(t6 - a2); // V1 x
-        t3 = s3 / 0x10000;
-        t5 = t3 + s5 * s4 / 0x1000;
-        v1 = s2 * t2 / 0x1000;
-        MEMORY.ref(2, addr).offset(0x0aL).setu(t5 + v1); // V1 y
-        t4 = s3 + s7 * t2 / 0x1000;
-        MEMORY.ref(1, addr).offset(0x0cL).setu(s1.u_0e.get()); // V1 u
-        MEMORY.ref(1, addr).offset(0x0dL).setu(s1.v_0f.get()); // V1 v
-        MEMORY.ref(2, addr).offset(0x0eL).setu(s1.clutY_12.get() << 6 | (s1.clutX_10.get() & 0x3f0L) >>> 4); // CLUT
-        MEMORY.ref(2, addr).offset(0x10L).setu(t4 - a2); // V2 x
-        a2 = s7 * s4 / 0x1000;
-        MEMORY.ref(2, addr).offset(0x12L).setu(t3 + a2 + v1); // V2 y
-        t1 = fp * s4 / 0x1000;
-        t0 = fp * t2 / 0x1000;
-        MEMORY.ref(1, addr).offset(0x14L).setu(s1.w_08.get() + s1.u_0e.get() + 0xffL); // V2 u
-        MEMORY.ref(1, addr).offset(0x15L).setu(s1.v_0f.get()); // V2 v
-        MEMORY.ref(2, addr).offset(0x16L).setu(s1._0c.get() | s1._00.get() >>> 23 & 0x60L); // TPage
-        MEMORY.ref(2, addr).offset(0x18L).setu(t6 - t1); // V3 x
-        MEMORY.ref(2, addr).offset(0x1aL).setu(t5 + t0); // V3 Y
-        MEMORY.ref(1, addr).offset(0x1cL).setu(s1.u_0e.get()); // V3 u
-        MEMORY.ref(1, addr).offset(0x1dL).setu(s1.h_0a.get() + s1.v_0f.get() + 0xffL); // V3 v
-        MEMORY.ref(2, addr).offset(0x20L).setu(t4 - t1); // V4 x
-        MEMORY.ref(2, addr).offset(0x22L).setu(s3 / 0x10000 + a2 + t0); // V4 y
-        MEMORY.ref(1, addr).offset(0x24L).setu(s1.w_08.get() + s1.u_0e.get() + 0xffL); // V4 u
-        MEMORY.ref(1, addr).offset(0x25L).setu(s1.h_0a.get() + s1.v_0f.get() + 0xffL); // V4 v
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, addr);
       }
     }
 
@@ -3997,7 +3966,7 @@ public final class Bttl_800e {
       sp0x10.b_16.set(a1.svec_1c.getZ());
       sp0x10._1c.set(a1.svec_16.getX());
       sp0x10._1e.set(a1.svec_16.getY());
-      sp0x10._20.set(a1.svec_10.getZ()); // This is correct, different svec for Z
+      sp0x10.rotation_20.set(a1.svec_10.getZ()); // This is correct, different svec for Z
       if((a1._00.get() & 0x400_0000L) != 0) {
         zOffset_1f8003e8.set(a1.z_22.get());
         FUN_800e75ac(sp0x10, a2);

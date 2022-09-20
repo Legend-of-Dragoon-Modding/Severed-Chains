@@ -33,7 +33,7 @@ public class BattleStruct24 implements MemoryRef {
   public final ShortRef _1a;
   public final ShortRef _1c;
   public final ShortRef _1e;
-  public final IntRef _20;
+  public final IntRef rotation_20;
 
   public BattleStruct24(final Value ref) {
     this.ref = ref;
@@ -56,7 +56,7 @@ public class BattleStruct24 implements MemoryRef {
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
     this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
-    this._20 = ref.offset(4, 0x20L).cast(IntRef::new);
+    this.rotation_20 = ref.offset(4, 0x20L).cast(IntRef::new);
   }
 
   public BattleStruct24() {
@@ -80,7 +80,7 @@ public class BattleStruct24 implements MemoryRef {
     this._1a = new ShortRef();
     this._1c = new ShortRef();
     this._1e = new ShortRef();
-    this._20 = new IntRef();
+    this.rotation_20 = new IntRef();
   }
 
   @Override

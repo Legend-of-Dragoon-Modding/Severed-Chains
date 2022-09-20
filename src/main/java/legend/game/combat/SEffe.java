@@ -6421,7 +6421,7 @@ public final class SEffe {
         //LAB_8010d73c
         sp0x10._1c.set(manager._10.svec_16.getX());
         sp0x10._1e.set(manager._10.svec_16.getY());
-        sp0x10._20.set(s3._6e.get());
+        sp0x10.rotation_20.set(s3._6e.get());
         sp0x38.setX(manager._10.vec_04.getX() + (s3._08.get() >> 8));
         sp0x38.setY(manager._10.vec_04.getY() + (s3._0c.get() >> 8));
         sp0x38.setZ(manager._10.vec_04.getZ() + (s3._10.get() >> 8));
@@ -6524,7 +6524,7 @@ public final class SEffe {
       sp0x10.b_16.set(manager._10.svec_1c.getZ());
       sp0x10._1c.set(manager._10.svec_16.getX());
       sp0x10._1e.set(manager._10.svec_16.getY());
-      sp0x10._20.set(manager._10.svec_10.getX());
+      sp0x10.rotation_20.set(manager._10.svec_10.getX());
       sp0x38.setX(manager._10.vec_04.getX() + v1._04.get());
       sp0x38.setY(manager._10.vec_04.getY() + v1._06.get());
       sp0x38.setZ(manager._10.vec_04.getZ() + v1._08.get());
