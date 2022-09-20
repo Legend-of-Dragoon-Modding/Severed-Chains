@@ -3510,7 +3510,7 @@ public final class SItem {
     int previousId = charData.equipment_14.get(slot).get();
     charData.equipment_14.get(slot).set(equipmentId);
 
-    if(previousId == -1) {
+    if(previousId == 0xff) {
       previousId = 0x100;
     }
 
