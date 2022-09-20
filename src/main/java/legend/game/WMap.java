@@ -8816,19 +8816,19 @@ public class WMap {
           }
         }
       }
-
-      //LAB_800e6f3c
     }
+
+    // Render world map place names when start is held down
 
     //LAB_800e6f54
     _800c68ac.get(count)._04.set(-1);
 
-    qsort(_800c68ac.bound(WMapStruct0c_2.class, count), count, 0xc, getBiFunctionAddress(WMap.class, "FUN_800e7854", WMapStruct0c_2.class, WMapStruct0c_2.class, long.class));
+    qsort(_800c68ac.bound(WMapStruct0c_2.class, count), count, 0xc, getBiFunctionAddress(WMap.class, "sortPlaceNamesByZ", WMapStruct0c_2.class, WMapStruct0c_2.class, long.class));
 
     //LAB_800e6fa0
     int i;
     WMapStruct0c_2 struct;
-    for(i = 0, struct = _800c68ac.get(count); i < 7 && struct._04.get() >= 0; i++, struct = _800c68ac.get(count)) {
+    for(i = 0, struct = _800c68ac.get(0); i < 7 && struct._04.get() >= 0; i++, struct = _800c68ac.get(i)) {
       //LAB_800e6fec
       //LAB_800e6fec
       //LAB_800e6ff4
@@ -8984,6 +8984,11 @@ public class WMap {
     measureText(text, width, lines);
     renderText(text, x - width.get() + 3, y, (short)a3, (short)a4);
     renderText(text, x - (width.get() - 1) + 3, y + 1, 0x9L, (short)a4);
+  }
+
+  @Method(0x800e7854L)
+  public static long sortPlaceNamesByZ(final WMapStruct0c_2 a, final WMapStruct0c_2 b) {
+    return a.z_00.get() - b.z_00.get();
   }
 
   @Method(0x800e7888L)
