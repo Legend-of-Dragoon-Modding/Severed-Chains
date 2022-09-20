@@ -1,11 +1,14 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
+import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.IoHelper;
@@ -67,6 +70,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -316,6 +320,25 @@ import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -340,6 +363,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -547,7 +575,136 @@ public final class Scus94491BpeSegment {
 
   private static final Path state = Paths.get("./state.ddmp");
 
+  private static final float controllerDeadzone = Config.controllerDeadzone();
+  private static int controllerId = -1;
   private static boolean inputPulse;
+  private static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
+  private static final Int2BooleanMap controllerEdgeTriggers = new Int2BooleanOpenHashMap();
+
+  private static void handleControllerInput() {
+    if(controllerId != -1) {
+      final FloatBuffer axes = glfwGetJoystickAxes(controllerId);
+      final float axisX = axes.get(GLFW_GAMEPAD_AXIS_LEFT_X);
+      final float axisY = axes.get(GLFW_GAMEPAD_AXIS_LEFT_Y);
+      final float axisL = axes.get(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
+      final float axisR = axes.get(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+      final ByteBuffer hats = glfwGetJoystickHats(controllerId);
+      final int dpad = hats.get(0);
+
+      if(axisX > controllerDeadzone || (dpad & GLFW_HAT_RIGHT) != 0) {
+        controllerPress(0x2000);
+      } else if(axisX < -controllerDeadzone || (dpad & GLFW_HAT_LEFT) != 0) {
+        controllerPress(0x8000);
+      } else {
+        controllerRelease(0x2000);
+        controllerRelease(0x8000);
+      }
+
+      if(axisY < -controllerDeadzone || (dpad & GLFW_HAT_UP) != 0) {
+        controllerPress(0x1000);
+      } else if(axisY > controllerDeadzone || (dpad & GLFW_HAT_DOWN) != 0) {
+        controllerPress(0x4000);
+      } else {
+        controllerRelease(0x1000);
+        controllerRelease(0x4000);
+      }
+
+      if(axisL > controllerDeadzone) {
+        controllerPress(0x1);
+      } else {
+        controllerRelease(0x1);
+      }
+
+      if(axisR > controllerDeadzone) {
+        controllerPress(0x2);
+      } else {
+        controllerRelease(0x2);
+      }
+
+      final ByteBuffer buttons = glfwGetJoystickButtons(controllerId);
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_A) != 0) {
+        controllerPress(0x20);
+      } else {
+        controllerRelease(0x20);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_B) != 0) {
+        controllerPress(0x40);
+      } else {
+        controllerRelease(0x40);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_X) != 0) {
+        controllerPress(0x80);
+      } else {
+        controllerRelease(0x80);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_Y) != 0) {
+        controllerPress(0x10);
+      } else {
+        controllerRelease(0x10);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER) != 0) {
+        controllerPress(0x4);
+      } else {
+        controllerRelease(0x4);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER) != 0) {
+        controllerPress(0x8);
+      } else {
+        controllerRelease(0x8);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_START) != 0) {
+        controllerPress(0x800);
+      } else {
+        controllerRelease(0x800);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_BACK) != 0) {
+        controllerPress(0x100);
+      } else {
+        controllerRelease(0x100);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_THUMB) != 0) {
+        controllerPress(0x200);
+      } else {
+        controllerRelease(0x200);
+      }
+
+      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) != 0) {
+        controllerPress(0x400);
+      } else {
+        controllerRelease(0x400);
+      }
+    }
+  }
+
+  private static void controllerPress(final int input) {
+    if(!controllerEdgeTriggers.getOrDefault(input, false)) {
+      _800bee90.oru(input);
+      _800bee94.oru(input);
+      _800bee98.oru(input);
+      keyRepeat.put(input, 0);
+      controllerEdgeTriggers.put(input, true);
+    }
+  }
+
+  private static void controllerRelease(final int input) {
+    if(controllerEdgeTriggers.getOrDefault(input, false)) {
+      _800bee90.and(~input);
+      _800bee94.and(~input);
+      _800bee98.and(~input);
+      keyRepeat.remove(input);
+      controllerEdgeTriggers.remove(input);
+    }
+  }
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -621,8 +778,6 @@ public final class Scus94491BpeSegment {
     gamepadKeyMap.put(GLFW_KEY_S, 0x20); // Cross
     gamepadKeyMap.put(GLFW_KEY_A, 0x80); // Square
 
-    final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
-
     GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
       if(mods != 0) {
         return;
@@ -655,8 +810,31 @@ public final class Scus94491BpeSegment {
       }
     });
 
+    final String controllerGuid = Config.controllerGuid();
+    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
+      if(controllerGuid.equals(glfwGetJoystickGUID(i))) {
+        System.out.println("Using gamepad " + glfwGetJoystickName(i));
+        controllerId = i;
+        break;
+      }
+    }
+
+    GPU.window().events.onControllerConnected((window, id) -> {
+      if(controllerGuid.equals(glfwGetJoystickGUID(id))) {
+        controllerId = id;
+      }
+    });
+
+    GPU.window().events.onControllerDisconnected((window, id) -> {
+      if(controllerId == id) {
+        controllerId = -1;
+      }
+    });
+
     final Runnable r = () -> {
       EventManager.INSTANCE.clearStaleRefs();
+
+      handleControllerInput();
 
       joypadPress_8007a398.setu(_800bee94);
       joypadInput_8007a39c.setu(_800bee90);
