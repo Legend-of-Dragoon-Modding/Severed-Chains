@@ -798,15 +798,10 @@ public class WMap {
   public static void FUN_800ccc64() {
     setProjectionPlaneDistance(1100);
 
-    long v1 = 0x7L;
-    long v0 = gameState_800babc8.scriptFlags1_13c.getAddress() + 0x1cL;
-
     //LAB_800ccc84
-    do {
-      MEMORY.ref(4, v0).setu(0);
-      v1 = v1 - 0x1L;
-      v0 = v0 - 0x4L;
-    } while(v1 >= 0);
+    for(int i = 0; i < 8; i++) {
+      gameState_800babc8.scriptFlags1_13c.get(i).set(0);
+    }
 
     FUN_800ccf04();
     _800c6690.setu(0);

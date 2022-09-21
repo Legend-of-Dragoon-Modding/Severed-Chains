@@ -31,6 +31,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
@@ -4243,11 +4244,20 @@ public final class Scus94491BpeSegment {
     final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
     final int index = a0.params_20.get(0).deref().get() >>> 5;
 
+    final ArrayRef<UnsignedIntRef> flags;
+    if(index < 8) {
+      flags = gameState_800babc8.scriptFlags1_13c;
+    } else if(index < 16) {
+      flags = gameState_800babc8._15c;
+    } else {
+      throw new RuntimeException("Are there more flags?");
+    }
+
     if(a0.params_20.get(1).deref().get() != 0) {
-      gameState_800babc8.scriptFlags1_13c.get(index).or(0x1L << shift);
+      flags.get(index % 8).or(0x1L << shift);
     } else {
       //LAB_800173dc
-      gameState_800babc8.scriptFlags1_13c.get(index).and(~(0x1L << shift));
+      flags.get(index % 8).and(~(0x1L << shift));
     }
 
     //LAB_800173f4

@@ -31,7 +31,6 @@ public class GameState52c implements MemoryRef {
    */
   public final ArrayRef<UnsignedIntRef> scriptFlags2_bc;
   public final ArrayRef<UnsignedIntRef> scriptFlags1_13c;
-
   public final ArrayRef<UnsignedIntRef> _15c;
   public final ArrayRef<UnsignedIntRef> _17c;
   public final ArrayRef<UnsignedIntRef> dragoonSpirits_19c;
@@ -74,7 +73,6 @@ public class GameState52c implements MemoryRef {
     this._b8 = ref.offset(4, 0xb8L).cast(UnsignedIntRef::new);
     this.scriptFlags2_bc = ref.offset(4, 0xbcL).cast(ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
     this.scriptFlags1_13c = ref.offset(4, 0x13cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-
     this._15c = ref.offset(4, 0x15cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
     this._17c = ref.offset(4, 0x17cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
     this.dragoonSpirits_19c = ref.offset(4, 0x19cL).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
