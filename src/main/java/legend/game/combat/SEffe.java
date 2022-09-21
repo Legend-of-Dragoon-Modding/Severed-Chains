@@ -228,6 +228,13 @@ public final class SEffe {
 
   private static final SVECTOR _800fb94c = MEMORY.ref(2, 0x800fb94cL, SVECTOR::new);
 
+  /**
+   * <ol start="0">
+   *   <li>{@link SEffe#FUN_800fce10}</li>
+   *   <li>null</li>
+   *   <li>{@link SEffe#FUN_800fcf18}</li>
+   * </ol>
+   */
   private static final Value _801197c0 = MEMORY.ref(4, 0x801197c0L);
 
   private static final Value _801197ec = MEMORY.ref(1, 0x801197ecL);
@@ -1063,6 +1070,11 @@ public final class SEffe {
     }
 
     //LAB_800fcf08
+  }
+
+  @Method(0x800fcf18L)
+  public static void FUN_800fcf18(final EffectManagerData6c a0, final long a1) {
+    // no-op
   }
 
   @Method(0x800fcf20L)
@@ -3563,6 +3575,42 @@ public final class SEffe {
       s0._00.z.add(rcos(angle) * effect._1e.get() >> 12);
       s0._00.y.set(0);
       angle += step;
+    }
+  }
+
+  @Method(0x80105050L)
+  public static void FUN_80105050(final EffectManagerData6c manager, final BttlScriptData6cSub38 effect, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    final int a0 = effect._28.get();
+    final int s6 = 0x800 / (a0 - 1);
+    final int s5 = 0x1000 / effect.count_00.get() * a3;
+    int s2 = 0;
+
+    //LAB_801050c0
+    for(int i = 0; i < a0; i++) {
+      final BttlScriptData6cSub38Sub14Sub30 s1 = a2.ptr_10.deref().get(i);
+      s1._00.x.add(rcos(s2) * effect._1e.get() >> 12);
+      s1._00.y.set((rsin(s2) * rsin(s2) >> 12) * effect._1e.get() >> 12);
+      s1._00.z.add((rsin(s2) * rcos(s5) >> 12) * effect._1e.get() >> 12);
+      s2 += s6;
+    }
+  }
+
+  @Method(0x801051acL)
+  public static void FUN_801051ac(final EffectManagerData6c manager, final BttlScriptData6cSub38 effect, final BttlScriptData6cSub38Sub14 a2, final int a3) {
+    final int a1 = effect._28.get();
+    final int s6 = 0x1000 / (a1 - 1);
+    final int s5 = manager._10.vec_28.getX() << 8 >> 8;
+    long s3 = a2._02.get();
+    long s2 = 0;
+
+    //LAB_80105210
+    for(int i = 0; i < a1; i++) {
+      final BttlScriptData6cSub38Sub14Sub30 s0 = a2.ptr_10.deref().get(i);
+      s0._00.x.add(rsin(s2) * effect._1e.get() >> 12);
+      s0._00.y.set(rsin(s3) * effect._1e.get() / 4 >> 12);
+      s0._00.z.add(rcos(s2) * effect._1e.get() >> 12);
+      s2 = s2 + s6;
+      s3 = s3 + s5;
     }
   }
 
