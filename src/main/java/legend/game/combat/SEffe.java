@@ -33,6 +33,7 @@ import legend.game.combat.types.BttlScriptData6cInner;
 import legend.game.combat.types.BttlScriptData6cSub08_2;
 import legend.game.combat.types.BttlScriptData6cSub08_3;
 import legend.game.combat.types.BttlScriptData6cSub08_4;
+import legend.game.combat.types.BttlScriptData6cSub10_2;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlScriptData6cSub14_2;
 import legend.game.combat.types.BttlScriptData6cSub14_4;
@@ -42,6 +43,7 @@ import legend.game.combat.types.BttlScriptData6cSub18Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub1c_2;
 import legend.game.combat.types.BttlScriptData6cSub1c_2Sub1e;
+import legend.game.combat.types.BttlScriptData6cSub20_2;
 import legend.game.combat.types.BttlScriptData6cSub24;
 import legend.game.combat.types.BttlScriptData6cSub24_2;
 import legend.game.combat.types.BttlScriptData6cSub30;
@@ -123,6 +125,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
+import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
@@ -225,6 +228,8 @@ public final class SEffe {
   private static final Value _800fb8fc = MEMORY.ref(4, 0x800fb8fcL);
   private static final Value _800fb910 = MEMORY.ref(4, 0x800fb910L);
   private static final Value _800fb930 = MEMORY.ref(1, 0x800fb930L);
+
+  private static final Value _800fb940 = MEMORY.ref(4, 0x800fb940L);
 
   private static final SVECTOR _800fb94c = MEMORY.ref(2, 0x800fb94cL, SVECTOR::new);
 
@@ -6478,6 +6483,168 @@ public final class SEffe {
     }
   }
 
+  @Method(0x8010e04cL)
+  public static long FUN_8010e04c(final RunningScript script) {
+    final int count = script.params_20.get(2).deref().get();
+    final int s4 = script.params_20.get(1).deref().get();
+
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x10,
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010e6b0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010e2fc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010feb8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      BttlScriptData6cSub10_2::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    manager._10._00.set(0x5000_0000L);
+
+    final BttlScriptData6cSub10_2 effect = manager._44.derefAs(BttlScriptData6cSub10_2.class);
+    long addr = addToLinkedListTail(count * 0x10);
+    effect.count_00.set(count);
+    effect._0c.set(addr);
+
+    //LAB_8010e100
+    for(int i = 0; i < count; i++) {
+      MEMORY.ref(1, addr).offset(0x0L).setu(0x1L);
+      MEMORY.ref(2, addr).offset(0x2L).setu(rand() % 321 - 160);
+      MEMORY.ref(2, addr).offset(0x4L).setu(rand() % 241 - 120);
+      final long v0 = rand() % 1025 + 1024;
+      MEMORY.ref(2, addr).offset(0xaL).setu(v0);
+      MEMORY.ref(2, addr).offset(0xcL).setu(v0);
+      MEMORY.ref(2, addr).offset(0xeL).setu(v0);
+      MEMORY.ref(2, addr).offset(0xaL).shl(1);
+      addr += 0x10L;
+    }
+
+    //LAB_8010e1d8
+    if((s4 & 0xf_ff00) == 0xf_ff00) {
+      final long v1 = _800c6948.get() + (s4 & 0xff) * 0x8L;
+      effect._04.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
+      effect._06.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
+      effect._08.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
+      effect._09.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
+      effect._0a.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
+    } else {
+      //LAB_8010e254
+      long v0 = FUN_800eac58(s4 | 0x400_0000L).getAddress();
+      v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
+      effect._04.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+      effect._06.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
+      effect._08.set((int)(MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4));
+      effect._09.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
+      effect._0a.set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+    }
+
+    //LAB_8010e2b0
+    manager._10._00.or(0x5000_0000L);
+    script.params_20.get(0).deref().set(effectIndex);
+    return 0;
+  }
+
+  @Method(0x8010e2fcL)
+  public static void FUN_8010e2fc(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub10_2 s1 = manager._44.derefAs(BttlScriptData6cSub10_2.class);
+    final long sp10 = manager._10._00.get();
+    final long sp14 = -s1._08.get() / 2;
+    final long sp16 = -s1._09.get() / 2;
+    final long sp18 = s1._08.get();
+    final long sp1a = s1._09.get();
+    final long sp1c = (s1._06.get() & 0x100) >>> 4 | (s1._04.get() & 0x3ff) >>> 6;
+    final long sp1e = (s1._04.get() & 0x3f) << 2;
+    final long sp1f = s1._06.get();
+    final long sp20 = s1._0a.get() << 4 & 0x3ff;
+    final long sp28 = 0;
+    final long sp2a = 0;
+    final long sp22 = s1._0a.get() >>> 6 & 0x1ff;
+    final long sp24 = manager._10.svec_1c.getX();
+    final long sp25 = manager._10.svec_1c.getY();
+    final long sp26 = manager._10.svec_1c.getZ();
+    long s2 = s1._0c.get();
+
+    //LAB_8010e414
+    for(int s3 = 0; s3 < s1.count_00.get(); s3++) {
+      if(MEMORY.ref(1, s2).offset(0x0L).getSigned() != 0) {
+        final long packet = linkedListAddress_1f8003d8.get();
+        linkedListAddress_1f8003d8.addu(0x28L);
+        MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
+        MEMORY.ref(1, packet).offset(0x04L).setu(sp24);
+        MEMORY.ref(1, packet).offset(0x05L).setu(sp25);
+        MEMORY.ref(1, packet).offset(0x06L).setu(sp26);
+        MEMORY.ref(1, packet).offset(0x07L).setu(0x2cL | sp10 >>> 29 & 0x2L);
+        final long a2 = (MEMORY.ref(2, s2).offset(0xcL).getSigned() * s1._08.get() >> 12) / 2;
+        final long a3 = (MEMORY.ref(2, s2).offset(0xeL).getSigned() * s1._09.get() >> 12) / 2;
+        MEMORY.ref(2, packet).offset(0x08L).setu(MEMORY.ref(2, s2).offset(0x2L).get() - a2);
+        MEMORY.ref(2, packet).offset(0x0aL).setu(MEMORY.ref(2, s2).offset(0x4L).get() - a3);
+        MEMORY.ref(1, packet).offset(0x0cL).setu(sp1e);
+        MEMORY.ref(1, packet).offset(0x0dL).setu(sp1f);
+        MEMORY.ref(2, packet).offset(0x0eL).setu(sp22 << 6 | (sp20 & 0x3f0) >>> 4);
+        MEMORY.ref(2, packet).offset(0x10L).setu(MEMORY.ref(2, s2).offset(0x2L).get() + a2 + (s1._08.get() * MEMORY.ref(2, s2).offset(0xcL).getSigned() >> 12));
+        MEMORY.ref(2, packet).offset(0x12L).setu(MEMORY.ref(2, s2).offset(0x4L).get() + a3);
+        MEMORY.ref(1, packet).offset(0x14L).setu(sp18 + (sp1e - 1));
+        MEMORY.ref(1, packet).offset(0x15L).setu(sp1f);
+        MEMORY.ref(2, packet).offset(0x16L).setu(sp1c | sp10 >>> 23 & 0x60);
+        MEMORY.ref(2, packet).offset(0x18L).setu(MEMORY.ref(2, s2).offset(0x2L).get() + a2);
+        MEMORY.ref(2, packet).offset(0x1aL).setu(MEMORY.ref(2, s2).offset(0x4L).get() + a3 + (s1._09.get() * MEMORY.ref(2, s2).offset(0xeL).getSigned() >> 12));
+        MEMORY.ref(1, packet).offset(0x1cL).setu(sp1e);
+        MEMORY.ref(1, packet).offset(0x1dL).setu(sp1a + (sp1f - 1));
+        MEMORY.ref(2, packet).offset(0x20L).setu(MEMORY.ref(2, s2).offset(0x2L).get() + a2 + (s1._08.get() * MEMORY.ref(2, s2).offset(0xcL).getSigned() >> 12));
+        MEMORY.ref(2, packet).offset(0x22L).setu(MEMORY.ref(2, s2).offset(0x4L).get() + a3 + (s1._09.get() * MEMORY.ref(2, s2).offset(0xeL).getSigned() >> 12));
+        MEMORY.ref(1, packet).offset(0x24L).setu(sp18 + sp1e - 1);
+        MEMORY.ref(1, packet).offset(0x25L).setu(sp1a + sp1f - 1);
+        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet);
+      }
+
+      //LAB_8010e678
+      s2 += 0x10L;
+    }
+
+    //LAB_8010e694
+  }
+
+  @Method(0x8010e6b0L)
+  public static void FUN_8010e6b0(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub10_2 effect = manager._44.derefAs(BttlScriptData6cSub10_2.class);
+
+    //LAB_8010e6ec
+    long s2 = effect._0c.get();
+    for(int s3 = 0; s3 < effect.count_00.get(); s3++) {
+      MEMORY.ref(2, s2).offset(0x6L).setu(MEMORY.ref(2, s2).offset(0x2L).get());
+      MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
+      MEMORY.ref(2, s2).offset(0x2L).addu((rsin(manager._10.svec_10.getX()) * 32 >> 12) * manager._10.svec_16.getX() * MEMORY.ref(2, s2).offset(0x6L).getSigned() >> 24);
+      MEMORY.ref(2, s2).offset(0x4L).addu((rcos(manager._10.svec_10.getX()) * 32 >> 12) * manager._10.svec_16.getX() * MEMORY.ref(2, s2).offset(0x6L).getSigned() >> 24);
+
+      if(MEMORY.ref(2, s2).offset(0xaL).getSigned() * 120 + 50 >> 12 < MEMORY.ref(2, s2).offset(0x4L).getSigned()) {
+        MEMORY.ref(2, s2).offset(0x8L).setu(-120);
+        MEMORY.ref(2, s2).offset(0x4L).setu(-120);
+        final long v0 = rand() % 321 - 160;
+        MEMORY.ref(2, s2).offset(0x6L).setu(v0);
+        MEMORY.ref(2, s2).offset(0x2L).setu(v0);
+        MEMORY.ref(1, s2).offset(0x0L).setu(0x1L);
+      }
+
+      //LAB_8010e828
+      final long v1 = MEMORY.ref(2, s2).offset(0x2L).getSigned();
+      if(v1 > 0xa0) {
+        MEMORY.ref(2, s2).offset(0x6L).setu(-0xa0);
+        MEMORY.ref(2, s2).offset(0x2L).setu(-0xa0);
+        MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
+        //LAB_8010e848
+      } else if(v1 < -0xa0) {
+        //LAB_8010e854
+        MEMORY.ref(2, s2).offset(0x6L).setu(0xa0);
+        MEMORY.ref(2, s2).offset(0x2L).setu(0xa0);
+        MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
+      }
+
+      //LAB_8010e860
+      s2 += 0x10L;
+    }
+
+    //LAB_8010e87c
+  }
+
   @Method(0x8010e89cL)
   public static long FUN_8010e89c(final RunningScript script) {
     final int count = script.params_20.get(4).deref().get();
@@ -6582,6 +6749,254 @@ public final class SEffe {
     //LAB_8010edac
   }
 
+  @Method(0x8010edc8L)
+  public static long FUN_8010edc8(final RunningScript script) {
+    final long sp18 = _800fb940.offset(0x0L).get();
+    final long sp1c = _800fb940.offset(0x4L).get();
+    final long sp20 = _800fb940.offset(0x8L).get();
+    final int count = script.params_20.get(1).deref().get();
+    final int s5 = script.params_20.get(2).deref().get();
+    final int sp38 = script.params_20.get(3).deref().get();
+
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x20,
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010f124", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010f340", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010fee4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      BttlScriptData6cSub20_2::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub20_2 effect = manager._44.derefAs(BttlScriptData6cSub20_2.class);
+    long addr = addToLinkedListTail(count * 0xa8);
+    effect.count_00.set(count);
+    effect._04.set(0);
+    effect._08.set(addr);
+
+    //LAB_8010eecc
+    for(int i = 0; i < count; i++) {
+      MEMORY.ref(1, addr).offset(0x8cL).setu(0x7fL);
+      MEMORY.ref(1, addr).offset(0x8dL).setu(0x7fL);
+      MEMORY.ref(1, addr).offset(0x8eL).setu(0x7fL);
+      MEMORY.ref(4, addr).offset(0x04L).setu(rand() % s5 + 1);
+      MEMORY.ref(1, addr).offset(0x00L).setu(0);
+      MEMORY.ref(4, addr).offset(0x34L).setu(0);
+      MEMORY.ref(4, addr).offset(0x30L).setu(0);
+      MEMORY.ref(4, addr).offset(0x2cL).setu(0);
+      MEMORY.ref(4, addr).offset(0x74L).setu(0);
+      MEMORY.ref(4, addr).offset(0x70L).setu(0);
+      MEMORY.ref(4, addr).offset(0x6cL).setu(0);
+      final int s3 = rand() * (sp38 + 1);
+      final int s2 = rand() % 4096;
+      MEMORY.ref(4, addr).offset(0x10L).setu(0);
+      MEMORY.ref(4, addr).offset(0x0cL).setu((rcos(s2) - rsin(s2)) * s3 >> 12);
+      MEMORY.ref(1, addr).offset(0x8cL).setu(0xffL);
+      MEMORY.ref(1, addr).offset(0x8dL).setu(0xffL);
+      MEMORY.ref(1, addr).offset(0x8eL).setu(0xffL);
+      MEMORY.ref(2, addr).offset(0xa2L).setu(0);
+      MEMORY.ref(2, addr).offset(0xa0L).setu(0);
+      MEMORY.ref(4, addr).offset(0x14L).setu((rcos(s2) + rsin(s2)) * s3 >> 12);
+      MEMORY.ref(1, addr).offset(0x90L).setu(0x7fL);
+      MEMORY.ref(1, addr).offset(0x91L).setu(0x7fL);
+      MEMORY.ref(1, addr).offset(0x92L).setu(0x7fL);
+      MEMORY.ref(1, addr).offset(0x01L).setu(0);
+      MEMORY.ref(4, addr).offset(0x44L).setu(0);
+      MEMORY.ref(4, addr).offset(0x3cL).setu(0);
+      MEMORY.ref(4, addr).offset(0x08L).setu(rand() % s5 + 1);
+      MEMORY.ref(4, addr).offset(0x4cL).setu(rand() % 4096);
+      MEMORY.ref(4, addr).offset(0x84L).setu(0xc00L);
+      MEMORY.ref(4, addr).offset(0x7cL).setu(0xc00L);
+      MEMORY.ref(4, addr).offset(0x80L).setu(0x400L);
+      MEMORY.ref(1, addr).offset(0x90L).setu(0xffL);
+      MEMORY.ref(1, addr).offset(0x91L).setu(0xffL);
+      MEMORY.ref(1, addr).offset(0x92L).setu(0xffL);
+      MEMORY.ref(4, addr).offset(0x1cL).setu(MEMORY.ref(4, addr).offset(0x9cL-0x90L).get());
+      MEMORY.ref(4, addr).offset(0x20L).setu(MEMORY.ref(4, addr).offset(0x9cL-0x8cL).get() - 0x100L);
+      MEMORY.ref(4, addr).offset(0x24L).setu(MEMORY.ref(4, addr).offset(0x9cL-0x88L).get());
+      long a0 = FUN_800eac58(sp18 | 0x300_0000L).getAddress();
+      MEMORY.ref(4, addr).offset(0x94L).setu(a0 + MEMORY.ref(4, a0).offset(0xcL).get() + 0x18L);
+      a0 = FUN_800eac58(sp1c | 0x300_0000L).getAddress();
+      MEMORY.ref(4, addr).offset(0x98L).setu(a0 + MEMORY.ref(4, a0).offset(0xcL).get() + 0x18L);
+      a0 = FUN_800eac58(sp20 | 0x300_0000L).getAddress();
+      MEMORY.ref(4, addr).offset(0x9cL).setu(a0 + MEMORY.ref(4, a0).offset(0xcL).get() + 0x18L);
+      addr += 0xa8L;
+    }
+
+    //LAB_8010f0d0
+    manager._10._00.set(0x1400_0000L);
+    script.params_20.get(0).deref().set(effectIndex);
+    return 0;
+  }
+
+  @Method(0x8010f124L)
+  public static void FUN_8010f124(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub20_2 effect = manager._44.derefAs(BttlScriptData6cSub20_2.class);
+    long s1 = effect._08.get();
+
+    //LAB_8010f168
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      if(MEMORY.ref(4, s1).offset(0x04L).get() < effect._04.get()) {
+        if(MEMORY.ref(2, s1).offset(0xa0L).getSigned() >= 0x1000) {
+          MEMORY.ref(1, s1).offset(0x00L).setu(0);
+        } else {
+          //LAB_8010f19c
+          long v1 = MEMORY.ref(2, s1).offset(0xa2L).getSigned();
+
+          if(v1 >= 9) {
+            if(v1 == 9) {
+              MEMORY.ref(4, s1).offset(0x10L).setu(-0x800);
+              MEMORY.ref(4, s1).offset(0x6cL).setu(0x6800);
+              MEMORY.ref(4, s1).offset(0x74L).setu(0x6800);
+            }
+
+            //LAB_8010f1dc
+            if(v1 >= 10) {
+              if(v1 == 10) {
+                MEMORY.ref(1, s1).offset(0x01L).setu(0);
+              }
+
+              //LAB_8010f1f0
+              MEMORY.ref(4, s1).offset(0x40L).addu(0x80);
+              MEMORY.ref(4, s1).offset(0x80L).addu(0x600);
+              MEMORY.ref(2, s1).offset(0xa0L).addu(0x200);
+              MEMORY.ref(4, s1).offset(0x84L).subu(0x1c0);
+              MEMORY.ref(4, s1).offset(0x7cL).subu(0x1c0);
+            }
+
+            //LAB_8010f22c
+            MEMORY.ref(2, s1).offset(0xa2L).addu(0x1L);
+          } else {
+            //LAB_8010f240
+            MEMORY.ref(1, s1).offset(0x00L).setu(0x1L);
+            MEMORY.ref(1, s1).offset(0x01L).setu(0x1L);
+            MEMORY.ref(4, s1).offset(0x30L).addu(0x80);
+            MEMORY.ref(4, s1).offset(0x74L).addu(0x266);
+            MEMORY.ref(2, s1).offset(0xa0L).addu(0xcc);
+            MEMORY.ref(4, s1).offset(0x6cL).addu(0x266);
+
+            v1 = rsin(MEMORY.ref(2, s1).offset(0xa0L).getSigned()) * 0x1600 >> 12;
+            if(v1 >= 0) {
+              MEMORY.ref(4, s1).offset(0x70L).setu(v1);
+            } else {
+              MEMORY.ref(4, s1).offset(0x70L).setu(0);
+            }
+
+            //LAB_8010f2a8
+            MEMORY.ref(1, s1).offset(0x8cL).subu(23);
+            MEMORY.ref(1, s1).offset(0x8dL).subu(23);
+            MEMORY.ref(1, s1).offset(0x8eL).subu(23);
+            MEMORY.ref(2, s1).offset(0xa2L).addu(1);
+          }
+        }
+      }
+
+      //LAB_8010f2d8
+      s1 += 0xa8L;
+    }
+
+    //LAB_8010f2f4
+    effect._04.incr();
+
+    if(effect.count_00.get() <= 0) {
+      deallocateScriptAndChildren(effectIndex);
+    }
+
+    //LAB_8010f31c
+  }
+
+  @Method(0x8010f340L)
+  public static void FUN_8010f340(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final BttlScriptData6cSub20_2 effect = manager._44.derefAs(BttlScriptData6cSub20_2.class);
+    if((int)manager._10._00.get() >= 0) {
+      long s3 = effect._08.get();
+
+      final VECTOR sp0x14 = new VECTOR();
+      final SVECTOR sp0x20 = new SVECTOR();
+      final MATRIX sp0x3c = new MATRIX();
+      final MATRIX sp0x88 = new MATRIX();
+      final VECTOR sp0xa8 = new VECTOR();
+      final MATRIX sp0xb8 = new MATRIX();
+      final MATRIX sp0xd8 = new MATRIX();
+
+      final Memory.TemporaryReservation dobjTmp = MEMORY.temp(0x10);
+      final GsDOBJ2 sp0xf8 = new GsDOBJ2(dobjTmp.get());
+
+      //LAB_8010f3a4
+      for(int i = 0; i < effect.count_00.get(); i++) {
+        if(MEMORY.ref(1, s3).offset(0x00L).get() != 0) {
+          FUN_800e8594(sp0xb8, manager);
+          final int a1 = MEMORY.ref(2, s3).offset(0xa2L).getSigned() >= 10 ? 1 : 0;
+          final long a0 = s3 + a1 * 0x10;
+          final long a2 = s3 + a1 * 0x4;
+          final long sp10 = 0x5000_0000L;
+          sp0x14.setX((int)(MEMORY.ref(4, a0).offset(0x0cL).getSigned() + manager._10.vec_04.getX()));
+          sp0x14.setY((int)(MEMORY.ref(4, a0).offset(0x10L).getSigned() + manager._10.vec_04.getY()));
+          sp0x14.setZ((int)(MEMORY.ref(4, a0).offset(0x14L).getSigned() + manager._10.vec_04.getZ()));
+          sp0x20.setX((short)MEMORY.ref(2, a0).offset(0x2cL).get());
+          sp0x20.setY((short)MEMORY.ref(2, a0).offset(0x30L).get());
+          sp0x20.setZ((short)MEMORY.ref(2, a0).offset(0x34L).get());
+          final short sp26 = (short)(MEMORY.ref(4, a0).offset(0x6cL).get() * manager._10.svec_16.getX() >> 12);
+          final short sp28 = (short)(MEMORY.ref(4, a0).offset(0x70L).get() * manager._10.svec_16.getY() >> 12);
+          final short sp2a = (short)(MEMORY.ref(4, a0).offset(0x74L).get() * manager._10.svec_16.getZ() >> 12);
+          final int sp2c = (int)(MEMORY.ref(1, a2).offset(0x8cL).get() * manager._10.svec_1c.getX() >> 8);
+          final int sp2e = (int)(MEMORY.ref(1, a2).offset(0x8dL).get() * manager._10.svec_1c.getY() >> 8);
+          final int sp30 = (int)(MEMORY.ref(1, a2).offset(0x8eL).get() * manager._10.svec_1c.getZ() >> 8);
+
+          if((manager._10._00.get() & 0x40) == 0) {
+            FUN_800e61e4(sp2c << 5, sp2e << 5, sp30 << 5);
+          }
+
+          //LAB_8010f50c
+          GsSetLightMatrix(sp0xb8);
+          FUN_8003f210(matrix_800c3548, sp0xb8, sp0xd8);
+          setRotTransMatrix(sp0xd8);
+          RotMatrix_8003faf0(sp0x20, sp0x3c);
+          TransMatrix(sp0x3c, sp0x14);
+          sp0xa8.setX(sp26);
+          sp0xa8.setY(sp28);
+          sp0xa8.setZ(sp2a);
+          ScaleMatrix(sp0x3c, sp0xa8);
+          final long sp80 = 0;
+          final long sp38 = 0;
+          sp0xf8.attribute_00.set(manager._10._00.get());
+          FUN_8003f210(matrix_800c3548, sp0x3c, sp0x88);
+          setRotTransMatrix(sp0x88);
+          zOffset_1f8003e8.set(0);
+          _1f8003ec.setu(manager._10._00.get() >>> 23 & 0x60);
+
+          if(MEMORY.ref(1, s3).offset(0x01L).get() != 0) {
+            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x98L).get()); //TODO
+            renderCtmd(sp0xf8);
+          }
+
+          //LAB_8010f5d0
+          final long v1 = MEMORY.ref(2, s3).offset(0xa2L).getSigned();
+
+          if(v1 < 9) {
+            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x94L).get()); //TODO
+            renderCtmd(sp0xf8);
+          } else if(v1 >= 11) {
+            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x9cL).get()); //TODO
+            renderCtmd(sp0xf8);
+          }
+
+          //LAB_8010f608
+          if((manager._10._00.get() & 0x40) == 0) {
+            FUN_800e62a8();
+          }
+        }
+
+        //LAB_8010f624
+        s3 += 0xa8L;
+      }
+
+      dobjTmp.release();
+    }
+
+    //LAB_8010f640
+  }
+
   @Method(0x8010f94cL)
   public static void FUN_8010f94c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub50.class)._38.getPointer());
@@ -6674,6 +7089,16 @@ public final class SEffe {
   @Method(0x8010fe84L)
   public static void FUN_8010fe84(final int effectIndex, final EffectManagerData6c manager, final BttlScriptData6cSub14_4Sub70 a2) {
     // no-op
+  }
+
+  @Method(0x8010feb8L)
+  public static void FUN_8010feb8(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub10_2.class)._0c.get());
+  }
+
+  @Method(0x8010fee4L)
+  public static void FUN_8010fee4(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub20_2.class)._08.get());
   }
 
   @Method(0x8010ff10L)
