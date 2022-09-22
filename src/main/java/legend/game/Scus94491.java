@@ -7,7 +7,6 @@ import legend.core.kernel.Bios;
 import legend.core.kernel.EXEC;
 import legend.core.kernel.Kernel;
 import legend.core.kernel.jmp_buf;
-import legend.core.memory.EntryPoint;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -34,7 +33,6 @@ import static legend.core.dma.DmaManager.DMA_DICR;
 import static legend.core.dma.DmaManager.DMA_DPCR;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 
-@EntryPoint
 public final class Scus94491 {
   private Scus94491() { }
 

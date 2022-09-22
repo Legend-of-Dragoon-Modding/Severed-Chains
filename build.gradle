@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 plugins {
   id 'java'
   id 'org.openjfx.javafxplugin' version '0.0.10'
@@ -8,13 +10,50 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = targetCompatibility = 1.17
 
+project.ext.lwjglVersion = "3.2.3"
+project.ext.jomlVersion = "1.10.1"
+
+if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
+  project.ext.lwjglNatives = "natives-windows"
+}
+
+if(DefaultNativePlatform.getCurrentOperatingSystem().isLinux()) {
+  project.ext.lwjglNatives = "natives-linux"
+}
+
+if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
+  project.ext.lwjglNatives = "natives-macos"
+}
+
 repositories {
   mavenCentral()
   mavenLocal()
 }
 
 dependencies {
-  implementation group: 'legend', name: 'lod-core', version: '0.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+  implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
+
+  implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+  implementation "org.lwjgl:lwjgl"
+  implementation "org.lwjgl:lwjgl-glfw"
+  implementation "org.lwjgl:lwjgl-nuklear"
+  implementation "org.lwjgl:lwjgl-opengl"
+  implementation "org.lwjgl:lwjgl-stb"
+  runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+  implementation "org.joml:joml:${jomlVersion}"
+
+  implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.4.0'
+
+  implementation group: 'net.oneandone.reflections8', name: 'reflections8', version: '0.11.5'
+
+  implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

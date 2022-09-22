@@ -25,7 +25,7 @@ public class EventManager {
   private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
   public EventManager() {
-    LOGGER.info("Scanning for entry point class...");
+    LOGGER.info("Scanning for event consumers...");
     final Reflections reflections = new Reflections(ClasspathHelper.forClassLoader());
     final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
 
