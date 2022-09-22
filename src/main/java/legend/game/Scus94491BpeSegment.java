@@ -796,10 +796,6 @@ public final class Scus94491BpeSegment {
     });
 
     GPU.window().events.onKeyRelease((window, key, scancode, mods) -> {
-      if(mods != 0) {
-        return;
-      }
-
       final int input = gamepadKeyMap.get(key);
 
       if(input != 0) {
