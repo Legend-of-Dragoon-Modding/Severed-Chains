@@ -301,6 +301,7 @@ public final class SItem {
   public static final LodString Are_you_sure_you_want_to_sell_8011c568 = MEMORY.ref(2, 0x8011c568L, LodString::new);
   /** "New Addition" */
   public static final LodString New_Addition_8011c5a8 = MEMORY.ref(2, 0x8011c5a8L, LodString::new);
+  public static final LodString Spell_Unlocked_8011c5c4 = MEMORY.ref(2, 0x8011c5c4L, LodString::new);
   public static final LodString No_item_to_sell_8011c5dc = MEMORY.ref(2, 0x8011c5dcL, LodString::new);
   public static final LodString No_weapon_to_sell_8011c5fc = MEMORY.ref(2, 0x8011c5fcL, LodString::new);
   public static final LodString Do_you_want_to_be_armed_with_it_8011c620 = MEMORY.ref(2, 0x8011c620L, LodString::new);
@@ -475,13 +476,9 @@ public final class SItem {
   public static final Value soundTick_8011e17c = MEMORY.ref(4, 0x8011e17cL);
   public static final ArrayRef<IntRef> pendingXp_8011e180 = MEMORY.ref(4, 0x8011e180L, ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
 
-  public static final Value _8011e1a8 = MEMORY.ref(1, 0x8011e1a8L);
-  public static final Value _8011e1a9 = MEMORY.ref(1, 0x8011e1a9L);
-  public static final Value _8011e1aa = MEMORY.ref(1, 0x8011e1aaL);
+  public static final ArrayRef<UnsignedByteRef> spellsUnlocked_8011e1a8 = MEMORY.ref(1, 0x8011e1a8L, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new));
 
-  public static final Value _8011e1b8 = MEMORY.ref(1, 0x8011e1b8L);
-  public static final Value _8011e1b9 = MEMORY.ref(1, 0x8011e1b9L);
-  public static final Value _8011e1ba = MEMORY.ref(1, 0x8011e1baL);
+  public static final ArrayRef<UnsignedByteRef> additionsUnlocked_8011e1b8 = MEMORY.ref(1, 0x8011e1b8L, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new));
 
   public static final Value _8011e1c8 = MEMORY.ref(1, 0x8011e1c8L);
 
@@ -4027,7 +4024,7 @@ public final class SItem {
   }
 
   @Method(0x801049b4L)
-  public static long loadAdditions(final int charIndex, final ArrayRef<MenuAdditionInfo> additions) {
+  public static int loadAdditions(final int charIndex, final ArrayRef<MenuAdditionInfo> additions) {
     //LAB_801049c8
     for(int i = 0; i < 9; i++) {
       additions.get(i).offset_00.set(-1);
@@ -4045,7 +4042,7 @@ public final class SItem {
 
     //LAB_80104a10
     //LAB_80104a54
-    long t5 = 0;
+    int t5 = 0;
     int t0 = 0;
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
       final long a0_0 = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex)._00.get();
@@ -4065,7 +4062,7 @@ public final class SItem {
 
         //LAB_80104aec
         if(a0_0 == gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
-          t5 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex + 0x1L;
+          t5 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex + 1;
         }
 
         t0++;
@@ -6322,7 +6319,7 @@ public final class SItem {
    * @return True if there is remaining XP to give
    */
   @Method(0x8010cc24L)
-  public static boolean givePendingXp(final int charIndex, final int a1) {
+  public static boolean givePendingXp(final int charIndex, final int charSlot) {
     if(charIndex == -1) {
       return false;
     }
@@ -6359,9 +6356,9 @@ public final class SItem {
     while(gameState_800babc8.charData_32c.get(charIndex).xp_00.get() >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c.get(charIndex).level_12.get() < 60) {
       gameState_800babc8.charData_32c.get(charIndex).level_12.incr();
 
-      _8011e1c8.offset(a1).addu(0x1L);
-      if(_8011e1b8.offset(a1).get() == 0) {
-        _8011e1b8.offset(a1).setu(loadAdditions(charIndex, additions_8011e098));
+      _8011e1c8.offset(charSlot).addu(0x1L);
+      if(additionsUnlocked_8011e1b8.get(charSlot).get() == 0) {
+        additionsUnlocked_8011e1b8.get(charSlot).set(loadAdditions(charIndex, additions_8011e098));
       }
 
       //LAB_8010cd9c
@@ -6393,7 +6390,7 @@ public final class SItem {
 
         loadCharacterStats(0);
         if(spellCount != getUnlockedDragoonSpells(spellIndices, charIndex)) {
-          _8011e1a8.offset(charSlot).setu(spellIndices[spellCount - 1] + 1);
+          spellsUnlocked_8011e1a8.get(charSlot).set(spellIndices[spellCount] + 1);
         }
 
         //LAB_8010cf70
@@ -6599,7 +6596,7 @@ public final class SItem {
   }
 
   @Method(0x8010d398L)
-  public static void FUN_8010d398(final int x, final int y, final int additionIndex, final long a3) {
+  public static void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final long a3) {
     FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 0x4L);
     FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 0x3L);
 
@@ -6612,19 +6609,20 @@ public final class SItem {
   }
 
   @Method(0x8010d498L)
-  public static void FUN_8010d498(final int x, final int y, final int additionIndex, final long a3) {
-    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 0x4L);
-    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 0x3L);
-    if(a3 >= 0x14L) {
-      Scus94491BpeSegment_8002.renderText(additions_8011a064.get(additionIndex).deref(), x - 4, y + 6, 0, 0);
-      Scus94491BpeSegment_8002.renderText(New_Addition_8011c5a8, x - 4, y + 20, 0, 0);
+  public static void renderSpellUnlocked(final int x, final int y, final int spellIndex, final long a3) {
+    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 0x4L); // New spell border
+    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 0x3L); // New spell background
+
+    if(a3 >= 20) {
+      Scus94491BpeSegment_8002.renderText(spells_80052734.get(spellIndex).deref(), x - 4, y + 6, 0, 0);
+      Scus94491BpeSegment_8002.renderText(Spell_Unlocked_8011c5c4, x - 4, y + 20, 0, 0);
     }
 
     //LAB_8010d470
   }
 
   @Method(0x8010d598L)
-  public static long FUN_8010d598(final int charSlot) {
+  public static int FUN_8010d598(final int charSlot) {
     final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
 
     if(charIndex == -1) {
@@ -6699,16 +6697,16 @@ public final class SItem {
 
           //LAB_8010d87c
           for(int i = 0; i < 10; i++) {
-            _8011e1a8.offset(i).setu(0);
-            _8011e1b8.offset(i).setu(0);
+            spellsUnlocked_8011e1a8.get(i).set(0);
+            additionsUnlocked_8011e1b8.get(i).set(0);
             _8011e1c8.offset(i).setu(0);
             _8011e1d8.offset(i).setu(0);
             pendingXp_8011e180.get(i).set(0);
           }
 
-          _8011e1b8.setu(FUN_8010d598(0));
-          _8011e1b9.setu(FUN_8010d598(1));
-          _8011e1ba.setu(FUN_8010d598(2));
+          additionsUnlocked_8011e1b8.get(0).set(FUN_8010d598(0));
+          additionsUnlocked_8011e1b8.get(1).set(FUN_8010d598(1));
+          additionsUnlocked_8011e1b8.get(2).set(FUN_8010d598(2));
 
           xpDivisor_8011e174.set(0);
           for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -6815,7 +6813,7 @@ public final class SItem {
           _8011e170.setu(0x3L);
           totalXpFromCombat_800bc95c.set(0);
 
-          if(_8011e1b8.get() + _8011e1b9.get() + _8011e1ba.get() == 0) {
+          if(additionsUnlocked_8011e1b8.get(0).get() + additionsUnlocked_8011e1b8.get(1).get() + additionsUnlocked_8011e1b8.get(2).get() == 0) {
             //LAB_8010dc9c
             inventoryMenuState_800bdc28.set(InventoryMenuState._8);
           } else if((joypadPress_8007a398.get() & 0x20L) != 0) {
@@ -6843,7 +6841,7 @@ public final class SItem {
 
         //LAB_8010dcf4
         //LAB_8010dcf8
-        FUN_8010ebec(_8011e178.get());
+        renderAdditionsUnlocked(_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6855,7 +6853,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState._8);
         }
 
-        FUN_8010ebec(_8011e178.get());
+        renderAdditionsUnlocked(_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6896,7 +6894,7 @@ public final class SItem {
         }
 
         //LAB_8010de6c
-        if(_8011e1a8.get() + _8011e1a9.get() + _8011e1aa.get() != 0) {
+        if(spellsUnlocked_8011e1a8.get(0).get() != 0 || spellsUnlocked_8011e1a8.get(1).get() != 0 || spellsUnlocked_8011e1a8.get(2).get() != 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._11);
         } else {
           //LAB_8010de98
@@ -6933,7 +6931,7 @@ public final class SItem {
 
         //LAB_8010df20
         //LAB_8010df24
-        FUN_8010ec6c(_8011e178.get());
+        renderSpellsUnlocked(_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6948,7 +6946,7 @@ public final class SItem {
 
         //LAB_8010df20
         //LAB_8010df24
-        FUN_8010ec6c(_8011e178.get());
+        renderSpellsUnlocked(_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -7210,20 +7208,20 @@ public final class SItem {
   }
 
   @Method(0x8010ebecL)
-  public static void FUN_8010ebec(final long a0) {
+  public static void renderAdditionsUnlocked(final long a0) {
     for(int i = 0; i < 3; i++) {
-      if(_8011e1b8.offset(i).get() != 0) {
-        FUN_8010d398(168, 40 + i * 64, (int)(_8011e1b8.offset(i).get() - 0x1L), a0);
+      if(additionsUnlocked_8011e1b8.get(i).get() != 0) {
+        renderAdditionUnlocked(168, 40 + i * 64, additionsUnlocked_8011e1b8.get(i).get() - 1, a0);
       }
     }
   }
 
   @Method(0x8010ec6cL)
-  public static void FUN_8010ec6c(final long a0) {
+  public static void renderSpellsUnlocked(final long a0) {
     //LAB_8010ec98
     for(int i = 0; i < 3; i++) {
-      if(_8011e1a8.offset(i).get() != 0) {
-        FUN_8010d498(168, 40, (int)(_8011e1a8.offset(i).get() - 1), a0);
+      if(spellsUnlocked_8011e1a8.get(i).get() != 0) {
+        renderSpellUnlocked(168, 40 + i * 64, spellsUnlocked_8011e1a8.get(i).get() - 1, a0);
       }
 
       //LAB_8010ecc0
