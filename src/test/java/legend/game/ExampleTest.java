@@ -8,9 +8,4 @@ public class ExampleTest {
     void shouldPass() {
         Assertions.assertTrue(true);
     }
-
-    @Test
-    void shouldFail() {
-        Assertions.assertTrue(false);
-    }
 }
