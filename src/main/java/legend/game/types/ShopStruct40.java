@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.*;
 import legend.core.memory.types.*;
+import legend.game.combat.types.BattleStructEf4Sub08;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -14,7 +15,7 @@ public class ShopStruct40 implements MemoryRef {
     public ShopStruct40(final Value ref) {
         this.ref = ref;
         this.shopType_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-        this.item_00 = MEMORY.ref(4, this.getAddress(), ArrayRef.of(ItemStruct04.class, 0x40, 4, ItemStruct04::new));
+        this.item_00 = ref.offset(4, 0x00L).cast(ArrayRef.of(ItemStruct04.class, 0x10, 4, ItemStruct04::new));
     }
 
     @Override
