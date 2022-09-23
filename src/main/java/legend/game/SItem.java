@@ -7889,7 +7889,7 @@ public final class SItem {
       }
 
       //LAB_801105b0
-      int maxHp = stats.maxHp_66.get() * (stats._62.get() / 100 + 1);
+      int maxHp = stats.maxHp_66.get() * (stats.hpMulti_62.get() / 100 + 1);
 
       //TODO remove HP cap
       if(maxHp >= 9999) {
@@ -7904,7 +7904,7 @@ public final class SItem {
       }
 
       //LAB_80110608
-      final int maxMp = stats.maxMp_6e.get() * (stats._64.get() / 100 + 1);
+      final int maxMp = stats.maxMp_6e.get() * (stats.mpMulti_64.get() / 100 + 1);
 
       stats.maxMp_6e.set(maxMp);
 
@@ -8017,30 +8017,30 @@ public final class SItem {
           if((equipmentStats.special2_0c.get() & a0) != 0) {
             if(a0 == 0x1L) {
               //LAB_80110d78
-              characterStats._64.add((short)equipmentStats.specialAmount_0d.get());
+              characterStats.mpMulti_64.add((short)equipmentStats.specialAmount_0d.get());
             } else if(a0 == 0x2L) {
               //LAB_80110d60
-              characterStats._62.add((short)equipmentStats.specialAmount_0d.get());
+              characterStats.hpMulti_62.add((short)equipmentStats.specialAmount_0d.get());
               //LAB_80110c98
             } else if(a0 == 0x4L) {
               //LAB_80110d58
               characterStats.magicalResistance_60.set(1);
             } else if(a0 == 0x8L) {
               //LAB_80110d40
-              characterStats._5e.add(equipmentStats.specialAmount_0d.get());
+              characterStats.revive_5e.add((short)equipmentStats.specialAmount_0d.get());
             } else if(a0 == 0x10L) {
               //LAB_80110d28
-              characterStats._5c.add(equipmentStats.specialAmount_0d.get());
+              characterStats.spRegen_5c.add((short)equipmentStats.specialAmount_0d.get());
               //LAB_80110ca8
             } else if(a0 == 0x20L) {
               //LAB_80110d10
-              characterStats.spRegen_5a.add((short)equipmentStats.specialAmount_0d.get());
+              characterStats.mpRegen_5a.add((short)equipmentStats.specialAmount_0d.get());
               //LAB_80110ccc
             } else if(a0 == 0x40L) {
               //LAB_80110cf8
-              characterStats.mpRegen_58.add((short)equipmentStats.specialAmount_0d.get());
+              characterStats.hpRegen_58.add((short)equipmentStats.specialAmount_0d.get());
             } else if(a0 == 0x80L) {
-              characterStats.hpRegen_56.add((short)equipmentStats.specialAmount_0d.get());
+              characterStats._56.add((short)equipmentStats.specialAmount_0d.get());
             }
           }
 
