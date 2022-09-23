@@ -619,8 +619,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
-  public static final ScriptFile _8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
-
+  public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
   public static final FileEntry08 _8004f65c = MEMORY.ref(2, 0x8004f65cL, FileEntry08::new);
 

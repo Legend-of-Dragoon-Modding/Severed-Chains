@@ -91,7 +91,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
-import static legend.game.Scus94491BpeSegment_8004._8004f650;
+import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
@@ -1508,7 +1508,7 @@ public final class Bttl_800d {
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get();
       final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
       final ScriptState<AdditionScriptData1c> s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(AdditionScriptData1c.class));
-      loadScriptFile(scriptIndex, _8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       final CString additionName = getAdditionName(0, addition);
@@ -1685,7 +1685,7 @@ public final class Bttl_800d {
       //LAB_800d4388
       final int scriptIndex = allocateScriptState(0x40L, BttlScriptData40::new);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-      loadScriptFile(scriptIndex, _8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d4018", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d430c", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
 
@@ -1749,7 +1749,7 @@ public final class Bttl_800d {
     final int s2 = a0.params_20.get(0).deref().get();
     if(s2 != -1) {
       final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
-      loadScriptFile(scriptIndex, _8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
       setCallback04(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();

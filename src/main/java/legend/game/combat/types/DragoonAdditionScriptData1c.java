@@ -8,7 +8,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 /** Dragoon addition data? */
-public class EffeScriptData1c implements MemoryRef {
+public class DragoonAdditionScriptData1c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
@@ -30,7 +30,7 @@ public class EffeScriptData1c implements MemoryRef {
 
   public final UnsignedIntRef _18;
 
-  public EffeScriptData1c(final Value ref) {
+  public DragoonAdditionScriptData1c(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);

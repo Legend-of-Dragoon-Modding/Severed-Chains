@@ -205,7 +205,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800c#FUN_800ce9b0}</li>
    *   <li>{@link SEffe#FUN_801052dc}</li>
    *   <li>{@link SEffe#FUN_80105604}</li>
-   *   <li>{@link SEffe#FUN_801087f8}</li>
+   *   <li>{@link SEffe#allocateDragoonAdditionScript}</li>
    *   <li>{@link SEffe#FUN_80105c38}</li>
    *   <li>{@link Bttl_800c#FUN_800c6968}</li>
    *   <li>{@link SEffe#FUN_80109a7c}</li>
