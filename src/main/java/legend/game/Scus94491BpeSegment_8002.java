@@ -2330,7 +2330,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800239ec
     int a3 = 0;
     for(int i = 0; i < a2; i++) {
-      if((a0.get(i)._02.get() & 0x1000) == 0) {
+      if((a0.get(i).price_02.get() & 0x1000) == 0) {
         a1.get(a3).set(a0.get(i).itemId_00.get());
         a3++;
       }
@@ -2355,7 +2355,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023ab4
     for(int i = 0; i < 0x130; i++) {
       s0.get(i).itemId_00.set(0xff);
-      s0.get(i)._02.set(0);
+      s0.get(i).price_02.set(0);
     }
 
     //LAB_80023aec

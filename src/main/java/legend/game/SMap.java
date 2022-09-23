@@ -30,44 +30,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.tmd.Renderer;
-import legend.game.types.ActiveStatsa0;
-import legend.game.types.AnmFile;
-import legend.game.types.AnmStruct;
-import legend.game.types.BigStruct;
-import legend.game.types.BigSubStruct;
-import legend.game.types.CharacterData2c;
-import legend.game.types.DR_MODE;
-import legend.game.types.DR_MOVE;
-import legend.game.types.DR_TPAGE;
-import legend.game.types.EnvironmentFile;
-import legend.game.types.EnvironmentStruct;
-import legend.game.types.ExtendedTmd;
-import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT;
-import legend.game.types.GsRVIEW2;
-import legend.game.types.McqHeader;
-import legend.game.types.MediumStruct;
-import legend.game.types.ModelPartTransforms;
-import legend.game.types.MrgEntry;
-import legend.game.types.MrgFile;
-import legend.game.types.NewRootEntryStruct;
-import legend.game.types.NewRootStruct;
-import legend.game.types.RunningScript;
-import legend.game.types.SMapStruct44;
-import legend.game.types.ScriptFile;
-import legend.game.types.ScriptState;
-import legend.game.types.SmallerStruct;
-import legend.game.types.SomethingStruct;
-import legend.game.types.SomethingStruct2;
-import legend.game.types.Struct20;
-import legend.game.types.Struct34;
-import legend.game.types.Struct54;
-import legend.game.types.SubmapEncounterData_04;
-import legend.game.types.TmdAnimationFile;
-import legend.game.types.TmdExtension;
-import legend.game.types.UnknownStruct;
-import legend.game.types.UnknownStruct2;
-import legend.game.types.WeirdTimHeader;
+import legend.game.types.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -600,7 +563,7 @@ public final class SMap {
    * </ol>
    */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> diskSwapLoadingStages_800f48e8 = MEMORY.ref(4, 0x800f48e8L, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 18, 4, Pointer.deferred(4, SupplierRef::new)));
-  public static final Value _800f4930 = MEMORY.ref(4, 0x800f4930L);
+  public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(0x40, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 0x300, 0x40, ShopStruct40::new));
 
   /** TODO an array of 0x14-long somethings */
   public static final Value _800f5930 = MEMORY.ref(4, 0x800f5930L);
