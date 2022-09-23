@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
+import java.util.Scanner;
+
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.ENTRY_POINT;

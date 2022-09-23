@@ -1,1 +1,1 @@
-java -jar lod-game-1.0-SNAPSHOT.jar -ea
+java -cp "lod-game-1.0-SNAPSHOT.jar;libs/*" legend.game.MainWindows -ea

@@ -55,6 +55,8 @@ dependencies {
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
+  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.12.1'
+
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
@@ -70,14 +72,30 @@ jar {
       'Main-Class': 'legend.game.Main'
     )
   }
+}
 
-  from {
-    configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
-  } {
-    exclude "META-INF/**"
-    duplicatesStrategy "exclude"
+task clearOutput(type: Delete) {
+  delete "${buildDir}/libs/**"
+}
+
+task copyLibs(type: Copy) {
+  from configurations.compileClasspath + configurations.runtimeClasspath
+  into "${buildDir}/libs/libs"
+}
+
+task copySupportFiles(type: Copy) {
+  into "${buildDir}/libs"
+
+  into("gfx") {
+    from 'gfx'
+  }
+
+  into(".") {
+    from 'launch.bat'
   }
 }
+
+jar.dependsOn(clearOutput, copyLibs, copySupportFiles)
 
 test {
   useJUnitPlatform()
