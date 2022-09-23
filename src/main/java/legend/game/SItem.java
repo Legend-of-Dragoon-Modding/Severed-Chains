@@ -476,9 +476,9 @@ public final class SItem {
   public static final Value soundTick_8011e17c = MEMORY.ref(4, 0x8011e17cL);
   public static final ArrayRef<IntRef> pendingXp_8011e180 = MEMORY.ref(4, 0x8011e180L, ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
 
-  public static final ArrayRef<UnsignedByteRef> spellsUnlocked_8011e1a8 = MEMORY.ref(1, 0x8011e1a8L, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> spellsUnlocked_8011e1a8 = MEMORY.ref(1, 0x8011e1a8L, ArrayRef.of(UnsignedByteRef.class, 10, 1, UnsignedByteRef::new));
 
-  public static final ArrayRef<UnsignedByteRef> additionsUnlocked_8011e1b8 = MEMORY.ref(1, 0x8011e1b8L, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> additionsUnlocked_8011e1b8 = MEMORY.ref(1, 0x8011e1b8L, ArrayRef.of(UnsignedByteRef.class, 10, 1, UnsignedByteRef::new));
 
   public static final Value _8011e1c8 = MEMORY.ref(1, 0x8011e1c8L);
 
