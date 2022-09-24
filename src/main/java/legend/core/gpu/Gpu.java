@@ -39,8 +39,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.function.BiFunction;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.INTERRUPTS;
@@ -1278,29 +1276,18 @@ public class Gpu implements Runnable {
     final int bias1 = isTopLeft(vx2, vy2, vx0, vy0) ? 0 : -1;
     final int bias2 = isTopLeft(vx0, vy0, vx1, vy1) ? 0 : -1;
 
-    final int w0_row = orient2d(vx1, vy1, vx2, vy2, minX, minY);
-    final int w1_row = orient2d(vx2, vy2, vx0, vy0, minX, minY);
-    final int w2_row = orient2d(vx0, vy0, vx1, vy1, minX, minY);
-
-    final int minX1 = minX;
-    final int minY1 = minY;
-    final int maxX1 = maxX;
-    final int c11 = c1;
-    final int c21 = c2;
-    final int area1 = area;
-    final int tu11 = tu1;
-    final int tu21 = tu2;
-    final int tv11 = tv1;
-    final int tv21 = tv2;
+    int w0_row = orient2d(vx1, vy1, vx2, vy2, minX, minY);
+    int w1_row = orient2d(vx2, vy2, vx0, vy0, minX, minY);
+    int w2_row = orient2d(vx0, vy0, vx1, vy1, minX, minY);
 
     // Rasterize
-    StreamSupport.intStream(IntStream.range(minY, maxY).spliterator(), true).forEach(y -> {
+    for(int y = minY; y < maxY; y++) {
       // Barycentric coordinates at start of row
-      int w0 = w0_row + (y - minY1) * B12;
-      int w1 = w1_row + (y - minY1) * B20;
-      int w2 = w2_row + (y - minY1) * B01;
+      int w0 = w0_row;
+      int w1 = w1_row;
+      int w2 = w2_row;
 
-      for(int x = minX1; x < maxX1; x++) {
+      for(int x = minX; x < maxX; x++) {
         // If p is on or inside all edges, render pixel
         if((w0 + bias0 | w1 + bias1 | w2 + bias2) >= 0) {
           // Adjustments per triangle instead of per pixel can be done at area level
@@ -1308,26 +1295,25 @@ public class Gpu implements Runnable {
           // I assume it could be handled recalculating AXX and BXX offsets but the math is beyond my scope
 
           // Check background mask
-          if(Gpu.this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((Gpu.this.getPixel(x, y) & 0xff00_0000L) != 0) {
+          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
               w0 += A12;
               w1 += A20;
               w2 += A01;
               continue;
             }
           }
-
           // Reset default colour of the triangle calculated outside the for as it gets overwritten as follows...
           int colour = c0;
 
           if(isShaded) {
-            colour = Gpu.this.getShadedColor(w0, w1, w2, c0, c11, c21, area1);
+            colour = this.getShadedColor(w0, w1, w2, c0, c1, c2, area);
           }
 
           if(isTextured) {
-            final int texelX = interpolateCoords(w0, w1, w2, tu0, tu11, tu21, area1);
-            final int texelY = interpolateCoords(w0, w1, w2, tv0, tv11, tv21, area1);
-            int texel = Gpu.this.getTexel(Gpu.this.maskTexelAxis(texelX, Gpu.this.preMaskX, Gpu.this.postMaskX), Gpu.this.maskTexelAxis(texelY, Gpu.this.preMaskY, Gpu.this.postMaskY), clutX, clutY, textureBaseX, textureBaseY, bpp);
+            final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
+            final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
+            int texel = this.getTexel(this.maskTexelAxis(texelX, this.preMaskX, this.postMaskX), this.maskTexelAxis(texelY, this.preMaskY, this.postMaskY), clutX, clutY, textureBaseX, textureBaseY, bpp);
             if(texel == 0) {
               w0 += A12;
               w1 += A20;
@@ -1336,19 +1322,19 @@ public class Gpu implements Runnable {
             }
 
             if(!isRaw) {
-              texel = Gpu.this.applyBlending(colour, texel);
+              texel = this.applyBlending(colour, texel);
             }
 
             colour = texel;
           }
 
           if(isTranslucent && (!isTextured || (colour & 0xff00_0000) != 0)) {
-            colour = Gpu.this.handleTranslucence(x, y, colour, translucencyMode);
+            colour = this.handleTranslucence(x, y, colour, translucencyMode);
           }
 
-          colour |= (Gpu.this.status.setMaskBit ? 1 : 0) << 24;
+          colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-          Gpu.this.setPixel(x, y, colour);
+          this.setPixel(x, y, colour);
         }
 
         // One step right
@@ -1356,7 +1342,12 @@ public class Gpu implements Runnable {
         w1 += A20;
         w2 += A01;
       }
-    });
+
+      // One step down
+      w0_row += B12;
+      w1_row += B20;
+      w2_row += B01;
+    }
   }
 
   private int applyBlending(final int colour, final int texel) {
