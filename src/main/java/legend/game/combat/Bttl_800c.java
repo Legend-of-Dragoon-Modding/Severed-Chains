@@ -103,9 +103,9 @@ import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setCallback04;
-import static legend.game.Scus94491BpeSegment.setCallback08;
-import static legend.game.Scus94491BpeSegment.setCallback10;
+import static legend.game.Scus94491BpeSegment.setScriptTicker;
+import static legend.game.Scus94491BpeSegment.setScriptRenderer;
+import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -2752,7 +2752,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800caf2c
-      setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800caf50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800caf50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
     }
 
     //LAB_800caf38
@@ -2760,8 +2760,8 @@ public final class Bttl_800c {
 
   @Method(0x800caf2cL)
   public static void FUN_800caf50(final int index, final ScriptState<BattleObject27c> state, final BattleObject27c data) {
-    setCallback08(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb024", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-    setCallback04(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cafb4", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+    setScriptRenderer(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb024", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+    setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cafb4", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
     FUN_800cafb4(index, state, data);
   }
 
@@ -3106,7 +3106,7 @@ public final class Bttl_800c {
     //LAB_800cbb98
     a0.scriptIndex_c8.set(t0);
     FUN_800cdc1c(a0, x, y, z, t1.params_20.get(3).deref().get(), t1.params_20.get(4).deref().get(), t1.params_20.get(5).deref().get(), 0, t1.params_20.get(2).deref().get());
-    setCallback10(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3129,7 +3129,7 @@ public final class Bttl_800c {
     final int z = s0.params_20.get(5).deref().get() - vec.getZ();
     state.scriptIndex_c8.set(scriptIndex2);
     FUN_800cdc1c(state, vec.getX(), vec.getY(), vec.getZ(), s0.params_20.get(3).deref().get(), s0.params_20.get(4).deref().get(), s0.params_20.get(5).deref().get(), 0, SquareRoot0(x * x + y * y + z * z) / s0.params_20.get(2).deref().get());
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3152,7 +3152,7 @@ public final class Bttl_800c {
     //LAB_800cbe78
     a0.scriptIndex_c8.set(t1.params_20.get(1).deref().get());
     FUN_800cdc1c(a0, a1, a2, a3, t1.params_20.get(3).deref().get(), t1.params_20.get(4).deref().get(), t1.params_20.get(5).deref().get(), 0x20, t1.params_20.get(2).deref().get());
-    setCallback10(t1.params_20.get(0).deref().get(), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(t1.params_20.get(0).deref().get(), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3175,7 +3175,7 @@ public final class Bttl_800c {
     final int z = s0.params_20.get(5).deref().get() - vec.getZ();
     s5.scriptIndex_c8.set(scriptIndex2);
     FUN_800cdc1c(s5, vec.getX(), vec.getY(), vec.getZ(), s0.params_20.get(3).deref().get(), s0.params_20.get(4).deref().get(), s0.params_20.get(5).deref().get(), 0x20, SquareRoot0(x * x + y * y + z * z) / s0.params_20.get(2).deref().get());
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3195,7 +3195,7 @@ public final class Bttl_800c {
     //LAB_800cc160
     a0.scriptIndex_c8.set(t0);
     FUN_800cdc1c(a0, a1.getX(), a1.getY(), a1.getZ(), t1.params_20.get(3).deref().get(), a1.getY(), t1.params_20.get(4).deref().get(), 0, t1.params_20.get(2).deref().get());
-    setCallback10(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(s0, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3217,7 +3217,7 @@ public final class Bttl_800c {
     final int z = a0.params_20.get(4).deref().get() - vec.getZ();
     state1.scriptIndex_c8.set(scriptIndex2);
     FUN_800cdc1c(state1, vec.getX(), vec.getY(), vec.getZ(), a0.params_20.get(3).deref().get(), vec.getY(), a0.params_20.get(4).deref().get(), 0, SquareRoot0(x * x + z * z) / a0.params_20.get(2).deref().get());
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3237,7 +3237,7 @@ public final class Bttl_800c {
     //LAB_800cc3fc
     state1.scriptIndex_c8.set(scriptIndex2);
     FUN_800cdc1c(state1, vec.getX(), vec.getY(), vec.getZ(), t1.params_20.get(3).deref().get(), vec.getY(), t1.params_20.get(4).deref().get(), 0x20, t1.params_20.get(2).deref().get());
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3259,7 +3259,7 @@ public final class Bttl_800c {
     final int z = a0.params_20.get(4).deref().get() - vec.getZ();
     s5.scriptIndex_c8.set(scriptIndex2);
     FUN_800cdc1c(s5, vec.getX(), vec.getY(), vec.getZ(), a0.params_20.get(3).deref().get(), vec.getY(), a0.params_20.get(4).deref().get(), 0x20, SquareRoot0(x * x + z * z) / a0.params_20.get(2).deref().get());
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb250", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3287,7 +3287,7 @@ public final class Bttl_800c {
     state1._cc.set(s2);
     state1._d0.set(v0);
     state1._d4.set(v0 / s2);
-    setCallback10(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb34c", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
+    setScriptTempTicker(scriptIndex1, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb34c", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriFunctionRef::new));
     return 0;
   }
 
@@ -3704,7 +3704,7 @@ public final class Bttl_800c {
     final int bobjIndex = allocateScriptState(0x27c, BattleObject27c::new);
     a0.params_20.get(2).deref().set(bobjIndex);
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref();
-    setCallback04(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+    setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
     setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
     loadScriptFile(bobjIndex, a0.scriptState_04.deref().scriptPtr_14.deref(), a0.params_20.get(0).deref().get(), "", 0); //TODO
     state.ui_60.or(0x804);
