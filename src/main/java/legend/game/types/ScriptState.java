@@ -1,14 +1,7 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.CString;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.TriConsumerRef;
-import legend.core.memory.types.TriFunctionRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.*;
 
 import java.util.function.Function;
 
@@ -71,8 +64,26 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
+  /**
+   * Battle Menu flag - controls which options you can choose from.
+   <ul>
+     <li>0x01 Attack </li>
+     <li>0x02 Guard </li>
+     <li>0x04 Items </li>
+     <li>0x08 Escape </li>
+     <li>0x10 Dragoon </li>
+     <li>0x20 D-Attack </li>
+     <li>0x40 Magic </li>
+     <li>0x80 Special </li>
+   <ul>
+   */
+  public final  UnsignedByteRef _64;
   public final IntRef _c4;
   public final IntRef scriptIndex_c8;
+  /**
+   * IsDragoon
+   */
+  public final BoolRef _c0;
   public final IntRef _cc;
   public final IntRef _d0;
   public final IntRef _d4;
@@ -100,6 +111,8 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
     this.commandStack_1c = ref.offset(4, 0x1cL).cast(ArrayRef.of(Pointer.classFor(IntRef.class), 10, 4, Pointer.deferred(4, IntRef::new)));
     this.storage_44 = ref.offset(4, 0x44L).cast(ArrayRef.of(IntRef.class, 33, 4, IntRef::new)); // Dunno how long this should be
     this.ui_60 = ref.offset(4, 0x60L).cast(UnsignedIntRef::new);
+    this._64 = ref.offset(1, 0x64L).cast(UnsignedByteRef::new);
+    this._c0 = ref.offset(1, 0x40L).cast(BoolRef::new);
     this._c4 = ref.offset(4, 0xc4L).cast(IntRef::new);
     this.scriptIndex_c8 = ref.offset(4, 0xc8L).cast(IntRef::new);
     this._cc = ref.offset(4, 0xccL).cast(IntRef::new);
