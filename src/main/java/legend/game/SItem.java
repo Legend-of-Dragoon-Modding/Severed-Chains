@@ -146,7 +146,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
@@ -2959,7 +2959,7 @@ public final class SItem {
       v1 = submapNames_8011c108.get((int)_800bd808.get()).deref();
     } else {
       //LAB_80101ec0
-      v1 = worldMapNames_8011c1ec.get((int)_800bf0b0.get()).deref();
+      v1 = worldMapNames_8011c1ec.get((int) continentIndex_800bf0b0.get()).deref();
     }
 
     //LAB_80101ed4
@@ -3566,7 +3566,7 @@ public final class SItem {
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_80103c8c
       tempSaveData_8011dcc0.offset(1, 0x2dL).setu(0x1L);
-      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(_800bf0b0.offset(1, 0x0L)); //1b
+      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(continentIndex_800bf0b0.offset(1, 0x0L)); //1b
       //LAB_80103c98
     } else if(whichMenu_800bdc38.get() == 0x13L) {
       //LAB_80103c8c

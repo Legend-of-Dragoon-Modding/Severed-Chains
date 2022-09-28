@@ -215,7 +215,7 @@ public final class Bttl_800c {
 
   public static final UnsignedShortRef _800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
-  public static final Value _800c6698 = MEMORY.ref(4, 0x800c6698L);
+  public static final UnsignedByteRef uniqueMonsterCount_800c6698 = MEMORY.ref(1, 0x800c6698L).cast(UnsignedByteRef::new);
   public static final IntRef _800c669c = MEMORY.ref(4, 0x800c669cL, IntRef::new);
   /** The number of {@link Scus94491BpeSegment_8005#combatants_8005e398}s */
   public static final Value combatantCount_800c66a0 = MEMORY.ref(4, 0x800c66a0L);
@@ -1298,7 +1298,7 @@ public final class Bttl_800c {
       removeFromLinkedList(script_800c670c.getPointer());
 
       //LAB_800c8368
-      for(int i = 0; i < _800c6698.get(); i++) {
+      for(int i = 0; i < uniqueMonsterCount_800c6698.get(); i++) {
         removeFromLinkedList(_800c66d8.offset(i * 0x4L).get());
       }
 
