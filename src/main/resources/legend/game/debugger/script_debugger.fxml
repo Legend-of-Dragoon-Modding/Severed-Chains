@@ -35,12 +35,12 @@
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </HBox.margin>
                <children>
-                  <Label text="Callback 04" />
-                  <TextField fx:id="callback04" editable="false" />
-                  <Label text="Callback 08" />
-                  <TextField fx:id="callback08" editable="false" />
-                  <Label text="Callback 10" />
-                  <TextField fx:id="callback10" editable="false" />
+                  <Label text="Ticker" />
+                  <TextField fx:id="ticker" editable="false" />
+                  <Label text="Renderer" />
+                  <TextField fx:id="renderer" editable="false" />
+                  <Label text="Temp Ticker" />
+                  <TextField fx:id="tempTicker" editable="false" />
                   <Label text="Destructor" />
                   <TextField fx:id="destructor" editable="false" />
                   <Separator prefWidth="200.0">

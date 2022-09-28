@@ -180,7 +180,7 @@ import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb112;
-import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
+import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
 import static legend.game.Scus94491BpeSegment_800b._800bd61c;
@@ -1529,11 +1529,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022510
   }
 
-  @Method(0x80022518L)
-  public static void FUN_80022518() {
-    // Empty
-  }
-
   @Method(0x80022520L)
   public static void FUN_80022520(final long unused) {
     whichMenu_800bdc38.setu(0x4L);
@@ -1577,7 +1572,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0x2L);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1593,7 +1588,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0x7L);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1609,7 +1604,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0xcL);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1625,7 +1620,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0x11L);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1641,7 +1636,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0x16L);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1657,7 +1652,7 @@ public final class Scus94491BpeSegment_8002 {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38.setu(0x20);
           FUN_8001e010(0);
-          _800bc0b9.setu(0x1L);
+          scriptsDisabled_800bc0b9.set(true);
         }
       }
 
@@ -1690,13 +1685,13 @@ public final class Scus94491BpeSegment_8002 {
       case 0xa, 0xf, 0x19, 0x23, 0x5 -> {
         FUN_80012bb4();
         FUN_8001e010(-1L);
-        _800bc0b9.setu(0);
+        scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38.setu(0);
       }
 
       case 0x1e, 0x14 -> {
         FUN_80012bb4();
-        _800bc0b9.setu(0);
+        scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38.setu(0);
       }
     }

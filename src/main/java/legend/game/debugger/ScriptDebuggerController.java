@@ -53,11 +53,11 @@ public class ScriptDebuggerController {
   private final ObservableList<ListItem> stack = FXCollections.observableArrayList(e -> new Observable[] {e.prop});
 
   @FXML
-  public TextField callback04;
+  public TextField ticker;
   @FXML
-  public TextField callback08;
+  public TextField renderer;
   @FXML
-  public TextField callback10;
+  public TextField tempTicker;
   @FXML
   public TextField destructor;
   @FXML
@@ -164,9 +164,9 @@ public class ScriptDebuggerController {
       this.stack.get(stackIndex).update();
     }
 
-    this.callback04.setText("0x%1$x".formatted(state.callback_04.getPointer()));
-    this.callback08.setText("0x%1$x".formatted(state.callback_08.getPointer()));
-    this.callback10.setText("0x%1$x".formatted(state.callback_10.getPointer()));
+    this.ticker.setText("0x%1$x".formatted(state.ticker_04.getPointer()));
+    this.renderer.setText("0x%1$x".formatted(state.renderer_08.getPointer()));
+    this.tempTicker.setText("0x%1$x".formatted(state.tempTicker_10.getPointer()));
     this.destructor.setText("0x%1$x".formatted(state.destructor_0c.getPointer()));
     this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getPointer()));
     this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44.get(5).get()));

@@ -91,7 +91,6 @@ import static legend.game.SMap.mrg10Addr_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022518;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a0e4;
@@ -240,8 +239,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bc0b8;
-import static legend.game.Scus94491BpeSegment_800b._800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bc300;
 import static legend.game.Scus94491BpeSegment_800b._800bc304;
 import static legend.game.Scus94491BpeSegment_800b._800bc308;
@@ -297,6 +294,8 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
+import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.soundFileArr_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.soundMrgPtr_800bd748;
 import static legend.game.Scus94491BpeSegment_800b.soundMrgPtr_800bd76c;
@@ -840,17 +839,21 @@ public final class Scus94491BpeSegment {
       startFrame();
       FUN_80011f6c();
       loadFiles();
-      FUN_80022518();
-      FUN_80011ec0();
       executeLoadersAndScripts();
       FUN_8001b410();
       FUN_80013778();
       FUN_800145c4();
+
+      // SPU stuff
       FUN_8001aa24();
+
+      // Textboxes? Other things?
       FUN_8002a058();
+
+      // SPU stuff
       FUN_8002a0e4();
+
       FUN_80020ed8();
-      FUN_80017f94();
       _800bb0fc.addu(0x1L);
       endFrame();
 
@@ -988,18 +991,13 @@ public final class Scus94491BpeSegment {
     }
   }
 
-  @Method(0x80011ec0L)
-  public static void FUN_80011ec0() {
-    // Empty
-  }
-
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
     if(loadSstrmAndSmap() != 0) {
       callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
 
-      executeScripts1();
-      executeScripts2();
+      tickScripts();
+      renderScriptObjects();
     }
   }
 
@@ -2980,15 +2978,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001575cL)
-  public static void executeScripts1() {
+  public static void tickScripts() {
     executeScriptFrame();
-    executeScriptCallbacks1();
+    executeScriptTickers();
     scriptStateUpperBound_8004de4c.setu(0x9L);
   }
 
   @Method(0x800157b8L)
-  public static void executeScripts2() {
-    executeScriptCallbacks2();
+  public static void renderScriptObjects() {
+    executeScriptRenderers();
   }
 
   @Method(0x80015800L)
@@ -3117,29 +3115,29 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015a68L)
-  public static <T extends MemoryRef> void setCallback04(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
+  public static <T extends MemoryRef> void setScriptTicker(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
     final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
 
     if(callback == null) {
       //LAB_80015aa0
-      struct.callback_04.clear();
+      struct.ticker_04.clear();
       struct.ui_60.or(0x0004_0000L);
     } else {
-      struct.callback_04.set(callback);
+      struct.ticker_04.set(callback);
       struct.ui_60.and(0xfffb_ffffL);
     }
   }
 
   @Method(0x80015ab4L)
-  public static <T extends MemoryRef> void setCallback08(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
+  public static <T extends MemoryRef> void setScriptRenderer(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
     final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
 
     if(callback == null) {
       //LAB_80015aec
-      struct.callback_08.clear();
+      struct.renderer_08.clear();
       struct.ui_60.or(0x0008_0000L);
     } else {
-      struct.callback_08.set(callback);
+      struct.renderer_08.set(callback);
       struct.ui_60.and(0xfff7_ffffL);
     }
   }
@@ -3159,15 +3157,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015b4cL)
-  public static <T extends MemoryRef> void setCallback10(final int index, @Nullable final TriFunctionRef<Integer, ScriptState<T>, T, Long> callback) {
+  public static <T extends MemoryRef> void setScriptTempTicker(final int index, @Nullable final TriFunctionRef<Integer, ScriptState<T>, T, Long> callback) {
     final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
 
     if(callback == null) {
       //LAB_80015b80
-      struct.callback_10.clear();
+      struct.tempTicker_10.clear();
       struct.ui_60.and(0xfbff_ffffL);
     } else {
-      struct.callback_10.set(callback);
+      struct.tempTicker_10.set(callback);
       struct.ui_60.or(0x0400_0000L);
     }
   }
@@ -3328,7 +3326,7 @@ public final class Scus94491BpeSegment {
     long v0;
     long v1;
 
-    if(_800bc0b9.get() != 0 || _800bc0b8.get() != 0) {
+    if(scriptsTickDisabled_800bc0b8.get() || scriptsDisabled_800bc0b9.get()) {
       return;
     }
 
@@ -4397,8 +4395,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001770cL)
-  public static void executeScriptCallbacks1() {
-    if(_800bc0b8.get() != 0 || _800bc0b9.get() != 0) {
+  public static void executeScriptTickers() {
+    if(scriptsTickDisabled_800bc0b8.get() || scriptsDisabled_800bc0b9.get()) {
       return;
     }
 
@@ -4407,7 +4405,7 @@ public final class Scus94491BpeSegment {
       final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x14_0000L) == 0) {
-          scriptState.callback_04.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
+          scriptState.ticker_04.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
         }
       }
 
@@ -4419,8 +4417,8 @@ public final class Scus94491BpeSegment {
       final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
-          if(scriptState.callback_10.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable()) != 0) {
-            setCallback10(i, null);
+          if(scriptState.tempTicker_10.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable()) != 0) {
+            setScriptTempTicker(i, null);
           }
         }
       }
@@ -4432,8 +4430,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80017820L)
-  public static void executeScriptCallbacks2() {
-    if(_800bc0b9.get() != 0) {
+  public static void executeScriptRenderers() {
+    if(scriptsDisabled_800bc0b9.get()) {
       return;
     }
 
@@ -4442,7 +4440,7 @@ public final class Scus94491BpeSegment {
       final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress()) {
         if((scriptState.ui_60.get() & 0x18_0000L) == 0) {
-          scriptState.callback_08.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
+          scriptState.renderer_08.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
         }
       }
 
@@ -4573,16 +4571,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80017d8cL)
   public static void FUN_80017d8c(final long archiveAddress, final long destinationAddress, final long sizePtr) {
     assert false : "Use decompress";
-  }
-
-  @Method(0x80017f94L)
-  public static void FUN_80017f94() {
-    FUN_80017fdc();
-  }
-
-  @Method(0x80017fdcL)
-  public static void FUN_80017fdc() {
-    // empty
   }
 
   /**
