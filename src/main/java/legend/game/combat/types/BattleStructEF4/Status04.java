@@ -1,7 +1,8 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.core.memory.*;
-import legend.core.memory.types.*;
+import legend.core.memory.Value;
+import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.UnsignedByteRef;
 
 /**
  * One for each ally and enemy
@@ -13,7 +14,7 @@ public class Status04 implements MemoryRef {
      */
     public final UnsignedByteRef statusEffect_00;
     /**
-    Does not decrease on all statuses
+     * Does not decrease on all statuses
      */
     public final UnsignedByteRef statusTurns_01;
     // 0x02 is possibly bool has status??

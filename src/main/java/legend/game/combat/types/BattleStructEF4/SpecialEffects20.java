@@ -1,7 +1,9 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.core.memory.*;
-import legend.core.memory.types.*;
+import legend.core.memory.Value;
+import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.UnsignedByteRef;
+import legend.core.memory.types.BoolRef;
 
 /**
  * One for each ally and enemy
@@ -9,26 +11,26 @@ import legend.core.memory.types.*;
 public class SpecialEffects20 implements MemoryRef {
     private final Value ref;
     /**
-     <ul>
-     <li>0x01 Attack </li>
-     <li>0x02 Guard </li>
-     <li>0x04 Items </li>
-     <li>0x08 Escape </li>
-     <li>0x10 Dragoon </li>
-     <li>0x20 D-Attack </li>
-     <li>0x40 Magic </li>
-     <li>0x80 Special </li>
-     <ul>
+     * <ul>
+     * <li>0x01 Attack </li>
+     * <li>0x02 Guard </li>
+     * <li>0x04 Items </li>
+     * <li>0x08 Escape </li>
+     * <li>0x10 Dragoon </li>
+     * <li>0x20 D-Attack </li>
+     * <li>0x40 Magic </li>
+     * <li>0x80 Special </li>
+     * <ul>
      */
     public final UnsignedByteRef menuBlockFlag_18;
     /**
      * Each effect has two bits for up to 3 turns
-     <ul>
-        <li>0 - 1 Material Shield </li>
-        <li>2 - 3 Magical Shield </li>
-        <li>4 - 5 Magic Sig Stone </li>
-        <li>6 - 7 Charm Potion </li>
-      <ul>
+     * <ul>
+     *   <li>0 - 1 Material Shield </li>
+     *   <li>2 - 3 Magical Shield </li>
+     *   <li>4 - 5 Magic Sig Stone </li>
+     *   <li>6 - 7 Charm Potion </li>
+     * <ul>
      */
     public final UnsignedByteRef shieldsSigStoneCharmTurns_1c;
     public final UnsignedByteRef pandemoniumTurns_1d;

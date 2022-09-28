@@ -464,7 +464,7 @@ public final class SItem {
 
   public static final UnsignedByteRef currentShopItemCount_8011e13c = MEMORY.ref(1, 0x8011e13cL, UnsignedByteRef::new);
   /**
-   <ul>
+   * <ul>
    *   <li>0x0 - Item Shop</li>
    *   <li>0x1 - Weapon Shop</li>
    * </ul>
@@ -2959,7 +2959,7 @@ public final class SItem {
       v1 = submapNames_8011c108.get((int)_800bd808.get()).deref();
     } else {
       //LAB_80101ec0
-      v1 = worldMapNames_8011c1ec.get((int) continentIndex_800bf0b0.get()).deref();
+      v1 = worldMapNames_8011c1ec.get((int)continentIndex_800bf0b0.get()).deref();
     }
 
     //LAB_80101ed4

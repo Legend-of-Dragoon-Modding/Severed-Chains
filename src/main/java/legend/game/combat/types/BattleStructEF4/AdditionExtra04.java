@@ -1,7 +1,8 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.core.memory.*;
-import legend.core.memory.types.*;
+import legend.core.memory.Value;
+import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.UnsignedByteRef;
 
 
 /**
@@ -11,11 +12,11 @@ public class AdditionExtra04 implements MemoryRef {
     private final Value ref;
 
     /**
-     <ul>
+     * <ul>
      *      <li>0x01 Destroyer Mace </li>
      *      <li>0x02 Wargod Sash (half damage) </li>
      *      <li>0x06 Ultimate Wargod (full damage) </li>
-      <ul>
+     * <ul>
      */
     public final UnsignedByteRef flag_00;
 
