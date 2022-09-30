@@ -992,11 +992,11 @@ public final class SMap {
       final long primitiveCount = MEMORY.ref(2, primitives).get();
 
       if(id == 0x3000_0000L || id == 0x3200_0000L) {
-        FUN_80021048(primitives, primitiveCount);
+        FUN_80021048(primitives, primitiveCount); // no-op
         count -= primitiveCount;
         primitives += primitiveCount * 0x14L;
       } else if(id == 0x3004_0000L || id == 0x3204_0000L) {
-        FUN_80021058(primitives, primitiveCount);
+        FUN_80021058(primitives, primitiveCount); // no-op
         count -= primitiveCount;
         primitives += primitiveCount * 0x1cL;
       } else if(id == 0x3400_0000L || id == 0x3600_0000L) {
@@ -1008,11 +1008,11 @@ public final class SMap {
         count -= primitiveCount;
         primitives += primitiveCount * 0x24L;
       } else if(id == 0x3800_0000L || id == 0x3a00_0000L) {
-        FUN_80021050(primitives, primitiveCount);
+        FUN_80021050(primitives, primitiveCount); // no-op
         count -= primitiveCount;
         primitives += primitiveCount * 0x18L;
       } else if(id == 0x3804_0000L || id == 0x3a04_0000L) {
-        FUN_80021060(primitives, primitiveCount);
+        FUN_80021060(primitives, primitiveCount); // no-op
         count -= primitiveCount;
         primitives += primitiveCount * 0x24L;
       } else if(id == 0x3c00_0000L || id == 0x3e00_0000L) {
@@ -1164,7 +1164,7 @@ public final class SMap {
 
     //LAB_800da774
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x04L).and(MEMORY.ref(4, a3).get()).oru(MEMORY.ref(4, a3).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
+      MEMORY.ref(4, primitives).offset(0x04L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
       MEMORY.ref(4, primitives).offset(0x08L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
       MEMORY.ref(4, primitives).offset(0x0cL).addu(MEMORY.ref(4, a3).offset(0x10L));
       MEMORY.ref(4, primitives).offset(0x10L).addu(MEMORY.ref(4, a3).offset(0x10L));
@@ -8133,7 +8133,7 @@ public final class SMap {
           }
 
           //LAB_800ef6a0
-          final int a0_0 = s1.sxyz3_38.getX() - s1.sxyz0_20.getX() << 16 >> 17 << 16;
+          final int a0_0 = s1.sxyz3_38.getX() - s1.sxyz0_20.getX() >> 1 << 16;
           s1._08.set(a0_0);
           s1._0c.set(a0_0 / a1._38.get());
           s1._10.set(0);
@@ -9264,8 +9264,8 @@ public final class SMap {
 
       final long a0_0 = _800c69fc.get() + s1 * 0x2L;
       MEMORY.ref(2, a0_0).offset(0x18L).setu(v1);
-      s0 = s0 + 0x4L;
       MEMORY.ref(2, a0_0).offset(0x40L).setu(sp0x68.getX() + MEMORY.ref(2, s0).get());
+      s0 = s0 + 0x4L;
       MEMORY.ref(2, a0_0).offset(0x68L).setu(sp0x68.getY() + MEMORY.ref(2, s0).get());
       a1 = _800c69fc.get() + s1 * 0x4L;
       MEMORY.ref(4, a1).offset(0x90L).setu(sp90.get());

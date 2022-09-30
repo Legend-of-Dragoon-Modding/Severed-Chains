@@ -4616,7 +4616,7 @@ public final class SEffe {
     callScriptFunction(func, 5, a2, s4 + 12, s3 + 66, 1, 128);
 
     if(a0._11.get() != 0) {
-      final byte colour = (byte)(a0._11.get() * 64 - 1);
+      final int colour = a0._11.get() * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
       callScriptFunction(func, 5, 20, fp - 4, s7 - 4, 1, 128);
       FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, TexPageTrans.B_PLUS_F, rgb, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
@@ -4670,7 +4670,7 @@ public final class SEffe {
     final Value sp0xa0 = sp0xa0tmp.get();
     memcpy(sp0xa0.getAddress(), _800fb84c.getAddress(), 0xa);
 
-    final byte colour = (byte)((_80119fb4.get() + 1) * 64);
+    final int colour = (int)((_80119fb4.get() + 1) * 0x40);
     final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
     final int y = (short)_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;

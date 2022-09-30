@@ -1351,7 +1351,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d37dcL)
-  public static void renderAdditionNameChar(final short displayX, final short displayY, final short addition, final short charOffset, final byte charAlpha) {
+  public static void renderAdditionNameChar(final short displayX, final short displayY, final short addition, final short charOffset, final int charAlpha) {
     final CString additionName = MEMORY.ref(1, getAdditionName(0, addition).getAddress() + charOffset, CString.maxLength(30)); //TODO implement string slicing in core
     long charIdx = 0;
 
@@ -1414,7 +1414,7 @@ public final class Bttl_800d {
 
   @Method(0x800d3a20L)
   public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
-    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)additionStruct.addition_02.get(), (short)charIdx, (byte)(charAlpha));
+    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)additionStruct.addition_02.get(), (short)charIdx, (int)(charAlpha));
   }
 
   @Method(0x800d3a64L)
@@ -1435,15 +1435,15 @@ public final class Bttl_800d {
 
       //LAB_800d3ad4
       for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (byte)charAlpha);
+        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (int)charAlpha);
         s1 = s1 + 0x8L;
       }
 
       //LAB_800d3b08
-      FUN_800d3f98((short) s1         , a1.offsetY_06.get(), 0x0dL, (short)41, (byte)charAlpha);
-      FUN_800d3f98((short)(s1 + 0x08L), a1.offsetY_06.get(), 0x0eL, (short)41, (byte)charAlpha);
-      FUN_800d3f98((short)(s1 + 0x10L), a1.offsetY_06.get(), 0x0fL, (short)41, (byte)charAlpha);
-      FUN_800d3f98((short)(s1 + 0x18L), a1.offsetY_06.get(), 0x10L, (short)41, (byte)charAlpha);
+      FUN_800d3f98((short) s1         , a1.offsetY_06.get(), 0x0dL, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x08L), a1.offsetY_06.get(), 0x0eL, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x10L), a1.offsetY_06.get(), 0x0fL, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 + 0x18L), a1.offsetY_06.get(), 0x10L, (short)41, (int)charAlpha);
     }
 
     //LAB_800d3b98
@@ -1557,7 +1557,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3f98L)
-  public static void FUN_800d3f98(final short a0, final short a1, final long a2, final short a3, final byte colour) {
+  public static void FUN_800d3f98(final short a0, final short a1, final long a2, final short a3, final int colour) {
     FUN_80018d60(a0, a1, a2 * 8 + 16 & 0xf8L, 0x28L, 0x8L, 0x10L, a3, TexPageTrans.B_PLUS_F, new COLOUR().set(colour, colour, colour), 0x1000L);
   }
 
@@ -1646,20 +1646,20 @@ public final class Bttl_800d {
         s5 = (int)MEMORY.ref(4, sp30).offset(0x0L).get() >> 8;
 
         if(s3._01.get() != 0) {
-          FUN_800d3f98((short)s2, (short)s5, 0xaL, (short)sp28, (byte)(fp & 0xffL));
+          FUN_800d3f98((short)s2, (short)s5, 0xaL, (short)sp28, (int)(fp & 0xff));
           s2 = s2 + 0x8L;
         }
 
         //LAB_800d4224
         //LAB_800d423c
         for(int i = 0; i < sp0x18.length(); i++) {
-          FUN_800d3f98((short)s2, (short)s5, sp0x18.charAt(i) - 0x30L, (short)sp28, (byte)(fp & 0xffL));
+          FUN_800d3f98((short)s2, (short)s5, sp0x18.charAt(i) - 0x30L, (short)sp28, (int)(fp & 0xff));
           s2 = s2 + 0x8L;
         }
 
         //LAB_800d4274
-        FUN_800d3f98((short)(s2 - 0x2L), (short)s5, 0xbL, (short)sp2c, (byte)(fp & 0xffL));
-        FUN_800d3f98((short)(s2 + 0x4L), (short)s5, 0xcL, (short)sp2c, (byte)(fp & 0xffL));
+        FUN_800d3f98((short)(s2 - 0x2L), (short)s5, 0xbL, (short)sp2c, (int)(fp & 0xff));
+        FUN_800d3f98((short)(s2 + 0x4L), (short)s5, 0xcL, (short)sp2c, (int)(fp & 0xff));
       }
 
       //LAB_800d42c0
@@ -1786,7 +1786,7 @@ public final class Bttl_800d {
   public static long FUN_800d46d4(final RunningScript a0) {
     final long v1 = _800faaa0.offset(1, a0.params_20.get(0).deref().get() * 0x6L).getAddress();
 
-    final COLOUR colour = new COLOUR().set((byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get());
+    final COLOUR colour = new COLOUR().set(a0.params_20.get(4).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(4).deref().get());
 
     if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
       FUN_80018d60(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), MEMORY.ref(1, v1).offset(0x1L).get(), MEMORY.ref(1, v1).offset(0x2L).get(), MEMORY.ref(1, v1).offset(0x3L).get(), MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), TexPageTrans.of(a0.params_20.get(3).deref().get()), colour, 0x1000L);
