@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
+import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
@@ -33,6 +34,8 @@ import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
 import legend.game.types.TmdAnimationFile;
 
 import java.util.Arrays;
@@ -289,7 +292,7 @@ public final class Bttl_800d {
           linkedListAddress_1f8003d8.addu(0x14L);
 
           //LAB_800d0460
-          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
 
           a2_0 = data._10.z_22.get();
           v1 = s1 + a2_0;
@@ -477,7 +480,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d0d10
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
 
     long a2_0 = data._10.z_22.get();
     v1 = s7 + a2_0;
@@ -637,7 +640,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1558
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -700,7 +703,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1940
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -896,7 +899,7 @@ public final class Bttl_800d {
         s1 = s1 + s0._08.get();
       }
 
-      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, (data._10._00.get() & 0x1000_0000L) != 0 ? 0x1L : 0x2L, 0, 0), null);
+      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, (data._10._00.get() & 0x1000_0000L) != 0 ? TexPageTrans.B_PLUS_F : TexPageTrans.B_MINUS_F, 0, 0), null);
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s0._04.get() + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0xcL);
     }
@@ -1021,7 +1024,7 @@ public final class Bttl_800d {
 
     s0 = linkedListAddress_1f8003d8.get();
     linkedListAddress_1f8003d8.addu(0xcL);
-    SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+    SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
 
     v1 = data._10.z_22.get();
     a0 = s3 + v1;
@@ -1093,7 +1096,7 @@ public final class Bttl_800d {
 
       s0 = linkedListAddress_1f8003d8.get();
       linkedListAddress_1f8003d8.addu(0xcL);
-      SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+      SetDrawMode(MEMORY.ref(4, s0, DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
       a0 = data._10.z_22.get();
       v1 = s3 + a0;
       if((int)v1 >= 0xa0L) {
@@ -1369,7 +1372,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, 0x1L, new byte[] {charAlpha, charAlpha, charAlpha}, 0x1000L);
+    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfcL, charIdx / 21 * 12 + 144 & 0xfcL, 0xcL, 0xcL, 0xaL, TexPageTrans.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
   }
 
   /**
@@ -1554,8 +1557,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3f98L)
-  public static void FUN_800d3f98(final short a0, final short a1, final long a2, final short a3, final byte a4) {
-    FUN_80018d60(a0, a1, a2 * 8 + 16 & 0xf8L, 0x28L, 0x8L, 0x10L, a3, 0x1L, new byte[] {a4, a4, a4}, 0x1000L);
+  public static void FUN_800d3f98(final short a0, final short a1, final long a2, final short a3, final byte colour) {
+    FUN_80018d60(a0, a1, a2 * 8 + 16 & 0xf8L, 0x28L, 0x8L, 0x10L, a3, TexPageTrans.B_PLUS_F, new COLOUR().set(colour, colour, colour), 0x1000L);
   }
 
   @Method(0x800d4018L)
@@ -1783,13 +1786,13 @@ public final class Bttl_800d {
   public static long FUN_800d46d4(final RunningScript a0) {
     final long v1 = _800faaa0.offset(1, a0.params_20.get(0).deref().get() * 0x6L).getAddress();
 
-    final byte[] sp0x30 = {(byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get()};
+    final COLOUR colour = new COLOUR().set((byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get(), (byte)a0.params_20.get(4).deref().get());
 
     if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
-      FUN_80018d60(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), MEMORY.ref(1, v1).offset(0x1L).get(), MEMORY.ref(1, v1).offset(0x2L).get(), MEMORY.ref(1, v1).offset(0x3L).get(), MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), a0.params_20.get(3).deref().get(), sp0x30, 0x1000L);
+      FUN_80018d60(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), MEMORY.ref(1, v1).offset(0x1L).get(), MEMORY.ref(1, v1).offset(0x2L).get(), MEMORY.ref(1, v1).offset(0x3L).get(), MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), TexPageTrans.of(a0.params_20.get(3).deref().get()), colour, 0x1000L);
     } else {
       //LAB_800d4784
-      FUN_80018a5c(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), MEMORY.ref(1, v1).offset(0x1L).get(), MEMORY.ref(1, v1).offset(0x2L).get(), MEMORY.ref(1, v1).offset(0x3L).get(), MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), a0.params_20.get(3).deref().get(), sp0x30, 0x1000L, 0x1000L);
+      FUN_80018a5c(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), MEMORY.ref(1, v1).offset(0x1L).get(), MEMORY.ref(1, v1).offset(0x2L).get(), MEMORY.ref(1, v1).offset(0x3L).get(), MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), TexPageTrans.of(a0.params_20.get(3).deref().get()), colour, 0x1000L, 0x1000L);
     }
 
     //LAB_800d47cc

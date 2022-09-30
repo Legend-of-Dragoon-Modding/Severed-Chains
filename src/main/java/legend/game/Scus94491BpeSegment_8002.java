@@ -49,6 +49,9 @@ import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
 import legend.game.types.Struct84;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -178,8 +181,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b._800bb110;
-import static legend.game.Scus94491BpeSegment_800b._800bb112;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
@@ -3520,7 +3522,7 @@ public final class Scus94491BpeSegment_8002 {
         final long a1 = linkedListAddress_1f8003d8.get();
         linkedListAddress_1f8003d8.addu(0x8L);
         MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, a1).offset(0x4L).setu(0xe100_0200L | (_800bb112.get() | 0xdL) & 0x9ffL);
+        MEMORY.ref(4, a1).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() | 0xdL) & 0x9ffL);
         insertElementIntoLinkedList(tags_1f8003d0.getPointer() + MEMORY.ref(4, s1).offset(0xcL).get() * 0x4L, a1);
       }
     }
@@ -3606,7 +3608,7 @@ public final class Scus94491BpeSegment_8002 {
       v1 = sp0x20[(int)s1 + 0x6] + 0x10L;
       MEMORY.ref(1, s0).offset(0x25L).setu(v1);
       MEMORY.ref(1, s0).offset(0x1dL).setu(v1);
-      MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(0, 0, 896L, 256L));
+      MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256));
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + MEMORY.ref(4, s2).offset(0xcL).get() * 0x4L, s0);
       s1 = s1 + 0xcL;
     }
@@ -5106,10 +5108,7 @@ public final class Scus94491BpeSegment_8002 {
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
           s1 = _80052bf4.offset(sp22 * 0x4L).getAddress();
           s0 = _80052bc8.offset(sp22 * 0x4L).getAddress();
-          v1 = MEMORY.ref(4, s1).offset(0x0L).get() & 0x100L;
-          v1 = (int)v1 >> 8;
-          v1 = _800bb110.offset(v1 * 0x2L).getAddress();
-          v0 = MEMORY.ref(2, v1).offset(0x0L).get();
+          v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
           v0 = v0 | (MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L) >> 6;
           v0 = v0 & 0x9ffL;
           v0 = v0 | 0xe100_0200L;
@@ -5132,12 +5131,8 @@ public final class Scus94491BpeSegment_8002 {
           a1 = linkedListAddress_1f8003d8.get();
           linkedListAddress_1f8003d8.addu(0x8L);
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
-          v0 = MEMORY.ref(4, s1).offset(0x0L).get() & 0x100L;
-          v0 = (int)v0 >> 8;
-          v0 = v0 << 1;
-          v0 = _800bb110.offset(v0).getAddress();
           v1 = MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L;
-          v0 = MEMORY.ref(2, v0).offset(0x0L).get();
+          v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
           v1 = (int)v1 >> 6;
           v0 = v0 | v1;
           v0 = v0 & 0x9ffL;
@@ -5912,7 +5907,7 @@ public final class Scus94491BpeSegment_8002 {
         linkedListAddress_1f8003d8.addu(0x8L);
 
         MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (_800bb110.offset(((_80052bf4.offset(fp * 0x4L).get() & 0x100L) >> 8) * 0x2L).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
+        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_80052bf4.offset(fp * 0x4L).get())).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
         insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet2);
       }
 
@@ -6003,80 +5998,43 @@ public final class Scus94491BpeSegment_8002 {
       v1 = v1 + a0;
       v1 = v1 << 2;
       s2 = v1 + v0;
-      v0 = MEMORY.ref(4, s2).offset(0x8L).get();
-
-      v0 = v0 & 0x1000L;
-      if(v0 != 0) {
-        v1 = 0x1f80_0000L;
-        s0 = MEMORY.ref(4, v1).offset(0x3d8L).get();
-
-        a0 = s0;
-        v0 = s0 + 0x28L;
-        MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
-        setGp0_2c(a0);
-        a0 = s0;
-        a1 = 0x1L;
-        gpuLinkedListSetCommandTransparency(a0, true);
-        v0 = 0x80L;
-        a0 = 0x1f80_0000L;
-        a2 = 0x380L;
-        MEMORY.ref(1, s0).offset(0x4L).setu(v0);
-        MEMORY.ref(1, s0).offset(0x5L).setu(v0);
-        MEMORY.ref(1, s0).offset(0x6L).setu(v0);
-        v0 = MEMORY.ref(2, a0).offset(0x3dcL).get();
-        v1 = MEMORY.ref(2, s1).offset(0x4L).get();
-        v0 = v0 + 0x8L;
-        v1 = v1 - v0;
+      if((MEMORY.ref(4, s2).offset(0x8L).get() & 0x1000) != 0) {
+        s0 = linkedListAddress_1f8003d8.get();
+        linkedListAddress_1f8003d8.addu(0x28L);
+        setGp0_2c(s0);
+        gpuLinkedListSetCommandTransparency(s0, true);
+        MEMORY.ref(1, s0).offset(0x4L).setu(0x80);
+        MEMORY.ref(1, s0).offset(0x5L).setu(0x80);
+        MEMORY.ref(1, s0).offset(0x6L).setu(0x80);
+        v1 = MEMORY.ref(2, s1).offset(0x4L).get() - centreScreenX_1f8003dc.get() - 8;
         MEMORY.ref(2, s0).offset(0x18L).setu(v1);
         MEMORY.ref(2, s0).offset(0x8L).setu(v1);
-        v0 = MEMORY.ref(2, a0).offset(0x3dcL).get();
-        a0 = a0 + 0x3dcL;
-        v1 = MEMORY.ref(2, s1).offset(0x4L).get();
-        v0 = v0 - 0x8L;
-        v1 = v1 - v0;
+        v1 = MEMORY.ref(2, s1).offset(0x4L).get() - centreScreenX_1f8003dc.get() + 8;
         MEMORY.ref(2, s0).offset(0x20L).setu(v1);
         MEMORY.ref(2, s0).offset(0x10L).setu(v1);
-        v1 = MEMORY.ref(2, a0).offset(0x2L).get();
-        v0 = MEMORY.ref(2, s1).offset(0x6L).get();
-        a3 = 0x100L;
-        v0 = v0 - v1;
-        v0 = v0 - 0x6L;
+        v0 = MEMORY.ref(2, s1).offset(0x6L).get() - centreScreenY_1f8003de.get() - 6;
         MEMORY.ref(2, s0).offset(0x12L).setu(v0);
         MEMORY.ref(2, s0).offset(0xaL).setu(v0);
-        v1 = MEMORY.ref(2, a0).offset(0x2L).get();
-        v0 = MEMORY.ref(2, s1).offset(0x6L).get();
-        a0 = 0;
-        v0 = v0 - v1;
-        v0 = v0 + 0x8L;
+        v0 = MEMORY.ref(2, s1).offset(0x6L).get() - centreScreenY_1f8003de.get() + 8;
         MEMORY.ref(2, s0).offset(0x22L).setu(v0);
         MEMORY.ref(2, s0).offset(0x1aL).setu(v0);
         v0 = MEMORY.ref(2, s1).offset(0x8L).getSigned();
-        a1 = a0;
         v0 = v0 << 4;
         v0 = v0 + 0x40L;
         MEMORY.ref(1, s0).offset(0x1cL).setu(v0);
         MEMORY.ref(1, s0).offset(0xcL).setu(v0);
         v1 = MEMORY.ref(2, s1).offset(0x8L).getSigned();
-        v0 = 0xeL;
-        MEMORY.ref(1, s0).offset(0x25L).setu(v0);
-        MEMORY.ref(1, s0).offset(0x1dL).setu(v0);
-        v0 = 0x793fL;
+        MEMORY.ref(1, s0).offset(0x25L).setu(14);
+        MEMORY.ref(1, s0).offset(0x1dL).setu(14);
         MEMORY.ref(1, s0).offset(0x15L).setu(0);
         MEMORY.ref(1, s0).offset(0xdL).setu(0);
-        MEMORY.ref(2, s0).offset(0xeL).setu(v0);
+        MEMORY.ref(2, s0).offset(0xeL).setu(0x793f);
         v1 = v1 << 4;
         v1 = v1 + 0x50L;
         MEMORY.ref(1, s0).offset(0x24L).setu(v1);
         MEMORY.ref(1, s0).offset(0x14L).setu(v1);
-        v0 = GetTPage(a0, a1, a2, a3);
-        a1 = s0;
-        MEMORY.ref(2, a1).offset(0x16L).setu(v0);
-        v0 = 0x1f80_0000L;
-        a0 = MEMORY.ref(4, s2).offset(0xcL).get();
-        v0 = MEMORY.ref(4, v0).offset(0x3d0L).get();
-        a0 = a0 << 2;
-        a0 = v0 + a0;
-        insertElementIntoLinkedList(a0, a1);
+        MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256));
+        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s2).offset(0xcL).get()).getAddress(), s0);
       }
     }
 

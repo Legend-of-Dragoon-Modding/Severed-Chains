@@ -19,6 +19,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.ConsumerRef;
+import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -63,6 +64,9 @@ import legend.game.types.Struct20;
 import legend.game.types.Struct34;
 import legend.game.types.Struct54;
 import legend.game.types.SubmapEncounterData_04;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdExtension;
 import legend.game.types.UnknownStruct;
@@ -214,7 +218,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bb110;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
@@ -556,14 +560,7 @@ public final class SMap {
 
   public static final ArrayRef<UnsignedIntRef> _800d6cc8 = MEMORY.ref(4, 0x800d6cc8L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
 
-  public static final Value _800d6cf0 = MEMORY.ref(4, 0x800d6cf0L);
-  public static final Value _800d6cf4 = MEMORY.ref(4, 0x800d6cf4L);
-  public static final Value _800d6cf8 = MEMORY.ref(4, 0x800d6cf8L);
-  public static final Value _800d6cfc = MEMORY.ref(4, 0x800d6cfcL);
-
-  public static final Value _800d6d10 = MEMORY.ref(4, 0x800d6d10L);
-  public static final Value _800d6d14 = MEMORY.ref(4, 0x800d6d14L);
-  public static final Value _800d6d18 = MEMORY.ref(4, 0x800d6d18L);
+  public static final ArrayRef<EnumRef<TexPageTrans>> miscTextureTransModes_800d6cf0 = MEMORY.ref(4, 0x800d6cf0L, ArrayRef.of(EnumRef.classFor(TexPageTrans.class), 11, 4, EnumRef.of(TexPageTrans.values())));
   /**
    * Savepoint MRG (0x904 bytes)
    * <ol start="0">
@@ -3970,9 +3967,7 @@ public final class SMap {
 
     //LAB_800e389c
     MEMORY.ref(2, s0).offset(0x16L).setu(v0);
-    a0 = 0x200L;
-    a1 = 0x1feL;
-    v0 = GetClut(a0, a1);
+    v0 = GetClut(512, 510);
     v1 = 0x1f80_0000L;
     a0 = MEMORY.ref(4, v1).offset(0x3d0L).get();
     a1 = s0;
@@ -4050,9 +4045,7 @@ public final class SMap {
 
     //LAB_800e39bc
     MEMORY.ref(2, s0).offset(0x16L).setu(v0);
-    a0 = 0x200L;
-    a1 = 0x1fcL;
-    v0 = GetClut(a0, a1);
+    v0 = GetClut(512, 508);
     s6 = 0x1f80_0000L;
     a0 = MEMORY.ref(4, s6).offset(0x3d0L).get();
     a1 = s0;
@@ -4140,9 +4133,7 @@ public final class SMap {
       }
 
       //LAB_800e3b14
-      a0 = 0x200L;
-      a1 = 0x1ffL;
-      v0 = GetClut(a0, a1);
+      v0 = GetClut(512, 511);
       a0 = MEMORY.ref(4, s6).offset(0x3d0L).get();
       a1 = s0;
       MEMORY.ref(2, a1).offset(0xeL).setu(v0);
@@ -4217,9 +4208,7 @@ public final class SMap {
       }
 
       //LAB_800e3c3c
-      a0 = 0x200L;
-      a1 = 0x1fdL;
-      v0 = GetClut(a0, a1);
+      v0 = GetClut(512, 509);
       a0 = MEMORY.ref(4, s6).offset(0x3d0L).get();
       a1 = s0;
       MEMORY.ref(2, a1).offset(0xeL).setu(v0);
@@ -4518,7 +4507,7 @@ public final class SMap {
     MEMORY.ref(1, packet).offset(0x1dL).setu(_800f64b0.offset(1, 0xeL).get());
     MEMORY.ref(1, packet).offset(0x24L).setu(_800f64b0.offset(1, 0xaL).get());
     MEMORY.ref(1, packet).offset(0x25L).setu(_800f64b0.offset(1, 0xeL).get());
-    MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(0x3d0L, 0x1d0L));
+    MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(976, 464));
     MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
     MEMORY.ref(4, packet).offset(0x04L).setu(0x2e80_8080L);
     MEMORY.ref(2, packet).offset(0x16L).setu(0x1fL);
@@ -8281,8 +8270,8 @@ public final class SMap {
           MEMORY.ref(2, packet).offset(0x22L).setu(offsetY + s0.sxyz3_38.getY()); // Vertex 3 Y
 
           if(s0._00.get() == 0x2L) {
-            MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(960L, 464L)); // CLUT
-            MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(0, 0x2L, 960L, 320L)); // TPAGE
+            MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(960, 464)); // CLUT
+            MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.B_MINUS_F, 960, 320)); // TPAGE
           } else {
             //LAB_800efb64
             MEMORY.ref(2, packet).offset(0x0eL).setu(_800d6068.offset(2, 0xeL)); // CLUT
@@ -10496,7 +10485,7 @@ public final class SMap {
 
       //LAB_800f42d0
       if(tim.imageAddress.get() != 0) {
-        long v1 = _800bb110.getAddress();
+        long v1 = texPages_800bb110.getAddress();
         v1 += (tim.imageRect.deref().y.get() >>> 8 & 0x1L) * 0x2L;
         v1 += (a3 & 0b11) * 0x4L;
         v1 += (tim.flags.get() & 0b11) << 0x10L;
@@ -10559,7 +10548,7 @@ public final class SMap {
     final long v1 = _800f9ea8.getSigned();
     if(v1 == 0) {
       //LAB_800f4660
-      loadMiscTextures(0xbL);
+      loadMiscTextures(11);
       SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)992, (short)288, (short)8, (short)64), 984L, 288L); // Copies the save point texture beside itself
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x18L);
@@ -10593,34 +10582,16 @@ public final class SMap {
    * Textures such as footsteps, encounter indicator, yellow &lt;!&gt; sign, save point, etc.
    */
   @Method(0x800f4754L)
-  public static void loadMiscTextures(final long a0) {
-    final long[] sp00 = new long[11];
-
-    //LAB_800f478c
-    for(int v0 = 0; v0 < 2; v0++) {
-      sp00[v0 * 4    ] = _800d6cf0.offset(v0 * 0x10L).get();
-      sp00[v0 * 4 + 1] = _800d6cf4.offset(v0 * 0x10L).get();
-      sp00[v0 * 4 + 2] = _800d6cf8.offset(v0 * 0x10L).get();
-      sp00[v0 * 4 + 3] = _800d6cfc.offset(v0 * 0x10L).get();
-    }
-
-    sp00[ 8] = _800d6d10.get();
-    sp00[ 9] = _800d6d14.get();
-    sp00[10] = _800d6d18.get();
-
+  public static void loadMiscTextures(final int textureCount) {
     //LAB_800f47f0
-    for(int s2 = 0; s2 < a0; s2++) {
-      final TimHeader sp40 = parseTimHeader(_800f9eb0.offset(s2 * 0x4L).deref(4).offset(0x4L));
-      LoadImage(sp40.imageRect, sp40.imageAddress.get());
+    for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
+      final TimHeader header = parseTimHeader(_800f9eb0.offset(textureIndex * 0x4L).deref(4).offset(0x4L));
+      LoadImage(header.imageRect, header.imageAddress.get());
 
-      long a1 = (sp40.imageRect.y.get() >>> 8 & 0b1) << 1;
-      a1 += (sp00[s2] & 0b11) << 2;
-      a1 += (sp40.flags.get() & 0b11) << 4;
+      _800d6050.offset(textureIndex * 0x2L).setu(texPages_800bb110.get(TexPageBpp.values()[(int)(header.flags.get() & 0b11)]).get(miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6);
+      _800d6068.offset(textureIndex * 0x2L).setu(header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4);
 
-      _800d6050.offset(s2 * 0x2L).setu(_800bb110.offset(a1).get() | (sp40.imageRect.x.get() & 0x3c0) >>> 6);
-      _800d6068.offset(s2 * 0x2L).setu(sp40.clutRect.y.get() * 0x40 | (sp40.clutRect.x.get() & 0x3f0) >>> 4);
-
-      LoadImage(sp40.clutRect, sp40.clutAddress.get());
+      LoadImage(header.clutRect, header.clutAddress.get());
     }
 
     //LAB_800f48a8

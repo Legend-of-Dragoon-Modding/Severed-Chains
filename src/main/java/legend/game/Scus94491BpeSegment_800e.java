@@ -18,6 +18,9 @@ import legend.game.combat.SEffe;
 import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.RunningScript;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,8 +91,6 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bb110;
-import static legend.game.Scus94491BpeSegment_800b._800bb112;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
@@ -114,6 +115,7 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
 import static legend.game.Scus94491BpeSegment_800c._800c6740;
@@ -898,10 +900,10 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e60d8L)
   public static void FUN_800e60d8() {
-    for(int s2 = 0; s2 < 3; s2++) {
-      for(int s1 = 0; s1 < 5; s1++) {
-        _800bb110.offset(s2 * 16L).offset(s1 * 4L).setu(GetTPage(s2, s1, 0, 0));
-        _800bb112.offset(s2 * 16L).offset(s1 * 4L).setu(GetTPage(s2, s1, 0, 0x100L));
+    for(final TexPageBpp bpp : TexPageBpp.values()) {
+      for(final TexPageTrans trans : TexPageTrans.values()) {
+        texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_0).set(GetTPage(bpp, trans, 0, 0));
+        texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_256).set(GetTPage(bpp, trans, 0, 256));
       }
     }
   }
@@ -1022,7 +1024,7 @@ public final class Scus94491BpeSegment_800e {
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
     LoadImage(imageRect, header.getImageAddress());
 
-    _800bb348.setu(_800bb112).oru(0xdL);
+    _800bb348.setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
 
     if(header.hasClut()) {
       final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);

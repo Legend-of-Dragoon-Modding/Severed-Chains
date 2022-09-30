@@ -16,6 +16,11 @@ public final class EnumRef<T extends Enum<T>> implements MemoryRef {
     return ref -> new EnumRef<>(ref, values, toInt);
   }
 
+  public static <T extends Enum<T>> Class<EnumRef<T>> classFor(final Class<T> t) {
+    //noinspection unchecked
+    return (Class<EnumRef<T>>)(Class<?>)EnumRef.class;
+  }
+
   private final Value ref;
   private final T[] values;
   private final ToIntFunction<T> toInt;

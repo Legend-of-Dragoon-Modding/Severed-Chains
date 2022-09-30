@@ -11,12 +11,14 @@ import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.types.ActiveStatsa0;
@@ -40,6 +42,9 @@ import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
 import legend.game.types.Struct4c;
 import legend.game.types.Struct84;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 
 import java.util.function.Function;
 
@@ -64,17 +69,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);
   public static final Value doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L);
   public static final Value pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL);
-  public static final Value _800bb110 = MEMORY.ref(2, 0x800bb110L);
-  public static final Value _800bb112 = MEMORY.ref(2, 0x800bb112L);
-  public static final Value _800bb114 = MEMORY.ref(2, 0x800bb114L);
-  public static final Value _800bb116 = MEMORY.ref(2, 0x800bb116L);
-  public static final Value _800bb118 = MEMORY.ref(2, 0x800bb118L);
-  public static final Value _800bb11a = MEMORY.ref(2, 0x800bb11aL);
-
-  public static final Value _800bb120 = MEMORY.ref(2, 0x800bb120L);
-
-  public static final Value _800bb134 = MEMORY.ref(2, 0x800bb134L);
-
+  public static final EnumMapRef<TexPageBpp, EnumMapRef<TexPageTrans, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(TexPageBpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), TexPageBpp.values().length, 0x10, EnumMapRef.of(TexPageTrans.class, EnumMapRef.classFor(UnsignedShortRef.class), TexPageTrans.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
   public static final Value _800bb168 = MEMORY.ref(4, 0x800bb168L); //TODO is this part of the previous struct?
 

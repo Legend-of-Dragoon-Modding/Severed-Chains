@@ -67,6 +67,8 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.SpellStats0c;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
 import legend.game.types.TmdAnimationFile;
 
 import javax.annotation.Nullable;
@@ -4060,7 +4062,7 @@ public final class Bttl_800c {
 
       //LAB_800ce1a0
       //LAB_800ce1a4
-      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
 
       a2 = data._10.z_22.get();
       v1 = s1 + a2;
@@ -4308,7 +4310,7 @@ public final class Bttl_800c {
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
     linkedListAddress_1f8003d8.addu(0x10L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, manager._10._00.get() >>> 28 & 0x3L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -4377,7 +4379,7 @@ public final class Bttl_800c {
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
     linkedListAddress_1f8003d8.addu(0x10L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, script.params_20.get(3).deref().get() + 1, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
     return 0;

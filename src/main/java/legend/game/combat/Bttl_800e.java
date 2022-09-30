@@ -69,6 +69,8 @@ import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
 import legend.game.types.TmdAnimationFile;
 
 import javax.annotation.Nullable;
@@ -4076,7 +4078,7 @@ public final class Bttl_800e {
     effect.ptr_0c.set(v0 + MEMORY.ref(4, v0).offset(0x14L).get());
     final long v1 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
     effect._134.set(effect._10);
-    final long tpage = GetTPage(0, 0, MEMORY.ref(2, v1).offset(0x0L).getSigned(), MEMORY.ref(2, v1).offset(0x2L).getSigned());
+    final long tpage = GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, (int)MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
     final BigStruct struct = effect._134.deref();
     struct.ub_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
     FUN_800ddac8(struct, effect.ptr_08.get());

@@ -72,6 +72,9 @@ import legend.game.types.DR_TPAGE;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -146,7 +149,7 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb110;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
@@ -1421,7 +1424,7 @@ public final class SEffe {
             }
 
             //LAB_800fdcc8
-            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
             insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s3 + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
             linkedListAddress_1f8003d8.addu(0xcL);
           }
@@ -1484,7 +1487,7 @@ public final class SEffe {
           MEMORY.ref(2, s0).offset(0xaL).setu(sp0x64.get());
           insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, s0);
 
-          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, 1, 0, 0), null);
+          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
           insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
           linkedListAddress_1f8003d8.addu(0xcL);
         }
@@ -2683,7 +2686,7 @@ public final class SEffe {
       a0._5a.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
       a0._5e.set((int)(MEMORY.ref(1, v0).offset(0x4L).get() * 0x4L));
       a0._5f.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
-      a0.clut_5c.set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+      a0.clut_5c.set(GetClut((int)MEMORY.ref(2, v0).offset(0x8L).getSigned(), (int)MEMORY.ref(2, v0).offset(0xaL).getSigned()));
     }
 
     //LAB_80102048
@@ -3233,7 +3236,7 @@ public final class SEffe {
           }
 
           //LAB_80103ca0
-          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, data._10._00.get() >>> 28 & 3, 0, 0), null);
+          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
           a1 = data._10.z_22.get();
           a0 = sp18;
           v1 = a1 + a0;
@@ -3442,7 +3445,7 @@ public final class SEffe {
             }
 
             //LAB_80104834
-            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, manager._10._00.get() >>> 28 & 0x3L, 0, 0), null);
+            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
             a1 = manager._10.z_22.get();
             v1 = a1 + s7.sz3_0c.get();
 
@@ -3727,7 +3730,7 @@ public final class SEffe {
     }
 
     //LAB_801059c8
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, data._10.get() >> 28 & 0x3L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
 
     int a1 = data._08.get();
     final int z = data.z_14.get();
@@ -4091,7 +4094,7 @@ public final class SEffe {
         insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
       }
 
-      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0xcL);
     }
@@ -4214,11 +4217,11 @@ public final class SEffe {
       s7 = s7 + 0xeL;
     }
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x1L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x1L, 0x2L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_MINUS_F, 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -4613,10 +4616,10 @@ public final class SEffe {
     callScriptFunction(func, 5, a2, s4 + 12, s3 + 66, 1, 128);
 
     if(a0._11.get() != 0) {
-      final byte v0 = (byte)(a0._11.get() * 64 - 1);
-      final byte[] sp0x30 = {v0, v0, v0};
+      final byte colour = (byte)(a0._11.get() * 64 - 1);
+      final COLOUR rgb = new COLOUR().set(colour, colour, colour);
       callScriptFunction(func, 5, 20, fp - 4, s7 - 4, 1, 128);
-      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, 0x1L, sp0x30, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
+      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, TexPageTrans.B_PLUS_F, rgb, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
     }
 
     //LAB_80107bf0
@@ -4668,7 +4671,7 @@ public final class SEffe {
     memcpy(sp0xa0.getAddress(), _800fb84c.getAddress(), 0xa);
 
     final byte colour = (byte)((_80119fb4.get() + 1) * 64);
-    final byte[] sp0x30 = {colour, colour, colour};
+    final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
     final int y = (short)_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
 
@@ -4680,47 +4683,41 @@ public final class SEffe {
     }
 
     //LAB_80108048
-    FUN_80018d60((short)x, (short)y, 128, 64, 16, 16, 51, 1, sp0x30, 0x1000);
+    FUN_80018d60((short)x, (short)y, 128, 64, 16, 16, 51, TexPageTrans.B_PLUS_F, rgb, 0x1000);
 
-    sp0x30[0] = (byte)0x80;
-    sp0x30[1] = (byte)0x80;
-    sp0x30[2] = (byte)0x80;
+    rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801080ac
     for(int i = 0; i < 5; i++) {
       if(a0._07.get() < i) {
-        sp0x30[0] = 0x10;
-        sp0x30[1] = 0x10;
-        sp0x30[2] = 0x10;
+        rgb.set(0x10, 0x10, 0x10);
       }
 
       //LAB_801080cc
-      FUN_80018d60((short)_8011a01c.get() + sp0x48.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + sp0x48.offset(2, i * 0x4L).offset(0x2L).getSigned(), sp0x60.offset(1, i * 0x4L).getSigned(), sp0x60.offset(1, i * 0x4L).offset(0x2L).getSigned(), sp0x78.offset(2, i * 0x4L).getSigned(), sp0x78.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, 1, sp0x30, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + sp0x48.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + sp0x48.offset(2, i * 0x4L).offset(0x2L).getSigned(), sp0x60.offset(1, i * 0x4L).getSigned(), sp0x60.offset(1, i * 0x4L).offset(0x2L).getSigned(), sp0x78.offset(2, i * 0x4L).getSigned(), sp0x78.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, TexPageTrans.B_PLUS_F, rgb, 0x1000);
     }
 
     FUN_801079e8(a0);
 
-    sp0x30[0] = (byte)0x80;
-    sp0x30[1] = (byte)0x80;
-    sp0x30[2] = (byte)0x80;
+    rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801081a8
     for(int i = 0; i < a0._0d.get(); i++) {
-      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).get(), 1, sp0x30, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).get(), TexPageTrans.B_PLUS_F, rgb, 0x1000);
 
       if(a0._18.get() == 9) {
-        FUN_80018dec(_8011a01c.getSigned() + 23, _8011a020.getSigned() + 21, 232, 120, 23, 23, 12, 1, sp0x30, 0x800, 0x1800);
+        FUN_80018dec(_8011a01c.getSigned() + 23, _8011a020.getSigned() + 21, 232, 120, 23, 23, 12, TexPageTrans.B_PLUS_F, rgb, 0x800, 0x1800);
       }
 
       //LAB_80108250
     }
 
     //LAB_80108268
-    FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, 0, sp0x30, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).getSigned(), sp0x40.offset(1, a1 * 2).getSigned(), sp0x30, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, sp0x40.offset(1, a1 * 2).offset(0x1L).getSigned(), sp0x30, 0x1000);
-    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, sp0x90.offset(1, a0._18.get()).getSigned(), -1, sp0x30, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, sp0x90.offset(1, a0._18.get()).getSigned(), -1, sp0x30, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, TexPageTrans.HALF_B_PLUS_HALF_F, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).getSigned(), TexPageTrans.of((int)sp0x40.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, TexPageTrans.of((int)sp0x40.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, sp0x90.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, sp0x90.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
     _80119fb4.setu(1 - _80119fb4.get());
 
     sp0x40tmp.release();
@@ -4942,7 +4939,7 @@ public final class SEffe {
   public static void FUN_801089e8(final int index, final ScriptState<EffeScriptData30> state, final EffeScriptData30 data) {
     //LAB_80108a38
     for(int i = 7; i >= 0; i--) {
-      final byte[] sp0x28 = {(byte)0x80, (byte)0x80, (byte)0x80};
+      final COLOUR rgb = new COLOUR().set(0x80, 0x80, 0x80);
 
       final long fp = _80119fbc.get(i).getAddress();
       final long s2 = _80119fc4.get(i).getAddress();
@@ -4962,11 +4959,11 @@ public final class SEffe {
         //LAB_80108ac4
         int s0 = 0;
         do {
-          sp0x28[0] -= 32;
-          sp0x28[1] -= 32;
-          sp0x28[2] -= 32;
+          rgb.r.sub(32);
+          rgb.g.sub(32);
+          rgb.b.sub(32);
           s0++;
-          FUN_80018d60(struct._02.get() + s0 * 6, (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, 1, sp0x28, 0x1000);
+          FUN_80018d60(struct._02.get() + s0 * 6, (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
         } while(s0 < 4);
       } else if(v1 == 1) {
         //LAB_80108b58
@@ -4989,10 +4986,10 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, 1, sp0x28, 0x1000);
+      FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
 
       if((struct._01.get() & 0x1L) != 0) {
-        FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, 1, sp0x28, 0x1000);
+        FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
       }
 
       //LAB_80108cb0
@@ -5066,7 +5063,7 @@ public final class SEffe {
     }
 
     //LAB_80108f84
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(1, data._10._00.get() >>> 28 & 0x3L, 0, 0), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -5222,23 +5219,23 @@ public final class SEffe {
 
       //LAB_801096cc
       s3 -= 2;
-    } while(s3 < -1);
+    } while(s3 >= -1);
 
-    final long y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
+    final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x2L, data._10._00.get() >>> 28 & 0x3L, 0, y), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x2L, data._10._00.get() >>> 28 & 0x3L, 0x100L, y), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x74L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
 
   @Method(0x801097e0L)
   public static void FUN_801097e0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final long y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
-    final long v = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
+    final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
+    final int v = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
     final long packet1 = linkedListAddress_1f8003d8.get();
     MEMORY.ref(1, packet1).offset(0x3L).setu(0x4L);
@@ -5255,7 +5252,7 @@ public final class SEffe {
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet1);
     linkedListAddress_1f8003d8.addu(0x14L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x2L, data._10._00.get() >>> 28 & 0x3L, 0, y), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
 
@@ -5274,7 +5271,7 @@ public final class SEffe {
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet2);
     linkedListAddress_1f8003d8.addu(0x14L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(0x2L, data._10._00.get() >>> 28 & 0x3L, 0x100L, y), null);
+    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
     insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
@@ -5587,7 +5584,7 @@ public final class SEffe {
       MEMORY.ref(2, s0).offset(0x22L).setu(sp0x70.getY());
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, s0);
 
-      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(1, 1, 0, 0));
+      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0));
       insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, linkedListAddress_1f8003d8.get());
       linkedListAddress_1f8003d8.addu(0x8L);
     }
@@ -5876,7 +5873,7 @@ public final class SEffe {
           MEMORY.ref(2, s0).offset(0x1aL).setu(sp0x58.getY());
 
           final long addr = effect.ptr_00.get();
-          MEMORY.ref(2, s0).offset(0x16L).setu(_800bb110.offset((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) * 0x2L).offset(0x28L).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+          MEMORY.ref(2, s0).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
           insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), s0);
         }
 
@@ -5946,7 +5943,7 @@ public final class SEffe {
 
           //LAB_8010bbf8
           final long addr = effect.ptr_00.get();
-          MEMORY.ref(2, packet).offset(0x16L).setu(_800bb110.offset((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) * 0x2L).offset(0x28L).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+          MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
           insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
           linkedListAddress_1f8003d8.addu(0x28L);
         }
@@ -6044,7 +6041,7 @@ public final class SEffe {
       MEMORY.ref(1, packet).offset(0x25L).setu(a0 + effect._08.get() / 3);
 
       final long addr = effect.ptr_00.get();
-      MEMORY.ref(2, packet).offset(0x16L).setu(_800bb110.offset((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) * 0x2L).offset(0x28L).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
     }
 
@@ -6163,7 +6160,7 @@ public final class SEffe {
           effect._0e.get(i).set((int)MEMORY.ref(2, v0).offset(0x2L).get());
           effect._18.get(i).set((int)MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4);
           effect._22.get(i).set((int)MEMORY.ref(2, v0).offset(0x6L).get());
-          effect._2c.get(i).set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+          effect._2c.get(i).set(GetClut((int)MEMORY.ref(2, v0).offset(0x8L).getSigned(), (int)MEMORY.ref(2, v0).offset(0xaL).getSigned()));
         }
       }
 
@@ -6424,7 +6421,7 @@ public final class SEffe {
       effect._08.set((short)MEMORY.ref(2, addr).offset(0x2L).get());
       effect.width_0a.set((short)(MEMORY.ref(2, addr).offset(0x4L).getSigned() * 4));
       effect.height_0c.set((short)MEMORY.ref(2, addr).offset(0x6L).get());
-      effect.clut_0e.set((short)GetClut(MEMORY.ref(2, addr).offset(0x8L).getSigned(), MEMORY.ref(2, addr).offset(0xaL).getSigned()));
+      effect.clut_0e.set((short)GetClut((int)MEMORY.ref(2, addr).offset(0x8L).getSigned(), (int)MEMORY.ref(2, addr).offset(0xaL).getSigned()));
     }
 
     //LAB_8010d564
@@ -6534,7 +6531,7 @@ public final class SEffe {
       effect._06.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
       effect._08.set((int)(MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4));
       effect._09.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
-      effect._0a.set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+      effect._0a.set(GetClut((int)MEMORY.ref(2, v0).offset(0x8L).getSigned(), (int)MEMORY.ref(2, v0).offset(0xaL).getSigned()));
     }
 
     //LAB_8010e2b0
@@ -6697,7 +6694,7 @@ public final class SEffe {
       effect._06.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
       effect.width_08.set((int)(MEMORY.ref(2, v0).offset(0x4L).getSigned() << 2));
       effect.height_09.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
-      effect.clut_0a.set((int)GetClut(MEMORY.ref(2, v0).offset(0x8L).getSigned(), MEMORY.ref(2, v0).offset(0xaL).getSigned()));
+      effect.clut_0a.set(GetClut((int)MEMORY.ref(2, v0).offset(0x8L).getSigned(), (int)MEMORY.ref(2, v0).offset(0xaL).getSigned()));
     }
 
     //LAB_8010ebac

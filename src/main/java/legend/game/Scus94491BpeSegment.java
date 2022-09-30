@@ -16,6 +16,7 @@ import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.COLOUR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -64,6 +65,9 @@ import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -232,10 +236,6 @@ import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bb110;
-import static legend.game.Scus94491BpeSegment_800b._800bb114;
-import static legend.game.Scus94491BpeSegment_800b._800bb118;
-import static legend.game.Scus94491BpeSegment_800b._800bb120;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
@@ -307,6 +307,7 @@ import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.sssqChannelIndex_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -400,10 +401,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010320 = MEMORY.ref(4, 0x80010320L);
 
-  public static final Value _80010328 = MEMORY.ref(1, 0x80010328L);
-  public static final Value _80010329 = MEMORY.ref(1, 0x80010329L);
-  public static final Value _8001032a = MEMORY.ref(1, 0x8001032aL);
-
+  public static final COLOUR colour_80010328 = MEMORY.ref(1, 0x80010328L, COLOUR::new);
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
@@ -2203,8 +2201,8 @@ public final class Scus94491BpeSegment {
       //LAB_800138f0
       //LAB_80013948
       switch((int)scriptEffect_800bb140.type_00.get()) {
-        case 1, 2 -> drawFullScreenRect(colour, 0x2L);
-        case 3, 4 -> drawFullScreenRect(colour, 0x1L);
+        case 1, 2 -> drawFullScreenRect(colour, TexPageTrans.B_MINUS_F);
+        case 3, 4 -> drawFullScreenRect(colour, TexPageTrans.B_PLUS_F);
 
         case 5 -> {
           for(int s1 = 0; s1 < 8; s1++) {
@@ -2254,7 +2252,7 @@ public final class Scus94491BpeSegment {
       linkedListAddress_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb114.get(0x9ffL)); // Draw mode dither enabled, texpage X (320), whatever is or'd
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
 
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
@@ -2286,7 +2284,7 @@ public final class Scus94491BpeSegment {
       linkedListAddress_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | _800bb118.get(0x9ffL)); // Draw mode dither enabled, texpage X (320), whatever is or'd
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
 
       insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
@@ -2295,7 +2293,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013c3cL)
-  public static void drawFullScreenRect(final long colour, final long drawModeIndex) {
+  public static void drawFullScreenRect(final long colour, final TexPageTrans transMode) {
     long s0 = linkedListAddress_1f8003d8.get();
     linkedListAddress_1f8003d8.addu(0x10L);
 
@@ -2318,7 +2316,7 @@ public final class Scus94491BpeSegment {
     linkedListAddress_1f8003d8.addu(0x8L);
 
     MEMORY.ref(1, s0).offset(0x3L).setu(0x1L); // 1 word
-    MEMORY.ref(4, s0).offset(0x4L).setu(0xe1000205L | _800bb110.offset((drawModeIndex & 0x3L) * 4).get(0x9ffL)); // Draw mode/texpage
+    MEMORY.ref(4, s0).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(transMode).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode/texpage
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(0x1e).getAddress(), s0);
   }
 
@@ -4474,8 +4472,8 @@ public final class Scus94491BpeSegment {
       LoadImage(clutRect, header.getClutAddress());
     }
 
-    _800bc300.setu(_800bb120).oru(0xaL);
-    _800bc304.setu(_800bb120).oru(0xcL);
+    _800bc300.setu(texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get()).oru(0xaL);
+    _800bc304.setu(texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get()).oru(0xcL);
     _800bc308.setu(0x3fe8L);
 
     if(param_3 != 0) {
@@ -4649,7 +4647,6 @@ public final class Scus94491BpeSegment {
     long s0;
     final long s2;
     final long s4;
-    final long s5;
     final long t8;
     long s8;
     s0 = a3;
@@ -4674,9 +4671,8 @@ public final class Scus94491BpeSegment {
     a2 = s4;
     long t0_0 = a2 + 0x8L;
     MEMORY.ref(1, s4).offset(0x3L).setu(0x1L);
-    v0 = (int)a3 >> 8;
     v1 = t5 & 0x3c0L;
-    v0 = _800bb110.offset(v0 * 0x2L).get();
+    v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).get();
     v1 = (int)v1 >> 6;
     v0 = v0 | v1;
     v0 = v0 & 0x9ffL;
@@ -4686,12 +4682,9 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
     if(a6 != 0x80L) {
       //LAB_80018350
-      s5 = t3 & 0x100L;
-
       //LAB_8001836c
       for(t4 = 0; t4 < s2; t4 += 0x10L) {
-        v0 = (int)s5 >> 8;
-        t7 = _800bb110.offset(v0 * 0x2L).getAddress();
+        t7 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).getAddress();
 
         //LAB_80018380
         for(t1 = 0; t1 < t8; t1 += 0x10L) {
@@ -4746,12 +4739,9 @@ public final class Scus94491BpeSegment {
         //LAB_80018454
       }
     } else {
-      s5 = t3 & 0x100L;
-
       //LAB_8001825c
       for(t4 = 0; t4 < s2; t4 += 0x10L) {
-        v0 = (int)s5 >> 8;
-        t7 = _800bb110.offset(v0 * 0x2L).getAddress();
+        t7 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).getAddress();
 
         //LAB_80018274
         for(t1 = 0; t1 < t8; t1 += 0x10L) {
@@ -5029,7 +5019,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void FUN_80018a5c(long a0, long a1, long a2, final long a3, final long a4, final long a5, final long a6, long a7, final byte[] a8, final long a9, final long a10) {
+  public static void FUN_80018a5c(long a0, long a1, long a2, final long a3, final long a4, final long a5, final long a6, @Nullable TexPageTrans transMode, final COLOUR colour, final long a9, final long a10) {
     long v0;
     long v1;
     final long s0;
@@ -5060,27 +5050,19 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(4, v1).offset(0x3d8L).setu(v0);
     s0 = a0;
     setGp0_2c(a0);
-    v0 = -0x1L;
-    t0 = a7;
 
-    if((int)t0 == v0) {
+    if(transMode == null) {
       gpuLinkedListSetCommandTransparency(s0, false);
-      a7 = 0;
+      transMode = TexPageTrans.HALF_B_PLUS_HALF_F;
     } else {
       //LAB_80018b30
       gpuLinkedListSetCommandTransparency(s0, true);
     }
 
     //LAB_80018b38
-    v0 = a8[0] & 0xff;
-
-    MEMORY.ref(1, s0).offset(0x4L).setu(v0);
-    v0 = a8[1] & 0xff;
-
-    MEMORY.ref(1, s0).offset(0x5L).setu(v0);
-    v0 = a8[2] & 0xff;
-
-    MEMORY.ref(1, s0).offset(0x6L).setu(v0);
+    MEMORY.ref(1, s0).offset(0x4L).setu(colour.getR());
+    MEMORY.ref(1, s0).offset(0x5L).setu(colour.getG());
+    MEMORY.ref(1, s0).offset(0x6L).setu(colour.getB());
     t0 = a9;
 
     v0 = t0 << 16;
@@ -5195,7 +5177,7 @@ public final class Scus94491BpeSegment {
     v0 = (int)v0 >> 4;
     v1 = v1 | v0;
     MEMORY.ref(2, s0).offset(0xeL).setu(v1);
-    v0 = GetTPage(0, a7, 0x2c0L, 0x100L);
+    v0 = GetTPage(TexPageBpp.BITS_4, transMode, 704, 256);
     MEMORY.ref(2, s0).offset(0x16L).setu(v0);
     v0 = 0x1f80_0000L;
     insertElementIntoLinkedList(MEMORY.ref(4, v0).offset(0x3d0L).get() + 0x8L, s0);
@@ -5203,13 +5185,13 @@ public final class Scus94491BpeSegment {
 
   /**Some kind of intermediate rect render method**/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, final long a7, final byte[] a8, final long a9) {
-    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xffL, originV & 0xffL, originU + width & 0xffL, originV + height & 0xffL, (short)a6, a7, a8, (short)a9, (short)a9);
+  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, @Nullable final TexPageTrans transMode, final COLOUR colour, final long a9) {
+    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xffL, originV & 0xffL, originU + width & 0xffL, originV + height & 0xffL, (short)a6, transMode, colour, (short)a9, (short)a9);
   }
 
   @Method(0x80018decL)
-  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, final long a7, final byte[] a8, final long a9, final long a10) {
-    FUN_80018a5c(a0, a1, a2, a3, a2 + a4, a5 + a3, a6, a7, a8, a9, a10);
+  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, @Nullable final TexPageTrans transMode, final COLOUR colour, final long a9, final long a10) {
+    FUN_80018a5c(a0, a1, a2, a3, a2 + a4, a5 + a3, a6, transMode, colour, a9, a10);
   }
 
   @Method(0x80018e84L)
@@ -5221,7 +5203,6 @@ public final class Scus94491BpeSegment {
     long s1;
     long s2;
     final long[] sp0x30 = {0x42L, 0x43L, _80010320.offset(0x0L).get(), _80010320.offset(0x4L).get()};
-    final byte[] sp0x40 = {(byte)_80010328.get(), (byte)_80010329.get(), (byte)_8001032a.get()};
 
     //LAB_80018f04
     s1 = _8004f658.get();
@@ -5370,8 +5351,8 @@ public final class Scus94491BpeSegment {
             MEMORY.ref(1, s0).offset(0xbL).get() + 0x7L,
             0x4fL,
             MEMORY.ref(1, s0).offset(0xcL).get(),
-            (MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7L) - 0x1L,
-            sp0x40,
+            TexPageTrans.of((int)((MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1)),
+            colour_80010328,
             MEMORY.ref(2, s0).offset(0x4L).get() + 0x1000,
             MEMORY.ref(2, s0).offset(0x6L).get() + 0x1000
           );

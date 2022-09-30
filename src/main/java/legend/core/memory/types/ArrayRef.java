@@ -6,12 +6,12 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class ArrayRef<T extends legend.core.memory.types.MemoryRef> implements legend.core.memory.types.MemoryRef, Iterable<T> {
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, ArrayRef<T>> of(final Class<T> cls, final int length, final int elementSize, final int stride, final Function<Value, T> constructor) {
+public class ArrayRef<T extends MemoryRef> implements MemoryRef, Iterable<T> {
+  public static <T extends MemoryRef> Function<Value, ArrayRef<T>> of(final Class<T> cls, final int length, final int elementSize, final int stride, final Function<Value, T> constructor) {
     return ref -> new ArrayRef<>(ref, cls, length, elementSize, stride, constructor);
   }
 
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, ArrayRef<T>> of(final Class<T> cls, final int length, final int stride, final Function<Value, T> constructor) {
+  public static <T extends MemoryRef> Function<Value, ArrayRef<T>> of(final Class<T> cls, final int length, final int stride, final Function<Value, T> constructor) {
     return ref -> new ArrayRef<>(ref, cls, length, stride, constructor);
   }
 

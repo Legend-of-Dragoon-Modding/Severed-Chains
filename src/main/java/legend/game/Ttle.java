@@ -23,6 +23,9 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
+import legend.game.types.TexPageY;
 import legend.game.types.TmdRenderingStruct;
 
 import javax.annotation.Nullable;
@@ -33,15 +36,15 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
-import static legend.game.Scus94491BpeSegment.renderMcq;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
 import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
 import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -50,11 +53,11 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
+import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
 import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -74,19 +77,15 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb114;
-import static legend.game.Scus94491BpeSegment_800b._800bb116;
-import static legend.game.Scus94491BpeSegment_800b._800bb120;
-import static legend.game.Scus94491BpeSegment_800b._800bb134;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
@@ -98,6 +97,7 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -885,7 +885,7 @@ public final class Ttle {
       MEMORY.ref(2, sp10).offset(0x12L).setu(y); // Y
       MEMORY.ref(1, sp10).offset(0x14L).setu(_800ce7f8.offset((i * 2L + 0x1L) * 4)); // U
       MEMORY.ref(1, sp10).offset(0x15L).setu(_800ce7f8.offset(i * 8L)); // V
-      MEMORY.ref(2, sp10).offset(0x16L).setu(_800bb114.get() | 0x9L); // Page
+      MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L); // Page
 
       // Vertex 2
       MEMORY.ref(2, sp10).offset(0x18L).setu(x); // X
@@ -919,7 +919,7 @@ public final class Ttle {
       MEMORY.ref(2, sp10).offset(0x12L).setu(y - 0x8L);
       MEMORY.ref(1, sp10).offset(0x14L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
       MEMORY.ref(1, sp10).offset(0x15L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get());
-      MEMORY.ref(2, sp10).offset(0x16L).setu(_800bb114.get() | 0x9L);
+      MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
 
       // Vertex 2
       MEMORY.ref(2, sp10).offset(0x18L).setu(x - 0x8L);
@@ -1121,7 +1121,7 @@ public final class Ttle {
       MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4));
       MEMORY.ref(1, address).offset(0x14L).setu(_800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4));
       MEMORY.ref(1, address).offset(0x15L).setu(_800ce7f8.offset((i + 0x3L) * 8));
-      MEMORY.ref(2, address).offset(0x16L).setu(_800bb114.get() | 0x9L);
+      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
 
       MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset((i + 0x3L) * 8));
       MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4).get() + 0x10L);
@@ -1157,7 +1157,7 @@ public final class Ttle {
       MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() - 0x9L);
       MEMORY.ref(1, address).offset(0x14L).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get());
       MEMORY.ref(1, address).offset(0x15L).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0x16L).setu(_800bb114.get() | 0x9L);
+      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
 
       MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset((sp18 + 0x3L) * 8).get() - 0x8L);
       MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() + 0x17L);
@@ -1217,7 +1217,7 @@ public final class Ttle {
       MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() - 0x9L);
       MEMORY.ref(1, address).offset(0x14L).setu(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get());
       MEMORY.ref(1, address).offset(0x15L).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0x16L).setu(_800bb114.get() | 0x9L);
+      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
 
       MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset(sp14 * 8).get() - 0x8L);
       MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() + 0x17L);
@@ -1260,7 +1260,7 @@ public final class Ttle {
       //LAB_800cabe8
       renderQuad(
         sp40,
-        (_800bb114.get() | 0xeL) & 0xffffL,
+        (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0xeL) & 0xffffL,
         0x1028L,
         copyrightFadeInAmount_800c6714.get(),
         copyrightFadeInAmount_800c6714.get(),
@@ -1297,7 +1297,7 @@ public final class Ttle {
       //LAB_800cae48
       renderQuad(
         linkedListAddress_1f8003d8.get(),
-        _800bb116.get() | (int)((i << 0x6L) + 0x240L & 0x3c0L) >> 0x6L,
+        texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | (int)((i << 0x6L) + 0x240L & 0x3c0L) >> 0x6L,
         0x68L,
         logoFadeInAmount_800c66ec.get(),
         logoFadeInAmount_800c66ec.get(),
@@ -1319,7 +1319,7 @@ public final class Ttle {
 
     renderQuad(
       linkedListAddress_1f8003d8.get(),
-      _800bb114.get() | 0xeL,
+      texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0xeL,
       0x1428L,
       logoFadeInAmount_800c66ec.get(),
       logoFadeInAmount_800c66ec.get(),
@@ -1357,7 +1357,7 @@ public final class Ttle {
     //LAB_800cb100
     for(int i = 0; i < 6; i++) {
       //LAB_800cb11c
-      final long page = _800bb120.offset((i / 3 & 1) * 2).get() | (int)_800ce920.offset(i % 3 * 4).get(0x3c0L) >> 6;
+      final long page = texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(i < 3 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (int)_800ce920.offset(i % 3 * 4).get(0x3c0L) >> 6;
 
       renderQuad(
         linkedListAddress_1f8003d8.get(),
@@ -1546,7 +1546,7 @@ public final class Ttle {
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp40 = linkedListAddress_1f8003d8.get();
-    SetDrawMode(MEMORY.ref(4, sp40, DR_MODE::new), false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get(), null);
+    SetDrawMode(MEMORY.ref(4, sp40, DR_MODE::new), false, true, texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_PLUS_F).get(doubleBufferFrame_800bb108.get() == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get(), null);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp40);
     linkedListAddress_1f8003d8.addu(0xcL);
 
@@ -1568,7 +1568,7 @@ public final class Ttle {
     linkedListAddress_1f8003d8.addu(0x14L);
 
     final long sp48 = linkedListAddress_1f8003d8.get();
-    SetDrawMode(MEMORY.ref(4, sp48, DR_MODE::new), false, true, _800bb134.offset(doubleBufferFrame_800bb108.get() * 2).get() | 4, null);
+    SetDrawMode(MEMORY.ref(4, sp48, DR_MODE::new), false, true, texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_PLUS_F).get(doubleBufferFrame_800bb108.get() == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | 4, null);
     insertElementIntoLinkedList(tags_1f8003d0.deref().get(5).getAddress(), sp48);
     linkedListAddress_1f8003d8.addu(0xcL);
 

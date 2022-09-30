@@ -47,6 +47,8 @@ import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.RenderStruct20;
+import legend.game.types.TexPageBpp;
+import legend.game.types.TexPageTrans;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1995,33 +1997,15 @@ public final class Scus94491BpeSegment_8003 {
    * <p>The semitransparent rate is also effective for polygons on which texture mapping is not performed.
    * The texture page address is limited to a multiple of 64 in the X direction and a multiple of 256 in the Y
    * direction.</p>
-   *
-   * @param tp Texture mode
-   *           <ol start="0">
-   *             <li>4-bit CLUT</li>
-   *             <li>8-bit CLUT</li>
-   *             <li>16-bit Direct</li>
-   *           </ol>
-   * @param abr Semitransparency rate
-   *           <ol start="0">
-   *             <li>0.5 x Back + 0.5 x Forward</li>
-   *             <li>1.0 x Back + 1.0 x Forward</li>
-   *             <li>1.0 x Back - 1.0 x Forward</li>
-   *             <li>1.0 x Back + 0.25 x Forward</li>
-   *           </ol>
-   * @param x X
-   * @param y Y
-   *
-   * @return Texture page ID
    */
   @Method(0x8003b3f0L)
-  public static long GetTPage(final long tp, final long abr, final long x, final long y) {
+  public static int GetTPage(final TexPageBpp bpp, final TexPageTrans trans, final int x, final int y) {
     return
-      ((tp & 0x3L) << 0x7L |
-      (abr & 0x3L) << 0x5L |
-      (y & 0x100L) >> 0x4L |
-      (x & 0x3ffL) >> 0x6L |
-      (y & 0x200L) << 0x2L) & 0xffffL;
+      (bpp.ordinal() << 7 |
+      trans.ordinal() << 5 |
+      (y & 0x200) << 2 |
+      (y & 0x100) >> 4 |
+      (x & 0x3ff) >> 6) & 0xffff;
   }
 
   /**
@@ -2035,8 +2019,8 @@ public final class Scus94491BpeSegment_8003 {
    * @return CLUT ID.
    */
   @Method(0x8003b430L)
-  public static long GetClut(final long x, final long y) {
-    return (y << 6 | x >> 4 & 0x3fL) & 0xffffL;
+  public static int GetClut(final int x, final int y) {
+    return (y << 6 | x >> 4 & 0x3f) & 0xffff;
   }
 
   @Method(0x8003b450L)
