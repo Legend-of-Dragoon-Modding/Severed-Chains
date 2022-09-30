@@ -7716,7 +7716,7 @@ public final class SMap {
             break;
           }
 
-          FUN_800f4244(_800d4bf0.get(), _800f9e5c.getAddress(), _800f9e5e.getAddress(), 0x1L);
+          FUN_800f4244(_800d4bf0.get(), _800f9e5c.getAddress(), _800f9e5e.getAddress(), TexPageTrans.B_PLUS_F);
           DrawSync(0);
           StoreImage(sp20, _800d4bd4.get());
           removeFromLinkedList(_800d4bf0.get());
@@ -10470,7 +10470,7 @@ public final class SMap {
   }
 
   @Method(0x800f4244L)
-  public static void FUN_800f4244(final long a0, final long a1, final long a2, final long a3) {
+  public static void FUN_800f4244(final long a0, final long a1, final long a2, final TexPageTrans transMode) {
     FUN_8003b8f0(a0);
 
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x14);
@@ -10485,12 +10485,7 @@ public final class SMap {
 
       //LAB_800f42d0
       if(tim.imageAddress.get() != 0) {
-        long v1 = texPages_800bb110.getAddress();
-        v1 += (tim.imageRect.deref().y.get() >>> 8 & 0x1L) * 0x2L;
-        v1 += (a3 & 0b11) * 0x4L;
-        v1 += (tim.flags.get() & 0b11) << 0x10L;
-        final long v0 = MEMORY.ref(2, v1).get() | (tim.imageRect.deref().x.get() & 0x3c0L) / 0x40L;
-        MEMORY.ref(2, a1).setu(v0);
+        MEMORY.ref(2, a1).setu(texPages_800bb110.get(TexPageBpp.values()[(int)(tim.flags.get() & 0b11)]).get(transMode).get(TexPageY.fromY(tim.imageRect.deref().y.get())).get() | (tim.imageRect.deref().x.get() & 0x3c0L) >> 6);
         LoadImage(tim.imageRect.deref(), tim.imageAddress.get());
       }
     }
