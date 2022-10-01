@@ -344,8 +344,7 @@ public class WMap {
   /** "Move?" */
   private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
-  private static final ArrayRef<Pointer<LodString>> _800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
-
+  private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
   private static final Pointer<LodString> _800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
   private static final Pointer<LodString> No_Entry_800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
   private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
@@ -8254,7 +8253,6 @@ public class WMap {
     int sp50;
     final long sp54;
     long sp58;
-    final long sp5c;
 
     if(_800c6690.get() != 0) {
       return;
@@ -8510,22 +8508,22 @@ public class WMap {
 
             //LAB_800e6138
             placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
-            sp5c = places_800f0234.get((int)placeIndex)._05.get();
+            final long services = places_800f0234.get((int)placeIndex).services_05.get();
 
             //LAB_800e619c
-            sp50 = 0;
+            int servicesCount = 0;
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
-              if((sp5c & 1L << i) != 0) {
-                FUN_800e774c(_800f01cc.get(i).deref(), 205, sp50 * 16 + 30, 0, 0);
-                sp50++;
+              if((services & 1L << i) != 0) {
+                FUN_800e774c(services_800f01cc.get(i).deref(), 205, servicesCount * 16 + 30, 0, 0);
+                servicesCount++;
               }
 
               //LAB_800e6248
             }
 
             //LAB_800e6260
-            if(sp50 == 0) {
+            if(servicesCount == 0) {
               FUN_800e774c(_800f01e0.deref(), 201, 62, 0, 0);
             }
 
