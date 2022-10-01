@@ -5127,108 +5127,90 @@ public final class SEffe {
     return 0;
   }
 
-  /** TODO there's no way this method is right */
   @Method(0x80109358L)
   public static void FUN_80109358(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v0;
-    long a1;
-    long s0;
-    long s1;
-    long s2;
-
     final long u = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
     final BttlScriptData6cSub08_2 sp48 = data._44.derefAs(BttlScriptData6cSub08_2.class);
-    final long sp30 = data._10.svec_16.getX() >> 8;
-    final long sp2c = data._10.svec_16.getY() >> 11;
-    final long sp38 = data._10.svec_16.getZ() * 15 >> 9;
+    final int sp30 = data._10.svec_16.getX() >> 8;
+    final int sp2c = data._10.svec_16.getY() >> 11;
+    final int sp38 = data._10.svec_16.getZ() * 15 >> 9;
 
     //LAB_801093f0
-    long s3 = 0x1L;
-    do {
-      final long t1 = sp48._00.get();
-      long sp28 = t1;
-      long sp34 = t1;
-
-      //LAB_80109410
-      long sp40;
-      long s5;
-      if(s3 != 0x1L) {
-        s5 = -0x1L;
-        sp40 = 0x77L;
-      } else {
-        s5 = 0;
-        sp40 = 0x78L;
-      }
+    for(int s3 = 1; s3 >= -1; s3 -= 2) {
+      final int angle = sp48.angle_00.get();
+      int angle1 = angle;
+      int angle2 = angle;
+      int s5 = s3 == 1 ? 0 : -1;
+      int sp40 = s3 == 1 ? 120 : 119;
 
       //LAB_80109430
       //LAB_8010944c
-      while(s3 != 1 && s5 > -sp38 || s5 < sp38) {
-        v0 = (int)(rsin(sp28) * sp2c) >> 12;
-        s2 = v0 + 0x1L + sp2c;
+      while(s3 != 1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
+        int s2 = (rsin(angle1) * sp2c >> 12) + 1 + sp2c;
+
         if(s2 == 0) {
-          s2 = 0x1L;
+          s2 = 1;
         }
 
         //LAB_8010949c
         //LAB_801094b8
         for(int s6 = 0; s6 < s2; s6++) {
-          s1 = (int)(rsin(sp34) * sp30) >> 12;
-          s0 = s5 + s6 * s3;
+          final int x = rsin(angle2) * sp30 >> 12;
+          final int y = s5 + s6 * s3;
 
-          a1 = linkedListAddress_1f8003d8.get();
-          MEMORY.ref(1, a1).offset(0x3L).setu(0x4L);
-          MEMORY.ref(1, a1).offset(0x4L).setu(data._10.svec_1c.getX());
-          MEMORY.ref(1, a1).offset(0x5L).setu(data._10.svec_1c.getY());
-          MEMORY.ref(1, a1).offset(0x6L).setu(data._10.svec_1c.getZ());
-          MEMORY.ref(1, a1).offset(0x7L).setu(0x66L);
-          MEMORY.ref(2, a1).offset(0x8L).setu(-0xa0L - s1);
-          MEMORY.ref(2, a1).offset(0xaL).setu(s0);
-          MEMORY.ref(1, a1).offset(0xcL).setu(0);
-          MEMORY.ref(1, a1).offset(0xdL).setu(u + sp40);
-          MEMORY.ref(2, a1).offset(0x10L).setu(0x100L);
-          MEMORY.ref(2, a1).offset(0x12L).setu(0x1L);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
+          long packet = linkedListAddress_1f8003d8.get();
+          MEMORY.ref(1, packet).offset(0x3L).setu(0x4L);
+          MEMORY.ref(1, packet).offset(0x4L).setu(data._10.svec_1c.getX()); // R
+          MEMORY.ref(1, packet).offset(0x5L).setu(data._10.svec_1c.getY()); // G
+          MEMORY.ref(1, packet).offset(0x6L).setu(data._10.svec_1c.getZ()); // B
+          MEMORY.ref(1, packet).offset(0x7L).setu(0x66L); // Textured quad, variable size, translucent, texture-blending
+          MEMORY.ref(2, packet).offset(0x8L).setu(-160 - x); // X
+          MEMORY.ref(2, packet).offset(0xaL).setu(y); // Y
+          MEMORY.ref(1, packet).offset(0xcL).setu(0); // U
+          MEMORY.ref(1, packet).offset(0xdL).setu(u + sp40); // V
+          MEMORY.ref(2, packet).offset(0x10L).setu(256); // W
+          MEMORY.ref(2, packet).offset(0x12L).setu(1); // H
+          insertElementIntoLinkedList(tags_1f8003d0.deref().get(30).getAddress(), packet);
           linkedListAddress_1f8003d8.addu(0x14L);
 
-          a1 = linkedListAddress_1f8003d8.get();
-          MEMORY.ref(1, a1).offset(0x3L).setu(0x4L);
-          MEMORY.ref(1, a1).offset(0x4L).setu(data._10.svec_1c.getX());
-          MEMORY.ref(1, a1).offset(0x5L).setu(data._10.svec_1c.getY());
-          MEMORY.ref(1, a1).offset(0x6L).setu(data._10.svec_1c.getZ());
-          MEMORY.ref(1, a1).offset(0x7L).setu(0x66L);
-          MEMORY.ref(2, a1).offset(0x8L).setu(0x60L - s1);
-          MEMORY.ref(2, a1).offset(0xaL).setu(s0);
-          MEMORY.ref(1, a1).offset(0xcL).setu(0);
-          MEMORY.ref(1, a1).offset(0xdL).setu(u + sp40);
-          MEMORY.ref(2, a1).offset(0x10L).setu(0x40L);
-          MEMORY.ref(2, a1).offset(0x12L).setu(0x1L);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x74L, a1);
+          packet = linkedListAddress_1f8003d8.get();
+          MEMORY.ref(1, packet).offset(0x3L).setu(0x4L);
+          MEMORY.ref(1, packet).offset(0x4L).setu(data._10.svec_1c.getX()); // R
+          MEMORY.ref(1, packet).offset(0x5L).setu(data._10.svec_1c.getY()); // G
+          MEMORY.ref(1, packet).offset(0x6L).setu(data._10.svec_1c.getZ()); // B
+          MEMORY.ref(1, packet).offset(0x7L).setu(0x66L); // Textured quad, variable size, translucent, texture-blending
+          MEMORY.ref(2, packet).offset(0x8L).setu(96 - x); // X
+          MEMORY.ref(2, packet).offset(0xaL).setu(y); // Y
+          MEMORY.ref(1, packet).offset(0xcL).setu(0); // U
+          MEMORY.ref(1, packet).offset(0xdL).setu(u + sp40); // V
+          MEMORY.ref(2, packet).offset(0x10L).setu(64); // W
+          MEMORY.ref(2, packet).offset(0x12L).setu(1); // H
+          insertElementIntoLinkedList(tags_1f8003d0.deref().get(29).getAddress(), packet);
           linkedListAddress_1f8003d8.addu(0x14L);
 
-          sp34 = sp34 + s3 * 0x20L;
+          angle2 += s3 * 32;
         }
 
         //LAB_80109678
-        sp28 = sp28 + s2 * 0x20L;
-        sp40 = sp40 + s3;
-        s5 = s5 + s2 * s3;
+        angle1 += s2 * 32;
+        sp40 += s3;
+        s5 += s2 * s3;
 
         //LAB_801096b8
       }
 
       //LAB_801096cc
-      s3 -= 2;
-    } while(s3 >= -1);
+    }
 
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
     SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(30).getAddress(), linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
 
     SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x74L, linkedListAddress_1f8003d8.get());
+    insertElementIntoLinkedList(tags_1f8003d0.deref().get(29).getAddress(), linkedListAddress_1f8003d8.get());
     linkedListAddress_1f8003d8.addu(0xcL);
   }
 
@@ -5279,7 +5261,7 @@ public final class SEffe {
   @Method(0x80109a4cL)
   public static void FUN_80109a4c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BttlScriptData6cSub08_2 v0 = data._44.derefAs(BttlScriptData6cSub08_2.class);
-    v0._00.add(v0._04.get());
+    v0.angle_00.add(v0.angleStep_04.get());
   }
 
   @Method(0x80109a6cL)
@@ -5305,8 +5287,8 @@ public final class SEffe {
 
     final EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub08_2 v1 = a0._44.derefAs(BttlScriptData6cSub08_2.class);
-    v1._00.set(0x800L);
-    v1._04.set(s0.params_20.get(1).deref().get());
+    v1.angle_00.set(0x800);
+    v1.angleStep_04.set(s0.params_20.get(1).deref().get());
     a0._10._00.set(0x4000_0000L);
     s0.params_20.get(0).deref().set(scriptIndex);
     return 0;
