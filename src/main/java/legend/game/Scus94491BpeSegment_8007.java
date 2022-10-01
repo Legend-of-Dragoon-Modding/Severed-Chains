@@ -1,7 +1,7 @@
 package legend.game;
 
-import legend.core.memory.*;
-import legend.core.memory.types.*;
+import legend.core.memory.Value;
+import legend.core.memory.types.UnsignedByteRef;
 
 import static legend.core.Hardware.MEMORY;
 

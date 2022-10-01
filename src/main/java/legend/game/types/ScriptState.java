@@ -35,6 +35,8 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    */
   public final ArrayRef<IntRef> storage_44;
   /**
+   * <strong>NOTE: also contained in previous array</strong>
+   *
    * <p>Bit set - which of the pointers at the start of the struct are set</p>
    *
    * <ul>
@@ -65,19 +67,22 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array
   /**
-   * Battle Menu flag - controls which options you can choose from.
+   * <strong>NOTE: also contained in previous array</strong>
+   *
+   * <p>Battle Menu flag - controls which options you can choose from.</p>
+
    * <ul>
-   *  <li>0x01 Attack </li>
-   *  <li>0x02 Guard </li>
-   *  <li>0x04 Items </li>
-   *  <li>0x08 Escape </li>
-   *  <li>0x10 Dragoon </li>
-   *  <li>0x20 D-Attack </li>
-   *  <li>0x40 Magic </li>
-   *  <li>0x80 Special </li>
+   *   <li>0x01 Attack</li>
+   *   <li>0x02 Guard</li>
+   *   <li>0x04 Items</li>
+   *   <li>0x08 Escape</li>
+   *   <li>0x10 Dragoon</li>
+   *   <li>0x20 D-Attack</li>
+   *   <li>0x40 Magic</li>
+   *   <li>0x80 Special</li>
    * <ul>
    */
-  public final  UnsignedByteRef _64;
+  public final UnsignedByteRef _64;
   public final IntRef _c4;
   public final IntRef scriptIndex_c8;
   /**

@@ -1,8 +1,16 @@
 package legend.game.combat.types;
 
 import legend.core.memory.Value;
-import legend.core.memory.types.*;
-import legend.game.combat.types.BattleStructEF4.*;
+import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.ByteRef;
+import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.UnsignedByteRef;
+import legend.core.memory.types.UnsignedIntRef;
+import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
+import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
+import legend.game.combat.types.BattleStructEF4.Status04;
 
 public class BattleStructEf4 implements MemoryRef {
   private final Value ref;
@@ -17,17 +25,17 @@ public class BattleStructEf4 implements MemoryRef {
   public final UnsignedByteRef dAttackValue_280;
 
   /**
-   <ul>
-   *      <li>0x00 Dart </li>
-   *      <li>0x01 Lavitz </li>
-   *      <li>0x02 Shana </li>
-   *      <li>0x03 Rose </li>
-   *      <li>0x04 Haschel </li>
-   *      <li>0x05 Albert </li>
-   *      <li>0x06 Meru </li>
-   *      <li>0x07 Kongol </li>
-   *      <li>0x08 Miranda </li>
-   <ul>
+   * <ul>
+   *   <li>0x00 Dart</li>
+   *   <li>0x01 Lavitz</li>
+   *   <li>0x02 Shana</li>
+   *   <li>0x03 Rose</li>
+   *   <li>0x04 Haschel</li>
+   *   <li>0x05 Albert</li>
+   *   <li>0x06 Meru</li>
+   *   <li>0x07 Kongol</li>
+   *   <li>0x08 Miranda</li>
+   * <ul>
    */
   public final UnsignedByteRef specialFlag_2b0;
 
