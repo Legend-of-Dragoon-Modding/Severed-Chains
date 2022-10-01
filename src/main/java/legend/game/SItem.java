@@ -3637,14 +3637,17 @@ public final class SItem {
    * @param scrollAmount I'm pretty sure this is the amount the window scrolls when you reach the end of the elements that are currently on screen
    */
   @Method(0x80103f00L)
-  public static boolean scrollMenu(final IntRef selectedSlot, final IntRef scroll, int slotsDisplayed, int slotCount, final int scrollAmount) {
+  public static boolean scrollMenu(final IntRef selectedSlot, @Nullable final IntRef scroll, int slotsDisplayed, int slotCount, final int scrollAmount) {
     slotsDisplayed = Math.min(slotsDisplayed, slotCount);
 
     if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) {
       if(selectedSlot.get() == 0) {
-        if(scroll.get() == 0) { // Wrap around up
+        if(scroll == null || scroll.get() == 0) { // Wrap around up
           selectedSlot.set(slotsDisplayed - 1);
-          scroll.set(slotCount - slotsDisplayed);
+
+          if(scroll != null) {
+            scroll.set(slotCount - slotsDisplayed);
+          }
         } else {
           //LAB_80103f44
           if(scroll.get() < scrollAmount) {
@@ -3661,9 +3664,12 @@ public final class SItem {
       if(selectedSlot.get() < slotsDisplayed - 1) {
         selectedSlot.incr();
       } else {
-        if(scroll.get() + slotsDisplayed == slotCount) {
+        if(scroll == null || scroll.get() + slotsDisplayed == slotCount) {
           selectedSlot.set(0);
-          scroll.set(0);
+
+          if(scroll != null) {
+            scroll.set(0);
+          }
         } else {
           //LAB_80103f8c
           if(slotCount <= scroll.get() + slotsDisplayed * scrollAmount) {
