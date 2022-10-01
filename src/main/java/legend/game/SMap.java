@@ -3195,7 +3195,6 @@ public final class SMap {
           _800c6970.offset(i * 0x4L).setu(-0x1L);
         }
 
-        clearJoypadInput();
         _800c6aac.setu(0xaL);
         _800bd7b8.setu(0);
         break;
@@ -3206,9 +3205,6 @@ public final class SMap {
           if(_800c6aac.get() != 0) {
             _800c6aac.subu(0x1L);
           }
-
-          //LAB_800e1f38
-          clearJoypadInput();
         }
 
         //LAB_800e1f40
@@ -4896,7 +4892,6 @@ public final class SMap {
     }
 
     _800c6aac.setu(0xaL);
-    clearJoypadInput();
     _800bd7b4.setu(0);
     if(_800cab28.get() == 0) {
       if(scriptEffect_800bb140._24.get() == 0) {
