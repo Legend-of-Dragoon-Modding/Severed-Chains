@@ -4598,27 +4598,27 @@ public final class SEffe {
 
     final int a2;
     if(FUN_80108460(a0, 0) != 0) {
-      callScriptFunction(func, 5, 36, fp, s3 + 64, 1, 128);
+      callScriptFunction(func, 36, fp, s3 + 64, 1, 128);
       a2 = 33;
     } else {
       //LAB_80107a80
       if(FUN_80108460(a0, 2) != 0) {
-        callScriptFunction(func, 5, 36, fp, s3 + 60, 1, 128);
+        callScriptFunction(func, 36, fp, s3 + 60, 1, 128);
         a2 = 33;
       } else {
         //LAB_80107ad4
-        callScriptFunction(func, 5, 36, fp, s3 + 56, 1, 128);
+        callScriptFunction(func, 36, fp, s3 + 56, 1, 128);
         a2 = 35;
       }
     }
 
     //LAB_80107b10
-    callScriptFunction(func, 5, a2, s4 + 12, s3 + 66, 1, 128);
+    callScriptFunction(func, a2, s4 + 12, s3 + 66, 1, 128);
 
     if(a0._11.get() != 0) {
       final int colour = a0._11.get() * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
-      callScriptFunction(func, 5, 20, fp - 4, s7 - 4, 1, 128);
+      callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
       FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, TexPageTrans.B_PLUS_F, rgb, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
     }
 
@@ -4627,21 +4627,21 @@ public final class SEffe {
     final int s1 = Math.min(4, a0._07.get());
 
     //LAB_80107c08
-    callScriptFunction(func, 5, s1 + 4, fp + 36, s7,      1, 128);
-    callScriptFunction(func, 5, 24,     fp -  4, s7,      1, 128);
-    callScriptFunction(func, 5, 26,     fp -  4, s7 + 12, 1, 128);
-    callScriptFunction(func, 5, 30,     fp -  4, s7 +  4, 1, 128);
-    callScriptFunction(func, 5, 31,     fp + 48, s7 +  4, 1, 128);
+    callScriptFunction(func, s1 + 4, fp + 36, s7,      1, 128);
+    callScriptFunction(func, 24,     fp -  4, s7,      1, 128);
+    callScriptFunction(func, 26,     fp -  4, s7 + 12, 1, 128);
+    callScriptFunction(func, 30,     fp -  4, s7 +  4, 1, 128);
+    callScriptFunction(func, 31,     fp + 48, s7 +  4, 1, 128);
 
     //LAB_80107cd4
     for(int i = 0; i < 48; i += 8) {
-      callScriptFunction(func, 5, 28, fp + i, s7,      1, 128);
-      callScriptFunction(func, 5, 29, fp + i, s7 + 12, 1, 128);
-      callScriptFunction(func, 5, 32, fp + i, s7 -  4, 1, 128);
+      callScriptFunction(func, 28, fp + i, s7,      1, 128);
+      callScriptFunction(func, 29, fp + i, s7 + 12, 1, 128);
+      callScriptFunction(func, 32, fp + i, s7 -  4, 1, 128);
     }
 
-    callScriptFunction(func, 5, 25, fp + 48, s7     , 1, 128);
-    callScriptFunction(func, 5, 27, fp + 48, s7 + 12, 1, 128);
+    callScriptFunction(func, 25, fp + 48, s7     , 1, 128);
+    callScriptFunction(func, 27, fp + 48, s7 + 12, 1, 128);
   }
 
   @Method(0x80107dc4L)
