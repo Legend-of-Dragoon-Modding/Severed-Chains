@@ -1395,7 +1395,7 @@ public final class Bttl_800d {
 
     //LAB_800d3944
     //LAB_800d3948
-    return (int)(10 - charWidthAdjustTable_800fa7cc.get(charTableOffset).get());
+    return 10 - charWidthAdjustTable_800fa7cc.get(charTableOffset).get();
   }
 
   @Method(0x800d3968L)
@@ -1973,6 +1973,31 @@ public final class Bttl_800d {
     //LAB_800d53a0
     s4._11c.or(0x1L);
     s4._120.set(15);
+  }
+
+  @Method(0x800d53e4L)
+  public static void FUN_800d53e4(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6) {
+    final BattleCamera cam = camera_800c67f0;
+
+    final int s5 = (a0 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getX();
+    final int s6 = (a1 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getY();
+    final int s2 = (a2 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getZ();
+    final int s3 = s5 / 2;
+    final int v0 = s6 / 2;
+    final int s0 = s2 / 2;
+    cam._dc.set(SquareRoot0(s3 * s3 + v0 * v0 + s0 * s0) << 9);
+    cam._d4.set((ratan2(s2, s5) & 0xfff) << 8);
+    final int a0_0 = cam._dc.get() * 2 / (a3 + a4);
+    final int s4 = (a4 - a3) / a0_0;
+    cam._d8.set((ratan2(s6, SquareRoot0(s3 * s3 + s0 * s0) * 2) & 0xfff) << 8);
+    cam._a4.set(a3);
+    cam._e8.set(a0);
+    cam._ec.set(a1);
+    cam._f0.set(a2);
+    cam._11c.or(0x1L);
+    cam._120.set(16);
+    cam._d0.set(a0_0);
+    cam._b4.set(s4);
   }
 
   @Method(0x800d5ec8L)
