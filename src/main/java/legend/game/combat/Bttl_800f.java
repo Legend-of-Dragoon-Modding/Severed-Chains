@@ -223,7 +223,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f1268L)
-  public static void FUN_800f1268(final long a0, final long a1, final long a2, final long a3, final long a4) {
+  public static void renderTextBoxBackground(final long a0, final long a1, final long a2, final long a3, final long a4) {
     final byte[] sp0x10 = new byte[0x1b];
     for(int i = 0; i < sp0x10.length; i++) {
       sp0x10[i] = (byte)_800c6fec.offset(i).get();
@@ -1053,8 +1053,8 @@ public final class Bttl_800f {
         //LAB_800f30b0
         for(s2 = 0; s2 < s3; s2++) {
           if((a1 & s4) != 0) {
-            s0 = s3 - (FUN_800f8ca0(a0 & s5) + 0x1L);
-            v1 = s3 - (FUN_800f8ca0(a1 & s4) + 0x1L);
+            s0 = s3 - (getTargetEnemyElement(a0 & s5) + 0x1L);
+            v1 = s3 - (getTargetEnemyElement(a1 & s4) + 0x1L);
 
             // 0 800f3108
             // 1 800f3188
@@ -1296,7 +1296,7 @@ public final class Bttl_800f {
     for(digitStructIdx = 0; digitStructIdx < 5; digitStructIdx++) {
       final FloatingNumberC4Sub20 digitStruct = num.digits_24.get(digitStructIdx);
       digitStruct._00.set(0x8000L);
-      digitStruct._10.set((short)0);
+      digitStruct.y_10.set((short)0);
 
       if(clutCol == 2) {
         digitStruct._00.set(0);
@@ -1405,13 +1405,13 @@ public final class Bttl_800f {
               if((a0 & 0x1) != 0) {
                 if((a0 & 0x2) != 0) {
                   if(a1._08.get() < 5) {
-                    a1._10.add((short)a1._08.get());
+                    a1.y_10.add((short)a1._08.get());
                     a1._08.incr();
                   }
                 } else {
                   //LAB_800f3bb0
                   a1._00.or(0x8002L);
-                  a1._04.set(a1._10.get());
+                  a1._04.set(a1.y_10.get());
                   a1._08.set(-4);
                 }
               } else {
@@ -1502,9 +1502,8 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3dbcL)
-  public static void FUN_800f3dbc() {
+  public static void drawFloatingNumbers() {
     //LAB_800f3e20
-    long fp = 0;
     for(int i = 0; i < 12; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
@@ -1542,10 +1541,10 @@ public final class Bttl_800f {
                 MEMORY.ref(2, packet).offset(0x20L).setu(v1); // X3
                 MEMORY.ref(2, packet).offset(0x10L).setu(v1); // X1
                 long a2 = num.y_20.get() - centreScreenY_1f8003de.get();
-                v0 = digit._10.get() + a2;
+                v0 = digit.y_10.get() + a2;
                 MEMORY.ref(2, packet).offset(0x12L).setu(v0); // Y1
                 MEMORY.ref(2, packet).offset(0xaL).setu(v0); // Y0
-                v1 = digit._10.get() + digit.texH_18.get() + a2;
+                v1 = digit.y_10.get() + digit.texH_18.get() + a2;
                 MEMORY.ref(2, packet).offset(0x22L).setu(v1); // Y3
                 MEMORY.ref(2, packet).offset(0x1aL).setu(v1); // Y2
                 v0 = digit.u_12.get();
@@ -1587,8 +1586,8 @@ public final class Bttl_800f {
                 v0 = (int)v0 >> 4;
                 a2 = a2 | v0;
                 MEMORY.ref(2, packet).offset(0xeL).setu(a2); // CLUT
-                v0 = GetTPage(TexPageBpp.BITS_4, TexPageTrans.of(s3), 704, 496);
-                MEMORY.ref(2, packet).offset(0x16L).setu(v0); // TPAGE
+                final int tpage = GetTPage(TexPageBpp.BITS_4, TexPageTrans.of(s3), 704, 496);
+                MEMORY.ref(2, packet).offset(0x16L).setu(tpage); // TPAGE
                 insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x1cL, packet);
 
                 if((num.state_00.get() & 97) == 0) {
@@ -1602,9 +1601,7 @@ public final class Bttl_800f {
           }
         }
       }
-
       //LAB_800f4134
-      fp = fp + 0xc4L;
     }
   }
 
@@ -2552,7 +2549,7 @@ public final class Bttl_800f {
 
   /** TODO use item menu */
   @Method(0x800f5c94L)
-  public static void FUN_800f5c94() {
+  public static void drawItemMenuElements() {
     final BttlStructa4 structa4 = _800c6b60.deref();
 
     if(structa4._00.get() != 0 && (structa4._02.get() & 0x1L) != 0) {
@@ -2599,9 +2596,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5ee8
+        //Item menu
         final long a2 = structa4._10.get() + 6;
         final long a3 = structa4._12.get() + 0x11L;
-        FUN_800f1268(structa4._04.get() - a2 / 2, structa4._06.get() - a3, a2, a3, 0x8L);
+        renderTextBoxBackground(structa4._04.get() - a2 / 2, structa4._06.get() - a3, a2, a3, 0x8L);
       }
 
       //LAB_800f5f50
@@ -2617,7 +2615,7 @@ public final class Bttl_800f {
             final BattleObject27c bobj = FUN_800f9e50(structa4._1c.get());
             calculateFloatingNumberRender(0, 0x1L, 0, bobj.spellMp_a0.get(), 280, 135, 0, structa4._0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 0x10L, 0x80L, 0x18L, 0x10L, 0x2cL, null);
-            FUN_800f1268(0xecL, 0x82L, 0x40L, 0xeL, 0x8L);
+            renderTextBoxBackground(0xecL, 0x82L, 0x40L, 0xeL, 0x8L);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2625,7 +2623,8 @@ public final class Bttl_800f {
 
         //LAB_800f604c
         //LAB_800f6050
-        FUN_800f1268(0x2cL, 0x9cL, 0xe8L, 0xeL, 0x8L);
+        //Selected item description
+        renderTextBoxBackground(0x2cL, 0x9cL, 0xe8L, 0xeL, 0x8L);
         renderText((short)s1, structa4._1c.get(), 160, 163);
       }
     }
@@ -3006,6 +3005,7 @@ public final class Bttl_800f {
       sp0x30[i] = MEMORY.ref(2, t7).offset(i * 0x2L).get();
     }
 
+    // TODO: This is where the list of CLUT IDs for dragoon icons is gotten
     t7 = v0 + 0x71d0L;
     final long[] sp0x48 = new long[10];
     for(int i = 0; i < 10; i++) {
@@ -3632,20 +3632,20 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8568L)
-  public static LodString FUN_800f8568(final BattleObject27c a0, final LodString a1) {
-    if(a0.charIndex_272.get() != 0x185L) {
-      return a1;
+  public static LodString getTargetEnemyName(final BattleObject27c target, final LodString targetName) {
+    if(target.charIndex_272.get() != 0x185L) {
+      return targetName;
     }
 
     final long v1 = _8006f284.get();
     if(v1 != 0x4L) {
       if((int)v1 < 0x5L) {
         if(v1 != 0) {
-          return a1;
+          return targetName;
         }
         //LAB_800f85ec
       } else if(v1 != 0x6L) {
-        return a1;
+        return targetName;
       }
     }
 
@@ -3797,12 +3797,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8ca0L)
-  public static long FUN_800f8ca0(final long a0) {
+  public static long getTargetEnemyElement(final long elemFlag) {
     //LAB_800f8cac
-    long a2 = -0x1L;
+    long elemIdx = -0x1L;
     for(int i = 0; i < 32; i++) {
-      if((a0 & 1 << i) != 0) {
-        a2 = i;
+      if((elemFlag & 1 << i) != 0) {
+        elemIdx = i;
         break;
       }
 
@@ -3810,7 +3810,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f8cd0
-    return a2;
+    return elemIdx;
   }
 
   @Method(0x800f8cd8L)
@@ -3836,7 +3836,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8dfcL)
-  public static void FUN_800f8dfc(final long x, final long y, final long u, final long v, final long w, final long h, final long a6, final long a7, final long a8) {
+  public static void drawUITextureElement(final long x, final long y, final long u, final long v, final long w, final long h, final long a6, final long a7, final long a8) {
     final long t3 = _800c71ec.getAddress();
 
     final byte[] sp0x20 = {
@@ -4256,7 +4256,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9c2cL)
   public static long FUN_800f9c2c(final RunningScript script) {
-    FUN_800f1268(
+    renderTextBoxBackground(
       (short)script.params_20.get(0).deref().get() - script.params_20.get(2).deref().get() / 2,
       (short)script.params_20.get(1).deref().get() - script.params_20.get(3).deref().get() / 2,
       (short)script.params_20.get(2).deref().get(),
