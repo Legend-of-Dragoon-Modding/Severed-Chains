@@ -10,14 +10,14 @@ public class MenuItemStruct04 implements MemoryRef {
 
   public final UnsignedByteRef itemId_00;
   public final UnsignedByteRef itemSlot_01;
-  public final UnsignedShortRef _02;
+  public final UnsignedShortRef price_02;
 
   public MenuItemStruct04(final Value ref) {
     this.ref = ref;
 
     this.itemId_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
     this.itemSlot_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
-    this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
+    this.price_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
   }
 
   @Override

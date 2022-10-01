@@ -6074,13 +6074,13 @@ public final class Bttl_800e {
       s0.mpPerPhysicalHit_12c.set(stats.mpPerPhysicalHit_50.get());
       s0.itemSpPerMagicalHit_12e.set(stats.spPerMagicalHit_52.get());
       s0.mpPerMagicalHit_130.set(stats.mpPerMagicalHit_54.get());
-      s0.hpRegen_132.set(stats.hpRegen_56.get());
-      s0.mpRegen_134.set(stats.mpRegen_58.get());
-      s0.spRegen_136.set(stats.spRegen_5a.get());
-      s0.revive_138.set(stats._5c.get());
-      s0._13a.set(stats._5e.get());
-      s0._13c.set(stats._62.get());
-      s0._13e.set(stats._64.get());
+      s0._132.set(stats._56.get());
+      s0.hpRegen_134.set(stats.hpRegen_58.get());
+      s0.mpRegen_136.set(stats.mpRegen_5a.get());
+      s0.spRegen_138.set(stats.spRegen_5c.get());
+      s0.revive_13a.set(stats.revive_5e.get());
+      s0.hpMulti_13c.set(stats.hpMulti_62.get());
+      s0.mpMulti_13e.set(stats.mpMulti_64.get());
       s0._142.set(stats.onHitStatus_9b.get());
     }
 

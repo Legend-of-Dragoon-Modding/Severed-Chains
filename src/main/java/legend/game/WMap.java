@@ -147,7 +147,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be358;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -9076,7 +9076,7 @@ public class WMap {
 
     _800c6798.setu(_800f0e34.get(sp1c)._0e.get() - 0x1L);
     _800c679c.setu(_800c6798.get());
-    _800bf0b0.setu(_800c6798.get());
+    continentIndex_800bf0b0.setu(_800c6798.get());
 
     FUN_800ea630(sp1c);
 
@@ -9134,7 +9134,7 @@ public class WMap {
       _800c67a8.setu(sp1c);
       _800c6798.setu(_800f0e34.get(sp1c)._0e.get() - 0x1L);
       _800c679c.setu(_800c6798.get());
-      _800bf0b0.setu(_800c6798.get());
+      continentIndex_800bf0b0.setu(_800c6798.get());
 
       if(_800f2248.offset(_800c67aa.get() * 0x8L).getSigned() < 0) {
         sp4c = -0x1L;

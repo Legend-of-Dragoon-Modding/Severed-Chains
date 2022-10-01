@@ -2327,7 +2327,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800239ec
     int a3 = 0;
     for(int i = 0; i < a2; i++) {
-      if((a0.get(i)._02.get() & 0x1000) == 0) {
+      if((a0.get(i).price_02.get() & 0x1000) == 0) {
         a1.get(a3).set(a0.get(i).itemId_00.get());
         a3++;
       }
@@ -2352,7 +2352,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023ab4
     for(int i = 0; i < 0x130; i++) {
       s0.get(i).itemId_00.set(0xff);
-      s0.get(i)._02.set(0);
+      s0.get(i).price_02.set(0);
     }
 
     //LAB_80023aec
@@ -6463,14 +6463,14 @@ public final class Scus94491BpeSegment_8002 {
       stats.mpPerPhysicalHit_50.set((short)0);
       stats.spPerMagicalHit_52.set((short)0);
       stats.mpPerMagicalHit_54.set((short)0);
-      stats.hpRegen_56.set((short)0);
-      stats.mpRegen_58.set((short)0);
-      stats.spRegen_5a.set((short)0);
-      stats._5c.set(0);
-      stats._5e.set(0);
+      stats._56.set((short)0);
+      stats.hpRegen_58.set((short)0);
+      stats.mpRegen_5a.set((short)0);
+      stats.spRegen_5c.set((short)0);
+      stats.revive_5e.set((short)0);
       stats.magicalResistance_60.set(0);
-      stats._62.set((short)0);
-      stats._64.set((short)0);
+      stats.hpMulti_62.set((short)0);
+      stats.mpMulti_64.set((short)0);
       stats.maxHp_66.set(0);
       stats.addition_68.set(0);
       stats.bodySpeed_69.set(0);

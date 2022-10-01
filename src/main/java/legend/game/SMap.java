@@ -72,6 +72,7 @@ import legend.game.types.TmdExtension;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
+import legend.game.types.ShopStruct40;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -600,7 +601,7 @@ public final class SMap {
    * </ol>
    */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> diskSwapLoadingStages_800f48e8 = MEMORY.ref(4, 0x800f48e8L, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 18, 4, Pointer.deferred(4, SupplierRef::new)));
-  public static final Value _800f4930 = MEMORY.ref(4, 0x800f4930L);
+  public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
   /** TODO an array of 0x14-long somethings */
   public static final Value _800f5930 = MEMORY.ref(4, 0x800f5930L);
