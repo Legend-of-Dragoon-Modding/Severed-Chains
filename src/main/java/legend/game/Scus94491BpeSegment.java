@@ -3896,7 +3896,19 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016a84L)
   public static long scriptDivide(final RunningScript a0) {
-    a0.params_20.get(1).deref().div(a0.params_20.get(0).deref());
+    final int divisor = a0.params_20.get(0).deref().get();
+
+    if(divisor == 0) {
+      if(a0.params_20.get(1).deref().get() >= 0) {
+        a0.params_20.get(1).deref().set(-1);
+      } else {
+        a0.params_20.get(1).deref().set(1);
+      }
+
+      return 0;
+    }
+
+    a0.params_20.get(1).deref().div(divisor);
     return 0;
   }
 
