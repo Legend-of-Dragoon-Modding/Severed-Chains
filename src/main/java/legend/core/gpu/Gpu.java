@@ -43,7 +43,9 @@ import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.colour24To15;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
@@ -215,6 +217,7 @@ public class Gpu implements Runnable {
   }
 
   private int tagsUploaded;
+  private boolean dumpPackets;
   public int uploadLinkedList(final long address) {
     this.tagsUploaded = 0;
 
@@ -227,8 +230,16 @@ public class Gpu implements Runnable {
           value = MEMORY.get(a, 4);
           final long words = (value & 0xff00_0000L) >>> 24;
 
+          if(dumpPackets && words != 0) {
+            LOGGER.info("GP0 packet @ %06x %d words", value & 0xffffff, words);
+          }
+
           for(int i = 1; i <= words; i++) {
             this.queueGp0Command((int)MEMORY.get(a + i * 4L, 4));
+
+            if(dumpPackets) {
+              LOGGER.info("%08x", MEMORY.get(a + i * 4L, 4));
+            }
           }
 
           this.tagsUploaded++;
@@ -423,6 +434,10 @@ public class Gpu implements Runnable {
     this.guiManager.setFont(font);
 
     this.window.events.onKeyPress((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_D && mods == GLFW_MOD_CONTROL) {
+        dumpPackets = !dumpPackets;
+      }
+
       if(mods != 0) {
         return;
       }
@@ -500,6 +515,10 @@ public class Gpu implements Runnable {
     this.lastFrame = System.nanoTime();
 
     this.ctx.onDraw(() -> {
+      if(dumpPackets) {
+        LOGGER.info("FRAME START -------------------------------------");
+      }
+
       this.r.run();
       this.tick();
       this.guiManager.draw(this.ctx.getWidth(), this.ctx.getHeight(), this.ctx.getWidth() / this.window.getScale(), this.ctx.getHeight() / this.window.getScale());
@@ -507,6 +526,10 @@ public class Gpu implements Runnable {
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.window.setTitle("Legend of Dragoon - scale: %d - FPS: %.2f/%d".formatted(this.renderScale, fps, this.window.getFpsLimit()));
       this.lastFrame = System.nanoTime();
+
+      if(dumpPackets) {
+        LOGGER.info("FRAME END -------------------------------------");
+      }
     });
 
     if(Config.controllerConfig()) {
