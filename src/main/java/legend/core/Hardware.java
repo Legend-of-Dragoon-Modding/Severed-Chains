@@ -71,7 +71,7 @@ public final class Hardware {
     stream.put((byte)'d');
     stream.put((byte)'m');
     stream.put((byte)'p');
-    stream.put((byte)2);
+    stream.put((byte)3);
 
     MEMORY.dump(stream);
     CPU.dump(stream);
@@ -96,7 +96,7 @@ public final class Hardware {
 
     final int version = stream.get();
 
-    if(version < 0 || version > 2) {
+    if(version < 0 || version > 3) {
       LOGGER.error("Failed to load state: invalid version %d", version);
     }
 

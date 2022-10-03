@@ -29,8 +29,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.BiFunctionRef;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -103,28 +101,20 @@ import static legend.game.Scus94491BpeSegment_8005._8005457c;
 import static legend.game.Scus94491BpeSegment_8005._800545ec;
 import static legend.game.Scus94491BpeSegment_8005._800545fc;
 import static legend.game.Scus94491BpeSegment_8005._80054674;
-import static legend.game.Scus94491BpeSegment_8005._800546b4;
 import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
-import static legend.game.Scus94491BpeSegment_8005._800546c4;
 import static legend.game.Scus94491BpeSegment_8005._8005475c;
 import static legend.game.Scus94491BpeSegment_8005._8005477c;
 import static legend.game.Scus94491BpeSegment_8005._80054790;
 import static legend.game.Scus94491BpeSegment_8005._80054792;
 import static legend.game.Scus94491BpeSegment_8005._800547bb;
 import static legend.game.Scus94491BpeSegment_8005._800547f4;
-import static legend.game.Scus94491BpeSegment_8005._800547f8;
-import static legend.game.Scus94491BpeSegment_8005._800547fc;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
 import static legend.game.Scus94491BpeSegment_8005.dmaCallbacks_80054640;
-import static legend.game.Scus94491BpeSegment_8005.drawSyncCallback_800546c8;
-import static legend.game.Scus94491BpeSegment_8005.gpuQueueIndex_800547e4;
-import static legend.game.Scus94491BpeSegment_8005.gpuQueueTotal_800547e8;
-import static legend.game.Scus94491BpeSegment_8005.gpuReverseFlag_800546bf;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
 import static legend.game.Scus94491BpeSegment_8005.inExceptionHandler_80053566;
 import static legend.game.Scus94491BpeSegment_8005.interruptCallbacks_80053568;
@@ -132,8 +122,6 @@ import static legend.game.Scus94491BpeSegment_8005.interruptHandlersInitialized_
 import static legend.game.Scus94491BpeSegment_8005.jmp_buf_8005359c;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.oldIMask_800547ec;
-import static legend.game.Scus94491BpeSegment_8005.oldIMask_800547f0;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.vsyncCallbacks_8005460c;
 import static legend.game.Scus94491BpeSegment_800b.CdlDIR_800bfda8;
@@ -170,10 +158,6 @@ import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.doubleBufferOffsetMode_800c34d6;
-import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObjPtr_800c1c14;
-import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackObj_800c1c1c;
-import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallbackSomething_800c1c18;
-import static legend.game.Scus94491BpeSegment_800c.gpuDmaCallback_800c1c10;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
@@ -908,17 +892,6 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x80038190L)
   public static long ResetGraph(final long mode) {
-    final long v1 = mode & 0b111L;
-    //LAB_800381cc
-    if(v1 != 0 && v1 != 0x3L && v1 != 0x5L) {
-      //LAB_800382a0
-      LOGGER.trace("ResetGraph(%d)...", mode);
-
-      //LAB_800382d4
-      //LAB_800382f0
-      return (long)_80054674.deref(4).offset(0x34L).cast(FunctionRef::new).run(mode);
-    }
-
     //LAB_800381dc
     LOGGER.trace("ResetGraph:jtb=%08x,env=%08x", _80054674.getAddress(), _800546bc.getAddress());
 
@@ -960,7 +933,7 @@ public final class Scus94491BpeSegment_8003 {
     gpu_debug.setu(level);
 
     if(level != 0) {
-      LOGGER.info("SetGraphDebug:level:%d,type:%d,reverse:%d", gpu_debug.get(), _800546bc.get(), gpuReverseFlag_800546bf.get());
+      LOGGER.info("SetGraphDebug:level:%d,type:%d", gpu_debug.get(), _800546bc.get());
     }
 
     return old;
@@ -989,33 +962,6 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
-  /**
-   * <p>Waits for drawing to terminate.</p>
-   *
-   * <p>If DrawSync(0) is used, and execution of the primitive list takes an exceptionally long time (approximately
-   * longer than 8 Vsync) to complete, a timeout is generated and the GPU is reset. Reasons why this might
-   * occur include an exceptionally long primitive list, or one that renders exceptionally large numbers of pixels.
-   * Another possibility is that the primitive list has been corrupted in some way. To avoid this, the application
-   * can use a loop such as:<br>
-   * <tt>while(DrawSync(1));</tt>
-   * </p>
-   *
-   * @param mode <ol start="0">
-   *               <li>Wait for termination of all non-blocking functions registered in the queue</li>
-   *               <li>Return the number of positions in the current queue</li>
-   *             </ol>
-   *
-   * @return Number of positions in the execution queue.
-   */
-  @Method(0x8003850cL)
-  public static int DrawSync(final int mode) {
-    if(gpu_debug.get() >= 0x2L) {
-      LOGGER.info("DrawSync(%d)...", mode);
-    }
-
-    return (int)_800546b4.deref(4).offset(0x3cL).deref(4).call(mode);
-  }
-
   @Method(0x80038574L)
   private static void validateRect(final String text, final RECT rect) {
     if(rect.w.get() > _800546c0.get() || rect.x.get() + rect.w.get() > _800546c0.get() || rect.y.get() > _800546c2.get() || rect.y.get() + rect.h.get() > _800546c2.get() || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
@@ -1028,13 +974,6 @@ public final class Scus94491BpeSegment_8003 {
   public static int ClearImage(final RECT rect, final byte r, final byte g, final byte b) {
     validateRect("ClearImage", rect);
 
-//    return (int)_800546b4.deref(4).offset(0x8L).deref(4).call(
-//      _800546b4.deref(4).offset(0xcL).deref(4).cast(BiFunctionRef::new),
-//      rect,
-//      0x8L,
-//      (b & 0xffL) << 16 | (g & 0xffL) << 8 | r & 0xffL
-//    );
-
     return (int)ClearImage_Impl(rect, (b & 0xffL) << 16 | (g & 0xffL) << 8 | r & 0xffL);
   }
 
@@ -1042,87 +981,22 @@ public final class Scus94491BpeSegment_8003 {
   public static void LoadImage(final RECT rect, final long address) {
     validateRect("LoadImage",rect);
 
-    _800546b4.deref(4).offset(0x8L).deref(4).call(
-      _800546b4.deref(4).offset(0x20L).deref(4).cast(BiFunctionRef::new),
-      rect,
-      0x8L,
-      address
-    );
+    uploadImageToGpu(rect, address);
   }
 
   @Method(0x80038818L)
   public static long StoreImage(final RECT rect, final long address) {
     validateRect("StoreImage", rect);
 
-    recordGpuTime();
-
     rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
     rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
 
-    //LAB_80039fac
-    //LAB_80039fb0
-    final long dataSize = rect.w.get() * rect.h.get() + 0x1L;
-    if(dataSize / 2 <= 0) {
-      return -0x1L;
+    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
+      throw new IllegalArgumentException("RECT width and height must be greater than 0");
     }
 
-    //LAB_80039fe4
-    //LAB_8003a014
-    while(GPU_REG1.get(0x400_0000L) == 0) {
-      if(Hardware.isGpuThread()) {
-        GPU.tick();
-      }
-
-      if(checkForGpuTimeout() != 0) {
-        return -0x1L;
-      }
-
-      DebugHelper.sleep(1);
-    }
-
-    GPU.command01ClearCache();
     GPU.commandC0CopyRectFromVramToCpu(rect, address);
 
-    // Pre-optimisation
-    //LAB_8003a044
-//    GPU_REG1.setu(0x400_0000L);
-//    GPU_REG0.setu(0x100_0000L);
-//    GPU_REG0.setu(0xc000_0000L);
-//    GPU_REG0.setu((rect.getY() & 0xffffL) << 16 | rect.getX() & 0xffffL);
-//    GPU_REG0.setu((rect.getH() & 0xffffL) << 16 | rect.getW() & 0xffffL);
-
-    //LAB_8003a0c0
-//    while(GPU_REG1.get(0x800_0000L) == 0) {
-//      if(checkForGpuTimeout() != 0) {
-//        return -0x1L;
-//      }
-//
-//      DebugHelper.sleep(1);
-//    }
-
-    //LAB_8003a0f0
-    //LAB_8003a100
-//    long numberOfRegTransfers = dataSize / 32;
-//    final long numberOfDmaTransfers = numberOfRegTransfers;
-//    numberOfRegTransfers = dataSize / 2 - numberOfRegTransfers * 16;
-//
-//    long s2 = 0;
-//    while(numberOfRegTransfers != 0) {
-//      MEMORY.ref(4, address).offset(s2).setu(GPU_REG0);
-//      s2 += 0x4L;
-//      numberOfRegTransfers--;
-//    }
-
-    //LAB_8003a120
-//    if(numberOfDmaTransfers != 0) {
-//      GPU_REG1.setu(0x400_0003L);
-//      dma.gpu.MADR.setu(s2);
-//      dma.gpu.BCR.setu(numberOfDmaTransfers << 16 | 16);
-//      dma.gpu.CHCR.setu(0x100_0200L);
-//    }
-
-    //LAB_8003a16c
-    //LAB_8003a170
     return 0;
   }
 
@@ -1130,8 +1004,8 @@ public final class Scus94491BpeSegment_8003 {
   public static long MoveImage(final RECT rect, final int x, final int y) {
     validateRect("MoveImage", rect);
 
-    if(rect.w.get() == 0 || rect.h.get() == 0) {
-      return -0x1L;
+    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
+      throw new IllegalArgumentException("RECT width and height must be greater than 0");
     }
 
     //LAB_800388d0
@@ -1141,7 +1015,7 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.ref(4, v1).offset(0x8L).setu((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL);
 
     //LAB_80038918
-    return (int)_800546b4.deref(4).offset(0x8L).deref(4).call(_800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new), _8005475c.offset(-0x8L).cast(UnsignedIntRef::new), 0x14L, 0L);
+    return uploadLinkedListToGpu(_8005475c.offset(-0x8L).cast(UnsignedIntRef::new));
   }
 
   /**
@@ -1168,39 +1042,10 @@ public final class Scus94491BpeSegment_8003 {
     ot.get(0).num.set(0);
     ot.get(0).p.set(0x5_477cL);
     return ot;
-
-    // Pre-optimisation:
-    //LAB_80038a40
-//    DMA_DPCR.oru(0b1000_0000_0000_0000_0000_0000_0000L); // Master enable OTC DMA
-//    DMA_OTC_MADR.setu(ot + (count - 1) * 4);
-//    DMA_OTC_CHCR.setu(0b1_0001_0000_0000_0000_0000_0000_0010L); // Step: backwards, Start/Busy: Start/Enable/Busy, Start/Trigger: Manual Start
-//    DMA_OTC_BCR.setu(count);
-//
-//    recordGpuTime();
-//
-//    long ret = -0x1L;
-//
-//    do {
-//      if(DMA_OTC_CHCR.get(0b1_0000_0000_0000_0000_0000_0000L) == 0) { // Start/Busy
-//        ret = count;
-//        break;
-//      }
-//
-//      try {
-//        Thread.sleep(1);
-//      } catch(final InterruptedException ignored) { }
-//    } while(checkForGpuTimeout() == 0);
-//
-//    _8005477c.setu(0x405_4768L);
-//    MEMORY.ref(4, ot).setu(0x5_477cL);
-//    return ot;
   }
 
   /**
    * Executes the GPU primitives in the linked list ot.
-   *
-   * DrawOTag() is non-blocking. To detect when execution of the primitive list is complete, use DrawSync() or
-   * install a callback routine with DrawSyncCallback().
    *
    * @param address Pointer to a linked list of GPU primitives
    */
@@ -1211,9 +1056,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     uploadLinkedListToGpu(address);
-
-    // Pre-optimisation:
-//    FUN_8003a288(LibGpu::uploadLinkedList, address, 0, 0);
   }
 
   /**
@@ -1237,12 +1079,6 @@ public final class Scus94491BpeSegment_8003 {
 
     SetDrawEnv(env.dr_env, env);
     env.dr_env.tag.set((int)(env.dr_env.tag.get() | 0xff_ffff));
-//    _800546b4.deref(4).offset(0x8L).deref(4).call(
-//      _800546b4.deref(4).offset(0x18L).deref(4).cast(BiFunctionRef::new),
-//      env.dr_env,
-//      0x40L,
-//      0L
-//    );
     uploadLinkedListToGpu(env.dr_env);
     DRAWENV_800546cc.set(env);
     return env;
@@ -1284,11 +1120,6 @@ public final class Scus94491BpeSegment_8003 {
       //LAB_80038e68
       if(env.isinter.get() != 0) {
         s0 |= 0b10_0000L; // Interlaced
-      }
-
-      //LAB_80038e7c
-      if(gpuReverseFlag_800546bf.get() != 0) {
-        s0 |= 0b1000_0000L; // "Reverse flag" - distorted - unknown use
       }
 
       //LAB_80038e94
@@ -1601,8 +1432,6 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x80039cd4L)
   public static long uploadImageToGpu(final RECT rect, final long address) {
-    recordGpuTime();
-
     rect.w.set((short)clamp(rect.w.get(), 0, _800546c0.get()));
     rect.h.set((short)clamp(rect.h.get(), 0, _800546c2.get()));
 
@@ -1613,49 +1442,7 @@ public final class Scus94491BpeSegment_8003 {
       return -0x1L;
     }
 
-    //LAB_80039db0
-//    final long numberOfDmaTransfers = dataSize / 32; // 32 half-words per 16-word DMA block
-//    long numberOfRegTransfers = dataSize / 2 - numberOfDmaTransfers * 16;
-
-    //LAB_80039de0
-    while(GPU_REG1.get(0x400_0000L) == 0) {
-      if(Hardware.isGpuThread()) {
-        GPU.tick();
-      }
-
-      if(checkForGpuTimeout() != 0) {
-        return -0x1L;
-      }
-    }
-
-    GPU.command01ClearCache();
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
-
-    // Pre-optimisation
-    //LAB_80039e10
-//    GPU_REG1.setu(0x400_0000L); // DMA direction: off
-//    GPU_REG0.setu(0x100_0000L); // Clear cache
-
-    //LAB_80039e44
-//    GPU_REG0.setu(0xa000_0000L); // GP0(a0h) - Copy rect from CPU to VRAM
-//    GPU_REG0.setu(rect.getY() << 0x10 | rect.getX());
-//    GPU_REG0.setu(rect.getH() << 0x10 | rect.getW());
-
-    //LAB_80039e80
-//    long s2 = 0;
-//    while(numberOfRegTransfers != 0) {
-//      GPU_REG0.setu(MEMORY.ref(4, address).offset(s2));
-//      s2 += 0x4L;
-//      numberOfRegTransfers--;
-//    }
-
-    //LAB_80039e9c
-//    if(numberOfDmaTransfers != 0) {
-//      GPU_REG1.setu(0x400_0002L); // DMA type CPU to GP0
-//      DMA_GPU_MADR.setu(address + s2);
-//      DMA_GPU_BCR.setu(numberOfDmaTransfers << 0x10L | 0x10L); // Number of blocks | block size 16
-//      DMA_GPU_CHCR.setu(0b1_0000_0000_0000_0010_0000_0001L); // Direction: from RAM; sync mode: 1 (sync blocks to DMA requests); start/busy: start/enable/busy;
-//    }
 
     //LAB_80039ee8
     //LAB_80039eec
@@ -1670,16 +1457,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(value = 0x8003a1ecL, ignoreExtraParams = true)
   public static int uploadLinkedListToGpu(final MemoryRef address) {
     return GPU.uploadLinkedList(address.getAddress());
-
-    // Pre-optimization
-//    GPU_REG1.setu(0x400_0002L); // DMA direction: CPU to GP0
-//    DMA_GPU_MADR.setu(address.getAddress());
-//    DMA_GPU_BCR.setu(0);
-
-    // Bit 1    - from main RAM
-    // Bit 9-10 - Sync mode 2: linked-list
-    // Bit 24   - Start/busy - start/enable/busy
-//    DMA_GPU_CHCR.setu(0b1_0000_0000_0000_0100_0000_0001L);
   }
 
   @Method(0x8003a234L)
@@ -1688,267 +1465,32 @@ public final class Scus94491BpeSegment_8003 {
     return GPU_REG0.get(0xff_ffffL);
   }
 
-  @Method(0x8003a288L)
-  public static int FUN_8003a288(final BiFunctionRef<MemoryRef, Long, Integer> callback, final MemoryRef arg1, final long arg1Size, final long arg2) {
-    recordGpuTime();
-
-    //LAB_8003a2bc
-    while((gpuQueueIndex_800547e4.get() + 0x1L & 0x3fL) == gpuQueueTotal_800547e8.get()) {
-      if(Hardware.isGpuThread()) {
-        GPU.tick();
-      }
-
-      if(checkForGpuTimeout() != 0) {
-        return 0xffff_ffff;
-      }
-
-      //LAB_8003a2d4
-    }
-
-    oldIMask_800547ec.setu(setIMask(0));
-    _800546c4.setu(0x1L);
-
-    if(_800546bd.get() == 0 || gpuQueueIndex_800547e4.get() == gpuQueueTotal_800547e8.get() && DMA.gpu.CHCR.get(0x100_0000L) == 0 && drawSyncCallback_800546c8.get() == 0) {
-      //LAB_8003a368
-      //LAB_8003a374
-      while(GPU_REG1.get(0x400_0000L) == 0) {
-        DebugHelper.sleep(1);
-      }
-
-      callback.run(arg1, arg2);
-
-      setIMask(oldIMask_800547ec.get());
-      return 0;
-    }
-
-    //LAB_8003a3ac
-    SetDmaInterruptCallback(DmaChannelType.GPU, getMethodAddress(Scus94491BpeSegment_8003.class, "gpuDmaCallback"));
-
-    if(arg1Size == 0) {
-      //LAB_8003a468
-      gpuDmaCallbackObjPtr_800c1c14.offset(gpuQueueIndex_800547e4.get() * 96).setu(arg1.getAddress());
-    } else {
-      //LAB_8003a3d4
-      for(int i = 0; i < arg1Size; i += 4) {
-        //LAB_8003a3e0
-        gpuDmaCallbackObj_800c1c1c.offset(gpuQueueIndex_800547e4.get() * 96L).offset(i).setu(MEMORY.ref(4, arg1.getAddress()).offset(i));
-      }
-
-      //LAB_8003a424
-      gpuDmaCallbackObjPtr_800c1c14.offset(gpuQueueIndex_800547e4.get() * 96).setu(gpuDmaCallbackObj_800c1c1c.offset(gpuQueueTotal_800547e8.get() * 96).getAddress());
-    }
-
-    //LAB_8003a48c
-    gpuDmaCallbackSomething_800c1c18.offset(gpuQueueIndex_800547e4.get() * 96).setu(arg2);
-    gpuDmaCallback_800c1c10.offset(gpuQueueIndex_800547e4.get() * 96).setu(callback.getAddress());
-    gpuQueueIndex_800547e4.addu(0x1L).and(0x3fL);
-    setIMask(oldIMask_800547ec.get());
-    gpuDmaCallback();
-
-    //LAB_8003a51c
-    return (int)(gpuQueueIndex_800547e4.get() - gpuQueueTotal_800547e8.get() & 0x3fL);
-  }
-
-  @Method(0x8003a538L)
-  public static long gpuDmaCallback() {
-    if(DMA.gpu.CHCR.get(0x100_0000L) != 0) {
-      return 0x1L;
-    }
-
-    oldIMask_800547f0.setu(setIMask(0));
-
-    if(gpuQueueIndex_800547e4.get() != gpuQueueTotal_800547e8.get()) {
-      //LAB_8003a5b0
-      while(DMA.gpu.CHCR.get(0x100_0000L) == 0) {
-        if((gpuQueueTotal_800547e8.get() + 1 & 0x3fL) == gpuQueueIndex_800547e4.get()) {
-          if(drawSyncCallback_800546c8.get() == 0) {
-            SetDmaInterruptCallback(DmaChannelType.GPU, 0);
-          }
-        }
-
-        //LAB_8003a5ec
-        //LAB_8003a60c
-        while(GPU_REG1.get(0x400_0000L) == 0) {
-          DebugHelper.sleep(1);
-        }
-
-        //LAB_8003a620
-        gpuDmaCallback_800c1c10.offset(gpuQueueTotal_800547e8.get() * 96).deref(4).call(
-          gpuDmaCallbackObjPtr_800c1c14.offset(gpuQueueTotal_800547e8.get() * 96).get(),
-          gpuDmaCallbackSomething_800c1c18.offset(gpuQueueTotal_800547e8.get() * 96).get()
-        );
-
-        gpuQueueTotal_800547e8.addu(0x1L).and(0x3fL);
-
-        if(gpuQueueIndex_800547e4.get() == gpuQueueTotal_800547e8.get()) {
-          break;
-        }
-      }
-    }
-
-    //LAB_8003a6e8
-    setIMask(oldIMask_800547f0.get());
-
-    if(gpuQueueIndex_800547e4.get() == gpuQueueTotal_800547e8.get() && DMA.gpu.CHCR.get(0x100_0000L) == 0 && _800546c4.get() != 0) {
-      if(drawSyncCallback_800546c8.get() != 0) {
-        _800546c4.setu(0);
-        drawSyncCallback_800546c8.deref(4).call();
-      }
-    }
-
-    //LAB_8003a768
-    //LAB_8003a784
-    return gpuQueueIndex_800547e4.get() - gpuQueueTotal_800547e8.get() & 0x3fL;
-  }
-
   @Method(0x8003a798L)
   public static long FUN_8003a798(final long mode) {
     _800547f4.setu(setIMask(0));
-    gpuQueueIndex_800547e4.setu(0);
-    gpuQueueTotal_800547e8.setu(0);
 
-    final long v1 = mode & 0b111L;
-    if(v1 == 0x1L || v1 == 0x3L) {
+    if(mode == 1 || mode == 3) {
       //LAB_8003a854
       DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
       DMA.gpu.enable();
       GPU_REG1.setu(0x200_0000L); // Acknowledge GPU interrupt
       GPU_REG1.setu(0x100_0000L); // Reset command buffer
-    } else if(v1 == 0 || v1 == 0x5L) {
+    } else if(mode == 0 || mode == 5) {
       //LAB_8003a808
       DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
       DMA.gpu.enable();
       GPU_REG1.setu(0); // Reset GPU
-      fillMemory(gpuDmaCallback_800c1c10.getAddress(), (byte)0, 0x1800);
     }
 
     //LAB_8003a8a0
     setIMask(_800547f4.get());
 
-    if((mode & 0b111) != 0) {
+    if(mode != 0) {
       return 0;
     }
 
     //LAB_8003a8c4
-    return FUN_8003ab88(mode);
-  }
-
-  @Method(0x8003a8d4L)
-  public static int DrawSync_Impl(final int mode) {
-    if(mode == 0) {
-      recordGpuTime();
-
-      //LAB_8003a8f4
-      while(gpuQueueIndex_800547e4.get() != gpuQueueTotal_800547e8.get()) {
-        if(Hardware.isGpuThread()) {
-          GPU.tick();
-        }
-
-        gpuDmaCallback();
-
-        if(checkForGpuTimeout() != 0) {
-          return 0xffff_ffff;
-        }
-      }
-
-      //LAB_8003a940
-      long v0 = DMA.gpu.CHCR.get(0x100_0000L);
-
-      if(v0 == 0) {
-        v0 = GPU_REG1.get(0x400_0000L);
-      }
-
-      //LAB_8003a930
-      while(v0 == 0) {
-        if(Hardware.isGpuThread()) {
-          GPU.tick();
-        }
-
-        if(checkForGpuTimeout() != 0) {
-          return 0xffff_ffff;
-        }
-
-        //LAB_8003a940
-        v0 = DMA.gpu.CHCR.get(0x100_0000L);
-
-        if(v0 == 0) {
-          v0 = GPU_REG1.get(0x400_0000L);
-        }
-      }
-
-      return 0;
-    }
-
-    //LAB_8003a988
-    final long s0 = gpuQueueIndex_800547e4.get() - gpuQueueTotal_800547e8.get() & 0x3fL;
-    if(s0 != 0) {
-      gpuDmaCallback();
-    }
-
-    //LAB_8003a9b4
-    if(DMA.gpu.CHCR.get(0x100_0000L) == 0 && GPU_REG1.get(0x400_0000L) != 0) {
-      return (int)s0;
-    }
-
-    //LAB_8003a9f4
-    if(s0 == 0) {
-      return 1;
-    }
-
-    //LAB_8003aa00
-    return (int)s0;
-  }
-
-  @Method(0x8003aa10L)
-  public static void recordGpuTime() {
-    _800547f8.setu(VSync(-1) + 0xf0L);
-    _800547fc.setu(0);
-  }
-
-  @Method(0x8003aa44L)
-  public static long checkForGpuTimeout() {
-    if(VSync(-1) <= _800547f8.get() && _800547fc.addu(0x1L).get() <= 0xf_0000L) {
-      //LAB_8003ab74
-      return  0;
-    }
-
-    //LAB_8003aa98
-    LOGGER.error("GPU timeout:que=%d,stat=%08x,chcr=%08x,madr=%08x", gpuQueueIndex_800547e4.get() - gpuQueueTotal_800547e8.get() & 0x3fL, GPU_REG1.get(), DMA.gpu.CHCR.get(), DMA.gpu.MADR.get());
-
-    _800547f4.setu(setIMask(0));
-    gpuQueueTotal_800547e8.setu(0);
-    gpuQueueIndex_800547e4.setu(0);
-    DMA.gpu.CHCR.setu(0x401L);
-    DMA_DPCR.oru(0x800L);
-    GPU_REG1.setu(0x200_0000L);
-    GPU_REG1.setu(0x100_0000L);
-    setIMask(_800547f4.get());
-
-    //LAB_8003ab78
-    return -0x1L;
-  }
-
-  @Method(0x8003ab88L)
-  public static long FUN_8003ab88(final long mode) {
-    GPU_REG1.setu(0x1000_0007L); // Get GPU info - GPU version
-
-    // If it's an old GPU
-    if(GPU_REG0.get(0xff_ffffL) != 0x2L) {
-      // Draw mode settings (aka. texpage)
-      // Forces bit 12 - textured rectangle x-flip
-      GPU_REG0.setu(0xe100_0000L | 0b1_0000_0000_0000 | GPU_REG1.get(0b11_1111_1111_1111L)); // GPUSTAT
-      return 0;
-    }
-
-    //LAB_8003abf8
-    if((mode & 0b1000L) != 0) {
-      GPU_REG1.setu(0x900_0001L); // New texture disable - allow texture disable via GP0(e1h).11
-      return 0x2L;
-    }
-
-    //LAB_8003ac1c
-    //LAB_8003ac20
-    return 0x1L;
+    return 1;
   }
 
   @Method(0x8003b068L)

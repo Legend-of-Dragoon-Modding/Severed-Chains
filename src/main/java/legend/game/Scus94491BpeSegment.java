@@ -107,7 +107,6 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
@@ -1836,7 +1835,7 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(4, a1).offset(0x4L).setu(0xe600_0001L); // Mask bit setting - force bit 15
       MEMORY.ref(4, a1).offset(0x8L).setu(0);
 
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)(orderingTableSize_1f8003c8.get() - 1)).getAddress(), a1);
+      insertElementIntoLinkedList(tags_1f8003d0.deref().get(orderingTableSize_1f8003c8.get() - 1).getAddress(), a1);
       linkedListAddress_1f8003d8.addu(0xcL);
     }
 
@@ -1849,7 +1848,6 @@ public final class Scus94491BpeSegment {
   public static void syncFrame() {
     if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
       //LAB_80012efc
-      DrawSync(0);
       VSync((int)vsyncMode_8007a3b8.getSigned());
     } else {
       VSync(0);
@@ -1893,7 +1891,6 @@ public final class Scus94491BpeSegment {
 
     VSync(0);
     SetDispMask(0);
-    DrawSync(0);
     VSync(0);
 
     final long displayHeight;
@@ -1921,7 +1918,6 @@ public final class Scus94491BpeSegment {
     FUN_8003c5e0();
     setProjectionPlaneDistance(320);
 
-    DrawSync(0);
     VSync(0);
     SetDispMask(1);
 
