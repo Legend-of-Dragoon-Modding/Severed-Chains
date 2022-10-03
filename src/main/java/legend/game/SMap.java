@@ -697,7 +697,7 @@ public final class SMap {
     //LAB_800d9370
     //LAB_800d9374
     if(diskSwapMcqLoaded_800c6698.get() != 0) {
-      renderMcq(mcq_800c66a0, 640, 0, -centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), 0x24L, 0x80L);
+      renderMcq(mcq_800c66a0, 640, 0, -centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), 36, 0x80);
     }
 
     //LAB_800d93c4

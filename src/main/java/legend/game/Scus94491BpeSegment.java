@@ -4631,174 +4631,82 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80018104
-    if(mcq.height_0a.get() != 256) {
+    if(mcq.vramHeight_0a.get() != 256) {
       throw new RuntimeException("Invalid MCQ");
     }
 
-    LoadImage(new RECT((short)x, (short)y, mcq.width_08.get(), mcq.height_0a.get()), mcq.getImageDataAddress());
+    LoadImage(new RECT((short)x, (short)y, mcq.vramWidth_08.get(), mcq.vramHeight_0a.get()), mcq.getImageDataAddress());
 
     //LAB_8001813c
     return 0;
   }
 
   @Method(0x8001814cL)
-  public static void renderMcq(final McqHeader mcq, long a1, long a2, long a3, final long a4, final long a5, final long a6) {
-    long v0;
-    long v1;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
-    long s0;
-    final long s2;
-    final long s4;
-    final long t8;
-    long s8;
-    s0 = a3;
-    s8 = a4;
-    s2 = mcq._14.get();
-    t8 = mcq._16.get();
-    t6 = a1 + mcq._0c.get();
-    t2 = a2 + mcq._0e.get();
-    a1 = a1 + mcq._10.get();
-    t3 = a2 + mcq._12.get();
-    t5 = a1 & 0x3c0L;
-    a3 = t3 & 0x100L;
-    a1 = a1 << 2;
-    s4 = linkedListAddress_1f8003d8.get();
+  public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, int x, int y, final int z, final int colour) {
+    final int width = mcq.screenWidth_14.get();
+    final int height = mcq.screenHeight_16.get();
+    int clutX = mcq.clutX_0c.get() + vramOffsetX;
+    int clutY = mcq.clutY_0e.get() + vramOffsetY;
+    int u = mcq.u_10.get() + vramOffsetX;
+    int v = mcq.v_12.get() + vramOffsetY;
+    int t5 = u & 0x3c0;
+    final int a3 = v & 0x100;
+    u = u * 4;
+    final long s4 = linkedListAddress_1f8003d8.get();
 
     if(mcq.magic_00.get() == McqHeader.MAGIC_2) {
-      s0 = s0 + mcq._28.get();
-      s8 = s8 + mcq._2a.get();
+      x += mcq.screenOffsetX_28.get();
+      y += mcq.screenOffsetY_2a.get();
     }
 
     //LAB_800181e4
-    a2 = s4;
+    long a2 = s4;
     long t0_0 = a2 + 0x8L;
     MEMORY.ref(1, s4).offset(0x3L).setu(0x1L);
-    v1 = t5 & 0x3c0L;
-    v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).get();
-    v1 = (int)v1 >> 6;
-    v0 = v0 | v1;
-    v0 = v0 & 0x9ffL;
-    v0 = v0 | 0xe100_0200L;
-    MEMORY.ref(4, s4).offset(0x4L).setu(v0);
-    v0 = t0_0 << 8;
-    MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
-    if(a6 != 0x80L) {
-      //LAB_80018350
-      //LAB_8001836c
-      for(t4 = 0; t4 < s2; t4 += 0x10L) {
-        t7 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).getAddress();
+    MEMORY.ref(4, s4).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
+    MEMORY.ref(3, a2).setu(t0_0); // SWL v0,$2(a2)
 
-        //LAB_80018380
-        for(t1 = 0; t1 < t8; t1 += 0x10L) {
-          a2 = t0_0;
-          MEMORY.ref(2, a2).offset(0x8L).setu(t4 + s0);
-          v1 = t2 << 6;
-          MEMORY.ref(2, a2).offset(0xaL).setu(t1 + s8);
-          v0 = t6 & 0x3f0L;
-          v0 = (int)v0 >> 4;
-          v1 = v1 | v0;
-          MEMORY.ref(1, a2).offset(0x3L).setu(0x3L);
-          MEMORY.ref(4, a2).offset(0x4L).setu(0x7c80_8080L);
-          MEMORY.ref(1, a2).offset(0x4L).setu(a6);
-          MEMORY.ref(1, a2).offset(0x5L).setu(a6);
-          MEMORY.ref(1, a2).offset(0x6L).setu(a6);
-          MEMORY.ref(1, a2).offset(0xcL).setu(a1);
-          MEMORY.ref(1, a2).offset(0xdL).setu(t3);
-          MEMORY.ref(2, a2).offset(0xeL).setu(v1);
-          t0_0 = a2 + 0x10L;
-          v0 = t0_0 << 8;
-          MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
-          t3 = t3 + 0x10L & 0xf0L;
-          if(t3 == 0) {
-            a1 = a1 + 0x10L & 0xf0L;
-            if(a1 == 0) {
-              t5 = t5 + 0x40L;
-              a2 = t0_0;
-              v1 = t5 & 0x3c0L;
-              MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
-              v0 = MEMORY.ref(2, t7).offset(0x0L).get();
-              v1 = (int)v1 >> 6;
-              v0 = v0 | v1;
-              v0 = v0 & 0x9ffL;
-              v0 = v0 | 0xe100_0200L;
-              MEMORY.ref(4, a2).offset(0x4L).setu(v0);
-              t0_0 = a2 + 0x8L;
-              v0 = t0_0 << 8;
-              MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
-            }
+    //LAB_80018350
+    //LAB_8001836c
+    for(int chunkX = 0; chunkX < width; chunkX += 16) {
+      final int tpage = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff;
+
+      //LAB_80018380
+      for(int chunkY = 0; chunkY < height; chunkY += 16) {
+        a2 = t0_0;
+        MEMORY.ref(1, a2).offset(0x3L).setu(0x3L);
+        MEMORY.ref(1, a2).offset(0x4L).setu(colour);
+        MEMORY.ref(1, a2).offset(0x5L).setu(colour);
+        MEMORY.ref(1, a2).offset(0x6L).setu(colour);
+        MEMORY.ref(1, a2).offset(0x7L).setu(0x7cL);
+        MEMORY.ref(2, a2).offset(0x8L).setu(x + chunkX); // X
+        MEMORY.ref(2, a2).offset(0xaL).setu(y + chunkY); // Y
+        MEMORY.ref(1, a2).offset(0xcL).setu(u); // U
+        MEMORY.ref(1, a2).offset(0xdL).setu(v); // V
+        MEMORY.ref(2, a2).offset(0xeL).setu(clutY << 6 | (clutX & 0x3f0) >> 4); // CLUT
+        t0_0 = a2 + 0x10L;
+        MEMORY.ref(3, a2).setu(t0_0); // SWL v0,$2(a2)
+        v = v + 16 & 0xf0;
+        if(v == 0) {
+          u = u + 16 & 0xf0;
+          if(u == 0) {
+            t5 = t5 + 64;
+            a2 = t0_0;
+            MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
+            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | tpage | (t5 & 0x3c0) >> 6);
+            MEMORY.ref(3, a2).setu(a2 + 0x8L); // SWL v0,$2(a2)
+            t0_0 = a2 + 0x8L;
           }
-
-          //LAB_80018434
-          t2 = t2 + 0x1L & 0xffL;
-          if(t2 == 0) {
-            t6 = t6 + 0x10L;
-          }
-
-          //LAB_80018444
-          t2 = t2 | a3;
         }
 
-        //LAB_80018454
-      }
-    } else {
-      //LAB_8001825c
-      for(t4 = 0; t4 < s2; t4 += 0x10L) {
-        t7 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)t3)).getAddress();
-
-        //LAB_80018274
-        for(t1 = 0; t1 < t8; t1 += 0x10L) {
-          a2 = t0_0;
-          MEMORY.ref(2, a2).offset(0x8L).setu(s0 + t4);
-          v1 = t2 << 6;
-          MEMORY.ref(2, a2).offset(0xaL).setu(t1 + s8);
-          v0 = t6 & 0x3f0L;
-          v0 = (int)v0 >> 4;
-          v1 = v1 | v0;
-          MEMORY.ref(1, a2).offset(0x3L).setu(0x3L);
-          MEMORY.ref(4, a2).offset(0x4L).setu(0x7c80_8080L);
-          MEMORY.ref(1, a2).offset(0xcL).setu(a1);
-          MEMORY.ref(1, a2).offset(0xdL).setu(t3);
-          MEMORY.ref(2, a2).offset(0xeL).setu(v1);
-          t0_0 = a2 + 0x10L;
-          v0 = t0_0 << 8;
-          MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
-          t3 = t3 + 0x10L & 0xf0L;
-          if(t3 == 0) {
-            a1 = a1 + 0x10L & 0xf0L;
-            if(a1 == 0) {
-              t5 = t5 + 0x40L;
-              a2 = t0_0;
-              v1 = t5 & 0x3c0L;
-              MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
-              v0 = MEMORY.ref(2, t7).offset(0x0L).get();
-              v1 = (int)v1 >> 6;
-              v0 = v0 | v1;
-              v0 = v0 & 0x9ffL;
-              v0 = v0 | 0xe100_0200L;
-              MEMORY.ref(4, a2).offset(0x4L).setu(v0);
-              t0_0 = a2 + 0x8L;
-              v0 = t0_0 << 8;
-              MEMORY.ref(3, a2).setu(v0 >>> 8); // SWL v0,$2(a2)
-            }
-          }
-
-          //LAB_80018318
-          t2 = t2 + 0x1L & 0xffL;
-          if(t2 == 0) {
-            t6 = t6 + 0x10L;
-          }
-
-          //LAB_80018328
-          t2 = t2 | a3;
+        //LAB_80018434
+        clutY = clutY + 1 & 0xff;
+        if(clutY == 0) {
+          clutX = clutX + 16;
         }
 
-        //LAB_80018338
+        //LAB_80018444
+        clutY = clutY | a3;
       }
     }
 
@@ -4806,7 +4714,7 @@ public final class Scus94491BpeSegment {
     linkedListAddress_1f8003d8.setu(t0_0);
 
     //LAB_8001846c
-    FUN_8003b450(tags_1f8003d0.getPointer() + a5 * 0x4L, s4, a2);
+    FUN_8003b450(tags_1f8003d0.deref().get(z).getAddress(), s4, a2);
   }
 
   @Method(0x80018508L)

@@ -456,7 +456,7 @@ public final class Bttl_800c {
 
   public static final Value _800fa6d4 = MEMORY.ref(2, 0x800fa6d4L);
 
-  public static final Value _800fa6dc = MEMORY.ref(4, 0x800fa6dcL);
+  public static final IntRef mcqColour_800fa6dc = MEMORY.ref(4, 0x800fa6dcL, IntRef::new);
   public static final UnboundedArrayRef<RECT> _800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
 
   public static final Value _800fa730 = MEMORY.ref(2, 0x800fa730L);
@@ -870,7 +870,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7488L)
   public static int getHitMultiplier(final int charSlot, final long hitNum, final long a2) {
-    if((scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().ui_60.get() & 0x2L) != 0) {
+    if((scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().ui_60.get() & 0x2L) != 0) { // Is dragoon
       final long a0_0 = _1f8003f4.getPointer() + (charSlot + 0x3L) * 0x100L + hitNum * 0x20L + a2 * 0x2L; //TODO
       return (int)MEMORY.ref(2, a0_0).offset(0x38L).getSigned();
     }
@@ -1087,7 +1087,7 @@ public final class Bttl_800c {
 
     if(fileCount_8004ddc8.get() == 0 && _800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8() != 0) {
       vsyncMode_8007a3b8.setu(0x3L);
-      _800fa6dc.setu(0x80L);
+      mcqColour_800fa6dc.set(0x80);
       scriptStatePtrArr_800bc1c0.get((int)_800c66c8.get()).deref().ui_60.and(0xffff_efffL);
 
       if((int)_800c6760.get() <= 0) {
@@ -1445,12 +1445,6 @@ public final class Bttl_800c {
 
   @Method(0x800c882cL)
   public static void FUN_800c882c() {
-    final long a0;
-    final long a1;
-    final long a3;
-    final long s0;
-    final long s2;
-    final long s3;
     if(_800c6764.get() == 0 || _800c66d4.get() == 0 || (_800bc960.get() & 0x80L) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
@@ -1460,36 +1454,37 @@ public final class Bttl_800c {
     } else {
       _800c6774.addu(_800c676c.get());
       _800c6778.addu(_800c6770.get());
-      a3 = (_800c66cc.getSigned() * FUN_800dd118() / 0x1000L + _800c6774.get()) % _1f8003f4.deref().stageMcq_9cb0._14.get() - centreScreenX_1f8003dc.get();
-      s2 = _800c6778.get() - (FUN_800dd0d4() + 0x800L & 0xfffL) + 0x760L - centreScreenY_1f8003de.get();
-      s0 = a3 - _1f8003f4.deref().stageMcq_9cb0._14.get();
-      s3 = a3 + _1f8003f4.deref().stageMcq_9cb0._14.get();
-      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
-      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
+      final int a3 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + (int)_800c6774.get()) % _1f8003f4.deref().stageMcq_9cb0.screenWidth_14.get() - centreScreenX_1f8003dc.get();
+      final int s2 = (int)_800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
+      final int s0 = a3 - _1f8003f4.deref().stageMcq_9cb0.screenWidth_14.get();
+      final int s3 = a3 + _1f8003f4.deref().stageMcq_9cb0.screenWidth_14.get();
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, a3, s2, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s0, s2, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
-      if(centreScreenX_1f8003dc.get() >= (int)s3) {
-        renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, orderingTableSize_1f8003c8.get() - 0x2L, _800fa6dc.get());
+      if(centreScreenX_1f8003dc.get() >= s3) {
+        renderMcq(_1f8003f4.deref().stageMcq_9cb0, 320, 0, s3, s2, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       }
 
       //LAB_800c89d4
+      final int a0;
       if(_1f8003f4.deref().stageMcq_9cb0.magic_00.get() == McqHeader.MAGIC_1) {
         a0 = s2;
       } else {
         //LAB_800c89f8
-        a0 = s2 + _1f8003f4.deref().stageMcq_9cb0._2a.get();
+        a0 = s2 + _1f8003f4.deref().stageMcq_9cb0.screenOffsetY_2a.get();
       }
 
       //LAB_800c8a04
-      a1 = _800fa6dc.getSigned();
-      if((int)a0 >= -centreScreenY_1f8003de.get()) {
-        _8007a3a8.setu(_1f8003f4.deref().stageMcq_9cb0._18.get() * a1 / 0x80L);
-        _800bb104.setu(_1f8003f4.deref().stageMcq_9cb0._19.get() * a1 / 0x80L);
-        _800babc0.setu(_1f8003f4.deref().stageMcq_9cb0._1a.get() * a1 / 0x80L);
+      final int a1 = mcqColour_800fa6dc.get();
+      if(a0 >= -centreScreenY_1f8003de.get()) {
+        _8007a3a8.setu(_1f8003f4.deref().stageMcq_9cb0._18.get() * a1 / 0x80);
+        _800bb104.setu(_1f8003f4.deref().stageMcq_9cb0._19.get() * a1 / 0x80);
+        _800babc0.setu(_1f8003f4.deref().stageMcq_9cb0._1a.get() * a1 / 0x80);
       } else {
         //LAB_800c8a74
-        _8007a3a8.setu(_1f8003f4.deref().stageMcq_9cb0._20.get() * a1 / 0x80L);
-        _800bb104.setu(_1f8003f4.deref().stageMcq_9cb0._21.get() * a1 / 0x80L);
-        _800babc0.setu(_1f8003f4.deref().stageMcq_9cb0._22.get() * a1 / 0x80L);
+        _8007a3a8.setu(_1f8003f4.deref().stageMcq_9cb0._20.get() * a1 / 0x80);
+        _800bb104.setu(_1f8003f4.deref().stageMcq_9cb0._21.get() * a1 / 0x80);
+        _800babc0.setu(_1f8003f4.deref().stageMcq_9cb0._22.get() * a1 / 0x80);
       }
     }
 
@@ -1586,13 +1581,13 @@ public final class Bttl_800c {
     memcpy(_1f8003f4.deref().stageMcq_9cb0.getAddress(), mcq.getAddress(), 0x2c);
 
     _800c66d4.setu(0x1L);
-    _800c66cc.setu((0x400L / mcq._14.get() + 0x1L) * mcq._14.get());
+    _800c66cc.setu((0x400L / mcq.screenWidth_14.get() + 0x1L) * mcq.screenWidth_14.get());
   }
 
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
     if(_800c66d4.get() != 0 && (_800bc960.get() & 0x80L) == 0) {
-      final RECT sp0x10 = new RECT((short)512, (short)0, _1f8003f4.deref().stageMcq_9cb0.width_08.get(), (short)256);
+      final RECT sp0x10 = new RECT((short)512, (short)0, _1f8003f4.deref().stageMcq_9cb0.vramWidth_08.get(), (short)256);
       MoveImage(sp0x10, 320, 0);
       _800c6764.setu(0x1L);
       _800bc960.oru(0x80);

@@ -4540,15 +4540,13 @@ public final class Bttl_800d {
     final int dy = a1 - y.get();
     final int dz = a2 - z.get();
 
-    int s1 = dx / 2;
-    s1 = s1 * s1;
-
-    final long halfDx = dy / 2;
-    final long halfDy = dz / 2;
+    final int halfDx = dx / 2;
+    final int halfDy = dy / 2;
+    final int halfDz = dz / 2;
 
     x.set(ratan2(dz, dx) & 0xfff);
-    y.set(ratan2(dy, SquareRoot0(s1 + halfDy * halfDy) * 2) & 0xfff);
-    z.set(SquareRoot0(s1 + halfDx * halfDx + (int)(halfDy * dz) / 2) * 2);
+    y.set(ratan2(dy, SquareRoot0(halfDx * halfDx + halfDz * halfDz) * 2) & 0xfff);
+    z.set(SquareRoot0(halfDx * halfDx + halfDy * halfDy + halfDz * halfDz) * 2);
   }
 
   @Method(0x800dcebcL)
@@ -4657,13 +4655,13 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd0d4L)
-  public static long FUN_800dd0d4() {
+  public static int FUN_800dd0d4() {
     final BattleCamera cam = camera_800c67f0;
     return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd118L)
-  public static long FUN_800dd118() {
+  public static int FUN_800dd118() {
     final BattleCamera cam = camera_800c67f0;
     return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }

@@ -947,8 +947,8 @@ public final class Bttl_800f {
     } else if(attacker.additionHits_56.get() > 0) {
       //LAB_800f2b94
       int additionMultiplier = 0;
-      for(int i = 0; i < ((attacker.additionHits_56.get() - 1)) + 1; i++) {
-        additionMultiplier = additionMultiplier + getHitMultiplier(attacker.charSlot_276.get(), i, 0x4L);
+      for(int i = 0; i < attacker.additionHits_56.get(); i++) {
+        additionMultiplier += getHitMultiplier(attacker.charSlot_276.get(), i, 0x4L);
       }
 
       //LAB_800f2bb4

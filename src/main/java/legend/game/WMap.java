@@ -3617,8 +3617,8 @@ public class WMap {
     final RECT sp0x18 = new RECT(
       (short)sp20,
       (short)sp24,
-      mcq.width_08.get(),
-      mcq.height_0a.get()
+      mcq.vramWidth_08.get(),
+      mcq.vramHeight_0a.get()
     );
 
     LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
@@ -8056,12 +8056,12 @@ public class WMap {
     final long packet = linkedListAddress_1f8003d8.get();
 
     long sp1c = packet;
-    long clutY = a1 + mcq._0c.get();
-    long clutXDiv16 = a2 + mcq._0e.get();
-    final long width = mcq._14.get();
-    final long height = mcq._16.get();
-    long u = a1 + mcq._10.get();
-    long v = a2 + mcq._12.get();
+    long clutY = a1 + mcq.clutX_0c.get();
+    long clutXDiv16 = a2 + mcq.clutY_0e.get();
+    final long width = mcq.screenWidth_14.get();
+    final long height = mcq.screenHeight_16.get();
+    long u = a1 + mcq.u_10.get();
+    long v = a2 + mcq.v_12.get();
     long sp30 = u & 0x3c0L;
     final long sp34 = v & 0x100L;
     u = u * 0x4L;
