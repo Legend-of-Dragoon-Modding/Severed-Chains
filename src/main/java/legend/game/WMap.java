@@ -100,7 +100,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003dfc0;
@@ -746,10 +745,8 @@ public class WMap {
     vsyncMode_8007a3b8.setu(0x3L);
     scriptStartEffect(0x2L, 0xfL);
     LoadImage(_800c8700, struct.imageData_2c.get());
-    DrawSync(0);
     removeFromLinkedList(struct.imageData_2c.get());
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30.get());
-    DrawSync(0);
     removeFromLinkedList(struct.imageData_30.get());
     FUN_800d1914();
 
@@ -3625,7 +3622,6 @@ public class WMap {
     );
 
     LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
-    DrawSync(0);
     memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
     FUN_800127cc(address, 0, 0x1L);
 
@@ -3639,7 +3635,6 @@ public class WMap {
     final long cx = clutX_800ef0d0.offset(param * 0x8L).getSigned();
     final long cy = clutY_800ef0d2.offset(param * 0x8L).getSigned();
     FUN_800d5c50(address, ix, iy, cx, cy);
-    DrawSync(0);
     removeFromLinkedList(address);
     _800c66b8.oru(0x800L);
 
@@ -3654,7 +3649,6 @@ public class WMap {
       if(MEMORY.ref(4, address).offset(i * 0x8L).offset(0xcL).get() != 0) {
         //LAB_800d58c8
         FUN_800d5d98(address + MEMORY.ref(4, address).offset((i + 1) * 0x8L).get());
-        DrawSync(0);
       }
 
       //LAB_800d5920

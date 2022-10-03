@@ -57,6 +57,7 @@ import legend.game.types.RunningScript;
 import legend.game.types.SMapStruct44;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
+import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStruct2;
@@ -72,7 +73,6 @@ import legend.game.types.TmdExtension;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
-import legend.game.types.ShopStruct40;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -116,10 +116,10 @@ import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
+import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptRenderer;
 import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
+import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
@@ -155,7 +155,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
@@ -219,13 +218,8 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bee94;
-import static legend.game.Scus94491BpeSegment_800b._800bee98;
-import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd782;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
@@ -234,6 +228,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd818;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b._800bee94;
+import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
@@ -253,8 +250,10 @@ import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 
@@ -3031,7 +3030,6 @@ public final class SMap {
         imageRect.h.set((short)0x80);
 
         LoadImage(imageRect, tim.imageAddress.get());
-        DrawSync(0);
 
         final int scriptStateIndex = allocateScriptState(0, 0, false, null, 0);
         scriptIndex_800c6740.set(scriptStateIndex);
@@ -3573,8 +3571,6 @@ public final class SMap {
             }
 
             //LAB_800e31b8
-            DrawSync(0);
-
             sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(9) + 0x4L));
             LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3583,7 +3579,6 @@ public final class SMap {
             }
 
             //LAB_800e3248
-            DrawSync(0);
             //LAB_800e3254
           } else if(v1 == 0xd8L) {
             TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(2) + 0x4L));
@@ -3594,8 +3589,6 @@ public final class SMap {
             }
 
             //LAB_800e32f4
-            DrawSync(0);
-
             sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(10) + 0x4L));
             LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3604,7 +3597,6 @@ public final class SMap {
             }
 
             //LAB_800e3384
-            DrawSync(0);
             //LAB_800e3390
           } else if(v1 == 0xdcL) {
             TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(3) + 0x4L));
@@ -3615,8 +3607,6 @@ public final class SMap {
             }
 
             //LAB_800e3430
-            DrawSync(0);
-
             sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(11) + 0x4L));
             LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3625,7 +3615,6 @@ public final class SMap {
             }
 
             //LAB_800e34c0
-            DrawSync(0);
             //LAB_800e34cc
           } else if(v1 == 0xe0L) {
             TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(4) + 0x4L));
@@ -3636,8 +3625,6 @@ public final class SMap {
             }
 
             //LAB_800e356c
-            DrawSync(0);
-
             sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(12) + 0x4L));
             LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3646,7 +3633,6 @@ public final class SMap {
             }
 
             //LAB_800e35fc
-            DrawSync(0);
             //LAB_800e3608
           } else if(v1 == 0xe4L) {
             TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(5) + 0x4L));
@@ -3657,8 +3643,6 @@ public final class SMap {
             }
 
             //LAB_800e36a8
-            DrawSync(0);
-
             sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(13) + 0x4L));
             LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3667,7 +3651,6 @@ public final class SMap {
             }
 
             //LAB_800e3738
-            DrawSync(0);
           }
 
           //LAB_800e3744
@@ -3709,8 +3692,6 @@ public final class SMap {
         }
 
         //LAB_800e2a6c
-        DrawSync(0);
-
         sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(12) + 0x4L));
         LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3719,7 +3700,6 @@ public final class SMap {
         }
 
         //LAB_800e2afc
-        DrawSync(0);
         //LAB_800e2b08
       } else if(v1 == 0x8L) {
         TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(3) + 0x4L));
@@ -3730,8 +3710,6 @@ public final class SMap {
         }
 
         //LAB_800e2ba8
-        DrawSync(0);
-
         sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(11) + 0x4L));
         LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3740,7 +3718,6 @@ public final class SMap {
         }
 
         //LAB_800e2c38
-        DrawSync(0);
         //LAB_800e2c44
       } else if(v1 == 0xcL) {
         TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(2) + 0x4L));
@@ -3751,8 +3728,6 @@ public final class SMap {
         }
 
         //LAB_800e2ce4
-        DrawSync(0);
-
         sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(10) + 0x4L));
         LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3761,7 +3736,6 @@ public final class SMap {
         }
 
         //LAB_800e2d74
-        DrawSync(0);
         //LAB_800e2d80
       } else if(v1 == 0x10L) {
         TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(1) + 0x4L));
@@ -3772,8 +3746,6 @@ public final class SMap {
         }
 
         //LAB_800e2e20
-        DrawSync(0);
-
         sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(9) + 0x4L));
         LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3782,7 +3754,6 @@ public final class SMap {
         }
 
         //LAB_800e2eb0
-        DrawSync(0);
         //LAB_800e2ebc
       } else if(v1 == 0x14L) {
         TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(0) + 0x4L));
@@ -3793,8 +3764,6 @@ public final class SMap {
         }
 
         //LAB_800e2f5c
-        DrawSync(0);
-
         sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(8) + 0x4L));
         LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3803,7 +3772,6 @@ public final class SMap {
         }
 
         //LAB_800e2fec
-        DrawSync(0);
       }
 
       //LAB_800e2ff8
@@ -3853,8 +3821,6 @@ public final class SMap {
       }
 
       //LAB_800e28f0
-      DrawSync(0);
-
       sp0x20 = parseTimHeader(MEMORY.ref(4, mrg10Addr_800c6710.deref().getFile(13) + 0x4L));
       LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
 
@@ -3863,8 +3829,6 @@ public final class SMap {
       }
 
       //LAB_800e2980
-      DrawSync(0);
-
       v0 = 0x800c_0000L;
       MEMORY.ref(1, v0).offset(0x6728L).setu(0);
       v0 = 0x800c_0000L;
@@ -4224,8 +4188,6 @@ public final class SMap {
     if(header.hasClut()) {
       LoadImage(header.clutRect, header.clutAddress.get());
     }
-
-    DrawSync(0);
   }
 
   @Method(0x800e3d68L)
@@ -4660,7 +4622,6 @@ public final class SMap {
     //LAB_800e4ecc
     MoveImage(doubleBufferFrame_800bb108.get() != 0 ? _800d69fc : _800d6a04, 640, 0);
     _80052c48.setu(0x1L);
-    DrawSync(0);
   }
 
   @Method(0x800e4f74L)
@@ -4849,8 +4810,6 @@ public final class SMap {
     loadEnvironment(mrg.getFile(0, EnvironmentFile::new));
     FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), (int)mrg.entries.get(2).size.get(), mrg.getFile(1, UnboundedArrayRef.of(0xc, SomethingStruct2::new)), mrg.entries.get(1).size.get());
 
-    DrawSync(0);
-
     removeFromLinkedList(mrg.getAddress());
 
     _80052c44.setu(0x2L);
@@ -5036,9 +4995,7 @@ public final class SMap {
       _800cab20.subu(0x1L);
 
       if(_800cab20.getSigned() >= 0) {
-        DrawSync(0);
         setWidthAndFlags(384L, 0);
-        DrawSync(0);
         _800caaf4.setu(submapCut_80052c30.get());
         _800caaf8.setu(_80052c34);
         return;
@@ -7398,8 +7355,6 @@ public final class SMap {
 
         ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
 
-        DrawSync(0);
-
         final long a1;
         if(_800f970c.offset(_800bf0dc.get() * 16).get() == 0) {
           //LAB_800ed6f8
@@ -7460,12 +7415,10 @@ public final class SMap {
     fileLoadingCallbackIndex_8004ddc4.setu(0x19L);
 
     ClearImage(new RECT((short)0, (short)0, (short)640, (short)511), (byte)0, (byte)0, (byte)0);
-    DrawSync(0);
 
     //LAB_800ed87c
     for(int s2 = 0; s2 < 3; s2++) {
       LoadImage(rectArray3_800f96f4.get(s2), textureDataPtrArray3_800d4ba0.get(s2).get());
-      DrawSync(0);
       removeFromLinkedList(textureDataPtrArray3_800d4ba0.get(s2).get());
     }
 
@@ -7511,7 +7464,6 @@ public final class SMap {
     fileLoadingCallbackIndex_8004ddc4.setu(0x17L);
     scriptStartEffect(0x1L, 0x1L);
     ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
-    DrawSync(0);
     setWidthAndFlags(640L, 0);
 
     //LAB_800edab4
@@ -7653,7 +7605,6 @@ public final class SMap {
         _800f9e5a.setu(0);
 
         //LAB_800ee1e4
-        DrawSync(0);
         break;
 
       case 0x1:
@@ -7701,7 +7652,6 @@ public final class SMap {
           _800f9e5a.addu(0x1L);
           removeFromLinkedList(drgn0_mrg_80428_address_800d4bec.get());
           _800c686c.setu(0x1L);
-          DrawSync(0);
         }
 
         break;
@@ -7713,7 +7663,6 @@ public final class SMap {
           }
 
           FUN_800f4244(_800d4bf0.get(), _800f9e5c.getAddress(), _800f9e5e.getAddress(), TexPageTrans.B_PLUS_F);
-          DrawSync(0);
           StoreImage(sp20, _800d4bd4.get());
           removeFromLinkedList(_800d4bf0.get());
         }
@@ -7946,7 +7895,6 @@ public final class SMap {
 
   @Method(0x800eef2cL)
   public static void syncAndLoadImage(final RECT imageRect, final long imageAddress) {
-    DrawSync(0);
     LoadImage(imageRect, imageAddress);
   }
 
@@ -7969,7 +7917,6 @@ public final class SMap {
       MEMORY.ref(4, a2).offset(i * 0x4L).offset(0x10L).setu((MEMORY.ref(2, a2).offset(i * 0x2L).offset(0x90L).get() << 16) / 60);
     }
 
-    DrawSync(0);
     LoadImage(imageRect, imageAddress);
   }
 
@@ -10545,7 +10492,6 @@ public final class SMap {
       linkedListAddress_1f8003d8.addu(0x18L);
       _800f9ea8.addu(0x1L);
       _800f9eac.setu(0x1L);
-      DrawSync(0);
     } else if(v1 == 0x1L) {
       //LAB_800f4650
       //LAB_800f46d8
@@ -10555,7 +10501,6 @@ public final class SMap {
       FUN_800f0370();
       _800f9ea8.addu(0x1L);
       _800f9eac.setu(0x2L);
-      DrawSync(0);
     } else if(v1 == -0x1L) {
       //LAB_800f4714
       FUN_800f3b3c();

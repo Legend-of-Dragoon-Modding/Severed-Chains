@@ -7,7 +7,6 @@ import legend.core.InterruptType;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Timers;
-import legend.core.dma.DmaChannel;
 import legend.core.memory.IllegalAddressException;
 import legend.core.memory.Memory;
 import legend.core.memory.MisalignedAccessException;
@@ -40,7 +39,6 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.function.BiFunction;
 
-import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.colour24To15;
@@ -94,11 +92,6 @@ public class Gpu implements Runnable {
 
   public final Status status = new Status();
   private int gpuInfo;
-
-  public final DmaChannel dma = DMA.gpu;
-  private final DmaChannel dmaOtc = DMA.otc;
-  private long dmaOtcAddress;
-  private int dmaOtcCount;
 
   private final Queue<Runnable> commandQueue = new LinkedList<>();
   private int displayStartX;
@@ -239,7 +232,7 @@ public class Gpu implements Runnable {
           }
 
           this.tagsUploaded++;
-          a = a & 0xff00_0000 | value & 0xff_ffffL;
+          a = a & 0xff00_0000L | value & 0xff_ffffL;
         } catch(final legend.core.gpu.InvalidGp0CommandException e) {
           throw new RuntimeException("Invalid GP0 packet at 0x%08x".formatted(a), e);
         }
@@ -304,13 +297,6 @@ public class Gpu implements Runnable {
    */
   private void disableDisplay() {
     this.status.displayEnable = false;
-  }
-
-  /**
-   * GP1(04h) - DMA Direction / Data Request
-   */
-  private void dmaDirection(final DMA_DIRECTION direction) {
-    this.status.dmaDirection = direction;
   }
 
   /**
@@ -599,94 +585,7 @@ public class Gpu implements Runnable {
     this.transforms.identity();
     this.transforms2.set(this.transforms);
 
-    //TODO most stuff here is deprecated, communicate with GPU directly rather than using DMA
-
-    if(this.dma.channelControl.isBusy()) {
-      switch(this.status.dmaDirection) {
-        case OFF -> throw new RuntimeException("GPU DMA channel busy but no DMA direction");
-
-        case CPU_TO_GP0 -> {
-          switch(this.dma.channelControl.getMode()) {
-            case SYNC_TO_DMA_REQUESTS -> {
-              while(this.dma.getBlockCount() > 0) {
-                LOGGER.info("Transferring size %04x", this.dma.getBlockSize());
-
-                synchronized(this.commandQueue) {
-                  for(int n = 0; n < this.dma.getBlockSize() / 4; n++) {
-                    try {
-                      this.queueGp0Command((int)this.dma.MADR.deref(4).offset(n * 4L).get());
-                    } catch(final legend.core.gpu.InvalidGp0CommandException e) {
-                      throw new RuntimeException("Invalid GP0 packet at 0x%08x".formatted(this.dma.MADR.deref(4).offset(n * 4L).get()), e);
-                    }
-                  }
-
-                  while(!this.commandQueue.isEmpty()) {
-                    this.processGp0Command();
-                  }
-                }
-
-                this.dma.MADR.addu(this.dma.getBlockSize());
-                this.dma.decrementBlockCount();
-              }
-
-              LOGGER.info("GPU DMA transfer complete");
-              this.dma.channelControl.resetBusy();
-            }
-
-            case LINKED_LIST -> {
-              LOGGER.info("Linked list transfer");
-
-              final Value value = this.dma.MADR.deref(4);
-              this.dma.MADR.setu(0x8000_0000 | value.get(0xff_ffffL));
-
-              final long words = value.get(0xff00_0000L) >> 24;
-
-              for(int i = 1; i < words; i++) {
-                try {
-                  this.queueGp0Command((int)value.offset(i * 4L).get());
-                } catch(final legend.core.gpu.InvalidGp0CommandException e) {
-                  throw new RuntimeException("Invalid GP0 packet at 0x%08x".formatted(value.offset(i * 4L).get()), e);
-                }
-              }
-
-              if(value.get(0xff_ffffL) == 0xff_ffffL) {
-                LOGGER.info("GPU DMA linked list transfer complete");
-                this.dma.channelControl.resetBusy();
-              }
-            }
-
-            default -> throw new RuntimeException("Unsupported GPU DMA sync mode " + this.dma.channelControl.getMode());
-          }
-        }
-
-        default -> throw new RuntimeException("Unsupported GPU DMA transfer direction " + this.status.dmaDirection);
-      }
-    }
-
     this.status.readyToReceiveCommand = true;
-
-    if(this.dmaOtc.channelControl.getStartTrigger() == DmaChannel.ChannelControl.START_TRIGGER.MANUAL) {
-      this.dmaOtcAddress = this.dmaOtc.MADR.get();
-      this.dmaOtcCount = (int)this.dmaOtc.BCR.get();
-
-      LOGGER.info("Starting OTC DMA transfer at %08x (count: %04x)", this.dmaOtcAddress, this.dmaOtcCount);
-      this.dmaOtc.channelControl.resetStartTrigger();
-    }
-
-    if(this.dmaOtc.channelControl.isBusy()) {
-      MEMORY.waitForLock(() -> {
-        for(int i = 0; i < this.dmaOtcCount - 1; i++) {
-          MEMORY.ref(4, this.dmaOtcAddress).offset(-i * 4L).setu(this.dmaOtcAddress - (i + 1) * 4L & 0xff_ffffL);
-        }
-
-        //TODO no$ docs seem to say this should be added here but this needs to be verified
-        MEMORY.ref(4, this.dmaOtcAddress).offset(-this.dmaOtcCount * 4L).setu(0xff_ffffL);
-      });
-
-      LOGGER.info("OTC DMA transfer complete");
-      this.dmaOtc.transferComplete();
-      this.dmaOtc.channelControl.resetBusy();
-    }
 
     if(this.isVramViewer) {
       final int size = this.vramWidth * this.vramHeight;
@@ -1529,9 +1428,6 @@ public class Gpu implements Runnable {
 
     IoHelper.write(stream, this.gpuInfo);
 
-    IoHelper.write(stream, this.dmaOtcAddress);
-    IoHelper.write(stream, this.dmaOtcCount);
-
     IoHelper.write(stream, this.displayStartX);
     IoHelper.write(stream, this.displayStartY);
     IoHelper.write(stream, this.displayRangeX1);
@@ -1604,8 +1500,10 @@ public class Gpu implements Runnable {
 
     this.gpuInfo = IoHelper.readInt(buf);
 
-    this.dmaOtcAddress = IoHelper.readLong(buf);
-    this.dmaOtcCount = IoHelper.readInt(buf);
+    if(version < 3) {
+      IoHelper.readLong(buf);
+      IoHelper.readInt(buf);
+    }
 
     this.displayStartX = IoHelper.readInt(buf);
     this.displayStartY = IoHelper.readInt(buf);
@@ -2222,7 +2120,6 @@ public class Gpu implements Runnable {
           Gpu.this.resetCommandBuffer();
           Gpu.this.acknowledgeGpuInterrupt();
           Gpu.this.disableDisplay();
-          Gpu.this.dmaDirection(DMA_DIRECTION.OFF);
           Gpu.this.displayStart(0, 0);
           Gpu.this.horizontalDisplayRange(0x200, 0x200 + 0xa00);
           Gpu.this.verticalDisplayRange(0x10, 0x10 + 0xf0);
@@ -2252,32 +2149,6 @@ public class Gpu implements Runnable {
             LOGGER.trace("Disabling display");
             Gpu.this.disableDisplay();
           }
-
-          return;
-
-        case 0x04: // DMA type
-          switch(value & 0b11) {
-            case 0:
-              Gpu.this.dmaDirection(DMA_DIRECTION.OFF);
-              break;
-
-            case 1:
-              Gpu.this.dmaDirection(DMA_DIRECTION.FIFO);
-              break;
-
-            case 2:
-              Gpu.this.dmaDirection(DMA_DIRECTION.CPU_TO_GP0);
-              break;
-
-            case 3:
-              Gpu.this.dmaDirection(DMA_DIRECTION.GPU_READ_TO_CPU);
-              break;
-
-            default:
-              throw new RuntimeException("GPU DMA type " + (value & 0b11) + " not supported");
-          }
-
-          LOGGER.trace("GPU DMA type set to %s", Gpu.this.status.dmaDirection);
 
           return;
 

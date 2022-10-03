@@ -59,7 +59,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -468,7 +467,6 @@ public final class Ttle {
     for(int i = 0; i < MEMORY.ref(4, transferDest).offset(0x4L).get(); i++) {
       if(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0xcL).get() != 0) {
         loadTimImage(MEMORY.ref(4, transferDest).offset(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0x8L)).getAddress());
-        DrawSync(0);
       }
     }
 
@@ -1432,7 +1430,6 @@ public final class Ttle {
     for(int i = 0; i < 3; i++) {
       //LAB_800cb5f4
       LoadImage(rectArray_800ce798.get(i), _800c6748.offset(i * 0x4L).get());
-      DrawSync(0);
       removeFromLinkedList(_800c6748.offset(i * 0x4L).get());
     }
 

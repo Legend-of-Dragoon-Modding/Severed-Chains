@@ -42,12 +42,6 @@ public final class Scus94491BpeSegment_800c {
 
   public static final GpuPacket _800c1be8 = MEMORY.ref(4, 0x800c1be8L, GpuPacket::new);
 
-  // GPU DMA callback structure (60h bytes, repeats 40h times)
-  public static final Value gpuDmaCallback_800c1c10 = MEMORY.ref(4, 0x800c1c10L);
-  public static final Value gpuDmaCallbackObjPtr_800c1c14 = MEMORY.ref(4, 0x800c1c14L);
-  public static final Value gpuDmaCallbackSomething_800c1c18 = MEMORY.ref(4, 0x800c1c18L);
-  public static final Value gpuDmaCallbackObj_800c1c1c = MEMORY.ref(4, 0x800c1c1cL);
-
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
   /** Note this is overlapped by {@link #_800c3423} */

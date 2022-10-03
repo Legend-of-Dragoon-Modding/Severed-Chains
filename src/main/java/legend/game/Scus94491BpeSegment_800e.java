@@ -58,7 +58,6 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
@@ -811,7 +810,6 @@ public final class Scus94491BpeSegment_800e {
 
 //    ClearImage(new RECT((short)0, (short)0, (short)640, (short)512), (byte)0, (byte)0, (byte)0);
 //    ClearImage(new RECT((short)640, (short)0, (short)384, (short)512), (byte)0, (byte)0, (byte)0);
-    DrawSync(0);
     VSync(0);
 
     GsInitGraph((short)640, (short)480, 0b110101, true, false);
@@ -1032,7 +1030,6 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e65c4
-    DrawSync(0);
     _1f8003fc.setu(_800bb228.getAddress());
 
     //LAB_800e65e8
@@ -1171,8 +1168,6 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    DrawSync(0);
-
     FUN_800e6b3c(bigStruct_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
 
     bigStruct_800bda10.coord2Param_64.rotate.x.set((short)0);
