@@ -4669,8 +4669,6 @@ public final class Scus94491BpeSegment {
     //LAB_80018350
     //LAB_8001836c
     for(int chunkX = 0; chunkX < width; chunkX += 16) {
-      final int tpage = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff;
-
       //LAB_80018380
       for(int chunkY = 0; chunkY < height; chunkY += 16) {
         a2 = t0_0;
@@ -4693,7 +4691,7 @@ public final class Scus94491BpeSegment {
             t5 = t5 + 64;
             a2 = t0_0;
             MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | tpage | (t5 & 0x3c0) >> 6);
+            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(a3)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
             MEMORY.ref(3, a2).setu(a2 + 0x8L); // SWL v0,$2(a2)
             t0_0 = a2 + 0x8L;
           }
