@@ -5740,46 +5740,43 @@ public final class Bttl_800e {
 
   @Method(0x800ee8c4L)
   public static void battleHudTexturesLoadedCallback(final long address, final long fileSize, final long param) {
-    final short[] sp0x38 = new short[12];
-    for(int i = 0; i < sp0x38.length; i++) {
-      sp0x38[i] = (short)_800c6e48.offset(i * 0x2L).get();
+    final short[] clutX = new short[6];
+    for(int i = 0; i < 4; i++) {
+      clutX[i] = _800c6e60.get(i).get();
     }
 
-    final short[] sp0x50 = new short[6];
-    for(int i = 0; i < sp0x50.length; i++) {
-      sp0x50[i] = (short)_800c6e60.offset(i * 0x2L).get();
-    }
+    clutX[4] = 0;
+    clutX[5] = 16;
+
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_800ee9c0
-    for(int s0 = 0; s0 < MEMORY.ref(4, address).offset(0x4L).get(); s0++) {
-      if(MEMORY.ref(4, address).offset(s0 * 0x8L).offset(0xcL).get() != 0) {
-        final TimHeader sp0x10 = parseTimHeader(MEMORY.ref(4, address + MEMORY.ref(4, address).offset(s0 * 0x8L).offset(0x8L).get() + 0x4L)); //TODO
+    for(int fileIndex = 0; fileIndex < mrg.count.get(); fileIndex++) {
+      if(mrg.entries.get(fileIndex).size.get() != 0) {
+        final TimHeader sp0x10 = parseTimHeader(MEMORY.ref(4, mrg.getFile(fileIndex) + 0x4L)); //TODO
 
-        if(s0 == 0) {
-          final RECT sp0x30 = new RECT((short)704, (short)256, (short)64, (short)256);
-          LoadImage(sp0x30, sp0x10.getImageAddress());
+        if(fileIndex == 0) {
+          LoadImage(new RECT().set((short)704, (short)256, (short)64, (short)256), sp0x10.getImageAddress());
         }
 
         //LAB_800eea20
         final RECT sp0x30 = new RECT();
-        if(s0 < 0x4L) {
-          sp0x30.x.set((short)(sp0x50[s0] + 704));
+        if(fileIndex < 4) {
+          sp0x30.x.set((short)(clutX[fileIndex] + 704));
           sp0x30.y.set((short)496);
         } else {
           //LAB_800eea3c
-          sp0x30.x.set((short)(sp0x50[s0] + 896));
+          sp0x30.x.set((short)(clutX[fileIndex] + 896));
           sp0x30.y.set((short)304);
         }
 
         //LAB_800eea50
-        sp0x30.w.set(sp0x38[s0 * 2    ]);
-        sp0x30.h.set(sp0x38[s0 * 2 + 1]);
+        sp0x30.w.set(_800c6e48.get(fileIndex).getX());
+        sp0x30.h.set(_800c6e48.get(fileIndex).getY());
         LoadImage(sp0x30, sp0x10.getClutAddress());
         DrawSync(0);
         _800c6cf4.addu(0x1L);
       }
-
-      //LAB_800eea8c
     }
 
     //LAB_800eeaac
