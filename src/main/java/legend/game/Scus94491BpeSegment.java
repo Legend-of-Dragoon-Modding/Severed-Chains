@@ -91,7 +91,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.initFileEntries;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.FUN_800edb8c;
-import static legend.game.SMap.mrg10Addr_800c6710;
+import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
@@ -6860,7 +6860,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001c4ecL)
   public static void FUN_8001c4ec() {
-    mrg10Addr_800c6710.clear();
+    chapterTitleCardMrg_800c6710.clear();
     _8004f6ec.setu(0);
     playSound(0, 16, 0, 0, (short)0, (short)0);
     vsyncMode_8007a3b8.setu(0x2L);
