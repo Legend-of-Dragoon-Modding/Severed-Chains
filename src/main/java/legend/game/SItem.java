@@ -60,17 +60,17 @@ import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
@@ -1426,12 +1426,12 @@ public final class SItem {
         //LAB_800fdb74
         if((inventoryJoypadInput_800bdc44.get() & 0x10L) != 0) {
           playSound(0x2L);
-          _8011dcb8.get(0).setPointer(addToLinkedListTail(0x4c0L));
-          _8011dcb8.get(1).setPointer(addToLinkedListTail(0x4c0L));
+          _8011dcb8.get(0).setPointer(mallocTail(0x4c0L));
+          _8011dcb8.get(1).setPointer(mallocTail(0x4c0L));
           _8011d754.setu(FUN_80104738(0x1L));
           FUN_80023a2c(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-          removeFromLinkedList(_8011dcb8.get(0).getPointer());
-          removeFromLinkedList(_8011dcb8.get(1).getPointer());
+          free(_8011dcb8.get(0).getPointer());
+          free(_8011dcb8.get(1).getPointer());
           MEMORY.ref(4, 0x800bdc28L).setu(0xeL);
         }
 
@@ -1447,8 +1447,8 @@ public final class SItem {
         scriptStartEffect(0x2L, 0xaL);
         deallocateRenderables(0xffL);
         renderGlyphs(glyphs_801141c4, 0, 0);
-        _8011dcb8.get(0).setPointer(addToLinkedListTail(0x4c0L));
-        _8011dcb8.get(1).setPointer(addToLinkedListTail(0x4c0L));
+        _8011dcb8.get(0).setPointer(mallocTail(0x4c0L));
+        _8011dcb8.get(1).setPointer(mallocTail(0x4c0L));
         recalcInventory();
         charSlot_8011d734.set(0);
         selectedSlot_8011d740.set(0);
@@ -2247,7 +2247,7 @@ public final class SItem {
 
       case DABAS_INIT_72:
         _8004dd30.setu(0x1L);
-        dabasData_8011d7c0.setPointer(addToLinkedListTail(0x100L));
+        dabasData_8011d7c0.setPointer(mallocTail(0x100L));
         dabasFilePtr_8011dd00.setu(0);
 
         //LAB_80100070
@@ -2415,7 +2415,7 @@ public final class SItem {
         break;
 
       case DABAS_DISCARD_INIT_94: {
-        final LodString str = MEMORY.ref(2, addToLinkedListTail(48), LodString::new);
+        final LodString str = MEMORY.ref(2, mallocTail(48), LodString::new);
         str.set("Discard items?");
 
         setMessageBoxText(str, 0x2);
@@ -2428,7 +2428,7 @@ public final class SItem {
       }
 
       case DABAS_NEW_DIG_INIT_96: {
-        final LodString str = MEMORY.ref(2, addToLinkedListTail(44), LodString::new);
+        final LodString str = MEMORY.ref(2, mallocTail(44), LodString::new);
         str.set("Begin new expedition?");
 
         setMessageBoxText(str, 0x2);
@@ -2441,7 +2441,7 @@ public final class SItem {
       }
 
       case DABAS_TAKE_ITEMS_INIT_98: {
-        final LodString str = MEMORY.ref(2, addToLinkedListTail(46), LodString::new);
+        final LodString str = MEMORY.ref(2, mallocTail(46), LodString::new);
         str.set("Take items from Dabas?");
 
         setMessageBoxText(str, 0x2);
@@ -2454,7 +2454,7 @@ public final class SItem {
       case DABAS_CONFIRM_ACTION_99:
         switch(messageBox(messageBox_8011dc90)) {
           case YES -> {
-            removeFromLinkedList(messageBox_8011dc90.text_00.getPointer());
+            free(messageBox_8011dc90.text_00.getPointer());
             messageBox_8011dc90.text_00.clear();
 
             //LAB_80100e2c
@@ -2462,7 +2462,7 @@ public final class SItem {
           }
 
           case NO -> {
-            removeFromLinkedList(messageBox_8011dc90.text_00.getPointer());
+            free(messageBox_8011dc90.text_00.getPointer());
             messageBox_8011dc90.text_00.clear();
 
             //LAB_80100e40
@@ -2509,7 +2509,7 @@ public final class SItem {
           //LAB_80101070
           if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > 0x20) {
             //LAB_80101090
-            final LodString str = MEMORY.ref(2, addToLinkedListTail(78), LodString::new);
+            final LodString str = MEMORY.ref(2, mallocTail(78), LodString::new);
             str.set("Dabas has more items\nthan you can hold");
             setMessageBoxText(str, 0);
             dabasState_8011d758.setu(3);
@@ -2572,7 +2572,7 @@ public final class SItem {
             //LAB_8010126c
             menuItems_8011d7c8.get(6).itemId_00.set(0xff);
           } else if(state == 3) {
-            removeFromLinkedList(messageBox_8011dc90.text_00.getPointer());
+            free(messageBox_8011dc90.text_00.getPointer());
           }
 
           //LAB_80101b14
@@ -2600,7 +2600,7 @@ public final class SItem {
         };
 
         final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-        final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+        final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
         string.set(response);
 
         setMessageBoxText(string, 0);
@@ -2626,7 +2626,7 @@ public final class SItem {
         };
 
         final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-        final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+        final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
         string.set(response);
 
         setMessageBoxText(string, 0);
@@ -2657,7 +2657,7 @@ public final class SItem {
           };
 
           final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-          final LodString string = MEMORY.ref(2, addToLinkedListTail((response.length() + 1) * 2), LodString::new);
+          final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
           string.set(response);
 
           setMessageBoxText(string, 0x1);
@@ -2790,7 +2790,7 @@ public final class SItem {
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           if(inventoryMenuState_800bdc28.get() == InventoryMenuState._109) {
-            removeFromLinkedList(messageBox_8011dc90.text_00.getPointer());
+            free(messageBox_8011dc90.text_00.getPointer());
           }
 
           //LAB_8010175c
@@ -2803,8 +2803,8 @@ public final class SItem {
         renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          removeFromLinkedList(dabasFilePtr_8011dd00.get());
-          removeFromLinkedList(dabasData_8011d7c0.getPointer());
+          free(dabasFilePtr_8011dd00.get());
+          free(dabasData_8011d7c0.getPointer());
           FUN_800fca0c(InventoryMenuState._2, 0xdL);
           _8004dd30.setu(0);
         }
@@ -2867,8 +2867,8 @@ public final class SItem {
               return;
             }
 
-            removeFromLinkedList(_8011dcb8.get(0).getPointer());
-            removeFromLinkedList(_8011dcb8.get(1).getPointer());
+            free(_8011dcb8.get(0).getPointer());
+            free(_8011dcb8.get(1).getPointer());
           }
 
           case 0x9 -> renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xfeL);
@@ -2893,7 +2893,7 @@ public final class SItem {
 
       case _125:
         deallocateRenderables(0xffL);
-        removeFromLinkedList(drgn0_6666FilePtr_800bdc3c.getPointer());
+        free(drgn0_6666FilePtr_800bdc3c.getPointer());
 
         final long menu = whichMenu_800bdc38.get();
         if(menu == 0xeL) {
@@ -2995,10 +2995,10 @@ public final class SItem {
     renderCentredText(List_8011cf3c, 142, getItemSubmenuOptionY(2), selectedIndex == 2 ? 0x5L : a1);
     renderCentredText(Goods_8011cf48, 142, getItemSubmenuOptionY(3), selectedIndex == 3 ? 0x5L : a1);
 
-    final LodString dabas = MEMORY.ref(2, addToLinkedListTail(12), LodString::new);
+    final LodString dabas = MEMORY.ref(2, mallocTail(12), LodString::new);
     dabas.set("Diiig");
     renderCentredText(dabas, 142, getItemSubmenuOptionY(4), selectedIndex == 4 ? 0x5L : a1);
-    removeFromLinkedList(dabas.getAddress());
+    free(dabas.getAddress());
   }
 
   @Method(0x8010214cL)
@@ -5431,8 +5431,8 @@ public final class SItem {
     final Value sp0x48 = sp0x48tmp.get();
     memcpy(sp0x48.getAddress(), _800fbb44.getAddress(), 0x3d);
 
-    final long s3 = addToLinkedListTail(0x2000L);
-    final long s4 = addToLinkedListTail(0x680L);
+    final long s3 = mallocTail(0x2000L);
+    final long s4 = mallocTail(0x680L);
     memcpy(s4, gameState_800babc8.getAddress(), 0x52c);
     MEMORY.ref(1, s3).offset(0x00L).setu(0x53L);
     MEMORY.ref(1, s3).offset(0x01L).setu(0x43L);
@@ -5498,8 +5498,8 @@ public final class SItem {
 
     //LAB_8010a7a8
     //LAB_8010a7ac
-    removeFromLinkedList(s3);
-    removeFromLinkedList(s4);
+    free(s3);
+    free(s4);
 
     sp0x48tmp.release();
   }
@@ -6123,7 +6123,7 @@ public final class SItem {
       case _19 -> {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
-        removeFromLinkedList(gameOverMcq_800bdc3c.getPointer());
+        free(gameOverMcq_800bdc3c.getPointer());
         if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingSmapOvl_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
@@ -6442,7 +6442,7 @@ public final class SItem {
 
   @Method(0x8010d078L)
   public static void FUN_8010d078(long x, long y, final long w, final long h, final long a4) {
-    final long t0 = linkedListAddress_1f8003d8.get();
+    final long t0 = gpuPacketAddr_1f8003d8.get();
     x -= 8 + displayWidth_1f8003e0.get() / 2;
     y -= 120;
     MEMORY.ref(1, t0).offset(0x03L).setu(0x8L);
@@ -6455,7 +6455,7 @@ public final class SItem {
     MEMORY.ref(2, t0).offset(0x1aL).setu(y + h);
     MEMORY.ref(2, t0).offset(0x20L).setu(x + w);
     MEMORY.ref(2, t0).offset(0x22L).setu(y + h);
-    linkedListAddress_1f8003d8.addu(0x24L);
+    gpuPacketAddr_1f8003d8.addu(0x24L);
 
     final int z;
     switch((int)a4) {
@@ -6577,12 +6577,12 @@ public final class SItem {
     }
 
     //LAB_8010d2c4
-    insertElementIntoLinkedList(tags_1f8003d0.deref().get(z).getAddress(), t0);
+    queueGpuPacket(tags_1f8003d0.deref().get(z).getAddress(), t0);
 
     if(a4 == 0x1L) {
-      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, 0);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(36).getAddress(), linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0x8L);
+      SetDrawTPage(gpuPacketAddr_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, 0);
+      queueGpuPacket(tags_1f8003d0.deref().get(36).getAddress(), gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0x8L);
     }
 
     //LAB_8010d318
@@ -7000,7 +7000,7 @@ public final class SItem {
       case _18:
         scriptStartEffect(0x2L, 0xaL);
         deallocateRenderables(0xffL);
-        removeFromLinkedList(drgn0_6666FilePtr_800bdc3c.getPointer());
+        free(drgn0_6666FilePtr_800bdc3c.getPointer());
         whichMenu_800bdc38.setu(0x1eL);
         _800bdf00.setu(0xdL);
         break;
@@ -7437,8 +7437,8 @@ public final class SItem {
 
       case AWAIT_INIT_1:
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
-          _8011dcb8.get(0).setPointer(addToLinkedListTail(0x4c0L));
-          _8011dcb8.get(1).setPointer(addToLinkedListTail(0x4c0L));
+          _8011dcb8.get(0).setPointer(mallocTail(0x4c0L));
+          _8011dcb8.get(1).setPointer(mallocTail(0x4c0L));
           recalcInventory();
           FUN_80104738(0x1L);
           messageBox_8011dc90._0c.set(0);
@@ -7687,10 +7687,10 @@ public final class SItem {
 
         if(_800bb168.get() >= 0xff) {
           scriptStartEffect(0x2L, 0xaL);
-          removeFromLinkedList(_8011dcb8.get(0).getPointer());
-          removeFromLinkedList(_8011dcb8.get(1).getPointer());
+          free(_8011dcb8.get(0).getPointer());
+          free(_8011dcb8.get(1).getPointer());
           deallocateRenderables(0xffL);
-          removeFromLinkedList(drgn0_6666FilePtr_800bdc3c.getPointer());
+          free(drgn0_6666FilePtr_800bdc3c.getPointer());
           whichMenu_800bdc38.setu(0x23L);
 
           if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingSmapOvl_8004dd08.get() == 0) {

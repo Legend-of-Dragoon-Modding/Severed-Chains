@@ -18,9 +18,9 @@ import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012444;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment._80010250;
-import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
+import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020460;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80024654;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ac24;
@@ -111,7 +111,7 @@ public final class SInit {
     if(v1 == 0x3L) {
       //LAB_800fb980
       if(linkedListEntry_800fd518.get() != 0) {
-        removeFromLinkedList(linkedListEntry_800fd518.get());
+        free(linkedListEntry_800fd518.get());
         linkedListEntry_800fd518.setu(0);
       }
 
@@ -138,13 +138,13 @@ public final class SInit {
 
       fileCount_8004ddc8.setu(0);
     } else if(linkedListEntry_800bbacc.get() != 0) {
-      removeFromLinkedList(linkedListEntry_800bbacc.get());
+      free(linkedListEntry_800bbacc.get());
       linkedListEntry_800bbacc.setu(0);
     }
 
     //LAB_800fba30
     _800fd51c.setu(0);
-    linkedListEntry_800fd518.setu(addToLinkedListHead(0x7_0000L));
+    linkedListEntry_800fd518.setu(mallocHead(0x7_0000L));
     _8004dd88.set(String.format("\\SECT\\DRGN2%d.BIN", drgnBinIndex_800bc058.get()));
 
     return 0x1L;
@@ -223,7 +223,7 @@ public final class SInit {
   public static long FUN_800fbcc0() {
     final long a1 = _800fd51c.get();
     if(a1 == 0) {
-      removeFromLinkedList(linkedListEntry_800fd518.get());
+      free(linkedListEntry_800fd518.get());
 
       linkedListEntry_800fd518.setu(0);
       linkedListEntry_800bbacc.setu(0);

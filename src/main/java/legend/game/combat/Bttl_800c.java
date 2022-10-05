@@ -87,14 +87,14 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
@@ -102,7 +102,7 @@ import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
@@ -1290,17 +1290,17 @@ public final class Bttl_800c {
       FUN_800c8ce4();
 
       if(!script_800c66fc.isNull()) {
-        removeFromLinkedList(script_800c66fc.getPointer());
+        free(script_800c66fc.getPointer());
       }
 
       //LAB_800c8314
       FUN_80029e04(null);
       deallocateScriptAndChildren((int)scriptIndex_800c674c.get());
-      removeFromLinkedList(script_800c670c.getPointer());
+      free(script_800c670c.getPointer());
 
       //LAB_800c8368
       for(int i = 0; i < uniqueMonsterCount_800c6698.get(); i++) {
-        removeFromLinkedList(_800c66d8.offset(i * 0x4L).get());
+        free(_800c66d8.offset(i * 0x4L).get());
       }
 
       //LAB_800c8394
@@ -1320,12 +1320,12 @@ public final class Bttl_800c {
         if((combatant.flags_19e.get() & 0x2L) == 0) {
           //LAB_800c8434
           if(!combatant.mrg_00.isNull()) {
-            removeFromLinkedList(combatant.mrg_00.getPointer());
+            free(combatant.mrg_00.getPointer());
           }
         }
 
         if(combatant._04.get() != 0) {
-          removeFromLinkedList(combatant._04.get());
+          free(combatant._04.get());
         }
 
         //LAB_800c8454
@@ -1394,7 +1394,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8624L)
   public static void FUN_800c8624() {
-    final BattleStruct18cb0 struct = MEMORY.ref(4, addToLinkedListTail(0x1_8cb0L), BattleStruct18cb0::new);
+    final BattleStruct18cb0 struct = MEMORY.ref(4, mallocTail(0x1_8cb0L), BattleStruct18cb0::new);
     _1f8003f4.set(struct);
 
     //LAB_800c8654
@@ -1423,7 +1423,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8748L)
   public static void FUN_800c8748() {
-    removeFromLinkedList(_1f8003f4.getPointer());
+    free(_1f8003f4.getPointer());
   }
 
   @Method(0x800c8774L)
@@ -1711,7 +1711,7 @@ public final class Bttl_800c {
     if(combatant._04.get() != 0) {
       if((combatant.flags_19e.get() & 0x2L) == 0) {
         //LAB_800c91e8
-        removeFromLinkedList(combatant._04.get());
+        free(combatant._04.get());
       }
 
       combatant._04.set(0);
@@ -1956,7 +1956,7 @@ public final class Bttl_800c {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant._04.get() != 0) {
-      removeFromLinkedList(s5);
+      free(s5);
     } else {
       //LAB_800c9910
       if(s0 == 0 && MEMORY.ref(4, s5).offset(0x4L).get() == 0x40L) {
@@ -2182,7 +2182,7 @@ public final class Bttl_800c {
     } else {
       //LAB_800ca034
       //LAB_800ca038
-      removeFromLinkedList(address);
+      free(address);
     }
 
     //LAB_800ca040
@@ -2343,7 +2343,7 @@ public final class Bttl_800c {
 
     final long addr = combatant._04.get();
     if(addr != 0) {
-      removeFromLinkedList(addr);
+      free(addr);
       combatant._04.set(0);
     }
 
@@ -2546,7 +2546,7 @@ public final class Bttl_800c {
     long s0 = _8006e918.getAddress();
     for(int s1 = 0; s1 < 0x100; s1++) {
       if(MEMORY.ref(1, s0).offset(0x4L).get() >= 0x2L) {
-        removeFromLinkedList(MEMORY.ref(4, s0).get());
+        free(MEMORY.ref(4, s0).get());
         MEMORY.ref(1, s0).offset(0x4L).setu(0);
       }
 
@@ -2614,14 +2614,14 @@ public final class Bttl_800c {
 
   @Method(0x800cab58L)
   public static long FUN_800cab58(final long size, final long a1, final long a2, final long a3) {
-    final long s0 = addToLinkedListTail(size);
+    final long s0 = mallocTail(size);
     if(s0 == 0) {
       return -0x1L;
     }
 
     final long v0 = FUN_800caae4(s0, a1, a2, a3);
     if((int)v0 < 0) {
-      removeFromLinkedList(s0);
+      free(s0);
       return -0x1L;
     }
 
@@ -2652,7 +2652,7 @@ public final class Bttl_800c {
       FUN_800cadbc(param);
     } else {
       //LAB_800cacf4
-      removeFromLinkedList(address);
+      free(address);
     }
 
     //LAB_800cad04
@@ -3872,7 +3872,7 @@ public final class Bttl_800c {
 
     //LAB_800cdbe0
     if(!script_800c66fc.isNull()) {
-      removeFromLinkedList(script_800c66fc.getPointer());
+      free(script_800c66fc.getPointer());
       script_800c66fc.clear();
     }
 
@@ -4012,8 +4012,8 @@ public final class Bttl_800c {
         final IntRef sp0x30 = new IntRef();
         final IntRef sp0x34 = new IntRef();
         FUN_800cf244(s0._04.get(1), sp0x30, sp0x34);
-        a1 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x24L);
+        a1 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x24L);
         MEMORY.ref(1, a1).offset(0x03L).setu(0x8L);
         MEMORY.ref(4, a1).offset(0x04L).setu(0x3a00_0000L);
         MEMORY.ref(2, a1).offset(0x08L).setu(sp0x38.get());
@@ -4041,7 +4041,7 @@ public final class Bttl_800c {
           }
 
           //LAB_800ce138
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (int)a0 / 4 * 4, a1);
+          queueGpuPacket(tags_1f8003d0.getPointer() + (int)a0 / 4 * 4, a1);
         }
 
         //LAB_800ce14c
@@ -4054,7 +4054,7 @@ public final class Bttl_800c {
 
       //LAB_800ce1a0
       //LAB_800ce1a4
-      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
 
       a2 = data._10.z_22.get();
       v1 = s1 + a2;
@@ -4064,10 +4064,10 @@ public final class Bttl_800c {
         }
 
         //LAB_800ce210
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (int)(s1 + a2) / 4 * 4, linkedListAddress_1f8003d8.get());
+        queueGpuPacket(tags_1f8003d0.getPointer() + (int)(s1 + a2) / 4 * 4, gpuPacketAddr_1f8003d8.get());
       }
 
-      linkedListAddress_1f8003d8.addu(0xcL);
+      gpuPacketAddr_1f8003d8.addu(0xcL);
     }
 
     //LAB_800ce230
@@ -4170,7 +4170,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce678L)
   public static void FUN_800ce678(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub3c.class)._34.getPointer());
+    free(data._44.derefAs(BttlScriptData6cSub3c.class)._34.getPointer());
   }
 
   @Method(0x800ce6a8L)
@@ -4178,7 +4178,7 @@ public final class Bttl_800c {
     final int s4 = allocateEffectManager(a0.scriptStateIndex_00.get(), 0x3cL, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce254", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cde94", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce678", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), BttlScriptData6cSub3c::new);
     final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(s4).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub3c s0 = s1._44.derefAs(BttlScriptData6cSub3c.class);
-    s0._34.setPointer(addToLinkedListTail(0x2c * 65));
+    s0._34.setPointer(mallocTail(0x2c * 65));
 
     //LAB_800ce75c
     for(int i = 0; i < 65; i++) {
@@ -4288,7 +4288,7 @@ public final class Bttl_800c {
   public static void FUN_800ceb28(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub0e a0 = manager._44.derefAs(BttlScriptData6cSub0e.class);
 
-    final long a1 = linkedListAddress_1f8003d8.get();
+    final long a1 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
     MEMORY.ref(4, a1).offset(0x4L).setu(0x6280_8080L);
     MEMORY.ref(1, a1).offset(0x4L).setu(a0.svec_00.getX() >>> 8);
@@ -4299,12 +4299,12 @@ public final class Bttl_800c {
     MEMORY.ref(2, a1).offset(0xaL).setu(-120);
     MEMORY.ref(2, a1).offset(0xcL).setu(320);
     MEMORY.ref(2, a1).offset(0xeL).setu(280);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
-    linkedListAddress_1f8003d8.addu(0x10L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
+    gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x800cec84L)
@@ -4358,7 +4358,7 @@ public final class Bttl_800c {
 
   @Method(0x800cef00L)
   public static long FUN_800cef00(final RunningScript script) {
-    final long a1 = linkedListAddress_1f8003d8.get();
+    final long a1 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
     MEMORY.ref(1, a1).offset(0x4L).setu(script.params_20.get(0).deref().get());
     MEMORY.ref(1, a1).offset(0x5L).setu(script.params_20.get(1).deref().get());
@@ -4368,12 +4368,12 @@ public final class Bttl_800c {
     MEMORY.ref(2, a1).offset(0xaL).setu(-120);
     MEMORY.ref(2, a1).offset(0xcL).setu(320);
     MEMORY.ref(2, a1).offset(0xeL).setu(280);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
-    linkedListAddress_1f8003d8.addu(0x10L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
+    gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
     return 0;
   }
 

@@ -182,8 +182,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005a1ea = MEMORY.ref(2, 0x8005a1eaL);
 
-  public static final Value linkedListHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
-  public static final Value linkedListTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
+  public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
+  public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   /**
    * 12-byte struct, repeats 16 times? May start 4 bytes earlier
    */

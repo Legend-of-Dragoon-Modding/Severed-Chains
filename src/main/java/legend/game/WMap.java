@@ -61,18 +61,18 @@ import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
-import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -653,8 +653,8 @@ public class WMap {
         final WMapStruct258 struct258 = struct258_800c66a8.deref();
 
         //LAB_800cc7d0
-        removeFromLinkedList(struct258.imageData_2c.get());
-        removeFromLinkedList(struct258.imageData_30.get());
+        free(struct258.imageData_2c.get());
+        free(struct258.imageData_30.get());
 
         pregameLoadingStage_800bb10c.setu(gameState_800babc8._4e4.get() != 0 ? 0x9L : 0x7L);
       } else {
@@ -727,12 +727,12 @@ public class WMap {
     whichMenu_800bdc38.setu(0x1L);
 
     final RECT rect = new RECT().set(_800c8700);
-    long v0 = addToLinkedListTail(0x1_0000L);
+    long v0 = mallocTail(0x1_0000L);
     struct258_800c66a8.deref().imageData_2c.set(v0);
     StoreImage(rect, v0);
 
     rect.set((short)320, (short)0, (short)64, (short)512);
-    v0 = addToLinkedListTail(0x1_0000L);
+    v0 = mallocTail(0x1_0000L);
     struct258_800c66a8.deref().imageData_30.set(v0);
     StoreImage(rect, v0);
 
@@ -745,9 +745,9 @@ public class WMap {
     vsyncMode_8007a3b8.setu(0x3L);
     scriptStartEffect(0x2L, 0xfL);
     LoadImage(_800c8700, struct.imageData_2c.get());
-    removeFromLinkedList(struct.imageData_2c.get());
+    free(struct.imageData_2c.get());
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30.get());
-    removeFromLinkedList(struct.imageData_30.get());
+    free(struct.imageData_30.get());
     FUN_800d1914();
 
     if(struct.zoomState_1f8.get() == 0) {
@@ -772,7 +772,7 @@ public class WMap {
 
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
-    setWidthAndFlags(0x140L, 0);
+    setWidthAndFlags(320, 0);
     vsyncMode_8007a3b8.setu(0x3L);
     unloadSoundFile((int)0x9L);
     FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
@@ -889,7 +889,7 @@ public class WMap {
 
   @Method(0x800ccf04L)
   public static void FUN_800ccf04() {
-    struct258_800c66a8.set(MEMORY.ref(4, addToLinkedListTail(0x258L), WMapStruct258::new));
+    struct258_800c66a8.set(MEMORY.ref(4, mallocTail(0x258L), WMapStruct258::new));
     _800c6698.setu(0x2L);
     _800c669c.setu(0x2L);
     _800c66a0.setu(0x2L);
@@ -1009,7 +1009,7 @@ public class WMap {
     FUN_800e05c4();
     FUN_800e7888();
     FUN_800eede4();
-    removeFromLinkedList(struct258_800c66a8.getPointer());
+    free(struct258_800c66a8.getPointer());
     _800bdf00.setu(0xdL);
 
     //LAB_800cd2d4
@@ -1047,7 +1047,7 @@ public class WMap {
     long sp54_s;
     long sp56_s;
 
-    final WMapRender40 sp34 = MEMORY.ref(4, addToLinkedListTail(0x40L), WMapRender40::new);
+    final WMapRender40 sp34 = MEMORY.ref(4, mallocTail(0x40L), WMapRender40::new);
 
     sp34._28.set(a7);
     sp34._2c.set(a8);
@@ -1060,10 +1060,10 @@ public class WMap {
     sp34._3e.set((int)a13);
 
     if(a9 == 0) {
-      sp34._00.set(MEMORY.ref(4, addToLinkedListTail(0x10L), UnboundedArrayRef.of(0x10, WMapRender10::new)));
+      sp34._00.set(MEMORY.ref(4, mallocTail(0x10L), UnboundedArrayRef.of(0x10, WMapRender10::new)));
     } else {
       //LAB_800cd4fc
-      sp34._00.set(MEMORY.ref(4, addToLinkedListTail(sp34._30.get() * 0x10L), UnboundedArrayRef.of(0x10, WMapRender10::new)));
+      sp34._00.set(MEMORY.ref(4, mallocTail(sp34._30.get() * 0x10L), UnboundedArrayRef.of(0x10, WMapRender10::new)));
     }
 
     //LAB_800cd534
@@ -1078,7 +1078,7 @@ public class WMap {
     }
 
     //LAB_800cd600
-    sp34._1c.set(MEMORY.ref(4, addToLinkedListTail(sp34._30.get() * 0x8L), UnboundedArrayRef.of(0x8, WMapRender08_2::new)));
+    sp34._1c.set(MEMORY.ref(4, mallocTail(sp34._30.get() * 0x8L), UnboundedArrayRef.of(0x8, WMapRender08_2::new)));
 
     final long sp58_s = MEMORY.ref(2, a6).offset(0x4L).getSigned() / (int)a7;
     final long sp5a_s = MEMORY.ref(2, a6).offset(0x6L).getSigned() / (int)a8;
@@ -1089,7 +1089,7 @@ public class WMap {
         //LAB_800cdbf0
         for(int i = 0; i < 2; i++) {
           //LAB_800cdc0c
-          sp34._14.get(i).set(MEMORY.ref(4, addToLinkedListTail(sp34._30.get() * 0x28L), UnboundedArrayRef.of(0x28, WMapRender28::new, () -> (int)sp34._30.get())));
+          sp34._14.get(i).set(MEMORY.ref(4, mallocTail(sp34._30.get() * 0x28L), UnboundedArrayRef.of(0x28, WMapRender28::new, () -> (int)sp34._30.get())));
         }
 
         //LAB_800cdc74
@@ -1159,7 +1159,7 @@ public class WMap {
         //LAB_800cd6cc
         for(int i = 0; i < 2; i++) {
           //LAB_800cd6e8
-          sp34._04.get(i).set(addToLinkedListTail(sp34._30.get() * 0x8L));
+          sp34._04.get(i).set(mallocTail(sp34._30.get() * 0x8L));
         }
       }
 
@@ -1167,7 +1167,7 @@ public class WMap {
       //LAB_800cd74c
       for(int i = 0; i < 2; i++) {
         //LAB_800cd768
-        sp34._0c.get(i).set(addToLinkedListTail(sp34._30.get() * 0x24L));
+        sp34._0c.get(i).set(mallocTail(sp34._30.get() * 0x24L));
       }
 
       //LAB_800cd7d0
@@ -1293,10 +1293,10 @@ public class WMap {
         MEMORY.ref(2, sp18).offset(0x20L).setu(sp20._00.get() + a0._38.get() + sp20._04.get());
         MEMORY.ref(2, sp18).offset(0x22L).setu(sp20._02.get() + a0._3a.get() + sp20._06.get());
 
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp18);
+        queueGpuPacket(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp18);
 
         if(a0.transparency_3c.get()) {
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp14);
+          queueGpuPacket(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp14);
         }
 
         //LAB_800ce7a0
@@ -1322,7 +1322,7 @@ public class WMap {
         MEMORY.ref(2, sp18).offset(0x1aL).setu(sp20._02.get() + a0._3a.get() + sp20._06.get());
         MEMORY.ref(2, sp18).offset(0x20L).setu(sp20._00.get() + a0._38.get() + sp20._04.get());
         MEMORY.ref(2, sp18).offset(0x22L).setu(sp20._02.get() + a0._3a.get() + sp20._06.get());
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp1c.getAddress());
+        queueGpuPacket(tags_1f8003d0.deref().get(a0._3e.get()).getAddress(), sp1c.getAddress());
       }
 
       //LAB_800cea00
@@ -1968,31 +1968,31 @@ public class WMap {
     for(int i = 0; i < 2; i++) {
       //LAB_800d1608
       if(a0._0c.get(i).get() != 0) {
-        removeFromLinkedList(a0._0c.get(i).get());
+        free(a0._0c.get(i).get());
       }
 
       //LAB_800d165c
       if(!a0._14.get(i).isNull()) {
-        removeFromLinkedList(a0._14.get(i).getPointer());
+        free(a0._14.get(i).getPointer());
       }
 
       //LAB_800d16b0
       if(a0._04.get(i).get() != 0) {
-        removeFromLinkedList(a0._04.get(i).get());
+        free(a0._04.get(i).get());
       }
 
       //LAB_800d1704
     }
 
     //LAB_800d171c
-    removeFromLinkedList(a0._1c.getPointer());
-    removeFromLinkedList(a0._00.getPointer());
-    removeFromLinkedList(a0.getAddress());
+    free(a0._1c.getPointer());
+    free(a0._00.getPointer());
+    free(a0.getAddress());
   }
 
   @Method(0x800d177cL)
   public static void FUN_800d177c() {
-    _800c66b0.set(MEMORY.ref(4, addToLinkedListTail(0x19c0L), WMapStruct19c0::new));
+    _800c66b0.set(MEMORY.ref(4, mallocTail(0x19c0L), WMapStruct19c0::new));
 
     GsInitCoordinate2(null, _800c66b0.deref().coord2_20);
 
@@ -2703,7 +2703,7 @@ public class WMap {
     a0 = v0;
     a1 = sp30;
 
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
     v1 = 0x1f80_0000L;
     v1 = MEMORY.ref(4, v1).offset(0x3d0L).get();
 
@@ -2711,7 +2711,7 @@ public class WMap {
     a0 = v0;
     a1 = sp34;
 
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
     v0 = 0x800c_0000L;
     v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
 
@@ -2927,7 +2927,7 @@ public class WMap {
     a0 = v0;
     a1 = sp30;
 
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
     v1 = 0x1f80_0000L;
     v1 = MEMORY.ref(4, v1).offset(0x3d0L).get();
 
@@ -2935,7 +2935,7 @@ public class WMap {
     a0 = v0;
     a1 = sp34;
 
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
     v0 = sp24;
 
     a0 = v0;
@@ -3597,7 +3597,7 @@ public class WMap {
 
   @Method(0x800d55fcL)
   public static void FUN_800d55fc() {
-    removeFromLinkedList(_800c66b0.getPointer());
+    free(_800c66b0.getPointer());
   }
 
   @Method(0x800d562cL)
@@ -3635,7 +3635,7 @@ public class WMap {
     final long cx = clutX_800ef0d0.offset(param * 0x8L).getSigned();
     final long cy = clutY_800ef0d2.offset(param * 0x8L).getSigned();
     FUN_800d5c50(address, ix, iy, cx, cy);
-    removeFromLinkedList(address);
+    free(address);
     _800c66b8.oru(0x800L);
 
     //LAB_800d5848
@@ -3655,7 +3655,7 @@ public class WMap {
     }
 
     //LAB_800d5938
-    removeFromLinkedList(address);
+    free(address);
 
     _800c66b8.oru(param);
 
@@ -3760,7 +3760,7 @@ public class WMap {
     sp10 = v0;
     a0 = 0x20L;
 
-    v0 = addToLinkedListTail(a0);
+    v0 = mallocTail(a0);
     sp14 = v0;
     v0 = sp14;
 
@@ -3818,7 +3818,7 @@ public class WMap {
     sp18 = t0;
     a0 = sp18;
 
-    v0 = addToLinkedListTail(a0);
+    v0 = mallocTail(a0);
     v1 = sp14;
 
     MEMORY.ref(4, v1).offset(0x8L).setu(v0);
@@ -3838,7 +3838,7 @@ public class WMap {
     sp18 = t0;
     a0 = sp18;
 
-    v0 = addToLinkedListTail(a0);
+    v0 = mallocTail(a0);
     v1 = sp14;
 
     MEMORY.ref(4, v1).offset(0xcL).setu(v0);
@@ -4025,9 +4025,9 @@ public class WMap {
 
   @Method(0x800d6818L)
   public static void FUN_800d6818(final long a0) {
-    removeFromLinkedList(MEMORY.ref(4, a0).offset(0xcL).get());
-    removeFromLinkedList(MEMORY.ref(4, a0).offset(0x8L).get());
-    removeFromLinkedList(a0);
+    free(MEMORY.ref(4, a0).offset(0xcL).get());
+    free(MEMORY.ref(4, a0).offset(0x8L).get());
+    free(a0);
   }
 
   @Method(0x800d6880L)
@@ -4049,13 +4049,13 @@ public class WMap {
     }
 
     //LAB_800d6950
-    final long sp10 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x14L);
+    final long sp10 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x14L);
 
     setGpuPacketType(0xeL, sp10, false, false);
 
-    final long sp14 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x8L);
+    final long sp14 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x8L);
     MEMORY.ref(1, sp14).offset(0x3L).setu(0x1L);
     MEMORY.ref(4, sp14).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ffL);
 
@@ -4070,8 +4070,8 @@ public class WMap {
     MEMORY.ref(2, sp10).offset(0x10L).setu(0x80L);
     MEMORY.ref(2, sp10).offset(0x12L).setu(0x18L);
 
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp10);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp14);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x34L, sp10);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x34L, sp14);
 
     struct258_800c66a8.deref()._20.add((short)0x10);
 
@@ -4105,11 +4105,11 @@ public class WMap {
     final long[] sp0x40 = new long[7];
     for(int i = 0; i < 7; i++) {
       //LAB_800d6c30
-      sp0x20[i] = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x14L);
+      sp0x20[i] = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x14L);
 
-      sp0x40[i] = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x8L);
+      sp0x40[i] = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x8L);
 
       //LAB_800d6d14
       setGpuPacketType(0xeL, sp0x20[i], i < 0x2L, false);
@@ -4147,8 +4147,8 @@ public class WMap {
       MEMORY.ref(2, sp0x20[i]).offset(0x10L).setu(_800ef104.offset(i * 0x6L + 0x4L).get());
       MEMORY.ref(2, sp0x20[i]).offset(0x12L).setu(_800ef104.offset(i * 0x6L + 0x5L).get());
 
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x50L, sp0x20[i]);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x50L, sp0x40[i]);
+      queueGpuPacket(tags_1f8003d0.getPointer() + 0x50L, sp0x20[i]);
+      queueGpuPacket(tags_1f8003d0.getPointer() + 0x50L, sp0x40[i]);
     }
 
     //LAB_800d71f4
@@ -4156,7 +4156,7 @@ public class WMap {
 
   @Method(0x800d7208L)
   public static void FUN_800d7208(final long a0) {
-    final long packet = linkedListAddress_1f8003d8.get();
+    final long packet = gpuPacketAddr_1f8003d8.get();
     setGpuPacketType(0xcL, packet, false, false);
     MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
     MEMORY.ref(2, packet).offset(0xeL).setu(0x7f28L);
@@ -4182,8 +4182,8 @@ public class WMap {
     MEMORY.ref(1, packet).offset(0x1dL).setu(0xb8L);
     MEMORY.ref(1, packet).offset(0x24L).setu(MEMORY.ref(1, at).offset(-0xe98L).get() * 0x10 + 0x50L);
     MEMORY.ref(1, packet).offset(0x25L).setu(0xb8L);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, packet);
-    linkedListAddress_1f8003d8.addu(0x28L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x34L, packet);
+    gpuPacketAddr_1f8003d8.addu(0x28L);
 
     final long sp1c;
     final long sp28;
@@ -4208,8 +4208,8 @@ public class WMap {
       at = 0x800f_0000L;
       at = at + sp18 * 0x4L + 0x3L;
       sp22 = MEMORY.ref(1, at).offset(-0xed0L).get();
-      sp28 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x28L);
+      sp28 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x28L);
       setGpuPacketType(0xcL, sp28, false, false);
       MEMORY.ref(2, sp28).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
       MEMORY.ref(2, sp28).offset(0xeL).setu(0x7ea8L);
@@ -4232,7 +4232,7 @@ public class WMap {
       MEMORY.ref(1, sp28).offset(0x1dL).setu(sp1e + sp22);
       MEMORY.ref(1, sp28).offset(0x24L).setu(sp1c + sp20);
       MEMORY.ref(1, sp28).offset(0x25L).setu(sp1e + sp22);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp28);
+      queueGpuPacket(tags_1f8003d0.getPointer() + 0x34L, sp28);
     } else {
       //LAB_800d7734
       sp14 = _800bb0fc.get() / 3 % 15;
@@ -4251,7 +4251,7 @@ public class WMap {
       at = 0x800f_0000L;
       at = at + sp18 * 0x4L + 0x3L;
       sp22 = MEMORY.ref(1, at).offset(-0xec0L).get();
-      sp28 = linkedListAddress_1f8003d8.get();
+      sp28 = gpuPacketAddr_1f8003d8.get();
       setGpuPacketType(0xcL, sp28, false, false);
       MEMORY.ref(2, sp28).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
       MEMORY.ref(2, sp28).offset(0xeL).setu(0x7ee8L);
@@ -4274,8 +4274,8 @@ public class WMap {
       MEMORY.ref(1, sp28).offset(0x1dL).setu(sp1e + sp22);
       MEMORY.ref(1, sp28).offset(0x24L).setu(sp1c + sp20);
       MEMORY.ref(1, sp28).offset(0x25L).setu(sp1e + sp22);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x34L, sp28);
-      linkedListAddress_1f8003d8.addu(0x28L);
+      queueGpuPacket(tags_1f8003d0.getPointer() + 0x34L, sp28);
+      gpuPacketAddr_1f8003d8.addu(0x28L);
     }
 
     //LAB_800d7a18
@@ -4372,7 +4372,7 @@ public class WMap {
     GsGetLs(struct258_800c66a8.deref().tmdRendering_08.deref().coord2s_04.deref().get(0), sp0x18);
     setRotTransMatrix(sp0x18);
 
-    sp10 = linkedListAddress_1f8003d8.get();
+    sp10 = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800d7d6c
     for(int i = 0; i < _800c67a0.get(); i++) {
@@ -4773,7 +4773,7 @@ public class WMap {
             a0 = v1;
             a1 = sp10;
 
-            insertElementIntoLinkedList(a0, a1);
+            queueGpuPacket(a0, a1);
           }
 
           //LAB_800d84b0
@@ -5240,7 +5240,7 @@ public class WMap {
                   a0 = v1;
                   a1 = sp10;
 
-                  insertElementIntoLinkedList(a0, a1);
+                  queueGpuPacket(a0, a1);
                 }
               }
 
@@ -6318,7 +6318,7 @@ public class WMap {
   public static long FUN_800deeac(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
 
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800deee8
     for(int i = 0; i < count; i++) {
@@ -6388,7 +6388,7 @@ public class WMap {
     }
 
     //LAB_800df204
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
 
     //LAB_800df220
     return primitives;
@@ -6415,7 +6415,7 @@ public class WMap {
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
-      struct258_800c66a8.deref().bigStructs_0c.get(i).set(MEMORY.ref(4, addToLinkedListTail(0x124L), BigStruct::new));
+      struct258_800c66a8.deref().bigStructs_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), BigStruct::new));
       loadDrgnBinFile(0, 5714 + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
       struct258_800c66a8.deref().bigStructs_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
@@ -6563,7 +6563,7 @@ public class WMap {
       v0 = v0 + v1;
       a0 = MEMORY.ref(4, v0).offset(0x1b4L).get();
 
-      removeFromLinkedList(a0);
+      free(a0);
       v0 = 0x800c_0000L;
       v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
       v1 = i;
@@ -6573,7 +6573,7 @@ public class WMap {
       v0 = v0 + v1;
       a0 = MEMORY.ref(4, v0).offset(0xcL).get();
 
-      removeFromLinkedList(a0);
+      free(a0);
       v0 = 0x800c_0000L;
       v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
       v1 = i;
@@ -7220,12 +7220,12 @@ public class WMap {
     //LAB_800e17b4
     for(int i = 0; i < 8; i++) {
       //LAB_800e17d0
-      final long sp70 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x1cL);
+      final long sp70 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x1cL);
       setGpuPacketType(0x7L, sp70, true, false);
 
-      final long sp74 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x8L);
+      final long sp74 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, sp74).offset(0x3L).setu(0x1L);
       MEMORY.ref(4, sp74).offset(0x4L).setu(0xe100_0000L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ffL);
@@ -7256,8 +7256,8 @@ public class WMap {
       final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, MEMORY.ref(2, sp70 + 0x8L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x10L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x18L, DVECTOR::new), sp0x68, sp0x64);
 
       if(sp6c >= 0x3L && sp6c < orderingTableSize_1f8003c8.get()) {
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp70);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp74);
+        queueGpuPacket(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp70);
+        queueGpuPacket(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp74);
       }
 
       //LAB_800e1a98
@@ -7332,8 +7332,8 @@ public class WMap {
     //LAB_800e1ccc
     for(sp68 = 0; sp68 < 39; sp68++) {
       //LAB_800e1ce8
-      sp118 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x34L);
+      sp118 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x34L);
       setGpuPacketType(0xdL, sp118, true, false);
       MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
       MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
@@ -7398,12 +7398,12 @@ public class WMap {
       sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
 
       if((int)sp84 >= 0x3L && (int)sp84 < (int)orderingTableSize_1f8003c8.get()) {
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
+        queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
       }
 
       //LAB_800e2440
-      sp118 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x34L);
+      sp118 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x34L);
       setGpuPacketType(0xdL, sp118, true, false);
       MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
       MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
@@ -7437,7 +7437,7 @@ public class WMap {
       sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
 
       if((int)sp84 >= 3 && (int)sp84 < (int)orderingTableSize_1f8003c8.get()) {
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
+        queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
       }
     }
 
@@ -7464,9 +7464,9 @@ public class WMap {
   public static void FUN_800e28dc(final long a0, final long a1) {
     final long a3 = a0 * a1;
 
-    struct258_800c66a8.deref().vecs_224.set(MEMORY.ref(4, addToLinkedListTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> (int)a3)));
-    struct258_800c66a8.deref().vecs_228.set(MEMORY.ref(4, addToLinkedListTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> (int)a3)));
-    struct258_800c66a8.deref().ptr_22c.set(addToLinkedListTail(a3 * 0x4L));
+    struct258_800c66a8.deref().vecs_224.set(MEMORY.ref(4, mallocTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> (int)a3)));
+    struct258_800c66a8.deref().vecs_228.set(MEMORY.ref(4, mallocTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> (int)a3)));
+    struct258_800c66a8.deref().ptr_22c.set(mallocTail(a3 * 0x4L));
     struct258_800c66a8.deref()._230.set(0);
     struct258_800c66a8.deref()._234.set(a3 - 0x1L);
     struct258_800c66a8.deref()._238.set(a3);
@@ -7540,9 +7540,9 @@ public class WMap {
 
   @Method(0x800e3230L)
   public static void FUN_800e3230() {
-    removeFromLinkedList(struct258_800c66a8.deref().vecs_224.getPointer());
-    removeFromLinkedList(struct258_800c66a8.deref().vecs_228.getPointer());
-    removeFromLinkedList(struct258_800c66a8.deref().ptr_22c.get());
+    free(struct258_800c66a8.deref().vecs_224.getPointer());
+    free(struct258_800c66a8.deref().vecs_228.getPointer());
+    free(struct258_800c66a8.deref().ptr_22c.get());
   }
 
   @Method(0x800e32a8L)
@@ -7653,7 +7653,7 @@ public class WMap {
 
   @Method(0x800e3aa8L)
   public static WMapTmdRenderingStruct18 loadTmd(final TmdWithId tmd) {
-    final WMapTmdRenderingStruct18 sp10 = MEMORY.ref(4, addToLinkedListTail(0x18L), WMapTmdRenderingStruct18::new);
+    final WMapTmdRenderingStruct18 sp10 = MEMORY.ref(4, mallocTail(0x18L), WMapTmdRenderingStruct18::new);
     sp10.count_0c.set(allocateTmdRenderer(sp10, tmd));
 
     //LAB_800e3b00
@@ -7662,12 +7662,12 @@ public class WMap {
 
   @Method(0x800e3b14L)
   public static void deallocateTmdRenderer(final WMapTmdRenderingStruct18 a0) {
-    removeFromLinkedList(a0._10.getPointer());
-    removeFromLinkedList(a0.rotations_08.getPointer());
-    removeFromLinkedList(a0.coord2s_04.getPointer());
-    removeFromLinkedList(a0.dobj2s_00.getPointer());
-    removeFromLinkedList(a0.tmd_14.getPointer());
-    removeFromLinkedList(a0.getAddress());
+    free(a0._10.getPointer());
+    free(a0.rotations_08.getPointer());
+    free(a0.coord2s_04.getPointer());
+    free(a0.dobj2s_00.getPointer());
+    free(a0.tmd_14.getPointer());
+    free(a0.getAddress());
   }
 
   @Method(0x800e3bd4L)
@@ -7675,10 +7675,10 @@ public class WMap {
     adjustTmdPointers(tmd.tmd);
 
     final long nobj = tmd.tmd.header.nobj.get();
-    a0.dobj2s_00.set(MEMORY.ref(4, addToLinkedListTail(nobj * 0x10L), UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
-    a0.coord2s_04.set(MEMORY.ref(4, addToLinkedListTail(nobj * 0x50L), UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    a0.rotations_08.set(MEMORY.ref(4, addToLinkedListTail(nobj * 0x08L), UnboundedArrayRef.of(0x8, SVECTOR::new)));
-    a0._10.set(MEMORY.ref(4, addToLinkedListTail(nobj * 0x04L), UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
+    a0.dobj2s_00.set(MEMORY.ref(4, mallocTail(nobj * 0x10L), UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+    a0.coord2s_04.set(MEMORY.ref(4, mallocTail(nobj * 0x50L), UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
+    a0.rotations_08.set(MEMORY.ref(4, mallocTail(nobj * 0x08L), UnboundedArrayRef.of(0x8, SVECTOR::new)));
+    a0._10.set(MEMORY.ref(4, mallocTail(nobj * 0x04L), UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
 
     //LAB_800e3d24
     for(int i = 0; i < nobj; i++) {
@@ -8052,7 +8052,7 @@ public class WMap {
 
   @Method(0x800e4934L)
   public static void FUN_800e4934(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int a6, final long colour) {
-    final long packet = linkedListAddress_1f8003d8.get();
+    final long packet = gpuPacketAddr_1f8003d8.get();
 
     long sp1c = packet;
     int clutX = vramOffsetX + mcq.clutX_0c.get();
@@ -8122,7 +8122,7 @@ public class WMap {
     }
 
     //LAB_800e4d90
-    linkedListAddress_1f8003d8.setu(sp1c);
+    gpuPacketAddr_1f8003d8.setu(sp1c);
 
     MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(tags_1f8003d0.deref().get(z).p);
     tags_1f8003d0.deref().get(z).p.set(packet & 0xff_ffffL);
@@ -8432,8 +8432,8 @@ public class WMap {
         FUN_800e774c(places_800f0234.get((int)placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
 
         if((_800c66b8.get() & 0x800L) != 0) {
-          final long sp4c = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x28L);
+          final long sp4c = gpuPacketAddr_1f8003d8.get();
+          gpuPacketAddr_1f8003d8.addu(0x28L);
 
           setGpuPacketType(0xcL, sp4c, false, false);
 
@@ -8485,7 +8485,7 @@ public class WMap {
           MEMORY.ref(1, sp4c).offset(0x24L).setu(0x77L);
           MEMORY.ref(1, sp4c).offset(0x25L).setu(0x59L);
 
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x38L, sp4c);
+          queueGpuPacket(tags_1f8003d0.getPointer() + 0x38L, sp4c);
 
           if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
             playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -10404,7 +10404,7 @@ public class WMap {
     _800f659c.setu(_800f6598);
     _800f65a0.setu(0);
 
-    _800c86f8.setPointer(addToLinkedListTail(0x1200L));
+    _800c86f8.setPointer(mallocTail(0x1200L));
     _800c86fc.setu(0);
 
     //LAB_800eb9b8
@@ -10447,7 +10447,7 @@ public class WMap {
     final WMapStruct258 struct = struct258_800c66a8.deref();
 
     _800c86fc.setu(0x1L);
-    struct._24.setPointer(addToLinkedListTail(0x900L));
+    struct._24.setPointer(mallocTail(0x900L));
 
     //LAB_800ebbb4
     final VECTOR sp0x20 = new VECTOR();
@@ -10507,7 +10507,7 @@ public class WMap {
     rotateCoord2(sp38_0.rotation_50, sp38_0.coord2_00);
 
     //LAB_800ec028
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
     for(int i = 0; i < 24; i++) {
       final WMapStruct258Sub60 sp38 = struct._24.deref().get(i);
 
@@ -10650,13 +10650,13 @@ public class WMap {
                             MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get());
                             MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get());
                             MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get());
-                            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x22cL, packet);
+                            queueGpuPacket(tags_1f8003d0.getPointer() + 0x22cL, packet);
                           } else {
                             //LAB_800ec928
                             MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get() / 3);
                             MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get() / 3);
                             MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get() / 3);
-                            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, packet);
+                            queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, packet);
                           }
                         }
                       }
@@ -10674,13 +10674,13 @@ public class WMap {
     }
 
     //LAB_800eca1c
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
   }
 
   @Method(0x800eca3cL)
   public static void FUN_800eca3c() {
     _800c86fc.setu(0x1L);
-    struct258_800c66a8.deref()._24.setPointer(addToLinkedListTail(0x1800L));
+    struct258_800c66a8.deref()._24.setPointer(mallocTail(0x1800L));
 
     //LAB_800eca94
     for(int i = 0; i < 64; i++) {
@@ -10715,7 +10715,7 @@ public class WMap {
     final SVECTOR sp0x78 = new SVECTOR().set((short) 2, (short) 2, (short)0);
     final SVECTOR sp0x80 = new SVECTOR();
 
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
@@ -10860,7 +10860,7 @@ public class WMap {
                         MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get());
                         MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get());
                         MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get());
-                        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x22cL, packet);
+                        queueGpuPacket(tags_1f8003d0.getPointer() + 0x22cL, packet);
                       }
                     }
                   }
@@ -10876,7 +10876,7 @@ public class WMap {
     }
 
     //LAB_800ed93c
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
   }
 
   @Method(0x800ed95cL)
@@ -10976,7 +10976,7 @@ public class WMap {
     }
 
     //LAB_800edc84
-    long packetAddr = linkedListAddress_1f8003d8.get();
+    long packetAddr = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800edca8
     for(int i = 0; i < _800c86cc.get(); i++) {
@@ -11176,7 +11176,7 @@ public class WMap {
                                 v1 = (int)struct._50.get() / 0x40L;
                                 MEMORY.ref(1, packetAddr).offset(0x25L).setu(_800f65d4.offset(v1 * 0x2L).offset(0x1L).get() + 0x1fL);
 
-                                insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x190L + sp84 * 0x4L, packetAddr);
+                                queueGpuPacket(tags_1f8003d0.getPointer() + 0x190L + sp84 * 0x4L, packetAddr);
 
                                 struct._50.incr();
 
@@ -11206,7 +11206,7 @@ public class WMap {
     }
 
     //LAB_800eed1c
-    linkedListAddress_1f8003d8.setu(packetAddr);
+    gpuPacketAddr_1f8003d8.setu(packetAddr);
 
     //LAB_800eed28
   }
@@ -11215,7 +11215,7 @@ public class WMap {
   public static void FUN_800eed3c() {
     if(_800c86fc.get() != 0) {
       _800c86fc.setu(0);
-      removeFromLinkedList(struct258_800c66a8.deref()._24.getPointer());
+      free(struct258_800c66a8.deref()._24.getPointer());
     }
   }
 
@@ -11223,13 +11223,13 @@ public class WMap {
   public static void FUN_800eed90() {
     if(_800c86fc.get() != 0) {
       _800c86fc.setu(0);
-      removeFromLinkedList(struct258_800c66a8.deref()._24.getPointer());
+      free(struct258_800c66a8.deref()._24.getPointer());
     }
   }
 
   @Method(0x800eede4L)
   public static void FUN_800eede4() {
-    removeFromLinkedList(_800c86f8.getPointer());
+    free(_800c86f8.getPointer());
     _800f65bc.get((int)_800f6598.get()).deref().run();
   }
 }
