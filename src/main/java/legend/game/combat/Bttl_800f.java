@@ -2547,7 +2547,11 @@ public final class Bttl_800f {
     //LAB_800f5c64
   }
 
-  /** TODO use item menu */
+  /** Draws most elements associated with item and dragoon magic menus.
+   * This includes:
+   *   - Item and Dragoon magic backgrounds, scroll arrows, and text
+   *   - Item and Dragoon magic description background and text
+   *   - Dragoon magic MP cost background and normal text (excluding the number value) */
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
     final BttlStructa4 structa4 = _800c6b60.deref();
@@ -3835,7 +3839,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8dfcL)
-  public static void drawUITextureElement(final long x, final long y, final long u, final long v, final long w, final long h, final long a6, final long a7, final long a8) {
+  public static void drawUiTextureElement(final long x, final long y, final long u, final long v, final long w, final long h, final long a6, final long a7, final long a8) {
     final long t3 = _800c71ec.getAddress();
 
     final byte[] sp0x20 = {

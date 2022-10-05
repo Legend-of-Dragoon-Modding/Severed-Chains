@@ -251,7 +251,7 @@ import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f83c8;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.getTargetEnemyElement;
-import static legend.game.combat.Bttl_800f.drawUITextureElement;
+import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
 import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.SBtld.enemyNames_80112068;
@@ -6318,8 +6318,7 @@ public final class Bttl_800e {
               }
 
               // Numbers
-              //TODO Need to verify these methods for font colour
-              drawUITextureElement(
+              drawUiTextureElement(
                       displayStats.x_00.get() + struct.x_02.get() - centreScreenX_1f8003dc.get(),
                       displayStats.y_02.get() + struct.y_04.get() - centreScreenY_1f8003de.get(),
                       struct.u_06.get(),
@@ -6340,10 +6339,10 @@ public final class Bttl_800e {
           s0 = _800fb444.offset(data.charIndex_272.get() * 0x4L).get();
 
           // Names
-          drawUITextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() + 1, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 25, MEMORY.ref(1, s0).offset(0x0L).get(), MEMORY.ref(1, s0).offset(0x1L).get(), MEMORY.ref(1, s0).offset(0x2L).get(), MEMORY.ref(1, s0).offset(0x3L).get(), 0x2cL, spec, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() + 1, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 25, MEMORY.ref(1, s0).offset(0x0L).get(), MEMORY.ref(1, s0).offset(0x1L).get(), MEMORY.ref(1, s0).offset(0x2L).get(), MEMORY.ref(1, s0).offset(0x3L).get(), 0x2cL, spec, s7._14.get(2).get());
 
           // Portraits
-          drawUITextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() - 44, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 22, MEMORY.ref(1, s0).offset(0x4L).get(), MEMORY.ref(1, s0).offset(0x5L).get(), MEMORY.ref(1, s0).offset(0x6L).get(), MEMORY.ref(1, s0).offset(0x7L).get(), MEMORY.ref(1, s0).offset(0x8L).get(), s5, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() - 44, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 22, MEMORY.ref(1, s0).offset(0x4L).get(), MEMORY.ref(1, s0).offset(0x5L).get(), MEMORY.ref(1, s0).offset(0x6L).get(), MEMORY.ref(1, s0).offset(0x7L).get(), MEMORY.ref(1, s0).offset(0x8L).get(), s5, s7._14.get(2).get());
 
           if(spec != 0) {
             final long v1_0 = (6 - s7._14.get(2).get()) * 8 + 100;
@@ -6425,9 +6424,8 @@ public final class Bttl_800e {
             v1 = sp0x78.offset(s0).getAddress();
 
             // HP: /  MP: /  SP:
-
             //LAB_800f0610
-            drawUITextureElement(
+            drawUiTextureElement(
               MEMORY.ref(2, v1).offset(0x0L).get() + displayStats.x_00.get() - centreScreenX_1f8003dc.get(),
               MEMORY.ref(2, v1).offset(0x2L).get() + displayStats.y_02.get() - centreScreenY_1f8003de.get(),
               MEMORY.ref(1, v1).offset(0x4L).get(),
@@ -6500,7 +6498,7 @@ public final class Bttl_800e {
               queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, s0);
             }
 
-            // SP border
+            //SP border
             //LAB_800f0910
             for(int i = 0; i < 4; i++) {
               final long offsetX = displayStats.x_00.get() - centreScreenX_1f8003dc.get();
@@ -6508,7 +6506,7 @@ public final class Bttl_800e {
               drawLine(_800fb46c.get(i * 4).get() + offsetX, _800fb46c.get(i * 4 + 1).get() + offsetY, _800fb46c.get(i * 4 + 2).get() + offsetX, _800fb46c.get(i * 4 + 3).get() + offsetY, 0x60L, 0x60L, 0x60L, false);
             }
 
-            // Full SP meter
+            //Full SP meter
             if((s7.flags_06.get() & 0x8) != 0) {
               //LAB_800f09ec
               for(int i = 0; i < 4; i++) {
