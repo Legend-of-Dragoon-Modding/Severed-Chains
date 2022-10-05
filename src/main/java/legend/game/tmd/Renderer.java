@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -196,7 +196,7 @@ public class Renderer {
 
     final int packetLength = (gp0CommandCount + 1) * 4;
 
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     final Polygon poly = new Polygon(vertexCount);
     long readIndex = primitives;
@@ -325,12 +325,12 @@ public class Renderer {
       }
     }
 
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return readIndex;
   }
 
   private static long renderPrimitive3000(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     for(int i = 0; i < count; i++) {
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x0aL).get());
@@ -400,12 +400,12 @@ public class Renderer {
     }
 
     //LAB_800db128
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3004(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dbb60
     for(int i = 0; i < count; i++) {
@@ -483,7 +483,7 @@ public class Renderer {
     }
 
     //LAB_800dbdc8
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
@@ -493,7 +493,7 @@ public class Renderer {
   }
 
   private static long renderPrimitive3204(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dd530
     for(int i = 0; i < count; i++) {
@@ -576,12 +576,12 @@ public class Renderer {
     }
 
     //LAB_800dd7e4
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive34(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     CPU.MTC2(0x80_8080L, 6); // RGBC
 
@@ -655,12 +655,12 @@ public class Renderer {
     }
 
     //LAB_800db770
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive35(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800caa18
     for(int i = 0; i < count; i++) {
@@ -728,12 +728,12 @@ public class Renderer {
     }
 
     //LAB_800cac94
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive36(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     CPU.MTC2(0x80_8080L, 6); // RGBC
 
@@ -809,12 +809,12 @@ public class Renderer {
     }
 
     //LAB_800dca70
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive37(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800ddbd4
     for(int i = 0; i < count; i++) {
@@ -884,12 +884,12 @@ public class Renderer {
     }
 
     //LAB_800dde54
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3800(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dabc4
     for(int i = 0; i < count; i++) {
@@ -973,12 +973,12 @@ public class Renderer {
     }
 
     //LAB_800dae98
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3804(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800db7d8
     for(int i = 0; i < count; i++) {
@@ -1065,12 +1065,12 @@ public class Renderer {
     }
 
     //LAB_800dbaf4
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3a00(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dcad8
     for(int i = 0; i < count; i++) {
@@ -1160,12 +1160,12 @@ public class Renderer {
     }
 
     //LAB_800dce04
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3a04(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dd14c
     for(int i = 0; i < count; i++) {
@@ -1258,12 +1258,12 @@ public class Renderer {
     }
 
     //LAB_800dd4bc
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     CPU.MTC2(0x80_8080L, 6); // RGBC
 
@@ -1353,12 +1353,12 @@ public class Renderer {
     }
 
     //LAB_800db4a0
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3d(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long length) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dbe2c
     for(int i = 0; i < length; i++) {
@@ -1437,12 +1437,12 @@ public class Renderer {
     }
 
     //LAB_800dc148
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3e(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     CPU.MTC2(0x80_8080L, 6); // RGBC
 
@@ -1533,12 +1533,12 @@ public class Renderer {
     }
 
     //LAB_800dc7a0
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   private static long renderPrimitive3f(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    long packet = linkedListAddress_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800dd84c
     for(int i = 0; i < count; i++) {
@@ -1623,7 +1623,7 @@ public class Renderer {
     }
 
     //LAB_800ddb70
-    linkedListAddress_1f8003d8.setu(packet);
+    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 }

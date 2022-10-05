@@ -29,8 +29,8 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.playSound;
@@ -166,8 +166,8 @@ public final class Bttl_800f {
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
-      final long s0 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x28L);
+      final long s0 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x28L);
       setGp0_2c(s0);
       gpuLinkedListSetCommandTransparency(s0, false);
       MEMORY.ref(1, s0).offset(0x6L).setu(0x80L);
@@ -218,7 +218,7 @@ public final class Bttl_800f {
       MEMORY.ref(1, s0).offset(0x25L).setu(v1);
       MEMORY.ref(1, s0).offset(0x1dL).setu(v1);
       MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 704, 256));
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(31).getAddress(), s0);
+      queueGpuPacket(tags_1f8003d0.deref().get(31).getAddress(), s0);
     }
   }
 
@@ -237,8 +237,8 @@ public final class Bttl_800f {
     }
 
     //LAB_800f1340
-    long s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x24L);
+    long s0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x24L);
     setGp0_38(s0);
     gpuLinkedListSetCommandTransparency(s0, true);
 
@@ -279,9 +279,9 @@ public final class Bttl_800f {
     MEMORY.ref(1, s0).offset(0xeL).setu(v0);
     FUN_800f0f5c(s0);
 
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, s0);
-    s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x24L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, s0);
+    s0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x24L);
     setGp0_38(s0);
     gpuLinkedListSetCommandTransparency(s0, true);
 
@@ -314,13 +314,13 @@ public final class Bttl_800f {
     MEMORY.ref(2, s0).offset(0x22L).setu(s4);
     MEMORY.ref(2, s0).offset(0x1aL).setu(s4);
 
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, s0);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, s0);
 
-    final long a1_0 = linkedListAddress_1f8003d8.get();
+    final long a1_0 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, a1_0).offset(0x3L).setu(0x1L);
     MEMORY.ref(4, a1_0).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() | 0xbL) & 0x9ffL);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, a1_0);
-    linkedListAddress_1f8003d8.addu(0x8L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, a1_0);
+    gpuPacketAddr_1f8003d8.addu(0x8L);
   }
 
   @Method(0x800f1550L)
@@ -947,8 +947,8 @@ public final class Bttl_800f {
     } else if(attacker.additionHits_56.get() > 0) {
       //LAB_800f2b94
       int additionMultiplier = 0;
-      for(int i = 0; i < ((attacker.additionHits_56.get() - 1)) + 1; i++) {
-        additionMultiplier = additionMultiplier + getHitMultiplier(attacker.charSlot_276.get(), i, 0x4L);
+      for(int i = 0; i < attacker.additionHits_56.get(); i++) {
+        additionMultiplier += getHitMultiplier(attacker.charSlot_276.get(), i, 0x4L);
       }
 
       //LAB_800f2bb4
@@ -1525,10 +1525,10 @@ public final class Bttl_800f {
             if((digit._00.get() & 0x8000) != 0) {
               //LAB_800f3ec0
               for(int s3 = 1; s3 < 3; s3++) {
-                final long packet = linkedListAddress_1f8003d8.get();
+                final long packet = gpuPacketAddr_1f8003d8.get();
                 setGp0_2c(packet); // Textured quad, opaque, texture blending
                 gpuLinkedListSetCommandTransparency(packet, translucent); // Enable translucency?
-                linkedListAddress_1f8003d8.addu(0x28L);
+                gpuPacketAddr_1f8003d8.addu(0x28L);
 
                 MEMORY.ref(1, packet).offset(0x4L).setu(r); // R
                 MEMORY.ref(1, packet).offset(0x5L).setu(g); // G
@@ -1588,7 +1588,7 @@ public final class Bttl_800f {
                 MEMORY.ref(2, packet).offset(0xeL).setu(a2); // CLUT
                 final int tpage = GetTPage(TexPageBpp.BITS_4, TexPageTrans.of(s3), 704, 496);
                 MEMORY.ref(2, packet).offset(0x16L).setu(tpage); // TPAGE
-                insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x1cL, packet);
+                queueGpuPacket(tags_1f8003d0.getPointer() + 0x1cL, packet);
 
                 if((num.state_00.get() & 97) == 0) {
                   //LAB_800f4118
@@ -3005,7 +3005,6 @@ public final class Bttl_800f {
       sp0x30[i] = MEMORY.ref(2, t7).offset(i * 0x2L).get();
     }
 
-    // TODO: This is where the list of CLUT IDs for dragoon icons is gotten
     t7 = v0 + 0x71d0L;
     final long[] sp0x48 = new long[10];
     for(int i = 0; i < 10; i++) {
@@ -3134,8 +3133,8 @@ public final class Bttl_800f {
   public static void FUN_800f7210(final long x, final long y, final long[] a2, final long a3, final long a4, @Nullable TexPageTrans transparencyMode, final long colour) {
     long v0;
     long v1;
-    final long s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x28L);
+    final long s0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x28L);
     setGp0_2c(s0);
     if(transparencyMode == null) {
       gpuLinkedListSetCommandTransparency(s0, false);
@@ -3246,14 +3245,14 @@ public final class Bttl_800f {
     v1 = v1 | v0;
     MEMORY.ref(2, s0).offset(0xeL).setu(v1);
     MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, transparencyMode, 704, 256));
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + a3 * 0x4L, s0);
+    queueGpuPacket(tags_1f8003d0.getPointer() + a3 * 0x4L, s0);
   }
 
   /** Background of battle menu icons */
   @Method(0x800f74f4L)
   public static void FUN_800f74f4(final long a0, final long x, final long y, final long w, final long h, final long a5, @Nullable TexPageTrans transMode, final long a7) {
-    final long s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x28L);
+    final long s0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x28L);
     setGp0_2c(s0);
 
     if(transMode == null) {
@@ -3815,8 +3814,8 @@ public final class Bttl_800f {
 
   @Method(0x800f8cd8L)
   public static void FUN_800f8cd8(final long x, final long y, final long u, final long v, final long w, final long h, final long a6, @Nullable TexPageTrans transMode) {
-    final long v0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x28L);
+    final long v0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x28L);
     setGp0_2c(v0);
 
     if(transMode == null) {
@@ -3845,8 +3844,8 @@ public final class Bttl_800f {
       (byte)MEMORY.ref(1, t3).offset(0x2L).getSigned(),
     };
 
-    final long s0 = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x28L);
+    final long s0 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x28L);
     setGp0_2c(s0);
     gpuLinkedListSetCommandTransparency(s0, false);
 
@@ -3914,7 +3913,7 @@ public final class Bttl_800f {
     v1 = v1 | v0;
     MEMORY.ref(2, a0).offset(0xeL).setu(v1);
     MEMORY.ref(2, a0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, transparencyMode, 704, 496));
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, a0);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, a0);
   }
 
   @Method(0x800f923cL)
@@ -4347,7 +4346,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9ee8L)
   public static void drawLine(final long x1, final long y1, final long x2, final long y2, final long r, final long g, final long b, final boolean transparent) {
-    final long s0 = linkedListAddress_1f8003d8.get();
+    final long s0 = gpuPacketAddr_1f8003d8.get();
     setGp0_50(s0);
     gpuLinkedListSetCommandTransparency(s0, transparent);
     MEMORY.ref(1, s0).offset(0x4L).setu(r);
@@ -4360,14 +4359,14 @@ public final class Bttl_800f {
     MEMORY.ref(1, s0).offset(0xeL).setu(b);
     MEMORY.ref(2, s0).offset(0x10L).setu(x2);
     MEMORY.ref(2, s0).offset(0x12L).setu(y2);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, s0);
-    linkedListAddress_1f8003d8.addu(0x14L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, s0);
+    gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    final long a1_0 = linkedListAddress_1f8003d8.get();
+    final long a1_0 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, a1_0).offset(0x3L).setu(0x1L);
     MEMORY.ref(4, a1_0).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get((transparent ? TexPageTrans.B_PLUS_F : TexPageTrans.HALF_B_PLUS_HALF_F)).get(TexPageY.Y_256).get() | 0xbL) & 0x9ffL);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, a1_0);
-    linkedListAddress_1f8003d8.addu(0x8L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, a1_0);
+    gpuPacketAddr_1f8003d8.addu(0x8L);
   }
 
   @Method(0x800fa018L)

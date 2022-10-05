@@ -256,13 +256,13 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef mpPerPhysicalHit_12c;
   public final ShortRef itemSpPerMagicalHit_12e;
   public final ShortRef mpPerMagicalHit_130;
-  public final ShortRef hpRegen_132;
-  public final ShortRef mpRegen_134;
-  public final ShortRef spRegen_136;
-  public final UnsignedShortRef revive_138;
-  public final UnsignedShortRef _13a;
-  public final UnsignedShortRef _13c;
-  public final UnsignedShortRef _13e;
+  public final ShortRef _132;
+  public final ShortRef hpRegen_134;
+  public final ShortRef mpRegen_136;
+  public final ShortRef spRegen_138;
+  public final UnsignedShortRef revive_13a;
+  public final UnsignedShortRef hpMulti_13c;
+  public final UnsignedShortRef mpMulti_13e;
 
   public final UnsignedShortRef _142;
   public final Pointer<CombatantStruct1a8> combatant_144;
@@ -444,13 +444,13 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.mpPerPhysicalHit_12c = ref.offset(2, 0x12cL).cast(ShortRef::new);
     this.itemSpPerMagicalHit_12e = ref.offset(2, 0x12eL).cast(ShortRef::new);
     this.mpPerMagicalHit_130 = ref.offset(2, 0x130L).cast(ShortRef::new);
-    this.hpRegen_132 = ref.offset(2, 0x132L).cast(ShortRef::new);
-    this.mpRegen_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
-    this.spRegen_136 = ref.offset(2, 0x136L).cast(ShortRef::new);
-    this.revive_138 = ref.offset(2, 0x138L).cast(UnsignedShortRef::new);
-    this._13a = ref.offset(2, 0x13aL).cast(UnsignedShortRef::new);
-    this._13c = ref.offset(2, 0x13cL).cast(UnsignedShortRef::new);
-    this._13e = ref.offset(2, 0x13eL).cast(UnsignedShortRef::new);
+    this._132 = ref.offset(2, 0x132L).cast(ShortRef::new);
+    this.hpRegen_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
+    this.mpRegen_136 = ref.offset(2, 0x136L).cast(ShortRef::new);
+    this.spRegen_138 = ref.offset(2, 0x138L).cast(ShortRef::new);
+    this.revive_13a = ref.offset(2, 0x13aL).cast(UnsignedShortRef::new);
+    this.hpMulti_13c = ref.offset(2, 0x13cL).cast(UnsignedShortRef::new);
+    this.mpMulti_13e = ref.offset(2, 0x13eL).cast(UnsignedShortRef::new);
 
     this._142 = ref.offset(2, 0x142L).cast(UnsignedShortRef::new);
     this.combatant_144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, CombatantStruct1a8::new));

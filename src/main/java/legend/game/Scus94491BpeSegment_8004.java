@@ -318,7 +318,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.SMap#_800c6778}</li>
    *   <li>{@link legend.game.SMap#_800c676c}</li>
    *   <li>{@link legend.game.SMap#_800c6770}</li>
-   *   <li>{@link Bttl_800c#_800fa6dc}</li>
+   *   <li>{@link Bttl_800c#mcqColour_800fa6dc}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_15c}</li>
@@ -334,7 +334,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb02c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb058}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8005#_8005a368}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8007#_8007a3b4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8007#shopId_8007a3b4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1a4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad8c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398}</li>

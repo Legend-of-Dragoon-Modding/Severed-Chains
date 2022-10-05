@@ -121,12 +121,9 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
-  public static final Value _800546b4 = MEMORY.ref(4, 0x800546b4L);
-
   public static final Value _800546bc = MEMORY.ref(1, 0x800546bcL);
   public static final Value _800546bd = MEMORY.ref(1, 0x800546bdL);
   public static final Value gpu_debug = MEMORY.ref(1, 0x800546beL);
-  public static final Value gpuReverseFlag_800546bf = MEMORY.ref(1, 0x800546bfL);
 
   /**
    * Max RECT width?
@@ -136,8 +133,6 @@ public final class Scus94491BpeSegment_8005 {
    * Max RECT height?
    */
   public static final Value _800546c2 = MEMORY.ref(2, 0x800546c2L);
-  public static final Value _800546c4 = MEMORY.ref(4, 0x800546c4L);
-  public static final Value drawSyncCallback_800546c8 = MEMORY.ref(4, 0x800546c8L);
 
   public static final DRAWENV DRAWENV_800546cc = MEMORY.ref(4, 0x800546ccL, DRAWENV::new);
   public static final DISPENV DISPENV_80054728 = MEMORY.ref(4, 0x80054728L, DISPENV::new);
@@ -154,20 +149,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _800547bb = MEMORY.ref(1, 0x800547bbL);
 
-  /**
-   * Current index in the GPU queue
-   */
-  public static final Value gpuQueueIndex_800547e4 = MEMORY.ref(4, 0x800547e4L);
-  /**
-   * Total entries currently in the GPU queue
-   */
-  public static final Value gpuQueueTotal_800547e8 = MEMORY.ref(4, 0x800547e8L);
-  public static final Value oldIMask_800547ec = MEMORY.ref(4, 0x800547ecL);
-  public static final Value oldIMask_800547f0 = MEMORY.ref(4, 0x800547f0L);
-
   public static final Value _800547f4 = MEMORY.ref(4, 0x800547f4L);
-  public static final Value _800547f8 = MEMORY.ref(4, 0x800547f8L);
-  public static final Value _800547fc = MEMORY.ref(4, 0x800547fcL);
 
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
 
@@ -200,8 +182,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005a1ea = MEMORY.ref(2, 0x8005a1eaL);
 
-  public static final Value linkedListHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
-  public static final Value linkedListTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
+  public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
+  public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   /**
    * 12-byte struct, repeats 16 times? May start 4 bytes earlier
    */

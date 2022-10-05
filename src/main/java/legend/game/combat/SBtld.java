@@ -42,7 +42,7 @@ import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
-import static legend.game.combat.Bttl_800c._800c6698;
+import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c._800c66d8;
@@ -277,8 +277,8 @@ public class SBtld {
     getCombatant((int)index).filePtr_10.set(script.getAddress());
     _8005e398_SCRIPT_SIZES.remove((int)index);
     _8005e398_SCRIPT_SIZES.put((int)index, new Tuple<>("S_BTLD Script %d".formatted(index), (int)fileSize));
-    _800c66d8.offset(_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
-    _800c6698.addu(0x1L);
+    _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
+    uniqueMonsterCount_800c6698.add(1);
     FUN_80012bb4();
   }
 

@@ -12,7 +12,8 @@ public class WMapStruct0c implements MemoryRef {
 
   public final Pointer<LodString> name_00;
   public final UnsignedByteRef _04;
-  public final UnsignedByteRef _05;
+  /** Things a place offers like inn, shops, etc. */
+  public final UnsignedByteRef services_05;
   public final ArrayRef<ByteRef> _06;
 
   public WMapStruct0c(final Value ref) {
@@ -20,7 +21,7 @@ public class WMapStruct0c implements MemoryRef {
 
     this.name_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, LodString::new));
     this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
+    this.services_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
     this._06 = ref.offset(1, 0x06L).cast(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
   }
 

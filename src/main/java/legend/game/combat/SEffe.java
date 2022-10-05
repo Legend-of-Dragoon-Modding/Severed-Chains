@@ -88,19 +88,19 @@ import static legend.game.Scus94491BpeSegment.FUN_80018dec;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
-import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
-import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.mallocHead;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setScriptRenderer;
@@ -1063,7 +1063,7 @@ public final class SEffe {
   @Method(0x800fce10L)
   public static void FUN_800fce10(final EffectManagerData6c a0, final long a1) {
     if((int)MEMORY.ref(4, a1).offset(0x0L).get() >= 0) {
-      final long packet = linkedListAddress_1f8003d8.get();
+      final long packet = gpuPacketAddr_1f8003d8.get();
       MEMORY.ref(1, packet).offset(0x03L).setu(0x4L);
       MEMORY.ref(4, packet).offset(0x04L).setu(0x5242_4140L);
       MEMORY.ref(2, packet).offset(0x08L).setu(MEMORY.ref(2, a1).offset(0x08L).get());
@@ -1073,8 +1073,8 @@ public final class SEffe {
       MEMORY.ref(1, packet).offset(0x0eL).setu(MEMORY.ref(1, a1).offset(0x46L).get());
       MEMORY.ref(2, packet).offset(0x10L).setu(MEMORY.ref(2, a1).offset(0x0cL).get());
       MEMORY.ref(2, packet).offset(0x12L).setu(MEMORY.ref(2, a1).offset(0x14L).get());
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22.get()) / 4 * 4, packet);
-      linkedListAddress_1f8003d8.addu(0x14L);
+      queueGpuPacket(tags_1f8003d0.getPointer() + (MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22.get()) / 4 * 4, packet);
+      gpuPacketAddr_1f8003d8.addu(0x14L);
     }
 
     //LAB_800fcf08
@@ -1424,9 +1424,9 @@ public final class SEffe {
             }
 
             //LAB_800fdcc8
-            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
-            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s3 + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
-            linkedListAddress_1f8003d8.addu(0xcL);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+            queueGpuPacket(tags_1f8003d0.getPointer() + (s3 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
+            gpuPacketAddr_1f8003d8.addu(0xcL);
           }
         }
 
@@ -1463,8 +1463,8 @@ public final class SEffe {
 
         final VECTOR sp0x20 = new VECTOR();
         FUN_800fd1dc(data, s2, s4, sp0x20);
-        final long s0 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(s0);
+        final long s0 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(s0);
         MEMORY.ref(1, s0).offset(0x3L).setu(0x2L);
         MEMORY.ref(4, s0).offset(0x4L).setu(0x6880_8080L);
         MEMORY.ref(1, s0).offset(0x7L).oru(data._10._00.get() >>> 29 & 0x2L);
@@ -1485,11 +1485,11 @@ public final class SEffe {
           //LAB_800fdf44
           MEMORY.ref(2, s0).offset(0x8L).setu(sp0x60.get());
           MEMORY.ref(2, s0).offset(0xaL).setu(sp0x64.get());
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, s0);
+          queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, s0);
 
-          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, linkedListAddress_1f8003d8.get());
-          linkedListAddress_1f8003d8.addu(0xcL);
+          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+          queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
+          gpuPacketAddr_1f8003d8.addu(0xcL);
         }
       }
 
@@ -1575,8 +1575,8 @@ public final class SEffe {
         //LAB_800fe300
         final VECTOR sp0x18 = new VECTOR().set(sp54._50);
 
-        s3 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x28L);
+        s3 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x28L);
         MEMORY.ref(1, s3).offset(0x3L).setu(0x9L);
         MEMORY.ref(4, s3).offset(0x4L).setu(0x2c80_8080L);
         v0 = data._10._00.get();
@@ -1670,7 +1670,7 @@ public final class SEffe {
           a0 = (int)a0 >> 2;
           a0 = a0 << 2;
           a0 = tags_1f8003d0.getPointer() + a0;
-          insertElementIntoLinkedList(a0, s3);
+          queueGpuPacket(a0, s3);
         }
 
         //LAB_800fe564
@@ -1694,9 +1694,9 @@ public final class SEffe {
           while((int)s4 < (int)s6) {
             a2 = s3;
             a1 = 0x9L;
-            s0 = linkedListAddress_1f8003d8.get();
+            s0 = gpuPacketAddr_1f8003d8.get();
             a0 = s0;
-            linkedListAddress_1f8003d8.addu(0x28L);
+            gpuPacketAddr_1f8003d8.addu(0x28L);
 
             //LAB_800fe644
             do {
@@ -1735,7 +1735,7 @@ public final class SEffe {
               }
 
               //LAB_800fe78c
-              insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (s5 + a0) / 0x4L * 0x4L, s0);
+              queueGpuPacket(tags_1f8003d0.getPointer() + (s5 + a0) / 0x4L * 0x4L, s0);
             }
 
             //LAB_800fe7a8
@@ -1804,7 +1804,7 @@ public final class SEffe {
         case 2, 4, 5 -> {
           //LAB_800fe960
           for(int i = 0; i < s2._50.get(); i++) {
-            removeFromLinkedList(s2._68.deref().get(i)._44.getPointer());
+            free(s2._68.deref().get(i)._44.getPointer());
           }
         }
 
@@ -1812,7 +1812,7 @@ public final class SEffe {
           if((s2._24.get() & 0x6000_0000L) != 0) {
             //LAB_800fe9b4
             for(int i = 0; i < s2._50.get(); i++) {
-              removeFromLinkedList(s2._68.deref().get(i)._80.get());
+              free(s2._68.deref().get(i)._80.get());
             }
           }
         }
@@ -1821,7 +1821,7 @@ public final class SEffe {
           if((s2._24.get() & 0x6000_0000L) != 0) {
             //LAB_800fea08
             for(int i = 0; i < s2._50.get(); i++) {
-              removeFromLinkedList(s2._68.deref().get(i)._44.getPointer());
+              free(s2._68.deref().get(i)._44.getPointer());
             }
           }
         }
@@ -1830,7 +1830,7 @@ public final class SEffe {
 
     //LAB_800fea30
     //LAB_800fea3c
-    removeFromLinkedList(s2._68.getPointer());
+    free(s2._68.getPointer());
     FUN_80102534();
   }
 
@@ -2407,8 +2407,8 @@ public final class SEffe {
 
       if(v1 == 0) {
         //LAB_801011a0
-        final long s1 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x28L);
+        final long s1 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x28L);
         MEMORY.ref(1, s1).offset(0x3L).setu(0x9L);
         MEMORY.ref(4, s1).offset(0x4L).setu(0x2c80_8080L);
         long s0 = a3._80.get();
@@ -2608,7 +2608,7 @@ public final class SEffe {
     //LAB_80101cb0
     for(int s3 = 0; s3 < a0._50.get(); s3++) {
       final BttlScriptData6cSub98Sub94 s2 = a0._68.deref().get(s3);
-      s2._44.setPointer(addToLinkedListHead(a0._54.get() * 0x8L));
+      s2._44.setPointer(mallocHead(a0._54.get() * 0x8L));
 
       //LAB_80101cdc
       for(int s1 = 0; s1 < a0._54.get(); s1++) {
@@ -2643,7 +2643,7 @@ public final class SEffe {
 
       //LAB_80101e3c
       for(int i = 0; i < a0._50.get(); i++) {
-        a0._68.deref().get(i)._44.setPointer(addToLinkedListHead(a0._54.get() * 8));
+        a0._68.deref().get(i)._44.setPointer(mallocHead(a0._54.get() * 8));
       }
     }
 
@@ -2662,11 +2662,11 @@ public final class SEffe {
       //LAB_80101f2c
       for(int i = 0; i < a0._50.get(); i++) {
         final BttlScriptData6cSub98Sub94 s2 = a0._68.deref().get(i);
-        final long v1 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x28L);
+        final long v1 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x28L);
         MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
         MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
-        s2._80.set(addToLinkedListHead(a0._54.get() * 0x10L));
+        s2._80.set(mallocHead(a0._54.get() * 0x10L));
       }
     }
 
@@ -2702,7 +2702,7 @@ public final class SEffe {
     final EffectManagerData6c s3 = scriptStatePtrArr_800bc1c0.get(s6).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub98 s1 = s3._44.derefAs(BttlScriptData6cSub98.class);
     s1._50.set(s2.params_20.get(3).deref().get());
-    s1._68.setPointer(addToLinkedListHead(s0));
+    s1._68.setPointer(mallocHead(s0));
 
     if(_8011a00c.isNull()) {
       _8011a00c.set(s1);
@@ -2826,18 +2826,18 @@ public final class SEffe {
 
     //LAB_80102550
     while(s0 != null) {
-      final long s1 = addToLinkedListHead(s0.size_64.get());
+      final long s1 = mallocHead(s0.size_64.get());
 
       if(s1 != 0) {
         final long a1 = s0._68.getPointer();
 
         if(s1 < a1) {
           memcpy(s1, a1, (int)s0.size_64.get());
-          removeFromLinkedList(s0._68.getPointer());
+          free(s0._68.getPointer());
           s0._68.setPointer(s1);
         } else {
           //LAB_801025a4
-          removeFromLinkedList(s1);
+          free(s1);
         }
       }
 
@@ -2998,8 +2998,8 @@ public final class SEffe {
    */
   @Method(0x80102f7cL)
   public static void FUN_80102f7c(final SVECTOR a0, final SVECTOR a1, final DVECTOR[] xy, final int a3, final int a4) {
-    final long addr = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x24L);
+    final long addr = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x24L);
     MEMORY.ref(1, addr).offset(0x03L).setu(0x8L);
     MEMORY.ref(1, addr).offset(0x04L).setu(0); // R0
     MEMORY.ref(1, addr).offset(0x05L).setu(0); // G0
@@ -3022,7 +3022,7 @@ public final class SEffe {
     MEMORY.ref(2, addr).offset(0x1aL).setu(xy[2].getY()); // Y2
     MEMORY.ref(2, addr).offset(0x20L).setu(xy[3].getX()); // X3
     MEMORY.ref(2, addr).offset(0x22L).setu(xy[3].getY()); // Y3
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a3 + a4) / 4 * 4, addr);
+    queueGpuPacket(tags_1f8003d0.getPointer() + (a3 + a4) / 4 * 4, addr);
   }
 
   @Method(0x801030d8L)
@@ -3172,8 +3172,8 @@ public final class SEffe {
               }
 
               //LAB_80103834
-              a1 = linkedListAddress_1f8003d8.get();
-              linkedListAddress_1f8003d8.addu(0x1cL);
+              a1 = gpuPacketAddr_1f8003d8.get();
+              gpuPacketAddr_1f8003d8.addu(0x1cL);
               MEMORY.ref(1, a1).offset(0x03L).setu(0x6L);
               MEMORY.ref(4, a1).offset(0x04L).setu(0x3080_8080L);
               MEMORY.ref(1, a1).offset(0x04L).setu(spb0 >>> 9);
@@ -3192,7 +3192,7 @@ public final class SEffe {
               MEMORY.ref(1, a1).offset(0x16L).setu(spb0 >>> 9);
               MEMORY.ref(2, a1).offset(0x18L).setu(spa8 >> 8);
               MEMORY.ref(2, a1).offset(0x1aL).setu(spac >> 8);
-              insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (data._10.z_22.get() + sp18) / 4 * 4, a1);
+              queueGpuPacket(tags_1f8003d0.getPointer() + (data._10.z_22.get() + sp18) / 4 * 4, a1);
             }
 
             //LAB_80103994
@@ -3236,7 +3236,7 @@ public final class SEffe {
           }
 
           //LAB_80103ca0
-          SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
+          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
           a1 = data._10.z_22.get();
           a0 = sp18;
           v1 = a1 + a0;
@@ -3246,10 +3246,10 @@ public final class SEffe {
             }
 
             //LAB_80103d24
-            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + (a1 + a0) / 4 * 4, linkedListAddress_1f8003d8.get());
+            queueGpuPacket(tags_1f8003d0.getPointer() + (a1 + a0) / 4 * 4, gpuPacketAddr_1f8003d8.get());
           }
 
-          linkedListAddress_1f8003d8.addu(0xcL);
+          gpuPacketAddr_1f8003d8.addu(0xcL);
         }
       }
     }
@@ -3280,10 +3280,10 @@ public final class SEffe {
     int spc0;
     boolean spb4 = true;
     final BttlScriptData6cSub38 spb8 = manager._44.derefAs(BttlScriptData6cSub38.class);
-    final long spbc = addToLinkedListTail(spb8._28.get() * 0x8L);
+    final long spbc = mallocTail(spb8._28.get() * 0x8L);
 
     if(spb8._04.get() + 1 == spb8._0c.get()) {
-      removeFromLinkedList(spbc);
+      free(spbc);
       return;
     }
 
@@ -3292,7 +3292,7 @@ public final class SEffe {
     //LAB_80103e40
     if(spb8._04.get() == 1) {
       FUN_80102860(manager, spb8);
-      removeFromLinkedList(spbc);
+      free(spbc);
 
       //LAB_80103e8c
       for(int i = 0; i < spb8.count_00.get(); i++) {
@@ -3445,7 +3445,7 @@ public final class SEffe {
             }
 
             //LAB_80104834
-            SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
             a1 = manager._10.z_22.get();
             v1 = a1 + s7.sz3_0c.get();
 
@@ -3455,9 +3455,9 @@ public final class SEffe {
               }
 
               //LAB_801048b8
-              insertElementIntoLinkedList(tags_1f8003d0.getPointer() + a1 + s7.sz3_0c.get() / 4 * 4, linkedListAddress_1f8003d8.get());
+              queueGpuPacket(tags_1f8003d0.getPointer() + a1 + s7.sz3_0c.get() / 4 * 4, gpuPacketAddr_1f8003d8.get());
             }
-            linkedListAddress_1f8003d8.addu(0xcL);
+            gpuPacketAddr_1f8003d8.addu(0xcL);
           }
         }
 
@@ -3465,7 +3465,7 @@ public final class SEffe {
       }
 
       //LAB_8010490c
-      removeFromLinkedList(spbc);
+      free(spbc);
     }
 
     //LAB_8010491c
@@ -3477,11 +3477,11 @@ public final class SEffe {
 
     //LAB_80104984
     for(int i = 0; i < s2.count_00.get(); i++) {
-      removeFromLinkedList(s2._34.deref().get(i).ptr_10.getPointer());
+      free(s2._34.deref().get(i).ptr_10.getPointer());
     }
 
     //LAB_801049ac
-    removeFromLinkedList(s2._34.getPointer());
+    free(s2._34.getPointer());
   }
 
   @Method(0x801049d4L)
@@ -3652,7 +3652,7 @@ public final class SEffe {
     s6._29.set(s0 >>> 24 & 0x20);
     s6._2a.set(0);
     s6.callback_2c.set(_80119ee8.get(s1).deref());
-    s6._34.setPointer(addToLinkedListTail(s6.count_00.get() * 0x14L));
+    s6._34.setPointer(mallocTail(s6.count_00.get() * 0x14L));
 
     if(s6._0c.get() == 0) {
       s6._0c.set(-1);
@@ -3665,7 +3665,7 @@ public final class SEffe {
       struct._00.set(1);
       struct._02.set((short)(seed_800fa754.advance().get() % 4097));
       struct._04.set((short)0, (short)0, (short)0);
-      struct.ptr_10.setPointer(addToLinkedListTail(s6._28.get() * 0x30L));
+      struct.ptr_10.setPointer(mallocTail(s6._28.get() * 0x30L));
       _80119ebc.get(s6._20.get()).deref().run(s7, s6, struct, i);
       FUN_80102bfc(s7, s6, struct);
     }
@@ -3730,7 +3730,7 @@ public final class SEffe {
     }
 
     //LAB_801059c8
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
 
     int a1 = data._08.get();
     final int z = data.z_14.get();
@@ -3742,9 +3742,9 @@ public final class SEffe {
       }
 
       //LAB_80105a4c
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + a1 + z / 4 * 4, linkedListAddress_1f8003d8.get());
+      queueGpuPacket(tags_1f8003d0.getPointer() + a1 + z / 4 * 4, gpuPacketAddr_1f8003d8.get());
     }
-    linkedListAddress_1f8003d8.addu(0xcL);
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x80105aa0L)
@@ -3770,11 +3770,11 @@ public final class SEffe {
   public static void FUN_80105bb8(final int scriptIndex, final ScriptState<BttlScriptData6cSub1c_2> state, final BttlScriptData6cSub1c_2 data) {
     //LAB_80105be8
     for(int i = 0; i < data.count_00.get(); i++) {
-      removeFromLinkedList(data._18.deref().get(i).getPointer());
+      free(data._18.deref().get(i).getPointer());
     }
 
     //LAB_80105c10
-    removeFromLinkedList(data._18.getPointer());
+    free(data._18.getPointer());
   }
 
   @Method(0x80105c38L)
@@ -3797,12 +3797,12 @@ public final class SEffe {
     effect._04.set(s3);
     effect.count_0c.set(s1._28.get());
     effect._10.set(manager._10._00.get());
-    effect._18.setPointer(addToLinkedListTail(effect.count_00.get() * 0x4L));
+    effect._18.setPointer(mallocTail(effect.count_00.get() * 0x4L));
 
     //LAB_80105d64
     for(int s7 = 0; s7 < effect.count_00.get(); s7++) {
       final BttlScriptData6cSub38Sub14 struct14 = s1._34.deref().get(s7);
-      effect._18.deref().get(s7).setPointer(addToLinkedListTail(effect.count_0c.get() * 0x1eL));
+      effect._18.deref().get(s7).setPointer(mallocTail(effect.count_0c.get() * 0x1eL));
 
       //LAB_80105da0
       for(int s4 = 0; s4 < effect.count_0c.get(); s4++) {
@@ -3914,7 +3914,7 @@ public final class SEffe {
     a2._38.set(0);
     a2._39.set(0);
     a2._3a.set((int)a3);
-    a2._40.set(addToLinkedListTail((v0 & 0xffL) * 0x20L));
+    a2._40.set(mallocTail((v0 & 0xffL) * 0x20L));
     s6 = FUN_801061bc(s5.charSlot_276.get(), 0, 0xfL, a3) & 0xffL;
     a2._36.set((int)s6);
 
@@ -3941,7 +3941,7 @@ public final class SEffe {
       MEMORY.ref(2, s7).offset(0x10L).setu(a3_0 - (short)v0 / 2 + 1);
       MEMORY.ref(2, s7).offset(0x12L).setu(a3_0 + v0 - (short)MEMORY.ref(2, s7).offset(0xeL).get() / 2);
 
-      a3_0 = addToLinkedListTail(0xeeL);
+      a3_0 = mallocTail(0xeeL);
       MEMORY.ref(4, s7).offset(0x18L).setu(a3_0);
 
       //LAB_8010652c
@@ -4056,8 +4056,8 @@ public final class SEffe {
           sp0x18[i + 1] = (rsin(MEMORY.ref(2, s4).offset(0x2L).getSigned() + i * 0x400L) * s3 >> 12) + 30L;
         }
 
-        final long addr = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x18L);
+        final long addr = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x18L);
         MEMORY.ref(1, addr).offset(0x3L).setu(0x5L);
         MEMORY.ref(4, addr).offset(0x4L).setu(0x2a80_8080L);
 
@@ -4091,12 +4091,12 @@ public final class SEffe {
         MEMORY.ref(2, addr).offset(0x12L).setu(sp0x18[7]);
         MEMORY.ref(2, addr).offset(0x14L).setu(sp0x18[4]);
         MEMORY.ref(2, addr).offset(0x16L).setu(sp0x18[5]);
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
+        queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, addr);
       }
 
-      SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0xcL);
+      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+      queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0xcL);
     }
 
     //LAB_80106a4c
@@ -4117,8 +4117,8 @@ public final class SEffe {
     final long sp2c = rsin(s2) * s0 >> 12;
     final long colour = MEMORY.ref(2, a0).offset(0x8L).getSigned() * 0x4L;
 
-    final long addr = linkedListAddress_1f8003d8.get();
-    linkedListAddress_1f8003d8.addu(0x24L);
+    final long addr = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x24L);
     MEMORY.ref(1, addr).offset(0x3L).setu(0x8L);
     MEMORY.ref(4, addr).offset(0x4L).setu(0x3a80_8080L);
     MEMORY.ref(1, addr).offset(0x14L).setu(0);
@@ -4141,7 +4141,7 @@ public final class SEffe {
     MEMORY.ref(2, addr).offset(0x1aL).setu(sp24 + 0x1eL);
     MEMORY.ref(2, addr).offset(0x20L).setu(sp28);
     MEMORY.ref(2, addr).offset(0x22L).setu(sp2c + 0x1eL);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, addr);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, addr);
   }
 
   @Method(0x80106cccL)
@@ -4161,8 +4161,8 @@ public final class SEffe {
           //LAB_80106d80
           long s4 = 0;
           for(long s5 = 0; s5 < 4; s5++) {
-            final long s1 = linkedListAddress_1f8003d8.get();
-            linkedListAddress_1f8003d8.addu(0x10L);
+            final long s1 = gpuPacketAddr_1f8003d8.get();
+            gpuPacketAddr_1f8003d8.addu(0x10L);
             MEMORY.ref(1, s1).offset(0x3L).setu(0x3L);
             MEMORY.ref(4, s1).offset(0x4L).setu(0x4080_8080L);
             final long v1 = MEMORY.ref(1, s3).offset(0xbL).get();
@@ -4198,7 +4198,7 @@ public final class SEffe {
             MEMORY.ref(2, s1).offset(0xaL).setu(sp24);
             MEMORY.ref(2, s1).offset(0xcL).setu(sp18);
             MEMORY.ref(2, s1).offset(0xeL).setu(sp1c);
-            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, s1);
+            queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, s1);
             sp20 = sp18;
             sp24 = sp1c;
           }
@@ -4217,13 +4217,13 @@ public final class SEffe {
       s7 = s7 + 0xeL;
     }
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_MINUS_F, 0, 0), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x7cL, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_MINUS_F, 0, 0), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x80107088L)
@@ -4410,7 +4410,7 @@ public final class SEffe {
         //LAB_8010752c
         s2 = s3._40.get();
         for(s0 = 0; s0 < s3._30.get(); s0++) {
-          removeFromLinkedList(MEMORY.ref(4, s2).offset(0x18L).get());
+          free(MEMORY.ref(4, s2).offset(0x18L).get());
           s2 = s2 + 0x20L;
         }
 
@@ -4505,7 +4505,7 @@ public final class SEffe {
 
   @Method(0x80107790L)
   public static void FUN_80107790(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub44.class)._40.get());
+    free(data._44.derefAs(BttlScriptData6cSub44.class)._40.get());
   }
 
   @Method(0x801077bcL)
@@ -5041,7 +5041,7 @@ public final class SEffe {
     //LAB_80108e84
     for(long s3 = 0; s3 < s4.count_00.get(); s3++) {
       if(Math.abs(Math.abs(MEMORY.ref(2, s1).offset(0x4L).getSigned() + MEMORY.ref(2, s1).offset(0x2L).getSigned()) - Math.abs(MEMORY.ref(2, s1).offset(0x8L).getSigned() + MEMORY.ref(2, s1).offset(0x6L).getSigned())) > 180) {
-        final long a1 = linkedListAddress_1f8003d8.get();
+        final long a1 = gpuPacketAddr_1f8003d8.get();
         MEMORY.ref(1, a1).offset(0x03L).setu(0x4L);
         MEMORY.ref(1, a1).offset(0x04L).setu(0);
         MEMORY.ref(1, a1).offset(0x05L).setu(0);
@@ -5054,8 +5054,8 @@ public final class SEffe {
         MEMORY.ref(1, a1).offset(0x0eL).setu(data._10.svec_1c.getZ());
         MEMORY.ref(2, a1).offset(0x10L).setu(MEMORY.ref(2, s1).offset(0x02L).get() - 0x100L);
         MEMORY.ref(2, a1).offset(0x12L).setu(MEMORY.ref(2, s1).offset(0x04L).get() - 0x80L);
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
-        linkedListAddress_1f8003d8.addu(0x14L);
+        queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
+        gpuPacketAddr_1f8003d8.addu(0x14L);
       }
 
       //LAB_80108f6c
@@ -5063,9 +5063,9 @@ public final class SEffe {
     }
 
     //LAB_80108f84
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x80109000L)
@@ -5091,7 +5091,7 @@ public final class SEffe {
 
   @Method(0x8010912cL)
   public static void FUN_8010912c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub08_3.class).ptr_04.get());
+    free(data._44.derefAs(BttlScriptData6cSub08_3.class).ptr_04.get());
   }
 
   @Method(0x80109158L)
@@ -5108,7 +5108,7 @@ public final class SEffe {
 
     final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub08_3 s0 = s1._44.derefAs(BttlScriptData6cSub08_3.class);
-    long t1 = addToLinkedListTail(count * 0xcL);
+    long t1 = mallocTail(count * 0xcL);
     s0.count_00.set(count);
     s0.ptr_04.set(t1);
     s1._10._00.set(0x5000_0000L);
@@ -5127,109 +5127,91 @@ public final class SEffe {
     return 0;
   }
 
-  /** TODO there's no way this method is right */
   @Method(0x80109358L)
   public static void FUN_80109358(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v0;
-    long a1;
-    long s0;
-    long s1;
-    long s2;
-
     final long u = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
     final BttlScriptData6cSub08_2 sp48 = data._44.derefAs(BttlScriptData6cSub08_2.class);
-    final long sp30 = data._10.svec_16.getX() >> 8;
-    final long sp2c = data._10.svec_16.getY() >> 11;
-    final long sp38 = data._10.svec_16.getZ() * 15 >> 9;
+    final int sp30 = data._10.svec_16.getX() >> 8;
+    final int sp2c = data._10.svec_16.getY() >> 11;
+    final int sp38 = data._10.svec_16.getZ() * 15 >> 9;
 
     //LAB_801093f0
-    long s3 = 0x1L;
-    do {
-      final long t1 = sp48._00.get();
-      long sp28 = t1;
-      long sp34 = t1;
-
-      //LAB_80109410
-      long sp40;
-      long s5;
-      if(s3 != 0x1L) {
-        s5 = -0x1L;
-        sp40 = 0x77L;
-      } else {
-        s5 = 0;
-        sp40 = 0x78L;
-      }
+    for(int s3 = 1; s3 >= -1; s3 -= 2) {
+      final int angle = sp48.angle_00.get();
+      int angle1 = angle;
+      int angle2 = angle;
+      int s5 = s3 == 1 ? 0 : -1;
+      int sp40 = s3 == 1 ? 120 : 119;
 
       //LAB_80109430
       //LAB_8010944c
-      while(s3 != 1 && s5 > -sp38 || s5 < sp38) {
-        v0 = (int)(rsin(sp28) * sp2c) >> 12;
-        s2 = v0 + 0x1L + sp2c;
+      while(s3 != 1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
+        int s2 = (rsin(angle1) * sp2c >> 12) + 1 + sp2c;
+
         if(s2 == 0) {
-          s2 = 0x1L;
+          s2 = 1;
         }
 
         //LAB_8010949c
         //LAB_801094b8
         for(int s6 = 0; s6 < s2; s6++) {
-          s1 = (int)(rsin(sp34) * sp30) >> 12;
-          s0 = s5 + s6 * s3;
+          final int x = rsin(angle2) * sp30 >> 12;
+          final int y = s5 + s6 * s3;
 
-          a1 = linkedListAddress_1f8003d8.get();
-          MEMORY.ref(1, a1).offset(0x3L).setu(0x4L);
-          MEMORY.ref(1, a1).offset(0x4L).setu(data._10.svec_1c.getX());
-          MEMORY.ref(1, a1).offset(0x5L).setu(data._10.svec_1c.getY());
-          MEMORY.ref(1, a1).offset(0x6L).setu(data._10.svec_1c.getZ());
-          MEMORY.ref(1, a1).offset(0x7L).setu(0x66L);
-          MEMORY.ref(2, a1).offset(0x8L).setu(-0xa0L - s1);
-          MEMORY.ref(2, a1).offset(0xaL).setu(s0);
-          MEMORY.ref(1, a1).offset(0xcL).setu(0);
-          MEMORY.ref(1, a1).offset(0xdL).setu(u + sp40);
-          MEMORY.ref(2, a1).offset(0x10L).setu(0x100L);
-          MEMORY.ref(2, a1).offset(0x12L).setu(0x1L);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, a1);
-          linkedListAddress_1f8003d8.addu(0x14L);
+          long packet = gpuPacketAddr_1f8003d8.get();
+          MEMORY.ref(1, packet).offset(0x3L).setu(0x4L);
+          MEMORY.ref(1, packet).offset(0x4L).setu(data._10.svec_1c.getX()); // R
+          MEMORY.ref(1, packet).offset(0x5L).setu(data._10.svec_1c.getY()); // G
+          MEMORY.ref(1, packet).offset(0x6L).setu(data._10.svec_1c.getZ()); // B
+          MEMORY.ref(1, packet).offset(0x7L).setu(0x66L); // Textured quad, variable size, translucent, texture-blending
+          MEMORY.ref(2, packet).offset(0x8L).setu(-160 - x); // X
+          MEMORY.ref(2, packet).offset(0xaL).setu(y); // Y
+          MEMORY.ref(1, packet).offset(0xcL).setu(0); // U
+          MEMORY.ref(1, packet).offset(0xdL).setu(u + sp40); // V
+          MEMORY.ref(2, packet).offset(0x10L).setu(256); // W
+          MEMORY.ref(2, packet).offset(0x12L).setu(1); // H
+          queueGpuPacket(tags_1f8003d0.deref().get(30).getAddress(), packet);
+          gpuPacketAddr_1f8003d8.addu(0x14L);
 
-          a1 = linkedListAddress_1f8003d8.get();
-          MEMORY.ref(1, a1).offset(0x3L).setu(0x4L);
-          MEMORY.ref(1, a1).offset(0x4L).setu(data._10.svec_1c.getX());
-          MEMORY.ref(1, a1).offset(0x5L).setu(data._10.svec_1c.getY());
-          MEMORY.ref(1, a1).offset(0x6L).setu(data._10.svec_1c.getZ());
-          MEMORY.ref(1, a1).offset(0x7L).setu(0x66L);
-          MEMORY.ref(2, a1).offset(0x8L).setu(0x60L - s1);
-          MEMORY.ref(2, a1).offset(0xaL).setu(s0);
-          MEMORY.ref(1, a1).offset(0xcL).setu(0);
-          MEMORY.ref(1, a1).offset(0xdL).setu(u + sp40);
-          MEMORY.ref(2, a1).offset(0x10L).setu(0x40L);
-          MEMORY.ref(2, a1).offset(0x12L).setu(0x1L);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x74L, a1);
-          linkedListAddress_1f8003d8.addu(0x14L);
+          packet = gpuPacketAddr_1f8003d8.get();
+          MEMORY.ref(1, packet).offset(0x3L).setu(0x4L);
+          MEMORY.ref(1, packet).offset(0x4L).setu(data._10.svec_1c.getX()); // R
+          MEMORY.ref(1, packet).offset(0x5L).setu(data._10.svec_1c.getY()); // G
+          MEMORY.ref(1, packet).offset(0x6L).setu(data._10.svec_1c.getZ()); // B
+          MEMORY.ref(1, packet).offset(0x7L).setu(0x66L); // Textured quad, variable size, translucent, texture-blending
+          MEMORY.ref(2, packet).offset(0x8L).setu(96 - x); // X
+          MEMORY.ref(2, packet).offset(0xaL).setu(y); // Y
+          MEMORY.ref(1, packet).offset(0xcL).setu(0); // U
+          MEMORY.ref(1, packet).offset(0xdL).setu(u + sp40); // V
+          MEMORY.ref(2, packet).offset(0x10L).setu(64); // W
+          MEMORY.ref(2, packet).offset(0x12L).setu(1); // H
+          queueGpuPacket(tags_1f8003d0.deref().get(29).getAddress(), packet);
+          gpuPacketAddr_1f8003d8.addu(0x14L);
 
-          sp34 = sp34 + s3 * 0x20L;
+          angle2 += s3 * 32;
         }
 
         //LAB_80109678
-        sp28 = sp28 + s2 * 0x20L;
-        sp40 = sp40 + s3;
-        s5 = s5 + s2 * s3;
+        angle1 += s2 * 32;
+        sp40 += s3;
+        s5 += s2 * s3;
 
         //LAB_801096b8
       }
 
       //LAB_801096cc
-      s3 -= 2;
-    } while(s3 >= -1);
+    }
 
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
+    queueGpuPacket(tags_1f8003d0.deref().get(30).getAddress(), gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x74L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
+    queueGpuPacket(tags_1f8003d0.deref().get(29).getAddress(), gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x801097e0L)
@@ -5237,7 +5219,7 @@ public final class SEffe {
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
     final int v = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
-    final long packet1 = linkedListAddress_1f8003d8.get();
+    final long packet1 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, packet1).offset(0x3L).setu(0x4L);
     MEMORY.ref(1, packet1).offset(0x4L).setu(data._10.svec_1c.getX());
     MEMORY.ref(1, packet1).offset(0x5L).setu(data._10.svec_1c.getY());
@@ -5249,14 +5231,14 @@ public final class SEffe {
     MEMORY.ref(1, packet1).offset(0xdL).setu(v);
     MEMORY.ref(2, packet1).offset(0x10L).setu(0x100L);
     MEMORY.ref(2, packet1).offset(0x12L).setu(0xf0L);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet1);
-    linkedListAddress_1f8003d8.addu(0x14L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, packet1);
+    gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    final long packet2 = linkedListAddress_1f8003d8.get();
+    final long packet2 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, packet2).offset(0x3L).setu(0x4L);
     MEMORY.ref(1, packet2).offset(0x7L).setu(0x66L);
     MEMORY.ref(1, packet2).offset(0x4L).setu(data._10.svec_1c.getX());
@@ -5268,18 +5250,18 @@ public final class SEffe {
     MEMORY.ref(1, packet2).offset(0xdL).setu(v);
     MEMORY.ref(2, packet2).offset(0x10L).setu(0x40L);
     MEMORY.ref(2, packet2).offset(0x12L).setu(0xf0L);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet2);
-    linkedListAddress_1f8003d8.addu(0x14L);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, packet2);
+    gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    SetDrawMode(linkedListAddress_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
-    insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0xcL);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
+    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0xcL);
   }
 
   @Method(0x80109a4cL)
   public static void FUN_80109a4c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BttlScriptData6cSub08_2 v0 = data._44.derefAs(BttlScriptData6cSub08_2.class);
-    v0._00.add(v0._04.get());
+    v0.angle_00.add(v0.angleStep_04.get());
   }
 
   @Method(0x80109a6cL)
@@ -5305,8 +5287,8 @@ public final class SEffe {
 
     final EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub08_2 v1 = a0._44.derefAs(BttlScriptData6cSub08_2.class);
-    v1._00.set(0x800L);
-    v1._04.set(s0.params_20.get(1).deref().get());
+    v1.angle_00.set(0x800);
+    v1.angleStep_04.set(s0.params_20.get(1).deref().get());
     a0._10._00.set(0x4000_0000L);
     s0.params_20.get(0).deref().set(scriptIndex);
     return 0;
@@ -5358,8 +5340,8 @@ public final class SEffe {
 
   @Method(0x80109cf0L)
   public static void FUN_80109cf0(final int index, final ScriptState<EffeScriptData18> state, final EffeScriptData18 data) {
-    removeFromLinkedList(data.ptr_10.get());
-    removeFromLinkedList(data.ptr_14.get());
+    free(data.ptr_10.get());
+    free(data.ptr_14.get());
   }
 
   @Method(0x80109d30L)
@@ -5381,8 +5363,8 @@ public final class SEffe {
     s3._04.set(s4);
     s3.count_08.set(s0);
     s3._0c.set(s2_0);
-    s3.ptr_10.set(addToLinkedListTail(s0 * 0x10));
-    s3.ptr_14.set(addToLinkedListTail(s0 * 0x10));
+    s3.ptr_10.set(mallocTail(s0 * 0x10));
+    s3.ptr_14.set(mallocTail(s0 * 0x10));
     v1 = MEMORY.ref(4, v0).offset(0x8L).get();
     final long s6 = MEMORY.ref(4, v1).offset(0x0L).get();
     v1 = 0x8012_0000L;
@@ -5438,7 +5420,7 @@ public final class SEffe {
     effect._1c.set(a0.params_20.get(7).deref().get());
     effect._20.set((int)(CPU.CFC2(26) >> 2));
 
-    long s2 = addToLinkedListTail(effect.count_04.get() * 4);
+    long s2 = mallocTail(effect.count_04.get() * 4);
     effect.ptr_00.set(s2);
 
     //LAB_8010a754
@@ -5532,8 +5514,8 @@ public final class SEffe {
     //LAB_8010ab34
     final long s6 = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, sp0x58, sp0x60, sp0x68, sp0x70, sp0xe0, sp0xe4);
     if(s6 >= effect._20.get()) {
-      final long s0 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x24L);
+      final long s0 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x24L);
       MEMORY.ref(4, s0).offset(0x4L).setu(0x3a80_8080L);
       MEMORY.ref(1, s0).offset(0x3L).setu(0x8L);
 
@@ -5582,11 +5564,11 @@ public final class SEffe {
       MEMORY.ref(2, s0).offset(0x1aL).setu(sp0x68.getY());
       MEMORY.ref(2, s0).offset(0x20L).setu(sp0x70.getX());
       MEMORY.ref(2, s0).offset(0x22L).setu(sp0x70.getY());
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, s0);
+      queueGpuPacket(tags_1f8003d0.getPointer() + s6 / 4 * 4, s0);
 
-      SetDrawTPage(linkedListAddress_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0));
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s6 / 4 * 4, linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0x8L);
+      SetDrawTPage(gpuPacketAddr_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0));
+      queueGpuPacket(tags_1f8003d0.getPointer() + s6 / 4 * 4, gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0x8L);
     }
 
     //LAB_8010ae18
@@ -5644,7 +5626,7 @@ public final class SEffe {
 
   @Method(0x8010b00cL)
   public static void FUN_8010b00c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub24.class).ptr_00.get());
+    free(manager._44.derefAs(BttlScriptData6cSub24.class).ptr_00.get());
   }
 
   @Method(0x8010b058L)
@@ -5691,7 +5673,7 @@ public final class SEffe {
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final DeathDimensionEffect effect = manager._44.derefAs(DeathDimensionEffect.class);
-    effect.ptr_00.set(addToLinkedListTail(0x8));
+    effect.ptr_00.set(mallocTail(0x8));
     effect._04.set(script.params_20.get(4).deref().get());
     effect._08.set(script.params_20.get(5).deref().get());
     effect._0c.set(script.params_20.get(6).deref().get());
@@ -5714,14 +5696,14 @@ public final class SEffe {
         sp0x18.h.set((short)s3);
 
         final long v1 = effect.ptr_00.get();
-        SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x18, MEMORY.ref(2, v1).offset(0x0L).get(), MEMORY.ref(2, v1).offset(0x2L).get() + i * 64);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(40).getAddress(), linkedListAddress_1f8003d8.get());
-        linkedListAddress_1f8003d8.addu(0x18L);
+        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x18, MEMORY.ref(2, v1).offset(0x0L).get(), MEMORY.ref(2, v1).offset(0x2L).get() + i * 64);
+        queueGpuPacket(tags_1f8003d0.deref().get(40).getAddress(), gpuPacketAddr_1f8003d8.get());
+        gpuPacketAddr_1f8003d8.addu(0x18L);
 
-        final long packet2 = linkedListAddress_1f8003d8.get();
+        final long packet2 = gpuPacketAddr_1f8003d8.get();
         SetMaskBit(packet2, true);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(40).getAddress(), packet2);
-        linkedListAddress_1f8003d8.addu(0xcL);
+        queueGpuPacket(tags_1f8003d0.deref().get(40).getAddress(), packet2);
+        gpuPacketAddr_1f8003d8.addu(0xcL);
       }
     } else if(v0 < 3) {
       //LAB_8010b3f0
@@ -5743,14 +5725,14 @@ public final class SEffe {
         sp0x18.x.set((short)s3);
 
         final long v1 = effect.ptr_00.get();
-        SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x18, MEMORY.ref(2, v1).offset(0x0L).get() + i % 2 * 32, MEMORY.ref(2, v1).offset(0x2L).get() + i / 2 * 32);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(40).getAddress(), linkedListAddress_1f8003d8.get());
-        linkedListAddress_1f8003d8.addu(0x18);
+        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x18, MEMORY.ref(2, v1).offset(0x0L).get() + i % 2 * 32, MEMORY.ref(2, v1).offset(0x2L).get() + i / 2 * 32);
+        queueGpuPacket(tags_1f8003d0.deref().get(40).getAddress(), gpuPacketAddr_1f8003d8.get());
+        gpuPacketAddr_1f8003d8.addu(0x18);
 
-        final long packet2 = linkedListAddress_1f8003d8.get();
+        final long packet2 = gpuPacketAddr_1f8003d8.get();
         SetMaskBit(packet2, true);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get(40).getAddress(), packet2);
-        linkedListAddress_1f8003d8.addu(0xcL);
+        queueGpuPacket(tags_1f8003d0.deref().get(40).getAddress(), packet2);
+        gpuPacketAddr_1f8003d8.addu(0xcL);
       }
     }
 
@@ -5785,8 +5767,8 @@ public final class SEffe {
 
     //LAB_8010b764
     for(int i = 0; i < 8; i++) {
-      final long s0 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x20L);
+      final long s0 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x20L);
       MEMORY.ref(1, s0).offset(0x3L).setu(0x7L);
       MEMORY.ref(4, s0).offset(0x4L).setu(0x2480_8080L);
       MEMORY.ref(1, s0).offset(0x4L).setu(sp0x48.getR());
@@ -5874,7 +5856,7 @@ public final class SEffe {
 
           final long addr = effect.ptr_00.get();
           MEMORY.ref(2, s0).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), s0);
+          queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), s0);
         }
 
         case 5, 6 -> {
@@ -5914,7 +5896,7 @@ public final class SEffe {
             break;
           }
 
-          final long packet = linkedListAddress_1f8003d8.get();
+          final long packet = gpuPacketAddr_1f8003d8.get();
           MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
           MEMORY.ref(1, packet).offset(0x04L).setu(sp0x48.getR());
           MEMORY.ref(1, packet).offset(0x05L).setu(sp0x48.getG());
@@ -5944,8 +5926,8 @@ public final class SEffe {
           //LAB_8010bbf8
           final long addr = effect.ptr_00.get();
           MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
-          linkedListAddress_1f8003d8.addu(0x28L);
+          queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
+          gpuPacketAddr_1f8003d8.addu(0x28L);
         }
       }
     }
@@ -6012,8 +5994,8 @@ public final class SEffe {
         break;
       }
 
-      final long packet = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.addu(0x28L);
+      final long packet = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.addu(0x28L);
       MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
       MEMORY.ref(1, packet).offset(0x04L).setu(sp0x48.getR());
       MEMORY.ref(1, packet).offset(0x05L).setu(sp0x48.getG());
@@ -6042,7 +6024,7 @@ public final class SEffe {
 
       final long addr = effect.ptr_00.get();
       MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
+      queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
     }
 
     //LAB_8010c0f0
@@ -6073,7 +6055,7 @@ public final class SEffe {
 
   @Method(0x8010c294L)
   public static void FUN_8010c294(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(DeathDimensionEffect.class).ptr_00.get());
+    free(manager._44.derefAs(DeathDimensionEffect.class).ptr_00.get());
   }
 
   @Method(0x8010c2e0L)
@@ -6116,7 +6098,7 @@ public final class SEffe {
     final BttlScriptData6cSub50 effect = manager._44.derefAs(BttlScriptData6cSub50.class);
     effect._00.set(5);
     effect._02.set(0);
-    effect._38.setPointer(addToLinkedListTail(0x12cL));
+    effect._38.setPointer(mallocTail(0x12cL));
 
     //LAB_8010c4a4
     for(int i = 0; i < 5; i++) {
@@ -6255,8 +6237,8 @@ public final class SEffe {
           if(s6 == 0) {
             //LAB_8010cb38
             for(int s3 = 0; s3 < 4; s3++) {
-              final long addr = linkedListAddress_1f8003d8.get();
-              linkedListAddress_1f8003d8.addu(0x28L);
+              final long addr = gpuPacketAddr_1f8003d8.get();
+              gpuPacketAddr_1f8003d8.addu(0x28L);
               MEMORY.ref(1, addr).offset(0x3L).setu(0x9L);
               MEMORY.ref(4, addr).offset(0x4L).setu(0x2c80_8080L);
               MEMORY.ref(1, addr).offset(0x7L).oru(sp10 >>> 29 & 0x2L);
@@ -6294,12 +6276,12 @@ public final class SEffe {
               MEMORY.ref(2, addr).offset(0x22L).setu(sp0x48[(int)_800fb930.offset(s3 * 0x4L).offset(0x3L).get() * 2 + 1]);
               MEMORY.ref(1, addr).offset(0x24L).setu(sp18 + sp1e - 1);
               MEMORY.ref(1, addr).offset(0x25L).setu(sp1a + sp1f - 1);
-              insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
+              queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, addr);
             }
           } else {
             //LAB_8010ceec
-            final long addr = linkedListAddress_1f8003d8.get();
-            linkedListAddress_1f8003d8.addu(0x28L);
+            final long addr = gpuPacketAddr_1f8003d8.get();
+            gpuPacketAddr_1f8003d8.addu(0x28L);
             MEMORY.ref(1, addr).offset(0x03L).setu(0x9L);
             MEMORY.ref(4, addr).offset(0x04L).setu(0x2c80_8080L);
             MEMORY.ref(1, addr).offset(0x07L).oru(sp10 >>> 29 & 0x2L);
@@ -6328,7 +6310,7 @@ public final class SEffe {
             MEMORY.ref(2, addr).offset(0x22L).setu(s0.y_06.get() - a1 + t0 + (s5._22.get(s6).get() * s0._30.get() >> 12));
             MEMORY.ref(1, addr).offset(0x24L).setu(sp18 + sp1e - 1);
             MEMORY.ref(1, addr).offset(0x25L).setu(sp1a + sp1f - 1);
-            insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, addr);
+            queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, addr);
           }
         }
 
@@ -6359,7 +6341,7 @@ public final class SEffe {
     effect.count_00.set(count);
     effect._02.set(0);
 
-    effect.ptr_10.setPointer(addToLinkedListTail(count * 0x70));
+    effect.ptr_10.setPointer(mallocTail(count * 0x70));
 
     //LAB_8010d298
     for(int s2 = 0; s2 < count; s2++) {
@@ -6498,7 +6480,7 @@ public final class SEffe {
     manager._10._00.set(0x5000_0000L);
 
     final BttlScriptData6cSub10_2 effect = manager._44.derefAs(BttlScriptData6cSub10_2.class);
-    long addr = addToLinkedListTail(count * 0x10);
+    long addr = mallocTail(count * 0x10);
     effect.count_00.set(count);
     effect._0c.set(addr);
 
@@ -6563,8 +6545,8 @@ public final class SEffe {
     //LAB_8010e414
     for(int s3 = 0; s3 < s1.count_00.get(); s3++) {
       if(MEMORY.ref(1, s2).offset(0x0L).getSigned() != 0) {
-        final long packet = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x28L);
+        final long packet = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x28L);
         MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
         MEMORY.ref(1, packet).offset(0x04L).setu(sp24);
         MEMORY.ref(1, packet).offset(0x05L).setu(sp25);
@@ -6590,7 +6572,7 @@ public final class SEffe {
         MEMORY.ref(2, packet).offset(0x22L).setu(MEMORY.ref(2, s2).offset(0x4L).get() + a3 + (s1._09.get() * MEMORY.ref(2, s2).offset(0xeL).getSigned() >> 12));
         MEMORY.ref(1, packet).offset(0x24L).setu(sp18 + sp1e - 1);
         MEMORY.ref(1, packet).offset(0x25L).setu(sp1a + sp1f - 1);
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + 0x78L, packet);
+        queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, packet);
       }
 
       //LAB_8010e678
@@ -6661,7 +6643,7 @@ public final class SEffe {
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub18 effect = manager._44.derefAs(BttlScriptData6cSub18.class);
     effect.count_00.set(count);
-    effect.ptr_0c.setPointer(addToLinkedListTail(count * 0x3c));
+    effect.ptr_0c.setPointer(mallocTail(count * 0x3c));
     manager._10._00.set(0x5000_0000L);
 
     //LAB_8010e980
@@ -6766,7 +6748,7 @@ public final class SEffe {
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub20_2 effect = manager._44.derefAs(BttlScriptData6cSub20_2.class);
-    long addr = addToLinkedListTail(count * 0xa8);
+    long addr = mallocTail(count * 0xa8);
     effect.count_00.set(count);
     effect._04.set(0);
     effect._08.set(addr);
@@ -6996,7 +6978,7 @@ public final class SEffe {
 
   @Method(0x8010f94cL)
   public static void FUN_8010f94c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub50.class)._38.getPointer());
+    free(manager._44.derefAs(BttlScriptData6cSub50.class)._38.getPointer());
   }
 
   @Method(0x8010f978L)
@@ -7014,7 +6996,7 @@ public final class SEffe {
 
   @Method(0x8010fa20L)
   public static void FUN_8010fa20(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub14_4.class).ptr_10.getPointer());
+    free(manager._44.derefAs(BttlScriptData6cSub14_4.class).ptr_10.getPointer());
   }
 
   @Method(0x8010fa4cL)
@@ -7090,12 +7072,12 @@ public final class SEffe {
 
   @Method(0x8010feb8L)
   public static void FUN_8010feb8(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub10_2.class)._0c.get());
+    free(manager._44.derefAs(BttlScriptData6cSub10_2.class)._0c.get());
   }
 
   @Method(0x8010fee4L)
   public static void FUN_8010fee4(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub20_2.class)._08.get());
+    free(manager._44.derefAs(BttlScriptData6cSub20_2.class)._08.get());
   }
 
   @Method(0x8010ff10L)
@@ -7120,7 +7102,7 @@ public final class SEffe {
 
   @Method(0x8010ffd8L)
   public static void FUN_8010ffd8(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    removeFromLinkedList(manager._44.derefAs(BttlScriptData6cSub18.class).ptr_0c.getPointer());
+    free(manager._44.derefAs(BttlScriptData6cSub18.class).ptr_0c.getPointer());
   }
 
   @Method(0x80110030L)
@@ -9108,7 +9090,7 @@ public final class SEffe {
         if(s7 >= 0x50) {
           final long a1 = (_1f8003f8.get() << 13) / s7 * manager._10.svec_16.getZ() / 0x1000;
 
-          final long packet = linkedListAddress_1f8003d8.get();
+          final long packet = gpuPacketAddr_1f8003d8.get();
           MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
           MEMORY.ref(4, packet).offset(0x4L).setu(0x2c80_8080L);
           MEMORY.ref(1, packet).offset(0x7L).oru(manager._10._00.get() >>> 29 & 0x2L);
@@ -9152,8 +9134,8 @@ public final class SEffe {
           MEMORY.ref(1, packet).offset(0x25L).setu(sp45 + sp42 - 1);
           MEMORY.ref(2, packet).offset(0xeL).setu(sp46);
           MEMORY.ref(2, packet).offset(0x16L).setu((sp42 & 0x100L) >>> 4 | (sp40 & 0x3ffL) >>> 6 | manager._10._00.get() >>> 23 & 0x60L);
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)s7 / 4).getAddress(), packet);
-          linkedListAddress_1f8003d8.addu(0x28L);
+          queueGpuPacket(tags_1f8003d0.deref().get((int)s7 / 4).getAddress(), packet);
+          gpuPacketAddr_1f8003d8.addu(0x28L);
         }
       } else {
         //LAB_80116790
@@ -9893,13 +9875,13 @@ public final class SEffe {
       //LAB_80118018
       final long s0 = effect.ptr_0c.get();
       effect._08.set((int)MEMORY.ref(2, s0).offset(0xaL).getSigned());
-      effect.ptr_10.set(addToLinkedListHead(MEMORY.ref(4, s0).offset(0x4L).get() * 0x14));
+      effect.ptr_10.set(mallocHead(MEMORY.ref(4, s0).offset(0x4L).get() * 0x14));
       memcpy(effect.ptr_10.get(), s0 + MEMORY.ref(4, s0).offset(0x10L).get(), (int)(MEMORY.ref(4, s0).offset(0x4L).get() * 0x14));
     } else if(v1 == 0x2L) {
       //LAB_80118068
       final long s1 = effect.ptr_0c.get();
       effect._08.set((int)MEMORY.ref(2, s1).offset(0xaL).getSigned());
-      effect.ptr_10.set(addToLinkedListHead(MEMORY.ref(4, s1).offset(0x4L).get() * 0x28));
+      effect.ptr_10.set(mallocHead(MEMORY.ref(4, s1).offset(0x4L).get() * 0x28));
       final long s0 = s1 + MEMORY.ref(4, s1).offset(0x10L).get();
       final int size = (int)(MEMORY.ref(4, s1).offset(0x4L).get() * 0x14);
       memcpy(effect.ptr_10.get(), s0, size);
@@ -9922,7 +9904,7 @@ public final class SEffe {
     final long a0 = s0.ptr_10.get();
 
     if(a0 != 0) {
-      removeFromLinkedList(a0);
+      free(a0);
       s0.ptr_10.set(0);
     }
 
@@ -10233,13 +10215,13 @@ public final class SEffe {
               sp0x20.w.set(sp0x28.w.get());
               sp0x20.h.set(sp0x28.h.get());
 
-              SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x20, sp0x28.x.get(), sp0x28.y.get());
-              insertElementIntoLinkedList(tags_1f8003d0.deref().get(sp34).getAddress(), linkedListAddress_1f8003d8.get());
-              linkedListAddress_1f8003d8.addu(0x18L);
+              SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x20, sp0x28.x.get(), sp0x28.y.get());
+              queueGpuPacket(tags_1f8003d0.deref().get(sp34).getAddress(), gpuPacketAddr_1f8003d8.get());
+              gpuPacketAddr_1f8003d8.addu(0x18L);
 
-              SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x28, sp0x20.x.get(), sp0x20.y.get());
-              insertElementIntoLinkedList(tags_1f8003d0.deref().get(fp).getAddress(), linkedListAddress_1f8003d8.get());
-              linkedListAddress_1f8003d8.addu(0x18L);
+              SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x28, sp0x20.x.get(), sp0x20.y.get());
+              queueGpuPacket(tags_1f8003d0.deref().get(fp).getAddress(), gpuPacketAddr_1f8003d8.get());
+              gpuPacketAddr_1f8003d8.addu(0x18L);
             }
           }
         }
@@ -10484,7 +10466,7 @@ public final class SEffe {
     s3._14.set(0);
 
     if(s6 != 0) {
-      s3._18.setPointer(addToLinkedListHead(s6 * 0x10L));
+      s3._18.setPointer(mallocHead(s6 * 0x10L));
     } else {
       //LAB_80119568
       s3._18.clear();
@@ -10546,7 +10528,7 @@ public final class SEffe {
   @Method(0x80119788L)
   public static void FUN_80119788(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     if(!data._44.derefAs(BttlScriptData6cSub30.class)._18.isNull()) {
-      removeFromLinkedList(data._44.derefAs(BttlScriptData6cSub30.class)._18.getPointer());
+      free(data._44.derefAs(BttlScriptData6cSub30.class)._18.getPointer());
     }
   }
 }

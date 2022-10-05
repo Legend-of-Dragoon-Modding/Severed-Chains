@@ -99,25 +99,24 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
-import static legend.game.Scus94491BpeSegment.addToLinkedListHead;
-import static legend.game.Scus94491BpeSegment.addToLinkedListTail;
+import static legend.game.Scus94491BpeSegment.mallocHead;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.insertElementIntoLinkedList;
-import static legend.game.Scus94491BpeSegment.linkedListAddress_1f8003d8;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
-import static legend.game.Scus94491BpeSegment.removeFromLinkedList;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
-import static legend.game.Scus94491BpeSegment_8003.DrawSync;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -181,8 +180,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
-import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
 import static legend.game.Scus94491BpeSegment_800b._800bd61c;
@@ -239,9 +236,11 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
@@ -288,7 +287,7 @@ public final class Scus94491BpeSegment_8002 {
     if(_800bd610.offset(a0 * 16).get() != 0) {
       FUN_8004d034((int)_800bd61c.offset(a0 * 16).get(), 0x1L);
       FUN_8004c390((int)_800bd61c.offset(a0 * 16).get());
-      removeFromLinkedList(_800bd614.offset(a0 * 16).get());
+      free(_800bd614.offset(a0 * 16).get());
       _800bd610.offset(a0 * 16).setu(0);
     }
 
@@ -499,18 +498,18 @@ public final class Scus94491BpeSegment_8002 {
     if(mainCallbackIndex_8004dd20.get() != 0x6L || _800bd7a0.get() == 0) {
       //LAB_80020b00
       //LAB_80020b04
-      address = addToLinkedListTail(bigStruct.count_c8.get() * 0x88L);
+      address = mallocTail(bigStruct.count_c8.get() * 0x88L);
       bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
     } else {
-      removeFromLinkedList(_800bd7a0.get());
+      free(_800bd7a0.get());
 
-      address = addToLinkedListHead(bigStruct.count_c8.get() * 0x88L);
+      address = mallocHead(bigStruct.count_c8.get() * 0x88L);
       bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
 
       _800bd7a8.subu(0x1L);
       _800bd7a4.subu(bigStruct.count_c8.get() * 0x88L + _800bd7a8.get() * 0x100L);
 
-      _800bd7a0.setu(addToLinkedListHead(_800bd7a4.get()));
+      _800bd7a0.setu(mallocHead(_800bd7a4.get()));
     }
 
     //LAB_80020b40
@@ -676,12 +675,12 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020fe0L)
   public static void FUN_80020fe0(final BigStruct a0) {
     if(!a0.dobj2ArrPtr_00.isNull()) {
-      removeFromLinkedList(a0.dobj2ArrPtr_00.getPointer());
+      free(a0.dobj2ArrPtr_00.getPointer());
     }
 
     //LAB_80021008
     if(mainCallbackIndex_8004dd20.get() == 0x5L && !a0.smallerStructPtr_a4.isNull()) {
-      removeFromLinkedList(a0.smallerStructPtr_a4.getPointer());
+      free(a0.smallerStructPtr_a4.getPointer());
     }
 
     //LAB_80021034
@@ -1037,7 +1036,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021868L)
   public static void FUN_80021868() {
     if(_800bd7a0.get() != 0) {
-      removeFromLinkedList(_800bd7a0.get());
+      free(_800bd7a0.get());
       _800bd7a0.setu(0);
     }
 
@@ -1048,7 +1047,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800218a4() {
     _800bd7a8.setu(0x7L);
     _800bd7a4.setu(0x4968L);
-    _800bd7a0.setu(addToLinkedListHead(0x4968L)); //TODO struct
+    _800bd7a0.setu(mallocHead(0x4968L)); //TODO struct
   }
 
   @Method(0x800218f0L)
@@ -1409,9 +1408,9 @@ public final class Scus94491BpeSegment_8002 {
       rect.x.set((short)(MEMORY.ref(2, s1).getSigned() + t2));
       s1 += 0x2L;
       rect.y.set((short)(MEMORY.ref(2, s1).getSigned() + t1));
-      SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, a2 & 0xffffL, a0_1 & 0xffffL);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0x18L);
+      SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), rect, a2 & 0xffffL, a0_1 & 0xffffL);
+      queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0x18L);
 
       s1 += 0x2L;
       a0.usArr_ac.get(index).incr();
@@ -1467,9 +1466,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     rect.set((short)960, (short)256, (short)s5, (short)s3);
-    SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, s6 & 0xffffL, s7 & 0xffffL);
-    insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0x18L);
+    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), rect, s6 & 0xffffL, s7 & 0xffffL);
+    queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0x18L);
 
     s0_0 = (int)s0_0 >> 20;
     s3 -= s0_0;
@@ -1477,9 +1476,9 @@ public final class Scus94491BpeSegment_8002 {
     final long a3;
     if((int)v1 == 0) {
       rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
-      SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, 256L);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0x18L);
+      SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, 256L);
+      queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0x18L);
 
       a3 = s0_0 + 0x100L & 0xffffL;
       rect.set((short)s6, (short)s7, (short)s5, (short)s3);
@@ -1487,18 +1486,18 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80022358
 
       rect.set((short)s6, (short)s7, (short)s5, (short)s0_0);
-      SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, s3 + 256L & 0xffffL);
-      insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
-      linkedListAddress_1f8003d8.addu(0x18L);
+      SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, s3 + 256L & 0xffffL);
+      queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
+      gpuPacketAddr_1f8003d8.addu(0x18L);
 
       a3 = 0x100L;
       rect.set((short)s6, (short)(s0_0 + s7), (short)s5, (short)s3);
     }
 
     //LAB_8002241c
-    SetDrawMove(linkedListAddress_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, a3);
-    insertElementIntoLinkedList(tags_1f8003d0.deref().get(1).getAddress(), linkedListAddress_1f8003d8.get());
-    linkedListAddress_1f8003d8.addu(0x18L);
+    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), rect, 960L, a3);
+    queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
+    gpuPacketAddr_1f8003d8.addu(0x18L);
 
     //LAB_80022440
   }
@@ -2327,7 +2326,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800239ec
     int a3 = 0;
     for(int i = 0; i < a2; i++) {
-      if((a0.get(i)._02.get() & 0x1000) == 0) {
+      if((a0.get(i).price_02.get() & 0x1000) == 0) {
         a1.get(a3).set(a0.get(i).itemId_00.get());
         a3++;
       }
@@ -2347,12 +2346,12 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
-    final ArrayRef<MenuItemStruct04> s0 = MEMORY.ref(4, addToLinkedListTail(0x4c0L), ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new));
+    final ArrayRef<MenuItemStruct04> s0 = MEMORY.ref(4, mallocTail(0x4c0L), ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new));
 
     //LAB_80023ab4
     for(int i = 0; i < 0x130; i++) {
       s0.get(i).itemId_00.set(0xff);
-      s0.get(i)._02.set(0);
+      s0.get(i).price_02.set(0);
     }
 
     //LAB_80023aec
@@ -2362,13 +2361,13 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023b10
     FUN_80023a2c(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-    removeFromLinkedList(s0.getAddress());
+    free(s0.getAddress());
   }
 
   @Method(0x80023b54L)
   public static Renderable58 allocateRenderable(final Drgn0_6666Struct a0, @Nullable Renderable58 a1) {
     if(a1 == null) {
-      a1 = MEMORY.ref(4, addToLinkedListTail(0x58L), Renderable58::new);
+      a1 = MEMORY.ref(4, mallocTail(0x58L), Renderable58::new);
     }
 
     //LAB_80023b7c
@@ -2501,8 +2500,8 @@ public final class Scus94491BpeSegment_8002 {
         for(int i = metricses.length() - 1; i >= 0; i--) {
           final RenderableMetrics14 metrics = metricses.get(i);
 
-          final long packet = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x28L);
+          final long packet = gpuPacketAddr_1f8003d8.get();
+          gpuPacketAddr_1f8003d8.addu(0x28L);
           MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
           MEMORY.ref(4, packet).offset(0x4L).setu(0x2c80_8080L);
           MEMORY.ref(1, packet).offset(0x4L).setu(0x80L); // R
@@ -2618,7 +2617,7 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_8002424c
-          insertElementIntoLinkedList(tags_1f8003d0.deref().get(renderable._3c.get()).getAddress(), packet);
+          queueGpuPacket(tags_1f8003d0.deref().get(renderable._3c.get()).getAddress(), packet);
         }
       }
 
@@ -2658,7 +2657,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80024364
-    removeFromLinkedList(a0.getAddress());
+    free(a0.getAddress());
   }
 
   @Method(0x8002437cL)
@@ -2834,14 +2833,13 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80025000
-        DrawSync(0);
       }
 
       //LAB_80025008
     }
 
     //LAB_80025018
-    removeFromLinkedList(mrg.getAddress());
+    free(mrg.getAddress());
   }
 
   @Method(0x8002504cL)
@@ -2886,7 +2884,7 @@ public final class Scus94491BpeSegment_8002 {
     struct84._04.set((short)a0.params_20.get(1).deref().get());
     struct84._08.or(0x1000L);
     struct84.str_24.set(MEMORY.ref(2, a0.params_20.get(2).getPointer(), LodString::new));
-    struct84.ptr_58.set(addToLinkedListHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8));
+    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8));
     FUN_8002a2b4(s1);
     FUN_80027d74(s1, struct84._14.get(), struct84._16.get());
     return 0;
@@ -2932,7 +2930,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800253d4
     struct84._08.or(0x1000L);
-    struct84.ptr_58.set(addToLinkedListHead(struct84._1c.get() * (struct84._1e.get() + 0x1L) * 0x8L));
+    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 0x1L) * 0x8L));
     FUN_8002a2b4(s2);
     FUN_80028938(s2, a0.params_20.get(1).deref().get());
 
@@ -2991,7 +2989,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80025690
       struct84._08.or(0x1000);
-      struct84.ptr_58.set(addToLinkedListHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
+      struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
       FUN_8002a2b4(s2);
       FUN_80027d74(s2, struct84._14.get(), struct84._16.get());
     }
@@ -3023,7 +3021,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800257e0L)
   public static void FUN_800257e0(final int a0) {
     if(_800bdf38.get(a0)._00.get() != 0) {
-      removeFromLinkedList(_800bdf38.get(a0).ptr_58.get());
+      free(_800bdf38.get(a0).ptr_58.get());
     }
 
     //LAB_80025824
@@ -3483,8 +3481,8 @@ public final class Scus94491BpeSegment_8002 {
     final long s1 = _800be358.get((int)a0).getAddress();
     if(MEMORY.ref(2, s1).offset(0x4L).getSigned() != 0) {
       if(MEMORY.ref(4, s1).offset(0x0L).get() != 0x1L) {
-        final long s0 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x24L);
+        final long s0 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x24L);
         setGp0_38(s0);
         gpuLinkedListSetCommandTransparency(s0, true);
         v0 = MEMORY.ref(2, s1).offset(0x14L).get() - MEMORY.ref(2, s1).offset(0x1cL).get() - centreScreenX_1f8003dc.get();
@@ -3518,12 +3516,12 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80026144
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + MEMORY.ref(4, s1).offset(0xcL).get() * 0x4L, s0);
-        final long a1 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x8L);
+        queueGpuPacket(tags_1f8003d0.getPointer() + MEMORY.ref(4, s1).offset(0xcL).get() * 0x4L, s0);
+        final long a1 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x8L);
         MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
         MEMORY.ref(4, a1).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() | 0xdL) & 0x9ffL);
-        insertElementIntoLinkedList(tags_1f8003d0.getPointer() + MEMORY.ref(4, s1).offset(0xcL).get() * 0x4L, a1);
+        queueGpuPacket(tags_1f8003d0.getPointer() + MEMORY.ref(4, s1).offset(0xcL).get() * 0x4L, a1);
       }
     }
 
@@ -3566,8 +3564,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800262e4
     for(s3 = 0; s3 < 8; s3++) {
-      s0 = linkedListAddress_1f8003d8.get();
-      linkedListAddress_1f8003d8.setu(s0 + 0x28L);
+      s0 = gpuPacketAddr_1f8003d8.get();
+      gpuPacketAddr_1f8003d8.setu(s0 + 0x28L);
       setGp0_2c(s0);
       gpuLinkedListSetCommandTransparency(s0, false);
       MEMORY.ref(1, s0).offset(0x6L).setu(0x80L);
@@ -3609,7 +3607,7 @@ public final class Scus94491BpeSegment_8002 {
       MEMORY.ref(1, s0).offset(0x25L).setu(v1);
       MEMORY.ref(1, s0).offset(0x1dL).setu(v1);
       MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256));
-      insertElementIntoLinkedList(tags_1f8003d0.getPointer() + MEMORY.ref(4, s2).offset(0xcL).get() * 0x4L, s0);
+      queueGpuPacket(tags_1f8003d0.getPointer() + MEMORY.ref(4, s2).offset(0xcL).get() * 0x4L, s0);
       s1 = s1 + 0xcL;
     }
   }
@@ -3788,7 +3786,7 @@ public final class Scus94491BpeSegment_8002 {
           struct84._3a.incr();
 
           if(struct84._3a.get() >= struct84._1e.get() + 1) {
-            removeFromLinkedList(struct84.ptr_58.get());
+            free(struct84.ptr_58.get());
             struct84._00.set(0);
           }
         }
@@ -3812,7 +3810,7 @@ public final class Scus94491BpeSegment_8002 {
     } else if(v1 == 0xc) {
       //LAB_80026af0
       if(struct4c._00.get() == 0) {
-        removeFromLinkedList(struct84.ptr_58.get());
+        free(struct84.ptr_58.get());
         struct84._00.set(0);
       }
     } else if(v1 == 0xd) {
@@ -3872,7 +3870,7 @@ public final class Scus94491BpeSegment_8002 {
           } else if(v1 == 0xf) {
             //LAB_80026c98
             //LAB_80026c9c
-            removeFromLinkedList(struct84.ptr_58.get());
+            free(struct84.ptr_58.get());
             struct84._00.set(0);
           }
         }
@@ -3884,7 +3882,7 @@ public final class Scus94491BpeSegment_8002 {
       } else {
         //LAB_80026cd0
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
-          removeFromLinkedList(struct84.ptr_58.get());
+          free(struct84.ptr_58.get());
           struct84._00.set(0);
           FUN_80029920(a0, 0);
         }
@@ -3894,7 +3892,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80026cdc
       //LAB_80026ce8
       if((struct84._08.get() & 0x40L) != 0) {
-        removeFromLinkedList(struct84.ptr_58.get());
+        free(struct84.ptr_58.get());
         struct84._00.set(0);
         FUN_80029920(a0, 0);
       }
@@ -3929,7 +3927,7 @@ public final class Scus94491BpeSegment_8002 {
 
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        removeFromLinkedList(struct84.ptr_58.get());
+        free(struct84.ptr_58.get());
         struct84._00.set(0);
         struct84._6c.set(struct84._68.get());
       } else {
@@ -4165,7 +4163,7 @@ public final class Scus94491BpeSegment_8002 {
         } else {
           struct84._3a.incr();
           if(struct84._3a.get() >= struct84._1e.get() + 1) {
-            removeFromLinkedList(struct84.ptr_58.get());
+            free(struct84.ptr_58.get());
             struct84._00.set(0);
           }
         }
@@ -4220,7 +4218,7 @@ public final class Scus94491BpeSegment_8002 {
 
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        removeFromLinkedList(struct84.ptr_58.get());
+        free(struct84.ptr_58.get());
         struct84._00.set(0);
         struct84._6c.set(struct84._68.get() - struct84._72.get());
       } else {
@@ -5053,8 +5051,8 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_8002840c
         FUN_8002a63c(MEMORY.ref(2, fp).offset(0x6L).get());
         s4 = _800be5c0.get() & 0xffff;
-        s6 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x14L);
+        s6 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x14L);
         sp18 = _800be5b8.get() & 0xffff;
         sp20 = _800be5c8.get() & 0xffff;
         sp22 = _800be5bc.get() & 0xffff;
@@ -5101,10 +5099,10 @@ public final class Scus94491BpeSegment_8002 {
           MEMORY.ref(2, s6).offset(0x10L).setu(0x8L);
           MEMORY.ref(2, s6).offset(0x12L).setu(s2);
           gpuLinkedListSetCommandTransparency(s6, false);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, s6);
+          queueGpuPacket(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, s6);
 
-          a1 = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x8L);
+          a1 = gpuPacketAddr_1f8003d8.get();
+          gpuPacketAddr_1f8003d8.addu(0x8L);
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
           s1 = _80052bf4.offset(sp22 * 0x4L).getAddress();
           s0 = _80052bc8.offset(sp22 * 0x4L).getAddress();
@@ -5113,10 +5111,10 @@ public final class Scus94491BpeSegment_8002 {
           v0 = v0 & 0x9ffL;
           v0 = v0 | 0xe100_0200L;
           MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, a1);
+          queueGpuPacket(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L, a1);
 
-          s6 = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x14L);
+          s6 = gpuPacketAddr_1f8003d8.get();
+          gpuPacketAddr_1f8003d8.addu(0x14L);
           MEMORY.ref(1, s6).offset(0x3L).setu(0x4L);
           MEMORY.ref(4, s6).offset(0x4L).setu(0x6480_8080L);
           MEMORY.ref(2, s6).offset(0x8L).setu(sp28 + 0x1L);
@@ -5127,9 +5125,9 @@ public final class Scus94491BpeSegment_8002 {
           MEMORY.ref(1, s6).offset(0xdL).setu(sp44);
           MEMORY.ref(2, s6).offset(0x10L).setu(0x8L);
           gpuLinkedListSetCommandTransparency(s6, false);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, s6);
-          a1 = linkedListAddress_1f8003d8.get();
-          linkedListAddress_1f8003d8.addu(0x8L);
+          queueGpuPacket(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, s6);
+          a1 = gpuPacketAddr_1f8003d8.get();
+          gpuPacketAddr_1f8003d8.addu(0x8L);
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
           v1 = MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L;
           v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
@@ -5138,7 +5136,7 @@ public final class Scus94491BpeSegment_8002 {
           v0 = v0 & 0x9ffL;
           v0 = v0 | 0xe100_0200L;
           MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-          insertElementIntoLinkedList(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, a1);
+          queueGpuPacket(tags_1f8003d0.getPointer() + s7._0c.get() * 0x4L + 0x4L, a1);
         }
       }
 
@@ -5657,7 +5655,7 @@ public final class Scus94491BpeSegment_8002 {
     struct84.str_24.set(_80052c20);
     struct84._08.or(0x40L);
 
-    long addr = addToLinkedListHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8);
+    long addr = mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8);
     struct84.ptr_58.set(addr);
     //LAB_800290cc
     for(int i = 0; i < struct84._1c.get() * struct84._1e.get() + 1; i++) {
@@ -5766,7 +5764,7 @@ public final class Scus94491BpeSegment_8002 {
     v0 = MEMORY.ref(4, s1).offset(0x3d0L).get();
     a0 = a0 << 2;
     a0 = v0 + a0;
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
     v1 = 0xe100_0000L;
     a1 = MEMORY.ref(4, s4).offset(0x3d8L).get();
     v1 = v1 | 0x200L;
@@ -5782,7 +5780,7 @@ public final class Scus94491BpeSegment_8002 {
     v0 = v0 & 0x9ffL;
     v0 = v0 | v1;
     MEMORY.ref(4, a1).offset(0x4L).setu(v0);
-    insertElementIntoLinkedList(a0, a1);
+    queueGpuPacket(a0, a1);
   }
 
   @Method(0x80029300L)
@@ -5839,8 +5837,8 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_800294b4
         final long fp = _800be5bc.get();
 
-        final long packet1 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x14L);
+        final long packet1 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x14L);
 
         MEMORY.ref(1, packet1).offset(0x03L).setu(0x4L);
         MEMORY.ref(4, packet1).offset(0x04L).setu(0x6480_8080L); // Textured rect, variable size, opaque, texture-blending
@@ -5901,14 +5899,14 @@ public final class Scus94491BpeSegment_8002 {
         MEMORY.ref(2, packet1).offset(0x0eL).setu((_800be5b8.get() + 0x1e0L) * 0x40L | ((a3 & 0xfL) * 0x10L + 0x340L & 0x3f0L) >> 4); // clut
         MEMORY.ref(2, packet1).offset(0x10L).setu(0x8L); // width
         gpuLinkedListSetCommandTransparency(packet1, false);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet1);
+        queueGpuPacket(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet1);
 
-        final long packet2 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x8L);
+        final long packet2 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x8L);
 
         MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
         MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_80052bf4.offset(fp * 0x4L).get())).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet2);
+        queueGpuPacket(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet2);
       }
 
       //LAB_80029760
@@ -5999,8 +5997,8 @@ public final class Scus94491BpeSegment_8002 {
       v1 = v1 << 2;
       s2 = v1 + v0;
       if((MEMORY.ref(4, s2).offset(0x8L).get() & 0x1000) != 0) {
-        s0 = linkedListAddress_1f8003d8.get();
-        linkedListAddress_1f8003d8.addu(0x28L);
+        s0 = gpuPacketAddr_1f8003d8.get();
+        gpuPacketAddr_1f8003d8.addu(0x28L);
         setGp0_2c(s0);
         gpuLinkedListSetCommandTransparency(s0, true);
         MEMORY.ref(1, s0).offset(0x4L).setu(0x80);
@@ -6034,7 +6032,7 @@ public final class Scus94491BpeSegment_8002 {
         MEMORY.ref(1, s0).offset(0x24L).setu(v1);
         MEMORY.ref(1, s0).offset(0x14L).setu(v1);
         MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256));
-        insertElementIntoLinkedList(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s2).offset(0xcL).get()).getAddress(), s0);
+        queueGpuPacket(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s2).offset(0xcL).get()).getAddress(), s0);
       }
     }
 
@@ -6097,7 +6095,7 @@ public final class Scus94491BpeSegment_8002 {
     final Struct84 struct84 = _800bdf38.get(s1);
 
     if(struct84._00.get() != 0) {
-      removeFromLinkedList(struct84.ptr_58.get());
+      free(struct84.ptr_58.get());
     }
 
     //LAB_80029db8
@@ -6115,7 +6113,7 @@ public final class Scus94491BpeSegment_8002 {
       final Struct84 s0 = _800bdf38.get(i);
 
       if(s0._00.get() != 0) {
-        removeFromLinkedList(s0.ptr_58.get());
+        free(s0.ptr_58.get());
       }
 
       //LAB_80029e48
@@ -6463,14 +6461,14 @@ public final class Scus94491BpeSegment_8002 {
       stats.mpPerPhysicalHit_50.set((short)0);
       stats.spPerMagicalHit_52.set((short)0);
       stats.mpPerMagicalHit_54.set((short)0);
-      stats.hpRegen_56.set((short)0);
-      stats.mpRegen_58.set((short)0);
-      stats.spRegen_5a.set((short)0);
-      stats._5c.set(0);
-      stats._5e.set(0);
+      stats._56.set((short)0);
+      stats.hpRegen_58.set((short)0);
+      stats.mpRegen_5a.set((short)0);
+      stats.spRegen_5c.set((short)0);
+      stats.revive_5e.set((short)0);
       stats.magicalResistance_60.set(0);
-      stats._62.set((short)0);
-      stats._64.set((short)0);
+      stats.hpMulti_62.set((short)0);
+      stats.mpMulti_64.set((short)0);
       stats.maxHp_66.set(0);
       stats.addition_68.set(0);
       stats.bodySpeed_69.set(0);
