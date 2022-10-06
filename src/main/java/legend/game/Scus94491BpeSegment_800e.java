@@ -770,7 +770,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800f1f9c}</li>
    *   <li>{@link SMap#FUN_800f1060}</li>
    *   <li>{@link SMap#FUN_800f2264}</li>
-   *   <li>{@link SMap#FUN_800f179c}</li>
+   *   <li>{@link SMap#scriptAddSavePoint}</li>
    *   <li>{@link SMap#FUN_800f23ec}</li>
    *   <li>{@link SMap#FUN_800f2780}</li>
    *   <li>{@link SMap#FUN_800f2090}</li>

@@ -108,8 +108,8 @@ import static legend.game.Scus94491BpeSegment.setScriptRenderer;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
@@ -3612,7 +3612,7 @@ public final class Bttl_800e {
       } else if(base.magic_00.get() == BattleScriptDataBase.BOBJ) {
         final BattleObject27c bobj = (BattleObject27c)base;
         final Model124 s1 = bobj.model_148;
-        FUN_800214bc(s1);
+        applyModelRotationAndScale(s1);
         final int coord2Index = s3.coord2Index_0d.get();
 
         final MATRIX sp0x10 = new MATRIX();
@@ -4258,7 +4258,7 @@ public final class Bttl_800e {
   @Method(0x800ea0f4L)
   public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c effectManager, final int coord2Index) {
     final Model124 model = effectManager._44.derefAs(BttlScriptData6cSub13c.class)._10;
-    FUN_800214bc(model);
+    applyModelRotationAndScale(model);
     return model.coord2ArrPtr_04.deref().get(coord2Index);
   }
 
@@ -4405,7 +4405,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea5f4L)
   public static void FUN_800ea5f4(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    FUN_80020fe0(manager._44.derefAs(BttlScriptData6cSub13c.class)._134.deref());
+    deallocateModel(manager._44.derefAs(BttlScriptData6cSub13c.class)._134.deref());
   }
 
   @Method(0x800ea620L)
@@ -5355,7 +5355,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec974L)
-  public static void FUN_800ec974(final Model124 model) {
+  public static void renderBttlModel(final Model124 model) {
     _1f8003ec.setu(model.ui_108.get());
     zOffset_1f8003e8.set(model.zOffset_a0.get());
 

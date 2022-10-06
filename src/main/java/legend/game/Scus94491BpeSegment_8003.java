@@ -3858,13 +3858,20 @@ public final class Scus94491BpeSegment_8003 {
 
   /** Returns Z */
   @Method(0x8003f900L)
-  public static long perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, final Ref<Long> ir0, final Ref<Long> flags) {
+  public static long perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
     CPU.MTC2(worldCoords.getXY(), 0);
-    CPU.MTC2(worldCoords.getZ() & 0xffffL, 1);
+    CPU.MTC2(worldCoords.getZ(),  1);
     CPU.COP2(0x18_0001L); // Perspective transform single
     screenCoords.setXY(CPU.MFC2(14)); // SXY2
-    ir0.set(CPU.MFC2(8)); // IR0
-    flags.set(CPU.CFC2(31)); // Flags
+
+    if(ir0 != null) {
+      ir0.set(CPU.MFC2(8)); // IR0
+    }
+
+    if(flags != null) {
+      flags.set(CPU.CFC2(31)); // Flags
+    }
+
     return CPU.MFC2(19) >> 2; // SZ3
   }
 

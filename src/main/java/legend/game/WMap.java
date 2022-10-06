@@ -80,15 +80,15 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020a00;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020b98;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
+import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800211d8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
+import static legend.game.Scus94491BpeSegment_8002.renderModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800257e0;
@@ -592,7 +592,7 @@ public class WMap {
   }
 
   @Method(0x800c925cL) // Renders the player
-  public static void FUN_800c925c(final Model124 model) {
+  public static void renderWmapModel(final Model124 model) {
     long s0 = 0x1L;
     long s6 = model.ui_f4.get();
     final long nobj = model.ObjTable_0c.nobj.get();
@@ -6437,7 +6437,7 @@ public class WMap {
       final Model124 model = struct258.models_0c.get(i).deref();
 
       //LAB_800dfcc0
-      FUN_80020a00(model, struct258._b4.get(i).extendedTmd_00.deref(), struct258._b4.get(i).tmdAnim_08.deref());
+      initModel(model, struct258._b4.get(i).extendedTmd_00.deref(), struct258._b4.get(i).tmdAnim_08.deref());
       FUN_80021584(model, struct258._b4.get(i).tmdAnim_08.deref());
 
       model.coord2_14.coord.transfer.setX(struct258.coord2_34.coord.transfer.getX());
@@ -6506,8 +6506,8 @@ public class WMap {
     }
 
     //LAB_800e02e0
-    FUN_800214bc(struct.models_0c.get((int)struct._1e4.get()).deref());
-    FUN_80020b98(struct.models_0c.get((int)struct._1e4.get()).deref());
+    applyModelRotationAndScale(struct.models_0c.get((int)struct._1e4.get()).deref());
+    animateModel(struct.models_0c.get((int)struct._1e4.get()).deref());
 
     final long v0 = struct._1e4.get();
     if(v0 == 0) {
@@ -6538,7 +6538,7 @@ public class WMap {
 
     //LAB_800e04fc
     struct.models_0c.get((int)struct._1e4.get()).deref().zOffset_a0.set((short)0x4e);
-    FUN_800211d8(struct.models_0c.get((int)struct._1e4.get()).deref());
+    renderModel(struct.models_0c.get((int)struct._1e4.get()).deref());
     GsSetAmbient(_800c66b0.deref().ambientLight_14c.getX(), _800c66b0.deref().ambientLight_14c.getY(), _800c66b0.deref().ambientLight_14c.getZ());
     FUN_800e06d0();
     FUN_800e1364();
@@ -6553,7 +6553,7 @@ public class WMap {
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
-      FUN_80020fe0(struct258_800c66a8.deref().models_0c.get(i).deref());
+      deallocateModel(struct258_800c66a8.deref().models_0c.get(i).deref());
       v0 = 0x800c_0000L;
       v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
       v1 = i;

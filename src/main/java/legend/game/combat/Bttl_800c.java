@@ -113,11 +113,11 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020a00;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020b98;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80020fe0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800211d8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
+import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
+import static legend.game.Scus94491BpeSegment_8002.renderModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021868;
@@ -1882,7 +1882,7 @@ public final class Bttl_800c {
       FUN_80021520(model, tmd, anim, a3);
     } else {
       //LAB_800c9664
-      FUN_80020a00(model, tmd, anim);
+      initModel(model, tmd, anim);
     }
 
     //LAB_800c9680
@@ -1892,7 +1892,7 @@ public final class Bttl_800c {
   @Method(0x800c96acL)
   public static void FUN_800c96ac(final Model124 model, final int combatantIndex) {
     if((combatants_8005e398.get(combatantIndex).flags_19e.get() & 0x4L) == 0) {
-      FUN_80020fe0(model);
+      deallocateModel(model);
     }
 
     //LAB_800c96f8
@@ -2762,10 +2762,10 @@ public final class Bttl_800c {
   @Method(0x800cafb4L)
   public static void FUN_800cafb4(final int index, final ScriptState<BattleObject27c> state, final BattleObject27c data) {
     if((state.ui_60.get() & 0x211L) == 0) {
-      FUN_800214bc(data.model_148);
+      applyModelRotationAndScale(data.model_148);
       if((state.ui_60.get() & 0x80L) == 0 || data._1e6.get() != 0) {
         //LAB_800cb004
-        FUN_80020b98(data.model_148);
+        animateModel(data.model_148);
       }
     }
 
@@ -2775,7 +2775,7 @@ public final class Bttl_800c {
   @Method(0x800cb024L)
   public static void FUN_800cb024(final int index, final ScriptState<BattleObject27c> state, final BattleObject27c data) {
     if((state.ui_60.get() & 0x211L) == 0) {
-      FUN_800211d8(data.model_148);
+      renderModel(data.model_148);
     }
 
     //LAB_800cb048

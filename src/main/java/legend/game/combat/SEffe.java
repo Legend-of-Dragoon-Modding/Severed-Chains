@@ -108,7 +108,7 @@ import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800214bc;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -7700,7 +7700,7 @@ public final class SEffe {
       }
     } else {
       final Model124 model = ((BattleObject27c)s0).model_148;
-      FUN_800214bc(model);
+      applyModelRotationAndScale(model);
       final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04.deref().get(a2);
       GsGetLw(coord2, a0);
       coord2.flg.set(0);
