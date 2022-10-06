@@ -25,7 +25,7 @@ public class SMapStruct3c implements MemoryRef {
 
   public final IntRef _2c;
   public final IntRef _30;
-
+  public final IntRef z_34;
   public final Pointer<SMapStruct3c> parent_38;
 
   public SMapStruct3c(final Value ref) {
@@ -47,7 +47,7 @@ public class SMapStruct3c implements MemoryRef {
 
     this._2c = ref.offset(4, 0x2cL).cast(IntRef::new);
     this._30 = ref.offset(4, 0x30L).cast(IntRef::new);
-
+    this.z_34 = ref.offset(4, 0x34L).cast(IntRef::new);
     this.parent_38 = ref.offset(4, 0x38L).cast(Pointer.deferred(4, SMapStruct3c::new));
   }
 

@@ -49,7 +49,7 @@ import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
-import legend.game.types.BigStruct;
+import legend.game.types.WorldObject210;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
@@ -3017,7 +3017,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800158ccL)
   public static int allocateScriptState(final long innerStructSize) {
-    return allocateScriptState(innerStructSize, BigStruct::new);
+    return allocateScriptState(innerStructSize, WorldObject210::new);
   }
 
   public static <T extends MemoryRef> int allocateScriptState(final long innerStructSize, final Function<Value, T> type) {
@@ -3035,7 +3035,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80015918L)
   public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4) {
-    return allocateScriptState(index, innerStructSize, allocateOnHead, a3, a4, BigStruct::new);
+    return allocateScriptState(index, innerStructSize, allocateOnHead, a3, a4, WorldObject210::new);
   }
 
   /**
@@ -3328,7 +3328,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
-      final ScriptState<BigStruct> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(BigStruct.class));
+      final ScriptState<WorldObject210> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(WorldObject210.class));
 
       if(scriptState.getAddress() != scriptState_800bc0c0.getAddress() && (scriptState.ui_60.get() & 0x12_0000L) == 0) {
         RunningScript_800bc070.scriptStateIndex_00.set(index);

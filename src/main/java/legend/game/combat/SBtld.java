@@ -237,10 +237,10 @@ public class SBtld {
       data.charSlot_276.set((short)_800c6768.get());
       data.combatant_144.set(getCombatant(combatantIndex));
       data.combatantIndex_26c.set((short)combatantIndex);
-      data._148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
-      data._148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
-      data._148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
-      data._148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
+      data.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
+      data.model_148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
+      data.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
+      data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
       state.ui_60.or(0x4L);
       _800c66d0.incr();
       _800c6768.incr();

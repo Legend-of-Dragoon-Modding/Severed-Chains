@@ -58,12 +58,12 @@ import legend.game.combat.types.FloatingNumberC4Sub20;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.BigStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MOVE;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
+import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
@@ -86,22 +86,22 @@ import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
-import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getDrgnFilePos;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.mallocHead;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptRenderer;
@@ -156,9 +156,9 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
@@ -2078,8 +2078,8 @@ public final class Bttl_800e {
       } else {
         //LAB_800e49f4
         final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a2).deref().innerStruct_00.derefAs(BattleObject27c.class);
-        sp0x10.setX(bobj._148.coord2Param_64.rotate.getX());
-        sp0x10.setZ(bobj._148.coord2Param_64.rotate.getZ());
+        sp0x10.setX(bobj.model_148.coord2Param_64.rotate.getX());
+        sp0x10.setZ(bobj.model_148.coord2Param_64.rotate.getZ());
       }
     }
 
@@ -2109,7 +2109,7 @@ public final class Bttl_800e {
       FUN_800e45c0(s0, lights_800c692c.deref().get(s1 - 1).light_00.direction_00);
     } else {
       //LAB_800e4b40
-      s0 = scriptStatePtrArr_800bc1c0.get(s1).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.coord2Param_64.rotate;
+      s0 = scriptStatePtrArr_800bc1c0.get(s1).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate;
     }
 
     //LAB_800e4b64
@@ -2271,7 +2271,7 @@ public final class Bttl_800e {
       s0.vec_28.set(sp0x18);
     } else {
       //LAB_800e51e8
-      final SVECTOR v0 = scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.coord2Param_64.rotate;
+      final SVECTOR v0 = scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate;
       s0.vec_28.set(v0);
     }
 
@@ -2316,7 +2316,7 @@ public final class Bttl_800e {
     a0_0._00.set(0x4002L);
     a0_0.scriptIndex_38.set(bobjIndex);
 
-    a0_0.vec_04.set(sp0x10).sub(scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.coord2Param_64.rotate);
+    a0_0.vec_04.set(sp0x10).sub(scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate);
     a0_0.vec_10.set(0, 0, 0);
     a0_0.vec_1c.set(0, 0, 0);
     return 0;
@@ -2516,7 +2516,7 @@ public final class Bttl_800e {
       } else if(v1 == 0x2L) {
         //LAB_800e5bf0
         final SVECTOR sp0x10 = new SVECTOR();
-        sp0x10.set(scriptStatePtrArr_800bc1c0.get(a2.scriptIndex_38.get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.coord2Param_64.rotate).add(a2.vec_04);
+        sp0x10.set(scriptStatePtrArr_800bc1c0.get(a2.scriptIndex_38.get()).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate).add(a2.vec_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 0x3L) {
         //LAB_800e5bdc
@@ -3611,7 +3611,7 @@ public final class Bttl_800e {
         //LAB_800e86c8
       } else if(base.magic_00.get() == BattleScriptDataBase.BOBJ) {
         final BattleObject27c bobj = (BattleObject27c)base;
-        final BigStruct s1 = bobj._148;
+        final Model124 s1 = bobj.model_148;
         FUN_800214bc(s1);
         final int coord2Index = s3.coord2Index_0d.get();
 
@@ -4024,31 +4024,31 @@ public final class Bttl_800e {
   public static long FUN_800e9798(final RunningScript script) {
     final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    final BigStruct v1;
+    final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
-      v1 = ((EffectManagerData6c)a2)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+      model = ((EffectManagerData6c)a2)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     } else {
-      v1 = ((BattleObject27c)a2)._148;
+      model = ((BattleObject27c)a2).model_148;
     }
 
     //LAB_800e97e8
     //LAB_800e97ec
     final int a0 = script.params_20.get(1).deref().get();
     if(a0 == -1) {
-      v1.b_cc.set(2);
-      v1.b_cd.set(-1);
+      model.b_cc.set(2);
+      model.b_cd.set(-1);
     } else if(a0 == -2) {
       //LAB_800e982c
-      v1.b_cc.set(3);
+      model.b_cc.set(3);
       //LAB_800e980c
     } else if(a0 == -3) {
       //LAB_800e983c
-      v1.b_cc.set(0);
+      model.b_cc.set(0);
     } else {
       //LAB_800e9844
       //LAB_800e9848
-      v1.b_cc.set(3);
-      v1.b_cd.set(a0);
+      model.b_cc.set(3);
+      model.b_cd.set(a0);
     }
 
     //LAB_800e984c
@@ -4077,10 +4077,10 @@ public final class Bttl_800e {
     final long v1 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
     effect._134.set(effect._10);
     final long tpage = GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, (int)MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
-    final BigStruct struct = effect._134.deref();
-    struct.ub_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
-    FUN_800ddac8(struct, effect.ptr_08.get());
-    FUN_800de36c(struct, effect.ptr_0c.get());
+    final Model124 model = effect._134.deref();
+    model.ub_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
+    FUN_800ddac8(model, effect.ptr_08.get());
+    FUN_800de36c(model, effect.ptr_0c.get());
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
     manager._10._00.set(0x1400_0040L);
     a0.params_20.get(0).deref().set(scriptIndex);
@@ -4119,101 +4119,101 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9ae4L)
-  public static void FUN_800e9ae4(final BigStruct a0, final BattleRenderStruct a1) {
-    a0.count_c8.set((short)a1.objtable2_550.nobj.get());
-    a0.tmdNobj_ca.set((int)a1.objtable2_550.nobj.get());
-    a0.ObjTable_0c.top.set(a1.objtable2_550.top.deref());
-    a0.ObjTable_0c.nobj.set(a1.objtable2_550.nobj.get());
+  public static void FUN_800e9ae4(final Model124 model, final BattleRenderStruct a1) {
+    model.count_c8.set((short)a1.objtable2_550.nobj.get());
+    model.tmdNobj_ca.set((int)a1.objtable2_550.nobj.get());
+    model.ObjTable_0c.top.set(a1.objtable2_550.top.deref());
+    model.ObjTable_0c.nobj.set(a1.objtable2_550.nobj.get());
 
     //LAB_800e9b24
-    memcpy(a0.coord2_14.getAddress(), a1.coord2_558.getAddress(), 0x50);
+    memcpy(model.coord2_14.getAddress(), a1.coord2_558.getAddress(), 0x50);
 
     //LAB_800e9b5c
-    memcpy(a0.coord2Param_64.getAddress(), a1.param_5a8.getAddress(), 0x28);
+    memcpy(model.coord2Param_64.getAddress(), a1.param_5a8.getAddress(), 0x28);
 
-    a0.tmd_8c.set(a1.tmd_5d0.deref());
-    a0.partTransforms_90.set(a1.rotTrans_5d4.deref());
-    a0.partTransforms_94.set(a1.rotTrans_5d8.deref());
-    a0.animCount_98.set(a1.rotTransCount_5dc.get());
-    a0.s_9a.set(a1._5de.get());
-    a0.ub_9c.set(a1._5e0.get());
-    a0.ub_9d.set(0);
-    a0.zOffset_a0.set((short)0x200);
-    a0.ub_a2.set(0);
-    a0.ub_a3.set(0);
-    a0.smallerStructPtr_a4.clear();
-    a0.s_9e.set(a1._5e2.get());
-    a0.ptr_a8.set(a1._5ec.get());
+    model.tmd_8c.set(a1.tmd_5d0.deref());
+    model.partTransforms_90.set(a1.rotTrans_5d4.deref());
+    model.partTransforms_94.set(a1.rotTrans_5d8.deref());
+    model.animCount_98.set(a1.rotTransCount_5dc.get());
+    model.s_9a.set(a1._5de.get());
+    model.ub_9c.set(a1._5e0.get());
+    model.ub_9d.set(0);
+    model.zOffset_a0.set((short)0x200);
+    model.ub_a2.set(0);
+    model.ub_a3.set(0);
+    model.smallerStructPtr_a4.clear();
+    model.s_9e.set(a1._5e2.get());
+    model.ptr_a8.set(a1._5ec.get());
 
     //LAB_800e9c0c
     for(int i = 0; i < 7; i++) {
-      a0.aub_ec.get(i).set(0);
+      model.aub_ec.get(i).set(0);
     }
 
-    a0.ui_f4.set(a1._5e4.get());
-    a0.ui_f8.set(0);
-    a0.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    a0.ui_108.set(0);
-    a0.vector_10c.set(0x1000, 0x1000, 0x1000);
-    a0.vector_118.set(0, 0, 0);
-    a0.b_cc.set(0);
-    a0.b_cd.set(0);
+    model.ui_f4.set(a1._5e4.get());
+    model.ui_f8.set(0);
+    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.ui_108.set(0);
+    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_118.set(0, 0, 0);
+    model.b_cc.set(0);
+    model.b_cd.set(0);
 
-    final int count = a0.count_c8.get();
+    final int count = model.count_c8.get();
     final long addr = mallocHead(count * 0x10 + count * 0x50 + count * 0x28);
-    a0.dobj2ArrPtr_00.setPointer(addr);
-    a0.coord2ArrPtr_04.setPointer(addr + count * 0x10);
-    a0.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
-    memcpy(a0.dobj2ArrPtr_00.getPointer(), a1.dobj2s_00.getAddress(), count * 0x10);
-    memcpy(a0.coord2ArrPtr_04.getPointer(), a1.coord2s_a0.getAddress(), count * 0x50);
-    memcpy(a0.coord2ParamArrPtr_08.getPointer(), a1.params_3c0.getAddress(), count * 0x28);
+    model.dobj2ArrPtr_00.setPointer(addr);
+    model.coord2ArrPtr_04.setPointer(addr + count * 0x10);
+    model.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
+    memcpy(model.dobj2ArrPtr_00.getPointer(), a1.dobj2s_00.getAddress(), count * 0x10);
+    memcpy(model.coord2ArrPtr_04.getPointer(), a1.coord2s_a0.getAddress(), count * 0x50);
+    memcpy(model.coord2ParamArrPtr_08.getPointer(), a1.params_3c0.getAddress(), count * 0x28);
 
-    final GsCOORDINATE2 parent = a0.coord2_14;
+    final GsCOORDINATE2 parent = model.coord2_14;
 
     //LAB_800e9d34
     for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00.deref().get(i);
-      dobj2.coord2_04.set(a0.coord2ArrPtr_04.deref().get(i));
+      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00.deref().get(i);
+      dobj2.coord2_04.set(model.coord2ArrPtr_04.deref().get(i));
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04.deref();
-      coord2.param.set(a0.coord2ParamArrPtr_08.deref().get(i));
+      coord2.param.set(model.coord2ParamArrPtr_08.deref().get(i));
       coord2.super_.set(parent);
     }
 
     //LAB_800e9d90
-    a0.coord2_14.param.set(a0.coord2Param_64);
-    a0.ObjTable_0c.top.set(a0.dobj2ArrPtr_00.deref());
+    model.coord2_14.param.set(model.coord2Param_64);
+    model.ObjTable_0c.top.set(model.dobj2ArrPtr_00.deref());
   }
 
   @Method(0x800e9db4L)
-  public static void FUN_800e9db4(final BigStruct a0, final BigStruct a1) {
+  public static void FUN_800e9db4(final Model124 model1, final Model124 model2) {
     //LAB_800e9dd8
-    memcpy(a0.getAddress(), a1.getAddress(), 0x124);
+    memcpy(model1.getAddress(), model2.getAddress(), 0x124);
 
-    final int count = a0.count_c8.get();
+    final int count = model1.count_c8.get();
     final long addr = mallocHead(count * 0x10 + count * 0x50 + count * 0x28);
-    a0.dobj2ArrPtr_00.setPointer(addr);
-    a0.coord2ArrPtr_04.setPointer(addr + count * 0x10);
-    a0.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
-    memcpy(a0.dobj2ArrPtr_00.getPointer(), a1.dobj2ArrPtr_00.getPointer(), count * 0x10);
-    memcpy(a0.coord2ArrPtr_04.getPointer(), a1.coord2ArrPtr_04.getPointer(), count * 0x50);
-    memcpy(a0.coord2ParamArrPtr_08.getPointer(), a1.coord2ParamArrPtr_08.getPointer(), count * 0x28);
+    model1.dobj2ArrPtr_00.setPointer(addr);
+    model1.coord2ArrPtr_04.setPointer(addr + count * 0x10);
+    model1.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
+    memcpy(model1.dobj2ArrPtr_00.getPointer(), model2.dobj2ArrPtr_00.getPointer(), count * 0x10);
+    memcpy(model1.coord2ArrPtr_04.getPointer(), model2.coord2ArrPtr_04.getPointer(), count * 0x50);
+    memcpy(model1.coord2ParamArrPtr_08.getPointer(), model2.coord2ParamArrPtr_08.getPointer(), count * 0x28);
 
-    final GsCOORDINATE2 parent = a0.coord2_14;
+    final GsCOORDINATE2 parent = model1.coord2_14;
 
     //LAB_800e9ee8
     for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00.deref().get(i);
-      dobj2.coord2_04.set(a0.coord2ArrPtr_04.deref().get(i));
+      final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00.deref().get(i);
+      dobj2.coord2_04.set(model1.coord2ArrPtr_04.deref().get(i));
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04.deref();
-      coord2.param.set(a0.coord2ParamArrPtr_08.deref().get(i));
+      coord2.param.set(model1.coord2ParamArrPtr_08.deref().get(i));
       coord2.super_.set(parent);
     }
 
     //LAB_800e9f44
-    a0.coord2_14.param.set(a0.coord2Param_64);
-    a0.ObjTable_0c.top.set(a0.dobj2ArrPtr_00.deref());
+    model1.coord2_14.param.set(model1.coord2Param_64);
+    model1.ObjTable_0c.top.set(model1.dobj2ArrPtr_00.deref());
   }
 
   @Method(0x800e9f68L)
@@ -4242,43 +4242,43 @@ public final class Bttl_800e {
       FUN_800e9ae4(s0._10, _1f8003f4.deref().render_963c);
     } else {
       //LAB_800ea030
-      FUN_800e9db4(s0._10, scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class)._148);
+      FUN_800e9db4(s0._10, scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148);
     }
 
     //LAB_800ea04c
-    final BigStruct v1 = s0._134.deref();
-    manager._10.vec_04.set(v1.coord2_14.coord.transfer);
-    manager._10.svec_10.set(v1.coord2Param_64.rotate);
-    manager._10.svec_16.set(v1.scaleVector_fc);
+    final Model124 model = s0._134.deref();
+    manager._10.vec_04.set(model.coord2_14.coord.transfer);
+    manager._10.svec_10.set(model.coord2Param_64.rotate);
+    manager._10.svec_16.set(model.scaleVector_fc);
     manager._10._00.set(0x1400_0040L);
     a0.params_20.get(0).deref().set(managerIndex);
     return 0;
   }
 
   @Method(0x800ea0f4L)
-  public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c a0, final long a1) {
-    final BigStruct struct = a0._44.derefAs(BttlScriptData6cSub13c.class)._10;
-    FUN_800214bc(struct);
-    return struct.coord2ArrPtr_04.deref().get((int)a1);
+  public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c effectManager, final int coord2Index) {
+    final Model124 model = effectManager._44.derefAs(BttlScriptData6cSub13c.class)._10;
+    FUN_800214bc(model);
+    return model.coord2ArrPtr_04.deref().get(coord2Index);
   }
 
   @Method(0x800ea13cL)
   public static long FUN_800ea13c(final RunningScript a0) {
-    final BigStruct v0 = scriptStatePtrArr_800bc1c0.get((short)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final Model124 model = scriptStatePtrArr_800bc1c0.get((short)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     final int a1 = a0.params_20.get(1).deref().get() & 0xffff;
 
     //TODO
-    MEMORY.ref(4, v0.ui_f4.getAddress()).offset(((short)a1 >> 5) * 0x4L).oru(1L << (a1 & 0x1f));
+    MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)a1 >> 5) * 0x4L).oru(1L << (a1 & 0x1f));
     return 0;
   }
 
   @Method(0x800ea19cL)
   public static long FUN_800ea19c(final RunningScript a0) {
-    final BigStruct v0 = scriptStatePtrArr_800bc1c0.get((short)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final Model124 model = scriptStatePtrArr_800bc1c0.get((short)a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     final int v1 = a0.params_20.get(1).deref().get() & 0xffff;
 
     //TODO
-    MEMORY.ref(4, v0.ui_f4.getAddress()).offset(((short)v1 >> 5) * 0x4L).and(~(1L << (v1 & 0x1f)));
+    MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)v1 >> 5) * 0x4L).and(~(1L << (v1 & 0x1f)));
     return 0;
   }
 
@@ -4300,17 +4300,17 @@ public final class Bttl_800e {
   public static long FUN_800ea2a0(final RunningScript script) {
     final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    final BigStruct v0;
+    final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
-      v0 = ((EffectManagerData6c)a2)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+      model = ((EffectManagerData6c)a2)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     } else {
       //LAB_800ea2f8
-      v0 = ((BattleObject27c)a2)._148;
+      model = ((BattleObject27c)a2).model_148;
     }
 
     //LAB_800ea300
-    v0.vector_10c.setX(script.params_20.get(1).deref().get());
-    v0.vector_10c.setZ(script.params_20.get(2).deref().get());
+    model.vector_10c.setX(script.params_20.get(1).deref().get());
+    model.vector_10c.setZ(script.params_20.get(2).deref().get());
     return 0;
   }
 
@@ -4318,16 +4318,16 @@ public final class Bttl_800e {
   public static long FUN_800ea30c(final RunningScript script) {
     final BattleScriptDataBase a3 = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    final BigStruct v0;
+    final Model124 model;
     if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
-      v0 = ((EffectManagerData6c)a3)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+      model = ((EffectManagerData6c)a3)._44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     } else {
       //LAB_800ea36c
-      v0 = ((BattleObject27c)a3)._148;
+      model = ((BattleObject27c)a3).model_148;
     }
 
     //LAB_800ea374
-    v0.vector_118.set(script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get());
+    model.vector_118.set(script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get());
     return 0;
   }
 
@@ -4353,15 +4353,15 @@ public final class Bttl_800e {
     FUN_800e8594(sp0x10, manager);
 
     final BttlScriptData6cSub13c s0 = manager._44.derefAs(BttlScriptData6cSub13c.class);
-    final BigStruct v1 = s0._134.deref();
-    v1.coord2Param_64.rotate.set(manager._10.svec_10);
-    v1.scaleVector_fc.set(manager._10.svec_16);
-    v1.zOffset_a0.set(manager._10.z_22.get());
-    v1.coord2_14.coord.set(sp0x10);
-    v1.coord2_14.flg.set(0);
+    final Model124 model = s0._134.deref();
+    model.coord2Param_64.rotate.set(manager._10.svec_10);
+    model.scaleVector_fc.set(manager._10.svec_16);
+    model.zOffset_a0.set(manager._10.z_22.get());
+    model.coord2_14.coord.set(sp0x10);
+    model.coord2_14.flg.set(0);
 
     if(s0.ptr_0c.get() != 0) {
-      FUN_800de2e8(v1, manager._10._24.get());
+      FUN_800de2e8(model, manager._10._24.get());
     }
 
     //LAB_800ea4fc
@@ -4379,18 +4379,18 @@ public final class Bttl_800e {
       }
 
       //LAB_800ea574
-      final BigStruct a0 = s1._134.deref();
+      final Model124 model = s1._134.deref();
 
-      final long s2 = a0.ui_108.get();
+      final long s2 = model.ui_108.get();
 
       if((manager._10._00.get() & 0x4000_0000L) != 0) {
-        a0.ui_108.set(manager._10._00.get() >>> 23 & 0x60L);
+        model.ui_108.set(manager._10._00.get() >>> 23 & 0x60L);
       }
 
       //LAB_800ea598
-      FUN_800dd89c(a0, manager._10._00.get());
+      FUN_800dd89c(model, manager._10._00.get());
 
-      a0.ui_108.set(s2);
+      model.ui_108.set(s2);
 
       if((manager._10._00.get() & 0x40L) == 0) {
         FUN_800e62a8();
@@ -5153,35 +5153,35 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec258L)
-  public static void FUN_800ec258(final BigStruct a0) {
-    final BigStruct s2 = bigStruct_800bda10;
+  public static void FUN_800ec258(final Model124 model) {
+    final Model124 s2 = model_800bda10;
 
-    GsInitCoordinate2(a0.coord2_14, s2.coord2_14);
+    GsInitCoordinate2(model.coord2_14, s2.coord2_14);
 
-    if(a0.b_cc.get() != 3) {
-      s2.coord2_14.coord.transfer.setX(a0.vector_118.getX());
+    if(model.b_cc.get() != 3) {
+      s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
 
-      if(a0.b_cc.get() == 1) {
-        s2.coord2_14.coord.transfer.setY(a0.vector_118.getY());
+      if(model.b_cc.get() == 1) {
+        s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
-        s2.coord2_14.coord.transfer.setY(a0.vector_118.getY() - (a0.coord2_14.coord.transfer.getY() << 12) / a0.scaleVector_fc.getY());
+        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - (model.coord2_14.coord.transfer.getY() << 12) / model.scaleVector_fc.getY());
       }
 
       //LAB_800ec2e0
-      s2.coord2_14.coord.transfer.setZ(a0.vector_118.getZ());
+      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
     } else {
       //LAB_800ec2ec
-      s2.coord2_14.coord.transfer.setX(a0.vector_118.getX() + a0.coord2ArrPtr_04.deref().get(a0.b_cd.get()).coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(a0.vector_118.getY() - (a0.coord2_14.coord.transfer.getY() << 12) / a0.scaleVector_fc.getY());
-      s2.coord2_14.coord.transfer.setZ(a0.vector_118.getZ() + a0.coord2ArrPtr_04.deref().get(a0.b_cd.get()).coord.transfer.getZ());
+      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04.deref().get(model.b_cd.get()).coord.transfer.getX());
+      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - (model.coord2_14.coord.transfer.getY() << 12) / model.scaleVector_fc.getY());
+      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04.deref().get(model.b_cd.get()).coord.transfer.getZ());
     }
 
     //LAB_800ec370
-    s2.zOffset_a0.set((short)(a0.zOffset_a0.get() + 0x10));
-    s2.scaleVector_fc.setX(a0.vector_10c.getX() / 4);
-    s2.scaleVector_fc.setY(a0.vector_10c.getY() / 4);
-    s2.scaleVector_fc.setZ(a0.vector_10c.getZ() / 4);
+    s2.zOffset_a0.set((short)(model.zOffset_a0.get() + 0x10));
+    s2.scaleVector_fc.setX(model.vector_10c.getX() / 4);
+    s2.scaleVector_fc.setY(model.vector_10c.getY() / 4);
+    s2.scaleVector_fc.setZ(model.vector_10c.getZ() / 4);
     RotMatrix_8003faf0(s2.coord2Param_64.rotate, s2.coord2_14.coord);
     final VECTOR scale = new VECTOR().set(s2.scaleVector_fc);
     ScaleMatrixL(s2.coord2_14.coord, scale);
@@ -5299,9 +5299,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec7e4L)
-  public static DVECTOR perspectiveTransformXyz(final BigStruct a0, final short x, final short y, final short z) {
+  public static DVECTOR perspectiveTransformXyz(final Model124 model, final short x, final short y, final short z) {
     final MATRIX ls = new MATRIX();
-    GsGetLs(a0.coord2_14, ls);
+    GsGetLs(model.coord2_14, ls);
     setRotTransMatrix(ls);
 
     final DVECTOR screenCoords = new DVECTOR();
@@ -5355,15 +5355,15 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec974L)
-  public static void FUN_800ec974(final BigStruct a0) {
-    _1f8003ec.setu(a0.ui_108.get());
-    zOffset_1f8003e8.set(a0.zOffset_a0.get());
+  public static void FUN_800ec974(final Model124 model) {
+    _1f8003ec.setu(model.ui_108.get());
+    zOffset_1f8003e8.set(model.zOffset_a0.get());
 
     //LAB_800ec9d0
-    long s6 = a0.ui_f4.get();
+    long s6 = model.ui_f4.get();
     long s0 = 0x1L;
-    for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
-      final GsDOBJ2 s2 = a0.ObjTable_0c.top.deref().get(i);
+    for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
+      final GsDOBJ2 s2 = model.ObjTable_0c.top.deref().get(i);
 
       if((s0 & s6) == 0) {
         final MATRIX sp0x30 = new MATRIX();
@@ -5385,15 +5385,15 @@ public final class Bttl_800e {
       s0 = s0 << 1;
       if((int)s0 == 0) {
         s0 = 0x1L;
-        s6 = a0.ui_f8.get();
+        s6 = model.ui_f8.get();
       }
 
       //LAB_800eca4c
     }
 
     //LAB_800eca58
-    if(a0.b_cc.get() != 0) {
-      FUN_800ec258(a0);
+    if(model.b_cc.get() != 0) {
+      FUN_800ec258(model);
     }
 
     //LAB_800eca70
@@ -5426,7 +5426,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800ecb90
-      FUN_800eccfc(a3._148, textEffect, scriptIndex, a3);
+      FUN_800eccfc(a3.model_148, textEffect, scriptIndex, a3);
     } else {
       //LAB_800ecba4
       long count = 0;
@@ -5471,7 +5471,7 @@ public final class Bttl_800e {
 
         //LAB_800eccac
         if((state.ui_60.get() & 0x4000L) == 0) {
-          FUN_800eccfc(data._148, textEffect, scriptIndex, data);
+          FUN_800eccfc(data.model_148, textEffect, scriptIndex, data);
         }
 
         //LAB_800eccc8
@@ -5482,7 +5482,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eccfcL)
-  public static void FUN_800eccfc(final BigStruct a0, final int textEffect, final int scriptIndex, final BattleObject27c data) {
+  public static void FUN_800eccfc(final Model124 model, final int textEffect, final int scriptIndex, final BattleObject27c data) {
     final int x;
     final int y;
     final int z;
@@ -5507,7 +5507,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800ecdac
-    final DVECTOR screenCoords = perspectiveTransformXyz(a0, (short)x, (short)y, (short)z);
+    final DVECTOR screenCoords = perspectiveTransformXyz(model, (short)x, (short)y, (short)z);
     long addr = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, addr).offset(0x03L).setu(0x4L);
     MEMORY.ref(4, addr).offset(0x04L).setu(0x6680_8080L);

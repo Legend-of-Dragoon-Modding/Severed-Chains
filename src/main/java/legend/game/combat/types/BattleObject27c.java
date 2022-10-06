@@ -13,7 +13,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.types.BigStruct;
+import legend.game.types.Model124;
+import legend.game.types.WorldObject210;
 
 public class BattleObject27c extends BattleScriptDataBase {
   public final ArrayRef<ShortRef> all_04; // Note: overlaps all the way to _144
@@ -266,7 +267,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public final UnsignedShortRef _142;
   public final Pointer<CombatantStruct1a8> combatant_144;
-  public final BigStruct _148;
+  public final Model124 model_148;
 
   //TODO maybe part of previous struct
   public final UnsignedByteRef _1e4;
@@ -290,6 +291,9 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final IntRef _260;
   public final IntRef _264;
   public final IntRef _268;
+
+  // This should be the end of model_148
+
   public final ShortRef combatantIndex_26c;
   public final ShortRef animIndex_26e;
   public final ShortRef animIndex_270;
@@ -454,7 +458,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
     this._142 = ref.offset(2, 0x142L).cast(UnsignedShortRef::new);
     this.combatant_144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, CombatantStruct1a8::new));
-    this._148 = ref.offset(4, 0x148L).cast(BigStruct::new);
+    this.model_148 = ref.offset(4, 0x148L).cast(Model124::new);
 
     this._1e4 = ref.offset(1, 0x1e4L).cast(UnsignedByteRef::new);
     this.colourMap_1e5 = ref.offset(1, 0x1e5L).cast(UnsignedByteRef::new);

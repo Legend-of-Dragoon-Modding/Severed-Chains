@@ -27,7 +27,8 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.BigStruct;
+import legend.game.types.Model124;
+import legend.game.types.WorldObject210;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MOVE;
 import legend.game.types.Drgn0_6666Entry;
@@ -394,132 +395,132 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020700
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(BigStruct, ExtendedTmd, TmdAnimationFile)} */
+  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(Model124, ExtendedTmd, TmdAnimationFile)} */
   @Method(0x80020718L)
-  public static void FUN_80020718(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+  public static void FUN_80020718(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     LOGGER.info("Loading scripted TMD %08x (animation %08x)", extendedTmd.getAddress(), tmdAnimFile.getAddress());
 
-    final int transferX = bigStruct.coord2_14.coord.transfer.getX();
-    final int transferY = bigStruct.coord2_14.coord.transfer.getY();
-    final int transferZ = bigStruct.coord2_14.coord.transfer.getZ();
+    final int transferX = model.coord2_14.coord.transfer.getX();
+    final int transferY = model.coord2_14.coord.transfer.getY();
+    final int transferZ = model.coord2_14.coord.transfer.getZ();
 
     //LAB_80020760
     for(int i = 0; i < 7; i++) {
-      bigStruct.aub_ec.get(i).set(0);
+      model.aub_ec.get(i).set(0);
     }
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
-    bigStruct.tmd_8c.set(tmd);
-    bigStruct.tmdNobj_ca.set((int)tmd.header.nobj.get());
+    model.tmd_8c.set(tmd);
+    model.tmdNobj_ca.set((int)tmd.header.nobj.get());
 
     if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
-      FUN_800de004(bigStruct, extendedTmd);
+      FUN_800de004(model, extendedTmd);
     }
 
     //LAB_8002079c
-    bigStruct.ui_108.set((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11); //TODO reading the upper 16 bits of the TMD ID?
+    model.ui_108.set((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11); //TODO reading the upper 16 bits of the TMD ID?
 
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_80020818
-      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress()); //TODO
+      model.ptr_a8.set(extendedTmd.ptr_08.getAddress()); //TODO
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
-        bigStruct.aui_d0.get(i).set(0);
+        model.aui_d0.get(i).set(0);
       }
     } else {
-      bigStruct.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
+      model.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
         //TODO make aui_d0 array of pointers to unsigned ints (also pointers but to what?)
         //TODO also ui_a8 is a pointer to a relative pointer?
-        bigStruct.aui_d0.get(i).set(bigStruct.ptr_a8.get() + MEMORY.ref(4, bigStruct.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
-        FUN_8002246c(bigStruct, i);
+        model.aui_d0.get(i).set(model.ptr_a8.get() + MEMORY.ref(4, model.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
+        FUN_8002246c(model, i);
       }
     }
 
     //LAB_80020838
-    adjustTmdPointers(bigStruct.tmd_8c.deref());
-    initObjTable2(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
-    bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
-    GsInitCoordinate2(null, bigStruct.coord2_14);
-    FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 1));
+    adjustTmdPointers(model.tmd_8c.deref());
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
+    model.coord2_14.param.set(model.coord2Param_64);
+    GsInitCoordinate2(null, model.coord2_14);
+    FUN_80021ca0(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 1));
 
-    bigStruct.zOffset_a0.set((short)0);
-    bigStruct.ub_a2.set(0);
-    bigStruct.ub_a3.set(0);
-    bigStruct.ui_f4.set(0);
-    bigStruct.ui_f8.set(0);
+    model.zOffset_a0.set((short)0);
+    model.ub_a2.set(0);
+    model.ub_a3.set(0);
+    model.ui_f4.set(0);
+    model.ui_f8.set(0);
 
-    FUN_80021584(bigStruct, tmdAnimFile);
+    FUN_80021584(model, tmdAnimFile);
 
-    bigStruct.coord2_14.coord.transfer.setX(transferX);
-    bigStruct.coord2_14.coord.transfer.setY(transferY);
-    bigStruct.coord2_14.coord.transfer.setZ(transferZ);
+    model.coord2_14.coord.transfer.setX(transferX);
+    model.coord2_14.coord.transfer.setY(transferY);
+    model.coord2_14.coord.transfer.setZ(transferZ);
 
     int s1 = 0;
     //LAB_80020940
     if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       //LAB_80020958
-      for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-        FUN_800d9e64(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
+      for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
+        FUN_800d9e64(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
       }
 
       //LAB_80020978
     } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
       //LAB_80020990
-      for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-        FUN_800c8844(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
+      for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
+        FUN_800c8844(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
       }
 
       //LAB_800209ac
     } else {
       //LAB_8002091c
-      for(int i = 0; i < bigStruct.ObjTable_0c.nobj.get(); i++) {
-        FUN_80020468(bigStruct.ObjTable_0c.top.deref().get(s1++), bigStruct.ub_9d.get());
+      for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
+        FUN_80020468(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
       }
     }
 
     //LAB_800209b0
-    bigStruct.b_cc.set(0);
-    bigStruct.b_cd.set(-2);
-    bigStruct.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    bigStruct.vector_10c.set(0x1000, 0x1000, 0x1000);
-    bigStruct.vector_118.set(0, 0, 0);
+    model.b_cc.set(0);
+    model.b_cd.set(-2);
+    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_118.set(0, 0, 0);
   }
 
   @Method(0x80020a00L)
-  public static void FUN_80020a00(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
-    bigStruct.count_c8.set((short)extendedTmd.tmdPtr_00.deref().tmd.header.nobj.get());
+  public static void FUN_80020a00(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+    model.count_c8.set((short)extendedTmd.tmdPtr_00.deref().tmd.header.nobj.get());
 
     final long address;
     if(mainCallbackIndex_8004dd20.get() != 0x6L || _800bd7a0.get() == 0) {
       //LAB_80020b00
       //LAB_80020b04
-      address = mallocTail(bigStruct.count_c8.get() * 0x88L);
-      bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+      address = mallocTail(model.count_c8.get() * 0x88L);
+      model.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
     } else {
       free(_800bd7a0.get());
 
-      address = mallocHead(bigStruct.count_c8.get() * 0x88L);
-      bigStruct.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
+      address = mallocHead(model.count_c8.get() * 0x88L);
+      model.dobj2ArrPtr_00.set(MEMORY.ref(4, address, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
 
       _800bd7a8.subu(0x1L);
-      _800bd7a4.subu(bigStruct.count_c8.get() * 0x88L + _800bd7a8.get() * 0x100L);
+      _800bd7a4.subu(model.count_c8.get() * 0x88L + _800bd7a8.get() * 0x100L);
 
       _800bd7a0.setu(mallocHead(_800bd7a4.get()));
     }
 
     //LAB_80020b40
-    bigStruct.coord2ArrPtr_04.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
-    bigStruct.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + bigStruct.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
-    FUN_80020718(bigStruct, extendedTmd, tmdAnimFile);
+    model.coord2ArrPtr_04.set(MEMORY.ref(4, address + model.count_c8.get() * 0x10L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
+    model.coord2ParamArrPtr_08.set(MEMORY.ref(4, address + model.count_c8.get() * 0x60L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
+    FUN_80020718(model, extendedTmd, tmdAnimFile);
   }
 
   @Method(0x80020b98L)
-  public static void FUN_80020b98(final BigStruct a0) {
+  public static void FUN_80020b98(final Model124 a0) {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       FUN_800da114(a0);
       return;
@@ -673,7 +674,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020fe0L)
-  public static void FUN_80020fe0(final BigStruct a0) {
+  public static void FUN_80020fe0(final Model124 a0) {
     if(!a0.dobj2ArrPtr_00.isNull()) {
       free(a0.dobj2ArrPtr_00.getPointer());
     }
@@ -844,7 +845,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800211d8L)
-  public static void FUN_800211d8(final BigStruct a0) {
+  public static void FUN_800211d8(final Model124 a0) {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
       //LAB_80021230
       FUN_800daa3c(a0);
@@ -884,7 +885,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800212d8L)
-  public static void applyModelPartTransforms(final BigStruct a0) {
+  public static void applyModelPartTransforms(final Model124 a0) {
     final int count = a0.tmdNobj_ca.get();
 
     if(count == 0) {
@@ -913,7 +914,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800213c4L)
-  public static void FUN_800213c4(final BigStruct a0) {
+  public static void FUN_800213c4(final Model124 a0) {
     //LAB_80021404
     for(int i = 0; i < a0.tmdNobj_ca.get(); i++) {
       final ModelPartTransforms transforms = a0.partTransforms_94.deref().get(i);
@@ -932,26 +933,26 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800214bcL)
-  public static void FUN_800214bc(final BigStruct a0) {
+  public static void FUN_800214bc(final Model124 a0) {
     RotMatrix_8003faf0(a0.coord2Param_64.rotate, a0.coord2_14.coord);
     ScaleMatrix(a0.coord2_14.coord, a0.scaleVector_fc);
     a0.coord2_14.flg.set(0);
   }
 
   @Method(0x80021520L)
-  public static void FUN_80021520(final BigStruct a0, final ExtendedTmd a1, final TmdAnimationFile a2, final long a3) {
+  public static void FUN_80021520(final Model124 a0, final ExtendedTmd a1, final TmdAnimationFile a2, final long a3) {
     FUN_80020718(a0, a1, a2);
     FUN_8002155c(a0, a3);
   }
 
   @Method(0x8002155cL)
-  public static void FUN_8002155c(final BigStruct a0, final long a1) {
+  public static void FUN_8002155c(final Model124 a0, final long a1) {
     final int v0 = (int)_8005039c.offset(2, a1 * 0x2L).getSigned();
     a0.vector_10c.set(v0, v0, v0);
   }
 
   @Method(0x80021584L)
-  public static void FUN_80021584(final BigStruct bigStruct, final TmdAnimationFile tmdAnimFile) {
+  public static void FUN_80021584(final Model124 bigStruct, final TmdAnimationFile tmdAnimFile) {
     bigStruct.partTransforms_90.set(tmdAnimFile.partTransforms_10);
     bigStruct.partTransforms_94.set(tmdAnimFile.partTransforms_10);
     bigStruct.animCount_98.set(tmdAnimFile.count_0c);
@@ -973,7 +974,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021628L)
-  public static void FUN_80021628(final BigStruct a0) {
+  public static void FUN_80021628(final Model124 a0) {
     if(mainCallbackIndex_8004dd20.get() != 0x5L && mainCallbackIndex_8004dd20.get() != 0x8L) {
       //LAB_80021678
       for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
@@ -997,7 +998,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021724L)
-  public static void FUN_80021724(final BigStruct a0) {
+  public static void FUN_80021724(final Model124 a0) {
     final long v1 = mainCallbackIndex_8004dd20.get();
     if(v1 == 0x5) {
       //LAB_8002177c
@@ -1015,7 +1016,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800217a4L)
-  public static void FUN_800217a4(final BigStruct bigStruct) {
+  public static void FUN_800217a4(final Model124 bigStruct) {
     if(bigStruct.coord2Param_64.rotate.pad.get() == -1) {
       final MATRIX mat = new MATRIX();
       RotMatrix_8003fd80(bigStruct.coord2Param_64.rotate, mat);
@@ -1350,7 +1351,7 @@ public final class Scus94491BpeSegment_8002 {
    * This method animates the fog in the first cutscene with Rose/Feyrbrand
    */
   @Method(0x80022018L)
-  public static void FUN_80022018(final BigStruct a0, final int index) {
+  public static void FUN_80022018(final Model124 a0, final int index) {
     final RECT rect = new RECT();
 
     if(a0.aui_d0.get(index).get() == 0) {
@@ -1503,7 +1504,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002246cL)
-  public static void FUN_8002246c(final BigStruct a0, final int a1) {
+  public static void FUN_8002246c(final Model124 a0, final int a1) {
     if(a0.aui_d0.get(a1).get() == 0) {
       a0.aub_ec.get(a1).set(0);
       return;

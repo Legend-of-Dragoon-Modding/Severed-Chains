@@ -11,7 +11,7 @@ public class RunningScript implements MemoryRef {
   private final Value ref;
 
   public final IntRef scriptStateIndex_00;
-  public final Pointer<ScriptState<BigStruct>> scriptState_04;
+  public final Pointer<ScriptState<WorldObject210>> scriptState_04;
   /** Pointer to the start of the current command (i.e. the op) */
   public final Pointer<IntRef> opPtr_08;
   /** Pointer to the current element in the packet (may be op or param) */
@@ -26,7 +26,7 @@ public class RunningScript implements MemoryRef {
     this.ref = ref;
 
     this.scriptStateIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
-    this.scriptState_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, ScriptState.of(BigStruct::new)));
+    this.scriptState_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, ScriptState.of(WorldObject210::new)));
     this.opPtr_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, IntRef::new));
     this.commandPtr_0c = ref.offset(4, 0x0cL).cast(Pointer.deferred(4, IntRef::new));
     this.opIndex_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);

@@ -22,7 +22,7 @@ public class WMapStruct258 implements MemoryRef {
   public final UnsignedByteRef _05;
 
   public final Pointer<WMapTmdRenderingStruct18> tmdRendering_08;
-  public final ArrayRef<Pointer<BigStruct>> bigStructs_0c; //TODO doesn't use the whole BigStruct? Only 0x124 bytes? Is BigStruct too big?
+  public final ArrayRef<Pointer<Model124>> models_0c;
   public final UnsignedIntRef _1c; //TODO pointer to a struct
   public final ShortRef _20;
 
@@ -82,7 +82,7 @@ public class WMapStruct258 implements MemoryRef {
     this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
 
     this.tmdRendering_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, WMapTmdRenderingStruct18::new));
-    this.bigStructs_0c = ref.offset(4, 0x0cL).cast(ArrayRef.of(Pointer.classFor(BigStruct.class), 4, 4, Pointer.deferred(4, BigStruct::new)));
+    this.models_0c = ref.offset(4, 0x0cL).cast(ArrayRef.of(Pointer.classFor(Model124.class), 4, 4, Pointer.deferred(4, Model124::new)));
     this._1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
 

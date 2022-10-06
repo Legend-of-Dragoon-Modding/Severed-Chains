@@ -23,7 +23,6 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.tmd.Renderer;
-import legend.game.types.BigStruct;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
 import legend.game.types.GameState52c;
@@ -31,6 +30,7 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
+import legend.game.types.Model124;
 import legend.game.types.MrgFile;
 import legend.game.types.TexPageBpp;
 import legend.game.types.TexPageTrans;
@@ -61,18 +61,18 @@ import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.fillMemory;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -517,7 +517,7 @@ public class WMap {
   }
 
   @Method(0x800c8d90L)
-  public static void FUN_800c8d90(final BigStruct a0) {
+  public static void FUN_800c8d90(final Model124 model) {
     assert false;
   }
 
@@ -592,18 +592,18 @@ public class WMap {
   }
 
   @Method(0x800c925cL) // Renders the player
-  public static void FUN_800c925c(final BigStruct a0) {
+  public static void FUN_800c925c(final Model124 model) {
     long s0 = 0x1L;
-    long s6 = a0.ui_f4.get();
-    final long nobj = a0.ObjTable_0c.nobj.get();
-    final long fp = a0.ui_f8.get();
+    long s6 = model.ui_f4.get();
+    final long nobj = model.ObjTable_0c.nobj.get();
+    final long fp = model.ui_f8.get();
 
-    zOffset_1f8003e8.set(a0.zOffset_a0.get());
-    _1f8003ec.setu(a0.ui_108.get());
+    zOffset_1f8003e8.set(model.zOffset_a0.get());
+    _1f8003ec.setu(model.ui_108.get());
 
     //LAB_800c92c8
     for(int i = 0; i < nobj; i++) {
-      final GsDOBJ2 dobj2 = a0.ObjTable_0c.top.deref().get(i);
+      final GsDOBJ2 dobj2 = model.ObjTable_0c.top.deref().get(i);
 
       if((s0 & s6) == 0) {
         final MATRIX ls = new MATRIX();
@@ -632,8 +632,8 @@ public class WMap {
     }
 
     //LAB_800c9354
-    if(a0.b_cc.get() != 0) {
-      FUN_800c8d90(a0);
+    if(model.b_cc.get() != 0) {
+      FUN_800c8d90(model);
     }
 
     //LAB_800c936c
@@ -5776,16 +5776,16 @@ public class WMap {
         struct258_800c66a8.deref()._21e.set(_800c66b0.deref().mapRotation_70.getY());
         struct258_800c66a8.deref()._223.set(0);
         struct258_800c66a8.deref()._220.set(1);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x400);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setX(0x400);
         struct258_800c66a8.deref().coord2_34.coord.transfer.setX(struct258_800c66a8.deref().vec_94.getX() >> 12);
         struct258_800c66a8.deref().coord2_34.coord.transfer.setY(struct258_800c66a8.deref().vec_94.getY() >> 12);
         struct258_800c66a8.deref().coord2_34.coord.transfer.setZ(struct258_800c66a8.deref().vec_94.getZ() >> 12);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setX(struct258_800c66a8.deref().coord2_34.coord.transfer.getX());
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setY(struct258_800c66a8.deref().coord2_34.coord.transfer.getY());
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2_14.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ());
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2_14.coord.transfer.setX(struct258_800c66a8.deref().coord2_34.coord.transfer.getX());
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2_14.coord.transfer.setY(struct258_800c66a8.deref().coord2_34.coord.transfer.getY());
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2_14.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ());
 
         //LAB_800da8a0
         for(int i = 0; i < 8; i++) {
@@ -5811,16 +5811,16 @@ public class WMap {
       case 2:
         FUN_800e3304();
 
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.y.add(0x40);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.y.add(0x40);
 
-        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() > 0x600L) {
-          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x600);
+        if(struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX() > 0x600L) {
+          struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setX(0x600);
         }
 
         //LAB_800da9fc
-        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        a0 = struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
         struct258_800c66a8.deref().vec_94.y.add(0xfffa_0000);
 
         _800c66b0.deref().coord2_20.coord.transfer.y.sub(96);
@@ -5852,10 +5852,10 @@ public class WMap {
         break;
 
       case 3:
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.set(0, 0, 0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0x400);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY((short)0x800);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.set(0, 0, 0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setX((short)0x400);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setY((short)0x800);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
 
         _800c66b0.deref().mapRotation_70.setY((short)0);
         _800c66b0.deref().coord2_20.coord.transfer.setX(720);
@@ -5933,22 +5933,22 @@ public class WMap {
         }
 
         //LAB_800db07c
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.add(0x200);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.x.add(0x200);
 
-        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() > 0x800) {
-          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x800);
+        if(struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX() > 0x800) {
+          struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setX(0x800);
         }
 
         //LAB_800db0f0
-        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        a0 = struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
         FUN_800dc178(0x1L, 0x1L);
         break;
 
       case 5:
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.set(0x800, 0x800, 0x800);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.set(0x800, 0x800, 0x800);
 
         if(FUN_8002a488(0x6L) != 0) {
           struct258_800c66a8.deref()._220.set(5);
@@ -6023,16 +6023,16 @@ public class WMap {
         //LAB_800db698
         FUN_800dcc20(struct258_800c66a8.deref().vec_94, sp0x38, sp0x48, 0xcL, struct258_800c66a8.deref()._218.get());
 
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.sub(170);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.x.sub(170);
 
-        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() < 0) {
-          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0);
+        if(struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX() < 0) {
+          struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setX(0);
         }
 
         //LAB_800db74c
-        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        a0 = struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
         FUN_800dc178(0, 0);
         break;
@@ -6076,13 +6076,13 @@ public class WMap {
         struct258_800c66a8.deref().vec_94.setY(-5000 << 12);
         struct258_800c66a8.deref().rotation_a4.setY((short)struct258_800c66a8.deref()._21c.get());
         _800c66b0.deref().mapRotation_70.setY((short)struct258_800c66a8.deref()._21e.get());
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setX(0x600);
-        a0 = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY((int)a0);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setX((short)0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setY(struct258_800c66a8.deref().rotation_a4.getY());
+        struct258_800c66a8.deref().models_0c.get(2).deref().coord2Param_64.rotate.setZ((short)0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setX(0x600);
+        a0 = struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
         struct258_800c66a8.deref()._220.set(11);
 
         FUN_80019c80(0xcL, 0x1L, 0x1L);
@@ -6127,16 +6127,16 @@ public class WMap {
         }
 
         //LAB_800dbeb4
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.x.sub(16);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.x.sub(16);
 
-        if(struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX() < 1024) {
-          struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ(1024);
+        if(struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX() < 1024) {
+          struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ(1024);
         }
 
         //LAB_800dbf28
-        final int x = struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.getX();
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setY(x);
-        struct258_800c66a8.deref().bigStructs_0c.get(2).deref().scaleVector_fc.setZ(x);
+        final int x = struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.getX();
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setY(x);
+        struct258_800c66a8.deref().models_0c.get(2).deref().scaleVector_fc.setZ(x);
 
         _800ef1a4.subu(0x1L);
 
@@ -6415,9 +6415,9 @@ public class WMap {
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
-      struct258_800c66a8.deref().bigStructs_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), BigStruct::new));
+      struct258_800c66a8.deref().models_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), Model124::new));
       loadDrgnBinFile(0, 5714 + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
-      struct258_800c66a8.deref().bigStructs_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
+      struct258_800c66a8.deref().models_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
     //LAB_800dfbb4
@@ -6434,21 +6434,21 @@ public class WMap {
 
     //LAB_800dfca4
     for(int i = 0; i < 4; i++) {
-      final BigStruct bigStruct = struct258.bigStructs_0c.get(i).deref();
+      final Model124 model = struct258.models_0c.get(i).deref();
 
       //LAB_800dfcc0
-      FUN_80020a00(bigStruct, struct258._b4.get(i).extendedTmd_00.deref(), struct258._b4.get(i).tmdAnim_08.deref());
-      FUN_80021584(bigStruct, struct258._b4.get(i).tmdAnim_08.deref());
+      FUN_80020a00(model, struct258._b4.get(i).extendedTmd_00.deref(), struct258._b4.get(i).tmdAnim_08.deref());
+      FUN_80021584(model, struct258._b4.get(i).tmdAnim_08.deref());
 
-      bigStruct.coord2_14.coord.transfer.setX(struct258.coord2_34.coord.transfer.getX());
-      bigStruct.coord2_14.coord.transfer.setY(struct258.coord2_34.coord.transfer.getY());
-      bigStruct.coord2_14.coord.transfer.setZ(struct258.coord2_34.coord.transfer.getZ());
-      bigStruct.coord2Param_64.rotate.setX((short)0);
-      bigStruct.coord2Param_64.rotate.setY(struct258.rotation_a4.getY());
-      bigStruct.coord2Param_64.rotate.setZ((short)0);
-      bigStruct.scaleVector_fc.setX(0);
-      bigStruct.scaleVector_fc.setY(0);
-      bigStruct.scaleVector_fc.setZ(0);
+      model.coord2_14.coord.transfer.setX(struct258.coord2_34.coord.transfer.getX());
+      model.coord2_14.coord.transfer.setY(struct258.coord2_34.coord.transfer.getY());
+      model.coord2_14.coord.transfer.setZ(struct258.coord2_34.coord.transfer.getZ());
+      model.coord2Param_64.rotate.setX((short)0);
+      model.coord2Param_64.rotate.setY(struct258.rotation_a4.getY());
+      model.coord2Param_64.rotate.setZ((short)0);
+      model.scaleVector_fc.setX(0);
+      model.scaleVector_fc.setY(0);
+      model.scaleVector_fc.setZ(0);
     }
 
     //LAB_800dff4c
@@ -6467,26 +6467,26 @@ public class WMap {
     FUN_800e28dc(0x28L, 0x1L);
 
     final int v0 = (int)struct258._1e4.get();
-    final BigStruct v1 = struct258.bigStructs_0c.get(v0).deref();
+    final Model124 model = struct258.models_0c.get(v0).deref();
     if(v0 == 0) {
       //LAB_800e00c4
-      v1.scaleVector_fc.set(0x800, 0x666, 0x800);
+      model.scaleVector_fc.set(0x800, 0x666, 0x800);
     } else if(v0 == 1) {
       //LAB_800e0114
       if(_800c6798.get() == 7) {
-        v1.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
       } else {
-        v1.scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        model.scaleVector_fc.set(0x2000, 0x2000, 0x2000);
       }
 
       //LAB_800e01b8
       //LAB_800e00a4
     } else if(v0 == 2) {
       //LAB_800e01c0
-      v1.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0, 0, 0);
     } else if(v0 == 3) {
       //LAB_800e0210
-      v1.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0, 0, 0);
     }
 
     //LAB_800e0260
@@ -6506,24 +6506,24 @@ public class WMap {
     }
 
     //LAB_800e02e0
-    FUN_800214bc(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
-    FUN_80020b98(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
+    FUN_800214bc(struct.models_0c.get((int)struct._1e4.get()).deref());
+    FUN_80020b98(struct.models_0c.get((int)struct._1e4.get()).deref());
 
     final long v0 = struct._1e4.get();
     if(v0 == 0) {
       //LAB_800e03a0
       GsSetAmbient(0xc80, 0xc80, 0xc80);
 
-      struct.bigStructs_0c.get(0).deref().scaleVector_fc.set(0x800, 0x666, 0x800);
+      struct.models_0c.get(0).deref().scaleVector_fc.set(0x800, 0x666, 0x800);
     } else if(v0 == 1) {
       //LAB_800e0404
       GsSetAmbient(0x800, 0x800, 0x800);
 
 
       if(_800c6798.get() == 7) {
-        struct.bigStructs_0c.get(1).deref().scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        struct.models_0c.get(1).deref().scaleVector_fc.set(0x1000, 0x1000, 0x1000);
       } else {
-        struct.bigStructs_0c.get(1).deref().scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        struct.models_0c.get(1).deref().scaleVector_fc.set(0x2000, 0x2000, 0x2000);
       }
 
       //LAB_800e04bc
@@ -6537,8 +6537,8 @@ public class WMap {
     }
 
     //LAB_800e04fc
-    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().zOffset_a0.set((short)0x4e);
-    FUN_800211d8(struct.bigStructs_0c.get((int)struct._1e4.get()).deref());
+    struct.models_0c.get((int)struct._1e4.get()).deref().zOffset_a0.set((short)0x4e);
+    FUN_800211d8(struct.models_0c.get((int)struct._1e4.get()).deref());
     GsSetAmbient(_800c66b0.deref().ambientLight_14c.getX(), _800c66b0.deref().ambientLight_14c.getY(), _800c66b0.deref().ambientLight_14c.getZ());
     FUN_800e06d0();
     FUN_800e1364();
@@ -6553,7 +6553,7 @@ public class WMap {
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
-      FUN_80020fe0(struct258_800c66a8.deref().bigStructs_0c.get(i).deref());
+      FUN_80020fe0(struct258_800c66a8.deref().models_0c.get(i).deref());
       v0 = 0x800c_0000L;
       v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
       v1 = i;
@@ -7171,7 +7171,7 @@ public class WMap {
       a0 = a0 + a2;
       v1 = v1 + a0;
 
-      FUN_80021584(MEMORY.ref(4, v0).offset(0xcL).deref(4).cast(BigStruct::new), MEMORY.ref(4, v1).offset(0xb4L).deref(4).cast(TmdAnimationFile::new)); //TODO
+      FUN_80021584(MEMORY.ref(4, v0).offset(0xcL).deref(4).cast(Model124::new), MEMORY.ref(4, v1).offset(0xb4L).deref(4).cast(TmdAnimationFile::new)); //TODO
     }
 
     //LAB_800e1354
@@ -7185,20 +7185,20 @@ public class WMap {
     struct.coord2_34.coord.transfer.setX(struct.vec_94.getX() >> 12);
     struct.coord2_34.coord.transfer.setY(struct.vec_94.getY() >> 12);
     struct.coord2_34.coord.transfer.setZ(struct.vec_94.getZ() >> 12);
-    struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2_14.coord.transfer.set(struct.coord2_34.coord.transfer);
+    struct.models_0c.get((int)struct._1e4.get()).deref().coord2_14.coord.transfer.set(struct.coord2_34.coord.transfer);
 
     if(struct._250.get() == 0) {
-      long sp10 = struct.rotation_a4.getY() - struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.getY();
-      final long sp14 = struct.rotation_a4.getY() - (struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.getY() - 0x1000L);
+      long sp10 = struct.rotation_a4.getY() - struct.models_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.getY();
+      final long sp14 = struct.rotation_a4.getY() - (struct.models_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.getY() - 0x1000L);
 
       if(Math.abs(sp14) < Math.abs(sp10)) {
         sp10 = sp14;
       }
 
       //LAB_800e15e4
-      struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.y.add((short)(sp10 / 2));
-      struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.setX(struct.rotation_a4.getX());
-      struct.bigStructs_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.setZ(struct.rotation_a4.getZ());
+      struct.models_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.y.add((short)(sp10 / 2));
+      struct.models_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.setX(struct.rotation_a4.getX());
+      struct.models_0c.get((int)struct._1e4.get()).deref().coord2Param_64.rotate.setZ(struct.rotation_a4.getZ());
     }
 
     //LAB_800e16f8
@@ -7214,7 +7214,7 @@ public class WMap {
     final Ref<Long> sp0x64 = new Ref<>();
     final Ref<Long> sp0x68 = new Ref<>();
 
-    GsGetLs(struct258_800c66a8.deref().bigStructs_0c.get((int)struct258_800c66a8.deref()._1e4.get()).deref().coord2_14, sp0x28);
+    GsGetLs(struct258_800c66a8.deref().models_0c.get((int)struct258_800c66a8.deref()._1e4.get()).deref().coord2_14, sp0x28);
     setRotTransMatrix(sp0x28);
 
     //LAB_800e17b4

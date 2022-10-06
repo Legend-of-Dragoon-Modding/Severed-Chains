@@ -60,15 +60,15 @@ import legend.game.combat.types.BttlScriptData6cSub98Inner24;
 import legend.game.combat.types.BttlScriptData6cSub98Sub94;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.DeathDimensionEffect;
-import legend.game.combat.types.EffeScriptData18;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
+import legend.game.combat.types.EffeScriptData18;
 import legend.game.combat.types.EffeScriptData30;
 import legend.game.combat.types.EffeScriptData30Sub06;
 import legend.game.combat.types.EffectManagerData6c;
-import legend.game.types.BigStruct;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
+import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -88,23 +88,23 @@ import static legend.game.Scus94491BpeSegment.FUN_80018dec;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
-import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.mallocHead;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
-import static legend.game.Scus94491BpeSegment.setScriptRenderer;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
+import static legend.game.Scus94491BpeSegment.setScriptRenderer;
+import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -149,12 +149,12 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b._800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
+import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -3846,10 +3846,10 @@ public final class SEffe {
 
     final GsCOORDINATE2 coord2;
     if(a2 == 0) {
-      coord2 = v0._148.coord2ArrPtr_04.deref().get(1);
+      coord2 = v0.model_148.coord2ArrPtr_04.deref().get(1);
     } else {
       //LAB_80105fe4
-      coord2 = v0._148.coord2_14;
+      coord2 = v0.model_148.coord2_14;
     }
 
     //LAB_80105fec
@@ -6165,7 +6165,7 @@ public final class SEffe {
     effect._4a.set((short)(rand() % 30));
 
     if(effect._4a.get() != 0) {
-      final DVECTOR screenCoords = perspectiveTransformXyz(scriptStatePtrArr_800bc1c0.get(effect.bobjIndex_3c.get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148, effect._40.get(), effect._42.get(), effect._44.get());
+      final DVECTOR screenCoords = perspectiveTransformXyz(scriptStatePtrArr_800bc1c0.get(effect.bobjIndex_3c.get()).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148, effect._40.get(), effect._42.get(), effect._44.get());
       final int t4 = (int)-(screenCoords.getX() * 2.5f);
       final int t3 = (int)-(screenCoords.getY() * 2.5f);
 
@@ -7114,13 +7114,13 @@ public final class SEffe {
     }
 
     //LAB_8011006c
-    return ((BattleObject27c)a0)._148.coord2_14.coord.transfer;
+    return ((BattleObject27c)a0).model_148.coord2_14.coord.transfer;
   }
 
   @Method(0x80110074L)
   public static SVECTOR FUN_80110074(final long a0) {
     final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
-    return data.magic_00.get() != BattleScriptDataBase.EM__ ? ((BattleObject27c)data)._148.coord2Param_64.rotate : ((EffectManagerData6c)data)._10.svec_10;
+    return data.magic_00.get() != BattleScriptDataBase.EM__ ? ((BattleObject27c)data).model_148.coord2Param_64.rotate : ((EffectManagerData6c)data)._10.svec_10;
   }
 
   @Method(0x801100b8L)
@@ -7137,8 +7137,8 @@ public final class SEffe {
 
     //LAB_801100fc
     final BattleObject27c a3_0 = state.innerStruct_00.derefAs(BattleObject27c.class);
-    a2.set(a3_0._148.coord2_14.coord.transfer);
-    a1.set(a3_0._148.coord2Param_64.rotate);
+    a2.set(a3_0.model_148.coord2_14.coord.transfer);
+    a1.set(a3_0.model_148.coord2Param_64.rotate);
   }
 
   @Method(0x80110120L)
@@ -7655,12 +7655,12 @@ public final class SEffe {
       if(v1 == 0x100_0000L || v1 == 0x200_0000L) {
         //LAB_80111998
         final BttlScriptData6cSub13c struct13c = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._44.derefAs(BttlScriptData6cSub13c.class);
-        final BigStruct struct = struct13c._134.deref();
-        struct.coord2_14.flg.set(0);
-        struct.coord2_14.coord.set(sp0x10);
+        final Model124 model = struct13c._134.deref();
+        model.coord2_14.flg.set(0);
+        model.coord2_14.coord.set(sp0x10);
 
         //LAB_80111a0c
-        final GsCOORDINATE2 coord2 = struct.coord2ArrPtr_04.deref().get(a2);
+        final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04.deref().get(a2);
         GsGetLw(coord2, a0);
         coord2.flg.set(0);
       } else if(v1 == 0) {
@@ -7699,9 +7699,9 @@ public final class SEffe {
         }
       }
     } else {
-      final BigStruct struct = ((BattleObject27c)s0)._148;
-      FUN_800214bc(struct);
-      final GsCOORDINATE2 coord2 = struct.coord2ArrPtr_04.deref().get(a2);
+      final Model124 model = ((BattleObject27c)s0).model_148;
+      FUN_800214bc(model);
+      final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04.deref().get(a2);
       GsGetLw(coord2, a0);
       coord2.flg.set(0);
     }
@@ -8258,7 +8258,7 @@ public final class SEffe {
       ((EffectManagerData6c)a0_0)._10.svec_16.set(sp0x00);
     } else {
       //LAB_80113b64
-      ((BattleObject27c)a0_0)._148.scaleVector_fc.set(sp0x00);
+      ((BattleObject27c)a0_0).model_148.scaleVector_fc.set(sp0x00);
     }
 
     //LAB_80113b94
@@ -10074,7 +10074,7 @@ public final class SEffe {
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        s0.tmd_08.set(((BattleObject27c)a0_0)._148.dobj2ArrPtr_00.deref().get(s2).tmd_08.deref());
+        s0.tmd_08.set(((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00.deref().get(s2).tmd_08.deref());
       }
     }
 
@@ -10129,7 +10129,7 @@ public final class SEffe {
       _1f8003ec.setu(s1._10._00.get() >>> 23 & 0x60L);
       zOffset_1f8003e8.set(s1._10.z_22.get());
       FUN_800e60e0(s1._10.svec_1c.getX() << 5, s1._10.svec_1c.getY() << 5, s1._10.svec_1c.getZ() << 5);
-      FUN_800de3f4(bigStruct_800bda10.dobj2ArrPtr_00.deref().get(0).tmd_08.deref(), s1._10, sp0x10);
+      FUN_800de3f4(model_800bda10.dobj2ArrPtr_00.deref().get(0).tmd_08.deref(), s1._10, sp0x10);
       FUN_800e6170();
     }
 

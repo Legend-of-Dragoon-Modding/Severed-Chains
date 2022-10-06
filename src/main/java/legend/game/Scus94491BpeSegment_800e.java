@@ -15,8 +15,8 @@ import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
-import legend.game.types.BigStruct;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.TexPageBpp;
 import legend.game.types.TexPageTrans;
@@ -33,19 +33,19 @@ import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
-import static legend.game.Scus94491BpeSegment.heap_8011e210;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.drawSceaLogo;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gameLoop;
+import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
+import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
@@ -108,8 +108,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
-import static legend.game.Scus94491BpeSegment_800b.bigStruct_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -1168,84 +1168,84 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    FUN_800e6b3c(bigStruct_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
+    FUN_800e6b3c(model_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
 
-    bigStruct_800bda10.coord2Param_64.rotate.x.set((short)0);
-    bigStruct_800bda10.coord2Param_64.rotate.y.set((short)0);
-    bigStruct_800bda10.coord2Param_64.rotate.z.set((short)0);
-    bigStruct_800bda10.ub_9d.set(0);
-    bigStruct_800bda10.b_cc.set(0);
+    model_800bda10.coord2Param_64.rotate.x.set((short)0);
+    model_800bda10.coord2Param_64.rotate.y.set((short)0);
+    model_800bda10.coord2Param_64.rotate.z.set((short)0);
+    model_800bda10.ub_9d.set(0);
+    model_800bda10.b_cc.set(0);
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(BigStruct, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
+  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(legend.game.types.Model124, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(final BigStruct bigStruct, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
-    final int x = bigStruct.coord2_14.coord.transfer.getX();
-    final int y = bigStruct.coord2_14.coord.transfer.getY();
-    final int z = bigStruct.coord2_14.coord.transfer.getZ();
+  public static void FUN_800e6b3c(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+    final int x = model.coord2_14.coord.transfer.getX();
+    final int y = model.coord2_14.coord.transfer.getY();
+    final int z = model.coord2_14.coord.transfer.getZ();
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      bigStruct.aub_ec.get(i).set(0);
+      model.aub_ec.get(i).set(0);
     }
 
-    bigStruct.dobj2ArrPtr_00.set(_800bd9f8);
-    bigStruct.coord2ArrPtr_04.set(_800bdb38);
-    bigStruct.coord2ParamArrPtr_08.set(_800bd7c0);
-    bigStruct.count_c8.set((short)tmdAnimFile.count_0c.get());
+    model.dobj2ArrPtr_00.set(_800bd9f8);
+    model.coord2ArrPtr_04.set(_800bdb38);
+    model.coord2ParamArrPtr_08.set(_800bd7c0);
+    model.count_c8.set((short)tmdAnimFile.count_0c.get());
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
-    bigStruct.tmd_8c.set(tmd);
-    bigStruct.tmdNobj_ca.set((int)tmd.header.nobj.get());
-    bigStruct.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
+    model.tmd_8c.set(tmd);
+    model.tmdNobj_ca.set((int)tmd.header.nobj.get());
+    model.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
 
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_800e6c44
-      bigStruct.ptr_a8.set(extendedTmd.ptr_08.getAddress());
+      model.ptr_a8.set(extendedTmd.ptr_08.getAddress());
 
       //LAB_800e6c54
       for(int i = 0; i < 7; i++) {
-        bigStruct.aui_d0.get(i).set(0);
+        model.aui_d0.get(i).set(0);
       }
     } else {
-      bigStruct.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
+      model.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        bigStruct.aui_d0.get(i).set(bigStruct.ptr_a8.get() + MEMORY.ref(4, bigStruct.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
-        FUN_8002246c(bigStruct, i);
+        model.aui_d0.get(i).set(model.ptr_a8.get() + MEMORY.ref(4, model.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
+        FUN_8002246c(model, i);
       }
     }
 
     //LAB_800e6c64
-    adjustTmdPointers(bigStruct.tmd_8c.deref());
-    initObjTable2(bigStruct.ObjTable_0c, bigStruct.dobj2ArrPtr_00.deref(), bigStruct.coord2ArrPtr_04.deref(), bigStruct.coord2ParamArrPtr_08.deref(), bigStruct.count_c8.get());
-    bigStruct.coord2_14.param.set(bigStruct.coord2Param_64);
-    GsInitCoordinate2(null, bigStruct.coord2_14);
-    FUN_80021ca0(bigStruct.ObjTable_0c, bigStruct.tmd_8c.deref(), bigStruct.coord2_14, bigStruct.count_c8.get(), (short)(bigStruct.tmdNobj_ca.get() + 0x1L));
+    adjustTmdPointers(model.tmd_8c.deref());
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
+    model.coord2_14.param.set(model.coord2Param_64);
+    GsInitCoordinate2(null, model.coord2_14);
+    FUN_80021ca0(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 0x1L));
 
-    bigStruct.zOffset_a0.set((short)0);
-    bigStruct.ub_a2.set(0);
-    bigStruct.ub_a3.set(0);
-    bigStruct.ui_f4.set(0);
-    bigStruct.ui_f8.set(0);
+    model.zOffset_a0.set((short)0);
+    model.ub_a2.set(0);
+    model.ub_a3.set(0);
+    model.ui_f4.set(0);
+    model.ui_f8.set(0);
 
-    FUN_80021584(bigStruct, tmdAnimFile);
+    FUN_80021584(model, tmdAnimFile);
 
-    bigStruct.coord2_14.coord.transfer.setX(x);
-    bigStruct.coord2_14.coord.transfer.setY(y);
-    bigStruct.coord2_14.coord.transfer.setZ(z);
-    bigStruct.b_cc.set(0);
-    bigStruct.scaleVector_fc.setX(0x1000);
-    bigStruct.scaleVector_fc.setY(0x1000);
-    bigStruct.scaleVector_fc.setZ(0x1000);
-    bigStruct.vector_10c.setX(0x1000);
-    bigStruct.vector_10c.setY(0x1000);
-    bigStruct.vector_10c.setZ(0x1000);
-    bigStruct.vector_118.setX(0);
-    bigStruct.vector_118.setY(0);
-    bigStruct.vector_118.setZ(0);
+    model.coord2_14.coord.transfer.setX(x);
+    model.coord2_14.coord.transfer.setY(y);
+    model.coord2_14.coord.transfer.setZ(z);
+    model.b_cc.set(0);
+    model.scaleVector_fc.setX(0x1000);
+    model.scaleVector_fc.setY(0x1000);
+    model.scaleVector_fc.setZ(0x1000);
+    model.vector_10c.setX(0x1000);
+    model.vector_10c.setY(0x1000);
+    model.vector_10c.setZ(0x1000);
+    model.vector_118.setX(0);
+    model.vector_118.setY(0);
+    model.vector_118.setZ(0);
   }
 
   @Method(0x800e6d60L)

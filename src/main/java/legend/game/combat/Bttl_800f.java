@@ -1375,7 +1375,7 @@ public final class Bttl_800f {
             }
 
             //LAB_800f3a44
-            final DVECTOR screenCoords = perspectiveTransformXyz(bobj._148, x, y, z);
+            final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
             num.x_1c.set(clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()));
             num.y_20.set(clampY(screenCoords.getY() + centreScreenY_1f8003de.get()));
           }
@@ -1660,7 +1660,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f4320
-    final DVECTOR screenCoords = perspectiveTransformXyz(a0._148, x, y, z);
+    final DVECTOR screenCoords = perspectiveTransformXyz(a0.model_148, x, y, z);
 
     //LAB_800f4394
     FUN_800f89f4(s2, 0, 0x2L, s3, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
@@ -4069,9 +4069,9 @@ public final class Bttl_800f {
   @Method(0x800f96d4L)
   public static long FUN_800f96d4(final RunningScript a0) {
     final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    a0.params_20.get(1).deref().set(v1._148.coord2_14.coord.transfer.getX());
-    a0.params_20.get(2).deref().set(v1._148.coord2_14.coord.transfer.getY());
-    a0.params_20.get(3).deref().set(v1._148.coord2_14.coord.transfer.getZ());
+    a0.params_20.get(1).deref().set(v1.model_148.coord2_14.coord.transfer.getX());
+    a0.params_20.get(2).deref().set(v1.model_148.coord2_14.coord.transfer.getY());
+    a0.params_20.get(3).deref().set(v1.model_148.coord2_14.coord.transfer.getZ());
     return 0;
   }
 

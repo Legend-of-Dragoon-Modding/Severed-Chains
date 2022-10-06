@@ -29,7 +29,8 @@ import legend.game.combat.types.BttlScriptData6cSub14_3;
 import legend.game.combat.types.BttlScriptData6cSub34_2;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
-import legend.game.types.BigStruct;
+import legend.game.types.Model124;
+import legend.game.types.WorldObject210;
 import legend.game.types.DR_MODE;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.RunningScript;
@@ -173,10 +174,10 @@ public final class Bttl_800d {
     final int a3;
     if(animIndex < 32) {
       //LAB_800d00d0
-      a0 = v1._148.ui_f4;
+      a0 = v1.model_148.ui_f4;
       a3 = animIndex;
     } else {
-      a0 = v1._148.ui_f8;
+      a0 = v1.model_148.ui_f8;
       a3 = animIndex - 32;
     }
 
@@ -200,7 +201,7 @@ public final class Bttl_800d {
       a0.params_20.get(1).deref().set((int)MEMORY.ref(2, v1).offset(0xa8L).getSigned());
     } else {
       //LAB_800d017c
-      a0.params_20.get(1).deref().set(((BattleObject27c)a1)._148.animCount_98.get());
+      a0.params_20.get(1).deref().set(((BattleObject27c)a1).model_148.animCount_98.get());
     }
 
     //LAB_800d0194
@@ -1266,7 +1267,7 @@ public final class Bttl_800d {
       BttlScriptData6cSub34_2::new
     );
 
-    final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class)._148.animCount_98.get();
+    final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
     final EffectManagerData6c data = scriptStatePtrArr_800bc1c0.get((int)fp).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub34_2 sub = data._44.derefAs(BttlScriptData6cSub34_2.class);
     long s4 = mallocTail(animCount * 0x30L);
@@ -2892,9 +2893,9 @@ public final class Bttl_800d {
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     setViewpoint(
-      bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8),
-      bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8),
-      bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8)
+      bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8),
+      bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8),
+      bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8)
     );
 
     cam._d0.decr();
@@ -2916,7 +2917,7 @@ public final class Bttl_800d {
     final IntRef sp0x1c = new IntRef().set(cam._b8.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._a0.get() >> 8);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
     setViewpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
 
     cam._d0.decr();
@@ -3065,7 +3066,7 @@ public final class Bttl_800d {
     cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
     cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
-    setViewpoint(bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8), bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8));
+    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8));
 
     cam._d0.decr();
     if(cam._d0.get() <= 0) {
@@ -3090,7 +3091,7 @@ public final class Bttl_800d {
     refZ.set(cam._a0.get() >> 8);
     FUN_800dcc94(0, 0, 0, refX, refY, refZ);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    setViewpoint(bobj._148.coord2_14.coord.transfer.getX() + refX.get(), bobj._148.coord2_14.coord.transfer.getY() + refY.get(), bobj._148.coord2_14.coord.transfer.getZ() + refZ.get());
+    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + refX.get(), bobj.model_148.coord2_14.coord.transfer.getY() + refY.get(), bobj.model_148.coord2_14.coord.transfer.getZ() + refZ.get());
     cam._e0.add(cam._e4.get());
     cam._dc.sub(cam._e0.get());
 
@@ -3099,7 +3100,7 @@ public final class Bttl_800d {
       refX.set(cam.rview2_00.viewpoint_00.getX());
       refY.set(cam.rview2_00.viewpoint_00.getY());
       refZ.set(cam.rview2_00.viewpoint_00.getZ());
-      FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+      FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
       cam._ac.set(refX.get() << 8);
       cam._b8.set(refY.get() << 8);
       cam._a0.set(refZ.get() << 8);
@@ -3203,7 +3204,7 @@ public final class Bttl_800d {
     cam.vec_20.z.add(cam._54.get());
 
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    setRefpoint(bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
 
     cam._5c.decr();
     if(cam._5c.get() <= 0) {
@@ -3226,7 +3227,7 @@ public final class Bttl_800d {
     final IntRef sp0x1c = new IntRef().set(cam._44.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._2c.get() >> 8);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getX(), sp0x18, sp0x1c, sp0x20);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), sp0x18, sp0x1c, sp0x20);
     setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
 
     cam._5c.decr();
@@ -3390,9 +3391,9 @@ public final class Bttl_800d {
     cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
 
     setRefpoint(
-      bobj._148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8),
-      bobj._148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8),
-      bobj._148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8)
+      bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8),
+      bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8),
+      bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8)
     );
 
     cam._5c.decr();
@@ -3421,7 +3422,7 @@ public final class Bttl_800d {
     FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
 
     final BattleObject27c bobj = state.innerStruct_00.derefAs(BattleObject27c.class);
-    setRefpoint(bobj._148.coord2_14.coord.transfer.getX() + sp0x18.get(), bobj._148.coord2_14.coord.transfer.getY() + sp0x1c.get(), bobj._148.coord2_14.coord.transfer.getZ() + sp0x20.get());
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + sp0x18.get(), bobj.model_148.coord2_14.coord.transfer.getY() + sp0x1c.get(), bobj.model_148.coord2_14.coord.transfer.getZ() + sp0x20.get());
 
     cam._6c.add(cam._70.get());
     cam.vec_60.z.sub(cam._6c.get());
@@ -3431,7 +3432,7 @@ public final class Bttl_800d {
       sp0x18.set(cam.rview2_00.refpoint_0c.getX());
       sp0x1c.set(cam.rview2_00.refpoint_0c.getY());
       sp0x20.set(cam.rview2_00.refpoint_0c.getZ());
-      FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
+      FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
       cam._38.set(sp0x18.get() << 8);
       cam._44.set(sp0x1c.get() << 8);
       cam._2c.set(sp0x20.get() << 8);
@@ -3619,7 +3620,7 @@ public final class Bttl_800d {
     final IntRef refY = new IntRef().set(y >> 8);
     final IntRef refZ = new IntRef().set(z >> 8);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
     setViewpoint(refX.get(), refY.get(), refZ.get());
     cam.bobjIndex_f4.set(scriptIndex);
     cam._11c.or(0x1L);
@@ -3727,7 +3728,7 @@ public final class Bttl_800d {
     final IntRef refY = new IntRef().set(cam._44.get() >> 8);
     final IntRef refZ = new IntRef().set(cam._2c.get() >> 8);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
     setRefpoint(refX.get(), refY.get(), refZ.get());
     cam.bobjIndex_80.set(scriptIndex);
     cam._11c.or(0x2L);
@@ -3985,7 +3986,7 @@ public final class Bttl_800d {
     final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
     final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
     final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
     setViewpoint(refX.get(), refY.get(), refZ.get());
   }
 
@@ -4079,7 +4080,7 @@ public final class Bttl_800d {
     final IntRef sp0x1c = new IntRef().set(cam._44.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._2c.get() >> 8);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcc94(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
     setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
   }
 
@@ -4291,7 +4292,7 @@ public final class Bttl_800d {
     final IntRef refY = new IntRef().set(y);
     final IntRef refZ = new IntRef().set(z);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
 
     if(component == 0) {
       //LAB_800dc76c
@@ -4448,7 +4449,7 @@ public final class Bttl_800d {
     final IntRef sp0x1c = new IntRef().set(y);
     final IntRef sp0x20 = new IntRef().set(z);
     final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    FUN_800dcd9c(bobj._148.coord2_14.coord.transfer.getX(), bobj._148.coord2_14.coord.transfer.getY(), bobj._148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
+    FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
 
     if(component == 0) {
       //LAB_800dcafc
@@ -4651,7 +4652,7 @@ public final class Bttl_800d {
       return ((EffectManagerData6c)data)._10.vec_04;
     }
 
-    return ((BattleObject27c)data)._148.coord2_14.coord.transfer;
+    return ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
   }
 
   @Method(0x800dd0d4L)
@@ -4707,7 +4708,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd4ccL)
-  public static long FUN_800dd4cc(final BigStruct a0, final long a1) {
+  public static long FUN_800dd4cc(final Model124 a0, final long a1) {
     long v0;
     long v1;
     final long s0;
@@ -4780,7 +4781,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd638L)
-  public static long FUN_800dd638(final BigStruct a0, final long a1) {
+  public static long FUN_800dd638(final Model124 a0, final long a1) {
     long v0;
     final long v1;
     long s3;
@@ -4863,7 +4864,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd89cL)
-  public static void FUN_800dd89c(final BigStruct a0, final long a1) {
+  public static void FUN_800dd89c(final Model124 model, final long a1) {
     final long v0;
     final long v1;
     long s0;
@@ -4873,11 +4874,11 @@ public final class Bttl_800d {
     final long fp;
     final long sp50;
     s4 = 0x1L;
-    s7 = a0.ui_f4.get();
-    fp = a0.ObjTable_0c.nobj.get();
-    zOffset_1f8003e8.set(a0.zOffset_a0.get());
-    sp50 = a0.ui_f8.get();
-    _1f8003ec.setu(a0.ui_108.get());
+    s7 = model.ui_f4.get();
+    fp = model.ObjTable_0c.nobj.get();
+    zOffset_1f8003e8.set(model.zOffset_a0.get());
+    sp50 = model.ui_f8.get();
+    _1f8003ec.setu(model.ui_108.get());
     s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
@@ -4885,7 +4886,7 @@ public final class Bttl_800d {
 
     //LAB_800dd928
     for(int i = 0; i < fp; i++) {
-      final GsDOBJ2 s2 = a0.ObjTable_0c.top.deref().get(i);
+      final GsDOBJ2 s2 = model.ObjTable_0c.top.deref().get(i);
 
       if(s4 == 0) {
         s4 = 0x1L;
@@ -4928,57 +4929,57 @@ public final class Bttl_800d {
     //LAB_800dda54
     //LAB_800dda58
     for(int i = 0; i < 7; i++) {
-      if(a0.aub_ec.get(i).get() != 0) {
-        FUN_80022018(a0, i);
+      if(model.aub_ec.get(i).get() != 0) {
+        FUN_80022018(model, i);
       }
 
       //LAB_800dda70
     }
 
-    if(a0.b_cc.get() != 0) {
-      FUN_80021724(a0);
+    if(model.b_cc.get() != 0) {
+      FUN_80021724(model);
     }
 
     //LAB_800dda98
   }
 
   @Method(0x800ddac8L)
-  public static void FUN_800ddac8(final BigStruct a0, final long a1) {
-    final VECTOR sp0x18 = new VECTOR().set(a0.coord2_14.coord.transfer);
+  public static void FUN_800ddac8(final Model124 model, final long a1) {
+    final VECTOR sp0x18 = new VECTOR().set(model.coord2_14.coord.transfer);
 
     //LAB_800ddb18
     for(int i = 0; i < 7; i++) {
-      a0.aub_ec.get(i).set(0);
+      model.aub_ec.get(i).set(0);
     }
 
-    a0.tmd_8c.set(MEMORY.ref(4, a1 + 0x10L, Tmd::new));
+    model.tmd_8c.set(MEMORY.ref(4, a1 + 0x10L, Tmd::new));
     final short count = (short)MEMORY.ref(4, a1).offset(0x14L).get();
-    a0.tmdNobj_ca.set(count);
-    a0.count_c8.set(count);
+    model.tmdNobj_ca.set(count);
+    model.count_c8.set(count);
     long v0 = mallocHead(count * 0x10 + count * 0x50 + count * 0x28);
-    a0.dobj2ArrPtr_00.setPointer(v0);
-    v0 = v0 + a0.count_c8.get() * 0x10;
-    a0.coord2ArrPtr_04.setPointer(v0);
-    v0 = v0 + a0.count_c8.get() * 0x50;
-    a0.coord2ParamArrPtr_08.setPointer(v0);
-    a0.ui_108.set((MEMORY.ref(4, a1).offset(0xcL).get() & 0xffff_0000L) >>> 11);
-    adjustTmdPointers(a0.tmd_8c.deref());
-    initObjTable2(a0.ObjTable_0c, a0.dobj2ArrPtr_00.deref(), a0.coord2ArrPtr_04.deref(), a0.coord2ParamArrPtr_08.deref(), a0.count_c8.get());
-    a0.coord2_14.param.set(a0.coord2Param_64);
-    GsInitCoordinate2(null, a0.coord2_14);
-    a0.ObjTable_0c.nobj.set(count);
+    model.dobj2ArrPtr_00.setPointer(v0);
+    v0 = v0 + model.count_c8.get() * 0x10;
+    model.coord2ArrPtr_04.setPointer(v0);
+    v0 = v0 + model.count_c8.get() * 0x50;
+    model.coord2ParamArrPtr_08.setPointer(v0);
+    model.ui_108.set((MEMORY.ref(4, a1).offset(0xcL).get() & 0xffff_0000L) >>> 11);
+    adjustTmdPointers(model.tmd_8c.deref());
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
+    model.coord2_14.param.set(model.coord2Param_64);
+    GsInitCoordinate2(null, model.coord2_14);
+    model.ObjTable_0c.nobj.set(count);
 
     final long s3 = a1 + 0xcL;
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
       if((MEMORY.ref(4, s3).offset(0x4L).get() & 0x2L) != 0) {
-        a0.dobj2ArrPtr_00.deref().get(i).tmd_08.setPointer(s3 + i * 0x1cL + 0xcL); //TODO
+        model.dobj2ArrPtr_00.deref().get(i).tmd_08.setPointer(s3 + i * 0x1cL + 0xcL); //TODO
       } else {
         final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
         final GsDOBJ2 dobj2 = tmp.get().cast(GsDOBJ2::new);
         updateTmdPacketIlen(MEMORY.ref(4, a1 + 0x18L, UnboundedArrayRef.of(0x1c, TmdObjTable::new)), dobj2, i);
-        a0.dobj2ArrPtr_00.deref().get(i).tmd_08.set(dobj2.tmd_08.deref());
+        model.dobj2ArrPtr_00.deref().get(i).tmd_08.set(dobj2.tmd_08.deref());
         tmp.release();
       }
 
@@ -4988,30 +4989,30 @@ public final class Bttl_800d {
     //LAB_800ddc54
     //LAB_800ddc64
     for(int i = 0; i < count; i++) {
-      a0.coord2ArrPtr_04.deref().get(i).super_.set(a0.coord2_14);
+      model.coord2ArrPtr_04.deref().get(i).super_.set(model.coord2_14);
     }
 
     //LAB_800ddc80
-    a0.ub_a2.set(0);
-    a0.ub_a3.set(0);
-    a0.ui_f4.set(0);
-    a0.ui_f8.set(0);
-    a0.zOffset_a0.set((short)0);
-    a0.coord2_14.coord.transfer.set(sp0x18);
+    model.ub_a2.set(0);
+    model.ub_a3.set(0);
+    model.ui_f4.set(0);
+    model.ui_f8.set(0);
+    model.zOffset_a0.set((short)0);
+    model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((a0.tmd_8c.deref().header.flags.get() & 0x2L) == 0 && a0.ub_9d.get() != 0) {
-      FUN_80021628(a0);
+    if((model.tmd_8c.deref().header.flags.get() & 0x2L) == 0 && model.ub_9d.get() != 0) {
+      FUN_80021628(model);
     }
 
     //LAB_800ddce8
-    a0.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    a0.b_cc.set(0);
-    a0.vector_10c.set(0x1000, 0x1000, 0x1000);
-    a0.vector_118.set(0, 0, 0);
+    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.b_cc.set(0);
+    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_118.set(0, 0, 0);
   }
 
   @Method(0x800ddd3cL)
-  public static long FUN_800ddd3c(final BigStruct a0, final long a1) {
+  public static long FUN_800ddd3c(final Model124 a0, final long a1) {
     long v0;
     long v1;
     long a2;
@@ -5155,18 +5156,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de210L)
-  public static void FUN_800de210(final BigStruct a0, final long a1) {
+  public static void FUN_800de210(final Model124 model, final long a1) {
     long v1;
     long a2;
     final long a3;
-    final UnboundedArrayRef<GsCOORD2PARAM> t0 = a0.coord2ParamArrPtr_08.deref();
+    final UnboundedArrayRef<GsCOORD2PARAM> t0 = model.coord2ParamArrPtr_08.deref();
     t0.get(0).scale.setY((int)a1); //TODO ?? a1 is a pointer
-    a0.partTransforms_90.setPointer(0x2L); //TODO ??
-    a0.partTransforms_94.clear();
-    a0.animCount_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
-    a0.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xeL).get() * 2));
-    a0.ub_9c.set(1);
-    a0.s_9e.set((short)(MEMORY.ref(2, a1).offset(0xeL).get() * 2));
+    model.partTransforms_90.setPointer(0x2L); //TODO ??
+    model.partTransforms_94.clear();
+    model.animCount_98.set((int)MEMORY.ref(2, a1).offset(0xcL).get());
+    model.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xeL).get() * 2));
+    model.ub_9c.set(1);
+    model.s_9e.set((short)(MEMORY.ref(2, a1).offset(0xeL).get() * 2));
     a3 = MEMORY.ref(2, a1).offset(0xcL).get();
 
     //LAB_800de270
@@ -5183,11 +5184,11 @@ public final class Bttl_800d {
 
     //LAB_800de2c8
     t0.get(0).scale.setX(1);
-    FUN_800ddd3c(a0, 0);
+    FUN_800ddd3c(model, 0);
   }
 
   @Method(0x800de2e8L)
-  public static void FUN_800de2e8(final BigStruct a0, final long a1) {
+  public static void FUN_800de2e8(final Model124 a0, final long a1) {
     final long v1 = a0.partTransforms_90.getPointer(); //TODO ??
     if(v1 == 1) {
       //LAB_800de318
@@ -5204,22 +5205,22 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de36cL)
-  public static void FUN_800de36c(final BigStruct a0, final long a1) {
+  public static void FUN_800de36c(final Model124 model, final long a1) {
     final long v1 = MEMORY.ref(4, a1).offset(0x0L).get();
     if(v1 == 0x2042_4d43L) { // "CMB "
-      FUN_800de210(a0, a1);
+      FUN_800de210(model, a1);
       //LAB_800de398
     } else if(v1 == 0x42_4d4cL) { // "LMB"
-      a0.coord2ParamArrPtr_08.deref().get(0).scale.setX((int)a1); //TODO ?? a1 is a pointer
-      a0.partTransforms_90.setPointer(0x1L); //TODO ??
-      a0.partTransforms_94.clear();
-      a0.animCount_98.set((int)MEMORY.ref(2, a1).offset(0x4L).get());
-      a0.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xcL).getSigned() * 2));
-      a0.ub_9c.set(1);
-      a0.s_9e.set((short)(MEMORY.ref(2, a1).offset(0xcL).getSigned() * 2));
+      model.coord2ParamArrPtr_08.deref().get(0).scale.setX((int)a1); //TODO ?? a1 is a pointer
+      model.partTransforms_90.setPointer(0x1L); //TODO ??
+      model.partTransforms_94.clear();
+      model.animCount_98.set((int)MEMORY.ref(2, a1).offset(0x4L).get());
+      model.s_9a.set((short)(MEMORY.ref(2, a1).offset(0xcL).getSigned() * 2));
+      model.ub_9c.set(1);
+      model.s_9e.set((short)(MEMORY.ref(2, a1).offset(0xcL).getSigned() * 2));
     } else {
       //LAB_800de3dc
-      FUN_80021584(a0, MEMORY.ref(4, a1, TmdAnimationFile::new)); //TODO
+      FUN_80021584(model, MEMORY.ref(4, a1, TmdAnimationFile::new)); //TODO
     }
 
     //LAB_800de3e4

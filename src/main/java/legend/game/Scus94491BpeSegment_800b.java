@@ -22,7 +22,8 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.BigStruct;
+import legend.game.types.Model124;
+import legend.game.types.WorldObject210;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
@@ -218,7 +219,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
   public static final Pointer<BattleRenderStruct> _800bda0c = MEMORY.ref(4, 0x800bda0cL, Pointer.deferred(4, BattleRenderStruct::new));
-  public static final BigStruct bigStruct_800bda10 = MEMORY.ref(4, 0x800bda10L, BigStruct::new);
+  public static final Model124 model_800bda10 = MEMORY.ref(4, 0x800bda10L, Model124::new);
 
   public static final UnboundedArrayRef<GsCOORDINATE2> _800bdb38 = MEMORY.ref(4, 0x800bdb38L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new));
 

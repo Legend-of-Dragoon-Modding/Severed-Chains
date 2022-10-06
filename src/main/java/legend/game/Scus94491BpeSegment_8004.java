@@ -253,7 +253,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc928}</li>
    *   <li>{@link legend.game.SMap#_800c66bc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#encounterId_800bb0f8}</li>
-   *   <li>{@link legend.game.SMap#bigStruct_800c6748}</li>
+   *   <li>{@link legend.game.SMap#model_800c6748}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e518}</li>
    *   <li>{@link legend.game.SMap#_800c6718}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#submapStage_800bb0f4}</li>

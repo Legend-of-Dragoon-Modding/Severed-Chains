@@ -4,21 +4,21 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 
 public class Struct34 implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedShortRef _02;
-  public final UnsignedShortRef _04;
-  public final UnsignedShortRef _06;
-  public final UnsignedShortRef _08;
-  public final UnsignedShortRef _0a;
+  public final ShortRef _02;
+  public final ShortRef _04;
+  public final ShortRef _06;
+  public final ShortRef _08;
+  public final ShortRef _0a;
   public final UnsignedIntRef _0c;
   public final UnsignedIntRef _10;
   public final UnsignedIntRef _14;
-  public final UnsignedShortRef _18;
+  public final ShortRef _18;
 
   public final IntRef x_1c;
   public final IntRef y_20;
@@ -30,15 +30,15 @@ public class Struct34 implements MemoryRef {
   public Struct34(final Value ref) {
     this.ref = ref;
 
-    this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
+    this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
+    this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
+    this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
-    this._18 = ref.offset(2, 0x18L).cast(UnsignedShortRef::new);
+    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
 
     this.x_1c = ref.offset(4, 0x1cL).cast(IntRef::new);
     this.y_20 = ref.offset(4, 0x20L).cast(IntRef::new);
