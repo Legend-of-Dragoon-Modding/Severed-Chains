@@ -5,7 +5,6 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedIntRef;
 
 public class Struct34 implements MemoryRef {
   private final Value ref;
@@ -15,9 +14,9 @@ public class Struct34 implements MemoryRef {
   public final ShortRef _06;
   public final ShortRef _08;
   public final ShortRef _0a;
-  public final UnsignedIntRef _0c;
-  public final UnsignedIntRef _10;
-  public final UnsignedIntRef _14;
+  public final IntRef _0c;
+  public final IntRef _10;
+  public final IntRef _14;
   public final ShortRef _18;
 
   public final IntRef x_1c;
@@ -35,9 +34,9 @@ public class Struct34 implements MemoryRef {
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
-    this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
-    this._14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
+    this._0c = ref.offset(4, 0x0cL).cast(IntRef::new);
+    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
+    this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
 
     this.x_1c = ref.offset(4, 0x1cL).cast(IntRef::new);
