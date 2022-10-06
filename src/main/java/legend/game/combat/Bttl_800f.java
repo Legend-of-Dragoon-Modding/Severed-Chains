@@ -3800,11 +3800,11 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8ca0L)
-  public static long getTargetEnemyElement(final long elemFlag) {
+  public static int getTargetEnemyElement(final long elemFlag) {
     //LAB_800f8cac
-    long elemIdx = -0x1L;
+    int elemIdx = -1;
     for(int i = 0; i < 32; i++) {
-      if((elemFlag & 1 << i) != 0) {
+      if((elemFlag & 1L << i) != 0) {
         elemIdx = i;
         break;
       }

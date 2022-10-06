@@ -6540,9 +6540,10 @@ public final class Bttl_800e {
         drawTargetArrow(menu._50.get(), menu.combatantIndex.get());
         final int a1_0 = menu.combatantIndex.get();
         LodString str;
+        int element;
         if(a1_0 == -1) {  // Target all
           str = targeting_800fb36c.get((int)menu._50.get()).deref();
-          spf0 = 0x3L;
+          element = 3;
           textLen(str);
         } else {  // Target single
           final BattleObject27c data;
@@ -6562,20 +6563,15 @@ public final class Bttl_800e {
             //LAB_800f0d10
             str = getTargetEnemyName(data, currentEnemyNames_800c69d0.get((int)s4));
             textLen(str);
-            spf0 = getTargetEnemyElement(data.elementFlag_1c.get());
+            element = getTargetEnemyElement(data.elementFlag_1c.get());
           } else if(menu._50.get() == 0) {
             data = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(a1_0).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
             textLen(str);
+            element = (int)sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();
 
-            if(data.charIndex_272.get() != 0) {
-              spf0 = sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();
-            } else {
-              if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0) {
-                if((scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()).deref().ui_60.get() & 0x2L) != 0) {
-                  spf0 = sp0xa0.offset(0x12L).get();
-                }
-              }
+            if(data.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()).deref().ui_60.get() & 0x2L) != 0) {
+              element = (int)sp0xa0.offset(0x12L).get();
             }
           } else {
             //LAB_800f0d58
@@ -6584,15 +6580,15 @@ public final class Bttl_800e {
             data = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
             if((scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().ui_60.get() & 0x4L) == 0) {
               str = playerNames_800fb378.get(data.charIndex_272.get()).deref();
-              spf0 = sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();
+              element = (int)sp0xa0.offset(2, data.charIndex_272.get() * 0x2L).get();
 
               if(data.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()).deref().ui_60.get() & 0x2L) != 0) {
-                spf0 = sp0xa0.offset(0x12L).get();
+                element = (int)sp0xa0.offset(0x12L).get();
               }
             } else {
               //LAB_800f0e24
               str = getTargetEnemyName(data, currentEnemyNames_800c69d0.get(menu.combatantIndex.get()));
-              spf0 = getTargetEnemyElement(data.elementFlag_1c.get());
+              element = getTargetEnemyElement(data.elementFlag_1c.get());
             }
 
             //LAB_800f0e58
@@ -6631,7 +6627,7 @@ public final class Bttl_800e {
 
         //LAB_800f0ed8
         //Character name
-        renderTextBoxBackground(0x2cL, 0x17L, 0xe8L, 0xeL, (short)spf0);
+        renderTextBoxBackground(0x2cL, 0x17L, 0xe8L, 0xeL, (short)element);
         renderText(str, 160 - textWidth(str) / 2, 24, 0, 0);
       }
     }
