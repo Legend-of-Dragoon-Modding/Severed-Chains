@@ -60,20 +60,20 @@ import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.free;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
+import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
@@ -128,8 +128,8 @@ import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006f280;
-import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
@@ -146,9 +146,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
+import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
@@ -420,7 +420,7 @@ public final class SItem {
   public static final Value _8011d78c = MEMORY.ref(4, 0x8011d78cL);
   public static final LodString _8011d790 = MEMORY.ref(2, 0x8011d790L, LodString::new);
 
-  public static final UnsignedIntRef memcardState_8011d7b8 = MEMORY.ref(4, 0x8011d7b8L, UnsignedIntRef::new);
+  public static final UnsignedIntRef _8011d7b8 = MEMORY.ref(4, 0x8011d7b8L, UnsignedIntRef::new);
   public static final UnsignedIntRef _8011d7bc = MEMORY.ref(4, 0x8011d7bcL, UnsignedIntRef::new);
   public static final Pointer<DabasData100> dabasData_8011d7c0 = MEMORY.ref(4, 0x8011d7c0L, Pointer.deferred(4, DabasData100::new));
 
@@ -445,13 +445,10 @@ public final class SItem {
   public static final Value dabasFileSize_8011dd04 = MEMORY.ref(4, 0x8011dd04L);
   public static final IntRef dabasGold_8011dd08 = MEMORY.ref(4, 0x8011dd08L, IntRef::new);
   public static final Value dabasHasItems_8011dd0c = MEMORY.ref(4, 0x8011dd0cL);
-  @Deprecated
-  public static final Value REFACTORED_memcardData_8011dd10 = MEMORY.ref(4, 0x8011dd10L);
 
   public static final Value _8011e094 = MEMORY.ref(4, 0x8011e094L);
   public static final ArrayRef<MenuAdditionInfo> additions_8011e098 = MEMORY.ref(1, 0x8011e098L, ArrayRef.of(MenuAdditionInfo.class, 9, 0x2, MenuAdditionInfo::new));
 
-  public static final Value memcardSaveLoadingStage_8011e0d4 = MEMORY.ref(1, 0x8011e0d4L);
   public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
   public static final IntRef menuIndex_8011e0dc = MEMORY.ref(4, 0x8011e0dcL, IntRef::new);
   public static final IntRef menuIndex_8011e0e0 = MEMORY.ref(4, 0x8011e0e0L, IntRef::new);
@@ -1784,7 +1781,7 @@ public final class SItem {
         //LAB_800fe824
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
           a0 = FUN_80022afc(menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get());
-          memcardState_8011d7b8.set(a0);
+          _8011d7b8.set(a0);
 
           if(a0 == 0) {
             //LAB_800fe93c
@@ -1823,7 +1820,7 @@ public final class SItem {
 
       case _30: // Confirm use item
         if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) { // Circle
-          if((memcardState_8011d7b8.get() & 0x2L) == 0) {
+          if((_8011d7b8.get() & 0x2L) == 0) {
             //LAB_800fea00
             unloadRenderable(renderablePtr_800bdbe8.deref());
           } else {
@@ -1840,7 +1837,7 @@ public final class SItem {
 
         //LAB_800fea24
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) { // Cross
-          if((memcardState_8011d7b8.get() & 0x2L) != 0) {
+          if((_8011d7b8.get() & 0x2L) != 0) {
             _8011d754.setu(-0x2L);
 
             if(characterCount_8011d7c4.get() != 0) {
@@ -1874,7 +1871,7 @@ public final class SItem {
         }
 
         //LAB_800febb0
-        if((memcardState_8011d7b8.get() & 0x2L) == 0 && handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
+        if((_8011d7b8.get() & 0x2L) == 0 && handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
           renderablePtr_800bdbe8.deref().x_40.set(FUN_800fc8c0(charSlot_8011d734.get()) - 3);
         }
 
@@ -1988,7 +1985,6 @@ public final class SItem {
       case _40: // Part of load game menu
         saveListDownArrow_800bdb98.clear();
         saveListUpArrow_800bdb94.clear();
-        memcardSaveLoadingStage_8011e0d4.setu(0x1L);
         slotScroll_8011d744.set(0);
         selectedSlot_8011d740.set(0);
         renderSavedGames(0, false, 0);
@@ -2121,7 +2117,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         _8011d7bc.set(0);
-        memcardState_8011d7b8.set(0);
+        _8011d7b8.set(0);
 
         loadSaveFile(slotScroll_8011d744.get() + selectedSlot_8011d740.get());
 
@@ -2170,7 +2166,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         _8011d7bc.set(0);
-        memcardState_8011d7b8.set(0);
+        _8011d7b8.set(0);
 
         gameState_800babc8.submapScene_a4.set(index_80052c38.get());
         gameState_800babc8.submapCut_a8.set((int)_800cb450.get());
@@ -2814,11 +2810,12 @@ public final class SItem {
       case _122:
         renderDabasMenu(selectedSlot_8011d740.get());
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          v1 = memcardState_8011d7b8.get();
+          v1 = _8011d7b8.get();
           if(v1 == 0 || v1 == 0x3L) {
             //LAB_80101844
-            MEMORY.ref(4, 0x800bdc28L).setu(0x59);
-            break;
+//            inventoryMenuState_800bdc28.set(InventoryMenuState._59);
+//            break;
+            throw new RuntimeException("Need to figure out what 59 was");
           }
 
           //LAB_80101854
