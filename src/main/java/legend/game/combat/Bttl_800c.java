@@ -20,6 +20,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.QuadFunctionRef;
+import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
@@ -275,8 +276,8 @@ public final class Bttl_800c {
 
   public static final MATRIX _800c6798 = MEMORY.ref(4, 0x800c6798L, MATRIX::new);
   public static final UnsignedIntRef _800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
-  public static final Value x_800c67bc = MEMORY.ref(4, 0x800c67bcL);
-  public static final Value y_800c67c0 = MEMORY.ref(4, 0x800c67c0L);
+  public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
+  public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
   public static final Value _800c67c4 = MEMORY.ref(4, 0x800c67c4L);
 
   public static final Value _800c67d4 = MEMORY.ref(4, 0x800c67d4L);
@@ -285,10 +286,6 @@ public final class Bttl_800c {
   public static final Value _800c67e8 = MEMORY.ref(4, 0x800c67e8L);
 
   public static final BattleCamera camera_800c67f0 = MEMORY.ref(4, 0x800c67f0L, BattleCamera::new);
-
-  public static final Value callbackIndex_800c6878 = MEMORY.ref(4, 0x800c6878L);
-
-  public static final Value callbackIndex_800c68ec = MEMORY.ref(4, 0x800c68ecL);
 
   public static final Value _800c6912 = MEMORY.ref(1, 0x800c6912L);
   public static final Value _800c6913 = MEMORY.ref(1, 0x800c6913L);
@@ -632,7 +629,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d9bd4}</li>
    * </ol>
    */
-  public static final Value _800facbc = MEMORY.ref(4, 0x800facbcL);
+  public static final ArrayRef<Pointer<RunnableRef>> _800facbc = MEMORY.ref(4, 0x800facbcL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 24, 4, Pointer.deferred(4, RunnableRef::new)));
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc090}</li>
@@ -661,7 +658,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800da8bc}</li>
    * </ol>
    */
-  public static final Value _800fad1c = MEMORY.ref(4, 0x800fad1cL);
+  public static final ArrayRef<Pointer<RunnableRef>> _800fad1c = MEMORY.ref(4, 0x800fad1cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 24, 4, Pointer.deferred(4, RunnableRef::new)));
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc408}</li>
