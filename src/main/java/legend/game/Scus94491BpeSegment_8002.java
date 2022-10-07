@@ -3903,7 +3903,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_8002659c
     } else if(v1 == 0x12) {
       //LAB_80026d94
-      FUN_80029140(a0, (short)struct84._60.get());
+      renderTextboxSelection(a0, (short)struct84._60.get());
 
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -4102,7 +4102,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 0x13) {
       //LAB_8002711c
-      FUN_80029140(a0, (short)struct84._68.get());
+      renderTextboxSelection(a0, (short)struct84._68.get());
       struct84._64.decr();
 
       if(struct84._64.get() == 0) {
@@ -4194,7 +4194,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 0x16) {
       //LAB_80027354
-      FUN_80029140(a0, (short)struct84._68.get());
+      renderTextboxSelection(a0, (short)struct84._68.get());
 
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -5652,9 +5652,9 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
+  /** The purple bar used in inn dialogs, etc. */
   @Method(0x80029140L)
-  public static void FUN_80029140(long a0, long a1) {
-    if(true)return;
+  public static void renderTextboxSelection(long a0, long a1) {
     long v0;
     long v1;
     long a2;
