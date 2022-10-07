@@ -9748,7 +9748,7 @@ public final class SMap {
         MEMORY.ref(2, packet).offset(0x0aL).setu(top); // Y0
         MEMORY.ref(1, packet).offset(0x0cL).setu(64); // U0
         MEMORY.ref(1, packet).offset(0x0dL).setu(32); // V0
-        MEMORY.ref(1, packet).offset(0x0eL).setu(cluts_800d6068.get(9).get()); // CLUT
+        MEMORY.ref(2, packet).offset(0x0eL).setu(cluts_800d6068.get(9).get()); // CLUT
         MEMORY.ref(2, packet).offset(0x10L).setu(right); // X1
         MEMORY.ref(2, packet).offset(0x12L).setu(top); // Y1
         MEMORY.ref(1, packet).offset(0x14L).setu(95); // U1
