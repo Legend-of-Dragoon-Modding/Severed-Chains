@@ -3000,7 +3000,7 @@ public class WMap {
     if(v0 == 0x1L) {
       //LAB_800d49e4
       _800bdf00.setu(0xeL);
-      _800be358.get(7)._0c.set(0xeL);
+      _800be358.get(7).z_0c.set(14);
 
       if(width.get() < 4) {
         _800be358.get(7).width_18.set((short)4);
@@ -3024,7 +3024,7 @@ public class WMap {
 
       //LAB_800d49e4
       _800bdf00.setu(0xeL);
-      _800be358.get(7)._0c.set(0xeL);
+      _800be358.get(7).z_0c.set(14);
 
       if(width.get() < 0x4L) {
         _800be358.get(7).width_18.set((short)4);
@@ -5961,7 +5961,7 @@ public class WMap {
         break;
 
       case 6:
-        _800be358.get(6)._0c.set(0x12L);
+        _800be358.get(6).z_0c.set(18);
 
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
@@ -8826,7 +8826,7 @@ public class WMap {
         if(v0 == 0x1L) {
           //LAB_800e71d8
           _800bdf00.setu(i + 0xeL);
-          _800be358.get(i)._0c.set(i + 0xeL);
+          _800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
             _800be358.get(i).width_18.set((short)width.get());
@@ -8876,7 +8876,7 @@ public class WMap {
 
           //LAB_800e71d8
           _800bdf00.setu(i + 0xeL);
-          _800be358.get(i)._0c.set(i + 0xeL);
+          _800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
             _800be358.get(i).width_18.set((short)width.get());
@@ -8905,7 +8905,7 @@ public class WMap {
 
         //LAB_800e74d8
         _800bdf00.setu(i + 0x77L);
-        _800be358.get(i)._0c.set(i + 0x77L);
+        _800be358.get(i).z_0c.set(i + 119);
 
         FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
       }

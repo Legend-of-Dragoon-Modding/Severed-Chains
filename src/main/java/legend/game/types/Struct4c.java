@@ -15,7 +15,7 @@ public class Struct4c implements MemoryRef {
   public final ShortRef _04;
   public final ShortRef _06;
   public final UnsignedIntRef _08;
-  public final UnsignedIntRef _0c;
+  public final IntRef z_0c;
   public final UnsignedIntRef _10;
   public final ShortRef _14;
   public final ShortRef _16;
@@ -34,7 +34,7 @@ public class Struct4c implements MemoryRef {
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
-    this._0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
+    this.z_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(2, 0x14L).cast(ShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(ShortRef::new);

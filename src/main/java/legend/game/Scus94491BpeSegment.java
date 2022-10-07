@@ -416,6 +416,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010868 = MEMORY.ref(4, 0x80010868L);
 
+  /** TODO 0x60-byte struct */
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
 
   public static final CString cdName_80011700 = MEMORY.ref(6, 0x80011700L, CString::new);
@@ -846,8 +847,6 @@ public final class Scus94491BpeSegment {
 
       // Textboxes? Other things?
       FUN_8002a058();
-
-      // SPU stuff
       FUN_8002a0e4();
 
       FUN_80020ed8();
