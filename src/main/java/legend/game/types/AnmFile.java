@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -16,9 +17,10 @@ public class AnmFile implements MemoryRef {
   public final UnsignedShortRef n_sprite_gp_04;
   /** Number of sequences */
   public final UnsignedShortRef n_sequence_06;
+  private final UnboundedArrayRef<AnmSequence> sequences_08;
 
-  private final UnboundedArrayRef<AnmSequence> sequences;
-  private UnboundedArrayRef<AnmSpriteGroup> spriteGroups;
+  /** Has a relative offset */
+  private UnboundedArrayRef<RelativePointer<AnmSpriteGroup>> spriteGroups;
 
   public AnmFile(final Value ref) {
     this.ref = ref;
@@ -28,22 +30,21 @@ public class AnmFile implements MemoryRef {
     this.flag_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.n_sprite_gp_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this.n_sequence_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-
-    this.sequences = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0x8, AnmSequence::new, this::sequenceCount));
+    this.sequences_08 = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0x8, AnmSequence::new, this::sequenceCount));
   }
 
   public UnboundedArrayRef<AnmSequence> getSequences() {
-    return this.sequences;
+    return this.sequences_08;
   }
 
-  public UnboundedArrayRef<AnmSpriteGroup> getSpriteGroups() {
+  public UnboundedArrayRef<RelativePointer<AnmSpriteGroup>> getSpriteGroups() {
     // Check if the location has changed
     if(this.spriteGroups != null && this.spriteGroups.getAddress() != this.getAddress() + (this.n_sequence_06.get() + 1) * 8L) {
       this.spriteGroups = null;
     }
 
     if(this.spriteGroups == null) {
-      this.spriteGroups = this.ref.offset(4, (this.n_sequence_06.get() + 1) * 8L).cast(UnboundedArrayRef.of(0x18, AnmSpriteGroup::new));
+      this.spriteGroups = this.ref.offset(4, (this.n_sequence_06.get() + 1) * 8L).cast(UnboundedArrayRef.of(4, RelativePointer.deferred(4, this.getAddress(), AnmSpriteGroup::new)));
     }
 
     return this.spriteGroups;
