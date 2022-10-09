@@ -20,8 +20,8 @@ public class WorldObject210 implements MemoryRef {
   public final UnsignedShortRef us_12a;
   public final UnsignedShortRef us_12c;
   public final UnsignedShortRef mrgAnimGroup_12e;
-  /** TODO possibly file index? */
-  public final UnsignedShortRef scriptFileIndex_130;
+  /** The script index of this wobj */
+  public final UnsignedShortRef wobjIndex_130;
   public final UnsignedShortRef mrgAnimGroupIndex_132;
   public final ShortRef s_134;
 
@@ -78,7 +78,7 @@ public class WorldObject210 implements MemoryRef {
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
     this.mrgAnimGroup_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
-    this.scriptFileIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
+    this.wobjIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
     this.mrgAnimGroupIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.s_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
 

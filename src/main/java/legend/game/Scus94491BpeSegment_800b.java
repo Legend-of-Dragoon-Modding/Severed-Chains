@@ -22,8 +22,6 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleRenderStruct;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.Model124;
-import legend.game.types.WorldObject210;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
@@ -31,6 +29,7 @@ import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
+import legend.game.types.Model124;
 import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RunningScript;
@@ -46,6 +45,7 @@ import legend.game.types.Struct84;
 import legend.game.types.TexPageBpp;
 import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
+import legend.game.types.WobjPos14;
 
 import java.util.function.Function;
 
@@ -213,10 +213,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
-  public static final Value _800bd818 = MEMORY.ref(4, 0x800bd818L);
-
+  public static final ArrayRef<WobjPos14> wobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(WobjPos14.class, 24, 0x14, WobjPos14::new));
   public static final UnboundedArrayRef<GsDOBJ2> _800bd9f8 = MEMORY.ref(4, 0x800bd9f8L, UnboundedArrayRef.of(0x10, GsDOBJ2::new));
-
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
   public static final Pointer<BattleRenderStruct> _800bda0c = MEMORY.ref(4, 0x800bda0cL, Pointer.deferred(4, BattleRenderStruct::new));
   public static final Model124 model_800bda10 = MEMORY.ref(4, 0x800bda10L, Model124::new);
