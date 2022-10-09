@@ -22,7 +22,7 @@ The kernel and bios are functional and fully capable of bootstrapping the LoD ex
 The Java version is still in early development and not ready for playing. A strong knowledge of Java and MIPS assembly is recommended. If you are interested in contributing (or just curious), the following steps should get you up and running:
 1. Install a git client and ensure the installation includes command line integration
 2. Clone this repository to your local computer using git
-3. Copy an ISO/bin of the first LoD disk into the `isos` directory and rename it to `1.iso`
+3. Copy your ISOs of the LoD disks into the `isos` directory and rename them to `1.iso`, `2.iso`, etc. Note: if you have BINs instead of ISOs, it's very likely you can change the file extension to ISO and they will work.
 4. Open your local copy of this repository in your IDE (IntelliJ recommended)
 5. Gradle should automatically attempt to configure the project and download all dependencies. If it doesn't, expand the gradle tab and click refresh. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
 6. run the project
