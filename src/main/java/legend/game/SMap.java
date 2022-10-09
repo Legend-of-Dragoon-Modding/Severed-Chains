@@ -14,7 +14,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
@@ -34,18 +33,16 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.AnmFile;
 import legend.game.types.AnimatedSprite08;
+import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
-import legend.game.types.Model124;
-import legend.game.types.TriangleIndicator140;
-import legend.game.types.WorldObject210;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
+import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
 import legend.game.types.ExtendedTmd;
@@ -54,32 +51,34 @@ import legend.game.types.GsOT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.types.MediumStruct;
+import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
 import legend.game.types.RunningScript;
+import legend.game.types.SMapStruct3c;
 import legend.game.types.SavePointRenderData44;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
-import legend.game.types.SMapStruct3c;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStruct2;
 import legend.game.types.Struct20;
 import legend.game.types.Struct34;
-import legend.game.types.Struct54;
 import legend.game.types.SubmapEncounterData_04;
 import legend.game.types.TexPageBpp;
 import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdExtension;
+import legend.game.types.TriangleIndicator140;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
+import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -99,16 +98,14 @@ import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
-import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.cdName_80011700;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.fillMemory;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -116,10 +113,12 @@ import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.mallocHead;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
+import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -132,15 +131,10 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
@@ -154,11 +148,16 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002aa04;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.getTimerValue;
+import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
+import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
@@ -242,7 +241,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -250,6 +248,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
+import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
@@ -467,7 +466,7 @@ public final class SMap {
 
   public static final Model124 model_800d4d40 = MEMORY.ref(4, 0x800d4d40L, Model124::new);
 
-  public static final Struct54 _800d4e68 = MEMORY.ref(4, 0x800d4e68L, Struct54::new);
+  public static final DustRenderData54 dust_800d4e68 = MEMORY.ref(4, 0x800d4e68L, DustRenderData54::new);
 
   public static final Struct20 _800d4ec0 = MEMORY.ref(4, 0x800d4ec0L, Struct20::new);
   /** TODO struct */
@@ -521,22 +520,10 @@ public final class SMap {
 
   public static final ArrayRef<SVECTOR> _800d6b7c = MEMORY.ref(4, 0x800d6b7cL, ArrayRef.of(SVECTOR.class, 12, 8, SVECTOR::new));
 
-  public static final Value _800d6bdc = MEMORY.ref(4, 0x800d6bdcL);
-  public static final Value _800d6be0 = MEMORY.ref(4, 0x800d6be0L);
-  public static final Value _800d6be4 = MEMORY.ref(4, 0x800d6be4L);
-  public static final Value _800d6be8 = MEMORY.ref(4, 0x800d6be8L);
-  public static final Value _800d6bec = MEMORY.ref(4, 0x800d6becL);
-  public static final Value _800d6bf0 = MEMORY.ref(4, 0x800d6bf0L);
-  public static final Value _800d6bf4 = MEMORY.ref(4, 0x800d6bf4L);
-  public static final Value _800d6bf8 = MEMORY.ref(4, 0x800d6bf8L);
-  public static final Value _800d6bfc = MEMORY.ref(4, 0x800d6bfcL);
-  public static final Value _800d6c00 = MEMORY.ref(4, 0x800d6c00L);
-  public static final Value _800d6c04 = MEMORY.ref(4, 0x800d6c04L);
-  public static final Value _800d6c08 = MEMORY.ref(4, 0x800d6c08L);
-  public static final Value _800d6c0c = MEMORY.ref(4, 0x800d6c0cL);
-  public static final Value _800d6c10 = MEMORY.ref(4, 0x800d6c10L);
-  public static final Value _800d6c14 = MEMORY.ref(4, 0x800d6c14L);
-  public static final Value _800d6c18 = MEMORY.ref(4, 0x800d6c18L);
+  public static final ArrayRef<IntRef> _800d6bdc = MEMORY.ref(4, 0x800d6bdcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<IntRef> smokeTextureWidths_800d6bec = MEMORY.ref(4, 0x800d6becL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<IntRef> smokeTextureHeights_800d6bfc = MEMORY.ref(4, 0x800d6bfcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<ShortRef> _800d6c0c = MEMORY.ref(2, 0x800d6c0cL, ArrayRef.of(ShortRef.class, 4, 2, 4, ShortRef::new));
 
   public static final SVECTOR savePointV0_800d6c28 = MEMORY.ref(4, 0x800d6c28L, SVECTOR::new);
   public static final SVECTOR savePointV1_800d6c30 = MEMORY.ref(4, 0x800d6c30L, SVECTOR::new);
@@ -7700,46 +7687,33 @@ public final class SMap {
       //LAB_800ef240
       if(a1._08.get() != 0) {
         if(a1._00.get() % a1._34.get() == 0) {
-          final SVECTOR sp0x28 = new SVECTOR().set(_800d6b7c.get( 0));
-          final SVECTOR sp0x30 = new SVECTOR().set(_800d6b7c.get( 1));
-          final SVECTOR sp0x38 = new SVECTOR().set(_800d6b7c.get( 2));
-          final SVECTOR sp0x40 = new SVECTOR().set(_800d6b7c.get( 3));
-          final SVECTOR sp0x48 = new SVECTOR().set(_800d6b7c.get( 4));
-          final SVECTOR sp0x50 = new SVECTOR().set(_800d6b7c.get( 5));
-          final SVECTOR sp0x58 = new SVECTOR().set(_800d6b7c.get( 6));
-          final SVECTOR sp0x60 = new SVECTOR().set(_800d6b7c.get( 7));
-          final SVECTOR sp0x68 = new SVECTOR().set(_800d6b7c.get( 8));
-          final SVECTOR sp0x70 = new SVECTOR().set(_800d6b7c.get( 9));
-          final SVECTOR sp0x78 = new SVECTOR().set(_800d6b7c.get(10));
-          final SVECTOR sp0x80 = new SVECTOR().set(_800d6b7c.get(11));
-
           //LAB_800ef394
-          final Struct54 s1 = FUN_800f0400(_800d4e68);
+          final DustRenderData54 dust = addDust(dust_800d4e68);
 
           if(a1._10.get() != 0) {
             //LAB_800ef3e8
-            s1._00.set((short)2);
-            s1._02.set((short)3);
+            dust.renderMode_00.set((short)2);
+            dust.textureIndex_02.set((short)3);
 
             //LAB_800ef3f8
           } else {
-            s1._00.set((short)0);
-            s1._02.set(a1._1c.get());
+            dust.renderMode_00.set((short)0);
+            dust.textureIndex_02.set(a1._1c.get());
 
-            final long v1 = a1._1c.get();
+            final int v1 = a1._1c.get();
             if(v1 == 0) {
               a1._1c.set((short)1);
               //LAB_800ef3f8
-            } else if(v1 == 0x1L) {
+            } else if(v1 == 1) {
               //LAB_800ef3d8
               a1._1c.set((short)0);
             }
           }
 
           //LAB_800ef3fc
-          getScreenOffset(s1.x_18, s1.y_1c);
-          s1._04.set((short)0);
-          s1._06.set((short)150);
+          getScreenOffset(dust.x_18, dust.y_1c);
+          dust._04.set((short)0);
+          dust._06.set((short)150);
 
           final MATRIX ls = new MATRIX();
           GsGetLs(model.coord2_14, ls);
@@ -7752,47 +7726,47 @@ public final class SMap {
           CPU.CTC2(ls.transfer.getY(), 6);
           CPU.CTC2(ls.transfer.getZ(), 7);
 
-          final long v1 = s1._02.get();
-          if(v1 == 0) {
+          final int type = dust.textureIndex_02.get();
+          if(type == 0) {
             //LAB_800ef4b4
-            s1.sz3div4_4c.set(RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, s1.sxyz0_20, s1.sxyz1_28, s1.sxyz2_30, s1.sxyz3_38, new Ref<>(), new Ref<>()));
-          } else if(v1 == 0x1L) {
+            dust.z_4c.set(RotTransPers4(_800d6b7c.get( 4), _800d6b7c.get( 5), _800d6b7c.get( 6), _800d6b7c.get( 7), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null));
+          } else if(type == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            s1.sz3div4_4c.set(RotTransPers4(sp0x68, sp0x70, sp0x78, sp0x80, s1.sxyz0_20, s1.sxyz1_28, s1.sxyz2_30, s1.sxyz3_38, new Ref<>(), new Ref<>()));
-          } else if(v1 == 0x3L) {
+            dust.z_4c.set(RotTransPers4(_800d6b7c.get( 8), _800d6b7c.get( 9), _800d6b7c.get(10), _800d6b7c.get(11), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null));
+          } else if(type == 3) {
             //LAB_800ef4a0
             //LAB_800ef4b4
-            s1.sz3div4_4c.set(RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, s1.sxyz0_20, s1.sxyz1_28, s1.sxyz2_30, s1.sxyz3_38, new Ref<>(), new Ref<>()));
+            dust.z_4c.set(RotTransPers4(_800d6b7c.get( 0), _800d6b7c.get( 1), _800d6b7c.get( 2), _800d6b7c.get( 3), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null));
           }
 
           //LAB_800ef4ec
-          if(s1.sz3div4_4c.get() < 0x29L) {
-            s1.sz3div4_4c.set(0x29L);
+          if(dust.z_4c.get() < 41) {
+            dust.z_4c.set(41);
           }
 
           //LAB_800ef504
-          s1._40.set(0x4_4444L);
-          s1._44.set(0x80_0000L);
-          s1.colour_48.set(0x80L);
+          dust.colourStep_40.set(0x4_4444);
+          dust.colourAccumulator_44.set(0x80_0000);
+          dust.colour_48.set(0x80);
         }
       }
 
       //LAB_800ef520
       if(a1._0c.get() != 0) {
         if(a1._00.get() % a1._30.get() == 0) {
-          final Struct54 s1 = FUN_800f0400(_800d4e68);
-          s1._00.set((short)1);
-          s1._02.set((short)2);
-          getScreenOffset(s1.x_18, s1.y_1c);
+          final DustRenderData54 dust = addDust(dust_800d4e68);
+          dust.renderMode_00.set((short)1);
+          dust.textureIndex_02.set((short)2);
+          getScreenOffset(dust.x_18, dust.y_1c);
 
           final SVECTOR vert0 = new SVECTOR().set((short)-a1._28.get(), (short)0, (short)-a1._28.get());
           final SVECTOR vert1 = new SVECTOR().set((short) a1._28.get(), (short)0, (short)-a1._28.get());
           final SVECTOR vert2 = new SVECTOR().set((short)-a1._28.get(), (short)0, (short) a1._28.get());
           final SVECTOR vert3 = new SVECTOR().set((short) a1._28.get(), (short)0, (short) a1._28.get());
 
-          s1._04.set((short)0);
-          s1._06.set(a1._38.get());
+          dust._04.set((short)0);
+          dust._06.set(a1._38.get());
 
           final MATRIX ls = new MATRIX();
           GsGetLs(model.coord2_14, ls);
@@ -7806,24 +7780,24 @@ public final class SMap {
           CPU.CTC2(ls.transfer.getZ(), 7);
 
           //TODO The real code actually passes the same reference for sxyz 1 and 2, is that a bug?
-          s1.sz3div4_4c.set(RotTransPers4(vert0, vert1, vert2, vert3, s1.sxyz0_20, s1.sxyz1_28, s1.sxyz2_30, s1.sxyz3_38, new Ref<>(), new Ref<>()));
+          dust.z_4c.set(RotTransPers4(vert0, vert1, vert2, vert3, dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null));
 
-          if(s1.sz3div4_4c.get() < 0x29L) {
-            s1.sz3div4_4c.set(0x29L);
+          if(dust.z_4c.get() < 41) {
+            dust.z_4c.set(41);
           }
 
           //LAB_800ef6a0
-          final int a0_0 = s1.sxyz3_38.getX() - s1.sxyz0_20.getX() >> 1 << 16;
-          s1._08.set(a0_0);
-          s1._0c.set(a0_0 / a1._38.get());
-          s1._10.set(0);
+          final int a0_0 = dust.v3_38.getX() - dust.v0_20.getX() >> 1 << 16;
+          dust._08.set(a0_0);
+          dust._0c.set(a0_0 / a1._38.get());
+          dust._10.set(0);
 
-          s1.sxyz0_20.setZ((short)((s1.sxyz3_38.getX() + s1.sxyz0_20.getX()) / 2));
-          s1.sxyz1_28.setZ((short)((s1.sxyz3_38.getY() + s1.sxyz0_20.getY()) / 2));
+          dust.v0_20.setZ((short)((dust.v3_38.getX() + dust.v0_20.getX()) / 2));
+          dust.v1_28.setZ((short)((dust.v3_38.getY() + dust.v0_20.getY()) / 2));
 
-          s1._40.set(0x80_0000L / a1._38.get());
-          s1._44.set(0x80_0000L);
-          s1.colour_48.set(0x80L);
+          dust.colourStep_40.set(0x80_0000 / a1._38.get());
+          dust.colourAccumulator_44.set(0x80_0000);
+          dust.colour_48.set(0x80);
         }
       }
 
@@ -7882,47 +7856,23 @@ public final class SMap {
 
   @Method(0x800ef8acL)
   public static void FUN_800ef8ac() {
-    long a0;
-    long a2;
-    long v0;
-    long v1;
+    final int[] u = new int[4];
+    for(int i = 0; i < 4; i++) {
+      u[i] = _800d6bdc.get(i).get();
+    }
 
-    final long[] sp10 = new long[4];
-    sp10[0] = _800d6bdc.get();
-    sp10[1] = _800d6be0.get();
-    sp10[2] = _800d6be4.get();
-    sp10[3] = _800d6be8.get();
-
-    final long[] sp20 = new long[4];
-    sp20[0] = 0x40L;
-
-    final long[] sp30 = new long[4];
-    sp30[0] = _800d6bec.get();
-    sp30[1] = _800d6bf0.get();
-    sp30[2] = _800d6bf4.get();
-    sp30[3] = _800d6bf8.get();
-
-    final long[] sp40 = new long[4];
-    sp40[0] = _800d6bfc.get();
-    sp40[1] = _800d6c00.get();
-    sp40[2] = _800d6c04.get();
-    sp40[3] = _800d6c08.get();
-
-    final long[] sp50 = new long[4];
-    sp50[0] = _800d6c0c.get();
-    sp50[1] = _800d6c10.get();
-    sp50[2] = _800d6c14.get();
-    sp50[3] = _800d6c18.get();
+    final int[] v = new int[4];
+    v[3] = 64; // Other values are 0
 
     final IntRef sox = new IntRef();
     final IntRef soy = new IntRef();
     getScreenOffset(sox, soy);
-    final long screenOffsetX = sox.get();
-    final long screenOffsetY = soy.get();
+    final int screenOffsetX = sox.get();
+    final int screenOffsetY = soy.get();
 
     //LAB_800ef9cc
-    Struct54 s1 = _800d4e68;
-    Struct54 s0 = s1.next_50.derefNullable();
+    DustRenderData54 s1 = dust_800d4e68;
+    DustRenderData54 s0 = s1.next_50.derefNullable();
     while(s0 != null) {
       if(s0._04.get() >= s0._06.get()) {
         s1.next_50.setNullable(s0.next_50.derefNullable());
@@ -7932,24 +7882,24 @@ public final class SMap {
         //LAB_800efa08
         final long packet = gpuPacketAddr_1f8003d8.get();
         gpuPacketAddr_1f8003d8.addu(0x28L);
-        MEMORY.ref(1, packet).offset(0x3L).setu(0x9L); // 9 words
-        MEMORY.ref(4, packet).offset(0x4L).setu(0x2c80_8080L); // Textured four-point polygon, opaque, texture-blending
+        MEMORY.ref(1, packet).offset(0x03L).setu(9); // 9 words
+        MEMORY.ref(4, packet).offset(0x04L).setu(0x2e80_8080L); // Textured four-point polygon, opaque, texture-blending
 
-        v1 = s0._00.get();
-        if(v1 == 0 || v1 == 0x2L) {
+        final int mode = s0.renderMode_00.get();
+        if(mode == 0 || mode == 2) {
           //LAB_800efa44
-          final long offsetX = screenOffsetX - s0.x_18.get();
-          final long offsetY = screenOffsetY - s0.y_1c.get();
-          MEMORY.ref(2, packet).offset(0x08L).setu(offsetX + s0.sxyz0_20.getX()); // Vertex 0 X
-          MEMORY.ref(2, packet).offset(0x0aL).setu(offsetY + s0.sxyz0_20.getY()); // Vertex 0 Y
-          MEMORY.ref(2, packet).offset(0x10L).setu(offsetX + s0.sxyz1_28.getX()); // Vertex 1 X
-          MEMORY.ref(2, packet).offset(0x12L).setu(offsetY + s0.sxyz1_28.getY()); // Vertex 1 Y
-          MEMORY.ref(2, packet).offset(0x18L).setu(offsetX + s0.sxyz2_30.getX()); // Vertex 2 X
-          MEMORY.ref(2, packet).offset(0x1aL).setu(offsetY + s0.sxyz2_30.getY()); // Vertex 2 Y
-          MEMORY.ref(2, packet).offset(0x20L).setu(offsetX + s0.sxyz3_38.getX()); // Vertex 3 X
-          MEMORY.ref(2, packet).offset(0x22L).setu(offsetY + s0.sxyz3_38.getY()); // Vertex 3 Y
+          final int offsetX = screenOffsetX - s0.x_18.get();
+          final int offsetY = screenOffsetY - s0.y_1c.get();
+          MEMORY.ref(2, packet).offset(0x08L).setu(offsetX + s0.v0_20.getX()); // X0
+          MEMORY.ref(2, packet).offset(0x0aL).setu(offsetY + s0.v0_20.getY()); // Y0
+          MEMORY.ref(2, packet).offset(0x10L).setu(offsetX + s0.v1_28.getX()); // X1
+          MEMORY.ref(2, packet).offset(0x12L).setu(offsetY + s0.v1_28.getY()); // Y1
+          MEMORY.ref(2, packet).offset(0x18L).setu(offsetX + s0.v2_30.getX()); // X2
+          MEMORY.ref(2, packet).offset(0x1aL).setu(offsetY + s0.v2_30.getY()); // Y2
+          MEMORY.ref(2, packet).offset(0x20L).setu(offsetX + s0.v3_38.getX()); // X3
+          MEMORY.ref(2, packet).offset(0x22L).setu(offsetY + s0.v3_38.getY()); // Y3
 
-          if(s0._00.get() == 0x2L) {
+          if(mode == 2) {
             MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(960, 464)); // CLUT
             MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.B_MINUS_F, 960, 320)); // TPAGE
           } else {
@@ -7957,30 +7907,25 @@ public final class SMap {
             MEMORY.ref(2, packet).offset(0x0eL).setu(cluts_800d6068.get(7).get()); // CLUT
             MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800d6050.get(7).get()); // TPAGE
           }
-        } else if(v1 == 0x1L) {
+        } else if(mode == 1) {
           //LAB_800efb7c
           s0._08.add(s0._0c.get());
           s0._10.set(s0._08.get() >> 16);
-          v0 = s0.sxyz0_20.getZ();
-          v1 = s0._08.get() >> 17;
-          v0 -= v1;
-          s0.sxyz0_20.setX((short)v0);
-          a2 = s0.sxyz0_20.getX();
-          v0 = s0.sxyz1_28.getZ() - v1;
-          s0.sxyz0_20.setY((short)v0);
-          a0 = screenOffsetY - s0.y_1c.get() + v0;
-          v1 = screenOffsetX - s0.x_18.get() + a2;
-          MEMORY.ref(2, packet).offset(0x08L).setu(v1); // Vertex 0 X
-          MEMORY.ref(2, packet).offset(0x0aL).setu(a0); // Vertex 0 Y
-          MEMORY.ref(2, packet).offset(0x10L).setu(v1 + s0._10.get()); // Vertex 1 X
-          MEMORY.ref(2, packet).offset(0x12L).setu(a0); // Vertex 1 Y
-          MEMORY.ref(2, packet).offset(0x18L).setu(v1); // Vertex 2 X
-          MEMORY.ref(2, packet).offset(0x1aL).setu(a0 + s0._10.get()); // Vertex 2 Y
-          MEMORY.ref(2, packet).offset(0x20L).setu(v1 + s0._10.get()); // Vertex 3 X
-          MEMORY.ref(2, packet).offset(0x22L).setu(a0 + s0._10.get()); // Vertex 3 Y
+          s0.v0_20.setX((short)(s0.v0_20.getZ() - (s0._08.get() >> 17)));
+          s0.v0_20.setY((short)(s0.v1_28.getZ() - (s0._08.get() >> 17)));
+          final int x = screenOffsetX - s0.x_18.get() + s0.v0_20.getX();
+          final int y = screenOffsetY - s0.y_1c.get() + s0.v0_20.getY();
+          MEMORY.ref(2, packet).offset(0x08L).setu(x); // X0
+          MEMORY.ref(2, packet).offset(0x0aL).setu(y); // Y0
+          MEMORY.ref(2, packet).offset(0x10L).setu(x + s0._10.get()); // X1
+          MEMORY.ref(2, packet).offset(0x12L).setu(y); // Y1
+          MEMORY.ref(2, packet).offset(0x18L).setu(x); // X2
+          MEMORY.ref(2, packet).offset(0x1aL).setu(y + s0._10.get()); // Y2
+          MEMORY.ref(2, packet).offset(0x20L).setu(x + s0._10.get()); // X3
+          MEMORY.ref(2, packet).offset(0x22L).setu(y + s0._10.get()); // Y3
 
           if((s0._04.get() & 0x3L) == 0) {
-            s0.sxyz1_28.z.decr();
+            s0.v1_28.z.decr();
           }
 
           //LAB_800efc4c
@@ -7989,32 +7934,31 @@ public final class SMap {
         }
 
         //LAB_800efc64
-        if(s0._04.get() >= sp50[s0._00.get()]) {
-          s0._44.sub(s0._40);
-          v0 = s0._44.get() >>> 16;
-          if(v0 >= 0x100L) {
+        if(s0._04.get() >= _800d6c0c.get(s0.renderMode_00.get()).get()) {
+          s0.colourAccumulator_44.sub(s0.colourStep_40);
+
+          final int colour = s0.colourAccumulator_44.get() >>> 16;
+          if(colour >= 0x100) {
             s0.colour_48.set(0);
           } else {
-            s0.colour_48.set(v0);
+            s0.colour_48.set(colour);
           }
         }
 
         //LAB_800efcb8
-        MEMORY.ref(4, packet).offset(0x4L).setu((MEMORY.ref(1, packet).offset(0x7L).get() | 0x2L) << 24 | 0x80_8080L);
-        MEMORY.ref(4, packet).offset(0x4L).setu((MEMORY.ref(1, packet).offset(0x7L).get() & 0xfeL) << 24 | 0x80_8080L);
-        MEMORY.ref(1, packet).offset(0x4L).setu(s0.colour_48.get()); // R
-        MEMORY.ref(1, packet).offset(0x5L).setu(s0.colour_48.get()); // G
-        MEMORY.ref(1, packet).offset(0x6L).setu(s0.colour_48.get()); // B
-        MEMORY.ref(1, packet).offset(0xcL).setu(sp10[s0._02.get()]); // U0
-        MEMORY.ref(1, packet).offset(0xdL).setu(sp20[s0._02.get()]); // V0
-        MEMORY.ref(1, packet).offset(0x14L).setu(sp10[s0._02.get()] + sp30[s0._02.get()]); // U1
-        MEMORY.ref(1, packet).offset(0x15L).setu(sp20[s0._02.get()]); // V1
-        MEMORY.ref(1, packet).offset(0x1cL).setu(sp10[s0._02.get()]); // U2
-        MEMORY.ref(1, packet).offset(0x1dL).setu(sp20[s0._02.get()] + sp40[s0._02.get()]); // V2
-        MEMORY.ref(1, packet).offset(0x24L).setu(sp10[s0._02.get()] + sp30[s0._02.get()]); // U3
-        MEMORY.ref(1, packet).offset(0x25L).setu(sp20[s0._02.get()] + sp40[s0._02.get()]); // V3
+        MEMORY.ref(1, packet).offset(0x04L).setu(s0.colour_48.get()); // R
+        MEMORY.ref(1, packet).offset(0x05L).setu(s0.colour_48.get()); // G
+        MEMORY.ref(1, packet).offset(0x06L).setu(s0.colour_48.get()); // B
+        MEMORY.ref(1, packet).offset(0x0cL).setu(u[s0.textureIndex_02.get()]); // U0
+        MEMORY.ref(1, packet).offset(0x0dL).setu(v[s0.textureIndex_02.get()]); // V0
+        MEMORY.ref(1, packet).offset(0x14L).setu(u[s0.textureIndex_02.get()] + smokeTextureWidths_800d6bec.get(s0.textureIndex_02.get()).get()); // U1
+        MEMORY.ref(1, packet).offset(0x15L).setu(v[s0.textureIndex_02.get()]); // V1
+        MEMORY.ref(1, packet).offset(0x1cL).setu(u[s0.textureIndex_02.get()]); // U2
+        MEMORY.ref(1, packet).offset(0x1dL).setu(v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get()); // V2
+        MEMORY.ref(1, packet).offset(0x24L).setu(u[s0.textureIndex_02.get()] + smokeTextureWidths_800d6bec.get(s0.textureIndex_02.get()).get()); // U3
+        MEMORY.ref(1, packet).offset(0x25L).setu(v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get()); // V3
 
-        queueGpuPacket(tags_1f8003d0.deref().get((int)s0.sz3div4_4c.get()).getAddress(), packet);
+        queueGpuPacket(tags_1f8003d0.deref().get(s0.z_4c.get()).getAddress(), packet);
 
         s0._04.incr();
         s1 = s0;
@@ -8176,7 +8120,7 @@ public final class SMap {
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
     initModel(model_800d4d40, mrg_800d6d1c.getFile(4, ExtendedTmd::new), mrg_800d6d1c.getFile(5, TmdAnimationFile::new));
-    _800d4e68.next_50.clear();
+    dust_800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
   }
@@ -8190,18 +8134,18 @@ public final class SMap {
   }
 
   @Method(0x800f0400L)
-  public static Struct54 FUN_800f0400(final Struct54 a0) {
-    final Struct54 v0 = MEMORY.ref(4, mallocHead(0x54L), Struct54::new);
-    v0.next_50.setNullable(a0.next_50.derefNullable());
-    a0.next_50.set(v0);
-    return v0;
+  public static DustRenderData54 addDust(final DustRenderData54 parent) {
+    final DustRenderData54 child = MEMORY.ref(4, mallocHead(0x54L), DustRenderData54::new);
+    child.next_50.setNullable(parent.next_50.derefNullable());
+    parent.next_50.set(child);
+    return child;
   }
 
   @Method(0x800f0440L)
   public static void FUN_800f0440() {
     deallocateModel(model_800d4d40);
     FUN_800f058c();
-    FUN_800f05e8();
+    deallocateDust();
     FUN_800f0e7c();
   }
 
@@ -8272,14 +8216,14 @@ public final class SMap {
   }
 
   @Method(0x800f05e8L)
-  public static void FUN_800f05e8() {
-    final Struct54 v1 = _800d4e68;
+  public static void deallocateDust() {
+    final DustRenderData54 v1 = dust_800d4e68;
 
     if(!v1.next_50.isNull()) {
       //LAB_800f0610
-      Struct54 s0;
+      DustRenderData54 s0;
       do {
-        final Struct54 a0 = v1.next_50.deref();
+        final DustRenderData54 a0 = v1.next_50.deref();
         s0 = a0.next_50.derefNullable();
         free(a0.getAddress());
         v1.next_50.setNullable(s0);
