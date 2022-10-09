@@ -8,7 +8,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class SomethingStruct2 implements MemoryRef {
+public class SomethingStructSub0c_1 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef count_00;
@@ -17,7 +17,7 @@ public class SomethingStruct2 implements MemoryRef {
   public final UnsignedIntRef ptr_04;
   public final IntRef _08;
 
-  public SomethingStruct2(final Value ref) {
+  public SomethingStructSub0c_1(final Value ref) {
     this.ref = ref;
 
     this.count_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
