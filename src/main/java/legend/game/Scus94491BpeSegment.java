@@ -3015,10 +3015,6 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800158ccL)
-  public static int allocateScriptState(final long innerStructSize) {
-    return allocateScriptState(innerStructSize, WorldObject210::new);
-  }
-
   public static <T extends MemoryRef> int allocateScriptState(final long innerStructSize, final Function<Value, T> type) {
     final int index = findFreeScriptState();
 
@@ -3033,13 +3029,6 @@ public final class Scus94491BpeSegment {
    * @return index, or -1 on failure to allocate memory
    */
   @Method(0x80015918L)
-  public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4) {
-    return allocateScriptState(index, innerStructSize, allocateOnHead, a3, a4, WorldObject210::new);
-  }
-
-  /**
-   * @return index, or -1 on failure to allocate memory
-   */
   public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
     LOGGER.info("Allocating script index %d (0x%x bytes)", index, innerStructSize);
 
@@ -3240,7 +3229,7 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Forking script %d to %d", parentScriptIndex, childScriptIndex);
 
-    if(childScriptIndex < 0 || allocateScriptState(childScriptIndex, 0, false, null, 0) < 0) {
+    if(childScriptIndex < 0 || allocateScriptState(childScriptIndex, 0, false, null, 0, null) < 0) {
       //LAB_80015dd4
       return -1;
     }

@@ -275,7 +275,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    *   <li>{@link legend.game.SMap#scriptStateIndices_800c6880}</li>
    *   <li>{@link legend.game.SMap#scriptIndex_800c6740}</li>
-   *   <li>{@link legend.game.SMap#scriptCount_800c6730}</li>
+   *   <li>{@link legend.game.SMap#wobjCount_800c6730}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bd7b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bda08}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8005#submapCut_80052c30}</li>

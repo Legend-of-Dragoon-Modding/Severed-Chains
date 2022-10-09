@@ -2582,7 +2582,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6070L)
   public static void FUN_800e6070() {
-    allocateScriptState(1, 0, false, null, 0);
+    allocateScriptState(1, 0, false, null, 0, null);
     loadScriptFile(1, script_800faebc, "BTTL Script 800faebc", 0); //TODO unknown size
     setScriptTicker(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5a78", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
     setScriptRenderer(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5fe8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
