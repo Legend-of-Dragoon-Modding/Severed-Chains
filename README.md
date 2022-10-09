@@ -24,7 +24,7 @@ The Java version is still in early development and not ready for playing. A stro
 2. Clone this repository to your local computer using git
 3. Copy an ISO/bin of the first LoD disk into the `isos` directory and rename it to `1.iso`
 4. Open your local copy of this repository in your IDE (IntelliJ recommended)
-5. The gradle settings will attempt to configure the project and associate a separate "lod-core" repository with it. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
+5. Gradle should automatically attempt to configure the project and download all dependencies. If it doesn't, expand the gradle tab and click refresh. This process should succeed; resolve any errors if it does not. (lack of command line git can cause issues here)
 6. run the project
 
 Note: Java 17 is required and both repositories use gradle. It is **strongly** recommended to run with assertions enabled.
