@@ -3056,7 +3056,7 @@ public final class SItem {
 
   @Method(0x80102660L)
   public static void FUN_80102660(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
-    final long s0 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+    final long s0 = a3 == 0xff ? 1 : 0;
 
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
     renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), s0);
@@ -3640,7 +3640,7 @@ public final class SItem {
     if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) {
       if(selectedSlot.get() == 0) {
         if(scroll == null || scroll.get() == 0) { // Wrap around up
-          selectedSlot.set(slotsDisplayed - 1);
+          selectedSlot.set(Math.max(0, slotsDisplayed - 1));
 
           if(scroll != null) {
             scroll.set(slotCount - slotsDisplayed);
