@@ -33,8 +33,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.function.BiFunction;
@@ -123,6 +125,8 @@ public class Gpu implements Runnable {
   private int scanLine;
   private boolean isOddLine;
 
+  private final List<VramTexture> textures = new ArrayList<>();
+
   public Gpu(final Memory memory) {
     memory.addSegment(new GpuSegment(0x1f80_1810L));
   }
@@ -147,7 +151,37 @@ public class Gpu implements Runnable {
     // NOOP - we don't do caching
   }
 
-  public void commandA0CopyRectFromCpuToVram(final legend.core.gpu.RECT rect, final long address) {
+  private void removeTexturesForPixel(final int x, final int y) {
+    this.textures.removeIf(tex -> tex.containsPixel(x, y));
+  }
+
+  public void loadTexture(final RECT rect, final long address, final Bpp bpp) {
+    assert address != 0;
+
+    final int rectX = rect.x.get() * this.renderScale;
+    final int rectY = rect.y.get() * this.renderScale;
+    final int rectW = rect.w.get() * this.renderScale;
+    final int rectH = rect.h.get() * this.renderScale;
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    synchronized(this.commandQueue) {
+      this.commandQueue.add(() -> {
+        LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
+
+        this.removeTexturesForPixel(rectX, rectY);
+
+        MEMORY.waitForLock(() -> {
+          final byte[] data = MEMORY.getBytes(address, rectW * rectH * 2);
+          final VramTexture tex = new VramTexture(rectX, rectY, rectW, rectH, bpp, data);
+          this.textures.add(tex);
+        });
+      });
+    }
+  }
+
+  public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
     assert address != 0;
 
     final int rectX = rect.x.get() * this.renderScale;
@@ -166,6 +200,8 @@ public class Gpu implements Runnable {
           int i = 0;
           for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
             for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
+              this.removeTexturesForPixel(x, y);
+
               final int packed = (int)MEMORY.get(address + i * 2, 2);
               final int unpacked = MathHelper.colour15To24(packed);
 
@@ -1299,12 +1335,12 @@ public class Gpu implements Runnable {
     return ay == by && bx > ax || by < ay;
   }
 
-  private int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp depth) {
-    if(depth == legend.core.gpu.Bpp.BITS_4) {
+  private int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp depth) {
+    if(depth == Bpp.BITS_4) {
       return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
 
-    if(depth == legend.core.gpu.Bpp.BITS_8) {
+    if(depth == Bpp.BITS_8) {
       return this.get8bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
 
@@ -1312,14 +1348,44 @@ public class Gpu implements Runnable {
   }
 
   private int get4bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 4 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x / this.renderScale & 3) * 4 & 0xf;
+    int p = -1;
+
+    for(final VramTexture tex : this.textures) {
+      final int adjustedX = tex.adjustX(textureBaseX) + x;
+      final int adjustedY = tex.adjustY(textureBaseY) + y;
+
+      if(tex.containsPixel(adjustedX, adjustedY)) {
+        p = tex.getPixel(adjustedX, adjustedY);
+        break;
+      }
+    }
+
+    if(p == -1) {
+      final int index = this.getPixel15(x / 4 + textureBaseX, y + textureBaseY);
+      p = index >> (x / this.renderScale & 3) * 4 & 0xf;
+    }
+
     return this.getPixel(clutX + p * this.renderScale, clutY);
   }
 
   private int get8bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 2 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x / this.renderScale & 1) * 8 & 0xff;
+    int p = -1;
+
+    for(final VramTexture tex : this.textures) {
+      final int adjustedX = tex.adjustX(textureBaseX) + x;
+      final int adjustedY = tex.adjustY(textureBaseY) + y;
+
+      if(tex.containsPixel(adjustedX, adjustedY)) {
+        p = tex.getPixel(adjustedX, adjustedY);
+        break;
+      }
+    }
+
+    if(p == -1) {
+      final int index = this.getPixel15(x / 2 + textureBaseX, y + textureBaseY);
+      p = index >> (x / this.renderScale & 1) * 8 & 0xff;
+    }
+
     return this.getPixel(clutX + p * this.renderScale, clutY);
   }
 
@@ -1565,6 +1631,7 @@ public class Gpu implements Runnable {
 
         for(int posY = y; posY < y + h; posY++) {
           for(int posX = x; posX < x + w; posX++) {
+            gpu.removeTexturesForPixel(posX, posY);
             gpu.setPixel(posX, posY, colour);
           }
         }
@@ -1694,6 +1761,8 @@ public class Gpu implements Runnable {
 
         for(int y = 0; y < height; y++) {
           for(int x = 0; x < width; x++) {
+            gpu.removeTexturesForPixel(x, y);
+
             int colour = gpu.getPixel(sourceX + x, sourceY + y);
 
             if(gpu.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {

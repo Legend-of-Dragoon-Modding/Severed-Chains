@@ -14,6 +14,7 @@ import legend.core.Hardware;
 import legend.core.IoHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.COLOUR;
@@ -4461,6 +4462,7 @@ public final class Scus94491BpeSegment {
     final RECT imageRect = new RECT();
     imageRect.set((short)640, (short)0, header.getImageRect().w.get(), header.getImageRect().h.get());
     LoadImage(imageRect, header.getImageAddress());
+    GPU.loadTexture(imageRect,  header.getImageAddress(), Bpp.BITS_8);
 
     if(header.hasClut()) {
       final RECT clutRect = new RECT();
