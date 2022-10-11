@@ -4210,13 +4210,13 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80017354L)
   public static long FUN_80017354(final RunningScript a0) {
-    gameState_800babc8._4e3.set(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
+    gameState_800babc8.indicatorsDisabled_4e3.set(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
     return 0;
   }
 
   @Method(0x80017374L)
   public static long FUN_80017374(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(gameState_800babc8._4e3.get() != 0 ? 1 : 0);
+    a0.params_20.get(0).deref().set(gameState_800babc8.indicatorsDisabled_4e3.get() != 0 ? 1 : 0);
     return 0;
   }
 
