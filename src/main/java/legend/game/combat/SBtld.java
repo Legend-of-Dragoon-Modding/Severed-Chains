@@ -113,7 +113,7 @@ public class SBtld {
   @Method(0x80109170L)
   public static void FUN_80109170(final long address, final long fileSize, final long param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
-    scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0));
+    scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0, null));
     loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
 
     final long v1;

@@ -20,8 +20,8 @@ public class SomethingStruct implements MemoryRef {
   public final UnsignedIntRef count_0c;
   public final UnsignedIntRef primitives_10;
   /** 0xc bytes each */
-  public final Pointer<UnboundedArrayRef<SomethingStruct2>> ptr_14;
-  public final UnsignedIntRef ptr_18;
+  public final Pointer<UnboundedArrayRef<SomethingStructSub0c_1>> ptr_14;
+  public final Pointer<UnboundedArrayRef<SomethingStructSub0c_2>> ptr_18;
   public final Pointer<TmdWithId> tmdPtr_1c;
   public final Pointer<GsDOBJ2> dobj2Ptr_20;
   public final Pointer<GsCOORDINATE2> coord2Ptr_24;
@@ -34,8 +34,8 @@ public class SomethingStruct implements MemoryRef {
     this.normals_08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this.count_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this.primitives_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
-    this.ptr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, SomethingStruct2::new)));
-    this.ptr_18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
+    this.ptr_14 = ref.offset(4, 0x14L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new)));
+    this.ptr_18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, SomethingStructSub0c_2::new)));
     this.tmdPtr_1c = ref.offset(4, 0x1cL).cast(Pointer.deferred(4, TmdWithId::new));
     this.dobj2Ptr_20 = ref.offset(4, 0x20L).cast(Pointer.deferred(4, GsDOBJ2::new));
     this.coord2Ptr_24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, GsCOORDINATE2::new));
