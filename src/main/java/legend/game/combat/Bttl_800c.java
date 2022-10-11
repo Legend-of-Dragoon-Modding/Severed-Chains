@@ -114,17 +114,15 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021868;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800218a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
+import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -918,7 +916,6 @@ public final class Bttl_800c {
 
     //LAB_800c760c
     FUN_800ec4bc();
-    FUN_800218a4();
     FUN_8001ff74();
 
     pregameLoadingStage_800bb10c.addu(0x1L);
@@ -1060,7 +1057,6 @@ public final class Bttl_800c {
       }
 
       //LAB_800c7b80
-      FUN_80021868();
       pregameLoadingStage_800bb10c.addu(0x1L);
     }
 

@@ -45,13 +45,16 @@ public class WorldObject210 implements MemoryRef {
 
   public final IntRef ui_188;
   public final UnsignedIntRef ui_18c;
+  /** I think this is either wobj type, or maybe the type of things this wobj collides with? */
   public final UnsignedIntRef ui_190;
   public final UnsignedIntRef ui_194;
   public final IntRef i_198;
-  public final IntRef i_19c;
+  /** The wobj that this wobj is currently collided with (unknown how this differs from _1a8) */
+  public final IntRef collidedWithWobjIndex_19c;
   public final IntRef i_1a0;
   public final IntRef i_1a4;
-  public final IntRef i_1a8;
+  /** The wobj that this wobj is currently collided with (unknown how this differs from _19c) */
+  public final IntRef collidedWithWobjIndex_1a8;
   public final IntRef i_1ac;
   public final IntRef i_1b0;
   public final IntRef i_1b4;
@@ -105,10 +108,10 @@ public class WorldObject210 implements MemoryRef {
     this.ui_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
     this.ui_194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
     this.i_198 = ref.offset(4, 0x198L).cast(IntRef::new);
-    this.i_19c = ref.offset(4, 0x19cL).cast(IntRef::new);
+    this.collidedWithWobjIndex_19c = ref.offset(4, 0x19cL).cast(IntRef::new);
     this.i_1a0 = ref.offset(4, 0x1a0L).cast(IntRef::new);
     this.i_1a4 = ref.offset(4, 0x1a4L).cast(IntRef::new);
-    this.i_1a8 = ref.offset(4, 0x1a8L).cast(IntRef::new);
+    this.collidedWithWobjIndex_1a8 = ref.offset(4, 0x1a8L).cast(IntRef::new);
     this.i_1ac = ref.offset(4, 0x1acL).cast(IntRef::new);
     this.i_1b0 = ref.offset(4, 0x1b0L).cast(IntRef::new);
     this.i_1b4 = ref.offset(4, 0x1b4L).cast(IntRef::new);
