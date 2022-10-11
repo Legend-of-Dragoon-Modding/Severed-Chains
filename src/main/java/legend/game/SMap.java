@@ -6242,8 +6242,8 @@ public final class SMap {
     //LAB_800e9164
     long v1;
     for(int i = 0; i < t2; i++) {
-      final SomethingStructSub0c_1 t5 = SomethingStructPtr_800d1a88.deref().ptr_14.deref().get(i);
       final long a3_0 = _800cbe48.offset(i * 0x4L).get();
+      final SomethingStructSub0c_1 t5 = SomethingStructPtr_800d1a88.deref().ptr_14.deref().get((int)a3_0);
 
       v1 = -MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x0L).getSigned() * x - MEMORY.ref(2, t6).offset(a3_0 * 0x8L).offset(0x4L).getSigned() * z - t5._08.get();
 
