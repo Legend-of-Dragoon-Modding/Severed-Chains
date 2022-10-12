@@ -49,11 +49,11 @@ import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
-import legend.game.types.WorldObject210;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.LoadingOverlay0c;
 import legend.game.types.McqHeader;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
@@ -69,6 +69,7 @@ import legend.game.types.TexPageBpp;
 import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,6 +88,7 @@ import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
+import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.initFileEntries;
 import static legend.game.SMap.FUN_800e5934;
@@ -142,10 +144,6 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
 import static legend.game.Scus94491BpeSegment_8004.SsSetRVol;
 import static legend.game.Scus94491BpeSegment_8004._8004dd00;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
-import static legend.game.Scus94491BpeSegment_8004._8004dd10;
-import static legend.game.Scus94491BpeSegment_8004._8004dd14;
-import static legend.game.Scus94491BpeSegment_8004._8004dd18;
-import static legend.game.Scus94491BpeSegment_8004._8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
@@ -174,11 +172,15 @@ import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbacks_8004dddc
 import static legend.game.Scus94491BpeSegment_8004.initSound;
 import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
+import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
 import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
-import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
+import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.orderingTableBits_8004dd38;
+import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd14;
+import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd18;
+import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -210,12 +212,10 @@ import static legend.game.Scus94491BpeSegment_8005._800501bc;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1e4;
 import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
-import static legend.game.Scus94491BpeSegment_8005._8005a2a8;
-import static legend.game.Scus94491BpeSegment_8005._8005a2ac;
-import static legend.game.Scus94491BpeSegment_8005._8005a2b0;
 import static legend.game.Scus94491BpeSegment_8005._8005a398;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
+import static legend.game.Scus94491BpeSegment_8005.loadingOverlays_8005a2a8;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -318,6 +318,7 @@ import static legend.game.combat.Bttl_800c.FUN_800c882c;
 import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
 import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800c._800c6768;
+import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
@@ -1644,22 +1645,22 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800128c4L)
   public static long loadSstrmAndSmap() {
-    if(loadingOverlay_8004dd1e.get() == 0) {
+    if(!loadingOverlay_8004dd1e.get()) {
       //LAB_80012910
       //LAB_80012900
-      while(_8004dd14.get() != _8004dd18.get() && _8005a2a8.offset(_8004dd18.get() * 0xcL).offset(0x4L).get() == 0) {
-        _8004dd18.addu(0x1L).and(0xfL);
+      while(overlayQueueIndex_8004dd14.get() != overlayQueueIndex_8004dd18.get() && loadingOverlays_8005a2a8.get(overlayQueueIndex_8004dd18.get()).loadedCallback_04.isNull()) {
+        overlayQueueIndex_8004dd18.incr().and(0xf);
         //LAB_80012910
       }
 
       //LAB_80012930
-      if(loadingOverlay_8004dd1e.get() == 0) {
-        if(_8004dd1c.get() == 0) {
-          if(_8004dd14.get() != _8004dd18.get()) {
-            loadingOverlay_8004dd1e.setu(0x1L);
-            _8004dd10.setu(_8005a2a8.offset(_8004dd18.get() * 0xcL));
-            loadFile(overlays_8004db88.get((int)_8004dd10.get()), _80010004.get(), getMethodAddress(Scus94491BpeSegment.class, "overlayLoadedCallback", long.class, long.class, long.class), _8004dd18.get(), 0x11L);
-            _8004dd18.addu(0x1L).and(0xfL);
+      if(!loadingOverlay_8004dd1e.get()) {
+        if(overlaysLoadedCount_8004dd1c.get() == 0) {
+          if(overlayQueueIndex_8004dd14.get() != overlayQueueIndex_8004dd18.get()) {
+            loadingOverlay_8004dd1e.set(true);
+            loadedOverlayIndex_8004dd10.set(loadingOverlays_8005a2a8.get(overlayQueueIndex_8004dd18.get()).overlayIndex_00.get());
+            loadFile(overlays_8004db88.get(loadedOverlayIndex_8004dd10.get()), _80010004.get(), getMethodAddress(Scus94491BpeSegment.class, "overlayLoadedCallback", long.class, long.class, long.class), overlayQueueIndex_8004dd18.get(), 0x11L);
+            overlayQueueIndex_8004dd18.incr().and(0xf);
           }
         }
       }
@@ -1668,7 +1669,7 @@ public final class Scus94491BpeSegment {
     //LAB_800129c0
     //LAB_800129c4
     if(mainCallbackIndexOnceLoaded_8004dd24.getSigned() != -1) {
-      if(loadingSmapOvl_8004dd08.get() != 0) {
+      if(loadingGameStateOverlay_8004dd08.get() != 0) {
         return 0;
       }
 
@@ -1678,7 +1679,7 @@ public final class Scus94491BpeSegment {
       mainCallbackIndexOnceLoaded_8004dd24.setu(-1);
       FUN_80019710();
       vsyncMode_8007a3b8.setu(0x2L);
-      loadSmap((int)mainCallbackIndex_8004dd20.getSigned());
+      loadGameStateOverlay((int)mainCallbackIndex_8004dd20.getSigned());
 
       if(mainCallbackIndex_8004dd20.get() == 0x6L) { // Starting combat
         FUN_8001c4ec();
@@ -1687,7 +1688,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80012a34
     //LAB_80012a38
-    if(loadingSmapOvl_8004dd08.get() == 0 || (callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0 || (callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
       //LAB_80012a6c
       return 1;
     }
@@ -1696,52 +1697,58 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
-  /** TODO this isn't just SMAP */
   @Method(0x80012a84L)
-  public static long loadSmap(final int callbackIndex) {
+  public static long loadGameStateOverlay(final int callbackIndex) {
     final FileEntry08 entry = callback_8004dbc0.get(callbackIndex).entry_04.derefNullable();
 
     if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
       //LAB_80012ac0
       FUN_80012bd4(callbackIndex);
-      loadingSmapOvl_8004dd08.setu(0);
+      loadingGameStateOverlay_8004dd08.setu(0);
       return 0x1L;
     }
 
     //LAB_80012ad8
     currentlyLoadingFileEntry_8004dd04.set(entry);
-    loadingSmapOvl_8004dd08.setu(0x1L);
-    loadFile(entry, _80010000.get(), getMethodAddress(Scus94491BpeSegment.class, "smapLoadedCallback", long.class, long.class, long.class), callbackIndex, 0x11L);
+    loadingGameStateOverlay_8004dd08.setu(0x1L);
+    loadFile(entry, _80010000.get(), getMethodAddress(Scus94491BpeSegment.class, "gameStateOverlayLoadedCallback", long.class, long.class, long.class), callbackIndex, 0x11L);
     return 0;
   }
 
   /**
+   * Supporting overlays that can be loaded at any time like S_ITEM, etc.
+   *
    * @param overlayIndex <ol start="0">
    *                       <li>S_INIT</li>
-   *                     </ul>
+   *                       <li>S_BTLD</li>
+   *                       <li>S_ITEM</li>
+   *                       <li>S_EFFE</li>
+   *                       <li>S_STRM</li>
+   *                     </ol>
    */
   @Method(0x80012b1cL)
-  public static void loadAndRunOverlay(final int overlayIndex, final long overlayMethod, final long callbackParam) {
-    if(_8004dd10.get() == overlayIndex && loadingOverlay_8004dd1e.get() == 0) {
-      _8004dd1c.addu(0x1L);
-      MEMORY.ref(4, overlayMethod).cast(ConsumerRef::new).run(callbackParam);
+  public static void loadSupportOverlay(final int overlayIndex, final ConsumerRef<Integer> overlayMethod, final int callbackParam) {
+    if(loadedOverlayIndex_8004dd10.get() == overlayIndex && !loadingOverlay_8004dd1e.get()) {
+      overlaysLoadedCount_8004dd1c.incr();
+      overlayMethod.run(callbackParam);
       return;
     }
 
     //LAB_80012b6c
     //LAB_80012b70
-    _8005a2a8.offset(_8004dd14.get() * 12).setu(overlayIndex);
-    _8005a2ac.offset(_8004dd14.get() * 12).setu(overlayMethod);
-    _8005a2b0.offset(_8004dd14.get() * 12).setu(callbackParam);
-    _8004dd14.addu(0x1L).and(0xfL);
+    final LoadingOverlay0c loadingOverlay = loadingOverlays_8005a2a8.get(overlayQueueIndex_8004dd14.get());
+    loadingOverlay.overlayIndex_00.set(overlayIndex);
+    loadingOverlay.loadedCallback_04.set(overlayMethod);
+    loadingOverlay.callbackParam_08.set(callbackParam);
+    overlayQueueIndex_8004dd14.incr().and(0xf);
 
     //LAB_80012ba4
   }
 
   @Method(0x80012bb4L)
-  public static void FUN_80012bb4() {
-    if(_8004dd1c.getSigned() > 0) {
-      _8004dd1c.subu(1);
+  public static void decrementOverlayCount() {
+    if(overlaysLoadedCount_8004dd1c.get() > 0) {
+      overlaysLoadedCount_8004dd1c.decr();
     }
   }
 
@@ -1755,51 +1762,37 @@ public final class Scus94491BpeSegment {
     //LAB_80012bf0
     final long v0 = callback_8004dbc0.get(callbackIndex).ptr_08.get();
     if(v0 != 0) {
-      long a0 = MEMORY.ref(4, v0).get();
-      long v1 = MEMORY.ref(4, v0).offset(0x4L).get() / 0x4L;
-
-      //LAB_80012c1c
-      while(v1 > 0) {
-        MEMORY.ref(4, a0).setu(0);
-        a0 += 0x4L;
-        v1--;
-
-        //LAB_80012c24
-      }
+      bzero(MEMORY.ref(4, v0).offset(0x0L).get(), (int)MEMORY.ref(4, v0).offset(0x4L).get());
     }
-    //LAB_80012c30
   }
 
   @Method(0x80012c48L)
-  public static void smapLoadedCallback(final long address, final long fileSize, final long callbackIndex) {
-    loadingSmapOvl_8004dd08.setu(0);
+  public static void gameStateOverlayLoadedCallback(final long address, final long fileSize, final long callbackIndex) {
+    loadingGameStateOverlay_8004dd08.setu(0);
   }
 
   @Method(0x80012c54L)
-  public static void overlayLoadedCallback(final long address, final long fileSize, final long a2) {
-    loadingOverlay_8004dd1e.setu(0);
-    FUN_80012c7c(a2);
+  public static void overlayLoadedCallback(final long address, final long fileSize, final long overlayQueueIndex) {
+    loadingOverlay_8004dd1e.set(false);
+    removeLoadedOverlayFromQueue((int)overlayQueueIndex);
   }
 
   @Method(0x80012c7cL)
-  public static void FUN_80012c7c(final long a0) {
-    long s1 = a0;
-
+  public static void removeLoadedOverlayFromQueue(final int startingIndex) {
     //LAB_80012cd0
-    while(s1 != _8004dd14.get()) {
-      if(_8004dd10.get() == _8005a2a8.offset(s1 * 12).get()) {
-        if(_8005a2ac.offset(s1 * 12).get() != 0) {
-          _8004dd1c.addu(0x1L);
-          _8005a2ac.offset(s1 * 12).deref(4).cast(ConsumerRef::new).run(_8005a2b0.offset(s1 * 12).get());
+    for(int i = startingIndex; i != overlayQueueIndex_8004dd14.get(); i = i + 1 & 0xf) {
+      final LoadingOverlay0c loadingOverlay = loadingOverlays_8005a2a8.get(i);
+
+      if(loadedOverlayIndex_8004dd10.get() == loadingOverlay.overlayIndex_00.get()) {
+        if(!loadingOverlay.loadedCallback_04.isNull()) {
+          overlaysLoadedCount_8004dd1c.incr();
+          loadingOverlay.loadedCallback_04.deref().run(loadingOverlay.callbackParam_08.get());
         }
 
         //LAB_80012d14
-        _8005a2a8.offset(s1 * 12).setu(-0x1L);
-        _8005a2ac.offset(s1 * 12).setu(0);
+        loadingOverlay.overlayIndex_00.set(-1);
+        loadingOverlay.loadedCallback_04.clear();
       }
-
-      //LAB_80012d20
-      s1 = s1 + 0x1L & 0xfL;
     }
 
     //LAB_80012d30
@@ -2078,36 +2071,8 @@ public final class Scus94491BpeSegment {
    * @return Pointer to destination (dest)
    */
   @Method(0x800135d8L)
-  public static long memcpy(final long dest, long src, int length) {
-    if(length == 0) {
-      return dest;
-    }
-
-    final long v0 = (length | dest | src) & 0xfffffffcL;
-    long a3 = dest;
-    if(v0 == 0) {
-      length = length / 4;
-
-      //LAB_80013600
-      while(length > 0) {
-        MEMORY.ref(4, a3).setu(MEMORY.ref(4, src));
-        src += 0x4L;
-        a3 += 0x4L;
-        length--;
-      }
-
-      return dest;
-    }
-
-    //LAB_80013630
-    while(length > 0) {
-      MEMORY.ref(1, a3).setu(MEMORY.ref(1, src));
-      src++;
-      a3++;
-      length--;
-    }
-
-    //LAB_8001364c
+  public static long memcpy(final long dest, final long src, final int length) {
+    MEMORY.memcpy(dest, src, length);
     return dest;
   }
 
@@ -2289,30 +2254,25 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final long colour, final TexPageTrans transMode) {
-    long s0 = gpuPacketAddr_1f8003d8.get();
+    long packet = gpuPacketAddr_1f8003d8.get();
+    MEMORY.ref(1, packet).offset(0x3L).setu(3); // 3 words
+    MEMORY.ref(1, packet).offset(0x4L).setu(colour); // R
+    MEMORY.ref(1, packet).offset(0x5L).setu(colour); // G
+    MEMORY.ref(1, packet).offset(0x6L).setu(colour); // B
+    MEMORY.ref(1, packet).offset(0x7L).setu(0x60L); // Monochrome rectangle (variable size, opaque)
+    MEMORY.ref(2, packet).offset(0x8L).set(-centreScreenX_1f8003dc.get()); // x
+    MEMORY.ref(2, packet).offset(0xaL).set(-centreScreenY_1f8003de.get()); // y
+    MEMORY.ref(2, packet).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // w
+    MEMORY.ref(2, packet).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // h
+    gpuLinkedListSetCommandTransparency(packet, true);
+    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), packet);
     gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
-
-    MEMORY.ref(1, s0).offset(0x4L).setu(colour); // R
-    MEMORY.ref(1, s0).offset(0x5L).setu(colour); // G
-    MEMORY.ref(1, s0).offset(0x6L).setu(colour); // B
-    MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle (variable size, opaque)
-
-    MEMORY.ref(2, s0).offset(0x8L).set(-centreScreenX_1f8003dc.get()); // xx
-    MEMORY.ref(2, s0).offset(0xaL).set(-centreScreenY_1f8003de.get()); // xx
-    MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // yy
-    MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // yy
-
-    gpuLinkedListSetCommandTransparency(s0, true);
-    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), s0);
-
-    s0 = gpuPacketAddr_1f8003d8.get();
+    packet = gpuPacketAddr_1f8003d8.get();
+    MEMORY.ref(1, packet).offset(0x3L).setu(1); // 1 word
+    MEMORY.ref(4, packet).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(transMode).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode/texpage
+    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), packet);
     gpuPacketAddr_1f8003d8.addu(0x8L);
-
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x1L); // 1 word
-    MEMORY.ref(4, s0).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(transMode).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode/texpage
-    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), s0);
   }
 
   @Method(0x80013d78L)
@@ -2540,13 +2500,13 @@ public final class Scus94491BpeSegment {
           }
 
           if(_8004ddd0.get() == 0x2L) {
-            fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
+            fileLoadingCallbackIndex_8004ddc4.set(11);
             _8004ddd0.setu(0x1L);
             return 0x1L;
           }
 
           //LAB_80014b7c
-          fileLoadingCallbackIndex_8004ddc4.setu(0x7L);
+          fileLoadingCallbackIndex_8004ddc4.set(7);
         } else {
           //LAB_80014b3c
           if(_8004ddd0.get() != 0x2L) {
@@ -2556,7 +2516,7 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80014b80
-          fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
+          fileLoadingCallbackIndex_8004ddc4.set(11);
         }
 
         _8004ddd0.setu(_8004ddd4);
@@ -2565,7 +2525,7 @@ public final class Scus94491BpeSegment {
       }
 
       if(_8004ddd0.get() == 0x2L) {
-        fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
+        fileLoadingCallbackIndex_8004ddc4.set(11);
         _8004ddd0.setu(0x1L);
         return 0x1L;
       }
@@ -2591,13 +2551,13 @@ public final class Scus94491BpeSegment {
 
       //LAB_80014b08
       //LAB_80014b10
-      fileLoadingCallbackIndex_8004ddc4.setu(0x1aL);
+      fileLoadingCallbackIndex_8004ddc4.set(26);
       _8004ddd0.setu(0x1L);
       return 0x1L;
     }
 
     if(_8004ddd0.get() == 0x2L) {
-      fileLoadingCallbackIndex_8004ddc4.setu(0xbL);
+      fileLoadingCallbackIndex_8004ddc4.set(11);
       _8004ddd0.setu(0x1L);
       return 0x1L;
     }
@@ -2617,7 +2577,7 @@ public final class Scus94491BpeSegment {
     }
 
     if(_8004ddcc.get() == 0) {
-      fileLoadingCallbackIndex_8004ddc4.setu(0x1L);
+      fileLoadingCallbackIndex_8004ddc4.set(1);
       _8004ddd0.setu(0x1L);
 
       //LAB_80014b90
@@ -2723,7 +2683,7 @@ public final class Scus94491BpeSegment {
       default -> {
         file.used.set(false);
         popFirstFileIfUnused();
-        fileLoadingCallbackIndex_8004ddc4.setu(0);
+        fileLoadingCallbackIndex_8004ddc4.set(0);
         return -0x1L;
       }
     }
@@ -2742,7 +2702,7 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    final int callbackIndex = (int)fileLoadingCallbackIndex_8004ddc4.get();
+    final int callbackIndex = fileLoadingCallbackIndex_8004ddc4.get();
     if(callbackIndex != 0) {
       LOGGER.info("File loading callback index %d", callbackIndex);
     }
@@ -2776,7 +2736,7 @@ public final class Scus94491BpeSegment {
 
     CDROM.readFromDisk(file.pos, (int)numberOfTransfers_800bb490.get(), fileTransferDest_800bb488.get());
 
-    fileLoadingCallbackIndex_8004ddc4.setu(0x2L);
+    fileLoadingCallbackIndex_8004ddc4.set(2);
 
     return 1;
   }
@@ -2787,7 +2747,7 @@ public final class Scus94491BpeSegment {
     fileLoadingInfoArray_800bbad8.get(0).used.set(false);
 
     popFirstFileIfUnused();
-    fileLoadingCallbackIndex_8004ddc4.setu(0);
+    fileLoadingCallbackIndex_8004ddc4.set(0);
     return 0;
   }
 
@@ -2808,17 +2768,15 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    fileCount_8004ddc8.subu(0x1L);
+    fileCount_8004ddc8.decr();
 
     //LAB_800151d4
     for(int i = 0; i < fileCount_8004ddc8.get(); i++) {
-      final FileLoadingInfo file1 = fileLoadingInfoArray_800bbad8.get(i + 1);
-      final FileLoadingInfo file2 = fileLoadingInfoArray_800bbad8.get(i);
-      file2.set(file1);
+      fileLoadingInfoArray_800bbad8.get(i).set(fileLoadingInfoArray_800bbad8.get(i + 1));
     }
 
     //LAB_80015230
-    fileLoadingInfoArray_800bbad8.get((int)fileCount_8004ddc8.get()).used.set(false);
+    fileLoadingInfoArray_800bbad8.get(fileCount_8004ddc8.get()).used.set(false);
 
     //LAB_80015244
   }
@@ -2888,13 +2846,13 @@ public final class Scus94491BpeSegment {
   @Method(0x8001557cL)
   @Nullable
   public static FileLoadingInfo addFile() {
-    if(fileCount_8004ddc8.get() >= 44L) {
+    if(fileCount_8004ddc8.get() >= 44) {
       LOGGER.error("File stack overflow");
       return null;
     }
 
-    final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get((int)fileCount_8004ddc8.get());
-    fileCount_8004ddc8.addu(0x1L);
+    final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(fileCount_8004ddc8.get());
+    fileCount_8004ddc8.incr();
 
     return file;
   }
@@ -3279,14 +3237,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80015f08
-    long a2 = a3.storage_44.get(8).getAddress();
-    long a1 = child.storage_44.get(8).getAddress();
-
     //LAB_80015f14
-    for(int i = 24; i >= 0; i--) {
-      MEMORY.ref(4, a2).offset(0x0L).setu(MEMORY.ref(4, a1).offset(0x0L).get());
-      a1 = a1 + 0x4L;
-      a2 = a2 + 0x4L;
+    for(int i = 0; i < 25; i++) {
+      a3.storage_44.get(8 + i).set(child.storage_44.get(8 + i).get());
     }
 
     a3.scriptPtr_14.set(child.scriptPtr_14.deref());
@@ -4721,11 +4674,11 @@ public final class Scus94491BpeSegment {
 
       if(v1 == 0xaL) {
         //LAB_800185a8
-        loadSmap(5);
+        loadGameStateOverlay(5);
         _8004f2a8.addu(0x1L);
       } else if(v1 == 0xbL) {
         //LAB_800185c4
-        if(loadingSmapOvl_8004dd08.get() == 0) {
+        if(loadingGameStateOverlay_8004dd08.get() == 0) {
           _8004f2a8.setu(0xcL);
         }
       } else if(v1 == 0xcL) {
@@ -4792,42 +4745,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800187ccL)
   public static long FUN_800187cc() {
-    long v0;
-    long a0;
-    long s0;
-    long s1;
-    final long s2;
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
-    s0 = 0;
-    if((int)v0 > 0) {
-      v0 = 0x800c_0000L;
-      s2 = v0 - 0x3e40L;
-      v0 = 0x8007_0000L;
-      s1 = v0 - 0x1c68L;
-
-      //LAB_80018800
-      do {
-        v0 = MEMORY.ref(4, s1).offset(0xe40L).get();
-
-        v0 = v0 << 2;
-        v0 = v0 + s2;
-        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-        a0 = MEMORY.ref(2, v0).offset(0x26cL).getSigned();
-
-        if(FUN_800c90b0((int)a0) == 0) { //TODO
-          return 0;
-        }
-
-        //LAB_8001883c
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x677cL).get();
-        s0 = s0 + 0x1L;
-        s1 = s1 + 0x4L;
-      } while((int)s0 < (int)v0);
+    //LAB_80018800
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      if(FUN_800c90b0(scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()) == 0) {
+        return 0;
+      }
     }
 
     //LAB_80018850
@@ -4837,42 +4759,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001886cL)
   public static long FUN_8001886c() {
-    long v0;
-    long a0;
-    long s0;
-    long s1;
-    final long s2;
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x6768L).get();
-    s0 = 0;
-    if((int)v0 > 0) {
-      v0 = 0x800c_0000L;
-      s2 = v0 - 0x3e40L;
-      v0 = 0x8007_0000L;
-      s1 = v0 - 0x1c68L;
-
-      //LAB_800188a0
-      do {
-        v0 = MEMORY.ref(4, s1).offset(0xe50L).get();
-
-        v0 = v0 << 2;
-        v0 = v0 + s2;
-        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-        v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-        a0 = MEMORY.ref(2, v0).offset(0x26cL).getSigned();
-
-        if(FUN_800c90b0((int)a0) == 0) { //TODO
-          return 0;
-        }
-
-        //LAB_800188dc
-        v0 = 0x800c_0000L;
-        v0 = MEMORY.ref(4, v0).offset(0x6768L).get();
-        s0 = s0 + 0x1L;
-        s1 = s1 + 0x4L;
-      } while((int)s0 < (int)v0);
+    //LAB_800188a0
+    for(int i = 0; i < _800c6768.get(); i++) {
+      if(FUN_800c90b0(scriptStatePtrArr_800bc1c0.get(_8006e398.bobjIndices_e50.get(i).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()) == 0) {
+        return 0;
+      }
     }
 
     //LAB_800188f0
@@ -4890,7 +4781,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018944L)
   public static void waitForFilesToLoad() {
-    if(fileCount_8004ddc8.get() == 0 && _8004dd14.get() == _8004dd18.get() && loadingSmapOvl_8004dd08.get() == 0) {
+    if(fileCount_8004ddc8.get() == 0 && overlayQueueIndex_8004dd14.get() == overlayQueueIndex_8004dd18.get() && loadingGameStateOverlay_8004dd08.get() == 0) {
       pregameLoadingStage_800bb10c.addu(0x1L);
     }
 
@@ -4910,7 +4801,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_800189e4
     //LAB_800189e8
-    if(fileCount_8004ddc8.get() == 0 && _8004dd14.get() == _8004dd18.get() && loadingSmapOvl_8004dd08.get() == 0) {
+    if(fileCount_8004ddc8.get() == 0 && overlayQueueIndex_8004dd14.get() == overlayQueueIndex_8004dd18.get() && loadingGameStateOverlay_8004dd08.get() == 0) {
       FUN_800201c8(0x6L);
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.setu(0x2L);
@@ -6239,7 +6130,7 @@ public final class Scus94491BpeSegment {
 
     FUN_8001b54c();
 
-    if(loadingSmapOvl_8004dd08.get() == 0x1L) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0x1L) {
       return;
     }
 
@@ -6266,7 +6157,7 @@ public final class Scus94491BpeSegment {
     if(_8004f6ec.get() != 0) {
       //LAB_8001b4d4
       if(_8004f6ec.get() >= 0x7L) {
-        if(loadingSmapOvl_8004dd08.get() == 0) {
+        if(loadingGameStateOverlay_8004dd08.get() == 0) {
           _8004f6e4.setu(-0x1L);
           _800bc960.oru(0x1L);
         }
@@ -7529,7 +7420,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001de84L)
-  public static void FUN_8001de84(final long a0) {
+  public static void FUN_8001de84(final int a0) {
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -7569,7 +7460,7 @@ public final class Scus94491BpeSegment {
     loadDrgnBinFile(0, (int)_80050104.offset(FUN_8001a810() * 0x4L).get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001cae0", long.class, long.class, long.class), 0, 0x4L);
     loadedDrgnFiles_800bcf78.oru(0x8L);
     FUN_8001d1c4();
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   //TODO verify this method
@@ -8208,7 +8099,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ff74L)
   public static void FUN_8001ff74() {
-    loadAndRunOverlay(1, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001de84", long.class), 0);
+    loadSupportOverlay(1, getConsumerAddress(Scus94491BpeSegment.class, "FUN_8001de84", int.class), 0);
   }
 
   @Method(0x8001ffb0L)

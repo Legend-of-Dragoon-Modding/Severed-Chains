@@ -10,6 +10,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
@@ -122,13 +123,13 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004dd00 = MEMORY.ref(4, 0x8004dd00L);
   public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
-  public static final Value loadingSmapOvl_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
+  public static final Value loadingGameStateOverlay_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
-  public static final Value _8004dd10 = MEMORY.ref(4, 0x8004dd10L);
-  public static final Value _8004dd14 = MEMORY.ref(4, 0x8004dd14L);
-  public static final Value _8004dd18 = MEMORY.ref(4, 0x8004dd18L);
-  public static final Value _8004dd1c = MEMORY.ref(2, 0x8004dd1cL);
-  public static final Value loadingOverlay_8004dd1e = MEMORY.ref(1, 0x8004dd1eL);
+  public static final IntRef loadedOverlayIndex_8004dd10 = MEMORY.ref(4, 0x8004dd10L, IntRef::new);
+  public static final IntRef overlayQueueIndex_8004dd14 = MEMORY.ref(4, 0x8004dd14L, IntRef::new);
+  public static final IntRef overlayQueueIndex_8004dd18 = MEMORY.ref(4, 0x8004dd18L, IntRef::new);
+  public static final ShortRef overlaysLoadedCount_8004dd1c = MEMORY.ref(2, 0x8004dd1cL, ShortRef::new);
+  public static final BoolRef loadingOverlay_8004dd1e = MEMORY.ref(1, 0x8004dd1eL, BoolRef::new);
 
   public static final Value mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L);
   /** When the overlay finishes loading, switch to this */
@@ -162,9 +163,10 @@ public final class Scus94491BpeSegment_8004 {
 
   /** The current disk number, 1-indexed */
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
-  public static final Value fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L);
-  public static final Value fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L);
+  public static final IntRef fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L, IntRef::new);
+  public static final IntRef fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L, IntRef::new);
   public static final Value _8004ddcc = MEMORY.ref(1, 0x8004ddccL);
+
   public static final Value _8004ddd0 = MEMORY.ref(4, 0x8004ddd0L);
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
   public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);

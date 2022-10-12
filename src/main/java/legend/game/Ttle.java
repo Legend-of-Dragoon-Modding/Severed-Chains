@@ -32,14 +32,15 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
+import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
-import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
@@ -195,7 +196,7 @@ public final class Ttle {
   public static final Value _800ce920 = MEMORY.ref(4, 0x800ce920L);
 
   @Method(0x800c7194L)
-  public static void setUpNewGameData(final long unused) {
+  public static void setUpNewGameData(final int unused) {
     final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
     final int oldMono = gameState_800babc8.mono_4e0.get();
 
@@ -278,7 +279,7 @@ public final class Ttle {
 
     //LAB_800c7404
     gameState_800babc8.gold_94.set(20);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800c7424L)
@@ -314,7 +315,7 @@ public final class Ttle {
 
   @Method(0x800c7524L)
   public static void setUpNewGameData() {
-    loadAndRunOverlay(2, getMethodAddress(Ttle.class, "setUpNewGameData", long.class), 0);
+    loadSupportOverlay(2, getConsumerAddress(Ttle.class, "setUpNewGameData", int.class), 0);
   }
 
   @Method(0x800c7558L)

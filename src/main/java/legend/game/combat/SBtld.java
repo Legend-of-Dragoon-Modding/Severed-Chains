@@ -19,9 +19,10 @@ import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 
 import static legend.core.Hardware.MEMORY;
+import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
-import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
@@ -86,7 +87,7 @@ public class SBtld {
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
   @Method(0x80109050L)
-  public static void FUN_80109050(final long param) {
+  public static void FUN_80109050(final int param) {
     final long v1 = _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).getAddress();
     _800c6718.offset(0x00L).setu(MEMORY.ref(1, v1).offset(0x0L).get());
     _800c6718.offset(0x04L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
@@ -128,11 +129,11 @@ public class SBtld {
     _800c66b0.setu(simpleRand() & 0x3L);
     _800c6780.setu(_800c6718.offset((_800c66b0.get() + 0x6L) * 0x4L).get());
     _800bc960.oru(0x2L);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x80109250L)
-  public static void FUN_80109250(final long param) {
+  public static void FUN_80109250(final int param) {
     long s1 = _1f8003f4.getPointer() + 0x38L; //TODO
 
     //LAB_801092a0
@@ -172,7 +173,7 @@ public class SBtld {
 
     memcpy(_1f8003f4.getPointer(), _80102050.offset(encounterId_800bb0f8.get() * 0x38L).getAddress(), 0x38);
 
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x80109454L)
@@ -201,17 +202,17 @@ public class SBtld {
   }
 
   @Method(0x8010955cL)
-  public static void allocateEnemyBattleObjects(final long a0) {
+  public static void allocateEnemyBattleObjects(final int a0) {
     final long fp = _1f8003f4.getPointer(); //TODO
 
     //LAB_801095a0
     for(int i = 0; i < 3; i++) {
-      final long s2 = MEMORY.ref(2, fp).offset(i * 0x2L).get() & 0x1ffL;
-      if(s2 == 0x1ffL) {
+      final int s2 = (int)(MEMORY.ref(2, fp).offset(i * 0x2L).get() & 0x1ff);
+      if(s2 == 0x1ff) {
         break;
       }
 
-      loadAndRunOverlay(1, getMethodAddress(SBtld.class, "FUN_80109808", long.class), addCombatant(s2, -1) * 0x10000 + s2);
+      loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109808", int.class), (addCombatant(s2, -1) << 16) + s2);
     }
 
     //LAB_801095ec
@@ -256,14 +257,14 @@ public class SBtld {
     }
 
     //LAB_801097d0
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x80109808L)
-  public static void FUN_80109808(final long param) {
-    final int fileIndex = (int)(param & 0xffff);
-    final long s0 = param >>> 16;
-    final CombatantStruct1a8 v0 = getCombatant((int)s0);
+  public static void FUN_80109808(final int param) {
+    final int fileIndex = param & 0xffff;
+    final int s0 = param >>> 16;
+    final CombatantStruct1a8 v0 = getCombatant(s0);
     final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
     v0._194.set(MEMORY.ref(4, v1).offset(0x0L).get());
     v0._198.set(MEMORY.ref(4, v1).offset(0x4L).get());
@@ -279,11 +280,11 @@ public class SBtld {
     _8005e398_SCRIPT_SIZES.put((int)index, new Tuple<>("S_BTLD Script %d".formatted(index), (int)fileSize));
     _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
     uniqueMonsterCount_800c6698.add(1);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x801098f4L)
-  public static void FUN_801098f4(final long param) {
+  public static void FUN_801098f4(final int param) {
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
     final int stage = Math.max(0, submapStage_800bb0f4.get());
 
@@ -303,6 +304,6 @@ public class SBtld {
     }
 
     //LAB_80109a80
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 }
