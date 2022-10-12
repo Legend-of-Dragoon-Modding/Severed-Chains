@@ -25,7 +25,6 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -234,7 +233,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
-import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
@@ -264,6 +262,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
 
 public final class SMap {
@@ -276,7 +275,8 @@ public final class SMap {
   public static final Value diskSwapMcqLoaded_800c6698 = MEMORY.ref(1, 0x800c6698L);
 
   public static final McqHeader mcq_800c66a0 = MEMORY.ref(4, 0x800c66a0L, McqHeader::new);
-  public static final ArrayRef<Pointer<McqHeader>> mcqs_800c66d0 = MEMORY.ref(4, 0x800c66d0L, ArrayRef.of(Pointer.classFor(McqHeader.class), 2, 4, Pointer.deferred(4, McqHeader::new)));
+  public static final Pointer<McqHeader> wrongDiskMcq_800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.deferred(4, McqHeader::new));
+
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
   public static final GsF_LIGHT GsF_LIGHT_2_800c66f8 = MEMORY.ref(4, 0x800c66f8L, GsF_LIGHT::new);
@@ -558,32 +558,9 @@ public final class SMap {
    */
   public static final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
 
-  public static final ArrayRef<UnsignedShortRef> mcqPleaseInsertDiskN_800f48d0 = MEMORY.ref(2, 0x800f48d0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
   public static final ArrayRef<UnsignedShortRef> mcqWrongDisk_800f48d8 = MEMORY.ref(2, 0x800f48d8L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
   public static final ArrayRef<UnsignedShortRef> mcqPleaseWait_800f48e0 = MEMORY.ref(2, 0x800f48e0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
-  /**
-   * <ol start="0">
-   *   <li>{@link SMap#loadDiskSwapScreen}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#stopCdrom}</li>
-   *   <li>{@link SMap#FUN_800d96b8}</li>
-   *   <li>{@link SMap#isCdromDriveOpen}</li>
-   *   <li>{@link SMap#prepareForDiskSwap}</li>
-   *   <li>{@link SMap#loadNewDisk}</li>
-   *   <li>{@link SMap#checkDiskSwapSuccess}</li>
-   *   <li>{@link SMap#FUN_800d98b0}</li>
-   *   <li>{@link SMap#FUN_800d992c}</li>
-   *   <li>{@link SMap#authenticateDisk}</li>
-   *   <li>{@link SMap#FUN_800d9994}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#waitForSInitToLoad}</li>
-   *   <li>{@link SMap#FUN_800d99f0}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> diskSwapLoadingStages_800f48e8 = MEMORY.ref(4, 0x800f48e8L, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 18, 4, Pointer.deferred(4, SupplierRef::new)));
+
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
   /** TODO an array of 0x14-long somethings */
@@ -663,7 +640,14 @@ public final class SMap {
   public static void swapDiskLoadingStage() {
     LOGGER.info("Disk swap loading stage %d", pregameLoadingStage_800bb10c.get());
 
-    final long v1 = diskSwapLoadingStages_800f48e8.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+    final long v1 = switch((int)pregameLoadingStage_800bb10c.get()) {
+      case 0 -> loadDiskSwapScreen();
+      case 1 -> FUN_800d96b8();
+      case 2 -> FUN_800d98b0();
+      case 3 -> FUN_800d992c();
+      case 4 -> FUN_800d99f0();
+      default -> throw new RuntimeException("Invalid stage");
+    };
 
     if(v1 == 1) {
       //LAB_800d930c
@@ -677,7 +661,7 @@ public final class SMap {
       vsyncMode_8007a3b8.setu(0x2L);
     } else if(v1 == 3) {
       //LAB_800d9354
-      loadWrongDiskOrPleaseWaitMcq(0);
+      loadWrongDiskMcq();
       diskSwapAttempts_800c6690.setu(0);
 
       //LAB_800d936c
@@ -705,9 +689,8 @@ public final class SMap {
     vsyncMode_8007a3b8.setu(0);
     S_InitLoaded_800c6694.setu(0);
     diskSwapMcqLoaded_800c6698.setu(0);
-    loadDrgnBinFile(0, mcqPleaseInsertDiskN_800f48d0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
     loadDrgnBinFile(0, mcqWrongDisk_800f48d8.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d9614", long.class, long.class, long.class), 0, 0x4L);
-    loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d9614", long.class, long.class, long.class), 1, 0x4L);
     loadAndRunOverlay(0, getMethodAddress(SMap.class, "FUN_800d962c", long.class), 0);
     return 1;
   }
@@ -716,14 +699,14 @@ public final class SMap {
   public static void FUN_800d956c(final long address, final long size, final long param) {
     memcpy(mcq_800c66a0.getAddress(), address, 0x2c);
 
-    loadMcq(mcq_800c66a0, 640, 0);
+    loadMcq(MEMORY.ref(4, address, McqHeader::new), 640, 0);
     diskSwapMcqLoaded_800c6698.setu(0x1L);
     FUN_800127cc(address, 0, 0x1L);
   }
 
   @Method(0x800d9614L)
   public static void FUN_800d9614(final long address, final long size, final long param) {
-    mcqs_800c66d0.get((int)param).setPointer(address);
+    wrongDiskMcq_800c66d0.setPointer(address);
   }
 
   @Method(0x800d962cL)
@@ -731,73 +714,38 @@ public final class SMap {
     S_InitLoaded_800c6694.setu(0x1L);
   }
 
-  @Method(0x800d963cL)
-  public static long waitForSInitToLoad() {
+  @Method(0x800d96b8L)
+  public static long FUN_800d96b8() {
     if(S_InitLoaded_800c6694.get() == 0 || fileCount_8004ddc8.get() != 0) {
-      //LAB_800d9660
       return 0;
     }
 
-    //LAB_800d9668
-    return 1;
-  }
-
-  @Method(0x800d9670L)
-  public static long stopCdrom() {
-    //LAB_800d96a8
-    return 1;
-  }
-
-  @Method(0x800d96b8L)
-  public static long FUN_800d96b8() {
-    if(S_InitLoaded_800c6694.get() != 0 && fileCount_8004ddc8.get() == 0) {
-      if(_800bb168.get() == 0) {
-        return 1;
-      }
-
+    if(_800bb168.get() != 0) {
       //LAB_800d9704
       if(diskSwapAttempts_800c6690.get() == 0) {
-        scriptStartEffect(2, 15);
+        scriptStartEffect(2, 5);
         diskSwapAttempts_800c6690.addu(0x1L);
       }
+
+      //LAB_800d9730
+      //LAB_800d9734
+      return 0;
     }
 
-    //LAB_800d9730
-    //LAB_800d9734
-    return 0;
-  }
-
-  @Method(0x800d9744L)
-  public static long isCdromDriveOpen() {
-    return 1;
-  }
-
-  @Method(0x800d976cL)
-  public static long prepareForDiskSwap() {
-    loadWrongDiskOrPleaseWaitMcq(1);
-    return 1;
-  }
-
-  @Method(0x800d97c4L)
-  public static long loadNewDisk() {
     CDROM.loadDisk(diskNum_8004ddc0.get());
     cdName_80011700.set("CD00" + diskNum_8004ddc0.get());
     DsNewMedia();
-    return 1;
-  }
 
-  @Method(0x800d9814L)
-  public static long checkDiskSwapSuccess() {
     final CdlFILE file = new CdlFILE();
-    if(DsSearchFile(file, "\\SECT\\DRGN2%d.BIN;1".formatted(diskNum_8004ddc0.get())) != null) {
-      //LAB_800d988c
-      drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
-      return 1;
+    if(DsSearchFile(file, "\\SECT\\DRGN2%d.BIN;1".formatted(diskNum_8004ddc0.get())) == null) {
+      //LAB_800d98a0
+      diskSwapAttempts_800c6690.addu(0x1L);
+      return diskSwapAttempts_800c6690.get() < 0x15 ? 0 : 3;
     }
 
-    //LAB_800d98a0
-    diskSwapAttempts_800c6690.addu(0x1L);
-    return diskSwapAttempts_800c6690.get() < 0x15 ? 0 : 3;
+    //LAB_800d988c
+    drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
+    return 1;
   }
 
   @Method(0x800d98b0L)
@@ -814,10 +762,8 @@ public final class SMap {
       return 3;
     }
 
-    free(mcqs_800c66d0.get(0).getPointer());
-    free(mcqs_800c66d0.get(1).getPointer());
-    mcqs_800c66d0.get(0).clear();
-    mcqs_800c66d0.get(1).clear();
+    free(wrongDiskMcq_800c66d0.getPointer());
+    wrongDiskMcq_800c66d0.clear();
 
     //LAB_800d9918
     return 1;
@@ -829,21 +775,6 @@ public final class SMap {
       return 0;
     }
 
-    SInitBinLoaded_800bbad0.set(false);
-//    FUN_80036e80();
-//    FUN_800fbff8();
-
-    //LAB_800d9960
-    return 1;
-  }
-
-  @Method(0x800d9970L)
-  public static long authenticateDisk() {
-    return 1;
-  }
-
-  @Method(0x800d9994L)
-  public static long FUN_800d9994() {
     SInitBinLoaded_800bbad0.set(true);
 
     //TODO GH#3
@@ -858,7 +789,7 @@ public final class SMap {
   @Method(0x800d99f0L)
   public static long FUN_800d99f0() {
     if(diskSwapAttempts_800c6690.get() == 0) {
-      scriptStartEffect(1, 15);
+      scriptStartEffect(1, 5);
       diskSwapAttempts_800c6690.addu(0x1L);
       return 0;
     }
@@ -878,12 +809,9 @@ public final class SMap {
     return 2;
   }
 
-  /**
-   * @param index 0 = wrong disk, 1 = please wait
-   */
   @Method(0x800d9a7cL)
-  public static void loadWrongDiskOrPleaseWaitMcq(final int index) {
-    final McqHeader mcq = mcqs_800c66d0.get(index).deref();
+  public static void loadWrongDiskMcq() {
+    final McqHeader mcq = wrongDiskMcq_800c66d0.deref();
     memcpy(mcq_800c66a0.getAddress(), mcq.getAddress(), 0x2c);
 
     //LAB_800d9aa8
