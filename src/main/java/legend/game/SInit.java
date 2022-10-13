@@ -136,7 +136,7 @@ public final class SInit {
         fileLoadingInfoArray_800bbad8.get(i).used.set(false);
       }
 
-      fileCount_8004ddc8.setu(0);
+      fileCount_8004ddc8.set(0);
     } else if(linkedListEntry_800bbacc.get() != 0) {
       free(linkedListEntry_800bbacc.get());
       linkedListEntry_800bbacc.setu(0);

@@ -78,6 +78,60 @@ public class TempSegment extends Segment {
   }
 
   @Override
+  public byte[] getBytes(final int offset, final int size) {
+    if(this.tempUsage.nextClearBit(offset) < offset + size) {
+      throw new IllegalAddressException("There's no temp value reserved from %08x to %08x".formatted(offset, offset + size));
+    }
+
+    final byte[] data = new byte[size];
+    System.arraycopy(this.temp, offset, data, 0, size);
+    return data;
+  }
+
+  @Override
+  public void getBytes(final int offset, final byte[] dest, final int dataOffset, final int dataSize) {
+    if(this.tempUsage.nextClearBit(offset) < offset + dataSize) {
+      throw new IllegalAddressException("There's no temp value reserved from %08x to %08x".formatted(offset, offset + dataSize));
+    }
+
+    System.arraycopy(this.temp, offset, dest, dataOffset, dataSize);
+  }
+
+  @Override
+  public void setBytes(final int offset, final byte[] data) {
+    if(this.tempUsage.nextClearBit(offset) < offset + data.length) {
+      throw new IllegalAddressException("There's no temp value reserved from %08x to %08x".formatted(offset, offset + data.length));
+    }
+
+    this.removeFunctions(offset, offset + data.length);
+    System.arraycopy(data, 0, this.temp, offset, data.length);
+  }
+
+  @Override
+  public void setBytes(final int offset, final byte[] data, final int dataOffset, final int dataLength) {
+    if(this.tempUsage.nextClearBit(offset) < offset + dataLength) {
+      throw new IllegalAddressException("There's no temp value reserved from %08x to %08x".formatted(offset, offset + dataLength));
+    }
+
+    this.removeFunctions(offset, offset + data.length);
+    System.arraycopy(data, dataOffset, this.temp, offset, dataLength);
+  }
+
+  @Override
+  public void memcpy(final int dest, final int src, final int length) {
+    if(this.tempUsage.nextClearBit(src) < src + length) {
+      throw new IllegalAddressException("There's no temp value reserved for src from %08x to %08x".formatted(src, src + length));
+    }
+
+    if(this.tempUsage.nextClearBit(dest) < dest + length) {
+      throw new IllegalAddressException("There's no temp value reserved for dest from %08x to %08x".formatted(dest, dest + length));
+    }
+
+    this.removeFunctions(dest, dest + length);
+    System.arraycopy(this.temp, src, this.temp, dest, length);
+  }
+
+  @Override
   public void dump(final ByteBuffer stream) {
     stream.put(this.temp);
 

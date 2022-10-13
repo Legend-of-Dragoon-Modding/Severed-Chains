@@ -197,9 +197,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<SshdFile> soundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
   public static final Pointer<SssqFile> soundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
 
-  public static final Value _800bd7a0 = MEMORY.ref(4, 0x800bd7a0L);
-  public static final Value _800bd7a4 = MEMORY.ref(4, 0x800bd7a4L);
-  public static final Value _800bd7a8 = MEMORY.ref(4, 0x800bd7a8L);
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final Value _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L);
   public static final Value _800bd7b4 = MEMORY.ref(2, 0x800bd7b4L);

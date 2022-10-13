@@ -76,11 +76,12 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.MEMORY;
+import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012444;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_800128a8;
-import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.FUN_8001324c;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
@@ -95,7 +96,7 @@ import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -114,17 +115,15 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
-import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021868;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800218a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
+import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -378,13 +377,13 @@ public final class Bttl_800c {
   public static final Value _800c6e9c = MEMORY.ref(2, 0x800c6e9cL);
 
   /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6ecc = MEMORY.ref(2, 0x800c6eccL);
+  public static final Value _800c6ecc = MEMORY.ref(1, 0x800c6eccL);
 
   /** TODO unknown size, maybe struct or array */
   public static final Value _800c6ef0 = MEMORY.ref(2, 0x800c6ef0L);
 
   /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6f04 = MEMORY.ref(2, 0x800c6f04L);
+  public static final Value _800c6f04 = MEMORY.ref(1, 0x800c6f04L);
 
   public static final Value _800c6f30 = MEMORY.ref(4, 0x800c6f30L);
 
@@ -918,7 +917,6 @@ public final class Bttl_800c {
 
     //LAB_800c760c
     FUN_800ec4bc();
-    FUN_800218a4();
     FUN_8001ff74();
 
     pregameLoadingStage_800bb10c.addu(0x1L);
@@ -927,7 +925,7 @@ public final class Bttl_800c {
   @Method(0x800c7648L)
   public static void FUN_800c7648() {
     loadStage(submapStage_800bb0f4.get());
-    loadAndRunOverlay(1, getMethodAddress(SBtld.class, "FUN_80109050", long.class), 0);
+    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109050", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -977,7 +975,7 @@ public final class Bttl_800c {
 
     _8006e398._ee4.set(gameState_800babc8.morphMode_4e2.get());
 
-    loadAndRunOverlay(1, getMethodAddress(SBtld.class, "FUN_80109250", long.class), 0);
+    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109250", int.class), 0);
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -994,19 +992,19 @@ public final class Bttl_800c {
 
   @Method(0x800c788cL)
   public static void deferAllocateEnemyBattleObjects() {
-    loadAndRunOverlay(1, getMethodAddress(SBtld.class, "allocateEnemyBattleObjects", long.class), 0);
+    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "allocateEnemyBattleObjects", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c78d4L)
   public static void deferAllocatePlayerBattleObjects() {
-    loadAndRunOverlay(2, getMethodAddress(SItem.class, "allocatePlayerBattleObjects", long.class), 0);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "allocatePlayerBattleObjects", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c791cL)
   public static void deferLoadEncounterAssets() {
-    loadAndRunOverlay(2, getMethodAddress(SItem.class, "loadEncounterAssets", long.class), 0);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "loadEncounterAssets", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1035,7 +1033,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7a30L)
   public static void deferDoNothing() {
-    loadAndRunOverlay(3, getMethodAddress(Bttl_800c.class, "doNothing", long.class), 0);
+    loadSupportOverlay(3, getConsumerAddress(Bttl_800c.class, "doNothing", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1060,7 +1058,6 @@ public final class Bttl_800c {
       }
 
       //LAB_800c7b80
-      FUN_80021868();
       pregameLoadingStage_800bb10c.addu(0x1L);
     }
 
@@ -1068,7 +1065,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7a78L)
-  public static void doNothing(final long param) {
+  public static void doNothing(final int param) {
     // empty
   }
 
@@ -1260,8 +1257,8 @@ public final class Bttl_800c {
     if(_800c6690.get() >= _800fa6b8.offset(s0 * 0x2L).getSigned() || (joypadPress_8007a398.get() & 0xff) != 0 && _800c6690.get() >= 0x19L) {
       //LAB_800c8214
       FUN_800e9120();
-      FUN_80012bb4();
-      loadAndRunOverlay(2, getMethodAddress(SItem.class, "FUN_800fc3a0", long.class), 0);
+      decrementOverlayCount();
+      loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc3a0", int.class), 0);
 
       if(_800bb168.get() == 0) {
         scriptStartEffect(0x1L, _800fa6d0.offset(s0 * 0x2L).getSigned());

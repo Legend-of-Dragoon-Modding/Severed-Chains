@@ -4646,30 +4646,6 @@ public final class SEffe {
 
   @Method(0x80107dc4L)
   public static void FUN_80107dc4(final DragoonAdditionScriptData1c a0, final int a1, final int angle) {
-    final Memory.TemporaryReservation sp0x40tmp = MEMORY.temp(0x6);
-    final Value sp0x40 = sp0x40tmp.get();
-    memcpy(sp0x40.getAddress(), _800fb7fc.getAddress(), 0x6);
-
-    final Memory.TemporaryReservation sp0x48tmp = MEMORY.temp(0x14);
-    final Value sp0x48 = sp0x48tmp.get();
-    memcpy(sp0x48.getAddress(), _800fb804.getAddress(), 0x14);
-
-    final Memory.TemporaryReservation sp0x60tmp = MEMORY.temp(0x14);
-    final Value sp0x60 = sp0x60tmp.get();
-    memcpy(sp0x60.getAddress(), _800fb818.getAddress(), 0x14);
-
-    final Memory.TemporaryReservation sp0x78tmp = MEMORY.temp(0x14);
-    final Value sp0x78 = sp0x78tmp.get();
-    memcpy(sp0x78.getAddress(), _800fb82c.getAddress(), 0x14);
-
-    final Memory.TemporaryReservation sp0x90tmp = MEMORY.temp(0xa);
-    final Value sp0x90 = sp0x90tmp.get();
-    memcpy(sp0x90.getAddress(), _800fb840.getAddress(), 0xa);
-
-    final Memory.TemporaryReservation sp0xa0tmp = MEMORY.temp(0xa);
-    final Value sp0xa0 = sp0xa0tmp.get();
-    memcpy(sp0xa0.getAddress(), _800fb84c.getAddress(), 0xa);
-
     final int colour = (int)((_80119fb4.get() + 1) * 0x40);
     final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
@@ -4694,7 +4670,7 @@ public final class SEffe {
       }
 
       //LAB_801080cc
-      FUN_80018d60((short)_8011a01c.get() + sp0x48.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + sp0x48.offset(2, i * 0x4L).offset(0x2L).getSigned(), sp0x60.offset(1, i * 0x4L).getSigned(), sp0x60.offset(1, i * 0x4L).offset(0x2L).getSigned(), sp0x78.offset(2, i * 0x4L).getSigned(), sp0x78.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + _800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + _800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), _800fb818.offset(1, i * 0x4L).getSigned(), _800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), _800fb82c.offset(2, i * 0x4L).getSigned(), _800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, TexPageTrans.B_PLUS_F, rgb, 0x1000);
     }
 
     FUN_801079e8(a0);
@@ -4703,7 +4679,7 @@ public final class SEffe {
 
     //LAB_801081a8
     for(int i = 0; i < a0._0d.get(); i++) {
-      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).get(), TexPageTrans.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).get(), TexPageTrans.B_PLUS_F, rgb, 0x1000);
 
       if(a0._18.get() == 9) {
         FUN_80018dec(_8011a01c.getSigned() + 23, _8011a020.getSigned() + 21, 232, 120, 23, 23, 12, TexPageTrans.B_PLUS_F, rgb, 0x800, 0x1800);
@@ -4714,18 +4690,11 @@ public final class SEffe {
 
     //LAB_80108268
     FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, TexPageTrans.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, sp0xa0.offset(1, a0._18.get()).getSigned(), TexPageTrans.of((int)sp0x40.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, TexPageTrans.of((int)sp0x40.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, sp0x90.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, sp0x90.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).getSigned(), TexPageTrans.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, TexPageTrans.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, _800fb840.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, _800fb840.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
     _80119fb4.setu(1 - _80119fb4.get());
-
-    sp0x40tmp.release();
-    sp0x48tmp.release();
-    sp0x60tmp.release();
-    sp0x78tmp.release();
-    sp0x90tmp.release();
-    sp0xa0tmp.release();
   }
 
   @Method(0x80108460L)

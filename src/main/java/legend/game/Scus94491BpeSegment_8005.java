@@ -20,6 +20,7 @@ import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
 import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
 
 import static legend.core.Hardware.MEMORY;
@@ -184,10 +185,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
-  /**
-   * 12-byte struct, repeats 16 times? May start 4 bytes earlier
-   */
-  public static final Value _8005a2a8 = MEMORY.ref(4, 0x8005a2a8L);
+  public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));
   public static final Value _8005a2ac = MEMORY.ref(4, 0x8005a2acL);
   public static final Value _8005a2b0 = MEMORY.ref(4, 0x8005a2b0L);
 

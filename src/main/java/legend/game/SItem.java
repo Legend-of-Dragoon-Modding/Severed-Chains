@@ -50,12 +50,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.roundUp;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
+import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
 import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
-import static legend.game.Scus94491BpeSegment.FUN_80012bb4;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
@@ -65,7 +66,7 @@ import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadAndRunOverlay;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -116,7 +117,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.loadingSmapOvl_8004dd08;
+import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
@@ -501,7 +502,7 @@ public final class SItem {
   private static final List<Tuple<String, SavedGameDisplayData>> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
-  public static void allocatePlayerBattleObjects(final long a0) {
+  public static void allocatePlayerBattleObjects(final int a0) {
     //LAB_800fbdb8
     for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
       if(gameState_800babc8.charIndex_88.get(charCount_800c677c.get()).get() < 0) {
@@ -546,12 +547,12 @@ public final class SItem {
     _8006e398.charBobjIndices_e40.get(charCount_800c677c.get()).set(-1);
 
     FUN_800f863c();
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800fbfe0L)
-  public static void loadEncounterAssets(final long param) {
-    loadAndRunOverlay(2, getMethodAddress(SItem.class, "loadEnemyTextures", long.class), 2625 + encounterId_800bb0f8.get());
+  public static void loadEncounterAssets(final int param) {
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "loadEnemyTextures", int.class), 2625 + encounterId_800bb0f8.get());
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -589,10 +590,10 @@ public final class SItem {
     //LAB_800fc19c
     //LAB_800fc1a4
     _8006f280.setu(s2);
-    loadAndRunOverlay(2, getMethodAddress(SItem.class, "FUN_800fc504", long.class), MEMORY.ref(2, s2).getSigned());
-    loadAndRunOverlay(2, getMethodAddress(SItem.class, "FUN_800fc654", long.class), MEMORY.ref(2, s2).getSigned() + 0x1L);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc504", int.class), (int)MEMORY.ref(2, s2).getSigned());
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc654", int.class), (int)MEMORY.ref(2, s2).getSigned() + 1);
     _800bc960.oru(0x400L);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800fc210L)
@@ -627,17 +628,17 @@ public final class SItem {
     //LAB_800fc34c
     _800bc960.oru(0x4L);
     FUN_800127cc(address, 0, 0x1L);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800fc3a0L)
-  public static void FUN_800fc3a0(final long a0) {
-    FUN_80012bb4();
+  public static void FUN_800fc3a0(final int a0) {
+    decrementOverlayCount();
   }
 
   @Method(0x800fc3c0L)
-  public static void loadEnemyTextures(final long fileIndex) {
-    loadDrgnBinFile(0, (int)fileIndex, 0, getMethodAddress(SItem.class, "enemyTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x5L);
+  public static void loadEnemyTextures(final int fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "enemyTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x5L);
   }
 
   @Method(0x800fc404L)
@@ -669,12 +670,12 @@ public final class SItem {
 
     //LAB_800fc4cc
     FUN_800127cc(address, 0, 0x1L);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800fc504L)
-  public static void FUN_800fc504(final long fileIndex) {
-    loadDrgnBinFile(0, (int)fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), 0, 0x5L);
+  public static void FUN_800fc504(final int fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), 0, 0x5L);
   }
 
   @Method(0x800fc548L)
@@ -702,12 +703,12 @@ public final class SItem {
 
     //LAB_800fc614
     FUN_800127cc(address, 0, 0x1L);
-    FUN_80012bb4();
+    decrementOverlayCount();
   }
 
   @Method(0x800fc654L)
-  public static void FUN_800fc654(final long fileIndex) {
-    loadDrgnBinFile(0, (int)fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), 0, 0x4L);
+  public static void FUN_800fc654(final int fileIndex) {
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x800fc698L)
@@ -2915,7 +2916,7 @@ public final class SItem {
         }
 
         //LAB_80101bc4
-        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingSmapOvl_8004dd08.get() == 0) {
+        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 
@@ -6121,7 +6122,7 @@ public final class SItem {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
         free(gameOverMcq_800bdc3c.getPointer());
-        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingSmapOvl_8004dd08.get() == 0) {
+        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 
@@ -7690,7 +7691,7 @@ public final class SItem {
           free(drgn0_6666FilePtr_800bdc3c.getPointer());
           whichMenu_800bdc38.setu(0x23L);
 
-          if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingSmapOvl_8004dd08.get() == 0) {
+          if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
             FUN_800e3fac();
           }
 
@@ -7919,7 +7920,7 @@ public final class SItem {
     }
 
     if(spc0 == 0x1L) {
-      FUN_80012bb4();
+      decrementOverlayCount();
       _800be5d0.setu(1);
     }
 
