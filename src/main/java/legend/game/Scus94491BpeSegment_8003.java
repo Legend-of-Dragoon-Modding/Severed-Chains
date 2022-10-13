@@ -1036,12 +1036,12 @@ public final class Scus94491BpeSegment_8003 {
     LOGGER.trace("ClearOTagR(%08x,%d)...", ot, count);
 
     for(int i = 1; i < count; i++) {
-      ot.get(i).set(ot.get(i - 1).getAddress() & 0xff_ffffL);
+      final GsOT_TAG tag = ot.get(i);
+      tag.set(tag.getAddress() - 4 & 0xff_ffffL);
     }
 
     _8005477c.setu(0x405_4768L);
-    ot.get(0).num.set(0);
-    ot.get(0).p.set(0x5_477cL);
+    ot.get(0).set(0x5_477cL);
     return ot;
   }
 

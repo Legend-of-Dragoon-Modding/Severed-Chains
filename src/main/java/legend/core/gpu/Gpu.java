@@ -29,6 +29,7 @@ import org.lwjgl.system.MemoryUtil;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -222,18 +223,24 @@ public class Gpu implements Runnable {
       long value;
       long a = address;
 
+      final byte[] data = new byte[80];
+      final ByteBuffer buffer = ByteBuffer.wrap(data);
+      buffer.order(ByteOrder.LITTLE_ENDIAN);
+      final IntBuffer ints = buffer.asIntBuffer();
+
       do {
         try {
           value = MEMORY.get(a, 4);
-          final long words = (value & 0xff00_0000L) >>> 24;
+          final int words = (int)(value >>> 24);
 
-          for(int i = 1; i <= words; i++) {
-            this.queueGp0Command((int)MEMORY.get(a + i * 4L, 4));
+          MEMORY.getBytes(a + 4, data, 0, words * 4);
+          for(int i = 0; i < words; i++) {
+            this.queueGp0Command(ints.get(i));
           }
 
           this.tagsUploaded++;
           a = a & 0xff00_0000L | value & 0xff_ffffL;
-        } catch(final legend.core.gpu.InvalidGp0CommandException e) {
+        } catch(final InvalidGp0CommandException e) {
           throw new RuntimeException("Invalid GP0 packet at 0x%08x".formatted(a), e);
         }
       } while((value & 0xff_ffffL) != 0xff_ffffL);
@@ -244,7 +251,7 @@ public class Gpu implements Runnable {
     return this.tagsUploaded;
   }
 
-  private void queueGp0Command(final int command) throws legend.core.gpu.InvalidGp0CommandException {
+  private void queueGp0Command(final int command) throws InvalidGp0CommandException {
     if(this.currentCommand == null) {
       this.currentCommand = new Gp0CommandBuffer(command);
     } else {
