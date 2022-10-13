@@ -1590,7 +1590,7 @@ public final class SMap {
     }
 
     //LAB_800ded90
-    wobj.vec_148.setZ(z & 0xffff);
+    wobj.vec_154.setZ(z & 0xffff);
 
     wobj.s_174.set(wobj.s_172.get());
     wobj.s_172.set((short)1);
