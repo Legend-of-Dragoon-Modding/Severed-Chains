@@ -8959,7 +8959,7 @@ public final class SMap {
         s1.y_38.set(s5.playerY_0c.get() - 28);
 
         anm = playerIndicatorAnimation_800d5588.anm_00.deref();
-        spriteGroups = playerIndicatorAnimation_800d5588.spriteGroup_04.deref();
+        spriteGroups = anm.getSpriteGroups();
       } else {
         // Door indicators
 
@@ -8972,7 +8972,7 @@ public final class SMap {
         s1.y_38.set(s5.screenOffsetY_14.get() - s5._e0.get(indicatorIndex - 1).get() + s5._68.get(indicatorIndex - 1).get() - 32);
 
         anm = doorIndicatorAnimation_800d5590.anm_00.deref();
-        spriteGroups = doorIndicatorAnimation_800d5590.spriteGroup_04.deref();
+        spriteGroups = anm.getSpriteGroups();
       }
 
       //LAB_800f365c
