@@ -1568,8 +1568,12 @@ public final class SEffe {
         v1 = v1 | v0;
         sp54._90.set(v1);
         if((data._10._00.get() & 0x400_0000L) == 0) {
-          assert false : "This seems wrong";
-          sp54._68.setY((short)(ratan2(FUN_800dc408(0, 0, 0, 0, 0) - sp54._50.getX(), FUN_800dc408(2, 0, 0, 0, 0) - sp54._50.getZ()) + 0x400)); //TODO last three params of both functions were undefined
+          // This is super bugged in retail and passes garbage as the last 3 params to both methods.
+          // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
+          sp54._68.setY((short)(ratan2(
+            FUN_800dc408(0, 0, 0, 0, 0) - sp54._50.getX(),
+            FUN_800dc408(2, 0, 0, 0, 0) - sp54._50.getZ()
+          ) + 0x400));
         }
 
         //LAB_800fe300
