@@ -38,7 +38,7 @@ Controls are currently hardcoded to the keyboard.
 - R2 - 3
 - R3 - C
 - Plus/minus - increase/decrease FPS
-- CTRL+plus/mins - increase/decrese resolution scale (beta feature)
+- CTRL+plus/mins - increase/decrease resolution scale (beta feature)
 - F12 - open debug tools (developer feature - can easily cause crashes)
 
 To use a controller, open the config.conf file and set controller_config=true. The next time the code is run, it will list all controllers it detects and will prompt you to select the one you wish to use. Only one controller can be registered for use at any given time. If the game crashes after setting up a controller, delete its GUID from the config file and restart the game.
