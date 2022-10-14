@@ -3,10 +3,12 @@ package legend.game.debugger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import legend.game.SMap;
 
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
@@ -27,8 +29,12 @@ public class DebuggerController {
   @FXML
   public Button startEncounter;
 
+  @FXML
+  public CheckBox renderCollision;
+
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+    this.renderCollision.setSelected(SMap.enableCollisionDebug);
   }
 
   @FXML
@@ -51,5 +57,10 @@ public class DebuggerController {
     encounterId_800bb0f8.set(this.encounterId.getValue());
     submapStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
     FUN_800e5534(-1, 0);
+  }
+
+  @FXML
+  public void renderCollisionClick(final ActionEvent actionEvent) {
+    SMap.enableCollisionDebug = this.renderCollision.isSelected();
   }
 }

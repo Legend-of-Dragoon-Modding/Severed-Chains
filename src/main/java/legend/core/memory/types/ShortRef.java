@@ -76,6 +76,14 @@ public class ShortRef implements MemoryRef {
     return this.div(val.get());
   }
 
+  public ShortRef mod(final short val) {
+    return this.set((short)(this.get() % val));
+  }
+
+  public ShortRef mod(final ShortRef val) {
+    return this.mod(val.get());
+  }
+
   public ShortRef incr() {
     return this.add((short)1);
   }

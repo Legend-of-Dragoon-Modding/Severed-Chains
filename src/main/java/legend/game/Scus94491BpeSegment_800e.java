@@ -558,11 +558,11 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800df650}</li>
    *   <li>{@link SMap#FUN_800df680}</li>
    *   <li>{@link SMap#FUN_800df6a4}</li>
-   *   <li>{@link SMap#FUN_800df788}</li>
-   *   <li>{@link SMap#FUN_800df890}</li>
+   *   <li>{@link SMap#scriptRotateWobj}</li>
+   *   <li>{@link SMap#scriptRotateWobjAbsolute}</li>
    *   <li>{@link SMap#FUN_800df904}</li>
    *   <li>{@link SMap#FUN_800de1d0}</li>
-   *   <li>{@link SMap#FUN_800df954}</li>
+   *   <li>{@link SMap#scriptFacePlayer}</li>
    *   <li>{@link SMap#FUN_800df9a8}</li>
    *   <li>{@link SMap#FUN_800dfb28}</li>
    *   <li>{@link SMap#FUN_800dfb44}</li>
@@ -583,8 +583,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800dfd10}</li>
    *   <li>{@link SMap#FUN_800de334}</li>
    *   <li>{@link SMap#FUN_800de4b4}</li>
-   *   <li>{@link SMap#FUN_800dfd8c}</li>
-   *   <li>{@link SMap#FUN_800dfdd8}</li>
+   *   <li>{@link SMap#scriptShowTriangleIndicator}</li>
+   *   <li>{@link SMap#scriptHideTriangleIndicator}</li>
    *   <li>{@link SMap#FUN_800dfd48}</li>
    *   <li>{@link SMap#FUN_800e05c8}</li>
    *   <li>{@link SMap#FUN_800e05f0}</li>
@@ -600,7 +600,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e0a14}</li>
    *   <li>{@link SMap#FUN_800e0a48}</li>
    *   <li>{@link SMap#FUN_800e0a94}</li>
-   *   <li>{@link SMap#FUN_800dee28}</li>
+   *   <li>{@link SMap#scriptCheckPlayerCollision}</li>
    *   <li>{@link SMap#FUN_800e0af4}</li>
    *   <li>{@link SMap#FUN_800e0b34}</li>
    *   <li>{@link SMap#FUN_800e0ba0}</li>
@@ -617,7 +617,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800dff68}</li>
    *   <li>{@link SMap#FUN_800dffa4}</li>
    *   <li>{@link SMap#FUN_800dffdc}</li>
-   *   <li>{@link SMap#FUN_800e0018}</li>
+   *   <li>{@link SMap#scriptFacePoint}</li>
    *   <li>{@link SMap#FUN_800e0094}</li>
    *   <li>{@link SMap#FUN_800de668}</li>
    *   <li>{@link SMap#FUN_800de944}</li>
@@ -633,7 +633,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e03a8}</li>
    *   <li>{@link SMap#FUN_800e03e4}</li>
    *   <li>{@link SMap#FUN_800e0448}</li>
-   *   <li>{@link SMap#FUN_800e04b4}</li>
+   *   <li>{@link SMap#scriptFaceCamera}</li>
    *   <li>{@link SMap#FUN_800e0520}</li>
    *   <li>{@link SMap#FUN_800e057c}</li>
    *   <li>{@link SMap#FUN_800e074c}</li>

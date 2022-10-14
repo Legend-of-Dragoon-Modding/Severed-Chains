@@ -26,7 +26,7 @@ public class WorldObject210 implements MemoryRef {
   public final ShortRef s_134;
 
   public final VECTOR vec_138;
-  public final IntRef ui_144;
+  public final IntRef i_144;
   public final VECTOR vec_148;
   public final VECTOR vec_154;
   public final VECTOR vec_160;
@@ -37,30 +37,48 @@ public class WorldObject210 implements MemoryRef {
 
   public final ShortRef s_178;
 
-  public final ShortRef s_17c;
-
-  public final ShortRef s_180;
-
-  public final ShortRef s_184;
-
-  public final IntRef ui_188;
+  /** The amount to rotate this wobj by each frame for {@link WorldObject210#rotationFrames_188} frames */
+  public final VECTOR rotationAmount_17c;
+  /** Number of frames to apply rotation for */
+  public final IntRef rotationFrames_188;
   public final UnsignedIntRef ui_18c;
-  /** I think this is either wobj type, or maybe the type of things this wobj collides with? */
-  public final UnsignedIntRef ui_190;
-  public final UnsignedIntRef ui_194;
-  public final IntRef i_198;
+  /**
+   * Example flags for the player wobj - 0x120_0001
+   *
+   * <ul>
+   *   <li>0x1 - player</li>
+   *   <li>0x10_0000 - player can collide with</li>
+   *   <li>0x20_0000 - collision something</li>
+   *   <li>0x40_0000 - collision something</li>
+   *   <li>0x80_0000 - collision something</li>
+   *   <li>0x100_0000 - collision something</li>
+   *   <li>0x200_0000 - collision something</li>
+   *   <li>0x400_0000 - collision something</li>
+   *   <li>0x800_0000 - collision something</li>
+   *   <li>0x1000_0000 - collision something</li>
+   *   <li>0x2000_0000 - ?</li>
+   *   <li>0x4000_0000 - ?</li>
+   *   <li>0x8000_0000 - ?</li>
+   * </ul>
+   */
+  public final UnsignedIntRef flags_190;
+  /** The yellow &lt;!&gt; */
+  public final BoolRef showAlertIndicator_194;
+  public final IntRef alertIndicatorOffsetY_198;
   /** The wobj that this wobj is currently collided with (unknown how this differs from _1a8) */
   public final IntRef collidedWithWobjIndex_19c;
-  public final IntRef i_1a0;
-  public final IntRef i_1a4;
+  public final IntRef collisionSizeHorizontal_1a0;
+  public final IntRef collisionSizeVertical_1a4;
   /** The wobj that this wobj is currently collided with (unknown how this differs from _19c) */
   public final IntRef collidedWithWobjIndex_1a8;
-  public final IntRef i_1ac;
-  public final IntRef i_1b0;
-  public final IntRef i_1b4;
-  public final IntRef i_1b8;
-  public final IntRef i_1bc;
-  public final IntRef i_1c0;
+  public final IntRef collisionSizeHorizontal_1ac;
+  public final IntRef collisionSizeVertical_1b0;
+  /** Not exactly sure what the point of this is... it extends the collision box in the direction the wobj is facing */
+  public final IntRef collisionReach_1b4;
+  public final IntRef playerCollisionSizeHorizontal_1b8;
+  public final IntRef playerCollisionSizeVertical_1bc;
+  /** Not exactly sure what the point of this is... it extends the collision box in the direction the wobj is facing */
+  public final IntRef playerCollisionReach_1c0;
   public final BoolRef flatLightingEnabled_1c4;
   public final UnsignedByteRef flatLightRed_1c5;
   public final UnsignedByteRef flatLightGreen_1c6;
@@ -86,7 +104,7 @@ public class WorldObject210 implements MemoryRef {
     this.s_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
 
     this.vec_138 = ref.offset(4, 0x138L).cast(VECTOR::new);
-    this.ui_144 = ref.offset(4, 0x144L).cast(IntRef::new);
+    this.i_144 = ref.offset(4, 0x144L).cast(IntRef::new);
     this.vec_148 = ref.offset(4, 0x148L).cast(VECTOR::new);
     this.vec_154 = ref.offset(4, 0x154L).cast(VECTOR::new);
     this.vec_160 = ref.offset(4, 0x160L).cast(VECTOR::new);
@@ -97,27 +115,22 @@ public class WorldObject210 implements MemoryRef {
 
     this.s_178 = ref.offset(2, 0x178L).cast(ShortRef::new);
 
-    this.s_17c = ref.offset(2, 0x17cL).cast(ShortRef::new);
-
-    this.s_180 = ref.offset(2, 0x180L).cast(ShortRef::new);
-
-    this.s_184 = ref.offset(2, 0x184L).cast(ShortRef::new);
-
-    this.ui_188 = ref.offset(4, 0x188L).cast(IntRef::new);
+    this.rotationAmount_17c = ref.offset(2, 0x17cL).cast(VECTOR::new);
+    this.rotationFrames_188 = ref.offset(4, 0x188L).cast(IntRef::new);
     this.ui_18c = ref.offset(4, 0x18cL).cast(UnsignedIntRef::new);
-    this.ui_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
-    this.ui_194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
-    this.i_198 = ref.offset(4, 0x198L).cast(IntRef::new);
+    this.flags_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
+    this.showAlertIndicator_194 = ref.offset(4, 0x194L).cast(BoolRef::new);
+    this.alertIndicatorOffsetY_198 = ref.offset(4, 0x198L).cast(IntRef::new);
     this.collidedWithWobjIndex_19c = ref.offset(4, 0x19cL).cast(IntRef::new);
-    this.i_1a0 = ref.offset(4, 0x1a0L).cast(IntRef::new);
-    this.i_1a4 = ref.offset(4, 0x1a4L).cast(IntRef::new);
+    this.collisionSizeHorizontal_1a0 = ref.offset(4, 0x1a0L).cast(IntRef::new);
+    this.collisionSizeVertical_1a4 = ref.offset(4, 0x1a4L).cast(IntRef::new);
     this.collidedWithWobjIndex_1a8 = ref.offset(4, 0x1a8L).cast(IntRef::new);
-    this.i_1ac = ref.offset(4, 0x1acL).cast(IntRef::new);
-    this.i_1b0 = ref.offset(4, 0x1b0L).cast(IntRef::new);
-    this.i_1b4 = ref.offset(4, 0x1b4L).cast(IntRef::new);
-    this.i_1b8 = ref.offset(4, 0x1b8L).cast(IntRef::new);
-    this.i_1bc = ref.offset(4, 0x1bcL).cast(IntRef::new);
-    this.i_1c0 = ref.offset(4, 0x1c0L).cast(IntRef::new);
+    this.collisionSizeHorizontal_1ac = ref.offset(4, 0x1acL).cast(IntRef::new);
+    this.collisionSizeVertical_1b0 = ref.offset(4, 0x1b0L).cast(IntRef::new);
+    this.collisionReach_1b4 = ref.offset(4, 0x1b4L).cast(IntRef::new);
+    this.playerCollisionSizeHorizontal_1b8 = ref.offset(4, 0x1b8L).cast(IntRef::new);
+    this.playerCollisionSizeVertical_1bc = ref.offset(4, 0x1bcL).cast(IntRef::new);
+    this.playerCollisionReach_1c0 = ref.offset(4, 0x1c0L).cast(IntRef::new);
     this.flatLightingEnabled_1c4 = ref.offset(1, 0x1c4L).cast(BoolRef::new);
     this.flatLightRed_1c5 = ref.offset(1, 0x1c5L).cast(UnsignedByteRef::new);
     this.flatLightGreen_1c6 = ref.offset(1, 0x1c6L).cast(UnsignedByteRef::new);
