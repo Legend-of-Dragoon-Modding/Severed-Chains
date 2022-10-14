@@ -583,8 +583,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800dfd10}</li>
    *   <li>{@link SMap#FUN_800de334}</li>
    *   <li>{@link SMap#FUN_800de4b4}</li>
-   *   <li>{@link SMap#scriptShowTriangleIndicator}</li>
-   *   <li>{@link SMap#scriptHideTriangleIndicator}</li>
+   *   <li>{@link SMap#scriptShowAlertIndicator}</li>
+   *   <li>{@link SMap#scriptHideAlertIndicator}</li>
    *   <li>{@link SMap#FUN_800dfd48}</li>
    *   <li>{@link SMap#FUN_800e05c8}</li>
    *   <li>{@link SMap#FUN_800e05f0}</li>
@@ -630,7 +630,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e02c0}</li>
    *   <li>{@link SMap#FUN_800e02fc}</li>
    *   <li>{@link SMap#FUN_800deba0}</li>
-   *   <li>{@link SMap#FUN_800e03a8}</li>
+   *   <li>{@link SMap#scriptGetWobjNobj}</li>
    *   <li>{@link SMap#FUN_800e03e4}</li>
    *   <li>{@link SMap#FUN_800e0448}</li>
    *   <li>{@link SMap#scriptFaceCamera}</li>

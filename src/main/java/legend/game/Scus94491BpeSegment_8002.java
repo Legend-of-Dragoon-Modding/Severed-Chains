@@ -78,7 +78,7 @@ import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800de004;
-import static legend.game.SMap.FUN_800e2220;
+import static legend.game.SMap.unloadSmap;
 import static legend.game.SMap.FUN_800e2428;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
@@ -5123,7 +5123,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80028938L)
-  public static void FUN_80028938(long a0, long a1) {
+  public static void FUN_80028938(final int sp58, final int wobjIndex) {
     long v0;
     long v1;
     long a2;
@@ -5142,15 +5142,13 @@ public final class Scus94491BpeSegment_8002 {
     final long sp24;
     final long sp20;
     final long sp18;
-    final long sp58;
     final long sp14;
     final long sp1c;
 
-    sp58 = a0;
-    FUN_800e2428(a1);
-    a0 = 0x800c_0000L;
+    FUN_800e2428(wobjIndex);
+    long a0 = 0x800c_0000L;
     a0 = a0 + 0x68e8L;
-    a1 = 0x800c_0000L;
+    long a1 = 0x800c_0000L;
     a1 = a1 - 0x1ca8L;
     v0 = MEMORY.ref(4, a0).offset(0x70L).get();
     a3 = sp58;
@@ -6506,7 +6504,7 @@ public final class Scus94491BpeSegment_8002 {
         FUN_800e8e50();
         FUN_800e828c();
         FUN_800e4f8c();
-        FUN_800e2220();
+        unloadSmap();
 
         _80052c44.setu(0x2L);
         break;
@@ -6518,7 +6516,7 @@ public final class Scus94491BpeSegment_8002 {
         FUN_800e8e50();
         FUN_800e828c();
         FUN_800e4f8c();
-        FUN_800e2220();
+        unloadSmap();
         FUN_800e4e5c();
 
         //LAB_8002ab98
