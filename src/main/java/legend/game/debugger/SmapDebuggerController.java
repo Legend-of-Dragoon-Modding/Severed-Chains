@@ -16,7 +16,6 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.SMap;
 import legend.game.types.ScriptState;
 import legend.game.types.WorldObject210;
@@ -76,6 +75,8 @@ public class SmapDebuggerController {
 
   @FXML
   public CheckBox alertIcon;
+
+  private WorldObject210 wobj;
 
   public void initialize() {
     for(int i = 0; i < wobjCount_800c6730.get(); i++) {
@@ -143,29 +144,29 @@ public class SmapDebuggerController {
     this.scriptIndex.setText("View script %d".formatted(wobjIndex));
 
     final ScriptState<WorldObject210> state = scriptStatePtrArr_800bc1c0.get(wobjIndex).derefAs(ScriptState.classFor(WorldObject210.class));
-    final WorldObject210 wobj = state.innerStruct_00.deref();
+    this.wobj = state.innerStruct_00.deref();
 
-    this.posX.getValueFactory().setValue(wobj.model_00.coord2_14.coord.transfer.getX());
-    this.posY.getValueFactory().setValue(wobj.model_00.coord2_14.coord.transfer.getY());
-    this.posZ.getValueFactory().setValue(wobj.model_00.coord2_14.coord.transfer.getZ());
-    this.rotX.getValueFactory().setValue((int)wobj.model_00.coord2Param_64.rotate.getX());
-    this.rotY.getValueFactory().setValue((int)wobj.model_00.coord2Param_64.rotate.getY());
-    this.rotZ.getValueFactory().setValue((int)wobj.model_00.coord2Param_64.rotate.getZ());
-    this.scaleX.getValueFactory().setValue(wobj.model_00.scaleVector_fc.getX());
-    this.scaleY.getValueFactory().setValue(wobj.model_00.scaleVector_fc.getY());
-    this.scaleZ.getValueFactory().setValue(wobj.model_00.scaleVector_fc.getZ());
+    this.posX.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getX());
+    this.posY.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getY());
+    this.posZ.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getZ());
+    this.rotX.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getX());
+    this.rotY.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getY());
+    this.rotZ.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getZ());
+    this.scaleX.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getX());
+    this.scaleY.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getY());
+    this.scaleZ.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getZ());
 
-    this.collideByPlayer.setSelected((wobj.flags_190.get() & 0x10_0000L) != 0);
-    this.collide20.setSelected((wobj.flags_190.get() & 0x20_0000L) != 0);
-    this.collide40.setSelected((wobj.flags_190.get() & 0x40_0000L) != 0);
-    this.collide80.setSelected((wobj.flags_190.get() & 0x80_0000L) != 0);
-    this.collide100.setSelected((wobj.flags_190.get() & 0x100_0000L) != 0);
-    this.collide200.setSelected((wobj.flags_190.get() & 0x200_0000L) != 0);
-    this.collide400.setSelected((wobj.flags_190.get() & 0x400_0000L) != 0);
-    this.collide800.setSelected((wobj.flags_190.get() & 0x800_0000L) != 0);
-    this.collide1000.setSelected((wobj.flags_190.get() & 0x1000_0000L) != 0);
+    this.collideByPlayer.setSelected((this.wobj.flags_190.get() & 0x10_0000L) != 0);
+    this.collide20.setSelected((this.wobj.flags_190.get() & 0x20_0000L) != 0);
+    this.collide40.setSelected((this.wobj.flags_190.get() & 0x40_0000L) != 0);
+    this.collide80.setSelected((this.wobj.flags_190.get() & 0x80_0000L) != 0);
+    this.collide100.setSelected((this.wobj.flags_190.get() & 0x100_0000L) != 0);
+    this.collide200.setSelected((this.wobj.flags_190.get() & 0x200_0000L) != 0);
+    this.collide400.setSelected((this.wobj.flags_190.get() & 0x400_0000L) != 0);
+    this.collide800.setSelected((this.wobj.flags_190.get() & 0x800_0000L) != 0);
+    this.collide1000.setSelected((this.wobj.flags_190.get() & 0x1000_0000L) != 0);
 
-    this.alertIcon.setSelected(wobj.showAlertIndicator_194.get());
+    this.alertIcon.setSelected(this.wobj.showAlertIndicator_194.get());
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -183,51 +184,85 @@ public class SmapDebuggerController {
     this.displayStats(this.wobjList.getSelectionModel().getSelectedIndex());
   }
 
-  public void updateValues(final ActionEvent event) {
-    final int index = this.wobjList.getSelectionModel().getSelectedIndex();
-    final int wobjIndex = wobjIndices_800c6880.get(index).get();
-
-    if(wobjIndex == -1) {
-      return;
+  public void updatePos(final ActionEvent event) {
+    if(this.wobj != null) {
+      this.wobj.model_00.coord2_14.coord.transfer.setX(this.posX.getValueFactory().getValue());
+      this.wobj.model_00.coord2_14.coord.transfer.setY(this.posY.getValueFactory().getValue());
+      this.wobj.model_00.coord2_14.coord.transfer.setZ(this.posZ.getValueFactory().getValue());
     }
-
-    final ScriptState<WorldObject210> state = scriptStatePtrArr_800bc1c0.get(wobjIndex).derefAs(ScriptState.classFor(WorldObject210.class));
-    final WorldObject210 wobj = state.innerStruct_00.deref();
-
-    wobj.model_00.coord2_14.coord.transfer.setX(this.posX.getValueFactory().getValue());
-    wobj.model_00.coord2_14.coord.transfer.setY(this.posY.getValueFactory().getValue());
-    wobj.model_00.coord2_14.coord.transfer.setZ(this.posZ.getValueFactory().getValue());
-    wobj.model_00.coord2Param_64.rotate.setX(this.rotX.getValueFactory().getValue().shortValue());
-    wobj.model_00.coord2Param_64.rotate.setY(this.rotY.getValueFactory().getValue().shortValue());
-    wobj.model_00.coord2Param_64.rotate.setZ(this.rotZ.getValueFactory().getValue().shortValue());
-    wobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
-    wobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
-    wobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
-
-    this.setOrClearFlag(wobj.flags_190, 0x10_0000L, this.collideByPlayer.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x20_0000L, this.collide20.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x40_0000L, this.collide40.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x80_0000L, this.collide80.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x100_0000L, this.collide100.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x200_0000L, this.collide200.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x400_0000L, this.collide400.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x800_0000L, this.collide800.isSelected());
-    this.setOrClearFlag(wobj.flags_190, 0x1000_0000L, this.collide1000.isSelected());
-
-    wobj.showAlertIndicator_194.set(this.alertIcon.isSelected());
   }
 
-  private void setOrClearFlag(final UnsignedIntRef flags, final long flag, final boolean selected) {
-    if(selected) {
-      flags.or(flag);
-    } else {
-      flags.and(~flag);
+  public void updateRot(final ActionEvent event) {
+    if(this.wobj != null) {
+      this.wobj.model_00.coord2Param_64.rotate.setX(this.rotX.getValueFactory().getValue().shortValue());
+      this.wobj.model_00.coord2Param_64.rotate.setY(this.rotY.getValueFactory().getValue().shortValue());
+      this.wobj.model_00.coord2Param_64.rotate.setZ(this.rotZ.getValueFactory().getValue().shortValue());
+    }
+  }
+
+  public void updateScale(final ActionEvent event) {
+    if(this.wobj != null) {
+      this.wobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
+      this.wobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
+      this.wobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
     }
   }
 
   @FXML
   public void renderCollisionClick(final ActionEvent actionEvent) {
     SMap.enableCollisionDebug = this.renderCollision.isSelected();
+  }
+
+  public void playerCollideWithClick(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x10_0000L, this.collideByPlayer.isSelected());
+  }
+
+  public void collider20Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x20_0000L, this.collide20.isSelected());
+  }
+
+  public void collider40Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x40_0000L, this.collide40.isSelected());
+  }
+
+  public void collider80Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x80_0000L, this.collide80.isSelected());
+  }
+
+  public void collider100Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x100_0000L, this.collide100.isSelected());
+  }
+
+  public void collider200Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x200_0000L, this.collide200.isSelected());
+  }
+
+  public void collider400Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x400_0000L, this.collide400.isSelected());
+  }
+
+  public void collider800Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x800_0000L, this.collide800.isSelected());
+  }
+
+  public void collider1000Click(final ActionEvent actionEvent) {
+    this.setOrClearFlag(0x1000_0000L, this.collide1000.isSelected());
+  }
+
+  public void showAlertIconClick(final ActionEvent actionEvent) {
+    if(this.wobj != null) {
+      this.wobj.showAlertIndicator_194.set(this.alertIcon.isSelected());
+    }
+  }
+
+  private void setOrClearFlag(final long flag, final boolean selected) {
+    if(this.wobj != null) {
+      if(selected) {
+        this.wobj.flags_190.or(flag);
+      } else {
+        this.wobj.flags_190.and(~flag);
+      }
+    }
   }
 
   private static class ListItem {

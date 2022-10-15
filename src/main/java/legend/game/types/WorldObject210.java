@@ -45,17 +45,19 @@ public class WorldObject210 implements MemoryRef {
   /**
    * Example flags for the player wobj - 0x120_0001
    *
+   * Collision flags are in pairs. Each collider flag collides with the following collidee flag.
+   *
    * <ul>
    *   <li>0x1 - player</li>
    *   <li>0x10_0000 - player can collide with</li>
-   *   <li>0x20_0000 - collision something</li>
-   *   <li>0x40_0000 - collision something</li>
-   *   <li>0x80_0000 - collision something</li>
-   *   <li>0x100_0000 - collision something</li>
-   *   <li>0x200_0000 - collision something</li>
-   *   <li>0x400_0000 - collision something</li>
-   *   <li>0x800_0000 - collision something</li>
-   *   <li>0x1000_0000 - collision something</li>
+   *   <li>0x20_0000 - collider something</li>
+   *   <li>0x40_0000 - collidee something</li>
+   *   <li>0x80_0000 - collider something</li>
+   *   <li>0x100_0000 - collidee something</li>
+   *   <li>0x200_0000 - collider something</li>
+   *   <li>0x400_0000 - collidee something</li>
+   *   <li>0x800_0000 - collider something</li>
+   *   <li>0x1000_0000 - collidee something</li>
    *   <li>0x2000_0000 - ?</li>
    *   <li>0x4000_0000 - ?</li>
    *   <li>0x8000_0000 - ?</li>

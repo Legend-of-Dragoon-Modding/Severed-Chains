@@ -46,10 +46,9 @@
                         </Separator>
                         <Button fx:id="refreshStats" mnemonicParsing="false" onAction="#refreshValues" prefHeight="32.0" prefWidth="56.0" text="Refresh">
                            <HBox.margin>
-                              <Insets right="4.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="updateStats" mnemonicParsing="false" onAction="#updateValues" prefHeight="38.0" prefWidth="55.0" text="Update" />
                         <Separator orientation="VERTICAL" prefHeight="200.0">
                            <HBox.margin>
                               <Insets left="3.0" right="3.0" />
@@ -87,6 +86,11 @@
                            </HBox.margin>
                         </Label>
                         <Spinner fx:id="posZ" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Button fx:id="updatePos" mnemonicParsing="false" onAction="#updatePos" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin>
+                        </Button>
                      </children>
                   </HBox>
                   <Label text="Rotation" />
@@ -110,6 +114,11 @@
                            </HBox.margin>
                         </Label>
                         <Spinner fx:id="rotZ" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Button fx:id="updateRot" mnemonicParsing="false" onAction="#updateRot" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin>
+                        </Button>
                      </children>
                   </HBox>
                   <Label text="Scale" />
@@ -133,6 +142,11 @@
                            </HBox.margin>
                         </Label>
                         <Spinner fx:id="scaleZ" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                        <Button fx:id="updateScale" mnemonicParsing="false" onAction="#updateScale" prefHeight="26.0" prefWidth="55.0" text="Update">
+                           <HBox.margin>
+                              <Insets left="8.0" />
+                           </HBox.margin>
+                        </Button>
                      </children>
                   </HBox>
                   <Separator prefWidth="200.0">
@@ -141,27 +155,28 @@
                      </VBox.margin>
                   </Separator>
                   <Label text="Collision" />
-                  <GridPane prefHeight="62.0" prefWidth="426.0">
+                  <GridPane prefHeight="103.0" prefWidth="426.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <CheckBox fx:id="collideByPlayer" mnemonicParsing="false" text="Collide by player" />
-                        <CheckBox fx:id="collide20" mnemonicParsing="false" text="Collision 0x20_0000" GridPane.columnIndex="1" />
-                        <CheckBox fx:id="collide40" mnemonicParsing="false" text="Collision 0x40_0000" GridPane.columnIndex="2" />
-                        <CheckBox fx:id="collide80" mnemonicParsing="false" text="Collision 0x80_0000" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="collide100" mnemonicParsing="false" text="Collision 0x100_0000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="collide200" mnemonicParsing="false" text="Collision 0x200_0000" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="collide400" mnemonicParsing="false" text="Collision 0x400_0000" GridPane.rowIndex="2" />
-                        <CheckBox fx:id="collide800" mnemonicParsing="false" text="Collision 0x800_0000" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <CheckBox fx:id="collide1000" mnemonicParsing="false" text="Collision 0x1000_0000" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="collideByPlayer" mnemonicParsing="false" onAction="#playerCollideWithClick" text="Player collides with" />
+                        <CheckBox fx:id="collide20" mnemonicParsing="false" onAction="#collider20Click" text="Collider 0x20_0000" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="collide40" mnemonicParsing="false" onAction="#collider40Click" text="Collidee 0x40_0000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="collide80" mnemonicParsing="false" onAction="#collider80Click" text="Collider 0x80_0000" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="collide100" mnemonicParsing="false" onAction="#collider100Click" text="Collidee 0x100_0000" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="collide200" mnemonicParsing="false" onAction="#collider200Click" text="Collider 0x200_0000" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="collide400" mnemonicParsing="false" onAction="#collider400Click" text="Collidee 0x400_0000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="collide800" mnemonicParsing="false" onAction="#collider800Click" text="Collider 0x800_0000" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="collide1000" mnemonicParsing="false" onAction="#collider1000Click" text="Collidee 0x1000_0000" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
                   <Separator prefWidth="200.0">
@@ -170,7 +185,7 @@
                      </VBox.margin>
                   </Separator>
                   <Label text="Misc" />
-                  <CheckBox fx:id="alertIcon" mnemonicParsing="false" text="Show alert icon" />
+                  <CheckBox fx:id="alertIcon" mnemonicParsing="false" onAction="#showAlertIconClick" text="Show alert icon" />
                </children>
             </VBox>
          </children>
