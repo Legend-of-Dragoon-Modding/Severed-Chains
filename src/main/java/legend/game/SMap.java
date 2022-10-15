@@ -2216,7 +2216,7 @@ public final class SMap {
     wobj.mrgAnimGroupIndex_132.set(script.params_20.get(1).deref().get());
     model.ub_a3.set(0);
     model.ub_a2.set(1);
-    FUN_80021584(model, wobj.mrg_124.deref().getFile(wobj.mrgAnimGroup_12e.get() * 33 + wobj.mrgAnimGroupIndex_132.get(), TmdAnimationFile::new));
+    FUN_80021584(model, wobj.mrg_124.deref().getFile(wobj.mrgAnimGroup_12e.get() * 33 + wobj.mrgAnimGroupIndex_132.get() + 1, TmdAnimationFile::new));
     wobj.us_12c.set(0);
     wobj.flags_190.and(0x9fff_ffffL);
     return 0;
