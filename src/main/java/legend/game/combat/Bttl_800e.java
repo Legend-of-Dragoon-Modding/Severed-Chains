@@ -5782,7 +5782,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eeaecL)
-  public static void FUN_800eeaec() {
+  public static void updateGameStateAndDeallocateMenu() {
     //LAB_800eeb10
     //LAB_800eebb4
     //LAB_800eebd8

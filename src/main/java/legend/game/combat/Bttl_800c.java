@@ -82,7 +82,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80012444;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_800128a8;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.FUN_8001324c;
+import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -196,7 +196,7 @@ import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ec8d0;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
-import static legend.game.combat.Bttl_800e.FUN_800eeaec;
+import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.drawUiElements;
@@ -933,7 +933,7 @@ public final class Bttl_800c {
   public static void FUN_800c76a0() {
     if((_800bc960.get() & 0x3L) == 0x3L) {
       setWidthAndFlags(320, 0);
-      FUN_8001324c(12);
+      setDepthResolution(12);
       vsyncMode_8007a3b8.setu(0x3L);
       _800bc960.oru(0x40L);
       setProjectionPlaneDistance(320);
@@ -1107,7 +1107,7 @@ public final class Bttl_800c {
           } else {
             FUN_80020308();
 
-            if(encounterId_800bb0f8.get() != 0x1bbL) {
+            if(encounterId_800bb0f8.get() != 443) { // Melbu
               _800bc974.setu(0x1L);
               FUN_8001af00(0x6L);
             } else {
@@ -1278,9 +1278,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c82b8L)
-  public static void FUN_800c82b8() {
+  public static void deallocateCombat() {
     if(_800bb168.get() == 0xffL) {
-      FUN_800eeaec();
+      updateGameStateAndDeallocateMenu();
       FUN_800c8ce4();
 
       if(!script_800c66fc.isNull()) {
@@ -1339,8 +1339,8 @@ public final class Bttl_800c {
       //LAB_800c84b4
       switch((int)_800bc974.get()) {
         case 2 -> {
-          final long v1 = encounterId_800bb0f8.get();
-          if(v1 == 0x187L || v1 >= 0x194L && v1 < 0x198L) {
+          final int encounter = encounterId_800bb0f8.get();
+          if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
             //LAB_800c8514
             gameState_800babc8.scriptFlags2_bc.get(0x1d).or(0x800_0000L);
           } else {
@@ -1371,7 +1371,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c8590
-      FUN_8001324c(14);
+      setDepthResolution(14);
       _800bc94c.setu(0);
 
       switch((int)_800bc974.get()) {
@@ -2285,7 +2285,7 @@ public final class Bttl_800c {
       case 3 -> {
         final long s0 = a0_0.bpe_00.get(); //TODO
 
-        if(a0_0._09.get() == 0 || encounterId_800bb0f8.get() != 0x1bbL) {
+        if(a0_0._09.get() == 0 || encounterId_800bb0f8.get() != 443) { // Melbu
           //LAB_800ca3c4
           FUN_800cadbc(s0);
         }

@@ -145,7 +145,7 @@ public final class Scus94491BpeSegment_8004 {
    * Bit 2 - 24-bit colour
    */
   public static final Value renderFlags_8004dd36 = MEMORY.ref(2, 0x8004dd36L);
-  public static final UnsignedShortRef orderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
+  public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
   public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
   public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
@@ -619,6 +619,41 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<ItemStats0c> itemStats_8004f2ac = MEMORY.ref(1, 0x8004f2acL, ArrayRef.of(ItemStats0c.class, 0x40, 0xc, ItemStats0c::new));
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
+  /**
+   * <ol start="0">
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c7524}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c7648}</li>
+   *   <li>{@link Bttl_800c#FUN_800c76a0}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Bttl_800c#FUN_800c772c}</li>
+   *   <li>{@link Bttl_800c#deferAllocateEnemyBattleObjects()}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#deferAllocatePlayerBattleObjects()}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#deferLoadEncounterAssets}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c7964}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c79f0}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#deferDoNothing}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c7a80}</li>
+   *   <li>{@link Bttl_800c#FUN_800c7bb8}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Bttl_800c#FUN_800c8068}</li>
+   *   <li>{@link Bttl_800c#deallocateCombat}</li>
+   *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_80018508}</li>
+   *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
+   * </ol>
+   */
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
   public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);

@@ -164,7 +164,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052bc8;
 import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005._80052c3c;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
@@ -6480,7 +6480,7 @@ public final class Scus94491BpeSegment_8002 {
     submapCut_80052c30.set(675);
     _80052c34.setu(0x4L);
     index_80052c38.set(0);
-    _80052c3c.setu(-1L);
+    submapCut_80052c3c.set(-1);
     _80052c40.setu(0);
     _80052c44.setu(0x2L);
   }

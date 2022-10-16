@@ -30,7 +30,7 @@ public class ArrayRef<T extends MemoryRef> implements MemoryRef, Iterable<T> {
     this.elements = (T[])Array.newInstance(cls, length);
 
     for(int i = 0; i < length; i++) {
-      this.elements[i] = constructor.apply(ref.offset(ref.getSize(), i * stride));
+      this.elements[i] = constructor.apply(ref.offset(elementSize, i * stride));
     }
   }
 

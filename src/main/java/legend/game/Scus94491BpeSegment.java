@@ -177,7 +177,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.orderingTableBits_8004dd38;
+import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd14;
 import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd18;
 import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
@@ -1864,7 +1864,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012f5c
     final long use24BitColour = renderFlags_8004dd36.get() >>> 0x2L & 0x1L;
     final long height480 = renderFlags_8004dd36.get() & 0x2L;
-    final int orderingTableBits = orderingTableBits_8004dd38.get();
+    final int orderingTableBits = reinitOrderingTableBits_8004dd38.get();
 
     _800babc0.setu(0);
     _800bb104.setu(0);
@@ -1950,10 +1950,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001324cL)
-  public static void FUN_8001324c(final int orderingTableBits) {
+  public static void setDepthResolution(final int orderingTableBits) {
     if(orderingTableBits_1f8003c0.get() != orderingTableBits) {
       syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
-      orderingTableBits_8004dd38.set(orderingTableBits);
+      reinitOrderingTableBits_8004dd38.set(orderingTableBits);
     }
 
     //LAB_80013274
@@ -5332,7 +5332,7 @@ public final class Scus94491BpeSegment {
           _800bc980.offset(i * 0xcL).offset(4, 0x8L).setu(_8004f6a4.offset(_800bc980.offset(i * 0xcL).offset(1, 0x1L).get() * 0x4L));
         }
 
-        if(_800bd780.get() != 0x1L && encounterId_800bb0f8.get() == 0x1bbL) {
+        if(_800bd780.get() != 0x1L && encounterId_800bb0f8.get() == 443) { // Melbu
           //LAB_80019978
           soundMrgSshdPtr_800bd784.set(MEMORY.ref(4, mallocTail(0x650L), SshdFile::new));
           soundMrgSssqPtr_800bd788.set(MEMORY.ref(4, mallocTail(0x5c30L), SssqFile::new));
@@ -7345,7 +7345,7 @@ public final class Scus94491BpeSegment {
     final MrgFile soundMrg = MEMORY.ref(4, addressPtr, MrgFile::new);
     soundMrgPtr_800bd76c.set(soundMrg);
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && encounterId_800bb0f8.get() == 0x1bbL) {
+    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
       memcpy(soundMrgSshdPtr_800bd784.getPointer(), soundMrg.getFile(3), (int)soundMrg.entries.get(3).size.get());
       memcpy(soundMrgSssqPtr_800bd788.getPointer(), soundMrg.getFile(2), (int)soundMrg.entries.get(2).size.get());

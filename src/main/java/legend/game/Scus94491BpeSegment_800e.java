@@ -641,8 +641,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e0184}</li>
    *   <li>{@link SMap#FUN_800e0c40}</li>
    *   <li>{@link SMap#FUN_800e0c80}</li>
-   *   <li>{@link SMap#FUN_800e0c00}</li>
-   *   <li>{@link SMap#FUN_800e0c24}</li>
+   *   <li>{@link SMap#scriptLoadChapterTitleCard}</li>
+   *   <li>{@link SMap#scriptIsChapterTitleCardLoaded}</li>
    *   <li>{@link SMap#FUN_800e0c9c}</li>
    * </ol>
    */
