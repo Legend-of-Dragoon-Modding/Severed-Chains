@@ -2111,7 +2111,6 @@ public class WMap {
   @Method(0x800d219cL)
   public static void updateLights() {
     long v0;
-    long v1;
 
     if(struct258_800c66a8.deref().zoomState_1f8.get() == 0) {
       return;
@@ -2499,36 +2498,23 @@ public class WMap {
     long sp80;
     long sp84;
 
-    v0 = 0x800c_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x66b0L).get();
-
-    v1 = MEMORY.ref(1, v0).offset(0xc4L).getSigned();
-
     //LAB_800d4088
-    if(v1 == 0 || _800c66b0.deref()._c5.get() != 0) {
+    if(_800c66b0.deref()._c4.get() == 0 || _800c66b0.deref()._c5.get() != 0) {
       //LAB_800d41f0
       return;
     }
 
     //LAB_800d40ac
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x66a8L).get();
-
-    v0 = MEMORY.ref(1, v1).offset(0x1f8L).get();
+    v0 = struct258_800c66a8.deref().zoomState_1f8.get();
 
     if(v0 == 0x1L) {
       //LAB_800d4108
-      at = 0x800d_0000L;
-      MEMORY.ref(4, at).offset(-0x7910L).setu(0);
+      _800c86f0.setu(0);
       sp1c = 0x10L;
       sp18 = 0x20L;
     } else if(v0 == 0x4L) {
       //LAB_800d4170
-      v1 = 0x8008_0000L;
-      v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
-
-      v0 = v1 & 0x1L;
-      if(v0 != 0) {
+      if((joypadPress_8007a398.get() & 0x1) != 0) {
         FUN_8002a3ec(7, 0);
       }
 
@@ -2540,29 +2526,19 @@ public class WMap {
     } else if(v0 == 0x5L) {
       //LAB_800d41b0
       FUN_8002a3ec(7, 0);
-      v1 = 0x8008_0000L;
-      v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
 
-      v0 = v1 & 0x2L;
-      if(v0 != 0) {
-        at = 0x800d_0000L;
-        MEMORY.ref(4, at).offset(-0x7910L).setu(0);
+      if((joypadPress_8007a398.get() & 0x2) != 0) {
+        _800c86f0.setu(0);
       }
 
       //LAB_800d41e0
-      sp1c = 0x10L;
-      sp18 = 0x20L;
       return;
     } else if(v0 == 0x6L) {
       //LAB_800d4128
       FUN_8002a3ec(7, 0);
-      v1 = 0x8008_0000L;
-      v1 = MEMORY.ref(4, v1).offset(-0x5c68L).get();
 
-      v0 = v1 & 0x2L;
-      if(v0 != 0) {
-        at = 0x800d_0000L;
-        MEMORY.ref(4, at).offset(-0x7910L).setu(0);
+      if((joypadPress_8007a398.get() & 0x2) != 0) {
+        _800c86f0.setu(0);
       }
 
       //LAB_800d4158
@@ -2586,123 +2562,31 @@ public class WMap {
     final DVECTOR sp0x60 = new DVECTOR(); // sxy2
     final Ref<Long> sp0x68 = new Ref<>(); // ir0
     final Ref<Long> sp0x64 = new Ref<>(); // flags
-    sp6c = perspectiveTransform(sp0x58, sp0x60, sp0x68, sp0x64);
+    perspectiveTransform(sp0x58, sp0x60, sp0x68, sp0x64);
     sp70 = sp0x60.getXY();
-    v1 = sp0x60.getXY();
-
-    v0 = (int)v1 >> 16;
-    sp72 = v0;
-    v0 = 0x1f80_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x3d8L).get();
-
-    sp74 = v0;
-    v1 = sp74;
-
-    v0 = v1 + 0x14L;
-    v1 = v0;
-    at = 0x1f80_0000L;
-    MEMORY.ref(4, at).offset(0x3d8L).setu(v1);
-    v0 = sp74;
-
-    sp30 = v0;
-    a0 = 0xeL;
-    a1 = sp30;
-
-    setGpuPacketType(a0, a1, false, false);
-    v0 = 0x1f80_0000L;
-    v0 = MEMORY.ref(4, v0).offset(0x3d8L).get();
-
-    sp78 = v0;
-    v1 = sp78;
-
-    v0 = v1 + 0x8L;
-    v1 = v0;
-    at = 0x1f80_0000L;
-    MEMORY.ref(4, at).offset(0x3d8L).setu(v1);
-    v0 = sp78;
-
-    sp34 = v0;
-    v0 = sp30;
-    v1 = 0x7c28L;
-    MEMORY.ref(2, v0).offset(0xeL).setu(v1);
-    v0 = sp34;
-    v1 = 0x1L;
-    MEMORY.ref(1, v0).offset(0x3L).setu(v1);
-    v0 = sp34;
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(2, v1).offset(-0x4eeaL).get();
-
-    a0 = v1 | 0xaL;
-    v1 = a0;
-    a0 = v1 & 0x9ffL;
-    v1 = a0 & 0xffffL;
-    a0 = 0xe100_0000L;
-    v1 = v1 | a0;
-    MEMORY.ref(4, v0).offset(0x4L).setu(v1);
-    v0 = sp30;
-    v1 = 0x55L;
-    MEMORY.ref(1, v0).offset(0x4L).setu(v1);
-    v0 = sp30;
-
-    MEMORY.ref(1, v0).offset(0x5L).setu(0);
-    v0 = sp30;
-
-    MEMORY.ref(1, v0).offset(0x6L).setu(0);
-    v0 = sp30;
-    v1 = sp1c;
-
-    a0 = (int)v1 >> 31;
-    a1 = a0 >>> 31;
-    a0 = v1 + a1;
-    v1 = (int)a0 >> 1;
-    a0 = sp70;
-
-    a0 = a0 - v1;
-    MEMORY.ref(2, v0).offset(0x8L).setu(a0);
-    v0 = sp30;
-    v1 = sp72;
-    a0 = sp1c;
-
-    v1 = v1 - a0;
-    MEMORY.ref(2, v0).offset(0xaL).setu(v1);
-    v0 = sp30;
-    v1 = sp1c;
-
-    MEMORY.ref(2, v0).offset(0x10L).setu(v1);
-    v0 = sp30;
-    v1 = sp1c;
-
-    MEMORY.ref(2, v0).offset(0x12L).setu(v1);
-    v0 = sp30;
-    v1 = 0x800c_0000L;
-    v1 = MEMORY.ref(4, v1).offset(-0x4f04L).get();
-
-    a0 = v1 & 0x7L;
-    v1 = sp1c;
-
-    lo = (long)(int)a0 * (int)v1 & 0xffff_ffffL;
-    t0 = lo;
-    MEMORY.ref(1, v0).offset(0xcL).setu(t0);
-    v0 = sp30;
-    v1 = sp18;
-
-    MEMORY.ref(1, v0).offset(0xdL).setu(v1);
-    v1 = 0x1f80_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x3d0L).get();
-
-    v0 = v1 + 0x64L;
-    a0 = v0;
-    a1 = sp30;
-
-    queueGpuPacket(a0, a1);
-    v1 = 0x1f80_0000L;
-    v1 = MEMORY.ref(4, v1).offset(0x3d0L).get();
-
-    v0 = v1 + 0x64L;
-    a0 = v0;
-    a1 = sp34;
-
-    queueGpuPacket(a0, a1);
+    sp72 = sp0x60.getY();
+    sp74 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.addu(0x14L);
+    sp30 = sp74;
+    setGpuPacketType(0xeL, sp30, false, false);
+    sp78 = gpuPacketAddr_1f8003d8.get();
+    gpuPacketAddr_1f8003d8.setu(sp78 + 0x8L);
+    sp34 = sp78;
+    MEMORY.ref(2, sp30).offset(0xeL).setu(0x7c28L);
+    MEMORY.ref(1, sp34).offset(0x3L).setu(1);
+    MEMORY.ref(4, sp34).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
+    MEMORY.ref(1, sp30).offset(0x4L).setu(0x55L);
+    MEMORY.ref(1, sp30).offset(0x5L).setu(0);
+    MEMORY.ref(1, sp30).offset(0x6L).setu(0);
+    MEMORY.ref(2, sp30).offset(0x8L).setu(sp70 - sp1c / 2);
+    MEMORY.ref(2, sp30).offset(0xaL).setu(sp72 - sp1c);
+    MEMORY.ref(2, sp30).offset(0x10L).setu(sp1c);
+    MEMORY.ref(2, sp30).offset(0x12L).setu(sp1c);
+    a0 = _800bb0fc.get() & 0x7L;
+    MEMORY.ref(1, sp30).offset(0xcL).setu(a0 * sp1c);
+    MEMORY.ref(1, sp30).offset(0xdL).setu(sp18);
+    queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp30);
+    queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp34);
     v0 = 0x800c_0000L;
     v0 = MEMORY.ref(4, v0).offset(0x66a8L).get();
 
@@ -9743,10 +9627,10 @@ public class WMap {
     }
 
     //LAB_800ea6dc
-    final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-
     _800c67a8.setu(a0);
     areaIndex_800c67aa.set(_800f0e34.get(a0).areaIndex_00.get());
+
+    final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
     pathIndex_800c67ac.set(Math.abs(area._00.get()) - 1); // Transition to a different path
 
     final int sign;
