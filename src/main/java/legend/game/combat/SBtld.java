@@ -38,7 +38,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.addCombatant;
@@ -286,7 +286,7 @@ public class SBtld {
   @Method(0x801098f4L)
   public static void FUN_801098f4(final int param) {
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
-    final int stage = Math.max(0, submapStage_800bb0f4.get());
+    final int stage = Math.max(0, combatStage_800bb0f4.get());
 
     //LAB_8010993c
     //LAB_80109954
@@ -296,7 +296,7 @@ public class SBtld {
 
     //LAB_8010999c
     memcpy(struct7cc._98.getAddress(), _80114a10.getAddress(), 0x260);
-    memcpy(struct7cc.svec_00.getAddress(), _8011517c.offset(submapStage_800bb0f4.get() * 0x8L).getAddress(), 0x8);
+    memcpy(struct7cc.svec_00.getAddress(), _8011517c.offset(combatStage_800bb0f4.get() * 0x8L).getAddress(), 0x8);
 
     //LAB_80109a30
     for(int i = 0; stageIndices_800fb064.offset(i).get() != 0xffL; i++) {

@@ -96,6 +96,10 @@ public class IntRef implements MemoryRef {
     return this.set(~this.get());
   }
 
+  public IntRef neg() {
+    return this.set(-this.get());
+  }
+
   public IntRef and(final int val) {
     return this.set(this.get() & val);
   }

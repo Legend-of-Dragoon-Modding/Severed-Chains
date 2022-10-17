@@ -63,7 +63,7 @@ public final class Scus94491BpeSegment_800b {
 
   // End of game state 800bb0f4
 
-  public static final IntRef submapStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
+  public static final IntRef combatStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 

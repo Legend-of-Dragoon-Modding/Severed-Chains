@@ -261,7 +261,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
@@ -4069,7 +4069,7 @@ public final class SMap {
     if(encounterAccumulator_800c6ae8.get() > 0x1400L) {
       // Start combat
       encounterId_800bb0f8.set(sceneEncounterIds_800f74c4.get(encounterData_800f64c4.get(submapCut_80052c30.get()).scene_00.get()).get(randomEncounterIndex()).get());
-      submapStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
+      combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       return 0x1L;
     }
 
@@ -8136,9 +8136,9 @@ public final class SMap {
     final GsCOORDINATE2 sp0x48 = new GsCOORDINATE2(sp0x48tmp.get());
     GsInitCoordinate2(null, sp0x48);
 
-    final IntRef sp0x98 = new IntRef();
-    final IntRef sp0x9c = new IntRef();
-    getScreenOffset(sp0x98, sp0x9c);
+    final IntRef screenOffsetX = new IntRef();
+    final IntRef screenOffsetY = new IntRef();
+    getScreenOffset(screenOffsetX, screenOffsetY);
     sp0x48.coord.transfer.set(a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get());
     final MATRIX sp0x28 = new MATRIX();
     GsGetLs(sp0x48, sp0x28);
@@ -8157,8 +8157,6 @@ public final class SMap {
 
     final DVECTOR sp0x10 = new DVECTOR();
     sp0x10.setXY(CPU.MFC2(14));
-    final long spa0 = CPU.MFC2(8);
-    final long spa4 = CPU.CFC2(31);
     final int spa8 = (int)CPU.MFC2(19) >> 2;
     PopMatrix();
 
@@ -8178,8 +8176,8 @@ public final class SMap {
     s1._18.set((short)a0.params_20.get(7).deref().get());
     s1.x_1c.set(sp0x10.getX());
     s1.y_20.set(sp0x10.getY());
-    s1.screenOffsetX_24.set(sp0x98.get());
-    s1.screenOffsetY_28.set(sp0x9c.get());
+    s1.screenOffsetX_24.set(screenOffsetX.get());
+    s1.screenOffsetY_28.set(screenOffsetY.get());
     s1.sz3_2c.set(spa8);
 
     sp0x48tmp.release();
@@ -8308,9 +8306,6 @@ public final class SMap {
     final MATRIX sp0x70 = new MATRIX();
     final IntRef sp90 = new IntRef();
     final IntRef sp94 = new IntRef();
-    long sp98;
-    long sp9c;
-    long spa0;
 
     getScreenOffset(sp90, sp94);
     GsInitCoordinate2(null, sp0x18);
@@ -8345,9 +8340,6 @@ public final class SMap {
       CPU.COP2(0x180001L);
 
       sp0x68.setXY(CPU.MFC2(14)); // SXY2
-      sp98 = CPU.MFC2(8); // IR0
-      sp9c = CPU.CFC2(31); // FLAG
-      spa0 = CPU.MFC2(19) >> 2; // SZ3
 
       PopMatrix();
 
@@ -8387,9 +8379,6 @@ public final class SMap {
     CPU.MTC2(0, 1);
     CPU.COP2(0x180001L);
     final DVECTOR sp0x18 = new DVECTOR().setXY(CPU.MFC2(14));
-    final long sp90 = CPU.MFC2(8);
-    final long sp94 = CPU.CFC2(31);
-    final int sp98 = (int)CPU.MFC2(19) >> 2;
     PopMatrix();
 
     //LAB_800f1e20

@@ -8,7 +8,7 @@ import legend.core.memory.types.UnsignedByteRef;
 public class WMapStruct14 implements MemoryRef {
   private final Value ref;
 
-  public final ShortRef _00;
+  public final ShortRef areaIndex_00;
   public final ShortRef placeIndex_02;
   public final ShortRef _04;
   public final ShortRef _06;
@@ -22,7 +22,7 @@ public class WMapStruct14 implements MemoryRef {
   public WMapStruct14(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
+    this.areaIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this.placeIndex_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);

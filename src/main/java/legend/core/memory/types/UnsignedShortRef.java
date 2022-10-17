@@ -88,6 +88,14 @@ public class UnsignedShortRef implements MemoryRef {
     return this.div(val.get());
   }
 
+  public UnsignedShortRef mod(final long val) {
+    return this.set((int)(this.get() % val));
+  }
+
+  public UnsignedShortRef mod(final UnsignedShortRef val) {
+    return this.mod(val.get());
+  }
+
   public UnsignedShortRef incr() {
     return this.add(1);
   }

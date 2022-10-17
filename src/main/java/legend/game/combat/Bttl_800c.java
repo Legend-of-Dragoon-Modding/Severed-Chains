@@ -180,7 +180,7 @@ import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.Scus94491BpeSegment_800b.submapStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -924,7 +924,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7648L)
   public static void FUN_800c7648() {
-    loadStage(submapStage_800bb0f4.get());
+    loadStage(combatStage_800bb0f4.get());
     loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109050", int.class), 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
