@@ -2867,9 +2867,9 @@ public final class Scus94491BpeSegment_8002 {
     final Struct4c struct4c = _800be358.get(s2);
     struct4c._04.set((short)_80052b88.offset(((a0.params_20.get(2).deref().get() & 0xf0L) >>> 4) * 0x2L).get());
     struct4c._06.set((short)_80052b68.offset((a0.params_20.get(2).deref().get() & 0xfL) * 0x2L).get());
-    struct4c._14.set((short)0);
-    struct4c._16.set((short)0);
-    struct4c.width_18.set((short)(a0.params_20.get(3).deref().get() + 0x1L));
+    struct4c.x_14.set((short)0);
+    struct4c.y_16.set((short)0);
+    struct4c.chars_18.set((short)(a0.params_20.get(3).deref().get() + 0x1L));
     struct4c.lines_1a.set((short)(a0.params_20.get(4).deref().get() + 0x1L));
     FUN_800258a8(s2);
 
@@ -2899,10 +2899,10 @@ public final class Scus94491BpeSegment_8002 {
     FUN_80028938(s2, a0.params_20.get(1).deref().get());
 
     if(struct4c._04.get() == 0x2L) {
-      struct4c._24.get(5).set(struct4c._14.get());
-      struct4c._24.get(6).set(struct4c._16.get());
-      struct4c._14.set((short)struct4c._24.get(1).get());
-      struct4c._16.set((short)struct4c._24.get(2).get());
+      struct4c._24.get(5).set(struct4c.x_14.get());
+      struct4c._24.get(6).set(struct4c.y_16.get());
+      struct4c.x_14.set((short)struct4c._24.get(1).get());
+      struct4c.y_16.set((short)struct4c._24.get(2).get());
       struct4c._08.or(0x2L);
     }
 
@@ -2925,9 +2925,9 @@ public final class Scus94491BpeSegment_8002 {
       final Struct4c struct4c = _800be358.get(s2);
       struct4c._04.set(s0);
       struct4c._06.set(s1);
-      struct4c._14.set((short)a0.params_20.get(2).deref().get());
-      struct4c._16.set((short)a0.params_20.get(3).deref().get());
-      struct4c.width_18.set((short)(a0.params_20.get(4).deref().get() + 1));
+      struct4c.x_14.set((short)a0.params_20.get(2).deref().get());
+      struct4c.y_16.set((short)a0.params_20.get(3).deref().get());
+      struct4c.chars_18.set((short)(a0.params_20.get(4).deref().get() + 1));
       struct4c.lines_1a.set((short)(a0.params_20.get(5).deref().get() + 1));
       FUN_800258a8(s2);
 
@@ -2996,8 +2996,8 @@ public final class Scus94491BpeSegment_8002 {
     struct._08.set(0);
     struct.z_0c.set(14);
     struct._10.set(0);
-    struct._1c.set(0);
-    struct._1e.set(0);
+    struct.width_1c.set(0);
+    struct.height_1e.set((short)0);
     struct._20.set((short)0x1000);
     struct._22.set((short)0x1000);
 
@@ -3031,9 +3031,9 @@ public final class Scus94491BpeSegment_8002 {
     struct84._44.set((short)0);
 
     final Struct4c struct4c = _800be358.get(a0);
-    struct84._14.set(struct4c._14.get());
-    struct84._16.set(struct4c._16.get());
-    struct84._1c.set((short)(struct4c.width_18.get() - 1));
+    struct84._14.set(struct4c.x_14.get());
+    struct84._16.set(struct4c.y_16.get());
+    struct84._1c.set((short)(struct4c.chars_18.get() - 1));
     struct84._1e.set((short)(struct4c.lines_1a.get() - 1));
     struct84._18.set((short)(struct84._14.get() - struct84._1c.get() * 9 / 2));
     struct84._1a.set((short)(struct84._16.get() - struct84._1e.get() * 6));
@@ -5568,8 +5568,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028fc0
     //LAB_80028fd4
     if(
-      a1 - _800be358.get((int)a0).width_18.get() * 9 / 2 < 0xaL ||
-      a1 + _800be358.get((int)a0).width_18.get() * 9 / 2 > (int)t1 ||
+      a1 - _800be358.get((int)a0).chars_18.get() * 9 / 2 < 0xaL ||
+      a1 + _800be358.get((int)a0).chars_18.get() * 9 / 2 > (int)t1 ||
       a2 - _800be358.get((int)a0).lines_1a.get() * 6 < 0x12L ||
       a2 + _800be358.get((int)a0).lines_1a.get() * 6 > 0xdeL
     ) {
@@ -5586,9 +5586,9 @@ public final class Scus94491BpeSegment_8002 {
 
     final Struct4c struct4c = _800be358.get(0);
     struct4c._04.set((short)_80052b8c.get());
-    struct4c._14.set((short)260);
-    struct4c._16.set((short)120);
-    struct4c.width_18.set((short)6);
+    struct4c.x_14.set((short)260);
+    struct4c.y_16.set((short)120);
+    struct4c.chars_18.set((short)6);
     struct4c.lines_1a.set((short)8);
     FUN_800258a8(0);
 
@@ -5907,9 +5907,9 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029970
     final Struct4c struct = _800be358.get(a0);
     final long v1 = _800bdea0.offset(a0 * 0xcL).getAddress();
-    MEMORY.ref(2, v1).offset(0x4L).setu(struct._14.get());
+    MEMORY.ref(2, v1).offset(0x4L).setu(struct.x_14.get());
     MEMORY.ref(2, v1).offset(0x8L).setu(0);
-    MEMORY.ref(2, v1).offset(0x6L).setu(struct._16.get() + struct.lines_1a.get() * 6L);
+    MEMORY.ref(2, v1).offset(0x6L).setu(struct.y_16.get() + struct.lines_1a.get() * 6L);
   }
 
   @Method(0x800299d4L)
@@ -6003,9 +6003,9 @@ public final class Scus94491BpeSegment_8002 {
 
     final Struct4c struct4c = _800be358.get(s0);
     struct4c._04.set((short)a0.params_20.get(1).deref().get());
-    struct4c._14.set((short)a0.params_20.get(2).deref().get());
-    struct4c._16.set((short)a0.params_20.get(3).deref().get());
-    struct4c.width_18.set((short)(a0.params_20.get(4).deref().get() + 1));
+    struct4c.x_14.set((short)a0.params_20.get(2).deref().get());
+    struct4c.y_16.set((short)a0.params_20.get(3).deref().get());
+    struct4c.chars_18.set((short)(a0.params_20.get(4).deref().get() + 1));
     struct4c.lines_1a.set((short)(a0.params_20.get(5).deref().get() + 1));
     return 0;
   }
@@ -6214,7 +6214,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a32cL)
-  public static void FUN_8002a32c(final int a0, final long a1, final long a2, final long a3, final long a4, final long a5) {
+  public static void FUN_8002a32c(final int a0, final int a1, final int x, final int y, final int chars, final int lines) {
     FUN_800257e0(a0);
 
     final Struct4c struct = _800be358.get(a0);
@@ -6222,10 +6222,10 @@ public final class Scus94491BpeSegment_8002 {
     struct._06.set((short)1);
     struct._08.or(0x4L);
 
-    struct._14.set((short)a2);
-    struct._16.set((short)a3);
-    struct.width_18.set((short)(a4 + 1));
-    struct.lines_1a.set((short)(a5 + 1));
+    struct.x_14.set((short)x);
+    struct.y_16.set((short)y);
+    struct.chars_18.set((short)(chars + 1));
+    struct.lines_1a.set((short)(lines + 1));
   }
 
   @Method(0x8002a3ecL)
