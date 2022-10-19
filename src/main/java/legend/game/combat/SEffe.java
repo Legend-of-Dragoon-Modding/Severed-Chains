@@ -8766,7 +8766,9 @@ public final class SEffe {
 
   @Method(0x80115ab0L)
   public static long FUN_80115ab0(final RunningScript a0) {
-    return _800bf0cf.get() != a0.params_20.get(0).deref().get() ? 2 : 0;
+//    return _800bf0cf.get() != a0.params_20.get(0).deref().get() ? 2 : 0;
+    //TODO GH#3 the XA code is rewritten and it never sets 800bf0cf back to 0, I dunno if this is important or not
+    return 0;
   }
 
   @Method(0x80115ad8L)
