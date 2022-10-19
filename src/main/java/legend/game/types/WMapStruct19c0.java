@@ -33,7 +33,7 @@ public class WMapStruct19c0 implements MemoryRef {
 
   public final ShortRef _98;
   public final ShortRef _9a;
-  public final UnsignedShortRef _9c;
+  public final ShortRef _9c;
   public final ShortRef _9e;
   public final UnsignedShortRef _a0;
   public final VECTOR vec_a4;
@@ -90,7 +90,7 @@ public class WMapStruct19c0 implements MemoryRef {
 
     this._98 = ref.offset(2, 0x98L).cast(ShortRef::new);
     this._9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
-    this._9c = ref.offset(2, 0x9cL).cast(UnsignedShortRef::new);
+    this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
     this._9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
     this._a0 = ref.offset(2, 0xa0L).cast(UnsignedShortRef::new);
     this.vec_a4 = ref.offset(4, 0xa4L).cast(VECTOR::new);
