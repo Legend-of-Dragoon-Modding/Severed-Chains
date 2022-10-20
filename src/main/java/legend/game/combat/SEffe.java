@@ -1464,7 +1464,7 @@ public final class SEffe {
         final VECTOR sp0x20 = new VECTOR();
         FUN_800fd1dc(data, s2, s4, sp0x20);
         final long s0 = gpuPacketAddr_1f8003d8.get();
-        gpuPacketAddr_1f8003d8.addu(s0);
+        gpuPacketAddr_1f8003d8.addu(0xcL);
         MEMORY.ref(1, s0).offset(0x3L).setu(0x2L);
         MEMORY.ref(4, s0).offset(0x4L).setu(0x6880_8080L);
         MEMORY.ref(1, s0).offset(0x7L).oru(data._10._00.get() >>> 29 & 0x2L);
@@ -5019,7 +5019,7 @@ public final class SEffe {
         MEMORY.ref(1, a1).offset(0x04L).setu(0);
         MEMORY.ref(1, a1).offset(0x05L).setu(0);
         MEMORY.ref(1, a1).offset(0x06L).setu(0);
-        MEMORY.ref(4, a1).offset(0x07L).setu(0x52L);
+        MEMORY.ref(1, a1).offset(0x07L).setu(0x52L);
         MEMORY.ref(2, a1).offset(0x08L).setu(MEMORY.ref(2, s1).offset(0x06L).get() - 0x100L);
         MEMORY.ref(2, a1).offset(0x0aL).setu(MEMORY.ref(2, s1).offset(0x08L).get() - 0x80L);
         MEMORY.ref(1, a1).offset(0x0cL).setu(data._10.svec_1c.getX());

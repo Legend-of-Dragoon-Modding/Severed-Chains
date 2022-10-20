@@ -1669,6 +1669,12 @@ public class Gpu implements Runnable {
       return gpu.texturedRectangleBuilder(command, vertex, tex, size);
     }),
 
+    MONOCHROME_RECT_1X1_TRANS(0x6a, 2, (buffer, gpu) -> {
+      final int command = buffer.getInt(0);
+      final int vertex = buffer.getInt(1);
+      return gpu.untexturedRectangleBuilder(command, vertex, 0x1_0001);
+    }),
+
     TEX_RECT_16_OPAQUE_BLENDED(0x7c, 3, (buffer, gpu) -> {
       final int command = buffer.getInt(0);
       final int vertex = buffer.getInt(1);
