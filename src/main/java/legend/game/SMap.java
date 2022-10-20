@@ -1345,6 +1345,43 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800de334L)
+  public static long FUN_800de334(final RunningScript script) {
+    final SVECTOR sp0x10 = new SVECTOR();
+    get3dAverageOfSomething(script.params_20.get(0).deref().get(), sp0x10);
+    model_800c6748.coord2_14.coord.transfer.set(sp0x10);
+    final MATRIX lw = new MATRIX();
+    final MATRIX ls = new MATRIX();
+    GsGetLws(model_800c6748.coord2_14, lw, ls);
+    CPU.CTC2(ls.getPacked(0), 0);
+    CPU.CTC2(ls.getPacked(2), 1);
+    CPU.CTC2(ls.getPacked(4), 2);
+    CPU.CTC2(ls.getPacked(6), 3);
+    CPU.CTC2(ls.getPacked(8), 4);
+    CPU.CTC2(ls.transfer.getX(), 5);
+    CPU.CTC2(ls.transfer.getY(), 6);
+    CPU.CTC2(ls.transfer.getZ(), 7);
+    CPU.MTC2(0, 0);
+    CPU.MTC2(0, 1);
+    CPU.COP2(0x180001L);
+    final DVECTOR screenXy = new DVECTOR().setXY(CPU.MFC2(14));
+
+    //LAB_800de438
+    final TriangleIndicator140 struct = _800c69fc.deref();
+    for(int i = 0; i < 20; i++) {
+      if(struct._18.get(i).get() == -1) {
+        struct.x_40.get(i).set(screenXy.getX());
+        struct.y_68.get(i).set(screenXy.getY());
+        struct._18.get(i).set((short)script.params_20.get(1).deref().get());
+        getScreenOffset(struct.screenOffsetX_90.get(i), struct.screenOffsetY_e0.get(i));
+        break;
+      }
+    }
+
+    //LAB_800de49c
+    return 0;
+  }
+
   @Method(0x800de4b4L)
   public static long FUN_800de4b4(final RunningScript a0) {
     long sp68;
@@ -1387,10 +1424,10 @@ public final class SMap {
         final TriangleIndicator140 a1 = _800c69fc.deref();
 
         if(a1._18.get(i).get() == -1) {
-          a1._40.get(i).set(sp20.getX());
-          a1._68.get(i).set(sp20.getY());
+          a1.x_40.get(i).set(sp20.getX());
+          a1.y_68.get(i).set(sp20.getY());
           a1._18.get(i).set((short)ints.get(s0).get());
-          getScreenOffset(a1._90.get(i), a1._e0.get(i));
+          getScreenOffset(a1.screenOffsetX_90.get(i), a1.screenOffsetY_e0.get(i));
           break;
         }
       }
@@ -8344,10 +8381,10 @@ public final class SMap {
       PopMatrix();
 
       a0._18.get(i).set((short)ints.get(s0++).get());
-      a0._40.get(i).set((short)(sp0x68.getX() + ints.get(s0++).get()));
-      a0._68.get(i).set((short)(sp0x68.getY() + ints.get(s0++).get()));
-      a0._90.get(i).set(sp90.get());
-      a0._e0.get(i).set(sp94.get());
+      a0.x_40.get(i).set((short)(sp0x68.getX() + ints.get(s0++).get()));
+      a0.y_68.get(i).set((short)(sp0x68.getY() + ints.get(s0++).get()));
+      a0.screenOffsetX_90.get(i).set(sp90.get());
+      a0.screenOffsetY_e0.get(i).set(sp94.get());
     }
 
     sp0x18tmp.release();
@@ -8387,9 +8424,9 @@ public final class SMap {
 
       if(a1._18.get(i).get() == -1) {
         a1._18.get(i).set((short)script.params_20.get(1).deref().get());
-        a1._40.get(i).set((short)(sp0x18.getX() + script.params_20.get(2).deref().get()));
-        a1._68.get(i).set((short)(sp0x18.getY() + script.params_20.get(3).deref().get()));
-        getScreenOffset(a1._90.get(i), a1._e0.get(i));
+        a1.x_40.get(i).set((short)(sp0x18.getX() + script.params_20.get(2).deref().get()));
+        a1.y_68.get(i).set((short)(sp0x18.getY() + script.params_20.get(3).deref().get()));
+        getScreenOffset(a1.screenOffsetX_90.get(i), a1.screenOffsetY_e0.get(i));
         break;
       }
     }
@@ -8534,10 +8571,10 @@ public final class SMap {
     final UnboundedArrayRef<IntRef> a0 = script.params_20.get(0).deref().reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
     for(int a1 = 0; a0.get(i).get() != -1; a1++) {
       v1._18.get(a1).set((short)a0.get(i++).get());
-      v1._40.get(a1).set((short)(a0.get(i++).get() + x));
-      v1._68.get(a1).set((short)(a0.get(i++).get() + y));
-      v1._90.get(a1).set(x);
-      v1._e0.get(a1).set(y);
+      v1.x_40.get(a1).set((short)(a0.get(i++).get() + x));
+      v1.y_68.get(a1).set((short)(a0.get(i++).get() + y));
+      v1.screenOffsetX_90.get(a1).set(x);
+      v1.screenOffsetY_e0.get(a1).set(y);
     }
 
     //LAB_800f26b4
@@ -8906,8 +8943,8 @@ public final class SMap {
           break;
         }
 
-        s1.x_34.set(s5.screenOffsetX_10.get() - s5._90.get(indicatorIndex - 1).get() + s5._40.get(indicatorIndex - 1).get() -  2);
-        s1.y_38.set(s5.screenOffsetY_14.get() - s5._e0.get(indicatorIndex - 1).get() + s5._68.get(indicatorIndex - 1).get() - 32);
+        s1.x_34.set(s5.screenOffsetX_10.get() - s5.screenOffsetX_90.get(indicatorIndex - 1).get() + s5.x_40.get(indicatorIndex - 1).get() -  2);
+        s1.y_38.set(s5.screenOffsetY_14.get() - s5.screenOffsetY_e0.get(indicatorIndex - 1).get() + s5.y_68.get(indicatorIndex - 1).get() - 32);
 
         anm = doorIndicatorAnimation_800d5590.anm_00.deref();
         spriteGroups = anm.getSpriteGroups();

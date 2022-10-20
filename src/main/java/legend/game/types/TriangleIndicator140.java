@@ -14,10 +14,10 @@ public class TriangleIndicator140 implements MemoryRef {
   public final IntRef screenOffsetX_10;
   public final IntRef screenOffsetY_14;
   public final ArrayRef<ShortRef> _18;
-  public final ArrayRef<ShortRef> _40;
-  public final ArrayRef<ShortRef> _68;
-  public final ArrayRef<IntRef> _90;
-  public final ArrayRef<IntRef> _e0;
+  public final ArrayRef<ShortRef> x_40;
+  public final ArrayRef<ShortRef> y_68;
+  public final ArrayRef<IntRef> screenOffsetX_90;
+  public final ArrayRef<IntRef> screenOffsetY_e0;
 
   public TriangleIndicator140(final Value ref) {
     this.ref = ref;
@@ -27,10 +27,10 @@ public class TriangleIndicator140 implements MemoryRef {
     this.screenOffsetX_10 = ref.offset(4, 0x10L).cast(IntRef::new);
     this.screenOffsetY_14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(2, 0x18L).cast(ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
-    this._40 = ref.offset(2, 0x40L).cast(ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
-    this._68 = ref.offset(2, 0x68L).cast(ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
-    this._90 = ref.offset(4, 0x90L).cast(ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
-    this._e0 = ref.offset(4, 0xe0L).cast(ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
+    this.x_40 = ref.offset(2, 0x40L).cast(ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
+    this.y_68 = ref.offset(2, 0x68L).cast(ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
+    this.screenOffsetX_90 = ref.offset(4, 0x90L).cast(ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
+    this.screenOffsetY_e0 = ref.offset(4, 0xe0L).cast(ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
   }
 
   @Override
