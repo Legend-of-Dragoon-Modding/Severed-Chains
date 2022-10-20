@@ -37,7 +37,7 @@ jobs:
       with:
         type: 'zip'
         filename: 'snapshot.zip'
-        path: 'build/libs'
+        directory: 'build/libs'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
