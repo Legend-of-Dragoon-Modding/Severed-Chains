@@ -116,7 +116,7 @@ public class Voice implements MemoryRef {
     try {
       System.arraycopy(ram, this.currentAddress * 8, this.spuAdpcm, 0, 16);
     } catch(final ArrayIndexOutOfBoundsException e) {
-      LOGGER.warn("SPU voice %d overflow", this.voiceIndex);
+//      LOGGER.warn("SPU voice %d overflow", this.voiceIndex);
       this.currentAddress = 0;
     }
 

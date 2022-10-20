@@ -30,7 +30,7 @@ public class Renderable58 implements MemoryRef {
   public final UnsignedIntRef clut_30;
   public final UnsignedIntRef _34;
   public final UnsignedIntRef _38;
-  public final UnsignedByteRef _3c;
+  public final UnsignedByteRef z_3c;
   public final IntRef x_40;
   public final IntRef y_44;
   public final UnsignedIntRef _48;
@@ -55,7 +55,7 @@ public class Renderable58 implements MemoryRef {
     this.clut_30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
     this._34 = ref.offset(4, 0x34L).cast(UnsignedIntRef::new);
     this._38 = ref.offset(4, 0x38L).cast(UnsignedIntRef::new);
-    this._3c = ref.offset(1, 0x3cL).cast(UnsignedByteRef::new);
+    this.z_3c = ref.offset(1, 0x3cL).cast(UnsignedByteRef::new);
     this.x_40 = ref.offset(4, 0x40L).cast(IntRef::new);
     this.y_44 = ref.offset(4, 0x44L).cast(IntRef::new);
     this._48 = ref.offset(4, 0x48L).cast(UnsignedIntRef::new);

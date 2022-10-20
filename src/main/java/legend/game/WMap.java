@@ -5432,8 +5432,6 @@ public class WMap {
     final SVECTOR sp0x48 = new SVECTOR();
     final SVECTOR sp0x50 = new SVECTOR();
     final SVECTOR sp0x58 = new SVECTOR();
-    final Ref<Long> sp0x64 = new Ref<>();
-    final Ref<Long> sp0x68 = new Ref<>();
 
     GsGetLs(struct258_800c66a8.deref().models_0c.get(struct258_800c66a8.deref().modelIndex_1e4.get()).deref().coord2_14, sp0x28);
     setRotTransMatrix(sp0x28);
@@ -5448,37 +5446,35 @@ public class WMap {
       final long sp74 = gpuPacketAddr_1f8003d8.get();
       gpuPacketAddr_1f8003d8.addu(0x8L);
 
-      MEMORY.ref(1, sp74).offset(0x3L).setu(0x1L);
-      MEMORY.ref(4, sp74).offset(0x4L).setu(0xe100_0000L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ffL);
-      MEMORY.ref(1, sp70).offset(0x4L).setu(0x80L);
-      MEMORY.ref(1, sp70).offset(0x5L).setu(0x80L);
-      MEMORY.ref(1, sp70).offset(0x6L).setu(0x80L);
-      MEMORY.ref(1, sp70).offset(0xcL).setu(0);
-      MEMORY.ref(1, sp70).offset(0xdL).setu(0);
-      MEMORY.ref(1, sp70).offset(0xeL).setu(0);
+      MEMORY.ref(1, sp74).offset(0x03L).setu(0x1L);
+      MEMORY.ref(4, sp74).offset(0x04L).setu(0xe100_0000L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ffL);
+      MEMORY.ref(1, sp70).offset(0x04L).setu(0x80L);
+      MEMORY.ref(1, sp70).offset(0x05L).setu(0x80L);
+      MEMORY.ref(1, sp70).offset(0x06L).setu(0x80L);
+      MEMORY.ref(1, sp70).offset(0x0cL).setu(0);
+      MEMORY.ref(1, sp70).offset(0x0dL).setu(0);
+      MEMORY.ref(1, sp70).offset(0x0eL).setu(0);
       MEMORY.ref(1, sp70).offset(0x14L).setu(0);
       MEMORY.ref(1, sp70).offset(0x15L).setu(0);
       MEMORY.ref(1, sp70).offset(0x16L).setu(0);
 
-      //TODO
-      final long v0 = 0x800c_0000L;
       sp0x50.set(
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c4L).offset(i * 0x4L).get(),
+        struct258_800c66a8.deref()._1c4.get(i * 2).get(),
         (short)0,
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c6L).offset(i * 0x4L).get()
+        struct258_800c66a8.deref()._1c4.get(i * 2 + 1).get()
       );
 
       sp0x58.set(
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c4L).offset((i + 1 & 0x7L) * 0x4L).get(),
+        struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2).get(),
         (short)0,
-        (short)MEMORY.ref(4, v0).offset(0x66a8L).deref(2).offset(0x1c6L).offset((i + 1 & 0x7L) * 0x4L).get()
+        struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2 + 1).get()
       );
 
-      final long sp6c = FUN_8003f930(sp0x48, sp0x50, sp0x58, MEMORY.ref(2, sp70 + 0x8L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x10L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x18L, DVECTOR::new), sp0x68, sp0x64);
+      final int z = FUN_8003f930(sp0x48, sp0x50, sp0x58, MEMORY.ref(2, sp70 + 0x8L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x10L, DVECTOR::new), MEMORY.ref(2, sp70 + 0x18L, DVECTOR::new), null, null);
 
-      if(sp6c >= 0x3L && sp6c < orderingTableSize_1f8003c8.get()) {
-        queueGpuPacket(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp70);
-        queueGpuPacket(tags_1f8003d0.deref().get((int)sp6c).get() + 0x138L, sp74);
+      if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
+        queueGpuPacket(tags_1f8003d0.deref().get(78 + z).getAddress(), sp70);
+        queueGpuPacket(tags_1f8003d0.deref().get(78 + z).getAddress(), sp74);
       }
 
       //LAB_800e1a98

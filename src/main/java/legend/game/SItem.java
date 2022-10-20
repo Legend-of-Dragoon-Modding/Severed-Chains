@@ -1134,7 +1134,7 @@ public final class SItem {
           if(selectedMenuOptionRenderablePtr_800bdbe4.isNull()) {
             selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x74, 0x74, FUN_800fc7bc(0) - 34, menuOptionY(0) - 2));
             FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
-            selectedMenuOptionRenderablePtr_800bdbe4.deref()._3c.set(0x20);
+            selectedMenuOptionRenderablePtr_800bdbe4.deref().z_3c.set(0x20);
           }
 
           //LAB_800fd100
@@ -2675,7 +2675,7 @@ public final class SItem {
 
         if(renderablePtr_800bdbec.isNull()) {
           renderablePtr_800bdbec.set(allocateUiElement(0xd3, 0xd3, 68, 80));
-          renderablePtr_800bdbec.deref()._3c.set(0x1f);
+          renderablePtr_800bdbec.deref().z_3c.set(0x1f);
         }
 
         //LAB_80101380
@@ -2690,7 +2690,7 @@ public final class SItem {
 
         unloadRenderable(renderablePtr_800bdbec.deref());
         renderablePtr_800bdbec.set(allocateUiElement(0xd3, 0xd9, 68, 80));
-        renderablePtr_800bdbec.deref()._3c.set(0x1f);
+        renderablePtr_800bdbec.deref().z_3c.set(0x1f);
         inventoryMenuState_800bdc28.set(InventoryMenuState._107);
 
         //LAB_8010157c
@@ -2708,7 +2708,7 @@ public final class SItem {
           gameState_800babc8.gold_94.add(dabasGold_8011dd08.get());
           unloadRenderable(renderablePtr_800bdbec.deref());
           renderablePtr_800bdbec.set(allocateUiElement(0xd3, 0xd3, 68, 80));
-          renderablePtr_800bdbec.deref()._3c.set(0x1f);
+          renderablePtr_800bdbec.deref().z_3c.set(0x1f);
           inventoryMenuState_800bdc28.set(InventoryMenuState._108);
         } else {
           dabasGold_8011dd08.sub(10);
@@ -3281,7 +3281,7 @@ public final class SItem {
     a0._28.set(0x1);
     a0._38.set(0);
     a0._34.set(0);
-    a0._3c.set(0x1f);
+    a0.z_3c.set(0x1f);
   }
 
   @Method(0x801033e8L)
@@ -4104,7 +4104,7 @@ public final class SItem {
     a0._28.set(0x1);
     a0._34.set(0);
     a0._38.set(0);
-    a0._3c.set(0x23);
+    a0.z_3c.set(0x23);
   }
 
   @Method(0x80104b7cL)
@@ -4176,7 +4176,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(clut);
-      renderable._3c.set(0x21);
+      renderable.z_3c.set(0x21);
       renderable.x_40.set(x);
       renderable.y_44.set(y);
       flags |= 0x1L;
@@ -4193,7 +4193,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(clut);
-      renderable._3c.set(0x21);
+      renderable.z_3c.set(0x21);
       renderable.x_40.set(x + 6);
       renderable.y_44.set(y);
     }
@@ -4207,7 +4207,7 @@ public final class SItem {
     renderable.glyph_04.set(s0);
     renderable.tpage_2c.set(0x19L);
     renderable.clut_30.set(clut);
-    renderable._3c.set(0x21);
+    renderable.z_3c.set(0x21);
     renderable.x_40.set(x + 12);
     renderable.y_44.set(y);
     return clut;
@@ -4255,7 +4255,7 @@ public final class SItem {
       renderable.x_40.set(x);
       renderable.y_44.set(y);
       renderable.clut_30.set(clut);
-      renderable._3c.set(0x21);
+      renderable.z_3c.set(0x21);
       flags |= 0x1L;
     }
 
@@ -4273,7 +4273,7 @@ public final class SItem {
       renderable.x_40.set(x + 6);
       renderable.y_44.set(y);
       renderable.clut_30.set(clut);
-      renderable._3c.set(0x21);
+      renderable.z_3c.set(0x21);
       flags |= 0x1L;
     }
 
@@ -4291,7 +4291,7 @@ public final class SItem {
       renderable.x_40.set(x + 12);
       renderable.y_44.set(y);
       renderable.clut_30.set(clut);
-      renderable._3c.set(0x21);
+      renderable.z_3c.set(0x21);
     }
 
     //LAB_80105978
@@ -4306,7 +4306,7 @@ public final class SItem {
     renderable.x_40.set(x + 18);
     renderable.y_44.set(y);
     renderable.clut_30.set(clut);
-    renderable._3c.set(0x21);
+    renderable.z_3c.set(0x21);
   }
 
   @Method(0x80105a50L)
@@ -4327,7 +4327,7 @@ public final class SItem {
       struct.flags_00.or(0x4L);
       struct.tpage_2c.set(0x19L);
       struct.clut_30.set(0);
-      struct._3c.set(0x21);
+      struct.z_3c.set(0x21);
       struct.x_40.set(x);
       struct.y_44.set(y);
       flags |= 0x1L;
@@ -4344,7 +4344,7 @@ public final class SItem {
       struct.flags_00.or(0x4L);
       struct.tpage_2c.set(0x19L);
       struct.clut_30.set(0);
-      struct._3c.set(0x21);
+      struct.z_3c.set(0x21);
       struct.x_40.set(x + 6);
       struct.y_44.set(y);
       flags |= 0x1L;
@@ -4361,7 +4361,7 @@ public final class SItem {
       struct.flags_00.or(0x4L);
       struct.tpage_2c.set(0x19L);
       struct.clut_30.set(0);
-      struct._3c.set(0x21);
+      struct.z_3c.set(0x21);
       struct.x_40.set(x + 12);
       struct.y_44.set(y);
       flags |= 0x1L;
@@ -4378,7 +4378,7 @@ public final class SItem {
       struct.flags_00.or(0x4L);
       struct.tpage_2c.set(0x19L);
       struct.clut_30.set(0);
-      struct._3c.set(0x21);
+      struct.z_3c.set(0x21);
       struct.x_40.set(x + 18);
       struct.y_44.set(y);
       flags |= 0x1L;
@@ -4395,7 +4395,7 @@ public final class SItem {
       struct.flags_00.or(0x4L);
       struct.tpage_2c.set(0x19L);
       struct.clut_30.set(0);
-      struct._3c.set(0x21);
+      struct.z_3c.set(0x21);
       struct.x_40.set(x + 24);
       struct.y_44.set(y);
     }
@@ -4409,7 +4409,7 @@ public final class SItem {
     struct.flags_00.or(0x4L);
     struct.tpage_2c.set(0x19L);
     struct.clut_30.set(0);
-    struct._3c.set(0x21);
+    struct.z_3c.set(0x21);
     struct.x_40.set(x + 30);
     struct.y_44.set(y);
   }
@@ -4442,7 +4442,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4457,7 +4457,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 6);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4472,7 +4472,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 12);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4487,7 +4487,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 18);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4502,7 +4502,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 24);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4517,7 +4517,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 30);
       renderable.y_44.set(y);
       sp10 |= 0x1L;
@@ -4532,7 +4532,7 @@ public final class SItem {
       renderable.glyph_04.set(s0);
       renderable.tpage_2c.set(0x19L);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       renderable.x_40.set(x + 36);
       renderable.y_44.set(y);
     }
@@ -4544,7 +4544,7 @@ public final class SItem {
     renderable.glyph_04.set(value % 10);
     renderable.tpage_2c.set(0x19L);
     renderable.clut_30.set(0);
-    renderable._3c.set(0x1f);
+    renderable.z_3c.set(0x1f);
     renderable.x_40.set(x + 42);
     renderable.y_44.set(y);
   }
@@ -4563,7 +4563,7 @@ public final class SItem {
       renderable.x_40.set(x);
       renderable.y_44.set(y);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       sp10 |= 0x1L;
     }
 
@@ -4578,7 +4578,7 @@ public final class SItem {
       renderable.x_40.set(x + 6);
       renderable.y_44.set(y);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
       sp10 |= 0x1L;
     }
 
@@ -4593,7 +4593,7 @@ public final class SItem {
       renderable.x_40.set(x + 12);
       renderable.y_44.set(y);
       renderable.clut_30.set(0);
-      renderable._3c.set(0x1f);
+      renderable.z_3c.set(0x1f);
     }
 
     //LAB_80107690
@@ -4604,7 +4604,7 @@ public final class SItem {
     renderable.x_40.set(x + 18);
     renderable.y_44.set(y);
     renderable.clut_30.set(0);
-    renderable._3c.set(0x1f);
+    renderable.z_3c.set(0x1f);
   }
 
   /**
@@ -4624,7 +4624,7 @@ public final class SItem {
         struct.glyph_04.set(digit);
         struct.tpage_2c.set(0x19L);
         struct.clut_30.set(0);
-        struct._3c.set(0x21);
+        struct.z_3c.set(0x21);
         struct.x_40.set(x + 6 * i);
         struct.y_44.set(y);
         flags |= 0x1L;
@@ -4711,7 +4711,7 @@ public final class SItem {
     v0.glyph_04.set(character);
     v0.tpage_2c.set(0x19L);
     v0.clut_30.set(0x7ca9L);
-    v0._3c.set(0x21);
+    v0.z_3c.set(0x21);
     v0.x_40.set(x);
     v0.y_44.set(y);
   }
@@ -4724,7 +4724,7 @@ public final class SItem {
     v0.glyph_04.set(0xc);
     v0.tpage_2c.set(0x19L);
     v0.clut_30.set(clut);
-    v0._3c.set(0x21);
+    v0.z_3c.set(0x21);
     v0.x_40.set(x + 20);
     v0.y_44.set(y);
   }
@@ -4740,7 +4740,7 @@ public final class SItem {
       v0.glyph_04.set(218);
       v0.tpage_2c.set(0x19L);
       v0.clut_30.set(0x7ca9L);
-      v0._3c.set(0x21);
+      v0.z_3c.set(0x21);
       v0.x_40.set(x + 30);
       v0.y_44.set(y);
     }
@@ -4810,7 +4810,7 @@ public final class SItem {
   public static void renderCharacterSlot(final int x, final int y, final int charIndex, final long a3, final long a4) {
     if(charIndex != -1) {
       if(a3 != 0) {
-        allocateUiElement( 74,  74, x, y)._3c.set(0x21);
+        allocateUiElement( 74,  74, x, y).z_3c.set(0x21);
         allocateUiElement(153, 153, x, y);
 
         if(charIndex < 9) {
@@ -4818,7 +4818,7 @@ public final class SItem {
           initGlyph(struct, glyph_801142d4);
           struct.glyph_04.set(charIndex);
           struct.tpage_2c.add(0x1L);
-          struct._3c.set(0x21);
+          struct.z_3c.set(0x21);
           struct.x_40.set(x + 8);
           struct.y_44.set(y + 8);
         }
@@ -4840,7 +4840,7 @@ public final class SItem {
 
         if(a4 != 0) {
           final Renderable58 struct = allocateUiElement(113, 113, x + 56, y + 24);
-          struct._3c.set(0x21);
+          struct.z_3c.set(0x21);
         }
       }
 
@@ -4862,17 +4862,17 @@ public final class SItem {
           initGlyph(renderable, glyph_801142d4);
           renderable.glyph_04.set(charIndex);
           renderable.tpage_2c.add(0x1L);
-          renderable._3c.set(0x21);
+          renderable.z_3c.set(0x21);
           renderable.x_40.set(x + 2);
           renderable.y_44.set(y + 8);
         }
 
         //LAB_8010834c
-        allocateUiElement(0x50, 0x50, x, y)._3c.set(0x21);
+        allocateUiElement(0x50, 0x50, x, y).z_3c.set(0x21);
         allocateUiElement(0x9c, 0x9c, x, y);
 
         if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2L) == 0) {
-          allocateUiElement(0x72, 0x72, x, y + 24)._3c.set(0x21);
+          allocateUiElement(0x72, 0x72, x, y + 24).z_3c.set(0x21);
         }
 
         //LAB_801083c4
@@ -4893,14 +4893,14 @@ public final class SItem {
       FUN_80107e70(x - 4, y - 6, charIndex);
 
       if(a4 != 0) {
-        allocateUiElement(112, 112, x, y)._3c.set(0x21);
+        allocateUiElement(112, 112, x, y).z_3c.set(0x21);
 
         if(charIndex < 9) {
           final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
           initGlyph(renderable, glyph_801142d4);
           renderable.glyph_04.set(charIndex);
           renderable.tpage_2c.add(0x1L);
-          renderable._3c.set(0x21);
+          renderable.z_3c.set(0x21);
           renderable.x_40.set(x + 2);
           renderable.y_44.set(y + 8);
         }
@@ -5033,8 +5033,8 @@ public final class SItem {
     renderCentredText(locationNames.get(saveData.locationIndex).deref(), 278, y + 47, 0x4L); // Location text
 
     if((a3 & 0xffL) != 0) {
-      allocateUiElement(0x4c, 0x4c,  16, y)._3c.set(0x21); // Left half of border
-      allocateUiElement(0x4d, 0x4d, 192, y)._3c.set(0x21); // Right half of border
+      allocateUiElement(0x4c, 0x4c,  16, y).z_3c.set(0x21); // Left half of border
+      allocateUiElement(0x4d, 0x4d, 192, y).z_3c.set(0x21); // Right half of border
 
       // Load char 0
       if(saveData.char0Index >= 0 && saveData.char0Index < 9) {
@@ -5042,7 +5042,7 @@ public final class SItem {
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04.set(saveData.char0Index);
         struct.tpage_2c.add(0x1L);
-        struct._3c.set(0x21);
+        struct.z_3c.set(0x21);
         struct.x_40.set(38);
         struct.y_44.set(y + 8);
       }
@@ -5054,7 +5054,7 @@ public final class SItem {
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04.set(saveData.char1Index);
         struct.tpage_2c.add(0x1L);
-        struct._3c.set(0x21);
+        struct.z_3c.set(0x21);
         struct.x_40.set(90);
         struct.y_44.set(y + 8);
       }
@@ -5066,7 +5066,7 @@ public final class SItem {
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04.set(saveData.char2Index);
         struct.tpage_2c.add(0x1L);
-        struct._3c.set(0x21);
+        struct.z_3c.set(0x21);
         struct.x_40.set(142);
         struct.y_44.set(y + 8);
       }
@@ -5345,7 +5345,7 @@ public final class SItem {
     initGlyph(s0, glyph_801142d4);
     s0.tpage_2c.add(0x1L);
     s0.glyph_04.set(glyph);
-    s0._3c.set(0x21);
+    s0.z_3c.set(0x21);
     s0.x_40.set(x);
     s0.y_44.set(y);
 
@@ -5381,7 +5381,7 @@ public final class SItem {
         initGlyph(struct, glyph);
         sp0x10tmp.release();
 
-        struct._3c.set(0x21);
+        struct.z_3c.set(0x21);
       }
 
       //LAB_801099a0
@@ -7028,7 +7028,7 @@ public final class SItem {
 
     final int glyph = (int)_800fbc9c.offset(charSlot).getSigned();
     final Renderable58 renderable = FUN_8010cfa0(glyph, glyph, x, y, 704, (int)_800fbc88.offset(charSlot * 0x2L).getSigned());
-    renderable._3c.set(0x23);
+    renderable.z_3c.set(0x23);
 
     //LAB_8010e1f0
     return renderable;
@@ -7251,7 +7251,7 @@ public final class SItem {
         menu._0c.set(0x2);
         menu.renderable_04.clear();
         menu.renderable_08.set(allocateUiElement(149, 142, menu.x_1c.get() - 50, menu.y_1e.get() - 10));
-        menu.renderable_08.deref()._3c.set(0x20);
+        menu.renderable_08.deref().z_3c.set(0x20);
         menu.renderable_08.deref()._18.set(142);
         msgboxResult_8011e1e8.set(MessageBoxResult.AWAITING_INPUT);
 
@@ -7330,7 +7330,7 @@ public final class SItem {
             menu.renderable_04.set(renderable);
             renderable._38.set(0);
             renderable._34.set(0);
-            menu.renderable_04.deref()._3c.set(0x20);
+            menu.renderable_04.deref().z_3c.set(0x20);
           }
 
           //LAB_8010ef64
@@ -7369,7 +7369,7 @@ public final class SItem {
         unloadRenderable(menu.renderable_08.deref());
         renderable = allocateUiElement(0x8e, 0x95, menu.x_1c.get() - 50, menu.y_1e.get() - 10);
         menu.renderable_08.set(renderable);
-        renderable._3c.set(0x20);
+        renderable.z_3c.set(0x20);
         menu.renderable_08.deref().flags_00.or(0x10L);
         break;
 

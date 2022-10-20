@@ -186,13 +186,10 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));
-  public static final Value _8005a2ac = MEMORY.ref(4, 0x8005a2acL);
-  public static final Value _8005a2b0 = MEMORY.ref(4, 0x8005a2b0L);
-
   public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
 
   public static final ArrayRef<GsOT> orderingTables_8005a370 = MEMORY.ref(4, 0x8005a370L, ArrayRef.of(GsOT.class, 2, 0x14, GsOT::new));
-  public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> _8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
+  public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> orderingTableTags_8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
 
   public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
 
