@@ -12,9 +12,11 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
@@ -77,7 +79,7 @@ public final class Scus94491BpeSegment_800c {
   /** Incremented with each frame - overflows to 1 */
   public static final Value PSDCNT_800c34d0 = MEMORY.ref(4, 0x800c34d0L);
   /** Double buffer index */
-  public static final Value PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L);
+  public static final UnsignedShortRef PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L, UnsignedShortRef::new);
   public static final EnumRef<GsOffsetType> doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L, EnumRef.of(GsOffsetType::getValue, GsOffsetType.values()));
   public static final Value _800c34d8 = MEMORY.ref(4, 0x800c34d8L);
   public static final Value lightMode_800c34dc = MEMORY.ref(4, 0x800c34dcL);
@@ -133,7 +135,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value sceaLogoTextureLoaded_800c672c = MEMORY.ref(4, 0x800c672cL);
   public static final Value sceaLogoDisplayTime_800c6730 = MEMORY.ref(4, 0x800c6730L);
-  public static final Value sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L);
+  public static final IntRef sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L, IntRef::new);
 
   public static final Value _800c6740 = MEMORY.ref(1, 0x800c6740L);
 

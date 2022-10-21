@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.MemoryHelper;
 import legend.core.cdrom.FileLoadingInfo;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.BVEC4;
@@ -69,9 +70,8 @@ import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -81,7 +81,6 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003ee;
@@ -91,13 +90,14 @@ import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getDrgnFilePos;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -109,12 +109,12 @@ import static legend.game.Scus94491BpeSegment.setScriptRenderer;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.checkForPsychBombX;
+import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -241,20 +241,20 @@ import static legend.game.combat.Bttl_800d.FUN_800de36c;
 import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800d.unpackCtmdData;
-import static legend.game.combat.Bttl_800f.renderTextBoxBackground;
 import static legend.game.combat.Bttl_800f.FUN_800f1550;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
-import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.FUN_800f4964;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
-import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f83c8;
-import static legend.game.combat.Bttl_800f.getTargetEnemyName;
-import static legend.game.combat.Bttl_800f.getTargetEnemyElement;
-import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
+import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
+import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
+import static legend.game.combat.Bttl_800f.drawUiTextureElement;
+import static legend.game.combat.Bttl_800f.getTargetEnemyElement;
+import static legend.game.combat.Bttl_800f.getTargetEnemyName;
+import static legend.game.combat.Bttl_800f.renderTextBoxBackground;
 import static legend.game.combat.SBtld.enemyNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.FUN_80114f3c;
@@ -271,7 +271,7 @@ public final class Bttl_800e {
 
     primitives += 0x4L;
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
 
@@ -499,7 +499,7 @@ public final class Bttl_800e {
             MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(22));
             MEMORY.ref(1, packet).offset(0x0bL).setu(fp);
 
-            final GsOT_TAG tag = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref().get(z);
+            final GsOT_TAG tag = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref().get(z);
             MEMORY.ref(4, packet).offset(0x0L).setu(0x700_0000L | tag.p.get());
             tag.set(packet & 0xff_ffffL);
             packet += 0x20L;
@@ -523,7 +523,7 @@ public final class Bttl_800e {
     long packet = gpuPacketAddr_1f8003d8.get();
     final long a1 = _1f8003ee.get();
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
 
     primitives += 0x4L;
@@ -660,7 +660,7 @@ public final class Bttl_800e {
   /** LSC 3 VERTEX GOURAUD TEXTURED */
   @Method(0x800e121cL)
   public static long FUN_800e121c(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     long packet = gpuPacketAddr_1f8003d8.get();
     final long sp38 = _1f8003ee.get();
@@ -783,7 +783,7 @@ public final class Bttl_800e {
 
     primitives += 0x4L;
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
 
@@ -1008,7 +1008,7 @@ public final class Bttl_800e {
 
             MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(22));
             MEMORY.ref(4, packet).offset(0x4L).setu(0xe100_0200L | _1f8003ec.getSigned());
-            final GsOT_TAG tag = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref().get(z);
+            final GsOT_TAG tag = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref().get(z);
             MEMORY.ref(4, packet).offset(0x0L).setu(0x600_0000L | tag.p.get());
             MEMORY.ref(4, packet).offset(0x0L).setu(0x700_0000L | tag.p.get());
             tag.set(packet & 0xff_ffffL);
@@ -1036,7 +1036,7 @@ public final class Bttl_800e {
     primitives += 0x4L;
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -1147,7 +1147,7 @@ public final class Bttl_800e {
   /** NLSC 3 VERTEX GRADATION TEXTURED */
   @Method(0x800e2620L)
   public static long FUN_800e2620(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     long packet = gpuPacketAddr_1f8003d8.get();
     final long sp50 = _1f8003ee.get();
@@ -1253,7 +1253,7 @@ public final class Bttl_800e {
     primitives += 0x4L;
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x20);
     final Value unpacked = tmp.get();
@@ -1392,7 +1392,7 @@ public final class Bttl_800e {
     primitives += 0x4L;
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x18);
     final Value unpacked = tmp.get();
@@ -1509,7 +1509,7 @@ public final class Bttl_800e {
     primitives += 0x4L;
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -1627,7 +1627,7 @@ public final class Bttl_800e {
     primitives += 0x4L;
 
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -1768,7 +1768,7 @@ public final class Bttl_800e {
   public static long FUN_800e3f88(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
     final long t4 = _1f8003ee.get();
 
     //LAB_800e4008
@@ -1836,7 +1836,7 @@ public final class Bttl_800e {
   public static long FUN_800e4184(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
     final long a0 = _1f8003ee.get();
 
     //LAB_800e41e0
@@ -1910,7 +1910,7 @@ public final class Bttl_800e {
   public static long FUN_800e43a8(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
 
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
     final long t8 = _1f8003ec.getSigned() << 16;
 
     MEMORY.ref(1, packet).offset(0x3L).setu(0x9L);
@@ -4077,7 +4077,7 @@ public final class Bttl_800e {
     effect.ptr_0c.set(v0 + MEMORY.ref(4, v0).offset(0x14L).get());
     final long v1 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
     effect._134.set(effect._10);
-    final long tpage = GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, (int)MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
+    final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, (int)MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
     final Model124 model = effect._134.deref();
     model.ub_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
     FUN_800ddac8(model, effect.ptr_08.get());

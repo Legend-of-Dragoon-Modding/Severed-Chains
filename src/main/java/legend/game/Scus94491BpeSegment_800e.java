@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.cdrom.CdlFILE;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.Tmd;
@@ -18,10 +19,9 @@ import legend.game.combat.SEffe;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -898,8 +898,8 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e60d8L)
   public static void FUN_800e60d8() {
-    for(final TexPageBpp bpp : TexPageBpp.values()) {
-      for(final TexPageTrans trans : TexPageTrans.values()) {
+    for(final Bpp bpp : Bpp.values()) {
+      for(final Translucency trans : Translucency.values()) {
         texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_0).set(GetTPage(bpp, trans, 0, 0));
         texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_256).set(GetTPage(bpp, trans, 0, 256));
       }
@@ -925,7 +925,7 @@ public final class Scus94491BpeSegment_800e {
 //    sceaLogoAlpha_800c6734.addu(0x3L);
 
 //    if(sceaLogoAlpha_800c6734.get() > 0x80L) {
-      sceaLogoAlpha_800c6734.setu(0x80L);
+      sceaLogoAlpha_800c6734.set(0x80);
       pregameLoadingStage_800bb10c.addu(0x1L);
 //    }
   }
@@ -954,7 +954,7 @@ public final class Scus94491BpeSegment_800e {
     sceaLogoTextureLoaded_800c672c.setu(0x1L);
     sceaLogoDisplayTime_800c6730.setu(VSync(-1));
     pregameLoadingStage_800bb10c.addu(0x1L);
-    sceaLogoAlpha_800c6734.setu(0);
+    sceaLogoAlpha_800c6734.set(0);
   }
 
   @Method(0x800e6328L)
@@ -1022,7 +1022,7 @@ public final class Scus94491BpeSegment_800e {
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
     LoadImage(imageRect, header.getImageAddress());
 
-    _800bb348.setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
+    _800bb348.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
 
     if(header.hasClut()) {
       final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);

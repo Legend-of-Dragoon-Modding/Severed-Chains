@@ -20,6 +20,7 @@ import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -43,6 +44,7 @@ import java.util.function.BiFunction;
 import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.colour24To15;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
@@ -101,7 +103,7 @@ public class Gpu implements Runnable {
   private int displayRangeX2;
   private int displayRangeY1;
   private int displayRangeY2;
-  private final legend.core.gpu.RECT drawingArea = new legend.core.gpu.RECT();
+  public final RECT drawingArea = new RECT();
   private short offsetX;
   private short offsetY;
   private boolean texturedRectXFlip;
@@ -110,10 +112,10 @@ public class Gpu implements Runnable {
   private int textureWindowMaskY;
   private int textureWindowOffsetX;
   private int textureWindowOffsetY;
-  private int preMaskX;
-  private int preMaskY;
-  private int postMaskX;
-  private int postMaskY;
+  public int preMaskX;
+  public int preMaskY;
+  public int postMaskX;
+  public int postMaskY;
 
   @Nullable
   private Gp0CommandBuffer currentCommand;
@@ -123,6 +125,9 @@ public class Gpu implements Runnable {
   private final int verticalTiming = 263;
   private int scanLine;
   private boolean isOddLine;
+
+  private int zMax;
+  private LinkedList<GpuCommand>[] zQueues;
 
   public Gpu(final Memory memory) {
     memory.addSegment(new GpuSegment(0x1f80_1810L));
@@ -249,6 +254,10 @@ public class Gpu implements Runnable {
     LOGGER.trace("GPU linked list uploaded");
 
     return this.tagsUploaded;
+  }
+
+  public void queueCommand(final int z, final GpuCommand command) {
+    this.zQueues[z].addFirst(command);
   }
 
   private void queueGp0Command(final int command) throws InvalidGp0CommandException {
@@ -507,7 +516,26 @@ public class Gpu implements Runnable {
     this.lastFrame = System.nanoTime();
 
     this.ctx.onDraw(() -> {
+      if(this.zMax != orderingTableSize_1f8003c8.get()) {
+        this.zMax = orderingTableSize_1f8003c8.get();
+        this.zQueues = new LinkedList[this.zMax];
+        Arrays.setAll(this.zQueues, key -> new LinkedList<>());
+      }
+
       this.r.run();
+
+      if(this.zQueues != null) {
+        synchronized(this.commandQueue) {
+          for(final LinkedList<GpuCommand> commandList : this.zQueues) {
+            for(final GpuCommand command : commandList) {
+              this.commandQueue.add(() -> command.render(this));
+            }
+
+            commandList.clear();
+          }
+        }
+      }
+
       this.tick();
       this.guiManager.draw(this.ctx.getWidth(), this.ctx.getHeight(), this.ctx.getWidth() / this.window.getScale(), this.ctx.getHeight() / this.window.getScale());
 
@@ -698,6 +726,14 @@ public class Gpu implements Runnable {
     this.status.drawingLine = this.status.drawingLine.flip();
   }
 
+  public int getOffsetX() {
+    return this.offsetX;
+  }
+
+  public int getOffsetY() {
+    return this.offsetY;
+  }
+
   public int getRenderScale() {
     return this.renderScale;
   }
@@ -789,7 +825,7 @@ public class Gpu implements Runnable {
     return (short)(n << 21 >> 21);
   }
 
-  private static Runnable polygonRenderer(final IntList buffer, final Gpu gpu) {
+  static Runnable polygonRenderer(final IntList buffer, final Gpu gpu) {
     int bufferIndex = 0;
     final int cmd = buffer.getInt(bufferIndex++);
     final int colour = cmd & 0xff_ffff;
@@ -887,7 +923,7 @@ public class Gpu implements Runnable {
 
       final int texturePageXBase = (page       & 0b1111) *  64 * gpu.renderScale;
       final int texturePageYBase = (page >>> 4 & 0b0001) * 256 * gpu.renderScale;
-      final SEMI_TRANSPARENCY translucency = SEMI_TRANSPARENCY.values()[page >>> 5 & 0b11];
+      final Translucency translucency = Translucency.values()[page >>> 5 & 0b11];
       final legend.core.gpu.Bpp texturePageColours = legend.core.gpu.Bpp.values()[page >>> 7 & 0b11];
 
       for(int i = 0; i < vertices; i++) {
@@ -1126,7 +1162,7 @@ public class Gpu implements Runnable {
     };
   }
 
-  private void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final SEMI_TRANSPARENCY translucencyMode) {
+  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -1256,7 +1292,7 @@ public class Gpu implements Runnable {
     }
   }
 
-  private int applyBlending(final int colour, final int texel) {
+  public int applyBlending(final int colour, final int texel) {
     return
       texel & 0xff00_0000 |
       Math.min((colour >>> 16 & 0xff) * (texel >>> 16 & 0xff) >>> 7, 0xff) << 16 |
@@ -1264,15 +1300,15 @@ public class Gpu implements Runnable {
       Math.min((colour        & 0xff) * (texel        & 0xff) >>> 7, 0xff);
   }
 
-  private int getPixel(final int x, final int y) {
+  public int getPixel(final int x, final int y) {
     return this.vram24[y * this.vramWidth + x];
   }
 
-  private int getPixel15(final int x, final int y) {
+  public int getPixel15(final int x, final int y) {
     return this.vram15[y * this.vramWidth + x];
   }
 
-  private void setPixel(final int x, final int y, final int pixel) {
+  public void setPixel(final int x, final int y, final int pixel) {
     final int index = y * this.vramWidth + x;
     this.vram24[index] = pixel;
     this.vram15[index] = colour24To15(pixel);
@@ -1298,7 +1334,7 @@ public class Gpu implements Runnable {
     return r << 16 | g << 8 | b;
   }
 
-  private int maskTexelAxis(final int axis, final int preMaskAxis, final int postMaskAxis) {
+  public int maskTexelAxis(final int axis, final int preMaskAxis, final int postMaskAxis) {
     return axis & preMaskAxis | postMaskAxis;
   }
 
@@ -1306,12 +1342,12 @@ public class Gpu implements Runnable {
     return ay == by && bx > ax || by < ay;
   }
 
-  private int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp depth) {
-    if(depth == legend.core.gpu.Bpp.BITS_4) {
+  public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp depth) {
+    if(depth == Bpp.BITS_4) {
       return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
 
-    if(depth == legend.core.gpu.Bpp.BITS_8) {
+    if(depth == Bpp.BITS_8) {
       return this.get8bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
 
@@ -1341,7 +1377,7 @@ public class Gpu implements Runnable {
     return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   }
 
-  private int handleTranslucence(final int x, final int y, final int texel, final SEMI_TRANSPARENCY mode) {
+  public int handleTranslucence(final int x, final int y, final int texel, final Translucency mode) {
     final int pixel = this.getPixel(x, y);
 
     final int br = pixel        & 0xff;
@@ -1482,7 +1518,7 @@ public class Gpu implements Runnable {
 
     this.status.texturePageXBase = IoHelper.readInt(buf);
     this.status.texturePageYBase = IoHelper.readEnum(buf, TEXTURE_PAGE_Y_BASE.class);
-    this.status.semiTransparency = IoHelper.readEnum(buf, SEMI_TRANSPARENCY.class);
+    this.status.semiTransparency = IoHelper.readEnum(buf, Translucency.class);
     this.status.texturePageColours = IoHelper.readEnum(buf, legend.core.gpu.Bpp.class);
     this.status.dither = IoHelper.readBool(buf);
     this.status.drawable = IoHelper.readBool(buf);
@@ -1731,7 +1767,7 @@ public class Gpu implements Runnable {
 
         gpu.status.texturePageXBase = (settings & 0b1111) * 64 * gpu.renderScale;
         gpu.status.texturePageYBase = (settings & 0b1_0000) != 0 ? TEXTURE_PAGE_Y_BASE.BASE_256 : TEXTURE_PAGE_Y_BASE.BASE_0;
-        gpu.status.semiTransparency = SEMI_TRANSPARENCY.values()[(settings & 0b110_0000) >>> 5];
+        gpu.status.semiTransparency = Translucency.values()[(settings & 0b110_0000) >>> 5];
         gpu.status.texturePageColours = legend.core.gpu.Bpp.values()[(settings & 0b1_1000_0000) >>> 7];
         gpu.status.drawable = (settings & 0b100_0000_0000) != 0;
         gpu.status.disableTextures = (settings & 0b1000_0000_0000) != 0;
@@ -1832,7 +1868,7 @@ public class Gpu implements Runnable {
     private final GP0_COMMAND command;
     private final IntList buffer = new IntArrayList();
 
-    private Gp0CommandBuffer(final int command) throws legend.core.gpu.InvalidGp0CommandException {
+    private Gp0CommandBuffer(final int command) throws InvalidGp0CommandException {
       this.command = GP0_COMMAND.getCommand((command & 0xff000000) >>> 24);
       this.queueValue(command);
     }
@@ -1858,7 +1894,7 @@ public class Gpu implements Runnable {
     /**
      * Bits 5-6 - Semi-transparency
      */
-    public SEMI_TRANSPARENCY semiTransparency = SEMI_TRANSPARENCY.HALF_B_PLUS_HALF_F;
+    public Translucency semiTransparency = Translucency.HALF_B_PLUS_HALF_F;
     /**
      * Bits 7-8 - Texture page colours
      */
@@ -1993,13 +2029,6 @@ public class Gpu implements Runnable {
     TEXTURE_PAGE_Y_BASE(final int value) {
       this.value = value;
     }
-  }
-
-  public enum SEMI_TRANSPARENCY {
-    HALF_B_PLUS_HALF_F,
-    B_PLUS_F,
-    B_MINUS_F,
-    B_PLUS_QUARTER_F,
   }
 
   public enum DRAW_PIXELS {

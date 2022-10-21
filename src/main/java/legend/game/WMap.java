@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.COLOUR;
@@ -33,10 +34,9 @@ import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.MrgFile;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 import legend.game.types.WMapAreaData08;
 import legend.game.types.WMapRender10;
 import legend.game.types.WMapRender28;
@@ -904,7 +904,7 @@ public class WMap {
     zOffset_1f8003e8.set(0);
     _1f8003ec.setu(0x20L);
     tempZ_800c66d8.set(0);
-    _800c66dc.setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get());
+    _800c66dc.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get());
 
     FUN_800e3fac(0);
     FUN_800e78c0();
@@ -1043,7 +1043,7 @@ public class WMap {
   }
 
   @Method(0x800cd3c8L)
-  public static WMapRender40 FUN_800cd3c8(final long a0, final COLOUR a1, final COLOUR a2, final COLOUR a3, final COLOUR a4, final long a5, final long a6, final long a7, final long a8, final long a9, final boolean transparency, final TexPageTrans transparencyMode, final long a12, final int z, final long a14, final long a15, final long a16) {
+  public static WMapRender40 FUN_800cd3c8(final long a0, final COLOUR a1, final COLOUR a2, final COLOUR a3, final COLOUR a4, final long a5, final long a6, final long a7, final long a8, final long a9, final boolean transparency, final Translucency transparencyMode, final long a12, final int z, final long a14, final long a15, final long a16) {
     long sp2c = 0;
     long sp30 = 0;
     long sp38;
@@ -1192,10 +1192,10 @@ public class WMap {
         //LAB_800cd850
         if(transparency) {
           MEMORY.ref(1, sp48).offset(0x3L).setu(0x1L);
-          MEMORY.ref(4, sp48).offset(0x4L).setu(0xe100_0000L | GetTPage(TexPageBpp.BITS_4, transparencyMode, 0, 0) & 0x9ffL);
+          MEMORY.ref(4, sp48).offset(0x4L).setu(0xe100_0000L | GetTPage(Bpp.BITS_4, transparencyMode, 0, 0) & 0x9ffL);
 
           MEMORY.ref(1, sp4c).offset(0x3L).setu(0x1L);
-          MEMORY.ref(4, sp4c).offset(0x4L).setu(0xe100_0000L | GetTPage(TexPageBpp.BITS_4, transparencyMode, 0, 0) & 0x9ffL);
+          MEMORY.ref(4, sp4c).offset(0x4L).setu(0xe100_0000L | GetTPage(Bpp.BITS_4, transparencyMode, 0, 0) & 0x9ffL);
         }
 
         //LAB_800cd8e8
@@ -1276,10 +1276,10 @@ public class WMap {
 
     if(a0._3d.get() == 0x9L) {
       //LAB_800ce538
-      sp18 = a0._0c.get((int)doubleBufferFrame_800bb108.get()).get();
+      sp18 = a0._0c.get(doubleBufferFrame_800bb108.get()).get();
 
       if(a0.transparency_3c.get()) {
-        sp14 = a0._04.get((int)doubleBufferFrame_800bb108.get()).get();
+        sp14 = a0._04.get(doubleBufferFrame_800bb108.get()).get();
       } else {
         sp14 = 0; // Only used if transparency is set, just needs to be initialized
       }
@@ -1317,7 +1317,7 @@ public class WMap {
       //LAB_800ce81c
       for(int i = 0; i < a0._30.get(); i++) {
         final RECT sp20 = a0._1c.deref().get(i);
-        final WMapRender28 sp1c = a0._14.get((int)doubleBufferFrame_800bb108.get()).deref().get(i);
+        final WMapRender28 sp1c = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
 
         //LAB_800ce840
         MEMORY.ref(2, sp18).offset(0x08L).setu(sp20.x.get() + a0.x_38.get());
@@ -1370,8 +1370,8 @@ public class WMap {
     v0 = a0._3d.get();
     if(v0 == 0x9L) {
       //LAB_800ceacc
-      long sp4 = a0._0c.get((int)doubleBufferFrame_800bb108.get()).get();
-      long sp8 = a0._0c.get((int)(doubleBufferFrame_800bb108.get() ^ 0x1L)).get();
+      long sp4 = a0._0c.get(doubleBufferFrame_800bb108.get()).get();
+      long sp8 = a0._0c.get(doubleBufferFrame_800bb108.get() ^ 1).get();
 
       //LAB_800ceb38
       int n = 0;
@@ -1444,8 +1444,8 @@ public class WMap {
       //LAB_800cf050
       int n = 0;
       for(int i = 0; i < a0._30.get(); i++) {
-        final WMapRender28 spc = a0._14.get((int)doubleBufferFrame_800bb108.get()).deref().get(i);
-        final WMapRender28 sp10 = a0._14.get((int)(doubleBufferFrame_800bb108.get() ^ 0x1L)).deref().get(i);
+        final WMapRender28 spc = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
+        final WMapRender28 sp10 = a0._14.get(doubleBufferFrame_800bb108.get() ^ 1).deref().get(i);
         final WMapRender10 sp14 = a0._00.deref().get(n);
 
         //LAB_800cf074
@@ -2567,7 +2567,7 @@ public class WMap {
 
     final long sp78 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, sp78).offset(0x3L).setu(1);
-    MEMORY.ref(4, sp78).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
+    MEMORY.ref(4, sp78).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
     queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp78);
     gpuPacketAddr_1f8003d8.addu(0x8L);
 
@@ -2609,7 +2609,7 @@ public class WMap {
 
         final long sp80 = gpuPacketAddr_1f8003d8.get();
         MEMORY.ref(1, sp80).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, sp80).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
+        MEMORY.ref(4, sp80).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
         queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp80);
         gpuPacketAddr_1f8003d8.addu(0x8L);
 
@@ -3218,7 +3218,7 @@ public class WMap {
 
     final long sp14 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, sp14).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, sp14).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ffL);
+    MEMORY.ref(4, sp14).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ffL);
     queueGpuPacket(tags_1f8003d0.deref().get(13).getAddress(), sp14);
     gpuPacketAddr_1f8003d8.addu(0x8L);
 
@@ -3269,7 +3269,7 @@ public class WMap {
 
       //LAB_800d6da8
       MEMORY.ref(1, sp0x40[i]).offset(0x3L).setu(0x1L);
-      MEMORY.ref(4, sp0x40[i]).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() & 0x9ff);
+      MEMORY.ref(4, sp0x40[i]).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() & 0x9ff);
 
       if(i < 2 || i >= 5) {
         //LAB_800d6f34
@@ -3315,7 +3315,7 @@ public class WMap {
     MEMORY.ref(2, packet).offset(0x0eL).setu(0x7f28); // CLUT
     MEMORY.ref(2, packet).offset(0x10L).setu(102); // X1
     MEMORY.ref(2, packet).offset(0x12L).setu(88); // Y1
-    MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
+    MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
     MEMORY.ref(2, packet).offset(0x18L).setu(86); // X2
     MEMORY.ref(2, packet).offset(0x1aL).setu(104); // Y2
     MEMORY.ref(2, packet).offset(0x20L).setu(102); // X3
@@ -3352,7 +3352,7 @@ public class WMap {
       MEMORY.ref(2, packet2).offset(0x12L).setu(80); // Y1
       MEMORY.ref(1, packet2).offset(0x14L).setu(u + w); // U1
       MEMORY.ref(1, packet2).offset(0x15L).setu(v); // V1
-      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
+      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
       MEMORY.ref(2, packet2).offset(0x18L).setu(106); // X2
       MEMORY.ref(2, packet2).offset(0x1aL).setu(80 + h); // Y2
       MEMORY.ref(1, packet2).offset(0x1cL).setu(u); // U2
@@ -3384,7 +3384,7 @@ public class WMap {
       MEMORY.ref(2, packet2).offset(0x12L).setu(80); // Y1
       MEMORY.ref(1, packet2).offset(0x14L).setu(u + w); // U1
       MEMORY.ref(1, packet2).offset(0x15L).setu(v); // V1
-      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
+      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
       MEMORY.ref(2, packet2).offset(0x18L).setu(106); // X2
       MEMORY.ref(2, packet2).offset(0x1aL).setu(80 + h); // Y2
       MEMORY.ref(1, packet2).offset(0x1cL).setu(u); // U2
@@ -3480,7 +3480,7 @@ public class WMap {
           if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
             setGpuPacketType(0xcL, sp10, true, false);
 
-            MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
+            MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
             MEMORY.ref(2, sp10).offset(0xeL).setu(0x7c28L);
 
             if(struct258_800c66a8.deref().zoomState_1f8.get() == 0) {
@@ -3579,7 +3579,7 @@ public class WMap {
 
               if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
                 setGpuPacketType(0xcL, sp10, true, false);
-                MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
+                MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
                 MEMORY.ref(2, sp10).offset(0xeL).setu(0x7c28);
 
                 if(zoomState == 0) {
@@ -3684,7 +3684,7 @@ public class WMap {
       0x4L,
       0x2L,
       true,
-      TexPageTrans.B_PLUS_F,
+      Translucency.B_PLUS_F,
       0x9L,
       13,
       0,
@@ -4623,7 +4623,7 @@ public class WMap {
 
   @Method(0x800deeacL)
   public static long FUN_800deeac(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()).org_04.deref();
+    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     long packet = gpuPacketAddr_1f8003d8.get();
 
@@ -5447,7 +5447,7 @@ public class WMap {
       gpuPacketAddr_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, sp74).offset(0x03L).setu(0x1L);
-      MEMORY.ref(4, sp74).offset(0x04L).setu(0xe100_0000L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ffL);
+      MEMORY.ref(4, sp74).offset(0x04L).setu(0xe100_0000L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ffL);
       MEMORY.ref(1, sp70).offset(0x04L).setu(0x80L);
       MEMORY.ref(1, sp70).offset(0x05L).setu(0x80L);
       MEMORY.ref(1, sp70).offset(0x06L).setu(0x80L);
@@ -5552,7 +5552,7 @@ public class WMap {
       sp118 = gpuPacketAddr_1f8003d8.get();
       gpuPacketAddr_1f8003d8.addu(0x34L);
       setGpuPacketType(0xdL, sp118, true, false);
-      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
+      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
       MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
       MEMORY.ref(1, sp118).offset(0xcL).setu(0);
       MEMORY.ref(1, sp118).offset(0xdL).setu(0);
@@ -5622,7 +5622,7 @@ public class WMap {
       sp118 = gpuPacketAddr_1f8003d8.get();
       gpuPacketAddr_1f8003d8.addu(0x34L);
       setGpuPacketType(0xdL, sp118, true, false);
-      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
+      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
       MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
       MEMORY.ref(1, sp118).offset(0xcL).setu(0);
       MEMORY.ref(1, sp118).offset(0xdL).setu(0);
@@ -6278,7 +6278,7 @@ public class WMap {
     final int sp34 = v & 0x100;
     u = u * 4;
     MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0) >> 6) & 0x9ff);
+    MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0) >> 6) & 0x9ff);
     long sp18 = sp1c;
     sp1c = sp1c + 0x8L;
     MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
@@ -6312,7 +6312,7 @@ public class WMap {
           if(u == 0) {
             sp30 = sp30 + 64;
             MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0L) >> 6) & 0x9ffL);
+            MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0L) >> 6) & 0x9ffL);
 
             sp18 = sp1c;
             sp1c = sp1c + 0x8L;
@@ -6396,7 +6396,7 @@ public class WMap {
       0x8L,
       0x4L,
       true,
-      TexPageTrans.B_MINUS_F,
+      Translucency.B_MINUS_F,
       0x9L,
       14,
       0,
@@ -6433,7 +6433,7 @@ public class WMap {
       0x4L,
       0x2L,
       true,
-      TexPageTrans.B_PLUS_F,
+      Translucency.B_PLUS_F,
       0x9L,
       13,
       0,
@@ -6647,7 +6647,7 @@ public class WMap {
 
           setGpuPacketType(0xcL, sp4c, false, false);
 
-          MEMORY.ref(2, sp4c).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_800ef0d6.get())).get() | (_800ef0d4.get() & 0x3c0L) >> 6);
+          MEMORY.ref(2, sp4c).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_8).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_800ef0d6.get())).get() | (_800ef0d4.get() & 0x3c0L) >> 6);
           MEMORY.ref(2, sp4c).offset(0xeL).setu(_800ef0da.get() << 6 | (_800ef0d8.get() & 0x3f0L) >> 4);
 
           sp50 = (int)_800c67a8.get();
@@ -8385,7 +8385,7 @@ public class WMap {
 
       //LAB_800ec044
       setGpuPacketType(0xcL, packet, true, false);
-      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0x9);
+      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0x9);
       MEMORY.ref(2, packet).offset(0xeL).setu(i % 3 + 0x1f0 << 6 | 0x24);
       MEMORY.ref(1, packet).offset(0xcL).setu(0);
       MEMORY.ref(1, packet).offset(0xdL).setu(i % 3 * 64);
@@ -8595,7 +8595,7 @@ public class WMap {
 
       //LAB_800ecdd0
       setGpuPacketType(0xcL, packet, true, false);
-      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
+      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
       MEMORY.ref(2, packet).offset(0xeL).setu(0x7c28L);
       at = 0x800f_0000L;
       at = at + sp38.rotation_50.getZ() / 2 * 2;
@@ -9004,10 +9004,10 @@ public class WMap {
                               //LAB_800ee930
                               if((int)sp84 >= 0x6L && (int)sp84 < (int)(orderingTableSize_1f8003c8.get() - 0x1L)) {
                                 if(sp18 == 0x8L) {
-                                  MEMORY.ref(2, packetAddr).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_256).get() | 0xaL);
+                                  MEMORY.ref(2, packetAddr).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_MINUS_F).get(TexPageY.Y_256).get() | 0xaL);
                                 } else {
                                   //LAB_800ee998
-                                  MEMORY.ref(2, packetAddr).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
+                                  MEMORY.ref(2, packetAddr).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL);
                                 }
 
                                 //LAB_800ee9b0

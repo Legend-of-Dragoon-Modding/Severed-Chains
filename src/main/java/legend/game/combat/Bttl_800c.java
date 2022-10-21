@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -68,9 +69,8 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.SpellStats0c;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
@@ -81,8 +81,6 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80012444;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_800128a8;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_80015704;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -94,19 +92,21 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptRenderer;
 import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
@@ -174,13 +174,13 @@ import static legend.game.Scus94491BpeSegment_800b._800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -196,11 +196,11 @@ import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ec8d0;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
-import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
+import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
@@ -4048,7 +4048,7 @@ public final class Bttl_800c {
 
       //LAB_800ce1a0
       //LAB_800ce1a4
-      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
 
       a2 = data._10.z_22.get();
       v1 = s1 + a2;
@@ -4296,7 +4296,7 @@ public final class Bttl_800c {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
     gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -4365,7 +4365,7 @@ public final class Bttl_800c {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
     gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
     return 0;

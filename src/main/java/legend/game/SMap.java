@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.cdrom.CdlFILE;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -69,12 +70,11 @@ import legend.game.types.SomethingStructSub0c_2;
 import legend.game.types.Struct20;
 import legend.game.types.Struct34;
 import legend.game.types.SubmapEncounterData_04;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TimFile;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdExtension;
+import legend.game.types.Translucency;
 import legend.game.types.TriangleIndicator140;
 import legend.game.types.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
@@ -111,12 +111,12 @@ import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -213,7 +213,6 @@ import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
@@ -221,6 +220,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -244,6 +244,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -261,7 +262,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
@@ -544,7 +544,7 @@ public final class SMap {
   public static final ArrayRef<IntRef> _800d6cd8 = MEMORY.ref(4, 0x800d6cd8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final ArrayRef<IntRef> _800d6ce4 = MEMORY.ref(4, 0x800d6ce4L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  public static final ArrayRef<EnumRef<TexPageTrans>> miscTextureTransModes_800d6cf0 = MEMORY.ref(4, 0x800d6cf0L, ArrayRef.of(EnumRef.classFor(TexPageTrans.class), 11, 4, EnumRef.of(TexPageTrans.values())));
+  public static final ArrayRef<EnumRef<Translucency>> miscTextureTransModes_800d6cf0 = MEMORY.ref(4, 0x800d6cf0L, ArrayRef.of(EnumRef.classFor(Translucency.class), 11, 4, EnumRef.of(Translucency.values())));
   /**
    * Savepoint MRG (0x904 bytes)
    * <ol start="0">
@@ -4239,7 +4239,7 @@ public final class SMap {
 
     a1.callback_48.deref().run(a1);
 
-    GsOTPtr_800f64c0.set(orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
+    GsOTPtr_800f64c0.set(orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
     _800c6ae0.addu(0x1L);
 
     if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
@@ -7082,7 +7082,7 @@ public final class SMap {
             break;
           }
 
-          FUN_800f4244(theEndTim_800d4bf0.deref().getAddress(), tpage_800f9e5c, clut_800f9e5e, TexPageTrans.B_PLUS_F); //TODO
+          FUN_800f4244(theEndTim_800d4bf0.deref().getAddress(), tpage_800f9e5c, clut_800f9e5e, Translucency.B_PLUS_F); //TODO
           StoreImage(_800d6b48, _800d4bd4.get());
           free(theEndTim_800d4bf0.getPointer());
         }
@@ -7544,7 +7544,7 @@ public final class SMap {
 
           if(mode == 2) {
             MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(960, 464)); // CLUT
-            MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.B_MINUS_F, 960, 320)); // TPAGE
+            MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(Bpp.BITS_4, Translucency.B_MINUS_F, 960, 320)); // TPAGE
           } else {
             //LAB_800efb64
             MEMORY.ref(2, packet).offset(0x0eL).setu(cluts_800d6068.get(7).get()); // CLUT
@@ -9282,7 +9282,7 @@ public final class SMap {
   }
 
   @Method(0x800f4244L)
-  public static void FUN_800f4244(final long timFile, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final TexPageTrans transMode) {
+  public static void FUN_800f4244(final long timFile, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
     FUN_8003b8f0(timFile);
 
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x14);
@@ -9297,7 +9297,7 @@ public final class SMap {
 
       //LAB_800f42d0
       if(tim.imageAddress.get() != 0) {
-        tpageOut.set(texPages_800bb110.get(TexPageBpp.values()[(int)(tim.flags.get() & 0b11)]).get(transMode).get(TexPageY.fromY(tim.imageRect.deref().y.get())).get() | (tim.imageRect.deref().x.get() & 0x3c0) >> 6);
+        tpageOut.set(texPages_800bb110.get(Bpp.values()[(int)(tim.flags.get() & 0b11)]).get(transMode).get(TexPageY.fromY(tim.imageRect.deref().y.get())).get() | (tim.imageRect.deref().x.get() & 0x3c0) >> 6);
         LoadImage(tim.imageRect.deref(), tim.imageAddress.get());
       }
     }
@@ -9393,7 +9393,7 @@ public final class SMap {
       final TimHeader header = parseTimHeader(_800f9eb0.offset(textureIndex * 0x4L).deref(4).offset(0x4L));
       LoadImage(header.imageRect, header.imageAddress.get());
 
-      texPages_800d6050.get(textureIndex).set(texPages_800bb110.get(TexPageBpp.values()[(int)(header.flags.get() & 0b11)]).get(miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6);
+      texPages_800d6050.get(textureIndex).set(texPages_800bb110.get(Bpp.values()[(int)(header.flags.get() & 0b11)]).get(miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6);
       cluts_800d6068.get(textureIndex).set(header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4);
 
       LoadImage(header.clutRect, header.clutAddress.get());

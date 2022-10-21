@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
@@ -72,9 +73,8 @@ import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
+import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -108,10 +108,10 @@ import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
@@ -1424,7 +1424,7 @@ public final class SEffe {
             }
 
             //LAB_800fdcc8
-            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
             queueGpuPacket(tags_1f8003d0.getPointer() + (s3 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
             gpuPacketAddr_1f8003d8.addu(0xcL);
           }
@@ -1487,7 +1487,7 @@ public final class SEffe {
           MEMORY.ref(2, s0).offset(0xaL).setu(sp0x64.get());
           queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, s0);
 
-          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
           queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
           gpuPacketAddr_1f8003d8.addu(0xcL);
         }
@@ -3240,7 +3240,7 @@ public final class SEffe {
           }
 
           //LAB_80103ca0
-          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
+          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
           a1 = data._10.z_22.get();
           a0 = sp18;
           v1 = a1 + a0;
@@ -3449,7 +3449,7 @@ public final class SEffe {
             }
 
             //LAB_80104834
-            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
             a1 = manager._10.z_22.get();
             v1 = a1 + s7.sz3_0c.get();
 
@@ -3734,7 +3734,7 @@ public final class SEffe {
     }
 
     //LAB_801059c8
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
 
     int a1 = data._08.get();
     final int z = data.z_14.get();
@@ -4098,7 +4098,7 @@ public final class SEffe {
         queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, addr);
       }
 
-      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
       queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
       gpuPacketAddr_1f8003d8.addu(0xcL);
     }
@@ -4221,11 +4221,11 @@ public final class SEffe {
       s7 = s7 + 0xeL;
     }
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_MINUS_F, 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_MINUS_F, 0, 0), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x7cL, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -4623,7 +4623,7 @@ public final class SEffe {
       final int colour = a0._11.get() * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
       callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
-      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, TexPageTrans.B_PLUS_F, rgb, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
+      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 0xe8L, 0x78L, 0xffL, 0x8fL, 0xcL, Translucency.B_PLUS_F, rgb, a0._11.get() * 256 + 6404, a0._11.get() * 256 + 4096);
     }
 
     //LAB_80107bf0
@@ -4663,7 +4663,7 @@ public final class SEffe {
     }
 
     //LAB_80108048
-    FUN_80018d60((short)x, (short)y, 128, 64, 16, 16, 51, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+    FUN_80018d60((short)x, (short)y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
 
     rgb.set(0x80, 0x80, 0x80);
 
@@ -4674,7 +4674,7 @@ public final class SEffe {
       }
 
       //LAB_801080cc
-      FUN_80018d60((short)_8011a01c.get() + _800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + _800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), _800fb818.offset(1, i * 0x4L).getSigned(), _800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), _800fb82c.offset(2, i * 0x4L).getSigned(), _800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + _800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + _800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), _800fb818.offset(1, i * 0x4L).getSigned(), _800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), _800fb82c.offset(2, i * 0x4L).getSigned(), _800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, Translucency.B_PLUS_F, rgb, 0x1000);
     }
 
     FUN_801079e8(a0);
@@ -4683,19 +4683,19 @@ public final class SEffe {
 
     //LAB_801081a8
     for(int i = 0; i < a0._0d.get(); i++) {
-      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).get(), TexPageTrans.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).get(), Translucency.B_PLUS_F, rgb, 0x1000);
 
       if(a0._18.get() == 9) {
-        FUN_80018dec(_8011a01c.getSigned() + 23, _8011a020.getSigned() + 21, 232, 120, 23, 23, 12, TexPageTrans.B_PLUS_F, rgb, 0x800, 0x1800);
+        FUN_80018dec(_8011a01c.getSigned() + 23, _8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
       }
 
       //LAB_80108250
     }
 
     //LAB_80108268
-    FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, TexPageTrans.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).getSigned(), TexPageTrans.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, TexPageTrans.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18.get()).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
     FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, _800fb840.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
     FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, _800fb840.offset(1, a0._18.get()).getSigned(), null, rgb, 0x1000);
     _80119fb4.setu(1 - _80119fb4.get());
@@ -4936,7 +4936,7 @@ public final class SEffe {
           rgb.g.sub(32);
           rgb.b.sub(32);
           s0++;
-          FUN_80018d60(struct._02.get() + s0 * 6, (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+          FUN_80018d60(struct._02.get() + s0 * 6, (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
         } while(s0 < 4);
       } else if(v1 == 1) {
         //LAB_80108b58
@@ -4959,10 +4959,10 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
 
       if((struct._01.get() & 0x1L) != 0) {
-        FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, TexPageTrans.B_PLUS_F, rgb, 0x1000);
+        FUN_80018d60(struct._02.get(), (short)_8011a020.get() + 16, MEMORY.ref(1, fp).offset(0x0L).get(), MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
       }
 
       //LAB_80108cb0
@@ -5036,7 +5036,7 @@ public final class SEffe {
     }
 
     //LAB_80108f84
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -5178,11 +5178,11 @@ public final class SEffe {
 
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
     queueGpuPacket(tags_1f8003d0.deref().get(30).getAddress(), gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
     queueGpuPacket(tags_1f8003d0.deref().get(29).getAddress(), gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -5207,7 +5207,7 @@ public final class SEffe {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, packet1);
     gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
 
@@ -5226,7 +5226,7 @@ public final class SEffe {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, packet2);
     gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(TexPageBpp.BITS_16, TexPageTrans.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -5539,7 +5539,7 @@ public final class SEffe {
       MEMORY.ref(2, s0).offset(0x22L).setu(sp0x70.getY());
       queueGpuPacket(tags_1f8003d0.getPointer() + s6 / 4 * 4, s0);
 
-      SetDrawTPage(gpuPacketAddr_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(TexPageBpp.BITS_8, TexPageTrans.B_PLUS_F, 0, 0));
+      SetDrawTPage(gpuPacketAddr_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0));
       queueGpuPacket(tags_1f8003d0.getPointer() + s6 / 4 * 4, gpuPacketAddr_1f8003d8.get());
       gpuPacketAddr_1f8003d8.addu(0x8L);
     }
@@ -5828,7 +5828,7 @@ public final class SEffe {
           MEMORY.ref(2, s0).offset(0x1aL).setu(sp0x58.getY());
 
           final long addr = effect.ptr_00.get();
-          MEMORY.ref(2, s0).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+          MEMORY.ref(2, s0).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_15).get(Translucency.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
           queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), s0);
         }
 
@@ -5898,7 +5898,7 @@ public final class SEffe {
 
           //LAB_8010bbf8
           final long addr = effect.ptr_00.get();
-          MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+          MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_15).get(Translucency.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
           queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
           gpuPacketAddr_1f8003d8.addu(0x28L);
         }
@@ -5996,7 +5996,7 @@ public final class SEffe {
       MEMORY.ref(1, packet).offset(0x25L).setu(a0 + effect._08.get() / 3);
 
       final long addr = effect.ptr_00.get();
-      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_16).get(TexPageTrans.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
+      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_15).get(Translucency.B_MINUS_F).get((MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0) >>> 6);
       queueGpuPacket(tags_1f8003d0.deref().get(a2 >> 2).getAddress(), packet);
     }
 

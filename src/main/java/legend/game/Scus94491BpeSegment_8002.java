@@ -4,6 +4,7 @@ import legend.core.Hardware;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
@@ -49,10 +50,9 @@ import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
 import legend.game.types.Struct84;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,7 +78,6 @@ import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800de004;
-import static legend.game.SMap.unloadSmap;
 import static legend.game.SMap.FUN_800e2428;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
@@ -94,7 +93,7 @@ import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.renderSmapModel;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
+import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
@@ -102,13 +101,14 @@ import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -164,7 +164,6 @@ import static legend.game.Scus94491BpeSegment_8005._80052bc8;
 import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
@@ -175,6 +174,7 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
@@ -3481,7 +3481,7 @@ public final class Scus94491BpeSegment_8002 {
 
         final long packet2 = gpuPacketAddr_1f8003d8.get();
         MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() | 0xdL) & 0x9ffL);
+        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get() | 0xdL) & 0x9ffL);
         queueGpuPacket(tags_1f8003d0.deref().get(s1.z_0c.get()).getAddress(), packet2);
         gpuPacketAddr_1f8003d8.addu(0x8L);
       }
@@ -3541,7 +3541,7 @@ public final class Scus94491BpeSegment_8002 {
       MEMORY.ref(2, s0).offset(0x12L).setu(top); // Y1
       MEMORY.ref(1, s0).offset(0x14L).setu(u + 16); // U1
       MEMORY.ref(1, s0).offset(0x15L).setu(v); // V1
-      MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256)); // TPAGE
+      MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, 896, 256)); // TPAGE
       MEMORY.ref(2, s0).offset(0x18L).setu(left); // X2
       MEMORY.ref(2, s0).offset(0x1aL).setu(bottom); // Y2
       MEMORY.ref(1, s0).offset(0x1cL).setu(u); // U2
@@ -5048,7 +5048,7 @@ public final class Scus94491BpeSegment_8002 {
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
           s1 = _80052bf4.offset(sp22 * 0x4L).getAddress();
           s0 = _80052bc8.offset(sp22 * 0x4L).getAddress();
-          v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
+          v0 = texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
           v0 = v0 | (MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L) >> 6;
           v0 = v0 & 0x9ffL;
           v0 = v0 | 0xe100_0200L;
@@ -5072,7 +5072,7 @@ public final class Scus94491BpeSegment_8002 {
           gpuPacketAddr_1f8003d8.addu(0x8L);
           MEMORY.ref(1, a1).offset(0x3L).setu(0x1L);
           v1 = MEMORY.ref(4, s0).offset(0x0L).get() & 0x3c0L;
-          v0 = texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
+          v0 = texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)MEMORY.ref(4, s1).offset(0x0L).get())).get();
           v1 = (int)v1 >> 6;
           v0 = v0 | v1;
           v0 = v0 & 0x9ffL;
@@ -5638,7 +5638,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final long packet2 = gpuPacketAddr_1f8003d8.get();
     MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_020dL | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get());
+    MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_020dL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get());
     queueGpuPacket(tags_1f8003d0.deref().get(12).getAddress(), packet2);
     gpuPacketAddr_1f8003d8.addu(0x8L);
   }
@@ -5765,7 +5765,7 @@ public final class Scus94491BpeSegment_8002 {
         gpuPacketAddr_1f8003d8.addu(0x8L);
 
         MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_80052bf4.offset(fp * 0x4L).get())).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
+        MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_80052bf4.offset(fp * 0x4L).get())).get() | (_80052bc8.offset(fp * 0x4L).get() & 0x3c0L) >> 6) & 0x9ffL);
         queueGpuPacket(tags_1f8003d0.deref().get((int)_800bdf00.get()).getAddress(), packet2);
       }
 
@@ -5888,7 +5888,7 @@ public final class Scus94491BpeSegment_8002 {
         v1 = v1 + 0x50L;
         MEMORY.ref(1, s0).offset(0x24L).setu(v1);
         MEMORY.ref(1, s0).offset(0x14L).setu(v1);
-        MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, TexPageTrans.HALF_B_PLUS_HALF_F, 896, 256));
+        MEMORY.ref(2, s0).offset(0x16L).setu(GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, 896, 256));
         queueGpuPacket(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s2).offset(0xcL).get()).getAddress(), s0);
       }
     }

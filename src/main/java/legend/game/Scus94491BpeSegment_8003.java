@@ -9,6 +9,7 @@ import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
 import legend.core.dma.DmaChannelType;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gpu.DR_ENV;
@@ -46,8 +47,7 @@ import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.RenderStruct20;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
+import legend.game.types.Translucency;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1542,7 +1542,7 @@ public final class Scus94491BpeSegment_8003 {
    * direction.</p>
    */
   @Method(0x8003b3f0L)
-  public static int GetTPage(final TexPageBpp bpp, final TexPageTrans trans, final int x, final int y) {
+  public static int GetTPage(final Bpp bpp, final Translucency trans, final int x, final int y) {
     return
       (bpp.ordinal() << 7 |
       trans.ordinal() << 5 |
@@ -1914,7 +1914,7 @@ public final class Scus94491BpeSegment_8003 {
     GsInitGraph2(displayWidth, displayHeight, flags, dither, use24BitColour);
     GsInit3D();
 
-    PSDIDX_800c34d4.setu(0);
+    PSDIDX_800c34d4.set(0);
 
     initDisplay(displayWidth, displayHeight);
     GsSetDrawBuffClip();

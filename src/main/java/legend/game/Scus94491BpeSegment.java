@@ -14,6 +14,11 @@ import legend.core.Hardware;
 import legend.core.IoHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
+import legend.core.gpu.Bpp;
+import legend.core.gpu.Gpu;
+import legend.core.gpu.GpuCommandSetMaskBit;
+import legend.core.gpu.GpuCommandTexturedQuad;
+import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.COLOUR;
@@ -65,10 +70,9 @@ import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -237,9 +241,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bc300;
-import static legend.game.Scus94491BpeSegment_800b._800bc304;
-import static legend.game.Scus94491BpeSegment_800b._800bc308;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
@@ -380,7 +381,12 @@ public final class Scus94491BpeSegment {
   public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
   public static final Pointer<UnboundedArrayRef<GsOT_TAG>> tags_1f8003d0 = MEMORY.ref(4, 0x1f8003d0L, Pointer.of(4, UnboundedArrayRef.of(4, GsOT_TAG::new)));
   public static final Value gpuPacketAddrTail_1f8003d4 = MEMORY.ref(4, 0x1f8003d4L);
-  public static final Value gpuPacketAddr_1f8003d8 = MEMORY.ref(4, 0x1f8003d8L);
+  public static final Value gpuPacketAddr_1f8003d8 = MEMORY.new MemoryValue(4, 0x1f8003d8L) {
+    @Override
+    public long get() {
+      throw new RuntimeException("NOPE");
+    }
+  };
   public static final ShortRef centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL, ShortRef::new);
   public static final ShortRef centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL, ShortRef::new);
   public static final IntRef displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L, IntRef::new);
@@ -1799,35 +1805,22 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012d58L)
   public static void startFrame() {
-    doubleBufferFrame_800bb108.setu(PSDIDX_800c34d4);
+    doubleBufferFrame_800bb108.set(PSDIDX_800c34d4.get());
 
     _8007a3ac.setu(_8007a3c0.offset((PSDIDX_800c34d4.get() + 1) * 0x20400L).getAddress());
 
-    tags_1f8003d0.set(orderingTableTags_8005a398.get((int)PSDIDX_800c34d4.get()));
+    tags_1f8003d0.set(orderingTableTags_8005a398.get(PSDIDX_800c34d4.get()));
     gpuPacketAddr_1f8003d8.setu(_8007a3c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
     gpuPacketAddrTail_1f8003d4.setu(_8007a3ac);
 
-    GsClearOt(0, 0, orderingTables_8005a370.get((int)PSDIDX_800c34d4.get()));
+    GsClearOt(0, 0, orderingTables_8005a370.get(PSDIDX_800c34d4.get()));
   }
 
   @Method(0x80012df8L)
   public static void endFrame() {
     if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      long a1 = gpuPacketAddr_1f8003d8.get();
-      MEMORY.ref(1, a1).offset(0x3L).setu(0x2L); // 2 words
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe600_0000L); // Mask bit setting - set mask while drawing
-      MEMORY.ref(4, a1).offset(0x8L).setu(0);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(3).getAddress(), a1);
-      gpuPacketAddr_1f8003d8.addu(0xcL);
-
-      a1 = gpuPacketAddr_1f8003d8.get();
-      MEMORY.ref(1, a1).offset(0x3L).setu(0x2L); // 2 words
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe600_0001L); // Mask bit setting - force bit 15
-      MEMORY.ref(4, a1).offset(0x8L).setu(0);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(orderingTableSize_1f8003c8.get() - 1).getAddress(), a1);
-      gpuPacketAddr_1f8003d8.addu(0xcL);
+      GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
+      GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
     }
 
     //LAB_80012e8c
@@ -1926,11 +1919,11 @@ public final class Scus94491BpeSegment {
     GsSwapDispBuff();
 
     if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      GsSortClear(_8007a3a8.get(), _800bb104.get(), _800babc0.get(), orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
+      GsSortClear(_8007a3a8.get(), _800bb104.get(), _800babc0.get(), orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
     }
 
     //LAB_800131b0
-    drawOTag(orderingTables_8005a370.get((int)doubleBufferFrame_800bb108.get()));
+    drawOTag(orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
   }
 
   @Method(0x800131e0L)
@@ -2160,8 +2153,8 @@ public final class Scus94491BpeSegment {
       //LAB_800138f0
       //LAB_80013948
       switch((int)scriptEffect_800bb140.type_00.get()) {
-        case 1, 2 -> drawFullScreenRect(colour, TexPageTrans.B_MINUS_F);
-        case 3, 4 -> drawFullScreenRect(colour, TexPageTrans.B_PLUS_F);
+        case 1, 2 -> drawFullScreenRect(colour, Translucency.B_MINUS_F);
+        case 3, 4 -> drawFullScreenRect(colour, Translucency.B_PLUS_F);
 
         case 5 -> {
           for(int s1 = 0; s1 < 8; s1++) {
@@ -2211,7 +2204,7 @@ public final class Scus94491BpeSegment {
       gpuPacketAddr_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
 
       queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
@@ -2243,7 +2236,7 @@ public final class Scus94491BpeSegment {
       gpuPacketAddr_1f8003d8.addu(0x8L);
 
       MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
+      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
 
       queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
     }
@@ -2252,26 +2245,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013c3cL)
-  public static void drawFullScreenRect(final long colour, final TexPageTrans transMode) {
-    long packet = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, packet).offset(0x3L).setu(3); // 3 words
-    MEMORY.ref(1, packet).offset(0x4L).setu(colour); // R
-    MEMORY.ref(1, packet).offset(0x5L).setu(colour); // G
-    MEMORY.ref(1, packet).offset(0x6L).setu(colour); // B
-    MEMORY.ref(1, packet).offset(0x7L).setu(0x60L); // Monochrome rectangle (variable size, opaque)
-    MEMORY.ref(2, packet).offset(0x8L).set(-centreScreenX_1f8003dc.get()); // x
-    MEMORY.ref(2, packet).offset(0xaL).set(-centreScreenY_1f8003de.get()); // y
-    MEMORY.ref(2, packet).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // w
-    MEMORY.ref(2, packet).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // h
-    gpuLinkedListSetCommandTransparency(packet, true);
-    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x10L);
-
-    packet = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, packet).offset(0x3L).setu(1); // 1 word
-    MEMORY.ref(4, packet).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(TexPageBpp.BITS_4).get(transMode).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode/texpage
-    queueGpuPacket(tags_1f8003d0.deref().get(0x1e).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x8L);
+  public static void drawFullScreenRect(final long colour, final Translucency transMode) {
+    final GpuCommandUntexturedQuad packet = new GpuCommandUntexturedQuad();
+    packet.translucent(transMode);
+    packet.monochrome((int)colour);
+    packet.pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1);
+    GPU.queueCommand(30, packet);
   }
 
   @Method(0x80013d78L)
@@ -4420,10 +4399,6 @@ public final class Scus94491BpeSegment {
       LoadImage(clutRect, header.getClutAddress());
     }
 
-    _800bc300.setu(texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get()).oru(0xaL);
-    _800bc304.setu(texPages_800bb110.get(TexPageBpp.BITS_8).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get()).oru(0xcL);
-    _800bc308.setu(0x3fe8L);
-
     if(param_3 != 0) {
       FUN_800127cc(address, 0, 1);
     }
@@ -4435,88 +4410,16 @@ public final class Scus94491BpeSegment {
    * NOTE: elements are added in reverse order
    */
   @Method(0x80017a3cL)
-  public static void drawSceaLogo(final long colour) {
+  public static void drawSceaLogo(final int colour) {
     final TimHeader tim = timHeader_800bc2e0;
 
-    final Value c0 = gpuPacketAddr_1f8003d8.deref(4);
-    c0.offset(1, 0x03L).setu(0x4L); // OT element size
-    c0.offset(1, 0x04L).setu(colour); // R
-    c0.offset(1, 0x05L).setu(colour); // G
-    c0.offset(1, 0x06L).setu(colour); // B
-    c0.offset(1, 0x07L).setu(0x64L); // Textured rectangle, variable size, opaque, texture-blending
-    c0.offset(2, 0x08L).setu(-tim.getImageRect().w.get()); // X
-    c0.offset(2, 0x0aL).setu(-tim.getImageRect().h.get() / 2); // Y
-    c0.offset(1, 0x0cL).setu(0); // TX
-    c0.offset(1, 0x0dL).setu(0); // TY
-    c0.offset(2, 0x0eL).setu(_800bc308); // CLUT
-    c0.offset(2, 0x10L).setu(0x100L); // W
-    c0.offset(2, 0x12L).setu(tim.getImageRect().h.get()); // H
-    queueGpuPacket(tags_1f8003d0.deref().get(0x29).getAddress(), c0.getAddress());
-
-    final Value c1 = gpuPacketAddr_1f8003d8.deref(4).offset(0x28L);
-    c1.offset(1, 0x03L).setu(0x1L); // OT element size
-    // Draw mode (texpage), forces dithering and gets the following values from memory:
-    // 0-3 texture page x base (n*64)
-    // 4   texture page y base (n*256)
-    // 5-6 semi-transparency
-    // 7-8 texture page colors (0=4-bit, 1=8-bit, 2=15-bit, 3=reserved)
-    // 11  texture disable (0=normal, 1=disable if GP1(09h).bit0==1)
-    c1.offset(4, 0x04L).setu(0xe1000200L | _800bc300.get(0x9ffL));
-    queueGpuPacket(tags_1f8003d0.deref().get(0x29).getAddress(), c1.getAddress());
-
-    final Value c2 = gpuPacketAddr_1f8003d8.deref(4).offset(0x14L);
-    c2.offset(1, 0x03L).setu(0x4L); // OT element size
-    c2.offset(1, 0x04L).setu(colour); // R
-    c2.offset(1, 0x05L).setu(colour); // G
-    c2.offset(1, 0x06L).setu(colour); // B
-    c2.offset(1, 0x07L).setu(0x64L); // Textured rectangle, variable size, opaque, texture-blending
-    c2.offset(2, 0x08L).setu(-tim.getImageRect().w.get() + 0x100L); // X
-    c2.offset(2, 0x0aL).setu(-tim.getImageRect().h.get() / 2); // Y
-    c2.offset(1, 0x0cL).setu(0); // TX
-    c2.offset(1, 0x0dL).setu(0); // TY
-    c2.offset(2, 0x0eL).setu(_800bc308); // CLUT
-    c2.offset(2, 0x10L).setu(tim.getImageRect().w.get() * 2 - 0x100L); // W
-    c2.offset(2, 0x12L).setu(tim.getImageRect().h.get()); // H
-    queueGpuPacket(tags_1f8003d0.deref().get(0x29).getAddress(), c2.getAddress());
-
-    final Value c3 = gpuPacketAddr_1f8003d8.deref(4).offset(0x30L);
-    c3.offset(1, 0x03L).setu(0x1L); // OT element size
-    // Draw mode (texpage), forces dithering and gets the following values from memory:
-    // 0-3 texture page x base (n*64)
-    // 4   texture page y base (n*256)
-    // 5-6 semi-transparency
-    // 7-8 texture page colors (0=4-bit, 1=8-bit, 2=15-bit, 3=reserved)
-    // 11  texture disable (0=normal, 1=disable if GP1(09h).bit0==1)
-    c3.offset(4, 0x04L).setu(0xe1000200L | _800bc304.get(0x9ffL));
-    queueGpuPacket(tags_1f8003d0.deref().get(0x29).getAddress(), c3.getAddress());
-
-    gpuPacketAddr_1f8003d8.addu(0x38L);
-  }
-
-  @Method(0x80017c44L)
-  public static long FUN_80017c44(final long unused, final long archiveAddress, final long destinationAddress) {
-    assert false : "Use decompress";
-    return 0;
-  }
-
-  @Method(0x80017ce0L)
-  public static void FUN_80017ce0(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false : "Use decompress";
-  }
-
-  @Method(0x80017d28L)
-  public static void FUN_80017d28(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false : "Use decompress";
-  }
-
-  @Method(0x80017d58L)
-  public static void FUN_80017d58(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false : "Use decompress";
-  }
-
-  @Method(0x80017d8cL)
-  public static void FUN_80017d8c(final long archiveAddress, final long destinationAddress, final long sizePtr) {
-    assert false : "Use decompress";
+    final GpuCommandTexturedQuad packet = new GpuCommandTexturedQuad();
+    packet.bpp(Bpp.BITS_8);
+    packet.monochrome(colour);
+    packet.pos(-tim.getImageRect().w.get(), -tim.getImageRect().h.get() / 2, tim.getImageRect().w.get() * 2, tim.getImageRect().h.get());
+    packet.clut(640, 255);
+    packet.vramPos(640, 0);
+    GPU.queueCommand(41, packet);
   }
 
   /**
@@ -4603,7 +4506,7 @@ public final class Scus94491BpeSegment {
     long a2 = s4;
     long t0_0 = a2 + 0x8L;
     MEMORY.ref(1, s4).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, s4).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
+    MEMORY.ref(4, s4).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
     MEMORY.ref(3, a2).setu(t0_0); // SWL v0,$2(a2)
 
     //LAB_80018350
@@ -4631,7 +4534,7 @@ public final class Scus94491BpeSegment {
             t5 = t5 + 64;
             a2 = t0_0;
             MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(a3)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
+            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(a3)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
             MEMORY.ref(3, a2).setu(a2 + 0x8L); // SWL v0,$2(a2)
             t0_0 = a2 + 0x8L;
           }
@@ -4811,7 +4714,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void FUN_80018a5c(final long x, final long y, final long s4, final long a3, final long a4, final long a5, final long a6, @Nullable TexPageTrans transMode, final COLOUR colour, final long a9, final long a10) {
+  public static void FUN_80018a5c(final long x, final long y, final long s4, final long a3, final long a4, final long a5, final long a6, @Nullable Translucency transMode, final COLOUR colour, final long a9, final long a10) {
     final long w = Math.abs(a4 - s4);
     final long h = Math.abs(a5 - a3);
     final long packet = gpuPacketAddr_1f8003d8.get();
@@ -4820,7 +4723,7 @@ public final class Scus94491BpeSegment {
 
     if(transMode == null) {
       gpuLinkedListSetCommandTransparency(packet, false);
-      transMode = TexPageTrans.HALF_B_PLUS_HALF_F;
+      transMode = Translucency.HALF_B_PLUS_HALF_F;
     } else {
       //LAB_80018b30
       gpuLinkedListSetCommandTransparency(packet, true);
@@ -4881,18 +4784,18 @@ public final class Scus94491BpeSegment {
 
     //LAB_80018cf0
     MEMORY.ref(2, packet).offset(0x0eL).setu(clutY << 6 | (clutX & 0x3f0) >> 4);
-    MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(TexPageBpp.BITS_4, transMode, 704, 256));
+    MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(Bpp.BITS_4, transMode, 704, 256));
     queueGpuPacket(tags_1f8003d0.deref().get(2).getAddress(), packet);
   }
 
   /**Some kind of intermediate rect render method**/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, @Nullable final TexPageTrans transMode, final COLOUR colour, final long a9) {
+  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
     FUN_80018a5c((short)displayX, (short)displayY, originU & 0xffL, originV & 0xffL, originU + width & 0xffL, originV + height & 0xffL, (short)a6, transMode, colour, (short)a9, (short)a9);
   }
 
   @Method(0x80018decL)
-  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, @Nullable final TexPageTrans transMode, final COLOUR colour, final long a9, final long a10) {
+  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
     FUN_80018a5c(a0, a1, a2, a3, a2 + a4, a5 + a3, a6, transMode, colour, a9, a10);
   }
 
@@ -5053,7 +4956,7 @@ public final class Scus94491BpeSegment {
             MEMORY.ref(1, s0).offset(0xbL).get() + 0x7L,
             0x4fL,
             MEMORY.ref(1, s0).offset(0xcL).get(),
-            TexPageTrans.of((int)((MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1)),
+            Translucency.of((int)((MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1)),
             colour_80010328,
             MEMORY.ref(2, s0).offset(0x4L).get() + 0x1000,
             MEMORY.ref(2, s0).offset(0x6L).get() + 0x1000

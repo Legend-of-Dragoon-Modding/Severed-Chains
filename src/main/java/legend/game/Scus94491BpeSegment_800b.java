@@ -3,6 +3,7 @@ package legend.game;
 import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
@@ -42,9 +43,8 @@ import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
 import legend.game.types.Struct4c;
 import legend.game.types.Struct84;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
+import legend.game.types.Translucency;
 import legend.game.types.WobjPos14;
 
 import java.util.function.Function;
@@ -68,9 +68,9 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);
-  public static final Value doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L);
+  public static final IntRef doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L, IntRef::new);
   public static final Value pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL);
-  public static final EnumMapRef<TexPageBpp, EnumMapRef<TexPageTrans, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(TexPageBpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), TexPageBpp.values().length, 0x10, EnumMapRef.of(TexPageTrans.class, EnumMapRef.classFor(UnsignedShortRef.class), TexPageTrans.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
+  public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
   public static final Value _800bb168 = MEMORY.ref(4, 0x800bb168L); //TODO is this part of the previous struct?
 
@@ -105,10 +105,6 @@ public final class Scus94491BpeSegment_800b {
   public static final ScriptState<VoidRef> scriptState_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, ScriptState.of(VoidRef::new));
   public static final ArrayRef<Pointer<ScriptState<? extends MemoryRef>>> scriptStatePtrArr_800bc1c0 = (ArrayRef<Pointer<ScriptState<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(ScriptState.class), 0x48, 4, (Function)Pointer.deferred(4, ScriptState.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
   public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
-
-  public static final Value _800bc300 = MEMORY.ref(4, 0x800bc300L);
-  public static final Value _800bc304 = MEMORY.ref(4, 0x800bc304L);
-  public static final Value _800bc308 = MEMORY.ref(4, 0x800bc308L);
 
   public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
 
