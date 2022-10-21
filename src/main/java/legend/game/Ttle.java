@@ -774,7 +774,7 @@ public final class Ttle {
 
     //LAB_800c868c
     switch((int)_800c672c.get()) {
-      case 0x0:
+      case 0 -> {
         //LAB_800c86d8
         for(int i = 0; i < 0x3L; i++) {
           //LAB_800c86f4
@@ -783,9 +783,9 @@ public final class Ttle {
 
         //LAB_800c8728
         _800c672c.setu(0x1L);
-        break;
+      }
 
-      case 0x1:
+      case 1 -> {
         //LAB_800c8740
         //LAB_800c886c
         for(int i = 0; i < 0x3L; i++) {
@@ -804,10 +804,9 @@ public final class Ttle {
 
           //LAB_800c8854
         }
+      }
 
-        break;
-
-      case 0x2:
+      case 2 -> {
         //LAB_800c8878
         //LAB_800c89e4
         for(int i = 0; i < 0x3L; i++) {
@@ -833,10 +832,9 @@ public final class Ttle {
 
           //LAB_800c89cc
         }
+      }
 
-        break;
-
-      case 0x3:
+      case 3 -> {
         _800c672c.setu(0x4L);
         if(selectedMenuOption_800ce774.get() == 0) {
           pregameLoadingStage_800bb10c.setu(0x4L);
@@ -845,18 +843,18 @@ public final class Ttle {
           _800c6728.setu(0x2L);
           pregameLoadingStage_800bb10c.setu(0x5L);
         }
+      }
 
-        //LAB_800c8a4c
-        break;
-
-      case 0x4:
+      //LAB_800c8a4c
+      case 4 -> {
         return;
+      }
     }
 
     long sp10 = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800c8a70
-    for(int i = 0; i < 0x3L; i++) {
+    for(int i = 0; i < 3; i++) {
       final long x = _800ce8ac.offset(i * 8L).get();
       final long y = _800ce8ac.offset((i * 2L + 0x1L) * 4).get();
 
@@ -888,15 +886,15 @@ public final class Ttle {
 
       // Vertex 2
       MEMORY.ref(2, sp10).offset(0x18L).setu(x); // X
-      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 0x10L); // Y
+      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 16); // Y
       MEMORY.ref(1, sp10).offset(0x1cL).setu(0); // U
-      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce7f8.offset(i * 8L).get() + 0x10L); // V
+      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce7f8.offset(i * 8L).get() + 16); // V
 
       // Vertex 3
       MEMORY.ref(2, sp10).offset(0x20L).setu(x + _800ce7f8.offset(2, (i * 2L + 0x1L) * 4).get()); // X
-      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 0x10L); // Y
+      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 16); // Y
       MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce7f8.offset((i * 2L + 0x1L) * 4)); // U
-      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce7f8.offset(i * 8L).get() + 0x10L); // V
+      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce7f8.offset(i * 8L).get() + 16); // V
 
       queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), sp10);
       sp10 += 0x28L;
@@ -907,30 +905,30 @@ public final class Ttle {
       MEMORY.ref(1, sp10).offset(0x06L).setu(menuOptionTransparency_800c6730.get(i).get());
 
       // Vertex 0
-      MEMORY.ref(2, sp10).offset(0x08L).setu(x - 0x8L);
-      MEMORY.ref(2, sp10).offset(0x0aL).setu(y - 0x8L);
+      MEMORY.ref(2, sp10).offset(0x08L).setu(x - 8);
+      MEMORY.ref(2, sp10).offset(0x0aL).setu(y - 8);
       MEMORY.ref(1, sp10).offset(0x0cL).setu(_800ce840.offset(i * 3L * 4L));
       MEMORY.ref(1, sp10).offset(0x0dL).setu(_800ce840.offset((i * 3L + 0x1L) * 4));
       MEMORY.ref(2, sp10).offset(0x0eL).setu(0x128L);
 
       // Vertex 1
-      MEMORY.ref(2, sp10).offset(0x10L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, sp10).offset(0x12L).setu(y - 0x8L);
+      MEMORY.ref(2, sp10).offset(0x10L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 8);
+      MEMORY.ref(2, sp10).offset(0x12L).setu(y - 8);
       MEMORY.ref(1, sp10).offset(0x14L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
       MEMORY.ref(1, sp10).offset(0x15L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get());
       MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
 
       // Vertex 2
-      MEMORY.ref(2, sp10).offset(0x18L).setu(x - 0x8L);
-      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 0x17L);
+      MEMORY.ref(2, sp10).offset(0x18L).setu(x - 8);
+      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 23);
       MEMORY.ref(1, sp10).offset(0x1cL).setu(_800ce840.offset(i * 3L * 4L));
-      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 0x20L);
+      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 32);
 
       // Vertex 3
-      MEMORY.ref(2, sp10).offset(0x20L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 0x17L);
+      MEMORY.ref(2, sp10).offset(0x20L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 8);
+      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 23);
       MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
-      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 0x20L);
+      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 32);
 
       queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), sp10);
       sp10 += 0x28L;
