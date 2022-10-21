@@ -1271,21 +1271,16 @@ public final class Ttle {
     for(int sp44 = 0; sp44 < 2; sp44++) {
       //LAB_800cabe8
       renderQuad(
-        texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0xe,
+        Bpp.BITS_4,
+        896, 0,
         0x1028,
-        copyrightFadeInAmount_800c6714.get(),
-        copyrightFadeInAmount_800c6714.get(),
-        copyrightFadeInAmount_800c6714.get(),
-        (int)_800ce8f4.get(sp44 * 4).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 1).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 3).get(),
-        (int)_800ce914.offset(4, sp44 * 4).get(),
-        80,
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 3).get(),
+        copyrightFadeInAmount_800c6714.get(), copyrightFadeInAmount_800c6714.get(), copyrightFadeInAmount_800c6714.get(),
+        (int)_800ce8f4.get(sp44 * 4).get(), (int)_800ce8f4.get(sp44 * 4 + 1).get(),
+        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
+        (int)_800ce914.offset(4, sp44 * 4).get(), 80,
+        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
         100,
-        true
+        Translucency.B_PLUS_F
       );
     }
   }
@@ -1302,40 +1297,30 @@ public final class Ttle {
     for(int i = 0; i < 2; i++) {
       //LAB_800cae48
       renderQuad(
-        texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | (int)((i << 0x6L) + 0x240L & 0x3c0L) >> 0x6L,
+        Bpp.BITS_4,
+        576 + i * 64, 256,
         0x68,
-        logoFadeInAmount_800c66ec.get(),
-        logoFadeInAmount_800c66ec.get(),
-        logoFadeInAmount_800c66ec.get(),
-        0,
-        0,
-        (int)_800ce91c.offset(i * 2).get(),
-        88,
-        i * 255 - 184,
-        -80,
-        (int)_800ce91c.offset(i * 2).get(),
-        88,
+        logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(),
+        0, 0,
+        (int)_800ce91c.offset(i * 2).get(), 88,
+        i * 255 - 184, -80,
+        (int)_800ce91c.offset(i * 2).get(), 88,
         orderingTableSize_1f8003c8.get() - 4,
-        true
+        Translucency.B_PLUS_F
       );
     }
 
     renderQuad(
-      texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0xe,
+      Bpp.BITS_4,
+      896, 0,
       0x1428,
-      logoFadeInAmount_800c66ec.get(),
-      logoFadeInAmount_800c66ec.get(),
-      logoFadeInAmount_800c66ec.get(),
-      0,
-      240,
-      16,
-      8,
-      134,
-      -14,
-      16,
-      8,
+      logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(),
+      0, 240,
+      16, 8,
+      134, -14,
+      16, 8,
       orderingTableSize_1f8003c8.get() - 4,
-      true
+      Translucency.B_PLUS_F
     );
   }
 
@@ -1355,28 +1340,18 @@ public final class Ttle {
 
     //LAB_800cb0ec
     //LAB_800cb100
-    for(int i = 0; i < 6; i++) {
-      //LAB_800cb11c
-      final int page = texPages_800bb110.get(Bpp.BITS_8).get(Translucency.HALF_B_PLUS_HALF_F).get(i < 3 ? TexPageY.Y_0 : TexPageY.Y_256).get() | (int)_800ce920.offset(i % 3 * 4).get(0x3c0L) >> 6;
-
-      renderQuad(
-        page,
-        40,
-        backgroundFadeInAmount_800c670c.get(),
-        backgroundFadeInAmount_800c670c.get(),
-        backgroundFadeInAmount_800c670c.get(),
-        0,
-        0,
-        128 - (i - i % 3 & 1),
-        i / 3 * -88 + 255,
-        i % 3 * 128 - 192,
-        i / 3 * 255 - 120 + backgroundScrollAmount_800c6708.get(),
-        128,
-        i / 3 * -88 + 255,
-        orderingTableSize_1f8003c8.get() - 3,
-        false
-      );
-    }
+    renderQuad(
+      Bpp.BITS_8,
+      384, 0,
+      0x28,
+      backgroundFadeInAmount_800c670c.get(), backgroundFadeInAmount_800c670c.get(), backgroundFadeInAmount_800c670c.get(),
+      0, 0,
+      384, 424,
+      -192, -120 + backgroundScrollAmount_800c6708.get(),
+      384, 424,
+      orderingTableSize_1f8003c8.get() - 3,
+      null
+    );
 
     //LAB_800cb370
     backgroundScrollAmount_800c6708.incr();
@@ -1387,10 +1362,11 @@ public final class Ttle {
     //LAB_800cb3b0
   }
 
-  /** TODO tpage and clut split */
+  /** TODO clut split */
   @Method(0x800cb4c4L)
-  public static void renderQuad(final int page, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, final boolean transparency) {
+  public static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
     final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(4)
+      .bpp(bpp)
       .rgb(r, g, b)
       .pos(0, x, y)
       .pos(1, x + w, y)
@@ -1401,10 +1377,10 @@ public final class Ttle {
       .uv(2, u, v + th)
       .uv(3, u + tw, v + th)
       .clut((clut & 0b111111) * 16, clut >>> 6)
-      .vramPos((page & 0b1111) * 64, (clut & 0b10000) == 0 ? 0 : 256);
+      .vramPos(vramX, vramY);
 
-    if(transparency) {
-      cmd.translucent(Translucency.HALF_B_PLUS_HALF_F);
+    if(translucency != null) {
+      cmd.translucent(translucency);
     }
 
     GPU.queueCommand(z, cmd);

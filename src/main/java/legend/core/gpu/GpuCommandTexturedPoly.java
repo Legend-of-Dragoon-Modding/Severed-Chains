@@ -2,6 +2,8 @@ package legend.core.gpu;
 
 import legend.game.types.Translucency;
 
+import java.util.Arrays;
+
 public class GpuCommandTexturedPoly extends GpuCommand {
   private final int vertexCount;
 
@@ -10,14 +12,11 @@ public class GpuCommandTexturedPoly extends GpuCommand {
   private boolean shaded;
   private boolean raw;
 
-  private int r;
-  private int g;
-  private int b;
-
   private final int[] x;
   private final int[] y;
   private final int[] u;
   private final int[] v;
+  private final int[] colour;
 
   private int clutX;
   private int clutY;
@@ -30,6 +29,7 @@ public class GpuCommandTexturedPoly extends GpuCommand {
     this.y = new int[vertexCount];
     this.u = new int[vertexCount];
     this.v = new int[vertexCount];
+    this.colour = new int[vertexCount];
   }
 
   public GpuCommandTexturedPoly bpp(final Bpp bpp) {
@@ -53,16 +53,28 @@ public class GpuCommandTexturedPoly extends GpuCommand {
   }
 
   public GpuCommandTexturedPoly rgb(final int r, final int g, final int b) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    return this;
+    return this.colour(b << 16 | g << 8 | r);
   }
 
   public GpuCommandTexturedPoly monochrome(final int colour) {
-    this.r = colour;
-    this.g = colour;
-    this.b = colour;
+    return this.rgb(colour, colour, colour);
+  }
+
+  public GpuCommandTexturedPoly colour(final int colour) {
+    Arrays.fill(this.colour, colour);
+    return this;
+  }
+
+  public GpuCommandTexturedPoly rgb(final int vertex, final int r, final int g, final int b) {
+    return this.colour(vertex, b << 16 | g << 8 | r);
+  }
+
+  public GpuCommandTexturedPoly monochrome(final int vertex, final int colour) {
+    return this.rgb(vertex, colour, colour, colour);
+  }
+
+  public GpuCommandTexturedPoly colour(final int vertex, final int colour) {
+    this.colour[vertex] = colour;
     return this;
   }
 
@@ -97,10 +109,10 @@ public class GpuCommandTexturedPoly extends GpuCommand {
       this.y[i] += gpu.getOffsetY();
     }
 
-    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.r, this.g, this.b, this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, true, this.shaded, this.translucence != null, this.raw, this.translucence);
+    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.colour[0], this.colour[1], this.colour[2], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, true, this.shaded, this.translucence != null, this.raw, this.translucence);
 
     if(this.vertexCount == 4) {
-      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.r, this.g, this.b, this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, true, this.shaded, this.translucence != null, this.raw, this.translucence);
+      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.colour[1], this.colour[2], this.colour[3], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, true, this.shaded, this.translucence != null, this.raw, this.translucence);
     }
   }
 }
