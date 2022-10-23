@@ -16,8 +16,8 @@ import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -103,7 +103,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
-import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
@@ -111,6 +110,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c86c;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
@@ -356,7 +356,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
@@ -573,8 +572,6 @@ public final class Scus94491BpeSegment {
   private static boolean dumping;
   private static boolean loading;
 
-  public static boolean OLD_RENDERER;
-
   private static int fpsLimit = 30;
 
   private static final Path state = Paths.get("./state.ddmp");
@@ -721,11 +718,6 @@ public final class Scus94491BpeSegment {
 
       if(key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL) != 0) {
         loading = true;
-      }
-
-      if(key == GLFW_KEY_R && (mods & GLFW_MOD_CONTROL) != 0) {
-        OLD_RENDERER = !OLD_RENDERER;
-        LOGGER.info("Old renderer: %b", OLD_RENDERER);
       }
 
       if(key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) {
