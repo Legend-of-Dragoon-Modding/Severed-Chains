@@ -526,12 +526,12 @@ public class Gpu implements Runnable {
 
       if(this.zQueues != null) {
         synchronized(this.commandQueue) {
-          for(final LinkedList<GpuCommand> commandList : this.zQueues) {
-            for(final GpuCommand command : commandList) {
+          for(int z = this.zQueues.length - 1; z >= 0; z--) {
+            for(final GpuCommand command : this.zQueues[z]) {
               this.commandQueue.add(() -> command.render(this));
             }
 
-            commandList.clear();
+            this.zQueues[z].clear();
           }
         }
       }

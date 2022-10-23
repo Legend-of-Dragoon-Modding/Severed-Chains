@@ -5,6 +5,7 @@ import legend.core.gpu.GpuCommandTexturedPoly;
 import legend.core.gpu.GpuCommandTexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
@@ -24,9 +25,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.CharacterData2c;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.TexPageY;
 import legend.game.types.TmdRenderingStruct;
 import legend.game.types.Translucency;
 
@@ -41,18 +40,15 @@ import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
@@ -73,8 +69,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
-import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -84,7 +78,6 @@ import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -99,7 +92,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -174,7 +166,7 @@ public final class Ttle {
    *   <li>{@link Ttle#renderMainMenu()}</li>
    *   <li>{@link Ttle#FUN_800c7e50()}</li>
    *   <li>{@link Ttle#FUN_800c7fa0()}</li>
-   *   <li>{@link Ttle#FUN_800c8148()}</li>
+   *   <li>{@link Ttle#fadeOutMainMenu()}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(4, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.deferred(4, RunnableRef::new)));
@@ -195,7 +187,6 @@ public final class Ttle {
   public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
 
   public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
-  public static final Value _800ce920 = MEMORY.ref(4, 0x800ce920L);
 
   @Method(0x800c7194L)
   public static void setUpNewGameData(final int unused) {
@@ -618,7 +609,7 @@ public final class Ttle {
   }
 
   @Method(0x800c8148L)
-  public static void FUN_800c8148() {
+  public static void fadeOutMainMenu() {
     if(_800c6754.get() == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
@@ -645,13 +636,6 @@ public final class Ttle {
     }
 
     //LAB_800c8218
-  }
-
-  @Method(0x800c8228L)
-  public static void setCommand(final long a0, final long entryAddress, final boolean transparency, final boolean unshaded) {
-    callbacks_800ce7b4.get((int)a0).deref().run(entryAddress);
-    gpuLinkedListSetCommandTransparency(entryAddress, transparency);
-    gpuLinkedListSetCommandTextureUnshaded(entryAddress, unshaded);
   }
 
   @Method(0x800c8298L)
@@ -853,107 +837,46 @@ public final class Ttle {
       }
     }
 
-    long sp10 = gpuPacketAddr_1f8003d8.get();
-
     //LAB_800c8a70
     for(int i = 0; i < 3; i++) {
-      final int x = (int)_800ce8ac.offset(i * 8).get();
-      final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).get();
+      final int x = (int)_800ce8ac.offset(i * 2 * 4).getSigned();
+      final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
 
       //LAB_800c8a8c
-      final GpuCommandTexturedPoly packet1 = new GpuCommandTexturedPoly(4);
-//      setCommand(0xcL, sp10, true, false); // 0x2c - 9 words; textured 4-point poly, opaque, blended
-      packet1.monochrome(menuOptionTransparency_800c6730.get(i).get());
-//      MEMORY.ref(1, sp10).offset(0x04L).setu(menuOptionTransparency_800c6730.get(i).get()); // R
-//      MEMORY.ref(1, sp10).offset(0x05L).setu(menuOptionTransparency_800c6730.get(i).get()); // G
-//      MEMORY.ref(1, sp10).offset(0x06L).setu(menuOptionTransparency_800c6730.get(i).get()); // B
+      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .monochrome(menuOptionTransparency_800c6730.get(i).get())
+        .pos(0, x, y)
+        .uv(0, 0, (int)_800ce7f8.offset(i * 2 * 4).get())
+        .pos(1, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y)
+        .uv(1, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get())
+        .pos(2, x, y + 16)
+        .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
+        .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
+        .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
+        .clut(640, selectedMenuOption_800ce774.get() == i ? 5 : 2)
+        .vramPos(576, 0)
+      );
 
-      // Vertex 0
-      packet1.pos(0, x, y);
-      packet1.uv(0, 0, (int)_800ce7f8.offset(i * 8L).get());
-//      MEMORY.ref(2, sp10).offset(0x08L).setu(x); // X
-//      MEMORY.ref(2, sp10).offset(0x0aL).setu(y); // Y
-//      MEMORY.ref(1, sp10).offset(0x0cL).setu(0); // U
-//      MEMORY.ref(1, sp10).offset(0x0dL).setu(_800ce7f8.offset(i * 8L)); // V
-
-      // Vertex 1
-      packet1.pos(1, (int)(x + _800ce7f8.offset(2, (i * 2 + 1) * 4).get()), y);
-      packet1.uv(1, (int)_800ce7f8.offset((i * 2L + 0x1L) * 4).get(), (int)_800ce7f8.offset(i * 8L).get());
-//      MEMORY.ref(2, sp10).offset(0x10L).setu(x + _800ce7f8.offset(2, (i * 2L + 0x1L) * 4).get()); // X
-//      MEMORY.ref(2, sp10).offset(0x12L).setu(y); // Y
-//      MEMORY.ref(1, sp10).offset(0x14L).setu(_800ce7f8.offset((i * 2L + 0x1L) * 4)); // U
-//      MEMORY.ref(1, sp10).offset(0x15L).setu(_800ce7f8.offset(i * 8L)); // V
-
-      // Vertex 2
-      packet1.pos(2, x, y + 16);
-      packet1.uv(2, 0, (int)_800ce7f8.offset(i * 8L).get() + 16);
-//      MEMORY.ref(2, sp10).offset(0x18L).setu(x); // X
-//      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 16); // Y
-//      MEMORY.ref(1, sp10).offset(0x1cL).setu(0); // U
-//      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce7f8.offset(i * 8L).get() + 16); // V
-
-      // Vertex 3
-      packet1.pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16);
-      packet1.uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)(_800ce7f8.offset(i * 8).get() + 16));
-//      MEMORY.ref(2, sp10).offset(0x20L).setu(x + _800ce7f8.offset(2, (i * 2L + 0x1L) * 4).get()); // X
-//      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 16); // Y
-//      MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce7f8.offset((i * 2L + 0x1L) * 4)); // U
-//      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce7f8.offset(i * 8L).get() + 16); // V
-
-      // CLUT
-      if(selectedMenuOption_800ce774.get() == i) {
-        packet1.clut(640, 5);
-//        MEMORY.ref(2, sp10).offset(0xeL).setu(360L);
-      } else {
-        packet1.clut(640, 2);
-//        MEMORY.ref(2, sp10).offset(0xeL).setu(168L);
-      }
-
-      packet1.vramPos(576, 0);
-//      MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L); // Page
-
-      GPU.queueCommand(100, packet1);
-//      queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), sp10);
-//      sp10 += 0x28L;
-
-      setCommand(0xcL, sp10, true, false);
-      MEMORY.ref(1, sp10).offset(0x04L).setu(menuOptionTransparency_800c6730.get(i).get());
-      MEMORY.ref(1, sp10).offset(0x05L).setu(menuOptionTransparency_800c6730.get(i).get());
-      MEMORY.ref(1, sp10).offset(0x06L).setu(menuOptionTransparency_800c6730.get(i).get());
-
-      // Vertex 0
-      MEMORY.ref(2, sp10).offset(0x08L).setu(x - 8);
-      MEMORY.ref(2, sp10).offset(0x0aL).setu(y - 8);
-      MEMORY.ref(1, sp10).offset(0x0cL).setu(_800ce840.offset(i * 3L * 4L));
-      MEMORY.ref(1, sp10).offset(0x0dL).setu(_800ce840.offset((i * 3L + 0x1L) * 4));
-      MEMORY.ref(2, sp10).offset(0x0eL).setu(0x128L);
-
-      // Vertex 1
-      MEMORY.ref(2, sp10).offset(0x10L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 8);
-      MEMORY.ref(2, sp10).offset(0x12L).setu(y - 8);
-      MEMORY.ref(1, sp10).offset(0x14L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
-      MEMORY.ref(1, sp10).offset(0x15L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get());
-      MEMORY.ref(2, sp10).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
-
-      // Vertex 2
-      MEMORY.ref(2, sp10).offset(0x18L).setu(x - 8);
-      MEMORY.ref(2, sp10).offset(0x1aL).setu(y + 23);
-      MEMORY.ref(1, sp10).offset(0x1cL).setu(_800ce840.offset(i * 3L * 4L));
-      MEMORY.ref(1, sp10).offset(0x1dL).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 32);
-
-      // Vertex 3
-      MEMORY.ref(2, sp10).offset(0x20L).setu(x + _800ce840.offset((i * 3L + 0x2L) * 4).get() - 8);
-      MEMORY.ref(2, sp10).offset(0x22L).setu(y + 23);
-      MEMORY.ref(1, sp10).offset(0x24L).setu(_800ce840.offset(i * 3L * 4L).get() + _800ce840.offset((i * 3L + 0x2L) * 4).get());
-      MEMORY.ref(1, sp10).offset(0x25L).setu(_800ce840.offset((i * 3L + 0x1L) * 4).get() + 32);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), sp10);
-      sp10 += 0x28L;
+      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .monochrome(menuOptionTransparency_800c6730.get(i).get())
+        .pos(0, x - 8, y - 8)
+        .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
+        .clut(640, 4)
+        .pos(1, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y - 8)
+        .uv(1, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get())
+        .vramPos(576, 0)
+        .pos(2, x - 8, y + 23)
+        .uv(2, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
+        .pos(3, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y + 23)
+        .uv(3, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
+      );
     }
 
     //LAB_800c9390
-    gpuPacketAddr_1f8003d8.setu(sp10);
-
     //LAB_800c939c
   }
 
@@ -1012,7 +935,7 @@ public final class Ttle {
 
     //LAB_800c95fc
     switch((int)_800c6738.get()) {
-      case 0:
+      case 0 -> {
         //LAB_800c964c
         for(int i = 0; i < 0x6L; i++) {
           //LAB_800c9668
@@ -1021,9 +944,9 @@ public final class Ttle {
 
         //LAB_800c969c
         _800c6738.setu(0x1L);
-        break;
+      }
 
-      case 0x1:
+      case 0x1 -> {
         //LAB_800c96b4
         for(int i = 0; i < 0x6L; i++) {
           //LAB_800c96d0
@@ -1046,9 +969,9 @@ public final class Ttle {
         }
 
         //LAB_800c9810
-        break;
+      }
 
-      case 0x2:
+      case 0x2 -> {
         //LAB_800c981c
         for(int i = 0; i < 0x6L; i++) {
           //LAB_800c9838
@@ -1072,9 +995,9 @@ public final class Ttle {
         }
 
         //LAB_800c99b8
-        break;
+      }
 
-      case 0x3:
+      case 0x3 -> {
         //LAB_800c99c4
         for(int i = 0; i < 0x6L; i++) {
           //LAB_800c99e0
@@ -1101,95 +1024,58 @@ public final class Ttle {
         }
 
         //LAB_800c9b4c
-        break;
-
-      case 0x4:
-        return;
-    }
-
-    long address = gpuPacketAddr_1f8003d8.get();
-
-    //LAB_800c9b70
-    for(int i = 0; i < 0x6L; i++) {
-      //LAB_800c9b8c
-      setCommand(0xcL, address, true, false);
-
-      //LAB_800c9c00
-      MEMORY.ref(1, address).offset(0x04L).setu(_800c673c.offset(i * 2L));
-      MEMORY.ref(1, address).offset(0x05L).setu(_800c673c.offset(i * 2L));
-      MEMORY.ref(1, address).offset(0x06L).setu(_800c673c.offset(i * 2L));
-
-      MEMORY.ref(2, address).offset(0x08L).setu(_800ce8ac.offset((i + 0x3L) * 8));
-      MEMORY.ref(2, address).offset(0x0aL).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4));
-      MEMORY.ref(1, address).offset(0x0cL).setu(0);
-      MEMORY.ref(1, address).offset(0x0dL).setu(_800ce7f8.offset((i + 0x3L) * 8));
-
-      if(_800ce778.get() == i) {
-        MEMORY.ref(2, address).offset(0xeL).setu(0x168L);
-      } else {
-        //LAB_800c9bf4
-        MEMORY.ref(2, address).offset(0xeL).setu(0xa8L);
       }
 
-      MEMORY.ref(2, address).offset(0x10L).setu(_800ce8ac.offset((i + 0x3L) * 8).get() + _800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4).get());
-      MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4));
-      MEMORY.ref(1, address).offset(0x14L).setu(_800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4));
-      MEMORY.ref(1, address).offset(0x15L).setu(_800ce7f8.offset((i + 0x3L) * 8));
-      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
+      case 0x4 -> {
+        return;
+      }
+    }
 
-      MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset((i + 0x3L) * 8));
-      MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4).get() + 0x10L);
-      MEMORY.ref(1, address).offset(0x1cL).setu(0);
-      MEMORY.ref(1, address).offset(0x1dL).setu(_800ce7f8.offset((i + 0x3L) * 8).get() + 0x10L);
-
-      MEMORY.ref(2, address).offset(0x20L).setu(_800ce8ac.offset((i + 0x3L) * 8).get() + _800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4).get());
-      MEMORY.ref(2, address).offset(0x22L).setu(_800ce8ac.offset(((i + 0x3L) * 2 + 0x1L) * 4).get() + 0x10L);
-      MEMORY.ref(1, address).offset(0x24L).setu(_800ce7f8.offset(((i + 0x3L) * 2 + 0x1L) * 4));
-      MEMORY.ref(1, address).offset(0x25L).setu(_800ce7f8.offset((i + 0x3L) * 8).get() + 0x10L);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), address);
-      address += 0x28L;
+    //LAB_800c9b70
+    for(int i = 0; i < 6; i++) {
+      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .monochrome((int)_800c673c.offset(i * 2).get())
+        .clut(640, selectedMenuOption_800ce774.get() == i ? 5 : 2)
+        .vramPos(576, 0)
+        .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
+        .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
+        .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
+        .uv(1, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get())
+        .pos(2, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
+        .uv(2, 0, (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
+        .pos(3, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
+        .uv(3, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
+      );
     }
 
     //LAB_800c9ff8
     //LAB_800c9ffc
-    for(int i = 0; i < 0x2L; i++) {
+    for(int i = 0; i < 2; i++) {
       //LAB_800ca018
-      sp18 = i * 3L;
-      setCommand(0xcL, address, true, false);
-      MEMORY.ref(1, address).offset(0x4L).setu(_800c673c.offset(sp18 * 2));
-      MEMORY.ref(1, address).offset(0x5L).setu(_800c673c.offset(sp18 * 2));
-      MEMORY.ref(1, address).offset(0x6L).setu(_800c673c.offset(sp18 * 2));
+      sp18 = i * 3;
 
-      MEMORY.ref(2, address).offset(0x8L).setu(_800ce8ac.offset((sp18 + 0x3L) * 8).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0xaL).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() - 0x9L);
-      MEMORY.ref(1, address).offset(0xcL).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4));
-      MEMORY.ref(1, address).offset(0xdL).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0xeL).setu(0x128L);
-
-      MEMORY.ref(2, address).offset(0x10L).setu(_800ce8ac.offset((sp18 + 0x3L) * 8).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() - 0x9L);
-      MEMORY.ref(1, address).offset(0x14L).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get());
-      MEMORY.ref(1, address).offset(0x15L).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
-
-      MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset((sp18 + 0x3L) * 8).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() + 0x17L);
-      MEMORY.ref(1, address).offset(0x1cL).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4));
-      MEMORY.ref(1, address).offset(0x1dL).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4).get() + 0x1fL);
-
-      MEMORY.ref(2, address).offset(0x20L).setu(_800ce8ac.offset((sp18 + 0x3L) * 8).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x22L).setu(_800ce8ac.offset(((sp18 + 0x3L) * 2 + 0x1L) * 4).get() + 0x17L);
-      MEMORY.ref(1, address).offset(0x24L).setu(_800ce840.offset((sp18 + 0x3L) * 3 * 4).get() + _800ce840.offset(((sp18 + 0x3L) * 3 + 0x2L) * 4).get());
-      MEMORY.ref(1, address).offset(0x25L).setu(_800ce840.offset(((sp18 + 0x3L) * 3 + 0x1L) * 4).get() + 0x1fL);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), address);
-      address += 0x28L;
+      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .colour((int)_800c673c.offset(sp18 * 2).get())
+        .clut(640, 4)
+        .vramPos(576, 0)
+        .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
+        .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
+        .pos(1, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
+        .uv(1, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
+        .pos(2, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
+        .uv(2, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
+        .pos(3, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
+        .uv(3, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
+      );
     }
 
     //LAB_800ca57c
     //LAB_800ca580
-    for(int i = 0; i < 0x2L; i++) {
+    for(int i = 0; i < 2; i++) {
       //LAB_800ca59c
       final long sp14;
       if(i == 0) {
@@ -1216,40 +1102,24 @@ public final class Ttle {
       }
 
       //LAB_800ca62c
-      setCommand(0xcL, address, true, false);
-      MEMORY.ref(1, address).offset(0x04L).setu(_800c673c.offset(sp1c * 2));
-      MEMORY.ref(1, address).offset(0x05L).setu(_800c673c.offset(sp1c * 2));
-      MEMORY.ref(1, address).offset(0x06L).setu(_800c673c.offset(sp1c * 2));
-
-      MEMORY.ref(2, address).offset(0x08L).setu(_800ce8ac.offset(sp14 * 8).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x0aL).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() - 0x9L);
-      MEMORY.ref(1, address).offset(0x0cL).setu(_800ce840.offset(sp14 * 3 * 4));
-      MEMORY.ref(1, address).offset(0x0dL).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0x0eL).setu(0x128L);
-
-      MEMORY.ref(2, address).offset(0x10L).setu(_800ce8ac.offset(sp14 * 8).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x12L).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() - 0x9L);
-      MEMORY.ref(1, address).offset(0x14L).setu(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get());
-      MEMORY.ref(1, address).offset(0x15L).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4));
-      MEMORY.ref(2, address).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x9L);
-
-      MEMORY.ref(2, address).offset(0x18L).setu(_800ce8ac.offset(sp14 * 8).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x1aL).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() + 0x17L);
-      MEMORY.ref(1, address).offset(0x1cL).setu(_800ce840.offset(sp14 * 3 * 4));
-      MEMORY.ref(1, address).offset(0x1dL).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4).get() + 0x1fL);
-
-      MEMORY.ref(2, address).offset(0x20L).setu(_800ce8ac.offset(sp14 * 8).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get() - 0x8L);
-      MEMORY.ref(2, address).offset(0x22L).setu(_800ce8ac.offset((sp14 * 2 + 0x1L) * 4).get() + 0x17L);
-      MEMORY.ref(1, address).offset(0x24L).setu(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 0x2L) * 4).get());
-      MEMORY.ref(1, address).offset(0x25L).setu(_800ce840.offset((sp14 * 3 + 0x1L) * 4).get() + 0x1fL);
-
-      queueGpuPacket(tags_1f8003d0.deref().get(100).getAddress(), address);
-      address += 0x28L;
+      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .monochrome((int)_800c673c.offset(sp1c * 2).get())
+        .clut(640, 4)
+        .vramPos(576, 0)
+        .pos(0, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
+        .uv(0, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
+        .pos(1, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
+        .uv(1, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
+        .pos(2, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
+        .uv(2, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
+        .pos(3, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
+        .uv(3, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
+      );
     }
 
     //LAB_800cab28
-    gpuPacketAddr_1f8003d8.setu(address);
-
     //LAB_800cab34
   }
 
@@ -1620,10 +1490,13 @@ public final class Ttle {
   @Method(0x800cc57cL)
   public static long FUN_800cc57c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
     final long sp00 = _800c671c.get();
-    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
+      final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(3)
+        .shaded()
+        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
+
       //LAB_800cc5c8
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1cL).get());
       final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1eL).get());
@@ -1636,52 +1509,47 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x280030L); // Perspective transformation triple
 
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L));
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L));
+      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
+      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
+      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
+
+      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
+      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800cc674
         CPU.COP2(0x1400006L); // Normal clipping
 
-        MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL));
-
         if(CPU.MFC2(24L) != 0) { // Is visible
           //LAB_800cc6b0
-          MEMORY.ref(1, packet).offset(0x03L).setu(0x9L); // 9 words
-          MEMORY.ref(4, packet).offset(0x04L).setu(0x3680_8080L); // Shaded textured three-point polygon, semi-transparent, tex-blend
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12L)); // Screen XY0
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13L)); // Screen XY1
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14L)); // Screen XY2
+          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
+          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
+
+          cmd.pos(0, v0.getX(), v0.getY());
+          cmd.pos(1, v1.getX(), v1.getY());
+          cmd.pos(2, v2.getX(), v2.getY());
 
           if((int)CPU.CFC2(31) >= 0) { // No errors
             //LAB_800cc6e8
-            if(MEMORY.ref(2, packet).offset(0x8L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0) {
+            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0) {
               //LAB_800cc72c
-              if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x78 || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x78 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x78) {
+              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78) {
                 //LAB_800cc770
-                if(MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0) {
+                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0) {
                   //LAB_800cc7b4
-                  if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x78 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x78 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x78) {
+                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78) {
                     //LAB_800cc7f8
                     CPU.COP2(0x158002dL); // Average of three Z values
 
-                    MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x10L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x11L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x12L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xffL);
+                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x10L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x11L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x12L).get() * sp00 / 0xff));
+                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xff));
+                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xff));
 
                     // OTZ - Average Z value (for ordering table)
                     final int z = (int)Math.min(CPU.MFC2(7) + _800c6758.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-                    final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
 
-                    MEMORY.ref(4, packet).setu(0x900_0000L | tag.p.get());
-                    tag.set(packet & 0xff_ffffL);
-                    packet += 0x28L;
+                    GPU.queueCommand(z, cmd);
                   }
                 }
               }
@@ -1695,8 +1563,6 @@ public final class Ttle {
     }
 
     //LAB_800ccb4c
-    gpuPacketAddr_1f8003d8.setu(packet);
-
     //LAB_800ccb68
     return primitives;
   }
@@ -1704,11 +1570,13 @@ public final class Ttle {
   @Method(0x800ccb78L)
   public static long FUN_800ccb78(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
     final long sp00 = _800c671c.get();
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    long packet = gpuPacketAddr_1f8003d8.get();
 
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
+      final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(4)
+        .shaded()
+        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
+
       //LAB_800ccbe4
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
       final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
@@ -1721,59 +1589,53 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L));
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L));
+      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
+      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
+      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
+      cmd.uv(3, (int)MEMORY.ref(1, primitives).offset(0x10L).get(), (int)MEMORY.ref(1, primitives).offset(0x11L).get());
+
+      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
+      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800ccc90
         CPU.COP2(0x140_0006L); // Normal clipping
 
-        MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL));
-
         if(CPU.MFC2(24) != 0) { // Is visible
           //LAB_800ccccc
-          MEMORY.ref(1, packet).offset(0x3L).setu(0xcL); // 12 words
-          MEMORY.ref(4, packet).offset(0x4L).setu(0x3e808080L); // Shaded textured four-point polygon, semi-transparent, tex-blend
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12L)); // Screen XY0
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13L)); // Screen XY1
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14L)); // Screen XY2
+          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
+          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
+
+          cmd.pos(0, v0.getX(), v0.getY());
+          cmd.pos(1, v1.getX(), v1.getY());
+          cmd.pos(2, v2.getX(), v2.getY());
 
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
           CPU.MTC2(vert3.getXY(), 0); // VXY0
           CPU.MTC2(vert3.getZ(),  1); // VZ0
           CPU.COP2(0x18_0001L); // Perspective transform single
 
-          MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L));
-
           if((int)CPU.CFC2(31) >= 0) { // No errors
             //LAB_800ccd54
-            MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // Screen XY2
+            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
 
-            if(MEMORY.ref(2, packet).offset(0x8L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() >= -0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() >= -0xc0 || MEMORY.ref(4, packet).offset(0x2cL).getSigned() >= -0xc0) {
+            cmd.pos(3, v3.getX(), v3.getY());
+
+            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0 || v3.getX() >= -0xc0) {
               //LAB_800ccdb4
-              if(MEMORY.ref(2, packet).offset(0xaL).getSigned() >= -0x78 || MEMORY.ref(2, packet).offset(0x16L).getSigned() >= -0x78 || MEMORY.ref(2, packet).offset(0x22L).getSigned() >= -0x78 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() >= -0x78) {
+              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78 || v3.getY() >= -0x78) {
                 //LAB_800cce0c
-                if(MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x14L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x20L).getSigned() <= 0xc0 || MEMORY.ref(2, packet).offset(0x2cL).getSigned() <= 0xc0) {
+                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0 || v3.getX() <= 0xc0) {
                   //LAB_800cce64
-                  if(MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x78 || MEMORY.ref(2, packet).offset(0x16L).getSigned() <= 0x78 || MEMORY.ref(2, packet).offset(0x22L).getSigned() <= 0x78 || MEMORY.ref(2, packet).offset(0x2eL).getSigned() <= 0x78) {
+                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
                     //LAB_800ccebc
-                    MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get() * sp00 / 0xffL);
-                    MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get() * sp00 / 0xffL);
+                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xff));
+                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xff));
+                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1dL).get() * sp00 / 0xff));
+                    cmd.rgb(3, (int)(MEMORY.ref(1, primitives).offset(0x20L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x21L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x22L).get() * sp00 / 0xff));
 
-                    MEMORY.ref(4, packet).setu(0xc00_0000L | tags.get((int)_800c6758.get()).get() & 0xff_ffffL);
-                    tags.get((int)_800c6758.get()).num.set(0x0c);
-                    tags.get((int)_800c6758.get()).p.set(packet & 0xff_ffffL);
-                    packet += 0x34L;
+                    GPU.queueCommand((int)_800c6758.get(), cmd);
                   }
                 }
               }
@@ -1787,8 +1649,6 @@ public final class Ttle {
     }
 
     //LAB-800cd2ac
-    gpuPacketAddr_1f8003d8.setu(packet);
-
     //LAB_800cd2c8
     return primitives;
   }
