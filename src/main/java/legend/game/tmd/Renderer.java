@@ -1,15 +1,20 @@
 package legend.game.tmd;
 
+import legend.core.gpu.Bpp;
+import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.Scus94491BpeSegment;
 import legend.game.types.GsOT_TAG;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static legend.core.Hardware.CPU;
+import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
@@ -155,49 +160,6 @@ public class Renderer {
     final int vertexCount = quad ? 4 : 3;
     // ---
 
-    // The number of words per vertex in the GP0 command
-    int components = 1;
-    if(shaded) { // Has colour info
-      components++;
-    }
-
-    if(textured) { // Has texture info
-      components++;
-    }
-
-    // The length in bytes of each vertex in the GP0 packet
-    final int packetPitch = components * 4;
-
-    // The number of words total in the GP0 command
-    int gp0CommandCount = components * vertexCount;
-
-    int gp0Command = 0x20;
-    if(shaded) {
-      gp0Command |= 0x10;
-    } else {
-      gp0CommandCount++; // Unshaded commands have an extra word at the start
-    }
-
-    if(quad) {
-      gp0Command |= 0x8;
-    }
-
-    if(textured) {
-      gp0Command |= 0x4;
-    }
-
-    if(translucent) {
-      gp0Command |= 0x2;
-
-      if(useSpecialTranslucency) {
-        gp0Command |= specialTrans << 25;
-      }
-    }
-
-    final int packetLength = (gp0CommandCount + 1) * 4;
-
-    long packet = gpuPacketAddr_1f8003d8.get();
-
     final Polygon poly = new Polygon(vertexCount);
     long readIndex = primitives;
 
@@ -208,8 +170,8 @@ public class Renderer {
 
       if(textured) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          poly.vertices[vertexIndex].u = MEMORY.get(readIndex++);
-          poly.vertices[vertexIndex].v = MEMORY.get(readIndex++);
+          poly.vertices[vertexIndex].u = MEMORY.get(readIndex++) & 0xff;
+          poly.vertices[vertexIndex].v = MEMORY.get(readIndex++) & 0xff;
 
           if(vertexIndex == 0) {
             poly.clut = (int)MEMORY.get(readIndex, 2);
@@ -248,6 +210,22 @@ public class Renderer {
       readIndex = readIndex + 3 & 0xffff_fffcL; // 4-byte-align
       // ---
 
+      final GpuCommandPoly cmd = new GpuCommandPoly(vertexCount);
+
+      if(shaded) {
+        cmd.shaded();
+      }
+
+      if(textured) {
+        cmd.clut((poly.clut & 0b111111) * 16, poly.clut >>> 6);
+        cmd.vramPos((poly.tpage & 0b1111) * 64, (poly.tpage & 0b10000) != 0 ? 256 : 0);
+        cmd.bpp(Bpp.of(poly.tpage >>> 7 & 0b11));
+
+        if(translucent) {
+          cmd.translucent(Translucency.of(poly.tpage >>> 5 & 0b11));
+        }
+      }
+
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         final SVECTOR vert = vertices.get(poly.vertices[vertexIndex].vertexIndex);
         CPU.MTC2(vert.getXY(), 0);
@@ -258,19 +236,12 @@ public class Renderer {
           continue outer;
         }
 
-        MEMORY.set(packet + 0x8L + vertexIndex * packetPitch, 4, CPU.MFC2(14));
+        final DVECTOR xy = new DVECTOR().setXY(CPU.MFC2(14));
+
+        cmd.pos(vertexIndex, xy.getX(), xy.getY());
 
         if(textured) {
-          final long index = packet + 0xcL + vertexIndex * packetPitch;
-
-          MEMORY.set(index,     (byte)poly.vertices[vertexIndex].u);
-          MEMORY.set(index + 1, (byte)poly.vertices[vertexIndex].v);
-
-          if(vertexIndex == 0) {
-            MEMORY.set(index + 2, 2, poly.clut);
-          } else if(vertexIndex == 1) {
-            MEMORY.set(index + 2, 2, poly.tpage);
-          }
+          cmd.uv(vertexIndex, poly.vertices[vertexIndex].u, poly.vertices[vertexIndex].v);
         }
 
         // Back-face culling
@@ -297,7 +268,7 @@ public class Renderer {
 
       if(textured && !lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, poly.vertices[vertexIndex].colour);
+          cmd.rgb(vertexIndex, poly.vertices[vertexIndex].colour);
         }
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
@@ -306,26 +277,17 @@ public class Renderer {
           CPU.MTC2(norm.getXY(), 0);
           CPU.MTC2(norm.getZ(),  1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector
-          MEMORY.set(packet + 0x4L + vertexIndex * packetPitch, 4, CPU.MFC2(22));
+          cmd.rgb(vertexIndex, (int)CPU.MFC2(22));
         }
       }
 
-      MEMORY.set(packet + 0x7L, (byte)gp0Command);
-
-      final GsOT_TAG tag = tags_1f8003d0.deref().get(z);
-      MEMORY.set(packet, 4, gp0CommandCount << 24 | tag.p.get());
-      tag.set(packet & 0xff_ffffL);
-      packet += packetLength;
-
       if(translucent && !textured) {
-        MEMORY.set(packet, 4, 0x100_0000L | tag.p.get());
-        MEMORY.set(packet + 4, 4, 0xe100_021fL | _1f8003ec.get() & 0x9ffL);
-        tag.set(packet & 0xff_ffffL);
-        packet += 0x8L;
+        cmd.translucent(Translucency.of((int)_1f8003ec.get() >>> 5 & 0b11));
       }
+
+      GPU.queueCommand(z, cmd);
     }
 
-    gpuPacketAddr_1f8003d8.setu(packet);
     return readIndex;
   }
 

@@ -1,8 +1,8 @@
 package legend.game;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandTexturedPoly;
-import legend.core.gpu.GpuCommandTexturedQuad;
+import legend.core.gpu.GpuCommandPoly;
+import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -843,7 +843,7 @@ public final class Ttle {
       final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
 
       //LAB_800c8a8c
-      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+      GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(menuOptionTransparency_800c6730.get(i).get())
@@ -859,7 +859,7 @@ public final class Ttle {
         .vramPos(576, 0)
       );
 
-      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+      GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(menuOptionTransparency_800c6730.get(i).get())
@@ -1033,7 +1033,7 @@ public final class Ttle {
 
     //LAB_800c9b70
     for(int i = 0; i < 6; i++) {
-      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+      GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome((int)_800c673c.offset(i * 2).get())
@@ -1056,7 +1056,7 @@ public final class Ttle {
       //LAB_800ca018
       sp18 = i * 3;
 
-      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+      GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome((int)_800c673c.offset(sp18 * 2).get())
@@ -1102,7 +1102,7 @@ public final class Ttle {
       }
 
       //LAB_800ca62c
-      GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
+      GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome((int)_800c673c.offset(sp1c * 2).get())
@@ -1235,7 +1235,7 @@ public final class Ttle {
   /** TODO clut split */
   @Method(0x800cb4c4L)
   public static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
-    final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(4)
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .bpp(bpp)
       .rgb(r, g, b)
       .pos(0, x, y)
@@ -1360,7 +1360,7 @@ public final class Ttle {
     final int colour = (rsin(_800c66fc.get()) * 160) >> 12;
 
     // GP0.66 Textured quad, variable size, translucent, blended
-    final GpuCommandTexturedQuad cmd = new GpuCommandTexturedQuad()
+    final GpuCommandQuad cmd = new GpuCommandQuad()
       .translucent(Translucency.B_PLUS_F)
       .bpp(Bpp.BITS_15)
       .monochrome(colour)
@@ -1493,7 +1493,7 @@ public final class Ttle {
 
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
-      final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(3)
+      final GpuCommandPoly cmd = new GpuCommandPoly(3)
         .shaded()
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 
@@ -1573,7 +1573,7 @@ public final class Ttle {
 
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
-      final GpuCommandTexturedPoly cmd = new GpuCommandTexturedPoly(4)
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .shaded()
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 

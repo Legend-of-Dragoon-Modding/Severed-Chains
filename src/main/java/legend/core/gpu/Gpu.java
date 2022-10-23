@@ -220,6 +220,26 @@ public class Gpu implements Runnable {
     }
   }
 
+  public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
+    LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
+
+    for(int y = 0; y < height; y++) {
+      for(int x = 0; x < width; x++) {
+        int colour = this.getPixel(sourceX + x, sourceY + y);
+
+        if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+          if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
+            continue;
+          }
+        }
+
+        colour |= (this.status.setMaskBit ? 1 : 0) << 24;
+
+        this.setPixel(destX + x, destY + y, colour);
+      }
+    }
+  }
+
   private int tagsUploaded;
   public int uploadLinkedList(final long address) {
     this.tagsUploaded = 0;
@@ -1162,7 +1182,7 @@ public class Gpu implements Runnable {
     };
   }
 
-  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
+  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -1738,25 +1758,7 @@ public class Gpu implements Runnable {
       final int height = (short)((size & 0xffff0000) >>> 16) * gpu.renderScale;
       final int width = (short)(size & 0xffff) * gpu.renderScale;
 
-      return () -> {
-        LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
-
-        for(int y = 0; y < height; y++) {
-          for(int x = 0; x < width; x++) {
-            int colour = gpu.getPixel(sourceX + x, sourceY + y);
-
-            if(gpu.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-              if((gpu.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
-                continue;
-              }
-            }
-
-            colour |= (gpu.status.setMaskBit ? 1 : 0) << 24;
-
-            gpu.setPixel(destX + x, destY + y, colour);
-          }
-        }
-      };
+      return () -> gpu.command80CopyRectFromVramToVram(sourceX, sourceY, destX, destY, width, height);
     }),
 
     DRAW_MODE_SETTINGS(0xe1, 1, (buffer, gpu) -> {

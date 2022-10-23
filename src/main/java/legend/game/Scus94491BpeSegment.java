@@ -17,7 +17,7 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandSetMaskBit;
-import legend.core.gpu.GpuCommandTexturedQuad;
+import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -103,7 +103,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a0e4;
+import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
@@ -853,7 +853,7 @@ public final class Scus94491BpeSegment {
 
       // Textboxes? Other things?
       FUN_8002a058();
-      FUN_8002a0e4();
+      renderTextboxes();
 
       FUN_80020ed8();
       _800bb0fc.addu(0x1L);
@@ -2182,31 +2182,11 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(scriptEffect_800bb140.red0_20.get() != 0 || scriptEffect_800bb140.green0_1c.get() != 0 || scriptEffect_800bb140.blue0_14.get() != 0) {
       //LAB_800139c4
-      final long s0 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x10L);
-
-      MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
-
-      MEMORY.ref(1, s0).offset(0x4L).setu(scriptEffect_800bb140.red0_20.get() & 0xffL); // R
-      MEMORY.ref(1, s0).offset(0x5L).setu(scriptEffect_800bb140.green0_1c.get() & 0xffL); // G
-      MEMORY.ref(1, s0).offset(0x6L).setu(scriptEffect_800bb140.blue0_14.get() & 0xffL); // B
-      MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle, variable size, opaque
-
-      MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
-      MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
-      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // W
-      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // H
-
-      gpuLinkedListSetCommandTransparency(s0, true);
-      queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
-
-      final long a1 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x8L);
-
-      MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
-
-      queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
+      GPU.queueCommand(39, new GpuCommandQuad()
+        .translucent(Translucency.B_PLUS_F)
+        .rgb((int)scriptEffect_800bb140.red0_20.get(), (int)scriptEffect_800bb140.green0_1c.get(), (int)scriptEffect_800bb140.blue0_14.get())
+        .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
+      );
     }
 
     //LAB_80013adc
@@ -2214,31 +2194,11 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(scriptEffect_800bb140.red1_18.get() != 0 || scriptEffect_800bb140.green1_10.get() != 0 || scriptEffect_800bb140.blue1_0c.get() != 0) {
       //LAB_80013b10
-      final long s0 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x10L);
-
-      MEMORY.ref(1, s0).offset(0x3L).setu(0x3L); // 3 words
-
-      MEMORY.ref(1, s0).offset(0x4L).setu(scriptEffect_800bb140.red1_18.get() & 0xffL); // R
-      MEMORY.ref(1, s0).offset(0x5L).setu(scriptEffect_800bb140.green1_10.get() & 0xffL); // G
-      MEMORY.ref(1, s0).offset(0x6L).setu(scriptEffect_800bb140.blue1_0c.get() & 0xffL); // B
-      MEMORY.ref(1, s0).offset(0x7L).setu(0x60L); // Monochrome rectangle, variable size, opaque
-
-      MEMORY.ref(2, s0).offset(0x8L).setu(-centreScreenX_1f8003dc.get()); // X
-      MEMORY.ref(2, s0).offset(0xaL).setu(-centreScreenY_1f8003de.get()); // Y
-      MEMORY.ref(2, s0).offset(0xcL).setu(displayWidth_1f8003e0.get() + 1); // W
-      MEMORY.ref(2, s0).offset(0xeL).setu(displayHeight_1f8003e4.get() + 1); // H
-
-      gpuLinkedListSetCommandTransparency(s0, true);
-      queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), s0);
-
-      final long a1 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x8L);
-
-      MEMORY.ref(1, a1).offset(0x3L).setu(0x1L); // 1 word
-      MEMORY.ref(4, a1).offset(0x4L).setu(0xe1000205L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_MINUS_F).get(TexPageY.Y_0).get() & 0x9ff); // Draw mode dither enabled, texpage X (320), whatever is or'd
-
-      queueGpuPacket(tags_1f8003d0.deref().get(0x27).getAddress(), a1);
+      GPU.queueCommand(39, new GpuCommandQuad()
+        .translucent(Translucency.B_MINUS_F)
+        .rgb((int)scriptEffect_800bb140.red1_18.get(), (int)scriptEffect_800bb140.green1_10.get(), (int)scriptEffect_800bb140.blue1_0c.get())
+        .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
+      );
     }
 
     //LAB_80013c20
@@ -4413,7 +4373,7 @@ public final class Scus94491BpeSegment {
   public static void drawSceaLogo(final int colour) {
     final TimHeader tim = timHeader_800bc2e0;
 
-    final GpuCommandTexturedQuad packet = new GpuCommandTexturedQuad();
+    final GpuCommandQuad packet = new GpuCommandQuad();
     packet.bpp(Bpp.BITS_8);
     packet.monochrome(colour);
     packet.pos(-tim.getImageRect().w.get(), -tim.getImageRect().h.get() / 2, tim.getImageRect().w.get() * 2, tim.getImageRect().h.get());
