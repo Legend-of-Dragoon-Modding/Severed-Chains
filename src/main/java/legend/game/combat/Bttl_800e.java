@@ -5693,7 +5693,7 @@ public final class Bttl_800e {
 
       //LAB_800ee770
       for(int v1 = 0; v1 < 22; v1++) {
-        currentEnemyNames_800c69d0.get(combatantIndex).charAt(v1, 0xa0ffL);
+        currentEnemyNames_800c69d0.get(combatantIndex).charAt(v1, 0xa0ff);
       }
     }
 
@@ -5701,7 +5701,7 @@ public final class Bttl_800e {
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       //LAB_800ee7b8
       for(int v1 = 0; v1 < 22; v1++) {
-        _800c6ba8.get(charSlot).charAt(v1, 0xa0ffL);
+        _800c6ba8.get(charSlot).charAt(v1, 0xa0ff);
       }
     }
 

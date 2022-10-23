@@ -1059,7 +1059,7 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandTexturedPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .colour((int)_800c673c.offset(sp18 * 2).get())
+        .monochrome((int)_800c673c.offset(sp18 * 2).get())
         .clut(640, 4)
         .vramPos(576, 0)
         .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)

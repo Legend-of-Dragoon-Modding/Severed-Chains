@@ -7173,7 +7173,7 @@ public class WMap {
     final IntRef lines = new IntRef();
     measureText(text, width, lines);
     renderText(text, x - width.get() + 3, y, (short)a3, (short)a4);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, 0x9L, (short)a4);
+    renderText(text, x - (width.get() - 1) + 3, y + 1, 9, (short)a4);
   }
 
   @Method(0x800e7854L)

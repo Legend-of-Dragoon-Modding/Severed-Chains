@@ -2468,7 +2468,7 @@ public final class Bttl_800f {
             break;
           }
 
-          sp0x40.charAt((int)(a1 + 1), v0);
+          sp0x40.charAt((int)(a1 + 1), (int)v0);
         }
 
         //LAB_800f5a38
@@ -2519,10 +2519,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5bd8
-        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y1, s2, a1);
+        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y1, (int)s2, (int)a1);
 
         if(a0 == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y1, s2, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y1, (int)s2, (int)a1);
         }
       } else if(y2 < y1 + 12) {
         if((structa4._02.get() & 0x4L) != 0) {
@@ -2532,10 +2532,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5b40
-        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y2, s2, a1);
+        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y2, (int)s2, (int)a1);
 
         if(a0 == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y2, s2, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y2, (int)s2, (int)a1);
         }
       }
 
