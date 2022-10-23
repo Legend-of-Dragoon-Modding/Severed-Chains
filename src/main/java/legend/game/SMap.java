@@ -172,7 +172,6 @@ import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
-import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -3948,29 +3947,23 @@ public final class SMap {
     CPU.MTC2(sp0x10.getZ(),  1);
     CPU.COP2(0x180001L);
     final DVECTOR sp0x18 = new DVECTOR().setXY(CPU.MFC2(14));
-    final long packet = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(2, packet).offset(0x08L).setu(_800f64b0.offset(0x0L).getSigned() + sp0x18.getX());
-    MEMORY.ref(2, packet).offset(0x0aL).setu(_800f64b0.offset(0x4L).getSigned() + sp0x18.getY());
-    MEMORY.ref(2, packet).offset(0x10L).setu(_800f64b0.offset(0x2L).getSigned() + sp0x18.getX());
-    MEMORY.ref(2, packet).offset(0x12L).setu(_800f64b0.offset(0x4L).getSigned() + sp0x18.getY());
-    MEMORY.ref(2, packet).offset(0x18L).setu(_800f64b0.offset(0x0L).getSigned() + sp0x18.getX());
-    MEMORY.ref(2, packet).offset(0x1aL).setu(_800f64b0.offset(0x6L).getSigned() + sp0x18.getY());
-    MEMORY.ref(2, packet).offset(0x20L).setu(_800f64b0.offset(0x2L).getSigned() + sp0x18.getX());
-    MEMORY.ref(2, packet).offset(0x22L).setu(_800f64b0.offset(0x6L).getSigned() + sp0x18.getY());
-    MEMORY.ref(1, packet).offset(0x0cL).setu(_800f64b0.offset(1, 0x8L).get());
-    MEMORY.ref(1, packet).offset(0x0dL).setu(_800f64b0.offset(1, 0xcL).get());
-    MEMORY.ref(1, packet).offset(0x14L).setu(_800f64b0.offset(1, 0xaL).get());
-    MEMORY.ref(1, packet).offset(0x15L).setu(_800f64b0.offset(1, 0xcL).get());
-    MEMORY.ref(1, packet).offset(0x1cL).setu(_800f64b0.offset(1, 0x8L).get());
-    MEMORY.ref(1, packet).offset(0x1dL).setu(_800f64b0.offset(1, 0xeL).get());
-    MEMORY.ref(1, packet).offset(0x24L).setu(_800f64b0.offset(1, 0xaL).get());
-    MEMORY.ref(1, packet).offset(0x25L).setu(_800f64b0.offset(1, 0xeL).get());
-    MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(976, 464));
-    MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
-    MEMORY.ref(4, packet).offset(0x04L).setu(0x2e80_8080L);
-    MEMORY.ref(2, packet).offset(0x16L).setu(0x1fL);
-    queueGpuPacket(tags_1f8003d0.deref().get(37).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x28L);
+
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .bpp(Bpp.BITS_4)
+      .translucent(Translucency.HALF_B_PLUS_HALF_F)
+      .monochrome(0x80)
+      .clut(976, 464)
+      .vramPos(960, 256)
+      .pos(0, (int)_800f64b0.offset(0x0L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x4L).getSigned() + sp0x18.getY())
+      .pos(1, (int)_800f64b0.offset(0x2L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x4L).getSigned() + sp0x18.getY())
+      .pos(2, (int)_800f64b0.offset(0x0L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x6L).getSigned() + sp0x18.getY())
+      .pos(3, (int)_800f64b0.offset(0x2L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x6L).getSigned() + sp0x18.getY())
+      .uv(0, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xcL).get())
+      .uv(1, (int)_800f64b0.offset(1, 0xaL).get(), (int)_800f64b0.offset(1, 0xcL).get())
+      .uv(2, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xeL).get())
+      .uv(3, (int)_800f64b0.offset(1, 0xaL).get(), (int)_800f64b0.offset(1, 0xeL).get());
+
+    GPU.queueCommand(37, cmd);
   }
 
   @Method(0x800e4994L)
