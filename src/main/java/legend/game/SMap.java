@@ -7499,11 +7499,6 @@ public final class SMap {
         //LAB_800efa08
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
-//        final long packet = gpuPacketAddr_1f8003d8.get();
-//        gpuPacketAddr_1f8003d8.addu(0x28L);
-//        MEMORY.ref(1, packet).offset(0x03L).setu(9); // 9 words
-//        MEMORY.ref(4, packet).offset(0x04L).setu(0x2e80_8080L); // Textured four-point polygon, opaque, texture-blending
-
         final int mode = s0.renderMode_00.get();
         if(mode == 0 || mode == 2) {
           //LAB_800efa44
@@ -7516,23 +7511,12 @@ public final class SMap {
             .pos(2, offsetX + s0.v2_30.getX(), offsetY + s0.v2_30.getY())
             .pos(3, offsetX + s0.v3_38.getX(), offsetY + s0.v3_38.getY());
 
-//          MEMORY.ref(2, packet).offset(0x08L).setu(offsetX + s0.v0_20.getX()); // X0
-//          MEMORY.ref(2, packet).offset(0x0aL).setu(offsetY + s0.v0_20.getY()); // Y0
-//          MEMORY.ref(2, packet).offset(0x10L).setu(offsetX + s0.v1_28.getX()); // X1
-//          MEMORY.ref(2, packet).offset(0x12L).setu(offsetY + s0.v1_28.getY()); // Y1
-//          MEMORY.ref(2, packet).offset(0x18L).setu(offsetX + s0.v2_30.getX()); // X2
-//          MEMORY.ref(2, packet).offset(0x1aL).setu(offsetY + s0.v2_30.getY()); // Y2
-//          MEMORY.ref(2, packet).offset(0x20L).setu(offsetX + s0.v3_38.getX()); // X3
-//          MEMORY.ref(2, packet).offset(0x22L).setu(offsetY + s0.v3_38.getY()); // Y3
-
           if(mode == 2) {
             cmd
               .clut(960, 464)
               .vramPos(960, 320)
               .bpp(Bpp.BITS_4)
               .translucent(Translucency.B_MINUS_F);
-//            MEMORY.ref(2, packet).offset(0x0eL).setu(GetClut(960, 464)); // CLUT
-//            MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(Bpp.BITS_4, Translucency.B_MINUS_F, 960, 320)); // TPAGE
           } else {
             //LAB_800efb64
             cmd
@@ -7540,8 +7524,6 @@ public final class SMap {
               .vramPos((texPages_800d6050.get(7).get() & 0b1111) * 64, (texPages_800d6050.get(7).get() & 0b10000) != 0 ? 256 : 0)
               .translucent(Translucency.of(texPages_800d6050.get(7).get() >>> 5 & 0b11))
               .bpp(Bpp.of(texPages_800d6050.get(7).get() >>> 7 & 0b11));
-//            MEMORY.ref(2, packet).offset(0x0eL).setu(cluts_800d6068.get(7).get()); // CLUT
-//            MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800d6050.get(7).get()); // TPAGE
           }
         } else if(mode == 1) {
           //LAB_800efb7c
@@ -7558,15 +7540,6 @@ public final class SMap {
             .pos(2, x, y + s0._10.get())
             .pos(3, x + s0._10.get(), y + s0._10.get());
 
-//          MEMORY.ref(2, packet).offset(0x08L).setu(x); // X0
-//          MEMORY.ref(2, packet).offset(0x0aL).setu(y); // Y0
-//          MEMORY.ref(2, packet).offset(0x10L).setu(x + s0._10.get()); // X1
-//          MEMORY.ref(2, packet).offset(0x12L).setu(y); // Y1
-//          MEMORY.ref(2, packet).offset(0x18L).setu(x); // X2
-//          MEMORY.ref(2, packet).offset(0x1aL).setu(y + s0._10.get()); // Y2
-//          MEMORY.ref(2, packet).offset(0x20L).setu(x + s0._10.get()); // X3
-//          MEMORY.ref(2, packet).offset(0x22L).setu(y + s0._10.get()); // Y3
-
           if((s0._04.get() & 0x3L) == 0) {
             s0.v1_28.z.decr();
           }
@@ -7577,8 +7550,6 @@ public final class SMap {
             .vramPos((texPages_800d6050.get(6).get() & 0b1111) * 64, (texPages_800d6050.get(6).get() & 0b10000) != 0 ? 256 : 0)
             .translucent(Translucency.of(texPages_800d6050.get(6).get() >>> 5 & 0b11))
             .bpp(Bpp.of(texPages_800d6050.get(6).get() >>> 7 & 0b11));
-//          MEMORY.ref(2, packet).offset(0x0eL).setu(cluts_800d6068.get(6).get()); // CLUT
-//          MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800d6050.get(6).get()); // TPAGE
         }
 
         //LAB_800efc64
@@ -7601,19 +7572,6 @@ public final class SMap {
           .uv(2, u[s0.textureIndex_02.get()], v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get())
           .uv(3, u[s0.textureIndex_02.get()] + smokeTextureWidths_800d6bec.get(s0.textureIndex_02.get()).get(), v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get());
 
-//        MEMORY.ref(1, packet).offset(0x04L).setu(s0.colour_48.get()); // R
-//        MEMORY.ref(1, packet).offset(0x05L).setu(s0.colour_48.get()); // G
-//        MEMORY.ref(1, packet).offset(0x06L).setu(s0.colour_48.get()); // B
-//        MEMORY.ref(1, packet).offset(0x0cL).setu(u[s0.textureIndex_02.get()]); // U0
-//        MEMORY.ref(1, packet).offset(0x0dL).setu(v[s0.textureIndex_02.get()]); // V0
-//        MEMORY.ref(1, packet).offset(0x14L).setu(u[s0.textureIndex_02.get()] + smokeTextureWidths_800d6bec.get(s0.textureIndex_02.get()).get()); // U1
-//        MEMORY.ref(1, packet).offset(0x15L).setu(v[s0.textureIndex_02.get()]); // V1
-//        MEMORY.ref(1, packet).offset(0x1cL).setu(u[s0.textureIndex_02.get()]); // U2
-//        MEMORY.ref(1, packet).offset(0x1dL).setu(v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get()); // V2
-//        MEMORY.ref(1, packet).offset(0x24L).setu(u[s0.textureIndex_02.get()] + smokeTextureWidths_800d6bec.get(s0.textureIndex_02.get()).get()); // U3
-//        MEMORY.ref(1, packet).offset(0x25L).setu(v[s0.textureIndex_02.get()] + smokeTextureHeights_800d6bfc.get(s0.textureIndex_02.get()).get()); // V3
-
-//        queueGpuPacket(tags_1f8003d0.deref().get(s0.z_4c.get()).getAddress(), packet);
         GPU.queueCommand(s0.z_4c.get(), cmd);
 
         s0._04.incr();
