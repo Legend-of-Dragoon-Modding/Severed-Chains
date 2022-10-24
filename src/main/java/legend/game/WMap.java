@@ -2477,7 +2477,7 @@ public class WMap {
     //LAB_800d3bd0
     //LAB_800d3fa4
     //LAB_800d3fac
-    FUN_800d4058();
+    renderPlayerAndDestinationIndicators();
   }
 
   @Method(0x800d3fc8L)
@@ -2489,7 +2489,7 @@ public class WMap {
   }
 
   @Method(0x800d4058L)
-  public static void FUN_800d4058() {
+  public static void renderPlayerAndDestinationIndicators() {
     //LAB_800d4088
     if(_800c66b0.deref()._c4.get() == 0 || _800c66b0.deref()._c5.get() != 0) {
       //LAB_800d41f0
@@ -2551,26 +2551,16 @@ public class WMap {
     final SVECTOR sp0x58 = new SVECTOR().set(struct258_800c66a8.deref().coord2_34.coord.transfer);
     final DVECTOR sp0x60 = new DVECTOR(); // sxy2
     perspectiveTransform(sp0x58, sp0x60, null, null);
-    final long sp74 = gpuPacketAddr_1f8003d8.get();
-    setGpuPacketType(0xeL, sp74, false, false); // 0x64
-    MEMORY.ref(1, sp74).offset(0x04L).setu(0x55); // R
-    MEMORY.ref(1, sp74).offset(0x05L).setu(0); // G
-    MEMORY.ref(1, sp74).offset(0x06L).setu(0); // B
-    MEMORY.ref(2, sp74).offset(0x08L).setu(sp0x60.getX() - size / 2); // X
-    MEMORY.ref(2, sp74).offset(0x0aL).setu(sp0x60.getY() - size); // Y
-    MEMORY.ref(1, sp74).offset(0x0cL).setu((_800bb0fc.get() & 0x7) * size); // U
-    MEMORY.ref(1, sp74).offset(0x0dL).setu(v); // V
-    MEMORY.ref(2, sp74).offset(0x0eL).setu(0x7c28L); // CLUT
-    MEMORY.ref(2, sp74).offset(0x10L).setu(size); // W
-    MEMORY.ref(2, sp74).offset(0x12L).setu(size); // H
-    queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp74);
-    gpuPacketAddr_1f8003d8.addu(0x14L);
 
-    final long sp78 = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, sp78).offset(0x3L).setu(1);
-    MEMORY.ref(4, sp78).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
-    queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp78);
-    gpuPacketAddr_1f8003d8.addu(0x8L);
+    // Player arrow on map
+    GPU.queueCommand(25, new GpuCommandQuad()
+      .bpp(Bpp.BITS_4)
+      .clut(640, 496)
+      .vramPos(640, 256)
+      .rgb(0x55, 0, 0)
+      .pos(sp0x60.getX() - size / 2, sp0x60.getY() - size, size, size)
+      .uv(((int)_800bb0fc.get() & 0x7) * size, v)
+    );
 
     if(struct258_800c66a8.deref().zoomState_1f8.get() == 4) {
       //LAB_800d44d0
@@ -2593,26 +2583,15 @@ public class WMap {
       //LAB_800d45f0
       if(sp24 != 0) {
         //LAB_800d4608
-        final long sp84 = gpuPacketAddr_1f8003d8.get();
-        setGpuPacketType(0xeL, sp84, false, false);
-        MEMORY.ref(1, sp84).offset(0x04L).setu(0); // R
-        MEMORY.ref(1, sp84).offset(0x05L).setu(0); // G
-        MEMORY.ref(1, sp84).offset(0x06L).setu(0x55); // B
-        MEMORY.ref(2, sp84).offset(0x08L).setu(_800f5a90.offset(sp24 * 0x2cL).get() - 160); // X
-        MEMORY.ref(2, sp84).offset(0x0aL).setu(_800f5a92.offset(sp24 * 0x2cL).get() - 120); // Y
-        MEMORY.ref(1, sp84).offset(0x0cL).setu((_800bb0fc.get() & 0x7) * size); // U
-        MEMORY.ref(1, sp84).offset(0x0dL).setu(v); // V
-        MEMORY.ref(2, sp84).offset(0x0eL).setu(0x7c28L); // CLUT
-        MEMORY.ref(2, sp84).offset(0x10L).setu(size); // W
-        MEMORY.ref(2, sp84).offset(0x12L).setu(size); // H
-        queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp84);
-        gpuPacketAddr_1f8003d8.addu(0x14L);
-
-        final long sp80 = gpuPacketAddr_1f8003d8.get();
-        MEMORY.ref(1, sp80).offset(0x3L).setu(0x1L);
-        MEMORY.ref(4, sp80).offset(0x4L).setu(0xe100_000aL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() & 0x9ff);
-        queueGpuPacket(tags_1f8003d0.deref().get(25).getAddress(), sp80);
-        gpuPacketAddr_1f8003d8.addu(0x8L);
+        // Destination arrow on map
+        GPU.queueCommand(25, new GpuCommandQuad()
+          .bpp(Bpp.BITS_4)
+          .clut(640, 496)
+          .vramPos(640, 256)
+          .rgb(0, 0, 0x55)
+          .pos((int)_800f5a90.offset(sp24 * 0x2cL).get() - 160, (int)_800f5a92.offset(sp24 * 0x2cL).get() - 120, size, size)
+          .uv(((int)_800bb0fc.get() & 0x7) * size, v)
+        );
 
         if(!places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.isNull()) {
           //LAB_800d4878
