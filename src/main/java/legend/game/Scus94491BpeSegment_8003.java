@@ -3289,17 +3289,12 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003ea80L)
   public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
-    final Ref<Long> t0Ref = new Ref<>((long)a0.getX());
-    final Ref<Long> t1Ref = new Ref<>((long)a0.getY());
-    final Ref<Long> t2Ref = new Ref<>((long)a0.getZ());
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.setX(t0Ref.get().intValue());
-    a1.setY(t1Ref.get().intValue());
-    a1.setZ(t2Ref.get().intValue());
+    a1.set(a0);
+    FUN_8003eae0(a1.x, a1.y, a1.z);
   }
 
   @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final Ref<Long> t0, final Ref<Long> t1, final Ref<Long> t2) {
+  public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
     final long v0;
     final long v1;
     long t3;
@@ -3336,34 +3331,22 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t1.get(), 10);
     CPU.MTC2(t2.get(), 11);
     CPU.COP2(0x190003dL);
-    t0.set(CPU.MFC2(25) >> t6);
-    t1.set(CPU.MFC2(26) >> t6);
-    t2.set(CPU.MFC2(27) >> t6);
+    t0.set((int)(CPU.MFC2(25) >> t6));
+    t1.set((int)(CPU.MFC2(26) >> t6));
+    t2.set((int)(CPU.MFC2(27) >> t6));
   }
 
   @Method(0x8003eba0L)
   public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    final long v0;
-    final long v1;
-    final long a2;
-    final long t0;
-    final long t1;
-    final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
-    final long t7;
-    final long t8;
-    final long t9;
-    t0 = a0.get(0);
-    t1 = a0.get(1);
-    t2 = a0.get(2);
-    t3 = a0.get(3);
-    t4 = a0.get(4);
-    t5 = a0.get(5);
-    v0 = CPU.CFC2(0);
-    v1 = CPU.CFC2(2);
-    a2 = CPU.CFC2(4);
+    final int t0 = a0.get(0);
+    final int t1 = a0.get(1);
+    final int t2 = a0.get(2);
+    final int t3 = a0.get(3);
+    final int t4 = a0.get(4);
+    final int t5 = a0.get(5);
+    final long v0 = CPU.CFC2(0);
+    final long v1 = CPU.CFC2(2);
+    final long a2 = CPU.CFC2(4);
     CPU.CTC2(t0, 0);
     CPU.CTC2(t1, 2);
     CPU.CTC2(t2, 4);
@@ -3371,9 +3354,9 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t4, 10);
     CPU.MTC2(t5, 11);
     CPU.COP2(0x178000cL);
-    t7 = CPU.MFC2(25);
-    t8 = CPU.MFC2(26);
-    t9 = CPU.MFC2(27);
+    final long t7 = CPU.MFC2(25);
+    final long t8 = CPU.MFC2(26);
+    final long t9 = CPU.MFC2(27);
     CPU.CTC2(t3, 0);
     CPU.CTC2(t4, 2);
     CPU.CTC2(t5, 4);
@@ -3381,30 +3364,30 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t3, 0);
     CPU.MTC2(t4, 1);
     CPU.MTC2(t5, 2);
-    final Ref<Long> t0Ref = new Ref<>(CPU.MFC2(25));
-    final Ref<Long> t1Ref = new Ref<>(CPU.MFC2(26));
-    final Ref<Long> t2Ref = new Ref<>(CPU.MFC2(27));
+    final IntRef t0Ref = new IntRef().set((int)CPU.MFC2(25));
+    final IntRef t1Ref = new IntRef().set((int)CPU.MFC2(26));
+    final IntRef t2Ref = new IntRef().set((int)CPU.MFC2(27));
     CPU.CTC2(v0, 0);
     CPU.CTC2(v1, 2);
     CPU.CTC2(a2, 4);
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(0, t0Ref.get().shortValue());
-    a1.set(1, t1Ref.get().shortValue());
-    a1.set(2, t2Ref.get().shortValue());
-    t0Ref.set(CPU.MFC2(0));
-    t1Ref.set(CPU.MFC2(1));
-    t2Ref.set(CPU.MFC2(2));
+    a1.set(0, (short)t0Ref.get());
+    a1.set(1, (short)t1Ref.get());
+    a1.set(2, (short)t2Ref.get());
+    t0Ref.set((int)CPU.MFC2(0));
+    t1Ref.set((int)CPU.MFC2(1));
+    t2Ref.set((int)CPU.MFC2(2));
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(3, t0Ref.get().shortValue());
-    a1.set(4, t1Ref.get().shortValue());
-    a1.set(5, t2Ref.get().shortValue());
-    t0Ref.set(t7);
-    t1Ref.set(t8);
-    t2Ref.set(t9);
+    a1.set(3, (short)t0Ref.get());
+    a1.set(4, (short)t1Ref.get());
+    a1.set(5, (short)t2Ref.get());
+    t0Ref.set((int)t7);
+    t1Ref.set((int)t8);
+    t2Ref.set((int)t9);
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(6, t0Ref.get().shortValue());
-    a1.set(7, t1Ref.get().shortValue());
-    a1.set(8, t2Ref.get().shortValue());
+    a1.set(6, (short)t0Ref.get());
+    a1.set(7, (short)t1Ref.get());
+    a1.set(8, (short)t2Ref.get());
   }
 
   @Method(0x8003ec90L)

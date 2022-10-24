@@ -15,7 +15,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ConsumerRef;
@@ -338,7 +337,7 @@ public class WMap {
   /**
    * <ol start="0">
    *   <li>{@link WMap#renderDartShadow}</li>
-   *   <li>{@link WMap#FUN_800e1ac4}</li>
+   *   <li>{@link WMap#renderQueenFuryShadow}</li>
    *   <li>{@link WMap#FUN_800e32fc}</li>
    *   <li>{@link WMap#FUN_800e32fc}</li>
    * </ul>
@@ -5293,35 +5292,7 @@ public class WMap {
   }
 
   @Method(0x800e1ac4L)
-  public static void FUN_800e1ac4() {
-    long v0;
-    long spf9;
-    long spec;
-    long spf0;
-    long sp118;
-    long spf8;
-    long sp110;
-    long sp111;
-    long sp112;
-    long spe8;
-    long spdc;
-    long sp84;
-    long sp10a;
-    long spe0;
-    long sp6c;
-    long spd8;
-    long spcc;
-    long sp78;
-    long spd0;
-    long spc8;
-    long sp68;
-    long spfa;
-    long sp108;
-    long sp109;
-    long sp100;
-    long sp101;
-    long sp102;
-
+  public static void renderQueenFuryShadow() {
     final MATRIX sp0x28 = new MATRIX();
     final SVECTOR sp0x48 = new SVECTOR();
     final SVECTOR sp0x50 = new SVECTOR();
@@ -5330,9 +5301,6 @@ public class WMap {
 
     final IntRef sp0x70 = new IntRef();
     final IntRef sp0x74 = new IntRef();
-
-    final Ref<Long> sp0x7c = new Ref<>();
-    final Ref<Long> sp0x80 = new Ref<>();
 
     final VECTOR sp0x88 = new VECTOR();
     final VECTOR sp0x98 = new VECTOR();
@@ -5356,129 +5324,125 @@ public class WMap {
     setRotTransMatrix(sp0x28);
 
     //LAB_800e1ccc
-    for(sp68 = 0; sp68 < 39; sp68++) {
+    for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
-      sp118 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x34L);
-      setGpuPacketType(0xdL, sp118, true, false);
-      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
-      MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
-      MEMORY.ref(1, sp118).offset(0xcL).setu(0);
-      MEMORY.ref(1, sp118).offset(0xdL).setu(0);
-      MEMORY.ref(1, sp118).offset(0x18L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x19L).setu(0);
-      MEMORY.ref(1, sp118).offset(0x24L).setu(0);
-      MEMORY.ref(1, sp118).offset(0x25L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x30L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x31L).setu(0x3fL);
-      FUN_800e2e1c(sp68, sp0x88, sp0x98, sp0x74, sp0x70);
-      spc8 = sp0x88.getX() * sp0x70.get() >> 12;
-      spcc = sp0x88.getY() * sp0x70.get() >> 12;
-      spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      spd8 = -spc8;
-      spdc = -spcc;
-      spe0 = -spd0;
+      FUN_800e2e1c(i, sp0x88, sp0x98, sp0x74, sp0x70);
+      int spc8 = sp0x88.getX() * sp0x70.get() >> 12;
+      int spcc = sp0x88.getY() * sp0x70.get() >> 12;
+      int spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
+      final int spd8 = -spc8;
+      final int spdc = -spcc;
+      final int spe0 = -spd0;
       sp0x48.setX((short)(spc8 + sp0x98.getX()));
       sp0x48.setY((short)(spcc + sp0x98.getY()));
       sp0x48.setZ((short)(spd0 + sp0x98.getZ()));
       sp0x50.setX((short)sp0x98.getX());
       sp0x50.setY((short)sp0x98.getY());
       sp0x50.setZ((short)sp0x98.getZ());
-      sp78 = 256 - sp0x74.get() * 256 / 40;
-      spf8 = sp78 * 96 / 256;
-      spf9 = sp78 * 96 / 256;
-      spfa = sp78 * 96 / 256;
-      sp100 = 0;
-      sp101 = sp78 / 8;
-      sp102 = sp78 * 96 / 256;
-      MEMORY.ref(1, sp118).offset(0x4L).setu(spf8);
-      MEMORY.ref(1, sp118).offset(0x5L).setu(spf9);
-      MEMORY.ref(1, sp118).offset(0x6L).setu(spfa);
-      MEMORY.ref(1, sp118).offset(0x10L).setu(sp100);
-      MEMORY.ref(1, sp118).offset(0x11L).setu(sp101);
-      MEMORY.ref(1, sp118).offset(0x12L).setu(sp102);
-      FUN_800e2e1c(sp68 + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
+
+      FUN_800e2e1c(i + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
       spc8 = sp0x88.getX() * sp0x70.get() >> 12;
       spcc = sp0x88.getY() * sp0x70.get() >> 12;
       spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      spe8 = -spc8;
-      spec = -spcc;
-      spf0 = -spd0;
+      final int spe8 = -spc8;
+      final int spec = -spcc;
+      final int spf0 = -spd0;
       sp0x58.setX((short)(spc8 + sp0xa8.getX()));
       sp0x58.setY((short)(spcc + sp0xa8.getY()));
       sp0x58.setZ((short)(spd0 + sp0xa8.getZ()));
       sp0x60.set(sp0xa8);
-      sp78 = 256 - sp0x74.get() * 256 / 40;
-      sp108 = sp78 * 96 / 256;
-      sp109 = sp78 * 96 / 256;
-      sp10a = sp78 * 96 / 256;
-      sp110 = 0;
-      sp111 = (int)sp78 / 8;
-      sp112 = sp78 * 96 / 256;
-      MEMORY.ref(1, sp118).offset(0x1cL).setu(sp108);
-      MEMORY.ref(1, sp118).offset(0x1dL).setu(sp109);
-      MEMORY.ref(1, sp118).offset(0x1eL).setu(sp10a);
-      MEMORY.ref(1, sp118).offset(0x28L).setu(sp110);
-      MEMORY.ref(1, sp118).offset(0x29L).setu(sp111);
-      MEMORY.ref(1, sp118).offset(0x2aL).setu(sp112);
-      sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
 
-      if((int)sp84 >= 0x3L && (int)sp84 < orderingTableSize_1f8003c8.get()) {
-        queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
+      int sp78 = 256 - sp0x74.get() * 256 / 40;
+      final int r0 = sp78 * 96 / 256;
+      final int g0 = sp78 * 96 / 256;
+      final int b0 = sp78 * 96 / 256;
+      final int r1 = 0;
+      final int g1 = sp78 / 8;
+      final int b1 = sp78 * 96 / 256;
+
+      sp78 = 256 - sp0x74.get() * 256 / 40;
+      final int r2 = sp78 * 96 / 256;
+      final int g2 = sp78 * 96 / 256;
+      final int b2 = sp78 * 96 / 256;
+      final int r3 = 0;
+      final int g3 = sp78 / 8;
+      final int b3 = sp78 * 96 / 256;
+
+      final SVECTOR sxyz0 = new SVECTOR();
+      final SVECTOR sxyz1 = new SVECTOR();
+      final SVECTOR sxyz2 = new SVECTOR();
+      final SVECTOR sxyz3 = new SVECTOR();
+
+      int z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3, null, null);
+
+      if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .shaded()
+          .bpp(Bpp.BITS_4)
+          .translucent(Translucency.B_PLUS_F)
+          .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())
+          .vramPos(448, 0)
+          .rgb(0, r0, g0, b0)
+          .rgb(1, r1, g1, b1)
+          .rgb(2, r2, g2, b2)
+          .rgb(3, r3, g3, b3)
+          .uv(0,  0,  0)
+          .uv(1, 63,  0)
+          .uv(2,  0, 63)
+          .uv(3, 63, 63)
+          .pos(0, sxyz0.getX(), sxyz0.getY())
+          .pos(1, sxyz1.getX(), sxyz1.getY())
+          .pos(2, sxyz2.getX(), sxyz2.getY())
+          .pos(3, sxyz3.getX(), sxyz3.getY());
+
+        GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
       }
 
       //LAB_800e2440
-      sp118 = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x34L);
-      setGpuPacketType(0xdL, sp118, true, false);
-      MEMORY.ref(2, sp118).offset(0x1aL).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get() | 0x7L);
-      MEMORY.ref(2, sp118).offset(0xeL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL);
-      MEMORY.ref(1, sp118).offset(0xcL).setu(0);
-      MEMORY.ref(1, sp118).offset(0xdL).setu(0);
-      MEMORY.ref(1, sp118).offset(0x18L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x19L).setu(0);
-      MEMORY.ref(1, sp118).offset(0x24L).setu(0);
-      MEMORY.ref(1, sp118).offset(0x25L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x30L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x31L).setu(0x3fL);
-      MEMORY.ref(1, sp118).offset(0x04L).setu(spf8);
-      MEMORY.ref(1, sp118).offset(0x05L).setu(spf9);
-      MEMORY.ref(1, sp118).offset(0x06L).setu(spfa);
-      MEMORY.ref(1, sp118).offset(0x10L).setu(sp100);
-      MEMORY.ref(1, sp118).offset(0x11L).setu(sp101);
-      MEMORY.ref(1, sp118).offset(0x12L).setu(sp102);
-      MEMORY.ref(1, sp118).offset(0x1cL).setu(sp108);
-      MEMORY.ref(1, sp118).offset(0x1dL).setu(sp109);
-      MEMORY.ref(1, sp118).offset(0x1eL).setu(sp10a);
-      MEMORY.ref(1, sp118).offset(0x28L).setu(sp110);
-      MEMORY.ref(1, sp118).offset(0x29L).setu(sp111);
-      MEMORY.ref(1, sp118).offset(0x2aL).setu(sp112);
-
       sp0x48.setX((short)(spd8 + sp0x98.getX()));
       sp0x48.setY((short)(spdc + sp0x98.getY()));
       sp0x48.setZ((short)(spe0 + sp0x98.getZ()));
       sp0x58.setX((short)(spe8 + sp0xa8.getX()));
       sp0x58.setY((short)(spec + sp0xa8.getY()));
       sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
-      sp84 = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, MEMORY.ref(2, sp118 + 0x8L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x14L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x20L, SVECTOR::new), MEMORY.ref(2, sp118 + 0x2cL, SVECTOR::new), sp0x80, sp0x7c);
+      z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3, null, null);
 
-      if((int)sp84 >= 3 && (int)sp84 < orderingTableSize_1f8003c8.get()) {
-        queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, sp118);
+      if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .shaded()
+          .bpp(Bpp.BITS_4)
+          .translucent(Translucency.B_PLUS_F)
+          .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())
+          .vramPos(448, 0)
+          .rgb(0, r0, g0, b0)
+          .rgb(1, r1, g1, b1)
+          .rgb(2, r2, g2, b2)
+          .rgb(3, r3, g3, b3)
+          .uv(0,  0,  0)
+          .uv(1, 63,  0)
+          .uv(2,  0, 63)
+          .uv(3, 63, 63)
+          .pos(0, sxyz0.getX(), sxyz0.getY())
+          .pos(1, sxyz1.getX(), sxyz1.getY())
+          .pos(2, sxyz2.getX(), sxyz2.getY())
+          .pos(3, sxyz3.getX(), sxyz3.getY());
+
+        GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
       }
     }
 
     //LAB_800e2770
     //LAB_800e2774
-    for(sp68 = 0; sp68 < 40; sp68++) {
+    for(int i = 0; i < 40; i++) {
       //LAB_800e2790
-      sp6c = struct258_800c66a8.deref()._230.get() - sp68 * struct258_800c66a8.deref()._23c.get();
+      long sp6c = struct258_800c66a8.deref()._230.get() - i * struct258_800c66a8.deref()._23c.get();
 
       if((int)sp6c < 0) {
         sp6c += struct258_800c66a8.deref()._238.get();
       }
 
       //LAB_800e2808
-      v0 = struct258_800c66a8.deref().ptr_22c.get() + sp6c * 0x4L;
+      final long v0 = struct258_800c66a8.deref().ptr_22c.get() + sp6c * 0x4L;
       MEMORY.ref(4, v0).offset(0x0L).addu(0x1L);
     }
 
