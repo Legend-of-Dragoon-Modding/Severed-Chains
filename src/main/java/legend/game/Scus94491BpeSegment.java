@@ -70,7 +70,6 @@ import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
-import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.WorldObject210;
@@ -114,7 +113,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -301,7 +299,6 @@ import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.sssqChannelIndex_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -4296,10 +4293,9 @@ public final class Scus94491BpeSegment {
     int clutY = mcq.clutY_0e.get() + vramOffsetY;
     int u = mcq.u_10.get() + vramOffsetX;
     int v = mcq.v_12.get() + vramOffsetY;
-    int t5 = u & 0x3c0;
-    final int a3 = v & 0x100;
+    int vramX = u & 0x3c0;
+    final int vramY = v & 0x100;
     u = u * 4 & 0xfc;
-    final long s4 = gpuPacketAddr_1f8003d8.get();
 
     if(mcq.magic_00.get() == McqHeader.MAGIC_2) {
       x += mcq.screenOffsetX_28.get();
@@ -4307,59 +4303,45 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800181e4
-    long a2 = s4;
-    long t0_0 = a2 + 0x8L;
-    MEMORY.ref(1, s4).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, s4).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(v)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
-    MEMORY.ref(3, a2).setu(t0_0); // SWL v0,$2(a2)
-
     //LAB_80018350
     //LAB_8001836c
     for(int chunkX = 0; chunkX < width; chunkX += 16) {
       //LAB_80018380
       for(int chunkY = 0; chunkY < height; chunkY += 16) {
-        a2 = t0_0;
-        MEMORY.ref(1, a2).offset(0x3L).setu(0x3L);
-        MEMORY.ref(1, a2).offset(0x4L).setu(colour);
-        MEMORY.ref(1, a2).offset(0x5L).setu(colour);
-        MEMORY.ref(1, a2).offset(0x6L).setu(colour);
-        MEMORY.ref(1, a2).offset(0x7L).setu(0x7cL);
-        MEMORY.ref(2, a2).offset(0x8L).setu(x + chunkX); // X
-        MEMORY.ref(2, a2).offset(0xaL).setu(y + chunkY); // Y
-        MEMORY.ref(1, a2).offset(0xcL).setu(u); // U
-        MEMORY.ref(1, a2).offset(0xdL).setu(v); // V
-        MEMORY.ref(2, a2).offset(0xeL).setu(clutY << 6 | (clutX & 0x3f0) >> 4); // CLUT
-        t0_0 = a2 + 0x10L;
-        MEMORY.ref(3, a2).setu(t0_0); // SWL v0,$2(a2)
+        GPU.queueCommand(z, new GpuCommandQuad()
+          .bpp(Bpp.BITS_4)
+          .translucent(Translucency.HALF_B_PLUS_HALF_F)
+          .clut(clutX, clutY)
+          .vramPos(vramX, vramY)
+          .monochrome(colour)
+          .pos(x + chunkX, y + chunkY, 16, 16)
+          .uv(u, v)
+        );
+
         v = v + 16 & 0xf0;
+
         if(v == 0) {
           u = u + 16 & 0xf0;
+
           if(u == 0) {
-            t5 = t5 + 64;
-            a2 = t0_0;
-            MEMORY.ref(1, a2).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, a2).offset(0x4L).setu(0xe100_0200L | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY(a3)).get() & 0x9ff | (t5 & 0x3c0) >> 6);
-            MEMORY.ref(3, a2).setu(a2 + 0x8L); // SWL v0,$2(a2)
-            t0_0 = a2 + 0x8L;
+            vramX = vramX + 64;
           }
         }
 
         //LAB_80018434
         clutY = clutY + 1 & 0xff;
+
         if(clutY == 0) {
           clutX = clutX + 16;
         }
 
         //LAB_80018444
-        clutY = clutY | a3;
+        clutY = clutY | vramY;
       }
     }
 
     //LAB_80018464
-    gpuPacketAddr_1f8003d8.setu(t0_0);
-
     //LAB_8001846c
-    FUN_8003b450(tags_1f8003d0.deref().get(z).getAddress(), s4, a2);
   }
 
   @Method(0x80018508L)

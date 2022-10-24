@@ -6063,10 +6063,10 @@ public class WMap {
     u = u * 4 & 0xfc;
 
     //LAB_800e4ad0
-    for(int offsetX = 0; offsetX < width; offsetX += 16) {
+    for(int chunkX = 0; chunkX < width; chunkX += 16) {
       //LAB_800e4af0
       //LAB_800e4af4
-      for(int offsetY = 0; offsetY < height; offsetY += 16) {
+      for(int chunkY = 0; chunkY < height; chunkY += 16) {
         //LAB_800e4b14
         GPU.queueCommand(z, new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
@@ -6074,7 +6074,7 @@ public class WMap {
           .clut(clutX, clutY)
           .vramPos(vramX, vramY)
           .monochrome(colour)
-          .pos(x + offsetX, y + offsetY, 16, 16)
+          .pos(x + chunkX, y + chunkY, 16, 16)
           .uv(u, v)
         );
 
