@@ -46,22 +46,6 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
-  /** Note this is overlapped by {@link #_800c3423} */
-  public static final Value _800c3420 = MEMORY.ref(4, 0x800c3420L);
-  public static final Value _800c3423 = MEMORY.ref(1, 0x800c3423L);
-  public static final Value _800c3424 = MEMORY.ref(1, 0x800c3424L);
-  public static final Value _800c3425 = MEMORY.ref(1, 0x800c3425L);
-  public static final Value _800c3426 = MEMORY.ref(1, 0x800c3426L);
-  public static final Value _800c3427 = MEMORY.ref(1, 0x800c3427L);
-  public static final Value _800c3428 = MEMORY.ref(2, 0x800c3428L);
-  public static final Value _800c342a = MEMORY.ref(2, 0x800c342aL);
-  public static final Value _800c342c = MEMORY.ref(2, 0x800c342cL);
-  public static final Value _800c342e = MEMORY.ref(2, 0x800c342eL);
-
-  public static final Value _800c3433 = MEMORY.ref(1, 0x800c3433L);
-
-  public static final Value _800c3437 = MEMORY.ref(1, 0x800c3437L);
-
   public static final Box clip_800c3440 = MEMORY.ref(8, 0x800c3440L, Box::new);
   public static final Box clip_800c3448 = MEMORY.ref(8, 0x800c3448L, Box::new);
   public static final DRAWENV DRAWENV_800c3450 = MEMORY.ref(92, 0x800c3450L, DRAWENV::new);

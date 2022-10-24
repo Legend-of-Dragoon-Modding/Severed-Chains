@@ -13,6 +13,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gpu.DR_ENV;
+import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -42,7 +43,6 @@ import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT;
 import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
@@ -77,6 +77,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.memcpy;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
@@ -107,7 +108,6 @@ import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005._8005475c;
-import static legend.game.Scus94491BpeSegment_8005._8005477c;
 import static legend.game.Scus94491BpeSegment_8005._80054790;
 import static legend.game.Scus94491BpeSegment_8005._80054792;
 import static legend.game.Scus94491BpeSegment_8005._800547bb;
@@ -138,18 +138,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c1ba8;
 import static legend.game.Scus94491BpeSegment_800c._800c1bc0;
 import static legend.game.Scus94491BpeSegment_800c._800c1be8;
 import static legend.game.Scus94491BpeSegment_800c._800c3410;
-import static legend.game.Scus94491BpeSegment_800c._800c3420;
-import static legend.game.Scus94491BpeSegment_800c._800c3423;
-import static legend.game.Scus94491BpeSegment_800c._800c3424;
-import static legend.game.Scus94491BpeSegment_800c._800c3425;
-import static legend.game.Scus94491BpeSegment_800c._800c3426;
-import static legend.game.Scus94491BpeSegment_800c._800c3427;
-import static legend.game.Scus94491BpeSegment_800c._800c3428;
-import static legend.game.Scus94491BpeSegment_800c._800c342a;
-import static legend.game.Scus94491BpeSegment_800c._800c342c;
-import static legend.game.Scus94491BpeSegment_800c._800c342e;
-import static legend.game.Scus94491BpeSegment_800c._800c3433;
-import static legend.game.Scus94491BpeSegment_800c._800c3437;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
@@ -1017,46 +1005,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_80038918
     return uploadLinkedListToGpu(_8005475c.offset(-0x8L).cast(UnsignedIntRef::new));
-  }
-
-  /**
-   * Initialize an array to a linked list for use as an ordering table.
-   *
-   * @param ot Head pointer of OT
-   * @param count Number of entries in OT
-   *
-   * Walks the array specified by ot and sets each element to be a pointer to the previous element, except the
-   * first, which is set to a pointer to a special terminator value which the PlayStation uses to recognize the end
-   * of a primitive list. count specifies how many entries are present in the array.
-   *
-   * To execute the OT initialized by ClearOTagR(), execute DrawOTag(ot+n-1).
-   */
-  @Method(0x800389f8L)
-  public static UnboundedArrayRef<GsOT_TAG> ClearOTagR(final UnboundedArrayRef<GsOT_TAG> ot, final int count) {
-    LOGGER.trace("ClearOTagR(%08x,%d)...", ot, count);
-
-    for(int i = 1; i < count; i++) {
-      final GsOT_TAG tag = ot.get(i);
-      tag.set(tag.getAddress() - 4 & 0xff_ffffL);
-    }
-
-    _8005477c.setu(0x405_4768L);
-    ot.get(0).set(0x5_477cL);
-    return ot;
-  }
-
-  /**
-   * Executes the GPU primitives in the linked list ot.
-   *
-   * @param address Pointer to a linked list of GPU primitives
-   */
-  @Method(0x80038b00L)
-  public static void DrawOTag(final MemoryRef address) {
-    if(gpu_debug.get() > 0) {
-      LOGGER.info("DrawOTag(%08x)...", address.getAddress());
-    }
-
-    uploadLinkedListToGpu(address);
   }
 
   /**
@@ -2004,11 +1952,6 @@ public final class Scus94491BpeSegment_8003 {
 
     displayRect_800c34c8.set((short)0, (short)0, (short)displayWidth, (short)displayHeight);
 
-    _800c3423.setu(0x3L);
-    _800c3427.setu(0x2L);
-    _800c3433.setu(0x3L);
-    _800c3437.setu(0x2L);
-
     PSDCNT_800c34d0.setu(0x1L);
   }
 
@@ -2021,49 +1964,35 @@ public final class Scus94491BpeSegment_8003 {
    * @param r R
    * @param g G
    * @param b B
-   * @param ot Ordering table
    */
   @Method(0x8003c048L)
-  public static void GsSortClear(final long r, final long g, final long b, final GsOT ot) {
-    _800c3424.offset(PSDIDX_800c34d4.get() * 0x10L).setu(r);
-    _800c3425.offset(PSDIDX_800c34d4.get() * 0x10L).setu(g);
-    _800c3426.offset(PSDIDX_800c34d4.get() * 0x10L).setu(b);
-
+  public static void GsSortClear(final int r, final int g, final int b) {
+    final int x;
+    final int y;
     if(PSDIDX_800c34d4.get() == 0) {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x1.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y1.get());
+      x = clip_800c3440.x1.get();
+      y = clip_800c3440.y1.get();
     } else {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x2.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y2.get());
+      x = clip_800c3440.x2.get();
+      y = clip_800c3440.y2.get();
     }
 
-    _800c342e.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayHeight_1f8003e4.get());
+    final int h = displayHeight_1f8003e4.get();
+    final int w;
 
     if(DISPENV_800c34b0.isrgb24.get() == 0) {
       //LAB_8003c13c
-      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get());
+      w = displayWidth_1f8003e0.get();
     } else {
-      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get() * 3 / 2);
+      w = displayWidth_1f8003e0.get() * 3 / 2;
     }
 
-    //LAB_8003c150
-    AddPrim(ot.tag_10.deref(), _800c3420.offset(PSDIDX_800c34d4.get() * 0x10L).getAddress());
-  }
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandQuad()
+      .rgb(r, g, b)
+      .pos(x, y, w, h)
+    );
 
-  /**
-   * <p>Registers a primitive beginning with the address *p to the OT entry *ot in OT table. ot is an ordering table or
-   * pointer to another primitive.</p>
-   *
-   * <p>A primitive may be added to a primitive list only once in the same frame. Attempting to add it multiple times
-   * in the same frame results in a corrupted list.</p>
-   *
-   * @param ot OT entry
-   * @param p Start address of primitive to be registered
-   */
-  @Method(0x8003c180L)
-  public static void AddPrim(final GsOT_TAG ot, final long p) {
-    MEMORY.ref(3, p).setu(ot.p.get());
-    ot.p.set(p & 0xff_ffffL);
+    //LAB_8003c150
   }
 
   @Method(0x8003c1c0L)
@@ -2346,32 +2275,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cce0L)
   public static void GsSetAmbient(final int r, final int g, final int b) {
     SetBackColor(r >> 4, g >> 4, b >> 4);
-  }
-
-  @Method(0x8003cd10L)
-  public static void drawOTag(final GsOT ot) {
-    DrawOTag(ot.tag_10.deref());
-  }
-
-  /**
-   * Initialize a libgs ordering table structure.
-   * <p>
-   * Initializes the libgs-style ordering table specified by the otp parameter. The length field of the GsOT
-   * structure must be properly set before this function is called. offset specifies the Z-depth value used for the
-   * start of the ordering table. point represents the average Z-depth of the entire ordering table and is used to
-   * determine depth priority when linking multiple ordering tables together.
-   *
-   * @param offset Ordering table offset value
-   * @param point Ordering table average Z value
-   * @param ot Pointer to ordering table
-   */
-  @Method(0x8003cd40L)
-  public static void GsClearOt(final long offset, final long point, final GsOT ot) {
-    ot.offset_08.set(offset);
-    ot.point_0c.set(point);
-    ot.tag_10.set(ot.org_04.deref().get((1 << ot.length_00.get()) - 1));
-
-    ClearOTagR(ot.org_04.deref(), 1 << ot.length_00.get());
   }
 
   /**

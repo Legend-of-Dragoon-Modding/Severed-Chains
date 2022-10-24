@@ -117,7 +117,6 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b450;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsClearOt;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
@@ -126,7 +125,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.drawOTag;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
@@ -1797,8 +1795,6 @@ public final class Scus94491BpeSegment {
 
     tags_1f8003d0.set(orderingTableTags_8005a398.get(PSDIDX_800c34d4.get()));
     gpuPacketAddr_1f8003d8.setu(_8007a3c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
-
-    GsClearOt(0, 0, orderingTables_8005a370.get(PSDIDX_800c34d4.get()));
   }
 
   @Method(0x80012df8L)
@@ -1862,14 +1858,14 @@ public final class Scus94491BpeSegment {
     SetDispMask(0);
     VSync(0);
 
-    final long displayHeight;
+    final int displayHeight;
     if(height480 == 0) {
       //LAB_80013040
       GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
-      displayHeight = 240L;
+      displayHeight = 240;
     } else {
       GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
-      displayHeight = 480L;
+      displayHeight = 480;
     }
 
     //LAB_80013060
@@ -1880,8 +1876,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013080
-    GsClearOt(0, 0, orderingTables_8005a370.get(0));
-    GsClearOt(0, 0, orderingTables_8005a370.get(1));
     ClearImage(rect1, (byte)0, (byte)0, (byte)0);
     ClearImage(rect2, (byte)0, (byte)0, (byte)0);
     FUN_8003c5e0();
@@ -1904,11 +1898,8 @@ public final class Scus94491BpeSegment {
     GsSwapDispBuff();
 
     if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      GsSortClear(_8007a3a8.get(), _800bb104.get(), _800babc0.get(), orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
+      GsSortClear((int)_8007a3a8.get(), (int)_800bb104.get(), (int)_800babc0.get());
     }
-
-    //LAB_800131b0
-    drawOTag(orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
   }
 
   @Method(0x800131e0L)
