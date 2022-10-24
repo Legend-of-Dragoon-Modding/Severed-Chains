@@ -4591,7 +4591,7 @@ public final class Scus94491BpeSegment {
     int v = mcq.v_12.get() + vramOffsetY;
     int t5 = u & 0x3c0;
     final int a3 = v & 0x100;
-    u = u * 4;
+    u = u * 4 & 0xfc;
     final long s4 = gpuPacketAddr_1f8003d8.get();
 
     if(mcq.magic_00.get() == McqHeader.MAGIC_2) {
