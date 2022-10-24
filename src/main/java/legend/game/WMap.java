@@ -8123,22 +8123,20 @@ public class WMap {
     rotateCoord2(sp38_0.rotation_50, sp38_0.coord2_00);
 
     //LAB_800ec028
-    long packet = gpuPacketAddr_1f8003d8.get();
     for(int i = 0; i < 24; i++) {
       final WMapStruct258Sub60 sp38 = struct._24.deref().get(i);
 
       //LAB_800ec044
-      setGpuPacketType(0xcL, packet, true, false);
-      MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0x9);
-      MEMORY.ref(2, packet).offset(0xeL).setu(i % 3 + 0x1f0 << 6 | 0x24);
-      MEMORY.ref(1, packet).offset(0xcL).setu(0);
-      MEMORY.ref(1, packet).offset(0xdL).setu(i % 3 * 64);
-      MEMORY.ref(1, packet).offset(0x14L).setu(0xffL);
-      MEMORY.ref(1, packet).offset(0x15L).setu(i % 3 * 64);
-      MEMORY.ref(1, packet).offset(0x1cL).setu(0);
-      MEMORY.ref(1, packet).offset(0x1dL).setu(i % 3 * 64 + 63);
-      MEMORY.ref(1, packet).offset(0x24L).setu(0xffL);
-      MEMORY.ref(1, packet).offset(0x25L).setu(i % 3 * 64 + 63);
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .clut(576, 496 + i % 3)
+        .vramPos(576, 256)
+        .uv(0,   0, i % 3 * 64)
+        .uv(1, 255, i % 3 * 64)
+        .uv(2,   0, i % 3 * 64 + 63)
+        .uv(3, 255, i % 3 * 64 + 63);
+
       sp38._5e.incr();
 
       if(sp38._5e.get() >> i % 3 + 4 != 0) {
@@ -8198,32 +8196,35 @@ public class WMap {
         CPU.MTC2(sp0x60.getXY(), 0);
         CPU.MTC2(sp0x60.getZ(),  1);
         CPU.COP2(0x180001L);
-        MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(14));
-        long sp88 = (int)CPU.MFC2(19) >> 2;
+        final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(14));
+        cmd.pos(0, v0.getX(), v0.getY());
+        int z = (int)CPU.MFC2(19) >> 2;
 
-        if(sp88 >= 5 && sp88 < orderingTableSize_1f8003c8.get() - 3) {
+        if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ec534
           CPU.MTC2(sp0x68.getXY(), 0);
           CPU.MTC2(sp0x68.getZ(),  1);
           CPU.COP2(0x180001L);
-          MEMORY.ref(4, packet).offset(0x10L).setu(CPU.MFC2(14));
-          sp88 = (int)CPU.MFC2(19) >> 2;
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(14));
+          cmd.pos(1, v1.getX(), v1.getY());
+          z = (int)CPU.MFC2(19) >> 2;
 
-          if(sp88 >= 5 && (int)sp88 < orderingTableSize_1f8003c8.get() - 3) {
+          if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ec5b8
-            if(MEMORY.ref(2, packet).offset(0x10L).getSigned() - MEMORY.ref(2, packet).offset(0x8L).getSigned() <= 0x400) {
+            if(v1.getX() - v0.getX() <= 0x400) {
               //LAB_800ec5ec
               CPU.MTC2(sp0x70.getXY(), 0);
               CPU.MTC2(sp0x70.getZ(),  1);
               CPU.COP2(0x180001L);
-              MEMORY.ref(4, packet).offset(0x18L).setu(CPU.MFC2(14));
-              sp88 = (int)CPU.MFC2(19) >> 2;
+              final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
+              cmd.pos(2, v2.getX(), v2.getY());
+              z = (int)CPU.MFC2(19) >> 2;
 
-              if(sp88 >= 5 && sp88 < orderingTableSize_1f8003c8.get() - 3) {
+              if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ec670
-                if(MEMORY.ref(2, packet).offset(0x1aL).getSigned() - MEMORY.ref(2, packet).offset(0xaL).getSigned() <= 0x200) {
+                if(v2.getY() - v0.getY() <= 0x200) {
                   //LAB_800ec6a4
-                  if(MEMORY.ref(2, packet).offset(0x1aL).getSigned() > 0) {
+                  if(v2.getY() > 0) {
                     sp38._5c.sub((short)0x20);
 
                     if(sp38._5c.get() < 0) {
@@ -8253,26 +8254,23 @@ public class WMap {
                     CPU.MTC2(sp0x78.getXY(), 0);
                     CPU.MTC2(sp0x78.getZ(),  1);
                     CPU.COP2(0x180001L);
-                    MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
-                    sp88 = (int)CPU.MFC2(19) >> 2;
+                    final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
+                    cmd.pos(3, v3.getX(), v3.getY());
+                    z = (int)CPU.MFC2(19) >> 2;
 
-                    if(sp88 >= 5 && orderingTableSize_1f8003c8.get() - 3 < sp88) {
+                    if(z >= 5 && orderingTableSize_1f8003c8.get() - 3 < z) {
                       //LAB_800ec83c
-                      if(MEMORY.ref(2, packet).offset(0x20L).getSigned() - MEMORY.ref(2, packet).offset(0x18L).getSigned() <= 0x400) {
+                      if(v3.getX() - v2.getX() <= 0x400) {
                         //LAB_800ec870
-                        if(MEMORY.ref(2, packet).offset(0x22L).getSigned() - MEMORY.ref(2, packet).offset(0x12L).getSigned() <= 0x200) {
+                        if(v3.getY() - v1.getY() <= 0x200) {
                           //LAB_800ec8a4
                           if(i < 12) {
-                            MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get());
-                            MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get());
-                            MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get());
-                            queueGpuPacket(tags_1f8003d0.getPointer() + 0x22cL, packet);
+                            cmd.monochrome(sp38._5c.get());
+                            GPU.queueCommand(139, cmd);
                           } else {
                             //LAB_800ec928
-                            MEMORY.ref(1, packet).offset(0x4L).setu(sp38._5c.get() / 3);
-                            MEMORY.ref(1, packet).offset(0x5L).setu(sp38._5c.get() / 3);
-                            MEMORY.ref(1, packet).offset(0x6L).setu(sp38._5c.get() / 3);
-                            queueGpuPacket(tags_1f8003d0.getPointer() + orderingTableSize_1f8003c8.get() * 0x4L - 0x10L, packet);
+                            cmd.monochrome(sp38._5c.get() / 3);
+                            GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
                           }
                         }
                       }
@@ -8284,13 +8282,9 @@ public class WMap {
           }
         }
       }
-
-      //LAB_800ec9e4
-      packet += 0x28L;
     }
 
     //LAB_800eca1c
-    gpuPacketAddr_1f8003d8.setu(packet);
   }
 
   @Method(0x800eca3cL)
