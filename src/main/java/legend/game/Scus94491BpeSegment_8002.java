@@ -52,7 +52,6 @@ import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct4c;
 import legend.game.types.Struct84;
-import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -109,16 +108,13 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
@@ -132,9 +128,7 @@ import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.setGp0_28;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
@@ -237,7 +231,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
@@ -5489,32 +5482,16 @@ public final class Scus94491BpeSegment_8002 {
   /** The purple bar used in inn dialogs, etc. */
   @Method(0x80029140L)
   public static void renderTextboxSelection(final int a0, final short a1) {
-    final long packet1 = gpuPacketAddr_1f8003d8.get();
-    setGp0_28(packet1);
     final Struct4c s0 = _800be358.get(a0);
-    final int width = (s0.chars_18.get() - 1) * 9 / 2;
+    final int width = (s0.chars_18.get() - 1) * 9;
     final int x = s0.x_14.get() - centreScreenX_1f8003dc.get();
     final int y = s0.y_16.get() - centreScreenY_1f8003de.get() + a1 * 12 - (s0.lines_1a.get() - 1) * 6;
-    MEMORY.ref(1, packet1).offset(0x04L).setu(0x80);
-    MEMORY.ref(1, packet1).offset(0x05L).setu(0x32);
-    MEMORY.ref(1, packet1).offset(0x06L).setu(0x64);
-    MEMORY.ref(2, packet1).offset(0x08L).setu(x - width);
-    MEMORY.ref(2, packet1).offset(0x0aL).setu(y);
-    MEMORY.ref(2, packet1).offset(0x0cL).setu(x + width);
-    MEMORY.ref(2, packet1).offset(0x0eL).setu(y);
-    MEMORY.ref(2, packet1).offset(0x10L).setu(x - width);
-    MEMORY.ref(2, packet1).offset(0x12L).setu(y + 12);
-    MEMORY.ref(2, packet1).offset(0x14L).setu(x + width);
-    MEMORY.ref(2, packet1).offset(0x16L).setu(y + 12);
-    gpuLinkedListSetCommandTransparency(packet1, true);
-    queueGpuPacket(tags_1f8003d0.deref().get(s0.z_0c.get()).getAddress(), packet1);
-    gpuPacketAddr_1f8003d8.addu(0x18L);
 
-    final long packet2 = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, packet2).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, packet2).offset(0x4L).setu(0xe100_020dL | texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get());
-    queueGpuPacket(tags_1f8003d0.deref().get(12).getAddress(), packet2);
-    gpuPacketAddr_1f8003d8.addu(0x8L);
+    GPU.queueCommand(s0.z_0c.get(), new GpuCommandQuad()
+      .translucent(Translucency.HALF_B_PLUS_HALF_F)
+      .rgb(0x80, 0x32, 0x64)
+      .pos(x - width / 2, y, width, 12)
+    );
   }
 
   @Method(0x80029300L)
