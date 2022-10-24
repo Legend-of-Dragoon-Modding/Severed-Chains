@@ -31,7 +31,6 @@ import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -3667,7 +3666,7 @@ public class WMap {
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
 
-    FUN_800d94cc();
+    renderAndHandleWorldMap();
     FUN_800da248();
 
     if(struct258_800c66a8.deref()._220.get() >= 0x2L && struct258_800c66a8.deref()._220.get() < 0x8L) {
@@ -3753,7 +3752,7 @@ public class WMap {
   }
 
   @Method(0x800d94ccL)
-  public static void FUN_800d94cc() {
+  public static void renderAndHandleWorldMap() {
     if((_800c66b8.get() & 0x1L) == 0) {
       return;
     }
@@ -3775,7 +3774,7 @@ public class WMap {
 
     //LAB_800d955c
     switch(struct258_800c66a8.deref().zoomState_1f8.get()) {
-      case 1:
+      case 1, 6:
         if((joypadPress_8007a398.get() & 0x2L) != 0) { // Zoom out
           playSound(0, 4, 0, 0, (short)0, (short)0);
 
@@ -3788,6 +3787,7 @@ public class WMap {
         }
 
         //LAB_800d9674
+        //LAB_800d9cc4
         break;
 
       case 2:
@@ -3883,25 +3883,10 @@ public class WMap {
 
         //LAB_800d9be8
         break;
-
-      case 6:
-        if((joypadPress_8007a398.get() & 0x2L) != 0) {
-          playSound(0, 4, 0, 0, (short)0, (short)0);
-
-          struct258_800c66a8.deref().svec_1e8.set(_800c66b0.deref().coord2_20.coord.transfer);
-
-          FUN_800d9d24(1);
-
-          struct258_800c66a8.deref().zoomState_1f8.set(2);
-          _800ef1a4.setu(0);
-        }
-
-        //LAB_800d9cc4
-        break;
     }
 
     //LAB_800d9ccc
-    FUN_800e4934(mcqHeader_800c6768, 320, 0, -160, -120, 30, 1, _800ef1a4.get() & 0xff);
+    renderMcq(mcqHeader_800c6768, 320, 0, -160, -120, 30, 1, (int)_800ef1a4.get() & 0xff);
 
     //LAB_800d9d10
   }
@@ -4419,7 +4404,7 @@ public class WMap {
     }
 
     //LAB_800dc114
-    FUN_800e4934(mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 4, 1, _800ef1a4.get());
+    renderMcq(mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 4, 1, (int)_800ef1a4.get());
 
     //LAB_800dc164
   }
@@ -6109,24 +6094,16 @@ public class WMap {
   }
 
   @Method(0x800e4934L)
-  public static void FUN_800e4934(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int a6, final long colour) {
-    final long packet = gpuPacketAddr_1f8003d8.get();
-
-    long sp1c = packet;
+  public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int a6, final int colour) {
     int clutX = vramOffsetX + mcq.clutX_0c.get();
     int clutY = vramOffsetY + mcq.clutY_0e.get();
     final int width = mcq.screenWidth_14.get();
     final int height = mcq.screenHeight_16.get();
     int u = vramOffsetX + mcq.u_10.get();
     int v = vramOffsetY + mcq.v_12.get();
-    int sp30 = u & 0x3c0;
-    final int sp34 = v & 0x100;
-    u = u * 4;
-    MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0) >> 6) & 0x9ff);
-    long sp18 = sp1c;
-    sp1c = sp1c + 0x8L;
-    MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
+    int vramX = u & 0x3c0;
+    final int vramY = v & 0x100;
+    u = u * 4 & 0xfc;
 
     //LAB_800e4ad0
     for(int offsetX = 0; offsetX < width; offsetX += 16) {
@@ -6134,34 +6111,23 @@ public class WMap {
       //LAB_800e4af4
       for(int offsetY = 0; offsetY < height; offsetY += 16) {
         //LAB_800e4b14
-        MEMORY.ref(1, sp1c).offset(0x3L).setu(0x3L);
-        MEMORY.ref(4, sp1c).offset(0x4L).setu(0x7c80_8080L); // Textured rect, 16x16, opaque, texture-blending
+        GPU.queueCommand(z, new GpuCommandQuad()
+          .bpp(Bpp.BITS_4)
+          .translucent(Translucency.B_PLUS_F)
+          .clut(clutX, clutY)
+          .vramPos(vramX, vramY)
+          .monochrome(colour)
+          .pos(x + offsetX, y + offsetY, 16, 16)
+          .uv(u, v)
+        );
 
-        gpuLinkedListSetCommandTransparency(sp1c, true);
-        MEMORY.ref(2, sp1c).offset(0x8L).setu(x + offsetX); // X
-        MEMORY.ref(2, sp1c).offset(0xaL).setu(y + offsetY); // Y
-        MEMORY.ref(1, sp1c).offset(0xcL).setu(u); // U
-        MEMORY.ref(1, sp1c).offset(0xdL).setu(v); // V
-        MEMORY.ref(2, sp1c).offset(0xeL).setu(clutY << 6 | (clutX & 0x3f0L) >> 4);
-        MEMORY.ref(1, sp1c).offset(0x4L).setu(colour); // R
-        MEMORY.ref(1, sp1c).offset(0x5L).setu(colour); // G
-        MEMORY.ref(1, sp1c).offset(0x6L).setu(colour); // B
-        sp18 = sp1c;
-        sp1c = sp1c + 0x10L;
-        MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
         v = v + 16 & 0xf0;
 
         if(v == 0) {
           u = u + 16 & 0xfc;
 
           if(u == 0) {
-            sp30 = sp30 + 64;
-            MEMORY.ref(1, sp1c).offset(0x3L).setu(0x1L);
-            MEMORY.ref(4, sp1c).offset(0x4L).setu(0xe100_0200L | (texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.fromY(sp34)).get() | (sp30 & 0x3c0L) >> 6) & 0x9ffL);
-
-            sp18 = sp1c;
-            sp1c = sp1c + 0x8L;
-            MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(sp1c & 0xff_ffffL);
+            vramX = vramX + 64;
           }
         }
 
@@ -6173,17 +6139,13 @@ public class WMap {
         }
 
         //LAB_800e4d4c
-        clutY = clutY | sp34;
+        clutY = clutY | vramY;
       }
 
       //LAB_800e4d78
     }
 
     //LAB_800e4d90
-    gpuPacketAddr_1f8003d8.setu(sp1c);
-
-    MEMORY.ref(4, sp18, GsOT_TAG::new).p.set(tags_1f8003d0.deref().get(z).p);
-    tags_1f8003d0.deref().get(z).p.set(packet & 0xff_ffffL);
   }
 
   @Method(0x800e4e1cL)
@@ -6209,7 +6171,7 @@ public class WMap {
     }
 
     //LAB_800e4f04
-    FUN_800e4934(mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 3, 0, _800c6794.get() & 0xff);
+    renderMcq(mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 3, 0, (int)_800c6794.get() & 0xff);
 
     //LAB_800e4f50
   }
