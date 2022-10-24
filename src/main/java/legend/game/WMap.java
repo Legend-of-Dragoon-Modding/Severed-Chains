@@ -137,7 +137,6 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
@@ -4476,7 +4475,6 @@ public class WMap {
   @Method(0x800dd05cL)
   public static void renderSpecialDobj2(final GsDOBJ2 dobj2) {
     final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.deref().vert_top_00.deref();
-    final long normals = dobj2.tmd_08.deref().normal_top_08.get();
     long primitives = dobj2.tmd_08.deref().primitives_10.getPointer();
     long count = dobj2.tmd_08.deref().n_primitive_14.get();
 
@@ -4488,36 +4486,10 @@ public class WMap {
       count -= primitiveCount;
 
       final long v0 = MEMORY.ref(4, primitives).get() & 0xff04_0000L;
-      if(v0 == 0x3a04_0000L) {
-        //LAB_800dd270
-        primitives = FUN_800de534(primitives, vertices, normals, primitiveCount);
-      } else if(v0 == 0x3500_0000L) {
-        //LAB_800dd358
-        primitives = FUN_800df6c8(primitives, vertices, primitiveCount);
-        //LAB_800dd190
-      } else if(v0 == 0x3800_0000L) {
-        //LAB_800dd1e0
-        primitives = FUN_800dd3a8(primitives, vertices, normals, primitiveCount);
-        //LAB_800dd170
-      } else if(v0 == 0x3804_0000L) {
-        //LAB_800dd240
-        primitives = FUN_800de0bc(primitives, vertices, normals, primitiveCount);
-      } else if(v0 == 0x3a00_0000L) {
-        //LAB_800dd210
-        primitives = FUN_800dd798(primitives, vertices, normals, primitiveCount);
-      } else if(v0 == 0x3c00_0000L) {
-        //LAB_800dd2a0
-        primitives = FUN_800ddc2c(primitives, vertices, normals, primitiveCount);
-      } else if(v0 == 0x3d00_0000L) {
-        //LAB_800dd300
+      if(v0 == 0x3d00_0000L) {
         primitives = FUN_800deeac(primitives, vertices, primitiveCount);
-        //LAB_800dd1c0
-      } else if(v0 == 0x3e00_0000L) {
-        //LAB_800dd2d0
-        primitives = FUN_800dea58(primitives, vertices, normals, primitiveCount);
-      } else if(v0 == 0x3f00_0000L) {
-        //LAB_800dd32c
-        primitives = FUN_800df228(primitives, vertices, primitiveCount);
+      } else {
+        assert false;
       }
 
       //LAB_800dd384
@@ -4527,58 +4499,22 @@ public class WMap {
     //LAB_800dd394
   }
 
-  @Method(0x800dd3a8L)
-  public static long FUN_800dd3a8(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800dd798L)
-  public static long FUN_800dd798(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800ddc2cL)
-  public static long FUN_800ddc2c(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800de0bcL)
-  public static long FUN_800de0bc(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800de534L)
-  public static long FUN_800de534(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800dea58L)
-  public static long FUN_800dea58(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
   @Method(0x800deeacL)
   public static long FUN_800deeac(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-
-    long packet = gpuPacketAddr_1f8003d8.get();
-
     //LAB_800deee8
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
-      MEMORY.ref(4, packet).offset(0x04L).setu(0x3c80_8080L);
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x04L).get()); // UV0, CLUT
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x08L).get()); // UV1, TPAGE
-      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0x0cL).get()); // UV2
-      MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get()); // UV3
+      final int tpage = (int)MEMORY.ref(2, primitives).offset(0x0aL).get();
 
-      MEMORY.ref(2, packet).offset(0x0eL).setu(_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get() << 6 | 0x3fL); // CLUT
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .bpp(Bpp.of(tpage >>> 7 & 0b11))
+        .translucent(Translucency.of(tpage >>> 5 & 0b11))
+        .shaded()
+        .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())
+        .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+        .uv(0, MEMORY.get(primitives + 0x04L) & 0xff, MEMORY.get(primitives + 0x05L) & 0xff)
+        .uv(1, MEMORY.get(primitives + 0x08L) & 0xff, MEMORY.get(primitives + 0x09L) & 0xff)
+        .uv(2, MEMORY.get(primitives + 0x0cL) & 0xff, MEMORY.get(primitives + 0x0dL) & 0xff)
+        .uv(3, MEMORY.get(primitives + 0x10L) & 0xff, MEMORY.get(primitives + 0x11L) & 0xff);
 
       //LAB_800def00
       final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
@@ -4598,9 +4534,14 @@ public class WMap {
 
         if((int)CPU.MFC2(24) > 0) { // Is visible
           //LAB_800defe8
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12)); // Screen XY0
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13)); // Screen XY1
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14)); // Screen XY2
+          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
+          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
+
+          cmd
+            .pos(0, v0.getX(), v0.getY())
+            .pos(1, v1.getX(), v1.getY())
+            .pos(2, v2.getX(), v2.getY());
 
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
           CPU.MTC2(vert3.getXY(), 0);
@@ -4609,25 +4550,16 @@ public class WMap {
 
           if((int)CPU.CFC2(31) >= 0) { // No errors
             //LAB_800df0ac
-            MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14)); // Screen XY3
+            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
 
-            MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get()); // R0
-            MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get()); // G0
-            MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get()); // B0
-            MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get()); // R1
-            MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get()); // G1
-            MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get()); // B1
-            MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get()); // R2
-            MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get()); // G2
-            MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get()); // B2
-            MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get()); // R3
-            MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get()); // G3
-            MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get()); // B3
+            cmd
+              .pos(3, v3.getX(), v3.getY())
+              .rgb(0, MEMORY.get(primitives + 0x14L) & 0xff, MEMORY.get(primitives + 0x15L) & 0xff, MEMORY.get(primitives + 0x16L) & 0xff)
+              .rgb(1, MEMORY.get(primitives + 0x18L) & 0xff, MEMORY.get(primitives + 0x19L) & 0xff, MEMORY.get(primitives + 0x1aL) & 0xff)
+              .rgb(2, MEMORY.get(primitives + 0x1cL) & 0xff, MEMORY.get(primitives + 0x1dL) & 0xff, MEMORY.get(primitives + 0x1eL) & 0xff)
+              .rgb(3, MEMORY.get(primitives + 0x20L) & 0xff, MEMORY.get(primitives + 0x21L) & 0xff, MEMORY.get(primitives + 0x22L) & 0xff);
 
-            final GsOT_TAG tag = tags.get(tempZ_800c66d8.get());
-            MEMORY.ref(4, packet).setu(0xc00_0000L | tag.p.get());
-            tag.set(packet & 0xff_ffffL);
-            packet += 0x34L;
+            GPU.queueCommand(tempZ_800c66d8.get(), cmd);
           }
         }
       }
@@ -4637,22 +4569,8 @@ public class WMap {
     }
 
     //LAB_800df204
-    gpuPacketAddr_1f8003d8.setu(packet);
-
     //LAB_800df220
     return primitives;
-  }
-
-  @Method(0x800df228L)
-  public static long FUN_800df228(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800df6c8L)
-  public static long FUN_800df6c8(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    assert false;
-    return 0;
   }
 
   @Method(0x800dfa70L)
