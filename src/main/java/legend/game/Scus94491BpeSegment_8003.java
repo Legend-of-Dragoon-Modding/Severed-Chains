@@ -13,7 +13,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gpu.DR_ENV;
-import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -43,7 +43,6 @@ import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.RenderStruct20;
@@ -1987,10 +1986,7 @@ public final class Scus94491BpeSegment_8003 {
       w = displayWidth_1f8003e0.get() * 3 / 2;
     }
 
-    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandQuad()
-      .rgb(r, g, b)
-      .pos(x, y, w, h)
-    );
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(x, y, w, h, r, g, b));
 
     //LAB_8003c150
   }

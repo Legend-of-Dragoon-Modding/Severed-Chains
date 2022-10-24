@@ -153,7 +153,17 @@ public class Gpu implements Runnable {
     // NOOP - we don't do caching
   }
 
-  public void commandA0CopyRectFromCpuToVram(final legend.core.gpu.RECT rect, final long address) {
+  public void command02FillRect(final int x, final int y, final int w, final int h, final int colour) {
+    LOGGER.trace("Fill rectangle in VRAM XYWH %d %d %d %d, RGB %06x", x, y, w, h, colour);
+
+    for(int posY = y; posY < y + h; posY++) {
+      for(int posX = x; posX < x + w; posX++) {
+        this.setPixel(posX, posY, colour);
+      }
+    }
+  }
+
+  public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
     assert address != 0;
 
     final int rectX = rect.x.get() * this.renderScale;
@@ -191,7 +201,7 @@ public class Gpu implements Runnable {
     }
   }
 
-  public void commandC0CopyRectFromVramToCpu(final legend.core.gpu.RECT rect, final long address) {
+  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
     assert address != 0;
 
     final int rectX = rect.x.get() * this.renderScale;
@@ -1623,15 +1633,7 @@ public class Gpu implements Runnable {
       final int h = (short)((size & 0xffff0000) >>> 16) * gpu.renderScale;
       final int w = (short)(size & 0xffff) * gpu.renderScale;
 
-      return () -> {
-        LOGGER.trace("Fill rectangle in VRAM XYWH %d %d %d %d, RGB %06x", x, y, w, h, colour);
-
-        for(int posY = y; posY < y + h; posY++) {
-          for(int posX = x; posX < x + w; posX++) {
-            gpu.setPixel(posX, posY, colour);
-          }
-        }
-      };
+      return () -> gpu.command02FillRect(x, y, w, h, colour);
     }),
 
     MONO_FOUR_POINT_POLY_OPAQUE(0x28, 5, (buffer, gpu) -> {
