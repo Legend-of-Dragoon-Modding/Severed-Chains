@@ -3,9 +3,9 @@ package legend.game.types;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
 
 public class WMapStruct258Sub60 implements MemoryRef {
   private final Value ref;
@@ -15,7 +15,7 @@ public class WMapStruct258Sub60 implements MemoryRef {
   public final ShortRef _58;
   public final ShortRef _5a;
   public final ShortRef _5c;
-  public final UnsignedByteRef _5e;
+  public final ByteRef _5e;
 
   public WMapStruct258Sub60(final Value ref) {
     this.ref = ref;
@@ -25,7 +25,7 @@ public class WMapStruct258Sub60 implements MemoryRef {
     this._58 = ref.offset(2, 0x58L).cast(ShortRef::new);
     this._5a = ref.offset(2, 0x5aL).cast(ShortRef::new);
     this._5c = ref.offset(2, 0x5cL).cast(ShortRef::new);
-    this._5e = ref.offset(1, 0x5eL).cast(UnsignedByteRef::new);
+    this._5e = ref.offset(1, 0x5eL).cast(ByteRef::new);
   }
 
   @Override
