@@ -1078,8 +1078,8 @@ public class WMap {
     //LAB_800cd578
     for(int i = 0; i < 2; i++) {
       //LAB_800cd594
-      sp34._04.get(i).set(0);
-      sp34._0c.get(i).set(0);
+      sp34.tpagePacket_04.get(i).set(0);
+      sp34.renderPacket_0c.get(i).set(0);
       sp34._14.get(i).clear();
     }
 
@@ -1165,7 +1165,7 @@ public class WMap {
         //LAB_800cd6cc
         for(int i = 0; i < 2; i++) {
           //LAB_800cd6e8
-          sp34._04.get(i).set(mallocTail(sp34._30.get() * 0x8L));
+          sp34.tpagePacket_04.get(i).set(mallocTail(sp34._30.get() * 0x8L));
         }
       }
 
@@ -1173,14 +1173,14 @@ public class WMap {
       //LAB_800cd74c
       for(int i = 0; i < 2; i++) {
         //LAB_800cd768
-        sp34._0c.get(i).set(mallocTail(sp34._30.get() * 0x24L));
+        sp34.renderPacket_0c.get(i).set(mallocTail(sp34._30.get() * 0x24L));
       }
 
       //LAB_800cd7d0
-      sp48 = sp34._04.get(0).get();
-      sp4c = sp34._04.get(1).get();
-      sp38 = sp34._0c.get(0).get();
-      sp3c = sp34._0c.get(1).get();
+      sp48 = sp34.tpagePacket_04.get(0).get();
+      sp4c = sp34.tpagePacket_04.get(1).get();
+      sp38 = sp34.renderPacket_0c.get(0).get();
+      sp3c = sp34.renderPacket_0c.get(1).get();
 
       sp2c = 0;
       sp30 = 0;
@@ -1269,19 +1269,19 @@ public class WMap {
 
   @Method(0x800ce4dcL)
   public static void FUN_800ce4dc(final WMapRender40 a0) {
-    long sp18;
-    long sp14;
+    long renderPacket;
+    long tpagePacket;
 
     FUN_800cea1c(a0);
 
-    if(a0._3d.get() == 0x9L) {
+    if(a0._3d.get() == 9) {
       //LAB_800ce538
-      sp18 = a0._0c.get(doubleBufferFrame_800bb108.get()).get();
+      renderPacket = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
 
       if(a0.transparency_3c.get()) {
-        sp14 = a0._04.get(doubleBufferFrame_800bb108.get()).get();
+        tpagePacket = a0.tpagePacket_04.get(doubleBufferFrame_800bb108.get()).get();
       } else {
-        sp14 = 0; // Only used if transparency is set, just needs to be initialized
+        tpagePacket = 0; // Only used if transparency is set, just needs to be initialized
       }
 
       //LAB_800ce5a0
@@ -1290,28 +1290,43 @@ public class WMap {
         final RECT sp20 = a0._1c.deref().get(i);
 
         //LAB_800ce5c8
-        MEMORY.ref(2, sp18).offset(0x08L).setu(sp20.x.get() + a0.x_38.get());
-        MEMORY.ref(2, sp18).offset(0x0aL).setu(sp20.y.get() + a0.y_3a.get());
-        MEMORY.ref(2, sp18).offset(0x10L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-        MEMORY.ref(2, sp18).offset(0x12L).setu(sp20.y.get() + a0.y_3a.get());
-        MEMORY.ref(2, sp18).offset(0x18L).setu(sp20.x.get() + a0.x_38.get());
-        MEMORY.ref(2, sp18).offset(0x1aL).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
-        MEMORY.ref(2, sp18).offset(0x20L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-        MEMORY.ref(2, sp18).offset(0x22L).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
+        final int left = a0.x_38.get() + sp20.x.get();
+        final int top = a0.y_3a.get() + sp20.y.get();
+        final int right = left + sp20.w.get();
+        final int bottom = top + sp20.h.get();
+        MEMORY.ref(2, renderPacket).offset(0x08L).setu(left);
+        MEMORY.ref(2, renderPacket).offset(0x0aL).setu(top);
+        MEMORY.ref(2, renderPacket).offset(0x10L).setu(right);
+        MEMORY.ref(2, renderPacket).offset(0x12L).setu(top);
+        MEMORY.ref(2, renderPacket).offset(0x18L).setu(left);
+        MEMORY.ref(2, renderPacket).offset(0x1aL).setu(bottom);
+        MEMORY.ref(2, renderPacket).offset(0x20L).setu(right);
+        MEMORY.ref(2, renderPacket).offset(0x22L).setu(bottom);
 
-        queueGpuPacket(tags_1f8003d0.deref().get(a0.z_3e.get()).getAddress(), sp18);
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .shaded()
+          .rgb(0, (int)MEMORY.get(renderPacket + 0x04L, 3))
+          .rgb(1, (int)MEMORY.get(renderPacket + 0x0cL, 3))
+          .rgb(2, (int)MEMORY.get(renderPacket + 0x14L, 3))
+          .rgb(3, (int)MEMORY.get(renderPacket + 0x1cL, 3))
+          .pos(0, left, top)
+          .pos(1, right, top)
+          .pos(2, left, bottom)
+          .pos(3, right, bottom);
 
         if(a0.transparency_3c.get()) {
-          queueGpuPacket(tags_1f8003d0.deref().get(a0.z_3e.get()).getAddress(), sp14);
+          cmd.translucent(Translucency.of((int)MEMORY.get(tpagePacket + 0x4L, 4) >>> 5 & 0b11));
         }
 
+        GPU.queueCommand(a0.z_3e.get(), cmd);
+
         //LAB_800ce7a0
-        sp18 += 0x24L;
-        sp14 += 0x8L;
+        renderPacket += 0x24L;
+        tpagePacket += 0x8L;
       }
     } else if(a0._3d.get() == 0xcL) {
       assert false : "Bugged; sp18 was uninitialized";
-      sp18 = 0;
+      renderPacket = 0;
 
       //LAB_800ce7f0
       //LAB_800ce81c
@@ -1320,14 +1335,14 @@ public class WMap {
         final WMapRender28 sp1c = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
 
         //LAB_800ce840
-        MEMORY.ref(2, sp18).offset(0x08L).setu(sp20.x.get() + a0.x_38.get());
-        MEMORY.ref(2, sp18).offset(0x0aL).setu(sp20.y.get() + a0.y_3a.get());
-        MEMORY.ref(2, sp18).offset(0x10L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-        MEMORY.ref(2, sp18).offset(0x12L).setu(sp20.y.get() + a0.y_3a.get());
-        MEMORY.ref(2, sp18).offset(0x18L).setu(sp20.x.get() + a0.x_38.get());
-        MEMORY.ref(2, sp18).offset(0x1aL).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
-        MEMORY.ref(2, sp18).offset(0x20L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-        MEMORY.ref(2, sp18).offset(0x22L).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
+        MEMORY.ref(2, renderPacket).offset(0x08L).setu(sp20.x.get() + a0.x_38.get());
+        MEMORY.ref(2, renderPacket).offset(0x0aL).setu(sp20.y.get() + a0.y_3a.get());
+        MEMORY.ref(2, renderPacket).offset(0x10L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
+        MEMORY.ref(2, renderPacket).offset(0x12L).setu(sp20.y.get() + a0.y_3a.get());
+        MEMORY.ref(2, renderPacket).offset(0x18L).setu(sp20.x.get() + a0.x_38.get());
+        MEMORY.ref(2, renderPacket).offset(0x1aL).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
+        MEMORY.ref(2, renderPacket).offset(0x20L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
+        MEMORY.ref(2, renderPacket).offset(0x22L).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
         queueGpuPacket(tags_1f8003d0.deref().get(a0.z_3e.get()).getAddress(), sp1c.getAddress());
       }
 
@@ -1370,8 +1385,8 @@ public class WMap {
     v0 = a0._3d.get();
     if(v0 == 0x9L) {
       //LAB_800ceacc
-      long sp4 = a0._0c.get(doubleBufferFrame_800bb108.get()).get();
-      long sp8 = a0._0c.get(doubleBufferFrame_800bb108.get() ^ 1).get();
+      long sp4 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
+      long sp8 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get() ^ 1).get();
 
       //LAB_800ceb38
       int n = 0;
@@ -1973,8 +1988,8 @@ public class WMap {
     //LAB_800d15ec
     for(int i = 0; i < 2; i++) {
       //LAB_800d1608
-      if(a0._0c.get(i).get() != 0) {
-        free(a0._0c.get(i).get());
+      if(a0.renderPacket_0c.get(i).get() != 0) {
+        free(a0.renderPacket_0c.get(i).get());
       }
 
       //LAB_800d165c
@@ -1983,8 +1998,8 @@ public class WMap {
       }
 
       //LAB_800d16b0
-      if(a0._04.get(i).get() != 0) {
-        free(a0._04.get(i).get());
+      if(a0.tpagePacket_04.get(i).get() != 0) {
+        free(a0.tpagePacket_04.get(i).get());
       }
 
       //LAB_800d1704
@@ -6384,20 +6399,17 @@ public class WMap {
         //LAB_800e5b68
         FUN_800ce4dc(_800c689c.deref());
 
-        long placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
+        int placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
-        measureText(places_800f0234.get((int)placeIndex).name_00.deref(), width, lines);
-        FUN_800e774c(places_800f0234.get((int)placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
+        measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
+        FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
 
         if((_800c66b8.get() & 0x800L) != 0) {
-          final long sp4c = gpuPacketAddr_1f8003d8.get();
-          gpuPacketAddr_1f8003d8.addu(0x28L);
-
-          setGpuPacketType(0xcL, sp4c, false, false);
-
-          MEMORY.ref(2, sp4c).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_8).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.fromY((int)_800ef0d6.get())).get() | (_800ef0d4.get() & 0x3c0L) >> 6);
-          MEMORY.ref(2, sp4c).offset(0xeL).setu(_800ef0da.get() << 6 | (_800ef0d8.get() & 0x3f0L) >> 4);
+          final GpuCommandPoly cmd = new GpuCommandPoly(4)
+            .bpp(Bpp.BITS_8)
+            .clut((int)_800ef0d8.get(), (int)_800ef0da.get())
+            .vramPos((int)_800ef0d4.get(), (int)_800ef0d6.get());
 
           sp50 = (int)_800c67a8.get();
           sp54 = 0x1L << (sp50 & 0x1fL);
@@ -6405,53 +6417,36 @@ public class WMap {
 
           if((gameState_800babc8._17c.get(sp50).get() & sp54) > 0) {
             //LAB_800e5e98
-            MEMORY.ref(1, sp4c).offset(0x4L).setu(_800c86d0.getSigned() / 2);
-            MEMORY.ref(1, sp4c).offset(0x5L).setu(_800c86d0.getSigned() / 2);
-            MEMORY.ref(1, sp4c).offset(0x6L).setu(_800c86d0.getSigned() / 2);
+            cmd.monochrome((int)_800c86d0.getSigned() / 2);
           } else {
             //LAB_800e5e18
-            MEMORY.ref(1, sp4c).offset(0x4L).setu(_800c86d0.getSigned() * 0x30L / 0x100L);
-
-            //LAB_800e5e50
-            MEMORY.ref(1, sp4c).offset(0x5L).setu(_800c86d0.getSigned() * 0x30L / 0x100L);
-
-            //LAB_800e5e88
-            MEMORY.ref(1, sp4c).offset(0x6L).setu(_800c86d0.getSigned() * 0x30L / 0x100L);
+            cmd.monochrome((int)_800c86d0.getSigned() * 0x30 / 0x100);
           }
 
           //LAB_800e5f04
           if(_800f0e34.get((int)_800c67a8.get())._10.get() != 0) {
-            MEMORY.ref(1, sp4c).offset(0x4L).setu(_800c86d0.getSigned() / 2);
-            MEMORY.ref(1, sp4c).offset(0x5L).setu(_800c86d0.getSigned() / 2);
-            MEMORY.ref(1, sp4c).offset(0x6L).setu(_800c86d0.getSigned() / 2);
+            cmd.monochrome((int)_800c86d0.getSigned() / 2);
           }
 
           //LAB_800e5fa4
-          MEMORY.ref(2, sp4c).offset(0x08L).setu(0x15L);
-          MEMORY.ref(2, sp4c).offset(0x0aL).setu(-0x60L);
-          MEMORY.ref(1, sp4c).offset(0x0cL).setu(0);
-          MEMORY.ref(1, sp4c).offset(0x0dL).setu(0);
-          MEMORY.ref(2, sp4c).offset(0x10L).setu(0x8dL);
-          MEMORY.ref(2, sp4c).offset(0x12L).setu(-0x60L);
-          MEMORY.ref(1, sp4c).offset(0x14L).setu(0x77L);
-          MEMORY.ref(1, sp4c).offset(0x15L).setu(0);
-          MEMORY.ref(2, sp4c).offset(0x18L).setu(0x15L);
-          MEMORY.ref(2, sp4c).offset(0x1aL).setu(-0x6L);
-          MEMORY.ref(1, sp4c).offset(0x1cL).setu(0);
-          MEMORY.ref(1, sp4c).offset(0x1dL).setu(0x59L);
-          MEMORY.ref(2, sp4c).offset(0x20L).setu(0x8dL);
-          MEMORY.ref(2, sp4c).offset(0x22L).setu(-0x6L);
-          MEMORY.ref(1, sp4c).offset(0x24L).setu(0x77L);
-          MEMORY.ref(1, sp4c).offset(0x25L).setu(0x59L);
+          cmd
+            .pos(0,  21, -96)
+            .pos(1, 141, -96)
+            .pos(2,  21,  -6)
+            .pos(3, 141,  -6)
+            .uv( 0,   0,   0)
+            .uv( 1, 119,   0)
+            .uv( 2,   0,  89)
+            .uv( 3, 119,  89);
 
-          queueGpuPacket(tags_1f8003d0.getPointer() + 0x38L, sp4c);
+          GPU.queueCommand(14, cmd);
 
-          if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
+          if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999) {
             playSound(0, 2, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e60d0
-          if((joypadInput_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999L) {
+          if((joypadInput_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999) {
             _800c86d0.subu(0x80L);
 
             if(_800c86d0.getSigned() < 0x80L) {
@@ -6460,7 +6455,7 @@ public class WMap {
 
             //LAB_800e6138
             placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
-            final long services = places_800f0234.get((int)placeIndex).services_05.get();
+            final long services = places_800f0234.get(placeIndex).services_05.get();
 
             //LAB_800e619c
             int servicesCount = 0;

@@ -49,7 +49,6 @@ public final class Scus94491BpeSegment_8007 {
   public static final Value joypadRepeat_8007a3a0 = MEMORY.ref(4, 0x8007a3a0L);
 
   public static final Value _8007a3a8 = MEMORY.ref(4, 0x8007a3a8L);
-  public static final Value _8007a3ac = MEMORY.ref(4, 0x8007a3acL);
 
   public static final UnsignedByteRef shopId_8007a3b4 = MEMORY.ref(1, 0x8007a3b4L).cast(UnsignedByteRef::new);
 

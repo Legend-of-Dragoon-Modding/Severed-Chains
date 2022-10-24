@@ -16,8 +16,8 @@ public class WMapRender40 implements MemoryRef {
   private final Value ref;
 
   public final Pointer<UnboundedArrayRef<WMapRender10>> _00;
-  public final ArrayRef<UnsignedIntRef> _04;
-  public final ArrayRef<UnsignedIntRef> _0c;
+  public final ArrayRef<UnsignedIntRef> tpagePacket_04;
+  public final ArrayRef<UnsignedIntRef> renderPacket_0c;
   public final ArrayRef<Pointer<UnboundedArrayRef<WMapRender28>>> _14;
   public final Pointer<UnboundedArrayRef<RECT>> _1c;
   public final ArrayRef<UnsignedIntRef> _20;
@@ -38,8 +38,8 @@ public class WMapRender40 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, WMapRender10::new)));
-    this._04 = ref.offset(4, 0x04L).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
-    this._0c = ref.offset(4, 0x0cL).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
+    this.tpagePacket_04 = ref.offset(4, 0x04L).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
+    this.renderPacket_0c = ref.offset(4, 0x0cL).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
     this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(WMapRender28.class)), 2, 4, Pointer.deferred(4, UnboundedArrayRef.of(0x28, WMapRender28::new))));
     this._1c = ref.offset(4, 0x1cL).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x8, RECT::new)));
     this._20 = ref.offset(4, 0x20L).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));

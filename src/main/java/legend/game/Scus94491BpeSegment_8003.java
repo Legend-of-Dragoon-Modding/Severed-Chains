@@ -1568,8 +1568,9 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003b450L)
   public static void FUN_8003b450(final long a0, final long a1, final long a2) {
-    MEMORY.ref(4, a2).and(0xff00_0000L).oru(MEMORY.ref(4, a0).get() & 0xff_ffffL);
-    MEMORY.ref(4, a0).and(0xff00_0000L).oru(a1 & 0xff_ffffL);
+    throw new RuntimeException("NOPE");
+//    MEMORY.ref(4, a2).and(0xff00_0000L).oru(MEMORY.ref(4, a0).get() & 0xff_ffffL);
+//    MEMORY.ref(4, a0).and(0xff00_0000L).oru(a1 & 0xff_ffffL);
   }
 
   @Method(0x8003b490L)

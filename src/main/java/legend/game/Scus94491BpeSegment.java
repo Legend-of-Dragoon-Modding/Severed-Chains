@@ -226,7 +226,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007._8007a3ac;
 import static legend.game.Scus94491BpeSegment_8007._8007a3c0;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -239,8 +238,6 @@ import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bb228;
-import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
@@ -379,7 +376,7 @@ public final class Scus94491BpeSegment {
   public static final IntRef orderingTableSize_1f8003c8 = MEMORY.ref(4, 0x1f8003c8L, IntRef::new);
   public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
   public static final Pointer<UnboundedArrayRef<GsOT_TAG>> tags_1f8003d0 = MEMORY.ref(4, 0x1f8003d0L, Pointer.of(4, UnboundedArrayRef.of(4, GsOT_TAG::new)));
-  public static final Value gpuPacketAddrTail_1f8003d4 = MEMORY.ref(4, 0x1f8003d4L);
+
   public static final Value gpuPacketAddr_1f8003d8 = MEMORY.new MemoryValue(4, 0x1f8003d8L) {
     @Override
     public long get() {
@@ -838,7 +835,6 @@ public final class Scus94491BpeSegment {
       executeLoadersAndScripts();
       FUN_8001b410();
       FUN_80013778();
-      FUN_800145c4();
 
       // SPU stuff
       FUN_8001aa24();
@@ -1799,11 +1795,8 @@ public final class Scus94491BpeSegment {
   public static void startFrame() {
     doubleBufferFrame_800bb108.set(PSDIDX_800c34d4.get());
 
-    _8007a3ac.setu(_8007a3c0.offset((PSDIDX_800c34d4.get() + 1) * 0x20400L).getAddress());
-
     tags_1f8003d0.set(orderingTableTags_8005a398.get(PSDIDX_800c34d4.get()));
     gpuPacketAddr_1f8003d8.setu(_8007a3c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
-    gpuPacketAddrTail_1f8003d4.setu(_8007a3ac);
 
     GsClearOt(0, 0, orderingTables_8005a370.get(PSDIDX_800c34d4.get()));
   }
@@ -2029,8 +2022,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001357cL)
   public static void queueGpuPacket(final long previousElement, final long newElement) {
-    MEMORY.ref(3, newElement).setu(MEMORY.ref(3, previousElement));
-    MEMORY.ref(3, previousElement).setu(newElement);
+    throw new RuntimeException("NOPE");
+//    MEMORY.ref(3, newElement).setu(MEMORY.ref(3, previousElement));
+//    MEMORY.ref(3, previousElement).setu(newElement);
   }
 
   @Method(0x80013598L)
@@ -2208,139 +2202,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80013d78L)
   public static void FUN_80013d78(final long a0, final long a1, final long a2) {
     assert false;
-  }
-
-  @Method(0x800145c4L)
-  public static void FUN_800145c4() {
-    long s0;
-    long s2 = _800bb228.getAddress();
-    final long s5 = _1f8003fc.get();
-    long s3 = 0;
-    long s1 = 0;
-
-    //LAB_8001461c
-    do {
-      if(s2 == s5) {
-        break;
-      }
-
-      long v1 = MEMORY.ref(1, s2).get();
-      s2++;
-      final long a0;
-      if(v1 >= 0x80L) {
-        //LAB_80014654
-        if(v1 < 0xe0L && v1 >= 0xa1L) {
-          v1 -= 0x40L;
-
-          //LAB_80014678
-          s0 = gpuPacketAddrTail_1f8003d4.get() - 0x44L;
-
-          a0 = (v1 & 0xe0L) << 0x6L | (v1 & 0x1fL) << 0x3L;
-          v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1L << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
-          MEMORY.ref(1, s0).offset(0x03L).setu(0xcL);
-          MEMORY.ref(4, s0).offset(0x04L).setu(0x7480_8080L);
-          MEMORY.ref(4, s0).offset(0x08L).setu(v1 + 1);
-          MEMORY.ref(4, s0).offset(0x0cL).setu(0x69b5_a800L | a0);
-          MEMORY.ref(4, s0).offset(0x10L).setu(0x7480_8080L);
-          MEMORY.ref(4, s0).offset(0x14L).setu(0x1_0000L | v1);
-          MEMORY.ref(4, s0).offset(0x18L).setu(0x69b5_a800L | a0);
-          MEMORY.ref(4, s0).offset(0x1cL).setu(0x7480_8080L);
-          MEMORY.ref(4, s0).offset(0x20L).setu(0x1_0002L + v1);
-          MEMORY.ref(4, s0).offset(0x24L).setu(0x69b5_a800L | a0);
-          MEMORY.ref(4, s0).offset(0x28L).setu(0x7480_8080L);
-          MEMORY.ref(4, s0).offset(0x2cL).setu(0x2_0001L + v1);
-          MEMORY.ref(4, s0).offset(0x30L).setu(0x69b5_a800L | a0);
-
-          MEMORY.ref(1, s0).offset(0x37L).setu(0x3L);
-          MEMORY.ref(4, s0).offset(0x38L).setu(0x7480_8080L);
-          MEMORY.ref(4, s0).offset(0x3cL).setu(0x1_0001L + v1);
-          MEMORY.ref(4, s0).offset(0x40L).setu(0x69b4_a800L | a0);
-
-          queueGpuPacket(tags_1f8003d0.deref().get(4).getAddress(), gpuPacketAddrTail_1f8003d4.get() - 0x10L);
-          queueGpuPacket(tags_1f8003d0.deref().get(5).getAddress(), s0);
-          gpuPacketAddrTail_1f8003d4.subu(0x44L);
-        }
-
-        //LAB_80014790
-        s1 += 0x9L;
-
-        //LAB_80014794
-        if(s1 < 0x130L) {
-          continue;
-        }
-      } else if(v1 >= 0x21L) {
-        //LAB_80014670
-        v1 -= 0x20L;
-
-        //LAB_80014678
-        s0 = gpuPacketAddrTail_1f8003d4.get() - 0x44L;
-
-        a0 = (v1 & 0xe0L) << 0x6L | (v1 & 0x1fL) << 0x3L;
-        v1 = s3 - (centreScreenY_1f8003de.get() - 0xcL) - 1L << 0x10L | s1 - (centreScreenX_1f8003dc.get() - 0x4L) - 1 & 0xffffL;
-        MEMORY.ref(1, s0).offset(0x3L).setu(0xcL);
-        MEMORY.ref(1, s0).offset(0x37L).setu(0x3L);
-        MEMORY.ref(4, s0).offset(0x38L).setu(0x7480_8080L);
-        MEMORY.ref(4, s0).offset(0x28L).setu(0x7480_8080L);
-        MEMORY.ref(4, s0).offset(0x1cL).setu(0x7480_8080L);
-        MEMORY.ref(4, s0).offset(0x10L).setu(0x7480_8080L);
-        MEMORY.ref(4, s0).offset(0x04L).setu(0x7480_8080L);
-        MEMORY.ref(4, s0).offset(0x08L).setu(v1 + 1);
-        MEMORY.ref(4, s0).offset(0x14L).setu(0x1_0000L | v1);
-        MEMORY.ref(4, s0).offset(0x20L).setu(0x1_0002L + v1);
-        MEMORY.ref(4, s0).offset(0x2cL).setu(0x2_0001L + v1);
-        MEMORY.ref(4, s0).offset(0x3cL).setu(0x1_0001L + v1);
-        MEMORY.ref(4, s0).offset(0x30L).setu(0x69b5_a800L | a0);
-        MEMORY.ref(4, s0).offset(0x24L).setu(0x69b5_a800L | a0);
-        MEMORY.ref(4, s0).offset(0x18L).setu(0x69b5_a800L | a0);
-        MEMORY.ref(4, s0).offset(0x0cL).setu(0x69b5_a800L | a0);
-        MEMORY.ref(4, s0).offset(0x40L).setu(0x69b4_a800L | a0);
-        queueGpuPacket(tags_1f8003d0.deref().get(4).getAddress(), gpuPacketAddrTail_1f8003d4.get() - 0x10L);
-        queueGpuPacket(tags_1f8003d0.deref().get(5).getAddress(), s0);
-        gpuPacketAddrTail_1f8003d4.subu(0x44L);
-
-        s1 += 0x9L;
-
-        //LAB_80014794
-        if(s1 < 0x130L) {
-          continue;
-        }
-      } else if(v1 != 0xaL) {
-        s1 += 0x9L;
-
-        //LAB_80014794
-        if(s1 < 0x130L) {
-          continue;
-        }
-      } else if(s3 >= 0x101L) {
-        //LAB_800147a0
-        break;
-      }
-
-      // Changed this, no longer loading
-
-      s3 += 0x9L;
-      s1 = 0;
-    } while(s3 < 0xe0L);
-
-    //LAB_800147b4
-    //LAB_800147b8
-    s0 = gpuPacketAddrTail_1f8003d4.get() - 0x8L;
-    gpuPacketAddrTail_1f8003d4.subu(0x8L);
-
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, s0).offset(0x4L).setu(_800bb348.get(0x9ffL) | 0xe100_0200L);
-    queueGpuPacket(tags_1f8003d0.deref().get(4).getAddress(), s0);
-
-    s0 = gpuPacketAddrTail_1f8003d4.get() - 0x8L;
-    gpuPacketAddrTail_1f8003d4.subu(0x8L);
-
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x1L);
-    MEMORY.ref(4, s0).offset(0x4L).setu(_800bb348.get(0x9ffL) | 0xe100_0200L);
-    queueGpuPacket(tags_1f8003d0.deref().get(5).getAddress(), s0);
-
-    _1f8003fc.setu(_800bb228.getAddress());
-
-    //LAB_80014840
   }
 
   @Method(0x8001486cL)
