@@ -2,9 +2,9 @@ package legend.game.combat.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedIntRef;
 
 public class BattleStruct3c implements MemoryRef {
   private final Value ref;
@@ -23,7 +23,7 @@ public class BattleStruct3c implements MemoryRef {
   public final ShortRef _0e;
   public final ShortRef _10;
   public final ShortRef _12;
-  public final ArrayRef<UnsignedIntRef> _14;
+  public final ArrayRef<IntRef> _14;
 
   public BattleStruct3c(final Value ref) {
     this.ref = ref;
@@ -38,7 +38,7 @@ public class BattleStruct3c implements MemoryRef {
     this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
     this._10 = ref.offset(2, 0x10L).cast(ShortRef::new);
     this._12 = ref.offset(2, 0x12L).cast(ShortRef::new);
-    this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
+    this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
   }
 
   @Override

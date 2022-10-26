@@ -87,7 +87,7 @@ public class Memory {
     }
 
     // Don't check alignment for temps - they use special storage
-    if(size > 4 || (address & TEMP_FLAG) == TEMP_FLAG) {
+    if(size > 4 || (size & 1) != 0 || (address & TEMP_FLAG) == TEMP_FLAG) {
       return;
     }
 

@@ -1507,7 +1507,7 @@ public final class SEffe {
 
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
           .clut((s2.clut_5c.get() & 0b111111) * 16, s2.clut_5c.get() >>> 6)
-          .vramPos(s2._58.get() & 0x3f0, 0)
+          .vramPos(s2._58.get() & 0x3c0, s2._5a.get() < 256 ? 0 : 256)
           .rgb(sp0x28.getX() >> 8, sp0x28.getY() >> 8, sp0x28.getZ() >> 8)
           .uv(0, (s2._58.get() & 0x3f) * 4,                    s2._5a.get())
           .uv(1, (s2._58.get() & 0x3f) * 4 + s2._5e.get() - 1, s2._5a.get())

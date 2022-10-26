@@ -7507,7 +7507,7 @@ public final class SMap {
           if(mode == 2) {
             cmd
               .clut(960, 464)
-              .vramPos(960, 320)
+              .vramPos(960, 256)
               .bpp(Bpp.BITS_4)
               .translucent(Translucency.B_MINUS_F);
           } else {
