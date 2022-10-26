@@ -69,6 +69,7 @@ public class Renderer {
       throw new RuntimeException("Invalid primitive type");
     }
 
+    //TODO need to figure out what this was being used for
     final long specialTrans = (int)_1f8003ec.get() >> 16;
 
     final int vertexCount = quad ? 4 : 3;
@@ -164,7 +165,7 @@ public class Renderer {
             CPU.COP2(0x140_0006L); // Normal clipping
             final long winding = CPU.MFC2(24);
 
-            if(specialTrans == 0 && winding <= 0 || specialTrans != 0 && winding == 0) {
+            if(!translucent && winding <= 0 || translucent && winding == 0) {
               continue outer;
             }
           }
