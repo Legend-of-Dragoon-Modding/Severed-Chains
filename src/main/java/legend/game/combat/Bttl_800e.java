@@ -5,6 +5,7 @@ import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
+import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.BVEC4;
@@ -5107,37 +5108,15 @@ public final class Bttl_800e {
         s6 = 256 + s1;
 
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)960, (short)256, (short)w, (short)h), x, y);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
-
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + s4, 960, 256, w, s1));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)x, (short)(y + s4), (short)w, (short)s1), 960, 256);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
-
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, s6, w, s4));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)x, (short)y, (short)w, (short)s4), 960, s6 & 0xffffL);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
       } else {
         //LAB_800ebf88
         s6 = 256 + s4;
 
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x, y, w, h));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)960, (short)256, (short)w, (short)h), x, y);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
-
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, s6, w, s1));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)x, (short)y, (short)w, (short)s1), 960, s6 & 0xffffL);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
-
         GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + s1, 960, 256, w, s4));
-//        SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), new RECT((short)x, (short)(y + s1), (short)w, (short)s4), 960, 256);
-//        queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-//        gpuPacketAddr_1f8003d8.addu(0x18L);
       }
     }
 
@@ -5418,7 +5397,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800ecb90
-      FUN_800eccfc(a3.model_148, textEffect, scriptIndex, a3);
+      drawTargetArrow(a3.model_148, textEffect, scriptIndex, a3);
     } else {
       //LAB_800ecba4
       long count = 0;
@@ -5463,7 +5442,7 @@ public final class Bttl_800e {
 
         //LAB_800eccac
         if((state.ui_60.get() & 0x4000L) == 0) {
-          FUN_800eccfc(data.model_148, textEffect, scriptIndex, data);
+          drawTargetArrow(data.model_148, textEffect, scriptIndex, data);
         }
 
         //LAB_800eccc8
@@ -5474,7 +5453,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eccfcL)
-  public static void FUN_800eccfc(final Model124 model, final int textEffect, final int scriptIndex, final BattleObject27c data) {
+  public static void drawTargetArrow(final Model124 model, final int textEffect, final int scriptIndex, final BattleObject27c data) {
     final int x;
     final int y;
     final int z;
@@ -5500,45 +5479,37 @@ public final class Bttl_800e {
 
     //LAB_800ecdac
     final DVECTOR screenCoords = perspectiveTransformXyz(model, (short)x, (short)y, (short)z);
-    long addr = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, addr).offset(0x03L).setu(0x4L);
-    MEMORY.ref(4, addr).offset(0x04L).setu(0x6680_8080L);
-    MEMORY.ref(2, addr).offset(0x08L).setu(screenCoords.getX() - 0x8L);
-    MEMORY.ref(2, addr).offset(0x0aL).setu(_800fb188.offset(2, (_800bb0fc.get() & 0x7L) * 0x2L).get() + screenCoords.getY());
-    MEMORY.ref(1, addr).offset(0x0cL).setu(0xf0L);
-    MEMORY.ref(1, addr).offset(0x0dL).setu(0);
-    MEMORY.ref(2, addr).offset(0x10L).setu(0x10L);
-    MEMORY.ref(2, addr).offset(0x12L).setu(0x18L);
+
+    final GpuCommandQuad cmd = new GpuCommandQuad()
+      .bpp(Bpp.BITS_4)
+      .translucent(Translucency.HALF_B_PLUS_HALF_F)
+      .vramPos(704, 256)
+      .monochrome(0x80)
+      .pos(screenCoords.getX() - 8, screenCoords.getY() + (int)_800fb188.offset(2, (_800bb0fc.get() & 0x7L) * 0x2L).getSigned(), 16, 24)
+      .uv(240, 0);
 
     if(textEffect == 0) {
       //LAB_800ece80
-      MEMORY.ref(2, addr).offset(0x0eL).setu(0x7fadL);
+      cmd.clut(720, 510);
     } else if(textEffect == 1) {
       //LAB_800ece88
-      MEMORY.ref(2, addr).offset(0x0eL).setu(0x7fedL);
+      cmd.clut(720, 511);
       //LAB_800ece70
     } else if(textEffect == 2) {
       //LAB_800ece90
       //LAB_800ece94
-      MEMORY.ref(2, addr).offset(0x0eL).setu(0x7c2eL);
+      cmd.clut(736, 496);
     }
 
     //LAB_800ece9c
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x70L, addr);
-    gpuPacketAddr_1f8003d8.addu(0x14L);
-
-    addr = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, addr).offset(0x03L).setu(0x1L);
-    MEMORY.ref(4, addr).offset(0x04L).setu(0xe100_021bL);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x70L, addr);
-    gpuPacketAddr_1f8003d8.addu(0x8L);
+    GPU.queueCommand(28, cmd);
   }
 
   @Method(0x800ee210L)
   public static long FUN_800ee210(final RunningScript a0) {
     final RECT sp0x10 = new RECT().set((short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get(), (short)(a0.params_20.get(2).deref().get() >> 2), (short)a0.params_20.get(3).deref().get());
     SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a0.params_20.get(0).deref().get() & 0xffffL, a0.params_20.get(1).deref().get() & 0xffffL);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
+    queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0x18L);
     return 0;
   }
