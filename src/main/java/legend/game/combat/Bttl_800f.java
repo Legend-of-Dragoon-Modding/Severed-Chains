@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8002;
@@ -25,6 +26,7 @@ import legend.game.types.Translucency;
 import javax.annotation.Nullable;
 
 import static java.lang.Math.round;
+import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
@@ -1526,47 +1528,23 @@ public final class Bttl_800f {
             if((digit._00.get() & 0x8000) != 0) {
               //LAB_800f3ec0
               for(int s3 = 1; s3 < 3; s3++) {
-                final long packet = gpuPacketAddr_1f8003d8.get();
-                setGp0_2c(packet); // Textured quad, opaque, texture blending
-                gpuLinkedListSetCommandTransparency(packet, translucent); // Enable translucency?
-                gpuPacketAddr_1f8003d8.addu(0x28L);
+                final int a1 = num.x_1c.get() - centreScreenX_1f8003dc.get();
+                final int a2 = num.y_20.get() - centreScreenY_1f8003de.get();
+                final int left = digit.x_0e.get() + a1;
+                final int right = digit.x_0e.get() + digit.texW_16.get() + a1;
+                final int top = digit.y_10.get() + a2;
+                final int bottom = digit.y_10.get() + digit.texH_18.get() + a2;
+                final int leftU = digit.u_12.get();
+                final int rightU = digit.u_12.get() + digit.texW_16.get();
+                final int topV = digit.v_14.get();
+                final int bottomV = digit.v_14.get() + digit.texH_18.get();
+                final int v1 = digit._1a.get();
 
-                MEMORY.ref(1, packet).offset(0x4L).setu(r); // R
-                MEMORY.ref(1, packet).offset(0x5L).setu(g); // G
-                MEMORY.ref(1, packet).offset(0x6L).setu(b); // B
-                final long a1 = num.x_1c.get() - centreScreenX_1f8003dc.get();
-                long v0 = digit.x_0e.get() + a1;
-                MEMORY.ref(2, packet).offset(0x18L).setu(v0); // X2
-                MEMORY.ref(2, packet).offset(0x8L).setu(v0); // X0
-                long v1 = digit.x_0e.get() + digit.texW_16.get() + a1;
-                MEMORY.ref(2, packet).offset(0x20L).setu(v1); // X3
-                MEMORY.ref(2, packet).offset(0x10L).setu(v1); // X1
-                long a2 = num.y_20.get() - centreScreenY_1f8003de.get();
-                v0 = digit.y_10.get() + a2;
-                MEMORY.ref(2, packet).offset(0x12L).setu(v0); // Y1
-                MEMORY.ref(2, packet).offset(0xaL).setu(v0); // Y0
-                v1 = digit.y_10.get() + digit.texH_18.get() + a2;
-                MEMORY.ref(2, packet).offset(0x22L).setu(v1); // Y3
-                MEMORY.ref(2, packet).offset(0x1aL).setu(v1); // Y2
-                v0 = digit.u_12.get();
-                MEMORY.ref(1, packet).offset(0x1cL).setu(v0); // U2
-                MEMORY.ref(1, packet).offset(0xcL).setu(v0); // U0
-                v1 = digit.u_12.get() + digit.texW_16.get();
-                MEMORY.ref(1, packet).offset(0x24L).setu(v1); // U3
-                MEMORY.ref(1, packet).offset(0x14L).setu(v1); // U1
-                v0 = digit.v_14.get();
-                MEMORY.ref(1, packet).offset(0x15L).setu(v0); // V1
-                MEMORY.ref(1, packet).offset(0xdL).setu(v0); // V0
-                v1 = digit.v_14.get() + digit.texH_18.get();
-                MEMORY.ref(1, packet).offset(0x25L).setu(v1); // V3
-                MEMORY.ref(1, packet).offset(0x1dL).setu(v1); // V2
-                v1 = digit._1a.get();
-
-                final long t1;
-                long t0;
-                if((int)v1 >= 0x80L) {
-                  t1 = 0x1L;
-                  t0 = v1 - 0x80L;
+                final int t1;
+                final int t0;
+                if(v1 >= 0x80) {
+                  t1 = 1;
+                  t0 = v1 - 0x80;
                 } else {
                   t1 = 0;
 
@@ -1574,22 +1552,31 @@ public final class Bttl_800f {
                   t0 = v1;
                 }
 
+                final int clutY = (int)_800c7114.offset(2, (t1 * 2 + 1) * 0x4L).get() + t0 % 16;
+                final int clutX = (int)_800c7114.offset(2, t1 * 2 * 0x4L).get() + t0 / 16 * 16 & 0x3f0;
+
+                final GpuCommandPoly cmd = new GpuCommandPoly(4)
+                  .bpp(Bpp.BITS_4)
+                  .clut(clutX, clutY)
+                  .vramPos(704, 256)
+                  .rgb(r, g, b)
+                  .pos(0, left, top)
+                  .pos(1, right, top)
+                  .pos(2, left, bottom)
+                  .pos(3, right, bottom)
+                  .uv(0, leftU, topV)
+                  .uv(1, rightU, topV)
+                  .uv(2, leftU, bottomV)
+                  .uv(3, rightU, bottomV);
+
+                if(translucent) {
+                  cmd.translucent(Translucency.of(s3));
+                }
+
                 //LAB_800f4048
-                final long a3 = t0;
-
                 //LAB_800f4058
-                t0 = t0 / 0x10L;
-
                 //LAB_800f4068
-                a2 = (_800c7114.offset(2, (t1 * 0x2L + 0x1L) * 0x4L).get() + a3 % 0x10L) * 0x40L; // TODO wtf is this
-                v0 = _800c7114.offset(4, t1 * 0x8L).get() + t0 * 0x10L;
-                v0 = v0 & 0x3f0L;
-                v0 = (int)v0 >> 4;
-                a2 = a2 | v0;
-                MEMORY.ref(2, packet).offset(0xeL).setu(a2); // CLUT
-                final int tpage = GetTPage(Bpp.BITS_4, Translucency.of(s3), 704, 496);
-                MEMORY.ref(2, packet).offset(0x16L).setu(tpage); // TPAGE
-                queueGpuPacket(tags_1f8003d0.getPointer() + 0x1cL, packet);
+                GPU.queueCommand(7, cmd);
 
                 if((num.state_00.get() & 97) == 0) {
                   //LAB_800f4118

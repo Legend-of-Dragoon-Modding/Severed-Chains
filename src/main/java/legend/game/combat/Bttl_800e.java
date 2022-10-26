@@ -4,6 +4,7 @@ import legend.core.MemoryHelper;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
+import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.BVEC4;
@@ -3272,7 +3273,7 @@ public final class Bttl_800e {
       MEMORY.ref(2, s0).offset(0x12L).setu(sp0x30.getY());
       MEMORY.ref(1, s0).offset(0x14L).setu(a0.u_0e.get() + a0.w_08.get());
       MEMORY.ref(1, s0).offset(0x15L).setu(a0.v_0f.get());
-      MEMORY.ref(2, s0).offset(0x16L).setu(a0._0c.get() | a0._00.get() >>> 23 & 0x60L);
+      MEMORY.ref(2, s0).offset(0x16L).setu(a0.tpage_0c.get() | a0._00.get() >>> 23 & 0x60L);
       MEMORY.ref(2, s0).offset(0x18L).setu(sp0x38.getX());
       MEMORY.ref(2, s0).offset(0x1aL).setu(sp0x38.getY());
       MEMORY.ref(1, s0).offset(0x1cL).setu(a0.u_0e.get());
@@ -3311,12 +3312,6 @@ public final class Bttl_800e {
         }
 
         //LAB_800e7a38
-        final long packet = gpuPacketAddr_1f8003d8.get();
-        MEMORY.ref(1, packet).offset(0x3L).setu(9); // 9 words
-        MEMORY.ref(1, packet).offset(0x4L).setu(s1.r_14.get()); // R
-        MEMORY.ref(1, packet).offset(0x5L).setu(s1.g_15.get()); // G
-        MEMORY.ref(1, packet).offset(0x6L).setu(s1.b_16.get()); // B
-        MEMORY.ref(1, packet).offset(0x7L).setu(0x2cL | s1._00.get() >>> 29 & 0x2L); // Command
         final int a1 = (int)_1f8003f8.get() * 0x400 / (sp0x18.getZ() / 4);
         final int s5 = s1.x_04.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
         final int s7 = s5 + s1.w_08.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
@@ -3324,26 +3319,25 @@ public final class Bttl_800e {
         final int fp = s2 + s1.h_0a.get() * s1._1e.get() / 0x8 * a1 / 0x8000;
         final int sin = rsin(s1.rotation_20.get());
         final int cos = rcos(s1.rotation_20.get());
-        MEMORY.ref(2, packet).offset(0x08L).setu(xy.getX() + s5 * cos / 0x1000 - s2 * sin / 0x1000); // V0 X
-        MEMORY.ref(2, packet).offset(0x0aL).setu(xy.getY() + s5 * sin / 0x1000 + s2 * cos / 0x1000); // V0 Y
-        MEMORY.ref(1, packet).offset(0x0cL).setu(s1.u_0e.get()); // V0 U
-        MEMORY.ref(1, packet).offset(0x0dL).setu(s1.v_0f.get()); // V0 V
-        MEMORY.ref(2, packet).offset(0x0eL).setu(s1.clutY_12.get() << 6 | (s1.clutX_10.get() & 0x3f0) >>> 4); // CLUT
-        MEMORY.ref(2, packet).offset(0x10L).setu(xy.getX() + s7 * cos / 0x1000 - s2 * sin / 0x1000); // V1 X
-        MEMORY.ref(2, packet).offset(0x12L).setu(xy.getY() + s7 * sin / 0x1000 + s2 * cos / 0x1000); // V1 Y
-        MEMORY.ref(1, packet).offset(0x14L).setu(s1.w_08.get() + s1.u_0e.get() - 1); // V1 U
-        MEMORY.ref(1, packet).offset(0x15L).setu(s1.v_0f.get()); // V1 V
-        MEMORY.ref(2, packet).offset(0x16L).setu(s1._0c.get() | s1._00.get() >>> 23 & 0x60); // TPAGE
-        MEMORY.ref(2, packet).offset(0x18L).setu(xy.getX() + s5 * cos / 0x1000 - fp * sin / 0x1000); // V2 X
-        MEMORY.ref(2, packet).offset(0x1aL).setu(xy.getY() + s5 * sin / 0x1000 + fp * cos / 0x1000); // V2 Y
-        MEMORY.ref(1, packet).offset(0x1cL).setu(s1.u_0e.get()); // V2 U
-        MEMORY.ref(1, packet).offset(0x1dL).setu(s1.h_0a.get() + s1.v_0f.get() - 1); // V2 V
-        MEMORY.ref(2, packet).offset(0x20L).setu(xy.getX() + s7 * cos / 0x1000 - fp * sin / 0x1000); // V3 X
-        MEMORY.ref(2, packet).offset(0x22L).setu(xy.getY() + s7 * sin / 0x1000 + fp * cos / 0x1000); // V3 Y
-        MEMORY.ref(1, packet).offset(0x24L).setu(s1.w_08.get() + s1.u_0e.get() - 1); // V3 U
-        MEMORY.ref(1, packet).offset(0x25L).setu(s1.h_0a.get() + s1.v_0f.get() - 1); // V3 V
-        queueGpuPacket(tags_1f8003d0.deref().get(z >> 2).getAddress(), packet);
-        gpuPacketAddr_1f8003d8.addu(0x28L);
+
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .clut(s1.clutX_10.get() & 0x3f0, s1.clutY_12.get())
+          .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
+          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
+          .pos(0, xy.getX() + s5 * cos / 0x1000 - s2 * sin / 0x1000, xy.getY() + s5 * sin / 0x1000 + s2 * cos / 0x1000)
+          .pos(1, xy.getX() + s7 * cos / 0x1000 - s2 * sin / 0x1000, xy.getY() + s7 * sin / 0x1000 + s2 * cos / 0x1000)
+          .pos(2, xy.getX() + s5 * cos / 0x1000 - fp * sin / 0x1000, xy.getY() + s5 * sin / 0x1000 + fp * cos / 0x1000)
+          .pos(3, xy.getX() + s7 * cos / 0x1000 - fp * sin / 0x1000, xy.getY() + s7 * sin / 0x1000 + fp * cos / 0x1000)
+          .uv(0, s1.u_0e.get(), s1.v_0f.get())
+          .uv(1, s1.w_08.get() + s1.u_0e.get() - 1, s1.v_0f.get())
+          .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
+          .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
+
+        if((s1._00.get() & 1 << 30) != 0) {
+          cmd.translucent(Translucency.of((int)s1._00.get() >>> 23 & 0b11));
+        }
+
+        GPU.queueCommand(z >> 2, cmd);
       }
     }
 
@@ -3959,7 +3953,7 @@ public final class Bttl_800e {
       sp0x10.y_06.set((short)(-MEMORY.ref(1, a0).offset(0x5L).get() / 2));
       sp0x10.w_08.set((int)MEMORY.ref(1, a0).offset(0x4L).get());
       sp0x10.h_0a.set((int)MEMORY.ref(1, a0).offset(0x5L).get());
-      sp0x10._0c.set((int)((MEMORY.ref(2, a0).offset(0x2L).get() & 0x100L) >>> 4 | (MEMORY.ref(2, a0).offset(0x0L).get() & 0x3ffL) >>> 6));
+      sp0x10.tpage_0c.set((int)((MEMORY.ref(2, a0).offset(0x2L).get() & 0x100L) >>> 4 | (MEMORY.ref(2, a0).offset(0x0L).get() & 0x3ffL) >>> 6));
       sp0x10.u_0e.set((int)((MEMORY.ref(2, a0).offset(0x0L).get() & 0x3fL) << 2));
       sp0x10.v_0f.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
       sp0x10.clutX_10.set((int)(MEMORY.ref(2, a0).offset(0x6L).get() << 4 & 0x3ffL));

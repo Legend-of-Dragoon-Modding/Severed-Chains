@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
@@ -1011,18 +1012,13 @@ public final class SEffe {
   @Method(0x800fce10L)
   public static void FUN_800fce10(final EffectManagerData6c a0, final long a1) {
     if((int)MEMORY.ref(4, a1).offset(0x0L).get() >= 0) {
-      final long packet = gpuPacketAddr_1f8003d8.get();
-      MEMORY.ref(1, packet).offset(0x03L).setu(0x4L);
-      MEMORY.ref(4, packet).offset(0x04L).setu(0x5242_4140L);
-      MEMORY.ref(2, packet).offset(0x08L).setu(MEMORY.ref(2, a1).offset(0x08L).get());
-      MEMORY.ref(2, packet).offset(0x0aL).setu(MEMORY.ref(2, a1).offset(0x10L).get());
-      MEMORY.ref(1, packet).offset(0x0cL).setu(MEMORY.ref(1, a1).offset(0x44L).get());
-      MEMORY.ref(1, packet).offset(0x0dL).setu(MEMORY.ref(1, a1).offset(0x45L).get());
-      MEMORY.ref(1, packet).offset(0x0eL).setu(MEMORY.ref(1, a1).offset(0x46L).get());
-      MEMORY.ref(2, packet).offset(0x10L).setu(MEMORY.ref(2, a1).offset(0x0cL).get());
-      MEMORY.ref(2, packet).offset(0x12L).setu(MEMORY.ref(2, a1).offset(0x14L).get());
-      queueGpuPacket(tags_1f8003d0.getPointer() + (MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22.get()) / 4 * 4, packet);
-      gpuPacketAddr_1f8003d8.addu(0x14L);
+      GPU.queueCommand(((int)MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22.get()) / 4, new GpuCommandLine()
+        .translucent(Translucency.B_PLUS_F)
+        .rgb(0, 0x40, 0x41, 0x42)
+        .rgb(1, (int)MEMORY.ref(1, a1).offset(0x44L).get(), (int)MEMORY.ref(1, a1).offset(0x45L).get(), (int)MEMORY.ref(1, a1).offset(0x46L).get())
+        .pos(0, (int)MEMORY.ref(2, a1).offset(0x08L).get(), (int)MEMORY.ref(2, a1).offset(0x10L).get())
+        .pos(1, (int)MEMORY.ref(2, a1).offset(0x0cL).get(), (int)MEMORY.ref(2, a1).offset(0x14L).get())
+      );
     }
 
     //LAB_800fcf08
@@ -1372,9 +1368,6 @@ public final class SEffe {
             }
 
             //LAB_800fdcc8
-            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
-            queueGpuPacket(tags_1f8003d0.getPointer() + (s3 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
-            gpuPacketAddr_1f8003d8.addu(0xcL);
           }
         }
 
@@ -6227,7 +6220,7 @@ public final class SEffe {
     sp0x10.y_06.set((short)(-effect.height_0c.get() / 2));
     sp0x10.w_08.set(effect.width_0a.get());
     sp0x10.h_0a.set(effect.height_0c.get());
-    sp0x10._0c.set((effect._08.get() & 0x100) >>> 4 | (effect._06.get() & 0x3ff) >>> 6);
+    sp0x10.tpage_0c.set((effect._08.get() & 0x100) >>> 4 | (effect._06.get() & 0x3ff) >>> 6);
     sp0x10.u_0e.set((effect._06.get() & 0x3f) * 4);
     sp0x10.v_0f.set(effect._08.get());
     sp0x10.clutX_10.set(effect.clut_0e.get() << 4 & 0x3ff);
@@ -6498,7 +6491,7 @@ public final class SEffe {
     sp0x10.y_06.set((short)(-effect.height_09.get() / 2));
     sp0x10.w_08.set(effect.width_08.get());
     sp0x10.h_0a.set(effect.height_09.get());
-    sp0x10._0c.set((effect._06.get() & 0x100) >>> 4 | (effect._04.get() & 0x3ff) >>> 6);
+    sp0x10.tpage_0c.set((effect._06.get() & 0x100) >>> 4 | (effect._04.get() & 0x3ff) >>> 6);
     sp0x10.u_0e.set((effect._04.get() & 0x3f) << 2);
     sp0x10.v_0f.set(effect._06.get());
     sp0x10.clutX_10.set(effect.clut_0a.get() << 4 & 0x3ff);

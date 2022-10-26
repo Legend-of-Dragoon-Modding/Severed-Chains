@@ -1312,7 +1312,7 @@ public final class Bttl_800d {
     v1 = MEMORY.ref(2, v1).offset(0x0L).get() & 0x3ffL;
     v1 = v1 >>> 6;
     v0 = v0 | v1;
-    sub._0c._0c.set((int)v0);
+    sub._0c.tpage_0c.set((int)v0);
     sub._0c.x_04.set((short)(-sub._0c.w_08.get() >> 1));
     sub._0c._18.set((short)0);
     sub._0c._1a.set((short)0);

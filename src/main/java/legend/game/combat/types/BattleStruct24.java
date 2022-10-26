@@ -20,7 +20,7 @@ public class BattleStruct24 implements MemoryRef {
   public final ShortRef y_06;
   public final UnsignedShortRef w_08;
   public final UnsignedShortRef h_0a;
-  public final UnsignedShortRef _0c;
+  public final UnsignedShortRef tpage_0c;
   public final UnsignedByteRef u_0e;
   public final UnsignedByteRef v_0f;
   public final UnsignedShortRef clutX_10;
@@ -43,7 +43,7 @@ public class BattleStruct24 implements MemoryRef {
     this.y_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this.w_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this.h_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
+    this.tpage_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this.u_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
     this.v_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
     this.clutX_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
@@ -67,7 +67,7 @@ public class BattleStruct24 implements MemoryRef {
     this.y_06 = new ShortRef();
     this.w_08 = new UnsignedShortRef();
     this.h_0a = new UnsignedShortRef();
-    this._0c = new UnsignedShortRef();
+    this.tpage_0c = new UnsignedShortRef();
     this.u_0e = new UnsignedByteRef();
     this.v_0f = new UnsignedByteRef();
     this.clutX_10 = new UnsignedShortRef();

@@ -594,7 +594,7 @@ public class Gpu implements Runnable {
       try {
         Config.save();
       } catch(final IOException e) {
-        System.err.println("Failed to save config");;
+        System.err.println("Failed to save config");
       }
     }
 
@@ -999,16 +999,16 @@ public class Gpu implements Runnable {
 
     final int v2 = buffer.getInt(bufferIndex);
 
-    return () -> gpu.rasterizeLine(v1, v2, colour1, colour2, isTransparent);
+    final int x = signed11bit(v1 & 0xffff) * gpu.renderScale;
+    final int y = signed11bit(v1 >> 16) * gpu.renderScale;
+
+    final int x2 = signed11bit(v2 & 0xffff) * gpu.renderScale;
+    final int y2 = signed11bit(v2 >> 16) * gpu.renderScale;
+
+    return () -> gpu.rasterizeLine(x, y, x2, y2, colour1, colour2, isTransparent ? gpu.status.semiTransparency : null);
   }
 
-  private void rasterizeLine(final int v1, final int v2, final int colour1, final int colour2, final boolean transparent) {
-    int x = signed11bit(v1 & 0xffff) * this.renderScale;
-    int y = signed11bit(v1 >> 16) * this.renderScale;
-
-    int x2 = signed11bit(v2 & 0xffff) * this.renderScale;
-    int y2 = signed11bit(v2 >> 16) * this.renderScale;
-
+  public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
     if(Math.abs(x - x2) >= this.vramWidth || Math.abs(y - y2) >= this.vramHeight) {
       return;
     }
@@ -1065,8 +1065,8 @@ public class Gpu implements Runnable {
       int color = interpolateColours(colour1, colour2, ratio);
 
       if(x >= this.drawingArea.x.get() && x < this.drawingArea.w.get() && y >= this.drawingArea.y.get() && y < this.drawingArea.h.get()) {
-        if(transparent) {
-          color = this.handleTranslucence(x, y, color, this.status.semiTransparency);
+        if(translucency != null) {
+          color = this.handleTranslucence(x, y, color, translucency);
         }
 
         color |= (this.status.setMaskBit ? 1 : 0) << 24;
