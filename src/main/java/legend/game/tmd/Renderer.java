@@ -188,10 +188,10 @@ public class Renderer {
 
     if(translucent) {
       gp0Command |= 0x2;
+    }
 
-      if(useSpecialTranslucency) {
-        gp0Command |= specialTrans << 25;
-      }
+    if(useSpecialTranslucency) {
+      gp0Command |= specialTrans << 1;
     }
 
     final int packetLength = (gp0CommandCount + 1) * 4;
@@ -279,7 +279,7 @@ public class Renderer {
             CPU.COP2(0x140_0006L); // Normal clipping
             final long winding = CPU.MFC2(24);
 
-            if(specialTrans == 0 && winding <= 0 || specialTrans != 0 && winding == 0) {
+            if(!translucent && winding <= 0 || translucent && winding == 0) {
               continue outer;
             }
           }
