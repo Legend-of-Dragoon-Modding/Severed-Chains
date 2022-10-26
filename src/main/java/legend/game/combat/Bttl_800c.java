@@ -4484,6 +4484,7 @@ public final class Bttl_800c {
     a3.set(sp0x10);
   }
 
+  /** Returns Z */
   @Method(0x800cf7d4L)
   public static int FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x30 = new SVECTOR().set(a1);
@@ -4581,6 +4582,7 @@ public final class Bttl_800c {
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
   }
 
+  /** Returns Z */
   @Method(0x800cfc20L)
   public static int FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0);

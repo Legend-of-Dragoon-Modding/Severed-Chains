@@ -2017,13 +2017,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013598L)
-  public static short rsin(final long angleDiv360Maybe) {
-    return (short)sin_cos_80054d0c.offset(2, 0x0L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
+  public static short rsin(final long theta) {
+    return (short)sin_cos_80054d0c.offset(2, 0x0L).offset((theta & 0xfffL) * 4).getSigned();
   }
 
   @Method(0x800135b8L)
-  public static short rcos(final long angleDiv360Maybe) {
-    return (short)sin_cos_80054d0c.offset(2, 0x2L).offset((angleDiv360Maybe & 0xfffL) * 4).getSigned();
+  public static short rcos(final long theta) {
+    return (short)sin_cos_80054d0c.offset(2, 0x2L).offset((theta & 0xfffL) * 4).getSigned();
   }
 
   /**
