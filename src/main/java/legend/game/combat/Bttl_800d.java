@@ -52,7 +52,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
-import static legend.game.Scus94491BpeSegment._1f8003ee;
+import static legend.game.Scus94491BpeSegment.ctmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.free;
@@ -5324,7 +5324,7 @@ public final class Bttl_800d {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t8 = _1f8003ee.get();
+    final long t8 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800dea38
     for(int i = 0; i < count; i++) {
@@ -5407,7 +5407,7 @@ public final class Bttl_800d {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long a0 = _1f8003ee.get();
+    final long a0 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800dec68
     MEMORY.ref(1, packet).offset(0x3L).setu(0xcL);
@@ -5493,7 +5493,7 @@ public final class Bttl_800d {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t9 = _1f8003ee.get();
+    final long t9 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800def08
     for(int i = 0; i < count; i++) {
@@ -5580,7 +5580,7 @@ public final class Bttl_800d {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t8 = _1f8003ee.get();
+    final long t8 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800df1ac
     for(int i = 0; i < count; i++) {
@@ -5652,7 +5652,7 @@ public final class Bttl_800d {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long s5 = _1f8003ee.get();
+    final long command = ctmdGp0CommandId_1f8003ee.get();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -5682,7 +5682,7 @@ public final class Bttl_800d {
         CPU.COP2(0x1400006L);
 
         long s2 = CPU.MFC2(24);
-        if((int)s2 > 0 || (s5 & 0x2L) != 0 && s2 != 0) {
+        if((int)s2 > 0 || (command & 0x2L) != 0 && s2 != 0) {
           //LAB_800df4ac
           MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
           MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
@@ -5692,9 +5692,8 @@ public final class Bttl_800d {
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
           CPU.COP2(0x180001L);
-          MEMORY.ref(1, packet).offset(0x07L).setu(s5);
+          MEMORY.ref(1, packet).offset(0x07L).setu(command);
           MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
-          s2 = CPU.CFC2(31);
           MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14));
           CPU.COP2(0x168002eL);
           MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get() * r >> 12);
@@ -5711,7 +5710,7 @@ public final class Bttl_800d {
           MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get() * b >> 12);
 
           final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
-          if(z >= 0xb) {
+          if(z >= 11) {
             //LAB_800df684
             final GsOT_TAG tag = tags.get(z);
             MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
@@ -5735,7 +5734,7 @@ public final class Bttl_800d {
     long s1 = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long s5 = _1f8003ee.get();
+    final long s5 = ctmdGp0CommandId_1f8003ee.get();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();

@@ -385,7 +385,7 @@ public final class Scus94491BpeSegment {
   public static final IntRef displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L, IntRef::new);
   public static final IntRef zOffset_1f8003e8 = MEMORY.ref(4, 0x1f8003e8L, IntRef::new);
   public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
-  public static final Value _1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
+  public static final Value ctmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
 
   public static final Pointer<BattleStruct18cb0> _1f8003f4 = MEMORY.ref(4, 0x1f8003f4L, Pointer.deferred(4, BattleStruct18cb0::new));
   public static final Value _1f8003f8 = MEMORY.ref(4, 0x1f8003f8L);

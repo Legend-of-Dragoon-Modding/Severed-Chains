@@ -86,7 +86,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
-import static legend.game.Scus94491BpeSegment._1f8003ee;
+import static legend.game.Scus94491BpeSegment.ctmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment._1f8003f8;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
@@ -270,7 +270,7 @@ public final class Bttl_800e {
   @Method(0x800e02e8L)
   public static long FUN_800e02e8(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long t2 = _1f8003ee.get();
+    final long t2 = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -411,7 +411,7 @@ public final class Bttl_800e {
   @Method(0x800e0848L)
   public static long FUN_800e0848(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long fp = _1f8003ee.get();
+    final long fp = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -524,7 +524,7 @@ public final class Bttl_800e {
   @Method(0x800e0c98L)
   public static long FUN_800e0c98(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long a1 = _1f8003ee.get();
+    final long a1 = ctmdGp0CommandId_1f8003ee.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
     final UnboundedArrayRef<BVEC4> vertices = verts.reinterpret(UnboundedArrayRef.of(4, BVEC4::new));
@@ -666,7 +666,7 @@ public final class Bttl_800e {
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long sp38 = _1f8003ee.get();
+    final long sp38 = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -782,7 +782,7 @@ public final class Bttl_800e {
   @Method(0x800e16a0L)
   public static long FUN_800e16a0(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long t0 = _1f8003ee.get();
+    final long t0 = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -919,7 +919,7 @@ public final class Bttl_800e {
   @Method(0x800e1c24L)
   public static long FUN_800e1c24(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long fp = _1f8003ee.get();
+    final long fp = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -1034,7 +1034,7 @@ public final class Bttl_800e {
   @Method(0x800e20bcL)
   public static long FUN_800e20bc(long primitives, final UnboundedArrayRef<SVECTOR> verts, final long normals, final long count) {
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long sp58 = _1f8003ee.get();
+    final long sp58 = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -1153,7 +1153,7 @@ public final class Bttl_800e {
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
 
     long packet = gpuPacketAddr_1f8003d8.get();
-    final long sp50 = _1f8003ee.get();
+    final long sp50 = ctmdGp0CommandId_1f8003ee.get();
 
     primitives += 0x4L;
 
@@ -1737,7 +1737,7 @@ public final class Bttl_800e {
     if((dobj2.attribute_00.get() & 0x4000_0000L) == 0) {
       s1 = 0;
     } else {
-      s1 = 0x12L;
+      s1 = 0x12L; // Shaded and translucent
     }
 
     //LAB_800e3eb4
@@ -1756,7 +1756,7 @@ public final class Bttl_800e {
       final long length = MEMORY.ref(2, primitives).get();
       final long command = MEMORY.ref(4, primitives).get();
 
-      _1f8003ee.setu((int)command >> 24 & 0x3eL | s1);
+      ctmdGp0CommandId_1f8003ee.setu((int)command >> 24 & 0x3eL | s1);
       final long index = command >>> 14 & 0x20L | command >>> 24 & 0xfL | command >>> 18 & 0x1L | s1;
       primitives = ctmdRenderers_800fadbc.get((int)index).deref().run(primitives, vertices, normals, length);
       count -= length;
@@ -1772,7 +1772,7 @@ public final class Bttl_800e {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t4 = _1f8003ee.get();
+    final long t4 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800e4008
     for(int i = 0; i < count; i++) {
@@ -1840,7 +1840,7 @@ public final class Bttl_800e {
     long packet = gpuPacketAddr_1f8003d8.get();
 
     final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long a0 = _1f8003ee.get();
+    final long a0 = ctmdGp0CommandId_1f8003ee.get();
 
     //LAB_800e41e0
     //LAB_800e41e4
