@@ -1304,7 +1304,6 @@ public class WMap {
         MEMORY.ref(2, renderPacket).offset(0x22L).setu(bottom);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .shaded()
           .rgb(0, (int)MEMORY.get(renderPacket + 0x04L, 3))
           .rgb(1, (int)MEMORY.get(renderPacket + 0x0cL, 3))
           .rgb(2, (int)MEMORY.get(renderPacket + 0x14L, 3))
@@ -4485,7 +4484,6 @@ public class WMap {
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .bpp(Bpp.of(tpage >>> 7 & 0b11))
-        .shaded()
         .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())
         .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
         .uv(0, MEMORY.get(primitives + 0x04L) & 0xff, MEMORY.get(primitives + 0x05L) & 0xff)
@@ -5288,7 +5286,6 @@ public class WMap {
         final GpuCommandPoly cmd = new GpuCommandPoly(3)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_MINUS_F)
-          .shaded()
           .monochrome(0, 0x80)
           .monochrome(1, 0)
           .monochrome(2, 0)
@@ -5391,7 +5388,6 @@ public class WMap {
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .shaded()
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
           .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())
@@ -5423,7 +5419,6 @@ public class WMap {
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .shaded()
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
           .clut(1008, (int)_800ef348.offset(struct258_800c66a8.deref()._28.get() * 0x2L).get())

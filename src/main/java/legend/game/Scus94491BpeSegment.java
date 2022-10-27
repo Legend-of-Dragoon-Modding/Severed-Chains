@@ -890,7 +890,7 @@ public final class Scus94491BpeSegment {
             IoHelper.write(buf, ptr.deref().getClass().getName());
 
             if(ptr.deref() instanceof EffectManagerData6c) {
-              final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref())._44;
+              final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref()).effect_44;
 
               if(ptr1.isNull()) {
                 IoHelper.write(buf, "");
@@ -948,7 +948,7 @@ public final class Scus94491BpeSegment {
               if(!clsName1.isEmpty()) {
                 final Class<?> cls1 = Class.forName(clsName1);
                 final Constructor<?> ctor1 = cls1.getConstructor(Value.class);
-                data6c._44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c._44.getPointer())));
+                data6c.effect_44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c.effect_44.getPointer())));
               }
 
               Pointer<BttlScriptData6cSubBase2> ptr2 = data6c._58;
@@ -1849,6 +1849,7 @@ public final class Scus94491BpeSegment {
     zShift_1f8003c4.set(14 - orderingTableBits);
     orderingTableSize_1f8003c8.set(1 << orderingTableBits);
     zMax_1f8003cc.set((1 << orderingTableBits) - 2);
+    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
     VSync(0);
     SetDispMask(0);

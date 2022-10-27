@@ -1494,7 +1494,6 @@ public final class Ttle {
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .shaded()
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 
       //LAB_800cc5c8
@@ -1574,7 +1573,6 @@ public final class Ttle {
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .shaded()
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 
       //LAB_800ccbe4

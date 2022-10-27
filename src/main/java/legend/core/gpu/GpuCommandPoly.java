@@ -64,11 +64,6 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
-  public final GpuCommandPoly shaded() {
-    this.shaded = true;
-    return this;
-  }
-
   public final GpuCommandPoly noTextureBlending() {
     this.raw = true;
     return this;
@@ -88,6 +83,7 @@ public class GpuCommandPoly extends GpuCommand {
   }
 
   public GpuCommandPoly rgb(final int vertex, final int colour) {
+    this.shaded = true;
     this.colour[vertex] = colour;
     return this;
   }

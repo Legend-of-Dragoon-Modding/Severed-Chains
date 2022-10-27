@@ -215,7 +215,6 @@ public final class Bttl_800f {
     final int b = _800c6fec.get(s5).get(2).get();
 
     final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-      .shaded()
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .rgb(0, 0, 0, 0)
       .rgb(1, r, g, b)
@@ -232,10 +231,7 @@ public final class Bttl_800f {
 
     final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .monochrome(0, 0)
-      .monochrome(1, 0)
-      .monochrome(2, 0)
-      .monochrome(3, 0)
+      .monochrome(0)
       .pos(0, left, top)
       .pos(1, left + width, top)
       .pos(2, left, top + height)

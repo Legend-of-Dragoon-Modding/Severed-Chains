@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static legend.core.Hardware.CDROM;
+import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
@@ -174,12 +175,12 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800d#FUN_800d30b8}</li>
    *   <li>{@link Bttl_800d#FUN_800d0564}</li>
    *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d0dec}</li>
+   *   <li>{@link Bttl_800d#allocateAdditionSparksEffect}</li>
    *   <li>{@link SEffe#FUN_80102608}</li>
    *   <li>{@link SEffe#FUN_801077e8}</li>
    *   <li>{@link SEffe#FUN_801077bc}</li>
    *   <li>{@link SEffe#FUN_80108de8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d19ec}</li>
+   *   <li>{@link Bttl_800d#allocateAdditionStarburstEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d1cac}</li>
    *   <li>{@link Bttl_800d#FUN_800d1cf4}</li>
    *   <li>{@link SEffe#FUN_801078c0}</li>
@@ -824,6 +825,7 @@ public final class Scus94491BpeSegment_800e {
     zShift_1f8003c4.set(0);
     orderingTableSize_1f8003c8.set(0x4000);
     zMax_1f8003cc.set(0x3ffe);
+    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
     FUN_8003c5e0();
 

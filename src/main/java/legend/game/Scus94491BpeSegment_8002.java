@@ -3405,7 +3405,6 @@ public final class Scus94491BpeSegment_8002 {
         final int v0 = (int)_800be5c4.getSigned() * 0xc;
 
         GPU.queueCommand(s1.z_0c.get(), new GpuCommandPoly(4)
-          .shaded()
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .monochrome(0, 0)
           .pos(0, x - s1.width_1c.get(), y - s1.height_1e.get())

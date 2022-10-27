@@ -55,7 +55,6 @@ public class Renderer {
     }
 
     final boolean gradated = (command & 0x4_0000) != 0;
-    final boolean shaded = (primitiveId & 0b1_0000) != 0;
     final boolean quad = (primitiveId & 0b1000) != 0;
     final boolean textured = (primitiveId & 0b100) != 0;
     final boolean translucent = (primitiveId & 0b10) != 0;
@@ -126,10 +125,6 @@ public class Renderer {
       // ---
 
       final GpuCommandPoly cmd = new GpuCommandPoly(vertexCount);
-
-      if(shaded) {
-        cmd.shaded();
-      }
 
       if(textured) {
         cmd.clut((poly.clut & 0b111111) * 16, poly.clut >>> 6);

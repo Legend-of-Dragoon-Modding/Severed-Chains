@@ -547,9 +547,7 @@ public class Gpu implements Runnable {
 
     this.ctx.onDraw(() -> {
       if(this.zMax != orderingTableSize_1f8003c8.get()) {
-        this.zMax = orderingTableSize_1f8003c8.get();
-        this.zQueues = new LinkedList[this.zMax];
-        Arrays.setAll(this.zQueues, key -> new LinkedList<>());
+        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
       }
 
       this.r.run();
@@ -609,6 +607,14 @@ public class Gpu implements Runnable {
       this.guiManager.free();
       font.free();
     }
+  }
+
+  public void updateOrderingTableSize(final int size) {
+    final LinkedList[] list = new LinkedList[size];
+    Arrays.setAll(list, key -> new LinkedList<>());
+
+    this.zMax = size;
+    this.zQueues = list;
   }
 
   private int readInt(final Scanner scanner, final String prompt, final String error) {

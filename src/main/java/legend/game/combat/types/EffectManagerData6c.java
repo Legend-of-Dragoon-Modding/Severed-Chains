@@ -17,7 +17,7 @@ public class EffectManagerData6c extends BattleScriptDataBase {
   public final ByteRef scriptIndex_0e;
 
   public final BttlScriptData6cInner _10;
-  public final Pointer<BttlScriptData6cSubBase1> _44;
+  public final Pointer<BttlScriptData6cSubBase1> effect_44;
   public final Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>> _48;
   public final Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>> destructor_4c;
   public final ShortRef parentScriptIndex_50;
@@ -39,7 +39,7 @@ public class EffectManagerData6c extends BattleScriptDataBase {
     this.scriptIndex_0e = ref.offset(1, 0x0eL).cast(ByteRef::new);
 
     this._10 = ref.offset(4, 0x10L).cast(BttlScriptData6cInner::new);
-    this._44 = ref.offset(4, 0x44L).cast(Pointer.deferred(4, value -> {throw new RuntimeException("Can't be instantiated");}));
+    this.effect_44 = ref.offset(4, 0x44L).cast(Pointer.deferred(4, value -> {throw new RuntimeException("Can't be instantiated");}));
     this._48 = ref.offset(4, 0x48L).cast(Pointer.deferred(4, TriConsumerRef::new));
     this.destructor_4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TriConsumerRef::new));
     this.parentScriptIndex_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
