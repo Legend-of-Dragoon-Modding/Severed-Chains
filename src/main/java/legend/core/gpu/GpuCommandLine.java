@@ -27,6 +27,22 @@ public class GpuCommandLine extends GpuCommand {
     return this.rgb(vertex, colour, colour, colour);
   }
 
+  public GpuCommandLine rgb(final int colour) {
+    for(int i = 0; i < 2; i++){
+      this.colour[i] = colour;
+    }
+
+    return this;
+  }
+
+  public GpuCommandLine rgb(final int r, final int g, final int b) {
+    return this.rgb(b << 16 | g << 8 | r);
+  }
+
+  public GpuCommandLine monochrome(final int colour) {
+    return this.rgb(colour, colour, colour);
+  }
+
   public GpuCommandLine pos(final int vertex, final int x, final int y) {
     this.x[vertex] = x;
     this.y[vertex] = y;

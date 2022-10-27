@@ -115,7 +115,6 @@ import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
@@ -126,7 +125,6 @@ import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
-import static legend.game.Scus94491BpeSegment_8003.setGp0_2c;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
@@ -4501,61 +4499,45 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void FUN_80018a5c(final long x, final long y, final long s4, final long a3, final long a4, final long a5, final long a6, @Nullable Translucency transMode, final COLOUR colour, final long a9, final long a10) {
-    final long w = Math.abs(a4 - s4);
-    final long h = Math.abs(a5 - a3);
-    final long packet = gpuPacketAddr_1f8003d8.get();
-    setGp0_2c(packet);
-    gpuPacketAddr_1f8003d8.addu(0x28L);
+  public static void FUN_80018a5c(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
+    final int w = Math.abs(rightU - leftU);
+    final int h = Math.abs(bottomV - topV);
 
-    if(transMode == null) {
-      gpuLinkedListSetCommandTransparency(packet, false);
-      transMode = Translucency.HALF_B_PLUS_HALF_F;
-    } else {
-      //LAB_80018b30
-      gpuLinkedListSetCommandTransparency(packet, true);
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .rgb(colour.getR(), colour.getG(), colour.getB());
+
+    if(transMode != null) {
+      cmd.translucent(transMode);
     }
 
     //LAB_80018b38
-    MEMORY.ref(1, packet).offset(0x4L).setu(colour.getR());
-    MEMORY.ref(1, packet).offset(0x5L).setu(colour.getG());
-    MEMORY.ref(1, packet).offset(0x6L).setu(colour.getB());
-
     if((short)a9 != 0x1000 || (short)a10 != (short)a9) {
       //LAB_80018b90
-      final long sp10 = x + (short)w / 2;
-      final long sp12 = y + (short)h / 2;
-      final long a2 = (short)w * (short)a9 >> 13;
-      final long a1 = (short)h * (short)a10 >> 13;
-      MEMORY.ref(2, packet).offset(0x08L).setu(sp10 - a2);
-      MEMORY.ref(2, packet).offset(0x0aL).setu(sp12 - a1);
-      MEMORY.ref(2, packet).offset(0x10L).setu(sp10 + a2);
-      MEMORY.ref(2, packet).offset(0x12L).setu(sp12 - a1);
-      MEMORY.ref(2, packet).offset(0x18L).setu(sp10 - a2);
-      MEMORY.ref(2, packet).offset(0x1aL).setu(sp12 + a1);
-      MEMORY.ref(2, packet).offset(0x20L).setu(sp10 + a2);
-      MEMORY.ref(2, packet).offset(0x22L).setu(sp12 + a1);
+      final int sp10 = x + (short)w / 2;
+      final int sp12 = y + (short)h / 2;
+      final int a2 = (short)w * (short)a9 >> 13;
+      final int a1 = (short)h * (short)a10 >> 13;
+
+      cmd
+        .pos(0, sp10 - a2, sp12 - a1)
+        .pos(1, sp10 + a2, sp12 - a1)
+        .pos(2, sp10 - a2, sp12 + a1)
+        .pos(3, sp10 + a2, sp12 + a1);
     } else {
       //LAB_80018c38
-      MEMORY.ref(2, packet).offset(0x08L).setu(x);
-      MEMORY.ref(2, packet).offset(0x0aL).setu(y);
-      MEMORY.ref(2, packet).offset(0x10L).setu(x + w);
-      MEMORY.ref(2, packet).offset(0x12L).setu(y);
-      MEMORY.ref(2, packet).offset(0x18L).setu(x);
-      MEMORY.ref(2, packet).offset(0x1aL).setu(y + h);
-      MEMORY.ref(2, packet).offset(0x20L).setu(x + w);
-      MEMORY.ref(2, packet).offset(0x22L).setu(y + h);
+      cmd
+        .pos(0, x, y)
+        .pos(1, x + w, y)
+        .pos(2, x, y + h)
+        .pos(3, x + w, y + h);
     }
 
     //LAB_80018c60
-    MEMORY.ref(1, packet).offset(0x0cL).setu(s4);
-    MEMORY.ref(1, packet).offset(0x0dL).setu(a3);
-    MEMORY.ref(1, packet).offset(0x14L).setu(a4);
-    MEMORY.ref(1, packet).offset(0x15L).setu(a3);
-    MEMORY.ref(1, packet).offset(0x1cL).setu(s4);
-    MEMORY.ref(1, packet).offset(0x1dL).setu(a5);
-    MEMORY.ref(1, packet).offset(0x24L).setu(a4);
-    MEMORY.ref(1, packet).offset(0x25L).setu(a5);
+    cmd
+      .uv(0, leftU, topV)
+      .uv(1, rightU, topV)
+      .uv(2, leftU, bottomV)
+      .uv(3, rightU, bottomV);
 
     final int a2 = (short)a6 / 16;
     final int a1 = (short)a6 % 16;
@@ -4570,20 +4552,23 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80018cf0
-    MEMORY.ref(2, packet).offset(0x0eL).setu(clutY << 6 | (clutX & 0x3f0) >> 4);
-    MEMORY.ref(2, packet).offset(0x16L).setu(GetTPage(Bpp.BITS_4, transMode, 704, 256));
-    queueGpuPacket(tags_1f8003d0.deref().get(2).getAddress(), packet);
+    cmd
+      .bpp(Bpp.BITS_4)
+      .clut(clutX & 0x3f0, clutY)
+      .vramPos(704, 256);
+
+    GPU.queueCommand(2, cmd);
   }
 
   /**Some kind of intermediate rect render method**/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final long displayX, final long displayY, final long originU, final long originV, final long width, final long height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
-    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xffL, originV & 0xffL, originU + width & 0xffL, originV + height & 0xffL, (short)a6, transMode, colour, (short)a9, (short)a9);
+  public static void FUN_80018d60(final int displayX, final int displayY, final int originU, final int originV, final int width, final int height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
+    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xff, originV & 0xff, originU + width & 0xff, originV + height & 0xff, (short)a6, transMode, colour, (short)a9, (short)a9);
   }
 
   @Method(0x80018decL)
-  public static void FUN_80018dec(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
-    FUN_80018a5c(a0, a1, a2, a3, a2 + a4, a5 + a3, a6, transMode, colour, a9, a10);
+  public static void FUN_80018dec(final int x, final int y, final int u, final int v, final int width, final int height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
+    FUN_80018a5c(x, y, u, v, u + width, v + height, a6, transMode, colour, a9, a10);
   }
 
   @Method(0x80018e84L)
@@ -4736,14 +4721,14 @@ public final class Scus94491BpeSegment {
 
           //LAB_80019208
           FUN_80018a5c(
-            MEMORY.ref(2, s0).offset(0x0L).getSigned(),
-            MEMORY.ref(2, s0).offset(0x2L).getSigned(),
-            MEMORY.ref(1, s0).offset(0xbL).get(),
-            0x40L,
-            MEMORY.ref(1, s0).offset(0xbL).get() + 0x7L,
-            0x4fL,
+            (int)MEMORY.ref(2, s0).offset(0x0L).getSigned(),
+            (int)MEMORY.ref(2, s0).offset(0x2L).getSigned(),
+            (int)MEMORY.ref(1, s0).offset(0xbL).get(),
+            64,
+            (int)MEMORY.ref(1, s0).offset(0xbL).get() + 7,
+            79,
             MEMORY.ref(1, s0).offset(0xcL).get(),
-            Translucency.of((int)((MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1)),
+            Translucency.of(((int)MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1),
             colour_80010328,
             MEMORY.ref(2, s0).offset(0x4L).get() + 0x1000,
             MEMORY.ref(2, s0).offset(0x6L).get() + 0x1000
