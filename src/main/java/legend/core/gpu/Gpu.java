@@ -14,8 +14,6 @@ import legend.core.memory.Segment;
 import legend.core.memory.Value;
 import legend.core.opengl.Camera;
 import legend.core.opengl.Context;
-import legend.core.opengl.Font;
-import legend.core.opengl.GuiManager;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
@@ -72,7 +70,6 @@ public class Gpu implements Runnable {
   private Camera camera;
   private Window window;
   private Context ctx;
-  private GuiManager guiManager;
   private Shader.UniformBuffer transforms2;
   private final Matrix4f transforms = new Matrix4f();
 
@@ -134,18 +131,6 @@ public class Gpu implements Runnable {
 
   public Window window() {
     return this.window;
-  }
-
-  public GuiManager guiManager() {
-    return this.guiManager;
-  }
-
-  public void command00Nop() {
-    LOGGER.trace("GPU NOP");
-  }
-
-  public void command01ClearCache() {
-    // NOOP - we don't do caching
   }
 
   public void commandA0CopyRectFromCpuToVram(final legend.core.gpu.RECT rect, final long address) {
@@ -418,16 +403,6 @@ public class Gpu implements Runnable {
     this.window = new Window("Legend of Dragoon", Config.windowWidth() * this.renderScale, Config.windowHeight() * this.renderScale);
     this.window.setFpsLimit(60);
     this.ctx = new Context(this.window, this.camera);
-    this.guiManager = new GuiManager(this.window);
-    this.window.setEventPoller(this.guiManager::captureInput);
-
-    final Font font;
-    try {
-      font = new Font("gfx/fonts/Consolas.ttf");
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load font", e);
-    }
-    this.guiManager.setFont(font);
 
     this.window.events.onKeyPress((window, key, scancode, mods) -> {
       if(mods != 0) {
@@ -509,7 +484,6 @@ public class Gpu implements Runnable {
     this.ctx.onDraw(() -> {
       this.r.run();
       this.tick();
-      this.guiManager.draw(this.ctx.getWidth(), this.ctx.getHeight(), this.ctx.getWidth() / this.window.getScale(), this.ctx.getHeight() / this.window.getScale());
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.window.setTitle("Legend of Dragoon - scale: %d - FPS: %.2f/%d".formatted(this.renderScale, fps, this.window.getFpsLimit()));
@@ -547,9 +521,6 @@ public class Gpu implements Runnable {
     } catch(final Throwable t) {
       LOGGER.error("Shutting down due to GPU exception:", t);
       this.window.close();
-    } finally {
-      this.guiManager.free();
-      font.free();
     }
   }
 
