@@ -173,7 +173,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#FUN_80102088}</li>
    *   <li>{@link SEffe#FUN_80102364}</li>
    *   <li>{@link Bttl_800d#FUN_800d30b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d0564}</li>
+   *   <li>{@link Bttl_800d#allocateProjectileHitEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
    *   <li>{@link Bttl_800d#allocateAdditionSparksEffect}</li>
    *   <li>{@link SEffe#FUN_80102608}</li>

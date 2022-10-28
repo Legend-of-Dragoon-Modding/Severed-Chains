@@ -4462,7 +4462,7 @@ public final class Bttl_800c {
     a3.set(sp0x10);
   }
 
-  /** Returns Z */
+  /** @return Z */
   @Method(0x800cf7d4L)
   public static int FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x30 = new SVECTOR().set(a1);
@@ -4546,6 +4546,7 @@ public final class Bttl_800c {
     return (int)CPU.MFC2(19); // SZ3
   }
 
+  /** @return Z */
   @Method(0x800cfb14L)
   public static int FUN_800cfb14(final EffectManagerData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10);
