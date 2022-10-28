@@ -7,7 +7,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class ProjectileHitEffect14Sub48 implements MemoryRef {
