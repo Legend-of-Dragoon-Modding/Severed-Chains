@@ -6118,8 +6118,8 @@ public final class SEffe {
     //LAB_8010d4a4
     if((s5 & 0xf_ff00) == 0xf_ff00) {
       final long addr = _800c6948.get() + (s5 & 0xff) * 0x8L;
-      effect._06.set((short)MEMORY.ref(2, addr).offset(0x0L).get());
-      effect._08.set((short)MEMORY.ref(2, addr).offset(0x2L).get());
+      effect.u_06.set((short)MEMORY.ref(2, addr).offset(0x0L).get());
+      effect.v_08.set((short)MEMORY.ref(2, addr).offset(0x2L).get());
       effect.width_0a.set((short)MEMORY.ref(1, addr).offset(0x4L).get());
       effect.height_0c.set((short)MEMORY.ref(1, addr).offset(0x5L).get());
       effect.clut_0e.set((short)MEMORY.ref(2, addr).offset(0x6L).get());
@@ -6127,8 +6127,8 @@ public final class SEffe {
       //LAB_8010d508
       long addr = FUN_800eac58(s5 | 0x400_0000L).getAddress(); //TODO
       addr = addr + MEMORY.ref(4, addr).offset(0x8L).get();
-      effect._06.set((short)MEMORY.ref(2, addr).offset(0x0L).get());
-      effect._08.set((short)MEMORY.ref(2, addr).offset(0x2L).get());
+      effect.u_06.set((short)MEMORY.ref(2, addr).offset(0x0L).get());
+      effect.v_08.set((short)MEMORY.ref(2, addr).offset(0x2L).get());
       effect.width_0a.set((short)(MEMORY.ref(2, addr).offset(0x4L).getSigned() * 4));
       effect.height_0c.set((short)MEMORY.ref(2, addr).offset(0x6L).get());
       effect.clut_0e.set((short)GetClut((int)MEMORY.ref(2, addr).offset(0x8L).getSigned(), (int)MEMORY.ref(2, addr).offset(0xaL).getSigned()));
@@ -6152,9 +6152,9 @@ public final class SEffe {
     sp0x10.y_06.set((short)(-effect.height_0c.get() / 2));
     sp0x10.w_08.set(effect.width_0a.get());
     sp0x10.h_0a.set(effect.height_0c.get());
-    sp0x10.tpage_0c.set((effect._08.get() & 0x100) >>> 4 | (effect._06.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect._06.get() & 0x3f) * 4);
-    sp0x10.v_0f.set(effect._08.get());
+    sp0x10.tpage_0c.set((effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6);
+    sp0x10.u_0e.set((effect.u_06.get() & 0x3f) * 4);
+    sp0x10.v_0f.set(effect.v_08.get());
     sp0x10.clutX_10.set(effect.clut_0e.get() << 4 & 0x3ff);
     sp0x10.clutY_12.set(effect.clut_0e.get() >>> 6 & 0x1ff);
     sp0x10._18.set((short)0);
@@ -6391,8 +6391,8 @@ public final class SEffe {
     //LAB_8010ead0
     if((sp1c & 0xf_ff00) == 0xf_ff00) {
       final long v1 = _800c6948.get() + (sp1c & 0xff) * 0x8L;
-      effect._04.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
-      effect._06.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
+      effect.u_04.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
+      effect.v_06.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
       effect.width_08.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
       effect.height_09.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
       effect.clut_0a.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
@@ -6400,8 +6400,8 @@ public final class SEffe {
       //LAB_8010eb50
       long v0 = FUN_800eac58(sp1c | 0x400_0000L).getAddress(); //TODO
       v0 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
-      effect._04.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
-      effect._06.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
+      effect.u_04.set((int)MEMORY.ref(2, v0).offset(0x0L).get());
+      effect.v_06.set((int)MEMORY.ref(2, v0).offset(0x2L).get());
       effect.width_08.set((int)(MEMORY.ref(2, v0).offset(0x4L).getSigned() << 2));
       effect.height_09.set((int)MEMORY.ref(1, v0).offset(0x6L).get());
       effect.clut_0a.set(GetClut((int)MEMORY.ref(2, v0).offset(0x8L).getSigned(), (int)MEMORY.ref(2, v0).offset(0xaL).getSigned()));
@@ -6423,9 +6423,9 @@ public final class SEffe {
     sp0x10.y_06.set((short)(-effect.height_09.get() / 2));
     sp0x10.w_08.set(effect.width_08.get());
     sp0x10.h_0a.set(effect.height_09.get());
-    sp0x10.tpage_0c.set((effect._06.get() & 0x100) >>> 4 | (effect._04.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect._04.get() & 0x3f) << 2);
-    sp0x10.v_0f.set(effect._06.get());
+    sp0x10.tpage_0c.set((effect.v_06.get() & 0x100) >>> 4 | (effect.u_04.get() & 0x3ff) >>> 6);
+    sp0x10.u_0e.set((effect.u_04.get() & 0x3f) << 2);
+    sp0x10.v_0f.set(effect.v_06.get());
     sp0x10.clutX_10.set(effect.clut_0a.get() << 4 & 0x3ff);
     sp0x10.clutY_12.set(effect.clut_0a.get() >>> 6 & 0x1ff);
     sp0x10._18.set((short)0);
