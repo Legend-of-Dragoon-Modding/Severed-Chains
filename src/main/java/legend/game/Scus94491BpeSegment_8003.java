@@ -3488,9 +3488,6 @@ public final class Scus94491BpeSegment_8003 {
     final long t0;
     final long t1;
     final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
     CPU.CTC2(a0.getPacked(0), 0);
     CPU.CTC2(a0.getPacked(2), 1);
     CPU.CTC2(a0.getPacked(4), 2);
@@ -3546,9 +3543,9 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(a1.transfer.getY() >> 15, 10);
     CPU.MTC2(a1.transfer.getZ() >> 15, 11);
     CPU.COP2(0x41e012L);
-    t3 = CPU.MFC2(25);
-    t4 = CPU.MFC2(26);
-    t5 = CPU.MFC2(27);
+    final long t3 = CPU.MFC2(25);
+    final long t4 = CPU.MFC2(26);
+    final long t5 = CPU.MFC2(27);
 
     CPU.MTC2(t0,  9);
     CPU.MTC2(t1, 10);

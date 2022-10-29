@@ -3983,7 +3983,7 @@ public final class Bttl_800c {
     final BttlScriptData6cSub3c s2 = data.effect_44.derefAs(BttlScriptData6cSub3c.class);
 
     if(!s2._38.isNull()) {
-      final SVECTOR sp0x18 = new SVECTOR().set(data._10.svec_1c);
+      final SVECTOR sp0x18 = new SVECTOR().set(data._10.colour_1c);
       final SVECTOR sp0x20 = new SVECTOR().set(sp0x18).div(s2._0e.get());
       BttlScriptData6cSub3cSub2c s0 = s2._38.deref();
 
@@ -4167,7 +4167,7 @@ public final class Bttl_800c {
     s0._04.set(a0.params_20.get(1).deref().get());
     s0.dobjIndex_08.set((short)a0.params_20.get(2).deref().get());
     s0._0e.set(0x14);
-    s1._10.svec_1c.set((short)255, (short)128, (short)96);
+    s1._10.colour_1c.set((short)255, (short)128, (short)96);
     final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(a0_0.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4232,7 +4232,7 @@ public final class Bttl_800c {
     final VECTOR s0;
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
       //LAB_800cea78
-      s0 = ((EffectManagerData6c)data)._10.vec_04;
+      s0 = ((EffectManagerData6c)data)._10.trans_04;
     } else {
       s0 = ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
     }
@@ -4375,7 +4375,7 @@ public final class Bttl_800c {
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
 
-    sp0x20.set(a0._10.svec_10);
+    sp0x20.set(a0._10.rot_10);
 
     if(a1 != null) {
       //LAB_800cf3c4
@@ -4410,7 +4410,7 @@ public final class Bttl_800c {
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
 
-    sp0x20.set(a0._10.svec_10);
+    sp0x20.set(a0._10.rot_10);
 
     if(a1 != null) {
       //LAB_800cf53c
@@ -4418,7 +4418,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cf578
-    sp0x10.set(a0._10.vec_04);
+    sp0x10.set(a0._10.trans_04);
     FUN_80040980(sp0x20, sp0x28);
     TransMatrix(sp0x28, sp0x10);
     CPU.CTC2(sp0x28.getPacked(0), 0);
@@ -4549,15 +4549,15 @@ public final class Bttl_800c {
   /** @return Z */
   @Method(0x800cfb14L)
   public static int FUN_800cfb14(final EffectManagerData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10);
-    final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
+    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.rot_10);
+    final VECTOR sp0x20 = new VECTOR().set(a0._10.trans_04);
     return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
   }
 
   @Method(0x800cfb94L)
   public static int FUN_800cfb94(final EffectManagerData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.svec_10).add(a1);
-    final VECTOR sp0x20 = new VECTOR().set(a0._10.vec_04);
+    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.rot_10).add(a1);
+    final VECTOR sp0x20 = new VECTOR().set(a0._10.trans_04);
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
   }
 

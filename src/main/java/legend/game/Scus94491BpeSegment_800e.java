@@ -448,7 +448,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800c#FUN_800ca648}</li> <-- This seems like a bad pointer
    *   <li>null</li>
    *   <li>{@link SEffe#FUN_80117eb0}</li>
-   *   <li>{@link SEffe#FUN_801183c0}</li>
+   *   <li>{@link SEffe#allocateGuardHealEffect}</li>
    *   <li>{@link Bttl_800e#FUN_800e99bc}</li>
    * </ol>
    */
