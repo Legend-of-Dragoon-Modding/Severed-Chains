@@ -5,12 +5,12 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub06 extends BttlScriptData6cSubBase1 {
+public class GuardEffect06 extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef _00;
   public final UnsignedShortRef _02;
   public final ShortRef _04;
 
-  public BttlScriptData6cSub06(final Value ref) {
+  public GuardEffect06(final Value ref) {
     super(ref);
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);

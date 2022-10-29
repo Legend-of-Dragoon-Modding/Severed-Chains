@@ -7,7 +7,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 
-public class BttlScriptData6cInner implements MemoryRef {
+public class EffectManagerData6cInner implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef _00;
@@ -19,7 +19,7 @@ public class BttlScriptData6cInner implements MemoryRef {
   public final UnsignedIntRef _24;
   public final VECTOR vec_28;
 
-  public BttlScriptData6cInner(final Value ref) {
+  public EffectManagerData6cInner(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);

@@ -185,7 +185,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800d#FUN_800d1cf4}</li>
    *   <li>{@link SEffe#FUN_801078c0}</li>
    *   <li>{@link SEffe#FUN_80108df0}</li>
-   *   <li>{@link Bttl_800d#FUN_800d2ff4}</li>
+   *   <li>{@link Bttl_800d#allocateGuardEffect}</li>
    *   <li>{@link Bttl_800c#FUN_800ce6a8}</li>
    *   <li>{@link Bttl_800d#FUN_800d2734}</li>
    *   <li>{@link Bttl_800d#scriptAllocateAdditionScript}</li>
