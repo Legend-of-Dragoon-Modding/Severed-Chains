@@ -55,7 +55,7 @@ import legend.game.combat.types.BttlScriptData6cSub34;
 import legend.game.combat.types.BttlScriptData6cSub38;
 import legend.game.combat.types.BttlScriptData6cSub38Sub14;
 import legend.game.combat.types.BttlScriptData6cSub38Sub14Sub30;
-import legend.game.combat.types.BttlScriptData6cSub44;
+import legend.game.combat.types.AdditionOverlaysEffect44;
 import legend.game.combat.types.BttlScriptData6cSub50;
 import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub5c;
@@ -2763,12 +2763,12 @@ public final class SEffe {
       //LAB_80102a04
       for(a1 = 0; a1 < s0._28.get(); a1++) {
         final BttlScriptData6cSub38Sub14Sub30 struct = s1.ptr_10.deref().get(a1);
-        struct.svec_10.set((short)sp10, (short)sp12, (short)sp14);
-        struct.svec_16.set((short)sp16, (short)sp18, (short)sp1a);
+        struct.colour_10.set((short)sp10, (short)sp12, (short)sp14);
+        struct.colour_16.set((short)sp16, (short)sp18, (short)sp1a);
 
         if(s0._22.get() == 0 && s0._0c.get() != -1) {
-          struct._1c.set(struct.svec_10).div(s0._0c.get());
-          struct._22.set(struct.svec_16).div(s0._0c.get());
+          struct._1c.set(struct.colour_10).div(s0._0c.get());
+          struct._22.set(struct.colour_16).div(s0._0c.get());
         } else {
           //LAB_80102b10
           struct._1c.set((short)0, (short)0, (short)0);
@@ -2831,65 +2831,23 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void FUN_80102f7c(final SVECTOR a0, final SVECTOR a1, final DVECTOR[] xy, final int a3, final int a4) {
-    final long addr = gpuPacketAddr_1f8003d8.get();
-    gpuPacketAddr_1f8003d8.addu(0x24L);
-    MEMORY.ref(1, addr).offset(0x03L).setu(0x8L);
-    MEMORY.ref(1, addr).offset(0x04L).setu(0); // R0
-    MEMORY.ref(1, addr).offset(0x05L).setu(0); // G0
-    MEMORY.ref(1, addr).offset(0x06L).setu(0); // B0
-    MEMORY.ref(1, addr).offset(0x07L).setu(0x3aL); // Shaded quad, translucent
-    MEMORY.ref(1, addr).offset(0x0cL).setu(a1.getX() >>> 8); // R1
-    MEMORY.ref(1, addr).offset(0x0dL).setu(a1.getY() >>> 8); // G1
-    MEMORY.ref(1, addr).offset(0x0eL).setu(a1.getZ() >>> 8); // B1
-    MEMORY.ref(1, addr).offset(0x14L).setu(0); // R2
-    MEMORY.ref(1, addr).offset(0x15L).setu(0); // G2
-    MEMORY.ref(1, addr).offset(0x16L).setu(0); // B2
-    MEMORY.ref(1, addr).offset(0x1cL).setu(a0.getX() >>> 8); // R3
-    MEMORY.ref(1, addr).offset(0x1dL).setu(a0.getY() >>> 8); // G3
-    MEMORY.ref(1, addr).offset(0x1eL).setu(a0.getZ() >>> 8); // B3
-    MEMORY.ref(2, addr).offset(0x08L).setu(xy[0].getX()); // X0
-    MEMORY.ref(2, addr).offset(0x0aL).setu(xy[0].getY()); // Y0
-    MEMORY.ref(2, addr).offset(0x10L).setu(xy[1].getX()); // X1
-    MEMORY.ref(2, addr).offset(0x12L).setu(xy[1].getY()); // Y1
-    MEMORY.ref(2, addr).offset(0x18L).setu(xy[2].getX()); // X2
-    MEMORY.ref(2, addr).offset(0x1aL).setu(xy[2].getY()); // Y2
-    MEMORY.ref(2, addr).offset(0x20L).setu(xy[3].getX()); // X3
-    MEMORY.ref(2, addr).offset(0x22L).setu(xy[3].getY()); // Y3
-    queueGpuPacket(tags_1f8003d0.getPointer() + (a3 + a4) / 4 * 4, addr);
+  public static void renderGradient(final SVECTOR colour1, final SVECTOR colour2, final DVECTOR[] xy, final int a3, final int a4, final Translucency translucency) {
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .translucent(translucency)
+      .pos(0, xy[0].getX(), xy[0].getY())
+      .pos(1, xy[1].getX(), xy[1].getY())
+      .pos(2, xy[2].getX(), xy[2].getY())
+      .pos(3, xy[3].getX(), xy[3].getY())
+      .monochrome(0, 0)
+      .rgb(1, colour2.getX(), colour2.getY(), colour2.getZ())
+      .monochrome(2, 0)
+      .rgb(3, colour1.getX(), colour1.getY(), colour1.getZ());
+
+    GPU.queueCommand(a3 + a4 >> 2, cmd);
   }
 
   @Method(0x801030d8L)
   public static void FUN_801030d8(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v1;
-    long a0;
-    long a1;
-    int s0;
-    long s7;
-    int sp54;
-    int spac;
-    int sp50;
-    int sp48;
-    int sp3c;
-    int spb0;
-    int spa8;
-    int spa4;
-    int sp44;
-    int sp40;
-    int sp38;
-    int spa0;
-    int sp6c;
-    int sp34;
-    int sp30;
-    int sp1c;
-    int sp5c;
-    int sp60;
-    int sp68;
-    int sp64;
-    int sp18;
-    int sp58;
-    int sp4c;
-    int spc0 = 1;
     final BttlScriptData6cSub38 s6 = data.effect_44.derefAs(BttlScriptData6cSub38.class);
 
     if(s6._04.get() + 1 == s6._0c.get()) {
@@ -2918,8 +2876,12 @@ public final class SEffe {
 
     //LAB_801031cc
     s6._2a.incr().and(31);
+
+    final int spc0;
     if((data._10._24.get() >> s6._2a.get() & 0x1L) == 0) {
       spc0 = 0;
+    } else {
+      spc0 = 1;
     }
 
     final DVECTOR[] sp0x80 = new DVECTOR[4];
@@ -2938,21 +2900,21 @@ public final class SEffe {
       s6.callback_2c.deref().run(data, s6, spbc, i);
       spbc._02.sub((short)(s6._10.get() << 7 >> 8));
       sp0x70.set(spbc.ptr_10.deref().get(0)._00);
-      sp18 = FUN_800cfb94(data, spbc._04, sp0x70, sp0x20, sp0x24) >> 2;
+      int sp18 = FUN_800cfb94(data, spbc._04, sp0x70, sp0x20, sp0x24) >> 2;
       sp0x70.set(spbc.ptr_10.deref().get(s6._28.get() - 1)._00);
-      sp1c = FUN_800cfb94(data, spbc._04, sp0x70, sp0x28, sp0x2c) >> 2;
-      sp40 = sp0x28.get() - sp0x20.get() << 8;
-      sp44 = sp0x2c.get() - sp0x24.get() << 8;
-      sp48 = sp40 / (s6._28.get() - 1);
-      sp4c = sp44 / (s6._28.get() - 1);
-      sp60 = sp0x20.get() << 8;
-      sp50 = sp0x20.get() << 8;
-      sp64 = sp0x24.get() << 8;
-      sp54 = sp0x24.get() << 8;
+      FUN_800cfb94(data, spbc._04, sp0x70, sp0x28, sp0x2c);
+      final int sp40 = sp0x28.get() - sp0x20.get() << 8;
+      final int sp44 = sp0x2c.get() - sp0x24.get() << 8;
+      final int sp48 = sp40 / (s6._28.get() - 1);
+      final int sp4c = sp44 / (s6._28.get() - 1);
+      int sp60 = sp0x20.get() << 8;
+      int sp50 = sp0x20.get() << 8;
+      int sp64 = sp0x24.get() << 8;
+      int sp54 = sp0x24.get() << 8;
       final short s0_0 = (short)(spbc.ptr_10.deref().get(0)._28.get() * data._10.scale_16.getX() >> 12);
-      s7 = -ratan2(sp40, sp44);
-      final short s1_0 = (short)(rcos(s7) * s0_0 >> 12);
-      final short v0_0 = (short)(rsin(s7) * s0_0 >> 12);
+      final int angle = -ratan2(sp40, sp44);
+      final short s1_0 = (short)(rcos(angle) * s0_0 >> 12);
+      final short v0_0 = (short)(rsin(angle) * s0_0 >> 12);
       sp0x28.set((short)(sp0x20.get() - s1_0));
       sp0x2c.set((short)(sp0x24.get() - v0_0));
       sp0x20.add(s1_0);
@@ -2961,72 +2923,61 @@ public final class SEffe {
       //LAB_80103488
       for(int fp = 0; fp < s6._28.get(); fp++) {
         final BttlScriptData6cSub38Sub14Sub30 s4 = spbc.ptr_10.deref().get(fp);
-        s4.svec_10.sub(s4._1c);
-        s4.svec_16.sub(s4._22);
+        s4.colour_10.sub(s4._1c);
+        s4.colour_16.sub(s4._22);
         s4._2a.add((short)(s6._10.get() << 8 >> 8));
       }
 
       //LAB_80103538
       if(spc0 == 0) {
-        v1 = data._10.z_22.get() + sp18;
+        final int v1 = data._10.z_22.get() + sp18;
         if(v1 >= 0xa0) {
           if(v1 >= 0xffe) {
             sp18 = 0xffe - data._10.z_22.get();
           }
+
+          final Translucency translucency = Translucency.of((int)(data._10._00.get() >>> 28 & 3));
 
           //LAB_80103574
           //LAB_80103594
           for(int fp = 0; fp < s6._28.get() - 1; fp++) {
             final BttlScriptData6cSub38Sub14Sub30 s4 = spbc.ptr_10.deref().get(fp);
             final BttlScriptData6cSub38Sub14Sub30 t4 = spbc.ptr_10.deref().get(fp + 1);
-            sp58 = sp50 + sp48;
-            sp5c = sp54 + sp4c;
-            sp68 = sp50 + sp48;
-            sp6c = sp54 + sp4c;
-            sp50 += rcos(s7) * s4._2c.get() >> 12 << 8;
-            sp54 += rsin(s7) * s4._2c.get() >> 12 << 8;
-            sp58 += rcos(s7) * t4._2c.get() >> 12 << 8;
-            sp5c += rsin(s7) * t4._2c.get() >> 12 << 8;
-            s0 = s4._28.get() * data._10.scale_16.getX() >> 12;
-            sp30 = (sp58 >> 8) + (rcos(s7) * s0 >> 12);
-            sp34 = (sp5c >> 8) + (rsin(s7) * s0 >> 12);
-            sp38 = (sp58 >> 8) - (rcos(s7) * s0 >> 12);
-            sp3c = (sp5c >> 8) - (rsin(s7) * s0 >> 12);
+            int sp58 = sp50 + sp48;
+            int sp5c = sp54 + sp4c;
+            final int sp68 = sp50 + sp48;
+            final int sp6c = sp54 + sp4c;
+            sp50 += rcos(angle) * s4._2c.get() >> 12 << 8;
+            sp54 += rsin(angle) * s4._2c.get() >> 12 << 8;
+            sp58 += rcos(angle) * t4._2c.get() >> 12 << 8;
+            sp5c += rsin(angle) * t4._2c.get() >> 12 << 8;
+            final int s0 = s4._28.get() * data._10.scale_16.getX() >> 12;
+            final int sp30 = (sp58 >> 8) + (rcos(angle) * s0 >> 12);
+            final int sp34 = (sp5c >> 8) + (rsin(angle) * s0 >> 12);
+            final int sp38 = (sp58 >> 8) - (rcos(angle) * s0 >> 12);
+            final int sp3c = (sp5c >> 8) - (rsin(angle) * s0 >> 12);
 
             if(s6._29.get() == 0) {
-              spa0 = (sp60 - sp50 >> 8) * s4._2e.get() + sp50;
-              spa4 = (sp64 - sp54 >> 8) * s4._2e.get() + sp54;
-              spa8 = (sp58 - sp50 >> 8) * s4._2e.get() + sp50;
-              spac = (sp5c - sp54 >> 8) * s4._2e.get() + sp54;
+              final int spa0 = (sp60 - sp50 >> 8) * s4._2e.get() + sp50;
+              final int spa4 = (sp64 - sp54 >> 8) * s4._2e.get() + sp54;
+              final int spa8 = (sp58 - sp50 >> 8) * s4._2e.get() + sp50;
+              final int spac = (sp5c - sp54 >> 8) * s4._2e.get() + sp54;
 
               //LAB_80103808
-              spb0 = s4.svec_10.getX() + Math.abs(s4._2c.get() - t4._2c.get()) * 8;
+              int spb0 = s4.colour_10.getX() + Math.abs(s4._2c.get() - t4._2c.get()) * 8;
               if((spb0 & 0xffff) > 0xff00) {
                 spb0 = 0xff00;
               }
 
               //LAB_80103834
-              a1 = gpuPacketAddr_1f8003d8.get();
-              gpuPacketAddr_1f8003d8.addu(0x1cL);
-              MEMORY.ref(1, a1).offset(0x03L).setu(0x6L);
-              MEMORY.ref(4, a1).offset(0x04L).setu(0x3080_8080L);
-              MEMORY.ref(1, a1).offset(0x04L).setu(spb0 >>> 9);
-              MEMORY.ref(1, a1).offset(0x05L).setu(spb0 >>> 9);
-              MEMORY.ref(1, a1).offset(0x06L).setu(spb0 >>> 9);
-              MEMORY.ref(1, a1).offset(0x07L).setu(0x32);
-              MEMORY.ref(2, a1).offset(0x08L).setu(spa0 >> 8);
-              MEMORY.ref(2, a1).offset(0x0aL).setu(spa4 >> 8);
-              MEMORY.ref(1, a1).offset(0x0cL).setu(spb0 >>> 8);
-              MEMORY.ref(1, a1).offset(0x0dL).setu(spb0 >>> 8);
-              MEMORY.ref(1, a1).offset(0x0eL).setu(spb0 >>> 8);
-              MEMORY.ref(2, a1).offset(0x10L).setu(sp50 >> 8);
-              MEMORY.ref(2, a1).offset(0x12L).setu(sp54 >> 8);
-              MEMORY.ref(1, a1).offset(0x14L).setu(spb0 >>> 9);
-              MEMORY.ref(1, a1).offset(0x15L).setu(spb0 >>> 9);
-              MEMORY.ref(1, a1).offset(0x16L).setu(spb0 >>> 9);
-              MEMORY.ref(2, a1).offset(0x18L).setu(spa8 >> 8);
-              MEMORY.ref(2, a1).offset(0x1aL).setu(spac >> 8);
-              queueGpuPacket(tags_1f8003d0.getPointer() + (data._10.z_22.get() + sp18) / 4 * 4, a1);
+              final GpuCommandPoly cmd = new GpuCommandPoly(3)
+                .translucent(translucency)
+                .pos(0, spa0 >> 8, spa4 >> 8)
+                .pos(1, sp50 >> 8, sp54 >> 8)
+                .pos(2, spa8 >> 8, spac >> 8)
+                .monochrome(spb0 >>> 9);
+
+              GPU.queueCommand(data._10.z_22.get() + sp18 >> 2, cmd);
             }
 
             //LAB_80103994
@@ -3039,25 +2990,25 @@ public final class SEffe {
             sp0x80[0].setY((short)sp34);
             sp0x80[2].setX(sp0x20.get());
             sp0x80[2].setY(sp0x24.get());
-            FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x80, sp18, data._10.z_22.get());
+            renderGradient(s4.colour_16, t4.colour_16, sp0x80, sp18, data._10.z_22.get(), translucency);
 
             sp0x80[0].setX((short)((sp0x80[0].getX() - sp0x80[1].getX()) / data._10.vec_28.getZ() + sp0x80[1].getX()));
             sp0x80[0].setY((short)((sp0x80[0].getY() - sp0x80[1].getY()) / data._10.vec_28.getZ() + sp0x80[1].getY()));
             sp0x80[2].setX((short)((sp0x80[2].getX() - sp0x80[3].getX()) / data._10.vec_28.getZ() + sp0x80[3].getX()));
             sp0x80[2].setY((short)((sp0x80[2].getY() - sp0x80[3].getY()) / data._10.vec_28.getZ() + sp0x80[3].getY()));
-            FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x80, sp18, data._10.z_22.get());
+            renderGradient(s4.colour_10, t4.colour_10, sp0x80, sp18, data._10.z_22.get(), translucency);
 
             sp0x80[0].setX((short)sp38);
             sp0x80[0].setY((short)sp3c);
             sp0x80[2].setX(sp0x28.get());
             sp0x80[2].setY(sp0x2c.get());
-            FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x80, sp18, data._10.z_22.get());
+            renderGradient(s4.colour_16, t4.colour_16, sp0x80, sp18, data._10.z_22.get(), translucency);
 
             sp0x80[0].setX((short)((sp0x80[0].getX() - sp0x80[1].getX()) / data._10.vec_28.getZ() + sp0x80[1].getX()));
             sp0x80[0].setY((short)((sp0x80[0].getY() - sp0x80[1].getY()) / data._10.vec_28.getZ() + sp0x80[1].getY()));
             sp0x80[2].setX((short)((sp0x80[2].getX() - sp0x80[3].getX()) / data._10.vec_28.getZ() + sp0x80[3].getX()));
             sp0x80[2].setY((short)((sp0x80[2].getY() - sp0x80[3].getY()) / data._10.vec_28.getZ() + sp0x80[3].getY()));
-            FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x80, sp18, data._10.z_22.get());
+            renderGradient(s4.colour_10, t4.colour_10, sp0x80, sp18, data._10.z_22.get(), translucency);
 
             sp0x20.set((short)sp30);
             sp0x24.set((short)sp34);
@@ -3070,20 +3021,6 @@ public final class SEffe {
           }
 
           //LAB_80103ca0
-          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
-          a1 = data._10.z_22.get();
-          a0 = sp18;
-          v1 = a1 + a0;
-          if(v1 >= 0xa0) {
-            if(v1 >= 0xffe) {
-              a1 = 0xffe - a0;
-            }
-
-            //LAB_80103d24
-            queueGpuPacket(tags_1f8003d0.getPointer() + (a1 + a0) / 4 * 4, gpuPacketAddr_1f8003d8.get());
-          }
-
-          gpuPacketAddr_1f8003d8.addu(0xcL);
         }
       }
     }
@@ -3159,8 +3096,8 @@ public final class SEffe {
           final BttlScriptData6cSub38Sub14Sub30 s4 = s7.ptr_10.deref().get(fp);
           final long a3 = spbc + fp * 0x8L;
           s7.sz3_0c.set(FUN_800cfb94(manager, s7._04, new VECTOR().set(s4._00), MEMORY.ref(2, a3, ShortRef::new), MEMORY.ref(2, a3 + 0x4L, ShortRef::new)) / 4);
-          s4.svec_10.sub(s4._1c);
-          s4.svec_16.sub(s4._22);
+          s4.colour_10.sub(s4._1c);
+          s4.colour_16.sub(s4._22);
           s4._2a.add((short)(spb8._10.get() << 8 >> 8));
         }
 
@@ -3175,6 +3112,8 @@ public final class SEffe {
         sp24 = (int)(MEMORY.ref(4, spbc).offset(0x4L).get() - (rsin(spc4) * s5 >> 12));
 
         if(!spb4) {
+          final Translucency translucency = Translucency.of((int)(manager._10._00.get() >>> 28 & 3));
+
           a0 = manager._10.z_22.get();
           v1 = a0 + s7.sz3_0c.get();
           if(v1 >= 0xa0) {
@@ -3209,22 +3148,22 @@ public final class SEffe {
                 sp0x50[0].setY((short)sp2c);
                 sp0x50[2].setX((short)sp18);
                 sp0x50[2].setY((short)sp1c);
-                FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get());
+                renderGradient(s4.colour_16, t4.colour_16, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                 sp0x50[0].setX((short)((sp0x50[0].getX() - sp0x50[1].getX()) / manager._10.vec_28.getZ() + sp0x50[1].getX()));
                 sp0x50[0].setY((short)((sp0x50[0].getY() - sp0x50[1].getY()) / manager._10.vec_28.getZ() + sp0x50[1].getY()));
                 sp0x50[2].setX((short)((sp0x50[2].getX() - sp0x50[3].getX()) / manager._10.vec_28.getZ() + sp0x50[3].getX()));
                 sp0x50[2].setY((short)((sp0x50[2].getY() - sp0x50[3].getY()) / manager._10.vec_28.getZ() + sp0x50[3].getY()));
-                FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get());
+                renderGradient(s4.colour_10, t4.colour_10, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                 sp0x50[0].setX((short)sp30);
                 sp0x50[0].setY((short)sp34);
                 sp0x50[2].setX((short)sp20);
                 sp0x50[2].setY((short)sp24);
-                FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get());
+                renderGradient(s4.colour_16, t4.colour_16, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                 sp0x50[0].setX((short)((sp0x50[0].getX() - sp0x50[1].getX()) / manager._10.vec_28.getZ() + sp0x50[1].getX()));
                 sp0x50[0].setY((short)((sp0x50[0].getY() - sp0x50[1].getY()) / manager._10.vec_28.getZ() + sp0x50[1].getY()));
                 sp0x50[2].setX((short)((sp0x50[2].getX() - sp0x50[3].getX()) / manager._10.vec_28.getZ() + sp0x50[3].getX()));
                 sp0x50[2].setY((short)((sp0x50[2].getY() - sp0x50[3].getY()) / manager._10.vec_28.getZ() + sp0x50[3].getY()));
-                FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get());
+                renderGradient(s4.colour_10, t4.colour_10, sp0x50, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
 
                 sp18 = sp28;
                 sp1c = sp2c;
@@ -3255,18 +3194,18 @@ public final class SEffe {
                   sp0x90[1].setX((short)(s2 + 1));
                   sp0x90[2].setX((short)(s3 - s5));
                   sp0x90[3].setX((short)(s3 + 1));
-                  FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get());
+                  renderGradient(s4.colour_16, t4.colour_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                   sp0x90[0].setX((short)(s2 - spd8));
                   sp0x90[2].setX((short)(s3 - spdc));
-                  FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get());
+                  renderGradient(s4.colour_10, t4.colour_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                   sp0x90[0].setX((short)(s2 + spc0));
                   sp0x90[1].setX((short)s2);
                   sp0x90[2].setX((short)(s3 + s5));
                   sp0x90[3].setX((short)s3);
-                  FUN_80102f7c(s4.svec_16, t4.svec_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get());
+                  renderGradient(s4.colour_16, t4.colour_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
                   sp0x90[0].setX((short)(s2 + spd8));
                   sp0x90[2].setX((short)spdc);
-                  FUN_80102f7c(s4.svec_10, t4.svec_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get());
+                  renderGradient(s4.colour_10, t4.colour_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22.get(), translucency);
 
                   s3 = s2;
                   v1 = s0_0;
@@ -3279,7 +3218,7 @@ public final class SEffe {
             }
 
             //LAB_80104834
-            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 3)), 0, 0), null);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0), null);
             a1 = manager._10.z_22.get();
             v1 = a1 + s7.sz3_0c.get();
 
@@ -3534,6 +3473,8 @@ public final class SEffe {
     Arrays.setAll(sp0x18, n -> new DVECTOR());
 
     //LAB_8010575c
+    final Translucency translucency = Translucency.of((int)(data._10.get() >> 28 & 3));
+
     for(int s7 = 0; s7 < data.count_00.get(); s7++) {
       //LAB_8010577c
       for(int s6 = 0; s6 < data.count_0c.get() - 1; s6++) {
@@ -3548,23 +3489,23 @@ public final class SEffe {
         sp0x18[2].setY(s4_1.y_02.get());
         sp0x18[3].setX((short)(s4_1.x_00.get() + 1));
         sp0x18[3].setY(s4_1.y_02.get());
-        FUN_80102f7c(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14.get(), data._08.get());
+        renderGradient(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14.get(), data._08.get(), translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() - s4_2._1c.get() / 3));
         sp0x18[2].setX((short)(s4_1.x_00.get() - s4_1._1c.get() / 3));
-        FUN_80102f7c(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14.get(), data._08.get());
+        renderGradient(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14.get(), data._08.get(), translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() + s4_2._1c.get()));
         sp0x18[1].setX(s4_2.x_00.get());
         sp0x18[2].setX((short)(s4_1.x_00.get() + s4_1._1c.get()));
         sp0x18[3].setX(s4_1.x_00.get());
-        FUN_80102f7c(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14.get(), data._08.get());
+        renderGradient(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14.get(), data._08.get(), translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() + s4_2._1c.get() / 3));
         sp0x18[2].setX((short)(s4_1.x_00.get() + s4_1._1c.get() / 3));
-        FUN_80102f7c(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14.get(), data._08.get());
+        renderGradient(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14.get(), data._08.get(), translucency);
       }
     }
 
     //LAB_801059c8
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10.get() >> 28 & 3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0), null);
 
     int a1 = data._08.get();
     final int z = data.z_14.get();
@@ -3659,8 +3600,8 @@ public final class SEffe {
           effect._08.set(manager._10.z_22.get());
           struct1e.x_00.set(refX.get());
           struct1e.y_02.set(refY.get());
-          struct1e.svec_04.set(s0.svec_10);
-          struct1e.svec_0a.set(s0.svec_16);
+          struct1e.svec_04.set(s0.colour_10);
+          struct1e.svec_0a.set(s0.colour_16);
           struct1e.svec_10.set(struct1e.svec_04).div(s3);
           struct1e.svec_16.set(struct1e.svec_0a).div(s3);
         }
@@ -3692,17 +3633,19 @@ public final class SEffe {
   }
 
   @Method(0x80106050L)
-  public static void FUN_80106050(final long a0, final long a1) {
+  public static void renderAdditionButton(final long a0, final long a1) {
     final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
 
-    if(Math.abs((byte)a0) >= 0x2L) {
-      callScriptFunction(callback, 0x24, 0x77, 0x2b, 0x1, 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x0L).offset(a1).get(), 0x73, 0x30, 0x1, 0x80);
+    // Params: ?, x, y, translucency, colour
+
+    if(Math.abs((byte)a0) >= 2) {
+      callScriptFunction(callback, 0x24, 119, 43, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x0L).offset(a1).get(), 115, 48, 0x1, 0x80);
     } else {
       //LAB_80106114
-      callScriptFunction(callback, 0x24, 0x77, 0x33, 0x1, 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x2L).offset(a1).get(), 0x73, 0x30, 0x1, 0x80);
-      callScriptFunction(callback, 0x25, 0x73, 0x32, 0x1, 0x80);
+      callScriptFunction(callback, 0x24, 119, 51, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x2L).offset(a1).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, 0x25, 115, 50, Translucency.B_PLUS_F.ordinal(), 0x80);
     }
   }
 
@@ -3723,7 +3666,7 @@ public final class SEffe {
   }
 
   @Method(0x801062a8L)
-  public static void FUN_801062a8(final int scriptIndex, final int a1, final BttlScriptData6cSub44 a2, final long a3) {
+  public static void FUN_801062a8(final int scriptIndex, final int a1, final AdditionOverlaysEffect44 a2, final long a3) {
     long v0;
     long s3;
     long s6;
@@ -3874,7 +3817,7 @@ public final class SEffe {
   }
 
   @Method(0x80106808L)
-  public static void FUN_80106808(final BttlScriptData6cSubBase1 a0, final long a1, final long a2, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c a4) {
+  public static void renderAdditionCentreSolidSquare(final BttlScriptData6cSubBase1 a0, final long a1, final long a2, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c a4) {
     if((int)a4._10._00.get() >= 0) {
       final long v0 = MEMORY.ref(4, a1).offset(0x14L).get();
 
@@ -3885,23 +3828,23 @@ public final class SEffe {
         //LAB_80106874
         final int[] sp0x18 = new int[8];
         for(int i = 0; i < 4; i++) {
-          sp0x18[i    ] =  rcos((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12;
-          sp0x18[i + 1] = (rsin((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12) + 30;
+          sp0x18[i * 2    ] =  rcos((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12;
+          sp0x18[i * 2 + 1] = (rsin((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12) + 30;
         }
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
         if(a2 == 1) {
-          cmd.monochrome(0, 0xff);
+          cmd.monochrome(0xff);
           //LAB_80106918
         } else if(a2 != -2) {
           //LAB_80106988
-          cmd.monochrome(0, 0x30);
+          cmd.monochrome(0x30);
         } else if(MEMORY.ref(1, a1).offset(0x1cL).getSigned() != 0) {
-          cmd.rgb(0, (int)MEMORY.ref(1, v0).offset(0x12L).get() * 3, (int)MEMORY.ref(1, v0).offset(0x13L).get(), ((int)MEMORY.ref(1, v0).offset(0x14L).get() - 1) * 8);
+          cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get() * 3, (int)MEMORY.ref(1, v0).offset(0x13L).get(), ((int)MEMORY.ref(1, v0).offset(0x14L).get() - 1) * 8);
         } else {
           //LAB_80106964
-          cmd.rgb(0, (int)MEMORY.ref(1, v0).offset(0x12L).get(), (int)MEMORY.ref(1, v0).offset(0x13L).get(), (int)MEMORY.ref(1, v0).offset(0x14L).get());
+          cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get(), (int)MEMORY.ref(1, v0).offset(0x13L).get(), (int)MEMORY.ref(1, v0).offset(0x14L).get());
         }
 
         //LAB_80106994
@@ -3909,8 +3852,8 @@ public final class SEffe {
           .translucent(Translucency.B_PLUS_F)
           .pos(0, sp0x18[0], sp0x18[1])
           .pos(1, sp0x18[2], sp0x18[3])
-          .pos(2, sp0x18[4], sp0x18[5])
-          .pos(3, sp0x18[6], sp0x18[7]);
+          .pos(2, sp0x18[6], sp0x18[5])
+          .pos(3, sp0x18[4], sp0x18[7]);
         GPU.queueCommand(30, cmd);
       }
     }
@@ -3948,7 +3891,7 @@ public final class SEffe {
   }
 
   @Method(0x80106cccL)
-  public static void renderAdditionSquares(final long a0, final long a1, final BttlScriptData6cSubBase1 a2, final long a3, final ScriptState<EffectManagerData6c> a4) {
+  public static void renderAdditionBorderSquares(final long a0, final long a1, final BttlScriptData6cSubBase1 a2, final long a3, final ScriptState<EffectManagerData6c> a4) {
     long s7 = MEMORY.ref(4, a3).offset(0x18L).get();
     final long sp28 = _8011a014.offset(a1).getAddress();
     long s3 = s7 + 0x2L;
@@ -4012,7 +3955,7 @@ public final class SEffe {
   }
 
   @Method(0x80107088L)
-  public static long FUN_80107088(final long a0, final long a1, final BttlScriptData6cSub44 a2, final long a3) {
+  public static long FUN_80107088(final long a0, final long a1, final AdditionOverlaysEffect44 a2, final long a3) {
     if(a2._34.get() >= MEMORY.ref(2, a3).offset(0x10L).getSigned() - 0x11L) {
       MEMORY.ref(2, a3).offset(0x8L).addu(0x1L);
 
@@ -4074,7 +4017,7 @@ public final class SEffe {
   }
 
   @Method(0x801071fcL)
-  public static void FUN_801071fc(final BttlScriptData6cSub44 a0, long a1, long a2) {
+  public static void FUN_801071fc(final AdditionOverlaysEffect44 a0, long a1, long a2) {
     final long a3 = _8011a014.offset(a2).getSigned();
     a0._32.set(1);
 
@@ -4095,8 +4038,8 @@ public final class SEffe {
   }
 
   @Method(0x8010726cL)
-  public static void FUN_8010726c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub44 s2 = data.effect_44.derefAs(BttlScriptData6cSub44.class);
+  public static void renderAdditionOverlaysEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final AdditionOverlaysEffect44 s2 = data.effect_44.derefAs(AdditionOverlaysEffect44.class);
 
     if(s2._31.get() != 0x1L) {
       if((int)data._10._00.get() >= 0) {
@@ -4105,7 +4048,7 @@ public final class SEffe {
         //LAB_801072c4
         int s0;
         for(s0 = 0; s0 < s2._30.get(); s0++) {
-          renderAdditionSquares(MEMORY.ref(1, s1).offset(0x2L).getSigned(), s0, s2, s1, state);
+          renderAdditionBorderSquares(MEMORY.ref(1, s1).offset(0x2L).getSigned(), s0, s2, s1, state);
           s1 = s1 + 0x20L;
         }
 
@@ -4123,11 +4066,11 @@ public final class SEffe {
 
         //LAB_80107330
         if(s0 < s2._30.get()) {
-          FUN_80106050((byte)(MEMORY.ref(2, s1).offset(0x10L).getSigned() + (MEMORY.ref(2, s1).offset(0x12L).getSigned() - MEMORY.ref(2, s1).offset(0x10L).getSigned()) / 2 - s2._34.get() - 0x1L), MEMORY.ref(1, s1).offset(0x1cL).getSigned());
+          renderAdditionButton((byte)(MEMORY.ref(2, s1).offset(0x10L).getSigned() + (MEMORY.ref(2, s1).offset(0x12L).getSigned() - MEMORY.ref(2, s1).offset(0x10L).getSigned()) / 2 - s2._34.get() - 0x1L), MEMORY.ref(1, s1).offset(0x1cL).getSigned());
 
           final byte v1 = (byte)s2._34.get();
-          if(MEMORY.ref(2, s1).offset(0x10L).getSigned() <= v1 && MEMORY.ref(2, s1).offset(0x12L).getSigned() >= v1) {
-            FUN_80106808(s2, s1, -0x2L, state, data);
+          if(v1 >= MEMORY.ref(2, s1).offset(0x10L).getSigned() && v1 <= MEMORY.ref(2, s1).offset(0x12L).getSigned()) {
+            renderAdditionCentreSolidSquare(s2, s1, -2, state, data);
           }
         }
       }
@@ -4137,14 +4080,14 @@ public final class SEffe {
   }
 
   @Method(0x801073d4L)
-  public static void FUN_801073d4(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickAdditionOverlaysEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     long v1;
     final long a0;
     long s0;
     long s1;
     long s2;
     long s4;
-    final BttlScriptData6cSub44 s3 = data.effect_44.derefAs(BttlScriptData6cSub44.class);
+    final AdditionOverlaysEffect44 s3 = data.effect_44.derefAs(AdditionOverlaysEffect44.class);
 
     if(s3._31.get() == 0) {
       s4 = 0x1L;
@@ -4279,7 +4222,7 @@ public final class SEffe {
           //LAB_80107728
           if(s3._38.get() != 0) {
             s3._38.decr();
-            FUN_80106808(s3, s3._3c.get(), _8011a014.offset(s3._39.get()).getSigned(), state, data);
+            renderAdditionCentreSolidSquare(s3, s3._3c.get(), _8011a014.offset(s3._39.get()).getSigned(), state, data);
           }
         }
       }
@@ -4289,8 +4232,8 @@ public final class SEffe {
   }
 
   @Method(0x80107790L)
-  public static void FUN_80107790(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(BttlScriptData6cSub44.class)._40.get());
+  public static void deallocateAdditionOverlaysEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    free(data.effect_44.derefAs(AdditionOverlaysEffect44.class)._40.get());
   }
 
   @Method(0x801077bcL)
@@ -4300,20 +4243,20 @@ public final class SEffe {
   }
 
   @Method(0x801077e8L)
-  public static long FUN_801077e8(final RunningScript s1) {
-    final int s2 = allocateEffectManager(
-      s1.scriptStateIndex_00.get(),
+  public static long allocateAdditionOverlaysEffect(final RunningScript script) {
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
       0x44L,
-      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_801073d4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010726c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80107790", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      BttlScriptData6cSub44::new
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "tickAdditionOverlaysEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "renderAdditionOverlaysEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "deallocateAdditionOverlaysEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      AdditionOverlaysEffect44::new
     );
 
-    final ScriptState<EffectManagerData6c> v0 = scriptStatePtrArr_800bc1c0.get(s2).derefAs(ScriptState.classFor(EffectManagerData6c.class));
-    FUN_801062a8(s1.params_20.get(0).deref().get(), s1.params_20.get(1).deref().get(), v0.innerStruct_00.deref().effect_44.derefAs(BttlScriptData6cSub44.class), s1.params_20.get(2).deref().get());
-    v0.storage_44.get(8).set(0);
-    s1.params_20.get(4).deref().set(s2);
+    final ScriptState<EffectManagerData6c> manager = scriptStatePtrArr_800bc1c0.get(effectIndex).derefAs(ScriptState.classFor(EffectManagerData6c.class));
+    FUN_801062a8(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), manager.innerStruct_00.deref().effect_44.derefAs(AdditionOverlaysEffect44.class), script.params_20.get(2).deref().get());
+    manager.storage_44.get(8).set(0);
+    script.params_20.get(4).deref().set(effectIndex);
     _80119f41.setu(0x1L);
     return 0;
   }
@@ -9665,6 +9608,7 @@ public final class SEffe {
     return 0;
   }
 
+  /** TODO renders other effects too? Burnout, more? */
   @Method(0x8011826cL)
   public static void renderGuardHealEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final GuardHealEffect14 s1 = data.effect_44.derefAs(GuardHealEffect14.class);

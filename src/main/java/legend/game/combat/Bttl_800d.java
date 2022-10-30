@@ -32,15 +32,14 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.BttlScriptData6cSub14;
-import legend.game.combat.types.MonsterDeathEffect34;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.GuardEffect06;
+import legend.game.combat.types.MonsterDeathEffect34;
 import legend.game.combat.types.ProjectileHitEffect14;
 import legend.game.combat.types.ProjectileHitEffect14Sub48;
 import legend.game.types.DR_MODE;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
@@ -106,9 +105,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -5760,18 +5757,13 @@ public final class Bttl_800d {
 
   @Method(0x800dfc5cL)
   public static long FUN_800dfc5c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = gpuPacketAddr_1f8003d8.get();
-
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t0 = _1f8003ec.getSigned() << 16;
-
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
     final IntRef refB = new IntRef();
     getLightColour(refR, refG, refB);
-    final long r = refR.get();
-    final long g = refG.get();
-    final long b = refB.get();
+    final int r = refR.get();
+    final int g = refG.get();
+    final int b = refB.get();
 
     //LAB_800dfce8
     for(int i = 0; i < count; i++) {
@@ -5785,48 +5777,48 @@ public final class Bttl_800d {
       CPU.MTC2(vert2.getXY(), 4);
       CPU.MTC2(vert2.getZ(),  5);
       CPU.COP2(0x280030L);
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get() & 0xff9f_ffffL | t0);
-      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
 
       if((int)CPU.CFC2(31) >= 0) {
         CPU.COP2(0x1400006L);
 
         if(CPU.MFC2(24) != 0) {
-          MEMORY.ref(4, packet).offset(0x8L).setu(CPU.MFC2(12));
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
+          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
+          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
           final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
           CPU.COP2(0x180001L);
-          MEMORY.ref(1, packet).offset(0x03L).setu(0xcL);
-          MEMORY.ref(4, packet).offset(0x04L).setu(0x3e80_8080L);
-          MEMORY.ref(4, packet).offset(0x30L).setu(MEMORY.ref(4, primitives).offset(0x10L).get());
 
           if((int)CPU.CFC2(31) >= 0) {
-            MEMORY.ref(4, packet).offset(0x2cL).setu(CPU.MFC2(14));
+            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
             CPU.COP2(0x168002eL);
-            MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x14L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x15L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x16L).get() * b >> 12);
-            MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x18L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x19L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x1aL).get() * b >> 12);
-            MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x1cL).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x1dL).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1eL).get() * b >> 12);
-            MEMORY.ref(1, packet).offset(0x28L).setu(MEMORY.ref(1, primitives).offset(0x20L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x29L).setu(MEMORY.ref(1, primitives).offset(0x21L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x2aL).setu(MEMORY.ref(1, primitives).offset(0x22L).get() * b >> 12);
 
-            final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
+            final int z = Math.min((int)CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
             if(z >= 0xb) {
+              final int clut = (int)MEMORY.ref(2, primitives).offset(0x06L).get();
+              final int tpage = (int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0xff9f | (int)_1f8003ec.get();
+
+              final GpuCommandPoly cmd = new GpuCommandPoly(4)
+                .bpp(Bpp.of(tpage >>> 7 & 0b11))
+                .translucent(Translucency.of(tpage >>> 5 & 0b11))
+                .clut((clut & 0b111111) * 16, clut >>> 6)
+                .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+                .pos(0, v0.getX(), v0.getY())
+                .pos(1, v1.getX(), v1.getY())
+                .pos(2, v2.getX(), v2.getY())
+                .pos(3, v3.getX(), v3.getY())
+                .uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get())
+                .uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get())
+                .uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get())
+                .uv(3, (int)MEMORY.ref(1, primitives).offset(0x10L).get(), (int)MEMORY.ref(1, primitives).offset(0x11L).get())
+                .rgb(0, (int)MEMORY.ref(1, primitives).offset(0x14L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x15L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x16L).get() * b >> 12)
+                .rgb(1, (int)MEMORY.ref(1, primitives).offset(0x18L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x19L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x1aL).get() * b >> 12)
+                .rgb(2, (int)MEMORY.ref(1, primitives).offset(0x1cL).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x1dL).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x1eL).get() * b >> 12)
+                .rgb(3, (int)MEMORY.ref(1, primitives).offset(0x20L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x21L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x22L).get() * b >> 12);
+
               //LAB_800dff7c
-              final GsOT_TAG tag = tags.get(z);
-              MEMORY.ref(4, packet).offset(0x0L).setu(0xc00_0000L | tag.p.get());
-              tag.set(packet & 0xff_ffffL);
-              packet += 0x34L;
+              GPU.queueCommand(z, cmd);
             }
           }
         }
@@ -5837,17 +5829,11 @@ public final class Bttl_800d {
     }
 
     //LAB_800dffb0
-    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 
   @Method(0x800dffe4L)
   public static long FUN_800dffe4(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    long packet = gpuPacketAddr_1f8003d8.get();
-
-    final UnboundedArrayRef<GsOT_TAG> tags = orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()).org_04.deref();
-    final long t0 = _1f8003ec.getSigned() << 16;
-
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
     final IntRef refB = new IntRef();
@@ -5868,39 +5854,40 @@ public final class Bttl_800d {
       CPU.MTC2(vert2.getXY(), 4);
       CPU.MTC2(vert2.getZ(),  5);
       CPU.COP2(0x280030L);
-      MEMORY.ref(4, packet).offset(0x0cL).setu(MEMORY.ref(4, primitives).offset(0x4L).get());
-      MEMORY.ref(4, packet).offset(0x18L).setu(MEMORY.ref(4, primitives).offset(0x8L).get() & 0xff9f_ffffL | t0);
-      MEMORY.ref(4, packet).offset(0x24L).setu(MEMORY.ref(4, primitives).offset(0xcL).get());
 
       if((int)CPU.CFC2(31) >= 0) {
         CPU.COP2(0x1400006L);
 
         if(CPU.MFC2(24) != 0) {
-          MEMORY.ref(4, packet).offset(0x08L).setu(CPU.MFC2(12));
-          MEMORY.ref(4, packet).offset(0x14L).setu(CPU.MFC2(13));
-          MEMORY.ref(4, packet).offset(0x20L).setu(CPU.MFC2(14));
-          MEMORY.ref(1, packet).offset(0x03L).setu(0x9L);
-          MEMORY.ref(4, packet).offset(0x04L).setu(0x3680_8080L);
+          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
+          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
+          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
 
           if((int)CPU.CFC2(31) >= 0) {
             CPU.COP2(0x158002dL);
-            MEMORY.ref(1, packet).offset(0x04L).setu(MEMORY.ref(1, primitives).offset(0x10L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x05L).setu(MEMORY.ref(1, primitives).offset(0x11L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x06L).setu(MEMORY.ref(1, primitives).offset(0x12L).get() * b >> 12);
-            MEMORY.ref(1, packet).offset(0x10L).setu(MEMORY.ref(1, primitives).offset(0x14L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x11L).setu(MEMORY.ref(1, primitives).offset(0x15L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x12L).setu(MEMORY.ref(1, primitives).offset(0x16L).get() * b >> 12);
-            MEMORY.ref(1, packet).offset(0x1cL).setu(MEMORY.ref(1, primitives).offset(0x18L).get() * r >> 12);
-            MEMORY.ref(1, packet).offset(0x1dL).setu(MEMORY.ref(1, primitives).offset(0x19L).get() * g >> 12);
-            MEMORY.ref(1, packet).offset(0x1eL).setu(MEMORY.ref(1, primitives).offset(0x1aL).get() * b >> 12);
 
-            final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
-            if(z >= 0xbL) {
+            final int z = Math.min((int)CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
+            if(z >= 0xb) {
+              final int clut = (int)MEMORY.ref(2, primitives).offset(0x6L).get();
+              final int tpage = (int)MEMORY.ref(2, primitives).offset(0xaL).get() & 0xff9f | (int)_1f8003ec.get();
+
+              final GpuCommandPoly cmd = new GpuCommandPoly(3)
+                .bpp(Bpp.of(tpage >>> 7 & 0b11))
+                .translucent(Translucency.of(tpage >>> 5 & 0b11))
+                .clut((clut & 0b111111) * 16, clut >>> 6)
+                .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+                .pos(0, v0.getX(), v0.getY())
+                .pos(1, v1.getX(), v1.getY())
+                .pos(2, v2.getX(), v2.getY())
+                .uv(0, (int)MEMORY.ref(1, primitives).offset(0x4L).get(), (int)MEMORY.ref(1, primitives).offset(0x5L).get())
+                .uv(1, (int)MEMORY.ref(1, primitives).offset(0x8L).get(), (int)MEMORY.ref(1, primitives).offset(0x9L).get())
+                .uv(2, (int)MEMORY.ref(1, primitives).offset(0xcL).get(), (int)MEMORY.ref(1, primitives).offset(0xdL).get())
+                .rgb(0, (int)MEMORY.ref(1, primitives).offset(0x10L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x11L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x12L).get() * b >> 12)
+                .rgb(1, (int)MEMORY.ref(1, primitives).offset(0x14L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x15L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x16L).get() * b >> 12)
+                .rgb(2, (int)MEMORY.ref(1, primitives).offset(0x18L).get() * r >> 12, (int)MEMORY.ref(1, primitives).offset(0x19L).get() * g >> 12, (int)MEMORY.ref(1, primitives).offset(0x1aL).get() * b >> 12);
+
               //LAB_800e0280
-              final GsOT_TAG tag = tags.get(z);
-              MEMORY.ref(4, packet).offset(0x0L).setu(0x900_0000L | tag.p.get());
-              tag.set(packet & 0xff_ffff);
-              packet += 0x28L;
+              GPU.queueCommand(z, cmd);
             }
           }
         }
@@ -5911,7 +5898,6 @@ public final class Bttl_800d {
     }
 
     //LAB_800e02b4
-    gpuPacketAddr_1f8003d8.setu(packet);
     return primitives;
   }
 }

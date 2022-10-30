@@ -177,7 +177,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
    *   <li>{@link Bttl_800d#allocateAdditionSparksEffect}</li>
    *   <li>{@link SEffe#FUN_80102608}</li>
-   *   <li>{@link SEffe#FUN_801077e8}</li>
+   *   <li>{@link SEffe#allocateAdditionOverlaysEffect}</li>
    *   <li>{@link SEffe#FUN_801077bc}</li>
    *   <li>{@link SEffe#FUN_80108de8}</li>
    *   <li>{@link Bttl_800d#allocateAdditionStarburstEffect}</li>
