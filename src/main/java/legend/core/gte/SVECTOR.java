@@ -35,7 +35,6 @@ public class SVECTOR implements MemoryRef {
     this.setX(other.getX());
     this.setY(other.getY());
     this.setZ(other.getZ());
-    this.setPad(other.getPad());
     return this;
   }
 
@@ -43,7 +42,6 @@ public class SVECTOR implements MemoryRef {
     this.setX((short)other.getX());
     this.setY((short)other.getY());
     this.setZ((short)other.getZ());
-    this.setPad((short)other.getPad());
     return this;
   }
 

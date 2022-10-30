@@ -1608,7 +1608,7 @@ public final class Bttl_800e {
                 .bpp(Bpp.of(tpage >>> 7 & 0b11))
                 .translucent(Translucency.of(tpage >>> 5 & 0b11))
                 .clut((clut & 0b111111) * 16, clut >>> 6)
-                .vramPos((tpage & 0b1111) * 64, (tpage * 0b10000) != 0 ? 256 : 0)
+                .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
                 .pos(0, v0.getX(), v0.getY())
                 .pos(1, v1.getX(), v1.getY())
                 .pos(2, v2.getX(), v2.getY())
