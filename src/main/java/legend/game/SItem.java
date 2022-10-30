@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.Tuple;
+import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -21,7 +22,6 @@ import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DR_TPAGE;
 import legend.game.types.DabasData100;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
@@ -39,6 +39,7 @@ import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.roundUp;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
@@ -56,28 +58,25 @@ import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
 import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.FUN_800127cc;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022898;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
@@ -111,7 +110,6 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8002.useItemInMenu;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -6439,149 +6437,94 @@ public final class SItem {
   }
 
   @Method(0x8010d078L)
-  public static void FUN_8010d078(long x, long y, final long w, final long h, final long a4) {
-    final long t0 = gpuPacketAddr_1f8003d8.get();
+  public static void FUN_8010d078(int x, int y, final int w, final int h, final int a4) {
     x -= 8 + displayWidth_1f8003e0.get() / 2;
     y -= 120;
-    MEMORY.ref(1, t0).offset(0x03L).setu(0x8L);
-    MEMORY.ref(4, t0).offset(0x04L).setu(0x3880_8080L);
-    MEMORY.ref(2, t0).offset(0x08L).setu(x);
-    MEMORY.ref(2, t0).offset(0x0aL).setu(y);
-    MEMORY.ref(2, t0).offset(0x10L).setu(x + w);
-    MEMORY.ref(2, t0).offset(0x12L).setu(y);
-    MEMORY.ref(2, t0).offset(0x18L).setu(x);
-    MEMORY.ref(2, t0).offset(0x1aL).setu(y + h);
-    MEMORY.ref(2, t0).offset(0x20L).setu(x + w);
-    MEMORY.ref(2, t0).offset(0x22L).setu(y + h);
-    gpuPacketAddr_1f8003d8.addu(0x24L);
+
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .pos(0, x, y)
+      .pos(1, x + w, y)
+      .pos(2, x, y + h)
+      .pos(3, x + w, y + h);
 
     final int z;
-    switch((int)a4) {
+    switch(a4) {
       case 0 -> {
         z = 36;
-        MEMORY.ref(1, t0).offset(0x4L).setu(0);
-        MEMORY.ref(1, t0).offset(0x5L).setu(0);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0x1L);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0x1L);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0x1L);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0x1L);
+
+        cmd
+          .rgb(0, 0, 0, 1)
+          .rgb(1, 0, 0, 1)
+          .rgb(2, 0, 0, 1)
+          .rgb(3, 0, 0, 1);
       }
 
       case 1 -> {
         z = 36;
-        MEMORY.ref(1, t0).offset(0x7L).oru(0x2L);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x14L);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0x50L);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0x14L);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0x50L);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0);
+
+        cmd
+          .translucent(Translucency.HALF_B_PLUS_HALF_F)
+          .rgb(0, 0x80, 0x80, 0x80)
+          .rgb(1,    0, 0x14, 0x50)
+          .rgb(2,    0, 0x14, 0x50)
+          .rgb(3,    0,    0,    0);
       }
 
       case 2 -> {
         z = 36;
-        MEMORY.ref(1, t0).offset(0x4L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x5L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0);
+
+        cmd
+          .monochrome(0, 0x7f)
+          .monochrome(1, 0x7f)
+          .monochrome(2, 0)
+          .monochrome(3, 0);
       }
 
       case 3 -> {
         z = 34;
-        MEMORY.ref(1, t0).offset(0x4L).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0x5L).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0x49L);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0x23L);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0x49L);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0x23L);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0);
+
+        cmd
+          .rgb(0, 0xff, 0x7a, 0)
+          .rgb(1, 0xff, 0x7a, 0)
+          .rgb(2, 0x49, 0x23, 0)
+          .rgb(3, 0x49, 0x23, 0);
       }
 
       case 4 -> {
         z = 35;
-        MEMORY.ref(1, t0).offset(0x4L).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0x5L).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0xffL);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0x7aL);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0);
+
+        cmd
+          .rgb(0, 0xff, 0x7a, 0)
+          .rgb(1, 0xff, 0x7a, 0)
+          .rgb(2, 0xff, 0x7a, 0)
+          .rgb(3, 0xff, 0x7a, 0);
       }
 
       case 5 -> {
         z = 34;
-        MEMORY.ref(1, t0).offset(0x5L).setu(0x84L);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x84L);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0xfeL);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0xfeL);
-        MEMORY.ref(1, t0).offset(0x4L).setu(0);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0x26L);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0x48L);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0x26L);
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0x48L);
+
+        cmd
+          .rgb(0, 0, 0x84, 0xfe)
+          .rgb(1, 0, 0x84, 0xfe)
+          .rgb(2, 0, 0x26, 0x48)
+          .rgb(3, 0, 0x26, 0x48);
       }
 
       case 6 -> {
         z = 35;
 
-        //LAB_8010d290
-        MEMORY.ref(1, t0).offset(0x4L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x5L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x6L).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xcL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xdL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0xeL).setu(0x7fL);
-        MEMORY.ref(1, t0).offset(0x14L).setu(0);
-        MEMORY.ref(1, t0).offset(0x15L).setu(0);
-        MEMORY.ref(1, t0).offset(0x16L).setu(0);
-        MEMORY.ref(1, t0).offset(0x1cL).setu(0);
-        MEMORY.ref(1, t0).offset(0x1dL).setu(0);
-
-        //LAB_8010d2c0
-        MEMORY.ref(1, t0).offset(0x1eL).setu(0);
+        cmd
+          .monochrome(0, 0x7f)
+          .monochrome(1, 0x7f)
+          .monochrome(2, 0)
+          .monochrome(3, 0);
       }
 
       default -> z = 0;
     }
 
     //LAB_8010d2c4
-    queueGpuPacket(tags_1f8003d0.deref().get(z).getAddress(), t0);
-
-    if(a4 == 0x1L) {
-      SetDrawTPage(gpuPacketAddr_1f8003d8.deref(4).cast(DR_TPAGE::new), false, true, 0);
-      queueGpuPacket(tags_1f8003d0.deref().get(36).getAddress(), gpuPacketAddr_1f8003d8.get());
-      gpuPacketAddr_1f8003d8.addu(0x8L);
-    }
+    GPU.queueCommand(z, cmd);
 
     //LAB_8010d318
   }
@@ -6606,9 +6549,9 @@ public final class SItem {
   }
 
   @Method(0x8010d398L)
-  public static void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final long a3) {
-    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 0x4L);
-    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 0x3L);
+  public static void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final int a3) {
+    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 4);
+    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 3);
 
     if(a3 >= 20) {
       Scus94491BpeSegment_8002.renderText(additions_8011a064.get(additionIndex).deref(), x - 4, y + 6, 0, 0);
@@ -6619,9 +6562,9 @@ public final class SItem {
   }
 
   @Method(0x8010d498L)
-  public static void renderSpellUnlocked(final int x, final int y, final int spellIndex, final long a3) {
-    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 0x4L); // New spell border
-    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 0x3L); // New spell background
+  public static void renderSpellUnlocked(final int x, final int y, final int spellIndex, final int a3) {
+    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 4); // New spell border
+    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 3); // New spell background
 
     if(a3 >= 20) {
       Scus94491BpeSegment_8002.renderText(spells_80052734.get(spellIndex).deref(), x - 4, y + 6, 0, 0);
@@ -6851,7 +6794,7 @@ public final class SItem {
 
         //LAB_8010dcf4
         //LAB_8010dcf8
-        renderAdditionsUnlocked(_8011e178.get());
+        renderAdditionsUnlocked((int)_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6863,7 +6806,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState._8);
         }
 
-        renderAdditionsUnlocked(_8011e178.get());
+        renderAdditionsUnlocked((int)_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6941,7 +6884,7 @@ public final class SItem {
 
         //LAB_8010df20
         //LAB_8010df24
-        renderSpellsUnlocked(_8011e178.get());
+        renderSpellsUnlocked((int)_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -6956,7 +6899,7 @@ public final class SItem {
 
         //LAB_8010df20
         //LAB_8010df24
-        renderSpellsUnlocked(_8011e178.get());
+        renderSpellsUnlocked((int)_8011e178.get());
         FUN_8010e9a8(0, xpDivisor_8011e174.get());
         break;
 
@@ -7013,10 +6956,10 @@ public final class SItem {
 
     //LAB_8010e09c
     //LAB_8010e0a0
-    FUN_8010d078(0xa6L, 0x16L, 0x88L, 0xc0L, 0x1L);
-    FUN_8010d078(0xeL, 0x16L, 0x90L, 0x78L, 0x1L);
-    FUN_8010d078(0xeL, 0x96L, 0x90L, 0x40L, 0x1L);
-    FUN_8010d078(0, 0, 0xf0L, 0xf0L, 0);
+    FUN_8010d078(166,  22, 136, 192, 1);
+    FUN_8010d078( 14,  22, 144, 120, 1);
+    FUN_8010d078( 14, 150, 144,  64, 1);
+    FUN_8010d078( 0,    0, 240, 240, 0);
   }
 
   @Method(0x8010e114L)
@@ -7127,7 +7070,7 @@ public final class SItem {
   @Method(0x8010e708L)
   public static void FUN_8010e708(final int x, final int y, final int charIndex) {
     if(charIndex != -1) {
-      FUN_8010d078(x + 1, y + 9, 0x18L, 0x20L, 0x2L);
+      FUN_8010d078(x + 1, y + 9, 24, 32, 2);
       final Renderable58 renderable = FUN_8010e114(x - 1, y + 8, charIndex);
       renderable.flags_00.or(0x8L);
       FUN_8010cfa0((int)_800fbca8.offset(charIndex).get(), (int)_800fbca8.offset(charIndex).get(), x + 32, y + 4, 736, 497).flags_00.or(0x8L);
@@ -7218,7 +7161,7 @@ public final class SItem {
   }
 
   @Method(0x8010ebecL)
-  public static void renderAdditionsUnlocked(final long a0) {
+  public static void renderAdditionsUnlocked(final int a0) {
     for(int i = 0; i < 3; i++) {
       if(additionsUnlocked_8011e1b8.get(i).get() != 0) {
         renderAdditionUnlocked(168, 40 + i * 64, additionsUnlocked_8011e1b8.get(i).get() - 1, a0);
@@ -7227,7 +7170,7 @@ public final class SItem {
   }
 
   @Method(0x8010ec6cL)
-  public static void renderSpellsUnlocked(final long a0) {
+  public static void renderSpellsUnlocked(final int a0) {
     //LAB_8010ec98
     for(int i = 0; i < 3; i++) {
       if(spellsUnlocked_8011e1a8.get(i).get() != 0) {
