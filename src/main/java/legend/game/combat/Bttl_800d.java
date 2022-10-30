@@ -32,7 +32,7 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.BttlScriptData6cSub14;
-import legend.game.combat.types.BttlScriptData6cSub34_2;
+import legend.game.combat.types.MonsterDeathEffect34;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
@@ -1006,8 +1006,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d30c0L)
-  public static void FUN_800d30c0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub34_2 s1 = data.effect_44.derefAs(BttlScriptData6cSub34_2.class);
+  public static void monsterDeathEffectRenderer(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final MonsterDeathEffect34 s1 = data.effect_44.derefAs(MonsterDeathEffect34.class);
     long s2 = s1.ptr_30.get();
 
     //LAB_800d30fc
@@ -1030,8 +1030,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d31b0L)
-  public static void FUN_800d31b0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub34_2 s1 = data.effect_44.derefAs(BttlScriptData6cSub34_2.class);
+  public static void monsterDeathEffectTicker(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final MonsterDeathEffect34 s1 = data.effect_44.derefAs(MonsterDeathEffect34.class);
 
     s1._02.decr();
     if(s1._02.get() == 0) {
@@ -1043,15 +1043,13 @@ public final class Bttl_800d {
 
       //LAB_800d322c
       for(int animIndex = 0; animIndex < s1.animCount_04.get(); animIndex++) {
-        if(s1._00.get() >= animIndex + 0x1L && MEMORY.ref(1, s2).offset(0x0L).getSigned() == -1) {
+        if(s1._00.get() >= animIndex + 1 && MEMORY.ref(1, s2).offset(0x0L).getSigned() == -1) {
           MEMORY.ref(1, s2).offset(0x0L).setu(0x1L);
           MEMORY.ref(1, s2).offset(0x1L).setu(0x8L);
           MEMORY.ref(4, s2).offset(0x10L).setu(0);
           MEMORY.ref(4, s2).offset(0x04L).setu(0);
-          seed_800fa754.advance();
-          MEMORY.ref(4, s2).offset(0x0cL).setu(seed_800fa754.get() % 4097);
-          seed_800fa754.advance();
-          MEMORY.ref(4, s2).offset(0x08L).setu(seed_800fa754.get() % 49 + 104);
+          MEMORY.ref(4, s2).offset(0x0cL).setu(seed_800fa754.advance().get() % 4097);
+          MEMORY.ref(4, s2).offset(0x08L).setu(seed_800fa754.advance().get() % 49 + 104);
           MEMORY.ref(2, s2).offset(0x24L).setu(data._10.colour_1c.getX() << 8);
           MEMORY.ref(2, s2).offset(0x26L).setu(data._10.colour_1c.getY() << 8);
           MEMORY.ref(2, s2).offset(0x28L).setu(data._10.colour_1c.getZ() << 8);
@@ -1091,38 +1089,38 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3490L)
-  public static void FUN_800d3490(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(BttlScriptData6cSub34_2.class).ptr_30.get());
+  public static void deallocateMonsterDeathEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    free(data.effect_44.derefAs(MonsterDeathEffect34.class).ptr_30.get());
   }
 
   @Method(0x800d34bcL)
-  public static long FUN_800d34bc(final RunningScript a0) {
+  public static long allocateMonsterDeathEffect(final RunningScript a0) {
     long v0;
     long v1;
 
     final long fp = allocateEffectManager(
       a0.scriptStateIndex_00.get(),
       0x34L,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d31b0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d30c0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3490", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      BttlScriptData6cSub34_2::new
+      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectRenderer", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateMonsterDeathEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MonsterDeathEffect34::new
     );
 
     final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
-    final EffectManagerData6c data = scriptStatePtrArr_800bc1c0.get((int)fp).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-    final BttlScriptData6cSub34_2 sub = data.effect_44.derefAs(BttlScriptData6cSub34_2.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get((int)fp).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final MonsterDeathEffect34 effect = manager.effect_44.derefAs(MonsterDeathEffect34.class);
     long s4 = mallocTail(animCount * 0x30L);
-    sub.ptr_30.set(s4); //TODO
-    sub._00.set((short)0);
-    sub._02.set(animCount + 8);
-    sub.animCount_04.set(animCount);
-    sub._06.set(0);
-    sub.scriptIndex_08.set(a0.params_20.get(1).deref().get());
+    effect.ptr_30.set(s4); //TODO
+    effect._00.set((short)0);
+    effect._02.set(animCount + 8);
+    effect.animCount_04.set(animCount);
+    effect._06.set(0);
+    effect.scriptIndex_08.set(a0.params_20.get(1).deref().get());
 
     //LAB_800d35a0
-    for(int animIndex = 0; animIndex < sub.animCount_04.get(); animIndex++) {
-      FUN_800d0094(sub.scriptIndex_08.get(), animIndex, 0x1L);
+    for(int animIndex = 0; animIndex < effect.animCount_04.get(); animIndex++) {
+      FUN_800d0094(effect.scriptIndex_08.get(), animIndex, 0x1L);
       MEMORY.ref(1, s4).offset(0x0L).setu(-0x1L);
       s4 = s4 + 0x30L;
     }
@@ -1133,30 +1131,30 @@ public final class Bttl_800d {
     v0 = _800c6948.get() + v1;
     v0 = MEMORY.ref(1, v0).offset(0x0L).get() & 0x3fL;
     v0 = v0 << 2;
-    sub._0c.u_0e.set((int)v0);
+    effect._0c.u_0e.set((int)v0);
     v0 = _800c6948.get() + v1;
     v0 = MEMORY.ref(1, v0).offset(0x2L).get();
-    sub._0c.v_0f.set((int)v0);
+    effect._0c.v_0f.set((int)v0);
     v1 = _800c6948.get() + v1;
-    sub._0c.w_08.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
-    sub._0c.h_0a.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
+    effect._0c.w_08.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
+    effect._0c.h_0a.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
     v0 = MEMORY.ref(2, v1).offset(0x6L).get() << 4;
     v0 = v0 & 0x3ffL;
-    sub._0c.clutX_10.set((int)v0);
+    effect._0c.clutX_10.set((int)v0);
     v0 = MEMORY.ref(2, v1).offset(0x6L).get() >>> 6;
     v0 = v0 & 0x1ffL;
-    sub._0c.clutY_12.set((int)v0);
+    effect._0c.clutY_12.set((int)v0);
     v0 = MEMORY.ref(2, v1).offset(0x2L).get() & 0x100L;
     v0 = v0 >>> 4;
     v1 = MEMORY.ref(2, v1).offset(0x0L).get() & 0x3ffL;
     v1 = v1 >>> 6;
     v0 = v0 | v1;
-    sub._0c.tpage_0c.set((int)v0);
-    sub._0c.x_04.set((short)(-sub._0c.w_08.get() >> 1));
-    sub._0c._18.set((short)0);
-    sub._0c._1a.set((short)0);
-    sub._0c.y_06.set((short)(-sub._0c.h_0a.get() >> 1));
-    sub._0c._00.set(data._10._00.get());
+    effect._0c.tpage_0c.set((int)v0);
+    effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
+    effect._0c._18.set((short)0);
+    effect._0c._1a.set((short)0);
+    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
+    effect._0c._00.set(manager._10._00.get());
     a0.params_20.get(0).deref().set((int)fp);
     return 0;
   }
