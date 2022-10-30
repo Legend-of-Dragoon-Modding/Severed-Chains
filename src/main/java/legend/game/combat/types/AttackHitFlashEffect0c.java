@@ -6,7 +6,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub0c extends BttlScriptData6cSubBase1 {
+public class AttackHitFlashEffect0c extends BttlScriptData6cSubBase1 {
   public final UnsignedIntRef _00;
   public final UnsignedShortRef u_04;
   public final UnsignedShortRef v_06;
@@ -14,7 +14,7 @@ public class BttlScriptData6cSub0c extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef h_09;
   public final UnsignedShortRef clut_0a;
 
-  public BttlScriptData6cSub0c(final Value ref) {
+  public AttackHitFlashEffect0c(final Value ref) {
     super(ref);
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);

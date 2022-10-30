@@ -44,7 +44,7 @@ import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub3c;
 import legend.game.combat.types.EffectManagerData6cInner;
-import legend.game.combat.types.BttlScriptData6cSub0c;
+import legend.game.combat.types.AttackHitFlashEffect0c;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.BttlScriptData6cSub1c;
@@ -3359,7 +3359,7 @@ public final class Bttl_800e {
           .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
 
         if((s1._00.get() & 1 << 30) != 0) {
-          cmd.translucent(Translucency.of((int)s1._00.get() >>> 23 & 0b11));
+          cmd.translucent(Translucency.of((int)s1._00.get() >>> 28 & 0b11));
         }
 
         GPU.queueCommand(z >> 2, cmd);
@@ -4002,7 +4002,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9590L)
-  public static void FUN_800e9590(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderAttackHitFlashEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final MATRIX sp0x10 = new MATRIX();
     FUN_800e8594(sp0x10, s0);
@@ -4031,19 +4031,19 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e96ccL)
-  public static long FUN_800e96cc(final RunningScript s1) {
+  public static long allocateAttackHitFlashEffect(final RunningScript s1) {
     final int scriptIndex = allocateEffectManager(
       s1.scriptStateIndex_00.get(),
       0xc,
       null,
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e9590", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "renderAttackHitFlashEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       null,
-      BttlScriptData6cSub0c::new
+      AttackHitFlashEffect0c::new
     );
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(EffectManagerData6c.class)).innerStruct_00.deref();
     manager._04.set(0x400_0000L);
-    FUN_800e95f0(manager.effect_44.derefAs(BttlScriptData6cSub0c.class).getAddress(), s1.params_20.get(1).deref().get());
+    FUN_800e95f0(manager.effect_44.derefAs(AttackHitFlashEffect0c.class).getAddress(), s1.params_20.get(1).deref().get()); //TODO
     manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
     s1.params_20.get(0).deref().set(scriptIndex);
     return 0;

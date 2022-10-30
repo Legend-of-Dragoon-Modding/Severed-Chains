@@ -443,7 +443,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#FUN_80111cc4}</li>
    *   <li>{@link SEffe#FUN_80111ed4}</li>
    *   <li>{@link Bttl_800e#FUN_800e93e0}</li>
-   *   <li>{@link Bttl_800e#FUN_800e96cc}</li>
+   *   <li>{@link Bttl_800e#allocateAttackHitFlashEffect}</li>
    *   <li>{@link Bttl_800e#FUN_800e9854}</li>
    *   <li>{@link Bttl_800c#FUN_800ca648}</li> <-- This seems like a bad pointer
    *   <li>null</li>
