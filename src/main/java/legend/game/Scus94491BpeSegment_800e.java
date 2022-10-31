@@ -210,7 +210,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#allocateDragoonAdditionScript}</li>
    *   <li>{@link SEffe#FUN_80105c38}</li>
    *   <li>{@link Bttl_800c#FUN_800c6968}</li>
-   *   <li>{@link SEffe#FUN_80109a7c}</li>
+   *   <li>{@link SEffe#allocateScreenDistortionEffect}</li>
    *   <li>{@link SEffe#FUN_801089cc}</li>
    *   <li>{@link SEffe#FUN_801023f4}</li>
    *   <li>{@link Bttl_800c#FUN_800cfec8}</li>

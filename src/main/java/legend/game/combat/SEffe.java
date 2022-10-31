@@ -34,7 +34,7 @@ import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct24;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.EffectManagerData6cInner;
-import legend.game.combat.types.BttlScriptData6cSub08_2;
+import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.combat.types.BttlScriptData6cSub08_3;
 import legend.game.combat.types.BttlScriptData6cSub08_4;
 import legend.game.combat.types.BttlScriptData6cSub10_2;
@@ -538,18 +538,18 @@ public final class SEffe {
    * <ol start="0">
    *   <li>{@link SEffe#FUN_80109358}</li>
    *   <li>{@link SEffe#FUN_80109358}</li>
-   *   <li>{@link SEffe#FUN_801097e0}</li>
+   *   <li>{@link SEffe#renderScreenDistortionBlurEffect}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>>> _80119fd4 = MEMORY.ref(4, 0x80119fd4L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(Integer.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
+  private static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>>> screenDistortionEffectRenderers_80119fd4 = MEMORY.ref(4, 0x80119fd4L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(Integer.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
   /**
    * <ol start="0">
    *   <li>{@link SEffe#FUN_80109a4c}</li>
    *   <li>{@link SEffe#FUN_80109a4c}</li>
-   *   <li>{@link SEffe#FUN_80109a6c}</li>
+   *   <li>{@link SEffe#tickScreenDistortionBlurEffect}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>>> _80119fe0 = MEMORY.ref(4, 0x80119fe0L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(Integer.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
+  private static final ArrayRef<Pointer<TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c>>> screenDistortionEffectTickers_80119fe0 = MEMORY.ref(4, 0x80119fe0L, ArrayRef.of(Pointer.classFor(TriConsumerRef.classFor(Integer.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)), 3, 4, Pointer.deferred(4, TriConsumerRef::new)));
   /**
    * <ol start="0">
    *   <li>{@link SEffe#FUN_8010b594}</li>
@@ -4828,7 +4828,7 @@ public final class SEffe {
   public static void FUN_80109358(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final long u = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
-    final BttlScriptData6cSub08_2 sp48 = data.effect_44.derefAs(BttlScriptData6cSub08_2.class);
+    final ScreenDistortionEffectData08 sp48 = data.effect_44.derefAs(ScreenDistortionEffectData08.class);
     final int sp30 = data._10.scale_16.getX() >> 8;
     final int sp2c = data._10.scale_16.getY() >> 11;
     final int sp38 = data._10.scale_16.getZ() * 15 >> 9;
@@ -4912,7 +4912,7 @@ public final class SEffe {
   }
 
   @Method(0x801097e0L)
-  public static void FUN_801097e0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderScreenDistortionBlurEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
     final int v = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
 
@@ -4937,37 +4937,38 @@ public final class SEffe {
 
   @Method(0x80109a4cL)
   public static void FUN_80109a4c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub08_2 v0 = data.effect_44.derefAs(BttlScriptData6cSub08_2.class);
-    v0.angle_00.add(v0.angleStep_04.get());
+    final ScreenDistortionEffectData08 effect = data.effect_44.derefAs(ScreenDistortionEffectData08.class);
+    effect.angle_00.add(effect.angleStep_04.get());
   }
 
   @Method(0x80109a6cL)
-  public static void FUN_80109a6c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickScreenDistortionBlurEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     // no-op
   }
 
   @Method(0x80109a74L)
-  public static void FUN_80109a74(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void deallocateScreenDistortionEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     // no-op
   }
 
   @Method(0x80109a7cL)
-  public static long FUN_80109a7c(final RunningScript s0) {
-    final int scriptIndex = allocateEffectManager(
-      s0.scriptStateIndex_00.get(),
-      0x8L,
-      _80119fd4.get(s0.params_20.get(2).deref().get()).deref(),
-      _80119fe0.get(s0.params_20.get(2).deref().get()).deref(),
-      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109a74", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      BttlScriptData6cSub08_2::new
+  public static long allocateScreenDistortionEffect(final RunningScript script) {
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x8,
+      // Ticker and renderer are swapped for some reason
+      screenDistortionEffectRenderers_80119fd4.get(script.params_20.get(2).deref().get()).deref(),
+      screenDistortionEffectTickers_80119fe0.get(script.params_20.get(2).deref().get()).deref(),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "deallocateScreenDistortionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      ScreenDistortionEffectData08::new
     );
 
-    final EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-    final BttlScriptData6cSub08_2 v1 = a0.effect_44.derefAs(BttlScriptData6cSub08_2.class);
-    v1.angle_00.set(0x800);
-    v1.angleStep_04.set(s0.params_20.get(1).deref().get());
-    a0._10._00.set(0x4000_0000L);
-    s0.params_20.get(0).deref().set(scriptIndex);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final ScreenDistortionEffectData08 effect = manager.effect_44.derefAs(ScreenDistortionEffectData08.class);
+    effect.angle_00.set(0x800);
+    effect.angleStep_04.set(script.params_20.get(1).deref().get());
+    manager._10._00.set(0x4000_0000L);
+    script.params_20.get(0).deref().set(effectIndex);
     return 0;
   }
 
