@@ -4104,7 +4104,7 @@ public final class Bttl_800e {
     effect.ptr_08.set(v0 + MEMORY.ref(4, v0).offset(0xcL).get());
     effect.ptr_0c.set(v0 + MEMORY.ref(4, v0).offset(0x14L).get());
     final long v1 = v0 + MEMORY.ref(4, v0).offset(0x8L).get();
-    effect._134.set(effect._10);
+    effect._134.set(effect.model_10);
     final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, (int)MEMORY.ref(2, v1).offset(0x0L).getSigned(), (int)MEMORY.ref(2, v1).offset(0x2L).getSigned());
     final Model124 model = effect._134.deref();
     model.ub_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
@@ -4137,8 +4137,8 @@ public final class Bttl_800e {
     s0.part_04.set(part.getAddress());
     s0.ptr_08.set(part.getAddress() + MEMORY.ref(4, part.getAddress()).offset(0xcL).get());
     s0.ptr_0c.set(part.getAddress() + MEMORY.ref(4, part.getAddress()).offset(0x14L).get());
-    s0._10.ub_9d.set(0);
-    s0._134.set(s0._10);
+    s0.model_10.ub_9d.set(0);
+    s0._134.set(s0.model_10);
     FUN_800ddac8(s0._134.deref(), s0.ptr_08.get());
     FUN_800de36c(s0._134.deref(), s0.ptr_0c.get());
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
@@ -4265,13 +4265,13 @@ public final class Bttl_800e {
     s0.part_04.set(0);
     s0.ptr_08.set(0);
     s0.ptr_0c.set(0);
-    s0._134.set(s0._10);
+    s0._134.set(s0.model_10);
 
     if((s2 & 0xff00_0000) == 0x700_0000) {
-      FUN_800e9ae4(s0._10, _1f8003f4.deref().render_963c);
+      FUN_800e9ae4(s0.model_10, _1f8003f4.deref().render_963c);
     } else {
       //LAB_800ea030
-      FUN_800e9db4(s0._10, scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148);
+      FUN_800e9db4(s0.model_10, scriptStatePtrArr_800bc1c0.get(s2).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148);
     }
 
     //LAB_800ea04c
@@ -4286,7 +4286,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea0f4L)
   public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c effectManager, final int coord2Index) {
-    final Model124 model = effectManager.effect_44.derefAs(BttlScriptData6cSub13c.class)._10;
+    final Model124 model = effectManager.effect_44.derefAs(BttlScriptData6cSub13c.class).model_10;
     applyModelRotationAndScale(model);
     return model.coord2ArrPtr_04.deref().get(coord2Index);
   }

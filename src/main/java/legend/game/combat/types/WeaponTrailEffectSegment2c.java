@@ -7,7 +7,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class BttlScriptData6cSub3cSub2c implements MemoryRef {
+public class WeaponTrailEffectSegment2c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
@@ -15,10 +15,10 @@ public class BttlScriptData6cSub3cSub2c implements MemoryRef {
   public final UnsignedByteRef _02;
   public final UnsignedByteRef _03;
   public final ArrayRef<VECTOR> _04;
-  public final Pointer<BttlScriptData6cSub3cSub2c> _24;
-  public final Pointer<BttlScriptData6cSub3cSub2c> _28;
+  public final Pointer<WeaponTrailEffectSegment2c> _24;
+  public final Pointer<WeaponTrailEffectSegment2c> _28;
 
-  public BttlScriptData6cSub3cSub2c(final Value ref) {
+  public WeaponTrailEffectSegment2c(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
@@ -26,8 +26,8 @@ public class BttlScriptData6cSub3cSub2c implements MemoryRef {
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
     this._03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this._04 = ref.offset(4, 0x04L).cast(ArrayRef.of(VECTOR.class, 2, 0x10, VECTOR::new));
-    this._24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, BttlScriptData6cSub3cSub2c::new));
-    this._28 = ref.offset(4, 0x28L).cast(Pointer.deferred(4, BttlScriptData6cSub3cSub2c::new));
+    this._24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, WeaponTrailEffectSegment2c::new));
+    this._28 = ref.offset(4, 0x28L).cast(Pointer.deferred(4, WeaponTrailEffectSegment2c::new));
   }
 
   @Override

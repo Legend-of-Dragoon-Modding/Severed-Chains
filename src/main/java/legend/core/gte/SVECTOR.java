@@ -288,6 +288,13 @@ public class SVECTOR implements MemoryRef {
     return this;
   }
 
+  public SVECTOR shl(final int amount) {
+    this.x.shl(amount);
+    this.y.shl(amount);
+    this.z.shl(amount);
+    return this;
+  }
+
   public SVECTOR and(final int value) {
     this.x.and(value);
     this.y.and(value);

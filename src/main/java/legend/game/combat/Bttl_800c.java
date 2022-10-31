@@ -48,8 +48,8 @@ import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlScriptData6cSub14;
-import legend.game.combat.types.BttlScriptData6cSub3c;
-import legend.game.combat.types.BttlScriptData6cSub3cSub2c;
+import legend.game.combat.types.WeaponTrailEffect3c;
+import legend.game.combat.types.WeaponTrailEffectSegment2c;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -3941,8 +3941,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdde4L)
-  public static BttlScriptData6cSub3cSub2c FUN_800cdde4(final BttlScriptData6cSub3c a0) {
-    BttlScriptData6cSub3cSub2c v1 = a0._38.deref();
+  public static WeaponTrailEffectSegment2c getRootSegment(final WeaponTrailEffect3c a0) {
+    WeaponTrailEffectSegment2c v1 = a0._38.deref();
 
     //LAB_800cddfc
     while(!v1._24.isNull()) {
@@ -3954,18 +3954,19 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cde1cL)
-  public static BttlScriptData6cSub3cSub2c FUN_800cde1c(final BttlScriptData6cSub3c a0) {
-    BttlScriptData6cSub3cSub2c v1 = a0._34.deref().get(0);
+  public static WeaponTrailEffectSegment2c FUN_800cde1c(final WeaponTrailEffect3c a0) {
+    WeaponTrailEffectSegment2c v1 = a0.segments_34.deref().get(0);
 
+    int i = 0;
     //LAB_800cde3c
-    int i;
-    for(i = 1; v1._03.get() != 0; i++) {
-      v1 = a0._34.deref().get(i);
+    while(v1._03.get() != 0) {
+      i++;
+      v1 = a0.segments_34.deref().get(i);
     }
 
     //LAB_800cde50
     if(i == 64) {
-      v1 = FUN_800cdde4(a0);
+      v1 = getRootSegment(a0);
       v1._03.set(0);
 
       if(!v1._28.isNull()) {
@@ -3979,13 +3980,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cde94L)
-  public static void FUN_800cde94(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub3c s2 = data.effect_44.derefAs(BttlScriptData6cSub3c.class);
+  public static void renderWeaponTrailEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final WeaponTrailEffect3c s2 = data.effect_44.derefAs(WeaponTrailEffect3c.class);
 
     if(!s2._38.isNull()) {
-      final SVECTOR sp0x18 = new SVECTOR().set(data._10.colour_1c);
+      final SVECTOR sp0x18 = new SVECTOR().set(data._10.colour_1c).shl(8);
       final SVECTOR sp0x20 = new SVECTOR().set(sp0x18).div(s2._0e.get());
-      BttlScriptData6cSub3cSub2c s0 = s2._38.deref();
+      WeaponTrailEffectSegment2c s0 = s2._38.deref();
 
       final IntRef sp0x38 = new IntRef();
       final IntRef sp0x3c = new IntRef();
@@ -4031,8 +4032,8 @@ public final class Bttl_800c {
 
         //LAB_800ce14c
         sp0x38.set(sp0x28.get());
-        sp0x3c.set(sp0x34.get());
-        sp0x40.set(sp0x34.get());
+        sp0x3c.set(sp0x2c.get());
+        sp0x40.set(sp0x30.get());
         sp0x44.set(sp0x34.get());
         s0 = s0._24.derefNullable();
       }
@@ -4045,22 +4046,22 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce254L)
-  public static void FUN_800ce254(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickWeaponTrailEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     long s5;
     long s6;
 
-    final BttlScriptData6cSub3c s3 = data.effect_44.derefAs(BttlScriptData6cSub3c.class);
-    s3._00.incr();
-    if(s3._00.get() == 0) {
-      FUN_800cdcec(s3._30.deref(), s3.dobjIndex_08.get(), s3.largestVertex_20, s3.smallestVertex_10, data, s3.largestVertexIndex_0c, s3.smallestVertexIndex_0a);
+    final WeaponTrailEffect3c effect = data.effect_44.derefAs(WeaponTrailEffect3c.class);
+    effect._00.incr();
+    if(effect._00.get() == 0) {
+      FUN_800cdcec(effect.parentModel_30.deref(), effect.dobjIndex_08.get(), effect.largestVertex_20, effect.smallestVertex_10, data, effect.largestVertexIndex_0c, effect.smallestVertexIndex_0a);
       return;
     }
 
     //LAB_800ce2c4
-    BttlScriptData6cSub3cSub2c s0 = FUN_800cde1c(s3);
+    WeaponTrailEffectSegment2c s0 = FUN_800cde1c(effect);
 
-    if(!s3._38.isNull()) {
-      s3._38.deref()._28.set(s0);
+    if(!effect._38.isNull()) {
+      effect._38.deref()._28.set(s0);
     }
 
     //LAB_800ce2e4
@@ -4069,20 +4070,20 @@ public final class Bttl_800c {
     s0._02.set(0x73);
     s0._03.set(0x1);
     s0._28.clear();
-    s0._24.setNullable(s3._38.derefNullable());
-    s3._38.set(s0);
+    s0._24.setNullable(effect._38.derefNullable());
+    effect._38.set(s0);
 
     //LAB_800ce320
     for(int i = 0; i < 2; i++) {
       final MATRIX sp0x20 = new MATRIX();
-      GsGetLw(s3._30.deref().coord2ArrPtr_04.deref().get(s3.dobjIndex_08.get()), sp0x20);
-      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, s3.smallestVertex_10);
+      GsGetLw(effect.parentModel_30.deref().coord2ArrPtr_04.deref().get(effect.dobjIndex_08.get()), sp0x20);
+      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, i == 0 ? effect.largestVertex_20 : effect.smallestVertex_10);
       sp0x40.add(sp0x20.transfer);
       s0._04.get(i).set(sp0x40);
     }
 
     //LAB_800ce3e0
-    s0 = s3._38.derefNullable();
+    s0 = effect._38.derefNullable();
     while(s0 != null) {
       FUN_800ce880(s0._04.get(1), s0._04.get(0), 0x1000, 0x400);
       s0 = s0._24.derefNullable();
@@ -4091,19 +4092,19 @@ public final class Bttl_800c {
     //LAB_800ce404
     //LAB_800ce40c
     for(s5 = 0; s5 < 2; s5++) {
-      s0 = s3._38.derefNullable();
+      s0 = effect._38.derefNullable();
       s6 = 0;
 
       //LAB_800ce41c
       while(s0 != null) {
         if(!s0._28.isNull()) {
           if(!s0._24.isNull()) {
-            BttlScriptData6cSub3cSub2c s1 = s0._24.deref();
+            WeaponTrailEffectSegment2c s1 = s0._24.deref();
 
             //LAB_800ce444
-            final BttlScriptData6cSub3cSub2c[] sp0x50 = new BttlScriptData6cSub3cSub2c[2];
+            final WeaponTrailEffectSegment2c[] sp0x50 = new WeaponTrailEffectSegment2c[2];
             for(int s2 = 0; s2 < 2; s2++) {
-              final BttlScriptData6cSub3cSub2c v0 = FUN_800cde1c(s3);
+              final WeaponTrailEffectSegment2c v0 = FUN_800cde1c(effect);
               sp0x50[s2] = v0;
               v0._00.set(0x6c);
               v0._01.set(0x63);
@@ -4140,45 +4141,53 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce678L)
-  public static void FUN_800ce678(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(BttlScriptData6cSub3c.class)._34.getPointer());
+  public static void deallocateWeaponTrailEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    free(data.effect_44.derefAs(WeaponTrailEffect3c.class).segments_34.getPointer());
   }
 
   @Method(0x800ce6a8L)
-  public static long FUN_800ce6a8(final RunningScript a0) {
-    final int s4 = allocateEffectManager(a0.scriptStateIndex_00.get(), 0x3cL, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce254", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cde94", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800ce678", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), BttlScriptData6cSub3c::new);
-    final EffectManagerData6c s1 = scriptStatePtrArr_800bc1c0.get(s4).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-    final BttlScriptData6cSub3c s0 = s1.effect_44.derefAs(BttlScriptData6cSub3c.class);
-    s0._34.setPointer(mallocTail(0x2c * 65));
+  public static long allocateWeaponTrailEffect(final RunningScript script) {
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x3c,
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "tickWeaponTrailEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "renderWeaponTrailEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "deallocateWeaponTrailEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      WeaponTrailEffect3c::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final WeaponTrailEffect3c effect = manager.effect_44.derefAs(WeaponTrailEffect3c.class);
+    effect.segments_34.setPointer(mallocTail(0x2c * 65));
 
     //LAB_800ce75c
     for(int i = 0; i < 65; i++) {
-      final BttlScriptData6cSub3cSub2c v1 = s0._34.deref().get(i);
-      v1._00.set(0x6c);
-      v1._01.set(0x63);
-      v1._02.set(0x73);
-      v1._03.set(0);
-      v1._24.clear();
-      v1._28.clear();
+      final WeaponTrailEffectSegment2c segment = effect.segments_34.deref().get(i);
+      segment._00.set(0x6c);
+      segment._01.set(0x63);
+      segment._02.set(0x73);
+      segment._03.set(0);
+      segment._24.clear();
+      segment._28.clear();
     }
 
-    s0._38.clear();
-    s0._00.set(-1);
-    s0._04.set(a0.params_20.get(1).deref().get());
-    s0.dobjIndex_08.set((short)a0.params_20.get(2).deref().get());
-    s0._0e.set(0x14);
-    s1._10.colour_1c.set((short)255, (short)128, (short)96);
-    final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+    effect._38.clear();
+    effect._00.set(-1);
+    effect._04.set(script.params_20.get(1).deref().get());
+    effect.dobjIndex_08.set((short)script.params_20.get(2).deref().get());
+    effect._0e.set(0x14);
+    manager._10.colour_1c.set((short)0xff, (short)0x80, (short)0x60);
 
-    if(a0_0.magic_00.get() == BattleScriptDataBase.EM__) {
-      s0._30.set(((EffectManagerData6c)a0_0).effect_44.derefAs(BttlScriptData6cSub13c.class)._10);
+    final BattleScriptDataBase parent = scriptStatePtrArr_800bc1c0.get(script.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+    if(parent.magic_00.get() == BattleScriptDataBase.EM__) {
+      effect.parentModel_30.set(((EffectManagerData6c)parent).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10);
     } else {
       //LAB_800ce7f8
-      s0._30.set(((BattleObject27c)a0_0).model_148);
+      effect.parentModel_30.set(((BattleObject27c)parent).model_148);
     }
 
     //LAB_800ce804
-    a0.params_20.get(0).deref().set(s4);
+    script.params_20.get(0).deref().set(effectIndex);
     return 0;
   }
 
@@ -4219,7 +4228,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce9b0L)
   public static long FUN_800ce9b0(final RunningScript a0) {
-    final BttlScriptData6cSub3c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub3c.class);
+    final WeaponTrailEffect3c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(WeaponTrailEffect3c.class);
     FUN_800ce880(a1.smallestVertex_10, a1.largestVertex_20, a0.params_20.get(2).deref().get(), a0.params_20.get(1).deref().get());
     return 0;
   }
@@ -4576,7 +4585,7 @@ public final class Bttl_800c {
 
     final Model124 model;
     if(a0.magic_00.get() == BattleScriptDataBase.EM__) {
-      model = ((EffectManagerData6c)a0).effect_44.derefAs(BttlScriptData6cSub13c.class)._10;
+      model = ((EffectManagerData6c)a0).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10;
     } else {
       //LAB_800cfd34
       model = ((BattleObject27c)a0).model_148;
