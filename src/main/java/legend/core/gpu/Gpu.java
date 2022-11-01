@@ -1,7 +1,5 @@
 package legend.core.gpu;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.InterruptType;
 import legend.core.IoHelper;
@@ -22,7 +20,6 @@ import org.lwjgl.system.MemoryUtil;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -31,7 +28,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.function.BiFunction;
 
 import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
@@ -89,9 +85,6 @@ public class Gpu implements Runnable {
   public final RECT drawingArea = new RECT();
   private short offsetX;
   private short offsetY;
-
-  @Nullable
-  private Gp0CommandBuffer currentCommand;
 
   private int zMax;
   private LinkedList<GpuCommand>[] zQueues;
@@ -201,59 +194,8 @@ public class Gpu implements Runnable {
     }
   }
 
-  private int tagsUploaded;
-  public int uploadLinkedList(final long address) {
-    this.tagsUploaded = 0;
-
-    MEMORY.waitForLock(() -> {
-      long value;
-      long a = address;
-
-      final byte[] data = new byte[80];
-      final ByteBuffer buffer = ByteBuffer.wrap(data);
-      buffer.order(ByteOrder.LITTLE_ENDIAN);
-      final IntBuffer ints = buffer.asIntBuffer();
-
-      do {
-        try {
-          value = MEMORY.get(a, 4);
-          final int words = (int)(value >>> 24);
-
-          MEMORY.getBytes(a + 4, data, 0, words * 4);
-          for(int i = 0; i < words; i++) {
-            this.queueGp0Command(ints.get(i));
-          }
-
-          this.tagsUploaded++;
-          a = a & 0xff00_0000L | value & 0xff_ffffL;
-        } catch(final InvalidGp0CommandException e) {
-          throw new RuntimeException("Invalid GP0 packet at 0x%08x".formatted(a), e);
-        }
-      } while((value & 0xff_ffffL) != 0xff_ffffL);
-    });
-
-    LOGGER.trace("GPU linked list uploaded");
-
-    return this.tagsUploaded;
-  }
-
   public void queueCommand(final int z, final GpuCommand command) {
     this.zQueues[z].addFirst(command);
-  }
-
-  private void queueGp0Command(final int command) throws InvalidGp0CommandException {
-    if(this.currentCommand == null) {
-      this.currentCommand = new Gp0CommandBuffer(command);
-    } else {
-      this.currentCommand.queueValue(command);
-    }
-
-    if(this.currentCommand.isComplete()) {
-      synchronized(this.commandQueue) {
-        this.commandQueue.add(this.currentCommand.command.factory.apply(this.currentCommand.buffer, this));
-      }
-      this.currentCommand = null;
-    }
   }
 
   private void processGp0Command() {
@@ -269,10 +211,10 @@ public class Gpu implements Runnable {
   public void reset() {
     LOGGER.info("Resetting GPU");
 
-    Gpu.this.resetCommandBuffer();
-    Gpu.this.displayStart(0, 0);
-    Gpu.this.verticalDisplayRange(16, 256);
-    Gpu.this.displayMode(HORIZONTAL_RESOLUTION._320, VERTICAL_RESOLUTION._240, DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
+    this.resetCommandBuffer();
+    this.displayStart(0, 0);
+    this.verticalDisplayRange(16, 256);
+    this.displayMode(HORIZONTAL_RESOLUTION._320, VERTICAL_RESOLUTION._240, DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
   }
 
   /**
@@ -342,6 +284,20 @@ public class Gpu implements Runnable {
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
     });
+  }
+
+  public void drawingArea(final int left, final int top, final int right, final int bottom) {
+    this.drawingArea.set((short)left, (short)top, (short)right, (short)bottom);
+  }
+
+  public void drawingOffset(final int x, final int y) {
+    this.offsetX = (short)x;
+    this.offsetY = (short)y;
+  }
+
+  public void maskBit(final boolean setMaskBit, final DRAW_PIXELS drawPixels) {
+    this.status.setMaskBit = setMaskBit;
+    this.status.drawPixels = drawPixels;
   }
 
   private Shader loadShader(final Path vsh, final Path fsh) {
@@ -657,7 +613,6 @@ public class Gpu implements Runnable {
       this.displayStartY /= this.renderScale;
       this.displayRangeY1 /= this.renderScale;
       this.displayRangeY2 /= this.renderScale;
-      this.status.texturePageXBase /= this.renderScale;
 
       this.vramWidth = STANDARD_VRAM_WIDTH;
       this.vramHeight = STANDARD_VRAM_HEIGHT;
@@ -689,7 +644,6 @@ public class Gpu implements Runnable {
       this.displayStartY *= this.renderScale;
       this.displayRangeY1 *= this.renderScale;
       this.displayRangeY2 *= this.renderScale;
-      this.status.texturePageXBase *= this.renderScale;
 
       this.vramWidth = STANDARD_VRAM_WIDTH * this.renderScale;
       this.vramHeight = STANDARD_VRAM_HEIGHT * this.renderScale;
@@ -722,10 +676,6 @@ public class Gpu implements Runnable {
     final int horizontalRes = this.status.horizontalResolution.res;
     final int verticalRes = this.status.verticalResolution.res;
     this.displaySize(horizontalRes, verticalRes);
-  }
-
-  private static short signed11bit(final int n) {
-    return (short)(n << 21 >> 21);
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
@@ -782,18 +732,18 @@ public class Gpu implements Runnable {
 
     for(int i = 0; i <= longest; i++) {
       final float ratio = (float)i / longest;
-      int color = interpolateColours(colour1, colour2, ratio);
+      int colour = interpolateColours(colour1, colour2, ratio);
 
       if(x >= this.drawingArea.x.get() && x < this.drawingArea.w.get() && y >= this.drawingArea.y.get() && y < this.drawingArea.h.get()) {
         if(translucency != null) {
-          color = this.handleTranslucence(x, y, color, translucency);
+          colour = this.handleTranslucence(x, y, colour, translucency);
         }
 
-        color |= (this.status.setMaskBit ? 1 : 0) << 24;
+        colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
         for(int y1 = 0; y1 < this.renderScale; y1++) {
           for(int x1 = 0; x1 < this.renderScale; x1++) {
-            this.setPixel(x + x1, y + y1, color);
+            this.setPixel(x + x1, y + y1, colour);
           }
         }
       }
@@ -808,108 +758,6 @@ public class Gpu implements Runnable {
         y += (short)dy2;
       }
     }
-  }
-
-  private Runnable untexturedRectangleBuilder(final int command, final int vertex, final int size) {
-    final boolean isTranslucent = (command & 1 << 25) != 0;
-
-    final int colour = command & 0xff_ffff;
-
-    final int vy = (short)((vertex & 0xffff0000) >>> 16) * this.renderScale;
-    final int vx = (short)(vertex & 0xffff) * this.renderScale;
-
-    final int vh = (short)((size & 0xffff0000) >>> 16) * this.renderScale;
-    final int vw = (short)(size & 0xffff) * this.renderScale;
-
-    return () -> {
-      LOGGER.trace("[GP0.%02x] Drawing variable-sized untextured quad offset %d %d, XYWH %d %d %d %d RGB %06x", command >>> 24, this.offsetX, this.offsetY, vx, vy, vw, vh, colour);
-
-      final int x1 = Math.max(vx + this.offsetX, this.drawingArea.x.get());
-      final int y1 = Math.max(vy + this.offsetY, this.drawingArea.y.get());
-      final int x2 = Math.min(vx + this.offsetX + vw, this.drawingArea.w.get());
-      final int y2 = Math.min(vy + this.offsetY + vh, this.drawingArea.h.get());
-
-      for(int y = y1; y < y2; y++) {
-        for(int x = x1; x < x2; x++) {
-          // Check background mask
-          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
-              continue;
-            }
-          }
-
-          final int texel;
-          if(isTranslucent) {
-            texel = this.handleTranslucence(x, y, colour, this.status.semiTransparency);
-          } else {
-            texel = colour;
-          }
-
-          this.setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
-        }
-      }
-    };
-  }
-
-  private Runnable texturedRectangleBuilder(final int command, final int vertex, final int tex, final int size) {
-    final boolean isTranslucent = (command & 1 << 25) != 0;
-    final boolean isRaw = (command & 1 << 24) != 0;
-
-    final int colour = command & 0xff_ffff;
-
-    final int vy = (short)((vertex & 0xffff0000) >>> 16) * this.renderScale;
-    final int vx = (short)(vertex & 0xffff) * this.renderScale;
-
-    final int clut = (tex & 0xffff0000) >>> 16;
-    final int ty = ((tex & 0xff00) >>> 8) * this.renderScale;
-    final int tx = (tex & 0xff) * this.renderScale;
-
-    final int vh = (short)((size & 0xffff0000) >>> 16) * this.renderScale;
-    final int vw = (short)(size & 0xffff) * this.renderScale;
-
-    final int clutX = (short)((clut & 0x3f) * 16) * this.renderScale;
-    final int clutY = (short)(clut >>> 6 & 0x1ff) * this.renderScale;
-
-    return () -> {
-      LOGGER.trace("[GP0.%02x] Drawing variable-sized textured quad offset %d %d, texpage XY %d %d, XYWH %d %d %d %d, UV %d %d, Clut(XY) %04x (%d %d), RGB %06x", command >>> 24, this.offsetX, this.offsetY, this.status.texturePageXBase, this.status.texturePageYBase.value * this.renderScale, vx, vy, vw, vh, tx, ty, clut, clutX, clutY, colour);
-
-      final int x1 = Math.max(vx + this.offsetX, this.drawingArea.x.get());
-      final int y1 = Math.max(vy + this.offsetY, this.drawingArea.y.get());
-      final int x2 = Math.min(vx + this.offsetX + vw, this.drawingArea.w.get());
-      final int y2 = Math.min(vy + this.offsetY + vh, this.drawingArea.h.get());
-
-      final int offsetX = x1 - (vx + this.offsetX);
-      final int offsetY = y1 - (vy + this.offsetY);
-
-      final int u1 = tx + offsetX;
-      final int v1 = ty + offsetY;
-
-      for(int y = y1, v = v1; y < y2; y++, v++) {
-        for(int x = x1, u = u1; x < x2; x++, u++) {
-          // Check background mask
-          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
-              continue;
-            }
-          }
-
-          int texel = this.getTexel(u, v, clutX, clutY, this.status.texturePageXBase, this.status.texturePageYBase.value * this.renderScale, this.status.texturePageColours);
-          if(texel == 0) {
-            continue;
-          }
-
-          if(!isRaw) {
-            texel = this.applyBlending(colour, texel);
-          }
-
-          if(isTranslucent && (texel & 0xff00_0000) != 0) {
-            texel = this.handleTranslucence(x, y, texel, this.status.semiTransparency);
-          }
-
-          this.setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
-        }
-      }
-    };
   }
 
   void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
@@ -1190,14 +1038,8 @@ public class Gpu implements Runnable {
     IoHelper.write(stream, this.windowWidth);
     IoHelper.write(stream, this.windowHeight);
 
-    IoHelper.write(stream, this.status.texturePageXBase);
-    IoHelper.write(stream, this.status.texturePageYBase);
-    IoHelper.write(stream, this.status.semiTransparency);
-    IoHelper.write(stream, this.status.texturePageColours);
-    IoHelper.write(stream, this.status.drawable);
     IoHelper.write(stream, this.status.setMaskBit);
     IoHelper.write(stream, this.status.drawPixels);
-    IoHelper.write(stream, this.status.interlaceField);
     IoHelper.write(stream, this.status.horizontalResolution);
     IoHelper.write(stream, this.status.verticalResolution);
     IoHelper.write(stream, this.status.displayAreaColourDepth);
@@ -1231,14 +1073,8 @@ public class Gpu implements Runnable {
       this.windowHeight = IoHelper.readInt(buf);
     }
 
-    this.status.texturePageXBase = IoHelper.readInt(buf);
-    this.status.texturePageYBase = IoHelper.readEnum(buf, TEXTURE_PAGE_Y_BASE.class);
-    this.status.semiTransparency = IoHelper.readEnum(buf, Translucency.class);
-    this.status.texturePageColours = IoHelper.readEnum(buf, legend.core.gpu.Bpp.class);
-    this.status.drawable = IoHelper.readBool(buf);
     this.status.setMaskBit = IoHelper.readBool(buf);
     this.status.drawPixels = IoHelper.readEnum(buf, DRAW_PIXELS.class);
-    this.status.interlaceField = IoHelper.readBool(buf);
     this.status.horizontalResolution = IoHelper.readEnum(buf, HORIZONTAL_RESOLUTION.class);
     this.status.verticalResolution = IoHelper.readEnum(buf, VERTICAL_RESOLUTION.class);
     this.status.displayAreaColourDepth = IoHelper.readEnum(buf, DISPLAY_AREA_COLOUR_DEPTH.class);
@@ -1270,221 +1106,7 @@ public class Gpu implements Runnable {
     this.commandQueue.clear();
   }
 
-  public enum GP0_COMMAND {
-    FILL_RECTANGLE_IN_VRAM(0x02, 3, (buffer, gpu) -> {
-      final int colour = buffer.getInt(0) & 0xff_ffff;
-
-      final int vertex = buffer.getInt(1);
-      final int y = (short)((vertex & 0xffff0000) >>> 16) * gpu.renderScale;
-      final int x = (short)(vertex & 0xffff) * gpu.renderScale;
-
-      final int size = buffer.getInt(2);
-      final int h = (short)((size & 0xffff0000) >>> 16) * gpu.renderScale;
-      final int w = (short)(size & 0xffff) * gpu.renderScale;
-
-      return () -> gpu.command02FillRect(x, y, w, h, colour);
-    }),
-
-    MONO_RECT_VAR_SIZE_OPAQUE(0x60, 3, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int size = buffer.getInt(2);
-      return gpu.untexturedRectangleBuilder(command, vertex, size);
-    }),
-
-    MONOCHROME_RECT_VAR_SIZE_TRANS(0x62, 3, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int size = buffer.getInt(2);
-      return gpu.untexturedRectangleBuilder(command, vertex, size);
-    }),
-
-    TEX_RECT_VAR_SIZE_OPAQUE_BLENDED(0x64, 4, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int tex = buffer.getInt(2);
-      final int size = buffer.getInt(3);
-      return gpu.texturedRectangleBuilder(command, vertex, tex, size);
-    }),
-
-    TEX_RECT_VAR_SIZE_TRANSPARENT_BLENDED(0x66, 4, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int tex = buffer.getInt(2);
-      final int size = buffer.getInt(3);
-      return gpu.texturedRectangleBuilder(command, vertex, tex, size);
-    }),
-
-    TEX_RECT_VAR_SIZE_TRANSPARENT_RAW(0x67, 4, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int tex = buffer.getInt(2);
-      final int size = buffer.getInt(3);
-      return gpu.texturedRectangleBuilder(command, vertex, tex, size);
-    }),
-
-    MONOCHROME_RECT_1X1_TRANS(0x6a, 2, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      return gpu.untexturedRectangleBuilder(command, vertex, 0x1_0001);
-    }),
-
-    TEX_RECT_16_OPAQUE_BLENDED(0x7c, 3, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int tex = buffer.getInt(2);
-      return gpu.texturedRectangleBuilder(command, vertex, tex, 0x10_0010);
-    }),
-
-    TEX_RECT_16_TRANSPARENT_BLENDED(0x7e, 3, (buffer, gpu) -> {
-      final int command = buffer.getInt(0);
-      final int vertex = buffer.getInt(1);
-      final int tex = buffer.getInt(2);
-      return gpu.texturedRectangleBuilder(command, vertex, tex, 0x10_0010);
-    }),
-
-    COPY_RECT_VRAM_VRAM(0x80, 4, (buffer, gpu) -> {
-      final int source = buffer.getInt(1);
-      final int sourceY = (short)((source & 0xffff0000) >>> 16) * gpu.renderScale;
-      final int sourceX = (short)(source & 0xffff) * gpu.renderScale;
-
-      final int dest = buffer.getInt(2);
-      final int destY = (short)((dest & 0xffff0000) >>> 16) * gpu.renderScale;
-      final int destX = (short)(dest & 0xffff) * gpu.renderScale;
-
-      final int size = buffer.getInt(3);
-      final int height = (short)((size & 0xffff0000) >>> 16) * gpu.renderScale;
-      final int width = (short)(size & 0xffff) * gpu.renderScale;
-
-      return () -> gpu.command80CopyRectFromVramToVram(sourceX, sourceY, destX, destY, width, height);
-    }),
-
-    DRAW_MODE_SETTINGS(0xe1, 1, (buffer, gpu) -> {
-      final int settings = buffer.getInt(0);
-
-      return () -> {
-        LOGGER.trace("[GP0.e1] Draw mode set to %08x", settings);
-
-        gpu.status.texturePageXBase = (settings & 0b1111) * 64 * gpu.renderScale;
-        gpu.status.texturePageYBase = (settings & 0b1_0000) != 0 ? TEXTURE_PAGE_Y_BASE.BASE_256 : TEXTURE_PAGE_Y_BASE.BASE_0;
-        gpu.status.semiTransparency = Translucency.values()[(settings & 0b110_0000) >>> 5];
-        gpu.status.texturePageColours = Bpp.values()[(settings & 0b1_1000_0000) >>> 7];
-        gpu.status.drawable = (settings & 0b100_0000_0000) != 0;
-      };
-    }),
-
-    DRAWING_AREA_TOP_LEFT(0xe3, 1, (buffer, gpu) -> {
-      final int area = buffer.getInt(0);
-
-      final short x = (short)((area & 0b11_1111_1111) * gpu.renderScale);
-      final short y = (short)((area >>> 10 & 0b1_1111_1111L) * gpu.renderScale);
-
-      assert x != 16;
-
-      return () -> {
-        LOGGER.trace("GP0.e3 setting drawing area top left to %d, %d", x, y);
-
-        gpu.drawingArea.x.set(x);
-        gpu.drawingArea.y.set(y);
-      };
-    }),
-
-    DRAWING_AREA_BOTTOM_RIGHT(0xe4, 1, (buffer, gpu) -> {
-      final int area = buffer.getInt(0);
-
-      final short x = (short)((area & 0b11_1111_1111) * gpu.renderScale);
-      final short y = (short)((area >>> 10 & 0b1_1111_1111L) * gpu.renderScale);
-
-      return () -> {
-        LOGGER.trace("GP0.e3 setting drawing area bottom right to %d, %d", x, y);
-
-        gpu.drawingArea.w.set(x);
-        gpu.drawingArea.h.set(y);
-      };
-    }),
-
-    DRAWING_OFFSET(0xe5, 1, (buffer, gpu) -> {
-      final int offset = buffer.getInt(0);
-
-      return () -> {
-        gpu.offsetX = (short)(signed11bit(offset & 0x7ff) * gpu.renderScale);
-        gpu.offsetY = (short)(signed11bit(offset >>> 11 & 0x7ff) * gpu.renderScale);
-      };
-    }),
-
-    MASK_BIT(0xe6, 1, (buffer, gpu) -> {
-      final int val = buffer.getInt(0);
-
-      return () -> {
-        gpu.status.setMaskBit = (val & 0x1) != 0;
-        gpu.status.drawPixels = (val & 0x2) != 0 ? DRAW_PIXELS.NOT_TO_MASKED_AREAS : DRAW_PIXELS.ALWAYS;
-
-        LOGGER.trace("[GP0.e6] set mask bit %b, draw pixels %s", gpu.status.setMaskBit, gpu.status.drawPixels);
-      };
-    }),
-    ;
-
-    public static GP0_COMMAND getCommand(final int command) throws InvalidGp0CommandException {
-      for(final GP0_COMMAND cmd : GP0_COMMAND.values()) {
-        if(cmd.command == command) {
-          return cmd;
-        }
-      }
-
-      throw new InvalidGp0CommandException("Invalid GP0 command " + Long.toString(command, 16));
-    }
-
-    public final int command;
-    public final int params;
-    private final BiFunction<IntList, Gpu, Runnable> factory;
-
-    GP0_COMMAND(final int command, final int params, final BiFunction<IntList, Gpu, Runnable> factory) {
-      this.command = command;
-      this.params = params;
-      this.factory = factory;
-    }
-  }
-
-  private static final class Gp0CommandBuffer {
-    private final GP0_COMMAND command;
-    private final IntList buffer = new IntArrayList();
-
-    private Gp0CommandBuffer(final int command) throws InvalidGp0CommandException {
-      this.command = GP0_COMMAND.getCommand((command & 0xff000000) >>> 24);
-      this.queueValue(command);
-    }
-
-    private void queueValue(final int value) {
-      this.buffer.add(value);
-    }
-
-    private boolean isComplete() {
-      return this.buffer.size() >= this.command.params;
-    }
-  }
-
   public static class Status {
-    /**
-     * Bits 0-3 - Texture page X base (value * 64)
-     */
-    public int texturePageXBase;
-    /**
-     * Bit 4 - Texture page Y base (0 = 0, 1 = 256)
-     */
-    public TEXTURE_PAGE_Y_BASE texturePageYBase = TEXTURE_PAGE_Y_BASE.BASE_0;
-    /**
-     * Bits 5-6 - Semi-transparency
-     */
-    public Translucency semiTransparency = Translucency.HALF_B_PLUS_HALF_F;
-    /**
-     * Bits 7-8 - Texture page colours
-     */
-    public Bpp texturePageColours = Bpp.BITS_4;
-
-    /**
-     * Bit 10 - Drawing to display area
-     */
-    public boolean drawable;
     /**
      * Bit 11 - Set mask bit when drawing pixels
      */
@@ -1493,10 +1115,6 @@ public class Gpu implements Runnable {
      * Bit 12 - Draw pixels
      */
     public DRAW_PIXELS drawPixels = DRAW_PIXELS.ALWAYS;
-    /**
-     * Bit 13 - Interlace field (always set when bit 22 is set)
-     */
-    public boolean interlaceField;
 
     /**
      * Bits 17-18 - Horizontal resolution 1
@@ -1511,18 +1129,6 @@ public class Gpu implements Runnable {
      * Bit 21 - Display area colour depth
      */
     public DISPLAY_AREA_COLOUR_DEPTH displayAreaColourDepth = DISPLAY_AREA_COLOUR_DEPTH.BITS_15;
-  }
-
-  public enum TEXTURE_PAGE_Y_BASE {
-    BASE_0(0),
-    BASE_256(256),
-    ;
-
-    public final int value;
-
-    TEXTURE_PAGE_Y_BASE(final int value) {
-      this.value = value;
-    }
   }
 
   public enum DRAW_PIXELS {

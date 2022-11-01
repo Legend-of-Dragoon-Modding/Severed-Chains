@@ -12,7 +12,6 @@ import legend.core.dma.DmaChannelType;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
-import legend.core.gpu.DR_ENV;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
@@ -31,12 +30,10 @@ import legend.core.kernel.jmp_buf;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
-import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
-import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -103,7 +100,6 @@ import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005._8005475c;
-import static legend.game.Scus94491BpeSegment_8005._800547f4;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
@@ -521,36 +517,17 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800376b0L)
   public static long ResetCallback() {
-    return (long)_800545ec.deref(4).offset(0xcL).deref(4).cast(SupplierRef::new).run();
+    return ResetCallback_Impl();
   }
 
   @Method(0x800376e0L)
   public static long InterruptCallback(final InterruptType interrupt, final long callback) {
-    return (long)_800545ec.deref(4).offset(0x8L).deref(4).call(interrupt, callback);
+    return InterruptCallback_Impl(interrupt, callback);
   }
 
   @Method(0x80037710L)
   public static long SetDmaInterruptCallback(final DmaChannelType channel, final long callback) {
-    return (long)_800545ec.deref(4).offset(0x4L).deref(4).call(channel, callback);
-  }
-
-  @Method(0x80037774L)
-  public static void SetVsyncInterruptCallback(final InterruptType interrupt, final long callback) {
-    _800545ec.deref(4).offset(0x14L).deref(4).cast(BiConsumerRef::new).run(interrupt, callback);
-  }
-
-  @Method(0x80037804L)
-  public static boolean CheckCallback() {
-    synchronized(inExceptionHandler_80053566) {
-      return inExceptionHandler_80053566.get();
-    }
-  }
-
-  @Method(0x8003782cL)
-  public static long setIMask(final long mask) {
-    final long old = I_MASK.get();
-    I_MASK.setu(mask);
-    return old;
+    return SetDmaInterruptCallback_Impl(channel, callback);
   }
 
   @Method(0x80037844L)
@@ -887,7 +864,7 @@ public final class Scus94491BpeSegment_8003 {
   public static void LoadImage(final RECT rect, final long address) {
     validateRect("LoadImage",rect);
 
-    uploadImageToGpu(rect, address);
+    GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
   @Method(0x80038818L)
@@ -907,7 +884,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80038878L)
-  public static long MoveImage(final RECT rect, final int x, final int y) {
+  public static void MoveImage(final RECT rect, final int x, final int y) {
     validateRect("MoveImage", rect);
 
     if(rect.w.get() <= 0 || rect.h.get() <= 0) {
@@ -921,7 +898,7 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.ref(4, v1).offset(0x8L).setu((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL);
 
     //LAB_80038918
-    return uploadLinkedListToGpu(_8005475c.offset(-0x8L).cast(UnsignedIntRef::new));
+    GPU.command80CopyRectFromVramToVram(rect.x.get(), rect.y.get(), x, y, rect.w.get(), rect.h.get());
   }
 
   /**
@@ -943,9 +920,10 @@ public final class Scus94491BpeSegment_8003 {
       LOGGER.info("PutDrawEnv(%08x)...", env.getAddress());
     }
 
-    SetDrawEnv(env.dr_env, env);
-    env.dr_env.tag.set((int)(env.dr_env.tag.get() | 0xff_ffff));
-    uploadLinkedListToGpu(env.dr_env);
+    GPU.drawingArea(env.clip.x.get(), env.clip.y.get(), env.clip.x.get() + env.clip.w.get(), env.clip.y.get() + env.clip.h.get());
+    GPU.drawingOffset(env.ofs.get(0).get(), env.ofs.get(1).get());
+    GPU.maskBit(false, Gpu.DRAW_PIXELS.ALWAYS);
+
     DRAWENV_800546cc.set(env);
     return env;
   }
@@ -1051,72 +1029,6 @@ public final class Scus94491BpeSegment_8003 {
     return env;
   }
 
-  /**
-   * <p>Initializes a DR_ENV primitive using the values contained in a DRAWENV structure. By using AddPrim() to
-   * insert a DR_ENV primitive into your primitive list, it is possible to change part of your drawing environment
-   * in the middle of drawing.</p>
-   *
-   * <p>The DR_ENV primitive uses the same information as the DRAWENV structure, but the data format is
-   * different and the DRAWENV structure cannot be used as a primitive. When the DR_ENV primitive is
-   * executed, the previous drawing environment settings are destroyed.</p>
-   *
-   * @param dr_env Pointer to drawing environment change primitive
-   * @param drawEnv Pointer to drawing environment structure in which the drawing environment is described
-   */
-  @Method(0x80039550L)
-  public static void SetDrawEnv(final DR_ENV dr_env, final DRAWENV drawEnv) {
-    dr_env.code.get(0).set(makeSetDrawingAreaTopLeftCommand(drawEnv.clip.x.get(), drawEnv.clip.y.get()));
-    dr_env.code.get(1).set(makeSetDrawingAreaBottomRightCommand(drawEnv.clip.x.get() + drawEnv.clip.w.get() - 1, drawEnv.clip.y.get() + drawEnv.clip.h.get() - 1));
-    dr_env.code.get(2).set(makeSetDrawingOffsetCommand(drawEnv.ofs.get(0).get(), drawEnv.ofs.get(1).get()));
-    dr_env.code.get(3).set(makeDrawModeSettingsCommand(drawEnv.dfe.get(), 0, drawEnv.tpage.get()));
-    dr_env.code.get(4).set(0xe600_0000L); // Mask bit setting
-
-    int size = 5;
-
-    if(drawEnv.isbg.get() != 0) {
-      final long width  = clamp(drawEnv.clip.w.get(), 0, _800546c0.get() - 1);
-      final long height = clamp(drawEnv.clip.h.get(), 0, _800546c2.get() - 1);
-
-      //LAB_800396ac
-      if((drawEnv.clip.x.get() & 0x3fL) != 0 || (width & 0x3fL) != 0) {
-        //LAB_800396d4
-        // Monochrome quad
-        dr_env.code.get(size++).set(0x6000_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() - drawEnv.ofs.get(0).get() & 0xffffL) << 16 | drawEnv.clip.y.get() - drawEnv.ofs.get(1).get() & 0xffffL);
-      } else {
-        //LAB_8003974c
-        // Monochrome triangle, opaque
-        dr_env.code.get(size++).set(0x200_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() & 0xffffL) << 16 | drawEnv.clip.y.get() & 0xffffL);
-      }
-
-      dr_env.code.get(size++).set(width << 16 | height);
-    }
-
-    //LAB_800397a4
-    dr_env.tag.set(size << 24);
-  }
-
-  @Method(0x800397c0L)
-  public static long makeDrawModeSettingsCommand(final long allowDrawing, final long dither, final long texturePage) {
-    return 0xe100_0000L | (allowDrawing != 0 ? 0x400L : 0) | (dither != 0 ? 0x200L : 0x0L) | texturePage & 0x9ffL;
-  }
-
-  @Method(0x800397e0L)
-  public static long makeSetDrawingAreaTopLeftCommand(final long x, final long y) {
-    return 0xe300_0000L | clamp(y, 0, _800546c2.get()) << 10 | clamp(x, 0, _800546c0.get());
-  }
-
-  @Method(0x80039878L)
-  public static long makeSetDrawingAreaBottomRightCommand(final long x, final long y) {
-    return 0xe400_0000L | clamp(y, 0, _800546c2.get()) << 10 | clamp(x, 0, _800546c0.get());
-  }
-
-  @Method(0x80039910L)
-  public static long makeSetDrawingOffsetCommand(final long x, final long y) {
-    return 0xe500_0000L | (y & 0x7ffL) << 11 | x & 0x7ffL;
-  }
-
   @Method(0x80039aa4L)
   public static long ClearImage_Impl(final RECT rect, final long colour) {
     rect.w.set(clamp(rect.w.get(), (short)0, (short)(_800546c0.get() - 1)));
@@ -1128,34 +1040,8 @@ public final class Scus94491BpeSegment_8003 {
     return 0;
   }
 
-  @Method(0x80039cd4L)
-  public static long uploadImageToGpu(final RECT rect, final long address) {
-    rect.w.set((short)clamp(rect.w.get(), 0, _800546c0.get()));
-    rect.h.set((short)clamp(rect.h.get(), 0, _800546c2.get()));
-
-    //LAB_80039d78
-    //LAB_80039d7c
-    final long dataSize = rect.w.get() * rect.h.get() + 1;
-    if(dataSize / 2 <= 0) {
-      return -0x1L;
-    }
-
-    GPU.commandA0CopyRectFromCpuToVram(rect, address);
-
-    //LAB_80039ee8
-    //LAB_80039eec
-    return 0;
-  }
-
-  @Method(value = 0x8003a1ecL, ignoreExtraParams = true)
-  public static int uploadLinkedListToGpu(final MemoryRef address) {
-    return GPU.uploadLinkedList(address.getAddress());
-  }
-
   @Method(0x8003a798L)
   public static long FUN_8003a798(final long mode) {
-    _800547f4.setu(setIMask(0));
-
     if(mode == 1 || mode == 3) {
       //LAB_8003a854
       GPU.resetCommandBuffer();
@@ -1165,8 +1051,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003a8a0
-    setIMask(_800547f4.get());
-
     if(mode != 0) {
       return 0;
     }
@@ -1581,9 +1465,6 @@ public final class Scus94491BpeSegment_8003 {
     DRAWENV_800c3450.ofs.get(0).set((short)0);
     DRAWENV_800c3450.ofs.get(1).set((short)0);
     DRAWENV_800c3450.tw.set((short)0, (short)0, (short)0, (short)0);
-    DRAWENV_800c3450.tpage.set((short)0);
-    DRAWENV_800c3450.dfe.set((byte)0);
-    DRAWENV_800c3450.isbg.set((byte)0);
     PutDrawEnv(DRAWENV_800c3450);
 
     DISPENV_800c34b0.disp.set((short)0, (short)0, displayWidth, displayHeight);

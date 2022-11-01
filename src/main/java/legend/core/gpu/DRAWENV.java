@@ -16,7 +16,7 @@ public class DRAWENV implements MemoryRef {
    * 0x4 w<br>
    * 0x6 h
    */
-  public final legend.core.gpu.RECT clip;
+  public final RECT clip;
   /**
    * 0x8 Drawing offset<br>
    * 0x8 offset 1<br>
@@ -30,16 +30,8 @@ public class DRAWENV implements MemoryRef {
    * 0x10 w<br>
    * 0x12 h
    */
-  public final legend.core.gpu.RECT tw;
-  /**
-   * 0x14 Texture page (tp, abr, tx, ty)
-   */
-  public final ShortRef tpage;
+  public final RECT tw;
 
-  /**
-   * 0x17 Permission flag for drawing (1 = drawing on display area is inhibited)
-   */
-  public final ByteRef dfe;
   /**
    * 0x18 Draw area clear flag
    */
@@ -56,24 +48,17 @@ public class DRAWENV implements MemoryRef {
    * 0x1b
    */
   public final ByteRef b0;
-  /**
-   * 0x1c
-   */
-  public final legend.core.gpu.DR_ENV dr_env;
 
   public DRAWENV(final Value ref) {
     this.ref = ref;
 
-    this.clip = new legend.core.gpu.RECT(ref.offset(2, 0x0L));
+    this.clip = new RECT(ref.offset(2, 0x0L));
     this.ofs = ref.offset(2, 0x8L).cast(ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new));
     this.tw = new RECT(ref.offset(2, 0xcL));
-    this.tpage = new ShortRef(ref.offset(2, 0x14L));
-    this.dfe = new ByteRef(ref.offset(1, 0x17L));
     this.isbg = new ByteRef(ref.offset(1, 0x18L));
     this.r0 = new ByteRef(ref.offset(1, 0x19L));
     this.g0 = new ByteRef(ref.offset(1, 0x1aL));
     this.b0 = new ByteRef(ref.offset(1, 0x1bL));
-    this.dr_env = new DR_ENV(ref.offset(4, 0x1cL));
   }
 
   public DRAWENV set(final DRAWENV other) {
@@ -81,13 +66,10 @@ public class DRAWENV implements MemoryRef {
     this.ofs.get(0).set(other.ofs.get(0));
     this.ofs.get(1).set(other.ofs.get(1));
     this.tw.set(other.tw);
-    this.tpage.set(other.tpage);
-    this.dfe.set(other.dfe);
     this.isbg.set(other.isbg);
     this.r0.set(other.r0);
     this.g0.set(other.g0);
     this.b0.set(other.b0);
-    this.dr_env.set(other.dr_env);
     return this;
   }
 
