@@ -3055,7 +3055,7 @@ public final class Bttl_800e {
     final BattleStruct24_2 a0 = _800c6938.deref();
 
     if(a0.frameCount_20.get() != -1) {
-      a0.frameCount_20.add((int)vsyncMode_8007a3b8.get());
+      a0.frameCount_20.add(vsyncMode_8007a3b8.get());
     }
 
     //LAB_800e70fc
@@ -3235,7 +3235,7 @@ public final class Bttl_800e {
     } else if(v1 == 0x3L) {
       //LAB_800e7574
       if(struct24.frameCount_20.get() >= 0) {
-        struct24.frameCount_20.add((int)vsyncMode_8007a3b8.get());
+        struct24.frameCount_20.add(vsyncMode_8007a3b8.get());
       }
     }
 

@@ -939,7 +939,7 @@ public final class Bttl_800c {
     if((_800bc960.get() & 0x3L) == 0x3L) {
       setWidthAndFlags(320, 0);
       setDepthResolution(12);
-      vsyncMode_8007a3b8.setu(0x3L);
+      vsyncMode_8007a3b8.set(3);
       _800bc960.oru(0x40L);
       setProjectionPlaneDistance(320);
       FUN_800dabec();
@@ -1085,7 +1085,7 @@ public final class Bttl_800c {
     }
 
     if(fileCount_8004ddc8.get() == 0 && _800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8() != 0) {
-      vsyncMode_8007a3b8.setu(0x3L);
+      vsyncMode_8007a3b8.set(3);
       mcqColour_800fa6dc.set(0x80);
       scriptStatePtrArr_800bc1c0.get((int)_800c66c8.get()).deref().ui_60.and(0xffff_efffL);
 
@@ -4282,7 +4282,7 @@ public final class Bttl_800c {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
     gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0));
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -4351,7 +4351,7 @@ public final class Bttl_800c {
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
     gpuPacketAddr_1f8003d8.addu(0x10L);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of(script.params_20.get(3).deref().get() + 1), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of(script.params_20.get(3).deref().get() + 1), 0, 0));
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
     return 0;

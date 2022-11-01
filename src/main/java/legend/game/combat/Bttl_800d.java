@@ -800,7 +800,7 @@ public final class Bttl_800d {
         s1 = s1 + s0._08.get();
       }
 
-      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, (data._10._00.get() & 0x1000_0000L) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F, 0, 0), null);
+      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, (data._10._00.get() & 0x1000_0000L) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F, 0, 0));
       queueGpuPacket(tags_1f8003d0.getPointer() + (s0._04.get() + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
       gpuPacketAddr_1f8003d8.addu(0xcL);
     }

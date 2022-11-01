@@ -1429,7 +1429,7 @@ public final class SEffe {
           MEMORY.ref(2, s0).offset(0xaL).setu(sp0x64.get());
           queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, s0);
 
-          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0), null);
+          SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.B_PLUS_F, 0, 0));
           queueGpuPacket(tags_1f8003d0.getPointer() + (s1 + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
           gpuPacketAddr_1f8003d8.addu(0xcL);
         }
@@ -3218,7 +3218,7 @@ public final class SEffe {
             }
 
             //LAB_80104834
-            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0), null);
+            SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0));
             a1 = manager._10.z_22.get();
             v1 = a1 + s7.sz3_0c.get();
 
@@ -3505,7 +3505,7 @@ public final class SEffe {
     }
 
     //LAB_801059c8
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, translucency, 0, 0));
 
     int a1 = data._08.get();
     final int z = data.z_14.get();
@@ -4760,7 +4760,7 @@ public final class SEffe {
     }
 
     //LAB_80108f84
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, 0));
     queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }
@@ -4902,11 +4902,11 @@ public final class SEffe {
 
     final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 0, y));
     queueGpuPacket(tags_1f8003d0.deref().get(30).getAddress(), gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 256, y), null);
+    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_15, Translucency.of((int)(data._10._00.get() >>> 28 & 3)), 256, y));
     queueGpuPacket(tags_1f8003d0.deref().get(29).getAddress(), gpuPacketAddr_1f8003d8.get());
     gpuPacketAddr_1f8003d8.addu(0xcL);
   }

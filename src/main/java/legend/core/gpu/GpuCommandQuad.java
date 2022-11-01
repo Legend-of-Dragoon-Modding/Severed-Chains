@@ -107,7 +107,7 @@ public class GpuCommandQuad extends GpuCommand {
 
         int texel;
         if(this.textured) {
-          texel = gpu.getTexel(gpu.maskTexelAxis(u, gpu.preMaskX, gpu.postMaskX), gpu.maskTexelAxis(v, gpu.preMaskY, gpu.postMaskY), this.clutX, this.clutY, this.vramX, this.vramY, this.bpp);
+          texel = gpu.getTexel(u, v, this.clutX, this.clutY, this.vramX, this.vramY, this.bpp);
           if(texel == 0) {
             continue;
           }

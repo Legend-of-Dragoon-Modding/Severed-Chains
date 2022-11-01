@@ -489,16 +489,14 @@ public final class Scus94491BpeSegment_8003 {
       final long s0 = GPU_REG1.get();
       checkVsyncTimeout(Vcount.get() + 1, 0x1L);
 
-      if((s0 & 0x40L) != 0) {
-        if((s0 ^ GPU_REG1.get()) >= 0) {
-          //LAB_8003759c
-          do {
-            if(Hardware.isGpuThread()) {
-              GPU.tick();
-            }
+      if((s0 & 0x40_0000L) != 0) {
+        //LAB_8003759c
+        while(((s0 ^ GPU_REG1.get()) & 0x8000_0000L) == 0) {
+          if(Hardware.isGpuThread()) {
+            GPU.tick();
+          }
 
-            DebugHelper.sleep(1);
-          } while(((s0 ^ GPU_REG1.get()) & 0x80000000L) == 0);
+          DebugHelper.sleep(1);
         }
       }
 
@@ -1271,10 +1269,9 @@ public final class Scus94491BpeSegment_8003 {
     dr_env.code.get(1).set(makeSetDrawingAreaBottomRightCommand(drawEnv.clip.x.get() + drawEnv.clip.w.get() - 1, drawEnv.clip.y.get() + drawEnv.clip.h.get() - 1));
     dr_env.code.get(2).set(makeSetDrawingOffsetCommand(drawEnv.ofs.get(0).get(), drawEnv.ofs.get(1).get()));
     dr_env.code.get(3).set(makeDrawModeSettingsCommand(drawEnv.dfe.get(), drawEnv.dtd.get(), drawEnv.tpage.get()));
-    dr_env.code.get(4).set(makeTextureWindowSettingsCommand(drawEnv.tw));
-    dr_env.code.get(5).set(0xe600_0000L); // Mask bit setting
+    dr_env.code.get(4).set(0xe600_0000L); // Mask bit setting
 
-    int size = 6;
+    int size = 5;
 
     if(drawEnv.isbg.get() != 0) {
       final long width  = clamp(drawEnv.clip.w.get(), 0, _800546c0.get() - 1);
@@ -1456,29 +1453,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003b0b4L)
   public static long GsGetWorkBase() {
     return GsOUT_PACKET_P.get();
-  }
-
-  /**
-   * BreakDraw?
-   */
-  @Method(0x8003b0d0L)
-  public static long FUN_8003b0d0() {
-    if(DMA.gpu.CHCR.get(0x100_0000L) == 0) { // Transfer stopped/completed
-      return 0;
-    }
-
-    if(DMA.gpu.CHCR.get(0x700L) >>> 8 != 0x4L) { // Chopping enabled, or not linked list
-      return -0x1L;
-    }
-
-    DMA.gpu.CHCR.and(0xfeff_ffffL);
-
-    if(DMA.gpu.MADR.get(0xff_ffffL) == 0xff_ffffL) {
-      return 0;
-    }
-
-    //LAB_8003b15c
-    return DMA.gpu.MADR.get();
   }
 
   /**
@@ -1729,10 +1703,9 @@ public final class Scus94491BpeSegment_8003 {
    * @param allowDrawingToDisplayArea 0: drawing not allowed in display area, 1: drawing allowed in display area
    * @param dither 0: dithering off, 1: dithering on
    * @param texturePage Texture page
-   * @param textureWindow Pointer to texture window
    */
   @Method(0x8003b850L)
-  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage, @Nullable final RECT textureWindow) {
+  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage) {
     drawMode.tag.and(0xff_ffffL).or(0x200_0000L);
 
     long drawingMode = 0xe100_0000L | texturePage & 0x9ffL;
@@ -1748,17 +1721,8 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003b878
     drawMode.code.get(0).set(drawingMode);
 
-    if(textureWindow == null) {
-      //LAB_8003b8d8
-      drawMode.code.get(1).set(0);
-    } else {
-      final long val = 0xe200_0000L |
-        (textureWindow.y.get() >> 3 & 0x1f) << 15 | // Texture window offset Y
-        (textureWindow.x.get() >> 3 & 0x1f) << 10 | // Texture window offset X
-        (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y
-        (-textureWindow.w.get() & 0xffL) >> 3; // Texture window mask X
-      drawMode.code.get(1).set(val);
-    }
+    //LAB_8003b8d8
+    drawMode.code.get(1).set(0);
 
     //LAB_8003b8dc
   }

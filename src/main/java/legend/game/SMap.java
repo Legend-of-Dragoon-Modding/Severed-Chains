@@ -658,7 +658,7 @@ public final class SMap {
       diskSwapAttempts_800c6690.setu(0);
       mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc05c.get());
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
     } else if(v1 == 3) {
       //LAB_800d9354
       loadWrongDiskMcq();
@@ -686,7 +686,7 @@ public final class SMap {
     scriptStartEffect(1, 1);
     _8004dd30.setu(0x1L);
     setMainVolume(0, 0);
-    vsyncMode_8007a3b8.setu(0);
+    vsyncMode_8007a3b8.set(1);
     S_InitLoaded_800c6694.setu(0);
     diskSwapMcqLoaded_800c6698.setu(0);
     loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
@@ -4770,7 +4770,7 @@ public final class SMap {
         if(a0) {
           mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L);
           pregameLoadingStage_800bb10c.setu(0);
-          vsyncMode_8007a3b8.setu(0x2L);
+          vsyncMode_8007a3b8.set(2);
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
           scriptsTickDisabled_800bc0b8.set(false);
@@ -4782,7 +4782,7 @@ public final class SMap {
         _80052c44.setu(0x5L);
         mainCallbackIndexOnceLoaded_8004dd24.setu(0x6L);
         pregameLoadingStage_800bb10c.setu(0);
-        vsyncMode_8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.set(2);
         _800f7e4c.setu(0);
         scriptsTickDisabled_800bc0b8.set(false);
       }
@@ -4806,7 +4806,7 @@ public final class SMap {
         if(a0) {
           FUN_8002a9c0();
           mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
-          vsyncMode_8007a3b8.setu(0x2L);
+          vsyncMode_8007a3b8.set(2);
           pregameLoadingStage_800bb10c.setu(0);
 
           //LAB_800e6484
@@ -4838,7 +4838,7 @@ public final class SMap {
           _80052c44.setu(0x5L);
           mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
           pregameLoadingStage_800bb10c.setu(0);
-          vsyncMode_8007a3b8.setu(0x2L);
+          vsyncMode_8007a3b8.set(2);
           _800f7e4c.setu(0);
           scriptsTickDisabled_800bc0b8.set(false);
         }
@@ -4846,14 +4846,14 @@ public final class SMap {
 
       case 0x16 -> {
         mainCallbackIndexOnceLoaded_8004dd24.setu(0xaL);
-        vsyncMode_8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.set(2);
         _80052c44.setu(0x1L);
         pregameLoadingStage_800bb10c.setu(0);
       }
 
       case 0x17 -> {
         mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
-        vsyncMode_8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.set(2);
         pregameLoadingStage_800bb10c.setu(0);
       }
     }
@@ -6793,7 +6793,7 @@ public final class SMap {
         break;
 
       case 0x2:
-        vsyncMode_8007a3b8.setu(0x4L);
+        vsyncMode_8007a3b8.set(4);
         FUN_800ed8d0(_800bf0dc.get());
 
         _800bd808.setu(-0x1L);
@@ -6808,7 +6808,7 @@ public final class SMap {
         break;
 
       case 0x4:
-        vsyncMode_8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.set(2);
         pregameLoadingStage_800bb10c.setu(0);
         mainCallbackIndexOnceLoaded_8004dd24.setu(_800bf0ec);
         break;
@@ -7901,7 +7901,7 @@ public final class SMap {
         gpuPacketAddr_1f8003d8.addu(0x18L);
 
         final long drawModePacket = gpuPacketAddr_1f8003d8.get();
-        SetDrawMode(MEMORY.ref(4, drawModePacket, DR_MODE::new), false, false, MEMORY.ref(4, s1).offset(0x4L).get(), null);
+        SetDrawMode(MEMORY.ref(4, drawModePacket, DR_MODE::new), false, false, MEMORY.ref(4, s1).offset(0x4L).get());
         queueGpuPacket(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s1).offset(0x20L).get()).getAddress(), drawModePacket);
         gpuPacketAddr_1f8003d8.addu(0xcL);
 

@@ -103,16 +103,6 @@ public class Gpu implements Runnable {
   public final RECT drawingArea = new RECT();
   private short offsetX;
   private short offsetY;
-  private boolean texturedRectXFlip;
-  private boolean texturedRectYFlip;
-  private int textureWindowMaskX;
-  private int textureWindowMaskY;
-  private int textureWindowOffsetX;
-  private int textureWindowOffsetY;
-  public int preMaskX;
-  public int preMaskY;
-  public int postMaskX;
-  public int postMaskY;
 
   @Nullable
   private Gp0CommandBuffer currentCommand;
@@ -832,159 +822,6 @@ public class Gpu implements Runnable {
     return (short)(n << 21 >> 21);
   }
 
-  static Runnable polygonRenderer(final IntList buffer, final Gpu gpu) {
-    int bufferIndex = 0;
-    final int cmd = buffer.getInt(bufferIndex++);
-    final int colour = cmd & 0xff_ffff;
-    final int command = cmd >>> 24;
-    final boolean isRaw = (command & 0b1) != 0;
-    final boolean isTranslucent = (command & 0b10) != 0;
-    final boolean isTextured = (command & 0b100) != 0;
-    final boolean isQuad = (command & 0b1000) != 0;
-    final boolean isShaded = (command & 0b1_0000) != 0;
-
-    final int vertices = isQuad ? 4 : 3;
-
-    final int[] x = new int[4];
-    final int[] y = new int[4];
-    final int[] tx = new int[4];
-    final int[] ty = new int[4];
-    final int[] c = new int[4];
-
-    Arrays.fill(c, colour);
-
-    final int vertex0 = buffer.getInt(bufferIndex++);
-    y[0] = (short)(vertex0 >>> 16 & 0xffff);
-    x[0] = (short)(vertex0        & 0xffff);
-
-    final int clut;
-    if(isTextured) {
-      final int tex0 = buffer.getInt(bufferIndex++);
-      clut = tex0 >>> 16 & 0xffff;
-      ty[0] = tex0 >>> 8 & 0xff;
-      tx[0] = tex0 & 0xff;
-    } else {
-      clut = 0;
-    }
-
-    if(isShaded) {
-      c[1] = buffer.getInt(bufferIndex++);
-    }
-
-    final int vertex1 = buffer.getInt(bufferIndex++);
-    y[1] = (short)(vertex1 >>> 16 & 0xffff);
-    x[1] = (short)(vertex1        & 0xffff);
-
-    final int page;
-    if(isTextured) {
-      final int tex1 = buffer.getInt(bufferIndex++);
-      page = tex1 >>> 16 & 0xffff;
-      ty[1] = tex1 >>> 8 & 0xff;
-      tx[1] = tex1 & 0xff;
-    } else {
-      page = 0;
-    }
-
-    if(isShaded) {
-      c[2] = buffer.getInt(bufferIndex++);
-    }
-
-    final int vertex2 = buffer.getInt(bufferIndex++);
-    y[2] = (short)(vertex2 >>> 16 & 0xffff);
-    x[2] = (short)(vertex2        & 0xffff);
-
-    if(isTextured) {
-      final int tex2 = buffer.getInt(bufferIndex++);
-      ty[2] = tex2 >>> 8 & 0xff;
-      tx[2] = tex2 & 0xff;
-    }
-
-    if(isQuad) {
-      if(isShaded) {
-        c[3] = buffer.getInt(bufferIndex++);
-      }
-
-      final int vertex3 = buffer.getInt(bufferIndex++);
-      y[3] = (short)(vertex3 >>> 16 & 0xffff);
-      x[3] = (short)(vertex3        & 0xffff);
-
-      if(isTextured) {
-        final int tex3 = buffer.getInt(bufferIndex);
-        ty[3] = tex3 >>> 8 & 0xff;
-        tx[3] = tex3 & 0xff;
-      }
-    }
-
-    final int clutX = (short)((clut & 0x3f) * 16) * gpu.renderScale;
-    final int clutY = (short)(clut >>> 6 & 0x1ff) * gpu.renderScale;
-
-    for(int i = 0; i < vertices; i++) {
-      x[i] *= gpu.renderScale;
-      y[i] *= gpu.renderScale;
-      tx[i] *= gpu.renderScale;
-      ty[i] *= gpu.renderScale;
-    }
-
-    return () -> {
-      LOGGER.trace("[GP0.%02x] Drawing textured %d-point poly offset %d %d, XYUV0 %d %d %d %d, XYUV1 %d %d %d %d, XYUV2 %d %d %d %d, XYUV3 %d %d %d %d, Clut(XY) %04x (%d %d), Page %04x, RGB %06x", command, vertices, gpu.offsetX, gpu.offsetY, x[0], y[0], tx[0], ty[0], x[1], y[1], tx[1], ty[1], x[2], y[2], tx[2], ty[2], x[3], y[3], tx[3], ty[3], clut, clutX, clutY, page, colour);
-
-      final int texturePageXBase = (page       & 0b1111) *  64 * gpu.renderScale;
-      final int texturePageYBase = (page >>> 4 & 0b0001) * 256 * gpu.renderScale;
-      final Translucency translucency = Translucency.values()[page >>> 5 & 0b11];
-      final legend.core.gpu.Bpp texturePageColours = legend.core.gpu.Bpp.values()[page >>> 7 & 0b11];
-
-      for(int i = 0; i < vertices; i++) {
-        x[i] += gpu.offsetX;
-        y[i] += gpu.offsetY;
-      }
-
-      gpu.status.texturePageXBase = texturePageXBase;
-      gpu.status.texturePageYBase = texturePageYBase / gpu.renderScale == 256 ? TEXTURE_PAGE_Y_BASE.BASE_256 : TEXTURE_PAGE_Y_BASE.BASE_0;
-      gpu.status.semiTransparency = translucency;
-      gpu.status.texturePageColours = texturePageColours;
-
-      gpu.rasterizeTriangle(x[0], y[0], x[1], y[1], x[2], y[2], tx[0], ty[0], tx[1], ty[1], tx[2], ty[2], c[0], c[1], c[2], clutX, clutY, texturePageXBase, texturePageYBase, texturePageColours, isTextured, isShaded, isTranslucent, isRaw, translucency);
-
-      if(isQuad) {
-        gpu.rasterizeTriangle(x[1], y[1], x[2], y[2], x[3], y[3], tx[1], ty[1], tx[2], ty[2], tx[3], ty[3], c[1], c[2], c[3], clutX, clutY, texturePageXBase, texturePageYBase, texturePageColours, isTextured, isShaded, isTranslucent, isRaw, translucency);
-      }
-    };
-  }
-
-  private static Runnable lineRenderer(final IntList buffer, final Gpu gpu) {
-    int bufferIndex = 0;
-    final int cmd = buffer.getInt(bufferIndex++);
-    final int colour1 = cmd & 0xff_ffff;
-    final int command = cmd >>> 24;
-
-    final boolean isPoly = (command & 1 << 3) != 0;
-    final boolean isShaded = (command & 1 << 4) != 0;
-    final boolean isTransparent = (command & 1 << 1) != 0;
-
-    if(isPoly) {
-      throw new RuntimeException("Polyline not supported");
-    }
-
-    final int v1 = buffer.getInt(bufferIndex++);
-
-    final int colour2;
-    if(isShaded) {
-      colour2 = buffer.getInt(bufferIndex++);
-    } else {
-      colour2 = colour1;
-    }
-
-    final int v2 = buffer.getInt(bufferIndex);
-
-    final int x = signed11bit(v1 & 0xffff) * gpu.renderScale;
-    final int y = signed11bit(v1 >> 16) * gpu.renderScale;
-
-    final int x2 = signed11bit(v2 & 0xffff) * gpu.renderScale;
-    final int y2 = signed11bit(v2 >> 16) * gpu.renderScale;
-
-    return () -> gpu.rasterizeLine(x, y, x2, y2, colour1, colour2, isTransparent ? gpu.status.semiTransparency : null);
-  }
-
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
     if(Math.abs(x - x2) >= this.vramWidth || Math.abs(y - y2) >= this.vramHeight) {
       return;
@@ -1150,7 +987,7 @@ public class Gpu implements Runnable {
             }
           }
 
-          int texel = this.getTexel(this.maskTexelAxis(u, this.preMaskX, this.postMaskX), this.maskTexelAxis(v, this.preMaskY, this.postMaskY), clutX, clutY, this.status.texturePageXBase, this.status.texturePageYBase.value * this.renderScale, this.status.texturePageColours);
+          int texel = this.getTexel(u, v, clutX, clutY, this.status.texturePageXBase, this.status.texturePageYBase.value * this.renderScale, this.status.texturePageColours);
           if(texel == 0) {
             continue;
           }
@@ -1262,7 +1099,7 @@ public class Gpu implements Runnable {
           if(isTextured) {
             final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
             final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
-            int texel = this.getTexel(this.maskTexelAxis(texelX, this.preMaskX, this.postMaskX), this.maskTexelAxis(texelY, this.preMaskY, this.postMaskY), clutX, clutY, textureBaseX, textureBaseY, bpp);
+            int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
             if(texel == 0) {
               w0 += A12;
               w1 += A20;
@@ -1339,10 +1176,6 @@ public class Gpu implements Runnable {
     final byte r = (byte)(c2R * ratio + c1R * (1 - ratio));
 
     return r << 16 | g << 8 | b;
-  }
-
-  public int maskTexelAxis(final int axis, final int preMaskAxis, final int postMaskAxis) {
-    return axis & preMaskAxis | postMaskAxis;
   }
 
   private static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
@@ -1487,16 +1320,17 @@ public class Gpu implements Runnable {
     IoHelper.write(stream, this.drawingArea);
     IoHelper.write(stream, this.offsetX);
     IoHelper.write(stream, this.offsetY);
-    IoHelper.write(stream, this.texturedRectXFlip);
-    IoHelper.write(stream, this.texturedRectYFlip);
-    IoHelper.write(stream, this.textureWindowMaskX);
-    IoHelper.write(stream, this.textureWindowMaskY);
-    IoHelper.write(stream, this.textureWindowOffsetX);
-    IoHelper.write(stream, this.textureWindowOffsetY);
-    IoHelper.write(stream, this.preMaskX);
-    IoHelper.write(stream, this.preMaskY);
-    IoHelper.write(stream, this.postMaskX);
-    IoHelper.write(stream, this.postMaskY);
+    //TODO
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
+    IoHelper.write(stream, 0);
 
     IoHelper.write(stream, this.videoCycles);
     IoHelper.write(stream, this.scanLine);
@@ -1564,16 +1398,17 @@ public class Gpu implements Runnable {
     IoHelper.readRect(buf, this.drawingArea);
     this.offsetX = IoHelper.readShort(buf);
     this.offsetY = IoHelper.readShort(buf);
-    this.texturedRectXFlip = IoHelper.readBool(buf);
-    this.texturedRectYFlip = IoHelper.readBool(buf);
-    this.textureWindowMaskX = IoHelper.readInt(buf);
-    this.textureWindowMaskY = IoHelper.readInt(buf);
-    this.textureWindowOffsetX = IoHelper.readInt(buf);
-    this.textureWindowOffsetY = IoHelper.readInt(buf);
-    this.preMaskX = IoHelper.readInt(buf);
-    this.preMaskY = IoHelper.readInt(buf);
-    this.postMaskX = IoHelper.readInt(buf);
-    this.postMaskY = IoHelper.readInt(buf);
+    //TODO
+    IoHelper.readBool(buf);
+    IoHelper.readBool(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
+    IoHelper.readInt(buf);
 
     this.videoCycles = IoHelper.readInt(buf);
     this.scanLine = IoHelper.readInt(buf);
@@ -1594,11 +1429,6 @@ public class Gpu implements Runnable {
   }
 
   public enum GP0_COMMAND {
-    NOOP(0x00, 1, (buffer, gpu) -> () -> LOGGER.trace("GPU NOOP")),
-    NOOP_4(0x04, 1, (buffer, gpu) -> () -> LOGGER.trace("GPU NOOP 4")), //TODO I'm not sure if this command is actually supposed to be executing, or if it's a bug in the game code
-
-    CLEAR_CACHE(0x01, 1, (buffer, gpu) -> () -> LOGGER.trace("GPU clear cache")),
-
     FILL_RECTANGLE_IN_VRAM(0x02, 3, (buffer, gpu) -> {
       final int colour = buffer.getInt(0) & 0xff_ffff;
 
@@ -1611,59 +1441,6 @@ public class Gpu implements Runnable {
       final int w = (short)(size & 0xffff) * gpu.renderScale;
 
       return () -> gpu.command02FillRect(x, y, w, h, colour);
-    }),
-
-    MONO_FOUR_POINT_POLY_OPAQUE(0x28, 5, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    MONO_FOUR_POINT_POLY_TRANSLUCENT(0x2a, 5, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-
-    TEXTURED_FOUR_POINT_POLYGON_OPAQUE_BLENDED(0x2c, 9, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    TEXTURED_FOUR_POINT_POLYGON_TRANSLUCENT_BLENDED(0x2e, 9, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_THREE_POINT_POLYGON_OPAQUE(0x30, 6, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-
-    SHADED_THREE_POINT_POLYGON_TRANSLUCENT(0x32, 6, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_TEXTURED_THREE_POINT_POLYGON_OPAQUE_BLENDED(0x34, 9, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_TEXTURED_THREE_POINT_POLYGON_TRANSLUCENT_BLENDED(0x36, 9, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_FOUR_POINT_POLYGON_OPAQUE(0x38, 8, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_FOUR_POINT_POLYGON_TRANSLUCENT(0x3a, 8, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-
-    SHADED_TEXTURED_FOUR_POINT_POLYGON_OPAQUE_BLENDED(0x3c, 12, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-    SHADED_TEXTURED_FOUR_POINT_POLYGON_TRANSLUCENT_BLENDED(0x3e, 12, (buffer, gpu) -> {
-      return polygonRenderer(buffer, gpu);
-    }),
-
-    MONOCHROME_LINE_OPAQUE(0x40, 3, (buffer, gpu) -> {
-      return lineRenderer(buffer, gpu);
-    }),
-    MONOCHROME_LINE_TRANSLUCENT(0x42, 3, (buffer, gpu) -> {
-      return lineRenderer(buffer, gpu);
-    }),
-    SHADED_LINE_OPAQUE(0x50, 4, (buffer, gpu) -> {
-      return lineRenderer(buffer, gpu);
-    }),
-    SHADED_LINE_TRANSLUCENT(0x52, 4, (buffer, gpu) -> {
-      return lineRenderer(buffer, gpu);
     }),
 
     MONO_RECT_VAR_SIZE_OPAQUE(0x60, 3, (buffer, gpu) -> {
@@ -1749,27 +1526,9 @@ public class Gpu implements Runnable {
         gpu.status.texturePageXBase = (settings & 0b1111) * 64 * gpu.renderScale;
         gpu.status.texturePageYBase = (settings & 0b1_0000) != 0 ? TEXTURE_PAGE_Y_BASE.BASE_256 : TEXTURE_PAGE_Y_BASE.BASE_0;
         gpu.status.semiTransparency = Translucency.values()[(settings & 0b110_0000) >>> 5];
-        gpu.status.texturePageColours = legend.core.gpu.Bpp.values()[(settings & 0b1_1000_0000) >>> 7];
+        gpu.status.texturePageColours = Bpp.values()[(settings & 0b1_1000_0000) >>> 7];
         gpu.status.drawable = (settings & 0b100_0000_0000) != 0;
         gpu.status.disableTextures = (settings & 0b1000_0000_0000) != 0;
-        gpu.texturedRectXFlip = (settings & 0b1_0000_0000_0000) != 0;
-        gpu.texturedRectYFlip = (settings & 0b10_0000_0000_0000) != 0;
-      };
-    }),
-
-    TEXTURE_WINDOW_SETTINGS(0xe2, 1, (buffer, gpu) -> {
-      final int settings = buffer.getInt(0);
-
-      return () -> {
-        gpu.textureWindowMaskX   =  (settings & 0b0000_0000_0000_0001_1111)         * 8 * gpu.renderScale;
-        gpu.textureWindowMaskY   = ((settings & 0b0000_0000_0011_1110_0000) >>>  5) * 8 * gpu.renderScale;
-        gpu.textureWindowOffsetX = ((settings & 0b0000_0111_1100_0000_0000) >>> 10) * 8 * gpu.renderScale;
-        gpu.textureWindowOffsetY = ((settings & 0b1111_1000_0000_0000_0000) >>> 15) * 8 * gpu.renderScale;
-
-        gpu.preMaskX = ~(gpu.textureWindowMaskX * 8);
-        gpu.preMaskY = ~(gpu.textureWindowMaskY * 8);
-        gpu.postMaskX = (gpu.textureWindowOffsetX & gpu.textureWindowMaskX) * 8;
-        gpu.postMaskY = (gpu.textureWindowOffsetY & gpu.textureWindowMaskY) * 8;
       };
     }),
 

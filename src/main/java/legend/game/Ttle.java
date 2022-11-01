@@ -283,7 +283,7 @@ public final class Ttle {
   @Method(0x800c7488L)
   public static void mainMenuStateSetUpNewGame() {
     setUpNewGameData();
-    vsyncMode_8007a3b8.setu(0);
+    vsyncMode_8007a3b8.set(1);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -302,7 +302,7 @@ public final class Ttle {
   @Method(0x800c7500L)
   public static void FUN_800c7500() {
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     pregameLoadingStage_800bb10c.setu(0);
   }
 
@@ -371,7 +371,7 @@ public final class Ttle {
         free(drgn0_6666FilePtr_800bdc3c.getPointer());
         mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
         pregameLoadingStage_800bb10c.setu(0);
-        vsyncMode_8007a3b8.setu(0x2L);
+        vsyncMode_8007a3b8.set(2);
       }
     }
 
@@ -425,7 +425,7 @@ public final class Ttle {
     GsRVIEW2_800c6760.super_1c.clear();
     GsSetRefView2(GsRVIEW2_800c6760);
 
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     pregameLoadingStage_800bb10c.setu(0x1L);
   }
 
@@ -542,7 +542,7 @@ public final class Ttle {
 
       _800bf0dc.setu(0x2L);
       _800bf0ec.setu(0x3L);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
 
       pregameLoadingStage_800bb10c.setu(0);
     }
@@ -584,7 +584,7 @@ public final class Ttle {
       }
 
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
 
       //LAB_800c80c4
       return;
@@ -594,7 +594,7 @@ public final class Ttle {
     if(_800c6728.get() == 0x3L) {
       mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
     } else {
       //LAB_800c8108
       renderMenuLogo();
@@ -630,7 +630,7 @@ public final class Ttle {
       _800bf0dc.setu(0);
       _800bf0ec.setu(0x2L);
       mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
 
       pregameLoadingStage_800bb10c.setu(0);
     }

@@ -113,7 +113,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b0d0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
@@ -563,8 +562,6 @@ public final class Scus94491BpeSegment {
   private static boolean dumping;
   private static boolean loading;
 
-  private static int fpsLimit = 30;
-
   private static final Path state = Paths.get("./state.ddmp");
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
@@ -700,8 +697,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    GPU.window().setFpsLimit(fpsLimit);
-
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL) != 0) {
         dumping = true;
@@ -712,12 +707,7 @@ public final class Scus94491BpeSegment {
       }
 
       if(key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) {
-        if((mods & GLFW_MOD_CONTROL) == 0) {
-          if(fpsLimit > 5) {
-            fpsLimit -= 5;
-            GPU.window().setFpsLimit(fpsLimit);
-          }
-        } else {
+        if((mods & GLFW_MOD_CONTROL) != 0) {
           if(GPU.getRenderScale() > 1) {
             GPU.rescaleVram(GPU.getRenderScale() - 1);
           }
@@ -725,10 +715,7 @@ public final class Scus94491BpeSegment {
       }
 
       if(key == GLFW_KEY_EQUAL || key == GLFW_KEY_KP_ADD) {
-        if((mods & GLFW_MOD_CONTROL) == 0) {
-          fpsLimit += 5;
-          GPU.window().setFpsLimit(fpsLimit);
-        } else {
+        if((mods & GLFW_MOD_CONTROL) != 0) {
           GPU.rescaleVram(GPU.getRenderScale() + 1);
         }
       }
@@ -1665,7 +1652,7 @@ public final class Scus94491BpeSegment {
       mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24);
       mainCallbackIndexOnceLoaded_8004dd24.setu(-1);
       FUN_80019710();
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
       loadGameStateOverlay((int)mainCallbackIndex_8004dd20.getSigned());
 
       if(mainCallbackIndex_8004dd20.get() == 0x6L) { // Starting combat
@@ -1807,15 +1794,8 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012eccL)
   public static void syncFrame() {
-    if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      //LAB_80012efc
-      VSync((int)vsyncMode_8007a3b8.getSigned());
-    } else {
-      VSync(0);
-      FUN_8003b0d0();
-    }
-
-    //LAB_80012f14
+    final int frames = Math.max(1, vsyncMode_8007a3b8.get());
+    GPU.window().setFpsLimit(60 / frames);
   }
 
   /**
@@ -4492,7 +4472,7 @@ public final class Scus94491BpeSegment {
     if(fileCount_8004ddc8.get() == 0 && overlayQueueIndex_8004dd14.get() == overlayQueueIndex_8004dd18.get() && loadingGameStateOverlay_8004dd08.get() == 0) {
       FUN_800201c8(0x6L);
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
       mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc91c.get());
     }
 
@@ -6042,7 +6022,7 @@ public final class Scus94491BpeSegment {
     chapterTitleCardMrg_800c6710.clear();
     _8004f6ec.setu(0);
     playSound(0, 16, 0, 0, (short)0, (short)0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     _800bd740.setu(0x2L);
     _800bd700.setu(0);
     _800bd704.setu(0);

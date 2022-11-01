@@ -840,7 +840,7 @@ public final class Scus94491BpeSegment_800e {
 
     mainCallbackIndexOnceLoaded_8004dd24.setu(0);
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     _800bb0fc.setu(0);
 
     FUN_800e60d8();
@@ -892,7 +892,7 @@ public final class Scus94491BpeSegment_800e {
       }
 
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
 
       //LAB_800e60c8
     }
@@ -1013,7 +1013,7 @@ public final class Scus94491BpeSegment_800e {
     setWidthAndFlags(320, 0);
 
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     mainCallbackIndexOnceLoaded_8004dd24.setu(mainCallbackIndex_8004dd20).addu(0x1L);
   }
 

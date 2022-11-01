@@ -748,7 +748,7 @@ public class WMap {
   @Method(0x800cca74L)
   public static void FUN_800cca74() {
     final WMapStruct258 struct = struct258_800c66a8.deref();
-    vsyncMode_8007a3b8.setu(0x3L);
+    vsyncMode_8007a3b8.set(3);
     scriptStartEffect(0x2L, 0xfL);
     LoadImage(_800c8700, struct.imageData_2c.get());
     free(struct.imageData_2c.get());
@@ -779,7 +779,7 @@ public class WMap {
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
     setWidthAndFlags(320, 0);
-    vsyncMode_8007a3b8.setu(0x3L);
+    vsyncMode_8007a3b8.set(3);
     unloadSoundFile((int)0x9L);
     FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
     pregameLoadingStage_800bb10c.setu(0x1L);
@@ -855,7 +855,7 @@ public class WMap {
     _80052c6c.setu(0);
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
   }
 
   @Method(0x800cce1cL)
@@ -872,7 +872,7 @@ public class WMap {
     _80052c6c.setu(0);
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x6L);
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
   }
 
   @Method(0x800cce9cL)
@@ -1027,7 +1027,7 @@ public class WMap {
 
     //LAB_800cd32c
     unloadSoundFile(9);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
   }
 
   /**
