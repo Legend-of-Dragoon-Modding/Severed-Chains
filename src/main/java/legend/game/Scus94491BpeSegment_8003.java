@@ -13,6 +13,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gpu.DR_ENV;
+import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -63,12 +64,8 @@ import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
 import static legend.core.MathHelper.clamp;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.core.Timers.TMR_HRETRACE_MODE;
-import static legend.core.Timers.TMR_HRETRACE_VAL;
 import static legend.core.dma.DmaManager.DMA_DICR;
 import static legend.core.dma.DmaManager.DMA_DPCR;
-import static legend.core.gpu.Gpu.GPU_REG0;
-import static legend.core.gpu.Gpu.GPU_REG1;
 import static legend.core.kernel.Bios.ExitCriticalSection;
 import static legend.core.kernel.Bios.setjmp_Impl_A13;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -94,7 +91,6 @@ import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
 import static legend.game.Scus94491BpeSegment_8005.GsOUT_PACKET_P;
 import static legend.game.Scus94491BpeSegment_8005.Vcount;
-import static legend.game.Scus94491BpeSegment_8005._800534fc;
 import static legend.game.Scus94491BpeSegment_8005._80053500;
 import static legend.game.Scus94491BpeSegment_8005._80053594;
 import static legend.game.Scus94491BpeSegment_8005._800535a0;
@@ -107,9 +103,6 @@ import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005._8005475c;
-import static legend.game.Scus94491BpeSegment_8005._80054790;
-import static legend.game.Scus94491BpeSegment_8005._80054792;
-import static legend.game.Scus94491BpeSegment_8005._800547bb;
 import static legend.game.Scus94491BpeSegment_8005._800547f4;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
@@ -134,8 +127,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c13a8;
 import static legend.game.Scus94491BpeSegment_800c._800c13a9;
 import static legend.game.Scus94491BpeSegment_800c._800c1434;
 import static legend.game.Scus94491BpeSegment_800c._800c1ba8;
-import static legend.game.Scus94491BpeSegment_800c._800c1bc0;
-import static legend.game.Scus94491BpeSegment_800c._800c1be8;
 import static legend.game.Scus94491BpeSegment_800c._800c3410;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
@@ -460,21 +451,11 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x80037490L)
   public static int VSync(final int mode) {
-    long v0;
-    long v1;
-
-    //LAB_800374b4
-    do {
-      v1 = TMR_HRETRACE_VAL.get();
-      v0 = TMR_HRETRACE_VAL.get();
-    } while(v1 != v0);
-
-    final long s1 = v1 - _800534fc.get() & 0xffffL;
-
     if(mode < 0) {
       return (int)Vcount.get();
     }
 
+    //LAB_800374b4
     //LAB_80037500
     if(mode != 0x1L) {
       //LAB_8003752c
@@ -486,32 +467,15 @@ public final class Scus94491BpeSegment_8003 {
         checkVsyncTimeout(_80053500.get(), 0);
       }
 
-      final long s0 = GPU_REG1.get();
       checkVsyncTimeout(Vcount.get() + 1, 0x1L);
-
-      if((s0 & 0x40_0000L) != 0) {
-        //LAB_8003759c
-        while(((s0 ^ GPU_REG1.get()) & 0x8000_0000L) == 0) {
-          if(Hardware.isGpuThread()) {
-            GPU.tick();
-          }
-
-          DebugHelper.sleep(1);
-        }
-      }
 
       //LAB_800375b4
       _80053500.setu(Vcount);
-
-      //LAB_800375cc
-      do {
-        _800534fc.setu(TMR_HRETRACE_VAL);
-      } while(_800534fc.get() != TMR_HRETRACE_VAL.get());
     }
 
     //LAB_800375f0
     //LAB_800375f4
-    return (int)s1;
+    return 0;
   }
 
   @Method(0x80037608L)
@@ -568,11 +532,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80037710L)
   public static long SetDmaInterruptCallback(final DmaChannelType channel, final long callback) {
     return (long)_800545ec.deref(4).offset(0x4L).deref(4).call(channel, callback);
-  }
-
-  @Method(0x80037740L)
-  public static void SetTmr0InterruptCallback(final long func) {
-    _800545ec.deref(4).offset(0x14L).deref(4).call(InterruptType.TMR0, func);
   }
 
   @Method(0x80037774L)
@@ -707,21 +666,6 @@ public final class Scus94491BpeSegment_8003 {
       ChangeClearRCnt(3, callback == 0);
     }
 
-    //LAB_80037bc0
-    if(interrupt == InterruptType.TMR0) {
-      ChangeClearRCnt(0, callback == 0);
-    }
-
-    //LAB_80037bd8
-    if(interrupt == InterruptType.TMR1) {
-      ChangeClearRCnt(1, callback == 0);
-    }
-
-    //LAB_80037bf0
-    if(interrupt == InterruptType.TMR2) {
-      ChangeClearRCnt(2, callback == 0);
-    }
-
     //LAB_80037c00
     I_MASK.setu(oldIMask);
 
@@ -760,7 +704,6 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x80037dd0L)
   public static long startInterruptVsync() {
-    TMR_HRETRACE_MODE.setu(0x100L);
     Vcount.setu(0);
 
     zeroMemory_80037d4c(vsyncCallbacks_8005460c.getAddress(), 8);
@@ -925,29 +868,6 @@ public final class Scus94491BpeSegment_8003 {
     return old;
   }
 
-  /**
-   * Set and cancel display mask.
-   *
-   * @param mask Display mask
-   *
-   * Puts display mask into the status specified by mask. mask =0: not displayed on screen; mask = 1;
-   * displayed on screen.
-   */
-  @Method(0x80038474L)
-  public static void SetDispMask(final int mask) {
-    LOGGER.trace("SetDispMask(%08x)...", mask);
-
-    if(mask == 0) {
-      fillMemory(DISPENV_80054728.getAddress(), (byte)0xff, 0x14);
-    }
-
-    if(mask == 0) {
-      sendDisplayCommand(0x300_0001L); // Disable screen
-    } else {
-      sendDisplayCommand(0x300_0000L); // Enable screen
-    }
-  }
-
   @Method(0x80038574L)
   private static void validateRect(final String text, final RECT rect) {
     if(rect.w.get() > _800546c0.get() || rect.x.get() + rect.w.get() > _800546c0.get() || rect.y.get() > _800546c2.get() || rect.y.get() + rect.h.get() > _800546c2.get() || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
@@ -1044,57 +964,40 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_80038d8c
-    // GP1(05h) - set start of display area (in VRAM)
-    sendDisplayCommand(0x500_0000L | (env.disp.y.get() & 0x3ffL) << 10 | env.disp.x.get() & 0x3ffL);
+    GPU.displayStart(env.disp.x.get(), env.disp.y.get());
 
     long s0 = 0;
-    long v1;
 
-    if(DISPENV_80054728.isinter.get() != env.isinter.get() || DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
+    if(DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
       //LAB_80038e34
-      env.pad0.set((byte)GsGetWorkBase());
-
-      if(env.pad0.get() == 0x1L) {
-        s0 |= 0b1000L; // PAL
-      }
-
-      //LAB_80038e54
-      if(env.isrgb24.get() != 0) {
-        s0 |= 0b1_0000L; // 24-bit colour
-      }
-
-      //LAB_80038e68
-      if(env.isinter.get() != 0) {
-        s0 |= 0b10_0000L; // Interlaced
-      }
-
       //LAB_80038e94
-      v1 = env.disp.w.get();
+      final int width = env.disp.w.get();
 
-      if(v1 > 280L) {
-        //LAB_80038eb8
-        if(v1 <= 352L) {
-          s0 |= 0b1L; // Horizontal res: 320
-        } else if(v1 <= 400L) {
-          s0 |= 0b100_0000L; // Horizontal res 2: 368
-        } else if(v1 <= 560L) {
-          s0 |= 0b10L; // Horizontal res: 512
-        } else {
-          //LAB_80038ed8
-          s0 |= 0b11L; // Horizontal res: 640
-        }
+      final Gpu.HORIZONTAL_RESOLUTION hRes;
+      final Gpu.VERTICAL_RESOLUTION vRes;
+
+      if(width <= 280) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._256;
+      } else if(width <= 352) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._320;
+      } else if(width <= 400) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._368;
+      } else if(width <= 560) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._512;
+      } else {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._640;
       }
 
       //LAB_80038edc
       //LAB_80038ef0
-      if(env.pad0.get() != 0 && env.disp.h.get() > 288L) {
-        s0 |= 0b10_0100L; // Vertical res: 480, vertical interlace: on
-      } else if(env.pad0.get() == 0 && env.disp.h.get() > 256L) {
-        s0 |= 0b10_0100L; // Vertical res: 480, vertical interlace: on
+      if(env.disp.h.get() <= 256) {
+        vRes = Gpu.VERTICAL_RESOLUTION._240;
+      } else {
+        vRes = Gpu.VERTICAL_RESOLUTION._480;
       }
 
       //LAB_80038efc
-      sendDisplayCommand(0x800_0000L | s0); // Display mode
+      GPU.displayMode(hRes, vRes, Gpu.DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
 
       env.pad0.set((byte)8);
     }
@@ -1102,13 +1005,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_80038f20
     if(DISPENV_80054728.screen.x.get() != env.screen.x.get() || DISPENV_80054728.screen.y.get() != env.screen.y.get() || DISPENV_80054728.screen.w.get() != env.screen.w.get() || DISPENV_80054728.screen.h.get() != env.screen.h.get() || env.pad0.get() == 0x8L) {
       //LAB_80038f98
-      env.pad0.set((byte)GsGetWorkBase());
+      env.pad0.set((byte)0);
 
-      if(env.pad0.get() == 0) {
-        s0 = env.screen.y.get() + 0x10L;
-      } else {
-        s0 = env.screen.y.get() + 0x13L;
-      }
+      s0 = env.screen.y.get() + 16;
 
       //LAB_80038fb8
       final long s2;
@@ -1119,130 +1018,31 @@ public final class Scus94491BpeSegment_8003 {
         s2 = s0 + env.screen.h.get();
       }
 
-      //LAB_80038fcc
-      v1 = env.disp.w.get();
-
-      final long a2;
-      if(v1 <= 280L) {
-        a2 = 0;
-      } else if(v1 <= 352L) {
-        a2 = 1L;
-      } else if(v1 <= 400L) {
-        a2 = 2L;
-      } else if(v1 <= 560L) {
-        a2 = 3L;
-      } else {
-        a2 = 4L;
-      }
-
-      //LAB_80039008
-      long v0 = (env.pad0.get() * 5 + a2) * 4;
-      v1 = _80054790.offset(v0).get();
-      v0 = _80054792.offset(v0).get() - v1;
-
-      long a0 = v1 + (env.screen.x.get() * _800547bb.offset(a2).get() & 0xffffffffL);
-      if(env.screen.w.get() != 0) {
-        final long a3 = v0 * env.screen.w.get() & 0xffffffffL;
-        v0 = a3 >> 0x8L;
-      }
-
-      //LAB_80039070
-      v1 = a0 + v0;
       long a1;
-      if(env.pad0.get() == 0) {
-        //LAB_80039110
-        if(a0 < 500L) {
-          a1 = 500L;
-        } else if(a0 <= 3250L) {
-          a1 = a0;
-        } else {
-          a1 = 3250L;
-        }
-
-        //LAB_8003912c
-        a0 = a1;
-
-        if(v1 < a1) {
-          a1 += _800547bb.offset(a2).get() * 4;
-        } else if(v1 <= 3290L) {
-          a1 = v1;
-        } else {
-          a1 = 3290L;
-        }
-
-        //LAB_80039160
-        //LAB_80039164
-        v1 = a1;
-
-        if(s0 < 16L) {
-          //LAB_80039180
-          a1 = 16L;
-        } else if(s0 <= 257L) {
-          a1 = s0;
-        } else {
-          a1 = 257L;
-        }
-
-        //LAB_80039184
-        s0 = a1;
-
-        //LAB_8003919c
-        if(s2 < a1) {
-          a1 += 2L;
-        } else if(s2 <= 258L) {
-          a1 = s2;
-        } else {
-          a1 = 258L;
-        }
+      //LAB_80039164
+      if(s0 < 16L) {
+        //LAB_80039180
+        a1 = 16L;
+      } else if(s0 <= 257L) {
+        a1 = s0;
       } else {
-        if(a0 < 540L) {
-          a1 = 540L;
-        } else if(a0 <= 3220L) {
-          a1 = a0;
-        } else {
-          a1 = 3220L;
-        }
+        a1 = 257L;
+      }
 
-        //LAB_8003909c
-        a0 = a1;
+      //LAB_80039184
+      s0 = a1;
 
-        if(v1 < a1) {
-          a1 += _800547bb.offset(a2).get() * 4;
-        } else if(v1 <= 3260L) {
-          a1 = v1;
-        } else {
-          a1 = 3260L;
-        }
-
-        //LAB_800390d0
-        //LAB_800390d4
-        v1 = a1;
-
-        if(s0 < 19L) {
-          //LAB_800390f0
-          a1 = 19L;
-        } else if(s0 <= 303L) {
-          a1 = s0;
-        } else {
-          a1 = 303L;
-        }
-
-        //LAB_800390f4
-        s0 = a1;
-
-        //LAB_8003919c
-        if(s2 < a1) {
-          a1 += 2L;
-        } else if(s2 <= 305L) {
-          a1 = s2;
-        } else {
-          a1 = 305L;
-        }
+      //LAB_8003919c
+      if(s2 < a1) {
+        a1 += 2L;
+      } else if(s2 <= 258L) {
+        a1 = s2;
+      } else {
+        a1 = 258L;
       }
 
       //LAB_800391a8
-      sendDisplayCommand(0x600_0000L | (v1 & 0xfffL) << 12 | a0 & 0xfffL); // Horizontal display range
-      sendDisplayCommand(0x700_0000L | (a1 & 0x3ffL) << 10 | s0 & 0x3ffL); // Vertical display range
+      GPU.verticalDisplayRange((int)s0, (int)a1);
     }
 
     memcpy(DISPENV_80054728.getAddress(), env.getAddress(), 0x14);
@@ -1268,7 +1068,7 @@ public final class Scus94491BpeSegment_8003 {
     dr_env.code.get(0).set(makeSetDrawingAreaTopLeftCommand(drawEnv.clip.x.get(), drawEnv.clip.y.get()));
     dr_env.code.get(1).set(makeSetDrawingAreaBottomRightCommand(drawEnv.clip.x.get() + drawEnv.clip.w.get() - 1, drawEnv.clip.y.get() + drawEnv.clip.h.get() - 1));
     dr_env.code.get(2).set(makeSetDrawingOffsetCommand(drawEnv.ofs.get(0).get(), drawEnv.ofs.get(1).get()));
-    dr_env.code.get(3).set(makeDrawModeSettingsCommand(drawEnv.dfe.get(), drawEnv.dtd.get(), drawEnv.tpage.get()));
+    dr_env.code.get(3).set(makeDrawModeSettingsCommand(drawEnv.dfe.get(), 0, drawEnv.tpage.get()));
     dr_env.code.get(4).set(0xe600_0000L); // Mask bit setting
 
     int size = 5;
@@ -1317,22 +1117,6 @@ public final class Scus94491BpeSegment_8003 {
     return 0xe500_0000L | (y & 0x7ffL) << 11 | x & 0x7ffL;
   }
 
-  @Method(0x8003992cL)
-  public static long makeTextureWindowSettingsCommand(final RECT rect) {
-    if(rect == null) {
-      return 0;
-    }
-
-    //LAB_8003993c
-    final long y = (rect.y.get() & 0x1f) >> 3 << 15;
-    final long x = (rect.x.get() & 0x1f) >> 3 << 10;
-    final long h = (-rect.h.get() & 0xffL) >> 3 << 5;
-    final long w = (-rect.w.get() & 0xffL) >> 3;
-
-    //LAB_800399a4
-    return 0xe200_0000L | y | x | h | w;
-  }
-
   @Method(0x80039aa4L)
   public static long ClearImage_Impl(final RECT rect, final long colour) {
     rect.w.set(clamp(rect.w.get(), (short)0, (short)(_800546c0.get() - 1)));
@@ -1340,38 +1124,7 @@ public final class Scus94491BpeSegment_8003 {
 
     LOGGER.info("Clearing screen %s %08x", rect, colour);
 
-    if((rect.x.get() & 0x3fL) != 0 || (rect.w.get() & 0x3fL) != 0) {
-      //LAB_80039b64
-      _800c1bc0.build(builder -> builder
-        .add(0xe300_0000L) // Draw area top left (0, 0)
-        .add(0xe4ff_ffffL) // Draw area bottom right (1023, 511)
-        .add(0xe500_0000L) // Draw offset (0, 0)
-        .add(0xe600_0000L) // Mask bit (draw always)
-        .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
-        .add(0x6000_0000L | colour) // Monochrome rect (var size, opaque) - colour bbrrgg
-        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - vertex YyyyXxxx
-        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - w/h HhhhWwww
-        .next(_800c1be8)
-      );
-
-      _800c1be8.build(builder -> builder
-        .add(0xe300_0000L | getGpuInfo(0x3L)) // Draw area top left
-        .add(0xe400_0000L | getGpuInfo(0x4L)) // Draw area top right
-        .add(0xe500_0000L | getGpuInfo(0x5L)) // Draw offset
-      );
-    } else {
-      //LAB_80039c3c
-      _800c1bc0.build(builder -> builder
-        .add(0xe600_0000L) // Mask bit (draw always)
-        .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
-        .add(0x0200_0000L | colour) // Fill rect - BbGgRr
-        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - YyyyXxxx
-        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - HhhhWwww
-      );
-    }
-
-    //LAB_80039cac
-    uploadLinkedListToGpu(_800c1bc0);
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get(), (int)colour));
     return 0;
   }
 
@@ -1394,20 +1147,9 @@ public final class Scus94491BpeSegment_8003 {
     return 0;
   }
 
-  @Method(0x8003a190L)
-  public static void sendDisplayCommand(final long command) {
-    GPU_REG1.setu(command);
-  }
-
   @Method(value = 0x8003a1ecL, ignoreExtraParams = true)
   public static int uploadLinkedListToGpu(final MemoryRef address) {
     return GPU.uploadLinkedList(address.getAddress());
-  }
-
-  @Method(0x8003a234L)
-  public static long getGpuInfo(final long type) {
-    GPU_REG1.setu(0x1000_0000L | type); // Get GPU info
-    return GPU_REG0.get(0xff_ffffL);
   }
 
   @Method(0x8003a798L)
@@ -1416,15 +1158,10 @@ public final class Scus94491BpeSegment_8003 {
 
     if(mode == 1 || mode == 3) {
       //LAB_8003a854
-      DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
-      DMA.gpu.enable();
-      GPU_REG1.setu(0x200_0000L); // Acknowledge GPU interrupt
-      GPU_REG1.setu(0x100_0000L); // Reset command buffer
+      GPU.resetCommandBuffer();
     } else if(mode == 0 || mode == 5) {
       //LAB_8003a808
-      DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
-      DMA.gpu.enable();
-      GPU_REG1.setu(0); // Reset GPU
+      GPU.reset();
     }
 
     //LAB_8003a8a0
@@ -1790,7 +1527,7 @@ public final class Scus94491BpeSegment_8003 {
    * <p>Resets libgpu and initializes the libgs graphic system. libgpu settings are maintained by the global variables
    * GsDISPENV and GsDRAWENV. The programmer can verify and/or modify libgpu by referencing the settings.</p>
    *
-   * <p>Vertical 480 line non-interlace mode is effective only when a VGA monitor is connected. In 240-line mode,
+   * <p>Vertical 480 line mode is effective only when a VGA monitor is connected. In 240-line mode,
    * the top and bottom 8 lines are almost invisible on home-use TV monitors. For PAL mode, the display
    * position should be shifted down by 24 lines.</p>
    *
@@ -1804,11 +1541,7 @@ public final class Scus94491BpeSegment_8003 {
    * @param displayWidth Horizontal resolution (256/320/384/512/640)
    * @param displayHeight Vertical resolution (240/480 NTSC or 256/512 PAL)
    * @param flags
-   * <ul>
-   * <li>Interlace display flag (bit 0)<ul>
-   * <li>0: Non-interlace GsNONINTER</li>
-   * <li>1: Interlace GSINTER</li>
-   * </ul></li>
+   * </li>
    * <li>Double buffer offset mode (bit 2)<ul>
    * <li>0: GTE offset GsOFSGTE</li>
    * <li>1: GPU offset GsOFSGPU</li>
@@ -1818,12 +1551,10 @@ public final class Scus94491BpeSegment_8003 {
    * <li>3: ResetGraph(3) GsRESET3</li>
    * </ul></li>
    * </ul>
-   * @param dither Dithering enabled
-   * @param use24BitColour VRAM BPP
    */
   @Method(0x8003bc30L)
-  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
-    GsInitGraph2(displayWidth, displayHeight, flags, dither, use24BitColour);
+  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags) {
+    GsInitGraph2(displayWidth, displayHeight, flags);
     GsInit3D();
 
     PSDIDX_800c34d4.set(0);
@@ -1840,7 +1571,7 @@ public final class Scus94491BpeSegment_8003 {
    * <p>Always use GsInitGraph() for the first initialization.</p>
    */
   @Method(0x8003bca4L)
-  public static void GsInitGraph2(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
+  public static void GsInitGraph2(final short displayWidth, final short displayHeight, final int flags) {
     if((flags >> 4 & 0b11) == 0b11) {
       ResetGraph(3);
     } else {
@@ -1851,7 +1582,6 @@ public final class Scus94491BpeSegment_8003 {
     DRAWENV_800c3450.ofs.get(1).set((short)0);
     DRAWENV_800c3450.tw.set((short)0, (short)0, (short)0, (short)0);
     DRAWENV_800c3450.tpage.set((short)0);
-    DRAWENV_800c3450.dtd.set((byte)(dither ? 1 : 0));
     DRAWENV_800c3450.dfe.set((byte)0);
     DRAWENV_800c3450.isbg.set((byte)0);
     PutDrawEnv(DRAWENV_800c3450);
@@ -1863,9 +1593,6 @@ public final class Scus94491BpeSegment_8003 {
       DISPENV_800c34b0.screen.y.set((short)0x18);
       DISPENV_800c34b0.pad0.set((byte)1);
     }
-
-    DISPENV_800c34b0.isinter.set((byte)(flags & 0b1));
-    DISPENV_800c34b0.isrgb24.set((byte)(use24BitColour ? 1 : 0));
 
     doubleBufferOffsetMode_800c34d6.set(GsOffsetType.fromValue(flags & 0b100));
 
@@ -1941,14 +1668,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     final int h = displayHeight_1f8003e4.get();
-    final int w;
-
-    if(DISPENV_800c34b0.isrgb24.get() == 0) {
-      //LAB_8003c13c
-      w = displayWidth_1f8003e0.get();
-    } else {
-      w = displayWidth_1f8003e0.get() * 3 / 2;
-    }
+    final int w = displayWidth_1f8003e0.get();
 
     GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(x, y, w, h, r, g, b));
 
@@ -2035,7 +1755,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     PutDispEnv(DISPENV_800c34b0);
-    SetDispMask(1);
 
     // GsIncFrame macro
     PSDCNT_800c34d0.addu(0x1L);

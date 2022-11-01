@@ -1402,7 +1402,7 @@ public final class Bttl_800f {
                   num.g_0d.set(0x60);
                   num.r_0e.set(0x60);
 
-                  final int a2 = 60 / (int)vsyncMode_8007a3b8.get() / 2;
+                  final int a2 = 60 / vsyncMode_8007a3b8.get() / 2;
                   num._14.set(a2);
                   num._18.set(96 / a2);
                 } else {

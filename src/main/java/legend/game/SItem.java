@@ -910,7 +910,7 @@ public final class SItem {
         drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
         messageBox_8011dc90._0c.set(0);
-        setWidthAndFlags(384, 0);
+        setWidthAndFlags(384);
         s0 = getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class);
         loadDrgnBinFile(0, 6665, 0, s0, 0, 0x5L);
         loadDrgnBinFile(0, 6666, 0, s0, 1, 0x3L);
@@ -5570,7 +5570,7 @@ public final class SItem {
       case INIT_0 -> {
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
-        setWidthAndFlags(384, 0);
+        setWidthAndFlags(384);
         loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 5);
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 1, 3);
         loadCharacterStats(0);
@@ -6605,7 +6605,7 @@ public final class SItem {
       case INIT_0:
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
-        setWidthAndFlags(320, 0);
+        setWidthAndFlags(320);
         loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 0x5L);
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 1, 0x3L);
         _800bdf00.setu(0x21L);
@@ -6947,7 +6947,7 @@ public final class SItem {
         break;
 
       case _19:
-        setWidthAndFlags(384, 0);
+        setWidthAndFlags(384);
         deallocateRenderables(0xffL);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         whichMenu_800bdc38.setu(0x22L);
@@ -7369,7 +7369,7 @@ public final class SItem {
       case INIT_0:
         drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
-        setWidthAndFlags(384, 0);
+        setWidthAndFlags(384);
         loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0x1L, 0x3L);
         loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 0x5L);
         _800bdf00.setu(0x21L);

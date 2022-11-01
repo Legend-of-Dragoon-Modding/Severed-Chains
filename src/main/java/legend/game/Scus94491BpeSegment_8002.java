@@ -67,7 +67,6 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.core.Timers.TMR_DOTCLOCK_VAL;
 import static legend.game.SInit.initFileEntries;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
@@ -4364,12 +4363,11 @@ public final class Scus94491BpeSegment_8002 {
         case 0xb0 -> {
           s0._00.set(0xd);
 
-          final long v0 = 60 / (int)vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
+          final long v0 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
           s0._3e.set((short)v0);
           s0._40.set((short)v0);
 
-          if(str.charAt(s0._30.get() + 1
-          ) >>> 8 == 0xa1L) {
+          if(str.charAt(s0._30.get() + 1) >>> 8 == 0xa1L) {
             s0._30.incr();
           }
 
@@ -6396,15 +6394,6 @@ public final class Scus94491BpeSegment_8002 {
     main();
 
     assert !Hardware.isAlive() : "Shouldn't get here";
-  }
-
-  @Method(0x8002d12cL)
-  public static long getTimerValue(final long timerIndex) {
-    if(timerIndex >= 3) {
-      return 0;
-    }
-
-    return TMR_DOTCLOCK_VAL.offset(timerIndex * 0x10L).get();
   }
 
   @Method(0x8002d220L)

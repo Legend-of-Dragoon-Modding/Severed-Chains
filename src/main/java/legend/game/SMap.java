@@ -159,7 +159,6 @@ import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
-import static legend.game.Scus94491BpeSegment_8002.getTimerValue;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -189,7 +188,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
@@ -679,7 +677,7 @@ public final class SMap {
 
   @Method(0x800d93dcL)
   public static long loadDiskSwapScreen() {
-    setWidthAndFlags(640, 1);
+    setWidthAndFlags(640);
     _800babc0.setu(0);
     _800bb104.setu(0);
     _8007a3a8.setu(0);
@@ -4484,7 +4482,7 @@ public final class SMap {
       _800cab20.subu(0x1L);
 
       if(_800cab20.getSigned() >= 0) {
-        setWidthAndFlags(384, 0);
+        setWidthAndFlags(384);
         _800caaf4.setu(submapCut_80052c30.get());
         _800caaf8.setu(_80052c34);
         return;
@@ -4519,9 +4517,9 @@ public final class SMap {
     //LAB_800e5ac4
     switch((int)smapLoadingStage_800cb430.get()) {
       case 0x0 -> {
-        srand(getTimerValue(0));
+        srand(System.nanoTime());
         if(_800cb440.get() == 0) {
-          setWidthAndFlags(384, 0);
+          setWidthAndFlags(384);
         }
 
         //LAB_800e5b2c
@@ -6767,8 +6765,6 @@ public final class SMap {
           StoreImage(rectArray3_800f96f4.get(s2), dest);
         }
 
-        SetDispMask(0);
-
         ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
 
         final int a1;
@@ -6780,7 +6776,7 @@ public final class SMap {
         }
 
         //LAB_800ed700
-        setWidthAndFlags((int)_800f9718.offset(_800bf0dc.get() * 16).get(), a1);
+        setWidthAndFlags((int)_800f9718.offset(_800bf0dc.get() * 16).get());
 
         pregameLoadingStage_800bb10c.setu(0x1L);
         break;
@@ -6880,7 +6876,7 @@ public final class SMap {
     fileLoadingCallbackIndex_8004ddc4.set(23);
     scriptStartEffect(0x1L, 0x1L);
     ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
-    setWidthAndFlags(640, 0);
+    setWidthAndFlags(640);
 
     //LAB_800edab4
     return 0x1L;

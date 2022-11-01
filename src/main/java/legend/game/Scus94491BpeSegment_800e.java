@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
@@ -70,9 +69,7 @@ import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
-import static legend.game.Scus94491BpeSegment_8003.SetTmr0InterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -805,15 +802,10 @@ public final class Scus94491BpeSegment_800e {
     ResetCallback();
 
     VSync(0);
-    SetDispMask(0);
     ResetGraph(0);
     SetGraphDebug(2);
 
-//    ClearImage(new RECT((short)0, (short)0, (short)640, (short)512), (byte)0, (byte)0, (byte)0);
-//    ClearImage(new RECT((short)640, (short)0, (short)384, (short)512), (byte)0, (byte)0, (byte)0);
-    VSync(0);
-
-    GsInitGraph((short)640, (short)480, 0b110101, true, false);
+    GsInitGraph((short)640, (short)480, 0b110100);
     GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
 
     orderingTables_8005a370.get(0).length_00.set(0xeL);
@@ -857,7 +849,6 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e6ecc();
     FUN_800e6774();
     FUN_800e6e6c();
-    SetTmr0InterruptCallback(getMethodAddress(Scus94491BpeSegment.class, "spuTimerInterruptCallback"));
   }
 
   @Method(0x800e5fc0L)
@@ -1010,7 +1001,7 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e64d4L)
   public static void loadSoundsAndChangeVideoMode() {
     loadDRGN0_mrg_62802_sounds();
-    setWidthAndFlags(320, 0);
+    setWidthAndFlags(320);
 
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.set(2);

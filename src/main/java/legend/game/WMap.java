@@ -665,7 +665,7 @@ public class WMap {
         pregameLoadingStage_800bb10c.setu(gameState_800babc8._4e4.get() != 0 ? 0x9L : 0x7L);
       } else {
         //LAB_800cc804
-        setWidthAndFlags(320, 0);
+        setWidthAndFlags(320);
         FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
         pregameLoadingStage_800bb10c.setu(0xcL);
       }
@@ -778,7 +778,7 @@ public class WMap {
 
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
-    setWidthAndFlags(320, 0);
+    setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(3);
     unloadSoundFile((int)0x9L);
     FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);

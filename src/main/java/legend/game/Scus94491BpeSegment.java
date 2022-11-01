@@ -119,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
 import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
@@ -182,7 +181,6 @@ import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
-import static legend.game.Scus94491BpeSegment_8004.renderFlags_8004dd36;
 import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
 import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
@@ -196,7 +194,6 @@ import static legend.game.Scus94491BpeSegment_8004.sssqGetTempo;
 import static legend.game.Scus94491BpeSegment_8004.sssqPitchShift;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetTempo;
-import static legend.game.Scus94491BpeSegment_8004.sssqTick;
 import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
@@ -547,17 +544,6 @@ public final class Scus94491BpeSegment {
     });
   }
 
-  @Method(0x80011dc0L)
-  public static void spuTimerInterruptCallback() {
-    sssqTick();
-
-    if(mainCallbackIndex_8004dd20.get() == 0x3L) {
-      gameState_800babc8.timestamp_a0.set(0);
-    } else {
-      gameState_800babc8.timestamp_a0.incr();
-    }
-  }
-
   public static final boolean SYNCHRONOUS = true;
   private static boolean dumping;
   private static boolean loading;
@@ -809,6 +795,12 @@ public final class Scus94491BpeSegment {
       joypadPress_8007a398.setu(_800bee94);
       joypadInput_8007a39c.setu(_800bee90);
       joypadRepeat_8007a3a0.setu(_800bee98);
+
+      if(mainCallbackIndex_8004dd20.get() == 3) {
+        gameState_800babc8.timestamp_a0.set(0);
+      } else {
+        gameState_800babc8.timestamp_a0.add(vsyncMode_8007a3b8.get());
+      }
 
       startFrame();
       FUN_80011f6c();
@@ -1782,10 +1774,8 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012df8L)
   public static void endFrame() {
-    if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
-      GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
-    }
+    GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
 
     //LAB_80012e8c
     syncFrame_8004dd3c.deref().run();
@@ -1803,16 +1793,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80012f24L)
   public static void syncFrame_reinit() {
-    final long flags;
-    if(renderFlags_8004dd36.get(0x3L) == 0) { // Height: 240, not interlaced
-      flags = 0b110100L;
-    } else {
-      flags = 0b110101L;
-    }
-
     //LAB_80012f5c
-    final long use24BitColour = renderFlags_8004dd36.get() >>> 0x2L & 0x1L;
-    final long height480 = renderFlags_8004dd36.get() & 0x2L;
     final int orderingTableBits = reinitOrderingTableBits_8004dd38.get();
 
     _800babc0.setu(0);
@@ -1832,21 +1813,12 @@ public final class Scus94491BpeSegment {
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
     VSync(0);
-    SetDispMask(0);
-    VSync(0);
 
-    final int displayHeight;
-    if(height480 == 0) {
-      //LAB_80013040
-      GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
-      displayHeight = 240;
-    } else {
-      GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
-      displayHeight = 480;
-    }
+    //LAB_80013040
+    GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
 
     //LAB_80013060
-    GsInitGraph((short)width_8004dd34.get(), (short)displayHeight, (short)flags, true, use24BitColour != 0);
+    GsInitGraph((short)width_8004dd34.get(), (short)240, (short)0b110100);
 
     if(width_8004dd34.get() == 384L) {
       DISPENV_800c34b0.screen.x.set((short)9);
@@ -1858,39 +1830,22 @@ public final class Scus94491BpeSegment {
     FUN_8003c5e0();
     setProjectionPlaneDistance(320);
 
-    VSync(0);
-    SetDispMask(1);
-
     syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame")).cast(RunnableRef::new));
-
-    if(use24BitColour == 0) {
-      swapDisplayBuffer_8004dd40.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "swapDisplayBuffer_24bpp")).cast(RunnableRef::new));
-    } else {
-      swapDisplayBuffer_8004dd40.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "swapDisplayBuffer_15bpp")).cast(RunnableRef::new));
-    }
+    swapDisplayBuffer_8004dd40.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "swapDisplayBuffer")).cast(RunnableRef::new));
   }
 
   @Method(0x80013148L)
-  public static void swapDisplayBuffer_24bpp() {
+  public static void swapDisplayBuffer() {
     GsSwapDispBuff();
-
-    if(renderFlags_8004dd36.get(0x2L) == 0) { // Height: 240
-      GsSortClear((int)_8007a3a8.get(), (int)_800bb104.get(), (int)_800babc0.get());
-    }
-  }
-
-  @Method(0x800131e0L)
-  public static void swapDisplayBuffer_15bpp() {
-    GsSwapDispBuff();
+    GsSortClear((int)_8007a3a8.get(), (int)_800bb104.get(), (int)_800babc0.get());
   }
 
   @Method(0x80013200L)
-  public static void setWidthAndFlags(final int width, final int flags) {
-    if(width != displayWidth_1f8003e0.get() || flags != renderFlags_8004dd36.get()) {
+  public static void setWidthAndFlags(final int width) {
+    if(width != displayWidth_1f8003e0.get()) {
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
       syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
       width_8004dd34.setu(width);
-      renderFlags_8004dd36.setu(flags);
     }
   }
 
@@ -2064,7 +2019,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void FUN_80013778() {
-    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (VSync(-1) - scriptEffect_800bb140.startTime_04.get()) / 2);
+    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), VSync(-1) - scriptEffect_800bb140.startTime_04.get());
 
     //LAB_800137d0
     final long colour;

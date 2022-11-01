@@ -33,14 +33,12 @@ public final class Hardware {
   public static final DmaManager DMA;
   public static final Gpu GPU;
   public static final Mdec MDEC;
-  public static final legend.core.Timers TIMERS;
   public static final CdDrive CDROM;
   public static final Spu SPU;
 
   public static final Thread codeThread;
   public static final Thread hardwareThread;
   public static final Thread gpuThread;
-  public static final Thread timerThread;
   public static final Thread spuThread;
 
   @Nullable
@@ -162,9 +160,8 @@ public final class Hardware {
     CPU = new Cpu();
     INTERRUPTS = new InterruptController(MEMORY);
     DMA = new DmaManager(MEMORY);
-    GPU = new Gpu(MEMORY);
+    GPU = new Gpu();
     MDEC = new Mdec(MEMORY);
-    TIMERS = new Timers(MEMORY);
     CDROM = new CdDrive();
     SPU = new Spu(MEMORY);
 
@@ -174,8 +171,6 @@ public final class Hardware {
     hardwareThread.setName("Hardware");
     gpuThread = new Thread(GPU);
     gpuThread.setName("GPU");
-    timerThread = new Thread(TIMERS);
-    timerThread.setName("Timers");
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
 
@@ -202,7 +197,6 @@ public final class Hardware {
   public static void start() {
     codeThread.start();
     gpuThread.start();
-    timerThread.start();
     spuThread.start();
 
     running = true;
@@ -211,14 +205,11 @@ public final class Hardware {
         INTERRUPTS.set(InterruptType.DMA);
       }
 
-      TIMERS.syncGPU(GPU.getBlanksAndDot());
-
       CPU.tick();
 
       DebugHelper.sleep(0);
-      if(!codeThread.isAlive() || !gpuThread.isAlive() || !timerThread.isAlive() || !spuThread.isAlive()) {
+      if(!codeThread.isAlive() || !gpuThread.isAlive() || !spuThread.isAlive()) {
         running = false;
-        TIMERS.stop();
         SPU.stop();
       }
 

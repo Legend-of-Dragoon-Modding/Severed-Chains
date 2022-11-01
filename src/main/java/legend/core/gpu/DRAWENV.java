@@ -35,10 +35,7 @@ public class DRAWENV implements MemoryRef {
    * 0x14 Texture page (tp, abr, tx, ty)
    */
   public final ShortRef tpage;
-  /**
-   * 0x16 Dither processing flag
-   */
-  public final ByteRef dtd;
+
   /**
    * 0x17 Permission flag for drawing (1 = drawing on display area is inhibited)
    */
@@ -71,7 +68,6 @@ public class DRAWENV implements MemoryRef {
     this.ofs = ref.offset(2, 0x8L).cast(ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new));
     this.tw = new RECT(ref.offset(2, 0xcL));
     this.tpage = new ShortRef(ref.offset(2, 0x14L));
-    this.dtd = new ByteRef(ref.offset(1, 0x16L));
     this.dfe = new ByteRef(ref.offset(1, 0x17L));
     this.isbg = new ByteRef(ref.offset(1, 0x18L));
     this.r0 = new ByteRef(ref.offset(1, 0x19L));
@@ -86,7 +82,6 @@ public class DRAWENV implements MemoryRef {
     this.ofs.get(1).set(other.ofs.get(1));
     this.tw.set(other.tw);
     this.tpage.set(other.tpage);
-    this.dtd.set(other.dtd);
     this.dfe.set(other.dfe);
     this.isbg.set(other.isbg);
     this.r0.set(other.r0);

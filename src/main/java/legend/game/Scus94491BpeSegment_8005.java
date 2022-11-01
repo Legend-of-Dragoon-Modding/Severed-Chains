@@ -96,7 +96,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
 
-  public static final Value _800534fc = MEMORY.ref(4, 0x800534fcL);
   public static final Value _80053500 = MEMORY.ref(4, 0x80053500L);
 
   public static final BoolRef interruptHandlersInitialized_80053564 = MEMORY.ref(2, 0x80053564L, BoolRef::new);
@@ -142,13 +141,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
 
   public static final Value _8005475c = MEMORY.ref(4, 0x8005475cL);
-
-  public static final Value _8005477c = MEMORY.ref(4, 0x8005477cL);
-
-  public static final Value _80054790 = MEMORY.ref(2, 0x80054790L);
-  public static final Value _80054792 = MEMORY.ref(2, 0x80054792L);
-
-  public static final Value _800547bb = MEMORY.ref(1, 0x800547bbL);
 
   public static final Value _800547f4 = MEMORY.ref(4, 0x800547f4L);
 

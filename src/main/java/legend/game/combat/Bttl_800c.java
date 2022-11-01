@@ -937,7 +937,7 @@ public final class Bttl_800c {
   @Method(0x800c76a0L)
   public static void FUN_800c76a0() {
     if((_800bc960.get() & 0x3L) == 0x3L) {
-      setWidthAndFlags(320, 0);
+      setWidthAndFlags(320);
       setDepthResolution(12);
       vsyncMode_8007a3b8.set(3);
       _800bc960.oru(0x40L);

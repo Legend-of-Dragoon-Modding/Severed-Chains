@@ -330,7 +330,7 @@ public final class Ttle {
       case 0 -> {
         if(fileCount_8004ddc8.get() == 0) {
           FUN_8002a9c0();
-          setWidthAndFlags(640, 0);
+          setWidthAndFlags(640);
           pregameLoadingStage_800bb10c.setu(0x1L);
         }
       }
@@ -413,7 +413,7 @@ public final class Ttle {
     }
 
     //LAB_800c7978
-    setWidthAndFlags(384, 0);
+    setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.setX(0);
     GsRVIEW2_800c6760.viewpoint_00.setY(0);

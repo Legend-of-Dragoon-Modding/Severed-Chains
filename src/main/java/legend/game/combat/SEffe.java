@@ -1743,7 +1743,7 @@ public final class SEffe {
     a2._58.setY((short)-(seed_800fa754.get() % 61 + 60));
 
     final long v1;
-    if(vsyncMode_8007a3b8.get() != 0x4L) {
+    if(vsyncMode_8007a3b8.get() != 4) {
       seed_800fa754.advance();
       v1 = -(seed_800fa754.get() % 14 + 5);
     } else {
