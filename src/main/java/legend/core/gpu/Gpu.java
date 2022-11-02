@@ -48,8 +48,8 @@ public class Gpu implements Runnable {
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
-  private int vramWidth = STANDARD_VRAM_WIDTH;
-  private int vramHeight = STANDARD_VRAM_HEIGHT;
+  private final int vramWidth = STANDARD_VRAM_WIDTH;
+  private final int vramHeight = STANDARD_VRAM_HEIGHT;
 
   private Camera camera;
   private Window window;
@@ -57,8 +57,8 @@ public class Gpu implements Runnable {
   private Shader.UniformBuffer transforms2;
   private final Matrix4f transforms = new Matrix4f();
 
-  private int[] vram24 = new int[this.vramWidth * this.vramHeight];
-  private int[] vram15 = new int[this.vramWidth * this.vramHeight];
+  private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
+  private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
   private boolean isVramViewer;
 

@@ -140,10 +140,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value array_8005473c = MEMORY.ref(2, 0x8005473cL);
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
 
-  public static final Value _8005475c = MEMORY.ref(4, 0x8005475cL);
-
-  public static final Value _800547f4 = MEMORY.ref(4, 0x800547f4L);
-
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
 
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);

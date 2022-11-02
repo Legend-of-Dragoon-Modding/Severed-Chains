@@ -31,7 +31,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -99,7 +98,6 @@ import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
-import static legend.game.Scus94491BpeSegment_8005._8005475c;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
@@ -892,11 +890,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_800388d0
-    final long v1 = _8005475c.getAddress();
-    MEMORY.ref(4, v1).offset(0x0L).setu((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL);
-    MEMORY.ref(4, v1).offset(0x4L).setu((y & 0xffffL) << 16 | x & 0xffffL);
-    MEMORY.ref(4, v1).offset(0x8L).setu((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL);
-
     //LAB_80038918
     GPU.command80CopyRectFromVramToVram(rect.x.get(), rect.y.get(), x, y, rect.w.get(), rect.h.get());
   }
@@ -1106,13 +1099,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003b430L)
   public static int GetClut(final int x, final int y) {
     return (y << 6 | x >> 4 & 0x3f) & 0xffff;
-  }
-
-  @Method(0x8003b450L)
-  public static void FUN_8003b450(final long a0, final long a1, final long a2) {
-    throw new RuntimeException("NOPE");
-//    MEMORY.ref(4, a2).and(0xff00_0000L).oru(MEMORY.ref(4, a0).get() & 0xff_ffffL);
-//    MEMORY.ref(4, a0).and(0xff00_0000L).oru(a1 & 0xff_ffffL);
   }
 
   @Method(0x8003b490L)

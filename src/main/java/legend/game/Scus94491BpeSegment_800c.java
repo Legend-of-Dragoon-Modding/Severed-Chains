@@ -4,7 +4,6 @@ import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.Box;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
-import legend.core.gpu.GpuPacket;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
@@ -39,10 +38,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c1434 = MEMORY.ref(4, 0x800c1434L);
 
   public static final Value _800c1ba8 = MEMORY.ref(4, 0x800c1ba8L);
-
-  public static final GpuPacket _800c1bc0 = MEMORY.ref(4, 0x800c1bc0L, GpuPacket::new);
-
-  public static final GpuPacket _800c1be8 = MEMORY.ref(4, 0x800c1be8L, GpuPacket::new);
 
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
