@@ -5266,7 +5266,7 @@ public final class SItem {
 
       final int s0 = menuItem.price_02.get();
       if((s0 & 0x1000L) != 0) {
-        renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30.set(s0 + 0x1f4 << 6 | 0x2b);
+        renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30.set(500 + (s0 & 0xf) << 6 | 0x2b);
         //LAB_80109574
       } else if((s0 & 0x2000L) != 0) {
         renderItemIcon(58, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30.set(0x7eaa);

@@ -118,6 +118,10 @@ public class GpuCommandPoly extends GpuCommand {
   }
 
   public GpuCommandPoly clut(final int x, final int y) {
+    if(y > 511) {
+      throw new IllegalArgumentException("Invalid y");
+    }
+
     this.clutX = x;
     this.clutY = y;
     this.textured = true;

@@ -49,7 +49,6 @@ import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
 import legend.game.types.MediumStruct;
@@ -216,7 +215,6 @@ import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
@@ -577,7 +575,6 @@ public final class SMap {
 
   public static final Value _800f64b0 = MEMORY.ref(2, 0x800f64b0L);
 
-  public static final Pointer<GsOT> GsOTPtr_800f64c0 = MEMORY.ref(4, 0x800f64c0L, Pointer.deferred(4, GsOT::new));
   /** Indexed by submap cut */
   public static final UnboundedArrayRef<SubmapEncounterData_04> encounterData_800f64c4 = MEMORY.ref(1, 0x800f64c4L, UnboundedArrayRef.of(4, SubmapEncounterData_04::new));
 
@@ -2882,7 +2879,7 @@ public final class SMap {
 
         final int submapScriptIndex = allocateScriptState(0, 0, false, null, 0, null);
         submapScriptIndex_800c6740.set(submapScriptIndex);
-        loadScriptFile(submapScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(0, ScriptFile::new), "Submap script", (int)submapScriptsMrg_800c68d8.deref().entries.get(0).size.get());
+        loadScriptFile(submapScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(0, ScriptFile::new));
 
         //LAB_800e1a38
         for(int i = 0; i < wobjCount_800c6730.get(); i++) {
@@ -2921,7 +2918,7 @@ public final class SMap {
           setScriptTicker(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "submapObjectTicker", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
           setScriptRenderer(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "submapObjectRenderer", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
           setScriptDestructor(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "scriptDestructor", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
-          loadScriptFile(submapObjectScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(i + 1, ScriptFile::new), "Submap object %d".formatted(i), (int)submapScriptsMrg_800c68d8.deref().entries.get(i + 1).size.get());
+          loadScriptFile(submapObjectScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(i + 1, ScriptFile::new));
 
           final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(submapObjectScriptIndex).deref().innerStruct_00.derefAs(WorldObject210.class);
           final Model124 model = wobj.model_00;
@@ -4189,7 +4186,6 @@ public final class SMap {
 
     a1.callback_48.deref().run(a1);
 
-    GsOTPtr_800f64c0.set(orderingTables_8005a370.get(doubleBufferFrame_800bb108.get()));
     _800c6ae0.addu(0x1L);
 
     if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
@@ -4202,10 +4198,6 @@ public final class SMap {
 
   @Method(0x800e519cL)
   public static void FUN_800e519c() {
-    if(GsOTPtr_800f64c0.isNull()) {
-      return;
-    }
-
     //LAB_800e51e8
     final MATRIX[] matrices = new MATRIX[wobjCount_800c6730.get()];
     for(int i = 0; i < wobjCount_800c6730.get(); i++) {
@@ -4217,7 +4209,7 @@ public final class SMap {
     }
 
     //LAB_800e5234
-    FUN_800e7954(GsOTPtr_800f64c0.deref(), matrices, wobjCount_800c6730.get());
+    FUN_800e7954(matrices, wobjCount_800c6730.get());
 
     //LAB_800e5248
   }
@@ -5453,7 +5445,7 @@ public final class SMap {
    * Renders the background?
    */
   @Method(0x800e7954L)
-  public static void FUN_800e7954(final GsOT ot, final MATRIX[] a1, final int count) {
+  public static void FUN_800e7954(final MATRIX[] a1, final int count) {
     final long s0;
     long s1;
     final long s3;

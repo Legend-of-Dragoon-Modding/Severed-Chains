@@ -71,6 +71,10 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052baa = MEMORY.ref(2, 0x80052baaL);
 
+  public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
+
+  public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
+
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
@@ -90,9 +94,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<Pointer<UnboundedArrayRef<FileEntry08>>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(FileEntry08.class)), 5, 0x4, Pointer.deferred(4, UnboundedArrayRef.of(0x8, FileEntry08::new))));
 
   public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
-
-  public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);
-  public static final Value _80052dc0 = MEMORY.ref(4, 0x80052dc0L);
 
   public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
 
@@ -172,13 +173,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final ArrayRef<GsOT> orderingTables_8005a370 = MEMORY.ref(4, 0x8005a370L, ArrayRef.of(GsOT.class, 2, 0x14, GsOT::new));
   public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> orderingTableTags_8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
-
-  public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
-
-  public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
-
-  //TODO hack to record script names/sizes
-  public static Int2ObjectMap<Tuple<String, Integer>> _8005e398_SCRIPT_SIZES = new Int2ObjectOpenHashMap<>();
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 

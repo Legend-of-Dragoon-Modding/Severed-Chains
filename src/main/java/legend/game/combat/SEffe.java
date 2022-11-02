@@ -3563,7 +3563,7 @@ public final class SEffe {
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub38 s1 = manager.effect_44.derefAs(BttlScriptData6cSub38.class);
     final int effectIndex = allocateScriptState(0x1c, BttlScriptData6cSub1c_2::new);
-    loadScriptFile(effectIndex, doNothingScript_8004f650, "", 0); //TODO
+    loadScriptFile(effectIndex, doNothingScript_8004f650);
     setScriptTicker(effectIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80105aa0", int.class, ScriptState.classFor(BttlScriptData6cSub1c_2.class), BttlScriptData6cSub1c_2.class), TriConsumerRef::new));
     setScriptRenderer(effectIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80105704", int.class, ScriptState.classFor(BttlScriptData6cSub1c_2.class), BttlScriptData6cSub1c_2.class), TriConsumerRef::new));
     setScriptDestructor(effectIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80105bb8", int.class, ScriptState.classFor(BttlScriptData6cSub1c_2.class), BttlScriptData6cSub1c_2.class), TriConsumerRef::new));
@@ -4574,7 +4574,7 @@ public final class SEffe {
     final int s2 = script.params_20.get(0).deref().get();
 
     final int scriptIndex = allocateScriptState(0x1c, DragoonAdditionScriptData1c::new);
-    loadScriptFile(scriptIndex, doNothingScript_8004f650, "Dragoon addition", 4);
+    loadScriptFile(scriptIndex, doNothingScript_8004f650);
     setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80108574", int.class, ScriptState.classFor(DragoonAdditionScriptData1c.class), DragoonAdditionScriptData1c.class), TriConsumerRef::new));
     setScriptRenderer(scriptIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80108514", int.class, ScriptState.classFor(DragoonAdditionScriptData1c.class), DragoonAdditionScriptData1c.class), TriConsumerRef::new));
     setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "doNothingScriptDestructor", int.class, ScriptState.classFor(MemoryRef.class), MemoryRef.class), TriConsumerRef::new));
@@ -4704,7 +4704,7 @@ public final class SEffe {
     playSound(0, 50, 0, 0, (short)0, (short)0);
 
     final int scriptIndex = allocateScriptState(0x30, EffeScriptData30::new);
-    loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
+    loadScriptFile(scriptIndex, doNothingScript_8004f650);
     setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_801089e8", int.class, ScriptState.classFor(EffeScriptData30.class), EffeScriptData30.class), TriConsumerRef::new));
     setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(SEffe.class, "doNothingScriptDestructor", int.class, ScriptState.classFor(MemoryRef.class), MemoryRef.class), TriConsumerRef::new));
     final EffeScriptData30 data = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffeScriptData30.class);
@@ -5027,7 +5027,7 @@ public final class SEffe {
     final int s5 = a0.params_20.get(2).deref().get();
     final int s4 = a0.params_20.get(3).deref().get();
     final int s2 = allocateScriptState(0x18, EffeScriptData18::new);
-    loadScriptFile(s2, doNothingScript_8004f650, "", 0); //TODO
+    loadScriptFile(s2, doNothingScript_8004f650);
     setScriptTicker(s2, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109b44", int.class, ScriptState.classFor(EffeScriptData18.class), EffeScriptData18.class), TriConsumerRef::new));
     setScriptRenderer(s2, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109b3c", int.class, ScriptState.classFor(EffeScriptData18.class), EffeScriptData18.class), TriConsumerRef::new));
     setScriptDestructor(s2, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109cf0", int.class, ScriptState.classFor(EffeScriptData18.class), EffeScriptData18.class), TriConsumerRef::new));
@@ -8367,14 +8367,14 @@ public final class SEffe {
     }
 
     //LAB_80115674
-    loadScriptFile(scriptIndex, file, offset, "", 0); //TODO
+    loadScriptFile(scriptIndex, file, offset);
     return 0;
   }
 
   @Method(0x80115690L)
   public static long FUN_80115690(final RunningScript a0) {
     final int s0 = a0.params_20.get(0).deref().get();
-    loadScriptFile(s0, a0.scriptState_04.deref().scriptPtr_14.deref(), 0, "S_EFFE Script", 0); //TODO unknown size
+    loadScriptFile(s0, a0.scriptState_04.deref().scriptPtr_14.deref(), 0);
     scriptStatePtrArr_800bc1c0.get(s0).deref().commandPtr_18.set(a0.params_20.get(1).deref());
     return 0;
   }

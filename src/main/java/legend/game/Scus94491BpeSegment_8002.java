@@ -159,8 +159,6 @@ import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
-import static legend.game.Scus94491BpeSegment_8005._80052dbc;
-import static legend.game.Scus94491BpeSegment_8005._80052dc0;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
@@ -231,10 +229,7 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c._800c6688;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.Scus94491BpeSegment_800e.ramSize_800e6f04;
-import static legend.game.Scus94491BpeSegment_800e.stackSize_800e6f08;
 import static legend.game.WMap.FUN_800c8844;
 import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.renderWmapModel;
@@ -6384,13 +6379,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start(final int argc, final long argv) {
-    for(int i = 0; i < 0x6c4b0; i += 4) {
-      _8005a1d8.offset(i).setu(0);
-    }
-
-    _80052dc0.setu(ramSize_800e6f04.get() - 0x8L - stackSize_800e6f08.get() - _800c6688.getAddress());
-    _80052dbc.setu(_800c6688.getAddress());
-
+    bzero(_8005a1d8.getAddress(), 0x6c4b0);
     main();
 
     assert !Hardware.isAlive() : "Shouldn't get here";

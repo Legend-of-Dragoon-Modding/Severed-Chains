@@ -2612,7 +2612,7 @@ public final class Bttl_800e {
   @Method(0x800e6070L)
   public static void FUN_800e6070() {
     allocateScriptState(1, 0, false, null, 0, null);
-    loadScriptFile(1, script_800faebc, "BTTL Script 800faebc", 0); //TODO unknown size
+    loadScriptFile(1, script_800faebc);
     setScriptTicker(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5a78", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
     setScriptRenderer(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5fe8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
     _800c6930.deref()._60.set(0);
@@ -2940,7 +2940,7 @@ public final class Bttl_800e {
 
           //LAB_800e6eb0
           final BattleStruct24_2 struct24 = _800c6938.deref();
-          loadScriptFile(struct24.scriptIndex_18.get(), struct24.script_14.deref(), struct24.scriptOffsetIndex_10.get(), "Bttl_800e Script", 0); //TODO
+          loadScriptFile(struct24.scriptIndex_18.get(), struct24.script_14.deref(), struct24.scriptOffsetIndex_10.get());
           struct24._1c.set(0);
           struct24.frameCount_20.set(0);
           _800fafe8.setu(0x3L);
@@ -3074,7 +3074,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e719c
-        loadScriptFile(index, a0.script_14.deref(), a0.scriptOffsetIndex_10.get(), "", 0); //TODO
+        loadScriptFile(index, a0.script_14.deref(), a0.scriptOffsetIndex_10.get());
         a0._1c.set(0);
         a0.frameCount_20.set(0);
       }
@@ -3454,7 +3454,7 @@ public final class Bttl_800e {
   public static int allocateEffectManager(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
     final int index = allocateScriptState(0x6cL, EffectManagerData6c::new);
 
-    loadScriptFile(index, script_800faebc, "BTTL Script 800faebc", 0); //TODO unknown size
+    loadScriptFile(index, script_800faebc);
     setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
     if(renderer != null) {
@@ -3523,7 +3523,7 @@ public final class Bttl_800e {
   @Method(0x800e832cL)
   public static <T extends MemoryRef> int FUN_800e832c(final int a0, final long subStructSize, final long a2, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> renderer, final long a4) {
     final int index = allocateScriptState(0x6cL, EffectManagerData6c::new);
-    loadScriptFile(index, script_800faebc, "BTTL Script FUN_800e832c", 0); //TODO
+    loadScriptFile(index, script_800faebc);
     setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
     if(renderer != null) {

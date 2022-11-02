@@ -244,7 +244,6 @@ public class Gpu implements Runnable {
   }
 
   private void displaySize(final int horizontalRes, final int verticalRes) {
-
     if(this.displayTexture != null) {
       this.displayTexture.delete();
     }
@@ -816,7 +815,7 @@ public class Gpu implements Runnable {
     final byte g = (byte)(c2G * ratio + c1G * (1 - ratio));
     final byte r = (byte)(c2R * ratio + c1R * (1 - ratio));
 
-    return r << 16 | g << 8 | b;
+    return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
   }
 
   private static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
@@ -921,10 +920,6 @@ public class Gpu implements Runnable {
       IoHelper.write(stream, pixel);
     }
 
-    IoHelper.write(stream, this.isVramViewer);
-    IoHelper.write(stream, this.windowWidth);
-    IoHelper.write(stream, this.windowHeight);
-
     IoHelper.write(stream, this.status.setMaskBit);
     IoHelper.write(stream, this.status.drawPixels);
     IoHelper.write(stream, this.status.horizontalResolution);
@@ -951,23 +946,11 @@ public class Gpu implements Runnable {
       this.vram15[i] = IoHelper.readInt(buf);
     }
 
-    this.isVramViewer = IoHelper.readBool(buf);
-
-    if(version >= 2) {
-      this.windowWidth = IoHelper.readInt(buf);
-      this.windowHeight = IoHelper.readInt(buf);
-    }
-
     this.status.setMaskBit = IoHelper.readBool(buf);
     this.status.drawPixels = IoHelper.readEnum(buf, DRAW_PIXELS.class);
     this.status.horizontalResolution = IoHelper.readEnum(buf, HORIZONTAL_RESOLUTION.class);
     this.status.verticalResolution = IoHelper.readEnum(buf, VERTICAL_RESOLUTION.class);
     this.status.displayAreaColourDepth = IoHelper.readEnum(buf, DISPLAY_AREA_COLOUR_DEPTH.class);
-
-    if(version < 3) {
-      IoHelper.readLong(buf);
-      IoHelper.readInt(buf);
-    }
 
     this.displayStartX = IoHelper.readInt(buf);
     this.displayStartY = IoHelper.readInt(buf);
@@ -977,10 +960,7 @@ public class Gpu implements Runnable {
     this.offsetX = IoHelper.readShort(buf);
     this.offsetY = IoHelper.readShort(buf);
 
-    final int horizontalRes = this.status.horizontalResolution.res;
-    final int verticalRes = this.status.verticalResolution.res;
-
-    this.displaySize(horizontalRes, verticalRes);
+    this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
 
     if(this.isVramViewer) {
       this.window.resize(this.vramTexture.width, this.vramTexture.height);

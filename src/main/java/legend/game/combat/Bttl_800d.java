@@ -1349,7 +1349,7 @@ public final class Bttl_800d {
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get();
       final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
       final ScriptState<AdditionScriptData1c> s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(AdditionScriptData1c.class));
-      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       final CString additionName = getAdditionName(0, addition);
@@ -1526,7 +1526,7 @@ public final class Bttl_800d {
       //LAB_800d4388
       final int scriptIndex = allocateScriptState(0x40L, BttlScriptData40::new);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d4018", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d430c", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
 
@@ -1590,7 +1590,7 @@ public final class Bttl_800d {
     final int s2 = a0.params_20.get(0).deref().get();
     if(s2 != -1) {
       final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
-      loadScriptFile(scriptIndex, doNothingScript_8004f650, "", 0); //TODO
+      loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
@@ -1604,7 +1604,7 @@ public final class Bttl_800d {
       s0._04.set(0);
       s0.length_08.set(0x1L);
       s0._10.set(s2);
-      final var struct = s0.ptr_18.deref().get(0);
+      final AdditionCharEffectData0c struct = s0.ptr_18.deref().get(0);
       struct.scrolling_00.set(1);
       struct.dupes_02.set((short)8);
       struct.position_04.set((short)-0xa0);

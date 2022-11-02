@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
-import legend.core.Tuple;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.RECT;
@@ -48,8 +47,6 @@ import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlScriptData6cSub14;
-import legend.game.combat.types.WeaponTrailEffect3c;
-import legend.game.combat.types.WeaponTrailEffectSegment2c;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -58,6 +55,8 @@ import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.MersenneTwisterSeed;
+import legend.game.combat.types.WeaponTrailEffect3c;
+import legend.game.combat.types.WeaponTrailEffectSegment2c;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_MODE;
 import legend.game.types.ExtendedTmd;
@@ -146,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
-import static legend.game.Scus94491BpeSegment_8005._8005e398_SCRIPT_SIZES;
 import static legend.game.Scus94491BpeSegment_8005._8005f428;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -246,7 +244,6 @@ public final class Bttl_800c {
   public static final Value _800c66d8 = MEMORY.ref(4, 0x800c66d8L);
 
   public static final Pointer<ScriptFile> script_800c66fc = MEMORY.ref(4, 0x800c66fcL, Pointer.deferred(4, ScriptFile::new));
-  public static int script_800c66fc_length;
 
   public static final Pointer<ScriptFile> script_800c670c = MEMORY.ref(4, 0x800c670cL, Pointer.deferred(4, ScriptFile::new));
 
@@ -2725,23 +2722,15 @@ public final class Bttl_800c {
 
       if((state.ui_60.get() & 0x800L) == 0) {
         final ScriptFile script;
-        final String scriptName;
-        final int scriptLength;
         if((state.ui_60.get() & 0x4L) != 0) {
           script = MEMORY.ref(4, getCombatantFile(data.combatantIndex_26c.get()), ScriptFile::new);
-
-          final Tuple<String, Integer> tuple = _8005e398_SCRIPT_SIZES.get(data.combatantIndex_26c.get());
-          scriptName = tuple.a();
-          scriptLength = tuple.b();
         } else {
           //LAB_800caf18
           script = script_800c66fc.deref();
-          scriptName = "S_BTLD BPE 800fb77c";
-          scriptLength = script_800c66fc_length;
         }
 
         //LAB_800caf20
-        loadScriptFile(index, script, scriptName, scriptLength);
+        loadScriptFile(index, script);
       }
 
       //LAB_800caf2c
@@ -3699,7 +3688,7 @@ public final class Bttl_800c {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref();
     setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
     setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-    loadScriptFile(bobjIndex, a0.scriptState_04.deref().scriptPtr_14.deref(), a0.params_20.get(0).deref().get(), "", 0); //TODO
+    loadScriptFile(bobjIndex, a0.scriptState_04.deref().scriptPtr_14.deref(), a0.params_20.get(0).deref().get());
     state.ui_60.or(0x804);
     _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
     _8006e398.bobjIndices_e50.get(_800c6768.get()).set(bobjIndex);
@@ -3866,7 +3855,7 @@ public final class Bttl_800c {
 
     //LAB_800cdbb8
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      loadScriptFile(_8006e398.charBobjIndices_e40.get(i).get(), null, "", 0); //TODO
+      loadScriptFile(_8006e398.charBobjIndices_e40.get(i).get(), null);
     }
 
     //LAB_800cdbe0

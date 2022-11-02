@@ -1,6 +1,5 @@
 package legend.game.combat;
 
-import legend.core.Tuple;
 import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -8,11 +7,11 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
@@ -21,29 +20,23 @@ import legend.game.types.ScriptState;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.memcpy;
-import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
+import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
+import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
+import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment_8005._8005e398_SCRIPT_SIZES;
+import static legend.game.Scus94491BpeSegment.setScriptTicker;
+import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
+import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
-import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
-import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
-import static legend.game.combat.Bttl_800c.addCombatant;
-import static legend.game.combat.Bttl_800c.getCombatantIndex;
-import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c._800c66d8;
@@ -51,11 +44,15 @@ import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6768;
 import static legend.game.combat.Bttl_800c._800c6780;
+import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.getCombatant;
+import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.script_800c66fc_length;
 import static legend.game.combat.Bttl_800c.script_800c670c;
+import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
+import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
+import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
 
@@ -108,14 +105,13 @@ public class SBtld {
   @Method(0x80109164L)
   public static void btldBpeDecompressed(final long address, final long fileSize, final long param) {
     script_800c66fc.setPointer(address);
-    script_800c66fc_length = (int)fileSize;
   }
 
   @Method(0x80109170L)
   public static void FUN_80109170(final long address, final long fileSize, final long param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
     scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0, null));
-    loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref(), "DRGN1 401", (int)fileSize);
+    loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref());
 
     final long v1;
     if((simpleRand() & 0x8000L) == 0) {
@@ -276,8 +272,6 @@ public class SBtld {
     final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
 
     getCombatant((int)index).filePtr_10.set(script.getAddress());
-    _8005e398_SCRIPT_SIZES.remove((int)index);
-    _8005e398_SCRIPT_SIZES.put((int)index, new Tuple<>("S_BTLD Script %d".formatted(index), (int)fileSize));
     _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
     uniqueMonsterCount_800c6698.add(1);
     decrementOverlayCount();
