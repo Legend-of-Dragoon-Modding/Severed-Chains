@@ -48,10 +48,8 @@ public class Gpu implements Runnable {
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
-  private int renderScale = Config.renderScale();
-
-  private int vramWidth = STANDARD_VRAM_WIDTH * this.renderScale;
-  private int vramHeight = STANDARD_VRAM_HEIGHT * this.renderScale;
+  private int vramWidth = STANDARD_VRAM_WIDTH;
+  private int vramHeight = STANDARD_VRAM_HEIGHT;
 
   private Camera camera;
   private Window window;
@@ -110,10 +108,10 @@ public class Gpu implements Runnable {
   public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
     assert address != 0;
 
-    final int rectX = rect.x.get() * this.renderScale;
-    final int rectY = rect.y.get() * this.renderScale;
-    final int rectW = rect.w.get() * this.renderScale;
-    final int rectH = rect.h.get() * this.renderScale;
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
 
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
@@ -122,20 +120,16 @@ public class Gpu implements Runnable {
 
     MEMORY.waitForLock(() -> {
       int i = 0;
-      for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
-        for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
-          final int packed = (int)MEMORY.get(address + i * 2, 2);
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          final int packed = (int)MEMORY.get(address + i, 2);
           final int unpacked = MathHelper.colour15To24(packed);
 
-          for(int y1 = y; y1 < y + this.renderScale; y1++) {
-            for(int x1 = x; x1 < x + this.renderScale; x1++) {
-              final int index = y1 * this.vramWidth + x1;
-              this.vram24[index] = unpacked;
-              this.vram15[index] = packed;
-            }
-          }
+          final int index = y * this.vramWidth + x;
+          this.vram24[index] = unpacked;
+          this.vram15[index] = packed;
 
-          i++;
+          i += 2;
         }
       }
     });
@@ -144,10 +138,10 @@ public class Gpu implements Runnable {
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
     assert address != 0;
 
-    final int rectX = rect.x.get() * this.renderScale;
-    final int rectY = rect.y.get() * this.renderScale;
-    final int rectW = rect.w.get() * this.renderScale;
-    final int rectH = rect.h.get() * this.renderScale;
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
 
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
@@ -156,11 +150,11 @@ public class Gpu implements Runnable {
 
     MEMORY.waitForLock(() -> {
       int i = 0;
-      for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
-        for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
           final int index = y * this.vramWidth + x;
-          MEMORY.set(address + i * 2, 2, this.vram15[index]);
-          i++;
+          MEMORY.set(address + i, 2, this.vram15[index]);
+          i += 2;
         }
       }
     });
@@ -216,8 +210,8 @@ public class Gpu implements Runnable {
    * Upper/left Display source address in VRAM. The size and target position on screen is set via Display Range registers; target=X1,Y2; size=(X2-X1/cycles_per_pix), (Y2-Y1).
    */
   public void displayStart(final int x, final int y) {
-    this.displayStartX = x * this.renderScale;
-    this.displayStartY = y * this.renderScale;
+    this.displayStartX = x;
+    this.displayStartY = y;
   }
 
   /**
@@ -228,8 +222,8 @@ public class Gpu implements Runnable {
    * The 224/264 values are for fullscreen pictures. Many NTSC games display 240 lines (overscan with hidden lines). Many PAL games display only 256 lines (underscan with black borders).
    */
   public void verticalDisplayRange(final int y1, final int y2) {
-    this.displayRangeY1 = y1 * this.renderScale;
-    this.displayRangeY2 = y2 * this.renderScale;
+    this.displayRangeY1 = y1;
+    this.displayRangeY2 = y2;
   }
 
   /**
@@ -252,15 +246,13 @@ public class Gpu implements Runnable {
   }
 
   private void displaySize(final int horizontalRes, final int verticalRes) {
-    final int hr = horizontalRes * this.renderScale;
-    final int vr = verticalRes * this.renderScale;
 
     if(this.displayTexture != null) {
       this.displayTexture.delete();
     }
 
     this.displayTexture = Texture.create(builder -> {
-      builder.size(hr, vr);
+      builder.size(horizontalRes, verticalRes);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.minFilter(GL_NEAREST);
@@ -302,7 +294,7 @@ public class Gpu implements Runnable {
   @Override
   public void run() {
     this.camera = new Camera(0.0f, 0.0f);
-    this.window = new Window("Legend of Dragoon", Config.windowWidth() * this.renderScale, Config.windowHeight() * this.renderScale);
+    this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
     this.ctx = new Context(this.window, this.camera);
 
@@ -392,7 +384,7 @@ public class Gpu implements Runnable {
       this.tick();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - scale: %d - FPS: %.2f/%d".formatted(this.renderScale, fps, this.window.getFpsLimit()));
+      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d".formatted(fps, this.window.getFpsLimit()));
       this.lastFrame = System.nanoTime();
     });
 
@@ -478,7 +470,7 @@ public class Gpu implements Runnable {
 
       MemoryUtil.memFree(pixels);
     } else if(this.status.displayAreaColourDepth == DISPLAY_AREA_COLOUR_DEPTH.BITS_24) {
-      int yRangeOffset = 240 * this.renderScale - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
+      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
       if(yRangeOffset < 0) {
         yRangeOffset = 0;
       }
@@ -487,9 +479,9 @@ public class Gpu implements Runnable {
       final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
       final IntBuffer pixelsInt = pixels.asIntBuffer();
 
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res * this.renderScale - yRangeOffset; y++) {
+      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
         int offset = 0;
-        for(int x = 0; x < this.status.horizontalResolution.res * this.renderScale; x += 2) {
+        for(int x = 0; x < this.status.horizontalResolution.res; x += 2) {
           final int p0rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
           final int p1rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
           final int p2rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
@@ -526,7 +518,7 @@ public class Gpu implements Runnable {
 
       MemoryUtil.memFree(pixels);
     } else { // 15bpp
-      int yRangeOffset = 240 * this.renderScale - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
+      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
       if(yRangeOffset < 0) {
         yRangeOffset = 0;
       }
@@ -539,7 +531,7 @@ public class Gpu implements Runnable {
       final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
       final byte[] from = new byte[this.displayTexture.width * 4];
 
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res * this.renderScale - yRangeOffset; y++) {
+      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
         vram.get((this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramTexture.width) * 4, from);
         pixels.put(from, 0, from.length);
       }
@@ -573,87 +565,6 @@ public class Gpu implements Runnable {
 
   public int getOffsetY() {
     return this.offsetY;
-  }
-
-  public int getRenderScale() {
-    return this.renderScale;
-  }
-
-  public void rescaleVram(final int newScale) {
-    if(newScale == this.renderScale) {
-      return;
-    }
-
-    if(this.renderScale > 1) {
-      // Scale down to 1
-
-      this.displayStartX /= this.renderScale;
-      this.displayStartY /= this.renderScale;
-      this.displayRangeY1 /= this.renderScale;
-      this.displayRangeY2 /= this.renderScale;
-
-      this.vramWidth = STANDARD_VRAM_WIDTH;
-      this.vramHeight = STANDARD_VRAM_HEIGHT;
-
-      final int[] vram15 = new int[this.vramWidth * this.vramHeight];
-      final int[] vram24 = new int[this.vramWidth * this.vramHeight];
-
-      int newIndex = 0;
-      for(int oldY = 0; oldY < this.vramHeight * this.renderScale; oldY += this.renderScale) {
-        for(int oldX = 0; oldX < this.vramWidth * this.renderScale; oldX += this.renderScale) {
-          final int oldIndex = oldY * this.vramWidth * this.renderScale + oldX;
-          vram15[newIndex] = this.vram15[oldIndex];
-          vram24[newIndex] = this.vram24[oldIndex];
-          newIndex++;
-        }
-      }
-
-      this.vram15 = vram15;
-      this.vram24 = vram24;
-      this.renderScale = 1;
-    }
-
-    if(newScale > 1) {
-      // Scale back up if necessary
-
-      this.renderScale = newScale;
-
-      this.displayStartX *= this.renderScale;
-      this.displayStartY *= this.renderScale;
-      this.displayRangeY1 *= this.renderScale;
-      this.displayRangeY2 *= this.renderScale;
-
-      this.vramWidth = STANDARD_VRAM_WIDTH * this.renderScale;
-      this.vramHeight = STANDARD_VRAM_HEIGHT * this.renderScale;
-
-      final int[] vram15 = new int[this.vramWidth * this.vramHeight];
-      final int[] vram24 = new int[this.vramWidth * this.vramHeight];
-
-      int oldIndex = 0;
-      for(int y = 0; y < this.vramHeight; y += this.renderScale) {
-        for(int x = 0; x < this.vramWidth; x += this.renderScale) {
-          for(int y1 = y; y1 < y + this.renderScale; y1++) {
-            for(int x1 = x; x1 < x + this.renderScale; x1++) {
-              final int newIndex = y1 * this.vramWidth + x1;
-              vram15[newIndex] = this.vram15[oldIndex];
-              vram24[newIndex] = this.vram24[oldIndex];
-            }
-          }
-
-          oldIndex++;
-        }
-      }
-
-      this.vram15 = vram15;
-      this.vram24 = vram24;
-    }
-
-    this.vramTexture.delete();
-    this.vramTexture = Texture.empty(this.vramWidth, this.vramHeight);
-
-    final int horizontalRes = this.status.horizontalResolution.res;
-    final int verticalRes = this.status.verticalResolution.res;
-    this.displaySize(horizontalRes, verticalRes);
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
@@ -719,11 +630,7 @@ public class Gpu implements Runnable {
 
         colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-        for(int y1 = 0; y1 < this.renderScale; y1++) {
-          for(int x1 = 0; x1 < this.renderScale; x1++) {
-            this.setPixel(x + x1, y + y1, colour);
-          }
-        }
+        this.setPixel(x, y, colour);
       }
 
       numerator += shortest;
@@ -928,14 +835,14 @@ public class Gpu implements Runnable {
 
   private int get4bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
     final int index = this.getPixel15(x / 4 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x / this.renderScale & 3) * 4 & 0xf;
-    return this.getPixel(clutX + p * this.renderScale, clutY);
+    final int p = index >> (x & 3) * 4 & 0xf;
+    return this.getPixel(clutX + p, clutY);
   }
 
   private int get8bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
     final int index = this.getPixel15(x / 2 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x / this.renderScale & 1) * 8 & 0xff;
-    return this.getPixel(clutX + p * this.renderScale, clutY);
+    final int p = index >> (x & 1) * 8 & 0xff;
+    return this.getPixel(clutX + p, clutY);
   }
 
   private int get16bppTexel(final int x, final int y, final int textureBaseX, final int textureBaseY) {
@@ -1002,8 +909,6 @@ public class Gpu implements Runnable {
   }
 
   public void dump(final ByteBuffer stream) {
-    IoHelper.write(stream, this.renderScale);
-
     for(final long pixel : this.vram24) {
       IoHelper.write(stream, pixel);
     }
@@ -1032,10 +937,6 @@ public class Gpu implements Runnable {
   }
 
   public void load(final ByteBuffer buf, final int version) {
-    final int renderScale = version >= 2 ? IoHelper.readInt(buf) : 1;
-
-    this.rescaleVram(renderScale);
-
     for(int i = 0; i < this.vram24.length; i++) {
       this.vram24[i] = IoHelper.readInt(buf);
     }

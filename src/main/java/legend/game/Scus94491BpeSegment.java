@@ -692,20 +692,6 @@ public final class Scus94491BpeSegment {
         loading = true;
       }
 
-      if(key == GLFW_KEY_MINUS || key == GLFW_KEY_KP_SUBTRACT) {
-        if((mods & GLFW_MOD_CONTROL) != 0) {
-          if(GPU.getRenderScale() > 1) {
-            GPU.rescaleVram(GPU.getRenderScale() - 1);
-          }
-        }
-      }
-
-      if(key == GLFW_KEY_EQUAL || key == GLFW_KEY_KP_ADD) {
-        if((mods & GLFW_MOD_CONTROL) != 0) {
-          GPU.rescaleVram(GPU.getRenderScale() + 1);
-        }
-      }
-
       if(key == GLFW_KEY_F12) {
         if(!Debugger.isRunning()) {
           try {
