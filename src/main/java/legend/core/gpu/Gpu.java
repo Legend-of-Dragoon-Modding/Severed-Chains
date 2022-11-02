@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 
 import static legend.core.Hardware.INTERRUPTS;
@@ -77,7 +76,6 @@ public class Gpu implements Runnable {
 
   public final Status status = new Status();
 
-  private final Queue<Runnable> commandQueue = new LinkedList<>();
   private int displayStartX;
   private int displayStartY;
   private int displayRangeY1;
@@ -88,6 +86,8 @@ public class Gpu implements Runnable {
 
   private int zMax;
   private LinkedList<GpuCommand>[] zQueues;
+
+  private boolean displayChanged;
 
   public Window.Events events() {
     return this.window.events;
@@ -118,31 +118,27 @@ public class Gpu implements Runnable {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    synchronized(this.commandQueue) {
-      this.commandQueue.add(() -> {
-        LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
 
-        MEMORY.waitForLock(() -> {
-          int i = 0;
-          for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
-            for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
-              final int packed = (int)MEMORY.get(address + i * 2, 2);
-              final int unpacked = MathHelper.colour15To24(packed);
+    MEMORY.waitForLock(() -> {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
+        for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
+          final int packed = (int)MEMORY.get(address + i * 2, 2);
+          final int unpacked = MathHelper.colour15To24(packed);
 
-              for(int y1 = y; y1 < y + this.renderScale; y1++) {
-                for(int x1 = x; x1 < x + this.renderScale; x1++) {
-                  final int index = y1 * this.vramWidth + x1;
-                  this.vram24[index] = unpacked;
-                  this.vram15[index] = packed;
-                }
-              }
-
-              i++;
+          for(int y1 = y; y1 < y + this.renderScale; y1++) {
+            for(int x1 = x; x1 < x + this.renderScale; x1++) {
+              final int index = y1 * this.vramWidth + x1;
+              this.vram24[index] = unpacked;
+              this.vram15[index] = packed;
             }
           }
-        });
-      });
-    }
+
+          i++;
+        }
+      }
+    });
   }
 
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
@@ -156,22 +152,18 @@ public class Gpu implements Runnable {
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
 
-    synchronized(this.commandQueue) {
-      this.commandQueue.add(() -> {
-        LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
+    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
 
-        MEMORY.waitForLock(() -> {
-          int i = 0;
-          for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
-            for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
-              final int index = y * this.vramWidth + x;
-              MEMORY.set(address + i * 2, 2, this.vram15[index]);
-              i++;
-            }
-          }
-        });
-      });
-    }
+    MEMORY.waitForLock(() -> {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y += this.renderScale) {
+        for(int x = rectX; x < rectX + rectW; x += this.renderScale) {
+          final int index = y * this.vramWidth + x;
+          MEMORY.set(address + i * 2, 2, this.vram15[index]);
+          i++;
+        }
+      }
+    });
   }
 
   public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
@@ -198,16 +190,6 @@ public class Gpu implements Runnable {
     this.zQueues[z].addFirst(command);
   }
 
-  private void processGp0Command() {
-    final Runnable command;
-
-    synchronized(this.commandQueue) {
-      command = this.commandQueue.remove();
-    }
-
-    command.run();
-  }
-
   public void reset() {
     LOGGER.info("Resetting GPU");
 
@@ -221,8 +203,10 @@ public class Gpu implements Runnable {
    * GP1(01h) - Reset Command Buffer
    */
   public void resetCommandBuffer() {
-    synchronized(this.commandQueue) {
-      this.commandQueue.clear();
+    if(this.zQueues != null) {
+      for(int z = this.zQueues.length - 1; z >= 0; z--) {
+        this.zQueues[z].clear();
+      }
     }
   }
 
@@ -254,17 +238,15 @@ public class Gpu implements Runnable {
    * Note: The Display Area Color Depth does NOT affect the Drawing Area (the Drawing Area is always 15bit).
    */
   public void displayMode(final HORIZONTAL_RESOLUTION hRes, final VERTICAL_RESOLUTION vRes, final DISPLAY_AREA_COLOUR_DEPTH dispColourDepth) {
-    // Always run on the GPU thread
-    if(glfwGetCurrentContext() == 0) {
-      synchronized(this.commandQueue) {
-        this.commandQueue.add(() -> this.displayMode(hRes, vRes, dispColourDepth));
-      }
-      return;
-    }
-
     this.status.horizontalResolution = hRes;
     this.status.verticalResolution = vRes;
     this.status.displayAreaColourDepth = dispColourDepth;
+
+    // Always run on the GPU thread
+    if(glfwGetCurrentContext() == 0) {
+      this.displayChanged = true;
+      return;
+    }
 
     this.displaySize(hRes.res, vRes.res);
   }
@@ -407,19 +389,6 @@ public class Gpu implements Runnable {
       }
 
       this.r.run();
-
-      if(this.zQueues != null) {
-        synchronized(this.commandQueue) {
-          for(int z = this.zQueues.length - 1; z >= 0; z--) {
-            for(final GpuCommand command : this.zQueues[z]) {
-              this.commandQueue.add(() -> command.render(this));
-            }
-
-            this.zQueues[z].clear();
-          }
-        }
-      }
-
       this.tick();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
@@ -482,6 +451,11 @@ public class Gpu implements Runnable {
   }
 
   public void tick() {
+    if(this.displayChanged) {
+      this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
+      this.displayChanged = false;
+    }
+
     INTERRUPTS.set(InterruptType.VBLANK);
 
     // Restore model buffer to identity
@@ -582,9 +556,13 @@ public class Gpu implements Runnable {
       MemoryUtil.memFree(pixels);
     }
 
-    synchronized(this.commandQueue) {
-      while(!this.commandQueue.isEmpty()) {
-        this.processGp0Command();
+    if(this.zQueues != null) {
+      for(int z = this.zQueues.length - 1; z >= 0; z--) {
+        for(final GpuCommand command : this.zQueues[z]) {
+          command.render(this);
+        }
+
+        this.zQueues[z].clear();
       }
     }
   }
@@ -1103,7 +1081,7 @@ public class Gpu implements Runnable {
       this.window.resize(this.windowWidth, this.windowHeight);
     }
 
-    this.commandQueue.clear();
+    this.resetCommandBuffer();
   }
 
   public static class Status {
