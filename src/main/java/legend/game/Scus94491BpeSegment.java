@@ -119,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
 import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -335,13 +334,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ADD;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_SUBTRACT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
@@ -1798,8 +1793,6 @@ public final class Scus94491BpeSegment {
     zMax_1f8003cc.set((1 << orderingTableBits) - 2);
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
-    VSync(0);
-
     //LAB_80013040
     GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
 
@@ -1849,7 +1842,7 @@ public final class Scus94491BpeSegment {
   public static int simpleRand() {
     final long v1;
     if(simpleRandSeed_8004dd44.get(0xfffL) == 0) {
-      v1 = VSync(-1) * 9; // If seed is 0, seed with vblanks
+      v1 = GPU.getVsyncCount() * 9; // If seed is 0, seed with vblanks
     } else {
       v1 = simpleRandSeed_8004dd44.get();
     }
@@ -1984,7 +1977,7 @@ public final class Scus94491BpeSegment {
     //LAB_800136f4
     scriptEffect_800bb140.type_00.set(effectType);
     scriptEffect_800bb140.totalFrames_08.set((int)frames > 0 ? frames : 0xfL);
-    scriptEffect_800bb140.startTime_04.set(VSync(-1));
+    scriptEffect_800bb140.startTime_04.set(GPU.getVsyncCount());
 
     if(_8004dd48.offset(effectType * 2).get() == 0x2L) {
       scriptEffect_800bb140.blue1_0c.set(0);
@@ -2005,7 +1998,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void FUN_80013778() {
-    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), VSync(-1) - scriptEffect_800bb140.startTime_04.get());
+    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
 
     //LAB_800137d0
     final long colour;

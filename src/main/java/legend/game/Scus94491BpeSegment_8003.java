@@ -1,8 +1,6 @@
 package legend.game;
 
 import legend.core.CpuRegisterType;
-import legend.core.DebugHelper;
-import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlDIR;
@@ -86,8 +84,6 @@ import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
 import static legend.game.Scus94491BpeSegment_8005.GsOUT_PACKET_P;
-import static legend.game.Scus94491BpeSegment_8005.Vcount;
-import static legend.game.Scus94491BpeSegment_8005._80053500;
 import static legend.game.Scus94491BpeSegment_8005._80053594;
 import static legend.game.Scus94491BpeSegment_8005._800535a0;
 import static legend.game.Scus94491BpeSegment_8005._8005457c;
@@ -110,7 +106,6 @@ import static legend.game.Scus94491BpeSegment_8005.jmp_buf_8005359c;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
-import static legend.game.Scus94491BpeSegment_8005.vsyncCallbacks_8005460c;
 import static legend.game.Scus94491BpeSegment_800b.CdlDIR_800bfda8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bf7a8;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
@@ -406,105 +401,6 @@ public final class Scus94491BpeSegment_8003 {
     return 0x1L;
   }
 
-  /**
-   * Wait for the next vertical blank, or return the vertical blank counter value.
-   *
-   * Waits for vertical blank using the method specified by mode, as defined below.
-   *
-   * <table>
-   *   <caption>Possible Values</caption>
-   *   <tr>
-   *     <th>Mode</th>
-   *     <th>Operation</th>
-   *   </tr>
-   *   <tr>
-   *     <td>0</td>
-   *     <td>Blocks until vertical sync is generated</td>
-   *   </tr>
-   *   <tr>
-   *     <td>1</td>
-   *     <td>Returns time elapsed from the point VSync() processing is last completed when mode=1 or n in horizontal sync units</td>
-   *   </tr>
-   *   <tr>
-   *     <td>n (n>1)</td>
-   *     <td>Blocks from the point VSync() processing is last completed when mode=1 or n until n number of vertical syncs are generated.</td>
-   *   </tr>
-   *   <tr>
-   *     <td>-n (n>0)</td>
-   *     <td>Returns absolute time after program boot in vertical sync interval units.</td>
-   *   </tr>
-   * </table>
-   *
-   * Vsync() may generate a timeout if long blocking periods are specified. To prevent deadlocks, rather than
-   * using Vsync() to block for an especially long time (say more than 4 vertical blank periods), have your
-   * program poll VSync(-1) in a loop instead.
-   *
-   * @return If mode>=0, returns time elapsed from the point that Vsync() processing is last completed when
-   *         mode=1 or n (horizontal blanking units). If mode<0, returns time elapsed after program boot (vertical
-   *         blanking units)
-   */
-  @Method(0x80037490L)
-  public static int VSync(final int mode) {
-    if(mode < 0) {
-      return (int)Vcount.get();
-    }
-
-    //LAB_800374b4
-    //LAB_80037500
-    if(mode != 0x1L) {
-      //LAB_8003752c
-      //LAB_80037534
-      //LAB_80037540
-      if(mode > 0) {
-        checkVsyncTimeout(_80053500.get() - 1 + mode, mode - 0x1L);
-      } else {
-        checkVsyncTimeout(_80053500.get(), 0);
-      }
-
-      checkVsyncTimeout(Vcount.get() + 1, 0x1L);
-
-      //LAB_800375b4
-      _80053500.setu(Vcount);
-    }
-
-    //LAB_800375f0
-    //LAB_800375f4
-    return 0;
-  }
-
-  @Method(0x80037608L)
-  public static void checkVsyncTimeout(final long a0, final long a1) {
-    if(Vcount.get() >= a0) {
-      return;
-    }
-
-    if(Hardware.isGpuThread()) {
-      GPU.tick();
-    }
-
-    //LAB_80037630
-    long a2 = a1 << 0xfL;
-
-    do {
-      a2--;
-      if(a2 == -0x1L) {
-        LOGGER.error("VSync: timeout");
-        ChangeClearRCnt(0x3, false);
-        break;
-      }
-
-      DebugHelper.sleep(1);
-
-      if(Hardware.isGpuThread()) {
-        GPU.tick();
-      }
-
-      //LAB_80037678
-    } while(Vcount.get() < a0);
-
-    //LAB_80037690
-  }
-
   @Method(0x800376a0L)
   public static boolean ChangeClearRCnt(final int t, final boolean flag) {
     GATE.acquire();
@@ -542,7 +438,6 @@ public final class Scus94491BpeSegment_8003 {
     _800535a0.setu(_8005457c.getAddress());
     SetCustomExitFromException(jmp_buf_8005359c);
     interruptHandlersInitialized_80053564.set(true);
-    _800545ec.deref(4).offset(0x14L).setu(startInterruptVsync());
     _800545ec.deref(4).offset(0x4L).setu(startInterruptDma());
     ExitCriticalSection();
 
@@ -675,34 +570,6 @@ public final class Scus94491BpeSegment_8003 {
     GATE.acquire();
     setjmp_Impl_A13(buffer, callback);
     GATE.release();
-  }
-
-  @Method(0x80037dd0L)
-  public static long startInterruptVsync() {
-    Vcount.setu(0);
-
-    zeroMemory_80037d4c(vsyncCallbacks_8005460c.getAddress(), 8);
-    InterruptCallback(InterruptType.VBLANK, getMethodAddress(Scus94491BpeSegment_8003.class, "executeVsyncCallbacks"));
-
-    return getMethodAddress(Scus94491BpeSegment_8003.class, "SetInterruptCallback_Impl", InterruptType.class, long.class);
-  }
-
-  @Method(0x80037e28L)
-  public static void executeVsyncCallbacks() {
-    Vcount.addu(0x1L);
-
-    for(int i = 0; i < 8; i++) {
-      final Pointer<RunnableRef> ptr = vsyncCallbacks_8005460c.get(i);
-
-      if(!ptr.isNull()) {
-        ptr.deref().run();
-      }
-    }
-  }
-
-  @Method(0x80037e94L)
-  public static void SetInterruptCallback_Impl(final InterruptType interrupt, final long callback) {
-    vsyncCallbacks_8005460c.get(interrupt.ordinal()).set(MEMORY.ref(4, callback, RunnableRef::new));
   }
 
   @Method(0x80037ef0L)

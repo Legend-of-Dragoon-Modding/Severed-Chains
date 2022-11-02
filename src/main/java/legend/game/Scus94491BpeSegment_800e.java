@@ -70,7 +70,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
-import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -718,7 +717,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800f#FUN_800f480c}</li>
    *   <li>{@link Bttl_800f#FUN_800f2694}</li>
    *   <li>{@link Bttl_800f#FUN_800f96a8}</li>
-   *   <li>{@link Bttl_800f#renderRecover}</li>
+   *   <li>{@link Bttl_800f#scriptRenderRecover}</li>
    *   <li>{@link Bttl_800f#FUN_800f2838}</li>
    *   <li>{@link Bttl_800f#FUN_800f9884}</li>
    *   <li>{@link Bttl_800f#FUN_800f98b0}</li>
@@ -801,7 +800,6 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e5d64() {
     ResetCallback();
 
-    VSync(0);
     ResetGraph(0);
     SetGraphDebug(2);
 
@@ -945,7 +943,7 @@ public final class Scus94491BpeSegment_800e {
     loadSceaLogo();
     scriptStartEffect(0x2L, 0x1L);
     sceaLogoTextureLoaded_800c672c.setu(0x1L);
-    sceaLogoDisplayTime_800c6730.setu(VSync(-1));
+    sceaLogoDisplayTime_800c6730.setu(GPU.getVsyncCount());
     pregameLoadingStage_800bb10c.addu(0x1L);
     sceaLogoAlpha_800c6734.set(0);
   }

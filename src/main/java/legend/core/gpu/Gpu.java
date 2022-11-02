@@ -1,7 +1,6 @@
 package legend.core.gpu;
 
 import legend.core.Config;
-import legend.core.InterruptType;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Camera;
@@ -28,7 +27,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -288,8 +286,13 @@ public class Gpu implements Runnable {
     return shader;
   }
 
+  private double vsyncCount;
   private long lastFrame;
   public Runnable r = () -> { };
+
+  public long getVsyncCount() {
+    return (long)this.vsyncCount;
+  }
 
   @Override
   public void run() {
@@ -386,6 +389,7 @@ public class Gpu implements Runnable {
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d".formatted(fps, this.window.getFpsLimit()));
       this.lastFrame = System.nanoTime();
+      this.vsyncCount += 60.0d / this.window.getFpsLimit();
     });
 
     if(Config.controllerConfig()) {
@@ -447,8 +451,6 @@ public class Gpu implements Runnable {
       this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
       this.displayChanged = false;
     }
-
-    INTERRUPTS.set(InterruptType.VBLANK);
 
     // Restore model buffer to identity
     this.transforms.identity();
@@ -909,6 +911,8 @@ public class Gpu implements Runnable {
   }
 
   public void dump(final ByteBuffer stream) {
+    IoHelper.write(stream, this.vsyncCount);
+
     for(final long pixel : this.vram24) {
       IoHelper.write(stream, pixel);
     }
@@ -937,6 +941,8 @@ public class Gpu implements Runnable {
   }
 
   public void load(final ByteBuffer buf, final int version) {
+    this.vsyncCount = IoHelper.readDouble(buf);
+
     for(int i = 0; i < this.vram24.length; i++) {
       this.vram24[i] = IoHelper.readInt(buf);
     }

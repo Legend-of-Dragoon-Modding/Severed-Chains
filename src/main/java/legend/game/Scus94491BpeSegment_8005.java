@@ -96,8 +96,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
 
-  public static final Value _80053500 = MEMORY.ref(4, 0x80053500L);
-
   public static final BoolRef interruptHandlersInitialized_80053564 = MEMORY.ref(2, 0x80053564L, BoolRef::new);
   public static final BoolRef inExceptionHandler_80053566 = MEMORY.ref(2, 0x80053566L, BoolRef::new);
   public static final Value interruptCallbacks_80053568 = MEMORY.ref(4, 0x80053568L);
@@ -112,10 +110,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800545ec = MEMORY.ref(4, 0x800545ecL);
 
   public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
-
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = MEMORY.ref(4, 0x8005460cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.of(4, RunnableRef::new)));
-
-  public static final Value Vcount = MEMORY.ref(4, 0x8005462cL);
 
   public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(4, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
