@@ -31,7 +31,7 @@ import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
-import legend.game.combat.types.BttlScriptData6cSub14;
+import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
@@ -39,7 +39,6 @@ import legend.game.combat.types.GuardEffect06;
 import legend.game.combat.types.MonsterDeathEffect34;
 import legend.game.combat.types.ProjectileHitEffect14;
 import legend.game.combat.types.ProjectileHitEffect14Sub48;
-import legend.game.types.DR_MODE;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
@@ -59,16 +58,13 @@ import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.ctmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
@@ -84,14 +80,12 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f990;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
@@ -664,178 +658,139 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d1d3cL)
-  public static void FUN_800d1d3c(final EffectManagerData6c a0, final long angle, final long[] a2, final BttlScriptData6cSub14 a3) {
-    if((int)a0._10._00.get() >= 0) {
-      final long packet = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.set(packet + 0x1cL);
-      MEMORY.ref(1, packet).offset(0x03L).setu(0x6L);
-      MEMORY.ref(1, packet).offset(0x04L).setu(a0._10.colour_1c.getX()); // R1
-      MEMORY.ref(1, packet).offset(0x05L).setu(a0._10.colour_1c.getY()); // G1
-      MEMORY.ref(1, packet).offset(0x06L).setu(a0._10.colour_1c.getZ()); // B1
-      MEMORY.ref(1, packet).offset(0x07L).setu(0x32L); // Shaded three-point poly, translucent
-      MEMORY.ref(2, packet).offset(0x08L).setu(a2[0]); // X1
-      MEMORY.ref(2, packet).offset(0x0aL).setu(a2[1]); // Y1
-      MEMORY.ref(1, packet).offset(0x0cL).setu(a3._0c.get()); // R2
-      MEMORY.ref(1, packet).offset(0x0dL).setu(a3._0d.get()); // G2
-      MEMORY.ref(1, packet).offset(0x0eL).setu(a3._0e.get()); // B2
-      MEMORY.ref(2, packet).offset(0x10L).setu(a2[2]); // X2
-      MEMORY.ref(2, packet).offset(0x12L).setu(a2[3]); // Y2
-      MEMORY.ref(1, packet).offset(0x14L).setu(a3._0c.get()); // R3
-      MEMORY.ref(1, packet).offset(0x15L).setu(a3._0d.get()); // G3
-      MEMORY.ref(1, packet).offset(0x16L).setu(a3._0e.get()); // B3
-      MEMORY.ref(2, packet).offset(0x18L).setu(a2[4]); // X3
-      MEMORY.ref(2, packet).offset(0x1aL).setu(a2[5]); // Y3
-      queueGpuPacket(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10.z_22.get()) / 4 * 0x4L, packet);
+  public static void FUN_800d1d3c(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
+    if((int)manager._10._00.get() >= 0) {
+      GPU.queueCommand(effect.z_04.get() + manager._10.z_22.get() >> 2, new GpuCommandPoly(3)
+        .translucent(translucency)
+        .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+        .rgb(1, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .rgb(2, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .pos(0, vertices[0], vertices[1])
+        .pos(1, vertices[2], vertices[3])
+        .pos(2, vertices[4], vertices[5])
+      );
     }
 
     //LAB_800d1e70
   }
 
   @Method(0x800d21b8L)
-  public static void FUN_800d21b8(final EffectManagerData6c a0, final long angle, final long[] a2, final BttlScriptData6cSub14 a3) {
-    if((int)a0._10._00.get() >= 0) {
+  public static void FUN_800d21b8(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
+    if((int)manager._10._00.get() >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (a0._10.scale_16.getX() / a3._01.get() + a0._10.vec_28.getX()) >> 12,
-        rsin(angle) * (a0._10.scale_16.getY() / a3._01.get() + a0._10.vec_28.getX()) >> 12,
-        a0._10.vec_28.getY()
+        rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
+        manager._10.vec_28.getY()
       );
 
       final ShortRef sp0x10 = new ShortRef();
       final ShortRef sp0x14 = new ShortRef();
-      FUN_800cfb14(a0, sp0x20, sp0x10, sp0x14);
+      FUN_800cfb14(manager, sp0x20, sp0x10, sp0x14);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + a3._08.get()) * (a0._10.scale_16.getX() / a3._01.get() + a0._10.vec_28.getX()) >> 12,
-        rsin(angle + a3._08.get()) * (a0._10.scale_16.getY() / a3._01.get() + a0._10.vec_28.getX()) >> 12,
-        a0._10.vec_28.getY()
+        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
+        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
+        manager._10.vec_28.getY()
       );
 
       final ShortRef sp0x18 = new ShortRef();
       final ShortRef sp0x1c = new ShortRef();
-      FUN_800cfb14(a0, sp0x30, sp0x18, sp0x1c);
+      FUN_800cfb14(manager, sp0x30, sp0x18, sp0x1c);
 
-      final long addr = gpuPacketAddr_1f8003d8.get();
-      gpuPacketAddr_1f8003d8.addu(0x24L);
-      MEMORY.ref(1, addr).offset(0x03L).setu(0x8L);
-      MEMORY.ref(1, addr).offset(0x04L).setu(a0._10.colour_1c.getX());
-      MEMORY.ref(1, addr).offset(0x05L).setu(a0._10.colour_1c.getY());
-      MEMORY.ref(1, addr).offset(0x06L).setu(a0._10.colour_1c.getZ());
-      MEMORY.ref(1, addr).offset(0x07L).setu(0x3aL);
-      MEMORY.ref(1, addr).offset(0x0cL).setu(a0._10.colour_1c.getX());
-      MEMORY.ref(1, addr).offset(0x0dL).setu(a0._10.colour_1c.getY());
-      MEMORY.ref(1, addr).offset(0x0eL).setu(a0._10.colour_1c.getZ());
-      MEMORY.ref(1, addr).offset(0x14L).setu(a3._0c.get());
-      MEMORY.ref(1, addr).offset(0x15L).setu(a3._0d.get());
-      MEMORY.ref(1, addr).offset(0x16L).setu(a3._0e.get());
-      MEMORY.ref(1, addr).offset(0x1cL).setu(a3._0c.get());
-      MEMORY.ref(1, addr).offset(0x1dL).setu(a3._0d.get());
-      MEMORY.ref(1, addr).offset(0x1eL).setu(a3._0e.get());
-      MEMORY.ref(2, addr).offset(0x08L).setu(sp0x10.get());
-      MEMORY.ref(2, addr).offset(0x0aL).setu(sp0x14.get());
-      MEMORY.ref(2, addr).offset(0x10L).setu(sp0x18.get());
-      MEMORY.ref(2, addr).offset(0x12L).setu(sp0x1c.get());
-      MEMORY.ref(2, addr).offset(0x18L).setu(a2[2]);
-      MEMORY.ref(2, addr).offset(0x1aL).setu(a2[3]);
-      MEMORY.ref(2, addr).offset(0x20L).setu(a2[4]);
-      MEMORY.ref(2, addr).offset(0x22L).setu(a2[5]);
-      queueGpuPacket(tags_1f8003d0.getPointer() + (a3._04.get() + a0._10.z_22.get()) / 4 * 4, addr);
+      GPU.queueCommand(effect.z_04.get() + manager._10.z_22.get() >> 2, new GpuCommandPoly(4)
+        .translucent(translucency)
+        .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+        .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+        .rgb(2, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .rgb(3, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .pos(0, sp0x10.get(), sp0x14.get())
+        .pos(1, sp0x18.get(), sp0x1c.get())
+        .pos(2, vertices[2], vertices[3])
+        .pos(3, vertices[4], vertices[5])
+      );
     }
 
     //LAB_800d2460
   }
 
   @Method(0x800d247cL)
-  public static void FUN_800d247c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final long v1;
-    final long a0;
-    long s1;
-    long sp54;
-    long sp50;
-    long sp30;
-    long sp28;
-    long sp2c;
-    final BttlScriptData6cSub14 s0 = data.effect_44.derefAs(BttlScriptData6cSub14.class);
-    s0._08.set(0x1000L / (0x4L << s0._00.get()));
-    final VECTOR sp0x18 = new VECTOR();
+  public static void renderPotionEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final PotionEffect14 effect = manager.effect_44.derefAs(PotionEffect14.class);
+    effect.angleStep_08.set(0x1000 / (0x4 << effect._00.get()));
+
     final ShortRef sp0x48 = new ShortRef();
     final ShortRef sp0x4c = new ShortRef();
-    s0._04.set(FUN_800cfb14(data, sp0x18, sp0x48, sp0x4c) / 4);
-    a0 = data._10.z_22.get();
-    v1 = s0._04.get() + a0;
-    if((int)v1 >= 0xa0L) {
-      if((int)v1 >= 0xffeL) {
-        s0._04.set(0xffeL - a0);
+    effect.z_04.set(FUN_800cfb14(manager, new VECTOR(), sp0x48, sp0x4c) >> 2);
+
+    final int z = effect.z_04.get() + manager._10.z_22.get();
+    if(z >= 0xa0) {
+      if(z >= 0xffe) {
+        effect.z_04.set(0xffe - manager._10.z_22.get());
       }
 
       //LAB_800d2510
       final VECTOR sp0x38 = new VECTOR().set(
-        rcos(0) * (data._10.scale_16.getX() / s0._01.get()) >> 12,
-        rsin(0) * (data._10.scale_16.getY() / s0._01.get()) >> 12,
+        rcos(0) * (manager._10.scale_16.getX() / effect._01.get()) >> 12,
+        rsin(0) * (manager._10.scale_16.getY() / effect._01.get()) >> 12,
         0
       );
 
       final ShortRef sp0x58 = new ShortRef();
       final ShortRef sp0x5c = new ShortRef();
-      FUN_800cfb14(data, sp0x38, sp0x58, sp0x5c);
-      s0._0c.set((int)(data._10._24.get() >> 16 & 0xff));
-      s0._0d.set((int)(data._10._24.get() >>  8 & 0xff));
-      s0._0e.set((int)(data._10._24.get()       & 0xff));
+      FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
+      effect._0c.set((int)(manager._10._24.get() >>> 16 & 0xff));
+      effect._0d.set((int)(manager._10._24.get() >>>  8 & 0xff));
+      effect._0e.set((int)(manager._10._24.get()        & 0xff));
 
       //LAB_800d25b4
-      for(s1 = 0; s1 < 0x1000; ) {
-        //TODO Why? Unused?
-        sp28 = sp0x38.getX();
-        sp2c = sp0x38.getY();
-        sp30 = sp0x38.getZ();
+      for(int angle = 0; angle < 0x1000; ) {
+        final ShortRef sp0x50 = new ShortRef().set(sp0x58.get());
+        final ShortRef sp0x54 = new ShortRef().set(sp0x5c.get());
 
         sp0x38.set(
-          rcos(s1 + s0._08.get()) * (data._10.scale_16.getX() / s0._01.get()) >> 12,
-          rsin(s1 + s0._08.get()) * (data._10.scale_16.getY() / s0._01.get()) >> 12,
+          rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get()) >> 12,
+          rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get()) >> 12,
           0
         );
 
-        FUN_800cfb14(data, sp0x38, sp0x58, sp0x5c);
-        s0.renderer_10.deref().run(data, s1, new long[] {sp0x48.get(), sp0x4c.get(), sp0x58.get(), sp0x5c.get(), sp0x58.get(), sp0x5c.get()}, s0);
-
-        s1 = s1 + s0._08.get();
+        FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
+        effect.renderer_10.deref().run(manager, angle, new short[] {sp0x48.get(), sp0x4c.get(), sp0x50.get(), sp0x54.get(), sp0x58.get(), sp0x5c.get()}, effect, (manager._10._00.get() & 0x1000_0000L) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
+        angle += effect.angleStep_08.get();
       }
-
-      SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, (data._10._00.get() & 0x1000_0000L) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F, 0, 0));
-      queueGpuPacket(tags_1f8003d0.getPointer() + (s0._04.get() + data._10.z_22.get()) / 4 * 4, gpuPacketAddr_1f8003d8.get());
-      gpuPacketAddr_1f8003d8.addu(0xcL);
     }
 
     //LAB_800d2710
   }
 
   @Method(0x800d272cL)
-  public static void FUN_800d272c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void deallocatePotionEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     // no-op
   }
 
   @Method(0x800d2734L)
-  public static long FUN_800d2734(final RunningScript s0) {
-    final int s2 = s0.params_20.get(1).deref().get();
-    final int s1 = s0.params_20.get(2).deref().get();
-    final int scriptIndex = allocateEffectManager(
-      s0.scriptStateIndex_00.get(),
-      0x14L,
+  public static long allocatePotionEffect(final RunningScript script) {
+    final int s2 = script.params_20.get(1).deref().get();
+    final int s1 = script.params_20.get(2).deref().get();
+
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x14,
       null,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d247c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d272c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      BttlScriptData6cSub14::new
+      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderPotionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocatePotionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      PotionEffect14::new
     );
 
-    final EffectManagerData6c v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
     //LAB_800d27b4
-    v1._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
+    manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
-    final BttlScriptData6cSub14 a0 = v1.effect_44.derefAs(BttlScriptData6cSub14.class);
-    a0._00.set(s2);
-    a0._01.set(s1 < 5 ? 1 : 4);
-    a0.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
-    s0.params_20.get(0).deref().set(scriptIndex);
+    final PotionEffect14 effect = manager.effect_44.derefAs(PotionEffect14.class);
+    effect._00.set(s2);
+    effect._01.set(s1 - 3 > 1 ? 4 : 1);
+    effect.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
+    script.params_20.get(0).deref().set(effectIndex);
     return 0;
   }
 

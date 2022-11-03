@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import legend.core.MathHelper;
 import legend.core.memory.segments.TempSegment;
 import legend.core.memory.types.QuadConsumer;
+import legend.core.memory.types.QuintConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -512,6 +513,16 @@ public class Memory {
     public <T, U, V, W> Value set(final QuadConsumer<T, U, V, W> function) {
       try {
         this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class, Object.class, Object.class), function, false);
+      } catch(final NoSuchMethodException e) {
+        throw new RuntimeException(e);
+      }
+      return this;
+    }
+
+    @Override
+    public <T, U, V, W, X> Value set(final QuintConsumer<T, U, V, W, X> function) {
+      try {
+        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class, Object.class, Object.class, Object.class), function, false);
       } catch(final NoSuchMethodException e) {
         throw new RuntimeException(e);
       }

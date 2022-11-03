@@ -2,6 +2,7 @@ package legend.core.memory;
 
 import legend.core.MathHelper;
 import legend.core.memory.types.QuadConsumer;
+import legend.core.memory.types.QuintConsumer;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.function.BiConsumer;
@@ -182,6 +183,10 @@ public class Value {
   }
 
   public <T, U, V, W> Value set(final QuadConsumer<T, U, V, W> function) {
+    throw new RuntimeException("Can't store functions in registers");
+  }
+
+  public <T, U, V, W, X> Value set(final QuintConsumer<T, U, V, W, X> function) {
     throw new RuntimeException("Can't store functions in registers");
   }
 
