@@ -3401,54 +3401,65 @@ public final class SEffe {
   }
 
   @Method(0x801052dcL)
-  public static long FUN_801052dc(final RunningScript fp) {
-    final int s0 = fp.params_20.get(6).deref().get();
-    final int s1 = fp.params_20.get(7).deref().get();
-    final int scriptIndex = allocateEffectManager(fp.scriptStateIndex_00.get(), 0x38L, null, _80119f14.get(s1).deref(), MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80104954", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), BttlScriptData6cSub38::new);
-    final EffectManagerData6c s7 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-    final BttlScriptData6cSub38 s6 = s7.effect_44.derefAs(BttlScriptData6cSub38.class);
-    s6.count_00.set(fp.params_20.get(3).deref().get());
-    s6._04.set(0);
-    s6.scriptIndex_08.set(fp.params_20.get(1).deref().get());
-    s6._0c.set(s0 >> 16 & 0xff);
-    s6._10.set(fp.params_20.get(5).deref().get());
-    s6._14.set(s0 >>> 24 & 0x8);
-    s6._18.set(s0 >>> 24 & 0x10);
-    s6._1c.set((short)fp.params_20.get(2).deref().get());
-    s6._1e.set((short)fp.params_20.get(4).deref().get());
-    s6._20.set((short)s1);
-    s6._22.set(s0 >>> 24 & 0x1);
-    s6._23.set(s0 >>> 24 & 0x2);
-    s6._24.set(s0 >>> 24 & 0x4);
-    s6._26.set(s0 & 0xff);
-    s6._28.set(s0 >> 8 & 0xff);
-    s6._29.set(s0 >>> 24 & 0x20);
-    s6._2a.set(0);
-    s6.callback_2c.set(_80119ee8.get(s1).deref());
-    s6._34.setPointer(mallocTail(s6.count_00.get() * 0x14L));
+  public static long FUN_801052dc(final RunningScript script) {
+    final int s0 = script.params_20.get(6).deref().get();
+    final int s1 = script.params_20.get(7).deref().get();
 
-    if(s6._0c.get() == 0) {
-      s6._0c.set(-1);
+    //TODO counter-attack electricity
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x38,
+      null,
+      _80119f14.get(s1).deref(),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80104954", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      BttlScriptData6cSub38::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final BttlScriptData6cSub38 effect = manager.effect_44.derefAs(BttlScriptData6cSub38.class);
+    effect.count_00.set(script.params_20.get(3).deref().get());
+    effect._04.set(0);
+    effect.scriptIndex_08.set(script.params_20.get(1).deref().get());
+    effect._0c.set(s0 >> 16 & 0xff);
+    effect._10.set(script.params_20.get(5).deref().get());
+    effect._14.set(s0 >>> 24 & 0x8);
+    effect._18.set(s0 >>> 24 & 0x10);
+    effect._1c.set((short)script.params_20.get(2).deref().get());
+    effect._1e.set((short)script.params_20.get(4).deref().get());
+    effect._20.set((short)s1);
+    effect._22.set(s0 >>> 24 & 0x1);
+    effect._23.set(s0 >>> 24 & 0x2);
+    effect._24.set(s0 >>> 24 & 0x4);
+    effect._26.set(s0 & 0xff);
+    effect._28.set(s0 >> 8 & 0xff);
+    effect._29.set(s0 >>> 24 & 0x20);
+    effect._2a.set(0);
+    effect.callback_2c.set(_80119ee8.get(s1).deref());
+    effect._34.setPointer(mallocTail(effect.count_00.get() * 0x14L));
+
+    if(effect._0c.get() == 0) {
+      effect._0c.set(-1);
     }
 
     //LAB_8010549c
     //LAB_801054b4
-    for(int i = 0; i < s6.count_00.get(); i++) {
-      final BttlScriptData6cSub38Sub14 struct = s6._34.deref().get(i);
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      final BttlScriptData6cSub38Sub14 struct = effect._34.deref().get(i);
       struct._00.set(1);
       struct._02.set((short)(seed_800fa754.advance().get() % 4097));
       struct._04.set((short)0, (short)0, (short)0);
-      struct.ptr_10.setPointer(mallocTail(s6._28.get() * 0x30L));
-      _80119ebc.get(s6._20.get()).deref().run(s7, s6, struct, i);
-      FUN_80102bfc(s7, s6, struct);
+      struct.ptr_10.setPointer(mallocTail(effect._28.get() * 0x30L));
+      _80119ebc.get(effect._20.get()).deref().run(manager, effect, struct, i);
+      FUN_80102bfc(manager, effect, struct);
     }
 
     //LAB_80105590
-    fp.params_20.get(0).deref().set(scriptIndex);
-    s7._10._00.or(0x5000_0000L);
-    s7._10.colour_1c.set((short)0, (short)0, (short)0xff);
-    s7._10.vec_28.setX(0x100);
-    s7._10.vec_28.setZ(0x3);
+    manager._10._00.or(0x5000_0000L);
+    manager._10.colour_1c.set((short)0, (short)0, (short)0xff);
+    manager._10.vec_28.setX(0x100);
+    manager._10.vec_28.setZ(0x3);
+
+    script.params_20.get(0).deref().set(effectIndex);
     return 0;
   }
 
@@ -9506,7 +9517,7 @@ public final class SEffe {
     //LAB_80117e80
   }
 
-  /** Effect renderer for Down Burst item */
+  /** Effect renderer for Down Burst and Night Raid items */
   @Method(0x80117eb0L)
   public static long FUN_80117eb0(final RunningScript script) {
     final int param1 = script.params_20.get(1).deref().get();

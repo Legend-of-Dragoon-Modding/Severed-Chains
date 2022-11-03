@@ -74,6 +74,10 @@ import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -261,6 +265,9 @@ import static legend.game.combat.SEffe.FUN_80115cac;
 
 public final class Bttl_800e {
   private Bttl_800e() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800e.class);
+  private static final Marker EFFECTS = MarkerManager.getMarker("EFFECTS");
 
   /** LSC 4 VERTEX GOURAUD NON-TEXTURED (SOLID) */
   @Method(0x800e02e8L)
@@ -3391,7 +3398,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ec4L)
-  public static void scriptManagerDestructor(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
+  public static void effectManagerDestructor(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
+    LOGGER.info(EFFECTS, "Deallocating effect manager %d");
+
     EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
     if(a0.parentScriptIndex_50.get() != -1) {
@@ -3462,15 +3471,17 @@ public final class Bttl_800e {
     }
 
     //LAB_800e8150
-    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "scriptManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
     final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     s0.size_08.set(subStructSize);
     if(subStructSize != 0) {
       s0.effect_44.set(MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor));
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
     } else {
       //LAB_800e8184
       s0.effect_44.clear();
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
     }
 
     //LAB_800e8188
@@ -3531,7 +3542,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e83b8
-    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "scriptManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
     final ScriptState<EffectManagerData6c> s3 = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(EffectManagerData6c.class));
     final EffectManagerData6c s0 = s3.innerStruct_00.derefAs(EffectManagerData6c.class);

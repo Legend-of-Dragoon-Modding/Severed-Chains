@@ -76,6 +76,8 @@ import legend.game.types.Translucency;
 import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -354,6 +356,8 @@ public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
+  private static final Marker MALLOC_MARKER = MarkerManager.getMarker("MALLOC");
+  private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
   public static final IntRef orderingTableBits_1f8003c0 = MEMORY.ref(4, 0x1f8003c0L, IntRef::new);
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
@@ -1059,7 +1063,7 @@ public final class Scus94491BpeSegment {
           }
 
           allocations++;
-          LOGGER.info("Allocating 0x%x bytes on head @ %08x (%d total)", size, currentEntry + 0xcL, allocations);
+          LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on head @ %08x (%d total)", size, currentEntry + 0xcL, allocations);
           return currentEntry + 0xcL;
         }
       }
@@ -1099,7 +1103,7 @@ public final class Scus94491BpeSegment {
           currentEntry.deref(4).setu(currentEntry.get() - size);
 
           allocations++;
-          LOGGER.info("Allocating 0x%x bytes on tail @ %08x (%d total)", size, currentEntry.get() - size + 0xcL, allocations);
+          LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on tail @ %08x (%d total)", size, currentEntry.get() - size + 0xcL, allocations);
           return currentEntry.get() - size + 0xcL;
         }
 
@@ -1107,7 +1111,7 @@ public final class Scus94491BpeSegment {
         nextEntry.deref(2).offset(0x8L).setu(0x2L); // Mark as used
 
         allocations++;
-        LOGGER.info("Allocating 0x%x bytes on tail @ %08x (%d total)", size, nextEntry.get() + 0xcL, allocations);
+        LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on tail @ %08x (%d total)", size, nextEntry.get() + 0xcL, allocations);
         return nextEntry.get() + 0xcL;
       }
 
@@ -1498,7 +1502,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80012764L)
   public static void free(long address) {
     allocations--;
-    LOGGER.info("Deallocating %08x (%d remaining)", address, allocations);
+    LOGGER.info(MALLOC_MARKER, "Deallocating %08x (%d remaining)", address, allocations);
 
     if(allocations < 0) {
       LOGGER.error("Negative allocations!", new Throwable());
@@ -2680,7 +2684,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80015918L)
   public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
-    LOGGER.info("Allocating script index %d (0x%x bytes)", index, innerStructSize);
+    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (0x%x bytes)", index, innerStructSize);
 
     final long linkedListAddress;
     if(allocateOnHead) {
@@ -2812,13 +2816,13 @@ public final class Scus94491BpeSegment {
     final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get(index).deref();
 
     if(script != null) {
-      LOGGER.info("Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
+      LOGGER.info(SCRIPT_MARKER, "Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
 
       struct.scriptPtr_14.set(script);
       struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
       struct.ui_60.and(0xfffd_ffffL);
     } else {
-      LOGGER.info("Clearing script index %d", index);
+      LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", index);
 
       struct.scriptPtr_14.clear();
       struct.commandPtr_18.clear();
@@ -2828,7 +2832,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015c20L)
   public static void deallocateScriptState(final int scriptIndex) {
-    LOGGER.info("Deallocating script state %d", scriptIndex);
+    LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", scriptIndex);
 
     EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(scriptIndex));
 
@@ -2849,7 +2853,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015c9cL)
   public static void deallocateScriptChildren(final int scriptIndex) {
-    LOGGER.info("Deallocating script %d children", scriptIndex);
+    LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", scriptIndex);
 
     final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
 
