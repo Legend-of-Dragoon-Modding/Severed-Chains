@@ -46,14 +46,13 @@ public final class Hardware {
 
   public static boolean dumping;
   public static boolean hardwareWaiting;
-  public static boolean timerWaiting;
   public static boolean spuWaiting;
   private static final List<Runnable> loadStateListeners = new ArrayList<>();
 
   private static void dumpLock() {
     dumping = true;
 
-    while(!hardwareWaiting || !timerWaiting || !spuWaiting) {
+    while(!hardwareWaiting || !spuWaiting) {
       DebugHelper.sleep(1);
     }
   }
