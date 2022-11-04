@@ -285,12 +285,17 @@ public class Gpu implements Runnable {
     return shader;
   }
 
+  private boolean ready;
   private double vsyncCount;
   private long lastFrame;
   public Runnable r = () -> { };
 
   public long getVsyncCount() {
     return (long)this.vsyncCount;
+  }
+
+  public boolean isReady() {
+    return this.ready;
   }
 
   @Override
@@ -416,6 +421,8 @@ public class Gpu implements Runnable {
     }
 
     this.window.show();
+
+    this.ready = true;
 
     try {
       this.window.run();

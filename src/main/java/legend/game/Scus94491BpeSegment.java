@@ -670,6 +670,10 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
+    while(!GPU.isReady()) {
+      DebugHelper.sleep(1);
+    }
+
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL) != 0) {
         dumping = true;
