@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
-import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
@@ -48,7 +47,6 @@ import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -57,10 +55,10 @@ import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.MersenneTwisterSeed;
+import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.WeaponTrailEffect3c;
 import legend.game.combat.types.WeaponTrailEffectSegment2c;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DR_MODE;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -97,7 +95,6 @@ import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -106,7 +103,6 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
@@ -116,7 +112,6 @@ import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
@@ -128,11 +123,9 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
@@ -4316,24 +4309,15 @@ public final class Bttl_800c {
     return 0;
   }
 
+  /** Used in Flameshot */
   @Method(0x800cef00L)
   public static long FUN_800cef00(final RunningScript script) {
-    final long a1 = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
-    MEMORY.ref(1, a1).offset(0x4L).setu(script.params_20.get(0).deref().get());
-    MEMORY.ref(1, a1).offset(0x5L).setu(script.params_20.get(1).deref().get());
-    MEMORY.ref(1, a1).offset(0x6L).setu(script.params_20.get(2).deref().get());
-    MEMORY.ref(1, a1).offset(0x7L).setu(0x62L);
-    MEMORY.ref(2, a1).offset(0x8L).setu(-160);
-    MEMORY.ref(2, a1).offset(0xaL).setu(-120);
-    MEMORY.ref(2, a1).offset(0xcL).setu(320);
-    MEMORY.ref(2, a1).offset(0xeL).setu(280);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
-    gpuPacketAddr_1f8003d8.addu(0x10L);
+    GPU.queueCommand(30, new GpuCommandQuad()
+      .translucent(Translucency.of(script.params_20.get(3).deref().get() + 1))
+      .rgb(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get())
+      .pos(-160, -120, 320, 280)
+    );
 
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of(script.params_20.get(3).deref().get() + 1), 0, 0));
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0xcL);
     return 0;
   }
 
