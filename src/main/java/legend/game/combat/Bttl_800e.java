@@ -3399,7 +3399,7 @@ public final class Bttl_800e {
 
   @Method(0x800e7ec4L)
   public static void effectManagerDestructor(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
-    LOGGER.info(EFFECTS, "Deallocating effect manager %d");
+    LOGGER.info(EFFECTS, "Deallocating effect manager %d", index);
 
     EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
