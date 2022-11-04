@@ -58,7 +58,6 @@ import legend.game.modding.events.scripting.ScriptTickEvent;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.McqHeader;
 import legend.game.types.MrgEntry;
@@ -210,14 +209,11 @@ import static legend.game.Scus94491BpeSegment_8005._8005a1ea;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.loadingOverlays_8005a2a8;
-import static legend.game.Scus94491BpeSegment_8005.orderingTableTags_8005a398;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007._8007a3c0;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
@@ -363,14 +359,7 @@ public final class Scus94491BpeSegment {
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
   public static final IntRef orderingTableSize_1f8003c8 = MEMORY.ref(4, 0x1f8003c8L, IntRef::new);
   public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
-  public static final Pointer<UnboundedArrayRef<GsOT_TAG>> tags_1f8003d0 = MEMORY.ref(4, 0x1f8003d0L, Pointer.of(4, UnboundedArrayRef.of(4, GsOT_TAG::new)));
 
-  public static final Value gpuPacketAddr_1f8003d8 = MEMORY.new MemoryValue(4, 0x1f8003d8L) {
-    @Override
-    public long get() {
-      throw new RuntimeException("NOPE");
-    }
-  };
   public static final ShortRef centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL, ShortRef::new);
   public static final ShortRef centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL, ShortRef::new);
   public static final IntRef displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L, IntRef::new);
@@ -1751,9 +1740,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80012d58L)
   public static void startFrame() {
     doubleBufferFrame_800bb108.set(PSDIDX_800c34d4.get());
-
-    tags_1f8003d0.set(orderingTableTags_8005a398.get(PSDIDX_800c34d4.get()));
-    gpuPacketAddr_1f8003d8.setu(_8007a3c0.offset(PSDIDX_800c34d4.get() * 0x20400L).getAddress());
   }
 
   @Method(0x80012df8L)
@@ -1786,9 +1772,6 @@ public final class Scus94491BpeSegment {
 
     final RECT rect1 = new RECT((short)0, (short)16, (short)width_8004dd34.get(), (short)240);
     final RECT rect2 = new RECT((short)0, (short)256, (short)width_8004dd34.get(), (short)240);
-
-    orderingTables_8005a370.get(0).length_00.set(orderingTableBits);
-    orderingTables_8005a370.get(1).length_00.set(orderingTableBits);
 
     orderingTableBits_1f8003c0.set(orderingTableBits);
     zShift_1f8003c4.set(14 - orderingTableBits);
@@ -1923,13 +1906,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001354c
-  }
-
-  @Method(0x8001357cL)
-  public static void queueGpuPacket(final long previousElement, final long newElement) {
-    throw new RuntimeException("NOPE");
-//    MEMORY.ref(3, newElement).setu(MEMORY.ref(3, previousElement));
-//    MEMORY.ref(3, previousElement).setu(newElement);
   }
 
   @Method(0x80013598L)

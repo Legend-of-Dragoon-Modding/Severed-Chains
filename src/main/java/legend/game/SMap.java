@@ -42,7 +42,6 @@ import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DR_MODE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
@@ -112,7 +111,6 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.gpuPacketAddr_1f8003d8;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
@@ -123,7 +121,6 @@ import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
-import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -134,7 +131,6 @@ import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment.tags_1f8003d0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
@@ -187,7 +183,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
@@ -2568,12 +2563,6 @@ public final class SMap {
       transformCollisionVertices(model, wobj.playerCollisionSizeHorizontal_1b8.get(), wobj.playerCollisionReach_1c0.get(), x0, y0, x1, y1);
       queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x80);
     }
-
-    final long packet = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, packet).offset(0x03L).setu(1);
-    MEMORY.ref(4, packet).offset(0x04L).setu(0xe100_0000L);
-    queueGpuPacket(tags_1f8003d0.deref().get(37).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x8L);
   }
 
   private static void transformCollisionVertices(final Model124 model, final int size, final int reach, final IntRef x0, final IntRef y0, final IntRef x1, final IntRef y1) {
@@ -2593,19 +2582,14 @@ public final class SMap {
   }
 
   private static void queueCollisionRectPacket(final int x0, final int y0, final int x1, final int y1, final int colour) {
-    final long packet = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, packet).offset(0x03L).setu(5);
-    MEMORY.ref(4, packet).offset(0x04L).setu(0x2a00_0000L | colour);
-    MEMORY.ref(2, packet).offset(0x08L).setu(x0);
-    MEMORY.ref(2, packet).offset(0x0aL).setu(y0);
-    MEMORY.ref(2, packet).offset(0x0cL).setu(x1);
-    MEMORY.ref(2, packet).offset(0x0eL).setu(y0);
-    MEMORY.ref(2, packet).offset(0x10L).setu(x0);
-    MEMORY.ref(2, packet).offset(0x12L).setu(y1);
-    MEMORY.ref(2, packet).offset(0x14L).setu(x1);
-    MEMORY.ref(2, packet).offset(0x16L).setu(y1);
-    queueGpuPacket(tags_1f8003d0.deref().get(37).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x18L);
+    GPU.queueCommand(37, new GpuCommandPoly(4)
+      .translucent(Translucency.B_PLUS_F)
+      .rgb(colour)
+      .pos(0, x0, y0)
+      .pos(1, x1, y0)
+      .pos(2, x0, y1)
+      .pos(3, x1, y1)
+    );
   }
 
   @Method(0x800e123cL)
@@ -7590,36 +7574,28 @@ public final class SMap {
         s0.size_28.set((short)(s0._24.get() >> 16));
         s0._30.sub(s0._2c.get());
 
+        final int clut = cluts_800d6068.get(6).get();
+        final int tpage = texPages_800d6050.get(6).get();
+
         final int x = refX.get() - s0.x_0c.get() + (s0._10.get() & 0xffff);
         final int y = refY.get() - s0.y_0e.get() + (s0._14.get() >> 16) - (s0._24.get() >> 16);
 
         //LAB_800eff7c
-        final long a1 = gpuPacketAddr_1f8003d8.get();
-        MEMORY.ref(1, a1).offset(0x03L).setu(0x9L);
-        MEMORY.ref(1, a1).offset(0x04L).setu(colour);
-        MEMORY.ref(1, a1).offset(0x05L).setu(colour);
-        MEMORY.ref(1, a1).offset(0x06L).setu(colour);
-        MEMORY.ref(1, a1).offset(0x07L).setu(0x2eL);
-        MEMORY.ref(2, a1).offset(0x08L).setu(x);
-        MEMORY.ref(2, a1).offset(0x0aL).setu(y);
-        MEMORY.ref(1, a1).offset(0x0cL).setu(0x40L);
-        MEMORY.ref(1, a1).offset(0x0dL).setu(0x40L);
-        MEMORY.ref(2, a1).offset(0x0eL).setu(cluts_800d6068.get(6).get());
-        MEMORY.ref(2, a1).offset(0x10L).setu(x + s0.size_28.get());
-        MEMORY.ref(2, a1).offset(0x12L).setu(y);
-        MEMORY.ref(1, a1).offset(0x14L).setu(0x5fL);
-        MEMORY.ref(1, a1).offset(0x15L).setu(0x40L);
-        MEMORY.ref(2, a1).offset(0x16L).setu(texPages_800d6050.get(6).get());
-        MEMORY.ref(2, a1).offset(0x18L).setu(x);
-        MEMORY.ref(2, a1).offset(0x1aL).setu(y + s0.size_28.get());
-        MEMORY.ref(1, a1).offset(0x1cL).setu(0x40L);
-        MEMORY.ref(1, a1).offset(0x1dL).setu(0x5fL);
-        MEMORY.ref(2, a1).offset(0x20L).setu(x + s0.size_28.get());
-        MEMORY.ref(2, a1).offset(0x22L).setu(y + s0.size_28.get());
-        MEMORY.ref(1, a1).offset(0x24L).setu(0x5fL);
-        MEMORY.ref(1, a1).offset(0x25L).setu(0x5fL);
-        queueGpuPacket(tags_1f8003d0.deref().get(40).getAddress(), a1);
-        gpuPacketAddr_1f8003d8.addu(0x28L);
+        GPU.queueCommand(40, new GpuCommandPoly(4)
+          .bpp(Bpp.of(tpage >>> 7 & 0b11))
+          .translucent(Translucency.of(tpage >>> 5 & 0b11))
+          .clut((clut & 0b111111) * 16, clut >>> 6)
+          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+          .monochrome(colour)
+          .pos(0, x, y)
+          .pos(1, x + s0.size_28.get(), y)
+          .pos(2, x, y + s0.size_28.get())
+          .pos(3, x + s0.size_28.get(), y + s0.size_28.get())
+          .uv(0, 64, 64)
+          .uv(1, 95, 64)
+          .uv(2, 64, 95)
+          .uv(3, 95, 95)
+        );
 
         s0._02.incr();
         s1 = s0;
@@ -7833,65 +7809,50 @@ public final class SMap {
 
   @Method(0x800f0970L)
   public static void FUN_800f0970() {
-    long v0;
-    long v1;
-    long s0;
     long a0;
-    long a2;
-    long a3;
-
     long s3 = _800d4f90.getAddress();
     long s1 = MEMORY.ref(4, s3).offset(0x30L).get();
 
     final IntRef sox = new IntRef();
     final IntRef soy = new IntRef();
     getScreenOffset(sox, soy);
-    final long screenOffsetX = sox.get();
-    final long screenOffsetY = soy.get();
+    final int screenOffsetX = sox.get();
+    final int screenOffsetY = soy.get();
 
     //LAB_800f09c0
     while(s1 != 0) {
       final long s2 = MEMORY.ref(4, s1).offset(0x2cL).get();
       if(MEMORY.ref(2, s2).offset(0x6L).get() >= MEMORY.ref(2, s1).get()) {
-        //LAB_800f0b04
-        s0 = gpuPacketAddr_1f8003d8.get();
-        MEMORY.ref(1, s0).offset(0x03L).setu(0x5L);
-        MEMORY.ref(4, s0).offset(0x04L).setu(0x2a80_8080L);
-        MEMORY.ref(2, s0).offset(0x08L).setu(screenOffsetX + MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x0L).get());
-        MEMORY.ref(2, s0).offset(0x0aL).setu(screenOffsetY + MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x2L).get());
-        MEMORY.ref(2, s0).offset(0x0cL).setu(screenOffsetX + MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x8L).get());
-        MEMORY.ref(2, s0).offset(0x0eL).setu(screenOffsetY + MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0xaL).get());
-        MEMORY.ref(2, s0).offset(0x10L).setu(screenOffsetX + MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x0L).get());
-        MEMORY.ref(2, s0).offset(0x12L).setu(screenOffsetY + MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x2L).get());
-        MEMORY.ref(2, s0).offset(0x14L).setu(screenOffsetX + MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x8L).get());
-        MEMORY.ref(2, s0).offset(0x16L).setu(screenOffsetY + MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0xaL).get());
+        final int tpage = (int)MEMORY.ref(4, s1).offset(0x4L).get();
 
+        //LAB_800f0b04
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .translucent(Translucency.of(tpage >>> 5 & 0b11))
+          .pos(0, screenOffsetX + (int)MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x0L).get(), screenOffsetY + (int)MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x2L).get())
+          .pos(1, screenOffsetX + (int)MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0x8L).get(), screenOffsetY + (int)MEMORY.ref(4, s1).offset(0x24L).deref(2).offset(0xaL).get())
+          .pos(2, screenOffsetX + (int)MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x0L).get(), screenOffsetY + (int)MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x2L).get())
+          .pos(3, screenOffsetX + (int)MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0x8L).get(), screenOffsetY + (int)MEMORY.ref(4, s1).offset(0x28L).deref(2).offset(0xaL).get());
+
+        final int r;
+        final int g;
+        final int b;
         if(MEMORY.ref(2, s2).offset(0x2L).get() - 1 >= MEMORY.ref(2, s1).get()) {
           //LAB_800f0d0c
-          a2 = MEMORY.ref(2, s1).offset(0x16L).get();
-          a0 = MEMORY.ref(2, s1).offset(0x1aL).get();
-          a3 = MEMORY.ref(2, s1).offset(0x1eL).get();
+          r = (int)MEMORY.ref(2, s1).offset(0x16L).get();
+          g = (int)MEMORY.ref(2, s1).offset(0x1aL).get();
+          b = (int)MEMORY.ref(2, s1).offset(0x1eL).get();
         } else {
           MEMORY.ref(4, s1).offset(0x14L).subu(MEMORY.ref(4, s1).offset(0x08L).get());
           MEMORY.ref(4, s1).offset(0x18L).subu(MEMORY.ref(4, s1).offset(0x0cL).get());
           MEMORY.ref(4, s1).offset(0x1cL).subu(MEMORY.ref(4, s1).offset(0x10L).get());
-          a2 = Math.max(0, MEMORY.ref(2, s1).offset(0x16L).getSigned());
-          a0 = Math.max(0, MEMORY.ref(2, s1).offset(0x1aL).getSigned());
-          a3 = Math.max(0, MEMORY.ref(2, s1).offset(0x1eL).getSigned());
+          r = Math.max(0, (int)MEMORY.ref(2, s1).offset(0x16L).getSigned());
+          g = Math.max(0, (int)MEMORY.ref(2, s1).offset(0x1aL).getSigned());
+          b = Math.max(0, (int)MEMORY.ref(2, s1).offset(0x1eL).getSigned());
         }
 
         //LAB_800f0d18
-        MEMORY.ref(1, s0).offset(0x4L).setu(a2);
-        MEMORY.ref(1, s0).offset(0x5L).setu(a0);
-        MEMORY.ref(1, s0).offset(0x6L).setu(a3);
-
-        queueGpuPacket(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s1).offset(0x20L).get()).getAddress(), s0);
-        gpuPacketAddr_1f8003d8.addu(0x18L);
-
-        final long drawModePacket = gpuPacketAddr_1f8003d8.get();
-        SetDrawMode(MEMORY.ref(4, drawModePacket, DR_MODE::new), false, false, MEMORY.ref(4, s1).offset(0x4L).get());
-        queueGpuPacket(tags_1f8003d0.deref().get((int)MEMORY.ref(4, s1).offset(0x20L).get()).getAddress(), drawModePacket);
-        gpuPacketAddr_1f8003d8.addu(0xcL);
+        cmd.rgb(r, g, b);
+        GPU.queueCommand((int)MEMORY.ref(4, s1).offset(0x20L).get(), cmd);
 
         s3 = s1;
         MEMORY.ref(2, s1).addu(0x1L);
@@ -7899,8 +7860,8 @@ public final class SMap {
       } else {
         MEMORY.ref(1, s2).offset(0x1L).subu(0x1L);
         a0 = _800d4fd0.offset(4, 0x10L).get();
-        v0 = MEMORY.ref(4, s1).offset(0x24L).get();
-        v1 = _800d4fd0.getAddress();
+        long v0 = MEMORY.ref(4, s1).offset(0x24L).get();
+        long v1 = _800d4fd0.getAddress();
 
         //LAB_800f09fc
         while(a0 != 0) {

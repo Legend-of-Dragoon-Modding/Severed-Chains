@@ -80,8 +80,6 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
-import static legend.game.Scus94491BpeSegment_8005.orderingTableTags_8005a398;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -226,7 +224,7 @@ public final class Scus94491BpeSegment_800e {
    *
    * <ol start="0">
    *   <li>{@link SEffe#FUN_8010a610}</li>
-   *   <li>{@link SEffe#FUN_8010b1d8}</li>
+   *   <li>{@link SEffe#allocateDeathDimensionEffect}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -805,11 +803,6 @@ public final class Scus94491BpeSegment_800e {
 
     GsInitGraph((short)640, (short)480, 0b110100);
     GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
-
-    orderingTables_8005a370.get(0).length_00.set(0xeL);
-    orderingTables_8005a370.get(0).org_04.set(orderingTableTags_8005a398.get(0));
-    orderingTables_8005a370.get(1).length_00.set(0xeL);
-    orderingTables_8005a370.get(1).org_04.set(orderingTableTags_8005a398.get(1));
 
     orderingTableBits_1f8003c0.set(14);
     zShift_1f8003c4.set(0);

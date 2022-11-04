@@ -55,6 +55,4 @@ public final class Scus94491BpeSegment_8007 {
 
   /** 60 FPS divisor (e.g. 2 means 30 FPS) */
   public static final IntRef vsyncMode_8007a3b8 = MEMORY.ref(4, 0x8007a3b8L, IntRef::new);
-
-  public static final Value _8007a3c0 = MEMORY.ref(4, 0x8007a3c0L);
 }

@@ -105,7 +105,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
-  public static final Value _800c6688 = MEMORY.ref(4, 0x800c6688L);
   public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(4, 0x800c668cL, CdlFILE::new);
 
   public static final Value SInitOvlData_800c66a4 = MEMORY.ref(4, 0x800c66a4L);

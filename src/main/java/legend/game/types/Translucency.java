@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import javax.annotation.Nonnull;
+
 public enum Translucency {
   /** 0.5 x background + 0.5 x foreground */
   HALF_B_PLUS_HALF_F,
@@ -12,6 +14,7 @@ public enum Translucency {
   ;
 
   /** NOTE: returns null if value is -1 */
+  @Nonnull
   public static Translucency of(final int value) {
     if(value == -1) {
       return null;

@@ -1,8 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.Tuple;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
@@ -18,8 +15,6 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
-import legend.game.types.GsOT;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
 
@@ -170,9 +165,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));
   public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
-
-  public static final ArrayRef<GsOT> orderingTables_8005a370 = MEMORY.ref(4, 0x8005a370L, ArrayRef.of(GsOT.class, 2, 0x14, GsOT::new));
-  public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> orderingTableTags_8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 
