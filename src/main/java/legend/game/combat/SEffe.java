@@ -71,7 +71,6 @@ import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
-import legend.game.types.DR_TPAGE;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
@@ -136,7 +135,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMode;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.SetMaskBit;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -2490,10 +2488,11 @@ public final class SEffe {
       //LAB_80101f2c
       for(int i = 0; i < a0.count_50.get(); i++) {
         final EffectData98Sub94 s2 = a0._68.deref().get(i);
-        final long v1 = gpuPacketAddr_1f8003d8.get();
-        gpuPacketAddr_1f8003d8.addu(0x28L);
-        MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
-        MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
+        //TODO why is a GP0 packet started here but not used?
+//        final long v1 = gpuPacketAddr_1f8003d8.get();
+//        gpuPacketAddr_1f8003d8.addu(0x28L);
+//        MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
+//        MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
         s2._80.set(mallocHead(a0._54.get() * 0x10L));
       }
     }
