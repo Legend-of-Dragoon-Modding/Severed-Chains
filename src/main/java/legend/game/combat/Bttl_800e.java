@@ -28,6 +28,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.combat.types.AttackHitFlashEffect0c;
 import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleDisplayStats144Sub10;
 import legend.game.combat.types.BattleLightStruct64;
@@ -43,10 +44,7 @@ import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub3c;
-import legend.game.combat.types.EffectManagerData6cInner;
-import legend.game.combat.types.AttackHitFlashEffect0c;
 import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub20;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
@@ -57,13 +55,14 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DeffPart;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DR_MOVE;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
@@ -91,7 +90,6 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003ec;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
@@ -108,6 +106,7 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
+import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.queueGpuPacket;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -144,7 +143,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.SetDrawMove;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
@@ -4864,49 +4862,14 @@ public final class Bttl_800e {
     return 0;
   }
 
+  /** Used in Dart transform */
   @Method(0x800eb554L)
   public static void FUN_800eb554(final RECT a0, final DVECTOR a1, final int height) {
-    final RECT sp0x10 = new RECT();
-
-    sp0x10.x.set((short)960);
-    sp0x10.y.set((short)256);
-    sp0x10.w.set(a0.w.get());
-    sp0x10.h.set((short)height);
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a1.getX(), a1.getY() + a0.h.get() - height);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
-
-    sp0x10.x.set(a1.getX());
-    sp0x10.y.set((short)(a1.getY() + height));
-    sp0x10.w.set(a0.w.get());
-    sp0x10.h.set((short)(a0.h.get() - height));
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a1.getX(), a1.getY());
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
-
-    sp0x10.x.set(a1.getX());
-    sp0x10.y.set(a1.getY());
-    sp0x10.w.set(a0.w.get());
-    sp0x10.h.set((short)height);
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a0.x.get(), a0.y.get() + a0.h.get() - height);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
-
-    sp0x10.x.set(a0.x.get());
-    sp0x10.y.set((short)(a0.y.get() + height));
-    sp0x10.w.set(a0.w.get());
-    sp0x10.h.set((short)(a0.h.get() - height));
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a0.x.get(), a0.h.get());
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
-
-    sp0x10.x.set(a0.x.get());
-    sp0x10.y.set(a0.y.get());
-    sp0x10.w.set(a0.w.get());
-    sp0x10.h.set((short)height);
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, 960, 256);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x4L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.getX(), a1.getY() + a0.h.get() - height, a0.w.get(), height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY() + height, a1.getX(), a1.getY(), a0.w.get(), a0.h.get() - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY(), a0.x.get(), a0.y.get() + a0.h.get() - height, a0.w.get(), height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get() + height, a0.x.get(), a0.h.get(), a0.w.get(), a0.h.get() - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get(), 960, 256, a0.w.get(), height));
   }
 
   @Method(0x800eb7c4L)
