@@ -5539,11 +5539,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee210L)
-  public static long FUN_800ee210(final RunningScript a0) {
-    final RECT sp0x10 = new RECT().set((short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get(), (short)(a0.params_20.get(2).deref().get() >> 2), (short)a0.params_20.get(3).deref().get());
-    SetDrawMove(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MOVE::new), sp0x10, a0.params_20.get(0).deref().get() & 0xffffL, a0.params_20.get(1).deref().get() & 0xffffL);
-    queueGpuPacket(tags_1f8003d0.deref().get(1).getAddress(), gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0x18L);
+  public static long FUN_800ee210(final RunningScript script) {
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20.get(4).deref().get(), script.params_20.get(5).deref().get(), script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get() / 4, (short)script.params_20.get(3).deref().get()));
     return 0;
   }
 

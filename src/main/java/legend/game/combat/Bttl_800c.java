@@ -3,6 +3,7 @@ package legend.game.combat;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
+import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -4258,23 +4259,11 @@ public final class Bttl_800c {
   public static void FUN_800ceb28(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub0e a0 = manager.effect_44.derefAs(BttlScriptData6cSub0e.class);
 
-    final long a1 = gpuPacketAddr_1f8003d8.get();
-    MEMORY.ref(1, a1).offset(0x3L).setu(0x3L);
-    MEMORY.ref(4, a1).offset(0x4L).setu(0x6280_8080L);
-    MEMORY.ref(1, a1).offset(0x4L).setu(a0.svec_00.getX() >>> 8);
-    MEMORY.ref(1, a1).offset(0x5L).setu(a0.svec_00.getY() >>> 8);
-    MEMORY.ref(1, a1).offset(0x6L).setu(a0.svec_00.getZ() >>> 8);
-    MEMORY.ref(1, a1).offset(0x7L).setu(0x62);
-    MEMORY.ref(2, a1).offset(0x8L).setu(-160);
-    MEMORY.ref(2, a1).offset(0xaL).setu(-120);
-    MEMORY.ref(2, a1).offset(0xcL).setu(320);
-    MEMORY.ref(2, a1).offset(0xeL).setu(280);
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, a1);
-    gpuPacketAddr_1f8003d8.addu(0x10L);
-
-    SetDrawMode(gpuPacketAddr_1f8003d8.deref(4).cast(DR_MODE::new), false, true, GetTPage(Bpp.BITS_8, Translucency.of((int)(manager._10._00.get() >>> 28 & 0x3)), 0, 0));
-    queueGpuPacket(tags_1f8003d0.getPointer() + 0x78L, gpuPacketAddr_1f8003d8.get());
-    gpuPacketAddr_1f8003d8.addu(0xcL);
+    GPU.queueCommand(30, new GpuCommandQuad()
+      .translucent(Translucency.of((int)manager._10._00.get() >>> 28 & 0b11))
+      .rgb(a0.svec_00.getX(), a0.svec_00.getY(), a0.svec_00.getZ())
+      .pos(-160, -120, 320, 280)
+    );
   }
 
   @Method(0x800cec84L)
@@ -4282,6 +4271,7 @@ public final class Bttl_800c {
     // no-op
   }
 
+  /** Used at the end of Rose transform */
   @Method(0x800cec8cL)
   public static long FUN_800cec8c(final RunningScript a0) {
     final short sp18 = (short)(a0.params_20.get(1).deref().get() << 8);
