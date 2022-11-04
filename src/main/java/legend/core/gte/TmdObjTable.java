@@ -1,6 +1,5 @@
 package legend.core.gte;
 
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -11,7 +10,7 @@ import legend.core.memory.types.UnsignedIntRef;
 public class TmdObjTable implements MemoryRef {
   private final Value ref;
 
-  public final Pointer<UnboundedArrayRef<legend.core.gte.SVECTOR>> vert_top_00;
+  public final Pointer<UnboundedArrayRef<SVECTOR>> vert_top_00;
   public final UnsignedIntRef n_vert_04;
   public final UnsignedIntRef normal_top_08;
   public final UnsignedIntRef n_normal_0c;

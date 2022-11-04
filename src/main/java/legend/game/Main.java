@@ -4,7 +4,6 @@ import legend.core.Hardware;
 import legend.game.modding.events.EventManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.plugins.util.PluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Scanner;
 public final class Main {
   static {
     System.setProperty("log4j.skipJansi", "false");
-    PluginManager.addPackage("legend");
+    System.setProperty("log4j2.configurationFile", "log4j2.xml");
   }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Main.class);
@@ -21,20 +20,6 @@ public final class Main {
   private Main() { }
 
   public static void main(final String[] args) {
-    if(System.getProperty("os.name").startsWith("Windows")) {
-      // Set output mode to handle virtual terminal sequences
-      final MainWindows.Kernel32.DWORD STD_OUTPUT_HANDLE = new MainWindows.Kernel32.DWORD(-11);
-      final MainWindows.Kernel32.HANDLE hOut = MainWindows.Kernel32.INSTANCE.GetStdHandle(STD_OUTPUT_HANDLE);
-
-      final MainWindows.Kernel32.DWORDByReference p_dwMode = new MainWindows.Kernel32.DWORDByReference(new MainWindows.Kernel32.DWORD(0));
-      MainWindows.Kernel32.INSTANCE.GetConsoleMode(hOut, p_dwMode);
-
-      final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
-      final MainWindows.Kernel32.DWORD dwMode = p_dwMode.getValue();
-      dwMode.setValue(dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-      MainWindows.Kernel32.INSTANCE.SetConsoleMode(hOut, dwMode);
-    }
-
     try {
       EventManager.INSTANCE.getClass(); // Trigger load
 

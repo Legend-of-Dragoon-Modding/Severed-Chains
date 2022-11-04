@@ -1,6 +1,8 @@
 package legend.game.types;
 
-public enum TexPageTrans {
+import javax.annotation.Nonnull;
+
+public enum Translucency {
   /** 0.5 x background + 0.5 x foreground */
   HALF_B_PLUS_HALF_F,
   /** 1.0 x background + 1.0 x foreground */
@@ -12,7 +14,8 @@ public enum TexPageTrans {
   ;
 
   /** NOTE: returns null if value is -1 */
-  public static TexPageTrans of(final int value) {
+  @Nonnull
+  public static Translucency of(final int value) {
     if(value == -1) {
       return null;
     }

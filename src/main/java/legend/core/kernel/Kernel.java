@@ -18,15 +18,6 @@ import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
-import static legend.core.Timers.TMR_DOTCLOCK_MAX;
-import static legend.core.Timers.TMR_DOTCLOCK_MODE;
-import static legend.core.Timers.TMR_DOTCLOCK_VAL;
-import static legend.core.Timers.TMR_HRETRACE_MAX;
-import static legend.core.Timers.TMR_HRETRACE_MODE;
-import static legend.core.Timers.TMR_HRETRACE_VAL;
-import static legend.core.Timers.TMR_SYSCLOCK_MAX;
-import static legend.core.Timers.TMR_SYSCLOCK_MODE;
-import static legend.core.Timers.TMR_SYSCLOCK_VAL;
 import static legend.core.kernel.Bios.EventControlBlockAddr_a0000120;
 import static legend.core.kernel.Bios.EventControlBlockSize_a0000124;
 import static legend.core.kernel.Bios.ExceptionChainPtr_a0000100;
@@ -486,15 +477,6 @@ public final class Kernel {
     }
 
     //LAB_00001594
-    TMR_DOTCLOCK_VAL.setu(0);
-    TMR_DOTCLOCK_MODE.setu(0);
-    TMR_DOTCLOCK_MAX.setu(0);
-    TMR_HRETRACE_VAL.setu(0);
-    TMR_HRETRACE_MODE.setu(0);
-    TMR_HRETRACE_MAX.setu(0);
-    TMR_SYSCLOCK_VAL.setu(0);
-    TMR_SYSCLOCK_MODE.setu(0);
-    TMR_SYSCLOCK_MAX.setu(0);
     FUN_000027a0();
   }
 

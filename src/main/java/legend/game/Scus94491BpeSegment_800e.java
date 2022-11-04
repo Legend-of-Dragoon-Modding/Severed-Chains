@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.cdrom.CdlFILE;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.Tmd;
@@ -18,16 +19,15 @@ import legend.game.combat.SEffe;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static legend.core.Hardware.CDROM;
+import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
@@ -69,10 +69,7 @@ import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.SetDispMask;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
-import static legend.game.Scus94491BpeSegment_8003.SetTmr0InterruptCallback;
-import static legend.game.Scus94491BpeSegment_8003.VSync;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -83,8 +80,6 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
-import static legend.game.Scus94491BpeSegment_8005.orderingTableTags_8005a398;
-import static legend.game.Scus94491BpeSegment_8005.orderingTables_8005a370;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -172,21 +167,21 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#FUN_80102088}</li>
    *   <li>{@link SEffe#FUN_80102364}</li>
    *   <li>{@link Bttl_800d#FUN_800d30b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d0564}</li>
+   *   <li>{@link Bttl_800d#allocateProjectileHitEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d0dec}</li>
+   *   <li>{@link Bttl_800d#allocateAdditionSparksEffect}</li>
    *   <li>{@link SEffe#FUN_80102608}</li>
-   *   <li>{@link SEffe#FUN_801077e8}</li>
+   *   <li>{@link SEffe#allocateAdditionOverlaysEffect}</li>
    *   <li>{@link SEffe#FUN_801077bc}</li>
    *   <li>{@link SEffe#FUN_80108de8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d19ec}</li>
+   *   <li>{@link Bttl_800d#allocateAdditionStarburstEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d1cac}</li>
    *   <li>{@link Bttl_800d#FUN_800d1cf4}</li>
    *   <li>{@link SEffe#FUN_801078c0}</li>
    *   <li>{@link SEffe#FUN_80108df0}</li>
-   *   <li>{@link Bttl_800d#FUN_800d2ff4}</li>
-   *   <li>{@link Bttl_800c#FUN_800ce6a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d2734}</li>
+   *   <li>{@link Bttl_800d#allocateGuardEffect}</li>
+   *   <li>{@link Bttl_800c#allocateWeaponTrailEffect}</li>
+   *   <li>{@link Bttl_800d#allocatePotionEffect}</li>
    *   <li>{@link Bttl_800d#scriptAllocateAdditionScript}</li>
    *   <li>{@link Bttl_800c#FUN_800cfccc}</li>
    *   <li>{@link Bttl_800d#FUN_800d4338}</li>
@@ -209,7 +204,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#allocateDragoonAdditionScript}</li>
    *   <li>{@link SEffe#FUN_80105c38}</li>
    *   <li>{@link Bttl_800c#FUN_800c6968}</li>
-   *   <li>{@link SEffe#FUN_80109a7c}</li>
+   *   <li>{@link SEffe#allocateScreenDistortionEffect}</li>
    *   <li>{@link SEffe#FUN_801089cc}</li>
    *   <li>{@link SEffe#FUN_801023f4}</li>
    *   <li>{@link Bttl_800c#FUN_800cfec8}</li>
@@ -218,7 +213,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800c#scriptSetMtSeed}</li>
    *   <li>{@link SEffe#FUN_80109d30}</li>
    *   <li>{@link SEffe#FUN_8010a3fc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d34bc}</li>
+   *   <li>{@link Bttl_800d#allocateMonsterDeathEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d0124}</li>
    *   <li>{@link SEffe#FUN_801079a4}</li>
    * </ol>
@@ -229,7 +224,7 @@ public final class Scus94491BpeSegment_800e {
    *
    * <ol start="0">
    *   <li>{@link SEffe#FUN_8010a610}</li>
-   *   <li>{@link SEffe#FUN_8010b1d8}</li>
+   *   <li>{@link SEffe#allocateDeathDimensionEffect}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -442,12 +437,12 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#FUN_80111cc4}</li>
    *   <li>{@link SEffe#FUN_80111ed4}</li>
    *   <li>{@link Bttl_800e#FUN_800e93e0}</li>
-   *   <li>{@link Bttl_800e#FUN_800e96cc}</li>
+   *   <li>{@link Bttl_800e#allocateAttackHitFlashEffect}</li>
    *   <li>{@link Bttl_800e#FUN_800e9854}</li>
-   *   <li>{@link Bttl_800c#FUN_800ca648}</li> <-- This seems like a bad pointer
+   *   <li>{@link Temp#FUN_800ca648}</li>
    *   <li>null</li>
    *   <li>{@link SEffe#FUN_80117eb0}</li>
-   *   <li>{@link SEffe#FUN_801183c0}</li>
+   *   <li>{@link SEffe#allocateGuardHealEffect}</li>
    *   <li>{@link Bttl_800e#FUN_800e99bc}</li>
    * </ol>
    */
@@ -720,7 +715,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800f#FUN_800f480c}</li>
    *   <li>{@link Bttl_800f#FUN_800f2694}</li>
    *   <li>{@link Bttl_800f#FUN_800f96a8}</li>
-   *   <li>{@link Bttl_800f#renderRecover}</li>
+   *   <li>{@link Bttl_800f#scriptRenderRecover}</li>
    *   <li>{@link Bttl_800f#FUN_800f2838}</li>
    *   <li>{@link Bttl_800f#FUN_800f9884}</li>
    *   <li>{@link Bttl_800f#FUN_800f98b0}</li>
@@ -803,27 +798,17 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e5d64() {
     ResetCallback();
 
-    VSync(0);
-    SetDispMask(0);
     ResetGraph(0);
     SetGraphDebug(2);
 
-//    ClearImage(new RECT((short)0, (short)0, (short)640, (short)512), (byte)0, (byte)0, (byte)0);
-//    ClearImage(new RECT((short)640, (short)0, (short)384, (short)512), (byte)0, (byte)0, (byte)0);
-    VSync(0);
-
-    GsInitGraph((short)640, (short)480, 0b110101, true, false);
+    GsInitGraph((short)640, (short)480, 0b110100);
     GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
-
-    orderingTables_8005a370.get(0).length_00.set(0xeL);
-    orderingTables_8005a370.get(0).org_04.set(orderingTableTags_8005a398.get(0));
-    orderingTables_8005a370.get(1).length_00.set(0xeL);
-    orderingTables_8005a370.get(1).org_04.set(orderingTableTags_8005a398.get(1));
 
     orderingTableBits_1f8003c0.set(14);
     zShift_1f8003c4.set(0);
     orderingTableSize_1f8003c8.set(0x4000);
     zMax_1f8003cc.set(0x3ffe);
+    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
     FUN_8003c5e0();
 
@@ -838,7 +823,7 @@ public final class Scus94491BpeSegment_800e {
 
     mainCallbackIndexOnceLoaded_8004dd24.setu(0);
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     _800bb0fc.setu(0);
 
     FUN_800e60d8();
@@ -855,7 +840,6 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e6ecc();
     FUN_800e6774();
     FUN_800e6e6c();
-    SetTmr0InterruptCallback(getMethodAddress(Scus94491BpeSegment.class, "spuTimerInterruptCallback"));
   }
 
   @Method(0x800e5fc0L)
@@ -890,7 +874,7 @@ public final class Scus94491BpeSegment_800e {
       }
 
       pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.setu(0x2L);
+      vsyncMode_8007a3b8.set(2);
 
       //LAB_800e60c8
     }
@@ -898,8 +882,8 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e60d8L)
   public static void FUN_800e60d8() {
-    for(final TexPageBpp bpp : TexPageBpp.values()) {
-      for(final TexPageTrans trans : TexPageTrans.values()) {
+    for(final Bpp bpp : Bpp.values()) {
+      for(final Translucency trans : Translucency.values()) {
         texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_0).set(GetTPage(bpp, trans, 0, 0));
         texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_256).set(GetTPage(bpp, trans, 0, 256));
       }
@@ -925,7 +909,7 @@ public final class Scus94491BpeSegment_800e {
 //    sceaLogoAlpha_800c6734.addu(0x3L);
 
 //    if(sceaLogoAlpha_800c6734.get() > 0x80L) {
-      sceaLogoAlpha_800c6734.setu(0x80L);
+      sceaLogoAlpha_800c6734.set(0x80);
       pregameLoadingStage_800bb10c.addu(0x1L);
 //    }
   }
@@ -952,9 +936,9 @@ public final class Scus94491BpeSegment_800e {
     loadSceaLogo();
     scriptStartEffect(0x2L, 0x1L);
     sceaLogoTextureLoaded_800c672c.setu(0x1L);
-    sceaLogoDisplayTime_800c6730.setu(VSync(-1));
+    sceaLogoDisplayTime_800c6730.setu(GPU.getVsyncCount());
     pregameLoadingStage_800bb10c.addu(0x1L);
-    sceaLogoAlpha_800c6734.setu(0);
+    sceaLogoAlpha_800c6734.set(0);
   }
 
   @Method(0x800e6328L)
@@ -1008,10 +992,10 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e64d4L)
   public static void loadSoundsAndChangeVideoMode() {
     loadDRGN0_mrg_62802_sounds();
-    setWidthAndFlags(320, 0);
+    setWidthAndFlags(320);
 
     pregameLoadingStage_800bb10c.setu(0);
-    vsyncMode_8007a3b8.setu(0x2L);
+    vsyncMode_8007a3b8.set(2);
     mainCallbackIndexOnceLoaded_8004dd24.setu(mainCallbackIndex_8004dd20).addu(0x1L);
   }
 
@@ -1022,7 +1006,7 @@ public final class Scus94491BpeSegment_800e {
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
     LoadImage(imageRect, header.getImageAddress());
 
-    _800bb348.setu(texPages_800bb110.get(TexPageBpp.BITS_4).get(TexPageTrans.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
+    _800bb348.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
 
     if(header.hasClut()) {
       final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);

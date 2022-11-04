@@ -7,26 +7,26 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 
-public class BttlScriptData6cInner implements MemoryRef {
+public class EffectManagerData6cInner implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef _00;
-  public final VECTOR vec_04;
-  public final SVECTOR svec_10;
-  public final SVECTOR svec_16;
-  public final SVECTOR svec_1c;
+  public final VECTOR trans_04;
+  public final SVECTOR rot_10;
+  public final SVECTOR scale_16;
+  public final SVECTOR colour_1c;
   public final ShortRef z_22;
   public final UnsignedIntRef _24;
   public final VECTOR vec_28;
 
-  public BttlScriptData6cInner(final Value ref) {
+  public EffectManagerData6cInner(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this.vec_04 = ref.offset(4, 0x04L).cast(VECTOR::new);
-    this.svec_10 = ref.offset(2, 0x10L).cast(SVECTOR::new);
-    this.svec_16 = ref.offset(2, 0x16L).cast(SVECTOR::new);
-    this.svec_1c = ref.offset(2, 0x1cL).cast(SVECTOR::new);
+    this.trans_04 = ref.offset(4, 0x04L).cast(VECTOR::new);
+    this.rot_10 = ref.offset(2, 0x10L).cast(SVECTOR::new);
+    this.scale_16 = ref.offset(2, 0x16L).cast(SVECTOR::new);
+    this.colour_1c = ref.offset(2, 0x1cL).cast(SVECTOR::new);
     this.z_22 = ref.offset(2, 0x22L).cast(ShortRef::new);
     this._24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
     this.vec_28 = ref.offset(4, 0x28L).cast(VECTOR::new);

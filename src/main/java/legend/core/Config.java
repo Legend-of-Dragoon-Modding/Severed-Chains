@@ -1,7 +1,5 @@
 package legend.core;
 
-import legend.core.MathHelper;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +16,6 @@ public final class Config {
   static {
     properties.setProperty("window_width", "320");
     properties.setProperty("window_height", "240");
-    properties.setProperty("render_scale", "1");
     properties.setProperty("controller_config", "false");
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
@@ -30,10 +27,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 240, 1, Integer.MAX_VALUE);
-  }
-
-  public static int renderScale() {
-    return readInt("render_scale", 1, 1, 5);
   }
 
   public static boolean controllerConfig() {

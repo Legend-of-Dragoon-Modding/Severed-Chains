@@ -6,7 +6,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub34_2 extends BttlScriptData6cSubBase1 {
+public class MonsterDeathEffect34 extends BttlScriptData6cSubBase1 {
   public final ShortRef _00;
   public final UnsignedShortRef _02;
   public final UnsignedShortRef animCount_04;
@@ -17,7 +17,7 @@ public class BttlScriptData6cSub34_2 extends BttlScriptData6cSubBase1 {
   /** TODO ptr */
   public final UnsignedIntRef ptr_30;
 
-  public BttlScriptData6cSub34_2(final Value ref) {
+  public MonsterDeathEffect34(final Value ref) {
     super(ref);
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);

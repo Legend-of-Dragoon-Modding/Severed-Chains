@@ -7,7 +7,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub98Inner24 implements MemoryRef {
+public class EffectData98Inner24 implements MemoryRef {
   private final Value ref;
 
   public final IntRef scriptIndex_04;
@@ -23,7 +23,7 @@ public class BttlScriptData6cSub98Inner24 implements MemoryRef {
   public final UnsignedIntRef _1c;
   public final UnsignedShortRef _20;
 
-  public BttlScriptData6cSub98Inner24(final Value ref) {
+  public EffectData98Inner24(final Value ref) {
     this.ref = ref;
 
     this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);

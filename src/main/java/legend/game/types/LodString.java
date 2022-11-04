@@ -131,17 +131,17 @@ public class LodString implements MemoryRef {
     return sb.toString();
   }
 
-  public long charAt(final int index) {
+  public int charAt(final int index) {
     if(this.ref == null) {
       return this.chars[index];
     }
 
-    return this.ref.offset(2, index * 0x2L).get();
+    return (int)this.ref.offset(2, index * 0x2L).get();
   }
 
-  public void charAt(final int index, final long c) {
+  public void charAt(final int index, final int c) {
     if(this.ref == null) {
-      this.chars[index] = (int)c;
+      this.chars[index] = c;
       return;
     }
 

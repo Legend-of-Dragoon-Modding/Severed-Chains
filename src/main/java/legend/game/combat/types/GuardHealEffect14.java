@@ -6,14 +6,14 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub14_2 extends BttlScriptData6cSubBase1 {
+public class GuardHealEffect14 extends BttlScriptData6cSubBase1 {
   public final UnsignedIntRef _00;
   public final UnsignedIntRef _04;
   public final Pointer<TmdObjTable> tmd_08;
 
   public final UnsignedShortRef _10;
 
-  public BttlScriptData6cSub14_2(final Value ref) {
+  public GuardHealEffect14(final Value ref) {
     super(ref);
 
     this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);

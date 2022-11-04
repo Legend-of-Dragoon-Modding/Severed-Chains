@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
 
 import static legend.core.Hardware.MEMORY;
@@ -49,12 +50,9 @@ public final class Scus94491BpeSegment_8007 {
   public static final Value joypadRepeat_8007a3a0 = MEMORY.ref(4, 0x8007a3a0L);
 
   public static final Value _8007a3a8 = MEMORY.ref(4, 0x8007a3a8L);
-  public static final Value _8007a3ac = MEMORY.ref(4, 0x8007a3acL);
 
   public static final UnsignedByteRef shopId_8007a3b4 = MEMORY.ref(1, 0x8007a3b4L).cast(UnsignedByteRef::new);
 
-  /** Number of vsyncs to wait for between frames (0 means 1) */
-  public static final Value vsyncMode_8007a3b8 = MEMORY.ref(4, 0x8007a3b8L);
-
-  public static final Value _8007a3c0 = MEMORY.ref(4, 0x8007a3c0L);
+  /** 60 FPS divisor (e.g. 2 means 30 FPS) */
+  public static final IntRef vsyncMode_8007a3b8 = MEMORY.ref(4, 0x8007a3b8L, IntRef::new);
 }

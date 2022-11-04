@@ -59,6 +59,10 @@ public final class IoHelper {
     write(stream, (int)value);
   }
 
+  public static void write(final ByteBuffer stream, final double value) {
+    stream.putDouble(value);
+  }
+
   public static void write(final ByteBuffer stream, final String value) {
     write(stream, value.length());
     stream.put(value.getBytes());
@@ -99,6 +103,10 @@ public final class IoHelper {
 
   public static long readLong(final ByteBuffer stream) {
     return readInt(stream) & 0xffff_ffffL;
+  }
+
+  public static double readDouble(final ByteBuffer stream) {
+    return stream.getDouble();
   }
 
   public static String readString(final ByteBuffer stream) {

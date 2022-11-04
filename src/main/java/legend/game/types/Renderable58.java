@@ -26,8 +26,8 @@ public class Renderable58 implements MemoryRef {
   public final Pointer<Drgn0_6666Struct> drgn0_6666_20;
   public final Pointer<UnboundedArrayRef<UnsignedIntRef>> drgn0_6666_data_24;
   public final UnsignedByteRef _28;
-  public final UnsignedIntRef tpage_2c;
-  public final UnsignedIntRef clut_30;
+  public final IntRef tpage_2c;
+  public final IntRef clut_30;
   public final UnsignedIntRef _34;
   public final UnsignedIntRef _38;
   public final UnsignedByteRef z_3c;
@@ -51,8 +51,8 @@ public class Renderable58 implements MemoryRef {
     this.drgn0_6666_20 = ref.offset(4, 0x20L).cast(Pointer.deferred(4, Drgn0_6666Struct::new));
     this.drgn0_6666_data_24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
     this._28 = ref.offset(1, 0x28L).cast(UnsignedByteRef::new);
-    this.tpage_2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
-    this.clut_30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
+    this.tpage_2c = ref.offset(4, 0x2cL).cast(IntRef::new);
+    this.clut_30 = ref.offset(4, 0x30L).cast(IntRef::new);
     this._34 = ref.offset(4, 0x34L).cast(UnsignedIntRef::new);
     this._38 = ref.offset(4, 0x38L).cast(UnsignedIntRef::new);
     this.z_3c = ref.offset(1, 0x3cL).cast(UnsignedByteRef::new);

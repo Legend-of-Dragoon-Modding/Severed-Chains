@@ -10,7 +10,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 
-public class BttlScriptData6cSub98Sub94 implements MemoryRef {
+public class EffectData98Sub94 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
@@ -54,7 +54,7 @@ public class BttlScriptData6cSub98Sub94 implements MemoryRef {
   public final ShortRef _8e;
   public final UnsignedIntRef _90;
 
-  public BttlScriptData6cSub98Sub94(final Value ref) {
+  public EffectData98Sub94(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);

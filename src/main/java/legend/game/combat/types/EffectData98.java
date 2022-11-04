@@ -13,16 +13,14 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
-  public final BttlScriptData6cSub98Inner24 _08;
+public class EffectData98 extends BttlScriptData6cSubBase1 {
+  public final EffectData98Inner24 _08;
 
-  public final UnsignedIntRef _24;
-
-  public final Pointer<TmdObjTable> _30;
+  public final Pointer<TmdObjTable> tmd_30;
   public final UnsignedShortRef _34;
   public final UnsignedShortRef _36;
 
-  public final UnsignedShortRef _50;
+  public final UnsignedShortRef count_50;
   public final UnsignedShortRef _52;
   public final UnsignedShortRef _54;
   public final UnsignedShortRef _56;
@@ -36,30 +34,28 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
 
   /** Size in bytes of following array of structs */
   public final UnsignedIntRef size_64;
-  public final Pointer<UnboundedArrayRef<BttlScriptData6cSub98Sub94>> _68;
+  public final Pointer<UnboundedArrayRef<EffectData98Sub94>> _68;
   public final ByteRef _6c;
 
   public final VECTOR vec_70;
 
   public final IntRef _80;
-  public final Pointer<TriConsumerRef<EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _84;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _88;
-  public final Pointer<QuadConsumerRef<EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94, BttlScriptData6cSub98Inner24>> _8c;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, BttlScriptData6cSub98, BttlScriptData6cSub98Sub94>> _90;
-  public final Pointer<BttlScriptData6cSub98> _94;
+  public final Pointer<TriConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94>> _84;
+  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _88;
+  public final Pointer<QuadConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94, EffectData98Inner24>> _8c;
+  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _90;
+  public final Pointer<EffectData98> _94;
 
-  public BttlScriptData6cSub98(final Value ref) {
+  public EffectData98(final Value ref) {
     super(ref);
 
-    this._08 = ref.offset(4, 0x08L).cast(BttlScriptData6cSub98Inner24::new);
+    this._08 = ref.offset(4, 0x08L).cast(EffectData98Inner24::new);
 
-    this._24 = ref.offset(4, 0x24L).cast(UnsignedIntRef::new);
-
-    this._30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));
+    this.tmd_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
 
-    this._50 = ref.offset(2, 0x50L).cast(UnsignedShortRef::new);
+    this.count_50 = ref.offset(2, 0x50L).cast(UnsignedShortRef::new);
     this._52 = ref.offset(2, 0x52L).cast(UnsignedShortRef::new);
     this._54 = ref.offset(2, 0x54L).cast(UnsignedShortRef::new);
     this._56 = ref.offset(2, 0x56L).cast(UnsignedShortRef::new);
@@ -72,7 +68,7 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
     this._61 = ref.offset(1, 0x61L).cast(ByteRef::new);
 
     this.size_64 = ref.offset(4, 0x64L).cast(UnsignedIntRef::new);
-    this._68 = ref.offset(4, 0x68L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x94, BttlScriptData6cSub98Sub94::new)));
+    this._68 = ref.offset(4, 0x68L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x94, EffectData98Sub94::new)));
     this._6c = ref.offset(1, 0x6cL).cast(ByteRef::new);
 
     this.vec_70 = ref.offset(4, 0x70L).cast(VECTOR::new);
@@ -82,6 +78,6 @@ public class BttlScriptData6cSub98 extends BttlScriptData6cSubBase1 {
     this._88 = ref.offset(4, 0x88L).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, QuadConsumerRef::new));
-    this._94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, BttlScriptData6cSub98::new));
+    this._94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, EffectData98::new));
   }
 }

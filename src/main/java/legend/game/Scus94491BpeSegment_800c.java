@@ -4,7 +4,6 @@ import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.Box;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
-import legend.core.gpu.GpuPacket;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
@@ -12,9 +11,11 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.core.spu.SpuDmaTransfer;
 import legend.game.types.GsOffsetType;
@@ -38,27 +39,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value _800c1ba8 = MEMORY.ref(4, 0x800c1ba8L);
 
-  public static final GpuPacket _800c1bc0 = MEMORY.ref(4, 0x800c1bc0L, GpuPacket::new);
-
-  public static final GpuPacket _800c1be8 = MEMORY.ref(4, 0x800c1be8L, GpuPacket::new);
-
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
-
-  /** Note this is overlapped by {@link #_800c3423} */
-  public static final Value _800c3420 = MEMORY.ref(4, 0x800c3420L);
-  public static final Value _800c3423 = MEMORY.ref(1, 0x800c3423L);
-  public static final Value _800c3424 = MEMORY.ref(1, 0x800c3424L);
-  public static final Value _800c3425 = MEMORY.ref(1, 0x800c3425L);
-  public static final Value _800c3426 = MEMORY.ref(1, 0x800c3426L);
-  public static final Value _800c3427 = MEMORY.ref(1, 0x800c3427L);
-  public static final Value _800c3428 = MEMORY.ref(2, 0x800c3428L);
-  public static final Value _800c342a = MEMORY.ref(2, 0x800c342aL);
-  public static final Value _800c342c = MEMORY.ref(2, 0x800c342cL);
-  public static final Value _800c342e = MEMORY.ref(2, 0x800c342eL);
-
-  public static final Value _800c3433 = MEMORY.ref(1, 0x800c3433L);
-
-  public static final Value _800c3437 = MEMORY.ref(1, 0x800c3437L);
 
   public static final Box clip_800c3440 = MEMORY.ref(8, 0x800c3440L, Box::new);
   public static final Box clip_800c3448 = MEMORY.ref(8, 0x800c3448L, Box::new);
@@ -77,7 +58,7 @@ public final class Scus94491BpeSegment_800c {
   /** Incremented with each frame - overflows to 1 */
   public static final Value PSDCNT_800c34d0 = MEMORY.ref(4, 0x800c34d0L);
   /** Double buffer index */
-  public static final Value PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L);
+  public static final UnsignedShortRef PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L, UnsignedShortRef::new);
   public static final EnumRef<GsOffsetType> doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L, EnumRef.of(GsOffsetType::getValue, GsOffsetType.values()));
   public static final Value _800c34d8 = MEMORY.ref(4, 0x800c34d8L);
   public static final Value lightMode_800c34dc = MEMORY.ref(4, 0x800c34dcL);
@@ -124,7 +105,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
-  public static final Value _800c6688 = MEMORY.ref(4, 0x800c6688L);
   public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(4, 0x800c668cL, CdlFILE::new);
 
   public static final Value SInitOvlData_800c66a4 = MEMORY.ref(4, 0x800c66a4L);
@@ -133,7 +113,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final Value sceaLogoTextureLoaded_800c672c = MEMORY.ref(4, 0x800c672cL);
   public static final Value sceaLogoDisplayTime_800c6730 = MEMORY.ref(4, 0x800c6730L);
-  public static final Value sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L);
+  public static final IntRef sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L, IntRef::new);
 
   public static final Value _800c6740 = MEMORY.ref(1, 0x800c6740L);
 

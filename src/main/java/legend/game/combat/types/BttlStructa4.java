@@ -13,8 +13,8 @@ public class BttlStructa4 implements MemoryRef {
 
   public final ShortRef _00;
   public final UnsignedShortRef _02;
-  public final UnsignedShortRef _04;
-  public final UnsignedShortRef _06;
+  public final UnsignedShortRef x_04;
+  public final UnsignedShortRef y_06;
   public final ShortRef charIndex_08;
   public final ShortRef _0a;
   public final UnsignedShortRef _0c;
@@ -38,7 +38,7 @@ public class BttlStructa4 implements MemoryRef {
 
   public final IntRef _7c;
   public final IntRef _80;
-  public final UnsignedIntRef _84;
+  public final IntRef _84;
   public final IntRef _88;
   public final IntRef _8c;
   public final UnsignedIntRef _90;
@@ -51,8 +51,8 @@ public class BttlStructa4 implements MemoryRef {
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.x_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
+    this.y_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
     this.charIndex_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
@@ -76,7 +76,7 @@ public class BttlStructa4 implements MemoryRef {
 
     this._7c = ref.offset(4, 0x7cL).cast(IntRef::new);
     this._80 = ref.offset(4, 0x80L).cast(IntRef::new);
-    this._84 = ref.offset(4, 0x84L).cast(UnsignedIntRef::new);
+    this._84 = ref.offset(4, 0x84L).cast(IntRef::new);
     this._88 = ref.offset(4, 0x88L).cast(IntRef::new);
     this._8c = ref.offset(4, 0x8cL).cast(IntRef::new);
     this._90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);

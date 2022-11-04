@@ -33,14 +33,12 @@ public final class Hardware {
   public static final DmaManager DMA;
   public static final Gpu GPU;
   public static final Mdec MDEC;
-  public static final legend.core.Timers TIMERS;
   public static final CdDrive CDROM;
   public static final Spu SPU;
 
   public static final Thread codeThread;
   public static final Thread hardwareThread;
   public static final Thread gpuThread;
-  public static final Thread timerThread;
   public static final Thread spuThread;
 
   @Nullable
@@ -48,14 +46,13 @@ public final class Hardware {
 
   public static boolean dumping;
   public static boolean hardwareWaiting;
-  public static boolean timerWaiting;
   public static boolean spuWaiting;
   private static final List<Runnable> loadStateListeners = new ArrayList<>();
 
   private static void dumpLock() {
     dumping = true;
 
-    while(!hardwareWaiting || !timerWaiting || !spuWaiting) {
+    while(!hardwareWaiting || !spuWaiting) {
       DebugHelper.sleep(1);
     }
   }
@@ -71,7 +68,7 @@ public final class Hardware {
     stream.put((byte)'d');
     stream.put((byte)'m');
     stream.put((byte)'p');
-    stream.put((byte)3);
+    stream.put((byte)4);
 
     MEMORY.dump(stream);
     CPU.dump(stream);
@@ -96,8 +93,12 @@ public final class Hardware {
 
     final int version = stream.get();
 
-    if(version < 0 || version > 3) {
-      LOGGER.error("Failed to load state: invalid version %d", version);
+    if(version < 4) {
+      LOGGER.error("Failed to load state: version %d too old", version);
+    }
+
+    if(version > 4) {
+      LOGGER.error("Failed to load state: version %d too new", version);
     }
 
     // Need to acquire gate to load kernel/bios functions
@@ -162,9 +163,8 @@ public final class Hardware {
     CPU = new Cpu();
     INTERRUPTS = new InterruptController(MEMORY);
     DMA = new DmaManager(MEMORY);
-    GPU = new Gpu(MEMORY);
+    GPU = new Gpu();
     MDEC = new Mdec(MEMORY);
-    TIMERS = new Timers(MEMORY);
     CDROM = new CdDrive();
     SPU = new Spu(MEMORY);
 
@@ -174,8 +174,6 @@ public final class Hardware {
     hardwareThread.setName("Hardware");
     gpuThread = new Thread(GPU);
     gpuThread.setName("GPU");
-    timerThread = new Thread(TIMERS);
-    timerThread.setName("Timers");
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
 
@@ -202,7 +200,6 @@ public final class Hardware {
   public static void start() {
     codeThread.start();
     gpuThread.start();
-    timerThread.start();
     spuThread.start();
 
     running = true;
@@ -211,14 +208,11 @@ public final class Hardware {
         INTERRUPTS.set(InterruptType.DMA);
       }
 
-      TIMERS.syncGPU(GPU.getBlanksAndDot());
-
       CPU.tick();
 
       DebugHelper.sleep(0);
-      if(!codeThread.isAlive() || !gpuThread.isAlive() || !timerThread.isAlive() || !spuThread.isAlive()) {
+      if(!codeThread.isAlive() || !gpuThread.isAlive() || !spuThread.isAlive()) {
         running = false;
-        TIMERS.stop();
         SPU.stop();
       }
 

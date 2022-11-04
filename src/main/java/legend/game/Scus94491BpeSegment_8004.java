@@ -139,12 +139,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
   public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
-  /**
-   * Bit 0 - Interlaced
-   * Bit 1 - Height (0 -> 240, 1 -> 480)
-   * Bit 2 - 24-bit colour
-   */
-  public static final Value renderFlags_8004dd36 = MEMORY.ref(2, 0x8004dd36L);
+
   public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
   public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
@@ -1256,7 +1251,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80045cb8L)
   public static void sssqTick() {
-    //TODO GH#3
+    //TODO GH#3 (also this used to be called from a timer callback (maybe 60hz?) but I removed the callback
     if(true) {
       return;
     }

@@ -1,17 +1,17 @@
 package legend.game;
 
 import legend.core.CpuRegisterType;
-import legend.core.DebugHelper;
-import legend.core.Hardware;
 import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
 import legend.core.dma.DmaChannelType;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
-import legend.core.gpu.DR_ENV;
+import legend.core.gpu.Gpu;
+import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
@@ -28,12 +28,9 @@ import legend.core.kernel.jmp_buf;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
-import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
-import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -41,13 +38,10 @@ import legend.game.types.DR_MODE;
 import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsOT;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.RenderStruct20;
-import legend.game.types.TexPageBpp;
-import legend.game.types.TexPageTrans;
+import legend.game.types.Translucency;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,12 +58,8 @@ import static legend.core.InterruptController.I_MASK;
 import static legend.core.InterruptController.I_STAT;
 import static legend.core.MathHelper.clamp;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.core.Timers.TMR_HRETRACE_MODE;
-import static legend.core.Timers.TMR_HRETRACE_VAL;
 import static legend.core.dma.DmaManager.DMA_DICR;
 import static legend.core.dma.DmaManager.DMA_DPCR;
-import static legend.core.gpu.Gpu.GPU_REG0;
-import static legend.core.gpu.Gpu.GPU_REG1;
 import static legend.core.kernel.Bios.ExitCriticalSection;
 import static legend.core.kernel.Bios.setjmp_Impl_A13;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -77,6 +67,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.memcpy;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
@@ -93,9 +84,6 @@ import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
 import static legend.game.Scus94491BpeSegment_8005.GsOUT_PACKET_P;
-import static legend.game.Scus94491BpeSegment_8005.Vcount;
-import static legend.game.Scus94491BpeSegment_8005._800534fc;
-import static legend.game.Scus94491BpeSegment_8005._80053500;
 import static legend.game.Scus94491BpeSegment_8005._80053594;
 import static legend.game.Scus94491BpeSegment_8005._800535a0;
 import static legend.game.Scus94491BpeSegment_8005._8005457c;
@@ -106,12 +94,6 @@ import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
-import static legend.game.Scus94491BpeSegment_8005._8005475c;
-import static legend.game.Scus94491BpeSegment_8005._8005477c;
-import static legend.game.Scus94491BpeSegment_8005._80054790;
-import static legend.game.Scus94491BpeSegment_8005._80054792;
-import static legend.game.Scus94491BpeSegment_8005._800547bb;
-import static legend.game.Scus94491BpeSegment_8005._800547f4;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
@@ -124,7 +106,6 @@ import static legend.game.Scus94491BpeSegment_8005.jmp_buf_8005359c;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
-import static legend.game.Scus94491BpeSegment_8005.vsyncCallbacks_8005460c;
 import static legend.game.Scus94491BpeSegment_800b.CdlDIR_800bfda8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bf7a8;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
@@ -135,21 +116,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c13a8;
 import static legend.game.Scus94491BpeSegment_800c._800c13a9;
 import static legend.game.Scus94491BpeSegment_800c._800c1434;
 import static legend.game.Scus94491BpeSegment_800c._800c1ba8;
-import static legend.game.Scus94491BpeSegment_800c._800c1bc0;
-import static legend.game.Scus94491BpeSegment_800c._800c1be8;
 import static legend.game.Scus94491BpeSegment_800c._800c3410;
-import static legend.game.Scus94491BpeSegment_800c._800c3420;
-import static legend.game.Scus94491BpeSegment_800c._800c3423;
-import static legend.game.Scus94491BpeSegment_800c._800c3424;
-import static legend.game.Scus94491BpeSegment_800c._800c3425;
-import static legend.game.Scus94491BpeSegment_800c._800c3426;
-import static legend.game.Scus94491BpeSegment_800c._800c3427;
-import static legend.game.Scus94491BpeSegment_800c._800c3428;
-import static legend.game.Scus94491BpeSegment_800c._800c342a;
-import static legend.game.Scus94491BpeSegment_800c._800c342c;
-import static legend.game.Scus94491BpeSegment_800c._800c342e;
-import static legend.game.Scus94491BpeSegment_800c._800c3433;
-import static legend.game.Scus94491BpeSegment_800c._800c3437;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
 import static legend.game.Scus94491BpeSegment_800c._800c34d8;
@@ -434,134 +401,6 @@ public final class Scus94491BpeSegment_8003 {
     return 0x1L;
   }
 
-  /**
-   * Wait for the next vertical blank, or return the vertical blank counter value.
-   *
-   * Waits for vertical blank using the method specified by mode, as defined below.
-   *
-   * <table>
-   *   <caption>Possible Values</caption>
-   *   <tr>
-   *     <th>Mode</th>
-   *     <th>Operation</th>
-   *   </tr>
-   *   <tr>
-   *     <td>0</td>
-   *     <td>Blocks until vertical sync is generated</td>
-   *   </tr>
-   *   <tr>
-   *     <td>1</td>
-   *     <td>Returns time elapsed from the point VSync() processing is last completed when mode=1 or n in horizontal sync units</td>
-   *   </tr>
-   *   <tr>
-   *     <td>n (n>1)</td>
-   *     <td>Blocks from the point VSync() processing is last completed when mode=1 or n until n number of vertical syncs are generated.</td>
-   *   </tr>
-   *   <tr>
-   *     <td>-n (n>0)</td>
-   *     <td>Returns absolute time after program boot in vertical sync interval units.</td>
-   *   </tr>
-   * </table>
-   *
-   * Vsync() may generate a timeout if long blocking periods are specified. To prevent deadlocks, rather than
-   * using Vsync() to block for an especially long time (say more than 4 vertical blank periods), have your
-   * program poll VSync(-1) in a loop instead.
-   *
-   * @return If mode>=0, returns time elapsed from the point that Vsync() processing is last completed when
-   *         mode=1 or n (horizontal blanking units). If mode<0, returns time elapsed after program boot (vertical
-   *         blanking units)
-   */
-  @Method(0x80037490L)
-  public static int VSync(final int mode) {
-    long v0;
-    long v1;
-
-    //LAB_800374b4
-    do {
-      v1 = TMR_HRETRACE_VAL.get();
-      v0 = TMR_HRETRACE_VAL.get();
-    } while(v1 != v0);
-
-    final long s1 = v1 - _800534fc.get() & 0xffffL;
-
-    if(mode < 0) {
-      return (int)Vcount.get();
-    }
-
-    //LAB_80037500
-    if(mode != 0x1L) {
-      //LAB_8003752c
-      //LAB_80037534
-      //LAB_80037540
-      if(mode > 0) {
-        checkVsyncTimeout(_80053500.get() - 1 + mode, mode - 0x1L);
-      } else {
-        checkVsyncTimeout(_80053500.get(), 0);
-      }
-
-      final long s0 = GPU_REG1.get();
-      checkVsyncTimeout(Vcount.get() + 1, 0x1L);
-
-      if((s0 & 0x40L) != 0) {
-        if((s0 ^ GPU_REG1.get()) >= 0) {
-          //LAB_8003759c
-          do {
-            if(Hardware.isGpuThread()) {
-              GPU.tick();
-            }
-
-            DebugHelper.sleep(1);
-          } while(((s0 ^ GPU_REG1.get()) & 0x80000000L) == 0);
-        }
-      }
-
-      //LAB_800375b4
-      _80053500.setu(Vcount);
-
-      //LAB_800375cc
-      do {
-        _800534fc.setu(TMR_HRETRACE_VAL);
-      } while(_800534fc.get() != TMR_HRETRACE_VAL.get());
-    }
-
-    //LAB_800375f0
-    //LAB_800375f4
-    return (int)s1;
-  }
-
-  @Method(0x80037608L)
-  public static void checkVsyncTimeout(final long a0, final long a1) {
-    if(Vcount.get() >= a0) {
-      return;
-    }
-
-    if(Hardware.isGpuThread()) {
-      GPU.tick();
-    }
-
-    //LAB_80037630
-    long a2 = a1 << 0xfL;
-
-    do {
-      a2--;
-      if(a2 == -0x1L) {
-        LOGGER.error("VSync: timeout");
-        ChangeClearRCnt(0x3, false);
-        break;
-      }
-
-      DebugHelper.sleep(1);
-
-      if(Hardware.isGpuThread()) {
-        GPU.tick();
-      }
-
-      //LAB_80037678
-    } while(Vcount.get() < a0);
-
-    //LAB_80037690
-  }
-
   @Method(0x800376a0L)
   public static boolean ChangeClearRCnt(final int t, final boolean flag) {
     GATE.acquire();
@@ -572,41 +411,17 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800376b0L)
   public static long ResetCallback() {
-    return (long)_800545ec.deref(4).offset(0xcL).deref(4).cast(SupplierRef::new).run();
+    return ResetCallback_Impl();
   }
 
   @Method(0x800376e0L)
   public static long InterruptCallback(final InterruptType interrupt, final long callback) {
-    return (long)_800545ec.deref(4).offset(0x8L).deref(4).call(interrupt, callback);
+    return InterruptCallback_Impl(interrupt, callback);
   }
 
   @Method(0x80037710L)
   public static long SetDmaInterruptCallback(final DmaChannelType channel, final long callback) {
-    return (long)_800545ec.deref(4).offset(0x4L).deref(4).call(channel, callback);
-  }
-
-  @Method(0x80037740L)
-  public static void SetTmr0InterruptCallback(final long func) {
-    _800545ec.deref(4).offset(0x14L).deref(4).call(InterruptType.TMR0, func);
-  }
-
-  @Method(0x80037774L)
-  public static void SetVsyncInterruptCallback(final InterruptType interrupt, final long callback) {
-    _800545ec.deref(4).offset(0x14L).deref(4).cast(BiConsumerRef::new).run(interrupt, callback);
-  }
-
-  @Method(0x80037804L)
-  public static boolean CheckCallback() {
-    synchronized(inExceptionHandler_80053566) {
-      return inExceptionHandler_80053566.get();
-    }
-  }
-
-  @Method(0x8003782cL)
-  public static long setIMask(final long mask) {
-    final long old = I_MASK.get();
-    I_MASK.setu(mask);
-    return old;
+    return SetDmaInterruptCallback_Impl(channel, callback);
   }
 
   @Method(0x80037844L)
@@ -623,7 +438,6 @@ public final class Scus94491BpeSegment_8003 {
     _800535a0.setu(_8005457c.getAddress());
     SetCustomExitFromException(jmp_buf_8005359c);
     interruptHandlersInitialized_80053564.set(true);
-    _800545ec.deref(4).offset(0x14L).setu(startInterruptVsync());
     _800545ec.deref(4).offset(0x4L).setu(startInterruptDma());
     ExitCriticalSection();
 
@@ -722,21 +536,6 @@ public final class Scus94491BpeSegment_8003 {
       ChangeClearRCnt(3, callback == 0);
     }
 
-    //LAB_80037bc0
-    if(interrupt == InterruptType.TMR0) {
-      ChangeClearRCnt(0, callback == 0);
-    }
-
-    //LAB_80037bd8
-    if(interrupt == InterruptType.TMR1) {
-      ChangeClearRCnt(1, callback == 0);
-    }
-
-    //LAB_80037bf0
-    if(interrupt == InterruptType.TMR2) {
-      ChangeClearRCnt(2, callback == 0);
-    }
-
     //LAB_80037c00
     I_MASK.setu(oldIMask);
 
@@ -771,35 +570,6 @@ public final class Scus94491BpeSegment_8003 {
     GATE.acquire();
     setjmp_Impl_A13(buffer, callback);
     GATE.release();
-  }
-
-  @Method(0x80037dd0L)
-  public static long startInterruptVsync() {
-    TMR_HRETRACE_MODE.setu(0x100L);
-    Vcount.setu(0);
-
-    zeroMemory_80037d4c(vsyncCallbacks_8005460c.getAddress(), 8);
-    InterruptCallback(InterruptType.VBLANK, getMethodAddress(Scus94491BpeSegment_8003.class, "executeVsyncCallbacks"));
-
-    return getMethodAddress(Scus94491BpeSegment_8003.class, "SetInterruptCallback_Impl", InterruptType.class, long.class);
-  }
-
-  @Method(0x80037e28L)
-  public static void executeVsyncCallbacks() {
-    Vcount.addu(0x1L);
-
-    for(int i = 0; i < 8; i++) {
-      final Pointer<RunnableRef> ptr = vsyncCallbacks_8005460c.get(i);
-
-      if(!ptr.isNull()) {
-        ptr.deref().run();
-      }
-    }
-  }
-
-  @Method(0x80037e94L)
-  public static void SetInterruptCallback_Impl(final InterruptType interrupt, final long callback) {
-    vsyncCallbacks_8005460c.get(interrupt.ordinal()).set(MEMORY.ref(4, callback, RunnableRef::new));
   }
 
   @Method(0x80037ef0L)
@@ -940,29 +710,6 @@ public final class Scus94491BpeSegment_8003 {
     return old;
   }
 
-  /**
-   * Set and cancel display mask.
-   *
-   * @param mask Display mask
-   *
-   * Puts display mask into the status specified by mask. mask =0: not displayed on screen; mask = 1;
-   * displayed on screen.
-   */
-  @Method(0x80038474L)
-  public static void SetDispMask(final int mask) {
-    LOGGER.trace("SetDispMask(%08x)...", mask);
-
-    if(mask == 0) {
-      fillMemory(DISPENV_80054728.getAddress(), (byte)0xff, 0x14);
-    }
-
-    if(mask == 0) {
-      sendDisplayCommand(0x300_0001L); // Disable screen
-    } else {
-      sendDisplayCommand(0x300_0000L); // Enable screen
-    }
-  }
-
   @Method(0x80038574L)
   private static void validateRect(final String text, final RECT rect) {
     if(rect.w.get() > _800546c0.get() || rect.x.get() + rect.w.get() > _800546c0.get() || rect.y.get() > _800546c2.get() || rect.y.get() + rect.h.get() > _800546c2.get() || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
@@ -982,7 +729,7 @@ public final class Scus94491BpeSegment_8003 {
   public static void LoadImage(final RECT rect, final long address) {
     validateRect("LoadImage",rect);
 
-    uploadImageToGpu(rect, address);
+    GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
   @Method(0x80038818L)
@@ -1002,7 +749,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x80038878L)
-  public static long MoveImage(final RECT rect, final int x, final int y) {
+  public static void MoveImage(final RECT rect, final int x, final int y) {
     validateRect("MoveImage", rect);
 
     if(rect.w.get() <= 0 || rect.h.get() <= 0) {
@@ -1010,53 +757,8 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_800388d0
-    final long v1 = _8005475c.getAddress();
-    MEMORY.ref(4, v1).offset(0x0L).setu((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL);
-    MEMORY.ref(4, v1).offset(0x4L).setu((y & 0xffffL) << 16 | x & 0xffffL);
-    MEMORY.ref(4, v1).offset(0x8L).setu((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL);
-
     //LAB_80038918
-    return uploadLinkedListToGpu(_8005475c.offset(-0x8L).cast(UnsignedIntRef::new));
-  }
-
-  /**
-   * Initialize an array to a linked list for use as an ordering table.
-   *
-   * @param ot Head pointer of OT
-   * @param count Number of entries in OT
-   *
-   * Walks the array specified by ot and sets each element to be a pointer to the previous element, except the
-   * first, which is set to a pointer to a special terminator value which the PlayStation uses to recognize the end
-   * of a primitive list. count specifies how many entries are present in the array.
-   *
-   * To execute the OT initialized by ClearOTagR(), execute DrawOTag(ot+n-1).
-   */
-  @Method(0x800389f8L)
-  public static UnboundedArrayRef<GsOT_TAG> ClearOTagR(final UnboundedArrayRef<GsOT_TAG> ot, final int count) {
-    LOGGER.trace("ClearOTagR(%08x,%d)...", ot, count);
-
-    for(int i = 1; i < count; i++) {
-      final GsOT_TAG tag = ot.get(i);
-      tag.set(tag.getAddress() - 4 & 0xff_ffffL);
-    }
-
-    _8005477c.setu(0x405_4768L);
-    ot.get(0).set(0x5_477cL);
-    return ot;
-  }
-
-  /**
-   * Executes the GPU primitives in the linked list ot.
-   *
-   * @param address Pointer to a linked list of GPU primitives
-   */
-  @Method(0x80038b00L)
-  public static void DrawOTag(final MemoryRef address) {
-    if(gpu_debug.get() > 0) {
-      LOGGER.info("DrawOTag(%08x)...", address.getAddress());
-    }
-
-    uploadLinkedListToGpu(address);
+    GPU.command80CopyRectFromVramToVram(rect.x.get(), rect.y.get(), x, y, rect.w.get(), rect.h.get());
   }
 
   /**
@@ -1078,9 +780,10 @@ public final class Scus94491BpeSegment_8003 {
       LOGGER.info("PutDrawEnv(%08x)...", env.getAddress());
     }
 
-    SetDrawEnv(env.dr_env, env);
-    env.dr_env.tag.set((int)(env.dr_env.tag.get() | 0xff_ffff));
-    uploadLinkedListToGpu(env.dr_env);
+    GPU.drawingArea(env.clip.x.get(), env.clip.y.get(), env.clip.x.get() + env.clip.w.get(), env.clip.y.get() + env.clip.h.get());
+    GPU.drawingOffset(env.ofs.get(0).get(), env.ofs.get(1).get());
+    GPU.maskBit(false, Gpu.DRAW_PIXELS.ALWAYS);
+
     DRAWENV_800546cc.set(env);
     return env;
   }
@@ -1099,57 +802,40 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_80038d8c
-    // GP1(05h) - set start of display area (in VRAM)
-    sendDisplayCommand(0x500_0000L | (env.disp.y.get() & 0x3ffL) << 10 | env.disp.x.get() & 0x3ffL);
+    GPU.displayStart(env.disp.x.get(), env.disp.y.get());
 
     long s0 = 0;
-    long v1;
 
-    if(DISPENV_80054728.isinter.get() != env.isinter.get() || DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
+    if(DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
       //LAB_80038e34
-      env.pad0.set((byte)GsGetWorkBase());
-
-      if(env.pad0.get() == 0x1L) {
-        s0 |= 0b1000L; // PAL
-      }
-
-      //LAB_80038e54
-      if(env.isrgb24.get() != 0) {
-        s0 |= 0b1_0000L; // 24-bit colour
-      }
-
-      //LAB_80038e68
-      if(env.isinter.get() != 0) {
-        s0 |= 0b10_0000L; // Interlaced
-      }
-
       //LAB_80038e94
-      v1 = env.disp.w.get();
+      final int width = env.disp.w.get();
 
-      if(v1 > 280L) {
-        //LAB_80038eb8
-        if(v1 <= 352L) {
-          s0 |= 0b1L; // Horizontal res: 320
-        } else if(v1 <= 400L) {
-          s0 |= 0b100_0000L; // Horizontal res 2: 368
-        } else if(v1 <= 560L) {
-          s0 |= 0b10L; // Horizontal res: 512
-        } else {
-          //LAB_80038ed8
-          s0 |= 0b11L; // Horizontal res: 640
-        }
+      final Gpu.HORIZONTAL_RESOLUTION hRes;
+      final Gpu.VERTICAL_RESOLUTION vRes;
+
+      if(width <= 280) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._256;
+      } else if(width <= 352) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._320;
+      } else if(width <= 400) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._368;
+      } else if(width <= 560) {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._512;
+      } else {
+        hRes = Gpu.HORIZONTAL_RESOLUTION._640;
       }
 
       //LAB_80038edc
       //LAB_80038ef0
-      if(env.pad0.get() != 0 && env.disp.h.get() > 288L) {
-        s0 |= 0b10_0100L; // Vertical res: 480, vertical interlace: on
-      } else if(env.pad0.get() == 0 && env.disp.h.get() > 256L) {
-        s0 |= 0b10_0100L; // Vertical res: 480, vertical interlace: on
+      if(env.disp.h.get() <= 256) {
+        vRes = Gpu.VERTICAL_RESOLUTION._240;
+      } else {
+        vRes = Gpu.VERTICAL_RESOLUTION._480;
       }
 
       //LAB_80038efc
-      sendDisplayCommand(0x800_0000L | s0); // Display mode
+      GPU.displayMode(hRes, vRes, Gpu.DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
 
       env.pad0.set((byte)8);
     }
@@ -1157,13 +843,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_80038f20
     if(DISPENV_80054728.screen.x.get() != env.screen.x.get() || DISPENV_80054728.screen.y.get() != env.screen.y.get() || DISPENV_80054728.screen.w.get() != env.screen.w.get() || DISPENV_80054728.screen.h.get() != env.screen.h.get() || env.pad0.get() == 0x8L) {
       //LAB_80038f98
-      env.pad0.set((byte)GsGetWorkBase());
+      env.pad0.set((byte)0);
 
-      if(env.pad0.get() == 0) {
-        s0 = env.screen.y.get() + 0x10L;
-      } else {
-        s0 = env.screen.y.get() + 0x13L;
-      }
+      s0 = env.screen.y.get() + 16;
 
       //LAB_80038fb8
       final long s2;
@@ -1174,219 +856,37 @@ public final class Scus94491BpeSegment_8003 {
         s2 = s0 + env.screen.h.get();
       }
 
-      //LAB_80038fcc
-      v1 = env.disp.w.get();
-
-      final long a2;
-      if(v1 <= 280L) {
-        a2 = 0;
-      } else if(v1 <= 352L) {
-        a2 = 1L;
-      } else if(v1 <= 400L) {
-        a2 = 2L;
-      } else if(v1 <= 560L) {
-        a2 = 3L;
-      } else {
-        a2 = 4L;
-      }
-
-      //LAB_80039008
-      long v0 = (env.pad0.get() * 5 + a2) * 4;
-      v1 = _80054790.offset(v0).get();
-      v0 = _80054792.offset(v0).get() - v1;
-
-      long a0 = v1 + (env.screen.x.get() * _800547bb.offset(a2).get() & 0xffffffffL);
-      if(env.screen.w.get() != 0) {
-        final long a3 = v0 * env.screen.w.get() & 0xffffffffL;
-        v0 = a3 >> 0x8L;
-      }
-
-      //LAB_80039070
-      v1 = a0 + v0;
       long a1;
-      if(env.pad0.get() == 0) {
-        //LAB_80039110
-        if(a0 < 500L) {
-          a1 = 500L;
-        } else if(a0 <= 3250L) {
-          a1 = a0;
-        } else {
-          a1 = 3250L;
-        }
-
-        //LAB_8003912c
-        a0 = a1;
-
-        if(v1 < a1) {
-          a1 += _800547bb.offset(a2).get() * 4;
-        } else if(v1 <= 3290L) {
-          a1 = v1;
-        } else {
-          a1 = 3290L;
-        }
-
-        //LAB_80039160
-        //LAB_80039164
-        v1 = a1;
-
-        if(s0 < 16L) {
-          //LAB_80039180
-          a1 = 16L;
-        } else if(s0 <= 257L) {
-          a1 = s0;
-        } else {
-          a1 = 257L;
-        }
-
-        //LAB_80039184
-        s0 = a1;
-
-        //LAB_8003919c
-        if(s2 < a1) {
-          a1 += 2L;
-        } else if(s2 <= 258L) {
-          a1 = s2;
-        } else {
-          a1 = 258L;
-        }
+      //LAB_80039164
+      if(s0 < 16L) {
+        //LAB_80039180
+        a1 = 16L;
+      } else if(s0 <= 257L) {
+        a1 = s0;
       } else {
-        if(a0 < 540L) {
-          a1 = 540L;
-        } else if(a0 <= 3220L) {
-          a1 = a0;
-        } else {
-          a1 = 3220L;
-        }
+        a1 = 257L;
+      }
 
-        //LAB_8003909c
-        a0 = a1;
+      //LAB_80039184
+      s0 = a1;
 
-        if(v1 < a1) {
-          a1 += _800547bb.offset(a2).get() * 4;
-        } else if(v1 <= 3260L) {
-          a1 = v1;
-        } else {
-          a1 = 3260L;
-        }
-
-        //LAB_800390d0
-        //LAB_800390d4
-        v1 = a1;
-
-        if(s0 < 19L) {
-          //LAB_800390f0
-          a1 = 19L;
-        } else if(s0 <= 303L) {
-          a1 = s0;
-        } else {
-          a1 = 303L;
-        }
-
-        //LAB_800390f4
-        s0 = a1;
-
-        //LAB_8003919c
-        if(s2 < a1) {
-          a1 += 2L;
-        } else if(s2 <= 305L) {
-          a1 = s2;
-        } else {
-          a1 = 305L;
-        }
+      //LAB_8003919c
+      if(s2 < a1) {
+        a1 += 2L;
+      } else if(s2 <= 258L) {
+        a1 = s2;
+      } else {
+        a1 = 258L;
       }
 
       //LAB_800391a8
-      sendDisplayCommand(0x600_0000L | (v1 & 0xfffL) << 12 | a0 & 0xfffL); // Horizontal display range
-      sendDisplayCommand(0x700_0000L | (a1 & 0x3ffL) << 10 | s0 & 0x3ffL); // Vertical display range
+      GPU.verticalDisplayRange((int)s0, (int)a1);
     }
 
     memcpy(DISPENV_80054728.getAddress(), env.getAddress(), 0x14);
 
     //LAB_80039204
     return env;
-  }
-
-  /**
-   * <p>Initializes a DR_ENV primitive using the values contained in a DRAWENV structure. By using AddPrim() to
-   * insert a DR_ENV primitive into your primitive list, it is possible to change part of your drawing environment
-   * in the middle of drawing.</p>
-   *
-   * <p>The DR_ENV primitive uses the same information as the DRAWENV structure, but the data format is
-   * different and the DRAWENV structure cannot be used as a primitive. When the DR_ENV primitive is
-   * executed, the previous drawing environment settings are destroyed.</p>
-   *
-   * @param dr_env Pointer to drawing environment change primitive
-   * @param drawEnv Pointer to drawing environment structure in which the drawing environment is described
-   */
-  @Method(0x80039550L)
-  public static void SetDrawEnv(final DR_ENV dr_env, final DRAWENV drawEnv) {
-    dr_env.code.get(0).set(makeSetDrawingAreaTopLeftCommand(drawEnv.clip.x.get(), drawEnv.clip.y.get()));
-    dr_env.code.get(1).set(makeSetDrawingAreaBottomRightCommand(drawEnv.clip.x.get() + drawEnv.clip.w.get() - 1, drawEnv.clip.y.get() + drawEnv.clip.h.get() - 1));
-    dr_env.code.get(2).set(makeSetDrawingOffsetCommand(drawEnv.ofs.get(0).get(), drawEnv.ofs.get(1).get()));
-    dr_env.code.get(3).set(makeDrawModeSettingsCommand(drawEnv.dfe.get(), drawEnv.dtd.get(), drawEnv.tpage.get()));
-    dr_env.code.get(4).set(makeTextureWindowSettingsCommand(drawEnv.tw));
-    dr_env.code.get(5).set(0xe600_0000L); // Mask bit setting
-
-    int size = 6;
-
-    if(drawEnv.isbg.get() != 0) {
-      final long width  = clamp(drawEnv.clip.w.get(), 0, _800546c0.get() - 1);
-      final long height = clamp(drawEnv.clip.h.get(), 0, _800546c2.get() - 1);
-
-      //LAB_800396ac
-      if((drawEnv.clip.x.get() & 0x3fL) != 0 || (width & 0x3fL) != 0) {
-        //LAB_800396d4
-        // Monochrome quad
-        dr_env.code.get(size++).set(0x6000_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() - drawEnv.ofs.get(0).get() & 0xffffL) << 16 | drawEnv.clip.y.get() - drawEnv.ofs.get(1).get() & 0xffffL);
-      } else {
-        //LAB_8003974c
-        // Monochrome triangle, opaque
-        dr_env.code.get(size++).set(0x200_0000L | (drawEnv.b0.get() & 0xff) << 16 | (drawEnv.g0.get() & 0xff) << 8 | drawEnv.r0.get() & 0xff);
-        dr_env.code.get(size++).set((drawEnv.clip.x.get() & 0xffffL) << 16 | drawEnv.clip.y.get() & 0xffffL);
-      }
-
-      dr_env.code.get(size++).set(width << 16 | height);
-    }
-
-    //LAB_800397a4
-    dr_env.tag.set(size << 24);
-  }
-
-  @Method(0x800397c0L)
-  public static long makeDrawModeSettingsCommand(final long allowDrawing, final long dither, final long texturePage) {
-    return 0xe100_0000L | (allowDrawing != 0 ? 0x400L : 0) | (dither != 0 ? 0x200L : 0x0L) | texturePage & 0x9ffL;
-  }
-
-  @Method(0x800397e0L)
-  public static long makeSetDrawingAreaTopLeftCommand(final long x, final long y) {
-    return 0xe300_0000L | clamp(y, 0, _800546c2.get()) << 10 | clamp(x, 0, _800546c0.get());
-  }
-
-  @Method(0x80039878L)
-  public static long makeSetDrawingAreaBottomRightCommand(final long x, final long y) {
-    return 0xe400_0000L | clamp(y, 0, _800546c2.get()) << 10 | clamp(x, 0, _800546c0.get());
-  }
-
-  @Method(0x80039910L)
-  public static long makeSetDrawingOffsetCommand(final long x, final long y) {
-    return 0xe500_0000L | (y & 0x7ffL) << 11 | x & 0x7ffL;
-  }
-
-  @Method(0x8003992cL)
-  public static long makeTextureWindowSettingsCommand(final RECT rect) {
-    if(rect == null) {
-      return 0;
-    }
-
-    //LAB_8003993c
-    final long y = (rect.y.get() & 0x1f) >> 3 << 15;
-    final long x = (rect.x.get() & 0x1f) >> 3 << 10;
-    final long h = (-rect.h.get() & 0xffL) >> 3 << 5;
-    final long w = (-rect.w.get() & 0xffL) >> 3;
-
-    //LAB_800399a4
-    return 0xe200_0000L | y | x | h | w;
   }
 
   @Method(0x80039aa4L)
@@ -1396,96 +896,21 @@ public final class Scus94491BpeSegment_8003 {
 
     LOGGER.info("Clearing screen %s %08x", rect, colour);
 
-    if((rect.x.get() & 0x3fL) != 0 || (rect.w.get() & 0x3fL) != 0) {
-      //LAB_80039b64
-      _800c1bc0.build(builder -> builder
-        .add(0xe300_0000L) // Draw area top left (0, 0)
-        .add(0xe4ff_ffffL) // Draw area bottom right (1023, 511)
-        .add(0xe500_0000L) // Draw offset (0, 0)
-        .add(0xe600_0000L) // Mask bit (draw always)
-        .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
-        .add(0x6000_0000L | colour) // Monochrome rect (var size, opaque) - colour bbrrgg
-        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - vertex YyyyXxxx
-        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - w/h HhhhWwww
-        .next(_800c1be8)
-      );
-
-      _800c1be8.build(builder -> builder
-        .add(0xe300_0000L | getGpuInfo(0x3L)) // Draw area top left
-        .add(0xe400_0000L | getGpuInfo(0x4L)) // Draw area top right
-        .add(0xe500_0000L | getGpuInfo(0x5L)) // Draw offset
-      );
-    } else {
-      //LAB_80039c3c
-      _800c1bc0.build(builder -> builder
-        .add(0xe600_0000L) // Mask bit (draw always)
-        .add(0xe100_0000L | GPU_REG1.get(0x7ffL) | (int)colour >> 31 << 10) // Draw mode
-        .add(0x0200_0000L | colour) // Fill rect - BbGgRr
-        .add((rect.y.get() & 0xffffL) << 16 | rect.x.get() & 0xffffL) // - YyyyXxxx
-        .add((rect.h.get() & 0xffffL) << 16 | rect.w.get() & 0xffffL) // - HhhhWwww
-      );
-    }
-
-    //LAB_80039cac
-    uploadLinkedListToGpu(_800c1bc0);
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get(), (int)colour));
     return 0;
-  }
-
-  @Method(0x80039cd4L)
-  public static long uploadImageToGpu(final RECT rect, final long address) {
-    rect.w.set((short)clamp(rect.w.get(), 0, _800546c0.get()));
-    rect.h.set((short)clamp(rect.h.get(), 0, _800546c2.get()));
-
-    //LAB_80039d78
-    //LAB_80039d7c
-    final long dataSize = rect.w.get() * rect.h.get() + 1;
-    if(dataSize / 2 <= 0) {
-      return -0x1L;
-    }
-
-    GPU.commandA0CopyRectFromCpuToVram(rect, address);
-
-    //LAB_80039ee8
-    //LAB_80039eec
-    return 0;
-  }
-
-  @Method(0x8003a190L)
-  public static void sendDisplayCommand(final long command) {
-    GPU_REG1.setu(command);
-  }
-
-  @Method(value = 0x8003a1ecL, ignoreExtraParams = true)
-  public static int uploadLinkedListToGpu(final MemoryRef address) {
-    return GPU.uploadLinkedList(address.getAddress());
-  }
-
-  @Method(0x8003a234L)
-  public static long getGpuInfo(final long type) {
-    GPU_REG1.setu(0x1000_0000L | type); // Get GPU info
-    return GPU_REG0.get(0xff_ffffL);
   }
 
   @Method(0x8003a798L)
   public static long FUN_8003a798(final long mode) {
-    _800547f4.setu(setIMask(0));
-
     if(mode == 1 || mode == 3) {
       //LAB_8003a854
-      DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
-      DMA.gpu.enable();
-      GPU_REG1.setu(0x200_0000L); // Acknowledge GPU interrupt
-      GPU_REG1.setu(0x100_0000L); // Reset command buffer
+      GPU.resetCommandBuffer();
     } else if(mode == 0 || mode == 5) {
       //LAB_8003a808
-      DMA.gpu.CHCR.setu(0b100_0000_0001L); // Direction: from RAM; sync mode: 2 (linked-list)
-      DMA.gpu.enable();
-      GPU_REG1.setu(0); // Reset GPU
+      GPU.reset();
     }
 
     //LAB_8003a8a0
-    setIMask(_800547f4.get());
-
     if(mode != 0) {
       return 0;
     }
@@ -1512,29 +937,6 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * BreakDraw?
-   */
-  @Method(0x8003b0d0L)
-  public static long FUN_8003b0d0() {
-    if(DMA.gpu.CHCR.get(0x100_0000L) == 0) { // Transfer stopped/completed
-      return 0;
-    }
-
-    if(DMA.gpu.CHCR.get(0x700L) >>> 8 != 0x4L) { // Chopping enabled, or not linked list
-      return -0x1L;
-    }
-
-    DMA.gpu.CHCR.and(0xfeff_ffffL);
-
-    if(DMA.gpu.MADR.get(0xff_ffffL) == 0xff_ffffL) {
-      return 0;
-    }
-
-    //LAB_8003b15c
-    return DMA.gpu.MADR.get();
-  }
-
-  /**
    * <p>Calculates the texture page ID, and returns it.</p>
    *
    * <p>The semitransparent rate is also effective for polygons on which texture mapping is not performed.
@@ -1542,7 +944,7 @@ public final class Scus94491BpeSegment_8003 {
    * direction.</p>
    */
   @Method(0x8003b3f0L)
-  public static int GetTPage(final TexPageBpp bpp, final TexPageTrans trans, final int x, final int y) {
+  public static int GetTPage(final Bpp bpp, final Translucency trans, final int x, final int y) {
     return
       (bpp.ordinal() << 7 |
       trans.ordinal() << 5 |
@@ -1564,12 +966,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003b430L)
   public static int GetClut(final int x, final int y) {
     return (y << 6 | x >> 4 & 0x3f) & 0xffff;
-  }
-
-  @Method(0x8003b450L)
-  public static void FUN_8003b450(final long a0, final long a1, final long a2) {
-    MEMORY.ref(4, a2).and(0xff00_0000L).oru(MEMORY.ref(4, a0).get() & 0xff_ffffL);
-    MEMORY.ref(4, a0).and(0xff00_0000L).oru(a1 & 0xff_ffffL);
   }
 
   @Method(0x8003b490L)
@@ -1781,10 +1177,9 @@ public final class Scus94491BpeSegment_8003 {
    * @param allowDrawingToDisplayArea 0: drawing not allowed in display area, 1: drawing allowed in display area
    * @param dither 0: dithering off, 1: dithering on
    * @param texturePage Texture page
-   * @param textureWindow Pointer to texture window
    */
   @Method(0x8003b850L)
-  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage, @Nullable final RECT textureWindow) {
+  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage) {
     drawMode.tag.and(0xff_ffffL).or(0x200_0000L);
 
     long drawingMode = 0xe100_0000L | texturePage & 0x9ffL;
@@ -1800,17 +1195,8 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003b878
     drawMode.code.get(0).set(drawingMode);
 
-    if(textureWindow == null) {
-      //LAB_8003b8d8
-      drawMode.code.get(1).set(0);
-    } else {
-      final long val = 0xe200_0000L |
-        (textureWindow.y.get() >> 3 & 0x1f) << 15 | // Texture window offset Y
-        (textureWindow.x.get() >> 3 & 0x1f) << 10 | // Texture window offset X
-        (-textureWindow.h.get() & 0xf8L) << 2 | // Texture window mask Y
-        (-textureWindow.w.get() & 0xffL) >> 3; // Texture window mask X
-      drawMode.code.get(1).set(val);
-    }
+    //LAB_8003b8d8
+    drawMode.code.get(1).set(0);
 
     //LAB_8003b8dc
   }
@@ -1878,7 +1264,7 @@ public final class Scus94491BpeSegment_8003 {
    * <p>Resets libgpu and initializes the libgs graphic system. libgpu settings are maintained by the global variables
    * GsDISPENV and GsDRAWENV. The programmer can verify and/or modify libgpu by referencing the settings.</p>
    *
-   * <p>Vertical 480 line non-interlace mode is effective only when a VGA monitor is connected. In 240-line mode,
+   * <p>Vertical 480 line mode is effective only when a VGA monitor is connected. In 240-line mode,
    * the top and bottom 8 lines are almost invisible on home-use TV monitors. For PAL mode, the display
    * position should be shifted down by 24 lines.</p>
    *
@@ -1892,11 +1278,7 @@ public final class Scus94491BpeSegment_8003 {
    * @param displayWidth Horizontal resolution (256/320/384/512/640)
    * @param displayHeight Vertical resolution (240/480 NTSC or 256/512 PAL)
    * @param flags
-   * <ul>
-   * <li>Interlace display flag (bit 0)<ul>
-   * <li>0: Non-interlace GsNONINTER</li>
-   * <li>1: Interlace GSINTER</li>
-   * </ul></li>
+   * </li>
    * <li>Double buffer offset mode (bit 2)<ul>
    * <li>0: GTE offset GsOFSGTE</li>
    * <li>1: GPU offset GsOFSGPU</li>
@@ -1906,15 +1288,13 @@ public final class Scus94491BpeSegment_8003 {
    * <li>3: ResetGraph(3) GsRESET3</li>
    * </ul></li>
    * </ul>
-   * @param dither Dithering enabled
-   * @param use24BitColour VRAM BPP
    */
   @Method(0x8003bc30L)
-  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
-    GsInitGraph2(displayWidth, displayHeight, flags, dither, use24BitColour);
+  public static void GsInitGraph(final short displayWidth, final short displayHeight, final int flags) {
+    GsInitGraph2(displayWidth, displayHeight, flags);
     GsInit3D();
 
-    PSDIDX_800c34d4.setu(0);
+    PSDIDX_800c34d4.set(0);
 
     initDisplay(displayWidth, displayHeight);
     GsSetDrawBuffClip();
@@ -1928,7 +1308,7 @@ public final class Scus94491BpeSegment_8003 {
    * <p>Always use GsInitGraph() for the first initialization.</p>
    */
   @Method(0x8003bca4L)
-  public static void GsInitGraph2(final short displayWidth, final short displayHeight, final int flags, final boolean dither, final boolean use24BitColour) {
+  public static void GsInitGraph2(final short displayWidth, final short displayHeight, final int flags) {
     if((flags >> 4 & 0b11) == 0b11) {
       ResetGraph(3);
     } else {
@@ -1938,10 +1318,6 @@ public final class Scus94491BpeSegment_8003 {
     DRAWENV_800c3450.ofs.get(0).set((short)0);
     DRAWENV_800c3450.ofs.get(1).set((short)0);
     DRAWENV_800c3450.tw.set((short)0, (short)0, (short)0, (short)0);
-    DRAWENV_800c3450.tpage.set((short)0);
-    DRAWENV_800c3450.dtd.set((byte)(dither ? 1 : 0));
-    DRAWENV_800c3450.dfe.set((byte)0);
-    DRAWENV_800c3450.isbg.set((byte)0);
     PutDrawEnv(DRAWENV_800c3450);
 
     DISPENV_800c34b0.disp.set((short)0, (short)0, displayWidth, displayHeight);
@@ -1951,9 +1327,6 @@ public final class Scus94491BpeSegment_8003 {
       DISPENV_800c34b0.screen.y.set((short)0x18);
       DISPENV_800c34b0.pad0.set((byte)1);
     }
-
-    DISPENV_800c34b0.isinter.set((byte)(flags & 0b1));
-    DISPENV_800c34b0.isrgb24.set((byte)(use24BitColour ? 1 : 0));
 
     doubleBufferOffsetMode_800c34d6.set(GsOffsetType.fromValue(flags & 0b100));
 
@@ -2003,11 +1376,6 @@ public final class Scus94491BpeSegment_8003 {
 
     displayRect_800c34c8.set((short)0, (short)0, (short)displayWidth, (short)displayHeight);
 
-    _800c3423.setu(0x3L);
-    _800c3427.setu(0x2L);
-    _800c3433.setu(0x3L);
-    _800c3437.setu(0x2L);
-
     PSDCNT_800c34d0.setu(0x1L);
   }
 
@@ -2020,49 +1388,25 @@ public final class Scus94491BpeSegment_8003 {
    * @param r R
    * @param g G
    * @param b B
-   * @param ot Ordering table
    */
   @Method(0x8003c048L)
-  public static void GsSortClear(final long r, final long g, final long b, final GsOT ot) {
-    _800c3424.offset(PSDIDX_800c34d4.get() * 0x10L).setu(r);
-    _800c3425.offset(PSDIDX_800c34d4.get() * 0x10L).setu(g);
-    _800c3426.offset(PSDIDX_800c34d4.get() * 0x10L).setu(b);
-
+  public static void GsSortClear(final int r, final int g, final int b) {
+    final int x;
+    final int y;
     if(PSDIDX_800c34d4.get() == 0) {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x1.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y1.get());
+      x = clip_800c3440.x1.get();
+      y = clip_800c3440.y1.get();
     } else {
-      _800c3428.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.x2.get());
-      _800c342a.offset(PSDIDX_800c34d4.get() * 0x10L).setu(clip_800c3440.y2.get());
+      x = clip_800c3440.x2.get();
+      y = clip_800c3440.y2.get();
     }
 
-    _800c342e.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayHeight_1f8003e4.get());
+    final int h = displayHeight_1f8003e4.get();
+    final int w = displayWidth_1f8003e0.get();
 
-    if(DISPENV_800c34b0.isrgb24.get() == 0) {
-      //LAB_8003c13c
-      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get());
-    } else {
-      _800c342c.offset(PSDIDX_800c34d4.get() * 0x10L).setu(displayWidth_1f8003e0.get() * 3 / 2);
-    }
+    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(x, y, w, h, r, g, b));
 
     //LAB_8003c150
-    AddPrim(ot.tag_10.deref(), _800c3420.offset(PSDIDX_800c34d4.get() * 0x10L).getAddress());
-  }
-
-  /**
-   * <p>Registers a primitive beginning with the address *p to the OT entry *ot in OT table. ot is an ordering table or
-   * pointer to another primitive.</p>
-   *
-   * <p>A primitive may be added to a primitive list only once in the same frame. Attempting to add it multiple times
-   * in the same frame results in a corrupted list.</p>
-   *
-   * @param ot OT entry
-   * @param p Start address of primitive to be registered
-   */
-  @Method(0x8003c180L)
-  public static void AddPrim(final GsOT_TAG ot, final long p) {
-    MEMORY.ref(3, p).setu(ot.p.get());
-    ot.p.set(p & 0xff_ffffL);
   }
 
   @Method(0x8003c1c0L)
@@ -2145,7 +1489,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     PutDispEnv(DISPENV_800c34b0);
-    SetDispMask(1);
 
     // GsIncFrame macro
     PSDCNT_800c34d0.addu(0x1L);
@@ -2345,32 +1688,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cce0L)
   public static void GsSetAmbient(final int r, final int g, final int b) {
     SetBackColor(r >> 4, g >> 4, b >> 4);
-  }
-
-  @Method(0x8003cd10L)
-  public static void drawOTag(final GsOT ot) {
-    DrawOTag(ot.tag_10.deref());
-  }
-
-  /**
-   * Initialize a libgs ordering table structure.
-   * <p>
-   * Initializes the libgs-style ordering table specified by the otp parameter. The length field of the GsOT
-   * structure must be properly set before this function is called. offset specifies the Z-depth value used for the
-   * start of the ordering table. point represents the average Z-depth of the entire ordering table and is used to
-   * determine depth priority when linking multiple ordering tables together.
-   *
-   * @param offset Ordering table offset value
-   * @param point Ordering table average Z value
-   * @param ot Pointer to ordering table
-   */
-  @Method(0x8003cd40L)
-  public static void GsClearOt(final long offset, final long point, final GsOT ot) {
-    ot.offset_08.set(offset);
-    ot.point_0c.set(point);
-    ot.tag_10.set(ot.org_04.deref().get((1 << ot.length_00.get()) - 1));
-
-    ClearOTagR(ot.org_04.deref(), 1 << ot.length_00.get());
   }
 
   /**
@@ -3289,17 +2606,12 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003ea80L)
   public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
-    final Ref<Long> t0Ref = new Ref<>((long)a0.getX());
-    final Ref<Long> t1Ref = new Ref<>((long)a0.getY());
-    final Ref<Long> t2Ref = new Ref<>((long)a0.getZ());
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.setX(t0Ref.get().intValue());
-    a1.setY(t1Ref.get().intValue());
-    a1.setZ(t2Ref.get().intValue());
+    a1.set(a0);
+    FUN_8003eae0(a1.x, a1.y, a1.z);
   }
 
   @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final Ref<Long> t0, final Ref<Long> t1, final Ref<Long> t2) {
+  public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
     final long v0;
     final long v1;
     long t3;
@@ -3336,34 +2648,22 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t1.get(), 10);
     CPU.MTC2(t2.get(), 11);
     CPU.COP2(0x190003dL);
-    t0.set(CPU.MFC2(25) >> t6);
-    t1.set(CPU.MFC2(26) >> t6);
-    t2.set(CPU.MFC2(27) >> t6);
+    t0.set((int)(CPU.MFC2(25) >> t6));
+    t1.set((int)(CPU.MFC2(26) >> t6));
+    t2.set((int)(CPU.MFC2(27) >> t6));
   }
 
   @Method(0x8003eba0L)
   public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    final long v0;
-    final long v1;
-    final long a2;
-    final long t0;
-    final long t1;
-    final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
-    final long t7;
-    final long t8;
-    final long t9;
-    t0 = a0.get(0);
-    t1 = a0.get(1);
-    t2 = a0.get(2);
-    t3 = a0.get(3);
-    t4 = a0.get(4);
-    t5 = a0.get(5);
-    v0 = CPU.CFC2(0);
-    v1 = CPU.CFC2(2);
-    a2 = CPU.CFC2(4);
+    final int t0 = a0.get(0);
+    final int t1 = a0.get(1);
+    final int t2 = a0.get(2);
+    final int t3 = a0.get(3);
+    final int t4 = a0.get(4);
+    final int t5 = a0.get(5);
+    final long v0 = CPU.CFC2(0);
+    final long v1 = CPU.CFC2(2);
+    final long a2 = CPU.CFC2(4);
     CPU.CTC2(t0, 0);
     CPU.CTC2(t1, 2);
     CPU.CTC2(t2, 4);
@@ -3371,9 +2671,9 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t4, 10);
     CPU.MTC2(t5, 11);
     CPU.COP2(0x178000cL);
-    t7 = CPU.MFC2(25);
-    t8 = CPU.MFC2(26);
-    t9 = CPU.MFC2(27);
+    final long t7 = CPU.MFC2(25);
+    final long t8 = CPU.MFC2(26);
+    final long t9 = CPU.MFC2(27);
     CPU.CTC2(t3, 0);
     CPU.CTC2(t4, 2);
     CPU.CTC2(t5, 4);
@@ -3381,30 +2681,30 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(t3, 0);
     CPU.MTC2(t4, 1);
     CPU.MTC2(t5, 2);
-    final Ref<Long> t0Ref = new Ref<>(CPU.MFC2(25));
-    final Ref<Long> t1Ref = new Ref<>(CPU.MFC2(26));
-    final Ref<Long> t2Ref = new Ref<>(CPU.MFC2(27));
+    final IntRef t0Ref = new IntRef().set((int)CPU.MFC2(25));
+    final IntRef t1Ref = new IntRef().set((int)CPU.MFC2(26));
+    final IntRef t2Ref = new IntRef().set((int)CPU.MFC2(27));
     CPU.CTC2(v0, 0);
     CPU.CTC2(v1, 2);
     CPU.CTC2(a2, 4);
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(0, t0Ref.get().shortValue());
-    a1.set(1, t1Ref.get().shortValue());
-    a1.set(2, t2Ref.get().shortValue());
-    t0Ref.set(CPU.MFC2(0));
-    t1Ref.set(CPU.MFC2(1));
-    t2Ref.set(CPU.MFC2(2));
+    a1.set(0, (short)t0Ref.get());
+    a1.set(1, (short)t1Ref.get());
+    a1.set(2, (short)t2Ref.get());
+    t0Ref.set((int)CPU.MFC2(0));
+    t1Ref.set((int)CPU.MFC2(1));
+    t2Ref.set((int)CPU.MFC2(2));
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(3, t0Ref.get().shortValue());
-    a1.set(4, t1Ref.get().shortValue());
-    a1.set(5, t2Ref.get().shortValue());
-    t0Ref.set(t7);
-    t1Ref.set(t8);
-    t2Ref.set(t9);
+    a1.set(3, (short)t0Ref.get());
+    a1.set(4, (short)t1Ref.get());
+    a1.set(5, (short)t2Ref.get());
+    t0Ref.set((int)t7);
+    t1Ref.set((int)t8);
+    t2Ref.set((int)t9);
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(6, t0Ref.get().shortValue());
-    a1.set(7, t1Ref.get().shortValue());
-    a1.set(8, t2Ref.get().shortValue());
+    a1.set(6, (short)t0Ref.get());
+    a1.set(7, (short)t1Ref.get());
+    a1.set(8, (short)t2Ref.get());
   }
 
   @Method(0x8003ec90L)
@@ -3605,9 +2905,6 @@ public final class Scus94491BpeSegment_8003 {
     final long t0;
     final long t1;
     final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
     CPU.CTC2(a0.getPacked(0), 0);
     CPU.CTC2(a0.getPacked(2), 1);
     CPU.CTC2(a0.getPacked(4), 2);
@@ -3663,9 +2960,9 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2(a1.transfer.getY() >> 15, 10);
     CPU.MTC2(a1.transfer.getZ() >> 15, 11);
     CPU.COP2(0x41e012L);
-    t3 = CPU.MFC2(25);
-    t4 = CPU.MFC2(26);
-    t5 = CPU.MFC2(27);
+    final long t3 = CPU.MFC2(25);
+    final long t4 = CPU.MFC2(26);
+    final long t5 = CPU.MFC2(27);
 
     CPU.MTC2(t0,  9);
     CPU.MTC2(t1, 10);
@@ -3859,7 +3156,7 @@ public final class Scus94491BpeSegment_8003 {
 
   /** Returns Z */
   @Method(0x8003f900L)
-  public static long perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
+  public static int perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
     CPU.MTC2(worldCoords.getXY(), 0);
     CPU.MTC2(worldCoords.getZ(),  1);
     CPU.COP2(0x18_0001L); // Perspective transform single
@@ -3873,7 +3170,7 @@ public final class Scus94491BpeSegment_8003 {
       flags.set(CPU.CFC2(31)); // Flags
     }
 
-    return CPU.MFC2(19) >> 2; // SZ3
+    return (int)CPU.MFC2(19) >> 2; // SZ3
   }
 
   @Method(0x8003f930L)

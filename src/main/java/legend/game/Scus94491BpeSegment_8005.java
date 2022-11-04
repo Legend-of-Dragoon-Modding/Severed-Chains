@@ -1,8 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import legend.core.Tuple;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
@@ -18,8 +15,6 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
-import legend.game.types.GsOT;
-import legend.game.types.GsOT_TAG;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
 
@@ -71,6 +66,10 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052baa = MEMORY.ref(2, 0x80052baaL);
 
+  public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
+
+  public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
+
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final Value _80052c34 = MEMORY.ref(4, 0x80052c34L);
@@ -91,13 +90,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
 
-  public static final Value _80052dbc = MEMORY.ref(4, 0x80052dbcL);
-  public static final Value _80052dc0 = MEMORY.ref(4, 0x80052dc0L);
-
   public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
-
-  public static final Value _800534fc = MEMORY.ref(4, 0x800534fcL);
-  public static final Value _80053500 = MEMORY.ref(4, 0x80053500L);
 
   public static final BoolRef interruptHandlersInitialized_80053564 = MEMORY.ref(2, 0x80053564L, BoolRef::new);
   public static final BoolRef inExceptionHandler_80053566 = MEMORY.ref(2, 0x80053566L, BoolRef::new);
@@ -113,10 +106,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800545ec = MEMORY.ref(4, 0x800545ecL);
 
   public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
-
-  public static final ArrayRef<Pointer<RunnableRef>> vsyncCallbacks_8005460c = MEMORY.ref(4, 0x8005460cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.of(4, RunnableRef::new)));
-
-  public static final Value Vcount = MEMORY.ref(4, 0x8005462cL);
 
   public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(4, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
@@ -140,17 +129,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value array_8005473c = MEMORY.ref(2, 0x8005473cL);
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
-
-  public static final Value _8005475c = MEMORY.ref(4, 0x8005475cL);
-
-  public static final Value _8005477c = MEMORY.ref(4, 0x8005477cL);
-
-  public static final Value _80054790 = MEMORY.ref(2, 0x80054790L);
-  public static final Value _80054792 = MEMORY.ref(2, 0x80054792L);
-
-  public static final Value _800547bb = MEMORY.ref(1, 0x800547bbL);
-
-  public static final Value _800547f4 = MEMORY.ref(4, 0x800547f4L);
 
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
 
@@ -187,16 +165,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));
   public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
-
-  public static final ArrayRef<GsOT> orderingTables_8005a370 = MEMORY.ref(4, 0x8005a370L, ArrayRef.of(GsOT.class, 2, 0x14, GsOT::new));
-  public static final ArrayRef<UnboundedArrayRef<GsOT_TAG>> orderingTableTags_8005a398 = MEMORY.ref(4, 0x8005a398L, ArrayRef.of(UnboundedArrayRef.classFor(GsOT_TAG.class), 2, 0x1_0000, UnboundedArrayRef.of(4, GsOT_TAG::new)));
-
-  public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
-
-  public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
-
-  //TODO hack to record script names/sizes
-  public static Int2ObjectMap<Tuple<String, Integer>> _8005e398_SCRIPT_SIZES = new Int2ObjectOpenHashMap<>();
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 

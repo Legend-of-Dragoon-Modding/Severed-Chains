@@ -10,6 +10,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.MrgFile;
 
 public class BattleStruct7cc implements MemoryRef {
@@ -37,6 +38,11 @@ public class BattleStruct7cc implements MemoryRef {
   public final UnboundedArrayRef<Pointer<DeffPart>> _390;
 
   public final Value _39c;
+
+  public final UnsignedShortRef u_3ac;
+  public final UnsignedShortRef v_3ae;
+
+  public final UnsignedShortRef clut_3b2;
 
   public final Pointer<MrgFile> deffPackage_5a8;
   public final Pointer<DeffFile> deff_5ac;
@@ -66,6 +72,11 @@ public class BattleStruct7cc implements MemoryRef {
     this._390 = ref.offset(4, 0x390L).cast(UnboundedArrayRef.of(0x4, Pointer.deferred(4, DeffPart::new)));
 
     this._39c = ref.offset(4, 0x39cL);
+
+    this.u_3ac = ref.offset(2, 0x3acL).cast(UnsignedShortRef::new);
+    this.v_3ae = ref.offset(2, 0x3aeL).cast(UnsignedShortRef::new);
+
+    this.clut_3b2 = ref.offset(2, 0x3b2L).cast(UnsignedShortRef::new);
 
     this.deffPackage_5a8 = ref.offset(4, 0x5a8L).cast(Pointer.deferred(4, MrgFile::new));
     this.deff_5ac = ref.offset(4, 0x5acL).cast(Pointer.deferred(4, DeffFile::new));
