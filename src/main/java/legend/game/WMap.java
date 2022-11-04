@@ -3268,34 +3268,26 @@ public class WMap {
     //LAB_800d71f4
   }
 
+  /** The "press square to enter Queen Fury" overlay (square button and door icons), also renders something else if a0 == 0 but I'm not sure what it is */
   @Method(0x800d7208L)
-  public static void FUN_800d7208(final long a0) {
-    final long packet = gpuPacketAddr_1f8003d8.get();
-    setGpuPacketType(0xcL, packet, false, false);
-    MEMORY.ref(1, packet).offset(0x04L).setu(0x80); // R
-    MEMORY.ref(1, packet).offset(0x05L).setu(0x80); // G
-    MEMORY.ref(1, packet).offset(0x06L).setu(0x80); // B
-    MEMORY.ref(2, packet).offset(0x08L).setu(86); // X0
-    MEMORY.ref(2, packet).offset(0x0aL).setu(88); // Y0
-    MEMORY.ref(2, packet).offset(0x0eL).setu(0x7f28); // CLUT
-    MEMORY.ref(2, packet).offset(0x10L).setu(102); // X1
-    MEMORY.ref(2, packet).offset(0x12L).setu(88); // Y1
-    MEMORY.ref(2, packet).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
-    MEMORY.ref(2, packet).offset(0x18L).setu(86); // X2
-    MEMORY.ref(2, packet).offset(0x1aL).setu(104); // Y2
-    MEMORY.ref(2, packet).offset(0x20L).setu(102); // X3
-    MEMORY.ref(2, packet).offset(0x22L).setu(104); // Y3
-    final long sp14 = _800bb0fc.get() / 2 % 7;
-    MEMORY.ref(1, packet).offset(0x0cL).setu(_800ef168.offset(sp14).get() * 16 + 64); // U0
-    MEMORY.ref(1, packet).offset(0x0dL).setu(168); // V0
-    MEMORY.ref(1, packet).offset(0x14L).setu(_800ef168.offset(sp14).get() * 16 + 80); // U1
-    MEMORY.ref(1, packet).offset(0x15L).setu(168); // V1
-    MEMORY.ref(1, packet).offset(0x1cL).setu(_800ef168.offset(sp14).get() * 16 + 64); // U2
-    MEMORY.ref(1, packet).offset(0x1dL).setu(184); // V2
-    MEMORY.ref(1, packet).offset(0x24L).setu(_800ef168.offset(sp14).get() * 16 + 80); // U3
-    MEMORY.ref(1, packet).offset(0x25L).setu(184); // V3
-    queueGpuPacket(tags_1f8003d0.deref().get(13).getAddress(), packet);
-    gpuPacketAddr_1f8003d8.addu(0x28L);
+  public static void renderQueenFuryUi(final int a0) {
+    final int sp14 = (int)_800ef168.offset(_800bb0fc.get() / 2 % 7).get() * 16;
+
+    // Square button
+    GPU.queueCommand(13, new GpuCommandPoly(4)
+      .bpp(Bpp.BITS_4)
+      .clut(640, 508)
+      .vramPos(640, 256)
+      .monochrome(0x80)
+      .pos(0,  86,  88)
+      .pos(1, 102,  88)
+      .pos(2,  86, 104)
+      .pos(3, 102, 104)
+      .uv(0, 64 + sp14, 168)
+      .uv(1, 80 + sp14, 168)
+      .uv(2, 64 + sp14, 184)
+      .uv(3, 80 + sp14, 184)
+    );
 
     if(a0 == 0) {
       final int sp18 = (int)_800ef154.offset(_800bb0fc.get() / 2 % 5).get();
@@ -3303,31 +3295,21 @@ public class WMap {
       final int v = (int)_800ef130.offset(sp18 * 0x4L).offset(0x1L).get();
       final int w = (int)_800ef130.offset(sp18 * 0x4L).offset(0x2L).get();
       final int h = (int)_800ef130.offset(sp18 * 0x4L).offset(0x3L).get();
-      final long packet2 = gpuPacketAddr_1f8003d8.get();
-      setGpuPacketType(0xcL, packet2, false, false);
-      MEMORY.ref(1, packet2).offset(0x04L).setu(0x80); // R
-      MEMORY.ref(1, packet2).offset(0x05L).setu(0x80); // G
-      MEMORY.ref(1, packet2).offset(0x06L).setu(0x80); // B
-      MEMORY.ref(2, packet2).offset(0x08L).setu(106); // X0
-      MEMORY.ref(2, packet2).offset(0x0aL).setu(80); // Y0
-      MEMORY.ref(1, packet2).offset(0x0cL).setu(u); // U0
-      MEMORY.ref(1, packet2).offset(0x0dL).setu(v); // V0
-      MEMORY.ref(2, packet2).offset(0x0eL).setu(0x7ea8); // CLUT
-      MEMORY.ref(2, packet2).offset(0x10L).setu(106 + w); // X1
-      MEMORY.ref(2, packet2).offset(0x12L).setu(80); // Y1
-      MEMORY.ref(1, packet2).offset(0x14L).setu(u + w); // U1
-      MEMORY.ref(1, packet2).offset(0x15L).setu(v); // V1
-      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
-      MEMORY.ref(2, packet2).offset(0x18L).setu(106); // X2
-      MEMORY.ref(2, packet2).offset(0x1aL).setu(80 + h); // Y2
-      MEMORY.ref(1, packet2).offset(0x1cL).setu(u); // U2
-      MEMORY.ref(1, packet2).offset(0x1dL).setu(v + h); // V2
-      MEMORY.ref(2, packet2).offset(0x20L).setu(106 + w); // X3
-      MEMORY.ref(2, packet2).offset(0x22L).setu(80 + h); // Y3
-      MEMORY.ref(1, packet2).offset(0x24L).setu(u + w); // U3
-      MEMORY.ref(1, packet2).offset(0x25L).setu(v + h); // V3
-      queueGpuPacket(tags_1f8003d0.deref().get(13).getAddress(), packet2);
-      gpuPacketAddr_1f8003d8.addu(0x28L);
+
+      GPU.queueCommand(13, new GpuCommandPoly(4)
+        .bpp(Bpp.BITS_4)
+        .clut(640, 506)
+        .vramPos(640, 256)
+        .monochrome(0x80)
+        .pos(0, 106, 80)
+        .pos(1, 106 + w, 80)
+        .pos(2, 106, 80 + h)
+        .pos(3, 106 + w, 80 + h)
+        .uv(0, u, v)
+        .uv(1, u + w, v)
+        .uv(2, u, v + h)
+        .uv(3, u + w, v + h)
+      );
     } else {
       //LAB_800d7734
       final int sp18 = (int)_800ef158.offset(_800bb0fc.get() / 3 % 15).get();
@@ -3335,31 +3317,22 @@ public class WMap {
       final int v = (int)_800ef140.offset(sp18 * 0x4L).offset(0x1L).get();
       final int w = (int)_800ef140.offset(sp18 * 0x4L).offset(0x2L).get();
       final int h = (int)_800ef140.offset(sp18 * 0x4L).offset(0x3L).get();
-      final long packet2 = gpuPacketAddr_1f8003d8.get();
-      setGpuPacketType(0xcL, packet2, false, false);
-      MEMORY.ref(1, packet2).offset(0x04L).setu(0x80); // R
-      MEMORY.ref(1, packet2).offset(0x05L).setu(0x80); // G
-      MEMORY.ref(1, packet2).offset(0x06L).setu(0x80); // B
-      MEMORY.ref(2, packet2).offset(0x08L).setu(106); // X0
-      MEMORY.ref(2, packet2).offset(0x0aL).setu(80); // Y0
-      MEMORY.ref(1, packet2).offset(0x0cL).setu(u); // U0
-      MEMORY.ref(1, packet2).offset(0x0dL).setu(v); // V0
-      MEMORY.ref(2, packet2).offset(0x0eL).setu(0x7ee8); // CLUT
-      MEMORY.ref(2, packet2).offset(0x10L).setu(106 + w); // X1
-      MEMORY.ref(2, packet2).offset(0x12L).setu(80); // Y1
-      MEMORY.ref(1, packet2).offset(0x14L).setu(u + w); // U1
-      MEMORY.ref(1, packet2).offset(0x15L).setu(v); // V1
-      MEMORY.ref(2, packet2).offset(0x16L).setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_256).get() | 0xaL); // TPAGE
-      MEMORY.ref(2, packet2).offset(0x18L).setu(106); // X2
-      MEMORY.ref(2, packet2).offset(0x1aL).setu(80 + h); // Y2
-      MEMORY.ref(1, packet2).offset(0x1cL).setu(u); // U2
-      MEMORY.ref(1, packet2).offset(0x1dL).setu(v + h); // V2
-      MEMORY.ref(2, packet2).offset(0x20L).setu(106 + w); // X3
-      MEMORY.ref(2, packet2).offset(0x22L).setu(80 + h); // Y3
-      MEMORY.ref(1, packet2).offset(0x24L).setu(u + w); // U3
-      MEMORY.ref(1, packet2).offset(0x25L).setu(v + h); // V3
-      queueGpuPacket(tags_1f8003d0.deref().get(13).getAddress(), packet2);
-      gpuPacketAddr_1f8003d8.addu(0x28L);
+
+      // Door
+      GPU.queueCommand(13, new GpuCommandPoly(4)
+        .bpp(Bpp.BITS_4)
+        .clut(640, 507)
+        .vramPos(640, 256)
+        .monochrome(0x80)
+        .pos(0, 106, 80)
+        .pos(1, 106 + w, 80)
+        .pos(2, 106, 80 + h)
+        .pos(3, 106 + w, 80 + h)
+        .uv(0, u, v)
+        .uv(1, u + w, v)
+        .uv(2, u, v + h)
+        .uv(3, u + w, v + h)
+      );
     }
 
     //LAB_800d7a18
@@ -3902,7 +3875,7 @@ public class WMap {
   }
 
   /**
-   * Handles Coolon fast travel, probably other things
+   * Handles Coolon fast travel, Queen Fury overlay, probably other things
    */
   @Method(0x800da248L)
   public static void FUN_800da248() {
@@ -3962,7 +3935,7 @@ public class WMap {
       sp58 = sp58 >>> 5;
 
       if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0 && _800c6870.get() == 0) {
-        FUN_800d7208(0x1L);
+        renderQueenFuryUi(1);
       }
 
       //LAB_800da418
@@ -3971,11 +3944,6 @@ public class WMap {
 
     //LAB_800da420
     if(struct258._250.get() == 0x1L) {
-      return;
-    }
-
-    //LAB_800da444
-    if(struct258.modelIndex_1e4.get() == 1) {
       return;
     }
 
@@ -3989,7 +3957,7 @@ public class WMap {
     }
 
     //LAB_800da4ec
-    FUN_800d7208(0);
+    renderQueenFuryUi(0);
 
     if((joypadPress_8007a398.get() & 0x80L) != 0) {
       struct258._250.set(0x2L);
