@@ -1843,21 +1843,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013404L)
-  public static int FUN_80013404(final long a0, final long a1, final long a2) {
-    long v0;
-    long v1;
-    v1 = (long)(int)a0 * (int)a2 & 0xffff_ffffL;
-    v0 = 0x1L - a2;
-    v1 = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-    v0 = v1 + a1 * 0x2L;
-
-    if(a2 > 0) {
-      v0 = (int)v0 / (int)a2;
-    } else {
-      v0 = (int)v0 >= 0 ? -1 : 1;
-    }
-
-    return (int)v0 >> 1;
+  public static int FUN_80013404(final int a0, final int a1, final int a2) {
+    return (a1 * 2 + a0 * a2 * (1 - a2)) / a2 / 2;
   }
 
   @Method(0x80013434L)

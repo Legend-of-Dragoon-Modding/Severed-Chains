@@ -37,6 +37,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);
 
+  public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
+
   public static final Value _8005039c = MEMORY.ref(2, 0x8005039cL);
 
   public static final Value _800503b0 = MEMORY.ref(2, 0x800503b0L);
