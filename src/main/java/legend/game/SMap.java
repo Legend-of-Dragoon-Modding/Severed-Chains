@@ -8411,6 +8411,67 @@ public final class SMap {
     return FUN_800f1f9c(a0);
   }
 
+  @Method(0x800f2090L)
+  public static long FUN_800f2090(final RunningScript script) {
+    final UnboundedArrayRef<IntRef> ints = script.params_20.get(0).deref().reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
+    int a0 = 0;
+    Struct34 a1 = struct34_800d6018.parent_30.derefNullable();
+    Struct34 sp30 = null;
+
+    //LAB_800f20a8
+    while(a1 != null) {
+      final Struct34 v1 = a1.parent_30.derefNullable();
+      a1.parent_30.setNullable(sp30);
+      sp30 = a1;
+      a1 = v1;
+    }
+
+    //LAB_800f20c4
+    a1 = sp30;
+
+    //LAB_800f20e4
+    while(a1 != null && ints.get(a0).get() != -2) {
+      if(ints.get(a0).get() == -1) {
+        a0++;
+        a1._04.set((short)17);
+        a1._06.set((short)100);
+        a1._08.set((short)0);
+        a1._0a.set((short)0);
+      } else {
+        //LAB_800f2108
+        a1._08.set((short)ints.get(a0).get());
+        a0++;
+        a1._0a.set((short)ints.get(a0).get());
+        a0++;
+        a1._04.set((short)ints.get(a0).get());
+        a0++;
+        a1._06.set((short)ints.get(a0).get());
+        a0++;
+      }
+
+      //LAB_800f2138
+      a1._00.set((short)ints.get(a0).get());
+      a0++;
+      a1 = a1.parent_30.derefNullable();
+    }
+
+    a1 = sp30;
+
+    //LAB_800f2164
+    sp30 = null;
+
+    //LAB_800f2170
+    while(a1 != null) {
+      final Struct34 v1 = a1.parent_30.derefNullable();
+      a1.parent_30.setNullable(sp30);
+      sp30 = a1;
+      a1 = v1;
+    }
+
+    //LAB_800f218c
+    return 0;
+  }
+
   @Method(0x800f2264L)
   public static long FUN_800f2264(final RunningScript script) {
     final ScriptState<WorldObject210> wobj1 = script.scriptState_04.deref();

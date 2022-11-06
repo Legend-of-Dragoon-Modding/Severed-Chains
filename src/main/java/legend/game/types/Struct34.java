@@ -9,6 +9,7 @@ import legend.core.memory.types.ShortRef;
 public class Struct34 implements MemoryRef {
   private final Value ref;
 
+  public final ShortRef _00;
   public final ShortRef _02;
   public final ShortRef _04;
   public final ShortRef _06;
@@ -29,6 +30,7 @@ public class Struct34 implements MemoryRef {
   public Struct34(final Value ref) {
     this.ref = ref;
 
+    this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
