@@ -7864,7 +7864,13 @@ public final class SEffe {
       s0.scriptIndex_30.set(-1);
       s0._32.set((short)s2);
       s0._0c.set(s1._10.scale_16);
-      s0._18.set(sp0x18).div((int)s2);
+
+      if(s2 != 0) {
+        s0._18.set(sp0x18).div((int)s2);
+      } else {
+        s0._18.set(-1, -1, -1);
+      }
+
       s0._24.set(0, 0, 0);
     }
 
