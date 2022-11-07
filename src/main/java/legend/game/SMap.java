@@ -2244,9 +2244,9 @@ public final class SMap {
   public static long FUN_800e0614(final RunningScript script) {
     final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class);
     wobj.flatLightingEnabled_1c4.set(true);
-    wobj.flatLightRed_1c5.set(script.params_20.get(1).deref().get());
-    wobj.flatLightGreen_1c6.set(script.params_20.get(2).deref().get());
-    wobj.flatLightBlue_1c7.set(script.params_20.get(3).deref().get());
+    wobj.flatLightRed_1c5.set(script.params_20.get(1).deref().get() & 0xff);
+    wobj.flatLightGreen_1c6.set(script.params_20.get(2).deref().get() & 0xff);
+    wobj.flatLightBlue_1c7.set(script.params_20.get(3).deref().get() & 0xff);
     return 0;
   }
 
