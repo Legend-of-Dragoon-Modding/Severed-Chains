@@ -24,6 +24,8 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
 import legend.game.types.SpellStats0c;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
@@ -134,6 +136,8 @@ import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
 public final class Bttl_800f {
   private Bttl_800f() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800f.class);
 
   @Method(0x800f0f5cL)
   public static void FUN_800f0f5c(final GpuCommandPoly parentCommand) {
@@ -3281,6 +3285,23 @@ public final class Bttl_800f {
     bzero(bobj._94.getAddress(), 0x18);
 
     if(bobj.spellId_4e.get() != -1) {
+      if(bobj.spellId_4e.get() > 127) {
+        LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e.get());
+        bobj._94.set((short)0);
+        bobj._96.set((short)0);
+        bobj._98.set((short)0);
+        bobj.spellDamage_9a.set((short)0);
+        bobj.spellMulti_9c.set((short)0);
+        bobj.spellAccuracy_9e.set((short)0);
+        bobj.spellMp_a0.set((short)0);
+        bobj._a2.set((short)0);
+        bobj.spellElement_a4.set((short)0);
+        bobj._a6.set((short)0);
+        bobj._a8.set((short)0);
+        bobj._aa.set((short)0);
+        return;
+      }
+
       final SpellStats0c spellStats = spellStats_800fa0b8.get(bobj.spellId_4e.get());
       bobj._94.set((short)spellStats._00.get());
       bobj._96.set((short)spellStats._01.get());
