@@ -59,6 +59,7 @@ import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.SMapStruct3c;
+import legend.game.types.SnowEffect;
 import legend.game.types.SavePointRenderData44;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -442,7 +443,7 @@ public final class SMap {
 
   public static final Value _800d4bd0 = MEMORY.ref(4, 0x800d4bd0L);
   public static final Value _800d4bd4 = MEMORY.ref(4, 0x800d4bd4L);
-  public static final Pointer<SMapStruct3c> ptr_800d4bd8 = MEMORY.ref(4, 0x800d4bd8L, Pointer.deferred(4, SMapStruct3c::new));
+  public static final Pointer<SnowEffect> snow_800d4bd8 = MEMORY.ref(4, 0x800d4bd8L, Pointer.deferred(4, SnowEffect::new));
   public static final BoolRef smapModelAndAnimationMrgLoaded_800d4bdc = MEMORY.ref(4, 0x800d4bdcL, BoolRef::new);
   public static final BoolRef smapTextureAndMatrixMrgLoaded_800d4be0 = MEMORY.ref(4, 0x800d4be0L, BoolRef::new);
   public static final BoolRef theEndTimLoaded_800d4be4 = MEMORY.ref(4, 0x800d4be4L, BoolRef::new);
@@ -452,6 +453,11 @@ public final class SMap {
   public static final Pointer<TimFile> theEndTim_800d4bf0 = MEMORY.ref(4, 0x800d4bf0L, Pointer.deferred(4, TimFile::new));
 
   public static final Model124 model_800d4bf8 = MEMORY.ref(4, 0x800d4bf8L, Model124::new);
+
+  public static final Value _800d4d20 = MEMORY.ref(4, 0x800d4d20L);
+
+  public static final IntRef _800d4d30 = MEMORY.ref(4, 0x800d4d30L, IntRef::new);
+  public static final IntRef _800d4d34 = MEMORY.ref(4, 0x800d4d34L, IntRef::new);
 
   public static final Model124 model_800d4d40 = MEMORY.ref(4, 0x800d4d40L, Model124::new);
 
@@ -609,8 +615,12 @@ public final class SMap {
   public static final UnsignedShortRef clut_800f9e5e = MEMORY.ref(2, 0x800f9e5eL, UnsignedShortRef::new);
   public static final ShortRef _800f9e60 = MEMORY.ref(2, 0x800f9e60L, ShortRef::new);
 
-  public static final IntRef _800f9e64 = MEMORY.ref(4, 0x800f9e64L, IntRef::new);
+  public static final IntRef snowLoadingStage_800f9e64 = MEMORY.ref(4, 0x800f9e64L, IntRef::new);
 
+  public static final ShortRef _800f9e68 = MEMORY.ref(2, 0x800f9e68L, ShortRef::new);
+  public static final ShortRef _800f9e6a = MEMORY.ref(2, 0x800f9e6aL, ShortRef::new);
+  public static final ShortRef _800f9e6c = MEMORY.ref(2, 0x800f9e6cL, ShortRef::new);
+  public static final ShortRef _800f9e6e = MEMORY.ref(2, 0x800f9e6eL, ShortRef::new);
   public static final Value _800f9e70 = MEMORY.ref(4, 0x800f9e70L);
   public static final Value _800f9e74 = MEMORY.ref(4, 0x800f9e74L);
   public static final Value _800f9e78 = MEMORY.ref(2, 0x800f9e78L);
@@ -7082,54 +7092,55 @@ public final class SMap {
     //caseD_6
   }
 
+  /** Used in Snow Field (disk 3) */
   @Method(0x800ee20cL)
-  public static void FUN_800ee20c() {
+  public static void handleSnow() {
     if(_800f9eac.get() == -1) {
-      _800f9e64.set(-1);
+      snowLoadingStage_800f9e64.set(-1);
     }
 
     //LAB_800ee234
-    switch(_800f9e64.get()) {
+    switch(snowLoadingStage_800f9e64.get()) {
       case 0 -> {
-        ptr_800d4bd8.setPointer(mallocTail(0x3c));
-        ptr_800d4bd8.deref().parent_38.clear();
-        _800f9e64.incr();
+        snow_800d4bd8.setPointer(mallocTail(0x3c));
+        snow_800d4bd8.deref().next_38.clear();
+        snowLoadingStage_800f9e64.incr();
       }
 
       case 1 -> {
-        if(FUN_800ef034(ptr_800d4bd8.deref()) != 0) {
+        if(allocateSnowEffect(snow_800d4bd8.deref()) != 0) {
           //LAB_800ee2fc
-          _800f9e64.incr();
+          snowLoadingStage_800f9e64.incr();
         }
       }
 
       case 2 -> {
-        SMapStruct3c s0 = ptr_800d4bd8.deref().parent_38.derefNullable();
+        SnowEffect snow = snow_800d4bd8.deref().next_38.derefNullable();
 
         //LAB_800ee2d8
-        int s1;
-        for(s1 = 0; s0 != null; s1++) {
-          FUN_800ee558(s0);
-          s0 = s0.parent_38.derefNullable();
+        int count;
+        for(count = 0; snow != null; count++) {
+          initSnowEffect(snow);
+          snow = snow.next_38.derefNullable();
         }
 
         //LAB_800ee2f0
-        if(s1 >= 256) {
+        if(count >= 256) {
           //LAB_800ee2fc
-          _800f9e64.incr();
+          snowLoadingStage_800f9e64.incr();
         }
       }
 
-      case 3 -> FUN_800ee368(ptr_800d4bd8.deref());
+      case 3 -> renderSnowEffect(snow_800d4bd8.deref());
 
       case -1 -> {
         if(_800f9e60.get() != 0) {
-          FUN_800ef090(ptr_800d4bd8.deref());
+          deallocateSnowEffect(snow_800d4bd8.deref());
         }
 
         //LAB_800ee348
         _800f9e60.set((short)0);
-        _800f9e64.set(0);
+        snowLoadingStage_800f9e64.set(0);
       }
     }
 
@@ -7137,13 +7148,169 @@ public final class SMap {
   }
 
   @Method(0x800ee368L)
-  public static void FUN_800ee368(final SMapStruct3c a0) {
-    assert false;
+  public static void renderSnowEffect(final SnowEffect root) {
+    SnowEffect snow = root.next_38.derefNullable();
+
+    //LAB_800ee38c
+    while(snow != null) {
+      if(snow._00.get() == 0) {
+        snow._00.set((short)1);
+      }
+
+      //LAB_800ee3a0
+      if(snow._00.get() == 1) {
+        if((snow.y_18.get() + 0x78 & 0xffff) < 0xf1) {
+          snow.xAccumulator_24.add(snow.xStep_1c.get());
+          snow.x_16.set((short)((snow.xAccumulator_24.get() >> 16) + (snow._10.get() * rsin(snow._08.get()) >> 12)));
+
+          final short x = snow.x_16.get();
+          if(x < -0xc0) {
+            snow.x_16.set((short)0xc0);
+            snow.xAccumulator_24.set(0xc0_0000);
+            snow._08.set(0);
+            //LAB_800ee42c
+          } else if(x > 0xc0) {
+            snow.x_16.set((short)-0xc0);
+            snow.xAccumulator_24.set(-0xc0_0000);
+            snow._08.set(0);
+          }
+
+          //LAB_800ee448
+          snow.yAccumulator_28.add(snow.yStep_20.get());
+          snow.y_18.set((short)(snow.yAccumulator_28.get() >> 16));
+
+          GPU.queueCommand(40, new GpuCommandQuad()
+            .monochrome(snow.colour_34.get())
+            .pos(snow.x_16.get(), snow.y_18.get(), snow.size_14.get(), snow.size_14.get())
+          );
+
+          snow._08.add(snow._0c.get()).and(0xfff);
+        } else {
+          //LAB_800ee52c
+          wrapAroundSnowEffect(snow);
+        }
+      }
+
+      //LAB_800ee534
+      snow = snow.next_38.derefNullable();
+    }
+
+    //LAB_800ee544
   }
 
   @Method(0x800ee558L)
-  public static void FUN_800ee558(final SMapStruct3c a0) {
-    assert false;
+  public static void initSnowEffect(final SnowEffect snow) {
+    snow._00.set((short)1);
+    snow.x_16.set((short)(rand() % 384 - 192 + _800f9e6a.get()));
+    snow.y_18.set((short)(rand() % 240 - 120));
+
+    int a0 = _800d4d30.get();
+    if(a0 == 0) {
+      snow.xStep_1c.set(0);
+    } else {
+      //LAB_800ee62c
+      snow.xStep_1c.set(0x20_0000 / (a0 - (simpleRand() * a0 / 2 >> 16)));
+    }
+
+    //LAB_800ee644
+    snow.xAccumulator_24.set(snow.x_16.get() << 16);
+
+    int s2 = 0;
+    a0 = _800f9e68.get();
+    if(a0 < 35) {
+      snow.size_14.set((short)3);
+      //LAB_800ee66c
+    } else if(a0 < 150) {
+      snow.size_14.set((short)2);
+      s2 = _800d4d34.get() * 0x5555 >> 16;
+      //LAB_800ee6ac
+    } else if(a0 < 256) {
+      snow.size_14.set((short)1);
+      s2 = _800d4d34.get() * 0x5555 >> 15;
+    }
+
+    //LAB_800ee6e8
+    final long s1 = _800d4d20.getAddress();
+    snow.colour_34.set((short)0xff);
+    snow.yAccumulator_28.set(snow.y_18.get() << 16);
+    snow.yStep_20.set(0x20_0000 / ((int)MEMORY.ref(4, s1).offset(0x14L).get() + s2));
+    snow._10.set((int)MEMORY.ref(4, s1).offset(0xcL).get());
+    final int v0 = simpleRand() << 11 >> 16;
+    MEMORY.ref(4, s1).offset(0x4L).setu(v0);
+    snow._08.set(v0);
+
+    if(MEMORY.ref(4, s1).offset(0x8L).get() == 0) {
+      snow._0c.set(0);
+    } else {
+      //LAB_800ee750
+      final long a2 = simpleRand() * MEMORY.ref(4, s1).offset(0x8L).get();
+      snow._0c.set((int)a2 >> 16);
+    }
+
+    //LAB_800ee770
+    _800f9e68.incr().and(0xff);
+    _800f9e6a.incr().and(0x0f);
+  }
+
+  /** Reuse snow effect when it reaches the bottom of the screen */
+  @Method(0x800ee7b0L)
+  public static void wrapAroundSnowEffect(final SnowEffect snow) {
+    snow._00.set((short)0);
+    snow.x_16.set((short)(rand() % 384 - 192 + _800f9e6e.get()));
+    snow.y_18.set((short)-120);
+
+    final int a0 = _800d4d30.get();
+    if(a0 == 0) {
+      snow.xStep_1c.set(0);
+    } else {
+      //LAB_800ee84c
+      snow.xStep_1c.set(0x20_0000 / (a0 - (simpleRand() * a0 / 2 >> 16)));
+    }
+
+    //LAB_800ee864
+    snow.xAccumulator_24.set(snow.x_16.get() << 16);
+    snow.yAccumulator_28.set(snow.y_18.get() << 16);
+    snow.colour_34.set((short)0xd8);
+
+    final int v1 = _800f9e6c.get();
+    int s2 = 0;
+    if(v1 == 0 || v1 == 2 || v1 == 4) {
+      //LAB_800ee890
+      snow.size_14.set((short)1);
+      s2 = _800d4d34.get() * 0x5555 >> 15;
+      //LAB_800ee8c0
+    } else if(v1 == 1) {
+      snow.size_14.set((short)2);
+      s2 = _800d4d34.get() * 0x5555 >> 16;
+      //LAB_800ee8f4
+    } else if(v1 == 3) {
+      snow.size_14.set((short)3);
+    }
+
+    //LAB_800ee900
+    //LAB_800ee904
+    final long s1 = _800d4d20.getAddress();
+    snow.yStep_20.set(0x20_0000 / ((int)MEMORY.ref(4, s1).offset(0x14L).get() + s2));
+    snow._10.set((int)MEMORY.ref(4, s1).offset(0xcL).get());
+    final int v0 = simpleRand() << 11 >> 16;
+    MEMORY.ref(4, s1).offset(0x4L).setu(v0);
+    snow._08.set(v0);
+
+    if(MEMORY.ref(4, s1).offset(0x8L).get() == 0) {
+      snow._0c.set(0);
+    } else {
+      //LAB_800ee968
+      snow._0c.set(simpleRand() * (int)MEMORY.ref(4, s1).offset(0x8L).get() >> 16);
+    }
+
+    //LAB_800ee988
+    _800f9e6c.incr();
+    if(_800f9e6c.get() >= 6) {
+      _800f9e6c.set((short)0);
+    }
+
+    //LAB_800ee9b4
+    _800f9e6e.incr().and(0xf);
   }
 
   @Method(0x800ee9e0L)
@@ -7253,14 +7420,34 @@ public final class SMap {
   }
 
   @Method(0x800ef034L)
-  public static long FUN_800ef034(final SMapStruct3c a0) {
-    assert false;
-    return 0;
+  public static long allocateSnowEffect(final SnowEffect root) {
+    SnowEffect current = root;
+
+    //LAB_800ef04c
+    for(int i = 0; i < 0x100; i++) {
+      current = MEMORY.ref(4, mallocTail(0x3c), SnowEffect::new);
+      current.next_38.setNullable(root.next_38.derefNullable());
+      root.next_38.setNullable(current);
+    }
+
+    return current != null ? 1 : 0;
   }
 
   @Method(0x800ef090L)
-  public static void FUN_800ef090(final SMapStruct3c a0) {
-    assert false;
+  public static void deallocateSnowEffect(SnowEffect a0) {
+    final SnowEffect s1 = a0;
+    SnowEffect s0 = s1.next_38.derefNullable();
+
+    //LAB_800ef0b4
+    while(s0 != null) {
+      a0 = s0;
+      s0 = a0.next_38.derefNullable();
+      s1.next_38.setNullable(s0);
+      free(a0.getAddress());
+    }
+
+    //LAB_800ef0d8
+    free(s1.getAddress());
   }
 
   @Method(0x800ef0f8L)
@@ -8472,6 +8659,38 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800f2198L)
+  public static long FUN_800f2198(final RunningScript script) {
+    final short a1 = (short)script.params_20.get(0).deref().get();
+    final long a2 = _800d4d20.getAddress();
+
+    MEMORY.ref(2, a2).offset(0x02L).setu(a1);
+
+    if(a1 == 0) {
+      _800f9e60.set((short)0);
+      //LAB_800f21d0
+    } else if(a1 == 1) {
+      _800f9e60.set(a1);
+
+      if(script.params_20.get(2).deref().get() < 0) {
+        script.params_20.get(2).deref().neg();
+      }
+
+      //LAB_800f2210
+      MEMORY.ref(4, a2).offset(0x04L).setu(0);
+      MEMORY.ref(4, a2).offset(0x08L).setu(script.params_20.get(4).deref().get());
+      MEMORY.ref(4, a2).offset(0x0cL).setu(script.params_20.get(3).deref().get());
+      MEMORY.ref(4, a2).offset(0x10L).setu(script.params_20.get(1).deref().get());
+      MEMORY.ref(4, a2).offset(0x14L).setu(script.params_20.get(2).deref().get());
+      //LAB_800f2250
+    } else if(a1 == 2) {
+      _800f9e60.set(a1);
+    }
+
+    //LAB_800f225c
+    return 0;
+  }
+
   @Method(0x800f2264L)
   public static long FUN_800f2264(final RunningScript script) {
     final ScriptState<WorldObject210> wobj1 = script.scriptState_04.deref();
@@ -9279,7 +9498,7 @@ public final class SMap {
       FUN_800f41dc();
 
       if(_800f9e60.get() - 0x1L < 0x2L) {
-        FUN_800ee20c();
+        handleSnow();
       }
 
       FUN_800f0514();
@@ -9288,7 +9507,7 @@ public final class SMap {
       renderSmoke();
 
       if(_800f9e60.get() == 0x1L) {
-        FUN_800ee20c();
+        handleSnow();
       }
 
       if(_800f9e74.get() != 0 || _800f9e70.get() != 0) {
@@ -9303,7 +9522,7 @@ public final class SMap {
     FUN_800f41dc();
 
     if(_800f9e60.get() - 0x1L < 0x2L) {
-      FUN_800ee20c();
+      handleSnow();
     }
 
     //LAB_800f4454
