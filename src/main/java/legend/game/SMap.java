@@ -9228,7 +9228,6 @@ public final class SMap {
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-          .translucent(Translucency.of(tpage >>> 5 & 0b11))
           .bpp(Bpp.of(tpage >>> 7 & 0b11))
           .rgb(s1.r_24.get(), s1.g_25.get(), s1.b_26.get())
           .pos(0, x, y)
@@ -9245,6 +9244,10 @@ public final class SMap {
           cmd.clut(_800d6cd8.get(triangleIndex).get() & 0x3f0, (sprite.cba_04.get() >>> 6 & 0x1ff) - _800d6ce4.get(triangleIndex).get());
         } else { // Door indicators
           //LAB_800f3884
+          if((sprite.cba_04.get() & 0x8000L) != 0) {
+            cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
+          }
+
           cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - (int)_800d6cc8.get(s5._18.get(indicatorIndex - 1).get()).get());
         }
 
