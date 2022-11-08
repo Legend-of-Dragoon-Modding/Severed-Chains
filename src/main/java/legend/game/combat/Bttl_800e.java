@@ -2725,9 +2725,10 @@ public final class Bttl_800e {
     final int scriptIndex = FUN_800e832c(
       a0.scriptStateIndex_00.get(),
       0,
-      getMethodAddress(Bttl_800e.class, "FUN_800e70bc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class),
+      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e70bc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e71dc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      getMethodAddress(Bttl_800e.class, "FUN_800e6314", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class)
+      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e6314", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      null
     );
 
     scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._04.set(0x600_0400L);
@@ -3515,8 +3516,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e832cL)
-  public static <T extends MemoryRef> int FUN_800e832c(final int a0, final long subStructSize, final long a2, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> renderer, final long a4) {
+  public static int FUN_800e832c(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
     final int index = allocateScriptState(0x6cL, EffectManagerData6c::new);
+
     loadScriptFile(index, script_800faebc);
     setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
@@ -3527,62 +3529,58 @@ public final class Bttl_800e {
     //LAB_800e83b8
     setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
-    final ScriptState<EffectManagerData6c> s3 = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(EffectManagerData6c.class));
-    final EffectManagerData6c s0 = s3.innerStruct_00.derefAs(EffectManagerData6c.class);
-
+    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     s0.size_08.set(subStructSize);
-
     if(subStructSize != 0) {
-      s0.effect_44.setPointer(mallocTail(subStructSize));
+      s0.effect_44.set(MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor));
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
     } else {
       //LAB_800e83ec
       s0.effect_44.clear();
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
     }
 
     //LAB_800e83f0
-    s0.ticker_48.set(MEMORY.ref(4, a2, TriConsumerRef::new));
-    s0.scriptIndex_0e.set(index);
-    s0._10.trans_04.set(0, 0, 0);
-    s0._10.rot_10.set((short)0, (short)0, (short)0);
-    s0._10.z_22.set((short)0);
-    s0._10._24.set(0);
-    s0._10.vec_28.set(0, 0, 0);
-    s0.destructor_4c.set(MEMORY.ref(4, a4, TriConsumerRef::new));
     s0.magic_00.set(BattleScriptDataBase.EM__);
     s0._04.set(0xff00_0000L);
     s0.scriptIndex_0c.set(-1);
     s0.coord2Index_0d.set(-1);
+    s0.scriptIndex_0e.set(index);
     s0._10._00.set(0x5400_0000L);
+    s0._10.trans_04.set(0, 0, 0);
+    s0._10.rot_10.set((short)0, (short)0, (short)0);
     s0._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
     s0._10.colour_1c.set((short)0x80, (short)0x80, (short)0x80);
+    s0._10.z_22.set((short)0);
+    s0._10._24.set(0);
+    s0._10.vec_28.set(0, 0, 0);
+    s0.ticker_48.setNullable(ticker);
+    s0.destructor_4c.setNullable(destructor);
     s0.parentScriptIndex_50.set((short)-1);
     s0.childScriptIndex_52.set((short)-1);
     s0.oldChildScriptIndex_54.set((short)-1);
     s0.newChildScriptIndex_56.set((short)-1);
     s0._58.clear();
-    s3.typePtr_f8.set(s0.type_5c);
+    scriptStatePtrArr_800bc1c0.get(index).deref().typePtr_f8.set(s0.type_5c);
     strcpy(s0.type_5c, _800c6e18.get());
 
-    if(a0 != -1) {
-      final int a0_0;
-      if(scriptStatePtrArr_800bc1c0.get(a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() == BattleScriptDataBase.EM__) {
-        a0_0 = a0;
-      } else {
-        a0_0 = struct7cc_800c693c.deref().scriptIndex_1c.get();
+    if(parentIndex != -1) {
+      if(scriptStatePtrArr_800bc1c0.get(parentIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() != BattleScriptDataBase.EM__) {
+        parentIndex = struct7cc_800c693c.deref().scriptIndex_1c.get();
       }
 
       //LAB_800e84fc
-      final EffectManagerData6c data1 = scriptStatePtrArr_800bc1c0.get(a0_0).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-      final EffectManagerData6c data2 = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+      final EffectManagerData6c parent = scriptStatePtrArr_800bc1c0.get(parentIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+      final EffectManagerData6c child = scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
-      data2.parentScriptIndex_50.set((short)a0_0);
-      if(data1.childScriptIndex_52.get() != -0x1L) {
-        data2.oldChildScriptIndex_54.set(data1.childScriptIndex_52.get());
-        scriptStatePtrArr_800bc1c0.get(data1.childScriptIndex_52.get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class).newChildScriptIndex_56.set((short)index);
+      child.parentScriptIndex_50.set((short)parentIndex);
+      if(parent.childScriptIndex_52.get() != -1) {
+        child.oldChildScriptIndex_54.set(parent.childScriptIndex_52.get());
+        scriptStatePtrArr_800bc1c0.get(parent.childScriptIndex_52.get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class).newChildScriptIndex_56.set((short)index);
       }
 
       //LAB_800e8568
-      data1.childScriptIndex_52.set((short)index);
+      parent.childScriptIndex_52.set((short)index);
     }
 
     //LAB_800e856c

@@ -85,7 +85,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800257e0;
+import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
@@ -1020,7 +1020,7 @@ public class WMap {
     //LAB_800cd2d4
     for(int i = 0; i < 8; i++) {
       //LAB_800cd2f0
-      FUN_800257e0(i);
+      clearTextbox(i);
       FUN_8002a3ec(i, 0);
     }
 
@@ -4150,7 +4150,7 @@ public class WMap {
       case 5:
         struct258.models_0c.get(2).deref().scaleVector_fc.set(0x800, 0x800, 0x800);
 
-        if(FUN_8002a488(0x6L) != 0) {
+        if(FUN_8002a488(6) != 0) {
           struct258._220.set(5);
           struct258._223.set(0);
           struct258._218.set(0);
@@ -6288,7 +6288,7 @@ public class WMap {
         break;
 
       case 2:
-        if(FUN_8002a488(0x7L) != 0) {
+        if(FUN_8002a488(7) != 0) {
           FUN_8002a32c(6, 0, 240, 70, 13, 7);
           _800c68a4.setu(0x3L);
         }

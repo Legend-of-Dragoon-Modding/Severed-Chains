@@ -44,6 +44,7 @@ import legend.game.types.SssqFile;
 import legend.game.types.Textbox4c;
 import legend.game.types.Struct84;
 import legend.game.types.TexPageY;
+import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
 import legend.game.types.WobjPos14;
 
@@ -274,7 +275,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
 
-  public static final Value _800bdea0 = MEMORY.ref(4, 0x800bdea0L);
+  public static final ArrayRef<TextboxArrow0c> textboxArrows_800bdea0 = MEMORY.ref(4, 0x800bdea0L, ArrayRef.of(TextboxArrow0c.class, 8, 0xc, TextboxArrow0c::new));
 
   public static final Value _800bdf00 = MEMORY.ref(4, 0x800bdf00L);
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);
