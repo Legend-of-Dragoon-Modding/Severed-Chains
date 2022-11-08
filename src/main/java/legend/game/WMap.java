@@ -142,7 +142,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
-import static legend.game.Scus94491BpeSegment_800b._800be358;
+import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -2618,16 +2618,16 @@ public class WMap {
           if(v0 == 0x1L) {
             //LAB_800d49e4
             _800bdf00.setu(0xeL);
-            _800be358.get(7).z_0c.set(14);
+            textboxes_800be358.get(7).z_0c.set(14);
 
             if(width.get() < 4) {
-              _800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358.get(7).chars_18.set((short)4);
             } else {
-              _800be358.get(7).chars_18.set((short)width.get());
+              textboxes_800be358.get(7).chars_18.set((short)width.get());
             }
 
             //LAB_800d4a28
-            _800be358.get(7).lines_1a.set((short)lines.get());
+            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
             _800c86f0.setu(0x2L);
             //LAB_800d4974
           } else if(v0 == 0) {
@@ -2637,36 +2637,36 @@ public class WMap {
 
             //LAB_800d49e4
             _800bdf00.setu(0xeL);
-            _800be358.get(7).z_0c.set(14);
+            textboxes_800be358.get(7).z_0c.set(14);
 
             if(width.get() < 4) {
-              _800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358.get(7).chars_18.set((short)4);
             } else {
-              _800be358.get(7).chars_18.set((short)width.get());
+              textboxes_800be358.get(7).chars_18.set((short)width.get());
             }
 
             //LAB_800d4a28
-            _800be358.get(7).lines_1a.set((short)lines.get());
+            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
             _800c86f0.setu(0x2L);
           } else if(v0 == 0x2L) {
             //LAB_800d4a40
-            _800be358.get(7).chars_18.set((short)width.get());
+            textboxes_800be358.get(7).chars_18.set((short)width.get());
 
             if(width.get() < 4) {
-              _800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358.get(7).chars_18.set((short)4);
             }
 
             //LAB_800d4a6c
-            _800be358.get(7).lines_1a.set((short)lines.get());
-            _800be358.get(7).width_1c.set(_800be358.get(7).chars_18.get() * 9 / 2);
-            _800be358.get(7).height_1e.set((short)(_800be358.get(7).lines_1a.get() * 6));
-            _800be358.get(7).x_14.set((short)x);
-            _800be358.get(7).y_16.set((short)y);
+            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
+            textboxes_800be358.get(7).width_1c.set(textboxes_800be358.get(7).chars_18.get() * 9 / 2);
+            textboxes_800be358.get(7).height_1e.set((short)(textboxes_800be358.get(7).lines_1a.get() * 6));
+            textboxes_800be358.get(7).x_14.set((short)x);
+            textboxes_800be358.get(7).y_16.set((short)y);
           }
 
           //LAB_800d4aec
           _800bdf00.setu(0x1aL);
-          _800be358.get(7).z_0c.set(26);
+          textboxes_800be358.get(7).z_0c.set(26);
 
           FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, 0, 0);
         }
@@ -4161,7 +4161,7 @@ public class WMap {
         break;
 
       case 6:
-        _800be358.get(6).z_0c.set(18);
+        textboxes_800be358.get(6).z_0c.set(18);
 
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
@@ -6524,7 +6524,7 @@ public class WMap {
 
         FUN_800ce4dc(_800c6898.deref());
 
-        if(_800be358.get(6)._00.get() == 0 && _800be358.get(7)._00.get() == 0 && _800c6898.deref()._34.get() == 0) {
+        if(textboxes_800be358.get(6)._00.get() == 0 && textboxes_800be358.get(7)._00.get() == 0 && _800c6898.deref()._34.get() == 0) {
           _800c68a4.setu(0x9L);
         }
 
@@ -6742,47 +6742,47 @@ public class WMap {
         if(v0 == 0x1L) {
           //LAB_800e71d8
           _800bdf00.setu(i + 0xeL);
-          _800be358.get(i).z_0c.set(i + 14);
+          textboxes_800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
-            _800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358.get(i).chars_18.set((short)width.get());
           } else {
-            _800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358.get(i).chars_18.set((short)4);
           }
 
           //LAB_800e7298
-          _800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
           if(width.get() >= 4) {
-            _800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358.get(i).chars_18.set((short)width.get());
           } else {
-            _800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358.get(i).chars_18.set((short)4);
           }
 
           //LAB_800e735c
-          _800be358.get(i).lines_1a.set((short)lines.get());
-          _800be358.get(i).width_1c.set(_800be358.get(i).chars_18.get() * 9 / 2);
-          _800be358.get(i).height_1e.set((short)(_800be358.get(i).lines_1a.get() * 6));
-          _800be358.get(i).x_14.set((short)x);
-          _800be358.get(i).y_16.set((short)y);
+          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
+          textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
+          textboxes_800be358.get(i).x_14.set((short)x);
+          textboxes_800be358.get(i).y_16.set((short)y);
         } else if((int)v0 >= 0x2L) {
           //LAB_800e7154
           if(v0 == 0x2L) {
             //LAB_800e72e8
             if(width.get() >= 4) {
-              _800be358.get(i).chars_18.set((short)width.get());
+              textboxes_800be358.get(i).chars_18.set((short)width.get());
             } else {
-              _800be358.get(i).chars_18.set((short)4);
+              textboxes_800be358.get(i).chars_18.set((short)4);
             }
 
             //LAB_800e735c
-            _800be358.get(i).lines_1a.set((short)lines.get());
-            _800be358.get(i).width_1c.set(_800be358.get(i).chars_18.get() * 9 / 2);
-            _800be358.get(i).height_1e.set((short)(_800be358.get(i).lines_1a.get() * 6));
-            _800be358.get(i).x_14.set((short)x);
-            _800be358.get(i).y_16.set((short)y);
+            textboxes_800be358.get(i).lines_1a.set((short)lines.get());
+            textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
+            textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
+            textboxes_800be358.get(i).x_14.set((short)x);
+            textboxes_800be358.get(i).y_16.set((short)y);
           }
         } else if(v0 == 0) {
           //LAB_800e7168
@@ -6792,36 +6792,36 @@ public class WMap {
 
           //LAB_800e71d8
           _800bdf00.setu(i + 0xeL);
-          _800be358.get(i).z_0c.set(i + 14);
+          textboxes_800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
-            _800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358.get(i).chars_18.set((short)width.get());
           } else {
-            _800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358.get(i).chars_18.set((short)4);
           }
 
           //LAB_800e7298
-          _800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
           if(width.get() >= 4) {
-            _800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358.get(i).chars_18.set((short)width.get());
           } else {
-            _800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358.get(i).chars_18.set((short)4);
           }
 
           //LAB_800e735c
-          _800be358.get(i).lines_1a.set((short)lines.get());
-          _800be358.get(i).width_1c.set(_800be358.get(i).chars_18.get() * 9 / 2);
-          _800be358.get(i).height_1e.set((short)(_800be358.get(i).lines_1a.get() * 6));
-          _800be358.get(i).x_14.set((short)x);
-          _800be358.get(i).y_16.set((short)y);
+          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
+          textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
+          textboxes_800be358.get(i).x_14.set((short)x);
+          textboxes_800be358.get(i).y_16.set((short)y);
         }
 
         //LAB_800e74d8
         _800bdf00.setu(i + 0x77L);
-        _800be358.get(i).z_0c.set(i + 119);
+        textboxes_800be358.get(i).z_0c.set(i + 119);
 
         FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
       }
