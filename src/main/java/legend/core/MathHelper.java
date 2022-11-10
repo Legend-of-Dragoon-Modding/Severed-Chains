@@ -117,4 +117,12 @@ public final class MathHelper {
 
     return num / div;
   }
+
+  public static long shrRound(final long val, final int shr) {
+    if(shr == 0 || val == 0) {
+      return val;
+    }
+    final long i = (val >> (shr - 1)) & 1;
+    return (val >> shr) + i;
+  }
 }

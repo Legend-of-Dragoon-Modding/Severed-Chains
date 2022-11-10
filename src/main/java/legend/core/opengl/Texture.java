@@ -1,6 +1,5 @@
 package legend.core.opengl;
 
-import legend.core.gpu.RECT;
 import org.lwjgl.system.MemoryStack;
 
 import javax.annotation.Nullable;
@@ -33,6 +32,7 @@ import static org.lwjgl.opengl.GL11C.glTexImage2D;
 import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
 import static org.lwjgl.opengl.GL12C.GL_TEXTURE_MAX_LEVEL;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
 import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
@@ -64,10 +64,13 @@ public final class Texture {
   public final int width;
   public final int height;
 
+  private final int dataFormat;
+
   private Texture(@Nullable final ByteBuffer data, @Nullable final FloatBuffer dataF, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
+    this.dataFormat = dataFormat;
     this.use();
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
@@ -91,13 +94,23 @@ public final class Texture {
     }
   }
 
-  public void data(final RECT rect, final ByteBuffer data) {
+  public void data(final int x, final int y, final int w, final int h, final ByteBuffer data) {
     this.use();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get(), GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_BYTE, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
-      throw new RuntimeException("Failed to upload data, rect: " + rect + ", glError: " + Long.toString(error, 16));
+      throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
+    }
+  }
+
+  public void data(final int x, final int y, final int w, final int h, final int[] data) {
+    this.use();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8, data);
+
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
     }
   }
 

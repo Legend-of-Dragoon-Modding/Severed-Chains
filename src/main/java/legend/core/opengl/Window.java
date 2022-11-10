@@ -329,20 +329,40 @@ public class Window {
       this.controllerDisconnected.forEach(cb -> cb.action(this.window, id));
     }
 
-    public void onKeyPress(final Key callback) {
+    public Key onKeyPress(final Key callback) {
       this.keyPress.add(callback);
+      return callback;
     }
 
-    public void onKeyRelease(final Key callback) {
+    public void removeKeyPress(final Key callback) {
+      this.keyPress.remove(callback);
+    }
+
+    public Key onKeyRelease(final Key callback) {
       this.keyRelease.add(callback);
+      return callback;
     }
 
-    public void onKeyRepeat(final Key callback) {
+    public void removeKeyRelease(final Key callback) {
+      this.keyRelease.remove(callback);
+    }
+
+    public Key onKeyRepeat(final Key callback) {
       this.keyRepeat.add(callback);
+      return callback;
     }
 
-    public void onCharPress(final Char callback) {
+    public void removeKeyRepeat(final Key callback) {
+      this.keyRepeat.remove(callback);
+    }
+
+    public Char onCharPress(final Char callback) {
       this.charPress.add(callback);
+      return callback;
+    }
+
+    public void removeCharPress(final Char callback) {
+      this.charPress.remove(callback);
     }
 
     public void onMouseMove(final Cursor callback) {

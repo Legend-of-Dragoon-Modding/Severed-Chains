@@ -190,6 +190,7 @@ public class Spu implements Runnable, MemoryRef {
     this.keyOn = 0;
     this.keyOff = 0;
 
+/*
     this.tickNoiseGenerator();
 
     for(int i = 0; i < this.voices.length; i++) {
@@ -232,6 +233,7 @@ public class Spu implements Runnable, MemoryRef {
       sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
       sumRight += sample * v.processVolume(v.volumeRight) >> 15;
     }
+*/
 
     if(!this.control.spuUnmuted()) { //todo merge this on the for voice loop
       //On mute the spu still ticks but output is 0 for voices (not for cdInput)
@@ -461,7 +463,7 @@ public class Spu implements Runnable, MemoryRef {
 
   public void pushCdBufferSamples(final byte[] decodedXaAdpcm) {
     synchronized(this.cdBuffer) {
-//      this.cdBuffer.clear(); TODO is not clearing the buffer going to be a problem?
+//      this.cdBuffer.clear(); // TODO is not clearing the buffer going to be a problem?
 
       for(final byte b : decodedXaAdpcm) {
         this.cdBuffer.add(b);

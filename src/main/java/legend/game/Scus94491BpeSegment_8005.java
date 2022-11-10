@@ -12,6 +12,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
@@ -88,6 +89,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final FileEntry08 lodXa00Xa_80052c94 = MEMORY.ref(2, 0x80052c94L, FileEntry08::new);
 
+  public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<Pointer<UnboundedArrayRef<FileEntry08>>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(FileEntry08.class)), 5, 0x4, Pointer.deferred(4, UnboundedArrayRef.of(0x8, FileEntry08::new))));
 
   public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);

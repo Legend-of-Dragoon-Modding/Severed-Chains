@@ -89,6 +89,17 @@ public class CdDrive {
     }
   }
 
+  public void readRawSector(final CdlLOC pos, final byte[] out) {
+    LOGGER.info(DMA_MARKER, "[CDROM] Reading raw sector %s", pos);
+
+    try {
+      this.diskSync.seekSectorRaw(pos);
+      this.diskSync.read(out);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public void playXaAudio(final CdlLOC locIn, final int filterFile, final int filterChannel, final Runnable onCompletion) {
     final CdlLOC loc = new CdlLOC().set(locIn);
 

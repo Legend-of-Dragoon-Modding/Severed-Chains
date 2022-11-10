@@ -36,8 +36,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Gpu implements Runnable {
@@ -243,18 +241,20 @@ public class Gpu implements Runnable {
     this.displaySize(hRes.res, vRes.res);
   }
 
-  private void displaySize(final int horizontalRes, final int verticalRes) {
+  public void displaySize(final int horizontalRes, final int verticalRes) {
     if(this.displayTexture != null) {
+      if(this.displayTexture.width == horizontalRes && this.displayTexture.height == verticalRes) {
+        return;
+      }
+
       this.displayTexture.delete();
     }
 
-    this.displayTexture = Texture.create(builder -> {
-      builder.size(horizontalRes, verticalRes);
-      builder.internalFormat(GL_RGBA);
-      builder.dataFormat(GL_RGBA);
-      builder.minFilter(GL_NEAREST);
-      builder.magFilter(GL_NEAREST);
-    });
+    this.displayTexture = Texture.empty(horizontalRes, verticalRes);
+  }
+
+  public void displayTexture(final int[] pixels) {
+    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
   }
 
   public void drawingArea(final int left, final int top, final int right, final int bottom) {
@@ -288,7 +288,8 @@ public class Gpu implements Runnable {
   private boolean ready;
   private double vsyncCount;
   private long lastFrame;
-  public Runnable r = () -> { };
+  public Runnable mainRenderer;
+  public Runnable subRenderer = () -> { };
 
   public long getVsyncCount() {
     return (long)this.vsyncCount;
@@ -382,13 +383,21 @@ public class Gpu implements Runnable {
 
     this.lastFrame = System.nanoTime();
 
-    this.ctx.onDraw(() -> {
+    this.mainRenderer = () -> {
       if(this.zMax != orderingTableSize_1f8003c8.get()) {
         this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
       }
 
-      this.r.run();
+      this.subRenderer.run();
       this.tick();
+    };
+
+    this.ctx.onDraw(() -> {
+      // Restore model buffer to identity
+      this.transforms.identity();
+      this.transforms2.set(this.transforms);
+
+      this.mainRenderer.run();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d".formatted(fps, this.window.getFpsLimit()));
@@ -458,10 +467,6 @@ public class Gpu implements Runnable {
       this.displayChanged = false;
     }
 
-    // Restore model buffer to identity
-    this.transforms.identity();
-    this.transforms2.set(this.transforms);
-
     if(this.isVramViewer) {
       final int size = this.vramWidth * this.vramHeight;
       final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
@@ -470,7 +475,7 @@ public class Gpu implements Runnable {
 
       pixels.flip();
 
-      this.vramTexture.data(new RECT((short)0, (short)0, (short)this.vramWidth, (short)this.vramHeight), pixels);
+      this.vramTexture.data(0, 0, this.vramWidth, this.vramHeight, pixels);
 
       this.vramShader.use();
       this.vramTexture.use();
@@ -518,11 +523,9 @@ public class Gpu implements Runnable {
 
       pixels.flip();
 
-      this.displayTexture.data(new RECT((short)0, (short)0, (short)this.displayTexture.width, (short)this.displayTexture.height), pixels);
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
 
-      this.vramShader.use();
-      this.displayTexture.use();
-      this.displayMesh.draw();
+      this.drawMesh();
 
       MemoryUtil.memFree(pixels);
     } else { // 15bpp
@@ -546,11 +549,9 @@ public class Gpu implements Runnable {
 
       pixels.flip();
 
-      this.displayTexture.data(new RECT((short)0, (short)0, (short)this.displayTexture.width, (short)this.displayTexture.height), pixels);
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
 
-      this.vramShader.use();
-      this.displayTexture.use();
-      this.displayMesh.draw();
+      this.drawMesh();
 
       MemoryUtil.memFree(vram);
       MemoryUtil.memFree(pixels);
@@ -565,6 +566,12 @@ public class Gpu implements Runnable {
         this.zQueues[z].clear();
       }
     }
+  }
+
+  public void drawMesh() {
+    this.vramShader.use();
+    this.displayTexture.use();
+    this.displayMesh.draw();
   }
 
   public int getOffsetX() {

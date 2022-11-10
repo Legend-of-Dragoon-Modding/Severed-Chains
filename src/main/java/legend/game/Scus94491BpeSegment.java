@@ -816,7 +816,7 @@ public final class Scus94491BpeSegment {
     };
 
     if(SYNCHRONOUS) {
-      GPU.r = r;
+      GPU.subRenderer = r;
     }
 
     while(Hardware.isAlive()) {

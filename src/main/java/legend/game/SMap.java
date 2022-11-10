@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.cdrom.CdlFILE;
+import legend.core.cdrom.CdlLOC;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -34,6 +35,7 @@ import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.fmv.Fmv;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
@@ -47,6 +49,7 @@ import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.FileEntry08;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.McqHeader;
@@ -59,12 +62,12 @@ import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.SMapStruct3c;
-import legend.game.types.SnowEffect;
 import legend.game.types.SavePointRenderData44;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
+import legend.game.types.SnowEffect;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStructSub0c_1;
 import legend.game.types.SomethingStructSub0c_2;
@@ -210,6 +213,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
+import static legend.game.Scus94491BpeSegment_8005._80052d6c;
+import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
@@ -217,6 +222,7 @@ import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
@@ -6870,8 +6876,6 @@ public final class SMap {
 
   @Method(0x800ed960L)
   public static long loadFmv() {
-    // TODO skip FMVs
-
     _800bf0d8.setu(0x2L);
     fileLoadingCallbackIndex_8004ddc4.set(22);
 
@@ -6881,14 +6885,14 @@ public final class SMap {
 
   @Method(0x800ed9e4L)
   public static long playFmv() {
-    //TODO skip FMV
+    final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
+    final CdlLOC pos = CdlFILE_800bb4c8.get(file.fileIndex_00.get()).pos;
+
+    Fmv.play((int)pos.pack(), true);
 
     //LAB_800eda50
     _800bf0d8.setu(0x3L);
     fileLoadingCallbackIndex_8004ddc4.set(23);
-    scriptStartEffect(0x1L, 0x1L);
-    ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
-    setWidthAndFlags(640);
 
     //LAB_800edab4
     return 0x1L;
@@ -6896,19 +6900,6 @@ public final class SMap {
 
   @Method(0x800edac4L)
   public static long stopFmv() {
-    //TODO skip FMV
-    /*
-    if(_800bf0b4.get() == 0) {
-      //LAB_800edb30
-      return 0;
-    }
-
-    if(_800bf0d8.get() != 0x3L) {
-      return 0;
-    }
-
-    SStrm.stopFmv(_800f970c.offset(_800bf0dc.get() * 16).getAddress());
-    */
     decrementOverlayCount();
 
     fileLoadingCallbackIndex_8004ddc4.set(24);

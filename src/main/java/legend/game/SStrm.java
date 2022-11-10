@@ -141,14 +141,14 @@ public final class SStrm {
     final long s2 = a1;
     MEMORY.ref(2, s2).setu(MEMORY.ref(2, a0));
     MEMORY.ref(2, s2).offset(0x2L).setu(MEMORY.ref(2, a0).offset(0x2L));
-    long v1 = (int)(MEMORY.ref(2, a0).offset(0x4L).get() + 0xfL) / 16;
-    long v0 = (int)(MEMORY.ref(2, a0).offset(0x6L).get() + 0xfL) / 16;
+    long v1 = (int)(MEMORY.ref(2, a0).offset(0x4L).get() + 0xfL) / 16; // w
+    long v0 = (int)(MEMORY.ref(2, a0).offset(0x6L).get() + 0xfL) / 16; // h
     v1 = v1 * v0 & 0xffff_ffffL;
     s0 = a0 + 0xaL;
     long s1 = v1 * 6;
     final long[] arr = new long[(int)(v1 * 12 + 14 & ~0b111L)];
     FUN_800fcc50(arr, s0, v1 * 12);
-    s0 += MEMORY.ref(2, a0).offset(0x8L).get();
+    s0 += MEMORY.ref(2, a0).offset(0x8L).get(); // Size of compressed initial block codes
     a1 = 0x10L;
     long t1 = 0;
     long t3 = s1;
@@ -166,8 +166,8 @@ public final class SStrm {
 
       //LAB_800fcaac
       while(true) {
-        CPU.MTC2(a2, 0x1eL);
-        a0 = a2 >>> 0x1dL;
+        CPU.MTC2(a2, 30L);
+        a0 = a2 >>> 29L;
         long a3;
         if((int)a2 < 0) {
           a3 = 0x3L;
