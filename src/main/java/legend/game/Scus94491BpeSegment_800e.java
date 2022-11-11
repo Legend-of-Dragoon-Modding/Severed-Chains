@@ -94,12 +94,11 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
-import static legend.game.Scus94491BpeSegment_800b._800bf0b4;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
@@ -1272,12 +1271,11 @@ public final class Scus94491BpeSegment_800e {
     setCdVolume(0x7f, 0x7f);
     setCdMix(0x3f);
 
-    _800bf0b4.setu(0);
     _800bf0cd.setu(0);
     _800bf0ce.setu(0x7fL);
     _800bf0cf.setu(0);
     _800bf0d0.setu(0);
-    _800bf0d8.setu(0);
+    fmvStage_800bf0d8.setu(0);
   }
 
   @Method(0x800e6eccL)

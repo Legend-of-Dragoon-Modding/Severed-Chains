@@ -312,7 +312,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bee98 = MEMORY.ref(4, 0x800bee98L);
 
   public static final Value continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
-  public static final Value _800bf0b4 = MEMORY.ref(4, 0x800bf0b4L);
 
   public static final Value _800bf0c0 = MEMORY.ref(4, 0x800bf0c0L);
   public static final Value _800bf0c4 = MEMORY.ref(4, 0x800bf0c4L);
@@ -323,7 +322,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
   public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);
 
-  public static final Value _800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
+  public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
 
   public static final Value _800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
   public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);

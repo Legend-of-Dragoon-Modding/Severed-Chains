@@ -259,7 +259,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b._800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0e0;
 import static legend.game.Scus94491BpeSegment_800b.currentlyLoadingFileInfo_800bb468;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
@@ -933,7 +933,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
-    if(loadSstrmAndSmap() != 0) {
+    if(loadQueuedOverlay() != 0) {
       callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
 
       tickScripts();
@@ -1587,7 +1587,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800128c4L)
-  public static long loadSstrmAndSmap() {
+  public static long loadQueuedOverlay() {
     if(!loadingOverlay_8004dd1e.get()) {
       //LAB_80012910
       //LAB_80012900
@@ -1642,6 +1642,8 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012a84L)
   public static long loadGameStateOverlay(final int callbackIndex) {
+    LOGGER.info("Loading game state overlay %d", callbackIndex);
+
     final FileEntry08 entry = callback_8004dbc0.get(callbackIndex).entry_04.derefNullable();
 
     if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
@@ -1671,6 +1673,8 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80012b1cL)
   public static void loadSupportOverlay(final int overlayIndex, final ConsumerRef<Integer> overlayMethod, final int callbackParam) {
+    LOGGER.info("Loading support overlay %d", overlayIndex);
+
     if(loadedOverlayIndex_8004dd10.get() == overlayIndex && !loadingOverlay_8004dd1e.get()) {
       overlaysLoadedCount_8004dd1c.incr();
       overlayMethod.run(callbackParam);
@@ -2129,7 +2133,6 @@ public final class Scus94491BpeSegment {
 
     switch(file.namePtr.deref().get()) {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
-      case "\\OVL\\S_STRM.OV_" -> MEMORY.addFunctions(SStrm.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
       case "\\OVL\\S_INIT.OV_" -> MEMORY.addFunctions(SInit.class);
@@ -2204,7 +2207,7 @@ public final class Scus94491BpeSegment {
       }
 
       //LAB_80014ae8
-      if(_800bf0d8.get() != 0) {
+      if(fmvStage_800bf0d8.get() != 0) {
         //LAB_80014af8
         FUN_800edb8c();
 
@@ -2234,7 +2237,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80014a3c
-    if(_800bf0d8.get() != 0) {
+    if(fmvStage_800bf0d8.get() != 0) {
       FUN_800edb8c();
       return 0x1L;
     }
