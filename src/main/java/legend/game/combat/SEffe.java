@@ -31,6 +31,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.types.AdditionOverlaysEffect44;
 import legend.game.combat.types.BattleObject27c;
@@ -70,6 +71,7 @@ import legend.game.combat.types.EffectData98Inner24;
 import legend.game.combat.types.EffectData98Sub94;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
+import legend.game.combat.types.FrozenJetEffect28;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.types.Model124;
@@ -4999,6 +5001,145 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80109fbcL)
+  public static void FUN_80109fbc(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    // no-op
+  }
+
+  @Method(0x80109fc4L)
+  public static void FUN_80109fc4(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final FrozenJetEffect28 effect = manager.effect_44.derefAs(FrozenJetEffect28.class);
+    final int s3 = effect._18.get();
+    int s1 = s3;
+    final long sp78 = effect.vertexCount_00.get();
+
+    //LAB_8010a020
+    outer:
+    while(true) {
+      long s4 = effect._1a.get() + (s1 << 11);
+      s1++;
+
+      //LAB_8010a04c
+      for(int s2 = 1; s2 < s3 - 1; s2++) {
+        if(s1 >= sp78 - s3) {
+          break outer;
+        }
+
+        final SVECTOR sp0x10 = new SVECTOR().set(effect.verticesCopy_1c.deref().get(s1));
+        sp0x10.y.add((short)(rsin(s4) * (manager._10.vec_28.getX() << 10 >> 8) >> 12)); // 2b
+        effect.vertices_0c.deref().get(s1).set(sp0x10);
+        s4 = s4 + (0x1000 / s3 / manager._10.vec_28.getY() >> 8);
+        s1++;
+      }
+
+      //LAB_8010a124
+      s1++;
+    }
+
+    //LAB_8010a130
+    if((effect._24.get() & 0x1) != 0) {
+      long s0 = effect.primitives_14.get();
+
+      //LAB_8010a15c
+      for(s1 = 0; s1 < effect.primitiveCount_08.get(); s1++) {
+        final int sp70 = (int)MEMORY.ref(2, s0).offset(0x24L).get();
+        final int sp72 = (int)MEMORY.ref(2, s0).offset(0x26L).get();
+        final int sp74 = (int)MEMORY.ref(2, s0).offset(0x28L).get();
+        final int sp76 = (int)MEMORY.ref(2, s0).offset(0x2aL).get();
+        final SVECTOR sp0x18 = new SVECTOR().set(effect.vertices_0c.deref().get(sp70));
+        final SVECTOR sp0x20 = new SVECTOR().set(effect.vertices_0c.deref().get(sp72));
+        final SVECTOR sp0x28 = new SVECTOR().set(effect.vertices_0c.deref().get(sp74));
+        final SVECTOR sp0x30 = new SVECTOR().set(effect.vertices_0c.deref().get(sp76));
+        final VECTOR sp0x40 = new VECTOR().set(sp0x20).sub(sp0x18);
+        final VECTOR sp0x50 = new VECTOR().set(sp0x28).sub(sp0x18);
+        CPU.CTC2(sp0x50.getX(), 0);
+        CPU.CTC2(sp0x50.getY(), 2);
+        CPU.CTC2(sp0x50.getZ(), 4);
+        CPU.MTC2(sp0x40.getX(), 9);
+        CPU.MTC2(sp0x40.getY(), 10);
+        CPU.MTC2(sp0x40.getZ(), 11);
+        CPU.COP2(0x178000cL);
+        final VECTOR sp0x60 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
+        final SVECTOR sp0x38 = new SVECTOR().set(sp0x60);
+
+        effect.normals_10.deref().get(sp70).set(sp0x38);
+        effect.normals_10.deref().get(sp72).set(sp0x38);
+        effect.normals_10.deref().get(sp74).set(sp0x38);
+        effect.normals_10.deref().get(sp76).set(sp0x38);
+
+        s0 = s0 + 0x2cL;
+      }
+    }
+
+    //LAB_8010a374
+    effect._1a.add((short)((int)manager._10._24.get() << 7 >> 8));
+  }
+
+  @Method(0x8010a3bcL)
+  public static void FUN_8010a3bc(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final FrozenJetEffect28 effect = manager.effect_44.derefAs(FrozenJetEffect28.class);
+    free(effect.normalsCopy_20.getPointer());
+    free(effect.verticesCopy_1c.getPointer());
+  }
+
+  @Method(0x8010a3fcL)
+  public static long FUN_8010a3fc(final RunningScript script) {
+    final int s4 = script.params_20.get(2).deref().get();
+    final int sp18 = script.params_20.get(4).deref().get();
+
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x28,
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109fc4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80109fbc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_8010a3bc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      FrozenJetEffect28::new
+    );
+
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final FrozenJetEffect28 effect = manager.effect_44.derefAs(FrozenJetEffect28.class);
+
+    final GuardHealEffect14 v1 = scriptStatePtrArr_800bc1c0.get(script.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(GuardHealEffect14.class);
+    final TmdObjTable tmd = v1.tmd_08.deref();
+
+    final long vertexCount = tmd.n_vert_04.get();
+    final long normalCount = tmd.n_normal_0c.get();
+
+    final UnboundedArrayRef<SVECTOR> vertices = tmd.vert_top_00.deref();
+    final long normals = tmd.normal_top_08.get();
+
+    effect.vertexCount_00.set(vertexCount);
+    effect.normalCount_04.set(normalCount);
+    effect.primitiveCount_08.set(tmd.n_primitive_14.get());
+    effect.vertices_0c.set(vertices);
+    effect.normals_10.setPointer(normals);
+    effect.primitives_14.set(tmd.primitives_10.getPointer());
+    effect._18.set(s4);
+    effect.verticesCopy_1c.setPointer(mallocTail(vertexCount * 8));
+    effect.normalsCopy_20.setPointer(mallocTail(normalCount * 8));
+    effect._24.set(sp18 & 0xff);
+    manager._10._24.set(0x100);
+    manager._10.vec_28.setX(0x100);
+    manager._10.vec_28.setY(0x100);
+
+    //LAB_8010a538
+    for(int t0 = 0; t0 < vertexCount; t0++) {
+      //LAB_8010a54c
+      effect.verticesCopy_1c.deref().get(t0).set(vertices.get(t0));
+    }
+
+    //LAB_8010a578
+    //LAB_8010a588
+    for(int t0 = 0; t0 < normalCount; t0++) {
+      //LAB_8010a59c
+      effect.normalsCopy_20.deref().get(t0).set((SVECTOR)MEMORY.ref(4, normals).offset(t0 * 0x8L).cast(SVECTOR::new));
+    }
+
+    //LAB_8010a5c8
+    script.params_20.get(0).deref().set(effectIndex);
+    return 0;
+  }
+
   @Method(0x8010a610L)
   public static long FUN_8010a610(final RunningScript a0) {
     final int effectIndex = allocateEffectManager(
@@ -5273,7 +5414,7 @@ public final class SEffe {
       for(int i = 0; i < 4; i++) {
         final long v1 = effect.ptr_00.get();
 
-        GPU.queueCommand(40, new GpuCommandCopyVramToVram((x + ((i & 1) - 1) * w), (y + (i / 2 - 1) * h), (int)MEMORY.ref(2, v1).offset(0x0L).get(), (int)MEMORY.ref(2, v1).offset(0x2L).get() + i * 64, w, h));
+        GPU.queueCommand(40, new GpuCommandCopyVramToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, (int)MEMORY.ref(2, v1).offset(0x0L).get(), (int)MEMORY.ref(2, v1).offset(0x2L).get() + i * 64, w, h));
         GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
       }
     } else if(v0 < 3) {
