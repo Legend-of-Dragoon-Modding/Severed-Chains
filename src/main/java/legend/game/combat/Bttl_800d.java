@@ -31,6 +31,7 @@ import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
+import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
@@ -103,7 +104,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cea1c;
+import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.FUN_800cf244;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
@@ -191,16 +192,15 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d0124L)
-  public static long FUN_800d0124(final RunningScript a0) {
-    final ScriptState<?> a2 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
-    final BattleScriptDataBase a1 = a2.innerStruct_00.derefAs(BattleScriptDataBase.class);
+  public static long FUN_800d0124(final RunningScript script) {
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref();
+    final BattleScriptDataBase data = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a1.magic_00.get() == BattleScriptDataBase.EM__) {
-      final long v1 = ((EffectManagerData6c)a1).effect_44.getPointer(); //TODO
-      a0.params_20.get(1).deref().set((int)MEMORY.ref(2, v1).offset(0xa8L).getSigned());
+    if(data.magic_00.get() == BattleScriptDataBase.EM__) {
+      script.params_20.get(1).deref().set(((EffectManagerData6c)data).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10.animCount_98.get());
     } else {
       //LAB_800d017c
-      a0.params_20.get(1).deref().set(((BattleObject27c)a1).model_148.animCount_98.get());
+      script.params_20.get(1).deref().set(((BattleObject27c)data).model_148.animCount_98.get());
     }
 
     //LAB_800d0194
@@ -497,7 +497,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d11c4
       final VECTOR sp0x10 = new VECTOR();
-      FUN_800cea1c(a1.scriptIndex_00.get(), sp0x10);
+      scriptGetScriptedObjectPos(a1.scriptIndex_00.get(), sp0x10);
       sp0x10.add(a0._10.trans_04);
       FUN_800cf244(sp0x10, a2[0], a2[1]);
     }
@@ -679,7 +679,7 @@ public final class Bttl_800d {
     if((int)manager._10._00.get() >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
         rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12, // X is correct
         manager._10.vec_28.getY()
       );
 
@@ -1047,9 +1047,6 @@ public final class Bttl_800d {
 
   @Method(0x800d34bcL)
   public static long allocateMonsterDeathEffect(final RunningScript a0) {
-    long v0;
-    long v1;
-
     final long fp = allocateEffectManager(
       a0.scriptStateIndex_00.get(),
       0x34L,
@@ -1078,35 +1075,19 @@ public final class Bttl_800d {
     }
 
     //LAB_800d35cc
-    v1 = a0.params_20.get(2).deref().get() & 0xffL;
-    v1 = v1 << 3;
-    v0 = _800c6948.get() + v1;
-    v0 = MEMORY.ref(1, v0).offset(0x0L).get() & 0x3fL;
-    v0 = v0 << 2;
-    effect._0c.u_0e.set((int)v0);
-    v0 = _800c6948.get() + v1;
-    v0 = MEMORY.ref(1, v0).offset(0x2L).get();
-    effect._0c.v_0f.set((int)v0);
-    v1 = _800c6948.get() + v1;
-    effect._0c.w_08.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
-    effect._0c.h_0a.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
-    v0 = MEMORY.ref(2, v1).offset(0x6L).get() << 4;
-    v0 = v0 & 0x3ffL;
-    effect._0c.clutX_10.set((int)v0);
-    v0 = MEMORY.ref(2, v1).offset(0x6L).get() >>> 6;
-    v0 = v0 & 0x1ffL;
-    effect._0c.clutY_12.set((int)v0);
-    v0 = MEMORY.ref(2, v1).offset(0x2L).get() & 0x100L;
-    v0 = v0 >>> 4;
-    v1 = MEMORY.ref(2, v1).offset(0x0L).get() & 0x3ffL;
-    v1 = v1 >>> 6;
-    v0 = v0 | v1;
-    effect._0c.tpage_0c.set((int)v0);
+    final long v0 = _800c6948.get() + (a0.params_20.get(2).deref().get() & 0xff) * 0x8L;
+    effect._0c._00.set(manager._10._00.get());
     effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
+    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
+    effect._0c.w_08.set((int)MEMORY.ref(1, v0).offset(0x4L).get());
+    effect._0c.h_0a.set((int)MEMORY.ref(1, v0).offset(0x5L).get());
+    effect._0c.tpage_0c.set((int)((MEMORY.ref(2, v0).offset(0x2L).get() & 0x100) >>> 4 | (MEMORY.ref(2, v0).offset(0x0L).get() & 0x3ff) >>> 6));
+    effect._0c.u_0e.set((int)(MEMORY.ref(1, v0).offset(0x0L).get() & 0x3f) * 4);
+    effect._0c.v_0f.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
+    effect._0c.clutX_10.set((int)(MEMORY.ref(2, v0).offset(0x6L).get() << 4 & 0x3ff));
+    effect._0c.clutY_12.set((int)(MEMORY.ref(2, v0).offset(0x6L).get() >>> 6 & 0x1ff));
     effect._0c._18.set((short)0);
     effect._0c._1a.set((short)0);
-    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
-    effect._0c._00.set(manager._10._00.get());
     a0.params_20.get(0).deref().set((int)fp);
     return 0;
   }

@@ -521,15 +521,15 @@ public final class Scus94491BpeSegment_8004 {
    * </ol>
    * ...
    * <ol start="128">
-   *   <li>{@link Bttl_800c#FUN_800cb3fc}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb468}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb4c8}</li>
+   *   <li>{@link Bttl_800c#scriptSetBobjPos}</li>
+   *   <li>{@link Bttl_800c#scriptGetBobjPos}</li>
+   *   <li>{@link Bttl_800c#scriptSetBobjRotation}</li>
    *   <li>{@link Bttl_800c#FUN_800cc7d8}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb534}</li>
+   *   <li>{@link Bttl_800c#scriptSetBobjRotationY}</li>
    *   <li>{@link Bttl_800c#FUN_800cc948}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb578}</li>
+   *   <li>{@link Bttl_800c#scriptGetBobjRotation}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb5d8}</li>
+   *   <li>{@link Bttl_800c#scriptGetMonsterStatusResistFlags}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Bttl_800c#FUN_800cb618}</li>
    *   <li>{@link Bttl_800c#FUN_800cb674}</li>

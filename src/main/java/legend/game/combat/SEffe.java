@@ -61,7 +61,7 @@ import legend.game.combat.types.BttlScriptData6cSub50;
 import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub5c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
-import legend.game.combat.types.DeathDimensionEffect;
+import legend.game.combat.types.DeathDimensionEffect1c;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.EffeScriptData18;
 import legend.game.combat.types.EffeScriptData30;
@@ -153,7 +153,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cea1c;
+import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
@@ -548,7 +548,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_8010bc60}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, DeathDimensionEffect>>> deathDimensionRenderers_80119fec = MEMORY.ref(4, 0x80119fecL, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, DeathDimensionEffect.class)), 2, 4, Pointer.deferred(4, BiConsumerRef::new)));
+  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, DeathDimensionEffect1c>>> deathDimensionRenderers_80119fec = MEMORY.ref(4, 0x80119fecL, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, DeathDimensionEffect1c.class)), 2, 4, Pointer.deferred(4, BiConsumerRef::new)));
 
   private static final Value _80119f40 = MEMORY.ref(1, 0x80119f40L);
   private static final Value _80119f41 = MEMORY.ref(1, 0x80119f41L);
@@ -789,7 +789,7 @@ public final class SEffe {
       //LAB_800fc11c
     } else if(a1.scriptIndex_04.get() != -1 && a2._14.get() == 0) {
       final VECTOR sp0x10 = new VECTOR();
-      FUN_800cea1c(a1.scriptIndex_04.get(), sp0x10);
+      scriptGetScriptedObjectPos(a1.scriptIndex_04.get(), sp0x10);
       a2._58.setX((short)((sp0x10.getX() - (a2._3c.getX() + a2._2c.getX())) / a2._1a.getZ()));
       a2._58.setY((short)((sp0x10.getY() - (a2._3c.getY() + a2._2c.getY())) / a2._1a.getZ()));
       a2._58.setZ((short)((sp0x10.getZ() - (a2._3c.getZ() + a2._2c.getZ())) / a2._1a.getZ()));
@@ -2134,10 +2134,10 @@ public final class SEffe {
   public static void FUN_80100d60(final long scriptIndex, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
     if(a3._04.get() == 0 && a2.scriptIndex_04.get() != -1) {
       final VECTOR sp0x20 = new VECTOR();
-      FUN_800cea1c((int)scriptIndex, sp0x20);
+      scriptGetScriptedObjectPos((int)scriptIndex, sp0x20);
 
       final VECTOR sp0x30 = new VECTOR();
-      FUN_800cea1c(a2.scriptIndex_04.get(), sp0x30);
+      scriptGetScriptedObjectPos(a2.scriptIndex_04.get(), sp0x30);
 
       final VECTOR sp0x10 = new VECTOR().set(sp0x20).sub(sp0x30);
       a3._50.set(sp0x10);
@@ -2176,8 +2176,8 @@ public final class SEffe {
 
     final VECTOR sp0x10 = new VECTOR();
     final VECTOR sp0x20 = new VECTOR();
-    FUN_800cea1c(a2.scriptIndex_00.get(), sp0x10);
-    FUN_800cea1c(a2.scriptIndex_04.get(), sp0x20);
+    scriptGetScriptedObjectPos(a2.scriptIndex_00.get(), sp0x10);
+    scriptGetScriptedObjectPos(a2.scriptIndex_04.get(), sp0x20);
 
     final VECTOR sp0x30 = new VECTOR().set(sp0x20).sub(sp0x10);
 
@@ -2676,7 +2676,7 @@ public final class SEffe {
     if(a1.scriptIndex_08.get() != -1) {
       final VECTOR sp0x10 = new VECTOR();
       final VECTOR sp0x20 = new VECTOR();
-      FUN_800cea1c(a1.scriptIndex_08.get(), sp0x10);
+      scriptGetScriptedObjectPos(a1.scriptIndex_08.get(), sp0x10);
       sp0x10.sub(a0._10.trans_04).div(a1._28.get());
 
       //LAB_801026f0
@@ -5389,11 +5389,11 @@ public final class SEffe {
       null,
       MEMORY.ref(4, getMethodAddress(SEffe.class, "renderDeathDimensionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(SEffe.class, "deallocateDeathDimensionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      DeathDimensionEffect::new
+      DeathDimensionEffect1c::new
     );
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-    final DeathDimensionEffect effect = manager.effect_44.derefAs(DeathDimensionEffect.class);
+    final DeathDimensionEffect1c effect = manager.effect_44.derefAs(DeathDimensionEffect1c.class);
     effect.ptr_00.set(mallocTail(0x8));
     effect._04.set(script.params_20.get(4).deref().get());
     effect._08.set(script.params_20.get(5).deref().get());
@@ -5439,7 +5439,7 @@ public final class SEffe {
   }
 
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c manager, final DeathDimensionEffect effect) {
+  public static void FUN_8010b594(final EffectManagerData6c manager, final DeathDimensionEffect1c effect) {
     int v0;
     int v1;
     int a0;
@@ -5607,7 +5607,7 @@ public final class SEffe {
   }
 
   @Method(0x8010bc60L)
-  public static void FUN_8010bc60(final EffectManagerData6c manager, final DeathDimensionEffect effect) {
+  public static void FUN_8010bc60(final EffectManagerData6c manager, final DeathDimensionEffect1c effect) {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10._00.get() & 0x40) != 0) {
@@ -5696,7 +5696,7 @@ public final class SEffe {
     final MATRIX sp0x30 = new MATRIX().set(identityMatrix_800c3568);
 
     if((int)manager._10._00.get() >= 0) {
-      final DeathDimensionEffect effect = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(DeathDimensionEffect.class);
+      final DeathDimensionEffect1c effect = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(DeathDimensionEffect1c.class);
       FUN_800e8594(sp0x10, manager);
       FUN_8003f210(matrix_800c3548, sp0x10, sp0x30);
       CPU.CTC2(sp0x30.getPacked(0), 0);
@@ -5715,7 +5715,7 @@ public final class SEffe {
 
   @Method(0x8010c294L)
   public static void deallocateDeathDimensionEffect(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(manager.effect_44.derefAs(DeathDimensionEffect.class).ptr_00.get());
+    free(manager.effect_44.derefAs(DeathDimensionEffect1c.class).ptr_00.get());
   }
 
   @Method(0x8010c2e0L)

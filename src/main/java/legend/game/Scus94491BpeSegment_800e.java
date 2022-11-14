@@ -195,7 +195,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800d#FUN_800d46d4}</li>
    *   <li>{@link SEffe#FUN_80108df8}</li>
    *   <li>{@link SEffe#FUN_80102610}</li>
-   *   <li>{@link Bttl_800c#FUN_800cfdf8}</li>
+   *   <li>{@link Bttl_800c#scriptGetBobjDimension}</li>
    *   <li>{@link SEffe#FUN_80109158}</li>
    *   <li>{@link Bttl_800c#FUN_800ce9b0}</li>
    *   <li>{@link SEffe#FUN_801052dc}</li>
