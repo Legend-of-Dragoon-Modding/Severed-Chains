@@ -1,7 +1,9 @@
 package legend.game;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.ArrayRef;
 import legend.game.combat.types.BattleStructEf4;
+import legend.game.combat.types.BttlStruct08;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -10,8 +12,7 @@ public final class Scus94491BpeSegment_8006 {
 
   public static final BattleStructEf4 _8006e398 = MEMORY.ref(4, 0x8006e398L, BattleStructEf4::new);
 
-  /** TODO array of 0x8 structs */
-  public static final Value _8006e918 = MEMORY.ref(4, 0x8006e918L);
+  public static final ArrayRef<BttlStruct08> _8006e918 = MEMORY.ref(4, 0x8006e918L, ArrayRef.of(BttlStruct08.class, 0x100, 0x8, BttlStruct08::new));
 
   public static final Value _8006f1a4 = MEMORY.ref(4, 0x8006f1a4L);
 

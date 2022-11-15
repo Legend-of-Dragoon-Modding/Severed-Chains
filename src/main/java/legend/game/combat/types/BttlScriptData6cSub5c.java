@@ -24,8 +24,7 @@ public class BttlScriptData6cSub5c extends BttlScriptData6cSubBase1 {
   public final IntRef _48;
   public final Pointer<TmdObjTable> _4c;
   public final IntRef _50;
-  public final IntRef _54;
-  public final IntRef _58;
+  public final SpriteMetrics08 metrics_54;
 
   public BttlScriptData6cSub5c(final Value ref) {
     super(ref);
@@ -44,7 +43,6 @@ public class BttlScriptData6cSub5c extends BttlScriptData6cSubBase1 {
     this._48 = ref.offset(4, 0x48L).cast(IntRef::new);
     this._4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TmdObjTable::new));
     this._50 = ref.offset(4, 0x50L).cast(IntRef::new);
-    this._54 = ref.offset(4, 0x54L).cast(IntRef::new);
-    this._58 = ref.offset(4, 0x58L).cast(IntRef::new);
+    this.metrics_54 = ref.offset(4, 0x54L).cast(SpriteMetrics08::new);
   }
 }

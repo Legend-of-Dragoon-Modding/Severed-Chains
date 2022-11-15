@@ -15,7 +15,7 @@ import legend.game.types.MrgFile;
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.game.Scus94491BpeSegment.FUN_80012444;
+import static legend.game.Scus94491BpeSegment.realloc;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment._80010250;
 import static legend.game.Scus94491BpeSegment.mallocHead;
@@ -210,7 +210,7 @@ public final class SInit {
 
     final long a2 = MEMORY.ref(4, s0).offset(0x4L).get();
     _800fd524.offset(_800fd404.get() * 4).setu(_800fd51c);
-    _800fd51c.addu(0x8L + ((a2 << 0x6L & 0xffffffffL) >>> 0x3L));
+    _800fd51c.addu(8 + (a2 << 6 >>> 3));
 
     //LAB_800fbc9c
     _800fd404.addu(0x1L);
@@ -221,7 +221,7 @@ public final class SInit {
 
   @Method(0x800fbcc0L)
   public static long FUN_800fbcc0() {
-    final long a1 = _800fd51c.get();
+    final int a1 = (int)_800fd51c.get();
     if(a1 == 0) {
       free(linkedListEntry_800fd518.get());
 
@@ -229,7 +229,7 @@ public final class SInit {
       linkedListEntry_800bbacc.setu(0);
     } else {
       //LAB_800fbcfc
-      long address = FUN_80012444(linkedListEntry_800fd518.get(), a1);
+      long address = realloc(linkedListEntry_800fd518.get(), a1);
       if(address == 0) {
         address = linkedListEntry_800fd518.get();
       }

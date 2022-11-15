@@ -37,7 +37,7 @@ public class BattleStruct7cc implements MemoryRef {
 
   public final UnboundedArrayRef<Pointer<DeffPart>> _390;
 
-  public final Value _39c;
+  public final UnboundedArrayRef<SpriteMetrics08> spriteMetrics_39c;
 
   public final UnsignedShortRef u_3ac;
   public final UnsignedShortRef v_3ae;
@@ -71,7 +71,7 @@ public class BattleStruct7cc implements MemoryRef {
 
     this._390 = ref.offset(4, 0x390L).cast(UnboundedArrayRef.of(0x4, Pointer.deferred(4, DeffPart::new)));
 
-    this._39c = ref.offset(4, 0x39cL);
+    this.spriteMetrics_39c = ref.offset(4, 0x39cL).cast(UnboundedArrayRef.of(8, SpriteMetrics08::new));
 
     this.u_3ac = ref.offset(2, 0x3acL).cast(UnsignedShortRef::new);
     this.v_3ae = ref.offset(2, 0x3aeL).cast(UnsignedShortRef::new);

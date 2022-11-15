@@ -9,6 +9,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -58,7 +59,8 @@ public class Model124 implements MemoryRef {
   public final UnsignedIntRef ui_f4;
   public final UnsignedIntRef ui_f8;
   public final VECTOR scaleVector_fc;
-  public final UnsignedIntRef ui_108;
+  /** Pretty sure this doesn't include VRAM X/Y */
+  public final IntRef tpage_108;
   public final VECTOR vector_10c;
   public final VECTOR vector_118;
 
@@ -96,7 +98,7 @@ public class Model124 implements MemoryRef {
     this.ui_f4 = ref.offset(4, 0xf4L).cast(UnsignedIntRef::new);
     this.ui_f8 = ref.offset(4, 0xf8L).cast(UnsignedIntRef::new);
     this.scaleVector_fc = ref.offset(4, 0xfcL).cast(VECTOR::new);
-    this.ui_108 = ref.offset(4, 0x108L).cast(UnsignedIntRef::new);
+    this.tpage_108 = ref.offset(4, 0x108L).cast(IntRef::new);
     this.vector_10c = ref.offset(4, 0x10cL).cast(VECTOR::new);
     this.vector_118 = ref.offset(4, 0x118L).cast(VECTOR::new);
   }

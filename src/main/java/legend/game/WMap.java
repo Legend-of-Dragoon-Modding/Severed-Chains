@@ -62,7 +62,7 @@ import static legend.game.Scus94491BpeSegment.FUN_800127cc;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment._1f8003ec;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
@@ -604,7 +604,7 @@ public class WMap {
     final long fp = model.ui_f8.get();
 
     zOffset_1f8003e8.set(model.zOffset_a0.get());
-    _1f8003ec.setu(model.ui_108.get());
+    tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
 
     //LAB_800c92c8
     for(int i = 0; i < nobj; i++) {
@@ -901,7 +901,7 @@ public class WMap {
     _800c66a4.setu(0x2L);
     _800c66b8.setu(0);
     zOffset_1f8003e8.set(0);
-    _1f8003ec.setu(0x20L);
+    tmdGp0Tpage_1f8003ec.set(0x20);
     tempZ_800c66d8.set(0);
     _800c66dc.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get());
 

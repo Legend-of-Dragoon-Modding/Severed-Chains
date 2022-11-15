@@ -37,7 +37,7 @@ public class Memory {
 
   private final Object lock = new Object();
 
-  private final List<legend.core.memory.Segment> segments = new ArrayList<>();
+  private final List<Segment> segments = new ArrayList<>();
 
   private boolean alignmentChecks = true;
 
@@ -102,16 +102,16 @@ public class Memory {
     return address & REGION_MASK[region];
   }
 
-  public void addSegment(final legend.core.memory.Segment segment) {
+  public void addSegment(final Segment segment) {
     synchronized(this.lock) {
       this.segments.add(segment);
     }
   }
 
-  private legend.core.memory.Segment getSegment(final long address) {
+  private Segment getSegment(final long address) {
     final long masked = this.maskAddress(address);
 
-    for(final legend.core.memory.Segment segment : this.segments) {
+    for(final Segment segment : this.segments) {
       if(segment.accepts(masked)) {
         return segment;
       }
@@ -126,7 +126,7 @@ public class Memory {
     }
 
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       return segment.get((int)(this.maskAddress(address) - segment.getAddress()));
     }
   }
@@ -139,14 +139,14 @@ public class Memory {
     }
 
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       return segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
     }
   }
 
   public void set(final long address, final byte data) {
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       segment.set((int)(this.maskAddress(address) - segment.getAddress()), data);
     }
 
@@ -159,7 +159,7 @@ public class Memory {
     this.checkAlignment(address, size);
 
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       final int addr = (int)(this.maskAddress(address) - segment.getAddress());
       segment.removeFunction(addr);
       segment.set(addr, size, data);
@@ -172,7 +172,7 @@ public class Memory {
 
   public byte[] getBytes(final long address, final int size) {
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       return segment.getBytes((int)(this.maskAddress(address) - segment.getAddress()), size);
     }
   }
@@ -183,7 +183,7 @@ public class Memory {
     }
 
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       segment.getBytes((int)(this.maskAddress(address) - segment.getAddress()), dest, offset, size);
     }
   }
@@ -194,7 +194,7 @@ public class Memory {
 
   public void setBytes(final long address, final byte[] data, final int offset, final int size) {
     synchronized(this.lock) {
-      final legend.core.memory.Segment segment = this.getSegment(address);
+      final Segment segment = this.getSegment(address);
       segment.setBytes((int)(this.maskAddress(address) - segment.getAddress()), data, offset, size);
     }
 
@@ -204,9 +204,13 @@ public class Memory {
   }
 
   public void memcpy(final long dest, final long src, final int length) {
+    if(dest == src || length == 0) {
+      return;
+    }
+
     synchronized(this.lock) {
-      final legend.core.memory.Segment srcSegment = this.getSegment(src);
-      legend.core.memory.Segment destSegment = this.getSegment(dest);
+      final Segment srcSegment = this.getSegment(src);
+      Segment destSegment = this.getSegment(dest);
 
       if(destSegment == srcSegment) {
         srcSegment.memcpy((int)(this.maskAddress(dest) - srcSegment.getAddress()), (int)(this.maskAddress(src) - srcSegment.getAddress()), length);
@@ -253,13 +257,13 @@ public class Memory {
   }
 
   public void dump(final ByteBuffer stream) {
-    for(final legend.core.memory.Segment segment : this.segments) {
+    for(final Segment segment : this.segments) {
       segment.dump(stream);
     }
   }
 
   public void load(final ByteBuffer stream, final int version) throws ClassNotFoundException {
-    for(final legend.core.memory.Segment segment : this.segments) {
+    for(final Segment segment : this.segments) {
       segment.load(stream);
     }
   }
@@ -305,27 +309,27 @@ public class Memory {
   private void setFunction(final long address, final java.lang.reflect.Method function, @Nullable final Object instance, final boolean ignoreExtraParams) {
     this.checkAlignment(address, 4);
 
-    final legend.core.memory.Segment segment = this.getSegment(address);
+    final Segment segment = this.getSegment(address);
     segment.setFunction((int)(this.maskAddress(address) - segment.getAddress()), function, instance, ignoreExtraParams);
   }
 
   private MethodBinding getFunction(final long address) {
     this.checkAlignment(address, 4);
 
-    final legend.core.memory.Segment segment = this.getSegment(address);
+    final Segment segment = this.getSegment(address);
     return segment.getFunction((int)(this.maskAddress(address) - segment.getAddress()));
   }
 
   private boolean isFunction(final long address) {
     this.checkAlignment(address, 4);
 
-    final legend.core.memory.Segment segment = this.getSegment(address);
+    final Segment segment = this.getSegment(address);
     return segment.isFunction((int)(this.maskAddress(address) - segment.getAddress()));
   }
 
   public class MemoryValue extends Value {
     private final long address;
-    private legend.core.memory.Segment segment;
+    private Segment segment;
     private int segmentOffset;
 
     public MemoryValue(final int byteSize, final long address) {

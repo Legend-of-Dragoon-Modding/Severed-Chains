@@ -459,7 +459,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800e#FUN_800eb84c}</li>
    *   <li>{@link Bttl_800e#FUN_800eb188}</li>
    *   <li>{@link Bttl_800e#FUN_800eb01c}</li>
-   *   <li>{@link Bttl_800c#FUN_800caae4}</li>
+   *   <li>{@link Temp#FUN_800caae4}</li>
    *   <li>{@link SEffe#FUN_80115690}</li>
    *   <li>{@link SEffe#FUN_80118df4}</li>
    *   <li>{@link SEffe#FUN_80111a58}</li>

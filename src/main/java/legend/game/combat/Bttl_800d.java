@@ -40,6 +40,7 @@ import legend.game.combat.types.GuardEffect06;
 import legend.game.combat.types.MonsterDeathEffect34;
 import legend.game.combat.types.ProjectileHitEffect14;
 import legend.game.combat.types.ProjectileHitEffect14Sub48;
+import legend.game.combat.types.SpriteMetrics08;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
@@ -54,9 +55,9 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment._1f8003ec;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.ctmdGp0CommandId_1f8003ee;
+import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -120,7 +121,7 @@ import static legend.game.combat.Bttl_800c._800c67e8;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
 import static legend.game.combat.Bttl_800c._800c6920;
-import static legend.game.combat.Bttl_800c._800c6948;
+import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c._800c6d94;
 import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
@@ -167,7 +168,7 @@ public final class Bttl_800d {
   private Bttl_800d() { }
 
   @Method(0x800d0094L)
-  public static void FUN_800d0094(final int scriptIndex, final int animIndex, final long a2) {
+  public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
     final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     final UnsignedIntRef a0;
@@ -182,8 +183,8 @@ public final class Bttl_800d {
     }
 
     //LAB_800d00d4
-    if((a2 & 0xffL) != 0) {
-      a0.set(~(1L << a3) & a0.get());
+    if(clearBit) {
+      a0.and(~(1L << a3));
       return;
     }
 
@@ -1013,7 +1014,7 @@ public final class Bttl_800d {
           MEMORY.ref(4, s2).offset(0x14L).setu(sp0x10.getX());
           MEMORY.ref(4, s2).offset(0x18L).setu(sp0x10.getY());
           MEMORY.ref(4, s2).offset(0x1cL).setu(sp0x10.getZ());
-          FUN_800d0094(s1.scriptIndex_08.get(), animIndex, 0);
+          FUN_800d0094(s1.scriptIndex_08.get(), animIndex, false);
         }
 
         //LAB_800d33d0
@@ -1069,23 +1070,23 @@ public final class Bttl_800d {
 
     //LAB_800d35a0
     for(int animIndex = 0; animIndex < effect.animCount_04.get(); animIndex++) {
-      FUN_800d0094(effect.scriptIndex_08.get(), animIndex, 0x1L);
+      FUN_800d0094(effect.scriptIndex_08.get(), animIndex, true);
       MEMORY.ref(1, s4).offset(0x0L).setu(-0x1L);
       s4 = s4 + 0x30L;
     }
 
     //LAB_800d35cc
-    final long v0 = _800c6948.get() + (a0.params_20.get(2).deref().get() & 0xff) * 0x8L;
+    final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20.get(2).deref().get() & 0xff);
     effect._0c._00.set(manager._10._00.get());
     effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
     effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
-    effect._0c.w_08.set((int)MEMORY.ref(1, v0).offset(0x4L).get());
-    effect._0c.h_0a.set((int)MEMORY.ref(1, v0).offset(0x5L).get());
-    effect._0c.tpage_0c.set((int)((MEMORY.ref(2, v0).offset(0x2L).get() & 0x100) >>> 4 | (MEMORY.ref(2, v0).offset(0x0L).get() & 0x3ff) >>> 6));
-    effect._0c.u_0e.set((int)(MEMORY.ref(1, v0).offset(0x0L).get() & 0x3f) * 4);
-    effect._0c.v_0f.set((int)MEMORY.ref(1, v0).offset(0x2L).get());
-    effect._0c.clutX_10.set((int)(MEMORY.ref(2, v0).offset(0x6L).get() << 4 & 0x3ff));
-    effect._0c.clutY_12.set((int)(MEMORY.ref(2, v0).offset(0x6L).get() >>> 6 & 0x1ff));
+    effect._0c.w_08.set(metrics.w_04.get());
+    effect._0c.h_0a.set(metrics.h_05.get());
+    effect._0c.tpage_0c.set((metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6);
+    effect._0c.u_0e.set((metrics.u_00.get() & 0x3f) * 4);
+    effect._0c.v_0f.set(metrics.v_02.get());
+    effect._0c.clutX_10.set(metrics.clut_06.get() << 4 & 0x3ff);
+    effect._0c.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
     effect._0c._18.set((short)0);
     effect._0c._1a.set((short)0);
     a0.params_20.get(0).deref().set((int)fp);
@@ -4604,7 +4605,7 @@ public final class Bttl_800d {
     fp = model.ObjTable_0c.nobj.get();
     zOffset_1f8003e8.set(model.zOffset_a0.get());
     sp50 = model.ui_f8.get();
-    _1f8003ec.setu(model.ui_108.get());
+    tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
     s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
@@ -4688,7 +4689,7 @@ public final class Bttl_800d {
     model.coord2ArrPtr_04.setPointer(v0);
     v0 = v0 + model.count_c8.get() * 0x50;
     model.coord2ParamArrPtr_08.setPointer(v0);
-    model.ui_108.set((MEMORY.ref(4, a1).offset(0xcL).get() & 0xffff_0000L) >>> 11);
+    model.tpage_108.set((int)((MEMORY.ref(4, a1).offset(0xcL).get() & 0xffff_0000L) >>> 11));
     adjustTmdPointers(model.tmd_8c.deref());
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
     model.coord2_14.param.set(model.coord2Param_64);
@@ -5091,7 +5092,7 @@ public final class Bttl_800d {
 
   @Method(0x800de9bcL)
   public static long FUN_800de9bc(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     //LAB_800dea38
     for(int i = 0; i < count; i++) {
@@ -5159,7 +5160,7 @@ public final class Bttl_800d {
             cmd.rgb(3, (int)CPU.MFC2(22));
 
             if((command & 0x2) != 0 ) {
-              final int tpage = (int)_1f8003ec.get();
+              final int tpage = tmdGp0Tpage_1f8003ec.get();
               cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
             }
 
@@ -5178,7 +5179,7 @@ public final class Bttl_800d {
 
   @Method(0x800dec14L)
   public static long FUN_800dec14(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     //LAB_800dec68
     CPU.MTC2(0x808080, 6);
@@ -5276,7 +5277,7 @@ public final class Bttl_800d {
 
   @Method(0x800dee8cL)
   public static long FUN_800dee8c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     //LAB_800def08
     for(int i = 0; i < count; i++) {
@@ -5351,7 +5352,7 @@ public final class Bttl_800d {
 
             cmd.rgb(3, (int)CPU.MFC2(22));
 
-            final int tpage = (int)_1f8003ec.get();
+            final int tpage = tmdGp0Tpage_1f8003ec.get();
 
             if((command & 0x2) != 0) {
               cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
@@ -5372,7 +5373,7 @@ public final class Bttl_800d {
 
   @Method(0x800df130L)
   public static long FUN_800df130(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     //LAB_800df1ac
     for(int i = 0; i < count; i++) {
@@ -5428,7 +5429,7 @@ public final class Bttl_800d {
             CPU.COP2(0x108041bL);
             cmd.rgb(2, (int)CPU.MFC2(22));
 
-            final int tpage = (int)_1f8003ec.get();
+            final int tpage = tmdGp0Tpage_1f8003ec.get();
 
             if((command & 0x2) != 0) {
               cmd.translucent(Translucency.of(tpage >> 5 & 0b11));
@@ -5449,7 +5450,7 @@ public final class Bttl_800d {
 
   @Method(0x800df370L)
   public static long FUN_800df370(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -5532,7 +5533,7 @@ public final class Bttl_800d {
 
   @Method(0x800df6f0L)
   public static long FUN_800df6f0(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    final long command = ctmdGp0CommandId_1f8003ee.get();
+    final long command = tmdGp0CommandId_1f8003ee.get();
 
     final IntRef refR = new IntRef();
     final IntRef refG = new IntRef();
@@ -5639,7 +5640,7 @@ public final class Bttl_800d {
             if(z >= 0xb) {
               //LAB_800dfb94
               final int clut = (int)MEMORY.ref(2, primitives).offset(0x6L).get();
-              final int tpage = (int)MEMORY.ref(2, primitives).offset(0xaL).get() & 0xff9f | (int)_1f8003ec.getSigned();
+              final int tpage = (int)MEMORY.ref(2, primitives).offset(0xaL).get() & 0xff9f | tmdGp0Tpage_1f8003ec.get();
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)
                 .bpp(Bpp.of(tpage >>> 7 & 0b11))
@@ -5733,7 +5734,7 @@ public final class Bttl_800d {
             final int z = Math.min((int)CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
             if(z >= 0xb) {
               final int clut = (int)MEMORY.ref(2, primitives).offset(0x06L).get();
-              final int tpage = (int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0xff9f | (int)_1f8003ec.get();
+              final int tpage = (int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0xff9f | tmdGp0Tpage_1f8003ec.get();
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)
                 .bpp(Bpp.of(tpage >>> 7 & 0b11))
@@ -5805,7 +5806,7 @@ public final class Bttl_800d {
             final int z = Math.min((int)CPU.MFC2(7) + zOffset_1f8003e8.get() >> 2, 0xffe);
             if(z >= 0xb) {
               final int clut = (int)MEMORY.ref(2, primitives).offset(0x6L).get();
-              final int tpage = (int)MEMORY.ref(2, primitives).offset(0xaL).get() & 0xff9f | (int)_1f8003ec.get();
+              final int tpage = (int)MEMORY.ref(2, primitives).offset(0xaL).get() & 0xff9f | tmdGp0Tpage_1f8003ec.get();
 
               final GpuCommandPoly cmd = new GpuCommandPoly(3)
                 .bpp(Bpp.of(tpage >>> 7 & 0b11))

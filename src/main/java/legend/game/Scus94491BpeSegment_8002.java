@@ -404,7 +404,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002079c
-    model.ui_108.set((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11); //TODO reading the upper 16 bits of the TMD ID?
+    model.tpage_108.set((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11)); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
 
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {

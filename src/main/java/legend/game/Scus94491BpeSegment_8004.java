@@ -131,6 +131,13 @@ public final class Scus94491BpeSegment_8004 {
   public static final ShortRef overlaysLoadedCount_8004dd1c = MEMORY.ref(2, 0x8004dd1cL, ShortRef::new);
   public static final BoolRef loadingOverlay_8004dd1e = MEMORY.ref(1, 0x8004dd1eL, BoolRef::new);
 
+  /**
+   * <ol>
+   *   <li value="5">SMAP</li>
+   *   <li value="6">Combat</li>
+   *   <li value="8">WMAP</li>
+   * </ol>
+   */
   public static final Value mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L);
   /** When the overlay finishes loading, switch to this */
   public static final Value mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L);

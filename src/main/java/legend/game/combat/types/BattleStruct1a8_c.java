@@ -11,7 +11,7 @@ import legend.core.memory.types.UnsignedShortRef;
 public class BattleStruct1a8_c implements MemoryRef {
   private final Value ref;
 
-  /** This can either be a pointer to a BPE, or 2-byte x, 1-byte Y, 1-byte H */
+  /** This can either be a pointer to a BPE, or 2-byte x, 1-byte Y, 1-byte H... or an index...? */
   public final UnsignedIntRef bpe_00;
   public final UnsignedShortRef x_00;
   public final UnsignedByteRef y_02;

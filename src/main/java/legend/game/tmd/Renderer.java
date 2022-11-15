@@ -14,7 +14,8 @@ import org.apache.logging.log4j.Logger;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
-import static legend.game.Scus94491BpeSegment._1f8003ec;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
@@ -69,7 +70,7 @@ public class Renderer {
     }
 
     //TODO need to figure out what this was being used for
-    final long specialTrans = (int)_1f8003ec.get() >> 16;
+    final long specialTrans = tmdGp0CommandId_1f8003ee.get();
 
     final int vertexCount = quad ? 4 : 3;
     // ---
@@ -192,7 +193,7 @@ public class Renderer {
       }
 
       if(translucent && !textured) {
-        cmd.translucent(Translucency.of((int)_1f8003ec.get() >>> 5 & 0b11));
+        cmd.translucent(Translucency.of((int)tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11));
       }
 
       GPU.queueCommand(z, cmd);

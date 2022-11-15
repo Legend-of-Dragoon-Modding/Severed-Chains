@@ -23,12 +23,12 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
   public final UnsignedShortRef count_50;
   public final UnsignedShortRef _52;
   public final UnsignedShortRef _54;
-  public final UnsignedShortRef _56;
-  public final UnsignedShortRef _58;
-  public final UnsignedShortRef _5a;
+  public final UnsignedShortRef tpage_56;
+  public final UnsignedShortRef u_58;
+  public final UnsignedShortRef v_5a;
   public final UnsignedShortRef clut_5c;
-  public final UnsignedByteRef _5e;
-  public final UnsignedByteRef _5f;
+  public final UnsignedByteRef w_5e;
+  public final UnsignedByteRef h_5f;
   public final ByteRef _60;
   public final ByteRef _61;
 
@@ -58,12 +58,12 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
     this.count_50 = ref.offset(2, 0x50L).cast(UnsignedShortRef::new);
     this._52 = ref.offset(2, 0x52L).cast(UnsignedShortRef::new);
     this._54 = ref.offset(2, 0x54L).cast(UnsignedShortRef::new);
-    this._56 = ref.offset(2, 0x56L).cast(UnsignedShortRef::new);
-    this._58 = ref.offset(2, 0x58L).cast(UnsignedShortRef::new);
-    this._5a = ref.offset(2, 0x5aL).cast(UnsignedShortRef::new);
+    this.tpage_56 = ref.offset(2, 0x56L).cast(UnsignedShortRef::new);
+    this.u_58 = ref.offset(2, 0x58L).cast(UnsignedShortRef::new);
+    this.v_5a = ref.offset(2, 0x5aL).cast(UnsignedShortRef::new);
     this.clut_5c = ref.offset(2, 0x5cL).cast(UnsignedShortRef::new);
-    this._5e = ref.offset(1, 0x5eL).cast(UnsignedByteRef::new);
-    this._5f = ref.offset(1, 0x5fL).cast(UnsignedByteRef::new);
+    this.w_5e = ref.offset(1, 0x5eL).cast(UnsignedByteRef::new);
+    this.h_5f = ref.offset(1, 0x5fL).cast(UnsignedByteRef::new);
     this._60 = ref.offset(1, 0x60L).cast(ByteRef::new);
     this._61 = ref.offset(1, 0x61L).cast(ByteRef::new);
 

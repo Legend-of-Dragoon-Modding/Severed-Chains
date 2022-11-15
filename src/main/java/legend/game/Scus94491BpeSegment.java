@@ -39,6 +39,7 @@ import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.TriFunctionRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
@@ -365,8 +366,8 @@ public final class Scus94491BpeSegment {
   public static final IntRef displayWidth_1f8003e0 = MEMORY.ref(4, 0x1f8003e0L, IntRef::new);
   public static final IntRef displayHeight_1f8003e4 = MEMORY.ref(4, 0x1f8003e4L, IntRef::new);
   public static final IntRef zOffset_1f8003e8 = MEMORY.ref(4, 0x1f8003e8L, IntRef::new);
-  public static final Value _1f8003ec = MEMORY.ref(2, 0x1f8003ecL);
-  public static final Value ctmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL);
+  public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
+  public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
   public static final Pointer<BattleStruct18cb0> _1f8003f4 = MEMORY.ref(4, 0x1f8003f4L, Pointer.deferred(4, BattleStruct18cb0::new));
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
@@ -953,7 +954,7 @@ public final class Scus94491BpeSegment {
             //LAB_80011fdc
             free(_8005a1e0.offset(i * 0xcL).get());
           } else {
-            FUN_80012444(_8005a1e0.offset(i * 0xcL).get(), _8005a1e4.offset(i * 0xcL).get());
+            realloc(_8005a1e0.offset(i * 0xcL).get(), (int)_8005a1e4.offset(i * 0xcL).get());
           }
         }
       }
@@ -1222,274 +1223,86 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012444L)
-  public static long FUN_80012444(final long address, final long size) {
-    long v0;
-    long v1;
-    long a0 = address;
-    long a1 = size;
-    long a2;
-    long a3;
-    final long t0;
-    final long t1;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    final long s4;
-    s1 = a0;
-    if(s1 == 0) {
-      return 0;
-    }
-    s2 = a1;
-    s1 = s1 - 0xcL;
-    s2 = s2 + 0xfL;
-    v0 = -0x4L;
-    s2 = s2 & v0;
-    s3 = MEMORY.ref(4, s1).offset(0x4L).get();
-
-    if(s2 < s3) {
-      v1 = s2;
-    } else {
-      v1 = s3;
-    }
+  public static long realloc(long address, int newSize) {
+    address = address - 0xcL;
+    newSize = newSize + 0xf & 0xffff_fffc; // Add 0xc and 4-byte align
+    int blockSize = (int)MEMORY.ref(4, address).offset(0x4L).get();
 
     //LAB_80012494
-    s4 = v1;
-    a0 = s2 - 0xcL;
-    s0 = mallocTail(a0);
-    if(s0 != 0) {
-      s0 = s0 - 0xcL;
-      a1 = s0 + 0xcL;
-      if(s1 < s0) {
-        a0 = s1 + 0xcL;
-        v1 = s4 - 0xcL;
-        v1 = v1 >>> 2;
-        v1--;
+    final int size = Math.min(newSize, blockSize);
+    final long s0 = mallocTail(newSize - 0xc) - 0xcL;
 
-        //LAB_800124d0
-        while((int)v1 >= 0) {
-          v0 = MEMORY.ref(4, a0).offset(0x0L).get();
-          MEMORY.ref(4, a1).offset(0x0L).setu(v0);
-          a0 = a0 + 0x4L;
-          a1 = a1 + 0x4L;
+    if(address < s0) {
+      //LAB_800124d0
+      memcpy(s0 + 0xcL, address + 0xcL, size - 0xc);
+      free(address + 0xcL);
 
-          //LAB_800124e4
-          v1 = v1 - 0x1L;
-        }
-
-        a0 = s1 + 0xcL;
-        free(a0);
-
-        //LAB_80012740
-        return s0 + 0xcL;
-      }
-
-      //LAB_800124f8
-      a0 = s0 + 0xcL;
-      a1 = 0;
-      a2 = a1;
-      free(a0);
+      //LAB_80012740
+      return s0 + 0xcL;
     }
 
+    //LAB_800124f8
+    free(s0 + 0xcL);
+
     //LAB_80012508
-    v1 = MEMORY.ref(4, s1).offset(0x0L).get();
-
-    v0 = MEMORY.ref(2, v1).offset(0x8L).get();
-
-    if(v0 != 0) {
-      s0 = s1;
-    } else {
-      s0 = v1;
-      v0 = MEMORY.ref(4, s0).offset(0x4L).get();
-      s3 = s3 + v0;
+    // Merge with previous memory block if possible
+    final long previousBlock = MEMORY.ref(4, address).offset(0x0L).get();
+    final long dest;
+    if(MEMORY.ref(2, previousBlock).offset(0x8L).get() == 0) { // If free space
+      dest = previousBlock;
+      blockSize += (int)MEMORY.ref(4, dest).offset(0x4L).get();
+    } else { // If not free space
+      dest = address;
     }
 
     //LAB_80012530
-    v0 = MEMORY.ref(4, s1).offset(0x4L).get();
-
-    v1 = s1 + v0;
-    v0 = MEMORY.ref(2, v1).offset(0x8L).get();
-
-    if(v0 == 0) {
-      v0 = MEMORY.ref(4, v1).offset(0x4L).get();
-      s3 = s3 + v0;
+    // Merge with next memory block if possible
+    final long nextBlock = address + MEMORY.ref(4, address).offset(0x4L).get();
+    if(MEMORY.ref(2, nextBlock).offset(0x8L).get() == 0) { // If free space
+      blockSize += (int)MEMORY.ref(4, nextBlock).offset(0x4L).get();
     }
 
     //LAB_8001255c
-    if(s3 < s2) {
-      t1 = s3 - s2;
+    // If it doesn't fit, allocate a new block
+    if(blockSize < newSize) {
       //LAB_800126d8
-      a0 = s2 - 0xcL;
-      a1 = 0;
-      a2 = a1;
-      v0 = mallocTail(a0);
-      s0 = v0;
-      if(s0 == 0) {
-        //LAB_800126f4
-        return 0;
-      }
-
-      s0 = s0 - 0xcL;
-      //LAB_800126fc
-      a1 = s0 + 0xcL;
-      v1 = s1 + 0xcL;
-      a0 = s4 - 0xcL;
-      a0 = a0 >>> 2;
-      a0--;
+      final long newBlock = mallocTail(newSize - 0xc) - 0xcL;
 
       //LAB_80012710
-      while((int)a0 >= 0) {
-        v0 = MEMORY.ref(4, v1).offset(0x0L).get();
-        MEMORY.ref(4, a1).offset(0x0L).setu(v0);
-        v1 = v1 + 0x4L;
-        a1 = a1 + 0x4L;
-
-        //LAB_80012724
-        a0 = a0 - 0x1L;
-      }
-
-      a0 = s1 + 0xcL;
-
-      //LAB_80012734
-      a1 = 0;
-      a2 = a1;
-      free(a0);
+      memcpy(newBlock + 0xcL, address + 0xcL, size - 0xc);
+      free(address + 0xcL);
 
       //LAB_80012740
-      v0 = s0 + 0xcL;
-    } else {
-      t1 = s3 - s2;
-      t0 = s0 + t1;
-      if(t1 >= 0xcL) {
-        if(t0 == s1) {
-          a3 = t0 + 0xcL;
-        } else {
-          a3 = t0 + 0xcL;
-          a2 = s1 + 0xcL;
-          a1 = s4 - 0xcL;
-          if(a3 >= a2) {
-            a1 = a1 >>> 2;
-            //LAB_800125c0
-            v1 = t0 + 0xcL;
-            v0 = s1 + 0xcL;
-            if(v0 < v1) {
-              v0 = a1;
-              if((int)v0 <= 0) {
-                a1 = a1 - 0x1L;
-              } else {
-                a1 = a1 - 0x1L;
-
-                //LAB_800125e0
-                do {
-                  a0 = a1;
-                  v0 = a1 << 2;
-                  v1 = v0 + a3;
-                  v0 = v0 + a2;
-                  v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-
-                  MEMORY.ref(4, v1).offset(0x0L).setu(v0);
-                  a1 = a1 - 0x1L;
-                } while((int)a0 > 0);
-              }
-            }
-          } else {
-            a1 = a1 >>> 2;
-            v0 = a1;
-            a1 = a1 - 0x1L;
-            if((int)v0 > 0) {
-              //LAB_80012598
-              do {
-                v0 = MEMORY.ref(4, a2).offset(0x0L).get();
-                MEMORY.ref(4, a3).offset(0x0L).setu(v0);
-                a2 = a2 + 0x4L;
-                a3 = a3 + 0x4L;
-                v0 = a1;
-                a1 = a1 - 0x1L;
-              } while((int)v0 > 0);
-            }
-          }
-        }
-
-        //LAB_80012604
-        MEMORY.ref(2, s0).offset(0x8L).setu(0);
-
-        //LAB_80012608
-        v0 = 0x2L;
-        MEMORY.ref(2, t0).offset(0x8L).setu(v0);
-        MEMORY.ref(4, s0).offset(0x4L).setu(t1);
-        v0 = s0 + t1;
-        MEMORY.ref(4, v0).offset(0x0L).setu(s0);
-        MEMORY.ref(4, t0).offset(0x4L).setu(s2);
-        v0 = t0 + s2;
-        MEMORY.ref(4, v0).offset(0x0L).setu(t0);
-        v0 = t0 + 0xcL;
-      } else {
-        //LAB_80012630
-        if(s0 == s1) {
-          a3 = s0 + 0xcL;
-        } else {
-          a3 = s0 + 0xcL;
-          a2 = s1 + 0xcL;
-          a1 = s4 - 0xcL;
-          if(a3 >= a2) {
-            a1 = a1 >>> 2;
-
-            //LAB_80012680
-            v1 = s0 + 0xcL;
-            v0 = s1 + 0xcL;
-            if(v0 >= v1) {
-              v0 = a1;
-            } else {
-              v0 = a1;
-              if((int)v0 <= 0) {
-                a1 = a1 - 0x1L;
-              } else {
-                a1 = a1 - 0x1L;
-
-                //LAB_8001269c
-                do {
-                  a0 = a1;
-                  v0 = a1 << 2;
-                  v1 = v0 + a3;
-                  v0 = v0 + a2;
-                  v0 = MEMORY.ref(4, v0).offset(0x0L).get();
-                  MEMORY.ref(4, v1).offset(0x0L).setu(v0);
-                  a1 = a1 - 0x1L;
-                } while((int)a0 > 0);
-              }
-            }
-          } else {
-            a1 = a1 >>> 2;
-            v0 = a1;
-            a1 = a1 - 0x1L;
-            if((int)v0 > 0) {
-              //LAB_80012658
-              do {
-                v0 = MEMORY.ref(4, a2).offset(0x0L).get();
-                MEMORY.ref(4, a3).offset(0x0L).setu(v0);
-                a2 = a2 + 0x4L;
-                a3 = a3 + 0x4L;
-                v0 = a1;
-                a1 = a1 - 0x1L;
-              } while((int)v0 > 0);
-            }
-          }
-        }
-
-        //LAB_800126c0
-        v0 = 0x2L;
-
-        //LAB_800126c4
-        MEMORY.ref(2, s0).offset(0x8L).setu(v0);
-        MEMORY.ref(4, s0).offset(0x4L).setu(s3);
-        v0 = s0 + s3;
-        MEMORY.ref(4, v0).offset(0x0L).setu(s0);
-        v0 = s0 + 0xcL;
-      }
+      return newBlock + 0xcL;
     }
 
-    //LAB_80012744
-    return v0;
+    // If there's more than enough space, split the block and only use what's needed
+    final int deltaSize = blockSize - newSize;
+    if(deltaSize >= 0xc) {
+      final long t0 = dest + deltaSize;
+      memcpy(t0 + 0xcL, address + 0xcL, size - 0xc);
+
+      //LAB_80012604
+      MEMORY.ref(4, dest).offset(0x0L).offset(deltaSize).setu(dest);
+      MEMORY.ref(4, dest).offset(0x4L).setu(deltaSize);
+      MEMORY.ref(2, dest).offset(0x8L).setu(0);
+
+      MEMORY.ref(4, t0).offset(0x0L).offset(newSize).setu(t0);
+      MEMORY.ref(4, t0).offset(0x4L).setu(newSize);
+      MEMORY.ref(2, t0).offset(0x8L).setu(1);
+      return t0 + 0xcL;
+    }
+
+    //LAB_80012630
+    // Otherwise, the data just fits
+    memcpy(dest + 0xcL, address + 0xcL, size - 0xc);
+
+    //LAB_800126c0
+    //LAB_800126c4
+    MEMORY.ref(4, dest).offset(0x0L).offset(blockSize).setu(dest);
+    MEMORY.ref(4, dest).offset(0x4L).setu(blockSize);
+    MEMORY.ref(2, dest).offset(0x8L).setu(2);
+    return dest + 0xcL;
   }
 
   @Method(0x80012764L)
@@ -1577,9 +1390,9 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800128a8L)
-  public static long FUN_800128a8(final long a0) {
-    if(a0 != 0) {
-      return MEMORY.ref(4, a0).offset(-0x8L).get() - 0xcL;
+  public static int getMallocSize(final long address) {
+    if(address != 0) {
+      return (int)MEMORY.ref(4, address).offset(-0x8L).get() - 0xc;
     }
 
     //LAB_800128bc
@@ -2571,23 +2384,17 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80015704L)
-  public static long FUN_80015704(long a0, long a1) {
-    a1 = a1 - 0x1L;
-    long a2 = MEMORY.ref(4, a0).offset(0x4L).get() * 0x8L + 0x8L;
-    a0 = a0 + a1 * 0x8L;
+  public static int FUN_80015704(final long a0, final int count) {
+    int a2 = ((int)MEMORY.ref(4, a0).offset(0x4L).get() + 1) * 8;
 
     //LAB_80015724
-    while((int)a1 >= 0) {
-      final long v0 = MEMORY.ref(4, a0).offset(0xcL).get() + 0x3L & 0xffff_fffcL;
-      final long v1 = MEMORY.ref(4, a0).offset(0x8L).get() + v0;
+    for(int i = count - 1; i >= 0; i--) {
+      final long addr = a0 + i * 0x8L;
+      final int v1 = (int)MEMORY.ref(4, addr).offset(0x8L).get() + ((int)MEMORY.ref(4, addr).offset(0xcL).get() + 3 & 0xffff_fffc);
 
-      if((int)a2 < (int)v1) {
+      if(a2 < v1) {
         a2 = v1;
       }
-
-      //LAB_80015748
-      a0 = a0 - 0x8L;
-      a1 = a1 - 0x1L;
     }
 
     //LAB_80015754
@@ -6039,13 +5846,12 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001cb34
     do {
-      a1 = 0x3L;
-      v0 = s3 << a1;
+      v0 = s3 << 3;
       v0 = s7 + v0;
       v0 = MEMORY.ref(4, v0).offset(0x8L).get();
       v1 = MEMORY.ref(4, s1).offset(0x0L).get();
       s2 = s7 + v0;
-      v0 = v1 << a1;
+      v0 = v1 << 3;
       v0 = v0 - v1;
       v1 = MEMORY.ref(4, s2).offset(0x8L).get();
       v0 = v0 << 2;
@@ -6055,13 +5861,13 @@ public final class Scus94491BpeSegment {
       MEMORY.ref(2, v0).offset(0x2L).setu(v1);
       v1 = MEMORY.ref(4, s1).offset(0x0L).get();
       a0 = s2;
-      v0 = v1 << a1;
+      v0 = v1 << 3;
       v0 = v0 - v1;
       v0 = v0 << 2;
       v1 = MEMORY.ref(4, s5).offset(0x4L).get();
       v0 = v0 + s4;
       MEMORY.ref(4, v0).offset(0x4L).setu(v1);
-      v0 = FUN_80015704(a0, a1);
+      v0 = FUN_80015704(a0, 3);
       a0 = MEMORY.ref(4, s1).offset(0x0L).get();
       a1 = s2;
       v1 = a0 << 3;
@@ -6395,10 +6201,10 @@ public final class Scus94491BpeSegment {
         } while((int)a0 >= 0);
 
         //LAB_8001d72c
-        v0 = FUN_80015704(s2, 0x3L);
+        v0 = FUN_80015704(s2, 3);
         v0 = mallocTail(v0);
         MEMORY.ref(4, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x4L).setu(v0);
-        v0 = FUN_80015704(s2, 0x3L);
+        v0 = FUN_80015704(s2, 3);
         a0 = MEMORY.ref(4, s4).offset(MEMORY.ref(4, s3).get() * 0x1cL).offset(0x4L).get();
         memcpy(a0, s2, (int)v0);
 

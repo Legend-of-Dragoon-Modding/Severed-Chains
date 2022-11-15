@@ -104,7 +104,7 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
-import static legend.game.Scus94491BpeSegment._1f8003ec;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.cdName_80011700;
@@ -1161,7 +1161,7 @@ public final class SMap {
     long s6 = a0.ui_f4.get();
 
     zOffset_1f8003e8.set(a0.zOffset_a0.get());
-    _1f8003ec.setu(a0.ui_108.get());
+    tmdGp0Tpage_1f8003ec.set(a0.tpage_108.get());
 
     //LAB_800daaa8
     for(int i = 0; i < a0.ObjTable_0c.nobj.get(); i++) {
@@ -2461,7 +2461,7 @@ public final class SMap {
     }
 
     //LAB_800e0e74
-    model.ui_108.set((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >> 11));
+    model.tpage_108.set((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >> 11));
     final long v0_0 = extendedTmd.ptr_08.get();
     if(v0_0 != 0) {
       model.ptr_a8.set(extendedTmd.getAddress() + v0_0 / 0x4L * 0x4L);
@@ -7339,7 +7339,7 @@ public final class SMap {
   @Method(0x800eee48L)
   public static void FUN_800eee48(final Model124 model, final MATRIX matrix) {
     zOffset_1f8003e8.set(model.zOffset_a0.get());
-    _1f8003ec.setu(model.ui_108.get());
+    tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
 
     final MATRIX lw = new MATRIX();
 
