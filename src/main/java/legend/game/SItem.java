@@ -57,7 +57,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.FUN_800127cc;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
@@ -625,7 +625,7 @@ public final class SItem {
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
     decrementOverlayCount();
   }
 
@@ -667,7 +667,7 @@ public final class SItem {
     }
 
     //LAB_800fc4cc
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
     decrementOverlayCount();
   }
 
@@ -700,7 +700,7 @@ public final class SItem {
     }
 
     //LAB_800fc614
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
     decrementOverlayCount();
   }
 
@@ -845,7 +845,7 @@ public final class SItem {
       FUN_80022a94(MEMORY.ref(4, address).offset(0x6200L)); // Item textures
       FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0460L));
       FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0580L));
-      FUN_800127cc(MEMORY.ref(4, address).getAddress(), 0, 0x1L);
+      deferReallocOrFree(address, 0, 1);
     } else if(param == 0x1L) {
       //LAB_800fc9e4
       drgn0_6666FilePtr_800bdc3c.setPointer(address);

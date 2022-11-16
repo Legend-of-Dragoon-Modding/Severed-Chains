@@ -12,12 +12,12 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
+import legend.game.types.DeferredReallocOrFree0c;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -31,6 +31,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
 
   public static final Value _80050104 = MEMORY.ref(4, 0x80050104L);
+
+  public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
 
   public static final Value _8005019c = MEMORY.ref(4, 0x8005019cL);
 
@@ -160,11 +162,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
 
-  public static final Value _8005a1e0 = MEMORY.ref(4, 0x8005a1e0L);
-  public static final Value _8005a1e4 = MEMORY.ref(4, 0x8005a1e4L);
-
-  public static final Value _8005a1ea = MEMORY.ref(2, 0x8005a1eaL);
-
+  public static final ArrayRef<DeferredReallocOrFree0c> deferredReallocOrFree_8005a1e0 = MEMORY.ref(4, 0x8005a1e0L, ArrayRef.of(DeferredReallocOrFree0c.class, 16, 0xc, DeferredReallocOrFree0c::new));
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));

@@ -6,7 +6,6 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
@@ -94,15 +93,13 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -124,8 +121,6 @@ public final class Scus94491BpeSegment_800e {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_800e.class);
 
-  public static final Value ramSize_800e6f04 = MEMORY.ref(4, 0x800e6f04L);
-  public static final Value stackSize_800e6f08 = MEMORY.ref(4, 0x800e6f08L);
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment_800e#initSceaLogo()}</li>
@@ -838,7 +833,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e670c();
     FUN_800e6ecc();
     FUN_800e6774();
-    FUN_800e6e6c();
+    initFmvs();
   }
 
   @Method(0x800e5fc0L)
@@ -1266,13 +1261,11 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e6e6cL)
-  public static void FUN_800e6e6c() {
+  public static void initFmvs() {
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
     setCdMix(0x3f);
 
-    _800bf0cd.setu(0);
-    _800bf0ce.setu(0x7fL);
     _800bf0cf.setu(0);
     _800bf0d0.setu(0);
     fmvStage_800bf0d8.setu(0);

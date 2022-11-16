@@ -58,7 +58,7 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.FUN_800127cc;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
@@ -2878,7 +2878,7 @@ public class WMap {
 
     LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
     memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
 
     _800c66b8.oru(0x1L);
   }

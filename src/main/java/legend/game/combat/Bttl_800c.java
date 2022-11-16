@@ -81,11 +81,11 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.realloc;
-import static legend.game.Scus94491BpeSegment.FUN_800127cc;
+import static legend.game.Scus94491BpeSegment.realloc2;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.getMallocSize;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
-import static legend.game.Scus94491BpeSegment.FUN_80015704;
+import static legend.game.Scus94491BpeSegment.getMrgSize;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
@@ -1492,23 +1492,23 @@ public final class Bttl_800c {
     final MrgFile mrg = _1f8003f4.deref().stageMrg_638.deref();
 
     // MCQ
-    if((int)mrg.entries.get(1).size.get() > 0) {
+    if(mrg.entries.get(1).size.get() > 0) {
       loadStageMcq(mrg.getFile(1, McqHeader::new));
     }
 
     //LAB_800c8bb0
     // TIM
-    if((int)mrg.entries.get(2).size.get() > 0) {
+    if(mrg.entries.get(2).size.get() > 0) {
       loadStageTim(mrg.getFile(2));
     }
 
     //LAB_800c8bcc
     // Scripted TMD
-    if((int)mrg.entries.get(0).size.get() > 0) {
+    if(mrg.entries.get(0).size.get() > 0) {
       decompress(mrg.getFile(0), _1f8003f4.deref().stageTmdMrg_63c.getAddress(), getMethodAddress(Bttl_800c.class, "stageTmdMrgLoaded", long.class, long.class, long.class), 0, 0);
     } else {
       //LAB_800c8c0c
-      FUN_800127cc(mrg.getAddress(), 0, 0x1L);
+      deferReallocOrFree(mrg.getAddress(), 0, 1);
     }
 
     //LAB_800c8c24
@@ -1519,7 +1519,7 @@ public final class Bttl_800c {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     FUN_800c8774(mrg);
-    FUN_800127cc(_1f8003f4.deref().stageMrg_638.getPointer(), 0, 0x1L);
+    deferReallocOrFree(_1f8003f4.deref().stageMrg_638.getPointer(), 0, 1);
     _1f8003f4.deref().stageMrg_638.clear();
   }
 
@@ -1814,7 +1814,7 @@ public final class Bttl_800c {
       final long size = mrg.entries.get(animIndex).size.get();
 
       if(size != 0) {
-        FUN_800c9a80(mrg.getFile(animIndex), size, 0x1L, 0, combatantIndex, animIndex);
+        FUN_800c9a80(mrg.getFile(animIndex), size, 1, 0, combatantIndex, animIndex);
       }
 
       //LAB_800c94cc
@@ -1936,54 +1936,54 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9898L)
-  public static void FUN_800c9898(final long address, final long fileSize, final long param) {
-    long s5 = address;
+  public static void FUN_800c9898(long address, final long fileSize, final long param) {
+    MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+
     final int combatantIndex = (int)(param >>> 9 & 0x3f);
     final long s0 = param >>> 8 & 0x1L;
     final int s7 = (int)(param << 25) >> 25;
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant._04.get() != 0) {
-      free(s5);
+      free(mrg.getAddress());
     } else {
       //LAB_800c9910
-      if(s0 == 0 && MEMORY.ref(4, s5).offset(0x4L).get() == 0x40L) {
+      if(s0 == 0 && mrg.count.get() == 64) {
         _8006e398.bobjIndices_d80.get(s7).set(0);
-        long s4 = 0x100L;
 
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          if(MEMORY.ref(4, s5).offset(0xcL).offset(s4).get() != 0) {
+          final int size = mrg.entries.get(32 + animIndex).size.get();
+
+          if(size != 0) {
             if(combatant._14.get(animIndex)._09.get() != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
 
             //LAB_800c9974
-            FUN_800c9a80(s5 + MEMORY.ref(4, s5).offset(0x8L).offset(s4).get(), MEMORY.ref(4, s5).offset(0xcL).offset(s4).get(), 0x6L, s7, combatantIndex, animIndex);
+            // Type 6 - TIM file
+            FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, s7, combatantIndex, animIndex);
           }
-
-          //LAB_800c9990
-          s4 = s4 + 0x8L;
         }
 
-        final long v0 = realloc(s5, FUN_80015704(s5, 32));
-        if(v0 != 0) {
-          s5 = v0;
-        }
+        address = realloc2(mrg.getAddress(), getMrgSize(mrg, 32));
+        mrg = MEMORY.ref(4, address, MrgFile::new);
       }
 
       //LAB_800c99d8
-      combatant._04.set(s5);
+      combatant._04.set(mrg.getAddress()); //TODO
 
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
-        if(MEMORY.ref(4, s5).offset(animIndex * 0x8L).offset(0xcL).get() != 0) {
+        final int size = mrg.entries.get(animIndex).size.get();
+
+        if(size != 0) {
           if(combatant._14.get(animIndex)._09.get() != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
 
           //LAB_800c9a18
-          FUN_800c9a80(s5 + MEMORY.ref(4, s5).offset(animIndex * 0x8L).offset(0x8L).get(), MEMORY.ref(4, s5).offset(animIndex * 0x8L).offset(0xcL).get(), 0x2L, 1, combatantIndex, animIndex);
+          FUN_800c9a80(mrg.getFile(animIndex), size, 2, 1, combatantIndex, animIndex);
         }
 
         //LAB_800c9a34
@@ -1993,73 +1993,77 @@ public final class Bttl_800c {
     //LAB_800c9a48
   }
 
-  /** TODO this method is very weird, are we dealing with a polymorphic struct? */
+  /**
+   * @param type <ol>
+   *               <li>Animation</li>
+   *               <li>Animation</li>
+   *               <li>Index</li>
+   *               <li value="6">TIM</li>
+   *             </ol>
+   */
   @Method(0x800c9a80L)
-  public static void FUN_800c9a80(final long addr, final long size, final long a2, final int a3, final int combatantIndex, final int animIndex) {
+  public static void FUN_800c9a80(final long addr, final long size, final int type, final int a3, final int combatantIndex, final int animIndex) {
     final BattleStruct1a8_c s3 = combatants_8005e398.get(combatantIndex)._14.get(animIndex);
 
-    if(s3._0a.get() != 0) {
+    if(s3.type_0a.get() != 0) {
       FUN_800c9c7c(combatantIndex, animIndex);
     }
 
     //LAB_800c9b28
-    if(a2 == 0x1L) {
+    if(type == 1) {
       //LAB_800c9b68
-      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) {
-        s3._0a.set(0x4);
-        s3.bpe_00.set(addr);
-        s3._0b.set(0);
+      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) { // BPE
+        s3.type4_5.bpe_00.set(addr);
         s3._08.set(a3);
+        s3.type_0a.set(4);
+        s3._0b.set(0);
       } else {
-        s3._0a.set((int)a2);
-        s3.bpe_00.set(addr);
-        s3._0b.set((int)a2);
+        s3.type1_2.anim_00.setPointer(addr);
         s3._08.set(a3);
+        s3.type_0a.set(1);
+        s3._0b.set(1);
       }
-    } else if(a2 == 0x2L) {
+    } else if(type == 2) {
       //LAB_800c9b80
-      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) {
+      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) { // BPE
         //LAB_800c9b88
-        s3._0a.set(0x5);
-        s3.bpe_00.set(addr);
-        s3._0b.set(0);
+        s3.type4_5.bpe_00.set(addr);
         s3._08.set(a3);
+        s3.type_0a.set(5);
+        s3._0b.set(0);
       } else {
         //LAB_800c9b98
-        s3._0a.set((int)a2);
-        s3.bpe_00.set(addr);
-        s3._0b.set(0x1);
-
-        //LAB_800c9ba8
+        s3.type1_2.anim_00.setPointer(addr);
         s3._08.set(a3);
+        s3.type_0a.set(2);
+        s3._0b.set(0x1);
       }
       //LAB_800c9b4c
-    } else if(a2 == 0x3L) {
+    } else if(type == 3) {
       //LAB_800c9bb0
-      s3._0b.set(0x1);
-      s3._0a.set((int)a2);
-      //TODO wtf?
-      s3.bpe_00.set(a3);
-      s3._08.set(-0x1);
-    } else if(a2 == 0x6L) {
+      s3.type3.index_00.set(a3);
+      s3._08.set(-1);
+      s3.type_0a.set(3);
+      s3._0b.set(1);
+    } else if(type == 6) {
       //LAB_800c9bcc
       final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.bobjIndices_d80.get(a3).get(), (short)64, (short)(size / 128));
       LoadImage(sp0x10, addr);
 
       _8006e398.bobjIndices_d80.get(a3).add((int)(size / 128));
-      s3.x_00.set(sp0x10.x.get());
-      s3.y_02.set(sp0x10.y.get());
-      s3.h_03.set(sp0x10.h.get());
-      s3._08.set(-0x1);
-      s3._0a.set((int)a2);
+      s3.type6.x_00.set(sp0x10.x.get());
+      s3.type6.y_02.set(sp0x10.y.get());
+      s3.type6.h_03.set(sp0x10.h.get());
+      s3._08.set(-1);
+      s3.type_0a.set(6);
       s3._0b.set(0);
     } else {
       return;
     }
 
     //LAB_800c9c44
-    s3._04.set((short)-1);
-    s3._06.set((short)-1);
+    s3.BttlStruct08_index_04.set((short)-1);
+    s3.BattleStructEf4Sub08_index_06.set((short)-1);
     s3._09.set(0);
 
     //LAB_800c9c54
@@ -2075,19 +2079,17 @@ public final class Bttl_800c {
     }
 
     //LAB_800c9d04
-    switch(s0._0a.get()) {
-      case 3 -> FUN_800cad64((int)s0.bpe_00.get()); //TODO
+    switch(s0.type_0a.get()) {
+      case 3 -> FUN_800cad64(s0.type3.index_00.get());
       case 4, 5 -> {
-        if(s0._0b.get() == 0) {
-          break;
-        }
-
-        final int a0 = s0._04.get();
-        if(a0 >= 0) {
-          //LAB_800c9d78
-          FUN_800cad64(a0);
-        } else {
-          _8006e398._d8c.get(s0._06.get()).used_04.set(false);
+        if(s0._0b.get() != 0) {
+          final int a0 = s0.BttlStruct08_index_04.get();
+          if(a0 >= 0) {
+            //LAB_800c9d78
+            FUN_800cad64(a0);
+          } else {
+            _8006e398._d8c.get(s0.BattleStructEf4Sub08_index_06.get()).used_04.set(false);
+          }
         }
       }
 
@@ -2095,12 +2097,12 @@ public final class Bttl_800c {
     }
 
     //LAB_800c9d84
-    s0.bpe_00.set(0);
-    s0._04.set((short)-1);
-    s0._06.set((short)-1);
+    s0.type0._00.set(0);
+    s0.BttlStruct08_index_04.set((short)-1);
+    s0.BattleStructEf4Sub08_index_06.set((short)-1);
     s0._08.set(-1);
     s0._09.set(0);
-    s0._0a.set(0);
+    s0.type_0a.set(0);
     s0._0b.set(0);
 
     //LAB_800c9da0
@@ -2109,16 +2111,16 @@ public final class Bttl_800c {
   @Method(0x800c9db8L)
   public static void FUN_800c9db8(final int combatantIndex, final int animIndex, final int a2) {
     FUN_800c9c7c(combatantIndex, animIndex);
-    FUN_800c9a80(0, 0, 0x3L, a2, combatantIndex, animIndex);
+    FUN_800c9a80(0, 0, 3, a2, combatantIndex, animIndex);
   }
 
   @Method(0x800c9e10L)
-  public static long FUN_800c9e10(final int combatantIndex, final int animIndex) {
+  public static boolean FUN_800c9e10(final int combatantIndex, final int animIndex) {
     final BattleStruct1a8_c s0 = combatants_8005e398.get(combatantIndex)._14.get(animIndex);
 
-    return switch(s0._0a.get()) {
-      case 1, 2 -> s0.bpe_00.get() != 0 ? 0x1L : 0;
-      case 3 -> (int)s0.bpe_00.get() >= 0 ? 0x1L : 0;
+    return switch(s0.type_0a.get()) {
+      case 1, 2 -> !s0.type1_2.anim_00.isNull();
+      case 3 -> s0.type3.index_00.get() >= 0;
       case 4, 5 -> {
         if(s0._0b.get() == 0) {
           final int a3 = (short)_800c66ac.getSigned() + 1 & 0xffff_fff0;
@@ -2126,34 +2128,32 @@ public final class Bttl_800c {
           _8006e398._d8c.get(a3)._00.set(s0);
           _8006e398._d8c.get(a3).used_04.set(true);
           s0._0b.set(1);
-          s0._06.set((short)a3);
+          s0.BattleStructEf4Sub08_index_06.set((short)a3);
 
-          if(decompress(s0.bpe_00.get(), 0, getMethodAddress(Bttl_800c.class, "FUN_800c9fcc", long.class, long.class, long.class), a3, 0x4L) != 0) {
-            yield 0;
-          }
+          decompress(s0.type4_5.bpe_00.get(), 0, getMethodAddress(Bttl_800c.class, "FUN_800c9fcc", long.class, long.class, long.class), a3, 0x4L);
         }
 
-        yield 0x1L;
+        yield true;
       }
 
       case 6 -> {
         if(s0._0b.get() == 0) {
-          final int s1 = FUN_800cab58(s0.h_03.get() * 0x80, 3, 0, 0);
+          final int s1 = FUN_800cab58(s0.type6.h_03.get() * 0x80, 3, 0, 0);
           if(s1 < 0) {
-            yield 0;
+            yield false;
           }
 
-          final RECT sp0x20 = new RECT((short)s0.x_00.get(), (short)s0.y_02.get(), (short)64, (short)s0.h_03.get());
+          final RECT sp0x20 = new RECT((short)s0.type6.x_00.get(), (short)s0.type6.y_02.get(), (short)64, (short)s0.type6.h_03.get());
           StoreImage(sp0x20, FUN_800cad34(s1));
-          s0._04.set((short)s1);
+          s0.BttlStruct08_index_04.set((short)s1);
           s0._0b.set(1);
         }
 
         //LAB_800c9fb4
-        yield 0x1L;
+        yield true;
       }
 
-      default -> 0;
+      default -> false;
     };
 
     //LAB_800c9fb8
@@ -2164,8 +2164,8 @@ public final class Bttl_800c {
     final BattleStruct1a8_c s0 = _8006e398._d8c.get((int)param)._00.deref();
 
     if(s0._0b.get() != 0 && _8006e398._d8c.get((int)param).used_04.get()) {
-      s0._04.set((short)FUN_800caae4(address, 3, 0, 0));
-      s0._06.set((short)-1);
+      s0.BttlStruct08_index_04.set((short)FUN_800caae4(address, 3, 0, 0));
+      s0.BattleStructEf4Sub08_index_06.set((short)-1);
       _8006e398._d8c.get((int)param).used_04.set(false);
     } else {
       //LAB_800ca034
@@ -2178,20 +2178,22 @@ public final class Bttl_800c {
 
   @Method(0x800ca054L)
   public static long FUN_800ca054(final int combatantIndex, final int animIndex) {
-    switch(combatants_8005e398.get(combatantIndex)._14.get(animIndex)._0a.get()) {
+    switch(combatants_8005e398.get(combatantIndex)._14.get(animIndex).type_0a.get()) {
       case 0 -> {
         return 0;
       }
+
       case 1, 2, 3 -> {
         return 1;
       }
+
       case 4, 5, 6 -> {
         if(combatants_8005e398.get(combatantIndex)._14.get(animIndex)._0b.get() == 0) {
           return 0;
         }
 
         //LAB_800ca0f0
-        return ~combatants_8005e398.get(combatantIndex)._14.get(animIndex)._04.get() >>> 31;
+        return combatants_8005e398.get(combatantIndex)._14.get(animIndex).BttlStruct08_index_04.get() >= 0 ? 1 : 0;
       }
     }
 
@@ -2206,7 +2208,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca194L)
-  public static long FUN_800ca194(final int combatantIndex, final int animIndex) {
+  public static boolean FUN_800ca194(final int combatantIndex, final int animIndex) {
     final BattleStruct1a8_c s0 = combatants_8005e398.get(combatantIndex)._14.get(animIndex);
 
     if(s0._09.get() > 0) {
@@ -2214,35 +2216,31 @@ public final class Bttl_800c {
     }
 
     //LAB_800ca1f4
-    final long v1 = s0._0a.get();
+    final int type = s0.type_0a.get();
 
-    if(v1 == 0) {
+    if(type == 0 || type > 6) {
       //LAB_800ca250
-      return 0;
+      return false;
     }
 
-    if((int)v1 < 0x4L) {
-      return 0x1L;
-    }
-
-    if((int)v1 >= 0x7L) {
-      return 0;
+    if(type < 4) {
+      return true;
     }
 
     if(s0._09.get() == 0) {
-      if(s0._04.get() >= 0) {
-        FUN_800cad64(s0._04.get());
+      if(s0.BttlStruct08_index_04.get() >= 0) {
+        FUN_800cad64(s0.BttlStruct08_index_04.get());
       }
 
       //LAB_800ca240
-      s0._04.set((short)-1);
-      s0._06.set((short)-1);
+      s0.BttlStruct08_index_04.set((short)-1);
+      s0.BattleStructEf4Sub08_index_06.set((short)-1);
       s0._0b.set(0);
     }
 
     //LAB_800ca258
     //LAB_800ca25c
-    return 0x1L;
+    return true;
   }
 
   @Method(0x800ca26cL)
@@ -2253,7 +2251,7 @@ public final class Bttl_800c {
     boolean s3 = true;
     for(int i = 0; i < 32; i++) {
       if(combatant._14.get(i)._09.get() == 0) {
-        if(FUN_800ca194(combatantIndex, i) != 0) {
+        if(FUN_800ca194(combatantIndex, i)) {
           s3 = !s3;
         } else {
           s3 = false;
@@ -2270,11 +2268,11 @@ public final class Bttl_800c {
   public static TmdAnimationFile FUN_800ca31c(final int combatantIndex, final int animIndex) {
     final BattleStruct1a8_c a0_0 = combatants_8005e398.get(combatantIndex)._14.get(animIndex);
 
-    return switch(a0_0._0a.get()) {
-      case 1, 2 -> MEMORY.ref(4, a0_0.bpe_00.get(), TmdAnimationFile::new); //TODO
+    return switch(a0_0.type_0a.get()) {
+      case 1, 2 -> a0_0.type1_2.anim_00.deref();
 
       case 3 -> {
-        final int s0 = (int)a0_0.bpe_00.get(); //TODO
+        final int s0 = a0_0.type3.index_00.get();
 
         if(a0_0._09.get() == 0 || encounterId_800bb0f8.get() != 443) { // Melbu
           //LAB_800ca3c4
@@ -2286,7 +2284,7 @@ public final class Bttl_800c {
 
       case 4, 5, 6 -> {
         if(a0_0._0b.get() != 0) {
-          final int s0 = a0_0._04.get();
+          final int s0 = a0_0.BttlStruct08_index_04.get();
 
           if(s0 >= 0) {
             //LAB_800ca3f4
@@ -2316,7 +2314,7 @@ public final class Bttl_800c {
     //LAB_800ca488
     //LAB_800ca494
     for(int i = 0; i < 32; i++) {
-      final int v1 = combatant._14.get(i)._0a.get();
+      final int v1 = combatant._14.get(i).type_0a.get();
 
       if(v1 == 2 || v1 >= 5 && v1 < 7) {
         //LAB_800ca4c0
@@ -2419,7 +2417,7 @@ public final class Bttl_800c {
 
     //LAB_800ca724
     //LAB_800ca728
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
   }
 
   @Method(0x800ca75cL)
@@ -2596,10 +2594,6 @@ public final class Bttl_800c {
   @Method(0x800cab58L)
   public static int FUN_800cab58(final long size, final int a1, final int a2, final int a3) {
     final long s0 = mallocTail(size);
-    if(s0 == 0) {
-      return -1;
-    }
-
     final int v0 = FUN_800caae4(s0, a1, a2, a3);
     if(v0 < 0) {
       free(s0);
@@ -2655,7 +2649,7 @@ public final class Bttl_800c {
     final BttlStruct08 s0 = _8006e918.get(index);
 
     if(s0._04.get() != 1) {
-      FUN_800127cc(s0.ptr_00.get(), 0, 0x1L);
+      deferReallocOrFree(s0.ptr_00.get(), 0, 1);
       s0.ptr_00.set(0);
     }
 
@@ -2668,7 +2662,7 @@ public final class Bttl_800c {
     final BttlStruct08 s1 = _8006e918.get(index);
     final long currentAddress = s1.ptr_00.get();
 
-    final long newAddress = realloc(currentAddress, getMallocSize(currentAddress));
+    final long newAddress = realloc2(currentAddress, getMallocSize(currentAddress));
     if(newAddress == 0 || newAddress == currentAddress) {
       //LAB_800cae1c
       return -1;

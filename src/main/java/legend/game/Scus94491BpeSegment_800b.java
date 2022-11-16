@@ -82,11 +82,11 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
 
   public static final Value transferDest_800bb460 = MEMORY.ref(4, 0x800bb460L);
-  public static final Value fileSize_800bb464 = MEMORY.ref(4, 0x800bb464L);
+  public static final IntRef fileSize_800bb464 = MEMORY.ref(4, 0x800bb464L, IntRef::new);
   public static final FileLoadingInfo currentlyLoadingFileInfo_800bb468 = MEMORY.ref(4, 0x800bb468L, FileLoadingInfo::new);
   public static final Value fileTransferDest_800bb488 = MEMORY.ref(4, 0x800bb488L);
-  public static final Value fileSize_800bb48c = MEMORY.ref(4, 0x800bb48cL);
-  public static final Value numberOfTransfers_800bb490 = MEMORY.ref(4, 0x800bb490L);
+  public static final IntRef fileSize_800bb48c = MEMORY.ref(4, 0x800bb48cL, IntRef::new);
+  public static final IntRef numberOfTransfers_800bb490 = MEMORY.ref(4, 0x800bb490L, IntRef::new);
 
   public static final ArrayRef<CdlFILE> CdlFILE_800bb4c8 = MEMORY.ref(0x600, 0x800bb4c8L, ArrayRef.of(CdlFILE.class, 0x40, 0x18, CdlFILE::new));
 
@@ -179,13 +179,14 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Pointer<MrgFile> soundMrgPtr_800bd748 = MEMORY.ref(4, 0x800bd748L, Pointer.deferred(4, MrgFile::new));
 
-  public static final Value _800bd758 = MEMORY.ref(4, 0x800bd758L);
+  public static final Pointer<MrgFile> mrg_800bd758 = MEMORY.ref(4, 0x800bd758L, Pointer.deferred(4, MrgFile::new));
 
-  public static final Value _800bd768 = MEMORY.ref(4, 0x800bd768L);
+  public static final Pointer<MrgFile> soundMrgPtr_800bd768 = MEMORY.ref(4, 0x800bd768L, Pointer.deferred(4, MrgFile::new));
   public static final Pointer<MrgFile> soundMrgPtr_800bd76c = MEMORY.ref(4, 0x800bd76cL, Pointer.deferred(4, MrgFile::new));
 
   public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
   public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
+  public static final Value fileCount_800bd77c = MEMORY.ref(4, 0x800bd77c4L);
 
   public static final Value _800bd780 = MEMORY.ref(1, 0x800bd780L);
   public static final Value _800bd781 = MEMORY.ref(1, 0x800bd781L);
@@ -313,12 +314,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
 
-  public static final Value _800bf0c0 = MEMORY.ref(4, 0x800bf0c0L);
-  public static final Value _800bf0c4 = MEMORY.ref(4, 0x800bf0c4L);
-  public static final Value _800bf0c8 = MEMORY.ref(4, 0x800bf0c8L);
-  public static final Value _800bf0cc = MEMORY.ref(1, 0x800bf0ccL);
-  public static final Value _800bf0cd = MEMORY.ref(1, 0x800bf0cdL);
-  public static final Value _800bf0ce = MEMORY.ref(1, 0x800bf0ceL);
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
   public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);
 

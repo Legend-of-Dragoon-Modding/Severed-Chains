@@ -50,8 +50,8 @@ import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct28;
-import legend.game.types.Textbox4c;
 import legend.game.types.Struct84;
+import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -186,14 +186,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
-import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
 import static legend.game.Scus94491BpeSegment_800b._800bdf38;
-import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b._800be5b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5bc;
 import static legend.game.Scus94491BpeSegment_800b._800be5c0;
@@ -202,18 +200,12 @@ import static legend.game.Scus94491BpeSegment_800b._800be5c8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
-import static legend.game.Scus94491BpeSegment_800b._800bf0c0;
-import static legend.game.Scus94491BpeSegment_800b._800bf0c4;
-import static legend.game.Scus94491BpeSegment_800b._800bf0c8;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cc;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cd;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ce;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
+import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -231,6 +223,8 @@ import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
+import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.WMap.FUN_800c8844;
@@ -5904,23 +5898,9 @@ public final class Scus94491BpeSegment_8002 {
     LOGGER.info("Rumble 8002c184");
   }
 
+  /** This method had code for fading in audio but it was unused */
   @Method(0x8002c86cL)
-  public static void FUN_8002c86c() {
-    if(_800bf0cd.get() != 0) {
-      _800bf0c0.addu(_800bf0c4);
-      _800bf0ce.setu(_800bf0c0).shra(0x10L);
-      _800bf0c8.subu(0x1L);
-
-      if(_800bf0c8.getSigned() <= 0) {
-        _800bf0cd.setu(0);
-        _800bf0ce.setu(_800bf0cc);
-      }
-
-      //LAB_8002c8c4
-      setCdVolume((int)_800bf0ce.get(), (int)_800bf0ce.get());
-      setCdMix(0x3f);
-    }
-
+  public static void startFmvs() {
     //LAB_8002c8dc
     if(fmvStage_800bf0d8.get() == 0x1L) {
       fileLoadingCallbackIndex_8004ddc4.set(21);

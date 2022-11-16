@@ -26,8 +26,8 @@ public class Drgn0_6666Struct implements MemoryRef {
   }
 
   public ArrayRef<RenderableMetrics14> getMetrics(final int offset) {
-    final int count = (int)ref.offset(4, offset).get();
-    return ref.offset(4, offset).offset(0x4L).cast(ArrayRef.of(RenderableMetrics14.class,count, 0x14, RenderableMetrics14::new));
+    final int count = (int)this.ref.offset(4, offset).get();
+    return this.ref.offset(4, offset).offset(0x4L).cast(ArrayRef.of(RenderableMetrics14.class, count, 0x14, RenderableMetrics14::new));
   }
 
   @Override

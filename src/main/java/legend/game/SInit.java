@@ -15,7 +15,7 @@ import legend.game.types.MrgFile;
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.game.Scus94491BpeSegment.realloc;
+import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment._80010250;
 import static legend.game.Scus94491BpeSegment.mallocHead;
@@ -229,7 +229,7 @@ public final class SInit {
       linkedListEntry_800bbacc.setu(0);
     } else {
       //LAB_800fbcfc
-      long address = realloc(linkedListEntry_800fd518.get(), a1);
+      long address = realloc2(linkedListEntry_800fd518.get(), a1);
       if(address == 0) {
         address = linkedListEntry_800fd518.get();
       }

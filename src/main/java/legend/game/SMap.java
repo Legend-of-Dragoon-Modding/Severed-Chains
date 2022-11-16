@@ -98,7 +98,7 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.FUN_800127cc;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -706,7 +706,7 @@ public final class SMap {
 
     loadMcq(MEMORY.ref(4, address, McqHeader::new), 640, 0);
     diskSwapMcqLoaded_800c6698.setu(0x1L);
-    FUN_800127cc(address, 0, 0x1L);
+    deferReallocOrFree(address, 0, 1);
   }
 
   @Method(0x800d9614L)

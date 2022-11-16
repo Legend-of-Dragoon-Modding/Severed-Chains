@@ -29,7 +29,7 @@ public final class Scus94491 {
   public static final Value _80188a88 = MEMORY.ref(4, 0x80188a88L);
 
   @Method(0x801bf2a0L)
-  public static long decompress(final long archiveAddress, final long destinationAddress) {
+  public static int decompress(final long archiveAddress, final long destinationAddress) {
     // Check BPE header - this check is in the BPE block method but not the main EXE method
     if(MEMORY.ref(4, archiveAddress).offset(0x4L).get() != 0x1a455042L) {
       throw new RuntimeException("Attempted to decompress non-BPE segment at " + Long.toString(archiveAddress, 16));

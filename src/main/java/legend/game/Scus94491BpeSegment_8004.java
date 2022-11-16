@@ -121,7 +121,7 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<CallbackStruct> callback_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
-  public static final Value _8004dd00 = MEMORY.ref(4, 0x8004dd00L);
+  public static final IntRef _8004dd00 = MEMORY.ref(4, 0x8004dd00L, IntRef::new);
   public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
   public static final Value loadingGameStateOverlay_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
@@ -167,7 +167,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
   public static final IntRef fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L, IntRef::new);
   public static final IntRef fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L, IntRef::new);
-  public static final Value _8004ddcc = MEMORY.ref(1, 0x8004ddccL);
+  public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
   public static final Value _8004ddd0 = MEMORY.ref(4, 0x8004ddd0L);
   public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
@@ -176,8 +176,8 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#FUN_800149cc}</li>
-   *   <li>{@link Scus94491BpeSegment#loadQueuedFile}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80014e54}</li>
+   *   <li>{@link Scus94491BpeSegment#readQueuedFileFromDisk}</li>
+   *   <li>{@link Scus94491BpeSegment#removeCurrentlyLoadingFileFromQueue}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80014eb4}</li>
    *   <li>{@link Scus94491BpeSegment#resetCallbackIndex1}</li>
    *   <li>{@link Scus94491BpeSegment#resetCallbackIndex2}</li>
