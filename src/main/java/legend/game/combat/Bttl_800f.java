@@ -2961,6 +2961,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f6fc8
+      // Draw red glow underneath selected menu item
       FUN_800f7210(menu._28.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c.get());
 
       if((menu._02.get() & 0x1L) != 0) {
@@ -3028,8 +3029,8 @@ public final class Bttl_800f {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .monochrome(colour)
       .pos(0, left, top)
-      .pos(1, right, bottom)
-      .pos(2, left, top)
+      .pos(1, right, top)
+      .pos(2, left, bottom)
       .pos(3, right, bottom);
 
     final int leftU = a2.get(4).get();
@@ -3083,6 +3084,8 @@ public final class Bttl_800f {
     if(transparencyMode != null) {
       cmd.translucent(transparencyMode);
     }
+
+    GPU.queueCommand(z, cmd);
   }
 
   /** Background of battle menu icons */
