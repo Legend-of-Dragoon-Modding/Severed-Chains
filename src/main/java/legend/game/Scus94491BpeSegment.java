@@ -4531,6 +4531,9 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80019a60L)
   public static void playSound(final int index, final int soundIndex, final long a2, final long a3, final short a4, final short a5) {
+    //TODO GH#3
+    if(true) return;
+
     if(!soundFileArr_800bcf80.get(index).used_00.get() || soundFileArr_800bcf80.get(index).playableSoundIndex_10.get() == -1) {
       return;
     }
@@ -4639,6 +4642,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019e24L)
   public static void FUN_80019e24(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6) {
+    //TODO GH#3
+    if(true) return;
+
     final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get((int)a1).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     long t1 = 0;
@@ -4699,6 +4705,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019facL)
   public static void FUN_80019fac(final int a0, final long a1, final int soundIndex, final short a3, final short a4) {
+    //TODO GH#3
+    if(true) return;
+
     int soundFileIndex = 0;
     int t4 = 0;
 
@@ -6070,6 +6079,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001de84L)
   public static void FUN_8001de84(final int a0) {
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+    decrementOverlayCount();
+    if(true) return;
+
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
