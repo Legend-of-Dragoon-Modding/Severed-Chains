@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.Hardware;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
@@ -1875,7 +1876,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800231f0
     while(gameState_800babc8.items_2e9.get(gameState_800babc8.itemCount_1e6.get()).get() != 0xff) {
-      if(gameState_800babc8.itemCount_1e6.get() >= 32) {
+      if(gameState_800babc8.itemCount_1e6.get() >= Config.inventorySize()) {
         break;
       }
 
@@ -1884,7 +1885,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80023224
     //LAB_80023248
-    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= 32; i++) {
+    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= Config.inventorySize(); i++) {
       gameState_800babc8.items_2e9.get(i).set(0xff);
     }
 
@@ -1916,18 +1917,18 @@ public final class Scus94491BpeSegment_8002 {
       return 0xff;
     }
 
-    if(itemIndex < 0x20) {
+    if(itemIndex < Config.inventorySize()) {
       if(gameState_800babc8.items_2e9.get(itemIndex).get() == 0xff) {
         return 0xff;
       }
 
       //LAB_80023334
-      for(int i = itemIndex; i < 31; i++) {
+      for(int i = itemIndex; i < Config.inventorySize() - 1; i++) {
         gameState_800babc8.items_2e9.get(i).set(gameState_800babc8.items_2e9.get(i + 1).get());
       }
 
       //LAB_80023358
-      gameState_800babc8.items_2e9.get(31).set(0xff);
+      gameState_800babc8.items_2e9.get(Config.inventorySize() - 1).set(0xff);
       gameState_800babc8.itemCount_1e6.decr();
       return 0;
     }
@@ -1935,7 +1936,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002338c
     if(itemIndex >= 192) {
       //LAB_800233a4
-      for(int i = 0; i < 32; i++) {
+      for(int i = 0; i < Config.inventorySize(); i++) {
         if(gameState_800babc8.items_2e9.get(i).get() == itemIndex) {
           //LAB_8002337c
           return takeItem(i);
@@ -2001,7 +2002,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800234f4
     final int count = gameState_800babc8.itemCount_1e6.get();
 
-    if(count >= 32) {
+    if(count >= Config.inventorySize()) {
       //LAB_8002350c
       return 0xff;
     }
@@ -2195,7 +2196,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a2cL)
-  public static void FUN_80023a2c(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+  public static void sortItems(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
     qsort(a0, count, 0x4, getBiFunctionAddress(Scus94491BpeSegment_8002.class, "compareItems", MenuItemStruct04.class, MenuItemStruct04.class, long.class));
     FUN_800239e0(a0, a1, count);
   }
@@ -2216,7 +2217,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023b10
-    FUN_80023a2c(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+    sortItems(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
     free(s0.getAddress());
   }
 

@@ -19,6 +19,7 @@ public final class Config {
     properties.setProperty("controller_config", "false");
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
+    properties.setProperty("inventory_size", "32");
   }
 
   public static int windowWidth() {
@@ -47,6 +48,10 @@ public final class Config {
 
   public static float controllerDeadzone() {
     return readFloat("controller_deadzone", 0.3f, 0.0f, 1.0f);
+  }
+
+  public static int inventorySize() {
+    return readInt("inventory_size", 32, 1, 64);
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

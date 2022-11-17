@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Memory;
@@ -57,7 +58,6 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
@@ -65,6 +65,7 @@ import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -83,7 +84,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023544;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80023a2c;
+import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
@@ -902,8 +903,6 @@ public final class SItem {
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
-    LOGGER.info("Inventory menu state: %s", inventoryMenuState_800bdc28.get());
-
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0: // Initialize, loads some files (unknown contents)
         _800bdc34.setu(0);
@@ -1425,7 +1424,7 @@ public final class SItem {
           _8011dcb8.get(0).setPointer(mallocTail(0x4c0L));
           _8011dcb8.get(1).setPointer(mallocTail(0x4c0L));
           _8011d754.setu(FUN_80104738(0x1L));
-          FUN_80023a2c(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+          sortItems(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
           free(_8011dcb8.get(0).getPointer());
           free(_8011dcb8.get(1).getPointer());
           MEMORY.ref(4, 0x800bdc28L).setu(0xeL);
@@ -1516,16 +1515,16 @@ public final class SItem {
         if((inventoryJoypadInput_800bdc44.get() & 0x10L) != 0) { // Discard items menu - sort items
           playSound(0x2L);
 
-          final ArrayRef<UnsignedByteRef> a1_0;
+          final ArrayRef<UnsignedByteRef> items;
           if(charSlot_8011d734.get() != 0) {
-            a1_0 = gameState_800babc8.items_2e9;
+            items = gameState_800babc8.items_2e9;
           } else {
             //LAB_800fdef8
-            a1_0 = gameState_800babc8.equipment_1e8;
+            items = gameState_800babc8.equipment_1e8;
           }
 
           //LAB_800fdf00
-          FUN_80023a2c(_8011dcb8.get(charSlot_8011d734.get()).deref(), a1_0, count_8011d750.get());
+          sortItems(_8011dcb8.get(charSlot_8011d734.get()).deref(), items, count_8011d750.get());
         }
 
         //LAB_800fdf18
@@ -1839,16 +1838,12 @@ public final class SItem {
           if((_8011d7b8.get() & 0x2L) != 0) {
             _8011d754.setu(-0x2L);
 
-            if(characterCount_8011d7c4.get() != 0) {
-              //LAB_800fea84
-              for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-                useItemInMenu(_8011d788.getAddress(), menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(i).get());
+            //LAB_800fea84
+            for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+              useItemInMenu(_8011d788.getAddress(), menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(i).get());
 
-                if((int)_8011d78c.get() != -0x2L) {
-                  _8011d754.setu(0);
-                }
-
-                //LAB_800feac8
+              if((int)_8011d78c.get() != -0x2L) {
+                _8011d754.setu(0);
               }
             }
 
@@ -2502,7 +2497,7 @@ public final class SItem {
           }
 
           //LAB_80101070
-          if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > 0x20) {
+          if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > Config.inventorySize()) {
             //LAB_80101090
             final LodString str = MEMORY.ref(2, mallocTail(78), LodString::new);
             str.set("Dabas has more items\nthan you can hold");
@@ -2648,7 +2643,6 @@ public final class SItem {
             "Dabas plays a happy song\non his accordion.",
             "Dabas wonders why he is\nthe one paying you.",
             "You thank Dabas even though\nthe items are dirty.",
-
           };
 
           final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
@@ -3098,7 +3092,7 @@ public final class SItem {
       allocateUiElement(0xb, 0xb, 154, 24);
       renderThreeDigitNumber(160, 24, 0xff);
       allocateUiElement(0xb, 0xb, 338, 24);
-      renderTwoDigitNumber(344, 24, 32);
+      renderTwoDigitNumber(344, 24, Config.inventorySize());
       allocateUiElement(0x55, 0x55, 16, 16);
       saveListUpArrow_800bdb94.set(allocateUiElement(0x3d, 0x44, 180, FUN_800fc814(2)));
       saveListDownArrow_800bdb98.set(allocateUiElement(0x35, 0x3c, 180, FUN_800fc814(8)));
@@ -3909,7 +3903,7 @@ public final class SItem {
 
     //LAB_801044d4
     //LAB_801044e8
-    for(int i = 0; i < 32; i++) {
+    for(int i = 0; i < Config.inventorySize(); i++) {
       menuItems_8011d7c8.get(i).itemId_00.set(0xff);
     }
 
@@ -4039,7 +4033,7 @@ public final class SItem {
       additions.get(i).index_01.set(-1);
     }
 
-    if(charIndex == -0x1L) {
+    if(charIndex == -1) {
       return 0;
     }
 
@@ -4106,32 +4100,20 @@ public final class SItem {
   }
 
   @Method(0x80104b7cL)
-  public static long FUN_80104b7c(final long dragoons, final int charIndex) {
-    final Memory.TemporaryReservation sp0x0tmp = MEMORY.temp(0x2c);
-
-    sp0x0tmp.get().offset(0x28L).setu(dragoons);
-
-    final long sp = sp0x0tmp.address;
-    final long v0 = _800fba58.getAddress();
-
+  public static boolean hasDragoon(final long dragoons, final int charIndex) {
     //LAB_80104b94
-    memcpy(sp, v0, 0x24);
-
-    if(charIndex == -0x1L) {
-      return 0;
+    if(charIndex == -1) {
+      return false;
     }
 
     //LAB_80104be0
-    long v1 = (MEMORY.ref(4, sp).offset(0x28L).offset((MEMORY.ref(4, sp).offset(charIndex * 0x4L).get() >>> 5) * 0x4L).get() & 0x1L << (MEMORY.ref(4, sp).offset(charIndex * 0x4L).get() & 0x1fL)) > 0 ? 1 : 0;
-    if(charIndex == 0) {
-      v1 = v1 | dragoons >>> 7;
+    if(charIndex == 0 && (dragoons & 0xff) >>> 7 != 0) { // Divine
+      return true;
     }
-
-    sp0x0tmp.release();
 
     //LAB_80104c24
     //LAB_80104c28
-    return v1;
+    return (dragoons & 0x1L << (_800fba58.offset(charIndex * 0x4L).get() & 0x1fL)) > 0;
   }
 
   @Method(0x80104c30L)
@@ -4145,7 +4127,7 @@ public final class SItem {
   }
 
   @Method(0x80105048L)
-  public static int FUN_80105048(final int x, final int y, final int currentVal, int newVal) {
+  public static int renderThreeDigitNumberComparison(final int x, final int y, final int currentVal, int newVal) {
     long flags = 0;
     final int clut;
     if(currentVal < newVal) {
@@ -4715,8 +4697,8 @@ public final class SItem {
   }
 
   @Method(0x80107d34L)
-  public static void FUN_80107d34(final int x, final int y, final int currentVal, final int newVal) {
-    final int clut = FUN_80105048(x, y, currentVal, newVal);
+  public static void renderThreeDigitNumberComparisonWithPercent(final int x, final int y, final int currentVal, final int newVal) {
+    final int clut = renderThreeDigitNumberComparison(x, y, currentVal, newVal);
     final Renderable58 v0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
     v0.flags_00.or(0xcL);
     v0.glyph_04.set(0xc);
@@ -4853,7 +4835,7 @@ public final class SItem {
 
   @Method(0x801082a0L)
   public static void FUN_801082a0(final int x, final int y, final int charIndex, final long a3) {
-    if(charIndex != -0x1L) {
+    if(charIndex != -1) {
       if(a3 != 0) {
         if(charIndex < 9) {
           final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
@@ -4947,54 +4929,54 @@ public final class SItem {
 
       //LAB_80108770
       final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-      FUN_80105048( 58, 116, stats.bodyAttack_6a.get(), statsTmp.bodyAttack_6a.get());
-      FUN_80105048( 90, 116, stats.gearAttack_88.get(), statsTmp.gearAttack_88.get());
-      FUN_80105048(122, 116, stats.bodyAttack_6a.get() + stats.gearAttack_88.get(), statsTmp.bodyAttack_6a.get() + statsTmp.gearAttack_88.get());
+      renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a.get(), statsTmp.bodyAttack_6a.get());
+      renderThreeDigitNumberComparison( 90, 116, stats.gearAttack_88.get(), statsTmp.gearAttack_88.get());
+      renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a.get() + stats.gearAttack_88.get(), statsTmp.bodyAttack_6a.get() + statsTmp.gearAttack_88.get());
 
-      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
-        FUN_80107d34(159, 116, stats.dragoonAttack_72.get(), statsTmp.dragoonAttack_72.get());
+      if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+        renderThreeDigitNumberComparisonWithPercent(159, 116, stats.dragoonAttack_72.get(), statsTmp.dragoonAttack_72.get());
       }
 
       //LAB_801087fc
-      FUN_80105048( 58, 128, stats.bodyDefence_6c.get(), statsTmp.bodyDefence_6c.get());
-      FUN_80105048( 90, 128, stats.gearDefence_8c.get(), statsTmp.gearDefence_8c.get());
-      FUN_80105048(122, 128, stats.bodyDefence_6c.get() + stats.gearDefence_8c.get(), statsTmp.bodyDefence_6c.get() + statsTmp.gearDefence_8c.get());
+      renderThreeDigitNumberComparison( 58, 128, stats.bodyDefence_6c.get(), statsTmp.bodyDefence_6c.get());
+      renderThreeDigitNumberComparison( 90, 128, stats.gearDefence_8c.get(), statsTmp.gearDefence_8c.get());
+      renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c.get() + stats.gearDefence_8c.get(), statsTmp.bodyDefence_6c.get() + statsTmp.gearDefence_8c.get());
 
-      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
-        FUN_80107d34(159, 128, stats.dragoonDefence_74.get(), statsTmp.dragoonDefence_74.get());
+      if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+        renderThreeDigitNumberComparisonWithPercent(159, 128, stats.dragoonDefence_74.get(), statsTmp.dragoonDefence_74.get());
       }
 
       //LAB_8010886c
-      FUN_80105048( 58, 140, stats.bodyMagicAttack_6b.get(), statsTmp.bodyMagicAttack_6b.get());
-      FUN_80105048( 90, 140, stats.gearMagicAttack_8a.get(), statsTmp.gearMagicAttack_8a.get());
-      FUN_80105048(122, 140, stats.bodyMagicAttack_6b.get() + stats.gearMagicAttack_8a.get(), statsTmp.bodyMagicAttack_6b.get() + statsTmp.gearMagicAttack_8a.get());
+      renderThreeDigitNumberComparison( 58, 140, stats.bodyMagicAttack_6b.get(), statsTmp.bodyMagicAttack_6b.get());
+      renderThreeDigitNumberComparison( 90, 140, stats.gearMagicAttack_8a.get(), statsTmp.gearMagicAttack_8a.get());
+      renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b.get() + stats.gearMagicAttack_8a.get(), statsTmp.bodyMagicAttack_6b.get() + statsTmp.gearMagicAttack_8a.get());
 
-      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
-        FUN_80107d34(159, 140, stats.dragoonMagicAttack_73.get(), statsTmp.dragoonMagicAttack_73.get());
+      if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+        renderThreeDigitNumberComparisonWithPercent(159, 140, stats.dragoonMagicAttack_73.get(), statsTmp.dragoonMagicAttack_73.get());
       }
 
       //LAB_801088dc
-      FUN_80105048( 58, 152, stats.bodyMagicDefence_6d.get(), statsTmp.bodyMagicDefence_6d.get());
-      FUN_80105048( 90, 152, stats.gearMagicDefence_8e.get(), statsTmp.gearMagicDefence_8e.get());
-      FUN_80105048(122, 152, stats.bodyMagicDefence_6d.get() + stats.gearMagicDefence_8e.get(), statsTmp.bodyMagicDefence_6d.get() + statsTmp.gearMagicDefence_8e.get());
+      renderThreeDigitNumberComparison( 58, 152, stats.bodyMagicDefence_6d.get(), statsTmp.bodyMagicDefence_6d.get());
+      renderThreeDigitNumberComparison( 90, 152, stats.gearMagicDefence_8e.get(), statsTmp.gearMagicDefence_8e.get());
+      renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d.get() + stats.gearMagicDefence_8e.get(), statsTmp.bodyMagicDefence_6d.get() + statsTmp.gearMagicDefence_8e.get());
 
-      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) != 0) {
-        FUN_80107d34(159, 152, stats.dragoonMagicDefence_75.get(), statsTmp.dragoonMagicDefence_75.get());
+      if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+        renderThreeDigitNumberComparisonWithPercent(159, 152, stats.dragoonMagicDefence_75.get(), statsTmp.dragoonMagicDefence_75.get());
       }
 
       //LAB_8010894c
-      FUN_80105048( 58, 164, stats.bodySpeed_69.get(), statsTmp.bodySpeed_69.get());
-      FUN_80105048( 90, 164, stats.gearSpeed_86.get(), statsTmp.gearSpeed_86.get());
-      FUN_80105048(122, 164, stats.bodySpeed_69.get() + stats.gearSpeed_86.get(), statsTmp.bodySpeed_69.get() + statsTmp.gearSpeed_86.get());
+      renderThreeDigitNumberComparison( 58, 164, stats.bodySpeed_69.get(), statsTmp.bodySpeed_69.get());
+      renderThreeDigitNumberComparison( 90, 164, stats.gearSpeed_86.get(), statsTmp.gearSpeed_86.get());
+      renderThreeDigitNumberComparison(122, 164, stats.bodySpeed_69.get() + stats.gearSpeed_86.get(), statsTmp.bodySpeed_69.get() + statsTmp.gearSpeed_86.get());
 
-      FUN_80107d34( 90, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
-      FUN_80107d34(122, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
-      FUN_80107d34( 90, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
-      FUN_80107d34(122, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
-      FUN_80107d34( 90, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
-      FUN_80107d34(122, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
-      FUN_80107d34( 90, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
-      FUN_80107d34(122, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
+      renderThreeDigitNumberComparisonWithPercent( 90, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
+      renderThreeDigitNumberComparisonWithPercent(122, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
+      renderThreeDigitNumberComparisonWithPercent( 90, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
+      renderThreeDigitNumberComparisonWithPercent(122, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
+      renderThreeDigitNumberComparisonWithPercent( 90, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
+      renderThreeDigitNumberComparisonWithPercent(122, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
+      renderThreeDigitNumberComparisonWithPercent( 90, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
+      renderThreeDigitNumberComparisonWithPercent(122, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
 
       sp0x10tmp.release();
 
@@ -5089,7 +5071,7 @@ public final class SItem {
 
   @Method(0x80108e60L)
   public static void renderCharacterEquipment(final int charIndex, final long a1) {
-    if(charIndex == -0x1L) {
+    if(charIndex == -1) {
       return;
     }
 
@@ -5222,7 +5204,7 @@ public final class SItem {
     }
 
     //LAB_80109308
-    if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) == 0) {
+    if(!hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
       return;
     }
 
@@ -5564,8 +5546,6 @@ public final class SItem {
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
-    LOGGER.error("%s %s", inventoryMenuState_800bdc28.get(), inventoryJoypadInput_800bdc44.get());
-
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> {
         renderablePtr_800bdc5c.clear();
@@ -5718,10 +5698,10 @@ public final class SItem {
             FUN_80104b60(renderablePtr_800bdbf0.deref());
 
             if(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get() < 0xc0) {
-              v0 = gameState_800babc8.equipmentCount_1e4.get() < 0xff ? 1 : 0;
+              v0 = gameState_800babc8.equipmentCount_1e4.get() < 255 ? 1 : 0;
             } else {
               //LAB_8010b0bc
-              v0 = gameState_800babc8.itemCount_1e6.get() < 0x20 ? 1 : 0;
+              v0 = gameState_800babc8.itemCount_1e6.get() < Config.inventorySize() ? 1 : 0;
             }
 
             //LAB_8010b0cc
@@ -6144,7 +6124,7 @@ public final class SItem {
     if((a2 & 0xffL) != 0) {
       renderTwoDigitNumber(105, 36, gameState_800babc8.itemCount_1e6.get(), 0x2L);
       FUN_801038d4(94, 16, 16);
-      renderTwoDigitNumber(123, 36, 32, 0x2L);
+      renderTwoDigitNumber(123, 36, Config.inventorySize(), 0x2L);
     } else {
       //LAB_8010c3e8
       renderThreeDigitNumber(93, 36, gameState_800babc8.equipmentCount_1e4.get(), 0x2L);
@@ -6277,10 +6257,10 @@ public final class SItem {
         FUN_801038d4(0x6b, 274, 147);
         FUN_801038d4(0x6b, 274, 157);
         loadCharacterStats(0);
-        FUN_80105048(284, 127, oldStats.gearAttack_88.get(), newStats.gearAttack_88.get());
-        FUN_80105048(284, 137, oldStats.gearDefence_8c.get(), newStats.gearDefence_8c.get());
-        FUN_80105048(284, 147, oldStats.gearMagicAttack_8a.get(), newStats.gearMagicAttack_8a.get());
-        FUN_80105048(284, 157, oldStats.gearMagicDefence_8e.get(), newStats.gearMagicDefence_8e.get());
+        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88.get(), newStats.gearAttack_88.get());
+        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c.get(), newStats.gearDefence_8c.get());
+        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a.get(), newStats.gearMagicAttack_8a.get());
+        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e.get(), newStats.gearMagicDefence_8e.get());
       } else {
         //LAB_8010cafc
         renderText(Cannot_be_armed_with_8011c6d4, 228, 137, 4);
@@ -7081,7 +7061,7 @@ public final class SItem {
       FUN_8010e2a0(x + 108, y + 20, gameState_800babc8.charData_32c.get(charIndex).level_12.get());
 
       final int dlevel;
-      if(FUN_80104b7c(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex) == 0) {
+      if(!hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
         dlevel = 0;
       } else {
         dlevel = gameState_800babc8.charData_32c.get(charIndex).dlevel_13.get();
@@ -7520,10 +7500,10 @@ public final class SItem {
           playSound(0x2L);
 
           if(menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get() < 0xc0) {
-            FUN_80023a2c(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+            sortItems(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
           } else {
             //LAB_8010f838
-            FUN_80023a2c(_8011dcb8.get(1).deref(), gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+            sortItems(_8011dcb8.get(1).deref(), gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
           }
         }
 

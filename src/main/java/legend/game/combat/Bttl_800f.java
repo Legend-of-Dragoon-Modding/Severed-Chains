@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
@@ -1794,7 +1795,7 @@ public final class Bttl_800f {
     if(v1 == 0) {
       //LAB_800f4a6c
       //LAB_800f4a7c
-      for(int i = 0; i < 32; i++) {
+      for(int i = 0; i < Config.inventorySize(); i++) {
         if(gameState_800babc8.items_2e9.get(i).get() == 0xff) {
           break;
         }

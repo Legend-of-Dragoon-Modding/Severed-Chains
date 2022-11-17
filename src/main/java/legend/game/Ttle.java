@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -254,12 +255,12 @@ public final class Ttle {
     gameState_800babc8.equipmentCount_1e4.set((short)0);
 
     //LAB_800c73b8
-    for(int i = 0x20; i >= 0; i--) {
+    for(int i = Config.inventorySize(); i >= 0; i--) {
       gameState_800babc8.items_2e9.get(i).set(0xff);
     }
 
     //LAB_800c73d8
-    for(int i = 0; i < 0x21; i++) {
+    for(int i = 0; i < Config.inventorySize() + 1; i++) {
       final int itemId = (int)_800ce76c.offset(i * 0x2L).get();
       if(itemId == 0xff) {
         gameState_800babc8.itemCount_1e6.set((short)i);

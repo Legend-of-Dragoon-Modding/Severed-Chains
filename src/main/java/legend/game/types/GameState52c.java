@@ -1,5 +1,6 @@
 package legend.game.types;
 
+import legend.core.Config;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
@@ -85,7 +86,7 @@ public class GameState52c implements MemoryRef {
     this.equipmentCount_1e4 = ref.offset(2, 0x1e4L).cast(ShortRef::new);
     this.itemCount_1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
     this.equipment_1e8 = ref.offset(1, 0x1e8L).cast(ArrayRef.of(UnsignedByteRef.class, 0x101, 1, UnsignedByteRef::new));
-    this.items_2e9 = ref.offset(1, 0x2e9L).cast(ArrayRef.of(UnsignedByteRef.class, 0x21, 1, UnsignedByteRef::new));
+    this.items_2e9 = ref.offset(1, 0x2e9L).cast(ArrayRef.of(UnsignedByteRef.class, Config.inventorySize() + 1, 1, UnsignedByteRef::new));
 
     this.charData_32c = ref.offset(4, 0x32cL).cast(ArrayRef.of(CharacterData2c.class, 9, 0x2c, CharacterData2c::new));
     this._4b8 = ref.offset(4, 0x4b8L).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
