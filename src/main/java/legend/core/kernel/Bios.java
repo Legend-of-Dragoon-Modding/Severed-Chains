@@ -16,8 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-import java.util.Scanner;
-
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.ENTRY_POINT;
@@ -142,29 +140,6 @@ public final class Bios {
     //LAB_bfc00434
     MEMORY.memcpy(kernelStart_a0000500.getAddress(), kernelStartRom_bfc10000.getAddress(), 0x8bf0);
     MEMORY.addFunctions(Kernel.class);
-  }
-
-  @Method(0xbfc01accL)
-  public static long bzero_Impl_A28(final long dst, final int size) {
-    if(dst == 0 || size <= 0) {
-      return 0;
-    }
-
-    MEMORY.waitForLock(() -> {
-      long dest = dst;
-      long s = size;
-      MEMORY.disableAlignmentChecks();
-      for(; s >= 8; s -= 8, dest += 8) {
-        MEMORY.set(dest, 8, 0);
-      }
-      MEMORY.enableAlignmentChecks();
-
-      for(int i = 0; i < s; i++) {
-        MEMORY.set(dst, (byte)0);
-      }
-    });
-
-    return dst;
   }
 
   @Method(0xbfc02200L)
@@ -333,7 +308,7 @@ public final class Bios {
     }
 
     //LAB_bfc04640
-    bzero_Impl_A28(mem, size);
+    MEMORY.memfill(mem, size, 0);
     ExceptionChainPtr_a0000100.set(MEMORY.ref(4, mem, ArrayRef.of(Pointer.classFor(legend.core.kernel.PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, legend.core.kernel.PriorityChainEntry::new))));
     ExceptionChainSize_a0000104.setu(size);
 

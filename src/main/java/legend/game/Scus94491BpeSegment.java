@@ -167,7 +167,7 @@ import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbacks_8004dddc;
-import static legend.game.Scus94491BpeSegment_8004.initSound;
+import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.isSpuDmaTransferInProgress;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
@@ -1718,22 +1718,6 @@ public final class Scus94491BpeSegment {
     return dest;
   }
 
-  @Method(0x80013658L)
-  public static void fillMemory(final long address, final long fill, final long size) {
-    // Fill in 4-byte segments if possible
-    if((address & 0x3L) == 0 && (size & 0x3L) == 0) {
-      for(int i = 0; i < size; i += 4) {
-        MEMORY.set(address + i, 4, fill);
-      }
-
-      return;
-    }
-
-    for(int i = 0; i < size; i++) {
-      MEMORY.set(address + i, (byte)fill);
-    }
-  }
-
   @Method(0x800136dcL)
   public static void scriptStartEffect(final long effectType, final long frames) {
     //LAB_800136f4
@@ -2171,73 +2155,68 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001524cL)
-  public static long loadFile(final FileEntry08 entry, final long transferDest, final long callback, final long callbackParam, final long param_5) {
-    final long s0 = FUN_800155b8(entry.fileIndex_00.get(), transferDest, param_5);
-
-    if(s0 < 0) {
-      return -0x1L;
+  public static long loadFile(final FileEntry08 entry, final long transferDest, final long callback, final long callbackParam, final long flags) {
+    if(entry.fileIndex_00.get() == -1) {
+      throw new RuntimeException("File not loaded");
     }
 
     final FileLoadingInfo file = addFile();
-    if(file == null) {
-      assert false : "File stack overflow";
-      return -0x1L;
-    }
-
     file.callback.set(MEMORY.ref(4, callback).cast(TriConsumerRef::new));
     file.transferDest.setu(transferDest);
     file.namePtr.set(entry.name_04.deref());
     file.callbackParam.set((int)callbackParam);
-    file.type.set((short)s0);
+    file.type.set((short)FUN_800155b8(transferDest, flags));
     file.used.set(true);
     setLoadingFilePosAndSizeFromFile(file, entry);
 
     LOGGER.info(file);
 
+    // Insta-load
+    readQueuedFileFromDisk();
+    removeCurrentlyLoadingFileFromQueue();
+    decompressCurrentFile();
+    executeCurrentlyLoadingFileCallback();
+
     return 0;
   }
 
   @Method(0x80015310L)
-  public static long loadDrgnBinFile(final int index, final int fileIndex, final long fileTransferDest, final long callback, final long callbackParam, final long param_6) {
+  public static long loadDrgnBinFile(final int index, final int fileIndex, final long fileTransferDest, final long callback, final long callbackParam, final long flags) {
     final int drgnIndex = Math.min(index, 2);
+
+    if(drgnFiles_8004dda0.get(drgnIndex).fileIndex_00.get() == -1) {
+      throw new RuntimeException("DRGN file %d not loaded".formatted(drgnIndex));
+    }
 
     //LAB_80015388
     //LAB_8001538c
-    final long s2 = FUN_800155b8(drgnFiles_8004dda0.get(drgnIndex).fileIndex_00.get(), fileTransferDest, param_6);
-    if(s2 < 0) {
-      return -0x1L;
-    }
-
     LOGGER.info("Queueing DRGN%d file %d (if you're a programmer), %d (if you're a zamboni)", index, fileIndex, fileIndex + 1);
 
     final FileLoadingInfo file = addFile();
-    if(file == null) {
-      //LAB_800153d4
-      assert false : "File stack overflow";
-      return -0x1L;
-    }
-
-    //LAB_800153dc
     file.callback.set(MEMORY.ref(4, callback).cast(TriConsumerRef::new));
     file.transferDest.setu(fileTransferDest);
     file.namePtr.set(drgnFiles_8004dda0.get(drgnIndex).name_04.deref());
     file.callbackParam.set((int)callbackParam);
-    file.type.set((short)s2);
+    file.type.set((short)FUN_800155b8(fileTransferDest, flags));
     file.used.set(true);
     getDrgnFilePos(file, drgnIndex, fileIndex);
 
     LOGGER.info(file);
+
+    // Insta-load
+    readQueuedFileFromDisk();
+    removeCurrentlyLoadingFileFromQueue();
+    decompressCurrentFile();
+    executeCurrentlyLoadingFileCallback();
 
     //LAB_80015424
     return 0;
   }
 
   @Method(0x8001557cL)
-  @Nullable
   public static FileLoadingInfo addFile() {
     if(fileCount_8004ddc8.get() >= 44) {
-      LOGGER.error("File stack overflow");
-      return null;
+      throw new RuntimeException("File stack overflow");
     }
 
     final FileLoadingInfo file = fileLoadingInfoArray_800bbad8.get(fileCount_8004ddc8.get());
@@ -2247,26 +2226,22 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800155b8L)
-  public static long FUN_800155b8(final long a0, final long fileTransferDest, long a2) {
-    if(a0 < 0) {
-      return -0x1L;
-    }
-
-    a2 = a2 & 0xffffffefL | 0x8L;
+  public static long FUN_800155b8(final long fileTransferDest, long flags) {
+    flags = flags & 0xffff_ffefL | 0x8L;
 
     //LAB_800155d0
-    if(fileTransferDest == 0 && (a2 & 0x8000L) == 0) {
+    if(fileTransferDest == 0 && (flags & 0x8000L) == 0) {
       //LAB_800155ec
-      if((a2 & 0x6L) == 0) {
-        a2 |= 0x2L;
+      if((flags & 0x6L) == 0) {
+        flags |= 0x2L;
       }
 
-      return a2;
+      return flags;
     }
 
     //LAB_800155e4
     //LAB_800155fc
-    return a2 & 0xfffffff9L;
+    return flags & 0xffff_fff9L;
   }
 
   @Method(0x80015604L)
@@ -4160,7 +4135,7 @@ public final class Scus94491BpeSegment {
     GPU.queueCommand(2, cmd);
   }
 
-  /**Some kind of intermediate rect render method**/
+  /** Some kind of intermediate rect render method **/
   @Method(0x80018d60L)
   public static void FUN_80018d60(final int displayX, final int displayY, final int originU, final int originV, final int width, final int height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
     FUN_80018a5c((short)displayX, (short)displayY, originU & 0xff, originV & 0xff, originU + width & 0xff, originV + height & 0xff, (short)a6, transMode, colour, (short)a9, (short)a9);
@@ -4237,7 +4212,30 @@ public final class Scus94491BpeSegment {
         if(MEMORY.ref(1, s0).offset(0x8L).getSigned() >= 0) {
           v0 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 8;
           v1 = v0 & 0xfL;
-          if(v1 == 0x1L) {
+          if(v1 == 0) {
+            //LAB_80019040
+            MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
+
+            if(MEMORY.ref(2, s0).offset(0x4L).get() != 0) {
+              MEMORY.ref(2, s0).offset(0x4L).subu(0x492L);
+              MEMORY.ref(2, s0).offset(0x6L).subu(0x492L);
+            } else {
+              //LAB_80019084
+              MEMORY.ref(2, s0).offset(0xcL).and(0x8fffL);
+            }
+
+            //LAB_80019094
+            if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
+              MEMORY.ref(2, s0).offset(0xcL).and(0x7fffL);
+              MEMORY.ref(1, s0).offset(0x8L).setu(0);
+              v1 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 8;
+              v1 = v1 & 0xfL;
+              v1 = v1 + 0x1L;
+              v1 = v1 & 0xfL;
+              v1 = v1 << 8;
+              MEMORY.ref(2, s0).offset(0xcL).and(0xf0ffL).oru(v1);
+            }
+          } else if(v1 == 0x1L) {
             //LAB_800190d4
             a0 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 15;
             v1 = a0 + 0x1L;
@@ -4255,67 +4253,36 @@ public final class Scus94491BpeSegment {
               v1 = v1 << 8;
               MEMORY.ref(2, s0).offset(0xcL).and(0xf0ffL).oru(v1);
             }
-          } else {
-            if(v1 >= 0x2L) {
-              //LAB_80019028
-              if(v1 == 0x2L) {
-                //LAB_80019164
-                MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
+            //LAB_80019028
+          } else if(v1 == 0x2L) {
+            //LAB_80019164
+            MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
 
-                if(MEMORY.ref(1, s0).offset(0x9L).get() == 0) {
-                  //LAB_80019180
-                  MEMORY.ref(1, s0).offset(0x9L).setu(0x8L);
-                  v1 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 8;
-                  v1 = v1 & 0xfL;
-                  v1 = v1 + 0x1L;
-                  v1 = v1 & 0xfL;
-                  v1 = v1 << 8;
+            if(MEMORY.ref(1, s0).offset(0x9L).get() == 0) {
+              //LAB_80019180
+              MEMORY.ref(1, s0).offset(0x9L).setu(0x8L);
+              v1 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 8;
+              v1 = v1 & 0xfL;
+              v1 = v1 + 0x1L;
+              v1 = v1 & 0xfL;
+              v1 = v1 << 8;
 
-                  //LAB_800191a4
-                  MEMORY.ref(2, s0).offset(0xcL).and(0xf0ffL).oru(v1);
-                }
-              } else {
-                if(v1 == 0x3L) {
-                  //LAB_800191b8
-                  MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
+              //LAB_800191a4
+              MEMORY.ref(2, s0).offset(0xcL).and(0xf0ffL).oru(v1);
+            }
+          } else if(v1 == 0x3L) {
+            //LAB_800191b8
+            MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
 
-                  if((MEMORY.ref(1, s0).offset(0x9L).get() & 0x1L) != 0) {
-                    MEMORY.ref(2, s0).offset(0x2L).addu(0x1L);
-                  }
+            if((MEMORY.ref(1, s0).offset(0x9L).get() & 0x1L) != 0) {
+              MEMORY.ref(2, s0).offset(0x2L).addu(0x1L);
+            }
 
-                  //LAB_800191e4
-                  MEMORY.ref(2, s0).offset(0x6L).subu(0x200L);
+            //LAB_800191e4
+            MEMORY.ref(2, s0).offset(0x6L).subu(0x200L);
 
-                  if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
-                    MEMORY.ref(1, s0).offset(0x8L).setu(-100);
-                  }
-                }
-              }
-            } else {
-              if(v1 == 0) {
-                //LAB_80019040
-                MEMORY.ref(1, s0).offset(0x9L).subu(0x1L);
-
-                if(MEMORY.ref(2, s0).offset(0x4L).get() != 0) {
-                  MEMORY.ref(2, s0).offset(0x4L).subu(0x492L);
-                  MEMORY.ref(2, s0).offset(0x6L).subu(0x492L);
-                } else {
-                  //LAB_80019084
-                  MEMORY.ref(2, s0).offset(0xcL).and(0x8fffL);
-                }
-
-                //LAB_80019094
-                if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
-                  MEMORY.ref(2, s0).offset(0xcL).and(0x7fffL);
-                  MEMORY.ref(1, s0).offset(0x8L).setu(0);
-                  v1 = MEMORY.ref(2, s0).offset(0xcL).get() >>> 8;
-                  v1 = v1 & 0xfL;
-                  v1 = v1 + 0x1L;
-                  v1 = v1 & 0xfL;
-                  v1 = v1 << 8;
-                  MEMORY.ref(2, s0).offset(0xcL).and(0xf0ffL).oru(v1);
-                }
-              }
+            if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
+              MEMORY.ref(1, s0).offset(0x8L).setu(-100);
             }
           }
 
@@ -4407,7 +4374,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019500L)
   public static void FUN_80019500() {
-    initSound();
+    initSpu();
     sssqFadeIn(0, 0);
     FUN_8004c3f0(0x8L);
     sssqSetReverbType(0x3L);
@@ -4415,7 +4382,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019548
     for(int i = 0; i < 13; i++) {
-      FUN_8001aa44(i);
+      unuseSoundFile(i);
     }
 
     FUN_8001aa64();
@@ -4624,72 +4591,47 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80019c80L)
-  public static void FUN_80019c80(final long a0, final long a1, final long a2) {
-    long v0;
-    long v1;
-    long s0;
-    long s1;
-    final long s2;
-    final long s5;
-    s1 = 0;
-    s5 = -0x8000L;
-    s2 = a2 & 0x1L;
-    v0 = 0x800c_0000L;
-    s0 = v0 - 0x3658L;
+  public static void FUN_80019c80(final int soundFileIndex, final int soundIndex, final int a2) {
+    final int s2 = a2 & 1;
 
     //LAB_80019cc4
-    do {
-      if(MEMORY.ref(1, s0).offset(0x2L).get() == a0 && MEMORY.ref(1, s0).offset(0x3L).get() == a1) {
-        FUN_8004d78c((short)(s1 | s5));
+    for(int i = 0; i < 24; i++) {
+      final SpuStruct08 s0 = _800bc9a8.get(i);
+
+      if(s0.soundFileIndex_02.get() == soundFileIndex && s0.soundIndex_03.get() == soundIndex) {
+        FUN_8004d78c((short)(0xffff8000 | i));
+
         if(s2 == 0) {
           break;
         }
       }
-
-      //LAB_80019cfc
-      s1 = s1 + 0x1L;
-      s0 = s0 + 0x8L;
-    } while((int)s1 < 0x18L);
+    }
 
     //LAB_80019d0c
-    s1 = 0;
-    v0 = 0x800c_0000L;
-    v1 = v0 - 0x2ef0L;
-
     //LAB_80019d1c
-    do {
-      if(MEMORY.ref(1, v1).offset(0x0L).get() == 0x4L && MEMORY.ref(4, v1).offset(0xcL).get() == a1 && MEMORY.ref(4, v1).offset(0x8L).get() == a0) {
-        MEMORY.ref(1, v1).offset(0x0L).setu(0);
-        MEMORY.ref(4, v1).offset(0x1cL).setu(0);
+    for(int i = 0; i < 32; i++) {
+      final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
+
+      if(v1._00.get() == 4 && v1.soundIndex_0c.get() == soundIndex && v1.soundFileIndex_08.get() == soundFileIndex) {
+        v1._00.set(0);
+        v1._1c.set(0);
       }
+    }
 
-      //LAB_80019d54
-      s1 = s1 + 0x1L;
-      v1 = v1 + 0x28L;
-    } while((int)s1 < 0x20L);
-
-    v0 = (int)a2 >> 1;
-    v0 = v0 & 0x1L;
-    if(v0 != 0) {
-      v0 = 0x800c_0000L;
-      v0 = v0 - 0x2ef0L;
-      v1 = v0;
-      final long a0_0 = v1 + 0x500L;
-
+    if((a2 >> 1 & 1) != 0) {
       //LAB_80019d84
-      do {
+      for(int i = 0; i < 32; i++) {
+        final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
+
         //LAB_80019db4
-        if(MEMORY.ref(1, v1).offset(0x0L).get() == 0x3L && (MEMORY.ref(2, v1).offset(0x20L).getSigned() != 0 || MEMORY.ref(2, v1).offset(0x24L).getSigned() != 0) || MEMORY.ref(4, v1).offset(0x1cL).get() != 0) {
+        if(v1._00.get() == 3 && (v1._20.get() != 0 || v1._24.get() != 0) || v1._1c.get() != 0) {
           //LAB_80019dc4
-          if(MEMORY.ref(4, v1).offset(0xcL).get() == a1 && MEMORY.ref(4, v1).offset(0x8L).get() == a0) {
-            MEMORY.ref(1, v1).offset(0x0L).setu(0);
-            MEMORY.ref(4, v1).offset(0x1cL).setu(0);
+          if(v1.soundIndex_0c.get() == soundIndex && v1.soundFileIndex_08.get() == soundFileIndex) {
+            v1._00.set(0);
+            v1._1c.set(0);
           }
         }
-
-        //LAB_80019dec
-        v1 = v1 + 0x28L;
-      } while((int)v1 < (int)a0_0);
+      }
     }
 
     //LAB_80019dfc
@@ -5055,7 +4997,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001aa44L)
-  public static void FUN_8001aa44(final int index) {
+  public static void unuseSoundFile(final int index) {
     soundFileArr_800bcf80.get(index).used_00.set(false);
   }
 
@@ -5079,8 +5021,8 @@ public final class Scus94491BpeSegment {
     }
   }
 
-  @Method(0x8001ab34L) // Button press (actually I think this is sound?)
-  public static long FUN_8001ab34(final RunningScript a0) {
+  @Method(0x8001ab34L)
+  public static long scriptPlaySound(final RunningScript a0) {
     playSound(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), (short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get());
     return 0;
   }
@@ -5185,13 +5127,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b0f0L)
-  public static long FUN_8001b0f0(final RunningScript a0) {
+  public static long scriptGetSssqTempoScale(final RunningScript a0) {
     a0.params_20.get(0).deref().set((int)sssqTempoScale_800bd100.get());
     return 0;
   }
 
   @Method(0x8001b118L)
-  public static long FUN_8001b118(final RunningScript a0) {
+  public static long scriptSetSssqTempoScale(final RunningScript a0) {
     sssqTempoScale_800bd100.setu(a0.params_20.get(0).deref().get());
     return 0;
   }
@@ -5212,7 +5154,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b14cL)
-  public static long FUN_8001b14c(final RunningScript a0) {
+  public static long scriptSetMainVolume(final RunningScript a0) {
     setMainVolume((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
     return 0;
   }
@@ -5252,7 +5194,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b27cL)
-  public static long FUN_8001b27c(final RunningScript a0) {
+  public static long scriptSssqFadeIn(final RunningScript a0) {
     sssqFadeIn((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
     return 0;
   }

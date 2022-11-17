@@ -106,7 +106,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -5776,7 +5775,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002aa04L)
   public static void FUN_8002aa04() {
-    fillMemory(_800beb98.getAddress(), 0, 0x190);
+    MEMORY.memfill(_800beb98.getAddress(), 0x190, 0);
     _800bed28.setu(0);
   }
 

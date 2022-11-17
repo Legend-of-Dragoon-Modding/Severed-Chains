@@ -4,6 +4,7 @@ import legend.core.MathHelper;
 import legend.core.memory.Segment;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class RamSegment extends Segment {
   private final byte[] data;
@@ -74,6 +75,12 @@ public class RamSegment extends Segment {
   public void memcpy(final int dest, final int src, final int length) {
     this.removeFunctions(dest, dest + length);
     System.arraycopy(this.data, src, this.data, dest, length);
+  }
+
+  @Override
+  public void memfill(final int addr, final int length, final int value) {
+    this.removeFunctions(addr, addr + length);
+    Arrays.fill(this.data, addr, addr + length, (byte)value);
   }
 
   @Override

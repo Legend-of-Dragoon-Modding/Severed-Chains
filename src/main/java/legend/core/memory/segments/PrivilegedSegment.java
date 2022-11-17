@@ -2,7 +2,6 @@ package legend.core.memory.segments;
 
 import legend.core.memory.MethodBinding;
 import legend.core.memory.Segment;
-import legend.core.memory.segments.PrivilegeGate;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -84,6 +83,12 @@ public class PrivilegedSegment extends Segment {
   public void memcpy(final int dest, final int src, final int length) {
     this.gate.test(this.getAddress() + dest);
     this.segment.memcpy(dest, src, length);
+  }
+
+  @Override
+  public void memfill(final int addr, final int length, final int value) {
+    this.gate.test(this.getAddress() + addr);
+    this.segment.memfill(addr, length, value);
   }
 
   @Override

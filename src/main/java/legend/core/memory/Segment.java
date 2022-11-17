@@ -60,6 +60,10 @@ public abstract class Segment {
     throw new UnsupportedOperationException("This memory segment does not support memcpy (address: " + Long.toHexString(this.getAddress() + dest) + ')');
   }
 
+  public void memfill(final int addr, final int length, final int value) {
+    throw new UnsupportedOperationException("This memory segment does not support memcpy (address: " + Long.toHexString(this.getAddress() + addr) + ')');
+  }
+
   protected void setFunction(final int offset, final Method function, @Nullable final Object instance, final boolean ignoreExtraParams) {
     function.setAccessible(true);
 

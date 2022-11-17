@@ -3680,7 +3680,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b834L)
-  public static void initSound() {
+  public static void initSpu() {
     assert _80011db0.get() == 0x07070707L && _80011db4.get() == 0x07070707L && _80011db8.get() == 0x07070707L && _80011dbc.get() == 0x07070707L : "The data was different - gonna have to do the stack thing";
 
     final SpuStruct44 spu44 = _800c6630;

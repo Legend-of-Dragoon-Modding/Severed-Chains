@@ -231,6 +231,17 @@ public class Memory {
     }
   }
 
+  public void memfill(final long addr, final int length, final int value) {
+    if(length == 0) {
+      return;
+    }
+
+    synchronized(this.lock) {
+      final Segment srcSegment = this.getSegment(addr);
+      srcSegment.memfill((int)(this.maskAddress(addr) - srcSegment.getAddress()), length, value);
+    }
+  }
+
   public Value ref(final int byteSize, final long address) {
     this.checkAlignment(address, byteSize);
     return new MemoryValue(byteSize, address);

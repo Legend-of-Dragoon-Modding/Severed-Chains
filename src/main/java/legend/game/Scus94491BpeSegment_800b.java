@@ -186,7 +186,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
   public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
-  public static final Value fileCount_800bd77c = MEMORY.ref(4, 0x800bd77c4L);
+  public static final Value fileCount_800bd77c = MEMORY.ref(4, 0x800bd77cL);
 
   public static final Value _800bd780 = MEMORY.ref(1, 0x800bd780L);
   public static final Value _800bd781 = MEMORY.ref(1, 0x800bd781L);

@@ -41,7 +41,7 @@ import legend.game.types.WMapAreaData08;
 import legend.game.types.WMapRender10;
 import legend.game.types.WMapRender28;
 import legend.game.types.WMapRender40;
-import legend.game.types.WMapStruct0c;
+import legend.game.types.Place0c;
 import legend.game.types.WMapStruct0c_2;
 import legend.game.types.WMapStruct14;
 import legend.game.types.WMapStruct19c0;
@@ -63,7 +63,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -157,15 +156,21 @@ import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 public class WMap {
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
 
-  private static final Value _800c6698 = MEMORY.ref(4, 0x800c6698L);
-  private static final Value _800c669c = MEMORY.ref(4, 0x800c669cL);
+  private static final Value worldMapState_800c6698 = MEMORY.ref(4, 0x800c6698L);
+  private static final Value playerState_800c669c = MEMORY.ref(4, 0x800c669cL);
   private static final Value _800c66a0 = MEMORY.ref(4, 0x800c66a0L);
   private static final Value _800c66a4 = MEMORY.ref(4, 0x800c66a4L);
   private static final Pointer<WMapStruct258> struct258_800c66a8 = MEMORY.ref(4, 0x800c66a8L, Pointer.deferred(4, WMapStruct258::new));
 
   private static final Pointer<WMapStruct19c0> _800c66b0 = MEMORY.ref(4, 0x800c66b0L, Pointer.deferred(4, WMapStruct19c0::new));
 
-  private static final Value _800c66b8 = MEMORY.ref(4, 0x800c66b8L);
+  /**
+   * <ul>
+   *   <li>0x2 - general wmap textures</li>
+   *   <li>0x4 - wmap mesh</li>
+   * </ul>
+   */
+  private static final Value filesLoadedFlags_800c66b8 = MEMORY.ref(4, 0x800c66b8L);
 
   private static final WeirdTimHeader _800c66c0 = MEMORY.ref(4, 0x800c66c0L, WeirdTimHeader::new);
 
@@ -362,7 +367,7 @@ public class WMap {
 
   private static final Value _800f021c = MEMORY.ref(2, 0x800f021cL);
 
-  private static final UnboundedArrayRef<WMapStruct0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, WMapStruct0c::new));
+  private static final UnboundedArrayRef<Place0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, Place0c::new));
 
   private static final UnboundedArrayRef<WMapStruct14> _800f0e34 = MEMORY.ref(2, 0x800f0e34L, UnboundedArrayRef.of(0x14, WMapStruct14::new));
 
@@ -691,7 +696,7 @@ public class WMap {
 
             if(a0.zoomState_1f8.get() == 0) {
               if(a0._220.get() == 0) {
-                if(_800c6698.get() >= 0x3L || _800c669c.get() >= 0x3L) {
+                if(worldMapState_800c6698.get() >= 0x3L || playerState_800c669c.get() >= 0x3L) {
                   //LAB_800cc900
                   if((joypadPress_8007a398.get() & 0x10L) != 0) {
                     if(_800c6798.offset(0xfcL).get() != 0x1L) {
@@ -895,11 +900,12 @@ public class WMap {
   @Method(0x800ccf04L)
   public static void FUN_800ccf04() {
     struct258_800c66a8.set(MEMORY.ref(4, mallocTail(0x258L), WMapStruct258::new));
-    _800c6698.setu(0x2L);
-    _800c669c.setu(0x2L);
+    worldMapState_800c6698.setu(0x2L);
+    playerState_800c669c.setu(0x2L);
+    loadWait = 20;
     _800c66a0.setu(0x2L);
     _800c66a4.setu(0x2L);
-    _800c66b8.setu(0);
+    filesLoadedFlags_800c66b8.setu(0);
     zOffset_1f8003e8.set(0);
     tmdGp0Tpage_1f8003ec.set(0x20);
     tempZ_800c66d8.set(0);
@@ -925,18 +931,21 @@ public class WMap {
     //LAB_800cd020
   }
 
+  /** This is a hack to "fix" a bug caused by the game loading too fast. Without this delay, Dart will automatically walk forward a bit when leaving a submap. */
+  private static int loadWait = 20;
+
   @Method(0x800cd030L)
   public static void FUN_800cd030() {
     FUN_800d1d88();
     FUN_800e3ff0();
 
-    switch((int)_800c6698.get()) {
+    switch((int)worldMapState_800c6698.get()) {
       case 0:
         break;
 
       case 2:
-        if((_800c66b8.get() & 0x2L) != 0 && (_800c66b8.get() & 0x4L) != 0) {
-          _800c6698.setu(0x3L);
+        if((filesLoadedFlags_800c66b8.get() & 0x2L) != 0 && (filesLoadedFlags_800c66b8.get() & 0x4L) != 0) { // World map textures and mesh loaded
+          worldMapState_800c6698.setu(0x3L);
         }
 
         //LAB_800cd0d4
@@ -944,60 +953,65 @@ public class WMap {
 
       case 3:
         FUN_800d8efc();
-        _800c6698.setu(0x4L);
+        worldMapState_800c6698.setu(0x4L);
         break;
 
       case 4:
-        _800c6698.setu(0x5L);
+        worldMapState_800c6698.setu(0x5L);
         break;
 
       case 5:
-        render();
+        renderWorldMap();
         break;
 
       case 6:
-        _800c6698.setu(0x7L);
+        worldMapState_800c6698.setu(0x7L);
         break;
 
       case 7:
-        FUN_800dcde8();
-        _800c6698.setu(0);
+        deallocateWorldMap();
+        worldMapState_800c6698.setu(0);
         break;
     }
 
     //LAB_800cd148
-    switch((int)_800c669c.get()) {
+    switch((int)playerState_800c669c.get()) {
       case 0:
+        loadWait = 20;
         break;
 
       case 2:
-        if((_800c66b8.get() & 0x2a8L) == 0x2a8L && (_800c66b8.get() & 0x550L) == 0x550L) {
-          _800c669c.setu(0x3L);
+        if((filesLoadedFlags_800c66b8.get() & 0x2a8L) == 0x2a8L && (filesLoadedFlags_800c66b8.get() & 0x550L) == 0x550L) {
+          playerState_800c669c.setu(0x3L);
         }
 
         //LAB_800cd1dc
         break;
 
       case 3:
+        if(loadWait-- > 10) break;
+
         FUN_800dfbd8();
-        _800c669c.setu(0x4L);
+        playerState_800c669c.setu(0x4L);
         break;
 
       case 4:
-        _800c669c.setu(0x5L);
+        if(loadWait-- > 0) break;
+
+        playerState_800c669c.setu(0x5L);
         break;
 
       case 5:
-        FUN_800e0274();
+        renderPlayer();
         break;
 
       case 6:
-        _800c669c.setu(0x7L);
+        playerState_800c669c.setu(0x7L);
         break;
 
       case 7:
         FUN_800e05c4();
-        _800c669c.setu(0);
+        playerState_800c669c.setu(0);
         break;
     }
 
@@ -1010,7 +1024,7 @@ public class WMap {
   @Method(0x800cd278L)
   public static void FUN_800cd278() {
     FUN_800d55fc();
-    FUN_800dcde8();
+    deallocateWorldMap();
     FUN_800e05c4();
     FUN_800e7888();
     FUN_800eede4();
@@ -2880,7 +2894,7 @@ public class WMap {
     memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
     deferReallocOrFree(address, 0, 1);
 
-    _800c66b8.oru(0x1L);
+    filesLoadedFlags_800c66b8.oru(0x1L);
   }
 
   @Method(0x800d5768L)
@@ -2891,7 +2905,7 @@ public class WMap {
     final long cy = clutY_800ef0d2.offset(param * 0x8L).getSigned();
     FUN_800d5c50(address, ix, iy, cx, cy);
     free(address);
-    _800c66b8.oru(0x800L);
+    filesLoadedFlags_800c66b8.oru(0x800L);
 
     //LAB_800d5848
   }
@@ -2912,7 +2926,7 @@ public class WMap {
     //LAB_800d5938
     free(address);
 
-    _800c66b8.oru(param);
+    filesLoadedFlags_800c66b8.oru(param);
 
     //LAB_800d5970
   }
@@ -2925,7 +2939,7 @@ public class WMap {
     initTmdTransforms(struct258_800c66a8.deref().tmdRendering_08.deref(), null);
     struct258_800c66a8.deref().tmdRendering_08.deref().tmd_14.set(tmd);
     setAllCoord2Attribs(struct258_800c66a8.deref().tmdRendering_08.deref(), 0);
-    _800c66b8.oru(0x4L);
+    filesLoadedFlags_800c66b8.oru(0x4L);
   }
 
   @Method(0x800d5a30L)
@@ -2950,17 +2964,17 @@ public class WMap {
 
     if(param == 0) {
       //LAB_800d5bb8
-      _800c66b8.oru(0x10L);
+      filesLoadedFlags_800c66b8.oru(0x10L);
     } else if(param == 1) {
       //LAB_800d5bd8
-      _800c66b8.oru(0x40L);
+      filesLoadedFlags_800c66b8.oru(0x40L);
       //LAB_800d5b98
     } else if(param == 2) {
       //LAB_800d5bf8
-      _800c66b8.oru(0x100L);
+      filesLoadedFlags_800c66b8.oru(0x100L);
     } else if(param == 3) {
       //LAB_800d5c18
-      _800c66b8.oru(0x400L);
+      filesLoadedFlags_800c66b8.oru(0x400L);
     }
 
     //LAB_800d5c38
@@ -3176,7 +3190,7 @@ public class WMap {
 
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
-    _800c66b8.and(0xffff_efffL);
+    filesLoadedFlags_800c66b8.and(0xffff_efffL);
     loadDrgnBinFile(0, 5695, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x1_1000L, 0x4L);
     struct258_800c66a8.deref()._20.set((short)0);
   }
@@ -3184,7 +3198,7 @@ public class WMap {
   /** Path, continent name, zoom level indicator */
   @Method(0x800d6900L)
   public static void renderMapOverlay() {
-    if((_800c66b8.get() & 0x1000L) == 0) {
+    if((filesLoadedFlags_800c66b8.get() & 0x1000L) == 0) {
       return;
     }
 
@@ -3348,12 +3362,7 @@ public class WMap {
     final SVECTOR sp0x70 = new SVECTOR();
     final long[] sp0xb0 = new long[0xff];
 
-    if(_800c6698.get() < 4) {
-      return;
-    }
-
-    //LAB_800d7a60
-    if(_800c669c.get() < 4) {
+    if(worldMapState_800c6698.get() < 4 || playerState_800c669c.get() < 4) {
       return;
     }
 
@@ -3570,7 +3579,7 @@ public class WMap {
     final Value sp0x50 = sp0x50tmp.get();
     final Value sp0x58 = sp0x58tmp.get();
 
-    fillMemory(sp0x48.getAddress(), 0, 0x4L);
+    MEMORY.memfill(sp0x48.getAddress(), 0x4, 0);
 
     sp0x50.setu(_800c8778);
     sp0x58.offset(0x0L).setu(_800c877c.offset(0x0L));
@@ -3603,7 +3612,7 @@ public class WMap {
 
   @Method(0x800d8e4cL)
   public static void FUN_800d8e4c(final int index) {
-    _800c66b8.and(0xffff_fffdL);
+    filesLoadedFlags_800c66b8.and(0xffff_fffdL);
     loadDrgnBinFile(0, 5697 + index, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2L, 0x4L);
     loadDrgnBinFile(0, 5705 + index, 0, getMethodAddress(WMap.class, "loadTmdCallback", long.class, long.class, long.class), 0, 0x2L);
   }
@@ -3626,7 +3635,7 @@ public class WMap {
   }
 
   @Method(0x800d9044L)
-  public static void render() {
+  public static void renderWorldMap() {
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
 
@@ -3717,7 +3726,7 @@ public class WMap {
 
   @Method(0x800d94ccL)
   public static void renderAndHandleWorldMap() {
-    if((_800c66b8.get() & 0x1L) == 0) {
+    if((filesLoadedFlags_800c66b8.get() & 0x1L) == 0) {
       return;
     }
 
@@ -3918,7 +3927,7 @@ public class WMap {
     }
 
     //LAB_800da324
-    if((_800c66b8.get() & 0x1L) == 0) {
+    if((filesLoadedFlags_800c66b8.get() & 0x1L) == 0) {
       return;
     }
 
@@ -4238,7 +4247,7 @@ public class WMap {
         break;
 
       case 8:
-        FUN_80019c80(0xcL, 0x1L, 0x1L);
+        FUN_80019c80(12, 1, 1);
 
         if(struct258.coolonWarpIndex_222.get() == 8) {
           sp60 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get();
@@ -4251,7 +4260,7 @@ public class WMap {
           _80052c34.setu(_800c6862.get());
         } else {
           //LAB_800db9bc
-          _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get())._04.get());
+          _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get()).submapCut_04.get());
           _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get())._06.get());
           submapCut_80052c30.set((int)_800c6860.get());
           index_80052c38.set((int)_800c6862.get());
@@ -4283,7 +4292,7 @@ public class WMap {
         struct258.models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
         struct258._220.set(11);
 
-        FUN_80019c80(0xcL, 0x1L, 0x1L);
+        FUN_80019c80(12, 1, 1);
 
         // Fall through
 
@@ -4379,7 +4388,7 @@ public class WMap {
   }
 
   @Method(0x800dcde8L)
-  public static void FUN_800dcde8() {
+  public static void deallocateWorldMap() {
     if(!struct258_800c66a8.deref().tmdRendering_08.isNull()) {
       deallocateTmdRenderer(struct258_800c66a8.deref().tmdRendering_08.deref());
     }
@@ -4517,7 +4526,7 @@ public class WMap {
 
   @Method(0x800dfa70L)
   public static void FUN_800dfa70() {
-    _800c66b8.and(0xffff_fd57L);
+    filesLoadedFlags_800c66b8.and(0xffff_fd57L);
 
     loadDrgnBinFile(0, 5713, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2a8L, 0x4L);
 
@@ -4596,7 +4605,7 @@ public class WMap {
   }
 
   @Method(0x800e0274L) // Pretty sure this renders the player
-  public static void FUN_800e0274() {
+  public static void renderPlayer() {
     final WMapStruct258 struct = struct258_800c66a8.deref();
 
     if(struct._250.get() != 0x2L) {
@@ -5533,12 +5542,12 @@ public class WMap {
     }
 
     //LAB_800e36a8
-    if(_800c6698.get() != 0x5L) {
+    if(worldMapState_800c6698.get() != 0x5L) {
       return;
     }
 
     //LAB_800e36c4
-    if(_800c669c.get() != 0x5L) {
+    if(playerState_800c669c.get() != 0x5L) {
       return;
     }
 
@@ -5727,7 +5736,7 @@ public class WMap {
 
       if((int)v0 < 0x2L) {
         //LAB_800e4478
-        if(v0 == 0 && ((int)_800c6698.get() >= 0x3L || (int)_800c669c.get() >= 0x3L)) {//LAB_800e44b0
+        if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 0x3L || (int)playerState_800c669c.get() >= 0x3L)) {//LAB_800e44b0
           scriptStartEffect(0x2L, 0xfL);
 
           _800c66b0.deref()._11a.set(1);
@@ -5751,7 +5760,7 @@ public class WMap {
         //LAB_800e4464
         if(v0 == 0x2L) {
           //LAB_800e45c8
-          if(_800c669c.get() >= 0x3L) {
+          if(playerState_800c669c.get() >= 0x3L) {
             struct258_800c66a8.deref()._00.incr();
 
             if((int)struct258_800c66a8.deref()._00.get() >= 0x2L) {
@@ -5796,7 +5805,7 @@ public class WMap {
       } else if((int)v0 < 0x2L) {
         //LAB_800e410c
         //LAB_800e42fc
-        if(v0 == 0 && ((int)_800c6698.get() >= 0x3L || (int)_800c669c.get() >= 0x3L)) {
+        if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 0x3L || (int)playerState_800c669c.get() >= 0x3L)) {
           //LAB_800e4144
           scriptStartEffect(0x2L, 0xfL);
 
@@ -5824,7 +5833,7 @@ public class WMap {
         //LAB_800e40f8
       } else if(v0 == 0x2L) {
         //LAB_800e4368
-        if((int)_800c669c.get() >= 0x3L) {
+        if((int)playerState_800c669c.get() >= 0x3L) {
           struct258_800c66a8.deref()._00.incr();
 
           if((int)struct258_800c66a8.deref()._00.get() >= 0x2L) {
@@ -6069,14 +6078,14 @@ public class WMap {
 
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
-    _800c66b8.and(0xffff_fffeL);
+    filesLoadedFlags_800c66b8.and(0xffff_fffeL);
     loadDrgnBinFile(0, 5696, 0, getMethodAddress(WMap.class, "FUN_800d562c", long.class, long.class, long.class), 0, 0x4L);
     _800c6794.setu(0);
   }
 
   @Method(0x800e4e84L)
   public static void FUN_800e4e84() {
-    if((_800c66b8.get() & 0x1L) == 0) {
+    if((filesLoadedFlags_800c66b8.get() & 0x1L) == 0) {
       return;
     }
 
@@ -6106,7 +6115,7 @@ public class WMap {
     final Value sp0x58 = sp0x58tmp.get();
 
     sp0x48.setu(_800c87e8);
-    fillMemory(sp0x50.getAddress(), 0, 0x4L);
+    MEMORY.memfill(sp0x50.getAddress(), 0x4, 0);
     sp0x58.offset(0x0L).setu(_800c87ec.offset(0x0L));
     sp0x58.offset(0x4L).setu(_800c87ec.offset(0x4L));
 
@@ -6142,7 +6151,7 @@ public class WMap {
     final Value sp0x68 = sp0x68tmp.get();
     final Value sp0x70 = sp0x70tmp.get();
 
-    fillMemory(sp0x60.getAddress(), 0, 0x4L);
+    MEMORY.memfill(sp0x60.getAddress(), 0x4, 0);
     sp0x68.setu(_800c87f4);
     sp0x70.offset(0x0L).setu(_800c87f8.offset(0x0L));
     sp0x70.offset(0x4L).setu(_800c87f8.offset(0x4L));
@@ -6174,10 +6183,8 @@ public class WMap {
 
   @Method(0x800e5150L)
   public static void handleMapTransitions() {
-    long v1;
     final long sp20;
     final long sp2c;
-    long sp34;
     final long sp38;
     final long sp3c;
     int sp50;
@@ -6263,9 +6270,9 @@ public class WMap {
         break;
 
       case 1:
-        _800c66b8.and(0xffff_f7ffL);
+        filesLoadedFlags_800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
+        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).fileIndex_04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
         FUN_8002a32c(7, 1, 240, 120, 14, 16);
 
         _800c68a4.setu(0x2L);
@@ -6275,10 +6282,10 @@ public class WMap {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          v1 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
+          final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
-          if(v1 > 0) {
-            playSound(0xc, (int)v1, 0, 0, (short)0, (short)0);
+          if(soundIndex > 0) {
+            playSound(0xc, soundIndex, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e5698
@@ -6361,13 +6368,13 @@ public class WMap {
         //LAB_800e5b68
         FUN_800ce4dc(_800c689c.deref());
 
-        int placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
+        final int placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
         FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
 
-        if((_800c66b8.get() & 0x800L) != 0) {
+        if((filesLoadedFlags_800c66b8.get() & 0x800L) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .bpp(Bpp.BITS_8)
             .clut((int)_800ef0d8.get(), (int)_800ef0da.get())
@@ -6416,7 +6423,6 @@ public class WMap {
             }
 
             //LAB_800e6138
-            placeIndex = _800f0e34.get((int)_800c67a8.get()).placeIndex_02.get();
             final long services = places_800f0234.get(placeIndex).services_05.get();
 
             //LAB_800e619c
@@ -6459,10 +6465,10 @@ public class WMap {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
+              final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
-              if((int)sp34 > 0) {
-                FUN_80019c80(0xcL, sp34, 0x1L);
+              if(soundIndex > 0) {
+                FUN_80019c80(12, soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -6481,10 +6487,10 @@ public class WMap {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
+              final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
-              if((int)sp34 > 0) {
-                FUN_80019c80(0xcL, sp34, 0x1L);
+              if(soundIndex > 0) {
+                FUN_80019c80(12, soundIndex, 1);
               }
 
               //LAB_800e6504
@@ -6500,10 +6506,10 @@ public class WMap {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              sp34 = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get())._06.get(i).get();
+              final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
-              if((int)sp34 > 0) {
-                FUN_80019c80(0xcL, sp34, 0x1L);
+              if(soundIndex > 0) {
+                FUN_80019c80(12, soundIndex, 1);
               }
 
               //LAB_800e65fc
@@ -6584,7 +6590,7 @@ public class WMap {
           _80052c34.setu(_800c6862.get());
         } else {
           //LAB_800e693c
-          submapCut_80052c30.set(_800f0e34.get((int)_800c67a8.get())._04.get());
+          submapCut_80052c30.set(_800f0e34.get((int)_800c67a8.get()).submapCut_04.get());
 
           if(_800c86d2.getSigned() == 0x1L) {
             sp20 = _800c6862.get() >>> 4 & 0xffffL;
@@ -6936,7 +6942,7 @@ public class WMap {
     int sp1c;
     for(sp1c = 0; sp1c < 0x100; sp1c++) {
       //LAB_800e7b70
-      if(_800f0e34.get(sp1c)._04.get() == _800c685c.getSigned() && _800f0e34.get(sp1c)._06.get() == _800c685e.getSigned()) {
+      if(_800f0e34.get(sp1c).submapCut_04.get() == _800c685c.getSigned() && _800f0e34.get(sp1c)._06.get() == _800c685e.getSigned()) {
         sp18 = true;
         break;
       }
@@ -7167,7 +7173,7 @@ public class WMap {
   @Method(0x800e8a10L)
   public static void FUN_800e8a10() {
     //LAB_800e8a38
-    if((int)_800c6698.get() >= 0x4L && (int)_800c669c.get() >= 0x4L) {
+    if((int)worldMapState_800c6698.get() >= 0x4L && (int)playerState_800c669c.get() >= 0x4L) {
       //LAB_800e8a58
       FUN_800e8cb0();
       FUN_800e975c();
@@ -7319,7 +7325,7 @@ public class WMap {
                     //LAB_800e9018
                     if(_800c66b0.deref()._c4.get() == 0) {
                       //LAB_800e903c
-                      if((_800c66b8.get() & 0x1L) != 0) {
+                      if((filesLoadedFlags_800c66b8.get() & 0x1L) != 0) {
                         //LAB_800e905c
                         if(_800c6690.get() == 0) {
                           //LAB_800e9078
@@ -7364,12 +7370,12 @@ public class WMap {
     }
 
     //LAB_800e9178
-    if(_800c6698.get() != 0x5L) {
+    if(worldMapState_800c6698.get() != 0x5L) {
       return;
     }
 
     //LAB_800e9194
-    if(_800c669c.get() != 0x5L) {
+    if(playerState_800c669c.get() != 0x5L) {
       return;
     }
 
@@ -8422,7 +8428,7 @@ public class WMap {
         break;
 
       case 2:
-        if((_800c66b8.get() & 0x1_0000L) != 0 && (_800c66b8.get() & 0x1000L) != 0) {
+        if((filesLoadedFlags_800c66b8.get() & 0x1_0000L) != 0 && (filesLoadedFlags_800c66b8.get() & 0x1000L) != 0) {
           _800c66a4.setu(0x3L);
         }
 
@@ -8435,7 +8441,7 @@ public class WMap {
         break;
 
       case 4:
-        if(_800c6698.get() >= 0x3L || _800c669c.get() >= 0x3L) {
+        if(worldMapState_800c6698.get() >= 0x3L || playerState_800c669c.get() >= 0x3L) {
           //LAB_800eda98
           _800c66a4.setu(0x5L);
         }
@@ -8480,7 +8486,7 @@ public class WMap {
     final SVECTOR rotation = new SVECTOR(); // Just (0, 0, 0)
     final MATRIX ls = new MATRIX();
 
-    if((_800c66b8.get() & 0x1000L) == 0) {
+    if((filesLoadedFlags_800c66b8.get() & 0x1000L) == 0) {
       return;
     }
 
@@ -8495,12 +8501,12 @@ public class WMap {
     }
 
     //LAB_800edc44
-    if((int)_800c6698.get() < 0x4L) {
+    if((int)worldMapState_800c6698.get() < 0x4L) {
       return;
     }
 
     //LAB_800edc64
-    if((int)_800c669c.get() < 0x4L) {
+    if((int)playerState_800c669c.get() < 0x4L) {
       return;
     }
 

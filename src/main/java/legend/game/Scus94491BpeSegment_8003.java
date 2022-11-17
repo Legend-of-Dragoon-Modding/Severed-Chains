@@ -22,7 +22,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
-import legend.core.kernel.Bios;
 import legend.core.kernel.Kernel;
 import legend.core.kernel.jmp_buf;
 import legend.core.memory.Method;
@@ -145,7 +144,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {
-    Bios.bzero_Impl_A28(address, size);
+    MEMORY.memfill(address, size, 0);
   }
 
   @Method(0x80032898L)
@@ -667,7 +666,7 @@ public final class Scus94491BpeSegment_8003 {
     LOGGER.trace("ResetGraph:jtb=%08x,env=%08x", _80054674.getAddress(), _800546bc.getAddress());
 
     //LAB_800381f8
-    fillMemory(_800546bc.getAddress(), (byte)0, 0x80);
+    MEMORY.memfill(_800546bc.getAddress(), 0x80, 0);
     ResetCallback();
 
     _800546bc.setu(FUN_8003a798(mode));
@@ -675,8 +674,8 @@ public final class Scus94491BpeSegment_8003 {
     _800546c0.setu(array_8005473c.offset(_800546bc.get() * 4));
     _800546c2.setu(array_80054748.offset(_800546bc.get() * 4));
 
-    fillMemory(DRAWENV_800546cc.getAddress(), (byte)0xff, 92);
-    fillMemory(DISPENV_80054728.getAddress(), (byte)0xff, 20);
+    MEMORY.memfill(DRAWENV_800546cc.getAddress(), 0x5c, 0xff);
+    MEMORY.memfill(DISPENV_80054728.getAddress(), 0x14, 0xff);
 
     return _800546bc.get();
   }
@@ -917,18 +916,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003a8c4
     return 1;
-  }
-
-  @Method(0x8003b068L)
-  public static void fillMemory(final long address, final byte fill, final int length) {
-    if(length == 0) {
-      return;
-    }
-
-    //LAB_8003b074
-    for(int offset = 0; offset < length; offset++) {
-      MEMORY.set(address + offset, fill);
-    }
   }
 
   @Method(0x8003b0b4L)

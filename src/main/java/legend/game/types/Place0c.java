@@ -7,22 +7,22 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class WMapStruct0c implements MemoryRef {
+public class Place0c implements MemoryRef {
   private final Value ref;
 
   public final Pointer<LodString> name_00;
-  public final UnsignedByteRef _04;
+  public final UnsignedByteRef fileIndex_04;
   /** Things a place offers like inn, shops, etc. */
   public final UnsignedByteRef services_05;
-  public final ArrayRef<ByteRef> _06;
+  public final ArrayRef<ByteRef> soundIndices_06;
 
-  public WMapStruct0c(final Value ref) {
+  public Place0c(final Value ref) {
     this.ref = ref;
 
     this.name_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, LodString::new));
-    this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
+    this.fileIndex_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
     this.services_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this._06 = ref.offset(1, 0x06L).cast(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+    this.soundIndices_06 = ref.offset(1, 0x06L).cast(ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
   }
 
   @Override

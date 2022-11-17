@@ -264,7 +264,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8002013c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80020230}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800202a4}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ab34}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptPlaySound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ab98}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001abd0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ac48}</li>
@@ -280,10 +280,10 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001b134}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b13c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b144}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b14c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSetMainVolume}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b17c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b208}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b27c}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSssqFadeIn}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7094 = MEMORY.ref(4, 0x800e7094L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -295,8 +295,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_8001b310}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b33c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b3a0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b0f0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b118}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptGetSssqTempoScale}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSetSssqTempoScale}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ffc0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ac88}</li>
@@ -784,12 +784,12 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d44L)
   public static void main() {
-    FUN_800e5d64();
+    gameInit();
     gameLoop();
   }
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
-  public static void FUN_800e5d64() {
+  public static void gameInit() {
     ResetCallback();
 
     ResetGraph(0);
@@ -820,7 +820,7 @@ public final class Scus94491BpeSegment_800e {
     vsyncMode_8007a3b8.set(2);
     _800bb0fc.setu(0);
 
-    FUN_800e60d8();
+    precalculateTpages();
     loadSystemFont();
     clearScriptStates();
     allocateHeap(heap_8011e210.getAddress(), 0x3d_edf0L);
@@ -875,7 +875,7 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e60d8L)
-  public static void FUN_800e60d8() {
+  public static void precalculateTpages() {
     for(final Bpp bpp : Bpp.values()) {
       for(final Translucency trans : Translucency.values()) {
         texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_0).set(GetTPage(bpp, trans, 0, 0));

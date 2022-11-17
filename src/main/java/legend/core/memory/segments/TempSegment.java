@@ -4,6 +4,7 @@ import legend.core.memory.IllegalAddressException;
 import legend.core.memory.Segment;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.BitSet;
 
 public class TempSegment extends Segment {
@@ -129,6 +130,16 @@ public class TempSegment extends Segment {
 
     this.removeFunctions(dest, dest + length);
     System.arraycopy(this.temp, src, this.temp, dest, length);
+  }
+
+  @Override
+  public void memfill(final int addr, final int length, final int value) {
+    if(this.tempUsage.nextClearBit(addr) < addr + length) {
+      throw new IllegalAddressException("There's no temp value reserved for src from %08x to %08x".formatted(addr, addr + length));
+    }
+
+    this.removeFunctions(addr, addr + length);
+    Arrays.fill(this.temp, addr, addr + length, (byte)value);
   }
 
   @Override

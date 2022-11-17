@@ -112,7 +112,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.fillMemory;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -4940,7 +4939,7 @@ public final class SMap {
 
   @Method(0x800e664cL)
   public static void FUN_800e664c(final long submapCut, final long a1) {
-    fillMemory(arr_800cb460.getAddress(), 0, 0x100L);
+    MEMORY.memfill(arr_800cb460.getAddress(), 0x100, 0);
 
     final NewRootEntryStruct entry = newRootPtr_800cb458.deref().entries_0000.get((int)submapCut);
     final short offset = (short)(entry.ub_05.get() << 8 | entry.ub_04.get());
@@ -5368,7 +5367,7 @@ public final class SMap {
 
     memcpy(envStruct_800cab30.getAddress(), envFile.environments_18.getAddress(), (int)(backgroundObjectsCount_800cb584.get() * 0x24L));
     buildBackgroundRenderingPacket(envStruct_800cab30);
-    fillMemory(_800cb590.getAddress(), 0, 0x180L);
+    MEMORY.memfill(_800cb590.getAddress(), 0x180, 0);
   }
 
   @Method(0x800e7604L)
@@ -5722,12 +5721,12 @@ public final class SMap {
   @Method(0x800e81a0L)
   public static void FUN_800e81a0(final int index) {
     final UnknownStruct2 s0_0 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    fillMemory(s0_0.getAddress(), 0, 0x8L);
+    MEMORY.memfill(s0_0.getAddress(), 0x8, 0);
     FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_0, 0);
     _800cbd38.set(s0_0);
 
     final UnknownStruct2 s0_1 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    fillMemory(s0_1.getAddress(), 0, 0x8L);
+    MEMORY.memfill(s0_1.getAddress(), 0x8, 0);
     FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_1, 0);
     _800cbd3c.set(s0_1);
 
@@ -5893,17 +5892,17 @@ public final class SMap {
     _800f7f14.setu(0x1L);
 
     final UnknownStruct2 s0_0 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    fillMemory(s0_0.getAddress(), 0, 0x8L);
+    MEMORY.memfill(s0_0.getAddress(), 0x8, 0);
     FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_0, 0);
     _800cbe34.set(s0_0);
 
     final UnknownStruct2 s0_1 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    fillMemory(s0_1.getAddress(), 0, 0x8L);
+    MEMORY.memfill(s0_1.getAddress(), 0x8, 0);
     FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_1, 0);
     _800d1a8c.set(s0_1);
 
     final UnknownStruct2 s0_2 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    fillMemory(s0_2.getAddress(), 0, 0x8L);
+    MEMORY.memfill(s0_2.getAddress(), 0x8, 0);
     FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_2, 0);
     _800cbe38.set(s0_2);
 
@@ -6734,7 +6733,7 @@ public final class SMap {
       _800d1a90.callback_48.set(MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800ea96c", MediumStruct.class), ConsumerRef::new));
     } else {
       //LAB_800ea9a4
-      fillMemory(_800d1a90.getAddress(), 0, 0x4cL);
+      MEMORY.memfill(_800d1a90.getAddress(), 0x4c, 0);
 
       final long a3 = _800f7f74.getAddress();
       final MediumStruct a2 = _800d1a90;
