@@ -12,6 +12,7 @@ import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.IoHelper;
+import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
@@ -3210,7 +3211,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80016ab0L)
   public static long scriptDivide2(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() / a0.params_20.get(1).deref().get());
+    a0.params_20.get(1).deref().set(MathHelper.safeDiv(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()));
     return 0;
   }
 
