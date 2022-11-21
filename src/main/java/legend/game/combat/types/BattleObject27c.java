@@ -1,20 +1,16 @@
 package legend.game.combat.types;
 
 import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.Model124;
-import legend.game.types.WorldObject210;
 
 public class BattleObject27c extends BattleScriptDataBase {
   public final ArrayRef<ShortRef> all_04; // Note: overlaps all the way to _144
@@ -25,10 +21,18 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedShortRef mp_0c;
   /**
    * <ul>
-   *   <li>0x20 - Can become dragoon</li>
+   *   <li>0x1 - Petrified</li>
+   *   <li>0x2 - Bewitched</li>
+   *   <li>0x4 - Confused</li>
+   *   <li>0x8 - Fearful</li>
+   *   <li>0x10 - Stunned</li>
+   *   <li>0x20 - Weapon blocked</li>
+   *   <li>0x40 - Dispirited</li>
+   *   <li>0x80 - Also dispirited?</li>
+   *   <li>0x2000 - Can become dragoon</li>
    * </ul>
    */
-  public final UnsignedShortRef dragoonFlag_0e;
+  public final UnsignedShortRef status_0e;
   public final UnsignedShortRef maxHp_10;
   public final UnsignedShortRef maxMp_12;
   /**
@@ -270,30 +274,10 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final Model124 model_148;
 
   //TODO maybe part of previous struct
-  public final UnsignedByteRef _1e4;
-  public final UnsignedByteRef colourMap_1e5;
-  public final ShortRef _1e6;
-  public final ShortRef _1e8;
-  public final UnsignedByteRef _1ea;
-
-  public final UnsignedByteRef _214;
-  public final ByteRef _215;
-
-  public final UnboundedArrayRef<UnsignedByteRef> _234;
-
   public final UnsignedIntRef _23c;
   public final UnsignedIntRef _240;
-  public final VECTOR _244;
-
-  public final UnsignedIntRef _254;
-
-  public final UnsignedIntRef _25c;
-  public final IntRef _260;
-  public final IntRef _264;
-  public final IntRef _268;
 
   // This should be the end of model_148
-
   public final ShortRef combatantIndex_26c;
   public final ShortRef animIndex_26e;
   public final ShortRef animIndex_270;
@@ -312,7 +296,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.hp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this.sp_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this.mp_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this.dragoonFlag_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
+    this.status_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
     this.maxHp_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
     this.maxMp_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this.specialEffectFlag_14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
@@ -460,27 +444,9 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.combatant_144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, CombatantStruct1a8::new));
     this.model_148 = ref.offset(4, 0x148L).cast(Model124::new);
 
-    this._1e4 = ref.offset(1, 0x1e4L).cast(UnsignedByteRef::new);
-    this.colourMap_1e5 = ref.offset(1, 0x1e5L).cast(UnsignedByteRef::new);
-    this._1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
-    this._1e8 = ref.offset(2, 0x1e8L).cast(ShortRef::new);
-    this._1ea = ref.offset(1, 0x1eaL).cast(UnsignedByteRef::new);
-
-    this._214 = ref.offset(1, 0x214L).cast(UnsignedByteRef::new);
-    this._215 = ref.offset(1, 0x215L).cast(ByteRef::new);
-
-    this._234 = ref.offset(1, 0x234L).cast(UnboundedArrayRef.of(1, UnsignedByteRef::new));
-
     this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
     this._240 = ref.offset(4, 0x240L).cast(UnsignedIntRef::new);
-    this._244 = ref.offset(4, 0x244L).cast(VECTOR::new);
 
-    this._254 = ref.offset(4, 0x254L).cast(UnsignedIntRef::new);
-
-    this._25c = ref.offset(4, 0x25cL).cast(UnsignedIntRef::new);
-    this._260 = ref.offset(4, 0x260L).cast(IntRef::new);
-    this._264 = ref.offset(4, 0x264L).cast(IntRef::new);
-    this._268 = ref.offset(4, 0x268L).cast(IntRef::new);
     this.combatantIndex_26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
     this.animIndex_26e = ref.offset(2, 0x26eL).cast(ShortRef::new);
     this.animIndex_270 = ref.offset(2, 0x270L).cast(ShortRef::new);

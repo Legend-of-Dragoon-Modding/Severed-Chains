@@ -1,6 +1,7 @@
 package legend.core.gte;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 
@@ -9,13 +10,13 @@ public class TmdHeader implements MemoryRef {
   private final Value ref;
 
   public final UnsignedIntRef flags;
-  public final UnsignedIntRef nobj;
+  public final IntRef nobj;
 
   public TmdHeader(final Value ref) {
     this.ref = ref;
 
     this.flags = ref.offset(4, 0x0L).cast(UnsignedIntRef::new);
-    this.nobj = ref.offset(4, 0x4L).cast(UnsignedIntRef::new);
+    this.nobj = ref.offset(4, 0x4L).cast(IntRef::new);
   }
 
   @Override

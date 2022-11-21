@@ -51,7 +51,7 @@ import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
+import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
@@ -640,21 +640,21 @@ public final class Scus94491BpeSegment_800e {
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 512</p>
    *
    * <ol start="0">
-   *   <li>{@link Bttl_800e#FUN_800ee2ac}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee2e4}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee324}</li>
+   *   <li>{@link Bttl_800e#scriptSetBobjZOffset}</li>
+   *   <li>{@link Bttl_800e#scriptSetBobjScaleUniform}</li>
+   *   <li>{@link Bttl_800e#scriptSetBobjScale}</li>
    *   <li>{@link Bttl_800e#FUN_800ee384}</li>
    *   <li>{@link Bttl_800e#FUN_800ee468}</li>
    *   <li>{@link Bttl_800e#FUN_800ee49c}</li>
    *   <li>{@link Bttl_800e#FUN_800ee4e8}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee548}</li>
+   *   <li>{@link Bttl_800e#scriptApplyScreenDarkening}</li>
    *   <li>{@link Bttl_800e#FUN_800ee384}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee574}</li>
+   *   <li>{@link Bttl_800e#scriptGetStageNobj}</li>
    *   <li>{@link Bttl_800e#FUN_800ee594}</li>
    *   <li>{@link Bttl_800e#FUN_800ee5c0}</li>
    *   <li>{@link Bttl_800e#FUN_800ee3c0}</li>
    *   <li>{@link Bttl_800e#FUN_800ee408}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee5f0}</li>
+   *   <li>{@link Bttl_800e#scriptSetStageZ}</li>
    * </ol>
    */
   public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7570 = MEMORY.ref(4, 0x800e7570L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
@@ -1151,7 +1151,7 @@ public final class Scus94491BpeSegment_800e {
     model_800bda10.coord2Param_64.rotate.x.set((short)0);
     model_800bda10.coord2Param_64.rotate.y.set((short)0);
     model_800bda10.coord2Param_64.rotate.z.set((short)0);
-    model_800bda10.ub_9d.set(0);
+    model_800bda10.colourMap_9d.set(0);
     model_800bda10.b_cc.set(0);
   }
 
@@ -1174,7 +1174,7 @@ public final class Scus94491BpeSegment_800e {
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
     model.tmd_8c.set(tmd);
-    model.tmdNobj_ca.set((int)tmd.header.nobj.get());
+    model.tmdNobj_ca.set(tmd.header.nobj.get());
     model.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
 
     final long v0 = extendedTmd.ptr_08.get();
@@ -1201,7 +1201,7 @@ public final class Scus94491BpeSegment_800e {
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
     model.coord2_14.param.set(model.coord2Param_64);
     GsInitCoordinate2(null, model.coord2_14);
-    FUN_80021ca0(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 0x1L));
+    prepareObjTable2(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 0x1L));
 
     model.zOffset_a0.set((short)0);
     model.ub_a2.set(0);

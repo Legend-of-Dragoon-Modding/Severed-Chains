@@ -14,9 +14,7 @@ public class BattleStruct18cb0 implements MemoryRef {
   public final Pointer<MrgFile> stageMrg_638;
   public final Pointer<MrgFile> stageTmdMrg_63c;
 
-  public final BattleRenderStruct render_963c;
-  //TODO don't know where this struct ends
-
+  public final BattleStage stage_963c;
   public final McqHeader stageMcq_9cb0;
   public final Value _9cdc;
   public final Value _9ce0;
@@ -32,7 +30,7 @@ public class BattleStruct18cb0 implements MemoryRef {
     this.stageMrg_638 = ref.offset(4, 0x638L).cast(Pointer.deferred(4, MrgFile::new));
     this.stageTmdMrg_63c = ref.offset(4, 0x63cL).cast(Pointer.deferred(4, MrgFile::new));
 
-    this.render_963c = ref.offset(4, 0x963cL).cast(BattleRenderStruct::new);
+    this.stage_963c = ref.offset(4, 0x963cL).cast(BattleStage::new);
 
     this.stageMcq_9cb0 = ref.offset(4, 0x9cb0L).cast(McqHeader::new);
     this._9cdc = ref.offset(4, 0x9cdcL);

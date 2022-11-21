@@ -35,7 +35,7 @@ public class Model124 implements MemoryRef {
   public final UnsignedShortRef animCount_98;
   public final ShortRef s_9a;
   public final UnsignedByteRef ub_9c;
-  public final UnsignedByteRef ub_9d;
+  public final UnsignedByteRef colourMap_9d;
   public final ShortRef s_9e;
   public final ShortRef zOffset_a0;
   public final UnsignedByteRef ub_a2;
@@ -79,7 +79,7 @@ public class Model124 implements MemoryRef {
     this.animCount_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
     this.s_9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
-    this.ub_9d = ref.offset(1, 0x9dL).cast(UnsignedByteRef::new);
+    this.colourMap_9d = ref.offset(1, 0x9dL).cast(UnsignedByteRef::new);
     this.s_9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
     this.zOffset_a0 = ref.offset(2, 0xa0L).cast(ShortRef::new);
     this.ub_a2 = ref.offset(1, 0xa2L).cast(UnsignedByteRef::new);

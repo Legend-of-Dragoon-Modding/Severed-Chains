@@ -1394,7 +1394,7 @@ public final class Ttle {
   }
 
   @Method(0x800cbf3cL)
-  public static long prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
+  public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
     adjustTmdPointers(tmd.tmd);
 
     tmdRenderer.dobj2s_00.set(MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x10L), UnboundedArrayRef.of(4, GsDOBJ2::new)));

@@ -605,7 +605,7 @@ public class WMap {
   public static void renderWmapModel(final Model124 model) {
     long s0 = 0x1L;
     long s6 = model.ui_f4.get();
-    final long nobj = model.ObjTable_0c.nobj.get();
+    final int nobj = model.ObjTable_0c.nobj.get();
     final long fp = model.ui_f8.get();
 
     zOffset_1f8003e8.set(model.zOffset_a0.get());
@@ -1336,30 +1336,7 @@ public class WMap {
         renderPacket += 0x24L;
         tpagePacket += 0x8L;
       }
-    } else if(a0._3d.get() == 0xcL) {
-      assert false : "Bugged; sp18 was uninitialized";
-//      renderPacket = 0;
-//
-//      //LAB_800ce7f0
-//      //LAB_800ce81c
-//      for(int i = 0; i < a0._30.get(); i++) {
-//        final RECT sp20 = a0._1c.deref().get(i);
-//        final WMapRender28 sp1c = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
-//
-//        //LAB_800ce840
-//        MEMORY.ref(2, renderPacket).offset(0x08L).setu(sp20.x.get() + a0.x_38.get());
-//        MEMORY.ref(2, renderPacket).offset(0x0aL).setu(sp20.y.get() + a0.y_3a.get());
-//        MEMORY.ref(2, renderPacket).offset(0x10L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-//        MEMORY.ref(2, renderPacket).offset(0x12L).setu(sp20.y.get() + a0.y_3a.get());
-//        MEMORY.ref(2, renderPacket).offset(0x18L).setu(sp20.x.get() + a0.x_38.get());
-//        MEMORY.ref(2, renderPacket).offset(0x1aL).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
-//        MEMORY.ref(2, renderPacket).offset(0x20L).setu(sp20.x.get() + a0.x_38.get() + sp20.w.get());
-//        MEMORY.ref(2, renderPacket).offset(0x22L).setu(sp20.y.get() + a0.y_3a.get() + sp20.h.get());
-//        queueGpuPacket(tags_1f8003d0.deref().get(a0.z_3e.get()).getAddress(), sp1c.getAddress());
-//      }
-
-      //LAB_800cea00
-    }
+    } else assert a0._3d.get() != 0xcL : "Bugged; sp18 was uninitialized";
 
     //LAB_800ce7e8
     //LAB_800cea08
@@ -3625,7 +3602,7 @@ public class WMap {
 
     if(_800c6798.get() == 2) {
       //LAB_800d8f94
-      for(int i = 0; i < (int)struct258_800c66a8.deref().tmdRendering_08.deref().count_0c.get(); i++) {
+      for(int i = 0; i < struct258_800c66a8.deref().tmdRendering_08.deref().count_0c.get(); i++) {
         //LAB_800d8fc4
         struct258_800c66a8.deref().tmdRendering_08.deref()._10.deref().get(i).set(rand() % 4095);
       }
@@ -4535,7 +4512,7 @@ public class WMap {
       //LAB_800dfae8
       struct258_800c66a8.deref().models_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), Model124::new));
       loadDrgnBinFile(0, 5714 + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
-      struct258_800c66a8.deref().models_0c.get(i).deref().ub_9d.set((int)_800ef694.offset(i).get() + 0x80);
+      struct258_800c66a8.deref().models_0c.get(i).deref().colourMap_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
     //LAB_800dfbb4
@@ -5642,10 +5619,10 @@ public class WMap {
   }
 
   @Method(0x800e3bd4L)
-  public static long allocateTmdRenderer(final WMapTmdRenderingStruct18 a0, final TmdWithId tmd) {
+  public static int allocateTmdRenderer(final WMapTmdRenderingStruct18 a0, final TmdWithId tmd) {
     adjustTmdPointers(tmd.tmd);
 
-    final long nobj = tmd.tmd.header.nobj.get();
+    final int nobj = tmd.tmd.header.nobj.get();
     a0.dobj2s_00.set(MEMORY.ref(4, mallocTail(nobj * 0x10L), UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
     a0.coord2s_04.set(MEMORY.ref(4, mallocTail(nobj * 0x50L), UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
     a0.rotations_08.set(MEMORY.ref(4, mallocTail(nobj * 0x08L), UnboundedArrayRef.of(0x8, SVECTOR::new)));

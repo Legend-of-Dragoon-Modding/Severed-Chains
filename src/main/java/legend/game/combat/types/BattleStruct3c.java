@@ -14,11 +14,11 @@ public class BattleStruct3c implements MemoryRef {
   public final ShortRef _04;
   /**
    * 0x4 - max SP
-   * 0x8 - also set when at max SP?
+   * 0x8 - max SP blinking border (turns on and off each frame)
    */
   public final ShortRef flags_06;
-  public final ShortRef _08;
-  public final ShortRef _0a;
+  public final ShortRef x_08;
+  public final ShortRef y_0a;
   public final ShortRef _0c;
   public final ShortRef _0e;
   public final ShortRef _10;
@@ -32,8 +32,8 @@ public class BattleStruct3c implements MemoryRef {
     this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this.flags_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this.x_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this.y_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
     this._10 = ref.offset(2, 0x10L).cast(ShortRef::new);

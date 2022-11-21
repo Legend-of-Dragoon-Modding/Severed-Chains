@@ -147,7 +147,7 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bda0c;
+import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
@@ -194,7 +194,7 @@ import static legend.game.combat.Bttl_800e.FUN_800e9178;
 import static legend.game.combat.Bttl_800e.FUN_800e9428;
 import static legend.game.combat.Bttl_800e.FUN_800e95f0;
 import static legend.game.combat.Bttl_800e.FUN_800eac58;
-import static legend.game.combat.Bttl_800e.FUN_800ebb58;
+import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 import static legend.game.combat.Bttl_800e.renderCtmd;
@@ -7783,7 +7783,7 @@ public final class SEffe {
       t1 = ((EffectManagerData6c)t0)._10.scale_16;
     } else {
       //LAB_80113660
-      t1 = new SVECTOR().set(((BattleObject27c)t0)._244);
+      t1 = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
     }
 
     //LAB_801136a0
@@ -7799,7 +7799,7 @@ public final class SEffe {
         svec = ((EffectManagerData6c)t0)._10.scale_16;
       } else {
         //LAB_80113708
-        svec = new SVECTOR().set(((BattleObject27c)t0)._244);
+        svec = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
       }
 
       //LAB_80113744
@@ -7837,7 +7837,7 @@ public final class SEffe {
       t0 = ((EffectManagerData6c)a3)._10.scale_16;
     } else {
       //LAB_80113834
-      t0 = new SVECTOR().set(((BattleObject27c)a3)._244);
+      t0 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
     }
 
     //LAB_80113874
@@ -7853,7 +7853,7 @@ public final class SEffe {
         a0_1 = ((EffectManagerData6c)a3)._10.scale_16;
       } else {
         //LAB_801138dc
-        a0_1 = new SVECTOR().set(((BattleObject27c)a3)._244);
+        a0_1 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
       }
 
       //LAB_8011391c
@@ -7894,7 +7894,7 @@ public final class SEffe {
         v1 = ((EffectManagerData6c)a1_0)._10.scale_16;
       } else {
         //LAB_80113a64
-        v1 = new SVECTOR().set(((BattleObject27c)a1_0)._244);
+        v1 = new SVECTOR().set(((BattleObject27c)a1_0).model_148.scaleVector_fc);
       }
 
       //LAB_80113aa0
@@ -8485,7 +8485,7 @@ public final class SEffe {
       deallocateScriptAndChildren(index);
     } else {
       //LAB_80115b80
-      FUN_800ebb58(s0);
+      applyScreenDarkening(s0);
 
       //LAB_80115bd4
       if(s1 < s0) {
@@ -8501,7 +8501,7 @@ public final class SEffe {
 
   @Method(0x80115bf0L)
   public static void FUN_80115bf0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    FUN_800ebb58(scriptStatePtrArr_800bc1c0.get(index).deref().storage_44.get(9).get());
+    applyScreenDarkening(scriptStatePtrArr_800bc1c0.get(index).deref().storage_44.get(9).get());
   }
 
   @Method(0x80115c2cL)
@@ -8513,29 +8513,30 @@ public final class SEffe {
   }
 
   @Method(0x80115cacL)
-  public static long FUN_80115cac(final long a0) {
-    final long sp10;
-    final long sp14;
-    final long sp18;
-    if(currentStage_800c66a4.get() - 0x47L >= 0x8L) {
+  public static long FUN_80115cac(final int a0) {
+    final int x;
+    final int y;
+    final int z;
+
+    if(currentStage_800c66a4.get() < 71 || currentStage_800c66a4.get() > 78) {
       //LAB_80115d14
       //LAB_80115d2c
       for(int i = 0; ; i++) {
         if(stageIndices_800fb064.offset(i).get() == 0xffL) {
           //LAB_80115cd8
           final SVECTOR v0 = struct7cc_800c693c.deref().svec_00;
-          sp10 = v0.getX() & 0xffff;
-          sp14 = v0.getY() & 0xffff;
-          sp18 = v0.getZ() & 0xffff;
+          x = v0.getX() & 0xffff;
+          y = v0.getY() & 0xffff;
+          z = v0.getZ() & 0xffff;
           break;
         }
 
         if(stageIndices_800fb064.offset(i).get() == currentStage_800c66a4.get()) {
           //LAB_80115d58
           final DVECTOR v0 = struct7cc_800c693c.deref().dvecs_08.get(i);
-          sp10 = v0.getX() & 0xffff;
-          sp14 = v0.getY() & 0xffff;
-          sp18 = 0;
+          x = v0.getX() & 0xffff;
+          y = v0.getY() & 0xffff;
+          z = 0;
           break;
         }
       }
@@ -8543,26 +8544,27 @@ public final class SEffe {
       //LAB_80115d84
       if(a0 == 0) {
         //LAB_80115dc0
-        if((_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
+        if((stage_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
           FUN_80115c2c(6, 16);
         }
 
         //LAB_80115de8
-        _800bda0c.deref()._5e4.set(~(sp10 | sp14 | sp18) & _800bda0c.deref()._5e4.get());
+        stage_800bda0c.deref()._5e4.and(~(x | y | z));
         //LAB_80115da8
-      } else if(a0 == 0x1L) {
+      } else if(a0 == 1) {
         //LAB_80115e18
-        _800bda0c.deref()._5e4.or(sp10);
-      } else if(a0 == 0x2L) {
+        stage_800bda0c.deref()._5e4.or(x);
+      } else if(a0 == 2) {
         //LAB_80115e34
-        _800bda0c.deref()._5e4.or(sp14);
-        if((_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
+        stage_800bda0c.deref()._5e4.or(y);
+
+        if((stage_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
           FUN_80115c2c(16, 6);
         }
-      } else if(a0 == 0x3L) {
+      } else if(a0 == 3) {
         //LAB_80115e70
         //LAB_80115e8c
-        _800bda0c.deref()._5e4.or(sp18);
+        stage_800bda0c.deref()._5e4.or(z);
       }
     }
 
@@ -8592,7 +8594,7 @@ public final class SEffe {
       final BattleScriptDataBase a0 = scriptStatePtrArr_800bc1c0.get(a2).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
       if(a0.magic_00.get() != BattleScriptDataBase.EM__) {
         //LAB_8011604c
-        v0 = _800fb0ec.offset(((BattleObject27c)a0).colourMap_1e5.get() * 0x4L).get();
+        v0 = _800fb0ec.offset(((BattleObject27c)a0).model_148.colourMap_9d.get() * 0x4L).get();
         u = (int)((v0 & 0xf) << 6);
         v = (int)((v0 & 0x10) << 4);
         w = 0x100;
@@ -8602,7 +8604,7 @@ public final class SEffe {
         v1 = manager._04.get() & 0xff00_0000L;
         if(v1 == 0x200_0000L) {
           //LAB_80115fd8
-          v0 = _800fb0ec.offset(manager.effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref().ub_9d.get() * 0x4L).get();
+          v0 = _800fb0ec.offset(manager.effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref().colourMap_9d.get() * 0x4L).get();
           u = (int)((v0 & 0xf) << 6);
           v = (int)((v0 & 0x10) << 4);
           w = 0x100;
@@ -9708,7 +9710,7 @@ public final class SEffe {
       //LAB_801185b0
     } else if(v1 == 0x700_0000L) {
       //LAB_80118610
-      s0.tmd_08.set(_1f8003f4.deref().render_963c.dobj2s_00.get(s2).tmd_08.deref());
+      s0.tmd_08.set(_1f8003f4.deref().stage_963c.dobj2s_00.get(s2).tmd_08.deref());
     } else {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = scriptStatePtrArr_800bc1c0.get(s1).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);

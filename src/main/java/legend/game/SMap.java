@@ -143,7 +143,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021ca0;
+import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
@@ -1208,7 +1208,7 @@ public final class SMap {
       smallerStruct.uba_04.get(index).set(0);
     } else {
       //LAB_800ddeac
-      final long v1 = (struct.ub_9d.get() & 0x7fL) * 0x2L;
+      final long v1 = (struct.colourMap_9d.get() & 0x7fL) * 0x2L;
       final int t2 = (int)_80050424.offset(v1).getSigned() + 112;
       final int t1 = (int)_800503f8.offset(v1).getSigned();
 
@@ -2057,7 +2057,7 @@ public final class SMap {
     final int index = script.params_20.get(1).deref().get();
 
     wobj.mrgAnimGroup_12e.set(index);
-    model.ub_9d.set((int)submapObjectFlags_800c6a50.offset(index * 0x4L).get());
+    model.colourMap_9d.set((int)submapObjectFlags_800c6a50.offset(index * 0x4L).get());
 
     deallocateModel(model);
     FUN_800e0d18(model, submapObjectModels_800c6a00.get(index).deref(), wobj.mrg_124.deref().getFile(index * 33 + 1, TmdAnimationFile::new));
@@ -2197,7 +2197,7 @@ public final class SMap {
 
   @Method(0x800e03a8L)
   public static long scriptGetWobjNobj(final RunningScript script) {
-    script.params_20.get(1).deref().set((int)scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class).model_00.ObjTable_0c.nobj.get());
+    script.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class).model_00.ObjTable_0c.nobj.get());
     return 0;
   }
 
@@ -2489,7 +2489,7 @@ public final class SMap {
     model.coord2_14.param.set(model.coord2Param_64);
 
     GsInitCoordinate2(null, model.coord2_14);
-    FUN_80021ca0(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 1));
+    prepareObjTable2(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 1));
 
     model.zOffset_a0.set((short)0);
     model.ub_a2.set(0);
@@ -2866,7 +2866,7 @@ public final class SMap {
       case 9 -> {
         FUN_800218f0();
 
-        final int fileCount = (int)submapScriptsMrg_800c68d8.deref().count.get();
+        final int fileCount = submapScriptsMrg_800c68d8.deref().count.get();
         final int wobjCount = fileCount - 2;
 
         _800c672c.setu(wobjCount);
@@ -2946,7 +2946,7 @@ public final class SMap {
 
           final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(submapObjectScriptIndex).deref().innerStruct_00.derefAs(WorldObject210.class);
           final Model124 model = wobj.model_00;
-          model.ub_9d.set((int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get());
+          model.colourMap_9d.set((int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get());
 
           initModel(model, submapObjectModels_800c6a00.get(i).deref(), submapAssetsMrg_800c6878.deref().getFile(i * 33 + 1, TmdAnimationFile::new));
 
@@ -4309,7 +4309,7 @@ public final class SMap {
 
     //LAB_800e5430
     loadEnvironment(mrg.getFile(0, EnvironmentFile::new));
-    FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), (int)mrg.entries.get(2).size.get(), mrg.getFile(1, UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new)), mrg.entries.get(1).size.get());
+    FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), mrg.entries.get(2).size.get(), mrg.getFile(1, UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new)), mrg.entries.get(1).size.get());
 
     free(mrg.getAddress());
 
@@ -7030,7 +7030,7 @@ public final class SMap {
       }
 
       case 0x4 -> {
-        model_800d4bf8.ub_9d.set(0x91);
+        model_800d4bf8.colourMap_9d.set(0x91);
 
         initModel(model_800d4bf8, smapModelAndAnimationMrg_800d4be8.deref().getFile(0, ExtendedTmd::new), smapModelAndAnimationMrg_800d4be8.deref().getFile(1, TmdAnimationFile::new));
 

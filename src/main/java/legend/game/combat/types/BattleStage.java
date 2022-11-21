@@ -16,7 +16,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.ModelPartTransforms;
 
-public class BattleRenderStruct implements MemoryRef {
+public class BattleStage implements MemoryRef {
   private final Value ref;
 
   public final UnboundedArrayRef<GsDOBJ2> dobj2s_00;
@@ -29,7 +29,7 @@ public class BattleRenderStruct implements MemoryRef {
   public final Pointer<Tmd> tmd_5d0;
   public final Pointer<UnboundedArrayRef<ModelPartTransforms>> rotTrans_5d4;
   public final Pointer<UnboundedArrayRef<ModelPartTransforms>> rotTrans_5d8;
-  public final ShortRef rotTransCount_5dc;
+  public final ShortRef partCount_5dc;
   public final ShortRef _5de;
   public final ShortRef _5e0;
   public final ShortRef _5e2;
@@ -45,7 +45,7 @@ public class BattleRenderStruct implements MemoryRef {
   public final ArrayRef<ShortRef> _64a;
   public final ArrayRef<ShortRef> _65e;
 
-  public BattleRenderStruct(final Value ref) {
+  public BattleStage(final Value ref) {
     this.ref = ref;
 
     this.dobj2s_00 = ref.offset(4, 0x00L).cast(UnboundedArrayRef.of(0x10, GsDOBJ2::new));
@@ -57,7 +57,7 @@ public class BattleRenderStruct implements MemoryRef {
     this.tmd_5d0 = ref.offset(4, 0x5d0L).cast(Pointer.deferred(4, Tmd::new));
     this.rotTrans_5d4 = ref.offset(4, 0x5d4L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
     this.rotTrans_5d8 = ref.offset(4, 0x5d8L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
-    this.rotTransCount_5dc = ref.offset(2, 0x5dcL).cast(ShortRef::new);
+    this.partCount_5dc = ref.offset(2, 0x5dcL).cast(ShortRef::new);
     this._5de = ref.offset(2, 0x5deL).cast(ShortRef::new);
     this._5e0 = ref.offset(2, 0x5e0L).cast(ShortRef::new);
     this._5e2 = ref.offset(2, 0x5e2L).cast(ShortRef::new);

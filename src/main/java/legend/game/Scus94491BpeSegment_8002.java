@@ -391,7 +391,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
     model.tmd_8c.set(tmd);
-    model.tmdNobj_ca.set((int)tmd.header.nobj.get());
+    model.tmdNobj_ca.set(tmd.header.nobj.get());
 
     if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       FUN_800de004(model, extendedTmd);
@@ -426,7 +426,7 @@ public final class Scus94491BpeSegment_8002 {
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
     model.coord2_14.param.set(model.coord2Param_64);
     GsInitCoordinate2(null, model.coord2_14);
-    FUN_80021ca0(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 1));
+    prepareObjTable2(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 1));
 
     model.zOffset_a0.set((short)0);
     model.ub_a2.set(0);
@@ -445,21 +445,21 @@ public final class Scus94491BpeSegment_8002 {
     if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       //LAB_80020958
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_800d9e64(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
+        FUN_800d9e64(model.ObjTable_0c.top.deref().get(s1++), model.colourMap_9d.get());
       }
 
       //LAB_80020978
     } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
       //LAB_80020990
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_800c8844(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
+        FUN_800c8844(model.ObjTable_0c.top.deref().get(s1++), model.colourMap_9d.get());
       }
 
       //LAB_800209ac
     } else {
       //LAB_8002091c
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_80020468(model.ObjTable_0c.top.deref().get(s1++), model.ub_9d.get());
+        FUN_80020468(model.ObjTable_0c.top.deref().get(s1++), model.colourMap_9d.get());
       }
     }
 
@@ -861,19 +861,19 @@ public final class Scus94491BpeSegment_8002 {
     if(mainCallbackIndex_8004dd20.get() != 0x5L && mainCallbackIndex_8004dd20.get() != 0x8L) {
       //LAB_80021678
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_80020468(model.ObjTable_0c.top.deref().get(i), model.ub_9d.get());
+        FUN_80020468(model.ObjTable_0c.top.deref().get(i), model.colourMap_9d.get());
       }
       //LAB_8002169c
     } else if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
       //LAB_800216b4
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_800d9e64(model.ObjTable_0c.top.deref().get(i), model.ub_9d.get());
+        FUN_800d9e64(model.ObjTable_0c.top.deref().get(i), model.colourMap_9d.get());
       }
       //LAB_800216d4
     } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
       //LAB_800216ec
       for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-        FUN_800c8844(model.ObjTable_0c.top.deref().get(i), model.ub_9d.get());
+        FUN_800c8844(model.ObjTable_0c.top.deref().get(i), model.colourMap_9d.get());
       }
     }
 
@@ -926,9 +926,9 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021918L)
-  public static void FUN_80021918(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long maxSize, final long a4) {
-    final long s2 = (short)a4 >> 8;
-    final long dobj2Id = a4 & 0xffL;
+  public static void prepareObjTable2Step(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final int maxSize, final int a4) {
+    final int s2 = a4 >> 8;
+    final int dobj2Id = a4 & 0xff;
 
     GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
 
@@ -963,21 +963,19 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800219ac
     //LAB_80021a98
-    if(s2 == 0x2L && tmd != null) {
+    if(s2 == 2 && tmd != null) {
       updateTmdPacketIlen(getTmdObjTableOffset(tmd, dobj2Id), dobj2, 0);
     }
 
     //LAB_800219d8
     //LAB_80021ac0
-    if(s2 == 0x8L && table != null) {
-      FUN_80021bac(table, dobj2Id, maxSize);
+    if(s2 == 8 && table != null) {
+      addNewDobj2(table, dobj2Id, maxSize);
     }
 
-    if(s2 == 0x1L) {
+    if(s2 == 1) {
       //LAB_800219ec
-      rotation.x.set((short)11);
-      rotation.y.set((short)11);
-      rotation.z.set((short)11);
+      rotation.set((short)11, (short)11, (short)11);
 
       dobj2.coord2_04.deref().coord.set(0, (short)0x1000);
       dobj2.coord2_04.deref().coord.set(1, (short)0);
@@ -993,16 +991,12 @@ public final class Scus94491BpeSegment_8002 {
       RotMatrixY(rotation.y.get(), coord);
       RotMatrixZ(rotation.z.get(), coord);
 
-      scale.x.set(0x1000);
-      scale.y.set(0x1000);
-      scale.z.set(0x1000);
+      scale.set(0x1000, 0x1000, 0x1000);
 
       RotMatrix_8003faf0(rotation, coord);
       ScaleMatrixL(coord, scale);
 
-      translation.x.set(1);
-      translation.y.set(1);
-      translation.z.set(1);
+      translation.set(1, 1, 1);
 
       TransMatrix(coord, translation);
     }
@@ -1024,7 +1018,7 @@ public final class Scus94491BpeSegment_8002 {
       dobj2s.get(i).attribute_00.set(0x8000_0000L);
       dobj2s.get(i).coord2_04.set(coord2s.get(i));
       dobj2s.get(i).tmd_08.clear();
-      dobj2s.get(i).id_0c.set(0xffff_ffffL);
+      dobj2s.get(i).id_0c.set(-1);
 
       coord2s.get(i).param.set(params.get(i));
     }
@@ -1033,7 +1027,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021b64L)
-  public static GsDOBJ2 getDObj2ById(final GsOBJTABLE2 table, final long id) {
+  public static GsDOBJ2 getDObj2ById(final GsOBJTABLE2 table, final int id) {
     //LAB_80021b80
     for(int i = 0; i < table.nobj.get(); i++) {
       final GsDOBJ2 obj2 = table.top.deref().get(i);
@@ -1050,18 +1044,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021bacL)
-  public static void FUN_80021bac(final GsOBJTABLE2 table, final long id, final long maxSize) {
-    final long size = table.nobj.get();
+  public static void addNewDobj2(final GsOBJTABLE2 table, final int id, final int maxSize) {
+    final int size = table.nobj.get();
 
     //LAB_80021bd4
-    GsDOBJ2 struct = table.top.deref().get(0);
+    GsDOBJ2 dobj2 = table.top.deref().get(0);
     int i;
     for(i = 0; i < size; i++) {
-      if((int)struct.id_0c.get() == -1) {
+      if(dobj2.id_0c.get() == -1) {
         break;
       }
 
-      struct = table.top.deref().get(i);
+      dobj2 = table.top.deref().get(i);
     }
 
     //LAB_80021c08
@@ -1071,15 +1065,15 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021bf4
     if(i >= size) {
-      struct = table.top.deref().get((int)table.nobj.get());
+      dobj2 = table.top.deref().get(table.nobj.get());
       table.nobj.incr();
     }
 
     //LAB_80021c2c
-    struct.id_0c.set(id);
-    struct.attribute_00.set(0);
-    GsInitCoordinate2(null, struct.coord2_04.deref());
-    struct.tmd_08.clear();
+    dobj2.id_0c.set(id);
+    dobj2.attribute_00.set(0);
+    GsInitCoordinate2(null, dobj2.coord2_04.deref());
+    dobj2.tmd_08.clear();
 
     //LAB_80021c48
   }
@@ -1105,25 +1099,20 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021ca0L)
-  public static void FUN_80021ca0(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final long count, final long nobj) {
-    long s1 = 0x801L;
-
+  public static void prepareObjTable2(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final int maxSize, final int nobj) {
     //LAB_80021d08
-    for(int s0 = 1; s0 < nobj; s0++) {
-      FUN_80021918(table, tmd, coord2, count, s1);
-      s1++;
+    for(int i = 1; i < nobj; i++) {
+      // Add new dobj2
+      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x800 | i);
     }
 
     //LAB_80021d3c
-    long s2 = 0x101L;
-    s1 = 0x201L;
-
     //LAB_80021d64
     for(int i = 1; i < nobj; i++) {
-      FUN_80021918(table, tmd, coord2, count, s1);
-      FUN_80021918(table, tmd, coord2, count, s2);
-      s1++;
-      s2++;
+      // Merge TMD packets
+      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x200 | i);
+      // Set initial transforms
+      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x100 | i);
     }
 
     //LAB_80021db4
@@ -1226,7 +1215,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022068
-    long v1 = a0.ub_9d.get();
+    long v1 = a0.colourMap_9d.get();
     final long t2;
     long v0;
     if((v1 & 0x80L) == 0) {

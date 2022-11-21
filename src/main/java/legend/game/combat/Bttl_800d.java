@@ -4598,11 +4598,10 @@ public final class Bttl_800d {
     long s4;
     long s6;
     long s7;
-    final long fp;
     final long sp50;
     s4 = 0x1L;
     s7 = model.ui_f4.get();
-    fp = model.ObjTable_0c.nobj.get();
+    final int nobj = model.ObjTable_0c.nobj.get();
     zOffset_1f8003e8.set(model.zOffset_a0.get());
     sp50 = model.ui_f8.get();
     tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
@@ -4612,7 +4611,7 @@ public final class Bttl_800d {
     s6 = v1 | v0;
 
     //LAB_800dd928
-    for(int i = 0; i < fp; i++) {
+    for(int i = 0; i < nobj; i++) {
       final GsDOBJ2 s2 = model.ObjTable_0c.top.deref().get(i);
 
       if(s4 == 0) {
@@ -4626,7 +4625,7 @@ public final class Bttl_800d {
         final MATRIX ls = new MATRIX();
         GsGetLws(s2.coord2_04.deref(), lw, ls);
 
-        if((s6 & (ls.transfer.getZ() ^ _800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800L && ls.transfer.getZ() + ls.transfer.getX() >= -0x800L && ls.transfer.getZ() - ls.transfer.getY() >= -0x800L && ls.transfer.getZ() + ls.transfer.getY() >= -0x800L) {
+        if((s6 & (ls.transfer.getZ() ^ _800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
           //LAB_800dd9bc
           if((a1 & 0x8L) != 0) {
             FUN_8003eba0(lw, lw);
@@ -4727,7 +4726,7 @@ public final class Bttl_800d {
     model.zOffset_a0.set((short)0);
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((model.tmd_8c.deref().header.flags.get() & 0x2L) == 0 && model.ub_9d.get() != 0) {
+    if((model.tmd_8c.deref().header.flags.get() & 0x2L) == 0 && model.colourMap_9d.get() != 0) {
       FUN_80021628(model);
     }
 

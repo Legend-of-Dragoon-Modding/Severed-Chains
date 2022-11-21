@@ -588,11 +588,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cb95c}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li value="352">{@link Bttl_800c#FUN_800cd3b4}</li>
-   *   <li>{@link Bttl_800e#FUN_800ee210}</li>
+   *   <li>{@link Bttl_800e#scriptCopyVram}</li>
    *   <li>{@link Bttl_800c#FUN_800cd468}</li>
    *   <li>{@link Bttl_800c#FUN_800cd4b0}</li>
    *   <li>{@link Bttl_800c#FUN_800cd4f0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd52c}</li>
+   *   <li>{@link Bttl_800c#scriptAddCombatant}</li>
    *   <li>{@link Bttl_800c#FUN_800cd570}</li>
    *   <li>{@link Bttl_800c#FUN_800cda78}</li>
    *   <li>{@link Bttl_800c#FUN_800cd5b4}</li>
