@@ -33,7 +33,6 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.types.DR_MODE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOffsetType;
@@ -3101,7 +3100,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f930L)
-  public static int FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final DVECTOR a3, final DVECTOR a4, final DVECTOR a5, @Nullable Ref<Long> a6, @Nullable final Ref<Long> a7) {
+  public static int FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final DVECTOR a3, final DVECTOR a4, final DVECTOR a5, @Nullable final Ref<Long> a6, @Nullable final Ref<Long> a7) {
     CPU.MTC2(a0.getXY(), 0);
     CPU.MTC2(a0.getZ(),  1);
     CPU.MTC2(a1.getXY(), 2);
@@ -3313,6 +3312,60 @@ public final class Scus94491BpeSegment_8003 {
   /** TODO one of the RotMatrix* methods */
   @Method(0x8003fd80L)
   public static void RotMatrix_8003fd80(final SVECTOR svec, final MATRIX mat) {
-    assert false;
+    final int x = svec.getX();
+    final int sinCosX;
+    final int sinX;
+    final int negSinX;
+    if(x >= 0) {
+      //LAB_8003fdc4
+      sinCosX = (int)sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
+      sinX = (short)sinCosX;
+      negSinX = -sinX;
+    } else {
+      sinCosX = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
+      negSinX = (short)sinCosX;
+      sinX = -negSinX;
+    }
+    final int cosX = sinCosX >> 16;
+
+    //LAB_8003fde8
+    final int y = svec.getY();
+    final int sinCosY;
+    final int sinY;
+    if(y >= 0) {
+      //LAB_8003fe2c
+      sinCosY = (int)sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
+      sinY = (short)sinCosY;
+    } else {
+      sinCosY = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
+      sinY = -(short)sinCosY;
+    }
+    final int cosY = sinCosY >> 16;
+
+    //LAB_8003fe4c
+    mat.set(5, (short)negSinX);
+    mat.set(2, (short)(sinY * cosX >> 12));
+    mat.set(8, (short)(cosY * cosX >> 12));
+
+    final int z = svec.getZ();
+    final int sinCosZ;
+    final int sinZ;
+    if(z >= 0) {
+      //LAB_8003feb4
+      sinCosZ = (int)sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
+      sinZ = (short)sinCosZ;
+    } else {
+      sinCosZ = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
+      sinZ = -(short)sinCosZ;
+    }
+    final int cosZ = sinCosZ >> 16;
+
+    //LAB_8003fee0
+    mat.set(3, (short)(sinZ * cosX >> 12));
+    mat.set(4, (short)(cosZ * cosX >> 12));
+    mat.set(0, (short)((cosY * cosZ >> 12) + ((sinY * sinX >> 12) * sinZ >> 12)));
+    mat.set(1, (short)(-(cosY * sinZ >> 12) + ((sinY * sinX >> 12) * cosZ >> 12)));
+    mat.set(7, (short)((sinY * sinZ >> 12) + ((cosY * sinX >> 12) * cosZ >> 12)));
+    mat.set(6, (short)(-(sinY * cosZ >> 12) + ((cosY * sinX >> 12) * sinZ >> 12)));
   }
 }
