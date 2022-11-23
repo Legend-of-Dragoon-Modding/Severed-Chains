@@ -101,7 +101,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
@@ -3183,7 +3183,7 @@ public final class Bttl_800d {
       //LAB_800daabc
       final int x;
       final int y;
-      final long a0 = _800bb0fc.get() & 0x3L;
+      final long a0 = tickCount_800bb0fc.get() & 0x3L;
       if(a0 == 0) {
         //LAB_800dab04
         x = (int)_800c67e4.get();
@@ -4625,7 +4625,7 @@ public final class Bttl_800d {
         final MATRIX ls = new MATRIX();
         GsGetLws(s2.coord2_04.deref(), lw, ls);
 
-        if((s6 & (ls.transfer.getZ() ^ _800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
+        if((s6 & (ls.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
           //LAB_800dd9bc
           if((a1 & 0x8L) != 0) {
             FUN_8003eba0(lw, lw);
@@ -4974,7 +4974,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800de4a8
-    if((s0 & (sp0x10.transfer.getZ() ^ _800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800) {
+    if((s0 & (sp0x10.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800) {
       //LAB_800de50c
       setRotTransMatrix(sp0x10);
 

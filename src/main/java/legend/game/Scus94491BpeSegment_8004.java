@@ -108,7 +108,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#executeSmapPregameLoadingStage()}</li>
    *   <li>{@link SMap#swapDiskLoadingStage()}</li>
-   *   <li>0x800d9e08 (TODO)</li>
+   *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>0x800c6eb8 (TODO)</li>
    *   <li>0x800cab8c (TODO)</li>
    *   <li>null</li>
@@ -215,7 +215,7 @@ public final class Scus94491BpeSegment_8004 {
    * <ol start="0">
    *   <li>{@link legend.game.Scus94491BpeSegment_8004#mainCallbackIndex_8004dd20}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#pregameLoadingStage_800bb10c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb0fc}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#tickCount_800bb0fc}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee90}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee94}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#gold_94}</li>

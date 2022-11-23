@@ -57,7 +57,7 @@ import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -2228,7 +2228,7 @@ public final class Bttl_800f {
 
     //LAB_800f5694
     //LAB_800f5698
-    structa4._84.set((int)_800bb0fc.get() & 0x7);
+    structa4._84.set((int)tickCount_800bb0fc.get() & 0x7);
 
     //LAB_800f56ac
   }

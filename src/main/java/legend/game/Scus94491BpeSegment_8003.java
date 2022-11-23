@@ -34,7 +34,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_MODE;
-import legend.game.types.DR_MOVE;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOffsetType;
@@ -1102,23 +1101,6 @@ public final class Scus94491BpeSegment_8003 {
     p.code.get(0).set(command | drawingBit | ditherBit | otherBits);
   }
 
-  @Method(0x8003b780L)
-  public static void SetDrawMove(final DR_MOVE p, final RECT src, final long destX, final long destY) {
-    p.tag.and(0xff_ffffL);
-
-    //LAB_8003b7a4
-    if(src.w.get() != 0 && src.h.get() != 0) {
-      p.tag.or(0x500_0000L);
-    }
-
-    //LAB_8003b7ac
-    p.code.get(0).set(0x100_0000L);
-    p.code.get(1).set(0x8000_0000L); // Copy rect VRAM to VRAM
-    p.code.get(2).set((src.y.get() & 0xffffL) << 16 | src.x.get() & 0xffffL); // src
-    p.code.get(3).set((destY & 0xffffL) << 16 | destX & 0xffffL); // dest
-    p.code.get(4).set((src.h.get() & 0xffffL) << 16 | src.w.get() & 0xffffL); // size
-  }
-
   /**
    * <p>Links primitive p0 to primitive p1. The combined primitive size of p0 and p1 must be less than 15 words.
    * Within this size, any number of connections is possible.</p>
@@ -1144,48 +1126,6 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003b80c
     //LAB_8003b810
     return -0x1L;
-  }
-
-  @Method(0x8003b820L)
-  public static void SetMaskBit(final long packet, final boolean forceMask) {
-    MEMORY.ref(1, packet).offset(0x3L).setu(0x2L);
-    MEMORY.ref(4, packet).offset(0x4L).setu(forceMask ? 0xe600_0001L : 0xe600_0000L);
-    MEMORY.ref(4, packet).offset(0x8L).setu(0);
-  }
-
-  /**
-   * Initialize content of a drawing mode primitive.
-   * <p>
-   * Initializes a DR_MODE primitive. By using AddPrim() to insert a DR_MODE primitive into your primitive list, it
-   * is possible to change part of your drawing environment in the middle of drawing.<br>
-   * If tw is 0, the texture window is not changed.
-   *
-   * @param drawMode Pointer to drawing mode primitive
-   * @param allowDrawingToDisplayArea 0: drawing not allowed in display area, 1: drawing allowed in display area
-   * @param dither 0: dithering off, 1: dithering on
-   * @param texturePage Texture page
-   */
-  @Method(0x8003b850L)
-  public static void SetDrawMode(final DR_MODE drawMode, final boolean allowDrawingToDisplayArea, final boolean dither, final long texturePage) {
-    drawMode.tag.and(0xff_ffffL).or(0x200_0000L);
-
-    long drawingMode = 0xe100_0000L | texturePage & 0x9ffL;
-    if(dither) {
-      drawingMode |= 0x200L;
-    }
-
-    //LAB_8003b86c
-    if(allowDrawingToDisplayArea) {
-      drawingMode |= 0x400L;
-    }
-
-    //LAB_8003b878
-    drawMode.code.get(0).set(drawingMode);
-
-    //LAB_8003b8d8
-    drawMode.code.get(1).set(0);
-
-    //LAB_8003b8dc
   }
 
   @Method(0x8003b8f0L)

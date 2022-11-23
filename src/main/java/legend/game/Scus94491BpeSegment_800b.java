@@ -58,6 +58,8 @@ public final class Scus94491BpeSegment_800b {
   public static final int DSL_MAX_DIR = 0x80;
   public static final int DSL_MAX_FILE = 0x40;
 
+  public static final Value _800ba3b8 = MEMORY.ref(4, 0x800ba3b8L);
+
   public static final Value _800babc0 = MEMORY.ref(4, 0x800babc0L);
 
   public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
@@ -66,7 +68,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef combatStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
-  public static final Value _800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
+  public static final Value tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL);
 
   public static final Value _800bb104 = MEMORY.ref(4, 0x800bb104L);
   public static final IntRef doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L, IntRef::new);
@@ -275,6 +277,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<Renderable58> renderablePtr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Renderable58::new));
 
   public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
+
+  public static final Value _800bdd24 = MEMORY.ref(4, 0x800bdd24L);
 
   public static final ArrayRef<TextboxArrow0c> textboxArrows_800bdea0 = MEMORY.ref(4, 0x800bdea0L, ArrayRef.of(TextboxArrow0c.class, 8, 0xc, TextboxArrow0c::new));
 

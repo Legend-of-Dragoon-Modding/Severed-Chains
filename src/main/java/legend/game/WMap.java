@@ -135,9 +135,10 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
+import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
@@ -2562,7 +2563,7 @@ public class WMap {
       .vramPos(640, 256)
       .rgb(0x55, 0, 0)
       .pos(sp0x60.getX() - size / 2, sp0x60.getY() - size, size, size)
-      .uv(((int)_800bb0fc.get() & 0x7) * size, v)
+      .uv(((int)tickCount_800bb0fc.get() & 0x7) * size, v)
     );
 
     if(struct258_800c66a8.deref().zoomState_1f8.get() == 4) {
@@ -2593,7 +2594,7 @@ public class WMap {
           .vramPos(640, 256)
           .rgb(0, 0, 0x55)
           .pos((int)_800f5a90.offset(sp24 * 0x2cL).get() - 160, (int)_800f5a92.offset(sp24 * 0x2cL).get() - 120, size, size)
-          .uv(((int)_800bb0fc.get() & 0x7) * size, v)
+          .uv(((int)tickCount_800bb0fc.get() & 0x7) * size, v)
         );
 
         if(!places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.isNull()) {
@@ -3261,7 +3262,7 @@ public class WMap {
   /** The "press square to enter Queen Fury" overlay (square button and door icons), also renders something else if a0 == 0 but I'm not sure what it is */
   @Method(0x800d7208L)
   public static void renderQueenFuryUi(final int a0) {
-    final int sp14 = (int)_800ef168.offset(_800bb0fc.get() / 2 % 7).get() * 16;
+    final int sp14 = (int)_800ef168.offset(tickCount_800bb0fc.get() / 2 % 7).get() * 16;
 
     // Square button
     GPU.queueCommand(13, new GpuCommandPoly(4)
@@ -3280,7 +3281,7 @@ public class WMap {
     );
 
     if(a0 == 0) {
-      final int sp18 = (int)_800ef154.offset(_800bb0fc.get() / 2 % 5).get();
+      final int sp18 = (int)_800ef154.offset(tickCount_800bb0fc.get() / 2 % 5).get();
       final int u = (int)_800ef130.offset(sp18 * 0x4L).offset(0x0L).get();
       final int v = (int)_800ef130.offset(sp18 * 0x4L).offset(0x1L).get();
       final int w = (int)_800ef130.offset(sp18 * 0x4L).offset(0x2L).get();
@@ -3302,7 +3303,7 @@ public class WMap {
       );
     } else {
       //LAB_800d7734
-      final int sp18 = (int)_800ef158.offset(_800bb0fc.get() / 3 % 15).get();
+      final int sp18 = (int)_800ef158.offset(tickCount_800bb0fc.get() / 3 % 15).get();
       final int u = (int)_800ef140.offset(sp18 * 0x4L).offset(0x0L).get();
       final int v = (int)_800ef140.offset(sp18 * 0x4L).offset(0x1L).get();
       final int w = (int)_800ef140.offset(sp18 * 0x4L).offset(0x2L).get();
@@ -3367,7 +3368,7 @@ public class WMap {
     }
 
     //LAB_800d7b84
-    final long sp98 = _800bb0fc.get() / 5 % 3;
+    final long sp98 = tickCount_800bb0fc.get() / 5 % 3;
 
     final int u = (int)_800ef170.offset(sp94).offset(sp98 * 0x4L).offset(0x0L).get();
     final int v = (int)_800ef170.offset(sp94).offset(sp98 * 0x4L).offset(0x1L).get();
@@ -3944,7 +3945,7 @@ public class WMap {
     //LAB_800da4ec
     renderQueenFuryUi(0);
 
-    if((joypadPress_8007a398.get() & 0x80L) != 0) {
+    if((joypadPress_8007a398.get() & 0x80L) != 0) { // Square
       struct258._250.set(0x2L);
     }
 
@@ -3954,7 +3955,7 @@ public class WMap {
     }
 
     //LAB_800da544
-    switch(struct258._220.get()) {
+    switch(struct258._220.get() + 1) {
       case 1:
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
@@ -3991,7 +3992,7 @@ public class WMap {
         }
 
         //LAB_800da940
-        if((_800bb0fc.get() & 0x3L) == 0) {
+        if((tickCount_800bb0fc.get() & 0x3L) == 0) {
           playSound(12, 1, 0, 0, (short)0, (short)0);
         }
 
@@ -3999,11 +4000,11 @@ public class WMap {
         break;
 
       case 2:
-        FUN_800e3304();
+        renderWinglyTeleportScreenEffect();
 
         struct258.models_0c.get(2).deref().scaleVector_fc.y.add(0x40);
 
-        if(struct258.models_0c.get(2).deref().scaleVector_fc.getX() > 0x600L) {
+        if(struct258.models_0c.get(2).deref().scaleVector_fc.getX() > 0x600) {
           struct258.models_0c.get(2).deref().scaleVector_fc.setX(0x600);
         }
 
@@ -4130,7 +4131,7 @@ public class WMap {
         struct258.models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
         struct258.models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
-        FUN_800dc178(0x1L, 0x1L);
+        renderCoolonMap(0x1L, 0x1L);
         break;
 
       case 5:
@@ -4143,7 +4144,7 @@ public class WMap {
         }
 
         //LAB_800db1d8
-        FUN_800dc178(0, 0);
+        renderCoolonMap(0, 0);
         break;
 
       case 6:
@@ -4157,7 +4158,7 @@ public class WMap {
         FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, 0, 0);
         measureText(Yes_800effb0, width, lines);
         FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, 0, 0);
-        FUN_800dc178(0, 0);
+        renderCoolonMap(0, 0);
 
         if((joypadPress_8007a398.get() & 0x40L) != 0) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -4220,7 +4221,7 @@ public class WMap {
         struct258.models_0c.get(2).deref().scaleVector_fc.setY((int)a0);
         struct258.models_0c.get(2).deref().scaleVector_fc.setZ((int)a0);
 
-        FUN_800dc178(0, 0);
+        renderCoolonMap(0, 0);
         break;
 
       case 8:
@@ -4248,7 +4249,7 @@ public class WMap {
         //LAB_800dba98
 
         FUN_800e3fac(1);
-        FUN_800dc178(0, 0);
+        renderCoolonMap(0, 0);
         break;
 
       case 0xb:
@@ -4274,7 +4275,7 @@ public class WMap {
         // Fall through
 
       case 0xc:
-        FUN_800e3304();
+        renderWinglyTeleportScreenEffect();
 
         _800c66b0.deref().coord2_20.coord.transfer.y.add(0x70);
 
@@ -4355,8 +4356,150 @@ public class WMap {
   }
 
   @Method(0x800dc178L)
-  public static void FUN_800dc178(final long a0, final long a1) {
-    assert false;
+  public static void renderCoolonMap(final long a0, final long a1) {
+    final WMapStruct258 struct = struct258_800c66a8.deref();
+
+    final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228.get(struct.coolonWarpIndex_221.get());
+    final CoolonWarpDestination20 warp2 = coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get());
+
+    short x = (short)(warp1.x_18.get() - warp2.x_18.get());
+    short y = (short)(warp1.y_1a.get() - warp2.y_1a.get());
+
+    struct.rotation_a4.setY((short)(ratan2(y, x) + 0x400 & 0xfff));
+    struct.models_0c.get(2).deref().coord2Param_64.rotate.y.add((short)((struct.rotation_a4.getY() - struct.models_0c.get(2).deref().coord2Param_64.rotate.getY()) / 8));
+
+    if(a0 != 0) {
+      if((joypadRepeat_8007a3a0.get() & 0x6000) != 0) {
+        playSound(0, 1, 0, 0, (short)0, (short)0);
+
+        if(struct.coolonWarpIndex_222.get() > 0) {
+          struct.coolonWarpIndex_222.decr();
+        } else {
+          struct.coolonWarpIndex_222.set(8);
+        }
+      }
+
+      //LAB_800dc384
+      if((joypadRepeat_8007a3a0.get() & 0x9000) != 0) {
+        playSound(0, 1, 0, 0, (short)0, (short)0);
+
+        struct.coolonWarpIndex_222.incr();
+        if(struct.coolonWarpIndex_222.get() >= 9) {
+          struct.coolonWarpIndex_222.set(0);
+        }
+      }
+    }
+
+    //LAB_800dc410
+    final int sp20 = (int)tickCount_800bb0fc.get() / 5 % 3;
+
+    //LAB_800dc468
+    for(int sp1c = 0; sp1c < 9; sp1c++) {
+      //LAB_800dc484
+      final int left = coolonWarpDest_800ef228.get(sp1c).x_18.get();
+      final int top = coolonWarpDest_800ef228.get(sp1c).y_1a.get();
+
+      GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, new GpuCommandPoly(4)
+        .bpp(Bpp.BITS_4)
+        .translucent(Translucency.B_PLUS_F)
+        .clut(640, 496)
+        .vramPos(640, 256)
+        .rgb(0x80, 0x80, 0xff)
+        .pos(0, left, top)
+        .pos(1, left + 10, top)
+        .pos(2, left, top + 10)
+        .pos(3, left + 10, top + 10)
+        .uv(0, sp20 * 16, 0)
+        .uv(1, (sp20 + 1) * 16, 0)
+        .uv(2, sp20 * 16, 16)
+        .uv(3, (sp20 + 1) * 16, 16)
+      );
+    }
+
+    //LAB_800dc734
+    x = (short)(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).x_18.get() - 2);
+    y = (short)(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).y_1a.get() - 12);
+
+    // Selection arrow
+    GPU.queueCommand(17, new GpuCommandQuad()
+      .bpp(Bpp.BITS_4)
+      .clut(640, 496)
+      .vramPos(640, 256)
+      .rgb(0x80, 0x80, 0xff)
+      .pos(x, y, 16, 16)
+      .uv(((int)tickCount_800bb0fc.get() & 0x7) * 16, 32)
+    );
+
+    if(a1 == 0) {
+      //LAB_800dcbf4
+      FUN_8002a3ec(7, 0);
+      _800c86f0.setu(0);
+    } else {
+      x += 167;
+      y += 116;
+
+      final IntRef widthRef = new IntRef();
+      final IntRef linesRef = new IntRef();
+      measureText(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).placeName_1c.deref(), widthRef, linesRef);
+      final int width = widthRef.get();
+      final int lines = linesRef.get();
+
+      final long v0 = _800c86f0.get();
+      if(v0 == 0) {
+        //LAB_800dc9e4
+        FUN_8002a32c(7, 0, x, y, (short)((width & 0xffff) - 1), (short)((lines & 0xffff) - 1));
+        _800c86f0.setu(1);
+
+        //LAB_800dca40
+        _800bdf00.setu(14);
+        textboxes_800be358.get(7).z_0c.set(14);
+
+        if(width >= 4) {
+          textboxes_800be358.get(7).chars_18.set((short)width);
+        } else {
+          textboxes_800be358.get(7).chars_18.set((short)4);
+        }
+
+        //LAB_800dca84
+        textboxes_800be358.get(7).lines_1a.set((short)lines);
+        _800c86f0.setu(2);
+      } else if(v0 == 1) {
+        _800bdf00.setu(14);
+        textboxes_800be358.get(7).z_0c.set(14);
+
+        if(width >= 4) {
+          textboxes_800be358.get(7).chars_18.set((short)width);
+        } else {
+          textboxes_800be358.get(7).chars_18.set((short)4);
+        }
+
+        //LAB_800dca84
+        textboxes_800be358.get(7).lines_1a.set((short)lines);
+        _800c86f0.setu(2);
+        //LAB_800dc9d0
+      } else if(v0 == 2) {
+        //LAB_800dca9c
+        if(width >= 4) {
+          textboxes_800be358.get(7).chars_18.set((short)width);
+        } else {
+          textboxes_800be358.get(7).chars_18.set((short)4);
+        }
+
+        //LAB_800dcac8
+        textboxes_800be358.get(7).lines_1a.set((short)lines);
+        textboxes_800be358.get(7).width_1c.set(textboxes_800be358.get(7).chars_18.get() * 9 / 2);
+        textboxes_800be358.get(7).height_1e.set((short)(textboxes_800be358.get(7).lines_1a.get() * 6));
+        textboxes_800be358.get(7).x_14.set(x);
+        textboxes_800be358.get(7).y_16.set(y);
+      }
+
+      //LAB_800dcb48
+      _800bdf00.setu(18);
+      textboxes_800be358.get(7).z_0c.set(18);
+      FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), 0, 0);
+    }
+
+    //LAB_800dcc0c
   }
 
   @Method(0x800dcc20L)
@@ -4775,7 +4918,7 @@ public class WMap {
         }
 
         //LAB_800e08b8
-        FUN_800e3304();
+        renderWinglyTeleportScreenEffect();
 
         a0 = 0x800c_0000L;
         a0 = MEMORY.ref(4, a0).offset(0x66a8L).get();
@@ -5161,7 +5304,7 @@ public class WMap {
 
       //LAB_800e1210
       if(struct.modelIndex_1e4.get() == 1) {
-        if((_800bb0fc.get() & 0x3) == 0) {
+        if((tickCount_800bb0fc.get() & 0x3) == 0) {
           playSound(0xc, 0, 0, 0, (short)0, (short)0);
         }
       }
@@ -5507,9 +5650,20 @@ public class WMap {
     // no-op
   }
 
+  /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
-  public static void FUN_800e3304() {
-    assert false;
+  public static void renderWinglyTeleportScreenEffect() {
+    final int v = doubleBufferFrame_800bb108.get() ^ 1;
+
+    final GpuCommandQuad cmd = new GpuCommandQuad()
+      .bpp(Bpp.BITS_15)
+      .translucent(Translucency.HALF_B_PLUS_HALF_F)
+      .vramPos(0, doubleBufferFrame_800bb108.get() * 256)
+      .monochrome(0x80)
+      .pos(-160, -120, 320, 240)
+      .uv(0, v * 16);
+
+    GPU.queueCommand(5, cmd);
   }
 
   @Method(0x800e367cL)
@@ -6387,12 +6541,12 @@ public class WMap {
 
           GPU.queueCommand(14, cmd);
 
-          if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999) {
+          if((joypadPress_8007a398.get() & 0x80L) != 0 && _800c6860.get() != 999) { // Square
             playSound(0, 2, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e60d0
-          if((joypadInput_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999) {
+          if((joypadInput_8007a39c.get() & 0x80L) != 0 && _800c6860.get() != 999) { // Square
             _800c86d0.subu(0x80L);
 
             if(_800c86d0.getSigned() < 0x80L) {
@@ -7306,7 +7460,7 @@ public class WMap {
                         //LAB_800e905c
                         if(_800c6690.get() == 0) {
                           //LAB_800e9078
-                          if((joypadPress_8007a398.get() & 0x80L) != 0) {
+                          if((joypadPress_8007a398.get() & 0x80L) != 0) { // Square
                             if(_800c6894.get() != 0x1L) {
                               _800c6860.setu(_800f1580.get());
                               _800c6862.setu(_800f1582.get());

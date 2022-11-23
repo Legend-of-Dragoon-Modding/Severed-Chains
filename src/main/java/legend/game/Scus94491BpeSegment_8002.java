@@ -173,7 +173,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd614;
 import static legend.game.Scus94491BpeSegment_800b._800bd61c;
@@ -4874,7 +4874,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800288a4L)
   public static void FUN_800288a4(final int a0) {
-    if((_800bb0fc.get() & 0x1L) == 0) {
+    if((tickCount_800bb0fc.get() & 0x1L) == 0) {
       final long s0 = _800bdf38.get(a0).getAddress(); //TODO
       MEMORY.ref(2, s0).offset(0x2cL).addu(MEMORY.ref(2, s0).offset(0x2aL).get() & 0x7L);
 
@@ -5578,7 +5578,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow._00.get() & 0x1L) != 0) {
       if((_800bdf38.get(textboxIndex)._08.get() & 0x1000L) != 0) {
-        if((_800bb0fc.get() & 0x1L) == 0) {
+        if((tickCount_800bb0fc.get() & 0x1L) == 0) {
           arrow.spriteIndex_08.incr();
         }
 

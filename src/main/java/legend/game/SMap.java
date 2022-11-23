@@ -223,6 +223,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
+import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
@@ -234,6 +235,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b._800bdd24;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
@@ -899,6 +901,21 @@ public final class SMap {
   public static void FUN_800d9dc0(final int charIndex) {
     gameState_800babc8.charData_32c.get(charIndex).sp_0c.set(500);
     FUN_800d9b08(-1);
+  }
+
+  @Method(0x800d9e08L)
+  public static void FUN_800d9e08() {
+    pregameLoadingStage_800bb10c.addu(0x1L);
+
+    if(pregameLoadingStage_800bb10c.get() > 94) {
+      _800bf0dc.setu(0x11L);
+      _800bf0ec.setu(0x4L);
+      _800ba3b8.setu(0x2L);
+      _800bdd24.setu(0x9L);
+      pregameLoadingStage_800bb10c.setu(0);
+    }
+
+    //LAB_800d9e5c
   }
 
   @Method(0x800d9e64L)

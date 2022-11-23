@@ -154,7 +154,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -5452,7 +5452,7 @@ public final class Bttl_800e {
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .vramPos(704, 256)
       .monochrome(0x80)
-      .pos(screenCoords.getX() - 8, screenCoords.getY() + (int)_800fb188.offset(2, (_800bb0fc.get() & 0x7L) * 0x2L).getSigned(), 16, 24)
+      .pos(screenCoords.getX() - 8, screenCoords.getY() + (int)_800fb188.offset(2, (tickCount_800bb0fc.get() & 0x7L) * 0x2L).getSigned(), 16, 24)
       .uv(240, 0);
 
     if(textEffect == 0) {
@@ -6123,7 +6123,7 @@ public final class Bttl_800e {
           renderNumber(charSlot, 3, bobj.maxMp_12.get(), 1);
           renderNumber(charSlot, 4, bobj.sp_0a.get() / 100, 1);
 
-          s2._14.get(1).set((int)_800bb0fc.get() & 0x3);
+          s2._14.get(1).set((int)tickCount_800bb0fc.get() & 0x3);
 
           //LAB_800efc0c
           if(bobj.sp_0a.get() < bobj.dlevel_06.get() * 100) {
@@ -6464,7 +6464,7 @@ public final class Bttl_800e {
           final int status = targetBobj.status_0e.get();
 
           if((status & 0xff) != 0) {
-            if((_800bb0fc.get() & 0x10L) != 0) {
+            if((tickCount_800bb0fc.get() & 0x10L) != 0) {
               int mask = 0x80;
 
               //LAB_800f0e94

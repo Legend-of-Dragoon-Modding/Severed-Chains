@@ -1,7 +1,5 @@
 package legend.core.gte;
 
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 
@@ -9,7 +7,7 @@ public class GsCOORD2PARAM implements MemoryRef {
   private final Value ref;
 
   public final VECTOR scale;
-  public final legend.core.gte.SVECTOR rotate;
+  public final SVECTOR rotate;
   public final VECTOR trans;
 
   public GsCOORD2PARAM(final Value ref) {

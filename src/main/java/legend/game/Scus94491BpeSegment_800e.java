@@ -82,7 +82,7 @@ import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
@@ -818,7 +818,7 @@ public final class Scus94491BpeSegment_800e {
     mainCallbackIndexOnceLoaded_8004dd24.setu(0);
     pregameLoadingStage_800bb10c.setu(0);
     vsyncMode_8007a3b8.set(2);
-    _800bb0fc.setu(0);
+    tickCount_800bb0fc.setu(0);
 
     precalculateTpages();
     loadSystemFont();

@@ -224,7 +224,7 @@ import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
@@ -797,7 +797,7 @@ public final class Scus94491BpeSegment {
       renderTextboxes();
 
       FUN_80020ed8();
-      _800bb0fc.addu(0x1L);
+      tickCount_800bb0fc.addu(0x1L);
       endFrame();
 
       _800bee94.setu(0);
