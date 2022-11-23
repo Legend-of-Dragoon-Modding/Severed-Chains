@@ -297,7 +297,7 @@ public final class Bttl_800c {
   public static final Pointer<BattleStruct24_2> _800c6938 = MEMORY.ref(4, 0x800c6938L, Pointer.deferred(4, BattleStruct24_2::new));
   public static final Pointer<BattleStruct7cc> struct7cc_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, BattleStruct7cc::new));
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
-  public static final Value _800c6944 = MEMORY.ref(4, 0x800c6944L);
+  public static final Pointer<UnboundedArrayRef<Pointer<TmdObjTable>>> tmds_800c6944 = MEMORY.ref(4, 0x800c6944L, Pointer.deferred(4, UnboundedArrayRef.of(0x4, Pointer.deferred(4, TmdObjTable::new))));
   public static final Pointer<UnboundedArrayRef<SpriteMetrics08>> spriteMetrics_800c6948 = MEMORY.ref(4, 0x800c6948L, Pointer.deferred(4, UnboundedArrayRef.of(8, SpriteMetrics08::new)));
 
   public static final Pointer<DeffFile> deff_800c6950 = MEMORY.ref(4, 0x800c6950L, Pointer.deferred(4, DeffFile::new));

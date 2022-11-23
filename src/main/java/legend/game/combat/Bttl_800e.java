@@ -175,7 +175,7 @@ import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c6940;
-import static legend.game.combat.Bttl_800c._800c6944;
+import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -3867,10 +3867,10 @@ public final class Bttl_800e {
     final BattleStruct7cc v0 = MEMORY.ref(4, mallocTail(0x7ccL), BattleStruct7cc::new);
     _800c6938.set(v0._5b8);
     _800c6930.set(v0._5dc);
-    lights_800c692c.setPointer(v0._640.getAddress());
+    lights_800c692c.setPointer(v0._640.getAddress()); //TODO
     v0._20.set(0x4L);
     v0.ptr_24.set(v0._28.getAddress());
-    _800c6944.setu(v0._2f8.getAddress());
+    tmds_800c6944.set(v0.tmds_2f8);
     _800c6940.setu(v0._390.getAddress());
     struct7cc_800c693c.set(v0);
     spriteMetrics_800c6948.set(v0.spriteMetrics_39c);
@@ -4507,7 +4507,7 @@ public final class Bttl_800e {
     //LAB_800ea89c
     //LAB_800ea8a8
     for(int n = 0; n < 0x40; n++) {
-      struct7cc._2f8.get(n).clear();
+      struct7cc.tmds_2f8.get(n).clear();
     }
 
     //LAB_800ea8e0
@@ -4521,7 +4521,7 @@ public final class Bttl_800e {
       a1 = v0 & 0xffL;
       if(a1 >= 0x5L) {
         v0 = deff2.pointers_08.get(i).part_04.deref().getAddress();
-        struct7cc._2f8.get((int)a1).set(MEMORY.ref(4, v0 + MEMORY.ref(4, v0).offset(0xcL).get(), ExtendedTmd::new).tmdPtr_00.deref().tmd.objTable.get(0));
+        struct7cc.tmds_2f8.get((int)a1).set(MEMORY.ref(4, v0 + MEMORY.ref(4, v0).offset(0xcL).get(), ExtendedTmd::new).tmdPtr_00.deref().tmd.objTable.get(0));
       }
 
       //LAB_800ea928

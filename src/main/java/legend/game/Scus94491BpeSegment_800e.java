@@ -315,7 +315,7 @@ public final class Scus94491BpeSegment_800e {
    * <ol start="0">
    *   <li>{@link SEffe#FUN_8010c378}</li>
    *   <li>{@link SEffe#FUN_8010d1dc}</li>
-   *   <li>{@link SEffe#FUN_8010d7dc}</li>
+   *   <li>{@link SEffe#allocateGoldDragoonTransformEffect}</li>
    *   <li>{@link SEffe#FUN_8010e04c}</li>
    *   <li>{@link SEffe#FUN_8010edc8}</li>
    *   <li>{@link SEffe#FUN_8010e89c}</li>

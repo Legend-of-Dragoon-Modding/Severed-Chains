@@ -73,6 +73,8 @@ import legend.game.combat.types.EffectData98Sub94;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.FrozenJetEffect28;
+import legend.game.combat.types.GoldDragoonTransformEffect20;
+import legend.game.combat.types.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.combat.types.SpriteMetrics08;
@@ -89,6 +91,7 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.core.MemoryHelper.getTriConsumerAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.FUN_80018dec;
@@ -118,6 +121,7 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
@@ -162,7 +166,7 @@ import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.FUN_800cffd8;
-import static legend.game.combat.Bttl_800c._800c6944;
+import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c._800fb954;
@@ -2440,7 +2444,9 @@ public final class SEffe {
     a0._60.set(1);
 
     if((a3 & 0xf_ff00L) == 0xf_ff00L) {
-      a0.tmd_30.set(_800c6944.offset((a3 & 0xffL) * 0x4L).deref(4).cast(TmdObjTable::new));
+      //TODO I added the first deref here, this might have been a retail bug...
+      //     Looking at how _800c6944 gets set, I don't see how it could have been correct
+      a0.tmd_30.set(tmds_800c6944.deref().get((int)a3 & 0xff).deref());
       a0.tpage_56.set(0x20);
     } else {
       //LAB_80101d98
@@ -6108,6 +6114,184 @@ public final class SEffe {
     }
   }
 
+  @Method(0x8010d7dcL)
+  public static long allocateGoldDragoonTransformEffect(final RunningScript script) {
+    final int s7 = script.params_20.get(1).deref().get();
+    final int count = script.params_20.get(2).deref().get();
+    final int sp1c = 32;
+    final int sp20 = script.params_20.get(4).deref().get();
+    final int sp24 = script.params_20.get(5).deref().get();
+    final int sp28 = script.params_20.get(6).deref().get();
+    final int sp2c = script.params_20.get(7).deref().get();
+    final int sp30 = script.params_20.get(8).deref().get();
+
+    final int effectIndex = allocateEffectManager(
+      script.scriptStateIndex_00.get(),
+      0x20,
+      getTriConsumerAddress(SEffe.class, "goldDragoonTransformEffectTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class),
+      getTriConsumerAddress(SEffe.class, "goldDragoonTransformEffectRenderer", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class),
+      getTriConsumerAddress(SEffe.class, "goldDragoonTransformEffectDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class),
+      GoldDragoonTransformEffect20::new
+    );
+
+    final GoldDragoonTransformEffect20 effect = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(GoldDragoonTransformEffect20.class);
+
+    effect.count_00.set(count);
+    effect._04.set(0);
+    effect.parts_08.setPointer(mallocTail(count * 0x84));
+
+    //LAB_8010d8ec
+    for(int i = 0; i < count; i++) {
+      final GoldDragoonTransformEffectInstance84 instance = effect.parts_08.deref().get(i);
+      instance.used_00.set(true);
+      instance.counter_04.set(0);
+      instance._68.set(0x7f);
+      instance._69.set(0x7f);
+      instance._6a.set(0x7f);
+
+      final int s2 = rand() % (sp20 - sp1c + 1) + sp1c;
+      final int theta = rand() % 4096;
+      instance.transStep_28.setX(rcos(theta) * s2 >> 4);
+      instance.transStep_28.setY(rand() % (sp28 - sp24 + 1) + sp24 << 8);
+      instance.transStep_28.setZ(rsin(theta) * s2 >> 4);
+      instance.rot_38.setX(rand() % 4096);
+      instance.rot_38.setY(rand() % 4096);
+      instance.rot_38.setZ(rand() % 4096);
+      instance.rotStep_48.setX((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+      instance.rotStep_48.setY((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+      instance.rotStep_48.setZ((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+
+      if(sp2c != 0) {
+        //LAB_8010dbc4
+        instance._7c.set((short)(rand() % (sp2c + 1)));
+      } else {
+        instance._7c.set((short)0);
+      }
+
+      //LAB_8010dbe8
+      instance._7e.set((short)(rand() % (sp30 + 2)));
+      instance._80.set((short)-1);
+
+      if((s7 & 0xf_ff00L) == 0xf_ff00L) {
+        //TODO I added the first deref here, this might have been a retail bug...
+        //     Looking at how _800c6944 gets set, I don't see how it could have been correct
+        instance.tmd_70.set(tmds_800c6944.deref().get(s7 & 0xff).deref());
+      } else {
+        //LAB_8010dc40
+        final long part = FUN_800eac58(s7 | 0x300_0000L).getAddress(); //TODO
+        instance.tmd_70.setPointer(part + MEMORY.ref(4, part).offset(0xcL).get() + 0x18L);
+      }
+
+      //LAB_8010dc60
+      instance.trans_08.set(0, 0, 0);
+    }
+
+    //LAB_8010dc8c
+    script.params_20.get(0).deref().set(effectIndex);
+    return 0;
+  }
+
+  @Method(0x8010dcd0L)
+  public static void goldDragoonTransformEffectTicker(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final GoldDragoonTransformEffect20 effect = manager.effect_44.derefAs(GoldDragoonTransformEffect20.class);
+    int unusedCount = 0;
+
+    //LAB_8010dd00
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      final GoldDragoonTransformEffectInstance84 instance = effect.parts_08.deref().get(i);
+
+      if(!instance.used_00.get()) {
+        unusedCount++;
+        continue;
+      }
+
+      //LAB_8010dd18
+      instance._80.incr();
+
+      if(instance._7e.get() != -1) {
+        if(instance._7e.get() == instance._80.get()) {
+          instance._7e.set((short)-1);
+        }
+      }
+
+      //LAB_8010dd40
+      if(instance._7e.get() == -1) {
+        //LAB_8010dd50
+        instance.counter_04.incr();
+        final int counter = instance.counter_04.get();
+
+        instance.trans_08.x.add(instance.transStep_28.getX());
+        instance.trans_08.y.set(counter * counter * 0x1800 - instance.transStep_28.getY() * counter);
+        instance.trans_08.z.add(instance.transStep_28.getZ());
+
+        instance.rot_38.add(instance.rotStep_48);
+
+        if(instance._7c.get() <= 0) {
+          if(instance.trans_08.getY() > 0x400) {
+            instance.used_00.set(false);
+          }
+          //LAB_8010ddf8
+        } else if(instance.trans_08.getY() >= 0) {
+          instance.counter_04.set(1);
+          instance.transStep_28.y.div(2);
+          instance._7c.decr();
+        }
+      }
+    }
+
+    if(unusedCount >= effect.count_00.get()) {
+      //LAB_8010de5c
+      deallocateScriptAndChildren(effectIndex);
+    }
+
+    //LAB_8010de6c
+  }
+
+  @Method(0x8010de7cL)
+  public static void goldDragoonTransformEffectRenderer(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final GoldDragoonTransformEffect20 effect = manager.effect_44.derefAs(GoldDragoonTransformEffect20.class);
+    effect._04.incr();
+
+    final Memory.TemporaryReservation dobj2Tmp = MEMORY.temp(0x10);
+    final GsDOBJ2 dobj2 = new GsDOBJ2(dobj2Tmp.get());
+    final VECTOR trans = new VECTOR();
+    final SVECTOR rot = new SVECTOR();
+    final MATRIX transforms = new MATRIX();
+    final MATRIX sp0x98 = new MATRIX();
+    final VECTOR scale = new VECTOR();
+
+    //LAB_8010ded8
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      final GoldDragoonTransformEffectInstance84 instance = effect.parts_08.deref().get(i);
+
+      if(instance.used_00.get()) {
+        trans.setX((instance.trans_08.getX() >> 8) + manager._10.trans_04.getX());
+        trans.setY((instance.trans_08.getY() >> 8) + manager._10.trans_04.getY());
+        trans.setZ((instance.trans_08.getZ() >> 8) + manager._10.trans_04.getZ());
+
+        rot.set(instance.rot_38);
+        scale.set(manager._10.scale_16);
+
+        RotMatrix_8003faf0(rot, transforms);
+        TransMatrix(transforms, trans);
+        ScaleMatrix(transforms, scale);
+
+        dobj2.tmd_08.set(instance.tmd_70.deref());
+
+        FUN_8003f210(matrix_800c3548, transforms, sp0x98);
+        setRotTransMatrix(sp0x98);
+
+        zOffset_1f8003e8.set(0);
+        tmdGp0Tpage_1f8003ec.set(2);
+
+        renderDobj2(dobj2);
+      }
+    }
+
+    //LAB_8010e020
+    dobj2Tmp.release();
+  }
+
   @Method(0x8010e04cL)
   public static long FUN_8010e04c(final RunningScript script) {
     final int count = script.params_20.get(2).deref().get();
@@ -6711,6 +6895,11 @@ public final class SEffe {
   @Method(0x8010fe84L)
   public static void FUN_8010fe84(final int effectIndex, final EffectManagerData6c manager, final BttlScriptData6cSub14_4Sub70 a2) {
     // no-op
+  }
+
+  @Method(0x8010fe8cL)
+  public static void goldDragoonTransformEffectDestructor(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    free(manager.effect_44.derefAs(GoldDragoonTransformEffect20.class).parts_08.getPointer());
   }
 
   @Method(0x8010feb8L)
@@ -8702,7 +8891,7 @@ public final class SEffe {
       } else {
         //LAB_80116724
         if((a2 & 0xf_ff00) == 0xf_ff00) {
-          sp8c = struct7cc_800c693c.deref()._2f8.get(a2 & 0xff).deref();
+          sp8c = struct7cc_800c693c.deref().tmds_2f8.get(a2 & 0xff).deref();
         } else {
           //LAB_80116750
           //TODO
@@ -9655,7 +9844,7 @@ public final class SEffe {
 
     if((s1 & 0xf_ff00) == 0xf_ff00) {
       effect._04.set(0);
-      effect.tmd_08.set(struct7cc_800c693c.deref()._2f8.get((int)s1 & 0xff).deref());
+      effect.tmd_08.set(struct7cc_800c693c.deref().tmds_2f8.get((int)s1 & 0xff).deref());
       effect._10.set(0x20);
     } else {
       //LAB_8011847c
@@ -9741,7 +9930,7 @@ public final class SEffe {
     if((a1 & 0xf_ff00L) == 0xf_ff00L) {
       MEMORY.ref(2, a0).offset(0x10L).setu(0x20L);
       MEMORY.ref(4, a0).offset(0x4L).setu(0);
-      MEMORY.ref(4, a0).offset(0x8L).setu(struct7cc_800c693c.deref()._2f8.get((int)(a1 & 0xff)).deref().getAddress()); //TODO
+      MEMORY.ref(4, a0).offset(0x8L).setu(struct7cc_800c693c.deref().tmds_2f8.get((int)(a1 & 0xff)).deref().getAddress()); //TODO
     } else {
       //LAB_80118750
       long v0 = FUN_800eac58(a1 | 0x300_0000L).getAddress(); //TODO

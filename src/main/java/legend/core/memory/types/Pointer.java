@@ -9,15 +9,15 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
-public class Pointer<T extends legend.core.memory.types.MemoryRef> implements legend.core.memory.types.MemoryRef {
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, Pointer<T>> of(final int size, final Function<Value, T> constructor) {
+public class Pointer<T extends MemoryRef> implements MemoryRef {
+  public static <T extends MemoryRef> Function<Value, Pointer<T>> of(final int size, final Function<Value, T> constructor) {
     return ref -> new Pointer<>(ref, constructor, size, true);
   }
 
   /**
    * Lazy mode - don't resolve pointer until used
    */
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, Pointer<T>> deferred(final int size, final Function<Value, T> constructor) {
+  public static <T extends MemoryRef> Function<Value, Pointer<T>> deferred(final int size, final Function<Value, T> constructor) {
     return ref -> new Pointer<>(ref, constructor, size, false);
   }
 

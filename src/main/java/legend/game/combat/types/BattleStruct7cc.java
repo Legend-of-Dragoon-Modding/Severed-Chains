@@ -33,7 +33,7 @@ public class BattleStruct7cc implements MemoryRef {
 
   public final BattleStruct4c _4c;
   public final ArrayRef<BattleStruct4c> _98;
-  public final UnboundedArrayRef<Pointer<TmdObjTable>> _2f8;
+  public final UnboundedArrayRef<Pointer<TmdObjTable>> tmds_2f8;
 
   public final UnboundedArrayRef<Pointer<DeffPart>> _390;
 
@@ -67,7 +67,7 @@ public class BattleStruct7cc implements MemoryRef {
 
     this._4c = ref.offset(4, 0x4cL).cast(BattleStruct4c::new);
     this._98 = ref.offset(4, 0x98L).cast(ArrayRef.of(BattleStruct4c.class, 8, 0x4c, BattleStruct4c::new));
-    this._2f8 = ref.offset(4, 0x2f8L).cast(UnboundedArrayRef.of(0x4, Pointer.deferred(4, TmdObjTable::new)));
+    this.tmds_2f8 = ref.offset(4, 0x2f8L).cast(UnboundedArrayRef.of(0x4, Pointer.deferred(4, TmdObjTable::new)));
 
     this._390 = ref.offset(4, 0x390L).cast(UnboundedArrayRef.of(0x4, Pointer.deferred(4, DeffPart::new)));
 

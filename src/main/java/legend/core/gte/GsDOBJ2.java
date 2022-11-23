@@ -13,8 +13,8 @@ public class GsDOBJ2 implements MemoryRef {
   /** perspective, translation, rotate, display */
   public final UnsignedIntRef attribute_00;
   /** local dmatrix */
-  public final Pointer<legend.core.gte.GsCOORDINATE2> coord2_04;
-  public final Pointer<legend.core.gte.TmdObjTable> tmd_08;
+  public final Pointer<GsCOORDINATE2> coord2_04;
+  public final Pointer<TmdObjTable> tmd_08;
   public final IntRef id_0c;
 
   public GsDOBJ2(final Value ref) {
