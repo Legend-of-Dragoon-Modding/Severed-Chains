@@ -52,7 +52,7 @@ public class WMapStruct258 implements MemoryRef {
   public final SVECTOR svec_200;
   public final SVECTOR svec_208;
 
-  public final UnsignedIntRef _218;
+  public final IntRef _218;
   public final UnsignedShortRef _21c;
   public final UnsignedShortRef _21e;
   public final ByteRef _220;
@@ -110,7 +110,7 @@ public class WMapStruct258 implements MemoryRef {
     this.svec_200 = ref.offset(2, 0x200L).cast(SVECTOR::new);
     this.svec_208 = ref.offset(2, 0x208L).cast(SVECTOR::new);
 
-    this._218 = ref.offset(4, 0x218L).cast(UnsignedIntRef::new);
+    this._218 = ref.offset(4, 0x218L).cast(IntRef::new);
     this._21c = ref.offset(2, 0x21cL).cast(UnsignedShortRef::new);
     this._21e = ref.offset(2, 0x21eL).cast(UnsignedShortRef::new);
     this._220 = ref.offset(1, 0x220L).cast(ByteRef::new);

@@ -4202,13 +4202,13 @@ public class WMap {
 
         struct258._218.incr();
 
-        if(struct258._218.get() > 0xcL) {
-          struct258._218.set(0xcL);
+        if(struct258._218.get() > 12) {
+          struct258._218.set(12);
           struct258._220.set(7);
         }
 
         //LAB_800db698
-        FUN_800dcc20(struct258.vec_94, sp0x38, sp0x48, 0xcL, struct258._218.get());
+        FUN_800dcc20(struct258.vec_94, sp0x38, sp0x48, 12, struct258._218.get());
 
         struct258.models_0c.get(2).deref().scaleVector_fc.x.sub(170);
 
@@ -4503,8 +4503,19 @@ public class WMap {
   }
 
   @Method(0x800dcc20L)
-  public static void FUN_800dcc20(final VECTOR a0, final VECTOR a1, final VECTOR a2, final long a3, final long a4) {
-    assert false;
+  public static void FUN_800dcc20(final VECTOR a0, final VECTOR a1, final VECTOR a2, final int a3, final int a4) {
+    if(a3 == a4) {
+      a0.setX(a2.getX() << 12);
+      a0.setY(a2.getY() << 12);
+      a0.setZ(a2.getZ() << 12);
+    } else {
+      //LAB_800dcca4
+      a0.setX(((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) + a1.getX() << 12);
+      a0.setY(((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) + a1.getY() << 12);
+      a0.setZ(((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) + a1.getZ() << 12);
+    }
+
+    //LAB_800dcddc
   }
 
   @Method(0x800dcde8L)
