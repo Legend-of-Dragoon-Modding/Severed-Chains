@@ -20,6 +20,7 @@ public final class Config {
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("inventory_size", "32");
+    properties.setProperty("unlock_party", "false");
   }
 
   public static int windowWidth() {
@@ -52,6 +53,10 @@ public final class Config {
 
   public static int inventorySize() {
     return readInt("inventory_size", 32, 1, 64);
+  }
+
+  public static boolean unlockParty() {
+    return readBool("unlock_party", false);
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

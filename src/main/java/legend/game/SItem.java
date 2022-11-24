@@ -37,6 +37,7 @@ import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.MrgFile;
+import legend.game.types.PartyPermutation08;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
@@ -127,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
-import static legend.game.Scus94491BpeSegment_8006._8006f280;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -216,7 +216,7 @@ public final class SItem {
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
   /** Contains data for every combination of party members (like a DRGN0 file index that contains the textures and models of each char */
-  public static final Value partyPermutations_80111d68 = MEMORY.ref(1, 0x80111d68L);
+  public static final ArrayRef<ArrayRef<PartyPermutation08>> partyPermutations_80111d68 = MEMORY.ref(2, 0x80111d68L, ArrayRef.of(ArrayRef.classFor(PartyPermutation08.class), 9, 0x48, ArrayRef.of(PartyPermutation08.class, 9, 8, PartyPermutation08::new)));
 
   public static final ArrayRef<EquipmentStats1c> equipmentStats_80111ff0 = MEMORY.ref(1, 0x80111ff0L, ArrayRef.of(EquipmentStats1c.class, 0xc0, 0x1c, EquipmentStats1c::new));
   public static final ArrayRef<IntRef> kongolXpTable_801134f0 = MEMORY.ref(4, 0x801134f0L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
@@ -569,35 +569,73 @@ public final class SItem {
     }
 
     //LAB_800fc104
-    final long v1 = charCount_800c677c.get();
-    final long s2;
-    if(v1 == 1) {
-      //LAB_800fc140
-      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).getAddress();
-    } else if(v1 == 2) {
-      //LAB_800fc164
-      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(0).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(1).get() * 0x8L).getAddress();
-      //LAB_800fc12c
-    } else if(v1 == 3) {
-      //LAB_800fc174
-      //LAB_800fc180
-      s2 = partyPermutations_80111d68.offset(gameState_800babc8.charIndex_88.get(1).get() * 0x48L).offset(gameState_800babc8.charIndex_88.get(2).get() * 0x8L).getAddress();
-    } else {
-      throw new RuntimeException("Invalid value " + v1);
+    final int charCount = charCount_800c677c.get();
+
+    // nodart: this algorithm finds 1 or 2 party permutations that contain models for each character. No more than two permutations will ever be
+    // needed because there is a permutation for every combination of characters with Dart. If Dart is replaced, only one more permutation will
+    // need to be found for the replacement character.
+    int mainPermIndex1 = 0;
+    int mainPermIndex2 = 0;
+    int extraPermIndex1 = -1;
+    int extraPermIndex2 = -1;
+
+    outer:
+    for(int permGroup = 0; permGroup < 9; permGroup++) {
+      for(int perm = 0; perm < 9; perm++) {
+        int foundChars = 0;
+        int notFoundIndex = -1;
+
+        charLoop:
+        for(int charSlot = 0; charSlot < charCount; charSlot++) {
+          for(int permSlot = 0; permSlot < 3; permSlot++) {
+            if(partyPermutations_80111d68.get(permGroup).get(perm).charIndices_02.get(permSlot).get() == gameState_800babc8.charIndex_88.get(charSlot).get()) {
+              foundChars++;
+              continue charLoop;
+            }
+          }
+
+          notFoundIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
+        }
+
+        // Handle finding all 1, 2, or 3 chars
+        if(foundChars == charCount) {
+          mainPermIndex1 = permGroup;
+          mainPermIndex2 = perm;
+          break outer;
+        }
+
+        // Handle finding 2/3 chars
+        if(foundChars == 2) {
+          mainPermIndex1 = permGroup;
+          mainPermIndex2 = perm;
+          extraPermIndex1 = notFoundIndex;
+          extraPermIndex2 = 0;
+        }
+      }
     }
 
     //LAB_800fc19c
     //LAB_800fc1a4
-    _8006f280.setu(s2);
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc504", int.class), (int)MEMORY.ref(2, s2).getSigned());
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc654", int.class), (int)MEMORY.ref(2, s2).getSigned() + 1);
+    int permIndices = mainPermIndex2 << 8 | mainPermIndex1;
+
+    if(extraPermIndex1 != -1) {
+      permIndices |= extraPermIndex1 << 16;
+      permIndices |= extraPermIndex2 << 24;
+    } else {
+      permIndices |= 0xffff_0000;
+    }
+
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc504", int.class), permIndices);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc654", int.class), permIndices);
     _800bc960.oru(0x400L);
     decrementOverlayCount();
   }
 
   @Method(0x800fc210L)
   public static void FUN_800fc210(final long address, final long fileSize, final long param) {
-    final long s3 = _8006e398.ptr_ee8.get();
+    final int permIndex1 = (int)param & 0xff;
+    final int permIndex2 = (int)param >>> 8 & 0xff;
+    final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
 
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
@@ -606,15 +644,15 @@ public final class SItem {
       final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
       //LAB_800fc298
-      for(int a1 = 0; a1 < 3; a1++) {
-        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == data.charIndex_272.get()) {
+      for(int permutationSlot = 0; permutationSlot < 3; permutationSlot++) {
+        if(permutation.charIndices_02.get(permutationSlot).get() == data.charIndex_272.get()) {
           s0 = s0 & 0xffff_ff80L;
           s0 = s0 | combatant.charSlot_19c.get() & 0x7fL;
           s0 = s0 & 0xffff_81ffL;
           s0 = s0 | (data.combatantIndex_26c.get() & 0x3fL) << 9;
           s0 = s0 & 0xffff_ff7fL;
           s0 = s0 & 0xffff_feffL;
-          decompress(address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get(), getMethodAddress(Bttl_800c.class, "combatantTmdAndAnimLoadedCallback", long.class, long.class, long.class), s0, 0);
+          decompress(address + MEMORY.ref(4, address).offset(permutationSlot * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get(), getMethodAddress(Bttl_800c.class, "combatantTmdAndAnimLoadedCallback", long.class, long.class, long.class), s0, 0);
           break;
         }
 
@@ -673,22 +711,35 @@ public final class SItem {
   }
 
   @Method(0x800fc504L)
-  public static void FUN_800fc504(final int fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), 0, 0x5L);
+  public static void FUN_800fc504(final int permIndices) {
+    final int mainPermIndex1 = permIndices & 0xff;
+    final int mainPermIndex2 = permIndices >>> 8 & 0xff;
+    final int extraPermIndex1 = permIndices >>> 16 & 0xff;
+    final int extraPermIndex2 = permIndices >>> 24 & 0xff;
+
+    final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
+
+    if(extraPermIndex1 != 0xff) {
+      final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
+    }
   }
 
   @Method(0x800fc548L)
   public static void FUN_800fc548(final long address, final long fileSize, final long param) {
-    final long s3 = _8006e398.ptr_ee8.get();
+    final int permIndex1 = (int)param & 0xff;
+    final int permIndex2 = (int)param >>> 8 & 0xff;
+    final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
 
     //LAB_800fc590
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
       //LAB_800fc5b4
-      for(long a1 = 0; a1 < 3; a1++) {
-        if(MEMORY.ref(2, s3).offset(a1 * 0x2L).offset(0x2L).getSigned() == bobj.charIndex_272.get()) {
-          a1 = address + MEMORY.ref(4, address).offset(a1 * 0x8L).offset(0x8L).get();
+      for(int permutationSlot = 0; permutationSlot < 3; permutationSlot++) {
+        if(permutation.charIndices_02.get(permutationSlot).get() == bobj.charIndex_272.get()) {
+          long a1 = address + MEMORY.ref(4, address).offset(permutationSlot * 0x8L).offset(0x8L).get();
           a1 = a1 + MEMORY.ref(4, a1).offset(0x8L).get();
           FUN_800ca75c(bobj.combatantIndex_26c.get(), a1);
           break;
@@ -706,8 +757,19 @@ public final class SItem {
   }
 
   @Method(0x800fc654L)
-  public static void FUN_800fc654(final int fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), 0, 0x4L);
+  public static void FUN_800fc654(final int permIndices) {
+    final int mainPermIndex1 = permIndices & 0xff;
+    final int mainPermIndex2 = permIndices >>> 8 & 0xff;
+    final int extraPermIndex1 = permIndices >>> 16 & 0xff;
+    final int extraPermIndex2 = permIndices >>> 24 & 0xff;
+
+    final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
+
+    if(extraPermIndex1 != 0xff) {
+      final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
+    }
   }
 
   @Method(0x800fc698L)
@@ -1226,7 +1288,7 @@ public final class SItem {
 
       case _8:
         scriptStartEffect(0x2L, 0xaL);
-        selectedSlot_8011d740.set(1);
+        selectedSlot_8011d740.set(0);
         slotScroll_8011d744.set(0);
         inventoryMenuState_800bdc28.set(InventoryMenuState._9);
         break;
@@ -1247,7 +1309,7 @@ public final class SItem {
           break;
         }
 
-        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && selectedSlot_8011d740.get() > 1) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && selectedSlot_8011d740.get() > 0) { // Up
           selectedSlot_8011d740.decr();
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           playSound(0x1L);
@@ -1255,7 +1317,7 @@ public final class SItem {
 
         //LAB_800fd4e4
         //LAB_800fd4e8
-        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && selectedSlot_8011d740.get() < 2) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && selectedSlot_8011d740.get() < 2) { // Down
           selectedSlot_8011d740.incr();
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           playSound(0x1L);
@@ -1264,7 +1326,7 @@ public final class SItem {
         //LAB_800fd52c
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
           final int charIndex = gameState_800babc8.charIndex_88.get(selectedSlot_8011d740.get()).get();
-          if(charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20L) != 0) {
+          if(!Config.unlockParty() && charIndex != -1 && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20L) != 0) {
             //LAB_800fd590
             playSound(0x28L);
           } else {
@@ -1290,7 +1352,7 @@ public final class SItem {
       case _11:
         renderCharacterSwapScreen(0);
 
-        if((inventoryJoypadInput_800bdc44.get() & 0x8000L) != 0 && slotScroll_8011d744.get() % 3 > 0) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x8000L) != 0 && slotScroll_8011d744.get() % 3 > 0) { // Left
           slotScroll_8011d744.decr();
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1298,7 +1360,7 @@ public final class SItem {
         }
 
         //LAB_800fd6b8
-        if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && slotScroll_8011d744.get() % 3 < 2) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x2000L) != 0 && slotScroll_8011d744.get() % 3 < 2) { // Right
           slotScroll_8011d744.incr();
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1306,7 +1368,7 @@ public final class SItem {
         }
 
         //LAB_800fd730
-        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && slotScroll_8011d744.get() > 2) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x1000L) != 0 && slotScroll_8011d744.get() > 2) { // Up
           slotScroll_8011d744.sub(3);
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1315,7 +1377,7 @@ public final class SItem {
 
         //LAB_800fd78c
         //LAB_800fd790
-        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && slotScroll_8011d744.get() < 3) {
+        if((inventoryJoypadInput_800bdc44.get() & 0x4000L) != 0 && slotScroll_8011d744.get() < 3) { // Down
           slotScroll_8011d744.add(3);
           renderablePtr_800bdbec.deref().x_40.set(FUN_800fc880(slotScroll_8011d744.get()));
           renderablePtr_800bdbec.deref().y_44.set(FUN_800fc8a8(slotScroll_8011d744.get()));
@@ -1331,14 +1393,21 @@ public final class SItem {
 
         //LAB_800fd820
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
+          int charCount = 0;
+          for(int i = 0; i < 3; i++) {
+            if(gameState_800babc8.charIndex_88.get(i).get() != -1) {
+              charCount++;
+            }
+          }
+
           final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(slotScroll_8011d744.get()).get();
-          if(secondaryCharIndex == -1) {
+          if((!Config.unlockParty() || charCount < 2) && secondaryCharIndex == -1) {
             //LAB_800fd888
             playSound(0x28L);
             break;
           }
 
-          if((gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2L) == 0) {
+          if(secondaryCharIndex != -1 && (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2L) == 0) {
             //LAB_800fd888
             playSound(0x28L);
             break;
@@ -1347,7 +1416,7 @@ public final class SItem {
           //LAB_800fd898
           playSound(0x2L);
           final int charIndex = gameState_800babc8.charIndex_88.get(selectedSlot_8011d740.get()).get();
-          gameState_800babc8.charIndex_88.get(selectedSlot_8011d740.get()).set(secondaryCharIndices_800bdbf8.get(slotScroll_8011d744.get()).get());
+          gameState_800babc8.charIndex_88.get(selectedSlot_8011d740.get()).set(secondaryCharIndex);
           secondaryCharIndices_800bdbf8.get(slotScroll_8011d744.get()).set(charIndex);
           inventoryMenuState_800bdc28.set(InventoryMenuState._9);
         }
@@ -2939,9 +3008,9 @@ public final class SItem {
     renderThreeDigitNumber(128, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 0), 0x3L);
     renderTwoDigitNumber(152, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 1), 0x3L);
     renderTwoDigitNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 2), 0x3L);
-    renderCharacterSlot(194,  16, gameState_800babc8.charIndex_88.get(0).get(), s4, 0);
-    renderCharacterSlot(194,  88, gameState_800babc8.charIndex_88.get(1).get(), s4, 0);
-    renderCharacterSlot(194, 160, gameState_800babc8.charIndex_88.get(2).get(), s4, 0);
+    renderCharacterSlot(194,  16, gameState_800babc8.charIndex_88.get(0).get(), s4, false);
+    renderCharacterSlot(194,  88, gameState_800babc8.charIndex_88.get(1).get(), s4, false);
+    renderCharacterSlot(194, 160, gameState_800babc8.charIndex_88.get(2).get(), s4, false);
     renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98.get()).deref(), 94, 24, 4);
 
     final LodString v1;
@@ -3030,17 +3099,17 @@ public final class SItem {
     FUN_801082a0(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), s1);
 
     if(gameState_800babc8.charIndex_88.get(0).get() != -1) {
-      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get()).partyFlags_04.get() & 0x20L);
+      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_801025b4
     if(gameState_800babc8.charIndex_88.get(1).get() != -1) {
-      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get()).partyFlags_04.get() & 0x20L);
+      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_801025f8
     if(gameState_800babc8.charIndex_88.get(2).get() != -1) {
-      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), s1, gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get()).partyFlags_04.get() & 0x20L);
+      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_8010263c
@@ -3051,7 +3120,7 @@ public final class SItem {
   public static void FUN_80102660(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
     final long s0 = a3 == 0xff ? 1 : 0;
 
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, false);
     renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), s0);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
 
@@ -3073,7 +3142,7 @@ public final class SItem {
     final long s0 = (a1 ^ 0xffL) < 0x1L ? 1 : 0;
 
     renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xff, s0);
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, 0);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, false);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
     renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), s0);
 
@@ -3168,7 +3237,7 @@ public final class SItem {
     }
 
     //LAB_80102db0
-    renderCharacterSlot(16, 21, charIndex, sp2c, 0);
+    renderCharacterSlot(16, 21, charIndex, sp2c, false);
     uploadRenderables();
   }
 
@@ -4787,7 +4856,7 @@ public final class SItem {
   }
 
   @Method(0x80107f9cL)
-  public static void renderCharacterSlot(final int x, final int y, final int charIndex, final long a3, final long a4) {
+  public static void renderCharacterSlot(final int x, final int y, final int charIndex, final long a3, final boolean dontSelect) {
     if(charIndex != -1) {
       if(a3 != 0) {
         allocateUiElement( 74,  74, x, y).z_3c.set(0x21);
@@ -4818,7 +4887,8 @@ public final class SItem {
         renderCharacter(x + 124, y + 50, 11);
         renderXp(x + 130, y + 50, getXpToNextLevel(charIndex));
 
-        if(a4 != 0) {
+        // Render "don't select" overlay
+        if(dontSelect) {
           final Renderable58 struct = allocateUiElement(113, 113, x + 56, y + 24);
           struct.z_3c.set(0x21);
         }

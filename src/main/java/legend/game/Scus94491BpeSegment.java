@@ -214,7 +214,6 @@ import static legend.game.Scus94491BpeSegment_8005.loadingOverlays_8005a2a8;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
-import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -5818,7 +5817,7 @@ public final class Scus94491BpeSegment {
     final int encounterId = encounterId_800bb0f8.get();
     if(encounterId == 0x1af) {
       //LAB_8001d394
-      if(_8006f284.get() == 0) {
+      if(_8006e398._eec.get() == 0) {
         loadDrgnBinFile(0, 1296, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
       } else {
         //LAB_8001d3d0
@@ -5827,7 +5826,7 @@ public final class Scus94491BpeSegment {
     } else {
       if(encounterId == 0x186) {
         //LAB_8001d330
-        if(_8006f284.get() != 0) {
+        if(_8006e398._eec.get() != 0) {
           //LAB_8001d370
           loadDrgnBinFile(0, 1291, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
         } else {
@@ -5836,7 +5835,7 @@ public final class Scus94491BpeSegment {
         //LAB_8001d31c
       } else if(encounterId == 0x1bb) {
         //LAB_8001d3f8
-        final long v1 = _8006f284.get();
+        final long v1 = _8006e398._eec.get();
         if(v1 == 0) {
           //LAB_8001d43c
           loadDrgnBinFile(0, 1292, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);

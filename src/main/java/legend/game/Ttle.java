@@ -245,7 +245,7 @@ public final class Ttle {
       }
     }
 
-    gameState_800babc8.charData_32c.get(0).partyFlags_04.set(35);
+    gameState_800babc8.charData_32c.get(0).partyFlags_04.set(0x3);
 
     //LAB_800c7398
     for(int i = 0x100; i >= 0; i--) {
@@ -337,8 +337,8 @@ public final class Ttle {
       }
 
       case 1 -> {
-        loadDrgnBinFile(0, 6667, 0, getMethodAddress(Ttle.class, "FUN_800c7558", long.class, long.class, long.class), 0, 0x2L);
         pregameLoadingStage_800bb10c.setu(0x2L);
+        loadDrgnBinFile(0, 6667, 0, getMethodAddress(Ttle.class, "FUN_800c7558", long.class, long.class, long.class), 0, 0x2L);
       }
 
       case 3 -> {

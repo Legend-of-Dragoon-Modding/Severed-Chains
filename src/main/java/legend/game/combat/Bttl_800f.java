@@ -53,7 +53,6 @@ import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8006._8006f1d8;
 import static legend.game.Scus94491BpeSegment_8006._8006f210;
 import static legend.game.Scus94491BpeSegment_8006._8006f254;
-import static legend.game.Scus94491BpeSegment_8006._8006f284;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -3427,7 +3426,7 @@ public final class Bttl_800f {
       return targetName;
     }
 
-    final long v1 = _8006f284.get();
+    final long v1 = _8006e398._eec.get();
     if(v1 != 0x4L) {
       if((int)v1 < 0x5L) {
         if(v1 != 0) {
@@ -3441,7 +3440,7 @@ public final class Bttl_800f {
 
     //LAB_800f85f4
     //LAB_800f8634
-    return _800c6ba8.get((int)_800c6f30.offset(_8006f284.get() * 0x4L).get());
+    return _800c6ba8.get((int)_800c6f30.offset(_8006e398._eec.get() * 0x4L).get());
   }
 
   @Method(0x800f863cL)

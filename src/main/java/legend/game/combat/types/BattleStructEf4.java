@@ -6,11 +6,12 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
+import legend.game.types.PartyPermutation08;
 
 public class BattleStructEf4 implements MemoryRef {
   private final Value ref;
@@ -44,6 +45,7 @@ public class BattleStructEf4 implements MemoryRef {
   public final ArrayRef<AdditionExtra04> additionExtra_474;
 
   public final BoolRef dragonBlockStaff_550;
+
   public final ArrayRef<IntRef> bobjIndices_d80;
   public final ArrayRef<BattleStructEf4Sub08> _d8c;
   public final ArrayRef<IntRef> bobjIndices_e0c;
@@ -57,8 +59,8 @@ public class BattleStructEf4 implements MemoryRef {
 
   public final ByteRef _ee4;
 
-  /** TODO ptr */
-  public final UnsignedIntRef ptr_ee8;
+  /** Note: nodart code no longer uses this */
+  public final Pointer<PartyPermutation08> partyPermutation_ee8;
   public final IntRef _eec;
 
   public BattleStructEf4(final Value ref) {
@@ -90,7 +92,7 @@ public class BattleStructEf4 implements MemoryRef {
 
     this._ee4 = ref.offset(1, 0xee4L).cast(ByteRef::new);
 
-    this.ptr_ee8 = ref.offset(4, 0xee8L).cast(UnsignedIntRef::new);
+    this.partyPermutation_ee8 = ref.offset(4, 0xee8L).cast(Pointer.deferred(4, PartyPermutation08::new));
     this._eec = ref.offset(4, 0xeecL).cast(IntRef::new);
   }
 
