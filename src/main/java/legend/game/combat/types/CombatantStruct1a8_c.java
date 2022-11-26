@@ -12,7 +12,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.TmdAnimationFile;
 
 /** A union type, see type property to tell which type it is */
-public class BattleStruct1a8_c implements MemoryRef {
+public class CombatantStruct1a8_c implements MemoryRef {
   private final Value ref;
 
   public final Type0 type0;
@@ -39,7 +39,7 @@ public class BattleStruct1a8_c implements MemoryRef {
   public final UnsignedByteRef type_0a;
   public final UnsignedByteRef _0b;
 
-  public BattleStruct1a8_c(final Value ref) {
+  public CombatantStruct1a8_c(final Value ref) {
     this.ref = ref;
 
     this.type0 = new Type0();
@@ -65,7 +65,7 @@ public class BattleStruct1a8_c implements MemoryRef {
     public final IntRef _00;
 
     private Type0() {
-      this._00 = BattleStruct1a8_c.this.ref.offset(4, 0x00L).cast(IntRef::new);
+      this._00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(IntRef::new);
     }
   }
 
@@ -73,7 +73,7 @@ public class BattleStruct1a8_c implements MemoryRef {
     public final Pointer<TmdAnimationFile> anim_00;
 
     private AnimType() {
-      this.anim_00 = BattleStruct1a8_c.this.ref.offset(4, 0x00L).cast(Pointer.deferred(4, TmdAnimationFile::new));
+      this.anim_00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(Pointer.deferred(4, TmdAnimationFile::new));
     }
   }
 
@@ -81,7 +81,7 @@ public class BattleStruct1a8_c implements MemoryRef {
     public final IntRef index_00;
 
     private IndexType() {
-      this.index_00 = BattleStruct1a8_c.this.ref.offset(4, 0x00L).cast(IntRef::new);
+      this.index_00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(IntRef::new);
     }
   }
 
@@ -89,7 +89,7 @@ public class BattleStruct1a8_c implements MemoryRef {
     public final UnsignedIntRef bpe_00;
 
     private BpeType() {
-      this.bpe_00 = BattleStruct1a8_c.this.ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+      this.bpe_00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     }
   }
 
@@ -99,9 +99,9 @@ public class BattleStruct1a8_c implements MemoryRef {
     public final UnsignedByteRef h_03;
 
     private TimType() {
-      this.x_00 = BattleStruct1a8_c.this.ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-      this.y_02 = BattleStruct1a8_c.this.ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-      this.h_03 = BattleStruct1a8_c.this.ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
+      this.x_00 = CombatantStruct1a8_c.this.ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+      this.y_02 = CombatantStruct1a8_c.this.ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
+      this.h_03 = CombatantStruct1a8_c.this.ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     }
   }
 }

@@ -8,7 +8,6 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.Model124;
 
@@ -272,12 +271,6 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedShortRef _142;
   public final Pointer<CombatantStruct1a8> combatant_144;
   public final Model124 model_148;
-
-  //TODO maybe part of previous struct
-  public final UnsignedIntRef _23c;
-  public final UnsignedIntRef _240;
-
-  // This should be the end of model_148
   public final ShortRef combatantIndex_26c;
   public final ShortRef animIndex_26e;
   public final ShortRef animIndex_270;
@@ -443,9 +436,6 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._142 = ref.offset(2, 0x142L).cast(UnsignedShortRef::new);
     this.combatant_144 = ref.offset(4, 0x144L).cast(Pointer.deferred(4, CombatantStruct1a8::new));
     this.model_148 = ref.offset(4, 0x148L).cast(Model124::new);
-
-    this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
-    this._240 = ref.offset(4, 0x240L).cast(UnsignedIntRef::new);
 
     this.combatantIndex_26c = ref.offset(2, 0x26cL).cast(ShortRef::new);
     this.animIndex_26e = ref.offset(2, 0x26eL).cast(ShortRef::new);

@@ -169,7 +169,7 @@ import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
 import static legend.game.combat.Bttl_800c._800c6758;
-import static legend.game.combat.Bttl_800c._800c6768;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c._800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
@@ -3444,7 +3444,7 @@ public final class Bttl_800e {
 
   @Method(0x800e80c4L)
   public static int allocateEffectManager(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
-    final int index = allocateScriptState(0x6cL, EffectManagerData6c::new);
+    final int index = allocateScriptState(0x6c, EffectManagerData6c::new);
 
     loadScriptFile(index, script_800faebc);
     setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
@@ -3516,7 +3516,7 @@ public final class Bttl_800e {
 
   @Method(0x800e832cL)
   public static int FUN_800e832c(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
-    final int index = allocateScriptState(0x6cL, EffectManagerData6c::new);
+    final int index = allocateScriptState(0x6c, EffectManagerData6c::new);
 
     loadScriptFile(index, script_800faebc);
     setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
@@ -6424,7 +6424,7 @@ public final class Bttl_800e {
 
             //LAB_800f0cf0
             int enemySlot;
-            for(enemySlot = 0; enemySlot < _800c6768.get(); enemySlot++) {
+            for(enemySlot = 0; enemySlot < monsterCount_800c6768.get(); enemySlot++) {
               if(_800c6b78.offset(enemySlot * 0x4L).get() == menu._48.get()) {
                 break;
               }

@@ -207,7 +207,7 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<Pointer<SupplierRef<Long>>> fileLoadingCallbacks_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
-  public static final Value scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL);
+  public static final IntRef scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL, IntRef::new);
 
   /**
    * Table of pointers to variables accessible by scripting engine
@@ -593,7 +593,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cd4b0}</li>
    *   <li>{@link Bttl_800c#FUN_800cd4f0}</li>
    *   <li>{@link Bttl_800c#scriptAddCombatant}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd570}</li>
+   *   <li>{@link Bttl_800c#scriptDeallocateAndClearCombatant}</li>
    *   <li>{@link Bttl_800c#FUN_800cda78}</li>
    *   <li>{@link Bttl_800c#FUN_800cd5b4}</li>
    *   <li>{@link Bttl_800c#FUN_800cd740}</li>
@@ -601,7 +601,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800cd810}</li>
    *   <li>{@link Bttl_800c#FUN_800cd8a4}</li>
    *   <li>{@link Bttl_800c#scriptGetBobjNobj}</li>
-   *   <li>{@link Bttl_800c#FUN_800cda3c}</li>
+   *   <li>{@link Bttl_800c#scriptDeallocateCombatant}</li>
    *   <li>{@link Bttl_800c#FUN_800cdb18}</li>
    *   <li>{@link Bttl_800c#scriptLoadStage}</li>
    *   <li>{@link Bttl_800c#FUN_800cd910}</li>

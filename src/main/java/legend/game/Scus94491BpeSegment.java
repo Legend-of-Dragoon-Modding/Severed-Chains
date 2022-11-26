@@ -302,7 +302,7 @@ import static legend.game.combat.Bttl_800c.FUN_800c7304;
 import static legend.game.combat.Bttl_800c.FUN_800c882c;
 import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
 import static legend.game.combat.Bttl_800c.FUN_800c90b0;
-import static legend.game.combat.Bttl_800c._800c6768;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld._80109a98;
@@ -2291,7 +2291,7 @@ public final class Scus94491BpeSegment {
   public static void tickScripts() {
     executeScriptFrame();
     executeScriptTickers();
-    scriptStateUpperBound_8004de4c.setu(0x9L);
+    scriptStateUpperBound_8004de4c.set(9);
   }
 
   @Method(0x800157b8L)
@@ -2301,28 +2301,28 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015800L)
   public static int findFreeScriptState() {
-    scriptStateUpperBound_8004de4c.addu(0x1L);
+    scriptStateUpperBound_8004de4c.incr();
 
-    if(scriptStateUpperBound_8004de4c.get() >= 0x48L) {
-      scriptStateUpperBound_8004de4c.setu(0x9L);
+    if(scriptStateUpperBound_8004de4c.get() >= 72) {
+      scriptStateUpperBound_8004de4c.set(9);
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = (int)scriptStateUpperBound_8004de4c.get(); i < 0x48; i++) {
+    for(int i = scriptStateUpperBound_8004de4c.get(); i < 72; i++) {
       if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == scriptState_800bc0c0.getAddress()) {
         //LAB_800158c0
-        scriptStateUpperBound_8004de4c.setu(i);
+        scriptStateUpperBound_8004de4c.set(i);
         return i;
       }
     }
 
     //LAB_8001586c
     //LAB_80015898
-    for(int i = 0x9; i < scriptStateUpperBound_8004de4c.get(); i++) {
+    for(int i = 9; i < scriptStateUpperBound_8004de4c.get(); i++) {
       if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == scriptState_800bc0c0.getAddress()) {
         //LAB_800158c0
-        scriptStateUpperBound_8004de4c.setu(i);
+        scriptStateUpperBound_8004de4c.set(i);
         return i;
       }
     }
@@ -2332,7 +2332,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800158ccL)
-  public static <T extends MemoryRef> int allocateScriptState(final long innerStructSize, final Function<Value, T> type) {
+  public static <T extends MemoryRef> int allocateScriptState(final int innerStructSize, final Function<Value, T> type) {
     final int index = findFreeScriptState();
 
     if(index < 0) {
@@ -2343,34 +2343,30 @@ public final class Scus94491BpeSegment {
   }
 
   /**
-   * @return index, or -1 on failure to allocate memory
+   * @return index
    */
   @Method(0x80015918L)
-  public static <T extends MemoryRef> int allocateScriptState(final int index, final long innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
+  public static <T extends MemoryRef> int allocateScriptState(final int index, final int innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (0x%x bytes)", index, innerStructSize);
 
-    final long linkedListAddress;
+    final long addr;
     if(allocateOnHead) {
-      linkedListAddress = mallocHead(innerStructSize + 0x100L);
+      addr = mallocHead(innerStructSize + 0x100L);
     } else {
       //LAB_80015954
-      linkedListAddress = mallocTail(innerStructSize + 0x100L);
+      addr = mallocTail(innerStructSize + 0x100L);
     }
 
     //LAB_80015968
-    if(linkedListAddress == 0) {
-      return -1;
-    }
+    bzero(addr, innerStructSize + 0x100);
 
-    bzero(linkedListAddress, (int)(innerStructSize + 0x100));
-
-    final ScriptState<T> scriptState = MEMORY.ref(4, linkedListAddress, ScriptState.of(type));
+    final ScriptState<T> scriptState = MEMORY.ref(4, addr, ScriptState.of(type));
 
     //LAB_80015978
     scriptStatePtrArr_800bc1c0.get(index).set(scriptState);
 
     if(innerStructSize != 0) {
-      scriptState.innerStruct_00.setPointer(linkedListAddress + 0x100L);
+      scriptState.innerStruct_00.setPointer(addr + 0x100L);
     } else {
       scriptState.innerStruct_00.clear();
     }
@@ -4022,7 +4018,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001886cL)
   public static long FUN_8001886c() {
     //LAB_800188a0
-    for(int i = 0; i < _800c6768.get(); i++) {
+    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
       if(FUN_800c90b0(scriptStatePtrArr_800bc1c0.get(_8006e398.bobjIndices_e50.get(i).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()) == 0) {
         return 0;
       }
@@ -4712,7 +4708,7 @@ public final class Scus94491BpeSegment {
     int t4 = 0;
 
     //LAB_80019fdc
-    for(int i = 0; i < _800c6768.get(); i++) {
+    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
       final int bobjIndex = _8006e398.bobjIndices_e50.get(i).get();
 
       if(scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == a1) {

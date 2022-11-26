@@ -1284,7 +1284,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get();
-      final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
+      final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
       final ScriptState<AdditionScriptData1c> s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(AdditionScriptData1c.class));
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
@@ -1461,7 +1461,7 @@ public final class Bttl_800d {
       s4.params_20.get(1).deref().set(0);
     } else {
       //LAB_800d4388
-      final int scriptIndex = allocateScriptState(0x40L, BttlScriptData40::new);
+      final int scriptIndex = allocateScriptState(0x40, BttlScriptData40::new);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d4018", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
@@ -1526,7 +1526,7 @@ public final class Bttl_800d {
   public static long FUN_800d4580(final RunningScript a0) {
     final int s2 = a0.params_20.get(0).deref().get();
     if(s2 != -1) {
-      final int scriptIndex = allocateScriptState(0x1cL, AdditionScriptData1c::new);
+      final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));

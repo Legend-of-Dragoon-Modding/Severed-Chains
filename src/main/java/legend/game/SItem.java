@@ -12,7 +12,6 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -56,6 +55,7 @@ import static legend.core.MathHelper.roundUp;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
+import static legend.core.MemoryHelper.getTriConsumerAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
 import static legend.game.SMap.shops_800f4930;
@@ -85,7 +85,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80022afc;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023544;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
@@ -105,6 +104,7 @@ import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
+import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
@@ -130,7 +130,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc928;
@@ -172,14 +171,15 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.FUN_800ca75c;
 import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
 import static legend.game.combat.Bttl_800c.getCombatant;
+import static legend.game.combat.Bttl_800c.loadCombatantTim;
 import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
 import static legend.game.combat.Bttl_800f.FUN_800f863c;
 
@@ -511,7 +511,7 @@ public final class SItem {
 
     //LAB_800fbde8
     final long fp = _80111d38.offset(charCount_800c677c.get() * 0xcL).getAddress();
-    final long[] charIndices = new long[(int)charCount_800c677c.get()];
+    final int[] charIndices = new int[charCount_800c677c.get()];
 
     //LAB_800fbe18
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
@@ -522,22 +522,22 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final int bobjIndex = allocateScriptState(charSlot + 6, 0x27cL, false, null, 0, BattleObject27c::new);
-      setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      final int bobjIndex = allocateScriptState(charSlot + 6, 0x27c, false, null, 0, BattleObject27c::new);
+      setScriptTicker(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjTicker", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
+      setScriptDestructor(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjDestructors", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.charBobjIndices_e40.get(charSlot).set(bobjIndex);
-      final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
-      s1.magic_00.set(BattleScriptDataBase.BOBJ);
-      s1.combatant_144.set(getCombatant((short)charIndices[charSlot]));
-      s1.charIndex_272.set((short)charIndex);
-      s1.charSlot_276.set((short)charSlot);
-      s1.combatantIndex_26c.set((short)charIndices[charSlot]);
-      s1._274.set((short)_800c66d0.get());
-      s1.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
-      s1.model_148.coord2_14.coord.transfer.setY(0);
-      s1.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
-      s1.model_148.coord2Param_64.rotate.set((short)0, (short)0x400, (short)0);
+      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+      bobj.magic_00.set(BattleScriptDataBase.BOBJ);
+      bobj.combatant_144.set(getCombatant((short)charIndices[charSlot]));
+      bobj.charIndex_272.set((short)charIndex);
+      bobj.charSlot_276.set((short)charSlot);
+      bobj.combatantIndex_26c.set((short)charIndices[charSlot]);
+      bobj._274.set((short)_800c66d0.get());
+      bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
+      bobj.model_148.coord2_14.coord.transfer.setY(0);
+      bobj.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
+      bobj.model_148.coord2Param_64.rotate.set((short)0, (short)0x400, (short)0);
       _800c66d0.incr();
     }
 
@@ -625,14 +625,14 @@ public final class SItem {
       permIndices |= 0xffff_0000;
     }
 
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc504", int.class), permIndices);
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc654", int.class), permIndices);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "deferLoadPartyPermutationTimMrg", int.class), permIndices);
+    loadSupportOverlay(2, getConsumerAddress(SItem.class, "deferLoadPartyPermutationTmdMrg", int.class), permIndices);
     _800bc960.oru(0x400L);
     decrementOverlayCount();
   }
 
   @Method(0x800fc210L)
-  public static void FUN_800fc210(final long address, final long fileSize, final long param) {
+  public static void loadPartyPermutationTmdMrg(final long address, final long fileSize, final long param) {
     final int permIndex1 = (int)param & 0xff;
     final int permIndex2 = (int)param >>> 8 & 0xff;
     final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
@@ -694,7 +694,7 @@ public final class SItem {
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
           if((MEMORY.ref(2, s2).offset(enemySlot * 0x2L).get() & 0x1ffL) == a2 && mrg.entries.get(enemySlot).size.get() != 0) {
-            FUN_800ca75c(i, mrg.getFile(enemySlot));
+            loadCombatantTim(i, mrg.getFile(enemySlot));
             break;
           }
 
@@ -711,26 +711,28 @@ public final class SItem {
   }
 
   @Method(0x800fc504L)
-  public static void FUN_800fc504(final int permIndices) {
+  public static void deferLoadPartyPermutationTimMrg(final int permIndices) {
     final int mainPermIndex1 = permIndices & 0xff;
     final int mainPermIndex2 = permIndices >>> 8 & 0xff;
     final int extraPermIndex1 = permIndices >>> 16 & 0xff;
     final int extraPermIndex2 = permIndices >>> 24 & 0xff;
 
     final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "loadPartyPermutationTimMrg", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
 
     if(extraPermIndex1 != 0xff) {
       final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "FUN_800fc548", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "loadPartyPermutationTimMrg", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
     }
   }
 
   @Method(0x800fc548L)
-  public static void FUN_800fc548(final long address, final long fileSize, final long param) {
+  public static void loadPartyPermutationTimMrg(final long address, final long fileSize, final long param) {
     final int permIndex1 = (int)param & 0xff;
     final int permIndex2 = (int)param >>> 8 & 0xff;
     final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
+
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_800fc590
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
@@ -739,16 +741,10 @@ public final class SItem {
       //LAB_800fc5b4
       for(int permutationSlot = 0; permutationSlot < 3; permutationSlot++) {
         if(permutation.charIndices_02.get(permutationSlot).get() == bobj.charIndex_272.get()) {
-          long a1 = address + MEMORY.ref(4, address).offset(permutationSlot * 0x8L).offset(0x8L).get();
-          a1 = a1 + MEMORY.ref(4, a1).offset(0x8L).get();
-          FUN_800ca75c(bobj.combatantIndex_26c.get(), a1);
+          loadCombatantTim(bobj.combatantIndex_26c.get(), mrg.getFile(permutationSlot, MrgFile::new).getFile(0));
           break;
         }
-
-        //LAB_800fc5e8
       }
-
-      //LAB_800fc5fc
     }
 
     //LAB_800fc614
@@ -757,18 +753,18 @@ public final class SItem {
   }
 
   @Method(0x800fc654L)
-  public static void FUN_800fc654(final int permIndices) {
+  public static void deferLoadPartyPermutationTmdMrg(final int permIndices) {
     final int mainPermIndex1 = permIndices & 0xff;
     final int mainPermIndex2 = permIndices >>> 8 & 0xff;
     final int extraPermIndex1 = permIndices >>> 16 & 0xff;
     final int extraPermIndex2 = permIndices >>> 24 & 0xff;
 
     final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "loadPartyPermutationTmdMrg", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
 
     if(extraPermIndex1 != 0xff) {
       final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "FUN_800fc210", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "loadPartyPermutationTmdMrg", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
     }
   }
 

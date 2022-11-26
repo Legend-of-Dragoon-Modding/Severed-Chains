@@ -42,7 +42,7 @@ import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c._800c66d8;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c._800c6768;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.getCombatant;
@@ -221,17 +221,17 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final int bobjIndex = allocateScriptState(0x27cL, BattleObject27c::new);
-      setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cae50", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "FUN_800cb058", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      final int bobjIndex = allocateScriptState(0x27c, BattleObject27c::new);
+      setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "bobjTicker", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "bobjDestructor", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
-      _8006e398.bobjIndices_e50.get(_800c6768.get()).set(bobjIndex);
+      _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(bobjIndex);
       final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get(bobjIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
       final BattleObject27c data = state.innerStruct_00.deref();
       data.magic_00.set(BattleScriptDataBase.BOBJ);
       data.charIndex_272.set((short)charIndex);
       data._274.set((short)_800c66d0.get());
-      data.charSlot_276.set((short)_800c6768.get());
+      data.charSlot_276.set((short)monsterCount_800c6768.get());
       data.combatant_144.set(getCombatant(combatantIndex));
       data.combatantIndex_26c.set((short)combatantIndex);
       data.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
@@ -240,15 +240,15 @@ public class SBtld {
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
       state.ui_60.or(0x4L);
       _800c66d0.incr();
-      _800c6768.incr();
+      monsterCount_800c6768.incr();
     }
 
     //LAB_8010975c
     _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(-1);
-    _8006e398.bobjIndices_e50.get(_800c6768.get()).set(-1);
+    _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(-1);
 
     //LAB_801097ac
-    for(int i = 0; i < _800c6768.get(); i++) {
+    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
       loadMonster(_8006e398.bobjIndices_e50.get(i).get());
     }
 

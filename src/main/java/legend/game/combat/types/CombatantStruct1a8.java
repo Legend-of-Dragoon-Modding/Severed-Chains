@@ -21,7 +21,7 @@ public class CombatantStruct1a8 implements MemoryRef {
 
   /** This seems to be either a script or an extended TMD */
   public final UnsignedIntRef filePtr_10;
-  public final ArrayRef<BattleStruct1a8_c> _14;
+  public final ArrayRef<CombatantStruct1a8_c> _14;
   public final UnsignedIntRef _194;
   public final UnsignedIntRef _198;
   public final ShortRef charSlot_19c;
@@ -30,7 +30,7 @@ public class CombatantStruct1a8 implements MemoryRef {
    * 0x4 - player (not NPC)
    */
   public final UnsignedShortRef flags_19e;
-  public final ShortRef _1a0;
+  public final ShortRef colourMap_1a0;
   /** Maybe not strictly char index? */
   public final ShortRef charIndex_1a2;
   public final ShortRef _1a4;
@@ -44,12 +44,12 @@ public class CombatantStruct1a8 implements MemoryRef {
     this.tmd_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, ExtendedTmd::new));
 
     this.filePtr_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
-    this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(BattleStruct1a8_c.class, 32, 0xc, BattleStruct1a8_c::new));
+    this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(CombatantStruct1a8_c.class, 32, 0xc, CombatantStruct1a8_c::new));
     this._194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
     this._198 = ref.offset(4, 0x198L).cast(UnsignedIntRef::new);
     this.charSlot_19c = ref.offset(2, 0x19cL).cast(ShortRef::new);
     this.flags_19e = ref.offset(2, 0x19eL).cast(UnsignedShortRef::new);
-    this._1a0 = ref.offset(2, 0x1a0L).cast(ShortRef::new);
+    this.colourMap_1a0 = ref.offset(2, 0x1a0L).cast(ShortRef::new);
     this.charIndex_1a2 = ref.offset(2, 0x1a2L).cast(ShortRef::new);
     this._1a4 = ref.offset(2, 0x1a4L).cast(ShortRef::new);
     this._1a6 = ref.offset(2, 0x1a6L).cast(ShortRef::new);

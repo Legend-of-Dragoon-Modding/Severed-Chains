@@ -229,10 +229,7 @@ public final class SInit {
       linkedListEntry_800bbacc.setu(0);
     } else {
       //LAB_800fbcfc
-      long address = realloc2(linkedListEntry_800fd518.get(), a1);
-      if(address == 0) {
-        address = linkedListEntry_800fd518.get();
-      }
+      final long address = realloc2(linkedListEntry_800fd518.get(), a1);
 
       //LAB_800fbd20
       linkedListEntry_800bbacc.setu(address);
