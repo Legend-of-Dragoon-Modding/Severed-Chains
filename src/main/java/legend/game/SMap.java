@@ -98,13 +98,11 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
 import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.cdName_80011700;
@@ -112,6 +110,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -134,6 +133,7 @@ import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
@@ -143,7 +143,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
@@ -159,6 +158,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
@@ -239,13 +239,13 @@ import static legend.game.Scus94491BpeSegment_800b._800bdd24;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -8166,6 +8166,23 @@ public final class SMap {
     _800f9e78.setu(0);
   }
 
+  @Method(0x800f0f20L)
+  public static long FUN_800f0f20() {
+    long v1 = 0;
+
+    //LAB_800f0f3c
+    for(int a0 = 0; a0 < 8; a0++) {
+      if(_800f9e7c.offset(a0 * 0x4L).get() == 0) {
+        v1 = mallocHead(0x18);
+        _800f9e7c.offset(a0 * 0x4L).setu(v1);
+        break;
+      }
+    }
+
+    //LAB_800f0f78
+    return v1;
+  }
+
   @Method(0x800f0fe8L)
   public static void FUN_800f0fe8() {
     long s0 = _800f9e7c.getAddress();
@@ -8366,6 +8383,39 @@ public final class SMap {
     }
 
     //LAB_800f162c
+    return 0;
+  }
+
+  @Method(0x800f1634L)
+  public static long FUN_800f1634(final RunningScript script) {
+    final ScriptState<WorldObject210> state = script.scriptState_04.deref();
+
+    script.params_20.get(9).set(state.storage_44.get(0));
+
+    final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(state.storage_44.get(0).get()).deref().innerStruct_00.derefAs(WorldObject210.class);
+    if(script.params_20.get(0).deref().get() == 0 || _800f9e78.getSigned() >= 8) {
+      //LAB_800f1698
+      wobj._1d0._18.set(0);
+    } else {
+      //LAB_800f16a4
+      final long a1 = FUN_800f0f20();
+      MEMORY.ref(1, a1).offset(0x1L).setu(0);
+      MEMORY.ref(1, a1).offset(0x0L).setu(script.params_20.get(1).deref().get());
+      MEMORY.ref(2, a1).offset(0x2L).setu(script.params_20.get(2).deref().get());
+      MEMORY.ref(2, a1).offset(0x4L).setu(script.params_20.get(3).deref().get());
+      MEMORY.ref(2, a1).offset(0x8L).setu(script.params_20.get(4).deref().get());
+      MEMORY.ref(4, a1).offset(0xcL).setu(script.params_20.get(5).deref().get());
+      MEMORY.ref(1, a1).offset(0x10L).setu(script.params_20.get(6).deref().get());
+      MEMORY.ref(1, a1).offset(0x11L).setu(script.params_20.get(7).deref().get());
+      MEMORY.ref(1, a1).offset(0x12L).setu(script.params_20.get(8).deref().get());
+      MEMORY.ref(4, a1).offset(0x14L).setu(0);
+      MEMORY.ref(2, a1).offset(0x6L).setu(MEMORY.ref(2, a1).offset(0x2L).get() + MEMORY.ref(2, a1).offset(0x4L).get());
+      wobj._1d0._18.set(script.params_20.get(0).deref().get());
+      wobj._1d0._3c.set(a1);
+      _800f9e78.addu(0x1L);
+    }
+
+    //LAB_800f1784
     return 0;
   }
 
