@@ -2,7 +2,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.10'
+  id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 group 'legend'
@@ -49,9 +49,11 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   implementation "org.joml:joml:${jomlVersion}"
 
-  implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.4.0'
+  implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.9'
 
-  implementation group: 'net.oneandone.reflections8', name: 'reflections8', version: '0.11.5'
+  implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+  // To quiet no logger found for reflections
+  implementation group: 'org.slf4j', name: 'slf4j-nop', version: '2.0.5'
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
@@ -92,6 +94,7 @@ task copySupportFiles(type: Copy) {
 
   into(".") {
     from 'launch.bat'
+    from 'log4j2.xml'
   }
 }
 

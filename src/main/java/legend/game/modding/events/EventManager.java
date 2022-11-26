@@ -2,8 +2,8 @@ package legend.game.modding.events;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.reflections8.Reflections;
-import org.reflections8.util.ClasspathHelper;
+import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -26,7 +26,7 @@ public class EventManager {
 
   public EventManager() {
     LOGGER.info("Scanning for event consumers...");
-    final Reflections reflections = new Reflections(ClasspathHelper.forClassLoader());
+    final Reflections reflections = new Reflections(ClasspathHelper.forPackage("legend"));
     final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
 
     for(final Class<?> listener : listeners) {
