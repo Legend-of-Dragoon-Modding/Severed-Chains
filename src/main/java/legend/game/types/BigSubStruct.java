@@ -26,7 +26,7 @@ public class BigSubStruct implements MemoryRef {
   public final IntRef _34;
   public final ShortRef _38;
 
-  public final UnsignedIntRef _3c;
+  public final UnsignedIntRef ptr_3c;
 
   public BigSubStruct(final Value ref) {
     this.ref = ref;
@@ -47,7 +47,7 @@ public class BigSubStruct implements MemoryRef {
     this._34 = ref.offset(4, 0x34L).cast(IntRef::new);
     this._38 = ref.offset(2, 0x38L).cast(ShortRef::new);
 
-    this._3c = ref.offset(4, 0x3cL).cast(UnsignedIntRef::new);
+    this.ptr_3c = ref.offset(4, 0x3cL).cast(UnsignedIntRef::new);
   }
 
   @Override

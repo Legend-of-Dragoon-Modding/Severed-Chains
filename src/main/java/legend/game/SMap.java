@@ -169,6 +169,7 @@ import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
+import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -525,7 +526,8 @@ public final class SMap {
   public static final ArrayRef<IntRef> smokeTextureWidths_800d6bec = MEMORY.ref(4, 0x800d6becL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> smokeTextureHeights_800d6bfc = MEMORY.ref(4, 0x800d6bfcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<ShortRef> _800d6c0c = MEMORY.ref(2, 0x800d6c0cL, ArrayRef.of(ShortRef.class, 4, 2, 4, ShortRef::new));
-
+  public static final SVECTOR _800d6c18 = MEMORY.ref(4, 0x800d6c18L, SVECTOR::new);
+  public static final SVECTOR _800d6c20 = MEMORY.ref(4, 0x800d6c20L, SVECTOR::new);
   public static final SVECTOR savePointV0_800d6c28 = MEMORY.ref(4, 0x800d6c28L, SVECTOR::new);
   public static final SVECTOR savePointV1_800d6c30 = MEMORY.ref(4, 0x800d6c30L, SVECTOR::new);
   public static final SVECTOR savePointV2_800d6c38 = MEMORY.ref(4, 0x800d6c38L, SVECTOR::new);
@@ -7936,7 +7938,7 @@ public final class SMap {
     a0._30.set(0);
     a0._34.set(0);
     a0._38.set((short)0);
-    a0._3c.set(0);
+    a0.ptr_3c.set(0);
   }
 
   @Method(0x800f0514L)
@@ -7997,8 +7999,88 @@ public final class SMap {
   }
 
   @Method(0x800f0644L)
-  public static void FUN_800f0644(final Model124 a0, final BigSubStruct a1) {
-    assert false;
+  public static void FUN_800f0644(final Model124 model, final BigSubStruct a1) {
+    if((a1._00.get() & 0x1) == 0) {
+      final long s2 = a1.ptr_3c.get();
+
+      if(MEMORY.ref(1, s2).offset(0x1L).get() < MEMORY.ref(1, s2).offset(0x0L).get()) {
+        final SVECTOR sp0x10 = new SVECTOR().set(_800d6c18);
+        final SVECTOR sp0x18 = new SVECTOR().set(_800d6c20);
+        final long s0 = _800d4f90.getAddress();
+        final long s3 = mallocHead(0x34);
+        MEMORY.ref(4, s3).offset(0x30L).setu(MEMORY.ref(4, s0).offset(0x30L).get());
+        MEMORY.ref(4, s0).offset(0x30L).setu(s3);
+        final long s4 = _800d4fd0.getAddress();
+        long s1 = mallocHead(0x14);
+        MEMORY.ref(4, s1).offset(0x10L).setu(MEMORY.ref(4, s4).offset(0x10L).get());
+        MEMORY.ref(4, s4).offset(0x10L).setu(s1);
+
+        final IntRef screenX = new IntRef();
+        final IntRef screenY = new IntRef();
+        getScreenOffset(screenX, screenY);
+
+        sp0x10.setX((short)-MEMORY.ref(2, s2).offset(0x8L).get());
+        sp0x18.setX((short)MEMORY.ref(2, s2).offset(0x8L).get());
+
+        final MATRIX sp0x20 = new MATRIX();
+        GsGetLs(model.coord2_14, sp0x20);
+
+        PushMatrix();
+        CPU.CTC2(sp0x20.getPacked(0), 0);
+        CPU.CTC2(sp0x20.getPacked(2), 1);
+        CPU.CTC2(sp0x20.getPacked(4), 2);
+        CPU.CTC2(sp0x20.getPacked(6), 3);
+        CPU.CTC2(sp0x20.getPacked(8), 4);
+        CPU.CTC2(sp0x20.transfer.getX(), 5);
+        CPU.CTC2(sp0x20.transfer.getY(), 6);
+        CPU.CTC2(sp0x20.transfer.getZ(), 7);
+        CPU.MTC2(sp0x10.getXY(), 0);
+        CPU.MTC2(sp0x10.getZ(), 1);
+        CPU.COP2(0x180001L);
+        MEMORY.ref(4, s1).offset(0x0L).setu(CPU.MFC2(14));
+        long sp48 = CPU.MFC2(8);
+        long sp4c = CPU.CFC2(31);
+        MEMORY.ref(4, s3).offset(0x20L).setu((int)CPU.MFC2(19) >> 2);
+        CPU.MTC2(sp0x18.getXY(), 0);
+        CPU.MTC2(sp0x18.getZ(), 1);
+        CPU.COP2(0x180001L);
+        MEMORY.ref(4, s1).offset(0x8L).setu(CPU.MFC2(14));
+        sp48 = CPU.MFC2(8);
+        sp4c = CPU.CFC2(31);
+        MEMORY.ref(4, s3).offset(0x20L).setu((int)CPU.MFC2(19) >> 2);
+        PopMatrix();
+
+        MEMORY.ref(2, s3).offset(0x0L).setu(0);
+        MEMORY.ref(4, s3).offset(0x4L).setu(GetTPage(Bpp.BITS_4, Translucency.of((int)MEMORY.ref(4, s2).offset(0xcL).get()), 972, 320));
+        FUN_800f0df0(s2, s3);
+        MEMORY.ref(2, s1).offset(0x0L).subu(screenX.get());
+        MEMORY.ref(2, s1).offset(0x2L).subu(screenY.get());
+        MEMORY.ref(2, s1).offset(0x8L).subu(screenX.get());
+        MEMORY.ref(2, s1).offset(0xaL).subu(screenY.get());
+
+        if(MEMORY.ref(1, s2).offset(0x1L).get() == 0) {
+          MEMORY.ref(4, s2).offset(0x14L).setu(s1);
+          s1 = mallocHead(0x14);
+          MEMORY.ref(4, s1).offset(0x10L).setu(MEMORY.ref(4, s4).offset(0x10L).get());
+          MEMORY.ref(4, s4).offset(0x10L).setu(s1);
+          final long v1 = MEMORY.ref(4, s2).offset(0x14L).get();
+          MEMORY.ref(4, s1).offset(0x0L).setu(MEMORY.ref(4, v1).offset(0x0L).get());
+          MEMORY.ref(4, s1).offset(0x4L).setu(MEMORY.ref(4, v1).offset(0x4L).get());
+          final long v0 = MEMORY.ref(4, s2).offset(0x14L).get();
+          MEMORY.ref(4, s1).offset(0x8L).setu(MEMORY.ref(4, v0).offset(0x8L).get());
+          MEMORY.ref(4, s1).offset(0xcL).setu(MEMORY.ref(4, v0).offset(0xcL).get());
+        }
+
+        //LAB_800f0928
+        MEMORY.ref(4, s3).offset(0x28L).setu(s1);
+        MEMORY.ref(4, s3).offset(0x24L).setu(MEMORY.ref(4, s2).offset(0x14L).get());
+        MEMORY.ref(4, s2).offset(0x14L).setu(s1);
+        MEMORY.ref(4, s3).offset(0x2cL).setu(s2);
+        MEMORY.ref(1, s2).offset(0x1L).addu(0x1L);
+      }
+    }
+
+    //LAB_800f094c
   }
 
   @Method(0x800f0970L)
@@ -8124,6 +8206,16 @@ public final class SMap {
     }
 
     //LAB_800f0dc8
+  }
+
+  @Method(0x800f0df0L)
+  public static void FUN_800f0df0(final long a0, final long a1) {
+    MEMORY.ref(4, a1).offset(0x14L).setu(MEMORY.ref(1, a0).offset(0x10L).get() << 16);
+    MEMORY.ref(4, a1).offset(0x18L).setu(MEMORY.ref(1, a0).offset(0x11L).get() << 16);
+    MEMORY.ref(4, a1).offset(0x1cL).setu(MEMORY.ref(1, a0).offset(0x12L).get() << 16);
+    MEMORY.ref(4, a1).offset(0x8L).setu((int)MEMORY.ref(4, a1).offset(0x14L).get() / MEMORY.ref(2, a0).offset(0x4L).get());
+    MEMORY.ref(4, a1).offset(0xcL).setu((int)MEMORY.ref(4, a1).offset(0x18L).get() / MEMORY.ref(2, a0).offset(0x4L).get());
+    MEMORY.ref(4, a1).offset(0x10L).setu((int)MEMORY.ref(4, a1).offset(0x1cL).get() / MEMORY.ref(2, a0).offset(0x4L).get());
   }
 
   @Method(0x800f0e60L)
@@ -8411,7 +8503,7 @@ public final class SMap {
       MEMORY.ref(4, a1).offset(0x14L).setu(0);
       MEMORY.ref(2, a1).offset(0x6L).setu(MEMORY.ref(2, a1).offset(0x2L).get() + MEMORY.ref(2, a1).offset(0x4L).get());
       wobj._1d0._18.set(script.params_20.get(0).deref().get());
-      wobj._1d0._3c.set(a1);
+      wobj._1d0.ptr_3c.set(a1);
       _800f9e78.addu(0x1L);
     }
 
