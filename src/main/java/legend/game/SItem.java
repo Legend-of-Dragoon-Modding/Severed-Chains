@@ -524,7 +524,7 @@ public final class SItem {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
       final int bobjIndex = allocateScriptState(charSlot + 6, 0x27c, false, null, 0, BattleObject27c::new);
       setScriptTicker(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjTicker", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
-      setScriptDestructor(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjDestructors", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
+      setScriptDestructor(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjDestructor", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.charBobjIndices_e40.get(charSlot).set(bobjIndex);
       final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
