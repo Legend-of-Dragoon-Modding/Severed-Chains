@@ -8956,6 +8956,20 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800f25a8L)
+  public static long FUN_800f25a8(final RunningScript script) {
+    final ScriptState<WorldObject210> v1 = script.scriptState_04.deref();
+    script.params_20.get(1).set(v1.storage_44.get(0));
+
+    if(script.params_20.get(0).deref().get() == 1) {
+      FUN_800f0e7c();
+      scriptStatePtrArr_800bc1c0.get(v1.storage_44.get(0).get()).derefAs(ScriptState.classFor(WorldObject210.class)).innerStruct_00.deref()._1d0._18.set(0);
+    }
+
+    //LAB_800f2604
+    return 0;
+  }
+
   @Method(0x800f2618L)
   public static long FUN_800f2618(final RunningScript script) {
     final IntRef refOffsetX = new IntRef();
