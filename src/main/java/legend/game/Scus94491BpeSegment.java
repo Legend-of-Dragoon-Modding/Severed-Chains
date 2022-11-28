@@ -2879,7 +2879,11 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80016598
-          ret = callback.run(RunningScript_800bc070);
+          try {
+            ret = callback.run(RunningScript_800bc070);
+          } catch(final Throwable e) {
+            throw new RuntimeException("An error occurred while ticking script %d".formatted(index), e);
+          }
 
           if(scriptLog[index]) {
             if(ret == 1) {
