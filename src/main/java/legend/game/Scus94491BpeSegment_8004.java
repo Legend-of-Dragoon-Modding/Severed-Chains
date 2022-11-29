@@ -53,7 +53,7 @@ import static legend.game.Scus94491BpeSegment_8002.EnableEvent;
 import static legend.game.Scus94491BpeSegment_8002.OpenEvent;
 import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8005._80058d0c;
+import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005._8005967c;
 import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f3c;
@@ -1090,7 +1090,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040c44
-      atan = (int)_80058d0c.offset(x * 0x2L).getSigned();
+      atan = (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
     } else {
       //LAB_80040c58
       if((y & 0x7fe0_0000) == 0) {
@@ -1103,7 +1103,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040ccc
-      atan = 0x400 - (int)_80058d0c.offset(x * 0x2L).getSigned();
+      atan = 0x400 - (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
     }
 
     //LAB_80040ce0
@@ -1120,20 +1120,10 @@ public final class Scus94491BpeSegment_8004 {
     return atan;
   }
 
-  /**
-   * I think this is patch_missing_cop0r13_in_exception_handler (no$)
-   *
-   * Shouldn't be necessary since we aren't actually emulating the CPU
-   */
-  @Method(0x80040d10L)
-  public static void patchC0TableAgain() {
-    LOGGER.warn("Skipping bios patch");
-  }
-
   @Method(0x80040df0L)
   public static void FUN_80040df0(final VECTOR a0, final COLOUR in, final COLOUR out) {
     CPU.MTC2(a0.getX(), 0); // VXY0
-    CPU.MTC2(a0.getY(),  1); // VZ0
+    CPU.MTC2(a0.getY(), 1); // VZ0
     CPU.MTC2(in.pack(), 6); // RGBC
     CPU.COP2(0x108_041bL);
     out.unpack(CPU.MFC2(22)); // RGB FIFO
@@ -1177,8 +1167,11 @@ public final class Scus94491BpeSegment_8004 {
     return (int)CPU.MFC2(31);
   }
 
+  /**
+   * Transform vector a1 and store in vector a2. Matrix a0 is uploaded to GTE in transposed order.
+   */
   @Method(0x80040ec0L)
-  public static VECTOR FUN_80040ec0(final MATRIX a0, final VECTOR a1, final VECTOR a2) {
+  public static VECTOR ApplyTransposeMatrixLV(final MATRIX a0, final VECTOR a1, final VECTOR a2) {
     CPU.CTC2((a0.get(3) & 0xffffL) << 16 | a0.get(0) & 0xffffL, 0);
     CPU.CTC2((a0.get(1) & 0xffffL) << 16 | a0.get(6) & 0xffffL, 1);
     CPU.CTC2((a0.get(7) & 0xffffL) << 16 | a0.get(4) & 0xffffL, 2);

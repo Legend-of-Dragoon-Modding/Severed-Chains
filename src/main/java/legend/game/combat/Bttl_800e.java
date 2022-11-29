@@ -128,8 +128,8 @@ import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003ef50;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
+import static legend.game.Scus94491BpeSegment_8003.ApplyRotMatrix;
+import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -2015,22 +2015,21 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4674L)
-  public static VECTOR FUN_800e4674(final VECTOR a0, final SVECTOR a1) {
-    final MATRIX sp0x10 = new MATRIX();
-    RotMatrix_80040010(a1, sp0x10);
-    SetRotMatrix(sp0x10);
-    final SVECTOR sp0x30 = new SVECTOR().set((short)0, (short)0, (short)0x1000);
-    FUN_8003ef50(sp0x30, a0);
-    return a0;
+  public static VECTOR FUN_800e4674(final VECTOR out, final SVECTOR rotation) {
+    final MATRIX rotMatrix = new MATRIX();
+    RotMatrix_80040010(rotation, rotMatrix);
+    SetRotMatrix(rotMatrix);
+    ApplyRotMatrix(new SVECTOR().set((short)0, (short)0, (short)(1 << 12)), out);
+    return out;
   }
 
   @Method(0x800e46c8L)
-  public static void FUN_800e46c8() {
+  public static void resetLights() {
     final BattleLightStruct64 v1 = _800c6930.deref();
     v1.colour_00.set(0x800, 0x800, 0x800);
 
     final BttlLightStruct84 a0 = lights_800c692c.deref().get(0);
-    a0.light_00.direction_00.set(0, 0x1000, 0);
+    a0.light_00.direction_00.set(0, 1 << 12, 0);
     a0.light_00.r_0c.set(0x80);
     a0.light_00.g_0d.set(0x80);
     a0.light_00.b_0e.set(0x80);
@@ -2043,30 +2042,30 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e473cL)
-  public static long FUN_800e473c(final RunningScript a0) {
-    FUN_800e46c8();
+  public static long scriptResetLights(final RunningScript script) {
+    resetLights();
     return 0;
   }
 
   @Method(0x800e475cL)
-  public static void FUN_800e475c(final int lightIndex, final int x, final int y, final int z) {
+  public static void setLightDirection(final int lightIndex, final int x, final int y, final int z) {
     final BttlLightStruct84 light = lights_800c692c.deref().get(lightIndex);
     light.light_00.direction_00.set(x, y, z);
     light._10._00.set(0);
   }
 
   @Method(0x800e4788L)
-  public static long FUN_800e4788(final RunningScript a0) {
-    FUN_800e475c(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+  public static long scriptSetLightDirection(final RunningScript script) {
+    setLightDirection(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get());
     return 0;
   }
 
   @Method(0x800e47c8L)
-  public static long FUN_800e47c8(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
-    a0.params_20.get(1).deref().set(light.light_00.direction_00.getX());
-    a0.params_20.get(2).deref().set(light.light_00.direction_00.getY());
-    a0.params_20.get(3).deref().set(light.light_00.direction_00.getZ());
+  public static long scriptGetLightDirection(final RunningScript script) {
+    final BttlLightStruct84 light = lights_800c692c.deref().get(script.params_20.get(0).deref().get());
+    script.params_20.get(1).deref().set(light.light_00.direction_00.getX());
+    script.params_20.get(2).deref().set(light.light_00.direction_00.getY());
+    script.params_20.get(3).deref().set(light.light_00.direction_00.getZ());
     return 0;
   }
 
@@ -2617,7 +2616,7 @@ public final class Bttl_800e {
     setScriptTicker(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5a78", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
     setScriptRenderer(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5fe8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
     _800c6930.deref()._60.set(0);
-    FUN_800e46c8();
+    resetLights();
   }
 
   @Method(0x800e60e0L)
@@ -3614,11 +3613,11 @@ public final class Bttl_800e {
         ScaleVectorL_SVEC(sp0x10, manager._10.scale_16);
         if(s3.coord2Index_0d.get() != -1) {
           //LAB_800e866c
-          FUN_8003f210(sp0x10, FUN_800ea0f4(manager, s3.coord2Index_0d.get()).coord, sp0x10);
+          MulMatrix0(sp0x10, FUN_800ea0f4(manager, s3.coord2Index_0d.get()).coord, sp0x10);
         }
 
         //LAB_800e86ac
-        FUN_8003f210(sp0x10, a0, a0);
+        MulMatrix0(sp0x10, a0, a0);
         s3 = manager;
         scriptIndex = s3.scriptIndex_0c.get();
         //LAB_800e86c8
@@ -3638,7 +3637,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e8774
-        FUN_8003f210(sp0x10, a0, a0);
+        MulMatrix0(sp0x10, a0, a0);
         s3 = null;
         scriptIndex = -1;
       } else {
@@ -3653,12 +3652,12 @@ public final class Bttl_800e {
 
     //LAB_800e87b4
     if(scriptIndex == -2) {
-      final MATRIX sp0x10 = new MATRIX();
+      final MATRIX transposedWs = new MATRIX();
       final VECTOR sp0x30 = new VECTOR();
-      TransposeMatrix(worldToScreenMatrix_800c3548, sp0x10);
+      TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
       sp0x30.set(worldToScreenMatrix_800c3548.transfer).negate();
-      sp0x10.transfer.set(ApplyMatrixLV(sp0x10, sp0x30));
-      FUN_8003f210(sp0x10, a0, a0);
+      transposedWs.transfer.set(ApplyMatrixLV(transposedWs, sp0x30));
+      MulMatrix0(transposedWs, a0, a0);
     }
 
     //LAB_800e8814

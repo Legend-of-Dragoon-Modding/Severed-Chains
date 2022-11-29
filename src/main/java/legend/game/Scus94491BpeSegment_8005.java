@@ -144,7 +144,7 @@ public final class Scus94491BpeSegment_8005 {
   /** Precomputed sin/cos table */
   public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);
 
-  public static final Value _80058d0c = MEMORY.ref(2, 0x80058d0cL);
+  public static final Value atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
   public static final Value _8005967c = MEMORY.ref(2, 0x8005967cL);
 

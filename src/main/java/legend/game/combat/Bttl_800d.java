@@ -80,8 +80,8 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f990;
+import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
+import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -2672,7 +2672,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam._dc.get() >> 8));
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
     cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
     cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
@@ -2727,7 +2727,7 @@ public final class Bttl_800d {
     cam._a4.add(cam._b4.get());
     cam._dc.sub(cam._a4.get());
     _800faba0.setZ((short)(cam._dc.get() >> 8));
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
 
     cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
@@ -2791,7 +2791,7 @@ public final class Bttl_800d {
     cam._a4.add(cam._b4.get());
     cam._dc.sub(cam._a4.get());
     _800faba0.setZ((short)(cam._dc.get() >> 8));
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
     cam.vec_94.setX(cam._e8.get() - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec.get() - (_800faba8.getX() << 8));
     cam.vec_94.setZ(cam._f0.get() + (_800faba8.getY() << 8));
@@ -2982,7 +2982,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
     cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
@@ -3041,7 +3041,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
 
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
@@ -3113,7 +3113,7 @@ public final class Bttl_800d {
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
 
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
 
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
@@ -4256,7 +4256,7 @@ public final class Bttl_800d {
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.set((short)0, (short)0, (short)z.get());
-    FUN_8003f990(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8, _800c67b8);
     x.set(a0 - _800faba8.getZ());
     y.set(a1 - _800faba8.getX());
     z.set(a2 + _800faba8.getY());
@@ -4967,7 +4967,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800de45c
-    FUN_8003f210(worldToScreenMatrix_800c3548, a2, sp0x10);
+    MulMatrix0(worldToScreenMatrix_800c3548, a2, sp0x10);
     if((a1._00.get() & 0x400_0000L) == 0) {
       RotMatrix_8003faf0(a1.rot_10, sp0x10);
       ScaleVectorL_SVEC(sp0x10, a1.scale_16);

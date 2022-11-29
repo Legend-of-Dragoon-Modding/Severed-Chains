@@ -102,7 +102,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -5351,12 +5351,12 @@ public class WMap {
   @Method(0x800e1740L)
   public static void renderDartShadow() {
     final MATRIX sp0x28 = new MATRIX();
-    final SVECTOR sp0x48 = new SVECTOR();
-    final SVECTOR sp0x50 = new SVECTOR();
-    final SVECTOR sp0x58 = new SVECTOR();
-    final DVECTOR v0 = new DVECTOR();
-    final DVECTOR v1 = new DVECTOR();
-    final DVECTOR v2 = new DVECTOR();
+    final SVECTOR vert0 = new SVECTOR();
+    final SVECTOR vert1 = new SVECTOR();
+    final SVECTOR vert2 = new SVECTOR();
+    final DVECTOR sxy0 = new DVECTOR();
+    final DVECTOR sxy1 = new DVECTOR();
+    final DVECTOR sxy2 = new DVECTOR();
 
     GsGetLs(struct258_800c66a8.deref().models_0c.get(struct258_800c66a8.deref().modelIndex_1e4.get()).deref().coord2_14, sp0x28);
     setRotTransMatrix(sp0x28);
@@ -5364,10 +5364,10 @@ public class WMap {
     //LAB_800e17b4
     for(int i = 0; i < 8; i++) {
       //LAB_800e17d0
-      sp0x50.set(struct258_800c66a8.deref()._1c4.get( i            * 2).get(), (short)0, struct258_800c66a8.deref()._1c4.get( i            * 2 + 1).get());
-      sp0x58.set(struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2).get(), (short)0, struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2 + 1).get());
+      vert1.set(struct258_800c66a8.deref()._1c4.get( i            * 2).get(), (short)0, struct258_800c66a8.deref()._1c4.get( i            * 2 + 1).get());
+      vert2.set(struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2).get(), (short)0, struct258_800c66a8.deref()._1c4.get((i + 1 & 0x7) * 2 + 1).get());
 
-      final int z = FUN_8003f930(sp0x48, sp0x50, sp0x58, v0, v1, v2, null, null);
+      final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2, null, null);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(3)
@@ -5376,9 +5376,9 @@ public class WMap {
           .monochrome(0, 0x80)
           .monochrome(1, 0)
           .monochrome(2, 0)
-          .pos(0, v0.getX(), v0.getY())
-          .pos(1, v1.getX(), v1.getY())
-          .pos(2, v2.getX(), v2.getY());
+          .pos(0, sxy0.getX(), sxy0.getY())
+          .pos(1, sxy1.getX(), sxy1.getY())
+          .pos(2, sxy2.getX(), sxy2.getY());
 
         GPU.queueCommand(78 + z, cmd);
       }

@@ -76,7 +76,6 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8004.Lzc;
-import static legend.game.Scus94491BpeSegment_8004.patchC0TableAgain;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
 import static legend.game.Scus94491BpeSegment_8005.GsOUT_PACKET_P;
@@ -2501,8 +2500,6 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    patchC0TableAgain();
-
     // Set bit 30 of status register to enable GTE
     CPU.MTC0(CpuRegisterType.SR, CPU.MFC0(CpuRegisterType.SR) | 0x40000000);
 
@@ -2734,14 +2731,15 @@ public final class Scus94491BpeSegment_8003 {
     return new VECTOR().set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
   }
 
+  /** Transforms vec using the matrix already loaded into the GTE */
   @Method(0x8003ef50L)
-  public static VECTOR FUN_8003ef50(final SVECTOR vec, final VECTOR out) {
+  public static VECTOR ApplyRotMatrix(final SVECTOR vec, final VECTOR out) {
     CPU.MTC2(vec.getXY(), 0); // VXY0
     CPU.MTC2(vec.getZ(),  1); // VZ0
     CPU.COP2(0x48_6012L);
-    out.setX((int)CPU.MFC2( 9));
-    out.setY((int)CPU.MFC2(10));
-    out.setZ((int)CPU.MFC2(11));
+    out.setX((int)CPU.MFC2( 9)); // IR0
+    out.setY((int)CPU.MFC2(10)); // IR1
+    out.setZ((int)CPU.MFC2(11)); // IR2
     return out;
   }
 
@@ -2806,7 +2804,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f210L)
-  public static MATRIX FUN_8003f210(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
+  public static MATRIX MulMatrix0(final MATRIX a0, final MATRIX a1, final MATRIX out) {
     final long t0;
     final long t1;
     final long t2;
@@ -2819,23 +2817,23 @@ public final class Scus94491BpeSegment_8003 {
     CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0);
     CPU.MTC2(                             a1.get(6) & 0xffff, 1);
     CPU.COP2(0x486012L);
-    a2.set(0, (short)CPU.MFC2( 9));
-    a2.set(3, (short)CPU.MFC2(10));
-    a2.set(6, (short)CPU.MFC2(11));
+    out.set(0, (short)CPU.MFC2( 9));
+    out.set(3, (short)CPU.MFC2(10));
+    out.set(6, (short)CPU.MFC2(11));
 
     CPU.MTC2((a1.get(4) & 0xffff) << 16 | a1.get(1) & 0xffff, 0);
     CPU.MTC2(                             a1.get(7) & 0xffff, 1);
     CPU.COP2(0x486012L);
-    a2.set(1, (short)CPU.MFC2( 9));
-    a2.set(4, (short)CPU.MFC2(10));
-    a2.set(7, (short)CPU.MFC2(11));
+    out.set(1, (short)CPU.MFC2( 9));
+    out.set(4, (short)CPU.MFC2(10));
+    out.set(7, (short)CPU.MFC2(11));
 
     CPU.MTC2((a1.get(5) & 0xffff) << 16 | a1.get(2) & 0xffff, 0);
     CPU.MTC2(                             a1.get(8) & 0xffff, 1);
     CPU.COP2(0x486012L);
-    a2.set(2, (short)CPU.MFC2( 9));
-    a2.set(5, (short)CPU.MFC2(10));
-    a2.set(8, (short)CPU.MFC2(11));
+    out.set(2, (short)CPU.MFC2( 9));
+    out.set(5, (short)CPU.MFC2(10));
+    out.set(8, (short)CPU.MFC2(11));
 
     if(a1.transfer.getX() < 0) {
       t0 = -(-a1.transfer.getX() & 0x7fffL);
@@ -2880,10 +2878,10 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003f400
     //LAB_8003f418
     //LAB_8003f41c
-    a2.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
-    a2.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
-    a2.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
-    return a2;
+    out.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
+    out.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
+    out.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    return out;
   }
 
   /**
@@ -2970,7 +2968,7 @@ public final class Scus94491BpeSegment_8003 {
   }
   
   @Method(0x8003f680L)
-  public static VECTOR FUN_8003f680(final MATRIX a0, final SVECTOR a1, final VECTOR a2) {
+  public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
     CPU.CTC2(a0.getPacked(0), 0);
     CPU.CTC2(a0.getPacked(2), 1);
     CPU.CTC2(a0.getPacked(4), 2);
@@ -2978,11 +2976,11 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(a0.getPacked(8), 4);
     CPU.MTC2(a1.getXY(), 0);
     CPU.MTC2(a1.getZ(),  1);
-    CPU.COP2(0x486012L);
-    a2.setX((int)CPU.MFC2(25));
-    a2.setY((int)CPU.MFC2(26));
-    a2.setZ((int)CPU.MFC2(27));
-    return a2;
+    CPU.COP2(0x48_6012L); // Multiply V0 by rotation matrix, 12-bit fraction
+    out.setX((int)CPU.MFC2(25)); // MAC0
+    out.setY((int)CPU.MFC2(26)); // MAC1
+    out.setZ((int)CPU.MFC2(27)); // MAC2
+    return out;
   }
 
   @Method(0x8003f6d0L)
@@ -3079,33 +3077,33 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f930L)
-  public static int FUN_8003f930(final SVECTOR a0, final SVECTOR a1, final SVECTOR a2, final DVECTOR a3, final DVECTOR a4, final DVECTOR a5, @Nullable final Ref<Long> a6, @Nullable final Ref<Long> a7) {
-    CPU.MTC2(a0.getXY(), 0);
-    CPU.MTC2(a0.getZ(),  1);
-    CPU.MTC2(a1.getXY(), 2);
-    CPU.MTC2(a1.getZ(),  3);
-    CPU.MTC2(a2.getXY(), 4);
-    CPU.MTC2(a2.getZ(),  5);
+  public static int perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final DVECTOR screen0, final DVECTOR screen1, final DVECTOR screen2, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
+    CPU.MTC2(world0.getXY(), 0);
+    CPU.MTC2(world0.getZ(),  1);
+    CPU.MTC2(world1.getXY(), 2);
+    CPU.MTC2(world1.getZ(),  3);
+    CPU.MTC2(world2.getXY(), 4);
+    CPU.MTC2(world2.getZ(),  5);
 
     CPU.COP2(0x280030L);
 
-    a3.setXY(CPU.MFC2(12));
-    a4.setXY(CPU.MFC2(13));
-    a5.setXY(CPU.MFC2(14));
+    screen0.setXY(CPU.MFC2(12));
+    screen1.setXY(CPU.MFC2(13));
+    screen2.setXY(CPU.MFC2(14));
 
-    if(a6 != null) {
-      a6.set(CPU.MFC2(8));
+    if(ir0 != null) {
+      ir0.set(CPU.MFC2(8));
     }
 
-    if(a7 != null) {
-      a7.set(CPU.CFC2(31));
+    if(flags != null) {
+      flags.set(CPU.CFC2(31));
     }
 
     return (int)CPU.MFC2(19) >> 2;
   }
 
   @Method(0x8003f990L)
-  public static void FUN_8003f990(final SVECTOR v0, final VECTOR out, @Nullable final UnsignedIntRef flags) {
+  public static void RotTrans(final SVECTOR v0, final VECTOR out, @Nullable final UnsignedIntRef flags) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(), 1); // VZ0
     CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)

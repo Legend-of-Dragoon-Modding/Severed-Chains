@@ -125,10 +125,10 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f210;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f680;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003f990;
+import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
+import static legend.game.Scus94491BpeSegment_8003.ApplyMatrix;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
+import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -142,7 +142,7 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040df0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e10;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040ec0;
+import static legend.game.Scus94491BpeSegment_8004.ApplyTransposeMatrixLV;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -933,14 +933,14 @@ public final class SEffe {
     //LAB_800fc920
     final MATRIX s1 = worldToScreenMatrix_800c3548;
     final VECTOR sp0x30 = new VECTOR().set(s1.transfer).negate();
-    FUN_80040ec0(s1, sp0x30, a0);
+    ApplyTransposeMatrixLV(s1, sp0x30, a0);
 
     if(a1 != null) {
       sp0x30.set(s1.transfer).negate();
       sp0x30.z.add(0x1000);
 
       final VECTOR sp0x10 = new VECTOR();
-      FUN_80040ec0(s1, sp0x30, sp0x10);
+      ApplyTransposeMatrixLV(s1, sp0x30, sp0x10);
       sp0x10.sub(a0);
       final short angle = (short)ratan2(sp0x10.getX(), sp0x10.getZ());
       a1.setY(angle);
@@ -1040,7 +1040,7 @@ public final class SEffe {
       //LAB_800fcf94
       GsSetLightMatrix(sp0x10);
       final MATRIX sp0x30 = new MATRIX();
-      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
+      MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x400_0000L) == 0) {
         RotMatrix_8003faf0(a0._10.rot_10, sp0x30);
         ScaleMatrixL(sp0x30, new VECTOR().set(a0._10.scale_16));
@@ -5245,18 +5245,18 @@ public final class SEffe {
     final SVECTOR sp0x78 = new SVECTOR().set((short)MEMORY.ref(2, a1).offset(0x0L).get(), (short)0, (short)0);
     RotMatrix_8003faf0(sp0x78, sp0xa0);
     TransMatrix(sp0x80, sp0x28);
-    FUN_8003f210(sp0xa0, sp0x80, sp0xc0);
+    MulMatrix0(sp0xa0, sp0x80, sp0xc0);
     FUN_800e8594(sp0x80, manager);
 
     if((manager._10._00.get() & 0x400_0000L) == 0) {
-      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x80, sp0xa0);
+      MulMatrix0(worldToScreenMatrix_800c3548, sp0x80, sp0xa0);
       RotMatrix_8003faf0(manager._10.rot_10, sp0xa0);
-      FUN_8003f210(sp0xa0, sp0xc0, sp0xc0);
+      MulMatrix0(sp0xa0, sp0xc0, sp0xc0);
       setRotTransMatrix(sp0xc0);
     } else {
       //LAB_8010ab10
-      FUN_8003f210(sp0x80, sp0xc0, sp0xa0);
-      FUN_8003f210(worldToScreenMatrix_800c3548, sp0xa0, sp0x80);
+      MulMatrix0(sp0x80, sp0xc0, sp0xa0);
+      MulMatrix0(worldToScreenMatrix_800c3548, sp0xa0, sp0x80);
       setRotTransMatrix(sp0x80);
     }
 
@@ -5452,13 +5452,12 @@ public final class SEffe {
     int v1;
     int a0;
     int a1;
-    int a2;
 
     final COLOUR sp0x48 = new COLOUR();
 
     if((manager._10._00.get() & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      FUN_8003f990(_800fb8d0, sp0x70, null);
+      RotTrans(_800fb8d0, sp0x70, null);
       FUN_80040df0(sp0x70, _800fb8cc, sp0x48);
     } else {
       //LAB_8010b6c8
@@ -5477,28 +5476,28 @@ public final class SEffe {
 
       switch(i) {
         case 1, 2, 4, 7 -> {
-          final SVECTOR sp0x28 = new SVECTOR();
-          final SVECTOR sp0x30 = new SVECTOR();
-          final SVECTOR sp0x38 = new SVECTOR();
-          final DVECTOR sp0x50 = new DVECTOR();
-          final DVECTOR sp0x54 = new DVECTOR();
-          final DVECTOR sp0x58 = new DVECTOR();
+          final SVECTOR vert0 = new SVECTOR();
+          final SVECTOR vert1 = new SVECTOR();
+          final SVECTOR vert2 = new SVECTOR();
+          final DVECTOR sxy0 = new DVECTOR();
+          final DVECTOR sxy1 = new DVECTOR();
+          final DVECTOR sxy2 = new DVECTOR();
 
           //LAB_8010b80c
           if(i == 1 || i == 4) {
             //LAB_8010b828
             a0 = i & 0x3;
             v0 = (a0 - 2) * effect._10.get() / 4;
-            sp0x30.setZ((short)v0);
+            vert1.setZ((short)v0);
             v0 = (a0 - 1) * effect._10.get() / 4;
-            sp0x28.setZ((short)v0);
-            sp0x38.setZ((short)v0);
+            vert0.setZ((short)v0);
+            vert2.setZ((short)v0);
             a0 = i >> 2;
             v0 = (a0 - 1) * effect._14.get() / 2;
-            sp0x28.setY((short)v0);
+            vert0.setY((short)v0);
             v0 = a0 * effect._14.get() / 2;
-            sp0x30.setY((short)v0);
-            sp0x38.setY((short)v0);
+            vert1.setY((short)v0);
+            vert2.setY((short)v0);
             a0 = (i >> 1) * 64;
             v1 = (i & 0x1) * 32;
 
@@ -5510,18 +5509,18 @@ public final class SEffe {
             //LAB_8010b8c8
             a0 = i & 0x3;
             v0 = (a0 - 2) * effect._10.get() / 4;
-            sp0x30.setZ((short)v0);
-            sp0x28.setZ((short)v0);
+            vert1.setZ((short)v0);
+            vert0.setZ((short)v0);
             v0 = (a0 - 1) * effect._10.get() / 4;
-            sp0x38.setZ((short)v0);
+            vert2.setZ((short)v0);
             a0 = i >> 2;
             v0 = (a0 - 1) * effect._14.get() / 2;
-            sp0x28.setY((short)v0);
+            vert0.setY((short)v0);
             v1 = (i & 1) * 32;
             a0 = (i >> 1) * 64;
             v0 = a0 * effect._14.get() / 2;
-            sp0x38.setY((short)v0);
-            sp0x30.setY((short)v0);
+            vert2.setY((short)v0);
+            vert1.setY((short)v0);
 
             cmd
               .uv(0, v1, a0)
@@ -5530,12 +5529,12 @@ public final class SEffe {
           }
 
           //LAB_8010b9a4
-          a2 = FUN_8003f930(sp0x28, sp0x30, sp0x38, sp0x50, sp0x54, sp0x58, null, null);
+          final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2, null, null);
 
           if(effect._10.get() == 0) {
             //LAB_8010b638
             final int sp8c = (int)CPU.CFC2(26);
-            a1 = (a2 << 12) * 4;
+            a1 = (z << 12) * 4;
             effect._10.set(effect._04.get() * a1 / sp8c >>> 12);
             effect._14.set(effect._08.get() * a1 / sp8c >>> 12);
             break;
@@ -5546,43 +5545,43 @@ public final class SEffe {
           cmd
             .bpp(Bpp.BITS_15)
             .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? 0 : 256)
-            .pos(0, sp0x50.getX(), sp0x50.getY())
-            .pos(0, sp0x54.getX(), sp0x54.getY())
-            .pos(0, sp0x58.getX(), sp0x58.getY());
+            .pos(0, sxy0.getX(), sxy0.getY())
+            .pos(0, sxy1.getX(), sxy1.getY())
+            .pos(0, sxy2.getX(), sxy2.getY());
 
-          GPU.queueCommand(a2 >> 2, cmd);
+          GPU.queueCommand(z >> 2, cmd);
         }
 
         case 5, 6 -> {
-          final SVECTOR sp0x28 = new SVECTOR();
-          final SVECTOR sp0x30 = new SVECTOR();
-          final SVECTOR sp0x38 = new SVECTOR();
-          final SVECTOR sp0x40 = new SVECTOR();
-          final SVECTOR sp0x50 = new SVECTOR();
-          final SVECTOR sp0x54 = new SVECTOR();
-          final SVECTOR sp0x58 = new SVECTOR();
-          final SVECTOR sp0x5c = new SVECTOR();
+          final SVECTOR vert0 = new SVECTOR();
+          final SVECTOR vert1 = new SVECTOR();
+          final SVECTOR vert2 = new SVECTOR();
+          final SVECTOR vert3 = new SVECTOR();
+          final SVECTOR sxy0 = new SVECTOR();
+          final SVECTOR sxy1 = new SVECTOR();
+          final SVECTOR sxy2 = new SVECTOR();
+          final SVECTOR sxy3 = new SVECTOR();
 
           a0 = i & 0x3;
           a1 = i >> 2;
           v0 = (a0 - 2) * effect._10.get() / 4;
-          sp0x38.setZ((short)v0);
-          sp0x28.setZ((short)v0);
+          vert2.setZ((short)v0);
+          vert0.setZ((short)v0);
           v0 = (a1 - 1) * effect._14.get() / 2;
-          sp0x30.setY((short)v0);
-          sp0x28.setY((short)v0);
+          vert1.setY((short)v0);
+          vert0.setY((short)v0);
           v0 = (a0 - 1) * effect._10.get() / 4;
-          sp0x40.setZ((short)v0);
-          sp0x30.setZ((short)v0);
+          vert3.setZ((short)v0);
+          vert1.setZ((short)v0);
           v0 = a1 * effect._14.get() / 2;
-          sp0x40.setY((short)v0);
-          sp0x38.setY((short)v0);
-          a2 = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sp0x50, sp0x54, sp0x58, sp0x5c, null, null);
+          vert3.setY((short)v0);
+          vert2.setY((short)v0);
+          final int z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3, null, null);
 
           if(effect._10.get() == 0) {
             //LAB_8010b664
             final int sp90 = (int)CPU.CFC2(26);
-            a1 = (a2 << 12) * 4;
+            a1 = (z << 12) * 4;
 
             //LAB_8010b688
             effect._10.set(effect._04.get() * a1 / sp90 >>> 12);
@@ -5594,14 +5593,14 @@ public final class SEffe {
           final int v = (i >> 1) * 64;
           final long addr = effect.ptr_00.get();
 
-          GPU.queueCommand(a2 >> 2, new GpuCommandPoly(4)
+          GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
             .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) != 0 ? 256 : 0)
             .rgb(sp0x48.getR(), sp0x48.getG(), sp0x48.getB())
-            .pos(0, sp0x50.getX(), sp0x50.getY())
-            .pos(1, sp0x54.getX(), sp0x54.getY())
-            .pos(2, sp0x58.getX(), sp0x58.getY())
-            .pos(3, sp0x5c.getX(), sp0x5c.getY())
+            .pos(0, sxy0.getX(), sxy0.getY())
+            .pos(1, sxy1.getX(), sxy1.getY())
+            .pos(2, sxy2.getX(), sxy2.getY())
+            .pos(3, sxy3.getX(), sxy3.getY())
             .uv(0, u, v)
             .uv(1, u + effect._04.get() / 4 - 1, v)
             .uv(2, u, v + effect._08.get() / 2 - 1)
@@ -5620,7 +5619,7 @@ public final class SEffe {
 
     if((manager._10._00.get() & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      FUN_8003f990(_800fb8d0, sp0x70, null);
+      RotTrans(_800fb8d0, sp0x70, null);
       FUN_80040df0(sp0x70, _800fb8cc, rgb);
     } else {
       //LAB_8010bd6c
@@ -5706,7 +5705,7 @@ public final class SEffe {
     if((int)manager._10._00.get() >= 0) {
       final DeathDimensionEffect1c effect = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(DeathDimensionEffect1c.class);
       FUN_800e8594(sp0x10, manager);
-      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
+      MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       CPU.CTC2(sp0x30.getPacked(0), 0);
       CPU.CTC2(sp0x30.getPacked(2), 1);
       CPU.CTC2(sp0x30.getPacked(4), 2);
@@ -6278,7 +6277,7 @@ public final class SEffe {
 
         dobj2.tmd_08.set(instance.tmd_70.deref());
 
-        FUN_8003f210(worldToScreenMatrix_800c3548, transforms, sp0x98);
+        MulMatrix0(worldToScreenMatrix_800c3548, transforms, sp0x98);
         setRotTransMatrix(sp0x98);
 
         zOffset_1f8003e8.set(0);
@@ -6755,7 +6754,7 @@ public final class SEffe {
 
           //LAB_8010f50c
           GsSetLightMatrix(sp0xb8);
-          FUN_8003f210(worldToScreenMatrix_800c3548, sp0xb8, sp0xd8);
+          MulMatrix0(worldToScreenMatrix_800c3548, sp0xb8, sp0xd8);
           setRotTransMatrix(sp0xd8);
           RotMatrix_8003faf0(sp0x20, sp0x3c);
           TransMatrix(sp0x3c, sp0x14);
@@ -6766,7 +6765,7 @@ public final class SEffe {
           final long sp80 = 0;
           final long sp38 = 0;
           sp0xf8.attribute_00.set(manager._10._00.get());
-          FUN_8003f210(worldToScreenMatrix_800c3548, sp0x3c, sp0x88);
+          MulMatrix0(worldToScreenMatrix_800c3548, sp0x3c, sp0x88);
           setRotTransMatrix(sp0x88);
           zOffset_1f8003e8.set(0);
           tmdGp0Tpage_1f8003ec.set((int)manager._10._00.get() >>> 23 & 0x60);
@@ -7012,22 +7011,22 @@ public final class SEffe {
 
   @Method(0x8011035cL)
   public static long FUN_8011035c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
-    final VECTOR s0 = getScriptedObjectTranslation(scriptIndex1);
+    final VECTOR translation1 = getScriptedObjectTranslation(scriptIndex1);
 
     if(scriptIndex2 == -1) {
-      a2.set(s0);
+      a2.set(translation1);
     } else {
       //LAB_801103b8
-      final Ref<SVECTOR> sp0x58 = new Ref<>();
-      final Ref<VECTOR> sp0x5c = new Ref<>();
-      getScriptedObjectRotationAndTranslation(scriptIndex2, sp0x58, sp0x5c);
+      final Ref<SVECTOR> rotation2 = new Ref<>();
+      final Ref<VECTOR> translation2 = new Ref<>();
+      getScriptedObjectRotationAndTranslation(scriptIndex2, rotation2, translation2);
 
-      final VECTOR sp0x18 = new VECTOR().set(s0).sub(sp0x5c.get());
+      final VECTOR translationDelta = new VECTOR().set(translation1).sub(translation2.get());
       final MATRIX sp0x38 = new MATRIX();
-      RotMatrix_8003faf0(sp0x58.get(), sp0x38);
+      RotMatrix_8003faf0(rotation2.get(), sp0x38);
 
       final VECTOR sp0x28 = new VECTOR();
-      FUN_80040ec0(sp0x38, sp0x18, sp0x28);
+      ApplyTransposeMatrixLV(sp0x38, translationDelta, sp0x28);
       a2.set(sp0x28);
     }
 
@@ -7049,7 +7048,7 @@ public final class SEffe {
       sp0x10.transfer.sub(sp0x30.transfer);
 
       final VECTOR sp0x50 = new VECTOR();
-      FUN_80040ec0(sp0x30, sp0x10.transfer, sp0x50);
+      ApplyTransposeMatrixLV(sp0x30, sp0x10.transfer, sp0x50);
       s1.set(sp0x50);
     }
 
@@ -7412,7 +7411,7 @@ public final class SEffe {
     SetRotMatrix(sp0x28);
 
     final VECTOR sp0x18 = new VECTOR();
-    FUN_8003f680(sp0x28, sp0x10, sp0x18);
+    ApplyMatrix(sp0x28, sp0x10, sp0x18);
     manager._10.trans_04.add(sp0x18);
     effect._10.incr();
     return 1;
@@ -8865,7 +8864,7 @@ public final class SEffe {
     RotMatrix_80040010(manager._10.rot_10, sp0x10);
     TransMatrix(sp0x10, manager._10.trans_04);
     ScaleVectorL_SVEC(sp0x10, manager._10.scale_16);
-    FUN_8003f210(matrix, sp0x10, sp0x10);
+    MulMatrix0(matrix, sp0x10, sp0x10);
     final int s0 = manager._10.vec_28.getX();
     final VECTOR sp0x30 = new VECTOR().set(s0, s0, s0);
     ScaleMatrixL(sp0x10, sp0x30);
@@ -8925,7 +8924,7 @@ public final class SEffe {
       final SVECTOR sp0x58 = new SVECTOR();
       final MATRIX sp0x60 = new MATRIX();
       final DVECTOR sp0x80 = new DVECTOR();
-      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x60);
+      MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x60);
       setRotTransMatrix(sp0x60);
 
       final int z = perspectiveTransform(sp0x58, sp0x80, null, null);
