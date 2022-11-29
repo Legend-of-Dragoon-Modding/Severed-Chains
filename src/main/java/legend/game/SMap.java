@@ -264,7 +264,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public final class SMap {
   private SMap() { }
@@ -1340,8 +1340,8 @@ public final class SMap {
       final Model124 playerModel = player.model_00;
 
       deltaMovement.set(deltaX, deltaY, deltaZ);
-      SetRotMatrix(matrix_800c3548);
-      SetTransMatrix(matrix_800c3548);
+      SetRotMatrix(worldToScreenMatrix_800c3548);
+      SetTransMatrix(worldToScreenMatrix_800c3548);
       transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
       final int s2 = FUN_800e88a0(player.mrgAnimGroup_12e.get(), playerModel.coord2_14.coord, worldspaceDeltaMovement);
@@ -1658,8 +1658,8 @@ public final class SMap {
       //LAB_800dee9c
       //LAB_800deea0
       deltaMovement.set(deltaX, deltaY, deltaZ);
-      SetRotMatrix(matrix_800c3548);
-      SetTransMatrix(matrix_800c3548);
+      SetRotMatrix(worldToScreenMatrix_800c3548);
+      SetTransMatrix(worldToScreenMatrix_800c3548);
       transformToWorldspace(movement, deltaMovement);
 
       final int collisionResult = FUN_800e88a0(wobj.mrgAnimGroup_12e.get(), model.coord2_14.coord, movement);
@@ -1876,8 +1876,8 @@ public final class SMap {
 
   @Method(0x800df6a4L)
   public static long FUN_800df6a4(final RunningScript s1) {
-    SetRotMatrix(matrix_800c3548);
-    SetTransMatrix(matrix_800c3548);
+    SetRotMatrix(worldToScreenMatrix_800c3548);
+    SetTransMatrix(worldToScreenMatrix_800c3548);
     FUN_800e8104(new SVECTOR().set((short)s1.params_20.get(0).deref().get(), (short)s1.params_20.get(0).deref().get(), (short)s1.params_20.get(0).deref().get()));
 
     //LAB_800df744
@@ -2532,8 +2532,8 @@ public final class SMap {
     final Model124 model = wobj.model_00;
 
     if(wobj.s_178.get() != 0) {
-      SetRotMatrix(matrix_800c3548);
-      SetTransMatrix(matrix_800c3548);
+      SetRotMatrix(worldToScreenMatrix_800c3548);
+      SetTransMatrix(worldToScreenMatrix_800c3548);
       FUN_800e8104(new SVECTOR().set(model.coord2_14.coord.transfer));
     }
 
@@ -2600,8 +2600,8 @@ public final class SMap {
   private static void renderCollisionDebug(final int index, final WorldObject210 wobj) {
     final Model124 model = wobj.model_00;
 
-    SetRotMatrix(matrix_800c3548);
-    SetTransMatrix(matrix_800c3548);
+    SetRotMatrix(worldToScreenMatrix_800c3548);
+    SetTransMatrix(worldToScreenMatrix_800c3548);
 
     final IntRef x0 = new IntRef();
     final IntRef y0 = new IntRef();
@@ -3158,8 +3158,8 @@ public final class SMap {
       if((wobj.flags_190.get() & 0x1L) != 0) { // Is player
         final SVECTOR sp0x18 = new SVECTOR();
         sp0x18.set((short)x, (short)y, (short)z);
-        SetRotMatrix(matrix_800c3548);
-        SetTransMatrix(matrix_800c3548);
+        SetRotMatrix(worldToScreenMatrix_800c3548);
+        SetTransMatrix(worldToScreenMatrix_800c3548);
         transformToWorldspace(sp0x20, sp0x18);
       } else {
         //LAB_800e2134
@@ -5141,7 +5141,7 @@ public final class SMap {
   @Method(0x800e6be0L)
   public static long FUN_800e6be0(final RunningScript a0) {
     final MATRIX coord = scriptStatePtrArr_800bc1c0.get(wobjIndices_800c6880.get(a0.params_20.get(0).deref().get()).get()).deref().innerStruct_00.derefAs(WorldObject210.class).model_00.coord2_14.coord;
-    a0.params_20.get(1).deref().set((matrix_800c3548.get(6) * coord.transfer.getX() + matrix_800c3548.get(7) * coord.transfer.getY() + matrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
+    a0.params_20.get(1).deref().set((worldToScreenMatrix_800c3548.get(6) * coord.transfer.getX() + worldToScreenMatrix_800c3548.get(7) * coord.transfer.getY() + worldToScreenMatrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + worldToScreenMatrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
     return 0;
   }
 
@@ -5304,11 +5304,11 @@ public final class SMap {
       } else {
         //LAB_800e7194
         long a0 =
-          matrix_800c3548.get(6) * s0.svec_00.getX() +
-          matrix_800c3548.get(7) * s0.svec_00.getY() +
-          matrix_800c3548.get(8) * s0.svec_00.getZ();
+          worldToScreenMatrix_800c3548.get(6) * s0.svec_00.getX() +
+          worldToScreenMatrix_800c3548.get(7) * s0.svec_00.getY() +
+          worldToScreenMatrix_800c3548.get(8) * s0.svec_00.getZ();
         a0 >>= 12;
-        a0 += matrix_800c3548.transfer.z.get();
+        a0 += worldToScreenMatrix_800c3548.transfer.z.get();
         a0 >>= 16 - orderingTableBits_1f8003c0.get();
         MEMORY.ref(2, tpagePacket).offset(0x20L).setu(a0);
       }
@@ -5340,8 +5340,8 @@ public final class SMap {
   public static void FUN_800e7328() {
     setProjectionPlaneDistance((int)projectionPlaneDistance_800bd810.get());
     GsSetRefView2(rview2_800cbd10);
-    clearSmallValuesFromMatrix(matrix_800c3548);
-    matrix_800cbd68.set(matrix_800c3548);
+    clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
+    matrix_800cbd68.set(worldToScreenMatrix_800c3548);
     TransposeMatrix(matrix_800cbd68, matrix_800cbd40);
     rview2_800bd7e8.set(rview2_800cbd10);
   }
@@ -5524,9 +5524,9 @@ public final class SMap {
     //LAB_800e7a60
     //LAB_800e7a7c
     for(int i = 0; i < count; i++) {
-      sp10[i] = (matrix_800c3548.get(6) * a1[i].transfer.getX() +
-        matrix_800c3548.get(7) * a1[i].transfer.getY() +
-        matrix_800c3548.get(8) * a1[i].transfer.getZ() >> 12) + matrix_800c3548.transfer.getZ() >> 0x10L - orderingTableBits_1f8003c0.get();
+      sp10[i] = (worldToScreenMatrix_800c3548.get(6) * a1[i].transfer.getX() +
+        worldToScreenMatrix_800c3548.get(7) * a1[i].transfer.getY() +
+        worldToScreenMatrix_800c3548.get(8) * a1[i].transfer.getZ() >> 12) + worldToScreenMatrix_800c3548.transfer.getZ() >> 0x10L - orderingTableBits_1f8003c0.get();
     }
 
     //LAB_800e7b08

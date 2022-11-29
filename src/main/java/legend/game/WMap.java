@@ -100,7 +100,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003dfc0;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003f930;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
@@ -2007,20 +2007,12 @@ public class WMap {
 
     GsInitCoordinate2(null, _800c66b0.deref().coord2_20);
 
-    _800c66b0.deref().coord2_20.coord.transfer.setX(0);
-    _800c66b0.deref().coord2_20.coord.transfer.setY(0);
-    _800c66b0.deref().coord2_20.coord.transfer.setY(0);
-    _800c66b0.deref().mapRotation_70.setX((short)0);
-    _800c66b0.deref().mapRotation_70.setY((short)0);
-    _800c66b0.deref().mapRotation_70.setZ((short)0);
-    _800c66b0.deref()._00._00.set(0);
-    _800c66b0.deref()._00._04.set(-300);
-    _800c66b0.deref()._00._08.set(-900);
-    _800c66b0.deref()._00._0c.set(0);
-    _800c66b0.deref()._00._10.set(300);
-    _800c66b0.deref()._00._14.set(900);
-    _800c66b0.deref()._00._18.set(0);
-    _800c66b0.deref()._00._1c.set(_800c66b0.deref().coord2_20);
+    _800c66b0.deref().coord2_20.coord.transfer.set(0, 0, 0);
+    _800c66b0.deref().mapRotation_70.set((short)0, (short)0, (short)0);
+    _800c66b0.deref().rview2_00.viewpoint_00.set(0, -300, -900);
+    _800c66b0.deref().rview2_00.refpoint_0c.set(0, 300, 900);
+    _800c66b0.deref().rview2_00.viewpointTwist_18.set(0);
+    _800c66b0.deref().rview2_00.super_1c.set(_800c66b0.deref().coord2_20);
 
     FUN_800d1d28();
     FUN_800d1914();
@@ -2238,22 +2230,18 @@ public class WMap {
       if(struct._c4.get() == 0) {
         if(struct258_800c66a8.deref().zoomState_1f8.get() == 0) {
           if(struct258_800c66a8.deref()._220.get() == 0) {
-            struct.coord2_20.coord.transfer.setX(struct258_800c66a8.deref().coord2_34.coord.transfer.getX());
-            struct.coord2_20.coord.transfer.setY(struct258_800c66a8.deref().coord2_34.coord.transfer.getY());
-            struct.coord2_20.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ());
+            struct.coord2_20.coord.transfer.set(struct258_800c66a8.deref().coord2_34.coord.transfer);
           }
         }
       }
     }
 
     //LAB_800d2ec4
-    FUN_8003dfc0(struct._00);
+    GsSetRefView2L(struct.rview2_00);
     FUN_800d2fa8();
     FUN_800d3fc8();
 
-    struct.mapRotation_70.x.and(0xfff);
-    struct.mapRotation_70.y.and(0xfff);
-    struct.mapRotation_70.z.and(0xfff);
+    struct.mapRotation_70.and(0xfff);
     struct.mapRotationEndAngle_7a.and(0xfff);
   }
 
@@ -2321,10 +2309,10 @@ public class WMap {
       _800c66b0.deref()._110.set(2);
     } else if(v0 == 3) {
       //LAB_800d3434
-      _800c66b0.deref()._00._04.set(_800c66b0.deref()._c8._04.get() + _800c66b0.deref()._ec.get() * _800c66b0.deref()._10e.get());
-      _800c66b0.deref()._00._08.set(_800c66b0.deref()._c8._08.get() + _800c66b0.deref()._f0.get() * _800c66b0.deref()._10e.get());
-      _800c66b0.deref()._00._10.set(_800c66b0.deref()._c8._10.get() + _800c66b0.deref()._f8.get() * _800c66b0.deref()._10e.get());
-      _800c66b0.deref()._00._14.set(_800c66b0.deref()._c8._14.get() + _800c66b0.deref()._fc.get() * _800c66b0.deref()._10e.get());
+      _800c66b0.deref().rview2_00.viewpoint_00.setY(_800c66b0.deref().rview2_c8.viewpoint_00.getY() + _800c66b0.deref().viewpointY_ec.get() * _800c66b0.deref()._10e.get());
+      _800c66b0.deref().rview2_00.viewpoint_00.setZ(_800c66b0.deref().rview2_c8.viewpoint_00.getZ() + _800c66b0.deref().viewpointZ_f0.get() * _800c66b0.deref()._10e.get());
+      _800c66b0.deref().rview2_00.refpoint_0c.setY(_800c66b0.deref().rview2_c8.refpoint_0c.getY() + _800c66b0.deref().refpointY_f8.get() * _800c66b0.deref()._10e.get());
+      _800c66b0.deref().rview2_00.refpoint_0c.setZ(_800c66b0.deref().rview2_c8.refpoint_0c.getZ() + _800c66b0.deref().refpointZ_fc.get() * _800c66b0.deref()._10e.get());
       _800c66b0.deref().mapRotation_70.setY((short)(_800c66b0.deref()._10a.get() + _800c66b0.deref()._10c.get() * _800c66b0.deref()._10e.get()));
 
       if(_800c66b0.deref()._10e.get() > 0) {
@@ -2343,10 +2331,10 @@ public class WMap {
 
     //LAB_800d3228
     //LAB_800d3268
-    _800c66b0.deref()._00._04.set(_800c66b0.deref()._c8._04.get() + _800c66b0.deref()._ec.get() * _800c66b0.deref()._10e.get());
-    _800c66b0.deref()._00._08.set(_800c66b0.deref()._c8._08.get() + _800c66b0.deref()._f0.get() * _800c66b0.deref()._10e.get());
-    _800c66b0.deref()._00._10.set(_800c66b0.deref()._c8._10.get() + _800c66b0.deref()._f8.get() * _800c66b0.deref()._10e.get());
-    _800c66b0.deref()._00._14.set(_800c66b0.deref()._c8._14.get() + _800c66b0.deref()._fc.get() * _800c66b0.deref()._10e.get());
+    _800c66b0.deref().rview2_00.viewpoint_00.setY(_800c66b0.deref().rview2_c8.viewpoint_00.getY() + _800c66b0.deref().viewpointY_ec.get() * _800c66b0.deref()._10e.get());
+    _800c66b0.deref().rview2_00.viewpoint_00.setZ(_800c66b0.deref().rview2_c8.viewpoint_00.getZ() + _800c66b0.deref().viewpointZ_f0.get() * _800c66b0.deref()._10e.get());
+    _800c66b0.deref().rview2_00.refpoint_0c.setY(_800c66b0.deref().rview2_c8.refpoint_0c.getY() + _800c66b0.deref().refpointY_f8.get() * _800c66b0.deref()._10e.get());
+    _800c66b0.deref().rview2_00.refpoint_0c.setZ(_800c66b0.deref().rview2_c8.refpoint_0c.getZ() + _800c66b0.deref().refpointZ_fc.get() * _800c66b0.deref()._10e.get());
     _800c66b0.deref().mapRotation_70.setY((short)(_800c66b0.deref()._10a.get() + _800c66b0.deref()._10c.get() * _800c66b0.deref()._10e.get()));
 
     _800c66b0.deref()._10e.incr();
@@ -2365,24 +2353,20 @@ public class WMap {
     final long v0 = _800c66b0.deref()._c5.get();
     if(v0 == 0x1L) {
       //LAB_800d38dc
-      _800c66b0.deref()._00._04.sub(1450);
-      _800c66b0.deref()._00._10.add(1450);
+      _800c66b0.deref().rview2_00.viewpoint_00.y.sub(1450);
+      _800c66b0.deref().rview2_00.refpoint_0c.y.add(1450);
       _800c66b0.deref().mapRotation_70.setY((short)(_800c66b0.deref()._9a.get() + _800c66b0.deref()._9c.get() * _800c66b0.deref()._a0.get()));
-      _800c66b0.deref().vec_b4.x.add(_800c66b0.deref().vec_a4.x);
-      _800c66b0.deref().vec_b4.y.add(_800c66b0.deref().vec_a4.y);
-      _800c66b0.deref().vec_b4.z.add(_800c66b0.deref().vec_a4.z);
+      _800c66b0.deref().vec_b4.add(_800c66b0.deref().vec_a4);
       _800c66b0.deref().coord2_20.coord.transfer.setX(struct258_800c66a8.deref().coord2_34.coord.transfer.getX() - _800c66b0.deref().vec_b4.getX() / 0x100);
       _800c66b0.deref().coord2_20.coord.transfer.setY(struct258_800c66a8.deref().coord2_34.coord.transfer.getY() - _800c66b0.deref().vec_b4.getY() / 0x100);
       _800c66b0.deref().coord2_20.coord.transfer.setZ(struct258_800c66a8.deref().coord2_34.coord.transfer.getZ() - _800c66b0.deref().vec_b4.getZ() / 0x100);
       _800c66b0.deref()._a0.incr();
 
       if((short)_800c66b0.deref()._a0.get() >= 6) {
-        _800c66b0.deref()._00._04.set(_800c66b0.deref()._9e.get());
-        _800c66b0.deref()._00._10.set(-_800c66b0.deref()._9e.get());
+        _800c66b0.deref().rview2_00.viewpoint_00.y.set(_800c66b0.deref()._9e.get());
+        _800c66b0.deref().rview2_00.refpoint_0c.y.set(-_800c66b0.deref()._9e.get());
         _800c66b0.deref().mapRotation_70.setY(_800c66b0.deref()._98.get());
-        _800c66b0.deref().coord2_20.coord.transfer.setX(0);
-        _800c66b0.deref().coord2_20.coord.transfer.setY(0);
-        _800c66b0.deref().coord2_20.coord.transfer.setZ(0);
+        _800c66b0.deref().coord2_20.coord.transfer.set(0, 0, 0);
         _800c66b0.deref()._c5.set(0);
         struct258_800c66a8.deref().zoomState_1f8.set(1);
       }
@@ -2437,12 +2421,12 @@ public class WMap {
     } else if(v0 == 0x2L) {
       //LAB_800d3bd8
       if(struct258_800c66a8.deref()._05.get() == 0) {
-        _800c66b0.deref()._00._04.add(1450);
-        _800c66b0.deref()._00._10.sub(1450);
+        _800c66b0.deref().rview2_00.viewpoint_00.y.add(1450);
+        _800c66b0.deref().rview2_00.refpoint_0c.y.sub(1450);
       } else {
         //LAB_800d3c44
-        _800c66b0.deref()._00._04.add(290);
-        _800c66b0.deref()._00._10.sub(290);
+        _800c66b0.deref().rview2_00.viewpoint_00.y.add(290);
+        _800c66b0.deref().rview2_00.refpoint_0c.y.sub(290);
       }
 
       //LAB_800d3c8c
@@ -2467,8 +2451,8 @@ public class WMap {
 
       //LAB_800d3ea8
       if(sp18 != 0) {
-        _800c66b0.deref()._00._04.set(_800c66b0.deref()._9e.get());
-        _800c66b0.deref()._00._10.set(-_800c66b0.deref()._9e.get());
+        _800c66b0.deref().rview2_00.viewpoint_00.setY(_800c66b0.deref()._9e.get());
+        _800c66b0.deref().rview2_00.refpoint_0c.setY(-_800c66b0.deref()._9e.get());
         _800c66b0.deref().mapRotation_70.setY(_800c66b0.deref()._98.get());
         _800c66b0.deref().coord2_20.coord.transfer.set(struct258_800c66a8.deref().coord2_34.coord.transfer);
         _800c66b0.deref()._c5.set(0);
@@ -2736,18 +2720,14 @@ public class WMap {
     final WMapStruct19c0 struct = _800c66b0.deref();
     struct._110.set(0);
     struct._10e.set(0);
-    struct._c8._00.set(struct._00._00.get());
-    struct._c8._04.set(struct._00._04.get());
-    struct._c8._08.set(struct._00._08.get());
-    struct._c8._0c.set(struct._00._0c.get());
-    struct._c8._10.set(struct._00._10.get());
-    struct._c8._14.set(struct._00._14.get());
-    struct._c8._18.set(struct._00._18.get());
-    struct._c8._1c.set(struct._00._1c.deref());
-    struct._ec.set((-100 - struct._c8._04.get()) / 16);
-    struct._f0.set((-600 - struct._c8._08.get()) / 16);
-    struct._f8.set(( -90 - struct._c8._10.get()) / 16);
-    struct._fc.set(-struct._c8._14.get() / 16);
+    struct.rview2_c8.viewpoint_00.set(struct.rview2_00.viewpoint_00);
+    struct.rview2_c8.refpoint_0c.set(struct.rview2_00.refpoint_0c);
+    struct.rview2_c8.viewpointTwist_18.set(struct.rview2_00.viewpointTwist_18.get());
+    struct.rview2_c8.super_1c.set(struct.rview2_00.super_1c.deref());
+    struct.viewpointY_ec.set((-100 - struct.rview2_c8.viewpoint_00.getY()) / 16);
+    struct.viewpointZ_f0.set((-600 - struct.rview2_c8.viewpoint_00.getZ()) / 16);
+    struct.refpointY_f8.set(( -90 - struct.rview2_c8.refpoint_0c.getY()) / 16);
+    struct.refpointZ_fc.set(-struct.rview2_c8.refpoint_0c.getZ() / 16);
     struct._10a.set(struct.mapRotation_70.getY());
 
     final short sp18 = (short)(struct258_800c66a8.deref().rotation_a4.getY() + 0x800);
@@ -5951,12 +5931,10 @@ public class WMap {
           //LAB_800e4144
           scriptStartEffect(0x2L, 0xfL);
 
-          _800c66b0.deref()._00._04.set(-9000);
-          _800c66b0.deref()._00._10.set(9000);
+          _800c66b0.deref().rview2_00.viewpoint_00.setY(-9000);
+          _800c66b0.deref().rview2_00.refpoint_0c.setY(9000);
           _800c66b0.deref()._11a.set(1);
-          _800c66b0.deref().coord2_20.coord.transfer.setX(0);
-          _800c66b0.deref().coord2_20.coord.transfer.setY(0);
-          _800c66b0.deref().coord2_20.coord.transfer.setZ(0);
+          _800c66b0.deref().coord2_20.coord.transfer.set(0, 0, 0);
           _800c66b0.deref()._9e.set((short)-300);
           _800c66b0.deref()._9a.set((short)0);
           _800c66b0.deref().mapRotation_70.setY((short)0);

@@ -163,7 +163,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
@@ -3248,7 +3248,7 @@ public final class Bttl_800e {
   @Method(0x800e75acL)
   public static void FUN_800e75ac(final BattleStruct24 a0, final MATRIX a1) {
     final MATRIX sp0x40 = new MATRIX();
-    FUN_8003ec90(matrix_800c3548, a1, sp0x40);
+    FUN_8003ec90(worldToScreenMatrix_800c3548, a1, sp0x40);
     final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + sp0x40.transfer.getZ() / 4);
 
     if(z >= 40) {
@@ -3306,8 +3306,8 @@ public final class Bttl_800e {
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1._00.get() >= 0) {
-      final VECTOR sp0x18 = ApplyMatrixLV(matrix_800c3548, trans);
-      sp0x18.add(matrix_800c3548.transfer);
+      final VECTOR sp0x18 = ApplyMatrixLV(worldToScreenMatrix_800c3548, trans);
+      sp0x18.add(worldToScreenMatrix_800c3548.transfer);
 
       final int x;
       final int y;
@@ -3360,14 +3360,14 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7dbcL)
-  public static int FUN_800e7dbc(final DVECTOR a0, final VECTOR a1) {
-    final VECTOR sp0x10 = ApplyMatrixLV(matrix_800c3548, a1);
-    sp0x10.add(matrix_800c3548.transfer);
+  public static int FUN_800e7dbc(final DVECTOR out, final VECTOR translation) {
+    final VECTOR transformed = ApplyMatrixLV(worldToScreenMatrix_800c3548, translation);
+    transformed.add(worldToScreenMatrix_800c3548.transfer);
 
-    if(sp0x10.getZ() >= 160) {
-      a0.setX((short)(sp0x10.getX() * projectionPlaneDistance_1f8003f8.get() / sp0x10.getZ()));
-      a0.setY((short)(sp0x10.getY() * projectionPlaneDistance_1f8003f8.get() / sp0x10.getZ()));
-      return sp0x10.getZ() >> 2;
+    if(transformed.getZ() >= 160) {
+      out.setX((short)(transformed.getX() * projectionPlaneDistance_1f8003f8.get() / transformed.getZ()));
+      out.setY((short)(transformed.getY() * projectionPlaneDistance_1f8003f8.get() / transformed.getZ()));
+      return transformed.getZ() >> 2;
     }
 
     //LAB_800e7e8c
@@ -3655,8 +3655,8 @@ public final class Bttl_800e {
     if(scriptIndex == -2) {
       final MATRIX sp0x10 = new MATRIX();
       final VECTOR sp0x30 = new VECTOR();
-      TransposeMatrix(matrix_800c3548, sp0x10);
-      sp0x30.set(matrix_800c3548.transfer).negate();
+      TransposeMatrix(worldToScreenMatrix_800c3548, sp0x10);
+      sp0x30.set(worldToScreenMatrix_800c3548.transfer).negate();
       sp0x10.transfer.set(ApplyMatrixLV(sp0x10, sp0x30));
       FUN_8003f210(sp0x10, a0, a0);
     }

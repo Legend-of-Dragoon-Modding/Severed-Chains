@@ -158,7 +158,7 @@ import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
@@ -931,7 +931,7 @@ public final class SEffe {
     }
 
     //LAB_800fc920
-    final MATRIX s1 = matrix_800c3548;
+    final MATRIX s1 = worldToScreenMatrix_800c3548;
     final VECTOR sp0x30 = new VECTOR().set(s1.transfer).negate();
     FUN_80040ec0(s1, sp0x30, a0);
 
@@ -1040,7 +1040,7 @@ public final class SEffe {
       //LAB_800fcf94
       GsSetLightMatrix(sp0x10);
       final MATRIX sp0x30 = new MATRIX();
-      FUN_8003f210(matrix_800c3548, sp0x10, sp0x30);
+      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x400_0000L) == 0) {
         RotMatrix_8003faf0(a0._10.rot_10, sp0x30);
         ScaleMatrixL(sp0x30, new VECTOR().set(a0._10.scale_16));
@@ -5249,14 +5249,14 @@ public final class SEffe {
     FUN_800e8594(sp0x80, manager);
 
     if((manager._10._00.get() & 0x400_0000L) == 0) {
-      FUN_8003f210(matrix_800c3548, sp0x80, sp0xa0);
+      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x80, sp0xa0);
       RotMatrix_8003faf0(manager._10.rot_10, sp0xa0);
       FUN_8003f210(sp0xa0, sp0xc0, sp0xc0);
       setRotTransMatrix(sp0xc0);
     } else {
       //LAB_8010ab10
       FUN_8003f210(sp0x80, sp0xc0, sp0xa0);
-      FUN_8003f210(matrix_800c3548, sp0xa0, sp0x80);
+      FUN_8003f210(worldToScreenMatrix_800c3548, sp0xa0, sp0x80);
       setRotTransMatrix(sp0x80);
     }
 
@@ -5706,7 +5706,7 @@ public final class SEffe {
     if((int)manager._10._00.get() >= 0) {
       final DeathDimensionEffect1c effect = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(DeathDimensionEffect1c.class);
       FUN_800e8594(sp0x10, manager);
-      FUN_8003f210(matrix_800c3548, sp0x10, sp0x30);
+      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       CPU.CTC2(sp0x30.getPacked(0), 0);
       CPU.CTC2(sp0x30.getPacked(2), 1);
       CPU.CTC2(sp0x30.getPacked(4), 2);
@@ -6278,7 +6278,7 @@ public final class SEffe {
 
         dobj2.tmd_08.set(instance.tmd_70.deref());
 
-        FUN_8003f210(matrix_800c3548, transforms, sp0x98);
+        FUN_8003f210(worldToScreenMatrix_800c3548, transforms, sp0x98);
         setRotTransMatrix(sp0x98);
 
         zOffset_1f8003e8.set(0);
@@ -6755,7 +6755,7 @@ public final class SEffe {
 
           //LAB_8010f50c
           GsSetLightMatrix(sp0xb8);
-          FUN_8003f210(matrix_800c3548, sp0xb8, sp0xd8);
+          FUN_8003f210(worldToScreenMatrix_800c3548, sp0xb8, sp0xd8);
           setRotTransMatrix(sp0xd8);
           RotMatrix_8003faf0(sp0x20, sp0x3c);
           TransMatrix(sp0x3c, sp0x14);
@@ -6766,7 +6766,7 @@ public final class SEffe {
           final long sp80 = 0;
           final long sp38 = 0;
           sp0xf8.attribute_00.set(manager._10._00.get());
-          FUN_8003f210(matrix_800c3548, sp0x3c, sp0x88);
+          FUN_8003f210(worldToScreenMatrix_800c3548, sp0x3c, sp0x88);
           setRotTransMatrix(sp0x88);
           zOffset_1f8003e8.set(0);
           tmdGp0Tpage_1f8003ec.set((int)manager._10._00.get() >>> 23 & 0x60);
@@ -6938,7 +6938,7 @@ public final class SEffe {
   }
 
   @Method(0x80110030L)
-  public static VECTOR FUN_80110030(final int scriptIndex) {
+  public static VECTOR getScriptedObjectTranslation(final int scriptIndex) {
     final BattleScriptDataBase a0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(a0.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -6950,27 +6950,27 @@ public final class SEffe {
   }
 
   @Method(0x80110074L)
-  public static SVECTOR FUN_80110074(final long a0) {
-    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+  public static SVECTOR getScriptedObjectRotation(final int scriptIndex) {
+    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
     return data.magic_00.get() != BattleScriptDataBase.EM__ ? ((BattleObject27c)data).model_148.coord2Param_64.rotate : ((EffectManagerData6c)data)._10.rot_10;
   }
 
   @Method(0x801100b8L)
-  public static void FUN_801100b8(final int scriptIndex, final Ref<SVECTOR> a1, final Ref<VECTOR> a2) {
+  public static void getScriptedObjectRotationAndTranslation(final int scriptIndex, final Ref<SVECTOR> rotation, final Ref<VECTOR> translation) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-    final BattleScriptDataBase a3 = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase obj = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
-      final EffectManagerData6c a3_0 = state.innerStruct_00.derefAs(EffectManagerData6c.class);
-      a2.set(a3_0._10.trans_04);
-      a1.set(a3_0._10.rot_10);
+    if(obj.magic_00.get() == BattleScriptDataBase.EM__) {
+      final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
+      translation.set(manager._10.trans_04);
+      rotation.set(manager._10.rot_10);
       return;
     }
 
     //LAB_801100fc
-    final BattleObject27c a3_0 = state.innerStruct_00.derefAs(BattleObject27c.class);
-    a2.set(a3_0.model_148.coord2_14.coord.transfer);
-    a1.set(a3_0.model_148.coord2Param_64.rotate);
+    final BattleObject27c bobj = state.innerStruct_00.derefAs(BattleObject27c.class);
+    translation.set(bobj.model_148.coord2_14.coord.transfer);
+    rotation.set(bobj.model_148.coord2Param_64.rotate);
   }
 
   @Method(0x80110120L)
@@ -6984,13 +6984,8 @@ public final class SEffe {
     a0.setZ((short)0);
     a0.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
-    short s1 = (short)(rcos(-a0.getY()) * sp0x10.getZ() - rsin(-a0.getY()) * sp0x10.getX());
-    if(s1 < 0) {
-      s1 += 0xfff;
-    }
-
-    //LAB_801101f4
-    a0.setX((short)ratan2(-sp0x10.getY(), s1 >> 12));
+    final short s1 = (short)(rcos(-a0.getY()) * sp0x10.getZ() - rsin(-a0.getY()) * sp0x10.getX());
+    a0.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
     return a0;
   }
 
@@ -7004,10 +6999,9 @@ public final class SEffe {
     final VECTOR sp0x10 = new VECTOR().set(a2).sub(a3).negate();
     final SVECTOR sp0x30 = new SVECTOR();
     sp0x30.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
-    final long s1 = rcos(-sp0x30.getY()) * sp0x10.getZ() - rsin(-sp0x30.getY()) * sp0x10.getX();
 
-    //LAB_80110308
-    sp0x30.setX((short)ratan2(-sp0x10.getY(), (int)s1 / 0x1000));
+    final int s1 = rcos(-sp0x30.getY()) * sp0x10.getZ() - rsin(-sp0x30.getY()) * sp0x10.getX();
+    sp0x30.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
 
     final MATRIX sp0x38 = new MATRIX();
     RotMatrix_80040010(sp0x30, sp0x38);
@@ -7018,15 +7012,15 @@ public final class SEffe {
 
   @Method(0x8011035cL)
   public static long FUN_8011035c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
-    final VECTOR s0 = FUN_80110030(scriptIndex1);
+    final VECTOR s0 = getScriptedObjectTranslation(scriptIndex1);
 
-    if(scriptIndex2 == -0x1L) {
+    if(scriptIndex2 == -1) {
       a2.set(s0);
     } else {
       //LAB_801103b8
       final Ref<SVECTOR> sp0x58 = new Ref<>();
       final Ref<VECTOR> sp0x5c = new Ref<>();
-      FUN_801100b8(scriptIndex2, sp0x58, sp0x5c);
+      getScriptedObjectRotationAndTranslation(scriptIndex2, sp0x58, sp0x5c);
 
       final VECTOR sp0x18 = new VECTOR().set(s0).sub(sp0x5c.get());
       final MATRIX sp0x38 = new MATRIX();
@@ -7046,7 +7040,7 @@ public final class SEffe {
     final MATRIX sp0x10 = new MATRIX();
     FUN_800e8594(sp0x10, scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class));
 
-    if(scriptIndex2 == -0x1L) {
+    if(scriptIndex2 == -1) {
       s1.set(sp0x10.transfer);
     } else {
       //LAB_80110500
@@ -7064,38 +7058,38 @@ public final class SEffe {
   }
 
   @Method(0x801105ccL)
-  public static void FUN_801105cc(final VECTOR a0, final int scriptIndex, final VECTOR a2) {
-    final Ref<SVECTOR> sp0x30 = new Ref<>();
-    final Ref<VECTOR> sp0x34 = new Ref<>();
-    FUN_801100b8(scriptIndex, sp0x30, sp0x34);
+  public static void FUN_801105cc(final VECTOR out, final int scriptIndex, final VECTOR a2) {
+    final Ref<SVECTOR> rotation = new Ref<>();
+    final Ref<VECTOR> translation = new Ref<>();
+    getScriptedObjectRotationAndTranslation(scriptIndex, rotation, translation);
 
     final MATRIX sp0x10 = new MATRIX();
-    RotMatrix_8003faf0(sp0x30.get(), sp0x10);
+    RotMatrix_8003faf0(rotation.get(), sp0x10);
 
-    a0
+    out
       .set(ApplyMatrixLV(sp0x10, a2))
-      .add(sp0x34.get());
+      .add(translation.get());
   }
 
   @Method(0x8011066cL)
-  public static BattleScriptDataBase FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
-    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+  public static BattleScriptDataBase FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
+    final BattleScriptDataBase obj = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
 
-    if(data.magic_00.get() == BattleScriptDataBase.EM__ && (((EffectManagerData6c)data)._04.get() & 0x2L) != 0) {
-      FUN_800e8d04((EffectManagerData6c)data, 0x1L);
+    if(obj.magic_00.get() == BattleScriptDataBase.EM__ && (((EffectManagerData6c)obj)._04.get() & 0x2L) != 0) {
+      FUN_800e8d04((EffectManagerData6c)obj, 0x1L);
     }
 
     //LAB_801106dc
-    final VECTOR a0_0 = FUN_80110030(scriptIndex1);
+    final VECTOR objTranslation = getScriptedObjectTranslation(scriptIndex1);
     if(scriptIndex2 == -1) {
-      a0_0.set(a2);
+      objTranslation.set(translation);
     } else {
       //LAB_80110718
-      FUN_801105cc(a0_0, scriptIndex2, a2);
+      FUN_801105cc(objTranslation, scriptIndex2, translation);
     }
 
     //LAB_80110720
-    return data;
+    return obj;
   }
 
   @Method(0x80110740L)
@@ -7109,7 +7103,7 @@ public final class SEffe {
       //LAB_80110814
       final Ref<SVECTOR> sp0x40 = new Ref<>();
       final Ref<VECTOR> sp0x44 = new Ref<>();
-      FUN_801100b8(s1.scriptIndex_30.get(), sp0x40, sp0x44);
+      getScriptedObjectRotationAndTranslation(s1.scriptIndex_30.get(), sp0x40, sp0x44);
 
       final MATRIX sp0x10 = new MATRIX();
       RotMatrix_8003faf0(sp0x40.get(), sp0x10);
@@ -7135,7 +7129,7 @@ public final class SEffe {
   }
 
   @Method(0x801108fcL)
-  public static BttlScriptData6cSub34 FUN_801108fc(final long a0, final long a1, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2) {
+  public static BttlScriptData6cSub34 FUN_801108fc(final long a0, final int scriptIndex, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2) {
     final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     if((s0._04.get() & 0x2L) != 0) {
       FUN_800e8d04(s0, 0x1L);
@@ -7153,9 +7147,9 @@ public final class SEffe {
     final int transformedX2;
     final int transformedY2;
     final int transformedZ2;
-    if((int)a1 != -0x1L) {
+    if(scriptIndex != -1) {
       final MATRIX rotation = new MATRIX();
-      RotMatrix_8003faf0(FUN_80110074(a1), rotation);
+      RotMatrix_8003faf0(getScriptedObjectRotation(scriptIndex), rotation);
       final VECTOR sp0x38 = new VECTOR().set(x1, y1, z1);
       final VECTOR sp0x48 = new VECTOR();
       sp0x48.set(ApplyMatrixLV(rotation, sp0x38));
@@ -7183,13 +7177,13 @@ public final class SEffe {
   }
 
   @Method(0x80110aa8L)
-  public static BttlScriptData6cSub34 FUN_80110aa8(final int a0, final int a1, final int a2, final int a3, final int x, final int y, final int z) {
+  public static BttlScriptData6cSub34 FUN_80110aa8(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
     if(a3 < 0) {
       return null;
     }
 
     //LAB_80110afc
-    final EffectManagerData6c s2 = scriptStatePtrArr_800bc1c0.get(a1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c s2 = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
     if((s2._04.get() & 0x2L) != 0) {
       FUN_800e8d04(s2, 0x1L);
     }
@@ -7198,23 +7192,20 @@ public final class SEffe {
 
     //LAB_80110b38
     final BttlScriptData6cSub34 s0 = FUN_800e8dd4(s2, 0x1L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80110740", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34L, BttlScriptData6cSub34::new);
-    if(a2 == -1) {
-      final VECTOR v0 = FUN_80110030(a1);
-      sp0x18.set(x, y, z).sub(v0);
-    } else {
+    if(scriptIndex2 == -1) {
+      sp0x18.set(x, y, z)
+        .sub(getScriptedObjectTranslation(scriptIndex1));
       //LAB_80110b9c
-      final VECTOR s1 = FUN_80110030(a1);
-
-      if(a0 == 0) {
-        //LAB_80110bc0
-        final VECTOR v0 = FUN_80110030(a2);
-        sp0x18.set(x, y, z).add(v0).sub(s1);
-      } else if(a0 == 1) {
-        //LAB_80110c0c
-        final VECTOR sp0x28 = new VECTOR().set(x, y, z);
-        FUN_801105cc(sp0x18, a2, sp0x28);
-        sp0x18.sub(s1);
-      }
+    } else if(a0 == 0) {
+      //LAB_80110bc0
+      sp0x18.set(x, y, z)
+        .sub(getScriptedObjectTranslation(scriptIndex1))
+        .add(getScriptedObjectTranslation(scriptIndex2));
+    } else if(a0 == 1) {
+      //LAB_80110c0c
+      FUN_801105cc(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
+      sp0x18
+        .sub(getScriptedObjectTranslation(scriptIndex1));
     }
 
     //LAB_80110c6c
@@ -7258,21 +7249,22 @@ public final class SEffe {
       s0._18.set(0, 0, 0);
     } else {
       //LAB_80110e30
-      final VECTOR v1 = FUN_80110030(scriptIndex1);
       final VECTOR sp0x18 = new VECTOR();
 
       if(scriptIndex2 == -1) {
-        sp0x18.set(x, y, z).sub(v1);
+        sp0x18.set(x, y, z)
+          .sub(getScriptedObjectTranslation(scriptIndex1));
         //LAB_80110e70
       } else if(a0 == 0) {
         //LAB_80110e94
-        final VECTOR v2 = FUN_80110030(scriptIndex2);
-        sp0x18.set(x, y, z).add(v2).sub(v1);
+        sp0x18.set(x, y, z)
+          .sub(getScriptedObjectTranslation(scriptIndex1))
+          .add(getScriptedObjectTranslation(scriptIndex2));
       } else if(a0 == 1) {
         //LAB_80110ee0
-        final VECTOR sp0x28 = new VECTOR().set(x, y, z);
-        FUN_801105cc(sp0x18, scriptIndex2, sp0x28);
-        sp0x18.sub(v1);
+        FUN_801105cc(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
+        sp0x18
+          .sub(getScriptedObjectTranslation(scriptIndex1));
       }
 
       //LAB_80110f38
@@ -7305,8 +7297,8 @@ public final class SEffe {
 
     //LAB_80111084
     final BttlScriptData6cSub34 effect = FUN_800e8dd4(manager, 1, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80110740", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34, BttlScriptData6cSub34::new);
-    final VECTOR v1 = FUN_80110030(scriptIndex1);
-    final VECTOR v2 = FUN_80110030(scriptIndex2);
+    final VECTOR v1 = getScriptedObjectTranslation(scriptIndex1);
+    final VECTOR v2 = getScriptedObjectTranslation(scriptIndex2);
     final VECTOR sp0x18 = new VECTOR().set(v1).sub(v2);
     effect._0c.set(sp0x18);
     effect.scriptIndex_30.set(scriptIndex2);
@@ -7580,12 +7572,11 @@ public final class SEffe {
 
   @Method(0x80111b60L)
   public static long FUN_80111b60(final RunningScript a0) {
-    final VECTOR v0 = FUN_80110030(a0.params_20.get(0).deref().get());
+    final VECTOR translation = getScriptedObjectTranslation(a0.params_20.get(0).deref().get());
     final DVECTOR sp0x10 = new DVECTOR();
-    a0.params_20.get(3).deref().set(FUN_800e7dbc(sp0x10, v0));
+    a0.params_20.get(3).deref().set(FUN_800e7dbc(sp0x10, translation) << 2);
     a0.params_20.get(1).deref().set(sp0x10.getX());
     a0.params_20.get(2).deref().set(sp0x10.getY());
-    a0.params_20.get(3).deref().shl(2);
     return 0;
   }
 
@@ -7622,7 +7613,7 @@ public final class SEffe {
       if(s2._06.get() == 0) {
         if(s0 != -1) {
           final MATRIX sp0x20 = new MATRIX();
-          RotMatrix_8003faf0(FUN_80110074(s0), sp0x20);
+          RotMatrix_8003faf0(getScriptedObjectRotation(s0), sp0x20);
 
           VECTOR sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s4, s6, s3));
           s4 = sp0x50.getX();
@@ -7658,7 +7649,7 @@ public final class SEffe {
       final BttlScriptData6cSub34 s3 = (BttlScriptData6cSub34)FUN_800e8c84(data, 0x1L);
 
       if(s3._32.get() != -1 && s3._06.get() == 0) {
-        final VECTOR v0 = FUN_80110030(scriptIndex);
+        final VECTOR v0 = getScriptedObjectTranslation(scriptIndex);
         int s0 = s3._32.get();
 
         final VECTOR sp0x10 = new VECTOR().set(
@@ -7744,31 +7735,31 @@ public final class SEffe {
 
   @Method(0x80112474L)
   public static void FUN_80112474(final int a0, final int a1, final SVECTOR a2) {
-    final SVECTOR s0 = FUN_80110074(a0);
+    final SVECTOR s0 = getScriptedObjectRotation(a0);
 
     if(a1 == -1) {
       a2.set(s0);
     } else {
       //LAB_801124c8
-      a2.set(s0).sub(FUN_80110074(a1)).and(0xfff);
+      a2.set(s0).sub(getScriptedObjectRotation(a1)).and(0xfff);
     }
 
     //LAB_80112518
   }
 
   @Method(0x80112530L)
-  public static long FUN_80112530(final long a0, final long a1, final SVECTOR a2) {
-    final EffectManagerData6c data = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+  public static long FUN_80112530(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+    final EffectManagerData6c data = scriptStatePtrArr_800bc1c0.get(scriptIndex1).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
 
     if(data.magic_00.get() == BattleScriptDataBase.EM__ && (data._04.get() & 0x4L) != 0) {
       FUN_800e8d04(data, 0x2L);
     }
 
     //LAB_8011259c
-    final SVECTOR s0 = FUN_80110074(a0).set(a2);
-    if((int)a1 != -1) {
+    final SVECTOR s0 = getScriptedObjectRotation(scriptIndex1).set(a2);
+    if(scriptIndex2 != -1) {
       //LAB_801125d8
-      s0.add(FUN_80110074(a1));
+      s0.add(getScriptedObjectRotation(scriptIndex2));
     }
 
     //LAB_8011261c
@@ -7849,7 +7840,7 @@ public final class SEffe {
   @Method(0x80112900L)
   public static long FUN_80112900(final RunningScript s0) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_80110228(sp0x10, FUN_80110030(s0.params_20.get(0).deref().get()), FUN_80110030(s0.params_20.get(1).deref().get()));
+    FUN_80110228(sp0x10, getScriptedObjectTranslation(s0.params_20.get(0).deref().get()), getScriptedObjectTranslation(s0.params_20.get(1).deref().get()));
 
     // XZY is the correct order
     s0.params_20.get(2).deref().set(sp0x10.getX());
@@ -7866,13 +7857,13 @@ public final class SEffe {
     final Ref<SVECTOR> sp0x50 = new Ref<>(new SVECTOR());
     final Ref<VECTOR> sp0x54 = new Ref<>(new VECTOR());
 
-    FUN_801100b8(a0.params_20.get(0).deref().get(), sp0x50, sp0x54);
+    getScriptedObjectRotationAndTranslation(a0.params_20.get(0).deref().get(), sp0x50, sp0x54);
 
     if(s0 != -0x1L) {
       final Ref<SVECTOR> sp0x58 = new Ref<>(new SVECTOR());
       final Ref<VECTOR> sp0x5c = new Ref<>(new VECTOR());
 
-      FUN_801100b8(s0, sp0x58, sp0x5c);
+      getScriptedObjectRotationAndTranslation(s0, sp0x58, sp0x5c);
 
       final MATRIX sp0x20 = new MATRIX();
       RotMatrix_8003faf0(sp0x58.get(), sp0x20);
@@ -7918,7 +7909,7 @@ public final class SEffe {
       final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(s0).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
       final BttlScriptData6cSub34 effect = FUN_800e8dd4(manager, 2, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80112638", EffectManagerData6c.class, BttlScriptData6cSub34.class), BiFunctionRef::new), 0x34, BttlScriptData6cSub34::new);
 
-      final SVECTOR v1 = FUN_80110074(s0);
+      final SVECTOR v1 = getScriptedObjectRotation(s0);
       final int sp18;
       final int sp1c;
       final int sp20;
@@ -7928,7 +7919,7 @@ public final class SEffe {
         sp20 = s7 - v1.getZ();
       } else {
         //LAB_80112ce4
-        final SVECTOR v2 = FUN_80110074(s4);
+        final SVECTOR v2 = getScriptedObjectRotation(s4);
         sp18 = v2.getX() + s5 - v1.getX();
         sp1c = v2.getY() + s6 - v1.getY();
         sp20 = v2.getZ() + s7 - v1.getZ();
@@ -8934,7 +8925,7 @@ public final class SEffe {
       final SVECTOR sp0x58 = new SVECTOR();
       final MATRIX sp0x60 = new MATRIX();
       final DVECTOR sp0x80 = new DVECTOR();
-      FUN_8003f210(matrix_800c3548, sp0x10, sp0x60);
+      FUN_8003f210(worldToScreenMatrix_800c3548, sp0x10, sp0x60);
       setRotTransMatrix(sp0x60);
 
       final int z = perspectiveTransform(sp0x58, sp0x80, null, null);

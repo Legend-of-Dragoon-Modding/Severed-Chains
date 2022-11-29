@@ -1172,9 +1172,9 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80040ea0L)
-  public static long Lzc(final long a0) {
-    CPU.MTC2(a0, 30);
-    return CPU.MFC2(31);
+  public static int Lzc(final int val) {
+    CPU.MTC2(val, 30);
+    return (int)CPU.MFC2(31);
   }
 
   @Method(0x80040ec0L)

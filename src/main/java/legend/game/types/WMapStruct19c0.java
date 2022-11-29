@@ -18,7 +18,7 @@ import legend.core.memory.types.UnsignedShortRef;
 public class WMapStruct19c0 implements MemoryRef {
   private final Value ref;
 
-  public final RenderStruct20 _00;
+  public final GsRVIEW2 rview2_00;
   public final GsCOORDINATE2 coord2_20;
   public final SVECTOR mapRotation_70;
   public final ShortRef mapRotationStartAngle_78;
@@ -42,13 +42,13 @@ public class WMapStruct19c0 implements MemoryRef {
   public final ByteRef _c4;
   public final UnsignedByteRef _c5;
 
-  public final RenderStruct20 _c8;
+  public final GsRVIEW2 rview2_c8;
 
-  public final IntRef _ec;
-  public final IntRef _f0;
+  public final IntRef viewpointY_ec;
+  public final IntRef viewpointZ_f0;
 
-  public final IntRef _f8;
-  public final IntRef _fc;
+  public final IntRef refpointY_f8;
+  public final IntRef refpointZ_fc;
 
   public final ShortRef _108;
   public final ShortRef _10a;
@@ -75,7 +75,7 @@ public class WMapStruct19c0 implements MemoryRef {
   public WMapStruct19c0(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(RenderStruct20::new);
+    this.rview2_00 = ref.offset(4, 0x00L).cast(GsRVIEW2::new);
     this.coord2_20 = ref.offset(4, 0x20L).cast(GsCOORDINATE2::new);
     this.mapRotation_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
     this.mapRotationStartAngle_78 = ref.offset(2, 0x78L).cast(ShortRef::new);
@@ -99,13 +99,13 @@ public class WMapStruct19c0 implements MemoryRef {
     this._c4 = ref.offset(1, 0xc4L).cast(ByteRef::new);
     this._c5 = ref.offset(1, 0xc5L).cast(UnsignedByteRef::new);
 
-    this._c8 = ref.offset(4, 0xc8L).cast(RenderStruct20::new);
+    this.rview2_c8 = ref.offset(4, 0xc8L).cast(GsRVIEW2::new);
 
-    this._ec = ref.offset(4, 0xecL).cast(IntRef::new);
-    this._f0 = ref.offset(4, 0xf0L).cast(IntRef::new);
+    this.viewpointY_ec = ref.offset(4, 0xecL).cast(IntRef::new);
+    this.viewpointZ_f0 = ref.offset(4, 0xf0L).cast(IntRef::new);
 
-    this._f8 = ref.offset(4, 0xf8L).cast(IntRef::new);
-    this._fc = ref.offset(4, 0xfcL).cast(IntRef::new);
+    this.refpointY_f8 = ref.offset(4, 0xf8L).cast(IntRef::new);
+    this.refpointZ_fc = ref.offset(4, 0xfcL).cast(IntRef::new);
 
     this._108 = ref.offset(2, 0x108L).cast(ShortRef::new);
     this._10a = ref.offset(2, 0x10aL).cast(ShortRef::new);

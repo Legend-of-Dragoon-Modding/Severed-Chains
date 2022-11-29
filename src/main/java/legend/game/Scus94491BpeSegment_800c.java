@@ -67,9 +67,10 @@ public final class Scus94491BpeSegment_800c {
   public static final MATRIX lightDirectionMatrix_800c34e8 = MEMORY.ref(4, 0x800c34e8L, MATRIX::new);
   public static final MATRIX lightColourMatrix_800c3508 = MEMORY.ref(4, 0x800c3508L, MATRIX::new);
   public static final MATRIX matrix_800c3528 = MEMORY.ref(4, 0x800c3528L, MATRIX::new);
-  public static final MATRIX matrix_800c3548 = MEMORY.ref(4, 0x800c3548L, MATRIX::new);
+  public static final MATRIX worldToScreenMatrix_800c3548 = MEMORY.ref(4, 0x800c3548L, MATRIX::new);
   public static final MATRIX identityMatrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
-  public static final MATRIX matrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
+  /** Includes aspect scale */
+  public static final MATRIX identityAspectMatrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
 
   public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
 

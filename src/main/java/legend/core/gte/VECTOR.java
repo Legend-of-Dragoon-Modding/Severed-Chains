@@ -40,7 +40,7 @@ public class VECTOR implements MemoryRef {
   }
 
   /** NOTE: does NOT set pad */
-  public VECTOR set(final legend.core.gte.SVECTOR other) {
+  public VECTOR set(final SVECTOR other) {
     this.setX(other.getX());
     this.setY(other.getY());
     this.setZ(other.getZ());
@@ -112,7 +112,7 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR add(final legend.core.gte.SVECTOR other) {
+  public VECTOR add(final SVECTOR other) {
     this.x.add(other.x.get());
     this.y.add(other.y.get());
     this.z.add(other.z.get());
@@ -140,7 +140,7 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR sub(final legend.core.gte.SVECTOR other) {
+  public VECTOR sub(final SVECTOR other) {
     this.x.sub(other.x.get());
     this.y.sub(other.y.get());
     this.z.sub(other.z.get());
@@ -168,7 +168,7 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR mul(final legend.core.gte.SVECTOR value) {
+  public VECTOR mul(final SVECTOR value) {
     this.x.mul(value.x.get());
     this.y.mul(value.y.get());
     this.z.mul(value.z.get());
@@ -196,7 +196,7 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR div(final legend.core.gte.SVECTOR divisor) {
+  public VECTOR div(final SVECTOR divisor) {
     this.x.div(divisor.x.get());
     this.y.div(divisor.y.get());
     this.z.div(divisor.z.get());
@@ -249,6 +249,13 @@ public class VECTOR implements MemoryRef {
     this.x.set(-this.x.get());
     this.y.set(-this.y.get());
     this.z.set(-this.z.get());
+    return this;
+  }
+
+  public VECTOR shra(final int bits) {
+    this.x.shra(bits);
+    this.y.shra(bits);
+    this.z.shra(bits);
     return this;
   }
 

@@ -140,6 +140,14 @@ public class IntRef implements MemoryRef {
     return this.shr(bits.get());
   }
 
+  public IntRef shra(final int bits) {
+    return this.set(this.get() >> bits);
+  }
+
+  public IntRef shra(final IntRef bits) {
+    return this.shra(bits.get());
+  }
+
   public IntRef abs() {
     if(this.ref != null) {
       this.ref.abs();

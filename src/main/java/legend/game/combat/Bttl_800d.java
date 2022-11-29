@@ -104,7 +104,7 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.FUN_800cf244;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
@@ -4967,7 +4967,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800de45c
-    FUN_8003f210(matrix_800c3548, a2, sp0x10);
+    FUN_8003f210(worldToScreenMatrix_800c3548, a2, sp0x10);
     if((a1._00.get() & 0x400_0000L) == 0) {
       RotMatrix_8003faf0(a1.rot_10, sp0x10);
       ScaleVectorL_SVEC(sp0x10, a1.scale_16);

@@ -37,7 +37,6 @@ import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.RenderStruct20;
 import legend.game.types.Translucency;
 import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
@@ -123,13 +122,13 @@ import static legend.game.Scus94491BpeSegment_800c.clip_800c3448;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.doubleBufferOffsetMode_800c34d6;
+import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.lightMode_800c34dc;
 import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3588;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public final class Scus94491BpeSegment_8003 {
   private Scus94491BpeSegment_8003() { }
@@ -1264,7 +1263,7 @@ public final class Scus94491BpeSegment_8003 {
     displayWidth_1f8003e0.set(displayWidth);
     displayHeight_1f8003e4.set(displayHeight);
 
-    final long a0 = (displayHeight << 14) / displayWidth / 3;
+    final int a0 = (displayHeight << 14) / displayWidth / 3;
 
     identityMatrix_800c3568.set(0, 0, (short)0x1000);
     identityMatrix_800c3568.set(0, 1, (short)0);
@@ -1279,18 +1278,18 @@ public final class Scus94491BpeSegment_8003 {
     identityMatrix_800c3568.transfer.setY(0);
     identityMatrix_800c3568.transfer.setZ(0);
 
-    matrix_800c3588.set(0, 0, (short)0x1000);
-    matrix_800c3588.set(0, 1, (short)0);
-    matrix_800c3588.set(0, 2, (short)0);
-    matrix_800c3588.set(1, 0, (short)0);
-    matrix_800c3588.set(1, 1, (short)a0);
-    matrix_800c3588.set(1, 2, (short)0);
-    matrix_800c3588.set(2, 0, (short)0);
-    matrix_800c3588.set(2, 1, (short)0);
-    matrix_800c3588.set(2, 2, (short)0x1000);
-    matrix_800c3588.transfer.setX(0);
-    matrix_800c3588.transfer.setY(0);
-    matrix_800c3588.transfer.setZ(0);
+    identityAspectMatrix_800c3588.set(0, 0, (short)0x1000);
+    identityAspectMatrix_800c3588.set(0, 1, (short)0);
+    identityAspectMatrix_800c3588.set(0, 2, (short)0);
+    identityAspectMatrix_800c3588.set(1, 0, (short)0);
+    identityAspectMatrix_800c3588.set(1, 1, (short)a0);
+    identityAspectMatrix_800c3588.set(1, 2, (short)0);
+    identityAspectMatrix_800c3588.set(2, 0, (short)0);
+    identityAspectMatrix_800c3588.set(2, 1, (short)0);
+    identityAspectMatrix_800c3588.set(2, 2, (short)0x1000);
+    identityAspectMatrix_800c3588.transfer.setX(0);
+    identityAspectMatrix_800c3588.transfer.setY(0);
+    identityAspectMatrix_800c3588.transfer.setZ(0);
 
     lightDirectionMatrix_800c34e8.clear();
     lightColourMatrix_800c3508.clear();
@@ -1726,21 +1725,21 @@ public final class Scus94491BpeSegment_8003 {
     long a2;
     long v0;
 
-    matrix_800c3548.set(matrix_800c3588);
+    worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
 
-    FUN_8003d5d0(matrix_800c3548, -struct.viewpointTwist_18.get());
-    final int[] sp10 = new int[6];
+    FUN_8003d5d0(worldToScreenMatrix_800c3548, -struct.viewpointTwist_18.get());
+    final VECTOR[] sp10 = {new VECTOR(), new VECTOR()};
     FUN_8003d380(struct, sp10);
 
     long a0;
 
-    v0 = sp10[3] - sp10[0];
+    v0 = sp10[1].getX() - sp10[0].getX();
     a0 = v0 * v0;
 
-    v0 = sp10[4] - sp10[1];
+    v0 = sp10[1].getY() - sp10[0].getY();
     a0 += v0 * v0;
 
-    v0 = sp10[5] - sp10[2];
+    v0 = sp10[1].getZ() - sp10[0].getZ();
     a0 += v0 * v0;
 
     s2 = SquareRoot0(a0);
@@ -1748,13 +1747,13 @@ public final class Scus94491BpeSegment_8003 {
       return 0x1L;
     }
 
-    s0 = (sp10[1] - sp10[4]) << 12;
+    s0 = (sp10[0].getY() - sp10[1].getY()) << 12;
 
     //LAB_8003d0dc
-    v0 = sp10[3] - sp10[0];
+    v0 = sp10[1].getX() - sp10[0].getX();
     a0 = v0 * v0;
 
-    v0 = sp10[5] - sp10[2];
+    v0 = sp10[1].getZ() - sp10[0].getZ();
     a0 += v0 * v0;
 
     s1 = SquareRoot0(a0);
@@ -1763,21 +1762,21 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d134
     final MATRIX sp30 = new MATRIX();
     FUN_8003cee0(sp30, -(short)(s0 / s2), (short)(a2 / s2), 0x78L);
-    MulMatrix(matrix_800c3548, sp30);
+    MulMatrix(worldToScreenMatrix_800c3548, sp30);
 
     if(s1 != 0) {
-      a1 = (sp10[3] - sp10[0]) << 12;
+      a1 = (sp10[1].getX() - sp10[0].getX()) << 12;
 
       //LAB_8003d1c0
-      a2 = (sp10[5] - sp10[2]) << 12;
+      a2 = (sp10[1].getZ() - sp10[0].getZ()) << 12;
 
       //LAB_8003d200
       FUN_8003cee0(sp30, -(short)(a1 / s1), (short)(a2 / s1), 0x79L);
-      MulMatrix(matrix_800c3548, sp30);
+      MulMatrix(worldToScreenMatrix_800c3548, sp30);
     }
 
     //LAB_8003d230
-    matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
+    worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
 
     if(!struct.super_1c.isNull()) {
       final MATRIX lw = new MATRIX();
@@ -1786,37 +1785,29 @@ public final class Scus94491BpeSegment_8003 {
       final MATRIX transposedLw = new MATRIX();
       TransposeMatrix(lw, transposedLw);
       transposedLw.transfer.set(ApplyMatrixLV(transposedLw, lw.transfer)).negate();
-      GsMulCoord2(matrix_800c3548, transposedLw);
-      matrix_800c3548.set(transposedLw);
+      GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
+      worldToScreenMatrix_800c3548.set(transposedLw);
     }
 
     //LAB_8003d310
-    matrix_800c3528.set(matrix_800c3548);
+    matrix_800c3528.set(worldToScreenMatrix_800c3548);
 
     //LAB_8003d35c
     return 0;
   }
 
   @Method(0x8003d380L)
-  public static void FUN_8003d380(final GsRVIEW2 a0, final int[] a1) {
+  public static void FUN_8003d380(final GsRVIEW2 a0, final VECTOR[] a1) {
     int longestComponentBits = log2(getLongestComponent(a0));
 
     if(longestComponentBits < 16) {
-      a1[0] = a0.viewpoint_00.getX();
-      a1[1] = a0.viewpoint_00.getY();
-      a1[2] = a0.viewpoint_00.getZ();
-      a1[3] = a0.refpoint_0c.getX();
-      a1[4] = a0.refpoint_0c.getY();
-      a1[5] = a0.refpoint_0c.getZ();
+      a1[0].set(a0.viewpoint_00);
+      a1[1].set(a0.refpoint_0c);
     } else {
       longestComponentBits -= 15;
 
-      a1[0] = a0.viewpoint_00.getX() >> longestComponentBits;
-      a1[1] = a0.viewpoint_00.getY() >> longestComponentBits;
-      a1[2] = a0.viewpoint_00.getZ() >> longestComponentBits;
-      a1[3] = a0.refpoint_0c.getX() >> longestComponentBits;
-      a1[4] = a0.refpoint_0c.getY() >> longestComponentBits;
-      a1[5] = a0.refpoint_0c.getZ() >> longestComponentBits;
+      a1[0].set(a0.viewpoint_00).shra(longestComponentBits);
+      a1[1].set(a0.refpoint_0c).shra(longestComponentBits);
     }
   }
 
@@ -2054,7 +2045,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003dc70
-    GsMulCoord2(matrix_800c3548, matrix);
+    GsMulCoord2(worldToScreenMatrix_800c3548, matrix);
   }
 
   /**
@@ -2128,30 +2119,42 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003df48
     ls.set(lw);
-    GsMulCoord2(matrix_800c3548, ls);
+    GsMulCoord2(worldToScreenMatrix_800c3548, ls);
   }
 
+  /**
+   * Calculates GsWSMATRIX using the viewpoint information in pv. GsWSMATRIX doesn’t change unless the
+   * viewpoint is moved, so this function should be called every frame only if the viewpoint is moved, in order for
+   * changes to be updated.
+   *
+   * It should also be called every frame if the GsRVIEW2 member super is set to anything other than WORLD,
+   * because even if the other parameters are not changed, if the parameters of the superior coordinate system
+   * are changed, the viewpoint will have moved.
+   *
+   * Compared to GsSetRefView2(), GsSetRefView2L() has higher precision: viewpoint wobbling caused by
+   * insufficient precision is improved. However, its execution time is doubled
+   */
   @Method(0x8003dfc0L)
-  public static long FUN_8003dfc0(final RenderStruct20 s2) {
-    long v0;
-    long v1;
-    long a0;
-    long a1;
-    final long a3;
-    long s0;
-    long s1;
-    long s3;
+  public static long GsSetRefView2L(final GsRVIEW2 s2) {
+    int v0;
+    int v1;
+    int a0;
+    int a1;
+    final int a3;
+    int s0;
+    int s1;
+    int s3;
 
-    matrix_800c3548.set(matrix_800c3588);
-    FUN_8003d5d0(matrix_800c3548, -s2._18.get());
+    worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
+    FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18.get());
 
-    v0 = s2._0c.get() - s2._00.get();
+    v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
     a3 = v0 * v0;
 
-    v0 = s2._10.get() - s2._04.get();
+    v0 = s2.refpoint_0c.getY() - s2.viewpoint_00.getY();
     a0 = v0 * v0;
 
-    v0 = s2._14.get() - s2._08.get();
+    v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
     v1 = v0 * v0;
 
     s0 = a3 + a0 + v1;
@@ -2159,17 +2162,17 @@ public final class Scus94491BpeSegment_8003 {
       return 0x1L;
     }
 
-    v0 = s2._04.get() - s2._10.get();
+    v0 = s2.viewpoint_00.getY() - s2.refpoint_0c.getY();
     s1 = v0 * v0;
-    a1 = 0xcL - Lzc(s1);
-    if((int)a1 < 0) {
+    a1 = 12 - Lzc(s1);
+    if(a1 < 0) {
       //LAB_8003e0e4
       //LAB_8003e0fc
-      s3 = (s2._04.get() - s2._10.get()) * -0x1000L / SquareRoot0(s0);
+      s3 = (s2.viewpoint_00.getY() - s2.refpoint_0c.getY()) * -0x1000 / SquareRoot0(s0);
       //LAB_8003e108
-    } else if(s2._04.get() - s2._10.get() >= 0) {
+    } else if(s2.viewpoint_00.getY() - s2.refpoint_0c.getY() >= 0) {
       v0 = s0 >>> a1;
-      a0 = 0xcL - a1;
+      a0 = 12 - a1;
       a0 = s1 << a0;
 
       //LAB_8003e138
@@ -2178,7 +2181,7 @@ public final class Scus94491BpeSegment_8003 {
       v0 = s0 >>> a1;
 
       //LAB_8003e14c
-      a0 = 0xcL - a1;
+      a0 = 12 - a1;
       a0 = s1 << a0;
 
       //LAB_8003e164
@@ -2186,21 +2189,21 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e174
-    v0 = s2._0c.get() - s2._00.get();
+    v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
     a0 = v0 * v0;
 
-    v0 = s2._14.get() - s2._08.get();
+    v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
     v1 = v0 * v0;
 
     s1 = a0 + v1;
-    a1 = 0xcL - Lzc(s1);
+    a1 = 12 - Lzc(s1);
 
-    if((int)a1 < 0) {
+    if(a1 < 0) {
       //LAB_8003e1e8
       //LAB_8003e200
-      v0 = SquareRoot0(s1) * 0x1000L / SquareRoot0(s0);
+      v0 = SquareRoot0(s1) * 0x1000 / SquareRoot0(s0);
     } else {
-      a0 = 0xcL - a1;
+      a0 = 12 - a1;
 
       //LAB_8003e20c
       a0 = s1 << a0;
@@ -2211,23 +2214,23 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e230
-    final MATRIX sp0x30 = new MATRIX();
-    FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x78L);
-    MulMatrix(matrix_800c3548, sp0x30);
+    final MATRIX lw = new MATRIX();
+    FUN_8003cee0(lw, (short)s3, (short)v0, 0x78L);
+    MulMatrix(worldToScreenMatrix_800c3548, lw);
 
     if(s1 != 0) {
       s0 = s1;
-      v0 = s2._0c.get() - s2._00.get();
+      v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
       s1 = v0 * v0;
-      a1 = 0xcL - Lzc(s1);
-      if((int)a1 < 0) {
+      a1 = 12 - Lzc(s1);
+      if(a1 < 0) {
         //LAB_8003e2c8
         //LAB_8003e2e0
-        s3 = (s2._0c.get() - s2._00.get()) * -0x1000L / SquareRoot0(s0);
+        s3 = (s2.refpoint_0c.getX() - s2.viewpoint_00.getX()) * -0x1000 / SquareRoot0(s0);
         //LAB_8003e2ec
-      } else if(s2._0c.get() - s2._00.get() >= 0) {
+      } else if(s2.refpoint_0c.getX() - s2.viewpoint_00.getX() >= 0) {
         v0 = s0 >>> a1;
-        a0 = 0xcL - a1;
+        a0 = 12 - a1;
         a0 = s1 << a0;
 
         //LAB_8003e31c
@@ -2236,7 +2239,7 @@ public final class Scus94491BpeSegment_8003 {
         v0 = s0 >>> a1;
 
         //LAB_8003e330
-        a0 = 0xcL - a1;
+        a0 = 12 - a1;
         a0 = s1 << a0;
 
         //LAB_8003e348
@@ -2244,17 +2247,17 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003e358
-      v0 = s2._14.get() - s2._08.get();
+      v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
       s1 = v0 * v0;
-      a1 = 0xcL - Lzc(s1);
-      if((int)a1 < 0) {
+      a1 = 12 - Lzc(s1);
+      if(a1 < 0) {
         //LAB_8003e3b4
         //LAB_8003e3cc
-        v0 = (s2._14.get() - s2._08.get()) * 0x1000L / SquareRoot0(s0);
+        v0 = (s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ()) * 0x1000 / SquareRoot0(s0);
         //LAB_8003e3d8
-      } else if(s2._14.get() - s2._08.get() >= 0) {
+      } else if(s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ() >= 0) {
         v0 = s0 >>> a1;
-        a0 = 0xcL - a1;
+        a0 = 12 - a1;
         a0 = s1 << a0;
 
         //LAB_8003e408
@@ -2262,7 +2265,7 @@ public final class Scus94491BpeSegment_8003 {
       } else {
         v0 = s0 >>> a1;
         //LAB_8003e41c
-        a0 = 0xcL - a1;
+        a0 = 12 - a1;
         a0 = s1 << a0;
 
         //LAB_8003e434
@@ -2271,32 +2274,25 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003e444
       //LAB_8003e448
-      FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x79L);
-      MulMatrix(matrix_800c3548, sp0x30);
+      FUN_8003cee0(lw, (short)s3, (short)v0, 0x79L);
+      MulMatrix(worldToScreenMatrix_800c3548, lw);
     }
 
     //LAB_8003e474
-    final VECTOR sp0x90 = new VECTOR();
-    sp0x90.setX(-s2._00.get());
-    sp0x90.setY(-s2._04.get());
-    sp0x90.setZ(-s2._08.get());
-    matrix_800c3548.transfer.set(ApplyMatrixLV(matrix_800c3548, sp0x90));
+    worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate()));
 
-    if(!s2._1c.isNull()) {
-      GsGetLw(s2._1c.deref(), sp0x30);
+    if(!s2.super_1c.isNull()) {
+      GsGetLw(s2.super_1c.deref(), lw);
 
-      final MATRIX sp0x50 = new MATRIX();
-      TransposeMatrix(sp0x30, sp0x50);
-      sp0x90.set(ApplyMatrixLV(sp0x50, sp0x30.transfer));
-      sp0x50.transfer.setX(-sp0x90.getX());
-      sp0x50.transfer.setY(-sp0x90.getY());
-      sp0x50.transfer.setZ(-sp0x90.getZ());
-      GsMulCoord2(matrix_800c3548, sp0x50);
-      matrix_800c3548.set(sp0x50);
+      final MATRIX transposedLw = new MATRIX();
+      TransposeMatrix(lw, transposedLw);
+      transposedLw.transfer.set(ApplyMatrixLV(transposedLw, lw.transfer)).negate();
+      GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
+      worldToScreenMatrix_800c3548.set(transposedLw);
     }
 
     //LAB_8003e55c
-    matrix_800c3528.set(matrix_800c3548);
+    matrix_800c3528.set(worldToScreenMatrix_800c3548);
 
     //LAB_8003e5a8
     return 0;
@@ -2421,18 +2417,18 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?
-  public static long FUN_8003e760(final long a0) {
-    final long[] sp0x04 = new long[7];
-    final long[] sp0x24 = new long[7];
-    sp0x04[0] = a0 + 0x5d_50adL;
-    sp0x24[0] = a0 - 0x5d_50adL;
+  public static int FUN_8003e760(final int a0) {
+    final int[] sp0x04 = new int[7];
+    final int[] sp0x24 = new int[7];
+    sp0x04[0] = a0 + 0x5d_50ad;
+    sp0x24[0] = a0 - 0x5d_50ad;
 
     //LAB_8003e790
     for(int a3 = 1; a3 < 7; a3++) {
       if(a3 != 4) {
-        final long v0 = sp0x04[a3 - 1] >> a3;
+        final int v0 = sp0x04[a3 - 1] >> a3;
 
-        if((int)sp0x24[a3 - 1] < 0) {
+        if(sp0x24[a3 - 1] < 0) {
           //LAB_8003e7d0
           sp0x04[a3] = sp0x04[a3 - 1] + (sp0x24[a3 - 1] >> a3);
           sp0x24[a3] = sp0x24[a3 - 1] + v0;
@@ -2443,22 +2439,22 @@ public final class Scus94491BpeSegment_8003 {
       } else {
         //LAB_8003e7fc
         //LAB_8003e87c
-        if((int)sp0x24[3] >= 0) {
-          sp0x24[3] -= (int)sp0x04[3] >> 4;
-          sp0x04[3] -= (int)sp0x24[3] >> 4;
+        if(sp0x24[3] >= 0) {
+          sp0x24[3] -= sp0x04[3] >> 4;
+          sp0x04[3] -= sp0x24[3] >> 4;
         } else {
           //LAB_8003e844
-          sp0x24[3] += (int)sp0x04[3] >> 4;
-          sp0x04[3] += (int)sp0x24[3] >> 4;
+          sp0x24[3] += sp0x04[3] >> 4;
+          sp0x04[3] += sp0x24[3] >> 4;
         }
 
-        if((int)sp0x24[3] < 0) {
+        if(sp0x24[3] < 0) {
           //LAB_8003e87c
-          sp0x04[4] = sp0x04[3] + ((int)sp0x24[3] >> 4);
-          sp0x24[4] = sp0x24[3] + ((int)sp0x04[3] >> 4);
+          sp0x04[4] = sp0x04[3] + (sp0x24[3] >> 4);
+          sp0x24[4] = sp0x24[3] + (sp0x04[3] >> 4);
         } else {
-          sp0x04[4] = sp0x04[3] - ((int)sp0x24[3] >> 4);
-          sp0x24[4] = sp0x24[3] - ((int)sp0x04[3] >> 4);
+          sp0x04[4] = sp0x04[3] - (sp0x24[3] >> 4);
+          sp0x24[4] = sp0x24[3] - (sp0x04[3] >> 4);
         }
 
         //LAB_8003e890
@@ -2471,32 +2467,28 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003e8b4L)
-  public static long FUN_8003e8b4(long a0) {
-    long v0;
-    long s0;
+  public static int FUN_8003e8b4(int a0) {
+    int s0;
 
     if(a0 == 0) {
       return 0;
     }
 
     //LAB_8003e8d4
-    v0 = 0x8 - Lzc(a0);
-    if((int)v0 >= 0) {
-      s0 = (int)v0 >> 1;
-      v0 = s0 << 1;
-      a0 = (int)a0 >> v0;
+    int v0 = 8 - Lzc(a0);
+    if(v0 >= 0) {
+      s0 = v0 >> 1;
+      a0 = a0 >> s0 * 2;
     } else {
       //LAB_8003e8f8
-      v0 = (int)v0 >> 1;
-      s0 = v0 + 0x1L;
-      v0 = s0 << 1;
-      v0 = -v0;
-      a0 = a0 << v0;
+      v0 = v0 >> 1;
+      s0 = v0 + 1;
+      a0 = a0 << -s0 * 2;
     }
 
     //LAB_8003e90c
-    s0 = s0 - 0x6L;
-    if((int)s0 < 0) {
+    s0 = s0 - 6;
+    if(s0 < 0) {
       v0 = FUN_8003e760(a0) >> -s0;
     } else {
       //LAB_8003e92c
@@ -2674,6 +2666,9 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
+   * Multiplies matrix by vector beginning from the rightmost end. The result is saved in vector v1. It is a 16
+   * x 32 bit multiplier which uses the GTE. It destroys the constant rotation matrix
+   *
    * NOTE: a2 moved to return
    */
   @Method(0x8003edf0L)
@@ -2684,75 +2679,59 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(matrix.getPacked(6), 3); //
     CPU.CTC2(matrix.getPacked(8), 4); //
 
-    long t0 = vector.x.get();
-    long t1 = vector.y.get();
-    long t2 = vector.z.get();
-    long t3;
-    if(t0 < 0) {
-      t0 = -t0;
-      t3 = t0 >> 0xfL;
-      t3 = -t3;
-      t0 &= 0x7fffL;
-      t0 = -t0;
+    final int wholeX;
+    final int fractX;
+    if(vector.getX() < 0) {
+      wholeX = -(-vector.getX() / 8 >> 12);
+      fractX = -(-vector.getX() & 0x7fff);
     } else {
       //LAB_8003ee44
-      t3 = t0 >> 0xfL;
-      t0 &= 0x7fffL;
+      wholeX = vector.getX() / 8 >> 12;
+      fractX = vector.getX() & 0x7fff;
     }
 
     //LAB_8003ee4c
-    long t4;
-    if(t1 < 0) {
-      t1 = -t1;
-      t4 = t1 >> 0xfL;
-      t4 = -t4;
-      t1 &= 0x7fffL;
-      t1 = -t1;
+    final int wholeY;
+    final int fractY;
+    if(vector.getY() < 0) {
+      wholeY = -(-vector.getY() / 8 >> 12);
+      fractY = -(-vector.getY() & 0x7fff);
     } else {
       //LAB_8003ee6c
-      t4 = t1 >> 0xfL;
-      t1 &= 0x7fffL;
+      wholeY = vector.getY() / 8 >> 12;
+      fractY = vector.getY() & 0x7fff;
     }
 
     //LAB_8003ee74
-    long t5;
-    if(t2 < 0) {
-      t2 = -t2;
-      t5 = t2 >> 0xfL;
-      t5 = -t5;
-      t2 &= 0x7fffL;
-      t2 = -t2;
+    final int wholeZ;
+    final int fractZ;
+    if(vector.getZ() < 0) {
+      wholeZ = -(-vector.getZ() / 8 >> 12);
+      fractZ = -(-vector.getZ() & 0x7fff);
     } else {
       //LAB_8003ee94
-      t5 = t2 >> 0xfL;
-      t2 &= 0x7fffL;
+      wholeZ = vector.getZ() / 8 >> 12;
+      fractZ = vector.getZ() & 0x7fff;
     }
 
     //LAB_8003ee9c
-    CPU.MTC2(t3,  9); // IR1
-    CPU.MTC2(t4, 10); // IR2
-    CPU.MTC2(t5, 11); // IR3
-    CPU.COP2(0x41_e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, rotation, no fraction)
-    t3 = CPU.MFC2(25); // MAC1
-    t4 = CPU.MFC2(26); // MAC2
-    t5 = CPU.MFC2(27); // MAC3
+    CPU.MTC2(wholeX,  9); // IR1
+    CPU.MTC2(wholeY, 10); // IR2
+    CPU.MTC2(wholeZ, 11); // IR3
+    CPU.COP2(0x41_e012L); // Multiply IR by rotation, no fraction)
+    final int x1 = (int)CPU.MFC2(25); // MAC1
+    final int y1 = (int)CPU.MFC2(26); // MAC2
+    final int z1 = (int)CPU.MFC2(27); // MAC3
 
-    CPU.MTC2(t0,  9); // IR1
-    CPU.MTC2(t1, 10); // IR2
-    CPU.MTC2(t2, 11); // IR3
-    CPU.COP2(0x49_e012L); // Multiply vector by matrix and add vector (no translation vector, multiply by IR, 12-bit fraction)
+    CPU.MTC2(fractX,  9); // IR1
+    CPU.MTC2(fractY, 10); // IR2
+    CPU.MTC2(fractZ, 11); // IR3
+    CPU.COP2(0x49_e012L); // Multiply IR by rotation, 12-bit fraction
+    final int x2 = (int)CPU.MFC2(25); // MAC1
+    final int y2 = (int)CPU.MFC2(26); // MAC2
+    final int z2 = (int)CPU.MFC2(27); // MAC3
 
-    //LAB_8003ef24
-    t0 = CPU.MFC2(25); // MAC1
-    t1 = CPU.MFC2(26); // MAC2
-    t2 = CPU.MFC2(27); // MAC3
-
-    final VECTOR out = new VECTOR();
-    out.x.set((int)(t0 + t3 * 8));
-    out.y.set((int)(t1 + t4 * 8));
-    out.z.set((int)(t2 + t5 * 8));
-
-    return out;
+    return new VECTOR().set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
   }
 
   @Method(0x8003ef50L)

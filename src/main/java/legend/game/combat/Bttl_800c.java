@@ -182,7 +182,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3548;
+import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
@@ -4309,11 +4309,11 @@ public final class Bttl_800c {
   /** @return Z */
   @Method(0x800cf244L)
   public static int FUN_800cf244(final VECTOR a0, final IntRef a1, final IntRef a2) {
-    CPU.CTC2(matrix_800c3548.getPacked(0), 0);
-    CPU.CTC2(matrix_800c3548.getPacked(2), 1);
-    CPU.CTC2(matrix_800c3548.getPacked(4), 2);
-    CPU.CTC2(matrix_800c3548.getPacked(6), 3);
-    CPU.CTC2(matrix_800c3548.getPacked(8), 4);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(0), 0);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(2), 1);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(4), 2);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(6), 3);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(8), 4);
 
     final SVECTOR a0s = new SVECTOR().set(a0);
     CPU.MTC2(a0s.getXY(), 0); // VXY0
@@ -4321,7 +4321,7 @@ public final class Bttl_800c {
     CPU.COP2(0x48_6012L); // MVMVA - multiply V0 by rotation matrix and add nothing
 
     final VECTOR sp0x10 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
-    sp0x10.add(matrix_800c3548.transfer);
+    sp0x10.add(worldToScreenMatrix_800c3548.transfer);
     a1.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
     a2.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
     return sp0x10.getZ();
@@ -4424,11 +4424,11 @@ public final class Bttl_800c {
   @Method(0x800cf7d4L)
   public static int FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x30 = new SVECTOR().set(a1);
-    CPU.CTC2(matrix_800c3548.getPacked(0), 0);
-    CPU.CTC2(matrix_800c3548.getPacked(2), 1);
-    CPU.CTC2(matrix_800c3548.getPacked(4), 2);
-    CPU.CTC2(matrix_800c3548.getPacked(6), 3);
-    CPU.CTC2(matrix_800c3548.getPacked(8), 4);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(0), 0);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(2), 1);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(4), 2);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(6), 3);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(8), 4);
     CPU.MTC2(sp0x30.getXY(), 0);
     CPU.MTC2(sp0x30.getZ(),  1);
     final SVECTOR sp0x28 = new SVECTOR().set(a0);
@@ -4437,14 +4437,14 @@ public final class Bttl_800c {
     sp0x10.setX((int)CPU.MFC2(25));
     sp0x10.setY((int)CPU.MFC2(26));
     sp0x10.setZ((int)CPU.MFC2(27));
-    CPU.CTC2(matrix_800c3548.getPacked(0), 0);
-    CPU.CTC2(matrix_800c3548.getPacked(2), 1);
-    CPU.CTC2(matrix_800c3548.getPacked(4), 2);
-    CPU.CTC2(matrix_800c3548.getPacked(6), 3);
-    CPU.CTC2(matrix_800c3548.getPacked(8), 4);
-    CPU.CTC2(matrix_800c3548.transfer.getX(), 5);
-    CPU.CTC2(matrix_800c3548.transfer.getY(), 6);
-    CPU.CTC2(matrix_800c3548.transfer.getZ(), 7);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(0), 0);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(2), 1);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(4), 2);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(6), 3);
+    CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(8), 4);
+    CPU.CTC2(worldToScreenMatrix_800c3548.transfer.getX(), 5);
+    CPU.CTC2(worldToScreenMatrix_800c3548.transfer.getY(), 6);
+    CPU.CTC2(worldToScreenMatrix_800c3548.transfer.getZ(), 7);
 
     final MATRIX sp0x38 = new MATRIX();
     sp0x38.setPacked(0, CPU.CFC2(0));
