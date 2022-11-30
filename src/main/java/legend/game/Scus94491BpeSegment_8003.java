@@ -2175,7 +2175,7 @@ public final class Scus94491BpeSegment_8003 {
       a0 = s1 << a0;
 
       //LAB_8003e138
-      s3 = -FUN_8003e8b4(a0 / v0);
+      s3 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
     } else {
       v0 = s0 >>> a1;
 
@@ -2184,7 +2184,7 @@ public final class Scus94491BpeSegment_8003 {
       a0 = s1 << a0;
 
       //LAB_8003e164
-      s3 = FUN_8003e8b4(a0 / v0);
+      s3 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
     }
 
     //LAB_8003e174
@@ -2209,13 +2209,13 @@ public final class Scus94491BpeSegment_8003 {
       v0 = s0 >>> a1;
 
       //LAB_8003e224
-      v0 = FUN_8003e8b4(a0 / v0);
+      v0 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
     }
 
     //LAB_8003e230
-    final MATRIX lw = new MATRIX();
-    FUN_8003cee0(lw, (short)s3, (short)v0, 0x78L);
-    MulMatrix(worldToScreenMatrix_800c3548, lw);
+    final MATRIX sp0x30 = new MATRIX();
+    FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x78L);
+    MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
 
     if(s1 != 0) {
       s0 = s1;
@@ -2233,7 +2233,7 @@ public final class Scus94491BpeSegment_8003 {
         a0 = s1 << a0;
 
         //LAB_8003e31c
-        s3 = -FUN_8003e8b4(a0 / v0);
+        s3 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
       } else {
         v0 = s0 >>> a1;
 
@@ -2242,7 +2242,7 @@ public final class Scus94491BpeSegment_8003 {
         a0 = s1 << a0;
 
         //LAB_8003e348
-        s3 = FUN_8003e8b4(a0 / v0);
+        s3 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
       }
 
       //LAB_8003e358
@@ -2260,7 +2260,7 @@ public final class Scus94491BpeSegment_8003 {
         a0 = s1 << a0;
 
         //LAB_8003e408
-        v0 = FUN_8003e8b4(a0 / v0);
+        v0 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
       } else {
         v0 = s0 >>> a1;
         //LAB_8003e41c
@@ -2268,19 +2268,20 @@ public final class Scus94491BpeSegment_8003 {
         a0 = s1 << a0;
 
         //LAB_8003e434
-        v0 = -FUN_8003e8b4(a0 / v0);
+        v0 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
       }
 
       //LAB_8003e444
       //LAB_8003e448
-      FUN_8003cee0(lw, (short)s3, (short)v0, 0x79L);
-      MulMatrix(worldToScreenMatrix_800c3548, lw);
+      FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x79L);
+      MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
     }
 
     //LAB_8003e474
     worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate()));
 
     if(!s2.super_1c.isNull()) {
+      final MATRIX lw = new MATRIX();
       GsGetLw(s2.super_1c.deref(), lw);
 
       final MATRIX transposedLw = new MATRIX();
