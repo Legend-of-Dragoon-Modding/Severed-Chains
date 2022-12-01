@@ -5498,7 +5498,7 @@ public final class SMap {
     long t1;
     long t3;
     final long[] sp10 = new long[count];
-    final long[] sp38 = new long[(int)_800cb580.get()];
+    final short[] sp38 = new short[(int)_800cb580.get()];
 
     s1 = _800cb710.getAddress();
 
@@ -5542,9 +5542,9 @@ public final class SMap {
       if(v1 != 0x1L) {
         if(v1 != 2) {
           //LAB_800e7d78
-          sp38[i] = MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).get();
+          sp38[i] = (short)MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).get();
         } else {
-          sp38[i] = MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x22L).get() & 0x3fffL;
+          sp38[i] = (short)(MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x22L).get() & 0x3fff);
         }
 
         continue;
@@ -5589,14 +5589,14 @@ public final class SMap {
         //LAB_800e7cd8
         if(t0 == 0) {
           //LAB_800e7cf8
-          sp38[i] = Math.max(a3 - 0x32L, 0x28L);
+          sp38[i] = (short)Math.max(a3 - 50, 40);
           continue outerForLoop;
         }
 
         //LAB_800e7d00
         if(t1 == 0) {
           //LAB_800e7d3c
-          sp38[i] = Math.min(a3 + 0x32L, (0x1L << orderingTableBits_1f8003c0.get()) - 0x1L);
+          sp38[i] = (short)Math.min(a3 + 50, (1 << orderingTableBits_1f8003c0.get()) - 1);
           continue outerForLoop;
         }
 
@@ -5606,10 +5606,10 @@ public final class SMap {
       //LAB_800e7d50
       if(a3 > MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).getSigned() || t3 < MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).getSigned()) {
         //LAB_800e7d64
-        sp38[i] = (a3 + t3) / 0x2L;
+        sp38[i] = (short)(((short)a3 + t3) / 2);
       } else {
         //LAB_800e7d78
-        sp38[i] = MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).getSigned();
+        sp38[i] = (short)MEMORY.ref(2, s3).offset((i + s0) * 0x24L).offset(0x20L).getSigned();
       }
 
       //LAB_800e7d80
