@@ -455,7 +455,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800e#FUN_800eb188}</li>
    *   <li>{@link Bttl_800e#FUN_800eb01c}</li>
    *   <li>{@link Temp#FUN_800caae4}</li>
-   *   <li>{@link SEffe#FUN_80115690}</li>
+   *   <li>{@link SEffe#scriptLoadSameScriptAndJump}</li>
    *   <li>{@link SEffe#FUN_80118df4}</li>
    *   <li>{@link SEffe#FUN_80111a58}</li>
    *   <li>{@link Bttl_800e#FUN_800ea384}</li>
@@ -463,8 +463,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Bttl_800e#FUN_800e73ac}</li>
    *   <li>{@link Bttl_800e#FUN_800e6db4}</li>
    *   <li>{@link Bttl_800e#FUN_800e7490}</li>
-   *   <li>{@link SEffe#FUN_8011574c}</li>
-   *   <li>{@link SEffe#FUN_8011578c}</li>
+   *   <li>{@link SEffe#scriptGetEffectZ}</li>
+   *   <li>{@link SEffe#scriptSetEffectZ}</li>
    *   <li>{@link SEffe#FUN_801184e4}</li>
    *   <li>{@link SEffe#FUN_801157d0}</li>
    *   <li>{@link SEffe#FUN_801127e0}</li>

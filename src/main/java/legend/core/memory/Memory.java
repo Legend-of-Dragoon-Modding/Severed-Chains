@@ -121,26 +121,30 @@ public class Memory {
   }
 
   public byte get(final long address) {
-    if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
-    }
-
     synchronized(this.lock) {
       final Segment segment = this.getSegment(address);
-      return segment.get((int)(this.maskAddress(address) - segment.getAddress()));
+      final byte val = segment.get((int)(this.maskAddress(address) - segment.getAddress()));
+
+      if(watches.contains((int)address & 0xffffff)) {
+        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+      }
+
+      return val;
     }
   }
 
   public long get(final long address, final int size) {
     this.checkAlignment(address, size);
 
-    if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
-    }
-
     synchronized(this.lock) {
       final Segment segment = this.getSegment(address);
-      return segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
+      final long val = segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
+
+      if(watches.contains((int)address & 0xffffff)) {
+        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+      }
+
+      return val;
     }
   }
 
@@ -198,8 +202,10 @@ public class Memory {
       segment.setBytes((int)(this.maskAddress(address) - segment.getAddress()), data, offset, size);
     }
 
-    if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " set to " + Long.toHexString(MathHelper.get(data, 0, 4)), new Throwable());
+    for(final int watch : watches) {
+      if(watch >= (address & 0xffffff) && watch < (address & 0xffffff) + size) {
+        LOGGER.error(Long.toHexString(address) + " set to " + Long.toHexString(this.get(address & 0xff00_0000L | watch, 4)), new Throwable());
+      }
     }
   }
 
@@ -228,6 +234,12 @@ public class Memory {
           }
         }
       }
+
+      for(final int watch : watches) {
+        if(watch >= (dest & 0xffffff) && watch < (dest & 0xffffff) + length) {
+          LOGGER.error(Long.toHexString(dest) + " set to " + Long.toHexString(this.get(dest & 0xff00_0000L | watch, 4)), new Throwable());
+        }
+      }
     }
   }
 
@@ -239,6 +251,12 @@ public class Memory {
     synchronized(this.lock) {
       final Segment srcSegment = this.getSegment(addr);
       srcSegment.memfill((int)(this.maskAddress(addr) - srcSegment.getAddress()), length, value);
+
+      for(final int watch : watches) {
+        if(watch >= (addr & 0xffffff) && watch < (addr & 0xffffff) + length) {
+          LOGGER.error(Long.toHexString(addr) + " set to " + Long.toHexString(value), new Throwable());
+        }
+      }
     }
   }
 
@@ -411,12 +429,14 @@ public class Memory {
 
     @Override
     public long get() {
-      if(watches.contains((int)this.address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(this.address) + " read", new Throwable());
-      }
-
       synchronized(Memory.this.lock) {
-        return this.getSegment().get(this.segmentOffset, this.getSize());
+        final long val = this.getSegment().get(this.segmentOffset, this.getSize());
+
+        if(watches.contains((int)this.address & 0xffffff)) {
+          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
+        }
+
+        return val;
       }
     }
 

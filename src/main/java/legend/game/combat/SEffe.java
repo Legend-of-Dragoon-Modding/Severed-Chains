@@ -8532,11 +8532,12 @@ public final class SEffe {
     return 0;
   }
 
+  /** Loads the same script that's currently executing into script index param0 and jumps to param1 */
   @Method(0x80115690L)
-  public static long FUN_80115690(final RunningScript a0) {
-    final int s0 = a0.params_20.get(0).deref().get();
-    loadScriptFile(s0, a0.scriptState_04.deref().scriptPtr_14.deref(), 0);
-    scriptStatePtrArr_800bc1c0.get(s0).deref().commandPtr_18.set(a0.params_20.get(1).deref());
+  public static long scriptLoadSameScriptAndJump(final RunningScript script) {
+    final int s0 = script.params_20.get(0).deref().get();
+    loadScriptFile(s0, script.scriptState_04.deref().scriptPtr_14.deref(), 0);
+    scriptStatePtrArr_800bc1c0.get(s0).deref().commandPtr_18.set(script.params_20.get(1).deref());
     return 0;
   }
 
@@ -8549,14 +8550,14 @@ public final class SEffe {
   }
 
   @Method(0x8011574cL)
-  public static long FUN_8011574c(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._10.z_22.get());
+  public static long scriptGetEffectZ(final RunningScript script) {
+    script.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._10.z_22.get());
     return 0;
   }
 
   @Method(0x8011578cL)
-  public static long FUN_8011578c(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._10.z_22.set((short)a0.params_20.get(1).deref().get());
+  public static long scriptSetEffectZ(final RunningScript script) {
+    scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(EffectManagerData6c.class)._10.z_22.set((short)script.params_20.get(1).deref().get());
     return 0;
   }
 
