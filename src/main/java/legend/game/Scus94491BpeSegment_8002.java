@@ -296,9 +296,9 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020378
       memcpy(a1_0.getAddress(), a0_0.getAddress(), 0x28);
 
-      if(a1_0._00.get() == 4) {
+      if(a1_0.type_00.get() == 4) {
         if(a1_0._1c.get() != 0) {
-          a1_0._00.set(3);
+          a1_0.type_00.set(3);
         }
       }
 

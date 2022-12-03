@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class SpuStruct66 implements MemoryRef {
@@ -34,7 +35,7 @@ public class SpuStruct66 implements MemoryRef {
   public final UnsignedShortRef _30;
   public final UnsignedShortRef _32;
   public final UnsignedShortRef _34;
-  public final UnsignedShortRef _36;
+  public final ShortRef _36;
   public final UnsignedShortRef _38;
   public final UnsignedShortRef _3a;
   public final UnsignedShortRef _3c;
@@ -89,7 +90,7 @@ public class SpuStruct66 implements MemoryRef {
     this._30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
     this._32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
-    this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
+    this._36 = ref.offset(2, 0x36L).cast(ShortRef::new);
     this._38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
     this._3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
     this._3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);

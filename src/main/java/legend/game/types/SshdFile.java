@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 
@@ -9,7 +10,7 @@ public class SshdFile implements MemoryRef {
 
   private final Value ref;
 
-  public final UnsignedIntRef size_04;
+  public final IntRef size_04;
 
   public final UnsignedIntRef magic_0c;
 
@@ -23,7 +24,7 @@ public class SshdFile implements MemoryRef {
   public SshdFile(final Value ref) {
     this.ref = ref;
 
-    this.size_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.size_04 = ref.offset(4, 0x04L).cast(IntRef::new);
 
     this.magic_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
 

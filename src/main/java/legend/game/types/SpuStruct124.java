@@ -33,6 +33,8 @@ public class SpuStruct124 implements MemoryRef {
   public final UnsignedShortRef _024;
   public final UnsignedByteRef _026;
   public final UnsignedByteRef _027;
+  /** Union */
+  public final UnsignedIntRef _028_4b;
   public final UnsignedByteRef _028;
   public final UnsignedByteRef _029;
   public final UnsignedByteRef _02a;
@@ -104,6 +106,7 @@ public class SpuStruct124 implements MemoryRef {
     this._024 = ref.offset(2, 0x024L).cast(UnsignedShortRef::new);
     this._026 = ref.offset(1, 0x026L).cast(UnsignedByteRef::new);
     this._027 = ref.offset(1, 0x027L).cast(UnsignedByteRef::new);
+    this._028_4b = ref.offset(4, 0x028L).cast(UnsignedIntRef::new);
     this._028 = ref.offset(1, 0x028L).cast(UnsignedByteRef::new);
     this._029 = ref.offset(1, 0x029L).cast(UnsignedByteRef::new);
     this._02a = ref.offset(1, 0x02aL).cast(UnsignedByteRef::new);

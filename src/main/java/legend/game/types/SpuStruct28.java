@@ -10,7 +10,16 @@ import legend.core.memory.types.UnsignedIntRef;
 public class SpuStruct28 implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedByteRef _00;
+  /**
+   * <ol start="0">
+   *   <li>unused</li>
+   *   <li>?</li>
+   *   <li>?</li>
+   *   <li>sounds?</li>
+   *   <li>?</li>
+   * </ul>
+   */
+  public final UnsignedByteRef type_00;
 
   public final IntRef _04;
   public final IntRef soundFileIndex_08;
@@ -29,7 +38,7 @@ public class SpuStruct28 implements MemoryRef {
   public SpuStruct28(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
+    this.type_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
 
     this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this.soundFileIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);

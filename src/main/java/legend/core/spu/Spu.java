@@ -190,7 +190,6 @@ public class Spu implements Runnable, MemoryRef {
     this.keyOn = 0;
     this.keyOff = 0;
 
-/*
     this.tickNoiseGenerator();
 
     for(int i = 0; i < this.voices.length; i++) {
@@ -233,7 +232,6 @@ public class Spu implements Runnable, MemoryRef {
       sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
       sumRight += sample * v.processVolume(v.volumeRight) >> 15;
     }
-*/
 
     if(!this.control.spuUnmuted()) { //todo merge this on the for voice loop
       //On mute the spu still ticks but output is 0 for voices (not for cdInput)
@@ -402,7 +400,7 @@ public class Spu implements Runnable, MemoryRef {
     return (short)interpolated;
   }
 
-  public void directWrite(final int spuRamOffset, final long ramOffset, final int size) {
+  public void  directWrite(final int spuRamOffset, final long ramOffset, final int size) {
     LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
     final byte[] data = MEMORY.getBytes(ramOffset, size);
     this.processDmaWrite(spuRamOffset, data);
@@ -439,22 +437,7 @@ public class Spu implements Runnable, MemoryRef {
   }
 
   private void processDmaWrite(final int spuRamOffset, final byte[] dma) {
-    //Tekken 3 and FF8 overflows SPU Ram
-    final int destAddress = spuRamOffset + dma.length - 1;
-
-    if(destAddress <= 0x7FFFF) {
-      System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-    } else {
-      final int overflow = destAddress - 0x7FFFF;
-
-      final byte[] firstSlice = new byte[dma.length - overflow];
-      final byte[] overflowSpan = new byte[overflow];
-      System.arraycopy(dma, 0, firstSlice, 0, firstSlice.length);
-      System.arraycopy(dma, firstSlice.length, overflowSpan, 0, overflowSpan.length);
-
-      System.arraycopy(firstSlice, 0, this.ram, spuRamOffset, firstSlice.length);
-      System.arraycopy(overflowSpan, 0, this.ram, 0, overflowSpan.length);
-    }
+    System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
 
     if(this.irqAddress > spuRamOffset && this.irqAddress < spuRamOffset + dma.length) {
       INTERRUPTS.set(InterruptType.SPU);

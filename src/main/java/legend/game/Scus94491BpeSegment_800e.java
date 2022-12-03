@@ -38,7 +38,7 @@ import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.heap_8011e210;
-import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
+import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -985,7 +985,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e64d4L)
   public static void loadSoundsAndChangeVideoMode() {
-    loadDRGN0_mrg_62802_sounds();
+    loadMenuSounds();
     setWidthAndFlags(320);
 
     pregameLoadingStage_800bb10c.setu(0);
