@@ -29,21 +29,21 @@ public class Voice implements MemoryRef {
   public final UnsignedShortRef ADSR_CURR_VOL;
   public final UnsignedShortRef ADPCM_REPEAT_ADDR;
 
-  public legend.core.spu.Volume volumeLeft = new legend.core.spu.Volume();           //0
-  public legend.core.spu.Volume volumeRight = new legend.core.spu.Volume();          //2
+  public Volume volumeLeft = new Volume();           //0
+  public Volume volumeRight = new Volume();          //2
 
   public int pitch;                //4
   public int startAddress;         //6
   public int currentAddress;       //6 Internal
 
-  public legend.core.spu.ADSR adsr = new ADSR();
+  public ADSR adsr = new ADSR();
 
   public int adsrVolume;           //C
   public int adpcmRepeatAddress;   //E
 
-  public final legend.core.spu.Counter counter = new Counter();
+  public final Counter counter = new Counter();
 
-  public legend.core.spu.Phase adsrPhase;
+  public Phase adsrPhase;
 
   public short old;
   public short older;
@@ -70,7 +70,7 @@ public class Voice implements MemoryRef {
     this.ADSR_CURR_VOL = memory.ref(2, 0x1f801c0cL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
     this.ADPCM_REPEAT_ADDR = memory.ref(2, 0x1f801c0eL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
 
-    this.adsrPhase = legend.core.spu.Phase.Off;
+    this.adsrPhase = Phase.Off;
 
     this.voiceIndex = voiceIndex;
   }
@@ -95,12 +95,12 @@ public class Voice implements MemoryRef {
     this.currentAddress = this.startAddress;
     this.adsrCounter = 0;
     this.adsrVolume = 0;
-    this.adsrPhase = legend.core.spu.Phase.Attack;
+    this.adsrPhase = Phase.Attack;
   }
 
   public void keyOff() {
     this.adsrCounter = 0;
-    this.adsrPhase = legend.core.spu.Phase.Release;
+    this.adsrPhase = Phase.Release;
   }
 
   public byte[] spuAdpcm = new byte[16];
@@ -182,7 +182,7 @@ public class Voice implements MemoryRef {
   int adsrCounter;
 
   public void tickAdsr(final int v) {
-    if(this.adsrPhase == legend.core.spu.Phase.Off) {
+    if(this.adsrPhase == Phase.Off) {
       this.adsrVolume = 0;
       return;
     }
