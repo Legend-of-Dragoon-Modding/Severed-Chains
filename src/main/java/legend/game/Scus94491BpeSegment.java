@@ -189,6 +189,7 @@ import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
+import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
@@ -4412,6 +4413,45 @@ public final class Scus94491BpeSegment {
     _800bd781.setu(0);
   }
 
+  @Method(0x80019610L)
+  public static void FUN_80019610() {
+    setMainVolume(0, 0);
+    FUN_8004c3f0(8);
+    sssqSetReverbType(3);
+    SsSetRVol(0x30, 0x30);
+    setMonoOrStereo(gameState_800babc8.mono_4e0.get());
+
+    //LAB_80019654
+    for(int i = 0; i < 13; i++) {
+      unuseSoundFile(i);
+    }
+
+    FUN_8001aa64();
+    FUN_8001aa78();
+    FUN_8001aa90();
+
+    //LAB_8001968c
+    for(int i = 0; i < 32; i++) {
+      final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
+      v1.type_00.set(0);
+      v1._1c.set(0);
+    }
+
+    //LAB_800196b4
+    for(int i = 0; i < 13; i++) {
+      soundFileArr_800bcf80.get(i).used_00.set(false);
+    }
+
+    //LAB_800196d4
+    for(int i = 0; i < 7; i++) {
+      _800bd610.offset(i * 0x10L).setu(0);
+    }
+
+    sssqTempoScale_800bd100.setu(0x100);
+    _800bd780.setu(0);
+    _800bd781.setu(0);
+  }
+
   @Method(0x80019710L)
   public static void FUN_80019710() {
     if(mainCallbackIndex_8004dd20.get() != 0x5L && previousMainCallbackIndex_8004dd28.get() == 0x5L) {
@@ -6678,7 +6718,7 @@ public final class Scus94491BpeSegment {
     setSpuDmaCompleteCallback(0);
 
     //TODO make sure directWrite works
-    SPU.directWrite(0x2_1f70 + (int)soundFileArr_800bcf80.get(11).spuRamOffset_14.get(), audioAddress, (int)spuTransferSize);
+    SPU.directWrite(0x2_1f70 + soundFileArr_800bcf80.get(11).spuRamOffset_14.get(), audioAddress, (int)spuTransferSize);
 
     if(_800bd0fc.get(0x1L) == 0) {
       FUN_8004cf8c((int)sssqChannelIndex_800bd0f8.get());

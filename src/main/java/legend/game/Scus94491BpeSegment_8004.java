@@ -4307,13 +4307,13 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004ccb0L)
-  public static long sssqFadeIn(final long fadeTime, final long maxVol) {
+  public static long sssqFadeIn(final int fadeTime, final int maxVol) {
     assert fadeTime >= 0;
     assert maxVol >= 0;
 
     final SpuStruct44 spu44 = _800c6630;
 
-    if(fadeTime >= 0x100L) {
+    if(fadeTime >= 0x100) {
       assert false : "Error";
       return -0x1L;
     }
@@ -4330,8 +4330,8 @@ public final class Scus94491BpeSegment_8004 {
 
     setMainVolume(0, 0);
     spu44.fadingIn_2a.set(1);
-    spu44.fadeTime_2c.set((int)fadeTime);
-    spu44.fadeInVol_2e.set((int)maxVol);
+    spu44.fadeTime_2c.set(fadeTime);
+    spu44.fadeInVol_2e.set(maxVol);
 
     //LAB_8004cd30
     //LAB_8004cd34

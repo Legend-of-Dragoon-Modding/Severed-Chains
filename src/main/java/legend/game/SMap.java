@@ -98,6 +98,7 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -116,6 +117,7 @@ import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
+import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
@@ -205,6 +207,7 @@ import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
+import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
@@ -785,10 +788,10 @@ public final class SMap {
 
     SInitBinLoaded_800bbad0.set(true);
 
-    //TODO GH#3
-//    FUN_80019610();
-//    loadDRGN0_mrg_62802_sounds();
-//    sssqFadeIn(0x3cL, 0x7fL);
+    // Reload main sounds after disk swap?
+    FUN_80019610();
+    loadMenuSounds();
+    sssqFadeIn(0x3c, 0x7f);
 
     //LAB_800d99e0
     return 1;
