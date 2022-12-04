@@ -52,6 +52,7 @@ import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
@@ -307,7 +308,7 @@ import static legend.game.combat.Bttl_800c.FUN_800c90b0;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
-import static legend.game.combat.SBtld._80109a98;
+import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -6023,9 +6024,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001d9d0L)
   public static void FUN_8001d9d0() {
-    final long struct = _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).getAddress();
+    final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
 
-    if(MEMORY.ref(1, struct).offset(0x1L).get() != 0xffL) {
+    if(stageData._01.get() != 0xff) {
 //      loadedDrgnFiles_800bcf78.oru(0x80L); //TODO GH#3
       _800bd782.addu(0x1L);
       if(true) return;
@@ -6033,14 +6034,14 @@ public final class Scus94491BpeSegment {
       final int fileIndex;
       final long callback;
       final long callbackParam;
-      if((MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL) == 0x13L) {
+      if((stageData._01.get() & 0x1f) == 0x13) {
         unloadSoundFile(8);
         fileIndex = 732;
         callback = getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class);
         callbackParam = 0x2_dc00L;
       } else {
         //LAB_8001da58
-        fileIndex = (int)_800501bc.get((int)(MEMORY.ref(1, struct).offset(0x1L).get() & 0x1fL)).get();
+        fileIndex = (int)_800501bc.get(stageData._01.get() & 0x1f).get();
         callback = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001fb44", long.class, long.class, long.class);
         callbackParam = 0;
       }
@@ -6145,14 +6146,16 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    if(_80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() != 0xffL) {
+    final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
+
+    if(stageData._01.get() != 0xff) {
       FUN_800201c8(0x6L);
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final long v1 = _8005019c.offset(1, _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() & 0x1fL).get();
+      final long v1 = _8005019c.offset(1, stageData._01.get() & 0x1f).get();
       if(v1 == 0xcL) {
         FUN_8001fcf4(696);
       } else if(v1 == 0xdL) {

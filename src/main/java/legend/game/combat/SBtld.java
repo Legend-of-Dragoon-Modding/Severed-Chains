@@ -13,6 +13,7 @@ import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MonsterStats1c;
+import legend.game.combat.types.StageData10;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
@@ -62,11 +63,8 @@ public class SBtld {
   /** TODO 0x38-byte struct array */
   public static final Value _80102050 = MEMORY.ref(4, 0x80102050L);
 
-  /** TODO 0x10-byte struct */
-  public static final Value _80109a98 = MEMORY.ref(4, 0x80109a98L);
-
-  public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x200, 0x1c, MonsterStats1c::new));
-
+  public static final ArrayRef<StageData10> stageData_80109a98 = MEMORY.ref(4, 0x80109a98L, ArrayRef.of(StageData10.class, 0x200, 0x10, StageData10::new));
+  public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x190, 0x1c, MonsterStats1c::new));
   /** TODO 0x80-byte struct array */
   public static final Value _8010e658 = MEMORY.ref(4, 0x8010e658L);
 
@@ -85,18 +83,18 @@ public class SBtld {
 
   @Method(0x80109050L)
   public static void FUN_80109050(final int param) {
-    final long v1 = _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).getAddress();
-    _800c6718.offset(0x00L).setu(MEMORY.ref(1, v1).offset(0x0L).get());
-    _800c6718.offset(0x04L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
-    _800c6718.offset(0x08L).setu(MEMORY.ref(1, v1).offset(0x2L).get());
-    _800c6718.offset(0x0cL).setu(MEMORY.ref(1, v1).offset(0x3L).get());
-    _800c6718.offset(0x10L).setu(MEMORY.ref(1, v1).offset(0x4L).get());
-    _800c6718.offset(0x14L).setu(MEMORY.ref(1, v1).offset(0x5L).get());
-    _800c6718.offset(0x18L).setu(MEMORY.ref(2, v1).offset(0x6L).getSigned());
-    _800c6718.offset(0x1cL).setu(MEMORY.ref(2, v1).offset(0x8L).getSigned());
-    _800c6718.offset(0x20L).setu(MEMORY.ref(2, v1).offset(0xaL).getSigned());
-    _800c6718.offset(0x24L).setu(MEMORY.ref(2, v1).offset(0xcL).getSigned());
-    _800c6718.offset(0x28L).setu(MEMORY.ref(2, v1).offset(0xeL).get());
+    final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
+    _800c6718.offset(0x00L).setu(stageData._00.get());
+    _800c6718.offset(0x04L).setu(stageData._01.get());
+    _800c6718.offset(0x08L).setu(stageData._02.get());
+    _800c6718.offset(0x0cL).setu(stageData._03.get());
+    _800c6718.offset(0x10L).setu(stageData._04.get());
+    _800c6718.offset(0x14L).setu(stageData._05.get());
+    _800c6718.offset(0x18L).setu(stageData._06.get());
+    _800c6718.offset(0x1cL).setu(stageData._08.get());
+    _800c6718.offset(0x20L).setu(stageData._0a.get());
+    _800c6718.offset(0x24L).setu(stageData._0c.get());
+    _800c6718.offset(0x28L).setu(stageData._0e.get());
 
     decompress(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "btldBpeDecompressed", long.class, long.class, long.class), 0, 0);
     loadDrgnBinFile(1, 401, 0, getMethodAddress(SBtld.class, "FUN_80109170", long.class, long.class, long.class), 0, 0x2L);
