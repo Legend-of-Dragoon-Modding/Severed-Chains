@@ -266,7 +266,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800201c8L)
   public static void FUN_800201c8(final long a0) {
     if(_800bd610.offset(a0 * 16).get() != 0) {
-      FUN_8004d034((int)_800bd61c.offset(a0 * 16).get(), 0x1L);
+      FUN_8004d034((int)_800bd61c.offset(a0 * 16).get(), 1);
       FUN_8004c390((int)_800bd61c.offset(a0 * 16).get());
       free(_800bd614.offset(a0 * 16).get());
       _800bd610.offset(a0 * 16).setu(0);

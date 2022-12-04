@@ -6341,7 +6341,7 @@ public final class Scus94491BpeSegment {
 
       case 8 -> {
         if(_800bd0f0.getSigned() != 0) {
-          FUN_8004d034((int)sssqChannelIndex_800bd0f8.getSigned(), 0x1L);
+          FUN_8004d034((int)sssqChannelIndex_800bd0f8.getSigned(), 1);
           FUN_8004c390((int)sssqChannelIndex_800bd0f8.getSigned());
 
           if(_800bd781.get() == 0) {
