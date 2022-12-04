@@ -5814,6 +5814,7 @@ public final class Scus94491BpeSegment {
     assert false;
   }
 
+  /** Dragoon transformation sounds */
   @Method(0x8001d068L)
   public static void FUN_8001d068(final int scriptIndex, final long a1) {
     final BattleObject27c s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
@@ -5821,16 +5822,15 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(3);
     unloadSoundFile(6);
 
-    //TODO GH#3
-    if(true) return;
-
     if(a1 == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
       if(s1.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
         //LAB_8001d134
+        // Regular dragoons
         loadDrgnBinFile(0, 1317 + s1.charIndex_272.get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       } else {
+        // Divine dragoon
         loadDrgnBinFile(0, 1328, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e98c", long.class, long.class, long.class), 0, 0x4L);
       }
     } else if(a1 == 1) {
