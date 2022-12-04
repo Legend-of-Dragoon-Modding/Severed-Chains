@@ -16,10 +16,10 @@ public class SshdFile implements MemoryRef {
 
   public final UnsignedIntRef _10;
 
-  public final UnsignedIntRef ptr_14;
-  public final UnsignedIntRef ptr_18;
-  public final UnsignedIntRef ptr_1c;
-  public final UnsignedIntRef ptr_20;
+  public final IntRef ptr_14;
+  public final IntRef ptr_18;
+  public final IntRef ptr_1c;
+  public final IntRef ptr_20;
 
   public SshdFile(final Value ref) {
     this.ref = ref;
@@ -30,10 +30,10 @@ public class SshdFile implements MemoryRef {
 
     this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
 
-    this.ptr_14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
-    this.ptr_18 = ref.offset(4, 0x18L).cast(UnsignedIntRef::new);
-    this.ptr_1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this.ptr_20 = ref.offset(4, 0x20L).cast(UnsignedIntRef::new);
+    this.ptr_14 = ref.offset(4, 0x14L).cast(IntRef::new);
+    this.ptr_18 = ref.offset(4, 0x18L).cast(IntRef::new);
+    this.ptr_1c = ref.offset(4, 0x1cL).cast(IntRef::new);
+    this.ptr_20 = ref.offset(4, 0x20L).cast(IntRef::new);
   }
 
   @Override

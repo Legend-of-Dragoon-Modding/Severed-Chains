@@ -59,11 +59,13 @@ public class SpuStruct124 implements MemoryRef {
   public final UnsignedByteRef _0e7;
   public final UnsignedByteRef _0e8;
   public final UnsignedByteRef pitchShifted_0e9;
-  public final UnsignedByteRef _0ea;
+  public final UnsignedByteRef reverbEnabled_0ea;
 
-  /** 0x1000 is normal pitch */
+  /** 12-bit fixed-point - 0x1000 is normal pitch */
   public final UnsignedShortRef pitch_0ec;
+  /** 12-bit fixed-point */
   public final ShortRef pitchShiftVolLeft_0ee;
+  /** 12-bit fixed-point */
   public final ShortRef pitchShiftVolRight_0f0;
 
   public final UnsignedByteRef _104;
@@ -131,7 +133,7 @@ public class SpuStruct124 implements MemoryRef {
     this._0e7 = ref.offset(1, 0x0e7L).cast(UnsignedByteRef::new);
     this._0e8 = ref.offset(1, 0x0e8L).cast(UnsignedByteRef::new);
     this.pitchShifted_0e9 = ref.offset(1, 0x0e9L).cast(UnsignedByteRef::new);
-    this._0ea = ref.offset(1, 0x0eaL).cast(UnsignedByteRef::new);
+    this.reverbEnabled_0ea = ref.offset(1, 0x0eaL).cast(UnsignedByteRef::new);
 
     this.pitch_0ec = ref.offset(2, 0x0ecL).cast(UnsignedShortRef::new);
     this.pitchShiftVolLeft_0ee = ref.offset(2, 0x0eeL).cast(ShortRef::new);
