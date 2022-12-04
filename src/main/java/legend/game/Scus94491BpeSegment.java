@@ -768,6 +768,8 @@ public final class Scus94491BpeSegment {
       }
     });
 
+    startSound();
+
     final Runnable r = () -> {
       EventManager.INSTANCE.clearStaleRefs();
 
@@ -792,7 +794,6 @@ public final class Scus94491BpeSegment {
 
       // SPU stuff
       FUN_8001aa24();
-      sssqTick();
 
       // Textboxes? Other things?
       FUN_8002a058();
@@ -832,7 +833,35 @@ public final class Scus94491BpeSegment {
       DebugHelper.sleep(1);
     }
 
+    stopSound();
     Platform.exit();
+  }
+
+  private static final int soundTps = 60;
+  private static final int soundTime = 1_000_000_000 / soundTps;
+  private static long soundTimer;
+  private static boolean soundRunning;
+
+  private static void startSound() {
+    soundTimer = System.nanoTime() + soundTime;
+    soundRunning = true;
+    new Thread(Scus94491BpeSegment::soundLoop).start();
+  }
+
+  private static void stopSound() {
+    soundRunning = false;
+  }
+
+  private static void soundLoop() {
+    while(soundRunning) {
+      sssqTick();
+
+      while(System.nanoTime() <= soundTimer) {
+        DebugHelper.sleep(0);
+      }
+
+      soundTimer = System.nanoTime() + soundTime;
+    }
   }
 
   private static void handleSaveStates() {
