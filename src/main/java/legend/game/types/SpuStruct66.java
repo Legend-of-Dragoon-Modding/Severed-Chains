@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -8,10 +9,10 @@ import legend.core.memory.types.UnsignedShortRef;
 public class SpuStruct66 implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedShortRef used_00;
+  public final BoolRef used_00;
   public final UnsignedShortRef _02;
   public final UnsignedShortRef channel_04;
-  public final UnsignedShortRef channelIndex_06;
+  public final ShortRef channelIndex_06;
   public final UnsignedShortRef _08;
   public final UnsignedShortRef _0a;
   public final UnsignedShortRef _0c;
@@ -63,10 +64,10 @@ public class SpuStruct66 implements MemoryRef {
   public SpuStruct66(final Value ref) {
     this.ref = ref;
 
-    this.used_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+    this.used_00 = ref.offset(2, 0x00L).cast(BoolRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.channel_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.channelIndex_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.channelIndex_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);

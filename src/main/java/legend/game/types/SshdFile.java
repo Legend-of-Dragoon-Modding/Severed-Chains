@@ -14,7 +14,7 @@ public class SshdFile implements MemoryRef {
 
   public final UnsignedIntRef magic_0c;
 
-  public final UnsignedIntRef _10;
+  public final IntRef _10;
 
   public final IntRef ptr_14;
   public final IntRef ptr_18;
@@ -28,7 +28,7 @@ public class SshdFile implements MemoryRef {
 
     this.magic_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
 
-    this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
+    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
 
     this.ptr_14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this.ptr_18 = ref.offset(4, 0x18L).cast(IntRef::new);
