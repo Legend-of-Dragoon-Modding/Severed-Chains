@@ -1250,8 +1250,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80045cb8L)
   public static void sssqTick() {
-    //TODO GH#3 (also this used to be called from a timer callback (maybe 60hz?) but I removed the callback
-
     sssqStatus(0x1L);
     FUN_8004a8b8();
 
@@ -4054,11 +4052,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c390L)
   public static long FUN_8004c390(final int channelIndex) {
-    //TODO GH#3
-    if(true) {
-      return 0;
-    }
-
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8.get(channelIndex);
@@ -4199,11 +4192,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c8dcL)
   public static long FUN_8004c8dc(final int channelIndex, final long a1) {
-    //TODO GH#3
-    if(true) {
-      return 0;
-    }
-
     assert channelIndex >= 0;
 
     if(channelIndex >= 24) {
@@ -4217,7 +4205,8 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     if(_800c4ac8.get(channelIndex)._027.get() == 0) {
-      assert false : "Error";
+      // This is normal
+//      assert false : "Error";
       return -0x1L;
     }
 
@@ -4417,11 +4406,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d034L) //TODO unsure of this restructure
   public static void FUN_8004d034(final int voiceIndex, final long a1) {
-    //TODO GH#3
-    if(true) {
-      return;
-    }
-
     final SpuStruct124 spu124 = _800c4ac8.get(voiceIndex);
 
     sshdPtr_800c4ac0.set(playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020.get()).sshdPtr_04.deref());

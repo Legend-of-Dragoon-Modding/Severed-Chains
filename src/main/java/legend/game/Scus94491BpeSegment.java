@@ -4704,19 +4704,16 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80019e24L)
-  public static void FUN_80019e24(final long a0, final long a1, final long a2, final long a3, final long a4, final long a5, final long a6) {
-    //TODO GH#3
-    if(true) return;
+  public static void FUN_80019e24(final int type, final int a1, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a1).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
-    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get((int)a1).deref().innerStruct_00.derefAs(BattleObject27c.class);
-
-    long t1 = 0;
-    if(a0 == 0x1L) {
+    int soundFileIndex = 0;
+    if(type == 1) {
       //LAB_80019e68
       for(int i = 0; i < 3; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get())._02.get() == v1.charIndex_272.get()) {
+        if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get())._02.get() == bobj.charIndex_272.get()) {
           //LAB_80019ea4
-          t1 = _800500f8.offset(i * 0x4L).get();
+          soundFileIndex = (int)_800500f8.offset(i * 0x4L).get();
           break;
         }
       }
@@ -4724,13 +4721,13 @@ public final class Scus94491BpeSegment {
       //LAB_80019f18
       //LAB_80019f30
       for(int i = 0; i < 4; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get())._02.get() == v1.charIndex_272.get()) {
+        if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get())._02.get() == bobj.charIndex_272.get()) {
           //LAB_80019ea4
-          t1 = _800500e8.offset(i * 0x4L).get();
+          soundFileIndex = (int)_800500e8.offset(i * 0x4L).get();
           break;
         }
 
-        if(i == 0x3L) {
+        if(i == 3) {
           return;
         }
       }
@@ -4742,22 +4739,22 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 32; i++) {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019eac
-        final SoundFile soundFile = soundFileArr_800bcf80.get((int)t1);
+        final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
 
         FUN_8001a714(
-          (int)a0,
-          (int)t1,
-          (int)a2,
+          type,
+          soundFileIndex,
+          soundIndex,
           i,
           soundFile.playableSoundIndex_10.get(),
-          soundFile.ptr_08.get() + a2 * 0x2L,
+          soundFile.ptr_08.get() + soundIndex * 0x2L,
           0,
           (short)-1,
           (short)-1,
           (short)-1,
           (short)a6,
           (short)a5,
-          (int)a1
+          a1
         );
         break;
       }
@@ -6142,11 +6139,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001de84L)
   public static void FUN_8001de84(final int a0) {
-    //TODO GH#3
-    _800bd782.addu(0x1L);
-    decrementOverlayCount();
-    if(true) return;
-
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -6155,6 +6147,10 @@ public final class Scus94491BpeSegment {
 
     if(_80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() != 0xffL) {
       FUN_800201c8(0x6L);
+
+      // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
+      //LAB_8001df8c
+      unloadSoundFile(8);
 
       final long v1 = _8005019c.offset(1, _80109a98.offset(encounterId_800bb0f8.get() * 0x10L).offset(1, 0x1L).get() & 0x1fL).get();
       if(v1 == 0xcL) {
@@ -6177,8 +6173,6 @@ public final class Scus94491BpeSegment {
         FUN_8001fcf4(701);
       }
 
-      //LAB_8001df8c
-      unloadSoundFile(8);
       FUN_8001d9d0();
     }
 
