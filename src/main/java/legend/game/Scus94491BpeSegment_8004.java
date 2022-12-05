@@ -3901,11 +3901,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c1f8L)
   public static long FUN_8004c1f8(final int playableSoundIndex, final SssqFile sssq) {
-    //TODO GH#3
-    if(true) {
-      return 0;
-    }
-
     if((playableSoundIndex & 0xff80) != 0) {
       assert false : "Error";
       return -0x1L;
