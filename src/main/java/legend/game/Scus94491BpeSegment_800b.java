@@ -17,6 +17,7 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -41,9 +42,9 @@ import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
-import legend.game.types.Textbox4c;
 import legend.game.types.Struct84;
 import legend.game.types.TexPageY;
+import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
 import legend.game.types.WobjPos14;
@@ -150,11 +151,11 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
-  public static final Value sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L);
+  public static final ShortRef sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L, ShortRef::new);
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
-  public static final Value sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L);
-  public static final Value sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L);
+  public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);
+  public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));

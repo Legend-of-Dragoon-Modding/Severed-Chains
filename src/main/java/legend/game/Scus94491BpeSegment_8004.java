@@ -3031,7 +3031,32 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80049e2cL)
   public static void FUN_80049e2c(final int channelIndex) {
-    assert false;
+    final SpuStruct124 struct124 = _800c4ac8.get(channelIndex);
+    struct124._037.set(1);
+    struct124._0e6.set(1);
+
+    final long v1 = sssqPtr_800c4aa4.get() + struct124.sssqOffset_00c.get();
+    final long a0 = MEMORY.ref(1, v1).offset(0x4L).get();
+
+    if(a0 == 0) {
+      //LAB_80049ecc
+      struct124._02c.set(MEMORY.ref(1, v1).offset(0x2L).get() | MEMORY.ref(1, v1).offset(0x3L).get() << 8);
+      final long v0 = sssqPtr_800c4aa4.get() + struct124._02c.get();
+      struct124._039.set((int)MEMORY.ref(1, v0).offset(0x0L).get());
+    } else if(struct124._035.get() == a0) {
+      struct124._035.set(0);
+      struct124._037.set(0);
+      struct124._0e6.set(0);
+    } else {
+      //LAB_80049ea0
+      struct124._02c.set(MEMORY.ref(1, v1).offset(0x2L).get() + (MEMORY.ref(1, v1).offset(0x3L).get() << 8));
+      struct124._035.incr();
+      final long v0 = sssqPtr_800c4aa4.get() + struct124._02c.get();
+      struct124._039.set((int)MEMORY.ref(1, v0).offset(0x0L).get());
+    }
+
+    //LAB_80049f00
+    struct124.sssqOffset_00c.add(0x5L);
   }
 
   @Method(0x80049f14L)
@@ -3900,15 +3925,13 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c1f8L)
-  public static long FUN_8004c1f8(final int playableSoundIndex, final SssqFile sssq) {
+  public static short FUN_8004c1f8(final int playableSoundIndex, final SssqFile sssq) {
     if((playableSoundIndex & 0xff80) != 0) {
-      assert false : "Error";
-      return -0x1L;
+      throw new IllegalArgumentException("Invalid playableSoundIndex " + playableSoundIndex);
     }
 
     if(sssq.magic_0c.get() != SssqFile.MAGIC) {
-      assert false : "Error";
-      return -0x1L;
+      throw new IllegalArgumentException("Invalid magic " + sssq.magic_0c.get());
     }
 
     //LAB_8004c258
@@ -3952,8 +3975,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004c380
     //LAB_8004c384
     //LAB_8004c388
-    assert false : "Error";
-    return -0x1L;
+    throw new RuntimeException("Didn't find sound");
   }
 
   @Method(0x8004c390L)
@@ -3978,7 +4000,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c3f0L)
-  public static long FUN_8004c3f0(final long a0) {
+  public static long FUN_8004c3f0(final int a0) {
     assert a0 >= 0;
 
     if(a0 >= 24) {
@@ -3987,7 +4009,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c420
-    long a1 = 0;
+    int a1 = 0;
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       if(_800c3a40.get(voiceIndex)._1a.get() != 0) {
         a1++;
@@ -4002,15 +4024,15 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    _800c6630._03.set((int)a0);
+    _800c6630._03.set(a0);
 
     //LAB_8004c488
     return 0;
   }
 
   @Method(0x8004c494L)
-  public static void sssqSetReverbType(final long type) {
-    _800c6630.reverbType_34.set((int)type);
+  public static void sssqSetReverbType(final int type) {
+    _800c6630.reverbType_34.set(type);
 
     if(type != 0) {
       SPU.VOICE_CHN_REVERB_MODE.set(0);
@@ -4458,7 +4480,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d4f8L)
-  public static long sssqGetTempo(final int channelIndex) {
+  public static short sssqGetTempo(final int channelIndex) {
     return (short)_800c4ac8.get(channelIndex).tempo_108.get();
   }
 

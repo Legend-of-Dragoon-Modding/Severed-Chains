@@ -2671,7 +2671,7 @@ public final class Bttl_800e {
     _800fafe8.setu(0x4L);
 
     if((struct7cc._20.get() & 0x4_0000L) != 0) {
-      FUN_8001d068(_800c6938.deref().scriptIndex_04.get(), 0x1L);
+      FUN_8001d068(_800c6938.deref().scriptIndex_04.get(), 1);
     }
 
     //LAB_800e638c
@@ -2759,7 +2759,7 @@ public final class Bttl_800e {
     if((struct7cc._20.get() & 0x4_0000L) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      FUN_8001d068(battle24.scriptIndex_04.get(), s3 != 0x2e || s1 != 0 ? 0 : 0x2L);
+      FUN_8001d068(battle24.scriptIndex_04.get(), s3 != 0x2e || s1 != 0 ? 0 : 2);
     }
 
     //LAB_800e6714

@@ -963,7 +963,7 @@ public final class Bttl_800c {
     scriptStartEffect(0x4L, 0x1eL);
 
     _800bc960.oru(0x20L);
-    _8006e398._eec.set(0);
+    _8006e398.stageProgression_eec.set(0);
 
     FUN_800ca980();
     FUN_800c8ee4();
@@ -973,7 +973,7 @@ public final class Bttl_800c {
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
-    _8006e398._ee4.set(gameState_800babc8.morphMode_4e2.get());
+    _8006e398.morphMode_ee4.set(gameState_800babc8.morphMode_4e2.get());
 
     loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109250", int.class), 0);
 
