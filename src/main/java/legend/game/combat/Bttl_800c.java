@@ -137,7 +137,7 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040980;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004cd50;
+import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
@@ -1266,7 +1266,7 @@ public final class Bttl_800c {
 
       //LAB_800c8274
       if(s0 == 0x2L) {
-        FUN_8004cd50((short)(_800fa6d4.getSigned() - 2));
+        sssqFadeOut((short)(_800fa6d4.getSigned() - 2));
       }
 
       //LAB_800c8290

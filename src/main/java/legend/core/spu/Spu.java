@@ -18,6 +18,7 @@ import legend.core.memory.segments.RamSegment;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.Scus94491BpeSegment_8004;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -400,19 +401,21 @@ public class Spu implements Runnable, MemoryRef {
     return (short)interpolated;
   }
 
-  public void  directWrite(final int spuRamOffset, final long ramOffset, final int size) {
+  public void directWrite(final int spuRamOffset, final long ramOffset, final int size) {
     LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
     final byte[] data = MEMORY.getBytes(ramOffset, size);
     this.processDmaWrite(spuRamOffset, data);
-    DMA.spu.transferComplete();
-    INTERRUPTS.set(InterruptType.SPU);
+//    DMA.spu.transferComplete();
+//    INTERRUPTS.set(InterruptType.SPU);
+    Scus94491BpeSegment_8004.spuDmaCallback();
   }
 
   public void directWrite(final int spuRamOffset, final byte[] data) {
     LOGGER.info("Performing direct write from byte array to SPU @ %04x (%d bytes)", spuRamOffset, data.length);
     this.processDmaWrite(spuRamOffset, data);
-    DMA.spu.transferComplete();
-    INTERRUPTS.set(InterruptType.SPU);
+//    DMA.spu.transferComplete();
+//    INTERRUPTS.set(InterruptType.SPU);
+    Scus94491BpeSegment_8004.spuDmaCallback();
   }
 
   private byte[] processDmaLoad(final int size) {

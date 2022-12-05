@@ -292,7 +292,7 @@ public final class Scus94491BpeSegment_800e {
    *
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#FUN_8001b2ac}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b310}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSssqFadeOut}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b33c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b3a0}</li>
    *   <li>{@link Scus94491BpeSegment#scriptGetSssqTempoScale}</li>
