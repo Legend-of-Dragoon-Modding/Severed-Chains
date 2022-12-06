@@ -207,7 +207,7 @@ public final class Scus94491BpeSegment_800b {
   public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
 
   public static final GsRVIEW2 rview2_800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, GsRVIEW2::new);
-  public static final Value _800bd808 = MEMORY.ref(4, 0x800bd808L);
+  public static final IntRef submapIndex_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
@@ -317,7 +317,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bee94 = MEMORY.ref(4, 0x800bee94L);
   public static final Value _800bee98 = MEMORY.ref(4, 0x800bee98L);
 
-  public static final Value continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L);
+  public static final IntRef continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L, IntRef::new);
 
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
   public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);

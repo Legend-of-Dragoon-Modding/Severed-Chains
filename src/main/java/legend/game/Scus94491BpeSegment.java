@@ -253,7 +253,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd774;
 import static legend.game.Scus94491BpeSegment_800b._800bd780;
 import static legend.game.Scus94491BpeSegment_800b._800bd781;
 import static legend.game.Scus94491BpeSegment_800b._800bd782;
-import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
@@ -4591,7 +4591,7 @@ public final class Scus94491BpeSegment {
     //LAB_80019a20
     //LAB_80019a24
     if(mainCallbackIndex_8004dd20.get() != 0x5L) {
-      _800bd808.setu(-0x1L);
+      submapIndex_800bd808.set(-1);
     }
 
     //LAB_80019a3c
@@ -5645,16 +5645,16 @@ public final class Scus94491BpeSegment {
     {
       //LAB_8001c63c
       do {
-        final long t3 = _800bd808.get();
+        final int submapIndex = submapIndex_800bd808.get();
 
-        if(t3 == MEMORY.ref(1, a2).offset(0x0L).get()) {
+        if(submapIndex == MEMORY.ref(1, a2).offset(0x0L).get()) {
           long v1 = 0;
 
           //LAB_8001c680
           do {
             jmp_8001c6e4:
             {
-              if(t3 == 57) {
+              if(submapIndex == 57) { // Opening (Rose intro, Dart forest, horses)
                 if(MEMORY.ref(4, a2).offset(0x4L).deref(2).offset(v1).getSigned() != submapCut_80052c30.get()) {
                   break jmp_8001c6e4;
                 }
@@ -5688,7 +5688,7 @@ public final class Scus94491BpeSegment {
 
       //LAB_8001c728
       do {
-        if(_800bd808.get() == MEMORY.ref(1, a0).offset(0x0L).get()) {
+        if(submapIndex_800bd808.get() == MEMORY.ref(1, a0).offset(0x0L).get()) {
           a2 = submapCut_80052c30.get();
           long v1 = MEMORY.ref(4, a0).offset(0x4L).get();
 
@@ -5739,7 +5739,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001c874L)
   public static long FUN_8001c874() {
-    if(_800bd808.get() == 0x38L) {
+    if(submapIndex_800bd808.get() == 56) { // Moon
       for(int i = 0; ; i += 0x8) {
         if(_8004ff10.offset(i).get() == submapCut_80052c30.get()) {
           return _8004ff14.offset(i).get();
@@ -5748,7 +5748,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001c8bc
-    return _80050068.offset(_800bd808.get() * 0x2L).getSigned();
+    return _80050068.offset(submapIndex_800bd808.get() * 0x2L).getSigned();
   }
 
   @Method(0x8001cae0L)
@@ -6486,13 +6486,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eadcL)
-  public static void FUN_8001eadc(final int index) {
+  public static void loadSubmapSounds(final int submapIndex) {
     loadedDrgnFiles_800bcf78.oru(0x2L);
-    loadDrgnBinFile(0, 5750 + index, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001eb38", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5750 + submapIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "submapSoundsLoaded", long.class, long.class, long.class), 0, 0x4L);
   }
 
   @Method(0x8001eb38L)
-  public static void FUN_8001eb38(final long address, final long fileSize, final long a2) {
+  public static void submapSoundsLoaded(final long address, final long fileSize, final long a2) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
     soundMrgPtr_800bd748.set(mrg);
 
@@ -6504,14 +6504,14 @@ public final class Scus94491BpeSegment {
     soundFileArr_800bcf80.get(8).ptr_08.set(mrg2.getFile(2)); //TODO this might be an SSsq
     soundFileArr_800bcf80.get(8).ptr_0c.set(mrg2.getFile(1));
     soundFileArr_800bcf80.get(8)._02.set((short)MEMORY.ref(2, mrg2.getFile(0)).get());
-    setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ec18"));
+    setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "submapSoundsCleanup"));
     soundFileArr_800bcf80.get(8).playableSoundIndex_10.set(loadSshdAndSoundbank(mrg.getFile(4), mrg2.getFile(3, SshdFile::new), 0x4_de90));
     FUN_8004cb0c(soundFileArr_800bcf80.get(8).playableSoundIndex_10.get(), 0x7fL);
     soundFileArr_800bcf80.get(8).used_00.set(true);
   }
 
   @Method(0x8001ec18L)
-  public static void FUN_8001ec18() {
+  public static void submapSoundsCleanup() {
     free(soundMrgPtr_800bd748.getPointer());
     loadedDrgnFiles_800bcf78.and(0xffff_fffdL);
     _800bd782.addu(0x1L);

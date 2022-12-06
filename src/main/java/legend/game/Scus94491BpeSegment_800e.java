@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
-import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
 import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
@@ -1136,7 +1136,7 @@ public final class Scus94491BpeSegment_800e {
       scriptSubFunctions_8004e29c.get(672 + i).set(scriptSubFunctions_800e74f0.get(i).deref());
     }
 
-    _800bd808.setu(0);
+    submapIndex_800bd808.setu(0);
 
     final TimHeader header = parseTimHeader(ovalBlobTimHeader_80010548);
     LoadImage(header.getImageRect(), header.getImageAddress());
