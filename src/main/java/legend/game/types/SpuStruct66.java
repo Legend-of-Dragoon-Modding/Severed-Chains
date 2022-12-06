@@ -48,6 +48,7 @@ public class SpuStruct66 implements MemoryRef {
   public final UnsignedShortRef _48;
   public final UnsignedShortRef _4a;
   public final UnsignedShortRef _4c;
+  /** Maybe tempo? */
   public final UnsignedShortRef _4e;
   public final UnsignedShortRef _50;
   public final UnsignedShortRef _52;

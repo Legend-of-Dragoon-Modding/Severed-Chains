@@ -3499,7 +3499,7 @@ public final class Scus94491BpeSegment_8004 {
           }
 
           //LAB_8004b068
-          FUN_8004c8dc((short)channelIndex, sssqPtr_800c667c.deref(1).get());
+          FUN_8004c8dc((short)channelIndex, (int)sssqPtr_800c667c.deref(1).get());
           s4++;
         }
       }
@@ -4090,8 +4090,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c6f8L)
-  public static void setMonoOrStereo(final long mono) {
-    _800c6630.mono_36.set((int)mono);
+  public static void setMono(final int mono) {
+    _800c6630.mono_36.set(mono);
   }
 
   @Method(0x8004c894L)
@@ -4119,7 +4119,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static long FUN_8004c8dc(final int channelIndex, final long a1) {
+  public static long FUN_8004c8dc(final int channelIndex, final int a1) {
     assert channelIndex >= 0;
 
     if(channelIndex >= 24) {
@@ -4127,7 +4127,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(a1 >= 0x80L) {
+    if(a1 >= 128) {
       assert false : "Error";
       return -0x1L;
     }
@@ -4145,9 +4145,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c97c
     for(int i = 0; i < 16; i++) {
-      final long t0 = sssqDataPointer_800c6680.deref(1).offset(0x3L).get() * (int)a1 & 0xffff_ffffL;
-      final long v0 = (int)t0 >> 7;
-      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(v0);
+      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(sssqDataPointer_800c6680.deref(1).offset(0x3L).get() * a1 >> 7);
       sssqDataPointer_800c6680.addu(0x10L);
     }
 

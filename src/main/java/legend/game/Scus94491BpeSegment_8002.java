@@ -246,7 +246,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(4);
     unloadSoundFile(5);
     unloadSoundFile(6);
-    unloadSoundFile(7);
+    unloadSoundFile(8);
     FUN_800201c8(0x6L);
   }
 
