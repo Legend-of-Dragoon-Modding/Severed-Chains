@@ -20,13 +20,21 @@ public class Voice implements MemoryRef {
 
   private final int voiceIndex;
 
+  /** 0x00 */
   public final UnsignedShortRef LEFT;
+  /** 0x02 */
   public final UnsignedShortRef RIGHT;
+  /** 0x04 */
   public final UnsignedShortRef ADPCM_SAMPLE_RATE;
+  /** 0x06 */
   public final UnsignedShortRef ADPCM_START_ADDR;
+  /** 0x08 */
   public final UnsignedShortRef ADSR_LO;
+  /** 0x0a */
   public final UnsignedShortRef ADSR_HI;
+  /** 0x0c */
   public final UnsignedShortRef ADSR_CURR_VOL;
+  /** 0x0e */
   public final UnsignedShortRef ADPCM_REPEAT_ADDR;
 
   public Volume volumeLeft = new Volume();           //0

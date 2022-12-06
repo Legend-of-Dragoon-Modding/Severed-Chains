@@ -21,7 +21,7 @@ public class SpuStruct28 implements MemoryRef {
    */
   public final UnsignedByteRef type_00;
 
-  public final IntRef _04;
+  public final IntRef bobjIndex_04;
   public final IntRef soundFileIndex_08;
   public final IntRef soundIndex_0c;
   public final ShortRef playableSoundIndex_10;
@@ -40,7 +40,7 @@ public class SpuStruct28 implements MemoryRef {
 
     this.type_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
 
-    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
+    this.bobjIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this.soundFileIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this.soundIndex_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
     this.playableSoundIndex_10 = ref.offset(2, 0x10L).cast(ShortRef::new);

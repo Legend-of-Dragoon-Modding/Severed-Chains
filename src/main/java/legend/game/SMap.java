@@ -102,7 +102,7 @@ import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
-import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
+import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
@@ -2780,7 +2780,7 @@ public final class SMap {
 
         _800bd782.setu(0);
 
-        final long ret = FUN_8001c60c();
+        final int ret = getSubmapMusicChange();
         if(ret == -1) {
           FUN_8001ae90();
 

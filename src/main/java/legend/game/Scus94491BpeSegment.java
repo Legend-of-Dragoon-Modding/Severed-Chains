@@ -64,6 +64,7 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.McqHeader;
+import legend.game.types.MoonMusic08;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
@@ -74,6 +75,7 @@ import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
+import legend.game.types.SubmapMusic08;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.WorldObject210;
@@ -159,8 +161,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004f6e8;
 import static legend.game.Scus94491BpeSegment_8004._8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
-import static legend.game.Scus94491BpeSegment_8004._8004ff10;
-import static legend.game.Scus94491BpeSegment_8004._8004ff14;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
@@ -174,6 +174,7 @@ import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004d
 import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
 import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd14;
 import static legend.game.Scus94491BpeSegment_8004.overlayQueueIndex_8004dd18;
 import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
@@ -202,9 +203,9 @@ import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
 import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
-import static legend.game.Scus94491BpeSegment_8005._80050068;
-import static legend.game.Scus94491BpeSegment_8005._800500e8;
-import static legend.game.Scus94491BpeSegment_8005._800500f8;
+import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
+import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
+import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005._80050104;
 import static legend.game.Scus94491BpeSegment_8005._80050190;
 import static legend.game.Scus94491BpeSegment_8005._8005019c;
@@ -253,7 +254,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd774;
 import static legend.game.Scus94491BpeSegment_800b._800bd780;
 import static legend.game.Scus94491BpeSegment_800b._800bd781;
 import static legend.game.Scus94491BpeSegment_800b._800bd782;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
@@ -293,6 +293,7 @@ import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.sssqChannelIndex_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
@@ -4648,7 +4649,7 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 32; i++) {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019b54
-        FUN_8001a714(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, -1);
+        playSound(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, -1);
         break;
       }
     }
@@ -4703,31 +4704,36 @@ public final class Scus94491BpeSegment {
     //LAB_80019dfc
   }
 
+  /**
+   * @param type 1 - player, 2 - monster
+   */
   @Method(0x80019e24L)
-  public static void FUN_80019e24(final int type, final int a1, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(a1).deref().innerStruct_00.derefAs(BattleObject27c.class);
+  public static void playBobjSound(final int type, final int bobjIndex, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     int soundFileIndex = 0;
     if(type == 1) {
       //LAB_80019e68
-      for(int i = 0; i < 3; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get())._02.get() == bobj.charIndex_272.get()) {
+      for(int charSlot = 0; charSlot < 3; charSlot++) {
+        final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
+        if(soundFileArr_800bcf80.get(index)._02.get() == bobj.charIndex_272.get()) {
           //LAB_80019ea4
-          soundFileIndex = (int)_800500f8.offset(i * 0x4L).get();
+          soundFileIndex = index;
           break;
         }
       }
     } else {
       //LAB_80019f18
       //LAB_80019f30
-      for(int i = 0; i < 4; i++) {
-        if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get())._02.get() == bobj.charIndex_272.get()) {
+      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+        final int index = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
+        if(soundFileArr_800bcf80.get(index)._02.get() == bobj.charIndex_272.get()) {
           //LAB_80019ea4
-          soundFileIndex = (int)_800500e8.offset(i * 0x4L).get();
+          soundFileIndex = index;
           break;
         }
 
-        if(i == 3) {
+        if(monsterSlot == 3) {
           return;
         }
       }
@@ -4740,22 +4746,7 @@ public final class Scus94491BpeSegment {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019eac
         final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
-
-        FUN_8001a714(
-          type,
-          soundFileIndex,
-          soundIndex,
-          i,
-          soundFile.playableSoundIndex_10.get(),
-          soundFile.ptr_08.get() + soundIndex * 0x2L,
-          0,
-          (short)-1,
-          (short)-1,
-          (short)-1,
-          (short)a6,
-          (short)a5,
-          a1
-        );
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 0x2L, 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, bobjIndex);
         break;
       }
     }
@@ -4763,45 +4754,43 @@ public final class Scus94491BpeSegment {
     //LAB_80019f9c
   }
 
+  /** Same as playBobjSound, but looks up bobj by combatant index */
   @Method(0x80019facL)
-  public static void FUN_80019fac(final int a0, final long a1, final int soundIndex, final short a3, final short a4) {
-    //TODO GH#3
-    if(true) return;
-
+  public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short a3, final short a4) {
     int soundFileIndex = 0;
-    int t4 = 0;
+    int bobjIndex = 0;
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final int bobjIndex = _8006e398.bobjIndices_e50.get(i).get();
+      final int index = _8006e398.bobjIndices_e50.get(i).get();
 
-      if(scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == a1) {
+      if(scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == charOrMonsterIndex) {
         //LAB_8001a070
-        t4 = bobjIndex;
+        bobjIndex = index;
         break;
       }
     }
 
     //LAB_8001a018
-    if(a0 == 0x1L) {
+    if(type == 1) {
       //LAB_8001a034
-      for(int i = 0; i < 3; i++) {
-        final int v1 = (int)_800500f8.offset(i * 0x4L).get();
+      for(int charSlot = 0; charSlot < 3; charSlot++) {
+        final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
 
-        if(soundFileArr_800bcf80.get(v1)._02.get() == a1) {
-          soundFileIndex = v1;
+        if(soundFileArr_800bcf80.get(index)._02.get() == charOrMonsterIndex) {
+          soundFileIndex = index;
           break;
         }
       }
     } else {
       //LAB_8001a0e4
       //LAB_8001a0f4
-      for(int i = 0; i < 4; i++) {
-        final int v1 = (int)_800500e8.offset(i * 0x4L).get();
+      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+        final int index = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
 
-        if(soundFileArr_800bcf80.get(v1)._02.get() == a1) {
+        if(soundFileArr_800bcf80.get(index)._02.get() == charOrMonsterIndex) {
           //LAB_8001a078
-          soundFileIndex = v1;
+          soundFileIndex = index;
           break;
         }
       }
@@ -4811,12 +4800,10 @@ public final class Scus94491BpeSegment {
     //LAB_8001a12c
     //LAB_8001a134
     for(int i = 0; i < 32; i++) {
-      final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
-
-      if(v1.type_00.get() == 0) {
+      if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_8001a080
-        final var v0 = soundFileArr_800bcf80.get(soundFileIndex);
-        FUN_8001a714(a0, soundFileIndex, soundIndex, i, v0.playableSoundIndex_10.get(), v0.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, t4);
+        final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, bobjIndex);
         break;
       }
     }
@@ -4825,12 +4812,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a164L)
-  public static void FUN_8001a164(final long a0, final long a1, final long soundIndex, final long a3) {
+  public static void FUN_8001a164(final long a0, final int bobjIndex, final long soundIndex, final long a3) {
     //LAB_8001a1a8
     for(int i = 0; i < 24; i++) {
       final SpuStruct08 s0 = _800bc9a8.get(i);
-      if(s0.soundIndex_03.get() == soundIndex && s0._04.get() == a1) {
-        FUN_8004d78c(0xffff_8000L | i);
+
+      if(s0.soundIndex_03.get() == soundIndex && s0.bobjIndex_04.get() == bobjIndex) {
+        FUN_8004d78c((short)(0xffff_8000 | i));
+
         if((a3 & 0x1L) == 0) {
           break;
         }
@@ -4845,7 +4834,7 @@ public final class Scus94491BpeSegment {
       for(int i = 0; i < 32; i++) {
         final SpuStruct28 v1 = spu28Arr_800bd110.get(i);
         //LAB_8001a238
-        if(v1.type_00.get() != 0 && (v1._20.get() != 0 || v1._24.get() != 0) && v1.soundIndex_0c.get() == soundIndex && v1._04.get() == a1) {
+        if(v1.type_00.get() != 0 && (v1._20.get() != 0 || v1._24.get() != 0) && v1.soundIndex_0c.get() == soundIndex && v1.bobjIndex_04.get() == bobjIndex) {
           v1.type_00.set(0);
           v1._1c.set(0);
         }
@@ -4924,20 +4913,20 @@ public final class Scus94491BpeSegment {
       );
     }
 
-    if(s0 != -0x1L) {
+    if(s0 != -1) {
       _800bc9a8.get(s0).soundFileIndex_02.set((byte)spu28Arr_800bd110.get(a0).soundFileIndex_08.get());
       _800bc9a8.get(s0).soundIndex_03.set((byte)spu28Arr_800bd110.get(a0).soundIndex_0c.get());
-      _800bc9a8.get(s0)._04.set(spu28Arr_800bd110.get(a0)._04.get());
+      _800bc9a8.get(s0).bobjIndex_04.set(spu28Arr_800bd110.get(a0).bobjIndex_04.get());
     }
 
     //LAB_8001a704
   }
 
   @Method(0x8001a714L)
-  public static void FUN_8001a714(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, final int a12) {
+  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, final int bobjIndex) {
     final SpuStruct28 spu28 = spu28Arr_800bd110.get(a3);
     spu28.type_00.set(type);
-    spu28._04.set(a12);
+    spu28.bobjIndex_04.set(bobjIndex);
     spu28.soundFileIndex_08.set(soundFileIndex);
     spu28.soundIndex_0c.set(soundIndex);
     spu28.playableSoundIndex_10.set(playableSoundIndex);
@@ -5103,8 +5092,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001abd0L)
-  public static long FUN_8001abd0(final RunningScript a0) {
-    FUN_80019e24(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get());
+  public static long scriptPlayBobjSound(final RunningScript script) {
+    playBobjSound(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get(), script.params_20.get(4).deref().get(), script.params_20.get(5).deref().get(), script.params_20.get(6).deref().get());
     return 0;
   }
 
@@ -5115,8 +5104,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ac88L)
-  public static long FUN_8001ac88(final RunningScript a0) {
-    FUN_80019fac(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), (short)a0.params_20.get(3).deref().get(), (short)a0.params_20.get(4).deref().get());
+  public static long scriptPlayCombatantSound(final RunningScript script) {
+    playCombatantSound(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), (short)script.params_20.get(3).deref().get(), (short)script.params_20.get(4).deref().get());
     return 0;
   }
 
@@ -5308,7 +5297,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b3e4L)
-  public static long FUN_8001b3e4() {
+  public static int FUN_8001b3e4() {
     if(soundFileArr_800bcf80.get(11).used_00.get()) {
       return soundFileArr_800bcf80.get(11)._02.get();
     }
@@ -5635,82 +5624,72 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001c60cL)
-  public static long FUN_8001c60c() {
-    final long s0 = FUN_8001b3e4();
-    int a3 = 0;
-    long a2 = _8004fb00.getAddress();
+  public static int getSubmapMusicChange() {
+    final int s0 = FUN_8001b3e4();
 
-    final long a1;
+    final int musicIndex;
     jmp_8001c7a0:
     {
       //LAB_8001c63c
-      do {
+      SubmapMusic08 a2;
+      int a3;
+      for(a3 = 0, a2 = _8004fb00.get(a3); a2.submapCut_00.get() != 99 || a2.musicIndex_02.get() != 99; a3++, a2 = _8004fb00.get(a3)) { // I think 99 is just a sentinel value that means "end of list"
         final int submapIndex = submapIndex_800bd808.get();
 
-        if(submapIndex == MEMORY.ref(1, a2).offset(0x0L).get()) {
-          long v1 = 0;
+        if(submapIndex == a2.submapCut_00.get()) {
+          int v1 = 0;
 
           //LAB_8001c680
           do {
-            jmp_8001c6e4:
-            {
-              if(submapIndex == 57) { // Opening (Rose intro, Dart forest, horses)
-                if(MEMORY.ref(4, a2).offset(0x4L).deref(2).offset(v1).getSigned() != submapCut_80052c30.get()) {
-                  break jmp_8001c6e4;
-                }
-
-                if((gameState_800babc8._1a4.get(0).get() & 0x1) == 0) {
-                  //LAB_8001c7cc
-                  a1 = MEMORY.ref(2, a2).offset(0x2L).getSigned();
-                  break jmp_8001c7a0;
-                }
+            if(submapIndex == 57) { // Opening (Rose intro, Dart forest, horses)
+              if(a2.submapCuts_04.deref().get(v1).get() != submapCut_80052c30.get()) {
+                continue;
               }
 
-              //LAB_8001c6ac
-              if(MEMORY.ref(4, a2).offset(0x4L).deref(2).offset(v1).getSigned() == submapCut_80052c30.get() && (gameState_800babc8._1a4.get(a3 >>> 5).get() & 0x1 << (a3 & 0x1f)) != 0) {
-                //LAB_8001c7c0
-                a1 = MEMORY.ref(2, a2).offset(0x2L).getSigned();
+              if((gameState_800babc8._1a4.get(0).get() & 0x1) == 0) {
+                //LAB_8001c7cc
+                musicIndex = a2.musicIndex_02.get();
                 break jmp_8001c7a0;
               }
             }
 
+            //LAB_8001c6ac
+            if(a2.submapCuts_04.deref().get(v1).get() == submapCut_80052c30.get() && (gameState_800babc8._1a4.get(a3 >>> 5).get() & 0x1 << (a3 & 0x1f)) != 0) {
+              //LAB_8001c7c0
+              musicIndex = a2.musicIndex_02.get();
+              break jmp_8001c7a0;
+            }
+
             //LAB_8001c6e4
-            v1 = v1 + 0x2L;
-          } while(MEMORY.ref(4, a2).offset(0x4L).deref(2).offset(v1).getSigned() != -1);
+          } while(a2.submapCuts_04.deref().get(++v1).get() != -1);
         }
 
         //LAB_8001c700
-        a2 = a2 + 0x8L;
-        a3++;
-      } while(MEMORY.ref(1, a2).offset(0x0L).get() != 99 || MEMORY.ref(2, a2).offset(0x2L).getSigned() != 99);
-
-      long a0 = _8004fa98.getAddress();
+      }
 
       //LAB_8001c728
-      do {
-        if(submapIndex_800bd808.get() == MEMORY.ref(1, a0).offset(0x0L).get()) {
-          a2 = submapCut_80052c30.get();
-          long v1 = MEMORY.ref(4, a0).offset(0x4L).get();
+      SubmapMusic08 a0;
+      for(a3 = 0, a0 = _8004fa98.get(a3); a0.submapCut_00.get() != 99 || a0.musicIndex_02.get() != 99; a3++, a0 = _8004fa98.get(a3)) {
+        if(submapIndex_800bd808.get() == a0.submapCut_00.get()) {
+          int v1 = 0;
 
           //LAB_8001c748
           do {
-            if(MEMORY.ref(2, v1).offset(0x0L).getSigned() == a2) {
+            if(a0.submapCuts_04.deref().get(v1).get() == submapCut_80052c30.get()) {
               //LAB_8001c7d8
-              return FUN_8001c84c(s0, MEMORY.ref(2, a0).offset(0x2L).getSigned());
+              return FUN_8001c84c(s0, a0.musicIndex_02.get());
             }
-            v1 = v1 + 0x2L;
-          } while(MEMORY.ref(2, v1).offset(0x0L).getSigned() != -1);
+          } while(a0.submapCuts_04.deref().get(++v1).get() != -1);
         }
 
         //LAB_8001c76c
-        a0 = a0 + 0x8L;
-      } while(MEMORY.ref(1, a0).offset(0x0L).get() != 99 || MEMORY.ref(2, a0).offset(0x2L).getSigned() != 99);
+      }
 
-      a1 = FUN_8001c874();
+      musicIndex = getCurrentSubmapMusic();
     }
 
     //LAB_8001c7a0
-    final long v1 = FUN_8001c84c(s0, a1);
+    final int v1 = FUN_8001c84c(s0, musicIndex);
     if(v1 != -2) {
       return v1;
     }
@@ -5725,30 +5704,32 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001c84cL)
-  public static long FUN_8001c84c(final long a0, final long a1) {
+  public static int FUN_8001c84c(final int a0, final int a1) {
     if(a0 != a1) {
       return a1;
     }
 
-    if(a0 == -0x1L) {
-      return -0x1L;
+    if(a0 == -1) {
+      return -1;
     }
 
-    return -0x2L;
+    return -2;
   }
 
   @Method(0x8001c874L)
-  public static long FUN_8001c874() {
+  public static int getCurrentSubmapMusic() {
     if(submapIndex_800bd808.get() == 56) { // Moon
-      for(int i = 0; ; i += 0x8) {
-        if(_8004ff10.offset(i).get() == submapCut_80052c30.get()) {
-          return _8004ff14.offset(i).get();
+      for(int i = 0; ; i++) {
+        final MoonMusic08 moonMusic = moonMusic_8004ff10.get(i);
+
+        if(moonMusic.submapCut_00.get() == submapCut_80052c30.get()) {
+          return moonMusic.musicIndex_04.get();
         }
       }
     }
 
     //LAB_8001c8bc
-    return _80050068.offset(submapIndex_800bd808.get() * 0x2L).getSigned();
+    return submapMusic_80050068.get(submapIndex_800bd808.get()).get();
   }
 
   @Method(0x8001cae0L)
@@ -5758,20 +5739,20 @@ public final class Scus94491BpeSegment {
     final MrgFile mrg = soundMrgPtr_800bd768.deref();
 
     //LAB_8001cb34
-    for(int s3 = 0; s3 < 3; s3++) {
-      final int index = (int)_800500f8.offset(s3 * 0x4L).get();
-      final SoundFile s4 = soundFileArr_800bcf80.get(index);
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
+      final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
+      final SoundFile soundFile = soundFileArr_800bcf80.get(index);
 
-      final MrgFile s2 = mrg.getFile(s3, MrgFile::new);
-      s4._02.set((short)s2.getFile(0));
-      s4.soundMrgPtr_04.setPointer(_800bc980.offset(s3 * 0xcL).offset(0x4L).get());
-      memcpy(s4.soundMrgPtr_04.getPointer(), s2.getAddress(), getMrgSize(s2, 3));
+      final MrgFile s2 = mrg.getFile(charSlot, MrgFile::new);
+      soundFile._02.set((short)MEMORY.ref(2, s2.getFile(0)).get());
+      soundFile.soundMrgPtr_04.setPointer(_800bc980.offset(charSlot * 0xcL).offset(0x4L).get());
+      memcpy(soundFile.soundMrgPtr_04.getPointer(), s2.getAddress(), getMrgSize(s2, 3));
 
-      final MrgFile s0 = s4.soundMrgPtr_04.deref();
-      s4.ptr_08.set(s0.getFile(1));
-      s4._02.set((short)MEMORY.ref(2, s0.getFile(0)).get());
+      final MrgFile s0 = soundFile.soundMrgPtr_04.deref();
+      soundFile.ptr_08.set(s0.getFile(1));
+      soundFile._02.set((short)MEMORY.ref(2, s0.getFile(0)).get());
 
-      if(s3 == 0 || s3 == 1) {
+      if(charSlot == 0 || charSlot == 1) {
         //LAB_8001cc30
         setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001e8cc"));
       } else {
@@ -5782,8 +5763,8 @@ public final class Scus94491BpeSegment {
 
       //LAB_8001cc48
       //LAB_8001cc50
-      s4.playableSoundIndex_10.set(loadSshdAndSoundbank(s2.getFile(3), s0.getFile(2, SshdFile::new), (int)_80050190.offset(s3 * 0x4L).get()));
-      s4.used_00.set(true);
+      soundFile.playableSoundIndex_10.set(loadSshdAndSoundbank(s2.getFile(3), s0.getFile(2, SshdFile::new), (int)_80050190.offset(charSlot * 0x4L).get()));
+      soundFile.used_00.set(true);
     }
   }
 
@@ -5795,9 +5776,9 @@ public final class Scus94491BpeSegment {
     final BattleObject27c s2 = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
     //LAB_8001cd3c
-    int i;
-    for(i = 0; i < 3; i++) {
-      final SoundFile soundFile = soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get());
+    int charSlot;
+    for(charSlot = 0; charSlot < 3; charSlot++) {
+      final SoundFile soundFile = soundFileArr_800bcf80.get(characterSoundFileIndices_800500f8.get(charSlot).get());
 
       if(soundFile._02.get() == s2.charIndex_272.get()) {
         break;
@@ -5805,7 +5786,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001cd78
-    final SoundFile soundFile = soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get());
+    final SoundFile soundFile = soundFileArr_800bcf80.get(characterSoundFileIndices_800500f8.get(charSlot).get());
     sssqUnloadPlayableSound(soundFile.playableSoundIndex_10.get());
     soundFile.used_00.set(false);
 
@@ -5823,7 +5804,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001ce70
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ce98", long.class, long.class, long.class), i, 0x4L);
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ce98", long.class, long.class, long.class), charSlot, 0x4L);
   }
 
   @Method(0x8001ce98L)
@@ -5950,8 +5931,8 @@ public final class Scus94491BpeSegment {
     int addressInSoundBuffer = 0x5_a1e0;
 
     //LAB_8001d588
-    for(int i = 0; i < 4; i++) {
-      final SoundFile file = soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get());
+    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+      final SoundFile file = soundFileArr_800bcf80.get(monsterSoundFileIndices_800500e8.get(monsterSlot).get());
       file._02.set((short)-1);
       file.used_00.set(false);
     }
@@ -5992,12 +5973,12 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001d698
-    for(int fileIndex = 0; fileIndex < mrg.count.get(); fileIndex++) {
-      final MrgFile s2 = mrg.getFile(fileIndex, MrgFile::new);
+    for(int monsterSlot = 0; monsterSlot < mrg.count.get(); monsterSlot++) {
+      final MrgFile s2 = mrg.getFile(monsterSlot, MrgFile::new);
       final int file3Size = s2.entries.get(3).size.get();
 
       if(file3Size <= 48) {
-        if(sp0x18[fileIndex] == 1) {
+        if(sp0x18[monsterSlot] == 1) {
           FUN_8001eaa0();
         }
       } else {
@@ -6011,8 +5992,8 @@ public final class Scus94491BpeSegment {
         }
 
         //LAB_8001d72c
-        final int index = (int)_800500e8.offset(fileIndex * 0x4L).get();
-        final SoundFile s4 = soundFileArr_800bcf80.get(index);
+        final int soundFileIndex = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
+        final SoundFile s4 = soundFileArr_800bcf80.get(soundFileIndex);
 
         s4.soundMrgPtr_04.setPointer(mallocTail(getMrgSize(s2, 3)));
         memcpy(s4.soundMrgPtr_04.getPointer(), s2.getAddress(), getMrgSize(s2, 3));
@@ -6022,7 +6003,7 @@ public final class Scus94491BpeSegment {
         s4._02.set((short)MEMORY.ref(2, s0.getFile(0)).get());
 
         final long a0;
-        if(sp0x18[fileIndex] != 1) {
+        if(sp0x18[monsterSlot] != 1) {
           a0 = getMethodAddress(Scus94491BpeSegment.class, "FUN_8001ea98");
         } else {
           //LAB_8001d804
@@ -6204,12 +6185,8 @@ public final class Scus94491BpeSegment {
     decrementOverlayCount();
   }
 
-  //TODO verify this method
   @Method(0x8001e010L)
-  public static void FUN_8001e010(final long a0) {
-    final long v1;
-    final long a1;
-    final long s0;
+  public static void FUN_8001e010(final int a0) {
     if(a0 == 0) {
       //LAB_8001e054
       FUN_80020360(spu28Arr_800bd110, spu28Arr_800bca78);
@@ -6218,64 +6195,61 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
 
       loadedDrgnFiles_800bcf78.oru(0x80L);
-      loadDrgnBinFile(0, 5815, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5815 * 0x100L, 0x4L);
-
+      loadDrgnBinFile(0, 5815, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5815 << 8, 0x4L);
       //LAB_8001e044
-    } else if(a0 == 0x1L) {
+    } else if(a0 == 1) {
       //LAB_8001e094
       FUN_8001ad18();
       unloadSoundFile(8);
       unloadSoundFile(8);
 
       //LAB_8001e0bc
-//      loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
-      _800bd782.addu(0x1L);
-//      loadDrgnBinFile(0, 5900, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5900 * 0x100L, 0x4L);
-    } else if((int)a0 == -0x1L) {
+      loadedDrgnFiles_800bcf78.oru(0x80L);
+      loadDrgnBinFile(0, 5900, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5900 << 8, 0x4L);
+    } else if(a0 == -1) {
       //LAB_8001e0f8
       if(_800bdc34.get() != 0) {
-        if(mainCallbackIndex_8004dd20.get() == 0x8L && gameState_800babc8._4e4.get() != 0) {
+        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8._4e4.get() != 0) {
           sssqResetStuff();
           unloadSoundFile(8);
-
-          //LAB_8001e23c
-//          loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
-          _800bd782.addu(0x1L);
-//          loadDrgnBinFile(0, 5850, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5850 * 0x100L, 0x4L);
+          loadedDrgnFiles_800bcf78.oru(0x80L);
+          loadDrgnBinFile(0, 5850, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5850 << 8, 0x4L);
         }
       } else {
         //LAB_8001e160
-        FUN_800201c8(0x6L);
+        FUN_800201c8(6);
         unloadSoundFile(8);
-        v1 = mainCallbackIndex_8004dd20.get();
-        if(v1 == 0x5L) {
-          //LAB_8001e1ac
-          s0 = FUN_8001c60c();
-          if((int)s0 == -0x2L || (int)s0 == -0x3L) {
-            if((int)s0 == -0x2L) {
-              //LAB_8001e1f4
-              FUN_8001ada0();
-            }
-            //LAB_8001e1dc
-          } else if((int)s0 < -0x1L || s0 != a0) {
-            //LAB_8001e20c
-            unloadSoundFile(8);
-            a1 = 5815 + s0 * 5;
 
-            //LAB_8001e23c
-//            loadedDrgnFiles_800bcf78.oru(0x80L); TODO GH#3
-            _800bd782.addu(0x1L);
-//            loadDrgnBinFile(0, a1, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), a1 * 0x100L, 0x4L);
-          } else {
+        final long callbackIndex = mainCallbackIndex_8004dd20.get();
+        if(callbackIndex == 5) {
+          //LAB_8001e1ac
+          final int musicIndex = getSubmapMusicChange();
+          //LAB_8001e1dc
+          if(musicIndex == -1) {
             FUN_8001ae90();
+            _800bd782.setu(1);
+          } else if(musicIndex == -2) {
+            //LAB_8001e1f4
+            FUN_8001ada0();
 
             //LAB_8001e200
-            _800bd782.setu(0x1L);
+            _800bd782.setu(1);
+          } else if(musicIndex == -3) {
+            _800bd782.setu(1);
+          } else {
+            //LAB_8001e1dc
+            //LAB_8001e20c
+            unloadSoundFile(8);
+            final int fileIndex = 5815 + musicIndex * 5;
+
+            //LAB_8001e23c
+            loadedDrgnFiles_800bcf78.oru(0x80L);
+            loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8, 0x4L);
           }
-        } else if(v1 == 0x6L) {
+        } else if(callbackIndex == 6) {
           //LAB_8001e264
           sssqResetStuff();
-        } else if(v1 == 0x8L) {
+        } else if(callbackIndex == 8) {
           unloadSoundFile(8);
         }
       }
@@ -6283,9 +6257,9 @@ public final class Scus94491BpeSegment {
       //LAB_8001e26c
       FUN_8001ad18();
       FUN_80020360(spu28Arr_800bca78, spu28Arr_800bd110);
-
-      //LAB_8001e288
     }
+
+    //LAB_8001e288
   }
 
   @Method(0x8001e29cL)
@@ -6301,10 +6275,12 @@ public final class Scus94491BpeSegment {
 
       case 1 -> {
         //LAB_8001e324
-        for(int i = 0; i < 3; i++) {
-          if(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get()).used_00.get()) {
-            sssqUnloadPlayableSound(soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get()).playableSoundIndex_10.get());
-            soundFileArr_800bcf80.get((int)_800500f8.offset(i * 0x4L).get()).used_00.set(false);
+        for(int charSlot = 0; charSlot < 3; charSlot++) {
+          final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
+
+          if(soundFileArr_800bcf80.get(index).used_00.get()) {
+            sssqUnloadPlayableSound(soundFileArr_800bcf80.get(index).playableSoundIndex_10.get());
+            soundFileArr_800bcf80.get(index).used_00.set(false);
           }
 
           //LAB_8001e374
@@ -6321,11 +6297,13 @@ public final class Scus94491BpeSegment {
 
       case 3 -> {
         //LAB_8001e3dc
-        for(int i = 0; i < 4; i++) {
-          if(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get()).used_00.get()) {
-            free(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get()).soundMrgPtr_04.getPointer());
-            sssqUnloadPlayableSound(soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get()).playableSoundIndex_10.get());
-            soundFileArr_800bcf80.get((int)_800500e8.offset(i * 0x4L).get()).used_00.set(false);
+        for(int monsterIndex = 0; monsterIndex < 4; monsterIndex++) {
+          final int index = monsterSoundFileIndices_800500e8.get(monsterIndex).get();
+
+          if(soundFileArr_800bcf80.get(index).used_00.get()) {
+            free(soundFileArr_800bcf80.get(index).soundMrgPtr_04.getPointer());
+            sssqUnloadPlayableSound(soundFileArr_800bcf80.get(index).playableSoundIndex_10.get());
+            soundFileArr_800bcf80.get(index).used_00.set(false);
           }
 
           //LAB_8001e450
@@ -6653,11 +6631,11 @@ public final class Scus94491BpeSegment {
    * </ol>
    */
   @Method(0x8001f3d0L)
-  public static void loadMusicPackage(final long index, final long a1) {
+  public static void loadMusicPackage(final int index, final int a1) {
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.oru(0x80L);
-    final long fileIndex = 5815 + index * 5;
-    loadDrgnBinFile(0, (int)fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
+    final int fileIndex = 5815 + index * 5;
+    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
   }
 
   @Method(0x8001f450L)

@@ -1531,7 +1531,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0xa, 0xf, 0x19, 0x23, 0x5 -> {
         decrementOverlayCount();
-        FUN_8001e010(-1L);
+        FUN_8001e010(-1);
         scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38.setu(0);
       }

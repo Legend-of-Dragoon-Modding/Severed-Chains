@@ -266,7 +266,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_800202a4}</li>
    *   <li>{@link Scus94491BpeSegment#scriptPlaySound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ab98}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001abd0}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptPlayBobjSound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ac48}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ad5c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001adc8}</li>
@@ -299,7 +299,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#scriptSetSssqTempoScale}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ffc0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ac88}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptPlayCombatantSound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001acd8}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80020060}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f250}</li>
@@ -1136,7 +1136,7 @@ public final class Scus94491BpeSegment_800e {
       scriptSubFunctions_8004e29c.get(672 + i).set(scriptSubFunctions_800e74f0.get(i).deref());
     }
 
-    submapIndex_800bd808.setu(0);
+    submapIndex_800bd808.set(0);
 
     final TimHeader header = parseTimHeader(ovalBlobTimHeader_80010548);
     LoadImage(header.getImageRect(), header.getImageAddress());
