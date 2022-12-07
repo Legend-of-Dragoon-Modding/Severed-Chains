@@ -2442,11 +2442,11 @@ public final class Scus94491BpeSegment_8004 {
     // There are 12 notes per octave, %12 is likely getting the note, and /12 the octave
 
     if(note < a0) {
-      return (int)_8005967c.offset(((12 - (a0 - note) % 12) * 16 + a4 * (a3 - 0x40L) / 4 + 0xd0L + (short)a2) * 2).getSigned() >> (a0 - note) / 12 + 1 & 0xffff;
+      return (int)(_8005967c.offset(((12 - (a0 - note) % 12) * 16 + (int)a4 * (int)(a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() >> ((a0 - note) / 12 + 1));
     }
 
     //LAB_80048a38
-    return (int)_8005967c.offset(((note - a0) % 12 * 16 + a4 * (a3 - 0x40L) / 4 + 0xd0L + (short)a2) * 2).get() << (note - a0) / 12 & 0xffff;
+    return (int)(_8005967c.offset(((note - a0) % 12 * 16 + (int)a4 * (a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() << (note - a0) / 12);
   }
 
   @Method(0x80048ab8L) //TODO this appears to be calculating volume

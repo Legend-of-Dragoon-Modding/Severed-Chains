@@ -6072,10 +6072,10 @@ public final class Scus94491BpeSegment {
       soundFileArr_800bcf80.get(11).spuRamOffset_14.set(0);
       soundFileArr_800bcf80.get(11)._02.set((short)MEMORY.ref(2, soundMrg.getFile(0)).get());
       soundFileArr_800bcf80.get(11)._18.set((int)MEMORY.ref(1, soundMrg.getFile(1)).get() - 1);
+      soundFileArr_800bcf80.get(11).spuRamOffset_14.add(soundMrg.entries.get(4).size.get());
       setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001f810"));
       soundFileArr_800bcf80.get(11).playableSoundIndex_10.set(loadSshdAndSoundbank(soundMrg.getFile(4), soundMrgSshdPtr_800bd784.deref(), 0x2_1f70 + soundFileArr_800bcf80.get(11).spuRamOffset_14.get()));
       soundFileArr_800bcf80.get(11).used_00.set(true);
-      soundFileArr_800bcf80.get(11).spuRamOffset_14.add(soundMrg.entries.get(4).size.get());
       sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(soundFileArr_800bcf80.get(11).playableSoundIndex_10.get(), soundMrgSssqPtr_800bd788.deref()));
       _800bd781.setu(0x1L);
     } else {
@@ -6087,10 +6087,10 @@ public final class Scus94491BpeSegment {
         soundFileArr_800bcf80.get(11).spuRamOffset_14.set(0);
         soundFileArr_800bcf80.get(11)._02.set((short)MEMORY.ref(2, soundFileArr_800bcf80.get(11).soundMrgPtr_04.deref().getFile(0)).get());
         soundFileArr_800bcf80.get(11)._18.set((int)MEMORY.ref(1, soundMrg.getFile(1)).get() - 1);
+        soundFileArr_800bcf80.get(11).spuRamOffset_14.add(soundMrg.entries.get(4).size.get());
         setSpuDmaCompleteCallback(getMethodAddress(Scus94491BpeSegment.class, "FUN_8001f810"));
         soundFileArr_800bcf80.get(11).playableSoundIndex_10.set(loadSshdAndSoundbank(soundMrg.getFile(4), soundFileArr_800bcf80.get(11).soundMrgPtr_04.deref().getFile(3, SshdFile::new), 0x2_1f70 + soundFileArr_800bcf80.get(11).spuRamOffset_14.get()));
         soundFileArr_800bcf80.get(11).used_00.set(true);
-        soundFileArr_800bcf80.get(11).spuRamOffset_14.add(soundMrg.entries.get(4).size.get());
         sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(soundFileArr_800bcf80.get(11).playableSoundIndex_10.get(), soundFileArr_800bcf80.get(11).soundMrgPtr_04.deref().getFile(2, SssqFile::new)));
       } else {
         //LAB_8001dcdc
