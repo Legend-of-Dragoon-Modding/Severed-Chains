@@ -3797,7 +3797,8 @@ public final class Scus94491BpeSegment_8004 {
 
       if(spu66.used_00.get() && spu66.playableSoundIndex_22.get() == playableSoundIndex) {
         //LAB_8004c1e8
-        assert false : "PlayableSound still in use";
+        LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSoundIndex);
+        LOGGER.error(new Throwable());
         return -0x1L;
       }
 
@@ -4053,11 +4054,11 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cb0cL)
-  public static long FUN_8004cb0c(final long playableSoundIndex, final long a1) {
+  public static long FUN_8004cb0c(final int playableSoundIndex, final long a1) {
     assert playableSoundIndex >= 0;
     assert a1 >= 0;
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get((int)playableSoundIndex);
+    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
     sshdPtr_800c4ac0.set(sound.sshdPtr_04.deref());
 
     if(!sound.used_00.get()) {
@@ -4320,9 +4321,35 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d2fcL)
-  public static long FUN_8004d2fc(final int channelIndex, final long a1, final long a2) {
-    assert false;
-    return 0;
+  public static short FUN_8004d2fc(final int channelIndex, final short a1, final short a2) {
+    final SpuStruct124 struct124 = _800c4ac8.get(channelIndex);
+    final SssqFile a3 = struct124.sssqPtr_010.deref();
+    sssqPtr_800c667c.setu(a3.getAddress());
+
+    short ret = -1;
+
+    if(a1 >= 0x100 || a2 >= 0x80) {
+      throw new IllegalArgumentException();
+    }
+
+    final int v1 = struct124._028.get();
+
+    if(v1 == 0) {
+      //LAB_8004d3b0
+      FUN_8004c8dc(channelIndex, 0);
+      FUN_8004cf8c(channelIndex);
+      struct124._03a.set(0);
+
+      //LAB_8004d3c8
+      ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
+    } else if(v1 == 1 && a3._00.get() < a2) {
+      struct124._03a.set(0);
+      ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
+    }
+
+    //LAB_8004d3f4
+    //LAB_8004d3f8
+    return ret;
   }
 
   @Method(0x8004d41cL)
