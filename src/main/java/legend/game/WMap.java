@@ -1040,7 +1040,6 @@ public class WMap {
     }
 
     //LAB_800cd32c
-    unloadSoundFile(9);
     vsyncMode_8007a3b8.set(2);
   }
 
