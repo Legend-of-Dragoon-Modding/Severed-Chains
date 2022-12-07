@@ -6194,8 +6194,10 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
       unloadSoundFile(8);
 
-      loadedDrgnFiles_800bcf78.oru(0x80L);
-      loadDrgnBinFile(0, 5815, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5815 << 8, 0x4L);
+      //TODO GH#3
+      _800bd782.addu(0x1L);
+//      loadedDrgnFiles_800bcf78.oru(0x80L);
+//      loadDrgnBinFile(0, 5815, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5815 << 8, 0x4L);
       //LAB_8001e044
     } else if(a0 == 1) {
       //LAB_8001e094
@@ -6204,16 +6206,20 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
 
       //LAB_8001e0bc
-      loadedDrgnFiles_800bcf78.oru(0x80L);
-      loadDrgnBinFile(0, 5900, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5900 << 8, 0x4L);
+      //TODO GH#3
+      _800bd782.addu(0x1L);
+//      loadedDrgnFiles_800bcf78.oru(0x80L);
+//      loadDrgnBinFile(0, 5900, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5900 << 8, 0x4L);
     } else if(a0 == -1) {
       //LAB_8001e0f8
       if(_800bdc34.get() != 0) {
         if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8._4e4.get() != 0) {
           sssqResetStuff();
           unloadSoundFile(8);
-          loadedDrgnFiles_800bcf78.oru(0x80L);
-          loadDrgnBinFile(0, 5850, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5850 << 8, 0x4L);
+          //TODO GH#3
+          _800bd782.addu(0x1L);
+//          loadedDrgnFiles_800bcf78.oru(0x80L);
+//          loadDrgnBinFile(0, 5850, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), 5850 << 8, 0x4L);
         }
       } else {
         //LAB_8001e160
@@ -6243,8 +6249,10 @@ public final class Scus94491BpeSegment {
             final int fileIndex = 5815 + musicIndex * 5;
 
             //LAB_8001e23c
-            loadedDrgnFiles_800bcf78.oru(0x80L);
-            loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8, 0x4L);
+            //TODO GH#3
+            _800bd782.addu(0x1L);
+//            loadedDrgnFiles_800bcf78.oru(0x80L);
+//            loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8, 0x4L);
           }
         } else if(callbackIndex == 6) {
           //LAB_8001e264
@@ -6633,44 +6641,54 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f3d0L)
   public static void loadMusicPackage(final int index, final int a1) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
-    final int fileIndex = 5815 + index * 5;
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    final int fileIndex = 5815 + index * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
   }
 
   @Method(0x8001f450L)
   public static long scriptLoadMusicPackage(final RunningScript a0) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
-    final int fileIndex = 5815 + a0.params_20.get(0).deref().get() * 5;
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    final int fileIndex = 5815 + a0.params_20.get(0).deref().get() * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
     return 0;
   }
 
   @Method(0x8001f560L)
   public static long FUN_8001f560(final RunningScript a0) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
-    final int fileIndex = 732 + a0.params_20.get(0).deref().get() * 5;
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    final int fileIndex = 732 + a0.params_20.get(0).deref().get() * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
     return 0;
   }
 
   @Method(0x8001f674L)
   public static long FUN_8001f674(final RunningScript a0) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
-    final int fileIndex = 2353 + a0.params_20.get(0).deref().get() * 6;
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    final int fileIndex = 2353 + a0.params_20.get(0).deref().get() * 6;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
     return 0;
   }
 
   @Method(0x8001f708L)
   public static void FUN_8001f708(final int chapterIndex, final int a1) {
     unloadSoundFile(8);
-    loadedDrgnFiles_800bcf78.oru(0x80L);
-    final int fileIndex = 5850 + chapterIndex * 5;
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a1, 0x4L);
+    //TODO GH#3
+    _800bd782.addu(0x1L);
+//    loadedDrgnFiles_800bcf78.oru(0x80L);
+//    final int fileIndex = 5850 + chapterIndex * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a1, 0x4L);
   }
 
   @Method(0x8001f810L)
