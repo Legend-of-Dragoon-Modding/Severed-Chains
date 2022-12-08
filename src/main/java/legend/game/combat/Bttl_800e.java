@@ -2006,6 +2006,7 @@ public final class Bttl_800e {
     return primitives;
   }
 
+  /** USED IN GATES OF HEAVEN MIRANDA VER - seems to be a atan2 only */
   @Method(0x800e45c0L)
   public static void FUN_800e45c0(final SVECTOR a0, final VECTOR a1) {
     final int angle = ratan2(a1.getX(), a1.getZ());
@@ -2014,6 +2015,7 @@ public final class Bttl_800e {
     a0.setZ((short)0);
   }
 
+  /** Rotation Matrix used in Red-Eyed Dragon Summoning */
   @Method(0x800e4674L)
   public static VECTOR FUN_800e4674(final VECTOR out, final SVECTOR rotation) {
     final MATRIX rotMatrix = new MATRIX();
@@ -2069,6 +2071,7 @@ public final class Bttl_800e {
     return 0;
   }
 
+  /** Shana and WHO??? Dragoon Transformation Use this - seems to change the source of Light on the fly */
   @Method(0x800e4824L)
   public static void FUN_800e4824(final int lightIndex, final int x, final int y, final int z) {
     final VECTOR sp0x18 = new VECTOR();
@@ -2079,12 +2082,14 @@ public final class Bttl_800e {
     light._10._00.set(0);
   }
 
+  /** Shana and WHO??? Dragoon Transformation Use this - continue the FUN_800e4824() processing */
   @Method(0x800e48a8L)
   public static long FUN_800e48a8(final RunningScript a0) {
     FUN_800e4824(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
     return 0;
   }
 
+  /** Unknown usage */
   @Method(0x800e48e8L)
   public static long FUN_800e48e8(final RunningScript a0) {
     final SVECTOR sp0x10 = new SVECTOR();
@@ -2095,6 +2100,7 @@ public final class Bttl_800e {
     return 0;
   }
 
+  /** Unknown usage */
   @Method(0x800e4964L)
   public static long FUN_800e4964(final RunningScript a0) {
     final SVECTOR sp0x10 = new SVECTOR();
@@ -2248,6 +2254,7 @@ public final class Bttl_800e {
     return 0;
   }
 
+  /** USED in Miranda Gates of Heaven Ver, continuing the Ratan */
   @Method(0x800e4fa0L)
   public static long FUN_800e4fa0(final RunningScript a0) {
     final int s3 = a0.params_20.get(1).deref().get();
@@ -3302,6 +3309,7 @@ public final class Bttl_800e {
     //LAB_800e7930
   }
 
+  /* Used in Professor - Zenebatos - Throwing Books attack ||| Also for Death Dimension */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1._00.get() >= 0) {
