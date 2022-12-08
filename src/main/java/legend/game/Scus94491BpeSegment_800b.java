@@ -19,6 +19,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
@@ -38,6 +39,7 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
+import legend.game.types.SpuStruct10;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
@@ -159,15 +161,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
-  public static final Value _800bd610 = MEMORY.ref(2, 0x800bd610L);
-
-  public static final Value _800bd614 = MEMORY.ref(4, 0x800bd614L);
-
-  public static final Value _800bd61c = MEMORY.ref(2, 0x800bd61cL);
-
+  public static final ArrayRef<SpuStruct10> spu10Arr_800bd610 = MEMORY.ref(2, 0x800bd610L, ArrayRef.of(SpuStruct10.class, 7, 0x10, SpuStruct10::new));
   public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
 
-  public static final ArrayRef<UnsignedIntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6f8L, ArrayRef.of(UnsignedIntRef.class, 3, 4, UnsignedIntRef::new));
+  public static final ArrayRef<IntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6e8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
@@ -191,12 +188,12 @@ public final class Scus94491BpeSegment_800b {
   public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
   public static final Value fileCount_800bd77c = MEMORY.ref(4, 0x800bd77cL);
 
-  public static final Value _800bd780 = MEMORY.ref(1, 0x800bd780L);
-  public static final Value _800bd781 = MEMORY.ref(1, 0x800bd781L);
-  public static final Value _800bd782 = MEMORY.ref(1, 0x800bd782L);
+  public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
+  public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
+  public static final UnsignedByteRef musicLoaded_800bd782 = MEMORY.ref(1, 0x800bd782L, UnsignedByteRef::new);
 
-  public static final Pointer<SshdFile> soundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
-  public static final Pointer<SssqFile> soundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
+  public static final Pointer<SshdFile> melbuSoundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
+  public static final Pointer<SssqFile> melbuSoundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
 
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final Value _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L);

@@ -27,6 +27,7 @@ import legend.game.types.CallbackStruct;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
+import legend.game.types.PartySoundPermutation02;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
@@ -34,6 +35,7 @@ import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
+import legend.game.types.SssqEntry;
 import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +48,9 @@ import static legend.core.Hardware.SPU;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.kernel.Bios.EnterCriticalSection;
 import static legend.core.kernel.Bios.ExitCriticalSection;
+import static legend.core.kernel.Kernel.EvMdNOINTR;
+import static legend.core.kernel.Kernel.EvSpCOMP;
+import static legend.core.kernel.Kernel.HwSPU;
 import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment._80011db4;
 import static legend.game.Scus94491BpeSegment._80011db8;
@@ -661,10 +666,8 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
   public static final FileEntry08 _8004f65c = MEMORY.ref(2, 0x8004f65cL, FileEntry08::new);
-
-  public static final Value _8004f664 = MEMORY.ref(1, 0x8004f664L);
-
-  public static final ArrayRef<UnsignedByteRef> _8004f698 = MEMORY.ref(1, 0x8004f698L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
+  public static final ArrayRef<PartySoundPermutation02> partyCombatSoundPermutations_8004f664 = MEMORY.ref(1, 0x8004f664L, ArrayRef.of(PartySoundPermutation02.class, 26, 2, PartySoundPermutation02::new));
+  public static final ArrayRef<UnsignedByteRef> singleCharacterCombatSoundFileIndices_8004f698 = MEMORY.ref(1, 0x8004f698L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
 
   public static final Value _8004f6a4 = MEMORY.ref(4, 0x8004f6a4L);
 
@@ -1480,7 +1483,7 @@ public final class Scus94491BpeSegment_8004 {
     struct66._3a.set(sshd10Ptr_800c6678.deref()._0d.get());
     struct66._3c.set((int)sssqDataPointer_800c6680.deref(1).offset(0xcL).get());
     struct66._3e.set(spu124._005.get());
-    struct66._44.set(0);
+    struct66.sssqEntry_44.set(0);
     struct66._40.set(sshd10Ptr_800c6678.deref()._02.get());
     struct66._4a.set(sshd10Ptr_800c6678.deref()._0a.get());
     struct66._4c.set(sshd10Ptr_800c6678.deref()._0c.get());
@@ -1622,7 +1625,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80046b24
       for(int s7 = s2._01e.get(); s7 < s2._026.get() + 1; s7++) {
         if(FUN_80048938(_800c6674.deref(1).get(), s7, s2._002.get())) {
-          final short voiceIndex = (short)FUN_80047e1c();
+          final short voiceIndex = FUN_80047e1c();
           if(voiceIndex == -1) {
             break;
           }
@@ -1673,7 +1676,7 @@ public final class Scus94491BpeSegment_8004 {
           s1._3e.set(s2._005.get());
           s1._40.set(sshd10Ptr_800c6678.deref()._02.get());
           s1._42.set(0);
-          s1._44.set(0);
+          s1.sssqEntry_44.set(0);
           s1._4a.set(sshd10Ptr_800c6678.deref()._0a.get());
           s1._4c.set((int)sssqDataPointer_800c6680.deref(1).offset(0x4L).get());
           s1._4e.set(120);
@@ -1793,7 +1796,7 @@ public final class Scus94491BpeSegment_8004 {
           final SpuStruct124 struct124 = _800c4ac8.get(struct66.channelIndex_06.get());
 
           long v1;
-          if(struct66._14.get() == 1 || struct66._44.get() == 1 || struct124._104.get() == 1) {
+          if(struct66._14.get() == 1 || struct66.sssqEntry_44.get() == 1 || struct124._104.get() == 1) {
             //LAB_800471d0
             //LAB_800471d4
             long a2 = struct66._36.get();
@@ -1801,7 +1804,7 @@ public final class Scus94491BpeSegment_8004 {
             long t2 = struct66._40.get();
             long a3 = struct66._38.get();
             long t3 = struct66._3a.get();
-            if(struct66._14.get() == 1 || struct66._44.get() == 1) {
+            if(struct66._14.get() == 1 || struct66.sssqEntry_44.get() == 1) {
               //LAB_80047220
               if((a1 & 0xffff) >= (t2 & 0xffff)) {
                 t2 = 120 - (a1 - t2);
@@ -1881,7 +1884,7 @@ public final class Scus94491BpeSegment_8004 {
               }
 
               //LAB_800474f0
-              if(struct66._44.get() != 0) {
+              if(struct66.sssqEntry_44.get() != 0) {
                 if(struct66._62.get() != 0) {
                   struct66._62.decr();
 
@@ -1911,7 +1914,7 @@ public final class Scus94491BpeSegment_8004 {
 
                   if(struct66._62.get() == 0) {
                     struct66._4e.set((int)a1);
-                    struct66._44.set(0);
+                    struct66.sssqEntry_44.set(0);
                   }
                 }
               }
@@ -2077,7 +2080,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80047e1cL)
-  public static long FUN_80047e1c() {
+  public static short FUN_80047e1c() {
     //LAB_80047e34
     for(int i = 0; i < 24; i++) {
       //LAB_80047e4c
@@ -2093,10 +2096,10 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80047ea0
-    long a1 = 24;
+    int a1 = 24;
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(_800c3a40.get(voiceIndex)._1a.get() == 0 && _800c3a40.get(voiceIndex)._08.get() == 0x1L) {
-        final long v1 = _800c3a40.get(voiceIndex)._0a.get();
+      if(_800c3a40.get(voiceIndex)._1a.get() == 0 && _800c3a40.get(voiceIndex)._08.get() == 1) {
+        final int v1 = _800c3a40.get(voiceIndex)._0a.get();
 
         if(a1 > v1) {
           a1 = v1;
@@ -2111,7 +2114,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80047f28
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
         if(_800c3a40.get(voiceIndex)._1a.get() == 0) {
-          final long v1 = _800c3a40.get(voiceIndex)._0a.get();
+          final int v1 = _800c3a40.get(voiceIndex)._0a.get();
 
           if(a1 > v1) {
             //LAB_80047f84
@@ -2127,15 +2130,13 @@ public final class Scus94491BpeSegment_8004 {
 
     if(a1 == 24) {
       _800c6630.voiceIndex_10.set((short)-1);
-      return -0x1L;
+      return -1;
     }
 
     //LAB_80047f90
-    final long a3 = a1 & 0xffffL;
-
     //LAB_80047fa0
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(a3 < _800c3a40.get(voiceIndex)._0a.get()) {
+      if((a1 & 0xffff) < _800c3a40.get(voiceIndex)._0a.get()) {
         _800c3a40.get(voiceIndex)._0a.decr();
       }
 
@@ -2153,12 +2154,12 @@ public final class Scus94491BpeSegment_8004 {
     if((a0 & 0xffffL) != 0) {
       //LAB_8004802c
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._1a.get() == 0x1L && _800c3a40.get(voiceIndex)._20.get() == (a0 & 0xffffL) && _800c3a40.get(voiceIndex).playableSoundIndex_22.get() == (playableSoundIndex & 0xffffL)) {
+        if(_800c3a40.get(voiceIndex)._1a.get() == 1 && _800c3a40.get(voiceIndex)._20.get() == (a0 & 0xffffL) && _800c3a40.get(voiceIndex).playableSoundIndex_22.get() == (playableSoundIndex & 0xffffL)) {
           //LAB_80048080
           for(int voiceIndex2 = 0; voiceIndex2 < 24; voiceIndex2++) {
-            final long v1 = _800c3a40.get(voiceIndex)._0a.get();
+            final int v1 = _800c3a40.get(voiceIndex)._0a.get();
 
-            if(v1 < _800c3a40.get(voiceIndex2)._0a.get() && v1 != 0x40L) {
+            if(v1 < _800c3a40.get(voiceIndex2)._0a.get() && v1 != 64) {
               _800c3a40.get(voiceIndex2)._0a.decr();
             }
 
@@ -2183,7 +2184,7 @@ public final class Scus94491BpeSegment_8004 {
       for(int i = 0; i < 24; i++) {
         //LAB_80048144
         for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-          if(_800c3a40.get(voiceIndex)._1a.get() == 0x1L) {
+          if(_800c3a40.get(voiceIndex)._1a.get() == 1) {
             final int v1 = _800c3a40.get(voiceIndex)._0a.get();
 
             if(v1 >= i && v1 < (short)t1) {
@@ -2216,7 +2217,7 @@ public final class Scus94491BpeSegment_8004 {
         t1 = 24;
       }
 
-      return -0x1L;
+      return -1;
     }
 
     //LAB_800482a0
@@ -2242,10 +2243,10 @@ public final class Scus94491BpeSegment_8004 {
     jmp_80048478:
     {
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._08.get() == 0x1L && _800c3a40.get(voiceIndex)._1a.get() != 0x1L) {
+        if(_800c3a40.get(voiceIndex)._08.get() == 1 && _800c3a40.get(voiceIndex)._1a.get() != 1) {
           //LAB_8004836c
           for(int voiceIndex2 = voiceIndex; voiceIndex2 < 24; voiceIndex2++) {
-            if(_800c3a40.get(voiceIndex2)._08.get() == 0x1L && _800c3a40.get(voiceIndex2)._1a.get() != 0x1L) {
+            if(_800c3a40.get(voiceIndex2)._08.get() == 1 && _800c3a40.get(voiceIndex2)._1a.get() != 1) {
               final int v1 = _800c3a40.get(voiceIndex2)._0a.get();
               if(v1 < (short)t1) {
                 t1 = v1;
@@ -2264,7 +2265,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_80048414
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._1a.get() != 0x1L) {
+        if(_800c3a40.get(voiceIndex)._1a.get() != 1) {
           final int v1 = _800c3a40.get(voiceIndex)._0a.get();
           if(v1 < (short)t1) {
             t1 = v1;
@@ -2282,7 +2283,7 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final int v1 = _800c3a40.get(voiceIndex)._0a.get();
 
-      if(v1 > (short)t1 && v1 != 0xffffL) {
+      if(v1 > (short)t1 && v1 != 0xffff) {
         _800c3a40.get(voiceIndex)._0a.decr();
       }
 
@@ -2354,7 +2355,7 @@ public final class Scus94491BpeSegment_8004 {
         if(spu66._1a.get() == 0) {
           if(spu66.channelIndex_06.get() == channelIndex) {
             if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020.get()) {
-              if(spu66.channel_04.get() == (spu124.command_000.get() & 0xfL)) {
+              if(spu66.channel_04.get() == (spu124.command_000.get() & 0xf)) {
                 if(spu66._02.get() == spu124._002.get()) {
                   if(spu66._0c.get() == 0) {
                     //LAB_800487d0
@@ -2474,7 +2475,7 @@ public final class Scus94491BpeSegment_8004 {
     sshd10Ptr_800c6678.add(a1 * 0x10L);
 
     final int a1_0;
-    if(a0 == 0x4L) {
+    if(a0 == 4) {
       a1_0 = sshd10Ptr_800c6678.deref()._0c.get();
     } else {
       //LAB_80048bc4
@@ -2693,7 +2694,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_800491b0
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-      if(spu66.channel_04.get() == (spu124.command_000.get() & 0xfL)) {
+      if(spu66.channel_04.get() == (spu124.command_000.get() & 0xf)) {
         if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020.get()) {
           if(spu66.channelIndex_06.get() == channelIndex) {
             if(spu66.used_00.get()) {
@@ -2793,7 +2794,7 @@ public final class Scus94491BpeSegment_8004 {
                   }
 
                   //LAB_80049578
-                  struct66._44.set(1);
+                  struct66.sssqEntry_44.set(1);
                   struct66._60.set((int)MEMORY.ref(1, a2).offset(0x3L).get());
                   struct66._62.set((int)(MEMORY.ref(1, a2).offset(0x2L).get() * 4 * struct44._42.get() / 60));
                   struct66._64.set((int)(MEMORY.ref(1, a2).offset(0x2L).get() * 4 * struct44._42.get() / 60));
@@ -2853,7 +2854,7 @@ public final class Scus94491BpeSegment_8004 {
         final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
 
         if(spu66.used_00.get()) {
-          if(spu66.channel_04.get() == (spu124.command_000.get() & 0xfL)) {
+          if(spu66.channel_04.get() == (spu124.command_000.get() & 0xf)) {
             if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020.get()) {
               if(spu66._08.get() != 1) {
                 if(spu66.channelIndex_06.get() == channelIndex) {
@@ -2915,7 +2916,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80049b80
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
         final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-        if(spu66.channel_04.get() == (spu124.command_000.get() & 0xfL)) {
+        if(spu66.channel_04.get() == (spu124.command_000.get() & 0xf)) {
           if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020.get()) {
             if(spu66.channelIndex_06.get() == channelIndex) {
               if(spu66._08.get() != 1) {
@@ -3269,7 +3270,7 @@ public final class Scus94491BpeSegment_8004 {
     final SpuStruct124 spu124 = _800c4ac8.get(channelIndex);
 
     final int command = (int)sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get()).get();
-    if((command & 0x80L) != 0) {
+    if((command & 0x80) != 0) {
       spu124.command_000.set(command);
       spu124._001.set(command);
     } else {
@@ -3434,7 +3435,7 @@ public final class Scus94491BpeSegment_8004 {
           }
 
           //LAB_8004b114
-          FUN_8004b464((short)channelIndex, i, sssqDataPointer_800c6680.deref(1).offset(0x3L).get());
+          FUN_8004b464((short)channelIndex, (short)i, (short)sssqDataPointer_800c6680.deref(1).offset(0x3L).get());
           s4++;
         }
 
@@ -3537,8 +3538,31 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b464L)
-  public static void FUN_8004b464(final int channelIndex, final long a1, final long a2) {
-    assert false;
+  public static void FUN_8004b464(final short channelIndex, final short sssqEntry, final short a2) {
+    final SpuStruct124 struct124 = _800c4ac8.get(channelIndex);
+    final SssqFile sssq = struct124.sssqPtr_010.deref();
+    sssqPtr_800c667c.setu(sssq.getAddress());
+    final SssqEntry entry = sssq.entries_10.get(sssqEntry);
+    sssqDataPointer_800c6680.setu(entry.getAddress());
+    entry._03.set(a2);
+    sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(a2 * sssqPtr_800c667c.deref(1).get() >> 7);
+
+    //LAB_8004b514
+    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+
+      if(struct66.used_00.get()) {
+        if(struct66._1a.get() == 0) {
+          if(struct66.playableSoundIndex_22.get() == struct124.playableSoundIndex_020.get()) {
+            if(struct66.channelIndex_06.get() == channelIndex) {
+              if(struct66.sssqEntry_44.get() == sssqEntry) {
+                FUN_8004ad2c(voiceIndex);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   @Method(0x8004b5bcL)
@@ -3548,18 +3572,20 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004b5e4L)
   public static short FUN_8004b5e4(final short a0, final short a1) {
-    short a2 = a1;
+    final short a2;
     if(a1 < 0) {
-      a2 = (short)-a1;
-      if(a0 < a2) {
-        a2 = a0;
+      if(a0 < -a1) {
+        a2 = (short)-a0;
+      } else {
+        a2 = a1;
       }
 
       //LAB_8004b618
-      a2 = (short)-a2;
       //LAB_8004b620
     } else if(a0 < a1) {
       a2 = a0;
+    } else {
+      a2 = a1;
     }
 
     //LAB_8004b638
@@ -3646,9 +3672,9 @@ public final class Scus94491BpeSegment_8004 {
 //    sp1c = _80011dbc.get();
 
     //LAB_8004b8ac
-    for(long a1 = 0; a1 < 0x100L; a1++) {
-      if(a1 != 0xd7L) { // Status register is read-only
-        MEMORY.ref(2, SPU.getAddress()).offset(a1 * 2).setu(0);
+    for(int registerIndex = 0; registerIndex < 0x100; registerIndex++) {
+      if(registerIndex != 0xd7) { // Status register is read-only
+        MEMORY.ref(2, SPU.getAddress()).offset(registerIndex * 2).setu(0);
       }
     }
 
@@ -3662,7 +3688,7 @@ public final class Scus94491BpeSegment_8004 {
 
     EnterCriticalSection();
     registerSpuDmaCallback(getMethodAddress(Scus94491BpeSegment_8004.class, "spuDmaCallback"));
-    final long eventId = OpenEvent(0xf000_0009L, (int)0x20L, (int)0x2000L, 0);
+    final long eventId = OpenEvent(HwSPU, EvSpCOMP, EvMdNOINTR, 0);
     spu44.eventSpuIrq_1c.set(eventId);
     EnableEvent(eventId);
     ExitCriticalSection();
@@ -3701,7 +3727,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004bab8
-    for(int soundIndex = 0; soundIndex < 0x7f; soundIndex++) {
+    for(int soundIndex = 0; soundIndex < 127; soundIndex++) {
       //LAB_8004bacc
       playableSoundPtrArr_800c43d0.get(soundIndex).used_00.set(false);
       playableSoundPtrArr_800c43d0.get(soundIndex).sshdPtr_04.clear();

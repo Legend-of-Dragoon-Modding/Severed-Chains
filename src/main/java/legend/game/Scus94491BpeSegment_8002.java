@@ -50,6 +50,7 @@ import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.RunningScript;
+import legend.game.types.SpuStruct10;
 import legend.game.types.SpuStruct28;
 import legend.game.types.Struct84;
 import legend.game.types.Textbox4c;
@@ -174,9 +175,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b._800bd610;
-import static legend.game.Scus94491BpeSegment_800b._800bd614;
-import static legend.game.Scus94491BpeSegment_800b._800bd61c;
+import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
@@ -247,7 +246,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    FUN_800201c8(0x6L);
+    FUN_800201c8(6);
   }
 
   @Method(0x80020060L)
@@ -264,12 +263,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800201c8L)
-  public static void FUN_800201c8(final long a0) {
-    if(_800bd610.offset(a0 * 16).get() != 0) {
-      FUN_8004d034((int)_800bd61c.offset(a0 * 16).get(), 1);
-      FUN_8004c390((int)_800bd61c.offset(a0 * 16).get());
-      free(_800bd614.offset(a0 * 16).get());
-      _800bd610.offset(a0 * 16).setu(0);
+  public static void FUN_800201c8(final int index) {
+    final SpuStruct10 struct10 = spu10Arr_800bd610.get(index);
+
+    if(struct10._00.get() != 0) {
+      FUN_8004d034(struct10.channelIndex_0c.get(), 1);
+      FUN_8004c390(struct10.channelIndex_0c.get());
+      free(struct10.mrg_04.getPointer());
+      struct10._00.set(0);
     }
 
     //LAB_80020220

@@ -12,6 +12,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
@@ -32,8 +33,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
 
-  public static final Value _8005019c = MEMORY.ref(4, 0x8005019cL);
-
+  public static final ArrayRef<UnsignedByteRef> _8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> _800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
 
   public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);

@@ -1109,7 +1109,7 @@ public final class Bttl_800c {
 
             if(encounterId_800bb0f8.get() != 443) { // Melbu
               _800bc974.setu(0x1L);
-              FUN_8001af00(0x6L);
+              FUN_8001af00(6);
             } else {
               //LAB_800c7d30
               _800bc974.setu(0x4L);

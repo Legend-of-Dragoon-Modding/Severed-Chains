@@ -232,7 +232,7 @@ import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
-import static legend.game.Scus94491BpeSegment_800b._800bd782;
+import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
@@ -2778,14 +2778,14 @@ public final class SMap {
           //LAB_800e1584
         }
 
-        _800bd782.setu(0);
+        musicLoaded_800bd782.set(0);
 
         final int ret = getSubmapMusicChange();
         if(ret == -1) {
           FUN_8001ae90();
 
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
@@ -2794,14 +2794,14 @@ public final class SMap {
           FUN_8001ada0();
 
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
 
         if(ret == -3) {
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
@@ -2812,7 +2812,7 @@ public final class SMap {
       }
 
       case 2 -> {
-        if(_800bd782.get() != 0 && (getLoadedDrgnFiles() & 0x2L) == 0) {
+        if(musicLoaded_800bd782.get() != 0 && (getLoadedDrgnFiles() & 0x2L) == 0) {
           loadingStage_800c68e4.addu(0x1L);
         }
       }
