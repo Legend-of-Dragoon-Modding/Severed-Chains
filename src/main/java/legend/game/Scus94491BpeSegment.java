@@ -778,10 +778,12 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    startSound();
-
     final Runnable r = () -> {
       EventManager.INSTANCE.clearStaleRefs();
+
+      if(!soundRunning) {
+        startSound();
+      }
 
       handleControllerInput();
 
@@ -864,7 +866,12 @@ public final class Scus94491BpeSegment {
 
   private static void soundLoop() {
     while(soundRunning) {
-      sssqTick();
+      try {
+        sssqTick();
+      } catch(final Throwable t) {
+        LOGGER.error("Sound thread crashed!", t);
+        soundRunning = false;
+      }
 
       while(System.nanoTime() <= soundTimer) {
         DebugHelper.sleep(0);
