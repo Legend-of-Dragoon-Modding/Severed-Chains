@@ -2499,6 +2499,11 @@ public final class Scus94491BpeSegment_8004 {
     a3.sshdPtr_08.set(sshd);
     sshdPtr_800c4ac0.set(sshd);
     final long t1 = sshd.getAddress() + sshd.ptr_1c.get();
+
+    if((sshd.ptr_1c.get() & 0x1) != 0) {
+      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptr_1c.get()), new Throwable());
+    }
+
     _800c4abc.setu(t1);
 
     if(sshd.ptr_20.get() != -1) {
@@ -2550,11 +2555,6 @@ public final class Scus94491BpeSegment_8004 {
         spu124._118.set(0);
         spu124._0e7.set(0);
         spu124.sssqPtr_010.setPointer(v0);
-
-        if((v0 & 0x3) != 0) {
-          LOGGER.error("SSSQ POINTER SET TO INVALID VALUE %08x".formatted(v0), new Throwable());
-        }
-
         spu124.sssqOffset_00c.set(0);
         spu124.playableSoundIndex_020.set(playableSoundIndex);
         spu124._024.set((int)a1);
@@ -3870,11 +3870,6 @@ public final class Scus94491BpeSegment_8004 {
           spu124._02a.set(0);
           spu124._118.set(0);
           spu124.sssqPtr_010.set(sssq);
-
-          if((spu124.sssqPtr_010.getPointer() & 0x3) != 0) {
-            LOGGER.error("SSSQ POINTER SET TO INVALID VALUE %08x".formatted(spu124.sssqPtr_010.getPointer()), new Throwable());
-          }
-
           spu124.sssqOffset_00c.set(0x110L);
           spu124.command_000.set((int)sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get()).get());
           spu124._001.set(spu124.command_000.get());
@@ -4359,8 +4354,8 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d2fcL)
   public static short FUN_8004d2fc(final int channelIndex, final short a1, final short a2) {
     final SpuStruct124 struct124 = _800c4ac8.get(channelIndex);
-    final SssqFile a3 = struct124.sssqPtr_010.deref();
-    sssqPtr_800c667c.setu(a3.getAddress());
+    final long a3 = struct124.sssqPtr_010.getPointer(); // Seems this can be 1-byte aligned, so we can't deref without causing alignment crashes
+    sssqPtr_800c667c.setu(a3);
 
     short ret = -1;
 
@@ -4378,7 +4373,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004d3c8
       ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
-    } else if(v1 == 1 && a3._00.get() < a2) {
+    } else if(v1 == 1 && MEMORY.ref(1, a3).offset(0x0L).get() < a2) {
       struct124._03a.set(0);
       ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
     }
