@@ -5273,6 +5273,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001b2acL)
   public static long FUN_8001b2ac(final RunningScript a0) {
+    //TODO GH#3 (re-enabling this causes code to fail later - after one fight, subsequent fights will have completely broken audio, repeatedly crashing the sound thread)
+    if(true) {
+      return 0;
+    }
+
     FUN_8004d2fc((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
     _800bd0f0.offset(2, 0x18L).setu(a0.params_20.get(1).deref().get());
     return 0;

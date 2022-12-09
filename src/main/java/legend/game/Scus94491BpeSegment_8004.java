@@ -35,7 +35,6 @@ import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
-import legend.game.types.SssqEntry;
 import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
@@ -3545,11 +3544,11 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004b464L)
   public static void FUN_8004b464(final short channelIndex, final short sssqEntry, final short a2) {
     final SpuStruct124 struct124 = _800c4ac8.get(channelIndex);
-    final SssqFile sssq = struct124.sssqPtr_010.deref();
-    sssqPtr_800c667c.setu(sssq.getAddress());
-    final SssqEntry entry = sssq.entries_10.get(sssqEntry);
-    sssqDataPointer_800c6680.setu(entry.getAddress());
-    entry._03.set(a2);
+    final long sssq = struct124.sssqPtr_010.getPointer();
+    sssqPtr_800c667c.setu(sssq);
+    final long entry = sssq + 0x10 + sssqEntry * 0x10;
+    sssqDataPointer_800c6680.setu(entry);
+    MEMORY.ref(1, entry).offset(0x03L).setu(a2);
     sssqDataPointer_800c6680.deref(1).offset(0xeL).setu(a2 * sssqPtr_800c667c.deref(1).get() >> 7);
 
     //LAB_8004b514
