@@ -2550,6 +2550,11 @@ public final class Scus94491BpeSegment_8004 {
         spu124._118.set(0);
         spu124._0e7.set(0);
         spu124.sssqPtr_010.setPointer(v0);
+
+        if((v0 & 0x3) != 0) {
+          LOGGER.error("SSSQ POINTER SET TO INVALID VALUE %08x".formatted(v0), new Throwable());
+        }
+
         spu124.sssqOffset_00c.set(0);
         spu124.playableSoundIndex_020.set(playableSoundIndex);
         spu124._024.set((int)a1);
@@ -3865,6 +3870,11 @@ public final class Scus94491BpeSegment_8004 {
           spu124._02a.set(0);
           spu124._118.set(0);
           spu124.sssqPtr_010.set(sssq);
+
+          if((spu124.sssqPtr_010.getPointer() & 0x3) != 0) {
+            LOGGER.error("SSSQ POINTER SET TO INVALID VALUE %08x".formatted(spu124.sssqPtr_010.getPointer()), new Throwable());
+          }
+
           spu124.sssqOffset_00c.set(0x110L);
           spu124.command_000.set((int)sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get()).get());
           spu124._001.set(spu124.command_000.get());
