@@ -18,6 +18,7 @@ import legend.core.memory.segments.RamSegment;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.Scus94491BpeSegment_8004;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +47,9 @@ public class Spu implements Runnable, MemoryRef {
   public final UnsignedShortRef VOICE_KEY_ON_LO = MEMORY.ref(2, 0x1f801d88L, UnsignedShortRef::new);
   public final UnsignedShortRef VOICE_KEY_ON_HI = MEMORY.ref(2, 0x1f801d8aL, UnsignedShortRef::new);
   public final UnsignedIntRef VOICE_KEY_OFF = MEMORY.ref(4, 0x1f801d8cL, UnsignedIntRef::new);
+  /** 0x18c */
   public final UnsignedShortRef VOICE_KEY_OFF_LO = MEMORY.ref(2, 0x1f801d8cL, UnsignedShortRef::new);
+  /** 0x18e */
   public final UnsignedShortRef VOICE_KEY_OFF_HI = MEMORY.ref(2, 0x1f801d8eL, UnsignedShortRef::new);
   public final UnsignedIntRef VOICE_CHN_FM_MODE = MEMORY.ref(4, 0x1f801d90L, UnsignedIntRef::new);
   public final UnsignedIntRef VOICE_CHN_NOISE_MODE = MEMORY.ref(4, 0x1f801d94L, UnsignedIntRef::new);
@@ -66,7 +69,9 @@ public class Spu implements Runnable, MemoryRef {
   public final UnsignedShortRef EXT_VOL_L = MEMORY.ref(2, 0x1f801db4L, UnsignedShortRef::new);
   public final UnsignedShortRef EXT_VOL_R = MEMORY.ref(2, 0x1f801db6L, UnsignedShortRef::new);
   public final UnsignedIntRef CURR_MAIN_VOL = MEMORY.ref(4, 0x1f801db8L, UnsignedIntRef::new);
+  /** 1b8 */
   public final UnsignedShortRef CURR_MAIN_VOL_L = MEMORY.ref(2, 0x1f801db8L, UnsignedShortRef::new);
+  /** 1ba */
   public final UnsignedShortRef CURR_MAIN_VOL_R = MEMORY.ref(2, 0x1f801dbaL, UnsignedShortRef::new);
 
   private final SourceDataLine sound;
@@ -190,7 +195,6 @@ public class Spu implements Runnable, MemoryRef {
     this.keyOn = 0;
     this.keyOff = 0;
 
-/*
     this.tickNoiseGenerator();
 
     for(int i = 0; i < this.voices.length; i++) {
@@ -233,7 +237,6 @@ public class Spu implements Runnable, MemoryRef {
       sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
       sumRight += sample * v.processVolume(v.volumeRight) >> 15;
     }
-*/
 
     if(!this.control.spuUnmuted()) { //todo merge this on the for voice loop
       //On mute the spu still ticks but output is 0 for voices (not for cdInput)
@@ -406,15 +409,17 @@ public class Spu implements Runnable, MemoryRef {
     LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
     final byte[] data = MEMORY.getBytes(ramOffset, size);
     this.processDmaWrite(spuRamOffset, data);
-    DMA.spu.transferComplete();
-    INTERRUPTS.set(InterruptType.SPU);
+//    DMA.spu.transferComplete();
+//    INTERRUPTS.set(InterruptType.SPU);
+    Scus94491BpeSegment_8004.spuDmaCallback();
   }
 
   public void directWrite(final int spuRamOffset, final byte[] data) {
     LOGGER.info("Performing direct write from byte array to SPU @ %04x (%d bytes)", spuRamOffset, data.length);
     this.processDmaWrite(spuRamOffset, data);
-    DMA.spu.transferComplete();
-    INTERRUPTS.set(InterruptType.SPU);
+//    DMA.spu.transferComplete();
+//    INTERRUPTS.set(InterruptType.SPU);
+    Scus94491BpeSegment_8004.spuDmaCallback();
   }
 
   private byte[] processDmaLoad(final int size) {
@@ -439,22 +444,7 @@ public class Spu implements Runnable, MemoryRef {
   }
 
   private void processDmaWrite(final int spuRamOffset, final byte[] dma) {
-    //Tekken 3 and FF8 overflows SPU Ram
-    final int destAddress = spuRamOffset + dma.length - 1;
-
-    if(destAddress <= 0x7FFFF) {
-      System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-    } else {
-      final int overflow = destAddress - 0x7FFFF;
-
-      final byte[] firstSlice = new byte[dma.length - overflow];
-      final byte[] overflowSpan = new byte[overflow];
-      System.arraycopy(dma, 0, firstSlice, 0, firstSlice.length);
-      System.arraycopy(dma, firstSlice.length, overflowSpan, 0, overflowSpan.length);
-
-      System.arraycopy(firstSlice, 0, this.ram, spuRamOffset, firstSlice.length);
-      System.arraycopy(overflowSpan, 0, this.ram, 0, overflowSpan.length);
-    }
+    System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
 
     if(this.irqAddress > spuRamOffset && this.irqAddress < spuRamOffset + dma.length) {
       INTERRUPTS.set(InterruptType.SPU);

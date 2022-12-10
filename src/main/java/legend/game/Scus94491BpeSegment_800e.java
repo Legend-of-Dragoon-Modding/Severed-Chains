@@ -38,7 +38,7 @@ import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.heap_8011e210;
-import static legend.game.Scus94491BpeSegment.loadDRGN0_mrg_62802_sounds;
+import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
-import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
 import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
@@ -266,7 +266,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment#FUN_800202a4}</li>
    *   <li>{@link Scus94491BpeSegment#scriptPlaySound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ab98}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001abd0}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptPlayBobjSound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ac48}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ad5c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001adc8}</li>
@@ -292,14 +292,14 @@ public final class Scus94491BpeSegment_800e {
    *
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#FUN_8001b2ac}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b310}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptSssqFadeOut}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b33c}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b3a0}</li>
    *   <li>{@link Scus94491BpeSegment#scriptGetSssqTempoScale}</li>
    *   <li>{@link Scus94491BpeSegment#scriptSetSssqTempoScale}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001ffc0}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ac88}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptPlayCombatantSound}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001acd8}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80020060}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_8001f250}</li>
@@ -985,7 +985,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e64d4L)
   public static void loadSoundsAndChangeVideoMode() {
-    loadDRGN0_mrg_62802_sounds();
+    loadMenuSounds();
     setWidthAndFlags(320);
 
     pregameLoadingStage_800bb10c.setu(0);
@@ -1136,7 +1136,7 @@ public final class Scus94491BpeSegment_800e {
       scriptSubFunctions_8004e29c.get(672 + i).set(scriptSubFunctions_800e74f0.get(i).deref());
     }
 
-    _800bd808.setu(0);
+    submapIndex_800bd808.set(0);
 
     final TimHeader header = parseTimHeader(ovalBlobTimHeader_80010548);
     LoadImage(header.getImageRect(), header.getImageAddress());

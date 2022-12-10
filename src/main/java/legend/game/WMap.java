@@ -1040,7 +1040,6 @@ public class WMap {
     }
 
     //LAB_800cd32c
-    unloadSoundFile(9);
     vsyncMode_8007a3b8.set(2);
   }
 
@@ -7109,7 +7108,7 @@ public class WMap {
 
     _800c6798.setu(_800f0e34.get(sp1c)._0e.get() - 0x1L);
     _800c679c.setu(_800c6798.get());
-    continentIndex_800bf0b0.setu(_800c6798.get());
+    continentIndex_800bf0b0.set((int)_800c6798.get());
 
     FUN_800ea630(sp1c);
 
@@ -7166,7 +7165,7 @@ public class WMap {
       _800c67a8.setu(sp1c);
       _800c6798.setu(_800f0e34.get(sp1c)._0e.get() - 0x1L);
       _800c679c.setu(_800c6798.get());
-      continentIndex_800bf0b0.setu(_800c6798.get());
+      continentIndex_800bf0b0.set((int)_800c6798.get());
 
       final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
       if(area._00.get() < 0) {
@@ -7681,7 +7680,7 @@ public class WMap {
     if(_800c6870.get() != 0) {
       if((int)_800c6870.get() < 0x3L) {
         FUN_800e3fac(1);
-        submapCut_80052c30.set(285);
+        submapCut_80052c30.set(285); // I think this is a Queen Fury cut
         _80052c34.setu(0x20L);
         _800c6870.setu(0x3L);
       }

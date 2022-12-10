@@ -1,16 +1,18 @@
 package legend.game.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class SpuStruct66 implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedShortRef used_00;
+  public final BoolRef used_00;
   public final UnsignedShortRef _02;
   public final UnsignedShortRef channel_04;
-  public final UnsignedShortRef channelIndex_06;
+  public final ShortRef channelIndex_06;
   public final UnsignedShortRef _08;
   public final UnsignedShortRef _0a;
   public final UnsignedShortRef _0c;
@@ -34,18 +36,19 @@ public class SpuStruct66 implements MemoryRef {
   public final UnsignedShortRef _30;
   public final UnsignedShortRef _32;
   public final UnsignedShortRef _34;
-  public final UnsignedShortRef _36;
+  public final ShortRef _36;
   public final UnsignedShortRef _38;
   public final UnsignedShortRef _3a;
   public final UnsignedShortRef _3c;
   public final UnsignedShortRef _3e;
   public final UnsignedShortRef _40;
   public final UnsignedShortRef _42;
-  public final UnsignedShortRef _44;
+  public final UnsignedShortRef sssqEntry_44;
   public final UnsignedShortRef _46;
   public final UnsignedShortRef _48;
   public final UnsignedShortRef _4a;
   public final UnsignedShortRef _4c;
+  /** Maybe tempo? */
   public final UnsignedShortRef _4e;
   public final UnsignedShortRef _50;
   public final UnsignedShortRef _52;
@@ -62,10 +65,10 @@ public class SpuStruct66 implements MemoryRef {
   public SpuStruct66(final Value ref) {
     this.ref = ref;
 
-    this.used_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+    this.used_00 = ref.offset(2, 0x00L).cast(BoolRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.channel_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.channelIndex_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.channelIndex_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
@@ -89,14 +92,14 @@ public class SpuStruct66 implements MemoryRef {
     this._30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
     this._32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
-    this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
+    this._36 = ref.offset(2, 0x36L).cast(ShortRef::new);
     this._38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
     this._3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
     this._3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);
     this._3e = ref.offset(2, 0x3eL).cast(UnsignedShortRef::new);
     this._40 = ref.offset(2, 0x40L).cast(UnsignedShortRef::new);
     this._42 = ref.offset(2, 0x42L).cast(UnsignedShortRef::new);
-    this._44 = ref.offset(2, 0x44L).cast(UnsignedShortRef::new);
+    this.sssqEntry_44 = ref.offset(2, 0x44L).cast(UnsignedShortRef::new);
     this._46 = ref.offset(2, 0x46L).cast(UnsignedShortRef::new);
     this._48 = ref.offset(2, 0x48L).cast(UnsignedShortRef::new);
     this._4a = ref.offset(2, 0x4aL).cast(UnsignedShortRef::new);

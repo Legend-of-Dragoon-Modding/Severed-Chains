@@ -10,7 +10,9 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
@@ -24,18 +26,14 @@ import static legend.core.Hardware.MEMORY;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
-  public static final Value _80050068 = MEMORY.ref(2, 0x80050068L);
-
-  public static final Value _800500e8 = MEMORY.ref(4, 0x800500e8L);
-
-  public static final Value _800500f8 = MEMORY.ref(4, 0x800500f8L);
-
+  public static final ArrayRef<ShortRef> submapMusic_80050068 = MEMORY.ref(2, 0x80050068L, ArrayRef.of(ShortRef.class, 64, 2, ShortRef::new));
+  public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final Value _80050104 = MEMORY.ref(4, 0x80050104L);
 
   public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
 
-  public static final Value _8005019c = MEMORY.ref(4, 0x8005019cL);
-
+  public static final ArrayRef<UnsignedByteRef> _8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> _800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
 
   public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);

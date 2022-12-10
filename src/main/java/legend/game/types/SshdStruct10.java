@@ -14,13 +14,19 @@ public class SshdStruct10 implements MemoryRef {
   public final UnsignedByteRef _02;
   public final ByteRef _03;
   public final UnsignedShortRef _04;
-  public final UnsignedShortRef _06;
-  public final UnsignedShortRef _08;
+  public final UnsignedShortRef adsrLo_06;
+  public final UnsignedShortRef adsrHi_08;
   public final UnsignedByteRef _0a;
   public final UnsignedByteRef _0b;
   public final UnsignedByteRef _0c;
   public final UnsignedByteRef _0d;
   public final UnsignedByteRef _0e;
+  /**
+   * <ul>
+   *   <li>0x2 - noise on</li>
+   *   <li>0x80 - reverb on</li>
+   * </ul>
+   */
   public final UnsignedByteRef _0f;
 
   public SshdStruct10(final Value ref) {
@@ -31,8 +37,8 @@ public class SshdStruct10 implements MemoryRef {
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
     this._03 = ref.offset(1, 0x03L).cast(ByteRef::new);
     this._04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
+    this.adsrLo_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
+    this.adsrHi_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this._0a = ref.offset(1, 0x0aL).cast(UnsignedByteRef::new);
     this._0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
     this._0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);

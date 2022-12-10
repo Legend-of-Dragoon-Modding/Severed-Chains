@@ -119,7 +119,7 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
+import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
@@ -137,7 +137,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
-import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
@@ -1210,7 +1210,7 @@ public final class SItem {
             } else if(a0 == 0x1L) {
               //LAB_800fd1a0
               gameState_800babc8.mono_4e0.set(0);
-              setMonoOrStereo(0);
+              setMono(0);
             } else if(a0 == 0x2L) {
               //LAB_800fd1b8
               gameState_800babc8.morphMode_4e2.set(0);
@@ -1235,16 +1235,16 @@ public final class SItem {
               FUN_8002bcc8(0, 0x100L);
               FUN_8002bda4(0, 0, 0x3cL);
               FUN_8002379c();
-            } else if(v1 == 0x1L) {
+            } else if(v1 == 1) {
               //LAB_800fd278
               gameState_800babc8.mono_4e0.set(1);
-              setMonoOrStereo(0x1L);
-            } else if(v1 == 0x2L) {
+              setMono(1);
+            } else if(v1 == 2) {
               //LAB_800fd290
               gameState_800babc8.morphMode_4e2.set(1);
-            } else if(v1 == 0x3L) {
+            } else if(v1 == 3) {
               //LAB_800fd29c
-              if(gameState_800babc8.indicatorMode_4e8.get() < 0x2L) {
+              if(gameState_800babc8.indicatorMode_4e8.get() < 2) {
                 gameState_800babc8.indicatorMode_4e8.incr();
               }
             }
@@ -2192,7 +2192,7 @@ public final class SItem {
 
         //LAB_800ff730
         FUN_8002379c();
-        setMonoOrStereo(gameState_800babc8.mono_4e0.get());
+        setMono(gameState_800babc8.mono_4e0.get());
 
         //LAB_800ff754
         inventoryMenuState_800bdc28.set(InventoryMenuState._71);
@@ -3011,10 +3011,10 @@ public final class SItem {
 
     final LodString v1;
     if(mainCallbackIndex_8004dd20.get() == 0x5L) {
-      v1 = submapNames_8011c108.get((int)_800bd808.get()).deref();
+      v1 = submapNames_8011c108.get(submapIndex_800bd808.get()).deref();
     } else {
       //LAB_80101ec0
-      v1 = worldMapNames_8011c1ec.get((int)continentIndex_800bf0b0.get()).deref();
+      v1 = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();
     }
 
     //LAB_80101ed4
@@ -3621,7 +3621,7 @@ public final class SItem {
     if(mainCallbackIndex_8004dd20.get() == 0x8L) {
       //LAB_80103c8c
       tempSaveData_8011dcc0.offset(1, 0x2dL).setu(0x1L);
-      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(continentIndex_800bf0b0.offset(1, 0x0L)); //1b
+      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(continentIndex_800bf0b0.get());
       //LAB_80103c98
     } else if(whichMenu_800bdc38.get() == 0x13L) {
       //LAB_80103c8c
@@ -3630,7 +3630,7 @@ public final class SItem {
     } else {
       //LAB_80103cb4
       tempSaveData_8011dcc0.offset(1, 0x2dL).setu(0);
-      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(_800bd808);
+      tempSaveData_8011dcc0.offset(1, 0x2cL).setu(submapIndex_800bd808.get());
     }
   }
 

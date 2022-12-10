@@ -3422,25 +3422,15 @@ public final class Bttl_800f {
 
   @Method(0x800f8568L)
   public static LodString getTargetEnemyName(final BattleObject27c target, final LodString targetName) {
-    if(target.charIndex_272.get() != 0x185L) {
-      return targetName;
-    }
-
-    final long v1 = _8006e398._eec.get();
-    if(v1 != 0x4L) {
-      if((int)v1 < 0x5L) {
-        if(v1 != 0) {
-          return targetName;
-        }
-        //LAB_800f85ec
-      } else if(v1 != 0x6L) {
-        return targetName;
+    // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
+    if(target.charIndex_272.get() == 0x185) {
+      final int stageProgression = _8006e398.stageProgression_eec.get();
+      if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
+        return _800c6ba8.get((int)_800c6f30.offset(_8006e398.stageProgression_eec.get() * 0x4L).get());
       }
     }
 
-    //LAB_800f85f4
-    //LAB_800f8634
-    return _800c6ba8.get((int)_800c6f30.offset(_8006e398._eec.get() * 0x4L).get());
+    return targetName;
   }
 
   @Method(0x800f863cL)

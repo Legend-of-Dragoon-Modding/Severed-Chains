@@ -57,11 +57,11 @@ public class BattleStructEf4 implements MemoryRef {
 
   public final ArrayRef<IntRef> bobjIndices_ebc;
 
-  public final ByteRef _ee4;
+  public final ByteRef morphMode_ee4;
 
   /** Note: nodart code no longer uses this */
   public final Pointer<PartyPermutation08> partyPermutation_ee8;
-  public final IntRef _eec;
+  public final IntRef stageProgression_eec;
 
   public BattleStructEf4(final Value ref) {
     this.ref = ref;
@@ -90,10 +90,10 @@ public class BattleStructEf4 implements MemoryRef {
 
     this.bobjIndices_ebc = ref.offset(4, 0xebcL).cast(ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
 
-    this._ee4 = ref.offset(1, 0xee4L).cast(ByteRef::new);
+    this.morphMode_ee4 = ref.offset(1, 0xee4L).cast(ByteRef::new);
 
     this.partyPermutation_ee8 = ref.offset(4, 0xee8L).cast(Pointer.deferred(4, PartyPermutation08::new));
-    this._eec = ref.offset(4, 0xeecL).cast(IntRef::new);
+    this.stageProgression_eec = ref.offset(4, 0xeecL).cast(IntRef::new);
   }
 
   @Override

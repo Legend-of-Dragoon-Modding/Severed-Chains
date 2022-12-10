@@ -98,11 +98,12 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.executeSInitLoadingStage;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
-import static legend.game.Scus94491BpeSegment.FUN_8001c60c;
-import static legend.game.Scus94491BpeSegment.FUN_8001eadc;
+import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
+import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.cdName_80011700;
@@ -116,6 +117,7 @@ import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
+import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
@@ -205,6 +207,7 @@ import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
+import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
@@ -229,11 +232,11 @@ import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
-import static legend.game.Scus94491BpeSegment_800b._800bd782;
+import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b._800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdd24;
@@ -508,8 +511,8 @@ public final class SMap {
   public static final ArrayRef<UnsignedShortRef> texPages_800d6050 = MEMORY.ref(2, 0x800d6050L, ArrayRef.of(UnsignedShortRef.class, 12, 2, UnsignedShortRef::new));
   public static final ArrayRef<UnsignedShortRef> cluts_800d6068 = MEMORY.ref(2, 0x800d6068L, ArrayRef.of(UnsignedShortRef.class, 12, 2, UnsignedShortRef::new));
 
-  public static final Value _800d610c = MEMORY.ref(2, 0x800d610cL);
-
+  /** Maps submap cuts to their submap */
+  public static final ArrayRef<UnsignedShortRef> cutToSubmap_800d610c = MEMORY.ref(2, 0x800d610cL, ArrayRef.of(UnsignedShortRef.class, 792, 2, UnsignedShortRef::new));
   /** TIM */
   public static final Value _800d673c = MEMORY.ref(4, 0x800d673cL);
 
@@ -785,10 +788,10 @@ public final class SMap {
 
     SInitBinLoaded_800bbad0.set(true);
 
-    //TODO GH#3
-//    FUN_80019610();
-//    loadDRGN0_mrg_62802_sounds();
-//    sssqFadeIn(0x3cL, 0x7fL);
+    // Reload main sounds after disk swap?
+    FUN_80019610();
+    loadMenuSounds();
+    sssqFadeIn(0x3c, 0x7f);
 
     //LAB_800d99e0
     return 1;
@@ -1984,7 +1987,7 @@ public final class SMap {
 
   @Method(0x800dfb28L)
   public static long FUN_800dfb28(final RunningScript a0) {
-    a0.params_20.get(0).deref().set((int)_800bd808.get());
+    a0.params_20.get(0).deref().set(submapIndex_800bd808.get());
     return 0;
   }
 
@@ -2752,17 +2755,17 @@ public final class SMap {
           break;
         }
 
-        final long old = _800bd808.get();
-        _800bd808.setu(_800d610c.offset(submapCut_80052c30.get() * 0x2L));
+        final int oldSubmapIndex = submapIndex_800bd808.get();
+        submapIndex_800bd808.set(cutToSubmap_800d610c.get(submapCut_80052c30.get()).get());
 
         //LAB_800e15b8
         //LAB_800e15ac
         //LAB_800e15b8
         //LAB_800e15b8
-        if(_800bd808.get() != old) {
+        if(submapIndex_800bd808.get() != oldSubmapIndex) { // Reload sounds when changing submap
           FUN_8001ad18();
           unloadSoundFile(4);
-          FUN_8001eadc((int)_800bd808.get());
+          loadSubmapSounds(submapIndex_800bd808.get());
         } else {
           //LAB_800e1550
           if(_800bda08.get() == submapCut_80052c30.get()) {
@@ -2775,30 +2778,30 @@ public final class SMap {
           //LAB_800e1584
         }
 
-        _800bd782.setu(0);
+        musicLoaded_800bd782.set(0);
 
-        final long ret = FUN_8001c60c();
-        if(ret == -0x1L) {
+        final int ret = getSubmapMusicChange();
+        if(ret == -1) {
           FUN_8001ae90();
 
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
 
-        if(ret == -0x2L) {
+        if(ret == -2) {
           FUN_8001ada0();
 
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
 
-        if(ret == -0x3L) {
+        if(ret == -3) {
           //LAB_800e15b8
-          _800bd782.setu(0x1L);
+          musicLoaded_800bd782.set(1);
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
@@ -2809,7 +2812,7 @@ public final class SMap {
       }
 
       case 2 -> {
-        if(_800bd782.get() != 0 && (getLoadedDrgnFiles() & 0x2L) == 0) {
+        if(musicLoaded_800bd782.get() != 0 && (getLoadedDrgnFiles() & 0x2L) == 0) {
           loadingStage_800c68e4.addu(0x1L);
         }
       }
@@ -4957,10 +4960,10 @@ public final class SMap {
   }
 
   @Method(0x800e664cL)
-  public static void FUN_800e664c(final long submapCut, final long a1) {
+  public static void FUN_800e664c(final int submapCut, final long a1) {
     MEMORY.memfill(arr_800cb460.getAddress(), 0x100, 0);
 
-    final NewRootEntryStruct entry = newRootPtr_800cb458.deref().entries_0000.get((int)submapCut);
+    final NewRootEntryStruct entry = newRootPtr_800cb458.deref().entries_0000.get(submapCut);
     final short offset = (short)(entry.ub_05.get() << 8 | entry.ub_04.get());
 
     if(offset < 0) {
@@ -5627,7 +5630,7 @@ public final class SMap {
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-        GPU.queueCommand((int)sp38[i], new GpuCommandQuad()
+        GPU.queueCommand(sp38[i], new GpuCommandQuad()
           .rgb((int)MEMORY.get(s1 + 0xcL, 3))
           .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
           .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
@@ -6819,7 +6822,7 @@ public final class SMap {
         vsyncMode_8007a3b8.set(4);
         FUN_800ed8d0(_800bf0dc.get());
 
-        _800bd808.setu(-0x1L);
+        submapIndex_800bd808.set(-1);
         pregameLoadingStage_800bb10c.setu(0x3L);
         break;
 

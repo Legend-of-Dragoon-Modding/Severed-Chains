@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -18,7 +19,7 @@ public class SoundFile implements MemoryRef {
   public final UnsignedIntRef ptr_0c;
   public final ShortRef playableSoundIndex_10;
 
-  public final UnsignedIntRef spuRamOffset_14;
+  public final IntRef spuRamOffset_14;
   public final UnsignedByteRef _18;
 
   public SoundFile(final Value ref) {
@@ -31,7 +32,7 @@ public class SoundFile implements MemoryRef {
     this.ptr_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this.playableSoundIndex_10 = ref.offset(2, 0x10L).cast(ShortRef::new);
 
-    this.spuRamOffset_14 = ref.offset(4, 0x14L).cast(UnsignedIntRef::new);
+    this.spuRamOffset_14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(1, 0x18L).cast(UnsignedByteRef::new);
   }
 

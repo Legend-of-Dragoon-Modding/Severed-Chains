@@ -78,7 +78,7 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.setMonoOrStereo;
+import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -901,7 +901,7 @@ public final class Ttle {
 
         if(_800ce778.get() == 0) {
           gameState_800babc8.mono_4e0.xor(0b1);
-          setMonoOrStereo(gameState_800babc8.mono_4e0.get());
+          setMono(gameState_800babc8.mono_4e0.get());
         } else {
           gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
           FUN_8002379c();

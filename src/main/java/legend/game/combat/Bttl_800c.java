@@ -137,7 +137,7 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040980;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004cd50;
+import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
@@ -963,7 +963,7 @@ public final class Bttl_800c {
     scriptStartEffect(0x4L, 0x1eL);
 
     _800bc960.oru(0x20L);
-    _8006e398._eec.set(0);
+    _8006e398.stageProgression_eec.set(0);
 
     FUN_800ca980();
     FUN_800c8ee4();
@@ -973,7 +973,7 @@ public final class Bttl_800c {
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
-    _8006e398._ee4.set(gameState_800babc8.morphMode_4e2.get());
+    _8006e398.morphMode_ee4.set(gameState_800babc8.morphMode_4e2.get());
 
     loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109250", int.class), 0);
 
@@ -1109,7 +1109,7 @@ public final class Bttl_800c {
 
             if(encounterId_800bb0f8.get() != 443) { // Melbu
               _800bc974.setu(0x1L);
-              FUN_8001af00(0x6L);
+              FUN_8001af00(6);
             } else {
               //LAB_800c7d30
               _800bc974.setu(0x4L);
@@ -1266,7 +1266,7 @@ public final class Bttl_800c {
 
       //LAB_800c8274
       if(s0 == 0x2L) {
-        FUN_8004cd50((short)(_800fa6d4.getSigned() - 2));
+        sssqFadeOut((short)(_800fa6d4.getSigned() - 2));
       }
 
       //LAB_800c8290
