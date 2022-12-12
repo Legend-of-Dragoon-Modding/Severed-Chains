@@ -51,11 +51,11 @@ import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
+import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
 import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
@@ -74,7 +74,6 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
@@ -82,12 +81,10 @@ import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
 import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
@@ -105,7 +102,9 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
 import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
 import static legend.game.Scus94491BpeSegment_800c._800c6740;
@@ -848,10 +847,8 @@ public final class Scus94491BpeSegment_800e {
       // Wait for all files to finish loading
 
       //LAB_800e6028
-      if(fileCount_8004ddc8.get() == 0) {
-        pregameLoadingStage_800bb10c.addu(1);
-        //LAB_800e5ff8
-      }
+      pregameLoadingStage_800bb10c.addu(1);
+      //LAB_800e5ff8
     } else if(loadingStage == 0x3L || loadingStage == 0x4L) {
       pregameLoadingStage_800bb10c.addu(1);
     } else if(loadingStage == 0x5L) {

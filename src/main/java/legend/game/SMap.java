@@ -102,8 +102,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
-import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
-import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.cdName_80011700;
@@ -114,12 +112,14 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
+import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
+import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
@@ -202,7 +202,6 @@ import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -232,11 +231,9 @@ import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
-import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdd24;
@@ -255,6 +252,7 @@ import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
@@ -264,6 +262,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800b.wobjPositions_800bd818;
@@ -700,14 +699,14 @@ public final class SMap {
     vsyncMode_8007a3b8.set(1);
     S_InitLoaded_800c6694.setu(0);
     diskSwapMcqLoaded_800c6698.setu(0);
-    loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d956c", long.class, long.class, long.class), 0, 0x2L);
-    loadDrgnBinFile(0, mcqWrongDisk_800f48d8.get(diskNum_8004ddc0.get() - 1).get(), 0, getMethodAddress(SMap.class, "FUN_800d9614", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, SMap::FUN_800d956c, 0, 0x2L);
+    loadDrgnBinFile(0, mcqWrongDisk_800f48d8.get(diskNum_8004ddc0.get() - 1).get(), 0, SMap::FUN_800d9614, 0, 0x4L);
     loadSupportOverlay(0, getConsumerAddress(SMap.class, "FUN_800d962c", int.class), 0);
     return 1;
   }
 
   @Method(0x800d956cL)
-  public static void FUN_800d956c(final long address, final long size, final long param) {
+  public static void FUN_800d956c(final long address, final int size, final int param) {
     memcpy(mcq_800c66a0.getAddress(), address, 0x2c);
 
     loadMcq(MEMORY.ref(4, address, McqHeader::new), 640, 0);
@@ -716,7 +715,7 @@ public final class SMap {
   }
 
   @Method(0x800d9614L)
-  public static void FUN_800d9614(final long address, final long size, final long param) {
+  public static void FUN_800d9614(final long address, final int size, final int param) {
     wrongDiskMcq_800c66d0.setPointer(address);
   }
 
@@ -727,7 +726,7 @@ public final class SMap {
 
   @Method(0x800d96b8L)
   public static long FUN_800d96b8() {
-    if(S_InitLoaded_800c6694.get() == 0 || fileCount_8004ddc8.get() != 0) {
+    if(S_InitLoaded_800c6694.get() == 0) {
       return 0;
     }
 
@@ -782,10 +781,6 @@ public final class SMap {
 
   @Method(0x800d992cL)
   public static long FUN_800d992c() {
-    if(fileCount_8004ddc8.get() != 0) {
-      return 0;
-    }
-
     SInitBinLoaded_800bbad0.set(true);
 
     // Reload main sounds after disk swap?
@@ -2852,9 +2847,9 @@ public final class SMap {
           //LAB_800e17c4
           //LAB_800e17d8
           // Submap data
-          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 1, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 0, 0x2L);
+          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 1, 0, SMap::submapAssetsLoadedCallback, 0, 0x2L);
           // Submap scripts
-          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 2, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 1, 0x2L);
+          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 2, 0, SMap::submapAssetsLoadedCallback, 1, 0x2L);
         }
 
         loadingStage_800c68e4.addu(0x1L);
@@ -3307,20 +3302,20 @@ public final class SMap {
       if(chapterTitleNum == 1) {
         //LAB_800e2700
         //LAB_800e2794
-        loadDrgnBinFile(0, 6670, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 0x10, 0x4L);
+        loadDrgnBinFile(0, 6670, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
       } else if(chapterTitleNum == 2) {
         //LAB_800e2728
         //LAB_800e2794
-        loadDrgnBinFile(0, 6671, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 0x10, 0x4L);
+        loadDrgnBinFile(0, 6671, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
         //LAB_800e26e8
       } else if(chapterTitleNum == 3) {
         //LAB_800e2750
         //LAB_800e2794
-        loadDrgnBinFile(0, 6672, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 0x10, 0x4L);
+        loadDrgnBinFile(0, 6672, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
       } else if(chapterTitleNum == 4) {
         //LAB_800e2778
         //LAB_800e2794
-        loadDrgnBinFile(0, 6673, 0, getMethodAddress(SMap.class, "submapAssetsLoadedCallback", long.class, long.class, long.class), 0x10, 0x4L);
+        loadDrgnBinFile(0, 6673, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
       }
 
       //LAB_800e27a4
@@ -3765,8 +3760,8 @@ public final class SMap {
   }
 
   @Method(0x800e3d80L)
-  public static void submapAssetsLoadedCallback(final long fileAddress, final long fileSize, final long assetType) {
-    switch((int)assetType) {
+  public static void submapAssetsLoadedCallback(final long fileAddress, final int fileSize, final int assetType) {
+    switch(assetType) {
       // Submap assets
       case 0x0 -> {
         submapAssetsLoaded_800c6874.set(true);
@@ -4063,10 +4058,6 @@ public final class SMap {
       return 0;
     }
 
-    if(fileCount_8004ddc8.get() != 0) {
-      return 0;
-    }
-
     if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
       return 0;
     }
@@ -4314,7 +4305,7 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final long address, final long fileSize, final long param) {
+  public static void loadBackground(final long address, final int fileSize, final int param) {
     backgroundLoaded_800cab10.offset(param * 0x4L).setu(0x1L);
 
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
@@ -4341,9 +4332,9 @@ public final class SMap {
   }
 
   @Method(0x800e54a4L)
-  public static void newrootCallback_800e54a4(final long address, final long fileSize, final long param) {
+  public static void newrootCallback_800e54a4(final long address, final int fileSize, final int param) {
     newrootPtr_800cab04.set(newroot_800c6af0);
-    memcpy(newroot_800c6af0.getAddress(), address, (int)fileSize);
+    memcpy(newroot_800c6af0.getAddress(), address, fileSize);
     free(address);
     FUN_800e6640(newrootPtr_800cab04.deref());
     newrootLoaded_800cab1c.setu(0x1L);
@@ -4568,7 +4559,7 @@ public final class SMap {
 
       case 0x1 -> { // Load newroot
         newrootLoaded_800cab1c.setu(0);
-        loadFile(_80052c4c, 0, getMethodAddress(SMap.class, "newrootCallback_800e54a4", long.class, long.class, long.class), 0x63L, 0);
+        loadFile(_80052c4c, 0, SMap::newrootCallback_800e54a4, 0x63, 0);
         smapLoadingStage_800cb430.setu(0x2L);
       }
 
@@ -4596,7 +4587,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         backgroundLoaded_800cab10.setu(0);
-        loadDrgnBinFile(2, fileIndex.get(), 0, getMethodAddress(SMap.class, "loadBackground", long.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(2, fileIndex.get(), 0, SMap::loadBackground, 0, 0x4L);
         noop_800e4fec();
         smapLoadingStage_800cb430.setu(0x6L);
       }
@@ -6793,7 +6784,7 @@ public final class SMap {
     switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0x0:
         creditsLoaded_800d1cb8.setu(0);
-        loadDrgnBinFile(0, 5721, 0, getMethodAddress(SMap.class, "loadCreditsMrg", long.class, long.class, long.class), _800bf0dc.get(), 0x4L);
+        loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)_800bf0dc.get(), 0x4L);
 
         //LAB_800ed644
         for(int s2 = 0; s2 < 3; s2++) {
@@ -6812,7 +6803,7 @@ public final class SMap {
         break;
 
       case 0x1:
-        if(creditsLoaded_800d1cb8.get() != 0 && fileCount_8004ddc8.get() == 0) {
+        if(creditsLoaded_800d1cb8.get() != 0) {
           pregameLoadingStage_800bb10c.setu(0x2L);
         }
 
@@ -6932,14 +6923,14 @@ public final class SMap {
   }
 
   @Method(0x800edc7cL)
-  public static void loadCreditsMrg(final long address, final long fileSize, final long fileIndex) {
+  public static void loadCreditsMrg(final long address, final int fileSize, final int fileIndex) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     if(fileIndex <= mrg.count.get()) {
-      final MrgEntry entry = mrg.entries.get((int)fileIndex);
+      final MrgEntry entry = mrg.entries.get(fileIndex);
 
       if(entry.size.get() != 0) {
-        memcpy(_800d1cc0.getAddress(), mrg.getFile((int)fileIndex), 12000);
+        memcpy(_800d1cc0.getAddress(), mrg.getFile(fileIndex), 12000);
         free(address);
         creditsLoaded_800d1cb8.setu(0x1L);
       }
@@ -7015,11 +7006,11 @@ public final class SMap {
 
         final int fileIndex = smapFileIndices_800f982c.get(submapCut_80052c30.get()).get();
         if(fileIndex != 0) {
-          loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 0, 0x2L);
-          loadDrgnBinFile(0, fileIndex + 1, 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 1, 0x4L);
+          loadDrgnBinFile(0, fileIndex, 0, SMap::FUN_800eeddc, 0, 0x2L);
+          loadDrgnBinFile(0, fileIndex + 1, 0, SMap::FUN_800eeddc, 1, 0x4L);
 
           if(submapCut_80052c30.get() == 673) { // End cutscene, loads "The End" TIM
-            loadDrgnBinFile(0, 7610, 0, getMethodAddress(SMap.class, "FUN_800eeddc", long.class, long.class, long.class), 2, 0x4L);
+            loadDrgnBinFile(0, 7610, 0, SMap::FUN_800eeddc, 2, 0x4L);
           }
         }
 
@@ -7344,14 +7335,14 @@ public final class SMap {
   }
 
   @Method(0x800eeddcL)
-  public static void FUN_800eeddc(final long address, final long fileSize, final long a2) {
-    if(a2 == 0) {
+  public static void FUN_800eeddc(final long address, final int fileSize, final int assetType) {
+    if(assetType == 0) {
       smapModelAndAnimationMrgLoaded_800d4bdc.set(true);
       smapModelAndAnimationMrg_800d4be8.setPointer(address);
-    } else if(a2 == 1) {
+    } else if(assetType == 1) {
       smapTextureAndMatrixMrgLoaded_800d4be0.set(true);
       smapTextureAndMatrixMrg_800d4bec.setPointer(address);
-    } else if(a2 == 2) {
+    } else if(assetType == 2) {
       theEndTimLoaded_800d4be4.set(true);
       theEndTim_800d4bf0.setPointer(address);
     }

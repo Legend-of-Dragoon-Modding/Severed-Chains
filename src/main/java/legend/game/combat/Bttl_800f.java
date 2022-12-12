@@ -34,7 +34,6 @@ import static java.lang.Math.round;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -56,12 +55,12 @@ import static legend.game.Scus94491BpeSegment_8006._8006f254;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
@@ -3417,7 +3416,7 @@ public final class Bttl_800f {
 
   @Method(0x800f84c8L)
   public static void loadBattleHudTextures() {
-    loadDrgnBinFile(0, 4113, 0, getMethodAddress(Bttl_800e.class, "battleHudTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 4113, 0, Bttl_800e::battleHudTexturesLoadedCallback, 0, 0x4L);
   }
 
   @Method(0x800f8568L)

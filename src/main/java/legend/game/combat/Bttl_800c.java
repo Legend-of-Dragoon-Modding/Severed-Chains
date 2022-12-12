@@ -38,11 +38,10 @@ import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleStageDarkening1800;
 import legend.game.combat.types.BattleStruct18cb0;
-import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStruct7cc;
@@ -53,6 +52,7 @@ import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DeffFile;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
@@ -83,11 +83,7 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.realloc2;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
-import static legend.game.Scus94491BpeSegment.getMallocSize;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
-import static legend.game.Scus94491BpeSegment.getMrgSize;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
 import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
@@ -98,7 +94,10 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
+import static legend.game.Scus94491BpeSegment.getMallocSize;
+import static legend.game.Scus94491BpeSegment.getMrgSize;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -107,6 +106,7 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
+import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
@@ -137,12 +137,11 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040980;
-import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
+import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8005._80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005f428;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
@@ -188,17 +187,17 @@ import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
 import static legend.game.combat.Bttl_800e.FUN_800e8ffc;
 import static legend.game.combat.Bttl_800e.FUN_800e9120;
-import static legend.game.combat.Bttl_800e.loadStageTmd;
-import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
-import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
-import static legend.game.combat.Bttl_800e.backupStageClut;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
+import static legend.game.combat.Bttl_800e.backupStageClut;
+import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
+import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
@@ -1079,7 +1078,7 @@ public final class Bttl_800c {
       return;
     }
 
-    if(fileCount_8004ddc8.get() == 0 && _800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8() != 0) {
+    if(_800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8() != 0) {
       vsyncMode_8007a3b8.set(3);
       mcqColour_800fa6dc.set(0x80);
       scriptStatePtrArr_800bc1c0.get((int)_800c66c8.get()).deref().ui_60.and(0xffff_efffL);
@@ -1484,12 +1483,12 @@ public final class Bttl_800c {
 
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
-    loadDrgnBinFile(0, 2497 + stage, 0, getMethodAddress(Bttl_800c.class, "stageMrgLoadedCallback", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 2497 + stage, 0, Bttl_800c::stageMrgLoadedCallback, 0, 0x2L);
     currentStage_800c66a4.setu(stage);
   }
 
   @Method(0x800c8b74L)
-  public static void stageMrgLoadedCallback(final long address, final long fileSize, final long param) {
+  public static void stageMrgLoadedCallback(final long address, final int fileSize, final int param) {
     _1f8003f4.deref().stageMrg_638.setPointer(address);
 
     final MrgFile mrg = _1f8003f4.deref().stageMrg_638.deref();
@@ -1783,7 +1782,7 @@ public final class Bttl_800c {
           }
 
           //LAB_800c93e8
-          loadDrgnBinFile(0, fileIndex, transferDest, getMethodAddress(Bttl_800c.class, "combatantTmdAndAnimLoadedCallback", long.class, long.class, long.class), callbackParam, 0x3L);
+          loadDrgnBinFile(0, fileIndex, transferDest, Bttl_800c::combatantTmdAndAnimLoadedCallback, callbackParam, 0x3L);
         }
       }
     }
@@ -1792,7 +1791,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c941cL)
-  public static void combatantTmdAndAnimLoadedCallback(final long address, final long fileSize, final long param) {
+  public static void combatantTmdAndAnimLoadedCallback(final long address, final int fileSize, final long param) {
     final int combatantIndex = (int)(param >>> 9 & 0x3f);
     final long s0 = param >>> 8 & 0x1L;
 
@@ -1932,14 +1931,14 @@ public final class Bttl_800c {
 
       //LAB_800c9860
       //LAB_800c9864
-      loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Bttl_800c.class, "FUN_800c9898", long.class, long.class, long.class), a3, 0x3L);
+      loadDrgnBinFile(0, fileIndex, 0, Bttl_800c::FUN_800c9898, a3, 0x3L);
     }
 
     //LAB_800c9888
   }
 
   @Method(0x800c9898L)
-  public static void FUN_800c9898(long address, final long fileSize, final long param) {
+  public static void FUN_800c9898(long address, final int fileSize, final long param) {
     MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     final int combatantIndex = (int)(param >>> 9 & 0x3f);
@@ -2382,14 +2381,14 @@ public final class Bttl_800c {
       }
 
       //LAB_800ca61c
-      loadDrgnBinFile(0, 3993 + fileIndex * 2, 0, getMethodAddress(Bttl_800c.class, "FUN_800ca65c", long.class, long.class, long.class), v1, 0x5L);
+      loadDrgnBinFile(0, 3993 + fileIndex * 2, 0, Bttl_800c::FUN_800ca65c, v1, 0x5L);
     }
 
     //LAB_800ca64c
   }
 
   @Method(0x800ca65cL)
-  public static void FUN_800ca65c(final long address, final long fileSize, final long param) {
+  public static void FUN_800ca65c(final long address, final int fileSize, final long param) {
     final int combatantIndex = (int)param >>> 9 & 0x3f;
     final CombatantStruct1a8 s1 = getCombatant(combatantIndex);
 
@@ -2613,20 +2612,20 @@ public final class Bttl_800c {
       return -1;
     }
 
-    loadDrgnBinFile(drgnIndex, fileIndex, 0, getMethodAddress(Bttl_800c.class, "FUN_800cacb0", long.class, long.class, long.class), s0, 0x2L);
+    loadDrgnBinFile(drgnIndex, fileIndex, 0, Bttl_800c::FUN_800cacb0, s0, 0x2L);
 
     //LAB_800cac98
     return s0;
   }
 
   @Method(0x800cacb0L)
-  public static void FUN_800cacb0(final long address, final long size, final long index) {
-    final BttlStruct08 a1 = _8006e918.get((int)index);
+  public static void FUN_800cacb0(final long address, final int size, final int index) {
+    final BttlStruct08 a1 = _8006e918.get(index);
 
     if(a1._04.get() == 1) {
       a1.ptr_00.set(address);
       a1._04.set(2);
-      reallocSomething((int)index);
+      reallocSomething(index);
     } else {
       //LAB_800cacf4
       free(address);

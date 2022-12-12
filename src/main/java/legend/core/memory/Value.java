@@ -3,7 +3,7 @@ package legend.core.memory;
 import legend.core.MathHelper;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumer;
-import org.apache.logging.log4j.util.TriConsumer;
+import legend.core.memory.types.TriConsumer;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

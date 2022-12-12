@@ -8,9 +8,9 @@ import legend.core.MathHelper;
 import legend.core.memory.segments.TempSegment;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumer;
+import legend.core.memory.types.TriConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;

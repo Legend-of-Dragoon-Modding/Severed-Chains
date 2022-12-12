@@ -137,7 +137,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
@@ -171,6 +170,7 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -632,9 +632,9 @@ public final class SItem {
   }
 
   @Method(0x800fc210L)
-  public static void loadPartyPermutationTmdMrg(final long address, final long fileSize, final long param) {
-    final int permIndex1 = (int)param & 0xff;
-    final int permIndex2 = (int)param >>> 8 & 0xff;
+  public static void loadPartyPermutationTmdMrg(final long address, final int fileSize, final int param) {
+    final int permIndex1 = param & 0xff;
+    final int permIndex2 = param >>> 8 & 0xff;
     final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
 
     //LAB_800fc260
@@ -675,11 +675,11 @@ public final class SItem {
 
   @Method(0x800fc3c0L)
   public static void loadEnemyTextures(final int fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(SItem.class, "enemyTexturesLoadedCallback", long.class, long.class, long.class), 0, 0x5L);
+    loadDrgnBinFile(0, fileIndex, 0, SItem::enemyTexturesLoadedCallback, 0, 0x5L);
   }
 
   @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final long address, final long fileSize, final long param) {
+  public static void enemyTexturesLoadedCallback(final long address, final int fileSize, final int param) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     final long s2 = _1f8003f4.getPointer(); //TODO
@@ -718,18 +718,18 @@ public final class SItem {
     final int extraPermIndex2 = permIndices >>> 24 & 0xff;
 
     final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "loadPartyPermutationTimMrg", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, SItem::loadPartyPermutationTimMrg, mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
 
     if(extraPermIndex1 != 0xff) {
       final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, getMethodAddress(SItem.class, "loadPartyPermutationTimMrg", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, SItem::loadPartyPermutationTimMrg, extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
     }
   }
 
   @Method(0x800fc548L)
-  public static void loadPartyPermutationTimMrg(final long address, final long fileSize, final long param) {
-    final int permIndex1 = (int)param & 0xff;
-    final int permIndex2 = (int)param >>> 8 & 0xff;
+  public static void loadPartyPermutationTimMrg(final long address, final int fileSize, final int param) {
+    final int permIndex1 = param & 0xff;
+    final int permIndex2 = param >>> 8 & 0xff;
     final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
 
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
@@ -760,11 +760,11 @@ public final class SItem {
     final int extraPermIndex2 = permIndices >>> 24 & 0xff;
 
     final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "loadPartyPermutationTmdMrg", long.class, long.class, long.class), mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
+    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, SItem::loadPartyPermutationTmdMrg, mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
 
     if(extraPermIndex1 != 0xff) {
       final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, getMethodAddress(SItem.class, "loadPartyPermutationTmdMrg", long.class, long.class, long.class), extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
+      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, SItem::loadPartyPermutationTmdMrg, extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
     }
   }
 
@@ -894,10 +894,9 @@ public final class SItem {
     return renderable;
   }
 
-  /** TODO also used for file 6668 */
   @Method(0x800fc944L)
-  public static void menuAssetsLoaded(final long address, final long size, final long param) {
-    if(param == 0) {
+  public static void menuAssetsLoaded(final long address, final int size, final int whichFile) {
+    if(whichFile == 0) {
       //LAB_800fc98c
       FUN_80022a94(MEMORY.ref(4, address).offset(0x83e0L)); // Character textures
       FUN_80022a94(MEMORY.ref(4, address)); // Menu textures
@@ -905,10 +904,10 @@ public final class SItem {
       FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0460L));
       FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0580L));
       deferReallocOrFree(address, 0, 1);
-    } else if(param == 0x1L) {
+    } else if(whichFile == 1) {
       //LAB_800fc9e4
       drgn0_6666FilePtr_800bdc3c.setPointer(address);
-    } else if(param == 0x4L) { // Dabas minigame assets
+    } else if(whichFile == 4) { // Dabas minigame assets
       //LAB_800fc978
       //LAB_800fc9f0
       dabasFilePtr_8011dd00.setu(address);
@@ -956,7 +955,6 @@ public final class SItem {
     final long a0;
     final long a2;
     final long t0;
-    final long s0;
     final long s1;
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
@@ -968,9 +966,8 @@ public final class SItem {
         renderablePtr_800bdc5c.clear();
         messageBox_8011dc90._0c.set(0);
         setWidthAndFlags(384);
-        s0 = getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class);
-        loadDrgnBinFile(0, 6665, 0, s0, 0, 0x5L);
-        loadDrgnBinFile(0, 6666, 0, s0, 1, 0x3L);
+        loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
+        loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
         loadCharacterStats(0);
         _800bdf00.setu(0x21L);
 
@@ -2316,7 +2313,7 @@ public final class SItem {
         //LAB_80100098
         bzero(dabasData_8011d7c0.getPointer(), 0x100);
 
-        loadDrgnBinFile(0, 6668, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 4, 0x2);
+        loadDrgnBinFile(0, 6668, 0, SItem::menuAssetsLoaded, 4, 0x2);
         scriptStartEffect(2, 10);
         selectedSlot_8011d740.set(0);
 
@@ -5617,8 +5614,8 @@ public final class SItem {
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
         setWidthAndFlags(384);
-        loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 5);
-        loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 1, 3);
+        loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 5);
+        loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 3);
         loadCharacterStats(0);
         _800bdf00.set(0x21L);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
@@ -6652,8 +6649,8 @@ public final class SItem {
         renderablePtr_800bdc5c.clear();
         drgn0_6666FilePtr_800bdc3c.clear();
         setWidthAndFlags(320);
-        loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 0x5L);
-        loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 1, 0x3L);
+        loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
+        loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
         _800bdf00.setu(0x21L);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         break;
@@ -7416,8 +7413,8 @@ public final class SItem {
         drgn0_6666FilePtr_800bdc3c.clear();
         renderablePtr_800bdc5c.clear();
         setWidthAndFlags(384);
-        loadDrgnBinFile(0, 6666, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0x1L, 0x3L);
-        loadDrgnBinFile(0, 6665, 0, getMethodAddress(SItem.class, "menuAssetsLoaded", long.class, long.class, long.class), 0, 0x5L);
+        loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
+        loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
         _800bdf00.setu(0x21L);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         break;
