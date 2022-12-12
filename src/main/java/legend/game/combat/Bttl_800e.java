@@ -2006,7 +2006,7 @@ public final class Bttl_800e {
     return primitives;
   }
 
-  /** USED IN GATES OF HEAVEN MIRANDA VER - seems to be a atan2 only */
+  /** GATES OF HEAVEN MIRANDA VER - atan2 only */
   @Method(0x800e45c0L)
   public static void FUN_800e45c0(final SVECTOR a0, final VECTOR a1) {
     final int angle = ratan2(a1.getX(), a1.getZ());
@@ -2071,7 +2071,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Shana and WHO??? Dragoon Transformation Use this - seems to change the source of Light on the fly */
+  /** Shana and Miranda Dragoon Transformation change the source of Light during effect */
   @Method(0x800e4824L)
   public static void FUN_800e4824(final int lightIndex, final int x, final int y, final int z) {
     final VECTOR sp0x18 = new VECTOR();
@@ -2082,7 +2082,7 @@ public final class Bttl_800e {
     light._10._00.set(0);
   }
 
-  /** Shana and WHO??? Dragoon Transformation Use this - continue the FUN_800e4824() processing */
+  /** Shana and Miranda Dragoon Transformation continuing FUN_800e4824() processing */
   @Method(0x800e48a8L)
   public static long FUN_800e48a8(final RunningScript a0) {
     FUN_800e4824(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
@@ -2155,7 +2155,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Seems to be changing the Ambient Light during Dragoon Transformation */
+  /** Changing Ambient Light during Dragoon Transformation */
   @Method(0x800e4bc0L)
   public static void FUN_800e4bc0(final int lightIndex, final int r, final int g, final int b) {
     final BttlLightStruct84 light = lights_800c692c.deref().get(lightIndex);
@@ -2165,14 +2165,14 @@ public final class Bttl_800e {
     light._4c._00.set(0);
   }
 
-  /** This is run when Dart Transforms into Dragoon */
+  /** Parameters for Dart Transforms into Dragoon */
   @Method(0x800e4c10L)
   public static long FUN_800e4c10(final RunningScript a0) {
     FUN_800e4bc0(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
     return 0;
   }
 
-  /** getting parameters for Dart Flameshot? */
+  /** Set Light Params for Dart Flameshot */
   @Method(0x800e4c90L)
   public static long FUN_800e4c90(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
@@ -2191,7 +2191,7 @@ public final class Bttl_800e {
     GsSetAmbient(r, g, b);
   }
 
-  /** Maybe returning the Ambient light values during transformation? or is an additional screen flash during Dart Transform */
+  /** Returning the Ambient light values during transformation */
   @Method(0x800e4d2cL)
   public static long FUN_800e4d2c(final RunningScript a0) {
     FUN_800e4cf8(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
@@ -2233,7 +2233,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Moonlight Miranda Ver, setting light direction, when she points the Bow to the Sky */
+  /** Moonlight Miranda Ver, Setting Light direction */
   @Method(0x800e4ea0L)
   public static long FUN_800e4ea0(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
@@ -2261,7 +2261,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** USED in Miranda Gates of Heaven Ver, continuing the atan2 */
+  /** Gates of Heaven Miranda Ver, Battle Light Struct */
   @Method(0x800e4fa0L)
   public static long FUN_800e4fa0(final RunningScript a0) {
     final int s3 = a0.params_20.get(1).deref().get();
@@ -2376,14 +2376,14 @@ public final class Bttl_800e {
     return lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._4c._00.get() > 0 ? 2 : 0;
   }
 
-  /** When Dart hit the flame ball of FlameShot, this is triggered */
+  /** FlameShot Dart, Light Setting */
   @Method(0x800e5560L)
   public static long FUN_800e5560(final RunningScript a0) {
     a0.params_20.get(1).deref().set((int)lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._4c._00.get());
     return 0;
   }
 
-  /** Rose Storm (Albert) lights, when he Finishes */
+  /** Rose Storm Albert lights setting */
   @Method(0x800e559cL)
   public static long FUN_800e559c(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
@@ -2424,7 +2424,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** setting new ambient colours */
+  /** Setting new ambient colours */
   @Method(0x800e5768L)
   public static void FUN_800e5768(final BattleStruct4c struct4c) {
     FUN_800e4cf8(struct4c.ambientColour_00.getX(), struct4c.ambientColour_00.getY(), struct4c.ambientColour_00.getZ());
@@ -2478,7 +2478,7 @@ public final class Bttl_800e {
     }
   }
 
-  /** after the transform seems to be returning to the Battle Stage */
+  /** Transform Finish seems to be returning to Actual Battle Stage */
   @Method(0x800e596cL)
   public static long FUN_800e596c(final RunningScript a0) {
     final int v0 = (int)currentStage_800c66a4.get() - 0x47;
@@ -2493,7 +2493,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** During Dart's Red-Eyed Dragon this is triggered, but it result is -3, so execute this FUN_800e5768, maybe it's a kind of Light Ambient set */
+  /** Light Ambient set Depending on the Effect */
   @Method(0x800e59d8L)
   public static long FUN_800e59d8(final RunningScript script) {
     final int a0 = script.params_20.get(0).deref().get();
@@ -2514,7 +2514,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Continuing Light Processing get - setting additional stuff and changing depending on the Battle Stage */
+  /** Continuing Light Processing get - setting additional light and changing depending on the Battle Stage */
   @Method(0x800e5a78L)
   public static void FUN_800e5a78(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
     final BattleLightStruct64 light1 = _800c6930.deref();
@@ -2617,7 +2617,7 @@ public final class Bttl_800e {
     }
   }
 
-  /** Calculating FLAT light? */
+  /** Calculating FLAT light */
   @Method(0x800e5fe8L)
   public static void FUN_800e5fe8(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
     //LAB_800e6008
@@ -2630,7 +2630,7 @@ public final class Bttl_800e {
     projectionPlaneDistance_1f8003f8.set(getProjectionPlaneDistance());
   }
 
-  /** Reseting Lights after entering battle? */
+  /** Reseting Lights after entering battle */
   @Method(0x800e6070L)
   public static void FUN_800e6070() {
     allocateScriptState(1, 0, false, null, 0, null);
@@ -2641,7 +2641,7 @@ public final class Bttl_800e {
     resetLights();
   }
 
-  /** Seems to be finishing the Light processing? */
+  /** Finishing the Light processing */
   @Method(0x800e60e0L)
   public static void FUN_800e60e0(final int r, final int g, final int b) {
     final BattleLightStruct64 v1 = _800c6930.deref();
@@ -2653,7 +2653,7 @@ public final class Bttl_800e {
     v1._60.incr().and(3);
   }
 
-  /** Setting the colour from FUN_800e60e0 into the BattleLightStruct64 */
+  /** Setting colour from FUN_800e60e0() into BattleLightStruct64 */
   @Method(0x800e6170L)
   public static void FUN_800e6170() {
     final BattleLightStruct64 a0 = _800c6930.deref();
@@ -2673,7 +2673,7 @@ public final class Bttl_800e {
     GsSetAmbient(v0.colour_00.getX(), v0.colour_00.getY(), v0.colour_00.getZ());
   }
 
-  /** GsSetAmbient BattleLightStruct64 at the very end of loading battle stage... maybe depends on the camera perspective */
+  /** Set Ambient Light at the end of Loading */
   @Method(0x800e62a8L)
   public static void FUN_800e62a8() {
     FUN_800e6170();
@@ -2686,7 +2686,7 @@ public final class Bttl_800e {
     }
   }
 
-  /** Continuing the Albert Transformation (END?) */
+  /** Unknown Usage */
   @Method(0x800e6314L)
   public static void FUN_800e6314(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
@@ -2725,7 +2725,7 @@ public final class Bttl_800e {
     struct7cc._20.and(0xff80_ffffL);
   }
 
-  /** Continuing the Albert Transformation 2 */
+  /** Unknown Usage */
   @Method(0x800e6470L)
   public static long FUN_800e6470(final RunningScript a0) {
     final int t0 = a0.params_20.get(0).deref().get();
@@ -2772,7 +2772,7 @@ public final class Bttl_800e {
     return scriptIndex;
   }
 
-  /** Continuing the Albert Transformation */
+  /** Unknown Usage */
   @Method(0x800e665cL)
   public static long FUN_800e665c(final RunningScript a0) {
     final int s3 = a0.params_20.get(0).deref().get() & 0xffff;
@@ -2930,7 +2930,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Albert Wing Blaster use this (case 2) */
+  /** Unknown Usage */
   @Method(0x800e6db4L)
   public static long FUN_800e6db4(final RunningScript a0) {
     final long v0;
@@ -3033,7 +3033,7 @@ public final class Bttl_800e {
     return v0;
   }
 
-  /** When Albert Transforms get this */
+  /** Unknown Usage */
   @Method(0x800e6fb4L)
   public static long FUN_800e6fb4(final RunningScript a0) {
     if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
@@ -3333,7 +3333,7 @@ public final class Bttl_800e {
     //LAB_800e7930
   }
 
-  /* Used in Professor - Zenebatos - Throwing Books attack ||| Also for Death Dimension */
+  /* Death Dimension and other Spells used this */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1._00.get() >= 0) {
@@ -4879,7 +4879,7 @@ public final class Bttl_800e {
     return 0;
   }
 
-  /** Used in Dart transform */
+  /** Copy to VRAM Used in Dart transform */
   @Method(0x800eb554L)
   public static void FUN_800eb554(final RECT a0, final DVECTOR a1, final int height) {
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.getX(), a1.getY() + a0.h.get() - height, a0.w.get(), height));
