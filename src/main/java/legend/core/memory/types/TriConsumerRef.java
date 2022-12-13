@@ -1,7 +1,6 @@
 package legend.core.memory.types;
 
 import legend.core.memory.Value;
-import org.apache.logging.log4j.util.TriConsumer;
 
 public class TriConsumerRef<T, U, V> implements MemoryRef {
   private final Value ref;

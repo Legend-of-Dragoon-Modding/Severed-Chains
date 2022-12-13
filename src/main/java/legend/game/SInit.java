@@ -15,12 +15,12 @@ import legend.game.types.MrgFile;
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment._80010250;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.qsort;
-import static legend.game.Scus94491BpeSegment.free;
+import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020460;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80024654;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ac24;
@@ -29,7 +29,6 @@ import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8004._8004dd80;
 import static legend.game.Scus94491BpeSegment_8004._8004dd88;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.sInitOvl_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.ttleOvl_8004db58;
 import static legend.game.Scus94491BpeSegment_8005._80052db0;
@@ -41,7 +40,6 @@ import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800bbac8;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
-import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.linkedListEntry_800bbacc;
 
 public final class SInit {
@@ -129,15 +127,7 @@ public final class SInit {
   public static long FUN_800fb9c0() {
     SInitBinLoaded_800bbad0.set(false);
 
-    if(_800bbac8.get() == 0) {
-      //LAB_800fba00
-      //LAB_800fba14
-      for(int i = 0; i < 44; i++) {
-        fileLoadingInfoArray_800bbad8.get(i).used.set(false);
-      }
-
-      fileCount_8004ddc8.set(0);
-    } else if(linkedListEntry_800bbacc.get() != 0) {
+    if(_800bbac8.get() != 0 && linkedListEntry_800bbacc.get() != 0) {
       free(linkedListEntry_800bbacc.get());
       linkedListEntry_800bbacc.setu(0);
     }

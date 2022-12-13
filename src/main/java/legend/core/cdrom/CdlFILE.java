@@ -11,7 +11,7 @@ public class CdlFILE implements MemoryRef {
   @Nullable
   private final Value ref;
 
-  public final legend.core.cdrom.CdlLOC pos;
+  public final CdlLOC pos;
   public final IntRef size;
   public final FixedString name;
 

@@ -2766,24 +2766,22 @@ public final class Bttl_800e {
     battle24.script_14.clear();
 
     //LAB_800e6738
-    final Memory.TemporaryReservation sp0x20tmp = MEMORY.temp(0x20);
-    final FileLoadingInfo file = new FileLoadingInfo(sp0x20tmp.get());
+    final FileLoadingInfo file = new FileLoadingInfo();
     for(int i = 0; _800fb040.offset(i).get() != 0xff; i++) {
       if(_800fb040.offset(i).get() == s3) {
         getDrgnFilePos(file, 0, 4115 + i);
 
-        if(file.size.get() != 0) {
-          loadDrgnBinFile(0, 4115 + i, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
+        if(file.size != 0) {
+          loadDrgnBinFile(0, 4115 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
         }
       }
 
       //LAB_800e679c
     }
-    sp0x20tmp.release();
 
     //LAB_800e67b0
-    loadDrgnBinFile(0, 4139 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
-    loadDrgnBinFile(0, 4140 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), battle24.scriptIndex_18.get(), 0x2L);
+    loadDrgnBinFile(0, 4139 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+    loadDrgnBinFile(0, 4140 + s3 * 2, 0, Bttl_800e::loadDeffPackage, battle24.scriptIndex_18.get(), 0x2L);
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2796,8 +2794,8 @@ public final class Bttl_800e {
     final BattleStruct24_2 t0 = _800c6938.deref();
     t0.script_14.clear();
     t0._00.or(0x200_0000L);
-    loadDrgnBinFile(0, 4307 + s0, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
-    loadDrgnBinFile(0, 4308 + s0, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), t0.scriptIndex_18.get(), 0x2L);
+    loadDrgnBinFile(0, 4307 + s0, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+    loadDrgnBinFile(0, 4308 + s0, 0, Bttl_800e::loadDeffPackage, t0.scriptIndex_18.get(), 0x2L);
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2821,8 +2819,8 @@ public final class Bttl_800e {
     v1._00.or(0x300_0000L);
 
     if(sp20 < 256) {
-      loadDrgnBinFile(0, 4433 + sp20 * 2, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
-      loadDrgnBinFile(0, 4434 + sp20 * 2, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), v1.scriptIndex_18.get(), 0x2L);
+      loadDrgnBinFile(0, 4433 + sp20 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+      loadDrgnBinFile(0, 4434 + sp20 * 2, 0, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get(), 0x2L);
     } else {
       //LAB_800e6a30
       final long a0_0 = sp20 >>> 4;
@@ -2833,8 +2831,8 @@ public final class Bttl_800e {
 
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      loadDrgnBinFile(0, 4945 + fileIndex, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
-      loadDrgnBinFile(0, 4946 + fileIndex, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), v1.scriptIndex_18.get(), 0x2L);
+      loadDrgnBinFile(0, 4945 + fileIndex, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+      loadDrgnBinFile(0, 4946 + fileIndex, 0, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get(), 0x2L);
     }
 
     //LAB_800e6a9c
@@ -2854,46 +2852,39 @@ public final class Bttl_800e {
     a0_0._00.or(0x500_0000L);
 
     //LAB_800e6b5c
-    final Memory.TemporaryReservation fileTmp = MEMORY.temp(0x20);
-    final FileLoadingInfo file = new FileLoadingInfo(fileTmp.get());
+    final FileLoadingInfo file = new FileLoadingInfo();
     for(int i = 0; _800fb05c.offset(i).get() != 0xff; i++) {
       if(_800fb05c.offset(i).get() == s3) {
         getDrgnFilePos(file, 0, 5505 + i);
 
-        if(file.size.get() != 0) {
-          loadDrgnBinFile(0, 5505 + i, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
+        if(file.size != 0) {
+          loadDrgnBinFile(0, 5505 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
         }
       }
 
       //LAB_800e6bc0
     }
-    fileTmp.release();
 
     //LAB_800e6bd4
     if((v1 & 0x1_0000L) != 0) {
-      final Memory.TemporaryReservation file1tmp = MEMORY.temp(0x20);
-      final Memory.TemporaryReservation file2tmp = MEMORY.temp(0x20);
-      final FileLoadingInfo file1 = new FileLoadingInfo(file1tmp.get());
-      final FileLoadingInfo file2 = new FileLoadingInfo(file2tmp.get());
+      final FileLoadingInfo file1 = new FileLoadingInfo();
+      final FileLoadingInfo file2 = new FileLoadingInfo();
 
       getDrgnFilePos(file1, 0, 5511 + s3 * 2);
       getDrgnFilePos(file2, 0, 5512 + s3 * 2);
 
-      if(file1.size.get() < file2.size.get()) {
+      if(file1.size < file2.size) {
         //LAB_800e6ca0
-        loadDrgnBinFile(0, 5511 + s3 * 2, mallocTail(file2.size.get() + 0x7ffL & 0xffff_f800L), getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0x1L, 0x4L);
+        loadDrgnBinFile(0, 5511 + s3 * 2, mallocTail(file2.size + 0x7ff & 0xffff_f800), Bttl_800e::FUN_800e929c, 1, 0x4L);
       } else {
-        loadDrgnBinFile(0, 5511 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
+        loadDrgnBinFile(0, 5511 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
       }
 
-      file1tmp.release();
-      file2tmp.release();
-
-      loadDrgnBinFile(0, 5512 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), a0_0.scriptIndex_18.get(), 0x4L);
+      loadDrgnBinFile(0, 5512 + s3 * 2, 0, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18.get(), 0x4L);
     } else {
       //LAB_800e6d1c
-      loadDrgnBinFile(0, 5511 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "FUN_800e929c", long.class, long.class, long.class), 0, 0x4L);
-      loadDrgnBinFile(0, 5512 + s3 * 2, 0, getMethodAddress(Bttl_800e.class, "loadDeffPackage", long.class, long.class, long.class), a0_0.scriptIndex_18.get(), 0x2L);
+      loadDrgnBinFile(0, 5511 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+      loadDrgnBinFile(0, 5512 + s3 * 2, 0, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18.get(), 0x2L);
     }
 
     //LAB_800e6d7c
@@ -3038,13 +3029,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final long address, final long fileSize, final long scriptIndex) {
+  public static void loadDeffPackage(final long address, final int fileSize, final int scriptIndex) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     struct7cc_800c693c.deref().deffPackage_5a8.set(mrg);
 
     if(mrg.entries.get(0).size.get() != 0) {
-      FUN_800ea620(mrg.getFile(0, DeffFile::new), mrg.entries.get(0).size.get(), (int)scriptIndex);
+      FUN_800ea620(mrg.getFile(0, DeffFile::new), mrg.entries.get(0).size.get(), scriptIndex);
     }
 
     //LAB_800e7098
@@ -3926,7 +3917,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final long address, final long fileSize, final long param) {
+  public static void FUN_800e929c(final long address, final int fileSize, final int param) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_800e92d4
@@ -3946,7 +3937,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e933c
-    if((param & 0x1L) == 0) {
+    if((param & 1) == 0) {
       free(address);
     }
 
@@ -4555,12 +4546,12 @@ public final class Bttl_800e {
   public static void loadBattleHudDeff(final long address, final long fileSize, final long param) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
-    long size = mrg.entries.get(2).size.get();
+    int size = mrg.entries.get(2).size.get();
     final DeffFile deff = MEMORY.ref(4, mallocTail(size), DeffFile::new);
 
     //LAB_800eaa74
     //LAB_800eaa90
-    memcpy(deff.getAddress(), mrg.getFile(2), (int)size);
+    memcpy(deff.getAddress(), mrg.getFile(2), size);
     FUN_800ea7d0(deff, size, 0);
 
     size = mrg.entries.get(3).size.get();
@@ -4568,7 +4559,7 @@ public final class Bttl_800e {
 
     //LAB_800eaad4
     //LAB_800eaaf0
-    memcpy(mrg1.getAddress(), mrg.getFile(3), (int)size);
+    memcpy(mrg1.getAddress(), mrg.getFile(3), size);
     FUN_800e929c(mrg1.getAddress(), size, 0);
 
     size = mrg.entries.get(1).size.get();
@@ -4576,7 +4567,7 @@ public final class Bttl_800e {
 
     //LAB_800eab34
     //LAB_800eab50
-    memcpy(mrg2.getAddress(), mrg.getFile(1), (int)size);
+    memcpy(mrg2.getAddress(), mrg.getFile(1), size);
     FUN_800e9288(mrg2, size, struct7cc_800c693c.deref().mrg_2c);
     free(address);
   }
@@ -4632,7 +4623,7 @@ public final class Bttl_800e {
 
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
-    loadDrgnBinFile(0, 4114, 0, getMethodAddress(Bttl_800e.class, "loadBattleHudDeff", long.class, long.class, long.class), struct7cc_800c693c.deref().mrg_2c.getAddress(), 0x4L);
+    loadDrgnBinFile(0, 4114, 0, Bttl_800e::loadBattleHudDeff, struct7cc_800c693c.deref().mrg_2c.getAddress(), 0x4L);
   }
 
   @Method(0x800ead44L)
@@ -5661,7 +5652,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void battleHudTexturesLoadedCallback(final long address, final long fileSize, final long param) {
+  public static void battleHudTexturesLoadedCallback(final long address, final int fileSize, final int param) {
     final short[] clutX = new short[6];
     for(int i = 0; i < 4; i++) {
       clutX[i] = _800c6e60.get(i).get();

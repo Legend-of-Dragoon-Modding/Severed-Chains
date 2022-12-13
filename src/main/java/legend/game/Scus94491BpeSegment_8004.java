@@ -170,7 +170,7 @@ public final class Scus94491BpeSegment_8004 {
   /** The current disk number, 1-indexed */
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
   public static final IntRef fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L, IntRef::new);
-  public static final IntRef fileCount_8004ddc8 = MEMORY.ref(4, 0x8004ddc8L, IntRef::new);
+
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
   public static final Value _8004ddd0 = MEMORY.ref(4, 0x8004ddd0L);
@@ -516,7 +516,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptStartEffect}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017564}</li>
+   *   <li>{@link Scus94491BpeSegment#scriptWaitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017584}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800175b4}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80017648}</li>

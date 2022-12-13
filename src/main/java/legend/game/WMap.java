@@ -34,6 +34,7 @@ import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.MrgFile;
+import legend.game.types.Place0c;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -41,7 +42,6 @@ import legend.game.types.WMapAreaData08;
 import legend.game.types.WMapRender10;
 import legend.game.types.WMapRender28;
 import legend.game.types.WMapRender40;
-import legend.game.types.Place0c;
 import legend.game.types.WMapStruct0c_2;
 import legend.game.types.WMapStruct14;
 import legend.game.types.WMapStruct19c0;
@@ -57,12 +57,10 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -76,6 +74,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
@@ -84,13 +83,13 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
-import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -100,9 +99,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -110,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
@@ -119,12 +117,12 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextur
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
+import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -138,11 +136,9 @@ import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdf00;
-import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -151,6 +147,8 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
+import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -683,10 +681,6 @@ public class WMap {
 
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
-    if(fileCount_8004ddc8.get() != 0) {
-      return;
-    }
-
     if(_800c6690.get() == 0) {
       if((joypadInput_8007a39c.get() & 0x1afL) == 0) {
         final WMapStruct19c0 v1 = _800c66b0.deref();
@@ -2827,7 +2821,7 @@ public class WMap {
   }
 
   @Method(0x800d562cL)
-  public static void FUN_800d562c(final long address, final long size, final long param) {
+  public static void FUN_800d562c(final long address, final int size, final int param) {
     final McqHeader mcq = MEMORY.ref(4, address, McqHeader::new);
     final int x = 320 + (int)(param & 0xffff_fffeL) * 64;
 
@@ -2855,7 +2849,7 @@ public class WMap {
   }
 
   @Method(0x800d5768L)
-  public static void FUN_800d5768(final long address, final long size, final long param) {
+  public static void FUN_800d5768(final long address, final int size, final int param) {
     final long ix = imageX_800ef0cc.offset(param * 0x8L).getSigned();
     final long iy = imageY_800ef0ce.offset(param * 0x8L).getSigned();
     final long cx = clutX_800ef0d0.offset(param * 0x8L).getSigned();
@@ -2868,7 +2862,7 @@ public class WMap {
   }
 
   @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
-  public static void FUN_800d5858(final long address, final long size, final long param) {
+  public static void FUN_800d5858(final long address, final int size, final int param) {
     //LAB_800d5874
     for(int i = 0; i < MEMORY.ref(4, address).offset(0x4L).get(); i++) {
       //LAB_800d5898
@@ -2889,7 +2883,7 @@ public class WMap {
   }
 
   @Method(0x800d5984L)
-  public static void loadTmdCallback(final long address, final long size, final long param) {
+  public static void loadTmdCallback(final long address, final int size, final int param) {
     final TmdWithId tmd = MEMORY.ref(4, address, TmdWithId::new);
 
     struct258_800c66a8.deref().tmdRendering_08.set(loadTmd(tmd));
@@ -2900,7 +2894,7 @@ public class WMap {
   }
 
   @Method(0x800d5a30L)
-  public static void FUN_800d5a30(final long address, final long size, final long param) {
+  public static void FUN_800d5a30(final long address, final int size, final int whichFile) {
     final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
 
     //LAB_800d5a48
@@ -2910,26 +2904,26 @@ public class WMap {
         //LAB_800d5a9c
         //LAB_800d5ab8
         //TODO
-        MEMORY.ref(4, struct258_800c66a8.deref()._b4.get((int)param).getAddress()).offset(i * 0x4L).setu(mrg.getFile(i));
+        MEMORY.ref(4, struct258_800c66a8.deref()._b4.get(whichFile).getAddress()).offset(i * 0x4L).setu(mrg.getFile(i));
       }
 
       //LAB_800d5b2c
     }
 
     //LAB_800d5b44
-    struct258_800c66a8.deref()._1b4.get((int)param).set(mrg.getAddress());
+    struct258_800c66a8.deref()._1b4.get(whichFile).set(mrg.getAddress());
 
-    if(param == 0) {
+    if(whichFile == 0) {
       //LAB_800d5bb8
       filesLoadedFlags_800c66b8.oru(0x10L);
-    } else if(param == 1) {
+    } else if(whichFile == 1) {
       //LAB_800d5bd8
       filesLoadedFlags_800c66b8.oru(0x40L);
       //LAB_800d5b98
-    } else if(param == 2) {
+    } else if(whichFile == 2) {
       //LAB_800d5bf8
       filesLoadedFlags_800c66b8.oru(0x100L);
-    } else if(param == 3) {
+    } else if(whichFile == 3) {
       //LAB_800d5c18
       filesLoadedFlags_800c66b8.oru(0x400L);
     }
@@ -3148,7 +3142,7 @@ public class WMap {
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
     filesLoadedFlags_800c66b8.and(0xffff_efffL);
-    loadDrgnBinFile(0, 5695, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x1_1000L, 0x4L);
+    loadDrgnBinFile(0, 5695, 0, WMap::FUN_800d5858, 0x1_1000, 0x4L);
     struct258_800c66a8.deref()._20.set((short)0);
   }
 
@@ -3570,8 +3564,8 @@ public class WMap {
   @Method(0x800d8e4cL)
   public static void FUN_800d8e4c(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
-    loadDrgnBinFile(0, 5697 + index, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2L, 0x4L);
-    loadDrgnBinFile(0, 5705 + index, 0, getMethodAddress(WMap.class, "loadTmdCallback", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 5697 + index, 0, WMap::FUN_800d5858, 2, 0x4L);
+    loadDrgnBinFile(0, 5705 + index, 0, WMap::loadTmdCallback, 0, 0x2L);
   }
 
   @Method(0x800d8efcL)
@@ -4638,13 +4632,13 @@ public class WMap {
   public static void FUN_800dfa70() {
     filesLoadedFlags_800c66b8.and(0xffff_fd57L);
 
-    loadDrgnBinFile(0, 5713, 0, getMethodAddress(WMap.class, "FUN_800d5858", long.class, long.class, long.class), 0x2a8L, 0x4L);
+    loadDrgnBinFile(0, 5713, 0, WMap::FUN_800d5858, 0x2a8, 0x4L);
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.deref().models_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), Model124::new));
-      loadDrgnBinFile(0, 5714 + i, 0, getMethodAddress(WMap.class, "FUN_800d5a30", long.class, long.class, long.class), i, 2);
+      loadDrgnBinFile(0, 5714 + i, 0, WMap::FUN_800d5a30, i, 2);
       struct258_800c66a8.deref().models_0c.get(i).deref().colourMap_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
@@ -5658,10 +5652,6 @@ public class WMap {
 
   @Method(0x800e367cL)
   public static void handleEncounters(final int encounterRateMultiplier) {
-    if(fileCount_8004ddc8.get() != 0) {
-      return;
-    }
-
     //LAB_800e36a8
     if(worldMapState_800c6698.get() != 0x5L) {
       return;
@@ -6198,7 +6188,7 @@ public class WMap {
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
     filesLoadedFlags_800c66b8.and(0xffff_fffeL);
-    loadDrgnBinFile(0, 5696, 0, getMethodAddress(WMap.class, "FUN_800d562c", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5696, 0, WMap::FUN_800d562c, 0, 0x4L);
     _800c6794.setu(0);
   }
 
@@ -6315,10 +6305,6 @@ public class WMap {
     }
 
     //LAB_800e5178
-    if(fileCount_8004ddc8.get() != 0) {
-      return;
-    }
-
     //LAB_800e5194
     if(_800c6894.get() != 0x1L) {
       FUN_800e69e8();
@@ -6391,7 +6377,7 @@ public class WMap {
       case 1:
         filesLoadedFlags_800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).fileIndex_04.get(), 0, getMethodAddress(WMap.class, "FUN_800d5768", long.class, long.class, long.class), 0x1L, 0x4L);
+        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).fileIndex_04.get(), 0, WMap::FUN_800d5768, 1, 0x4L);
         FUN_8002a32c(7, 1, 240, 120, 14, 16);
 
         _800c68a4.setu(0x2L);
@@ -7474,10 +7460,6 @@ public class WMap {
 
   @Method(0x800e9104L)
   public static void processInput() {
-    if(fileCount_8004ddc8.get() != 0) {
-      return;
-    }
-
     //LAB_800e912c
     if(struct258_800c66a8.deref()._05.get() != 0) {
       return;

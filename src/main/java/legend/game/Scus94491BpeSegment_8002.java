@@ -69,7 +69,6 @@ import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.initFileEntries;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
@@ -174,8 +173,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
@@ -203,7 +200,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
-import static legend.game.Scus94491BpeSegment_800b.fileLoadingInfoArray_800bbad8;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
@@ -221,9 +217,11 @@ import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
+import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.WMap.FUN_800c8844;
@@ -2604,7 +2602,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final long address, final long fileSize, final long unused) {
+  public static void basicUiTexturesLoaded(final long address, final int fileSize, final int unused) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2666,7 +2664,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
-    loadDrgnBinFile(0, 6669, 0, getMethodAddress(Scus94491BpeSegment_8002.class, "basicUiTexturesLoaded", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 6669, 0, Scus94491BpeSegment_8002::basicUiTexturesLoaded, 0, 0x4L);
     noop_8002498c();
 
     _800bdf00.setu(0xdL);
@@ -5913,7 +5911,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002c984L)
   public static long playXaAudio(final int xaLoadingStage, final int xaArchiveIndex, final int xaFileIndex) {
     //LAB_8002c9f0
-    if(fileLoadingCallbackIndex_8004ddc4.get() != 0 || fileLoadingInfoArray_800bbad8.get(0).used.get() || xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
+    if(fileLoadingCallbackIndex_8004ddc4.get() != 0 || xaFileIndex == 0 || xaFileIndex >= 32 || xaLoadingStage >= 5) {
       return 0;
     }
 

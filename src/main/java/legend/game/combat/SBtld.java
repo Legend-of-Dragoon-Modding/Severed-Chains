@@ -97,7 +97,7 @@ public class SBtld {
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
     decompress(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "btldBpeDecompressed", long.class, long.class, long.class), 0, 0);
-    loadDrgnBinFile(1, 401, 0, getMethodAddress(SBtld.class, "FUN_80109170", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(1, 401, 0, SBtld::FUN_80109170, 0, 0x2L);
   }
 
   @Method(0x80109164L)
@@ -106,7 +106,7 @@ public class SBtld {
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final long address, final long fileSize, final long param) {
+  public static void FUN_80109170(final long address, final int fileSize, final int param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
     scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0, null));
     loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref());
@@ -262,14 +262,14 @@ public class SBtld {
     final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
     v0._194.set(MEMORY.ref(4, v1).offset(0x0L).get());
     v0._198.set(MEMORY.ref(4, v1).offset(0x4L).get());
-    loadDrgnBinFile(1, fileIndex + 1, 0, getMethodAddress(SBtld.class, "FUN_8010989c", long.class, long.class, long.class), s0, 0x2L);
+    loadDrgnBinFile(1, fileIndex + 1, 0, SBtld::FUN_8010989c, s0, 0x2L);
   }
 
   @Method(0x8010989cL)
-  public static void FUN_8010989c(final long address, final long fileSize, final long index) {
+  public static void FUN_8010989c(final long address, final int fileSize, final int index) {
     final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
 
-    getCombatant((int)index).filePtr_10.set(script.getAddress());
+    getCombatant(index).filePtr_10.set(script.getAddress());
     _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
     uniqueMonsterCount_800c6698.add(1);
     decrementOverlayCount();

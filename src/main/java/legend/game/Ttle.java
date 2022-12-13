@@ -36,7 +36,6 @@ import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -76,7 +75,6 @@ import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
-import static legend.game.Scus94491BpeSegment_8004.fileCount_8004ddc8;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
@@ -295,9 +293,7 @@ public final class Ttle {
 
   @Method(0x800c74d4L)
   public static void waitForTtleFilesToLoad() {
-    if(fileCount_8004ddc8.get() == 0) {
-      pregameLoadingStage_800bb10c.addu(0x1L);
-    }
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c7500L)
@@ -313,7 +309,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7558L)
-  public static void FUN_800c7558(final long address, final long fileSize, final long param) {
+  public static void FUN_800c7558(final long address, final int fileSize, final int param) {
     final RECT rect = new RECT().set((short)640, (short)0, (short)MEMORY.ref(2, address).offset(0x8L).get(), (short)MEMORY.ref(2, address).offset(0xaL).get());
     gameOverMcq_800bdc3c.setPointer(address);
     LoadImage(rect, address + MEMORY.ref(4, address).offset(0x4L).get());
@@ -329,16 +325,14 @@ public final class Ttle {
   public static void FUN_800c75fc() {
     switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
-        if(fileCount_8004ddc8.get() == 0) {
-          FUN_8002a9c0();
-          setWidthAndFlags(640);
-          pregameLoadingStage_800bb10c.setu(0x1L);
-        }
+        FUN_8002a9c0();
+        setWidthAndFlags(640);
+        pregameLoadingStage_800bb10c.setu(0x1L);
       }
 
       case 1 -> {
         pregameLoadingStage_800bb10c.setu(0x2L);
-        loadDrgnBinFile(0, 6667, 0, getMethodAddress(Ttle.class, "FUN_800c7558", long.class, long.class, long.class), 0, 0x2L);
+        loadDrgnBinFile(0, 6667, 0, Ttle::FUN_800c7558, 0, 0x2L);
       }
 
       case 3 -> {
@@ -458,7 +452,7 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final long transferDest, final long fileSize, final long unknown) {
+  public static void menuTexturesMrgLoaded(final long transferDest, final int fileSize, final int unused) {
     for(int i = 0; i < MEMORY.ref(4, transferDest).offset(0x4L).get(); i++) {
       if(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0xcL).get() != 0) {
         loadTimImage(MEMORY.ref(4, transferDest).offset(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0x8L)).getAddress());
@@ -471,7 +465,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final long tmdAddressPtr, final long fileSize, final long unknown) {
+  public static void menuFireTmdLoaded(final long tmdAddressPtr, final int fileSize, final int unused) {
     final TmdWithId tmd = MEMORY.ref(4, tmdAddressPtr).cast(TmdWithId::new);
     _800c66d0.set(parseTmdFile(tmd));
     FUN_800cc0b0(_800c66d0.deref(), null);
@@ -485,10 +479,10 @@ public final class Ttle {
     _800c6724.setu(0);
 
     // MRG @ sector 61510
-    loadDrgnBinFile(0, 5718, 0, getMethodAddress(Ttle.class, "menuTexturesMrgLoaded", long.class, long.class, long.class), 0, 0x4L);
+    loadDrgnBinFile(0, 5718, 0, Ttle::menuTexturesMrgLoaded, 0, 0x4L);
 
     // TMD @ sector 61622
-    loadDrgnBinFile(0, 5719, 0, getMethodAddress(Ttle.class, "menuFireTmdLoaded", long.class, long.class, long.class), 0, 0x2L);
+    loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
 
     pregameLoadingStage_800bb10c.setu(0x2L);
 
@@ -688,10 +682,8 @@ public final class Ttle {
       menuIdleTime_800c6720.addu(0x2L);
 
       if(menuIdleTime_800c6720.get() > 0x690L) {
-        if(fileCount_8004ddc8.get() == 0) {
-          if(drgnBinIndex_800bc058.get() == 0x1L) {
-            pregameLoadingStage_800bb10c.setu(0x6L);
-          }
+        if(drgnBinIndex_800bc058.get() == 0x1L) {
+          pregameLoadingStage_800bb10c.setu(0x6L);
         }
       }
     }
@@ -708,7 +700,7 @@ public final class Ttle {
   @Method(0x800c8484L)
   public static void FUN_800c8484() {
     if(_800c672c.get() < 3) {
-      if(joypadPress_8007a398.get(0x20L) == 0 || fileCount_8004ddc8.get() != 0) {
+      if(joypadPress_8007a398.get(0x20L) == 0) {
         if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
           playSound(0, 1, 0, 0, (short)0, (short)0);
 

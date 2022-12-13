@@ -88,7 +88,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value transferDest_800bb460 = MEMORY.ref(4, 0x800bb460L);
   public static final IntRef fileSize_800bb464 = MEMORY.ref(4, 0x800bb464L, IntRef::new);
-  public static final FileLoadingInfo currentlyLoadingFileInfo_800bb468 = MEMORY.ref(4, 0x800bb468L, FileLoadingInfo::new);
+
   public static final Value fileTransferDest_800bb488 = MEMORY.ref(4, 0x800bb488L);
   public static final IntRef fileSize_800bb48c = MEMORY.ref(4, 0x800bb48cL, IntRef::new);
   public static final IntRef numberOfTransfers_800bb490 = MEMORY.ref(4, 0x800bb490L, IntRef::new);
@@ -100,7 +100,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value linkedListEntry_800bbacc = MEMORY.ref(4, 0x800bbaccL);
   public static final BoolRef SInitBinLoaded_800bbad0 = MEMORY.ref(1, 0x800bbad0L, BoolRef::new);
 
-  public static final ArrayRef<FileLoadingInfo> fileLoadingInfoArray_800bbad8 = MEMORY.ref(0x580, 0x800bbad8L, ArrayRef.of(FileLoadingInfo.class, 44, 32, FileLoadingInfo::new));
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
