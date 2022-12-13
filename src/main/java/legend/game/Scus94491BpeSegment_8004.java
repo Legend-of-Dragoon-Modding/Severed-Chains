@@ -1,7 +1,5 @@
 package legend.game;
 
-import legend.core.dma.DmaChannelType;
-import legend.core.dma.DmaManager;
 import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
@@ -41,22 +39,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.DMA;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
-import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.core.kernel.Bios.EnterCriticalSection;
-import static legend.core.kernel.Bios.ExitCriticalSection;
-import static legend.core.kernel.Kernel.EvMdNOINTR;
-import static legend.core.kernel.Kernel.EvSpCOMP;
-import static legend.core.kernel.Kernel.HwSPU;
 import static legend.game.Scus94491BpeSegment._80011db0;
-import static legend.game.Scus94491BpeSegment._80011db4;
-import static legend.game.Scus94491BpeSegment._80011db8;
-import static legend.game.Scus94491BpeSegment._80011dbc;
-import static legend.game.Scus94491BpeSegment_8002.EnableEvent;
-import static legend.game.Scus94491BpeSegment_8002.OpenEvent;
-import static legend.game.Scus94491BpeSegment_8003.SetDmaInterruptCallback;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8005._8005967c;
 import static legend.game.Scus94491BpeSegment_8005._80059b3c;
@@ -76,10 +61,6 @@ import static legend.game.Scus94491BpeSegment_800c._800c4abc;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
 import static legend.game.Scus94491BpeSegment_800c._800c6674;
-import static legend.game.Scus94491BpeSegment_800c.dmaDpcrPtr_800c4a9c;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuBcrPtr_800c4a94;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuChcrPtr_800c4a98;
-import static legend.game.Scus94491BpeSegment_800c.dmaSpuMadrPtr_800c4a90;
 import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshd10Ptr_800c6678;
@@ -568,7 +549,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
    *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#renderDamage}</li>
+   *   <li>{@link Bttl_800c#scriptRenderDamage}</li>
    *   <li>{@link Bttl_800c#FUN_800ccb70}</li>
    *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
    *   <li>{@link Bttl_800c#FUN_800cccf4}</li>
@@ -3355,11 +3336,6 @@ public final class Scus94491BpeSegment_8004 {
     }
   }
 
-  @Method(0x8004ab08L)
-  public static void registerSpuDmaCallback(final long callback) {
-    SetDmaInterruptCallback(DmaChannelType.SPU, callback);
-  }
-
   @Method(0x8004ab2cL)
   public static void spuDmaCallback() {
     voicePtr_800c4ac4.deref().SPUCNT.and(0xffcf);
@@ -3666,14 +3642,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004b834L)
   public static void initSpu() {
-    assert _80011db0.get() == 0x07070707L && _80011db4.get() == 0x07070707L && _80011db8.get() == 0x07070707L && _80011dbc.get() == 0x07070707L : "The data was different - gonna have to do the stack thing";
-
     final SpuStruct44 spu44 = _800c6630;
-
-//    sp10 = _80011db0.get();
-//    sp14 = _80011db4.get();
-//    sp18 = _80011db8.get();
-//    sp1c = _80011dbc.get();
 
     //LAB_8004b8ac
     for(int registerIndex = 0; registerIndex < 0x100; registerIndex++) {
@@ -3682,28 +3651,13 @@ public final class Scus94491BpeSegment_8004 {
       }
     }
 
-    dmaSpuMadrPtr_800c4a90.setu(DMA.spu.MADR.getAddress());
-    dmaSpuBcrPtr_800c4a94.setu(DMA.spu.BCR.getAddress());
-    dmaSpuChcrPtr_800c4a98.setu(DMA.spu.CHCR.getAddress());
-    dmaDpcrPtr_800c4a9c.setu(DmaManager.DMA_DPCR.getAddress());
     voicePtr_800c4ac4.set(SPU);
 
-    SPU.SOUND_RAM_DATA_TRANSFER_CTRL.set(0b100); // Normal
-
-    EnterCriticalSection();
-    registerSpuDmaCallback(getMethodAddress(Scus94491BpeSegment_8004.class, "spuDmaCallback"));
-    final long eventId = OpenEvent(HwSPU, EvSpCOMP, EvMdNOINTR, 0);
-    spu44.eventSpuIrq_1c.set(eventId);
-    EnableEvent(eventId);
-    ExitCriticalSection();
-
-    dmaDpcrPtr_800c4a9c.deref(4).oru(0xb_0000L);
     spu44._03.set(8);
     spu44.voiceIndex_00.set(0);
     spu44._0d.set(0);
     spu44._42.set(60);
     voicePtr_800c4ac4.deref().SPUCNT.set(0xc000); // SPU control - unmute; enable
-//    a0 = sp + 0x10L; //TODO see if statement with assert above
     spuDmaTransfer(0, _80011db0.getAddress(), 0x10, 0x1010);
 
     //LAB_8004b9e8
@@ -3717,11 +3671,7 @@ public final class Scus94491BpeSegment_8004 {
       voice.ADSR_HI.set(0);
     }
 
-    // Key on
     voicePtr_800c4ac4.deref().VOICE_KEY_ON.set(0xff_ffffL);
-//    wasteSomeCycles(0x4L);
-
-    // Key off
     voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(0xff_ffffL);
 
     //LAB_8004ba58

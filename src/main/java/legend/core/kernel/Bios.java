@@ -1,48 +1,21 @@
 package legend.core.kernel;
 
-import legend.core.DebugHelper;
 import legend.core.cdrom.CdlLOC;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.CString;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ProcessControlBlock;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ThreadControlBlock;
+import legend.game.Scus94491;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
-
 import static legend.core.Hardware.CDROM;
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.ENTRY_POINT;
-import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
-import static legend.core.InterruptController.I_MASK;
-import static legend.core.InterruptController.I_STAT;
-import static legend.core.dma.DmaManager.DMA_DICR;
-import static legend.core.dma.DmaManager.DMA_DPCR;
-import static legend.core.kernel.Kernel.CloseEvent_Impl_B09;
-import static legend.core.kernel.Kernel.DeliverEvent_Impl_B07;
-import static legend.core.kernel.Kernel.EnableEvent_Impl_B0c;
-import static legend.core.kernel.Kernel.EnqueueSyscallHandler_Impl_C01;
-import static legend.core.kernel.Kernel.EnqueueTimerAndVblankIrqs_Impl_C00;
 import static legend.core.kernel.Kernel.FileClose_Impl_B36;
 import static legend.core.kernel.Kernel.FileOpen_Impl_B32;
 import static legend.core.kernel.Kernel.FileRead_Impl_B34;
-import static legend.core.kernel.Kernel.InitDefInt_Impl_C0c;
-import static legend.core.kernel.Kernel.InstallExceptionHandlers_Impl_C07;
-import static legend.core.kernel.Kernel.OpenEvent_Impl_B08;
-import static legend.core.kernel.Kernel.ReturnFromException_Impl_B17;
-import static legend.core.kernel.Kernel.SetDefaultExitFromException_Impl_B18;
-import static legend.core.kernel.Kernel.SysDeqIntRP_Impl_C03;
-import static legend.core.kernel.Kernel.SysEnqIntRP_Impl_C02;
 import static legend.core.kernel.Kernel.SysInitMemory_Impl_C08;
-import static legend.core.kernel.Kernel.TestEvent_Impl_B0b;
-import static legend.core.kernel.Kernel.UnDeliverEvent_Impl_B20;
 import static legend.core.kernel.Kernel.alloc_kernel_memory_Impl_B00;
 
 public final class Bios {
@@ -50,8 +23,6 @@ public final class Bios {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Bios.class);
 
-  public static final Pointer<ArrayRef<Pointer<legend.core.kernel.PriorityChainEntry>>> ExceptionChainPtr_a0000100 = MEMORY.ref(4, 0xa0000100L, Pointer.of(0x20, ArrayRef.of(Pointer.classFor(legend.core.kernel.PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, legend.core.kernel.PriorityChainEntry::new))));
-  public static final Value ExceptionChainSize_a0000104 = MEMORY.ref(4, 0xa0000104L);
   public static final Pointer<ProcessControlBlock> ProcessControlBlockPtr_a0000108 = MEMORY.ref(4, 0xa0000108L, Pointer.of(4, ProcessControlBlock::new));
   public static final Value ProcessControlBlockSize_a000010c = MEMORY.ref(4, 0xa000010cL);
   public static final Value ThreadControlBlockAddr_a0000110 = MEMORY.ref(4, 0xa0000110L);
@@ -155,21 +126,6 @@ public final class Bios {
     randSeed_a0009010.setu(seed);
   }
 
-  @Method(0xbfc02240L)
-  public static void setjmp_Impl_A13(final legend.core.kernel.jmp_buf buffer, final RunnableRef callback) {
-    buffer.set(callback);
-  }
-
-  @Method(0xbfc0227cL)
-  public static int longjmp_Impl_A14(final jmp_buf buffer, final int value) {
-    throw new RuntimeException("Not implemented");
-  }
-
-  @Method(0xbfc02918L)
-  public static int abs_Impl_A0e(final int val) {
-    return Math.abs(val);
-  }
-
   @Method(0xbfc02b50L)
   public static long memcpy_Impl_A2a(final long dst, final long src, final int size) {
     if(dst == 0) {
@@ -192,57 +148,6 @@ public final class Bios {
   @Method(0xbfc03310L)
   public static int strncmp_Impl_A18(final String s1, final String s2, final int n) {
     return s1.substring(0, Math.min(s1.length(), n)).compareToIgnoreCase(s2.substring(0, Math.min(s2.length(), n)));
-  }
-
-  @Method(0xbfc033c8L)
-  @Nullable
-  public static CString strcpy_Impl_A19(@Nullable final CString dest, @Nullable final String src) {
-    if(dest == null || src == null) {
-      return null;
-    }
-
-    dest.set(src);
-    return dest;
-  }
-
-  @Method(0xbfc03418L)
-  @Nullable
-  public static CString strncpy_Impl_A1a(@Nullable final CString str1, @Nullable final CString str2, final int len) {
-    if(str1 == null || str2 == null) {
-      //LAB_bfc03428
-      return null;
-    }
-
-    //LAB_bfc03430
-    long a0 = str1.getAddress();
-    long a1 = str2.getAddress();
-
-    //LAB_bfc0343c
-    for(int i = 0; i < len; i++) {
-      final long a3 = MEMORY.ref(1, a1).getSigned();
-      MEMORY.ref(1, a0).setu(a3);
-
-      a0++;
-      a1++;
-
-      if(a3 == 0) {
-        i++;
-        //LAB_bfc03460
-        while(i < len) {
-          MEMORY.ref(1, a0).setu(0);
-          i++;
-          a0++;
-        }
-
-        //LAB_bfc03474
-        return MEMORY.ref(len, str1.getAddress(), CString::new);
-      }
-
-      //LAB_bfc0347c
-    }
-
-    //LAB_bfc03488
-    return MEMORY.ref(len, str1.getAddress(), CString::new);
   }
 
   @Method(0xbfc03a18L)
@@ -276,44 +181,6 @@ public final class Bios {
     }
 
     return false;
-  }
-
-  private static boolean entrypointInitialized;
-
-  @Method(0xbfc03cf0L)
-  public static long Exec_Impl_A43(final EXEC header, final int argc, final long argv) {
-    final Value entry = MEMORY.ref(4, header.pc0.get());
-
-    GATE.release();
-
-    if(ENTRY_POINT != null && !entrypointInitialized) {
-      MEMORY.addFunctions(ENTRY_POINT);
-      entrypointInitialized = true;
-    }
-
-    entry.cast(BiConsumerRef::new).run(argc, argv);
-
-    GATE.acquire();
-
-    return 0x1L;
-  }
-
-  @Method(0xbfc04610L)
-  public static long allocateExceptionChain(final int count) {
-    final int size = count * 8;
-    final long mem = alloc_kernel_memory(size);
-
-    if(mem == 0) {
-      return 0;
-    }
-
-    //LAB_bfc04640
-    MEMORY.memfill(mem, size, 0);
-    ExceptionChainPtr_a0000100.set(MEMORY.ref(4, mem, ArrayRef.of(Pointer.classFor(legend.core.kernel.PriorityChainEntry.class), 4, 4, 8, Pointer.of(0x10, legend.core.kernel.PriorityChainEntry::new))));
-    ExceptionChainSize_a0000104.setu(size);
-
-    //LAB_bfc04668
-    return size;
   }
 
   @Method(0xbfc04678L)
@@ -389,27 +256,13 @@ public final class Bios {
     _a00091c8.setu(0);
     _a00091cc.setu(0);
 
-    EnterCriticalSection();
-
-    I_MASK.and(0xfffffffbL);
-    I_MASK.and(0xfffffff7L);
-    I_STAT.setu(0xfffffffbL);
-    I_STAT.setu(0xfffffff7L);
-
     _a000b938.setu(0x1L);
     _a000b93c.setu(0x1L);
-
-    DMA_DPCR.setu(0x9099L);
-    DMA_DICR.setu(0x0800_0000L | DMA_DICR.get(0xff_ffffL));
 
     _a0009154.setu(0xffffL);
     _a0009158.setu(0xffffL);
     _a000915c.setu(0);
     _a0009160.setu(0);
-
-    I_STAT.setu(0xfffffffbL);
-
-    ExitCriticalSection();
 
     return true;
   }
@@ -418,27 +271,12 @@ public final class Bios {
   public static void bootstrapExecutable(final String cnf, final String exe) {
     LOGGER.info("Bootstrapping %s / %s", exe, cnf);
 
-    CPU.R12_SR.resetIEc();
-    CPU.R12_SR.setIm(CPU.R12_SR.getIm() & 0xffff_fbfeL);
-
     copyKernelSegment2();
 
-    InstallExceptionHandlers();
-    SetDefaultExitFromException();
-
-    I_MASK.setu(0);
-    I_STAT.setu(0);
-
     SysInitMemory(kernelMemoryStart_a000e000.getAddress(), 0x2000);
-    allocateExceptionChain(4);
-    EnqueueSyscallHandler(0);
-    InitDefInt(3);
     allocateEventControlBlock(10);
     allocateThreadControlBlock(1, 4);
-    EnqueueTimerAndVblankIrqs(1);
 
-    I_MASK.setu(0);
-    I_STAT.setu(0);
     CdInit_Impl_A54();
 
     //LAB_bfc06a3c
@@ -452,10 +290,8 @@ public final class Bios {
     }
 
     //LAB_bfc06be0
-    EnterCriticalSection();
-
     //LAB_bfc06c6c
-    Exec_Impl_A43(exe_a000b870, 1, 0);
+    Scus94491.main();
     LOGGER.info("Exiting");
     System.exit(0);
   }
@@ -528,7 +364,7 @@ public final class Bios {
       //LAB_bfc0760c
       s2 += 0x2cL;
       s3++;
-    } while(s0 < exe_a000b870.getAddress() && s3 != 0x2dL);
+    } while(s0 < _a000b070.getAddress() + 0x800 && s3 != 0x2dL);
 
     //LAB_bfc07620
     //LAB_bfc07630
@@ -593,7 +429,7 @@ public final class Bios {
       s1 += MEMORY.ref(1, s1).get();
       s2 += 0x18L;
       count++;
-    } while(s2 < _a00095b0.getAddress() && s1 < exe_a000b870.getAddress());
+    } while(s2 < _a00095b0.getAddress() && s1 < _a000b070.getAddress() + 0x800);
 
     //LAB_bfc07860
     //LAB_bfc07870
@@ -819,114 +655,14 @@ public final class Bios {
     return FileRead_Impl_B34(fd, buf, size);
   }
 
-  @Method(0xbfc0d8c0L)
-  public static void ExitCriticalSection() {
-    CPU.SYSCALL(2);
-  }
-
-  @Method(0xbfc0d8e0L)
-  public static void SystemErrorUnresolvedException_Impl_A40() {
-    // Normally does infinite loop: functionVectorA_000000a0.run(0x40L, EMPTY_OBJ_ARRAY);
-    LOGGER.error("Unresolved exception", new Throwable());
-    DebugHelper.pause();
-  }
-
-  @Method(0xbfc0d950L)
-  public static void SystemErrorBootOrDiskFailure_Impl_Aa1(final char type, final int errorCode) {
-    // Normally does infinite loop: functionVectorA_000000a0.run(0xa1L, new Object[] {type, errorCode});
-    LOGGER.error("Boot failure %s: %08x", type, errorCode);
-    DebugHelper.pause();
-  }
-
-  @Method(0xbfc0d960L)
-  public static boolean EnterCriticalSection() {
-    CPU.SYSCALL(1);
-
-    // The exception handler stores v0 (return value) here
-    GATE.acquire();
-    final boolean ret = ProcessControlBlockPtr_a0000108.deref().threadControlBlockPtr.deref().registers.get(1).get() != 0;
-    GATE.release();
-    return ret;
-  }
-
-  @Method(0xbfc0d970L)
-  public static void DeliverEvent(final long cls, final int spec) {
-    DeliverEvent_Impl_B07(cls, spec);
-  }
-
-  @Method(0xbfc0d980L)
-  public static void ReturnFromException() {
-    ReturnFromException_Impl_B17();
-  }
-
-  @Method(0xbfc0d990L)
-  public static void UnDeliverEvent(final long cls, final int spec) {
-    UnDeliverEvent_Impl_B20(cls, spec);
-  }
-
-  @Method(0xbfc0d9a0L)
-  public static void SetDefaultExitFromException() {
-    SetDefaultExitFromException_Impl_B18();
-  }
-
-  @Method(0xbfc0d9b0L)
-  public static long OpenEvent(final long cls, final int spec, final int mode, final long func) {
-    return OpenEvent_Impl_B08(cls, spec, mode, func);
-  }
-
-  @Method(0xbfc0d9c0L)
-  public static void EnableEvent(final long event) {
-    EnableEvent_Impl_B0c(event);
-  }
-
-  @Method(0xbfc0d9d0L)
-  public static void CloseEvent(final int event) {
-    CloseEvent_Impl_B09(event);
-  }
-
-  @Method(0xbfc0d9e0L)
-  public static int TestEvent(final long event) {
-    return TestEvent_Impl_B0b(event);
-  }
-
   @Method(0xbfc0dae0L)
   public static long alloc_kernel_memory(final int size) {
     return alloc_kernel_memory_Impl_B00(size);
   }
 
-  @Method(0xbfc0daf0L)
-  public static long SysEnqIntRP(final int priority, final legend.core.kernel.PriorityChainEntry struct) {
-    return SysEnqIntRP_Impl_C02(priority, struct);
-  }
-
-  @Method(0xbfc0db00L)
-  public static legend.core.kernel.PriorityChainEntry SysDeqIntRP(final int priority, final PriorityChainEntry struct) {
-    return SysDeqIntRP_Impl_C03(priority, struct);
-  }
-
-  @Method(0xbfc0db20L)
-  public static void InstallExceptionHandlers() {
-    InstallExceptionHandlers_Impl_C07();
-  }
-
   @Method(0xbfc0db40L)
   public static void SysInitMemory(final long address, final int size) {
     SysInitMemory_Impl_C08(address, size);
-  }
-
-  @Method(0xbfc0db50L)
-  public static long EnqueueSyscallHandler(final int priority) {
-    return EnqueueSyscallHandler_Impl_C01(priority);
-  }
-
-  @Method(0xbfc0db60L)
-  public static long InitDefInt(final int priority) {
-    return InitDefInt_Impl_C0c(priority);
-  }
-
-  @Method(0xbfc0db70L)
-  public static void EnqueueTimerAndVblankIrqs(final int priority) {
-    EnqueueTimerAndVblankIrqs_Impl_C00(priority);
   }
 
   @Method(0xbfc0dc10L)

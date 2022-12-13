@@ -3,7 +3,6 @@ package legend.core.memory.segments;
 import legend.core.MathHelper;
 import legend.core.memory.Segment;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class RamSegment extends Segment {
@@ -81,17 +80,5 @@ public class RamSegment extends Segment {
   public void memfill(final int addr, final int length, final int value) {
     this.removeFunctions(addr, addr + length);
     Arrays.fill(this.data, addr, addr + length, (byte)value);
-  }
-
-  @Override
-  public void dump(final ByteBuffer stream) {
-    super.dump(stream);
-    stream.put(this.data);
-  }
-
-  @Override
-  public void load(final ByteBuffer stream) throws ClassNotFoundException {
-    super.load(stream);
-    stream.get(this.data);
   }
 }

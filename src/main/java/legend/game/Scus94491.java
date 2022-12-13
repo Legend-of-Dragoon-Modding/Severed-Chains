@@ -1,8 +1,7 @@
 package legend.game;
 
 import legend.core.Hardware;
-import legend.core.kernel.Bios;
-import legend.core.kernel.EXEC;
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +11,6 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.MEMORY;
 
 public final class Scus94491 {
@@ -20,22 +18,20 @@ public final class Scus94491 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491.class);
 
-  public static final Value _1f800000 = MEMORY.ref(4, 0x1f800000L);
-
   public static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
 
-  public static final EXEC _80188898 = MEMORY.ref(4, 0x80188898L, EXEC::new);
-
-  public static final Value _80188a88 = MEMORY.ref(4, 0x80188a88L);
+  public static final Value bpe_80188a88 = MEMORY.ref(4, 0x80188a88L);
 
   @Method(0x801bf2a0L)
-  public static int decompress(final long archiveAddress, final long destinationAddress) {
+  public static byte[] decompress(final byte[] archive) {
     // Check BPE header - this check is in the BPE block method but not the main EXE method
-    if(MEMORY.ref(4, archiveAddress).offset(0x4L).get() != 0x1a455042L) {
-      throw new RuntimeException("Attempted to decompress non-BPE segment at " + Long.toString(archiveAddress, 16));
+    if(MathHelper.get(archive, 4, 4) != 0x1a455042L) {
+      throw new RuntimeException("Attempted to decompress non-BPE segment");
     }
 
-    LOGGER.info("Decompressing BPE segment at %08x to %08x", archiveAddress, destinationAddress);
+    LOGGER.info("Decompressing BPE segment");
+
+    final byte[] dest = new byte[(int)MathHelper.get(archive, 0, 4)];
 
     final Deque<Byte> unresolved_byte_list = new LinkedList<>();
     final byte[] dict_leftch = new byte[0x100];
@@ -48,7 +44,7 @@ public final class Scus94491 {
     // Each block is preceded by 4-byte int up to 0x800 giving the number
     // of decompressed bytes in the block. 0x00000000 indicates that there
     // are no further blocks and decompression is complete.
-    int bytes_remaining_in_block = (int)MEMORY.get(archiveAddress + archiveOffset, 4);
+    int bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
     archiveOffset += 4;
 
     while(bytes_remaining_in_block != 0) {
@@ -75,7 +71,7 @@ public final class Scus94491 {
         // be read into the dictionary, placed at the index value calculated
         // using the below formula. Otherwise, the byte indicates how many
         // sequential bytes to read into the dictionary.
-        int byte_pairs_to_read = MEMORY.get(archiveAddress + archiveOffset) & 0xff;
+        int byte_pairs_to_read = archive[archiveOffset] & 0xff;
         archiveOffset++;
 
         if(byte_pairs_to_read >= 0x80) {
@@ -91,11 +87,11 @@ public final class Scus94491 {
         if(key < 0x100) {
           // Check that dictionary length not exceeded.
           for(int i = 0; i < byte_pairs_to_read + 1; i++) {
-            dict_leftch[key] = MEMORY.get(archiveAddress + archiveOffset);
+            dict_leftch[key] = archive[archiveOffset];
             archiveOffset++;
 
             if((dict_leftch[key] & 0xff) != key) {
-              dict_rightch[key] = MEMORY.get(archiveAddress + archiveOffset);
+              dict_rightch[key] = archive[archiveOffset];
               archiveOffset++;
             }
 
@@ -108,7 +104,7 @@ public final class Scus94491 {
       // On each pass, read one byte and add it to a list of unresolved bytes.
       while(bytes_remaining_in_block > 0) {
         unresolved_byte_list.clear();
-        unresolved_byte_list.push(MEMORY.get(archiveAddress + archiveOffset));
+        unresolved_byte_list.push(archive[archiveOffset]);
         archiveOffset++;
 
         // Pop the first item in the list of unresolved bytes. If the
@@ -119,9 +115,9 @@ public final class Scus94491 {
         while(!unresolved_byte_list.isEmpty()) {
           final byte compressed_byte = unresolved_byte_list.pop();
           if(compressed_byte == dict_leftch[compressed_byte & 0xff]) {
-            MEMORY.set(destinationAddress + destinationOffset, compressed_byte);
+            dest[destinationOffset] = compressed_byte;
             destinationOffset++;
-            bytes_remaining_in_block -= 1;
+            bytes_remaining_in_block--;
           } else {
             unresolved_byte_list.push(dict_rightch[compressed_byte & 0xff]);
             unresolved_byte_list.push(dict_leftch[compressed_byte & 0xff]);
@@ -134,42 +130,30 @@ public final class Scus94491 {
         archiveOffset = archiveOffset + 4 - archiveOffset % 4;
       }
 
-      bytes_remaining_in_block = (int)MEMORY.get(archiveAddress + archiveOffset, 4);
+      bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
       archiveOffset += 4;
     }
 
-    //TODO not 100% sure this is the actual archive size
     LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
 
-    return totalSize;
+    return dest;
   }
 
   @Method(0x801bf460L)
   public static void main() {
-    _1f800000.setu(decompress(_80188a88.getAddress(), _80010000.getAddress()));
+    LOGGER.info("--- SCUS 94491 start! ---");
+
+    final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
+    final byte[] decompressed = Scus94491.decompress(archive);
+    MEMORY.setBytes(_80010000.getAddress(), decompressed);
 
     MEMORY.addFunctions(Scus94491BpeSegment.class);
     MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
     MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
     MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
     MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
-    Exec(_80188898, 1, 0);
-  }
-
-  @Method(0x801bf4e8L)
-  public static void start(final int argc, final long argv) {
-    LOGGER.info("--- SCUS 94491 start! ---");
-
-    main();
+    Scus94491BpeSegment_8002.start();
 
     assert !Hardware.isAlive() : "Shouldn't get here";
-  }
-
-  @Method(0x801c0990L)
-  public static long Exec(final EXEC header, final int argc, final long argv) {
-    GATE.acquire();
-    final long res = Bios.Exec_Impl_A43(header, argc, argv);
-    GATE.release();
-    return res;
   }
 }

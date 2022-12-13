@@ -12,7 +12,7 @@ public class BattleStruct18cb0 implements MemoryRef {
 
   /** This reference is only valid while it's loading */
   public final Pointer<MrgFile> stageMrg_638;
-  public final Pointer<MrgFile> stageTmdMrg_63c;
+  public final MrgFile stageTmdMrg_63c;
 
   public final BattleStage stage_963c;
   public final McqHeader stageMcq_9cb0;
@@ -28,7 +28,7 @@ public class BattleStruct18cb0 implements MemoryRef {
     this.ref = ref;
 
     this.stageMrg_638 = ref.offset(4, 0x638L).cast(Pointer.deferred(4, MrgFile::new));
-    this.stageTmdMrg_63c = ref.offset(4, 0x63cL).cast(Pointer.deferred(4, MrgFile::new));
+    this.stageTmdMrg_63c = ref.offset(4, 0x63cL).cast(MrgFile::new);
 
     this.stage_963c = ref.offset(4, 0x963cL).cast(BattleStage::new);
 

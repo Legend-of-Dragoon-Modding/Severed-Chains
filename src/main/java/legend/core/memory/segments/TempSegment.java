@@ -3,13 +3,12 @@ package legend.core.memory.segments;
 import legend.core.memory.IllegalAddressException;
 import legend.core.memory.Segment;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 
 public class TempSegment extends Segment {
   private final byte[] temp = new byte[0x1000];
-  private BitSet tempUsage = new BitSet(0x1000);
+  private final BitSet tempUsage = new BitSet(0x1000);
 
   public TempSegment() {
     super(0xffff_0000L, 0x1000);
@@ -140,23 +139,5 @@ public class TempSegment extends Segment {
 
     this.removeFunctions(addr, addr + length);
     Arrays.fill(this.temp, addr, addr + length, (byte)value);
-  }
-
-  @Override
-  public void dump(final ByteBuffer stream) {
-    stream.put(this.temp);
-
-    final byte[] bits = this.tempUsage.toByteArray();
-    stream.putInt(bits.length);
-    stream.put(bits);
-  }
-
-  @Override
-  public void load(final ByteBuffer stream) {
-    stream.get(this.temp);
-
-    final byte[] bits = new byte[stream.getInt()];
-    stream.get(bits);
-    this.tempUsage = BitSet.valueOf(bits);
   }
 }

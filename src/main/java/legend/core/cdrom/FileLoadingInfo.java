@@ -3,7 +3,6 @@ package legend.core.cdrom;
 public class FileLoadingInfo {
   public final CdlLOC pos = new CdlLOC();
   public int size;
-  public long transferDest;
   public String name;
   /**
    * 0 - transfer to transferDest

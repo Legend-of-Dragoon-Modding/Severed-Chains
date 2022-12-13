@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
@@ -49,9 +48,6 @@ import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct18cb0;
-import legend.game.combat.types.BttlScriptData6cSubBase1;
-import legend.game.combat.types.BttlScriptData6cSubBase2;
-import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.modding.events.EventManager;
@@ -88,14 +84,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.function.Function;
 
 import static legend.core.Hardware.CDROM;
@@ -263,9 +253,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fileCount_800bd77c;
-import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb464;
-import static legend.game.Scus94491BpeSegment_800b.fileSize_800bb48c;
-import static legend.game.Scus94491BpeSegment_800b.fileTransferDest_800bb488;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -275,7 +262,6 @@ import static legend.game.Scus94491BpeSegment_800b.melbuSoundMrgSssqPtr_800bd788
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
 import static legend.game.Scus94491BpeSegment_800b.mrg_800bd758;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
-import static legend.game.Scus94491BpeSegment_800b.numberOfTransfers_800bb490;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -296,7 +282,6 @@ import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
-import static legend.game.Scus94491BpeSegment_800b.transferDest_800bb460;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
@@ -338,7 +323,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
@@ -347,7 +331,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
@@ -407,9 +390,6 @@ public final class Scus94491BpeSegment {
   public static final CString cdName_80011700 = MEMORY.ref(6, 0x80011700L, CString::new);
 
   public static final Value _80011db0 = MEMORY.ref(4, 0x80011db0L);
-  public static final Value _80011db4 = MEMORY.ref(4, 0x80011db4L);
-  public static final Value _80011db8 = MEMORY.ref(4, 0x80011db8L);
-  public static final Value _80011dbc = MEMORY.ref(4, 0x80011dbcL);
 
   public static final Value heap_8011e210 = MEMORY.ref(4, 0x8011e210L);
 
@@ -538,10 +518,6 @@ public final class Scus94491BpeSegment {
   }
 
   public static final boolean SYNCHRONOUS = true;
-  private static boolean dumping;
-  private static boolean loading;
-
-  private static final Path state = Paths.get("./state.ddmp");
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
   private static int controllerId = -1;
@@ -681,14 +657,6 @@ public final class Scus94491BpeSegment {
     }
 
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
-      if(key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL) != 0) {
-        dumping = true;
-      }
-
-      if(key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL) != 0) {
-        loading = true;
-      }
-
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
         for(int i = 0; i < 24; i++) {
@@ -829,8 +797,6 @@ public final class Scus94491BpeSegment {
       }
 
       inputPulse = !inputPulse;
-
-      handleSaveStates();
     };
 
     if(SYNCHRONOUS) {
@@ -878,107 +844,6 @@ public final class Scus94491BpeSegment {
       }
 
       soundTimer = System.nanoTime() + soundTime;
-    }
-  }
-
-  private static void handleSaveStates() {
-    if(dumping) {
-      LOGGER.info("Pausing execution to dump save state...");
-      try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.READ)) {
-        final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_WRITE, 0, 32 * 1024 * 1024);
-        Hardware.dump(buf);
-
-        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
-          final Pointer<?> ptr = scriptStatePtrArr_800bc1c0.get(i).deref().innerStruct_00;
-
-          if(ptr.isNull()) {
-            IoHelper.write(buf, "");
-          } else {
-            IoHelper.write(buf, ptr.deref().getClass().getName());
-
-            if(ptr.deref() instanceof EffectManagerData6c) {
-              final Pointer<BttlScriptData6cSubBase1> ptr1 = ((EffectManagerData6c)ptr.deref()).effect_44;
-
-              if(ptr1.isNull()) {
-                IoHelper.write(buf, "");
-              } else {
-                IoHelper.write(buf, ptr1.deref().getClass().getName());
-              }
-
-              Pointer<BttlScriptData6cSubBase2> ptr2 = ((EffectManagerData6c)ptr.deref())._58;
-
-              while(!ptr2.isNull()) {
-                IoHelper.write(buf, ptr2.deref().getClass().getName());
-                ptr2 = ptr2.deref()._00;
-              }
-
-              IoHelper.write(buf, "");
-            }
-          }
-        }
-
-        LOGGER.info("Save state complete");
-      } catch(final Throwable throwable) {
-        LOGGER.error("Failed to dump save state", throwable);
-      }
-
-      dumping = false;
-    }
-
-    if(loading) {
-      try(final FileChannel channel = FileChannel.open(state, StandardOpenOption.READ)) {
-        LOGGER.info("Pausing execution to load save state...");
-        final ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(state));
-        Hardware.load(buf);
-
-        for(int i = 0; i < scriptStatePtrArr_800bc1c0.length(); i++) {
-          final Pointer<ScriptState<?>> ptr = scriptStatePtrArr_800bc1c0.get(i);
-
-          final String clsName = IoHelper.readString(buf);
-
-          if(!clsName.isEmpty()) {
-            final Class<?> cls = Class.forName(clsName);
-            final Constructor<?> ctor = cls.getConstructor(Value.class);
-            ptr.set(ScriptState.of(ref -> {
-              try {
-                return (MemoryRef)ctor.newInstance(ref);
-              } catch(final Exception e) {
-                throw new RuntimeException(e);
-              }
-            }).apply(MEMORY.ref(4, ptr.getPointer())));
-
-            if(EffectManagerData6c.class.equals(cls)) {
-              final EffectManagerData6c data6c = ptr.deref().innerStruct_00.derefAs(EffectManagerData6c.class);
-
-              final String clsName1 = IoHelper.readString(buf);
-
-              if(!clsName1.isEmpty()) {
-                final Class<?> cls1 = Class.forName(clsName1);
-                final Constructor<?> ctor1 = cls1.getConstructor(Value.class);
-                data6c.effect_44.set((BttlScriptData6cSubBase1)ctor1.newInstance(MEMORY.ref(4, data6c.effect_44.getPointer())));
-              }
-
-              Pointer<BttlScriptData6cSubBase2> ptr2 = data6c._58;
-              String clsName2 = IoHelper.readString(buf);
-
-              while(!clsName2.isEmpty()) {
-                final Class<?> cls2 = Class.forName(clsName2);
-                final Constructor<?> ctor2 = cls2.getConstructor(Value.class);
-                ptr2.set((BttlScriptData6cSubBase2)ctor2.newInstance(MEMORY.ref(4, ptr2.getPointer())));
-
-                ptr2 = ptr2.deref()._00;
-                clsName2 = IoHelper.readString(buf);
-              }
-            }
-          }
-        }
-
-        LOGGER.info("Load state complete");
-      } catch(final Throwable throwable) {
-        LOGGER.error("Failed to load save state", throwable);
-      }
-
-      loading = false;
     }
   }
 
@@ -1038,30 +903,6 @@ public final class Scus94491BpeSegment {
   }
 
   private static int allocations;
-
-  static {
-    Hardware.registerLoadStateListener(Scus94491BpeSegment::recalculateHeap);
-  }
-
-  public static void recalculateHeap() {
-    allocations = 0;
-
-    Value entry = heapHead_8005a2a0.deref(4);
-    long entryType = entry.offset(2, 0x8L).get();
-
-    do {
-      final long size = entry.offset(4, 0x4L).get();
-
-      if(entryType != 0) {
-        allocations++;
-      }
-
-      entry = entry.offset(size);
-      entryType = entry.offset(2, 0x8L).get();
-    } while(entryType != 3);
-
-    LOGGER.info("Recalculated allocations: %d", allocations);
-  }
 
   public static void dumpHeap() {
     Value entry = heapHead_8005a2a0.deref(4);
@@ -1901,55 +1742,6 @@ public final class Scus94491BpeSegment {
     assert false;
   }
 
-  @Method(0x8001486cL)
-  public static void decompressCurrentFile(final FileLoadingInfo file) {
-    if((file.type & 1) == 0) {
-      return;
-    }
-
-    LOGGER.info("Decompressing file %s...", file.name);
-
-    long transferDest;
-    //LAB_800148b8
-    if((file.type & 0b110) == 0) { // Decompress to file transfer dest
-      //LAB_800148ec
-      transferDest = file.transferDest;
-      fileSize_800bb464.set(Scus94491.decompress(transferDest_800bb460.get(), transferDest));
-      free(transferDest_800bb460.get());
-    } else {
-      //LAB_8001491c
-      transferDest = transferDest_800bb460.deref(4).offset(-0x8L).get();
-
-      fileSize_800bb464.set(Scus94491.decompress(transferDest_800bb460.get(), transferDest));
-
-      transferDest = realloc(transferDest, fileSize_800bb464.get());
-    }
-
-    //LAB_800149a4
-    //LAB_800149a8
-    transferDest_800bb460.setu(transferDest);
-
-    switch(file.name) {
-      case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
-      case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
-      case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
-      case "\\OVL\\S_INIT.OV_" -> MEMORY.addFunctions(SInit.class);
-      case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
-      case "\\OVL\\BTTL.OV_" -> {
-        MEMORY.addFunctions(Bttl_800c.class);
-        MEMORY.addFunctions(Bttl_800d.class);
-        MEMORY.addFunctions(Bttl_800e.class);
-        MEMORY.addFunctions(Bttl_800f.class);
-      }
-      case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
-      case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
-      case "\\SECT\\DRGN0.BIN" -> { }
-      default -> throw new RuntimeException("Loaded unknown file " + file.name);
-    }
-
-    //LAB_800149b4
-  }
-
   @Method(0x800149ccL)
   public static long FUN_800149cc() {
     //LAB_80014a74
@@ -2019,56 +1811,6 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
-  @Method(0x80014ba0L)
-  public static void allocateFileTransferDest(final FileLoadingInfo file) {
-    fileSize_800bb48c.set(file.size);
-    numberOfTransfers_800bb490.set((file.size + 0x7ff) / 0x800);
-
-    switch(file.type & 0b111) {
-      case 0 -> fileTransferDest_800bb488.setu(file.transferDest);
-
-      case 1, 4 -> {
-        final long size = numberOfTransfers_800bb490.get() * 0x800;
-        final long transferDest = mallocHead(size);
-
-        fileTransferDest_800bb488.setu(transferDest);
-      }
-
-      case 5 -> {
-        final int s1 = numberOfTransfers_800bb490.get() * 0x0800;
-        final int size = numberOfTransfers_800bb490.get() * 0x1000 + 0x100;
-        final long dest = mallocHead(size);
-
-        final long transferDest = dest + size - s1;
-        MEMORY.ref(4, transferDest).offset(-0x8L).setu(dest);
-        MEMORY.ref(4, transferDest).offset(-0x4L).setu(size);
-
-        fileTransferDest_800bb488.setu(transferDest);
-      }
-
-      case 3 -> {
-        final int s1 = numberOfTransfers_800bb490.get() * 0x0800;
-        final int size = numberOfTransfers_800bb490.get() * 0x1000 + 0x100;
-        final long dest = mallocTail(size);
-
-        final long transferDest = dest + size - s1;
-        MEMORY.ref(4, transferDest).offset(-0x8L).setu(dest);
-        MEMORY.ref(4, transferDest).offset(-0x4L).setu(size);
-
-        fileTransferDest_800bb488.setu(transferDest);
-      }
-
-      case 2 -> {
-        final int size = numberOfTransfers_800bb490.get() * 0x800;
-        final long transferDest = mallocTail(size);
-
-        fileTransferDest_800bb488.setu(transferDest);
-      }
-
-      default -> throw new RuntimeException("Failed to load file " + file);
-    }
-  }
-
   @Method(0x80014d20L)
   public static void loadFiles() {
     executeFileLoadingStage();
@@ -2102,15 +1844,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001524cL)
-  public static <Param> long loadFile(final FileEntry08 entry, final long transferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
+  public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
     if(entry.fileIndex_00.get() == -1) {
       throw new RuntimeException("File not loaded");
     }
 
     final FileLoadingInfo file = new FileLoadingInfo();
-    file.transferDest = transferDest;
     file.name = entry.name_04.deref().get();
-    file.type = FUN_800155b8(transferDest, (int)flags);
+    file.type = FUN_800155b8(fileTransferDest, (int)flags);
     setLoadingFilePosAndSizeFromFile(file, entry);
 
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
@@ -2121,18 +1862,46 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading file %s, size %d, pos %s from %s.%s(%s:%d)", file.name, file.size, file.pos, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
-    allocateFileTransferDest(file);
-    LOGGER.info("Loading file %s to %08x", file.name, fileTransferDest_800bb488.get());
-    CDROM.readFromDisk(file.pos, numberOfTransfers_800bb490.get(), fileTransferDest_800bb488.get());
+    byte[] data = new byte[file.size];
+    CDROM.readFromDisk(file.pos, data);
 
-    transferDest_800bb460.setu(fileTransferDest_800bb488);
-    fileSize_800bb464.set(fileSize_800bb48c.get());
+    if((file.type & 0x1) != 0) {
+      data = Scus94491.decompress(data);
+    }
 
-    decompressCurrentFile(file);
+    final long transferDest;
+    if((file.type & 0x2) != 0) {
+      transferDest = mallocTail(data.length);
+    } else if((file.type & 0x4) != 0) {
+      transferDest = mallocHead(data.length);
+    } else {
+      transferDest = fileTransferDest;
+    }
+
+    LOGGER.info("Loading file %s to %08x", file.name, transferDest);
+    MEMORY.setBytes(transferDest, data);
+
+    switch(file.name) {
+      case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
+      case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
+      case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
+      case "\\OVL\\S_INIT.OV_" -> MEMORY.addFunctions(SInit.class);
+      case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
+      case "\\OVL\\BTTL.OV_" -> {
+        MEMORY.addFunctions(Bttl_800c.class);
+        MEMORY.addFunctions(Bttl_800d.class);
+        MEMORY.addFunctions(Bttl_800e.class);
+        MEMORY.addFunctions(Bttl_800f.class);
+      }
+      case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
+      case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
+      case "\\SUBMAP\\NEWROOT.RDT" -> { }
+      default -> throw new RuntimeException("Loaded unknown file " + file.name);
+    }
 
     if(callback != null) {
       LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest_800bb460.get(), fileSize_800bb464.get(), callbackParam);
+      callback.onLoad(transferDest, data.length, callbackParam);
     }
 
     return 0;
@@ -2149,7 +1918,6 @@ public final class Scus94491BpeSegment {
     //LAB_80015388
     //LAB_8001538c
     final FileLoadingInfo file = new FileLoadingInfo();
-    file.transferDest = fileTransferDest;
     file.type = FUN_800155b8(fileTransferDest, (int)flags);
     file.name = drgnFiles_8004dda0.get(drgnIndex).name_04.deref().get();
     getDrgnFilePos(file, drgnIndex, fileIndex);
@@ -2162,18 +1930,28 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading DRGN%d file %d, size %d, pos %s from %s.%s(%s:%d)", index, fileIndex, file.size, file.pos, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
-    allocateFileTransferDest(file);
-    LOGGER.info("Loading file %s to %08x", file.name, fileTransferDest_800bb488.get());
-    CDROM.readFromDisk(file.pos, numberOfTransfers_800bb490.get(), fileTransferDest_800bb488.get());
+    byte[] data = new byte[file.size];
+    CDROM.readFromDisk(file.pos, data);
 
-    transferDest_800bb460.setu(fileTransferDest_800bb488);
-    fileSize_800bb464.set(fileSize_800bb48c.get());
+    if((file.type & 0x1) != 0) {
+      data = Scus94491.decompress(data);
+    }
 
-    decompressCurrentFile(file);
+    final long transferDest;
+    if((file.type & 0x3) != 0) {
+      transferDest = mallocTail(data.length);
+    } else if((file.type & 0x4) != 0) {
+      transferDest = mallocHead(data.length);
+    } else {
+      transferDest = fileTransferDest;
+    }
+
+    LOGGER.info("Loading file %s to %08x", file.name, transferDest);
+    MEMORY.setBytes(transferDest, data);
 
     if(callback != null) {
       LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest_800bb460.get(), fileSize_800bb464.get(), callbackParam);
+      callback.onLoad(transferDest, data.length, callbackParam);
     }
 
     //LAB_80015424
@@ -3752,39 +3530,6 @@ public final class Scus94491BpeSegment {
     packet.clut(640, 255);
     packet.vramPos(640, 0);
     GPU.queueCommand(41, packet);
-  }
-
-  /**
-   * Flags:
-   * bit 1: deallocate archive after decompression
-   * bit 3: allocate on head instead of tail
-   */
-  @Method(0x80017fe4L)
-  public static void decompress(final long archiveAddress, final long destinationAddress, final long callback, final long callbackParam, final long flags) {
-    final long address;
-    if(destinationAddress == 0) {
-      if((flags & 0x4L) != 0) {
-        address = mallocHead(MEMORY.ref(4, archiveAddress).get());
-      } else {
-        //LAB_8001803c
-        address = mallocTail(MEMORY.ref(4, archiveAddress).get());
-      }
-    } else {
-      address = destinationAddress;
-    }
-
-    //LAB_8001805c
-    //LAB_80018060
-    final long size = Scus94491.decompress(archiveAddress, address);
-
-    if((flags & 0x1L) != 0) {
-      free(archiveAddress);
-    }
-
-    //LAB_80018088
-    MEMORY.ref(4, callback).call(address, size, callbackParam);
-
-    //LAB_8001809c
   }
 
   @Method(0x800180c0L)

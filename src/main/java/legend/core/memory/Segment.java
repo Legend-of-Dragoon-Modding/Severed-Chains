@@ -2,17 +2,11 @@ package legend.core.memory;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import legend.core.IoHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
 
 public abstract class Segment {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Segment.class);
-
   private final long address;
   private final int length;
 
@@ -90,46 +84,5 @@ public abstract class Segment {
 
   protected boolean isFunction(final int offset) {
     return this.functions.containsKey(offset & 0xffff_fffcL);
-  }
-
-  public void dump(final ByteBuffer stream) {
-    IoHelper.write(stream, this.functions.size());
-
-    for(final var entry : this.functions.long2ObjectEntrySet()) {
-      final long address = entry.getLongKey();
-      final MethodBinding binding = entry.getValue();
-
-      if(binding.instance() != null) {
-        LOGGER.warn("WARNING: skipping method binding at %08x because it is an instance binding", address);
-        continue;
-      }
-
-      IoHelper.write(stream, address);
-      IoHelper.write(stream, binding.method().getDeclaringClass().getName());
-    }
-  }
-
-  public void load(final ByteBuffer stream) throws ClassNotFoundException {
-    this.functions.clear();
-
-    final int count = IoHelper.readInt(stream);
-    outer:
-    for(int i = 0; i < count; i++) {
-      final long address = IoHelper.readLong(stream);
-      final String className = IoHelper.readString(stream);
-
-      final Class<?> cls = Class.forName(className);
-      for(final Method method : cls.getMethods()) {
-        if(method.isAnnotationPresent(legend.core.memory.Method.class)) {
-          final legend.core.memory.Method annotation = method.getAnnotation(legend.core.memory.Method.class);
-          if((annotation.value() & 0xff_ffffL) == this.address + address) {
-            this.functions.put(address, new MethodBinding(method,  null, annotation.ignoreExtraParams()));
-            continue outer;
-          }
-        }
-      }
-
-      LOGGER.warn("WARNING: failed to find method %08x", address);
-    }
   }
 }

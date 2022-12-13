@@ -3,23 +3,20 @@ package legend.game;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
-import legend.core.kernel.jmp_buf;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
+import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.FileEntry08;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
-import legend.game.types.DeferredReallocOrFree0c;
 
 import static legend.core.Hardware.MEMORY;
 
@@ -95,23 +92,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
 
   public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
-
-  public static final BoolRef interruptHandlersInitialized_80053564 = MEMORY.ref(2, 0x80053564L, BoolRef::new);
-  public static final BoolRef inExceptionHandler_80053566 = MEMORY.ref(2, 0x80053566L, BoolRef::new);
-  public static final Value interruptCallbacks_80053568 = MEMORY.ref(4, 0x80053568L);
-
-  public static final Value _80053594 = MEMORY.ref(2, 0x80053594L);
-
-  public static final jmp_buf jmp_buf_8005359c = MEMORY.ref(4, 0x8005359cL, jmp_buf::new);
-  public static final Value _800535a0 = MEMORY.ref(4, 0x800535a0L);
-
-  public static final Value _8005457c = MEMORY.ref(4, 0x8005457cL);
-
-  public static final Value _800545ec = MEMORY.ref(4, 0x800545ecL);
-
-  public static final Value _800545fc = MEMORY.ref(4, 0x800545fcL);
-
-  public static final ArrayRef<Pointer<RunnableRef>> dmaCallbacks_80054640 = MEMORY.ref(4, 0x80054640L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.of(4, RunnableRef::new)));
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 

@@ -1,7 +1,6 @@
 package legend.core.gpu;
 
 import legend.core.Config;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Camera;
 import legend.core.opengl.Context;
@@ -921,68 +920,6 @@ public class Gpu implements Runnable {
     final int b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;
 
     return b << 16 | g << 8 | r;
-  }
-
-  public void dump(final ByteBuffer stream) {
-    IoHelper.write(stream, this.vsyncCount);
-
-    for(final long pixel : this.vram24) {
-      IoHelper.write(stream, pixel);
-    }
-
-    for(final long pixel : this.vram15) {
-      IoHelper.write(stream, pixel);
-    }
-
-    IoHelper.write(stream, this.status.setMaskBit);
-    IoHelper.write(stream, this.status.drawPixels);
-    IoHelper.write(stream, this.status.horizontalResolution);
-    IoHelper.write(stream, this.status.verticalResolution);
-    IoHelper.write(stream, this.status.displayAreaColourDepth);
-
-    IoHelper.write(stream, this.displayStartX);
-    IoHelper.write(stream, this.displayStartY);
-    IoHelper.write(stream, this.displayRangeY1);
-    IoHelper.write(stream, this.displayRangeY2);
-    IoHelper.write(stream, this.drawingArea);
-    IoHelper.write(stream, this.offsetX);
-    IoHelper.write(stream, this.offsetY);
-  }
-
-  public void load(final ByteBuffer buf, final int version) {
-    this.vsyncCount = IoHelper.readDouble(buf);
-
-    for(int i = 0; i < this.vram24.length; i++) {
-      this.vram24[i] = IoHelper.readInt(buf);
-    }
-
-    for(int i = 0; i < this.vram15.length; i++) {
-      this.vram15[i] = IoHelper.readInt(buf);
-    }
-
-    this.status.setMaskBit = IoHelper.readBool(buf);
-    this.status.drawPixels = IoHelper.readEnum(buf, DRAW_PIXELS.class);
-    this.status.horizontalResolution = IoHelper.readEnum(buf, HORIZONTAL_RESOLUTION.class);
-    this.status.verticalResolution = IoHelper.readEnum(buf, VERTICAL_RESOLUTION.class);
-    this.status.displayAreaColourDepth = IoHelper.readEnum(buf, DISPLAY_AREA_COLOUR_DEPTH.class);
-
-    this.displayStartX = IoHelper.readInt(buf);
-    this.displayStartY = IoHelper.readInt(buf);
-    this.displayRangeY1 = IoHelper.readInt(buf);
-    this.displayRangeY2 = IoHelper.readInt(buf);
-    IoHelper.readRect(buf, this.drawingArea);
-    this.offsetX = IoHelper.readShort(buf);
-    this.offsetY = IoHelper.readShort(buf);
-
-    this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
-
-    if(this.isVramViewer) {
-      this.window.resize(this.vramTexture.width, this.vramTexture.height);
-    } else {
-      this.window.resize(this.windowWidth, this.windowHeight);
-    }
-
-    this.resetCommandBuffer();
   }
 
   public static class Status {

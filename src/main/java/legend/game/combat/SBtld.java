@@ -7,6 +7,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.Scus94491;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct4c;
@@ -23,11 +24,11 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
+import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
@@ -43,11 +44,11 @@ import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c._800c66d8;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.script_800c670c;
@@ -96,13 +97,15 @@ public class SBtld {
     _800c6718.offset(0x24L).setu(stageData._0c.get());
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
-    decompress(bpe_800fb77c.getAddress(), 0, getMethodAddress(SBtld.class, "btldBpeDecompressed", long.class, long.class, long.class), 0, 0);
-    loadDrgnBinFile(1, 401, 0, SBtld::FUN_80109170, 0, 0x2L);
-  }
+    final int uncompressedSize = (int)bpe_800fb77c.offset(0x0L).get();
+    final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
+    final byte[] decompressed = Scus94491.decompress(archive);
+    final long destAddr = mallocTail(uncompressedSize);
+    MEMORY.setBytes(destAddr, decompressed);
 
-  @Method(0x80109164L)
-  public static void btldBpeDecompressed(final long address, final long fileSize, final long param) {
-    script_800c66fc.setPointer(address);
+    script_800c66fc.setPointer(destAddr);
+
+    loadDrgnBinFile(1, 401, 0, SBtld::FUN_80109170, 0, 0x2L);
   }
 
   @Method(0x80109170L)

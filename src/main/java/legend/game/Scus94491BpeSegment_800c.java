@@ -78,11 +78,6 @@ public final class Scus94491BpeSegment_800c {
   /** 0x5f4 bytes long */
   public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
 
-  public static final Value dmaSpuMadrPtr_800c4a90 = MEMORY.ref(4, 0x800c4a90L);
-  public static final Value dmaSpuBcrPtr_800c4a94 = MEMORY.ref(4, 0x800c4a94L);
-  public static final Value dmaSpuChcrPtr_800c4a98 = MEMORY.ref(4, 0x800c4a98L);
-  public static final Value dmaDpcrPtr_800c4a9c = MEMORY.ref(4, 0x800c4a9cL);
-
   /** NOTE: this pointer can be misaligned, hence being a Value */
   public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);

@@ -86,13 +86,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
 
-  public static final Value transferDest_800bb460 = MEMORY.ref(4, 0x800bb460L);
-  public static final IntRef fileSize_800bb464 = MEMORY.ref(4, 0x800bb464L, IntRef::new);
-
-  public static final Value fileTransferDest_800bb488 = MEMORY.ref(4, 0x800bb488L);
-  public static final IntRef fileSize_800bb48c = MEMORY.ref(4, 0x800bb48cL, IntRef::new);
-  public static final IntRef numberOfTransfers_800bb490 = MEMORY.ref(4, 0x800bb490L, IntRef::new);
-
   public static final ArrayRef<CdlFILE> CdlFILE_800bb4c8 = MEMORY.ref(0x600, 0x800bb4c8L, ArrayRef.of(CdlFILE.class, 0x40, 0x18, CdlFILE::new));
 
   public static final Value _800bbac8 = MEMORY.ref(1, 0x800bbac8L);

@@ -1,20 +1,13 @@
 package legend.core.spu;
 
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
 import legend.core.memory.MisalignedAccessException;
 import legend.core.memory.Segment;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedShortRef;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.nio.ByteBuffer;
 
 public class Voice implements MemoryRef {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
-
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
 
@@ -81,18 +74,6 @@ public class Voice implements MemoryRef {
     this.adsrPhase = Phase.Off;
 
     this.voiceIndex = voiceIndex;
-  }
-
-  public void reset() {
-    this.volumeLeft.set(0);
-    this.volumeRight.set(0);
-    this.pitch = 0;
-    this.startAddress = 0;
-    this.currentAddress = 0;
-    this.adsr.hi = 0;
-    this.adsr.lo = 0;
-    this.adsrVolume = 0;
-    this.adpcmRepeatAddress = 0;
   }
 
   public void keyOn() {
@@ -275,64 +256,6 @@ public class Voice implements MemoryRef {
   @Override
   public long getAddress() {
     return this.LEFT.getAddress();
-  }
-
-  public void dump(final ByteBuffer stream) {
-    this.volumeLeft.dump(stream);
-    this.volumeRight.dump(stream);
-
-    IoHelper.write(stream, this.pitch);
-    IoHelper.write(stream, this.startAddress);
-    IoHelper.write(stream, this.currentAddress);
-
-    this.adsr.dump(stream);
-
-    IoHelper.write(stream, this.adsrVolume);
-    IoHelper.write(stream, this.adpcmRepeatAddress);
-
-    this.counter.dump(stream);
-
-    IoHelper.write(stream, this.old);
-    IoHelper.write(stream, this.older);
-
-    IoHelper.write(stream, this.lastBlockSample26);
-    IoHelper.write(stream, this.lastBlockSample27);
-    IoHelper.write(stream, this.lastBlockSample28);
-
-    IoHelper.write(stream, this.latest);
-
-    IoHelper.write(stream, this.hasSamples);
-
-    IoHelper.write(stream, this.readRamIrq);
-  }
-
-  public void load(final ByteBuffer stream) {
-    this.volumeLeft.load(stream);
-    this.volumeRight.load(stream);
-
-    this.pitch = IoHelper.readInt(stream);
-    this.startAddress = IoHelper.readInt(stream);
-    this.currentAddress = IoHelper.readInt(stream);
-
-    this.adsr.load(stream);
-
-    this.adsrVolume = IoHelper.readInt(stream);
-    this.adpcmRepeatAddress = IoHelper.readInt(stream);
-
-    this.counter.load(stream);
-
-    this.old = IoHelper.readShort(stream);
-    this.older = IoHelper.readShort(stream);
-
-    this.lastBlockSample26 = IoHelper.readShort(stream);
-    this.lastBlockSample27 = IoHelper.readShort(stream);
-    this.lastBlockSample28 = IoHelper.readShort(stream);
-
-    this.latest = IoHelper.readShort(stream);
-
-    this.hasSamples = IoHelper.readBool(stream);
-
-    this.readRamIrq = IoHelper.readBool(stream);
   }
 
   public class VoiceSegment extends Segment {

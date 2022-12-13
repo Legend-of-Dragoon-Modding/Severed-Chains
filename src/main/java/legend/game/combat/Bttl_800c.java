@@ -32,6 +32,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
+import legend.game.Scus94491;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleDisplayStats144;
@@ -92,7 +93,6 @@ import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
-import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
@@ -103,6 +103,7 @@ import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
+import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -1507,7 +1508,13 @@ public final class Bttl_800c {
     //LAB_800c8bcc
     // Scripted TMD
     if(mrg.entries.get(0).size.get() > 0) {
-      decompress(mrg.getFile(0), _1f8003f4.deref().stageTmdMrg_63c.getAddress(), getMethodAddress(Bttl_800c.class, "stageTmdMrgLoaded", long.class, long.class, long.class), 0, 0);
+      final long archiveAddress = mrg.getFile(0);
+      final byte[] archive = MEMORY.getBytes(archiveAddress, mrg.entries.get(0).size.get());
+      final byte[] decompressed = Scus94491.decompress(archive);
+      final MrgFile stageTmdMrg = _1f8003f4.deref().stageTmdMrg_63c;
+      MEMORY.setBytes(stageTmdMrg.getAddress(), decompressed);
+
+      stageTmdMrgLoaded(stageTmdMrg);
     } else {
       //LAB_800c8c0c
       deferReallocOrFree(mrg.getAddress(), 0, 1);
@@ -1517,9 +1524,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8c38L)
-  public static void stageTmdMrgLoaded(final long address, final long fileSize, final long param) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
+  public static void stageTmdMrgLoaded(final MrgFile mrg) {
     loadStageMrg(mrg);
     deferReallocOrFree(_1f8003f4.deref().stageMrg_638.getPointer(), 0, 1);
     _1f8003f4.deref().stageMrg_638.clear();
@@ -1813,7 +1818,7 @@ public final class Bttl_800c {
     //LAB_800c94a0
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
-      final long size = mrg.entries.get(animIndex).size.get();
+      final int size = mrg.entries.get(animIndex).size.get();
 
       if(size != 0) {
         FUN_800c9a80(mrg.getFile(animIndex), size, 1, 0, combatantIndex, animIndex);
@@ -2004,7 +2009,7 @@ public final class Bttl_800c {
    *             </ol>
    */
   @Method(0x800c9a80L)
-  public static void FUN_800c9a80(final long addr, final long size, final int type, final int a3, final int combatantIndex, final int animIndex) {
+  public static void FUN_800c9a80(final long addr, final int size, final int type, final int a3, final int combatantIndex, final int animIndex) {
     final CombatantStruct1a8_c s3 = combatants_8005e398.get(combatantIndex)._14.get(animIndex);
 
     if(s3.type_0a.get() != 0) {
@@ -2052,7 +2057,7 @@ public final class Bttl_800c {
       final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.bobjIndices_d80.get(a3).get(), (short)64, (short)(size / 128));
       LoadImage(sp0x10, addr);
 
-      _8006e398.bobjIndices_d80.get(a3).add((int)(size / 128));
+      _8006e398.bobjIndices_d80.get(a3).add(size / 128);
       s3.type6.x_00.set(sp0x10.x.get());
       s3.type6.y_02.set(sp0x10.y.get());
       s3.type6.h_03.set(sp0x10.h.get());
@@ -2132,7 +2137,14 @@ public final class Bttl_800c {
           s0._0b.set(1);
           s0.BattleStructEf4Sub08_index_06.set((short)a3);
 
-          decompress(s0.type4_5.bpe_00.get(), 0, getMethodAddress(Bttl_800c.class, "FUN_800c9fcc", long.class, long.class, long.class), a3, 0x4L);
+          final long archiveAddress = s0.type4_5.bpe_00.get();
+          final int decompressedSize = (int)MEMORY.get(archiveAddress, 4);
+          final byte[] archive = MEMORY.getBytes(archiveAddress, decompressedSize + 0x100); // Too big, but we don't have the real size here
+          final byte[] decompressed = Scus94491.decompress(archive);
+          final long destAddress = mallocHead(decompressedSize);
+          MEMORY.setBytes(destAddress, decompressed);
+
+          FUN_800c9fcc(destAddress, a3);
         }
 
         yield true;
@@ -2162,13 +2174,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9fccL)
-  public static void FUN_800c9fcc(final long address, final long fileSize, final long param) {
-    final CombatantStruct1a8_c s0 = _8006e398._d8c.get((int)param)._00.deref();
+  public static void FUN_800c9fcc(final long address, final int param) {
+    final CombatantStruct1a8_c s0 = _8006e398._d8c.get(param)._00.deref();
 
-    if(s0._0b.get() != 0 && _8006e398._d8c.get((int)param).used_04.get()) {
+    if(s0._0b.get() != 0 && _8006e398._d8c.get(param).used_04.get()) {
       s0.BttlStruct08_index_04.set((short)FUN_800caae4(address, 3, 0, 0));
       s0.BattleStructEf4Sub08_index_06.set((short)-1);
-      _8006e398._d8c.get((int)param).used_04.set(false);
+      _8006e398._d8c.get(param).used_04.set(false);
     } else {
       //LAB_800ca034
       //LAB_800ca038

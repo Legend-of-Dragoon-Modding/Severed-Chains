@@ -1,9 +1,5 @@
 package legend.core.spu;
 
-import legend.core.IoHelper;
-
-import java.nio.ByteBuffer;
-
 public class Counter {            //internal
   public int register;
 
@@ -18,13 +14,5 @@ public class Counter {            //internal
 
   public int interpolationIndex() {
     return this.register >> 3 & 0xFF;
-  }
-
-  public void dump(final ByteBuffer stream) {
-    IoHelper.write(stream, this.register);
-  }
-
-  public void load(final ByteBuffer stream) {
-    this.register = IoHelper.readInt(stream);
   }
 }

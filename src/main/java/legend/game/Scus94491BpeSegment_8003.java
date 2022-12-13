@@ -1,12 +1,9 @@
 package legend.game;
 
-import legend.core.CpuRegisterType;
-import legend.core.InterruptType;
 import legend.core.MathHelper;
 import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.CdlLOC;
-import legend.core.dma.DmaChannelType;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
@@ -22,14 +19,10 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
-import legend.core.kernel.Kernel;
-import legend.core.kernel.jmp_buf;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -46,18 +39,9 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.DMA;
-import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
-import static legend.core.InterruptController.I_MASK;
-import static legend.core.InterruptController.I_STAT;
 import static legend.core.MathHelper.clamp;
-import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.core.dma.DmaManager.DMA_DICR;
-import static legend.core.dma.DmaManager.DMA_DPCR;
-import static legend.core.kernel.Bios.ExitCriticalSection;
-import static legend.core.kernel.Bios.setjmp_Impl_A13;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -79,11 +63,6 @@ import static legend.game.Scus94491BpeSegment_8004.Lzc;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
 import static legend.game.Scus94491BpeSegment_8005.GsOUT_PACKET_P;
-import static legend.game.Scus94491BpeSegment_8005._80053594;
-import static legend.game.Scus94491BpeSegment_8005._800535a0;
-import static legend.game.Scus94491BpeSegment_8005._8005457c;
-import static legend.game.Scus94491BpeSegment_8005._800545ec;
-import static legend.game.Scus94491BpeSegment_8005._800545fc;
 import static legend.game.Scus94491BpeSegment_8005._80054674;
 import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
@@ -92,12 +71,7 @@ import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
-import static legend.game.Scus94491BpeSegment_8005.dmaCallbacks_80054640;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
-import static legend.game.Scus94491BpeSegment_8005.inExceptionHandler_80053566;
-import static legend.game.Scus94491BpeSegment_8005.interruptCallbacks_80053568;
-import static legend.game.Scus94491BpeSegment_8005.interruptHandlersInitialized_80053564;
-import static legend.game.Scus94491BpeSegment_8005.jmp_buf_8005359c;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
@@ -396,252 +370,6 @@ public final class Scus94491BpeSegment_8003 {
     return 0x1L;
   }
 
-  @Method(0x800376a0L)
-  public static boolean ChangeClearRCnt(final int t, final boolean flag) {
-    GATE.acquire();
-    final boolean res = Kernel.ChangeClearRCnt_Impl_C0a(t, flag);
-    GATE.release();
-    return res;
-  }
-
-  @Method(0x800376b0L)
-  public static long ResetCallback() {
-    return ResetCallback_Impl();
-  }
-
-  @Method(0x800376e0L)
-  public static long InterruptCallback(final InterruptType interrupt, final long callback) {
-    return InterruptCallback_Impl(interrupt, callback);
-  }
-
-  @Method(0x80037710L)
-  public static long SetDmaInterruptCallback(final DmaChannelType channel, final long callback) {
-    return SetDmaInterruptCallback_Impl(channel, callback);
-  }
-
-  @Method(0x80037844L)
-  public static long ResetCallback_Impl() {
-    if(interruptHandlersInitialized_80053564.get()) {
-      return 0;
-    }
-
-    I_MASK.setu(0);
-    I_STAT.setu(0);
-    DMA_DPCR.setu(0x3333_3333L);
-    zeroMemory_80037d4c(interruptHandlersInitialized_80053564.getAddress(), 1050);
-    setjmp(jmp_buf_8005359c, MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment_8003.class, "handleException"), RunnableRef::new));
-    _800535a0.setu(_8005457c.getAddress());
-    SetCustomExitFromException(jmp_buf_8005359c);
-    interruptHandlersInitialized_80053564.set(true);
-    _800545ec.deref(4).offset(0x4L).setu(startInterruptDma());
-    ExitCriticalSection();
-
-    //LAB_8003790c
-    return interruptHandlersInitialized_80053564.getAddress();
-  }
-
-  @Method(0x8003791cL)
-  public static void handleException() {
-    if(!interruptHandlersInitialized_80053564.get()) {
-      LOGGER.error("unexpected interrupt(%04x)", I_STAT.get());
-      ReturnFromException();
-      return;
-    }
-
-    //LAB_80037974
-    synchronized(inExceptionHandler_80053566) {
-      inExceptionHandler_80053566.set(true);
-    }
-
-    long s0 = I_MASK.get(_80053594.get(I_STAT));
-
-    //LAB_800379b0
-    while(s0 != 0) {
-      long s1 = 0;
-      long s2 = 0;
-
-      //LAB_800379bc
-      while(s0 != 0 && s1 < 0xbL) {
-        if((s0 & 0x1L) != 0) {
-          I_STAT.setu(~(0x1L << s1));
-          final long v0 = interruptCallbacks_80053568.offset(s2).get();
-          if(v0 != 0) {
-            MEMORY.ref(4, v0).call();
-          }
-        }
-
-        //LAB_800379f8
-        s2 += 0x4L;
-        s0 >>>= 0x1L;
-        s1++;
-      }
-
-      //LAB_80037a0c
-      s0 = I_MASK.get(_80053594.get(I_STAT));
-    }
-
-    //LAB_80037a3c
-    if(I_STAT.get(I_MASK) == 0) {
-      //LAB_80037ab8
-      _800545fc.setu(0);
-    } else {
-      _800545fc.addu(0x1L);
-      if(_800545fc.get() > 0x800L) {
-        LOGGER.error("intr timeout(%04x:%04x)", I_STAT.get(), I_MASK.get());
-        _800545fc.setu(0);
-        I_STAT.setu(0);
-      }
-    }
-
-    //LAB_80037ac0
-    synchronized(inExceptionHandler_80053566) {
-      inExceptionHandler_80053566.set(false);
-    }
-
-    ReturnFromException();
-  }
-
-  @Method(0x80037aecL)
-  public static long InterruptCallback_Impl(final InterruptType interrupt, final long callback) {
-    final long oldCallback = interruptCallbacks_80053568.offset(interrupt.ordinal() * 4L).get();
-    if(callback == oldCallback || !interruptHandlersInitialized_80053564.get()) {
-      return oldCallback;
-    }
-
-    long oldIMask = I_MASK.get();
-    I_MASK.setu(0);
-
-    if(callback == 0) {
-      //LAB_80037b7c
-      interruptCallbacks_80053568.offset(interrupt.ordinal() * 4L).setu(0);
-
-      final long v0 = ~interrupt.getBit();
-      oldIMask &= v0;
-      _80053594.and(v0);
-    } else {
-      interruptCallbacks_80053568.offset(interrupt.ordinal() * 4L).setu(callback);
-
-      final long v1 = interrupt.getBit();
-      oldIMask |= v1;
-      _80053594.oru(v1);
-    }
-
-    //LAB_80037b9c
-    if(interrupt == InterruptType.VBLANK) {
-      ChangeClearRCnt(3, callback == 0);
-    }
-
-    //LAB_80037c00
-    I_MASK.setu(oldIMask);
-
-    //LAB_80037c10
-    //LAB_80037c14
-    return oldCallback;
-  }
-
-  @Method(0x80037d4cL)
-  public static void zeroMemory_80037d4c(final long address, final int words) {
-    for(long i = address; i < address + words * 4L; i += 4L) {
-      MEMORY.set(i, 4, 0);
-    }
-  }
-
-  @Method(0x80037d90L)
-  public static void ReturnFromException() {
-    GATE.acquire();
-    Kernel.ReturnFromException_Impl_B17();
-    GATE.release();
-  }
-
-  @Method(0x80037db0L)
-  public static void SetCustomExitFromException(final jmp_buf buffer) {
-    GATE.acquire();
-    Kernel.SetCustomExitFromException_Impl_B19(buffer);
-    GATE.release();
-  }
-
-  @Method(0x80037dc0L)
-  public static void setjmp(final jmp_buf buffer, final RunnableRef callback) {
-    GATE.acquire();
-    setjmp_Impl_A13(buffer, callback);
-    GATE.release();
-  }
-
-  @Method(0x80037ef0L)
-  public static long startInterruptDma() {
-    DMA_DICR.setu(0);
-
-    zeroMemory_80038168(dmaCallbacks_80054640.getAddress(), 8);
-    InterruptCallback(InterruptType.DMA, getMethodAddress(Scus94491BpeSegment_8003.class, "executeDmaInterruptCallbacks"));
-
-    return getMethodAddress(Scus94491BpeSegment_8003.class, "SetDmaInterruptCallback_Impl", DmaChannelType.class, long.class);
-  }
-
-  @Method(0x80037f3cL)
-  public static void executeDmaInterruptCallbacks() {
-    long s1 = DMA_DICR.get() >> 24 & 0x7fL;
-
-    //LAB_80037f90
-    while(s1 != 0) {
-      //LAB_80037f9c
-      for(int i = 0; i < 7 && s1 != 0; i++) {
-        if((s1 & 0x1L) != 0) {
-          DMA_DICR.and(0xff_ffffL | 0x1L << i + 24);
-          final Pointer<RunnableRef> callback = dmaCallbacks_80054640.get(i);
-          if(!callback.isNull()) {
-            callback.deref().run();
-          }
-        }
-
-        //LAB_80037fe4
-        s1 >>>= 1;
-      }
-
-      //LAB_80037ff4
-      s1 = DMA_DICR.get() >>> 24 & 0x7fL;
-    }
-
-    //LAB_80038018
-    if(DMA_DICR.get(0xff00_0000L) == 0x8000_0000L || DMA_DICR.get(0x8000L) != 0) {
-      //LAB_80038050
-      LOGGER.error("DMA bus error: code=%08x", DMA_DICR.get());
-
-      //LAB_80038064
-      for(int i = 0; i < 7; i++) {
-        LOGGER.error("MADR[%d]=%08x", i, DMA.mdecIn.MADR.offset(i << 0x4L).get());
-      }
-    }
-
-    //LAB_80038098
-  }
-
-  @Method(0x800380bcL)
-  public static long SetDmaInterruptCallback_Impl(final DmaChannelType channel, final long callback) {
-    final Pointer<RunnableRef> ptr = dmaCallbacks_80054640.get(channel.ordinal());
-    final long previous = ptr.isNull() ? 0 : ptr.deref().getAddress();
-
-    if(callback != previous) {
-      if(callback == 0) {
-        //LAB_80038124
-        ptr.clear();
-        DMA_DICR.setu(0x80_0000L | DMA_DICR.get(0xff_ffffL) & ~(0x1L << channel.ordinal() + 16));
-      } else {
-        ptr.set(MEMORY.ref(4, callback, RunnableRef::new));
-        DMA_DICR.setu(0x80_0000L | DMA_DICR.get(0xff_ffffL) | 0x1L << channel.ordinal() + 16);
-      }
-    }
-
-    //LAB_80038160
-    return previous;
-  }
-
-  @Method(0x80038168L)
-  public static void zeroMemory_80038168(final long address, final int words) {
-    for(long i = address; i < address + words * 4L; i += 4L) {
-      MEMORY.set(i, 4, 0);
-    }
-  }
-
   /**
    * Initialize drawing engine.
    *
@@ -663,7 +391,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_800381f8
     MEMORY.memfill(_800546bc.getAddress(), 0x80, 0);
-    ResetCallback();
 
     _800546bc.setu(FUN_8003a798(mode));
     _800546bd.setu(0x1L);
@@ -2501,9 +2228,6 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    // Set bit 30 of status register to enable GTE
-    CPU.MTC0(CpuRegisterType.SR, CPU.MFC0(CpuRegisterType.SR) | 0x40000000);
-
     // cop2r61 = 0x155, 61 = ZSF3 - Z3 avg scale factor (normally 1/3)
     CPU.CTC2(0x155, 29);
     // cop2r62 = 0x100, 62 = ZSF4 - Z4 avg scale factor (normally 1/4)

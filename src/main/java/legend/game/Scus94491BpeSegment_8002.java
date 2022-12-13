@@ -21,7 +21,6 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.kernel.Bios;
-import legend.core.kernel.Kernel;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -5944,7 +5943,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002ced8L)
-  public static void start(final int argc, final long argv) {
+  public static void start() {
     bzero(_8005a1d8.getAddress(), 0x6c4b0);
     main();
 
@@ -5984,21 +5983,5 @@ public final class Scus94491BpeSegment_8002 {
     GATE.acquire();
     Bios.srand_Impl_A30(seed);
     GATE.release();
-  }
-
-  @Method(0x8002ff10L)
-  public static long OpenEvent(final long desc, final int spec, final int mode, final long func) {
-    GATE.acquire();
-    final long res = Kernel.OpenEvent_Impl_B08(desc, spec, mode, func);
-    GATE.release();
-    return res;
-  }
-
-  @Method(0x8002ff40L)
-  public static boolean EnableEvent(final long event) {
-    GATE.acquire();
-    final boolean res = Kernel.EnableEvent_Impl_B0c(event);
-    GATE.release();
-    return res;
   }
 }

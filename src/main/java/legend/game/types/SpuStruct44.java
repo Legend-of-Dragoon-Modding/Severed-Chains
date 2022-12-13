@@ -29,6 +29,7 @@ public class SpuStruct44 implements MemoryRef {
   public final UnsignedShortRef noiseModeLo_16;
   public final UnsignedShortRef noiseModeHi_18;
 
+  /** No longer used */
   public final UnsignedIntRef eventSpuIrq_1c;
   /** No longer used */
   public final BoolRef spuDmaTransferInProgress_20;

@@ -54,7 +54,6 @@ import static legend.core.Hardware.MEMORY;
 import static legend.core.MathHelper.roundUp;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.core.MemoryHelper.getTriConsumerAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap._800cb450;
@@ -64,7 +63,6 @@ import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.decompress;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -178,6 +176,7 @@ import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
+import static legend.game.combat.Bttl_800c.combatantTmdAndAnimLoadedCallback;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.loadCombatantTim;
 import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
@@ -637,6 +636,8 @@ public final class SItem {
     final int permIndex2 = param >>> 8 & 0xff;
     final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
 
+    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+
     //LAB_800fc260
     long s0 = 0; //TODO this was uninitialized
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
@@ -652,7 +653,14 @@ public final class SItem {
           s0 = s0 | (data.combatantIndex_26c.get() & 0x3fL) << 9;
           s0 = s0 & 0xffff_ff7fL;
           s0 = s0 & 0xffff_feffL;
-          decompress(address + MEMORY.ref(4, address).offset(permutationSlot * 0x8L).offset(0x8L).get(), _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get(), getMethodAddress(Bttl_800c.class, "combatantTmdAndAnimLoadedCallback", long.class, long.class, long.class), s0, 0);
+
+          final long archiveAddress = mrg.getFile(permutationSlot);
+          final byte[] archive = MEMORY.getBytes(archiveAddress, mrg.entries.get(permutationSlot).size.get());
+          final byte[] decompressed = Scus94491.decompress(archive);
+          final long destAddress = _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get();
+          MEMORY.setBytes(destAddress, decompressed);
+          combatantTmdAndAnimLoadedCallback(destAddress, decompressed.length, s0);
+
           break;
         }
 

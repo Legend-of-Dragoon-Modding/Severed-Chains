@@ -28,7 +28,6 @@ import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.game.SInit.executeSInitLoadingStage;
-import static legend.game.Scus94491.decompress;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
@@ -66,7 +65,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.ResetCallback;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
@@ -789,8 +787,6 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void gameInit() {
-    ResetCallback();
-
     ResetGraph(0);
     SetGraphDebug(2);
 
@@ -951,10 +947,11 @@ public final class Scus94491BpeSegment_800e {
 
     LOGGER.info("Reading file %s...", file.name.get());
 
-    final int numberOfSectors = (int)((file.size.get() + 0x7ffL) / 0x800L);
-    CDROM.readFromDisk(file.pos, numberOfSectors, SInitOvlData_800c66a4.get());
+    final byte[] archive = new byte[file.size.get()];
+    CDROM.readFromDisk(file.pos, archive);
+    final byte[] decompressed = Scus94491.decompress(archive);
+    MEMORY.setBytes(_80010004.get(), decompressed);
 
-    decompress(SInitOvlData_800c66a4.get(), _80010004.get());
     free(SInitOvlData_800c66a4.get());
     pregameLoadingStage_800bb10c.addu(0x1L);
 

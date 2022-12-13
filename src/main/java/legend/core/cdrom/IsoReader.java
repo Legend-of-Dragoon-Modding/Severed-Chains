@@ -1,7 +1,5 @@
 package legend.core.cdrom;
 
-import legend.core.cdrom.CdlLOC;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
@@ -57,5 +55,9 @@ public class IsoReader {
 
   public void read(final byte[] out) throws IOException {
     this.file.read(out);
+  }
+
+  public void read(final byte[] out, final int offset, final int length) throws IOException {
+    this.file.read(out, offset, length);
   }
 }

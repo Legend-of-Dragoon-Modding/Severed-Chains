@@ -1,7 +1,5 @@
 package legend.core.cdrom;
 
-import legend.core.InterruptType;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.spu.XaAdpcm;
 import org.apache.logging.log4j.LogManager;
@@ -11,11 +9,9 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static legend.core.Hardware.INTERRUPTS;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
 
@@ -25,8 +21,7 @@ public class CdDrive {
   private static final Marker COMMAND_MARKER = MarkerManager.getMarker("CDROM_COMMAND").setParents(DRIVE_MARKER);
   private static final Marker DMA_MARKER = MarkerManager.getMarker("CDROM_DMA").setParents(DRIVE_MARKER);
 
-  private legend.core.cdrom.IsoReader diskSync;
-  private int diskIndex;
+  private IsoReader diskSync;
 
   /**
    * 0 = mute, 80 = normal, ff = double
@@ -55,14 +50,12 @@ public class CdDrive {
     final Path path = Paths.get("isos/%d.iso".formatted(index));
 
     try {
-      this.diskSync = new legend.core.cdrom.IsoReader(path);
+      this.diskSync = new IsoReader(path);
     } catch(final FileNotFoundException e) {
       throw new RuntimeException("Couldn't find ISO %d. Did you remember to put your ISOs in the /isos/ folder?".formatted(index));
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load disk " + index, e);
     }
-
-    this.diskIndex = index;
   }
 
   public void readFromDisk(final CdlLOC pos, final int sectorCount, final long dest) {
@@ -81,11 +74,31 @@ public class CdDrive {
         throw new RuntimeException(e);
       }
 
-      MEMORY.setBytes(dest + i * data.length, data);
-
       loc.advance(1);
 
-      INTERRUPTS.set(InterruptType.CDROM);
+      MEMORY.setBytes(dest + i * data.length, data);
+    }
+  }
+
+  public void readFromDisk(final CdlLOC pos, final byte[] dest) {
+    int length = dest.length;
+    final int sectorCount = (length + 0x7ff) / 0x800;
+
+    LOGGER.info(DMA_MARKER, "[CDROM] Performing direct read from disk: %d sectors from %s", sectorCount, pos);
+
+    final CdlLOC loc = new CdlLOC().set(pos);
+
+    for(int i = 0; i < sectorCount; i++) {
+      try {
+        this.diskSync.seekSector(loc);
+        this.diskSync.advance(0xc);
+        this.diskSync.read(dest, i * 0x800, Math.min(length, 0x800));
+        length -= 0x800;
+      } catch(final IOException e) {
+        throw new RuntimeException(e);
+      }
+
+      loc.advance(1);
     }
   }
 
@@ -178,19 +191,6 @@ public class CdDrive {
       rawSector[i + 1] = (byte)(volumeL >>> 8 & 0xff);
       rawSector[i + 2] = (byte)(volumeR       & 0xff);
       rawSector[i + 3] = (byte)(volumeR >>> 8 & 0xff);
-    }
-  }
-
-  public void dump(final ByteBuffer stream) throws IOException {
-    IoHelper.write(stream, (byte)this.diskIndex);
-    IoHelper.write(stream, this.diskSync.getPos());
-  }
-
-  public void load(final ByteBuffer stream, final int version) throws IOException {
-    if(version >= 1) {
-      this.diskIndex = IoHelper.readByte(stream);
-      this.loadDisk(this.diskIndex);
-      this.diskSync.setPos(IoHelper.readLong(stream));
     }
   }
 

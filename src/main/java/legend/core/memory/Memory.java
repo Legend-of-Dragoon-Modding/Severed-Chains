@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -283,18 +282,6 @@ public class Memory {
 
   public void releaseTemp(final long address, final int length) {
     this.temp.release((int)(address & TEMP_MASK), length);
-  }
-
-  public void dump(final ByteBuffer stream) {
-    for(final Segment segment : this.segments) {
-      segment.dump(stream);
-    }
-  }
-
-  public void load(final ByteBuffer stream, final int version) throws ClassNotFoundException {
-    for(final Segment segment : this.segments) {
-      segment.load(stream);
-    }
   }
 
   private record MethodInfo(java.lang.reflect.Method method, boolean ignoreExtraParams) { }
