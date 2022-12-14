@@ -7,6 +7,7 @@ import java.nio.file.Path;
 public class IsoReader {
   private static final int SECTOR_SIZE = 2352;
   private static final int SYNC_PATTER_SIZE = 12;
+  private static final int[] PAYLOAD_SIZE = {2048, 2324};
 
   private final Path path;
   private final RandomAccessFile file;
@@ -63,19 +64,30 @@ public class IsoReader {
     this.file.read(out, offset, length);
   }
 
-  public void readSectors(final int sector, final byte[] dest) {
-    int length = dest.length;
-    final int sectorCount = (length + 0x7ff) / 0x800;
+  public void readSectors(int sector, final byte[] dest) {
+    final int length = dest.length;
+    int dataRead = 0;
+    boolean endOfRecord = false;
 
-    for(int i = 0; i < sectorCount; i++) {
-      try {
-        this.seekSector(sector + i);
-        this.advance(0xc);
-        this.read(dest, i * 0x800, Math.min(length, 0x800));
-        length -= 0x800;
-      } catch(final IOException e) {
-        throw new RuntimeException(e);
+    try {
+      while(!endOfRecord) {
+        this.seekSector(sector);
+
+        this.advance(4); //Skip header
+
+        byte[] subheader = new byte[4];
+        this.read(subheader, 0, 4);
+
+        endOfRecord = (subheader[2] >> 7) == -1;
+
+        this.advance(4); //Skip the other copy of subheader
+        int left2Read = Math.min(length - dataRead, PAYLOAD_SIZE[(subheader[2] >> 5) & 1]);
+        this.read(dest, dataRead, left2Read);
+        dataRead += left2Read;
+        sector++;
       }
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
