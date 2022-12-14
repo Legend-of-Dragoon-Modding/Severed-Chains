@@ -8,11 +8,13 @@ public class IsoReader {
   private static final int SECTOR_SIZE = 2352;
   private static final int SYNC_PATTER_SIZE = 12;
 
+  private final Path path;
   private final RandomAccessFile file;
 
   public final int lba;
 
   public IsoReader(final Path path) throws IOException {
+    this.path = path;
     this.file = new RandomAccessFile(path.toFile(), "r");
     this.lba = (int)(this.file.length() / SECTOR_SIZE);
   }
@@ -59,5 +61,26 @@ public class IsoReader {
 
   public void read(final byte[] out, final int offset, final int length) throws IOException {
     this.file.read(out, offset, length);
+  }
+
+  public void readSectors(final int sector, final byte[] dest) {
+    int length = dest.length;
+    final int sectorCount = (length + 0x7ff) / 0x800;
+
+    for(int i = 0; i < sectorCount; i++) {
+      try {
+        this.seekSector(sector + i);
+        this.advance(0xc);
+        this.read(dest, i * 0x800, Math.min(length, 0x800));
+        length -= 0x800;
+      } catch(final IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "ISO Reader " + this.path;
   }
 }

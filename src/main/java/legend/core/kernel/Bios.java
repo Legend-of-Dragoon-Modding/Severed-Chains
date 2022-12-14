@@ -7,6 +7,8 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ProcessControlBlock;
 import legend.core.memory.types.ThreadControlBlock;
 import legend.game.Scus94491;
+import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,6 +100,12 @@ public final class Bios {
 
   @Method(0xbfc00000L)
   public static void main() {
+    try {
+      new Unpacker().unpack();
+    } catch(final UnpackerException e) {
+      throw new RuntimeException("Failed to unpack files", e);
+    }
+
     LOGGER.info("Executing BIOS");
 
     bootstrapExecutable("cdrom:SYSTEM.CNF;1", "cdrom:PSX.EXE;1");

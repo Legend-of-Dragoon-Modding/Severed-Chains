@@ -110,7 +110,10 @@ public final class IoHelper {
   }
 
   public static String readString(final ByteBuffer stream) {
-    final int length = readInt(stream);
+    return readString(stream, readInt(stream));
+  }
+
+  public static String readString(final ByteBuffer stream, final int length) {
     final byte[] data = new byte[length];
     stream.get(data);
     return new String(data);
