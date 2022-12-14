@@ -78,10 +78,10 @@ public class IsoReader {
         byte[] subheader = new byte[4];
         this.read(subheader, 0, 4);
 
-        endOfRecord = (subheader[2] >> 7) == -1;
+        endOfRecord = ((subheader[2] >>> 7) & 1) == 1;
 
         this.advance(4); //Skip the other copy of subheader
-        int left2Read = Math.min(length - dataRead, PAYLOAD_SIZE[(subheader[2] >> 5) & 1]);
+        int left2Read = Math.min(length - dataRead, PAYLOAD_SIZE[(subheader[2] >>> 5) & 1]);
         this.read(dest, dataRead, left2Read);
         dataRead += left2Read;
         sector++;
