@@ -2,16 +2,17 @@ package legend.core;
 
 import legend.core.cdrom.CdDrive;
 import legend.core.gpu.Gpu;
-import legend.core.kernel.Bios;
 import legend.core.memory.Memory;
-import legend.core.memory.segments.PrivilegeGate;
 import legend.core.memory.segments.RamSegment;
-import legend.core.memory.types.RunnableRef;
 import legend.core.spu.Spu;
+import legend.game.Scus94491;
+import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.Files;
 
 public final class Hardware {
   private Hardware() { }
@@ -19,7 +20,6 @@ public final class Hardware {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Hardware.class);
 
   public static final Memory MEMORY = new Memory();
-  public static final PrivilegeGate GATE = new PrivilegeGate();
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -42,32 +42,10 @@ public final class Hardware {
       LOGGER.warn("Failed to load config", e);
     }
 
-    // --- BIOS memory ------------------------
-
-    // 0x80 (0x10) - Exception vector
-    MEMORY.addSegment(GATE.wrap(new RamSegment(0x80L, 0x10)));
-
-    // 0x100 (0x58) - Table of tables
-    MEMORY.addSegment(GATE.wrap(new RamSegment(0x100L, 0x58)));
-
-    // 0x500 (0xbb00) - Kernel code/data - relocated from ROM
-    MEMORY.addSegment(GATE.wrap(new RamSegment(0x500L, 0xbb00)));
-
-    // 0xe000 (0x2000) - Kernel memory (ExCBs, EvCBs, TCBs)
-    MEMORY.addSegment(GATE.wrap(new RamSegment(0xe000L, 0x2000)));
-
     // --- User memory ------------------------
 
     MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x4f_0000));
     MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
-
-    // --- Bios ROM ---------------------------
-
-    MEMORY.addSegment(new RamSegment(0x1fc0_0000L, 0x8_0000));
-
-    GATE.acquire();
-    MEMORY.addFunctions(Bios.class);
-    GATE.release();
 
     CPU = new Cpu();
     GPU = new Gpu();
@@ -108,7 +86,22 @@ public final class Hardware {
   private static void run() {
     LOGGER.info("--- Legend start ---");
 
-    GATE.acquire();
-    MEMORY.ref(4, 0xbfc0_0000L).cast(RunnableRef::new).run();
+    try {
+      new Unpacker().unpack();
+    } catch(final UnpackerException e) {
+      throw new RuntimeException("Failed to unpack files", e);
+    }
+
+    try {
+      final byte[] fileData = Files.readAllBytes(Unpacker.ROOT.resolve("SCUS_944.91"));
+      MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load EXE", e);
+    }
+
+    Scus94491.main();
+
+    LOGGER.info("Exiting");
+    System.exit(0);
   }
 }

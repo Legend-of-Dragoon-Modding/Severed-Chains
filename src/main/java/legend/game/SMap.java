@@ -4546,7 +4546,7 @@ public final class SMap {
     //LAB_800e5ac4
     switch((int)smapLoadingStage_800cb430.get()) {
       case 0x0 -> {
-        srand(System.nanoTime());
+        srand((int)System.nanoTime());
         if(_800cb440.get() == 0) {
           setWidthAndFlags(384);
         }

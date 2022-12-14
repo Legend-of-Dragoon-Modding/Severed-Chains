@@ -22,6 +22,8 @@ public class Unpacker {
 
   public static final Logger LOGGER = LogManager.getFormatterLogger(Unpacker.class);
 
+  public static Path ROOT = Path.of(".", "files");
+
   public static void main(final String[] args) throws UnpackerException {
     new Unpacker().unpack();
   }
@@ -42,10 +44,8 @@ public class Unpacker {
       final Map<String, DirectoryEntry> files = new HashMap<>();
       this.getFiles(root, "", files);
 
-      final Path outputDir = Path.of(".", "files");
-
       for(final var e : files.entrySet()) {
-        final Path path = outputDir.resolve(e.getKey());
+        final Path path = ROOT.resolve(e.getKey());
 
         if(!Files.exists(path)) {
           LOGGER.info("Unpacking %s...", e.getKey());

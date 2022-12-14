@@ -20,7 +20,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
-import legend.core.kernel.Bios;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -63,7 +62,6 @@ import javax.annotation.Nullable;
 
 import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.GATE;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
@@ -5970,18 +5968,16 @@ public final class Scus94491BpeSegment_8002 {
     return dest;
   }
 
+  private static int randSeed = 0x24040001;
+
   @Method(0x8002d260L)
   public static int rand() {
-    GATE.acquire();
-    final int res = Bios.rand_Impl_A2f();
-    GATE.release();
-    return res;
+    randSeed = randSeed * 0x41c6_4e6d + 0x3039;
+    return randSeed >>> 16 & 0x7fff;
   }
 
   @Method(0x8002d270L)
-  public static void srand(final long seed) {
-    GATE.acquire();
-    Bios.srand_Impl_A30(seed);
-    GATE.release();
+  public static void srand(final int seed) {
+    randSeed = seed;
   }
 }
