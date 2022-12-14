@@ -3,8 +3,6 @@ package legend.game;
 import legend.core.Config;
 import legend.core.Hardware;
 import legend.core.MathHelper;
-import legend.core.cdrom.CdlFILE;
-import legend.core.cdrom.CdlLOC;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -60,7 +58,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
@@ -115,7 +112,6 @@ import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
-import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
@@ -169,7 +165,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
@@ -5828,24 +5823,6 @@ public final class Scus94491BpeSegment_8002 {
     initFileEntries(_80052c4c.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
-  @Method(0x8002ac48L)
-  public static int loadDRGN2xBIN() {
-    //LAB_8002ac6c
-    for(int attempts = 0; attempts < 10; attempts++) {
-      //LAB_8002ac74
-      for(int i = 0; i < 4; ) {
-        i++;
-
-        if(DsSearchFile(new CdlFILE(), String.format("\\SECT\\DRGN2%d.BIN;1", i)) != null) {
-          return i;
-        }
-      }
-    }
-
-    //LAB_8002acbc
-    return -1;
-  }
-
   @Method(0x8002bb38L)
   public static void FUN_8002bb38(final int joypadIndex, final long a1) {
     if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
@@ -5927,9 +5904,10 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002c448
-      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
+      LOGGER.info("PLAY XA %d", MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned());
+//      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
 
-      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
+//      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
       _800bf0cf.setu(4);
     }
 
@@ -5951,11 +5929,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002d220L)
   public static int strcmp(final String s1, final String s2) {
     return s1.compareToIgnoreCase(s2);
-  }
-
-  @Method(0x8002d230L)
-  public static int strncmp(final String s1, final String s2, final int length) {
-    return s1.substring(0, Math.min(s1.length(), length)).compareToIgnoreCase(s2.substring(0, Math.min(s2.length(), length)));
   }
 
   @Method(0x8002d240L)

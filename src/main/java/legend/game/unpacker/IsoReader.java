@@ -1,4 +1,4 @@
-package legend.core.cdrom;
+package legend.game.unpacker;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -31,16 +31,8 @@ public class IsoReader {
     this.file.seek(sector * SECTOR_SIZE + SYNC_PATTER_SIZE);
   }
 
-  public void seekSector(final CdlLOC loc) throws IOException {
-    this.seekSector(loc.pack());
-  }
-
   public void seekSectorRaw(final long sector) throws IOException {
     this.file.seek(sector * SECTOR_SIZE);
-  }
-
-  public void seekSectorRaw(final CdlLOC loc) throws IOException {
-    this.seekSectorRaw(loc.pack());
   }
 
   public void advance(final int amount) throws IOException {
@@ -63,19 +55,41 @@ public class IsoReader {
     this.file.read(out, offset, length);
   }
 
-  public void readSectors(final int sector, final byte[] dest) {
-    int length = dest.length;
-    final int sectorCount = (length + 0x7ff) / 0x800;
+  public byte[] readSectors(int sector, final int sectorCount, final boolean raw) {
+    int dataRead = 0;
+    boolean endOfRecord = false;
 
-    for(int i = 0; i < sectorCount; i++) {
-      try {
-        this.seekSector(sector + i);
-        this.advance(0xc);
-        this.read(dest, i * 0x800, Math.min(length, 0x800));
-        length -= 0x800;
-      } catch(final IOException e) {
-        throw new RuntimeException(e);
+    try {
+      this.seekSector(sector);
+      final byte[] subheader = new byte[4];
+      this.advance(4); //Skip header
+      this.read(subheader, 0, 4);
+
+      final int sectorSize = raw || ((subheader[2] >>> 5) & 1) != 0 ? 0x930 : 0x800;
+      final byte[] data = new byte[sectorSize * sectorCount];
+
+      while(!endOfRecord) {
+        this.seekSector(sector);
+
+        this.advance(4); //Skip header
+        this.read(subheader, 0, 4);
+
+        endOfRecord = (subheader[2] >>> 7 & 1) == 1;
+
+        if(raw) {
+          this.seekSectorRaw(sector);
+        } else {
+          this.advance(4); //Skip the other copy of subheader
+        }
+
+        this.read(data, dataRead, sectorSize);
+        dataRead += sectorSize;
+        sector++;
       }
+
+      return data;
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

@@ -1,7 +1,6 @@
 package legend.game.unpacker;
 
 import legend.core.MathHelper;
-import legend.core.cdrom.IsoReader;
 
 import java.util.HashMap;
 

@@ -2,9 +2,9 @@ package legend.game.fmv;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.cdrom.CdlLOC;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +15,6 @@ import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 
 public class Fmv {
@@ -178,16 +177,16 @@ public class Fmv {
   private static int oldFps;
   private static int oldWidth;
   private static int oldHeight;
+  private static int sector;
 
   private static SourceDataLine sound;
 
   private static Window.Events.Char charPress;
   private static boolean shouldStop;
 
-  public static void play(final int sector, final boolean doubleSpeed) {
+  public static void play(final String file, final boolean doubleSpeed) {
     shouldStop = false;
 
-    final CdlLOC pos = new CdlLOC().unpack(sector);
     final byte[] data = new byte[2352];
     final SectorHeader header = new SectorHeader(data);
     final VideoSector video = new VideoSector(data);
@@ -196,6 +195,9 @@ public class Fmv {
     final byte[] demuxedRaw = new byte[2016 * sectorCount];
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
+
+    final byte[] fileData = Unpacker.loadFile(file);
+    sector = 0;
 
     while(!GPU.isReady()) {
       DebugHelper.sleep(1);
@@ -226,8 +228,8 @@ public class Fmv {
 
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
-      for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++) {
-        CDROM.readRawSector(pos, data);
+      for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
+        System.arraycopy(fileData, sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
@@ -252,8 +254,6 @@ public class Fmv {
 
           sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
         }
-
-        pos.advance(1);
       }
 
       demuxed.position(10);

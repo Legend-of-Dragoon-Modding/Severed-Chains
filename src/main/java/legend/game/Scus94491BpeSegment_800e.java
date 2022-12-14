@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
@@ -21,25 +20,23 @@ import legend.game.types.RunningScript;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
-import static legend.game.SInit.executeSInitLoadingStage;
+import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.drawSceaLogo;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadSceaLogo;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -53,11 +50,8 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
-import static legend.game.Scus94491BpeSegment_8002.loadDRGN2xBIN;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
-import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
-import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -103,10 +97,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800c.SInitOvlData_800c66a4;
-import static legend.game.Scus94491BpeSegment_800c.SInitOvlFileName_800c66ac;
-import static legend.game.Scus94491BpeSegment_800c._800c6740;
-import static legend.game.Scus94491BpeSegment_800c.fileSInitOvl_800c668c;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoAlpha_800c6734;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoDisplayTime_800c6730;
 import static legend.game.Scus94491BpeSegment_800c.sceaLogoTextureLoaded_800c672c;
@@ -807,7 +797,6 @@ public final class Scus94491BpeSegment_800e {
 
     InitGeom();
     setProjectionPlaneDistance(640);
-    DsNewMedia();
     FUN_80019500();
 
     mainCallbackIndexOnceLoaded_8004dd24.setu(0);
@@ -930,29 +919,20 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6328L)
   public static void findSInitOvl() {
-    SInitOvlFileName_800c66ac.set(String.format("%s%s;1", _800c6740.getString(), "\\OVL\\S_INIT.OV_"));
-
     //LAB_800e635c
-    if(DsSearchFile(fileSInitOvl_800c668c, SInitOvlFileName_800c66ac.getString()) == null) {
-      return;
+    if(!Unpacker.exists("\\OVL\\S_INIT.OV_")) {
+      throw new RuntimeException("Couldn't find S_INIT");
     }
 
-    SInitOvlData_800c66a4.setu(mallocHead(fileSInitOvl_800c668c.size.get() + 0x800L));
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800e63c0L)
   public static void loadSInitOvl() {
-    final CdlFILE file = fileSInitOvl_800c668c;
+    LOGGER.info("Loading S_INIT...");
 
-    LOGGER.info("Reading file %s...", file.name.get());
+    MEMORY.setBytes(_80010004.get(), Unpacker.loadFile("\\OVL\\S_INIT.OV_"));
 
-    final byte[] archive = new byte[file.size.get()];
-    CDROM.readFromDisk(file.pos, archive);
-    final byte[] decompressed = Scus94491.decompress(archive);
-    MEMORY.setBytes(_80010004.get(), decompressed);
-
-    free(SInitOvlData_800c66a4.get());
     pregameLoadingStage_800bb10c.addu(0x1L);
 
     MEMORY.addFunctions(SInit.class);
@@ -962,19 +942,14 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6458L)
   public static void loadDrgnBin() {
-    final int drgnFileIndex = loadDRGN2xBIN();
-
-    if(drgnFileIndex >= 0) {
-      drgnBinIndex_800bc058.set(drgnFileIndex);
-      pregameLoadingStage_800bb10c.addu(0x1L);
-    }
+    drgnBinIndex_800bc058.set(1);
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800e6498L)
   public static void executeSInitLoadingStages() {
-    if(executeSInitLoadingStage(0x7fff_ffffL) != 0) {
-      pregameLoadingStage_800bb10c.addu(0x1L);
-    }
+    preloadDrgnBinFiles(0x7fff_ffffL);
+    pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800e64d4L)

@@ -3,7 +3,6 @@ package legend.game.unpacker;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
-import legend.core.cdrom.IsoReader;
 import legend.game.Scus94491;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +30,21 @@ public class Unpacker {
     unpack();
   }
 
-  public static byte[] loadFile(String name) {
+  public static byte[] loadFile(final String name) {
+    LOGGER.info("Loading file %s", name);
+
+    try {
+      return Files.readAllBytes(ROOT.resolve(fixPath(name)));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load file " + name, e);
+    }
+  }
+
+  public static boolean exists(final String name) {
+    return Files.exists(ROOT.resolve(fixPath(name)));
+  }
+
+  private static String fixPath(String name) {
     if(name.contains(";")) {
       name = name.substring(0, name.lastIndexOf(";"));
     }
@@ -40,11 +53,7 @@ public class Unpacker {
       name = name.substring(1);
     }
 
-    try {
-      return Files.readAllBytes(ROOT.resolve(name));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load file " + name, e);
-    }
+    return name.replace('\\', '/');
   }
 
   public static void unpack() throws UnpackerException {
@@ -147,8 +156,7 @@ public class Unpacker {
 
   private static Tuple<String, byte[]> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
-    final byte[] fileData = new byte[entry.length()];
-    entry.reader().readSectors(entry.sector(), fileData);
+    final byte[] fileData = entry.reader().readSectors(entry.sector(), (entry.length() + 0x7ff) / 0x800, e.getKey().endsWith(".IKI"));
     return new Tuple<>(e.getKey(), fileData);
   }
 

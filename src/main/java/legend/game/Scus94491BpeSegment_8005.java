@@ -91,8 +91,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
 
-  public static final Value cdromFilePointer_8005346c = MEMORY.ref(4, 0x8005346cL);
-
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
   public static final Value _800546bc = MEMORY.ref(1, 0x800546bcL);

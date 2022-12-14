@@ -1,7 +1,5 @@
 package legend.game;
 
-import legend.core.cdrom.CdlFILE;
-import legend.core.cdrom.CdlLOC;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -89,14 +87,13 @@ import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.SInit.executeSInitLoadingStage;
+import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -104,7 +101,6 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.cdName_80011700;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
@@ -167,8 +163,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
-import static legend.game.Scus94491BpeSegment_8003.DsNewMedia;
-import static legend.game.Scus94491BpeSegment_8003.DsSearchFile;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
@@ -224,7 +218,6 @@ import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -278,7 +271,6 @@ public final class SMap {
   public static final Value diskSwapMcqLoaded_800c6698 = MEMORY.ref(1, 0x800c6698L);
 
   public static final McqHeader mcq_800c66a0 = MEMORY.ref(4, 0x800c66a0L, McqHeader::new);
-  public static final Pointer<McqHeader> wrongDiskMcq_800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.deferred(4, McqHeader::new));
 
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
@@ -565,7 +557,6 @@ public final class SMap {
    */
   public static final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
 
-  public static final ArrayRef<UnsignedShortRef> mcqWrongDisk_800f48d8 = MEMORY.ref(2, 0x800f48d8L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
   public static final ArrayRef<UnsignedShortRef> mcqPleaseWait_800f48e0 = MEMORY.ref(2, 0x800f48e0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
 
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
@@ -669,13 +660,6 @@ public final class SMap {
       mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc05c.get());
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.set(2);
-    } else if(v1 == 3) {
-      //LAB_800d9354
-      loadWrongDiskMcq();
-      diskSwapAttempts_800c6690.setu(0);
-
-      //LAB_800d936c
-      pregameLoadingStage_800bb10c.setu(0x3L);
     }
 
     //LAB_800d9370
@@ -700,7 +684,6 @@ public final class SMap {
     S_InitLoaded_800c6694.setu(0);
     diskSwapMcqLoaded_800c6698.setu(0);
     loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, SMap::FUN_800d956c, 0, 0x2L);
-    loadDrgnBinFile(0, mcqWrongDisk_800f48d8.get(diskNum_8004ddc0.get() - 1).get(), 0, SMap::FUN_800d9614, 0, 0x4L);
     loadSupportOverlay(0, getConsumerAddress(SMap.class, "FUN_800d962c", int.class), 0);
     return 1;
   }
@@ -712,11 +695,6 @@ public final class SMap {
     loadMcq(MEMORY.ref(4, address, McqHeader::new), 640, 0);
     diskSwapMcqLoaded_800c6698.setu(0x1L);
     deferReallocOrFree(address, 0, 1);
-  }
-
-  @Method(0x800d9614L)
-  public static void FUN_800d9614(final long address, final int size, final int param) {
-    wrongDiskMcq_800c66d0.setPointer(address);
   }
 
   @Method(0x800d962cL)
@@ -742,17 +720,6 @@ public final class SMap {
       return 0;
     }
 
-    CDROM.loadDisk(diskNum_8004ddc0.get());
-    cdName_80011700.set("CD00" + diskNum_8004ddc0.get());
-    DsNewMedia();
-
-    final CdlFILE file = new CdlFILE();
-    if(DsSearchFile(file, "\\SECT\\DRGN2%d.BIN;1".formatted(diskNum_8004ddc0.get())) == null) {
-      //LAB_800d98a0
-      diskSwapAttempts_800c6690.addu(0x1L);
-      return diskSwapAttempts_800c6690.get() < 0x15 ? 0 : 3;
-    }
-
     //LAB_800d988c
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
     return 1;
@@ -760,21 +727,9 @@ public final class SMap {
 
   @Method(0x800d98b0L)
   public static long FUN_800d98b0() {
-    final int v0 = (int)executeSInitLoadingStage(3);
-
-    if(v0 == 0) {
-      return 0;
-    }
+    preloadDrgnBinFiles(3);
 
     //LAB_800d98d8
-    if(v0 < 0) {
-      //LAB_800d9914
-      return 3;
-    }
-
-    free(wrongDiskMcq_800c66d0.getPointer());
-    wrongDiskMcq_800c66d0.clear();
-
     //LAB_800d9918
     return 1;
   }
@@ -813,15 +768,6 @@ public final class SMap {
 
     //LAB_800d9a6c
     return 2;
-  }
-
-  @Method(0x800d9a7cL)
-  public static void loadWrongDiskMcq() {
-    final McqHeader mcq = wrongDiskMcq_800c66d0.deref();
-    memcpy(mcq_800c66a0.getAddress(), mcq.getAddress(), 0x2c);
-
-    //LAB_800d9aa8
-    loadMcq(mcq, 640, 0);
   }
 
   @Method(0x800d9b08L)
@@ -6881,9 +6827,8 @@ public final class SMap {
   @Method(0x800ed9e4L)
   public static long playFmv() {
     final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
-    final CdlLOC pos = CdlFILE_800bb4c8.get(file.fileIndex_00.get()).pos;
 
-    Fmv.play((int)pos.pack(), true);
+    Fmv.play(file.name_04.deref().get(), true);
 
     //LAB_800eda50
     fmvStage_800bf0d8.setu(0x3L);

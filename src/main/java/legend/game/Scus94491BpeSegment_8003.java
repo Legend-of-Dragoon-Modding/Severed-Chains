@@ -1,9 +1,6 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.cdrom.CdlDIR;
-import legend.core.cdrom.CdlFILE;
-import legend.core.cdrom.CdlLOC;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
@@ -37,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.CPU;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
@@ -57,8 +53,6 @@ import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
-import static legend.game.Scus94491BpeSegment_8002.strcmp;
-import static legend.game.Scus94491BpeSegment_8002.strncmp;
 import static legend.game.Scus94491BpeSegment_8004.Lzc;
 import static legend.game.Scus94491BpeSegment_8005.DISPENV_80054728;
 import static legend.game.Scus94491BpeSegment_8005.DRAWENV_800546cc;
@@ -70,21 +64,14 @@ import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
-import static legend.game.Scus94491BpeSegment_8005.cdromFilePointer_8005346c;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
-import static legend.game.Scus94491BpeSegment_800b.CdlDIR_800bfda8;
-import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bf7a8;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.DRAWENV_800c3450;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
-import static legend.game.Scus94491BpeSegment_800c._800c13a8;
-import static legend.game.Scus94491BpeSegment_800c._800c13a9;
-import static legend.game.Scus94491BpeSegment_800c._800c1434;
-import static legend.game.Scus94491BpeSegment_800c._800c1ba8;
 import static legend.game.Scus94491BpeSegment_800c._800c3410;
 import static legend.game.Scus94491BpeSegment_800c._800c34c4;
 import static legend.game.Scus94491BpeSegment_800c._800c34c6;
@@ -108,266 +95,14 @@ public final class Scus94491BpeSegment_8003 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
 
-  public static final int DSL_MAX_DIR = 0x80;
-  public static final int DSL_MAX_FILE = 0x40;
-  public static final int DSL_MAX_LEVEL = 0x8;
-
   @Method(0x800309f0L)
   public static void bzero(final long address, final int size) {
     MEMORY.memfill(address, size, 0);
   }
 
-  @Method(0x80032898L)
-  public static void CdMix_Impl(final int cdLeftToSpuLeft, final int cdLeftToSpuRight, final int cdRightToSpuRight, final int cdRightToSpuLeft) {
-    CDROM.setAudioMix(cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
-  }
-
   @Method(0x80035630L)
   public static void CdMix(final int cdLeftToSpuLeft, final int cdLeftToSpuRight, final int cdRightToSpuRight, final int cdRightToSpuLeft) {
-    CdMix_Impl(cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
-  }
-
-  @Method(0x80035c90L)
-  @Nullable
-  public static CdlFILE DsSearchFile(final CdlFILE file, final String name) {
-    //LAB_80035cf8
-    if(!name.startsWith("\\")) {
-      throw new RuntimeException("Bad path");
-    }
-
-    //LAB_80035d18
-    final StringBuilder str = new StringBuilder();
-
-    long fp = 0x1L;
-    int charIndex = 0;
-    long pathSegment;
-
-    //LAB_80035d30
-    Outer:
-    for(pathSegment = 0; pathSegment < DSL_MAX_LEVEL; pathSegment++) {
-      str.delete(0, str.length());
-
-      char chr = name.charAt(charIndex);
-
-      //LAB_80035d44
-      while(chr != '\\') {
-        if(chr == '\0') {
-          break Outer;
-        }
-
-        charIndex++;
-        str.append(chr);
-        chr = charIndex < name.length() ? name.charAt(charIndex) : 0;
-      }
-
-      //LAB_80035d6c
-      charIndex++;
-
-      fp = DsGetChildDirIndex(fp, str.toString());
-      if(fp == -0x1L) {
-        //LAB_80035d10
-        break;
-      }
-    }
-
-    //LAB_80035da0
-    //LAB_80035da4
-    if(pathSegment >= DSL_MAX_LEVEL) {
-      throw new RuntimeException("%s: path level (%d) error".formatted(name, pathSegment));
-    }
-
-    //LAB_80035dd8
-    if(str.isEmpty()) {
-      throw new RuntimeException("%s: dir was not found".formatted(name));
-    }
-
-    //LAB_80035e08
-    if(DsCacheFile(fp) == 0) {
-      throw new RuntimeException("DsSearchFile: disc error");
-    }
-
-    //LAB_80035e40
-    LOGGER.info("DsSearchFile: searching %s...", str.toString());
-
-    //LAB_80035e6c
-    //LAB_80035e80
-    for(int fileIndex = 0; fileIndex < DSL_MAX_FILE; fileIndex++) {
-      final CdlFILE cdFile = CdlFILE_800bf7a8.get(fileIndex);
-
-      if(cdFile.name.isEmpty()) {
-        break;
-      }
-
-      if(filenameMatches(cdFile.name.get(), str.toString())) {
-        LOGGER.info("%s:  found", str.toString());
-
-        //LAB_80035ed0
-        file.set(cdFile);
-        return cdFile;
-      }
-
-      //LAB_80035f08
-    }
-
-    //LAB_80035f20
-    //LAB_80035f3c
-    LOGGER.info("%s: not found", str.toString());
-
-    //LAB_80035f44
-    //LAB_80035f48
-    return null;
-  }
-
-  /**
-   * Compares two 16-byte strings
-   *
-   * @return True if both strings are identical
-   */
-  @Method(0x80035f70L)
-  public static boolean filenameMatches(final String s1, final String s2) {
-    return strncmp(s1, s2, 0xc) == 0;
-  }
-
-  @Method(0x80035f90L)
-  public static void DsNewMedia() {
-    CDROM.readFromDisk(new CdlLOC().unpack(0x10), 1, _800c13a8.getAddress());
-
-    //LAB_80036004
-    if(!"CD001".equals(_800c13a9.getString(0x5))) {
-      throw new RuntimeException("Invalid disk: wrong identifier");
-    }
-
-    //LAB_80036044
-    CDROM.readFromDisk(new CdlLOC().unpack(_800c1434.get()), 1, _800c13a8.getAddress());
-
-    //LAB_8003609c
-    LOGGER.info("DS_newmedia: searching dir...");
-
-    Value address = _800c13a8;
-    int directoryId;
-
-    //LAB_800360c0
-    //LAB_800360e0
-    for(directoryId = 0; directoryId < DSL_MAX_DIR; directoryId++) {
-      if(address.getAddress() >= _800c1ba8.getAddress()) {
-        break;
-      }
-
-      final long filenameLength = address.offset(1, 0x0L).get();
-
-      if(filenameLength == 0) {
-        break;
-      }
-
-      final CdlDIR dir = CdlDIR_800bfda8.get(directoryId);
-      dir.id.set(directoryId + 1);
-      dir.parentId.set(address.offset(1, 0x6L).get());
-      dir.lba.set(address.offset(2, 0x4L).get() << 16 | address.offset(2, 0x2L).get());
-      dir.name.set(address.offset(1, 0x8L).getString((int)filenameLength));
-
-      address = address.offset(filenameLength + (filenameLength & 0x1L) + 0x8L);
-
-      LOGGER.info("\t%08x,%04x,%04x,%s", dir.lba.get(), dir.id.get(), dir.parentId.get(), dir.name.get());
-
-      //LAB_800361bc
-    }
-
-    //LAB_800361d4
-    if(directoryId < DSL_MAX_DIR) {
-      CdlDIR_800bfda8.get(directoryId).parentId.set(0);
-    }
-
-    //LAB_800361fc
-    cdromFilePointer_8005346c.set(0);
-
-    LOGGER.info("DS_newmedia: %d dir entries found", directoryId);
-  }
-
-  @Method(0x80036254L)
-  public static long DsGetChildDirIndex(final long parentId, final String str) {
-    //LAB_80036288
-    for(int dirIndex = 0; dirIndex < DSL_MAX_DIR; dirIndex++) {
-      final CdlDIR dir = CdlDIR_800bfda8.get(dirIndex);
-
-      if(dir.parentId.get() == 0) {
-        return -0x1L;
-      }
-
-      if(dir.parentId.get() == parentId) {
-        if(strcmp(str, dir.name.get()) == 0) {
-          return dirIndex + 0x1L;
-        }
-      }
-
-      //LAB_800362c0
-      //LAB_800362c4
-    }
-
-    //LAB_800362d4
-    //LAB_800362d8
-    return -0x1L;
-  }
-
-  @Method(0x800362f8L)
-  public static long DsCacheFile(final long fp) {
-    if(fp == cdromFilePointer_8005346c.get()) {
-      return 0x1L;
-    }
-
-    CDROM.readFromDisk(new CdlLOC().unpack(CdlDIR_800bfda8.get((int)fp - 1).lba.get()), 1, _800c13a8.getAddress());
-
-    //LAB_80036394
-    LOGGER.info("DS_cachefile: searching...");
-
-    long s0 = _800c13a8.getAddress();
-
-    //LAB_800363bc
-    int fileIndex = 0;
-
-    //LAB_800363dc
-    while(fileIndex < DSL_MAX_FILE && s0 < _800c1ba8.getAddress()) {
-      if(MEMORY.ref(1, s0).get() == 0) {
-        break;
-      }
-
-      final CdlFILE file = CdlFILE_800bf7a8.get(fileIndex);
-
-      file.pos.unpack(MEMORY.ref(2, s0).offset(0x4L).get() << 16 | MEMORY.ref(2, s0).offset(0x2L).get());
-      file.size.set((int)(MEMORY.ref(2, s0).offset(0xcL).get() << 16 | MEMORY.ref(2, s0).offset(0xaL).get()));
-
-      if(fileIndex == 0) {
-        //LAB_80036440
-        // First entry: .
-        file.name.set(".");
-      } else if(fileIndex == 0x1L) {
-        //LAB_80036450
-        // Second entry: ..
-        file.name.set("..");
-      } else {
-        //LAB_8003646c
-        file.name.set(MEMORY.ref(1, s0).offset(0x21L).getString((int)MEMORY.ref(1, s0).offset(0x20L).get()));
-      }
-
-      //LAB_80036488
-      LOGGER.info("\t(%02d:%02d:%02d) %d %s", file.pos.getMinute(), file.pos.getSecond(), file.pos.getSector(), file.size.get(), file.name.get());
-
-      //LAB_800364e4
-      fileIndex++;
-      s0 += MEMORY.ref(1, s0).get();
-    }
-
-    //LAB_80036518
-    cdromFilePointer_8005346c.setu(fp);
-    if(fileIndex < DSL_MAX_FILE) {
-      CdlFILE_800bf7a8.get(fileIndex).name.set("");
-    }
-
-    //LAB_80036540
-    LOGGER.info("DS_cachefile: %d files found", fileIndex);
-
-    //LAB_80036568
-    //LAB_8003656c
-    return 0x1L;
+    LOGGER.warn("SET CD MIX %d %d %d %d", cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
   }
 
   /**

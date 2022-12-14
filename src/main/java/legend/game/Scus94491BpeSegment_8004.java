@@ -144,7 +144,7 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * \SECT\DRGN21.BIN, also gets changed in SInitBin
    */
-  public static final Value _8004dd88 = MEMORY.ref(1, 0x8004dd88L);
+  public static final Value drgn2xFileName_8004dd88 = MEMORY.ref(1, 0x8004dd88L);
 
   public static final UnboundedArrayRef<FileEntry08> drgnFiles_8004dda0 = MEMORY.ref(2, 0x8004dda0L, UnboundedArrayRef.of(0x8, FileEntry08::new));
 
@@ -231,7 +231,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeac}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeb4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1a4}</li>
-   *   <li>{@link legend.game.SMap#wrongDiskMcq_800c66d0}</li>
+   *   <li>{@link legend.game.combat.Bttl_800c#_800c66d0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1d8}</li>
    *   <li>{@link Bttl_800c#charCount_800c677c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>

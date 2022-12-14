@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.Box;
 import legend.core.gpu.DISPENV;
 import legend.core.gpu.DRAWENV;
@@ -30,13 +29,6 @@ import static legend.core.Hardware.MEMORY;
 
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
-
-  public static final Value _800c13a8 = MEMORY.ref(1, 0x800c13a8L);
-  public static final Value _800c13a9 = MEMORY.ref(1, 0x800c13a9L);
-
-  public static final Value _800c1434 = MEMORY.ref(4, 0x800c1434L);
-
-  public static final Value _800c1ba8 = MEMORY.ref(4, 0x800c1ba8L);
 
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
@@ -97,17 +89,9 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
-  public static final CdlFILE fileSInitOvl_800c668c = MEMORY.ref(4, 0x800c668cL, CdlFILE::new);
-
-  public static final Value SInitOvlData_800c66a4 = MEMORY.ref(4, 0x800c66a4L);
-
-  public static final Value SInitOvlFileName_800c66ac = MEMORY.ref(1, 0x800c66acL);
-
   public static final Value sceaLogoTextureLoaded_800c672c = MEMORY.ref(4, 0x800c672cL);
   public static final Value sceaLogoDisplayTime_800c6730 = MEMORY.ref(4, 0x800c6730L);
   public static final IntRef sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L, IntRef::new);
-
-  public static final Value _800c6740 = MEMORY.ref(1, 0x800c6740L);
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 

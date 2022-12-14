@@ -1,6 +1,5 @@
 package legend.core;
 
-import legend.core.cdrom.CdDrive;
 import legend.core.gpu.Gpu;
 import legend.core.memory.Memory;
 import legend.core.memory.segments.RamSegment;
@@ -22,7 +21,6 @@ public final class Hardware {
 
   public static final Cpu CPU;
   public static final Gpu GPU;
-  public static final CdDrive CDROM;
   public static final Spu SPU;
 
   public static final Thread codeThread;
@@ -48,7 +46,6 @@ public final class Hardware {
 
     CPU = new Cpu();
     GPU = new Gpu();
-    CDROM = new CdDrive();
     SPU = new Spu(MEMORY);
 
     codeThread = new Thread(Hardware::run);

@@ -1,7 +1,5 @@
 package legend.game;
 
-import legend.core.cdrom.CdlDIR;
-import legend.core.cdrom.CdlFILE;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
@@ -57,9 +55,6 @@ import static legend.core.Hardware.MEMORY;
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final int DSL_MAX_DIR = 0x80;
-  public static final int DSL_MAX_FILE = 0x40;
-
   public static final Value _800ba3b8 = MEMORY.ref(4, 0x800ba3b8L);
 
   public static final Value _800babc0 = MEMORY.ref(4, 0x800babc0L);
@@ -85,15 +80,14 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
 
-  public static final ArrayRef<CdlFILE> CdlFILE_800bb4c8 = MEMORY.ref(4, 0x800bb4c8L, ArrayRef.of(CdlFILE.class, 0x40, 0x18, CdlFILE::new));
+  public static final BoolRef drgnFilesCached_800bbac8 = MEMORY.ref(1, 0x800bbac8L, BoolRef::new);
 
-  public static final Value _800bbac8 = MEMORY.ref(1, 0x800bbac8L);
-
-  public static final Value linkedListEntry_800bbacc = MEMORY.ref(4, 0x800bbaccL);
+  public static final Value drgnFileCache_800bbacc = MEMORY.ref(4, 0x800bbaccL);
   public static final BoolRef SInitBinLoaded_800bbad0 = MEMORY.ref(1, 0x800bbad0L, BoolRef::new);
 
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
+  public static final byte[][] DRGN_CACHE = new byte[3][];
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
   public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
   public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
@@ -316,12 +310,4 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);
 
   public static final Value _800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
-
-  /**
-   * CD file list
-   *
-   * 0x800bf7a8-0x800bfda8
-   */
-  public static final ArrayRef<CdlFILE> CdlFILE_800bf7a8 = MEMORY.ref(1, 0x800bf7a8L, ArrayRef.of(CdlFILE.class, DSL_MAX_FILE, 0x18, CdlFILE::new));
-  public static final ArrayRef<CdlDIR> CdlDIR_800bfda8 = MEMORY.ref(4, 0x800bfda8L, ArrayRef.of(CdlDIR.class, DSL_MAX_DIR, 0x2c, CdlDIR::new));
 }

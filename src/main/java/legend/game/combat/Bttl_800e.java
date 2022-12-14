@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import legend.core.MemoryHelper;
-import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -34,8 +33,8 @@ import legend.game.combat.types.BattleDisplayStats144Sub10;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleStageDarkening1800;
 import legend.game.combat.types.BattleStruct14;
 import legend.game.combat.types.BattleStruct24;
@@ -97,7 +96,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.getDrgnFilePos;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -114,7 +112,6 @@ import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -123,13 +120,13 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcpy;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.ApplyRotMatrix;
-import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -139,6 +136,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
+import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
@@ -154,30 +152,27 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
+import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
+import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
 import static legend.game.combat.Bttl_800c._800c6758;
-import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c._800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c6940;
-import static legend.game.combat.Bttl_800c.tmds_800c6944;
-import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
-import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800c69c8;
@@ -226,12 +221,16 @@ import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.light_800c6ddc;
 import static legend.game.combat.Bttl_800c.lights_800c692c;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.script_800faebc;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
+import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
+import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
+import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
 import static legend.game.combat.Bttl_800d.FUN_800ddac8;
@@ -2766,12 +2765,9 @@ public final class Bttl_800e {
     battle24.script_14.clear();
 
     //LAB_800e6738
-    final FileLoadingInfo file = new FileLoadingInfo();
     for(int i = 0; _800fb040.offset(i).get() != 0xff; i++) {
       if(_800fb040.offset(i).get() == s3) {
-        getDrgnFilePos(file, 0, 4115 + i);
-
-        if(file.size != 0) {
+        if(drgnMrg_800bc060.get(0).deref().entries.get(4115 + i).size.get() != 0) {
           loadDrgnBinFile(0, 4115 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
         }
       }
@@ -2852,12 +2848,9 @@ public final class Bttl_800e {
     a0_0._00.or(0x500_0000L);
 
     //LAB_800e6b5c
-    final FileLoadingInfo file = new FileLoadingInfo();
     for(int i = 0; _800fb05c.offset(i).get() != 0xff; i++) {
       if(_800fb05c.offset(i).get() == s3) {
-        getDrgnFilePos(file, 0, 5505 + i);
-
-        if(file.size != 0) {
+        if(drgnMrg_800bc060.get(0).deref().entries.get(5505 + i).size.get() != 0) {
           loadDrgnBinFile(0, 5505 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
         }
       }
@@ -2867,15 +2860,12 @@ public final class Bttl_800e {
 
     //LAB_800e6bd4
     if((v1 & 0x1_0000L) != 0) {
-      final FileLoadingInfo file1 = new FileLoadingInfo();
-      final FileLoadingInfo file2 = new FileLoadingInfo();
+      final int fileSize1 = drgnMrg_800bc060.get(0).deref().entries.get(5511 + s3 * 2).size.get();
+      final int fileSize2 = drgnMrg_800bc060.get(0).deref().entries.get(5512 + s3 * 2).size.get();
 
-      getDrgnFilePos(file1, 0, 5511 + s3 * 2);
-      getDrgnFilePos(file2, 0, 5512 + s3 * 2);
-
-      if(file1.size < file2.size) {
+      if(fileSize1 < fileSize2) {
         //LAB_800e6ca0
-        loadDrgnBinFile(0, 5511 + s3 * 2, mallocTail(file2.size + 0x7ff & 0xffff_f800), Bttl_800e::FUN_800e929c, 1, 0x4L);
+        loadDrgnBinFile(0, 5511 + s3 * 2, mallocTail(fileSize2 + 0x7ff & 0xffff_f800), Bttl_800e::FUN_800e929c, 1, 0x4L);
       } else {
         loadDrgnBinFile(0, 5511 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
       }

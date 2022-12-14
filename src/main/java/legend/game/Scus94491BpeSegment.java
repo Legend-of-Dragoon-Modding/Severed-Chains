@@ -12,7 +12,6 @@ import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.MathHelper;
-import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
@@ -88,7 +87,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.function.Function;
 
-import static legend.core.Hardware.CDROM;
 import static legend.core.Hardware.GPU;
 import static legend.core.Hardware.MEMORY;
 import static legend.core.Hardware.SPU;
@@ -214,7 +212,7 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.CdlFILE_800bb4c8;
+import static legend.game.Scus94491BpeSegment_800b.DRGN_CACHE;
 import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
 import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -363,8 +361,6 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
   public static final Value _80010004 = MEMORY.ref(4, 0x80010004L);
-
-  public static final Value _80010250 = MEMORY.ref(4, 0x80010250L);
 
   public static final Value _80010320 = MEMORY.ref(4, 0x80010320L);
 
@@ -1845,33 +1841,32 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001524cL)
   public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
-    final FileLoadingInfo file = new FileLoadingInfo();
-    file.name = entry.name_04.deref().get();
-    file.type = FUN_800155b8(fileTransferDest, (int)flags);
+    final String name = entry.name_04.deref().get();
+    final int type = FUN_800155b8(fileTransferDest, (int)flags);
 
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
       .get();
 
-    LOGGER.info("Loading file %s, size %d, pos %s from %s.%s(%s:%d)", file.name, file.size, file.pos, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
     // Insta-load
-    final byte[] data = Unpacker.loadFile(file.name);
+    final byte[] data = Unpacker.loadFile(name);
+
+    LOGGER.info("Loading file %s, size %d from %s.%s(%s:%d)", name, data.length, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     final long transferDest;
-    if((file.type & 0x2) != 0) {
+    if((type & 0x2) != 0) {
       transferDest = mallocTail(data.length);
-    } else if((file.type & 0x4) != 0) {
+    } else if((type & 0x4) != 0) {
       transferDest = mallocHead(data.length);
     } else {
       transferDest = fileTransferDest;
     }
 
-    LOGGER.info("Loading file %s to %08x", file.name, transferDest);
+    LOGGER.info("Loading file %s to %08x", name, transferDest);
     MEMORY.setBytes(transferDest, data);
 
-    switch(file.name) {
+    switch(name) {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
@@ -1886,7 +1881,7 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
       case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
       case "\\SUBMAP\\NEWROOT.RDT" -> { }
-      default -> throw new RuntimeException("Loaded unknown file " + file.name);
+      default -> throw new RuntimeException("Loaded unknown file " + name);
     }
 
     if(callback != null) {
@@ -1907,36 +1902,34 @@ public final class Scus94491BpeSegment {
 
     //LAB_80015388
     //LAB_8001538c
-    final FileLoadingInfo file = new FileLoadingInfo();
-    file.type = FUN_800155b8(fileTransferDest, (int)flags);
-    file.name = drgnFiles_8004dda0.get(drgnIndex).name_04.deref().get();
-    getDrgnFilePos(file, drgnIndex, fileIndex);
+    final int type = FUN_800155b8(fileTransferDest, (int)flags);
+
+    final MrgEntry entry = drgnMrg_800bc060.get(drgnIndex).deref().entries.get(fileIndex);
 
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
       .get();
 
-    LOGGER.info("Loading DRGN%d file %d, size %d, pos %s from %s.%s(%s:%d)", index, fileIndex, file.size, file.pos, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+    LOGGER.info("Loading DRGN%d file %d, size %d, offset 0x%x from %s.%s(%s:%d)", index, fileIndex, entry.size.get(), entry.offset.get(), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
-    byte[] data = new byte[file.size];
-    CDROM.readFromDisk(file.pos, data);
+    byte[] data = new byte[entry.size.get()];
+    System.arraycopy(DRGN_CACHE[drgnIndex], (int)entry.offset.get() * 0x800, data, 0, data.length);
 
-    if((file.type & 0x1) != 0) {
+    if((type & 0x1) != 0) {
       data = Scus94491.decompress(data);
     }
 
     final long transferDest;
-    if((file.type & 0x3) != 0) {
+    if((type & 0x3) != 0) {
       transferDest = mallocTail(data.length);
-    } else if((file.type & 0x4) != 0) {
+    } else if((type & 0x4) != 0) {
       transferDest = mallocHead(data.length);
     } else {
       transferDest = fileTransferDest;
     }
 
-    LOGGER.info("Loading file %s to %08x", file.name, transferDest);
     MEMORY.setBytes(transferDest, data);
 
     if(callback != null) {
@@ -1965,18 +1958,6 @@ public final class Scus94491BpeSegment {
     //LAB_800155e4
     //LAB_800155fc
     return flags & 0xffff_fff9;
-  }
-
-  @Method(0x80015644L)
-  public static long getDrgnFilePos(final FileLoadingInfo file, final int drgnIndex, final int fileIndex) {
-    final long sector = CdlFILE_800bb4c8.get(drgnFiles_8004dda0.get(drgnIndex).fileIndex_00.get()).pos.pack();
-
-    final MrgEntry entry = drgnMrg_800bc060.get(drgnIndex).deref().entries.get(fileIndex);
-
-    file.pos.unpack(sector + entry.offset.get());
-    file.size = entry.size.get();
-
-    return 0;
   }
 
   @Method(0x800156f4L)
