@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.nio.file.Files;
 
 public final class Hardware {
   private Hardware() { }
@@ -87,17 +86,13 @@ public final class Hardware {
     LOGGER.info("--- Legend start ---");
 
     try {
-      new Unpacker().unpack();
+      Unpacker.unpack();
     } catch(final UnpackerException e) {
       throw new RuntimeException("Failed to unpack files", e);
     }
 
-    try {
-      final byte[] fileData = Files.readAllBytes(Unpacker.ROOT.resolve("SCUS_944.91"));
-      MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load EXE", e);
-    }
+    final byte[] fileData = Unpacker.loadFile("SCUS_944.91");
+    MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
 
     Scus94491.main();
 

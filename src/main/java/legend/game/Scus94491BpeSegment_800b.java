@@ -2,7 +2,6 @@ package legend.game;
 
 import legend.core.cdrom.CdlDIR;
 import legend.core.cdrom.CdlFILE;
-import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
@@ -39,8 +38,8 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
-import legend.game.types.SpuStruct10;
 import legend.game.types.SpuStruct08;
+import legend.game.types.SpuStruct10;
 import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
@@ -86,7 +85,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
 
-  public static final ArrayRef<CdlFILE> CdlFILE_800bb4c8 = MEMORY.ref(0x600, 0x800bb4c8L, ArrayRef.of(CdlFILE.class, 0x40, 0x18, CdlFILE::new));
+  public static final ArrayRef<CdlFILE> CdlFILE_800bb4c8 = MEMORY.ref(4, 0x800bb4c8L, ArrayRef.of(CdlFILE.class, 0x40, 0x18, CdlFILE::new));
 
   public static final Value _800bbac8 = MEMORY.ref(1, 0x800bbac8L);
 

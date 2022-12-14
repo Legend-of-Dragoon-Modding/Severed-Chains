@@ -12,7 +12,6 @@ import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.Hardware;
 import legend.core.MathHelper;
-import legend.core.cdrom.CdlFILE;
 import legend.core.cdrom.FileLoadingInfo;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -78,6 +77,7 @@ import legend.game.types.SubmapMusic08;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.WorldObject210;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -1280,7 +1280,7 @@ public final class Scus94491BpeSegment {
           if(overlayQueueIndex_8004dd14.get() != overlayQueueIndex_8004dd18.get()) {
             loadingOverlay_8004dd1e.set(true);
             loadedOverlayIndex_8004dd10.set(loadingOverlays_8005a2a8.get(overlayQueueIndex_8004dd18.get()).overlayIndex_00.get());
-            loadFile(overlays_8004db88.get(loadedOverlayIndex_8004dd10.get()), _80010004.get(), Scus94491BpeSegment::overlayLoadedCallback, overlayQueueIndex_8004dd18.get(), 0x11L);
+            loadFile(overlays_8004db88.get(loadedOverlayIndex_8004dd10.get()), _80010004.get(), Scus94491BpeSegment::overlayLoadedCallback, overlayQueueIndex_8004dd18.get(), 0x10L);
             overlayQueueIndex_8004dd18.incr().and(0xf);
           }
         }
@@ -1334,7 +1334,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012ad8
     currentlyLoadingFileEntry_8004dd04.set(entry);
     loadingGameStateOverlay_8004dd08.setu(0x1L);
-    loadFile(entry, _80010000.get(), Scus94491BpeSegment::gameStateOverlayLoadedCallback, callbackIndex, 0x11L);
+    loadFile(entry, _80010000.get(), Scus94491BpeSegment::gameStateOverlayLoadedCallback, callbackIndex, 0x10L);
     return 0;
   }
 
@@ -1845,14 +1845,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001524cL)
   public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
-    if(entry.fileIndex_00.get() == -1) {
-      throw new RuntimeException("File not loaded");
-    }
-
     final FileLoadingInfo file = new FileLoadingInfo();
     file.name = entry.name_04.deref().get();
     file.type = FUN_800155b8(fileTransferDest, (int)flags);
-    setLoadingFilePosAndSizeFromFile(file, entry);
 
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
@@ -1862,12 +1857,7 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading file %s, size %d, pos %s from %s.%s(%s:%d)", file.name, file.size, file.pos, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
-    byte[] data = new byte[file.size];
-    CDROM.readFromDisk(file.pos, data);
-
-    if((file.type & 0x1) != 0) {
-      data = Scus94491.decompress(data);
-    }
+    final byte[] data = Unpacker.loadFile(file.name);
 
     final long transferDest;
     if((file.type & 0x2) != 0) {
@@ -1975,13 +1965,6 @@ public final class Scus94491BpeSegment {
     //LAB_800155e4
     //LAB_800155fc
     return flags & 0xffff_fff9;
-  }
-
-  @Method(0x80015604L)
-  public static void setLoadingFilePosAndSizeFromFile(final FileLoadingInfo loadingFile, final FileEntry08 entry) {
-    final CdlFILE file = CdlFILE_800bb4c8.get(entry.fileIndex_00.get());
-    loadingFile.pos.set(file.pos);
-    loadingFile.size = file.size.get();
   }
 
   @Method(0x80015644L)

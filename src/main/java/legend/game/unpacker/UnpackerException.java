@@ -1,6 +1,6 @@
 package legend.game.unpacker;
 
-public class UnpackerException extends Exception {
+public class UnpackerException extends RuntimeException {
   public UnpackerException() {
     super();
   }

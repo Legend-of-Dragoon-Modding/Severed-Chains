@@ -1,7 +1,10 @@
 package legend.game.unpacker;
 
 import legend.core.IoHelper;
+import legend.core.MathHelper;
+import legend.core.Tuple;
 import legend.core.cdrom.IsoReader;
+import legend.game.Scus94491;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,45 +28,53 @@ public class Unpacker {
   public static Path ROOT = Path.of(".", "files");
 
   public static void main(final String[] args) throws UnpackerException {
-    new Unpacker().unpack();
+    unpack();
   }
 
-  public void unpack() throws UnpackerException {
+  public static byte[] loadFile(String name) {
+    if(name.contains(";")) {
+      name = name.substring(0, name.lastIndexOf(";"));
+    }
+
+    if(name.startsWith("\\")) {
+      name = name.substring(1);
+    }
+
+    try {
+      return Files.readAllBytes(ROOT.resolve(name));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load file " + name, e);
+    }
+  }
+
+  public static void unpack() throws UnpackerException {
     try {
       final DirectoryEntry[] roots = new DirectoryEntry[4];
       final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
 
       final IsoReader reader4 = new IsoReader(Path.of(".", "isos", "4.iso"));
-      final DirectoryEntry root = this.loadRoot(reader4, ids[3], null);
+      final DirectoryEntry root = loadRoot(reader4, ids[3], null);
 
       for(int i = 0; i < roots.length; i++) {
         final IsoReader reader = new IsoReader(Path.of(".", "isos", (i + 1) + ".iso"));
-        this.loadRoot(reader, ids[i], root);
+        loadRoot(reader, ids[i], root);
       }
 
       final Map<String, DirectoryEntry> files = new HashMap<>();
-      this.getFiles(root, "", files);
+      getFiles(root, "", files);
 
-      for(final var e : files.entrySet()) {
-        final Path path = ROOT.resolve(e.getKey());
-
-        if(!Files.exists(path)) {
-          LOGGER.info("Unpacking %s...", e.getKey());
-
-          Files.createDirectories(path.getParent());
-
-          final DirectoryEntry entry = e.getValue();
-          final byte[] fileData = new byte[entry.length()];
-          entry.reader().readSectors(entry.sector(), fileData);
-          Files.write(path, fileData);
-        }
-      }
+      files.entrySet()
+        .stream()
+        .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
+        .map(Unpacker::readFile)
+        .map(Unpacker::decompress)
+        .forEach(Unpacker::writeFile);
     } catch(final IOException e) {
       throw new UnpackerException(e);
     }
   }
 
-  private DirectoryEntry loadRoot(final IsoReader reader, final String id, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
+  private static DirectoryEntry loadRoot(final IsoReader reader, final String id, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
     final byte[] sectorData = new byte[0x800];
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -93,11 +104,11 @@ public class Unpacker {
     }
 
     final DirectoryEntry rootDir = DirectoryEntry.fromArray(reader, sectorData, 0x9c);
-    this.populateDirectoryTree(rootDir, destinationTree == null ? rootDir : destinationTree);
+    populateDirectoryTree(rootDir, destinationTree == null ? rootDir : destinationTree);
     return rootDir;
   }
 
-  private void populateDirectoryTree(final DirectoryEntry source, final DirectoryEntry destinationTree) throws IOException {
+  private static void populateDirectoryTree(final DirectoryEntry source, final DirectoryEntry destinationTree) throws IOException {
     final byte[] sectorData = new byte[0x800];
 
     source.reader().seekSector(source.sector());
@@ -112,7 +123,7 @@ public class Unpacker {
         destinationTree.children().putIfAbsent(directory.name(), directory);
 
         if(directory.isDirectory()) {
-          this.populateDirectoryTree(directory, destinationTree.children().get(directory.name()));
+          populateDirectoryTree(directory, destinationTree.children().get(directory.name()));
         }
       }
 
@@ -120,17 +131,45 @@ public class Unpacker {
     }
   }
 
-  private void getFiles(final DirectoryEntry root, final String path, final Map<String, DirectoryEntry> files) {
+  private static void getFiles(final DirectoryEntry root, final String path, final Map<String, DirectoryEntry> files) {
     if(!root.isDirectory()) {
       files.put(path + root.name(), root);
     } else {
       for(final DirectoryEntry entry : root.children().values()) {
         if(".".equals(root.name())) {
-          this.getFiles(entry, path, files);
+          getFiles(entry, path, files);
         } else {
-          this.getFiles(entry, path + root.name() + '/', files);
+          getFiles(entry, path + root.name() + '/', files);
         }
       }
+    }
+  }
+
+  private static Tuple<String, byte[]> readFile(final Map.Entry<String, DirectoryEntry> e) {
+    final DirectoryEntry entry = e.getValue();
+    final byte[] fileData = new byte[entry.length()];
+    entry.reader().readSectors(entry.sector(), fileData);
+    return new Tuple<>(e.getKey(), fileData);
+  }
+
+  private static Tuple<String, byte[]> decompress(final Tuple<String, byte[]> e) {
+    if(MathHelper.get(e.b(), 4, 4) != 0x1a455042L) {
+      return e;
+    }
+
+    return new Tuple<>(e.a(), Scus94491.decompress(e.b()));
+  }
+
+  private static void writeFile(final Tuple<String, byte[]> e) {
+    final Path path = ROOT.resolve(e.a());
+
+    LOGGER.info("Unpacking %s...", e.a());
+
+    try {
+      Files.createDirectories(path.getParent());
+      Files.write(path, e.b());
+    } catch(final IOException ex) {
+      throw new UnpackerException(ex);
     }
   }
 }

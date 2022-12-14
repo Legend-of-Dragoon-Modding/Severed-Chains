@@ -4559,7 +4559,7 @@ public final class SMap {
 
       case 0x1 -> { // Load newroot
         newrootLoaded_800cab1c.setu(0);
-        loadFile(_80052c4c, 0, SMap::newrootCallback_800e54a4, 0x63, 0);
+        loadFile(_80052c4c, 0, SMap::newrootCallback_800e54a4, 0x62, 0);
         smapLoadingStage_800cb430.setu(0x2L);
       }
 

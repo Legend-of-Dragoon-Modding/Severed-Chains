@@ -87,11 +87,11 @@ public final class SInit {
     _800fd3e8.setu(a0);
     final long v1 = SInitLoadingStageCallbackArray_800fd31c.get((int)SInitLoadingStage_800fd318.get()).deref().run();
 
-    if(v1 == 0x0L) {
+    if(v1 == 0) {
       return 0;
     }
 
-    if(v1 == 0x1L) {
+    if(v1 == 1) {
       //LAB_800fb950
       SInitLoadingStage_800fd318.addu(0x1L);
       _800fd404.setu(0);
@@ -99,28 +99,15 @@ public final class SInit {
     }
 
     //LAB_800fb938
-    if(v1 == 0x2L) {
+    if(v1 == 2) {
       //LAB_800fb96c
       SInitLoadingStage_800fd318.setu(0);
       _800fd404.setu(0);
-      return 0x1L;
-    }
-
-    if(v1 == 0x3L) {
-      //LAB_800fb980
-      if(linkedListEntry_800fd518.get() != 0) {
-        free(linkedListEntry_800fd518.get());
-        linkedListEntry_800fd518.setu(0);
-      }
-
-      //LAB_800fb99c
-      SInitLoadingStage_800fd318.setu(0);
-      _800fd404.setu(0);
-      return -0x1L;
+      return 1;
     }
 
     //LAB_800fb9ac
-    return 0x3L;
+    return 3;
   }
 
   @Method(0x800fb9c0L)
@@ -197,6 +184,8 @@ public final class SInit {
     final long s0 = linkedListEntry_800fd518.get() + _800fd51c.get();
     final CdlLOC cdPos = CdlFILE_800bb4c8.get(fileIndex).pos;
     CDROM.readFromDisk(cdPos, 0x50, s0);
+
+//    MEMORY.setBytes(s0, Unpacker.loadFile(CdlFILE_800bb4c8.get(fileIndex).name.get()));
 
     final long a2 = MEMORY.ref(4, s0).offset(0x4L).get();
     _800fd524.offset(_800fd404.get() * 4).setu(_800fd51c);
