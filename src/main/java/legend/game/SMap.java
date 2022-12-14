@@ -50,7 +50,6 @@ import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.McqHeader;
 import legend.game.types.MediumStruct;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
@@ -101,17 +100,13 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment._80010544;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -122,7 +117,6 @@ import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
@@ -266,11 +260,7 @@ public final class SMap {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
 
-  public static final Value diskSwapAttempts_800c6690 = MEMORY.ref(4, 0x800c6690L);
   public static final Value S_InitLoaded_800c6694 = MEMORY.ref(4, 0x800c6694L);
-  public static final Value diskSwapMcqLoaded_800c6698 = MEMORY.ref(1, 0x800c6698L);
-
-  public static final McqHeader mcq_800c66a0 = MEMORY.ref(4, 0x800c66a0L, McqHeader::new);
 
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
@@ -557,8 +547,6 @@ public final class SMap {
    */
   public static final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
 
-  public static final ArrayRef<UnsignedShortRef> mcqPleaseWait_800f48e0 = MEMORY.ref(2, 0x800f48e0L, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new));
-
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
   /** TODO an array of 0x14-long somethings */
@@ -605,8 +593,6 @@ public final class SMap {
 
   public static final ArrayRef<RECT> rectArray3_800f96f4 = MEMORY.ref(2, 0x800f96f4L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
-  public static final Value _800f970c = MEMORY.ref(4, 0x800f970cL);
-
   public static final Value _800f9718 = MEMORY.ref(2, 0x800f9718L);
 
   public static final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
@@ -641,22 +627,17 @@ public final class SMap {
   public static void swapDiskLoadingStage() {
     LOGGER.info("Disk swap loading stage %d", pregameLoadingStage_800bb10c.get());
 
-    final long v1 = switch((int)pregameLoadingStage_800bb10c.get()) {
+    final int v1 = switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0 -> loadDiskSwapScreen();
       case 1 -> FUN_800d96b8();
-      case 2 -> FUN_800d98b0();
-      case 3 -> FUN_800d992c();
-      case 4 -> FUN_800d99f0();
       default -> throw new RuntimeException("Invalid stage");
     };
 
     if(v1 == 1) {
       //LAB_800d930c
-      diskSwapAttempts_800c6690.setu(0);
       pregameLoadingStage_800bb10c.addu(0x1L);
     } else if(v1 == 2) {
       //LAB_800d9320
-      diskSwapAttempts_800c6690.setu(0);
       mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc05c.get());
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.set(2);
@@ -664,37 +645,20 @@ public final class SMap {
 
     //LAB_800d9370
     //LAB_800d9374
-    if(diskSwapMcqLoaded_800c6698.get() != 0) {
-      renderMcq(mcq_800c66a0, 640, 0, -centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), 36, 0x80);
-    }
-
     //LAB_800d93c4
   }
 
   @Method(0x800d93dcL)
-  public static long loadDiskSwapScreen() {
-    setWidthAndFlags(640);
+  public static int loadDiskSwapScreen() {
     _800babc0.setu(0);
     _800bb104.setu(0);
     _8007a3a8.setu(0);
-    scriptStartEffect(1, 1);
     _8004dd30.setu(0x1L);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.set(1);
     S_InitLoaded_800c6694.setu(0);
-    diskSwapMcqLoaded_800c6698.setu(0);
-    loadDrgnBinFile(0, mcqPleaseWait_800f48e0.get(diskNum_8004ddc0.get() - 1).get(), 0, SMap::FUN_800d956c, 0, 0x2L);
     loadSupportOverlay(0, getConsumerAddress(SMap.class, "FUN_800d962c", int.class), 0);
     return 1;
-  }
-
-  @Method(0x800d956cL)
-  public static void FUN_800d956c(final long address, final int size, final int param) {
-    memcpy(mcq_800c66a0.getAddress(), address, 0x2c);
-
-    loadMcq(MEMORY.ref(4, address, McqHeader::new), 640, 0);
-    diskSwapMcqLoaded_800c6698.setu(0x1L);
-    deferReallocOrFree(address, 0, 1);
   }
 
   @Method(0x800d962cL)
@@ -703,39 +667,15 @@ public final class SMap {
   }
 
   @Method(0x800d96b8L)
-  public static long FUN_800d96b8() {
+  public static int FUN_800d96b8() {
     if(S_InitLoaded_800c6694.get() == 0) {
-      return 0;
-    }
-
-    if(_800bb168.get() != 0) {
-      //LAB_800d9704
-      if(diskSwapAttempts_800c6690.get() == 0) {
-        scriptStartEffect(2, 5);
-        diskSwapAttempts_800c6690.addu(0x1L);
-      }
-
-      //LAB_800d9730
-      //LAB_800d9734
       return 0;
     }
 
     //LAB_800d988c
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
-    return 1;
-  }
+    preloadDrgnBinFiles();
 
-  @Method(0x800d98b0L)
-  public static long FUN_800d98b0() {
-    preloadDrgnBinFiles(3);
-
-    //LAB_800d98d8
-    //LAB_800d9918
-    return 1;
-  }
-
-  @Method(0x800d992cL)
-  public static long FUN_800d992c() {
     SInitBinLoaded_800bbad0.set(true);
 
     // Reload main sounds after disk swap?
@@ -743,27 +683,8 @@ public final class SMap {
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
 
-    //LAB_800d99e0
-    return 1;
-  }
-
-  @Method(0x800d99f0L)
-  public static long FUN_800d99f0() {
-    if(diskSwapAttempts_800c6690.get() == 0) {
-      scriptStartEffect(1, 5);
-      diskSwapAttempts_800c6690.addu(0x1L);
-      return 0;
-    }
-
-    //LAB_800d9a30
-    if(_800bb168.get() != 0xff) {
-      //LAB_800d9a68
-      return 0;
-    }
-
     decrementOverlayCount();
     S_InitLoaded_800c6694.setu(0);
-    diskSwapMcqLoaded_800c6698.setu(0);
     _8004dd30.setu(0);
 
     //LAB_800d9a6c

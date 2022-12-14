@@ -2,9 +2,7 @@ package legend.game;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.FileEntry08;
@@ -49,15 +47,10 @@ public final class SInit {
 
   public static final ArrayRef<Pointer<FileEntry08>> fileEntries_800fd414 = MEMORY.ref(4, 0x800fd414L, ArrayRef.of(Pointer.classFor(FileEntry08.class), 0x40, 0x4, Pointer.deferred(4, FileEntry08::new)));
 
-  public static final IntRef filesCount_800fd514 = MEMORY.ref(4, 0x800fd514L, IntRef::new);
-  public static final Value drgnFileCache_800fd518 = MEMORY.ref(4, 0x800fd518L);
-  public static final IntRef drgnFileCacheOffset_800fd51c = MEMORY.ref(4, 0x800fd51cL, IntRef::new);
+  private static int filesCount;
 
-  /**
-   * @return 0 means not done yet; non-zero means finished in some way (different values may indicate success/failure?)
-   */
   @Method(0x800fb8d8L)
-  public static long preloadDrgnBinFiles(final long a0) {
+  public static long preloadDrgnBinFiles() {
     SInitBinLoaded_800bbad0.set(false);
 
     if(drgnFilesCached_800bbac8.get() && drgnFileCache_800bbacc.get() != 0) {
@@ -66,16 +59,16 @@ public final class SInit {
     }
 
     //LAB_800fba30
-    drgnFileCacheOffset_800fd51c.set(0);
-    drgnFileCache_800fd518.setu(mallocHead(0x7_0000L));
+    int drgnFileCacheOffset = 0;
+    final long drgnFileCache = mallocHead(0x7_0000);
     drgn2xFileName_8004dd88.set(String.format("\\SECT\\DRGN2%d.BIN", drgnBinIndex_800bc058.get()));
 
-    filesCount_800fd514.set(0);
+    filesCount = 0;
     FUN_800fbe28();
-    qsort(fileEntries_800fd414, filesCount_800fd514.get(), 0x4, getBiFunctionAddress(SInit.class, "compareFileNames", Pointer.classFor(FileEntry08.class), Pointer.classFor(FileEntry08.class), long.class));
+    qsort(fileEntries_800fd414, filesCount, 0x4, getBiFunctionAddress(SInit.class, "compareFileNames", Pointer.classFor(FileEntry08.class), Pointer.classFor(FileEntry08.class), long.class));
 
     //LAB_800fbac0
-    for(int fileIndex = 0; fileIndex < filesCount_800fd514.get(); fileIndex++) {
+    for(int fileIndex = 0; fileIndex < filesCount; fileIndex++) {
       //LAB_800fbae0
       if(!Unpacker.exists(fileEntries_800fd414.get(fileIndex).deref().name_04.deref().get())) {
         //LAB_800fbb14
@@ -88,7 +81,7 @@ public final class SInit {
     final int[] drgnFileOffsets = new int[3];
     for(int drgnBinIndex = 0; drgnBinIndex < 3; drgnBinIndex++) {
       //LAB_800fbbc8
-      final MrgFile drgnMrg = drgnFileCache_800fd518.deref(4).offset(drgnFileCacheOffset_800fd51c.get()).cast(MrgFile::new);
+      final MrgFile drgnMrg = MEMORY.ref(4, drgnFileCache).offset(drgnFileCacheOffset).cast(MrgFile::new);
 
       // No need to reload DRGN0/1 when changing disks
       final byte[] fileData;
@@ -105,31 +98,24 @@ public final class SInit {
 
       MEMORY.setBytes(drgnMrg.getAddress(), fileData, 0, mrgEntryTableSize);
 
-      drgnFileOffsets[drgnBinIndex] = drgnFileCacheOffset_800fd51c.get();
-      drgnFileCacheOffset_800fd51c.add(mrgEntryTableSize);
+      drgnFileOffsets[drgnBinIndex] = drgnFileCacheOffset;
+      drgnFileCacheOffset += mrgEntryTableSize;
     }
 
     //LAB_800fbcb0
-    if(drgnFileCacheOffset_800fd51c.get() == 0) {
-      free(drgnFileCache_800fd518.get());
+    //LAB_800fbcfc
+    final long address = realloc2(drgnFileCache, drgnFileCacheOffset);
 
-      drgnFileCache_800fd518.setu(0);
-      drgnFileCache_800bbacc.setu(0);
-    } else {
-      //LAB_800fbcfc
-      final long address = realloc2(drgnFileCache_800fd518.get(), drgnFileCacheOffset_800fd51c.get());
+    //LAB_800fbd20
+    drgnFileCache_800bbacc.setu(address);
 
-      //LAB_800fbd20
-      drgnFileCache_800bbacc.setu(address);
-
-      //LAB_800fbd50
-      for(int i = 0; i < 3; i++) {
-        if(drgnFileOffsets[i] >= 0) {
-          //LAB_800fbd68
-          drgnMrg_800bc060.get(i).set(MEMORY.ref(4, address + drgnFileOffsets[i], MrgFile::new));
-        } else {
-          drgnMrg_800bc060.get(i).clear();
-        }
+    //LAB_800fbd50
+    for(int i = 0; i < 3; i++) {
+      if(drgnFileOffsets[i] >= 0) {
+        //LAB_800fbd68
+        drgnMrg_800bc060.get(i).set(MEMORY.ref(4, address + drgnFileOffsets[i], MrgFile::new));
+      } else {
+        drgnMrg_800bc060.get(i).clear();
       }
     }
 
@@ -175,8 +161,8 @@ public final class SInit {
 
     for(int i = 0; !entries.get(i).name_04.isNull(); i++) {
       entries.get(i).fileIndex_00.set((short)-1);
-      fileEntries_800fd414.get(filesCount_800fd514.get()).set(entries.get(i));
-      filesCount_800fd514.incr();
+      fileEntries_800fd414.get(filesCount).set(entries.get(i));
+      filesCount++;
     }
   }
 

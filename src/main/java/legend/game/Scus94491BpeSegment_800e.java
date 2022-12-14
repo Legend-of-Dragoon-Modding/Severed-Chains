@@ -948,7 +948,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6498L)
   public static void executeSInitLoadingStages() {
-    preloadDrgnBinFiles(0x7fff_ffffL);
+    preloadDrgnBinFiles();
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
