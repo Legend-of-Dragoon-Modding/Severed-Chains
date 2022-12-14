@@ -6683,9 +6683,9 @@ public final class SItem {
           glyph._34.set(0);
           glyph._38.set(0);
 
-          FUN_8010cfa0(0x3e, 0x3e, 24, 28, 720, 497);
-          FUN_8010cfa0(0x3d, 0x3d, 24, 40, 720, 497);
-          FUN_8010cfa0(0x40, 0x40, 24, 52, 720, 497);
+          FUN_8010cfa0(0x3e, 0x3e, 24, 28, 736, 497);
+          FUN_8010cfa0(0x3d, 0x3d, 24, 40, 736, 497);
+          FUN_8010cfa0(0x40, 0x40, 24, 52, 736, 497);
 
           //LAB_8010d81c
           for(int i = 0; i < 6; i++) {
@@ -7121,15 +7121,17 @@ public final class SItem {
   @Method(0x8010e708L)
   public static void FUN_8010e708(final int x, final int y, final int charIndex) {
     if(charIndex != -1) {
-      FUN_8010d078(x + 1, y + 9, 24, 32, 2);
-      final Renderable58 renderable = FUN_8010e114(x - 1, y + 8, charIndex);
+      FUN_8010d078(x + 1, y + 5, 24, 32, 2);
+      final Renderable58 renderable = FUN_8010e114(x - 1, y + 4, charIndex);
       renderable.flags_00.or(0x8L);
       FUN_8010cfa0((int)_800fbca8.offset(charIndex).get(), (int)_800fbca8.offset(charIndex).get(), x + 32, y + 4, 736, 497).flags_00.or(0x8L);
-      FUN_8010cfa0(0x3b, 0x3b, x + 30, y + 20, 736, 497).flags_00.or(0x8L);
-      FUN_8010cfa0(0x3c, 0x3c, x + 30, y + 32, 736, 497).flags_00.or(0x8L);
-      FUN_8010cfa0(0x3d, 0x3d, x, y + 48, 736, 497).flags_00.or(0x8L);
+      FUN_8010cfa0(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00.or(0x8L);
+      FUN_8010cfa0(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00.or(0x8L);
+      FUN_8010cfa0(0x3d, 0x3d, x, y + 40, 736, 497).flags_00.or(0x8L);
+      FUN_8010cfa0(0x3c, 0x3c, x, y + 52, 736, 497).flags_00.or(0x8L);
+      FUN_8010cfa0(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00.or(0x8L);
 
-      FUN_8010e2a0(x + 108, y + 20, gameState_800babc8.charData_32c.get(charIndex).level_12.get());
+      FUN_8010e2a0(x + 108, y + 16, gameState_800babc8.charData_32c.get(charIndex).level_12.get());
 
       final int dlevel;
       if(!hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
@@ -7139,11 +7141,17 @@ public final class SItem {
       }
 
       //LAB_8010e8e0
-      FUN_8010e2a0(x + 108, y + 32, dlevel);
+      FUN_8010e2a0(x + 108, y + 28, dlevel);
       final int xp = getXpToNextLevel(charIndex);
-      FUN_8010e340(x + 76 - getXpWidth(xp), y + 48, gameState_800babc8.charData_32c.get(charIndex).xp_00.get());
-      FUN_8010cfa0(0x22, 0x22, x - (getXpWidth(xp) - 114), y + 48, 736, 497).flags_00.or(0x8L);
-      FUN_8010e630(x + 84, y + 48, xp);
+      FUN_8010e340(x + 76 - getXpWidth(xp), y + 40, gameState_800babc8.charData_32c.get(charIndex).xp_00.get());
+      FUN_8010cfa0(0x22, 0x22, x - (getXpWidth(xp) - 114), y + 40, 736, 497).flags_00.or(0x8L);
+      FUN_8010e630(x + 84, y + 40, xp);
+
+
+      final int dxp = (int) _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c.get(charIndex).dlevel_13.get() * 0x2L).offset(0x2L).get();
+      FUN_8010e340(x + 76 - getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c.get(charIndex).dlevelXp_0e.get());
+      FUN_8010cfa0(0x22, 0x22, x - (getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00.or(0x8L);
+      FUN_8010e630(x + 84, y + 52, dxp);
     }
 
     //LAB_8010e978
