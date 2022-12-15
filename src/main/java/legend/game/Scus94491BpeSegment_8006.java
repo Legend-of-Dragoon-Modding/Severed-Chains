@@ -5,7 +5,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.game.combat.types.BattleStructEf4;
 import legend.game.combat.types.BttlStruct08;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_8006 {
   private Scus94491BpeSegment_8006() { }

@@ -4,7 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_8007 {
   private Scus94491BpeSegment_8007() { }

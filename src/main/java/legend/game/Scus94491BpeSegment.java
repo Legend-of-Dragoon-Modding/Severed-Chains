@@ -10,7 +10,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
-import legend.core.Hardware;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -86,14 +86,13 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.function.Function;
 
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
-import static legend.core.Hardware.SPU;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SPU;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SInit.initFileEntries;
 import static legend.game.SMap.FUN_800e5934;
-import static legend.game.SMap.FUN_800edb8c;
 import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020360;
@@ -108,7 +107,6 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.startFmvs;
 import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -135,9 +133,6 @@ import static legend.game.Scus94491BpeSegment_8004.SsSetRVol;
 import static legend.game.Scus94491BpeSegment_8004._8004dd00;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
-import static legend.game.Scus94491BpeSegment_8004._8004ddd0;
-import static legend.game.Scus94491BpeSegment_8004._8004ddd4;
-import static legend.game.Scus94491BpeSegment_8004._8004ddd8;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
 import static legend.game.Scus94491BpeSegment_8004._8004f5d4;
 import static legend.game.Scus94491BpeSegment_8004._8004f658;
@@ -151,8 +146,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
-import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
-import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbacks_8004dddc;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
@@ -174,7 +167,6 @@ import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
 import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
@@ -241,14 +233,11 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b._800bf0e0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fileCount_800bd77c;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
@@ -752,9 +741,11 @@ public final class Scus94491BpeSegment {
         gameState_800babc8.timestamp_a0.add(vsyncMode_8007a3b8.get());
       }
 
+      final int frames = Math.max(1, vsyncMode_8007a3b8.get());
+      GPU.window().setFpsLimit(60 / frames);
+
       startFrame();
       tickDeferredReallocOrFree();
-      loadFiles();
       executeLoadersAndScripts();
       FUN_8001b410();
       FUN_80013778();
@@ -786,7 +777,7 @@ public final class Scus94491BpeSegment {
       inputPulse = !inputPulse;
     };
 
-    while(Hardware.isAlive()) {
+    while(GameEngine.isAlive()) {
       DebugHelper.sleep(1);
     }
 
@@ -1419,8 +1410,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012eccL)
   public static void syncFrame() {
-    final int frames = Math.max(1, vsyncMode_8007a3b8.get());
-    GPU.window().setFpsLimit(60 / frames);
+    // No-op
   }
 
   /**
@@ -1719,103 +1709,6 @@ public final class Scus94491BpeSegment {
   @Method(0x80013d78L)
   public static void FUN_80013d78(final long a0, final long a1, final long a2) {
     assert false;
-  }
-
-  @Method(0x800149ccL)
-  public static long FUN_800149cc() {
-    //LAB_80014a74
-    if(_8004ddd8.get() == 0x1L) {
-      if(_8004ddd0.get() == 0x2L) {
-        fileLoadingCallbackIndex_8004ddc4.set(11);
-        _8004ddd0.setu(0x1L);
-        return 0x1L;
-      }
-
-      //LAB_80014aac
-      if(_800bf0cf.get() >= 2) {
-        _800bf0cf.setu(1);
-
-        //LAB_80014ad0
-        setCdVolume(0, 0);
-        _800bf0e0.setu(0);
-        return 0x1L;
-      }
-
-      //LAB_80014ae8
-      if(fmvStage_800bf0d8.get() != 0) {
-        //LAB_80014af8
-        FUN_800edb8c();
-
-        //LAB_80014b00
-        return 0x1L;
-      }
-
-      //LAB_80014b08
-      //LAB_80014b10
-      fileLoadingCallbackIndex_8004ddc4.set(26);
-      _8004ddd0.setu(0x1L);
-      return 0x1L;
-    }
-
-    //LAB_80014b1c
-    if(_8004ddd4.get() == 0x1L) {
-      //LAB_80014b3c
-      if(_8004ddd0.get() == 0x2L) {
-        //LAB_80014b80
-        fileLoadingCallbackIndex_8004ddc4.set(11);
-        _8004ddd0.setu(_8004ddd4);
-        _8004ddd4.setu(0);
-        return 0x1L;
-      }
-
-      //LAB_80014b88
-      _8004ddd4.setu(0);
-      return 0x1L;
-    }
-
-    if(_8004ddd4.get() == 0x2L) {
-      if(_8004ddd0.get() == 0x2L) {
-        fileLoadingCallbackIndex_8004ddc4.set(11);
-        _8004ddd0.setu(0x1L);
-        return 0x1L;
-      }
-
-      //LAB_80014b7c
-      fileLoadingCallbackIndex_8004ddc4.set(7);
-      _8004ddd0.setu(_8004ddd4);
-      _8004ddd4.setu(0);
-      return 0x1L;
-    }
-
-    return 0;
-  }
-
-  @Method(0x80014d20L)
-  public static void loadFiles() {
-    executeFileLoadingStage();
-  }
-
-  @Method(0x80014d50L)
-  public static void executeFileLoadingStage() {
-    final int callbackIndex = fileLoadingCallbackIndex_8004ddc4.get();
-    if(callbackIndex != 0) {
-      LOGGER.info("File loading callback index %d", callbackIndex);
-    }
-
-    fileLoadingCallbacks_8004dddc.get(callbackIndex).deref().run();
-    startFmvs();
-
-    //LAB_80014d94
-  }
-
-  @Method(0x80014df0L)
-  public static long readQueuedFileFromDisk() {
-    throw new RuntimeException("No longer used");
-  }
-
-  @Method(0x80014e54L)
-  public static long removeCurrentlyLoadingFileFromQueue() {
-    throw new RuntimeException("No longer used");
   }
 
   @Method(0x8001524cL)

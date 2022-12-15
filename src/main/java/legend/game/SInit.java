@@ -7,7 +7,7 @@ import legend.game.types.FileEntry08;
 import legend.game.types.MrgFile;
 import legend.game.unpacker.Unpacker;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.mallocHead;

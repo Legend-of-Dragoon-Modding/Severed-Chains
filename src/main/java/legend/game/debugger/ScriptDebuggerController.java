@@ -15,7 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
-import legend.core.Hardware;
+import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.game.Scus94491BpeSegment;
@@ -179,7 +179,7 @@ public class ScriptDebuggerController {
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    return Hardware.MEMORY.waitForLock(() -> {
+    return GameEngine.MEMORY.waitForLock(() -> {
       final Pointer<IntRef> val = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().commandStack_1c.get(stackIndex);
 
       if(val.isNull()) {

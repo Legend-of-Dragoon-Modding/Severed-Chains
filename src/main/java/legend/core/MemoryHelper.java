@@ -25,19 +25,19 @@ public final class MemoryHelper {
   }
 
   public static <T> ConsumerRef<T> getConsumerAddress(final Class<?> cls, final String method, final Class<T> arg) {
-    return Hardware.MEMORY.ref(4, getMethodAddress(cls, method, arg), ConsumerRef::new);
+    return GameEngine.MEMORY.ref(4, getMethodAddress(cls, method, arg), ConsumerRef::new);
   }
 
   public static <T, U, V> TriConsumerRef<T, U, V> getTriConsumerAddress(final Class<?> cls, final String method, final Class<T> argT, final Class<U> argU, final Class<V> argV) {
-    return Hardware.MEMORY.ref(4, getMethodAddress(cls, method, argT, argU, argV), TriConsumerRef::new);
+    return GameEngine.MEMORY.ref(4, getMethodAddress(cls, method, argT, argU, argV), TriConsumerRef::new);
   }
 
   public static <T, R> FunctionRef<T, R> getFunctionAddress(final Class<?> cls, final String method, final Class<T> arg, final Class<R> ret) {
-    return Hardware.MEMORY.ref(4, getMethodAddress(cls, method, arg), FunctionRef::new);
+    return GameEngine.MEMORY.ref(4, getMethodAddress(cls, method, arg), FunctionRef::new);
   }
 
   public static <T, U, R> BiFunctionRef<T, U, R> getBiFunctionAddress(final Class<?> cls, final String method, final Class<T> arg1, final Class<U> arg2, final Class<R> ret) {
-    return Hardware.MEMORY.ref(4, getMethodAddress(cls, method, arg1, arg2), BiFunctionRef::new);
+    return GameEngine.MEMORY.ref(4, getMethodAddress(cls, method, arg1, arg2), BiFunctionRef::new);
   }
 
   public static <T extends MemoryRef> void copyPointerTypes(final T dest, final T src) {
@@ -54,7 +54,7 @@ public final class MemoryHelper {
               continue;
             }
 
-            destPtr.set(srcPtr.deref().getClass().getConstructor(Value.class).newInstance(Hardware.MEMORY.ref(4, destPtr.getPointer())));
+            destPtr.set(srcPtr.deref().getClass().getConstructor(Value.class).newInstance(GameEngine.MEMORY.ref(4, destPtr.getPointer())));
 
             copyPointerTypes(destPtr.deref(), srcPtr.deref());
           }

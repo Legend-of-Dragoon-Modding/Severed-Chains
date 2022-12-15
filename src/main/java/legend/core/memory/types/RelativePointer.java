@@ -1,6 +1,6 @@
 package legend.core.memory.types;
 
-import legend.core.Hardware;
+import legend.core.GameEngine;
 import legend.core.memory.Value;
 
 import javax.annotation.Nullable;
@@ -85,7 +85,7 @@ public class RelativePointer<T extends legend.core.memory.types.MemoryRef> imple
       return;
     }
 
-    this.cache = this.constructor.apply(Hardware.MEMORY.ref(this.size, this.baseAddress + this.ref.get()));
+    this.cache = this.constructor.apply(GameEngine.MEMORY.ref(this.size, this.baseAddress + this.ref.get()));
   }
 
   public boolean isNull() {

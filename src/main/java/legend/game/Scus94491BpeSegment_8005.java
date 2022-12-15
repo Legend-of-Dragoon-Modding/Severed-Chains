@@ -18,7 +18,7 @@ import legend.game.types.FileEntry08;
 import legend.game.types.LoadingOverlay0c;
 import legend.game.types.LodString;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }

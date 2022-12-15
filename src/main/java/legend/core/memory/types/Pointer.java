@@ -1,6 +1,6 @@
 package legend.core.memory.types;
 
-import legend.core.Hardware;
+import legend.core.GameEngine;
 import legend.core.memory.Memory;
 import legend.core.memory.MisalignedAccessException;
 import legend.core.memory.Value;
@@ -157,7 +157,7 @@ public class Pointer<T extends MemoryRef> implements MemoryRef {
 
   public Pointer<T> set(final long address, final Class<? extends T> type) {
     try {
-      return this.set(type.getConstructor(Value.class).newInstance(Hardware.MEMORY.ref(this.size, address)));
+      return this.set(type.getConstructor(Value.class).newInstance(GameEngine.MEMORY.ref(this.size, address)));
     } catch(final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       throw new RuntimeException(e);
     }

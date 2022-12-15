@@ -24,7 +24,7 @@ import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
 import legend.game.types.SshdStruct10;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }

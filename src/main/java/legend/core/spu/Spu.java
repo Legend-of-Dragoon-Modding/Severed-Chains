@@ -24,7 +24,7 @@ import javax.sound.sampled.SourceDataLine;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public class Spu implements Runnable, MemoryRef {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Spu.class);

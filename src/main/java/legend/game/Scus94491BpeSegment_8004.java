@@ -13,7 +13,6 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.SupplierRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -38,9 +37,9 @@ import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.MEMORY;
-import static legend.core.Hardware.SPU;
+import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8005._8005967c;
@@ -150,47 +149,8 @@ public final class Scus94491BpeSegment_8004 {
 
   /** The current disk number, 1-indexed */
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
-  public static final IntRef fileLoadingCallbackIndex_8004ddc4 = MEMORY.ref(4, 0x8004ddc4L, IntRef::new);
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
-
-  public static final Value _8004ddd0 = MEMORY.ref(4, 0x8004ddd0L);
-  public static final Value _8004ddd4 = MEMORY.ref(4, 0x8004ddd4L);
-  public static final Value _8004ddd8 = MEMORY.ref(4, 0x8004ddd8L);
-
-  /**
-   * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#FUN_800149cc}</li>
-   *   <li>{@link Scus94491BpeSegment#readQueuedFileFromDisk}</li>
-   *   <li>{@link Scus94491BpeSegment#removeCurrentlyLoadingFileFromQueue}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80014eb4}</li>
-   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex1}</li>
-   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex2}</li>
-   *   <li>{@link Scus94491BpeSegment#resetCallbackIndex3}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing1}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing2}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing3}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing4}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing5}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing6}</li>
-   *   <li>{@link Scus94491BpeSegment#doNothing7}</li>
-   *   <li>0x8002cc28 - XA - should not be necessary</li>
-   *   <li>0x8002c268 - XA - should not be necessary</li>
-   *   <li>0x8002cca0 - XA - should not be necessary</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002cd18} probably XA</li>
-   *   <li>0x8002c33c - XA - should not be necessary</li>
-   *   <li>0x8002cb24 - XA - should not be necessary</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_8002c4f0} probably XA</li>
-   *   <li>{@link SMap#loadFmv}</li>
-   *   <li>{@link SMap#playFmv}</li>
-   *   <li>{@link SMap#stopFmv}</li>
-   *   <li>{@link SMap#FUN_800ed7e4}</li>
-   *   <li>{@link SMap#FUN_800edb44}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800150b4}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001511c}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<SupplierRef<Long>>> fileLoadingCallbacks_8004dddc = MEMORY.ref(4, 0x8004dddcL, ArrayRef.of(Pointer.classFor(SupplierRef.classFor(Long.class)), 28, 4, Pointer.of(4, SupplierRef::new)));
 
   public static final IntRef scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL, IntRef::new);
 

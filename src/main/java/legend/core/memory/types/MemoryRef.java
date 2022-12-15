@@ -1,6 +1,6 @@
 package legend.core.memory.types;
 
-import legend.core.Hardware;
+import legend.core.GameEngine;
 import legend.core.memory.Value;
 
 import java.util.function.Function;
@@ -13,6 +13,6 @@ public interface MemoryRef {
   }
 
   default <T extends MemoryRef> T reinterpret(final int size, final Function<Value, T> constructor) {
-    return constructor.apply(Hardware.MEMORY.ref(size, this.getAddress()));
+    return constructor.apply(GameEngine.MEMORY.ref(size, this.getAddress()));
   }
 }

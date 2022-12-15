@@ -13,6 +13,7 @@ import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
+import legend.game.fmv.Fmv;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
@@ -22,8 +23,8 @@ import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
@@ -61,7 +62,6 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
@@ -78,8 +78,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
+import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
@@ -740,6 +740,7 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e5d44L)
   public static void main() {
     gameInit();
+    preload();
     gameLoop();
   }
 
@@ -810,23 +811,17 @@ public final class Scus94491BpeSegment_800e {
 
     loadMenuSounds();
     setWidthAndFlags(320);
+    vsyncMode_8007a3b8.set(2);
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
 
     //LAB_800e6040
     _8004dd30.setu(0);
+    fmvIndex_800bf0dc.setu(0);
+    afterFmvLoadingStage_800bf0ec.setu(0x2L);
 
-    if(drgnBinIndex_800bc058.get() == 1) {
-      _800bf0dc.setu(0);
-      _800bf0ec.setu(0x2L);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
-    } else {
-      //LAB_800e608c
-      mainCallbackIndexOnceLoaded_8004dd24.setu(mainCallbackIndex_8004dd20.get() + 2);
-    }
-
-    vsyncMode_8007a3b8.set(2);
+    Fmv.playCurrentFmv();
   }
 
   @Method(0x800e6524L)

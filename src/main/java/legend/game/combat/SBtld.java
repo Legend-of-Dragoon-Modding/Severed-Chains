@@ -19,7 +19,7 @@ import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment._1f8003f4;

@@ -79,9 +79,9 @@ import legend.game.unpacker.Unpacker;
 
 import javax.annotation.Nullable;
 
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
@@ -171,8 +171,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc974;
 import static legend.game.Scus94491BpeSegment_800b._800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
-import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
+import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -1350,8 +1350,8 @@ public final class Bttl_800c {
         }
 
         case 4 -> {
-          _800bf0dc.setu(0x10L);
-          _800bf0ec.setu(0xbL);
+          fmvIndex_800bf0dc.setu(0x10L);
+          afterFmvLoadingStage_800bf0ec.setu(0xbL);
           a1 = 0x9L;
         }
       }

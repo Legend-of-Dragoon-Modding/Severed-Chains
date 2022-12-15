@@ -49,7 +49,7 @@ import legend.game.types.WobjPos14;
 
 import java.util.function.Function;
 
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
@@ -303,8 +303,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
 
-  public static final Value _800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
+  public static final Value fmvIndex_800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
   public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);
 
-  public static final Value _800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
+  public static final Value afterFmvLoadingStage_800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
 }

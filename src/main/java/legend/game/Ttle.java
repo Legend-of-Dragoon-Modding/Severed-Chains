@@ -17,7 +17,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -25,6 +24,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.fmv.Fmv;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.TmdRenderingStruct;
@@ -32,9 +32,9 @@ import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -74,20 +74,18 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -117,7 +115,7 @@ public final class Ttle {
   public static final Value logoFireInitialized_800c6718 = MEMORY.ref(4, 0x800c6718L);
   public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
   public static final Value menuIdleTime_800c6720 = MEMORY.ref(4, 0x800c6720L);
-  public static final Value _800c6724 = MEMORY.ref(4, 0x800c6724L);
+
   public static final Value _800c6728 = MEMORY.ref(4, 0x800c6728L);
   public static final Value _800c672c = MEMORY.ref(4, 0x800c672cL);
   public static final ArrayRef<ShortRef> menuOptionTransparency_800c6730 = MEMORY.ref(2, 0x800c6730L, ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
@@ -173,7 +171,6 @@ public final class Ttle {
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(2, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(1, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final ArrayRef<Pointer<ConsumerRef<Long>>> callbacks_800ce7b4 = MEMORY.ref(4, 0x800ce7b4L, ArrayRef.of(Pointer.classFor(ConsumerRef.classFor(Long.class)), 17, 4, Pointer.deferred(4, ConsumerRef::new)));
 
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
 
@@ -421,7 +418,21 @@ public final class Ttle {
     GsSetRefView2(GsRVIEW2_800c6760);
 
     vsyncMode_8007a3b8.set(2);
-    pregameLoadingStage_800bb10c.setu(0x1L);
+
+    loadDrgnBinFile(0, 5718, 0, Ttle::menuTexturesMrgLoaded, 0, 0x4L);
+    loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
+
+    // Prepare fire animation struct
+    //LAB_800c7d30
+    for(int i = 0; i < 4; i++) {
+      //LAB_800c7d4c
+      final RECT rect = new RECT((short)(944 + i * 16), (short)256, (short)64, (short)64);
+      _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
+    }
+
+    scriptStartEffect(0x2L, 0xfL);
+    SetGeomOffset(0, 0);
+    pregameLoadingStage_800bb10c.setu(0x3L);
   }
 
   @Method(0x800c7a18L)
@@ -461,7 +472,6 @@ public final class Ttle {
 
     //LAB_800c7bd0
     free(transferDest);
-    _800c6724.addu(1);
   }
 
   @Method(0x800c7c18L)
@@ -471,40 +481,16 @@ public final class Ttle {
     FUN_800cc0b0(_800c66d0.deref(), null);
     _800c66d0.deref().tmd_0c.set(tmd);
     setDobjAttributes(_800c66d0.deref(), 0);
-    _800c6724.addu(1L);
   }
 
   @Method(0x800c7cacL)
   public static void loadMainMenuGfx() {
-    _800c6724.setu(0);
-
-    // MRG @ sector 61510
-    loadDrgnBinFile(0, 5718, 0, Ttle::menuTexturesMrgLoaded, 0, 0x4L);
-
-    // TMD @ sector 61622
-    loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
-
-    pregameLoadingStage_800bb10c.setu(0x2L);
-
-    // Prepare fire animation struct
-
-    //LAB_800c7d30
-    for(int i = 0; i < 4; i++) {
-      //LAB_800c7d4c
-      final RECT rect = new RECT((short)(944 + i * 16), (short)256, (short)64, (short)64);
-      _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
-    }
-
-    //LAB_800c7ddc
+    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800c7df0L)
   public static void FUN_800c7df0() {
-    if(_800c6724.get() == 0x2L) {
-      scriptStartEffect(0x2L, 0xfL);
-      SetGeomOffset(0, 0);
-      pregameLoadingStage_800bb10c.setu(0x3L);
-    }
+    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800c7e50L)
@@ -526,18 +512,9 @@ public final class Ttle {
       FUN_800cb5c4();
       deallocateFire();
 
-      if(drgnBinIndex_800bc058.get() == 0x1L) {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
-      } else {
-        //LAB_800c7f40
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0xaL);
-        diskNum_8004ddc0.set(1);
-        _800bc05c.setu(0x9L);
-      }
-
-      _800bf0dc.setu(0x2L);
-      _800bf0ec.setu(0x3L);
-      vsyncMode_8007a3b8.set(2);
+      fmvIndex_800bf0dc.setu(0x2L);
+      afterFmvLoadingStage_800bf0ec.setu(0x3L);
+      Fmv.playCurrentFmv();
 
       pregameLoadingStage_800bb10c.setu(0);
     }
@@ -622,10 +599,9 @@ public final class Ttle {
       FUN_800cb5c4();
       deallocateFire();
 
-      _800bf0dc.setu(0);
-      _800bf0ec.setu(0x2L);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
-      vsyncMode_8007a3b8.set(2);
+      fmvIndex_800bf0dc.setu(0);
+      afterFmvLoadingStage_800bf0ec.setu(0x2L);
+      Fmv.playCurrentFmv();
 
       pregameLoadingStage_800bb10c.setu(0);
     }

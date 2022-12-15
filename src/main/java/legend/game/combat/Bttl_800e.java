@@ -82,9 +82,9 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;

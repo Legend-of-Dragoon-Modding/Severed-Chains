@@ -24,8 +24,8 @@ import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;

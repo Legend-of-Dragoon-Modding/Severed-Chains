@@ -17,10 +17,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public final class Hardware {
-  private Hardware() { }
+public final class GameEngine {
+  private GameEngine() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Hardware.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GameEngine.class);
 
   public static final Memory MEMORY = new Memory();
 

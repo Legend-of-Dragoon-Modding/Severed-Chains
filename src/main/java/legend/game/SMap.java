@@ -86,9 +86,9 @@ import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static legend.core.Hardware.CPU;
-import static legend.core.Hardware.GPU;
-import static legend.core.Hardware.MEMORY;
+import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
@@ -189,7 +189,6 @@ import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
-import static legend.game.Scus94491BpeSegment_8004.fileLoadingCallbackIndex_8004ddc4;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -225,8 +224,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bdd24;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
-import static legend.game.Scus94491BpeSegment_800b._800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b._800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
+import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -752,8 +751,8 @@ public final class SMap {
     pregameLoadingStage_800bb10c.addu(0x1L);
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
-      _800bf0dc.setu(0x11L);
-      _800bf0ec.setu(0x4L);
+      fmvIndex_800bf0dc.setu(0x11L);
+      afterFmvLoadingStage_800bf0ec.setu(0x4L);
       _800ba3b8.setu(0x2L);
       _800bdd24.setu(0x9L);
       pregameLoadingStage_800bb10c.setu(0);
@@ -4223,8 +4222,8 @@ public final class SMap {
     _800f7e4c.setu(0x1L);
 
     if(newCut > 0x7ff) {
-      _800bf0dc.setu(newCut - 0x800L);
-      _800bf0ec.setu(newScene);
+      fmvIndex_800bf0dc.setu(newCut - 0x800L);
+      afterFmvLoadingStage_800bf0ec.setu(newScene);
       smapLoadingStage_800cb430.setu(0x15L);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4707,9 +4706,8 @@ public final class SMap {
         //LAB_800e63b0
         if(a0) {
           _80052c44.setu(0x5L);
-          mainCallbackIndexOnceLoaded_8004dd24.setu(0x9L);
+          Fmv.playCurrentFmv();
           pregameLoadingStage_800bb10c.setu(0);
-          vsyncMode_8007a3b8.set(2);
           _800f7e4c.setu(0);
           scriptsTickDisabled_800bc0b8.set(false);
         }
@@ -6625,105 +6623,7 @@ public final class SMap {
 
   @Method(0x800ed5b0L)
   public static void startFmvLoadingStage() {
-    switch((int)pregameLoadingStage_800bb10c.get()) {
-      case 0x0:
-        creditsLoaded_800d1cb8.setu(0);
-        loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)_800bf0dc.get(), 0x4L);
-
-        setWidthAndFlags((int)_800f9718.offset(_800bf0dc.get() * 16).get());
-
-        vsyncMode_8007a3b8.set(4);
-        FUN_800ed8d0(_800bf0dc.get());
-
-        submapIndex_800bd808.set(-1);
-
-        pregameLoadingStage_800bb10c.setu(0x1L);
-
-      case 0x1:
-        if(fmvStage_800bf0d8.get() == 0x5L) {
-          vsyncMode_8007a3b8.set(2);
-          pregameLoadingStage_800bb10c.setu(0);
-          mainCallbackIndexOnceLoaded_8004dd24.setu(_800bf0ec);
-        }
-
-        break;
-    }
-  }
-
-  @Method(0x800ed7e4L)
-  public static long FUN_800ed7e4() {
-    if(fmvStage_800bf0d8.get() != 0x4L) {
-      //LAB_800ed818
-      return 0;
-    }
-
-    //LAB_800ed820
-    fmvStage_800bf0d8.setu(0x5L);
-    fileLoadingCallbackIndex_8004ddc4.set(25);
-
-    //LAB_800ed8b8
-    return 0x1L;
-  }
-
-  @Method(0x800ed8d0L)
-  public static void FUN_800ed8d0(final long a0) {
-    if(fmvStage_800bf0d8.get() != 0) {
-      return;
-    }
-
-    _800bf0dc.setu(a0);
-
-    //LAB_800ed91c
-    fmvStage_800bf0d8.setu(0x1L);
-
-    //LAB_800ed924
-  }
-
-  @Method(0x800ed960L)
-  public static long loadFmv() {
-    fmvStage_800bf0d8.setu(0x2L);
-    fileLoadingCallbackIndex_8004ddc4.set(22);
-
-    //LAB_800ed9d4
-    return 0x1L;
-  }
-
-  @Method(0x800ed9e4L)
-  public static long playFmv() {
-    final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
-
-    Fmv.play(file.name_04.deref().get(), true);
-
-    //LAB_800eda50
-    fmvStage_800bf0d8.setu(0x3L);
-    fileLoadingCallbackIndex_8004ddc4.set(23);
-
-    //LAB_800edab4
-    return 0x1L;
-  }
-
-  @Method(0x800edac4L)
-  public static long stopFmv() {
-    decrementOverlayCount();
-
-    fileLoadingCallbackIndex_8004ddc4.set(24);
-    fmvStage_800bf0d8.setu(0x4L);
-
-    //LAB_800edb34
-    return 0x1L;
-  }
-
-  @Method(0x800edb44L)
-  public static long FUN_800edb44() {
-    //LAB_800edb60
-    if(fmvStage_800bf0d8.get() == 0x5L) {
-      fmvStage_800bf0d8.setu(0);
-      fileLoadingCallbackIndex_8004ddc4.set(0);
-      return 0x1L;
-    }
-
-    //LAB_800edb84
-    return 0;
+    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800edb8cL)
