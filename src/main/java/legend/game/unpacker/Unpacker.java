@@ -28,6 +28,11 @@ public class Unpacker {
 
   public static Path ROOT = Path.of(".", "files");
 
+  private static final Object STATUS_LOCK = new Object();
+  private static final Object IO_LOCK = new Object();
+
+  private static boolean unpacking;
+
   public static void main(final String[] args) throws UnpackerException {
     unpack();
   }
@@ -35,15 +40,19 @@ public class Unpacker {
   public static byte[] loadFile(final String name) {
     LOGGER.info("Loading file %s", name);
 
-    try {
-      return Files.readAllBytes(ROOT.resolve(fixPath(name)));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load file " + name, e);
+    synchronized(IO_LOCK) {
+      try {
+        return Files.readAllBytes(ROOT.resolve(fixPath(name)));
+      } catch(final IOException e) {
+        throw new RuntimeException("Failed to load file " + name, e);
+      }
     }
   }
 
   public static boolean exists(final String name) {
-    return Files.exists(ROOT.resolve(fixPath(name)));
+    synchronized(IO_LOCK) {
+      return Files.exists(ROOT.resolve(fixPath(name)));
+    }
   }
 
   private static String fixPath(String name) {
@@ -59,29 +68,39 @@ public class Unpacker {
   }
 
   public static void unpack() throws UnpackerException {
-    try {
-      final DirectoryEntry[] roots = new DirectoryEntry[4];
-      final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
-
-      final IsoReader reader4 = new IsoReader(Path.of(".", "isos", "4.iso"));
-      final DirectoryEntry root = loadRoot(reader4, ids[3], null);
-
-      for(int i = 0; i < roots.length; i++) {
-        final IsoReader reader = new IsoReader(Path.of(".", "isos", (i + 1) + ".iso"));
-        loadRoot(reader, ids[i], root);
+    synchronized(IO_LOCK) {
+      synchronized(STATUS_LOCK) {
+        unpacking = true;
       }
 
-      final Map<String, DirectoryEntry> files = new HashMap<>();
-      getFiles(root, "", files);
+      try {
+        final DirectoryEntry[] roots = new DirectoryEntry[4];
+        final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
 
-      files.entrySet()
-        .stream()
-        .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
-        .map(Unpacker::readFile)
-        .map(Unpacker::decompress)
-        .forEach(Unpacker::writeFile);
-    } catch(final IOException e) {
-      throw new UnpackerException(e);
+        final IsoReader reader4 = new IsoReader(Path.of(".", "isos", "4.iso"));
+        final DirectoryEntry root = loadRoot(reader4, ids[3], null);
+
+        for(int i = 0; i < roots.length; i++) {
+          final IsoReader reader = new IsoReader(Path.of(".", "isos", (i + 1) + ".iso"));
+          loadRoot(reader, ids[i], root);
+        }
+
+        final Map<String, DirectoryEntry> files = new HashMap<>();
+        getFiles(root, "", files);
+
+        files.entrySet()
+          .stream()
+          .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
+          .map(Unpacker::readFile)
+          .map(Unpacker::decompress)
+          .forEach(Unpacker::writeFile);
+      } catch(final IOException e) {
+        throw new UnpackerException(e);
+      }
+
+      synchronized(STATUS_LOCK) {
+        unpacking = false;
+      }
     }
   }
 

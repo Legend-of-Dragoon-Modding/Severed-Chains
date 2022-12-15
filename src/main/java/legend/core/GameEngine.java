@@ -79,6 +79,8 @@ public final class GameEngine {
   private static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
   private static final Value bpe_80188a88 = MEMORY.ref(4, 0x80188a88L);
 
+  private static final Object LOCK = new Object();
+
   private static Window.Events.Resize onResize;
 
   private static Shader shader;
@@ -94,26 +96,28 @@ public final class GameEngine {
 
     GPU.mainRenderer = GameEngine::loadGfx;
 
-    try {
-      Unpacker.unpack();
-    } catch(final UnpackerException e) {
-      throw new RuntimeException("Failed to unpack files", e);
+    synchronized(LOCK) {
+      try {
+        Unpacker.unpack();
+      } catch(final UnpackerException e) {
+        throw new RuntimeException("Failed to unpack files", e);
+      }
+
+      final byte[] fileData = Unpacker.loadFile("SCUS_944.91");
+      MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
+
+      final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
+      final byte[] decompressed = Unpacker.decompress(archive);
+      MEMORY.setBytes(_80010000.getAddress(), decompressed);
+
+      MEMORY.addFunctions(Scus94491BpeSegment.class);
+      MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
+      MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
+      MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
+      MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
+
+      Scus94491BpeSegment_8002.start();
     }
-
-    final byte[] fileData = Unpacker.loadFile("SCUS_944.91");
-    MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
-
-    final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
-    final byte[] decompressed = Unpacker.decompress(archive);
-    MEMORY.setBytes(_80010000.getAddress(), decompressed);
-
-    MEMORY.addFunctions(Scus94491BpeSegment.class);
-    MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
-    MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
-    MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
-    MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
-
-    Scus94491BpeSegment_8002.start();
   }
 
   private static void transitionToGame() {
@@ -148,8 +152,11 @@ public final class GameEngine {
 
     spuThread.start();
     GPU.setStandardRenderer();
-    Fmv.playCurrentFmv();
-    gameLoop();
+
+    synchronized(LOCK) {
+      Fmv.playCurrentFmv();
+      gameLoop();
+    }
   }
 
   private static void loadGfx() {
