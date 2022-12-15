@@ -19,8 +19,11 @@ import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -85,15 +88,33 @@ public final class GameEngine {
 
   private static Shader shader;
   private static Shader.UniformFloat shaderAlpha;
-  private static Texture title1;
-  private static Texture title2;
-  private static Mesh mesh;
+  private static Texture title1Texture;
+  private static Texture title2Texture;
+  private static Mesh fullScrenMesh;
+
+  private static Shader eyeShader;
+  private static Shader.UniformFloat eyeShaderAlpha;
+  private static Shader.UniformFloat eyeShaderTicks;
+  private static Texture eye;
+  private static Mesh eyeMesh;
+
+  private static Texture loadingTexture;
+  private static Mesh loadingMesh;
+
+  private static final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
+  private static Shader.UniformBuffer transforms2;
+  private static final Matrix4f identity = new Matrix4f();
+  private static final Matrix4f eyeTransforms = new Matrix4f();
+  private static final Matrix4f loadingTransforms = new Matrix4f();
+
+  private static boolean loading;
 
   public static void start() {
     gpuThread.start();
 
     LOGGER.info("--- Legend start ---");
 
+    loading = true;
     GPU.mainRenderer = GameEngine::loadGfx;
 
     synchronized(LOCK) {
@@ -117,11 +138,13 @@ public final class GameEngine {
       MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
 
       Scus94491BpeSegment_8002.start();
+      loading = false;
     }
   }
 
   private static void transitionToGame() {
     glDisable(GL_BLEND);
+    transforms2.set(identity);
 
     shaderAlpha = null;
 
@@ -130,19 +153,47 @@ public final class GameEngine {
       shader = null;
     }
 
-    if(title1 != null) {
-      title1.delete();
-      title1 = null;
+    if(title1Texture != null) {
+      title1Texture.delete();
+      title1Texture = null;
     }
 
-    if(title2 != null) {
-      title2.delete();
-      title2 = null;
+    if(title2Texture != null) {
+      title2Texture.delete();
+      title2Texture = null;
     }
 
-    if(mesh != null) {
-      mesh.delete();
-      mesh = null;
+    if(fullScrenMesh != null) {
+      fullScrenMesh.delete();
+      fullScrenMesh = null;
+    }
+
+    eyeShaderAlpha = null;
+    eyeShaderTicks = null;
+
+    if(eyeShader != null) {
+      eyeShader.delete();
+      eyeShader = null;
+    }
+
+    if(eye != null) {
+      eye.delete();
+      eye = null;
+    }
+
+    if(eyeMesh != null) {
+      eyeMesh.delete();
+      eyeMesh = null;
+    }
+
+    if(loadingTexture != null) {
+      loadingTexture.delete();
+      loadingTexture = null;
+    }
+
+    if(loadingMesh != null) {
+      loadingMesh.delete();
+      loadingMesh = null;
     }
 
     if(onResize != null) {
@@ -163,12 +214,42 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    shader = loadShader(Paths.get("gfx", "shaders", "vram.vsh"), Paths.get("gfx", "shaders", "title.fsh"));
+    final Path vsh = Paths.get("gfx", "shaders", "vram.vsh");
+    shader = loadShader(vsh, Paths.get("gfx", "shaders", "title.fsh"));
     shader.use();
     shaderAlpha = shader.new UniformFloat("alpha");
 
-    title1 = Texture.png(Path.of(".", "gfx", "textures", "intro", "title1.png"));
-    title2 = Texture.png(Path.of(".", "gfx", "textures", "intro", "title2.png"));
+    title1Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title1.png"));
+    title2Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title2.png"));
+    loadingTexture = Texture.png(Path.of(".", "gfx", "textures", "intro", "loading.png"));
+    eye = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
+
+    eyeShader = loadShader(vsh, Paths.get("gfx", "shaders", "loading.fsh"));
+    eyeShader.use();
+    eyeShaderAlpha = eyeShader.new UniformFloat("alpha");
+    eyeShaderTicks = eyeShader.new UniformFloat("ticks");
+
+    eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+       0,  0, 0, 0,
+       0, 32, 0, 1,
+      32,  0, 1, 0,
+      32, 32, 1, 1,
+    }, 4);
+    eyeMesh.attribute(0, 0L, 2, 4);
+    eyeMesh.attribute(1, 2L, 2, 4);
+
+    loadingMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+        0,  0, 0, 0,
+        0, 32, 0, 1,
+      130,  0, 1, 0,
+      130, 32, 1, 1,
+    }, 4);
+    loadingMesh.attribute(0, 0L, 2, 4);
+    loadingMesh.attribute(1, 2L, 2, 4);
+
+    transforms2 = new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2);
+    identity.identity();
+
     onResize = GPU.window().events.onResize(GameEngine::windowResize);
     windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
     GPU.mainRenderer = GameEngine::renderIntro;
@@ -179,6 +260,8 @@ public final class GameEngine {
   private static long time;
   private static float fade1;
   private static float fade2;
+  private static float loadingFade;
+  private static float eyeFade;
 
   private static void renderIntro() {
     final int deltaMs = (int)((System.nanoTime() - time) / 1_000_000);
@@ -189,6 +272,7 @@ public final class GameEngine {
         fade1 = 1.0f;
       }
       fade2 = fade1;
+      eyeFade = fade1;
     } else if(deltaMs < 13000) {
       fade1 -= 0.0015f;
       if(fade1 < 0) {
@@ -204,20 +288,43 @@ public final class GameEngine {
       if(fade2 < 0) {
         fade2 = 0;
       }
+
+      loadingFade += 0.02f;
+      if(loadingFade > 1.0f) {
+        loadingFade = 1.0f;
+      }
     } else {
-      transitionToGame();
-      return;
+      if(!loading) {
+        transitionToGame();
+        return;
+      }
     }
 
     shader.use();
 
+    transforms2.set(identity);
     shaderAlpha.set(fade1 * fade1 * fade1);
-    title1.use();
-    mesh.draw();
+    title1Texture.use();
+    fullScrenMesh.draw();
 
     shaderAlpha.set(fade2 * fade2 * fade2);
-    title2.use();
-    mesh.draw();
+    title2Texture.use();
+    fullScrenMesh.draw();
+
+    if(loading) {
+      transforms2.set(eyeTransforms);
+      eyeShader.use();
+      eyeShaderAlpha.set(eyeFade);
+      eyeShaderTicks.set(deltaMs / 10_000.0f);
+      eye.use();
+      eyeMesh.draw();
+
+      transforms2.set(loadingTransforms);
+      shader.use();
+      shaderAlpha.set(loadingFade);
+      loadingTexture.use();
+      loadingMesh.draw();
+    }
   }
 
   private static void windowResize(final Window window, final int width, final int height) {
@@ -225,8 +332,8 @@ public final class GameEngine {
     final float unscaledWidth = width / windowScale;
     final float unscaledHeight = height / windowScale;
 
-    if(mesh != null) {
-      mesh.delete();
+    if(fullScrenMesh != null) {
+      fullScrenMesh.delete();
     }
 
     final float aspect = (float)4 / 3;
@@ -244,18 +351,17 @@ public final class GameEngine {
     final float r = l + w;
     final float b = t + h;
 
-    mesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+    fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
       l, t, 0, 0,
       l, b, 0, 1,
       r, t, 1, 0,
       r, b, 1, 1,
     }, 4);
-    mesh.attribute(0, 0L, 2, 4);
-    mesh.attribute(1, 2L, 2, 4);
-  }
+    fullScrenMesh.attribute(0, 0L, 2, 4);
+    fullScrenMesh.attribute(1, 2L, 2, 4);
 
-  public static boolean isAlive() {
-    return gpuThread.isAlive() && spuThread.isAlive();
+    eyeTransforms.translation(10.0f, unscaledHeight - 42.0f, 0.0f);
+    loadingTransforms.translation(46.0f, unscaledHeight - 42.0f, 0.0f);
   }
 
   private static Shader loadShader(final Path vsh, final Path fsh) {

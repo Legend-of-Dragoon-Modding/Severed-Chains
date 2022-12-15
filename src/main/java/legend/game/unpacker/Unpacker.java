@@ -28,10 +28,7 @@ public class Unpacker {
 
   public static Path ROOT = Path.of(".", "files");
 
-  private static final Object STATUS_LOCK = new Object();
   private static final Object IO_LOCK = new Object();
-
-  private static boolean unpacking;
 
   public static void main(final String[] args) throws UnpackerException {
     unpack();
@@ -69,10 +66,6 @@ public class Unpacker {
 
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
-      synchronized(STATUS_LOCK) {
-        unpacking = true;
-      }
-
       try {
         final DirectoryEntry[] roots = new DirectoryEntry[4];
         final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
@@ -96,10 +89,6 @@ public class Unpacker {
           .forEach(Unpacker::writeFile);
       } catch(final IOException e) {
         throw new UnpackerException(e);
-      }
-
-      synchronized(STATUS_LOCK) {
-        unpacking = false;
       }
     }
   }
@@ -177,7 +166,7 @@ public class Unpacker {
 
   private static Tuple<String, byte[]> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
-    final byte[] fileData = entry.reader().readSectors(entry.sector(), (entry.length() + 0x7ff) / 0x800, e.getKey().endsWith(".IKI"));
+    final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
     return new Tuple<>(e.getKey(), fileData);
   }
 

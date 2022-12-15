@@ -43,10 +43,6 @@ public class IsoReader {
     }
   }
 
-  public long readByte() throws IOException {
-    return this.file.readByte() & 0xffL;
-  }
-
   public void read(final byte[] out) throws IOException {
     this.file.read(out);
   }
@@ -55,34 +51,34 @@ public class IsoReader {
     this.file.read(out, offset, length);
   }
 
-  public byte[] readSectors(int sector, final int sectorCount, final boolean raw) {
+  public byte[] readSectors(int sector, final int length, final boolean raw) {
     int dataRead = 0;
     boolean endOfRecord = false;
+    final int sectorCount = (length + 0x7ff) / 0x800;
 
     try {
-      this.seekSector(sector);
-      final byte[] subheader = new byte[4];
-      this.advance(4); //Skip header
-      this.read(subheader, 0, 4);
+      final byte[] sectorData = new byte[0x930];
 
-      final int sectorSize = raw || ((subheader[2] >>> 5) & 1) != 0 ? 0x930 : 0x800;
-      final byte[] data = new byte[sectorSize * sectorCount];
+      int sectorSize = 0;
+      byte[] data = null;
 
       while(!endOfRecord) {
-        this.seekSector(sector);
+        this.seekSectorRaw(sector);
+        this.read(sectorData);
 
-        this.advance(4); //Skip header
-        this.read(subheader, 0, 4);
-
-        endOfRecord = (subheader[2] >>> 7 & 1) == 1;
-
-        if(raw) {
-          this.seekSectorRaw(sector);
-        } else {
-          this.advance(4); //Skip the other copy of subheader
+        if(data == null) {
+          sectorSize = raw || ((sectorData[16 + 2] >>> 5) & 1) != 0 ? 0x930 : 0x800;
+          data = new byte[raw ? sectorSize * sectorCount : length];
         }
 
-        this.read(data, dataRead, sectorSize);
+        endOfRecord = (sectorData[16 + 2] >>> 7 & 1) == 1;
+
+        if(raw) {
+          System.arraycopy(sectorData, 0, data, dataRead, sectorSize);
+        } else {
+          System.arraycopy(sectorData, 24, data, dataRead, Math.min(sectorSize, length - dataRead));
+        }
+
         dataRead += sectorSize;
         sector++;
       }
