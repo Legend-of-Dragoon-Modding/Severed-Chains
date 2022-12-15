@@ -30,7 +30,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
-import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -78,10 +77,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -741,7 +740,6 @@ public final class Scus94491BpeSegment_800e {
   public static void main() {
     gameInit();
     preload();
-    gameLoop();
   }
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
@@ -820,8 +818,6 @@ public final class Scus94491BpeSegment_800e {
     _8004dd30.setu(0);
     fmvIndex_800bf0dc.setu(0);
     afterFmvLoadingStage_800bf0ec.setu(0x2L);
-
-    Fmv.playCurrentFmv();
   }
 
   @Method(0x800e6524L)

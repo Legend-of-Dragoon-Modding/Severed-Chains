@@ -59,6 +59,16 @@ public final class Texture {
     });
   }
 
+  public static Texture png(final Path path) {
+    return Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.minFilter(GL_NEAREST);
+      builder.magFilter(GL_NEAREST);
+      builder.png(path);
+    });
+  }
+
   final int id;
 
   public final int width;

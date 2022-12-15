@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
-import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -628,10 +627,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    while(!GPU.isReady()) {
-      DebugHelper.sleep(1);
-    }
-
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -777,12 +772,11 @@ public final class Scus94491BpeSegment {
       inputPulse = !inputPulse;
     };
 
-    while(GameEngine.isAlive()) {
-      DebugHelper.sleep(1);
-    }
-
-    stopSound();
-    Platform.exit();
+    GPU.window().events.onShutdown(() -> {
+      stopSound();
+      SPU.stop();
+      Platform.exit();
+    });
   }
 
   private static final int soundTps = 60;

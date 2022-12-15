@@ -24,6 +24,7 @@ import static org.lwjgl.opengl.GL20C.glAttachShader;
 import static org.lwjgl.opengl.GL20C.glCompileShader;
 import static org.lwjgl.opengl.GL20C.glCreateProgram;
 import static org.lwjgl.opengl.GL20C.glCreateShader;
+import static org.lwjgl.opengl.GL20C.glDeleteProgram;
 import static org.lwjgl.opengl.GL20C.glDeleteShader;
 import static org.lwjgl.opengl.GL20C.glGetProgramInfoLog;
 import static org.lwjgl.opengl.GL20C.glGetProgrami;
@@ -94,6 +95,10 @@ public class Shader {
 
   public void use() {
     glUseProgram(this.shader);
+  }
+
+  public void delete() {
+    glDeleteProgram(this.shader);
   }
 
   private final FloatBuffer floatBuffer16 = BufferUtils.createFloatBuffer(16);

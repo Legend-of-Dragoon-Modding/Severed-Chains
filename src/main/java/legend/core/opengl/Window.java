@@ -245,6 +245,8 @@ public class Window {
       }
     }
 
+    this.events.onShutdown();
+
     glfwFreeCallbacks(this.window);
     glfwDestroyWindow(this.window);
   }
@@ -262,6 +264,7 @@ public class Window {
     private final List<ControllerState> controllerConnected = new ArrayList<>();
     private final List<ControllerState> controllerDisconnected = new ArrayList<>();
     private final List<Runnable> draw = new ArrayList<>();
+    private final List<Runnable> shutdown = new ArrayList<>();
     private final Window window;
 
     private double mouseX;
@@ -285,8 +288,13 @@ public class Window {
       this.resize.forEach(cb -> cb.resize(this.window, width, height));
     }
 
-    public void onResize(final Resize callback) {
+    public Resize onResize(final Resize callback) {
       this.resize.add(callback);
+      return callback;
+    }
+
+    public void removeOnResize(final Resize callback) {
+      this.resize.remove(callback);
     }
 
     private void onKey(final long window, final int key, final int scancode, final int action, final int mods) {
@@ -397,6 +405,16 @@ public class Window {
 
     public void onDraw(final Runnable callback) {
       this.draw.add(callback);
+    }
+
+    private void onShutdown() {
+      for(final Runnable shutdown : this.shutdown) {
+        shutdown.run();
+      }
+    }
+
+    public void onShutdown(final Runnable callback) {
+      this.shutdown.add(callback);
     }
 
     @FunctionalInterface public interface Resize {

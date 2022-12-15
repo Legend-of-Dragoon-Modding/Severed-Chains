@@ -382,14 +382,9 @@ public class Gpu implements Runnable {
 
     this.lastFrame = System.nanoTime();
 
-    this.mainRenderer = () -> {
-      if(this.zMax != orderingTableSize_1f8003c8.get()) {
-        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
-      }
-
-      this.subRenderer.run();
-      this.tick();
-    };
+    if(this.mainRenderer == null) {
+      this.setStandardRenderer();
+    }
 
     this.ctx.onDraw(() -> {
       // Restore model buffer to identity
@@ -438,6 +433,17 @@ public class Gpu implements Runnable {
       LOGGER.error("Shutting down due to GPU exception:", t);
       this.window.close();
     }
+  }
+
+  public void setStandardRenderer() {
+    this.mainRenderer = () -> {
+      if(this.zMax != orderingTableSize_1f8003c8.get()) {
+        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
+      }
+
+      this.subRenderer.run();
+      this.tick();
+    };
   }
 
   public void updateOrderingTableSize(final int size) {

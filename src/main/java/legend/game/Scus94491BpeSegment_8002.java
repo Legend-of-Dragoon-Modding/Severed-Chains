@@ -5946,8 +5946,6 @@ public final class Scus94491BpeSegment_8002 {
   public static void start() {
     bzero(_8005a1d8.getAddress(), 0x6c4b0);
     main();
-
-    assert !GameEngine.isAlive() : "Shouldn't get here";
   }
 
   @Method(0x8002d220L)
