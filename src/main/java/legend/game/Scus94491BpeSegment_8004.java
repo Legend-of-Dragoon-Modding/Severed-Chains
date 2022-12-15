@@ -82,7 +82,7 @@ public final class Scus94491BpeSegment_8004 {
 
   /**
    * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment_800e#executePregameLoadingStage()}</li>
+   *   <li>{@link Scus94491BpeSegment_800e#preload()}</li>
    *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
@@ -91,7 +91,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link Ttle#FUN_800c75fc()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
-   *   <li>{@link SMap#executeSmapPregameLoadingStage()}</li>
+   *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>{@link SMap#swapDiskLoadingStage()}</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>0x800c6eb8 (TODO)</li>

@@ -156,7 +156,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
-import static legend.game.Scus94491BpeSegment_8003.ClearImage;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
@@ -428,8 +427,6 @@ public final class SMap {
 
   public static final Value _800d1cc0 = MEMORY.ref(4, 0x800d1cc0L);
 
-  public static final ArrayRef<UnsignedIntRef> textureDataPtrArray3_800d4ba0 = MEMORY.ref(4, 0x800d4ba0L, ArrayRef.of(UnsignedIntRef.class, 3, 4, UnsignedIntRef::new));
-
   public static final MATRIX matrix_800d4bb0 = MEMORY.ref(4, 0x800d4bb0L, MATRIX::new);
 
   public static final Value _800d4bd0 = MEMORY.ref(4, 0x800d4bd0L);
@@ -590,8 +587,6 @@ public final class SMap {
   public static final Value _800f7f74 = MEMORY.ref(4, 0x800f7f74L);
 
   public static final Value _800f9374 = MEMORY.ref(4, 0x800f9374L);
-
-  public static final ArrayRef<RECT> rectArray3_800f96f4 = MEMORY.ref(2, 0x800f96f4L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
 
   public static final Value _800f9718 = MEMORY.ref(2, 0x800f9718L);
 
@@ -6647,54 +6642,28 @@ public final class SMap {
   }
 
   @Method(0x800ed5b0L)
-  public static void executeSmapPregameLoadingStage() {
+  public static void startFmvLoadingStage() {
     switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0x0:
         creditsLoaded_800d1cb8.setu(0);
         loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)_800bf0dc.get(), 0x4L);
 
-        //LAB_800ed644
-        for(int s2 = 0; s2 < 3; s2++) {
-          final RECT rect = rectArray3_800f96f4.get(s2);
-          final long dest = mallocTail(rect.w.get() * rect.h.get() * 2);
-          textureDataPtrArray3_800d4ba0.get(s2).set(dest);
-          StoreImage(rectArray3_800f96f4.get(s2), dest);
-        }
-
-        ClearImage(new RECT((short)0, (short)0, (short)1023, (short)511), (byte)0, (byte)0, (byte)0);
-
-        //LAB_800ed700
         setWidthAndFlags((int)_800f9718.offset(_800bf0dc.get() * 16).get());
 
-        pregameLoadingStage_800bb10c.setu(0x1L);
-        break;
-
-      case 0x1:
-        if(creditsLoaded_800d1cb8.get() != 0) {
-          pregameLoadingStage_800bb10c.setu(0x2L);
-        }
-
-        break;
-
-      case 0x2:
         vsyncMode_8007a3b8.set(4);
         FUN_800ed8d0(_800bf0dc.get());
 
         submapIndex_800bd808.set(-1);
-        pregameLoadingStage_800bb10c.setu(0x3L);
-        break;
 
-      case 0x3:
+        pregameLoadingStage_800bb10c.setu(0x1L);
+
+      case 0x1:
         if(fmvStage_800bf0d8.get() == 0x5L) {
-          pregameLoadingStage_800bb10c.setu(0x4L);
+          vsyncMode_8007a3b8.set(2);
+          pregameLoadingStage_800bb10c.setu(0);
+          mainCallbackIndexOnceLoaded_8004dd24.setu(_800bf0ec);
         }
 
-        break;
-
-      case 0x4:
-        vsyncMode_8007a3b8.set(2);
-        pregameLoadingStage_800bb10c.setu(0);
-        mainCallbackIndexOnceLoaded_8004dd24.setu(_800bf0ec);
         break;
     }
   }
@@ -6709,14 +6678,6 @@ public final class SMap {
     //LAB_800ed820
     fmvStage_800bf0d8.setu(0x5L);
     fileLoadingCallbackIndex_8004ddc4.set(25);
-
-    ClearImage(new RECT((short)0, (short)0, (short)640, (short)511), (byte)0, (byte)0, (byte)0);
-
-    //LAB_800ed87c
-    for(int s2 = 0; s2 < 3; s2++) {
-      LoadImage(rectArray3_800f96f4.get(s2), textureDataPtrArray3_800d4ba0.get(s2).get());
-      free(textureDataPtrArray3_800d4ba0.get(s2).get());
-    }
 
     //LAB_800ed8b8
     return 0x1L;

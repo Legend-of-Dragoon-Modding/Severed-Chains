@@ -4,8 +4,6 @@ import legend.core.Hardware;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
-import legend.game.unpacker.Unpacker;
-import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

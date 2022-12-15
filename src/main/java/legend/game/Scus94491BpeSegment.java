@@ -279,11 +279,9 @@ import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.timHeader_800bc2e0;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
-import static legend.game.Scus94491BpeSegment_800d.sceaTexture_800d05c4;
 import static legend.game.combat.Bttl_800c.FUN_800c7304;
 import static legend.game.combat.Bttl_800c.FUN_800c882c;
 import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
@@ -382,8 +380,6 @@ public final class Scus94491BpeSegment {
 
   /** TODO 0x60-byte struct */
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
-
-  public static final CString cdName_80011700 = MEMORY.ref(6, 0x80011700L, CString::new);
 
   public static final Value _80011db0 = MEMORY.ref(4, 0x80011db0L);
 
@@ -3447,53 +3443,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017898
-  }
-
-  @Method(0x800178b0L)
-  public static void loadSceaLogo() {
-    if(SInitBinLoaded_800bbad0.get()) {
-      loadDrgnBinFile(0, 5737, 0, Scus94491BpeSegment::loadSceaLogoTexture, 1, 5);
-    } else {
-      loadSceaLogoTexture(sceaTexture_800d05c4.getAddress(), 0, 0);
-    }
-  }
-
-  @Method(0x80017924L)
-  public static void loadSceaLogoTexture(final long address, final int size, final int param) {
-    timHeader_800bc2e0.set(parseTimHeader(MEMORY.ref(4, address).offset(0x4L)));
-    final TimHeader header = timHeader_800bc2e0;
-
-    final RECT imageRect = new RECT();
-    imageRect.set((short)640, (short)0, header.getImageRect().w.get(), header.getImageRect().h.get());
-    LoadImage(imageRect, header.getImageAddress());
-
-    if(header.hasClut()) {
-      final RECT clutRect = new RECT();
-      clutRect.set((short)640, (short)255, header.getClutRect().w.get(), header.getClutRect().h.get());
-      LoadImage(clutRect, header.getClutAddress());
-    }
-
-    if(param != 0) {
-      deferReallocOrFree(address, 0, 1);
-    }
-  }
-
-  /**
-   * Draws the TIM image located at {@link Scus94491BpeSegment_800b#timHeader_800bc2e0}
-   *
-   * NOTE: elements are added in reverse order
-   */
-  @Method(0x80017a3cL)
-  public static void drawSceaLogo(final int colour) {
-    final TimHeader tim = timHeader_800bc2e0;
-
-    final GpuCommandQuad packet = new GpuCommandQuad();
-    packet.bpp(Bpp.BITS_8);
-    packet.monochrome(colour);
-    packet.pos(-tim.getImageRect().w.get(), -tim.getImageRect().h.get() / 2, tim.getImageRect().w.get() * 2, tim.getImageRect().h.get());
-    packet.clut(640, 255);
-    packet.vramPos(640, 0);
-    GPU.queueCommand(41, packet);
   }
 
   @Method(0x800180c0L)

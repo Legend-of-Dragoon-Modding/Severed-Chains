@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -95,7 +94,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ScriptState<VoidRef> scriptState_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, ScriptState.of(VoidRef::new));
   public static final ArrayRef<Pointer<ScriptState<? extends MemoryRef>>> scriptStatePtrArr_800bc1c0 = (ArrayRef<Pointer<ScriptState<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(ScriptState.class), 0x48, 4, (Function)Pointer.deferred(4, ScriptState.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
-  public static final TimHeader timHeader_800bc2e0 = MEMORY.ref(0x1c, 0x800bc2e0L, TimHeader::new);
 
   public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
 

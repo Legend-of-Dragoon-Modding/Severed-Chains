@@ -10,7 +10,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -88,10 +87,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
-
-  public static final Value sceaLogoTextureLoaded_800c672c = MEMORY.ref(4, 0x800c672cL);
-  public static final Value sceaLogoDisplayTime_800c6730 = MEMORY.ref(4, 0x800c6730L);
-  public static final IntRef sceaLogoAlpha_800c6734 = MEMORY.ref(4, 0x800c6734L, IntRef::new);
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 
