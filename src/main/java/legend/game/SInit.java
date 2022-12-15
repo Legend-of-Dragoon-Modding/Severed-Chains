@@ -2,24 +2,19 @@ package legend.game;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.FileEntry08;
 import legend.game.types.MrgFile;
 import legend.game.unpacker.Unpacker;
 
 import static legend.core.Hardware.MEMORY;
-import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_800194dc;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020460;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80024654;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002ac24;
-import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8004._8004dd80;
 import static legend.game.Scus94491BpeSegment_8004.drgn2xFileName_8004dd88;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
@@ -30,7 +25,6 @@ import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_800b.DRGN_CACHE;
-import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.drgnFileCache_800bbacc;
 import static legend.game.Scus94491BpeSegment_800b.drgnFilesCached_800bbac8;
@@ -39,20 +33,10 @@ import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 public final class SInit {
   private SInit() { }
 
-  public static final FileEntry08 mesMvb_800fd334 = MEMORY.ref(2, 0x800fd334L, FileEntry08::new);
-
-  public static final FileEntry08 _800fd344 = MEMORY.ref(2, 0x800fd344L, FileEntry08::new);
-
-  public static final FileEntry08 _800fd34c = MEMORY.ref(2, 0x800fd34cL, FileEntry08::new);
-
-  public static final ArrayRef<Pointer<FileEntry08>> fileEntries_800fd414 = MEMORY.ref(4, 0x800fd414L, ArrayRef.of(Pointer.classFor(FileEntry08.class), 0x40, 0x4, Pointer.deferred(4, FileEntry08::new)));
-
+  private static final FileEntry08[] fileEntries = new FileEntry08[0x40];
   private static int filesCount;
 
-  @Method(0x800fb8d8L)
   public static long preloadDrgnBinFiles() {
-    SInitBinLoaded_800bbad0.set(false);
-
     if(drgnFilesCached_800bbac8.get() && drgnFileCache_800bbacc.get() != 0) {
       free(drgnFileCache_800bbacc.get());
       drgnFileCache_800bbacc.setu(0);
@@ -65,17 +49,16 @@ public final class SInit {
 
     filesCount = 0;
     FUN_800fbe28();
-    qsort(fileEntries_800fd414, filesCount, 0x4, getBiFunctionAddress(SInit.class, "compareFileNames", Pointer.classFor(FileEntry08.class), Pointer.classFor(FileEntry08.class), long.class));
 
     //LAB_800fbac0
     for(int fileIndex = 0; fileIndex < filesCount; fileIndex++) {
       //LAB_800fbae0
-      if(!Unpacker.exists(fileEntries_800fd414.get(fileIndex).deref().name_04.deref().get())) {
+      if(!Unpacker.exists(fileEntries[fileIndex].name_04.deref().get())) {
         //LAB_800fbb14
         throw new RuntimeException("Failed to find file");
       }
 
-      fileEntries_800fd414.get(fileIndex).deref().fileIndex_00.set((short)fileIndex);
+      fileEntries[fileIndex].fileIndex_00.set((short)fileIndex);
     }
 
     final int[] drgnFileOffsets = new int[3];
@@ -87,7 +70,7 @@ public final class SInit {
       final byte[] fileData;
       if(drgnBinIndex == 2 || DRGN_CACHE[drgnBinIndex] == null) {
         final int fileIndex = drgnFiles_8004dda0.get(drgnBinIndex).fileIndex_00.get();
-        fileData = Unpacker.loadFile(fileEntries_800fd414.get(fileIndex).deref().name_04.deref().get());
+        fileData = Unpacker.loadFile(fileEntries[fileIndex].name_04.deref().get());
         DRGN_CACHE[drgnBinIndex] = fileData;
       } else {
         fileData = DRGN_CACHE[drgnBinIndex];
@@ -120,7 +103,6 @@ public final class SInit {
     }
 
     //LAB_800fbd80
-    SInitBinLoaded_800bbad0.set(true);
     drgnFilesCached_800bbac8.set(true);
 
     //LAB_800fb938
@@ -128,15 +110,9 @@ public final class SInit {
     return 1;
   }
 
-  @Method(0x800fbdf8L)
-  public static long compareFileNames(final Pointer<FileEntry08> entry1, final Pointer<FileEntry08> entry2) {
-    return strcmp(entry1.deref().name_04.deref().get(), entry2.deref().name_04.deref().get());
-  }
-
   @Method(0x800fbe28L)
   public static void FUN_800fbe28() {
     FUN_800fbe80();
-    FUN_800fbf30();
     FUN_8002ac24();
     FUN_800194dc();
     FUN_80020460();
@@ -155,22 +131,11 @@ public final class SInit {
 
   @Method(0x800fbec8L)
   public static void initFileEntries(final UnboundedArrayRef<FileEntry08> entries) {
-    if(SInitBinLoaded_800bbad0.get()) {
-      return;
-    }
-
     for(int i = 0; !entries.get(i).name_04.isNull(); i++) {
       entries.get(i).fileIndex_00.set((short)-1);
-      fileEntries_800fd414.get(filesCount).set(entries.get(i));
+      fileEntries[filesCount] = entries.get(i);
       filesCount++;
     }
-  }
-
-  @Method(0x800fbf30L)
-  public static void FUN_800fbf30() {
-    initFileEntries(mesMvb_800fd334.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
-    initFileEntries(_800fd344.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
-    initFileEntries(_800fd34c.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
   @Method(0x800fbf6cL)

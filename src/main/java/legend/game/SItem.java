@@ -41,6 +41,7 @@ import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -656,7 +657,7 @@ public final class SItem {
 
           final long archiveAddress = mrg.getFile(permutationSlot);
           final byte[] archive = MEMORY.getBytes(archiveAddress, mrg.entries.get(permutationSlot).size.get());
-          final byte[] decompressed = Scus94491.decompress(archive);
+          final byte[] decompressed = Unpacker.decompress(archive);
           final long destAddress = _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get();
           MEMORY.setBytes(destAddress, decompressed);
           combatantTmdAndAnimLoadedCallback(destAddress, decompressed.length, s0);

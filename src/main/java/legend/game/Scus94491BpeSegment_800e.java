@@ -19,7 +19,6 @@ import legend.game.types.RunningScript;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +27,6 @@ import static legend.core.Hardware.MEMORY;
 import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
-import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
 import static legend.game.Scus94491BpeSegment.gameLoop;
@@ -807,14 +805,6 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6184L)
   public static void preload() {
-    if(!Unpacker.exists("\\OVL\\S_INIT.OV_")) {
-      throw new RuntimeException("Couldn't find S_INIT");
-    }
-
-    LOGGER.info("Loading S_INIT...");
-    MEMORY.setBytes(_80010004.get(), Unpacker.loadFile("\\OVL\\S_INIT.OV_"));
-    MEMORY.addFunctions(SInit.class);
-
     drgnBinIndex_800bc058.set(1);
     preloadDrgnBinFiles();
 

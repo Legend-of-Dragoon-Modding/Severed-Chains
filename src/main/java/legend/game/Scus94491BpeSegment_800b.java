@@ -82,7 +82,6 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef drgnFilesCached_800bbac8 = MEMORY.ref(1, 0x800bbac8L, BoolRef::new);
 
   public static final Value drgnFileCache_800bbacc = MEMORY.ref(4, 0x800bbaccL);
-  public static final BoolRef SInitBinLoaded_800bbad0 = MEMORY.ref(1, 0x800bbad0L, BoolRef::new);
 
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);

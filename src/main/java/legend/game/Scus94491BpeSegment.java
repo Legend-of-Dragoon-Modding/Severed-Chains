@@ -19,7 +19,6 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.COLOUR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -118,7 +117,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
 import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
@@ -214,7 +212,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.DRGN_CACHE;
 import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
-import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
@@ -509,8 +506,6 @@ public final class Scus94491BpeSegment {
     });
   }
 
-  public static final boolean SYNCHRONOUS = true;
-
   private static final float controllerDeadzone = Config.controllerDeadzone();
   private static int controllerId = -1;
   private static boolean inputPulse;
@@ -738,7 +733,7 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    final Runnable r = () -> {
+    GPU.subRenderer = () -> {
       EventManager.INSTANCE.clearStaleRefs();
 
       if(!soundRunning) {
@@ -791,15 +786,7 @@ public final class Scus94491BpeSegment {
       inputPulse = !inputPulse;
     };
 
-    if(SYNCHRONOUS) {
-      GPU.subRenderer = r;
-    }
-
     while(Hardware.isAlive()) {
-      if(!SYNCHRONOUS) {
-        r.run();
-      }
-
       DebugHelper.sleep(1);
     }
 
@@ -1334,7 +1321,7 @@ public final class Scus94491BpeSegment {
    * Supporting overlays that can be loaded at any time like S_ITEM, etc.
    *
    * @param overlayIndex <ol start="0">
-   *                       <li>S_INIT</li>
+   *                       <li>S_INIT (no longer used)</li>
    *                       <li>S_BTLD</li>
    *                       <li>S_ITEM</li>
    *                       <li>S_EFFE</li>
@@ -1810,10 +1797,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80014d50L)
   public static void executeFileLoadingStage() {
-    if(!SInitBinLoaded_800bbad0.get()) {
-      return;
-    }
-
     final int callbackIndex = fileLoadingCallbackIndex_8004ddc4.get();
     if(callbackIndex != 0) {
       LOGGER.info("File loading callback index %d", callbackIndex);
@@ -1866,7 +1849,6 @@ public final class Scus94491BpeSegment {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
       case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
-      case "\\OVL\\S_INIT.OV_" -> MEMORY.addFunctions(SInit.class);
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
       case "\\OVL\\BTTL.OV_" -> {
         MEMORY.addFunctions(Bttl_800c.class);
@@ -1914,7 +1896,7 @@ public final class Scus94491BpeSegment {
     System.arraycopy(DRGN_CACHE[drgnIndex], (int)entry.offset.get() * 0x800, data, 0, data.length);
 
     if((type & 0x1) != 0) {
-      data = Scus94491.decompress(data);
+      data = Unpacker.decompress(data);
     }
 
     final long transferDest;

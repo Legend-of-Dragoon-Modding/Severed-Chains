@@ -211,7 +211,6 @@ import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.SInitBinLoaded_800bbad0;
 import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
@@ -258,8 +257,6 @@ public final class SMap {
   private SMap() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
-
-  public static final Value S_InitLoaded_800c6694 = MEMORY.ref(4, 0x800c6694L);
 
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = MEMORY.ref(4, 0x800c66d8L, GsF_LIGHT::new);
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = MEMORY.ref(4, 0x800c66e8L, GsF_LIGHT::new);
@@ -651,35 +648,20 @@ public final class SMap {
     _8004dd30.setu(0x1L);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.set(1);
-    S_InitLoaded_800c6694.setu(0);
-    loadSupportOverlay(0, getConsumerAddress(SMap.class, "FUN_800d962c", int.class), 0);
     return 1;
-  }
-
-  @Method(0x800d962cL)
-  public static void FUN_800d962c(final int a0) {
-    S_InitLoaded_800c6694.setu(0x1L);
   }
 
   @Method(0x800d96b8L)
   public static int FUN_800d96b8() {
-    if(S_InitLoaded_800c6694.get() == 0) {
-      return 0;
-    }
-
     //LAB_800d988c
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
     preloadDrgnBinFiles();
-
-    SInitBinLoaded_800bbad0.set(true);
 
     // Reload main sounds after disk swap?
     FUN_80019610();
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
 
-    decrementOverlayCount();
-    S_InitLoaded_800c6694.setu(0);
     _8004dd30.setu(0);
 
     //LAB_800d9a6c

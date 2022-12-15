@@ -32,7 +32,6 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
-import legend.game.Scus94491;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleDisplayStats144;
@@ -76,6 +75,7 @@ import legend.game.types.ScriptState;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.Unpacker;
 
 import javax.annotation.Nullable;
 
@@ -1510,7 +1510,7 @@ public final class Bttl_800c {
     if(mrg.entries.get(0).size.get() > 0) {
       final long archiveAddress = mrg.getFile(0);
       final byte[] archive = MEMORY.getBytes(archiveAddress, mrg.entries.get(0).size.get());
-      final byte[] decompressed = Scus94491.decompress(archive);
+      final byte[] decompressed = Unpacker.decompress(archive);
       final MrgFile stageTmdMrg = _1f8003f4.deref().stageTmdMrg_63c;
       MEMORY.setBytes(stageTmdMrg.getAddress(), decompressed);
 
@@ -2140,7 +2140,7 @@ public final class Bttl_800c {
           final long archiveAddress = s0.type4_5.bpe_00.get();
           final int decompressedSize = (int)MEMORY.get(archiveAddress, 4);
           final byte[] archive = MEMORY.getBytes(archiveAddress, decompressedSize + 0x100); // Too big, but we don't have the real size here
-          final byte[] decompressed = Scus94491.decompress(archive);
+          final byte[] decompressed = Unpacker.decompress(archive);
           final long destAddress = mallocHead(decompressedSize);
           MEMORY.setBytes(destAddress, decompressed);
 

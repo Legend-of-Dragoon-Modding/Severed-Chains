@@ -7,7 +7,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.game.Scus94491;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct4c;
@@ -18,6 +17,7 @@ import legend.game.combat.types.StageData10;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
+import legend.game.unpacker.Unpacker;
 
 import static legend.core.Hardware.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
@@ -99,7 +99,7 @@ public class SBtld {
 
     final int uncompressedSize = (int)bpe_800fb77c.offset(0x0L).get();
     final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    final byte[] decompressed = Scus94491.decompress(archive);
+    final byte[] decompressed = Unpacker.decompress(archive);
     final long destAddr = mallocTail(uncompressedSize);
     MEMORY.setBytes(destAddr, decompressed);
 
