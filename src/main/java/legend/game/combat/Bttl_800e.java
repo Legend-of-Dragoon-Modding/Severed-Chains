@@ -758,7 +758,7 @@ public final class Bttl_800e {
             final int clut = (int)unpacked.offset(2, 0x02L).get();
             final int tpage = (int)unpacked.offset(2, 0x06L).get();
 
-            final GpuCommandPoly cmd = new GpuCommandPoly(4)
+            final GpuCommandPoly cmd = new GpuCommandPoly(3)
               .bpp(Bpp.of(tpage >>> 7 & 0b11))
               .clut((clut & 0b111111) * 16, clut >>> 6)
               .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
