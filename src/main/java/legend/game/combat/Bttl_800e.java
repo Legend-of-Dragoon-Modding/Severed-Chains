@@ -157,7 +157,7 @@ import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -3578,7 +3578,7 @@ public final class Bttl_800e {
     //LAB_800e8604
     while(scriptIndex >= 0) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-      if(state.getAddress() == scriptState_800bc0c0.getAddress()) {
+      if(state.getAddress() == unusedScriptState_800bc0c0.getAddress()) {
         a1._10._00.or(0x8000_0000L);
         a0.transfer.setZ(-0x7fff);
         scriptIndex = -2;
@@ -3847,7 +3847,7 @@ public final class Bttl_800e {
     final BattleStruct7cc v0 = MEMORY.ref(4, mallocTail(0x7ccL), BattleStruct7cc::new);
     _800c6938.set(v0._5b8);
     _800c6930.set(v0._5dc);
-    lights_800c692c.setPointer(v0._640.getAddress()); //TODO
+    lights_800c692c.set(v0._640);
     v0._20.set(0x4L);
     v0.ptr_24.set(v0._28.getAddress());
     tmds_800c6944.set(v0.tmds_2f8);

@@ -13,7 +13,6 @@ import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
-import legend.game.fmv.Fmv;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
@@ -86,7 +85,7 @@ import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -857,7 +856,7 @@ public final class Scus94491BpeSegment_800e {
   public static void clearScriptStates() {
     //LAB_800e666c
     for(int i = 0; i < 0x48; i++) {
-      scriptStatePtrArr_800bc1c0.get(i).set(scriptState_800bc0c0);
+      scriptStatePtrArr_800bc1c0.get(i).set(unusedScriptState_800bc0c0);
     }
   }
 

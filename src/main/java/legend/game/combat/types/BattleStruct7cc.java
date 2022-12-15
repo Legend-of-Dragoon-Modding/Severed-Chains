@@ -49,7 +49,7 @@ public class BattleStruct7cc implements MemoryRef {
 
   public final BattleStruct24_2 _5b8;
   public final BattleLightStruct64 _5dc;
-  public final Value _640;
+  public final ArrayRef<BttlLightStruct84> _640;
 
   public BattleStruct7cc(final Value ref) {
     this.ref = ref;
@@ -83,7 +83,7 @@ public class BattleStruct7cc implements MemoryRef {
 
     this._5b8 = ref.offset(4, 0x5b8L).cast(BattleStruct24_2::new);
     this._5dc = ref.offset(4, 0x5dcL).cast(BattleLightStruct64::new);
-    this._640 = ref.offset(4, 0x640L);
+    this._640 = ref.offset(4, 0x640L).cast(ArrayRef.of(BttlLightStruct84.class, 3, 0x84, BttlLightStruct84::new));
   }
 
   @Override

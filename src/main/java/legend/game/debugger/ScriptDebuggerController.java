@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptState_800bc0c0;
+import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 
 public class ScriptDebuggerController {
   private static final Set<ScriptDebuggerController> INSTANCES = new HashSet<>();
@@ -143,7 +143,7 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer() != scriptState_800bc0c0.getAddress() ? Long.toHexString(scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer()) : "not allocated";
+    return scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer() != unusedScriptState_800bc0c0.getAddress() ? Long.toHexString(scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer()) : "not allocated";
   }
 
   private void updateScriptVars() {
