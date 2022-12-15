@@ -254,6 +254,14 @@ public final class GameEngine {
     windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
     GPU.mainRenderer = GameEngine::renderIntro;
 
+    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
+      time = 0;
+      fade1 = 0.0f;
+      fade2 = 0.0f;
+      loadingFade = 1.0f;
+      eyeFade = 1.0f;
+    });
+
     time = System.nanoTime();
   }
 
@@ -264,7 +272,7 @@ public final class GameEngine {
   private static float eyeFade;
 
   private static void renderIntro() {
-    final int deltaMs = (int)((System.nanoTime() - time) / 1_000_000);
+    final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 
     if(deltaMs < 5000) {
       fade1 += 0.005f;
