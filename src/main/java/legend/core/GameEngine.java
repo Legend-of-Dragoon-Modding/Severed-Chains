@@ -182,12 +182,12 @@ public final class GameEngine {
         fade1 = 1.0f;
       }
       fade2 = fade1;
-    } else if(deltaMs < 11000) {
+    } else if(deltaMs < 13000) {
       fade1 -= 0.0015f;
       if(fade1 < 0) {
         fade1 = 0;
       }
-    } else if(deltaMs < 15000) {
+    } else if(deltaMs < 17000) {
       fade1 -= 0.01f;
       if(fade1 < 0) {
         fade1 = 0;
