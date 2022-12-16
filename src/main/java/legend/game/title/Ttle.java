@@ -250,7 +250,7 @@ public final class Ttle {
   }
 
   @Method(0x800c75b4L)
-  public static void FUN_800c75b4() {
+  public static void renderGameOver() {
     renderMcq(gameOverMcq_800bdc3c.deref(), 640, 0, -320, -108, 36, 128);
   }
 
@@ -280,6 +280,8 @@ public final class Ttle {
           pregameLoadingStage_800bb10c.setu(0x5L);
           scriptStartEffect(1, 10);
         }
+
+        renderGameOver();
       }
 
       case 5 -> {
@@ -288,7 +290,7 @@ public final class Ttle {
         }
 
         //LAB_800c7740
-        FUN_800c75b4();
+        renderGameOver();
       }
 
       case 6 -> {
