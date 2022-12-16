@@ -20,6 +20,7 @@ import legend.core.spu.Spu;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800e;
+import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
@@ -217,7 +218,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac80}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc974}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc960}</li>
-   *   <li>{@link legend.game.SMap#_800c66c8}</li>
+   *   <li>{@link legend.game.combat.Bttl_800c#_800c66c8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#goldGainedFromCombat_800bc920}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#totalXpFromCombat_800bc95c}</li>
    *   <li>null</li>

@@ -44,7 +44,7 @@ public final class SaveManager {
     try(final Stream<Path> stream = Files.list(dir)) {
       return stream
         .filter(file -> !Files.isDirectory(file) && matcher.matches(file.getFileName()))
-        .sorted(Comparator.comparingLong((Path path) -> {
+        .sorted(Comparator.comparingLong((final Path path) -> {
           try {
             return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
           } catch(final IOException e) {

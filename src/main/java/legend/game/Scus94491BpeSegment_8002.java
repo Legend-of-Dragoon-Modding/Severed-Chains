@@ -2075,11 +2075,6 @@ public final class Scus94491BpeSegment_8002 {
     // empty
   }
 
-  @Method(0x800237a4L)
-  public static long hasSavedGames() {
-    return SaveManager.hasSavedGames() ? 1 : 2;
-  }
-
   @Method(0x80023870L)
   public static void playSound(final long soundIndex) {
     Scus94491BpeSegment.playSound(0, (int)soundIndex, 0, 0, (short)0, (short)0);

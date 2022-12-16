@@ -1,4 +1,4 @@
-package legend.game;
+package legend.game.title;
 
 import legend.core.Config;
 import legend.core.gpu.Bpp;
@@ -19,15 +19,15 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.SaveManager;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.TmdRenderingStruct;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
@@ -52,13 +52,11 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002379c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.hasSavedGames;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -84,7 +82,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -95,93 +92,53 @@ import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 public final class Ttle {
   private Ttle() { }
 
-  public static final Value _800c66c8 = MEMORY.ref(4, 0x800c66c8L);
-  public static final Pointer<TmdRenderingStruct> _800c66d0 = MEMORY.ref(4, 0x800c66d0L, Pointer.deferred(4, TmdRenderingStruct::new));
+  public static TmdRenderingStruct _800c66d0;
   public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(4, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
-  public static final Value hasSavedGames_800c66e4 = MEMORY.ref(4, 0x800c66e4L);
-  public static final Value menuLoadingStage_800c66e8 = MEMORY.ref(4, 0x800c66e8L);
-  public static final IntRef logoFadeInAmount_800c66ec = MEMORY.ref(4, 0x800c66ecL, IntRef::new);
-  public static final Value logoFlashStage_800c66f0 = MEMORY.ref(4, 0x800c66f0L);
-  public static final Value _800c66f4 = MEMORY.ref(4, 0x800c66f4L);
-  public static final Value _800c66f8 = MEMORY.ref(4, 0x800c66f8L);
-  public static final Value _800c66fc = MEMORY.ref(4, 0x800c66fcL);
-  public static final Value _800c6700 = MEMORY.ref(2, 0x800c6700L);
-  public static final Value _800c6702 = MEMORY.ref(2, 0x800c6702L);
-  public static final Value backgroundInitialized_800c6704 = MEMORY.ref(4, 0x800c6704L);
-  public static final IntRef backgroundScrollAmount_800c6708 = MEMORY.ref(4, 0x800c6708L, IntRef::new);
-  public static final IntRef backgroundFadeInAmount_800c670c = MEMORY.ref(4, 0x800c670cL, IntRef::new);
-  public static final Value copyrightInitialized_800c6710 = MEMORY.ref(4, 0x800c6710L);
-  public static final IntRef copyrightFadeInAmount_800c6714 = MEMORY.ref(4, 0x800c6714L, IntRef::new);
-  public static final Value logoFireInitialized_800c6718 = MEMORY.ref(4, 0x800c6718L);
-  public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
-  public static final Value menuIdleTime_800c6720 = MEMORY.ref(4, 0x800c6720L);
+  public static int hasSavedGames;
+  public static int menuLoadingStage;
+  public static int logoFadeInAmount;
+  public static int logoFlashStage;
+  public static int logoFlashColour;
+  public static boolean backgroundInitialized;
+  public static int backgroundScrollAmount;
+  public static int backgroundFadeInAmount;
+  public static boolean copyrightInitialized;
+  public static int copyrightFadeInAmount;
+  public static boolean logoFireInitialized;
+  public static int flameColour;
+  public static int menuIdleTime;
 
-  public static final Value _800c6728 = MEMORY.ref(4, 0x800c6728L);
-  public static final Value _800c672c = MEMORY.ref(4, 0x800c672cL);
-  public static final ArrayRef<ShortRef> menuOptionTransparency_800c6730 = MEMORY.ref(2, 0x800c6730L, ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
+  public static int _800c6728;
+  public static int _800c672c;
+  public static final int[] menuOptionTransparency = {0, 0, 0};
 
-  public static final Value _800c6738 = MEMORY.ref(4, 0x800c6738L);
-  public static final Value _800c673c = MEMORY.ref(2, 0x800c673cL);
+  public static int _800c6738;
+  public static int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static final Value _800c6748 = MEMORY.ref(4, 0x800c6748L);
+  public static long[] vramData = {0, 0, 0};
 
-  public static final Value _800c6754 = MEMORY.ref(4, 0x800c6754L);
-  public static final Value _800c6758 = MEMORY.ref(4, 0x800c6758L);
+  public static int _800c6754;
+  public static int flamesZ;
 
   public static final GsRVIEW2 GsRVIEW2_800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
 
-  /**
-   * <ol start="0">
-   *   <li>{@link Ttle#mainMenuStateSetUpNewGame()}</li>
-   *   <li>{@link Ttle#FUN_800c74bc()}</li>
-   *   <li>{@link Ttle#waitForTtleFilesToLoad()}</li>
-   *   <li>{@link Ttle#FUN_800c7500()}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800c6898 = MEMORY.ref(4, 0x800c6898L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
 
-  public static final SVECTOR _800c68f0 = MEMORY.ref(2, 0x800c68f0L, SVECTOR::new);
-  public static final VECTOR _800c68f8 = MEMORY.ref(4, 0x800c68f8L, VECTOR::new);
+  public static int selectedMenuOption_800ce774;
+  public static int _800ce778;
 
-  public static final ArrayRef<UnsignedShortRef> characterStartingLevels_800ce6c4 = MEMORY.ref(2, 0x800ce6c4L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
-
-  public static final Value _800ce6d8 = MEMORY.ref(4, 0x800ce6d8L);
-
-  public static final Value _800ce6fc = MEMORY.ref(1, 0x800ce6fcL);
-
-  public static final Value _800ce758 = MEMORY.ref(1, 0x800ce758L);
-
-  public static final Value _800ce76c = MEMORY.ref(2, 0x800ce76cL);
-
-  public static final Value selectedMenuOption_800ce774 = MEMORY.ref(4, 0x800ce774L);
-  public static final Value _800ce778 = MEMORY.ref(4, 0x800ce778L);
-  /**
-   * <ol start="0">
-   *   <li>{@link Ttle#initializeMainMenu()}</li>
-   *   <li>{@link Ttle#loadMainMenuGfx()}</li>
-   *   <li>{@link Ttle#FUN_800c7df0()}</li>
-   *   <li>{@link Ttle#renderMainMenu()}</li>
-   *   <li>{@link Ttle#FUN_800c7e50()}</li>
-   *   <li>{@link Ttle#FUN_800c7fa0()}</li>
-   *   <li>{@link Ttle#fadeOutMainMenu()}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<RunnableRef>> loadingStageArray_800ce77c = MEMORY.ref(4, 0x800ce77cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 7, 4, Pointer.deferred(4, RunnableRef::new)));
-
+  // This is all data stored in the overlay rom
+  public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
+  public static final ArrayRef<ArrayRef<UnsignedShortRef>> startingEquipment_800ce6fc = MEMORY.ref(2, 0x800ce6fcL, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 9, 0xa, ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new)));
+  public static final ArrayRef<ShortRef> startingAddition_800ce758 = MEMORY.ref(2, 0x800ce758L, ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> startingItems_800ce76c = MEMORY.ref(2, 0x800ce76cL, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
   public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(2, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
-
   public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(1, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
-
   public static final Value _800ce840 = MEMORY.ref(1, 0x800ce840L);
-
   public static final Value _800ce8ac = MEMORY.ref(2, 0x800ce8acL);
-
   public static final ArrayRef<UnsignedIntRef> _800ce8f4 = MEMORY.ref(4, 0x800ce8f4L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-
   public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
-
   public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
 
   @Method(0x800c7194L)
@@ -201,8 +158,8 @@ public final class Ttle {
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-      final int level = characterStartingLevels_800ce6c4.get(charIndex).get();
-      charData.xp_00.set((int)_800ce6d8.offset(charIndex * 0x4L).deref(4).offset(level * 0x4L).get());
+      final int level = characterStartingLevels[charIndex];
+      charData.xp_00.set(characterXpPtrs_800ce6d8.get(charIndex).deref().get(level).get());
       charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
       charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
       charData.sp_0c.set(0);
@@ -232,11 +189,11 @@ public final class Ttle {
       }
 
       //LAB_800c730c
-      charData.selectedAddition_19.set((int)_800ce758.offset(charIndex * 0x2L).get());
+      charData.selectedAddition_19.set(startingAddition_800ce758.get(charIndex).get());
 
       //LAB_800c7334
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14.get(i).set((int)_800ce6fc.offset(charIndex * 0xaL).offset(i * 0x2L).get());
+        charData.equipment_14.get(i).set(startingEquipment_800ce6fc.get(charIndex).get(i).get());
       }
     }
 
@@ -256,7 +213,7 @@ public final class Ttle {
 
     //LAB_800c73d8
     for(int i = 0; i < Config.inventorySize() + 1; i++) {
-      final int itemId = (int)_800ce76c.offset(i * 0x2L).get();
+      final int itemId = startingItems_800ce76c.get(i).get();
       if(itemId == 0xff) {
         gameState_800babc8.itemCount_1e6.set((short)i);
         break;
@@ -273,28 +230,7 @@ public final class Ttle {
 
   @Method(0x800c7424L)
   public static void executeTtleUnloadingStage() {
-    loadingStageArray_800c6898.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
-  }
-
-  @Method(0x800c7488L)
-  public static void mainMenuStateSetUpNewGame() {
     setUpNewGameData();
-    vsyncMode_8007a3b8.set(1);
-    pregameLoadingStage_800bb10c.addu(0x1L);
-  }
-
-  @Method(0x800c74bcL)
-  public static void FUN_800c74bc() {
-    pregameLoadingStage_800bb10c.addu(0x1L);
-  }
-
-  @Method(0x800c74d4L)
-  public static void waitForTtleFilesToLoad() {
-    pregameLoadingStage_800bb10c.addu(0x1L);
-  }
-
-  @Method(0x800c7500L)
-  public static void FUN_800c7500() {
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     vsyncMode_8007a3b8.set(2);
     pregameLoadingStage_800bb10c.setu(0);
@@ -335,13 +271,10 @@ public final class Ttle {
       case 3 -> {
         deallocateRenderables(0xffL);
         scriptStartEffect(2, 10);
-        _800c66c8.setu(0xe10L);
         pregameLoadingStage_800bb10c.setu(0x4L);
       }
 
       case 4 -> {
-        _800c66c8.subu(0x1L);
-
         if((joypadPress_8007a398.get() & 0x820) != 0) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.setu(0x5L);
@@ -372,36 +305,40 @@ public final class Ttle {
 
   @Method(0x800c7798L)
   public static void executeTtleLoadingStage() {
-    loadingStageArray_800ce77c.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+    switch((int)pregameLoadingStage_800bb10c.get()) {
+      case 0 -> initializeMainMenu();
+      case 3 -> renderMainMenu();
+      case 4 -> FUN_800c7e50();
+      case 5 -> FUN_800c7fa0();
+      case 6 -> fadeOutMainMenu();
+    }
   }
 
   @Method(0x800c77e4L)
   public static void initializeMainMenu() {
-    menuLoadingStage_800c66e8.setu(0);
-    menuIdleTime_800c6720.setu(0);
-    _800c6728.setu(0);
-    _800c672c.setu(0);
-    _800c6738.setu(0);
-    logoFadeInAmount_800c66ec.set(0);
-    backgroundInitialized_800c6704.setu(0);
-    backgroundScrollAmount_800c6708.set(-176);
-    copyrightInitialized_800c6710.setu(0);
-    logoFireInitialized_800c6718.setu(0);
-    logoFlashStage_800c66f0.setu(0);
-    _800c6754.setu(0);
-    _800c6758.setu(100L);
+    menuLoadingStage = 0;
+    menuIdleTime = 0;
+    _800c6728 = 0;
+    _800c672c = 0;
+    _800c6738 = 0;
+    logoFadeInAmount = 0;
+    backgroundInitialized = false;
+    backgroundScrollAmount = -176;
+    copyrightInitialized = false;
+    logoFireInitialized = false;
+    logoFlashStage = 0;
+    _800c6754 = 0;
+    flamesZ = 100;
 
-    hasSavedGames();
-
-    hasSavedGames_800c66e4.setu(0);
-    selectedMenuOption_800ce774.setu(0);
-    _800ce778.setu(0);
+    hasSavedGames = 0;
+    selectedMenuOption_800ce774 = 0;
+    _800ce778 = 0;
 
     //LAB_800c7888
-    for(int i = 0; i < 0x3L; i++) {
+    for(int i = 0; i < 3; i++) {
       //LAB_800c78a4
-      _800c6748.offset(i * 4L).setu(mallocTail(rectArray_800ce798.get(i).w.get() * rectArray_800ce798.get(i).h.get() * 2L));
-      StoreImage(rectArray_800ce798.get(i), _800c6748.offset(i * 4L).get());
+      vramData[i] = mallocTail(rectArray_800ce798.get(i).w.get() * rectArray_800ce798.get(i).h.get() * 2L);
+      StoreImage(rectArray_800ce798.get(i), vramData[i]);
     }
 
     //LAB_800c7978
@@ -447,7 +384,6 @@ public final class Ttle {
 
   /**
    * Loads the MRG file @ sector 61510. All files are TIMs.
-   *
    * <ol start="0">
    *   <li>Menu background (upper portion)</li>
    *   <li>Logo fire 1</li>
@@ -477,25 +413,15 @@ public final class Ttle {
   @Method(0x800c7c18L)
   public static void menuFireTmdLoaded(final long tmdAddressPtr, final int fileSize, final int unused) {
     final TmdWithId tmd = MEMORY.ref(4, tmdAddressPtr).cast(TmdWithId::new);
-    _800c66d0.set(parseTmdFile(tmd));
-    FUN_800cc0b0(_800c66d0.deref(), null);
-    _800c66d0.deref().tmd_0c.set(tmd);
-    setDobjAttributes(_800c66d0.deref(), 0);
-  }
-
-  @Method(0x800c7cacL)
-  public static void loadMainMenuGfx() {
-    throw new RuntimeException("No longer used");
-  }
-
-  @Method(0x800c7df0L)
-  public static void FUN_800c7df0() {
-    throw new RuntimeException("No longer used");
+    _800c66d0 = parseTmdFile(tmd);
+    FUN_800cc0b0(_800c66d0, null);
+    _800c66d0.tmd_0c = tmd;
+    setDobjAttributes(_800c66d0, 0);
   }
 
   @Method(0x800c7e50L)
   public static void FUN_800c7e50() {
-    if(_800c6754.get() == 0) {
+    if(_800c6754 == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
 
@@ -507,8 +433,8 @@ public final class Ttle {
     renderMenuBackground();
     renderCopyright();
 
-    _800c6754.addu(0x1L);
-    if(_800c6754.get() >= 0x10L) {
+    _800c6754++;
+    if(_800c6754 >= 16) {
       FUN_800cb5c4();
       deallocateFire();
 
@@ -524,19 +450,19 @@ public final class Ttle {
 
   @Method(0x800c7fa0L)
   public static void FUN_800c7fa0() {
-    if(_800c6754.get() == 0) {
+    if(_800c6754 == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
 
     //LAB_800c7fcc
-    _800c6754.addu(0x1L);
+    _800c6754++;
 
-    if(_800c6754.get() >= 0x10L) {
-      if(_800c6728.get() == 0x2L) {
+    if(_800c6754 >= 16) {
+      if(_800c6728 == 2) {
         whichMenu_800bdc38.setu(0xbL);
         FUN_800cb5c4();
         deallocateFire();
-        _800c6728.setu(0x3L);
+        _800c6728 = 3;
       }
     }
 
@@ -563,7 +489,7 @@ public final class Ttle {
     }
 
     //LAB_800c80cc
-    if(_800c6728.get() == 0x3L) {
+    if(_800c6728 == 3) {
       mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
       pregameLoadingStage_800bb10c.setu(0);
       vsyncMode_8007a3b8.set(2);
@@ -582,7 +508,7 @@ public final class Ttle {
 
   @Method(0x800c8148L)
   public static void fadeOutMainMenu() {
-    if(_800c6754.get() == 0) {
+    if(_800c6754 == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
 
@@ -594,8 +520,8 @@ public final class Ttle {
     renderMenuBackground();
     renderCopyright();
 
-    _800c6754.addu(0x1L);
-    if(_800c6754.get() > 0xfL) {
+    _800c6754++;
+    if(_800c6754 > 15) {
       FUN_800cb5c4();
       deallocateFire();
 
@@ -611,36 +537,34 @@ public final class Ttle {
 
   @Method(0x800c8298L)
   public static void renderMainMenu() {
-    final long menuLoadingStage = menuLoadingStage_800c66e8.get();
-
     if(menuLoadingStage == 0) {
       //LAB_800c82f0
-      if(backgroundScrollAmount_800c6708.get() > -40) {
-        menuLoadingStage_800c66e8.setu(0x1L);
+      if(backgroundScrollAmount > -40) {
+        menuLoadingStage = 1;
       }
 
       //LAB_800c82d0
       //LAB_800c8314
-    } else if(menuLoadingStage == 0x1L) {
+    } else if(menuLoadingStage == 1) {
       //LAB_800c831c
       renderMenuLogo();
 
-      if(logoFadeInAmount_800c66ec.get() >= 0x80L) {
-        menuLoadingStage_800c66e8.setu(0x2L);
+      if(logoFadeInAmount >= 128) {
+        menuLoadingStage = 2;
       }
 
       //LAB_800c8348
-    } else if(menuLoadingStage == 0x2L) {
+    } else if(menuLoadingStage == 2) {
       //LAB_800c8350
       renderMenuLogo();
       renderLogoFlash();
 
-      if(logoFlashStage_800c66f0.get() == 0x2L) {
-        menuLoadingStage_800c66e8.setu(0x3L);
+      if(logoFlashStage == 2) {
+        menuLoadingStage = 3;
       }
 
       //LAB_800c8380
-    } else if(menuLoadingStage == 0x3L) {
+    } else if(menuLoadingStage == 3) {
       //LAB_800c8388
       FUN_800c93b0();
       FUN_800c8484();
@@ -654,20 +578,18 @@ public final class Ttle {
     //LAB_800c83c8
     renderMenuBackground();
 
-    if(_800c6728.get() != 0x1L) {
-      menuIdleTime_800c6720.addu(0x2L);
+    if(_800c6728 != 1) {
+      menuIdleTime += 2;
 
-      if(menuIdleTime_800c6720.get() > 0x690L) {
-        if(drgnBinIndex_800bc058.get() == 0x1L) {
-          pregameLoadingStage_800bb10c.setu(0x6L);
-        }
+      if(menuIdleTime > 1680) {
+        pregameLoadingStage_800bb10c.setu(0x6L);
       }
     }
 
     //LAB_800c8448
     if(joypadInput_8007a39c.get(0xf9ffL) != 0) {
-      menuLoadingStage_800c66e8.setu(0x3L);
-      menuIdleTime_800c6720.setu(0);
+      menuLoadingStage = 3;
+      menuIdleTime = 0;
     }
 
     //LAB_800c8474
@@ -675,45 +597,45 @@ public final class Ttle {
 
   @Method(0x800c8484L)
   public static void FUN_800c8484() {
-    if(_800c672c.get() < 3) {
+    if(_800c672c < 3) {
       if(joypadPress_8007a398.get(0x20L) == 0) {
         if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          selectedMenuOption_800ce774.subu(1);
-          if(selectedMenuOption_800ce774.getSigned() < 0) {
-            selectedMenuOption_800ce774.setu(2);
+          selectedMenuOption_800ce774--;
+          if(selectedMenuOption_800ce774 < 0) {
+            selectedMenuOption_800ce774 = 2;
           }
 
-          if(selectedMenuOption_800ce774.get() == 1 && hasSavedGames_800c66e4.get() != 1) {
-            selectedMenuOption_800ce774.subu(1);
+          if(selectedMenuOption_800ce774 == 1 && hasSavedGames != 1) {
+            selectedMenuOption_800ce774--;
           }
 
-          _800c672c.setu(2);
+          _800c672c = 2;
         }
 
         if(joypadPress_8007a398.get(0x4000L) != 0) { // Menu button down
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          selectedMenuOption_800ce774.addu(1);
-          if(selectedMenuOption_800ce774.get() > 2) {
-            selectedMenuOption_800ce774.setu(0);
+          selectedMenuOption_800ce774++;
+          if(selectedMenuOption_800ce774 > 2) {
+            selectedMenuOption_800ce774 = 0;
           }
 
-          if(selectedMenuOption_800ce774.get() == 1 && hasSavedGames_800c66e4.get() != 1) {
-            selectedMenuOption_800ce774.addu(1);
+          if(selectedMenuOption_800ce774 == 1 && hasSavedGames != 1) {
+            selectedMenuOption_800ce774++;
           }
 
-          _800c672c.setu(2);
+          _800c672c = 2;
         }
       } else { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
-        _800c672c.setu(3);
-        if(selectedMenuOption_800ce774.get() == 2) {
-          _800c6738.setu(0);
-          _800ce778.setu(0);
-          _800c6728.setu(1);
+        _800c672c = 3;
+        if(selectedMenuOption_800ce774 == 2) {
+          _800c6738 = 0;
+          _800ce778 = 0;
+          _800c6728 = 1;
         }
       }
     }
@@ -721,40 +643,40 @@ public final class Ttle {
 
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
-    if(hasSavedGames_800c66e4.get() == 0) {
-      hasSavedGames_800c66e4.setu(hasSavedGames());
-      selectedMenuOption_800ce774.setu(hasSavedGames_800c66e4.get() == 1 ? 1 : 0);
+    if(hasSavedGames == 0) {
+      hasSavedGames = SaveManager.hasSavedGames() ? 1 : 2;
+      selectedMenuOption_800ce774 = hasSavedGames == 1 ? 1 : 0;
       return;
     }
 
     //LAB_800c868c
-    switch((int)_800c672c.get()) {
+    switch(_800c672c) {
       case 0 -> {
         //LAB_800c86d8
-        for(int i = 0; i < 0x3L; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c86f4
-          menuOptionTransparency_800c6730.get(i).set((short)0);
+          menuOptionTransparency[i] = 0;
         }
 
         //LAB_800c8728
-        _800c672c.setu(0x1L);
+        _800c672c = 1;
       }
 
       case 1 -> {
         //LAB_800c8740
         //LAB_800c886c
-        for(int i = 0; i < 0x3L; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c875c
-          menuOptionTransparency_800c6730.get(i).add((short)0x4);
-          if(selectedMenuOption_800ce774.get() == i) {
-            if(menuOptionTransparency_800c6730.get(i).get() > 0xb0) {
-              menuOptionTransparency_800c6730.get(i).set((short)0xb0);
+          menuOptionTransparency[i] += 4;
+          if(selectedMenuOption_800ce774 == i) {
+            if(menuOptionTransparency[i] > 176) {
+              menuOptionTransparency[i] = 176;
             }
 
             //LAB_800c8800
             //LAB_800c8808
-          } else if(menuOptionTransparency_800c6730.get(i).get() > 0x40) {
-            menuOptionTransparency_800c6730.get(i).set((short)0x40);
+          } else if(menuOptionTransparency[i] > 64) {
+            menuOptionTransparency[i] = 64;
           }
 
           //LAB_800c8854
@@ -764,14 +686,14 @@ public final class Ttle {
       case 2 -> {
         //LAB_800c8878
         //LAB_800c89e4
-        for(int i = 0; i < 0x3L; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c8894
-          if(selectedMenuOption_800ce774.get() == i) {
+          if(selectedMenuOption_800ce774 == i) {
             // Fade in selected item
 
-            menuOptionTransparency_800c6730.get(i).add((short)0x8);
-            if(menuOptionTransparency_800c6730.get(i).get() > 0xa0) {
-              menuOptionTransparency_800c6730.get(i).set((short)0xa0);
+            menuOptionTransparency[i] += 8;
+            if(menuOptionTransparency[i] > 160) {
+              menuOptionTransparency[i] = 160;
             }
 
             //LAB_800c8938
@@ -779,9 +701,9 @@ public final class Ttle {
             // Fade out unselected items
 
             //LAB_800c8940
-            menuOptionTransparency_800c6730.get(i).sub((short)0x10);
-            if(menuOptionTransparency_800c6730.get(i).get() < 0x40) {
-              menuOptionTransparency_800c6730.get(i).set((short)0x40);
+            menuOptionTransparency[i] -= 16;
+            if(menuOptionTransparency[i] < 64) {
+              menuOptionTransparency[i] = 64;
             }
           }
 
@@ -790,12 +712,12 @@ public final class Ttle {
       }
 
       case 3 -> {
-        _800c672c.setu(0x4L);
-        if(selectedMenuOption_800ce774.get() == 0) {
+        _800c672c = 4;
+        if(selectedMenuOption_800ce774 == 0) {
           pregameLoadingStage_800bb10c.setu(0x4L);
           //LAB_800c8a20
-        } else if(selectedMenuOption_800ce774.get() == 0x1L) {
-          _800c6728.setu(0x2L);
+        } else if(selectedMenuOption_800ce774 == 1) {
+          _800c6728 = 2;
           pregameLoadingStage_800bb10c.setu(0x5L);
         }
       }
@@ -815,7 +737,7 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(menuOptionTransparency_800c6730.get(i).get())
+        .monochrome(menuOptionTransparency[i])
         .pos(0, x, y)
         .uv(0, 0, (int)_800ce7f8.offset(i * 2 * 4).get())
         .pos(1, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y)
@@ -824,14 +746,14 @@ public final class Ttle {
         .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
         .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
         .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .clut(640, selectedMenuOption_800ce774.get() == i ? 5 : 2)
+        .clut(640, selectedMenuOption_800ce774 == i ? 5 : 2)
         .vramPos(576, 0)
       );
 
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(menuOptionTransparency_800c6730.get(i).get())
+        .monochrome(menuOptionTransparency[i])
         .pos(0, x - 8, y - 8)
         .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
         .clut(640, 4)
@@ -851,28 +773,27 @@ public final class Ttle {
 
   @Method(0x800c93b0L)
   public static void FUN_800c93b0() {
-    if(_800c6728.get() == 1 && _800c6738.get() < 3) {
+    if(_800c6728 == 1 && _800c6738 < 3) {
       if(joypadPress_8007a398.get(0x5000L) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
-        _800ce778.xoru(0b11);
-        _800c6738.setu(2);
+        _800ce778 ^= 0b11;
+        _800c6738 = 2;
       }
 
       if(joypadPress_8007a398.get(0x40L) != 0) {
         playSound(0, 3, 0, 0, (short)0, (short)0);
-        _800c6738.setu(3);
-        _800c672c.setu(0);
+        _800c6738 = 3;
+        _800c672c = 0;
       }
 
       if(joypadPress_8007a398.get(0xa000L) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
-        if(_800ce778.get() == 0) {
+        if(_800ce778 == 0) {
           gameState_800babc8.mono_4e0.xor(0b1);
           setMono(gameState_800babc8.mono_4e0.get());
         } else {
           gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
-          FUN_8002379c();
 
           if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
             FUN_8002bcc8(0, 0x100);
@@ -880,57 +801,57 @@ public final class Ttle {
           }
         }
 
-        _800c6738.setu(2);
+        _800c6738 = 2;
       }
     }
   }
 
   @Method(0x800c959cL)
   public static void FUN_800c959c() {
-    if(_800c6728.get() != 0x1L) {
+    if(_800c6728 != 1) {
       return;
     }
 
     //LAB_800c95c4
-    long sp18 = gameState_800babc8.mono_4e0.get() + 0x1L;
+    int sp18 = gameState_800babc8.mono_4e0.get() + 1;
 
-    long sp1c;
+    int sp1c;
     if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       //LAB_800c95f8
-      sp1c = 0x5L;
+      sp1c = 5;
     } else {
-      sp1c = 0x4L;
+      sp1c = 4;
     }
 
     //LAB_800c95fc
-    switch((int)_800c6738.get()) {
+    switch(_800c6738) {
       case 0 -> {
         //LAB_800c964c
-        for(int i = 0; i < 0x6L; i++) {
+        for(int i = 0; i < 6; i++) {
           //LAB_800c9668
-          _800c673c.offset(i * 2L).setu(0);
+          configColours[i] = 0;
         }
 
         //LAB_800c969c
-        _800c6738.setu(0x1L);
+        _800c6738 = 1;
       }
 
       case 0x1 -> {
         //LAB_800c96b4
-        for(int i = 0; i < 0x6L; i++) {
+        for(int i = 0; i < 6; i++) {
           //LAB_800c96d0
-          _800c673c.offset(i * 2L).addu(0x10L);
-          if(_800ce778.get() == i || sp18 == i || sp1c == i) {
+          configColours[i] += 16;
+          if(_800ce778 == i || sp18 == i || sp1c == i) {
             //LAB_800c9758
-            if(_800c673c.offset(i * 2L).get() > 0xb0L) {
-              _800c673c.offset(i * 2L).setu(0xb0L);
+            if(configColours[i] > 176) {
+              configColours[i] = 176;
             }
 
             //LAB_800c97a4
           } else {
             //LAB_800c97ac
-            if(_800c673c.offset(i * 2L).get() > 0x40L) {
-              _800c673c.offset(i * 2L).setu(0x40L);
+            if(configColours[i] > 64) {
+              configColours[i] = 64;
             }
           }
 
@@ -942,21 +863,21 @@ public final class Ttle {
 
       case 0x2 -> {
         //LAB_800c981c
-        for(int i = 0; i < 0x6L; i++) {
+        for(int i = 0; i < 6; i++) {
           //LAB_800c9838
-          if(_800ce778.get() == i || sp18 == i || sp1c == i) {
+          if(_800ce778 == i || sp18 == i || sp1c == i) {
             //LAB_800c9880
-            _800c673c.offset(i * 2L).addu(0x8L);
-            if(_800c673c.offset(i * 2L).get() > 0xa0L) {
-              _800c673c.offset(i * 2L).setu(0xa0L);
+            configColours[i] += 8;
+            if(configColours[i] > 160) {
+              configColours[i] = 160;
             }
 
             //LAB_800c990c
           } else {
             //LAB_800c9914
-            _800c673c.offset(i * 2L).subu(0x10L);
-            if(_800c673c.offset(i * 2L).get() < 0x40L) {
-              _800c673c.offset(i * 2L).setu(0x40L);
+            configColours[i] = 16;
+            if(configColours[i] < 64) {
+              configColours[i] = 64;
             }
           }
 
@@ -968,25 +889,25 @@ public final class Ttle {
 
       case 0x3 -> {
         //LAB_800c99c4
-        for(int i = 0; i < 0x6L; i++) {
+        for(int i = 0; i < 6; i++) {
           //LAB_800c99e0
-          if(_800ce778.get() == i || sp18 == i || sp1c == i) {
+          if(_800ce778 == i || sp18 == i || sp1c == i) {
             //LAB_800c9a28
-            _800c673c.offset(i * 2L).subu(0x20L);
+            configColours[i] -= 32;
           } else {
             //LAB_800c9a70
-            _800c673c.offset(i * 2L).subu(0x8L);
+            configColours[i] -= 8;
           }
 
           //LAB_800c9ab0
-          if(_800c673c.offset(i * 2L).getSigned() < 0) {
-            _800c673c.offset(i * 2L).setu(0);
+          if(configColours[i] < 0) {
+            configColours[i] = 0;
           }
 
           //LAB_800c9af4
-          if(_800c673c.offset(_800ce778.get() * 2).get() == 0) {
-            _800c6738.setu(0x4L);
-            _800c6728.setu(0);
+          if(configColours[_800ce778] == 0) {
+            _800c6738 = 4;
+            _800c6728 = 0;
           }
 
           //LAB_800c9b34
@@ -1005,8 +926,8 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome((int)_800c673c.offset(i * 2).get())
-        .clut(640, selectedMenuOption_800ce774.get() == i ? 5 : 2)
+        .monochrome(configColours[i])
+        .clut(640, selectedMenuOption_800ce774 == i ? 5 : 2)
         .vramPos(576, 0)
         .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
         .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
@@ -1028,7 +949,7 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome((int)_800c673c.offset(sp18 * 2).get())
+        .monochrome(configColours[sp18])
         .clut(640, 4)
         .vramPos(576, 0)
         .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
@@ -1046,25 +967,25 @@ public final class Ttle {
     //LAB_800ca580
     for(int i = 0; i < 2; i++) {
       //LAB_800ca59c
-      final long sp14;
+      final int sp14;
       if(i == 0) {
-        sp14 = gameState_800babc8.mono_4e0.get() + 0x4L;
-        sp1c = gameState_800babc8.mono_4e0.get() + 0x1L;
+        sp14 = gameState_800babc8.mono_4e0.get() + 4;
+        sp1c = gameState_800babc8.mono_4e0.get() + 1;
       } else {
         //LAB_800ca5dc
         if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
           //LAB_800ca5fc
-          sp14 = 0x8L;
+          sp14 = 8;
         } else {
-          sp14 = 0x7L;
+          sp14 = 7;
         }
 
         //LAB_800ca600
         if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
           //LAB_800ca624
-          sp1c = 0x5L;
+          sp1c = 5;
         } else {
-          sp1c = 0x4L;
+          sp1c = 4;
         }
 
         //LAB_800ca628
@@ -1074,7 +995,7 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome((int)_800c673c.offset(sp1c * 2).get())
+        .monochrome(configColours[sp1c])
         .clut(640, 4)
         .vramPos(576, 0)
         .pos(0, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
@@ -1094,15 +1015,15 @@ public final class Ttle {
 
   @Method(0x800cab48L)
   public static void renderCopyright() {
-    if(copyrightInitialized_800c6710.get() == 0) {
-      copyrightFadeInAmount_800c6714.set(0);
-      copyrightInitialized_800c6710.setu(0x1L);
+    if(!copyrightInitialized) {
+      copyrightFadeInAmount = 0;
+      copyrightInitialized = true;
     }
 
     //LAB_800cab7c
-    copyrightFadeInAmount_800c6714.add(4);
-    if(copyrightFadeInAmount_800c6714.get() > 0x80) {
-      copyrightFadeInAmount_800c6714.set(0x80);
+    copyrightFadeInAmount += 4;
+    if(copyrightFadeInAmount > 0x80) {
+      copyrightFadeInAmount = 0x80;
     }
 
     //LAB_800cabb8
@@ -1113,7 +1034,7 @@ public final class Ttle {
         Bpp.BITS_4,
         896, 0,
         0x1028,
-        copyrightFadeInAmount_800c6714.get(), copyrightFadeInAmount_800c6714.get(), copyrightFadeInAmount_800c6714.get(),
+        copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount,
         (int)_800ce8f4.get(sp44 * 4).get(), (int)_800ce8f4.get(sp44 * 4 + 1).get(),
         (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
         (int)_800ce914.offset(4, sp44 * 4).get(), 80,
@@ -1126,9 +1047,9 @@ public final class Ttle {
 
   @Method(0x800cadd0L)
   public static void renderMenuLogo() {
-    logoFadeInAmount_800c66ec.add(4);
-    if(logoFadeInAmount_800c66ec.get() > 0x80) {
-      logoFadeInAmount_800c66ec.set(0x80);
+    logoFadeInAmount += 4;
+    if(logoFadeInAmount > 0x80) {
+      logoFadeInAmount = 0x80;
     }
 
     //LAB_800cae18
@@ -1139,7 +1060,7 @@ public final class Ttle {
         Bpp.BITS_4,
         576 + i * 64, 256,
         0x68,
-        logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(),
+        logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
         0, 0,
         (int)_800ce91c.offset(i * 2).get(), 88,
         i * 255 - 184, -80,
@@ -1153,7 +1074,7 @@ public final class Ttle {
       Bpp.BITS_4,
       896, 0,
       0x1428,
-      logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(), logoFadeInAmount_800c66ec.get(),
+      logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
       0, 240,
       16, 8,
       134, -14,
@@ -1165,16 +1086,16 @@ public final class Ttle {
 
   @Method(0x800cb070L)
   public static void renderMenuBackground() {
-    if(backgroundInitialized_800c6704.get() == 0) {
-      backgroundScrollAmount_800c6708.set(-176);
-      backgroundFadeInAmount_800c670c.set(0);
-      backgroundInitialized_800c6704.setu(0x1L);
+    if(!backgroundInitialized) {
+      backgroundScrollAmount = -176;
+      backgroundFadeInAmount = 0;
+      backgroundInitialized = true;
     }
 
     //LAB_800cb0b0
-    backgroundFadeInAmount_800c670c.add(2);
-    if(backgroundFadeInAmount_800c670c.get() > 0x80) {
-      backgroundFadeInAmount_800c670c.set(0x80);
+    backgroundFadeInAmount += 2;
+    if(backgroundFadeInAmount > 0x80) {
+      backgroundFadeInAmount = 0x80;
     }
 
     //LAB_800cb0ec
@@ -1183,19 +1104,19 @@ public final class Ttle {
       Bpp.BITS_8,
       384, 0,
       0x28,
-      backgroundFadeInAmount_800c670c.get(), backgroundFadeInAmount_800c670c.get(), backgroundFadeInAmount_800c670c.get(),
+      backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount,
       0, 0,
       384, 424,
-      -192, -120 + backgroundScrollAmount_800c6708.get(),
+      -192, -120 + backgroundScrollAmount,
       384, 424,
       orderingTableSize_1f8003c8.get() - 3,
       null
     );
 
     //LAB_800cb370
-    backgroundScrollAmount_800c6708.incr();
-    if(backgroundScrollAmount_800c6708.get() > 0) {
-      backgroundScrollAmount_800c6708.set(0);
+    backgroundScrollAmount++;
+    if(backgroundScrollAmount > 0) {
+      backgroundScrollAmount = 0;
     }
 
     //LAB_800cb3b0
@@ -1230,8 +1151,8 @@ public final class Ttle {
     //LAB_800cb5d8
     for(int i = 0; i < 3; i++) {
       //LAB_800cb5f4
-      LoadImage(rectArray_800ce798.get(i), _800c6748.offset(i * 0x4L).get());
-      free(_800c6748.offset(i * 0x4L).get());
+      LoadImage(rectArray_800ce798.get(i), vramData[i]);
+      free(vramData[i]);
     }
 
     //LAB_800cb688
@@ -1239,7 +1160,8 @@ public final class Ttle {
 
   @Method(0x800cb69cL)
   public static void deallocateFire() {
-    deallocateTmdRenderer(_800c66d0.deref());
+    deallocateTmdRenderer(_800c66d0);
+    _800c66d0 = null;
 
     //LAB_800cb6bc
     for(int i = 0; i < 4; i++) {
@@ -1252,36 +1174,36 @@ public final class Ttle {
 
   @Method(0x800cb728L)
   public static void renderMenuLogoFire() {
-    final SVECTOR sp58 = new SVECTOR().set(_800c68f0);
-    final VECTOR sp60 = new VECTOR().set(_800c68f8);
+    final SVECTOR rotation = new SVECTOR().set((short)0, (short)-0x800, (short)0);
+    final VECTOR scale = new VECTOR().set(0xdac, 0x1000, 0x1000);
 
-    if(logoFireInitialized_800c6718.get() == 0) {
-      logoFireInitialized_800c6718.setu(0x1L);
-      _800c671c.setu(0);
+    if(!logoFireInitialized) {
+      logoFireInitialized = true;
+      flameColour = 0;
     }
 
     //LAB_800cb7b4
-    _800c671c.addu(0x2L);
-    if(_800c671c.get() > 0xffL) {
-      _800c671c.setu(0xffL);
+    flameColour += 2;
+    if(flameColour > 0xff) {
+      flameColour = 0xff;
     }
 
     //LAB_800cb7f0
     GsSetRefView2(GsRVIEW2_800c6760);
 
-    final UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.deref().dobj2s_00.deref();
-    final UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.deref().coord2s_04.deref();
+    final UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.dobj2s_00;
+    final UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.coord2s_04;
 
     //LAB_800cb834
-    for(int i = 0; i < _800c66d0.deref().count_08.get(); i++) {
+    for(int i = 0; i < _800c66d0.count_08; i++) {
       final MATRIX sp10 = new MATRIX();
       final MATRIX sp30 = new MATRIX();
 
       //LAB_800cb85c
-      FUN_800cc26c(sp58, coord2s.get(i));
+      FUN_800cc26c(rotation, coord2s.get(i));
       GsGetLws(dobj2s.get(i).coord2_04.deref(), sp10, sp30);
       GsSetLightMatrix(sp10);
-      ScaleMatrixL(sp30, sp60);
+      ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
       FUN_800cc388(dobj2s.get(i));
     }
@@ -1300,33 +1222,24 @@ public final class Ttle {
   public static void renderLogoFlash() {
     final int sp24 = doubleBufferFrame_800bb108.get() ^ 1;
 
-    if(logoFlashStage_800c66f0.get() == 0x2L) {
+    if(logoFlashStage == 2) {
       return;
     }
 
     //LAB_800cb9b0
-    if(logoFlashStage_800c66f0.get() == 0) {
-      logoFlashStage_800c66f0.setu(0x1L);
-      _800c66f4.setu(0);
-      _800c66f8.setu(0);
-      _800c66fc.setu(0);
-
-      //LAB_800cb9ec
-      for(int i = 0; i < 1; i++) {
-        //LAB_800cba04
-        _800c6700.offset(i * 2L).setu(0);
-        _800c6702.offset(i * 2L).setu(0);
-      }
+    if(logoFlashStage == 0) {
+      logoFlashStage = 1;
+      logoFlashColour = 0;
     }
 
     //LAB_800cba54
-    _800c66fc.addu(0x60L);
-    if(_800c66fc.get() > 0x800L) {
-      _800c66fc.setu(0x800L);
+    logoFlashColour += 0x60;
+    if(logoFlashColour > 0x800) {
+      logoFlashColour = 0x800;
     }
 
     //LAB_800cba90
-    final int colour = (rsin(_800c66fc.get()) * 160) >> 12;
+    final int colour = (rsin(logoFlashColour) * 160) >> 12;
 
     // GP0.66 Textured quad, variable size, translucent, blended
     final GpuCommandQuad cmd = new GpuCommandQuad()
@@ -1339,8 +1252,8 @@ public final class Ttle {
 
     GPU.queueCommand(5, cmd);
 
-    if(_800c66fc.get() == 0x800L) {
-      logoFlashStage_800c66f0.setu(0x2L);
+    if(logoFlashColour == 0x800) {
+      logoFlashStage = 2;
     }
 
     //LAB_800cbe34
@@ -1348,30 +1261,29 @@ public final class Ttle {
 
   @Method(0x800cbe48L)
   public static TmdRenderingStruct parseTmdFile(final TmdWithId tmd) {
-    final TmdRenderingStruct tmdRenderer = MEMORY.ref(4, mallocTail(0x10L), TmdRenderingStruct::new);
-    tmdRenderer.count_08.set(prepareTmdRenderer(tmdRenderer, tmd));
+    final TmdRenderingStruct tmdRenderer = new TmdRenderingStruct();
+    tmdRenderer.count_08 = prepareTmdRenderer(tmdRenderer, tmd);
     return tmdRenderer;
   }
 
   @Method(0x800cbeb4L)
   public static void deallocateTmdRenderer(final TmdRenderingStruct renderer) {
-    free(renderer.coord2s_04.getPointer());
-    free(renderer.dobj2s_00.getPointer());
-    free(renderer.tmd_0c.getPointer());
-    free(renderer.getAddress());
+    free(renderer.coord2s_04.getAddress());
+    free(renderer.dobj2s_00.getAddress());
+    free(renderer.tmd_0c.getAddress());
   }
 
   @Method(0x800cbf3cL)
   public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
     adjustTmdPointers(tmd.tmd);
 
-    tmdRenderer.dobj2s_00.set(MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x10L), UnboundedArrayRef.of(4, GsDOBJ2::new)));
-    tmdRenderer.coord2s_04.set(MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x50L), UnboundedArrayRef.of(4, GsCOORDINATE2::new)));
+    tmdRenderer.dobj2s_00 = MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x10L), UnboundedArrayRef.of(4, GsDOBJ2::new));
+    tmdRenderer.coord2s_04 = MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x50L), UnboundedArrayRef.of(4, GsCOORDINATE2::new));
 
     //LAB_800cc02c
     for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
       //LAB_800cc04c
-      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00.deref().get(objIndex), objIndex);
+      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00.get(objIndex), objIndex);
     }
 
     //LAB_800cc088
@@ -1382,9 +1294,9 @@ public final class Ttle {
   @Method(0x800cc0b0L)
   public static void FUN_800cc0b0(final TmdRenderingStruct renderer, @Nullable final GsCOORDINATE2 superCoord2) {
     //LAB_800cc0f0
-    for(int i = 0; i < renderer.count_08.get(); i++) {
-      final GsCOORDINATE2 coord2 = renderer.coord2s_04.deref().get(i);
-      final GsDOBJ2 dobj2 = renderer.dobj2s_00.deref().get(i);
+    for(int i = 0; i < renderer.count_08; i++) {
+      final GsCOORDINATE2 coord2 = renderer.coord2s_04.get(i);
+      final GsDOBJ2 dobj2 = renderer.dobj2s_00.get(i);
 
       //LAB_800cc114
       GsInitCoordinate2(superCoord2, coord2);
@@ -1401,9 +1313,9 @@ public final class Ttle {
   @Method(0x800cc1bcL)
   public static void setDobjAttributes(final TmdRenderingStruct renderer, final long dobjAttribute) {
     //LAB_800cc1e4
-    for(int i = 0; i < renderer.count_08.get(); i++) {
+    for(int i = 0; i < renderer.count_08; i++) {
       //LAB_800cc208
-      renderer.dobj2s_00.deref().get(i).attribute_00.set(dobjAttribute);
+      renderer.dobj2s_00.get(i).attribute_00.set(dobjAttribute);
     }
 
     //LAB_800cc25c
@@ -1422,7 +1334,6 @@ public final class Ttle {
   @Method(0x800cc388L)
   public static void FUN_800cc388(final GsDOBJ2 dobj2) {
     final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.deref().vert_top_00.deref();
-    final long normals = dobj2.tmd_08.deref().normal_top_08.get();
     long primitives = dobj2.tmd_08.deref().primitives_10.getPointer();
     long primitiveCount = dobj2.tmd_08.deref().n_primitive_14.get();
 
@@ -1435,15 +1346,9 @@ public final class Ttle {
       //LAB_800cc420
       primitiveCount -= len;
 
-      if(command == 0x3400_0000L) {
-        //LAB_800cc528
-        primitives = FUN_800cd72c(primitives, vertices, normals, len);
-      } else if(command == 0x3700_0000L) {
+      if(command == 0x3700_0000L) {
         //LAB_800cc4a0
         primitives = FUN_800cc57c(primitives, vertices, len);
-      } else if(command == 0x3c00_0000L) {
-        //LAB_800cc4f8
-        primitives = FUN_800cd2d8(primitives, vertices, normals, len);
       } else if(command == 0x3f00_0000L) {
         //LAB_800cc4cc
         primitives = FUN_800ccb78(primitives, vertices, len);
@@ -1458,8 +1363,6 @@ public final class Ttle {
 
   @Method(0x800cc57cL)
   public static long FUN_800cc57c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    final long sp00 = _800c671c.get();
-
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
@@ -1510,12 +1413,12 @@ public final class Ttle {
                     //LAB_800cc7f8
                     CPU.COP2(0x158002dL); // Average of three Z values
 
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x10L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x11L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x12L).get() * sp00 / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xff));
+                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x10L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x11L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x12L).get() * flameColour / 0xff));
+                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
+                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
 
                     // OTZ - Average Z value (for ordering table)
-                    final int z = (int)Math.min(CPU.MFC2(7) + _800c6758.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+                    final int z = (int)Math.min(CPU.MFC2(7) + flamesZ >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
 
                     GPU.queueCommand(z, cmd);
                   }
@@ -1537,8 +1440,6 @@ public final class Ttle {
 
   @Method(0x800ccb78L)
   public static long FUN_800ccb78(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    final long sp00 = _800c671c.get();
-
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -1597,12 +1498,12 @@ public final class Ttle {
                   //LAB_800cce64
                   if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
                     //LAB_800ccebc
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * sp00 / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * sp00 / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1dL).get() * sp00 / 0xff));
-                    cmd.rgb(3, (int)(MEMORY.ref(1, primitives).offset(0x20L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x21L).get() * sp00 / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x22L).get() * sp00 / 0xff));
+                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
+                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
+                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1dL).get() * flameColour / 0xff));
+                    cmd.rgb(3, (int)(MEMORY.ref(1, primitives).offset(0x20L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x21L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x22L).get() * flameColour / 0xff));
 
-                    GPU.queueCommand((int)_800c6758.get(), cmd);
+                    GPU.queueCommand(flamesZ, cmd);
                   }
                 }
               }
@@ -1618,18 +1519,6 @@ public final class Ttle {
     //LAB-800cd2ac
     //LAB_800cd2c8
     return primitives;
-  }
-
-  @Method(0x800cd2d8L)
-  public static long FUN_800cd2d8(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
-  }
-
-  @Method(0x800cd72cL)
-  public static long FUN_800cd72c(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final long count) {
-    assert false;
-    return 0;
   }
 
   @Method(0x800cdaa0L)
