@@ -19,6 +19,10 @@ public final class MathHelper {
     return Math.max(min, Math.min(value, max));
   }
 
+  public static boolean inBox(final int x, final int y, final int left, final int top, final int width, final int height) {
+    return x >= left && x < left + width && y >= top && y < top + height;
+  }
+
   public static int colour15To24(final int colour) {
     final byte r = (byte)((colour        & 0b1_1111) * 8);
     final byte g = (byte)((colour >>>  5 & 0b1_1111) * 8);

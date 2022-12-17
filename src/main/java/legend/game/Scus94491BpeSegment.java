@@ -5679,7 +5679,7 @@ public final class Scus94491BpeSegment {
     } else if(a0 == -1) {
       //LAB_8001e0f8
       if(_800bdc34.get() != 0) {
-        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8._4e4.get() != 0) {
+        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
           sssqResetStuff();
           unloadSoundFile(8);
           //TODO GH#3

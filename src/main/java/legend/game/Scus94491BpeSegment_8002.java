@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.Config;
-import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -153,7 +152,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052baa;
 import static legend.game.Scus94491BpeSegment_8005._80052bc8;
 import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
-import static legend.game.Scus94491BpeSegment_8005._80052c34;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
@@ -5749,7 +5748,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
     submapCut_80052c30.set(675);
-    _80052c34.setu(0x4L);
+    submapScene_80052c34.setu(4);
     index_80052c38.set(0);
     submapCut_80052c3c.set(-1);
     _80052c40.setu(0);

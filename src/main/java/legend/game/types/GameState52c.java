@@ -57,7 +57,7 @@ public class GameState52c implements MemoryRef {
   public final UnsignedByteRef vibrationEnabled_4e1;
   public final UnsignedByteRef morphMode_4e2;
   public final UnsignedByteRef indicatorsDisabled_4e3;
-  public final UnsignedByteRef _4e4;
+  public final UnsignedByteRef isOnWorldMap_4e4;
 
   public final UnsignedShortRef _4e6;
   /** Controls how the indicators (triangles) are drawn (called "Note" in options menu) */
@@ -98,7 +98,7 @@ public class GameState52c implements MemoryRef {
     this.vibrationEnabled_4e1 = ref.offset(1, 0x4e1L).cast(UnsignedByteRef::new);
     this.morphMode_4e2 = ref.offset(1, 0x4e2L).cast(UnsignedByteRef::new);
     this.indicatorsDisabled_4e3 = ref.offset(1, 0x4e3L).cast(UnsignedByteRef::new);
-    this._4e4 = ref.offset(1, 0x4e4L).cast(UnsignedByteRef::new);
+    this.isOnWorldMap_4e4 = ref.offset(1, 0x4e4L).cast(UnsignedByteRef::new);
 
     this._4e6 = ref.offset(2, 0x4e6L).cast(UnsignedShortRef::new);
     this.indicatorMode_4e8 = ref.offset(4, 0x4e8L).cast(UnsignedIntRef::new);

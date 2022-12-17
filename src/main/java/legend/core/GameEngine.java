@@ -85,6 +85,8 @@ public final class GameEngine {
   private static final Object LOCK = new Object();
 
   private static Window.Events.Resize onResize;
+  private static Window.Events.Key onKeyPress;
+  private static Window.Events.Click onMouseRelease;
 
   private static Shader shader;
   private static Shader.UniformFloat shaderAlpha;
@@ -201,6 +203,16 @@ public final class GameEngine {
       onResize = null;
     }
 
+    if(onKeyPress != null) {
+      GPU.window().events.removeKeyPress(onKeyPress);
+      onKeyPress = null;
+    }
+
+    if(onMouseRelease != null) {
+      GPU.window().events.removeMouseRelease(onMouseRelease);
+      onMouseRelease = null;
+    }
+
     spuThread.start();
     GPU.setStandardRenderer();
 
@@ -254,15 +266,18 @@ public final class GameEngine {
     windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
     GPU.mainRenderer = GameEngine::renderIntro;
 
-    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      time = 0;
-      fade1 = 0.0f;
-      fade2 = 0.0f;
-      loadingFade = 1.0f;
-      eyeFade = 1.0f;
-    });
+    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> skip());
+    onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> skip());
 
     time = System.nanoTime();
+  }
+
+  private static void skip() {
+    time = 0;
+    fade1 = 0.0f;
+    fade2 = 0.0f;
+    loadingFade = 1.0f;
+    eyeFade = 1.0f;
   }
 
   private static long time;

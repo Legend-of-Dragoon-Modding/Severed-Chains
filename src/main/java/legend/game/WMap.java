@@ -126,7 +126,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8005._80052c34;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -665,7 +665,7 @@ public class WMap {
         free(struct258.imageData_2c.get());
         free(struct258.imageData_30.get());
 
-        pregameLoadingStage_800bb10c.setu(gameState_800babc8._4e4.get() != 0 ? 0x9L : 0x7L);
+        pregameLoadingStage_800bb10c.setu(gameState_800babc8.isOnWorldMap_4e4.get() != 0 ? 0x9L : 0x7L);
       } else {
         //LAB_800cc804
         setWidthAndFlags(320);
@@ -4073,7 +4073,7 @@ public class WMap {
             _800c6860.setu(_800f0e34.get((int)_800c67a8.get())._08.get());
             _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
             submapCut_80052c30.set((int)_800c6860.get());
-            _80052c34.setu(_800c6862.get());
+            submapScene_80052c34.setu(_800c6862.get());
 
             FUN_800e3fac(1);
           } else {
@@ -4208,7 +4208,7 @@ public class WMap {
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get())._08.get());
           _800c6862.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get())._0a.get());
           submapCut_80052c30.set((int)_800c6860.get());
-          _80052c34.setu(_800c6862.get());
+          submapScene_80052c34.setu(_800c6862.get());
         } else {
           //LAB_800db9bc
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222.get())._10.get()).submapCut_04.get());
@@ -6692,7 +6692,7 @@ public class WMap {
         //LAB_800e6900
         if(_800c6860.get() != 999L) {
           submapCut_80052c30.set((int)_800c6860.get());
-          _80052c34.setu(_800c6862.get());
+          submapScene_80052c34.setu(_800c6862.get());
         } else {
           //LAB_800e693c
           submapCut_80052c30.set(_800f0e34.get((int)_800c67a8.get()).submapCut_04.get());
@@ -7439,7 +7439,7 @@ public class WMap {
                               _800c6860.setu(_800f1580.get());
                               _800c6862.setu(_800f1582.get());
                               submapCut_80052c30.set((int)_800c6860.get());
-                              _80052c34.setu(_800c6862.get());
+                              submapScene_80052c34.setu(_800c6862.get());
                               FUN_800e3fac(1);
                             }
                           }
@@ -7663,7 +7663,7 @@ public class WMap {
       if((int)_800c6870.get() < 0x3L) {
         FUN_800e3fac(1);
         submapCut_80052c30.set(285); // I think this is a Queen Fury cut
-        _80052c34.setu(0x20L);
+        submapScene_80052c34.setu(0x20L);
         _800c6870.setu(0x3L);
       }
 

@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import legend.core.Config;
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -23,12 +24,14 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 
@@ -36,6 +39,7 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
+import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -74,6 +78,7 @@ import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
+import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -82,10 +87,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -113,9 +120,9 @@ public final class Ttle {
   public static final int[] menuOptionTransparency = {0, 0, 0};
 
   public static int _800c6738;
-  public static int[] configColours = {0, 0, 0, 0, 0, 0};
+  public static final int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static long[] vramData = {0, 0, 0};
+  public static final long[] vramData = {0, 0, 0};
 
   public static int _800c6754;
   public static int flamesZ;
@@ -124,8 +131,8 @@ public final class Ttle {
 
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
 
-  public static int selectedMenuOption_800ce774;
-  public static int _800ce778;
+  public static int selectedMenuOption;
+  public static int selectedConfigCategory;
 
   // This is all data stored in the overlay rom
   public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
@@ -140,6 +147,25 @@ public final class Ttle {
   public static final ArrayRef<UnsignedIntRef> _800ce8f4 = MEMORY.ref(4, 0x800ce8f4L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
   public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
   public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
+
+  private static Window.Events.Cursor onMouseMove;
+  private static Window.Events.Click onMouseRelease;
+  private static Window.Events.Key onKeyPress;
+
+  public static void test() {
+    mainCallbackIndexOnceLoaded_8004dd24.setu(2);
+    pregameLoadingStage_800bb10c.setu(0);
+    whichMenu_800bdc38.setu(0);
+    setWidthAndFlags(320);
+    vsyncMode_8007a3b8.set(2);
+    scriptsTickDisabled_800bc0b8.set(false);
+
+    FUN_8002a9c0();
+    _80052c44.setu(5);
+
+    drgnBinIndex_800bc058.set(1);
+    preloadDrgnBinFiles();
+  }
 
   @Method(0x800c7194L)
   public static void setUpNewGameData(final int unused) {
@@ -310,8 +336,8 @@ public final class Ttle {
     switch((int)pregameLoadingStage_800bb10c.get()) {
       case 0 -> initializeMainMenu();
       case 3 -> renderMainMenu();
-      case 4 -> FUN_800c7e50();
-      case 5 -> FUN_800c7fa0();
+      case 4 -> fadeOutForNewGame();
+      case 5 -> waitForSaveSelection();
       case 6 -> fadeOutMainMenu();
     }
   }
@@ -333,8 +359,8 @@ public final class Ttle {
     flamesZ = 100;
 
     hasSavedGames = 0;
-    selectedMenuOption_800ce774 = 0;
-    _800ce778 = 0;
+    selectedMenuOption = 0;
+    selectedConfigCategory = 0;
 
     //LAB_800c7888
     for(int i = 0; i < 3; i++) {
@@ -372,6 +398,8 @@ public final class Ttle {
     scriptStartEffect(0x2L, 0xfL);
     SetGeomOffset(0, 0);
     pregameLoadingStage_800bb10c.setu(0x3L);
+
+    addInputHandlers();
   }
 
   @Method(0x800c7a18L)
@@ -422,7 +450,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7e50L)
-  public static void FUN_800c7e50() {
+  public static void fadeOutForNewGame() {
     if(_800c6754 == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
@@ -430,14 +458,15 @@ public final class Ttle {
     //LAB_800c7e7c
     renderMenuLogo();
     renderMenuOptions();
-    FUN_800c959c();
+    renderOptionsMenu();
     renderMenuLogoFire();
     renderMenuBackground();
     renderCopyright();
 
     _800c6754++;
     if(_800c6754 >= 16) {
-      FUN_800cb5c4();
+      removeInputHandlers();
+      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0x2L);
@@ -451,7 +480,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7fa0L)
-  public static void FUN_800c7fa0() {
+  public static void waitForSaveSelection() {
     if(_800c6754 == 0) {
       scriptStartEffect(0x1L, 0xfL);
     }
@@ -462,7 +491,8 @@ public final class Ttle {
     if(_800c6754 >= 16) {
       if(_800c6728 == 2) {
         whichMenu_800bdc38.setu(0xbL);
-        FUN_800cb5c4();
+        removeInputHandlers();
+        restoreVram();
         deallocateFire();
         _800c6728 = 3;
       }
@@ -476,11 +506,11 @@ public final class Ttle {
     }
 
     if(_800bdc34.get() != 0) {
-      if(gameState_800babc8._4e4.get() != 0) {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L);
+      if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L); // WMAP
       } else {
         //LAB_800c80a4
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L); // SMAP
       }
 
       pregameLoadingStage_800bb10c.setu(0);
@@ -499,7 +529,7 @@ public final class Ttle {
       //LAB_800c8108
       renderMenuLogo();
       renderMenuOptions();
-      FUN_800c959c();
+      renderOptionsMenu();
       renderMenuLogoFire();
       renderMenuBackground();
       renderCopyright();
@@ -517,14 +547,15 @@ public final class Ttle {
     //LAB_800c8174
     renderMenuLogo();
     renderMenuOptions();
-    FUN_800c959c();
+    renderOptionsMenu();
     renderMenuLogoFire();
     renderMenuBackground();
     renderCopyright();
 
     _800c6754++;
     if(_800c6754 > 15) {
-      FUN_800cb5c4();
+      removeInputHandlers();
+      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0);
@@ -568,11 +599,11 @@ public final class Ttle {
       //LAB_800c8380
     } else if(menuLoadingStage == 3) {
       //LAB_800c8388
-      FUN_800c93b0();
-      FUN_800c8484();
+      handleOptionsInput();
+      handleMainInput();
       renderMenuLogo();
       renderMenuOptions();
-      FUN_800c959c();
+      renderOptionsMenu();
       renderMenuLogoFire();
       renderCopyright();
     }
@@ -597,48 +628,199 @@ public final class Ttle {
     //LAB_800c8474
   }
 
+  private static void addInputHandlers() {
+    onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {
+      final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
+
+      float w = window.getWidth();
+      float h = w / aspect;
+
+      if(h > window.getHeight()) {
+        h = window.getHeight();
+        w = h * aspect;
+      }
+
+      final float scaleX = w / GPU.getDisplayTextureWidth();
+      final float scaleY = h / GPU.getDisplayTextureHeight();
+
+      if(menuLoadingStage == 3) {
+        if(_800c672c < 3) {
+          for(int i = 0; i < 3; i++) {
+            final int menuWidth = (int)(130 * scaleX);
+            final int menuHeight = (int)(16 * scaleY);
+            final int menuX = (window.getWidth() - menuWidth) / 2;
+            final int menuY = (int)(_800ce8ac.offset((i * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+
+            if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
+              if(selectedMenuOption != i) {
+                playSound(0, 1, 0, 0, (short)0, (short)0);
+                selectedMenuOption = i;
+              }
+
+              break;
+            }
+          }
+        } else if(_800c6728 == 1 && _800c6738 < 3) {
+          for(int row = 0; row < 2; row++) {
+            final int menuWidth = (int)(300 * scaleX);
+            final int menuHeight = (int)(16 * scaleY);
+            final int menuX = (window.getWidth() - menuWidth) / 2;
+            final int menuY = (int)(_800ce8ac.offset(((row * 3 + 3) * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+
+            if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
+              if(selectedConfigCategory != row * 3) {
+                playSound(0, 1, 0, 0, (short)0, (short)0);
+                selectedConfigCategory = row * 3;
+                _800c6738 = 2;
+              }
+
+              break;
+            }
+          }
+        }
+      }
+
+      menuIdleTime = 0;
+    });
+
+    onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> {
+      if(button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        return;
+      }
+
+      if(menuLoadingStage < 3) {
+        menuLoadingStage = 3;
+      } else {
+        final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
+
+        float w = window.getWidth();
+        float h = w / aspect;
+
+        if(h > window.getHeight()) {
+          h = window.getHeight();
+          w = h * aspect;
+        }
+
+        final float scaleX = w / GPU.getDisplayTextureWidth();
+        final float scaleY = h / GPU.getDisplayTextureHeight();
+
+        if(_800c672c < 3) {
+          for(int i = 0; i < 3; i++) {
+            final int menuWidth = (int)(130 * scaleX);
+            final int menuHeight = (int)(16 * scaleY);
+            final int menuX = (window.getWidth() - menuWidth) / 2;
+            final int menuY = (int)(_800ce8ac.offset((i * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+
+            if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
+              playSound(0, 2, 0, 0, (short)0, (short)0);
+              selectedMenuOption = i;
+
+              _800c672c = 3;
+              if(selectedMenuOption == 2) {
+                _800c6738 = 0;
+                selectedConfigCategory = 0;
+                _800c6728 = 1;
+              }
+
+              break;
+            }
+          }
+        } else if(_800c6728 == 1 && _800c6738 < 3) {
+          for(int i = 0; i < 6; i++) {
+            if(i % 3 != 0) {
+              final int menuWidth = (int)(_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get() * scaleX);
+              final int menuHeight = (int)(16 * scaleY);
+              final int menuX = (int)(_800ce8ac.offset((i + 3) * 8).getSigned() * scaleX) + window.getWidth() / 2;
+              final int menuY = (int)(_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+
+              if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
+                playSound(0, 2, 0, 0, (short)0, (short)0);
+
+                switch(i) {
+                  case 1 -> gameState_800babc8.mono_4e0.set(0);
+                  case 2 -> gameState_800babc8.mono_4e0.set(1);
+                  case 4 -> {
+                    gameState_800babc8.vibrationEnabled_4e1.set(1);
+
+                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
+                      FUN_8002bcc8(0, 0x100);
+                      FUN_8002bda4(0, 0, 0x3c);
+                    }
+                  }
+                  case 5 -> {
+                    gameState_800babc8.vibrationEnabled_4e1.set(0);
+
+                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
+                      FUN_8002bcc8(0, 0x100);
+                      FUN_8002bda4(0, 0, 0x3c);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
+      if(_800c6728 == 1 && _800c6738 < 3) {
+        if(key == GLFW.GLFW_KEY_ESCAPE) {
+          playSound(0, 3, 0, 0, (short)0, (short)0);
+          _800c6738 = 3;
+          _800c672c = 0;
+        }
+      }
+    });
+  }
+
+  private static void removeInputHandlers() {
+    GPU.window().events.removeMouseMove(onMouseMove);
+    GPU.window().events.removeMouseRelease(onMouseRelease);
+    GPU.window().events.removeKeyPress(onKeyPress);
+    onMouseMove = null;
+    onMouseRelease = null;
+    onKeyPress = null;
+  }
+
   @Method(0x800c8484L)
-  public static void FUN_800c8484() {
+  public static void handleMainInput() {
     if(_800c672c < 3) {
-      if(joypadPress_8007a398.get(0x20L) == 0) {
-        if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
-          playSound(0, 1, 0, 0, (short)0, (short)0);
-
-          selectedMenuOption_800ce774--;
-          if(selectedMenuOption_800ce774 < 0) {
-            selectedMenuOption_800ce774 = 2;
-          }
-
-          if(selectedMenuOption_800ce774 == 1 && hasSavedGames != 1) {
-            selectedMenuOption_800ce774--;
-          }
-
-          _800c672c = 2;
-        }
-
-        if(joypadPress_8007a398.get(0x4000L) != 0) { // Menu button down
-          playSound(0, 1, 0, 0, (short)0, (short)0);
-
-          selectedMenuOption_800ce774++;
-          if(selectedMenuOption_800ce774 > 2) {
-            selectedMenuOption_800ce774 = 0;
-          }
-
-          if(selectedMenuOption_800ce774 == 1 && hasSavedGames != 1) {
-            selectedMenuOption_800ce774++;
-          }
-
-          _800c672c = 2;
-        }
-      } else { // Menu button X
+      if(joypadPress_8007a398.get(0x20L) != 0) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
-        if(selectedMenuOption_800ce774 == 2) {
+        if(selectedMenuOption == 2) {
           _800c6738 = 0;
-          _800ce778 = 0;
+          selectedConfigCategory = 0;
           _800c6728 = 1;
         }
+      } else if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
+        playSound(0, 1, 0, 0, (short)0, (short)0);
+
+        selectedMenuOption--;
+        if(selectedMenuOption < 0) {
+          selectedMenuOption = 2;
+        }
+
+        if(selectedMenuOption == 1 && hasSavedGames != 1) {
+          selectedMenuOption--;
+        }
+
+        _800c672c = 2;
+      } else if(joypadPress_8007a398.get(0x4000L) != 0) { // Menu button down
+        playSound(0, 1, 0, 0, (short)0, (short)0);
+
+        selectedMenuOption++;
+        if(selectedMenuOption > 2) {
+          selectedMenuOption = 0;
+        }
+
+        if(selectedMenuOption == 1 && hasSavedGames != 1) {
+          selectedMenuOption++;
+        }
+
+        _800c672c = 2;
       }
     }
   }
@@ -647,7 +829,7 @@ public final class Ttle {
   public static void renderMenuOptions() {
     if(hasSavedGames == 0) {
       hasSavedGames = SaveManager.hasSavedGames() ? 1 : 2;
-      selectedMenuOption_800ce774 = hasSavedGames == 1 ? 1 : 0;
+      selectedMenuOption = hasSavedGames == 1 ? 1 : 0;
       return;
     }
 
@@ -670,7 +852,7 @@ public final class Ttle {
         for(int i = 0; i < 3; i++) {
           //LAB_800c875c
           menuOptionTransparency[i] += 4;
-          if(selectedMenuOption_800ce774 == i) {
+          if(selectedMenuOption == i) {
             if(menuOptionTransparency[i] > 176) {
               menuOptionTransparency[i] = 176;
             }
@@ -690,7 +872,7 @@ public final class Ttle {
         //LAB_800c89e4
         for(int i = 0; i < 3; i++) {
           //LAB_800c8894
-          if(selectedMenuOption_800ce774 == i) {
+          if(selectedMenuOption == i) {
             // Fade in selected item
 
             menuOptionTransparency[i] += 8;
@@ -715,10 +897,10 @@ public final class Ttle {
 
       case 3 -> {
         _800c672c = 4;
-        if(selectedMenuOption_800ce774 == 0) {
+        if(selectedMenuOption == 0) {
           pregameLoadingStage_800bb10c.setu(0x4L);
           //LAB_800c8a20
-        } else if(selectedMenuOption_800ce774 == 1) {
+        } else if(selectedMenuOption == 1) {
           _800c6728 = 2;
           pregameLoadingStage_800bb10c.setu(0x5L);
         }
@@ -748,7 +930,7 @@ public final class Ttle {
         .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
         .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
         .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .clut(640, selectedMenuOption_800ce774 == i ? 5 : 2)
+        .clut(640, selectedMenuOption == i ? 5 : 2)
         .vramPos(576, 0)
       );
 
@@ -774,24 +956,24 @@ public final class Ttle {
   }
 
   @Method(0x800c93b0L)
-  public static void FUN_800c93b0() {
+  public static void handleOptionsInput() {
     if(_800c6728 == 1 && _800c6738 < 3) {
-      if(joypadPress_8007a398.get(0x5000L) != 0) {
+      if(joypadPress_8007a398.get(0x5000) != 0) { // Up, down
         playSound(0, 1, 0, 0, (short)0, (short)0);
-        _800ce778 ^= 0b11;
+        selectedConfigCategory ^= 0b11;
         _800c6738 = 2;
       }
 
-      if(joypadPress_8007a398.get(0x40L) != 0) {
+      if(joypadPress_8007a398.get(0x40) != 0) { // Back
         playSound(0, 3, 0, 0, (short)0, (short)0);
         _800c6738 = 3;
         _800c672c = 0;
       }
 
-      if(joypadPress_8007a398.get(0xa000L) != 0) {
+      if(joypadPress_8007a398.get(0xa000) != 0) { // Left, right
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
-        if(_800ce778 == 0) {
+        if(selectedConfigCategory == 0) {
           gameState_800babc8.mono_4e0.xor(0b1);
           setMono(gameState_800babc8.mono_4e0.get());
         } else {
@@ -809,7 +991,7 @@ public final class Ttle {
   }
 
   @Method(0x800c959cL)
-  public static void FUN_800c959c() {
+  public static void renderOptionsMenu() {
     if(_800c6728 != 1) {
       return;
     }
@@ -843,7 +1025,7 @@ public final class Ttle {
         for(int i = 0; i < 6; i++) {
           //LAB_800c96d0
           configColours[i] += 16;
-          if(_800ce778 == i || sp18 == i || sp1c == i) {
+          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
             //LAB_800c9758
             if(configColours[i] > 176) {
               configColours[i] = 176;
@@ -867,7 +1049,7 @@ public final class Ttle {
         //LAB_800c981c
         for(int i = 0; i < 6; i++) {
           //LAB_800c9838
-          if(_800ce778 == i || sp18 == i || sp1c == i) {
+          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
             //LAB_800c9880
             configColours[i] += 8;
             if(configColours[i] > 160) {
@@ -893,7 +1075,7 @@ public final class Ttle {
         //LAB_800c99c4
         for(int i = 0; i < 6; i++) {
           //LAB_800c99e0
-          if(_800ce778 == i || sp18 == i || sp1c == i) {
+          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
             //LAB_800c9a28
             configColours[i] -= 32;
           } else {
@@ -907,7 +1089,7 @@ public final class Ttle {
           }
 
           //LAB_800c9af4
-          if(configColours[_800ce778] == 0) {
+          if(configColours[selectedConfigCategory] == 0) {
             _800c6738 = 4;
             _800c6728 = 0;
           }
@@ -929,7 +1111,7 @@ public final class Ttle {
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(configColours[i])
-        .clut(640, selectedMenuOption_800ce774 == i ? 5 : 2)
+        .clut(640, selectedConfigCategory == i ? 5 : 2)
         .vramPos(576, 0)
         .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
         .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
@@ -942,8 +1124,7 @@ public final class Ttle {
       );
     }
 
-    //LAB_800c9ff8
-    //LAB_800c9ffc
+    // Render glowing overlay for Sound/Vibrate options
     for(int i = 0; i < 2; i++) {
       //LAB_800ca018
       sp18 = i * 3;
@@ -965,8 +1146,7 @@ public final class Ttle {
       );
     }
 
-    //LAB_800ca57c
-    //LAB_800ca580
+    // Render glowing overlay for selected Sound/Vibration option
     for(int i = 0; i < 2; i++) {
       //LAB_800ca59c
       final int sp14;
@@ -1149,7 +1329,7 @@ public final class Ttle {
   }
 
   @Method(0x800cb5c4L)
-  public static void FUN_800cb5c4() {
+  public static void restoreVram() {
     //LAB_800cb5d8
     for(int i = 0; i < 3; i++) {
       //LAB_800cb5f4
@@ -1212,7 +1392,7 @@ public final class Ttle {
 
     //LAB_800cb904
     //LAB_800cb908
-    for(int i = 0; i < 0x4L; i++) {
+    for(int i = 0; i < 4; i++) {
       //LAB_800cb924
       animateFire(_800c66d4.get(i).get());
     }
@@ -1241,7 +1421,7 @@ public final class Ttle {
     }
 
     //LAB_800cba90
-    final int colour = (rsin(logoFlashColour) * 160) >> 12;
+    final int colour = rsin(logoFlashColour) * 160 >> 12;
 
     // GP0.66 Textured quad, variable size, translucent, blended
     final GpuCommandQuad cmd = new GpuCommandQuad()

@@ -192,6 +192,7 @@ public class Fmv {
   private static SourceDataLine sound;
 
   private static Window.Events.Char charPress;
+  private static Window.Events.Click click;
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
@@ -249,6 +250,7 @@ public class Fmv {
     }
 
     charPress = GPU.window().events.onCharPress((window, codepoint) -> shouldStop = true);
+    click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
       if(shouldStop) {
@@ -442,6 +444,11 @@ public class Fmv {
       if(charPress != null) {
         GPU.window().events.removeCharPress(charPress);
         charPress = null;
+      }
+
+      if(click != null) {
+        GPU.window().events.removeMouseRelease(click);
+        click = null;
       }
 
       GPU.mainRenderer = oldRenderer;

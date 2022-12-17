@@ -143,7 +143,7 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
-import static legend.game.Scus94491BpeSegment_8005._80052c34;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005f428;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -1345,7 +1345,7 @@ public final class Bttl_800c {
             gameState_800babc8.scriptFlags2_bc.get(0x1d).or(0x800_0000L);
           } else {
             //LAB_800c8534
-            a1 = 0x7L;
+            a1 = 0x7L; // Game over screen
           }
         }
 
@@ -1361,7 +1361,7 @@ public final class Bttl_800c {
 
       long v1 = _800c6724.get();
       if(v1 != 0xff) {
-        _80052c34.setu(v1);
+        submapScene_80052c34.setu(v1);
       }
 
       //LAB_800c8578

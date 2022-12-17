@@ -250,6 +250,8 @@ public class Gpu implements Runnable {
     }
 
     this.displayTexture = Texture.empty(horizontalRes, verticalRes);
+
+    this.updateDisplayTexture(this.window, this.windowWidth, this.windowHeight);
   }
 
   public void displayTexture(final int[] pixels) {
@@ -321,44 +323,7 @@ public class Gpu implements Runnable {
       }
     });
 
-    this.window.events.onResize((window1, width, height) -> {
-      if(!this.isVramViewer) {
-        final float windowScale = this.window.getScale();
-        final float unscaledWidth = width / windowScale;
-        final float unscaledHeight = height / windowScale;
-
-        this.windowWidth = (int)unscaledWidth;
-        this.windowHeight = (int)unscaledHeight;
-
-        if(this.displayMesh != null) {
-          this.displayMesh.delete();
-        }
-
-        final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
-
-        float w = unscaledWidth;
-        float h = w / aspect;
-
-        if(h > unscaledHeight) {
-          h = unscaledHeight;
-          w = h * aspect;
-        }
-
-        final float l = (unscaledWidth - w) / 2;
-        final float t = (unscaledHeight - h) / 2;
-        final float r = l + w;
-        final float b = t + h;
-
-        this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-          l, t, 0, 0,
-          l, b, 0, 1,
-          r, t, 1, 0,
-          r, b, 1, 1,
-        }, 4);
-        this.displayMesh.attribute(0, 0L, 2, 4);
-        this.displayMesh.attribute(1, 2L, 2, 4);
-      }
-    });
+    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture(window1, (int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
     final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
     this.transforms2 = new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2);
@@ -432,6 +397,42 @@ public class Gpu implements Runnable {
     } catch(final Throwable t) {
       LOGGER.error("Shutting down due to GPU exception:", t);
       this.window.close();
+    }
+  }
+
+  private void updateDisplayTexture(final Window window, final int width, final int height) {
+    if(!this.isVramViewer) {
+
+      this.windowWidth = width;
+      this.windowHeight = height;
+
+      if(this.displayMesh != null) {
+        this.displayMesh.delete();
+      }
+
+      final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
+
+      float w = width;
+      float h = w / aspect;
+
+      if(h > height) {
+        h = height;
+        w = h * aspect;
+      }
+
+      final float l = (width - w) / 2;
+      final float t = (height - h) / 2;
+      final float r = l + w;
+      final float b = t + h;
+
+      this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+        l, t, 0, 0,
+        l, b, 0, 1,
+        r, t, 1, 0,
+        r, b, 1, 1,
+      }, 4);
+      this.displayMesh.attribute(0, 0L, 2, 4);
+      this.displayMesh.attribute(1, 2L, 2, 4);
     }
   }
 
@@ -585,6 +586,14 @@ public class Gpu implements Runnable {
 
   public int getOffsetY() {
     return this.offsetY;
+  }
+
+  public int getDisplayTextureWidth() {
+    return this.displayTexture.width;
+  }
+
+  public int getDisplayTextureHeight() {
+    return this.displayTexture.height;
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {

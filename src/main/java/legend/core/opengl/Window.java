@@ -252,6 +252,8 @@ public class Window {
   }
 
   public static final class Events {
+    private static final Object LOCK = new Object();
+
     private final List<Resize> resize = new ArrayList<>();
     private final List<Key> keyPress = new ArrayList<>();
     private final List<Key> keyRelease = new ArrayList<>();
@@ -275,146 +277,258 @@ public class Window {
     }
 
     private void onResize(final long window, final int width, final int height) {
-      this.window.width = width;
-      this.window.height = height;
+      synchronized(LOCK) {
+        this.window.width = width;
+        this.window.height = height;
 
-      try(final MemoryStack stack = MemoryStack.stackPush()) {
-        final FloatBuffer x = stack.mallocFloat(1);
-        final FloatBuffer y = stack.mallocFloat(1);
-        glfwGetWindowContentScale(window, x, y);
-        this.window.scale = x.get(0);
+        try(final MemoryStack stack = MemoryStack.stackPush()) {
+          final FloatBuffer x = stack.mallocFloat(1);
+          final FloatBuffer y = stack.mallocFloat(1);
+          glfwGetWindowContentScale(window, x, y);
+          this.window.scale = x.get(0);
+        }
+
+        this.resize.forEach(cb -> cb.resize(this.window, width, height));
       }
-
-      this.resize.forEach(cb -> cb.resize(this.window, width, height));
     }
 
     public Resize onResize(final Resize callback) {
-      this.resize.add(callback);
-      return callback;
+      synchronized(LOCK) {
+        this.resize.add(callback);
+        return callback;
+      }
     }
 
     public void removeOnResize(final Resize callback) {
-      this.resize.remove(callback);
+      synchronized(LOCK) {
+        this.resize.remove(callback);
+      }
     }
 
     private void onKey(final long window, final int key, final int scancode, final int action, final int mods) {
-      switch(action) {
-        case GLFW_PRESS -> this.keyPress.forEach(cb -> cb.action(this.window, key, scancode, mods));
-        case GLFW_RELEASE -> this.keyRelease.forEach(cb -> cb.action(this.window, key, scancode, mods));
-        case GLFW_REPEAT -> this.keyRepeat.forEach(cb -> cb.action(this.window, key, scancode, mods));
+      synchronized(LOCK) {
+        switch(action) {
+          case GLFW_PRESS -> this.keyPress.forEach(cb -> cb.action(this.window, key, scancode, mods));
+          case GLFW_RELEASE -> this.keyRelease.forEach(cb -> cb.action(this.window, key, scancode, mods));
+          case GLFW_REPEAT -> this.keyRepeat.forEach(cb -> cb.action(this.window, key, scancode, mods));
+        }
       }
     }
 
     private void onChar(final long window, final int codepoint) {
-      this.charPress.forEach(cb -> cb.action(this.window, codepoint));
+      synchronized(LOCK) {
+        this.charPress.forEach(cb -> cb.action(this.window, codepoint));
+      }
     }
 
     private void onMouseMove(final long window, final double x, final double y) {
-      final double scaledX = x / this.window.scale;
-      final double scaledY = y / this.window.scale;
+      synchronized(LOCK) {
+        final double scaledX = x / this.window.scale;
+        final double scaledY = y / this.window.scale;
 
-      this.mouseX = scaledX;
-      this.mouseY = scaledY;
-      this.mouseMove.forEach(cb -> cb.action(this.window, scaledX, scaledY));
+        this.mouseX = scaledX;
+        this.mouseY = scaledY;
+        this.mouseMove.forEach(cb -> cb.action(this.window, scaledX, scaledY));
+      }
     }
 
     private void onMouseButton(final long window, final int button, final int action, final int mods) {
-      switch(action) {
-        case GLFW_PRESS -> this.mousePress.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
-        case GLFW_RELEASE -> this.mouseRelease.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
+      synchronized(LOCK) {
+        switch(action) {
+          case GLFW_PRESS -> this.mousePress.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
+          case GLFW_RELEASE -> this.mouseRelease.forEach(cb -> cb.action(this.window, this.mouseX, this.mouseY, button, mods));
+        }
       }
     }
 
     private void onMouseScroll(final long window, final double deltaX, final double deltaY) {
-      this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      synchronized(LOCK) {
+        this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      }
     }
 
     private void onControllerConnected(final long window, final int id) {
-      this.controllerConnected.forEach(cb -> cb.action(this.window, id));
+      synchronized(LOCK) {
+        this.controllerConnected.forEach(cb -> cb.action(this.window, id));
+      }
     }
 
     private void onControllerDisconnected(final long window, final int id) {
-      this.controllerDisconnected.forEach(cb -> cb.action(this.window, id));
+      synchronized(LOCK) {
+        this.controllerDisconnected.forEach(cb -> cb.action(this.window, id));
+      }
     }
 
     public Key onKeyPress(final Key callback) {
-      this.keyPress.add(callback);
-      return callback;
+      synchronized(LOCK) {
+        this.keyPress.add(callback);
+        return callback;
+      }
     }
 
     public void removeKeyPress(final Key callback) {
-      this.keyPress.remove(callback);
+      synchronized(LOCK) {
+        this.keyPress.remove(callback);
+      }
     }
 
     public Key onKeyRelease(final Key callback) {
-      this.keyRelease.add(callback);
-      return callback;
+      synchronized(LOCK) {
+        this.keyRelease.add(callback);
+        return callback;
+      }
     }
 
     public void removeKeyRelease(final Key callback) {
-      this.keyRelease.remove(callback);
+      synchronized(LOCK) {
+        this.keyRelease.remove(callback);
+      }
     }
 
     public Key onKeyRepeat(final Key callback) {
-      this.keyRepeat.add(callback);
-      return callback;
+      synchronized(LOCK) {
+        this.keyRepeat.add(callback);
+        return callback;
+      }
     }
 
     public void removeKeyRepeat(final Key callback) {
-      this.keyRepeat.remove(callback);
+      synchronized(LOCK) {
+        this.keyRepeat.remove(callback);
+      }
     }
 
     public Char onCharPress(final Char callback) {
-      this.charPress.add(callback);
-      return callback;
+      synchronized(LOCK) {
+        this.charPress.add(callback);
+        return callback;
+      }
     }
 
     public void removeCharPress(final Char callback) {
-      this.charPress.remove(callback);
+      synchronized(LOCK) {
+        this.charPress.remove(callback);
+      }
     }
 
-    public void onMouseMove(final Cursor callback) {
-      this.mouseMove.add(callback);
+    public Cursor onMouseMove(final Cursor callback) {
+      synchronized(LOCK) {
+        this.mouseMove.add(callback);
+        return callback;
+      }
     }
 
-    public void onMousePress(final Click callback) {
-      this.mousePress.add(callback);
+    public void removeMouseMove(final Cursor callback) {
+      synchronized(LOCK) {
+        this.mouseMove.remove(callback);
+      }
     }
 
-    public void onMouseRelease(final Click callback) {
-      this.mouseRelease.add(callback);
+    public Click onMousePress(final Click callback) {
+      synchronized(LOCK) {
+        this.mousePress.add(callback);
+        return callback;
+      }
     }
 
-    public void onMouseScroll(final Scroll callback) {
-      this.mouseScroll.add(callback);
+    public void removeMousePress(final Click callback) {
+      synchronized(LOCK) {
+        this.mousePress.remove(callback);
+      }
     }
 
-    public void onControllerConnected(final ControllerState callback) {
-      this.controllerConnected.add(callback);
+    public Click onMouseRelease(final Click callback) {
+      synchronized(LOCK) {
+        this.mouseRelease.add(callback);
+        return callback;
+      }
     }
 
-    public void onControllerDisconnected(final ControllerState callback) {
-      this.controllerDisconnected.add(callback);
+    public void removeMouseRelease(final Click callback) {
+      synchronized(LOCK) {
+        this.mouseRelease.remove(callback);
+      }
+    }
+
+    public Scroll onMouseScroll(final Scroll callback) {
+      synchronized(LOCK) {
+        this.mouseScroll.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeMouseScroll(final Scroll callback) {
+      synchronized(LOCK) {
+        this.mouseScroll.remove(callback);
+      }
+    }
+
+    public ControllerState onControllerConnected(final ControllerState callback) {
+      synchronized(LOCK) {
+        this.controllerConnected.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeControllerConnected(final ControllerState callback) {
+      synchronized(LOCK) {
+        this.controllerConnected.remove(callback);
+      }
+    }
+
+    public ControllerState onControllerDisconnected(final ControllerState callback) {
+      synchronized(LOCK) {
+        this.controllerDisconnected.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeControllerDisconnected(final ControllerState callback) {
+      synchronized(LOCK) {
+        this.controllerDisconnected.remove(callback);
+      }
     }
 
     private void onDraw() {
-      for(final Runnable draw : this.draw) {
-        draw.run();
+      synchronized(LOCK) {
+        for(final Runnable draw : this.draw) {
+          draw.run();
+        }
       }
     }
 
-    public void onDraw(final Runnable callback) {
-      this.draw.add(callback);
+    public Runnable onDraw(final Runnable callback) {
+      synchronized(LOCK) {
+        this.draw.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeDraw(final Runnable callback) {
+      synchronized(LOCK) {
+        this.draw.remove(callback);
+      }
     }
 
     private void onShutdown() {
-      for(final Runnable shutdown : this.shutdown) {
-        shutdown.run();
+      synchronized(LOCK) {
+        for(final Runnable shutdown : this.shutdown) {
+          shutdown.run();
+        }
       }
     }
 
-    public void onShutdown(final Runnable callback) {
-      this.shutdown.add(callback);
+    public Runnable onShutdown(final Runnable callback) {
+      synchronized(LOCK) {
+        this.shutdown.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeShutdown(final Runnable callback) {
+      synchronized(LOCK) {
+        this.shutdown.remove(callback);
+      }
     }
 
     @FunctionalInterface public interface Resize {

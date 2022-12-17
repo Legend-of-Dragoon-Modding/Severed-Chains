@@ -47,7 +47,6 @@ import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
 import legend.game.types.ExtendedTmd;
-import legend.game.types.FileEntry08;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -196,13 +195,11 @@ import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005._80052c34;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
-import static legend.game.Scus94491BpeSegment_8005._80052d6c;
-import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
@@ -230,7 +227,6 @@ import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -4237,7 +4233,7 @@ public final class SMap {
 
     if(newCut > -1) {
       submapCut_80052c30.set(newCut);
-      _80052c34.setu(newScene);
+      submapScene_80052c34.setu(newScene);
       smapLoadingStage_800cb430.setu(0x4L);
       _800cb450.setu(newCut);
       _800f7e4c.setu(0x1L);
@@ -4356,7 +4352,7 @@ public final class SMap {
       if(_800cab20.getSigned() >= 0) {
         setWidthAndFlags(384);
         _800caaf4.setu(submapCut_80052c30.get());
-        _800caaf8.setu(_80052c34);
+        _800caaf8.setu(submapScene_80052c34);
         return;
       }
     }
@@ -4366,7 +4362,7 @@ public final class SMap {
     if(pregameLoadingStage_800bb10c.get() == 0) {
       pregameLoadingStage_800bb10c.setu(0x1L);
       _800caaf4.setu(submapCut_80052c30.get());
-      _800caaf8.setu(_80052c34);
+      _800caaf8.setu(submapScene_80052c34);
       _80052c44.setu(0x2L);
 
       if(_800cb440.get() != 0) {
@@ -4416,7 +4412,7 @@ public final class SMap {
         _800cab28.setu(0);
         _80052c44.setu(0x1L);
         _800caaf4.setu(submapCut_80052c30.get());
-        _800caaf8.setu(_80052c34);
+        _800caaf8.setu(submapScene_80052c34);
 
         // Detect if we need to change disks
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
@@ -4438,7 +4434,7 @@ public final class SMap {
       case 0x4 -> {
         FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
         _800caafc.setu(submapCut_80052c30.get());
-        _800cab00.setu(_80052c34);
+        _800cab00.setu(submapScene_80052c34);
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         smapLoadingStage_800cb430.setu(0x11L);
       }
@@ -4459,8 +4455,8 @@ public final class SMap {
       }
 
       case 0x9 -> {
-        FUN_800e4d00(submapCut_80052c30.get(), (int)_80052c34.get());
-        FUN_800e81a0((int)_80052c34.get());
+        FUN_800e4d00(submapCut_80052c30.get(), (int)submapScene_80052c34.get());
+        FUN_800e81a0((int)submapScene_80052c34.get());
         FUN_800e664c(submapCut_80052c30.get(), 0x1L);
         FUN_800e6d4c();
         if(_800cab2c.get() != 0) { // This might be to transition to another map or something?
@@ -4545,7 +4541,7 @@ public final class SMap {
         _800c6aac.setu(0xaL);
         switch((int)_800caaf0.get()) {
           case 0x5:
-            if(gameState_800babc8._4e4.get() != 0) {
+            if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
               smapLoadingStage_800cb430.setu(0x12L);
               _800f7e4c.setu(0);
               break;
@@ -4574,7 +4570,7 @@ public final class SMap {
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
         if(_800bdc34.get() != 0) {
-          FUN_800e5534(submapCut_80052c30.get(), (int)_80052c34.get());
+          FUN_800e5534(submapCut_80052c30.get(), (int)submapScene_80052c34.get());
         }
       }
 
@@ -4992,7 +4988,7 @@ public final class SMap {
     FUN_800e5534(a0.params_20.get(0).deref().get() + 0x800, a0.params_20.get(1).deref().get());
     submapCut_80052c30.set(a0.params_20.get(2).deref().get());
     _800cb450.setu(submapCut_80052c30.get());
-    _80052c34.setu(a0.params_20.get(3).deref().get());
+    submapScene_80052c34.setu(a0.params_20.get(3).deref().get());
     return 0x2L;
   }
 
