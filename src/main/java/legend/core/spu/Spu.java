@@ -66,7 +66,7 @@ public class Spu implements Runnable, MemoryRef {
   /** 1ba */
   public final UnsignedShortRef CURR_MAIN_VOL_R = MEMORY.ref(2, 0x1f801dbaL, UnsignedShortRef::new);
 
-  private final SourceDataLine sound;
+  private SourceDataLine sound;
 
   private final ByteList spuOutput = new ByteArrayList();
   private final Queue<Byte> cdBuffer = new ArrayDeque<>();
@@ -111,8 +111,9 @@ public class Spu implements Runnable, MemoryRef {
       this.sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
       this.sound.open();
       this.sound.start();
-    } catch(final LineUnavailableException e) {
-      throw new RuntimeException("Failed to start audio", e);
+    } catch(final LineUnavailableException|IllegalArgumentException e) {
+      LOGGER.error("Failed to start audio", e);
+      this.sound = null;
     }
 
     for(int i = 0; i < this.voices.length; i++) {
@@ -242,8 +243,10 @@ public class Spu implements Runnable, MemoryRef {
     this.spuOutput.add((byte)(sumRight >> 8));
 
     if(this.spuOutput.size() > 2048) {
-      final byte[] samples = this.spuOutput.toByteArray();
-      this.sound.write(samples, 0, samples.length);
+      if(this.sound != null) {
+        final byte[] samples = this.spuOutput.toByteArray();
+        this.sound.write(samples, 0, samples.length);
+      }
       this.spuOutput.clear();
     }
   }

@@ -172,6 +172,18 @@ public class Window {
 
   public void show() {
     glfwShowWindow(this.window);
+
+    try(final MemoryStack stack = MemoryStack.stackPush()) {
+      final IntBuffer x = stack.mallocInt(1);
+      final IntBuffer y = stack.mallocInt(1);
+      glfwGetWindowSize(this.window, x, y);
+
+      final FloatBuffer scaleX = stack.mallocFloat(1);
+      final FloatBuffer scaleY = stack.mallocFloat(1);
+      glfwGetWindowContentScale(this.window, scaleX, scaleY);
+
+      this.events.onResize(this.window, (int)(x.get() / scaleX.get()), (int)(y.get() / scaleY.get()));
+    }
   }
 
   public void close() {

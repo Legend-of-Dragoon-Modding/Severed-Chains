@@ -245,7 +245,7 @@ public class Fmv {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
       sound.open();
       sound.start();
-    } catch(final LineUnavailableException e) {
+    } catch(final LineUnavailableException|IllegalArgumentException e) {
       LOGGER.error("Failed to start audio for FMV");
     }
 
@@ -285,7 +285,9 @@ public class Fmv {
             decodedXaAdpcm[i] >>= 1;
           }
 
-          sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+          if(sound != null) {
+            sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+          }
         }
       }
 
