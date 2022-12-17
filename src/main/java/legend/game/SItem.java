@@ -1135,7 +1135,7 @@ public final class SItem {
               case 7 -> {
                 playSound(0x2L);
 
-                final String message = "Return to main menu?";
+                final String message = "Return to main menu?\nAlpha - do not use";
                 final LodString string = MEMORY.ref(2, mallocTail((message.length() + 1) * 2), LodString::new);
                 string.set(message);
 
