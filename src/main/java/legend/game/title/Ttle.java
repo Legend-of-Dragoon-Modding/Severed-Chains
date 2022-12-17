@@ -646,6 +646,10 @@ public final class Ttle {
       if(menuLoadingStage == 3) {
         if(_800c672c < 3) {
           for(int i = 0; i < 3; i++) {
+            if(i == 1 && hasSavedGames != 1) {
+              continue;
+            }
+
             final int menuWidth = (int)(130 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
@@ -706,6 +710,10 @@ public final class Ttle {
 
         if(_800c672c < 3) {
           for(int i = 0; i < 3; i++) {
+            if(i == 1 && hasSavedGames != 1) {
+              continue;
+            }
+
             final int menuWidth = (int)(130 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
