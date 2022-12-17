@@ -925,11 +925,18 @@ public final class Ttle {
       final int x = (int)_800ce8ac.offset(i * 2 * 4).getSigned();
       final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
 
+      final int colour;
+      if(i != 1 || hasSavedGames == 1) {
+        colour = menuOptionTransparency[i];
+      } else {
+        colour = menuOptionTransparency[i] / 2;
+      }
+
       //LAB_800c8a8c
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(menuOptionTransparency[i])
+        .monochrome(colour)
         .pos(0, x, y)
         .uv(0, 0, (int)_800ce7f8.offset(i * 2 * 4).get())
         .pos(1, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y)
@@ -945,7 +952,7 @@ public final class Ttle {
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(menuOptionTransparency[i])
+        .monochrome(colour)
         .pos(0, x - 8, y - 8)
         .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
         .clut(640, 4)
