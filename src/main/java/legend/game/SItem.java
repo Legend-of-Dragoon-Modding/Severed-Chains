@@ -44,6 +44,7 @@ import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
+import legend.game.types.UseItemResponse;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -419,10 +420,7 @@ public final class SItem {
 
   public static final Value saveCount_8011d768 = MEMORY.ref(4, 0x8011d768L);
 
-  public static final Value _8011d788 = MEMORY.ref(1, 0x8011d788L);
-
-  public static final Value _8011d78c = MEMORY.ref(4, 0x8011d78cL);
-  public static final LodString _8011d790 = MEMORY.ref(2, 0x8011d790L, LodString::new);
+  public static final UseItemResponse useItemResponse_8011d788 = MEMORY.ref(1, 0x8011d788L, UseItemResponse::new);
 
   public static final UnsignedIntRef _8011d7b8 = MEMORY.ref(4, 0x8011d7b8L, UnsignedIntRef::new);
   public static final UnsignedIntRef _8011d7bc = MEMORY.ref(4, 0x8011d7bcL, UnsignedIntRef::new);
@@ -1849,11 +1847,9 @@ public final class SItem {
         charSlot_8011d734.set(0);
         slotScroll_8011d744.set(0);
         selectedSlot_8011d740.set(0);
-        _8011d788.setu(0);
-        v0 = _8011d788.getAddress();
-        MEMORY.ref(4, v0).offset(0x4L).setu(0);
-        v0 = 0x8012_0000L;
-        MEMORY.ref(1, v0).offset(-0x2364L).setu(0);
+        useItemResponse_8011d788._00.set(0);
+        useItemResponse_8011d788.value_04.set(0);
+        messageBox_8011dc90._0c.set(0);
         inventoryMenuState_800bdc28.set(InventoryMenuState._27);
         break;
 
@@ -1946,22 +1942,22 @@ public final class SItem {
         //LAB_800fea24
         if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) { // Cross
           if((_8011d7b8.get() & 0x2L) != 0) {
-            _8011d754.setu(-0x2L);
+            _8011d754.setu(-2);
 
             //LAB_800fea84
             for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-              useItemInMenu(_8011d788.getAddress(), menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(i).get());
+              useItemInMenu(useItemResponse_8011d788, menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(i).get());
 
-              if((int)_8011d78c.get() != -0x2L) {
+              if(useItemResponse_8011d788.value_04.get() != -2) {
                 _8011d754.setu(0);
               }
             }
 
             //LAB_800feadc
-            _8011d78c.setu(_8011d754.get());
+            useItemResponse_8011d788.value_04.set((int)_8011d754.get());
           } else {
             //LAB_800feaf0
-            useItemInMenu(_8011d788.getAddress(), menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
+            useItemInMenu(useItemResponse_8011d788, menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get(), characterIndices_800bdbb8.get(charSlot_8011d734.get()).get());
           }
 
           //LAB_800feb40
@@ -1969,8 +1965,8 @@ public final class SItem {
           takeItem(menuItems_8011d7c8.get(selectedSlot_8011d740.get() + slotScroll_8011d744.get()).itemId_00.get());
           count_8011d750.set(FUN_80104448());
           loadCharacterStats(0);
-          FUN_80104324(_8011d788.getAddress());
-          setMessageBoxText(_8011d790, 0);
+          FUN_80104324(useItemResponse_8011d788);
+          setMessageBoxText(useItemResponse_8011d788.string_08, 0);
           inventoryMenuState_800bdc28.set(InventoryMenuState._27);
         }
 
@@ -4018,27 +4014,27 @@ public final class SItem {
     return YesNoResult.NONE;
   }
 
-  @Method(0x80104254L) //TODO a1 struct
-  public static void FUN_80104254(final LodString a0, final long a1) {
-    final int v1 = (int)MEMORY.ref(4, a1).offset(0x4L).get();
+  @Method(0x80104254L)
+  public static void FUN_80104254(final LodString a0, final UseItemResponse response) {
+    final int value = response.value_04.get();
 
     final LodString a0_0;
     final LodString a1_0;
-    if(v1 == -2) {
-      a0_0 = MEMORY.ref(2, a1 + 0x8L, LodString::new);
+    if(value == -2) {
+      a0_0 = response.string_08;
       a1_0 = _8011d618;
       //LAB_8010428c
-    } else if(v1 == -1) {
-      a0_0 = FUN_80103e04(MEMORY.ref(2, a1 + 0x8L, LodString::new), a0);
+    } else if(value == -1) {
+      a0_0 = FUN_80103e04(response.string_08, a0);
       a1_0 = _8011d534;
       //LAB_801042b4
-    } else if(v1 != 0) {
-      intToStr(v1, FUN_80103e04(MEMORY.ref(4, a1 + 0x8L, LodString::new), a0));
-      a0_0 = MEMORY.ref(2, a1 + 0x8L + textLength(MEMORY.ref(2, a1 + 0x8L, LodString::new)) * 0x2L, LodString::new);
+    } else if(value != 0) {
+      intToStr(value, FUN_80103e04(response.string_08, a0));
+      a0_0 = response.string_08.slice(textLength(response.string_08));
       a1_0 = _8011d560;
     } else {
       //LAB_801042fc
-      a0_0 = MEMORY.ref(2, a1 + 0x8L, LodString::new);
+      a0_0 = response.string_08;
       a1_0 = a0;
     }
 
@@ -4046,56 +4042,56 @@ public final class SItem {
     FUN_80103e04(a0_0, a1_0);
   }
 
-  @Method(0x80104324L) //TODO a0 struct
-  public static void FUN_80104324(final long a0) {
-    switch((int)MEMORY.ref(1, a0).get()) {
+  @Method(0x80104324L)
+  public static void FUN_80104324(final UseItemResponse response) {
+    switch(response._00.get()) {
       case 2:
-        FUN_80104254(_8011d57c, a0);
+        FUN_80104254(_8011d57c, response);
         break;
 
       case 3:
-        FUN_80104254(_8011cfcc, a0);
+        FUN_80104254(_8011cfcc, response);
         break;
 
       case 4:
-        FUN_80104254(_8011d584, a0);
+        FUN_80104254(_8011d584, response);
         break;
 
       case 5:
-        FUN_80104254(_8011cff8, a0);
+        FUN_80104254(_8011cff8, response);
         break;
 
       case 6:
-        FUN_80104254(_8011d58c, a0);
+        FUN_80104254(_8011d58c, response);
         break;
 
       case 8:
-        FUN_80103e04(MEMORY.ref(4, a0 + 0x8L, LodString::new), _8011d594);
+        FUN_80103e04(response.string_08, _8011d594);
         break;
 
       case 7:
-        final long v1 = MEMORY.ref(4, a0).offset(0x4L).get();
+        final int value = response.value_04.get();
 
-        if((v1 & 0x80L) != 0) {
-          FUN_80103e04(MEMORY.ref(4, a0 + 0x8L, LodString::new), _8011d5c8);
+        if((value & 0x80) != 0) {
+          FUN_80103e04(response.string_08, _8011d5c8);
           break;
         }
 
         //LAB_801043f8
-        if((v1 & 0x40L) != 0) {
-          FUN_80103e04(MEMORY.ref(4, a0 + 0x8L, LodString::new), _8011d5e0);
+        if((value & 0x40) != 0) {
+          FUN_80103e04(response.string_08, _8011d5e0);
           break;
         }
 
         //LAB_80104410
-        if((v1 & 0x8L) != 0) {
-          FUN_80103e04(MEMORY.ref(4, a0 + 0x8L, LodString::new), _8011d604);
+        if((value & 0x8) != 0) {
+          FUN_80103e04(response.string_08, _8011d604);
           break;
         }
 
       case 9:
         //LAB_80104424
-        FUN_80103e04(MEMORY.ref(4, a0 + 0x8L, LodString::new), _8011d618);
+        FUN_80103e04(response.string_08, _8011d618);
         break;
     }
 
@@ -5944,7 +5940,7 @@ public final class SItem {
 
         //LAB_8010b1c4
         //LAB_8010b1c8
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
         renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
       }
 
@@ -5999,7 +5995,7 @@ public final class SItem {
         }
 
         //LAB_8010b448
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
         renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
       }
 
@@ -6016,7 +6012,7 @@ public final class SItem {
         }
 
         //LAB_8010b508
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
         renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
       }
 
@@ -6247,7 +6243,7 @@ public final class SItem {
 
         //LAB_8010bf3c
         //LAB_8010bf40
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
         renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
       }
 
@@ -6287,7 +6283,7 @@ public final class SItem {
         }
 
         //LAB_8010c174
-        FUN_8010c458(menuItems_8011e0f8.getAddress(), menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
+        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0.deref(), renderable_8011e0f4.deref());
         renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
       }
 
@@ -6356,23 +6352,23 @@ public final class SItem {
   }
 
   @Method(0x8010c458L)
-  public static void FUN_8010c458(final long a0, final long a1, final Renderable58 a2, final Renderable58 a3) {
+  public static void FUN_8010c458(final UnboundedArrayRef<MenuItemStruct04> items, final int startItemIndex, final Renderable58 a2, final Renderable58 a3) {
     //LAB_8010c4b4
     int i;
-    for(i = 0; MEMORY.ref(1, a0).offset((a1 + i) * 0x4L).get() != 0xff; i++) {
-      if(i >= 0x6L) {
+    for(i = 0; items.get(startItemIndex + i).itemId_00.get() != 0xff; i++) {
+      if(i >= 6) {
         break;
       }
 
-      final long s0 = a0 + (a1 + i) * 0x4L;
-      renderText(equipment_8011972c.get((int)MEMORY.ref(1, s0).get()).deref(), 168, FUN_8010a808(i) + 2, 4);
-      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, (int)MEMORY.ref(2, s0).offset(0x2L).get());
-      renderItemIcon(getItemIcon((int)MEMORY.ref(1, s0).get()), 151, FUN_8010a808(i), 0x8L);
+      final MenuItemStruct04 item = items.get(startItemIndex + i);
+      renderText(equipment_8011972c.get(item.itemId_00.get()).deref(), 168, FUN_8010a808(i) + 2, 4);
+      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.price_02.get());
+      renderItemIcon(getItemIcon(item.itemId_00.get()), 151, FUN_8010a808(i), 0x8L);
     }
 
     //LAB_8010c558
     //LAB_8010c578
-    if(a1 != 0) {
+    if(startItemIndex != 0) {
       a2.flags_00.and(0xffff_ffbfL);
     } else {
       //LAB_8010c56c
@@ -6380,7 +6376,7 @@ public final class SItem {
     }
 
     //LAB_8010c5b0
-    if(MEMORY.ref(1, a0).offset((i + a1) * 0x4L).get() != 0xffL) {
+    if(items.get(i + startItemIndex).itemId_00.get() != 0xff) {
       a3.flags_00.and(0xffff_ffbfL);
     } else {
       //LAB_8010c5a4
@@ -7563,11 +7559,6 @@ public final class SItem {
 
   @Method(0x8010f198L)
   public static void FUN_8010f198() {
-    long v1;
-    long a0;
-    long a1;
-    long s0;
-    long s2;
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     //TODO this menu should use its own state var - the enum is for the giant main state method above
@@ -7591,21 +7582,21 @@ public final class SItem {
           messageBox_8011dc90._0c.set(0);
 
           //LAB_8010f2e8
-          a0 = menuItems_8011d7c8.getAddress();
-          a1 = _800bc928.getAddress();
-          for(s0 = 0; s0 < 10; s0++) {
-            if((int)s0 >= (int)_800bc978.get()) {
-              v1 = 0xffL;
+          for(int itemIndex = 0; itemIndex < 10; itemIndex++) {
+            final MenuItemStruct04 item = menuItems_8011d7c8.get(itemIndex);
+            final long a1 = _800bc928.offset(itemIndex * 0x4L).getAddress();
+
+            final int itemId;
+            if(itemIndex >= (int)_800bc978.get()) {
+              itemId = 0xff;
             } else {
-              v1 = MEMORY.ref(1, a1).offset(0x0L).get();
+              itemId = (int)MEMORY.ref(1, a1).offset(0x0L).get();
             }
 
             //LAB_8010f300
-            MEMORY.ref(1, a0).offset(0x0L).setu(v1);
-            MEMORY.ref(2, a0).offset(0x2L).setu(0);
-            MEMORY.ref(1, a0).offset(0x1L).setu(0);
-            a0 = a0 + 0x4L;
-            a1 = a1 + 0x4L;
+            item.itemId_00.set(itemId);
+            item.itemSlot_01.set(0);
+            item.price_02.set(0);
           }
 
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
@@ -7800,7 +7791,7 @@ public final class SItem {
             unloadRenderable(renderable_8011e208.deref());
 
             //LAB_8010fb94
-            s2 = 0;
+            long s2 = 0;
             for(int i = 0; i < _800bc978.get(); i++) {
               if(FUN_80022898(menuItems_8011d7c8.get(i).itemId_00.get()) != 0) {
                 s2 = s2 + 0x1L;

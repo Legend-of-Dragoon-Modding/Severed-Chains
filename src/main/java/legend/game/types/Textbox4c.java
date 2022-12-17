@@ -10,12 +10,12 @@ import legend.core.memory.types.UnsignedShortRef;
 public class Textbox4c implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedIntRef _00;
+  public final IntRef _00;
   public final ShortRef _04;
   public final ShortRef _06;
   public final UnsignedIntRef _08;
   public final IntRef z_0c;
-  public final UnsignedIntRef _10;
+  public final IntRef _10;
   public final ShortRef x_14;
   public final ShortRef y_16;
   public final ShortRef chars_18;
@@ -38,12 +38,12 @@ public class Textbox4c implements MemoryRef {
   public Textbox4c(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+    this._00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this._04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this._08 = ref.offset(4, 0x08L).cast(UnsignedIntRef::new);
     this.z_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
-    this._10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
+    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
     this.x_14 = ref.offset(2, 0x14L).cast(ShortRef::new);
     this.y_16 = ref.offset(2, 0x16L).cast(ShortRef::new);
     this.chars_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
