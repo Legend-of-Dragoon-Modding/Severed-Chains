@@ -15,7 +15,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
@@ -38,6 +38,7 @@ jobs:
         type: 'zip'
         filename: 'windows-snapshot.zip'
         directory: 'build/libs'
+        exclusions: '*.zip*'
         
     - name: Build Linux with Gradle
       run: ./gradlew build -Pos=linux
@@ -48,6 +49,7 @@ jobs:
         type: 'zip'
         filename: 'linux-snapshot.zip'
         directory: 'build/libs'
+        exclusions: '*.zip*'
         
     - name: Build MacOS with Gradle
       run: ./gradlew build -Pos=macos
@@ -58,6 +60,7 @@ jobs:
         type: 'zip'
         filename: 'macos-snapshot.zip'
         directory: 'build/libs'
+        exclusions: '*.zip*'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
