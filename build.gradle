@@ -26,17 +26,17 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
 }
 
 if (hasProperty("os")) {
-	switch (os) {
-		case "windows":
-			project.ext.lwjglNatives = "natives-windows"
-			break;
-		case "linux":
-			project.ext.lwjglNatives = "natives-linux"
-			break;
-		case "macos":
-			project.ext.lwjglNatives = "natives-macos"
-			break;
-	}
+  switch (os) {
+    case "windows":
+      project.ext.lwjglNatives = "natives-windows"
+      break;
+    case "linux":
+      project.ext.lwjglNatives = "natives-linux"
+      break;
+    case "macos":
+      project.ext.lwjglNatives = "natives-macos"
+      break;
+  }
 }
 
 repositories {
