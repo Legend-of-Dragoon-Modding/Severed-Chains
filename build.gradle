@@ -25,6 +25,20 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
   project.ext.lwjglNatives = "natives-macos"
 }
 
+if (hasProperty("os")) {
+  switch (os) {
+    case "windows":
+      project.ext.lwjglNatives = "natives-windows"
+      break;
+    case "linux":
+      project.ext.lwjglNatives = "natives-linux"
+      break;
+    case "macos":
+      project.ext.lwjglNatives = "natives-macos"
+      break;
+  }
+}
+
 repositories {
   mavenCentral()
   mavenLocal()
@@ -77,6 +91,7 @@ jar {
 }
 
 task clearOutput(type: Delete) {
+  delete "${buildDir}/libs/libs"
   delete "${buildDir}/libs/**"
 }
 

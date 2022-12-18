@@ -15,7 +15,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
@@ -29,15 +29,38 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build Windows with Gradle
+      run: ./gradlew build -Pos=windows
     
-    - name: ZIP Build
+    - name: ZIP Windows Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'snapshot.zip'
+        filename: 'windows-snapshot.zip'
         directory: 'build/libs'
+        exclusions: '*.zip*'
+        
+    - name: Build Linux with Gradle
+      run: ./gradlew build -Pos=linux
+    
+    - name: ZIP Linux Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'linux-snapshot.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+        
+    - name: Build MacOS with Gradle
+      run: ./gradlew build -Pos=macos
+    
+    - name: ZIP MacOS Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'macos-snapshot.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
@@ -50,7 +73,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/snapshot.zip'
+        artifacts: 'build/libs/windows-snapshot.zip,build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
