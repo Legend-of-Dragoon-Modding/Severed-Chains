@@ -13,7 +13,7 @@ on:
     - main
 
 jobs:
-  build-windows:
+  build:
 
     runs-on: windows-latest
     permissions:
@@ -29,60 +29,34 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build Windows with Gradle
+      run: ./gradlew build -Pos=windows
     
-    - name: ZIP Build
+    - name: ZIP Windows Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
         filename: 'windows-snapshot.zip'
         directory: 'build/libs'
-
-    - name: Delete Tag and Release
-      uses: dev-drprasad/delete-tag-and-release@v0.2.0
-      with:
-        delete_release: 'true'
-        tag_name: 'windowsdevbuild'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload Release
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: 'build/libs/windows-snapshot.zip'
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit: ${{ github.sha }}
-        name: 'Latest Windows Development Build'
-        allowUpdates: 'true'
-        prerelease: 'true'
-        tag: 'devbuild'
         
-        
-  build-linux:
-    needs: build-windows
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
-
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build Linux with Gradle
+      run: ./gradlew build -Pos=linux
     
-    - name: ZIP Build
+    - name: ZIP Linux Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
         filename: 'linux-snapshot.zip'
+        directory: 'build/libs'
+        
+    - name: Build MacOS with Gradle
+      run: ./gradlew build -Pos=macos
+    
+    - name: ZIP MacOS Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'macos-snapshot.zip'
         directory: 'build/libs'
 
     - name: Delete Tag and Release
@@ -96,10 +70,10 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/linux-snapshot.zip'
+        artifacts: 'build/libs/windows-snapshot.zip,build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
-        name: 'Latest Linux Development Build'
+        name: 'Latest Development Build'
         allowUpdates: 'true'
         prerelease: 'true'
-        tag: 'linuxdevbuild'
+        tag: 'devbuild'
