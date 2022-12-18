@@ -17,6 +17,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 public class Unpacker {
   static {
@@ -29,6 +31,11 @@ public class Unpacker {
   public static Path ROOT = Path.of(".", "files");
 
   private static final Object IO_LOCK = new Object();
+
+  private static final Map<BiPredicate<String, byte[]>, BiFunction<String, byte[], Map<String, byte[]>>> transformers = new HashMap<>();
+  static {
+    transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
+  }
 
   public static void main(final String[] args) throws UnpackerException {
     unpack();
@@ -85,8 +92,8 @@ public class Unpacker {
           .stream()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
-          .map(Unpacker::decompress)
-          .forEach(Unpacker::writeFile);
+          .map((Tuple<String, byte[]> e) -> transform(e.a(), e.b()))
+          .forEach(Unpacker::writeFiles);
       } catch(final IOException e) {
         throw new UnpackerException(e);
       }
@@ -170,22 +177,47 @@ public class Unpacker {
     return new Tuple<>(e.getKey(), fileData);
   }
 
-  private static Tuple<String, byte[]> decompress(final Tuple<String, byte[]> e) {
-    if(MathHelper.get(e.b(), 4, 4) != 0x1a455042L) {
-      return e;
+  private static Map<String, byte[]> transform(final String name, final byte[] data) {
+    final Map<String, byte[]> entries = new HashMap<>();
+
+    for(final var entry : transformers.entrySet()) {
+      final var descriminator = entry.getKey();
+      final var transformer = entry.getValue();
+
+      if(descriminator.test(name, data)) {
+        transformer.apply(name, data)
+          .entrySet().stream()
+          .map(e -> transform(e.getKey(), e.getValue()))
+          .forEach(entries::putAll);
+        break;
+      }
+
+      entries.put(name, data);
     }
 
-    return new Tuple<>(e.a(), Unpacker.decompress(e.b()));
+    return entries;
   }
 
-  private static void writeFile(final Tuple<String, byte[]> e) {
-    final Path path = ROOT.resolve(e.a());
+  private static boolean decompressDescriminator(final String name, final byte[] data) {
+    return MathHelper.get(data, 4, 4) == 0x1a455042;
+  }
 
-    LOGGER.info("Unpacking %s...", e.a());
+  private static Map<String, byte[]> decompress(final String name, final byte[] data) {
+    return Map.of(name, Unpacker.decompress(data));
+  }
+
+  private static void writeFiles(final Map<String, byte[]> files) {
+    files.forEach(Unpacker::writeFile);
+  }
+
+  private static void writeFile(final String name, final byte[] data) {
+    final Path path = ROOT.resolve(name);
+
+    LOGGER.info("Unpacking %s...", name);
 
     try {
       Files.createDirectories(path.getParent());
-      Files.write(path, e.b());
+      Files.write(path, data);
     } catch(final IOException ex) {
       throw new UnpackerException(ex);
     }
