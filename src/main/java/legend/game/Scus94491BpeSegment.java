@@ -143,7 +143,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004f6e8;
 import static legend.game.Scus94491BpeSegment_8004._8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
-import static legend.game.Scus94491BpeSegment_8004.callback_8004dbc0;
+import static legend.game.Scus94491BpeSegment_8004.gameStateCallbacks_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.drgnFiles_8004dda0;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
@@ -815,7 +815,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
     if(loadQueuedOverlay() != 0) {
-      callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
+      gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
 
       tickScripts();
       renderScriptObjects();
@@ -1274,7 +1274,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80012a34
     //LAB_80012a38
-    if(loadingGameStateOverlay_8004dd08.get() == 0 || (callback_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
       //LAB_80012a6c
       return 1;
     }
@@ -1287,7 +1287,7 @@ public final class Scus94491BpeSegment {
   public static long loadGameStateOverlay(final int callbackIndex) {
     LOGGER.info("Loading game state overlay %d", callbackIndex);
 
-    final FileEntry08 entry = callback_8004dbc0.get(callbackIndex).entry_04.derefNullable();
+    final FileEntry08 entry = gameStateCallbacks_8004dbc0.get(callbackIndex).entry_04.derefNullable();
 
     if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
       //LAB_80012ac0
@@ -1350,7 +1350,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80012bf0
-    final long v0 = callback_8004dbc0.get(callbackIndex).ptr_08.get();
+    final long v0 = gameStateCallbacks_8004dbc0.get(callbackIndex).ptr_08.get();
     if(v0 != 0) {
       bzero(MEMORY.ref(4, v0).offset(0x0L).get(), (int)MEMORY.ref(4, v0).offset(0x4L).get());
     }

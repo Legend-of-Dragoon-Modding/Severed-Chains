@@ -25,7 +25,6 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.fmv.Fmv;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -111,7 +110,6 @@ import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -134,7 +132,6 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
@@ -153,18 +150,16 @@ import static legend.game.Scus94491BpeSegment_8005._80052baa;
 import static legend.game.Scus94491BpeSegment_8005._80052bc8;
 import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c4c;
-import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
-import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
@@ -193,12 +188,9 @@ import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -217,7 +209,6 @@ import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderableP
 import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -5606,34 +5597,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002c184L)
   public static void FUN_8002c184() {
     LOGGER.info("Rumble 8002c184");
-  }
-
-  /** This method had code for fading in audio but it was unused */
-  @Method(0x8002c86cL)
-  public static void startFmvs() {
-    //LAB_8002c8dc
-    if(fmvStage_800bf0d8.get() == 0x1L) {
-      //TODO this might be necessary for the post-game cutscene or something?
-//      creditsLoaded_800d1cb8.setu(0);
-//      loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)fmvIndex_800bf0dc.get(), 0x4L);
-
-      final int width = switch((int)fmvIndex_800bf0dc.get()) {
-        case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
-        case 1, 5, 10, 11, 12, 13 -> 640;
-        default -> throw new RuntimeException("Illegal state");
-      };
-
-      setWidthAndFlags(width);
-
-      submapIndex_800bd808.set(-1);
-
-      final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(fmvIndex_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
-      Fmv.play(file.name_04.deref().get(), true);
-      fmvStage_800bf0d8.setu(0);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(afterFmvLoadingStage_800bf0ec);
-    }
-
-    //LAB_8002c8f4
   }
 
   @Method(0x8002c904L)
