@@ -36,24 +36,24 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'windows.zip'
+        filename: 'windows-snapshot.zip'
         directory: 'build/libs'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.0
       with:
         delete_release: 'true'
-        tag_name: 'devbuild'
+        tag_name: 'windowsdevbuild'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/windows.zip'
+        artifacts: 'build/libs/windows-snapshot.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
-        name: 'Latest Development Build'
+        name: 'Latest Windows Development Build'
         allowUpdates: 'true'
         prerelease: 'true'
         tag: 'devbuild'
@@ -82,7 +82,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'linux.zip'
+        filename: 'linux-snapshot.zip'
         directory: 'build/libs'
 
     - name: Delete Tag and Release
@@ -96,10 +96,10 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/linux.zip'
+        artifacts: 'build/libs/linux-snapshot.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
-        name: 'Latest Development Build'
+        name: 'Latest Linux Development Build'
         allowUpdates: 'true'
         prerelease: 'true'
-        tag: 'devbuild'
+        tag: 'linuxdevbuild'
