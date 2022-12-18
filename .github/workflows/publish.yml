@@ -60,7 +60,7 @@ jobs:
         
         
   build-linux:
-
+    needs: build-windows
     runs-on: ubuntu-latest
     permissions:
       contents: write
