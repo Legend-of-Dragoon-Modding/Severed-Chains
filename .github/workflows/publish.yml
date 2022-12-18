@@ -36,7 +36,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'snapshot.zip'
+        filename: 'windows.zip'
         directory: 'build/libs'
 
     - name: Delete Tag and Release
@@ -50,7 +50,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/snapshot.zip'
+        artifacts: 'build/libs/windows.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
@@ -82,7 +82,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'snapshot.zip'
+        filename: 'linux.zip'
         directory: 'build/libs'
 
     - name: Delete Tag and Release
@@ -96,7 +96,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/snapshot.zip'
+        artifacts: 'build/libs/linux.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
