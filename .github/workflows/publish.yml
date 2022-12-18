@@ -13,8 +13,53 @@ on:
     - main
 
 jobs:
-  build:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
 
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Build Windows with Gradle
+      run: ./gradlew build -Pos=windows
+    
+    - name: ZIP Windows Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'windows-snapshot.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+        
+    - name: Delete Tag and Release
+      uses: dev-drprasad/delete-tag-and-release@v0.2.0
+      with:
+        delete_release: 'true'
+        tag_name: 'devbuild'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'build/libs/windows-snapshot.zip'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit: ${{ github.sha }}
+        name: 'Latest Development Build'
+        allowUpdates: 'true'
+        prerelease: 'true'
+        tag: 'devbuild'
+        
+  build-linux:
+    needs: build-windows
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -62,18 +107,10 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip*'
 
-    - name: Delete Tag and Release
-      uses: dev-drprasad/delete-tag-and-release@v0.2.0
-      with:
-        delete_release: 'true'
-        tag_name: 'devbuild'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/windows-snapshot.zip,build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
+        artifacts: 'build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
