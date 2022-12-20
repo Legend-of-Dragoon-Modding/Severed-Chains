@@ -25,13 +25,13 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Drgn0_6666Entry;
 import legend.game.types.Drgn0_6666Struct;
 import legend.game.types.ExtendedTmd;
-import legend.game.types.FileEntry08;
 import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
@@ -40,8 +40,6 @@ import legend.game.types.MagicStuff08;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
-import legend.game.types.MrgEntry;
-import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.RunningScript;
@@ -57,13 +55,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.game.SInit.initFileEntries;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
 import static legend.game.SItem.FUN_8010d614;
@@ -103,7 +101,7 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
@@ -140,7 +138,6 @@ import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005._80052ae0;
 import static legend.game.Scus94491BpeSegment_8005._80052b40;
 import static legend.game.Scus94491BpeSegment_8005._80052b68;
 import static legend.game.Scus94491BpeSegment_8005._80052b88;
@@ -152,7 +149,6 @@ import static legend.game.Scus94491BpeSegment_8005._80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
-import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
@@ -2561,11 +2557,6 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  @Method(0x80024654L)
-  public static void FUN_80024654() {
-    initFileEntries(_80052ae0.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
-  }
-
   @Method(0x8002498cL)
   public static void noop_8002498c() {
     // empty
@@ -2587,7 +2578,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final long address, final int fileSize, final int unused) {
+  public static void basicUiTexturesLoaded(final List<byte[]> files, final int unused) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2605,51 +2596,41 @@ public final class Scus94491BpeSegment_8002 {
 
     final int[] indexOffsets = {0, 20, 22, 24, 26};
 
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
     //LAB_80024e88
-    for(int i = 0; i < mrg.count.get(); i++) {
-      final MrgEntry entry = mrg.entries.get(i);
+    for(int i = 0; i < files.size(); i++) {
+      final byte[] data = files.get(i);
 
-      if(entry.size.get() != 0) {
-        final TimHeader tim = parseTimHeader(MEMORY.ref(4, mrg.getFile(i)).offset(0x4L));
+      if(data.length != 0) {
+        final Tim tim = new Tim(data, 0);
         final int rectIndex = indexOffsets[i];
 
-        // Iteration 0 will count as >= 2
-        if(MathHelper.unsign(i - 1, 4) >= 0x2L) {
-          LoadImage(rects[rectIndex], tim.getImageAddress());
+        if(i == 0 || i > 2) {
+          GPU.uploadData(rects[rectIndex], data, tim.getImageData());
         }
 
         //LAB_80024efc
         if(i == 3) {
           //LAB_80024f2c
-          LoadImage(rects[indexOffsets[i] + 1], tim.getClutAddress());
+          GPU.uploadData(rects[indexOffsets[i] + 1], data, tim.getClutData());
         } else if(i < 4) {
           //LAB_80024fac
           for(int s0 = 0; s0 < 4; s0++) {
             final RECT rect = new RECT().set(rects[rectIndex + 1]);
             rect.x.set((short)(rect.x.get() + s0 * 16));
-            LoadImage(rect, tim.getClutAddress() + s0 * 0x80L);
+            GPU.uploadData(rect, data,  tim.getClutData() + s0 * 0x80);
           }
           //LAB_80024f1c
         } else if(i == 4) {
           //LAB_80024f68
-          LoadImage(rects[rectIndex + 1], tim.getClutAddress());
+          GPU.uploadData(rects[rectIndex + 1], data, tim.getClutData());
         }
-
-        //LAB_80025000
       }
-
-      //LAB_80025008
     }
-
-    //LAB_80025018
-    free(mrg.getAddress());
   }
 
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
-    loadDrgnBinFile(0, 6669, 0, Scus94491BpeSegment_8002::basicUiTexturesLoaded, 0, 0x4L);
+    loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded, 0);
     noop_8002498c();
 
     _800bdf00.setu(0xdL);
@@ -5555,11 +5536,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002ac10
     //LAB_8002ac14
     return s0;
-  }
-
-  @Method(0x8002ac24L)
-  public static void FUN_8002ac24() {
-    initFileEntries(_80052c4c.reinterpret(UnboundedArrayRef.of(0x8, FileEntry08::new)));
   }
 
   @Method(0x8002bb38L)

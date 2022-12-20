@@ -6,7 +6,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -28,23 +27,25 @@ import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -71,7 +72,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
@@ -164,7 +164,6 @@ public final class Ttle {
     _80052c44.setu(5);
 
     drgnBinIndex_800bc058.set(1);
-    preloadDrgnBinFiles();
   }
 
   @Method(0x800c7194L)
@@ -384,7 +383,7 @@ public final class Ttle {
 
     vsyncMode_8007a3b8.set(2);
 
-    loadDrgnBinFile(0, 5718, 0, Ttle::menuTexturesMrgLoaded, 0, 0x4L);
+    loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded, 0);
     loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
 
     // Prepare fire animation struct
@@ -400,16 +399,6 @@ public final class Ttle {
     pregameLoadingStage_800bb10c.setu(0x3L);
 
     addInputHandlers();
-  }
-
-  @Method(0x800c7a18L)
-  public static void loadTimImage(final long ptr) {
-    final TimHeader tim = parseTimHeader(MEMORY.ref(4, ptr).offset(0x4L));
-    LoadImage(tim.getImageRect(), tim.getImageAddress());
-
-    if(tim.hasClut()) {
-      LoadImage(tim.getClutRect(), tim.getClutAddress());
-    }
   }
 
   /**
@@ -429,15 +418,12 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final long transferDest, final int fileSize, final int unused) {
-    for(int i = 0; i < MEMORY.ref(4, transferDest).offset(0x4L).get(); i++) {
-      if(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0xcL).get() != 0) {
-        loadTimImage(MEMORY.ref(4, transferDest).offset(MEMORY.ref(4, transferDest).offset(i * 8L).offset(0x8L)).getAddress());
+  public static void menuTexturesMrgLoaded(final List<byte[]> files, final int unused) {
+    for(final byte[] data : files) {
+      if(data.length != 0) {
+        new Tim(data).uploadToGpu();
       }
     }
-
-    //LAB_800c7bd0
-    free(transferDest);
   }
 
   @Method(0x800c7c18L)

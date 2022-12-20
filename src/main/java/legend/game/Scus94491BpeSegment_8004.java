@@ -38,6 +38,8 @@ import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
+
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SPU;
@@ -75,10 +77,7 @@ public final class Scus94491BpeSegment_8004 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
 
-  public static final FileEntry08 ttleOvl_8004db58 = MEMORY.ref(2, 0x8004db58L, FileEntry08::new);
-
   public static final UnboundedArrayRef<FileEntry08> overlays_8004db88 = MEMORY.ref(2, 0x8004db88L, UnboundedArrayRef.of(0x8, FileEntry08::new));
-  public static final FileEntry08 sInitOvl_8004db88 = MEMORY.ref(2, 0x8004db88L, FileEntry08::new);
 
   /**
    * <ol start="0">
@@ -138,15 +137,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
   public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
-
-  public static final FileEntry08 _8004dd80 = MEMORY.ref(2, 0x8004dd80L, FileEntry08::new);
-
-  /**
-   * \SECT\DRGN21.BIN, also gets changed in SInitBin
-   */
-  public static final Value drgn2xFileName_8004dd88 = MEMORY.ref(1, 0x8004dd88L);
-
-  public static final UnboundedArrayRef<FileEntry08> drgnFiles_8004dda0 = MEMORY.ref(2, 0x8004dda0L, UnboundedArrayRef.of(0x8, FileEntry08::new));
 
   /** The current disk number, 1-indexed */
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
@@ -606,7 +596,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
-  public static final FileEntry08 _8004f65c = MEMORY.ref(2, 0x8004f65cL, FileEntry08::new);
+
   public static final ArrayRef<PartySoundPermutation02> partyCombatSoundPermutations_8004f664 = MEMORY.ref(1, 0x8004f664L, ArrayRef.of(PartySoundPermutation02.class, 26, 2, PartySoundPermutation02::new));
   public static final ArrayRef<UnsignedByteRef> singleCharacterCombatSoundFileIndices_8004f698 = MEMORY.ref(1, 0x8004f698L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
 
@@ -3303,7 +3293,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004ab5c
     if(_800c6630.hasCallback_38.get() != 0) {
-      spuDmaCompleteCallback_800c6628.deref().run();
+      spuDmaCompleteCallback_800c6628.run();
     }
   }
 
@@ -3564,12 +3554,12 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b694L)
-  public static void spuDmaTransfer(final long transferDirection, final long dmaAddress, final int dmaSize, final int addressInSoundBuffer) {
+  public static void spuDmaTransfer(final int transferDirection, final byte[] data, final int addressInSoundBuffer) {
     if(transferDirection != 0) {
       throw new RuntimeException("Read from SPU not supported");
     }
 
-    SPU.directWrite(addressInSoundBuffer, dmaAddress, dmaSize);
+    SPU.directWrite(addressInSoundBuffer, data);
   }
 
   /**
@@ -3619,7 +3609,7 @@ public final class Scus94491BpeSegment_8004 {
     spu44._0d.set(0);
     spu44._42.set(60);
     voicePtr_800c4ac4.deref().SPUCNT.set(0xc000); // SPU control - unmute; enable
-    spuDmaTransfer(0, _80011db0.getAddress(), 0x10, 0x1010);
+    spuDmaTransfer(0, MEMORY.getBytes(_80011db0.getAddress(), 0x10), 0x1010);
 
     //LAB_8004b9e8
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -3655,13 +3645,12 @@ public final class Scus94491BpeSegment_8004 {
     }
   }
 
-  //TODO RunnableRef
   @Method(0x8004be7cL)
-  public static void setSpuDmaCompleteCallback(final long runnableRef) {
-    if(runnableRef == 0) {
+  public static void setSpuDmaCompleteCallback(@Nullable final Runnable callback) {
+    if(callback == null) {
       _800c6630.hasCallback_38.set(0);
     } else {
-      spuDmaCompleteCallback_800c6628.set(MEMORY.ref(4, runnableRef).cast(RunnableRef::new));
+      spuDmaCompleteCallback_800c6628 = callback;
       _800c6630.hasCallback_38.set(1);
     }
   }
@@ -3670,12 +3659,7 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSoundPtrArr_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static short loadSshdAndSoundbank(final long soundbankPtr, final SshdFile sshd, final int addressInSoundBuffer) {
-    if((soundbankPtr & 0x3L) != 0) {
-      assert false : "Error";
-      return -1;
-    }
-
+  public static short loadSshdAndSoundbank(final byte[] soundbank, final SshdFile sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000) {
       assert false : "Error";
       return -1;
@@ -3693,7 +3677,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004bfac
     if(sshd.size_04.get() != 0) {
-      spuDmaTransfer(0, soundbankPtr, sshd.size_04.get(), addressInSoundBuffer);
+      spuDmaTransfer(0, soundbank, addressInSoundBuffer);
     }
 
     //LAB_8004bfe0

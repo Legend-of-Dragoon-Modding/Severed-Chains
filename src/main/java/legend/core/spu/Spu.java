@@ -363,16 +363,12 @@ public class Spu implements Runnable, MemoryRef {
   public void directWrite(final int spuRamOffset, final long ramOffset, final int size) {
     LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
     final byte[] data = MEMORY.getBytes(ramOffset, size);
-    this.processDmaWrite(spuRamOffset, data);
-    Scus94491BpeSegment_8004.spuDmaCallback();
+    this.directWrite(spuRamOffset, data);
   }
 
-  private void processDmaWrite(final int spuRamOffset, final byte[] dma) {
+  public void directWrite(final int spuRamOffset, final byte[] dma) {
     System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-
-    if(this.irqAddress > spuRamOffset && this.irqAddress < spuRamOffset + dma.length) {
-      Scus94491BpeSegment_8004.spuDmaCallback();
-    }
+    Scus94491BpeSegment_8004.spuDmaCallback();
   }
 
   public void pushCdBufferSamples(final byte[] decodedXaAdpcm) {

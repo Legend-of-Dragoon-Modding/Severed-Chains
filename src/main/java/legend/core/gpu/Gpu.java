@@ -130,6 +130,34 @@ public class Gpu implements Runnable {
     });
   }
 
+  public void uploadData(final RECT rect, final byte[] data, final int offset) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    MEMORY.waitForLock(() -> {
+      int i = offset;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          final int packed = (int)MathHelper.get(data, i, 2);
+          final int unpacked = MathHelper.colour15To24(packed);
+
+          final int index = y * this.vramWidth + x;
+          this.vram24[index] = unpacked;
+          this.vram15[index] = packed;
+
+          i += 2;
+        }
+      }
+    });
+  }
+
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
     assert address != 0;
 

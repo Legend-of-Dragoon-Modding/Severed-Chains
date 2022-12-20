@@ -184,7 +184,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x800387b8L)
   public static void LoadImage(final RECT rect, final long address) {
-    validateRect("LoadImage",rect);
+    validateRect("LoadImage", rect);
 
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }

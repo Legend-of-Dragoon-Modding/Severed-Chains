@@ -79,13 +79,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
 
-  public static final BoolRef drgnFilesCached_800bbac8 = MEMORY.ref(1, 0x800bbac8L, BoolRef::new);
-
-  public static final Value drgnFileCache_800bbacc = MEMORY.ref(4, 0x800bbaccL);
-
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
-  public static final byte[][] DRGN_CACHE = new byte[3][];
   public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
   public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
   public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
@@ -158,17 +153,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd714 = MEMORY.ref(4, 0x800bd714L);
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
-
-  public static final Pointer<MrgFile> soundMrgPtr_800bd748 = MEMORY.ref(4, 0x800bd748L, Pointer.deferred(4, MrgFile::new));
-
-  public static final Pointer<MrgFile> mrg_800bd758 = MEMORY.ref(4, 0x800bd758L, Pointer.deferred(4, MrgFile::new));
-
-  public static final Pointer<MrgFile> soundMrgPtr_800bd768 = MEMORY.ref(4, 0x800bd768L, Pointer.deferred(4, MrgFile::new));
-  public static final Pointer<MrgFile> soundMrgPtr_800bd76c = MEMORY.ref(4, 0x800bd76cL, Pointer.deferred(4, MrgFile::new));
-
-  public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
-  public static final Value soundbank_800bd778 = MEMORY.ref(4, 0x800bd778L);
-  public static final Value fileCount_800bd77c = MEMORY.ref(4, 0x800bd77cL);
 
   public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
   public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
@@ -304,7 +288,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
 
   public static final Value fmvIndex_800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
-  public static final Value _800bf0e0 = MEMORY.ref(4, 0x800bf0e0L);
 
   public static final Value afterFmvLoadingStage_800bf0ec = MEMORY.ref(4, 0x800bf0ecL);
 }
