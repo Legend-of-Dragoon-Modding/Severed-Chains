@@ -36,6 +36,8 @@ public class Unpacker {
 
   public static Path ROOT = Path.of(".", "files");
 
+  private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
+
   private static final Object IO_LOCK = new Object();
 
   private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new HashMap<>();
@@ -228,12 +230,14 @@ public class Unpacker {
     LOGGER.info("Unpacking %s...", name);
 
     final Map<String, FileData> entries = new HashMap<>();
+    boolean wasTransformed = false;
 
     for(final var entry : transformers.entrySet()) {
       final var descriminator = entry.getKey();
       final var transformer = entry.getValue();
 
       if(descriminator.test(name, data)) {
+        wasTransformed = true;
         transformer.apply(name, data)
           .entrySet().stream()
           .map(e -> transform(e.getKey(), e.getValue()))
@@ -242,7 +246,7 @@ public class Unpacker {
       }
     }
 
-    if(entries.isEmpty()) {
+    if(!wasTransformed) {
       entries.put(name, data);
     }
 
@@ -263,8 +267,12 @@ public class Unpacker {
 
   private static Map<String, FileData> unmrg(final String name, final FileData data) {
     final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
-    final Map<String, FileData> files = new HashMap<>();
 
+    if(archive.getCount() == 0) {
+      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+    }
+
+    final Map<String, FileData> files = new HashMap<>();
     int i = 0;
     for(final FileData entry : archive) {
       files.put(name + '/' + i, entry);
@@ -282,6 +290,11 @@ public class Unpacker {
     final Path path = ROOT.resolve(name);
 
     try {
+      if(data == EMPTY_DIRECTORY_SENTINEL) {
+        Files.createDirectories(path);
+        return;
+      }
+
       Files.createDirectories(path.getParent());
 
       try(final OutputStream writer = Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
