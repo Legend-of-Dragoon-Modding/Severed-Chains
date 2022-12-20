@@ -40,7 +40,7 @@ public class WMapStruct258 implements MemoryRef {
   public final IntRef currentAnimIndex_ac;
   public final IntRef animIndex_b0;
   public final ArrayRef<WMapStruct258Sub40> _b4;
-  public final ArrayRef<UnsignedIntRef> _1b4;
+  public final ArrayRef<Pointer<MrgFile>> _1b4;
   public final ArrayRef<ShortRef> _1c4;
   public final IntRef modelIndex_1e4;
   public final SVECTOR svec_1e8;
@@ -98,7 +98,7 @@ public class WMapStruct258 implements MemoryRef {
     this.currentAnimIndex_ac = ref.offset(4, 0xacL).cast(IntRef::new);
     this.animIndex_b0 = ref.offset(4, 0xb0L).cast(IntRef::new);
     this._b4 = ref.offset(4, 0xb4L).cast(ArrayRef.of(WMapStruct258Sub40.class, 4, 0x40, WMapStruct258Sub40::new));
-    this._1b4 = ref.offset(4, 0x1b4L).cast(ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
+    this._1b4 = ref.offset(4, 0x1b4L).cast(ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
     this._1c4 = ref.offset(2, 0x1c4L).cast(ArrayRef.of(ShortRef.class, 16, 2, ShortRef::new));
     this.modelIndex_1e4 = ref.offset(4, 0x1e4L).cast(IntRef::new);
     this.svec_1e8 = ref.offset(2, 0x1e8L).cast(SVECTOR::new);

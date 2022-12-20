@@ -141,7 +141,4 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
-
-  /** TODO huge structure related to combat */
-  public static final Value _8005f428 = MEMORY.ref(1, 0x8005f428L);
 }

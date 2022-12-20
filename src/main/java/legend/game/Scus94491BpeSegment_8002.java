@@ -248,13 +248,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800201c8L)
   public static void FUN_800201c8(final int index) {
-    final SpuStruct10 struct10 = spu10Arr_800bd610.get(index);
+    final SpuStruct10 struct10 = spu10Arr_800bd610[index];
 
-    if(struct10._00.get() != 0) {
-      FUN_8004d034(struct10.channelIndex_0c.get(), 1);
-      FUN_8004c390(struct10.channelIndex_0c.get());
-      free(struct10.mrg_04.getPointer());
-      struct10._00.set(0);
+    if(struct10._00 != 0) {
+      FUN_8004d034(struct10.channelIndex_0c, 1);
+      FUN_8004c390(struct10.channelIndex_0c);
+      free(struct10.sssq_08.getAddress());
+      struct10.sssq_08 = null;
+      struct10._00 = 0;
     }
 
     //LAB_80020220

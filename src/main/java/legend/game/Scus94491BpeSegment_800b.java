@@ -29,7 +29,6 @@ import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.MrgFile;
 import legend.game.types.Renderable58;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptEffectStruct;
@@ -81,7 +80,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
-  public static final ArrayRef<Pointer<MrgFile>> drgnMrg_800bc060 = MEMORY.ref(4, 0x800bc060L, ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
+
   public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
   public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
   public static final BoolRef scriptsDisabled_800bc0b9 = MEMORY.ref(1, 0x800bc0b9L, BoolRef::new);
@@ -138,7 +137,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
-  public static final ArrayRef<SpuStruct10> spu10Arr_800bd610 = MEMORY.ref(2, 0x800bd610L, ArrayRef.of(SpuStruct10.class, 7, 0x10, SpuStruct10::new));
+  public static final SpuStruct10[] spu10Arr_800bd610 = {new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10()};
   public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
 
   public static final ArrayRef<IntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6e8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
@@ -153,6 +152,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd714 = MEMORY.ref(4, 0x800bd714L);
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
+
+  public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
 
   public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
   public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);

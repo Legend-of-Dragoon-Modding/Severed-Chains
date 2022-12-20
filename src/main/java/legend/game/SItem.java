@@ -38,14 +38,12 @@ import legend.game.types.MenuItemStruct04;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
-import legend.game.types.MrgFile;
 import legend.game.types.PartyPermutation08;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 import legend.game.types.UseItemResponse;
-import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -74,6 +72,7 @@ import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -124,13 +123,13 @@ import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._8005a368;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
@@ -573,58 +572,30 @@ public final class SItem {
     //LAB_800fc104
     final int charCount = charCount_800c677c.get();
 
-    // nodart: this algorithm finds 1 or 2 party permutations that contain models for each character. No more than two permutations will ever be
-    // needed because there is a permutation for every combination of characters with Dart. If Dart is replaced, only one more permutation will
-    // need to be found for the replacement character.
-    int mainPermIndex1 = 0;
-    int mainPermIndex2 = 0;
-    int extraPermIndex1 = -1;
-    int extraPermIndex2 = -1;
+    final int[] files = new int[charCount];
+    final int[] slots = new int[charCount];
 
-    outer:
-    for(int permGroup = 0; permGroup < 9; permGroup++) {
-      for(int perm = 0; perm < 9; perm++) {
-        int foundChars = 0;
-        int notFoundIndex = -1;
-
-        charLoop:
-        for(int charSlot = 0; charSlot < charCount; charSlot++) {
+    charLoop:
+    for(int charSlot = 0; charSlot < charCount; charSlot++) {
+      for(int permGroup = 0; permGroup < 9; permGroup++) {
+        for(int perm = 0; perm < 9; perm++) {
           for(int permSlot = 0; permSlot < 3; permSlot++) {
-            if(partyPermutations_80111d68.get(permGroup).get(perm).charIndices_02.get(permSlot).get() == gameState_800babc8.charIndex_88.get(charSlot).get()) {
-              foundChars++;
+            final PartyPermutation08 permutation = partyPermutations_80111d68.get(permGroup).get(perm);
+
+            if(permutation.charIndices_02.get(permSlot).get() == gameState_800babc8.charIndex_88.get(charSlot).get()) {
+              files[charSlot] = permutation.drgn0File_00.get() - 3537;
+              slots[charSlot] = permSlot;
               continue charLoop;
             }
           }
-
-          notFoundIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-        }
-
-        // Handle finding all 1, 2, or 3 chars
-        if(foundChars == charCount) {
-          mainPermIndex1 = permGroup;
-          mainPermIndex2 = perm;
-          break outer;
-        }
-
-        // Handle finding 2/3 chars
-        if(foundChars == 2) {
-          mainPermIndex1 = permGroup;
-          mainPermIndex2 = perm;
-          extraPermIndex1 = notFoundIndex;
-          extraPermIndex2 = 0;
         }
       }
     }
 
-    //LAB_800fc19c
-    //LAB_800fc1a4
-    int permIndices = mainPermIndex2 << 8 | mainPermIndex1;
-
-    if(extraPermIndex1 != -1) {
-      permIndices |= extraPermIndex1 << 16;
-      permIndices |= extraPermIndex2 << 24;
-    } else {
-      permIndices |= 0xffff_0000;
+    int permIndices = 0;
+    for(int charSlot = 0; charSlot < charCount; charSlot++) {
+      permIndices |= files[charSlot] << charSlot * 8;
+      permIndices |= slots[charSlot] << 24 + charSlot * 2;
     }
 
     loadSupportOverlay(2, getConsumerAddress(SItem.class, "deferLoadPartyPermutationTimMrg", int.class), permIndices);
@@ -634,48 +605,20 @@ public final class SItem {
   }
 
   @Method(0x800fc210L)
-  public static void loadPartyPermutationTmdMrg(final long address, final int fileSize, final int param) {
-    final int permIndex1 = param & 0xff;
-    final int permIndex2 = param >>> 8 & 0xff;
-    final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
-
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
+  public static void loadPartyPermutationTmdMrg(final List<byte[]> files, final int charSlot) {
     //LAB_800fc260
-    long s0 = 0; //TODO this was uninitialized
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final BattleObject27c data = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-      final CombatantStruct1a8 combatant = data.combatant_144.deref();
+    final BattleObject27c data = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
-      //LAB_800fc298
-      for(int permutationSlot = 0; permutationSlot < 3; permutationSlot++) {
-        if(permutation.charIndices_02.get(permutationSlot).get() == data.charIndex_272.get()) {
-          s0 = s0 & 0xffff_ff80L;
-          s0 = s0 | combatant.charSlot_19c.get() & 0x7fL;
-          s0 = s0 & 0xffff_81ffL;
-          s0 = s0 | (data.combatantIndex_26c.get() & 0x3fL) << 9;
-          s0 = s0 & 0xffff_ff7fL;
-          s0 = s0 & 0xffff_feffL;
+    //LAB_800fc298
+    int s0 = combatant.charSlot_19c.get() & 0x7f;
+    s0 = s0 | (data.combatantIndex_26c.get() & 0x3f) << 9;
+    s0 = s0 & 0xffff_feff;
 
-          final long archiveAddress = mrg.getFile(permutationSlot);
-          final byte[] archive = MEMORY.getBytes(archiveAddress, mrg.entries.get(permutationSlot).size.get());
-          final byte[] decompressed = Unpacker.decompress(archive);
-          final long destAddress = _1f8003f4.deref()._9cdc.offset(combatant.charSlot_19c.get() * 0x4L).get();
-          MEMORY.setBytes(destAddress, decompressed);
-          combatantTmdAndAnimLoadedCallback(destAddress, decompressed.length, s0);
-
-          break;
-        }
-
-        //LAB_800fc324
-      }
-
-      //LAB_800fc338
-    }
+    combatantTmdAndAnimLoadedCallback(files, s0);
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
-    deferReallocOrFree(address, 0, 1);
     decrementOverlayCount();
   }
 
@@ -686,13 +629,12 @@ public final class SItem {
 
   @Method(0x800fc3c0L)
   public static void loadEnemyTextures(final int fileIndex) {
-    loadDrgnBinFile(0, fileIndex, 0, SItem::enemyTexturesLoadedCallback, 0, 0x5L);
+    // Example file: 2856
+    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback, 0);
   }
 
   @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final long address, final int fileSize, final int param) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
+  public static void enemyTexturesLoadedCallback(final List<byte[]> files, final int param) {
     final long s2 = _1f8003f4.getPointer(); //TODO
 
     //LAB_800fc434
@@ -704,78 +646,50 @@ public final class SItem {
 
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((MEMORY.ref(2, s2).offset(enemySlot * 0x2L).get() & 0x1ffL) == a2 && mrg.entries.get(enemySlot).size.get() != 0) {
-            loadCombatantTim(i, mrg.getFile(enemySlot));
+          if((MEMORY.ref(2, s2).offset(enemySlot * 0x2L).get() & 0x1ffL) == a2 && files.get(enemySlot).length != 0) {
+            final long tim = mallocTail(files.get(enemySlot).length);
+            MEMORY.setBytes(tim, files.get(enemySlot));
+            loadCombatantTim(i, tim);
+            free(tim);
             break;
           }
-
-          //LAB_800fc4a0
         }
       }
-
-      //LAB_800fc4b8
     }
 
     //LAB_800fc4cc
-    deferReallocOrFree(address, 0, 1);
     decrementOverlayCount();
   }
 
   @Method(0x800fc504L)
   public static void deferLoadPartyPermutationTimMrg(final int permIndices) {
-    final int mainPermIndex1 = permIndices & 0xff;
-    final int mainPermIndex2 = permIndices >>> 8 & 0xff;
-    final int extraPermIndex1 = permIndices >>> 16 & 0xff;
-    final int extraPermIndex2 = permIndices >>> 24 & 0xff;
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int file = permIndices >> charSlot * 8 & 0xff;
+      final int slot = permIndices >> 24 + charSlot * 2 & 0x3;
 
-    final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get(), 0, SItem::loadPartyPermutationTimMrg, mainPermIndex2 << 8 | mainPermIndex1, 0x5L);
-
-    if(extraPermIndex1 != 0xff) {
-      final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get(), 0, SItem::loadPartyPermutationTimMrg, extraPermIndex2 << 8 | extraPermIndex1, 0x5L);
+      loadDrgnDir(0, (3537 + file) + "/" + slot, SItem::loadPartyPermutationTimMrg, charSlot);
     }
   }
 
   @Method(0x800fc548L)
-  public static void loadPartyPermutationTimMrg(final long address, final int fileSize, final int param) {
-    final int permIndex1 = param & 0xff;
-    final int permIndex2 = param >>> 8 & 0xff;
-    final PartyPermutation08 permutation = partyPermutations_80111d68.get(permIndex1).get(permIndex2);
+  public static void loadPartyPermutationTimMrg(final List<byte[]> files, final int charSlot) {
+    final long tim = mallocTail(files.get(0).length);
+    MEMORY.setBytes(tim, files.get(0));
 
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    loadCombatantTim(bobj.combatantIndex_26c.get(), tim);
 
-    //LAB_800fc590
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-
-      //LAB_800fc5b4
-      for(int permutationSlot = 0; permutationSlot < 3; permutationSlot++) {
-        if(permutation.charIndices_02.get(permutationSlot).get() == bobj.charIndex_272.get()) {
-          loadCombatantTim(bobj.combatantIndex_26c.get(), mrg.getFile(permutationSlot, MrgFile::new).getFile(0));
-          break;
-        }
-      }
-    }
-
-    //LAB_800fc614
-    deferReallocOrFree(address, 0, 1);
+    free(tim);
     decrementOverlayCount();
   }
 
   @Method(0x800fc654L)
   public static void deferLoadPartyPermutationTmdMrg(final int permIndices) {
-    final int mainPermIndex1 = permIndices & 0xff;
-    final int mainPermIndex2 = permIndices >>> 8 & 0xff;
-    final int extraPermIndex1 = permIndices >>> 16 & 0xff;
-    final int extraPermIndex2 = permIndices >>> 24 & 0xff;
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int file = permIndices >> charSlot * 8 & 0xff;
+      final int slot = permIndices >> 24 + charSlot * 2 & 0x3;
 
-    final PartyPermutation08 mainPerm = partyPermutations_80111d68.get(mainPermIndex1).get(mainPermIndex2);
-    loadDrgnBinFile(0, mainPerm.drgn0File_00.get() + 1, 0, SItem::loadPartyPermutationTmdMrg, mainPermIndex2 << 8 | mainPermIndex1, 0x4L);
-
-    if(extraPermIndex1 != 0xff) {
-      final PartyPermutation08 extraPerm = partyPermutations_80111d68.get(extraPermIndex1).get(extraPermIndex2);
-      loadDrgnBinFile(0, extraPerm.drgn0File_00.get() + 1, 0, SItem::loadPartyPermutationTmdMrg, extraPermIndex2 << 8 | extraPermIndex1, 0x4L);
+      loadDrgnDir(0, (3537 + file + 1) + "/" + slot, SItem::loadPartyPermutationTmdMrg, charSlot);
     }
   }
 

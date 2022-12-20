@@ -68,6 +68,7 @@ public class Unpacker {
         final List<byte[]> files = new ArrayList<>();
 
         StreamSupport.stream(ds.spliterator(), false)
+          .filter(Files::isRegularFile)
           .sorted((path1, path2) -> {
             final String filename1 = path1.getFileName().toString();
             final String filename2 = path2.getFileName().toString();
@@ -96,6 +97,12 @@ public class Unpacker {
   public static boolean exists(final String name) {
     synchronized(IO_LOCK) {
       return Files.exists(ROOT.resolve(fixPath(name)));
+    }
+  }
+
+  public static boolean isDirectory(final String name) {
+    synchronized(IO_LOCK) {
+      return Files.isDirectory(ROOT.resolve(fixPath(name)));
     }
   }
 
@@ -251,7 +258,7 @@ public class Unpacker {
   }
 
   private static boolean mrgDescriminator(final String name, final FileData data) {
-    return data.size() >= 4 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
   }
 
   private static Map<String, FileData> unmrg(final String name, final FileData data) {

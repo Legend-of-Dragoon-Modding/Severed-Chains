@@ -7,7 +7,6 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.TmdAnimationFile;
 
@@ -18,7 +17,6 @@ public class CombatantStruct1a8_c implements MemoryRef {
   public final Type0 type0;
   public final AnimType type1_2;
   public final IndexType type3;
-  public final BpeType type4_5;
   public final TimType type6;
 
   public final ShortRef BttlStruct08_index_04;
@@ -45,7 +43,6 @@ public class CombatantStruct1a8_c implements MemoryRef {
     this.type0 = new Type0();
     this.type1_2 = new AnimType();
     this.type3 = new IndexType();
-    this.type4_5 = new BpeType();
     this.type6 = new TimType();
 
     this.BttlStruct08_index_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
@@ -82,14 +79,6 @@ public class CombatantStruct1a8_c implements MemoryRef {
 
     private IndexType() {
       this.index_00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(IntRef::new);
-    }
-  }
-
-  public class BpeType {
-    public final UnsignedIntRef bpe_00;
-
-    private BpeType() {
-      this.bpe_00 = CombatantStruct1a8_c.this.ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     }
   }
 

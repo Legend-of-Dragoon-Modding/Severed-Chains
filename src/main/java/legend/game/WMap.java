@@ -25,6 +25,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
@@ -53,6 +54,8 @@ import legend.game.types.WeirdTimHeader;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -64,6 +67,7 @@ import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -2862,21 +2866,17 @@ public class WMap {
   }
 
   @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
-  public static void FUN_800d5858(final long address, final int size, final int param) {
+  public static void timsLoaded(final List<byte[]> files, final int param) {
     //LAB_800d5874
-    for(int i = 0; i < MEMORY.ref(4, address).offset(0x4L).get(); i++) {
+    for(final byte[] file : files) {
       //LAB_800d5898
-      if(MEMORY.ref(4, address).offset(i * 0x8L).offset(0xcL).get() != 0) {
+      if(file.length != 0) {
         //LAB_800d58c8
-        FUN_800d5d98(address + MEMORY.ref(4, address).offset((i + 1) * 0x8L).get());
+        new Tim(file).uploadToGpu();
       }
-
-      //LAB_800d5920
     }
 
     //LAB_800d5938
-    free(address);
-
     filesLoadedFlags_800c66b8.oru(param);
 
     //LAB_800d5970
@@ -2894,8 +2894,9 @@ public class WMap {
   }
 
   @Method(0x800d5a30L)
-  public static void FUN_800d5a30(final long address, final int size, final int whichFile) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+  public static void FUN_800d5a30(final List<byte[]> files, final int whichFile) {
+    final MrgFile mrg = MrgFile.alloc(files, Math.min(files.size(), 16));
+    struct258_800c66a8.deref()._1b4.get(whichFile).set(mrg);
 
     //LAB_800d5a48
     for(int i = 0; i < mrg.count.get() && i < 16; i++) {
@@ -2911,8 +2912,6 @@ public class WMap {
     }
 
     //LAB_800d5b44
-    struct258_800c66a8.deref()._1b4.get(whichFile).set(mrg.getAddress());
-
     if(whichFile == 0) {
       //LAB_800d5bb8
       filesLoadedFlags_800c66b8.oru(0x10L);
@@ -3142,7 +3141,7 @@ public class WMap {
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
     filesLoadedFlags_800c66b8.and(0xffff_efffL);
-    loadDrgnBinFile(0, 5695, 0, WMap::FUN_800d5858, 0x1_1000, 0x4L);
+    loadDrgnDir(0, 5695, WMap::timsLoaded, 0x1_1000);
     struct258_800c66a8.deref()._20.set((short)0);
   }
 
@@ -3564,7 +3563,7 @@ public class WMap {
   @Method(0x800d8e4cL)
   public static void FUN_800d8e4c(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
-    loadDrgnBinFile(0, 5697 + index, 0, WMap::FUN_800d5858, 2, 0x4L);
+    loadDrgnDir(0, 5697 + index, WMap::timsLoaded, 2);
     loadDrgnBinFile(0, 5705 + index, 0, WMap::loadTmdCallback, 0, 0x2L);
   }
 
@@ -4632,13 +4631,13 @@ public class WMap {
   public static void FUN_800dfa70() {
     filesLoadedFlags_800c66b8.and(0xffff_fd57L);
 
-    loadDrgnBinFile(0, 5713, 0, WMap::FUN_800d5858, 0x2a8, 0x4L);
+    loadDrgnDir(0, 5713, WMap::timsLoaded, 0x2a8);
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.deref().models_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), Model124::new));
-      loadDrgnBinFile(0, 5714 + i, 0, WMap::FUN_800d5a30, i, 2);
+      loadDrgnDir(0, 5714 + i, WMap::FUN_800d5a30, i);
       struct258_800c66a8.deref().models_0c.get(i).deref().colourMap_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
