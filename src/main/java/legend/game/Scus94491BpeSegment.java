@@ -3971,7 +3971,9 @@ public final class Scus94491BpeSegment {
 
       //LAB_800197c0
       for(int i = 0; i < 3; i++) {
-        free(_800bc980.offset(i * 0xcL).offset(0x4L).get());
+        if(gameState_800babc8.charIndex_88.get(i).get() != -1) {
+          free(_800bc980.offset(i * 0xcL).offset(0x4L).get());
+        }
       }
 
       if(melbuSoundsLoaded_800bd780.get()) {
@@ -4015,9 +4017,12 @@ public final class Scus94491BpeSegment {
         //LAB_800198e8
         for(int charSlot = 0; charSlot < 3; charSlot++) {
           final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-          _800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).setu(charId);
-          _800bc980.offset(charSlot * 0xcL).offset(4, 0x4L).setu(mallocTail(_8004f6a4.offset(_800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).get() * 0x4L).get()));
-          _800bc980.offset(charSlot * 0xcL).offset(4, 0x8L).setu(_8004f6a4.offset(_800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).get() * 0x4L));
+
+          if(charId != -1) {
+            _800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).setu(charId);
+            _800bc980.offset(charSlot * 0xcL).offset(4, 0x4L).setu(mallocTail(_8004f6a4.offset(_800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).get() * 0x4L).get()));
+            _800bc980.offset(charSlot * 0xcL).offset(4, 0x8L).setu(_8004f6a4.offset(_800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).get() * 0x4L));
+          }
         }
 
         if(!melbuSoundsLoaded_800bd780.get() && encounterId_800bb0f8.get() == 443) { // Melbu
@@ -4430,7 +4435,10 @@ public final class Scus94491BpeSegment {
 
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-      fileIndices[charSlot] = singleCharacterCombatSoundFileIndices_8004f698.get(charId).get();
+
+      if(charId != -1) {
+        fileIndices[charSlot] = singleCharacterCombatSoundFileIndices_8004f698.get(charId).get();
+      }
     }
 
     return fileIndices;
@@ -5578,8 +5586,10 @@ public final class Scus94491BpeSegment {
     // Player combat sounds for current party composition (example file: 764)
     final int[] soundFileIndices = getPlayerCombatSoundFileIndices();
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      for(int charSlot1 = 0; charSlot1 < 3; charSlot1++) {
-        loadDrgnDir(0, (int)_80050104.offset(soundFileIndices[charSlot] * 0x4L).get() + "/" + charSlot1, Scus94491BpeSegment::FUN_8001cae0, charSlot);
+      if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
+        for(int charSlot1 = 0; charSlot1 < 3; charSlot1++) {
+          loadDrgnDir(0, (int)_80050104.offset(soundFileIndices[charSlot] * 0x4L).get() + "/" + charSlot1, Scus94491BpeSegment::FUN_8001cae0, charSlot);
+        }
       }
     }
 
