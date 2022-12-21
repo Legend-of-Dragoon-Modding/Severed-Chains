@@ -6,7 +6,6 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.BVEC4;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORD2PARAM;
@@ -23,7 +22,6 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -61,6 +59,7 @@ import legend.game.combat.types.FloatingNumberC4Sub20;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -74,12 +73,14 @@ import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
@@ -97,7 +98,8 @@ import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
@@ -144,7 +146,6 @@ import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
@@ -153,15 +154,14 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.drgnMrg_800bc060;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
@@ -2708,7 +2708,7 @@ public final class Bttl_800e {
       for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
         final CombatantStruct1a8 v1 = getCombatant(i);
 
-        if((v1.flags_19e.get() & 0x1L) != 0 && v1._04.get() != 0 && v1.charIndex_1a2.get() >= 0) {
+        if((v1.flags_19e.get() & 0x1L) != 0 && !v1.mrg_04.isNull() && v1.charIndex_1a2.get() >= 0) {
           FUN_800ca418(i);
         }
 
@@ -2767,8 +2767,8 @@ public final class Bttl_800e {
     //LAB_800e6738
     for(int i = 0; _800fb040.offset(i).get() != 0xff; i++) {
       if(_800fb040.offset(i).get() == s3) {
-        if(drgnMrg_800bc060.get(0).deref().entries.get(4115 + i).size.get() != 0) {
-          loadDrgnBinFile(0, 4115 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+        if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
+          loadDrgnDir(0, 4115 + i, Bttl_800e::FUN_800e929c, 0);
         }
       }
 
@@ -2776,8 +2776,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e67b0
-    loadDrgnBinFile(0, 4139 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-    loadDrgnBinFile(0, 4140 + s3 * 2, 0, Bttl_800e::loadDeffPackage, battle24.scriptIndex_18.get(), 0x2L);
+    loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c, 0);
+    loadDrgnDir(0, 4140 + s3 * 2, Bttl_800e::loadDeffPackage, battle24.scriptIndex_18.get());
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2790,8 +2790,8 @@ public final class Bttl_800e {
     final BattleStruct24_2 t0 = _800c6938.deref();
     t0.script_14.clear();
     t0._00.or(0x200_0000L);
-    loadDrgnBinFile(0, 4307 + s0, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-    loadDrgnBinFile(0, 4308 + s0, 0, Bttl_800e::loadDeffPackage, t0.scriptIndex_18.get(), 0x2L);
+    loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c, 0);
+    loadDrgnDir(0, 4308 + s0, Bttl_800e::loadDeffPackage, t0.scriptIndex_18.get());
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2815,8 +2815,8 @@ public final class Bttl_800e {
     v1._00.or(0x300_0000L);
 
     if(sp20 < 256) {
-      loadDrgnBinFile(0, 4433 + sp20 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-      loadDrgnBinFile(0, 4434 + sp20 * 2, 0, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get(), 0x2L);
+      loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c, 0);
+      loadDrgnDir(0, 4434 + sp20 * 2, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get());
     } else {
       //LAB_800e6a30
       final long a0_0 = sp20 >>> 4;
@@ -2827,8 +2827,8 @@ public final class Bttl_800e {
 
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      loadDrgnBinFile(0, 4945 + fileIndex, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-      loadDrgnBinFile(0, 4946 + fileIndex, 0, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get(), 0x2L);
+      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c, 0);
+      loadDrgnDir(0, 4946 + fileIndex, Bttl_800e::loadDeffPackage, v1.scriptIndex_18.get());
     }
 
     //LAB_800e6a9c
@@ -2850,8 +2850,8 @@ public final class Bttl_800e {
     //LAB_800e6b5c
     for(int i = 0; _800fb05c.offset(i).get() != 0xff; i++) {
       if(_800fb05c.offset(i).get() == s3) {
-        if(drgnMrg_800bc060.get(0).deref().entries.get(5505 + i).size.get() != 0) {
-          loadDrgnBinFile(0, 5505 + i, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
+        if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
+          loadDrgnDir(0, 5505 + i, Bttl_800e::FUN_800e929c, 0);
         }
       }
 
@@ -2859,23 +2859,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6bd4
-    if((v1 & 0x1_0000L) != 0) {
-      final int fileSize1 = drgnMrg_800bc060.get(0).deref().entries.get(5511 + s3 * 2).size.get();
-      final int fileSize2 = drgnMrg_800bc060.get(0).deref().entries.get(5512 + s3 * 2).size.get();
-
-      if(fileSize1 < fileSize2) {
-        //LAB_800e6ca0
-        loadDrgnBinFile(0, 5511 + s3 * 2, mallocTail(fileSize2 + 0x7ff & 0xffff_f800), Bttl_800e::FUN_800e929c, 1, 0x4L);
-      } else {
-        loadDrgnBinFile(0, 5511 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-      }
-
-      loadDrgnBinFile(0, 5512 + s3 * 2, 0, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18.get(), 0x4L);
-    } else {
-      //LAB_800e6d1c
-      loadDrgnBinFile(0, 5511 + s3 * 2, 0, Bttl_800e::FUN_800e929c, 0, 0x4L);
-      loadDrgnBinFile(0, 5512 + s3 * 2, 0, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18.get(), 0x2L);
-    }
+    loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c, 0);
+    loadDrgnDir(0, 5512 + s3 * 2, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18.get());
 
     //LAB_800e6d7c
     _800fafe8.setu(0x1L);
@@ -3019,8 +3004,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final long address, final int fileSize, final int scriptIndex) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+  public static void loadDeffPackage(final List<byte[]> files, final int scriptIndex) {
+    final MrgFile mrg = MrgFile.alloc(files);
 
     struct7cc_800c693c.deref().deffPackage_5a8.set(mrg);
 
@@ -3899,36 +3884,13 @@ public final class Bttl_800e {
     //LAB_800e9278
   }
 
-  @Method(0x800e9288L)
-  public static <T extends MemoryRef> void FUN_800e9288(final T obj, final long a1, @Nullable final Pointer<T> ptr) {
-    if(ptr != null) {
-      ptr.set(obj);
-    }
-  }
-
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final long address, final int fileSize, final int param) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
+  public static void FUN_800e929c(final List<byte[]> files, final int param) {
     //LAB_800e92d4
-    for(int i = 0; i < mrg.count.get(); i++) {
-      if(mrg.entries.get(i).size.get() != 0) {
-        final TimHeader tim = parseTimHeader(MEMORY.ref(4, mrg.getFile(i) + 0x4L)); //TODO
-        LoadImage(tim.getImageRect(), tim.getImageAddress());
-
-        if((tim.flags.get() & 0x8L) != 0) {
-          LoadImage(tim.getClutRect(), tim.getClutAddress());
-        }
-
-        //LAB_800e9324
+    for(final byte[] file : files) {
+      if(file.length != 0) {
+        new Tim(file).uploadToGpu();
       }
-
-      //LAB_800e932c
-    }
-
-    //LAB_800e933c
-    if((param & 1) == 0) {
-      free(address);
     }
 
     //LAB_800e9354
@@ -4532,36 +4494,6 @@ public final class Bttl_800e {
     struct7cc.deff_5ac.clear();
   }
 
-  @Method(0x800eaa24L)
-  public static void loadBattleHudDeff(final long address, final long fileSize, final long param) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
-    int size = mrg.entries.get(2).size.get();
-    final DeffFile deff = MEMORY.ref(4, mallocTail(size), DeffFile::new);
-
-    //LAB_800eaa74
-    //LAB_800eaa90
-    memcpy(deff.getAddress(), mrg.getFile(2), size);
-    FUN_800ea7d0(deff, size, 0);
-
-    size = mrg.entries.get(3).size.get();
-    final MrgFile mrg1 = MEMORY.ref(4, mallocTail(size), MrgFile::new);
-
-    //LAB_800eaad4
-    //LAB_800eaaf0
-    memcpy(mrg1.getAddress(), mrg.getFile(3), size);
-    FUN_800e929c(mrg1.getAddress(), size, 0);
-
-    size = mrg.entries.get(1).size.get();
-    final MrgFile mrg2 = MEMORY.ref(4, mallocTail(size), MrgFile::new);
-
-    //LAB_800eab34
-    //LAB_800eab50
-    memcpy(mrg2.getAddress(), mrg.getFile(1), size);
-    FUN_800e9288(mrg2, size, struct7cc_800c693c.deref().mrg_2c);
-    free(address);
-  }
-
   @Method(0x800eab8cL)
   public static void FUN_800eab8c() {
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
@@ -4613,7 +4545,15 @@ public final class Bttl_800e {
 
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
-    loadDrgnBinFile(0, 4114, 0, Bttl_800e::loadBattleHudDeff, struct7cc_800c693c.deref().mrg_2c.getAddress(), 0x4L);
+    loadDrgnFiles(0, (files, param) -> {
+      final int size = files.get(0).length;
+      final DeffFile deff = MEMORY.ref(4, mallocTail(size), DeffFile::new);
+      MEMORY.setBytes(deff.getAddress(), files.get(0));
+      FUN_800ea7d0(deff, size, 0);
+    }, 0, "4114/2");
+
+    loadDrgnDir(0, "4114/3", (files, param) -> FUN_800e929c(files, 0), 0);
+    loadDrgnDir(0, "4114/1", (files, param) -> struct7cc_800c693c.deref().mrg_2c.set(MrgFile.alloc(files)), 0);
   }
 
   @Method(0x800ead44L)
@@ -5642,7 +5582,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void battleHudTexturesLoadedCallback(final long address, final int fileSize, final int param) {
+  public static void battleHudTexturesLoadedCallback(final List<byte[]> files, final int param) {
     final short[] clutX = new short[6];
     for(int i = 0; i < 4; i++) {
       clutX[i] = _800c6e60.get(i).get();
@@ -5651,15 +5591,13 @@ public final class Bttl_800e {
     clutX[4] = 0;
     clutX[5] = 16;
 
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
     //LAB_800ee9c0
-    for(int fileIndex = 0; fileIndex < mrg.count.get(); fileIndex++) {
-      if(mrg.entries.get(fileIndex).size.get() != 0) {
-        final TimHeader sp0x10 = parseTimHeader(MEMORY.ref(4, mrg.getFile(fileIndex) + 0x4L)); //TODO
+    for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
+      if(files.get(fileIndex).length != 0) {
+        final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
-          LoadImage(new RECT().set((short)704, (short)256, (short)64, (short)256), sp0x10.getImageAddress());
+          GPU.uploadData(new RECT().set((short)704, (short)256, (short)64, (short)256), tim.getData(), tim.getImageData());
         }
 
         //LAB_800eea20
@@ -5676,13 +5614,12 @@ public final class Bttl_800e {
         //LAB_800eea50
         sp0x30.w.set(_800c6e48.get(fileIndex).getX());
         sp0x30.h.set(_800c6e48.get(fileIndex).getY());
-        LoadImage(sp0x30, sp0x10.getClutAddress());
+        GPU.uploadData(sp0x30, tim.getData(), tim.getClutData());
         _800c6cf4.addu(0x1L);
       }
     }
 
     //LAB_800eeaac
-    free(address);
   }
 
   @Method(0x800eeaecL)

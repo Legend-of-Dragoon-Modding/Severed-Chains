@@ -16,13 +16,8 @@ public class BattleStruct18cb0 implements MemoryRef {
 
   public final BattleStage stage_963c;
   public final McqHeader stageMcq_9cb0;
-  public final Value _9cdc;
-  public final Value _9ce0;
-  public final Value _9ce4;
-  public final Value _9ce8;
 
-  //TODO unknown size
-  public final Value _d4b0;
+  public final Value _9ce8;
 
   public BattleStruct18cb0(final Value ref) {
     this.ref = ref;
@@ -33,12 +28,8 @@ public class BattleStruct18cb0 implements MemoryRef {
     this.stage_963c = ref.offset(4, 0x963cL).cast(BattleStage::new);
 
     this.stageMcq_9cb0 = ref.offset(4, 0x9cb0L).cast(McqHeader::new);
-    this._9cdc = ref.offset(4, 0x9cdcL);
-    this._9ce0 = ref.offset(4, 0x9ce0L);
-    this._9ce4 = ref.offset(4, 0x9ce4L);
-    this._9ce8 = ref.offset(4, 0x9ce8L);
 
-    this._d4b0 = ref.offset(4, 0xd4b0L);
+    this._9ce8 = ref.offset(4, 0x9ce8L);
   }
 
   @Override

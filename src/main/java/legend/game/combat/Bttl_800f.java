@@ -37,6 +37,7 @@ import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -3416,7 +3417,7 @@ public final class Bttl_800f {
 
   @Method(0x800f84c8L)
   public static void loadBattleHudTextures() {
-    loadDrgnBinFile(0, 4113, 0, Bttl_800e::battleHudTexturesLoadedCallback, 0, 0x4L);
+    loadDrgnDir(0, 4113, Bttl_800e::battleHudTexturesLoadedCallback, 0);
   }
 
   @Method(0x800f8568L)

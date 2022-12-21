@@ -1,14 +1,47 @@
 package legend.game.types;
 
+import legend.core.MathHelper;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 
+import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.MEMORY;
+import static legend.game.Scus94491BpeSegment.mallocTail;
+
 public class MrgFile implements MemoryRef {
+  public static MrgFile alloc(final List<byte[]> files) {
+    return alloc(files, files.size());
+  }
+
+  public static MrgFile alloc(final List<byte[]> files, final int fileCount) {
+    final int headerSize = 8 + fileCount * 8;
+
+    int totalSize = headerSize;
+    for(int i = 0; i < fileCount; i++) {
+      final byte[] file = files.get(i);
+      totalSize += MathHelper.roundUp(file.length, 4);
+    }
+
+    final MrgFile mrg = MEMORY.ref(4, mallocTail(totalSize), MrgFile::new);
+    mrg.count.set(fileCount);
+
+    int offset = headerSize;
+    for(int i = 0; i < fileCount; i++) {
+      final byte[] file = files.get(i);
+      mrg.entries.get(i).offset.set(offset);
+      mrg.entries.get(i).size.set(file.length);
+      MEMORY.setBytes(mrg.getFile(i), file);
+      offset += MathHelper.roundUp(file.length, 4);
+    }
+
+    return mrg;
+  }
+
   private final Value ref;
 
   public final UnsignedIntRef magic;

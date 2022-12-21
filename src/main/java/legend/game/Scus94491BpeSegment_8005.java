@@ -52,8 +52,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<Pointer<LodString>> spells_80052734 = MEMORY.ref(4, 0x80052734L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
-  public static final FileEntry08 _80052ae0 = MEMORY.ref(2, 0x80052ae0L, FileEntry08::new);
-
   public static final ArrayRef<Pointer<LodString>> _80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(LodString.class), 10, 4, Pointer.deferred(2, LodString::new)));
 
   public static final Value _80052b68 = MEMORY.ref(2, 0x80052ba8L);
@@ -88,8 +86,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<Pointer<UnboundedArrayRef<FileEntry08>>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(FileEntry08.class)), 5, 0x4, Pointer.deferred(4, UnboundedArrayRef.of(0x8, FileEntry08::new))));
-
-  public static final FileEntry08 _80052db0 = MEMORY.ref(2, 0x80052db0L, FileEntry08::new);
 
   public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
 
@@ -145,7 +141,4 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
-
-  /** TODO huge structure related to combat */
-  public static final Value _8005f428 = MEMORY.ref(1, 0x8005f428L);
 }

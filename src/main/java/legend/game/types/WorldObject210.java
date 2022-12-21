@@ -5,7 +5,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -15,14 +14,14 @@ public class WorldObject210 implements MemoryRef {
   private final Value ref;
 
   public final Model124 model_00;
-  public final Pointer<MrgFile> mrg_124;
+
   public final ShortRef s_128;
   public final UnsignedShortRef us_12a;
   public final UnsignedShortRef us_12c;
-  public final UnsignedShortRef mrgAnimGroup_12e;
+  public final UnsignedShortRef wobjIndex_12e;
   /** The script index of this wobj */
   public final UnsignedShortRef wobjIndex_130;
-  public final UnsignedShortRef mrgAnimGroupIndex_132;
+  public final UnsignedShortRef animIndex_132;
   public final ShortRef s_134;
 
   public final VECTOR vec_138;
@@ -96,13 +95,13 @@ public class WorldObject210 implements MemoryRef {
     this.ref = ref;
 
     this.model_00 = ref.offset(4, 0x000L).cast(Model124::new);
-    this.mrg_124 = ref.offset(4, 0x124L).cast(Pointer.deferred(4, MrgFile::new));
+
     this.s_128 = ref.offset(2, 0x128L).cast(ShortRef::new);
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
-    this.mrgAnimGroup_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
+    this.wobjIndex_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
     this.wobjIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
-    this.mrgAnimGroupIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
+    this.animIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.s_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
 
     this.vec_138 = ref.offset(4, 0x138L).cast(VECTOR::new);

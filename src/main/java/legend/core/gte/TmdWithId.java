@@ -1,6 +1,5 @@
 package legend.core.gte;
 
-import legend.core.gte.Tmd;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;

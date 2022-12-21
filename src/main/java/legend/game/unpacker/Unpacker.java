@@ -8,17 +8,23 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.stream.StreamSupport;
 
 public class Unpacker {
   static {
@@ -30,11 +36,14 @@ public class Unpacker {
 
   public static Path ROOT = Path.of(".", "files");
 
+  private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
+
   private static final Object IO_LOCK = new Object();
 
-  private static final Map<BiPredicate<String, byte[]>, BiFunction<String, byte[], Map<String, byte[]>>> transformers = new HashMap<>();
+  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new HashMap<>();
   static {
     transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
+    transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -53,9 +62,49 @@ public class Unpacker {
     }
   }
 
+  public static List<byte[]> loadDirectory(final String name) {
+    LOGGER.info("Loading directory %s", name);
+
+    synchronized(IO_LOCK) {
+      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
+        final List<byte[]> files = new ArrayList<>();
+
+        StreamSupport.stream(ds.spliterator(), false)
+          .filter(Files::isRegularFile)
+          .sorted((path1, path2) -> {
+            final String filename1 = path1.getFileName().toString();
+            final String filename2 = path2.getFileName().toString();
+
+            try {
+              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
+            } catch(final NumberFormatException ignored) { }
+
+            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
+          })
+          .forEach(child -> {
+            try {
+              files.add(Files.readAllBytes(child));
+            } catch(final IOException e) {
+              throw new RuntimeException("Failed to load directory " + name, e);
+            }
+          });
+
+        return files;
+      } catch(final IOException e) {
+        throw new RuntimeException("Failed to load directory " + name, e);
+      }
+    }
+  }
+
   public static boolean exists(final String name) {
     synchronized(IO_LOCK) {
       return Files.exists(ROOT.resolve(fixPath(name)));
+    }
+  }
+
+  public static boolean isDirectory(final String name) {
+    synchronized(IO_LOCK) {
+      return Files.isDirectory(ROOT.resolve(fixPath(name)));
     }
   }
 
@@ -92,7 +141,7 @@ public class Unpacker {
           .stream()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
-          .map((Tuple<String, byte[]> e) -> transform(e.a(), e.b()))
+          .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
           .forEach(Unpacker::writeFiles);
       } catch(final IOException e) {
         throw new UnpackerException(e);
@@ -171,74 +220,111 @@ public class Unpacker {
     }
   }
 
-  private static Tuple<String, byte[]> readFile(final Map.Entry<String, DirectoryEntry> e) {
+  private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
     final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
-    return new Tuple<>(e.getKey(), fileData);
+    return new Tuple<>(e.getKey(), new FileData(fileData));
   }
 
-  private static Map<String, byte[]> transform(final String name, final byte[] data) {
-    final Map<String, byte[]> entries = new HashMap<>();
+  private static Map<String, FileData> transform(final String name, final FileData data) {
+    LOGGER.info("Unpacking %s...", name);
+
+    final Map<String, FileData> entries = new HashMap<>();
+    boolean wasTransformed = false;
 
     for(final var entry : transformers.entrySet()) {
       final var descriminator = entry.getKey();
       final var transformer = entry.getValue();
 
       if(descriminator.test(name, data)) {
+        wasTransformed = true;
         transformer.apply(name, data)
           .entrySet().stream()
           .map(e -> transform(e.getKey(), e.getValue()))
           .forEach(entries::putAll);
         break;
       }
+    }
 
+    if(!wasTransformed) {
       entries.put(name, data);
     }
 
     return entries;
   }
 
-  private static boolean decompressDescriminator(final String name, final byte[] data) {
-    return MathHelper.get(data, 4, 4) == 0x1a455042;
+  private static boolean decompressDescriminator(final String name, final FileData data) {
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
-  private static Map<String, byte[]> decompress(final String name, final byte[] data) {
-    return Map.of(name, Unpacker.decompress(data));
+  private static Map<String, FileData> decompress(final String name, final FileData data) {
+    return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
   }
 
-  private static void writeFiles(final Map<String, byte[]> files) {
+  private static boolean mrgDescriminator(final String name, final FileData data) {
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
+  }
+
+  private static Map<String, FileData> unmrg(final String name, final FileData data) {
+    final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
+
+    if(archive.getCount() == 0) {
+      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+    }
+
+    final Map<String, FileData> files = new HashMap<>();
+    int i = 0;
+    for(final FileData entry : archive) {
+      files.put(name + '/' + i, entry);
+      i++;
+    }
+
+    return files;
+  }
+
+  private static void writeFiles(final Map<String, FileData> files) {
     files.forEach(Unpacker::writeFile);
   }
 
-  private static void writeFile(final String name, final byte[] data) {
+  private static void writeFile(final String name, final FileData data) {
     final Path path = ROOT.resolve(name);
 
-    LOGGER.info("Unpacking %s...", name);
-
     try {
+      if(data == EMPTY_DIRECTORY_SENTINEL) {
+        Files.createDirectories(path);
+        return;
+      }
+
       Files.createDirectories(path.getParent());
-      Files.write(path, data);
+
+      try(final OutputStream writer = Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        writer.write(data.data(), data.offset(), data.size());
+      }
     } catch(final IOException ex) {
       throw new UnpackerException(ex);
     }
   }
 
   public static byte[] decompress(final byte[] archive) {
+    return decompress(archive, 0);
+  }
+
+  public static byte[] decompress(final byte[] archive, final int offset) {
     // Check BPE header - this check is in the BPE block method but not the main EXE method
-    if(MathHelper.get(archive, 4, 4) != 0x1a455042L) {
+    if(MathHelper.get(archive, offset + 4, 4) != 0x1a455042L) {
       throw new RuntimeException("Attempted to decompress non-BPE segment");
     }
 
     LOGGER.info("Decompressing BPE segment");
 
-    final byte[] dest = new byte[(int)MathHelper.get(archive, 0, 4)];
+    final byte[] dest = new byte[(int)MathHelper.get(archive, offset, 4)];
 
     final Deque<Byte> unresolved_byte_list = new LinkedList<>();
     final byte[] dict_leftch = new byte[0x100];
     final byte[] dict_rightch = new byte[0x100];
 
     int totalSize = 0;
-    int archiveOffset = 8;
+    int archiveOffset = offset + 8;
     int destinationOffset = 0;
 
     // Each block is preceded by 4-byte int up to 0x800 giving the number

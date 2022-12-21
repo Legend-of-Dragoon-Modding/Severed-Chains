@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -34,6 +35,9 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
+import legend.game.submap.SubmapAssets;
+import legend.game.submap.SubmapObject;
+import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
@@ -85,13 +89,14 @@ import legend.game.types.WorldObject210;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
-import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_80019610;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -105,6 +110,7 @@ import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -195,7 +201,6 @@ import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
@@ -203,6 +208,7 @@ import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -221,12 +227,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bdd24;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -260,7 +266,7 @@ public final class SMap {
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
   public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
   public static final Value _800c670e = MEMORY.ref(2, 0x800c670eL);
-  public static final Pointer<MrgFile> chapterTitleCardMrg_800c6710 = MEMORY.ref(4, 0x800c6710L, Pointer.deferred(4, MrgFile::new));
+  public static List<byte[]> chapterTitleCardMrg_800c6710;
   public static final Value _800c6714 = MEMORY.ref(4, 0x800c6714L);
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
   public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
@@ -287,13 +293,14 @@ public final class SMap {
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
   public static final BoolRef submapAssetsLoaded_800c6874 = MEMORY.ref(4, 0x800c6874L, BoolRef::new);
-  public static final Pointer<MrgFile> submapAssetsMrg_800c6878 = MEMORY.ref(4, 0x800c6878L, Pointer.deferred(4, MrgFile::new));
+  public static List<byte[]> submapAssetsMrg_800c6878;
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
   public static final ArrayRef<IntRef> wobjIndices_800c6880 = MEMORY.ref(4, 0x800c6880L, ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
   public static final BoolRef submapScriptsLoaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L, BoolRef::new);
 
-  public static final Pointer<MrgFile> submapScriptsMrg_800c68d8 = MEMORY.ref(4, 0x800c68d8L, Pointer.deferred(4, MrgFile::new));
+  public static List<byte[]> submapScriptsMrg_800c68d8;
+  public static SubmapAssets submapAssets;
 
   public static final BoolRef chapterTitleCardLoaded_800c68e0 = MEMORY.ref(2, 0x800c68e0L, BoolRef::new);
 
@@ -304,9 +311,7 @@ public final class SMap {
 
   public static final Value callbackIndex_800c6968 = MEMORY.ref(2, 0x800c6968L);
   public static final ArrayRef<IntRef> _800c6970 = MEMORY.ref(4, 0x800c6970L, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
-  public static final Value submapPxlIndex0_800c69f0 = MEMORY.ref(4, 0x800c69f0L);
-  public static final Value submapPxlIndex1_800c69f4 = MEMORY.ref(4, 0x800c69f4L);
-  public static final Value submapPxlIndex2_800c69f8 = MEMORY.ref(4, 0x800c69f8L);
+
   public static final Pointer<TriangleIndicator140> _800c69fc = MEMORY.ref(4, 0x800c69fcL, Pointer.deferred(4, TriangleIndicator140::new));
   public static final UnboundedArrayRef<Pointer<ExtendedTmd>> submapObjectModels_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.deferred(4, ExtendedTmd::new)));
 
@@ -424,12 +429,13 @@ public final class SMap {
   public static final Value _800d4bd0 = MEMORY.ref(4, 0x800d4bd0L);
   public static final Value _800d4bd4 = MEMORY.ref(4, 0x800d4bd4L);
   public static final Pointer<SnowEffect> snow_800d4bd8 = MEMORY.ref(4, 0x800d4bd8L, Pointer.deferred(4, SnowEffect::new));
-  public static final BoolRef smapModelAndAnimationMrgLoaded_800d4bdc = MEMORY.ref(4, 0x800d4bdcL, BoolRef::new);
-  public static final BoolRef smapTextureAndMatrixMrgLoaded_800d4be0 = MEMORY.ref(4, 0x800d4be0L, BoolRef::new);
+  public static final BoolRef submapCutModelAndAnimLoaded_800d4bdc = MEMORY.ref(4, 0x800d4bdcL, BoolRef::new);
+  public static final BoolRef submapTextureAndMatrixLoaded_800d4be0 = MEMORY.ref(4, 0x800d4be0L, BoolRef::new);
   public static final BoolRef theEndTimLoaded_800d4be4 = MEMORY.ref(4, 0x800d4be4L, BoolRef::new);
-  public static final Pointer<MrgFile> smapModelAndAnimationMrg_800d4be8 = MEMORY.ref(4, 0x800d4be8L, Pointer.deferred(4, MrgFile::new));
-  /** Contains fog texture and a raw matrix in a file */
-  public static final Pointer<MrgFile> smapTextureAndMatrixMrg_800d4bec = MEMORY.ref(4, 0x800d4becL, Pointer.deferred(4, MrgFile::new));
+  public static ExtendedTmd submapCutModel;
+  public static TmdAnimationFile submapCutAnim;
+  public static Tim submapCutTexture;
+  public static MATRIX submapCutMatrix;
   public static final Pointer<TimFile> theEndTim_800d4bf0 = MEMORY.ref(4, 0x800d4bf0L, Pointer.deferred(4, TimFile::new));
 
   public static final Model124 model_800d4bf8 = MEMORY.ref(4, 0x800d4bf8L, Model124::new);
@@ -580,8 +586,6 @@ public final class SMap {
 
   public static final Value _800f9374 = MEMORY.ref(4, 0x800f9374L);
 
-  public static final Value _800f9718 = MEMORY.ref(2, 0x800f9718L);
-
   public static final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
 
   public static final Value _800f9e5a = MEMORY.ref(2, 0x800f9e5aL);
@@ -650,7 +654,6 @@ public final class SMap {
   public static int FUN_800d96b8() {
     //LAB_800d988c
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
-    preloadDrgnBinFiles();
 
     // Reload main sounds after disk swap?
     FUN_80019610();
@@ -1181,7 +1184,7 @@ public final class SMap {
       SetTransMatrix(worldToScreenMatrix_800c3548);
       transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int s2 = FUN_800e88a0(player.mrgAnimGroup_12e.get(), playerModel.coord2_14.coord, worldspaceDeltaMovement);
+      final int s2 = FUN_800e88a0(player.wobjIndex_12e.get(), playerModel.coord2_14.coord, worldspaceDeltaMovement);
       if(s2 >= 0) {
         if(FUN_800e6798(s2, 0, playerModel.coord2_14.coord.transfer.getX(), playerModel.coord2_14.coord.transfer.getY(), playerModel.coord2_14.coord.transfer.getZ(), worldspaceDeltaMovement) != 0) {
           playerModel.coord2_14.coord.transfer.x.add(worldspaceDeltaMovement.getX());
@@ -1499,7 +1502,7 @@ public final class SMap {
       SetTransMatrix(worldToScreenMatrix_800c3548);
       transformToWorldspace(movement, deltaMovement);
 
-      final int collisionResult = FUN_800e88a0(wobj.mrgAnimGroup_12e.get(), model.coord2_14.coord, movement);
+      final int collisionResult = FUN_800e88a0(wobj.wobjIndex_12e.get(), model.coord2_14.coord, movement);
       if(collisionResult >= 0) {
         FUN_800e6798(collisionResult, 0, model.coord2_14.coord.transfer.getX(), model.coord2_14.coord.transfer.getY(), model.coord2_14.coord.transfer.getZ(), movement);
       }
@@ -1912,11 +1915,11 @@ public final class SMap {
 
     final int index = script.params_20.get(1).deref().get();
 
-    wobj.mrgAnimGroup_12e.set(index);
+    wobj.wobjIndex_12e.set(index);
     model.colourMap_9d.set((int)submapObjectFlags_800c6a50.offset(index * 0x4L).get());
 
     deallocateModel(model);
-    FUN_800e0d18(model, submapObjectModels_800c6a00.get(index).deref(), wobj.mrg_124.deref().getFile(index * 33 + 1, TmdAnimationFile::new));
+    FUN_800e0d18(model, submapObjectModels_800c6a00.get(index).deref(), submapAssets.objects.get(index).animations.get(0));
 
     wobj.us_12c.set(0);
     wobj.rotationFrames_188.set(0);
@@ -1929,12 +1932,12 @@ public final class SMap {
     final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class);
     final Model124 model = wobj.model_00;
 
-    wobj.mrgAnimGroupIndex_132.set(script.params_20.get(1).deref().get());
+    wobj.animIndex_132.set(script.params_20.get(1).deref().get());
     model.ub_a2.set(0);
     model.ub_a3.set(0);
 
-    final int mrgIndex = wobj.mrgAnimGroup_12e.get() * 33 + wobj.mrgAnimGroupIndex_132.get() + 1;
-    FUN_80021584(model, wobj.mrg_124.deref().getFile(mrgIndex, TmdAnimationFile::new));
+    final int animIndex = wobj.wobjIndex_12e.get() * 33 + wobj.animIndex_132.get() + 1;
+    FUN_80021584(model, submapAssets.objects.get(wobj.wobjIndex_12e.get()).animations.get(wobj.animIndex_132.get()));
 
     wobj.us_12c.set(0);
     wobj.flags_190.and(0x9fff_ffffL);
@@ -1944,7 +1947,7 @@ public final class SMap {
 
   @Method(0x800dff68L)
   public static long FUN_800dff68(final RunningScript script) {
-    script.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class).mrgAnimGroupIndex_132.get());
+    script.params_20.get(1).deref().set(scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class).animIndex_132.get());
     return 0;
   }
 
@@ -2135,10 +2138,10 @@ public final class SMap {
     final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(WorldObject210.class);
     final Model124 model = wobj.model_00;
 
-    wobj.mrgAnimGroupIndex_132.set(script.params_20.get(1).deref().get());
+    wobj.animIndex_132.set(script.params_20.get(1).deref().get());
     model.ub_a3.set(0);
     model.ub_a2.set(1);
-    FUN_80021584(model, wobj.mrg_124.deref().getFile(wobj.mrgAnimGroup_12e.get() * 33 + wobj.mrgAnimGroupIndex_132.get() + 1, TmdAnimationFile::new));
+    FUN_80021584(model, submapAssets.objects.get(wobj.wobjIndex_12e.get()).animations.get(wobj.animIndex_132.get()));
     wobj.us_12c.set(0);
     wobj.flags_190.and(0x9fff_ffffL);
     return 0;
@@ -2380,7 +2383,7 @@ public final class SMap {
         model.coord2Param_64.rotate.add(wobj.rotationAmount_17c);
       }
 
-      if(wobj.mrgAnimGroup_12e.get() == 0) {
+      if(wobj.wobjIndex_12e.get() == 0) {
         FUN_800217a4(model);
       } else {
         applyModelRotationAndScale(model);
@@ -2389,8 +2392,8 @@ public final class SMap {
       if(wobj.us_12a.get() == 0) {
         animateModel(model);
         if(wobj.us_12c.get() == 1 && (wobj.flags_190.get() & 0x2000_0000L) != 0) {
-          wobj.mrgAnimGroupIndex_132.set(0);
-          FUN_80021584(model, wobj.mrg_124.deref().getFile(wobj.mrgAnimGroup_12e.get() * 33 + 1, TmdAnimationFile::new));
+          wobj.animIndex_132.set(0);
+          FUN_80021584(model, submapAssets.objects.get(wobj.wobjIndex_12e.get()).animations.get(wobj.animIndex_132.get()));
           wobj.us_12c.set(0);
           wobj.flags_190.and(0x9fff_ffffL);
         }
@@ -2671,10 +2674,11 @@ public final class SMap {
 
       // Load map assets
       case 5 -> {
+        assert submapAssetsMrg_800c6878 == null : "Submap assets MRG was not empty";
+        assert submapScriptsMrg_800c68d8 == null : "Submap scripts MRG was not empty";
+
         submapScriptsLoaded_800c68d0.set(false);
         submapAssetsLoaded_800c6874.set(false);
-        submapScriptsMrg_800c68d8.clear();
-        submapAssetsMrg_800c6878.clear();
 
         final IntRef drgnIndex = new IntRef();
         final IntRef fileIndex = new IntRef();
@@ -2685,10 +2689,10 @@ public final class SMap {
           //LAB_800e1720
           //LAB_800e17c4
           //LAB_800e17d8
-          // Submap data
-          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 1, 0, SMap::submapAssetsLoadedCallback, 0, 0x2L);
-          // Submap scripts
-          loadDrgnBinFile(drgnIndex.get() + 2, fileIndex.get() + 2, 0, SMap::submapAssetsLoadedCallback, 1, 0x2L);
+          // Submap data (file example: 695)
+          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, SMap::submapAssetsLoadedCallback, 0);
+          // Submap scripts (file example: 696)
+          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, SMap::submapAssetsLoadedCallback, 1);
         }
 
         loadingStage_800c68e4.addu(0x1L);
@@ -2697,6 +2701,37 @@ public final class SMap {
       // Wait for map assets to load
       case 6 -> {
         if(submapAssetsLoaded_800c6874.get() && submapScriptsLoaded_800c68d0.get()) {
+          final int objCount = submapScriptsMrg_800c68d8.size() - 2;
+
+          submapAssets = new SubmapAssets();
+          submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1);
+          submapAssets.script = MEMORY.ref(4, mallocTail(submapScriptsMrg_800c68d8.get(0).length), ScriptFile::new);
+          MEMORY.setBytes(submapAssets.script.getAddress(), submapScriptsMrg_800c68d8.get(0));
+
+          for(int objIndex = 0; objIndex < objCount; objIndex++) {
+            final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1);
+            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33);
+
+            final SubmapObject obj = new SubmapObject();
+            obj.script = MEMORY.ref(4, mallocTail(scriptData.length), ScriptFile::new);
+            obj.model = MEMORY.ref(4, mallocTail(tmdData.length), ExtendedTmd::new);
+
+            MEMORY.setBytes(obj.script.getAddress(), scriptData);
+            MEMORY.setBytes(obj.model.getAddress(), tmdData);
+
+            for(int animIndex = (objIndex * 33) + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
+              final TmdAnimationFile anim = MEMORY.ref(4, mallocTail(submapAssetsMrg_800c6878.get(animIndex).length), TmdAnimationFile::new);
+              MEMORY.setBytes(anim.getAddress(), submapAssetsMrg_800c6878.get(animIndex));
+              obj.animations.add(anim);
+            }
+
+            submapAssets.objects.add(obj);
+          }
+
+          for(int i = 0; i < 3; i++) {
+            submapAssets.pxls.add(new Tim(submapAssetsMrg_800c6878.get(objCount * 34 + i)));
+          }
+
           loadingStage_800c68e4.addu(0x1L);
         }
       }
@@ -2722,48 +2757,40 @@ public final class SMap {
       case 9 -> {
         FUN_800218f0();
 
-        final int fileCount = submapScriptsMrg_800c68d8.deref().count.get();
-        final int wobjCount = fileCount - 2;
+        final int wobjCount = submapAssets.objects.size();
 
         _800c672c.setu(wobjCount);
         wobjCount_800c6730.set(wobjCount);
 
         final long s3;
         final long s4;
-        final MrgEntry lastEntry = submapScriptsMrg_800c68d8.deref().entries.get(fileCount - 1);
-        if(lastEntry.size.get() != 4) {
-          final ArrayRef<UnsignedIntRef> lastFileData = submapScriptsMrg_800c68d8.deref().getFile(fileCount - 1, ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
-          s3 = lastFileData.get(0).get(); // Second last int before padding
-          s4 = lastFileData.get(1).get(); // Last int before padding
+        final byte[] lastEntry = submapAssets.lastEntry;
+        if(lastEntry.length != 4) {
+          s3 = MathHelper.get(lastEntry, 0, 4); // Second last int before padding
+          s4 = MathHelper.get(lastEntry, 4, 4); // Last int before padding
         } else {
           s3 = 0;
           s4 = 0;
         }
 
         //LAB_800e1914
-        submapPxlIndex0_800c69f0.setu(wobjCount * 34);
-        submapPxlIndex1_800c69f4.setu(wobjCount * 34 + 1);
-        submapPxlIndex2_800c69f8.setu(wobjCount * 34 + 2);
+        submapAssets.pxls.get(0).uploadToGpu();
+        submapAssets.pxls.get(1).uploadToGpu();
 
-        loadTimImage(submapAssetsMrg_800c6878.deref().getFile((int)submapPxlIndex0_800c69f0.get()));
-        loadTimImage(submapAssetsMrg_800c6878.deref().getFile((int)submapPxlIndex1_800c69f4.get()));
-
-        final TimHeader tim = parseTimHeader(MEMORY.ref(4, submapAssetsMrg_800c6878.deref().getFile((int)submapPxlIndex2_800c69f8.get())).offset(0x4L));
+        final Tim tim = submapAssets.pxls.get(2);
         final RECT imageRect = new RECT();
-        imageRect.x.set(tim.imageRect.x);
-        imageRect.y.set(tim.imageRect.y);
-        imageRect.w.set(tim.imageRect.w);
+        imageRect.set(tim.getImageRect());
         imageRect.h.set((short)128);
 
-        LoadImage(imageRect, tim.imageAddress.get());
+        GPU.uploadData(imageRect, tim.getData(), tim.getImageData());
 
         final int submapScriptIndex = allocateScriptState(0, 0, false, null, 0, null);
         submapScriptIndex_800c6740.set(submapScriptIndex);
-        loadScriptFile(submapScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(0, ScriptFile::new));
+        loadScriptFile(submapScriptIndex, submapAssets.script);
 
         //LAB_800e1a38
         for(int i = 0; i < wobjCount_800c6730.get(); i++) {
-          submapObjectModels_800c6a00.get(i).set(submapAssetsMrg_800c6878.deref().getFile(i * 33, ExtendedTmd::new));
+          submapObjectModels_800c6a00.get(i).set(submapAssets.objects.get(i).model);
           submapObjectFlags_800c6a50.offset(i * 0x4L).setu(i + 0x81L);
 
           if(i + 1 == s3) {
@@ -2793,33 +2820,36 @@ public final class SMap {
         //LAB_800e1b20
         //LAB_800e1b54
         for(int i = 0; i < wobjCount_800c6730.get(); i++) {
+          final SubmapObject obj = submapAssets.objects.get(i);
+
           final int submapObjectScriptIndex = allocateScriptState(0x210, WorldObject210::new);
           wobjIndices_800c6880.get(i).set(submapObjectScriptIndex);
           setScriptTicker(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "submapObjectTicker", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
           setScriptRenderer(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "submapObjectRenderer", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
           setScriptDestructor(submapObjectScriptIndex, MEMORY.ref(4, getMethodAddress(SMap.class, "scriptDestructor", int.class, ScriptState.classFor(WorldObject210.class), WorldObject210.class), TriConsumerRef::new));
-          loadScriptFile(submapObjectScriptIndex, submapScriptsMrg_800c68d8.deref().getFile(i + 1, ScriptFile::new));
+          loadScriptFile(submapObjectScriptIndex, obj.script);
 
           final WorldObject210 wobj = scriptStatePtrArr_800bc1c0.get(submapObjectScriptIndex).deref().innerStruct_00.derefAs(WorldObject210.class);
           final Model124 model = wobj.model_00;
           model.colourMap_9d.set((int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get());
 
-          initModel(model, submapObjectModels_800c6a00.get(i).deref(), submapAssetsMrg_800c6878.deref().getFile(i * 33 + 1, TmdAnimationFile::new));
+          final ExtendedTmd tmd = submapObjectModels_800c6a00.get(i).deref();
+          final TmdAnimationFile anim = obj.animations.get(0);
+          initModel(model, tmd, anim);
 
           if(i == 0) { // Player
-            FUN_800e0d18(model_800c6748, submapObjectModels_800c6a00.get(0).deref(), submapAssetsMrg_800c6878.deref().getFile(1, TmdAnimationFile::new));
+            FUN_800e0d18(model_800c6748, tmd, anim);
             model_800c6748.coord2_14.coord.transfer.set(0, 0, 0);
             model_800c6748.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
           }
 
           //LAB_800e1c50
-          wobj.mrg_124.set(submapAssetsMrg_800c6878.deref());
           wobj.s_128.set((short)0);
           wobj.us_12a.set(0);
           wobj.us_12c.set(0);
-          wobj.mrgAnimGroup_12e.set(i);
+          wobj.wobjIndex_12e.set(i);
           wobj.wobjIndex_130.set(i);
-          wobj.mrgAnimGroupIndex_132.set(0);
+          wobj.animIndex_132.set(0);
           wobj.s_134.set((short)0);
           wobj.i_144.set(0);
           wobj.ui_16c.set(-1);
@@ -2871,7 +2901,7 @@ public final class SMap {
         _800c670a.setu(0);
         _800c670c.setu(0);
         _800c670e.setu(0);
-        chapterTitleCardMrg_800c6710.clear();
+        chapterTitleCardMrg_800c6710 = null;
         _800c6714.setu(0);
         _800c6718.setu(0);
         _800c671c.setu(0);
@@ -3004,7 +3034,7 @@ public final class SMap {
       }
 
       //LAB_800e2140
-      final int s3 = FUN_800e88a0(wobj.mrgAnimGroup_12e.get(), model.coord2_14.coord, sp0x20);
+      final int s3 = FUN_800e88a0(wobj.wobjIndex_12e.get(), model.coord2_14.coord, sp0x20);
       if(s3 >= 0) {
         if(FUN_800e6798(s3, 0, model.coord2_14.coord.transfer.getX(), model.coord2_14.coord.transfer.getY(), model.coord2_14.coord.transfer.getZ(), sp0x20) != 0) {
           model.coord2_14.coord.transfer.x.add(sp0x20.getX());
@@ -3037,8 +3067,8 @@ public final class SMap {
   public static void unloadSmap() {
     deallocateScriptAndChildren(submapScriptIndex_800c6740.get());
 
-    if(!chapterTitleCardMrg_800c6710.isNull()) {
-      free(chapterTitleCardMrg_800c6710.getPointer());
+    if(chapterTitleCardMrg_800c6710 != null) {
+      chapterTitleCardMrg_800c6710 = null;
     }
 
     //LAB_800e226c
@@ -3064,8 +3094,22 @@ public final class SMap {
 
     //LAB_800e2350
     _800bd7b0.setu(0x1L);
-    free(submapAssetsMrg_800c6878.getPointer());
-    free(submapScriptsMrg_800c68d8.getPointer());
+
+    free(submapAssets.script.getAddress());
+
+    for(final SubmapObject obj : submapAssets.objects) {
+      free(obj.script.getAddress());
+      free(obj.model.getAddress());
+
+      for(final TmdAnimationFile anim : obj.animations) {
+        free(anim.getAddress());
+      }
+    }
+
+    submapAssets = null;
+    submapAssetsMrg_800c6878 = null;
+    submapScriptsMrg_800c68d8 = null;
+
     FUN_80029e04(null);
 
     _800c6870.setu(-0x1L);
@@ -3141,20 +3185,20 @@ public final class SMap {
       if(chapterTitleNum == 1) {
         //LAB_800e2700
         //LAB_800e2794
-        loadDrgnBinFile(0, 6670, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
+        loadDrgnDir(0, 6670, SMap::submapAssetsLoadedCallback, 0x10);
       } else if(chapterTitleNum == 2) {
         //LAB_800e2728
         //LAB_800e2794
-        loadDrgnBinFile(0, 6671, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
+        loadDrgnDir(0, 6671, SMap::submapAssetsLoadedCallback, 0x10);
         //LAB_800e26e8
       } else if(chapterTitleNum == 3) {
         //LAB_800e2750
         //LAB_800e2794
-        loadDrgnBinFile(0, 6672, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
+        loadDrgnDir(0, 6672, SMap::submapAssetsLoadedCallback, 0x10);
       } else if(chapterTitleNum == 4) {
         //LAB_800e2778
         //LAB_800e2794
-        loadDrgnBinFile(0, 6673, 0, SMap::submapAssetsLoadedCallback, 0x10, 0x4L);
+        loadDrgnDir(0, 6673, SMap::submapAssetsLoadedCallback, 0x10);
       }
 
       //LAB_800e27a4
@@ -3178,20 +3222,8 @@ public final class SMap {
       //LAB_800e284c
       if(v1 == 0) {
         //LAB_800e2860
-        TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(5) + 0x4L));
-        LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-        if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-          LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-        }
-
-        //LAB_800e28f0
-        sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(13) + 0x4L));
-        LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-        if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-          LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-        }
+        new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
+        new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
 
         //LAB_800e2980
         _800c6728.setu(0);
@@ -3218,8 +3250,7 @@ public final class SMap {
         }
       } else if(v1 == 0xe9L) {
         //LAB_800e376c
-        free(chapterTitleCardMrg_800c6710.getPointer());
-        chapterTitleCardMrg_800c6710.clear();
+        chapterTitleCardMrg_800c6710 = null;
         chapterTitleState_800c6708.incr();
       } else if((int)v1 >= 0x23L) {
         //LAB_800e2828
@@ -3227,94 +3258,32 @@ public final class SMap {
           if((int)v1 >= 0xc9L) {
             //LAB_800e311c
             if(v1 == 0xd4L) {
-              TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(1) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e31b8
-              sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(9) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
+              new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
               //LAB_800e3248
               //LAB_800e3254
             } else if(v1 == 0xd8L) {
-              TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(2) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e32f4
-              sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(10) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
+              new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
               //LAB_800e3384
               //LAB_800e3390
             } else if(v1 == 0xdcL) {
-              TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(3) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e3430
-              sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(11) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
+              new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
               //LAB_800e34c0
               //LAB_800e34cc
             } else if(v1 == 0xe0L) {
-              TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(4) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e356c
-              sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(12) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
+              new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
               //LAB_800e35fc
               //LAB_800e3608
             } else if(v1 == 0xe4L) {
-              TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(5) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e36a8
-              sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(13) + 0x4L));
-              LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-              if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-                LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-              }
-
-              //LAB_800e3738
+              new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
             }
 
             //LAB_800e3744
@@ -3339,92 +3308,32 @@ public final class SMap {
       } else if((int)v1 > 0) {
         //LAB_800e29d4
         if(v1 == 0x4L) {
-          TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(4) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
-
-          //LAB_800e2a6c
-          sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(12) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
+          new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
           //LAB_800e2afc
           //LAB_800e2b08
         } else if(v1 == 0x8L) {
-          TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(3) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
-
-          //LAB_800e2ba8
-          sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(11) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
+          new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
           //LAB_800e2c38
           //LAB_800e2c44
         } else if(v1 == 0xcL) {
-          TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(2) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
-
-          //LAB_800e2ce4
-          sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(10) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
+          new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
           //LAB_800e2d74
           //LAB_800e2d80
         } else if(v1 == 0x10L) {
-          TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(1) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
-
-          //LAB_800e2e20
-          sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(9) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
+          new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
           //LAB_800e2eb0
           //LAB_800e2ebc
         } else if(v1 == 0x14L) {
-          TimHeader sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(0) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
-
-          //LAB_800e2f5c
-          sp0x20 = parseTimHeader(MEMORY.ref(4, chapterTitleCardMrg_800c6710.deref().getFile(8) + 0x4L));
-          LoadImage(sp0x20.imageRect, sp0x20.getImageAddress());
-
-          if((sp0x20.flags.get() >>> 3 & 0x1L) != 0) {
-            LoadImage(sp0x20.clutRect, sp0x20.getClutAddress());
-          }
+          new Tim(chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
 
           //LAB_800e2fec
         }
@@ -3599,24 +3508,24 @@ public final class SMap {
   }
 
   @Method(0x800e3d80L)
-  public static void submapAssetsLoadedCallback(final long fileAddress, final int fileSize, final int assetType) {
+  public static void submapAssetsLoadedCallback(final List<byte[]> files, final int assetType) {
     switch(assetType) {
       // Submap assets
       case 0x0 -> {
         submapAssetsLoaded_800c6874.set(true);
-        submapAssetsMrg_800c6878.set(MEMORY.ref(4, fileAddress, MrgFile::new));
+        submapAssetsMrg_800c6878 = files;
       }
 
       // Submap scripts
       case 0x1 -> {
         submapScriptsLoaded_800c68d0.set(true);
-        submapScriptsMrg_800c68d8.set(MEMORY.ref(4, fileAddress, MrgFile::new));
+        submapScriptsMrg_800c68d8 = files;
       }
 
       // Chapter title cards
       case 0x10 -> {
         chapterTitleCardLoaded_800c68e0.set(true);
-        chapterTitleCardMrg_800c6710.set(MEMORY.ref(4, fileAddress, MrgFile::new));
+        chapterTitleCardMrg_800c6710 = files;
       }
     }
   }
@@ -3698,8 +3607,8 @@ public final class SMap {
   @Method(0x800e3facL)
   public static void FUN_800e3fac() {
     if(_800bd7b8.get() == 0) {
-      loadTimImage(submapAssetsMrg_800c6878.deref().getFile((int)submapPxlIndex0_800c69f0.get()));
-      loadTimImage(submapAssetsMrg_800c6878.deref().getFile((int)submapPxlIndex1_800c69f4.get()));
+      submapAssets.pxls.get(0).uploadToGpu();
+      submapAssets.pxls.get(1).uploadToGpu();
     }
 
     //LAB_800e4008
@@ -4007,11 +3916,6 @@ public final class SMap {
     _800f7e28.set(_800c6aec);
   }
 
-  @Method(0x800e4fecL)
-  public static void noop_800e4fec() {
-    // empty
-  }
-
   @Method(0x800e4ff4L)
   public static void FUN_800e4ff4() {
     UnknownStruct s0 = _800c6aec.deref();
@@ -4144,26 +4048,36 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final long address, final int fileSize, final int param) {
-    backgroundLoaded_800cab10.offset(param * 0x4L).setu(0x1L);
-
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
+  public static void loadBackground(final List<byte[]> files, final int packageIndex) {
+    backgroundLoaded_800cab10.setu(0x1L);
 
     //LAB_800e5374
-    for(int i = 3; i < mrg.count.get(); i++) {
-      final TimHeader timHeader = parseTimHeader(MEMORY.ref(4, mrg.getFile(i)).offset(0x4L));
-      LoadImage(timHeader.imageRect, timHeader.imageAddress.get());
+    for(int i = 3; i < files.size(); i++) {
+      final byte[] data = files.get(i);
+
+      final Tim timHeader = new Tim(data);
+      GPU.uploadData(timHeader.getImageRect(), data, timHeader.getImageData());
 
       if(timHeader.hasClut()) {
-        LoadImage(timHeader.clutRect, timHeader.clutAddress.get());
+        GPU.uploadData(timHeader.getClutRect(), data, timHeader.getClutData());
       }
     }
 
     //LAB_800e5430
-    loadEnvironment(mrg.getFile(0, EnvironmentFile::new));
-    FUN_800e8cd0(mrg.getFile(2, TmdWithId::new), mrg.entries.get(2).size.get(), mrg.getFile(1, UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new)), mrg.entries.get(1).size.get());
+    final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).length), EnvironmentFile::new);
+    final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).length), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
+    final TmdWithId tmd = MEMORY.ref(4, mallocHead(files.get(2).length), TmdWithId::new);
 
-    free(mrg.getAddress());
+    MEMORY.setBytes(env.getAddress(), files.get(0));
+    MEMORY.setBytes(something1.getAddress(), files.get(1));
+    MEMORY.setBytes(tmd.getAddress(), files.get(2));
+
+    loadEnvironment(env);
+    FUN_800e8cd0(tmd, files.get(2).length, something1);
+
+    free(env.getAddress());
+    free(something1.getAddress());
+    free(tmd.getAddress());
 
     _80052c44.setu(0x2L);
     _80052c48.setu(0);
@@ -4426,8 +4340,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         backgroundLoaded_800cab10.setu(0);
-        loadDrgnBinFile(2, fileIndex.get(), 0, SMap::loadBackground, 0, 0x4L);
-        noop_800e4fec();
+        loadDrgnDir(2, fileIndex.get(), SMap::loadBackground, 0);
         smapLoadingStage_800cb430.setu(0x6L);
       }
 
@@ -5727,7 +5640,7 @@ public final class SMap {
   }
 
   @Method(0x800e8cd0L)
-  public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final UnboundedArrayRef<SomethingStructSub0c_1> a2, final long a3) {
+  public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final UnboundedArrayRef<SomethingStructSub0c_1> a2) {
     SomethingStructPtr_800d1a88.set(SomethingStruct_800cbe08);
     SomethingStruct_800cbe08.dobj2Ptr_20.set(GsDOBJ2_800cbdf8);
     SomethingStruct_800cbe08.coord2Ptr_24.set(GsCOORDINATE2_800cbda8);
@@ -6679,7 +6592,13 @@ public final class SMap {
 
         //LAB_800ee1b8
         deallocateModel(model_800d4bf8);
-        free(smapModelAndAnimationMrg_800d4be8.getPointer());
+
+        free(submapCutModel.getAddress());
+        free(submapCutAnim.getAddress());
+
+        submapCutModel = null;
+        submapCutAnim = null;
+
         _800f9e5a.setu(0);
 
         //LAB_800ee1e4
@@ -6702,20 +6621,51 @@ public final class SMap {
         }
 
         //LAB_800edeb4
-        smapModelAndAnimationMrgLoaded_800d4bdc.set(false);
-        smapTextureAndMatrixMrgLoaded_800d4be0.set(false);
+        assert submapCutModel == null;
+        assert submapCutAnim == null;
+        assert submapCutTexture == null;
+        assert submapCutMatrix == null;
+
+        submapCutModelAndAnimLoaded_800d4bdc.set(false);
+        submapTextureAndMatrixLoaded_800d4be0.set(false);
         theEndTimLoaded_800d4be4.set(false);
-        smapModelAndAnimationMrg_800d4be8.clear();
-        smapTextureAndMatrixMrg_800d4bec.clear();
         theEndTim_800d4bf0.clear();
 
         final int fileIndex = smapFileIndices_800f982c.get(submapCut_80052c30.get()).get();
         if(fileIndex != 0) {
-          loadDrgnBinFile(0, fileIndex, 0, SMap::FUN_800eeddc, 0, 0x2L);
-          loadDrgnBinFile(0, fileIndex + 1, 0, SMap::FUN_800eeddc, 1, 0x4L);
+          // File example: 7508
+          loadDrgnDir(0, fileIndex, (files, param) -> {
+            submapCutModelAndAnimLoaded_800d4bdc.set(true);
+
+            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), ExtendedTmd::new);
+            submapCutAnim = MEMORY.ref(4, mallocTail(files.get(1).length), TmdAnimationFile::new);
+
+            MEMORY.setBytes(submapCutModel.getAddress(), files.get(0));
+            MEMORY.setBytes(submapCutAnim.getAddress(), files.get(1));
+          }, 0);
+
+          loadDrgnDir(0, fileIndex + 1, (files, param) -> {
+            submapTextureAndMatrixLoaded_800d4be0.set(true);
+
+            submapCutTexture = new Tim(files.get(0));
+            submapCutMatrix = new MATRIX();
+
+            final byte[] matrixData = files.get(1);
+
+            for(int i = 0; i < 9; i++) {
+              submapCutMatrix.set(i, (short)MathHelper.get(matrixData, i * 2, 2));
+            }
+
+            for(int i = 0; i < 3; i++) {
+              submapCutMatrix.transfer.component(i).set((int)MathHelper.get(matrixData, 18 + i * 2, 2));
+            }
+          }, 1);
 
           if(submapCut_80052c30.get() == 673) { // End cutscene, loads "The End" TIM
-            loadDrgnBinFile(0, 7610, 0, SMap::FUN_800eeddc, 2, 0x4L);
+            loadDrgnBinFile(0, 7610, 0, (address, fileSize, param) -> {
+              theEndTimLoaded_800d4be4.set(true);
+              theEndTim_800d4bf0.setPointer(address);
+            }, 2, 0x4L);
           }
         }
 
@@ -6723,13 +6673,15 @@ public final class SMap {
       }
 
       case 0x2 -> {
-        if(smapModelAndAnimationMrgLoaded_800d4bdc.get() && smapTextureAndMatrixMrgLoaded_800d4be0.get()) {
-          final TimHeader tim = parseTimHeader(smapTextureAndMatrixMrg_800d4bec.deref().getFile(0, TimFile::new).data_04);
-          LoadImage(new RECT((short)1008, (short)256, tim.imageRect.w.get(), tim.imageRect.h.get()), tim.imageAddress.get());
-          loadMatrixFromFile(smapTextureAndMatrixMrg_800d4bec.deref().getFile(1, ArrayRef.of(ShortRef.class, 12, 2, ShortRef::new)), matrix_800d4bb0);
+        if(submapCutModelAndAnimLoaded_800d4bdc.get() && submapTextureAndMatrixLoaded_800d4be0.get()) {
+          GPU.uploadData(new RECT((short)1008, (short)256, submapCutTexture.getImageRect().w.get(), submapCutTexture.getImageRect().h.get()), submapCutTexture.getData(), submapCutTexture.getImageData());
+          matrix_800d4bb0.set(submapCutMatrix);
+
           _800f9e5a.addu(0x1L);
-          free(smapTextureAndMatrixMrg_800d4bec.getPointer());
           _800c686c.setu(0x1L);
+
+          submapCutTexture = null;
+          submapCutMatrix = null;
         }
       }
 
@@ -6750,7 +6702,7 @@ public final class SMap {
       case 0x4 -> {
         model_800d4bf8.colourMap_9d.set(0x91);
 
-        initModel(model_800d4bf8, smapModelAndAnimationMrg_800d4be8.deref().getFile(0, ExtendedTmd::new), smapModelAndAnimationMrg_800d4be8.deref().getFile(1, TmdAnimationFile::new));
+        initModel(model_800d4bf8, submapCutModel, submapCutAnim);
 
         if(submapCut_80052c30.get() == 673) { // End cutscene
           FUN_800eef6c(_800d6b48, _800d4bd4.get(), _800d4bd0.get());
@@ -7037,20 +6989,6 @@ public final class SMap {
     }
 
     //LAB_800eedc8
-  }
-
-  @Method(0x800eeddcL)
-  public static void FUN_800eeddc(final long address, final int fileSize, final int assetType) {
-    if(assetType == 0) {
-      smapModelAndAnimationMrgLoaded_800d4bdc.set(true);
-      smapModelAndAnimationMrg_800d4be8.setPointer(address);
-    } else if(assetType == 1) {
-      smapTextureAndMatrixMrgLoaded_800d4be0.set(true);
-      smapTextureAndMatrixMrg_800d4bec.setPointer(address);
-    } else if(assetType == 2) {
-      theEndTimLoaded_800d4be4.set(true);
-      theEndTim_800d4bf0.setPointer(address);
-    }
   }
 
   @Method(0x800eee48L)

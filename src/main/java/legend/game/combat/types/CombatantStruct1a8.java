@@ -15,8 +15,7 @@ public class CombatantStruct1a8 implements MemoryRef {
   private final Value ref;
 
   public final Pointer<MrgFile> mrg_00;
-  /** TODO ptr */
-  public final UnsignedIntRef _04;
+  public final Pointer<MrgFile> mrg_04;
   public final Pointer<ExtendedTmd> tmd_08;
 
   /** This seems to be either a script or an extended TMD */
@@ -40,7 +39,7 @@ public class CombatantStruct1a8 implements MemoryRef {
     this.ref = ref;
 
     this.mrg_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, MrgFile::new));
-    this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.mrg_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, MrgFile::new));
     this.tmd_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, ExtendedTmd::new));
 
     this.filePtr_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);

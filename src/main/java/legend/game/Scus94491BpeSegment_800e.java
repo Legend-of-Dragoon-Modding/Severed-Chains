@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.game.SInit.preloadDrgnBinFiles;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
@@ -85,10 +84,10 @@ import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800c.scriptSubFunction_800ca734;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
@@ -804,7 +803,6 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6184L)
   public static void preload() {
     drgnBinIndex_800bc058.set(1);
-    preloadDrgnBinFiles();
 
     loadMenuSounds();
     setWidthAndFlags(320);

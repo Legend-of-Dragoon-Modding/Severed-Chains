@@ -80,7 +80,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
   public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
   public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
-  public static final Pointer<RunnableRef> spuDmaCompleteCallback_800c6628 = MEMORY.ref(4, 0x800c6628L, Pointer.of(4, RunnableRef::new));
+  public static Runnable spuDmaCompleteCallback_800c6628;
 
   public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
