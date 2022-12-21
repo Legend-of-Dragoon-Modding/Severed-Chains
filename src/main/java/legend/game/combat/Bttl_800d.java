@@ -1078,10 +1078,10 @@ public final class Bttl_800d {
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20.get(2).deref().get() & 0xff);
     effect._0c._00.set(manager._10._00.get());
-    effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
-    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
     effect._0c.w_08.set(metrics.w_04.get());
     effect._0c.h_0a.set(metrics.h_05.get());
+    effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
+    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
     effect._0c.tpage_0c.set((metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6);
     effect._0c.u_0e.set((metrics.u_00.get() & 0x3f) * 4);
     effect._0c.v_0f.set(metrics.v_02.get());

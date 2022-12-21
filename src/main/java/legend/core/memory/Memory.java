@@ -399,7 +399,7 @@ public class Memory {
         return Memory.this.ref(size, this.get());
       } catch(final MisalignedAccessException e) {
         LOGGER.error("Misaligned deref %s", this);
-        LOGGER.error(new Throwable());
+        LOGGER.error("", new Throwable());
         throw e;
       }
     }

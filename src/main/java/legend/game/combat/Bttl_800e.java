@@ -3284,30 +3284,28 @@ public final class Bttl_800e {
         y = 0;
       }
 
-      final DVECTOR xy = new DVECTOR().set((short)x, (short)y);
-      int z = a2 + sp0x18.getZ() / 4;
+      int z = a2 + (sp0x18.getZ() >> 2);
       if(z >= 0x28) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
 
         //LAB_800e7a38
-        final int a1 = projectionPlaneDistance_1f8003f8.get() * 0x400 / (sp0x18.getZ() / 4);
-        final int s5 = s1.x_04.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
-        final int s7 = s5 + s1.w_08.get() * s1._1c.get() / 0x8 * a1 / 0x8000;
-        final int s2 = s1.y_06.get() * s1._1e.get() / 0x8 * a1 / 0x8000;
-        final int fp = s2 + s1.h_0a.get() * s1._1e.get() / 0x8 * a1 / 0x8000;
+        final int a1 = (projectionPlaneDistance_1f8003f8.get() << 10) / (sp0x18.getZ() >> 2);
+        final int s5 = s1.x_04.get() * s1._1c.get() / 8 * a1 / 8 >> 12;
+        final int s7 = s5 + (s1.w_08.get() * s1._1c.get() / 8 * a1 / 8 >> 12);
+        final int s2 = s1.y_06.get() * s1._1e.get() / 8 * a1 / 8 >> 12;
+        final int fp = s2 + (s1.h_0a.get() * s1._1e.get() / 8 * a1 / 8 >> 12);
         final int sin = rsin(s1.rotation_20.get());
         final int cos = rcos(s1.rotation_20.get());
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut(s1.clutX_10.get() & 0x3f0, s1.clutY_12.get())
+          .clut(s1.clutX_10.get(), s1.clutY_12.get())
           .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
-          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
-          .pos(0, xy.getX() + s5 * cos / 0x1000 - s2 * sin / 0x1000, xy.getY() + s5 * sin / 0x1000 + s2 * cos / 0x1000)
-          .pos(1, xy.getX() + s7 * cos / 0x1000 - s2 * sin / 0x1000, xy.getY() + s7 * sin / 0x1000 + s2 * cos / 0x1000)
-          .pos(2, xy.getX() + s5 * cos / 0x1000 - fp * sin / 0x1000, xy.getY() + s5 * sin / 0x1000 + fp * cos / 0x1000)
-          .pos(3, xy.getX() + s7 * cos / 0x1000 - fp * sin / 0x1000, xy.getY() + s7 * sin / 0x1000 + fp * cos / 0x1000)
+          .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
+          .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
+          .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
+          .pos(3, x + (s7 * cos >> 12) - (fp * sin >> 12), y + (s7 * sin >> 12) + (fp * cos >> 12))
           .uv(0, s1.u_0e.get(), s1.v_0f.get())
           .uv(1, s1.w_08.get() + s1.u_0e.get() - 1, s1.v_0f.get())
           .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)

@@ -6545,7 +6545,7 @@ public final class SItem {
   }
 
   @Method(0x8010d078L)
-  public static void FUN_8010d078(int x, int y, final int w, final int h, final int a4) {
+  public static void FUN_8010d078(int x, int y, final int w, final int h, final int type) {
     x -= 8 + displayWidth_1f8003e0.get() / 2;
     y -= 120;
 
@@ -6556,7 +6556,7 @@ public final class SItem {
       .pos(3, x + w, y + h);
 
     final int z;
-    switch(a4) {
+    switch(type) {
       case 0 -> {
         z = 36;
 
@@ -6657,11 +6657,11 @@ public final class SItem {
   }
 
   @Method(0x8010d398L)
-  public static void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final int a3) {
-    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 4);
-    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 3);
+  public static void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final int height) {
+    FUN_8010d078(x, y + 20 - height, 134, (height + 1) * 2, 4);
+    FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 3);
 
-    if(a3 >= 20) {
+    if(height >= 20) {
       Scus94491BpeSegment_8002.renderText(additions_8011a064.get(additionIndex).deref(), x - 4, y + 6, 0, 0);
       Scus94491BpeSegment_8002.renderText(New_Addition_8011c5a8, x - 4, y + 20, 0, 0);
     }
@@ -6670,11 +6670,11 @@ public final class SItem {
   }
 
   @Method(0x8010d498L)
-  public static void renderSpellUnlocked(final int x, final int y, final int spellIndex, final int a3) {
-    FUN_8010d078(x, y + 20 - a3, 134, (a3 + 1) * 2, 4); // New spell border
-    FUN_8010d078(x + 1, y + 20 - a3 + 1, 132, a3 * 2, 3); // New spell background
+  public static void renderSpellUnlocked(final int x, final int y, final int spellIndex, final int height) {
+    FUN_8010d078(x, y + 20 - height, 134, (height + 1) * 2, 6); // New spell border
+    FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
-    if(a3 >= 20) {
+    if(height >= 20) {
       Scus94491BpeSegment_8002.renderText(spells_80052734.get(spellIndex).deref(), x - 4, y + 6, 0, 0);
       Scus94491BpeSegment_8002.renderText(Spell_Unlocked_8011c5c4, x - 4, y + 20, 0, 0);
     }
@@ -7277,20 +7277,20 @@ public final class SItem {
   }
 
   @Method(0x8010ebecL)
-  public static void renderAdditionsUnlocked(final int a0) {
+  public static void renderAdditionsUnlocked(final int height) {
     for(int i = 0; i < 3; i++) {
       if(additionsUnlocked_8011e1b8.get(i).get() != 0) {
-        renderAdditionUnlocked(168, 40 + i * 64, additionsUnlocked_8011e1b8.get(i).get() - 1, a0);
+        renderAdditionUnlocked(168, 40 + i * 64, additionsUnlocked_8011e1b8.get(i).get() - 1, height);
       }
     }
   }
 
   @Method(0x8010ec6cL)
-  public static void renderSpellsUnlocked(final int a0) {
+  public static void renderSpellsUnlocked(final int height) {
     //LAB_8010ec98
     for(int i = 0; i < 3; i++) {
       if(spellsUnlocked_8011e1a8.get(i).get() != 0) {
-        renderSpellUnlocked(168, 40 + i * 64, spellsUnlocked_8011e1a8.get(i).get() - 1, a0);
+        renderSpellUnlocked(168, 40 + i * 64, spellsUnlocked_8011e1a8.get(i).get() - 1, height);
       }
 
       //LAB_8010ecc0

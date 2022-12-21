@@ -3723,7 +3723,7 @@ public final class Scus94491BpeSegment_8004 {
       if(spu66.used_00.get() && spu66.playableSoundIndex_22.get() == playableSoundIndex) {
         //LAB_8004c1e8
         LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSoundIndex);
-        LOGGER.error(new Throwable());
+        LOGGER.error("", new Throwable());
         return -0x1L;
       }
 

@@ -34,7 +34,6 @@ public class EffectData98Sub94 implements MemoryRef {
   public final ShortRef _24;
 
   public final VECTOR _2c;
-
   public final SVECTOR _3c;
   public final Pointer<UnboundedArrayRef<SVECTOR>> _44;
   public final SVECTOR _48;
@@ -78,7 +77,6 @@ public class EffectData98Sub94 implements MemoryRef {
     this._24 = ref.offset(2, 0x24L).cast(ShortRef::new);
 
     this._2c = ref.offset(4, 0x2cL).cast(VECTOR::new);
-
     this._3c = ref.offset(2, 0x3cL).cast(SVECTOR::new);
     this._44 = ref.offset(4, 0x44L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x8, SVECTOR::new)));
     this._48 = ref.offset(2, 0x48L).cast(SVECTOR::new);
