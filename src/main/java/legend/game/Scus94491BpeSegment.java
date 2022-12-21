@@ -3657,6 +3657,7 @@ public final class Scus94491BpeSegment {
     FUN_80018a5c(x, y, u, v, u + width, v + height, a6, transMode, colour, a9, a10);
   }
 
+  /** TODO */
   @Method(0x80018e84L)
   public static void FUN_80018e84() {
     long v0;
@@ -3824,6 +3825,7 @@ public final class Scus94491BpeSegment {
     //LAB_800192b4
   }
 
+  /** TODO */
   @Method(0x800192d8L)
   public static void FUN_800192d8(long a0, final long a1) {
     final long s0 = mallocTail(0x10L);
@@ -3861,6 +3863,7 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  /** TODO */
   @Method(0x80019470L)
   public static void FUN_80019470() {
     long s0 = _8004f658.get();
