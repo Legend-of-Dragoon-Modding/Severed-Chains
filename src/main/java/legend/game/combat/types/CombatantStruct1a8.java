@@ -5,6 +5,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.ExtendedTmd;
@@ -21,8 +22,11 @@ public class CombatantStruct1a8 implements MemoryRef {
   /** This seems to be either a script or an extended TMD */
   public final UnsignedIntRef filePtr_10;
   public final ArrayRef<CombatantStruct1a8_c> _14;
-  public final UnsignedIntRef _194;
-  public final UnsignedIntRef _198;
+  public final UnsignedShortRef xp_194;
+  public final UnsignedShortRef gold_196;
+  public final UnsignedByteRef itemChance_198;
+  public final UnsignedByteRef itemDrop_199;
+  public final UnsignedShortRef _19a;
   public final ShortRef charSlot_19c;
   /**
    * 0x1 - used?
@@ -44,8 +48,11 @@ public class CombatantStruct1a8 implements MemoryRef {
 
     this.filePtr_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(ArrayRef.of(CombatantStruct1a8_c.class, 32, 0xc, CombatantStruct1a8_c::new));
-    this._194 = ref.offset(4, 0x194L).cast(UnsignedIntRef::new);
-    this._198 = ref.offset(4, 0x198L).cast(UnsignedIntRef::new);
+    this.xp_194 = ref.offset(2, 0x194L).cast(UnsignedShortRef::new);
+    this.gold_196 = ref.offset(2, 0x196L).cast(UnsignedShortRef::new);
+    this.itemChance_198 = ref.offset(1, 0x198L).cast(UnsignedByteRef::new);
+    this.itemDrop_199 = ref.offset(1, 0x199L).cast(UnsignedByteRef::new);
+    this._19a = ref.offset(2, 0x19aL).cast(UnsignedShortRef::new);
     this.charSlot_19c = ref.offset(2, 0x19cL).cast(ShortRef::new);
     this.flags_19e = ref.offset(2, 0x19eL).cast(UnsignedShortRef::new);
     this.colourMap_1a0 = ref.offset(2, 0x1a0L).cast(ShortRef::new);

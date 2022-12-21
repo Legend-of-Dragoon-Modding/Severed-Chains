@@ -135,10 +135,10 @@ import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
-import static legend.game.Scus94491BpeSegment_800b._800bc928;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b._800bc978;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
 import static legend.game.Scus94491BpeSegment_800b._800bdba0;
@@ -6706,7 +6706,7 @@ public final class SItem {
   }
 
   @Method(0x8010d614L)
-  public static void FUN_8010d614() {
+  public static void renderPostCombatReport() {
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     switch(inventoryMenuState_800bdc28.get()) {
@@ -6746,8 +6746,8 @@ public final class SItem {
 
           //LAB_8010d81c
           for(int i = 0; i < 6; i++) {
-            if(i >= _800bc978.get()) {
-              _800bc928.offset(i * 0x4L).setu(0xffL);
+            if(i >= itemsDroppedByEnemiesCount_800bc978.get()) {
+              itemsDroppedByEnemies_800bc928.get(i).set(0xff);
             }
 
             //LAB_8010d830
@@ -7016,11 +7016,11 @@ public final class SItem {
           playSound(0x3L);
 
           final InventoryMenuState nextMenuState;
-          if(_800bc978.get() != 0 && (FUN_80023544(_800bc928.getAddress(), _800bc978.getAddress()) & 0xffL) != 0) {
-            nextMenuState = InventoryMenuState._19;
-          } else {
+          if(itemsDroppedByEnemiesCount_800bc978.get() == 0 || (FUN_80023544(itemsDroppedByEnemies_800bc928, itemsDroppedByEnemiesCount_800bc978) & 0xff) == 0) {
             //LAB_8010dfac
-            nextMenuState = InventoryMenuState._18;
+            nextMenuState = InventoryMenuState._18; // No items remaining
+          } else {
+            nextMenuState = InventoryMenuState._19; // Some items remaining
           }
 
           //LAB_8010dfb0
@@ -7252,10 +7252,10 @@ public final class SItem {
     y2 = 64;
 
     //LAB_8010eae0
-    for(int i = 0; i < _800bc978.get(); i++) {
-      if(_800bc928.offset(i * 0x4L).get() != 0xff) {
-        renderItemIcon(getItemIcon((int)_800bc928.offset(i * 0x4L).get()), 18, y1, 0x8L);
-        renderText(equipment_8011972c.get((int)_800bc928.offset(i * 0x4L).get()).deref(), 28, y2, 0);
+    for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
+      if(itemsDroppedByEnemies_800bc928.get(i).get() != 0xff) {
+        renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928.get(i).get()), 18, y1, 0x8L);
+        renderText(equipment_8011972c.get(itemsDroppedByEnemies_800bc928.get(i).get()).deref(), 28, y2, 0);
       }
 
       //LAB_8010eb38
@@ -7498,13 +7498,12 @@ public final class SItem {
           //LAB_8010f2e8
           for(int itemIndex = 0; itemIndex < 10; itemIndex++) {
             final MenuItemStruct04 item = menuItems_8011d7c8.get(itemIndex);
-            final long a1 = _800bc928.offset(itemIndex * 0x4L).getAddress();
 
             final int itemId;
-            if(itemIndex >= (int)_800bc978.get()) {
+            if(itemIndex >= itemsDroppedByEnemiesCount_800bc978.get()) {
               itemId = 0xff;
             } else {
-              itemId = (int)MEMORY.ref(1, a1).offset(0x0L).get();
+              itemId = itemsDroppedByEnemies_800bc928.get(itemIndex).get();
             }
 
             //LAB_8010f300
@@ -7574,7 +7573,7 @@ public final class SItem {
         break;
 
       case _8:
-        if(scrollMenu(menuIndex_8011e1f0, null, 5, (int)_800bc978.get(), 1)) {
+        if(scrollMenu(menuIndex_8011e1f0, null, 5, itemsDroppedByEnemiesCount_800bc978.get(), 1)) {
           renderable_8011e200.deref().y_44.set(FUN_8010f178(menuIndex_8011e1f0.get()));
         }
 
@@ -7706,7 +7705,7 @@ public final class SItem {
 
             //LAB_8010fb94
             long s2 = 0;
-            for(int i = 0; i < _800bc978.get(); i++) {
+            for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
               if(FUN_80022898(menuItems_8011d7c8.get(i).itemId_00.get()) != 0) {
                 s2 = s2 + 0x1L;
               }
@@ -7779,7 +7778,7 @@ public final class SItem {
 
     //LAB_8010fe18
     //LAB_8010fe38
-    renderMenuItems(16, 33, menuItems_8011d7c8, 0, Math.min(5, (int)_800bc978.get()), saveListUpArrow_800bdb94.deref(), saveListDownArrow_800bdb98.deref());
+    renderMenuItems(16, 33, menuItems_8011d7c8, 0, Math.min(5, itemsDroppedByEnemiesCount_800bc978.get()), saveListUpArrow_800bdb94.deref(), saveListDownArrow_800bdb98.deref());
 
     if((a4 & 0x1L) != 0 && a0 == 0) {
       renderString(0, 16, 164, itemId, 0);

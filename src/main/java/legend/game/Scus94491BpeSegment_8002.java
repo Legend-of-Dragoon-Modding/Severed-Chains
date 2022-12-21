@@ -22,6 +22,7 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.CString;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -64,7 +65,7 @@ import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.SItem.FUN_800fcad4;
 import static legend.game.SItem.FUN_8010a948;
-import static legend.game.SItem.FUN_8010d614;
+import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.FUN_8010f198;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
@@ -1511,7 +1512,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 0xe, 0x13, 0x18, 0x24, 0x4 -> FUN_800fcad4();
-      case 0x1d -> FUN_8010d614();
+      case 0x1d -> renderPostCombatReport();
       case 0x9 -> FUN_8010a948();
       case 0x22 -> FUN_8010f198();
 
@@ -1993,24 +1994,24 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023544L)
-  public static long FUN_80023544(final long a0, final long a1) {
+  public static int FUN_80023544(final ArrayRef<IntRef> items, final IntRef itemCount) {
     int count = 0;
     //LAB_80023580
-    for(int s0 = 0; s0 < MEMORY.ref(4, a1).get(); s0++) {
-      if(giveItem((int)MEMORY.ref(2, a0).offset(s0 * 0x4L).get()) != 0) {
+    for(int itemSlot = 0; itemSlot < itemCount.get(); itemSlot++) {
+      if(giveItem(items.get(itemSlot).get()) != 0) {
         count++;
       } else {
         //LAB_800235a4
         //LAB_800235c0
         int i;
-        for(i = s0; i < MEMORY.ref(4, a1).get() - 1; i++) {
-          MEMORY.ref(4, a0).offset(i * 0x4L).setu(MEMORY.ref(4, a0).offset((i + 1) * 0x4L).get());
+        for(i = itemSlot; i < itemCount.get() - 1; i++) {
+          items.get(i).set(items.get(i + 1).get());
         }
 
         //LAB_800235e4
-        MEMORY.ref(4, a0).offset(i * 0x4L).setu(0xffL);
-        MEMORY.ref(4, a1).subu(0x1L);
-        s0--;
+        items.get(i).set(0xff);
+        itemCount.decr();
+        itemSlot--;
       }
 
       //LAB_80023604

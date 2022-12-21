@@ -161,12 +161,12 @@ import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
 import static legend.game.Scus94491BpeSegment_800b._800bc918;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
-import static legend.game.Scus94491BpeSegment_800b._800bc928;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc974;
-import static legend.game.Scus94491BpeSegment_800b._800bc978;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -890,7 +890,7 @@ public final class Bttl_800c {
     totalXpFromCombat_800bc95c.set(0);
     _800bc960.setu(0);
     _800bc974.setu(0);
-    _800bc978.setu(0);
+    itemsDroppedByEnemiesCount_800bc978.set(0);
 
     int charIndex = gameState_800babc8.charIndex_88.get(1).get();
     if(charIndex < 0) {
@@ -3381,15 +3381,15 @@ public final class Bttl_800c {
         s0 = s0 | 0x40L;
 
         if((s0 & 0x4L) != 0) {
-          final long s1 = data.combatant_144.getPointer(); //TODO
-          goldGainedFromCombat_800bc920.add((int)MEMORY.ref(2, s1).offset(0x196L).get());
-          totalXpFromCombat_800bc95c.add((int)MEMORY.ref(2, s1).offset(0x194L).get());
+          final CombatantStruct1a8 enemyCombatant = data.combatant_144.deref();
+          goldGainedFromCombat_800bc920.add(enemyCombatant.gold_196.get());
+          totalXpFromCombat_800bc95c.add(enemyCombatant.xp_194.get());
 
           if((s0 & 0x2000L) == 0) {
-            if(simpleRand() * 100 >> 16 < MEMORY.ref(1, s1).offset(0x198L).get()) {
-              if(MEMORY.ref(1, s1).offset(0x199L).get() != 0xffL) {
-                _800bc928.offset(_800bc978.get() * 0x4L).setu(MEMORY.ref(1, s1).offset(0x199L).get());
-                _800bc978.addu(0x1L);
+            if(simpleRand() * 100 >> 16 < enemyCombatant.itemChance_198.get()) {
+              if(enemyCombatant.itemDrop_199.get() != 0xff) {
+                itemsDroppedByEnemies_800bc928.get(itemsDroppedByEnemiesCount_800bc978.get()).set(enemyCombatant.itemDrop_199.get());
+                itemsDroppedByEnemiesCount_800bc978.incr();
               }
 
               //LAB_800cd044

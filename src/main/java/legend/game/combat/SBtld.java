@@ -72,7 +72,7 @@ public class SBtld {
   public static final ArrayRef<Pointer<LodString>> enemyNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
 
   /** TODO 0x8-byte struct */
-  public static final Value _80112868 = MEMORY.ref(4, 0x80112868L);
+  public static final Value enemyRewards_80112868 = MEMORY.ref(4, 0x80112868L);
 
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
 
@@ -262,9 +262,12 @@ public class SBtld {
     final int fileIndex = param & 0xffff;
     final int s0 = param >>> 16;
     final CombatantStruct1a8 v0 = getCombatant(s0);
-    final long v1 = _80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
-    v0._194.set(MEMORY.ref(4, v1).offset(0x0L).get());
-    v0._198.set(MEMORY.ref(4, v1).offset(0x4L).get());
+    final long v1 = enemyRewards_80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
+    v0.xp_194.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
+    v0.gold_196.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
+    v0.itemChance_198.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
+    v0.itemDrop_199.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
+    v0._19a.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
     loadDrgnBinFile(1, fileIndex + 1, 0, SBtld::FUN_8010989c, s0, 0x2L);
   }
 

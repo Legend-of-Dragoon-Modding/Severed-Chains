@@ -88,8 +88,6 @@ public final class Scus94491BpeSegment_800b {
   public static final ScriptState<VoidRef> unusedScriptState_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, ScriptState.of(VoidRef::new));
   public static final ArrayRef<Pointer<ScriptState<? extends MemoryRef>>> scriptStatePtrArr_800bc1c0 = (ArrayRef<Pointer<ScriptState<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(ScriptState.class), 0x48, 4, (Function)Pointer.deferred(4, ScriptState.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
 
-  public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
-
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
   public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
@@ -97,8 +95,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc91c = MEMORY.ref(4, 0x800bc91cL);
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
-  public static final Value _800bc928 = MEMORY.ref(4, 0x800bc928L);
-
+  public static final ArrayRef<IntRef> itemsDroppedByEnemies_800bc928 = MEMORY.ref(4, 0x800bc928L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
   public static final Value _800bc960 = MEMORY.ref(4, 0x800bc960L);
@@ -106,7 +104,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
 
   public static final Value _800bc974 = MEMORY.ref(4, 0x800bc974L);
-  public static final Value _800bc978 = MEMORY.ref(4, 0x800bc978L);
+  public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
   //TODO structure @ 800bc980... 3 * 12?
   public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
