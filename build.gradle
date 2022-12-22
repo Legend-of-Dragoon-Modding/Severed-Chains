@@ -63,6 +63,8 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   implementation "org.joml:joml:${jomlVersion}"
 
+  implementation group: 'com.github.slugify', name: 'slugify', version: '3.0.2'
+
   implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.9'
 
   implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'

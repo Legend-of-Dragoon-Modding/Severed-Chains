@@ -13,7 +13,7 @@ public class ItemStats0c implements MemoryRef {
   public final UnsignedByteRef damage_02;
   public final UnsignedByteRef special1_03;
   public final UnsignedByteRef special2_04;
-  public final UnsignedByteRef uu1_05;
+  public final UnsignedByteRef damage_05;
   public final ByteRef specialAmount_06;
   public final ByteRef icon_07;
   public final UnsignedByteRef status_08;
@@ -39,7 +39,7 @@ public class ItemStats0c implements MemoryRef {
     this.damage_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
     this.special1_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this.special2_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this.uu1_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
+    this.damage_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
     this.specialAmount_06 = ref.offset(1, 0x06L).cast(ByteRef::new);
     this.icon_07 = ref.offset(1, 0x07L).cast(ByteRef::new);
     this.status_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);

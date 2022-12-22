@@ -36,7 +36,6 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.playSound;
@@ -911,7 +910,7 @@ public final class Bttl_800f {
       matk += spellStats_800fa0b8.get(attacker.spellId_4e.get()).multi_04.get();
     } else {
       //LAB_800f2ef8
-      matk += attacker.itemUu1_de.get();
+      matk += attacker.itemDamage_de.get();
     }
 
     //LAB_800f2f04
@@ -3247,7 +3246,7 @@ public final class Bttl_800f {
     bobj.itemDamage_d8.set((short)itemStats.damage_02.get());
     bobj.itemSpecial1_da.set((short)itemStats.special1_03.get());
     bobj.itemSpecial2_dc.set((short)itemStats.special2_04.get());
-    bobj.itemUu1_de.set((short)itemStats.uu1_05.get());
+    bobj.itemDamage_de.set((short)itemStats.damage_05.get());
     bobj.itemSpecialAmount_e0.set(itemStats.specialAmount_06.get());
     bobj._e2.set(itemStats.icon_07.get());
     bobj.itemStatus_e4.set((short)itemStats.status_08.get());
@@ -3451,7 +3450,7 @@ public final class Bttl_800f {
       matk += spellStats_800fa0b8.get(attacker.spellId_4e.get()).multi_04.get();
     } else {
       //LAB_800f87c4
-      matk += attacker.itemUu1_de.get();
+      matk += attacker.itemDamage_de.get();
     }
 
     //LAB_800f87d0

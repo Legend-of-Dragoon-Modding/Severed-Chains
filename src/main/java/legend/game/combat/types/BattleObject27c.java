@@ -235,7 +235,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef itemDamage_d8;
   public final ShortRef itemSpecial1_da;
   public final ShortRef itemSpecial2_dc;
-  public final ShortRef itemUu1_de;
+  public final ShortRef itemDamage_de;
   public final UnsignedByteRef itemSpecialAmount_e0;
   public final ShortRef _e2;
   public final ShortRef itemStatus_e4;
@@ -400,7 +400,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.itemDamage_d8 = ref.offset(2, 0xd8L).cast(ShortRef::new);
     this.itemSpecial1_da = ref.offset(2, 0xdaL).cast(ShortRef::new);
     this.itemSpecial2_dc = ref.offset(2, 0xdcL).cast(ShortRef::new);
-    this.itemUu1_de = ref.offset(2, 0xdeL).cast(ShortRef::new);
+    this.itemDamage_de = ref.offset(2, 0xdeL).cast(ShortRef::new);
     this.itemSpecialAmount_e0 = ref.offset(1, 0xe0L).cast(UnsignedByteRef::new);
     this._e2 = ref.offset(2, 0xe2L).cast(ShortRef::new);
     this.itemStatus_e4 = ref.offset(2, 0xe4L).cast(ShortRef::new);

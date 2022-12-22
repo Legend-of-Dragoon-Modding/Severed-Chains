@@ -15,6 +15,7 @@ import legend.game.Scus94491BpeSegment_8003;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
+import legend.game.modding.registries.Registries;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +28,10 @@ import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.gameLoop;
+import static legend.game.Scus94491BpeSegment.loadFile;
+import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -42,6 +46,9 @@ public final class GameEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameEngine.class);
 
   public static final Memory MEMORY = new Memory();
+
+  public static final Registries REGISTRIES = new Registries();
+  private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -138,6 +145,11 @@ public final class GameEngine {
       MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
       MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
       MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
+
+      // Load S_ITEM temporarily to get item names
+      loadFile(overlays_8004db88.get(2), _80010004.get(), (address, size, integer) -> { }, 0, 0x10L);
+
+      REGISTRY_ACCESS.initialize();
 
       Scus94491BpeSegment_8002.start();
       loading = false;
