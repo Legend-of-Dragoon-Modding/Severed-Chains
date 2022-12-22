@@ -20,6 +20,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleStage;
+import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
@@ -215,7 +216,7 @@ public final class Scus94491BpeSegment_800b {
    *
    * Seems any other value shows the inventory
    */
-  public static final Value whichMenu_800bdc38 = MEMORY.ref(4, 0x800bdc38L);
+  public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
   public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
@@ -245,7 +246,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<TextboxArrow0c> textboxArrows_800bdea0 = MEMORY.ref(4, 0x800bdea0L, ArrayRef.of(TextboxArrow0c.class, 8, 0xc, TextboxArrow0c::new));
 
-  public static final Value _800bdf00 = MEMORY.ref(4, 0x800bdf00L);
+  public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);
   public static final Value _800bdf08 = MEMORY.ref(4, 0x800bdf08L);
 

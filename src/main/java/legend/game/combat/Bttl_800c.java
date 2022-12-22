@@ -62,6 +62,7 @@ import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.WeaponTrailEffect3c;
 import legend.game.combat.types.WeaponTrailEffectSegment2c;
+import legend.game.inventory.WhichMenu;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
@@ -82,7 +83,6 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -161,12 +161,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
 import static legend.game.Scus94491BpeSegment_800b._800bc918;
 import static legend.game.Scus94491BpeSegment_800b._800bc91c;
-import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc974;
-import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -174,6 +172,8 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
+import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
@@ -922,7 +922,7 @@ public final class Bttl_800c {
   @Method(0x800c7648L)
   public static void FUN_800c7648() {
     loadStage(combatStage_800bb0f4.get());
-    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109050", int.class), 0);
+    loadSupportOverlay(1, SBtld::FUN_80109050, 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -972,7 +972,7 @@ public final class Bttl_800c {
 
     _8006e398.morphMode_ee4.set(gameState_800babc8.morphMode_4e2.get());
 
-    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109250", int.class), 0);
+    loadSupportOverlay(1, SBtld::FUN_80109250, 0);
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -989,19 +989,19 @@ public final class Bttl_800c {
 
   @Method(0x800c788cL)
   public static void deferAllocateEnemyBattleObjects() {
-    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "allocateEnemyBattleObjects", int.class), 0);
+    loadSupportOverlay(1, SBtld::allocateEnemyBattleObjects, 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c78d4L)
   public static void deferAllocatePlayerBattleObjects() {
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "allocatePlayerBattleObjects", int.class), 0);
+    loadSupportOverlay(2, SItem::allocatePlayerBattleObjects, 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c791cL)
   public static void deferLoadEncounterAssets() {
-    loadSupportOverlay(2, getConsumerAddress(SItem.class, "loadEncounterAssets", int.class), 0);
+    loadSupportOverlay(2, SItem::loadEncounterAssets, 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1030,7 +1030,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7a30L)
   public static void deferDoNothing() {
-    loadSupportOverlay(3, getConsumerAddress(Bttl_800c.class, "doNothing", int.class), 0);
+    loadSupportOverlay(3, Bttl_800c::doNothing, 0);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1255,7 +1255,7 @@ public final class Bttl_800c {
       //LAB_800c8214
       FUN_800e9120();
       decrementOverlayCount();
-      loadSupportOverlay(2, getConsumerAddress(SItem.class, "FUN_800fc3a0", int.class), 0);
+      loadSupportOverlay(2, SItem::FUN_800fc3a0, 0);
 
       if(_800bb168.get() == 0) {
         scriptStartEffect(0x1L, _800fa6d0.offset(s0 * 0x2L).getSigned());
@@ -1372,8 +1372,8 @@ public final class Bttl_800c {
       _800bc94c.setu(0);
 
       switch((int)_800bc974.get()) {
-        case 1, 3 -> whichMenu_800bdc38.setu(0x1aL);
-        case 2, 4, 5 -> whichMenu_800bdc38.setu(0);
+        case 1, 3 -> whichMenu_800bdc38 = WhichMenu._26;
+        case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
       //LAB_800c85f0

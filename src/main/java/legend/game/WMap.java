@@ -25,6 +25,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CoolonWarpDestination20;
@@ -53,7 +54,6 @@ import legend.game.types.WMapTmdRenderingStruct18;
 import legend.game.types.WeirdTimHeader;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
@@ -86,7 +86,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
@@ -96,6 +95,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
@@ -130,10 +130,10 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -151,6 +150,7 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -659,9 +659,9 @@ public class WMap {
 
   @Method(0x800cc758L)
   public static void FUN_800cc758() {
-    FUN_80022590();
+    loadAndRenderMenus();
 
-    if(whichMenu_800bdc38.get() == 0) {
+    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(_800bdc34.get() != 0) {
         final WMapStruct258 struct258 = struct258_800c66a8.deref();
 
@@ -733,7 +733,7 @@ public class WMap {
     }
 
     pregameLoadingStage_800bb10c.setu(0x4L);
-    whichMenu_800bdc38.setu(0x1L);
+    whichMenu_800bdc38 = WhichMenu.INIT_AND_LOAD_MUSIC_1;
 
     final RECT rect = new RECT().set(_800c8700);
     long v0 = mallocTail(0x1_0000L);
@@ -1028,7 +1028,7 @@ public class WMap {
     FUN_800e7888();
     FUN_800eede4();
     free(struct258_800c66a8.getPointer());
-    _800bdf00.setu(0xdL);
+    textZ_800bdf00.set(13);
 
     //LAB_800cd2d4
     for(int i = 0; i < 8; i++) {
@@ -2590,7 +2590,7 @@ public class WMap {
           final long v0 = _800c86f0.get();
           if(v0 == 0x1L) {
             //LAB_800d49e4
-            _800bdf00.setu(0xeL);
+            textZ_800bdf00.set(14);
             textboxes_800be358.get(7).z_0c.set(14);
 
             if(width.get() < 4) {
@@ -2609,7 +2609,7 @@ public class WMap {
             _800c86f0.setu(0x1L);
 
             //LAB_800d49e4
-            _800bdf00.setu(0xeL);
+            textZ_800bdf00.set(14);
             textboxes_800be358.get(7).z_0c.set(14);
 
             if(width.get() < 4) {
@@ -2638,7 +2638,7 @@ public class WMap {
           }
 
           //LAB_800d4aec
-          _800bdf00.setu(0x1aL);
+          textZ_800bdf00.set(26);
           textboxes_800be358.get(7).z_0c.set(26);
 
           FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, 0, 0);
@@ -4423,7 +4423,7 @@ public class WMap {
         _800c86f0.setu(1);
 
         //LAB_800dca40
-        _800bdf00.setu(14);
+        textZ_800bdf00.set(14);
         textboxes_800be358.get(7).z_0c.set(14);
 
         if(width >= 4) {
@@ -4436,7 +4436,7 @@ public class WMap {
         textboxes_800be358.get(7).lines_1a.set((short)lines);
         _800c86f0.setu(2);
       } else if(v0 == 1) {
-        _800bdf00.setu(14);
+        textZ_800bdf00.set(14);
         textboxes_800be358.get(7).z_0c.set(14);
 
         if(width >= 4) {
@@ -4466,7 +4466,7 @@ public class WMap {
       }
 
       //LAB_800dcb48
-      _800bdf00.setu(18);
+      textZ_800bdf00.set(18);
       textboxes_800be358.get(7).z_0c.set(18);
       FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), 0, 0);
     }
@@ -6358,7 +6358,7 @@ public class WMap {
         }
 
         //LAB_800e53e0
-        _800bdf00.setu(0xdL);
+        textZ_800bdf00.set(13);
         _800c6860.setu(_800f0e34.get((int)_800c67a8.get())._08.get());
         _800c6862.setu(_800f0e34.get((int)_800c67a8.get())._0a.get());
         _800c68a4.setu(0x1L);
@@ -6851,7 +6851,7 @@ public class WMap {
         final long v0 = _800c86d4.offset(i * 0x4L).get();
         if(v0 == 0x1L) {
           //LAB_800e71d8
-          _800bdf00.setu(i + 0xeL);
+          textZ_800bdf00.set(i + 14);
           textboxes_800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
@@ -6901,7 +6901,7 @@ public class WMap {
           _800c86d4.offset(i * 0x4L).setu(0x1L);
 
           //LAB_800e71d8
-          _800bdf00.setu(i + 0xeL);
+          textZ_800bdf00.set(i + 14);
           textboxes_800be358.get(i).z_0c.set(i + 14);
 
           if(width.get() >= 4) {
@@ -6930,7 +6930,7 @@ public class WMap {
         }
 
         //LAB_800e74d8
-        _800bdf00.setu(i + 0x77L);
+        textZ_800bdf00.set(i + 119);
         textboxes_800be358.get(i).z_0c.set(i + 119);
 
         FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);

@@ -86,7 +86,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
@@ -2739,7 +2738,7 @@ public final class Bttl_800e {
     v0.scriptIndex_18.set(scriptIndex);
     v0._1c.set(0);
     v0.frameCount_20.set(-1);
-    loadSupportOverlay(3, getConsumerAddress(Bttl_800e.class, "FUN_800e704c", int.class), 0);
+    loadSupportOverlay(3, Bttl_800e::FUN_800e704c, 0);
     return scriptIndex;
   }
 
@@ -3845,7 +3844,7 @@ public final class Bttl_800e {
     v0._34.set(0);
     v0.deff_38.clear();
     FUN_800e6070();
-    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_801098f4", int.class), 0);
+    loadSupportOverlay(1, SBtld::FUN_801098f4, 0);
   }
 
   @Method(0x800e9100L)

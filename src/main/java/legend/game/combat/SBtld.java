@@ -20,7 +20,6 @@ import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
 
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
@@ -209,7 +208,7 @@ public class SBtld {
         break;
       }
 
-      loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_80109808", int.class), (addCombatant(s2, -1) << 16) + s2);
+      loadSupportOverlay(1, SBtld::FUN_80109808, (addCombatant(s2, -1) << 16) + s2);
     }
 
     //LAB_801095ec

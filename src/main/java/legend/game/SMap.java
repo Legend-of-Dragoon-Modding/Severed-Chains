@@ -35,6 +35,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
+import legend.game.inventory.WhichMenu;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
 import legend.game.tim.Tim;
@@ -95,7 +96,6 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_80019610;
@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002aa04;
@@ -155,6 +154,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
@@ -330,7 +330,7 @@ public final class SMap {
   /** 14576 bytes - contains the contents of NEWROOT.RDT */
   public static final NewRootStruct newroot_800c6af0 = MEMORY.ref(4, 0x800c6af0L, NewRootStruct::new);
 
-  public static final Value _800caaf0 = MEMORY.ref(4, 0x800caaf0L);
+  public static WhichMenu _800caaf0;
   public static final Value _800caaf4 = MEMORY.ref(4, 0x800caaf4L);
   public static final Value _800caaf8 = MEMORY.ref(4, 0x800caaf8L);
   public static final Value _800caafc = MEMORY.ref(4, 0x800caafcL);
@@ -692,7 +692,7 @@ public final class SMap {
 
   @Method(0x800d9bc0L)
   public static long FUN_800d9bc0(final RunningScript a0) {
-    loadSupportOverlay(2, getConsumerAddress(SMap.class, "FUN_800d9b08", int.class), -1);
+    loadSupportOverlay(2, SMap::FUN_800d9b08, -1);
     return 0;
   }
 
@@ -710,7 +710,7 @@ public final class SMap {
   public static long FUN_800d9c1c(final RunningScript a0) {
     //LAB_800d9c78
     memcpy(gameState_800babc8.charData_32c.get(a0.params_20.get(1).deref().get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).getAddress(), 0x2c);
-    loadSupportOverlay(2, getConsumerAddress(SMap.class, "FUN_800d9b08", int.class), a0.params_20.get(1).deref().get());
+    loadSupportOverlay(2, SMap::FUN_800d9b08, a0.params_20.get(1).deref().get());
     return 0;
   }
 
@@ -735,7 +735,7 @@ public final class SMap {
     //LAB_800d9d90
     gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
 
-    loadSupportOverlay(2, getConsumerAddress(SMap.class, "FUN_800d9dc0", int.class), 0);
+    loadSupportOverlay(2, SMap::FUN_800d9dc0, 0);
     return 0;
   }
 
@@ -4156,7 +4156,7 @@ public final class SMap {
 
     if(newScene == 0x3fc) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38.setu(0x1fL);
+      whichMenu_800bdc38 = WhichMenu._31;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4164,7 +4164,7 @@ public final class SMap {
 
     if(newScene == 0x3fa) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38.setu(0x15L);
+      whichMenu_800bdc38 = WhichMenu._21;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
       _800f7e4c.setu(0x1L);
@@ -4180,14 +4180,14 @@ public final class SMap {
 
     if(newScene == 0x3fe) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38.setu(0x6L);
+      whichMenu_800bdc38 = WhichMenu._6;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
       return 1;
     }
 
     if(newScene == 0x3fd) {
-      whichMenu_800bdc38.setu(0x10L);
+      whichMenu_800bdc38 = WhichMenu._16;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e30.setu(index_80052c38.get());
       index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
@@ -4199,7 +4199,7 @@ public final class SMap {
 
     if(newScene == 0x3ff) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38.setu(0x1L);
+      whichMenu_800bdc38 = WhichMenu.INIT_AND_LOAD_MUSIC_1;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
       _800f7e4c.setu(0x1L);
@@ -4440,20 +4440,20 @@ public final class SMap {
       }
 
       case 0xe -> {
-        _800caaf0.setu(whichMenu_800bdc38);
+        _800caaf0 = whichMenu_800bdc38;
         _80052c44.setu(0x2L);
-        if(whichMenu_800bdc38.get() != 0) {
-          FUN_80022590();
+        if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
+          loadAndRenderMenus();
 
-          if(whichMenu_800bdc38.get() != 0) {
+          if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
             break;
           }
         }
 
         //LAB_800e6018
         _800c6aac.setu(0xaL);
-        switch((int)_800caaf0.get()) {
-          case 0x5:
+        switch(_800caaf0) {
+          case _5:
             if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
               smapLoadingStage_800cb430.setu(0x12L);
               _800f7e4c.setu(0);
@@ -4462,13 +4462,13 @@ public final class SMap {
 
             // Fall through
 
-          case 0x19:
-          case 0x23:
-          case 0xa:
+          case _25:
+          case _35:
+          case _10:
             smapLoadingStage_800cb430.setu(0xfL);
             break;
 
-          case 0x14:
+          case _20:
             smapLoadingStage_800cb430.setu(0xcL);
             _800f7e4c.setu(0);
             FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 8).get());

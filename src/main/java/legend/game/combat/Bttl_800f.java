@@ -33,7 +33,6 @@ import javax.annotation.Nullable;
 import static java.lang.Math.round;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -3434,12 +3433,12 @@ public final class Bttl_800f {
 
   @Method(0x800f863cL)
   public static void FUN_800f863c() {
-    loadSupportOverlay(2, getConsumerAddress(Bttl_800e.class, "FUN_800ef28c", int.class), 1);
+    loadSupportOverlay(2, Bttl_800e::FUN_800ef28c, 1);
   }
 
   @Method(0x800f8670L)
   public static void loadMonster(final int bobjIndex) {
-    loadSupportOverlay(1, getConsumerAddress(Bttl_800e.class, "loadMonster", int.class), bobjIndex);
+    loadSupportOverlay(1, Bttl_800e::loadMonster, bobjIndex);
   }
 
   @Method(0x800f8768L)
