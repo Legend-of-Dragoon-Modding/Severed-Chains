@@ -63,6 +63,7 @@ public class ScriptState<T extends MemoryRef> implements MemoryRef {
    *   <li>0x4 - is enemy</li>
    *   <li>0x8 - it is this character's turn</li>
    *   <li>0x20 - ?</li>
+   *   <li>0x40 - ?</li>
    * </ul>
    */
   public final UnsignedIntRef ui_60; // Note: also contained in previous array

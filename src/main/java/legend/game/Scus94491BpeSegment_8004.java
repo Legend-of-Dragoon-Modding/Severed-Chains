@@ -179,11 +179,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beea4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeac}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeb4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1a4}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e0c}</li>
    *   <li>{@link legend.game.combat.Bttl_800c#_800c66d0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1d8}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e40}</li>
    *   <li>{@link Bttl_800c#charCount_800c677c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e50}</li>
    *   <li>{@link legend.game.SMap#_800c6768}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f27c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#_eec}</li>
@@ -195,11 +195,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e518}</li>
    *   <li>{@link legend.game.SMap#_800c6718}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#combatStage_800bb0f4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f210}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e78}</li>
    *   <li>{@link legend.game.SMap#_800c669c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f244}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_eac}</li>
    *   <li>{@link legend.game.SMap#_800c6760}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f254}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_ebc}</li>
    *   <li>{@link legend.game.SMap#_800c6758}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f288}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bac7c}</li>
