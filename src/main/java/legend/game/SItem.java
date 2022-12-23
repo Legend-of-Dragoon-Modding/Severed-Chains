@@ -498,7 +498,7 @@ public final class SItem {
   private static final List<Tuple<String, SavedGameDisplayData>> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
-  public static void allocatePlayerBattleObjects(final int a0) {
+  public static void allocatePlayerBattleObjects() {
     //LAB_800fbdb8
     for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
       if(gameState_800babc8.charIndex_88.get(charCount_800c677c.get()).get() < 0) {
@@ -547,8 +547,8 @@ public final class SItem {
   }
 
   @Method(0x800fbfe0L)
-  public static void loadEncounterAssets(final int param) {
-    loadSupportOverlay(2, SItem::loadEnemyTextures, 2625 + encounterId_800bb0f8.get());
+  public static void loadEncounterAssets() {
+    loadSupportOverlay(2, () -> SItem.loadEnemyTextures(2625 + encounterId_800bb0f8.get()));
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -594,8 +594,9 @@ public final class SItem {
       permIndices |= slots[charSlot] << 24 + charSlot * 2;
     }
 
-    loadSupportOverlay(2, SItem::deferLoadPartyPermutationTimMrg, permIndices);
-    loadSupportOverlay(2, SItem::deferLoadPartyPermutationTmdMrg, permIndices);
+    final int pi = permIndices;
+    loadSupportOverlay(2, () -> SItem.deferLoadPartyPermutationTimMrg(pi));
+    loadSupportOverlay(2, () -> SItem.deferLoadPartyPermutationTmdMrg(pi));
     _800bc960.oru(0x400L);
     decrementOverlayCount();
   }
@@ -615,11 +616,6 @@ public final class SItem {
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fc3a0L)
-  public static void FUN_800fc3a0(final int a0) {
     decrementOverlayCount();
   }
 
@@ -870,7 +866,7 @@ public final class SItem {
   }
 
   @Method(0x800fcad4L)
-  public static void FUN_800fcad4() {
+  public static void renderMenus() {
     final long v0;
     long v1;
     final long a0;
@@ -918,13 +914,13 @@ public final class SItem {
       case _2:
         deallocateRenderables(0xffL);
 
-        if(whichMenu_800bdc38 == WhichMenu._14) { // Load game screen
+        if(whichMenu_800bdc38 == WhichMenu.RENDER_LOAD_GAME_MENU_14) { // Load game screen
           //LAB_800fccd4
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_LOAD_GAME_37);
           break;
         }
 
-        if(whichMenu_800bdc38 == WhichMenu._19) {
+        if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
           //LAB_800fccd0
           //LAB_800fccd4
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_LOAD_GAME_37);
@@ -932,7 +928,7 @@ public final class SItem {
         }
 
         //LAB_800fccbc
-        if(whichMenu_800bdc38 == WhichMenu._24) { // Character swap screen
+        if(whichMenu_800bdc38 == WhichMenu.RENDER_CHAR_SWAP_MENU_24) { // Character swap screen
           //LAB_800fcce0
           recalcInventory();
           FUN_80103b10();
@@ -1291,7 +1287,7 @@ public final class SItem {
           playSound(0x3L);
 
           //LAB_800fd62c
-          FUN_800fca0c(whichMenu_800bdc38 != WhichMenu._24 ? InventoryMenuState._2 : InventoryMenuState._125, 0x5L);
+          FUN_800fca0c(whichMenu_800bdc38 != WhichMenu.RENDER_CHAR_SWAP_MENU_24 ? InventoryMenuState._2 : InventoryMenuState._125, 0x5L);
         }
 
         break;
@@ -1520,7 +1516,7 @@ public final class SItem {
           saveListUpArrow_800bdb94.clear();
 
           //LAB_800fdea8
-          if(whichMenu_800bdc38 != WhichMenu._36) {
+          if(whichMenu_800bdc38 != WhichMenu.RENDER_SHOP_CARRIED_ITEMS_36) {
             FUN_800fca0c(InventoryMenuState._7, 0x8L);
           } else {
             FUN_800fca0c(InventoryMenuState._19, 0x8L);
@@ -1641,7 +1637,7 @@ public final class SItem {
 
       case _19:
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
-        whichMenu_800bdc38 = WhichMenu._9;
+        whichMenu_800bdc38 = WhichMenu.RENDER_SHOP_MENU_9;
         break;
 
       case STATUS_INIT_20:
@@ -2041,7 +2037,7 @@ public final class SItem {
           registerInputHandlers();
         }
 
-        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 3, whichMenu_800bdc38 == WhichMenu._14 ? saves.size() : saves.size() + 1, 1)) {
+        if(scrollMenu(selectedSlot_8011d740, slotScroll_8011d744, 3, whichMenu_800bdc38 == WhichMenu.RENDER_LOAD_GAME_MENU_14 ? saves.size() : saves.size() + 1, 1)) {
           renderablePtr_800bdbe8.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           renderablePtr_800bdbec.deref().y_44.set(getSlotY(selectedSlot_8011d740.get()));
           inventoryMenuState_800bdc28.set(InventoryMenuState._42);
@@ -2086,7 +2082,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         //LAB_800ff440
-        if(whichMenu_800bdc38 == WhichMenu._14) { // Load game menu
+        if(whichMenu_800bdc38 == WhichMenu.RENDER_LOAD_GAME_MENU_14) { // Load game menu
           setMessageBoxText(Load_this_data_8011ca08, 0x2);
           inventoryMenuState_800bdc28.set(InventoryMenuState.DO_YOU_WANT_TO_LOAD_THIS_SAVE_45);
         } else {
@@ -2216,7 +2212,7 @@ public final class SItem {
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          if(whichMenu_800bdc38 == WhichMenu._19) {
+          if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
             //LAB_80100020
             //LAB_80100024
             FUN_800fca0c(InventoryMenuState._125, 0xcL);
@@ -2242,10 +2238,10 @@ public final class SItem {
         _8004dd30.setu(0);
         renderSavedGames(slotScroll_8011d744.get(), true, 0);
 
-        if(whichMenu_800bdc38 == WhichMenu._19) {
+        if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.DISK_CHANGE_DO_YOU_WANT_TO_SAVE_NOW_38);
           //LAB_80100024
-        } else if(whichMenu_800bdc38 == WhichMenu.RENDER_MAIN_MENUS_4) {
+        } else if(whichMenu_800bdc38 == WhichMenu.RENDER_INVENTORY_MENU_4) {
           //LAB_80100018
           FUN_800fca0c(InventoryMenuState._2, 0xcL);
         } else {
@@ -2905,26 +2901,26 @@ public final class SItem {
         free(drgn0_6666FilePtr_800bdc3c.getPointer());
 
         switch(whichMenu_800bdc38) {
-          case _14 -> {
+          case RENDER_LOAD_GAME_MENU_14 -> {
             //LAB_80101b90
             scriptStartEffect(0x2L, 0xaL);
-            whichMenu_800bdc38 = WhichMenu._15;
+            whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15;
           }
 
-          case _19 ->
+          case RENDER_SAVE_GAME_MENU_19 ->
             //LAB_80101ba4
-            whichMenu_800bdc38 = WhichMenu._20;
+            whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
-          case _24 -> {
+          case RENDER_CHAR_SWAP_MENU_24 -> {
             scriptStartEffect(0x2L, 0xaL);
-            whichMenu_800bdc38 = WhichMenu._25;
+            whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
           default -> {
             //LAB_80101b70
             //LAB_80101bb0
             scriptStartEffect(0x2L, 0xaL);
-            whichMenu_800bdc38 = WhichMenu._5;
+            whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
           }
         }
 
@@ -3352,7 +3348,7 @@ public final class SItem {
         if(fileIndex < saves.size()) {
           renderSaveGameSlot(fileIndex, getSlotY(i), a2 == 0xffL ? 1 : 0);
         } else {
-          if(whichMenu_800bdc38 != WhichMenu._14) {
+          if(whichMenu_800bdc38 != WhichMenu.RENDER_LOAD_GAME_MENU_14) {
             renderCentredText(new LodString("New save"), 188, getSlotY(i) + 25, 4);
           }
 
@@ -3488,7 +3484,7 @@ public final class SItem {
     }
 
     //LAB_801036e8
-    if(scroll < (whichMenu_800bdc38 == WhichMenu._19 ? saves.size() - 3 : saves.size() - 2) && (whichMenu_800bdc38 == WhichMenu._19 && saves.size() > 2 || saves.size() > 3)) {
+    if(scroll < (whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19 ? saves.size() - 3 : saves.size() - 2) && (whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19 && saves.size() > 2 || saves.size() > 3)) {
       if(saveListDownArrow_800bdb98.isNull()) {
         // Allocate down arrow
         final Renderable58 renderable = allocateUiElement(111, 108, 182, 208);
@@ -3669,7 +3665,7 @@ public final class SItem {
       tempSaveData_8011dcc0.offset(1, 0x2dL).setu(0x1L);
       tempSaveData_8011dcc0.offset(1, 0x2cL).setu(continentIndex_800bf0b0.get());
       //LAB_80103c98
-    } else if(whichMenu_800bdc38 == WhichMenu._19) {
+    } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       //LAB_80103c8c
       tempSaveData_8011dcc0.offset(1, 0x2dL).setu(0x3L);
       tempSaveData_8011dcc0.offset(1, 0x2cL).setu(gameState_800babc8.chapterIndex_98.get());
@@ -5652,7 +5648,7 @@ public final class SItem {
   }
 
   @Method(0x8010a948L)
-  public static void FUN_8010a948() {
+  public static void renderShopMenu() {
     final long v0;
     final long v1;
 
@@ -6205,7 +6201,7 @@ public final class SItem {
 
       case _18 -> {
         inventoryMenuState_800bdc28.set(InventoryMenuState._16);
-        whichMenu_800bdc38 = WhichMenu._36;
+        whichMenu_800bdc38 = WhichMenu.RENDER_SHOP_CARRIED_ITEMS_36;
       }
 
       case _19 -> {
@@ -6218,7 +6214,7 @@ public final class SItem {
 
         //LAB_8010c290
         //LAB_8010c294
-        whichMenu_800bdc38 = WhichMenu._10;
+        whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
         textZ_800bdf00.set(13);
       }
     }
@@ -7034,7 +7030,7 @@ public final class SItem {
         scriptStartEffect(0x2L, 0xaL);
         deallocateRenderables(0xffL);
         free(drgn0_6666FilePtr_800bdc3c.getPointer());
-        whichMenu_800bdc38 = WhichMenu._30;
+        whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00.set(13);
         break;
 
@@ -7042,7 +7038,7 @@ public final class SItem {
         setWidthAndFlags(384);
         deallocateRenderables(0xffL);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
-        whichMenu_800bdc38 = WhichMenu._34;
+        whichMenu_800bdc38 = WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34;
         break;
     }
 
@@ -7456,7 +7452,7 @@ public final class SItem {
   }
 
   @Method(0x8010f198L)
-  public static void FUN_8010f198() {
+  public static void renderTooManyItemsMenu() {
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
     //TODO this menu should use its own state var - the enum is for the giant main state method above
@@ -7726,7 +7722,7 @@ public final class SItem {
           free(_8011dcb8.get(1).getPointer());
           deallocateRenderables(0xffL);
           free(drgn0_6666FilePtr_800bdc3c.getPointer());
-          whichMenu_800bdc38 = WhichMenu._35;
+          whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
           if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
             FUN_800e3fac();

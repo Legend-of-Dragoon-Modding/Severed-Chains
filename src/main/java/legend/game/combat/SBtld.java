@@ -82,7 +82,7 @@ public class SBtld {
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
   @Method(0x80109050L)
-  public static void FUN_80109050(final int param) {
+  public static void FUN_80109050() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
     _800c6718.offset(0x00L).setu(stageData._00.get());
     _800c6718.offset(0x04L).setu(stageData._01.get());
@@ -129,7 +129,7 @@ public class SBtld {
   }
 
   @Method(0x80109250L)
-  public static void FUN_80109250(final int param) {
+  public static void FUN_80109250() {
     long s1 = _1f8003f4.getPointer() + 0x38L; //TODO
 
     //LAB_801092a0
@@ -198,7 +198,7 @@ public class SBtld {
   }
 
   @Method(0x8010955cL)
-  public static void allocateEnemyBattleObjects(final int a0) {
+  public static void allocateEnemyBattleObjects() {
     final long fp = _1f8003f4.getPointer(); //TODO
 
     //LAB_801095a0
@@ -208,7 +208,7 @@ public class SBtld {
         break;
       }
 
-      loadSupportOverlay(1, SBtld::FUN_80109808, (addCombatant(s2, -1) << 16) + s2);
+      loadSupportOverlay(1, () -> SBtld.FUN_80109808((addCombatant(s2, -1) << 16) + s2));
     }
 
     //LAB_801095ec
@@ -281,7 +281,7 @@ public class SBtld {
   }
 
   @Method(0x801098f4L)
-  public static void FUN_801098f4(final int param) {
+  public static void FUN_801098f4() {
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
     final int stage = Math.max(0, combatStage_800bb0f4.get());
 

@@ -733,7 +733,7 @@ public class WMap {
     }
 
     pregameLoadingStage_800bb10c.setu(0x4L);
-    whichMenu_800bdc38 = WhichMenu.INIT_AND_LOAD_MUSIC_1;
+    whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
 
     final RECT rect = new RECT().set(_800c8700);
     long v0 = mallocTail(0x1_0000L);

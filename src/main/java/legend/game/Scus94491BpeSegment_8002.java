@@ -63,9 +63,9 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.game.SItem.FUN_800fcad4;
-import static legend.game.SItem.FUN_8010a948;
-import static legend.game.SItem.FUN_8010f198;
+import static legend.game.SItem.renderMenus;
+import static legend.game.SItem.renderShopMenu;
+import static legend.game.SItem.renderTooManyItemsMenu;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -1363,167 +1363,132 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022510
   }
 
-  @Method(0x80022520L)
-  public static void FUN_80022520(final int unused) {
-    whichMenu_800bdc38 = WhichMenu.RENDER_MAIN_MENUS_4;
-  }
-
-  @Method(0x80022530L)
-  public static void FUN_80022530(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._9;
-  }
-
-  @Method(0x80022540L)
-  public static void FUN_80022540(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._14;
-  }
-
-  @Method(0x80022550L)
-  public static void FUN_80022550(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._19;
-  }
-
-  @Method(0x80022560L)
-  public static void FUN_80022560(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._24;
-  }
-
-  @Method(0x80022570L)
-  public static void FUN_80022570(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._29;
-  }
-
-  @Method(0x80022580L)
-  public static void FUN_80022580(final int unused) {
-    whichMenu_800bdc38 = WhichMenu._34;
-  }
-
   @Method(0x80022590L)
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
-      case INIT_AND_LOAD_MUSIC_1 -> {
+      case INIT_INVENTORY_MENU_1 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_INVENTORY_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
+      case WAIT_FOR_INVENTORY_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu.WAIT_3;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022520, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_INVENTORY_MENU_4);
         }
       }
 
-      case _6 -> {
+      case INIT_SHOP_MENU_6 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._7;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_SHOP_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_7;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case _7 -> {
+      case WAIT_FOR_SHOP_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_7 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._8;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022530, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_8;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_SHOP_MENU_9);
         }
       }
 
-      case _11 -> {
+      case INIT_LOAD_GAME_MENU_11 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._12;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_LOAD_GAME_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_12;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case _12 -> {
+      case WAIT_FOR_LOAD_GAME_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_12 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._13;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022540, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_13;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_LOAD_GAME_MENU_14);
         }
       }
 
-      case _16 -> {
+      case INIT_SAVE_GAME_MENU_16 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._17;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_SAVE_GAME_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_17;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case _17 -> {
+      case WAIT_FOR_SAVE_GAME_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_17 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._18;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022550, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_18;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_SAVE_GAME_MENU_19);
         }
       }
 
-      case _21 -> {
+      case INIT_CHAR_SWAP_MENU_21 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._22;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_CHAR_SWAP_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_22;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case _22 -> {
+      case WAIT_FOR_CHAR_SWAP_MENU_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_22 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._23;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022560, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_23;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_CHAR_SWAP_MENU_24);
         }
       }
 
-      case _31 -> {
+      case INIT_POST_COMBAT_REPORT_26 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._32;
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
+        }
+      }
+
+      case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_28;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29);
+        }
+      }
+
+      case INIT_TOO_MANY_ITEMS_MENU_31 -> {
+        if((getLoadedDrgnFiles() & 0x80L) == 0) {
+          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_TOO_MANY_ITEMS_MENU_TO_LOAD_AND_LOAD_S_ITEM_32;
           FUN_8001e010(0);
           scriptsDisabled_800bc0b9.set(true);
         }
       }
 
-      case _26 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38 = WhichMenu._27;
-        }
-      }
-
-      case _27 -> {
+      case WAIT_FOR_TOO_MANY_ITEMS_MENU_TO_LOAD_AND_LOAD_S_ITEM_32 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._28;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022570, 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_33;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34);
         }
       }
 
-      case _32 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu._33;
-          loadSupportOverlay(2, Scus94491BpeSegment_8002::FUN_80022580, 0);
-        }
-      }
+      case RENDER_INVENTORY_MENU_4, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
+      case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
+      case RENDER_SHOP_MENU_9 -> renderShopMenu();
+      case RENDER_TOO_MANY_ITEMS_MENU_34 -> renderTooManyItemsMenu();
 
-      case RENDER_MAIN_MENUS_4, _14, _19, _24, _36 -> FUN_800fcad4();
-      case _29 -> renderPostCombatReport();
-      case _9 -> FUN_8010a948();
-      case _34 -> FUN_8010f198();
-
-      case _5, _10, _15, _25, _35 -> {
+      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_LOAD_GAME_MENU_15, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
         decrementOverlayCount();
         FUN_8001e010(-1);
         scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
-      case _20, _30 -> {
+      case UNLOAD_SAVE_GAME_MENU_20, UNLOAD_POST_COMBAT_REPORT_30 -> {
         decrementOverlayCount();
         scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38 = WhichMenu.NONE_0;

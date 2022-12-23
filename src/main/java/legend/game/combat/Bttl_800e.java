@@ -2738,7 +2738,7 @@ public final class Bttl_800e {
     v0.scriptIndex_18.set(scriptIndex);
     v0._1c.set(0);
     v0.frameCount_20.set(-1);
-    loadSupportOverlay(3, Bttl_800e::FUN_800e704c, 0);
+    loadSupportOverlay(3, Bttl_800e::FUN_800e704c);
     return scriptIndex;
   }
 
@@ -2998,7 +2998,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e704cL)
-  public static void FUN_800e704c(final int param) {
+  public static void FUN_800e704c() {
     _800c6938.deref()._1c.set(1);
   }
 
@@ -3844,7 +3844,7 @@ public final class Bttl_800e {
     v0._34.set(0);
     v0.deff_38.clear();
     FUN_800e6070();
-    loadSupportOverlay(1, SBtld::FUN_801098f4, 0);
+    loadSupportOverlay(1, SBtld::FUN_801098f4);
   }
 
   @Method(0x800e9100L)
@@ -5812,7 +5812,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ef28cL)
-  public static void FUN_800ef28c(final int a0) {
+  public static void FUN_800ef28c() {
     //LAB_800ef2c4
     //TODO sp0x18 is unused, why?
     //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);

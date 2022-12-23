@@ -32,6 +32,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
+import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleDisplayStats144;
@@ -922,7 +923,7 @@ public final class Bttl_800c {
   @Method(0x800c7648L)
   public static void FUN_800c7648() {
     loadStage(combatStage_800bb0f4.get());
-    loadSupportOverlay(1, SBtld::FUN_80109050, 0);
+    loadSupportOverlay(1, SBtld::FUN_80109050);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -972,7 +973,7 @@ public final class Bttl_800c {
 
     _8006e398.morphMode_ee4.set(gameState_800babc8.morphMode_4e2.get());
 
-    loadSupportOverlay(1, SBtld::FUN_80109250, 0);
+    loadSupportOverlay(1, SBtld::FUN_80109250);
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -989,19 +990,19 @@ public final class Bttl_800c {
 
   @Method(0x800c788cL)
   public static void deferAllocateEnemyBattleObjects() {
-    loadSupportOverlay(1, SBtld::allocateEnemyBattleObjects, 0);
+    loadSupportOverlay(1, SBtld::allocateEnemyBattleObjects);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c78d4L)
   public static void deferAllocatePlayerBattleObjects() {
-    loadSupportOverlay(2, SItem::allocatePlayerBattleObjects, 0);
+    loadSupportOverlay(2, SItem::allocatePlayerBattleObjects);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
   @Method(0x800c791cL)
   public static void deferLoadEncounterAssets() {
-    loadSupportOverlay(2, SItem::loadEncounterAssets, 0);
+    loadSupportOverlay(2, SItem::loadEncounterAssets);
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1030,7 +1031,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7a30L)
   public static void deferDoNothing() {
-    loadSupportOverlay(3, Bttl_800c::doNothing, 0);
+    loadSupportOverlay(3, () -> { });
     pregameLoadingStage_800bb10c.addu(0x1L);
   }
 
@@ -1059,11 +1060,6 @@ public final class Bttl_800c {
     }
 
     //LAB_800c7b9c
-  }
-
-  @Method(0x800c7a78L)
-  public static void doNothing(final int param) {
-    // empty
   }
 
   @Method(0x800c7bb8L)
@@ -1255,7 +1251,7 @@ public final class Bttl_800c {
       //LAB_800c8214
       FUN_800e9120();
       decrementOverlayCount();
-      loadSupportOverlay(2, SItem::FUN_800fc3a0, 0);
+      loadSupportOverlay(2, Scus94491BpeSegment::decrementOverlayCount);
 
       if(_800bb168.get() == 0) {
         scriptStartEffect(0x1L, _800fa6d0.offset(s0 * 0x2L).getSigned());
@@ -1372,7 +1368,7 @@ public final class Bttl_800c {
       _800bc94c.setu(0);
 
       switch((int)_800bc974.get()) {
-        case 1, 3 -> whichMenu_800bdc38 = WhichMenu._26;
+        case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 

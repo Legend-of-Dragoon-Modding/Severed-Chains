@@ -692,7 +692,7 @@ public final class SMap {
 
   @Method(0x800d9bc0L)
   public static long FUN_800d9bc0(final RunningScript a0) {
-    loadSupportOverlay(2, SMap::FUN_800d9b08, -1);
+    loadSupportOverlay(2, () -> SMap.FUN_800d9b08(-1));
     return 0;
   }
 
@@ -710,7 +710,7 @@ public final class SMap {
   public static long FUN_800d9c1c(final RunningScript a0) {
     //LAB_800d9c78
     memcpy(gameState_800babc8.charData_32c.get(a0.params_20.get(1).deref().get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).getAddress(), 0x2c);
-    loadSupportOverlay(2, SMap::FUN_800d9b08, a0.params_20.get(1).deref().get());
+    loadSupportOverlay(2, () -> SMap.FUN_800d9b08(a0.params_20.get(1).deref().get()));
     return 0;
   }
 
@@ -735,7 +735,7 @@ public final class SMap {
     //LAB_800d9d90
     gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
 
-    loadSupportOverlay(2, SMap::FUN_800d9dc0, 0);
+    loadSupportOverlay(2, () -> SMap.FUN_800d9dc0(0));
     return 0;
   }
 
@@ -4156,7 +4156,7 @@ public final class SMap {
 
     if(newScene == 0x3fc) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38 = WhichMenu._31;
+      whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4164,7 +4164,7 @@ public final class SMap {
 
     if(newScene == 0x3fa) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38 = WhichMenu._21;
+      whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
       _800f7e4c.setu(0x1L);
@@ -4180,14 +4180,14 @@ public final class SMap {
 
     if(newScene == 0x3fe) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38 = WhichMenu._6;
+      whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
       return 1;
     }
 
     if(newScene == 0x3fd) {
-      whichMenu_800bdc38 = WhichMenu._16;
+      whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e30.setu(index_80052c38.get());
       index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
@@ -4199,7 +4199,7 @@ public final class SMap {
 
     if(newScene == 0x3ff) {
       scriptsTickDisabled_800bc0b8.set(true);
-      whichMenu_800bdc38 = WhichMenu.INIT_AND_LOAD_MUSIC_1;
+      whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
       _800f7e4c.setu(0x1L);
@@ -4413,7 +4413,7 @@ public final class SMap {
         _80052c44.setu(0);
         FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
         if(joypadPress_8007a398.get(0x10L) != 0 && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
-          FUN_800e5534(-1, 1023);
+          FUN_800e5534(-1, 0x3ff);
         }
       }
 
@@ -4453,7 +4453,7 @@ public final class SMap {
         //LAB_800e6018
         _800c6aac.setu(0xaL);
         switch(_800caaf0) {
-          case _5:
+          case UNLOAD_INVENTORY_MENU_5:
             if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
               smapLoadingStage_800cb430.setu(0x12L);
               _800f7e4c.setu(0);
@@ -4462,13 +4462,13 @@ public final class SMap {
 
             // Fall through
 
-          case _25:
-          case _35:
-          case _10:
+          case UNLOAD_CHAR_SWAP_MENU_25:
+          case UNLOAD_TOO_MANY_ITEMS_MENU_35:
+          case UNLOAD_SHOP_MENU_10:
             smapLoadingStage_800cb430.setu(0xfL);
             break;
 
-          case _20:
+          case UNLOAD_SAVE_GAME_MENU_20:
             smapLoadingStage_800cb430.setu(0xcL);
             _800f7e4c.setu(0);
             FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 8).get());

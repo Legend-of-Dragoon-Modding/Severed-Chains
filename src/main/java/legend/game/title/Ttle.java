@@ -167,7 +167,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7194L)
-  public static void setUpNewGameData(final int unused) {
+  public static void setUpNewGameData() {
     final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
     final int oldMono = gameState_800babc8.mono_4e0.get();
 
@@ -255,15 +255,15 @@ public final class Ttle {
 
   @Method(0x800c7424L)
   public static void executeTtleUnloadingStage() {
-    setUpNewGameData();
+    loadSItemAndSetUpNewGameData();
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     vsyncMode_8007a3b8.set(2);
     pregameLoadingStage_800bb10c.setu(0);
   }
 
   @Method(0x800c7524L)
-  public static void setUpNewGameData() {
-    loadSupportOverlay(2, Ttle::setUpNewGameData, 0);
+  public static void loadSItemAndSetUpNewGameData() {
+    loadSupportOverlay(2, Ttle::setUpNewGameData);
   }
 
   @Method(0x800c7558L)
@@ -472,7 +472,7 @@ public final class Ttle {
 
     if(_800c6754 >= 16) {
       if(_800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu._11;
+        whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
         removeInputHandlers();
         restoreVram();
         deallocateFire();

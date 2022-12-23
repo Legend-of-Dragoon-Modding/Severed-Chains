@@ -3433,12 +3433,12 @@ public final class Bttl_800f {
 
   @Method(0x800f863cL)
   public static void FUN_800f863c() {
-    loadSupportOverlay(2, Bttl_800e::FUN_800ef28c, 1);
+    loadSupportOverlay(2, Bttl_800e::FUN_800ef28c);
   }
 
   @Method(0x800f8670L)
   public static void loadMonster(final int bobjIndex) {
-    loadSupportOverlay(1, Bttl_800e::loadMonster, bobjIndex);
+    loadSupportOverlay(1, () -> Bttl_800e.loadMonster(bobjIndex));
   }
 
   @Method(0x800f8768L)
