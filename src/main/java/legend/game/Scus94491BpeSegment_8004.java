@@ -186,7 +186,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f1e8}</li>
    *   <li>{@link legend.game.SMap#_800c6768}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006f27c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398._eec}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#_eec}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#itemsDroppedByEnemiesCount_800bc978}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#itemsDroppedByEnemies_800bc928}</li>
    *   <li>{@link legend.game.SMap#_800c66bc}</li>
@@ -262,19 +262,19 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_15c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_17c}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#dragoonSpirits_19c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baef8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baf24}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baf50}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800baf7c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bafa8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bafd4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb000}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb02c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb058}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8005#_8005a368}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(0)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(1)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(2)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(3)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(4)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(5)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(6)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(7)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(8)#partyFlags_04}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_8005#standingInSavePoint_8005a368}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8007#shopId_8007a3b4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1a4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bad8c}</li>
+   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1c4}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e3b8}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e3d8}</li>

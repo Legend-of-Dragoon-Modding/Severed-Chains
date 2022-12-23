@@ -138,7 +138,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static LoadingOverlay loadingOverlay_8005a2a8;
-  public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
+  public static final Value standingInSavePoint_8005a368 = MEMORY.ref(1, 0x8005a368L);
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 }

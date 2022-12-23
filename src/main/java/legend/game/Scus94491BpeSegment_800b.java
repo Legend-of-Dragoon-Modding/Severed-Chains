@@ -220,7 +220,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
-  public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
+
   /**
    * 0x01 - L2
    * 0x02 - R2

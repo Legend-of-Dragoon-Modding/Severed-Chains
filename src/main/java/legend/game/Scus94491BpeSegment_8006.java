@@ -13,19 +13,26 @@ public final class Scus94491BpeSegment_8006 {
   //TODO all of this is part of this struct
   public static final BattleStructEf4 _8006e398 = MEMORY.ref(4, 0x8006e398L, BattleStructEf4::new);
 
+  // 0x580
   public static final ArrayRef<BttlStruct08> _8006e918 = MEMORY.ref(4, 0x8006e918L, ArrayRef.of(BttlStruct08.class, 0x100, 0x8, BttlStruct08::new));
 
+  // 0xe0c
   public static final Value _8006f1a4 = MEMORY.ref(4, 0x8006f1a4L);
 
+  // 0xe40
   public static final Value _8006f1d8 = MEMORY.ref(4, 0x8006f1d8L);
 
+  // 0xe50
   public static final Value _8006f1e8 = MEMORY.ref(4, 0x8006f1e8L);
 
+  // 0xe78
   /** The same type as {@link Scus94491BpeSegment_8006#_8006f1d8} */
   public static final Value _8006f210 = MEMORY.ref(4, 0x8006f210L);
 
+  // 0xeac
   public static final Value _8006f244 = MEMORY.ref(4, 0x8006f244L);
 
+  // 0xebc
   /** The same type as {@link Scus94491BpeSegment_8006#_8006f1d8} */
   public static final Value _8006f254 = MEMORY.ref(4, 0x8006f254L);
 }

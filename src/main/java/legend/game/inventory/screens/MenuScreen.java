@@ -4,7 +4,7 @@ public abstract class MenuScreen {
   public abstract void render();
   public abstract void handleInput();
 
-  public boolean renderNext() {
+  public boolean propogateRender() {
     return false;
   }
 }

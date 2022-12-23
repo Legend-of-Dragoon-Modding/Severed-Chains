@@ -72,7 +72,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
 import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
-import static legend.game.Scus94491BpeSegment_800b._800bdc40;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
@@ -1054,7 +1053,6 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6d60() {
     _800bdb90.setu(0);
     _800bdc24.setu(0);
-    _800bdc40.setu(0);
     renderablePtr_800bdc5c.clear();
     FUN_800e6d9c();
   }
