@@ -14,10 +14,21 @@ import legend.core.memory.types.UnsignedShortRef;
 public class GameState52c implements MemoryRef {
   private final Value ref;
 
+  /** Maybe flags? Maybe individual bytes? */
+  public final IntRef _04;
+
   /** Don't really know what this means */
   public final UnsignedByteRef stardustProgress_0b;
 
   public final IntRef stardustTurnedIn_50;
+
+  /** Zy: changed when I did the battles in the marshland. i believe this reset when i went back to get the stardust */
+  public final IntRef _58;
+  /** Zy: changes when you are on the boat in the marshland */
+  public final IntRef _5c;
+
+  /** Zy: used as byte, displays as short, actually is an int, blocks if over 99, typical LOD code */
+  public final IntRef heroTickets_74;
 
   public final ArrayRef<IntRef> charIndex_88;
   public final IntRef gold_94;
@@ -28,6 +39,8 @@ public class GameState52c implements MemoryRef {
   public final IntRef submapScene_a4;
   public final IntRef submapCut_a8;
 
+  /** Used by the script engine */
+  public final IntRef _b0;
   public final UnsignedIntRef _b4;
   public final UnsignedIntRef _b8;
   /**
@@ -73,9 +86,16 @@ public class GameState52c implements MemoryRef {
   public GameState52c(final Value ref) {
     this.ref = ref;
 
+    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
+
     this.stardustProgress_0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
 
     this.stardustTurnedIn_50 = ref.offset(4, 0x50L).cast(IntRef::new);
+
+    this._58 = ref.offset(4, 0x58L).cast(IntRef::new);
+    this._5c = ref.offset(4, 0x5cL).cast(IntRef::new);
+
+    this.heroTickets_74 = ref.offset(4, 0x74L).cast(IntRef::new);
 
     this.charIndex_88 = ref.offset(4, 0x88L).cast(ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
     this.gold_94 = ref.offset(4, 0x94L).cast(IntRef::new);
@@ -85,6 +105,7 @@ public class GameState52c implements MemoryRef {
     this.submapScene_a4 = ref.offset(4, 0xa4L).cast(IntRef::new);
     this.submapCut_a8 = ref.offset(4, 0xa8L).cast(IntRef::new);
 
+    this._b0 = ref.offset(4, 0xb0L).cast(IntRef::new);
     this._b4 = ref.offset(4, 0xb4L).cast(UnsignedIntRef::new);
     this._b8 = ref.offset(4, 0xb8L).cast(UnsignedIntRef::new);
     this.scriptFlags2_bc = ref.offset(4, 0xbcL).cast(ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));

@@ -64,11 +64,13 @@ public class BattleStructEf4 implements MemoryRef {
   /** Note: nodart code no longer uses this */
   public final Pointer<PartyPermutation08> partyPermutation_ee8;
   public final IntRef stageProgression_eec;
+  /** Used by script engine */
+  public final IntRef _ef0;
 
   public BattleStructEf4(final Value ref) {
     this.ref = ref;
 
-    this.specialEffect_00 = ref.offset(4, 0x00L).cast(ArrayRef.of(SpecialEffects20.class, 8, 0x20, SpecialEffects20::new));
+    this.specialEffect_00 = ref.offset(4, 0x00L).cast(ArrayRef.of(SpecialEffects20.class, 10, 0x20, SpecialEffects20::new));
 
     this._180 = ref.offset(4, 0x180L).cast(ArrayRef.of(IntRef.class, 0x100, 4, IntRef::new));
 
@@ -98,6 +100,7 @@ public class BattleStructEf4 implements MemoryRef {
 
     this.partyPermutation_ee8 = ref.offset(4, 0xee8L).cast(Pointer.deferred(4, PartyPermutation08::new));
     this.stageProgression_eec = ref.offset(4, 0xeecL).cast(IntRef::new);
+    this._ef0 = ref.offset(4, 0xef0L).cast(IntRef::new);
   }
 
   @Override
