@@ -412,8 +412,6 @@ public final class SItem {
    */
   public static final Value dabasState_8011d758 = MEMORY.ref(4, 0x8011d758L);
 
-  public static final Value saveCount_8011d768 = MEMORY.ref(4, 0x8011d768L);
-
   public static final UseItemResponse useItemResponse_8011d788 = MEMORY.ref(1, 0x8011d788L, UseItemResponse::new);
 
   public static final UnsignedIntRef _8011d7b8 = MEMORY.ref(4, 0x8011d7b8L, UnsignedIntRef::new);
@@ -494,7 +492,7 @@ public final class SItem {
   public static final Pointer<Renderable58> renderable_8011e204 = MEMORY.ref(4, 0x8011e204L, Pointer.deferred(4, Renderable58::new));
   public static final Pointer<Renderable58> renderable_8011e208 = MEMORY.ref(4, 0x8011e208L, Pointer.deferred(4, Renderable58::new));
 
-  private static final List<Tuple<String, SavedGameDisplayData>> saves = new ArrayList<>();
+  public static final List<Tuple<String, SavedGameDisplayData>> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
   public static void allocatePlayerBattleObjects() {
@@ -869,7 +867,6 @@ public final class SItem {
     final long v0;
     long v1;
     final long a0;
-    final long t0;
     final long s1;
 
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
@@ -1986,17 +1983,9 @@ public final class SItem {
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
 
-        //LAB_800ff194
-        if(saveCount_8011d768.offset(1, 0x10L).get() > 0xcL) {
-          selectedSlot_8011d740.set((int)(saveCount_8011d768.offset(1, 0x10L).get() - 12));
-          slotScroll_8011d744.set(12);
-        } else {
-          //LAB_800ff1d0
-          selectedSlot_8011d740.set(0);
-          slotScroll_8011d744.set((int)saveCount_8011d768.offset(1, 0x10L).get());
-        }
+        selectedSlot_8011d740.set(0);
+        slotScroll_8011d744.set(0);
 
-        //LAB_800ff1e0
         renderablePtr_800bdbe8.set(allocateUiElement(129, 129,  16, getSlotY(selectedSlot_8011d740.get())));
         renderablePtr_800bdbec.set(allocateUiElement(130, 130, 192, getSlotY(selectedSlot_8011d740.get())));
         FUN_80104b60(renderablePtr_800bdbe8.deref());
@@ -2010,7 +1999,6 @@ public final class SItem {
       case _42:
         renderSaveListArrows(slotScroll_8011d744.get());
 
-        //LAB_800ff2a8
         deallocateRenderables(0);
         renderSavedGames(slotScroll_8011d744.get(), true, 0xffL);
 
@@ -2166,14 +2154,6 @@ public final class SItem {
         gameState_800babc8.submapScene_a4.set(index_80052c38.get());
         gameState_800babc8.submapCut_a8.set((int)_800cb450.get());
 
-        t0 = saveCount_8011d768.getAddress();
-        final SaveDisplayData saveDisplayData = saveDisplayData_8011dcc0;
-        saveDisplayData._30.set((int)MEMORY.ref(4, t0).offset(0xcL).get());
-        if(MEMORY.ref(1, t0).offset(0x10L).get() != selectedSlot_8011d740.get() + slotScroll_8011d744.get()) {
-          saveDisplayData._30.incr();
-        }
-
-        //LAB_800ff940
         saveGame(selectedSlot_8011d740.get() + slotScroll_8011d744.get());
 
         //LAB_800ff988

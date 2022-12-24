@@ -1,10 +1,17 @@
 package legend.game.inventory.screens;
 
 public abstract class MenuScreen {
-  public abstract void render();
-  public abstract void handleInput();
+  protected abstract void render();
+  protected void mouseMove(final int x, final int y) { }
+  protected void mouseClick(final int x, final int y, final int button, final int mods) { }
+  protected void mouseScroll(final double deltaX, double deltaY) { }
+  protected void keyPress(final int key, final int scancode, final int mods) { }
 
-  public boolean propogateRender() {
+  protected boolean propagateRender() {
+    return false;
+  }
+
+  protected boolean propagateInput() {
     return false;
   }
 }
