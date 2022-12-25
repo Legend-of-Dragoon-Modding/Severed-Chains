@@ -198,8 +198,8 @@ import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
+import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -2412,8 +2412,8 @@ public final class Scus94491BpeSegment_8002 {
 
         selectedMenuOptionRenderablePtr_800bdbe0.clear();
         selectedMenuOptionRenderablePtr_800bdbe4.clear();
-        renderablePtr_800bdbe8.clear();
-        renderablePtr_800bdbec.clear();
+        highlightLeftHalf_800bdbe8.clear();
+        highlightRightHalf_800bdbec.clear();
         renderablePtr_800bdbf0.clear();
 
         renderablePtr_800bdc20.clear();

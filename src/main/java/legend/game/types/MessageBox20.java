@@ -14,7 +14,7 @@ public class MessageBox20 implements MemoryRef {
   public final Pointer<LodString> text_00;
   public final Pointer<Renderable58> renderable_04;
   public final Pointer<Renderable58> renderable_08;
-  public final UnsignedByteRef _0c;
+  public final UnsignedByteRef state_0c;
 
   /** The number of frames the messagebox has been displayed */
   public final UnsignedIntRef ticks_10;
@@ -31,7 +31,7 @@ public class MessageBox20 implements MemoryRef {
     this.text_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, LodString::new));
     this.renderable_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, Renderable58::new));
     this.renderable_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, Renderable58::new));
-    this._0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
+    this.state_0c = ref.offset(1, 0x0cL).cast(UnsignedByteRef::new);
 
     this.ticks_10 = ref.offset(4, 0x10L).cast(UnsignedIntRef::new);
 

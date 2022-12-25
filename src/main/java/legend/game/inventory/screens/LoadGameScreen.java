@@ -15,8 +15,8 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
+import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
+import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 
@@ -34,10 +34,7 @@ public class LoadGameScreen extends MenuScreen {
       case 0 -> {
         deallocateRenderables(0xff);
         scriptStartEffect(2, 10);
-        this.loadingStage++;
-      }
 
-      case 1 -> {
         saveListDownArrow_800bdb98.clear();
         saveListUpArrow_800bdb94.clear();
         this.scroll = 0;
@@ -46,10 +43,10 @@ public class LoadGameScreen extends MenuScreen {
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
 
-        renderablePtr_800bdbe8.set(allocateUiElement(129, 129,  16, getSlotY(this.selectedSlot)));
-        renderablePtr_800bdbec.set(allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot)));
-        FUN_80104b60(renderablePtr_800bdbe8.deref());
-        FUN_80104b60(renderablePtr_800bdbec.deref());
+        highlightLeftHalf_800bdbe8.set(allocateUiElement(129, 129,  16, getSlotY(this.selectedSlot)));
+        highlightRightHalf_800bdbec.set(allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot)));
+        FUN_80104b60(highlightLeftHalf_800bdbe8.deref());
+        FUN_80104b60(highlightRightHalf_800bdbec.deref());
         renderSaveListArrows(this.scroll);
 
         deallocateRenderables(0);
@@ -58,7 +55,7 @@ public class LoadGameScreen extends MenuScreen {
         this.loadingStage++;
       }
 
-      case 2 -> {
+      case 1 -> {
         renderSaveListArrows(this.scroll);
         renderSavedGames(this.scroll, true, 0);
 
@@ -83,7 +80,7 @@ public class LoadGameScreen extends MenuScreen {
 
   @Override
   protected void mouseMove(final int x, final int y) {
-    if(this.loadingStage != 2) {
+    if(this.loadingStage != 1) {
       return;
     }
 
@@ -97,8 +94,8 @@ public class LoadGameScreen extends MenuScreen {
         if(i != this.selectedSlot) {
           playSound(1);
           this.selectedSlot = i;
-          renderablePtr_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
-          renderablePtr_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
+          highlightLeftHalf_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
+          highlightRightHalf_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
         }
       }
     }
@@ -106,7 +103,7 @@ public class LoadGameScreen extends MenuScreen {
 
   @Override
   protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    if(this.loadingStage != 2) {
+    if(this.loadingStage != 1) {
       return;
     }
 
@@ -148,8 +145,8 @@ public class LoadGameScreen extends MenuScreen {
   private void scroll(final int scroll) {
     playSound(1);
     this.scroll = scroll;
-    renderablePtr_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
-    renderablePtr_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
+    highlightLeftHalf_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
+    highlightRightHalf_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
     deallocateRenderables(0);
     renderSavedGames(this.scroll, true, 0xff);
   }
