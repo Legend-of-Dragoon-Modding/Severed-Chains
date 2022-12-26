@@ -147,6 +147,7 @@ public abstract class SaveListScreen extends MenuScreen {
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
     if(key == GLFW.GLFW_KEY_ESCAPE && mods == 0) {
+      playSound(3);
       this.loadingStage = 2;
     }
   }
