@@ -4825,7 +4825,7 @@ public final class Scus94491BpeSegment_8002 {
         final int v = s7 >= 0 ? v1 : v1 - s7;
         final int h = s7 >= 0 ? 12 - s7 : 12 + s7;
 
-        GPU.queueCommand((int)textZ_800bdf00.get(), new GpuCommandQuad()
+        GPU.queueCommand(textZ_800bdf00.get(), new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
           .monochrome(0x80)
           .pos(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)

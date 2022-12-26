@@ -126,12 +126,13 @@ public class MenuStack {
         w = h * aspect;
       }
 
-      final float t = (window.getHeight() - h) / 2;
+      final float left = (window.getWidth() - w) / 2;
+      final float top = (window.getHeight() - h) / 2;
 
       final float scaleX = w / GPU.getDisplayTextureWidth();
       final float scaleY = h / GPU.getDisplayTextureHeight();
 
-      this.input(screen -> screen.mouseClick((int)(x / scaleX), (int)(y / scaleY), button, mods));
+      this.input(screen -> screen.mouseClick((int)((x - left) / scaleX), (int)((y - top) / scaleY), button, mods));
     }
   }
 

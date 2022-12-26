@@ -425,7 +425,7 @@ public final class SItem {
   public static final Value canSave_8011dc88 = MEMORY.ref(1, 0x8011dc88L);
 
   public static final Value _8011dc8c = MEMORY.ref(4, 0x8011dc8cL);
-  public static final MessageBox20 messageBox_8011dc90 = MEMORY.ref(4, 0x8011dc90L, MessageBox20::new);
+  public static final MessageBox20 messageBox_8011dc90 = new MessageBox20();
 
   public static final Value _8011dca8 = MEMORY.ref(4, 0x8011dca8L);
 
@@ -874,7 +874,7 @@ public final class SItem {
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0: // Initialize, loads some files (unknown contents)
         _800bdc34.setu(0);
-        messageBox_8011dc90.state_0c.set(0);
+        messageBox_8011dc90.state_0c = 0;
         loadCharacterStats(0);
 
         if(mainCallbackIndex_8004dd20.get() == 0x8L) {
@@ -1001,7 +1001,7 @@ public final class SItem {
                 playSound(0x4L);
                 selectedItemSubmenuOption_8011d73c.set(0);
                 selectedMenuOptionRenderablePtr_800bdbe4.clear();
-                setMessageBoxText(null, 0x1);
+                setMessageBoxText(messageBox_8011dc90, null, 0x1);
                 inventoryMenuState_800bdc28.set(InventoryMenuState._6);
               }
 
@@ -1019,12 +1019,7 @@ public final class SItem {
 
               case 7 -> {
                 playSound(0x2L);
-
-                final String message = "Return to main menu?\nAlpha - do not use";
-                final LodString string = MEMORY.ref(2, mallocTail((message.length() + 1) * 2), LodString::new);
-                string.set(message);
-
-                setMessageBoxText(string, 2);
+                setMessageBoxText(messageBox_8011dc90, new LodString("Return to main menu?\nAlpha - do not use"), 2);
                 inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4_QUIT_CONFIRM);
               }
             }
@@ -1047,12 +1042,10 @@ public final class SItem {
       case MAIN_MENU_4_QUIT_CONFIRM:
         switch(messageBox(messageBox_8011dc90)) {
           case YES -> {
-            free(messageBox_8011dc90.text_00.getPointer());
             FUN_800fca0c(InventoryMenuState.MAIN_MENU_4_QUIT, 0x1L);
           }
 
           case NO -> {
-            free(messageBox_8011dc90.text_00.getPointer());
             inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
           }
         }
@@ -1115,7 +1108,7 @@ public final class SItem {
       case _6:
         messageBox(messageBox_8011dc90);
 
-        if(messageBox_8011dc90.ticks_10.get() >= 0x2L) {
+        if(messageBox_8011dc90.ticks_10 >= 2) {
           if(selectedMenuOptionRenderablePtr_800bdbe4.isNull()) {
             selectedMenuOptionRenderablePtr_800bdbe4.set(allocateUiElement(0x74, 0x74, FUN_800fc7bc(0) - 34, menuOptionY(0) - 2));
             FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4.deref());
@@ -1185,7 +1178,7 @@ public final class SItem {
           if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
             playSound(0x2L);
             inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-            messageBox_8011dc90.state_0c.incr();
+            messageBox_8011dc90.state_0c++;
             unloadRenderable(selectedMenuOptionRenderablePtr_800bdbe4.deref());
           }
 
@@ -1736,7 +1729,7 @@ public final class SItem {
         selectedSlot_8011d740.set(0);
         useItemResponse_8011d788._00.set(0);
         useItemResponse_8011d788.value_04.set(0);
-        messageBox_8011dc90.state_0c.set(0);
+        messageBox_8011dc90.state_0c = 0;
         inventoryMenuState_800bdc28.set(InventoryMenuState._27);
         break;
 
@@ -1853,7 +1846,7 @@ public final class SItem {
           count_8011d750.set(getUsableItemsInMenu());
           loadCharacterStats(0);
           FUN_80104324(useItemResponse_8011d788);
-          setMessageBoxText(useItemResponse_8011d788.string_08, 0);
+          setMessageBoxText(messageBox_8011dc90, useItemResponse_8011d788.string_08, 0);
           inventoryMenuState_800bdc28.set(InventoryMenuState._27);
         }
 
@@ -1946,7 +1939,7 @@ public final class SItem {
         break;
 
       case DISK_CHANGE_DO_YOU_WANT_TO_SAVE_NOW_38:
-        setMessageBoxText(Do_you_want_to_save_now_8011c370, 0x2);
+        setMessageBoxText(messageBox_8011dc90, Do_you_want_to_save_now_8011c370, 0x2);
         inventoryMenuState_800bdc28.set(InventoryMenuState._39);
         deallocateRenderables(0xffL);
         renderSavedGames(slotScroll_8011d744.get(), false, 0xffL);
@@ -1993,7 +1986,7 @@ public final class SItem {
         renderSaveListArrows(slotScroll_8011d744.get());
 
         inventoryMenuState_800bdc28.set(InventoryMenuState._42);
-        messageBox_8011dc90.state_0c.incr();
+        messageBox_8011dc90.state_0c++;
         break;
 
       case _42:
@@ -2020,7 +2013,7 @@ public final class SItem {
         //LAB_800ff330
         if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
           playSound(0x3L);
-          messageBox_8011dc90.state_0c.set(0);
+          messageBox_8011dc90.state_0c = 0;
           inventoryMenuState_800bdc28.set(InventoryMenuState._71);
         }
 
@@ -2057,7 +2050,7 @@ public final class SItem {
 
         //LAB_800ff440
         if(whichMenu_800bdc38 == WhichMenu.RENDER_LOAD_GAME_MENU_14) { // Load game menu
-          setMessageBoxText(Load_this_data_8011ca08, 0x2);
+          setMessageBoxText(messageBox_8011dc90, Load_this_data_8011ca08, 0x2);
           inventoryMenuState_800bdc28.set(InventoryMenuState.DO_YOU_WANT_TO_LOAD_THIS_SAVE_45);
         } else {
           //LAB_800ff4a0
@@ -2065,12 +2058,12 @@ public final class SItem {
           //LAB_800ff4c8
           if(slotScroll_8011d744.get() + selectedSlot_8011d740.get() < saves.size()) {
             //LAB_800ff4c0
-            setMessageBoxText(Overwrite_save_8011c9e8, 0x2);
+            setMessageBoxText(messageBox_8011dc90, Overwrite_save_8011c9e8, 0x2);
           } else {
-            setMessageBoxText(Save_new_game_8011c9c8, 0x2);
+            setMessageBoxText(messageBox_8011dc90, Save_new_game_8011c9c8, 0x2);
           }
 
-          messageBox_8011dc90.menuIndex_18.set(1);
+          messageBox_8011dc90.menuIndex_18 = 1;
           inventoryMenuState_800bdc28.set(InventoryMenuState._49);
         }
 
@@ -2122,7 +2115,7 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState._71);
 
         //LAB_80100bf4
-        messageBox_8011dc90.state_0c.incr();
+        messageBox_8011dc90.state_0c++;
         break;
 
       case _49:
@@ -2160,7 +2153,7 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState._53);
 
         //LAB_80100bf4
-        messageBox_8011dc90.state_0c.incr();
+        messageBox_8011dc90.state_0c++;
         break;
 
       case _53:
@@ -2170,7 +2163,7 @@ public final class SItem {
         //LAB_800ff9f4
         deallocateRenderables(0xffL);
         renderSavedGames(slotScroll_8011d744.get(), true, 0xffL);
-        setMessageBoxText(Saved_8011cb2c, 0);
+        setMessageBoxText(messageBox_8011dc90, Saved_8011cb2c, 0);
         inventoryMenuState_800bdc28.set(InventoryMenuState._54);
         break;
 
@@ -2369,7 +2362,7 @@ public final class SItem {
                 inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_NEW_DIG_INIT_96);
               } else {
                 //LAB_80100630
-                setMessageBoxText(_8011d044, 0);
+                setMessageBoxText(messageBox_8011dc90, _8011d044, 0);
                 _8011e094.setu(0);
                 inventoryMenuState_800bdc28.set(InventoryMenuState._110);
               }
@@ -2386,11 +2379,8 @@ public final class SItem {
         break;
 
       case DABAS_DISCARD_INIT_94: {
-        final LodString str = MEMORY.ref(2, mallocTail(48), LodString::new);
-        str.set("Discard items?");
-
-        setMessageBoxText(str, 0x2);
-        messageBox_8011dc90.menuIndex_18.set(1);
+        setMessageBoxText(messageBox_8011dc90, new LodString("Discard items?"), 0x2);
+        messageBox_8011dc90.menuIndex_18 = 1;
         renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80100db4
@@ -2399,11 +2389,8 @@ public final class SItem {
       }
 
       case DABAS_NEW_DIG_INIT_96: {
-        final LodString str = MEMORY.ref(2, mallocTail(44), LodString::new);
-        str.set("Begin new expedition?");
-
-        setMessageBoxText(str, 0x2);
-        messageBox_8011dc90.menuIndex_18.set(1);
+        setMessageBoxText(messageBox_8011dc90, new LodString("Begin new expedition?"), 0x2);
+        messageBox_8011dc90.menuIndex_18 = 1;
         renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80100db4
@@ -2412,10 +2399,7 @@ public final class SItem {
       }
 
       case DABAS_TAKE_ITEMS_INIT_98: {
-        final LodString str = MEMORY.ref(2, mallocTail(46), LodString::new);
-        str.set("Take items from Dabas?");
-
-        setMessageBoxText(str, 0x2);
+        setMessageBoxText(messageBox_8011dc90, new LodString("Take items from Dabas?"), 0x2);
         inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_CONFIRM_ACTION_99);
         _8011dca8.setu(0x1L);
         renderDabasMenu(selectedSlot_8011d740.get());
@@ -2425,17 +2409,11 @@ public final class SItem {
       case DABAS_CONFIRM_ACTION_99:
         switch(messageBox(messageBox_8011dc90)) {
           case YES -> {
-            free(messageBox_8011dc90.text_00.getPointer());
-            messageBox_8011dc90.text_00.clear();
-
             //LAB_80100e2c
             inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_PERFORM_ACTION_101);
           }
 
           case NO -> {
-            free(messageBox_8011dc90.text_00.getPointer());
-            messageBox_8011dc90.text_00.clear();
-
             //LAB_80100e40
             inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_MENU_79);
           }
@@ -2480,9 +2458,7 @@ public final class SItem {
           //LAB_80101070
           if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > Config.inventorySize()) {
             //LAB_80101090
-            final LodString str = MEMORY.ref(2, mallocTail(78), LodString::new);
-            str.set("Dabas has more items\nthan you can hold");
-            setMessageBoxText(str, 0);
+            setMessageBoxText(messageBox_8011dc90, new LodString("Dabas has more items\nthan you can hold"), 0);
             dabasState_8011d758.setu(3);
             break;
           }
@@ -2542,8 +2518,6 @@ public final class SItem {
           } else if(state == 2) {
             //LAB_8010126c
             menuItems_8011d7c8.get(6).itemId_00.set(0xff);
-          } else if(state == 3) {
-            free(messageBox_8011dc90.text_00.getPointer());
           }
 
           //LAB_80101b14
@@ -2571,10 +2545,8 @@ public final class SItem {
         };
 
         final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-        final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
-        string.set(response);
 
-        setMessageBoxText(string, 0);
+        setMessageBoxText(messageBox_8011dc90, new LodString(response), 0);
         renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80101650
@@ -2597,10 +2569,8 @@ public final class SItem {
         };
 
         final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-        final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
-        string.set(response);
 
-        setMessageBoxText(string, 0);
+        setMessageBoxText(messageBox_8011dc90, new LodString(response), 0);
         renderDabasMenu(selectedSlot_8011d740.get());
 
         //LAB_80101650
@@ -2627,10 +2597,8 @@ public final class SItem {
           };
 
           final String response = responses[ThreadLocalRandom.current().nextInt(responses.length)];
-          final LodString string = MEMORY.ref(2, mallocTail((response.length() + 1) * 2), LodString::new);
-          string.set(response);
 
-          setMessageBoxText(string, 0x1);
+          setMessageBoxText(messageBox_8011dc90, new LodString(response), 0x1);
           highlightRightHalf_800bdbec.clear();
           inventoryMenuState_800bdc28.set(InventoryMenuState._106);
         }
@@ -2640,7 +2608,7 @@ public final class SItem {
       case _106:
         messageBox(messageBox_8011dc90);
 
-        if(messageBox_8011dc90.ticks_10.get() < 3) {
+        if(messageBox_8011dc90.ticks_10 < 3) {
           //LAB_80101580
           renderDabasMenu(selectedSlot_8011d740.get());
           break;
@@ -2714,7 +2682,7 @@ public final class SItem {
         if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
           unloadRenderable(highlightRightHalf_800bdbec.deref());
           inventoryMenuState_800bdc28.set(InventoryMenuState._109);
-          messageBox_8011dc90.state_0c.incr();
+          messageBox_8011dc90.state_0c++;
         }
 
         //LAB_80101554
@@ -2736,7 +2704,7 @@ public final class SItem {
         }
 
         //LAB_80101644
-        setMessageBoxText(_8011d048, 0);
+        setMessageBoxText(messageBox_8011dc90, _8011d048, 0);
 
         //LAB_80101650
         inventoryMenuState_800bdc28.set(InventoryMenuState._109);
@@ -2747,7 +2715,7 @@ public final class SItem {
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           //LAB_801016b0
-          setMessageBoxText(_8011ce10, 0);
+          setMessageBoxText(messageBox_8011dc90, _8011ce10, 0);
           inventoryMenuState_800bdc28.set(InventoryMenuState._119);
         }
 
@@ -2759,10 +2727,6 @@ public final class SItem {
         renderDabasMenu(selectedSlot_8011d740.get());
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          if(inventoryMenuState_800bdc28.get() == InventoryMenuState._109) {
-            free(messageBox_8011dc90.text_00.getPointer());
-          }
-
           //LAB_8010175c
           inventoryMenuState_800bdc28.set(InventoryMenuState.DABAS_MENU_79);
         }
@@ -2986,7 +2950,7 @@ public final class SItem {
     onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW.GLFW_KEY_ESCAPE) {
         playSound(0x3L);
-        messageBox_8011dc90.state_0c.set(0);
+        messageBox_8011dc90.state_0c = 0;
         inventoryMenuState_800bdc28.set(InventoryMenuState._71);
       }
     });
@@ -3669,7 +3633,7 @@ public final class SItem {
     //LAB_80103ddc
     int v1;
     for(v1 = 0; v1 < 0xff; v1++) {
-      if(text.charAt(v1) == 0xa0ffL) {
+      if(text.charAt(v1) == 0xa0ff) {
         break;
       }
     }
@@ -7162,119 +7126,89 @@ public final class SItem {
   }
 
   @Method(0x8010ececL)
-  public static MessageBoxResult messageBox(final MessageBox20 menu) {
+  public static MessageBoxResult messageBox(final MessageBox20 messageBox) {
     final Renderable58 renderable;
-    final long s1;
 
-    switch(menu.state_0c.get()) {
+    switch(messageBox.state_0c) {
       case 0:
         return MessageBoxResult.YES;
 
-      case 1: // Allocate "loading saved games" box
-        menu.state_0c.set(0x2);
-        menu.renderable_04.clear();
-        menu.renderable_08.set(allocateUiElement(149, 142, menu.x_1c.get() - 50, menu.y_1e.get() - 10));
-        menu.renderable_08.deref().z_3c.set(0x20);
-        menu.renderable_08.deref()._18.set(142);
+      case 1: // Allocate
+        messageBox.state_0c = 2;
+        messageBox.renderable_04 = null;
+        messageBox.renderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
+        messageBox.renderable_08.z_3c.set(0x20);
+        messageBox.renderable_08._18.set(142);
         msgboxResult_8011e1e8.set(MessageBoxResult.AWAITING_INPUT);
 
       case 2:
-        if(menu.renderable_08.deref()._0c.get() != 0) {
-          menu.state_0c.set(0x3);
+        if(messageBox.renderable_08._0c.get() != 0) {
+          messageBox.state_0c = 3;
         }
 
         break;
 
       case 3:
         textZ_800bdf00.set(31);
-        final int x = menu.x_1c.get() + 60;
-        int y = menu.y_1e.get() + 7;
+        final int x = messageBox.x_1c + 60;
+        int y = messageBox.y_1e + 7;
 
-        menu.ticks_10.incr();
+        messageBox.ticks_10++;
 
-        if(!menu.text_00.isNull()) {
-          final int textLength = textLength(menu.text_00.deref());
-          final Memory.TemporaryReservation sp0x38tmp = MEMORY.temp((textLength + 1) * 2);
-          final LodString line = sp0x38tmp.get().cast(LodString::new);
-
-          final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp((textLength + 1) * 4);
-          final ArrayRef<Pointer<LodString>> lines = sp0x10tmp.get().cast(ArrayRef.of(Pointer.classFor(LodString.class), textLength + 1, 4, Pointer.deferred(4, LodString::new)));
-
-          lines.get(0).set(line);
-
-          int lineIndex = 1;
-
-          //LAB_8010ee1c
-          int charIndex;
-          for(charIndex = 0; charIndex < textLength; charIndex++) {
-            line.charAt(charIndex, menu.text_00.deref().charAt(charIndex));
-
-            if(line.charAt(charIndex) == 0xa1ffL) {
-              lines.get(lineIndex).set(line.slice(charIndex + 1));
-              line.charAt(charIndex, 0xa0ff);
-              lineIndex++;
-            }
-
-            //LAB_8010ee50
+        if(messageBox.text_00 != null) {
+          for(final LodString line : messageBox.text_00) {
+            renderCentredText(line, x, y, 4);
+            y += 14;
           }
-
-          //LAB_8010ee68
-          line.charAt(charIndex, 0xa0ff);
-
-          //LAB_8010ee80
-          for(int i = 0; i < lineIndex; i++) {
-            renderCentredText(lines.get(i).deref(), x, y, 4);
-            y = y + 14;
-          }
-
-          sp0x10tmp.release();
-          sp0x38tmp.release();
         }
 
         //LAB_8010eeac
         textZ_800bdf00.set(33);
-        s1 = menu._15.get();
 
-        if(s1 == 0) {
+        if(messageBox.type_15 == 0) {
           //LAB_8010eed8
-          if((inventoryJoypadInput_800bdc44.get() & 0x60L) != 0) {
-            playSound(0x2L);
-            menu.state_0c.set(0x4);
+          if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
+            playSound(2);
+            messageBox.state_0c = 4;
             msgboxResult_8011e1e8.set(MessageBoxResult.YES);
           }
 
           break;
         }
 
-        if(s1 == 0x2L) {
+        if(messageBox.type_15 == 2) {
           //LAB_8010ef10
-          if(menu.renderable_04.isNull()) {
-            renderable = allocateUiElement(125, 125, menu.x_1c.get() + 45, menu.menuIndex_18.get() * 14 + y + 5);
-            menu.renderable_04.set(renderable);
+          if(messageBox.renderable_04 == null) {
+            renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 14 + y + 5);
+            messageBox.renderable_04 = renderable;
             renderable._38.set(0);
             renderable._34.set(0);
-            menu.renderable_04.deref().z_3c.set(0x20);
+            messageBox.renderable_04.z_3c.set(0x20);
           }
 
           //LAB_8010ef64
           textZ_800bdf00.set(31);
 
-          renderCentredText(Yes_8011c20c, menu.x_1c.get() + 60, y + 7, menu.menuIndex_18.get() == 0 ? 5 : 4);
-          renderCentredText(No_8011c214, menu.x_1c.get() + 60, y + 21, menu.menuIndex_18.get() == 0 ? 4 : 5);
+          renderCentredText(Yes_8011c20c, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? 5 : 4);
+          renderCentredText(No_8011c214, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? 4 : 5);
 
           textZ_800bdf00.set(33);
-          final YesNoResult msgboxYesNo = handleYesNo(menu.menuIndex_18);
+
+          final IntRef index = new IntRef().set(messageBox.menuIndex_18);
+          final YesNoResult msgboxYesNo = handleYesNo(index);
+          messageBox.menuIndex_18 = index.get();
+
           if(msgboxYesNo == YesNoResult.SCROLLED) {
             //LAB_8010f014
-            menu.renderable_04.deref().y_44.set(menu.menuIndex_18.get() * 14 + y + 5);
+            messageBox.renderable_04.y_44.set(messageBox.menuIndex_18 * 14 + y + 5);
           } else if(msgboxYesNo == YesNoResult.YES) {
             //LAB_8010f040
-            menu.state_0c.set(0x4);
+            messageBox.state_0c = 4;
             msgboxResult_8011e1e8.set(MessageBoxResult.YES);
           } else if(msgboxYesNo == YesNoResult.NO || msgboxYesNo == YesNoResult.CANCELLED) {
             //LAB_8010f000
             //LAB_8010f05c
-            menu.state_0c.set(0x4);
+            messageBox.state_0c = 4;
             msgboxResult_8011e1e8.set(MessageBoxResult.NO);
           }
         }
@@ -7282,29 +7216,29 @@ public final class SItem {
         break;
 
       case 4:
-        menu.state_0c.set(0x5);
+        messageBox.state_0c = 5;
 
-        if(!menu.renderable_04.isNull()) {
-          unloadRenderable(menu.renderable_04.deref());
+        if(messageBox.renderable_04 != null) {
+          unloadRenderable(messageBox.renderable_04);
         }
 
         //LAB_8010f084
-        unloadRenderable(menu.renderable_08.deref());
-        renderable = allocateUiElement(0x8e, 0x95, menu.x_1c.get() - 50, menu.y_1e.get() - 10);
-        menu.renderable_08.set(renderable);
+        unloadRenderable(messageBox.renderable_08);
+        renderable = allocateUiElement(0x8e, 0x95, messageBox.x_1c - 50, messageBox.y_1e - 10);
+        messageBox.renderable_08 = renderable;
         renderable.z_3c.set(0x20);
-        menu.renderable_08.deref().flags_00.or(0x10L);
+        messageBox.renderable_08.flags_00.or(0x10L);
         break;
 
       case 5:
-        if(menu.renderable_08.deref()._0c.get() != 0) {
-          menu.state_0c.set(0x6);
+        if(messageBox.renderable_08._0c.get() != 0) {
+          messageBox.state_0c = 6;
         }
 
         break;
 
       case 6:
-        menu.state_0c.set(0);
+        messageBox.state_0c = 0;
         return msgboxResult_8011e1e8.get();
     }
 
@@ -7314,15 +7248,36 @@ public final class SItem {
   }
 
   @Method(0x8010f130L)
-  public static void setMessageBoxText(@Nullable final LodString text, final int a1) {
-    messageBox_8011dc90.text_00.setNullable(text);
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final LodString text, final int a1) {
+    if(text != null) {
+      final List<LodString> lines = new ArrayList<>();
+      final int length = textLength(text);
 
-    messageBox_8011dc90.x_1c.set(120);
-    messageBox_8011dc90.y_1e.set(100);
-    messageBox_8011dc90._15.set(a1);
-    messageBox_8011dc90.menuIndex_18.set(0);
-    messageBox_8011dc90.ticks_10.set(0);
-    messageBox_8011dc90.state_0c.set(1);
+      int lineStart = 0;
+      for(int charIndex = 0; charIndex < length; charIndex++) {
+        if(text.charAt(charIndex) == 0xa1ff) {
+          final LodString slice = text.slice(lineStart, charIndex - lineStart + 1);
+          slice.charAt(charIndex - lineStart, 0xa0ff);
+          lines.add(slice);
+          lineStart = charIndex + 1;
+        }
+      }
+
+      if(lines.isEmpty()) {
+        lines.add(text);
+      }
+
+      messageBox.text_00 = lines.toArray(LodString[]::new);
+    } else {
+      messageBox.text_00 = null;
+    }
+
+    messageBox.x_1c = 120;
+    messageBox.y_1e = 100;
+    messageBox.type_15 = a1;
+    messageBox.menuIndex_18 = 0;
+    messageBox.ticks_10 = 0;
+    messageBox.state_0c = 1;
   }
 
   @Method(0x8010f178L)
@@ -7351,7 +7306,7 @@ public final class SItem {
           _8011dcb8.get(1).setPointer(mallocTail(0x4c0L));
           recalcInventory();
           FUN_80104738(0x1L);
-          messageBox_8011dc90.state_0c.set(0);
+          messageBox_8011dc90.state_0c = 0;
 
           //LAB_8010f2e8
           for(int itemIndex = 0; itemIndex < 10; itemIndex++) {
@@ -7573,7 +7528,7 @@ public final class SItem {
 
             //LAB_8010fbc4
             if(s2 != 0) {
-              setMessageBoxText(This_item_cannot_be_thrown_away_8011c2a8, 0);
+              setMessageBoxText(messageBox_8011dc90, This_item_cannot_be_thrown_away_8011c2a8, 0);
               inventoryMenuState_800bdc28.set(InventoryMenuState._13);
             } else {
               //LAB_8010fbe8

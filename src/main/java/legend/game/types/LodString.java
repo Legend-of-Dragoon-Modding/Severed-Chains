@@ -245,15 +245,23 @@ public class LodString implements MemoryRef {
     this.charAt(text.length(), 0xa0ff);
   }
 
-  public LodString slice(final int index) {
+  public LodString slice(final int index, final int length) {
     if(this.ref == null) {
-      final LodString str = new LodString(this.chars.length - index);
+      final LodString str = new LodString(length);
 
-      for(int i = 0; i < this.chars.length - index; i++) {
+      for(int i = 0; i < length; i++) {
         str.charAt(i, this.charAt(index + i));
       }
 
       return str;
+    }
+
+    return this.ref.offset(2, index * 0x2L).cast(LodString::new);
+  }
+
+  public LodString slice(final int index) {
+    if(this.ref == null) {
+      return this.slice(index, this.chars.length - index);
     }
 
     return this.ref.offset(2, index * 0x2L).cast(LodString::new);
