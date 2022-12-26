@@ -2512,11 +2512,7 @@ public final class SItem {
           case 0x9 -> renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xfeL);
           case 0xa -> FUN_80102dfc(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0);
           case 0xb -> FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
-          //LAB_80101af4
-          case 0xc -> renderSavedGames(slotScroll_8011d744.get(), true, 0xfeL);
           case 0xd -> renderDabasMenu(selectedSlot_8011d740.get());
-          //LAB_80101af4
-          case 0xe -> renderSavedGames(slotScroll_8011d744.get(), false, 0xfeL);
         }
 
         //LAB_80101afc
@@ -2861,37 +2857,6 @@ public final class SItem {
     renderText(Goods_8011cf48, 210, 22, 4);
     FUN_8010965c(slotScroll, _800bdb9c.derefNullable(), _800bdba0.derefNullable());
     renderString(1, 194, 178, menuItems_8011d7c8.get(charSlot + selectedSlot * 2 + slotScroll).itemId_00.get(), s1);
-    uploadRenderables();
-  }
-
-  /**
-   * @param fileScroll The first save game do display on the screen
-   */
-  @Method(0x801030c0L)
-  public static void renderSavedGames(final int fileScroll, final boolean renderSaves, final long a2) {
-    if(a2 == 0xff) {
-      renderGlyphs(glyphs_80114258, 0, 0);
-    }
-
-    //LAB_80103100
-    if(renderSaves) {
-      //LAB_80103108
-      for(int i = 0; i < 3; i++) {
-        final int fileIndex = fileScroll + i;
-
-        if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
-          if(fileIndex == 0) {
-            renderCentredText(new LodString("New save"), 188, getSlotY(i) + 25, 4);
-          } else if(fileIndex < saves.size() + 1) {
-            renderSaveGameSlot(fileIndex - 1, getSlotY(i), a2 == 0xff ? 1 : 0);
-          }
-        } else {
-          renderSaveGameSlot(fileIndex, getSlotY(i), a2 == 0xff ? 1 : 0);
-        }
-      }
-    }
-
-    //LAB_80103144
     uploadRenderables();
   }
 
