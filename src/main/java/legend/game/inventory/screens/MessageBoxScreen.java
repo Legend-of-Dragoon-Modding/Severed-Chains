@@ -14,6 +14,7 @@ import static legend.game.SItem.setMessageBoxText;
 public class MessageBoxScreen extends MenuScreen {
   private final MessageBox20 messageBox = new MessageBox20();
   private final Consumer<MessageBoxResult> onResult;
+  private MessageBoxResult result;
 
   public MessageBoxScreen(final LodString text, final int type, final Consumer<MessageBoxResult> onResult) {
     setMessageBoxText(this.messageBox, text, type);
@@ -26,6 +27,7 @@ public class MessageBoxScreen extends MenuScreen {
 
     if(this.messageBox.state_0c == 0) {
       menuStack.popScreen();
+      this.onResult.accept(this.result);
     }
   }
 
@@ -72,7 +74,7 @@ public class MessageBoxScreen extends MenuScreen {
           this.messageBox.renderable_04.y_44.set(selectionY - 2);
         }
 
-        this.onResult.accept(MessageBoxResult.YES);
+        this.result = MessageBoxResult.YES;
         this.messageBox.state_0c = 4;
       } else if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         this.messageBox.menuIndex_18 = 1;
@@ -81,7 +83,7 @@ public class MessageBoxScreen extends MenuScreen {
           this.messageBox.renderable_04.y_44.set(selectionY + 12);
         }
 
-        this.onResult.accept(MessageBoxResult.NO);
+        this.result = MessageBoxResult.NO;
         this.messageBox.state_0c = 4;
       }
     }

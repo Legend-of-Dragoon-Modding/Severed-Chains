@@ -21,6 +21,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.MenuScreen;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
@@ -207,6 +208,7 @@ public final class Scus94491BpeSegment_800b {
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
   public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
+  public static MenuScreen confirmMenu;
 
   public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
   /**

@@ -101,7 +101,7 @@ public final class SaveManager {
     }
 
     //LAB_80109e38
-    if(MathHelper.get(data, 0x180, 4) != 0x5a02_0006L) {
+    if(MathHelper.get(data, 0, 4) != 0x76615344 && MathHelper.get(data, 0x180, 4) != 0x5a02_0006L) {
       throw new RuntimeException("Invalid save data");
     }
 
