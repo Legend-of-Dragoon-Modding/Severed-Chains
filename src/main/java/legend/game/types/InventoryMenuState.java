@@ -24,7 +24,7 @@ public enum InventoryMenuState {
   _18,
   _19,
   STATUS_INIT_20,
-  STATUS_LOAD_21,
+
   STATUS_MENU_22,
   ADDITIONS_INIT_23,
   ADDITIONS_LOAD_24,

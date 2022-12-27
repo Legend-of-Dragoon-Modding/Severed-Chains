@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.MathHelper;
 import legend.game.SaveManager;
 import legend.game.types.MessageBoxResult;
+import legend.game.types.Renderable58;
 import org.lwjgl.glfw.GLFW;
 
 import static legend.game.SItem.FUN_80104b60;
@@ -18,8 +19,6 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 
@@ -30,6 +29,9 @@ public abstract class SaveListScreen extends MenuScreen {
   private int scroll;
 
   private double scrollAccumulator;
+
+  private Renderable58 highlightLeftHalf;
+  private Renderable58 highlightRightHalf;
 
   private final Runnable unload;
 
@@ -52,10 +54,10 @@ public abstract class SaveListScreen extends MenuScreen {
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
 
-        highlightLeftHalf_800bdbe8 = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
-        highlightRightHalf_800bdbec = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
-        FUN_80104b60(highlightLeftHalf_800bdbe8);
-        FUN_80104b60(highlightRightHalf_800bdbec);
+        this.highlightLeftHalf = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
+        this.highlightRightHalf = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
+        FUN_80104b60(this.highlightLeftHalf);
+        FUN_80104b60(this.highlightRightHalf);
         renderSaveListArrows(this.scroll);
 
         deallocateRenderables(0);
@@ -118,8 +120,8 @@ public abstract class SaveListScreen extends MenuScreen {
         if(i != this.selectedSlot) {
           playSound(1);
           this.selectedSlot = i;
-          highlightLeftHalf_800bdbe8.y_44 = getSlotY(this.selectedSlot);
-          highlightRightHalf_800bdbec.y_44 = getSlotY(this.selectedSlot);
+          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         }
       }
     }
@@ -164,8 +166,8 @@ public abstract class SaveListScreen extends MenuScreen {
   private void scroll(final int scroll) {
     playSound(1);
     this.scroll = scroll;
-    highlightLeftHalf_800bdbe8.y_44 = getSlotY(this.selectedSlot);
-    highlightRightHalf_800bdbec.y_44 = getSlotY(this.selectedSlot);
+    this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+    this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
     deallocateRenderables(0);
     this.renderSavedGames(this.scroll, true, 0xff);
   }

@@ -23,6 +23,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.SaveGameScreen;
+import legend.game.inventory.screens.StatusScreen;
 import legend.game.title.Ttle;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -96,7 +97,6 @@ import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.itemCanBeUsedInMenu;
@@ -224,7 +224,7 @@ public final class SItem {
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114130 = MEMORY.ref(1, 0x80114130L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114160 = MEMORY.ref(1, 0x80114160L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114180 = MEMORY.ref(1, 0x80114180L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
-  public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141a4 = MEMORY.ref(1, 0x801141a4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
+  public static final UnboundedArrayRef<MenuGlyph06> characterStatusGlyphs_801141a4 = MEMORY.ref(1, 0x801141a4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141c4 = MEMORY.ref(1, 0x801141c4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141e4 = MEMORY.ref(1, 0x801141e4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141fc = MEMORY.ref(1, 0x801141fcL, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
@@ -1402,7 +1402,7 @@ public final class SItem {
           sortItems(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
           free(_8011dcb8.get(0).getPointer());
           free(_8011dcb8.get(1).getPointer());
-          MEMORY.ref(4, 0x800bdc28L).setu(0xeL);
+          inventoryMenuState_800bdc28.set(InventoryMenuState._14);
         }
 
         //LAB_800fdc18
@@ -1604,37 +1604,12 @@ public final class SItem {
         break;
 
       case STATUS_INIT_20:
-        scriptStartEffect(0x2L, 0xaL);
-        deallocateRenderables(0xffL);
-
-        //LAB_800fe3c4
-        inventoryMenuState_800bdc28.set(InventoryMenuState.STATUS_LOAD_21);
-        break;
-
-      case STATUS_LOAD_21:
-        deallocateRenderables(0);
-        renderGlyphs(glyphs_801141a4, 0, 0);
-        renderStatusMenu(charSlot_8011d734.get(), 0xffL);
+        menuStack.pushScreen(new StatusScreen(() -> inventoryMenuState_800bdc28.set(InventoryMenuState._2)));
         inventoryMenuState_800bdc28.set(InventoryMenuState.STATUS_MENU_22);
         break;
 
       case STATUS_MENU_22:
-        FUN_801034cc(charSlot_8011d734.get(), characterCount_8011d7c4.get());
-        renderStatusMenu(charSlot_8011d734.get(), 0);
-
-        if(_800bb168.get() == 0) {
-          if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
-            playSound(0x3L);
-            FUN_800fca0c(InventoryMenuState._2, 0x7L);
-          }
-
-          //LAB_800fe3b0
-          if(handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
-            //LAB_800fe3c4
-            inventoryMenuState_800bdc28.set(InventoryMenuState.STATUS_LOAD_21);
-          }
-        }
-
+        menuStack.render();
         break;
 
       case ADDITIONS_INIT_23:
@@ -2488,7 +2463,6 @@ public final class SItem {
 
           case 0x5 -> renderCharacterSwapScreen(0xfeL);
           case 0x6 -> FUN_80102660(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
-          case 0x7 -> renderStatusMenu(charSlot_8011d734.get(), 0xfeL);
 
           case 0x8 -> {
             if(charSlot_8011d734.get() != 0) {
@@ -2566,14 +2540,12 @@ public final class SItem {
   }
 
   @Method(0x80101d10L)
-  public static void renderInventoryMenu(final long selectedOption, final int a1, long a2) {
-    a2 = a2 ^ 0xffL;
-
+  public static void renderInventoryMenu(final long selectedOption, final int a1, final long a2) {
     final int s5 = canSave_8011dc88.get() != 0 ? a1 : 6;
 
     //LAB_80101d54
-    final long s4 = a2 < 0x1L ? 1 : 0;
-    if(s4 != 0) {
+    final boolean allocate = a2 == 0xff;
+    if(allocate) {
       renderDragoonSpirits((int)gameState_800babc8.dragoonSpirits_19c.get(0).get(), 40, 197);
       renderEightDigitNumber(67, 184, gameState_800babc8.gold_94.get(), 0); // Gold
       renderCharacter(146, 184, 10);
@@ -2585,9 +2557,9 @@ public final class SItem {
     renderThreeDigitNumber(128, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 0), 0x3L);
     renderTwoDigitNumber(152, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 1), 0x3L);
     renderTwoDigitNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0.get(), 2), 0x3L);
-    renderCharacterSlot(194,  16, gameState_800babc8.charIndex_88.get(0).get(), s4, false);
-    renderCharacterSlot(194,  88, gameState_800babc8.charIndex_88.get(1).get(), s4, false);
-    renderCharacterSlot(194, 160, gameState_800babc8.charIndex_88.get(2).get(), s4, false);
+    renderCharacterSlot(194,  16, gameState_800babc8.charIndex_88.get(0).get(), allocate, false);
+    renderCharacterSlot(194,  88, gameState_800babc8.charIndex_88.get(1).get(), allocate, false);
+    renderCharacterSlot(194, 160, gameState_800babc8.charIndex_88.get(2).get(), allocate, false);
     renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98.get()).deref(), 94, 24, 4);
 
     final LodString v1;
@@ -2617,7 +2589,7 @@ public final class SItem {
     renderCentredText(Save_8011cf10,     62, getMenuOptionY(6) + 2, selectedOption == 6 ? 5 : s5);
     renderCentredText(new LodString("Quit"),     62, getMenuOptionY(7) + 2, selectedOption == 7 ? 5 : a1);
 
-    if(s4 == 0) {
+    if(!allocate) {
       uploadRenderables();
     }
 
@@ -2667,27 +2639,27 @@ public final class SItem {
 
   @Method(0x801024c4L)
   public static void renderCharacterSwapScreen(final long a0) {
-    final long s1 = (a0 ^ 0xffL) < 0x1L ? 1 : 0;
+    final boolean allocate = a0 == 0xff;
 
-    FUN_801082a0(198,  16, secondaryCharIndices_800bdbf8.get(0).get(), s1);
-    FUN_801082a0(255,  16, secondaryCharIndices_800bdbf8.get(1).get(), s1);
-    FUN_801082a0(312,  16, secondaryCharIndices_800bdbf8.get(2).get(), s1);
-    FUN_801082a0(198, 122, secondaryCharIndices_800bdbf8.get(3).get(), s1);
-    FUN_801082a0(255, 122, secondaryCharIndices_800bdbf8.get(4).get(), s1);
-    FUN_801082a0(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), s1);
+    FUN_801082a0(198,  16, secondaryCharIndices_800bdbf8.get(0).get(), allocate);
+    FUN_801082a0(255,  16, secondaryCharIndices_800bdbf8.get(1).get(), allocate);
+    FUN_801082a0(312,  16, secondaryCharIndices_800bdbf8.get(2).get(), allocate);
+    FUN_801082a0(198, 122, secondaryCharIndices_800bdbf8.get(3).get(), allocate);
+    FUN_801082a0(255, 122, secondaryCharIndices_800bdbf8.get(4).get(), allocate);
+    FUN_801082a0(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), allocate);
 
     if(gameState_800babc8.charIndex_88.get(0).get() != -1) {
-      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get()).partyFlags_04.get() & 0x20) != 0);
+      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_801025b4
     if(gameState_800babc8.charIndex_88.get(1).get() != -1) {
-      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get()).partyFlags_04.get() & 0x20) != 0);
+      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_801025f8
     if(gameState_800babc8.charIndex_88.get(2).get() != -1) {
-      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), s1, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get()).partyFlags_04.get() & 0x20) != 0);
+      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get()).partyFlags_04.get() & 0x20) != 0);
     }
 
     //LAB_8010263c
@@ -2696,13 +2668,13 @@ public final class SItem {
 
   @Method(0x80102660L)
   public static void FUN_80102660(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
-    final long s0 = a3 == 0xff ? 1 : 0;
+    final boolean allocate = a3 == 0xff;
 
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, false);
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), s0);
-    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), allocate, false);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), allocate);
+    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), allocate);
 
-    if(s0 != 0) {
+    if(allocate) {
       allocateUiElement(0x5a, 0x5a, 194, 96);
       _800bdb9c = allocateUiElement(0x3d, 0x44, 358, FUN_800fc804(0));
       _800bdba0 = allocateUiElement(0x35, 0x3c, 358, FUN_800fc804(3));
@@ -2710,19 +2682,7 @@ public final class SItem {
 
     //LAB_80102748
     renderMenuItems(194, 92, menuItems_8011d7c8, slotScroll, 4, _800bdb9c, _800bdba0);
-    renderString(0, 194, 178, menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), s0);
-
-    uploadRenderables();
-  }
-
-  @Method(0x801027bcL)
-  public static void renderStatusMenu(final int charSlot, final long a1) {
-    final long s0 = (a1 ^ 0xffL) < 0x1L ? 1 : 0;
-
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xff, s0);
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), s0, false);
-    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), s0);
-    renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), s0);
+    renderString(0, 194, 178, menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), allocate);
 
     uploadRenderables();
   }
@@ -2734,8 +2694,8 @@ public final class SItem {
     renderThreeDigitNumber(136, 24, gameState_800babc8.equipmentCount_1e4.get(), 0x2L);
     renderTwoDigitNumber(326, 24, gameState_800babc8.itemCount_1e6.get(), 0x2L);
 
-    final long s1 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
-    if(s1 != 0) {
+    final boolean allocate = a3 == 0xff;
+    if(allocate) {
       allocateUiElement(0xb, 0xb, 154, 24);
       renderThreeDigitNumber(160, 24, 0xff);
       allocateUiElement(0xb, 0xb, 338, 24);
@@ -2758,20 +2718,20 @@ public final class SItem {
     }
 
     //LAB_80102a88
-    renderString(0, 194, 178, itemId, s1);
+    renderString(0, 194, 178, itemId, allocate);
     uploadRenderables();
   }
 
   @Method(0x80102ad8L)
   public static void renderAdditions(final int charSlot, final int slotIndex, final ArrayRef<MenuAdditionInfo> additions, final int selectedAdditionOffset, final long a4) {
-    final long sp2c = (a4 ^ 0xffL) < 0x1L ? 1 : 0;
+    final boolean allocate = a4 == 0xff;
     final int charIndex = characterIndices_800bdbb8.get(charSlot).get();
 
     if(additions.get(0).offset_00.get() == -1) {
       renderText(_8011c340, 106, 150, 4);
     } else {
       //LAB_80102b9c
-      if(sp2c != 0) {
+      if(allocate) {
         renderGlyphs(glyphs_801141e4, 0, 0);
       }
 
@@ -2780,7 +2740,7 @@ public final class SItem {
       for(int i = 0; i < 8; i++) {
         final int y = getAdditionSlotY(i);
 
-        if(sp2c != 0 && i <  additionCounts_8004f5c0.get(charIndex).get()) { // Total number of additions
+        if(allocate && i <  additionCounts_8004f5c0.get(charIndex).get()) { // Total number of additions
           renderCharacter(24, y, i + 1); // Addition number
         }
 
@@ -2792,7 +2752,7 @@ public final class SItem {
           //LAB_80102c58
           renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? 4 : 5);
 
-          if(sp2c != 0) {
+          if(allocate) {
             final int level = gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(index).get();
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
@@ -2815,21 +2775,21 @@ public final class SItem {
     }
 
     //LAB_80102db0
-    renderCharacterSlot(16, 21, charIndex, sp2c, false);
+    renderCharacterSlot(16, 21, charIndex, allocate, false);
     uploadRenderables();
   }
 
   @Method(0x80102dfcL)
   public static void FUN_80102dfc(final int charSlot, final int selectedSlot, final int slotScroll, final long a3) {
-    final long s2 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+    final boolean allocate = a3 == 0xff;
 
     //LAB_80102e48
     for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      FUN_80108464(FUN_800fc8c0(i) - 5, 120, characterIndices_800bdbb8.get(i).get(), s2);
+      FUN_80108464(FUN_800fc8c0(i) - 5, 120, characterIndices_800bdbb8.get(i).get(), allocate);
     }
 
     //LAB_80102e88
-    if(s2 != 0) {
+    if(allocate) {
       allocateUiElement(84, 84, 16, 16);
       saveListUpArrow_800bdb94 = allocateUiElement(61, 68, 180, FUN_800fc8dc(0) + 2);
       saveListDownArrow_800bdb98 = allocateUiElement(53, 60, 180, FUN_800fc8dc(4) + 2);
@@ -2837,15 +2797,15 @@ public final class SItem {
 
     //LAB_80102ee8
     renderMenuItems(16, 10, menuItems_8011d7c8, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
-    renderString(0, 194, 16, menuItems_8011d7c8.get(selectedSlot + slotScroll).itemId_00.get(), s2);
+    renderString(0, 194, 16, menuItems_8011d7c8.get(selectedSlot + slotScroll).itemId_00.get(), allocate);
     uploadRenderables();
   }
 
   @Method(0x80102f74L)
   public static void FUN_80102f74(final int charSlot, final int selectedSlot, final int slotScroll, final long a3) {
-    final long s1 = (a3 ^ 0xffL) < 0x1L ? 1 : 0;
+    final boolean allocate = a3 == 0xff;
 
-    if(s1 != 0) {
+    if(allocate) {
       allocateUiElement(0x55, 0x55,  16, 16);
       allocateUiElement(0x55, 0x55, 194, 16);
       _800bdb9c = allocateUiElement(0x3d, 0x44, 358, FUN_800fc814(2));
@@ -2856,7 +2816,7 @@ public final class SItem {
     renderText(Goods_8011cf48,  32, 22, 4);
     renderText(Goods_8011cf48, 210, 22, 4);
     FUN_8010965c(slotScroll, _800bdb9c, _800bdba0);
-    renderString(1, 194, 178, menuItems_8011d7c8.get(charSlot + selectedSlot * 2 + slotScroll).itemId_00.get(), s1);
+    renderString(1, 194, 178, menuItems_8011d7c8.get(charSlot + selectedSlot * 2 + slotScroll).itemId_00.get(), allocate);
     uploadRenderables();
   }
 
@@ -2880,7 +2840,7 @@ public final class SItem {
     }
 
     //LAB_80103390
-    renderString(2, 16, 178, selectedSlot, 0);
+    renderString(2, 16, 178, selectedSlot, false);
     uploadRenderables();
   }
 
@@ -2920,11 +2880,11 @@ public final class SItem {
   }
 
   @Method(0x801034ccL)
-  public static void FUN_801034cc(final long a0, final long a1) {
+  public static void FUN_801034cc(final int charSlot, final int charCount) {
     FUN_80103444(renderablePtr_800bdba4, 0x2d, 0x34, 0xaa, 0xb1);
     FUN_80103444(renderablePtr_800bdba8, 0x25, 0x2c, 0xa2, 0xa9);
 
-    if(a0 != 0) {
+    if(charSlot != 0) {
       if(renderablePtr_800bdba4 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 18, 16);
         renderable._18 = 0x2d;
@@ -2941,7 +2901,7 @@ public final class SItem {
     }
 
     //LAB_80103598
-    if(a0 < a1 - 0x1L) {
+    if(charSlot < charCount - 1) {
       if(renderablePtr_800bdba8 == null) {
         final Renderable58 renderable = allocateUiElement(0x6f, 0x6c, 350, 16);
         renderable._18 = 0x25;
@@ -3358,7 +3318,7 @@ public final class SItem {
   public static boolean handleMenuLeftRight(final IntRef menuIndex, final int menuItemCount) {
     if((inventoryJoypadInput_800bdc44.get() & 0x8000) != 0 && menuIndex.get() != 0) { // Left
       menuIndex.decr();
-      playSound(0x1L);
+      playSound(1);
       return true;
     }
 
@@ -4326,9 +4286,9 @@ public final class SItem {
   }
 
   @Method(0x80107f9cL)
-  public static void renderCharacterSlot(final int x, final int y, final int charIndex, final long a3, final boolean dontSelect) {
+  public static void renderCharacterSlot(final int x, final int y, final int charIndex, final boolean allocate, final boolean dontSelect) {
     if(charIndex != -1) {
-      if(a3 != 0) {
+      if(allocate) {
         allocateUiElement( 74,  74, x, y).z_3c = 33;
         allocateUiElement(153, 153, x, y);
 
@@ -4374,45 +4334,43 @@ public final class SItem {
   }
 
   @Method(0x801082a0L)
-  public static void FUN_801082a0(final int x, final int y, final int charIndex, final long a3) {
-    if(charIndex != -1) {
-      if(a3 != 0) {
-        if(charIndex < 9) {
-          final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
-          initGlyph(renderable, glyph_801142d4);
-          renderable.glyph_04 = charIndex;
-          renderable.tpage_2c++;
-          renderable.z_3c = 33;
-          renderable.x_40 = x + 2;
-          renderable.y_44 = y + 8;
-        }
-
-        //LAB_8010834c
-        allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
-        allocateUiElement(0x9c, 0x9c, x, y);
-
-        if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2L) == 0) {
-          allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
-        }
-
-        //LAB_801083c4
-        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-        renderFourDigitNumber(x + 25, y + 57, stats.level_0e.get());
-        renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f.get());
-        renderFourDigitNumber(x + 25, y + 79, stats.hp_04.get(), stats.maxHp_66.get());
-        renderFourDigitNumber(x + 25, y + 90, stats.mp_06.get());
+  public static void FUN_801082a0(final int x, final int y, final int charIndex, final boolean allocate) {
+    if(allocate && charIndex != -1) {
+      if(charIndex < 9) {
+        final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+        initGlyph(renderable, glyph_801142d4);
+        renderable.glyph_04 = charIndex;
+        renderable.tpage_2c++;
+        renderable.z_3c = 33;
+        renderable.x_40 = x + 2;
+        renderable.y_44 = y + 8;
       }
+
+      //LAB_8010834c
+      allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
+      allocateUiElement(0x9c, 0x9c, x, y);
+
+      if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2L) == 0) {
+        allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
+      }
+
+      //LAB_801083c4
+      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+      renderFourDigitNumber(x + 25, y + 57, stats.level_0e.get());
+      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f.get());
+      renderFourDigitNumber(x + 25, y + 79, stats.hp_04.get(), stats.maxHp_66.get());
+      renderFourDigitNumber(x + 25, y + 90, stats.mp_06.get());
     }
 
     //LAB_80108438
   }
 
   @Method(0x80108464L)
-  public static void FUN_80108464(final int x, final int y, final int charIndex, final long a4) {
+  public static void FUN_80108464(final int x, final int y, final int charIndex, final boolean allocate) {
     if(charIndex != -1) {
       FUN_80107e70(x - 4, y - 6, charIndex);
 
-      if(a4 != 0) {
+      if(allocate) {
         allocateUiElement(112, 112, x, y).z_3c = 33;
 
         if(charIndex < 9) {
@@ -4438,7 +4396,7 @@ public final class SItem {
   }
 
   @Method(0x801085e0L)
-  public static void renderCharacterStats(final int charIndex, final int equipmentId, final long a2) {
+  public static void renderCharacterStats(final int charIndex, final int equipmentId, final boolean allocate) {
     if(charIndex != -1) {
       final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xa0);
       final ActiveStatsa0 statsTmp = sp0x10tmp.get().cast(ActiveStatsa0::new);
@@ -4520,7 +4478,7 @@ public final class SItem {
 
       sp0x10tmp.release();
 
-      if(a2 != 0) {
+      if(allocate) {
         allocateUiElement(0x56, 0x56, 16, 94);
       }
     }
@@ -4610,14 +4568,14 @@ public final class SItem {
   }
 
   @Method(0x80108e60L)
-  public static void renderCharacterEquipment(final int charIndex, final long a1) {
+  public static void renderCharacterEquipment(final int charIndex, final boolean allocate) {
     if(charIndex == -1) {
       return;
     }
 
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
 
-    if(a1 != 0) {
+    if(allocate) {
       allocateUiElement(0x59, 0x59, 194, 16);
 
       if(charData.equipment_14.get(0).get() != 0xff) {
@@ -4657,8 +4615,8 @@ public final class SItem {
   }
 
   @Method(0x80109074L)
-  public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final long a4) {
-    if(a4 != 0) {
+  public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final boolean allocate) {
+    if(allocate) {
       allocateUiElement(0x5b, 0x5b, x, y);
     }
 
@@ -4731,47 +4689,6 @@ public final class SItem {
     }
 
     //LAB_80109284
-  }
-
-  @Method(0x801092b4L)
-  public static void renderCharacterSpells(final int charIndex, final long a1) {
-    if(charIndex == -0x1L) {
-      return;
-    }
-
-    if(a1 != 0) {
-      allocateUiElement(0x58, 0x58, 194, 101);
-    }
-
-    //LAB_80109308
-    if(!hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
-      return;
-    }
-
-    final byte[] spellIndices = new byte[8];
-    getUnlockedDragoonSpells(spellIndices, charIndex);
-    final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
-
-    //LAB_80109354
-    for(int i = 0; i < 4; i++) {
-      if(a1 != 0 && i < unlockedSpellCount) {
-        renderCharacter(200, 127 + i * 14, i + 1);
-      }
-
-      //LAB_80109370
-      final byte spellIndex = spellIndices[i];
-      if(spellIndex != -1) {
-        renderText(spells_80052734.get(spellIndex).deref(), 210, 125 + i * 14, 4);
-
-        if(a1 != 0) {
-          renderThreeDigitNumber(342, 128 + i * 14, (int)_80114290.offset(spellIndex).get());
-        }
-      }
-
-      //LAB_801093c4
-    }
-
-    //LAB_801093e0
   }
 
   @Method(0x80109410L)
@@ -5129,7 +5046,7 @@ public final class SItem {
         }
 
         //LAB_8010af94
-        renderString(0, 16, 122, menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), 0);
+        renderString(0, 16, 122, menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), false);
 
         if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
           playSound(3);
@@ -5322,7 +5239,7 @@ public final class SItem {
         if(_8011e13e.get() == 0) {
           //LAB_8010b868
           renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, 4);
-          renderString(0, 193, 122, gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), 0);
+          renderString(0, 193, 122, gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), false);
 
           if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.equipmentCount_1e4.get(), 1)) {
             FUN_8010a864(gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get());
@@ -5330,7 +5247,7 @@ public final class SItem {
           }
         } else {
           renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, 4);
-          renderString(0, 193, 122, gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), 0);
+          renderString(0, 193, 122, gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), false);
 
           if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.itemCount_1e6.get(), 1)) {
             selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(menuIndex_8011e0e0.get());
@@ -6831,7 +6748,7 @@ public final class SItem {
 
       case INIT_MAIN_MENU_3:
         deallocateRenderables(0);
-        FUN_8010fd80(0x1L, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(true, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
         menuIndex_8011e1fc.set(0);
         final Renderable58 renderable = allocateUiElement(125, 125, 136, FUN_8010f188(0) - 2);
         renderable_8011e208 = renderable;
@@ -6841,7 +6758,7 @@ public final class SItem {
         break;
 
       case MAIN_MENU_4:
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
         if(_800bb168.get() == 0) {
           renderText(Too_many_8011c21c, 16, 151, 4);
@@ -6873,7 +6790,7 @@ public final class SItem {
 
       case _7:
         deallocateRenderables(0);
-        FUN_8010fd80(0x1L, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
+        FUN_8010fd80(true, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
         inventoryMenuState_800bdc28.set(InventoryMenuState._8);
         break;
 
@@ -6906,7 +6823,7 @@ public final class SItem {
         }
 
         //LAB_8010f6d4
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x1L);
         break;
 
       case _9:
@@ -6980,7 +6897,7 @@ public final class SItem {
 
         //LAB_8010f9a4
         //LAB_8010f9a8
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x3L);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0x3L);
         break;
 
       case _10:
@@ -6996,7 +6913,7 @@ public final class SItem {
         renderText(End_8011c29c, 16, 185, 4);
         renderCentredText(Yes_8011c20c, 150, FUN_8010f188(0), menuIndex_8011e1fc.get() == 0 ? 5 : 6);
         renderCentredText(No_8011c214, 150, FUN_8010f188(1), menuIndex_8011e1fc.get() != 0 ? 5 : 6);
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
         switch(handleYesNo(menuIndex_8011e1fc)) {
           //LAB_8010fb28
@@ -7039,7 +6956,7 @@ public final class SItem {
         break;
 
       case _12:
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
 
         if(_800bb168.get() >= 0xff) {
           scriptStartEffect(0x2L, 0xaL);
@@ -7066,7 +6983,7 @@ public final class SItem {
 
         //LAB_8010fd28
         //LAB_8010fd5c
-        FUN_8010fd80(0, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
+        FUN_8010fd80(false, menuItems_8011d7c8.get(menuIndex_8011e1f0.get()).itemId_00.get(), slotIndex_8011e1f4.get(), slotScroll_8011e1f8.get(), 0);
         break;
     }
 
@@ -7074,8 +6991,8 @@ public final class SItem {
   }
 
   @Method(0x8010fd80L)
-  public static void FUN_8010fd80(final long a0, final int itemId, final int slotIndex, final int slotScroll, final long a4) {
-    if(a0 != 0) {
+  public static void FUN_8010fd80(final boolean allocate, final int itemId, final int slotIndex, final int slotScroll, final long a4) {
+    if(allocate) {
       renderGlyphs(glyphs_80114548, 0, 0);
       saveListUpArrow_800bdb94 = allocateUiElement(61, 68, 358, FUN_8010f178(0));
       saveListDownArrow_800bdb98 = allocateUiElement(53, 60, 358, FUN_8010f178(6));
@@ -7085,8 +7002,8 @@ public final class SItem {
     //LAB_8010fe38
     renderMenuItems(16, 33, menuItems_8011d7c8, 0, Math.min(5, itemsDroppedByEnemiesCount_800bc978.get()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
-    if((a4 & 0x1L) != 0 && a0 == 0) {
-      renderString(0, 16, 164, itemId, 0);
+    if((a4 & 0x1L) != 0 && !allocate) {
+      renderString(0, 16, 164, itemId, false);
     }
 
     //LAB_8010fe90
@@ -7110,7 +7027,7 @@ public final class SItem {
       //LAB_8010ff90
       if((a4 & 0x2L) != 0) {
         //LAB_8010ffb4
-        renderString(0, 194, 164, _8011dcb8.get(1).deref().get(slotScroll + slotIndex).itemId_00.get(), a0);
+        renderString(0, 194, 164, _8011dcb8.get(1).deref().get(slotScroll + slotIndex).itemId_00.get(), allocate);
 
         //LAB_8010ffcc
         if((a4 & 0x2L) != 0) {
@@ -7128,7 +7045,7 @@ public final class SItem {
 
       //LAB_8010ff08
       if((a4 & 0x2L) != 0) {
-        renderString(0, 194, 164, _8011dcb8.get(0).deref().get(slotScroll + slotIndex).itemId_00.get(), a0);
+        renderString(0, 194, 164, _8011dcb8.get(0).deref().get(slotScroll + slotIndex).itemId_00.get(), allocate);
 
         if((a4 & 0x2L) != 0) {
           final Renderable58 renderable = FUN_801038d4(137, 84, 140);
