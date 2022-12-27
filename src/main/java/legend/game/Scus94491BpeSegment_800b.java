@@ -220,18 +220,20 @@ public final class Scus94491BpeSegment_800b {
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
 
   /**
-   * 0x01 - L2
-   * 0x02 - R2
-   * 0x04 - L1
-   * 0x08 - R1
-   * 0x10 - Triangle
-   * 0x20 - Cross
-   * 0x40 - Circle
-   * 0x80 - Square
-   * 0x1000 - Up
-   * 0x2000 - Right
-   * 0x4000 - Down
-   * 0x8000 - Left
+   * <ul>
+   *   <li>0x01 - L2</li>
+   *   <li>0x02 - R2</li>
+   *   <li>0x04 - L1</li>
+   *   <li>0x08 - R1</li>
+   *   <li>0x10 - Triangle</li>
+   *   <li>0x20 - Cross</li>
+   *   <li>0x40 - Circle</li>
+   *   <li>0x80 - Square</li>
+   *   <li>0x1000 - Up</li>
+   *   <li>0x2000 - Right</li>
+   *   <li>0x4000 - Down</li>
+   *   <li>0x8000 - Left</li>
+   * </ul>
    */
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
