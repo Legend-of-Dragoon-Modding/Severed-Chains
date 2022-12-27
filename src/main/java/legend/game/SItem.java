@@ -359,10 +359,6 @@ public final class SItem {
   public static final LodString _8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
   public static final LodString _8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
   public static final LodString Press_to_sort_8011d024 = MEMORY.ref(2, 0x8011d024L, LodString::new);
-  /** "" */
-  public static final LodString _8011d044 = MEMORY.ref(2, 0x8011d044L, LodString::new);
-  /** "" */
-  public static final LodString _8011d048 = MEMORY.ref(2, 0x8011d048L, LodString::new);
   public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
   public static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
   public static final LodString SpecialItem_8011d054 = new LodString("Special Item");
@@ -411,11 +407,6 @@ public final class SItem {
 
   public static final BoolRef _8011dcfc = MEMORY.ref(1, 0x8011dcfcL, BoolRef::new);
 
-  /** DRGN0 file 6668 */
-  public static final Value dabasFilePtr_8011dd00 = MEMORY.ref(4, 0x8011dd00L);
-  public static final Value dabasFileSize_8011dd04 = MEMORY.ref(4, 0x8011dd04L);
-
-  public static final Value _8011e094 = MEMORY.ref(4, 0x8011e094L);
   public static final ArrayRef<MenuAdditionInfo> additions_8011e098 = MEMORY.ref(1, 0x8011e098L, ArrayRef.of(MenuAdditionInfo.class, 9, 0x2, MenuAdditionInfo::new));
 
   public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
@@ -791,11 +782,6 @@ public final class SItem {
     } else if(whichFile == 1) {
       //LAB_800fc9e4
       drgn0_6666FilePtr_800bdc3c.setPointer(address);
-    } else if(whichFile == 4) { // Dabas minigame assets
-      //LAB_800fc978
-      //LAB_800fc9f0
-      dabasFilePtr_8011dd00.setu(address);
-      dabasFileSize_8011dd04.setu(size);
     }
 
     //LAB_800fc9fc

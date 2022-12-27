@@ -3,7 +3,6 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
-import legend.game.SItem;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -22,9 +21,7 @@ import static legend.game.SItem.NextDig_8011d064;
 import static legend.game.SItem.SpecialItem_8011d054;
 import static legend.game.SItem.Take_8011d058;
 import static legend.game.SItem._8011dc8c;
-import static legend.game.SItem._8011e094;
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.dabasFilePtr_8011dd00;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.equipment_8011972c;
 import static legend.game.SItem.menuItems_8011d7c8;
@@ -38,7 +35,6 @@ import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
-import static legend.game.SItem.selectedSlot_8011d740;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
@@ -53,12 +49,8 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
-import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -68,9 +60,15 @@ public class DabasScreen extends MenuScreen {
   private int loadingStage;
 
   private DabasData100 dabasData_8011d7c0;
+  private Renderable58 renderable1;
+  private Renderable58 renderable2;
+  private long dabasFilePtr_8011dd00;
+
+  private int menuIndex;
 
   private int gold;
   private boolean hasItems;
+  private int _8011e094;
 
   private final Runnable unload;
 
@@ -82,31 +80,29 @@ public class DabasScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        this.dabasData_8011d7c0 = MEMORY.ref(4, mallocTail(0x100L), DabasData100::new);
+        this.dabasData_8011d7c0 = MEMORY.ref(4, mallocTail(0x100), DabasData100::new);
         bzero(this.dabasData_8011d7c0.getAddress(), 0x100);
-
-        dabasFilePtr_8011dd00.setu(0);
 
         for(int i = 0; i < 7; i++) {
           final MenuItemStruct04 menuItem = menuItems_8011d7c8.get(i);
           menuItem.itemId_00.set(0xff);
           menuItem.itemSlot_01.set(i);
-          menuItem.price_02.set(0);
         }
 
         //TODO this is the Pocketstation minigame to upload to the memcard
-        loadDrgnBinFile(0, 6668, 0, SItem::menuAssetsLoaded, 4, 0x2);
+        loadDrgnBinFile(0, 6668, 0, (address, size, unused) -> this.dabasFilePtr_8011dd00 = address, 0, 0x2);
+
         scriptStartEffect(2, 10);
-        selectedSlot_8011d740.set(0);
+        this.menuIndex = 0;
 
         deallocateRenderables(0xff);
         renderGlyphs(dabasMenuGlyphs_80114228, 0, 0);
-        highlightLeftHalf_800bdbe8 = allocateUiElement(0x9f, 0x9f, 60, this.getDabasMenuY(selectedSlot_8011d740.get()));
-        FUN_80104b60(highlightLeftHalf_800bdbe8);
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderable1 = allocateUiElement(0x9f, 0x9f, 60, this.getDabasMenuY(0));
+        FUN_80104b60(this.renderable1);
+        this.renderDabasMenu(0);
 
         _8011dc8c.setu(0);
-        _8011e094.setu(0);
+        this._8011e094 = 0;
         this.gold = 0;
         this.hasItems = false;
 
@@ -119,13 +115,12 @@ public class DabasScreen extends MenuScreen {
 
       // Load save
       case 1 -> {
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderDabasMenu(this.menuIndex);
 
         MEMORY.setBytes(this.dabasData_8011d7c0.getAddress(), DabasManager.loadSave(), 0x580, 0x80);
 
         final DabasData100 dabasData = this.dabasData_8011d7c0;
 
-        //LAB_801003cc
         for(int i = 0; i < 6; i++) {
           final MenuItemStruct04 menuItem = menuItems_8011d7c8.get(i);
 
@@ -139,9 +134,7 @@ public class DabasScreen extends MenuScreen {
             menuItem.itemId_00.set(0xff);
           }
 
-          //LAB_80100400
           menuItem.itemSlot_01.set(i);
-          menuItem.price_02.set(0);
         }
 
         final int specialItemId = dabasData.specialItem_2c.get();
@@ -159,25 +152,25 @@ public class DabasScreen extends MenuScreen {
         this.gold = dabasData.gold_34.get();
 
         if(dabasData._3c.get() == 1) {
-          _8011e094.setu(dabasData._3c.get());
+          this._8011e094 = dabasData._3c.get();
         }
 
         this.loadingStage = 2;
       }
 
-      case 2 -> this.renderDabasMenu(selectedSlot_8011d740.get());
+      case 2 -> this.renderDabasMenu(this.menuIndex);
 
       case 3 -> {
         messageBox(messageBox_8011dc90);
 
         if(messageBox_8011dc90.ticks_10 < 3) {
-          this.renderDabasMenu(selectedSlot_8011d740.get());
+          this.renderDabasMenu(this.menuIndex);
           break;
         }
 
-        if(highlightRightHalf_800bdbec == null) {
-          highlightRightHalf_800bdbec = allocateUiElement(0xd3, 0xd3, 68, 80);
-          highlightRightHalf_800bdbec.z_3c = 31;
+        if(this.renderable2 == null) {
+          this.renderable2 = allocateUiElement(0xd3, 0xd3, 68, 80);
+          this.renderable2.z_3c = 31;
         }
 
         //LAB_80101380
@@ -186,14 +179,14 @@ public class DabasScreen extends MenuScreen {
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
           //LAB_80101580
-          this.renderDabasMenu(selectedSlot_8011d740.get());
+          this.renderDabasMenu(this.menuIndex);
           break;
         }
 
-        unloadRenderable(highlightRightHalf_800bdbec);
-        highlightRightHalf_800bdbec = allocateUiElement(0xd3, 0xd9, 68, 80);
-        highlightRightHalf_800bdbec.z_3c = 31;
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        unloadRenderable(this.renderable2);
+        this.renderable2 = allocateUiElement(0xd3, 0xd9, 68, 80);
+        this.renderable2.z_3c = 31;
+        this.renderDabasMenu(this.menuIndex);
         this.loadingStage++;
       }
 
@@ -203,9 +196,9 @@ public class DabasScreen extends MenuScreen {
         if(this.gold <= 10 || (inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
           gameState_800babc8.gold_94.add(this.gold);
           this.gold = 0;
-          unloadRenderable(highlightRightHalf_800bdbec);
-          highlightRightHalf_800bdbec = allocateUiElement(0xd3, 0xd3, 68, 80);
-          highlightRightHalf_800bdbec.z_3c = 31;
+          unloadRenderable(this.renderable2);
+          this.renderable2 = allocateUiElement(0xd3, 0xd3, 68, 80);
+          this.renderable2.z_3c = 31;
           this.loadingStage++;
         } else {
           this.gold -= 10;
@@ -222,24 +215,24 @@ public class DabasScreen extends MenuScreen {
 
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderDabasMenu(this.menuIndex);
       }
 
       case 5 -> {
         messageBox(messageBox_8011dc90);
         if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
-          unloadRenderable(highlightRightHalf_800bdbec);
+          unloadRenderable(this.renderable2);
           messageBox_8011dc90.state_0c++;
           this.loadingStage++;
         }
 
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderDabasMenu(this.menuIndex);
       }
 
       case 6 -> {
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderDabasMenu(this.menuIndex);
 
         if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           this.loadingStage = 2;
@@ -247,15 +240,15 @@ public class DabasScreen extends MenuScreen {
       }
 
       case 100 -> {
-        this.renderDabasMenu(selectedSlot_8011d740.get());
-        free(dabasFilePtr_8011dd00.get());
+        this.renderDabasMenu(this.menuIndex);
+        free(this.dabasFilePtr_8011dd00);
         free(this.dabasData_8011d7c0.getAddress());
         scriptStartEffect(1, 10);
         this.loadingStage++;
       }
 
       case 101 -> {
-        this.renderDabasMenu(selectedSlot_8011d740.get());
+        this.renderDabasMenu(this.menuIndex);
 
         if(_800bb168.get() >= 0xff) {
           this.unload.run();
@@ -301,7 +294,7 @@ public class DabasScreen extends MenuScreen {
     dabasData.specialItem_2c.set(0);
 
     setMessageBoxText(messageBox_8011dc90, new LodString(TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)]), 0x1);
-    highlightRightHalf_800bdbec = null;
+    this.renderable2 = null;
     this.loadingStage = 3;
   }
 
@@ -333,7 +326,7 @@ public class DabasScreen extends MenuScreen {
 
     dabasData._3c.set(2);
     dabasData.specialItem_2c.set(0);
-    _8011e094.setu(0);
+    this._8011e094 = 0;
 
     menuStack.pushScreen(new MessageBoxScreen(new LodString(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)]), 0, result -> this.loadingStage = 2));
   }
@@ -345,9 +338,9 @@ public class DabasScreen extends MenuScreen {
     }
 
     for(int i = 0; i < 3; i++) {
-      if(selectedSlot_8011d740.get() != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
-        selectedSlot_8011d740.set(i);
-        highlightLeftHalf_800bdbe8.y_44 = this.getDabasMenuY(selectedSlot_8011d740.get());
+      if(this.menuIndex != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
+        this.menuIndex = i;
+        this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
       }
     }
   }
@@ -384,7 +377,7 @@ public class DabasScreen extends MenuScreen {
           playSound(40);
         }
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
-        if(_8011e094.get() != 0) {
+        if(this._8011e094 != 0) {
           playSound(2);
 
           menuStack.pushScreen(new MessageBoxScreen(new LodString("Begin new expedition?"), 2, result -> {
@@ -594,8 +587,8 @@ public class DabasScreen extends MenuScreen {
     renderText(AcquiredGold_8011cdd4, 30, 124, 4);
     renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? 5 : !this.hasItems && this.gold == 0 ? 6 : 4);
     renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? 5 : !this.hasItems ? 6 : 4);
-    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? 5 : _8011e094.get() == 0 ? 6 : 4);
-    renderMenuItems(194, 37, menuItems_8011d7c8, 0, 6, _800bdb9c, _800bdba0);
+    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? 5 : this._8011e094 == 0 ? 6 : 4);
+    renderMenuItems(194, 37, menuItems_8011d7c8, 0, 6, null, null);
     renderEightDigitNumber(100, 147, this.gold, 0x2L);
 
     final int itemId = menuItems_8011d7c8.get(6).itemId_00.get();
