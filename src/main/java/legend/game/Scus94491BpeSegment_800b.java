@@ -183,24 +183,24 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
-  public static final Pointer<Renderable58> saveListUpArrow_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> saveListDownArrow_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> _800bdb9c = MEMORY.ref(4, 0x800bdb9cL, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> _800bdba0 = MEMORY.ref(4, 0x800bdba0L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 saveListUpArrow_800bdb94;
+  public static Renderable58 saveListDownArrow_800bdb98;
+  public static Renderable58 _800bdb9c;
+  public static Renderable58 _800bdba0;
+  public static Renderable58 renderablePtr_800bdba4;
+  public static Renderable58 renderablePtr_800bdba8;
 
   public static final ArrayRef<IntRef> characterIndices_800bdbb8 = MEMORY.ref(4, 0x800bdbb8L, ArrayRef.of(IntRef.class, 9, 0x4, IntRef::new));
 
-  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> highlightLeftHalf_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> highlightRightHalf_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdbf0 = MEMORY.ref(4, 0x800bdbf0L, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 selectedMenuOptionRenderablePtr_800bdbe0;
+  public static Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
+  public static Renderable58 highlightLeftHalf_800bdbe8;
+  public static Renderable58 highlightRightHalf_800bdbec;
+  public static Renderable58 renderablePtr_800bdbf0;
 
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
-  public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 renderablePtr_800bdc20;
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
@@ -236,7 +236,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
-  public static final Pointer<Renderable58> renderablePtr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 renderablePtr_800bdc5c;
 
   public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
 

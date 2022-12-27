@@ -47,14 +47,14 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 0;
 
         if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44.set(selectionY - 2);
+          this.messageBox.renderable_04.y_44 = selectionY - 2;
         }
       } else if(this.messageBox.menuIndex_18 != 1 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
         playSound(1);
         this.messageBox.menuIndex_18 = 1;
 
         if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44.set(selectionY + 12);
+          this.messageBox.renderable_04.y_44 = selectionY + 12;
         }
       }
     }
@@ -75,7 +75,7 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 0;
 
         if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44.set(selectionY - 2);
+          this.messageBox.renderable_04.y_44 = selectionY - 2;
         }
 
         this.result = MessageBoxResult.YES;
@@ -85,7 +85,7 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.menuIndex_18 = 1;
 
         if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44.set(selectionY + 12);
+          this.messageBox.renderable_04.y_44 = selectionY + 12;
         }
 
         this.result = MessageBoxResult.NO;

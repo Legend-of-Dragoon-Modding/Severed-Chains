@@ -44,18 +44,18 @@ public abstract class SaveListScreen extends MenuScreen {
         deallocateRenderables(0xff);
         scriptStartEffect(2, 10);
 
-        saveListDownArrow_800bdb98.clear();
-        saveListUpArrow_800bdb94.clear();
+        saveListDownArrow_800bdb98 = null;
+        saveListUpArrow_800bdb94 = null;
         this.scroll = 0;
         this.selectedSlot = 0;
 
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
 
-        highlightLeftHalf_800bdbe8.set(allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot)));
-        highlightRightHalf_800bdbec.set(allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot)));
-        FUN_80104b60(highlightLeftHalf_800bdbe8.deref());
-        FUN_80104b60(highlightRightHalf_800bdbec.deref());
+        highlightLeftHalf_800bdbe8 = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
+        highlightRightHalf_800bdbec = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
+        FUN_80104b60(highlightLeftHalf_800bdbe8);
+        FUN_80104b60(highlightRightHalf_800bdbec);
         renderSaveListArrows(this.scroll);
 
         deallocateRenderables(0);
@@ -118,8 +118,8 @@ public abstract class SaveListScreen extends MenuScreen {
         if(i != this.selectedSlot) {
           playSound(1);
           this.selectedSlot = i;
-          highlightLeftHalf_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
-          highlightRightHalf_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
+          highlightLeftHalf_800bdbe8.y_44 = getSlotY(this.selectedSlot);
+          highlightRightHalf_800bdbec.y_44 = getSlotY(this.selectedSlot);
         }
       }
     }
@@ -164,8 +164,8 @@ public abstract class SaveListScreen extends MenuScreen {
   private void scroll(final int scroll) {
     playSound(1);
     this.scroll = scroll;
-    highlightLeftHalf_800bdbe8.deref().y_44.set(getSlotY(this.selectedSlot));
-    highlightRightHalf_800bdbec.deref().y_44.set(getSlotY(this.selectedSlot));
+    highlightLeftHalf_800bdbe8.y_44 = getSlotY(this.selectedSlot);
+    highlightRightHalf_800bdbec.y_44 = getSlotY(this.selectedSlot);
     deallocateRenderables(0);
     this.renderSavedGames(this.scroll, true, 0xff);
   }

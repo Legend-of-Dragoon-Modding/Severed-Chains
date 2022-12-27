@@ -8,13 +8,13 @@ import legend.core.memory.types.UnsignedShortRef;
 public class Drgn0_6666Entry implements MemoryRef {
   private final Value ref;
 
-  public final UnsignedShortRef _00;
+  public final UnsignedShortRef metricsIndicesIndex_00;
   public final UnsignedByteRef _02;
 
   public Drgn0_6666Entry(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
+    this.metricsIndicesIndex_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
   }
 

@@ -25,7 +25,6 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
@@ -1400,7 +1399,7 @@ public final class Scus94491BpeSegment_8002 {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
 
-          renderablePtr_800bdc5c.clear();
+          renderablePtr_800bdc5c = null;
           drgn0_6666FilePtr_800bdc3c.clear();
           setWidthAndFlags(384);
           loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
@@ -2150,134 +2149,137 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80023b54L)
   public static Renderable58 allocateRenderable(final Drgn0_6666Struct a0, @Nullable Renderable58 a1) {
     if(a1 == null) {
-      a1 = MEMORY.ref(4, mallocTail(0x58L), Renderable58::new);
+      a1 = new Renderable58();
     }
 
     //LAB_80023b7c
-    a1.flags_00.set(0);
-    a1.glyph_04.set(0);
-    a1._08.set(a0._0a.get());
-    a1._0c.set(0);
-    a1.startGlyph_10.set(0);
-    a1.endGlyph_14.set(a0.entryCount_06.get() - 1);
-    a1._18.set(0);
-    a1._1c.set(0);
-    a1.drgn0_6666_20.set(a0);
-    a1.drgn0_6666_data_24.set(MEMORY.ref(4, a0.entries_08.get(a0.entryCount_06.get()).getAddress()).cast(UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
-    a1._28.set(0);
-    a1.tpage_2c.set(0);
-    a1._34.set(0x1000L);
-    a1._38.set(0x1000L);
-    a1.z_3c.set(0x24);
-    a1.x_40.set(0);
-    a1.y_44.set(0);
-    a1._48.set(0);
-    a1.child_50.clear();
+    a1.flags_00 = 0;
+    a1.glyph_04 = 0;
+    a1._08 = a0._0a.get();
+    a1._0c = 0;
+    a1.startGlyph_10 = 0;
+    a1.endGlyph_14 = a0.entryCount_06.get() - 1;
+    a1._18 = 0;
+    a1._1c = 0;
+    a1.drgn0_6666_20 = a0;
+    a1.metricsIndices_24 = new int[a0.entryCount_06.get()];
+    for(int i = 0; i < a0.entryCount_06.get(); i++) {
+      a1.metricsIndices_24[i] = (int)MEMORY.get(a0.entries_08.get(a0.entryCount_06.get()).getAddress() + i * 4, 4);
+    }
 
-    if(!renderablePtr_800bdc5c.isNull()) {
-      a1.parent_54.set(renderablePtr_800bdc5c.deref());
-      renderablePtr_800bdc5c.deref().child_50.set(a1);
+    a1._28 = 0;
+    a1.tpage_2c = 0;
+    a1._34 = 0x1000;
+    a1._38 = 0x1000;
+    a1.z_3c = 36;
+    a1.x_40 = 0;
+    a1.y_44 = 0;
+    a1._48 = 0;
+    a1.child_50 = null;
+
+    if(renderablePtr_800bdc5c != null) {
+      a1.parent_54 = renderablePtr_800bdc5c;
+      renderablePtr_800bdc5c.child_50 = a1;
     } else {
       //LAB_80023c08
-      a1.parent_54.clear();
-      renderablePtr_800bdc5c.set(a1);
+      a1.parent_54 = null;
     }
 
     //LAB_80023c0c
-    renderablePtr_800bdc5c.set(a1);
+    renderablePtr_800bdc5c = a1;
     return a1;
   }
 
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    Renderable58 renderable = renderablePtr_800bdc5c.derefNullable();
+    Renderable58 renderable = renderablePtr_800bdc5c;
 
     _800bdc58.addu(0x1L);
 
     //LAB_80023c8c
     while(renderable != null) {
       boolean forceUnload = false;
-      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.deref().entries_08;
+      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.entries_08;
 
-      if((renderable.flags_00.get() & 0x4L) == 0) {
-        renderable._08.decr();
+      if((renderable.flags_00 & 0x4) == 0) {
+        renderable._08--;
 
-        if(renderable._08.get() < 0) {
-          if((renderable.flags_00.get() & 0x20L) != 0) {
-            renderable.glyph_04.decr();
+        if(renderable._08 < 0) {
+          if((renderable.flags_00 & 0x20) != 0) {
+            renderable.glyph_04--;
 
-            if(renderable.glyph_04.get() < renderable.startGlyph_10.get()) {
-              if((renderable.flags_00.get() & 0x10L) != 0) {
+            if(renderable.glyph_04 < renderable.startGlyph_10) {
+              if((renderable.flags_00 & 0x10) != 0) {
                 forceUnload = true;
-                renderable.flags_00.or(0x40L);
+                renderable.flags_00 |= 0x40;
               }
 
               //LAB_80023d0c
-              if(renderable._18.get() != 0) {
-                renderable.startGlyph_10.set(renderable._18);
+              if(renderable._18 != 0) {
+                renderable.startGlyph_10 = renderable._18;
 
-                if(renderable._1c.get() != 0) {
-                  renderable.endGlyph_14.set(renderable._1c);
+                if(renderable._1c != 0) {
+                  renderable.endGlyph_14 = renderable._1c;
                 } else {
                   //LAB_80023d34
-                  renderable.endGlyph_14.set(renderable._18);
-                  renderable.flags_00.or(0x4L);
+                  renderable.endGlyph_14 = renderable._18;
+                  renderable.flags_00 |= 0x4;
                 }
 
                 //LAB_80023d48
-                renderable._18.set(0);
-                renderable.flags_00.and(0xffff_ffdfL);
+                renderable._18 = 0;
+                renderable.flags_00 &= 0xffff_ffdf;
               }
 
               //LAB_80023d5c
               //LAB_80023e00
-              renderable.glyph_04.set(renderable.endGlyph_14);
-              renderable._0c.incr();
+              renderable.glyph_04 = renderable.endGlyph_14;
+              renderable._0c++;
             }
           } else {
             //LAB_80023d6c
-            renderable.glyph_04.incr();
+            renderable.glyph_04++;
 
-            if(renderable.endGlyph_14.get() < renderable.glyph_04.get()) {
-              if((renderable.flags_00.get() & 0x10L) != 0) {
+            if(renderable.endGlyph_14 < renderable.glyph_04) {
+              if((renderable.flags_00 & 0x10) != 0) {
                 forceUnload = true;
-                renderable.flags_00.or(0x40L);
+                renderable.flags_00 |= 0x40;
               }
 
               //LAB_80023da4
-              if(renderable._18.get() != 0) {
-                renderable.startGlyph_10.set(renderable._18);
+              if(renderable._18 != 0) {
+                renderable.startGlyph_10 = renderable._18;
 
-                if(renderable._1c.get() != 0) {
-                  renderable.endGlyph_14.set(renderable._1c);
+                if(renderable._1c != 0) {
+                  renderable.endGlyph_14 = renderable._1c;
                 } else {
                   //LAB_80023dcc
-                  renderable.endGlyph_14.set(renderable._18);
-                  renderable.flags_00.or(0x4L);
+                  renderable.endGlyph_14 = renderable._18;
+                  renderable.flags_00 |= 0x4;
                 }
 
                 //LAB_80023de0
-                renderable._18.set(0);
-                renderable.flags_00.and(0xffff_ffdfL);
+                renderable._18 = 0;
+                renderable.flags_00 &= 0xffff_ffdf;
               }
 
               //LAB_80023df4
               //LAB_80023e00
-              renderable.glyph_04.set(renderable.startGlyph_10);
-              renderable._0c.incr();
+              renderable.glyph_04 = renderable.startGlyph_10;
+              renderable._0c++;
             }
           }
 
           //LAB_80023e08
-          renderable._08.set(entries.get(renderable.glyph_04.get())._02.get() - 1);
+          renderable._08 = entries.get(renderable.glyph_04)._02.get() - 1;
         }
       }
 
       //LAB_80023e28
-      if((renderable.flags_00.get() & 0x40L) == 0) {
+      if((renderable.flags_00 & 0x40) == 0) {
         final int centreX = displayWidth_1f8003e0.get() / 2 + 8;
 
-        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.deref().getMetrics((int)renderable.drgn0_6666_data_24.deref().get(entries.get(renderable.glyph_04.get())._00.get()).get());
+        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.getMetrics(renderable.metricsIndices_24[entries.get(renderable.glyph_04).metricsIndicesIndex_00.get()]);
 
         //LAB_80023e94
         for(int i = metricses.length() - 1; i >= 0; i--) {
@@ -2288,28 +2290,28 @@ public final class Scus94491BpeSegment_8002 {
 
           final int x1;
           final int x2;
-          if(renderable._34.get() == 0x1000L) {
+          if(renderable._34 == 0x1000) {
             if(metrics._10.get() < 0) {
-              x2 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x2 = renderable.x_40 + metrics.x_02.get() - centreX;
               x1 = x2 + metrics.width_08.get();
             } else {
               //LAB_80023f20
-              x1 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x1 = renderable.x_40 + metrics.x_02.get() - centreX;
               x2 = x1 + metrics.width_08.get();
             }
           } else {
             //LAB_80023f40
-            final long a0_0 = renderable._34.get() != 0 ? renderable._34.get() : metrics._10.get();
+            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10.get();
 
             //LAB_80023f4c
             //LAB_80023f68
-            final int a1 = Math.abs((int)(metrics.width_08.get() * a0_0 / 0x1000));
+            final int a1 = Math.abs(metrics.width_08.get() * a0_0 / 0x1000);
             if(metrics._10.get() < 0) {
-              x2 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x2 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
               x1 = x2 + a1;
             } else {
               //LAB_80023fb4
-              x1 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x1 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
               x2 = x1 + a1;
             }
           }
@@ -2317,28 +2319,28 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80023fe4
           final int y1;
           final int y2;
-          if(renderable._38.get() == 0x1000L) {
+          if(renderable._38 == 0x1000) {
             if(metrics._12.get() < 0) {
-              y2 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y2 = renderable.y_44 + metrics.y_03.get() - 120;
               y1 = y2 + metrics.height_0a.get();
             } else {
               //LAB_80024024
-              y1 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y1 = renderable.y_44 + metrics.y_03.get() - 120;
               y2 = y1 + metrics.height_0a.get();
             }
           } else {
             //LAB_80024044
-            final long a0_0 = renderable._38.get() != 0 ? renderable._38.get() : metrics._12.get();
+            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12.get();
 
             //LAB_80024050
             //LAB_8002406c
-            final int a1 = Math.abs((int)(metrics.height_0a.get() * a0_0 / 0x1000));
+            final int a1 = Math.abs(metrics.height_0a.get() * a0_0 / 0x1000);
             if(metrics._12.get() < 0) {
-              y2 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y2 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
               y1 = y2 + a1;
             } else {
               //LAB_800240b8
-              y1 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y1 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
               y2 = y1 + a1;
             }
           }
@@ -2362,11 +2364,11 @@ public final class Scus94491BpeSegment_8002 {
           cmd.uv(2, metrics.u_00.get(), v);
           cmd.uv(3, u, v);
 
-          final int clut = renderable.clut_30.get() != 0 ? renderable.clut_30.get() : metrics.clut_04.get() & 0x7fff;
+          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04.get() & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
-          final int tpage = renderable.tpage_2c.get() != 0 ? metrics.tpage_06.get() & 0x60 | renderable.tpage_2c.get() : metrics.tpage_06.get() & 0x7f;
+          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06.get() & 0x60 | renderable.tpage_2c : metrics.tpage_06.get() & 0x7f;
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
@@ -2375,18 +2377,18 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_8002424c
-          GPU.queueCommand(renderable.z_3c.get(), cmd);
+          GPU.queueCommand(renderable.z_3c, cmd);
         }
       }
 
       //LAB_80024280
-      if((renderable.flags_00.get() & 0x8L) != 0 || forceUnload) {
+      if((renderable.flags_00 & 0x8) != 0 || forceUnload) {
         //LAB_800242a8
         unloadRenderable(renderable);
       }
 
       //LAB_800242b0
-      renderable = renderable.parent_54.derefNullable();
+      renderable = renderable.parent_54;
     }
 
     //LAB_800242b8
@@ -2394,41 +2396,38 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800242e8L)
   public static void unloadRenderable(final Renderable58 a0) {
-    final Renderable58 v0 = a0.child_50.derefNullable();
-    final Renderable58 v1 = a0.parent_54.derefNullable();
+    final Renderable58 v0 = a0.child_50;
+    final Renderable58 v1 = a0.parent_54;
 
     if(v0 == null) {
       if(v1 == null) {
-        renderablePtr_800bdc5c.clear();
+        renderablePtr_800bdc5c = null;
       } else {
         //LAB_80024320
-        renderablePtr_800bdc5c.set(v1);
-        v1.child_50.clear();
+        renderablePtr_800bdc5c = v1;
+        v1.child_50 = null;
       }
       //LAB_80024334
     } else if(v1 == null) {
-      v0.parent_54.clear();
+      v0.parent_54 = null;
     } else {
       //LAB_80024350
-      v0.parent_54.set(v1);
-      v1.child_50.setNullable(a0.child_50.derefNullable());
+      v0.parent_54 = v1;
+      v1.child_50 = a0.child_50;
     }
-
-    //LAB_80024364
-    free(a0.getAddress());
   }
 
   @Method(0x8002437cL)
   public static void deallocateRenderables(final long a0) {
-    Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
+    Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
       //LAB_800243b4
-      while(!s0.parent_54.isNull()) {
+      while(s0.parent_54 != null) {
         final Renderable58 a0_0 = s0;
-        s0 = s0.parent_54.deref();
+        s0 = s0.parent_54;
 
-        if(a0_0._28.get() <= a0) {
+        if(a0_0._28 <= a0) {
           unloadRenderable(a0_0);
         }
 
@@ -2436,26 +2435,26 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_800243e0
-      if(s0._28.get() <= a0) {
+      if(s0._28 <= a0) {
         unloadRenderable(s0);
       }
 
       //LAB_800243fc
       if(a0 != 0) {
-        saveListUpArrow_800bdb94.clear();
-        saveListDownArrow_800bdb98.clear();
-        _800bdb9c.clear();
-        _800bdba0.clear();
-        renderablePtr_800bdba4.clear();
-        renderablePtr_800bdba8.clear();
+        saveListUpArrow_800bdb94 = null;
+        saveListDownArrow_800bdb98 = null;
+        _800bdb9c = null;
+        _800bdba0 = null;
+        renderablePtr_800bdba4 = null;
+        renderablePtr_800bdba8 = null;
 
-        selectedMenuOptionRenderablePtr_800bdbe0.clear();
-        selectedMenuOptionRenderablePtr_800bdbe4.clear();
-        highlightLeftHalf_800bdbe8.clear();
-        highlightRightHalf_800bdbec.clear();
-        renderablePtr_800bdbf0.clear();
+        selectedMenuOptionRenderablePtr_800bdbe0 = null;
+        selectedMenuOptionRenderablePtr_800bdbe4 = null;
+        highlightLeftHalf_800bdbe8 = null;
+        highlightRightHalf_800bdbec = null;
+        renderablePtr_800bdbf0 = null;
 
-        renderablePtr_800bdc20.clear();
+        renderablePtr_800bdc20 = null;
       }
     }
 

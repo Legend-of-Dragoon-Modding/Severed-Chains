@@ -1053,7 +1053,7 @@ public final class Scus94491BpeSegment_800e {
   public static void FUN_800e6d60() {
     _800bdb90.setu(0);
     _800bdc24.setu(0);
-    renderablePtr_800bdc5c.clear();
+    renderablePtr_800bdc5c = null;
     FUN_800e6d9c();
   }
 

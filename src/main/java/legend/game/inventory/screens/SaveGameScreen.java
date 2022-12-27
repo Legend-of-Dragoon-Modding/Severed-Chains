@@ -46,15 +46,15 @@ public class SaveGameScreen extends SaveListScreen {
       return;
     }
 
-    if(!saveListUpArrow_800bdb94.isNull()) {
-      fadeOutArrow(saveListUpArrow_800bdb94.deref());
-      saveListUpArrow_800bdb94.clear();
+    if(saveListUpArrow_800bdb94 != null) {
+      fadeOutArrow(saveListUpArrow_800bdb94);
+      saveListUpArrow_800bdb94 = null;
     }
 
     //LAB_800ff3a4
-    if(!saveListDownArrow_800bdb98.isNull()) {
-      fadeOutArrow(saveListDownArrow_800bdb98.deref());
-      saveListDownArrow_800bdb98.clear();
+    if(saveListDownArrow_800bdb98 != null) {
+      fadeOutArrow(saveListDownArrow_800bdb98);
+      saveListDownArrow_800bdb98 = null;
     }
   }
 
