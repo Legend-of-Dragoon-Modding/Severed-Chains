@@ -154,6 +154,10 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
+    if(this.loadingStage != 1) {
+      return;
+    }
+
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
       this.scrollAccumulator = 0;
     }

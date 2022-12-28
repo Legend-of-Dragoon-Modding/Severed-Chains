@@ -226,6 +226,10 @@ public class AdditionsScreen extends MenuScreen {
 
   @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
       this.scrollAccumulator = 0;
     }

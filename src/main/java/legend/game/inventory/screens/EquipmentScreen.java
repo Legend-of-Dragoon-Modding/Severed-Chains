@@ -37,8 +37,6 @@ import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
-import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -56,6 +54,8 @@ public class EquipmentScreen extends MenuScreen {
   private int charSlot;
   private int equipmentCount;
   private Renderable58 itemHighlight;
+  private Renderable58 _800bdb9c;
+  private Renderable58 _800bdba0;
 
   public EquipmentScreen(final Runnable unload) {
     this.unload = unload;
@@ -173,11 +173,11 @@ public class EquipmentScreen extends MenuScreen {
 
     if(allocate) {
       allocateUiElement(0x5a, 0x5a, 194, 96);
-      _800bdb9c = allocateUiElement(0x3d, 0x44, 358, this.FUN_800fc804(0));
-      _800bdba0 = allocateUiElement(0x35, 0x3c, 358, this.FUN_800fc804(3));
+      this._800bdb9c = allocateUiElement(0x3d, 0x44, 358, this.FUN_800fc804(0));
+      this._800bdba0 = allocateUiElement(0x35, 0x3c, 358, this.FUN_800fc804(3));
     }
 
-    renderMenuItems(194, 92, menuItems_8011d7c8, slotScroll, 4, _800bdb9c, _800bdba0);
+    renderMenuItems(194, 92, menuItems_8011d7c8, slotScroll, 4, this._800bdb9c, this._800bdba0);
     renderString(0, 194, 178, menuItems_8011d7c8.get(slotIndex + slotScroll).itemId_00.get(), allocate);
 
     uploadRenderables();
@@ -235,6 +235,10 @@ public class EquipmentScreen extends MenuScreen {
 
   @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
+    if(this.loadingStage != 3) {
+      return;
+    }
+
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
       this.scrollAccumulator = 0;
     }
