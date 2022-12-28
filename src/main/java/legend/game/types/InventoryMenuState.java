@@ -18,7 +18,7 @@ public enum InventoryMenuState {
   EQUIPMENT_INIT_12,
   _13,
   _14,
-  _15,
+  EQUIPMENT_MENU_15,
   _16,
   _17,
   _18,

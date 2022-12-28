@@ -149,6 +149,7 @@ public class UseItemScreen extends MenuScreen {
   }
 
   private void scroll(final int scroll) {
+    playSound(1);
     this.slotScroll = scroll;
     this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
   }
