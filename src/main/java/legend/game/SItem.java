@@ -21,6 +21,7 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.AdditionsScreen;
 import legend.game.inventory.screens.DabasScreen;
 import legend.game.inventory.screens.EquipmentScreen;
 import legend.game.inventory.screens.MenuStack;
@@ -216,7 +217,7 @@ public final class SItem {
   public static final UnboundedArrayRef<MenuGlyph06> equipmentGlyphs_80114180 = MEMORY.ref(1, 0x80114180L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> characterStatusGlyphs_801141a4 = MEMORY.ref(1, 0x801141a4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141c4 = MEMORY.ref(1, 0x801141c4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
-  public static final UnboundedArrayRef<MenuGlyph06> glyphs_801141e4 = MEMORY.ref(1, 0x801141e4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
+  public static final UnboundedArrayRef<MenuGlyph06> additionGlyphs_801141e4 = MEMORY.ref(1, 0x801141e4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> useItemGlyphs_801141fc = MEMORY.ref(1, 0x801141fcL, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> dabasMenuGlyphs_80114228 = MEMORY.ref(1, 0x80114228L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114258 = MEMORY.ref(1, 0x80114258L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
@@ -264,7 +265,7 @@ public final class SItem {
   public static final LodString Acquired_item_8011c2f8 = MEMORY.ref(2, 0x8011c2f8L, LodString::new);
   public static final LodString _8011c314 = MEMORY.ref(2, 0x8011c314L, LodString::new);
   public static final LodString _8011c32c = MEMORY.ref(2, 0x8011c32cL, LodString::new);
-  public static final LodString _8011c340 = MEMORY.ref(2, 0x8011c340L, LodString::new);
+  public static final LodString Addition_cannot_be_used_8011c340 = MEMORY.ref(2, 0x8011c340L, LodString::new);
   /** "Do you want to save now?" */
   public static final LodString Do_you_want_to_save_now_8011c370 = MEMORY.ref(2, 0x8011c370L, LodString::new);
   public static final LodString Are_you_sure_you_want_to_buy_8011c3ec = MEMORY.ref(2, 0x8011c3ecL, LodString::new);
@@ -387,8 +388,6 @@ public final class SItem {
   public static final ArrayRef<Pointer<ArrayRef<MenuItemStruct04>>> _8011dcb8 = MEMORY.ref(4, 0x8011dcb8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MenuItemStruct04.class)), 2, 4, Pointer.deferred(4, ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new))));
 
   public static final BoolRef _8011dcfc = MEMORY.ref(1, 0x8011dcfcL, BoolRef::new);
-
-  public static final ArrayRef<MenuAdditionInfo> additions_8011e098 = MEMORY.ref(1, 0x8011e098L, ArrayRef.of(MenuAdditionInfo.class, 9, 0x2, MenuAdditionInfo::new));
 
   public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
   public static final IntRef menuIndex_8011e0dc = MEMORY.ref(4, 0x8011e0dcL, IntRef::new);
@@ -697,11 +696,6 @@ public final class SItem {
     return 221;
   }
 
-  @Method(0x800fc838L)
-  public static int getAdditionSlotY(final int a0) {
-    return 113 + a0 * 14;
-  }
-
   @Method(0x800fc84cL)
   public static int getSlotY(final int slot) {
     return 16 + slot * 72;
@@ -905,7 +899,6 @@ public final class SItem {
 
               case 3 -> {
                 playSound(2);
-                charSlot_8011d734.set(0);
                 FUN_800fca0c(InventoryMenuState.ADDITIONS_INIT_23, 0x1L);
               }
 
@@ -1455,75 +1448,12 @@ public final class SItem {
         break;
 
       case ADDITIONS_INIT_23:
-        selectedSlot_8011d740.set(0);
-        renderablePtr_800bdba8 = null;
-        renderablePtr_800bdba4 = null;
-        highlightRightHalf_800bdbec = null;
-        highlightLeftHalf_800bdbe8 = null;
-        scriptStartEffect(2, 10);
-        deallocateRenderables(0xff);
-        inventoryMenuState_800bdc28.set(InventoryMenuState.ADDITIONS_LOAD_24);
-        break;
-
-      case ADDITIONS_LOAD_24:
-        deallocateRenderables(0);
-        loadAdditions(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get(), additions_8011e098);
-
-        if(additions_8011e098.get(0).offset_00.get() != -1) {
-          highlightLeftHalf_800bdbe8 = allocateUiElement(117, 117, 39, getAdditionSlotY(selectedSlot_8011d740.get()) - 4);
-          FUN_80104b60(highlightLeftHalf_800bdbe8);
-        }
-
-        //LAB_800fe490
-        allocateUiElement(69, 69,   0, 0);
-        allocateUiElement(70, 70, 192, 0);
-        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xffL);
+        menuStack.pushScreen(new AdditionsScreen(() -> inventoryMenuState_800bdc28.set(InventoryMenuState._2)));
         inventoryMenuState_800bdc28.set(InventoryMenuState.ADDITIONS_MENU_25);
         break;
 
       case ADDITIONS_MENU_25:
-        FUN_801034cc(charSlot_8011d734.get(), characterCount_8011d7c4.get());
-        renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0);
-
-        if(_800bb168.get() != 0) {
-          break;
-        }
-
-        if(handleMenuLeftRight(charSlot_8011d734, characterCount_8011d7c4.get())) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.ADDITIONS_LOAD_24);
-          unloadRenderable(highlightLeftHalf_800bdbe8);
-        }
-
-        //LAB_800fe5b8
-        if((inventoryJoypadInput_800bdc44.get() & 0x40L) != 0) {
-          playSound(0x3L);
-          FUN_800fca0c(InventoryMenuState._2, 0x9L);
-        }
-
-        //LAB_800fe5e4
-        if(additions_8011e098.get(0).offset_00.get() == -1) {
-          break;
-        }
-
-        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          final int additionOffset = additions_8011e098.get(selectedSlot_8011d740.get()).offset_00.get();
-
-          if(additionOffset != -1) {
-            gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.set(additionOffset);
-            playSound(0x2L);
-            unloadRenderable(highlightLeftHalf_800bdbe8);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.ADDITIONS_LOAD_24);
-          } else {
-            //LAB_800fe680
-            playSound(0x28L);
-          }
-        }
-
-        //LAB_800fe68c
-        if(handleMenuUpDown(selectedSlot_8011d740, 7)) {
-          highlightLeftHalf_800bdbe8.y_44 = getAdditionSlotY(selectedSlot_8011d740.get()) - 4;
-        }
-
+        menuStack.render();
         break;
 
       case USE_ITEM_MENU_INIT_26:
@@ -1672,7 +1602,6 @@ public final class SItem {
             free(_8011dcb8.get(1).getPointer());
           }
 
-          case 0x9 -> renderAdditions(charSlot_8011d734.get(), selectedSlot_8011d740.get(), additions_8011e098, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(charSlot_8011d734.get()).get()).selectedAddition_19.get(), 0xfeL);
           case 0xb -> FUN_80102f74(charSlot_8011d734.get(), selectedSlot_8011d740.get(), slotScroll_8011d744.get(), 0xfeL);
         }
 
@@ -1881,63 +1810,6 @@ public final class SItem {
 
     //LAB_80102a88
     renderString(0, 194, 178, itemId, allocate);
-    uploadRenderables();
-  }
-
-  @Method(0x80102ad8L)
-  public static void renderAdditions(final int charSlot, final int slotIndex, final ArrayRef<MenuAdditionInfo> additions, final int selectedAdditionOffset, final long a4) {
-    final boolean allocate = a4 == 0xff;
-    final int charIndex = characterIndices_800bdbb8.get(charSlot).get();
-
-    if(additions.get(0).offset_00.get() == -1) {
-      renderText(_8011c340, 106, 150, 4);
-    } else {
-      //LAB_80102b9c
-      if(allocate) {
-        renderGlyphs(glyphs_801141e4, 0, 0);
-      }
-
-      //LAB_80102bbc
-      //LAB_80102bf0
-      for(int i = 0; i < 8; i++) {
-        final int y = getAdditionSlotY(i);
-
-        if(allocate && i <  additionCounts_8004f5c0.get(charIndex).get()) { // Total number of additions
-          renderCharacter(24, y, i + 1); // Addition number
-        }
-
-        //LAB_80102c30
-        final int offset = additions.get(i).offset_00.get();
-        final int index = additions.get(i).index_01.get();
-
-        if(offset != -1) {
-          //LAB_80102c58
-          renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? 4 : 5);
-
-          if(allocate) {
-            final int level = gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(index).get();
-            renderThreeDigitNumber(197, y, level); // Addition level
-            renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
-            renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
-            renderThreeDigitNumber(297, y, (int)(additionData_80052884.get(offset).damage_0c.get() * (ptrTable_80114070.offset(offset * 0x4L).deref(1).offset(level * 0x4L).offset(0x3L).get() + 100) / 100)); // Damage
-            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c.get(charIndex).additionXp_22.get(index).get()); // Current XP
-
-            if(level < 5) {
-              renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
-            } else {
-              //LAB_80102d8c
-              renderCharacter(354, y, 218); // Dash if at max XP
-            }
-          }
-        }
-
-        //LAB_80102d9c
-        //LAB_80102da0
-      }
-    }
-
-    //LAB_80102db0
-    renderCharacterSlot(16, 21, charIndex, allocate, false);
     uploadRenderables();
   }
 
@@ -2531,12 +2403,12 @@ public final class SItem {
     return t0;
   }
 
-  @Method(0x801049b4L)
-  public static int loadAdditions(final int charIndex, final ArrayRef<MenuAdditionInfo> additions) {
-    //LAB_801049c8
-    for(int i = 0; i < 9; i++) {
-      additions.get(i).offset_00.set(-1);
-      additions.get(i).index_01.set(-1);
+  public static int loadAdditions(final int charIndex, @Nullable final MenuAdditionInfo[] additions) {
+    if(additions != null) {
+      for(int i = 0; i < 9; i++) {
+        additions[i].offset_00 = -1;
+        additions[i].index_01 = -1;
+      }
     }
 
     if(charIndex == -1) {
@@ -2544,42 +2416,39 @@ public final class SItem {
     }
 
     if(additionOffsets_8004f5ac.get(charIndex).get() == -1) { // No additions (Shiranda)
-      //LAB_80104a08
       return 0;
     }
 
-    //LAB_80104a10
-    //LAB_80104a54
     int t5 = 0;
     int t0 = 0;
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
-      final long a0_0 = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex)._00.get();
+      final int level = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get();
 
-      if(a0_0 == -1 && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x40L) != 0) {
-        additions.get(t0).offset_00.set(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex);
-        additions.get(t0).index_01.set(additionIndex);
+      if(level == -1 && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x40L) != 0) {
+        if(additions != null) {
+          additions[t0].offset_00 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex;
+          additions[t0].index_01 = additionIndex;
+        }
+
         t0++;
-        //LAB_80104aa4
-      } else if(a0_0 > 0 && a0_0 <= gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
-        additions.get(t0).offset_00.set(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex);
-        additions.get(t0).index_01.set(additionIndex);
+      } else if(level > 0 && level <= gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
+        if(additions != null) {
+          additions[t0].offset_00 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex;
+          additions[t0].index_01 = additionIndex;
+        }
 
         if(gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(additionIndex).get() == 0) {
           gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(additionIndex).set(1);
         }
 
-        //LAB_80104aec
-        if(a0_0 == gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
+        if(level == gameState_800babc8.charData_32c.get(charIndex).level_12.get()) {
           t5 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex + 1;
         }
 
         t0++;
       }
-
-      //LAB_80104b00
     }
 
-    //LAB_80104b14
     return t5;
   }
 
@@ -4449,7 +4318,7 @@ public final class SItem {
 
       _8011e1c8.offset(charSlot).addu(0x1L);
       if(additionsUnlocked_8011e1b8.get(charSlot).get() == 0) {
-        additionsUnlocked_8011e1b8.get(charSlot).set(loadAdditions(charIndex, additions_8011e098));
+        additionsUnlocked_8011e1b8.get(charSlot).set(loadAdditions(charIndex, null));
       }
 
       //LAB_8010cd9c
