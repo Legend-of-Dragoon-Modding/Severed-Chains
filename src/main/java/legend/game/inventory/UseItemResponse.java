@@ -1,4 +1,6 @@
-package legend.game.types;
+package legend.game.inventory;
+
+import legend.game.types.LodString;
 
 public class UseItemResponse {
   public int _00;

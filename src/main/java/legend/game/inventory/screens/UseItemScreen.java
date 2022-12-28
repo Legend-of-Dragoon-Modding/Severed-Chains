@@ -9,7 +9,7 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
-import legend.game.types.UseItemResponse;
+import legend.game.inventory.UseItemResponse;
 
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.SItem.Completely_recovered_8011d534;
