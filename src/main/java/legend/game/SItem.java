@@ -345,8 +345,8 @@ public final class SItem {
   public static final LodString Morph_8011cfa4 = MEMORY.ref(2, 0x8011cfa4L, LodString::new);
   public static final LodString Normal_8011cfb0 = MEMORY.ref(2, 0x8011cfb0L, LodString::new);
   public static final LodString Short_8011cfc0 = MEMORY.ref(2, 0x8011cfc0L, LodString::new);
-  public static final LodString _8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
-  public static final LodString _8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
+  public static final LodString HP_recovered_for_all_8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
+  public static final LodString MP_recovered_for_all_8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
   public static final LodString Press_to_sort_8011d024 = MEMORY.ref(2, 0x8011d024L, LodString::new);
   public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
   public static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
@@ -354,16 +354,16 @@ public final class SItem {
   public static final LodString Take_8011d058 = new LodString("Take");
   public static final LodString Discard_8011d05c = new LodString("Discard");
   public static final LodString NextDig_8011d064 = new LodString("Next Dig");
-  public static final LodString _8011d534 = MEMORY.ref(2, 0x8011d534L, LodString::new);
-  public static final LodString _8011d560 = MEMORY.ref(2, 0x8011d560L, LodString::new);
-  public static final LodString _8011d57c = MEMORY.ref(2, 0x8011d57cL, LodString::new);
-  public static final LodString _8011d584 = MEMORY.ref(2, 0x8011d584L, LodString::new);
-  public static final LodString _8011d58c = MEMORY.ref(2, 0x8011d58cL, LodString::new);
-  public static final LodString _8011d594 = MEMORY.ref(2, 0x8011d594L, LodString::new);
-  public static final LodString _8011d5c8 = MEMORY.ref(2, 0x8011d5c8L, LodString::new);
-  public static final LodString _8011d5e0 = MEMORY.ref(2, 0x8011d5e0L, LodString::new);
-  public static final LodString _8011d604 = MEMORY.ref(2, 0x8011d604L, LodString::new);
-  public static final LodString _8011d618 = MEMORY.ref(2, 0x8011d618L, LodString::new);
+  public static final LodString Completely_recovered_8011d534 = MEMORY.ref(2, 0x8011d534L, LodString::new);
+  public static final LodString Recovered_8011d560 = MEMORY.ref(2, 0x8011d560L, LodString::new);
+  public static final LodString HP_8011d57c = MEMORY.ref(2, 0x8011d57cL, LodString::new);
+  public static final LodString MP_8011d584 = MEMORY.ref(2, 0x8011d584L, LodString::new);
+  public static final LodString SP_8011d58c = MEMORY.ref(2, 0x8011d58cL, LodString::new);
+  public static final LodString Encounter_risk_reduced_8011d594 = MEMORY.ref(2, 0x8011d594L, LodString::new);
+  public static final LodString Detoxified_8011d5c8 = MEMORY.ref(2, 0x8011d5c8L, LodString::new);
+  public static final LodString Spirit_recovered_8011d5e0 = MEMORY.ref(2, 0x8011d5e0L, LodString::new);
+  public static final LodString Fear_gone_8011d604 = MEMORY.ref(2, 0x8011d604L, LodString::new);
+  public static final LodString Nothing_happened_8011d618 = MEMORY.ref(2, 0x8011d618L, LodString::new);
 
   public static final IntRef charSlot_8011d734 = MEMORY.ref(4, 0x8011d734L, IntRef::new);
   public static final IntRef selectedMenuOption_8011d738 = MEMORY.ref(4, 0x8011d738L, IntRef::new);

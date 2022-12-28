@@ -12,20 +12,20 @@ import legend.game.types.Renderable58;
 import legend.game.types.UseItemResponse;
 
 import static legend.core.MemoryHelper.getBiFunctionAddress;
+import static legend.game.SItem.Completely_recovered_8011d534;
+import static legend.game.SItem.Detoxified_8011d5c8;
+import static legend.game.SItem.Encounter_risk_reduced_8011d594;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.FUN_80107e70;
-import static legend.game.SItem._8011cfcc;
-import static legend.game.SItem._8011cff8;
-import static legend.game.SItem._8011d534;
-import static legend.game.SItem._8011d560;
-import static legend.game.SItem._8011d57c;
-import static legend.game.SItem._8011d584;
-import static legend.game.SItem._8011d58c;
-import static legend.game.SItem._8011d594;
-import static legend.game.SItem._8011d5c8;
-import static legend.game.SItem._8011d5e0;
-import static legend.game.SItem._8011d604;
-import static legend.game.SItem._8011d618;
+import static legend.game.SItem.Fear_gone_8011d604;
+import static legend.game.SItem.HP_8011d57c;
+import static legend.game.SItem.HP_recovered_for_all_8011cfcc;
+import static legend.game.SItem.MP_8011d584;
+import static legend.game.SItem.MP_recovered_for_all_8011cff8;
+import static legend.game.SItem.Nothing_happened_8011d618;
+import static legend.game.SItem.Recovered_8011d560;
+import static legend.game.SItem.SP_8011d58c;
+import static legend.game.SItem.Spirit_recovered_8011d5e0;
 import static legend.game.SItem._8011d754;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -40,13 +40,11 @@ import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.SItem.textLength;
 import static legend.game.SItem.useItemGlyphs_801141fc;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.itemCanBeUsedInMenu;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
@@ -313,7 +311,7 @@ public class UseItemScreen extends MenuScreen {
           takeItem(menuItems_8011d7c8.get(this.selectedSlot + this.slotScroll).itemId_00.get());
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
-          this.FUN_80104324(this.useItemResponse);
+          this.getItemResponseText(this.useItemResponse);
           menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> { }));
           this.loadingStage = 1;
         }
@@ -321,88 +319,66 @@ public class UseItemScreen extends MenuScreen {
     }
   }
 
-  private void FUN_80104324(final UseItemResponse response) {
+  private void getItemResponseText(final UseItemResponse response) {
     switch(response._00) {
       case 2:
-        this.FUN_80104254(_8011d57c, response);
+        this.FUN_80104254(HP_8011d57c, response);
         break;
 
       case 3:
-        this.FUN_80104254(_8011cfcc, response);
+        this.FUN_80104254(HP_recovered_for_all_8011cfcc, response);
         break;
 
       case 4:
-        this.FUN_80104254(_8011d584, response);
+        this.FUN_80104254(MP_8011d584, response);
         break;
 
       case 5:
-        this.FUN_80104254(_8011cff8, response);
+        this.FUN_80104254(MP_recovered_for_all_8011cff8, response);
         break;
 
       case 6:
-        this.FUN_80104254(_8011d58c, response);
+        this.FUN_80104254(SP_8011d58c, response);
         break;
 
       case 8:
-        this.FUN_80103e04(response.string_08, _8011d594);
+        response.string_08 = Encounter_risk_reduced_8011d594;
         break;
 
       case 7:
         final int value = response.value_04;
 
         if((value & 0x80) != 0) {
-          this.FUN_80103e04(response.string_08, _8011d5c8);
+          response.string_08 = Detoxified_8011d5c8;
           break;
         }
 
         if((value & 0x40) != 0) {
-          this.FUN_80103e04(response.string_08, _8011d5e0);
+          response.string_08 = Spirit_recovered_8011d5e0;
           break;
         }
 
         if((value & 0x8) != 0) {
-          this.FUN_80103e04(response.string_08, _8011d604);
+          response.string_08 = Fear_gone_8011d604;
           break;
         }
 
       case 9:
-        this.FUN_80103e04(response.string_08, _8011d618);
+        response.string_08 = Nothing_happened_8011d618;
         break;
     }
   }
 
   private void FUN_80104254(final LodString a0, final UseItemResponse response) {
-    final int value = response.value_04;
-
-    final LodString a0_0;
-    final LodString a1_0;
-    if(value == -2) {
-      a0_0 = response.string_08;
-      a1_0 = _8011d618;
-    } else if(value == -1) {
-      a0_0 = this.FUN_80103e04(response.string_08, a0);
-      a1_0 = _8011d534;
-    } else if(value != 0) {
-      intToStr(value, this.FUN_80103e04(response.string_08, a0));
-      a0_0 = response.string_08.slice(textLength(response.string_08));
-      a1_0 = _8011d560;
+    if(response.value_04 == -2) {
+      response.string_08 = Nothing_happened_8011d618;
+    } else if(response.value_04 == -1) {
+      response.string_08 = new LodString(a0.get() + Completely_recovered_8011d534.get());
+    } else if(response.value_04 != 0) {
+      response.string_08 = new LodString(response.value_04 + a0.get() + Recovered_8011d560.get());
     } else {
-      a0_0 = response.string_08;
-      a1_0 = a0;
+      response.string_08 = a0;
     }
-
-    this.FUN_80103e04(a0_0, a1_0);
-  }
-
-  /** TODO I'm pretty sure this is right, by why return the end of the string? */
-  private LodString FUN_80103e04(final LodString a0, final LodString a1) {
-    int i;
-    for(i = 0; i < textLength(a1); i++) {
-      a0.charAt(i, a1.charAt(i));
-    }
-
-    a0.charAt(i, 0xa0ff);
-    return a0.slice(i);
   }
 
   @Override
