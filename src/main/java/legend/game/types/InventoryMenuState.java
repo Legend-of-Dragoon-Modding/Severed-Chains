@@ -13,7 +13,7 @@ public enum InventoryMenuState {
   _7,
   REPLACE_INIT_8,
   _9,
-  _10,
+  REPLACE_MENU_10,
   _11,
   EQUIPMENT_INIT_12,
   _13,

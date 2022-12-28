@@ -26,6 +26,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
@@ -1392,7 +1393,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, null);
       case INIT_LOAD_GAME_MENU_11 -> initMenu(WhichMenu.RENDER_LOAD_GAME_MENU_14, new LoadGameScreen());
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
-      case INIT_CHAR_SWAP_MENU_21 -> initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, null);
+      case INIT_CHAR_SWAP_MENU_21 -> initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, null);
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
@@ -1431,16 +1432,20 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19 -> menuStack.render();
-      case RENDER_INVENTORY_MENU_4, RENDER_CHAR_SWAP_MENU_24, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
+      case RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
+      case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
       case RENDER_SHOP_MENU_9 -> renderShopMenu();
       case RENDER_TOO_MANY_ITEMS_MENU_34 -> renderTooManyItemsMenu();
 
-      case UNLOAD_LOAD_GAME_MENU_15 -> {
+      case UNLOAD_LOAD_GAME_MENU_15, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25 -> {
         menuStack.popScreen();
         decrementOverlayCount();
-        FUN_8001e010(-1);
+
+        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
+          FUN_8001e010(-1);
+        }
+
         scriptsDisabled_800bc0b9.set(false);
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
@@ -1456,25 +1461,7 @@ public final class Scus94491BpeSegment_8002 {
         textZ_800bdf00.set(13);
       }
 
-      case UNLOAD_SAVE_GAME_MENU_20 -> {
-        menuStack.popScreen();
-        decrementOverlayCount();
-        scriptsDisabled_800bc0b9.set(false);
-        whichMenu_800bdc38 = WhichMenu.NONE_0;
-
-        deallocateRenderables(0xff);
-        free(drgn0_6666FilePtr_800bdc3c.getPointer());
-
-        scriptStartEffect(2, 10);
-
-        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
-          FUN_800e3fac();
-        }
-
-        textZ_800bdf00.set(13);
-      }
-
-      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
+      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
         decrementOverlayCount();
         FUN_8001e010(-1);
         scriptsDisabled_800bc0b9.set(false);
