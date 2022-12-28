@@ -339,6 +339,7 @@ public class DabasScreen extends MenuScreen {
 
     for(int i = 0; i < 3; i++) {
       if(this.menuIndex != i && MathHelper.inBox(x, y, 52, this.getDabasMenuY(i), 85, 14)) {
+        playSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
       }

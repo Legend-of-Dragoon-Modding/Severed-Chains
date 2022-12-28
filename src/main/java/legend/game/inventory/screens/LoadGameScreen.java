@@ -4,8 +4,6 @@ import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 
 import static legend.game.SItem.Load_this_data_8011ca08;
-import static legend.game.SItem._8011d7b8;
-import static legend.game.SItem._8011d7bc;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getSlotY;
 import static legend.game.SItem.loadSaveFile;
@@ -57,9 +55,6 @@ public class LoadGameScreen extends SaveListScreen {
   @Override
   protected void onMessageboxResult(final MessageBoxResult result) {
     if(result == MessageBoxResult.YES) {
-      _8011d7bc.set(0);
-      _8011d7b8.set(0);
-
       loadSaveFile(this.slot);
 
       //LAB_800ff6ec

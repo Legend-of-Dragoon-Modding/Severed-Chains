@@ -1690,8 +1690,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022d88L)
   public static UseItemResponse useItemInMenu(final UseItemResponse response, final int itemId, final int charIndex) {
-    response._00.set(0);
-    response.value_04.set(0);
+    response._00 = 0;
+    response.value_04 = 0;
 
     if(itemCanBeUsedInMenu(itemId) == 0) {
       //LAB_80022dd8
@@ -1699,16 +1699,16 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022e0c
-    response._00.set(1);
+    response._00 = 1;
 
     if(itemId == 0xdf) { // Charm potion
       if(mainCallbackIndex_8004dd20.get() == 0x8L || hasNoEncounters_800bed58.get() == 0) {
         //LAB_80022e40
-        response._00.set(8);
+        response._00 = 8;
         encounterAccumulator_800c6ae8.setu(0);
       } else {
         //LAB_80022e50
-        response._00.set(9);
+        response._00 = 9;
       }
 
       //LAB_80022e54
@@ -1721,7 +1721,7 @@ public final class Scus94491BpeSegment_8002 {
     final int percentage = itemStats.percentage_09.get();
     if((itemStats.type_0b.get() & 0x80) != 0) {
       //LAB_80022edc
-      response._00.set((itemStats.target_00.get() & 0x2) == 0 ? 2 : 3);
+      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 2 : 3;
 
       final int amount;
       if(percentage == 100) {
@@ -1732,13 +1732,13 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022f3c
-      response.value_04.set(addHp(charIndex, amount));
+      response.value_04 = addHp(charIndex, amount);
     }
 
     //LAB_80022f50
     if((itemStats.type_0b.get() & 0x40) != 0) {
       //LAB_80022f98
-      response._00.set((itemStats.target_00.get() & 0x2) == 0 ? 4 : 5);
+      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 4 : 5;
 
       final int amount;
       if(percentage == 100) {
@@ -1749,12 +1749,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022ff8
-      response.value_04.set(addMp(charIndex, amount));
+      response.value_04 = addMp(charIndex, amount);
     }
 
     //LAB_8002300c
     if((itemStats.type_0b.get() & 0x20) != 0) {
-      response._00.set(6);
+      response._00 = 6;
 
       final int amount;
       if(percentage == 100) {
@@ -1764,7 +1764,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80023050
-      response.value_04.set(addSp(charIndex, amount));
+      response.value_04 = addSp(charIndex, amount);
     }
 
     //LAB_80023068
@@ -1772,12 +1772,12 @@ public final class Scus94491BpeSegment_8002 {
       final int status = gameState_800babc8.charData_32c.get(charIndex).status_10.get();
 
       if((itemStats.status_08.get() & status) != 0) {
-        response.value_04.set(status);
+        response.value_04 = status;
         gameState_800babc8.charData_32c.get(charIndex).status_10.and(~status);
       }
 
       //LAB_800230ec
-      response._00.set(7);
+      response._00 = 7;
     }
 
     //LAB_800230f0

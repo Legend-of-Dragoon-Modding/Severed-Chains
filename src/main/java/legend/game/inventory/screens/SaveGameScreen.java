@@ -5,8 +5,6 @@ import legend.game.types.MessageBoxResult;
 
 import static legend.game.SItem.Overwrite_save_8011c9e8;
 import static legend.game.SItem.Save_new_game_8011c9c8;
-import static legend.game.SItem._8011d7b8;
-import static legend.game.SItem._8011d7bc;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getSlotY;
 import static legend.game.SItem.menuStack;
@@ -61,9 +59,6 @@ public class SaveGameScreen extends SaveListScreen {
   @Override
   protected void onMessageboxResult(final MessageBoxResult result) {
     if(result == MessageBoxResult.YES) {
-      _8011d7bc.set(0);
-      _8011d7b8.set(0);
-
       gameState_800babc8.submapScene_a4.set(index_80052c38.get());
       gameState_800babc8.submapCut_a8.set((int)_800cb450.get());
 
