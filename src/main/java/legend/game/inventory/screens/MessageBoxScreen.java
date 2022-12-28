@@ -66,8 +66,12 @@ public class MessageBoxScreen extends MenuScreen {
       return;
     }
 
-    // Yes/no
-    if(this.messageBox.type_15 == 2) {
+    if(this.messageBox.type_15 == 0) {
+      playSound(2);
+      this.result = MessageBoxResult.YES;
+      this.messageBox.state_0c = 4;
+    } else if(this.messageBox.type_15 == 2) {
+      // Yes/no
       final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
 
       if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {

@@ -5395,7 +5395,7 @@ public final class SItem {
   }
 
   @Method(0x8010f130L)
-  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final LodString text, final int a1) {
+  public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final LodString text, final int type) {
     if(text != null) {
       final List<LodString> lines = new ArrayList<>();
       final int length = textLength(text);
@@ -5410,9 +5410,7 @@ public final class SItem {
         }
       }
 
-      if(lines.isEmpty()) {
-        lines.add(text);
-      }
+      lines.add(text.slice(lineStart));
 
       messageBox.text_00 = lines.toArray(LodString[]::new);
     } else {
@@ -5421,7 +5419,7 @@ public final class SItem {
 
     messageBox.x_1c = 120;
     messageBox.y_1e = 100;
-    messageBox.type_15 = a1;
+    messageBox.type_15 = type;
     messageBox.menuIndex_18 = 0;
     messageBox.ticks_10 = 0;
     messageBox.state_0c = 1;
