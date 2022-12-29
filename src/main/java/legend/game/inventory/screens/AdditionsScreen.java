@@ -4,6 +4,8 @@ import legend.core.MathHelper;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
+import java.util.Arrays;
+
 import static legend.game.SItem.Addition_cannot_be_used_8011c340;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
@@ -44,6 +46,7 @@ public class AdditionsScreen extends MenuScreen {
 
   public AdditionsScreen(final Runnable unload) {
     this.unload = unload;
+    Arrays.setAll(this.additions, i -> new MenuAdditionInfo());
   }
 
   @Override

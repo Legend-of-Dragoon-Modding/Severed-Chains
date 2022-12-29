@@ -27,11 +27,11 @@ import legend.game.inventory.screens.DabasScreen;
 import legend.game.inventory.screens.EquipmentScreen;
 import legend.game.inventory.screens.GoodsScreen;
 import legend.game.inventory.screens.ItemListScreen;
+import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.StatusScreen;
 import legend.game.inventory.screens.UseItemScreen;
-import legend.game.title.Ttle;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentStats1c;
@@ -645,7 +645,7 @@ public final class SItem {
 
   @Method(0x800fc78cL)
   public static int getMenuOptionY(final int option) {
-    return 65 + option * 13;
+    return 78 + option * 13;
   }
 
   @Method(0x800fc7a4L)
@@ -790,148 +790,22 @@ public final class SItem {
       case AWAIT_INIT_1:
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-          _8011dcfc.set((gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4L) > 0);
+          _8011dcfc.set((gameState_800babc8.dragoonSpirits_19c.get(1).get() & 0x4) > 0);
           gameState_800babc8.vibrationEnabled_4e1.and(1);
         }
         break;
 
       case _2:
-        deallocateRenderables(0xffL);
+        menuStack.pushScreen(new MainMenuScreen(() -> {
+          menuStack.popScreen();
+          inventoryMenuState_800bdc28.set(InventoryMenuState._125);
+        }));
 
-        //LAB_800fccbc
-        if(whichMenu_800bdc38 == WhichMenu.RENDER_CHAR_SWAP_MENU_24) { // Character swap screen
-          //LAB_800fcce0
-          recalcInventory();
-          FUN_80103b10();
-          inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-          break;
-        }
-
-        //LAB_800fcd00
-        recalcInventory();
-        FUN_80103b10();
-        scriptStartEffect(0x2L, 0xaL);
-        inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
-        break;
-
-      case INIT_MAIN_MENU_3:
-        renderGlyphs(glyphs_80114130, 0, 0);
-        selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(115, 115, 29, getMenuOptionY(selectedMenuOption_8011d738.get()));
-        FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe0);
-        renderInventoryMenu(selectedMenuOption_8011d738.get(), 4, 0xffL);
         inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
         break;
 
-      case MAIN_MENU_4: // Main inventory menu
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
-          if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) { // Circle
-            playSound(0x3L);
-            FUN_800fca0c(InventoryMenuState._125, 0x1L);
-          }
-
-          //LAB_800fcdd4
-          if(handleMenuUpDown(selectedMenuOption_8011d738, 8)) {
-            selectedItemSubmenuOption_8011d73c.set(0);
-            selectedMenuOptionRenderablePtr_800bdbe0.y_44 = getMenuOptionY(selectedMenuOption_8011d738.get());
-          }
-
-          //LAB_800fce08
-          if((inventoryJoypadInput_800bdc44.get() & 0x2020) != 0) { // Right or cross
-            final int menuOption;
-            if((inventoryJoypadInput_800bdc44.get() & 0x2000) != 0) { // Right
-              menuOption = selectedMenuOption_8011d738.get() + 10;
-            } else {
-              //LAB_800fce30
-              menuOption = selectedMenuOption_8011d738.get();
-            }
-
-            //LAB_800fce34
-            switch(menuOption) {
-              case 0 -> {
-                playSound(2);
-                FUN_800fca0c(InventoryMenuState.STATUS_INIT_20, 0x1L);
-              }
-
-              case 1, 11 -> {
-                playSound(4);
-                selectedMenuOptionRenderablePtr_800bdbe4 = FUN_800fc900(selectedItemSubmenuOption_8011d73c.get());
-                inventoryMenuState_800bdc28.set(InventoryMenuState._5);
-              }
-
-              case 2 -> {
-                playSound(2);
-                FUN_800fca0c(InventoryMenuState.EQUIPMENT_INIT_12, 0x1L);
-              }
-
-              case 3 -> {
-                playSound(2);
-                FUN_800fca0c(InventoryMenuState.ADDITIONS_INIT_23, 0x1L);
-              }
-
-              case 4 -> {
-                playSound(2);
-                FUN_800fca0c(InventoryMenuState.REPLACE_INIT_8, 0x1L);
-              }
-
-              case 5 -> {
-                playSound(4);
-                selectedItemSubmenuOption_8011d73c.set(0);
-                selectedMenuOptionRenderablePtr_800bdbe4 = null;
-                setMessageBoxText(messageBox_8011dc90, null, 0x1);
-                inventoryMenuState_800bdc28.set(InventoryMenuState.CONFIG_6);
-              }
-
-              case 6 -> {
-                if(canSave_8011dc88.get() != 0) {
-                  playSound(2);
-                  FUN_800fca0c(InventoryMenuState.INIT_LOAD_GAME_37, 0x1L);
-                } else {
-                  playSound(40);
-                }
-              }
-
-              case 7 -> {
-                playSound(0x2L);
-                setMessageBoxText(messageBox_8011dc90, new LodString("Return to main menu?\nAlpha - do not use"), 2);
-                inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4_QUIT_CONFIRM);
-              }
-            }
-          }
-        }
-
-        //LAB_800fcf54
-        //LAB_800fcf58
-        if(selectedMenuOption_8011d738.get() == 1) {
-          renderItemSubmenu(0xff, 6);
-        }
-
-        //LAB_800fcf70
-        FUN_80102484(0);
-
-        //LAB_800fd344
-        renderInventoryMenu(selectedMenuOption_8011d738.get(), 4, 0);
-        break;
-
-      case MAIN_MENU_4_QUIT_CONFIRM:
-        switch(messageBox(messageBox_8011dc90)) {
-          case YES -> {
-            FUN_800fca0c(InventoryMenuState.MAIN_MENU_4_QUIT, 0x1L);
-          }
-
-          case NO -> {
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-          }
-        }
-
-        FUN_80102484(0);
-        renderInventoryMenu(selectedMenuOption_8011d738.get(), 4, 0);
-        break;
-
-      case MAIN_MENU_4_QUIT:
-        deallocateRenderables(0xffL);
-        free(drgn0_6666FilePtr_800bdc3c.getPointer());
-        scriptStartEffect(2, 10);
-        Ttle.test();
+      case MAIN_MENU_4, REPLACE_MENU_10, EQUIPMENT_MENU_15, STATUS_MENU_22, ADDITIONS_MENU_25, USE_ITEM_MENU_29, DISCARD_MENU_33, GOODS_MENU_36, LOAD_GAME_MENU_43, DABAS_MENU_79: // Main inventory menu
+        menuStack.render();
         break;
 
       case _5: // "Item" inventory submenu
@@ -1074,10 +948,6 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
         break;
 
-      case REPLACE_MENU_10, EQUIPMENT_MENU_15, STATUS_MENU_22, ADDITIONS_MENU_25, USE_ITEM_MENU_29, DISCARD_MENU_33, GOODS_MENU_36, LOAD_GAME_MENU_43, DABAS_MENU_79:
-        menuStack.render();
-        break;
-
       case EQUIPMENT_INIT_12:
         menuStack.pushScreen(new EquipmentScreen(() -> {
           menuStack.popScreen();
@@ -1153,72 +1023,57 @@ public final class SItem {
         break;
 
       case _123: // Start fade out
-        scriptStartEffect(0x1L, 0xaL);
+        scriptStartEffect(1, 10);
         inventoryMenuState_800bdc28.set(InventoryMenuState._124);
 
       case _124:
         switch((int)_800bdc2c.get()) {
           case 0x1 -> {
             FUN_80102484(0);
-
-            //LAB_801018f0
-            renderInventoryMenu(selectedMenuOption_8011d738.get(), 4, 0xfeL);
+            renderInventoryMenu(selectedMenuOption_8011d738.get(), 4, 0xfe);
           }
 
           case 0x2 -> {
-            FUN_80102484(0x1L);
+            FUN_80102484(1);
             renderItemSubmenu(selectedItemSubmenuOption_8011d73c.get(), 4);
-
-            //LAB_801018f0
-            renderInventoryMenu(selectedMenuOption_8011d738.get(), 6, 0xfeL);
+            renderInventoryMenu(selectedMenuOption_8011d738.get(), 6, 0xfe);
           }
         }
 
-        //LAB_80101afc
-        //LAB_80101b00
-        if((int)_800bb168.get() >= 0xffL) {
-          //LAB_80101b14
-          //LAB_80101b18
+        if(_800bb168.get() >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
         }
 
         break;
 
       case _125:
-        deallocateRenderables(0xffL);
+        deallocateRenderables(0xff);
         free(drgn0_6666FilePtr_800bdc3c.getPointer());
 
         switch(whichMenu_800bdc38) {
           case RENDER_LOAD_GAME_MENU_14 -> {
-            //LAB_80101b90
-            scriptStartEffect(0x2L, 0xaL);
+            scriptStartEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15;
           }
 
           case RENDER_SAVE_GAME_MENU_19 ->
-            //LAB_80101ba4
             whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
           case RENDER_CHAR_SWAP_MENU_24 -> {
-            scriptStartEffect(0x2L, 0xaL);
+            scriptStartEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
           default -> {
-            //LAB_80101b70
-            //LAB_80101bb0
-            scriptStartEffect(0x2L, 0xaL);
+            scriptStartEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
           }
         }
 
-        //LAB_80101bc4
         if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 
-        //LAB_80101bf8
-        //LAB_80101bfc
         textZ_800bdf00.set(13);
         break;
     }
@@ -1258,21 +1113,12 @@ public final class SItem {
     //LAB_80101ed4
     renderCentredText(v1, 90, 38, 4);
 
-    //LAB_80101f0c
     renderCentredText(Status_8011ceb4,   62, getMenuOptionY(0) + 2, selectedOption == 0 ? 5 : a1);
-    //LAB_80101f3c
-    renderCentredText(Item_8011cec4,     62, getMenuOptionY(1) + 2, selectedOption == 1 ? 5 : a1);
-    //LAB_80101f6c
-    renderCentredText(Armed_8011ced0,    62, getMenuOptionY(2) + 2, selectedOption == 2 ? 5 : a1);
-    //LAB_80101f9c
-    renderCentredText(Addition_8011cedc, 62, getMenuOptionY(3) + 2, selectedOption == 3 ? 5 : a1);
-    //LAB_80101fcc
-    renderCentredText(Replace_8011cef0,  62, getMenuOptionY(4) + 2, selectedOption == 4 ? 5 : a1);
-    //LAB_80101ff8
-    renderCentredText(Config_8011cf00,   62, getMenuOptionY(5) + 2, selectedOption == 5 ? 5 : a1);
-    //LAB_80102028
-    renderCentredText(Save_8011cf10,     62, getMenuOptionY(6) + 2, selectedOption == 6 ? 5 : s5);
-    renderCentredText(new LodString("Quit"),     62, getMenuOptionY(7) + 2, selectedOption == 7 ? 5 : a1);
+    renderCentredText(Armed_8011ced0,    62, getMenuOptionY(1) + 2, selectedOption == 1 ? 5 : a1);
+    renderCentredText(Addition_8011cedc, 62, getMenuOptionY(2) + 2, selectedOption == 2 ? 5 : a1);
+    renderCentredText(Replace_8011cef0,  62, getMenuOptionY(3) + 2, selectedOption == 3 ? 5 : a1);
+    renderCentredText(Config_8011cf00,   62, getMenuOptionY(4) + 2, selectedOption == 4 ? 5 : a1);
+    renderCentredText(Save_8011cf10,     62, getMenuOptionY(5) + 2, selectedOption == 5 ? 5 : s5);
 
     if(!allocate) {
       uploadRenderables();
@@ -1313,7 +1159,6 @@ public final class SItem {
 
   @Method(0x80102484L)
   public static void FUN_80102484(final long a0) {
-    //LAB_801024ac
     FUN_801038d4(a0 != 0 ? 23 : 24, 112, getMenuOptionY(1) + 3);
   }
 

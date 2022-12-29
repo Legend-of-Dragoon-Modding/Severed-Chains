@@ -6,8 +6,6 @@ public enum InventoryMenuState {
   _2,
   INIT_MAIN_MENU_3,
   MAIN_MENU_4,
-  MAIN_MENU_4_QUIT_CONFIRM,
-  MAIN_MENU_4_QUIT,
   _5,
   CONFIG_6,
   _7,
