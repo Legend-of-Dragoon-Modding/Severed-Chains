@@ -240,25 +240,12 @@ public final class SItem {
   public static final LodString _8011c314 = MEMORY.ref(2, 0x8011c314L, LodString::new);
   public static final LodString _8011c32c = MEMORY.ref(2, 0x8011c32cL, LodString::new);
   public static final LodString Addition_cannot_be_used_8011c340 = MEMORY.ref(2, 0x8011c340L, LodString::new);
-  public static final LodString Are_you_sure_you_want_to_buy_8011c3ec = MEMORY.ref(2, 0x8011c3ecL, LodString::new);
   public static final LodString Cannot_carry_anymore_8011c43c = MEMORY.ref(2, 0x8011c43cL, LodString::new);
   public static final LodString Not_enough_money_8011c468 = MEMORY.ref(2, 0x8011c468L, LodString::new);
-  /** "Conf." */
-  public static final LodString Conf_8011c48c = MEMORY.ref(2, 0x8011c48cL, LodString::new);
-  public static final LodString What_do_you_want_to_sell_8011c498 = MEMORY.ref(2, 0x8011c498L, LodString::new);
-  public static final LodString Armed_8011c4cc = MEMORY.ref(2, 0x8011c4ccL, LodString::new);
-  public static final LodString item_8011c4d8 = MEMORY.ref(2, 0x8011c4d8L, LodString::new);
   public static final LodString Which_item_do_you_want_to_sell_8011c4e4 = MEMORY.ref(2, 0x8011c4e4L, LodString::new);
   public static final LodString Which_weapon_do_you_want_to_sell_8011c524 = MEMORY.ref(2, 0x8011c524L, LodString::new);
-  public static final LodString Are_you_sure_you_want_to_sell_8011c568 = MEMORY.ref(2, 0x8011c568L, LodString::new);
-  /** "New Addition" */
   public static final LodString New_Addition_8011c5a8 = MEMORY.ref(2, 0x8011c5a8L, LodString::new);
   public static final LodString Spell_Unlocked_8011c5c4 = MEMORY.ref(2, 0x8011c5c4L, LodString::new);
-  public static final LodString No_item_to_sell_8011c5dc = MEMORY.ref(2, 0x8011c5dcL, LodString::new);
-  public static final LodString No_weapon_to_sell_8011c5fc = MEMORY.ref(2, 0x8011c5fcL, LodString::new);
-  public static final LodString Do_you_want_to_be_armed_with_it_8011c620 = MEMORY.ref(2, 0x8011c620L, LodString::new);
-  public static final LodString Is_armed_8011c670 = MEMORY.ref(2, 0x8011c670L, LodString::new);
-  public static final LodString Put_in_the_bag_8011c684 = MEMORY.ref(2, 0x8011c684L, LodString::new);
 
   public static final LodString Buy_8011c6a4 = MEMORY.ref(2, 0x8011c6a4L, LodString::new);
   public static final LodString Sell_8011c6ac = MEMORY.ref(2, 0x8011c6acL, LodString::new);
@@ -286,8 +273,6 @@ public final class SItem {
   public static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
   /** "Status" */
   public static final LodString Status_8011ceb4 = MEMORY.ref(2, 0x8011ceb4L, LodString::new);
-  /** "Item" */
-  public static final LodString Item_8011cec4 = MEMORY.ref(2, 0x8011cec4L, LodString::new);
   /** "Armed" */
   public static final LodString Armed_8011ced0 = MEMORY.ref(2, 0x8011ced0L, LodString::new);
   /** "Addition" */
@@ -1192,28 +1177,6 @@ public final class SItem {
     //LAB_80104110
     //LAB_80104148
     return true;
-  }
-
-  @Method(0x8010415cL)
-  public static boolean handleMenuLeftRight(final IntRef menuIndex, final int menuItemCount) {
-    if((inventoryJoypadInput_800bdc44.get() & 0x8000) != 0 && menuIndex.get() != 0) { // Left
-      menuIndex.decr();
-      playSound(1);
-      return true;
-    }
-
-    //LAB_80104184
-    if((inventoryJoypadInput_800bdc44.get() & 0x2000) != 0 && menuIndex.get() < menuItemCount - 1) { // Right
-      //LAB_801041b0
-      menuIndex.incr();
-      playSound(0x1L);
-
-      //LAB_801041c8
-      return true;
-    }
-
-    //LAB_801041c4
-    return false;
   }
 
   @Method(0x801041d8L)
