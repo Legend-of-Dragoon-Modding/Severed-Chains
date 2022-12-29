@@ -397,6 +397,39 @@ public class MainMenuScreen extends MenuScreen {
           }
         }
       }
+    } else if(this.loadingStage == 3) {
+      if(MathHelper.inBox(x, y, this.FUN_800fc7bc(1) - 28, this.menuOptionY(0), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.vibrationEnabled_4e1.set(0);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(2) - 28, this.menuOptionY(0), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.vibrationEnabled_4e1.set(1);
+        FUN_8002bcc8(0, 256);
+        FUN_8002bda4(0, 0, 60);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(1) - 28, this.menuOptionY(1), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.mono_4e0.set(0);
+        setMono(0);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(2) - 28, this.menuOptionY(1), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.mono_4e0.set(1);
+        setMono(1);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(1) - 28, this.menuOptionY(2), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.morphMode_4e2.set(0);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(2) - 28, this.menuOptionY(2), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.morphMode_4e2.set(1);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7d0(1) - 28, this.menuOptionY(3), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.indicatorMode_4e8.set(0);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7d0(2) - 28, this.menuOptionY(3), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.indicatorMode_4e8.set(1);
+      } else if(MathHelper.inBox(x, y, this.FUN_800fc7d0(3) - 28, this.menuOptionY(3), 56, 13)) {
+        playSound(2);
+        gameState_800babc8.indicatorMode_4e8.set(2);
+      }
     }
   }
 
