@@ -35,9 +35,8 @@ public enum InventoryMenuState {
   USE_ITEM_MENU_29,
 
   DISCARD_INIT_31,
-  _32,
-  _33,
-  CONFIRM_ITEM_DISCARD_34,
+  DISCARD_MENU_33,
+
   GOODS_INIT_35,
   GOODS_MENU_36,
 

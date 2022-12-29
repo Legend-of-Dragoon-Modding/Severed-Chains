@@ -25,6 +25,7 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.LoadGameScreen;
@@ -55,7 +56,6 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.inventory.UseItemResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -175,8 +175,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
-import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
-import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
@@ -2091,10 +2089,10 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void FUN_800239e0(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final long a2) {
+  public static void FUN_800239e0(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
     //LAB_800239ec
     int a3 = 0;
-    for(int i = 0; i < a2; i++) {
+    for(int i = 0; i < count; i++) {
       if((a0.get(i).price_02.get() & 0x1000) == 0) {
         a1.get(a3).set(a0.get(i).itemId_00.get());
         a3++;
@@ -2430,8 +2428,6 @@ public final class Scus94491BpeSegment_8002 {
       if(a0 != 0) {
         saveListUpArrow_800bdb94 = null;
         saveListDownArrow_800bdb98 = null;
-        _800bdb9c = null;
-        _800bdba0 = null;
         renderablePtr_800bdba4 = null;
         renderablePtr_800bdba8 = null;
 

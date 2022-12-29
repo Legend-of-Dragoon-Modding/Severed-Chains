@@ -8,7 +8,6 @@ import static legend.game.SItem.FUN_800fc824;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104738;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem._8011d754;
 import static legend.game.SItem._8011dcb8;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.canEquip;
@@ -273,7 +272,7 @@ public class EquipmentScreen extends MenuScreen {
       playSound(2);
       _8011dcb8.get(0).setPointer(mallocTail(0x4c0));
       _8011dcb8.get(1).setPointer(mallocTail(0x4c0));
-      _8011d754.setu(FUN_80104738(1));
+      FUN_80104738(1);
       sortItems(_8011dcb8.get(0).deref(), gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
       free(_8011dcb8.get(0).getPointer());
       free(_8011dcb8.get(1).getPointer());

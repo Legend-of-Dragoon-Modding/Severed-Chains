@@ -185,8 +185,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;
-  public static Renderable58 _800bdb9c;
-  public static Renderable58 _800bdba0;
+
   public static Renderable58 renderablePtr_800bdba4;
   public static Renderable58 renderablePtr_800bdba8;
 
