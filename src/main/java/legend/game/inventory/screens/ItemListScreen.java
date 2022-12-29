@@ -43,7 +43,6 @@ import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -63,6 +62,7 @@ public class ItemListScreen extends MenuScreen {
   private Renderable58 itemHighlight;
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
+  private Renderable58 renderablePtr_800bdc20;
   private int mouseX;
   private int mouseY;
 
@@ -148,7 +148,7 @@ public class ItemListScreen extends MenuScreen {
         final IntRef menuIndex = new IntRef().set(this.menuIndex);
         switch(handleYesNo(menuIndex)) {
           case SCROLLED ->
-            renderablePtr_800bdc20.y_44 = FUN_800fc860(this.menuIndex);
+            this.renderablePtr_800bdc20.y_44 = FUN_800fc860(this.menuIndex);
 
           case YES -> {
             int i;
@@ -167,12 +167,12 @@ public class ItemListScreen extends MenuScreen {
             FUN_800239e0(this.currentDisplayList, this.currentList, i);
             recalcInventory();
 
-            unloadRenderable(renderablePtr_800bdc20);
+            unloadRenderable(this.renderablePtr_800bdc20);
             this.loadingStage = 1;
           }
 
           case NO, CANCELLED -> {
-            unloadRenderable(renderablePtr_800bdc20);
+            unloadRenderable(this.renderablePtr_800bdc20);
             this.loadingStage = 1;
           }
         }
@@ -279,8 +279,8 @@ public class ItemListScreen extends MenuScreen {
           } else {
             playSound(2);
             this.menuIndex = 0;
-            renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
-            FUN_80104b60(renderablePtr_800bdc20);
+            this.renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
+            FUN_80104b60(this.renderablePtr_800bdc20);
             this.loadingStage = 2;
           }
         } else if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
@@ -294,8 +294,8 @@ public class ItemListScreen extends MenuScreen {
           } else {
             playSound(2);
             this.menuIndex = 0;
-            renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
-            FUN_80104b60(renderablePtr_800bdc20);
+            this.renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
+            FUN_80104b60(this.renderablePtr_800bdc20);
             this.loadingStage = 2;
           }
         }

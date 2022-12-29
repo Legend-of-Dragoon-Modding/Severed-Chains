@@ -14,4 +14,7 @@ public class MessageBox20 {
   public int menuIndex_18;
   public int x_1c;
   public int y_1e;
+
+  public LodString yes;
+  public LodString no;
 }

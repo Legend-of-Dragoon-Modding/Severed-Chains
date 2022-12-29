@@ -31,6 +31,7 @@ import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
+import legend.game.inventory.screens.ShopScreen;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -73,7 +74,6 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
-import static legend.game.SItem.renderShopMenu;
 import static legend.game.SItem.renderTooManyItemsMenu;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
@@ -197,20 +197,14 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
-import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -1389,7 +1383,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
       case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
-      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, null);
+      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, new ShopScreen());
       case INIT_LOAD_GAME_MENU_11 -> initMenu(WhichMenu.RENDER_LOAD_GAME_MENU_14, new LoadGameScreen());
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       case INIT_CHAR_SWAP_MENU_21 -> {
@@ -1435,10 +1429,9 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
+      case RENDER_SHOP_MENU_9, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
       case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
-      case RENDER_SHOP_MENU_9 -> renderShopMenu();
       case RENDER_TOO_MANY_ITEMS_MENU_34 -> renderTooManyItemsMenu();
 
       case UNLOAD_LOAD_GAME_MENU_15, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25 -> {
@@ -2435,14 +2428,6 @@ public final class Scus94491BpeSegment_8002 {
         saveListDownArrow_800bdb98 = null;
         renderablePtr_800bdba4 = null;
         renderablePtr_800bdba8 = null;
-
-        selectedMenuOptionRenderablePtr_800bdbe0 = null;
-        selectedMenuOptionRenderablePtr_800bdbe4 = null;
-        highlightLeftHalf_800bdbe8 = null;
-        highlightRightHalf_800bdbec = null;
-        renderablePtr_800bdbf0 = null;
-
-        renderablePtr_800bdc20 = null;
       }
     }
 

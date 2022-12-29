@@ -7,8 +7,11 @@ import legend.game.types.MessageBoxResult;
 
 import java.util.function.Consumer;
 
+import static legend.game.SItem.No_8011c214;
+import static legend.game.SItem.Yes_8011c20c;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
+import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -18,7 +21,12 @@ public class MessageBoxScreen extends MenuScreen {
   private MessageBoxResult result;
 
   public MessageBoxScreen(final LodString text, final int type, final Consumer<MessageBoxResult> onResult) {
+    this(text, Yes_8011c20c, No_8011c214, type, onResult);
+  }
+
+  public MessageBoxScreen(final LodString text, final LodString yes, final LodString no, final int type, final Consumer<MessageBoxResult> onResult) {
     setMessageBoxText(this.messageBox, text, type);
+    setMessageBoxOptions(this.messageBox, yes, no);
     this.onResult = onResult;
   }
 

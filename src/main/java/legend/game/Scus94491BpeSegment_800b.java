@@ -191,15 +191,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<IntRef> characterIndices_800bdbb8 = MEMORY.ref(4, 0x800bdbb8L, ArrayRef.of(IntRef.class, 9, 0x4, IntRef::new));
 
-  public static Renderable58 selectedMenuOptionRenderablePtr_800bdbe0;
-  public static Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
-  public static Renderable58 highlightLeftHalf_800bdbe8;
-  public static Renderable58 highlightRightHalf_800bdbec;
-  public static Renderable58 renderablePtr_800bdbf0;
-
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
-  public static Renderable58 renderablePtr_800bdc20;
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);

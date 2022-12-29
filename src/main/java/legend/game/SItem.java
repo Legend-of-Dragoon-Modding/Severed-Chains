@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
@@ -51,7 +50,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MemoryHelper.getTriConsumerAddress;
 import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
@@ -77,7 +75,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80023544;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
-import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -85,13 +82,9 @@ import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.giveItem;
-import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
-import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
-import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -105,7 +98,6 @@ import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
@@ -120,25 +112,19 @@ import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
-import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
-import static legend.game.Scus94491BpeSegment_800b.highlightLeftHalf_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.highlightRightHalf_800bdbec;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -361,28 +347,6 @@ public final class SItem {
   public static final ArrayRef<Pointer<ArrayRef<MenuItemStruct04>>> _8011dcb8 = MEMORY.ref(4, 0x8011dcb8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MenuItemStruct04.class)), 2, 4, Pointer.deferred(4, ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new))));
 
   public static final BoolRef _8011dcfc = MEMORY.ref(1, 0x8011dcfcL, BoolRef::new);
-
-  public static final IntRef menuIndex_8011e0d8 = MEMORY.ref(4, 0x8011e0d8L, IntRef::new);
-  public static final IntRef menuIndex_8011e0dc = MEMORY.ref(4, 0x8011e0dcL, IntRef::new);
-  public static final IntRef menuIndex_8011e0e0 = MEMORY.ref(4, 0x8011e0e0L, IntRef::new);
-  public static final IntRef menuScroll_8011e0e4 = MEMORY.ref(4, 0x8011e0e4L, IntRef::new);
-  public static final IntRef menuOption_8011e0e8 = MEMORY.ref(4, 0x8011e0e8L, IntRef::new);
-  public static final IntRef menuOption_8011e0ec = MEMORY.ref(4, 0x8011e0ecL, IntRef::new);
-  public static Renderable58 renderable_8011e0f0;
-  public static Renderable58 renderable_8011e0f4;
-  public static final UnboundedArrayRef<MenuItemStruct04> menuItems_8011e0f8 = MEMORY.ref(4, 0x8011e0f8L, UnboundedArrayRef.of(0x4, MenuItemStruct04::new));
-
-  public static final UnsignedByteRef currentShopItemCount_8011e13c = MEMORY.ref(1, 0x8011e13cL, UnsignedByteRef::new);
-  /**
-   * <ul>
-   *   <li>0x0 - Item Shop</li>
-   *   <li>0x1 - Weapon Shop</li>
-   * </ul>
-  */
-  public static final Value shopType_8011e13d = MEMORY.ref(1, 0x8011e13dL);
-  public static final Value _8011e13e = MEMORY.ref(1, 0x8011e13eL);
-
-  public static final Renderable58[] characterRenderables_8011e148 = new Renderable58[9];
 
   public static final Value _8011e170 = MEMORY.ref(1, 0x8011e170L);
 
@@ -751,7 +715,8 @@ public final class SItem {
             whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15;
           }
 
-          case RENDER_SAVE_GAME_MENU_19 -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
+          case RENDER_SAVE_GAME_MENU_19 ->
+            whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
           case RENDER_CHAR_SWAP_MENU_24 -> {
             scriptStartEffect(2, 10);
@@ -1720,12 +1685,6 @@ public final class SItem {
     renderNumber(x, y, value, 0x2L, 5);
   }
 
-  @Method(0x801069d0L)
-  public static void FUN_801069d0(final int x, final int y, final int value) {
-    // I didn't look at this method too closely, this may or may not be right
-    renderNumber(x, y, value, 0x2L, 4);
-  }
-
   /**
    * @param flags Bitset - 0x1: render leading zeros, 0x2: ?
    */
@@ -2253,25 +2212,6 @@ public final class SItem {
     }
   }
 
-  @Method(0x80109820L)
-  public static Renderable58 FUN_80109820(final int x, final int y, final int glyph) {
-    if(glyph >= 0x9L) {
-      //LAB_801098a0
-      return null;
-    }
-
-    final Renderable58 s0 = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
-    initGlyph(s0, glyph_801142d4);
-    s0.tpage_2c++;
-    s0.glyph_04 = glyph;
-    s0.z_3c = 33;
-    s0.x_40 = x;
-    s0.y_44 = y;
-
-    //LAB_801098a4
-    return s0;
-  }
-
   @Method(0x801098c0L)
   public static void renderDragoonSpirits(final int spirits, final int x, final int y) {
     final Memory.TemporaryReservation tmp = MEMORY.temp(0x28);
@@ -2337,817 +2277,9 @@ public final class SItem {
     }
   }
 
-  @Method(0x8010a7fcL)
-  public static int getShopMenuYOffset(final int index) {
-    return index * 16 + 58;
-  }
-
   @Method(0x8010a808L)
   public static int FUN_8010a808(final int index) {
     return index * 17 + 18;
-  }
-
-  @Method(0x8010a818L)
-  public static int FUN_8010a818(final int index) {
-    return index * 50 + 17;
-  }
-
-  @Method(0x8010a834L)
-  public static int FUN_8010a834(final int index) {
-    return index * 17 + 126;
-  }
-
-  @Method(0x8010a844L)
-  public static void FUN_8010a844(final InventoryMenuState nextMenuState, final long a1) {
-    inventoryMenuState_800bdc28.set(InventoryMenuState.LIST_INIT_16);
-    _800bdc2c.setu(a1);
-    confirmDest_800bdc30.set(nextMenuState);
-  }
-
-  @Method(0x8010a864L)
-  public static int FUN_8010a864(final int equipmentId) {
-    int s3 = -1;
-
-    //LAB_8010a8a4
-    for(int i = 0; i < 7; i++) {
-      if(characterIndices_800bdbb8.get(i).get() != -1) {
-        characterRenderables_8011e148[i].y_44 = 174;
-
-        if(equipmentId != 0xff) {
-          if(!canEquip(equipmentId, characterIndices_800bdbb8.get(i).get())) {
-            characterRenderables_8011e148[i].y_44 = 250;
-            //LAB_8010a8f0
-          } else if(s3 == -1) {
-            s3 = i;
-          }
-        }
-      }
-
-      //LAB_8010a8fc
-    }
-
-    if(s3 == -1) {
-      s3 = 0;
-    }
-
-    //LAB_8010a924
-    return s3;
-  }
-
-  @Method(0x8010a948L)
-  public static void renderShopMenu() {
-    final long v0;
-    final long v1;
-
-    inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
-
-    switch(inventoryMenuState_800bdc28.get()) {
-      case INIT_0 -> {
-        loadCharacterStats(0);
-        menuIndex_8011e0dc.set(0);
-        menuIndex_8011e0e0.set(0);
-        menuScroll_8011e0e4.set(0);
-        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
-      }
-
-      case AWAIT_INIT_1 -> {
-        if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
-          scriptStartEffect(2, 10);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-        }
-      }
-
-      case _2 -> {
-        deallocateRenderables(0xffL);
-        renderGlyphs(glyphs_80114510, 0, 0);
-        selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, getShopMenuYOffset(menuIndex_8011e0dc.get()));
-        FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe0);
-        currentShopItemCount_8011e13c.set(0);
-
-        //LAB_8010ab00
-        for(int i = 0; i < 16; i++) {
-          final int menuItemIndex = currentShopItemCount_8011e13c.get();
-          final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
-
-          if(itemId != 0xff) {
-            final MenuItemStruct04 menuItem = menuItems_8011e0f8.get(menuItemIndex);
-            menuItem.itemId_00.set(itemId);
-            menuItem.price_02.set((int)(itemPrices_80114310.get(itemId).get() * 0x2L));
-            currentShopItemCount_8011e13c.incr();
-          } else {
-            //LAB_8010ab6c
-            final MenuItemStruct04 menuItem = menuItems_8011e0f8.get(i);
-            menuItem.itemId_00.set(0xff);
-            menuItem.price_02.set(0);
-          }
-        }
-
-        final MenuItemStruct04 menuItem = menuItems_8011e0f8.get(16);
-        menuItem.itemId_00.set(0xff);
-        menuItem.price_02.set(0);
-        recalcInventory();
-        FUN_80103b10();
-
-        //LAB_8010abc4
-        for(int charSlot = 0; charSlot < characterCount_8011d7c4.get(); charSlot++) {
-          characterRenderables_8011e148[charSlot] = FUN_80109820(FUN_8010a818(charSlot), 174, characterIndices_800bdbb8.get(charSlot).get());
-        }
-
-        //LAB_8010ac00
-        shopType_8011e13d.setu(shops_800f4930.get(shopId_8007a3b4.get()).shopType_00.get() & 0x1L);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-        inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
-      }
-
-      case INIT_MAIN_MENU_3 -> {
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-
-        if(_800bb168.get() == 0) {
-          if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
-            playSound(3);
-            FUN_8010a844(InventoryMenuState._19, 0x1L);
-          }
-
-          //LAB_8010acac
-          if(handleMenuUpDown(menuIndex_8011e0dc, 4)) {
-            menuScroll_8011e0e4.set(0);
-            menuIndex_8011e0e0.set(0);
-            selectedMenuOptionRenderablePtr_800bdbe0.y_44 = getShopMenuYOffset(menuIndex_8011e0dc.get());
-          }
-
-          //LAB_8010ace4
-          if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
-            playSound(2);
-
-            shopType_8011e13d.setu(shops_800f4930.get(shopId_8007a3b4.get()).shopType_00.get() & 0x1L);
-
-            v1 = menuIndex_8011e0dc.get();
-            if(v1 == 0) {
-              //LAB_8010ad64
-              selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(menuIndex_8011e0e0.get()));
-              FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4);
-
-              if(shopType_8011e13d.get() == 0) {
-                menuIndex_8011e0d8.set(FUN_8010a864(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get()));
-                highlightLeftHalf_800bdbe8 = allocateUiElement(0x83, 0x83, FUN_8010a818(menuIndex_8011e0d8.get()), 174);
-                FUN_80104b60(highlightLeftHalf_800bdbe8);
-              }
-
-              //LAB_8010ae00
-              renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-              renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
-              inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-            } else if(v1 == 0x1L) {
-              //LAB_8010ae58
-              menuOption_8011e0e8.set(0);
-              renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-              renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
-              inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-              //LAB_8010ad48
-            } else if(v1 == 0x2L) {
-              //LAB_8010aeb8
-              FUN_8010a844(InventoryMenuState._18, 0x1L);
-            } else if(v1 == 0x3L) {
-              FUN_8010a844(InventoryMenuState._19, 0x1L);
-            }
-          }
-        }
-      }
-
-      case MAIN_MENU_4 -> {
-        if(shopType_8011e13d.get() == 0) {
-          if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
-            highlightLeftHalf_800bdbe8.x_40 = FUN_8010a818(menuIndex_8011e0d8.get());
-          }
-
-          //LAB_8010af18
-          renderEquipmentStatChange(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
-        } else {
-          //LAB_8010af64
-          renderNumberOfItems(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
-        }
-
-        //LAB_8010af94
-        renderString(0, 16, 122, menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), false);
-
-        if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
-          playSound(3);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-        }
-
-        //LAB_8010aff8
-        if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
-          if(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get() == 0xff) {
-            playSound(0x28);
-          } else {
-            //LAB_8010b044
-            playSound(2);
-            menuOption_8011e0ec.set(0);
-            renderablePtr_800bdbf0 = allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0));
-            FUN_80104b60(renderablePtr_800bdbf0);
-
-            if(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get() < 0xc0) {
-              v0 = gameState_800babc8.equipmentCount_1e4.get() < 255 ? 1 : 0;
-            } else {
-              //LAB_8010b0bc
-              v0 = gameState_800babc8.itemCount_1e6.get() < Config.inventorySize() ? 1 : 0;
-            }
-
-            //LAB_8010b0cc
-            inventoryMenuState_800bdc28.set(v0 != 0 ? InventoryMenuState._5 : InventoryMenuState.CONFIG_6);
-
-            if(gameState_800babc8.gold_94.get() < menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).price_02.get()) {
-              inventoryMenuState_800bdc28.set(InventoryMenuState._7);
-            }
-          }
-        }
-
-        //LAB_8010b124
-        //LAB_8010b128
-        if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, currentShopItemCount_8011e13c.get(), 1)) {
-          selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(menuIndex_8011e0e0.get());
-
-          if(shopType_8011e13d.get() == 0) {
-            menuIndex_8011e0d8.set(FUN_8010a864(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get()));
-            highlightLeftHalf_800bdbe8.x_40 = FUN_8010a818(menuIndex_8011e0d8.get());
-          }
-        }
-
-        //LAB_8010b1c4
-        //LAB_8010b1c8
-        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case _5 -> {
-        renderText(Are_you_sure_you_want_to_buy_8011c3ec, 16, 128, 4);
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 5 : 4);
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 4 : 5);
-
-        switch(handleYesNo(menuOption_8011e0ec)) {
-          case SCROLLED ->
-            //LAB_8010b2bc
-            renderablePtr_800bdbf0.y_44 = FUN_8010a834(menuOption_8011e0ec.get());
-
-          case YES -> {
-            //LAB_8010b2d8
-            gameState_800babc8.gold_94.sub(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).price_02.get());
-            unloadRenderable(renderablePtr_800bdbf0);
-
-            if(shopType_8011e13d.get() != 0) {
-              giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
-
-              //LAB_8010b378
-              inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-            } else {
-              //LAB_8010b360
-              inventoryMenuState_800bdc28.set(InventoryMenuState._13);
-            }
-
-            //LAB_8010b37c
-            //LAB_8010b2a8
-          }
-
-          case NO, CANCELLED -> {
-            //LAB_8010b368
-            unloadRenderable(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-          }
-        }
-
-        //LAB_8010b380
-        //LAB_8010b384
-        if(shopType_8011e13d.get() == 0) {
-          if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
-            highlightLeftHalf_800bdbe8.x_40 = FUN_8010a818(menuIndex_8011e0d8.get());
-          }
-
-          //LAB_8010b3cc
-          renderEquipmentStatChange(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
-        } else {
-          //LAB_8010b418
-          renderNumberOfItems(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
-        }
-
-        //LAB_8010b448
-        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case CONFIG_6, _7 -> {
-        //LAB_8010b490
-        //LAB_8010b498
-        renderText(inventoryMenuState_800bdc28.get() == InventoryMenuState.CONFIG_6 ? Cannot_carry_anymore_8011c43c : Not_enough_money_8011c468, 16, 128, 4);
-        renderCentredText(Conf_8011c48c, 148, FUN_8010a834(0) + 2, 5);
-        renderablePtr_800bdbf0.y_44 = FUN_8010a834(0);
-
-        if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
-          playSound(2);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-        }
-
-        //LAB_8010b508
-        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case REPLACE_INIT_8 -> {
-        highlightRightHalf_800bdbec = allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(menuOption_8011e0e8.get()));
-        FUN_80104b60(highlightRightHalf_800bdbec);
-        renderable_8011e0f0.flags_00 |= 0x40;
-        renderable_8011e0f4.flags_00 |= 0x40;
-        FUN_8010a864(0xff);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._9);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case _9 -> {
-        renderText(What_do_you_want_to_sell_8011c498, 16, 128, 4);
-        renderCentredText(Armed_8011c4cc, 148, FUN_8010a834(0) + 2, menuOption_8011e0e8.get() == 0 ? 5 : 4);
-        renderCentredText(item_8011c4d8, 148, FUN_8010a834(1) + 2, menuOption_8011e0e8.get() == 0 ? 4 : 5);
-
-        switch(handleYesNo(menuOption_8011e0e8)) {
-          case SCROLLED ->
-            //LAB_8010b69c
-            highlightRightHalf_800bdbec.y_44 = FUN_8010a834(menuOption_8011e0e8.get());
-
-          case YES -> {
-            //LAB_8010b6b8
-            menuIndex_8011e0e0.set(0);
-            menuScroll_8011e0e4.set(0);
-            _8011e13e.setu(0);
-
-            if(gameState_800babc8.equipmentCount_1e4.get() != 0) {
-              inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
-              selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
-              FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4);
-              unloadRenderable(highlightRightHalf_800bdbec);
-              FUN_8010a864(gameState_800babc8.equipment_1e8.get(0).get());
-            } else {
-              //LAB_8010b7b4
-              menuOption_8011e0e8.set(0);
-              inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_INIT_12);
-            }
-          }
-
-          //LAB_8010b680
-          case NO -> {
-            //LAB_8010b73c
-            _8011e13e.setu(0x1L);
-            menuScroll_8011e0e4.set(0);
-            menuIndex_8011e0e0.set(0);
-
-            if(gameState_800babc8.itemCount_1e6.get() != 0) {
-              inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
-              selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
-              FUN_80104b60(selectedMenuOptionRenderablePtr_800bdbe4);
-              unloadRenderable(highlightRightHalf_800bdbec);
-            } else {
-              //LAB_8010b7b4
-              menuOption_8011e0e8.set(0);
-              inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_INIT_12);
-            }
-          }
-
-          case CANCELLED ->
-            //LAB_8010b7c8
-            inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-        }
-
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case REPLACE_MENU_10 -> {
-        if(_8011e13e.get() == 0) {
-          //LAB_8010b868
-          renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, 4);
-          renderString(0, 193, 122, gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), false);
-
-          if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.equipmentCount_1e4.get(), 1)) {
-            FUN_8010a864(gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get());
-            selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(menuIndex_8011e0e0.get());
-          }
-        } else {
-          renderText(Which_item_do_you_want_to_sell_8011c4e4, 16, 128, 4);
-          renderString(0, 193, 122, gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get(), false);
-
-          if(scrollMenu(menuIndex_8011e0e0, menuScroll_8011e0e4, 6, gameState_800babc8.itemCount_1e6.get(), 1)) {
-            selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(menuIndex_8011e0e0.get());
-          }
-        }
-
-        //LAB_8010b918
-        if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) {
-          playSound(3);
-          unloadRenderable(selectedMenuOptionRenderablePtr_800bdbe4);
-          inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-        }
-
-        //LAB_8010b954
-        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
-
-        if((inventoryJoypadInput_800bdc44.get() & 0x20L) != 0) {
-          //LAB_8010b9e8
-          v0 = menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get();
-          //TODO not sure if this condition is right
-          if(_8011e13e.get() != 0 && gameState_800babc8.items_2e9.get((int)v0).get() == 0xffL || _8011e13e.get() == 0 && (gameState_800babc8.equipment_1e8.get((int)v0).get() == 0xffL || FUN_80022898(gameState_800babc8.equipment_1e8.get((int)v0).get()) != 0)) {
-            //LAB_8010ba28
-            playSound(0x28);
-          } else {
-            //LAB_8010ba38
-            playSound(2);
-            menuOption_8011e0ec.set(0);
-            renderablePtr_800bdbf0 = allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0));
-            FUN_80104b60(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState._11);
-          }
-        }
-      }
-
-      case _11 -> {
-        renderText(Are_you_sure_you_want_to_sell_8011c568, 16, 128, 4);
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 5 : 4);
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 4 : 5);
-
-        switch(handleYesNo(menuOption_8011e0ec)) {
-          case SCROLLED ->
-            //LAB_8010bb50
-            renderablePtr_800bdbf0.y_44 = FUN_8010a834(menuOption_8011e0ec.get());
-
-          case YES -> {
-            //LAB_8010bb6c
-            final int itemId;
-            if(_8011e13e.get() != 0) {
-              itemId = gameState_800babc8.items_2e9.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get();
-              v0 = takeItem(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get());
-            } else {
-              //LAB_8010bbc0
-              itemId = gameState_800babc8.equipment_1e8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).get();
-              v0 = takeEquipment(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get());
-            }
-
-            //LAB_8010bbfc
-            if(v0 == 0) {
-              addGold(itemPrices_80114310.get(itemId).get());
-            }
-
-            //LAB_8010bc1c
-            unloadRenderable(selectedMenuOptionRenderablePtr_800bdbe4);
-            unloadRenderable(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-            //LAB_8010bb3c
-          }
-
-          case NO, CANCELLED -> {
-            //LAB_8010bc48
-            unloadRenderable(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
-          }
-        }
-
-        //LAB_8010bcf8
-        //LAB_8010bcfc
-        //LAB_8010bd00
-        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
-      }
-
-      case EQUIPMENT_INIT_12 -> {
-        renderCentredText(Conf_8011c48c, 148, FUN_8010a834(0) + 2, 5);
-        highlightRightHalf_800bdbec.y_44 = FUN_8010a834(0);
-
-        //LAB_8010bcb4
-        //LAB_8010bcbc
-        renderText(_8011e13e.get() != 0 ? No_item_to_sell_8011c5dc : No_weapon_to_sell_8011c5fc, 16, 128, 4);
-
-        if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
-          playSound(2);
-
-          //LAB_8010bcf4
-          inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-        }
-
-        //LAB_8010bcf8
-        //LAB_8010bcfc
-        //LAB_8010bd00
-        renderItemList(menuScroll_8011e0e4.get(), _8011e13e.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), _8011e13e.get());
-      }
-
-      case _13, _14 -> {
-        if(inventoryMenuState_800bdc28.get() == InventoryMenuState._13) {
-          menuOption_8011e0ec.set(0);
-          renderablePtr_800bdbf0 = allocateUiElement(0x7d, 0x7d, 132, FUN_8010a834(0));
-          FUN_80104b60(renderablePtr_800bdbf0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._14);
-        }
-
-        renderEquipmentStatChange(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
-
-        if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
-          highlightLeftHalf_800bdbe8.x_40 = FUN_8010a818(menuIndex_8011e0d8.get());
-        }
-
-        //LAB_8010be00
-        renderText(Do_you_want_to_be_armed_with_it_8011c620, 16, 128, 4);
-        renderCentredText(Yes_8011c20c, 148, FUN_8010a834(0) + 2, menuOption_8011e0ec.get() == 0 ? 5 : 4);
-        renderCentredText(No_8011c214, 148, FUN_8010a834(1) + 2, menuOption_8011e0ec.get() == 0 ? 4 : 5);
-
-        switch(handleYesNo(menuOption_8011e0ec)) {
-          case SCROLLED ->
-            //LAB_8010becc
-            renderablePtr_800bdbf0.y_44 = FUN_8010a834(menuOption_8011e0ec.get());
-
-          case YES ->
-            //LAB_8010bee8
-            inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_MENU_15);
-            //LAB_8010beb8
-
-          case NO, CANCELLED -> {
-            //LAB_8010bef4
-            unloadRenderable(renderablePtr_800bdbf0);
-            giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
-
-            //LAB_8010bf38
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-          }
-        }
-
-        //LAB_8010bf3c
-        //LAB_8010bf40
-        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case EQUIPMENT_MENU_15 -> {
-        renderEquipmentStatChange(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get());
-
-        if(handleMenuLeftRight(menuIndex_8011e0d8, 7)) {
-          highlightLeftHalf_800bdbe8.x_40 = FUN_8010a818(menuIndex_8011e0d8.get());
-        }
-
-        //LAB_8010bfe4
-        renderCentredText(Conf_8011c48c, 148, FUN_8010a834(0) + 2, 5);
-        renderablePtr_800bdbf0.y_44 = FUN_8010a834(0);
-
-        if(!canEquip(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get())) {
-          //LAB_8010c0fc
-          renderText(Put_in_the_bag_8011c684, 16, 128, 4);
-
-          if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
-            playSound(2);
-
-            //LAB_8010c150
-            giveItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get());
-            unloadRenderable(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-          }
-        } else {
-          renderText(characterNames_801142dc.get(characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get()).deref(), 24, 128, 4);
-          renderText(Is_armed_8011c670, 16, 142, 4);
-
-          if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
-            playSound(2);
-            giveItem(equipItem(menuItems_8011e0f8.get(menuScroll_8011e0e4.get() + menuIndex_8011e0e0.get()).itemId_00.get(), characterIndices_800bdbb8.get(menuIndex_8011e0d8.get()).get()));
-            unloadRenderable(renderablePtr_800bdbf0);
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
-          }
-        }
-
-        //LAB_8010c174
-        FUN_8010c458(menuItems_8011e0f8, menuScroll_8011e0e4.get(), renderable_8011e0f0, renderable_8011e0f4);
-        renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-      }
-
-      case LIST_INIT_16, _17 -> {
-        if(inventoryMenuState_800bdc28.get() == InventoryMenuState.LIST_INIT_16) {
-          scriptStartEffect(1, 10);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._17);
-        }
-
-        if(_800bb168.get() >= 0xff) {
-          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
-        }
-
-        //LAB_8010c1e0
-        if(_800bdc2c.get() == 0x1L) {
-          //LAB_8010c1f0
-          //LAB_8010c1f4
-          renderShopMenu(menuIndex_8011e0dc.get(), shopType_8011e13d.get());
-        }
-      }
-
-      case _18 -> {
-        inventoryMenuState_800bdc28.set(InventoryMenuState.DISCARD_INIT_31);
-        whichMenu_800bdc38 = WhichMenu.RENDER_SHOP_CARRIED_ITEMS_36;
-      }
-
-      case _19 -> {
-        scriptStartEffect(2, 10);
-        deallocateRenderables(0xff);
-        free(gameOverMcq_800bdc3c.getPointer());
-        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
-          FUN_800e3fac();
-        }
-
-        //LAB_8010c290
-        //LAB_8010c294
-        whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
-        textZ_800bdf00.set(13);
-      }
-    }
-
-    //LAB_8010c2a4
-  }
-
-  @Method(0x8010c2c8L)
-  public static void renderShopMenu(final int selectedMenuItem, final long a2) {
-    renderCentredText(Buy_8011c6a4, 72, getShopMenuYOffset(0) + 2, selectedMenuItem != 0 ? 4 : 5);
-    renderCentredText(Sell_8011c6ac, 72, getShopMenuYOffset(1) + 2, selectedMenuItem != 1 ? 4 : 5);
-    renderCentredText(Carried_8011c6b8, 72, getShopMenuYOffset(2) + 2, selectedMenuItem != 2 ? 4 : 5);
-    renderCentredText(Leave_8011c6c8, 72, getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? 4 : 5);
-
-    if((a2 & 0xffL) != 0) {
-      renderTwoDigitNumber(105, 36, gameState_800babc8.itemCount_1e6.get(), 0x2L);
-      FUN_801038d4(94, 16, 16);
-      renderTwoDigitNumber(123, 36, Config.inventorySize(), 0x2L);
-    } else {
-      //LAB_8010c3e8
-      renderThreeDigitNumber(93, 36, gameState_800babc8.equipmentCount_1e4.get(), 0x2L);
-      FUN_801038d4(95, 16, 16);
-      renderThreeDigitNumber(117, 36, 255, 0x2L);
-    }
-
-    //LAB_8010c428
-    renderEightDigitNumber(87, 24, gameState_800babc8.gold_94.get(), 0x2L);
-    uploadRenderables();
-  }
-
-  @Method(0x8010c458L)
-  public static void FUN_8010c458(final UnboundedArrayRef<MenuItemStruct04> items, final int startItemIndex, final Renderable58 a2, final Renderable58 a3) {
-    //LAB_8010c4b4
-    int i;
-    for(i = 0; items.get(startItemIndex + i).itemId_00.get() != 0xff; i++) {
-      if(i >= 6) {
-        break;
-      }
-
-      final MenuItemStruct04 item = items.get(startItemIndex + i);
-      renderText(equipment_8011972c.get(item.itemId_00.get()).deref(), 168, FUN_8010a808(i) + 2, 4);
-      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.price_02.get());
-      renderItemIcon(getItemIcon(item.itemId_00.get()), 151, FUN_8010a808(i), 0x8L);
-    }
-
-    //LAB_8010c558
-    //LAB_8010c578
-    if(startItemIndex != 0) {
-      a2.flags_00 &= 0xffff_ffbf;
-    } else {
-      //LAB_8010c56c
-      a2.flags_00 |= 0x40;
-    }
-
-    //LAB_8010c5b0
-    if(items.get(i + startItemIndex).itemId_00.get() != 0xff) {
-      a3.flags_00 &= 0xffff_ffbf;
-    } else {
-      //LAB_8010c5a4
-      a3.flags_00 |= 0x40;
-    }
-  }
-
-  @Method(0x8010c5e0L)
-  public static void renderItemList(final int firstItem, final long a1, final Renderable58 upArrow, final Renderable58 downArrow) {
-    if((a1 & 0xff) != 0) {
-      //LAB_8010c654
-      int i;
-      for(i = 0; gameState_800babc8.items_2e9.get(firstItem + i).get() != 0xff && i < 6; i++) {
-        final int itemId = gameState_800babc8.items_2e9.get(firstItem + i).get();
-        renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-
-        //LAB_8010c6b0
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, FUN_80022898(itemId) == 0 ? 4 : 6);
-        FUN_801069d0(324, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
-      }
-
-      //LAB_8010c708
-      if(gameState_800babc8.items_2e9.get(firstItem + i).get() == 0xff) {
-        downArrow.flags_00 |= 0x40;
-      } else {
-        downArrow.flags_00 &= 0xffff_ffbf;
-      }
-    } else {
-      //LAB_8010c734
-      //LAB_8010c764
-      int i;
-      for(i = 0; gameState_800babc8.equipment_1e8.get(firstItem + i).get() != 0xff && i < 6; i++) {
-        final int itemId = gameState_800babc8.equipment_1e8.get(firstItem + i).get();
-        renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-
-        //LAB_8010c7c0
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, FUN_80022898(itemId) == 0 ? 4 : 6);
-
-        if(FUN_80022898(itemId) != 0) {
-          renderItemIcon(58, 330, FUN_8010a808(i), 0x8L).clut_30 = 0x7eaa;
-        } else {
-          //LAB_8010c814
-          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
-        }
-      }
-
-      //LAB_8010c854
-      if(gameState_800babc8.equipment_1e8.get(firstItem + i).get() == 0xff) {
-        //LAB_8010c880
-        downArrow.flags_00 |= 0x40;
-      } else {
-        downArrow.flags_00 &= 0xffff_ffbf;
-      }
-    }
-
-    //LAB_8010c88c
-    if(firstItem == 0) {
-      //LAB_8010c8a4
-      upArrow.flags_00 |= 0x40;
-    } else {
-      upArrow.flags_00 &= 0xffff_ffbf;
-    }
-  }
-
-  @Method(0x8010c8e4L)
-  public static void renderEquipmentStatChange(final int equipmentId, final int charIndex) {
-    if(charIndex != -1) {
-      final Memory.TemporaryReservation tmp = MEMORY.temp(0xa0);
-      final ActiveStatsa0 oldStats = new ActiveStatsa0(tmp.get());
-
-      //LAB_8010c920
-      memcpy(oldStats.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
-
-      //LAB_8010c974
-      final int[] oldEquipment = new int[5];
-      for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-        oldEquipment[equipmentSlot] = gameState_800babc8.charData_32c.get(charIndex).equipment_14.get(equipmentSlot).get();
-      }
-
-      if(equipItem(equipmentId, charIndex) != 0xff) {
-        FUN_801038d4(0x67, 210, 127);
-        FUN_801038d4(0x68, 210, 137);
-        FUN_801038d4(0x69, 210, 147);
-        FUN_801038d4(0x6a, 210, 157);
-        final ActiveStatsa0 newStats = stats_800be5f8.get(charIndex);
-        renderThreeDigitNumber(246, 127, newStats.gearAttack_88.get(), 0x2L);
-        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c.get(), 0x2L);
-        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a.get(), 0x2L);
-        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e.get(), 0x2L);
-        FUN_801038d4(0x6b, 274, 127);
-        FUN_801038d4(0x6b, 274, 137);
-        FUN_801038d4(0x6b, 274, 147);
-        FUN_801038d4(0x6b, 274, 157);
-        loadCharacterStats(0);
-        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88.get(), newStats.gearAttack_88.get());
-        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c.get(), newStats.gearDefence_8c.get());
-        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a.get(), newStats.gearMagicAttack_8a.get());
-        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e.get(), newStats.gearMagicDefence_8e.get());
-      } else {
-        //LAB_8010cafc
-        renderText(Cannot_be_armed_with_8011c6d4, 228, 137, 4);
-      }
-
-      //LAB_8010cb18
-      //LAB_8010cb3c
-      for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-        gameState_800babc8.charData_32c.get(charIndex).equipment_14.get(equipmentSlot).set(oldEquipment[equipmentSlot]);
-      }
-
-      loadCharacterStats(0);
-
-      tmp.release();
-    }
-
-    //LAB_8010cb6c
-  }
-
-  @Method(0x8010cb80L)
-  public static void renderNumberOfItems(final int itemId) {
-    if(itemId != 0xff) {
-      //LAB_8010cbb8
-      int count = 0;
-      for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == itemId) {
-          count++;
-        }
-
-        //LAB_8010cbcc
-      }
-
-      //LAB_8010cbdc
-      final LodString num = new LodString(11);
-      intToStr(count, num);
-      renderText(Number_kept_8011c7f4, 228, 137, 4);
-      renderText(num, 274, 137, 4);
-    }
-
-    //LAB_8010cc14
   }
 
   /**
@@ -4080,8 +3212,8 @@ public final class SItem {
           //LAB_8010ef64
           textZ_800bdf00.set(31);
 
-          renderCentredText(Yes_8011c20c, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? 5 : 4);
-          renderCentredText(No_8011c214, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? 4 : 5);
+          renderCentredText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? 5 : 4);
+          renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? 4 : 5);
 
           textZ_800bdf00.set(33);
 
@@ -4138,8 +3270,15 @@ public final class SItem {
     return MessageBoxResult.AWAITING_INPUT;
   }
 
+  public static void setMessageBoxOptions(final MessageBox20 messageBox, final LodString yes, final LodString no) {
+    messageBox.yes = yes;
+    messageBox.no = no;
+  }
+
   @Method(0x8010f130L)
   public static void setMessageBoxText(final MessageBox20 messageBox, @Nullable final LodString text, final int type) {
+    setMessageBoxOptions(messageBox, Yes_8011c20c, No_8011c214);
+
     if(text != null) {
       final List<LodString> lines = new ArrayList<>();
       final int length = textLength(text);
