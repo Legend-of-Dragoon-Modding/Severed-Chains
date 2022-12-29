@@ -28,7 +28,6 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -100,18 +99,7 @@ public class AdditionsScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
-
-        scriptStartEffect(1, 10);
-        this.loadingStage++;
-      }
-
-      // Unload
-      case 101 -> {
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

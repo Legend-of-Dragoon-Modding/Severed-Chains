@@ -42,7 +42,6 @@ import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
@@ -186,26 +185,16 @@ public class ItemListScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItemId, 0);
-        scriptStartEffect(1, 10);
-
         this._800bdba0 = null;
+
         this._800bdb9c = null;
         saveListDownArrow_800bdb98 = null;
         saveListUpArrow_800bdb94 = null;
 
-        this.loadingStage++;
-      }
+        free(_8011dcb8.get(0).getPointer());
+        free(_8011dcb8.get(1).getPointer());
 
-      // Unload
-      case 101 -> {
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItemId, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          free(_8011dcb8.get(0).getPointer());
-          free(_8011dcb8.get(1).getPointer());
-
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

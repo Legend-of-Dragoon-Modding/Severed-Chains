@@ -17,7 +17,6 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 
@@ -88,16 +87,7 @@ public abstract class SaveListScreen extends MenuScreen {
 
       case 2 -> {
         this.renderSavedGames(this.scroll, true, 0);
-        scriptStartEffect(1, 10);
-        this.loadingStage = 3;
-      }
-
-      case 3 -> {
-        this.renderSavedGames(this.scroll, true, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

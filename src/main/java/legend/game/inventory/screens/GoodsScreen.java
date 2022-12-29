@@ -18,7 +18,6 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
@@ -93,19 +92,10 @@ public class GoodsScreen extends MenuScreen {
       case 100 -> {
         this.renderGoods(this.selectedSlot, this.slotScroll, 0);
 
-        scriptStartEffect(1, 10);
         saveListDownArrow_800bdb98 = null;
         saveListUpArrow_800bdb94 = null;
-        this.loadingStage++;
-      }
 
-      // Unload
-      case 101 -> {
-        this.renderGoods(this.selectedSlot, this.slotScroll, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

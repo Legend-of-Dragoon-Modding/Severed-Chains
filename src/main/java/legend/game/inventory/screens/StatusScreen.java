@@ -20,7 +20,6 @@ import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -80,17 +79,7 @@ public class StatusScreen extends MenuScreen {
       case 3 -> {
         FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
         this.renderStatusMenu(this.charSlot, 0);
-        scriptStartEffect(1, 10);
-        this.loadingStage = 4;
-      }
-
-      case 4 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
-        this.renderStatusMenu(this.charSlot, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

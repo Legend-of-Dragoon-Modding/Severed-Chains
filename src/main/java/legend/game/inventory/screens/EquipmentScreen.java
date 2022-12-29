@@ -35,7 +35,6 @@ import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -114,19 +113,7 @@ public class EquipmentScreen extends MenuScreen {
       // Fade out
       case 100:
         this.FUN_80102660(this.charSlot, this.selectedSlot, this.slotScroll, 0);
-
-        scriptStartEffect(1, 10);
-        this.loadingStage++;
-        break;
-
-      // Unload
-      case 101:
-        this.FUN_80102660(this.charSlot, this.selectedSlot, this.slotScroll, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
-
+        this.unload.run();
         break;
     }
   }

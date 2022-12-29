@@ -4,12 +4,12 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8002;
+import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
-import legend.game.inventory.UseItemResponse;
 
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.SItem.Completely_recovered_8011d534;
@@ -52,7 +52,6 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8002.useItemInMenu;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -130,20 +129,9 @@ public class UseItemScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderUseItemMenu(this.selectedSlot, this.slotScroll, 0);
-
         saveListDownArrow_800bdb98 = null;
         saveListUpArrow_800bdb94 = null;
-        scriptStartEffect(1, 10);
-        this.loadingStage++;
-      }
-
-      // Unload
-      case 101 -> {
-        this.renderUseItemMenu(this.selectedSlot, this.slotScroll, 0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

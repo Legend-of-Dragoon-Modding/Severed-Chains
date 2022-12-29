@@ -48,7 +48,6 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
@@ -243,16 +242,7 @@ public class DabasScreen extends MenuScreen {
         this.renderDabasMenu(this.menuIndex);
         free(this.dabasFilePtr_8011dd00);
         free(this.dabasData_8011d7c0.getAddress());
-        scriptStartEffect(1, 10);
-        this.loadingStage++;
-      }
-
-      case 101 -> {
-        this.renderDabasMenu(this.menuIndex);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }

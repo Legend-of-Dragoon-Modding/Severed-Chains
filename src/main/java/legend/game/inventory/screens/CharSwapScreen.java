@@ -20,7 +20,6 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
@@ -64,18 +63,7 @@ public class CharSwapScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderCharacterSwapScreen(0);
-
-        scriptStartEffect(1, 10);
-        this.loadingStage++;
-      }
-
-      // Unload
-      case 101 -> {
-        this.renderCharacterSwapScreen(0);
-
-        if(_800bb168.get() >= 0xff) {
-          this.unload.run();
-        }
+        this.unload.run();
       }
     }
   }
