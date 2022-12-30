@@ -7,15 +7,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import legend.core.Config;
 import legend.game.combat.Bttl_800c;
 import legend.game.types.WMapAreaData08;
-import legend.core.Config;
 
-import javax.swing.*;
-
-import static legend.game.SMap.*;
+import static legend.game.SMap.FUN_800e5534;
+import static legend.game.SMap.encounterData_800f64c4;
+import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8005._8005a368;
+import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -142,7 +142,7 @@ public class DebuggerController {
 
   @FXML
   private void setSaveAnywhere(final ActionEvent event) {
-    _8005a368.set(0x1);
+    standingInSavePoint_8005a368.set(0x1);
   }
 
   @FXML
