@@ -1,5 +1,7 @@
 package legend.core;
 
+import legend.game.combat.Bttl_800c;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +23,10 @@ public final class Config {
     properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("inventory_size", "32");
     properties.setProperty("unlock_party", "false");
+    properties.setProperty("battle_ui_colour_change", "false");
+    properties.setProperty("battle_ui_r", "0");
+    properties.setProperty("battle_ui_g", "41");
+    properties.setProperty("battle_ui_b", "159");
   }
 
   public static int windowWidth() {
@@ -57,6 +63,39 @@ public final class Config {
 
   public static boolean unlockParty() {
     return readBool("unlock_party", false);
+  }
+
+  public static boolean changeBattleRGB() {
+    return readBool("battle_ui_colour_change", false);
+  }
+
+  public static int getBattleRGB() {
+    int[] rgbArray = new int[] {
+      readInt("battle_ui_r", 0, 0, 255),
+      readInt("battle_ui_g", 0, 0, 255),
+      readInt("battle_ui_b", 0, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8  |
+      (0xff & rgbArray[0]) << 0
+    );
+  }
+
+  public static void setBattleRGB(int rgb) {
+    int[] rgbArray = new int[] {
+            ((rgb >> 24) & 0xff),
+            ((rgb >> 16) & 0xff),
+            ((rgb >> 8)  & 0xff),
+            ((rgb >> 0)  & 0xff)
+    };
+
+    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {
