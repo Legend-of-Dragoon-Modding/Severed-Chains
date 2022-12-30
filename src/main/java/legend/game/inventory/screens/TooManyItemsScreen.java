@@ -33,7 +33,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
-import static legend.game.Scus94491BpeSegment_8002.removeItemsThatCantBeDiscarded;
+import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -336,9 +336,9 @@ public class TooManyItemsScreen extends MenuScreen {
             this.menuState = MenuState._8;
 
             if(isItem != 0) {
-              removeItemsThatCantBeDiscarded(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+              setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
             } else {
-              removeItemsThatCantBeDiscarded(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+              setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
             }
           }
         }

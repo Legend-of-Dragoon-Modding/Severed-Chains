@@ -249,12 +249,6 @@ public final class SItem {
   public static final LodString Stay_8011c820 = MEMORY.ref(2, 0x8011c820L, LodString::new);
   public static final LodString Half_8011c82c = MEMORY.ref(2, 0x8011c82cL, LodString::new);
   public static final LodString Off_8011c838 = MEMORY.ref(2, 0x8011c838L, LodString::new);
-  /**
-   * "Really want"
-   * "to throw"
-   * "this away?"
-   */
-  public static final LodString Really_want_to_throw_this_away_8011c8d4 = MEMORY.ref(2, 0x8011c8d4L, LodString::new);
   /** "Save new game?" */
   public static final LodString Save_new_game_8011c9c8 = MEMORY.ref(2, 0x8011c9c8L, LodString::new);
   /** "Overwrite save?" */
@@ -576,11 +570,6 @@ public final class SItem {
   @Method(0x800fc84cL)
   public static int getSlotY(final int slot) {
     return 16 + slot * 72;
-  }
-
-  @Method(0x800fc860L)
-  public static int FUN_800fc860(final int a0) {
-    return 180 + a0 * 17;
   }
 
   @Method(0x800fc8c0L)
@@ -1013,63 +1002,6 @@ public final class SItem {
   @Method(0x80103e90L)
   public static void renderCentredText(final LodString text, final int x, final int y, final int a3) {
     renderText(text, x - textWidth(text) / 2, y, a3);
-  }
-
-  @Method(0x801040c0L)
-  public static boolean handleMenuUpDown(final IntRef menuIndex, final int menuOptionCount) {
-    if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) { // Up
-      playSound(0x1L);
-
-      if(menuIndex.get() != 0) {
-        menuIndex.decr();
-      } else {
-        //LAB_80104108
-        menuIndex.set(menuOptionCount - 1);
-      }
-
-      //LAB_8010410c
-      //LAB_80104118
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000) != 0) { // Down
-      playSound(0x1L);
-
-      if(menuIndex.get() < menuOptionCount - 1) {
-        menuIndex.incr();
-      } else {
-        menuIndex.set(0);
-      }
-    } else {
-      return false;
-    }
-
-    //LAB_80104110
-    //LAB_80104148
-    return true;
-  }
-
-  @Method(0x801041d8L)
-  public static YesNoResult handleYesNo(final IntRef menuOption) {
-    if(handleMenuUpDown(menuOption, 2)) {
-      return YesNoResult.SCROLLED;
-    }
-
-    if((inventoryJoypadInput_800bdc44.get() & 0x40) != 0) { // Circle/cancel
-      playSound(0x3L);
-      return YesNoResult.CANCELLED;
-    }
-
-    //LAB_80104220
-    if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) { // Cross/accept
-      playSound(0x2L);
-
-      if(menuOption.get() == 0) {
-        return YesNoResult.YES;
-      }
-
-      return YesNoResult.NO;
-    }
-
-    //LAB_80104244
-    return YesNoResult.NONE;
   }
 
   @Method(0x801038d4L)
@@ -3032,24 +2964,6 @@ public final class SItem {
           renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? 4 : 5);
 
           textZ_800bdf00.set(33);
-
-          final IntRef index = new IntRef().set(messageBox.menuIndex_18);
-          final YesNoResult msgboxYesNo = handleYesNo(index);
-          messageBox.menuIndex_18 = index.get();
-
-          if(msgboxYesNo == YesNoResult.SCROLLED) {
-            //LAB_8010f014
-            messageBox.renderable_04.y_44 = messageBox.menuIndex_18 * 14 + y + 5;
-          } else if(msgboxYesNo == YesNoResult.YES) {
-            //LAB_8010f040
-            messageBox.state_0c = 4;
-            msgboxResult_8011e1e8.set(MessageBoxResult.YES);
-          } else if(msgboxYesNo == YesNoResult.NO || msgboxYesNo == YesNoResult.CANCELLED) {
-            //LAB_8010f000
-            //LAB_8010f05c
-            messageBox.state_0c = 4;
-            msgboxResult_8011e1e8.set(MessageBoxResult.NO);
-          }
         }
 
         break;

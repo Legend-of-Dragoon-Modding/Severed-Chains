@@ -2072,26 +2072,26 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void removeItemsThatCantBeDiscarded(final List<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+  public static void setInventoryFromDisplay(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> a1, final int count) {
     //LAB_800239ec
-    int a3 = 0;
+    int itemIndex = 0;
     for(int i = 0; i < count; i++) {
-      if((a0.get(i).flags_02 & 0x1000) == 0) {
-        a1.get(a3).set(a0.get(i).itemId_00);
-        a3++;
+      if((display.get(i).flags_02 & 0x1000) == 0) {
+        a1.get(itemIndex).set(display.get(i).itemId_00);
+        itemIndex++;
       }
 
       //LAB_80023a0c
     }
 
     //LAB_80023a1c
-    a1.get(a3).set(0xff);
+    a1.get(itemIndex).set(0xff);
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final List<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
-    a0.sort(Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
-    removeItemsThatCantBeDiscarded(a0, a1, count);
+  public static void sortItems(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> items, final int count) {
+    display.sort(Comparator.comparingInt(item -> getItemIcon(item.itemId_00)));
+    setInventoryFromDisplay(display, items, count);
   }
 
   @Method(0x80023a88L)

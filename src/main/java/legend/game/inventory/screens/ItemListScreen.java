@@ -3,9 +3,10 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
+import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
 import java.util.ArrayList;
@@ -13,20 +14,15 @@ import java.util.List;
 
 import static legend.game.SItem.FUN_800fc814;
 import static legend.game.SItem.FUN_800fc824;
-import static legend.game.SItem.FUN_800fc860;
 import static legend.game.SItem.FUN_801038d4;
 import static legend.game.SItem.FUN_80104738;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.No_8011c214;
 import static legend.game.SItem.Press_to_sort_8011d024;
-import static legend.game.SItem.Really_want_to_throw_this_away_8011c8d4;
-import static legend.game.SItem.Yes_8011c20c;
 import static legend.game.SItem._8011c314;
 import static legend.game.SItem._8011c32c;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.goodsGlyphs_801141c4;
-import static legend.game.SItem.handleYesNo;
-import static legend.game.SItem.renderCentredText;
+import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
@@ -34,18 +30,18 @@ import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment_8002.removeItemsThatCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
+import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
-import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class ItemListScreen extends MenuScreen {
   private int loadingStage;
@@ -56,13 +52,11 @@ public class ItemListScreen extends MenuScreen {
   private int selectedSlotItem;
   private int slotScrollEquipment;
   private int slotScrollItem;
-  private int menuIndex;
   private int equippedItemsCount;
   private Renderable58 equipmentHighlight;
   private Renderable58 itemHighlight;
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
-  private Renderable58 renderablePtr_800bdc20;
   private int mouseX;
   private int mouseY;
 
@@ -90,7 +84,6 @@ public class ItemListScreen extends MenuScreen {
         this.selectedSlotItem = 0;
         this.slotScrollEquipment = 0;
         this.slotScrollItem = 0;
-        this.menuIndex = 0;
         this.currentItemId = 0xff;
         this.equipmentHighlight = allocateUiElement(0x76, 0x76, FUN_800fc824(0), FUN_800fc814(this.selectedSlotEquipment) + 32);
         FUN_80104b60(this.equipmentHighlight);
@@ -143,47 +136,6 @@ public class ItemListScreen extends MenuScreen {
             }
           }
         }
-      }
-
-      case 2 -> {
-        renderText(Really_want_to_throw_this_away_8011c8d4, 192, 180, 4);
-        renderCentredText(Yes_8011c20c, 328, FUN_800fc860(0) + 2, this.menuIndex == 0 ? 5 : 6);
-        renderCentredText(No_8011c214, 328, FUN_800fc860(1) + 2, this.menuIndex == 0 ? 6 : 5);
-
-        final IntRef menuIndex = new IntRef().set(this.menuIndex);
-        switch(handleYesNo(menuIndex)) {
-          case SCROLLED ->
-            this.renderablePtr_800bdc20.y_44 = FUN_800fc860(this.menuIndex);
-
-          case YES -> {
-            int i;
-            for(i = this.currentIndex; ; i++) {
-              final MenuItemStruct04 a = this.currentDisplayList.get(i);
-              final MenuItemStruct04 b = this.currentDisplayList.get(i + 1);
-              a.itemId_00 = b.itemId_00;
-              a.flags_02 = b.flags_02;
-
-              if(b.itemId_00 == 0xff) {
-                break;
-              }
-            }
-
-            removeItemsThatCantBeDiscarded(this.currentDisplayList, this.currentList, i);
-            recalcInventory();
-
-            unloadRenderable(this.renderablePtr_800bdc20);
-            this.loadingStage = 1;
-          }
-
-          case NO, CANCELLED -> {
-            unloadRenderable(this.renderablePtr_800bdc20);
-            this.loadingStage = 1;
-          }
-        }
-
-        this.menuIndex = menuIndex.get();
-
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, 0xff, 0x1L);
       }
 
       // Fade out
@@ -245,13 +197,17 @@ public class ItemListScreen extends MenuScreen {
     this.mouseY = y;
 
     if(this.loadingStage == 1) {
-      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get()); i++) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
         if(this.selectedSlotEquipment != i && MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotEquipment = i;
           this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
-        } else if(this.selectedSlotItem != i && MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
+        }
+      }
+
+      for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
+        if(this.selectedSlotItem != i && MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotItem = i;
           this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
@@ -267,40 +223,46 @@ public class ItemListScreen extends MenuScreen {
       return;
     }
 
-    if(this.loadingStage == 1) {
-      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get()); i++) {
+    if(this.loadingStage == 1 && button == GLFW_MOUSE_BUTTON_LEFT) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
         if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotEquipment = i;
           this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
 
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0 || this.currentDisplayList.get(this.currentIndex).itemId_00 == 0xff) {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
             playSound(40);
           } else {
             playSound(2);
-            this.menuIndex = 0;
-            this.renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
-            FUN_80104b60(this.renderablePtr_800bdc20);
-            this.loadingStage = 2;
+            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
           }
-        } else if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
+        }
+      }
+
+      for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
+        if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotItem = i;
           this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
 
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0 || this.currentDisplayList.get(this.currentIndex).itemId_00 == 0xff) {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
             playSound(40);
           } else {
             playSound(2);
-            this.menuIndex = 0;
-            this.renderablePtr_800bdc20 = allocateUiElement(0x7d, 0x7d, 314, FUN_800fc860(0));
-            FUN_80104b60(this.renderablePtr_800bdc20);
-            this.loadingStage = 2;
+            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
           }
         }
       }
+    }
+  }
+
+  private void discard(final MessageBoxResult result) {
+    if(result == MessageBoxResult.YES) {
+      this.currentDisplayList.remove(this.currentIndex);
+      setInventoryFromDisplay(this.currentDisplayList, this.currentList, this.currentDisplayList.size());
+      recalcInventory();
     }
   }
 
