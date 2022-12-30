@@ -383,6 +383,8 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> _800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
+  public static final Value _800c7004 = MEMORY.ref(4, 0x800c7004L);
+
   public static final ArrayRef<ShortRef> _800c7008 = MEMORY.ref(2, 0x800c7008L, ArrayRef.of(ShortRef.class, 5, 2, ShortRef::new));
 
   public static final ArrayRef<UnsignedShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));

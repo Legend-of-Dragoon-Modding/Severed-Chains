@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.GameEngine;
 import legend.core.MemoryHelper;
 import legend.core.gpu.Bpp;
@@ -169,7 +170,6 @@ import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
-import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c._800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
@@ -219,6 +219,7 @@ import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deff_800c6950;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
+import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.light_800c6ddc;
@@ -6004,6 +6005,10 @@ public final class Bttl_800e {
   @Method(0x800ef9e4L)
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
+      if (Config.changeBattleRGB()) {
+        Bttl_800c._800c7004.set(Config.getBattleRGB());
+      }
+
       final long charCount = charCount_800c677c.get();
 
       //LAB_800efa34

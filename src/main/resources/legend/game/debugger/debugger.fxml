@@ -25,12 +25,50 @@
             <padding>
                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
             </padding>
+            <Label text="Field" textFill="RED" />
             <Label text="Encounter" />
             <HBox prefHeight="29.0" prefWidth="202.0">
                <Spinner fx:id="encounterId" editable="true" prefHeight="26.0" prefWidth="90.0" />
                <Button fx:id="getEncounterId" mnemonicParsing="false" onAction="#getEncounterId" text="Get" />
                <Button fx:id="startEncounter" mnemonicParsing="false" onAction="#startEncounter" text="Start" />
             </HBox>
+            <Label text="Map" />
+            <HBox prefHeight="0.0" prefWidth="193.0">
+               <children>
+                  <Spinner fx:id="mapId" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                  <Button fx:id="getMapId" mnemonicParsing="false" onAction="#getMapId" text="Get" />
+                  <Button fx:id="warpToMap" mnemonicParsing="false" onAction="#warpToMap" text="Warp" />
+               </children>
+            </HBox>
+            <Label text="VSync Mode" />
+            <HBox prefHeight="0.0" prefWidth="193.0">
+               <children>
+                  <Spinner fx:id="vsyncMode" editable="true" prefHeight="26.0" prefWidth="90.0" />
+                  <Button fx:id="getVsyncMode" mnemonicParsing="false" onAction="#getVsyncMode" text="Get" />
+                  <Button fx:id="setVsyncMode" mnemonicParsing="false" onAction="#setVsyncMode" text="Set" />
+               </children>
+            </HBox>
+            <Label text="Save Anywhere" />
+            <Button mnemonicParsing="false" onAction="#setSaveAnywhere" text="Set" />
+         </VBox>
+         <VBox prefHeight="374.0" prefWidth="213.0">
+            <children>
+               <Label text="Battle" textFill="RED" />
+               <Label text="UI Color" />
+               <HBox prefHeight="19.0" prefWidth="213.0">
+                  <children>
+                     <Spinner fx:id="battleUIColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUIColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUIColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                  </children>
+               </HBox>
+               <HBox prefHeight="0.0" prefWidth="213.0">
+                  <children>
+                     <Button mnemonicParsing="false" onAction="#getBattleUIRGB" text="Get" />
+                     <Button mnemonicParsing="false" onAction="#setBattleUIRGB" text="Set" />
+                  </children>
+               </HBox>
+            </children>
          </VBox>
       </HBox>
    </AnchorPane>
