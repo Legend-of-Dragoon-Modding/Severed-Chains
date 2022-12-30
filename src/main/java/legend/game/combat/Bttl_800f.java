@@ -2141,7 +2141,7 @@ public final class Bttl_800f {
         s0 = FUN_800f7768(a0, a1);
         if(s0 == 0x1L) {
           if(structa4._0a.get() == 0) {
-            takeItem(GameEngine.REGISTRIES.items.getEntryById((structa4._1c.get() & 0xff) - 0x40));
+            takeItem(GameEngine.REGISTRIES.items.getEntryById((structa4._1c.get() & 0xff) + 0xc0));
           }
 
           //LAB_800f545c
