@@ -1,16 +1,17 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.Goods_8011cf48;
 import static legend.game.SItem._8011c008;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.goodsGlyphs_801141c4;
-import static legend.game.SItem.menuItems_8011d7c8;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
@@ -35,8 +36,11 @@ public class GoodsScreen extends MenuScreen {
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
 
+  private final MenuItemStruct04[] menuItems = new MenuItemStruct04[64];
+
   public GoodsScreen(final Runnable unload) {
     this.unload = unload;
+    Arrays.setAll(this.menuItems, i -> new MenuItemStruct04());
   }
 
   @Override
@@ -50,12 +54,12 @@ public class GoodsScreen extends MenuScreen {
 
         //LAB_800fec7c
         for(int i = 0; i < 64; i++) {
-          menuItems_8011d7c8.get(i).itemId_00.set(0xff);
+          this.menuItems[i].itemId_00 = 0xff;
 
           if((gameState_800babc8.dragoonSpirits_19c.get(i >>> 5).get() & 0x1L << (i & 0x1fL)) != 0) {
-            menuItems_8011d7c8.get(this.count).itemId_00.set(i);
-            menuItems_8011d7c8.get(this.count).itemSlot_01.set(i);
-            menuItems_8011d7c8.get(this.count).price_02.set(0);
+            this.menuItems[this.count].itemId_00 = i;
+            this.menuItems[this.count].itemSlot_01 = i;
+            this.menuItems[this.count].price_02 = 0;
             this.count++;
           }
         }
@@ -113,17 +117,17 @@ public class GoodsScreen extends MenuScreen {
     renderText(Goods_8011cf48,  32, 22, 4);
     renderText(Goods_8011cf48, 210, 22, 4);
     this.FUN_8010965c(slotScroll, this._800bdb9c, this._800bdba0);
-    renderString(1, 194, 178, menuItems_8011d7c8.get(slotScroll + selectedSlot).itemId_00.get(), allocate);
+    renderString(1, 194, 178, this.menuItems[slotScroll + selectedSlot].itemId_00, allocate);
     uploadRenderables();
   }
 
   private void FUN_8010965c(final int slotScroll, @Nullable final Renderable58 a1, @Nullable final Renderable58 a2) {
     int i;
-    for(i = 0; i < 14 && menuItems_8011d7c8.get(slotScroll + i).itemId_00.get() != 0xff; i += 2) {
-      renderText(_8011c008.get(menuItems_8011d7c8.get(slotScroll + i).itemId_00.get()).deref(), 37, this.getSlotY(i / 2) + 34, 4);
+    for(i = 0; i < 14 && this.menuItems[slotScroll + i].itemId_00 != 0xff; i += 2) {
+      renderText(_8011c008.get(this.menuItems[slotScroll + i].itemId_00).deref(), 37, this.getSlotY(i / 2) + 34, 4);
 
-      if(menuItems_8011d7c8.get(slotScroll + i + 1).itemId_00.get() != 0xff) {
-        renderText(_8011c008.get(menuItems_8011d7c8.get(slotScroll + i + 1).itemId_00.get()).deref(), 214, this.getSlotY(i / 2) + 34, 4);
+      if(this.menuItems[slotScroll + i + 1].itemId_00 != 0xff) {
+        renderText(_8011c008.get(this.menuItems[slotScroll + i + 1].itemId_00).deref(), 214, this.getSlotY(i / 2) + 34, 4);
       }
     }
 
@@ -136,7 +140,7 @@ public class GoodsScreen extends MenuScreen {
     }
 
     if(a2 != null) {
-      if(menuItems_8011d7c8.get(slotScroll + i).itemId_00.get() != 0xff) {
+      if(this.menuItems[slotScroll + i].itemId_00 != 0xff) {
         a2.flags_00 &= 0xffff_ffbf;
       } else {
         a2.flags_00 |= 0x40;

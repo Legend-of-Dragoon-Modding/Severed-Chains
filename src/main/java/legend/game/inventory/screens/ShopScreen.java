@@ -3,7 +3,6 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
@@ -11,6 +10,7 @@ import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static legend.core.GameEngine.MEMORY;
@@ -55,13 +55,13 @@ import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
+import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
@@ -95,7 +95,7 @@ public class ShopScreen extends MenuScreen {
   private Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
   private Renderable58 charHighlight;
 
-  private final UnboundedArrayRef<MenuItemStruct04> menuItems_8011e0f8 = MEMORY.ref(4, 0x8011e0f8L, UnboundedArrayRef.of(0x4, MenuItemStruct04::new));
+  private final MenuItemStruct04[] menuItems = new MenuItemStruct04[17];
 
   private int itemCount;
   /**
@@ -123,6 +123,7 @@ public class ShopScreen extends MenuScreen {
   protected void render() {
     switch(this.menuState) {
       case INIT_0 -> {
+        Arrays.setAll(this.menuItems, i -> new MenuItemStruct04());
         loadCharacterStats(0);
         this.menuIndex_8011e0dc = 0;
         this.menuIndex_8011e0e0 = 0;
@@ -149,20 +150,20 @@ public class ShopScreen extends MenuScreen {
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
 
           if(itemId != 0xff) {
-            final MenuItemStruct04 menuItem = this.menuItems_8011e0f8.get(menuItemIndex);
-            menuItem.itemId_00.set(itemId);
-            menuItem.price_02.set((int)(itemPrices_80114310.get(itemId).get() * 0x2L));
+            final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
+            menuItem.itemId_00 = itemId;
+            menuItem.price_02 = itemPrices_80114310.get(itemId).get() * 2;
             this.itemCount++;
           } else {
-            final MenuItemStruct04 menuItem = this.menuItems_8011e0f8.get(i);
-            menuItem.itemId_00.set(0xff);
-            menuItem.price_02.set(0);
+            final MenuItemStruct04 menuItem = this.menuItems[i];
+            menuItem.itemId_00 = 0xff;
+            menuItem.price_02 = 0;
           }
         }
 
-        final MenuItemStruct04 menuItem = this.menuItems_8011e0f8.get(16);
-        menuItem.itemId_00.set(0xff);
-        menuItem.price_02.set(0);
+        final MenuItemStruct04 menuItem = this.menuItems[16];
+        menuItem.itemId_00 = 0xff;
+        menuItem.price_02 = 0;
         recalcInventory();
         FUN_80103b10();
 
@@ -180,12 +181,12 @@ public class ShopScreen extends MenuScreen {
 
       case BUY_4 -> {
         if(this.shopType == 0) {
-          this.renderEquipmentStatChange(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), characterIndices_800bdbb8.get(this.equipCharIndex).get());
+          this.renderEquipmentStatChange(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get());
         } else {
-          this.renderNumberOfItems(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get());
+          this.renderNumberOfItems(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
         }
 
-        renderString(0, 16, 122, this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), false);
+        renderString(0, 16, 122, this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, false);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -208,8 +209,8 @@ public class ShopScreen extends MenuScreen {
       }
 
       case BUY_SELECT_CHAR_5 -> {
-        this.renderEquipmentStatChange(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), characterIndices_800bdbb8.get(this.equipCharIndex).get());
-        renderString(0, 16, 122, this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), false);
+        this.renderEquipmentStatChange(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get());
+        renderString(0, 16, 122, this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, false);
         this.FUN_8010c458(this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
       }
@@ -291,7 +292,7 @@ public class ShopScreen extends MenuScreen {
     this.menuScroll_8011e0e4 = scroll;
 
     if(this.shopType == 0) {
-      this.equipCharIndex = this.FUN_8010a864(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get());
+      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
       this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
     }
   }
@@ -446,15 +447,15 @@ public class ShopScreen extends MenuScreen {
 
   private void FUN_8010c458(final int startItemIndex, final Renderable58 a2, final Renderable58 a3) {
     int i;
-    for(i = 0; this.menuItems_8011e0f8.get(startItemIndex + i).itemId_00.get() != 0xff; i++) {
+    for(i = 0; this.menuItems[startItemIndex + i].itemId_00 != 0xff; i++) {
       if(i >= 6) {
         break;
       }
 
-      final MenuItemStruct04 item = this.menuItems_8011e0f8.get(startItemIndex + i);
-      renderText(equipment_8011972c.get(item.itemId_00.get()).deref(), 168, FUN_8010a808(i) + 2, 4);
-      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.price_02.get());
-      renderItemIcon(getItemIcon(item.itemId_00.get()), 151, FUN_8010a808(i), 0x8L);
+      final MenuItemStruct04 item = this.menuItems[startItemIndex + i];
+      renderText(equipment_8011972c.get(item.itemId_00).deref(), 168, FUN_8010a808(i) + 2, 4);
+      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.price_02);
+      renderItemIcon(getItemIcon(item.itemId_00), 151, FUN_8010a808(i), 0x8L);
     }
 
     if(startItemIndex != 0) {
@@ -463,7 +464,7 @@ public class ShopScreen extends MenuScreen {
       a2.flags_00 |= 0x40;
     }
 
-    if(this.menuItems_8011e0f8.get(i + startItemIndex).itemId_00.get() != 0xff) {
+    if(this.menuItems[i + startItemIndex].itemId_00 != 0xff) {
       a3.flags_00 &= 0xffff_ffbf;
     } else {
       a3.flags_00 |= 0x40;
@@ -528,7 +529,7 @@ public class ShopScreen extends MenuScreen {
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
 
           if(this.shopType == 0) {
-            this.equipCharIndex = this.FUN_8010a864(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + i).itemId_00.get());
+            this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + i].itemId_00);
           }
         }
       }
@@ -569,7 +570,7 @@ public class ShopScreen extends MenuScreen {
               FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
               if(this.shopType == 0) {
-                this.equipCharIndex = this.FUN_8010a864(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get());
+                this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
               }
 
               this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
@@ -635,16 +636,16 @@ public class ShopScreen extends MenuScreen {
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
 
           if(this.shopType == 0) {
-            this.equipCharIndex = this.FUN_8010a864(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + i).itemId_00.get());
+            this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + i].itemId_00);
           }
 
-          if(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get() == 0xff) {
+          if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
             playSound(40);
           } else {
             playSound(2);
 
             final boolean hasSpace;
-            if(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get() < 0xc0) {
+            if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
               hasSpace = gameState_800babc8.equipmentCount_1e4.get() < 255;
             } else {
               hasSpace = gameState_800babc8.itemCount_1e6.get() < Config.inventorySize();
@@ -652,15 +653,15 @@ public class ShopScreen extends MenuScreen {
 
             if(!hasSpace) {
               menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> { }));
-            } else if(gameState_800babc8.gold_94.get() < this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price_02.get()) {
+            } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02) {
               menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {
               }));
             } else {
               if(this.shopType != 0) {
                 menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
                   if(result == MessageBoxResult.YES) {
-                    gameState_800babc8.gold_94.sub(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price_02.get());
-                    giveItem(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get());
+                    gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02);
+                    giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
                   }
                 }));
               } else {
@@ -681,13 +682,13 @@ public class ShopScreen extends MenuScreen {
 
           menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
             if(result == MessageBoxResult.YES) {
-              gameState_800babc8.gold_94.sub(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price_02.get());
+              gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02);
 
               menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
-                if(result1 == MessageBoxResult.YES && canEquip(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
-                  giveItem(equipItem(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get(), characterIndices_800bdbb8.get(this.equipCharIndex).get()));
+                if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
+                  giveItem(equipItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get()));
                 } else {
-                  giveItem(this.menuItems_8011e0f8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).itemId_00.get());
+                  giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
                 }
 
                 this.menuState = MenuState.BUY_4;

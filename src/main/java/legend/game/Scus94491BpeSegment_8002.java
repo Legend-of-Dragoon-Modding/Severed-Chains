@@ -62,12 +62,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.SItem.FUN_80103b10;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
@@ -114,7 +115,6 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
-import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -2071,26 +2071,13 @@ public final class Scus94491BpeSegment_8002 {
     return press & 0x20L;
   }
 
-  @Method(0x80023978L)
-  public static long compareItems(final MenuItemStruct04 item1, final MenuItemStruct04 item2) {
-    final int icon1 = getItemIcon(item1.itemId_00.get());
-    final int icon2 = getItemIcon(item2.itemId_00.get());
-
-    if(icon1 != icon2) {
-      return icon1 - icon2;
-    }
-
-    //LAB_800239c8
-    return item1.itemId_00.get() - item2.itemId_00.get();
-  }
-
   @Method(0x800239e0L)
-  public static void FUN_800239e0(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+  public static void FUN_800239e0(final MenuItemStruct04[] a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
     //LAB_800239ec
     int a3 = 0;
     for(int i = 0; i < count; i++) {
-      if((a0.get(i).price_02.get() & 0x1000) == 0) {
-        a1.get(a3).set(a0.get(i).itemId_00.get());
+      if((a0[i].price_02 & 0x1000) == 0) {
+        a1.get(a3).set(a0[i].itemId_00);
         a3++;
       }
 
@@ -2102,29 +2089,20 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
-    qsort(a0, count, 0x4, getBiFunctionAddress(Scus94491BpeSegment_8002.class, "compareItems", MenuItemStruct04.class, MenuItemStruct04.class, long.class));
+  public static void sortItems(final MenuItemStruct04[] a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+    Arrays.sort(a0, 0, count, Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
     FUN_800239e0(a0, a1, count);
   }
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
-    final ArrayRef<MenuItemStruct04> s0 = MEMORY.ref(4, mallocTail(0x4c0L), ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new));
+    final MenuItemStruct04[] s0 = new MenuItemStruct04[gameState_800babc8.itemCount_1e6.get()];
 
-    //LAB_80023ab4
-    for(int i = 0; i < 0x130; i++) {
-      s0.get(i).itemId_00.set(0xff);
-      s0.get(i).price_02.set(0);
-    }
-
-    //LAB_80023aec
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      s0.get(i).itemId_00.set(gameState_800babc8.items_2e9.get(i).get());
+      s0[i].itemId_00 = gameState_800babc8.items_2e9.get(i).get();
     }
 
-    //LAB_80023b10
     sortItems(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-    free(s0.getAddress());
   }
 
   @Method(0x80023b54L)

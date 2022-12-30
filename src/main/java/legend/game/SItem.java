@@ -309,18 +309,11 @@ public final class SItem {
   public static final LodString Fear_gone_8011d604 = MEMORY.ref(2, 0x8011d604L, LodString::new);
   public static final LodString Nothing_happened_8011d618 = MEMORY.ref(2, 0x8011d618L, LodString::new);
 
-  public static final Value _8011d754 = MEMORY.ref(4, 0x8011d754L);
-
   public static final UnsignedByteRef characterCount_8011d7c4 = MEMORY.ref(1, 0x8011d7c4L, UnsignedByteRef::new);
-
-  public static final ArrayRef<MenuItemStruct04> menuItems_8011d7c8 = MEMORY.ref(1, 0x8011d7c8L, ArrayRef.of(MenuItemStruct04.class, 0x100, 0x4, MenuItemStruct04::new));
 
   public static final Value canSave_8011dc88 = MEMORY.ref(1, 0x8011dc88L);
 
-  public static final Value _8011dc8c = MEMORY.ref(4, 0x8011dc8cL);
   public static final MessageBox20 messageBox_8011dc90 = new MessageBox20();
-
-  public static final ArrayRef<Pointer<ArrayRef<MenuItemStruct04>>> _8011dcb8 = MEMORY.ref(4, 0x8011dcb8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MenuItemStruct04.class)), 2, 4, Pointer.deferred(4, ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new))));
 
   public static final BoolRef _8011dcfc = MEMORY.ref(1, 0x8011dcfcL, BoolRef::new);
 
@@ -1022,105 +1015,6 @@ public final class SItem {
     renderText(text, x - textWidth(text) / 2, y, a3);
   }
 
-  /**
-   * @param scrollAmount I'm pretty sure this is the amount the window scrolls when you reach the end of the elements that are currently on screen
-   */
-  @Method(0x80103f00L)
-  public static boolean scrollMenu(final IntRef selectedSlot, @Nullable final IntRef scroll, int slotsDisplayed, int slotCount, final int scrollAmount) {
-    slotsDisplayed = Math.min(slotsDisplayed, slotCount);
-
-    if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) { // Up
-      if(selectedSlot.get() == 0) {
-        if(scroll == null || scroll.get() == 0) { // Wrap around up
-          selectedSlot.set(Math.max(0, slotsDisplayed - 1));
-
-          if(scroll != null) {
-            scroll.set(slotCount - slotsDisplayed);
-          }
-        } else {
-          //LAB_80103f44
-          if(scroll.get() < scrollAmount) {
-            return true;
-          }
-
-          scroll.sub(scrollAmount);
-        }
-      } else {
-        selectedSlot.decr();
-      }
-      //LAB_80103f64
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4000) != 0) { // Down
-      if(selectedSlot.get() < slotsDisplayed - 1) {
-        selectedSlot.incr();
-      } else {
-        if(scroll == null || scroll.get() + slotsDisplayed == slotCount) {
-          selectedSlot.set(0);
-
-          if(scroll != null) {
-            scroll.set(0);
-          }
-        } else {
-          //LAB_80103f8c
-          if(slotCount <= scroll.get() + slotsDisplayed * scrollAmount) {
-            return true;
-          }
-
-          scroll.add(scrollAmount);
-        }
-      }
-      //LAB_80103fb0
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x4) != 0) { // L1
-      if(selectedSlot.get() != 0) {
-        playSound(0x1L);
-        selectedSlot.set(0);
-      }
-
-      return true;
-      //LAB_80103fdc
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x1) != 0) { // L2
-      if(selectedSlot.get() >= slotsDisplayed - 1) {
-        return true;
-      }
-
-      playSound(0x1L);
-      selectedSlot.set(slotsDisplayed - 1);
-      return true;
-      //LAB_80104008
-    } else if((inventoryJoypadInput_800bdc44.get() & 0x8) == 0 || scroll.get() < scrollAmount) { // R1
-      //LAB_8010404c
-      if((inventoryJoypadInput_800bdc44.get() & 0x2) == 0) { // R2
-        return false;
-      }
-
-      if(slotsDisplayed >= slotCount) {
-        return false;
-      }
-
-      final int v1 = scroll.get() + slotsDisplayed * scrollAmount;
-      slotCount -= slotsDisplayed * scrollAmount;
-      if(v1 < slotCount) {
-        scroll.set(v1);
-        //LAB_8010408c
-      } else if(scroll.get() < slotCount) {
-        scroll.set(slotCount);
-      } else {
-        return false;
-      }
-    } else if(scroll.get() >= slotsDisplayed * scrollAmount) {
-      scroll.sub(slotsDisplayed * scrollAmount);
-    } else {
-      //LAB_80104044
-      scroll.set(0);
-    }
-
-    //LAB_80104098
-    playSound(0x1L);
-
-    //LAB_801040a0
-    //LAB_801040ac
-    return true;
-  }
-
   @Method(0x801040c0L)
   public static boolean handleMenuUpDown(final IntRef menuIndex, final int menuOptionCount) {
     if((inventoryJoypadInput_800bdc44.get() & 0x1000) != 0) { // Up
@@ -1186,63 +1080,50 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static long FUN_80104738(final long a0) {
-    //LAB_8010476c
-    for(int i = 0; i < 304; i++) {
-      _8011dcb8.get(0).deref().get(i).itemId_00.set(0xff);
-      _8011dcb8.get(1).deref().get(i).itemId_00.set(0xff);
+  public static int FUN_80104738(final MenuItemStruct04[] equipment, final MenuItemStruct04[] items, final long a0) {
+    for(final MenuItemStruct04 item : equipment) {
+      item.itemId_00 = 0xff;
     }
 
-    //LAB_801047bc
+    for(final MenuItemStruct04 item : items) {
+      item.itemId_00 = 0xff;
+    }
+
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      _8011dcb8.get(1).deref().get(i).itemId_00.set(gameState_800babc8.items_2e9.get(i).get());
-      _8011dcb8.get(1).deref().get(i).itemSlot_01.set(i);
-      _8011dcb8.get(1).deref().get(i).price_02.set(0);
+      items[i].itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      items[i].itemSlot_01 = i;
+      items[i].price_02 = 0;
     }
 
-    //LAB_8010480c
-    //LAB_8010482c
-    int s1;
-    for(s1 = 0; s1 < gameState_800babc8.equipmentCount_1e4.get(); s1++) {
-      _8011dcb8.get(0).deref().get(s1).itemId_00.set(gameState_800babc8.equipment_1e8.get(s1).get());
-      _8011dcb8.get(0).deref().get(s1).itemSlot_01.set(s1);
-      _8011dcb8.get(0).deref().get(s1).price_02.set(0);
+    int equipmentIndex;
+    for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipmentCount_1e4.get(); equipmentIndex++) {
+      equipment[equipmentIndex].itemId_00 = gameState_800babc8.equipment_1e8.get(equipmentIndex).get();
+      equipment[equipmentIndex].itemSlot_01 = equipmentIndex;
+      equipment[equipmentIndex].price_02 = 0;
 
-      if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(s1).get())) {
-        _8011dcb8.get(0).deref().get(s1).price_02.or(0x2000);
+      if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(equipmentIndex).get())) {
+        equipment[equipmentIndex].price_02 |= 0x2000;
       }
-
-      //LAB_80104898
     }
 
-    //LAB_801048ac
-    if(a0 != 0) {
-      return 0;
-    }
+    int equippedItemsCount = 0;
 
-    int s2 = s1;
-    int t0 = 0;
+    if(a0 == 0) {
+      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+        for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
+          if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get() != 0xff) {
+            equipment[equipmentIndex].itemId_00 = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get();
+            equipment[equipmentIndex].itemSlot_01 = equipmentIndex;
+            equipment[equipmentIndex].price_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
 
-    //LAB_801048e0
-    for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      //LAB_801048e8
-      for(int a1 = 0; a1 < 5; a1++) {
-        if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get() != 0xff) {
-          _8011dcb8.get(0).deref().get(s2).itemId_00.set(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(a1).get());
-          _8011dcb8.get(0).deref().get(s2).itemSlot_01.set(s2);
-          _8011dcb8.get(0).deref().get(s2).price_02.set(0x3000 | characterIndices_800bdbb8.get(i).get());
-
-          t0++;
-          s2++;
+            equippedItemsCount++;
+            equipmentIndex++;
+          }
         }
-
-        //LAB_80104968
       }
     }
 
-    //LAB_8010498c
-    //LAB_80104990
-    return t0;
+    return equippedItemsCount;
   }
 
   public static int loadAdditions(final int charIndex, @Nullable final MenuAdditionInfo[] additions) {
@@ -2103,22 +1984,27 @@ public final class SItem {
   }
 
   @Method(0x80109410L)
-  public static void renderMenuItems(final int x, final int y, final ArrayRef<MenuItemStruct04> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
+  public static void renderMenuItems(final int x, final int y, final MenuItemStruct04[] menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
     int s3 = slotScroll;
 
     //LAB_8010947c
     int i;
-    MenuItemStruct04 menuItem;
-    for(i = 0, menuItem = menuItems.get(s3); i < itemCount && menuItem.itemId_00.get() != 0xff; i++, menuItem = menuItems.get(s3)) {
-      //LAB_801094ac
-      renderText(equipment_8011972c.get(menuItem.itemId_00.get()).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.price_02.get() & 0x6000) == 0 ? 4 : 6);
-      renderItemIcon(getItemIcon(menuItem.itemId_00.get()), x + 4, y + FUN_800fc814(i), 0x8L);
+    for(i = 0; i < itemCount; i++) {
+      final MenuItemStruct04 menuItem = menuItems[s3];
 
-      final int s0 = menuItem.price_02.get();
-      if((s0 & 0x1000L) != 0) {
+      if(menuItem.itemId_00 == 0xff) {
+        break;
+      }
+
+      //LAB_801094ac
+      renderText(equipment_8011972c.get(menuItem.itemId_00).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.price_02 & 0x6000) == 0 ? 4 : 6);
+      renderItemIcon(getItemIcon(menuItem.itemId_00), x + 4, y + FUN_800fc814(i), 0x8L);
+
+      final int s0 = menuItem.price_02;
+      if((s0 & 0x1000) != 0) {
         renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
-      } else if((s0 & 0x2000L) != 0) {
+      } else if((s0 & 0x2000) != 0) {
         renderItemIcon(58, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30 = 0x7eaa;
       }
 
@@ -2140,7 +2026,7 @@ public final class SItem {
     //LAB_80109614
     //LAB_80109628
     if(a6 != null) { // There was an NPE here when fading out item list
-      if(menuItems.get(i + slotScroll).itemId_00.get() != 0xff) {
+      if(i + slotScroll < menuItems.length && menuItems[i + slotScroll].itemId_00 != 0xff) {
         a6.flags_00 &= 0xffff_ffbf;
       } else {
         a6.flags_00 |= 0x40;
