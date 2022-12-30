@@ -21,6 +21,9 @@ import java.util.stream.Stream;
 public final class SaveManager {
   private SaveManager() { }
 
+  public static final int MAGIC_RETAIL = 0x0111_4353;
+  public static final int MAGIC_V1 = 0x7661_5344;
+
   public static final int MAX_SAVES = 1000;
 
   private static final Path dir = Paths.get("saves");

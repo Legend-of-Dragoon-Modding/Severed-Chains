@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.Config;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
 import legend.game.types.DabasData100;
@@ -24,7 +25,6 @@ import static legend.game.SItem.SpecialItem_8011d054;
 import static legend.game.SItem.Take_8011d058;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
-import static legend.game.SItem.equipment_8011972c;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.messageBox_8011dc90;
@@ -42,7 +42,6 @@ import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -121,7 +120,7 @@ public class DabasScreen extends MenuScreen {
 
           if(itemId != 0) {
             final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = itemId;
+            item.item = GameEngine.REGISTRIES.items.getEntryById(itemId);
             this.menuItems.add(item);
             this.hasItems = true;
           }
@@ -132,7 +131,7 @@ public class DabasScreen extends MenuScreen {
           this.hasItems = true;
 
           this.specialItem = new MenuItemStruct04();
-          this.specialItem.itemId_00 = specialItemId;
+          this.specialItem.item = GameEngine.REGISTRIES.items.getEntryById(specialItemId);
         }
 
         this.gold = dabasData.gold_34.get();
@@ -242,7 +241,7 @@ public class DabasScreen extends MenuScreen {
 
     for(final MenuItemStruct04 item : this.menuItems) {
       if(item != null) {
-        if(item.itemId_00 < 0xc0) {
+        if(item.item.isEquippable()) {
           equipmentCount++;
         } else {
           itemCount++;
@@ -254,7 +253,7 @@ public class DabasScreen extends MenuScreen {
       equipmentCount++;
     }
 
-    if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > Config.inventorySize()) {
+    if(equipmentCount != 0 && gameState_800babc8.equipment.size() + equipmentCount >= 256 || itemCount != 0 && gameState_800babc8.items.size() + itemCount > Config.inventorySize()) {
       menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> { }));
       return;
     }
@@ -263,12 +262,12 @@ public class DabasScreen extends MenuScreen {
 
     for(final MenuItemStruct04 item : this.menuItems) {
       if(item != null) {
-        giveItem(item.itemId_00);
+        giveItem(item.item);
       }
     }
 
     if(this.specialItem != null) {
-      giveItem(this.specialItem.itemId_00);
+      giveItem(this.specialItem.item);
     }
 
     this.menuItems.clear();
@@ -578,8 +577,8 @@ public class DabasScreen extends MenuScreen {
     renderEightDigitNumber(100, 147, this.gold, 0x2L);
 
     if(this.specialItem != null) {
-      renderItemIcon(getItemIcon(this.specialItem.itemId_00), 198, 192, 0x8L);
-      renderText(equipment_8011972c.get(this.specialItem.itemId_00).deref(), 214, 194, 4);
+      renderItemIcon(this.specialItem.item.getIcon(), 198, 192, 0x8L);
+      renderText(new LodString(this.specialItem.item.name), 214, 194, 4);
     }
 
     //LAB_80103390

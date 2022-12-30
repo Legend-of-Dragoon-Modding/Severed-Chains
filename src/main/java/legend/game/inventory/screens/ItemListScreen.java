@@ -2,8 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.game.inventory.Item;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
@@ -25,14 +24,12 @@ import static legend.game.SItem.goodsGlyphs_801141c4;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
-import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -60,10 +57,10 @@ public class ItemListScreen extends MenuScreen {
   private int mouseX;
   private int mouseY;
 
-  private ArrayRef<UnsignedByteRef> currentList;
+  private List<Item> currentList;
   private List<MenuItemStruct04> currentDisplayList;
   private int currentIndex;
-  private int currentItemId;
+  private Item currentItem;
 
   private final List<MenuItemStruct04> equipment = new ArrayList<>();
   private final List<MenuItemStruct04> items = new ArrayList<>();
@@ -79,23 +76,22 @@ public class ItemListScreen extends MenuScreen {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
         renderGlyphs(goodsGlyphs_801141c4, 0, 0);
-        recalcInventory();
         this.selectedSlotEquipment = 0;
         this.selectedSlotItem = 0;
         this.slotScrollEquipment = 0;
         this.slotScrollItem = 0;
-        this.currentItemId = 0xff;
+        this.currentItem = null;
         this.equipmentHighlight = allocateUiElement(0x76, 0x76, FUN_800fc824(0), FUN_800fc814(this.selectedSlotEquipment) + 32);
         FUN_80104b60(this.equipmentHighlight);
         this.itemHighlight = allocateUiElement(0x76, 0x76, FUN_800fc824(1), FUN_800fc814(this.selectedSlotItem) + 32);
         FUN_80104b60(this.itemHighlight);
         this.equippedItemsCount = FUN_80104738(this.equipment, this.items, 0x1L);
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, 0xff, 0xff);
+        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, null, 0xff);
         this.loadingStage++;
       }
 
       case 1 -> {
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItemId, 0);
+        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItem, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -104,7 +100,7 @@ public class ItemListScreen extends MenuScreen {
             if(this.slotScrollEquipment > 0) {
               playSound(1);
               this.slotScrollEquipment--;
-              this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+              this.setCurrent(gameState_800babc8.equipment, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
             }
           }
 
@@ -112,7 +108,7 @@ public class ItemListScreen extends MenuScreen {
             if(this.slotScrollItem > 0) {
               playSound(1);
               this.slotScrollItem--;
-              this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+              this.setCurrent(gameState_800babc8.items, this.items, this.slotScrollItem + this.selectedSlotItem);
             }
           }
         }
@@ -121,18 +117,18 @@ public class ItemListScreen extends MenuScreen {
           this.scrollAccumulator += 1.0d;
 
           if(MathHelper.inBox(this.mouseX, this.mouseY, 8, 40, 174, 122)) {
-            if(this.slotScrollEquipment < gameState_800babc8.equipmentCount_1e4.get() + (int)this.equippedItemsCount - 7) {
+            if(this.slotScrollEquipment < gameState_800babc8.equipment.size() + this.equippedItemsCount - 7) {
               playSound(1);
               this.slotScrollEquipment++;
-              this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+              this.setCurrent(gameState_800babc8.equipment, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
             }
           }
 
           if(MathHelper.inBox(this.mouseX, this.mouseY, 186, 40, 174, 122)) {
-            if(this.slotScrollItem < gameState_800babc8.itemCount_1e6.get() - 7) {
+            if(this.slotScrollItem < gameState_800babc8.items.size() - 7) {
               playSound(1);
               this.slotScrollItem++;
-              this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+              this.setCurrent(gameState_800babc8.items, this.items, this.slotScrollItem + this.selectedSlotItem);
             }
           }
         }
@@ -140,7 +136,7 @@ public class ItemListScreen extends MenuScreen {
 
       // Fade out
       case 100 -> {
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItemId, 0);
+        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, this.currentItem, 0);
         this._800bdba0 = null;
 
         this._800bdb9c = null;
@@ -152,18 +148,18 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void setCurrent(final ArrayRef<UnsignedByteRef> list, final List<MenuItemStruct04> display, final int index) {
+  private void setCurrent(final List<Item> list, final List<MenuItemStruct04> display, final int index) {
     this.currentList = list;
     this.currentDisplayList = display;
     this.currentIndex = index;
-    this.currentItemId = list.get(index).get();
+    this.currentItem = list.get(index);
   }
 
-  private void renderItemList(final int slotScroll1, final int slotScroll2, final int itemId, final long a3) {
+  private void renderItemList(final int slotScroll1, final int slotScroll2, final Item item, final long a3) {
     renderMenuItems( 16, 33, this.equipment, slotScroll1, 7, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
     renderMenuItems(194, 33, this.items, slotScroll2, 7, this._800bdb9c, this._800bdba0);
-    renderThreeDigitNumber(136, 24, gameState_800babc8.equipmentCount_1e4.get(), 0x2L);
-    renderTwoDigitNumber(326, 24, gameState_800babc8.itemCount_1e6.get(), 0x2L);
+    renderThreeDigitNumber(136, 24, gameState_800babc8.equipment.size(), 0x2L);
+    renderTwoDigitNumber(326, 24, gameState_800babc8.items.size(), 0x2L);
 
     final boolean allocate = a3 == 0xff;
     if(allocate) {
@@ -187,7 +183,10 @@ public class ItemListScreen extends MenuScreen {
       renderText(Press_to_sort_8011d024, 37, 178, 4);
     }
 
-    renderString(0, 194, 178, itemId, allocate);
+    if(item != null) {
+      renderText(new LodString(item.description), 194, 178, 4);
+    }
+
     uploadRenderables();
   }
 
@@ -197,21 +196,21 @@ public class ItemListScreen extends MenuScreen {
     this.mouseY = y;
 
     if(this.loadingStage == 1) {
-      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.equipment.size() - this.slotScrollEquipment); i++) {
         if(this.selectedSlotEquipment != i && MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotEquipment = i;
           this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
-          this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+          this.setCurrent(gameState_800babc8.equipment, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
         }
       }
 
-      for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.items.size() - this.slotScrollItem); i++) {
         if(this.selectedSlotItem != i && MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotItem = i;
           this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
-          this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+          this.setCurrent(gameState_800babc8.items, this.items, this.slotScrollItem + this.selectedSlotItem);
         }
       }
     }
@@ -224,14 +223,14 @@ public class ItemListScreen extends MenuScreen {
     }
 
     if(this.loadingStage == 1 && button == GLFW_MOUSE_BUTTON_LEFT) {
-      for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.equipment.size() - this.slotScrollEquipment); i++) {
         if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotEquipment = i;
           this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
-          this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+          this.setCurrent(gameState_800babc8.equipment, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
 
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+          if((this.currentDisplayList.get(this.currentIndex).flags & 0x2000) != 0) {
             playSound(40);
           } else {
             playSound(2);
@@ -240,14 +239,14 @@ public class ItemListScreen extends MenuScreen {
         }
       }
 
-      for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
+      for(int i = 0; i < Math.min(7, gameState_800babc8.items.size() - this.slotScrollItem); i++) {
         if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlotItem = i;
           this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
-          this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+          this.setCurrent(gameState_800babc8.items, this.items, this.slotScrollItem + this.selectedSlotItem);
 
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+          if((this.currentDisplayList.get(this.currentIndex).flags & 0x2000) != 0) {
             playSound(40);
           } else {
             playSound(2);
@@ -262,7 +261,6 @@ public class ItemListScreen extends MenuScreen {
     if(result == MessageBoxResult.YES) {
       this.currentDisplayList.remove(this.currentIndex);
       setInventoryFromDisplay(this.currentDisplayList, this.currentList, this.currentDisplayList.size());
-      recalcInventory();
     }
   }
 
@@ -280,8 +278,8 @@ public class ItemListScreen extends MenuScreen {
 
       if(key == GLFW_KEY_S) { // Sort items
         playSound(2);
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
-        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+        sortItems(this.equipment, gameState_800babc8.equipment, gameState_800babc8.equipment.size() + this.equippedItemsCount);
+        sortItems(this.items, gameState_800babc8.items, gameState_800babc8.items.size());
       }
     }
   }

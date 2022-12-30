@@ -63,6 +63,7 @@ import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.WeaponTrailEffect3c;
 import legend.game.combat.types.WeaponTrailEffectSegment2c;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
@@ -79,7 +80,9 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
@@ -304,7 +307,7 @@ public final class Bttl_800c {
   public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
   public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
 
-  public static final Value _800c6988 = MEMORY.ref(1, 0x800c6988L);
+  public static final Map<Item, Integer> combatItems_800c6988 = new LinkedHashMap<>();
 
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
@@ -315,7 +318,6 @@ public final class Bttl_800c {
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
-  public static final Value _800c6b70 = MEMORY.ref(2, 0x800c6b70L);
 
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 

@@ -6,4 +6,9 @@ public class RegistryEntry {
   public RegistryEntry(final RegistryId id) {
     this.id = id;
   }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ' ' + this.id;
+  }
 }

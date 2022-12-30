@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.Config;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -24,7 +25,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.game.inventory.Item;
+import legend.game.inventory.Items;
 import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -42,7 +44,6 @@ import legend.game.types.Drgn0_6666Struct;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
-import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuItemStruct04;
@@ -64,6 +65,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
@@ -93,7 +95,6 @@ import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
-import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.playerPos_800c68e8;
 import static legend.game.SMap.renderSmapModel;
@@ -196,7 +197,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
@@ -1471,15 +1471,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x80022898L)
-  public static boolean itemCantBeDiscarded(final int itemId) {
-    if(itemId >= 0xc0) {
-      return false;
-    }
-
-    return (equipmentStats_80111ff0.get(itemId)._00.get() & 0x4) != 0;
-  }
-
   @Method(0x800228d0L)
   public static int getItemIcon(final int itemId) {
     if(itemId >= 0xc0) {
@@ -1572,23 +1563,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022aec
   }
 
-  @Method(0x80022afcL)
-  public static int itemCanBeUsedInMenu(final int itemId) {
-    if(itemId < 0xc0 || itemId == 0xff) {
-      return 0;
-    }
-
-    final int target = itemStats_8004f2ac.get(itemId - 0xc0).target_00.get();
-
-    if((target & 0x10L) == 0) {
-      //LAB_80022b40
-      return 0;
-    }
-
-    //LAB_80022b48
-    return target & 0x12;
-  }
-
   /**
    * @param amount Amount of HP to restore, -1 restores all hP
    * @return The amount of HP restored, -1 if all HP is restored, or -2 if HP was already full
@@ -1670,11 +1644,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022d88L)
-  public static UseItemResponse useItemInMenu(final UseItemResponse response, final int itemId, final int charIndex) {
+  public static UseItemResponse useItemInMenu(final UseItemResponse response, final Item item, final int charIndex) {
     response._00 = 0;
     response.value_04 = 0;
 
-    if(itemCanBeUsedInMenu(itemId) == 0) {
+    if(item.getUseFlags() == 0) {
       //LAB_80022dd8
       return response;
     }
@@ -1682,84 +1656,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022e0c
     response._00 = 1;
 
-    if(itemId == 0xdf) { // Charm potion
-      if(mainCallbackIndex_8004dd20.get() == 0x8L || hasNoEncounters_800bed58.get() == 0) {
-        //LAB_80022e40
-        response._00 = 8;
-        encounterAccumulator_800c6ae8.setu(0);
-      } else {
-        //LAB_80022e50
-        response._00 = 9;
-      }
-
-      //LAB_80022e54
-      //LAB_80022e60
-      return response;
-    }
-
-    //LAB_80022e94
-    final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
-    final int percentage = itemStats.percentage_09.get();
-    if((itemStats.type_0b.get() & 0x80) != 0) {
-      //LAB_80022edc
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 2 : 3;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        //LAB_80022ef0
-        amount = stats_800be5f8.get(charIndex).maxHp_66.get() * percentage / 100;
-      }
-
-      //LAB_80022f3c
-      response.value_04 = addHp(charIndex, amount);
-    }
-
-    //LAB_80022f50
-    if((itemStats.type_0b.get() & 0x40) != 0) {
-      //LAB_80022f98
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 4 : 5;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        //LAB_80022fac
-        amount = stats_800be5f8.get(charIndex).maxMp_6e.get() * percentage / 100;
-      }
-
-      //LAB_80022ff8
-      response.value_04 = addMp(charIndex, amount);
-    }
-
-    //LAB_8002300c
-    if((itemStats.type_0b.get() & 0x20) != 0) {
-      response._00 = 6;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        amount = percentage;
-      }
-
-      //LAB_80023050
-      response.value_04 = addSp(charIndex, amount);
-    }
-
-    //LAB_80023068
-    if((itemStats.type_0b.get() & 0x8) != 0) {
-      final int status = gameState_800babc8.charData_32c.get(charIndex).status_10.get();
-
-      if((itemStats.status_08.get() & status) != 0) {
-        response.value_04 = status;
-        gameState_800babc8.charData_32c.get(charIndex).status_10.and(~status);
-      }
-
-      //LAB_800230ec
-      response._00 = 7;
-    }
+    item.use(response, charIndex);
 
     //LAB_800230f0
     //LAB_800230fc
@@ -1767,168 +1664,62 @@ public final class Scus94491BpeSegment_8002 {
     return response;
   }
 
-  /** Recalculates item/equipment counts and removes invalid entries */
-  @Method(0x80023148L)
-  public static void recalcInventory() {
-    gameState_800babc8.equipmentCount_1e4.set((short)0);
-
-    //LAB_80023164
-    while(gameState_800babc8.equipment_1e8.get(gameState_800babc8.equipmentCount_1e4.get()).get() != 0xff) {
-      if(gameState_800babc8.equipmentCount_1e4.get() >= 255) {
-        break;
-      }
-
-      gameState_800babc8.equipmentCount_1e4.incr();
-    }
-
-    //LAB_80023198
-    //LAB_800231c0
-    for(int i = gameState_800babc8.equipmentCount_1e4.get(); i <= 256; i++) {
-      gameState_800babc8.equipment_1e8.get(i).set(0xff);
-    }
-
-    //LAB_800231d8
-    gameState_800babc8.itemCount_1e6.set((short)0);
-
-    //LAB_800231f0
-    while(gameState_800babc8.items_2e9.get(gameState_800babc8.itemCount_1e6.get()).get() != 0xff) {
-      if(gameState_800babc8.itemCount_1e6.get() >= Config.inventorySize()) {
-        break;
-      }
-
-      gameState_800babc8.itemCount_1e6.incr();
-    }
-
-    //LAB_80023224
-    //LAB_80023248
-    for(int i = gameState_800babc8.itemCount_1e6.get(); i <= Config.inventorySize(); i++) {
-      gameState_800babc8.items_2e9.get(i).set(0xff);
-    }
-
-    //LAB_8002325c
-  }
-
   @Method(0x80023264L)
   public static void checkForPsychBombX() {
     gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
 
-    //LAB_800232a4
-    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
+    for(final Item consumable : gameState_800babc8.items) {
+      if(consumable == Items.PSYCH_BOMB_X.get()) {
         gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
       }
-
-      //LAB_800232c4
     }
-
-    //LAB_800232d4
   }
 
-  /** Pretty sure this moves all the items in the inv up one when you use one */
   @Method(0x800232dcL)
-  public static int takeItem(final int itemIndex) {
-    recalcInventory();
-
-    if(gameState_800babc8.itemCount_1e6.get() == 0) {
-      return 0xff;
+  public static Item takeItem(final int itemIndex) {
+    if(itemIndex >= gameState_800babc8.items.size() - 1) {
+      return null;
     }
 
-    if(itemIndex < Config.inventorySize()) {
-      if(gameState_800babc8.items_2e9.get(itemIndex).get() == 0xff) {
-        return 0xff;
-      }
+    return gameState_800babc8.items.remove(itemIndex);
+  }
 
-      //LAB_80023334
-      for(int i = itemIndex; i < Config.inventorySize() - 1; i++) {
-        gameState_800babc8.items_2e9.get(i).set(gameState_800babc8.items_2e9.get(i + 1).get());
-      }
-
-      //LAB_80023358
-      gameState_800babc8.items_2e9.get(Config.inventorySize() - 1).set(0xff);
-      gameState_800babc8.itemCount_1e6.decr();
-      return 0;
-    }
-
-    //LAB_8002338c
-    if(itemIndex >= 192) {
-      //LAB_800233a4
-      for(int i = 0; i < Config.inventorySize(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == itemIndex) {
-          //LAB_8002337c
-          return takeItem(i);
-        }
+  public static Item takeItem(final Item consumable) {
+    for(final Iterator<Item> it = gameState_800babc8.items.listIterator(); it.hasNext(); ) {
+      if(it.next() == consumable) {
+        it.remove();
+        return consumable;
       }
     }
 
-    //LAB_800233c4
-    //LAB_800233c8
-    return 0xff;
+    return null;
   }
 
   @Method(0x800233d8L)
-  public static int takeEquipment(final int equipmentIndex) {
-    recalcInventory();
-
-    if(gameState_800babc8.equipmentCount_1e4.get() == 0) {
-      return 0xff;
+  public static Item takeEquipment(final int equipmentIndex) {
+    if(equipmentIndex >= gameState_800babc8.equipment.size()) {
+      return null;
     }
 
-    //LAB_8002340c
-    if(gameState_800babc8.equipment_1e8.get(equipmentIndex).get() == 0xff) {
-      return 0xff;
-    }
-
-    //LAB_80023430
-    for(int s0 = equipmentIndex; s0 < 0xff; s0++) {
-      gameState_800babc8.equipment_1e8.get(s0).set(gameState_800babc8.equipment_1e8.get(s0 + 1).get());
-    }
-
-    //LAB_80023454
-    gameState_800babc8.equipment_1e8.get(0x99).set(0xff);
-    gameState_800babc8.equipmentCount_1e4.decr();
-
-    //LAB_80023474
-    return 0;
+    return gameState_800babc8.equipment.remove(equipmentIndex);
   }
 
   @Method(0x80023484L)
-  public static int giveItem(final int itemId) {
-    recalcInventory();
-
-    if(itemId == 0xff) {
-      return 0xff;
-    }
-
-    if(itemId >= 0x100) {
-      return 0;
-    }
-
-    if(itemId < 0xc0) {
-      final int count = gameState_800babc8.equipmentCount_1e4.get();
-
-      if(count >= 255) {
+  public static int giveItem(final Item item) {
+    if(item.isEquippable()) {
+      if(gameState_800babc8.equipment.size() >= 256) {
         return 0xff;
       }
 
-      gameState_800babc8.equipment_1e8.get(count).set(itemId);
-      gameState_800babc8.equipmentCount_1e4.incr();
+      gameState_800babc8.equipment.add(item);
       return 0;
     }
 
-    //LAB_800234f4
-    final int count = gameState_800babc8.itemCount_1e6.get();
-
-    if(count >= Config.inventorySize()) {
-      //LAB_8002350c
+    if(gameState_800babc8.items.size() >= Config.inventorySize()) {
       return 0xff;
     }
 
-    //LAB_80023514
-    gameState_800babc8.items_2e9.get(count).set(itemId);
-    gameState_800babc8.itemCount_1e6.incr();
-
-    //LAB_80023530
-    //LAB_80023534
+    gameState_800babc8.items.add(item);
     return 0;
   }
 
@@ -1937,7 +1728,7 @@ public final class Scus94491BpeSegment_8002 {
     int count = 0;
     //LAB_80023580
     for(int itemSlot = 0; itemSlot < itemCount.get(); itemSlot++) {
-      if(giveItem(items.get(itemSlot).get()) != 0) {
+      if(giveItem(GameEngine.REGISTRIES.items.getEntryById(items.get(itemSlot).get())) != 0) {
         count++;
       } else {
         //LAB_800235a4
@@ -2072,25 +1863,19 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void setInventoryFromDisplay(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> a1, final int count) {
-    //LAB_800239ec
-    int itemIndex = 0;
+  public static void setInventoryFromDisplay(final List<MenuItemStruct04> display, final List<Item> a1, final int count) {
+    a1.clear();
+
     for(int i = 0; i < count; i++) {
-      if((display.get(i).flags_02 & 0x1000) == 0) {
-        a1.get(itemIndex).set(display.get(i).itemId_00);
-        itemIndex++;
+      if((display.get(i).flags & 0x1000) == 0) {
+        a1.add(display.get(i).item);
       }
-
-      //LAB_80023a0c
     }
-
-    //LAB_80023a1c
-    a1.get(itemIndex).set(0xff);
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> items, final int count) {
-    display.sort(Comparator.comparingInt(item -> getItemIcon(item.itemId_00)));
+  public static void sortItems(final List<MenuItemStruct04> display, final List<Item> items, final int count) {
+    display.sort(Comparator.comparingInt(item -> item.item.getIcon()));
     setInventoryFromDisplay(display, items, count);
   }
 
@@ -2098,13 +1883,13 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80023a88() {
     final List<MenuItemStruct04> items = new ArrayList<>();
 
-    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
+    for(final Item consumable : gameState_800babc8.items) {
       final MenuItemStruct04 item = new MenuItemStruct04();
-      item.itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      item.item = consumable;
       items.add(item);
     }
 
-    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+    sortItems(items, gameState_800babc8.items, gameState_800babc8.items.size());
   }
 
   @Method(0x80023b54L)
@@ -2426,7 +2211,7 @@ public final class Scus94491BpeSegment_8002 {
       case 0xfd -> addGold(100);
       case 0xfe -> addGold(200);
       case 0xff -> 0xff;
-      default -> giveItem(s0.params_20.get(0).deref().get());
+      default -> giveItem(GameEngine.REGISTRIES.items.getEntryById(s0.params_20.get(0).deref().get()));
     };
 
     //LAB_80024574
@@ -2438,28 +2223,24 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80024590L)
   public static long scriptTakeItem(final RunningScript script) {
-    final int itemId = script.params_20.get(0).deref().get() & 0xff;
+    final int itemId = script.params_20.get(0).deref().get();
 
     final GameState52c state = gameState_800babc8;
 
-    if(itemId < 0xc0) {
-      //LAB_800245e0
-      for(int i = 0; i < state.equipmentCount_1e4.get(); i++) {
-        if(state.equipment_1e8.get(i).get() == itemId) {
-          //LAB_8002460c
-          script.params_20.get(1).deref().set(takeEquipment(i));
-          return 0;
-        }
-      }
+    final Item item = GameEngine.REGISTRIES.items.getEntryById(itemId);
 
-      //LAB_80024600
-      script.params_20.get(1).deref().set(0xff);
-    } else {
-      //LAB_80024628
-      script.params_20.get(1).deref().set(takeItem(itemId));
+    for(int i = 0; i < state.equipment.size(); i++) {
+      if(state.equipment.get(i) == item) {
+        script.params_20.get(1).deref().set(takeEquipment(i) == null ? 0xff : 0);
+        return 0;
+      }
     }
 
-    //LAB_8002463c
+    if(itemId < 32) {
+      throw new RuntimeException("Script taking by index instead of ID, need to use other takeItem");
+    }
+
+    script.params_20.get(1).deref().set(takeItem(item) == null ? 0xff : 0);
     return 0;
   }
 

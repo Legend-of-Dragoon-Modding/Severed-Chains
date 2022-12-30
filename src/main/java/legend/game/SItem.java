@@ -1,5 +1,7 @@
 package legend.game;
 
+import legend.core.GameEngine;
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
@@ -19,10 +21,13 @@ import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.inventory.EquipmentSlot;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.registries.RegistryId;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentStats1c;
@@ -43,7 +48,9 @@ import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
@@ -69,7 +76,6 @@ import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023544;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
@@ -82,7 +88,6 @@ import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
@@ -210,7 +215,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> _80117a10 = MEMORY.ref(4, 0x80117a10L, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> equipment_8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> itemNames_8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> additions_8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
 
@@ -853,60 +858,32 @@ public final class SItem {
   }
 
   @Method(0x801039a0L)
-  public static boolean canEquip(final int equipmentId, final int charIndex) {
-    return charIndex != -1 && equipmentId < 0xc0 && (characterValidEquipment_80114284.offset(charIndex).get() & equipmentStats_80111ff0.get(equipmentId).equips_03.get()) != 0;
-  }
-
-  @Method(0x801039f8L)
-  public static int getEquipmentSlot(final int itemId) {
-    if(itemId < 0xc0) {
-      final int type = equipmentStats_80111ff0.get(itemId).type_01.get();
-
-      //LAB_80103a2c
-      for(int i = 0; i < 5; i++) {
-        if((type & 0x80 >> i) != 0) {
-          return i;
-        }
-
-        //LAB_80103a44
-      }
-    }
-
-    //LAB_80103a54
-    return -1;
+  public static boolean canEquip(final Item item, final int charIndex) {
+    return charIndex != -1 && item.isEquippableBy(charIndex);
   }
 
   /**
    * @return Item ID of previously-equipped item, 0xff if invalid, 0x100 if no item was equipped
    */
   @Method(0x80103a5cL)
-  public static int equipItem(final int equipmentId, final int charIndex) {
+  public static Item equipItem(final Item item, final int charIndex) {
     if(charIndex == -1) {
-      return 0xff;
+      return null;
     }
 
-    if((!canEquip(equipmentId, charIndex))) {
-      return 0xff;
+    if((!canEquip(item, charIndex))) {
+      return null;
     }
 
-    final int slot = getEquipmentSlot(equipmentId);
-    if(slot == -1) {
-      //LAB_80103ab8
-      return 0xff;
+    final EquipmentSlot slot = item.getEquipmentSlot();
+    if(slot == null) {
+      return null;
     }
 
-    //LAB_80103ac0
     final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
-    int previousId = charData.equipment_14.get(slot).get();
-    charData.equipment_14.get(slot).set(equipmentId);
-
-    if(previousId == 0xff) {
-      previousId = 0x100;
-    }
-
-    //LAB_80103af4
-    //LAB_80103af8
-    return previousId;
+    final Item previous = charData.equipment.get(slot);
+    charData.equipment.put(slot, item);
+    return previous;
   }
 
   @Method(0x80103b10L)
@@ -1016,22 +993,22 @@ public final class SItem {
     equipment.clear();
     items.clear();
 
-    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
+    for(final Item consumable : gameState_800babc8.items) {
       final MenuItemStruct04 item = new MenuItemStruct04();
-      item.itemId_00 = gameState_800babc8.items_2e9.get(i).get();
-      item.flags_02 = 0;
+      item.item = consumable;
+      item.flags = 0;
       items.add(item);
     }
 
     int equipmentIndex;
-    for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipmentCount_1e4.get(); equipmentIndex++) {
+    for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment.size(); equipmentIndex++) {
       final MenuItemStruct04 item = new MenuItemStruct04();
 
-      item.itemId_00 = gameState_800babc8.equipment_1e8.get(equipmentIndex).get();
-      item.flags_02 = 0;
+      item.item = gameState_800babc8.equipment.get(equipmentIndex);
+      item.flags = 0;
 
-      if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(equipmentIndex).get())) {
-        item.flags_02 |= 0x2000;
+      if(a0 != 0 && !gameState_800babc8.equipment.get(equipmentIndex).canBeDiscarded()) {
+        item.flags |= 0x2000;
       }
 
       equipment.add(item);
@@ -1041,11 +1018,11 @@ public final class SItem {
 
     if(a0 == 0) {
       for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-        for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-          if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get() != 0xff) {
+        for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+          if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment.containsKey(equipmentSlot)) {
             final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get();
-            item.flags_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
+            item.item = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment.get(equipmentSlot);
+            item.flags = 0x3000 | characterIndices_800bdbb8.get(i).get();
             equipment.add(item);
 
             equippedItemsCount++;
@@ -1620,27 +1597,30 @@ public final class SItem {
   }
 
   @Method(0x801085e0L)
-  public static void renderCharacterStats(final int charIndex, final int equipmentId, final boolean allocate) {
+  public static void renderCharacterStats(final int charIndex, @Nullable final Item equipment, final boolean allocate) {
     if(charIndex != -1) {
       final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xa0);
       final ActiveStatsa0 statsTmp = sp0x10tmp.get().cast(ActiveStatsa0::new);
 
-      if(equipmentId != 0xff) {
-        final Memory.TemporaryReservation sp0xb0tmp = MEMORY.temp(0x5);
+      if(equipment != null) {
+        final EnumMap<EquipmentSlot, Item> currentEquipment = new EnumMap<>(EquipmentSlot.class);
+        for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+          final Item item = gameState_800babc8.charData_32c.get(charIndex).equipment.get(equipmentSlot);
 
-        //LAB_80108638
-        memcpy(sp0xb0tmp.address, gameState_800babc8.charData_32c.get(charIndex).equipment_14.getAddress(), 5);
+          if(item != null) {
+            currentEquipment.put(equipmentSlot, item);
+          }
+        }
 
-        equipItem(equipmentId, charIndex);
+        equipItem(equipment, charIndex);
         loadCharacterStats(0);
 
         //LAB_80108694
         memcpy(statsTmp.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
 
         //LAB_801086e8
-        memcpy(gameState_800babc8.charData_32c.get(charIndex).equipment_14.getAddress(), sp0xb0tmp.address, 5);
-
-        sp0xb0tmp.release();
+        gameState_800babc8.charData_32c.get(charIndex).equipment.clear();
+        gameState_800babc8.charData_32c.get(charIndex).equipment.putAll(currentEquipment);
 
         loadCharacterStats(0);
       } else {
@@ -1802,42 +1782,23 @@ public final class SItem {
     if(allocate) {
       allocateUiElement(0x59, 0x59, 194, 16);
 
-      if(charData.equipment_14.get(0).get() != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14.get(0).get()), 202, 17, 0);
-      }
-
-      //LAB_80108ee4
-      if(charData.equipment_14.get(1).get() != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14.get(1).get()), 202, 31, 0);
-      }
-
-      //LAB_80108f10
-      if(charData.equipment_14.get(2).get() != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14.get(2).get()), 202, 45, 0);
-      }
-
-      //LAB_80108f3c
-      if(charData.equipment_14.get(3).get() != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14.get(3).get()), 202, 59, 0);
-      }
-
-      //LAB_80108f68
-      if(charData.equipment_14.get(4).get() != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14.get(4).get()), 202, 73, 0);
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        if(charData.equipment.get(slot) != null) {
+          renderItemIcon(charData.equipment.get(slot).getIcon(), 202, 17 + slot.ordinal() * 14, 0);
+        }
       }
     }
 
-    //LAB_80108f94
-    //LAB_80108f98
-    renderText(equipment_8011972c.get(charData.equipment_14.get(0).get()).deref(), 220, 19, 4);
-    renderText(equipment_8011972c.get(charData.equipment_14.get(1).get()).deref(), 220, 33, 4);
-    renderText(equipment_8011972c.get(charData.equipment_14.get(2).get()).deref(), 220, 47, 4);
-    renderText(equipment_8011972c.get(charData.equipment_14.get(3).get()).deref(), 220, 61, 4);
-    renderText(equipment_8011972c.get(charData.equipment_14.get(4).get()).deref(), 220, 75, 4);
-
-    //LAB_8010905c
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      if(charData.equipment.get(slot) != null) {
+        renderText(new LodString(charData.equipment.get(slot).name), 220, 19 + slot.ordinal() * 14, 4);
+      }
+    }
   }
 
+  /**
+   * @param stringType 0 - item descriptions
+   */
   @Method(0x80109074L)
   public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final boolean allocate) {
     if(allocate) {
@@ -1925,10 +1886,10 @@ public final class SItem {
       final MenuItemStruct04 menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(equipment_8011972c.get(menuItem.itemId_00).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? 4 : 6);
-      renderItemIcon(getItemIcon(menuItem.itemId_00), x + 4, y + FUN_800fc814(i), 0x8L);
+      renderText(new LodString(menuItem.item.name), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags & 0x6000) == 0 ? 4 : 6);
+      renderItemIcon(menuItem.item.getIcon(), x + 4, y + FUN_800fc814(i), 0x8L);
 
-      final int s0 = menuItem.flags_02;
+      final int s0 = menuItem.flags;
       if((s0 & 0x1000) != 0) {
         renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
@@ -2003,27 +1964,119 @@ public final class SItem {
   public static void loadSaveFile(final int saveSlot) {
     final byte[] data = SaveManager.loadGame(saves.get(saveSlot).a());
 
-    final int offset = switch((int)MathHelper.get(data, 0, 4)) {
-      case 0x01114353 -> 0x200;
-      case 0x76615344 -> 0x34;
-      default -> throw new RuntimeException("Invalid saved game file");
-    };
+    switch((int)MathHelper.get(data, 0, 4)) {
+      case SaveManager.MAGIC_RETAIL -> {
+        MEMORY.setBytes(gameState_800babc8.getAddress(), data, 0x200, 0x52c);
 
-    MEMORY.setBytes(gameState_800babc8.getAddress(), data, offset, 0x52c);
+        gameState_800babc8.equipment.clear();
+        for(int i = 0; i < gameState_800babc8.equipmentCount_1e4.get(); i++) {
+          gameState_800babc8.equipment.add(GameEngine.REGISTRIES.items.getEntryById(gameState_800babc8.equipment_1e8.get(i).get()));
+        }
+
+        gameState_800babc8.items.clear();
+        for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
+          gameState_800babc8.items.add(GameEngine.REGISTRIES.items.getEntryById(gameState_800babc8.items_2e9.get(i).get()));
+        }
+
+        for(int charSlot = 0; charSlot < 9; charSlot++) {
+          final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
+
+          charData.equipment.clear();
+          for(int equipSlot = 0; equipSlot < 5; equipSlot++) {
+            if(charData.equipment_14.get(equipSlot).get() != 0xff) {
+              charData.equipment.put(EquipmentSlot.fromRetail(equipSlot), GameEngine.REGISTRIES.items.getEntryById(charData.equipment_14.get(equipSlot).get()));
+            }
+          }
+        }
+      }
+
+      case SaveManager.MAGIC_V1 -> {
+        MEMORY.setBytes(gameState_800babc8.getAddress(), data, 0x34, 0x52c);
+
+        final ByteBuffer stream = ByteBuffer.wrap(data);
+        stream.position(0x34 + 0x52c);
+
+        gameState_800babc8.equipment.clear();
+        final int equipmentCount = IoHelper.readInt(stream);
+        for(int i = 0; i < equipmentCount; i++) {
+          final String name = IoHelper.readString(stream);
+          gameState_800babc8.equipment.add(GameEngine.REGISTRIES.items.getEntry(RegistryId.fromFull(name)));
+        }
+
+        gameState_800babc8.items.clear();
+        final int itemCount = IoHelper.readInt(stream);
+        for(int i = 0; i < itemCount; i++) {
+          final String name = IoHelper.readString(stream);
+          gameState_800babc8.items.add(GameEngine.REGISTRIES.items.getEntry(RegistryId.fromFull(name)));
+        }
+
+        for(int charId = 0; charId < 9; charId++) {
+          final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+
+          charData.equipment.clear();
+          for(final EquipmentSlot slot : EquipmentSlot.values()) {
+            final String name = IoHelper.readString(stream);
+
+            if(!name.isEmpty()) {
+              charData.equipment.put(slot, GameEngine.REGISTRIES.items.getEntry(RegistryId.fromFull(name)));
+            }
+          }
+        }
+      }
+
+      default ->
+        throw new RuntimeException("Invalid saved game file");
+    }
   }
 
   @Method(0x8010a344L)
-  public static void saveGame(final int slot) {
-    final SavedGameDisplayData displayData = updateSaveGameDisplayData(String.valueOf(slot), slot);
+  public static void saveGame(final int saveSlot) {
+    final SavedGameDisplayData displayData = updateSaveGameDisplayData(String.valueOf(saveSlot), saveSlot);
 
-    final byte[] data = new byte[0x560];
+    int length = 0x34 + 0x52c + 0x8;
+    length += gameState_800babc8.equipment.stream().mapToInt(item -> item.id.toString().length() + 4).sum();
+    length += gameState_800babc8.items.stream().mapToInt(item -> item.id.toString().length() + 4).sum();
+
+    for(int charId = 0; charId < 9; charId++) {
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        if(charData.equipment.containsKey(slot)) {
+          length += charData.equipment.get(slot).id.toString().length() + 4;
+        } else {
+          length += 4;
+        }
+      }
+    }
+
+    final byte[] data = new byte[length];
     displayData.save(data, 0);
     MEMORY.getBytes(gameState_800babc8.getAddress(), data, 0x34, 0x52c);
 
-    if(slot == -1) {
+    final ByteBuffer stream = ByteBuffer.wrap(data);
+    stream.position(0x34 + 0x52c);
+
+    IoHelper.write(stream, gameState_800babc8.equipment.size());
+    gameState_800babc8.equipment.forEach(item -> IoHelper.write(stream, item.id.toString()));
+    IoHelper.write(stream, gameState_800babc8.items.size());
+    gameState_800babc8.items.forEach(item -> IoHelper.write(stream, item.id.toString()));
+
+    for(int charId = 0; charId < 9; charId++) {
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        if(charData.equipment.containsKey(slot)) {
+          IoHelper.write(stream, charData.equipment.get(slot).id.toString());
+        } else {
+          IoHelper.write(stream, "");
+        }
+      }
+    }
+
+    if(saveSlot == -1) {
       SaveManager.newSave(data);
     } else {
-      SaveManager.overwriteSave(saves.get(slot).a(), data);
+      SaveManager.overwriteSave(saves.get(saveSlot).a(), data);
     }
   }
 
@@ -2355,7 +2408,6 @@ public final class SItem {
           }
 
           FUN_80103b10();
-          recalcInventory();
 
           //LAB_8010d87c
           for(int i = 0; i < 10; i++) {
@@ -2854,7 +2906,7 @@ public final class SItem {
     for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
       if(itemsDroppedByEnemies_800bc928.get(i).get() != 0xff) {
         renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928.get(i).get()), 18, y1, 0x8L);
-        renderText(equipment_8011972c.get(itemsDroppedByEnemies_800bc928.get(i).get()).deref(), 28, y2, 0);
+        renderText(itemNames_8011972c.get(itemsDroppedByEnemies_800bc928.get(i).get()).deref(), 28, y2, 0);
       }
 
       //LAB_8010eb38
@@ -3061,7 +3113,11 @@ public final class SItem {
 
       //LAB_801101e4
       for(int i = 0; i < 5; i++) {
-        stats.equipment_30.get(i).set(charData.equipment_14.get(i).get());
+        final Item item = charData.equipment.get(EquipmentSlot.fromRetail(i));
+
+        if(item != null) {
+          stats.equipment_30.get(i).set(GameEngine.REGISTRIES.items.getEntryId(item));
+        }
       }
 
       stats.selectedAddition_35.set(charData.selectedAddition_19.get());

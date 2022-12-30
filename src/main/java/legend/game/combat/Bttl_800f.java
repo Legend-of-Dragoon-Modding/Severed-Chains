@@ -1,6 +1,6 @@
 package legend.game.combat;
 
-import legend.core.Config;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
@@ -19,6 +19,7 @@ import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.inventory.Item;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -30,6 +31,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Iterator;
+import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.GPU;
@@ -46,7 +49,6 @@ import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
@@ -62,17 +64,14 @@ import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6988;
 import static legend.game.combat.Bttl_800c._800c69c8;
 import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
 import static legend.game.combat.Bttl_800c._800c6b68;
 import static legend.game.combat.Bttl_800c._800c6b6c;
-import static legend.game.combat.Bttl_800c._800c6b70;
 import static legend.game.combat.Bttl_800c._800c6ba0;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6ba8;
@@ -124,8 +123,10 @@ import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
+import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
+import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
@@ -1761,17 +1762,9 @@ public final class Bttl_800f {
 
     //LAB_800f4a58
     if(v1 == 0) {
-      //LAB_800f4a6c
-      //LAB_800f4a7c
-      for(int i = 0; i < Config.inventorySize(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == 0xff) {
-          break;
-        }
-      }
-
       //LAB_800f4a9c
       FUN_800f83c8();
-      a2.count_22.set((short)_800c6b70.getSigned());
+      a2.count_22.set((short)combatItems_800c6988.size());
     } else if(v1 == 0x1L) {
       //LAB_800f4abc
       //LAB_800f4ae0
@@ -2145,10 +2138,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5410
-        s0 = (int)FUN_800f7768(a0, a1);
+        s0 = FUN_800f7768(a0, a1);
         if(s0 == 0x1L) {
           if(structa4._0a.get() == 0) {
-            takeItem(((structa4._1c.get() & 0xff) - 0x40) & 0xff);
+            takeItem(GameEngine.REGISTRIES.items.getEntryById((structa4._1c.get() & 0xff) - 0x40));
           }
 
           //LAB_800f545c
@@ -2232,7 +2225,16 @@ public final class Bttl_800f {
 
     if(v1 == 0) {
       //LAB_800f56f0
-      return (int)(_800c6988.offset((a1._24.get() + a1._1e.get()) * 0x2L).get() - 0xc0);
+      int i = 0;
+      for(final var entry : combatItems_800c6988.entrySet()) {
+        if(i == a1._24.get() + a1._1e.get()) {
+          return GameEngine.REGISTRIES.items.getEntryId(entry.getKey()) - 0xc0;
+        }
+
+        i++;
+      }
+
+      return 0; // Shouldn't get here
     }
 
     if(v1 == 1) {
@@ -2290,8 +2292,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f58a4
-    long s7 = 0x1L;
-    long sp7c = 0;
+    final Iterator<Map.Entry<Item, Integer>> sp7c = combatItems_800c6988.entrySet().iterator();
 
     final LodString sp0x18 = new LodString(18);
     final LodString sp0x40 = new LodString(5);
@@ -2307,8 +2308,12 @@ public final class Bttl_800f {
       final LodString s3;
       if(a0 == 0) {
         //LAB_800f5918
-        s3 = _80050ae8.get((int)(_800c6988.offset(sp7c).get() - 0xc0)).deref();
-        intToStr((int)_800c6988.offset(s7).get(), sp0x48);
+        final var entry = sp7c.next();
+        final Item item = entry.getKey();
+        final int amount = entry.getValue();
+
+        s3 = new LodString(item.name);
+        intToStr(amount, sp0x48);
 
         //LAB_800f5968
         int i;
@@ -2326,7 +2331,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f59bc
-        if(_800c6988.offset(s7).get() < 10) {
+        if(amount < 10) {
           sp0x18.charAt(i, 0);
           i++;
         }
@@ -2415,8 +2420,6 @@ public final class Bttl_800f {
 
       //LAB_800f5c38
       y1 += 14;
-      sp7c = sp7c + 0x2L;
-      s7 = s7 + 0x2L;
     }
 
     //LAB_800f5c64
@@ -2747,7 +2750,7 @@ public final class Bttl_800f {
             if(v1 == 0x5L) {
               FUN_800f83c8();
 
-              if(_800c6b70.getSigned() == 0) {
+              if(combatItems_800c6988.isEmpty()) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -3373,33 +3376,10 @@ public final class Bttl_800f {
 
   @Method(0x800f83c8L)
   public static void FUN_800f83c8() {
-    //LAB_800f83dc
-    for(int i = 0; i < 0x40; i++) {
-      _800c6988.offset(i).setu(0xffL);
-    }
+    combatItems_800c6988.clear();
 
-    _800c6b70.setu(0);
-
-    //LAB_800f8420
-    for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.itemCount_1e6.get(); itemSlot1++) {
-      //LAB_800f843c
-      for(int itemSlot2 = 0; itemSlot2 < gameState_800babc8.itemCount_1e6.get(); itemSlot2++) {
-        final int itemId1 = gameState_800babc8.items_2e9.get(itemSlot1).get();
-        final int itemId2 = (int)_800c6988.offset(itemSlot2 * 0x2L).get();
-
-        if(itemId2 == itemId1) {
-          _800c6988.offset(itemSlot2 * 0x2L).offset(0x1L).addu(0x1L);
-          break;
-        }
-
-        //LAB_800f8468
-        if(itemId2 == 0xff) {
-          _800c6988.offset(itemSlot2 * 0x2L).setu(itemId1);
-          _800c6988.offset(itemSlot2 * 0x2L).offset(0x1L).setu(0x1L);
-          _800c6b70.addu(0x1L);
-          break;
-        }
-      }
+    for(final Item item : gameState_800babc8.items) {
+      combatItems_800c6988.merge(item, 1, Integer::sum);
     }
   }
 
@@ -3864,44 +3844,45 @@ public final class Bttl_800f {
 
   @Method(0x800f98b0L)
   public static long FUN_800f98b0(final RunningScript s3) {
-    int itemId = s3.params_20.get(0).deref().get();
-
-    if(gameState_800babc8.itemCount_1e6.get() == 0) {
+    if(gameState_800babc8.items.isEmpty()) {
       s3.params_20.get(1).deref().set(-1);
       return 0;
     }
 
-    if(itemId == -1) {
-      itemId = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.itemCount_1e6.get()) >> 16).get();
+    Item item;
+    if(s3.params_20.get(0).deref().get() == -1) {
+      item = gameState_800babc8.items.get((simpleRand() * gameState_800babc8.items.size()) >> 16);
 
       //LAB_800f996c
       for(int i = 0; i < 10; i++) {
         //TODO maybe protected item IDs that can't be dropped?
-        if(itemId == _800c72cc.get(i).get()) {
+        if(item == GameEngine.REGISTRIES.items.getEntryById(_800c72cc.get(i).get())) {
           //LAB_800f999c
-          itemId = -1;
+          item = null;
           break;
         }
       }
+    } else {
+      item = GameEngine.REGISTRIES.items.getEntryById(s3.params_20.get(0).deref().get());
     }
 
     //LAB_800f9988
-    if(itemId != -1) {
+    if(item != null) {
       //LAB_800f99a4
-      if(takeItem(itemId) != 0) {
-        itemId = -1;
+      if(takeItem(item) == null) {
+        item = null;
       }
     }
 
     //LAB_800f99c0
-    s3.params_20.get(1).deref().set(itemId);
+    s3.params_20.get(1).deref().set(GameEngine.REGISTRIES.items.getEntryId(item));
     return 0;
   }
 
   @Method(0x800f99ecL)
   public static long FUN_800f99ec(final RunningScript a0) {
     final int s1;
-    if(giveItem(a0.params_20.get(0).deref().get()) == 0) {
+    if(giveItem(GameEngine.REGISTRIES.items.getEntryById(a0.params_20.get(0).deref().get())) == 0) {
       s1 = a0.params_20.get(0).deref().get();
     } else {
       s1 = -1;

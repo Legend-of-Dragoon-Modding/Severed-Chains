@@ -10,6 +10,10 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.inventory.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameState52c implements MemoryRef {
   private final Value ref;
@@ -82,6 +86,9 @@ public class GameState52c implements MemoryRef {
   public final UnsignedShortRef _4e6;
   /** Controls how the indicators (triangles) are drawn (called "Note" in options menu) */
   public final UnsignedIntRef indicatorMode_4e8;
+
+  public final List<Item> equipment = new ArrayList<>();
+  public final List<Item> items = new ArrayList<>();
 
   public GameState52c(final Value ref) {
     this.ref = ref;

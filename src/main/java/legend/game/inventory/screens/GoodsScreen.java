@@ -1,12 +1,11 @@
 package legend.game.inventory.screens;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
-import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.Goods_8011cf48;
@@ -36,7 +35,7 @@ public class GoodsScreen extends MenuScreen {
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
 
-  private final List<MenuItemStruct04> menuItems = new ArrayList<>();
+  private final IntList menuItems = new IntArrayList();
 
   public GoodsScreen(final Runnable unload) {
     this.unload = unload;
@@ -54,9 +53,7 @@ public class GoodsScreen extends MenuScreen {
         this.menuItems.clear();
         for(int i = 0; i < 64; i++) {
           if((gameState_800babc8.dragoonSpirits_19c.get(i >>> 5).get() & 0x1L << (i & 0x1fL)) != 0) {
-            final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = i;
-            this.menuItems.add(item);
+            this.menuItems.add(i);
           }
         }
 
@@ -113,17 +110,17 @@ public class GoodsScreen extends MenuScreen {
     renderText(Goods_8011cf48,  32, 22, 4);
     renderText(Goods_8011cf48, 210, 22, 4);
     this.FUN_8010965c(slotScroll, this._800bdb9c, this._800bdba0);
-    renderString(1, 194, 178, this.menuItems.get(slotScroll + selectedSlot).itemId_00, allocate);
+    renderString(1, 194, 178, this.menuItems.getInt(slotScroll + selectedSlot), allocate);
     uploadRenderables();
   }
 
   private void FUN_8010965c(final int slotScroll, @Nullable final Renderable58 a1, @Nullable final Renderable58 a2) {
     int i;
     for(i = 0; i < 14 && slotScroll + i < this.menuItems.size(); i += 2) {
-      renderText(_8011c008.get(this.menuItems.get(slotScroll + i).itemId_00).deref(), 37, this.getSlotY(i / 2) + 34, 4);
+      renderText(_8011c008.get(this.menuItems.getInt(slotScroll + i)).deref(), 37, this.getSlotY(i / 2) + 34, 4);
 
       if(slotScroll + i + 1 < this.menuItems.size()) {
-        renderText(_8011c008.get(this.menuItems.get(slotScroll + i + 1).itemId_00).deref(), 214, this.getSlotY(i / 2) + 34, 4);
+        renderText(_8011c008.get(this.menuItems.getInt(slotScroll + i + 1)).deref(), 214, this.getSlotY(i / 2) + 34, 4);
       }
     }
 

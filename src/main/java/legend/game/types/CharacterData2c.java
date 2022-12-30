@@ -8,6 +8,10 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.inventory.EquipmentSlot;
+import legend.game.inventory.Item;
+
+import java.util.EnumMap;
 
 public class CharacterData2c implements MemoryRef {
   private final Value ref;
@@ -30,10 +34,11 @@ public class CharacterData2c implements MemoryRef {
   public final UnsignedByteRef level_12;
   public final UnsignedByteRef dlevel_13;
   public final ArrayRef<UnsignedByteRef> equipment_14;
-
   public final ByteRef selectedAddition_19;
   public final ArrayRef<UnsignedByteRef> additionLevels_1a;
   public final ArrayRef<UnsignedByteRef> additionXp_22;
+
+  public final EnumMap<EquipmentSlot, Item> equipment = new EnumMap<>(EquipmentSlot.class);
 
   public CharacterData2c(final Value ref) {
     this.ref = ref;

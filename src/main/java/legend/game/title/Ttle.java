@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import legend.core.Config;
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
@@ -27,6 +28,7 @@ import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.inventory.EquipmentSlot;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
@@ -218,34 +220,24 @@ public final class Ttle {
 
       //LAB_800c7334
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14.get(i).set(startingEquipment_800ce6fc.get(charIndex).get(i).get());
+        charData.equipment.put(EquipmentSlot.fromRetail(i), GameEngine.REGISTRIES.items.getEntryById(startingEquipment_800ce6fc.get(charIndex).get(i).get()));
       }
     }
 
     gameState_800babc8.charData_32c.get(0).partyFlags_04.set(0x3);
 
-    //LAB_800c7398
-    for(int i = 0x100; i >= 0; i--) {
-      gameState_800babc8.equipment_1e8.get(i).set(0xff);
-    }
-
-    gameState_800babc8.equipmentCount_1e4.set((short)0);
-
-    //LAB_800c73b8
-    for(int i = Config.inventorySize(); i >= 0; i--) {
-      gameState_800babc8.items_2e9.get(i).set(0xff);
-    }
+    gameState_800babc8.equipment.clear();
+    gameState_800babc8.items.clear();
 
     //LAB_800c73d8
     for(int i = 0; i < Config.inventorySize() + 1; i++) {
       final int itemId = startingItems_800ce76c.get(i).get();
       if(itemId == 0xff) {
-        gameState_800babc8.itemCount_1e6.set((short)i);
         break;
       }
 
       //LAB_800c73f0
-      gameState_800babc8.items_2e9.get(i).set(itemId);
+      gameState_800babc8.items.add(GameEngine.REGISTRIES.items.getEntryById(itemId));
     }
 
     //LAB_800c7404

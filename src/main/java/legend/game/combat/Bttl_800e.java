@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.GameEngine;
 import legend.core.MemoryHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -59,6 +60,8 @@ import legend.game.combat.types.FloatingNumberC4Sub20;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.inventory.Item;
+import legend.game.inventory.Items;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -5553,8 +5556,8 @@ public final class Bttl_800e {
     //LAB_800ee80c
     for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
       //LAB_800ee824
-      for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-        if(gameState_800babc8.items_2e9.get(itemSlot).get() == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+      for(int itemSlot = 0; itemSlot < gameState_800babc8.items.size(); itemSlot++) {
+        if(gameState_800babc8.items.get(itemSlot) == GameEngine.REGISTRIES.items.getEntryById(repeatItemIds_800c6e34.get(repeatItemIndex).get())) {
           usedRepeatItems_800c6c3c.or(1 << repeatItemIndex);
           break;
         }
@@ -5649,8 +5652,8 @@ public final class Bttl_800e {
     if((gameState_800babc8.scriptFlags2_bc.get(0xd).get() & 0x4_0000L) != 0) { // Used Psych Bomb X this battle
       //LAB_800eed30
       boolean hasPsychBombX = false;
-      for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
+      for(int i = 0; i < gameState_800babc8.items.size(); i++) {
+        if(gameState_800babc8.items.get(i) == Items.PSYCH_BOMB_X.get()) {
           hasPsychBombX = true;
           break;
         }
@@ -5658,7 +5661,7 @@ public final class Bttl_800e {
 
       //LAB_800eed54
       if(!hasPsychBombX) {
-        giveItem(0xfa); // Psych Bomb X
+        giveItem(Items.PSYCH_BOMB_X.get()); // Psych Bomb X
       }
     }
 
@@ -5668,11 +5671,13 @@ public final class Bttl_800e {
     //LAB_800eed78
     for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
       if((usedRepeatItems_800c6c3c.get() >> repeatItemIndex & 1) != 0) {
+        final Item repeatItem = GameEngine.REGISTRIES.items.getEntryById(repeatItemIds_800c6e34.get(repeatItemIndex).get());
+
         boolean hasRepeatItem = false;
 
         //LAB_800eedb0
-        for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-          if(gameState_800babc8.items_2e9.get(itemSlot).get() == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+        for(int itemSlot = 0; itemSlot < gameState_800babc8.items.size(); itemSlot++) {
+          if(gameState_800babc8.items.get(itemSlot) == repeatItem) {
             hasRepeatItem = true;
             break;
           }
@@ -5680,7 +5685,7 @@ public final class Bttl_800e {
 
         //LAB_800eedd8
         if(!hasRepeatItem) {
-          giveItem(repeatItemIds_800c6e34.get(repeatItemIndex).get());
+          giveItem(repeatItem);
         }
       }
     }
