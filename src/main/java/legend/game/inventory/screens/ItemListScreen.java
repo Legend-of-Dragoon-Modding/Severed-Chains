@@ -163,7 +163,6 @@ public class ItemListScreen extends MenuScreen {
               final MenuItemStruct04 a = this.currentDisplayList[i];
               final MenuItemStruct04 b = this.currentDisplayList[i + 1];
               a.itemId_00 = b.itemId_00;
-              a.itemSlot_01 = b.itemSlot_01;
               a.price_02 = b.price_02;
 
               if(b.itemId_00 == 0xff) {

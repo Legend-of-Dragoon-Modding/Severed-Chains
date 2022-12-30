@@ -211,7 +211,6 @@ public class UseItemScreen extends MenuScreen {
         final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
         final MenuItemStruct04 s3 = this.menuItems[count];
         s3.itemId_00 = itemId;
-        s3.itemSlot_01 = i;
         s3.price_02 = 0;
 
         if(itemStats.type_0b.get() == 0x8 && (itemStats.status_08.get() & allStatus) == 0) {

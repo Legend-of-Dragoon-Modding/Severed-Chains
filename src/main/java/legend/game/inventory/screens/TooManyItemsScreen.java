@@ -92,7 +92,6 @@ public class TooManyItemsScreen extends MenuScreen {
             }
 
             item.itemId_00 = itemId;
-            item.itemSlot_01 = 0;
             item.price_02 = 0;
           }
 
@@ -340,15 +339,12 @@ public class TooManyItemsScreen extends MenuScreen {
             playSound(40);
           } else {
             final int itemId = existingItem.itemId_00;
-            final int itemSlot = existingItem.itemSlot_01;
             final int flags = existingItem.price_02;
 
             existingItem.itemId_00 = newItem.itemId_00;
-            existingItem.itemSlot_01 = newItem.itemSlot_01;
             existingItem.price_02 = newItem.price_02;
 
             newItem.itemId_00 = itemId;
-            newItem.itemSlot_01 = itemSlot;
             newItem.price_02 = flags;
 
             playSound(2);

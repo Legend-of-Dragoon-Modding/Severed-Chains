@@ -1091,14 +1091,12 @@ public final class SItem {
 
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
       items[i].itemId_00 = gameState_800babc8.items_2e9.get(i).get();
-      items[i].itemSlot_01 = i;
       items[i].price_02 = 0;
     }
 
     int equipmentIndex;
     for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipmentCount_1e4.get(); equipmentIndex++) {
       equipment[equipmentIndex].itemId_00 = gameState_800babc8.equipment_1e8.get(equipmentIndex).get();
-      equipment[equipmentIndex].itemSlot_01 = equipmentIndex;
       equipment[equipmentIndex].price_02 = 0;
 
       if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(equipmentIndex).get())) {
@@ -1113,7 +1111,6 @@ public final class SItem {
         for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
           if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get() != 0xff) {
             equipment[equipmentIndex].itemId_00 = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get();
-            equipment[equipmentIndex].itemSlot_01 = equipmentIndex;
             equipment[equipmentIndex].price_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
 
             equippedItemsCount++;

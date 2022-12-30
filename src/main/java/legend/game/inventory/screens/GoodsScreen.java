@@ -58,8 +58,6 @@ public class GoodsScreen extends MenuScreen {
 
           if((gameState_800babc8.dragoonSpirits_19c.get(i >>> 5).get() & 0x1L << (i & 0x1fL)) != 0) {
             this.menuItems[this.count].itemId_00 = i;
-            this.menuItems[this.count].itemSlot_01 = i;
-            this.menuItems[this.count].price_02 = 0;
             this.count++;
           }
         }

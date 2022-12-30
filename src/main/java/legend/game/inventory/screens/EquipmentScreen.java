@@ -146,7 +146,6 @@ public class EquipmentScreen extends MenuScreen {
             final MenuItemStruct04 s2 = this.menuItems[equippable];
             s2.itemId_00 = equipmentId;
             s2.itemSlot_01 = equipmentSlot;
-            s2.price_02 = 0;
             equippable++;
           }
         }

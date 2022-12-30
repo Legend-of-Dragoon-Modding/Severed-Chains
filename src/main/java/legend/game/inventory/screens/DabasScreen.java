@@ -87,7 +87,6 @@ public class DabasScreen extends MenuScreen {
         for(int i = 0; i < 7; i++) {
           final MenuItemStruct04 menuItem = this.menuItems[i];
           menuItem.itemId_00 = 0xff;
-          menuItem.itemSlot_01 = i;
         }
 
         //TODO this is the Pocketstation minigame to upload to the memcard
@@ -130,11 +129,8 @@ public class DabasScreen extends MenuScreen {
             menuItem.itemId_00 = itemId;
             this.hasItems = true;
           } else {
-            //LAB_801003fc
             menuItem.itemId_00 = 0xff;
           }
-
-          menuItem.itemSlot_01 = i;
         }
 
         final int specialItemId = dabasData.specialItem_2c.get();
@@ -142,13 +138,9 @@ public class DabasScreen extends MenuScreen {
           this.hasItems = true;
           this.menuItems[6].itemId_00 = specialItemId;
         } else {
-          //LAB_80100450
           this.menuItems[6].itemId_00 = 0xff;
         }
 
-        //LAB_8010045c
-        this.menuItems[6].itemSlot_01 = 6;
-        this.menuItems[6].price_02 = 0;
         this.gold = dabasData.gold_34.get();
 
         if(dabasData._3c.get() == 1) {
@@ -173,12 +165,10 @@ public class DabasScreen extends MenuScreen {
           this.renderable2.z_3c = 31;
         }
 
-        //LAB_80101380
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
-          //LAB_80101580
           this.renderDabasMenu(this.menuIndex);
           break;
         }
