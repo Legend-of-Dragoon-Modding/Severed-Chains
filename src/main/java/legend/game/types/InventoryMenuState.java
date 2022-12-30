@@ -22,8 +22,5 @@ public enum InventoryMenuState {
   _18,
   _19,
 
-  DISCARD_INIT_31,
-  DISCARD_MENU_33,
-
   UNLOAD_125,
 }

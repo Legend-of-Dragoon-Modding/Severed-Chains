@@ -32,6 +32,7 @@ import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -74,7 +75,6 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
-import static legend.game.SItem.renderTooManyItemsMenu;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
@@ -1391,7 +1391,7 @@ public final class Scus94491BpeSegment_8002 {
         FUN_80103b10();
         initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       }
-      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, null);
+      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, new TooManyItemsScreen());
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
@@ -1429,10 +1429,9 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case RENDER_SHOP_MENU_9, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24 -> menuStack.render();
+      case RENDER_SHOP_MENU_9, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34 -> menuStack.render();
       case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
-      case RENDER_TOO_MANY_ITEMS_MENU_34 -> renderTooManyItemsMenu();
 
       case UNLOAD_LOAD_GAME_MENU_15, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25 -> {
         menuStack.popScreen();
@@ -1473,13 +1472,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022898L)
-  public static int FUN_80022898(final int itemId) {
+  public static boolean itemCantBeDiscarded(final int itemId) {
     if(itemId >= 0xc0) {
-      return 0;
+      return false;
     }
 
-    //LAB_800228b0
-    return equipmentStats_80111ff0.get(itemId)._00.get() & 0x4;
+    return (equipmentStats_80111ff0.get(itemId)._00.get() & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
