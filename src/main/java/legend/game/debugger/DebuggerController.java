@@ -121,7 +121,7 @@ public class DebuggerController {
 
   @FXML
   private void getMapId(final ActionEvent event) {
-    this.mapId.getValueFactory().setValue((submapCut_80052c30.get()));
+    this.mapId.getValueFactory().setValue(submapCut_80052c30.get());
   }
 
   @FXML
@@ -132,7 +132,7 @@ public class DebuggerController {
 
   @FXML
   private void getVsyncMode(final ActionEvent event) {
-    this.vsyncMode.getValueFactory().setValue((vsyncMode_8007a3b8.get()));
+    this.vsyncMode.getValueFactory().setValue(vsyncMode_8007a3b8.get());
   }
 
   @FXML
@@ -147,34 +147,33 @@ public class DebuggerController {
 
   @FXML
   private void getBattleUIRGB(final ActionEvent event) {
-    int rgb = (int) Bttl_800c._800c7004.get();
-    int[] rgbArray = new int[] {
-      ((rgb >> 24) & 0xff),
-      ((rgb >> 16) & 0xff),
-      ((rgb >> 8)  & 0xff),
-      ((rgb >> 0)  & 0xff)
+    final int rgb = (int) Bttl_800c._800c7004.get();
+    final int[] rgbArray = {
+      rgb >> 24 & 0xff,
+      rgb >> 16 & 0xff,
+      rgb >>  8 & 0xff,
+      rgb       & 0xff
     };
 
-    this.battleUIColourR.getValueFactory().setValue((int) rgbArray[3]);
-    this.battleUIColourG.getValueFactory().setValue((int) rgbArray[2]);
-    this.battleUIColourB.getValueFactory().setValue((int) rgbArray[1]);
+    this.battleUIColourR.getValueFactory().setValue(rgbArray[3]);
+    this.battleUIColourG.getValueFactory().setValue(rgbArray[2]);
+    this.battleUIColourB.getValueFactory().setValue(rgbArray[1]);
   }
 
   @FXML
   private void setBattleUIRGB(final ActionEvent event) {
-    byte[] rgbArray = new byte[] {
+    final byte[] rgbArray = {
       this.battleUIColourR.getValueFactory().getValue().byteValue(),
       this.battleUIColourG.getValueFactory().getValue().byteValue(),
       this.battleUIColourB.getValueFactory().getValue().byteValue(),
-      (byte) 0x00,
+      (byte)0x00,
     };
 
-    int rgb = (
+    final int rgb =
       (0xff & rgbArray[3]) << 24 |
       (0xff & rgbArray[2]) << 16 |
       (0xff & rgbArray[1]) << 8  |
-      (0xff & rgbArray[0]) << 0
-    );
+       0xff & rgbArray[0];
 
     Config.setBattleRGB(rgb);
     Bttl_800c._800c7004.set(rgb);
