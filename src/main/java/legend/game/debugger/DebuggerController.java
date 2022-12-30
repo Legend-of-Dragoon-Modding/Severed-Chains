@@ -7,12 +7,17 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import legend.game.combat.Bttl_800c;
 import legend.game.types.WMapAreaData08;
+import legend.core.Config;
 
-import static legend.game.SMap.FUN_800e5534;
-import static legend.game.SMap.encounterData_800f64c4;
+import javax.swing.*;
+
+import static legend.game.SMap.*;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8005._8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -39,8 +44,34 @@ public class DebuggerController {
   @FXML
   public Button startEncounter;
 
+  @FXML
+  public Spinner<Integer> mapId;
+  @FXML
+  public Button getMapId;
+  @FXML
+  public Button warpToMap;
+
+  @FXML
+  public Spinner<Integer> vsyncMode;
+  @FXML
+  public Button getVsyncMode;
+  @FXML
+  public Button setVsyncMode;
+
+  @FXML
+  public Spinner<Integer> battleUIColourR;
+  @FXML
+  public Spinner<Integer> battleUIColourG;
+  @FXML
+  public Spinner<Integer> battleUIColourB;
+
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+    this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
+    this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
+    this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 0));
+    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 41));
+    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 159));
   }
 
   @FXML
@@ -86,5 +117,66 @@ public class DebuggerController {
       gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
       pregameLoadingStage_800bb10c.setu(0x8L);
     }
+  }
+
+  @FXML
+  private void getMapId(final ActionEvent event) {
+    this.mapId.getValueFactory().setValue((submapCut_80052c30.get()));
+  }
+
+  @FXML
+  private void warpToMap(final ActionEvent event) {
+    submapCut_80052c30.set(this.mapId.getValue());
+    smapLoadingStage_800cb430.set(0x4);
+  }
+
+  @FXML
+  private void getVsyncMode(final ActionEvent event) {
+    this.vsyncMode.getValueFactory().setValue((vsyncMode_8007a3b8.get()));
+  }
+
+  @FXML
+  private void setVsyncMode(final ActionEvent event) {
+    vsyncMode_8007a3b8.set(this.vsyncMode.getValue());
+  }
+
+  @FXML
+  private void setSaveAnywhere(final ActionEvent event) {
+    _8005a368.set(0x1);
+  }
+
+  @FXML
+  private void getBattleUIRGB(final ActionEvent event) {
+    int rgb = (int) Bttl_800c._800c7004.get();
+    int[] rgbArray = new int[] {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8)  & 0xff),
+      ((rgb >> 0)  & 0xff)
+    };
+
+    this.battleUIColourR.getValueFactory().setValue((int) rgbArray[3]);
+    this.battleUIColourG.getValueFactory().setValue((int) rgbArray[2]);
+    this.battleUIColourB.getValueFactory().setValue((int) rgbArray[1]);
+  }
+
+  @FXML
+  private void setBattleUIRGB(final ActionEvent event) {
+    byte[] rgbArray = new byte[] {
+      this.battleUIColourR.getValueFactory().getValue().byteValue(),
+      this.battleUIColourG.getValueFactory().getValue().byteValue(),
+      this.battleUIColourB.getValueFactory().getValue().byteValue(),
+      (byte) 0x00,
+    };
+
+    int rgb = (
+      (0xff & rgbArray[3]) << 24 |
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8  |
+      (0xff & rgbArray[0]) << 0
+    );
+
+    Config.setBattleRGB(rgb);
+    Bttl_800c._800c7004.set(rgb);
   }
 }
