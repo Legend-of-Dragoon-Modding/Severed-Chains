@@ -15,7 +15,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.types.AdditionData0e;
 import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.FileEntry08;
-import legend.game.types.LoadingOverlay0c;
+import legend.game.types.LoadingOverlay;
 import legend.game.types.LodString;
 
 import static legend.core.GameEngine.MEMORY;
@@ -137,8 +137,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<DeferredReallocOrFree0c> deferredReallocOrFree_8005a1e0 = MEMORY.ref(4, 0x8005a1e0L, ArrayRef.of(DeferredReallocOrFree0c.class, 16, 0xc, DeferredReallocOrFree0c::new));
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
-  public static final ArrayRef<LoadingOverlay0c> loadingOverlays_8005a2a8 = MEMORY.ref(4, 0x8005a2a8L, ArrayRef.of(LoadingOverlay0c.class, 16, 0xc, LoadingOverlay0c::new));
-  public static final Value _8005a368 = MEMORY.ref(1, 0x8005a368L);
+  public static LoadingOverlay loadingOverlay_8005a2a8;
+  public static final Value standingInSavePoint_8005a368 = MEMORY.ref(1, 0x8005a368L);
 
   public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
 }

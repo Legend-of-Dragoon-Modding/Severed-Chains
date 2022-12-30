@@ -20,6 +20,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleStage;
+import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
@@ -138,8 +139,6 @@ public final class Scus94491BpeSegment_800b {
   public static final SpuStruct10[] spu10Arr_800bd610 = {new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10()};
   public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
 
-  public static final ArrayRef<IntRef> _800bd6e8 = MEMORY.ref(4, 0x800bd6e8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
   public static final Value _800bd700 = MEMORY.ref(1, 0x800bd700L);
@@ -184,24 +183,16 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 
   public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
-  public static final Pointer<Renderable58> saveListUpArrow_800bdb94 = MEMORY.ref(4, 0x800bdb94L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> saveListDownArrow_800bdb98 = MEMORY.ref(4, 0x800bdb98L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> _800bdb9c = MEMORY.ref(4, 0x800bdb9cL, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> _800bdba0 = MEMORY.ref(4, 0x800bdba0L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdba4 = MEMORY.ref(4, 0x800bdba4L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdba8 = MEMORY.ref(4, 0x800bdba8L, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 saveListUpArrow_800bdb94;
+  public static Renderable58 saveListDownArrow_800bdb98;
+
+  public static Renderable58 renderablePtr_800bdba4;
+  public static Renderable58 renderablePtr_800bdba8;
 
   public static final ArrayRef<IntRef> characterIndices_800bdbb8 = MEMORY.ref(4, 0x800bdbb8L, ArrayRef.of(IntRef.class, 9, 0x4, IntRef::new));
 
-  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe0 = MEMORY.ref(4, 0x800bdbe0L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> selectedMenuOptionRenderablePtr_800bdbe4 = MEMORY.ref(4, 0x800bdbe4L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdbe8 = MEMORY.ref(4, 0x800bdbe8L, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdbec = MEMORY.ref(4, 0x800bdbecL, Pointer.deferred(4, Renderable58::new));
-  public static final Pointer<Renderable58> renderablePtr_800bdbf0 = MEMORY.ref(4, 0x800bdbf0L, Pointer.deferred(4, Renderable58::new));
-
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
-  public static final Pointer<Renderable58> renderablePtr_800bdc20 = MEMORY.ref(4, 0x800bdc20L, Pointer.deferred(4, Renderable58::new));
   public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
@@ -215,29 +206,31 @@ public final class Scus94491BpeSegment_800b {
    *
    * Seems any other value shows the inventory
    */
-  public static final Value whichMenu_800bdc38 = MEMORY.ref(4, 0x800bdc38L);
+  public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
   public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
-  public static final Value _800bdc40 = MEMORY.ref(4, 0x800bdc40L);
+
   /**
-   * 0x01 - L2
-   * 0x02 - R2
-   * 0x04 - L1
-   * 0x08 - R1
-   * 0x10 - Triangle
-   * 0x20 - Cross
-   * 0x40 - Circle
-   * 0x80 - Square
-   * 0x1000 - Up
-   * 0x2000 - Right
-   * 0x4000 - Down
-   * 0x8000 - Left
+   * <ul>
+   *   <li>0x01 - L2</li>
+   *   <li>0x02 - R2</li>
+   *   <li>0x04 - L1</li>
+   *   <li>0x08 - R1</li>
+   *   <li>0x10 - Triangle</li>
+   *   <li>0x20 - Cross</li>
+   *   <li>0x40 - Circle</li>
+   *   <li>0x80 - Square</li>
+   *   <li>0x1000 - Up</li>
+   *   <li>0x2000 - Right</li>
+   *   <li>0x4000 - Down</li>
+   *   <li>0x8000 - Left</li>
+   * </ul>
    */
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
-  public static final Pointer<Renderable58> renderablePtr_800bdc5c = MEMORY.ref(4, 0x800bdc5cL, Pointer.deferred(4, Renderable58::new));
+  public static Renderable58 renderablePtr_800bdc5c;
 
   public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
 
@@ -245,7 +238,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<TextboxArrow0c> textboxArrows_800bdea0 = MEMORY.ref(4, 0x800bdea0L, ArrayRef.of(TextboxArrow0c.class, 8, 0xc, TextboxArrow0c::new));
 
-  public static final Value _800bdf00 = MEMORY.ref(4, 0x800bdf00L);
+  public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);
   public static final Value _800bdf08 = MEMORY.ref(4, 0x800bdf08L);
 

@@ -27,6 +27,7 @@ import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
@@ -39,7 +40,6 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -56,12 +56,12 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022590;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
+import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -155,7 +155,7 @@ public final class Ttle {
   public static void test() {
     mainCallbackIndexOnceLoaded_8004dd24.setu(2);
     pregameLoadingStage_800bb10c.setu(0);
-    whichMenu_800bdc38.setu(0);
+    whichMenu_800bdc38 = WhichMenu.NONE_0;
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(2);
     scriptsTickDisabled_800bc0b8.set(false);
@@ -167,7 +167,7 @@ public final class Ttle {
   }
 
   @Method(0x800c7194L)
-  public static void setUpNewGameData(final int unused) {
+  public static void setUpNewGameData() {
     final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
     final int oldMono = gameState_800babc8.mono_4e0.get();
 
@@ -255,15 +255,15 @@ public final class Ttle {
 
   @Method(0x800c7424L)
   public static void executeTtleUnloadingStage() {
-    setUpNewGameData();
+    loadSItemAndSetUpNewGameData();
     mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
     vsyncMode_8007a3b8.set(2);
     pregameLoadingStage_800bb10c.setu(0);
   }
 
   @Method(0x800c7524L)
-  public static void setUpNewGameData() {
-    loadSupportOverlay(2, getConsumerAddress(Ttle.class, "setUpNewGameData", int.class), 0);
+  public static void loadSItemAndSetUpNewGameData() {
+    loadSupportOverlay(2, Ttle::setUpNewGameData);
   }
 
   @Method(0x800c7558L)
@@ -371,12 +371,8 @@ public final class Ttle {
     //LAB_800c7978
     setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
-    GsRVIEW2_800c6760.viewpoint_00.setX(0);
-    GsRVIEW2_800c6760.viewpoint_00.setY(0);
-    GsRVIEW2_800c6760.viewpoint_00.setZ(2000);
-    GsRVIEW2_800c6760.refpoint_0c.setX(0);
-    GsRVIEW2_800c6760.refpoint_0c.setY(0);
-    GsRVIEW2_800c6760.refpoint_0c.setZ(-4000);
+    GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
+    GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
     GsRVIEW2_800c6760.viewpointTwist_18.set(0);
     GsRVIEW2_800c6760.super_1c.clear();
     GsSetRefView2(GsRVIEW2_800c6760);
@@ -476,7 +472,7 @@ public final class Ttle {
 
     if(_800c6754 >= 16) {
       if(_800c6728 == 2) {
-        whichMenu_800bdc38.setu(0xbL);
+        whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
         removeInputHandlers();
         restoreVram();
         deallocateFire();
@@ -485,40 +481,38 @@ public final class Ttle {
     }
 
     //LAB_800c8038
-    FUN_80022590();
+    loadAndRenderMenus();
 
-    if(whichMenu_800bdc38.get() != 0) {
-      return;
-    }
+    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+      if(_800bdc34.get() != 0) {
+        if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+          mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L); // WMAP
+        } else {
+          //LAB_800c80a4
+          mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L); // SMAP
+        }
 
-    if(_800bdc34.get() != 0) {
-      if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L); // WMAP
-      } else {
-        //LAB_800c80a4
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L); // SMAP
+        pregameLoadingStage_800bb10c.setu(0);
+        vsyncMode_8007a3b8.set(2);
+
+        //LAB_800c80c4
+        return;
       }
 
-      pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.set(2);
-
-      //LAB_800c80c4
-      return;
-    }
-
-    //LAB_800c80cc
-    if(_800c6728 == 3) {
-      mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
-      pregameLoadingStage_800bb10c.setu(0);
-      vsyncMode_8007a3b8.set(2);
-    } else {
-      //LAB_800c8108
-      renderMenuLogo();
-      renderMenuOptions();
-      renderOptionsMenu();
-      renderMenuLogoFire();
-      renderMenuBackground();
-      renderCopyright();
+      //LAB_800c80cc
+      if(_800c6728 == 3) {
+        mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
+        pregameLoadingStage_800bb10c.setu(0);
+        vsyncMode_8007a3b8.set(2);
+      } else {
+        //LAB_800c8108
+        renderMenuLogo();
+        renderMenuOptions();
+        renderOptionsMenu();
+        renderMenuLogoFire();
+        renderMenuBackground();
+        renderCopyright();
+      }
     }
 
     //LAB_800c8138
@@ -1485,9 +1479,7 @@ public final class Ttle {
       GsInitCoordinate2(superCoord2, coord2);
 
       dobj2.coord2_04.set(coord2);
-      coord2.coord.transfer.setX(100);
-      coord2.coord.transfer.setY(-430);
-      coord2.coord.transfer.setZ(-2048);
+      coord2.coord.transfer.set(100, -430, -2048);
     }
 
     //LAB_800cc1a8
