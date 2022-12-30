@@ -152,18 +152,18 @@ public class ShopScreen extends MenuScreen {
           if(itemId != 0xff) {
             final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
             menuItem.itemId_00 = itemId;
-            menuItem.price_02 = itemPrices_80114310.get(itemId).get() * 2;
+            menuItem.flags_02 = itemPrices_80114310.get(itemId).get() * 2;
             this.itemCount++;
           } else {
             final MenuItemStruct04 menuItem = this.menuItems[i];
             menuItem.itemId_00 = 0xff;
-            menuItem.price_02 = 0;
+            menuItem.flags_02 = 0;
           }
         }
 
         final MenuItemStruct04 menuItem = this.menuItems[16];
         menuItem.itemId_00 = 0xff;
-        menuItem.price_02 = 0;
+        menuItem.flags_02 = 0;
         recalcInventory();
         FUN_80103b10();
 
@@ -454,7 +454,7 @@ public class ShopScreen extends MenuScreen {
 
       final MenuItemStruct04 item = this.menuItems[startItemIndex + i];
       renderText(equipment_8011972c.get(item.itemId_00).deref(), 168, FUN_8010a808(i) + 2, 4);
-      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.price_02);
+      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.flags_02);
       renderItemIcon(getItemIcon(item.itemId_00), 151, FUN_8010a808(i), 0x8L);
     }
 
@@ -653,14 +653,14 @@ public class ShopScreen extends MenuScreen {
 
             if(!hasSpace) {
               menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> { }));
-            } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02) {
+            } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
               menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {
               }));
             } else {
               if(this.shopType != 0) {
                 menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
                   if(result == MessageBoxResult.YES) {
-                    gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02);
+                    gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
                     giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
                   }
                 }));
@@ -682,7 +682,7 @@ public class ShopScreen extends MenuScreen {
 
           menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
             if(result == MessageBoxResult.YES) {
-              gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].price_02);
+              gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
 
               menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
                 if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {

@@ -1080,28 +1080,29 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static int FUN_80104738(final MenuItemStruct04[] equipment, final MenuItemStruct04[] items, final long a0) {
-    for(final MenuItemStruct04 item : equipment) {
-      item.itemId_00 = 0xff;
-    }
-
-    for(final MenuItemStruct04 item : items) {
-      item.itemId_00 = 0xff;
-    }
+  public static int FUN_80104738(final List<MenuItemStruct04> equipment, final List<MenuItemStruct04> items, final long a0) {
+    equipment.clear();
+    items.clear();
 
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      items[i].itemId_00 = gameState_800babc8.items_2e9.get(i).get();
-      items[i].price_02 = 0;
+      final MenuItemStruct04 item = new MenuItemStruct04();
+      item.itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      item.flags_02 = 0;
+      items.add(item);
     }
 
     int equipmentIndex;
     for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipmentCount_1e4.get(); equipmentIndex++) {
-      equipment[equipmentIndex].itemId_00 = gameState_800babc8.equipment_1e8.get(equipmentIndex).get();
-      equipment[equipmentIndex].price_02 = 0;
+      final MenuItemStruct04 item = new MenuItemStruct04();
+
+      item.itemId_00 = gameState_800babc8.equipment_1e8.get(equipmentIndex).get();
+      item.flags_02 = 0;
 
       if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(equipmentIndex).get())) {
-        equipment[equipmentIndex].price_02 |= 0x2000;
+        item.flags_02 |= 0x2000;
       }
+
+      equipment.add(item);
     }
 
     int equippedItemsCount = 0;
@@ -1110,8 +1111,10 @@ public final class SItem {
       for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
         for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
           if(gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get() != 0xff) {
-            equipment[equipmentIndex].itemId_00 = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get();
-            equipment[equipmentIndex].price_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
+            final MenuItemStruct04 item = new MenuItemStruct04();
+            item.itemId_00 = gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).equipment_14.get(equipmentSlot).get();
+            item.flags_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
+            equipment.add(item);
 
             equippedItemsCount++;
             equipmentIndex++;
@@ -1981,23 +1984,19 @@ public final class SItem {
   }
 
   @Method(0x80109410L)
-  public static void renderMenuItems(final int x, final int y, final MenuItemStruct04[] menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
+  public static void renderMenuItems(final int x, final int y, final List<MenuItemStruct04> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
     int s3 = slotScroll;
 
     //LAB_8010947c
     int i;
-    for(i = 0; i < itemCount; i++) {
-      final MenuItemStruct04 menuItem = menuItems[s3];
-
-      if(menuItem.itemId_00 == 0xff) {
-        break;
-      }
+    for(i = 0; i < itemCount && s3 < menuItems.size(); i++) {
+      final MenuItemStruct04 menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(equipment_8011972c.get(menuItem.itemId_00).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.price_02 & 0x6000) == 0 ? 4 : 6);
+      renderText(equipment_8011972c.get(menuItem.itemId_00).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? 4 : 6);
       renderItemIcon(getItemIcon(menuItem.itemId_00), x + 4, y + FUN_800fc814(i), 0x8L);
 
-      final int s0 = menuItem.price_02;
+      final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
         renderItemIcon(48 | s0 & 0xf, x + 148, y + FUN_800fc814(i) - 1, 0x8L).clut_30 = (500 + (s0 & 0xf) & 0x1ff) << 6 | 0x2b;
         //LAB_80109574
@@ -2023,7 +2022,7 @@ public final class SItem {
     //LAB_80109614
     //LAB_80109628
     if(a6 != null) { // There was an NPE here when fading out item list
-      if(i + slotScroll < menuItems.length && menuItems[i + slotScroll].itemId_00 != 0xff) {
+      if(i + slotScroll < menuItems.size()) {
         a6.flags_00 &= 0xffff_ffbf;
       } else {
         a6.flags_00 |= 0x40;

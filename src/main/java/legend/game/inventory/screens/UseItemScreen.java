@@ -1,6 +1,5 @@
 package legend.game.inventory.screens;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.inventory.UseItemResponse;
@@ -10,8 +9,9 @@ import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static legend.game.SItem.Completely_recovered_8011d534;
 import static legend.game.SItem.Detoxified_8011d5c8;
@@ -74,11 +74,10 @@ public class UseItemScreen extends MenuScreen {
   private Renderable58 charHighlight;
   private final Renderable58[] _8011d718 = new Renderable58[7];
 
-  private final MenuItemStruct04[] menuItems = new MenuItemStruct04[Config.inventorySize()];
+  private final List<MenuItemStruct04> menuItems = new ArrayList<>();
 
   public UseItemScreen(final Runnable unload) {
     this.unload = unload;
-    Arrays.setAll(this.menuItems, i -> new MenuItemStruct04());
   }
 
   @Override
@@ -161,7 +160,7 @@ public class UseItemScreen extends MenuScreen {
 
     //LAB_80102ee8
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
-    renderString(0, 194, 16, this.menuItems[selectedSlot + slotScroll].itemId_00, allocate);
+    renderString(0, 194, 16, this.menuItems.get(selectedSlot + slotScroll).itemId_00, allocate);
     uploadRenderables();
   }
 
@@ -199,30 +198,27 @@ public class UseItemScreen extends MenuScreen {
       allStatus |= gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).status_10.get();
     }
 
-    for(int i = 0; i < Config.inventorySize(); i++) {
-      this.menuItems[i].itemId_00 = 0xff;
-    }
+    this.menuItems.clear();
 
-    int count = 0;
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
       final int itemId = gameState_800babc8.items_2e9.get(i).get();
 
       if(itemCanBeUsedInMenu(itemId) != 0) {
         final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
-        final MenuItemStruct04 s3 = this.menuItems[count];
-        s3.itemId_00 = itemId;
-        s3.price_02 = 0;
+        final MenuItemStruct04 item = new MenuItemStruct04();
+        item.itemId_00 = itemId;
+        item.flags_02 = 0;
 
         if(itemStats.type_0b.get() == 0x8 && (itemStats.status_08.get() & allStatus) == 0) {
-          s3.price_02 = 0x4000;
+          item.flags_02 = 0x4000;
         }
 
-        count++;
+        this.menuItems.add(item);
       }
     }
 
-    Arrays.sort(this.menuItems, 0, count, Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
-    return count;
+    this.menuItems.sort(Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
+    return this.menuItems.size();
   }
 
   @Override
@@ -258,9 +254,9 @@ public class UseItemScreen extends MenuScreen {
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
 
-          this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems[this.selectedSlot + this.slotScroll].itemId_00);
+          this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
 
-          if(this.itemUseFlags != 0 && (this.menuItems[this.selectedSlot + this.slotScroll].price_02 & 0x4000) == 0) {
+          if(this.itemUseFlags != 0 && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
             if((this.itemUseFlags & 0x2) != 0) {
               for(int i = 0; i < 7; i++) {
                 this._8011d718[i] = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(i), 110);
@@ -282,12 +278,12 @@ public class UseItemScreen extends MenuScreen {
       for(int slot = 0; slot < characterCount_8011d7c4.get(); slot++) {
         if(MathHelper.inBox(x, y, getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           if((this.itemUseFlags & 0x2) == 0) {
-            useItemInMenu(this.useItemResponse, this.menuItems[this.selectedSlot + this.slotScroll].itemId_00, characterIndices_800bdbb8.get(this.charSlot).get());
+            useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(this.charSlot).get());
           } else {
             int responseValue = -2;
 
             for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-              useItemInMenu(this.useItemResponse, this.menuItems[this.selectedSlot + this.slotScroll].itemId_00, characterIndices_800bdbb8.get(i).get());
+              useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(i).get());
 
               if(this.useItemResponse.value_04 != -2) {
                 responseValue = 0;
@@ -298,7 +294,7 @@ public class UseItemScreen extends MenuScreen {
           }
 
           playSound(2);
-          takeItem(this.menuItems[this.selectedSlot + this.slotScroll].itemId_00);
+          takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);

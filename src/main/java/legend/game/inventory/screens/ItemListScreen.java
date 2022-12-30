@@ -8,7 +8,8 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static legend.game.SItem.FUN_800fc814;
 import static legend.game.SItem.FUN_800fc824;
@@ -33,7 +34,7 @@ import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800239e0;
+import static legend.game.Scus94491BpeSegment_8002.removeItemsThatCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
@@ -66,18 +67,15 @@ public class ItemListScreen extends MenuScreen {
   private int mouseY;
 
   private ArrayRef<UnsignedByteRef> currentList;
-  private MenuItemStruct04[] currentDisplayList;
+  private List<MenuItemStruct04> currentDisplayList;
   private int currentIndex;
   private int currentItemId;
 
-  private final MenuItemStruct04[] equipment = new MenuItemStruct04[304];
-  private final MenuItemStruct04[] items = new MenuItemStruct04[Config.inventorySize()];
+  private final List<MenuItemStruct04> equipment = new ArrayList<>();
+  private final List<MenuItemStruct04> items = new ArrayList<>();
 
   public ItemListScreen(final Runnable unload) {
     this.unload = unload;
-
-    Arrays.setAll(this.equipment, i -> new MenuItemStruct04());
-    Arrays.setAll(this.items, i -> new MenuItemStruct04());
   }
 
   @Override
@@ -98,8 +96,8 @@ public class ItemListScreen extends MenuScreen {
         FUN_80104b60(this.equipmentHighlight);
         this.itemHighlight = allocateUiElement(0x76, 0x76, FUN_800fc824(1), FUN_800fc814(this.selectedSlotItem) + 32);
         FUN_80104b60(this.itemHighlight);
-        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, 0xff, 0xff);
         this.equippedItemsCount = FUN_80104738(this.equipment, this.items, 0x1L);
+        this.renderItemList(this.slotScrollEquipment, this.slotScrollItem, 0xff, 0xff);
         this.loadingStage++;
       }
 
@@ -160,17 +158,17 @@ public class ItemListScreen extends MenuScreen {
           case YES -> {
             int i;
             for(i = this.currentIndex; ; i++) {
-              final MenuItemStruct04 a = this.currentDisplayList[i];
-              final MenuItemStruct04 b = this.currentDisplayList[i + 1];
+              final MenuItemStruct04 a = this.currentDisplayList.get(i);
+              final MenuItemStruct04 b = this.currentDisplayList.get(i + 1);
               a.itemId_00 = b.itemId_00;
-              a.price_02 = b.price_02;
+              a.flags_02 = b.flags_02;
 
               if(b.itemId_00 == 0xff) {
                 break;
               }
             }
 
-            FUN_800239e0(this.currentDisplayList, this.currentList, i);
+            removeItemsThatCantBeDiscarded(this.currentDisplayList, this.currentList, i);
             recalcInventory();
 
             unloadRenderable(this.renderablePtr_800bdc20);
@@ -202,7 +200,7 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void setCurrent(final ArrayRef<UnsignedByteRef> list, final MenuItemStruct04[] display, final int index) {
+  private void setCurrent(final ArrayRef<UnsignedByteRef> list, final List<MenuItemStruct04> display, final int index) {
     this.currentList = list;
     this.currentDisplayList = display;
     this.currentIndex = index;
@@ -277,7 +275,7 @@ public class ItemListScreen extends MenuScreen {
           this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
 
-          if((this.currentDisplayList[this.currentIndex].price_02 & 0x2000) != 0 || this.currentDisplayList[this.currentIndex].itemId_00 == 0xff) {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0 || this.currentDisplayList.get(this.currentIndex).itemId_00 == 0xff) {
             playSound(40);
           } else {
             playSound(2);
@@ -292,7 +290,7 @@ public class ItemListScreen extends MenuScreen {
           this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
 
-          if((this.currentDisplayList[this.currentIndex].price_02 & 0x2000) != 0 || this.currentDisplayList[this.currentIndex].itemId_00 == 0xff) {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0 || this.currentDisplayList.get(this.currentIndex).itemId_00 == 0xff) {
             playSound(40);
           } else {
             playSound(2);

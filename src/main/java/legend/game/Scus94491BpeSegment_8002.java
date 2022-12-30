@@ -62,7 +62,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -2072,12 +2072,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void FUN_800239e0(final MenuItemStruct04[] a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+  public static void removeItemsThatCantBeDiscarded(final List<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
     //LAB_800239ec
     int a3 = 0;
     for(int i = 0; i < count; i++) {
-      if((a0[i].price_02 & 0x1000) == 0) {
-        a1.get(a3).set(a0[i].itemId_00);
+      if((a0.get(i).flags_02 & 0x1000) == 0) {
+        a1.get(a3).set(a0.get(i).itemId_00);
         a3++;
       }
 
@@ -2089,20 +2089,22 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final MenuItemStruct04[] a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
-    Arrays.sort(a0, 0, count, Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
-    FUN_800239e0(a0, a1, count);
+  public static void sortItems(final List<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
+    a0.sort(Comparator.comparingInt(o -> getItemIcon(o.itemId_00)));
+    removeItemsThatCantBeDiscarded(a0, a1, count);
   }
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
-    final MenuItemStruct04[] s0 = new MenuItemStruct04[gameState_800babc8.itemCount_1e6.get()];
+    final List<MenuItemStruct04> items = new ArrayList<>();
 
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      s0[i].itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      final MenuItemStruct04 item = new MenuItemStruct04();
+      item.itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      items.add(item);
     }
 
-    sortItems(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
   }
 
   @Method(0x80023b54L)
