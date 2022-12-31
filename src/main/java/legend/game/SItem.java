@@ -752,47 +752,6 @@ public final class SItem {
     //LAB_80103604
   }
 
-  @Method(0x8010361cL)
-  public static void renderSaveListArrows(final int scroll) {
-    FUN_80103444(saveListUpArrow_800bdb94, 194, 201, 202, 209);
-    FUN_80103444(saveListDownArrow_800bdb98, 178, 185, 186, 193);
-
-    if(scroll != 0) {
-      if(saveListUpArrow_800bdb94 == null) {
-        // Allocate up arrow
-        final Renderable58 renderable = allocateUiElement(111, 108, 182, 16);
-        renderable._18 = 194;
-        renderable._1c = 201;
-        saveListUpArrow_800bdb94 = renderable;
-        FUN_801033cc(renderable);
-      }
-      //LAB_801036c8
-    } else if(saveListUpArrow_800bdb94 != null) {
-      // Deallocate up arrow
-      fadeOutArrow(saveListUpArrow_800bdb94);
-      saveListUpArrow_800bdb94 = null;
-    }
-
-    //LAB_801036e8
-    if(scroll < (whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19 ? saves.size() - 3 : saves.size() - 3) && (whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19 && saves.size() > 2 || saves.size() > 3)) {
-      if(saveListDownArrow_800bdb98 == null) {
-        // Allocate down arrow
-        final Renderable58 renderable = allocateUiElement(111, 108, 182, 208);
-        renderable._18 = 178;
-        renderable._1c = 185;
-        saveListDownArrow_800bdb98 = renderable;
-        FUN_801033cc(renderable);
-      }
-      //LAB_80103738
-    } else if(saveListDownArrow_800bdb98 != null) {
-      // Deallocate down arrow
-      fadeOutArrow(saveListDownArrow_800bdb98);
-      saveListDownArrow_800bdb98 = null;
-    }
-
-    //LAB_80103754
-  }
-
   @Method(0x8010376cL)
   public static void renderGlyphs(final UnboundedArrayRef<MenuGlyph06> glyphs, final int x, final int y) {
     //LAB_801037ac
@@ -1711,10 +1670,10 @@ public final class SItem {
   }
 
   @Method(0x80108a6cL)
-  public static void renderSaveGameSlot(final int fileIndex, final int y, final long a3) {
+  public static void renderSaveGameSlot(final int fileIndex, final int y, final boolean allocate) {
     final SavedGameDisplayData saveData = saves.get(fileIndex).b();
 
-    if((a3 & 0xff) != 0) {
+    if(allocate) {
       renderTwoDigitNumber(21, y, fileIndex + 1); // File number
     }
 
@@ -1734,7 +1693,7 @@ public final class SItem {
     //LAB_80108ba0
     renderCentredText(locationNames.get(saveData.locationIndex).deref(), 278, y + 47, 4); // Location text
 
-    if((a3 & 0xff) != 0) {
+    if(allocate) {
       allocateUiElement(0x4c, 0x4c,  16, y).z_3c = 33; // Left half of border
       allocateUiElement(0x4d, 0x4d, 192, y).z_3c = 33; // Right half of border
 
