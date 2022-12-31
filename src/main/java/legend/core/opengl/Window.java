@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import legend.core.Config;
 import legend.core.DebugHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +10,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -86,6 +88,12 @@ public class Window {
 
       glfwTerminate();
       ERROR_CALLBACK.free();
+
+      try {
+        Config.save();
+      } catch (final IOException e) {
+        System.err.println("Failed to save config");
+      }
     }));
   }
 

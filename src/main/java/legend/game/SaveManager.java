@@ -97,11 +97,11 @@ public final class SaveManager {
     try {
       data = Files.readAllBytes(file);
     } catch(final IOException e) {
-      throw new RuntimeException("Failed to load game", e);
+      throw new RuntimeException("Failed to load saved game", e);
     }
 
     //LAB_80109e38
-    if(MathHelper.get(data, 0x180, 4) != 0x5a02_0006L) {
+    if(MathHelper.get(data, 0, 4) != 0x76615344 && MathHelper.get(data, 0x180, 4) != 0x5a02_0006L) {
       throw new RuntimeException("Invalid save data");
     }
 
@@ -109,7 +109,7 @@ public final class SaveManager {
   }
 
   public static SavedGameDisplayData loadDisplayData(final String filename) {
-    return new SavedGameDisplayData(filename, loadGame(filename));
+    return SavedGameDisplayData.read(filename, loadGame(filename));
   }
 
   public static List<Tuple<String, SavedGameDisplayData>> loadAllDisplayData() {

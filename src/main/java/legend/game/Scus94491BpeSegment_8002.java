@@ -25,7 +25,14 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.game.inventory.UseItemResponse;
+import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.CharSwapScreen;
+import legend.game.inventory.screens.LoadGameScreen;
+import legend.game.inventory.screens.MenuScreen;
+import legend.game.inventory.screens.SaveGameScreen;
+import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -51,30 +58,30 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.types.UseItemResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getBiFunctionAddress;
-import static legend.core.MemoryHelper.getConsumerAddress;
-import static legend.game.SItem.FUN_800fcad4;
-import static legend.game.SItem.FUN_8010a948;
-import static legend.game.SItem.renderPostCombatReport;
-import static legend.game.SItem.FUN_8010f198;
+import static legend.game.SItem.FUN_80103b10;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.menuStack;
+import static legend.game.SItem.renderMenus;
+import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SMap.FUN_800d9e64;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2428;
+import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
@@ -102,13 +109,15 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
+import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
-import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -167,10 +176,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
-import static legend.game.Scus94491BpeSegment_800b._800bdb9c;
-import static legend.game.Scus94491BpeSegment_800b._800bdba0;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
-import static legend.game.Scus94491BpeSegment_800b._800bdf00;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
@@ -186,6 +192,7 @@ import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
+import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -194,18 +201,13 @@ import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbe8;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbec;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdbf0;
-import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc20;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe0;
-import static legend.game.Scus94491BpeSegment_800b.selectedMenuOptionRenderablePtr_800bdbe4;
 import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -1363,182 +1365,119 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022510
   }
 
-  @Method(0x80022520L)
-  public static void FUN_80022520(final int unused) {
-    whichMenu_800bdc38.setu(0x4L);
-  }
+  private static WhichMenu destMenu;
+  private static MenuScreen destScreen;
 
-  @Method(0x80022530L)
-  public static void FUN_80022530(final int unused) {
-    whichMenu_800bdc38.setu(0x9L);
-  }
-
-  @Method(0x80022540L)
-  public static void FUN_80022540(final int unused) {
-    whichMenu_800bdc38.setu(0xeL);
-  }
-
-  @Method(0x80022550L)
-  public static void FUN_80022550(final int unused) {
-    whichMenu_800bdc38.setu(0x13L);
-  }
-
-  @Method(0x80022560L)
-  public static void FUN_80022560(final int unused) {
-    whichMenu_800bdc38.setu(0x18L);
-  }
-
-  @Method(0x80022570L)
-  public static void FUN_80022570(final int unused) {
-    whichMenu_800bdc38.setu(0x1dL);
-  }
-
-  @Method(0x80022580L)
-  public static void FUN_80022580(final int unused) {
-    whichMenu_800bdc38.setu(0x22L);
+  private static void initMenu(final WhichMenu destMenu, final MenuScreen destScreen) {
+    if((getLoadedDrgnFiles() & 0x80L) == 0) {
+      inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
+      whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
+      FUN_8001e010(0);
+      scriptsDisabled_800bc0b9.set(true);
+      Scus94491BpeSegment_8002.destMenu = destMenu;
+      Scus94491BpeSegment_8002.destScreen = destScreen;
+    }
   }
 
   @Method(0x80022590L)
-  public static void FUN_80022590() {
-    switch((int)whichMenu_800bdc38.get()) {
-      case 0x1 -> {
+  public static void loadAndRenderMenus() {
+    switch(whichMenu_800bdc38) {
+      case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
+      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, new ShopScreen());
+      case INIT_LOAD_GAME_MENU_11 -> initMenu(WhichMenu.RENDER_LOAD_GAME_MENU_14, new LoadGameScreen());
+      case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
+      case INIT_CHAR_SWAP_MENU_21 -> {
+        loadCharacterStats(0);
+        FUN_80103b10();
+        initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
+      }
+      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, new TooManyItemsScreen());
+
+      case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
+        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
+
+          renderablePtr_800bdc5c = null;
+          drgn0_6666FilePtr_800bdc3c.clear();
+          setWidthAndFlags(384);
+          loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
+          loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
+          textZ_800bdf00.set(33);
+
+          loadSupportOverlay(2, () -> {
+            whichMenu_800bdc38 = destMenu;
+
+            if(destScreen != null) {
+              menuStack.pushScreen(destScreen);
+              destScreen = null;
+            }
+          });
+        }
+      }
+
+      case INIT_POST_COMBAT_REPORT_26 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x2L);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
         }
       }
 
-      case 0x2 -> {
+      case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022520", int.class), 0);
+          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_28;
+          loadSupportOverlay(2, () -> whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29);
         }
       }
 
-      case 0x6 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x7L);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
+      case RENDER_SHOP_MENU_9, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34 -> menuStack.render();
+      case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
+      case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
+
+      case UNLOAD_LOAD_GAME_MENU_15, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25 -> {
+        menuStack.popScreen();
+        decrementOverlayCount();
+
+        if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
+          FUN_8001e010(-1);
         }
+
+        scriptsDisabled_800bc0b9.set(false);
+        whichMenu_800bdc38 = WhichMenu.NONE_0;
+
+        deallocateRenderables(0xff);
+        free(drgn0_6666FilePtr_800bdc3c.getPointer());
+
+        scriptStartEffect(2, 10);
+
+        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
+          FUN_800e3fac();
+        }
+
+        textZ_800bdf00.set(13);
       }
 
-      case 0x7 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022530", int.class), 0);
-        }
-      }
-
-      case 0xb -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0xcL);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
-        }
-      }
-
-      case 0xc -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022540", int.class), 0);
-        }
-      }
-
-      case 0x10 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x11L);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
-        }
-      }
-
-      case 0x11 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022550", int.class), 0);
-        }
-      }
-
-      case 0x15 -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x16L);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
-        }
-      }
-
-      case 0x16 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022560", int.class), 0);
-        }
-      }
-
-      case 0x1f -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x20);
-          FUN_8001e010(0);
-          scriptsDisabled_800bc0b9.set(true);
-        }
-      }
-
-      case 0x1a -> {
-        if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
-          whichMenu_800bdc38.setu(0x1bL);
-        }
-      }
-
-      case 0x1b -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022570", int.class), 0);
-        }
-      }
-
-      case 0x20 -> {
-        if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38.addu(0x1L);
-          loadSupportOverlay(2, getConsumerAddress(Scus94491BpeSegment_8002.class, "FUN_80022580", int.class), 0);
-        }
-      }
-
-      case 0xe, 0x13, 0x18, 0x24, 0x4 -> FUN_800fcad4();
-      case 0x1d -> renderPostCombatReport();
-      case 0x9 -> FUN_8010a948();
-      case 0x22 -> FUN_8010f198();
-
-      case 0xa, 0xf, 0x19, 0x23, 0x5 -> {
+      case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
         decrementOverlayCount();
         FUN_8001e010(-1);
         scriptsDisabled_800bc0b9.set(false);
-        whichMenu_800bdc38.setu(0);
+        whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
-      case 0x1e, 0x14 -> {
+      case UNLOAD_POST_COMBAT_REPORT_30 -> {
         decrementOverlayCount();
         scriptsDisabled_800bc0b9.set(false);
-        whichMenu_800bdc38.setu(0);
+        whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
     }
   }
 
   @Method(0x80022898L)
-  public static int FUN_80022898(final int itemId) {
+  public static boolean itemCantBeDiscarded(final int itemId) {
     if(itemId >= 0xc0) {
-      return 0;
+      return false;
     }
 
-    //LAB_800228b0
-    return equipmentStats_80111ff0.get(itemId)._00.get() & 0x4;
+    return (equipmentStats_80111ff0.get(itemId)._00.get() & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
@@ -1634,12 +1573,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022afcL)
-  public static long FUN_80022afc(final int itemId) {
+  public static int itemCanBeUsedInMenu(final int itemId) {
     if(itemId < 0xc0 || itemId == 0xff) {
       return 0;
     }
 
-    final long target = itemStats_8004f2ac.get(itemId - 0xc0).target_00.get();
+    final int target = itemStats_8004f2ac.get(itemId - 0xc0).target_00.get();
 
     if((target & 0x10L) == 0) {
       //LAB_80022b40
@@ -1647,7 +1586,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022b48
-    return target & 0x12L;
+    return target & 0x12;
   }
 
   /**
@@ -1732,25 +1671,25 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022d88L)
   public static UseItemResponse useItemInMenu(final UseItemResponse response, final int itemId, final int charIndex) {
-    response._00.set(0);
-    response.value_04.set(0);
+    response._00 = 0;
+    response.value_04 = 0;
 
-    if(FUN_80022afc(itemId) == 0) {
+    if(itemCanBeUsedInMenu(itemId) == 0) {
       //LAB_80022dd8
       return response;
     }
 
     //LAB_80022e0c
-    response._00.set(1);
+    response._00 = 1;
 
     if(itemId == 0xdf) { // Charm potion
       if(mainCallbackIndex_8004dd20.get() == 0x8L || hasNoEncounters_800bed58.get() == 0) {
         //LAB_80022e40
-        response._00.set(8);
+        response._00 = 8;
         encounterAccumulator_800c6ae8.setu(0);
       } else {
         //LAB_80022e50
-        response._00.set(9);
+        response._00 = 9;
       }
 
       //LAB_80022e54
@@ -1763,7 +1702,7 @@ public final class Scus94491BpeSegment_8002 {
     final int percentage = itemStats.percentage_09.get();
     if((itemStats.type_0b.get() & 0x80) != 0) {
       //LAB_80022edc
-      response._00.set((itemStats.target_00.get() & 0x2) == 0 ? 2 : 3);
+      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 2 : 3;
 
       final int amount;
       if(percentage == 100) {
@@ -1774,13 +1713,13 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022f3c
-      response.value_04.set(addHp(charIndex, amount));
+      response.value_04 = addHp(charIndex, amount);
     }
 
     //LAB_80022f50
     if((itemStats.type_0b.get() & 0x40) != 0) {
       //LAB_80022f98
-      response._00.set((itemStats.target_00.get() & 0x2) == 0 ? 4 : 5);
+      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 4 : 5;
 
       final int amount;
       if(percentage == 100) {
@@ -1791,12 +1730,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022ff8
-      response.value_04.set(addMp(charIndex, amount));
+      response.value_04 = addMp(charIndex, amount);
     }
 
     //LAB_8002300c
     if((itemStats.type_0b.get() & 0x20) != 0) {
-      response._00.set(6);
+      response._00 = 6;
 
       final int amount;
       if(percentage == 100) {
@@ -1806,7 +1745,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80023050
-      response.value_04.set(addSp(charIndex, amount));
+      response.value_04 = addSp(charIndex, amount);
     }
 
     //LAB_80023068
@@ -1814,12 +1753,12 @@ public final class Scus94491BpeSegment_8002 {
       final int status = gameState_800babc8.charData_32c.get(charIndex).status_10.get();
 
       if((itemStats.status_08.get() & status) != 0) {
-        response.value_04.set(status);
+        response.value_04 = status;
         gameState_800babc8.charData_32c.get(charIndex).status_10.and(~status);
       }
 
       //LAB_800230ec
-      response._00.set(7);
+      response._00 = 7;
     }
 
     //LAB_800230f0
@@ -2060,11 +1999,6 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  @Method(0x8002379cL)
-  public static void FUN_8002379c() {
-    // empty
-  }
-
   @Method(0x80023870L)
   public static void playSound(final long soundIndex) {
     Scus94491BpeSegment.playSound(0, (int)soundIndex, 0, 0, (short)0, (short)0);
@@ -2137,193 +2071,176 @@ public final class Scus94491BpeSegment_8002 {
     return press & 0x20L;
   }
 
-  @Method(0x80023978L)
-  public static long compareItems(final MenuItemStruct04 item1, final MenuItemStruct04 item2) {
-    final int icon1 = getItemIcon(item1.itemId_00.get());
-    final int icon2 = getItemIcon(item2.itemId_00.get());
-
-    if(icon1 != icon2) {
-      return icon1 - icon2;
-    }
-
-    //LAB_800239c8
-    return item1.itemId_00.get() - item2.itemId_00.get();
-  }
-
   @Method(0x800239e0L)
-  public static void FUN_800239e0(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final long a2) {
+  public static void setInventoryFromDisplay(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> a1, final int count) {
     //LAB_800239ec
-    int a3 = 0;
-    for(int i = 0; i < a2; i++) {
-      if((a0.get(i).price_02.get() & 0x1000) == 0) {
-        a1.get(a3).set(a0.get(i).itemId_00.get());
-        a3++;
+    int itemIndex = 0;
+    for(int i = 0; i < count; i++) {
+      if((display.get(i).flags_02 & 0x1000) == 0) {
+        a1.get(itemIndex).set(display.get(i).itemId_00);
+        itemIndex++;
       }
 
       //LAB_80023a0c
     }
 
     //LAB_80023a1c
-    a1.get(a3).set(0xff);
+    a1.get(itemIndex).set(0xff);
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final ArrayRef<MenuItemStruct04> a0, final ArrayRef<UnsignedByteRef> a1, final int count) {
-    qsort(a0, count, 0x4, getBiFunctionAddress(Scus94491BpeSegment_8002.class, "compareItems", MenuItemStruct04.class, MenuItemStruct04.class, long.class));
-    FUN_800239e0(a0, a1, count);
+  public static void sortItems(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> items, final int count) {
+    display.sort(Comparator.comparingInt(item -> getItemIcon(item.itemId_00)));
+    setInventoryFromDisplay(display, items, count);
   }
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
-    final ArrayRef<MenuItemStruct04> s0 = MEMORY.ref(4, mallocTail(0x4c0L), ArrayRef.of(MenuItemStruct04.class, 0x130, 0x4, MenuItemStruct04::new));
+    final List<MenuItemStruct04> items = new ArrayList<>();
 
-    //LAB_80023ab4
-    for(int i = 0; i < 0x130; i++) {
-      s0.get(i).itemId_00.set(0xff);
-      s0.get(i).price_02.set(0);
-    }
-
-    //LAB_80023aec
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      s0.get(i).itemId_00.set(gameState_800babc8.items_2e9.get(i).get());
+      final MenuItemStruct04 item = new MenuItemStruct04();
+      item.itemId_00 = gameState_800babc8.items_2e9.get(i).get();
+      items.add(item);
     }
 
-    //LAB_80023b10
-    sortItems(s0, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-    free(s0.getAddress());
+    sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
   }
 
   @Method(0x80023b54L)
   public static Renderable58 allocateRenderable(final Drgn0_6666Struct a0, @Nullable Renderable58 a1) {
     if(a1 == null) {
-      a1 = MEMORY.ref(4, mallocTail(0x58L), Renderable58::new);
+      a1 = new Renderable58();
     }
 
     //LAB_80023b7c
-    a1.flags_00.set(0);
-    a1.glyph_04.set(0);
-    a1._08.set(a0._0a.get());
-    a1._0c.set(0);
-    a1.startGlyph_10.set(0);
-    a1.endGlyph_14.set(a0.entryCount_06.get() - 1);
-    a1._18.set(0);
-    a1._1c.set(0);
-    a1.drgn0_6666_20.set(a0);
-    a1.drgn0_6666_data_24.set(MEMORY.ref(4, a0.entries_08.get(a0.entryCount_06.get()).getAddress()).cast(UnboundedArrayRef.of(0x4, UnsignedIntRef::new)));
-    a1._28.set(0);
-    a1.tpage_2c.set(0);
-    a1._34.set(0x1000L);
-    a1._38.set(0x1000L);
-    a1.z_3c.set(0x24);
-    a1.x_40.set(0);
-    a1.y_44.set(0);
-    a1._48.set(0);
-    a1.child_50.clear();
+    a1.flags_00 = 0;
+    a1.glyph_04 = 0;
+    a1._08 = a0._0a.get();
+    a1._0c = 0;
+    a1.startGlyph_10 = 0;
+    a1.endGlyph_14 = a0.entryCount_06.get() - 1;
+    a1._18 = 0;
+    a1._1c = 0;
+    a1.drgn0_6666_20 = a0;
+    a1.metricsIndices_24 = new int[a0.entryCount_06.get()];
+    for(int i = 0; i < a0.entryCount_06.get(); i++) {
+      a1.metricsIndices_24[i] = (int)MEMORY.get(a0.entries_08.get(a0.entryCount_06.get()).getAddress() + i * 4, 4);
+    }
 
-    if(!renderablePtr_800bdc5c.isNull()) {
-      a1.parent_54.set(renderablePtr_800bdc5c.deref());
-      renderablePtr_800bdc5c.deref().child_50.set(a1);
+    a1._28 = 0;
+    a1.tpage_2c = 0;
+    a1._34 = 0x1000;
+    a1._38 = 0x1000;
+    a1.z_3c = 36;
+    a1.x_40 = 0;
+    a1.y_44 = 0;
+    a1._48 = 0;
+    a1.child_50 = null;
+
+    if(renderablePtr_800bdc5c != null) {
+      a1.parent_54 = renderablePtr_800bdc5c;
+      renderablePtr_800bdc5c.child_50 = a1;
     } else {
       //LAB_80023c08
-      a1.parent_54.clear();
-      renderablePtr_800bdc5c.set(a1);
+      a1.parent_54 = null;
     }
 
     //LAB_80023c0c
-    renderablePtr_800bdc5c.set(a1);
+    renderablePtr_800bdc5c = a1;
     return a1;
   }
 
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    Renderable58 renderable = renderablePtr_800bdc5c.derefNullable();
+    Renderable58 renderable = renderablePtr_800bdc5c;
 
     _800bdc58.addu(0x1L);
 
     //LAB_80023c8c
     while(renderable != null) {
       boolean forceUnload = false;
-      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.deref().entries_08;
+      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.entries_08;
 
-      if((renderable.flags_00.get() & 0x4L) == 0) {
-        renderable._08.decr();
+      if((renderable.flags_00 & 0x4) == 0) {
+        renderable._08--;
 
-        if(renderable._08.get() < 0) {
-          if((renderable.flags_00.get() & 0x20L) != 0) {
-            renderable.glyph_04.decr();
+        if(renderable._08 < 0) {
+          if((renderable.flags_00 & 0x20) != 0) {
+            renderable.glyph_04--;
 
-            if(renderable.glyph_04.get() < renderable.startGlyph_10.get()) {
-              if((renderable.flags_00.get() & 0x10L) != 0) {
+            if(renderable.glyph_04 < renderable.startGlyph_10) {
+              if((renderable.flags_00 & 0x10) != 0) {
                 forceUnload = true;
-                renderable.flags_00.or(0x40L);
+                renderable.flags_00 |= 0x40;
               }
 
               //LAB_80023d0c
-              if(renderable._18.get() != 0) {
-                renderable.startGlyph_10.set(renderable._18);
+              if(renderable._18 != 0) {
+                renderable.startGlyph_10 = renderable._18;
 
-                if(renderable._1c.get() != 0) {
-                  renderable.endGlyph_14.set(renderable._1c);
+                if(renderable._1c != 0) {
+                  renderable.endGlyph_14 = renderable._1c;
                 } else {
                   //LAB_80023d34
-                  renderable.endGlyph_14.set(renderable._18);
-                  renderable.flags_00.or(0x4L);
+                  renderable.endGlyph_14 = renderable._18;
+                  renderable.flags_00 |= 0x4;
                 }
 
                 //LAB_80023d48
-                renderable._18.set(0);
-                renderable.flags_00.and(0xffff_ffdfL);
+                renderable._18 = 0;
+                renderable.flags_00 &= 0xffff_ffdf;
               }
 
               //LAB_80023d5c
               //LAB_80023e00
-              renderable.glyph_04.set(renderable.endGlyph_14);
-              renderable._0c.incr();
+              renderable.glyph_04 = renderable.endGlyph_14;
+              renderable._0c++;
             }
           } else {
             //LAB_80023d6c
-            renderable.glyph_04.incr();
+            renderable.glyph_04++;
 
-            if(renderable.endGlyph_14.get() < renderable.glyph_04.get()) {
-              if((renderable.flags_00.get() & 0x10L) != 0) {
+            if(renderable.endGlyph_14 < renderable.glyph_04) {
+              if((renderable.flags_00 & 0x10) != 0) {
                 forceUnload = true;
-                renderable.flags_00.or(0x40L);
+                renderable.flags_00 |= 0x40;
               }
 
               //LAB_80023da4
-              if(renderable._18.get() != 0) {
-                renderable.startGlyph_10.set(renderable._18);
+              if(renderable._18 != 0) {
+                renderable.startGlyph_10 = renderable._18;
 
-                if(renderable._1c.get() != 0) {
-                  renderable.endGlyph_14.set(renderable._1c);
+                if(renderable._1c != 0) {
+                  renderable.endGlyph_14 = renderable._1c;
                 } else {
                   //LAB_80023dcc
-                  renderable.endGlyph_14.set(renderable._18);
-                  renderable.flags_00.or(0x4L);
+                  renderable.endGlyph_14 = renderable._18;
+                  renderable.flags_00 |= 0x4;
                 }
 
                 //LAB_80023de0
-                renderable._18.set(0);
-                renderable.flags_00.and(0xffff_ffdfL);
+                renderable._18 = 0;
+                renderable.flags_00 &= 0xffff_ffdf;
               }
 
               //LAB_80023df4
               //LAB_80023e00
-              renderable.glyph_04.set(renderable.startGlyph_10);
-              renderable._0c.incr();
+              renderable.glyph_04 = renderable.startGlyph_10;
+              renderable._0c++;
             }
           }
 
           //LAB_80023e08
-          renderable._08.set(entries.get(renderable.glyph_04.get())._02.get() - 1);
+          renderable._08 = entries.get(renderable.glyph_04)._02.get() - 1;
         }
       }
 
       //LAB_80023e28
-      if((renderable.flags_00.get() & 0x40L) == 0) {
+      if((renderable.flags_00 & 0x40) == 0) {
         final int centreX = displayWidth_1f8003e0.get() / 2 + 8;
 
-        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.deref().getMetrics((int)renderable.drgn0_6666_data_24.deref().get(entries.get(renderable.glyph_04.get())._00.get()).get());
+        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.getMetrics(renderable.metricsIndices_24[entries.get(renderable.glyph_04).metricsIndicesIndex_00.get()]);
 
         //LAB_80023e94
         for(int i = metricses.length() - 1; i >= 0; i--) {
@@ -2334,28 +2251,28 @@ public final class Scus94491BpeSegment_8002 {
 
           final int x1;
           final int x2;
-          if(renderable._34.get() == 0x1000L) {
+          if(renderable._34 == 0x1000) {
             if(metrics._10.get() < 0) {
-              x2 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x2 = renderable.x_40 + metrics.x_02.get() - centreX;
               x1 = x2 + metrics.width_08.get();
             } else {
               //LAB_80023f20
-              x1 = renderable.x_40.get() + metrics.x_02.get() - centreX;
+              x1 = renderable.x_40 + metrics.x_02.get() - centreX;
               x2 = x1 + metrics.width_08.get();
             }
           } else {
             //LAB_80023f40
-            final long a0_0 = renderable._34.get() != 0 ? renderable._34.get() : metrics._10.get();
+            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10.get();
 
             //LAB_80023f4c
             //LAB_80023f68
-            final int a1 = Math.abs((int)(metrics.width_08.get() * a0_0 / 0x1000));
+            final int a1 = Math.abs(metrics.width_08.get() * a0_0 / 0x1000);
             if(metrics._10.get() < 0) {
-              x2 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x2 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
               x1 = x2 + a1;
             } else {
               //LAB_80023fb4
-              x1 = renderable.x_40.get() + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x1 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
               x2 = x1 + a1;
             }
           }
@@ -2363,28 +2280,28 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80023fe4
           final int y1;
           final int y2;
-          if(renderable._38.get() == 0x1000L) {
+          if(renderable._38 == 0x1000) {
             if(metrics._12.get() < 0) {
-              y2 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y2 = renderable.y_44 + metrics.y_03.get() - 120;
               y1 = y2 + metrics.height_0a.get();
             } else {
               //LAB_80024024
-              y1 = renderable.y_44.get() + metrics.y_03.get() - 120;
+              y1 = renderable.y_44 + metrics.y_03.get() - 120;
               y2 = y1 + metrics.height_0a.get();
             }
           } else {
             //LAB_80024044
-            final long a0_0 = renderable._38.get() != 0 ? renderable._38.get() : metrics._12.get();
+            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12.get();
 
             //LAB_80024050
             //LAB_8002406c
-            final int a1 = Math.abs((int)(metrics.height_0a.get() * a0_0 / 0x1000));
+            final int a1 = Math.abs(metrics.height_0a.get() * a0_0 / 0x1000);
             if(metrics._12.get() < 0) {
-              y2 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y2 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
               y1 = y2 + a1;
             } else {
               //LAB_800240b8
-              y1 = renderable.y_44.get() + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y1 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
               y2 = y1 + a1;
             }
           }
@@ -2408,11 +2325,11 @@ public final class Scus94491BpeSegment_8002 {
           cmd.uv(2, metrics.u_00.get(), v);
           cmd.uv(3, u, v);
 
-          final int clut = renderable.clut_30.get() != 0 ? renderable.clut_30.get() : metrics.clut_04.get() & 0x7fff;
+          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04.get() & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
-          final int tpage = renderable.tpage_2c.get() != 0 ? metrics.tpage_06.get() & 0x60 | renderable.tpage_2c.get() : metrics.tpage_06.get() & 0x7f;
+          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06.get() & 0x60 | renderable.tpage_2c : metrics.tpage_06.get() & 0x7f;
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
@@ -2421,18 +2338,18 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_8002424c
-          GPU.queueCommand(renderable.z_3c.get(), cmd);
+          GPU.queueCommand(renderable.z_3c, cmd);
         }
       }
 
       //LAB_80024280
-      if((renderable.flags_00.get() & 0x8L) != 0 || forceUnload) {
+      if((renderable.flags_00 & 0x8) != 0 || forceUnload) {
         //LAB_800242a8
         unloadRenderable(renderable);
       }
 
       //LAB_800242b0
-      renderable = renderable.parent_54.derefNullable();
+      renderable = renderable.parent_54;
     }
 
     //LAB_800242b8
@@ -2440,41 +2357,38 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800242e8L)
   public static void unloadRenderable(final Renderable58 a0) {
-    final Renderable58 v0 = a0.child_50.derefNullable();
-    final Renderable58 v1 = a0.parent_54.derefNullable();
+    final Renderable58 v0 = a0.child_50;
+    final Renderable58 v1 = a0.parent_54;
 
     if(v0 == null) {
       if(v1 == null) {
-        renderablePtr_800bdc5c.clear();
+        renderablePtr_800bdc5c = null;
       } else {
         //LAB_80024320
-        renderablePtr_800bdc5c.set(v1);
-        v1.child_50.clear();
+        renderablePtr_800bdc5c = v1;
+        v1.child_50 = null;
       }
       //LAB_80024334
     } else if(v1 == null) {
-      v0.parent_54.clear();
+      v0.parent_54 = null;
     } else {
       //LAB_80024350
-      v0.parent_54.set(v1);
-      v1.child_50.setNullable(a0.child_50.derefNullable());
+      v0.parent_54 = v1;
+      v1.child_50 = a0.child_50;
     }
-
-    //LAB_80024364
-    free(a0.getAddress());
   }
 
   @Method(0x8002437cL)
   public static void deallocateRenderables(final long a0) {
-    Renderable58 s0 = renderablePtr_800bdc5c.derefNullable();
+    Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
       //LAB_800243b4
-      while(!s0.parent_54.isNull()) {
+      while(s0.parent_54 != null) {
         final Renderable58 a0_0 = s0;
-        s0 = s0.parent_54.deref();
+        s0 = s0.parent_54;
 
-        if(a0_0._28.get() <= a0) {
+        if(a0_0._28 <= a0) {
           unloadRenderable(a0_0);
         }
 
@@ -2482,26 +2396,16 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_800243e0
-      if(s0._28.get() <= a0) {
+      if(s0._28 <= a0) {
         unloadRenderable(s0);
       }
 
       //LAB_800243fc
       if(a0 != 0) {
-        saveListUpArrow_800bdb94.clear();
-        saveListDownArrow_800bdb98.clear();
-        _800bdb9c.clear();
-        _800bdba0.clear();
-        renderablePtr_800bdba4.clear();
-        renderablePtr_800bdba8.clear();
-
-        selectedMenuOptionRenderablePtr_800bdbe0.clear();
-        selectedMenuOptionRenderablePtr_800bdbe4.clear();
-        renderablePtr_800bdbe8.clear();
-        renderablePtr_800bdbec.clear();
-        renderablePtr_800bdbf0.clear();
-
-        renderablePtr_800bdc20.clear();
+        saveListUpArrow_800bdb94 = null;
+        saveListDownArrow_800bdb98 = null;
+        renderablePtr_800bdba4 = null;
+        renderablePtr_800bdba8 = null;
       }
     }
 
@@ -2635,7 +2539,7 @@ public final class Scus94491BpeSegment_8002 {
     loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded, 0);
     noop_8002498c();
 
-    _800bdf00.setu(0xdL);
+    textZ_800bdf00.set(13);
     _800bdf04.setu(0);
     _800bdf08.setu(0);
     _800be5c4.setu(0);
@@ -4910,7 +4814,7 @@ public final class Scus94491BpeSegment_8002 {
         final int v = s7 >= 0 ? v1 : v1 - s7;
         final int h = s7 >= 0 ? 12 - s7 : 12 + s7;
 
-        GPU.queueCommand((int)_800bdf00.get(), new GpuCommandQuad()
+        GPU.queueCommand(textZ_800bdf00.get(), new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
           .monochrome(0x80)
           .pos(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)

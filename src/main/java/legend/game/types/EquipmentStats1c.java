@@ -8,6 +8,11 @@ import legend.core.memory.types.UnsignedByteRef;
 public class EquipmentStats1c implements MemoryRef {
   private final Value ref;
 
+  /**
+   * <ul>
+   *   <li>0x4 - can't be discarded</li>
+   * </ul>
+   */
   public final UnsignedByteRef _00;
   public final UnsignedByteRef type_01;
   public final UnsignedByteRef _02;

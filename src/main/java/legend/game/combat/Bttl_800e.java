@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MemoryHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -86,7 +87,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getConsumerAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
@@ -167,7 +167,7 @@ import static legend.game.combat.Bttl_800c.FUN_800c9708;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
-import static legend.game.combat.Bttl_800c._800c6758;
+import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c._800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
@@ -2739,7 +2739,7 @@ public final class Bttl_800e {
     v0.scriptIndex_18.set(scriptIndex);
     v0._1c.set(0);
     v0.frameCount_20.set(-1);
-    loadSupportOverlay(3, getConsumerAddress(Bttl_800e.class, "FUN_800e704c", int.class), 0);
+    loadSupportOverlay(3, Bttl_800e::FUN_800e704c);
     return scriptIndex;
   }
 
@@ -2999,7 +2999,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e704cL)
-  public static void FUN_800e704c(final int param) {
+  public static void FUN_800e704c() {
     _800c6938.deref()._1c.set(1);
   }
 
@@ -3845,7 +3845,7 @@ public final class Bttl_800e {
     v0._34.set(0);
     v0.deff_38.clear();
     FUN_800e6070();
-    loadSupportOverlay(1, getConsumerAddress(SBtld.class, "FUN_801098f4", int.class), 0);
+    loadSupportOverlay(1, SBtld::FUN_801098f4);
   }
 
   @Method(0x800e9100L)
@@ -5256,17 +5256,17 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eca98L)
-  public static void drawTargetArrow(final long a0, final int combatantIdx) {
+  public static void drawTargetArrow(final int targetType, final int combatantIdx) {
     int scriptIndex = 0;
     if(combatantIdx != -1) {
-      if(a0 == 0) {
+      if(targetType == 0) {
         //LAB_800ecb00
         scriptIndex = _8006e398.charBobjIndices_e40.get(combatantIdx).get();
-      } else if(a0 == 1) {
+      } else if(targetType == 1) {
         //LAB_800ecb1c
-        scriptIndex = _8006e398.bobjIndices_ebc.get(combatantIdx).get();
+        scriptIndex = _8006e398.enemyBobjIndices_ebc.get(combatantIdx).get();
         //LAB_800ecaf0
-      } else if(a0 == 2) {
+      } else if(targetType == 2) {
         //LAB_800ecb38
         scriptIndex = _8006e398.bobjIndices_e0c.get(combatantIdx).get();
       }
@@ -5286,14 +5286,14 @@ public final class Bttl_800e {
     } else {
       //LAB_800ecba4
       long count = 0;
-      if(a0 == 0) {
+      if(targetType == 0) {
         //LAB_800ecbdc
         count = charCount_800c677c.get();
-      } else if(a0 == 1) {
+      } else if(targetType == 1) {
         //LAB_800ecbec
-        count = _800c6758.get();
+        count = enemyCount_800c6758.get();
         //LAB_800ecbc8
-      } else if(a0 == 2) {
+      } else if(targetType == 2) {
         //LAB_800ecbfc
         count = _800c669c.get();
       }
@@ -5301,14 +5301,14 @@ public final class Bttl_800e {
       //LAB_800ecc04
       //LAB_800ecc1c
       for(int i = 0; i < count; i++) {
-        if(a0 == 0) {
+        if(targetType == 0) {
           //LAB_800ecc50
           scriptIndex = _8006e398.charBobjIndices_e40.get(i).get();
-        } else if(a0 == 1) {
+        } else if(targetType == 1) {
           //LAB_800ecc5c
-          scriptIndex = _8006e398.bobjIndices_ebc.get(i).get();
+          scriptIndex = _8006e398.enemyBobjIndices_ebc.get(i).get();
           //LAB_800ecc40
-        } else if(a0 == 2) {
+        } else if(targetType == 2) {
           //LAB_800ecc68
           scriptIndex = _8006e398.bobjIndices_e78.get(i).get();
         }
@@ -5813,7 +5813,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ef28cL)
-  public static void FUN_800ef28c(final int a0) {
+  public static void FUN_800ef28c() {
     //LAB_800ef2c4
     //TODO sp0x18 is unused, why?
     //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);
@@ -6000,6 +6000,10 @@ public final class Bttl_800e {
   @Method(0x800ef9e4L)
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
+      if (Config.changeBattleRGB()) {
+        Bttl_800c._800c7004.set(Config.getBattleRGB());
+      }
+
       final long charCount = charCount_800c677c.get();
 
       //LAB_800efa34
@@ -6322,20 +6326,20 @@ public final class Bttl_800e {
       // Targeting
       final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
       if(menu._4c.get() != 0) {
-        drawTargetArrow(menu._50.get(), menu.combatantIndex.get());
+        drawTargetArrow(menu.targetType_50.get(), menu.combatantIndex.get());
         final int targetCombatant = menu.combatantIndex.get();
         LodString str;
         int element;
         if(targetCombatant == -1) {  // Target all
-          str = targeting_800fb36c.get((int)menu._50.get()).deref();
+          str = targeting_800fb36c.get(menu.targetType_50.get()).deref();
           element = 3;
         } else {  // Target single
           final BattleObject27c targetBobj;
 
           //LAB_800f0bb0
-          if(menu._50.get() == 0x1L) {
+          if(menu.targetType_50.get() == 1) {
             //LAB_800f0ca4
-            targetBobj = scriptStatePtrArr_800bc1c0.get(_8006e398.bobjIndices_ebc.get(targetCombatant).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+            targetBobj = scriptStatePtrArr_800bc1c0.get(_8006e398.enemyBobjIndices_ebc.get(targetCombatant).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
 
             //LAB_800f0cf0
             int enemySlot;
@@ -6348,7 +6352,7 @@ public final class Bttl_800e {
             //LAB_800f0d10
             str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(enemySlot));
             element = getTargetEnemyElement(targetBobj.elementFlag_1c.get());
-          } else if(menu._50.get() == 0) {
+          } else if(menu.targetType_50.get() == 0) {
             targetBobj = scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(targetCombatant).get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
             str = playerNames_800fb378.get(targetBobj.charIndex_272.get()).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272.get() * 0x2L).get();
