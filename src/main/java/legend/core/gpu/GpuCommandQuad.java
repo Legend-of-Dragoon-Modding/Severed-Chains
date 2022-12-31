@@ -73,6 +73,14 @@ public class GpuCommandQuad extends GpuCommand {
   }
 
   public GpuCommandQuad vramPos(final int x, final int y) {
+    if(x < 0) {
+      throw new IllegalArgumentException("Invalid VRAM X " + x);
+    }
+
+    if(y < 0) {
+      throw new IllegalArgumentException("Invalid VRAM Y " + y);
+    }
+
     this.vramX = x;
     this.vramY = y;
     this.textured = true;
