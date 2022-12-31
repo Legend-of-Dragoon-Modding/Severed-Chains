@@ -139,7 +139,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final UnsignedShortRef onHitStatus_4a;
   /** Determines turn order */
   public final ShortRef turnValue_4c;
-  public final ShortRef spellId_4e;
+  public final ShortRef attackItemOrSpellId_4e;
 
   public final ShortRef attackItemId_52;
   public final BoolRef guard_54;
@@ -321,7 +321,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this._48 = ref.offset(2, 0x48L).cast(UnsignedShortRef::new);
     this.onHitStatus_4a = ref.offset(2, 0x4aL).cast(UnsignedShortRef::new);
     this.turnValue_4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
-    this.spellId_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
+    this.attackItemOrSpellId_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
 
     this.attackItemId_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
     this.guard_54 = ref.offset(1, 0x54L).cast(BoolRef::new);

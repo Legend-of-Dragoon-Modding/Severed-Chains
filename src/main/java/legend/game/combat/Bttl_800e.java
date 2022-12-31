@@ -5873,7 +5873,7 @@ public final class Bttl_800e {
       s0._46.set(stats._99.get());
       s0._48.set(stats._9a.get());
       s0.onHitStatus_4a.set(stats.onHitStatus_9b.get());
-      s0.spellId_4e.set((short)stats.onHitStatus_9b.get());
+      s0.attackItemOrSpellId_4e.set((short)stats.onHitStatus_9b.get());
       s0.selectedAddition_58.set(stats.selectedAddition_35.get());
       s0.dragoonAttack_ac.set(stats.dragoonAttack_72.get());
       s0.dragoonMagic_ae.set(stats.dragoonMagicAttack_73.get());
