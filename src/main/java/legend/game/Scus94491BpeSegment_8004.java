@@ -3976,8 +3976,13 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cb0cL)
   public static long FUN_8004cb0c(final int playableSoundIndex, final long a1) {
-    assert playableSoundIndex >= 0;
-    assert a1 >= 0;
+    if(playableSoundIndex < 0) {
+      throw new IllegalArgumentException("Negative playableSoundIndex");
+    }
+
+    if(a1 < 0) {
+      throw new RuntimeException("Negative a1");
+    }
 
     final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
     sshdPtr_800c4ac0.set(sound.sshdPtr_04.deref());
