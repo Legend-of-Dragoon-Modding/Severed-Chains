@@ -141,7 +141,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef turnValue_4c;
   public final ShortRef spellId_4e;
 
-  public final ShortRef weaponId_52;
+  public final ShortRef attackItemId_52;
   public final BoolRef guard_54;
 
   public final ShortRef additionHits_56;
@@ -237,7 +237,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public final ShortRef itemSpecial2_dc;
   public final ShortRef itemDamage_de;
   public final UnsignedByteRef itemSpecialAmount_e0;
-  public final ShortRef _e2;
+  public final ShortRef itemIcon_e2;
   public final ShortRef itemStatus_e4;
   public final ShortRef itemPercentage_e6;
   public final ShortRef itemUu2_e8;
@@ -323,7 +323,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.turnValue_4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
     this.spellId_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
 
-    this.weaponId_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
+    this.attackItemId_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
     this.guard_54 = ref.offset(1, 0x54L).cast(BoolRef::new);
 
     this.additionHits_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
@@ -402,7 +402,7 @@ public class BattleObject27c extends BattleScriptDataBase {
     this.itemSpecial2_dc = ref.offset(2, 0xdcL).cast(ShortRef::new);
     this.itemDamage_de = ref.offset(2, 0xdeL).cast(ShortRef::new);
     this.itemSpecialAmount_e0 = ref.offset(1, 0xe0L).cast(UnsignedByteRef::new);
-    this._e2 = ref.offset(2, 0xe2L).cast(ShortRef::new);
+    this.itemIcon_e2 = ref.offset(2, 0xe2L).cast(ShortRef::new);
     this.itemStatus_e4 = ref.offset(2, 0xe4L).cast(ShortRef::new);
     this.itemPercentage_e6 = ref.offset(2, 0xe6L).cast(ShortRef::new);
     this.itemUu2_e8 = ref.offset(2, 0xe8L).cast(ShortRef::new);

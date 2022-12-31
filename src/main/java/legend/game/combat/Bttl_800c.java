@@ -314,7 +314,7 @@ public final class Bttl_800c {
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
   public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
-  public static final Pointer<BttlStructa4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, BttlStructa4::new));
+  public static BttlStructa4 _800c6b60;
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
@@ -403,7 +403,28 @@ public final class Bttl_800c {
 
   public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
 
-  public static final Value _800c7124 = MEMORY.ref(2, 0x800c7124L);
+  /**
+   * <ul>
+   *   <li>Detonate rock</li>
+   *   <li>Thunderbolt</li>
+   *   <li>Meteor Fall</li>
+   *   <li>Gushing Magma</li>
+   *   <li>Dancing Ray</li>
+   *   <li>Fatal Blizzard</li>
+   *   <li>Black Rain</li>
+   *   <li>Rave Twister</li>
+   *   <li>Psych Bomb</li>
+   *   <li>Burning Wave</li>
+   *   <li>Frozen Jet</li>
+   *   <li>Down Burst</li>
+   *   <li>Gravity Grabber</li>
+   *   <li>Spectral Flash</li>
+   *   <li>Night Raid</li>
+   *   <li>Flash Hall</li>
+   *   <li>Psych Bomb X</li>
+   * </ul>
+   */
+  public static final ArrayRef<UnsignedShortRef> attackAllItems_800c7124 = MEMORY.ref(2, 0x800c7124L, ArrayRef.of(UnsignedShortRef.class, 17, 2, UnsignedShortRef::new));
 
   public static final Value _800c7190 = MEMORY.ref(1, 0x800c7190L);
 
@@ -3307,15 +3328,15 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ccd34L)
-  public static long FUN_800ccd34(final RunningScript a0) {
-    int v1 = a0.params_20.get(1).deref().get();
-    if(a0.params_20.get(2).deref().get() == 0x2L && v1 < 0) {
-      v1 = 0;
+  public static long setBobjValue(final RunningScript a0) {
+    int value = a0.params_20.get(1).deref().get();
+    if(a0.params_20.get(2).deref().get() == 2 && value < 0) {
+      value = 0;
     }
 
     //LAB_800ccd8c
     final BattleObject27c a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
-    a1.all_04.get(a0.params_20.get(2).deref().get()).set((short)v1);
+    a1.all_04.get(a0.params_20.get(2).deref().get()).set((short)value);
     return 0;
   }
 

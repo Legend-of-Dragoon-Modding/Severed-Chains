@@ -33,7 +33,7 @@ public class ActiveStatsa0 implements MemoryRef {
   public final ShortRef mpPerPhysicalHit_50;
   public final ShortRef spPerMagicalHit_52;
   public final ShortRef mpPerMagicalHit_54;
-  public final ShortRef _56;
+  public final ShortRef specialAmount_56;
   public final ShortRef hpRegen_58;
   public final ShortRef mpRegen_5a;
   public final ShortRef spRegen_5c;
@@ -56,9 +56,9 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef dragoonDefence_74;
   public final UnsignedByteRef dragoonMagicDefence_75;
   public final UnsignedByteRef specialEffectFlag_76;
-  public final UnsignedByteRef _77;
+  public final UnsignedByteRef gearType_77;
   public final UnsignedByteRef _78;
-  public final UnsignedByteRef _79;
+  public final UnsignedByteRef gearEquips_79;
   public final UnsignedByteRef elementFlag_7a;
   public final UnsignedByteRef _7b;
   public final UnsignedByteRef elementalResistanceFlag_7c;
@@ -66,10 +66,10 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef statusResistFlag_7e;
   public final UnsignedByteRef _7f;
   public final UnsignedByteRef _80;
-  public final UnsignedByteRef _81;
-  public final UnsignedByteRef _82;
+  public final UnsignedByteRef special1_81;
+  public final UnsignedByteRef special2_82;
   public final UnsignedByteRef _83;
-  public final ByteRef _84;
+  public final ByteRef gearIcon_84;
 
   public final ShortRef gearSpeed_86;
   public final ShortRef gearAttack_88;
@@ -112,7 +112,7 @@ public class ActiveStatsa0 implements MemoryRef {
     this.mpPerPhysicalHit_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
     this.spPerMagicalHit_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
     this.mpPerMagicalHit_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
-    this._56 = ref.offset(2, 0x56L).cast(ShortRef::new);
+    this.specialAmount_56 = ref.offset(2, 0x56L).cast(ShortRef::new);
     this.hpRegen_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
     this.mpRegen_5a = ref.offset(2, 0x5aL).cast(ShortRef::new);
     this.spRegen_5c = ref.offset(2, 0x5cL).cast(ShortRef::new);
@@ -135,9 +135,9 @@ public class ActiveStatsa0 implements MemoryRef {
     this.dragoonDefence_74 = ref.offset(1, 0x74L).cast(UnsignedByteRef::new);
     this.dragoonMagicDefence_75 = ref.offset(1, 0x75L).cast(UnsignedByteRef::new);
     this.specialEffectFlag_76 = ref.offset(1, 0x76L).cast(UnsignedByteRef::new);
-    this._77 = ref.offset(1, 0x77L).cast(UnsignedByteRef::new);
+    this.gearType_77 = ref.offset(1, 0x77L).cast(UnsignedByteRef::new);
     this._78 = ref.offset(1, 0x78L).cast(UnsignedByteRef::new);
-    this._79 = ref.offset(1, 0x79L).cast(UnsignedByteRef::new);
+    this.gearEquips_79 = ref.offset(1, 0x79L).cast(UnsignedByteRef::new);
     this.elementFlag_7a = ref.offset(1, 0x7aL).cast(UnsignedByteRef::new);
     this._7b = ref.offset(1, 0x7bL).cast(UnsignedByteRef::new);
     this.elementalResistanceFlag_7c = ref.offset(1, 0x7cL).cast(UnsignedByteRef::new);
@@ -145,10 +145,10 @@ public class ActiveStatsa0 implements MemoryRef {
     this.statusResistFlag_7e = ref.offset(1, 0x7eL).cast(UnsignedByteRef::new);
     this._7f = ref.offset(1, 0x7fL).cast(UnsignedByteRef::new);
     this._80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
-    this._81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
-    this._82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
+    this.special1_81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
+    this.special2_82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
     this._83 = ref.offset(1, 0x83L).cast(UnsignedByteRef::new);
-    this._84 = ref.offset(1, 0x84L).cast(ByteRef::new);
+    this.gearIcon_84 = ref.offset(1, 0x84L).cast(ByteRef::new);
 
     this.gearSpeed_86 = ref.offset(2, 0x86L).cast(ShortRef::new);
     this.gearAttack_88 = ref.offset(2, 0x88L).cast(ShortRef::new);

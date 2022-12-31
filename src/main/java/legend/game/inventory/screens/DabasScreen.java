@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.GameEngine;
 import legend.core.MathHelper;
+import legend.game.BaseMod;
 import legend.game.DabasManager;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
@@ -115,24 +116,32 @@ public class DabasScreen extends MenuScreen {
 
         final DabasData100 dabasData = this.dabasData_8011d7c0;
 
-        for(int i = 0; i < 6; i++) {
-          final int itemId = dabasData.items_14.get(i).get();
+//        for(int i = 0; i < 6; i++) {
+//          final int itemId = dabasData.items_14.get(i).get();
+//
+//          if(itemId != 0) {
+//            final MenuItemStruct04 item = new MenuItemStruct04();
+//            item.item = GameEngine.REGISTRIES.items.getEntryById(itemId);
+//            this.menuItems.add(item);
+//            this.hasItems = true;
+//          }
+//        }
+//
+//        final int specialItemId = dabasData.specialItem_2c.get();
+//        if(specialItemId != 0) {
+//          this.hasItems = true;
+//
+//          this.specialItem = new MenuItemStruct04();
+//          this.specialItem.item = GameEngine.REGISTRIES.items.getEntryById(specialItemId);
+//        }
 
-          if(itemId != 0) {
-            final MenuItemStruct04 item = new MenuItemStruct04();
-            item.item = GameEngine.REGISTRIES.items.getEntryById(itemId);
-            this.menuItems.add(item);
-            this.hasItems = true;
-          }
-        }
-
-        final int specialItemId = dabasData.specialItem_2c.get();
-        if(specialItemId != 0) {
-          this.hasItems = true;
-
-          this.specialItem = new MenuItemStruct04();
-          this.specialItem.item = GameEngine.REGISTRIES.items.getEntryById(specialItemId);
-        }
+        final MenuItemStruct04 item1 = new MenuItemStruct04();
+        final MenuItemStruct04 item2 = new MenuItemStruct04();
+        item1.item = GameEngine.REGISTRIES.items.getEntry(BaseMod.id("healing_poot"));
+        item2.item = GameEngine.REGISTRIES.items.getEntry(BaseMod.id("healing_tsunami"));
+        this.menuItems.add(item1);
+        this.menuItems.add(item2);
+        this.hasItems = true;
 
         this.gold = dabasData.gold_34.get();
 

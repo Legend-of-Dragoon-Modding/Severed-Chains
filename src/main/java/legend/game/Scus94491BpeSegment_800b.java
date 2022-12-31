@@ -256,8 +256,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
 
-  public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
-
   public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
 
   public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);

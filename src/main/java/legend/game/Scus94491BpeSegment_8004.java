@@ -501,7 +501,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#FUN_800ccb70}</li>
    *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
    *   <li>{@link Bttl_800c#FUN_800cccf4}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccd34}</li>
+   *   <li>{@link Bttl_800c#setBobjValue}</li>
    *   <li>{@link Bttl_800c#scriptGetStat}</li>
    *   <li>{@link Bttl_800c#FUN_800ccf0c}</li>
    *   <li>{@link Bttl_800c#FUN_800ccec8}</li>

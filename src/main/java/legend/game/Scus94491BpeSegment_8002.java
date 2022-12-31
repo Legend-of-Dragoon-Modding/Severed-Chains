@@ -72,7 +72,6 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.FUN_80103b10;
-import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
@@ -139,7 +138,6 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
@@ -195,7 +193,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -1471,16 +1468,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x800228d0L)
-  public static int getItemIcon(final int itemId) {
-    if(itemId >= 0xc0) {
-      return itemStats_8004f2ac.get(itemId - 0xc0).icon_07.get();
-    }
-
-    //LAB_80022908
-    return equipmentStats_80111ff0.get(itemId).icon_0e.get();
-  }
-
   @Method(0x80022928L)
   public static int getUnlockedDragoonSpells(final byte[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
@@ -1694,10 +1681,8 @@ public final class Scus94491BpeSegment_8002 {
   public static void checkForPsychBombX() {
     gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
 
-    for(final Item consumable : gameState_800babc8.items) {
-      if(consumable == Items.PSYCH_BOMB_X.get()) {
-        gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
-      }
+    if(gameState_800babc8.items.contains(Items.PSYCH_BOMB_X.get())) {
+      gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
     }
   }
 
@@ -4547,6 +4532,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029358
     int length;
     for(length = 0; ; length++) {
+      if(length > 500) {
+        throw new RuntimeException("String overflow");
+      }
+
       final int c = text.charAt(length);
 
       if(c == 0xa0ff) {
@@ -5103,7 +5092,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.mpPerPhysicalHit_50.set((short)0);
       stats.spPerMagicalHit_52.set((short)0);
       stats.mpPerMagicalHit_54.set((short)0);
-      stats._56.set((short)0);
+      stats.specialAmount_56.set((short)0);
       stats.hpRegen_58.set((short)0);
       stats.mpRegen_5a.set((short)0);
       stats.spRegen_5c.set((short)0);
@@ -5133,7 +5122,6 @@ public final class Scus94491BpeSegment_8002 {
       stats.additionDamageMultiplier_9f.set(0);
     }
 
-    FUN_8002a8f8();
     _800be5d0.setu(0);
   }
 
@@ -5142,9 +5130,9 @@ public final class Scus94491BpeSegment_8002 {
     final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
 
     stats.specialEffectFlag_76.set(0);
-    stats._77.set(0);
+    stats.gearType_77.set(0);
     stats._78.set(0);
-    stats._79.set(0);
+    stats.gearEquips_79.set(0);
     stats.elementFlag_7a.set(0);
     stats._7b.set(0);
     stats.elementalResistanceFlag_7c.set(0);
@@ -5152,10 +5140,10 @@ public final class Scus94491BpeSegment_8002 {
     stats.statusResistFlag_7e.set(0);
     stats._7f.set(0);
     stats._80.set(0);
-    stats._81.set(0);
-    stats._82.set(0);
+    stats.special1_81.set(0);
+    stats.special2_82.set(0);
     stats._83.set(0);
-    stats._84.set(0);
+    stats.gearIcon_84.set(0);
 
     stats.gearSpeed_86.set((short)0);
     stats.gearAttack_88.set((short)0);
@@ -5170,11 +5158,6 @@ public final class Scus94491BpeSegment_8002 {
     stats._99.set(0);
     stats._9a.set(0);
     stats.onHitStatus_9b.set(0);
-  }
-
-  @Method(0x8002a8f8L)
-  public static void FUN_8002a8f8() {
-    bzero(equipmentStats_800be5d8.getAddress(), 0x1c);
   }
 
   @Method(0x8002a9c0L)

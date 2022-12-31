@@ -1,7 +1,9 @@
 package legend.game.inventory;
 
+import legend.game.combat.types.BattleObject27c;
 import legend.game.modding.registries.RegistryEntry;
 import legend.game.modding.registries.RegistryId;
+import legend.game.types.ActiveStatsa0;
 
 public abstract class Item extends RegistryEntry {
   public final String name;
@@ -28,6 +30,14 @@ public abstract class Item extends RegistryEntry {
 
   public EquipmentSlot getEquipmentSlot() {
     return null;
+  }
+
+  public void applyAttackItemStats(final BattleObject27c bobj) {
+
+  }
+
+  public void applyEquipmentItemStats(final ActiveStatsa0 stats) {
+
   }
 
   public boolean canBeDiscarded() {

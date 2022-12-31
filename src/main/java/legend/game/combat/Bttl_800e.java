@@ -5511,14 +5511,14 @@ public final class Bttl_800e {
     _800c6c38.setu(0x1L);
     displayStats_800c6c2c.setPointer(mallocTail(0x144 * 3));
     floatingNumbers_800c6b5c.setPointer(mallocTail(0xc4 * 12));
-    _800c6b60.setPointer(mallocTail(0xa4L));
+    _800c6b60 = new BttlStructa4();
     battleMenu_800c6c34.setPointer(mallocTail(0x58L));
     _800c6b6c.setu(mallocTail(0x3cL));
 
     FUN_800ef7c4();
     FUN_800f4964();
 
-    final BttlStructa4 v0 = _800c6b60.deref();
+    final BttlStructa4 v0 = _800c6b60;
     v0._26.set((short)0);
     v0._28.set((short)0);
     v0._2a.set((short)0);
@@ -5652,17 +5652,8 @@ public final class Bttl_800e {
     //LAB_800eecf4
     if((gameState_800babc8.scriptFlags2_bc.get(0xd).get() & 0x4_0000L) != 0) { // Used Psych Bomb X this battle
       //LAB_800eed30
-      boolean hasPsychBombX = false;
-      for(int i = 0; i < gameState_800babc8.items.size(); i++) {
-        if(gameState_800babc8.items.get(i) == Items.PSYCH_BOMB_X.get()) {
-          hasPsychBombX = true;
-          break;
-        }
-      }
-
-      //LAB_800eed54
-      if(!hasPsychBombX) {
-        giveItem(Items.PSYCH_BOMB_X.get()); // Psych Bomb X
+      if(!gameState_800babc8.items.contains(Items.PSYCH_BOMB_X.get())) {
+        giveItem(Items.PSYCH_BOMB_X.get());
       }
     }
 
@@ -5695,24 +5686,16 @@ public final class Bttl_800e {
 
     free(displayStats_800c6c2c.getPointer());
     free(floatingNumbers_800c6b5c.getPointer());
-    free(_800c6b60.getPointer());
+    _800c6b60 = null;
     free(battleMenu_800c6c34.getPointer());
     free(_800c6b6c.get());
   }
 
   @Method(0x800eee80L)
   public static void loadMonster(final int bobjIndex) {
-    final long t8 = _800c6e90.getAddress();
-
-    final long[] sp0x10 = {
-      MEMORY.ref(4, t8).offset(0x0L).get(),
-      MEMORY.ref(4, t8).offset(0x4L).get(),
-      MEMORY.ref(4, t8).offset(0x8L).get(),
-    };
-
     //LAB_800eeecc
     for(int i = 0; i < 3; i++) {
-      final LodString a0_0 = enemyNames_80112068.get((int)sp0x10[i]).deref();
+      final LodString a0_0 = enemyNames_80112068.get((int)_800c6e90.offset(i * 0x4L).get()).deref();
 
       //LAB_800eeee0
       for(int charIndex = 0; ; charIndex++) {
@@ -5863,9 +5846,9 @@ public final class Bttl_800e {
       s0.maxHp_10.set(stats.maxHp_66.get());
       s0.maxMp_12.set(stats.maxMp_6e.get());
       s0.specialEffectFlag_14.set(stats.specialEffectFlag_76.get());
-      s0._16.set(stats._77.get());
+      s0._16.set(stats.gearType_77.get());
       s0._18.set(stats._78.get());
-      s0._1a.set(stats._79.get());
+      s0._1a.set(stats.gearEquips_79.get());
       s0.elementFlag_1c.set((short)stats.elementFlag_7a.get());
       s0._1e.set(stats._7b.get());
       s0.elementalResistanceFlag_20.set(stats.elementalResistanceFlag_7c.get());
@@ -5873,10 +5856,10 @@ public final class Bttl_800e {
       s0.statusResistFlag_24.set(stats.statusResistFlag_7e.get());
       s0._26.set(stats._7f.get());
       s0._28.set(stats._80.get());
-      s0._2a.set(stats._81.get());
-      s0._2c.set(stats._82.get());
+      s0._2a.set(stats.special1_81.get());
+      s0._2c.set(stats.special2_82.get());
       s0._2e.set(stats._83.get());
-      s0._30.set(stats._84.get());
+      s0._30.set(stats.gearIcon_84.get());
       s0.speed_32.set((short)(stats.gearSpeed_86.get() + stats.bodySpeed_69.get()));
       s0.attack_34.set(stats.gearAttack_88.get() + stats.bodyAttack_6a.get());
       s0.magicAttack_36.set(stats.gearMagicAttack_8a.get() + stats.bodyMagicAttack_6b.get());
@@ -5913,7 +5896,7 @@ public final class Bttl_800e {
       s0.mpPerPhysicalHit_12c.set(stats.mpPerPhysicalHit_50.get());
       s0.itemSpPerMagicalHit_12e.set(stats.spPerMagicalHit_52.get());
       s0.mpPerMagicalHit_130.set(stats.mpPerMagicalHit_54.get());
-      s0._132.set(stats._56.get());
+      s0._132.set(stats.specialAmount_56.get());
       s0.hpRegen_134.set(stats.hpRegen_58.get());
       s0.mpRegen_136.set(stats.mpRegen_5a.get());
       s0.spRegen_138.set(stats.spRegen_5c.get());

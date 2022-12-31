@@ -1,6 +1,7 @@
 package legend.game.inventory;
 
 import legend.game.modding.registries.RegistryId;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentStats1c;
 
 import static legend.game.SItem.characterValidEquipment_80114284;
@@ -145,6 +146,90 @@ public class EquipmentItem extends Item {
     }
 
     return null;
+  }
+
+  @Override
+  public void applyEquipmentItemStats(final ActiveStatsa0 stats) {
+    stats.specialEffectFlag_76.or(this.flags);
+    stats.gearType_77.or(this.type);
+    stats._78.or(this._02);
+    stats.gearEquips_79.or(this.equips);
+    stats.elementFlag_7a.or(this.element);
+    stats._7b.or(this._05);
+    stats.elementalResistanceFlag_7c.or(this.eHalf);
+    stats.elementalImmunityFlag_7d.or(this.eImmune);
+    stats.statusResistFlag_7e.or(this.statRes);
+    stats._7f.or(this._09);
+    stats.gearIcon_84.add(this.icon);
+    stats.gearSpeed_86.add((short)this.spd);
+    stats.gearAttack_88.add((short)this.atkHi);
+    stats.gearMagicAttack_8a.add((short)this.matk);
+    stats.gearDefence_8c.add((short)this.def);
+    stats.gearMagicDefence_8e.add((short)this.mdef);
+    stats.attackHit_90.add((short)this.aHit);
+    stats.magicHit_92.add((short)this.mHit);
+    stats.attackAvoid_94.add((short)this.aAv);
+    stats.magicAvoid_96.add((short)this.mAv);
+    stats.onHitStatusChance_98.add(this.onStatusChance);
+    stats._99.add(this._19);
+    stats._9a.add(this._1a);
+    stats.onHitStatus_9b.or(this.onHitStatus);
+    stats._80.add(this.atk);
+    stats.gearAttack_88.add((short)this.atk);
+    stats.special1_81.or(this.special1);
+
+    int mask = 0x1;
+    int bit;
+    for(bit = 0; bit < 8; bit++) {
+      if((this.special1 & mask) != 0) {
+        if(mask == 0x1) {
+          stats.mpPerMagicalHit_54.add((short)this.specialAmount);
+        } else if(mask == 0x2) {
+          stats.spPerMagicalHit_52.add((short)this.specialAmount);
+        } else if(mask == 0x4) {
+          stats.mpPerPhysicalHit_50.add((short)this.specialAmount);
+        } else if(mask == 0x8) {
+          stats.spPerPhysicalHit_4e.add((short)this.specialAmount);
+        } else if(mask == 0x10) {
+          stats.spMultiplier_4c.add((short)this.specialAmount);
+        } else if(mask == 0x20) {
+          stats.physicalResistance_4a.set(1);
+        } else if(mask == 0x40) {
+          stats.magicalImmunity_48.set(1);
+        } else if(mask == 0x80) {
+          stats.physicalImmunity_46.set(1);
+        }
+      }
+
+      mask <<= 1;
+    }
+
+    stats.special2_82.or(this.special2);
+
+    mask = 0x1;
+    for(bit = 0; bit < 8; bit++) {
+      if((this.special2 & mask) != 0) {
+        if(mask == 0x1) {
+          stats.mpMulti_64.add((short)this.specialAmount);
+        } else if(mask == 0x2) {
+          stats.hpMulti_62.add((short)this.specialAmount);
+        } else if(mask == 0x4) {
+          stats.magicalResistance_60.set(1);
+        } else if(mask == 0x8) {
+          stats.revive_5e.add((short)this.specialAmount);
+        } else if(mask == 0x10) {
+          stats.spRegen_5c.add((short)this.specialAmount);
+        } else if(mask == 0x20) {
+          stats.mpRegen_5a.add((short)this.specialAmount);
+        } else if(mask == 0x40) {
+          stats.hpRegen_58.add((short)this.specialAmount);
+        } else if(mask == 0x80) {
+          stats.specialAmount_56.add((short)this.specialAmount);
+        }
+      }
+
+      mask <<= 1;
+    }
   }
 
   @Override

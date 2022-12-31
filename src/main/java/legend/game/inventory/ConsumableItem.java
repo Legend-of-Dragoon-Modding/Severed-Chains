@@ -1,5 +1,6 @@
 package legend.game.inventory;
 
+import legend.game.combat.types.BattleObject27c;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.ItemStats0c;
 
@@ -168,5 +169,21 @@ public class ConsumableItem extends Item {
 
       response._00 = 7;
     }
+  }
+
+  @Override
+  public void applyAttackItemStats(final BattleObject27c bobj) {
+    bobj.itemTarget_d4.set((short)this.target);
+    bobj.itemElement_d6.set((short)this.element);
+    bobj.itemDamage_d8.set((short)this.damage);
+    bobj.itemSpecial1_da.set((short)this.special1);
+    bobj.itemSpecial2_dc.set((short)this.special2);
+    bobj.itemDamage_de.set((short)this.damage2);
+    bobj.itemSpecialAmount_e0.set(this.specialAmount);
+    bobj.itemIcon_e2.set((short)this.icon);
+    bobj.itemStatus_e4.set((short)this.status);
+    bobj.itemPercentage_e6.set((short)this.percentage);
+    bobj.itemUu2_e8.set((short)this.uu2);
+    bobj.itemType_ea.set((short)this.type);
   }
 }
