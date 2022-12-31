@@ -1639,8 +1639,34 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80022cd0L)
   public static int addSp(final int charIndex, final int amount) {
-    assert false;
-    return 0;
+    final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+    final int maxSp = charData.dlevel_13.get() * 100;
+
+    final int ret;
+    if(charData.sp_0c.get() == maxSp) {
+      ret = -2;
+    } else {
+      //LAB_80022d34
+      if(amount == -1) {
+        charData.sp_0c.set(maxSp);
+        ret = -1;
+      } else {
+        //LAB_80022d4c
+        charData.sp_0c.set(maxSp);
+        if(charData.sp_0c.get() + amount < maxSp) {
+          ret = amount;
+        } else {
+          charData.sp_0c.set(maxSp);
+          ret = -1;
+        }
+      }
+
+      //LAB_80022d6c
+      loadCharacterStats(0);
+    }
+
+    //LAB_80022d78
+    return ret;
   }
 
   @Method(0x80022d88L)

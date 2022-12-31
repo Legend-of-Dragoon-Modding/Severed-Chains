@@ -18,6 +18,8 @@ import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.itemNames_8011972c;
 import static legend.game.SItem.itemPrices_80114310;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
+import static legend.game.Scus94491BpeSegment_8002.addMp;
+import static legend.game.Scus94491BpeSegment_8002.addSp;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 
 @EventListener
@@ -64,11 +66,39 @@ public class BaseMod {
     }
 
     event.register(new HealingPootItem());
+    event.register(new HealingTsunamiItem());
   }
 
   private static class HealingPootItem extends Item {
     public HealingPootItem() {
       super(id("healing_poot"), "Healing Poot", "A light breeze.\nHeals 10 HP.", 2);
+    }
+
+    @Override
+    public int getIcon() {
+      return 0x21;
+    }
+
+    @Override
+    public int getUseFlags() {
+      return 0x10;
+    }
+
+    @Override
+    public boolean canBeUsedNow() {
+      return true;
+    }
+
+    @Override
+    public void use(final UseItemResponse response, final int charId) {
+      response._00 = 3;
+      response.value_04 = addHp(charId, 10);
+    }
+  }
+
+  private static class HealingTsunamiItem extends Item {
+    public HealingTsunamiItem() {
+      super(id("healing_tsunami"), "Healing Tsunami", "Recovers all HP/MP/SP.", 100);
     }
 
     @Override
@@ -88,8 +118,12 @@ public class BaseMod {
 
     @Override
     public void use(final UseItemResponse response, final int charId) {
+      addHp(charId, -1);
+      addMp(charId, -1);
+      addSp(charId, -1);
+
       response._00 = 3;
-      response.value_04 = addHp(charId, 10);
+      response.value_04 = -1;
     }
   }
 }
