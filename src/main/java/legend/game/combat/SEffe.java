@@ -9961,8 +9961,8 @@ public final class SEffe {
     final BttlScriptData6cSub08_4 effect = manager.effect_44.derefAs(BttlScriptData6cSub08_4.class);
     final int sp10 = DISPENV_800c34b0.disp.x.get() + manager._10.trans_04.getX() + 160 - (int)manager._10._24.get() / 2;
     final int sp12 = DISPENV_800c34b0.disp.y.get() + manager._10.trans_04.getY() + 120 - manager._10.vec_28.getX() / 2;
-    final int sp34 = manager._10.trans_04.getZ() - manager._10.vec_28.getY() / 2 >> 2;
-    final int fp = manager._10.trans_04.getZ() + manager._10.vec_28.getY() / 2 >> 2;
+    final int minZ = manager._10.trans_04.getZ() - manager._10.vec_28.getY() / 2 >> 2;
+    final int maxZ = manager._10.trans_04.getZ() + manager._10.vec_28.getY() / 2 >> 2;
     final int l = DISPENV_800c34b0.disp.x.get();
     final int r = l + 320;
     final int t = DISPENV_800c34b0.disp.y.get();
@@ -10008,8 +10008,7 @@ public final class SEffe {
               sp0x20.w.set(sp0x28.w.get());
               sp0x20.h.set(sp0x28.h.get());
 
-//              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x20.x.get(), sp0x20.y.get(), sp0x28.x.get(), sp0x28.y.get(), sp0x20.w.get(), sp0x20.h.get()));
-//              GPU.queueCommand(fp, new GpuCommandCopyVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get()));
+              // This was depth-queued at both minZ and maxZ, not really sure why... minZ sometimes had a negative value and would crash
               GPU.command80CopyRectFromVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get());
             }
           }
