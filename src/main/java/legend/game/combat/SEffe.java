@@ -9964,9 +9964,9 @@ public final class SEffe {
     final int sp34 = manager._10.trans_04.getZ() - manager._10.vec_28.getY() / 2 >> 2;
     final int fp = manager._10.trans_04.getZ() + manager._10.vec_28.getY() / 2 >> 2;
     final int l = DISPENV_800c34b0.disp.x.get();
-    final int r = DISPENV_800c34b0.disp.x.get() + 320;
+    final int r = l + 320;
     final int t = DISPENV_800c34b0.disp.y.get();
-    final int b = DISPENV_800c34b0.disp.y.get() + 240;
+    final int b = t + 240;
 
     final RECT sp0x20 = new RECT();
     final RECT sp0x28 = new RECT();
@@ -9976,7 +9976,7 @@ public final class SEffe {
       sp0x28.x.set((short)(sp10 + manager._10._24.get() / 2 * (i & 0x1L)));
       sp0x28.y.set((short)(sp12 + manager._10.vec_28.getX() / 2 * (i >> 1)));
       sp0x28.w.set((short)(manager._10._24.get() / 2));
-      sp0x28.h.set((short)(manager._10._24.get() / 2));
+      sp0x28.h.set((short)(manager._10.vec_28.getX() / 2));
       if(sp0x28.x.get() < r) {
         if(sp0x28.x.get() < l) {
           sp0x28.w.add((short)(sp0x28.x.get() - l));
@@ -10008,8 +10008,9 @@ public final class SEffe {
               sp0x20.w.set(sp0x28.w.get());
               sp0x20.h.set(sp0x28.h.get());
 
-              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x20.x.get(), sp0x20.y.get(), sp0x28.x.get(), sp0x28.y.get(), sp0x20.w.get(), sp0x20.h.get()));
-              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get()));
+//              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x20.x.get(), sp0x20.y.get(), sp0x28.x.get(), sp0x28.y.get(), sp0x20.w.get(), sp0x20.h.get()));
+//              GPU.queueCommand(fp, new GpuCommandCopyVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get()));
+              GPU.command80CopyRectFromVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get());
             }
           }
         }
