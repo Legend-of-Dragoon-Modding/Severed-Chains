@@ -163,7 +163,12 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
-    renderText(new LodString(this.menuItems.get(slotIndex + slotScroll).item.description), 194, 178, 4);
+
+    if(allocate) {
+      allocateUiElement(0x5b, 0x5b, 194, 178);
+    }
+
+    renderText(new LodString(this.menuItems.get(slotIndex + slotScroll).item.description), 196, 182, 4);
 
     uploadRenderables();
   }

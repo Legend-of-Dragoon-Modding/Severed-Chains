@@ -183,8 +183,12 @@ public class ItemListScreen extends MenuScreen {
       renderText(Press_to_sort_8011d024, 37, 178, 4);
     }
 
+    if(allocate) {
+      allocateUiElement(0x5b, 0x5b, 194, 178);
+    }
+
     if(item != null) {
-      renderText(new LodString(item.description), 194, 178, 4);
+      renderText(new LodString(item.description), 196, 182, 4);
     }
 
     uploadRenderables();

@@ -227,7 +227,11 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2L) != 0) {
-        renderText(new LodString(this.items.get(slotScroll + slotIndex).item.description), 194, 164, 4);
+        if(allocate) {
+          allocateUiElement(0x5b, 0x5b, 194, 164);
+        }
+
+        renderText(new LodString(this.items.get(slotScroll + slotIndex).item.description), 196, 168, 4);
 
         if((a4 & 0x2L) != 0) {
           final Renderable58 renderable = FUN_801038d4(137, 84, 140);
@@ -243,7 +247,11 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       if((a4 & 0x2L) != 0) {
-        renderText(new LodString(this.equipment.get(slotScroll + slotIndex).item.description), 194, 164, 4);
+        if(allocate) {
+          allocateUiElement(0x5b, 0x5b, 194, 164);
+        }
+
+        renderText(new LodString(this.equipment.get(slotScroll + slotIndex).item.description), 196, 168, 4);
 
         if((a4 & 0x2L) != 0) {
           final Renderable58 renderable = FUN_801038d4(137, 84, 140);
