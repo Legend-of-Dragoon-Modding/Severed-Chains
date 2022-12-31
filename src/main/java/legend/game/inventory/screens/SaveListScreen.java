@@ -170,7 +170,8 @@ public abstract class SaveListScreen extends MenuScreen {
     }
 
     if(renderSaves) {
-      for(int i = 0; i < 3; i++) {
+      final int maxSaves = Math.min(3, saves.size() - fileScroll);
+      for(int i = 0; i < maxSaves; i++) {
         this.renderSaveSlot(i, fileScroll + i, a2);
       }
     }
