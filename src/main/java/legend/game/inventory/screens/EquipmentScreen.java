@@ -153,7 +153,7 @@ public class EquipmentScreen extends MenuScreen {
     final boolean allocate = a3 == 0xff;
 
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), allocate, false);
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), slotIndex + slotScroll >= this.menuItems.size() ? 0xff : this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), allocate);
 
     if(allocate) {
@@ -163,7 +163,10 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
-    renderString(0, 194, 178, this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
+
+    if(slotIndex + slotScroll < this.menuItems.size()) {
+      renderString(0, 194, 178, this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
+    }
 
     uploadRenderables();
   }
