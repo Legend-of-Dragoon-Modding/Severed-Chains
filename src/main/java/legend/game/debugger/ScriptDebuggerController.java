@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 
 public class ScriptDebuggerController {
   private static final Set<ScriptDebuggerController> INSTANCES = new HashSet<>();
@@ -143,11 +142,11 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer() != unusedScriptState_800bc0c0.getAddress() ? Long.toHexString(scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer()) : "not allocated";
+    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? Long.toHexString(scriptStatePtrArr_800bc1c0[scriptIndex].getAddress()) : "not allocated";
   }
 
   private void updateScriptVars() {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(this.scriptSelector.getValue().index).deref();
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[this.scriptSelector.getValue().index];
 
     for(int storageIndex = 0; storageIndex < 33; storageIndex++) {
       this.storage.get(storageIndex).update();
@@ -174,13 +173,13 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
-    final int val = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().storage_44.get(storageIndex).get();
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44.get(storageIndex).get();
     return "0x%1$x (%1$d)".formatted(val);
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
     return GameEngine.MEMORY.waitForLock(() -> {
-      final Pointer<IntRef> val = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().commandStack_1c.get(stackIndex);
+      final Pointer<IntRef> val = scriptStatePtrArr_800bc1c0[scriptIndex].commandStack_1c.get(stackIndex);
 
       if(val.isNull()) {
         return "null";

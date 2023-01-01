@@ -121,7 +121,7 @@ public final class Temp {
       TempEffectData_d18::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     final TempEffectData_d18 effect = manager.effect_44.derefAs(TempEffectData_d18.class);
 
     effect._00.set(0);
@@ -189,7 +189,7 @@ public final class Temp {
       TempEffectData_08::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     final TempEffectData_08 effect = manager.effect_44.derefAs(TempEffectData_08.class);
     effect.u_00.set((short)0x300);
     effect.v_02.set((short)0);

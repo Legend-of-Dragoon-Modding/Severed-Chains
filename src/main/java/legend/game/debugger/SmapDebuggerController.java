@@ -143,8 +143,8 @@ public class SmapDebuggerController {
 
     this.scriptIndex.setText("View script %d".formatted(wobjIndex));
 
-    final ScriptState<WorldObject210> state = scriptStatePtrArr_800bc1c0.get(wobjIndex).derefAs(ScriptState.classFor(WorldObject210.class));
-    this.wobj = state.innerStruct_00.deref();
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[wobjIndex];
+    this.wobj = state.innerStruct_00.derefAs(WorldObject210.class);
 
     this.posX.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getX());
     this.posY.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getY());

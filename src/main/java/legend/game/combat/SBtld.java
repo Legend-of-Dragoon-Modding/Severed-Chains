@@ -226,8 +226,8 @@ public class SBtld {
       setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "bobjDestructor", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(bobjIndex);
-      final ScriptState<BattleObject27c> state = scriptStatePtrArr_800bc1c0.get(bobjIndex).derefAs(ScriptState.classFor(BattleObject27c.class));
-      final BattleObject27c data = state.innerStruct_00.deref();
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
+      final BattleObject27c data = state.innerStruct_00.derefAs(BattleObject27c.class);
       data.magic_00.set(BattleScriptDataBase.BOBJ);
       data.charIndex_272.set((short)charIndex);
       data._274.set((short)_800c66d0.get());

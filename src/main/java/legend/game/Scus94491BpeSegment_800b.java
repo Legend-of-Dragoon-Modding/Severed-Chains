@@ -18,7 +18,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.memory.types.VoidRef;
 import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
@@ -46,8 +45,6 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
 import legend.game.types.WobjPos14;
-
-import java.util.function.Function;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -86,8 +83,7 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
   public static final BoolRef scriptsDisabled_800bc0b9 = MEMORY.ref(1, 0x800bc0b9L, BoolRef::new);
 
-  public static final ScriptState<VoidRef> unusedScriptState_800bc0c0 = MEMORY.ref(4, 0x800bc0c0L, ScriptState.of(VoidRef::new));
-  public static final ArrayRef<Pointer<ScriptState<? extends MemoryRef>>> scriptStatePtrArr_800bc1c0 = (ArrayRef<Pointer<ScriptState<? extends MemoryRef>>>)MEMORY.ref(4, 0x800bc1c0L, ArrayRef.of(Pointer.classFor(ScriptState.class), 0x48, 4, (Function)Pointer.deferred(4, ScriptState.of(ref -> { throw new RuntimeException("Can't auto-instantiate"); }))));
+  public static final ScriptState<? extends MemoryRef>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);

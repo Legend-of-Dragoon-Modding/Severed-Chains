@@ -169,7 +169,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0094L)
   public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
-    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
 
     final UnsignedIntRef a0;
     final int a3;
@@ -194,7 +194,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0124L)
   public static long FUN_800d0124(final RunningScript script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(script.params_20.get(0).deref().get()).deref();
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()];
     final BattleScriptDataBase data = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -301,7 +301,7 @@ public final class Bttl_800d {
       ProjectileHitEffect14::new
     );
 
-    final ProjectileHitEffect14 effect = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(ProjectileHitEffect14.class);
+    final ProjectileHitEffect14 effect = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(ProjectileHitEffect14.class);
 
     final int count = script.params_20.get(1).deref().get();
     effect.count_00.set(count);
@@ -450,7 +450,7 @@ public final class Bttl_800d {
       AdditionSparksEffect08::new
     );
 
-    final AdditionSparksEffect08 effect = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(AdditionSparksEffect08.class);
+    final AdditionSparksEffect08 effect = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(AdditionSparksEffect08.class);
 
     long t6 = mallocTail(count * 0x4cL);
     effect._04.set(t6);
@@ -622,7 +622,7 @@ public final class Bttl_800d {
       AdditionStarburstEffect10::new
     );
 
-    final AdditionStarburstEffect10 effect = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(AdditionStarburstEffect10.class);
+    final AdditionStarburstEffect10 effect = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(AdditionStarburstEffect10.class);
     long t4 = mallocTail(count * 0x10L);
     effect.scriptIndex_00.set(s3.params_20.get(1).deref().get());
     effect.count_04.set(count);
@@ -782,7 +782,7 @@ public final class Bttl_800d {
       PotionEffect14::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(effectIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
 
     //LAB_800d27b4
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
@@ -916,7 +916,7 @@ public final class Bttl_800d {
       GuardEffect06::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     final GuardEffect06 effect = manager.effect_44.derefAs(GuardEffect06.class);
     effect._00.set(1);
     effect._02.set(0);
@@ -1048,7 +1048,7 @@ public final class Bttl_800d {
 
   @Method(0x800d34bcL)
   public static long allocateMonsterDeathEffect(final RunningScript a0) {
-    final long fp = allocateEffectManager(
+    final int fp = allocateEffectManager(
       a0.scriptStateIndex_00.get(),
       0x34L,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -1057,8 +1057,8 @@ public final class Bttl_800d {
       MonsterDeathEffect34::new
     );
 
-    final int animCount = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(1).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0.get((int)fp).deref().innerStruct_00.derefAs(EffectManagerData6c.class);
+    final int animCount = scriptStatePtrArr_800bc1c0[a0.params_20.get(1).deref().get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[fp].innerStruct_00.derefAs(EffectManagerData6c.class);
     final MonsterDeathEffect34 effect = manager.effect_44.derefAs(MonsterDeathEffect34.class);
     long s4 = mallocTail(animCount * 0x30L);
     effect.ptr_30.set(s4); //TODO
@@ -1285,7 +1285,6 @@ public final class Bttl_800d {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get();
       final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
-      final ScriptState<AdditionScriptData1c> s1 = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(AdditionScriptData1c.class));
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
@@ -1298,7 +1297,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800d3e7c
-      final AdditionScriptData1c additionStruct = s1.innerStruct_00.deref();
+      final AdditionScriptData1c additionStruct = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(AdditionScriptData1c.class);
       additionStruct._00.set(0);
       additionStruct.addition_02.set(addition);
       additionStruct._04.set(0);
@@ -1462,7 +1461,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d4388
       final int scriptIndex = allocateScriptState(0x40, BttlScriptData40::new);
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d4018", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d430c", int.class, ScriptState.classFor(BttlScriptData40.class), BttlScriptData40.class), TriConsumerRef::new));
@@ -1530,7 +1529,7 @@ public final class Bttl_800d {
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
       setScriptDestructor(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3d48", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       final AdditionScriptData1c s0 = state.innerStruct_00.derefAs(AdditionScriptData1c.class);
       s0.ptr_18.setPointer(mallocTail(0xcL));
       _800faa9c.setu(0x1L);
@@ -2619,7 +2618,7 @@ public final class Bttl_800d {
     cam.vec_94.y.add(cam._bc.get());
     cam.vec_94.z.add(cam._c8.get());
 
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4.get()].innerStruct_00.derefAs(BattleObject27c.class);
 
     setViewpoint(
       bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8),
@@ -2645,7 +2644,7 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef().set(cam._ac.get() >> 8);
     final IntRef sp0x1c = new IntRef().set(cam._b8.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._a0.get() >> 8);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4.get()].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
     setViewpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
 
@@ -2779,7 +2778,7 @@ public final class Bttl_800d {
   @Method(0x800d9a68L)
   public static void FUN_800d9a68() {
     final BattleCamera cam = camera_800c67f0;
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4.get()].innerStruct_00.derefAs(BattleObject27c.class);
     _800fab98.setX((short)(cam._d4.get() >> 8));
     _800fab98.setY((short)(cam._d8.get() >> 8));
     _800fab98.setZ((short)0);
@@ -2819,7 +2818,7 @@ public final class Bttl_800d {
     refY.set(refZ).add(cam._ec.get() >> 8);
     refZ.set(cam._a0.get() >> 8);
     FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4.get()].innerStruct_00.derefAs(BattleObject27c.class);
     setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + refX.get(), bobj.model_148.coord2_14.coord.transfer.getY() + refY.get(), bobj.model_148.coord2_14.coord.transfer.getZ() + refZ.get());
     cam._e0.add(cam._e4.get());
     cam._dc.sub(cam._e0.get());
@@ -2932,7 +2931,7 @@ public final class Bttl_800d {
     cam.vec_20.y.add(cam._48.get());
     cam.vec_20.z.add(cam._54.get());
 
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80.get()].innerStruct_00.derefAs(BattleObject27c.class);
     setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
 
     cam._5c.decr();
@@ -2955,7 +2954,7 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef().set(cam._38.get() >> 8);
     final IntRef sp0x1c = new IntRef().set(cam._44.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._2c.get() >> 8);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80.get()].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), sp0x18, sp0x1c, sp0x20);
     setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
 
@@ -3096,7 +3095,7 @@ public final class Bttl_800d {
   @Method(0x800da750L)
   public static void FUN_800da750() {
     final BattleCamera cam = camera_800c67f0;
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80.get()].innerStruct_00.derefAs(BattleObject27c.class);
 
     cam._30.add(cam._40.get());
     cam.vec_60.z.sub(cam._30.get());
@@ -3137,7 +3136,7 @@ public final class Bttl_800d {
   @Method(0x800da8bcL)
   public static void FUN_800da8bc() {
     final BattleCamera cam = camera_800c67f0;
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref();
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80.get()];
 
     final IntRef sp0x18 = new IntRef().set(cam.vec_60.getX() >> 8);
     final IntRef sp0x1c = new IntRef().set(cam.vec_60.getY() >> 8);
@@ -3348,7 +3347,7 @@ public final class Bttl_800d {
     final IntRef refX = new IntRef().set(x >> 8);
     final IntRef refY = new IntRef().set(y >> 8);
     final IntRef refZ = new IntRef().set(z >> 8);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
     setViewpoint(refX.get(), refY.get(), refZ.get());
     cam.bobjIndex_f4.set(scriptIndex);
@@ -3456,7 +3455,7 @@ public final class Bttl_800d {
     final IntRef refX = new IntRef().set(x >> 8);
     final IntRef refY = new IntRef().set(y >> 8);
     final IntRef refZ = new IntRef().set(z >> 8);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
     setRefpoint(refX.get(), refY.get(), refZ.get());
     cam.bobjIndex_80.set(scriptIndex);
@@ -3709,7 +3708,7 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     cam._122.set(0);
 
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_f4.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4.get()].innerStruct_00.derefAs(BattleObject27c.class);
     final IntRef refX = new IntRef().set(cam._ac.get() >> 8);
     final IntRef refY = new IntRef().set(cam._b8.get() >> 8);
     final IntRef refZ = new IntRef().set(cam._a0.get() >> 8);
@@ -3806,7 +3805,7 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef().set(cam._38.get() >> 8);
     final IntRef sp0x1c = new IntRef().set(cam._44.get() >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._2c.get() >> 8);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(cam.bobjIndex_80.get()).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80.get()].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
     setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
   }
@@ -4018,7 +4017,7 @@ public final class Bttl_800d {
     final IntRef refX = new IntRef().set(x);
     final IntRef refY = new IntRef().set(y);
     final IntRef refZ = new IntRef().set(z);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
 
     if(component == 0) {
@@ -4175,7 +4174,7 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef().set(x);
     final IntRef sp0x1c = new IntRef().set(y);
     final IntRef sp0x20 = new IntRef().set(z);
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
     FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
 
     if(component == 0) {
@@ -4373,7 +4372,7 @@ public final class Bttl_800d {
 
   @Method(0x800dd02cL)
   public static VECTOR FUN_800dd02c(final int scriptIndex) {
-    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase data = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
       return ((EffectManagerData6c)data)._10.trans_04;

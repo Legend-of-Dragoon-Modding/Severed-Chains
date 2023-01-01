@@ -86,7 +86,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800c.scriptSubFunction_800ca734;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
@@ -446,7 +445,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SEffe#FUN_80115ea4}</li>
    *   <li>{@link SEffe#FUN_80115ed4}</li>
    *   <li>{@link SEffe#FUN_801154f4}</li>
-   *   <li>{@link SEffe#FUN_80116160}</li>
+   *   <li>{@link SEffe#scriptConsolidateEffectMemory}</li>
    *   <li>null</li>
    *   <li>null</li>
    *   <li>null</li>
@@ -853,7 +852,7 @@ public final class Scus94491BpeSegment_800e {
   public static void clearScriptStates() {
     //LAB_800e666c
     for(int i = 0; i < 0x48; i++) {
-      scriptStatePtrArr_800bc1c0.get(i).set(unusedScriptState_800bc0c0);
+      scriptStatePtrArr_800bc1c0[i] = null;
     }
   }
 
