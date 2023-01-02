@@ -44,6 +44,7 @@ public class Unpacker {
   static {
     transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
+    transformers.put(Unpacker::drgn21_402_3_patcherDescriminator, Unpacker::drgn21_402_3_patcher);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -280,6 +281,25 @@ public class Unpacker {
     }
 
     return files;
+  }
+
+  /**
+   * DRGN21.402.3 is a submap object script for the screen of the Dragon's Nest
+   * with the weird plant you need to use the spring water on. That script has a
+   * bug which causes it to jump out of the bounds of the script into the next
+   * script. This no longer works in the decomp because the files are no longer
+   * adjacent in a MRG file. This patch extends the script to be long enough to
+   * contain the jump and just returns.
+   */
+  private static boolean drgn21_402_3_patcherDescriminator(final String name, final FileData data) {
+    return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
+  }
+
+  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data) {
+    final byte[] newData = new byte[0x107c];
+    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    newData[0x1078] = 0x49;
+    return Map.of(name, new FileData(newData));
   }
 
   private static void writeFiles(final Map<String, FileData> files) {
