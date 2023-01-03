@@ -4046,7 +4046,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce83cL)
   public static void FUN_800ce83c(final long a0, long a1) {
-    final long v1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.getPointer(); //TODO
+    final long v1 = scriptStatePtrArr_800bc1c0.get((int)a0).deref().innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.getPointer(); //TODO WeaponTrailEffect3c
     a1 = a1 * 0x4L;
     if((a1 & 0xffL) > 0x40L) {
       a1 = 0x40L;

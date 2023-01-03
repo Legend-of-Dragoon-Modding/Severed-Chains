@@ -8325,7 +8325,7 @@ public final class SEffe {
 
   @Method(0x80114e60L)
   public static long FUN_80114e60(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(4, v0).offset(0x34L).offset(a0.params_20.get(1).deref().get() * 0x4L).setu(a0.params_20.get(2).deref().get());
     return 0;
   }
@@ -8441,7 +8441,7 @@ public final class SEffe {
 
   @Method(0x8011549cL)
   public static long FUN_8011549c(final RunningScript a0) {
-    final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(4, a1).offset(0x10L).and(0xffff_ffbfL).oru(a0.params_20.get(1).deref().get() << 6);
     return 0;
   }
@@ -8506,7 +8506,7 @@ public final class SEffe {
 
   @Method(0x801156f8L)
   public static long FUN_801156f8(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(1, v0).offset(0xcL).setu(a0.params_20.get(1).deref().get());
     MEMORY.ref(1, v0).offset(0xdL).setu(a0.params_20.get(2).deref().get());
     return 0;
