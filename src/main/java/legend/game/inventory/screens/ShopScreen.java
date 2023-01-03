@@ -290,11 +290,6 @@ public class ShopScreen extends MenuScreen {
 
   private void scroll(final int scroll) {
     this.menuScroll_8011e0e4 = scroll;
-
-    if(this.shopType == 0) {
-      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-      this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
-    }
   }
 
   private int FUN_8010a864(final int equipmentId) {

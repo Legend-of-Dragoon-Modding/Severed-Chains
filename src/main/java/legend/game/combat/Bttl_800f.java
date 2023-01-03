@@ -4038,7 +4038,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9d7cL)
   public static long FUN_800f9d7c(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.getPointer(); //TODO bobj
     long a1 = v0 + 0xb0L;
 
     //LAB_800f9db0
