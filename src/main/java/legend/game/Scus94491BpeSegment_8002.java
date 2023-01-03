@@ -2414,23 +2414,23 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80024480L)
   public static long scriptGiveGold(final RunningScript script) {
-    script.params_20.get(1).deref().set(addGold(script.params_20.get(0).deref().get()));
+    script.params_20[1].set(addGold(script.params_20[0].get()));
     return 0;
   }
 
   @Method(0x800244c4L)
   public static long scriptGiveChestContents(final RunningScript s0) {
-    final int a0 = switch(s0.params_20.get(0).deref().get()) {
+    final int a0 = switch(s0.params_20[0].get()) {
       case 0xfb -> addGold(20);
       case 0xfc -> addGold(50);
       case 0xfd -> addGold(100);
       case 0xfe -> addGold(200);
       case 0xff -> 0xff;
-      default -> giveItem(s0.params_20.get(0).deref().get());
+      default -> giveItem(s0.params_20[0].get());
     };
 
     //LAB_80024574
-    s0.params_20.get(1).deref().set(a0);
+    s0.params_20[1].set(a0);
 
     //LAB_80024580
     return 0;
@@ -2438,7 +2438,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80024590L)
   public static long scriptTakeItem(final RunningScript script) {
-    final int itemId = script.params_20.get(0).deref().get() & 0xff;
+    final int itemId = script.params_20[0].get() & 0xff;
 
     final GameState52c state = gameState_800babc8;
 
@@ -2447,16 +2447,16 @@ public final class Scus94491BpeSegment_8002 {
       for(int i = 0; i < state.equipmentCount_1e4.get(); i++) {
         if(state.equipment_1e8.get(i).get() == itemId) {
           //LAB_8002460c
-          script.params_20.get(1).deref().set(takeEquipment(i));
+          script.params_20[1].set(takeEquipment(i));
           return 0;
         }
       }
 
       //LAB_80024600
-      script.params_20.get(1).deref().set(0xff);
+      script.params_20[1].set(0xff);
     } else {
       //LAB_80024628
-      script.params_20.get(1).deref().set(takeItem(itemId));
+      script.params_20[1].set(takeItem(itemId));
     }
 
     //LAB_8002463c
@@ -2569,13 +2569,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025158L)
   public static long FUN_80025158(final RunningScript a0) {
-    final int s1 = a0.params_20.get(0).deref().get();
+    final int s1 = a0.params_20[0].get();
     FUN_800258a8(s1);
 
     final Struct84 struct84 = _800bdf38.get(s1);
-    struct84.type_04.set((short)a0.params_20.get(1).deref().get());
+    struct84.type_04.set((short)a0.params_20[1].get());
     struct84._08.or(0x1000L);
-    struct84.str_24.set(MEMORY.ref(2, a0.params_20.get(2).getPointer(), LodString::new));
+    struct84.str_24.set(a0.params_20[2].reinterpret(LodString::new));
     struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8));
     FUN_8002a2b4(s1);
     FUN_80027d74(s1, struct84.x_14.get(), struct84.y_16.get());
@@ -2584,28 +2584,28 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025218L)
   public static long scriptAddWobjTextbox(final RunningScript script) {
-    if(script.params_20.get(2).deref().get() == 0) {
+    if(script.params_20[2].get() == 0) {
       return 0;
     }
 
-    final int textboxIndex = script.params_20.get(0).deref().get();
-    final long type = _80052ba8.offset(((script.params_20.get(2).deref().get() & 0xf00L) >>> 8) * 0x2L).get();
+    final int textboxIndex = script.params_20[0].get();
+    final long type = _80052ba8.offset(((script.params_20[2].get() & 0xf00) >>> 8) * 0x2L).get();
     clearTextbox(textboxIndex);
 
     final Textbox4c textbox = textboxes_800be358.get(textboxIndex);
-    textbox._04.set((short)_80052b88.offset(((script.params_20.get(2).deref().get() & 0xf0L) >>> 4) * 0x2L).get());
-    textbox._06.set((short)_80052b68.offset((script.params_20.get(2).deref().get() & 0xfL) * 0x2L).get());
+    textbox._04.set((short)_80052b88.offset(((script.params_20[2].get() & 0xf0) >>> 4) * 0x2L).get());
+    textbox._06.set((short)_80052b68.offset((script.params_20[2].get() & 0xf) * 0x2L).get());
     textbox.x_14.set((short)0);
     textbox.y_16.set((short)0);
-    textbox.chars_18.set((short)(script.params_20.get(3).deref().get() + 1));
-    textbox.lines_1a.set((short)(script.params_20.get(4).deref().get() + 1));
+    textbox.chars_18.set((short)(script.params_20[3].get() + 1));
+    textbox.lines_1a.set((short)(script.params_20[4].get() + 1));
     FUN_800258a8(textboxIndex);
 
     final Struct84 struct84 = _800bdf38.get(textboxIndex);
     struct84.type_04.set((short)type);
-    struct84.str_24.setPointer(script.params_20.get(5).getPointer());
+    struct84.str_24.setPointer(script.params_20[5].getAddress());
 
-    if(type == 1 && (script.params_20.get(1).deref().get() & 0x1000L) > 0) {
+    if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
       struct84._08.or(0x20L);
     }
 
@@ -2622,9 +2622,9 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800253d4
     struct84._08.or(0x1000L);
-    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 0x1L) * 0x8L));
+    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
     FUN_8002a2b4(textboxIndex);
-    positionWobjTextbox(textboxIndex, script.params_20.get(1).deref().get());
+    positionWobjTextbox(textboxIndex, script.params_20[1].get());
 
     if(type == 2) {
       textbox._38.set(textbox.x_14.get());
@@ -2641,10 +2641,10 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800254bcL)
   public static long FUN_800254bc(final RunningScript a0) {
-    final int textboxIndex = a0.params_20.get(0).deref().get();
+    final int textboxIndex = a0.params_20[0].get();
 
-    if(a0.params_20.get(1).deref().get() != 0) {
-      final int a2 = a0.params_20.get(1).deref().get();
+    if(a0.params_20[1].get() != 0) {
+      final int a2 = a0.params_20[1].get();
       final short s0 = (short)_80052b88.offset((a2 & 0xf0) >>> 3).get();
       final short s1 = (short)_80052b68.offset((a2 & 0xf) * 0x2L).get();
       final short s4 = (short)_80052ba8.offset((a2 & 0xf00) >>> 7).get();
@@ -2653,16 +2653,16 @@ public final class Scus94491BpeSegment_8002 {
       final Textbox4c struct4c = textboxes_800be358.get(textboxIndex);
       struct4c._04.set(s0);
       struct4c._06.set(s1);
-      struct4c.x_14.set((short)a0.params_20.get(2).deref().get());
-      struct4c.y_16.set((short)a0.params_20.get(3).deref().get());
-      struct4c.chars_18.set((short)(a0.params_20.get(4).deref().get() + 1));
-      struct4c.lines_1a.set((short)(a0.params_20.get(5).deref().get() + 1));
+      struct4c.x_14.set((short)a0.params_20[2].get());
+      struct4c.y_16.set((short)a0.params_20[3].get());
+      struct4c.chars_18.set((short)(a0.params_20[4].get() + 1));
+      struct4c.lines_1a.set((short)(a0.params_20[5].get() + 1));
       FUN_800258a8(textboxIndex);
 
       final Struct84 struct84 = _800bdf38.get(textboxIndex);
 
       struct84.type_04.set(s4);
-      struct84.str_24.set(a0.params_20.get(6).deref().reinterpret(LodString::new));
+      struct84.str_24.set(a0.params_20[6].reinterpret(LodString::new));
 
       if(s4 == 1 && (a2 & 0x1000) > 0) {
         struct84._08.or(0x20);
@@ -2692,11 +2692,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025718L)
   public static long FUN_80025718(final RunningScript a0) {
-    final Struct84 s0 = _800bdf38.get(a0.params_20.get(0).deref().get());
+    final Struct84 s0 = _800bdf38.get(a0.params_20[0].get());
 
     s0._6c.set(-1);
-    s0._70.set((short)a0.params_20.get(2).deref().get());
-    s0._72.set((short)a0.params_20.get(1).deref().get());
+    s0._70.set((short)a0.params_20[2].get());
+    s0._72.set((short)a0.params_20[1].get());
 
     if(s0._00.get() == 0xdL) {
       s0._00.set(0x17);
@@ -4716,7 +4716,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80029100
     FUN_80027d74(0, struct84.x_14.get(), struct84.y_16.get());
-    a0.params_20.get(0).deref().set(0);
+    a0.params_20[0].set(0);
     return 0;
   }
 
@@ -4936,7 +4936,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
       if(textboxes_800be358.get(i)._00.get() == 0 && _800bdf38.get(i)._00.get() == 0) {
-        a0.params_20.get(0).deref().set(i);
+        a0.params_20[0].set(i);
         return 0;
       }
 
@@ -4944,46 +4944,46 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80029bb0
     }
 
-    a0.params_20.get(0).deref().set(-1);
+    a0.params_20[0].set(-1);
     return 0;
   }
 
   @Method(0x80029bd4L)
   public static long FUN_80029bd4(final RunningScript a0) {
-    final int s0 = a0.params_20.get(0).deref().get();
+    final int s0 = a0.params_20[0].get();
     clearTextbox(s0);
 
     final Textbox4c struct4c = textboxes_800be358.get(s0);
-    struct4c._04.set((short)a0.params_20.get(1).deref().get());
-    struct4c.x_14.set((short)a0.params_20.get(2).deref().get());
-    struct4c.y_16.set((short)a0.params_20.get(3).deref().get());
-    struct4c.chars_18.set((short)(a0.params_20.get(4).deref().get() + 1));
-    struct4c.lines_1a.set((short)(a0.params_20.get(5).deref().get() + 1));
+    struct4c._04.set((short)a0.params_20[1].get());
+    struct4c.x_14.set((short)a0.params_20[2].get());
+    struct4c.y_16.set((short)a0.params_20[3].get());
+    struct4c.chars_18.set((short)(a0.params_20[4].get() + 1));
+    struct4c.lines_1a.set((short)(a0.params_20[5].get() + 1));
     return 0;
   }
 
   @Method(0x80029c98L)
   public static long FUN_80029c98(final RunningScript a0) {
-    final int a2 = a0.params_20.get(0).deref().get();
-    a0.params_20.get(1).deref().set(textboxes_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
+    final int a2 = a0.params_20[0].get();
+    a0.params_20[1].set(textboxes_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
     return 0;
   }
 
   @Method(0x80029cf4L)
   public static long FUN_80029cf4(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(textboxes_800be358.get(a0.params_20.get(0).deref().get())._00.get());
+    a0.params_20[1].set(textboxes_800be358.get(a0.params_20[0].get())._00.get());
     return 0;
   }
 
   @Method(0x80029d34L)
   public static long FUN_80029d34(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(_800bdf38.get(a0.params_20.get(0).deref().get())._00.get());
+    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._00.get());
     return 0;
   }
 
   @Method(0x80029d6cL)
   public static long FUN_80029d6c(final RunningScript a0) {
-    final int s1 = a0.params_20.get(0).deref().get();
+    final int s1 = a0.params_20[0].get();
     final Struct84 struct84 = _800bdf38.get(s1);
 
     if(struct84._00.get() != 0) {
@@ -5019,13 +5019,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029e8cL)
   public static long FUN_80029e8c(final RunningScript a0) {
-    _800bdf10.offset(Math.min(9, a0.params_20.get(0).deref().get()) * 0x4L).setu(a0.params_20.get(1).deref().get());
+    _800bdf10.offset(Math.min(9, a0.params_20[0].get()) * 0x4L).setu(a0.params_20[1].get());
     return 0;
   }
 
   @Method(0x80029eccL)
   public static long FUN_80029ecc(final RunningScript a0) {
-    final Struct84 v1 = _800bdf38.get(a0.params_20.get(0).deref().get());
+    final Struct84 v1 = _800bdf38.get(a0.params_20[0].get());
     if(v1._00.get() == 0x10L && (v1._08.get() & 0x20L) != 0) {
       v1._08.xor(0x20L);
     }
@@ -5038,13 +5038,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029f48L)
   public static long FUN_80029f48(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(_800bdf38.get(a0.params_20.get(0).deref().get())._6c.get());
+    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._6c.get());
     return 0;
   }
 
   @Method(0x80029f80L)
   public static long FUN_80029f80(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(_800bdf38.get(a0.params_20.get(0).deref().get())._7c.get());
+    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._7c.get());
     return 0;
   }
 

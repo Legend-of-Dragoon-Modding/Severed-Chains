@@ -113,7 +113,7 @@ public final class Temp {
   @Method(0x800ca658L)
   public static long FUN_800ca658(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
-      script.scriptStateIndex_00.get(),
+      script.scriptStateIndex_00,
       0xd18,
       MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca200", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca438", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -147,7 +147,7 @@ public final class Temp {
     }
 
     manager._10._00.or(0x5000_0000L);
-    script.params_20.get(0).deref().set(effectIndex);
+    script.params_20[0].set(effectIndex);
     return 0;
   }
 
@@ -181,7 +181,7 @@ public final class Temp {
   @Method(0x800caae4L)
   public static long FUN_800caae4(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
-      script.scriptStateIndex_00.get(),
+      script.scriptStateIndex_00,
       0x8,
       null,
       MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca89c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -197,7 +197,7 @@ public final class Temp {
     effect._05.set(0xff);
     effect._06.set((short)0);
     manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
-    script.params_20.get(0).deref().set(effectIndex);
+    script.params_20[0].set(effectIndex);
     return 0;
   }
 

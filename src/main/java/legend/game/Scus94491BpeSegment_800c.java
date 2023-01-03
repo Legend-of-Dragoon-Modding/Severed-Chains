@@ -11,7 +11,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;

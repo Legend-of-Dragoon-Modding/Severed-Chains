@@ -2053,16 +2053,16 @@ public final class Bttl_800e {
 
   @Method(0x800e4788L)
   public static long scriptSetLightDirection(final RunningScript script) {
-    setLightDirection(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get());
+    setLightDirection(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return 0;
   }
 
   @Method(0x800e47c8L)
   public static long scriptGetLightDirection(final RunningScript script) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(script.params_20.get(0).deref().get());
-    script.params_20.get(1).deref().set(light.light_00.direction_00.getX());
-    script.params_20.get(2).deref().set(light.light_00.direction_00.getY());
-    script.params_20.get(3).deref().set(light.light_00.direction_00.getZ());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(script.params_20[0].get());
+    script.params_20[1].set(light.light_00.direction_00.getX());
+    script.params_20[2].set(light.light_00.direction_00.getY());
+    script.params_20[3].set(light.light_00.direction_00.getZ());
     return 0;
   }
 
@@ -2078,17 +2078,17 @@ public final class Bttl_800e {
 
   @Method(0x800e48a8L)
   public static long FUN_800e48a8(final RunningScript a0) {
-    FUN_800e4824(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    FUN_800e4824(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
 
   @Method(0x800e48e8L)
   public static long FUN_800e48e8(final RunningScript a0) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_800e45c0(sp0x10, lights_800c692c.deref().get(a0.params_20.get(0).deref().get()).light_00.direction_00);
-    a0.params_20.get(1).deref().set(sp0x10.getX());
-    a0.params_20.get(2).deref().set(sp0x10.getY());
-    a0.params_20.get(3).deref().set(sp0x10.getZ());
+    FUN_800e45c0(sp0x10, lights_800c692c.deref().get(a0.params_20[0].get()).light_00.direction_00);
+    a0.params_20[1].set(sp0x10.getX());
+    a0.params_20[2].set(sp0x10.getY());
+    a0.params_20[3].set(sp0x10.getZ());
     return 0;
   }
 
@@ -2096,7 +2096,7 @@ public final class Bttl_800e {
   public static long FUN_800e4964(final RunningScript a0) {
     final SVECTOR sp0x10 = new SVECTOR();
 
-    final int a2 = a0.params_20.get(1).deref().get();
+    final int a2 = a0.params_20[1].get();
     if(a2 != -1) {
       //LAB_800e49c0
       if(a2 - 1 < 3) {
@@ -2112,11 +2112,11 @@ public final class Bttl_800e {
     //LAB_800e4a34
     //LAB_800e4a38
     final VECTOR sp0x18 = new VECTOR();
-    sp0x10.x.add((short)a0.params_20.get(2).deref().get());
-    sp0x10.y.add((short)a0.params_20.get(3).deref().get());
-    sp0x10.z.add((short)a0.params_20.get(4).deref().get());
+    sp0x10.x.add((short)a0.params_20[2].get());
+    sp0x10.y.add((short)a0.params_20[3].get());
+    sp0x10.z.add((short)a0.params_20[4].get());
     FUN_800e4674(sp0x18, sp0x10);
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
     light.light_00.direction_00.set(sp0x18);
     light._10._00.set(0);
     return 0;
@@ -2124,10 +2124,10 @@ public final class Bttl_800e {
 
   @Method(0x800e4abcL)
   public static long FUN_800e4abc(final RunningScript a0) {
-    final int s1 = a0.params_20.get(1).deref().get();
+    final int s1 = a0.params_20[1].get();
 
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_800e45c0(sp0x10, lights_800c692c.deref().get(a0.params_20.get(0).deref().get()).light_00.direction_00);
+    FUN_800e45c0(sp0x10, lights_800c692c.deref().get(a0.params_20[0].get()).light_00.direction_00);
 
     final SVECTOR s0;
     if(s1 - 1 < 3) {
@@ -2139,9 +2139,9 @@ public final class Bttl_800e {
     }
 
     //LAB_800e4b64
-    a0.params_20.get(1).deref().set(sp0x10.getX() - s0.getX());
-    a0.params_20.get(2).deref().set(sp0x10.getY() - s0.getY());
-    a0.params_20.get(3).deref().set(sp0x10.getZ() - s0.getZ());
+    a0.params_20[1].set(sp0x10.getX() - s0.getX());
+    a0.params_20[2].set(sp0x10.getY() - s0.getY());
+    a0.params_20[3].set(sp0x10.getZ() - s0.getZ());
     return 0;
   }
 
@@ -2156,16 +2156,16 @@ public final class Bttl_800e {
 
   @Method(0x800e4c10L)
   public static long FUN_800e4c10(final RunningScript a0) {
-    FUN_800e4bc0(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    FUN_800e4bc0(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
 
   @Method(0x800e4c90L)
   public static long FUN_800e4c90(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
-    a0.params_20.get(1).deref().set(light.light_00.r_0c.get());
-    a0.params_20.get(2).deref().set(light.light_00.g_0d.get());
-    a0.params_20.get(3).deref().set(light.light_00.b_0e.get());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
+    a0.params_20[1].set(light.light_00.r_0c.get());
+    a0.params_20[2].set(light.light_00.g_0d.get());
+    a0.params_20[3].set(light.light_00.b_0e.get());
     return 0;
   }
 
@@ -2179,7 +2179,7 @@ public final class Bttl_800e {
 
   @Method(0x800e4d2cL)
   public static long FUN_800e4d2c(final RunningScript a0) {
-    FUN_800e4cf8(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
+    FUN_800e4cf8(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
     _800c6930.deref()._24.set(0);
     return 0;
   }
@@ -2195,42 +2195,42 @@ public final class Bttl_800e {
   @Method(0x800e4db4L)
   public static long scriptGetLightColour(final RunningScript a0) {
     final BattleLightStruct64 v0 = _800c6930.deref();
-    a0.params_20.get(0).deref().set(v0.colour_00.getX());
-    a0.params_20.get(1).deref().set(v0.colour_00.getY());
-    a0.params_20.get(2).deref().set(v0.colour_00.getZ());
+    a0.params_20[0].set(v0.colour_00.getX());
+    a0.params_20[1].set(v0.colour_00.getY());
+    a0.params_20[2].set(v0.colour_00.getZ());
     return 0;
   }
 
   @Method(0x800e4dfcL)
   public static long FUN_800e4dfc(final RunningScript a0) {
-    lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._10._00.set(0);
+    lights_800c692c.deref().get(a0.params_20[0].get())._10._00.set(0);
     return 0;
   }
 
   @Method(0x800e4e2cL)
   public static long FUN_800e4e2c(final RunningScript a0) {
-    return lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._10._00.get() > 0 ? 2 : 0;
+    return lights_800c692c.deref().get(a0.params_20[0].get())._10._00.get() > 0 ? 2 : 0;
   }
 
   @Method(0x800e4e64L)
   public static long FUN_800e4e64(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((int)lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._10._00.get());
+    a0.params_20[1].set((int)lights_800c692c.deref().get(a0.params_20[0].get())._10._00.get());
     return 0;
   }
 
   @Method(0x800e4ea0L)
   public static long FUN_800e4ea0(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
-    final int t1 = a0.params_20.get(4).deref().get();
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
+    final int t1 = a0.params_20[4].get();
     final BttlLightStruct84Sub3c t0 = light._10;
 
     t0._00.set(0);
     t0.vec_04.setX(light.light_00.direction_00.getX() << 12);
     t0.vec_04.setY(light.light_00.direction_00.getY() << 12);
     t0.vec_04.setZ(light.light_00.direction_00.getZ() << 12);
-    t0.vec_28.setX(a0.params_20.get(1).deref().get() << 12);
-    t0.vec_28.setY(a0.params_20.get(2).deref().get() << 12);
-    t0.vec_28.setZ(a0.params_20.get(3).deref().get() << 12);
+    t0.vec_28.setX(a0.params_20[1].get() << 12);
+    t0.vec_28.setY(a0.params_20[2].get() << 12);
+    t0.vec_28.setZ(a0.params_20[3].get() << 12);
     t0._34.set(t1);
 
     if(t1 > 0) {
@@ -2247,12 +2247,12 @@ public final class Bttl_800e {
 
   @Method(0x800e4fa0L)
   public static long FUN_800e4fa0(final RunningScript a0) {
-    final int s3 = a0.params_20.get(1).deref().get();
-    final int s4 = a0.params_20.get(2).deref().get();
-    final int s2 = a0.params_20.get(3).deref().get();
-    final int s5 = a0.params_20.get(4).deref().get();
+    final int s3 = a0.params_20[1].get();
+    final int s4 = a0.params_20[2].get();
+    final int s2 = a0.params_20[3].get();
+    final int s5 = a0.params_20[4].get();
 
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
     light._10._00.set(0);
@@ -2277,12 +2277,12 @@ public final class Bttl_800e {
 
   @Method(0x800e50e8L)
   public static long FUN_800e50e8(final RunningScript a0) {
-    final int s3 = a0.params_20.get(0).deref().get();
-    final int s2 = a0.params_20.get(1).deref().get();
-    final int x = a0.params_20.get(2).deref().get();
-    final int y = a0.params_20.get(3).deref().get();
-    final int z = a0.params_20.get(4).deref().get();
-    final int s4 = a0.params_20.get(5).deref().get();
+    final int s3 = a0.params_20[0].get();
+    final int s2 = a0.params_20[1].get();
+    final int x = a0.params_20[2].get();
+    final int y = a0.params_20[3].get();
+    final int z = a0.params_20[4].get();
+    final int s4 = a0.params_20[5].get();
 
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, lights_800c692c.deref().get(s3).light_00.direction_00);
@@ -2318,22 +2318,22 @@ public final class Bttl_800e {
 
   @Method(0x800e52f8L)
   public static long FUN_800e52f8(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub3c v1 = light._10;
     v1._00.set(0x4001L);
     v1.vec_04.set(sp0x10.getX() << 12, sp0x10.getY() << 12, sp0x10.getZ() << 12);
-    v1.vec_10.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
-    v1.vec_1c.set(a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get());
+    v1.vec_10.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+    v1.vec_1c.set(a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get());
     return 0;
   }
 
   @Method(0x800e540cL)
   public static long FUN_800e540c(final RunningScript a0) {
-    final int bobjIndex = a0.params_20.get(1).deref().get();
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
+    final int bobjIndex = a0.params_20[1].get();
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
 
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
@@ -2350,32 +2350,32 @@ public final class Bttl_800e {
 
   @Method(0x800e54f8L)
   public static long FUN_800e54f8(final RunningScript a0) {
-    lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._4c._00.set(0);
+    lights_800c692c.deref().get(a0.params_20[0].get())._4c._00.set(0);
     return 0;
   }
 
   @Method(0x800e5528L)
   public static long FUN_800e5528(final RunningScript a0) {
-    return lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._4c._00.get() > 0 ? 2 : 0;
+    return lights_800c692c.deref().get(a0.params_20[0].get())._4c._00.get() > 0 ? 2 : 0;
   }
 
   @Method(0x800e5560L)
   public static long FUN_800e5560(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((int)lights_800c692c.deref().get(a0.params_20.get(0).deref().get())._4c._00.get());
+    a0.params_20[1].set((int)lights_800c692c.deref().get(a0.params_20[0].get())._4c._00.get());
     return 0;
   }
 
   @Method(0x800e559cL)
   public static long FUN_800e559c(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
-    final int t1 = a0.params_20.get(4).deref().get();
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
+    final int t1 = a0.params_20[4].get();
     final BttlLightStruct84Sub3c t0 = light._4c;
 
     t0._00.set(0);
     t0.vec_04.setX(light.light_00.r_0c.get() << 12);
     t0.vec_04.setY(light.light_00.g_0d.get() << 12);
     t0.vec_04.setZ(light.light_00.b_0e.get() << 12);
-    t0.vec_28.set(a0.params_20.get(1).deref().get() << 12, a0.params_20.get(2).deref().get() << 12, a0.params_20.get(3).deref().get() << 12);
+    t0.vec_28.set(a0.params_20[1].get() << 12, a0.params_20[2].get() << 12, a0.params_20[3].get() << 12);
     t0._34.set(t1);
 
     if(t1 > 0) {
@@ -2390,12 +2390,12 @@ public final class Bttl_800e {
 
   @Method(0x800e569cL)
   public static long FUN_800e569c(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20.get(0).deref().get());
+    final BttlLightStruct84 light = lights_800c692c.deref().get(a0.params_20[0].get());
     final BttlLightStruct84Sub3c v1 = light._4c;
     v1._00.set(0);
     v1.vec_04.set(light.light_00.r_0c.get() << 12, light.light_00.g_0d.get() << 12, light.light_00.b_0e.get() << 12);
-    v1.vec_10.set(a0.params_20.get(1).deref().get() << 12, a0.params_20.get(2).deref().get() << 12, a0.params_20.get(3).deref().get() << 12);
-    v1.vec_1c.set(a0.params_20.get(4).deref().get() << 12, a0.params_20.get(5).deref().get() << 12, a0.params_20.get(6).deref().get() << 12);
+    v1.vec_10.set(a0.params_20[1].get() << 12, a0.params_20[2].get() << 12, a0.params_20[3].get() << 12);
+    v1.vec_1c.set(a0.params_20[4].get() << 12, a0.params_20[5].get() << 12, a0.params_20[6].get() << 12);
 
     if(v1._34.get() > 0) {
       v1._00.set(0x1L);
@@ -2474,18 +2474,18 @@ public final class Bttl_800e {
 
   @Method(0x800e59d8L)
   public static long FUN_800e59d8(final RunningScript script) {
-    final int a0 = script.params_20.get(0).deref().get();
+    final int a0 = script.params_20[0].get();
 
     if(a0 == -1) {
-      memcpy(struct7cc_800c693c.deref()._4c.getAddress(), script.params_20.get(1).getPointer(), 0x4c);
+      memcpy(struct7cc_800c693c.deref()._4c.getAddress(), script.params_20[1].getAddress(), 0x4c);
     } else if(a0 == -2) {
       //LAB_800e5a38
       //LAB_800e5a60
-      FUN_800e5768(MEMORY.ref(4, script.params_20.get(1).getPointer(), BattleStruct4c::new));
+      FUN_800e5768(MEMORY.ref(4, script.params_20[1].getAddress(), BattleStruct4c::new));
       //LAB_800e5a14
     } else if(a0 == -3) {
       //LAB_800e5a40
-      FUN_800e5768(struct7cc_800c693c.deref()._98.get(script.params_20.get(1).deref().get()));
+      FUN_800e5768(struct7cc_800c693c.deref()._98.get(script.params_20[1].get()));
     }
 
     //LAB_800e5a68
@@ -2694,7 +2694,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6470L)
   public static long FUN_800e6470(final RunningScript a0) {
-    final int t0 = a0.params_20.get(0).deref().get();
+    final int t0 = a0.params_20[0].get();
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
     struct7cc._20.or(t0 & 0x1_0000L).or(t0 & 0x2_0000L).or(t0 & 0x10_0000L);
 
@@ -2712,7 +2712,7 @@ public final class Bttl_800e {
     }
 
     final int scriptIndex = FUN_800e832c(
-      a0.scriptStateIndex_00.get(),
+      a0.scriptStateIndex_00,
       0,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e70bc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e71dc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -2724,10 +2724,10 @@ public final class Bttl_800e {
 
     final BattleStruct24_2 v0 = _800c6938.deref();
     v0._00.set(t0 & 0xffffL);
-    v0.scriptIndex_04.set(a0.params_20.get(1).deref().get());
-    v0._08.set(a0.params_20.get(2).deref().get());
-    v0.scriptIndex_0c.set(a0.scriptStateIndex_00.get());
-    v0.scriptOffsetIndex_10.set(a0.params_20.get(3).deref().get() & 0xff);
+    v0.scriptIndex_04.set(a0.params_20[1].get());
+    v0._08.set(a0.params_20[2].get());
+    v0.scriptIndex_0c.set(a0.scriptStateIndex_00);
+    v0.scriptOffsetIndex_10.set(a0.params_20[3].get() & 0xff);
     v0.scriptIndex_18.set(scriptIndex);
     v0._1c.set(0);
     v0.frameCount_20.set(-1);
@@ -2737,8 +2737,8 @@ public final class Bttl_800e {
 
   @Method(0x800e665cL)
   public static long FUN_800e665c(final RunningScript a0) {
-    final int s3 = a0.params_20.get(0).deref().get() & 0xffff;
-    final int s1 = a0.params_20.get(3).deref().get() & 0xff;
+    final int s3 = a0.params_20[0].get() & 0xffff;
+    final int s1 = a0.params_20[3].get() & 0xff;
 
     final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
     struct7cc._20.or(_800fafec.offset(s3).get() << 16);
@@ -2778,7 +2778,7 @@ public final class Bttl_800e {
   public static long FUN_800e6844(final RunningScript a0) {
     struct7cc_800c693c.deref()._20.or(0x40_0000L);
     FUN_800e6470(a0);
-    final int s0 = ((a0.params_20.get(0).deref().get() & 0xffff) - 192) * 2;
+    final int s0 = ((a0.params_20[0].get() & 0xffff) - 192) * 2;
     final BattleStruct24_2 t0 = _800c6938.deref();
     t0.script_14.clear();
     t0._00.or(0x200_0000L);
@@ -2790,10 +2790,10 @@ public final class Bttl_800e {
 
   @Method(0x800e6920L)
   public static long FUN_800e6920(final RunningScript a0) {
-    final long s1 = a0.params_20.get(0).deref().get() & 0xff_0000L;
-    short sp20 = (short)a0.params_20.get(0).deref().get();
+    final long s1 = a0.params_20[0].get() & 0xff_0000L;
+    short sp20 = (short)a0.params_20[0].get();
     if(sp20 == -1) {
-      final BattleObject27c v0 = scriptStatePtrArr_800bc1c0[a0.params_20.get(1).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c v0 = scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00.derefAs(BattleObject27c.class);
       assert false : "?"; //a0.params_20.get(0).set(sp0x20);
       sp20 = getCombatant(v0.combatantIndex_26c.get()).charIndex_1a2.get();
     }
@@ -2830,7 +2830,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6aecL)
   public static long FUN_800e6aec(final RunningScript a0) {
-    final int v1 = a0.params_20.get(0).deref().get();
+    final int v1 = a0.params_20[0].get();
     final int s3 = v1 & 0xffff;
 
     FUN_800e6470(a0);
@@ -2863,7 +2863,7 @@ public final class Bttl_800e {
   public static long FUN_800e6db4(final RunningScript a0) {
     final long v0;
     final long v1;
-    switch(a0.params_20.get(0).deref().get() & 0xffff) {
+    switch(a0.params_20[0].get() & 0xffff) {
       case 0, 1 -> {
         v1 = _800fafe8.get();
         if(v1 == 0x1L) {
@@ -2963,7 +2963,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6fb4L)
   public static long FUN_800e6fb4(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
+    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.deref().scriptIndex_0c.get()) {
       return 2;
     }
 
@@ -3049,7 +3049,7 @@ public final class Bttl_800e {
 
   @Method(0x800e71e4L)
   public static long FUN_800e71e4(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
+    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.deref().scriptIndex_0c.get()) {
       return 0x2L;
     }
 
@@ -3079,7 +3079,7 @@ public final class Bttl_800e {
 
   @Method(0x800e727cL)
   public static long FUN_800e727c(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
+    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.deref().scriptIndex_0c.get()) {
       return 0x2L;
     }
 
@@ -3111,7 +3111,7 @@ public final class Bttl_800e {
   @Method(0x800e7314L)
   public static long FUN_800e7314(final RunningScript a0) {
     if(_800fafe8.get() != 0) {
-      if(a0.scriptStateIndex_00.get() != _800c6938.deref().scriptIndex_0c.get()) {
+      if(a0.scriptStateIndex_00 != _800c6938.deref().scriptIndex_0c.get()) {
         return 2;
       }
     }
@@ -3142,7 +3142,7 @@ public final class Bttl_800e {
       return 0x2L;
     }
 
-    final int v1 = a0.params_20.get(4).deref().get();
+    final int v1 = a0.params_20[4].get();
     if(v1 == 0x100_0000) {
       //LAB_800e7414
       FUN_800e665c(a0);
@@ -3168,15 +3168,15 @@ public final class Bttl_800e {
 
   @Method(0x800e7490L)
   public static long FUN_800e7490(final RunningScript a0) {
-    a0.params_20.get(0).deref().set((int)_800fafe8.get());
+    a0.params_20[0].set((int)_800fafe8.get());
     return 0;
   }
 
   @Method(0x800e74acL)
   public static long FUN_800e74ac(final RunningScript a0) {
     final BattleStruct24_2 struct24 = _800c6938.deref();
-    a0.params_20.get(0).deref().set(struct24.scriptIndex_04.get());
-    a0.params_20.get(1).deref().set(struct24._08.get());
+    a0.params_20[0].set(struct24.scriptIndex_04.get());
+    a0.params_20[1].set(struct24._08.get());
     return 0;
   }
 
@@ -3806,7 +3806,7 @@ public final class Bttl_800e {
 
   @Method(0x800e93e0L)
   public static long FUN_800e93e0(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(allocateEffectManager(a0.scriptStateIndex_00.get(), 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
     return 0;
   }
 
@@ -3878,7 +3878,7 @@ public final class Bttl_800e {
   @Method(0x800e96ccL)
   public static long allocateAttackHitFlashEffect(final RunningScript s1) {
     final int scriptIndex = allocateEffectManager(
-      s1.scriptStateIndex_00.get(),
+      s1.scriptStateIndex_00,
       0xc,
       null,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "renderAttackHitFlashEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -3888,15 +3888,15 @@ public final class Bttl_800e {
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     manager._04.set(0x400_0000L);
-    FUN_800e95f0(manager.effect_44.derefAs(AttackHitFlashEffect0c.class), s1.params_20.get(1).deref().get());
+    FUN_800e95f0(manager.effect_44.derefAs(AttackHitFlashEffect0c.class), s1.params_20[1].get());
     manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
-    s1.params_20.get(0).deref().set(scriptIndex);
+    s1.params_20[0].set(scriptIndex);
     return 0;
   }
 
   @Method(0x800e9798L)
   public static long FUN_800e9798(final RunningScript script) {
-    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -3907,7 +3907,7 @@ public final class Bttl_800e {
 
     //LAB_800e97e8
     //LAB_800e97ec
-    final int a0 = script.params_20.get(1).deref().get();
+    final int a0 = script.params_20[1].get();
     if(a0 == -1) {
       model.b_cc.set(2);
       model.b_cd.set(-1);
@@ -3932,7 +3932,7 @@ public final class Bttl_800e {
   @Method(0x800e9854L)
   public static long FUN_800e9854(final RunningScript a0) {
     final int scriptIndex = allocateEffectManager(
-      a0.scriptStateIndex_00.get(),
+      a0.scriptStateIndex_00,
       0x13c,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -3942,7 +3942,7 @@ public final class Bttl_800e {
 
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     manager._04.set(0x200_0000L);
-    final long v0 = FUN_800eac58(a0.params_20.get(1).deref().get() | 0x200_0000L).getAddress(); //TODO
+    final long v0 = FUN_800eac58(a0.params_20[1].get() | 0x200_0000L).getAddress(); //TODO
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
     effect._00.set(0);
     effect.part_04.set(v0);
@@ -3957,14 +3957,14 @@ public final class Bttl_800e {
     FUN_800de36c(model, effect.ptr_0c.get());
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
     manager._10._00.set(0x1400_0040L);
-    a0.params_20.get(0).deref().set(scriptIndex);
+    a0.params_20[0].set(scriptIndex);
     return 0;
   }
 
   @Method(0x800e99bcL)
   public static long FUN_800e99bc(final RunningScript a0) {
     final int scriptIndex = allocateEffectManager(
-      a0.scriptStateIndex_00.get(),
+      a0.scriptStateIndex_00,
       0x13cL,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -3974,7 +3974,7 @@ public final class Bttl_800e {
 
     final EffectManagerData6c data = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     data._04.set(0x100_0000L);
-    final DeffPart part = FUN_800eac58(a0.params_20.get(1).deref().get() | 0x100_0000L);
+    final DeffPart part = FUN_800eac58(a0.params_20[1].get() | 0x100_0000L);
     final BttlScriptData6cSub13c s0 = data.effect_44.derefAs(BttlScriptData6cSub13c.class);
     s0._00.set(0);
 
@@ -3988,7 +3988,7 @@ public final class Bttl_800e {
     FUN_800de36c(s0._134.deref(), s0.ptr_0c.get());
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
     data._10._00.set(0x5400_0000L);
-    a0.params_20.get(0).deref().set(scriptIndex);
+    a0.params_20[0].set(scriptIndex);
     return 0;
   }
 
@@ -4092,9 +4092,9 @@ public final class Bttl_800e {
 
   @Method(0x800e9f68L)
   public static long FUN_800e9f68(final RunningScript a0) {
-    final int s2 = a0.params_20.get(1).deref().get();
+    final int s2 = a0.params_20[1].get();
     final int managerIndex = allocateEffectManager(
-      a0.scriptStateIndex_00.get(),
+      a0.scriptStateIndex_00,
       0x13c,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -4125,7 +4125,7 @@ public final class Bttl_800e {
     manager._10.rot_10.set(model.coord2Param_64.rotate);
     manager._10.scale_16.set(model.scaleVector_fc);
     manager._10._00.set(0x1400_0040L);
-    a0.params_20.get(0).deref().set(managerIndex);
+    a0.params_20[0].set(managerIndex);
     return 0;
   }
 
@@ -4138,8 +4138,8 @@ public final class Bttl_800e {
 
   @Method(0x800ea13cL)
   public static long FUN_800ea13c(final RunningScript a0) {
-    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
-    final int a1 = a0.params_20.get(1).deref().get() & 0xffff;
+    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final int a1 = a0.params_20[1].get() & 0xffff;
 
     //TODO
     MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)a1 >> 5) * 0x4L).oru(1L << (a1 & 0x1f));
@@ -4148,8 +4148,8 @@ public final class Bttl_800e {
 
   @Method(0x800ea19cL)
   public static long FUN_800ea19c(final RunningScript a0) {
-    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
-    final int v1 = a0.params_20.get(1).deref().get() & 0xffff;
+    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final int v1 = a0.params_20[1].get() & 0xffff;
 
     //TODO
     MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)v1 >> 5) * 0x4L).and(~(1L << (v1 & 0x1f)));
@@ -4158,10 +4158,10 @@ public final class Bttl_800e {
 
   @Method(0x800ea200L)
   public static long FUN_800ea200(final RunningScript a0) {
-    final int effectIndex = a0.params_20.get(0).deref().get();
+    final int effectIndex = a0.params_20[0].get();
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
-    long v0 = FUN_800eac58(a0.params_20.get(1).deref().get() | 0x200_0000).getAddress();
+    long v0 = FUN_800eac58(a0.params_20[1].get() | 0x200_0000).getAddress();
     v0 = v0 + MEMORY.ref(4, v0).offset(0x14L).get();
     effect.ptr_0c.set(v0);
     FUN_800de36c(effect._134.deref(), v0);
@@ -4172,7 +4172,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea2a0L)
   public static long FUN_800ea2a0(final RunningScript script) {
-    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4183,14 +4183,14 @@ public final class Bttl_800e {
     }
 
     //LAB_800ea300
-    model.vector_10c.setX(script.params_20.get(1).deref().get());
-    model.vector_10c.setZ(script.params_20.get(2).deref().get());
+    model.vector_10c.setX(script.params_20[1].get());
+    model.vector_10c.setZ(script.params_20[2].get());
     return 0;
   }
 
   @Method(0x800ea30cL)
   public static long FUN_800ea30c(final RunningScript script) {
-    final BattleScriptDataBase a3 = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a3 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     final Model124 model;
     if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4201,20 +4201,20 @@ public final class Bttl_800e {
     }
 
     //LAB_800ea374
-    model.vector_118.set(script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get());
+    model.vector_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return 0;
   }
 
   @Method(0x800ea384L)
   public static long FUN_800ea384(final RunningScript a0) {
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
 
     if(effect.ptr_0c.get() == 0) {
-      a0.params_20.get(1).deref().set(0);
+      a0.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      a0.params_20.get(1).deref().set((int)(manager._10._24.get() + 2) / effect._134.deref().s_9a.get());
+      a0.params_20[1].set((int)(manager._10._24.get() + 2) / effect._134.deref().s_9a.get());
     }
 
     //LAB_800ea3e4
@@ -4526,10 +4526,10 @@ public final class Bttl_800e {
 
   @Method(0x800eb01cL)
   public static long FUN_800eb01c(final RunningScript script) {
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[(short)script.params_20.get(0).deref().get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
     final long v1 = effect._04.get();
-    final long v0_0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20.get(1).deref().get() * 0x10L;
+    final long v0_0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20[1].get() * 0x10L;
     final SVECTOR sp0x10 = MEMORY.ref(4, v0_0, SVECTOR::new);
 
     EffectManagerData6c v1_0 = manager;
@@ -4571,12 +4571,12 @@ public final class Bttl_800e {
 
   @Method(0x800eb188L)
   public static long FUN_800eb188(final RunningScript script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[(short)script.params_20.get(0).deref().get()];
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()];
     final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
 
     final long v1 = effect._04.get();
-    final long v0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20.get(1).deref().get() * 0x10L;
+    final long v0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20[1].get() * 0x10L;
     final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, MEMORY.ref(4, v0, RECT::new));
 
     if(a0 != null) {
@@ -4672,7 +4672,7 @@ public final class Bttl_800e {
 
   @Method(0x800eb518L)
   public static long FUN_800eb518(final RunningScript script) {
-    FUN_800eb48c(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get());
+    FUN_800eb48c(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return 0;
   }
 
@@ -4711,12 +4711,12 @@ public final class Bttl_800e {
 
   @Method(0x800eb84cL)
   public static long FUN_800eb84c(final RunningScript script) {
-    EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
     final long v0 = effect._04.get();
     final long v1 = MEMORY.ref(4, v0).offset(0x8L).get();
-    final long s1 = v0 + v1 + script.params_20.get(1).deref().get() * 0x10L;
-    final long s0 = v0 + v1 + script.params_20.get(2).deref().get() * 0x10L;
+    final long s1 = v0 + v1 + script.params_20[1].get() * 0x10L;
+    final long s0 = v0 + v1 + script.params_20[2].get() * 0x10L;
 
     //LAB_800eb8fc
     while((manager._04.get() & 0x400L) == 0) {
@@ -4733,7 +4733,7 @@ public final class Bttl_800e {
     final BttlScriptData6cSub20 sub = FUN_800e8dd4(manager, 0xa, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eb7c4", EffectManagerData6c.class, BttlScriptData6cSub20.class), BiFunctionRef::new), 0x20, BttlScriptData6cSub20::new);
     sub._0c.set(MEMORY.ref(4, s1, RECT::new));
     sub._14.set(0);
-    sub._18.set(script.params_20.get(3).deref().get());
+    sub._18.set(script.params_20[3].get());
     sub._1c.set(MEMORY.ref(2, s0, DVECTOR::new));
     return 0;
   }
@@ -5302,34 +5302,34 @@ public final class Bttl_800e {
 
   @Method(0x800ee210L)
   public static long scriptCopyVram(final RunningScript script) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20.get(4).deref().get(), script.params_20.get(5).deref().get(), script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get() / 4, (short)script.params_20.get(3).deref().get()));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
     return 0;
   }
 
   @Method(0x800ee2acL)
   public static long scriptSetBobjZOffset(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.zOffset_a0.set((short)a0.params_20.get(1).deref().get());
+    scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.zOffset_a0.set((short)a0.params_20[1].get());
     return 0;
   }
 
   @Method(0x800ee2e4L)
   public static long scriptSetBobjScaleUniform(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
-    final int scale = a0.params_20.get(1).deref().get();
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final int scale = a0.params_20[1].get();
     bobj.model_148.scaleVector_fc.set(scale, scale, scale);
     return 0;
   }
 
   @Method(0x800ee324L)
   public static long scriptSetBobjScale(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
-    bobj.model_148.scaleVector_fc.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    bobj.model_148.scaleVector_fc.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
 
   @Method(0x800ee384L)
   public static long FUN_800ee384(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
     bobj.model_148.b_cc.set(2);
     bobj.model_148.b_cd.set(-1);
     return 0;
@@ -5337,15 +5337,15 @@ public final class Bttl_800e {
 
   @Method(0x800ee3c0L)
   public static long FUN_800ee3c0(final RunningScript a0) {
-    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
     v1.model_148.b_cc.set(3);
-    v1.model_148.b_cd.set(a0.params_20.get(1).deref().get());
+    v1.model_148.b_cd.set(a0.params_20[1].get());
     return 0;
   }
 
   @Method(0x800ee408L)
   public static long FUN_800ee408(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
     final int a0_0 = bobj.model_148.b_cd.get();
     if(a0_0 == -2) {
       //LAB_800ee450
@@ -5363,52 +5363,52 @@ public final class Bttl_800e {
 
   @Method(0x800ee468L)
   public static long FUN_800ee468(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.b_cc.set(0);
+    scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.b_cc.set(0);
     return 0;
   }
 
   @Method(0x800ee49cL)
   public static long FUN_800ee49c(final RunningScript a0) {
-    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
-    a1.model_148.vector_10c.setX(a0.params_20.get(1).deref().get());
-    a1.model_148.vector_10c.setZ(a0.params_20.get(2).deref().get());
+    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    a1.model_148.vector_10c.setX(a0.params_20[1].get());
+    a1.model_148.vector_10c.setZ(a0.params_20[2].get());
     return 0;
   }
 
   @Method(0x800ee4e8L)
   public static long FUN_800ee4e8(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20.get(0).deref().get()].innerStruct_00.derefAs(BattleObject27c.class);
-    bobj.model_148.vector_118.set(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
+    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    bobj.model_148.vector_118.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
 
   @Method(0x800ee548L)
   public static long scriptApplyScreenDarkening(final RunningScript script) {
-    applyScreenDarkening(script.params_20.get(0).deref().get());
+    applyScreenDarkening(script.params_20[0].get());
     return 0;
   }
 
   @Method(0x800ee574L)
   public static long scriptGetStageNobj(final RunningScript script) {
-    script.params_20.get(0).deref().set(stage_800bda0c.deref().objtable2_550.nobj.get());
+    script.params_20[0].set(stage_800bda0c.deref().objtable2_550.nobj.get());
     return 0;
   }
 
   @Method(0x800ee594L)
   public static long FUN_800ee594(final RunningScript a0) {
-    stage_800bda0c.deref()._5e4.or(1L << a0.params_20.get(0).deref().get());
+    stage_800bda0c.deref()._5e4.or(1L << a0.params_20[0].get());
     return 0;
   }
 
   @Method(0x800ee5c0L)
   public static long FUN_800ee5c0(final RunningScript a0) {
-    stage_800bda0c.deref()._5e4.and(~(1L << a0.params_20.get(0).deref().get()));
+    stage_800bda0c.deref()._5e4.and(~(1L << a0.params_20[0].get()));
     return 0;
   }
 
   @Method(0x800ee5f0L)
   public static long scriptSetStageZ(final RunningScript script) {
-    stage_800bda0c.deref().z_5e8.set((short)script.params_20.get(0).deref().get());
+    stage_800bda0c.deref().z_5e8.set((short)script.params_20[0].get());
     return 0;
   }
 

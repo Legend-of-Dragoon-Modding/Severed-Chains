@@ -194,14 +194,14 @@ public final class Bttl_800d {
 
   @Method(0x800d0124L)
   public static long FUN_800d0124(final RunningScript script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20.get(0).deref().get()];
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleScriptDataBase data = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
 
     if(data.magic_00.get() == BattleScriptDataBase.EM__) {
-      script.params_20.get(1).deref().set(((EffectManagerData6c)data).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10.animCount_98.get());
+      script.params_20[1].set(((EffectManagerData6c)data).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10.animCount_98.get());
     } else {
       //LAB_800d017c
-      script.params_20.get(1).deref().set(((BattleObject27c)data).model_148.animCount_98.get());
+      script.params_20[1].set(((BattleObject27c)data).model_148.animCount_98.get());
     }
 
     //LAB_800d0194
@@ -293,7 +293,7 @@ public final class Bttl_800d {
   @Method(0x800d0564L)
   public static long allocateProjectileHitEffect(final RunningScript script) {
     final int scriptIndex = allocateEffectManager(
-      script.scriptStateIndex_00.get(),
+      script.scriptStateIndex_00,
       0x14,
       null,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderProjectileHitEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -303,7 +303,7 @@ public final class Bttl_800d {
 
     final ProjectileHitEffect14 effect = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(ProjectileHitEffect14.class);
 
-    final int count = script.params_20.get(1).deref().get();
+    final int count = script.params_20[1].get();
     effect.count_00.set(count);
     effect._04.set(0);
     effect._08.setPointer(mallocTail(count * 0x48));
@@ -313,9 +313,9 @@ public final class Bttl_800d {
       final ProjectileHitEffect14Sub48 struct = effect._08.deref().get(i);
 
       struct.used_00.set(true);
-      struct.r_34.set(script.params_20.get(2).deref().get() << 8);
-      struct.g_36.set(script.params_20.get(3).deref().get() << 8);
-      struct.b_38.set(script.params_20.get(4).deref().get() << 8);
+      struct.r_34.set(script.params_20[2].get() << 8);
+      struct.g_36.set(script.params_20[3].get() << 8);
+      struct.b_38.set(script.params_20[4].get() << 8);
 
       final short x = (short)(seed_800fa754.advance().get() % 301 + 200);
       final short y = (short)(seed_800fa754.advance().get() % 401 - 300);
@@ -337,7 +337,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d0980
-    script.params_20.get(0).deref().set(scriptIndex);
+    script.params_20[0].set(scriptIndex);
     return 0;
   }
 
@@ -438,11 +438,11 @@ public final class Bttl_800d {
 
   @Method(0x800d0decL)
   public static long allocateAdditionSparksEffect(final RunningScript s3) {
-    final int count = s3.params_20.get(1).deref().get();
-    final int s4 = s3.params_20.get(6).deref().get();
+    final int count = s3.params_20[1].get();
+    final int s4 = s3.params_20[6].get();
 
     final int scriptIndex = allocateEffectManager(
-      s3.scriptStateIndex_00.get(),
+      s3.scriptStateIndex_00,
       0x8L,
       null,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderAdditionSparks", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -456,7 +456,7 @@ public final class Bttl_800d {
     effect._04.set(t6);
     effect.count_00.set(count);
 
-    final long s1 = s3.params_20.get(5).deref().get() / s4;
+    final long s1 = s3.params_20[5].get() / s4;
 
     //LAB_800d0ee0
     for(int i = 0; i < count; i++) {
@@ -465,11 +465,11 @@ public final class Bttl_800d {
       MEMORY.ref(1, t6).offset(0x4L).setu(seed_800fa754.advance().get() % (s4 + 0x1L));
       MEMORY.ref(1, t6).offset(0x5L).setu(seed_800fa754.advance().get() % 9 + 7);
 
-      MEMORY.ref(2, t6).offset(0x40L).setu(s3.params_20.get(2).deref().get() << 8);
+      MEMORY.ref(2, t6).offset(0x40L).setu(s3.params_20[2].get() << 8);
       MEMORY.ref(2, t6).offset(0x46L).setu(MEMORY.ref(2, t6).offset(0x40L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x42L).setu(s3.params_20.get(3).deref().get() << 8);
+      MEMORY.ref(2, t6).offset(0x42L).setu(s3.params_20[3].get() << 8);
       MEMORY.ref(2, t6).offset(0x48L).setu(MEMORY.ref(2, t6).offset(0x44L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x44L).setu(s3.params_20.get(4).deref().get() << 8);
+      MEMORY.ref(2, t6).offset(0x44L).setu(s3.params_20[4].get() << 8);
       MEMORY.ref(2, t6).offset(0x4aL).setu(MEMORY.ref(2, t6).offset(0x48L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
       MEMORY.ref(4, t6).offset(0x8L).setu(MEMORY.ref(1, t6).offset(0x4L).get() * s1);
       MEMORY.ref(4, t6).offset(0x1cL).setu(0);
@@ -486,7 +486,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1154
-    s3.params_20.get(0).deref().set(scriptIndex);
+    s3.params_20[0].set(scriptIndex);
     return 0;
   }
 
@@ -611,20 +611,20 @@ public final class Bttl_800d {
 
   @Method(0x800d19ecL)
   public static long allocateAdditionStarburstEffect(final RunningScript s3) {
-    final int count = s3.params_20.get(2).deref().get();
+    final int count = s3.params_20[2].get();
 
     final int scriptIndex = allocateEffectManager(
-      s3.scriptStateIndex_00.get(),
+      s3.scriptStateIndex_00,
       0x10L,
       null,
-      additionStarburstRenderers_800c6dc4.get(s3.params_20.get(3).deref().get()).deref(),
+      additionStarburstRenderers_800c6dc4.get(s3.params_20[3].get()).deref(),
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateAdditionStarburstEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       AdditionStarburstEffect10::new
     );
 
     final AdditionStarburstEffect10 effect = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(AdditionStarburstEffect10.class);
     long t4 = mallocTail(count * 0x10L);
-    effect.scriptIndex_00.set(s3.params_20.get(1).deref().get());
+    effect.scriptIndex_00.set(s3.params_20[1].get());
     effect.count_04.set(count);
     effect._08.set(0);
     effect._0c.set(t4);
@@ -642,19 +642,19 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1c7c
-    s3.params_20.get(0).deref().set(scriptIndex);
+    s3.params_20[0].set(scriptIndex);
     return 0;
   }
 
   @Method(0x800d1cacL)
   public static long FUN_800d1cac(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(allocateEffectManager(a0.scriptStateIndex_00.get(), 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
     return 0;
   }
 
   @Method(0x800d1cf4L)
   public static long FUN_800d1cf4(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(allocateEffectManager(a0.scriptStateIndex_00.get(), 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
     return 0;
   }
 
@@ -770,11 +770,11 @@ public final class Bttl_800d {
 
   @Method(0x800d2734L)
   public static long allocatePotionEffect(final RunningScript script) {
-    final int s2 = script.params_20.get(1).deref().get();
-    final int s1 = script.params_20.get(2).deref().get();
+    final int s2 = script.params_20[1].get();
+    final int s1 = script.params_20[2].get();
 
     final int effectIndex = allocateEffectManager(
-      script.scriptStateIndex_00.get(),
+      script.scriptStateIndex_00,
       0x14,
       null,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderPotionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -791,7 +791,7 @@ public final class Bttl_800d {
     effect._00.set(s2);
     effect._01.set(s1 - 3 > 1 ? 4 : 1);
     effect.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
-    script.params_20.get(0).deref().set(effectIndex);
+    script.params_20[0].set(effectIndex);
     return 0;
   }
 
@@ -908,7 +908,7 @@ public final class Bttl_800d {
   @Method(0x800d2ff4L)
   public static long allocateGuardEffect(final RunningScript s0) {
     final int scriptIndex = allocateEffectManager(
-      s0.scriptStateIndex_00.get(),
+      s0.scriptStateIndex_00,
       0x6,
       null,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderGuardEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -924,7 +924,7 @@ public final class Bttl_800d {
     manager._10.colour_1c.setX((short)255);
     manager._10.colour_1c.setY((short)0);
     manager._10.colour_1c.setZ((short)0);
-    s0.params_20.get(0).deref().set(scriptIndex);
+    s0.params_20[0].set(scriptIndex);
     return 0;
   }
 
@@ -1049,7 +1049,7 @@ public final class Bttl_800d {
   @Method(0x800d34bcL)
   public static long allocateMonsterDeathEffect(final RunningScript a0) {
     final int fp = allocateEffectManager(
-      a0.scriptStateIndex_00.get(),
+      a0.scriptStateIndex_00,
       0x34L,
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectRenderer", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
@@ -1057,7 +1057,7 @@ public final class Bttl_800d {
       MonsterDeathEffect34::new
     );
 
-    final int animCount = scriptStatePtrArr_800bc1c0[a0.params_20.get(1).deref().get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
+    final int animCount = scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.animCount_98.get();
     final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[fp].innerStruct_00.derefAs(EffectManagerData6c.class);
     final MonsterDeathEffect34 effect = manager.effect_44.derefAs(MonsterDeathEffect34.class);
     long s4 = mallocTail(animCount * 0x30L);
@@ -1066,7 +1066,7 @@ public final class Bttl_800d {
     effect._02.set(animCount + 8);
     effect.animCount_04.set(animCount);
     effect._06.set(0);
-    effect.scriptIndex_08.set(a0.params_20.get(1).deref().get());
+    effect.scriptIndex_08.set(a0.params_20[1].get());
 
     //LAB_800d35a0
     for(int animIndex = 0; animIndex < effect.animCount_04.get(); animIndex++) {
@@ -1076,7 +1076,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d35cc
-    final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20.get(2).deref().get() & 0xff);
+    final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20[2].get() & 0xff);
     effect._0c._00.set(manager._10._00.get());
     effect._0c.w_08.set(metrics.w_04.get());
     effect._0c.h_0a.set(metrics.h_05.get());
@@ -1089,7 +1089,7 @@ public final class Bttl_800d {
     effect._0c.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
     effect._0c._18.set((short)0);
     effect._0c._1a.set((short)0);
-    a0.params_20.get(0).deref().set((int)fp);
+    a0.params_20[0].set(fp);
     return 0;
   }
 
@@ -1279,11 +1279,11 @@ public final class Bttl_800d {
 
   @Method(0x800d3d74L)
   public static long scriptAllocateAdditionScript(final RunningScript a0) {
-    if(a0.params_20.get(1).deref().get() == -1) {
+    if(a0.params_20[1].get() == -1) {
       _800faa9d.setu(0);
     } else {
       //LAB_800d3dc0
-      final int addition = gameState_800babc8.charData_32c.get(a0.params_20.get(0).deref().get()).selectedAddition_19.get();
+      final int addition = gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.get();
       final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3bb8", int.class, ScriptState.classFor(AdditionScriptData1c.class), AdditionScriptData1c.class), TriConsumerRef::new));
@@ -1452,12 +1452,12 @@ public final class Bttl_800d {
 
   @Method(0x800d4338L)
   public static long FUN_800d4338(final RunningScript s4) {
-    final int s2 = s4.params_20.get(0).deref().get();
-    final int s3 = s4.params_20.get(1).deref().get();
+    final int s2 = s4.params_20[0].get();
+    final int s3 = s4.params_20[1].get();
 
     if(s2 == -1) {
       _800faa94.setu(0);
-      s4.params_20.get(1).deref().set(0);
+      s4.params_20[1].set(0);
     } else {
       //LAB_800d4388
       final int scriptIndex = allocateScriptState(0x40, BttlScriptData40::new);
@@ -1514,7 +1514,7 @@ public final class Bttl_800d {
 
       //LAB_800d453c
       _800faa90.setu((s1._1c.get() >> 8) + v1 * 0x8L - 0x3L);
-      s4.params_20.get(1).deref().set(0);
+      s4.params_20[1].set(0);
     }
 
     //LAB_800d4560
@@ -1523,7 +1523,7 @@ public final class Bttl_800d {
 
   @Method(0x800d4580L)
   public static long FUN_800d4580(final RunningScript a0) {
-    final int s2 = a0.params_20.get(0).deref().get();
+    final int s2 = a0.params_20[0].get();
     if(s2 != -1) {
       final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
@@ -1558,15 +1558,15 @@ public final class Bttl_800d {
 
   @Method(0x800d46d4L)
   public static long FUN_800d46d4(final RunningScript a0) {
-    final long v1 = _800faaa0.offset(1, a0.params_20.get(0).deref().get() * 0x6L).getAddress();
+    final long v1 = _800faaa0.offset(1, a0.params_20[0].get() * 0x6L).getAddress();
 
-    final COLOUR colour = new COLOUR().set(a0.params_20.get(4).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(4).deref().get());
+    final COLOUR colour = new COLOUR().set(a0.params_20[4].get(), a0.params_20[4].get(), a0.params_20[4].get());
 
     if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
-      FUN_80018d60(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(a0.params_20.get(3).deref().get()), colour, 0x1000L);
+      FUN_80018d60(a0.params_20[1].get(), a0.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(a0.params_20[3].get()), colour, 0x1000L);
     } else {
       //LAB_800d4784
-      FUN_80018a5c(a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(a0.params_20.get(3).deref().get()), colour, 0x1000L, 0x1000L);
+      FUN_80018a5c(a0.params_20[1].get(), a0.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(a0.params_20[3].get()), colour, 0x1000L, 0x1000L);
     }
 
     //LAB_800d47cc
@@ -2440,10 +2440,10 @@ public final class Bttl_800d {
 
   @Method(0x800d8decL)
   public static long FUN_800d8dec(final RunningScript a0) {
-    final int s3 = a0.params_20.get(0).deref().get();
-    final int s0 = a0.params_20.get(1).deref().get();
-    final int s1 = a0.params_20.get(2).deref().get();
-    final int s4 = a0.params_20.get(3).deref().get();
+    final int s3 = a0.params_20[0].get();
+    final int s0 = a0.params_20[1].get();
+    final int s1 = a0.params_20[2].get();
+    final int s4 = a0.params_20[3].get();
 
     final BattleCamera cam = camera_800c67f0;
     cam._100.set(getProjectionPlaneDistance() << 16);
@@ -3239,7 +3239,7 @@ public final class Bttl_800d {
 
   @Method(0x800dac20L)
   public static long FUN_800dac20(final RunningScript a0) {
-    FUN_800dac70(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get());
+    FUN_800dac70(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get());
     return 0;
   }
 
@@ -3357,7 +3357,7 @@ public final class Bttl_800d {
 
   @Method(0x800db034L)
   public static long FUN_800db034(final RunningScript a0) {
-    FUN_800db084(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get());
+    FUN_800db084(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get());
     return 0;
   }
 
@@ -3465,7 +3465,7 @@ public final class Bttl_800d {
 
   @Method(0x800db460L)
   public static long FUN_800db460(final RunningScript a0) {
-    FUN_800db4ec(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get());
+    FUN_800db4ec(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get());
     return 0;
   }
 
@@ -3489,7 +3489,7 @@ public final class Bttl_800d {
 
   @Method(0x800db574L)
   public static long FUN_800db574(final RunningScript a0) {
-    FUN_800db600(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get());
+    FUN_800db600(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get());
     return 0;
   }
 
@@ -3513,7 +3513,7 @@ public final class Bttl_800d {
 
   @Method(0x800db688L)
   public static long FUN_800db688(final RunningScript a0) {
-    FUN_800db714(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get());
+    FUN_800db714(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get());
     return 0;
   }
 
@@ -3528,7 +3528,7 @@ public final class Bttl_800d {
 
   @Method(0x800db79cL)
   public static long FUN_800db79c(final RunningScript script) {
-    FUN_800db828(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get(), script.params_20.get(4).deref().get(), script.params_20.get(5).deref().get(), script.params_20.get(6).deref().get(), script.params_20.get(7).deref().get());
+    FUN_800db828(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
     return 0;
   }
 
@@ -3542,7 +3542,7 @@ public final class Bttl_800d {
 
   @Method(0x800db8b0L)
   public static long FUN_800db8b0(final RunningScript a0) {
-    FUN_800db950(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get(), a0.params_20.get(8).deref().get());
+    FUN_800db950(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get(), a0.params_20[8].get());
     return 0;
   }
 
@@ -3566,7 +3566,7 @@ public final class Bttl_800d {
 
   @Method(0x800db9e0L)
   public static long FUN_800db9e0(final RunningScript a0) {
-    FUN_800dba80(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), a0.params_20.get(4).deref().get(), a0.params_20.get(5).deref().get(), a0.params_20.get(6).deref().get(), a0.params_20.get(7).deref().get(), a0.params_20.get(8).deref().get());
+    FUN_800dba80(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get(), a0.params_20[8].get());
     return 0;
   }
 
@@ -3590,32 +3590,32 @@ public final class Bttl_800d {
 
   @Method(0x800dbb10L)
   public static long FUN_800dbb10(final RunningScript a0) {
-    final long v1 = a0.params_20.get(0).deref().get();
-    final long a1;
+    final int v1 = a0.params_20[0].get();
+    final int a1;
     if(v1 == 0) {
       //LAB_800dbb3c
-      a1 = _800c6912.get();
+      a1 = (int)_800c6912.get();
     } else if(v1 == 1) {
       //LAB_800dbb48
-      a1 = _800c6913.get();
+      a1 = (int)_800c6913.get();
     } else {
       throw new RuntimeException("Undefined a1");
     }
 
     //LAB_800dbb50
-    a0.params_20.get(1).deref().set((int)a1);
+    a0.params_20[1].set(a1);
     return 0;
   }
 
   @Method(0x800dbc2cL)
   public static long scriptSetViewportTwist(final RunningScript a0) {
-    camera_800c67f0.rview2_00.viewpointTwist_18.set(a0.params_20.get(0).deref().get());
+    camera_800c67f0.rview2_00.viewpointTwist_18.set(a0.params_20[0].get());
     return 0;
   }
 
   @Method(0x800dbc80L)
   public static long FUN_800dbc80(final RunningScript a0) {
-    final int v1 = a0.params_20.get(0).deref().get();
+    final int v1 = a0.params_20[0].get();
 
     if((v1 & 0x1) != 0) {
       camera_800c67f0._e4.set(0);
@@ -3635,7 +3635,7 @@ public final class Bttl_800d {
   @Method(0x800dbcc8L)
   public static long FUN_800dbcc8(final RunningScript a0) {
     final BattleCamera cam = camera_800c67f0;
-    cam._100.set(a0.params_20.get(0).deref().get() << 16);
+    cam._100.set(a0.params_20[0].get() << 16);
     cam._108.set(0);
     cam._118.set(1);
     return 0;
@@ -3643,7 +3643,7 @@ public final class Bttl_800d {
 
   @Method(0x800dbcfcL)
   public static long scriptGetProjectionPlaneDistance(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(getProjectionPlaneDistance());
+    a0.params_20[0].set(getProjectionPlaneDistance());
     return 0;
   }
 
@@ -3838,7 +3838,7 @@ public final class Bttl_800d {
     final int y;
     final int z;
     final long v1;
-    if(s0.params_20.get(0).deref().get() == 0) {
+    if(s0.params_20[0].get() == 0) {
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
@@ -3852,7 +3852,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dc344
-    s0.params_20.get(4).deref().set((int)MEMORY.ref(4, v1).offset(s0.params_20.get(1).deref().get() * 0x4L).deref(4).call(s0.params_20.get(2).deref().get(), s0.params_20.get(3).deref().get(), x, y, z));
+    s0.params_20[4].set((int)MEMORY.ref(4, v1).offset(s0.params_20[1].get() * 0x4L).deref(4).call(s0.params_20[2].get(), s0.params_20[3].get(), x, y, z));
     return 0;
   }
 
@@ -4200,7 +4200,7 @@ public final class Bttl_800d {
   @Method(0x800dcb84L)
   public static long FUN_800dcb84(final RunningScript a0) {
     final BattleCamera cam = camera_800c67f0;
-    final int a1 = a0.params_20.get(0).deref().get();
+    final int a1 = a0.params_20[0].get();
 
     if((a1 & 0x1L) != 0) {
       cam._120.set(0);
@@ -4221,10 +4221,10 @@ public final class Bttl_800d {
 
   @Method(0x800dcbecL)
   public static long FUN_800dcbec(final RunningScript a0) {
-    _800c67c4.setu(a0.params_20.get(0).deref().get());
-    _800c67d4.setu(a0.params_20.get(1).deref().get());
-    _800c67e4.setu(a0.params_20.get(2).deref().get());
-    _800c67e8.setu(a0.params_20.get(3).deref().get());
+    _800c67c4.setu(a0.params_20[0].get());
+    _800c67d4.setu(a0.params_20[1].get());
+    _800c67e4.setu(a0.params_20[2].get());
+    _800c67e8.setu(a0.params_20[3].get());
     _800fabb8.setu(0x1L);
     getScreenOffset(screenOffsetX_800c67bc, screenOffsetY_800c67c0);
     return 0;

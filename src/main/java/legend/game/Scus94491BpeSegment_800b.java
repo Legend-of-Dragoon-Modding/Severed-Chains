@@ -79,7 +79,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
 
-  public static final RunningScript RunningScript_800bc070 = MEMORY.ref(4, 0x800bc070L, RunningScript::new);
+  public static final RunningScript RunningScript_800bc070 = new RunningScript();
   public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
   public static final BoolRef scriptsDisabled_800bc0b9 = MEMORY.ref(1, 0x800bc0b9L, BoolRef::new);
 

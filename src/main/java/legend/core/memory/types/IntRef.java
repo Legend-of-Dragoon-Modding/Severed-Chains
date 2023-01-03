@@ -40,6 +40,7 @@ public class IntRef implements MemoryRef {
     return this;
   }
 
+  @Deprecated
   public IntRef set(final IntRef val) {
     return this.set(val.get());
   }
