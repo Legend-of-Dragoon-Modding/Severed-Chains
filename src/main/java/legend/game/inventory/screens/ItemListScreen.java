@@ -274,7 +274,6 @@ public class ItemListScreen extends MenuScreen {
 
     if(this.loadingStage == 1) {
       if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
         this.loadingStage = 100;
       }
 
