@@ -134,7 +134,7 @@ public class CombatDebuggerController {
     }
 
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = state.innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
     this.scriptIndex.setText("View script %d".formatted(bobjIndex));
 
@@ -166,7 +166,7 @@ public class CombatDebuggerController {
     }
 
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = state.innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
     final CombatantStruct1a8 combatant = combatants_8005e398.get(bobj.combatantIndex_26c.get());
 
@@ -205,7 +205,7 @@ public class CombatDebuggerController {
     }
 
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = state.innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
     bobj.level_04.set(this.level.getValue());
     bobj.dlevel_06.set(this.dlevel.getValue());

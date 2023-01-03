@@ -5,7 +5,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -20,7 +19,6 @@ import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
 
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -222,12 +220,12 @@ public class SBtld {
 
       final int combatantIndex = getCombatantIndex(charIndex);
       final int bobjIndex = allocateScriptState(0x27c, BattleObject27c::new);
-      setScriptTicker(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "bobjTicker", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
-      setScriptDestructor(bobjIndex, MEMORY.ref(4, getMethodAddress(Bttl_800c.class, "bobjDestructor", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class), TriConsumerRef::new));
+      setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
+      setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(bobjIndex);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-      final BattleObject27c data = state.innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
       data.magic_00.set(BattleScriptDataBase.BOBJ);
       data.charIndex_272.set((short)charIndex);
       data._274.set((short)_800c66d0.get());
@@ -238,7 +236,7 @@ public class SBtld {
       data.model_148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
       data.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
-      state.ui_60.or(0x4L);
+      state.flags_60.or(0x4);
       _800c66d0.incr();
       monsterCount_800c6768.incr();
     }

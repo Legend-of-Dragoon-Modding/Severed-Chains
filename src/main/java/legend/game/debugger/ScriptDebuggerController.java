@@ -17,7 +17,6 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.core.GameEngine;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.EventManager;
@@ -142,7 +141,7 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? Long.toHexString(scriptStatePtrArr_800bc1c0[scriptIndex].getAddress()) : "not allocated";
+    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00 != null ? Long.toHexString(scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.getAddress()) : "empty state" : "not allocated";
   }
 
   private void updateScriptVars() {
@@ -152,39 +151,38 @@ public class ScriptDebuggerController {
       this.storage.get(storageIndex).update();
     }
 
-    final Pointer<IntRef> top = state.commandPtr_18;
-    if(top.isNull()) {
+    if(state.commandPtr_18 == null) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%1$08x: %2$x".formatted(top.getPointer(), top.deref().get()));
+      this.stackTop.setText("0x%1$08x: %2$x".formatted(state.commandPtr_18.getAddress(), state.commandPtr_18.get()));
     }
 
     for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
       this.stack.get(stackIndex).update();
     }
 
-    this.ticker.setText("0x%1$x".formatted(state.ticker_04.getPointer()));
-    this.renderer.setText("0x%1$x".formatted(state.renderer_08.getPointer()));
-    this.tempTicker.setText("0x%1$x".formatted(state.tempTicker_10.getPointer()));
-    this.destructor.setText("0x%1$x".formatted(state.destructor_0c.getPointer()));
-    this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getPointer()));
-    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44.get(5).get()));
-    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44.get(6).get()));
+    this.ticker.setText(state.ticker_04.toString());
+    this.renderer.setText(state.renderer_08.toString());
+    this.tempTicker.setText(state.tempTicker_10.toString());
+    this.destructor.setText(state.destructor_0c.toString());
+    this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getAddress()));
+    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5].get()));
+    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6].get()));
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44.get(storageIndex).get();
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex].get();
     return "0x%1$x (%1$d)".formatted(val);
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
     return GameEngine.MEMORY.waitForLock(() -> {
-      final Pointer<IntRef> val = scriptStatePtrArr_800bc1c0[scriptIndex].commandStack_1c.get(stackIndex);
+      final IntRef val = scriptStatePtrArr_800bc1c0[scriptIndex].commandStack_1c[stackIndex];
 
-      if(val.isNull()) {
+      if(val == null) {
         return "null";
       } else {
-        return "0x%1$08x: %2$x".formatted(val.getPointer(), val.deref().get());
+        return "0x%1$08x: %2$x".formatted(val.getAddress(), val.get());
       }
     });
   }

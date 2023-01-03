@@ -28,7 +28,7 @@ public class GsRVIEW2 implements MemoryRef {
   public GsRVIEW2 set(final GsRVIEW2 other) {
     this.viewpoint_00.set(other.viewpoint_00);
     this.refpoint_0c.set(other.refpoint_0c);
-    this.viewpointTwist_18.set(other.viewpointTwist_18);
+    this.viewpointTwist_18.set(other.viewpointTwist_18.get());
     this.super_1c.setNullable(other.super_1c.derefNullable());
     return this;
   }

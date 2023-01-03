@@ -39,7 +39,6 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.PartyPermutation08;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
-import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
@@ -48,7 +47,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getTriConsumerAddress;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
@@ -352,11 +350,11 @@ public final class SItem {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
       final int bobjIndex = allocateScriptState(charSlot + 6, 0x27c, false, null, 0, BattleObject27c::new);
-      setScriptTicker(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjTicker", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
-      setScriptDestructor(bobjIndex, getTriConsumerAddress(Bttl_800c.class, "bobjDestructor", int.class, ScriptState.classFor(BattleObject27c.class), BattleObject27c.class));
+      setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
+      setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.charBobjIndices_e40.get(charSlot).set(bobjIndex);
-      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
       bobj.magic_00.set(BattleScriptDataBase.BOBJ);
       bobj.combatant_144.set(getCombatant((short)charIndices[charSlot]));
       bobj.charIndex_272.set((short)charIndex);
@@ -394,7 +392,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398.get(scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()).flags_19e.or(0x2a);
+      combatants_8005e398.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00).combatantIndex_26c.get()).flags_19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -436,7 +434,7 @@ public final class SItem {
   @Method(0x800fc210L)
   public static void loadPartyPermutationTmdMrg(final List<byte[]> files, final int charSlot) {
     //LAB_800fc260
-    final BattleObject27c data = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
     final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
     //LAB_800fc298
@@ -500,7 +498,7 @@ public final class SItem {
     final long tim = mallocTail(files.get(0).length);
     MEMORY.setBytes(tim, files.get(0));
 
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
     loadCombatantTim(bobj.combatantIndex_26c.get(), tim);
 
     free(tim);

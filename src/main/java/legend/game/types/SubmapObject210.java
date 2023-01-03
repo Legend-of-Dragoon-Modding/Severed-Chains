@@ -10,7 +10,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class WorldObject210 implements MemoryRef {
+public class SubmapObject210 implements MemoryRef {
   private final Value ref;
 
   public final Model124 model_00;
@@ -18,9 +18,9 @@ public class WorldObject210 implements MemoryRef {
   public final ShortRef s_128;
   public final UnsignedShortRef us_12a;
   public final UnsignedShortRef us_12c;
-  public final UnsignedShortRef wobjIndex_12e;
-  /** The script index of this wobj */
-  public final UnsignedShortRef wobjIndex_130;
+  public final UnsignedShortRef sobjIndex_12e;
+  /** The script index of this sobj */
+  public final UnsignedShortRef sobjIndex_130;
   public final UnsignedShortRef animIndex_132;
   public final ShortRef s_134;
 
@@ -36,13 +36,13 @@ public class WorldObject210 implements MemoryRef {
 
   public final ShortRef s_178;
 
-  /** The amount to rotate this wobj by each frame for {@link WorldObject210#rotationFrames_188} frames */
+  /** The amount to rotate this sobj by each frame for {@link SubmapObject210#rotationFrames_188} frames */
   public final VECTOR rotationAmount_17c;
   /** Number of frames to apply rotation for */
   public final IntRef rotationFrames_188;
   public final UnsignedIntRef ui_18c;
   /**
-   * Example flags for the player wobj - 0x120_0001
+   * Example flags for the player sobj - 0x120_0001
    *
    * Collision flags are in pairs. Each collider flag collides with the following collidee flag.
    *
@@ -66,19 +66,19 @@ public class WorldObject210 implements MemoryRef {
   /** The yellow &lt;!&gt; */
   public final BoolRef showAlertIndicator_194;
   public final IntRef alertIndicatorOffsetY_198;
-  /** The wobj that this wobj is currently collided with (unknown how this differs from _1a8) */
-  public final IntRef collidedWithWobjIndex_19c;
+  /** The sobj that this sobj is currently collided with (unknown how this differs from _1a8) */
+  public final IntRef collidedWithSobjIndex_19c;
   public final IntRef collisionSizeHorizontal_1a0;
   public final IntRef collisionSizeVertical_1a4;
-  /** The wobj that this wobj is currently collided with (unknown how this differs from _19c) */
-  public final IntRef collidedWithWobjIndex_1a8;
+  /** The sobj that this sobj is currently collided with (unknown how this differs from _19c) */
+  public final IntRef collidedWithSobjIndex_1a8;
   public final IntRef collisionSizeHorizontal_1ac;
   public final IntRef collisionSizeVertical_1b0;
-  /** Not exactly sure what the point of this is... it extends the collision box in the direction the wobj is facing */
+  /** Not exactly sure what the point of this is... it extends the collision box in the direction the sobj is facing */
   public final IntRef collisionReach_1b4;
   public final IntRef playerCollisionSizeHorizontal_1b8;
   public final IntRef playerCollisionSizeVertical_1bc;
-  /** Not exactly sure what the point of this is... it extends the collision box in the direction the wobj is facing */
+  /** Not exactly sure what the point of this is... it extends the collision box in the direction the sobj is facing */
   public final IntRef playerCollisionReach_1c0;
   public final BoolRef flatLightingEnabled_1c4;
   public final UnsignedByteRef flatLightRed_1c5;
@@ -91,7 +91,7 @@ public class WorldObject210 implements MemoryRef {
   public final UnsignedShortRef ambientBlue_1ce;
   public final BigSubStruct _1d0;
 
-  public WorldObject210(final Value ref) {
+  public SubmapObject210(final Value ref) {
     this.ref = ref;
 
     this.model_00 = ref.offset(4, 0x000L).cast(Model124::new);
@@ -99,8 +99,8 @@ public class WorldObject210 implements MemoryRef {
     this.s_128 = ref.offset(2, 0x128L).cast(ShortRef::new);
     this.us_12a = ref.offset(2, 0x12aL).cast(UnsignedShortRef::new);
     this.us_12c = ref.offset(2, 0x12cL).cast(UnsignedShortRef::new);
-    this.wobjIndex_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
-    this.wobjIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
+    this.sobjIndex_12e = ref.offset(2, 0x12eL).cast(UnsignedShortRef::new);
+    this.sobjIndex_130 = ref.offset(2, 0x130L).cast(UnsignedShortRef::new);
     this.animIndex_132 = ref.offset(2, 0x132L).cast(UnsignedShortRef::new);
     this.s_134 = ref.offset(2, 0x134L).cast(ShortRef::new);
 
@@ -122,10 +122,10 @@ public class WorldObject210 implements MemoryRef {
     this.flags_190 = ref.offset(4, 0x190L).cast(UnsignedIntRef::new);
     this.showAlertIndicator_194 = ref.offset(4, 0x194L).cast(BoolRef::new);
     this.alertIndicatorOffsetY_198 = ref.offset(4, 0x198L).cast(IntRef::new);
-    this.collidedWithWobjIndex_19c = ref.offset(4, 0x19cL).cast(IntRef::new);
+    this.collidedWithSobjIndex_19c = ref.offset(4, 0x19cL).cast(IntRef::new);
     this.collisionSizeHorizontal_1a0 = ref.offset(4, 0x1a0L).cast(IntRef::new);
     this.collisionSizeVertical_1a4 = ref.offset(4, 0x1a4L).cast(IntRef::new);
-    this.collidedWithWobjIndex_1a8 = ref.offset(4, 0x1a8L).cast(IntRef::new);
+    this.collidedWithSobjIndex_1a8 = ref.offset(4, 0x1a8L).cast(IntRef::new);
     this.collisionSizeHorizontal_1ac = ref.offset(4, 0x1acL).cast(IntRef::new);
     this.collisionSizeVertical_1b0 = ref.offset(4, 0x1b0L).cast(IntRef::new);
     this.collisionReach_1b4 = ref.offset(4, 0x1b4L).cast(IntRef::new);

@@ -44,7 +44,7 @@ import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
-import legend.game.types.WobjPos14;
+import legend.game.types.SobjPos14;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -168,7 +168,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
-  public static final ArrayRef<WobjPos14> wobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(WobjPos14.class, 24, 0x14, WobjPos14::new));
+  public static final ArrayRef<SobjPos14> sobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(SobjPos14.class, 24, 0x14, SobjPos14::new));
   public static final UnboundedArrayRef<GsDOBJ2> _800bd9f8 = MEMORY.ref(4, 0x800bd9f8L, UnboundedArrayRef.of(0x10, GsDOBJ2::new));
   public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
   public static final Pointer<BattleStage> stage_800bda0c = MEMORY.ref(4, 0x800bda0cL, Pointer.deferred(4, BattleStage::new));

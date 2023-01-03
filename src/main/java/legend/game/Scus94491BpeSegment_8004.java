@@ -210,9 +210,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#totalXpFromCombat_800bc95c}</li>
    *   <li>null</li>
    *   <li>null</li>
-   *   <li>{@link legend.game.SMap#wobjIndices_800c6880}</li>
+   *   <li>{@link legend.game.SMap#sobjIndices_800c6880}</li>
    *   <li>{@link legend.game.SMap#submapScriptIndex_800c6740}</li>
-   *   <li>{@link legend.game.SMap#wobjCount_800c6730}</li>
+   *   <li>{@link legend.game.SMap#sobjCount_800c6730}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bd7b0}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bda08}</li>
    *   <li>{@link legend.game.Scus94491BpeSegment_8005#submapCut_80052c30}</li>

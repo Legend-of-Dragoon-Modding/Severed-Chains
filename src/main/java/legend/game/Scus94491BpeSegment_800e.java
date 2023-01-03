@@ -497,8 +497,8 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800df650}</li>
    *   <li>{@link SMap#FUN_800df680}</li>
    *   <li>{@link SMap#FUN_800df6a4}</li>
-   *   <li>{@link SMap#scriptRotateWobj}</li>
-   *   <li>{@link SMap#scriptRotateWobjAbsolute}</li>
+   *   <li>{@link SMap#scriptRotateSobj}</li>
+   *   <li>{@link SMap#scriptRotateSobjAbsolute}</li>
    *   <li>{@link SMap#FUN_800df904}</li>
    *   <li>{@link SMap#FUN_800de1d0}</li>
    *   <li>{@link SMap#scriptFacePlayer}</li>
@@ -569,7 +569,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link SMap#FUN_800e02c0}</li>
    *   <li>{@link SMap#FUN_800e02fc}</li>
    *   <li>{@link SMap#FUN_800deba0}</li>
-   *   <li>{@link SMap#scriptGetWobjNobj}</li>
+   *   <li>{@link SMap#scriptGetSobjNobj}</li>
    *   <li>{@link SMap#FUN_800e03e4}</li>
    *   <li>{@link SMap#FUN_800e0448}</li>
    *   <li>{@link SMap#scriptFaceCamera}</li>
@@ -628,7 +628,7 @@ public final class Scus94491BpeSegment_800e {
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80029c98}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80029cf4}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80029d34}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#scriptAddWobjTextbox}</li>
+   *   <li>{@link Scus94491BpeSegment_8002#scriptAddSobjTextbox}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80029e8c}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_800254bc}</li>
    *   <li>{@link Scus94491BpeSegment_8002#FUN_80029d6c}</li>

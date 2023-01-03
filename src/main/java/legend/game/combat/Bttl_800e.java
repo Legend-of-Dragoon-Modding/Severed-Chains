@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.Config;
+import legend.core.DebugHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -23,6 +24,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.AttackHitFlashEffect0c;
@@ -2103,7 +2105,7 @@ public final class Bttl_800e {
         FUN_800e45c0(sp0x10, lights_800c692c.deref().get(a2 - 1).light_00.direction_00);
       } else {
         //LAB_800e49f4
-        final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a2].innerStruct_00.derefAs(BattleObject27c.class);
+        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a2].innerStruct_00;
         sp0x10.setX(bobj.model_148.coord2Param_64.rotate.getX());
         sp0x10.setZ(bobj.model_148.coord2Param_64.rotate.getZ());
       }
@@ -2135,7 +2137,8 @@ public final class Bttl_800e {
       FUN_800e45c0(s0, lights_800c692c.deref().get(s1 - 1).light_00.direction_00);
     } else {
       //LAB_800e4b40
-      s0 = scriptStatePtrArr_800bc1c0[s1].innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate;
+      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s1].innerStruct_00;
+      s0 = bobj.model_148.coord2Param_64.rotate;
     }
 
     //LAB_800e4b64
@@ -2297,7 +2300,8 @@ public final class Bttl_800e {
       s0.vec_28.set(sp0x18);
     } else {
       //LAB_800e51e8
-      final SVECTOR v0 = scriptStatePtrArr_800bc1c0[s2].innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate;
+      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
+      final SVECTOR v0 = bobj.model_148.coord2Param_64.rotate;
       s0.vec_28.set(v0);
     }
 
@@ -2342,7 +2346,8 @@ public final class Bttl_800e {
     a0_0._00.set(0x4002L);
     a0_0.scriptIndex_38.set(bobjIndex);
 
-    a0_0.vec_04.set(sp0x10).sub(scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+    a0_0.vec_04.set(sp0x10).sub(bobj.model_148.coord2Param_64.rotate);
     a0_0.vec_10.set(0, 0, 0);
     a0_0.vec_1c.set(0, 0, 0);
     return 0;
@@ -2542,7 +2547,8 @@ public final class Bttl_800e {
       } else if(v1 == 0x2L) {
         //LAB_800e5bf0
         final SVECTOR sp0x10 = new SVECTOR();
-        sp0x10.set(scriptStatePtrArr_800bc1c0[a2.scriptIndex_38.get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.coord2Param_64.rotate).add(a2.vec_04);
+        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a2.scriptIndex_38.get()].innerStruct_00;
+        sp0x10.set(bobj.model_148.coord2Param_64.rotate).add(a2.vec_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 0x3L) {
         //LAB_800e5bdc
@@ -2610,8 +2616,8 @@ public final class Bttl_800e {
   public static void FUN_800e6070() {
     allocateScriptState(1, 0, false, null, 0, null);
     loadScriptFile(1, script_800faebc);
-    setScriptTicker(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5a78", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
-    setScriptRenderer(1, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e5fe8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptTicker(1, Bttl_800e::FUN_800e5a78);
+    setScriptRenderer(1, Bttl_800e::FUN_800e5fe8);
     _800c6930.deref()._60.set(0);
     resetLights();
   }
@@ -2715,12 +2721,13 @@ public final class Bttl_800e {
       a0.scriptStateIndex_00,
       0,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e70bc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e71dc", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800e::FUN_800e71dc,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e6314", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       null
     );
 
-    scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class)._04.set(0x600_0400L);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    manager._04.set(0x600_0400L);
 
     final BattleStruct24_2 v0 = _800c6938.deref();
     v0._00.set(t0 & 0xffffL);
@@ -2793,7 +2800,7 @@ public final class Bttl_800e {
     final long s1 = a0.params_20[0].get() & 0xff_0000L;
     short sp20 = (short)a0.params_20[0].get();
     if(sp20 == -1) {
-      final BattleObject27c v0 = scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00;
       assert false : "?"; //a0.params_20.get(0).set(sp0x20);
       sp20 = getCombatant(v0.combatantIndex_26c.get()).charIndex_1a2.get();
     }
@@ -3160,7 +3167,8 @@ public final class Bttl_800e {
 
     //LAB_800e7450
     //LAB_800e7454
-    scriptStatePtrArr_800bc1c0[_800c6938.deref().scriptIndex_18.get()].innerStruct_00.derefAs(EffectManagerData6c.class).ticker_48.set(MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e74e0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[_800c6938.deref().scriptIndex_18.get()].innerStruct_00;
+    manager.ticker_48.set(MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800e74e0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
 
     //LAB_800e7480
     return 0;
@@ -3339,19 +3347,19 @@ public final class Bttl_800e {
   public static void effectManagerDestructor(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
     LOGGER.info(EFFECTS, "Deallocating effect manager %d", index);
 
-    EffectManagerData6c a0 = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+    EffectManagerData6c a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
 
     if(a0.parentScriptIndex_50.get() != -1) {
       if(a0.newChildScriptIndex_56.get() != -1) {
-        scriptStatePtrArr_800bc1c0[a0.newChildScriptIndex_56.get()].innerStruct_00.derefAs(EffectManagerData6c.class).oldChildScriptIndex_54.set(a0.oldChildScriptIndex_54.get());
+        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.newChildScriptIndex_56.get()].innerStruct_00).oldChildScriptIndex_54.set(a0.oldChildScriptIndex_54.get());
       } else {
         //LAB_800e7f4c
-        scriptStatePtrArr_800bc1c0[a0.parentScriptIndex_50.get()].innerStruct_00.derefAs(EffectManagerData6c.class).childScriptIndex_52.set(a0.oldChildScriptIndex_54.get());
+        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.parentScriptIndex_50.get()].innerStruct_00).childScriptIndex_52.set(a0.oldChildScriptIndex_54.get());
       }
 
       //LAB_800e7f6c
       if(a0.oldChildScriptIndex_54.get() != -1) {
-        scriptStatePtrArr_800bc1c0[a0.oldChildScriptIndex_54.get()].innerStruct_00.derefAs(EffectManagerData6c.class).newChildScriptIndex_56.set(a0.newChildScriptIndex_56.get());
+        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.oldChildScriptIndex_54.get()].innerStruct_00).newChildScriptIndex_56.set(a0.newChildScriptIndex_56.get());
       }
 
       //LAB_800e7fa0
@@ -3363,11 +3371,11 @@ public final class Bttl_800e {
     //LAB_800e7fac
     //LAB_800e7fcc
     while(struct.childScriptIndex_52.get() != -1) {
-      a0 = scriptStatePtrArr_800bc1c0[struct.childScriptIndex_52.get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+      a0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct.childScriptIndex_52.get()].innerStruct_00);
 
       //LAB_800e7ff8
       while(a0.childScriptIndex_52.get() != -1) {
-        a0 = scriptStatePtrArr_800bc1c0[a0.childScriptIndex_52.get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+        a0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.childScriptIndex_52.get()].innerStruct_00);
       }
 
       //LAB_800e8020
@@ -3398,28 +3406,30 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e80c4L)
-  public static int allocateEffectManager(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
+  public static int allocateEffectManager(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
     final int index = allocateScriptState(0x6c, EffectManagerData6c::new);
 
     loadScriptFile(index, script_800faebc);
-    setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptTicker(index, Bttl_800e::effectManagerTicker);
 
     if(renderer != null) {
       setScriptRenderer(index, renderer);
     }
 
     //LAB_800e8150
-    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, Bttl_800e::effectManagerDestructor);
 
-    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
+
+    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
     s0.size_08.set(subStructSize);
     if(subStructSize != 0) {
       s0.effect_44.set(MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor));
-      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     } else {
       //LAB_800e8184
       s0.effect_44.clear();
-      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", index, parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     }
 
     //LAB_800e8188
@@ -3443,22 +3453,22 @@ public final class Bttl_800e {
     s0.oldChildScriptIndex_54.set((short)-1);
     s0.newChildScriptIndex_56.set((short)-1);
     s0._58.clear();
-    scriptStatePtrArr_800bc1c0[index].typePtr_f8.set(s0.type_5c);
     strcpy(s0.type_5c, _800c6e18.get());
+    scriptStatePtrArr_800bc1c0[index].type_f8 = s0.type_5c.get();
 
     if(parentIndex != -1) {
-      if(scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() != BattleScriptDataBase.EM__) {
+      if(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00.get() != BattleScriptDataBase.EM__) {
         parentIndex = struct7cc_800c693c.deref().scriptIndex_1c.get();
       }
 
       //LAB_800e8294
-      final EffectManagerData6c parent = scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
-      final EffectManagerData6c child = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+      final EffectManagerData6c parent = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      final EffectManagerData6c child = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
 
       child.parentScriptIndex_50.set((short)parentIndex);
       if(parent.childScriptIndex_52.get() != -1) {
         child.oldChildScriptIndex_54.set(parent.childScriptIndex_52.get());
-        scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52.get()].innerStruct_00.derefAs(EffectManagerData6c.class).newChildScriptIndex_56.set((short)index);
+        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52.get()].innerStruct_00).newChildScriptIndex_56.set((short)index);
       }
 
       //LAB_800e8300
@@ -3470,28 +3480,30 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e832cL)
-  public static int FUN_800e832c(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
+  public static int FUN_800e832c(int parentIndex, final long subStructSize, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumerRef<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
     final int index = allocateScriptState(0x6c, EffectManagerData6c::new);
 
     loadScriptFile(index, script_800faebc);
-    setScriptTicker(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptTicker(index, Bttl_800e::effectManagerTicker);
 
     if(renderer != null) {
       setScriptRenderer(index, renderer);
     }
 
     //LAB_800e83b8
-    setScriptDestructor(index, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "effectManagerDestructor", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new));
+    setScriptDestructor(index, Bttl_800e::effectManagerDestructor);
 
-    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
+
+    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
     s0.size_08.set(subStructSize);
     if(subStructSize != 0) {
       s0.effect_44.set(MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor));
-      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", index, s0.effect_44.deref().getClass().getSimpleName(), parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     } else {
       //LAB_800e83ec
       s0.effect_44.clear();
-      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d, ticker: %s, renderer: %s, destructor: %s)", index, parentIndex, ticker != null ? Long.toHexString(ticker.getAddress()) : "null", renderer != null ? Long.toHexString(renderer.getAddress()) : "null", destructor != null ? Long.toHexString(destructor.getAddress()) : "null");
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", index, parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     }
 
     //LAB_800e83f0
@@ -3515,22 +3527,22 @@ public final class Bttl_800e {
     s0.oldChildScriptIndex_54.set((short)-1);
     s0.newChildScriptIndex_56.set((short)-1);
     s0._58.clear();
-    scriptStatePtrArr_800bc1c0[index].typePtr_f8.set(s0.type_5c);
+    scriptStatePtrArr_800bc1c0[index].type_f8 = s0.type_5c.get();
     strcpy(s0.type_5c, _800c6e18.get());
 
     if(parentIndex != -1) {
-      if(scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(BattleScriptDataBase.class).magic_00.get() != BattleScriptDataBase.EM__) {
+      if(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00.get() != BattleScriptDataBase.EM__) {
         parentIndex = struct7cc_800c693c.deref().scriptIndex_1c.get();
       }
 
       //LAB_800e84fc
-      final EffectManagerData6c parent = scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
-      final EffectManagerData6c child = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+      final EffectManagerData6c parent = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      final EffectManagerData6c child = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
 
       child.parentScriptIndex_50.set((short)parentIndex);
       if(parent.childScriptIndex_52.get() != -1) {
         child.oldChildScriptIndex_54.set(parent.childScriptIndex_52.get());
-        scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52.get()].innerStruct_00.derefAs(EffectManagerData6c.class).newChildScriptIndex_56.set((short)index);
+        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52.get()].innerStruct_00).newChildScriptIndex_56.set((short)index);
       }
 
       //LAB_800e8568
@@ -3560,7 +3572,7 @@ public final class Bttl_800e {
         break;
       }
 
-      final BattleScriptDataBase base = state.innerStruct_00.derefAs(BattleScriptDataBase.class);
+      final BattleScriptDataBase base = (BattleScriptDataBase)state.innerStruct_00;
       if(base.magic_00.get() == BattleScriptDataBase.EM__) {
         final EffectManagerData6c manager = (EffectManagerData6c)base;
         final MATRIX sp0x10 = new MATRIX();
@@ -3748,7 +3760,7 @@ public final class Bttl_800e {
     struct7cc_800c693c.set(v0);
     spriteMetrics_800c6948.set(v0.spriteMetrics_39c);
     final int scriptIndex = allocateEffectManager(-1, 0, null, null, null, null);
-    scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class)._04.set(0x600_0400L);
+    ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00)._04.set(0x600_0400L);
     v0.scriptIndex_1c.set(scriptIndex);
     v0.mrg_2c.clear();
     v0._30.set(0);
@@ -3775,10 +3787,10 @@ public final class Bttl_800e {
   public static void FUN_800e9178(final int a0) {
     if(a0 == 1) {
       //LAB_800e91a0
-      FUN_800e8d04(scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00.derefAs(EffectManagerData6c.class), 10);
+      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
     } else if(a0 == 2) {
       //LAB_800e91d8
-      FUN_800e8d04(scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00.derefAs(EffectManagerData6c.class), 10);
+      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
       FUN_800eab8c();
     } else {
       //LAB_800e9214
@@ -3786,7 +3798,7 @@ public final class Bttl_800e {
       deallocateScriptAndChildren(struct7cc_800c693c.deref().scriptIndex_1c.get());
       final int scriptIndex = allocateEffectManager(-1, 0, null, null, null, null);
       struct7cc_800c693c.deref().scriptIndex_1c.set(scriptIndex);
-      scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class)._04.set(0x600_0400L);
+      ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00)._04.set(0x600_0400L);
     }
 
     //LAB_800e9278
@@ -3844,7 +3856,7 @@ public final class Bttl_800e {
 
   @Method(0x800e9590L)
   public static void renderAttackHitFlashEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final EffectManagerData6c s0 = scriptStatePtrArr_800bc1c0[index].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
     final MATRIX sp0x10 = new MATRIX();
     FUN_800e8594(sp0x10, s0);
     FUN_800e9428(s0.effect_44.derefAs(AttackHitFlashEffect0c.class).metrics_04, s0._10, sp0x10);
@@ -3881,12 +3893,12 @@ public final class Bttl_800e {
       s1.scriptStateIndex_00,
       0xc,
       null,
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "renderAttackHitFlashEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800e::renderAttackHitFlashEffect,
       null,
       AttackHitFlashEffect0c::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     manager._04.set(0x400_0000L);
     FUN_800e95f0(manager.effect_44.derefAs(AttackHitFlashEffect0c.class), s1.params_20[1].get());
     manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
@@ -3896,7 +3908,7 @@ public final class Bttl_800e {
 
   @Method(0x800e9798L)
   public static long FUN_800e9798(final RunningScript script) {
-    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -3935,12 +3947,12 @@ public final class Bttl_800e {
       a0.scriptStateIndex_00,
       0x13c,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800e::FUN_800ea510,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea5f4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       BttlScriptData6cSub13c::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     manager._04.set(0x200_0000L);
     final long v0 = FUN_800eac58(a0.params_20[1].get() | 0x200_0000L).getAddress(); //TODO
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
@@ -3967,12 +3979,12 @@ public final class Bttl_800e {
       a0.scriptStateIndex_00,
       0x13cL,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800e::FUN_800ea510,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea5f4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       BttlScriptData6cSub13c::new
     );
 
-    final EffectManagerData6c data = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     data._04.set(0x100_0000L);
     final DeffPart part = FUN_800eac58(a0.params_20[1].get() | 0x100_0000L);
     final BttlScriptData6cSub13c s0 = data.effect_44.derefAs(BttlScriptData6cSub13c.class);
@@ -4097,12 +4109,12 @@ public final class Bttl_800e {
       a0.scriptStateIndex_00,
       0x13c,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea3f8", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea510", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800e::FUN_800ea510,
       MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800ea5f4", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
       BttlScriptData6cSub13c::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[managerIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[managerIndex].innerStruct_00;
     manager._04.set(0x200_0000L);
 
     final BttlScriptData6cSub13c s0 = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
@@ -4116,7 +4128,7 @@ public final class Bttl_800e {
       FUN_800e9ae4(s0.model_10, _1f8003f4.deref().stage_963c);
     } else {
       //LAB_800ea030
-      FUN_800e9db4(s0.model_10, scriptStatePtrArr_800bc1c0[s2].innerStruct_00.derefAs(BattleObject27c.class).model_148);
+      FUN_800e9db4(s0.model_10, ((BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00).model_148);
     }
 
     //LAB_800ea04c
@@ -4138,7 +4150,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea13cL)
   public static long FUN_800ea13c(final RunningScript a0) {
-    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final Model124 model = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     final int a1 = a0.params_20[1].get() & 0xffff;
 
     //TODO
@@ -4148,7 +4160,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea19cL)
   public static long FUN_800ea19c(final RunningScript a0) {
-    final Model124 model = scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
+    final Model124 model = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00).effect_44.derefAs(BttlScriptData6cSub13c.class)._134.deref();
     final int v1 = a0.params_20[1].get() & 0xffff;
 
     //TODO
@@ -4159,7 +4171,7 @@ public final class Bttl_800e {
   @Method(0x800ea200L)
   public static long FUN_800ea200(final RunningScript a0) {
     final int effectIndex = a0.params_20[0].get();
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
     long v0 = FUN_800eac58(a0.params_20[1].get() | 0x200_0000).getAddress();
     v0 = v0 + MEMORY.ref(4, v0).offset(0x14L).get();
@@ -4172,7 +4184,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea2a0L)
   public static long FUN_800ea2a0(final RunningScript script) {
-    final BattleScriptDataBase a2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
     if(a2.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4190,7 +4202,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea30cL)
   public static long FUN_800ea30c(final RunningScript script) {
-    final BattleScriptDataBase a3 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(BattleScriptDataBase.class);
+    final BattleScriptDataBase a3 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
     if(a3.magic_00.get() == BattleScriptDataBase.EM__) {
@@ -4207,7 +4219,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea384L)
   public static long FUN_800ea384(final RunningScript a0) {
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     final BttlScriptData6cSub13c effect = manager.effect_44.derefAs(BttlScriptData6cSub13c.class);
 
     if(effect.ptr_0c.get() == 0) {
@@ -4312,7 +4324,7 @@ public final class Bttl_800e {
         final long v1_0 = MEMORY.ref(4, deffPart.getAddress()).offset(0xcL).get();
 
         if(a2_0 != v1_0 && scriptIndex != 0) {
-          FUN_800eb308(scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(EffectManagerData6c.class), deffPart.getAddress() + v1_0, deffPart.getAddress() + a2_0);
+          FUN_800eb308((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00, deffPart.getAddress() + v1_0, deffPart.getAddress() + a2_0);
         }
       }
 
@@ -4504,7 +4516,7 @@ public final class Bttl_800e {
         break;
       }
 
-      a0 = scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+      a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
     }
 
     //LAB_800eafb8
@@ -4526,7 +4538,7 @@ public final class Bttl_800e {
 
   @Method(0x800eb01cL)
   public static long FUN_800eb01c(final RunningScript script) {
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
     final long v1 = effect._04.get();
     final long v0_0 = v1 + MEMORY.ref(4, v1).offset(0x8L).get() + (short)script.params_20[1].get() * 0x10L;
@@ -4542,7 +4554,7 @@ public final class Bttl_800e {
         break;
       }
 
-      v1_0 = scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+      v1_0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
     }
 
     //LAB_800eb0f8
@@ -4572,7 +4584,7 @@ public final class Bttl_800e {
   @Method(0x800eb188L)
   public static long FUN_800eb188(final RunningScript script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()];
-    final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
 
     final long v1 = effect._04.get();
@@ -4663,7 +4675,7 @@ public final class Bttl_800e {
   @Method(0x800eb48cL)
   public static void FUN_800eb48c(final int scriptIndex, final int a1, final int a2) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-    final EffectManagerData6c manager = state.innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
     final long v0 = effect._04.get();
     final RECT sp0x10 = new RECT().set(MEMORY.ref(2, v0 + MEMORY.ref(4, v0).offset(0x8L).get() + a1 * 0x10L, RECT::new));
@@ -4711,7 +4723,7 @@ public final class Bttl_800e {
 
   @Method(0x800eb84cL)
   public static long FUN_800eb84c(final RunningScript script) {
-    EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00.derefAs(EffectManagerData6c.class);
+    EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = manager.effect_44.derefAs(GuardHealEffect14.class);
     final long v0 = effect._04.get();
     final long v1 = MEMORY.ref(4, v0).offset(0x8L).get();
@@ -4726,7 +4738,7 @@ public final class Bttl_800e {
         break;
       }
 
-      manager = scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+      manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
     }
 
     //LAB_800eb934
@@ -5183,7 +5195,7 @@ public final class Bttl_800e {
 
       //LAB_800ecb50
       //LAB_800ecb54
-      final BattleObject27c a3 = scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c a3 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
       final int textEffect;
       if(a3.hp_08.get() > a3.maxHp_10.get() / 4) {
         textEffect = a3.hp_08.get() > a3.maxHp_10.get() / 2 ? 0 : 1;
@@ -5226,7 +5238,7 @@ public final class Bttl_800e {
         //LAB_800ecc74
         //LAB_800ecc78
         final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-        final BattleObject27c data = state.innerStruct_00.derefAs(BattleObject27c.class);
+        final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
 
         final int textEffect;
         if(data.hp_08.get() > data.maxHp_10.get() / 4) {
@@ -5236,7 +5248,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800eccac
-        if((state.ui_60.get() & 0x4000L) == 0) {
+        if((state.flags_60.get() & 0x4000L) == 0) {
           drawTargetArrow(data.model_148, textEffect, scriptIndex, data);
         }
 
@@ -5252,7 +5264,7 @@ public final class Bttl_800e {
     final int x;
     final int y;
     final int z;
-    final long v1 = scriptStatePtrArr_800bc1c0[scriptIndex].ui_60.get();
+    final long v1 = scriptStatePtrArr_800bc1c0[scriptIndex].flags_60.get();
     if((v1 & 0x4L) != 0) {
       // X and Z are swapped
       x = -data._78.getZ() * 100;
@@ -5308,13 +5320,14 @@ public final class Bttl_800e {
 
   @Method(0x800ee2acL)
   public static long scriptSetBobjZOffset(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.zOffset_a0.set((short)a0.params_20[1].get());
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+    bobj.model_148.zOffset_a0.set((short)a0.params_20[1].get());
     return 0;
   }
 
   @Method(0x800ee2e4L)
   public static long scriptSetBobjScaleUniform(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     final int scale = a0.params_20[1].get();
     bobj.model_148.scaleVector_fc.set(scale, scale, scale);
     return 0;
@@ -5322,14 +5335,14 @@ public final class Bttl_800e {
 
   @Method(0x800ee324L)
   public static long scriptSetBobjScale(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     bobj.model_148.scaleVector_fc.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
 
   @Method(0x800ee384L)
   public static long FUN_800ee384(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     bobj.model_148.b_cc.set(2);
     bobj.model_148.b_cd.set(-1);
     return 0;
@@ -5337,7 +5350,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee3c0L)
   public static long FUN_800ee3c0(final RunningScript a0) {
-    final BattleObject27c v1 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     v1.model_148.b_cc.set(3);
     v1.model_148.b_cd.set(a0.params_20[1].get());
     return 0;
@@ -5345,7 +5358,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee408L)
   public static long FUN_800ee408(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     final int a0_0 = bobj.model_148.b_cd.get();
     if(a0_0 == -2) {
       //LAB_800ee450
@@ -5363,13 +5376,14 @@ public final class Bttl_800e {
 
   @Method(0x800ee468L)
   public static long FUN_800ee468(final RunningScript a0) {
-    scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class).model_148.b_cc.set(0);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+    bobj.model_148.b_cc.set(0);
     return 0;
   }
 
   @Method(0x800ee49cL)
   public static long FUN_800ee49c(final RunningScript a0) {
-    final BattleObject27c a1 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     a1.model_148.vector_10c.setX(a0.params_20[1].get());
     a1.model_148.vector_10c.setZ(a0.params_20[2].get());
     return 0;
@@ -5377,7 +5391,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee4e8L)
   public static long FUN_800ee4e8(final RunningScript a0) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     bobj.model_148.vector_118.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return 0;
   }
@@ -5536,7 +5550,7 @@ public final class Bttl_800e {
     //LAB_800eebb4
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(bobj.charIndex_272.get());
 
       //LAB_800eec10
@@ -5631,7 +5645,7 @@ public final class Bttl_800e {
       //LAB_800eef0c
     }
 
-    final BattleObject27c monster = scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c monster = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
     final LodString name = enemyNames_80112068.get(monster.charIndex_272.get()).deref();
 
     //LAB_800eef7c
@@ -5743,7 +5757,7 @@ public final class Bttl_800e {
     //LAB_800ef36c
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final BattleObject27c s0 = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class);
+      final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, s0.charIndex_272.get());
       dragoonSpells_800c6960.get(charSlot).charIndex_00.set(s0.charIndex_272.get());
@@ -5889,7 +5903,7 @@ public final class Bttl_800e {
   public static void FUN_800ef8d8(final int charSlot) {
     final BattleStruct3c a0_0 = _800c6c40.get(charSlot);
     a0_0.charIndex_00.set((short)charSlot);
-    a0_0._02.set(scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get());
+    a0_0._02.set(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00).charIndex_272.get());
     a0_0._04.set((short)0);
     a0_0.flags_06.or(0x2);
     a0_0.x_08.set((short)(charSlot * 94 + 63));
@@ -5932,7 +5946,7 @@ public final class Bttl_800e {
         final BattleStruct3c s2 = _800c6c40.get(charSlot);
 
         if(s2.charIndex_00.get() != -1 && (s2.flags_06.get() & 0x1L) != 0 && (s2.flags_06.get() & 0x2L) != 0) {
-          final BattleObject27c bobj = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00.derefAs(BattleObject27c.class);
+          final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
 
           final int textEffect;
           if(bobj.hp_08.get() > bobj.maxHp_10.get() / 2) {
@@ -6011,11 +6025,11 @@ public final class Bttl_800e {
         final BattleStruct3c s7 = _800c6c40.get(charSlot);
 
         if(s7.charIndex_00.get() != -1 && (s7.flags_06.get() & 0x1) != 0 && (s7.flags_06.get() & 0x2) != 0) {
-          final long a2 = _8006e398.charBobjIndices_e40.get(charSlot).get();
-          final BattleObject27c data = scriptStatePtrArr_800bc1c0[(int)a2].innerStruct_00.derefAs(BattleObject27c.class);
+          final int bobjIndex = _8006e398.charBobjIndices_e40.get(charSlot).get();
+          final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
           final int spec;
           int s5;
-          if((scriptStatePtrArr_800bc1c0[(int)_800c66c8.get()].ui_60.get() & 0x4L) != 0x1L && _800c66c8.get() == a2) {
+          if((scriptStatePtrArr_800bc1c0[(int)_800c66c8.get()].flags_60.get() & 0x4L) != 0x1L && _800c66c8.get() == bobjIndex) {
             spec = 2;
             s5 = 2;
           } else {
@@ -6249,7 +6263,7 @@ public final class Bttl_800e {
           //LAB_800f0bb0
           if(menu.targetType_50.get() == 1) {
             //LAB_800f0ca4
-            targetBobj = scriptStatePtrArr_800bc1c0[_8006e398.enemyBobjIndices_ebc.get(targetCombatant).get()].innerStruct_00.derefAs(BattleObject27c.class);
+            targetBobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.enemyBobjIndices_ebc.get(targetCombatant).get()].innerStruct_00;
 
             //LAB_800f0cf0
             int enemySlot;
@@ -6263,23 +6277,23 @@ public final class Bttl_800e {
             str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(enemySlot));
             element = getTargetEnemyElement(targetBobj.elementFlag_1c.get());
           } else if(menu.targetType_50.get() == 0) {
-            targetBobj = scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(targetCombatant).get()].innerStruct_00.derefAs(BattleObject27c.class);
+            targetBobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(targetCombatant).get()].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charIndex_272.get()).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272.get() * 0x2L).get();
 
-            if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].ui_60.get() & 0x2L) != 0) {
+            if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].flags_60.get() & 0x2L) != 0) {
               element = (int)_800c6ef0.offset(0x12L).get();
             }
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
             final int bobjIndex = _8006e398.bobjIndices_e0c.get(targetCombatant).get();
-            targetBobj = scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00.derefAs(BattleObject27c.class);
-            if((scriptStatePtrArr_800bc1c0[bobjIndex].ui_60.get() & 0x4L) == 0) {
+            targetBobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+            if((scriptStatePtrArr_800bc1c0[bobjIndex].flags_60.get() & 0x4L) == 0) {
               str = playerNames_800fb378.get(targetBobj.charIndex_272.get()).deref();
               element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272.get() * 0x2L).get();
 
-              if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].ui_60.get() & 0x2L) != 0) {
+              if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].flags_60.get() & 0x2L) != 0) {
                 element = (int)_800c6ef0.offset(0x12L).get();
               }
             } else {

@@ -2583,7 +2583,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80025218L)
-  public static long scriptAddWobjTextbox(final RunningScript script) {
+  public static long scriptAddSobjTextbox(final RunningScript script) {
     if(script.params_20[2].get() == 0) {
       return 0;
     }
@@ -2624,7 +2624,7 @@ public final class Scus94491BpeSegment_8002 {
     struct84._08.or(0x1000L);
     struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
     FUN_8002a2b4(textboxIndex);
-    positionWobjTextbox(textboxIndex, script.params_20[1].get());
+    positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
     if(type == 2) {
       textbox._38.set(textbox.x_14.get());
@@ -4506,13 +4506,13 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028928
   }
 
-  /** Calculates a good position to place a textbox for a specific wobj */
+  /** Calculates a good position to place a textbox for a specific sobj */
   @Method(0x80028938L)
-  public static void positionWobjTextbox(final int textboxIndex, final int wobjIndex) {
+  public static void positionSobjTextbox(final int textboxIndex, final int sobjIndex) {
     final Textbox4c textbox = textboxes_800be358.get(textboxIndex);
     final Struct84 s0 = _800bdf38.get(textboxIndex);
 
-    FUN_800e2428(wobjIndex);
+    FUN_800e2428(sobjIndex);
     final long struct = playerPos_800c68e8.getAddress();
     final int s4 = (int)MEMORY.ref(4, struct).offset(0x70L).get();
     textbox._28.set(s4);

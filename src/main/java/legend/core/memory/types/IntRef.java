@@ -162,7 +162,7 @@ public class IntRef implements MemoryRef {
   @Override
   public long getAddress() {
     if(this.ref == null) {
-      return 0;
+      throw new IllegalStateException("Can't get address of non-memulated variable");
     }
 
     return this.ref.getAddress();

@@ -116,12 +116,12 @@ public final class Temp {
       script.scriptStateIndex_00,
       0xd18,
       MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca200", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
-      MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca438", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Temp::FUN_800ca438,
       null,
       TempEffectData_d18::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
     final TempEffectData_d18 effect = manager.effect_44.derefAs(TempEffectData_d18.class);
 
     effect._00.set(0);
@@ -184,12 +184,12 @@ public final class Temp {
       script.scriptStateIndex_00,
       0x8,
       null,
-      MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca89c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Temp::FUN_800ca89c,
       null,
       TempEffectData_08::new
     );
 
-    final EffectManagerData6c manager = scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00.derefAs(EffectManagerData6c.class);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
     final TempEffectData_08 effect = manager.effect_44.derefAs(TempEffectData_08.class);
     effect.u_00.set((short)0x300);
     effect.v_02.set((short)0);
