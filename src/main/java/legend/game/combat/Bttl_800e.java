@@ -2482,11 +2482,22 @@ public final class Bttl_800e {
     final int a0 = script.params_20[0].get();
 
     if(a0 == -1) {
-      memcpy(struct7cc_800c693c.deref()._4c.getAddress(), script.params_20[1].getAddress(), 0x4c);
+      final long addr = struct7cc_800c693c.deref()._4c.getAddress();
+      for(int i = 0; i < 0x13; i++) {
+        MEMORY.set(addr + i * 4, 4, script.params_20[1].array(i).get());
+      }
     } else if(a0 == -2) {
       //LAB_800e5a38
       //LAB_800e5a60
-      FUN_800e5768(MEMORY.ref(4, script.params_20[1].getAddress(), BattleStruct4c::new));
+      final BattleStruct4c struct = MEMORY.ref(4, mallocTail(4), BattleStruct4c::new);
+      final long addr = struct.getAddress();
+      for(int i = 0; i < 0x13; i++) {
+        MEMORY.set(addr + i * 4, 4, script.params_20[1].array(i).get());
+      }
+
+      FUN_800e5768(struct);
+
+      free(struct.getAddress());
       //LAB_800e5a14
     } else if(a0 == -3) {
       //LAB_800e5a40

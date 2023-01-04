@@ -2610,12 +2610,11 @@ public final class SEffe {
   @Method(0x801023fcL)
   public static long FUN_801023fc(final RunningScript script) {
     final EffectData98 a2 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44.derefAs(EffectData98.class);
-    final long a1 = script.params_20[1].getAddress();
 
     //LAB_8010243c
     for(int i = 0; i < a2.count_50.get(); i++) {
       final EffectData98Sub94 a0 = a2._68.deref().get(i);
-      MEMORY.ref(4, a1).offset(i * 0x4L).setu(a0._90.get() & 0x1L);
+      script.params_20[1].array(i).set((int)(a0._90.get() & 1));
     }
 
     //LAB_80102464
@@ -8526,7 +8525,7 @@ public final class SEffe {
   public static long scriptLoadSameScriptAndJump(final RunningScript script) {
     final int s0 = script.params_20[0].get();
     loadScriptFile(s0, script.scriptState_04.scriptPtr_14, 0);
-    scriptStatePtrArr_800bc1c0[s0].commandPtr_18 = script.params_20[1];
+    script.params_20[1].jump(scriptStatePtrArr_800bc1c0[s0]);
     return 0;
   }
 

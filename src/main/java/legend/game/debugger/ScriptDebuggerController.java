@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.core.GameEngine;
-import legend.core.memory.types.IntRef;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.EventManager;
@@ -151,10 +150,10 @@ public class ScriptDebuggerController {
       this.storage.get(storageIndex).update();
     }
 
-    if(state.commandPtr_18 == null) {
+    if(state.offset_18 == -1) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%1$08x: %2$x".formatted(state.commandPtr_18.getAddress(), state.commandPtr_18.get()));
+      this.stackTop.setText("0x%08x".formatted(state.offset_18));
     }
 
     for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
@@ -177,12 +176,12 @@ public class ScriptDebuggerController {
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
     return GameEngine.MEMORY.waitForLock(() -> {
-      final IntRef val = scriptStatePtrArr_800bc1c0[scriptIndex].commandStack_1c[stackIndex];
+      final int val = scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex];
 
-      if(val == null) {
+      if(val == -1) {
         return "null";
       } else {
-        return "0x%1$08x: %2$x".formatted(val.getAddress(), val.get());
+        return "0x%08x".formatted(val);
       }
     });
   }

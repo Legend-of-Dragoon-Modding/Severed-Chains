@@ -2553,7 +2553,9 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800250ec
     for(int i = 0; i < 8; i++) {
       textboxes_800be358.get(i)._00.set(0);
-      _800bdf38.get(i)._00.set(0);
+
+      _800bdf38[i] = new Struct84();
+      _800bdf38[i]._00 = 0;
     }
 
     //LAB_80025118
@@ -2572,13 +2574,13 @@ public final class Scus94491BpeSegment_8002 {
     final int s1 = a0.params_20[0].get();
     FUN_800258a8(s1);
 
-    final Struct84 struct84 = _800bdf38.get(s1);
-    struct84.type_04.set((short)a0.params_20[1].get());
-    struct84._08.or(0x1000L);
-    struct84.str_24.set(a0.params_20[2].reinterpret(LodString::new));
-    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8));
+    final Struct84 struct84 = _800bdf38[s1];
+    struct84.type_04 = a0.params_20[1].get();
+    struct84._08 |= 0x1000;
+    struct84.str_24 = LodString.fromParam(a0.params_20[2]);
+    struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 8);
     FUN_8002a2b4(s1);
-    FUN_80027d74(s1, struct84.x_14.get(), struct84.y_16.get());
+    FUN_80027d74(s1, struct84.x_14, struct84.y_16);
     return 0;
   }
 
@@ -2589,7 +2591,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     final int textboxIndex = script.params_20[0].get();
-    final long type = _80052ba8.offset(((script.params_20[2].get() & 0xf00) >>> 8) * 0x2L).get();
+    final int type = (int)_80052ba8.offset(((script.params_20[2].get() & 0xf00) >>> 8) * 0x2L).get();
     clearTextbox(textboxIndex);
 
     final Textbox4c textbox = textboxes_800be358.get(textboxIndex);
@@ -2601,28 +2603,28 @@ public final class Scus94491BpeSegment_8002 {
     textbox.lines_1a.set((short)(script.params_20[4].get() + 1));
     FUN_800258a8(textboxIndex);
 
-    final Struct84 struct84 = _800bdf38.get(textboxIndex);
-    struct84.type_04.set((short)type);
-    struct84.str_24.setPointer(script.params_20[5].getAddress());
+    final Struct84 struct84 = _800bdf38[textboxIndex];
+    struct84.type_04 = type;
+    struct84.str_24 = LodString.fromParam(script.params_20[5]);
 
     if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      struct84._08.or(0x20L);
+      struct84._08 |= 0x20;
     }
 
     //LAB_80025370
     //LAB_80025374
     if(type == 3) {
-      struct84._6c.set(-1);
+      struct84._6c = -1;
     }
 
     //LAB_800253a4
     if(type == 4) {
-      struct84._08.or(0x200L);
+      struct84._08 |= 0x200;
     }
 
     //LAB_800253d4
-    struct84._08.or(0x1000L);
-    struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
+    struct84._08 |= 0x1000;
+    struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 0x8L);
     FUN_8002a2b4(textboxIndex);
     positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
@@ -2647,7 +2649,7 @@ public final class Scus94491BpeSegment_8002 {
       final int a2 = a0.params_20[1].get();
       final short s0 = (short)_80052b88.offset((a2 & 0xf0) >>> 3).get();
       final short s1 = (short)_80052b68.offset((a2 & 0xf) * 0x2L).get();
-      final short s4 = (short)_80052ba8.offset((a2 & 0xf00) >>> 7).get();
+      final short type = (short)_80052ba8.offset((a2 & 0xf00) >>> 7).get();
       clearTextbox(textboxIndex);
 
       final Textbox4c struct4c = textboxes_800be358.get(textboxIndex);
@@ -2659,31 +2661,31 @@ public final class Scus94491BpeSegment_8002 {
       struct4c.lines_1a.set((short)(a0.params_20[5].get() + 1));
       FUN_800258a8(textboxIndex);
 
-      final Struct84 struct84 = _800bdf38.get(textboxIndex);
+      final Struct84 struct84 = _800bdf38[textboxIndex];
 
-      struct84.type_04.set(s4);
-      struct84.str_24.set(a0.params_20[6].reinterpret(LodString::new));
+      struct84.type_04 = type;
+      struct84.str_24 = LodString.fromParam(a0.params_20[6]);
 
-      if(s4 == 1 && (a2 & 0x1000) > 0) {
-        struct84._08.or(0x20);
+      if(type == 1 && (a2 & 0x1000) > 0) {
+        struct84._08 |= 0x20;
       }
 
       //LAB_8002562c
       //LAB_80025630
-      if(s4 == 3) {
-        struct84._6c.set(-1);
+      if(type == 3) {
+        struct84._6c = -1;
       }
 
       //LAB_80025660
-      if(s4 == 4) {
-        struct84._08.or(0x200);
+      if(type == 4) {
+        struct84._08 |= 0x200;
       }
 
       //LAB_80025690
-      struct84._08.or(0x1000);
-      struct84.ptr_58.set(mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 0x8L));
+      struct84._08 |= 0x1000;
+      struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 0x8L);
       FUN_8002a2b4(textboxIndex);
-      FUN_80027d74(textboxIndex, struct84.x_14.get(), struct84.y_16.get());
+      FUN_80027d74(textboxIndex, struct84.x_14, struct84.y_16);
     }
 
     //LAB_800256f0
@@ -2692,28 +2694,28 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025718L)
   public static long FUN_80025718(final RunningScript a0) {
-    final Struct84 s0 = _800bdf38.get(a0.params_20[0].get());
+    final Struct84 s0 = _800bdf38[a0.params_20[0].get()];
 
-    s0._6c.set(-1);
-    s0._70.set((short)a0.params_20[2].get());
-    s0._72.set((short)a0.params_20[1].get());
+    s0._6c = -1;
+    s0._70 = a0.params_20[2].get();
+    s0._72 = a0.params_20[1].get();
 
-    if(s0._00.get() == 0xdL) {
-      s0._00.set(0x17);
-      s0._64.set(0x0a);
-      s0._78.set(0x16);
+    if(s0._00 == 13) {
+      s0._00 = 23;
+      s0._64 = 10;
+      s0._78 = 22;
       Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
     }
 
     //LAB_800257bc
-    s0._08.or(0x800L);
+    s0._08 |= 0x800;
     return 0;
   }
 
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
-    if(_800bdf38.get(textboxIndex)._00.get() != 0) {
-      free(_800bdf38.get(textboxIndex).ptr_58.get());
+    if(_800bdf38[textboxIndex]._00 != 0) {
+      free(_800bdf38[textboxIndex].ptr_58);
     }
 
     //LAB_80025824
@@ -2742,44 +2744,52 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800258a8L)
   public static void FUN_800258a8(final int a0) {
-    final Struct84 struct84 = _800bdf38.get(a0);
-    struct84._00.set(0x1);
-    struct84._08.set(0);
-    struct84.z_0c.set(13);
-    struct84._10.set(0);
-    struct84._20.set((short)0x1000);
-    struct84._22.set((short)0x1000);
-    struct84._28.set(0);
-    struct84._2a.set((short)2);
-    struct84._2c.set((short)0);
-    struct84._30.set(0);
-    struct84._34.set((short)0);
-    struct84._36.set((short)0);
-    struct84._38.set((short)0);
-    struct84._3a.set((short)0);
-    struct84._3c.set((short)0);
-    struct84._3e.set((short)1);
-    struct84._40.set((short)0);
-    struct84._42.set((short)0);
-    struct84._44.set((short)0);
+    final Struct84 struct84 = _800bdf38[a0];
+    struct84._00 = 1;
+    struct84._08 = 0;
+    struct84.z_0c = 13;
+    struct84._10 = 0;
+    struct84._20 = 0x1000;
+    struct84._22 = 0x1000;
+    struct84._28 = 0;
+    struct84._2a = 2;
+    struct84._2c = 0;
+    struct84._30 = 0;
+    struct84._34 = 0;
+    struct84._36 = 0;
+    struct84._38 = 0;
+    struct84._3a = 0;
+    struct84._3c = 0;
+    struct84._3e = 1;
+    struct84._40 = 0;
+    struct84._42 = 0;
+    struct84._44 = 0;
 
     final Textbox4c struct4c = textboxes_800be358.get(a0);
-    struct84.x_14.set(struct4c.x_14.get());
-    struct84.y_16.set(struct4c.y_16.get());
-    struct84._1c.set((short)(struct4c.chars_18.get() - 1));
-    struct84._1e.set((short)(struct4c.lines_1a.get() - 1));
-    struct84._18.set((short)(struct84.x_14.get() - struct84._1c.get() * 9 / 2));
-    struct84._1a.set((short)(struct84.y_16.get() - struct84._1e.get() * 6));
+    struct84.x_14 = struct4c.x_14.get();
+    struct84.y_16 = struct4c.y_16.get();
+    struct84.chars_1c = struct4c.chars_18.get() - 1;
+    struct84.lines_1e = struct4c.lines_1a.get() - 1;
+    struct84._18 = struct84.x_14 - struct84.chars_1c * 9 / 2;
+    struct84._1a = struct84.y_16 - struct84.lines_1e * 6;
 
     //LAB_800259b4
     for(int i = 0; i < 8; i++) {
-      struct84._46.get(i).set((short)0);
+      struct84._46[i] = 0;
     }
 
     //LAB_800259e4
-    for(int i = 0; i < 10; i++) {
-      MEMORY.ref(4, struct84._5c.getAddress()).offset(i * 0x4L).setu(0); //TODO
-    }
+    struct84._5c = 0;
+    struct84._60 = 0;
+    struct84._64 = 0;
+    struct84._68 = 0;
+    struct84._6c = 0;
+    struct84._70 = 0;
+    struct84._72 = 0;
+    struct84._74 = 0;
+    struct84._78 = 0;
+    struct84._7c = 0;
+    struct84._80 = 0;
   }
 
   @Method(0x80025a04L)
@@ -2889,7 +2899,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 4, 5 -> {
-        if(_800bdf38.get(textboxIndex)._00.get() == 0) {
+        if(_800bdf38[textboxIndex]._00 == 0) {
           if(textbox._04.get() == 2) {
             textbox._00.set(3);
             textbox._08.or(0x1L);
@@ -3000,38 +3010,37 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800264b0L)
   public static void FUN_800264b0(final int textboxIndex) {
     long v0;
-    long v1;
     long s1;
     long s3;
 
     final Textbox4c struct4c = textboxes_800be358.get(textboxIndex);
-    final Struct84 struct84 = _800bdf38.get(textboxIndex);
+    final Struct84 struct84 = _800bdf38[textboxIndex];
 
-    v1 = struct84._00.get();
-    if(v1 == 0x1) {
+    long v1 = struct84._00;
+    if(v1 == 1) {
       //LAB_8002663c
-      if((struct84._08.get() & 0x1L) == 0) {
-        switch(struct84.type_04.get()) {
+      if((struct84._08 & 0x1) == 0) {
+        switch(struct84.type_04) {
           case 0:
-            struct84._00.set(0xc);
+            struct84._00 = 0xc;
             break;
 
           case 2:
-            struct84._00.set(0xa);
-            struct84._08.or(0x1L);
-            struct84._2a.set((short)1);
-            struct84._34.set((short)0);
-            struct84._36.set(struct84._1e.get());
+            struct84._00 = 10;
+            struct84._08 |= 0x1;
+            struct84._2a = 1;
+            struct84._34 = 0;
+            struct84._36 = struct84.lines_1e;
             break;
 
           case 3:
-            struct84._00.set(0x17);
-            struct84._08.or(0x1L);
-            struct84._2a.set((short)1);
-            struct84._34.set((short)0);
-            struct84._36.set((short)0);
-            struct84._64.set(0xa);
-            struct84._78.set(0x11);
+            struct84._00 = 23;
+            struct84._08 |= 0x1;
+            struct84._2a = 1;
+            struct84._34 = 0;
+            struct84._36 = 0;
+            struct84._64 = 10;
+            struct84._78 = 17;
             Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
             break;
 
@@ -3039,85 +3048,85 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026780
             do {
               FUN_800274f0(textboxIndex);
-            } while((struct84._08.get() & 0x400L) == 0);
+            } while((struct84._08 & 0x400) == 0);
 
-            struct84._08.xor(0x400L);
+            struct84._08 ^= 0x400;
             // Fall through
 
           default:
             //LAB_800267a0
-            struct84._00.set(0x4);
+            struct84._00 = 4;
             break;
         }
       }
-    } else if(v1 == 0x2) {
-      struct84._00.set(0x4);
+    } else if(v1 == 2) {
+      struct84._00 = 4;
       //LAB_80026538
-    } else if(v1 == 0x4) {
+    } else if(v1 == 4) {
       //LAB_800267c4
       FUN_800274f0(textboxIndex);
-    } else if(v1 == 0x5) {
+    } else if(v1 == 5) {
       //LAB_800267d4
-      if((struct84._08.get() & 0x1L) != 0) {
+      if((struct84._08 & 0x1) != 0) {
         //LAB_800267f4
-        if(struct84._3a.get() >= struct84._1e.get() - ((struct84._08.get() & 0x200L) == 0 ? 1 : 2)) {
-          struct84._08.xor(0x1L);
-          struct84._3a.set((short)0);
+        if(struct84._3a >= struct84.lines_1e - ((struct84._08 & 0x200) == 0 ? 1 : 2)) {
+          struct84._08 ^= 0x1;
+          struct84._3a = 0;
           setTextboxArrowPosition(textboxIndex, 1);
         } else {
           //LAB_80026828
-          struct84._00.set(0x9);
-          struct84._3a.incr();
+          struct84._00 = 9;
+          struct84._3a++;
           FUN_80028828(textboxIndex);
         }
       } else {
         //LAB_8002684c
-        if((struct84._08.get() & 0x20L) != 0) {
-          struct84._00.set(0x9);
-          struct84._08.or(0x1L);
+        if((struct84._08 & 0x20) != 0) {
+          struct84._00 = 9;
+          struct84._08 |= 0x1;
         } else {
           //LAB_8002686c
           if((joypadPress_8007a398.get() & 0x20L) != 0) {
             setTextboxArrowPosition(textboxIndex, 0);
 
-            v1 = struct84.type_04.get();
+            v1 = struct84.type_04;
             if(v1 == 1 || v1 == 4) {
               //LAB_800268b4
-              struct84._00.set(0x9);
-              struct84._08.or(0x1L);
+              struct84._00 = 9;
+              struct84._08 |= 0x1;
             }
 
             if(v1 == 2) {
               //LAB_800268d0
-              struct84._00.set(0xa);
+              struct84._00 = 10;
             }
           }
         }
       }
-    } else if(v1 == 0x6) {
+    } else if(v1 == 6) {
       //LAB_800268dc
-      if((joypadPress_8007a398.get() & 0x20L) != 0) {
-        struct84._00.set(0x4);
+      if((joypadPress_8007a398.get() & 0x20) != 0) {
+        struct84._00 = 4;
       }
-    } else if(v1 == 0x7) {
+    } else if(v1 == 7) {
       //LAB_800268fc
-      struct84._40.incr();
-      if(struct84._40.get() >= struct84._3e.get()) {
-        struct84._40.set((short)0);
-        struct84._00.set(0x4);
+      struct84._40++;
+      if(struct84._40 >= struct84._3e) {
+        struct84._40 = 0;
+        struct84._00 = 4;
       }
 
       //LAB_80026928
-      if((struct84._08.get() & 0x20L) == 0) {
-        if((joypadInput_8007a39c.get() & 0x20L) != 0) {
+      if((struct84._08 & 0x20) == 0) {
+        if((joypadInput_8007a39c.get() & 0x20) != 0) {
           s3 = 0;
 
           //LAB_80026954
           for(s1 = 0; s1 < 4; s1++) {
             FUN_800274f0(textboxIndex);
 
-            v1 = struct84._00.get();
-            if(v1 < 0x7L || v1 == 0xfL || v1 == 0xbL || v1 == 0xdL) {
+            v1 = struct84._00;
+            if(v1 < 7 || v1 == 15 || v1 == 11 || v1 == 13) {
               //LAB_8002698c
               s3 = 0x1L;
               break;
@@ -3128,211 +3137,211 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_800269a0
           if(s3 == 0) {
-            struct84._40.set((short)0);
-            struct84._00.set(0x4);
+            struct84._40 = 0;
+            struct84._00 = 4;
           }
         }
       }
-    } else if(v1 == 0x8) {
+    } else if(v1 == 8) {
       //LAB_800269cc
-      if(struct84._44.get() > 0) {
+      if(struct84._44 > 0) {
         //LAB_800269e8
-        struct84._44.decr();
+        struct84._44--;
       } else {
         //LAB_800269e0
-        struct84._00.set(0x4);
+        struct84._00 = 4;
       }
       //LAB_80026554
-    } else if(v1 == 0x9) {
+    } else if(v1 == 9) {
       //LAB_800269f0
       FUN_80028828(textboxIndex);
       //LAB_80026580
-    } else if(v1 == 0xa) {
+    } else if(v1 == 10) {
       //LAB_80026a00
       FUN_800288a4(textboxIndex);
 
-      if((struct84._08.get() & 0x4L) != 0) {
-        struct84._08.xor(0x4L);
-        if((struct84._08.get() & 0x2L) == 0) {
+      if((struct84._08 & 0x4) != 0) {
+        struct84._08 ^= 0x4;
+        if((struct84._08 & 0x2) == 0) {
           //LAB_80026a5c
           do {
             FUN_800274f0(textboxIndex);
-            v1 = struct84._00.get();
+            v1 = struct84._00;
             if(v1 == 0xf) {
-              struct84._3a.set((short)0);
-              struct84._08.or(0x2L);
+              struct84._3a = 0;
+              struct84._08 |= 0x2;
             }
           } while(v1 != 0x5 && v1 != 0xf);
 
           //LAB_80026a8c
-          struct84._00.set(0xa);
+          struct84._00 = 10;
         } else {
-          struct84._3a.incr();
+          struct84._3a++;
 
-          if(struct84._3a.get() >= struct84._1e.get() + 1) {
-            free(struct84.ptr_58.get());
-            struct84._00.set(0);
+          if(struct84._3a >= struct84.lines_1e + 1) {
+            free(struct84.ptr_58);
+            struct84._00 = 0;
           }
         }
       }
-    } else if(v1 == 0xb) {
+    } else if(v1 == 11) {
       //LAB_80026a98
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
         FUN_8002a2b4(textboxIndex);
 
-        struct84._00.set(0x4);
-        struct84._08.xor(0x1L);
-        struct84._34.set((short)0);
-        struct84._36.set((short)0);
-        struct84._3a.set((short)0);
+        struct84._00 = 4;
+        struct84._08 ^= 0x1;
+        struct84._34 = 0;
+        struct84._36 = 0;
+        struct84._3a = 0;
 
-        if((struct84._08.get() & 0x8L) != 0) {
-          struct84._00.set(0xd);
+        if((struct84._08 & 0x8) != 0) {
+          struct84._00 = 13;
         }
       }
-    } else if(v1 == 0xc) {
+    } else if(v1 == 12) {
       //LAB_80026af0
       if(struct4c._00.get() == 0) {
-        free(struct84.ptr_58.get());
-        struct84._00.set(0);
+        free(struct84.ptr_58);
+        struct84._00 = 0;
       }
-    } else if(v1 == 0xd) {
+    } else if(v1 == 13) {
       //LAB_80026b34
-      struct84._08.or(0x8L);
+      struct84._08 |= 0x8;
       setTextboxArrowPosition(textboxIndex, 1);
 
       //LAB_80026b4c
       do {
         FUN_800274f0(textboxIndex);
-        v1 = struct84._00.get();
+        v1 = struct84._00;
         if(v1 == 0x5) {
           //LAB_80026b28
-          struct84._00.set(0xb);
+          struct84._00 = 11;
           break;
         }
       } while(v1 != 0xf);
 
       //LAB_80026b6c
-      if((struct84._08.get() & 0x20L) != 0) {
+      if((struct84._08 & 0x20) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
       }
 
       //LAB_80026ba0
-      if(struct84._3e.get() != 0) {
+      if(struct84._3e != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
-        struct84._5c.set(struct84._00.get());
-        struct84._00.set(0xe);
+        struct84._5c = struct84._00;
+        struct84._00 = 14;
       }
 
       //LAB_80026bc8
-      if((struct84._08.get() & 0x800L) != 0) {
+      if((struct84._08 & 0x800) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
-        struct84._00.set(0x17);
-        struct84._64.set(0xa);
-        struct84._78.set(0x16);
-        struct84._68.set(struct84._72.get());
+        struct84._00 = 23;
+        struct84._64 = 10;
+        struct84._78 = 22;
+        struct84._68 = struct84._72;
         Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
       }
-    } else if(v1 == 0xe) {
+    } else if(v1 == 14) {
       //LAB_80026c18
-      if((struct84._08.get() & 0x40L) == 0) {
-        struct84._40.decr();
+      if((struct84._08 & 0x40) == 0) {
+        struct84._40--;
 
-        if(struct84._40.get() <= 0) {
-          struct84._40.set(struct84._3e.get());
+        if(struct84._40 <= 0) {
+          struct84._40 =struct84._3e;
 
-          v1 = struct84._5c.get();
-          if(v1 == 0xbL) {
+          v1 = struct84._5c;
+          if(v1 == 11) {
             //LAB_80026c70
             FUN_8002a2b4(textboxIndex);
-            struct84._34.set((short)0);
-            struct84._36.set((short)0);
-            struct84._3a.set((short)0);
-            struct84._00.set(0xd);
-            struct84._08.xor(0x1L);
-          } else if(v1 == 0xf) {
+            struct84._34 = 0;
+            struct84._36 = 0;
+            struct84._3a = 0;
+            struct84._00 = 13;
+            struct84._08 ^= 0x1;
+          } else if(v1 == 15) {
             //LAB_80026c98
             //LAB_80026c9c
-            free(struct84.ptr_58.get());
-            struct84._00.set(0);
+            free(struct84.ptr_58);
+            struct84._00 = 0;
           }
         }
       }
-    } else if(v1 == 0xf) {
+    } else if(v1 == 15) {
       //LAB_80026cb0
-      if((struct84._08.get() & 0x20L) != 0) {
-        struct84._00.set(0x10);
+      if((struct84._08 & 0x20) != 0) {
+        struct84._00 = 16;
       } else {
         //LAB_80026cd0
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
-          free(struct84.ptr_58.get());
-          struct84._00.set(0);
+          free(struct84.ptr_58);
+          struct84._00 = 0;
           setTextboxArrowPosition(textboxIndex, 0);
         }
       }
       //LAB_800265d8
-    } else if(v1 == 0x10) {
+    } else if(v1 == 16) {
       //LAB_80026cdc
       //LAB_80026ce8
-      if((struct84._08.get() & 0x40L) != 0) {
-        free(struct84.ptr_58.get());
-        struct84._00.set(0);
+      if((struct84._08 & 0x40) != 0) {
+        free(struct84.ptr_58);
+        struct84._00 = 0;
         setTextboxArrowPosition(textboxIndex, 0);
       }
-    } else if(v1 == 0x11) {
+    } else if(v1 == 17) {
       //LAB_80026d20
-      struct84._1e.incr();
+      struct84.lines_1e++;
 
       //LAB_80026d30
       do {
         FUN_800274f0(textboxIndex);
-        v1 = struct84._00.get();
-        if(v1 == 0x5L) {
+        v1 = struct84._00;
+        if(v1 == 5) {
           //LAB_80026d14
-          struct84._00.set(0x12);
+          struct84._00 = 18;
           break;
         }
         if(v1 == 0xfL) {
-          struct84._00.set(0x12);
-          struct84._3a.set((short)0);
-          struct84._08.or(0x102L);
+          struct84._00 = 18;
+          struct84._3a = 0;
+          struct84._08 |= 0x102;
           break;
         }
       } while(true);
 
       //LAB_80026d64
-      struct84._6c.set(-1);
-      struct84._1e.decr();
+      struct84._6c = -1;
+      struct84.lines_1e--;
       //LAB_8002659c
-    } else if(v1 == 0x12) {
+    } else if(v1 == 18) {
       //LAB_80026d94
-      renderTextboxSelection(textboxIndex, (short)struct84._60.get());
+      renderTextboxSelection(textboxIndex, (short)struct84._60);
 
-      if((joypadPress_8007a398.get() & 0x20L) != 0) {
+      if((joypadPress_8007a398.get() & 0x20) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        free(struct84.ptr_58.get());
-        struct84._00.set(0);
-        struct84._6c.set(struct84._68.get());
+        free(struct84.ptr_58);
+        struct84._00 = 0;
+        struct84._6c = struct84._68;
       } else {
         //LAB_80026df0
         if((joypadInput_8007a39c.get() & 0x4000L) == 0) {
           //LAB_80026ee8
           if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
-            if((struct84._08.get() & 0x100L) == 0 || struct84._68.get() != 0) {
+            if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
               //LAB_80026f38
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
               s3 = 0x3L;
-              if(struct84._60.get() > 0) {
-                struct84._00.set(0x13);
-                struct84._60.sub(0x1);
-                struct84._64.set(0x4);
-                struct84._68.decr();
+              if(struct84._60 > 0) {
+                struct84._00 = 19;
+                struct84._60--;
+                struct84._64 = 4;
+                struct84._68--;
               } else {
                 //LAB_80026f88
-                if((struct84._08.get() & 0x2L) != 0) {
-                  v1 = struct84._3a.get();
+                if((struct84._08 & 0x2) != 0) {
+                  v1 = struct84._3a;
 
                   // TODO not sure about this block of code
                   if(v1 == 1) {
@@ -3344,87 +3353,87 @@ public final class Scus94491BpeSegment_8002 {
                     }
 
                     //LAB_80026fc0
-                    struct84._3a.set((short)0);
-                    struct84._08.xor(0x2L);
+                    struct84._3a = 0;
+                    struct84._08 ^= 0x2;
                   }
 
                   //LAB_80026fe8
-                  struct84._3a.sub((short)1);
+                  struct84._3a--;
                 }
 
                 //LAB_80027014
-                struct84._68.decr();
+                struct84._68--;
 
-                if(struct84._68.get() < 0) {
-                  struct84._68.set(0);
+                if(struct84._68 < 0) {
+                  struct84._68 = 0;
                 } else {
                   //LAB_80027044
-                  struct84._2c.set((short)12);
+                  struct84._2c = 12;
                   FUN_800280d4(textboxIndex);
 
-                  final LodString str = struct84.str_24.deref();
+                  final LodString str = struct84.str_24;
 
                   //LAB_80027068
                   s1 = 0;
                   do {
-                    if(str.charAt(struct84._30.get() - 1) >>> 8 == 0xa1) {
+                    if(str.charAt(struct84._30 - 1) >>> 8 == 0xa1) {
                       s1++;
                     }
 
                     //LAB_80027090
-                    if(s1 == struct84._1e.get() + s3) {
+                    if(s1 == struct84.lines_1e + s3) {
                       break;
                     }
 
-                    struct84._30.decr();
-                  } while(struct84._30.get() > 0);
+                    struct84._30--;
+                  } while(struct84._30 > 0);
 
                   //LAB_800270b0
-                  struct84._34.set((short)0);
-                  struct84._36.set((short)0);
-                  struct84._08.or(0x80L);
+                  struct84._34 = 0;
+                  struct84._36 = 0;
+                  struct84._08 |= 0x80;
 
                   //LAB_800270dc
                   do {
                     FUN_800274f0(textboxIndex);
-                  } while(struct84._36.get() == 0 && struct84._00.get() != 0x5);
+                  } while(struct84._36 == 0 && struct84._00 != 5);
 
                   //LAB_80027104
-                  struct84._00.set(0x15);
-                  struct84._08.xor(0x80L);
+                  struct84._00 = 21;
+                  struct84._08 ^= 0x80;
                 }
               }
             }
           }
         }
 
-        struct84._00.set(0x13);
-        struct84._60.add(0x1);
-        struct84._64.set(0x4);
-        struct84._68.incr();
-        if((struct84._08.get() & 0x100L) == 0 || struct84._36.get() + 1 != struct84._68.get()) {
+        struct84._00 = 19;
+        struct84._60++;
+        struct84._64 = 4;
+        struct84._68++;
+        if((struct84._08 & 0x100) == 0 || struct84._36 + 1 != struct84._68) {
           //LAB_80026e68
           //LAB_80026e6c
-          if(struct84._60.get() < struct84._1e.get()) {
+          if(struct84._60 < struct84.lines_1e) {
             //LAB_80026ed0
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
             //LAB_80026ee8
             if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
-              if((struct84._08.get() & 0x100L) == 0 || struct84._68.get() != 0) {
+              if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
                 s3 = 0x3L;
-                if(struct84._60.get() > 0) {
-                  struct84._00.set(0x13);
-                  struct84._60.sub(0x1);
-                  struct84._64.set(0x4);
-                  struct84._68.decr();
+                if(struct84._60 > 0) {
+                  struct84._00 = 19;
+                  struct84._60--;
+                  struct84._64 = 4;
+                  struct84._68--;
                 } else {
                   //LAB_80026f88
-                  if((struct84._08.get() & 0x2L) != 0) {
-                    v1 = struct84._3a.get();
+                  if((struct84._08 & 0x2) != 0) {
+                    v1 = struct84._3a;
 
                     // TODO not sure about this block of code
                     if(v1 == 1) {
@@ -3436,149 +3445,149 @@ public final class Scus94491BpeSegment_8002 {
                       }
 
                       //LAB_80026fc0
-                      struct84._3a.set((short)0);
-                      struct84._08.xor(0x2L);
+                      struct84._3a = 0;
+                      struct84._08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
-                    struct84._3a.sub((short)1);
+                    struct84._3a--;
                   }
 
                   //LAB_80027014
-                  struct84._68.decr();
+                  struct84._68--;
 
-                  if(struct84._68.get() < 0) {
-                    struct84._68.set(0);
+                  if(struct84._68 < 0) {
+                    struct84._68 = 0;
                   } else {
                     //LAB_80027044
-                    struct84._2c.set((short)12);
+                    struct84._2c = 12;
                     FUN_800280d4(textboxIndex);
 
-                    final LodString str = struct84.str_24.deref();
+                    final LodString str = struct84.str_24;
 
                     //LAB_80027068
                     s1 = 0;
                     do {
-                      if(str.charAt(struct84._30.get() - 1) >>> 8 == 0xa1) {
+                      if(str.charAt(struct84._30 - 1) >>> 8 == 0xa1) {
                         s1++;
                       }
 
                       //LAB_80027090
-                      if(s1 == struct84._1e.get() + s3) {
+                      if(s1 == struct84.lines_1e + s3) {
                         break;
                       }
 
-                      struct84._30.decr();
-                    } while(struct84._30.get() > 0);
+                      struct84._30--;
+                    } while(struct84._30 > 0);
 
                     //LAB_800270b0
-                    struct84._34.set((short)0);
-                    struct84._36.set((short)0);
-                    struct84._08.or(0x80L);
+                    struct84._34 = 0;
+                    struct84._36 = 0;
+                    struct84._08 |= 0x80;
 
                     //LAB_800270dc
                     do {
                       FUN_800274f0(textboxIndex);
-                    } while(struct84._36.get() == 0 && struct84._00.get() != 0x5);
+                    } while(struct84._36 == 0 && struct84._00 != 5);
 
                     //LAB_80027104
-                    struct84._00.set(0x15);
-                    struct84._08.xor(0x80L);
+                    struct84._00 = 21;
+                    struct84._08 ^= 0x80;
                   }
                 }
               }
             }
           } else {
-            struct84._60.set(_800bdf38.get(textboxIndex)._1e.get() - 1);
-            struct84._00.set(0x14);
-            struct84._2c.set((short)0);
+            struct84._60 = _800bdf38[textboxIndex].lines_1e - 1;
+            struct84._00 = 0x14;
+            struct84._2c = (short)0;
 
-            if(struct84._3a.get() == 1) {
-              struct84._00.set(0x12);
-              struct84._68.decr();
+            if(struct84._3a == 1) {
+              struct84._00 = 18;
+              struct84._68--;
             }
           }
         } else {
-          struct84._00.set(0x3);
-          struct84._60.decr();
-          struct84._68.decr();
+          struct84._00 = 3;
+          struct84._60--;
+          struct84._68--;
         }
       }
-    } else if(v1 == 0x13) {
+    } else if(v1 == 19) {
       //LAB_8002711c
-      renderTextboxSelection(textboxIndex, (short)struct84._68.get());
-      struct84._64.decr();
+      renderTextboxSelection(textboxIndex, (short)struct84._68);
+      struct84._64--;
 
-      if(struct84._64.get() == 0) {
-        struct84._00.set(0x12);
+      if(struct84._64 == 0) {
+        struct84._00 = 18;
 
-        if((struct84._08.get() & 0x800L) != 0) {
-          struct84._00.set(0x16);
+        if((struct84._08 & 0x800) != 0) {
+          struct84._00 = 22;
         }
       }
-    } else if(v1 == 0x14) {
+    } else if(v1 == 20) {
       //LAB_8002715c
-      struct84._2c.add((short)4);
+      struct84._2c += 4;
 
-      if(struct84._2c.get() >= 12) {
+      if(struct84._2c >= 12) {
         FUN_80027eb4(textboxIndex);
-        struct84._08.or(0x4L);
-        struct84._2c.sub((short)0xc);
-        struct84._36.set(struct84._1e.get());
+        struct84._08 |= 0x4;
+        struct84._2c -= 12;
+        struct84._36 = struct84.lines_1e;
       }
 
       //LAB_800271a8
-      if((struct84._08.get() & 0x4L) != 0) {
-        struct84._08.xor(0x4L);
+      if((struct84._08 & 0x4) != 0) {
+        struct84._08 ^= 0x4;
 
-        if((struct84._08.get() & 0x2L) == 0) {
+        if((struct84._08 & 0x2) == 0) {
           //LAB_8002720c
           //LAB_80027220
           do {
             FUN_800274f0(textboxIndex);
 
-            v1 = struct84._00.get();
+            v1 = struct84._00;
             if(v1 == 0xf) {
-              struct84._3a.set((short)0);
-              struct84._08.or(0x2L);
+              struct84._3a = 0;
+              struct84._08 |= 0x2;
               break;
             }
-          } while(v1 != 0x5);
+          } while(v1 != 5);
         } else {
-          struct84._3a.incr();
-          if(struct84._3a.get() >= struct84._1e.get() + 1) {
-            free(struct84.ptr_58.get());
-            struct84._00.set(0);
+          struct84._3a++;
+          if(struct84._3a >= struct84.lines_1e + 1) {
+            free(struct84.ptr_58);
+            struct84._00 = 0;
           }
         }
 
         //LAB_80027250
         //LAB_80027254
-        struct84._00.set(0x12);
+        struct84._00 = 18;
       }
       //LAB_800265f4
-    } else if(v1 == 0x15) {
+    } else if(v1 == 21) {
       //LAB_8002727c
-      struct84._2c.sub((short)4);
+      struct84._2c -= 4;
 
-      if(struct84._2c.get() <= 0) {
-        struct84._36.set((short)0);
-        struct84._2c.set((short)0);
-        struct84._00.set(0x12);
-        struct84._08.or(0x4L);
+      if(struct84._2c <= 0) {
+        struct84._36 = 0;
+        struct84._2c = 0;
+        struct84._00 = 18;
+        struct84._08 |= 0x4;
       }
 
       //LAB_800272b0
-      if((struct84._08.get() & 0x4L) != 0) {
-        final LodString str = struct84.str_24.deref();
+      if((struct84._08 & 0x4) != 0) {
+        final LodString str = struct84.str_24;
 
         //LAB_800272dc
         s1 = 0;
         do {
-          v0 = str.charAt(struct84._30.get() + 1) >>> 8;
+          v0 = str.charAt(struct84._30 + 1) >>> 8;
           if(v0 == 0xa0L) {
             //LAB_80027274
-            struct84._30.decr();
+            struct84._30--;
             break;
           }
 
@@ -3587,34 +3596,34 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_8002730c
-          struct84._30.incr();
-        } while(s1 != struct84._1e.get());
+          struct84._30++;
+        } while(s1 != struct84.lines_1e);
 
         //LAB_80027320
-        struct84._00.set(0x12);
-        struct84._30.add(2);
-        struct84._34.set((short)0);
-        struct84._36.set(struct84._1e.get());
+        struct84._00 = 18;
+        struct84._30 += 2;
+        struct84._34 = 0;
+        struct84._36 = struct84.lines_1e;
       }
     } else if(v1 == 0x16) {
       //LAB_80027354
-      renderTextboxSelection(textboxIndex, (short)struct84._68.get());
+      renderTextboxSelection(textboxIndex, (short)struct84._68);
 
       if((joypadPress_8007a398.get() & 0x20L) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        free(struct84.ptr_58.get());
-        struct84._00.set(0);
-        struct84._6c.set(struct84._68.get() - struct84._72.get());
+        free(struct84.ptr_58);
+        struct84._00 = 0;
+        struct84._6c = struct84._68 - struct84._72;
       } else {
         //LAB_800273bc
         if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
-          struct84._00.set(0x13);
-          struct84._64.set(0x4);
-          struct84._68.decr();
+          struct84._00 = 19;
+          struct84._64 = 4;
+          struct84._68--;
 
-          if(struct84._68.get() < struct84._72.get()) {
-            struct84._68.set(struct84._72.get());
-            struct84._00.set(0x16);
+          if(struct84._68 < struct84._72) {
+            struct84._68 = struct84._72;
+            struct84._00 = 22;
           } else {
             //LAB_80027404
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3623,27 +3632,27 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_80027420
         if((joypadInput_8007a39c.get() & 0x4000L) != 0) {
-          struct84._00.set(0x13);
-          struct84._64.set(0x4);
-          struct84._68.incr();
+          struct84._00 = 19;
+          struct84._64 = 4;
+          struct84._68++;
 
-          if(struct84._70.get() >= struct84._68.get()) {
+          if(struct84._70 >= struct84._68) {
             //LAB_80027480
             //LAB_80027490
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
           } else {
-            struct84._68.set(struct84._70.get());
-            struct84._00.set(0x16);
+            struct84._68 = struct84._70;
+            struct84._00 = 22;
           }
         }
       }
       //LAB_80026620
-    } else if(v1 == 0x17) {
+    } else if(v1 == 23) {
       //LAB_800274a4
-      struct84._64.decr();
-      if(struct84._64.get() == 0) {
-        struct84._64.set(4);
-        struct84._00.set(struct84._78.get());
+      struct84._64--;
+      if(struct84._64 == 0) {
+        struct84._64 = 4;
+        struct84._00 = struct84._78;
       }
     }
 
@@ -3655,88 +3664,88 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800274f0(final int textboxIndex) {
     long v1;
 
-    final Struct84 s0 = _800bdf38.get(textboxIndex);
-    final LodString str = s0.str_24.deref();
+    final Struct84 s0 = _800bdf38[textboxIndex];
+    final LodString str = s0.str_24;
 
-    if((s0._08.get() & 0x10L) != 0) {
-      final int s1 = (short)s0._80.get();
-      FUN_8002a180(textboxIndex, s0._34.get(), s0._36.get(), s0._28.get(), s0._46.get(s1).get());
+    if((s0._08 & 0x10) != 0) {
+      final int s1 = (short)s0._80;
+      FUN_8002a180(textboxIndex, s0._34, s0._36, s0._28, s0._46[s1]);
 
-      s0._34.incr();
-      s0._3c.incr();
-      s0._80.incr();
+      s0._34++;
+      s0._3c++;
+      s0._80++;
 
-      if(s0._34.get() < s0._1c.get()) {
+      if(s0._34 < s0.chars_1c) {
         //LAB_80027768
-        if(s0._46.get(s1 + 1).get() == -1) {
-          s0._08.xor(0x10L);
+        if(s0._46[s1 + 1] == -1) {
+          s0._08 ^= 0x10;
         }
-      } else if(s0._36.get() >= s0._1e.get() - 1) {
-        if(s0._46.get(s1 + 1).get() != -1) {
-          s0._00.set(0x5);
-          s0._34.set((short)0);
-          s0._36.incr();
+      } else if(s0._36 >= s0.lines_1e - 1) {
+        if(s0._46[s1 + 1] != -1) {
+          s0._00 = 5;
+          s0._34 = 0;
+          s0._36++;
           setTextboxArrowPosition(textboxIndex, 1);
           return;
         }
 
         //LAB_80027618
-        v1 = str.charAt(s0._30.get()) >>> 8;
+        v1 = str.charAt(s0._30) >>> 8;
 
         if(v1 == 0xa0) {
           //LAB_800276f4
-          s0._00.set(0xf);
+          s0._00 = 15;
 
           //LAB_80027704
           setTextboxArrowPosition(textboxIndex, 1);
 
           //LAB_80027740
-          _800bdf38.get(textboxIndex)._08.xor(0x10L);
+          _800bdf38[textboxIndex]._08 ^= 0x10;
           return;
         }
 
         if(v1 == 0xa1) {
-          s0._30.incr();
+          s0._30++;
         }
 
         //LAB_8002764c
-        s0._00.set(0x5);
-        s0._34.set((short)0);
-        s0._36.incr();
+        s0._00 = 5;
+        s0._34 = 0;
+        s0._36++;
 
         //LAB_80027704
         setTextboxArrowPosition(textboxIndex, 1);
       } else {
         //LAB_80027688
-        s0._34.set((short)0);
-        s0._36.incr();
+        s0._34 = 0;
+        s0._36++;
 
-        if(s0._46.get(s1 + 1).get() == -1) {
-          v1 = str.charAt(s0._30.get()) >>> 8;
+        if(s0._46[s1 + 1] == -1) {
+          v1 = str.charAt(s0._30) >>> 8;
           if(v1 == 0xa0) {
             //LAB_800276f4
-            s0._00.set(0xf);
+            s0._00 = 15;
 
             //LAB_80027704
             setTextboxArrowPosition(textboxIndex, 1);
           } else {
             if(v1 == 0xa1) {
               //LAB_80027714
-              s0._30.incr();
+              s0._30++;
             }
 
             //LAB_80027724
-            _800bdf38.get(textboxIndex)._00.set(0x7);
+            _800bdf38[textboxIndex]._00 = 7;
           }
 
           //LAB_80027740
-          _800bdf38.get(textboxIndex)._08.xor(0x10L);
+          _800bdf38[textboxIndex]._08 ^= 0x10;
           return;
         }
       }
 
       //LAB_8002779c
-      _800bdf38.get(textboxIndex)._00.set(0x7);
+      _800bdf38[textboxIndex]._00 = 7;
       return;
     }
 
@@ -3747,25 +3756,25 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800277cc
     do {
-      final int a0_0 = str.charAt(s0._30.get());
+      final int a0_0 = str.charAt(s0._30);
 
       switch(a0_0 >>> 8) {
         case 0xa0 -> {
-          s0._00.set(0xf);
+          s0._00 = 15;
           setTextboxArrowPosition(textboxIndex, 1);
           s1 = 0;
         }
 
         case 0xa1 -> {
-          s0._34.set((short)0);
-          s0._36.incr();
-          s0._08.or(0x400L);
+          s0._34 = 0;
+          s0._36++;
+          s0._08 |= 0x400;
 
-          if(s0._36.get() >= s0._1e.get() || (s0._08.get() & 0x80L) != 0) {
+          if(s0._36 >= s0.lines_1e || (s0._08 & 0x80) != 0) {
             //LAB_80027880
-            s0._00.set(0x5);
+            s0._00 = 5;
 
-            if((s0._08.get() & 0x1L) == 0) {
+            if((s0._08 & 0x1) == 0) {
               setTextboxArrowPosition(textboxIndex, 1);
             }
 
@@ -3775,7 +3784,7 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xa2 -> {
           //LAB_80027d28
-          s0._00.set(0x6);
+          s0._00 = 6;
 
           //LAB_80027d2c
           s1 = 0;
@@ -3783,39 +3792,39 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xa3 -> {
           setTextboxArrowPosition(textboxIndex, 1);
-          s0._00.set(0xb);
+          s0._00 = 11;
 
-          if(str.charAt(s0._30.get() + 1) >>> 8 == 0xa1L) {
-            s0._30.incr();
+          if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
+            s0._30++;
           }
 
           s1 = 0;
         }
 
         case 0xa5 -> {
-          s0._3e.set((short)(a0_0 & 0xff));
-          s0._40.set((short)0);
+          s0._3e = a0_0 & 0xff;
+          s0._40 = 0;
         }
 
         case 0xa6 -> {
-          s0._00.set(0x8);
-          s0._44.set((short)(60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff)));
+          s0._00 = 8;
+          s0._44 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
           s1 = 0;
         }
 
         case 0xa7 -> {
-          final long a2 = a0_0 & 0xf;
+          final int a2 = a0_0 & 0xf;
 
           //LAB_80027950
-          s0._28.set((int)(a2 < 0xc ? a2 : 0));
+          s0._28 = a2 < 12 ? a2 : 0;
         }
 
         case 0xa8 -> {
-          s0._08.or(0x10L);
+          s0._08 |= 0x10;
 
           //LAB_80027970
           for(int i = 0; i < 8; i++) {
-            s0._46.get(i).set((short)-1);
+            s0._46[i] = -1;
           }
 
           long a1 = _800bdf10.offset((a0_0 & 0xff) * 0x4L).get();
@@ -3847,108 +3856,101 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80027a84
           //LAB_80027a90
           for(int i = 0; i < 8 && s1 < 10; i++, s1++) {
-            s0._46.get(i).set((short)sp0x18[(int)s1]);
+            s0._46[i] = (int)sp0x18[(int)s1];
           }
 
           //LAB_80027ae4
-          s0._80.set(0);
+          s0._80 = 0;
 
           //LAB_80027d2c
           s1 = 0;
         }
 
         case 0xad -> {
-          v1 = a0_0 & 0xff;
+          final int v1_0 = a0_0 & 0xff;
 
-          if((int)v1 >= s0._1c.get()) {
-            s0._34.set((short)(s0._1c.get() - 1));
+          if(v1_0 >= s0.chars_1c) {
+            s0._34 = s0.chars_1c - 1;
           } else {
             //LAB_80027b0c
-            s0._34.set((short)v1);
+            s0._34 = v1_0;
           }
         }
 
-        case 0xae -> {
-          v1 = a0_0 & 0xff;
-
-          if((int)v1 >= s0._1e.get() - 1) {
-            s0._36.set((short)(s0._1e.get() - 1));
-          } else {
-            //LAB_80027b38
-            s0._36.set((short)v1);
-          }
-        }
+        case 0xae ->
+          //LAB_80027b38
+          s0._36 = Math.min(a0_0 & 0xff, s0.lines_1e - 1);
 
         case 0xb0 -> {
-          s0._00.set(0xd);
+          s0._00 = 13;
 
-          final long v0 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
-          s0._3e.set((short)v0);
-          s0._40.set((short)v0);
+          final int v0 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
+          s0._3e = v0;
+          s0._40 = v0;
 
-          if(str.charAt(s0._30.get() + 1) >>> 8 == 0xa1L) {
-            s0._30.incr();
+          if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
+            s0._30++;
           }
 
           s1 = 0;
         }
 
-        case 0xb1 -> s0._7c.set(a0_0 & 0xff);
+        case 0xb1 -> s0._7c = a0_0 & 0xff;
 
         case 0xb2 -> {
           if((a0_0 & 0x1L) == 0x1L) {
-            s0._08.or(0x1000L);
+            s0._08 |= 0x1000;
           } else {
             //LAB_80027bd0
-            s0._08.xor(0x1000L);
+            s0._08 ^= 0x1000;
           }
         }
 
         default -> {
           //LAB_80027be4
-          FUN_8002a180(textboxIndex, s0._34.get(), s0._36.get(), s0._28.get(), (short)a0_0);
+          FUN_8002a180(textboxIndex, s0._34, s0._36, s0._28, (short)a0_0);
 
-          s0._34.incr();
-          s0._3c.incr();
+          s0._34++;
+          s0._3c++;
 
-          if(s0._34.get() < s0._1c.get()) {
+          if(s0._34 < s0.chars_1c) {
             //LAB_80027d28
-            s0._00.set(0x7);
-          } else if(s0._36.get() >= s0._1e.get() - 1) {
-            v1 = str.charAt(s0._30.get() + 1) >>> 8;
+            s0._00 = 7;
+          } else if(s0._36 >= s0.lines_1e - 1) {
+            v1 = str.charAt(s0._30 + 1) >>> 8;
 
             if(v1 == 0xa0) {
               //LAB_80027c7c
-              s0._00.set(0xf);
+              s0._00 = 15;
               setTextboxArrowPosition(textboxIndex, 1);
             } else {
               if(v1 == 0xa1) {
                 //LAB_80027c98
-                s0._30.incr();
+                s0._30++;
               }
 
               //LAB_80027c9c
-              s0._00.set(0x5);
-              s0._08.or(0x400L);
-              s0._34.set((short)0);
-              s0._36.incr();
+              s0._00 = 5;
+              s0._08 |= 0x400;
+              s0._34 = 0;
+              s0._36++;
 
-              if((s0._08.get() & 0x1L) == 0) {
+              if((s0._08 & 0x1) == 0) {
                 setTextboxArrowPosition(textboxIndex, 1);
               }
             }
           } else {
             //LAB_80027ce0
-            s0._08.or(0x400L);
-            s0._34.set((short)0);
-            s0._36.incr();
+            s0._08 |= 0x400;
+            s0._34 = 0;
+            s0._36++;
 
-            if(str.charAt(s0._30.get() + 1) >>> 8 == 0xa1L) {
-              s0._30.incr();
+            if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
+              s0._30++;
             }
 
             //LAB_80027d28
-            s0._00.set(0x7);
+            s0._00 = 7;
           }
 
           //LAB_80027d2c
@@ -3957,439 +3959,146 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80027d30
-      s0._30.incr();
+      s0._30++;
     } while(s1 != 0);
 
     //LAB_80027d44
   }
 
   @Method(0x80027d74L)
-  public static void FUN_80027d74(long a0, long a1, long a2) {
-    long v0;
-    long v1;
-    final long a3;
-    final long t0;
-    long t1;
-    long t2;
-    long t3;
-    final long t4;
-    final long t5;
-
-    t5 = a0;
-    t2 = a1;
-    t3 = a2;
-    t1 = 0x136L;
-    v0 = 0x8005_0000L;
-    v1 = MEMORY.ref(4, v0).offset(-8928L).get();
-    v0 = 0x5L;
-    if(v1 != v0) {
-      v1 = 0x800c_0000L;
+  public static void FUN_80027d74(final int textboxIndex, final int x, final int y) {
+    final int maxX;
+    if(mainCallbackIndex_8004dd20.get() == 5) {
+      maxX = 350;
     } else {
-      v1 = 0x800c_0000L;
-      t1 = 0x15eL;
+      maxX = 310;
     }
 
     //LAB_80027d9c
-    v1 = v1 - 0x20c8L;
-    v0 = t5 << 5;
-    v0 = v0 + t5;
-    v0 = v0 << 2;
-    t0 = v0 + v1;
-    v1 = MEMORY.ref(2, t0).offset(0x1cL).getSigned();
-    a0 = MEMORY.ref(2, t0).offset(0x1eL).getSigned();
-    v0 = v1 << 3;
-    v0 = v0 + v1;
-    v1 = v0 >>> 31;
-    v0 = v0 + v1;
-    a3 = (int)v0 >> 1;
-    v1 = a1 - a3;
-    a1 = a1 + a3;
-    v0 = a0 << 1;
-    v0 = v0 + a0;
-    a0 = v0 << 1;
-    t4 = a2 - a0;
-    v1 = v1 << 16;
-    v1 = (int)v1 >> 16;
-    if((int)v1 >= 0xaL) {
-      a2 = a2 + a0;
-    } else {
-      a2 = a2 + a0;
-      t2 = a3 + 0xaL;
+    final Struct84 t0 = _800bdf38[textboxIndex];
+    final int width = t0.chars_1c * 9 / 2;
+    final int height = t0.lines_1e * 6;
+    final int v1 = x - width;
+    final int t4 = y - height;
+
+    int t2 = x;
+    if((short)v1 < 10) {
+      t2 = width + 10;
     }
 
     //LAB_80027dfc
-    v0 = a1 << 16;
-    v0 = (int)v0 >> 16;
-    if((int)t1 >= (int)v0) {
-      v0 = t4 << 16;
-    } else {
-      v0 = t4 << 16;
-      t2 = t1 - a3;
+    if(x + width > maxX) {
+      t2 = maxX - width;
     }
 
     //LAB_80027e14
-    v0 = (int)v0 >> 16;
-    if((int)v0 >= 0x12L) {
-      v1 = a2 << 16;
-    } else {
-      v1 = a2 << 16;
-      t3 = a0 + 0x12L;
+    int t3 = y;
+    if((short)t4 < 18) {
+      t3 = height + 18;
     }
 
     //LAB_80027e28
-    v1 = (int)v1 >> 16;
-    v0 = 0xdeL;
-    if((int)v0 >= (int)v1) {
-      v0 = 0xdeL;
-    } else {
-      v0 = 0xdeL;
-      t3 = v0 - a0;
+    if(222 < y + height) {
+      t3 = 222 - height;
     }
 
     //LAB_80027e40
-    v1 = 0x800c_0000L;
-    v1 = v1 - 0x1ca8L;
-    v0 = t5 << 2;
-    v0 = v0 + t5;
-    v0 = v0 << 2;
-    v0 = v0 - t5;
-    v0 = v0 << 2;
-    v0 = v0 + v1;
-    MEMORY.ref(2, v0).offset(0x14L).setu(t2);
-    MEMORY.ref(2, t0).offset(0x14L).setu(t2);
-    MEMORY.ref(2, v0).offset(0x16L).setu(t3);
-    v1 = MEMORY.ref(2, t0).offset(0x1cL).getSigned();
-    a0 = MEMORY.ref(2, t0).offset(0x1eL).getSigned();
-    MEMORY.ref(2, t0).offset(0x16L).setu(t3);
-    v0 = v1 << 3;
-    v0 = v0 + v1;
-    v1 = v0 >>> 31;
-    v0 = v0 + v1;
-    v1 = MEMORY.ref(2, t0).offset(0x14L).get();
-    v0 = (int)v0 >> 1;
-    v1 = v1 - v0;
-    v0 = a0 << 1;
-    v0 = v0 + a0;
-    MEMORY.ref(2, t0).offset(0x18L).setu(v1);
-    v1 = t3;
-    v0 = v0 << 1;
-    v1 = v1 - v0;
-    MEMORY.ref(2, t0).offset(0x1aL).setu(v1);
+    final Textbox4c v0 = textboxes_800be358.get(textboxIndex);
+    v0.x_14.set((short)t2);
+    t0.x_14 = t2;
+    v0.y_16.set((short)t3);
+    t0.y_16 = t3;
+    t0._18 = t2 - width;
+    t0._1a = t3 - height;
   }
 
   @Method(0x80027eb4L)
-  public static void FUN_80027eb4(long a0) {
-    long v0;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
-    long t6;
-    long lo;
+  public static void FUN_80027eb4(final int textboxIndex) {
+    final Struct84 a0 = _800bdf38[textboxIndex];
+    final long a2 = a0.ptr_58;
 
-    t3 = a0;
-    v0 = 0x800c_0000L;
-    t0 = v0 - 0x20c8L;
-    a1 = t3 << 5;
-    v0 = a1 + t3;
-    v0 = v0 << 2;
-    a0 = v0 + t0;
-    v0 = MEMORY.ref(4, a0).offset(0x8L).get();
-    v1 = MEMORY.ref(2, a0).offset(0x1eL).getSigned();
-    a2 = MEMORY.ref(4, a0).offset(0x58L).get();
-    v0 = v0 & 0x200L;
-    a3 = v0 > 0 ? 1 : 0;
-    if((int)a3 < (int)v1) {
-      t4 = t0;
-      t5 = a1;
-      t2 = a0;
-
-      //LAB_80027efc
-      do {
-        t1 = t5;
-        v0 = MEMORY.ref(2, t2).offset(0x1cL).getSigned();
-
-        if((int)v0 <= 0) {
-          a1 = 0;
-        } else {
-          a1 = 0;
-          t0 = a3 + 0x1L;
-          a0 = t1 + t3;
-
-          //LAB_80027f18
-          do {
-            a0 = a0 << 2;
-            a0 = a0 + t4;
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x0L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(2, v1).offset(0x0L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x2L).get();
-            v1 = v1 + a2;
-            v0 = v0 - 0x1L;
-            MEMORY.ref(2, v1).offset(0x2L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(1, v0).offset(0x4L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(1, v1).offset(0x4L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x6L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(2, v1).offset(0x6L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            a1 = a1 + 0x1L;
-            a0 = t1 + t3;
-          } while((int)a1 < (int)v0);
-        }
-
-        //LAB_80028038
-        v0 = MEMORY.ref(2, t2).offset(0x1eL).getSigned();
-        a3 = a3 + 0x1L;
-      } while((int)a3 < (int)v0);
-
+    //LAB_80027efc
+    for(int i = (a0._08 & 0x200) > 0 ? 1 : 0; i < a0.lines_1e; i++) {
+      //LAB_80027f18
+      for(int a1 = 0; a1 < a0.chars_1c; a1++) {
+        final long v0 = a2 + ((i + 1) * a0.chars_1c + a1) * 0x8L;
+        final long v1 = a2 + (i * a0.chars_1c + a1) * 0x8L;
+        MEMORY.ref(2, v1).offset(0x0L).setu(MEMORY.ref(2, v0).offset(0x0L).get());
+        MEMORY.ref(2, v1).offset(0x2L).setu(MEMORY.ref(2, v0).offset(0x2L).get() - 1);
+        MEMORY.ref(1, v1).offset(0x4L).setu(MEMORY.ref(1, v0).offset(0x4L).get());
+        MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v0).offset(0x6L).get());
+      }
     }
-    v0 = 0x800c_0000L;
 
     //LAB_8002804c
-    v0 = v0 - 0x20c8L;
-    v1 = t3 << 5;
-    v1 = v1 + t3;
-    v1 = v1 << 2;
-    v1 = v1 + v0;
-    a0 = MEMORY.ref(2, v1).offset(0x1cL).getSigned();
-    v0 = MEMORY.ref(2, v1).offset(0x1eL).getSigned();
-    lo = (long)(int)a0 * (int)v0 & 0xffff_ffffL;
-    a1 = lo;
-    v0 = v0 + 0x1L;
-    lo = (long)(int)a0 * (int)v0 & 0xffff_ffffL;
-    v0 = a1 << 3;
-    a0 = v0 + a2;
-    a3 = lo;
-    if((int)a1 < (int)a3) {
-      a2 = v1;
-
-      //LAB_80028098
-      do {
-        MEMORY.ref(2, a0).offset(0x0L).setu(0);
-        MEMORY.ref(2, a0).offset(0x2L).setu(0);
-        MEMORY.ref(1, a0).offset(0x4L).setu(0);
-        MEMORY.ref(2, a0).offset(0x6L).setu(0);
-        v0 = MEMORY.ref(2, a2).offset(0x1eL).getSigned();
-        v1 = MEMORY.ref(2, a2).offset(0x1cL).getSigned();
-        v0 = v0 + 0x1L;
-        lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
-        a1 = a1 + 0x1L;
-        t6 = lo;
-        a0 = a0 + 0x8L;
-      } while((int)a1 < (int)t6);
+    //LAB_80028098
+    for(int i = a0.chars_1c * a0.lines_1e; i < a0.chars_1c * (a0.lines_1e + 1); i++) {
+      final long a0_0 = a2 + i * 0x8L;
+      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
+      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
     }
 
     //LAB_800280cc
   }
 
   @Method(0x800280d4L)
-  public static void FUN_800280d4(long a0) {
-    long v0;
-    long v1;
-    long a1;
-    final long a2;
-    long a3;
-    long t0;
-    long t1;
-    final long t2;
-    final long t3;
-    final long t4;
-    final long t5;
-    long lo;
+  public static void FUN_800280d4(final int textboxIndex) {
+    final Struct84 t4 = _800bdf38[textboxIndex];
+    final long a2 = t4.ptr_58;
 
-    t2 = a0;
-    v0 = 0x800c_0000L;
-    a0 = v0 - 0x20c8L;
-    v1 = t2 << 5;
-    v0 = v1 + t2;
-    v0 = v0 << 2;
-    v0 = v0 + a0;
-    a3 = MEMORY.ref(2, v0).offset(0x1eL).getSigned();
-    a2 = MEMORY.ref(4, v0).offset(0x58L).get();
-    if((int)a3 > 0) {
-      t3 = a0;
-      t5 = v1;
-      t4 = v0;
-
-      //LAB_8002810c
-      do {
-        t1 = t5;
-        v0 = MEMORY.ref(2, t4).offset(0x1cL).getSigned();
-
-        if((int)v0 > 0) {
-          a1 = 0;
-          t0 = a3 - 0x1L;
-          a0 = t1 + t2;
-
-          //LAB_80028128
-          do {
-            a0 = a0 << 2;
-            a0 = a0 + t3;
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x0L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(2, v1).offset(0x0L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x2L).get();
-            v1 = v1 + a2;
-            v0 = v0 + 0x1L;
-            MEMORY.ref(2, v1).offset(0x2L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(1, v0).offset(0x4L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(1, v1).offset(0x4L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            lo = (long)(int)a3 * (int)v0 & 0xffff_ffffL;
-            v1 = lo;
-            lo = (long)(int)t0 * (int)v0 & 0xffff_ffffL;
-            v1 = v1 + a1;
-            v1 = v1 << 3;
-            v0 = lo;
-            v0 = v0 + a1;
-            v0 = v0 << 3;
-            v0 = v0 + a2;
-            v0 = MEMORY.ref(2, v0).offset(0x6L).get();
-            v1 = v1 + a2;
-            MEMORY.ref(2, v1).offset(0x6L).setu(v0);
-            v0 = MEMORY.ref(2, a0).offset(0x1cL).getSigned();
-            a1 = a1 + 0x1L;
-            a0 = t1 + t2;
-          } while((int)a1 < (int)v0);
-        }
-
-        //LAB_80028248
-        a3 = a3 - 0x1L;
-      } while((int)a3 > 0);
+    //LAB_8002810c
+    for(int lineIndex = t4.lines_1e; lineIndex > 0; lineIndex--) {
+      //LAB_80028128
+      for(int charIndex = 0; charIndex < t4.chars_1c; charIndex++) {
+        final long v0 = a2 + ((lineIndex - 1) * t4.chars_1c + charIndex) * 8;
+        final long v1 = a2 + (lineIndex * t4.chars_1c + charIndex) * 8;
+        MEMORY.ref(2, v1).offset(0x0L).setu(MEMORY.ref(2, v0).offset(0x0L).get());
+        MEMORY.ref(2, v1).offset(0x2L).setu(MEMORY.ref(2, v0).offset(0x2L).get() + 1);
+        MEMORY.ref(1, v1).offset(0x4L).setu(MEMORY.ref(1, v0).offset(0x4L).get());
+        MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v0).offset(0x6L).get());
+      }
     }
 
     //LAB_80028254
-    v0 = 0x800c_0000L;
-    v0 = v0 - 0x20c8L;
-    v1 = t2 << 5;
-    v1 = v1 + t2;
-    v1 = v1 << 2;
-    v1 = v1 + v0;
-    v0 = MEMORY.ref(2, v1).offset(0x1cL).getSigned();
-
-    if((int)v0 > 0) {
-      a1 = 0;
-      a0 = a2;
-
-      //LAB_80028280
-      do {
-        MEMORY.ref(2, a0).offset(0x0L).setu(0);
-        MEMORY.ref(2, a0).offset(0x2L).setu(0);
-        MEMORY.ref(1, a0).offset(0x4L).setu(0);
-        MEMORY.ref(2, a0).offset(0x6L).setu(0);
-        v0 = MEMORY.ref(2, v1).offset(0x1cL).getSigned();
-        a1 = a1 + 0x1L;
-        a0 = a0 + 0x8L;
-      } while((int)a1 < (int)v0);
+    //LAB_80028280
+    for(int charIndex = 0; charIndex < t4.chars_1c; charIndex++) {
+      final long a0_0 = a2 + charIndex * 0x8L;
+      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
+      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
+      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
     }
 
     //LAB_800282a4
   }
 
   @Method(0x800282acL)
-  public static void renderTextboxText(final int a0) {
+  public static void renderTextboxText(final int textboxIndex) {
     int s1;
     int s2;
     int s3;
 
-    final Struct84 s7 = _800bdf38.get(a0);
+    final Struct84 s7 = _800bdf38[textboxIndex];
 
     final int sp10;
     final int sp14;
-    if((s7._08.get() & 0x200L) != 0) {
-      sp10 = s7._1c.get();
-      sp14 = s7._1c.get() * 2;
+    if((s7._08 & 0x200) != 0) {
+      sp10 = s7.chars_1c;
+      sp14 = s7.chars_1c * 2;
     } else {
       sp10 = 0;
-      sp14 = s7._1c.get();
+      sp14 = s7.chars_1c;
     }
 
     int sp38 = 0;
 
     //LAB_80028328
-    long fp = s7.ptr_58.get();
+    long fp = s7.ptr_58;
 
     //LAB_80028348
-    for(int i = 0; i < s7._1c.get() * (s7._1e.get() + 1); i++) {
+    for(int i = 0; i < s7.chars_1c * (s7.lines_1e + 1); i++) {
       if(MEMORY.ref(2, fp).offset(0x0L).getSigned() == 0) {
         sp38 = 0;
       }
@@ -4401,19 +4110,19 @@ public final class Scus94491BpeSegment_8002 {
         s1 = 0;
         s2 = 0;
         s3 = 0;
-        if((s7._08.get() & 0x1L) != 0) {
+        if((s7._08 & 0x1) != 0) {
           if(i >= sp10 && i < sp14) {
-            final int v1 = s7._2c.get();
+            final int v1 = s7._2c;
             s1 = -v1;
             s2 = -v1;
             s3 = v1;
           }
 
           //LAB_800283c4
-          if(i >= s7._1c.get() * s7._1e.get() && i < s7._1c.get() * (s7._1e.get() + 1)) {
+          if(i >= s7.chars_1c * s7.lines_1e && i < s7.chars_1c * (s7.lines_1e + 1)) {
             s1 = 0;
             s2 = 0;
-            s3 = 12 - s7._2c.get();
+            s3 = 12 - s7._2c;
           }
         }
 
@@ -4428,13 +4137,13 @@ public final class Scus94491BpeSegment_8002 {
           final GpuCommandQuad cmd = new GpuCommandQuad()
             .monochrome(0x80);
 
-          final int x = s7._18.get() + (int)MEMORY.ref(2, fp).offset(0x0L).getSigned() * 9 - centreScreenX_1f8003dc.get() - sp38;
+          final int x = s7._18 + (int)MEMORY.ref(2, fp).offset(0x0L).getSigned() * 9 - centreScreenX_1f8003dc.get() - sp38;
           final int y;
 
-          if((s7._08.get() & 0x200L) != 0 && i < s7._1c.get()) {
-            y = s7._1a.get() + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1;
+          if((s7._08 & 0x200) != 0 && i < s7.chars_1c) {
+            y = s7._1a + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1;
           } else {
-            y = s7._1a.get() + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1 - s7._2c.get();
+            y = s7._1a + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1 - s7._2c;
           }
 
           //LAB_80028544
@@ -4450,9 +4159,9 @@ public final class Scus94491BpeSegment_8002 {
           cmd.pos(x, y, 8, height);
           cmd.bpp(Bpp.BITS_4);
           cmd.vramPos(textboxVramX_80052bc8.get(sp22).get(), textboxVramY_80052bf4.get(sp22).get() < 256 ? 0 : 256);
-          GPU.queueCommand(s7.z_0c.get(), cmd);
+          GPU.queueCommand(s7.z_0c, cmd);
 
-          GPU.queueCommand(s7.z_0c.get() + 1, new GpuCommandQuad()
+          GPU.queueCommand(s7.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
             .monochrome(0x80)
             .clut(976, clutY)
@@ -4474,32 +4183,32 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80028828L)
   public static void FUN_80028828(final int a0) {
-    final Struct84 s0 = _800bdf38.get(a0);
+    final Struct84 s0 = _800bdf38[a0];
 
-    s0._2c.add(s0._2a.get());
+    s0._2c += s0._2a;
 
-    if(s0._2c.get() >= 12) {
+    if(s0._2c >= 12) {
       FUN_80027eb4(a0);
-      s0._00.set(4);
-      s0._2c.set((short)0);
-      s0._36.decr();
+      s0._00 = 4;
+      s0._2c = 0;
+      s0._36--;
     }
 
     //LAB_80028894
   }
 
   @Method(0x800288a4L)
-  public static void FUN_800288a4(final int a0) {
+  public static void FUN_800288a4(final int textboxIndex) {
     if((tickCount_800bb0fc.get() & 0x1L) == 0) {
-      final Struct84 s0 = _800bdf38.get(a0);
+      final Struct84 s0 = _800bdf38[textboxIndex];
 
-      s0._2c.add((short)(s0._2a.get() & 0x7));
+      s0._2c += s0._2a & 0x7;
 
-      if(s0._2c.get() >= 12) {
-        FUN_80027eb4(a0);
-        s0._08.or(0x4L);
-        s0._2c.sub((short)12);
-        s0._36.set(s0._1e.get());
+      if(s0._2c >= 12) {
+        FUN_80027eb4(textboxIndex);
+        s0._08 |= 0x4;
+        s0._2c -= 12;
+        s0._36 = s0.lines_1e;
       }
     }
 
@@ -4510,7 +4219,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028938L)
   public static void positionSobjTextbox(final int textboxIndex, final int sobjIndex) {
     final Textbox4c textbox = textboxes_800be358.get(textboxIndex);
-    final Struct84 s0 = _800bdf38.get(textboxIndex);
+    final Struct84 s0 = _800bdf38[textboxIndex];
 
     FUN_800e2428(sobjIndex);
     final long struct = playerPos_800c68e8.getAddress();
@@ -4531,7 +4240,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80028a20
-    if(s0._1c.get() >= 17) {
+    if(s0.chars_1c >= 17) {
       if(sp18 >= 121) {
         //LAB_80028acc
         final int x = width / 2;
@@ -4540,10 +4249,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16.set((short)y);
         textbox._48.set(8);
 
-        s0.x_14.set((short)x);
-        s0.y_16.set((short)y);
-        s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-        s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+        s0.x_14 = x;
+        s0.y_16 = y;
+        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+        s0._1a = s0.y_16 - s0.lines_1e * 6;
         return;
       }
 
@@ -4553,10 +4262,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16.set((short)y);
       textbox._48.set(7);
 
-      s0.x_14.set((short)x);
-      s0.y_16.set((short)y);
-      s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-      s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+      s0.x_14 = x;
+      s0.y_16 = y;
+      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+      s0._1a = s0.y_16 - s0.lines_1e * 6;
       return;
     }
 
@@ -4567,10 +4276,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16.set((short)y);
       textbox._48.set(0);
 
-      s0.x_14.set((short)s4);
-      s0.y_16.set((short)y);
-      s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-      s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+      s0.x_14 = s4;
+      s0.y_16 = y;
+      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+      s0._1a = s0.y_16 - s0.lines_1e * 6;
       return;
     }
 
@@ -4581,10 +4290,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16.set((short)y);
       textbox._48.set(1);
 
-      s0.x_14.set((short)s4);
-      s0.y_16.set((short)y);
-      s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-      s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+      s0.x_14 = s4;
+      s0.y_16 = y;
+      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+      s0._1a = s0.y_16 - s0.lines_1e * 6;
       return;
     }
 
@@ -4598,10 +4307,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16.set((short)y);
         textbox._48.set(4);
 
-        s0.x_14.set((short)s2);
-        s0.y_16.set((short)y);
-        s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-        s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+        s0.x_14 = s2;
+        s0.y_16 = y;
+        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+        s0._1a = s0.y_16 - s0.lines_1e * 6;
         return;
       }
 
@@ -4612,10 +4321,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16.set((short)y);
         textbox._48.set(5);
 
-        s0.x_14.set((short)s2);
-        s0.y_16.set((short)y);
-        s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-        s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+        s0.x_14 = s2;
+        s0.y_16 = y;
+        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+        s0._1a = s0.y_16 - s0.lines_1e * 6;
         return;
       }
     } else {
@@ -4626,10 +4335,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16.set((short)y);
         textbox._48.set(2);
 
-        s0.x_14.set((short)s2);
-        s0.y_16.set((short)y);
-        s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-        s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+        s0.x_14 = s2;
+        s0.y_16 = y;
+        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+        s0._1a = s0.y_16 - s0.lines_1e * 6;
         return;
       }
 
@@ -4640,10 +4349,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16.set((short)y);
         textbox._48.set(3);
 
-        s0.x_14.set((short)s2);
-        s0.y_16.set((short)y);
-        s0._18.set((short)(s0.x_14.get() - s0._1c.get() * 9 / 2));
-        s0._1a.set((short)(s0.y_16.get() - s0._1e.get() * 6));
+        s0.x_14 = s2;
+        s0.y_16 = y;
+        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
+        s0._1a = s0.y_16 - s0.lines_1e * 6;
         return;
       }
     }
@@ -4698,15 +4407,15 @@ public final class Scus94491BpeSegment_8002 {
     struct4c.lines_1a.set((short)8);
     FUN_800258a8(0);
 
-    final Struct84 struct84 = _800bdf38.get(0);
-    struct84.type_04.set((short)_80052baa.get());
-    struct84.str_24.set(_80052c20);
-    struct84._08.or(0x40L);
+    final Struct84 struct84 = _800bdf38[0];
+    struct84.type_04 = (int)_80052baa.get();
+    struct84.str_24 = _80052c20;
+    struct84._08 |= 0x40;
 
-    long addr = mallocHead(struct84._1c.get() * (struct84._1e.get() + 1) * 8);
-    struct84.ptr_58.set(addr);
+    long addr = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 8);
+    struct84.ptr_58 = addr;
     //LAB_800290cc
-    for(int i = 0; i < struct84._1c.get() * struct84._1e.get() + 1; i++) {
+    for(int i = 0; i < struct84.chars_1c * struct84.lines_1e + 1; i++) {
       MEMORY.ref(2, addr).offset(0x0L).setu(0);
       MEMORY.ref(2, addr).offset(0x2L).setu(0);
       MEMORY.ref(1, addr).offset(0x4L).setu(0);
@@ -4715,7 +4424,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80029100
-    FUN_80027d74(0, struct84.x_14.get(), struct84.y_16.get());
+    FUN_80027d74(0, struct84.x_14, struct84.y_16);
     a0.params_20[0].set(0);
     return 0;
   }
@@ -4901,8 +4610,8 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxArrow0c arrow = textboxArrows_800bdea0.get(textboxIndex);
 
     if((arrow._00.get() & 0x1) != 0) {
-      final Struct84 s2 = _800bdf38.get(textboxIndex);
-      if((s2._08.get() & 0x1000) != 0) {
+      final Struct84 s2 = _800bdf38[textboxIndex];
+      if((s2._08 & 0x1000) != 0) {
         final int left = arrow.x_04.get() - centreScreenX_1f8003dc.get() - 8;
         final int right = arrow.x_04.get() - centreScreenX_1f8003dc.get() + 8;
         final int top = arrow.y_06.get() - centreScreenY_1f8003de.get() - 6;
@@ -4910,7 +4619,7 @@ public final class Scus94491BpeSegment_8002 {
         final int leftU = 64 + arrow.spriteIndex_08.get() * 16;
         final int rightU = 80 + arrow.spriteIndex_08.get() * 16;
 
-        GPU.queueCommand(s2.z_0c.get(), new GpuCommandPoly(4)
+        GPU.queueCommand(s2.z_0c, new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .monochrome(0x80)
@@ -4935,7 +4644,7 @@ public final class Scus94491BpeSegment_8002 {
   public static long FUN_80029b68(final RunningScript a0) {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
-      if(textboxes_800be358.get(i)._00.get() == 0 && _800bdf38.get(i)._00.get() == 0) {
+      if(textboxes_800be358.get(i)._00.get() == 0 && _800bdf38[i]._00 == 0) {
         a0.params_20[0].set(i);
         return 0;
       }
@@ -4965,7 +4674,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029c98L)
   public static long FUN_80029c98(final RunningScript a0) {
     final int a2 = a0.params_20[0].get();
-    a0.params_20[1].set(textboxes_800be358.get(a2)._00.get() | _800bdf38.get(a2)._00.get());
+    a0.params_20[1].set(textboxes_800be358.get(a2)._00.get() | _800bdf38[a2]._00);
     return 0;
   }
 
@@ -4977,21 +4686,21 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029d34L)
   public static long FUN_80029d34(final RunningScript a0) {
-    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._00.get());
+    a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._00);
     return 0;
   }
 
   @Method(0x80029d6cL)
   public static long FUN_80029d6c(final RunningScript a0) {
     final int s1 = a0.params_20[0].get();
-    final Struct84 struct84 = _800bdf38.get(s1);
+    final Struct84 struct84 = _800bdf38[s1];
 
-    if(struct84._00.get() != 0) {
-      free(struct84.ptr_58.get());
+    if(struct84._00 != 0) {
+      free(struct84.ptr_58);
     }
 
     //LAB_80029db8
-    struct84._00.set(0);
+    struct84._00 = 0;
     textboxes_800be358.get(s1)._00.set(0);
     setTextboxArrowPosition(s1, 0);
     return 0;
@@ -5002,14 +4711,14 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
       final Textbox4c s2 = textboxes_800be358.get(i);
-      final Struct84 s0 = _800bdf38.get(i);
+      final Struct84 s0 = _800bdf38[i];
 
-      if(s0._00.get() != 0) {
-        free(s0.ptr_58.get());
+      if(s0._00 != 0) {
+        free(s0.ptr_58);
       }
 
       //LAB_80029e48
-      s0._00.set(0);
+      s0._00 = 0;
       s2._00.set(0);
       setTextboxArrowPosition(i, 0);
     }
@@ -5025,26 +4734,26 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029eccL)
   public static long FUN_80029ecc(final RunningScript a0) {
-    final Struct84 v1 = _800bdf38.get(a0.params_20[0].get());
-    if(v1._00.get() == 0x10L && (v1._08.get() & 0x20L) != 0) {
-      v1._08.xor(0x20L);
+    final Struct84 v1 = _800bdf38[a0.params_20[0].get()];
+    if(v1._00 == 16 && (v1._08 & 0x20) != 0) {
+      v1._08 ^= 0x20;
     }
 
     //LAB_80029f18
     //LAB_80029f1c
-    v1._08.or(0x40L);
+    v1._08 |= 0x40;
     return 0;
   }
 
   @Method(0x80029f48L)
   public static long FUN_80029f48(final RunningScript a0) {
-    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._6c.get());
+    a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._6c);
     return 0;
   }
 
   @Method(0x80029f80L)
   public static long FUN_80029f80(final RunningScript a0) {
-    a0.params_20[1].set(_800bdf38.get(a0.params_20[0].get())._7c.get());
+    a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._7c);
     return 0;
   }
 
@@ -5057,7 +4766,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a098
-      if(_800bdf38.get(i)._00.get() != 0) {
+      if(_800bdf38[i]._00 != 0) {
         FUN_800264b0(i); // Animates the textbox arrow
       }
     }
@@ -5076,7 +4785,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a134
-      if(_800bdf38.get(i)._00.get() != 0) {
+      if(_800bdf38[i]._00 != 0) {
         renderTextboxText(i);
         renderTextboxArrow(i);
       }
@@ -5087,13 +4796,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a180L)
   public static void FUN_8002a180(final int textboxIndex, final long a1, final long a2, long a3, final long lodChar) {
-    final Struct84 v1 = _800bdf38.get(textboxIndex);
-    final int a0 = v1._36.get() * v1._1c.get() + v1._34.get();
-    final long v0 = v1.ptr_58.get() + a0 * 0x8L;
+    final Struct84 v1 = _800bdf38[textboxIndex];
+    final int a0 = v1._36 * v1.chars_1c + v1._34;
+    final long v0 = v1.ptr_58 + a0 * 0x8L;
     MEMORY.ref(2, v0).offset(0x0L).setu(a1);
     MEMORY.ref(2, v0).offset(0x2L).setu(a2);
 
-    if((v1._08.get() & 0x200L) != 0 && (short)a2 == 0) {
+    if((v1._08 & 0x200) != 0 && (short)a2 == 0) {
       a3 = 0x8L;
     }
 
@@ -5148,11 +4857,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a2b4L)
   public static void FUN_8002a2b4(final int textboxIndex) {
-    final Struct84 a2 = _800bdf38.get(textboxIndex);
-    long a0_0 = a2.ptr_58.get();
+    final Struct84 a2 = _800bdf38[textboxIndex];
+    long a0_0 = a2.ptr_58;
 
     //LAB_8002a2f0
-    for(int a1 = 0; a1 < a2._1c.get() * (a2._1e.get() + 1); a1++) {
+    for(int a1 = 0; a1 < a2.chars_1c * (a2.lines_1e + 1); a1++) {
       MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
       MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
       MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
@@ -5182,7 +4891,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a3ec(final int textboxIndex, final long a1) {
     if((a1 & 0x1L) == 0) {
       //LAB_8002a40c
-      _800bdf38.get(textboxIndex)._00.set(0);
+      _800bdf38[textboxIndex]._00 = 0;
       textboxes_800be358.get(textboxIndex)._00.set(0);
     } else {
       //LAB_8002a458
@@ -5200,7 +4909,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxArrow0c arrow = textboxArrows_800bdea0.get(textboxIndex);
 
     if((arrow._00.get() & 0x1L) != 0) {
-      if((_800bdf38.get(textboxIndex)._08.get() & 0x1000L) != 0) {
+      if((_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
         if((tickCount_800bb0fc.get() & 0x1L) == 0) {
           arrow.spriteIndex_08.incr();
         }
@@ -5213,17 +4922,6 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002a554
-  }
-
-  @Method(0x8002a55cL)
-  public static long textLen(final LodString str) {
-    //LAB_8002a568
-    int i;
-    for(i = 0; str.charAt(i) < 0xa000L; i++) {
-      // Empty
-    }
-
-    return i;
   }
 
   @Method(0x8002a59cL)

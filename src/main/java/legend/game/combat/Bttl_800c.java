@@ -63,6 +63,7 @@ import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.WeaponTrailEffect3c;
 import legend.game.combat.types.WeaponTrailEffectSegment2c;
 import legend.game.inventory.WhichMenu;
+import legend.game.scripting.IntParam;
 import legend.game.types.CharacterData2c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.GsF_LIGHT;
@@ -4502,7 +4503,7 @@ public final class Bttl_800c {
 
     //LAB_800cff90
     for(int i = 0; i < params.length; i++) {
-      script.params_20[i] = new IntRef().set(params[i]);
+      script.params_20[i] = new IntParam(params[i]);
     }
 
     //LAB_800cffbc

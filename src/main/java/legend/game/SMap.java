@@ -34,6 +34,8 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
+import legend.game.scripting.Param;
+import legend.game.scripting.ScriptStorageParam;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
 import legend.game.tim.Tim;
@@ -1251,12 +1253,12 @@ public final class SMap {
     final MATRIX sp0x28 = new MATRIX();
     final MATRIX sp0x48 = new MATRIX();
 
-    final UnboundedArrayRef<IntRef> ints = a0.params_20[0].reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
+    final Param ints = a0.params_20[0];
     int s0 = 0;
 
     //LAB_800de4f8
-    while(ints.get(s0).get() != -1) {
-      get3dAverageOfSomething(ints.get(s0++).get(), sp0x10);
+    while(ints.array(s0).get() != -1) {
+      get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
       model_800c6748.coord2_14.coord.transfer.setX(sp0x10.getX());
       model_800c6748.coord2_14.coord.transfer.setY(sp0x10.getY());
       model_800c6748.coord2_14.coord.transfer.setZ(sp0x10.getZ());
@@ -1285,7 +1287,7 @@ public final class SMap {
         if(a1._18.get(i).get() == -1) {
           a1.x_40.get(i).set(sp20.getX());
           a1.y_68.get(i).set(sp20.getY());
-          a1._18.get(i).set((short)ints.get(s0).get());
+          a1._18.get(i).set((short)ints.array(s0).get());
           getScreenOffset(a1.screenOffsetX_90.get(i), a1.screenOffsetY_e0.get(i));
           break;
         }
@@ -1554,35 +1556,35 @@ public final class SMap {
   @Method(0x800df168L)
   public static long FUN_800df168(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800dfe0c(a0);
   }
 
   @Method(0x800df198L)
   public static long FUN_800df198(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800dfec8(a0);
   }
 
   @Method(0x800df1c8L)
   public static long FUN_800df1c8(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800dff68(a0);
   }
 
   @Method(0x800df1f8L)
   public static long FUN_800df1f8(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800dffa4(a0);
   }
 
   @Method(0x800df228L)
   public static long FUN_800df228(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800dffdc(a0);
   }
 
@@ -1633,14 +1635,14 @@ public final class SMap {
     a0.params_20[3] = a0.params_20[2];
     a0.params_20[2] = a0.params_20[1];
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return scriptFacePoint(a0);
   }
 
   @Method(0x800df410L)
   public static long FUN_800df410(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e0094(a0);
   }
 
@@ -1650,7 +1652,7 @@ public final class SMap {
     a0.params_20[3] = a0.params_20[2];
     a0.params_20[2] = a0.params_20[1];
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800de668(a0);
   }
 
@@ -1660,49 +1662,49 @@ public final class SMap {
     a0.params_20[3] = a0.params_20[2];
     a0.params_20[2] = a0.params_20[1];
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800de944(a0);
   }
 
   @Method(0x800df4d0L)
   public static long FUN_800df4d0(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e00cc(a0);
   }
 
   @Method(0x800df530L)
   public static long FUN_800df530(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e0184(a0);
   }
 
   @Method(0x800df5c0L)
   public static long FUN_800df5c0(final RunningScript script) {
     script.params_20[1] = script.params_20[0];
-    script.params_20[0] = script.scriptState_04.storage_44[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0244(script);
   }
 
   @Method(0x800df5f0L)
   public static long FUN_800df5f0(final RunningScript script) {
     script.params_20[1] = script.params_20[0];
-    script.params_20[0] = script.scriptState_04.storage_44[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0284(script);
   }
 
   @Method(0x800df620L)
   public static long FUN_800df620(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e02c0(a0);
   }
 
   @Method(0x800df650L)
   public static long FUN_800df650(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e02fc(a0);
   }
 
@@ -1773,7 +1775,7 @@ public final class SMap {
     a0.params_20[3] = a0.params_20[2];
     a0.params_20[2] = a0.params_20[1];
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800deba0(a0);
   }
 
@@ -1832,27 +1834,27 @@ public final class SMap {
   @Method(0x800dfb44L)
   public static long FUN_800dfb44(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return scriptGetSobjNobj(a0);
   }
 
   @Method(0x800dfb74L)
   public static long FUN_800dfb74(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e03e4(a0);
   }
 
   @Method(0x800dfba4L)
   public static long FUN_800dfba4(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e0448(a0);
   }
 
   @Method(0x800dfbd4L)
   public static long FUN_800dfbd4(final RunningScript a0) {
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return scriptFaceCamera(a0);
   }
 
@@ -1892,7 +1894,7 @@ public final class SMap {
   public static long FUN_800dfcd8(final RunningScript script) {
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
-    script.params_20[0] = script.scriptState_04.storage_44[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0520(script);
   }
 
@@ -7952,20 +7954,18 @@ public final class SMap {
     struct34_800d6018.parent_30.clear();
     GsInitCoordinate2(null, sp0x40);
 
-    long s1 = a0.params_20[0].getAddress();
+    final Param ints = a0.params_20[0];
+    int s1 = 0;
 
     //LAB_800f10dc
-    while((int)MEMORY.ref(4, s1).get() != -1) {
+    while(ints.array(s1).get() != -1) {
       final Struct34 struct = MEMORY.ref(4, mallocTail(0x34L), Struct34::new);
       struct.parent_30.setNullable(struct34_800d6018.parent_30.derefNullable());
       struct34_800d6018.parent_30.set(struct);
 
-      sp0x40.coord.transfer.setX((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
-      sp0x40.coord.transfer.setY((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
-      sp0x40.coord.transfer.setZ((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
+      sp0x40.coord.transfer.setX(ints.array(s1++).get());
+      sp0x40.coord.transfer.setY(ints.array(s1++).get());
+      sp0x40.coord.transfer.setZ(ints.array(s1++).get());
       GsGetLs(sp0x40, sp0x20);
 
       PushMatrix();
@@ -7995,14 +7995,10 @@ public final class SMap {
       struct._06.set((short)100);
       struct._08.set((short)0);
       struct._0a.set((short)0);
-      struct._0c.set((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
-      struct._10.set((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
-      struct._14.set((int)MEMORY.ref(4, s1).get());
-      s1 = s1 + 0x4L;
-      struct._18.set((short)MEMORY.ref(2, s1).get());
-      s1 = s1 + 0x4L;
+      struct._0c.set(ints.array(s1++).get());
+      struct._10.set(ints.array(s1++).get());
+      struct._14.set(ints.array(s1++).get());
+      struct._18.set((short)ints.array(s1++).get());
       struct.x_1c.set(sp0x18.getX());
       struct.y_20.set(sp0x18.getY());
       getScreenOffset(struct.screenOffsetX_24, struct.screenOffsetY_28);
@@ -8123,7 +8119,7 @@ public final class SMap {
   public static long FUN_800f1634(final RunningScript script) {
     final ScriptState<?> state = script.scriptState_04;
 
-    script.params_20[9] = state.storage_44[0];
+    script.params_20[9] = new ScriptStorageParam(state, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0].get()].innerStruct_00;
     if(script.params_20[0].get() == 0 || _800f9e78.getSigned() >= 8) {
@@ -8240,10 +8236,10 @@ public final class SMap {
     final TriangleIndicator140 a0 = _800c69fc.deref();
 
     //LAB_800f1ba8
-    final UnboundedArrayRef<IntRef> ints = script.params_20[0].reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
+    final Param ints = script.params_20[0];
     int s0 = 0;
-    for(int i = 0; ints.get(s0).get() != -1; i++) {
-      get3dAverageOfSomething(ints.get(s0++).get(), sp0x10);
+    for(int i = 0; ints.array(s0).get() != -1; i++) {
+      get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
 
       sp0x18.coord.transfer.setX(sp0x10.getX());
       sp0x18.coord.transfer.setY(sp0x10.getY());
@@ -8270,9 +8266,9 @@ public final class SMap {
 
       PopMatrix();
 
-      a0._18.get(i).set((short)ints.get(s0++).get());
-      a0.x_40.get(i).set((short)(sp0x68.getX() + ints.get(s0++).get()));
-      a0.y_68.get(i).set((short)(sp0x68.getY() + ints.get(s0++).get()));
+      a0._18.get(i).set((short)ints.array(s0++).get());
+      a0.x_40.get(i).set((short)(sp0x68.getX() + ints.array(s0++).get()));
+      a0.y_68.get(i).set((short)(sp0x68.getY() + ints.array(s0++).get()));
       a0.screenOffsetX_90.get(i).set(sp90.get());
       a0.screenOffsetY_e0.get(i).set(sp94.get());
     }
@@ -8358,13 +8354,13 @@ public final class SMap {
     a0.params_20[3] = a0.params_20[2];
     a0.params_20[2] = a0.params_20[1];
     a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = a0.scriptState_04.storage_44[0];
+    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800f1f9c(a0);
   }
 
   @Method(0x800f2090L)
   public static long FUN_800f2090(final RunningScript script) {
-    final UnboundedArrayRef<IntRef> ints = script.params_20[0].reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
+    final Param ints = script.params_20[0];
     int a0 = 0;
     Struct34 a1 = struct34_800d6018.parent_30.derefNullable();
     Struct34 sp30 = null;
@@ -8381,8 +8377,9 @@ public final class SMap {
     a1 = sp30;
 
     //LAB_800f20e4
-    while(a1 != null && ints.get(a0).get() != -2) {
-      if(ints.get(a0).get() == -1) {
+    //TODO I'm not sure this is right
+    while(a1 != null && ints.array(a0).get() != -2) {
+      if(ints.array(a0).get() == -1) {
         a0++;
         a1._04.set((short)17);
         a1._06.set((short)100);
@@ -8390,19 +8387,14 @@ public final class SMap {
         a1._0a.set((short)0);
       } else {
         //LAB_800f2108
-        a1._08.set((short)ints.get(a0).get());
-        a0++;
-        a1._0a.set((short)ints.get(a0).get());
-        a0++;
-        a1._04.set((short)ints.get(a0).get());
-        a0++;
-        a1._06.set((short)ints.get(a0).get());
-        a0++;
+        a1._08.set((short)ints.array(a0++).get());
+        a1._0a.set((short)ints.array(a0++).get());
+        a1._04.set((short)ints.array(a0++).get());
+        a1._06.set((short)ints.array(a0++).get());
       }
 
       //LAB_800f2138
-      a1._00.set((short)ints.get(a0).get());
-      a0++;
+      a1._00.set((short)ints.array(a0++).get());
       a1 = a1.parent_30.derefNullable();
     }
 
@@ -8458,7 +8450,7 @@ public final class SMap {
   @Method(0x800f2264L)
   public static long FUN_800f2264(final RunningScript script) {
     final ScriptState<?> sobj1 = script.scriptState_04;
-    script.params_20[1] = sobj1.storage_44[0];
+    script.params_20[1] = new ScriptStorageParam(sobj1, 0);
 
     final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0].get()].innerStruct_00;
     if(script.params_20[0].get() - 1 < 2) {
@@ -8476,10 +8468,10 @@ public final class SMap {
 
   @Method(0x800f22c4L)
   public static long FUN_800f22c4(final RunningScript script) {
-    script.params_20[2] = script.scriptState_04.storage_44[0];
+    script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
     final SubmapObject210 a0 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
 
-    long v1 = script.params_20[0].get();
+    int v1 = script.params_20[0].get();
     a0._1d0._10.set(v1);
     if(v1 == 0) {
       v1 = script.params_20[1].get();
@@ -8515,7 +8507,7 @@ public final class SMap {
 
   @Method(0x800f23a0L)
   public static long FUN_800f23a0(final RunningScript script) {
-    script.params_20[1] = script.scriptState_04.storage_44[0];
+    script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0].get()].innerStruct_00;
 
@@ -8533,7 +8525,7 @@ public final class SMap {
 
   @Method(0x800f23ecL)
   public static long FUN_800f23ec(final RunningScript a0) {
-    a0.params_20[4] = a0.scriptState_04.storage_44[0];
+    a0.params_20[4] = new ScriptStorageParam(a0.scriptState_04, 0);
     final int a2 = a0.params_20[0].get();
     final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.scriptState_04.storage_44[0].get()].innerStruct_00;
 
@@ -8600,7 +8592,7 @@ public final class SMap {
   @Method(0x800f25a8L)
   public static long FUN_800f25a8(final RunningScript script) {
     final ScriptState<?> v1 = script.scriptState_04;
-    script.params_20[1] = v1.storage_44[0];
+    script.params_20[1] = new ScriptStorageParam(v1, 0);
 
     if(script.params_20[0].get() == 1) {
       FUN_800f0e7c();
@@ -8624,11 +8616,11 @@ public final class SMap {
 
     //LAB_800f266c
     int i = 0;
-    final UnboundedArrayRef<IntRef> a0 = script.params_20[0].reinterpret(4, UnboundedArrayRef.of(4, IntRef::new));
-    for(int a1 = 0; a0.get(i).get() != -1; a1++) {
-      v1._18.get(a1).set((short)a0.get(i++).get());
-      v1.x_40.get(a1).set((short)(a0.get(i++).get() + x));
-      v1.y_68.get(a1).set((short)(a0.get(i++).get() + y));
+    final Param a0 = script.params_20[0];
+    for(int a1 = 0; a0.array(i).get() != -1; a1++) {
+      v1._18.get(a1).set((short)a0.array(i++).get());
+      v1.x_40.get(a1).set((short)(a0.array(i++).get() + x));
+      v1.y_68.get(a1).set((short)(a0.array(i++).get() + y));
       v1.screenOffsetX_90.get(a1).set(x);
       v1.screenOffsetY_e0.get(a1).set(y);
     }

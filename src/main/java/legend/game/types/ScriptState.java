@@ -14,6 +14,8 @@ public class ScriptState<T extends MemoryRef> {
     return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
   }
 
+  /** This script's index */
+  public final int index;
   public final T innerStruct_00;
   public TriConsumer<Integer, ScriptState<T>, T> ticker_04;
   public TriConsumer<Integer, ScriptState<T>, T> renderer_08;
@@ -23,9 +25,9 @@ public class ScriptState<T extends MemoryRef> {
   /** Pointer to the script file */
   public ScriptFile scriptPtr_14;
   /** Pointer to the current script command */
-  public IntRef commandPtr_18;
-  /** Pointers */
-  public final IntRef[] commandStack_1c = new IntRef[10];
+  public int offset_18;
+  /** Return offset for each stack frame */
+  public final int[] callStack_1c = new int[10];
   /**
    * 5 - parent script index
    * 6 - child script index
@@ -100,7 +102,8 @@ public class ScriptState<T extends MemoryRef> {
   public String type_f8;
   public int ui_fc;
 
-  public ScriptState(@Nullable final T innerStruct, final IntRef[] storage) {
+  public ScriptState(final int index, @Nullable final T innerStruct, final IntRef[] storage) {
+    this.index = index;
     this.innerStruct_00 = innerStruct;
 
     this.storage_44 = storage;

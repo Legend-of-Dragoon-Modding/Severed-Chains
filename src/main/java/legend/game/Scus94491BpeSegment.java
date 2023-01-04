@@ -19,7 +19,6 @@ import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -48,6 +47,10 @@ import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.GameVarArrayParam;
+import legend.game.scripting.GameVarParam;
+import legend.game.scripting.ScriptInlineParam;
+import legend.game.scripting.ScriptStorageParam;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
@@ -83,6 +86,7 @@ import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -157,7 +161,6 @@ import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_800
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
-import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
 import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -359,6 +362,7 @@ public final class Scus94491BpeSegment {
   private static final Int2ObjectMap<Function<RunningScript, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
 
   static {
+/*TODO
     scriptFunctionDescriptions.put(0, r -> "pause;");
     scriptFunctionDescriptions.put(1, r -> "rewind;");
     scriptFunctionDescriptions.put(2, r -> {
@@ -476,6 +480,7 @@ public final class Scus94491BpeSegment {
       final long ptr = a + MEMORY.ref(4, a + b * 4).getSigned() * 4;
       return "func 0x%x (p1 + p1[p0 * 4] * 4);".formatted(ptr - r.scriptState_04.scriptPtr_14.getAddress());
     });
+*/
   }
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
@@ -611,8 +616,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    Memory.addWatch(0x800c6e18L);
-
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -1926,9 +1929,9 @@ public final class Scus94491BpeSegment {
     }
 
     if(innerStructSize != 0) {
-      scriptState = new ScriptState<>(type.apply(MEMORY.ref(4, addr + storage.length * 4)), storage);
+      scriptState = new ScriptState<>(index, type.apply(MEMORY.ref(4, addr + storage.length * 4)), storage);
     } else {
-      scriptState = new ScriptState<>(null, storage);
+      scriptState = new ScriptState<>(index, null, storage);
     }
 
     scriptStatePtrArr_800bc1c0[index] = scriptState;
@@ -2021,13 +2024,13 @@ public final class Scus94491BpeSegment {
       LOGGER.info(SCRIPT_MARKER, "Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
 
       struct.scriptPtr_14 = script;
-      struct.commandPtr_18 = script.offsetArr_00.get((int)offsetIndex).deref();
+      struct.offset_18 = script.offsetArr_00.get((int)offsetIndex).get();
       struct.flags_60.and(0xfffd_ffff);
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", index);
 
       struct.scriptPtr_14 = null;
-      struct.commandPtr_18 = null;
+      struct.offset_18 = -1;
       struct.flags_60.or(0x2_0000);
     }
   }
@@ -2108,7 +2111,7 @@ public final class Scus94491BpeSegment {
     childScript.storage_44[6].set(parentScript.storage_44[6].get());
     parentScript.storage_44[6].set(childScriptIndex);
     childScript.scriptPtr_14 = parentScript.scriptPtr_14;
-    childScript.commandPtr_18 = parentScript.commandPtr_18;
+    childScript.offset_18 = parentScript.offset_18;
 
     //LAB_80015e4c
     return childScriptIndex;
@@ -2116,7 +2119,7 @@ public final class Scus94491BpeSegment {
 
   /** Deallocates child and assumes its identity? */
   @Method(0x80015e68L)
-  public static IntRef scriptConsumeChild(final int scriptIndex) {
+  public static int scriptConsumeChild(final int scriptIndex) {
     final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[scriptIndex];
 
     final int childIndex = a3.storage_44[6].get();
@@ -2144,11 +2147,11 @@ public final class Scus94491BpeSegment {
     }
 
     a3.scriptPtr_14 = child.scriptPtr_14;
-    a3.commandPtr_18 = child.commandPtr_18;
+    a3.offset_18 = child.offset_18;
     deallocateScriptState(childIndex);
 
     //LAB_80015f54
-    return child.commandPtr_18;
+    return child.offset_18;
   }
 
   @Method(0x80015f64L)
@@ -2170,176 +2173,157 @@ public final class Scus94491BpeSegment {
 
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
-      final ScriptState<SubmapObject210> scriptState = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[index];
+      final ScriptState<SubmapObject210> state = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[index];
 
-      if(scriptState != null && (scriptState.flags_60.get() & 0x12_0000L) == 0) {
+      if(state != null && (state.flags_60.get() & 0x12_0000L) == 0) {
         RunningScript_800bc070.scriptStateIndex_00 = index;
-        RunningScript_800bc070.scriptState_04 = scriptState;
-        RunningScript_800bc070.commandPtr_0c = scriptState.commandPtr_18;
-        RunningScript_800bc070.opPtr_08 = scriptState.commandPtr_18;
+        RunningScript_800bc070.scriptState_04 = state;
+        RunningScript_800bc070.commandOffset_0c = state.offset_18;
+        RunningScript_800bc070.opOffset_08 = state.offset_18;
 
         if(scriptLog[index]) {
-          System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.scriptPtr_14.getAddress());
+          System.err.printf("Exec script index %d (%08x)%n", index, state.scriptPtr_14.getAddress());
         }
 
         long ret;
         //LAB_80016018
         do {
-          final int opCommand = RunningScript_800bc070.commandPtr_0c.get();
+          final int opCommand = RunningScript_800bc070.getOp();
           RunningScript_800bc070.opIndex_10 = opCommand & 0xff;
           RunningScript_800bc070.paramCount_14 = opCommand >>> 8 & 0xff;
           RunningScript_800bc070.opParam_18 = opCommand >>> 16;
 
           if(scriptLog[index]) {
-            System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getAddress() - RunningScript_800bc070.scriptState_04.scriptPtr_14.getAddress()) + " (" + RunningScript_800bc070.commandPtr_0c + ')');
+            System.err.println(Long.toHexString(RunningScript_800bc070.commandOffset_0c) + " (" + RunningScript_800bc070.commandOffset_0c + ')');
             System.err.printf("param[p] = %x%n", opCommand >>> 16);
           }
 
-          RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
+          RunningScript_800bc070.commandOffset_0c += 4;
 
           //LAB_80016050
           for(int paramIndex = 0; paramIndex < RunningScript_800bc070.paramCount_14; paramIndex++) {
-            final int childCommand = RunningScript_800bc070.commandPtr_0c.get();
+            final int childCommand = RunningScript_800bc070.getOp();
             final int paramType = childCommand >>> 24;
-            final int param0 = childCommand >>> 16 & 0xff;
-            final int param1 = childCommand >>> 8 & 0xff;
-            final int param2 = childCommand & 0xff;
+            final int cmd2 = childCommand >>> 16 & 0xff;
+            final int cmd1 = childCommand >>> 8 & 0xff;
+            final int cmd0 = childCommand & 0xff;
 
-            RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-            final long commandPtr = RunningScript_800bc070.commandPtr_0c.getAddress();
+            RunningScript_800bc070.commandOffset_0c += 4;
 
-            if(paramType == 0x1) {
+            if(paramType == 0x1) { // Push next value after this param
               //LAB_800161f4
-              final IntRef p = RunningScript_800bc070.commandPtr_0c;
-              RunningScript_800bc070.params_20[paramIndex] = p;
-              RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-            } else if(paramType == 0x2) {
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c);
+              RunningScript_800bc070.commandOffset_0c += 4;
+            } else if(paramType == 0x2) { // Push storage[cmd0]
               //LAB_80016200
-              final IntRef p = RunningScript_800bc070.scriptState_04.storage_44[param2];
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x3) {
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(state, cmd0);
+            } else if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
               //LAB_800160cc
               //LAB_8001620c
-              final int a0_0 = RunningScript_800bc070.scriptState_04.storage_44[param2].get();
-              final int a1_0 = scriptStatePtrArr_800bc1c0[a0_0].storage_44[param1].get();
-              final IntRef p = scriptStatePtrArr_800bc1c0[a1_0].storage_44[param0];
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x4) {
+              final int otherScriptIndex1 = state.storage_44[cmd0].get();
+              final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1].get();
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
+            } else if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
               //LAB_80016258
-              final int a0_0 = RunningScript_800bc070.scriptState_04.storage_44[param2].get();
-              final int a1_0 = param1 + RunningScript_800bc070.scriptState_04.storage_44[param0].get();
-              final IntRef p = scriptStatePtrArr_800bc1c0[a0_0].storage_44[a1_0];
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x5) {
+              final int otherScriptIndex = state.storage_44[cmd0].get();
+              final int storageIndex = cmd1 + state.storage_44[cmd2].get();
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
+            } else if(paramType == 0x5) { // Push gameVar[cmd0]
               //LAB_80016290
-              final IntRef p = scriptPtrs_8004de58.get(param2).deref();
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x6) {
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0);
+            } else if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
               //LAB_800162a4
-              final IntRef p = scriptPtrs_8004de58.get(RunningScript_800bc070.scriptState_04.storage_44[param1].get() + param2).deref();
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x7) {
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + state.storage_44[cmd1].get());
+            } else if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
               //LAB_800162d0
-              final int a0_0 = RunningScript_800bc070.scriptState_04.storage_44[param1].get();
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x8) {
+              final int arrIndex = state.storage_44[cmd1].get();
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, arrIndex);
+            } else if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
               //LAB_800160e8
               //LAB_800162f4
-              final int v0_0 = RunningScript_800bc070.scriptState_04.storage_44[param1].get();
-              final int a1_0 = RunningScript_800bc070.scriptState_04.storage_44[param0].get();
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2 + v0_0).getPointer() + a1_0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x9) {
+              final int storage1 = state.storage_44[cmd1].get();
+              final int storage2 = state.storage_44[cmd2].get();
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
+            } else if(paramType == 0x9) { // Push (commandStart + (cmd0 | cmd1 << 8) * 4)
               //LAB_80016328
-              v1 = RunningScript_800bc070.opPtr_08.getAddress() + (short)childCommand * 0x4L;
-              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xa) {
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + (short)childCommand * 4);
+            } else if(paramType == 0xa) { // Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
               //LAB_80016118
               //LAB_80016334
-              v0 = RunningScript_800bc070.opPtr_08.getAddress() + ((short)childCommand + RunningScript_800bc070.scriptState_04.storage_44[param0].get()) * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xb) {
+              final int storage = state.storage_44[cmd2].get();
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + ((short)childCommand + storage) * 4);
+            } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
               //LAB_80016360
-              v0 = RunningScript_800bc070.opPtr_08.getAddress() + (RunningScript_800bc070.scriptState_04.storage_44[param0].get() + (short)childCommand) * 0x4L;
-              final long a0_0 = RunningScript_800bc070.opPtr_08.getAddress() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
-              final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xc) {
+              final int storage = state.storage_44[cmd2].get();
+//              v0 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + storage) * 0x4L;
+//              final long a0_0 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + MEMORY.ref(4, v0).get()) * 0x4L;
+//              final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + storage).get());
+            } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
               //LAB_800163a0
-              RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.storage_44[param2].get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.storage_44[param1].get() * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xd) {
+//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(state.storage_44[cmd0].get() * 0x4L).get() + state.storage_44[cmd1].get()) * 0x4L;
+//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0].get()).get() + state.storage_44[cmd1].get());
+              RunningScript_800bc070.commandOffset_0c += 4;
+            } else if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
               //LAB_800163e8
-              final IntRef p = scriptStatePtrArr_800bc1c0[RunningScript_800bc070.scriptState_04.storage_44[param2].get()].storage_44[param1 + param0];
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xe) {
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[state.storage_44[cmd0].get()], cmd1 + cmd2);
+            } else if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
               //LAB_80016418
-              final IntRef p = scriptPtrs_8004de58.get(param1 + param2).deref();
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0xf) {
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + cmd1);
+            } else if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
               //LAB_8001642c
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x10) {
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, cmd1);
+            } else if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
               //LAB_80016180
               //LAB_8001643c
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2 + RunningScript_800bc070.scriptState_04.storage_44[param1].get()).getPointer() + param0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
+              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + state.storage_44[cmd1].get(), cmd2);
             } else if(paramType == 0x11) {
               //LAB_80016468
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.get(opCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
+//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.get(opCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(cmd2).get() * 0x4L).cast(UnsignedIntRef::new));
               assert false;
             } else if(paramType == 0x12) {
               //LAB_80016138
               //LAB_8001648c
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
+//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.offset((cmd0 + cmd1) * 0x4L).deref(4).offset(cmd2 * 0x4L).cast(UnsignedIntRef::new));
               assert false;
             } else if(paramType == 0x13) {
               //LAB_800164a4
-              v1 = RunningScript_800bc070.opPtr_08.getAddress() + ((short)childCommand + param0) * 4;
-              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
-            } else if(paramType == 0x14) {
+//              v1 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + cmd2) * 4;
+//              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2);
+            } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
               //LAB_800164b4
-              v1 = RunningScript_800bc070.opPtr_08.getAddress() + (short)childCommand * 0x4L;
-
               //LAB_800164cc
-              v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).getSigned() * 0x4L;
-
               //LAB_800164d4
-              final IntRef p = MEMORY.ref(4, v1 + v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
+//              v1 = RunningScript_800bc070.opOffset_08.getAddress();
+//              v0 = MEMORY.ref(4, v1).offset(((short)childCommand + cmd2) * 0x4L).getSigned();
+//              final IntRef p = MEMORY.ref(4, v1).offset(((short)childCommand + v0) * 0x4L).cast(IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2).get());
             } else if(paramType == 0x15) {
               //LAB_800161a0
               //LAB_800164e0
-              RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.storage_44[param2].get() * 0x4L).get() * 0x4L + param1 * 0x4L;
-
               //LAB_80016580
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
+//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(state.storage_44[cmd0].get() * 0x4L).get() + cmd1) * 0x4L;
+//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0].get()).get() + cmd1);
+              RunningScript_800bc070.commandOffset_0c += 4;
             } else if(paramType == 0x16) {
               //LAB_80016518
-              RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.storage_44[param1].get() * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
+//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(cmd0 * 0x4L).get() + state.storage_44[cmd1].get()) * 0x4L;
+//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + state.storage_44[cmd1].get());
+              RunningScript_800bc070.commandOffset_0c += 4;
             } else if(paramType == 0x17) {
               //LAB_800161d4
               //LAB_8001654c
-              RunningScript_800bc070.commandPtr_0c = MEMORY.ref(4, RunningScript_800bc070.commandPtr_0c.getAddress() + 4, IntRef::new);
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20[paramIndex] = p;
+//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(cmd0 * 0x4L).get() + cmd1) * 0x4L;
+//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + cmd1);
+              RunningScript_800bc070.commandOffset_0c += 4;
             } else { // Treated as an immediate if not a valid op
               //LAB_80016574
-              final IntRef p = RunningScript_800bc070.commandPtr_0c;
-              RunningScript_800bc070.params_20[paramIndex] = MEMORY.ref(4, p.getAddress() - 4, IntRef::new);
+              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c - 4);
             }
 
             if(scriptLog[index]) {
@@ -2382,12 +2366,14 @@ public final class Scus94491BpeSegment {
           // Returning anything else pauses execution and repeats the same instruction next frame
           if(ret == 0 || ret == 1) {
             //LAB_800165e8
-            RunningScript_800bc070.opPtr_08 = RunningScript_800bc070.commandPtr_0c;
+            RunningScript_800bc070.opOffset_08 = RunningScript_800bc070.commandOffset_0c;
           }
+
+          Arrays.fill(RunningScript_800bc070.params_20, null);
         } while(ret == 0);
 
         //LAB_800165f4
-        scriptState.commandPtr_18 = RunningScript_800bc070.opPtr_08;
+        state.offset_18 = RunningScript_800bc070.opOffset_08;
       }
 
       //LAB_80016614
@@ -2495,7 +2481,10 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800167bcL)
   public static long scriptMemCopy(final RunningScript a0) {
-    memcpy(a0.params_20[2].getAddress(), a0.params_20[1].getAddress(), a0.params_20[0].get() * 4);
+    for(int i = 0; i < a0.params_20[0].get(); i++) {
+      a0.params_20[2].array(i).set(a0.params_20[1].array(i).get());
+    }
+
     return 0;
   }
 
@@ -2507,13 +2496,13 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80016868L)
   public static long scriptAnd(final RunningScript a0) {
-    a0.params_20[1].and(a0.params_20[0]);
+    a0.params_20[1].and(a0.params_20[0].get());
     return 0;
   }
 
   @Method(0x8001688cL)
   public static long scriptOr(final RunningScript a0) {
-    a0.params_20[1].or(a0.params_20[0]);
+    a0.params_20[1].or(a0.params_20[0].get());
     return 0;
   }
 
@@ -2544,7 +2533,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016920L)
   public static long scriptShiftLeft(final RunningScript a0) {
-    a0.params_20[1].shl(a0.params_20[0]);
+    a0.params_20[1].shl(a0.params_20[0].get());
     return 0;
   }
 
@@ -2566,7 +2555,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016968L)
   public static long scriptAdd(final RunningScript a0) {
-    a0.params_20[1].add(a0.params_20[0]);
+    a0.params_20[1].add(a0.params_20[0].get());
     return 0;
   }
 
@@ -2577,7 +2566,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x8001698cL)
   public static long scriptSubtract(final RunningScript a0) {
-    a0.params_20[1].sub(a0.params_20[0]);
+    a0.params_20[1].sub(a0.params_20[0].get());
     return 0;
   }
 
@@ -2629,7 +2618,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016a5cL)
   public static long scriptMultiply(final RunningScript a0) {
-    a0.params_20[1].mul(a0.params_20[0]);
+    a0.params_20[1].mul(a0.params_20[0].get());
     return 0;
   }
 
@@ -2748,7 +2737,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80016d38L)
   public static long scriptJump(final RunningScript a0) {
-    a0.commandPtr_0c = a0.params_20[0];
+    a0.params_20[0].jump(a0);
     return 0;
   }
 
@@ -2774,7 +2763,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80016d4cL)
   public static long scriptConditionalJump(final RunningScript a0) {
     if(scriptCompare(a0, a0.params_20[0].get(), a0.params_20[1].get(), a0.opParam_18) != 0) {
-      a0.commandPtr_0c = a0.params_20[2];
+      a0.params_20[2].jump(a0);
     }
 
     //LAB_80016d8c
@@ -2804,7 +2793,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80016da0L)
   public static long scriptConditionalJump0(final RunningScript a0) {
     if(scriptCompare(a0, 0, a0.params_20[0].get(), a0.opParam_18) != 0) {
-      a0.commandPtr_0c = a0.params_20[1];
+      a0.params_20[1].jump(a0);
     }
 
     //LAB_80016dd8
@@ -2819,7 +2808,7 @@ public final class Scus94491BpeSegment {
     a0.params_20[0].decr();
 
     if(a0.params_20[0].get() != 0) {
-      a0.commandPtr_0c = a0.params_20[1];
+      a0.params_20[1].jump(a0);
     }
 
     //LAB_80016e14
@@ -2828,7 +2817,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80016e1cL)
   public static long FUN_80016e1c(final RunningScript a0) {
-    a0.commandPtr_0c = MEMORY.ref(4, a0.params_20[1].getAddress()).offset(MEMORY.ref(4, a0.params_20[1].getAddress()).offset(a0.params_20[0].get() * 0x4L).get() * 0x4L).cast(IntRef::new);
+    a0.params_20[1].array(a0.params_20[1].array(a0.params_20[0].get()).get()).jump(a0);
     return 0;
   }
 
@@ -2841,12 +2830,12 @@ public final class Scus94491BpeSegment {
   public static long scriptJumpAndLink(final RunningScript a0) {
     final ScriptState<?> struct = a0.scriptState_04;
 
-    for(int i = struct.commandStack_1c.length - 1; i > 0; i--) {
-      struct.commandStack_1c[i] = struct.commandStack_1c[i - 1];
+    for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
+      struct.callStack_1c[i] = struct.callStack_1c[i - 1];
     }
 
-    struct.commandStack_1c[0] = a0.commandPtr_0c;
-    a0.commandPtr_0c = a0.params_20[0];
+    struct.callStack_1c[0] = a0.commandOffset_0c;
+    a0.params_20[0].jump(a0);
 
     return 0;
   }
@@ -2860,13 +2849,13 @@ public final class Scus94491BpeSegment {
   public static long scriptJumpReturn(final RunningScript a0) {
     final ScriptState<?> struct = a0.scriptState_04;
 
-    a0.commandPtr_0c = struct.commandStack_1c[0];
+    a0.commandOffset_0c = struct.callStack_1c[0];
 
-    for(int i = 0; i < struct.commandStack_1c.length - 1; i++) {
-      struct.commandStack_1c[i] = struct.commandStack_1c[i + 1];
+    for(int i = 0; i < struct.callStack_1c.length - 1; i++) {
+      struct.callStack_1c[i] = struct.callStack_1c[i + 1];
     }
 
-    struct.commandStack_1c[struct.commandStack_1c.length - 1] = null;
+    struct.callStack_1c[struct.callStack_1c.length - 1] = -1;
 
     return 0;
   }
@@ -2875,15 +2864,14 @@ public final class Scus94491BpeSegment {
   public static long scriptJumpAndLinkTable(final RunningScript a0) {
     final ScriptState<?> struct = a0.scriptState_04;
 
-    for(int i = struct.commandStack_1c.length - 1; i > 0; i--) {
-      struct.commandStack_1c[i] = struct.commandStack_1c[i - 1];
+    for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
+      struct.callStack_1c[i] = struct.callStack_1c[i - 1];
     }
 
-    struct.commandStack_1c[0] = a0.commandPtr_0c;
+    struct.callStack_1c[0] = a0.commandOffset_0c;
 
-    // Equivalent to a + a[b] * 4
-    final long v1 = a0.params_20[1].getAddress();
-    a0.commandPtr_0c = MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20[0].get() * 0x4L).getSigned() * 0x4L, IntRef::new);
+    // p1[p1[p0]]
+    a0.params_20[1].array(a0.params_20[1].array(a0.params_20[0].get()).get()).jump(a0);
     return 0;
   }
 
@@ -2912,7 +2900,7 @@ public final class Scus94491BpeSegment {
   public static long scriptForkAndJump(final RunningScript a0) {
     scriptFork(a0.params_20[0].get());
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    state.commandPtr_18 = a0.params_20[1];
+    a0.params_20[1].jump(state);
     state.storage_44[32].set(a0.params_20[2].get());
     return 0;
   }
@@ -2922,14 +2910,15 @@ public final class Scus94491BpeSegment {
   public static long scriptForkAndReenter(final RunningScript s0) {
     scriptFork(s0.params_20[0].get());
     final ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[s0.params_20[0].get()];
-    a0.commandPtr_18 = a0.scriptPtr_14.offsetArr_00.get(s0.params_20[1].get()).deref();
+    //TODO byval vs byref
+    a0.offset_18 = a0.scriptPtr_14.offsetArr_00.get(s0.params_20[1].get()).get();
     a0.storage_44[32].set(s0.params_20[2].get());
     return 0;
   }
 
   @Method(0x800172c0L)
   public static long scriptConsumeChild(final RunningScript a0) {
-    a0.commandPtr_0c = scriptConsumeChild(a0.scriptStateIndex_00);
+    a0.commandOffset_0c = scriptConsumeChild(a0.scriptStateIndex_00);
     return 0;
   }
 
@@ -2953,7 +2942,7 @@ public final class Scus94491BpeSegment {
     //LAB_80017314
     int i;
     for(i = 0; i < 10; i++) {
-      if(a0.scriptState_04.commandStack_1c[i] == null) {
+      if(a0.scriptState_04.callStack_1c[i] == -1) {
         break;
       }
     }
@@ -3100,10 +3089,10 @@ public final class Scus94491BpeSegment {
     final int index = a0.params_20[1].get() >>> 5;
 
     if(a0.params_20[2].get() != 0) {
-      MEMORY.ref(4, a0.params_20[0].getAddress()).offset(index * 0x4L).oru(0x1L << shift);
+      a0.params_20[0].array(index).or(1 << shift);
     } else {
       //LAB_800175fc
-      MEMORY.ref(4, a0.params_20[0].getAddress()).offset(index * 0x4L).and(~(0x1L << shift));
+      a0.params_20[0].array(index).and(~(1 << shift));
     }
 
     //LAB_80017614
@@ -3121,7 +3110,7 @@ public final class Scus94491BpeSegment {
     final int shift = a0.params_20[1].get() & 0x1f;
     final int index = a0.params_20[1].get() >>> 5;
 
-    a0.params_20[2].set((MEMORY.ref(4, a0.params_20[0].getAddress()).offset(index * 0x4L).get() & 0x1L << shift) > 0 ? 1 : 0);
+    a0.params_20[2].set((a0.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
 
     return 0;
   }
