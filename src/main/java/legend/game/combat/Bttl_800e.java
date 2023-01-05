@@ -2489,7 +2489,7 @@ public final class Bttl_800e {
     } else if(a0 == -2) {
       //LAB_800e5a38
       //LAB_800e5a60
-      final BattleStruct4c struct = MEMORY.ref(4, mallocTail(4), BattleStruct4c::new);
+      final BattleStruct4c struct = MEMORY.ref(4, mallocTail(0x4c), BattleStruct4c::new);
       final long addr = struct.getAddress();
       for(int i = 0; i < 0x13; i++) {
         MEMORY.set(addr + i * 4, 4, script.params_20[1].array(i).get());
