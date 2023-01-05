@@ -49,6 +49,7 @@ import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import legend.game.scripting.GameVarArrayParam;
 import legend.game.scripting.GameVarParam;
+import legend.game.scripting.Param;
 import legend.game.scripting.ScriptInlineParam;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.title.Ttle;
@@ -362,7 +363,6 @@ public final class Scus94491BpeSegment {
   private static final Int2ObjectMap<Function<RunningScript, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
 
   static {
-/*TODO
     scriptFunctionDescriptions.put(0, r -> "pause;");
     scriptFunctionDescriptions.put(1, r -> "rewind;");
     scriptFunctionDescriptions.put(2, r -> {
@@ -407,41 +407,41 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 4";
       }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - continue" : "no - rewind");
     });
-    scriptFunctionDescriptions.put(8, r -> "*0x%08x (p1) = 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(10, r -> "memcpy(0x%08x (p1), 0x%08x (p2), %d (p0));".formatted(r.params_20[1].getAddress(), r.params_20[2].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(12, r -> "*0x%08x (p0) = 0;".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(16, r -> "*0x%08x (p1) &= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(17, r -> "*0x%08x (p1) |= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(18, r -> "*0x%08x (p1) ^= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(19, r -> "*0x%08x (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2].getAddress(), r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(20, r -> "~*0x%08x (p0);".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(21, r -> "*0x%08x (p1) <<= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(22, r -> "*0x%08x (p1) >>= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(24, r -> "*0x%08x (p1) += 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(25, r -> "*0x%08x (p1) -= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(26, r -> "*0x%08x (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1].getAddress(), r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(27, r -> "*0x%08x (p0) ++;".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(28, r -> "*0x%08x (p0) --;".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(29, r -> "-*0x%08x (p0);".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(30, r -> "|*0x%08x| (p0);".formatted(r.params_20[0].getAddress()));
-    scriptFunctionDescriptions.put(32, r -> "*0x%08x (p1) *= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(33, r -> "*0x%08x (p1) /= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(34, r -> "*0x%08x (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1].getAddress(), r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(35, r -> "*0x%08x (p1) %%= 0x%x (p0);".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(36, r -> "*0x%08x (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1].getAddress(), r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(12, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(16, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(17, r -> "*%s (p1) |= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(18, r -> "*%s (p1) ^= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(19, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(20, r -> "~*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(21, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(22, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(24, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(25, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(26, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(27, r -> "*%s (p0) ++;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(28, r -> "*%s (p0) --;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(29, r -> "-*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(30, r -> "|*%s| (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(32, r -> "*%s (p1) *= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(33, r -> "*%s (p1) /= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(34, r -> "*%s (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(35, r -> "*%s (p1) %%= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(36, r -> "*%s (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
     scriptFunctionDescriptions.put(43, scriptFunctionDescriptions.get(35));
     scriptFunctionDescriptions.put(44, scriptFunctionDescriptions.get(36));
-    scriptFunctionDescriptions.put(48, r -> "*0x%08x (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(50, r -> "*0x%08x (p1) = sin(0x%x (p0));".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(51, r -> "*0x%08x (p1) = cos(0x%x (p0));".formatted(r.params_20[1].getAddress(), r.params_20[0].get()));
-    scriptFunctionDescriptions.put(52, r -> "*0x%08x (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2].getAddress(), r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(48, r -> "*%s (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(50, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(51, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(52, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
     scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp) (%08x));".formatted(r.opParam_18, scriptSubFunctions_8004e29c.get(r.opParam_18).getPointer()));
-    scriptFunctionDescriptions.put(64, r -> "jmp 0x%x (p0);".formatted(r.params_20[0].getAddress() - r.scriptState_04.scriptPtr_14.getAddress()));
+    scriptFunctionDescriptions.put(64, r -> "jmp %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(65, r -> {
       final int operandA = r.params_20[0].get();
       final int operandB = r.params_20[1].get();
       final int op = r.opParam_18;
-      final long dest = r.params_20[2].getAddress() - r.scriptState_04.scriptPtr_14.getAddress();
+      final Param dest = r.params_20[2];
 
       return (switch(op) {
         case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
@@ -453,12 +453,12 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
         case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
         default -> "illegal cmp 65";
-      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - jmp 0x%x (p2)".formatted(dest) : "no - continue");
+      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(66, r -> {
       final int operandB = r.params_20[0].get();
       final int op = r.opParam_18;
-      final long dest = r.params_20[1].getAddress() - r.scriptState_04.scriptPtr_14.getAddress();
+      final Param dest = r.params_20[1];
 
       return (switch(op) {
         case 0 -> "if 0 <= 0x%x (p0)? %s;";
@@ -470,17 +470,16 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0 & 0x%x (p0)? %s;";
         case 7 -> "if 0 !& 0x%x (p0)? %s;";
         default -> "illegal cmp 66";
-      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - jmp 0x%x (p1)".formatted(dest) : "no - continue");
+      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
-    scriptFunctionDescriptions.put(72, r -> "func 0x%x (p0);".formatted(r.params_20[0].getAddress() - r.scriptState_04.scriptPtr_14.getAddress()));
+    scriptFunctionDescriptions.put(72, r -> "func %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(73, r -> "return;");
     scriptFunctionDescriptions.put(74, r -> {
-      final long a = r.params_20[1].getAddress();
-      final int b = r.params_20[0].get();
-      final long ptr = a + MEMORY.ref(4, a + b * 4).getSigned() * 4;
-      return "func 0x%x (p1 + p1[p0 * 4] * 4);".formatted(ptr - r.scriptState_04.scriptPtr_14.getAddress());
+      final Param a = r.params_20[1];
+      final Param b = r.params_20[0];
+      final Param ptr = a.array(a.array(b.get()).get());
+      return "func %s (p1[p1[p0]]);".formatted(ptr);
     });
-*/
   }
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
