@@ -243,7 +243,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
 
   public static final Struct84[] _800bdf38 = new Struct84[8];
-  public static final ArrayRef<Textbox4c> textboxes_800be358 = MEMORY.ref(4, 0x800be358L, ArrayRef.of(Textbox4c.class, 8, 0x4c, Textbox4c::new));
+  public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
   public static final Value _800be5b8 = MEMORY.ref(4, 0x800be5b8L);
   public static final Value _800be5bc = MEMORY.ref(4, 0x800be5bcL);
   public static final Value _800be5c0 = MEMORY.ref(4, 0x800be5c0L);

@@ -2162,9 +2162,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80015f6cL)
   public static void executeScriptFrame() {
-    long v0;
-    long v1;
-
     if(scriptsTickDisabled_800bc0b8.get() || scriptsDisabled_800bc0b9.get()) {
       return;
     }
@@ -2255,14 +2252,9 @@ public final class Scus94491BpeSegment {
             } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
               //LAB_80016360
               final int storage = state.storage_44[cmd2].get();
-//              v0 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + storage) * 0x4L;
-//              final long a0_0 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + MEMORY.ref(4, v0).get()) * 0x4L;
-//              final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + storage).get());
             } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
               //LAB_800163a0
-//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(state.storage_44[cmd0].get() * 0x4L).get() + state.storage_44[cmd1].get()) * 0x4L;
-//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0].get()).get() + state.storage_44[cmd1].get());
               RunningScript_800bc070.commandOffset_0c += 4;
             } else if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
@@ -2280,45 +2272,32 @@ public final class Scus94491BpeSegment {
               RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + state.storage_44[cmd1].get(), cmd2);
             } else if(paramType == 0x11) {
               //LAB_80016468
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.get(opCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(cmd2).get() * 0x4L).cast(UnsignedIntRef::new));
               assert false;
             } else if(paramType == 0x12) {
               //LAB_80016138
               //LAB_8001648c
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.offset((cmd0 + cmd1) * 0x4L).deref(4).offset(cmd2 * 0x4L).cast(UnsignedIntRef::new));
               assert false;
             } else if(paramType == 0x13) {
               //LAB_800164a4
-//              v1 = RunningScript_800bc070.opOffset_08.getAddress() + ((short)childCommand + cmd2) * 4;
-//              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2);
             } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
               //LAB_800164b4
               //LAB_800164cc
               //LAB_800164d4
-//              v1 = RunningScript_800bc070.opOffset_08.getAddress();
-//              v0 = MEMORY.ref(4, v1).offset(((short)childCommand + cmd2) * 0x4L).getSigned();
-//              final IntRef p = MEMORY.ref(4, v1).offset(((short)childCommand + v0) * 0x4L).cast(IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2).get());
             } else if(paramType == 0x15) {
               //LAB_800161a0
               //LAB_800164e0
               //LAB_80016580
-//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(state.storage_44[cmd0].get() * 0x4L).get() + cmd1) * 0x4L;
-//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0].get()).get() + cmd1);
               RunningScript_800bc070.commandOffset_0c += 4;
             } else if(paramType == 0x16) {
               //LAB_80016518
-//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(cmd0 * 0x4L).get() + state.storage_44[cmd1].get()) * 0x4L;
-//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + state.storage_44[cmd1].get());
               RunningScript_800bc070.commandOffset_0c += 4;
             } else if(paramType == 0x17) {
               //LAB_800161d4
               //LAB_8001654c
-//              v0 = commandPtr + (MEMORY.ref(4, commandPtr).offset(cmd0 * 0x4L).get() + cmd1) * 0x4L;
-//              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
               RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + cmd1);
               RunningScript_800bc070.commandOffset_0c += 4;
             } else { // Treated as an immediate if not a valid op

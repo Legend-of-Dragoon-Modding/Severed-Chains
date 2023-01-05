@@ -2591,16 +2591,16 @@ public class WMap {
           if(v0 == 0x1L) {
             //LAB_800d49e4
             textZ_800bdf00.set(14);
-            textboxes_800be358.get(7).z_0c.set(14);
+            textboxes_800be358[7].z_0c = 14;
 
             if(width.get() < 4) {
-              textboxes_800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358[7].chars_18 = 4;
             } else {
-              textboxes_800be358.get(7).chars_18.set((short)width.get());
+              textboxes_800be358[7].chars_18 = width.get();
             }
 
             //LAB_800d4a28
-            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
+            textboxes_800be358[7].lines_1a = lines.get();
             _800c86f0.setu(0x2L);
             //LAB_800d4974
           } else if(v0 == 0) {
@@ -2610,36 +2610,36 @@ public class WMap {
 
             //LAB_800d49e4
             textZ_800bdf00.set(14);
-            textboxes_800be358.get(7).z_0c.set(14);
+            textboxes_800be358[7].z_0c = 14;
 
             if(width.get() < 4) {
-              textboxes_800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358[7].chars_18 = 4;
             } else {
-              textboxes_800be358.get(7).chars_18.set((short)width.get());
+              textboxes_800be358[7].chars_18 = width.get();
             }
 
             //LAB_800d4a28
-            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
+            textboxes_800be358[7].lines_1a = lines.get();
             _800c86f0.setu(0x2L);
           } else if(v0 == 0x2L) {
             //LAB_800d4a40
-            textboxes_800be358.get(7).chars_18.set((short)width.get());
+            textboxes_800be358[7].chars_18 = width.get();
 
             if(width.get() < 4) {
-              textboxes_800be358.get(7).chars_18.set((short)4);
+              textboxes_800be358[7].chars_18 = 4;
             }
 
             //LAB_800d4a6c
-            textboxes_800be358.get(7).lines_1a.set((short)lines.get());
-            textboxes_800be358.get(7).width_1c.set(textboxes_800be358.get(7).chars_18.get() * 9 / 2);
-            textboxes_800be358.get(7).height_1e.set((short)(textboxes_800be358.get(7).lines_1a.get() * 6));
-            textboxes_800be358.get(7).x_14.set((short)x);
-            textboxes_800be358.get(7).y_16.set((short)y);
+            textboxes_800be358[7].lines_1a = lines.get();
+            textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
+            textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6;
+            textboxes_800be358[7].x_14 = x;
+            textboxes_800be358[7].y_16 = y;
           }
 
           //LAB_800d4aec
           textZ_800bdf00.set(26);
-          textboxes_800be358.get(7).z_0c.set(26);
+          textboxes_800be358[7].z_0c = 26;
 
           FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, 0, 0);
         }
@@ -4120,7 +4120,7 @@ public class WMap {
         break;
 
       case 6:
-        textboxes_800be358.get(6).z_0c.set(18);
+        textboxes_800be358[6].z_0c = 18;
 
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
@@ -4424,50 +4424,50 @@ public class WMap {
 
         //LAB_800dca40
         textZ_800bdf00.set(14);
-        textboxes_800be358.get(7).z_0c.set(14);
+        textboxes_800be358[7].z_0c = 14;
 
         if(width >= 4) {
-          textboxes_800be358.get(7).chars_18.set((short)width);
+          textboxes_800be358[7].chars_18 = width;
         } else {
-          textboxes_800be358.get(7).chars_18.set((short)4);
+          textboxes_800be358[7].chars_18 = 4;
         }
 
         //LAB_800dca84
-        textboxes_800be358.get(7).lines_1a.set((short)lines);
+        textboxes_800be358[7].lines_1a = lines;
         _800c86f0.setu(2);
       } else if(v0 == 1) {
         textZ_800bdf00.set(14);
-        textboxes_800be358.get(7).z_0c.set(14);
+        textboxes_800be358[7].z_0c = 14;
 
         if(width >= 4) {
-          textboxes_800be358.get(7).chars_18.set((short)width);
+          textboxes_800be358[7].chars_18 = width;
         } else {
-          textboxes_800be358.get(7).chars_18.set((short)4);
+          textboxes_800be358[7].chars_18 = 4;
         }
 
         //LAB_800dca84
-        textboxes_800be358.get(7).lines_1a.set((short)lines);
+        textboxes_800be358[7].lines_1a = lines;
         _800c86f0.setu(2);
         //LAB_800dc9d0
       } else if(v0 == 2) {
         //LAB_800dca9c
         if(width >= 4) {
-          textboxes_800be358.get(7).chars_18.set((short)width);
+          textboxes_800be358[7].chars_18 = width;
         } else {
-          textboxes_800be358.get(7).chars_18.set((short)4);
+          textboxes_800be358[7].chars_18 = 4;
         }
 
         //LAB_800dcac8
-        textboxes_800be358.get(7).lines_1a.set((short)lines);
-        textboxes_800be358.get(7).width_1c.set(textboxes_800be358.get(7).chars_18.get() * 9 / 2);
-        textboxes_800be358.get(7).height_1e.set((short)(textboxes_800be358.get(7).lines_1a.get() * 6));
-        textboxes_800be358.get(7).x_14.set(x);
-        textboxes_800be358.get(7).y_16.set(y);
+        textboxes_800be358[7].lines_1a = lines;
+        textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
+        textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6;
+        textboxes_800be358[7].x_14 = x;
+        textboxes_800be358[7].y_16 = y;
       }
 
       //LAB_800dcb48
       textZ_800bdf00.set(18);
-      textboxes_800be358.get(7).z_0c.set(18);
+      textboxes_800be358[7].z_0c = 18;
       FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222.get()).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), 0, 0);
     }
 
@@ -6634,7 +6634,7 @@ public class WMap {
 
         FUN_800ce4dc(_800c6898.deref());
 
-        if(textboxes_800be358.get(6)._00.get() == 0 && textboxes_800be358.get(7)._00.get() == 0 && _800c6898.deref()._34.get() == 0) {
+        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && _800c6898.deref()._34.get() == 0) {
           _800c68a4.setu(0x9L);
         }
 
@@ -6852,47 +6852,47 @@ public class WMap {
         if(v0 == 0x1L) {
           //LAB_800e71d8
           textZ_800bdf00.set(i + 14);
-          textboxes_800be358.get(i).z_0c.set(i + 14);
+          textboxes_800be358[i].z_0c = i + 14;
 
           if(width.get() >= 4) {
-            textboxes_800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358[i].chars_18 = width.get();
           } else {
-            textboxes_800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358[i].chars_18 = 4;
           }
 
           //LAB_800e7298
-          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358[i].lines_1a = lines.get();
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
           if(width.get() >= 4) {
-            textboxes_800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358[i].chars_18 = width.get();
           } else {
-            textboxes_800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358[i].chars_18 = 4;
           }
 
           //LAB_800e735c
-          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
-          textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
-          textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
-          textboxes_800be358.get(i).x_14.set((short)x);
-          textboxes_800be358.get(i).y_16.set((short)y);
+          textboxes_800be358[i].lines_1a = lines.get();
+          textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
+          textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
+          textboxes_800be358[i].x_14 = x;
+          textboxes_800be358[i].y_16 = y;
         } else if((int)v0 >= 0x2L) {
           //LAB_800e7154
           if(v0 == 0x2L) {
             //LAB_800e72e8
             if(width.get() >= 4) {
-              textboxes_800be358.get(i).chars_18.set((short)width.get());
+              textboxes_800be358[i].chars_18 = width.get();
             } else {
-              textboxes_800be358.get(i).chars_18.set((short)4);
+              textboxes_800be358[i].chars_18 = 4;
             }
 
             //LAB_800e735c
-            textboxes_800be358.get(i).lines_1a.set((short)lines.get());
-            textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
-            textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
-            textboxes_800be358.get(i).x_14.set((short)x);
-            textboxes_800be358.get(i).y_16.set((short)y);
+            textboxes_800be358[i].lines_1a = lines.get();
+            textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
+            textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
+            textboxes_800be358[i].x_14 = x;
+            textboxes_800be358[i].y_16 = y;
           }
         } else if(v0 == 0) {
           //LAB_800e7168
@@ -6902,36 +6902,36 @@ public class WMap {
 
           //LAB_800e71d8
           textZ_800bdf00.set(i + 14);
-          textboxes_800be358.get(i).z_0c.set(i + 14);
+          textboxes_800be358[i].z_0c = i + 14;
 
           if(width.get() >= 4) {
-            textboxes_800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358[i].chars_18 = width.get();
           } else {
-            textboxes_800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358[i].chars_18 = 4;
           }
 
           //LAB_800e7298
-          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
+          textboxes_800be358[i].lines_1a = lines.get();
           _800c86d4.offset(i * 0x4L).setu(0x2L);
 
           //LAB_800e72e8
           if(width.get() >= 4) {
-            textboxes_800be358.get(i).chars_18.set((short)width.get());
+            textboxes_800be358[i].chars_18 = width.get();
           } else {
-            textboxes_800be358.get(i).chars_18.set((short)4);
+            textboxes_800be358[i].chars_18 = 4;
           }
 
           //LAB_800e735c
-          textboxes_800be358.get(i).lines_1a.set((short)lines.get());
-          textboxes_800be358.get(i).width_1c.set(textboxes_800be358.get(i).chars_18.get() * 9 / 2);
-          textboxes_800be358.get(i).height_1e.set((short)(textboxes_800be358.get(i).lines_1a.get() * 6));
-          textboxes_800be358.get(i).x_14.set((short)x);
-          textboxes_800be358.get(i).y_16.set((short)y);
+          textboxes_800be358[i].lines_1a = lines.get();
+          textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
+          textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
+          textboxes_800be358[i].x_14 = x;
+          textboxes_800be358[i].y_16 = y;
         }
 
         //LAB_800e74d8
         textZ_800bdf00.set(i + 119);
-        textboxes_800be358.get(i).z_0c.set(i + 119);
+        textboxes_800be358[i].z_0c = i + 119;
 
         FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
       }
