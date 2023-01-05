@@ -2554,6 +2554,8 @@ public final class Scus94491BpeSegment_8002 {
       _800bdf38[i] = new Struct84();
       _800bdf38[i]._00 = 0;
 
+      textboxArrows_800bdea0[i] = new TextboxArrow0c();
+
       setTextboxArrowPosition(i, 0);
     }
 
@@ -4588,35 +4590,35 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029920L)
   public static void setTextboxArrowPosition(final int textboxIndex, final int a1) {
-    final TextboxArrow0c arrow = textboxArrows_800bdea0.get(textboxIndex);
+    final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
     if(a1 == 0) {
-      arrow._00.set(0);
+      arrow._00 = 0;
     } else {
       //LAB_80029948
-      arrow._00.or(1);
+      arrow._00 |= 1;
     }
 
     //LAB_80029970
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    arrow.x_04.set((short)textbox.x_14);
-    arrow.y_06.set((short)(textbox.y_16 + textbox.lines_1a * 6));
-    arrow.spriteIndex_08.set((short)0);
+    arrow.x_04 = textbox.x_14;
+    arrow.y_06 = textbox.y_16 + textbox.lines_1a * 6;
+    arrow.spriteIndex_08 = 0;
   }
 
   @Method(0x800299d4L)
   public static void renderTextboxArrow(final int textboxIndex) {
-    final TextboxArrow0c arrow = textboxArrows_800bdea0.get(textboxIndex);
+    final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
-    if((arrow._00.get() & 0x1) != 0) {
+    if((arrow._00 & 0x1) != 0) {
       final Struct84 s2 = _800bdf38[textboxIndex];
       if((s2._08 & 0x1000) != 0) {
-        final int left = arrow.x_04.get() - centreScreenX_1f8003dc.get() - 8;
-        final int right = arrow.x_04.get() - centreScreenX_1f8003dc.get() + 8;
-        final int top = arrow.y_06.get() - centreScreenY_1f8003de.get() - 6;
-        final int bottom = arrow.y_06.get() - centreScreenY_1f8003de.get() + 8;
-        final int leftU = 64 + arrow.spriteIndex_08.get() * 16;
-        final int rightU = 80 + arrow.spriteIndex_08.get() * 16;
+        final int left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8;
+        final int right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8;
+        final int top = arrow.y_06 - centreScreenY_1f8003de.get() - 6;
+        final int bottom = arrow.y_06 - centreScreenY_1f8003de.get() + 8;
+        final int leftU = 64 + arrow.spriteIndex_08 * 16;
+        final int rightU = 80 + arrow.spriteIndex_08 * 16;
 
         GPU.queueCommand(s2.z_0c, new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
@@ -4905,17 +4907,17 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a4c4L)
   public static void updateTextboxArrowSprite(final int textboxIndex) {
-    final TextboxArrow0c arrow = textboxArrows_800bdea0.get(textboxIndex);
+    final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
-    if((arrow._00.get() & 0x1L) != 0) {
+    if((arrow._00 & 0x1) != 0) {
       if((_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
         if((tickCount_800bb0fc.get() & 0x1L) == 0) {
-          arrow.spriteIndex_08.incr();
+          arrow.spriteIndex_08++;
         }
 
         //LAB_8002a53c
-        if(arrow.spriteIndex_08.get() >= 7) {
-          arrow.spriteIndex_08.set((short)0);
+        if(arrow.spriteIndex_08 >= 7) {
+          arrow.spriteIndex_08 = 0;
         }
       }
     }

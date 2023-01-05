@@ -146,6 +146,10 @@ public class ScriptDebuggerController {
   private void updateScriptVars() {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[this.scriptSelector.getValue().index];
 
+    if(state == null) {
+      return;
+    }
+
     for(int storageIndex = 0; storageIndex < 33; storageIndex++) {
       this.storage.get(storageIndex).update();
     }
@@ -160,23 +164,47 @@ public class ScriptDebuggerController {
       this.stack.get(stackIndex).update();
     }
 
-    this.ticker.setText(state.ticker_04.toString());
-    this.renderer.setText(state.renderer_08.toString());
-    this.tempTicker.setText(state.tempTicker_10.toString());
-    this.destructor.setText(state.destructor_0c.toString());
+    if(state.ticker_04 != null) {
+      this.ticker.setText(state.ticker_04.toString());
+    } else {
+      this.ticker.setText("null");
+    }
+
+    if(state.renderer_08 != null) {
+      this.renderer.setText(state.renderer_08.toString());
+    } else {
+      this.renderer.setText("null");
+    }
+
+    if(state.tempTicker_10 != null) {
+      this.tempTicker.setText(state.tempTicker_10.toString());
+    } else {
+      this.tempTicker.setText("null");
+    }
+
+    if(state.destructor_0c != null) {
+      this.destructor.setText(state.destructor_0c.toString());
+    } else {
+      this.destructor.setText("null");
+    }
+
     this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getAddress()));
     this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5].get()));
     this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6].get()));
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
+    if(scriptStatePtrArr_800bc1c0[scriptIndex] == null) {
+      return "null";
+    }
+
     final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex].get();
     return "0x%1$x (%1$d)".formatted(val);
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
     return GameEngine.MEMORY.waitForLock(() -> {
-      final int val = scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex];
+      final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
 
       if(val == -1) {
         return "null";

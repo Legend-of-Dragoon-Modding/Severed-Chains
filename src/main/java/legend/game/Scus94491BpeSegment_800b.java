@@ -232,7 +232,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdd24 = MEMORY.ref(4, 0x800bdd24L);
 
-  public static final ArrayRef<TextboxArrow0c> textboxArrows_800bdea0 = MEMORY.ref(4, 0x800bdea0L, ArrayRef.of(TextboxArrow0c.class, 8, 0xc, TextboxArrow0c::new));
+  public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
   public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);

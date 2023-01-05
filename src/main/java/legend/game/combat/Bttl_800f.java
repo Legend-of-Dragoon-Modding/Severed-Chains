@@ -798,10 +798,6 @@ public final class Bttl_800f {
 
     //LAB_800f2a64
     //LAB_800f2a68
-    if(damage >= 9999) {
-      damage = 9999;
-    }
-
     //LAB_800f2a74
     if(defender.all_04.get(resistanceStats[attackType]).get() != 0) {
       damage /= 2;
