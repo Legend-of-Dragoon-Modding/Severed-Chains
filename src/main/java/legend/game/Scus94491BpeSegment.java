@@ -2086,7 +2086,8 @@ public final class Scus94491BpeSegment {
   public static int scriptFork(final int parentScriptIndex) {
     final int childScriptIndex = findFreeScriptState();
 
-    LOGGER.info("Forking script %d to %d", parentScriptIndex, childScriptIndex);
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Forking script %d to %d %s.%s(%s:%d)", parentScriptIndex, childScriptIndex, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     if(childScriptIndex < 0) {
       //LAB_80015dd4
@@ -2192,6 +2193,10 @@ public final class Scus94491BpeSegment {
           if(scriptLog[index]) {
             System.err.println(Long.toHexString(RunningScript_800bc070.commandOffset_0c) + " (" + RunningScript_800bc070.commandOffset_0c + ')');
             System.err.printf("param[p] = %x%n", opCommand >>> 16);
+          }
+
+          if(RunningScript_800bc070.paramCount_14 > 10) {
+            throw new RuntimeException("Too many parameters!");
           }
 
           RunningScript_800bc070.commandOffset_0c += 4;
@@ -2876,6 +2881,8 @@ public final class Scus94491BpeSegment {
   /** Forks the script and jumps to an address */
   @Method(0x800171c0L)
   public static long scriptForkAndJump(final RunningScript a0) {
+    LOGGER.info("Script %d forking script %s and jumping to %s", a0.scriptStateIndex_00, a0.params_20[0], a0.params_20[1]);
+
     scriptFork(a0.params_20[0].get());
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
     a0.params_20[1].jump(state);
@@ -2888,7 +2895,6 @@ public final class Scus94491BpeSegment {
   public static long scriptForkAndReenter(final RunningScript s0) {
     scriptFork(s0.params_20[0].get());
     final ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[s0.params_20[0].get()];
-    //TODO byval vs byref
     a0.offset_18 = a0.scriptPtr_14.offsetArr_00.get(s0.params_20[1].get()).get();
     a0.storage_44[32].set(s0.params_20[2].get());
     return 0;
