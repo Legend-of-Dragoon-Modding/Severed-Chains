@@ -34,7 +34,7 @@ public class LodString implements MemoryRef {
 
   public static LodString fromParam(final Param param) {
     int charCount = 0;
-    for(int paramIndex = 0; paramIndex < 100; paramIndex++) {
+    for(int paramIndex = 0; ; paramIndex++) {
       final Param p = param.array(paramIndex);
 
       charCount++;
@@ -60,7 +60,7 @@ public class LodString implements MemoryRef {
   public String get() {
     final StringBuilder sb = new StringBuilder();
 
-    for(int i = 0; i < 0x80; i++) {
+    for(int i = 0; i < (this.chars != null ? this.chars.length : 500); i++) {
       final long c = this.charAt(i);
 
       if(c == 0xa0ffL || c == 0xffffL) {
@@ -164,6 +164,10 @@ public class LodString implements MemoryRef {
 
   public int charAt(final int index) {
     if(this.ref == null) {
+      if(index >= this.chars.length) {
+        throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.chars.length));
+      }
+
       return this.chars[index];
     }
 
