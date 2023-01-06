@@ -88,7 +88,4 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
-
-  /** TODO this is in an overlay that we don't have yet */
-  public static final FunctionRef<RunningScript, Long> scriptSubFunction_800ca734 = MEMORY.ref(4, 0x800ca734L, FunctionRef::new);
 }

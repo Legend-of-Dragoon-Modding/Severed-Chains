@@ -157,6 +157,11 @@ public final class Temp {
     return 0;
   }
 
+  @Method(0x800ca734L)
+  public static FlowControl FUN_800ca734(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x800ca89cL)
   public static void FUN_800ca89c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final TempEffectData_08 s4 = manager.effect_44.derefAs(TempEffectData_08.class);
@@ -185,7 +190,7 @@ public final class Temp {
   }
 
   @Method(0x800caae4L)
-  public static long FUN_800caae4(final RunningScript script) {
+  public static FlowControl FUN_800caae4(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
       script.scriptStateIndex_00,
       0x8,
@@ -204,7 +209,7 @@ public final class Temp {
     effect._06.set((short)0);
     manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   private static class TempEffectData_d18 extends BttlScriptData6cSubBase1 {

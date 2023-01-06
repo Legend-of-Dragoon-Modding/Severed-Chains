@@ -2429,13 +2429,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80024480L)
-  public static long scriptGiveGold(final RunningScript script) {
+  public static FlowControl scriptGiveGold(final RunningScript script) {
     script.params_20[1].set(addGold(script.params_20[0].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800244c4L)
-  public static long scriptGiveChestContents(final RunningScript s0) {
+  public static FlowControl scriptGiveChestContents(final RunningScript s0) {
     final int a0 = switch(s0.params_20[0].get()) {
       case 0xfb -> addGold(20);
       case 0xfc -> addGold(50);
@@ -2449,11 +2449,11 @@ public final class Scus94491BpeSegment_8002 {
     s0.params_20[1].set(a0);
 
     //LAB_80024580
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80024590L)
-  public static long scriptTakeItem(final RunningScript script) {
+  public static FlowControl scriptTakeItem(final RunningScript script) {
     final int itemId = script.params_20[0].get() & 0xff;
 
     final GameState52c state = gameState_800babc8;
@@ -2464,7 +2464,7 @@ public final class Scus94491BpeSegment_8002 {
         if(state.equipment_1e8.get(i).get() == itemId) {
           //LAB_8002460c
           script.params_20[1].set(takeEquipment(i));
-          return 0;
+          return FlowControl.CONTINUE;
         }
       }
 
@@ -2476,7 +2476,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002463c
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8002498cL)
@@ -2587,7 +2587,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80025158L)
-  public static long FUN_80025158(final RunningScript a0) {
+  public static FlowControl FUN_80025158(final RunningScript a0) {
     final int s1 = a0.params_20[0].get();
     FUN_800258a8(s1);
 
@@ -2598,13 +2598,13 @@ public final class Scus94491BpeSegment_8002 {
     struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 8);
     FUN_8002a2b4(s1);
     FUN_80027d74(s1, struct84.x_14, struct84.y_16);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80025218L)
-  public static long scriptAddSobjTextbox(final RunningScript script) {
+  public static FlowControl scriptAddSobjTextbox(final RunningScript script) {
     if(script.params_20[2].get() == 0) {
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     final int textboxIndex = script.params_20[0].get();
@@ -2655,11 +2655,11 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80025494
     //LAB_80025498
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800254bcL)
-  public static long FUN_800254bc(final RunningScript a0) {
+  public static FlowControl FUN_800254bc(final RunningScript a0) {
     final int textboxIndex = a0.params_20[0].get();
 
     if(a0.params_20[1].get() != 0) {
@@ -2706,11 +2706,11 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800256f0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80025718L)
-  public static long FUN_80025718(final RunningScript a0) {
+  public static FlowControl FUN_80025718(final RunningScript a0) {
     final Struct84 s0 = _800bdf38[a0.params_20[0].get()];
 
     s0._6c = -1;
@@ -2726,7 +2726,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800257bc
     s0._08 |= 0x800;
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800257e0L)
@@ -4413,7 +4413,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80028ff8L)
-  public static long FUN_80028ff8(final RunningScript a0) {
+  public static FlowControl FUN_80028ff8(final RunningScript a0) {
     clearTextbox(0);
 
     final Textbox4c struct4c = textboxes_800be358[0];
@@ -4443,7 +4443,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029100
     FUN_80027d74(0, struct84.x_14, struct84.y_16);
     a0.params_20[0].set(0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /** The purple bar used in inn dialogs, etc. */
@@ -4658,12 +4658,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029b68L)
-  public static long FUN_80029b68(final RunningScript a0) {
+  public static FlowControl FUN_80029b68(final RunningScript a0) {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
       if(textboxes_800be358[i]._00 == 0 && _800bdf38[i]._00 == 0) {
         a0.params_20[0].set(i);
-        return 0;
+        return FlowControl.CONTINUE;
       }
 
       //LAB_80029bac
@@ -4671,11 +4671,11 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     a0.params_20[0].set(-1);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029bd4L)
-  public static long FUN_80029bd4(final RunningScript a0) {
+  public static FlowControl FUN_80029bd4(final RunningScript a0) {
     final int textboxIndex = a0.params_20[0].get();
     clearTextbox(textboxIndex);
 
@@ -4685,30 +4685,30 @@ public final class Scus94491BpeSegment_8002 {
     struct4c.y_16 = a0.params_20[3].get();
     struct4c.chars_18 = a0.params_20[4].get() + 1;
     struct4c.lines_1a = a0.params_20[5].get() + 1;
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029c98L)
-  public static long FUN_80029c98(final RunningScript a0) {
+  public static FlowControl FUN_80029c98(final RunningScript a0) {
     final int textboxIndex = a0.params_20[0].get();
     a0.params_20[1].set(textboxes_800be358[textboxIndex]._00 | _800bdf38[textboxIndex]._00);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029cf4L)
-  public static long FUN_80029cf4(final RunningScript a0) {
+  public static FlowControl FUN_80029cf4(final RunningScript a0) {
     a0.params_20[1].set(textboxes_800be358[a0.params_20[0].get()]._00);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029d34L)
-  public static long FUN_80029d34(final RunningScript a0) {
+  public static FlowControl FUN_80029d34(final RunningScript a0) {
     a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._00);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029d6cL)
-  public static long FUN_80029d6c(final RunningScript a0) {
+  public static FlowControl FUN_80029d6c(final RunningScript a0) {
     final int s1 = a0.params_20[0].get();
     final Struct84 struct84 = _800bdf38[s1];
 
@@ -4720,11 +4720,11 @@ public final class Scus94491BpeSegment_8002 {
     struct84._00 = 0;
     textboxes_800be358[s1]._00 = 0;
     setTextboxArrowPosition(s1, 0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029e04L)
-  public static long FUN_80029e04(final RunningScript a0) {
+  public static FlowControl FUN_80029e04(final RunningScript a0) {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
       final Textbox4c s2 = textboxes_800be358[i];
@@ -4740,17 +4740,17 @@ public final class Scus94491BpeSegment_8002 {
       setTextboxArrowPosition(i, 0);
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029e8cL)
-  public static long FUN_80029e8c(final RunningScript a0) {
+  public static FlowControl FUN_80029e8c(final RunningScript a0) {
     _800bdf10.offset(Math.min(9, a0.params_20[0].get()) * 0x4L).setu(a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029eccL)
-  public static long FUN_80029ecc(final RunningScript a0) {
+  public static FlowControl FUN_80029ecc(final RunningScript a0) {
     final Struct84 v1 = _800bdf38[a0.params_20[0].get()];
     if(v1._00 == 16 && (v1._08 & 0x20) != 0) {
       v1._08 ^= 0x20;
@@ -4759,19 +4759,19 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029f18
     //LAB_80029f1c
     v1._08 |= 0x40;
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029f48L)
-  public static long FUN_80029f48(final RunningScript a0) {
+  public static FlowControl FUN_80029f48(final RunningScript a0) {
     a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._6c);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80029f80L)
-  public static long FUN_80029f80(final RunningScript a0) {
+  public static FlowControl FUN_80029f80(final RunningScript a0) {
     a0.params_20[1].set(_800bdf38[a0.params_20[0].get()]._7c);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8002a058L)

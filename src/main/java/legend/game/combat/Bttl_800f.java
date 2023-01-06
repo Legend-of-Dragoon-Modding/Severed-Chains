@@ -19,6 +19,7 @@ import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.scripting.FlowControl;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -655,7 +656,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f2500L)
-  public static long FUN_800f2500(final RunningScript s3) {
+  public static FlowControl FUN_800f2500(final RunningScript s3) {
     final long t0;
     final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[s3.params_20[0].get()];
     final BattleObject27c s2 = (BattleObject27c)v0.innerStruct_00;
@@ -706,11 +707,11 @@ public final class Bttl_800f {
     //LAB_800f2640
     s3.params_20[2].set(damage);
     s3.params_20[3].set(FUN_800f7c5c(s3.params_20[0].get(), s3.params_20[1].get(), 0));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f2694L)
-  public static long FUN_800f2694(final RunningScript s1) {
+  public static FlowControl FUN_800f2694(final RunningScript s1) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s1.params_20[0].get()].innerStruct_00;
     bobj.spellId_4e.set((short)s1.params_20[2].get());
     clearTempWeaponAndSpellStats(bobj);
@@ -744,11 +745,11 @@ public final class Bttl_800f {
     //LAB_800f27ec
     s1.params_20[3].set(damage);
     s1.params_20[4].set(FUN_800f7c5c(s1.params_20[0].get(), s1.params_20[1].get(), 1));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f2838L)
-  public static long FUN_800f2838(final RunningScript s1) {
+  public static FlowControl FUN_800f2838(final RunningScript s1) {
     final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[s1.params_20[0].get()].innerStruct_00;
     clearTempWeaponAndSpellStats(s0);
     setTempWeaponStats(s1.params_20[0].get());
@@ -779,7 +780,7 @@ public final class Bttl_800f {
     s1.params_20[3].set(a1);
     s1.params_20[4].set(FUN_800f7c5c(s1.params_20[0].get(), s1.params_20[1].get(), 0x2L));
     FUN_800f8854(s1.params_20[0].get(), s1.params_20[1].get(), 0x1L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f29d4L)
@@ -1537,7 +1538,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f43dcL)
-  public static long FUN_800f43dc(final RunningScript script) {
+  public static FlowControl FUN_800f43dc(final RunningScript script) {
     //LAB_800f43f8
     //LAB_800f4410
     int charSlot;
@@ -1568,11 +1569,11 @@ public final class Bttl_800f {
 
     //LAB_800f4500
     script.params_20[2].set(struct.sp_0a.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f4518L)
-  public static long FUN_800f4518(final RunningScript a0) {
+  public static FlowControl FUN_800f4518(final RunningScript a0) {
     //LAB_800f4534
     //LAB_800f454c
     int i;
@@ -1596,11 +1597,11 @@ public final class Bttl_800f {
     }
 
     //LAB_800f45f8
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f4600L)
-  public static long FUN_800f4600(final RunningScript a0) {
+  public static FlowControl FUN_800f4600(final RunningScript a0) {
     final short[] sp0x00 = new short[17];
     for(int i = 0; i < sp0x00.length; i++) {
       sp0x00[i] = (short)_800c7124.offset(i * 0x2L).getSigned();
@@ -1656,15 +1657,15 @@ public final class Bttl_800f {
 
     //LAB_800f4800
     //LAB_800f4804
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f480cL)
-  public static long FUN_800f480c(final RunningScript s0) {
+  public static FlowControl FUN_800f480c(final RunningScript s0) {
     final long v0;
     BattleObject27c a1 = null;
     final long t5;
-    v0 = 0x800c_0000L;
+    v0 = 0x800c_0000L; //TODO
     t5 = v0 + 0x7148L;
     final int[] sp0x10 = new int[8];
     for(int i = 0; i < sp0x10.length; i++) {
@@ -1692,10 +1693,10 @@ public final class Bttl_800f {
     //LAB_800f48f4
     int v1 = FUN_800f7768(sp0x10[t0 * 2], sp0x10[t0 * 2 + 1]);
     if(v1 == 0) {
-      return 0x2L;
+      return FlowControl.PAUSE_AND_REWIND;
     }
 
-    if(v1 == 0x1L) {
+    if(v1 == 1) {
       //LAB_800f4930
       v1 = struct58._48.get();
     } else {
@@ -1708,7 +1709,7 @@ public final class Bttl_800f {
     s0.params_20[1].set(v1);
 
     //LAB_800f4954
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f4964L)
@@ -3789,40 +3790,40 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f95d0L)
-  public static long FUN_800f95d0(final RunningScript a0) {
+  public static FlowControl FUN_800f95d0(final RunningScript a0) {
     a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 0));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9618L)
-  public static long FUN_800f9618(final RunningScript a0) {
+  public static FlowControl FUN_800f9618(final RunningScript a0) {
     a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 1));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9660L)
-  public static long FUN_800f9660(final RunningScript a0) {
+  public static FlowControl FUN_800f9660(final RunningScript a0) {
     a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 2));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f96a8L)
-  public static long FUN_800f96a8(final RunningScript a0) {
+  public static FlowControl FUN_800f96a8(final RunningScript a0) {
     setTempSpellStats(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f96d4L)
-  public static long FUN_800f96d4(final RunningScript a0) {
+  public static FlowControl FUN_800f96d4(final RunningScript a0) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     a0.params_20[1].set(v1.model_148.coord2_14.coord.transfer.getX());
     a0.params_20[2].set(v1.model_148.coord2_14.coord.transfer.getY());
     a0.params_20[3].set(v1.model_148.coord2_14.coord.transfer.getZ());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9730L)
-  public static long FUN_800f9730(final RunningScript a0) {
+  public static FlowControl FUN_800f9730(final RunningScript a0) {
     //LAB_800f9758
     for(int i = 0; i < 12; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
@@ -3836,35 +3837,35 @@ public final class Bttl_800f {
     }
 
     //LAB_800f97c8
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f97d8L)
-  public static long FUN_800f97d8(final RunningScript a0) {
+  public static FlowControl FUN_800f97d8(final RunningScript a0) {
     FUN_800f4964();
     FUN_800f49bc(((BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00).charIndex_272.get(), (short)a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f984cL)
-  public static long scriptRenderRecover(final RunningScript a0) {
+  public static FlowControl scriptRenderRecover(final RunningScript a0) {
     setFloatingNumCoordsAndRender(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9884L)
-  public static long FUN_800f9884(final RunningScript a0) {
+  public static FlowControl FUN_800f9884(final RunningScript a0) {
     setTempWeaponStats(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f98b0L)
-  public static long FUN_800f98b0(final RunningScript s3) {
+  public static FlowControl FUN_800f98b0(final RunningScript s3) {
     int itemId = s3.params_20[0].get();
 
     if(gameState_800babc8.itemCount_1e6.get() == 0) {
       s3.params_20[1].set(-1);
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     if(itemId == -1) {
@@ -3891,11 +3892,11 @@ public final class Bttl_800f {
 
     //LAB_800f99c0
     s3.params_20[1].set(itemId);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f99ecL)
-  public static long FUN_800f99ec(final RunningScript a0) {
+  public static FlowControl FUN_800f99ec(final RunningScript a0) {
     final int s1;
     if(giveItem(a0.params_20[0].get()) == 0) {
       s1 = a0.params_20[0].get();
@@ -3905,11 +3906,11 @@ public final class Bttl_800f {
 
     //LAB_800f9a2c
     a0.params_20[1].set(s1);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9a50L)
-  public static long FUN_800f9a50(final RunningScript a0) {
+  public static FlowControl FUN_800f9a50(final RunningScript a0) {
     final int targetType = a0.params_20[0].get();
     final int targetBobj = a0.params_20[1].get();
 
@@ -3946,11 +3947,11 @@ public final class Bttl_800f {
     }
 
     //LAB_800f9b24
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9b2cL)
-  public static long scriptIsFloatingNumberOnScreen(final RunningScript a0) {
+  public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript a0) {
     //LAB_800f9b3c
     int found = 0;
     for(int i = 0; i < 12; i++) {
@@ -3966,40 +3967,40 @@ public final class Bttl_800f {
 
     //LAB_800f9b64
     a0.params_20[0].set(found);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9b78L)
-  public static long FUN_800f9b78(final RunningScript a0) {
+  public static FlowControl FUN_800f9b78(final RunningScript a0) {
     _800c6b64.setu(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9b94L)
-  public static long FUN_800f9b94(final RunningScript a0) {
+  public static FlowControl FUN_800f9b94(final RunningScript a0) {
     final long v1 = _800c6b6c.get();
     MEMORY.ref(2, v1).offset(0x0L).setu(0x1L);
     MEMORY.ref(2, v1).offset(0x6L).setu(a0.params_20[0].get());
     MEMORY.ref(2, v1).offset(0x8L).setu(a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9bd4L)
-  public static long FUN_800f9bd4(final RunningScript a0) {
+  public static FlowControl FUN_800f9bd4(final RunningScript a0) {
     final long v1 = _800c6b6c.get();
     MEMORY.ref(2, v1).offset(0x0L).setu(0x4L);
     MEMORY.ref(2, v1).offset(0x8L).setu(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9c00L)
-  public static long FUN_800f9c00(final RunningScript a0) {
+  public static FlowControl FUN_800f9c00(final RunningScript a0) {
     FUN_800fa018(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9c2cL)
-  public static long FUN_800f9c2c(final RunningScript script) {
+  public static FlowControl FUN_800f9c2c(final RunningScript script) {
     renderTextBoxBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
@@ -4008,11 +4009,11 @@ public final class Bttl_800f {
       (short)script.params_20[4].get()
     );
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9cacL)
-  public static long FUN_800f9cac(final RunningScript script) {
+  public static FlowControl FUN_800f9cac(final RunningScript script) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
     final int t2 = script.params_20[0].get();
 
@@ -4029,11 +4030,11 @@ public final class Bttl_800f {
       }
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9d7cL)
-  public static long FUN_800f9d7c(final RunningScript script) {
+  public static FlowControl FUN_800f9d7c(final RunningScript script) {
     final int bobjIndex = script.params_20[0].get();
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 
@@ -4051,7 +4052,7 @@ public final class Bttl_800f {
     }
 
     FUN_800f3204(bobjIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9e10L)
