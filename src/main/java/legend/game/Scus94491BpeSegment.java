@@ -23,7 +23,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -47,6 +46,7 @@ import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.FlowControl;
 import legend.game.scripting.GameVarArrayParam;
 import legend.game.scripting.GameVarParam;
 import legend.game.scripting.Param;
@@ -161,7 +161,7 @@ import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddc
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
-import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
+import static legend.game.Scus94491BpeSegment_8004.scriptOps_8004e098;
 import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -389,7 +389,7 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
         case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
         default -> "illegal cmp 3";
-      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - continue" : "no - rewind");
+      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(4, r -> {
       final int operandB = r.params_20[0].get();
@@ -405,7 +405,7 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0 & 0x%x (p1)? %s;";
         case 7 -> "if 0 !& 0x%x (p1)? %s;";
         default -> "illegal cmp 4";
-      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - continue" : "no - rewind");
+      }).formatted(operandB, scriptCompare(r, 0, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
@@ -453,7 +453,7 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
         case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
         default -> "illegal cmp 65";
-      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
+      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(66, r -> {
       final int operandB = r.params_20[0].get();
@@ -470,7 +470,7 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0 & 0x%x (p0)? %s;";
         case 7 -> "if 0 !& 0x%x (p0)? %s;";
         default -> "illegal cmp 66";
-      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
+      }).formatted(operandB, scriptCompare(r, 0, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(72, r -> "func %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(73, r -> "return;");
@@ -2184,7 +2184,7 @@ public final class Scus94491BpeSegment {
           System.err.printf("Exec script index %d (%08x)%n", index, state.scriptPtr_14.getAddress());
         }
 
-        long ret;
+        FlowControl ret;
         //LAB_80016018
         do {
           final int opCommand = RunningScript_800bc070.getOp();
@@ -2321,27 +2321,27 @@ public final class Scus94491BpeSegment {
           EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
 
           final int opIndex = RunningScript_800bc070.opIndex_10;
-          final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get(opIndex).deref();
+          final Function<RunningScript, FlowControl> callback = scriptOps_8004e098[opIndex];
 
           if(scriptLog[index]) {
             if(scriptFunctionDescriptions.containsKey(opIndex)) {
               System.err.println(scriptFunctionDescriptions.get(opIndex).apply(RunningScript_800bc070));
             } else {
-              System.err.printf("Running callback %d (%08x)%n", opIndex, callback.getAddress());
+              System.err.printf("Running callback %d%n", opIndex);
             }
           }
 
           //LAB_80016598
           try {
-            ret = callback.run(RunningScript_800bc070);
+            ret = callback.apply(RunningScript_800bc070);
           } catch(final Throwable e) {
             throw new RuntimeException("An error occurred while ticking script %d".formatted(index), e);
           }
 
           if(scriptLog[index]) {
-            if(ret == 1) {
+            if(ret == FlowControl.PAUSE) {
               System.err.println("Pausing");
-            } else if(ret != 0) {
+            } else if(ret == FlowControl.PAUSE_AND_REWIND) {
               System.err.println("Rewinding and pausing");
             }
           }
@@ -2349,13 +2349,13 @@ public final class Scus94491BpeSegment {
           // Returning 0 continues execution
           // Returning 1 pauses execution until the next frame
           // Returning anything else pauses execution and repeats the same instruction next frame
-          if(ret == 0 || ret == 1) {
+          if(ret == FlowControl.CONTINUE || ret == FlowControl.PAUSE) {
             //LAB_800165e8
             RunningScript_800bc070.opOffset_08 = RunningScript_800bc070.commandOffset_0c;
           }
 
           Arrays.fill(RunningScript_800bc070.params_20, null);
-        } while(ret == 0);
+        } while(ret == FlowControl.CONTINUE);
 
         //LAB_800165f4
         state.offset_18 = RunningScript_800bc070.opOffset_08;
@@ -2368,30 +2368,30 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001664cL)
-  public static long scriptCompare(final RunningScript a0, final long operandA, final long operandB, final long op) {
-    return switch((int)op) {
-      case 0x0 -> (int)operandA <= (int)operandB ? 1 : 0;
-      case 0x1 -> (int)operandA < (int)operandB ? 1 : 0;
-      case 0x2 -> operandA == operandB ? 1 : 0;
-      case 0x3 -> operandA != operandB ? 1 : 0;
-      case 0x4 -> (int)operandA > (int)operandB ? 1 : 0;
-      case 0x5 -> (int)operandA >= (int)operandB ? 1 : 0;
-      case 0x6 -> operandA & operandB;
-      case 0x7 -> (operandA & operandB) == 0 ? 1 : 0;
-      default -> 0;
+  public static boolean scriptCompare(final RunningScript a0, final int operandA, final int operandB, final int op) {
+    return switch(op) {
+      case 0 -> operandA <= operandB;
+      case 1 -> operandA < operandB;
+      case 2 -> operandA == operandB;
+      case 3 -> operandA != operandB;
+      case 4 -> operandA > operandB;
+      case 5 -> operandA >= operandB;
+      case 6 -> (operandA & operandB) != 0;
+      case 7 -> (operandA & operandB) == 0;
+      default -> false;
     };
   }
 
   /** Stop execution for this frame, resume next frame */
   @Method(0x800166d0L)
-  public static long scriptPause(final RunningScript script) {
-    return 1;
+  public static FlowControl scriptPause(final RunningScript script) {
+    return FlowControl.PAUSE;
   }
 
   /** Stop execution for this frame, resume next frame and repeat same command */
   @Method(0x800166d8L)
-  public static long scriptRewindAndPause(final RunningScript script) {
-    return 2;
+  public static FlowControl scriptRewindAndPause(final RunningScript script) {
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   /**
@@ -2400,13 +2400,13 @@ public final class Scus94491BpeSegment {
    * @return 0 if value is already 0; 2 if value was decremented
    */
   @Method(0x800166e0L)
-  public static long scriptWait(final RunningScript script) {
+  public static FlowControl scriptWait(final RunningScript script) {
     if(script.params_20[0].get() != 0) {
       script.params_20[0].decr();
-      return 2;
+      return FlowControl.PAUSE_AND_REWIND;
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2429,14 +2429,14 @@ public final class Scus94491BpeSegment {
    * @return 0 if comparison succeeds, otherwise return 2
    */
   @Method(0x8001670cL)
-  public static long scriptCompare(final RunningScript script) {
-    return scriptCompare(script, script.params_20[0].get(), script.params_20[1].get(), script.opParam_18) == 0 ? 2 : 0;
+  public static FlowControl scriptCompare(final RunningScript script) {
+    return scriptCompare(script, script.params_20[0].get(), script.params_20[1].get(), script.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /** Same as {@link Scus94491BpeSegment#scriptCompare(RunningScript)} with first param set to 0 */
   @Method(0x80016744L)
-  public static long scriptCompare0(final RunningScript script) {
-    return scriptCompare(script, 0, script.params_20[0].get(), script.opParam_18) < 1 ? 2 : 0;
+  public static FlowControl scriptCompare0(final RunningScript script) {
+    return scriptCompare(script, 0, script.params_20[0].get(), script.opParam_18) ? FlowControl.CONTINUE : FlowControl.PAUSE_AND_REWIND;
   }
 
   /**
@@ -2445,131 +2445,119 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016774L)
-  public static long scriptMove(final RunningScript script) {
+  public static FlowControl scriptMove(final RunningScript script) {
     script.params_20[1].set(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /** Pretty sure this is _supposed_ to be a swap */
   @Method(0x80016790L)
-  public static long FUN_80016790(final RunningScript script) {
+  public static FlowControl FUN_80016790(final RunningScript script) {
     final int v1 = script.params_20[0].get();
     script.params_20[1].set(v1);
     script.params_20[0].set(v1);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Copy block of memory at work array parameter 1 to block of memory at work array parameter 2. Word count is at work array parameter 0.
-   *
-   * @return 0
    */
   @Method(0x800167bcL)
-  public static long scriptMemCopy(final RunningScript script) {
+  public static FlowControl scriptMemCopy(final RunningScript script) {
     for(int i = 0; i < script.params_20[0].get(); i++) {
       script.params_20[2].array(i).set(script.params_20[1].array(i).get());
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016854L)
-  public static long scriptSetZero(final RunningScript script) {
+  public static FlowControl scriptSetZero(final RunningScript script) {
     script.params_20[0].set(0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016868L)
-  public static long scriptAnd(final RunningScript script) {
+  public static FlowControl scriptAnd(final RunningScript script) {
     script.params_20[1].and(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001688cL)
-  public static long scriptOr(final RunningScript script) {
+  public static FlowControl scriptOr(final RunningScript script) {
     script.params_20[1].or(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800168b0L)
-  public static long scriptXor(final RunningScript script) {
+  public static FlowControl scriptXor(final RunningScript script) {
     script.params_20[1].xor(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800168d4L)
-  public static long scriptAndOr(final RunningScript script) {
+  public static FlowControl scriptAndOr(final RunningScript script) {
     script.params_20[2]
       .and(script.params_20[0].get())
       .or(script.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016900L)
-  public static long scriptNot(final RunningScript script) {
+  public static FlowControl scriptNot(final RunningScript script) {
     script.params_20[0].not();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Shift work array value 1 left by value 0 bits
-   *
-   * @return 0
    */
   @Method(0x80016920L)
-  public static long scriptShiftLeft(final RunningScript script) {
+  public static FlowControl scriptShiftLeft(final RunningScript script) {
     script.params_20[1].shl(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Shift work array value 1 right (arithmetic) by value 0 bits
-   *
-   * @return 0
    */
   @Method(0x80016944L)
-  public static long scriptShiftRightArithmetic(final RunningScript script) {
+  public static FlowControl scriptShiftRightArithmetic(final RunningScript script) {
     script.params_20[1].set(script.params_20[1].get() >> script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Increment work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
    */
   @Method(0x80016968L)
-  public static long scriptAdd(final RunningScript script) {
+  public static FlowControl scriptAdd(final RunningScript script) {
     script.params_20[1].add(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Decrement work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
    */
   @Method(0x8001698cL)
-  public static long scriptSubtract(final RunningScript script) {
+  public static FlowControl scriptSubtract(final RunningScript script) {
     script.params_20[1].sub(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800169b0L)
-  public static long scriptSubtract2(final RunningScript script) {
+  public static FlowControl scriptSubtract2(final RunningScript script) {
     script.params_20[1].set(script.params_20[0].get() - script.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Increment work array value 0 by 1
-   *
-   * @return 0
    */
   @Method(0x800169d4L)
-  public static long scriptIncrementBy1(final RunningScript script) {
+  public static FlowControl scriptIncrementBy1(final RunningScript script) {
     script.params_20[0].incr();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2578,42 +2566,38 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x800169f4L)
-  public static long scriptDecrementBy1(final RunningScript script) {
+  public static FlowControl scriptDecrementBy1(final RunningScript script) {
     script.params_20[0].decr();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016a14L)
-  public static long scriptNegate(final RunningScript script) {
+  public static FlowControl scriptNegate(final RunningScript script) {
     script.params_20[0].neg();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016a34L)
-  public static long scriptAbs(final RunningScript script) {
+  public static FlowControl scriptAbs(final RunningScript script) {
     //LAB_80016a50
     script.params_20[0].abs();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Multiply work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
    */
   @Method(0x80016a5cL)
-  public static long scriptMultiply(final RunningScript script) {
+  public static FlowControl scriptMultiply(final RunningScript script) {
     script.params_20[1].mul(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Divide work array value 1 by value 0
-   *
-   * @return 0
    */
   @Method(0x80016a84L)
-  public static long scriptDivide(final RunningScript script) {
+  public static FlowControl scriptDivide(final RunningScript script) {
     final int divisor = script.params_20[0].get();
 
     if(divisor == 0) {
@@ -2623,82 +2607,80 @@ public final class Scus94491BpeSegment {
         script.params_20[1].set(1);
       }
 
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     script.params_20[1].div(divisor);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016ab0L)
-  public static long scriptDivide2(final RunningScript script) {
+  public static FlowControl scriptDivide2(final RunningScript script) {
     script.params_20[1].set(MathHelper.safeDiv(script.params_20[0].get(), script.params_20[1].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016adcL)
-  public static long scriptMod(final RunningScript script) {
+  public static FlowControl scriptMod(final RunningScript script) {
     script.params_20[1].mod(script.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016b04L)
-  public static long scriptMod2(final RunningScript script) {
+  public static FlowControl scriptMod2(final RunningScript script) {
     script.params_20[1].set(script.params_20[0].get() % script.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016b2cL)
-  public static long FUN_80016b2c(final RunningScript script) {
+  public static FlowControl FUN_80016b2c(final RunningScript script) {
     script.params_20[1].set((script.params_20[1].get() >> 4) * (script.params_20[0].get() >> 4) >> 4);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016b5cL)
-  public static long FUN_80016b5c(final RunningScript script) {
+  public static FlowControl FUN_80016b5c(final RunningScript script) {
     script.params_20[1].set(((script.params_20[1].get() << 4) / script.params_20[0].get()) << 8);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016b8cL)
-  public static long FUN_80016b8c(final RunningScript script) {
+  public static FlowControl FUN_80016b8c(final RunningScript script) {
     script.params_20[1].set(((script.params_20[0].get() << 4) / script.params_20[1].get()) << 8);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Calculate square root of work array value 0 and store in value 1
-   *
-   * @return 0
    */
   @Method(0x80016bbcL)
-  public static long scriptSquareRoot(final RunningScript script) {
+  public static FlowControl scriptSquareRoot(final RunningScript script) {
     script.params_20[1].set(SquareRoot0(script.params_20[0].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016c00L)
-  public static long FUN_80016c00(final RunningScript script) {
+  public static FlowControl FUN_80016c00(final RunningScript script) {
     script.params_20[1].set(script.params_20[0].get() * simpleRand() >>> 16);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016c4cL)
-  public static long scriptSin(final RunningScript script) {
+  public static FlowControl scriptSin(final RunningScript script) {
     script.params_20[1].set((int)sin_cos_80054d0c.offset(2, (script.params_20[0].get() & 0xfff) * 0x4L).getSigned());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016c80L)
-  public static long scriptCos(final RunningScript script) {
+  public static FlowControl scriptCos(final RunningScript script) {
     script.params_20[1].set((int)sin_cos_80054d0c.offset(2, (script.params_20[0].get() & 0xfff) * 0x4L).offset(0x2L).getSigned());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016cb4L)
-  public static long scriptRatan2(final RunningScript script) {
+  public static FlowControl scriptRatan2(final RunningScript script) {
     script.params_20[2].set(ratan2(script.params_20[0].get(), script.params_20[1].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2707,9 +2689,14 @@ public final class Scus94491BpeSegment {
    * @return The value that the sub-function returns
    */
   @Method(0x80016cfcL)
-  public static long scriptExecuteSubFunc(final RunningScript script) {
+  public static FlowControl scriptExecuteSubFunc(final RunningScript script) {
     try {
-      return scriptSubFunctions_8004e29c.get(script.opParam_18).deref().run(script);
+      return switch((int)(long)scriptSubFunctions_8004e29c.get(script.opParam_18).deref().run(script)) {
+        case 0 -> FlowControl.CONTINUE;
+        case 1 -> FlowControl.PAUSE;
+        case 2 -> FlowControl.PAUSE_AND_REWIND;
+        default -> throw new RuntimeException("Invalid return");
+      };
     } catch(final UnsupportedOperationException e) {
       throw new RuntimeException("Script subfunc %d error".formatted(script.opParam_18), e);
     }
@@ -2721,9 +2708,9 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016d38L)
-  public static long scriptJump(final RunningScript script) {
+  public static FlowControl scriptJump(final RunningScript script) {
     script.params_20[0].jump(script);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2746,13 +2733,13 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016d4cL)
-  public static long scriptConditionalJump(final RunningScript script) {
-    if(scriptCompare(script, script.params_20[0].get(), script.params_20[1].get(), script.opParam_18) != 0) {
+  public static FlowControl scriptConditionalJump(final RunningScript script) {
+    if(scriptCompare(script, script.params_20[0].get(), script.params_20[1].get(), script.opParam_18)) {
       script.params_20[2].jump(script);
     }
 
     //LAB_80016d8c
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
 
@@ -2776,20 +2763,20 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016da0L)
-  public static long scriptConditionalJump0(final RunningScript script) {
-    if(scriptCompare(script, 0, script.params_20[0].get(), script.opParam_18) != 0) {
+  public static FlowControl scriptConditionalJump0(final RunningScript script) {
+    if(scriptCompare(script, 0, script.params_20[0].get(), script.opParam_18)) {
       script.params_20[1].jump(script);
     }
 
     //LAB_80016dd8
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Decrements param0 and jumps to param1 if param0 > 0... maybe used for do...while loops?
    */
   @Method(0x80016decL)
-  public static long FUN_80016dec(final RunningScript script) {
+  public static FlowControl FUN_80016dec(final RunningScript script) {
     script.params_20[0].decr();
 
     if(script.params_20[0].get() != 0) {
@@ -2797,13 +2784,13 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80016e14
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016e1cL)
-  public static long FUN_80016e1c(final RunningScript script) {
+  public static FlowControl FUN_80016e1c(final RunningScript script) {
     script.params_20[1].array(script.params_20[1].array(script.params_20[0].get()).get()).jump(script);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2812,7 +2799,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016e50L)
-  public static long scriptJumpAndLink(final RunningScript script) {
+  public static FlowControl scriptJumpAndLink(final RunningScript script) {
     final ScriptState<?> struct = script.scriptState_04;
 
     for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
@@ -2822,7 +2809,7 @@ public final class Scus94491BpeSegment {
     struct.callStack_1c[0] = script.commandOffset_0c;
     script.params_20[0].jump(script);
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
@@ -2831,7 +2818,7 @@ public final class Scus94491BpeSegment {
    * @return 0
    */
   @Method(0x80016f28L)
-  public static long scriptJumpReturn(final RunningScript script) {
+  public static FlowControl scriptJumpReturn(final RunningScript script) {
     final ScriptState<?> struct = script.scriptState_04;
 
     script.commandOffset_0c = struct.callStack_1c[0];
@@ -2842,11 +2829,11 @@ public final class Scus94491BpeSegment {
 
     struct.callStack_1c[struct.callStack_1c.length - 1] = -1;
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80016ffcL)
-  public static long scriptJumpAndLinkTable(final RunningScript script) {
+  public static FlowControl scriptJumpAndLinkTable(final RunningScript script) {
     final ScriptState<?> struct = script.scriptState_04;
 
     for(int i = struct.callStack_1c.length - 1; i > 0; i--) {
@@ -2857,76 +2844,76 @@ public final class Scus94491BpeSegment {
 
     // p1[p1[p0]]
     script.params_20[1].array(script.params_20[1].array(script.params_20[0].get()).get()).jump(script);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800170f4L)
-  public static long scriptDeallocateSelf(final RunningScript script) {
+  public static FlowControl scriptDeallocateSelf(final RunningScript script) {
     deallocateScriptChildren(script.scriptStateIndex_00);
     deallocateScriptState(script.scriptStateIndex_00);
-    return 0x2L;
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x80017138L)
-  public static long scriptDeallocateChildren(final RunningScript script) {
+  public static FlowControl scriptDeallocateChildren(final RunningScript script) {
     deallocateScriptAndChildren(script.scriptStateIndex_00);
-    return 2;
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x80017160L)
-  public static long scriptDeallocateOther(final RunningScript script) {
+  public static FlowControl scriptDeallocateOther(final RunningScript script) {
     deallocateScriptChildren(script.params_20[0].get());
     deallocateScriptState(script.params_20[0].get());
-    return script.params_20[0].get() == script.scriptStateIndex_00 ? 2 : 0;
+    return script.params_20[0].get() == script.scriptStateIndex_00 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   /** Forks the script and jumps to an address */
   @Method(0x800171c0L)
-  public static long scriptForkAndJump(final RunningScript script) {
+  public static FlowControl scriptForkAndJump(final RunningScript script) {
     LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and jumping to %s", script.scriptStateIndex_00, script.params_20[0], script.params_20[1]);
 
     scriptFork(script.params_20[0].get());
     final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     script.params_20[1].jump(stateThatWasForked);
     stateThatWasForked.storage_44[32].set(script.params_20[2].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /** Forks the script and jumps to an entry point */
   @Method(0x80017234L)
-  public static long scriptForkAndReenter(final RunningScript script) {
+  public static FlowControl scriptForkAndReenter(final RunningScript script) {
     LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and re-entering at offset %s", script.scriptStateIndex_00, script.params_20[0], script.params_20[1]);
 
     scriptFork(script.params_20[0].get());
     final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     stateThatWasForked.offset_18 = stateThatWasForked.scriptPtr_14.offsetArr_00.get(script.params_20[1].get()).get();
     stateThatWasForked.storage_44[32].set(script.params_20[2].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800172c0L)
-  public static long scriptConsumeChild(final RunningScript script) {
+  public static FlowControl scriptConsumeChild(final RunningScript script) {
     script.commandOffset_0c = scriptConsumeChild(script.scriptStateIndex_00);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800172f4L)
-  public static long FUN_800172f4(final RunningScript script) {
-    return 0;
+  public static FlowControl FUN_800172f4(final RunningScript script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800172fcL)
-  public static long FUN_800172fc(final RunningScript script) {
-    return 0;
+  public static FlowControl FUN_800172fc(final RunningScript script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017304L)
-  public static long FUN_80017304(final RunningScript script) {
-    return 0;
+  public static FlowControl FUN_80017304(final RunningScript script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001730cL)
-  public static long scriptGetCallStackDepth(final RunningScript script) {
+  public static FlowControl scriptGetCallStackDepth(final RunningScript script) {
     //LAB_80017314
     int i;
     for(i = 0; i < 10; i++) {
@@ -2937,7 +2924,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80017338
     script.params_20[0].set(i);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001734cL)
