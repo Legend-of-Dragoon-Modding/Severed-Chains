@@ -2086,8 +2086,10 @@ public final class Scus94491BpeSegment {
   public static int scriptFork(final int parentScriptIndex) {
     final int childScriptIndex = findFreeScriptState();
 
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Forking script %d to %d %s.%s(%s:%d)", parentScriptIndex, childScriptIndex, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+    if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
+      final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+      LOGGER.info(SCRIPT_MARKER, "Forking script %d to %d %s.%s(%s:%d)", parentScriptIndex, childScriptIndex, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+    }
 
     if(childScriptIndex < 0) {
       //LAB_80015dd4
@@ -2881,7 +2883,7 @@ public final class Scus94491BpeSegment {
   /** Forks the script and jumps to an address */
   @Method(0x800171c0L)
   public static long scriptForkAndJump(final RunningScript a0) {
-    LOGGER.info("Script %d forking script %s and jumping to %s", a0.scriptStateIndex_00, a0.params_20[0], a0.params_20[1]);
+    LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and jumping to %s", a0.scriptStateIndex_00, a0.params_20[0], a0.params_20[1]);
 
     scriptFork(a0.params_20[0].get());
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
@@ -2893,6 +2895,8 @@ public final class Scus94491BpeSegment {
   /** Forks the script and jumps to an entry point */
   @Method(0x80017234L)
   public static long scriptForkAndReenter(final RunningScript s0) {
+    LOGGER.info(SCRIPT_MARKER, "Script %d forking script %s and re-entering at offset %s", s0.scriptStateIndex_00, s0.params_20[0], s0.params_20[1]);
+
     scriptFork(s0.params_20[0].get());
     final ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[s0.params_20[0].get()];
     a0.offset_18 = a0.scriptPtr_14.offsetArr_00.get(s0.params_20[1].get()).get();
