@@ -14,12 +14,14 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public void jump(final RunningScript script) {
+    script.scriptState_04.scriptPtr_14 = this.state.scriptPtr_14;
     script.commandOffset_0c = this.offset;
   }
 
   @Override
-  public void jump(final ScriptState<?> script) {
-    script.offset_18 = this.offset;
+  public void jump(final ScriptState<?> state) {
+    state.scriptPtr_14 = this.state.scriptPtr_14;
+    state.offset_18 = this.offset;
   }
 
   @Override
