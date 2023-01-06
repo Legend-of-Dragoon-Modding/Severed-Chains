@@ -79,6 +79,7 @@ import legend.game.combat.types.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.scripting.FlowControl;
 import legend.game.types.Model124;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
@@ -2505,7 +2506,7 @@ public final class SEffe {
   }
 
   @Method(0x80102088L)
-  public static long FUN_80102088(final RunningScript s2) {
+  public static FlowControl FUN_80102088(final RunningScript s2) {
     final int effectIndex = allocateEffectManager(
       s2.scriptStateIndex_00,
       0x98,
@@ -2575,11 +2576,11 @@ public final class SEffe {
     manager._10._00.or(0x5000_0000L);
     manager._04.or(0x4_0000L);
     FUN_80102534();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80102364L)
-  public static long FUN_80102364(final RunningScript a0) {
+  public static FlowControl FUN_80102364(final RunningScript a0) {
     final long a0_0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00).effect_44.getPointer(); //TODO
 
     final int a2 = a0.params_20[0].get();
@@ -2599,16 +2600,16 @@ public final class SEffe {
     }
 
     //LAB_801023ec
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801023f4L)
-  public static long FUN_801023f4(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_801023f4(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801023fcL)
-  public static long FUN_801023fc(final RunningScript script) {
+  public static FlowControl FUN_801023fc(final RunningScript script) {
     final EffectData98 a2 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44.derefAs(EffectData98.class);
 
     //LAB_8010243c
@@ -2618,11 +2619,11 @@ public final class SEffe {
     }
 
     //LAB_80102464
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010246cL)
-  public static long FUN_8010246c(final RunningScript a0) {
+  public static FlowControl FUN_8010246c(final RunningScript a0) {
     final EffectData98 effect = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00).effect_44.derefAs(EffectData98.class);
     final EffectData98Sub94 a1 = effect._68.deref().get(a0.params_20[1].get());
 
@@ -2631,7 +2632,7 @@ public final class SEffe {
     a0.params_20[2].set(sp0x20.getX());
     a0.params_20[3].set(sp0x20.getY());
     a0.params_20[4].set(sp0x20.getZ());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80102534L)
@@ -2662,9 +2663,14 @@ public final class SEffe {
     //LAB_801025c0
   }
 
+  @Method(0x80102608L)
+  public static FlowControl FUN_80102608(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x80102610L)
-  public static long FUN_80102610(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_80102610(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80102618L)
@@ -3362,7 +3368,7 @@ public final class SEffe {
   }
 
   @Method(0x801052dcL)
-  public static long FUN_801052dc(final RunningScript script) {
+  public static FlowControl FUN_801052dc(final RunningScript script) {
     final int s0 = script.params_20[6].get();
     final int s1 = script.params_20[7].get();
 
@@ -3421,11 +3427,11 @@ public final class SEffe {
     manager._10.vec_28.setZ(0x3);
 
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80105604L)
-  public static long FUN_80105604(final RunningScript s0) {
+  public static FlowControl FUN_80105604(final RunningScript s0) {
     final EffectManagerData6c a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s0.params_20[0].get()].innerStruct_00;
     final BttlScriptData6cSub38Sub14 a1 = a0.effect_44.derefAs(BttlScriptData6cSub38.class)._34.deref().get(s0.params_20[1].get());
     final BttlScriptData6cSub38Sub14Sub30 v0 = a1.ptr_10.deref().get(s0.params_20[2].get());
@@ -3436,7 +3442,7 @@ public final class SEffe {
     s0.params_20[3].set(sp0x20.getX());
     s0.params_20[4].set(sp0x20.getY());
     s0.params_20[5].set(sp0x20.getZ());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80105704L)
@@ -3510,7 +3516,7 @@ public final class SEffe {
   }
 
   @Method(0x80105c38L)
-  public static long FUN_80105c38(final RunningScript script) {
+  public static FlowControl FUN_80105c38(final RunningScript script) {
     final VECTOR sp0x18 = new VECTOR();
     final ShortRef refX = new ShortRef();
     final ShortRef refY = new ShortRef();
@@ -3566,7 +3572,7 @@ public final class SEffe {
     }
 
     //LAB_80105f64
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80105f98L)
@@ -4194,13 +4200,13 @@ public final class SEffe {
   }
 
   @Method(0x801077bcL)
-  public static long FUN_801077bc(final RunningScript a0) {
+  public static FlowControl FUN_801077bc(final RunningScript a0) {
     a0.params_20[2].set((int)_8011a014.offset(a0.params_20[1].get()).getSigned());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801077e8L)
-  public static long allocateAdditionOverlaysEffect(final RunningScript script) {
+  public static FlowControl allocateAdditionOverlaysEffect(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
       script.scriptStateIndex_00,
       0x44L,
@@ -4215,11 +4221,11 @@ public final class SEffe {
     manager.storage_44[8].set(0);
     script.params_20[4].set(effectIndex);
     _80119f41.setu(0x1L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801078c0L)
-  public static long FUN_801078c0(final RunningScript a0) {
+  public static FlowControl FUN_801078c0(final RunningScript a0) {
     final EffectManagerData6c v0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     final long a2 = v0.effect_44.getPointer(); //TODO
     final int v1 = a0.params_20[1].get();
@@ -4230,7 +4236,7 @@ public final class SEffe {
           MEMORY.ref(1, a2).offset(0x31L).setu(MEMORY.ref(1, a2).offset(0x31L).get() < 1 ? 1 : 0);
         }
 
-        return 0;
+        return FlowControl.CONTINUE;
       }
 
       //LAB_80107910
@@ -4240,7 +4246,7 @@ public final class SEffe {
         MEMORY.ref(1, a2).offset(0x31L).setu(MEMORY.ref(1, a2).offset(0x31L).get() < 1 ? 2 : 0);
       }
 
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     //LAB_80107930
@@ -4257,11 +4263,11 @@ public final class SEffe {
 
     //LAB_80107998
     //LAB_8010799c
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801079a4L)
-  public static long FUN_801079a4(final RunningScript a0) {
+  public static FlowControl FUN_801079a4(final RunningScript a0) {
     if(a0.params_20[0].get() == 0) {
       a0.params_20[1].set((int)_80119f41.getSigned());
     } else {
@@ -4270,7 +4276,7 @@ public final class SEffe {
     }
 
     //LAB_801079e0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801079e8L)
@@ -4526,7 +4532,7 @@ public final class SEffe {
    * {@link SEffe#doNothingScriptDestructor}
    */
   @Method(0x801087f8L)
-  public static long allocateDragoonAdditionScript(final RunningScript script) {
+  public static FlowControl allocateDragoonAdditionScript(final RunningScript script) {
     final int s4 = script.params_20[1].get();
     final int s2 = script.params_20[0].get();
 
@@ -4580,13 +4586,13 @@ public final class SEffe {
     _80119f40.setu(0);
     _80119f42.setu(0);
     _8011a024.setu(scriptIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801089ccL)
-  public static long FUN_801089cc(final RunningScript a0) {
+  public static FlowControl FUN_801089cc(final RunningScript a0) {
     a0.params_20[1].set((byte)_80119f40.getSigned());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x801089e8L)
@@ -4681,10 +4687,20 @@ public final class SEffe {
     }
   }
 
+  @Method(0x80108de8L)
+  public static FlowControl FUN_80108de8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x80108df0L)
+  public static FlowControl FUN_80108df0(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x80108df8L)
-  public static long FUN_80108df8(final RunningScript a0) {
+  public static FlowControl FUN_80108df8(final RunningScript a0) {
     a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80108e40L)
@@ -4738,7 +4754,7 @@ public final class SEffe {
   }
 
   @Method(0x80109158L)
-  public static long FUN_80109158(final RunningScript a0) {
+  public static FlowControl FUN_80109158(final RunningScript a0) {
     final int count = a0.params_20[1].get();
     final int scriptIndex = allocateEffectManager(
       a0.scriptStateIndex_00,
@@ -4767,7 +4783,7 @@ public final class SEffe {
 
     //LAB_80109328
     a0.params_20[0].set(scriptIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80109358L)
@@ -4873,7 +4889,7 @@ public final class SEffe {
   }
 
   @Method(0x80109a7cL)
-  public static long allocateScreenDistortionEffect(final RunningScript script) {
+  public static FlowControl allocateScreenDistortionEffect(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
       script.scriptStateIndex_00,
       0x8,
@@ -4890,7 +4906,7 @@ public final class SEffe {
     effect.angleStep_04.set(script.params_20[1].get());
     manager._10._00.set(0x4000_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80109b3cL)
@@ -4944,7 +4960,7 @@ public final class SEffe {
   }
 
   @Method(0x80109d30L)
-  public static long FUN_80109d30(final RunningScript a0) {
+  public static FlowControl FUN_80109d30(final RunningScript a0) {
     final int s5 = a0.params_20[2].get();
     final int s4 = a0.params_20[3].get();
     final int s2 = allocateScriptState(0x18, EffeScriptData18::new);
@@ -4994,7 +5010,7 @@ public final class SEffe {
     }
 
     //LAB_80109f90
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80109fbcL)
@@ -5079,7 +5095,7 @@ public final class SEffe {
   }
 
   @Method(0x8010a3fcL)
-  public static long FUN_8010a3fc(final RunningScript script) {
+  public static FlowControl FUN_8010a3fc(final RunningScript script) {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[4].get();
 
@@ -5133,11 +5149,11 @@ public final class SEffe {
 
     //LAB_8010a5c8
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010a610L)
-  public static long FUN_8010a610(final RunningScript a0) {
+  public static FlowControl FUN_8010a610(final RunningScript a0) {
     final int effectIndex = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x24L,
@@ -5189,7 +5205,7 @@ public final class SEffe {
     //LAB_8010a818
     a0.params_20[0].set(effectIndex);
     manager._10._00.or(0x5400_0000L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /** Used in Rose transform */
@@ -5378,7 +5394,7 @@ public final class SEffe {
   }
 
   @Method(0x8010b1d8L)
-  public static long allocateDeathDimensionEffect(final RunningScript script) {
+  public static FlowControl allocateDeathDimensionEffect(final RunningScript script) {
     final int effectIndex = allocateEffectManager(
       script.scriptStateIndex_00,
       0x1c,
@@ -5431,7 +5447,7 @@ public final class SEffe {
 
     //LAB_8010b548
     manager._10._00.or(0x5000_0000L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010b594L)
@@ -5729,7 +5745,7 @@ public final class SEffe {
   }
 
   @Method(0x8010c378L)
-  public static long FUN_8010c378(final RunningScript a0) {
+  public static FlowControl FUN_8010c378(final RunningScript a0) {
     final int sp18 = a0.params_20[1].get();
     final int sp1c = a0.params_20[1].get();
     final int sp20 = a0.params_20[3].get();
@@ -5810,7 +5826,7 @@ public final class SEffe {
     effect._48.set((short)0);
     manager._10._00.or(0x5000_0000L);
     a0.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010c69cL)
@@ -5962,7 +5978,7 @@ public final class SEffe {
   }
 
   @Method(0x8010d1dcL)
-  public static long FUN_8010d1dc(final RunningScript script) {
+  public static FlowControl FUN_8010d1dc(final RunningScript script) {
     final int count = script.params_20[1].get();
     final int s5 = script.params_20[2].get();
 
@@ -6048,7 +6064,7 @@ public final class SEffe {
     //LAB_8010d564
     manager._10._00.or(0x5000_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010d5b4L)
@@ -6102,7 +6118,7 @@ public final class SEffe {
   }
 
   @Method(0x8010d7dcL)
-  public static long allocateGoldDragoonTransformEffect(final RunningScript script) {
+  public static FlowControl allocateGoldDragoonTransformEffect(final RunningScript script) {
     final int s7 = script.params_20[1].get();
     final int count = script.params_20[2].get();
     final int sp1c = 32;
@@ -6175,7 +6191,7 @@ public final class SEffe {
 
     //LAB_8010dc8c
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010dcd0L)
@@ -6280,7 +6296,7 @@ public final class SEffe {
   }
 
   @Method(0x8010e04cL)
-  public static long FUN_8010e04c(final RunningScript script) {
+  public static FlowControl FUN_8010e04c(final RunningScript script) {
     final int count = script.params_20[2].get();
     final int s4 = script.params_20[1].get();
 
@@ -6336,7 +6352,7 @@ public final class SEffe {
     //LAB_8010e2b0
     manager._10._00.or(0x5000_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /** Used in Star Children */
@@ -6439,7 +6455,7 @@ public final class SEffe {
   }
 
   @Method(0x8010e89cL)
-  public static long FUN_8010e89c(final RunningScript script) {
+  public static FlowControl FUN_8010e89c(final RunningScript script) {
     final int count = script.params_20[4].get();
     final int sp1c = script.params_20[1].get();
     final int sp20 = script.params_20[2].get();
@@ -6496,7 +6512,7 @@ public final class SEffe {
     //LAB_8010ebac
     manager._10._00.or(0x5000_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010ec08L)
@@ -6543,7 +6559,7 @@ public final class SEffe {
   }
 
   @Method(0x8010edc8L)
-  public static long FUN_8010edc8(final RunningScript script) {
+  public static FlowControl FUN_8010edc8(final RunningScript script) {
     final long sp18 = _800fb940.offset(0x0L).get();
     final long sp1c = _800fb940.offset(0x4L).get();
     final long sp20 = _800fb940.offset(0x8L).get();
@@ -6619,7 +6635,7 @@ public final class SEffe {
     //LAB_8010f0d0
     manager._10._00.set(0x1400_0000L);
     script.params_20[0].set(effectIndex);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8010f124L)
@@ -7928,6 +7944,21 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80112e00L)
+  public static FlowControl FUN_80112e00(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8011306cL)
+  public static FlowControl FUN_8011306c(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x801132c8L)
+  public static FlowControl FUN_801132c8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8011357cL)
   public static long FUN_8011357c(final RunningScript script) {
     final SVECTOR sp0x10 = new SVECTOR().set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
@@ -8197,6 +8228,11 @@ public final class SEffe {
     return FUN_80113db8(1, a0);
   }
 
+  @Method(0x801143f8L)
+  public static FlowControl FUN_801143f8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8011441cL)
   public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
     final BattleScriptDataBase data1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
@@ -8296,6 +8332,11 @@ public final class SEffe {
     return 0x1L;
   }
 
+  @Method(0x801147c8L)
+  public static FlowControl FUN_801147c8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x80114920L)
   public static long FUN_80114920(final RunningScript a0) {
     final int scriptIndex1 = a0.params_20[0].get();
@@ -8326,6 +8367,11 @@ public final class SEffe {
 
     //LAB_80114ad0
     return 0;
+  }
+
+  @Method(0x80114b00L)
+  public static FlowControl FUN_80114b00(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x80114e0cL)
@@ -8393,6 +8439,11 @@ public final class SEffe {
     return 0;
   }
 
+  @Method(0x80114f34L)
+  public static FlowControl FUN_80114f34(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x80115014L)
   public static long FUN_80115014(final RunningScript a0) {
     FUN_80114f3c(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
@@ -8419,6 +8470,11 @@ public final class SEffe {
     MEMORY.ref(4, v0).offset(0x10L).setu((int)(s3 * 0x100 - MEMORY.ref(4, v0).offset(0xcL).get()) / s2);
     MEMORY.ref(4, v0).offset(0x14L).setu(0);
     return 0;
+  }
+
+  @Method(0x80115168L)
+  public static FlowControl FUN_80115168(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x80115288L)

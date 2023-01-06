@@ -20,6 +20,7 @@ import legend.game.combat.types.BattleStruct24;
 import legend.game.combat.types.BattleStruct7cc;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.EffectManagerData6c;
+import legend.game.scripting.FlowControl;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
@@ -108,6 +109,11 @@ public final class Temp {
     }
 
     //LAB_800ca620
+  }
+
+  @Method(0x800ca648L)
+  public static FlowControl FUN_800ca648(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800ca658L)

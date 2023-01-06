@@ -61,6 +61,7 @@ import legend.game.combat.types.FloatingNumberC4Sub20;
 import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.scripting.FlowControl;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -5324,9 +5325,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee210L)
-  public static long scriptCopyVram(final RunningScript script) {
+  public static FlowControl scriptCopyVram(final RunningScript script) {
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee2acL)

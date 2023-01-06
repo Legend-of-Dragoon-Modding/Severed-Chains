@@ -8,8 +8,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
-import legend.game.combat.Bttl_800c;
-import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
@@ -19,8 +17,6 @@ import legend.game.types.RunningScript;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -92,188 +88,6 @@ import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 public final class Scus94491BpeSegment_800e {
   private Scus94491BpeSegment_800e() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_800e.class);
-
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 736</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d3090}</li>
-   *   <li>{@link Bttl_800c#FUN_800cec8c}</li>
-   *   <li>{@link Bttl_800c#FUN_800cee50}</li>
-   *   <li>{@link Bttl_800c#FUN_800ceecc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d3098}</li>
-   *   <li>{@link Bttl_800d#FUN_800d30a0}</li>
-   *   <li>{@link Bttl_800d#FUN_800d30a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d30b0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cef00}</li>
-   *   <li>{@link Bttl_800c#FUN_800cf0b4}</li>
-   *   <li>{@link SEffe#FUN_80102088}</li>
-   *   <li>{@link SEffe#FUN_80102364}</li>
-   *   <li>{@link Bttl_800d#FUN_800d30b8}</li>
-   *   <li>{@link Bttl_800d#allocateProjectileHitEffect}</li>
-   *   <li>{@link Bttl_800d#FUN_800d09b8}</li>
-   *   <li>{@link Bttl_800d#allocateAdditionSparksEffect}</li>
-   *   <li>{@link SEffe#FUN_80102608}</li>
-   *   <li>{@link SEffe#allocateAdditionOverlaysEffect}</li>
-   *   <li>{@link SEffe#FUN_801077bc}</li>
-   *   <li>{@link SEffe#FUN_80108de8}</li>
-   *   <li>{@link Bttl_800d#allocateAdditionStarburstEffect}</li>
-   *   <li>{@link Bttl_800d#FUN_800d1cac}</li>
-   *   <li>{@link Bttl_800d#FUN_800d1cf4}</li>
-   *   <li>{@link SEffe#FUN_801078c0}</li>
-   *   <li>{@link SEffe#FUN_80108df0}</li>
-   *   <li>{@link Bttl_800d#allocateGuardEffect}</li>
-   *   <li>{@link Bttl_800c#allocateWeaponTrailEffect}</li>
-   *   <li>{@link Bttl_800d#allocatePotionEffect}</li>
-   *   <li>{@link Bttl_800d#scriptAllocateAdditionScript}</li>
-   *   <li>{@link Bttl_800c#FUN_800cfccc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d4338}</li>
-   *   <li>{@link Bttl_800d#FUN_800d4580}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6f64 = MEMORY.ref(4, 0x800e6f64L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 832</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d46d4}</li>
-   *   <li>{@link SEffe#FUN_80108df8}</li>
-   *   <li>{@link SEffe#FUN_80102610}</li>
-   *   <li>{@link Bttl_800c#scriptGetBobjDimension}</li>
-   *   <li>{@link SEffe#FUN_80109158}</li>
-   *   <li>{@link Bttl_800c#FUN_800ce9b0}</li>
-   *   <li>{@link SEffe#FUN_801052dc}</li>
-   *   <li>{@link SEffe#FUN_80105604}</li>
-   *   <li>{@link SEffe#allocateDragoonAdditionScript}</li>
-   *   <li>{@link SEffe#FUN_80105c38}</li>
-   *   <li>{@link Bttl_800c#FUN_800c6968}</li>
-   *   <li>{@link SEffe#allocateScreenDistortionEffect}</li>
-   *   <li>{@link SEffe#FUN_801089cc}</li>
-   *   <li>{@link SEffe#FUN_801023f4}</li>
-   *   <li>{@link Bttl_800c#FUN_800cfec8}</li>
-   *   <li>{@link SEffe#FUN_801023fc}</li>
-   *   <li>{@link SEffe#FUN_8010246c}</li>
-   *   <li>{@link Bttl_800c#scriptSetMtSeed}</li>
-   *   <li>{@link SEffe#FUN_80109d30}</li>
-   *   <li>{@link SEffe#FUN_8010a3fc}</li>
-   *   <li>{@link Bttl_800d#allocateMonsterDeathEffect}</li>
-   *   <li>{@link Bttl_800d#FUN_800d0124}</li>
-   *   <li>{@link SEffe#FUN_801079a4}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e6fe4 = MEMORY.ref(4, 0x800e6fe4L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 23, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 896</p>
-   *
-   * <ol start="0">
-   *   <li>{@link SEffe#FUN_8010a610}</li>
-   *   <li>{@link SEffe#allocateDeathDimensionEffect}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7040 = MEMORY.ref(4, 0x800e7040L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 2, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 32</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dabcc}</li>
-   *   <li>{@link Bttl_800d#FUN_800dac20}</li>
-   *   <li>{@link Bttl_800d#FUN_800db034}</li>
-   *   <li>{@link Bttl_800d#FUN_800db460}</li>
-   *   <li>{@link Bttl_800d#FUN_800db574}</li>
-   *   <li>{@link Bttl_800d#FUN_800db688}</li>
-   *   <li>{@link Bttl_800d#FUN_800db79c}</li>
-   *   <li>{@link Bttl_800d#FUN_800db8b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db9e0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbb10}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc2d8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbb9c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dcbec}</li>
-   *   <li>{@link Bttl_800d#FUN_800dcb84}</li>
-   *   <li>{@link Bttl_800d#scriptSetViewportTwist}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbc80}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbcc8}</li>
-   *   <li>{@link Bttl_800d#scriptGetProjectionPlaneDistance}</li>
-   *   <li>{@link Bttl_800d#FUN_800d8dec}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7048 = MEMORY.ref(4, 0x800e7048L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 19, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 224</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#FUN_8001e640}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001e918}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001e920}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001eb30}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001eccc}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001f070}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptLoadMusicPackage}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001fe28}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ffdc}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8002013c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80020230}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800202a4}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptPlaySound}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ab98}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptPlayBobjSound}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ac48}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ad5c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001adc8}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ae18}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ae68}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001aec8}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001af34}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001afa4}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b014}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b094}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b134}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b13c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b144}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSetMainVolume}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b17c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b208}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSssqFadeIn}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7094 = MEMORY.ref(4, 0x800e7094L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 32, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 704</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b2ac}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSssqFadeOut}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b33c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b3a0}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptGetSssqTempoScale}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSetSssqTempoScale}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001ffc0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001b1ec}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptPlayCombatantSound}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001acd8}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_80020060}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001f250}</li>
-   *   <li>{@link Scus94491BpeSegment_8002#FUN_800203f0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001f674}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001f560}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7114 = MEMORY.ref(4, 0x800e7114L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 15, 4, Pointer.deferred(4, FunctionRef::new)));
-  /**
-   * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 800</p>
-   *
-   * <ol start="0">
-   *   <li>{@link SEffe#FUN_8010c378}</li>
-   *   <li>{@link SEffe#FUN_8010d1dc}</li>
-   *   <li>{@link SEffe#allocateGoldDragoonTransformEffect}</li>
-   *   <li>{@link SEffe#FUN_8010e04c}</li>
-   *   <li>{@link SEffe#FUN_8010edc8}</li>
-   *   <li>{@link SEffe#FUN_8010e89c}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001c5fc}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_8001c604}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_800e7150 = MEMORY.ref(4, 0x800e7150L, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 8, 4, Pointer.deferred(4, FunctionRef::new)));
   /**
    * <p>Copied to {@link Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} at index 416</p>
    *
@@ -774,12 +588,9 @@ public final class Scus94491BpeSegment_800e {
     loadOvalBlobTexture();
     FUN_800e6dd4();
     FUN_800e6e3c();
-    copyScriptSubFunctions_800e67ac();
     FUN_800e6888();
     FUN_800e6d60();
-    FUN_800e670c();
     FUN_800e6ecc();
-    FUN_800e6774();
     initFmvs();
   }
 
@@ -851,53 +662,8 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6654L)
   public static void clearScriptStates() {
     //LAB_800e666c
-    for(int i = 0; i < 0x48; i++) {
+    for(int i = 0; i < 72; i++) {
       scriptStatePtrArr_800bc1c0[i] = null;
-    }
-  }
-
-  @Method(0x800e670cL)
-  public static void FUN_800e670c() {
-    //LAB_800e6720
-    for(int i = 0; i < 32; i++) {
-      scriptSubFunctions_8004e29c.get(736 + i).set(scriptSubFunctions_800e6f64.get(i).deref());
-    }
-
-    //LAB_800e6750
-    for(int i = 0; i < 23; i++) {
-      scriptSubFunctions_8004e29c.get(832 + i).set(scriptSubFunctions_800e6fe4.get(i).deref());
-    }
-  }
-
-  @Method(0x800e6774L)
-  public static void FUN_800e6774() {
-    //LAB_800e6788
-    for(int i = 0; i < 2; i++) {
-      scriptSubFunctions_8004e29c.get(896 + i).set(scriptSubFunctions_800e7040.get(i).deref());
-    }
-  }
-
-  @Method(0x800e67acL)
-  private static void copyScriptSubFunctions_800e67ac() {
-    //LAB_800e67c0
-    for(int i = 0; i < 19; i++) {
-      scriptSubFunctions_8004e29c.get(32 + i).set(scriptSubFunctions_800e7048.get(i).deref());
-    }
-
-    //LAB_800e67f0
-    for(int i = 0; i < 32; i++) {
-      scriptSubFunctions_8004e29c.get(224 + i).set(scriptSubFunctions_800e7094.get(i).deref());
-    }
-
-    //LAB_800e6820
-    for(int i = 0; i < 15; i++) {
-      scriptSubFunctions_8004e29c.get(704 + i).set(scriptSubFunctions_800e7114.get(i).deref());
-    }
-
-    //LAB_800e683c
-    //LAB_800e6850
-    for(int i = 0; i < 8; i++) {
-      scriptSubFunctions_8004e29c.get(800 + i).set(scriptSubFunctions_800e7150.get(i).deref());
     }
   }
 

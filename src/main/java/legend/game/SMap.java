@@ -34,6 +34,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
+import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.submap.SubmapAssets;
@@ -691,43 +692,43 @@ public final class SMap {
   }
 
   @Method(0x800d9bc0L)
-  public static long FUN_800d9bc0(final RunningScript a0) {
+  public static FlowControl FUN_800d9bc0(final RunningScript a0) {
     loadSupportOverlay(2, () -> SMap.FUN_800d9b08(-1));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9bf4L)
-  public static long FUN_800d9bf4(final RunningScript a0) {
+  public static FlowControl FUN_800d9bf4(final RunningScript a0) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
       gameState_800babc8.charData_32c.get(i).status_10.set(0);
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9c1cL)
-  public static long FUN_800d9c1c(final RunningScript a0) {
+  public static FlowControl FUN_800d9c1c(final RunningScript a0) {
     //LAB_800d9c78
     memcpy(gameState_800babc8.charData_32c.get(a0.params_20[1].get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20[0].get()).getAddress(), 0x2c);
     loadSupportOverlay(2, () -> SMap.FUN_800d9b08(a0.params_20[1].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9ce4L)
-  public static long scriptSetCharAddition(final RunningScript a0) {
+  public static FlowControl scriptSetCharAddition(final RunningScript a0) {
     gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.set(a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d20L)
-  public static long scriptGetCharAddition(final RunningScript a0) {
+  public static FlowControl scriptGetCharAddition(final RunningScript a0) {
     a0.params_20[1].set(gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d60L)
-  public static long FUN_800d9d60(final RunningScript a0) {
+  public static FlowControl FUN_800d9d60(final RunningScript a0) {
     if(gameState_800babc8.charData_32c.get(0).dlevelXp_0e.get() < 63901) {
       gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(63901);
     }
@@ -736,7 +737,7 @@ public final class SMap {
     gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
 
     loadSupportOverlay(2, () -> SMap.FUN_800d9dc0(0));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9dc0L)
@@ -1673,11 +1674,26 @@ public final class SMap {
     return FUN_800e00cc(a0);
   }
 
+  @Method(0x800df500L)
+  public static FlowControl FUN_800df500(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x800df530L)
   public static long FUN_800df530(final RunningScript a0) {
     a0.params_20[1] = a0.params_20[0];
     a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
     return FUN_800e0184(a0);
+  }
+
+  @Method(0x800df560L)
+  public static FlowControl FUN_800df560(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800df590L)
+  public static FlowControl FUN_800df590(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800df5c0L)
@@ -1896,6 +1912,16 @@ public final class SMap {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0520(script);
+  }
+
+  @Method(0x800dfd10L)
+  public static FlowControl FUN_800dfd10(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800dfd48L)
+  public static FlowControl FUN_800dfd48(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800dfd8cL)
@@ -2131,6 +2157,21 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800e057cL)
+  public static FlowControl FUN_800e057c(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800e05c8L)
+  public static FlowControl FUN_800e05c8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800e05f0L)
+  public static FlowControl FUN_800e05f0(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x800e0614L)
   public static long FUN_800e0614(final RunningScript script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2149,6 +2190,11 @@ public final class SMap {
     sobj.flatLightGreen_1c6.set(0x80);
     sobj.flatLightBlue_1c7.set(0x80);
     return 0;
+  }
+
+  @Method(0x800e074cL)
+  public static FlowControl FUN_800e074c(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e07f0L)
@@ -2300,6 +2346,11 @@ public final class SMap {
   public static long FUN_800e0c9c(final RunningScript a0) {
     _800c673c.setu(a0.params_20[0].get());
     return 0;
+  }
+
+  @Method(0x800e0cb8L)
+  public static FlowControl FUN_800e0cb8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e0d18L)
@@ -8323,6 +8374,11 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800f1eb8L)
+  public static FlowControl FUN_800f1eb8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x800f1f9cL)
   public static long FUN_800f1f9c(final RunningScript a0) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
@@ -8589,6 +8645,11 @@ public final class SMap {
     return 0;
   }
 
+  @Method(0x800f2554L)
+  public static FlowControl FUN_800f2554(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x800f25a8L)
   public static long FUN_800f25a8(final RunningScript script) {
     final ScriptState<?> v1 = script.scriptState_04;
@@ -8627,6 +8688,16 @@ public final class SMap {
 
     //LAB_800f26b4
     return 0;
+  }
+
+  @Method(0x800f26c8L)
+  public static FlowControl FUN_800f26c8(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800f2780L)
+  public static FlowControl FUN_800f2780(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800f2788L)

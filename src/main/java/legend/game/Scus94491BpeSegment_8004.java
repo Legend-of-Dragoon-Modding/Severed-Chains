@@ -8,7 +8,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
@@ -19,7 +18,9 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
+import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
+import legend.game.combat.SEffe;
 import legend.game.scripting.FlowControl;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
@@ -39,6 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
@@ -371,124 +373,249 @@ public final class Scus94491BpeSegment_8004 {
     scriptOps_8004e098[99] = Scus94491BpeSegment::scriptGetCallStackDepth;
   }
 
-  /**
-   * <p>Actually this is</p>
-   *
-   * <p>All methods that are skipped are {@link Scus94491BpeSegment#scriptRewindAndPause2}</p>
-   *
-   * <p>Many methods are copied into this table at runtime.</p>
-   *
-   * <ol start="0">
-   *   <li>{@link Scus94491BpeSegment#FUN_80017354}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017374}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag1}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag1}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptSetGlobalFlag2}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptReadGlobalFlag2}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptStartEffect}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptWaitForFilesToLoad}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017584}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800175b4}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017648}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80017688}</li>
-   *   <li>{@link SMap#FUN_800d9bc0}</li>
-   *   <li>{@link SMap#FUN_800d9bf4}</li>
-   *   <li>{@link SMap#FUN_800d9c1c}</li>
-   *   <li>{@link SMap#scriptSetCharAddition}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800176c0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800176ec}</li>
-   *   <li>{@link SMap#scriptGetCharAddition}</li>
-   *   <li>{@link SMap#FUN_800d9d60}</li>
-   * </ol>
-   * ...
-   * <ol start="128">
-   *   <li>{@link Bttl_800c#scriptSetBobjPos}</li>
-   *   <li>{@link Bttl_800c#scriptGetBobjPos}</li>
-   *   <li>{@link Bttl_800c#scriptSetBobjRotation}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc7d8}</li>
-   *   <li>{@link Bttl_800c#scriptSetBobjRotationY}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc948}</li>
-   *   <li>{@link Bttl_800c#scriptGetBobjRotation}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#scriptGetMonsterStatusResistFlags}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb618}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb674}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb6bc}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb764}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb76c}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb9b0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb9f0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cba28}</li>
-   *   <li>{@link Bttl_800c#FUN_800cba60}</li>
-   *   <li>{@link Bttl_800c#FUN_800cbabc}</li>
-   *   <li>{@link Bttl_800c#FUN_800cbb00}</li>
-   *   <li>{@link Bttl_800c#FUN_800cbc14}</li>
-   *   <li>{@link Bttl_800c#FUN_800cbde0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cbef8}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc0c8}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc1cc}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc364}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc46c}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc608}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc698}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc784}</li>
-   *   <li>{@link Bttl_800c#FUN_800cc8f4}</li>
-   *   <li>{@link Bttl_800c#FUN_800cca34}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#scriptRenderDamage}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccb70}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccba4}</li>
-   *   <li>{@link Bttl_800c#FUN_800cccf4}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccd34}</li>
-   *   <li>{@link Bttl_800c#scriptGetStat}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccf0c}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccec8}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccef8}</li>
-   *   <li>{@link Bttl_800c#FUN_800ccf2c}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd0ec}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd078}</li>
-   *   <li>{@link Bttl_800c#levelUpAddition}</li>
-   *   <li>{@link Bttl_800c#FUN_800cce70}</li>
-   *   <li>{@link Bttl_800c#scriptSetStat}</li>
-   * </ol>
-   * ...
-   * <ol start="320">
-   *   <li>{@link Bttl_800c#FUN_800cc9d8}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb84c}</li>
-   *   <li>{@link Bttl_800c#FUN_800cb95c}</li>
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   *   <li value="352">{@link Bttl_800c#FUN_800cd3b4}</li>
-   *   <li>{@link Bttl_800e#scriptCopyVram}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd468}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd4b0}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd4f0}</li>
-   *   <li>{@link Bttl_800c#scriptAddCombatant}</li>
-   *   <li>{@link Bttl_800c#scriptDeallocateAndClearCombatant}</li>
-   *   <li>{@link Bttl_800c#FUN_800cda78}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd5b4}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd740}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd7a8}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd810}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd8a4}</li>
-   *   <li>{@link Bttl_800c#scriptGetBobjNobj}</li>
-   *   <li>{@link Bttl_800c#scriptDeallocateCombatant}</li>
-   *   <li>{@link Bttl_800c#FUN_800cdb18}</li>
-   *   <li>{@link Bttl_800c#scriptLoadStage}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd910}</li>
-   *   <li>{@link Bttl_800c#scriptGetCombatantIndex}</li>
-   *   <li>{@link Bttl_800c#FUN_800cd998}</li>
-   *   <li>{@link Bttl_800c#FUN_800cdb74}</li>
-   * </ol>
-   * ...
-   * <ol start="1023">
-   *   <li>{@link Scus94491BpeSegment#scriptRewindAndPause2}</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<FunctionRef<RunningScript, Long>>> scriptSubFunctions_8004e29c = MEMORY.ref(4, 0x8004e29cL, ArrayRef.of(Pointer.classFor(FunctionRef.classFor(RunningScript.class, Long.class)), 0x3ff, 4, Pointer.of(4, FunctionRef::new)));
+  public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
+  static {
+    Arrays.setAll(scriptSubFunctions_8004e29c, i -> Scus94491BpeSegment::scriptRewindAndPause2);
+
+    scriptSubFunctions_8004e29c[0] = Scus94491BpeSegment::FUN_80017354;
+    scriptSubFunctions_8004e29c[1] = Scus94491BpeSegment::FUN_80017374;
+    scriptSubFunctions_8004e29c[2] = Scus94491BpeSegment::scriptSetGlobalFlag1;
+    scriptSubFunctions_8004e29c[3] = Scus94491BpeSegment::scriptReadGlobalFlag1;
+    scriptSubFunctions_8004e29c[4] = Scus94491BpeSegment::scriptSetGlobalFlag2;
+    scriptSubFunctions_8004e29c[5] = Scus94491BpeSegment::scriptReadGlobalFlag2;
+    scriptSubFunctions_8004e29c[6] = Scus94491BpeSegment::scriptStartEffect;
+    scriptSubFunctions_8004e29c[7] = Scus94491BpeSegment::scriptWaitForFilesToLoad;
+    scriptSubFunctions_8004e29c[8] = Scus94491BpeSegment::FUN_80017584;
+    scriptSubFunctions_8004e29c[9] = Scus94491BpeSegment::FUN_800175b4;
+    scriptSubFunctions_8004e29c[10] = Scus94491BpeSegment::FUN_80017648;
+    scriptSubFunctions_8004e29c[11] = Scus94491BpeSegment::FUN_80017688;
+    scriptSubFunctions_8004e29c[12] = SMap::FUN_800d9bc0;
+    scriptSubFunctions_8004e29c[13] = SMap::FUN_800d9bf4;
+    scriptSubFunctions_8004e29c[14] = SMap::FUN_800d9c1c;
+    scriptSubFunctions_8004e29c[15] = SMap::scriptSetCharAddition;
+    scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::FUN_800176c0;
+    scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::FUN_800176ec;
+    scriptSubFunctions_8004e29c[18] = SMap::scriptGetCharAddition;
+    scriptSubFunctions_8004e29c[19] = SMap::FUN_800d9d60;
+
+    scriptSubFunctions_8004e29c[32] = Bttl_800d::FUN_800dabcc;
+    scriptSubFunctions_8004e29c[33] = Bttl_800d::FUN_800dac20;
+    scriptSubFunctions_8004e29c[34] = Bttl_800d::FUN_800db034;
+    scriptSubFunctions_8004e29c[35] = Bttl_800d::FUN_800db460;
+    scriptSubFunctions_8004e29c[36] = Bttl_800d::FUN_800db574;
+    scriptSubFunctions_8004e29c[37] = Bttl_800d::FUN_800db688;
+    scriptSubFunctions_8004e29c[38] = Bttl_800d::FUN_800db79c;
+    scriptSubFunctions_8004e29c[39] = Bttl_800d::FUN_800db8b0;
+    scriptSubFunctions_8004e29c[40] = Bttl_800d::FUN_800db9e0;
+    scriptSubFunctions_8004e29c[41] = Bttl_800d::FUN_800dbb10;
+    scriptSubFunctions_8004e29c[42] = Bttl_800d::FUN_800dc2d8;
+    scriptSubFunctions_8004e29c[43] = Bttl_800d::FUN_800dbb9c;
+    scriptSubFunctions_8004e29c[44] = Bttl_800d::FUN_800dcbec;
+    scriptSubFunctions_8004e29c[45] = Bttl_800d::FUN_800dcb84;
+    scriptSubFunctions_8004e29c[46] = Bttl_800d::scriptSetViewportTwist;
+    scriptSubFunctions_8004e29c[47] = Bttl_800d::FUN_800dbc80;
+    scriptSubFunctions_8004e29c[48] = Bttl_800d::FUN_800dbcc8;
+    scriptSubFunctions_8004e29c[49] = Bttl_800d::scriptGetProjectionPlaneDistance;
+    scriptSubFunctions_8004e29c[50] = Bttl_800d::FUN_800d8dec;
+
+    scriptSubFunctions_8004e29c[128] = Bttl_800c::scriptSetBobjPos;
+    scriptSubFunctions_8004e29c[129] = Bttl_800c::scriptGetBobjPos;
+    scriptSubFunctions_8004e29c[130] = Bttl_800c::scriptSetBobjRotation;
+    scriptSubFunctions_8004e29c[131] = Bttl_800c::FUN_800cc7d8;
+    scriptSubFunctions_8004e29c[132] = Bttl_800c::scriptSetBobjRotationY;
+    scriptSubFunctions_8004e29c[133] = Bttl_800c::FUN_800cc948;
+    scriptSubFunctions_8004e29c[134] = Bttl_800c::scriptGetBobjRotation;
+    scriptSubFunctions_8004e29c[135] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[136] = Bttl_800c::scriptGetMonsterStatusResistFlags;
+    scriptSubFunctions_8004e29c[137] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[138] = Bttl_800c::FUN_800cb618;
+    scriptSubFunctions_8004e29c[139] = Bttl_800c::FUN_800cb674;
+    scriptSubFunctions_8004e29c[140] = Bttl_800c::FUN_800cb6bc;
+    scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
+    scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
+    scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
+    scriptSubFunctions_8004e29c[144] = Bttl_800c::FUN_800cb9f0;
+    scriptSubFunctions_8004e29c[145] = Bttl_800c::FUN_800cba28;
+    scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
+    scriptSubFunctions_8004e29c[147] = Bttl_800c::FUN_800cbabc;
+    scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
+    scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
+    scriptSubFunctions_8004e29c[150] = Bttl_800c::FUN_800cbde0;
+    scriptSubFunctions_8004e29c[151] = Bttl_800c::FUN_800cbef8;
+    scriptSubFunctions_8004e29c[152] = Bttl_800c::FUN_800cc0c8;
+    scriptSubFunctions_8004e29c[153] = Bttl_800c::FUN_800cc1cc;
+    scriptSubFunctions_8004e29c[154] = Bttl_800c::FUN_800cc364;
+    scriptSubFunctions_8004e29c[155] = Bttl_800c::FUN_800cc46c;
+    scriptSubFunctions_8004e29c[156] = Bttl_800c::FUN_800cc608;
+    scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
+    scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
+    scriptSubFunctions_8004e29c[159] = Bttl_800c::FUN_800cc8f4;
+    scriptSubFunctions_8004e29c[160] = Bttl_800c::FUN_800cca34;
+    scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[164] = Bttl_800c::scriptRenderDamage;
+    scriptSubFunctions_8004e29c[165] = Bttl_800c::FUN_800ccb70;
+    scriptSubFunctions_8004e29c[166] = Bttl_800c::FUN_800ccba4;
+    scriptSubFunctions_8004e29c[167] = Bttl_800c::FUN_800cccf4;
+    scriptSubFunctions_8004e29c[168] = Bttl_800c::FUN_800ccd34;
+    scriptSubFunctions_8004e29c[169] = Bttl_800c::scriptGetStat;
+    scriptSubFunctions_8004e29c[170] = Bttl_800c::FUN_800ccf0c;
+    scriptSubFunctions_8004e29c[171] = Bttl_800c::FUN_800ccec8;
+    scriptSubFunctions_8004e29c[172] = Bttl_800c::FUN_800ccef8;
+    scriptSubFunctions_8004e29c[173] = Bttl_800c::FUN_800ccf2c;
+    scriptSubFunctions_8004e29c[174] = Bttl_800c::FUN_800cd0ec;
+    scriptSubFunctions_8004e29c[175] = Bttl_800c::FUN_800cd078;
+    scriptSubFunctions_8004e29c[176] = Bttl_800c::levelUpAddition;
+    scriptSubFunctions_8004e29c[177] = Bttl_800c::FUN_800cce70;
+    scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetStat;
+
+    scriptSubFunctions_8004e29c[224] = Scus94491BpeSegment::FUN_8001e640;
+    scriptSubFunctions_8004e29c[225] = Scus94491BpeSegment::FUN_8001e918;
+    scriptSubFunctions_8004e29c[226] = Scus94491BpeSegment::FUN_8001e920;
+    scriptSubFunctions_8004e29c[227] = Scus94491BpeSegment::FUN_8001eb30;
+    scriptSubFunctions_8004e29c[228] = Scus94491BpeSegment::FUN_8001eccc;
+    scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::FUN_8001f070;
+    scriptSubFunctions_8004e29c[230] = Scus94491BpeSegment::scriptLoadMusicPackage;
+    scriptSubFunctions_8004e29c[231] = Scus94491BpeSegment::FUN_8001fe28;
+    scriptSubFunctions_8004e29c[232] = Scus94491BpeSegment::FUN_8001ffdc;
+    scriptSubFunctions_8004e29c[233] = Scus94491BpeSegment_8002::FUN_8002013c;
+    scriptSubFunctions_8004e29c[234] = Scus94491BpeSegment_8002::FUN_80020230;
+    scriptSubFunctions_8004e29c[235] = Scus94491BpeSegment_8002::FUN_800202a4;
+    scriptSubFunctions_8004e29c[236] = Scus94491BpeSegment::scriptPlaySound;
+    scriptSubFunctions_8004e29c[237] = Scus94491BpeSegment::FUN_8001ab98;
+    scriptSubFunctions_8004e29c[238] = Scus94491BpeSegment::scriptPlayBobjSound;
+    scriptSubFunctions_8004e29c[239] = Scus94491BpeSegment::FUN_8001ac48;
+    scriptSubFunctions_8004e29c[240] = Scus94491BpeSegment::FUN_8001ad5c;
+    scriptSubFunctions_8004e29c[241] = Scus94491BpeSegment::FUN_8001adc8;
+    scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::FUN_8001ae18;
+    scriptSubFunctions_8004e29c[243] = Scus94491BpeSegment::FUN_8001ae68;
+    scriptSubFunctions_8004e29c[244] = Scus94491BpeSegment::FUN_8001aec8;
+    scriptSubFunctions_8004e29c[245] = Scus94491BpeSegment::FUN_8001af34;
+    scriptSubFunctions_8004e29c[246] = Scus94491BpeSegment::FUN_8001afa4;
+    scriptSubFunctions_8004e29c[247] = Scus94491BpeSegment::FUN_8001b014;
+    scriptSubFunctions_8004e29c[248] = Scus94491BpeSegment::FUN_8001b094;
+    scriptSubFunctions_8004e29c[249] = Scus94491BpeSegment::FUN_8001b134;
+    scriptSubFunctions_8004e29c[250] = Scus94491BpeSegment::FUN_8001b13c;
+    scriptSubFunctions_8004e29c[251] = Scus94491BpeSegment::FUN_8001b144;
+    scriptSubFunctions_8004e29c[252] = Scus94491BpeSegment::scriptSetMainVolume;
+    scriptSubFunctions_8004e29c[253] = Scus94491BpeSegment::FUN_8001b17c;
+    scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::FUN_8001b208;
+    scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
+
+    scriptSubFunctions_8004e29c[320] = Bttl_800c::FUN_800cc9d8;
+    scriptSubFunctions_8004e29c[321] = Scus94491BpeSegment::scriptRewindAndPause2;
+    scriptSubFunctions_8004e29c[322] = Bttl_800c::FUN_800cb84c;
+    scriptSubFunctions_8004e29c[323] = Bttl_800c::FUN_800cb95c;
+    scriptSubFunctions_8004e29c[324] = Scus94491BpeSegment::scriptRewindAndPause2;
+
+    scriptSubFunctions_8004e29c[352] = Bttl_800c::FUN_800cd3b4;
+    scriptSubFunctions_8004e29c[353] = Bttl_800e::scriptCopyVram;
+    scriptSubFunctions_8004e29c[354] = Bttl_800c::FUN_800cd468;
+    scriptSubFunctions_8004e29c[355] = Bttl_800c::FUN_800cd4b0;
+    scriptSubFunctions_8004e29c[356] = Bttl_800c::FUN_800cd4f0;
+    scriptSubFunctions_8004e29c[357] = Bttl_800c::scriptAddCombatant;
+    scriptSubFunctions_8004e29c[358] = Bttl_800c::scriptDeallocateAndClearCombatant;
+    scriptSubFunctions_8004e29c[359] = Bttl_800c::FUN_800cda78;
+    scriptSubFunctions_8004e29c[360] = Bttl_800c::FUN_800cd5b4;
+    scriptSubFunctions_8004e29c[361] = Bttl_800c::FUN_800cd740;
+    scriptSubFunctions_8004e29c[362] = Bttl_800c::FUN_800cd7a8;
+    scriptSubFunctions_8004e29c[363] = Bttl_800c::FUN_800cd810;
+    scriptSubFunctions_8004e29c[364] = Bttl_800c::FUN_800cd8a4;
+    scriptSubFunctions_8004e29c[365] = Bttl_800c::scriptGetBobjNobj;
+    scriptSubFunctions_8004e29c[366] = Bttl_800c::scriptDeallocateCombatant;
+    scriptSubFunctions_8004e29c[367] = Bttl_800c::FUN_800cdb18;
+    scriptSubFunctions_8004e29c[368] = Bttl_800c::scriptLoadStage;
+    scriptSubFunctions_8004e29c[369] = Bttl_800c::FUN_800cd910;
+    scriptSubFunctions_8004e29c[370] = Bttl_800c::scriptGetCombatantIndex;
+    scriptSubFunctions_8004e29c[371] = Bttl_800c::FUN_800cd998;
+    scriptSubFunctions_8004e29c[372] = Bttl_800c::FUN_800cdb74;
+
+    scriptSubFunctions_8004e29c[704] = Scus94491BpeSegment::FUN_8001b2ac;
+    scriptSubFunctions_8004e29c[705] = Scus94491BpeSegment::scriptSssqFadeOut;
+    scriptSubFunctions_8004e29c[706] = Scus94491BpeSegment::FUN_8001b33c;
+    scriptSubFunctions_8004e29c[707] = Scus94491BpeSegment::FUN_8001b3a0;
+    scriptSubFunctions_8004e29c[708] = Scus94491BpeSegment::scriptGetSssqTempoScale;
+    scriptSubFunctions_8004e29c[709] = Scus94491BpeSegment::scriptSetSssqTempoScale;
+    scriptSubFunctions_8004e29c[710] = Scus94491BpeSegment::FUN_8001ffc0;
+    scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::FUN_8001b1ec;
+    scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
+    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::FUN_8001acd8;
+    scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
+    scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::FUN_8001f250;
+    scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::FUN_800203f0;
+    scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::FUN_8001f674;
+    scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
+
+    scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
+    scriptSubFunctions_8004e29c[737] = Bttl_800c::FUN_800cec8c;
+    scriptSubFunctions_8004e29c[738] = Bttl_800c::FUN_800cee50;
+    scriptSubFunctions_8004e29c[739] = Bttl_800c::FUN_800ceecc;
+    scriptSubFunctions_8004e29c[740] = Bttl_800d::FUN_800d3098;
+    scriptSubFunctions_8004e29c[741] = Bttl_800d::FUN_800d30a0;
+    scriptSubFunctions_8004e29c[742] = Bttl_800d::FUN_800d30a8;
+    scriptSubFunctions_8004e29c[743] = Bttl_800d::FUN_800d30b0;
+    scriptSubFunctions_8004e29c[744] = Bttl_800c::FUN_800cef00;
+    scriptSubFunctions_8004e29c[745] = Bttl_800c::FUN_800cf0b4;
+    scriptSubFunctions_8004e29c[746] = SEffe::FUN_80102088;
+    scriptSubFunctions_8004e29c[747] = SEffe::FUN_80102364;
+    scriptSubFunctions_8004e29c[748] = Bttl_800d::FUN_800d30b8;
+    scriptSubFunctions_8004e29c[749] = Bttl_800d::allocateProjectileHitEffect;
+    scriptSubFunctions_8004e29c[750] = Bttl_800d::FUN_800d09b8;
+    scriptSubFunctions_8004e29c[751] = Bttl_800d::allocateAdditionSparksEffect;
+    scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
+    scriptSubFunctions_8004e29c[753] = SEffe::allocateAdditionOverlaysEffect;
+    scriptSubFunctions_8004e29c[754] = SEffe::FUN_801077bc;
+    scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
+    scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
+    scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
+    scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
+    scriptSubFunctions_8004e29c[759] = SEffe::FUN_801078c0;
+    scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
+    scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
+    scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
+    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocatePotionEffect;
+    scriptSubFunctions_8004e29c[764] = Bttl_800d::scriptAllocateAdditionScript;
+    scriptSubFunctions_8004e29c[765] = Bttl_800c::FUN_800cfccc;
+    scriptSubFunctions_8004e29c[766] = Bttl_800d::FUN_800d4338;
+    scriptSubFunctions_8004e29c[767] = Bttl_800d::FUN_800d4580;
+
+    scriptSubFunctions_8004e29c[800] = SEffe::FUN_8010c378;
+    scriptSubFunctions_8004e29c[801] = SEffe::FUN_8010d1dc;
+    scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
+    scriptSubFunctions_8004e29c[803] = SEffe::FUN_8010e04c;
+    scriptSubFunctions_8004e29c[804] = SEffe::FUN_8010edc8;
+    scriptSubFunctions_8004e29c[805] = SEffe::FUN_8010e89c;
+    scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
+    scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
+
+    scriptSubFunctions_8004e29c[832] = Bttl_800d::FUN_800d46d4;
+    scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
+    scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
+    scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;
+    scriptSubFunctions_8004e29c[836] = SEffe::FUN_80109158;
+    scriptSubFunctions_8004e29c[837] = Bttl_800c::FUN_800ce9b0;
+    scriptSubFunctions_8004e29c[838] = SEffe::FUN_801052dc;
+    scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
+    scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
+    scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
+    scriptSubFunctions_8004e29c[842] = Bttl_800c::FUN_800c6968;
+    scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
+    scriptSubFunctions_8004e29c[844] = SEffe::FUN_801089cc;
+    scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
+    scriptSubFunctions_8004e29c[846] = Bttl_800c::FUN_800cfec8;
+    scriptSubFunctions_8004e29c[847] = SEffe::FUN_801023fc;
+    scriptSubFunctions_8004e29c[848] = SEffe::FUN_8010246c;
+    scriptSubFunctions_8004e29c[849] = Bttl_800c::scriptSetMtSeed;
+    scriptSubFunctions_8004e29c[850] = SEffe::FUN_80109d30;
+    scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
+    scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
+    scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;
+    scriptSubFunctions_8004e29c[854] = SEffe::FUN_801079a4;
+
+    scriptSubFunctions_8004e29c[896] = SEffe::FUN_8010a610;
+    scriptSubFunctions_8004e29c[897] = SEffe::allocateDeathDimensionEffect;
+  }
   // 8004f29c end of jump table
 
   public static final Value _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L);

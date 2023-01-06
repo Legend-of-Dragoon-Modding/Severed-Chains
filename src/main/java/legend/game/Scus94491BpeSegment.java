@@ -435,7 +435,7 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(50, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(51, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
     scriptFunctionDescriptions.put(52, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
-    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp) (%08x));".formatted(r.opParam_18, scriptSubFunctions_8004e29c.get(r.opParam_18).getPointer()));
+    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
     scriptFunctionDescriptions.put(64, r -> "jmp %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(65, r -> {
       final int operandA = r.params_20[0].get();
@@ -2691,12 +2691,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80016cfcL)
   public static FlowControl scriptExecuteSubFunc(final RunningScript script) {
     try {
-      return switch((int)(long)scriptSubFunctions_8004e29c.get(script.opParam_18).deref().run(script)) {
-        case 0 -> FlowControl.CONTINUE;
-        case 1 -> FlowControl.PAUSE;
-        case 2 -> FlowControl.PAUSE_AND_REWIND;
-        default -> throw new RuntimeException("Invalid return");
-      };
+      return scriptSubFunctions_8004e29c[script.opParam_18].apply(script);
     } catch(final UnsupportedOperationException e) {
       throw new RuntimeException("Script subfunc %d error".formatted(script.opParam_18), e);
     }
@@ -2928,31 +2923,29 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001734cL)
-  public static long scriptRewindAndPause2(final RunningScript a0) {
-    return 2;
+  public static FlowControl scriptRewindAndPause2(final RunningScript a0) {
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x80017354L)
-  public static long FUN_80017354(final RunningScript a0) {
+  public static FlowControl FUN_80017354(final RunningScript a0) {
     gameState_800babc8.indicatorsDisabled_4e3.set(a0.params_20[0].get() != 0 ? 1 : 0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017374L)
-  public static long FUN_80017374(final RunningScript a0) {
+  public static FlowControl FUN_80017374(final RunningScript a0) {
     a0.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3.get() != 0 ? 1 : 0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If work array element 1 is non-zero, the bit is set. If it's 0, the bit is cleared.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to set (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x80017390L)
-  public static long scriptSetGlobalFlag1(final RunningScript a0) {
+  public static FlowControl scriptSetGlobalFlag1(final RunningScript a0) {
     final int shift = a0.params_20[0].get() & 0x1f;
     final int index = a0.params_20[0].get() >>> 5;
 
@@ -2973,24 +2966,22 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800173f4
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x800173fcL)
-  public static long scriptReadGlobalFlag1(final RunningScript a0) {
+  public static FlowControl scriptReadGlobalFlag1(final RunningScript a0) {
     final int value = a0.params_20[0].get();
 
     // This is a fix for a bug in one of the game scripts - it ends up reading a flag that's massively out of bounds
     if(value == -1) {
       a0.params_20[1].set(0);
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     final int shift = value & 0x1f;
@@ -2998,11 +2989,11 @@ public final class Scus94491BpeSegment {
 
     a0.params_20[1].set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017440L)
-  public static long scriptSetGlobalFlag2(final RunningScript a0) {
+  public static FlowControl scriptSetGlobalFlag2(final RunningScript a0) {
     final int shift = a0.params_20[0].get() & 0x1f;
     final int index = a0.params_20[0].get() >>> 5;
 
@@ -3021,45 +3012,43 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800174d0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags2_bc}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x800174d8L)
-  public static long scriptReadGlobalFlag2(final RunningScript a0) {
+  public static FlowControl scriptReadGlobalFlag2(final RunningScript a0) {
     final int shift = a0.params_20[0].get() & 0x1f;
     final int index = a0.params_20[0].get() >>> 5;
 
     a0.params_20[1].set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001751cL)
-  public static long scriptStartEffect(final RunningScript a0) {
+  public static FlowControl scriptStartEffect(final RunningScript a0) {
     scriptStartEffect(a0.params_20[0].get(), Math.max(1, a0.params_20[1].get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017564L)
-  public static long scriptWaitForFilesToLoad(final RunningScript script) {
-    return 1; // Don't need to do anything here, file loading is synchronous
+  public static FlowControl scriptWaitForFilesToLoad(final RunningScript script) {
+    return FlowControl.PAUSE; // Don't need to do anything here, file loading is synchronous
   }
 
   @Method(0x80017584L)
-  public static long FUN_80017584(final RunningScript a0) {
+  public static FlowControl FUN_80017584(final RunningScript a0) {
     FUN_8002bb38(a0.params_20[0].get(), a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800175b4L)
-  public static long FUN_800175b4(final RunningScript a0) {
+  public static FlowControl FUN_800175b4(final RunningScript a0) {
     final int shift = a0.params_20[1].get() & 0x1f;
     final int index = a0.params_20[1].get() >>> 5;
 
@@ -3077,35 +3066,34 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017640
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017648L)
-  public static long FUN_80017648(final RunningScript a0) {
+  public static FlowControl FUN_80017648(final RunningScript a0) {
     final int shift = a0.params_20[1].get() & 0x1f;
     final int index = a0.params_20[1].get() >>> 5;
 
     a0.params_20[2].set((a0.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
-
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017688L)
-  public static long FUN_80017688(final RunningScript a0) {
+  public static FlowControl FUN_80017688(final RunningScript a0) {
     FUN_8002bda4(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800176c0L)
-  public static long FUN_800176c0(final RunningScript a0) {
+  public static FlowControl FUN_800176c0(final RunningScript a0) {
     FUN_8002c178(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800176ecL)
-  public static long FUN_800176ec(final RunningScript a0) {
+  public static FlowControl FUN_800176ec(final RunningScript a0) {
     FUN_8002c184();
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001770cL)
@@ -4291,39 +4279,39 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ab34L)
-  public static long scriptPlaySound(final RunningScript a0) {
+  public static FlowControl scriptPlaySound(final RunningScript a0) {
     playSound(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), (short)a0.params_20[4].get(), (short)a0.params_20[5].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ab98L)
-  public static long FUN_8001ab98(final RunningScript a0) {
+  public static FlowControl FUN_8001ab98(final RunningScript a0) {
     FUN_80019c80(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001abd0L)
-  public static long scriptPlayBobjSound(final RunningScript script) {
+  public static FlowControl scriptPlayBobjSound(final RunningScript script) {
     playBobjSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ac48L)
-  public static long FUN_8001ac48(final RunningScript a0) {
+  public static FlowControl FUN_8001ac48(final RunningScript a0) {
     FUN_8001a164(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ac88L)
-  public static long scriptPlayCombatantSound(final RunningScript script) {
+  public static FlowControl scriptPlayCombatantSound(final RunningScript script) {
     playCombatantSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), (short)script.params_20[3].get(), (short)script.params_20[4].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001acd8L)
-  public static long FUN_8001acd8(final RunningScript a0) {
+  public static FlowControl FUN_8001acd8(final RunningScript a0) {
     FUN_8001a164(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ad18L)
@@ -4338,7 +4326,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ad5cL)
-  public static long FUN_8001ad5c(final RunningScript a0) {
+  public static FlowControl FUN_8001ad5c(final RunningScript a0) {
     //LAB_8001ad70
     for(int i = 0; i < 32; i++) {
       final SpuStruct28 struct = spu28Arr_800bd110.get(i);
@@ -4347,7 +4335,7 @@ public final class Scus94491BpeSegment {
     }
 
     FUN_8004d91c(0x1L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ada0L)
@@ -4356,21 +4344,21 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001adc8L)
-  public static long FUN_8001adc8(final RunningScript a0) {
+  public static FlowControl FUN_8001adc8(final RunningScript a0) {
     FUN_8004cf8c(sssqChannelIndex_800bd0f8.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae18L)
-  public static long FUN_8001ae18(final RunningScript a0) {
+  public static FlowControl FUN_8001ae18(final RunningScript a0) {
     FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 2);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae68L)
-  public static long FUN_8001ae68(final RunningScript a0) {
+  public static FlowControl FUN_8001ae68(final RunningScript a0) {
     FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 2);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae90L)
@@ -4381,13 +4369,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001aec8L)
-  public static long FUN_8001aec8(final RunningScript a0) {
+  public static FlowControl FUN_8001aec8(final RunningScript a0) {
     if(_800bd0f0.getSigned() == 0x2L) {
       FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 0);
     }
 
     //LAB_8001aef0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001af00L)
@@ -4395,43 +4383,63 @@ public final class Scus94491BpeSegment {
     FUN_8004cf8c(spu10Arr_800bd610[index].channelIndex_0c);
   }
 
+  @Method(0x8001af34L)
+  public static FlowControl FUN_8001af34(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001afa4L)
+  public static FlowControl FUN_8001afa4(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001b014L)
+  public static FlowControl FUN_8001b014(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001b094L)
+  public static FlowControl FUN_8001b094(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001b0f0L)
-  public static long scriptGetSssqTempoScale(final RunningScript a0) {
+  public static FlowControl scriptGetSssqTempoScale(final RunningScript a0) {
     a0.params_20[0].set(sssqTempoScale_800bd100.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b118L)
-  public static long scriptSetSssqTempoScale(final RunningScript a0) {
+  public static FlowControl scriptSetSssqTempoScale(final RunningScript a0) {
     sssqTempoScale_800bd100.set(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b134L)
-  public static long FUN_8001b134(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b134(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b13cL)
-  public static long FUN_8001b13c(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b13c(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b144L)
-  public static long FUN_8001b144(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b144(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b14cL)
-  public static long scriptSetMainVolume(final RunningScript a0) {
+  public static FlowControl scriptSetMainVolume(final RunningScript a0) {
     setMainVolume((short)a0.params_20[0].get(), (short)a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b17cL)
-  public static long FUN_8001b17c(final RunningScript a0) {
+  public static FlowControl FUN_8001b17c(final RunningScript a0) {
     FUN_8001b1a8((short)a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b1a8L)
@@ -4441,13 +4449,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b1ecL)
-  public static long FUN_8001b1ec(final RunningScript a0) {
+  public static FlowControl FUN_8001b1ec(final RunningScript a0) {
     a0.params_20[0].set((int)_800bd108.getSigned());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b208L)
-  public static long FUN_8001b208(final RunningScript a0) {
+  public static FlowControl FUN_8001b208(final RunningScript a0) {
     //LAB_8001b22c
     for(int i = 0; i < 13; i++) {
       final SoundFile s0 = soundFileArr_800bcf80.get(i);
@@ -4459,52 +4467,52 @@ public final class Scus94491BpeSegment {
       //LAB_8001b250
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b27cL)
-  public static long scriptSssqFadeIn(final RunningScript a0) {
+  public static FlowControl scriptSssqFadeIn(final RunningScript a0) {
     sssqFadeIn((short)a0.params_20[0].get(), (short)a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b2acL)
-  public static long FUN_8001b2ac(final RunningScript a0) {
+  public static FlowControl FUN_8001b2ac(final RunningScript a0) {
     //TODO GH#3 (re-enabling this causes code to fail later - after one fight, subsequent fights will have completely broken audio, repeatedly crashing the sound thread)
     if(true) {
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     FUN_8004d2fc((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20[0].get(), (short)a0.params_20[1].get());
     _800bd0f0.offset(2, 0x18L).setu(a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b310L)
-  public static long scriptSssqFadeOut(final RunningScript a0) {
+  public static FlowControl scriptSssqFadeOut(final RunningScript a0) {
     sssqFadeOut((short)a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Something to do with sequenced audio
    */
   @Method(0x8001b33cL)
-  public static long FUN_8001b33c(final RunningScript a0) {
+  public static FlowControl FUN_8001b33c(final RunningScript a0) {
     //TODO GH#3
     if(true) {
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
     FUN_8004d41c((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20[0].get(), (short)a0.params_20[1].get());
     _800bd0f0.offset(2, 0x18L).setu(a0.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b3a0L)
-  public static long FUN_8001b3a0(final RunningScript a0) {
+  public static FlowControl FUN_8001b3a0(final RunningScript a0) {
     a0.params_20[0].set((short)FUN_8004d52c(sssqChannelIndex_800bd0f8.get()));
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b3e4L)
@@ -4832,6 +4840,16 @@ public final class Scus94491BpeSegment {
         _800bd700.setu(0);
       }
     }
+  }
+
+  @Method(0x8001c5fcL)
+  public static FlowControl FUN_8001c5fc(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001c604L)
+  public static FlowControl FUN_8001c604(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x8001c60cL)
@@ -5638,6 +5656,11 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_fffeL);
   }
 
+  @Method(0x8001e640L)
+  public static FlowControl FUN_8001e640(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001e8ccL)
   public static void FUN_8001e8cc() {
     // empty
@@ -5649,14 +5672,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001e918L)
-  public static long FUN_8001e918(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001e918(final RunningScript a0) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001e920L)
-  public static long FUN_8001e920(final RunningScript script) {
+  public static FlowControl FUN_8001e920(final RunningScript script) {
     FUN_8001cce8(script.params_20[0].get(), script.params_20[1].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001e950L)
@@ -5691,6 +5714,11 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, 5750 + submapIndex, Scus94491BpeSegment::submapSoundsLoaded, 0);
   }
 
+  @Method(0x8001eb30L)
+  public static FlowControl FUN_8001eb30(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001eb38L)
   public static void submapSoundsLoaded(final List<byte[]> files, final int unused) {
     final MrgFile mrg = MrgFile.alloc(files, 4);
@@ -5717,16 +5745,16 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ecccL)
-  public static long FUN_8001eccc(final RunningScript a0) {
+  public static FlowControl FUN_8001eccc(final RunningScript a0) {
     //TODO GH#3
     sssqResetStuff();
     musicLoaded_800bd782.incr();
-    if(true) return 0;
+    if(true) return FlowControl.CONTINUE;
 
     loadedDrgnFiles_800bcf78.oru(0x4L);
     sssqResetStuff();
     loadDrgnBinFile(0, 2437 + a0.params_20[0].get() * 3, 0, Scus94491BpeSegment::FUN_8001d8d8, 0, 0x4L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001eea8L)
@@ -5758,11 +5786,11 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f070L)
-  public static long FUN_8001f070(final RunningScript a0) {
+  public static FlowControl FUN_8001f070(final RunningScript a0) {
     loadedDrgnFiles_800bcf78.oru(0x20L);
     unloadSoundFile(6);
     loadDrgnDir(0, 1841 + a0.params_20[0].get(), Scus94491BpeSegment::FUN_8001f0dc, 0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f0dcL)
@@ -5784,11 +5812,11 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f250L)
-  public static long FUN_8001f250(final RunningScript script) {
+  public static FlowControl FUN_8001f250(final RunningScript script) {
     loadedDrgnFiles_800bcf78.oru(0x1_0000L);
     unloadSoundFile(7);
     loadDrgnDir(0, 1897 + script.params_20[0].get(), Scus94491BpeSegment::FUN_8001f2c0, 0);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f2c0L)
@@ -5836,36 +5864,36 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f450L)
-  public static long scriptLoadMusicPackage(final RunningScript a0) {
+  public static FlowControl scriptLoadMusicPackage(final RunningScript a0) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
 //    final int fileIndex = 5815 + a0.params_20.get(0).deref().get() * 5;
 //    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f560L)
-  public static long FUN_8001f560(final RunningScript a0) {
+  public static FlowControl FUN_8001f560(final RunningScript a0) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
 //    final int fileIndex = 732 + a0.params_20.get(0).deref().get() * 5;
 //    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f674L)
-  public static long FUN_8001f674(final RunningScript a0) {
+  public static FlowControl FUN_8001f674(final RunningScript a0) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
 //    final int fileIndex = 2353 + a0.params_20.get(0).deref().get() * 6;
 //    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f708L)
@@ -5992,6 +6020,11 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_bfffL);
   }
 
+  @Method(0x8001fe28L)
+  public static FlowControl FUN_8001fe28(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001ff74L)
   public static void FUN_8001ff74() {
     loadSupportOverlay(1, Scus94491BpeSegment::FUN_8001de84);
@@ -6003,14 +6036,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ffc0L)
-  public static long FUN_8001ffc0(final RunningScript a0) {
+  public static FlowControl FUN_8001ffc0(final RunningScript a0) {
     a0.params_20[0].set((int)loadedDrgnFiles_800bcf78.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ffdcL)
-  public static long FUN_8001ffdc(final RunningScript a0) {
+  public static FlowControl FUN_8001ffdc(final RunningScript a0) {
     unloadSoundFile(a0.params_20[0].get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 }

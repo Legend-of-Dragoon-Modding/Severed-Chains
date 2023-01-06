@@ -33,6 +33,7 @@ import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.scripting.FlowControl;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -237,7 +238,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020060L)
-  public static long FUN_80020060(final RunningScript a0) {
+  public static FlowControl FUN_80020060(final RunningScript a0) {
     FUN_8001ad18();
     unloadSoundFile(1);
     unloadSoundFile(3);
@@ -246,7 +247,12 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(6);
     unloadSoundFile(8);
     FUN_800201c8(6);
-    return 0;
+    return FlowControl.CONTINUE;
+  }
+
+  @Method(0x8002013cL)
+  public static FlowControl FUN_8002013c(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800201c8L)
@@ -262,6 +268,16 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020220
+  }
+
+  @Method(0x80020230L)
+  public static FlowControl FUN_80020230(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x800202a4L)
+  public static FlowControl FUN_800202a4(final RunningScript script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x80020308L)
@@ -296,12 +312,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800203f0L)
-  public static long FUN_800203f0(final RunningScript script) {
+  public static FlowControl FUN_800203f0(final RunningScript script) {
     unloadSoundFile(3);
     //TODO GH#3
 //    loadedDrgnFiles_800bcf78.oru(0x10L);
 //    loadDrgnBinFile(0, 1290 + script.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80020460L)
