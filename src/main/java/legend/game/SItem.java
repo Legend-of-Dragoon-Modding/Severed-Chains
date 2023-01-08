@@ -68,7 +68,7 @@ import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80023544;
+import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -2571,7 +2571,7 @@ public final class SItem {
         if((joypadPress_8007a398.get() & 0x60L) != 0) {
           playSound(3);
 
-          if(itemsDroppedByEnemiesCount_800bc978.get() == 0 || (FUN_80023544(itemsDroppedByEnemies_800bc928, itemsDroppedByEnemiesCount_800bc978) & 0xff) == 0) {
+          if(itemsDroppedByEnemiesCount_800bc978.get() == 0 || (giveItems(itemsDroppedByEnemies_800bc928, itemsDroppedByEnemiesCount_800bc978) & 0xff) == 0) {
             //LAB_8010dfac
             // No items remaining
             FUN_8010d050(InventoryMenuState._18, 0x1L);

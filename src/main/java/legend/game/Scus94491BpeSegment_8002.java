@@ -1949,7 +1949,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023544L)
-  public static int FUN_80023544(final ArrayRef<IntRef> items, final IntRef itemCount) {
+  public static int giveItems(final ArrayRef<IntRef> items, final IntRef itemCount) {
     int count = 0;
     //LAB_80023580
     for(int itemSlot = 0; itemSlot < itemCount.get(); itemSlot++) {
@@ -4797,7 +4797,7 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < 8; i++) {
       final Textbox4c struct4c = textboxes_800be358[i];
 
-      if(struct4c._00 != 0 && (int)struct4c._08 < 0) {
+      if(struct4c._00 != 0 && struct4c._08 < 0) {
         renderTextboxBackground(i);
       }
 
