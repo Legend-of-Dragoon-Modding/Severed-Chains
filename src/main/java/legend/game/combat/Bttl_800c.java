@@ -88,7 +88,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
-import static legend.game.Scus94491BpeSegment.FUN_8001ff74;
+import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -912,7 +912,7 @@ public final class Bttl_800c {
 
     //LAB_800c760c
     allocateStageDarkeningStorage();
-    FUN_8001ff74();
+    btldLoadEncounterSoundEffectsAndMusic();
 
     pregameLoadingStage_800bb10c.addu(0x1L);
   }

@@ -177,10 +177,10 @@ import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
 import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
-import static legend.game.Scus94491BpeSegment_8005._80050104;
+import static legend.game.Scus94491BpeSegment_8005.partySoundEffectPermutationFileIndices_80050104;
 import static legend.game.Scus94491BpeSegment_8005._80050190;
-import static legend.game.Scus94491BpeSegment_8005._8005019c;
-import static legend.game.Scus94491BpeSegment_8005._800501bc;
+import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
+import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005.deferredReallocOrFree_8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
@@ -5226,7 +5226,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001d1c4L)
-  public static void FUN_8001d1c4() {
+  public static void loadMonsterSounds() {
     final int encounterId = encounterId_800bb0f8.get();
     final int fileIndex;
     if(encounterId == 390) { // Doel
@@ -5357,10 +5357,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001d9d0L)
-  public static void FUN_8001d9d0() {
+  public static void loadEncounterMusic() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
 
-    if(stageData._01.get() != 0xff) {
+    if(stageData.musicIndex_01.get() != 0xff) {
 //      loadedDrgnFiles_800bcf78.oru(0x80L); //TODO GH#3
       musicLoaded_800bd782.incr();
       if(true) return;
@@ -5368,14 +5368,14 @@ public final class Scus94491BpeSegment {
       final int fileIndex;
       final FileLoadedCallback2<Integer> callback;
       final int callbackParam;
-      if((stageData._01.get() & 0x1f) == 0x13) {
+      if((stageData.musicIndex_01.get() & 0x1f) == 0x13) {
         unloadSoundFile(8);
         fileIndex = 732;
         callback = Scus94491BpeSegment::musicPackageLoadedCallback;
         callbackParam = 732 << 8;
       } else {
         //LAB_8001da58
-        fileIndex = (int)_800501bc.get(stageData._01.get() & 0x1f).get();
+        fileIndex = (int)combatMusicFileIndices_800501bc.get(stageData.musicIndex_01.get() & 0x1f).get();
         callback = Scus94491BpeSegment::FUN_8001fb44;
         callbackParam = 0;
       }
@@ -5463,7 +5463,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001de84L)
-  public static void FUN_8001de84() {
+  public static void loadEncounterSoundsAndMusic() {
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -5472,35 +5472,35 @@ public final class Scus94491BpeSegment {
 
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
 
-    if(stageData._01.get() != 0xff) {
+    if(stageData.musicIndex_01.get() != 0xff) {
       FUN_800201c8(6);
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int v1 = _8005019c.get(stageData._01.get() & 0x1f).get();
-      if(v1 == 0xc) {
-        FUN_8001fcf4(696);
-      } else if(v1 == 0xd) {
+      final int type = combatSoundEffectsTypes_8005019c.get(stageData.musicIndex_01.get() & 0x1f).get();
+      if(type == 0xc) {
+        loadEncounterSoundEffects(696);
+      } else if(type == 0xd) {
         //LAB_8001df68
-        FUN_8001fcf4(697);
-      } else if(v1 == 0xe) {
+        loadEncounterSoundEffects(697);
+      } else if(type == 0xe) {
         //LAB_8001df70
-        FUN_8001fcf4(698);
-      } else if(v1 == 0xf) {
+        loadEncounterSoundEffects(698);
+      } else if(type == 0xf) {
         //LAB_8001df78
-        FUN_8001fcf4(699);
+        loadEncounterSoundEffects(699);
         //LAB_8001df44
-      } else if(v1 == 0x56) {
+      } else if(type == 0x56) {
         //LAB_8001df84
-        FUN_8001fcf4(700);
-      } else if(v1 == 0x58) {
+        loadEncounterSoundEffects(700);
+      } else if(type == 0x58) {
         //LAB_8001df80
-        FUN_8001fcf4(701);
+        loadEncounterSoundEffects(701);
       }
 
-      FUN_8001d9d0();
+      loadEncounterMusic();
     }
 
     //LAB_8001df9c
@@ -5511,12 +5511,12 @@ public final class Scus94491BpeSegment {
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
         for(int charSlot1 = 0; charSlot1 < 3; charSlot1++) {
-          loadDrgnDir(0, (int)_80050104.offset(soundFileIndices[charSlot] * 0x4L).get() + "/" + charSlot1, Scus94491BpeSegment::FUN_8001cae0, charSlot);
+          loadDrgnDir(0, partySoundEffectPermutationFileIndices_80050104.get(soundFileIndices[charSlot]).get() + "/" + charSlot1, Scus94491BpeSegment::FUN_8001cae0, charSlot);
         }
       }
     }
 
-    FUN_8001d1c4();
+    loadMonsterSounds();
     decrementOverlayCount();
   }
 
@@ -6078,14 +6078,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fcf4L)
-  public static void FUN_8001fcf4(final int fileIndex) {
+  public static void loadEncounterSoundEffects(final int fileIndex) {
     loadedDrgnFiles_800bcf78.oru(0x4000L);
     // Example file: 700
-    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::FUN_8001fd4c, 6);
+    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::encounterSoundEffectsLoaded_8001fd4c, 6);
   }
 
   @Method(0x8001fd4cL)
-  public static void FUN_8001fd4c(final List<byte[]> files, final int index) {
+  public static void encounterSoundEffectsLoaded_8001fd4c(final List<byte[]> files, final int index) {
     final SpuStruct10 struct10 = spu10Arr_800bd610[index];
     struct10._00 = 2;
 
@@ -6100,8 +6100,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ff74L)
-  public static void FUN_8001ff74() {
-    loadSupportOverlay(1, Scus94491BpeSegment::FUN_8001de84);
+  public static void btldLoadEncounterSoundEffectsAndMusic() {
+    loadSupportOverlay(1, Scus94491BpeSegment::loadEncounterSoundsAndMusic);
   }
 
   @Method(0x8001ffb0L)

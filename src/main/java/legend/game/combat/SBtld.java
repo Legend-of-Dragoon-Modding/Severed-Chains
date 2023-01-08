@@ -85,7 +85,7 @@ public class SBtld {
   public static void FUN_80109050() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
     _800c6718.offset(0x00L).setu(stageData._00.get());
-    _800c6718.offset(0x04L).setu(stageData._01.get());
+    _800c6718.offset(0x04L).setu(stageData.musicIndex_01.get());
     _800c6718.offset(0x08L).setu(stageData._02.get());
     _800c6718.offset(0x0cL).setu(stageData._03.get());
     _800c6718.offset(0x10L).setu(stageData._04.get());
