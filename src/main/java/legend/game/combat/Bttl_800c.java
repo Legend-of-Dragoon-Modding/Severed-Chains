@@ -44,7 +44,7 @@ import legend.game.combat.types.BattleStageDarkening1800;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.BattleStruct7cc;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
@@ -288,7 +288,7 @@ public final class Bttl_800c {
   public static final Pointer<BattleLightStruct64> _800c6930 = MEMORY.ref(4, 0x800c6930L, Pointer.deferred(4, BattleLightStruct64::new));
 
   public static final Pointer<BattleStruct24_2> _800c6938 = MEMORY.ref(4, 0x800c6938L, Pointer.deferred(4, BattleStruct24_2::new));
-  public static final Pointer<BattleStruct7cc> struct7cc_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, BattleStruct7cc::new));
+  public static final Pointer<DeffManager7cc> deffManager_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, DeffManager7cc::new));
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
   public static final Pointer<UnboundedArrayRef<Pointer<TmdObjTable>>> tmds_800c6944 = MEMORY.ref(4, 0x800c6944L, Pointer.deferred(4, UnboundedArrayRef.of(0x4, Pointer.deferred(4, TmdObjTable::new))));
   public static final Pointer<UnboundedArrayRef<SpriteMetrics08>> spriteMetrics_800c6948 = MEMORY.ref(4, 0x800c6948L, Pointer.deferred(4, UnboundedArrayRef.of(8, SpriteMetrics08::new)));

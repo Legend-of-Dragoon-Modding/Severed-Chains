@@ -13,7 +13,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.MrgFile;
 
-public class BattleStruct7cc implements MemoryRef {
+public class DeffManager7cc implements MemoryRef {
   private final Value ref;
 
   //TODO these probably aren't actually an SVEC and an array of DVECs
@@ -51,7 +51,7 @@ public class BattleStruct7cc implements MemoryRef {
   public final BattleLightStruct64 _5dc;
   public final ArrayRef<BttlLightStruct84> _640;
 
-  public BattleStruct7cc(final Value ref) {
+  public DeffManager7cc(final Value ref) {
     this.ref = ref;
 
     this.svec_00 = ref.offset(2, 0x00L).cast(SVECTOR::new);

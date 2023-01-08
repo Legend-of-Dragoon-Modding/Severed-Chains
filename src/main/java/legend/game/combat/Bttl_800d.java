@@ -159,7 +159,7 @@ import static legend.game.combat.Bttl_800c.effectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
-import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.getLightColour;
@@ -4617,7 +4617,7 @@ public final class Bttl_800d {
     zOffset_1f8003e8.set(model.zOffset_a0.get());
     sp50 = model.ui_f8.get();
     tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
-    s6 = struct7cc_800c693c.deref()._20.get() & 0x4L;
+    s6 = deffManager_800c693c.deref()._20.get() & 0x4L;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
     s6 = v1 | v0;
@@ -4966,7 +4966,7 @@ public final class Bttl_800d {
 
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable a0, final EffectManagerData6cInner a1, final MATRIX a2) {
-    long s0 = struct7cc_800c693c.deref()._20.get() & 0x4L;
+    long s0 = deffManager_800c693c.deref()._20.get() & 0x4L;
     s0 = s0 >> 1 | s0 >> 2;
 
     final MATRIX sp0x10 = new MATRIX();

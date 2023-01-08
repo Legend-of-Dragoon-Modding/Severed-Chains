@@ -9,7 +9,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct4c;
-import legend.game.combat.types.BattleStruct7cc;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
@@ -50,7 +50,7 @@ import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.script_800c670c;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
-import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -280,7 +280,7 @@ public class SBtld {
 
   @Method(0x801098f4L)
   public static void FUN_801098f4() {
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
     final int stage = Math.max(0, combatStage_800bb0f4.get());
 
     //LAB_8010993c

@@ -17,7 +17,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.BattleStruct7cc;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.scripting.FlowControl;
@@ -30,7 +30,7 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
-import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800e.FUN_800e7dbc;
 import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.FUN_800e8594;
@@ -85,7 +85,7 @@ public final class Temp {
 
     final DVECTOR sp0x30 = new DVECTOR();
     if(FUN_800e7dbc(sp0x30, sp0x10.transfer) != 0) {
-      final BattleStruct7cc a0 = struct7cc_800c693c.deref();
+      final DeffManager7cc a0 = deffManager_800c693c.deref();
       final BattleStruct24 s1 = _800cbb74;
       s1._00.set(manager._10._00.get());
       s1.tpage_0c.set((a0.v_3ae.get() & 0x100) >>> 4 | (a0.u_3ac.get() & 0x3ff) >>> 6);

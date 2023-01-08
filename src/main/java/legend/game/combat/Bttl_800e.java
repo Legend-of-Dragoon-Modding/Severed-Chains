@@ -41,7 +41,7 @@ import legend.game.combat.types.BattleStruct24;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStruct4c;
-import legend.game.combat.types.BattleStruct7cc;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub13c;
@@ -229,7 +229,7 @@ import static legend.game.combat.Bttl_800c.script_800faebc;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
-import static legend.game.combat.Bttl_800c.struct7cc_800c693c;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
@@ -2469,10 +2469,10 @@ public final class Bttl_800e {
     final int v0 = (int)currentStage_800c66a4.get() - 0x47;
 
     if(v0 >= 0 && v0 < 0x8) {
-      FUN_800e5768(struct7cc_800c693c.deref()._98.get(v0));
+      FUN_800e5768(deffManager_800c693c.deref()._98.get(v0));
     } else {
       //LAB_800e59b0
-      FUN_800e5768(struct7cc_800c693c.deref()._4c);
+      FUN_800e5768(deffManager_800c693c.deref()._4c);
     }
 
     return FlowControl.CONTINUE;
@@ -2483,7 +2483,7 @@ public final class Bttl_800e {
     final int a0 = script.params_20[0].get();
 
     if(a0 == -1) {
-      final long addr = struct7cc_800c693c.deref()._4c.getAddress();
+      final long addr = deffManager_800c693c.deref()._4c.getAddress();
       for(int i = 0; i < 0x13; i++) {
         MEMORY.set(addr + i * 4, 4, script.params_20[1].array(i).get());
       }
@@ -2502,7 +2502,7 @@ public final class Bttl_800e {
       //LAB_800e5a14
     } else if(a0 == -3) {
       //LAB_800e5a40
-      FUN_800e5768(struct7cc_800c693c.deref()._98.get(script.params_20[1].get()));
+      FUN_800e5768(deffManager_800c693c.deref()._98.get(script.params_20[1].get()));
     }
 
     //LAB_800e5a68
@@ -2677,7 +2677,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6314L)
   public static void FUN_800e6314(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
 
     free(struct7cc.deffPackage_5a8.getPointer());
     struct7cc.deffPackage_5a8.clear();
@@ -2713,7 +2713,7 @@ public final class Bttl_800e {
   @Method(0x800e6470L)
   public static long FUN_800e6470(final RunningScript a0) {
     final int t0 = a0.params_20[0].get();
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
     struct7cc._20.or(t0 & 0x1_0000L).or(t0 & 0x2_0000L).or(t0 & 0x10_0000L);
 
     if((struct7cc._20.get() & 0x10_0000L) != 0) {
@@ -2759,14 +2759,14 @@ public final class Bttl_800e {
     final int s3 = a0.params_20[0].get() & 0xffff;
     final int s1 = a0.params_20[3].get() & 0xff;
 
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
-    struct7cc._20.or(_800fafec.offset(s3).get() << 16);
+    final DeffManager7cc deffManager = deffManager_800c693c.deref();
+    deffManager._20.or(_800fafec.offset(s3).get() << 16);
     FUN_800e6470(a0);
 
     final BattleStruct24_2 battle24 = _800c6938.deref();
 
     battle24._00.or(0x100_0000L);
-    if((struct7cc._20.get() & 0x4_0000L) != 0) {
+    if((deffManager._20.get() & 0x4_0000L) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
       FUN_8001d068(battle24.scriptIndex_04.get(), s3 != 0x2e || s1 != 0 ? 0 : 2);
@@ -2795,7 +2795,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6844L)
   public static long FUN_800e6844(final RunningScript a0) {
-    struct7cc_800c693c.deref()._20.or(0x40_0000L);
+    deffManager_800c693c.deref()._20.or(0x40_0000L);
     FUN_800e6470(a0);
     final int s0 = ((a0.params_20[0].get() & 0xffff) - 192) * 2;
     final BattleStruct24_2 t0 = _800c6938.deref();
@@ -2818,7 +2818,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e69a8
-    struct7cc_800c693c.deref()._20.or(s1 & 0x10_0000L);
+    deffManager_800c693c.deref()._20.or(s1 & 0x10_0000L);
     FUN_800e6470(a0);
 
     final BattleStruct24_2 v1 = _800c6938.deref();
@@ -2904,7 +2904,7 @@ public final class Bttl_800e {
           //LAB_800e6e58
           flow = FlowControl.PAUSE_AND_REWIND;
         } else if(v1 == 0x2L) {
-          final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+          final DeffManager7cc struct7cc = deffManager_800c693c.deref();
 
           //LAB_800e6e60
           if((struct7cc._20.get() & 0x20_0000L) != 0) {
@@ -3018,7 +3018,7 @@ public final class Bttl_800e {
   public static void loadDeffPackage(final List<byte[]> files, final int scriptIndex) {
     final MrgFile mrg = MrgFile.alloc(files);
 
-    struct7cc_800c693c.deref().deffPackage_5a8.set(mrg);
+    deffManager_800c693c.deref().deffPackage_5a8.set(mrg);
 
     if(mrg.entries.get(0).size.get() != 0) {
       FUN_800ea620(mrg.getFile(0, DeffFile::new), mrg.entries.get(0).size.get(), scriptIndex);
@@ -3038,7 +3038,7 @@ public final class Bttl_800e {
 
     //LAB_800e70fc
     if(a0._1c.get() != 0 && !a0.script_14.isNull()) {
-      final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+      final DeffManager7cc struct7cc = deffManager_800c693c.deref();
 
       if((struct7cc._20.get() & 0x4_0000L) == 0 || (getLoadedDrgnFiles() & 0x40L) == 0) {
         //LAB_800e7154
@@ -3207,7 +3207,7 @@ public final class Bttl_800e {
 
     if(v1 == 0x1L) {
       //LAB_800e7510
-      if(struct24._1c.get() != 0 && !struct24.script_14.isNull() && ((struct7cc_800c693c.deref()._20.get() & 0x4_0000L) == 0 || (getLoadedDrgnFiles() & 0x40L) == 0)) {
+      if(struct24._1c.get() != 0 && !struct24.script_14.isNull() && ((deffManager_800c693c.deref()._20.get() & 0x4_0000L) == 0 || (getLoadedDrgnFiles() & 0x40L) == 0)) {
         //LAB_800e756c
         _800fafe8.setu(0x2L);
       }
@@ -3470,7 +3470,7 @@ public final class Bttl_800e {
 
     if(parentIndex != -1) {
       if(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00.get() != BattleScriptDataBase.EM__) {
-        parentIndex = struct7cc_800c693c.deref().scriptIndex_1c.get();
+        parentIndex = deffManager_800c693c.deref().scriptIndex_1c.get();
       }
 
       //LAB_800e8294
@@ -3544,7 +3544,7 @@ public final class Bttl_800e {
 
     if(parentIndex != -1) {
       if(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00.get() != BattleScriptDataBase.EM__) {
-        parentIndex = struct7cc_800c693c.deref().scriptIndex_1c.get();
+        parentIndex = deffManager_800c693c.deref().scriptIndex_1c.get();
       }
 
       //LAB_800e84fc
@@ -3761,7 +3761,7 @@ public final class Bttl_800e {
 
   @Method(0x800e8ffcL)
   public static void FUN_800e8ffc() {
-    final BattleStruct7cc v0 = MEMORY.ref(4, mallocTail(0x7ccL), BattleStruct7cc::new);
+    final DeffManager7cc v0 = MEMORY.ref(4, mallocTail(0x7ccL), DeffManager7cc::new);
     _800c6938.set(v0._5b8);
     _800c6930.set(v0._5dc);
     lights_800c692c.set(v0._640);
@@ -3769,7 +3769,7 @@ public final class Bttl_800e {
     v0.ptr_24.set(v0._28.getAddress());
     tmds_800c6944.set(v0.tmds_2f8);
     _800c6940.setu(v0._390.getAddress());
-    struct7cc_800c693c.set(v0);
+    deffManager_800c693c.set(v0);
     spriteMetrics_800c6948.set(v0.spriteMetrics_39c);
     final int scriptIndex = allocateEffectManager(-1, 0, null, null, null, null);
     ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00)._04.set(0x600_0400L);
@@ -3791,25 +3791,25 @@ public final class Bttl_800e {
   public static void FUN_800e9120() {
     deallocateScriptAndChildren(1);
     FUN_800eab8c();
-    deallocateScriptAndChildren(struct7cc_800c693c.deref().scriptIndex_1c.get());
-    free(struct7cc_800c693c.getPointer());
+    deallocateScriptAndChildren(deffManager_800c693c.deref().scriptIndex_1c.get());
+    free(deffManager_800c693c.getPointer());
   }
 
   @Method(0x800e9178L)
   public static void FUN_800e9178(final int a0) {
     if(a0 == 1) {
       //LAB_800e91a0
-      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
+      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[deffManager_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
     } else if(a0 == 2) {
       //LAB_800e91d8
-      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct7cc_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
+      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[deffManager_800c693c.deref().scriptIndex_1c.get()].innerStruct_00, 10);
       FUN_800eab8c();
     } else {
       //LAB_800e9214
       FUN_800eab8c();
-      deallocateScriptAndChildren(struct7cc_800c693c.deref().scriptIndex_1c.get());
+      deallocateScriptAndChildren(deffManager_800c693c.deref().scriptIndex_1c.get());
       final int scriptIndex = allocateEffectManager(-1, 0, null, null, null, null);
-      struct7cc_800c693c.deref().scriptIndex_1c.set(scriptIndex);
+      deffManager_800c693c.deref().scriptIndex_1c.set(scriptIndex);
       ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00)._04.set(0x600_0400L);
     }
 
@@ -3879,7 +3879,7 @@ public final class Bttl_800e {
     a0._00.set(a1 | 0x400_0000L);
 
     if((a1 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = struct7cc_800c693c.deref().spriteMetrics_39c.get((int)(a1 & 0xff));
+      final SpriteMetrics08 metrics = deffManager_800c693c.deref().spriteMetrics_39c.get((int)(a1 & 0xff));
       a0.metrics_04.u_00.set(metrics.u_00.get());
       a0.metrics_04.v_02.set(metrics.v_02.get());
       a0.metrics_04.w_04.set(metrics.w_04.get());
@@ -4346,14 +4346,14 @@ public final class Bttl_800e {
 
     //LAB_800ea790
     deff_800c6950.set(deff);
-    struct7cc_800c693c.deref().deff_5ac.set(deff);
+    deffManager_800c693c.deref().deff_5ac.set(deff);
   }
 
   @Method(0x800ea7d0L)
   public static void FUN_800ea7d0(final DeffFile deff, final long size, final long a2) {
     long v0;
     long a1;
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
     FUN_800ea620(deff, size, struct7cc.scriptIndex_1c.get());
 
     final DeffFile deff2 = struct7cc.deff_5ac.deref();
@@ -4428,7 +4428,7 @@ public final class Bttl_800e {
 
   @Method(0x800eab8cL)
   public static void FUN_800eab8c() {
-    final BattleStruct7cc struct7cc = struct7cc_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
 
     long a0 = struct7cc._34.get();
     if(a0 != 0) {
@@ -4460,7 +4460,7 @@ public final class Bttl_800e {
 
   @Method(0x800eac58L)
   public static DeffPart FUN_800eac58(final long a0) {
-    final DeffFile deff = struct7cc_800c693c.deref().deff_5ac.deref();
+    final DeffFile deff = deffManager_800c693c.deref().deff_5ac.deref();
 
     //LAB_800eac84
     for(int i = 0; i < deff.pointerCount_06.get(); i++) {
@@ -4485,7 +4485,7 @@ public final class Bttl_800e {
     }, 0, "4114/2");
 
     loadDrgnDir(0, "4114/3", (files, param) -> FUN_800e929c(files, 0), 0);
-    loadDrgnDir(0, "4114/1", (files, param) -> struct7cc_800c693c.deref().mrg_2c.set(MrgFile.alloc(files)), 0);
+    loadDrgnDir(0, "4114/1", (files, param) -> deffManager_800c693c.deref().mrg_2c.set(MrgFile.alloc(files)), 0);
   }
 
   @Method(0x800ead44L)
