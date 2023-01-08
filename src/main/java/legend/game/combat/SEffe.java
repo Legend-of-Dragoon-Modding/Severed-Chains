@@ -8325,7 +8325,7 @@ public final class SEffe {
 
   @Method(0x80114e60L)
   public static long FUN_80114e60(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(4, v0).offset(0x34L).offset(a0.params_20.get(1).deref().get() * 0x4L).setu(a0.params_20.get(2).deref().get());
     return 0;
   }
@@ -8441,7 +8441,7 @@ public final class SEffe {
 
   @Method(0x8011549cL)
   public static long FUN_8011549c(final RunningScript a0) {
-    final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long a1 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(4, a1).offset(0x10L).and(0xffff_ffbfL).oru(a0.params_20.get(1).deref().get() << 6);
     return 0;
   }
@@ -8506,7 +8506,7 @@ public final class SEffe {
 
   @Method(0x801156f8L)
   public static long FUN_801156f8(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO em
     MEMORY.ref(1, v0).offset(0xcL).setu(a0.params_20.get(1).deref().get());
     MEMORY.ref(1, v0).offset(0xdL).setu(a0.params_20.get(2).deref().get());
     return 0;
@@ -9961,12 +9961,12 @@ public final class SEffe {
     final BttlScriptData6cSub08_4 effect = manager.effect_44.derefAs(BttlScriptData6cSub08_4.class);
     final int sp10 = DISPENV_800c34b0.disp.x.get() + manager._10.trans_04.getX() + 160 - (int)manager._10._24.get() / 2;
     final int sp12 = DISPENV_800c34b0.disp.y.get() + manager._10.trans_04.getY() + 120 - manager._10.vec_28.getX() / 2;
-    final int sp34 = manager._10.trans_04.getZ() - manager._10.vec_28.getY() / 2 >> 2;
-    final int fp = manager._10.trans_04.getZ() + manager._10.vec_28.getY() / 2 >> 2;
+    final int minZ = manager._10.trans_04.getZ() - manager._10.vec_28.getY() / 2 >> 2;
+    final int maxZ = manager._10.trans_04.getZ() + manager._10.vec_28.getY() / 2 >> 2;
     final int l = DISPENV_800c34b0.disp.x.get();
-    final int r = DISPENV_800c34b0.disp.x.get() + 320;
+    final int r = l + 320;
     final int t = DISPENV_800c34b0.disp.y.get();
-    final int b = DISPENV_800c34b0.disp.y.get() + 240;
+    final int b = t + 240;
 
     final RECT sp0x20 = new RECT();
     final RECT sp0x28 = new RECT();
@@ -9976,7 +9976,7 @@ public final class SEffe {
       sp0x28.x.set((short)(sp10 + manager._10._24.get() / 2 * (i & 0x1L)));
       sp0x28.y.set((short)(sp12 + manager._10.vec_28.getX() / 2 * (i >> 1)));
       sp0x28.w.set((short)(manager._10._24.get() / 2));
-      sp0x28.h.set((short)(manager._10._24.get() / 2));
+      sp0x28.h.set((short)(manager._10.vec_28.getX() / 2));
       if(sp0x28.x.get() < r) {
         if(sp0x28.x.get() < l) {
           sp0x28.w.add((short)(sp0x28.x.get() - l));
@@ -10008,8 +10008,8 @@ public final class SEffe {
               sp0x20.w.set(sp0x28.w.get());
               sp0x20.h.set(sp0x28.h.get());
 
-              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x20.x.get(), sp0x20.y.get(), sp0x28.x.get(), sp0x28.y.get(), sp0x20.w.get(), sp0x20.h.get()));
-              GPU.queueCommand(sp34, new GpuCommandCopyVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get()));
+              // This was depth-queued at both minZ and maxZ, not really sure why... minZ sometimes had a negative value and would crash
+              GPU.command80CopyRectFromVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get());
             }
           }
         }

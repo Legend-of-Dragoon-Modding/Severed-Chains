@@ -154,8 +154,8 @@ import static legend.game.Scus94491BpeSegment_8005._80052b88;
 import static legend.game.Scus94491BpeSegment_8005._80052b8c;
 import static legend.game.Scus94491BpeSegment_8005._80052ba8;
 import static legend.game.Scus94491BpeSegment_8005._80052baa;
-import static legend.game.Scus94491BpeSegment_8005._80052bc8;
-import static legend.game.Scus94491BpeSegment_8005._80052bf4;
+import static legend.game.Scus94491BpeSegment_8005.textboxVramX_80052bc8;
+import static legend.game.Scus94491BpeSegment_8005.textboxVramY_80052bf4;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
@@ -4449,14 +4449,14 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - s3;
           cmd.pos(x, y, 8, height);
           cmd.bpp(Bpp.BITS_4);
-          cmd.vramPos((int)_80052bc8.offset(sp22 * 0x4L).get(), _80052bf4.offset(sp22 * 0x4L).get() < 256 ? 0 : 256);
+          cmd.vramPos(textboxVramX_80052bc8.get(sp22).get(), textboxVramY_80052bf4.get(sp22).get() < 256 ? 0 : 256);
           GPU.queueCommand(s7.z_0c.get(), cmd);
 
           GPU.queueCommand(s7.z_0c.get() + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
             .monochrome(0x80)
             .clut(976, clutY)
-            .vramPos((int)_80052bc8.offset(sp22 * 0x4L).get(), _80052bf4.offset(sp22 * 0x4L).get() < 256 ? 0 : 256)
+            .vramPos(textboxVramX_80052bc8.get(sp22).get(), textboxVramY_80052bf4.get(sp22).get() < 256 ? 0 : 256)
             .pos(x + 1, y + 1, 8, height)
             .uv(u, v)
           );
@@ -4787,7 +4787,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_800294b4
-        final long fp = _800be5bc.get();
+        final int fp = (int)_800be5bc.get();
 
         if(lineIndex == 0) {
           glyphNudge = 0;
@@ -4820,7 +4820,7 @@ public final class Scus94491BpeSegment_8002 {
           .pos(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
           .uv((int)_800be5c0.get() * 16, v)
           .clut((a3 & 0xf) * 16 + 832 & 0x3f0, (int)_800be5b8.get() + 480)
-          .vramPos((int)_80052bc8.offset(fp * 0x4L).get(), _80052bf4.offset(fp * 0x4L).get() < 256 ? 0 : 256)
+          .vramPos(textboxVramX_80052bc8.get(fp).get(), textboxVramY_80052bf4.get(fp).get() < 256 ? 0 : 256)
         );
 
         glyphNudge += switch(c) {
@@ -5086,7 +5086,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a180L)
-  public static void FUN_8002a180(final int textboxIndex, final long a1, final long a2, long a3, final long a4) {
+  public static void FUN_8002a180(final int textboxIndex, final long a1, final long a2, long a3, final long lodChar) {
     final Struct84 v1 = _800bdf38.get(textboxIndex);
     final int a0 = v1._36.get() * v1._1c.get() + v1._34.get();
     final long v0 = v1.ptr_58.get() + a0 * 0x8L;
@@ -5100,7 +5100,13 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002a1e8
     //LAB_8002a1ec
     MEMORY.ref(1, v0).offset(0x4L).setu(a3);
-    MEMORY.ref(2, v0).offset(0x6L).setu(a4);
+
+    // Hellena Prison has a retail bug (textbox name says Warden?iate)
+    if(lodChar == 0x900) {
+      MEMORY.ref(2, v0).offset(0x6L).setu(0);
+    } else {
+      MEMORY.ref(2, v0).offset(0x6L).setu(lodChar);
+    }
   }
 
   @Method(0x8002a1fcL)

@@ -62,7 +62,6 @@ import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
@@ -81,7 +80,6 @@ import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
-import static legend.game.combat.Bttl_800c._800c7004;
 import static legend.game.combat.Bttl_800c._800c7008;
 import static legend.game.combat.Bttl_800c._800c7014;
 import static legend.game.combat.Bttl_800c._800c7028;
@@ -127,6 +125,7 @@ import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
+import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
@@ -4039,7 +4038,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9d7cL)
   public static long FUN_800f9d7c(final RunningScript a0) {
-    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO
+    final long v0 = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.getPointer(); //TODO bobj
     long a1 = v0 + 0xb0L;
 
     //LAB_800f9db0

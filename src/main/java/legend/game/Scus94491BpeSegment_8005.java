@@ -64,10 +64,8 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80052baa = MEMORY.ref(2, 0x80052baaL);
 
-  public static final Value _80052bc8 = MEMORY.ref(4, 0x80052bc8L);
-
-  public static final Value _80052bf4 = MEMORY.ref(4, 0x80052bf4L);
-
+  public static final ArrayRef<IntRef> textboxVramX_80052bc8 = MEMORY.ref(4, 0x80052bc8L, ArrayRef.of(IntRef.class, 11, 4, IntRef::new));
+  public static final ArrayRef<IntRef> textboxVramY_80052bf4 = MEMORY.ref(4, 0x80052bf4L, ArrayRef.of(IntRef.class, 11, 4, IntRef::new));
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final Value submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L);

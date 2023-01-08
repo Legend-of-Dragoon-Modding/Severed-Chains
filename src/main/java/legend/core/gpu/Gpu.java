@@ -845,7 +845,13 @@ public class Gpu implements Runnable {
   }
 
   public int getPixel15(final int x, final int y) {
-    return this.vram15[y * this.vramWidth + x];
+    final int index = y * this.vramWidth + x;
+
+    if(index < 0 || index >= this.vram15.length) {
+      throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.vram15.length));
+    }
+
+    return this.vram15[index];
   }
 
   public void setPixel(final int x, final int y, final int pixel) {

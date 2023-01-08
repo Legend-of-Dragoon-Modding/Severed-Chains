@@ -74,7 +74,7 @@ public class LoadGameScreen extends SaveListScreen {
   }
 
   @Override
-  protected void renderSaveSlot(final int slot, final int fileIndex, final int a2) {
-    renderSaveGameSlot(fileIndex, getSlotY(slot), a2 == 0xff ? 1 : 0);
+  protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
+    renderSaveGameSlot(fileIndex, getSlotY(slot), allocate);
   }
 }

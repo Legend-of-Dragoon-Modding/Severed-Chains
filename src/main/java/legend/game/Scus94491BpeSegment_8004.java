@@ -2323,12 +2323,18 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004888cL)
-  public static void setNoiseMode(final long channelIndex, final long voiceIndex) {
-    assert false;
+  public static void setNoiseMode(final int channelIndex, final int voiceIndex) {
+    final SpuStruct44 spu44 = _800c6630;
+
+    if(voiceIndex < 16) {
+      spu44.noiseModeLo_16.or(1 << voiceIndex);
+    } else {
+      spu44.noiseModeHi_18.or(1 << voiceIndex - 16);
+    }
   }
 
   @Method(0x800488d4L)
-  public static void setKeyOff(final int channelIndex, final long voiceIndex) {
+  public static void setKeyOff(final int channelIndex, final int voiceIndex) {
     final SpuStruct124 a2 = _800c4ac8.get(channelIndex);
 
     if(voiceIndex < 16) {
@@ -3294,8 +3300,23 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004ad2cL)
-  public static void FUN_8004ad2c(final long voiceIndex) {
-    assert false;
+  public static void FUN_8004ad2c(final int voiceIndex) {
+    final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+    final SpuStruct124 struct124 = _800c4ac8.get(struct66._1a.get());
+
+    if(struct66._1a.get() != 0) {
+      final long a1 = playableSoundPtrArr_800c43d0.get(struct124.playableSoundIndex_020.get()).sshdPtr_04.getPointer();
+      sshdPtr_800c4ac0.setPointer(a1);
+      sssqDataPointer_800c6680.setu(playableSoundPtrArr_800c43d0.get(struct124.playableSoundIndex_020.get()).sshdPtr_04.getPointer() + MEMORY.ref(4, a1).offset(0x20L).get() + struct66.channel_04.get() * 0x10L + 0x10L);
+    } else {
+      //LAB_8004adf4
+      sssqDataPointer_800c6680.setu(struct124.sssqPtr_010.getPointer() + struct66.channel_04.get() * 0x10L + 0x10L);
+    }
+
+    //LAB_8004ae10
+    _800c3a40.get(voiceIndex)._28.set((int)sssqDataPointer_800c6680.deref(1).offset(0xeL).get());
+    voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_8004ae94(voiceIndex, 0));
+    voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_8004ae94(voiceIndex, 1));
   }
 
   @Method(0x8004ae94L)
@@ -3975,9 +3996,20 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cb0cL)
-  public static long FUN_8004cb0c(final int playableSoundIndex, final long a1) {
-    assert playableSoundIndex >= 0;
-    assert a1 >= 0;
+  public static long FUN_8004cb0c(final int playableSoundIndex, int volume) {
+    if(playableSoundIndex < 0) {
+      throw new IllegalArgumentException("Negative playableSoundIndex");
+    }
+
+    if(volume < 0) {
+      //TODO GH#3, GH#193
+      // This happens during the killing blow in the first virage fight. In retail, a1 counts down from 0x7f to 0 (I'm assuming it's volume).
+      // In the decomp, it jumps down from 0x7f to 0 to -3. It seems like the previous script frame is setting it to a position vector value...?
+      LOGGER.error("Negative volume, changing to 0");
+      volume = 0;
+
+//      throw new RuntimeException("Negative a1");
+    }
 
     final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
     sshdPtr_800c4ac0.set(sound.sshdPtr_04.deref());
@@ -3997,20 +4029,20 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if((int)a1 >= 0x80L) {
+    if(volume >= 0x80) {
       assert false : "Error";
       return -0x1L;
     }
 
     sssqPtr_800c667c.setu(sound.sshdPtr_04.getPointer() + sound.sshdPtr_04.deref().ptr_20.get());
     final long ret = sssqPtr_800c667c.deref(1).offset(0x0L).get();
-    sssqPtr_800c667c.deref(1).offset(0x0L).setu(a1);
+    sssqPtr_800c667c.deref(1).offset(0x0L).setu(volume);
     sssqDataPointer_800c6680.setu(sound.sshdPtr_04.getPointer() + sshdPtr_800c4ac0.deref().ptr_20.get() + 0x10L);
 
     //LAB_8004cbc8
     for(int i = 0; i < 24; i++) {
       final long v0 = sssqDataPointer_800c6680.deref(1).offset(0x3L).get();
-      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu((int)v0 * (int)a1 >> 7);
+      sssqDataPointer_800c6680.deref(1).offset(0xeL).setu((int)v0 * volume >> 7);
       sssqDataPointer_800c6680.addu(0x10L);
     }
 

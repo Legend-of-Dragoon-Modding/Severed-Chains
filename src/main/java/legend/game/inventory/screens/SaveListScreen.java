@@ -2,16 +2,19 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.SaveManager;
+import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import org.lwjgl.glfw.GLFW;
 
+import static legend.game.SItem.FUN_801033cc;
+import static legend.game.SItem.FUN_80103444;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
+import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getSlotY;
 import static legend.game.SItem.glyphs_80114258;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.SItem.renderSaveListArrows;
 import static legend.game.SItem.saves;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -19,6 +22,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public abstract class SaveListScreen extends MenuScreen {
   protected int loadingStage;
@@ -56,17 +60,17 @@ public abstract class SaveListScreen extends MenuScreen {
         this.highlightRightHalf = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
         FUN_80104b60(this.highlightLeftHalf);
         FUN_80104b60(this.highlightRightHalf);
-        renderSaveListArrows(this.scroll);
+        this.renderSaveListArrows(this.scroll);
 
         deallocateRenderables(0);
-        this.renderSavedGames(this.scroll, true, 0xff);
+        this.renderSavedGames(this.scroll, true);
 
         this.loadingStage++;
       }
 
       case 1 -> {
-        renderSaveListArrows(this.scroll);
-        this.renderSavedGames(this.scroll, true, 0);
+        this.renderSaveListArrows(this.scroll);
+        this.renderSavedGames(this.scroll, false);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -86,7 +90,7 @@ public abstract class SaveListScreen extends MenuScreen {
       }
 
       case 2 -> {
-        this.renderSavedGames(this.scroll, true, 0);
+        this.renderSavedGames(this.scroll, false);
         this.unload.run();
       }
     }
@@ -98,7 +102,7 @@ public abstract class SaveListScreen extends MenuScreen {
       return;
     }
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
       final int slotWidth = 344;
       final int slotHeight = 64;
       final int slotX = 20;
@@ -121,7 +125,7 @@ public abstract class SaveListScreen extends MenuScreen {
       return;
     }
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
       final int slotWidth = 344;
       final int slotHeight = 64;
       final int slotX = 20;
@@ -161,25 +165,59 @@ public abstract class SaveListScreen extends MenuScreen {
     this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
     this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
     deallocateRenderables(0);
-    this.renderSavedGames(this.scroll, true, 0xff);
+    this.renderSavedGames(this.scroll, true);
   }
 
-  private void renderSavedGames(final int fileScroll, final boolean renderSaves, final int a2) {
-    if(a2 == 0xff) {
+  private void renderSavedGames(final int fileScroll, final boolean allocate) {
+    if(allocate) {
       renderGlyphs(glyphs_80114258, 0, 0);
     }
 
-    if(renderSaves) {
-      for(int i = 0; i < 3; i++) {
-        this.renderSaveSlot(i, fileScroll + i, a2);
-      }
+    final int maxSaves = Math.min(3, this.menuCount() - fileScroll);
+    for(int i = 0; i < maxSaves; i++) {
+      this.renderSaveSlot(i, fileScroll + i, allocate);
     }
 
     uploadRenderables();
   }
 
+  private void renderSaveListArrows(final int scroll) {
+    FUN_80103444(saveListUpArrow_800bdb94, 194, 201, 202, 209);
+    FUN_80103444(saveListDownArrow_800bdb98, 178, 185, 186, 193);
+
+    if(scroll != 0) {
+      if(saveListUpArrow_800bdb94 == null) {
+        // Allocate up arrow
+        final Renderable58 renderable = allocateUiElement(111, 108, 182, 16);
+        renderable._18 = 194;
+        renderable._1c = 201;
+        saveListUpArrow_800bdb94 = renderable;
+        FUN_801033cc(renderable);
+      }
+    } else if(saveListUpArrow_800bdb94 != null) {
+      // Deallocate up arrow
+      fadeOutArrow(saveListUpArrow_800bdb94);
+      saveListUpArrow_800bdb94 = null;
+    }
+
+    if(scroll < this.menuCount() - 3 && (whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19 && saves.size() > 2 || saves.size() > 3)) {
+      if(saveListDownArrow_800bdb98 == null) {
+        // Allocate down arrow
+        final Renderable58 renderable = allocateUiElement(111, 108, 182, 208);
+        renderable._18 = 178;
+        renderable._1c = 185;
+        saveListDownArrow_800bdb98 = renderable;
+        FUN_801033cc(renderable);
+      }
+    } else if(saveListDownArrow_800bdb98 != null) {
+      // Deallocate down arrow
+      fadeOutArrow(saveListDownArrow_800bdb98);
+      saveListDownArrow_800bdb98 = null;
+    }
+  }
+
   protected abstract int menuCount();
-  protected abstract void renderSaveSlot(final int slot, final int fileIndex, final int a2);
+  protected abstract void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate);
   protected abstract void onSelect(final int slot);
   protected abstract void onMessageboxResult(final MessageBoxResult result);
 }
