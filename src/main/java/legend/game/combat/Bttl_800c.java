@@ -284,14 +284,15 @@ public final class Bttl_800c {
   public static final Pointer<BttlStruct50> _800c6920 = MEMORY.ref(4, 0x800c6920L, Pointer.deferred(4, BttlStruct50::new));
 
   public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
-  public static final Pointer<ArrayRef<BttlLightStruct84>> lights_800c692c = MEMORY.ref(4, 0x800c692cL, Pointer.deferred(4, ArrayRef.of(BttlLightStruct84.class, 3, 0x84, BttlLightStruct84::new)));
-  public static final Pointer<BattleLightStruct64> _800c6930 = MEMORY.ref(4, 0x800c6930L, Pointer.deferred(4, BattleLightStruct64::new));
+  public static BttlLightStruct84[] lights_800c692c;
+  public static BattleLightStruct64 _800c6930;
 
-  public static final Pointer<BattleStruct24_2> _800c6938 = MEMORY.ref(4, 0x800c6938L, Pointer.deferred(4, BattleStruct24_2::new));
-  public static final Pointer<DeffManager7cc> deffManager_800c693c = MEMORY.ref(4, 0x800c693cL, Pointer.deferred(4, DeffManager7cc::new));
+  public static BattleStruct24_2 _800c6938;
+  public static DeffManager7cc deffManager_800c693c;
+  /** Dunno what this is for, it's set to a pointer but unused. I removed the set for now. */
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
-  public static final Pointer<UnboundedArrayRef<Pointer<TmdObjTable>>> tmds_800c6944 = MEMORY.ref(4, 0x800c6944L, Pointer.deferred(4, UnboundedArrayRef.of(0x4, Pointer.deferred(4, TmdObjTable::new))));
-  public static final Pointer<UnboundedArrayRef<SpriteMetrics08>> spriteMetrics_800c6948 = MEMORY.ref(4, 0x800c6948L, Pointer.deferred(4, UnboundedArrayRef.of(8, SpriteMetrics08::new)));
+  public static TmdObjTable[] tmds_800c6944;
+  public static SpriteMetrics08[] spriteMetrics_800c6948;
 
   public static final Pointer<DeffFile> deff_800c6950 = MEMORY.ref(4, 0x800c6950L, Pointer.deferred(4, DeffFile::new));
 

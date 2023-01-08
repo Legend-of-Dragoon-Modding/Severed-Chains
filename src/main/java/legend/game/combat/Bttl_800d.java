@@ -1086,7 +1086,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d35cc
-    final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20[2].get() & 0xff);
+    final SpriteMetrics08 metrics = spriteMetrics_800c6948[a0.params_20[2].get() & 0xff];
     effect._0c._00.set(manager._10._00.get());
     effect._0c.w_08.set(metrics.w_04.get());
     effect._0c.h_0a.set(metrics.h_05.get());
@@ -4617,7 +4617,7 @@ public final class Bttl_800d {
     zOffset_1f8003e8.set(model.zOffset_a0.get());
     sp50 = model.ui_f8.get();
     tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
-    s6 = deffManager_800c693c.deref()._20.get() & 0x4L;
+    s6 = deffManager_800c693c._20 & 0x4;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
     s6 = v1 | v0;
@@ -4966,7 +4966,7 @@ public final class Bttl_800d {
 
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable a0, final EffectManagerData6cInner a1, final MATRIX a2) {
-    long s0 = deffManager_800c693c.deref()._20.get() & 0x4L;
+    long s0 = deffManager_800c693c._20 & 0x4;
     s0 = s0 >> 1 | s0 >> 2;
 
     final MATRIX sp0x10 = new MATRIX();

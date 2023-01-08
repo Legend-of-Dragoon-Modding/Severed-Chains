@@ -1,22 +1,21 @@
 package legend.game.combat;
 
-import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattleStruct4c;
-import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
 import legend.game.types.LodString;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
+
+import java.nio.ByteBuffer;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
@@ -43,6 +42,7 @@ import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
@@ -50,7 +50,6 @@ import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.script_800c670c;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
-import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -73,9 +72,10 @@ public class SBtld {
 
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
 
-  public static final UnboundedArrayRef<BattleStruct4c> _801134fc = MEMORY.ref(4, 0x801134fcL, UnboundedArrayRef.of(0x4c, BattleStruct4c::new));
-
-  public static final ArrayRef<BattleStruct4c> _80114a10 = MEMORY.ref(4, 0x80114a10L, ArrayRef.of(BattleStruct4c.class, 8, 0x4c, BattleStruct4c::new));
+  /** BattleStruct4c[71] */
+  public static final Value _801134fc = MEMORY.ref(4, 0x801134fcL);
+  /** BattleStruct4c[8] */
+  public static final Value _80114a10 = MEMORY.ref(4, 0x80114a10L);
 
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
@@ -280,22 +280,29 @@ public class SBtld {
 
   @Method(0x801098f4L)
   public static void FUN_801098f4() {
-    final DeffManager7cc struct7cc = deffManager_800c693c.deref();
+    final DeffManager7cc struct7cc = deffManager_800c693c;
     final int stage = Math.max(0, combatStage_800bb0f4.get());
 
     //LAB_8010993c
     //LAB_80109954
-    memcpy(struct7cc._4c.getAddress(), _801134fc.get(stage).getAddress(), 0x4c);
+    struct7cc._4c.set(ByteBuffer.wrap(MEMORY.getBytes(_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)));
 
     FUN_800e5768(struct7cc._4c);
 
     //LAB_8010999c
-    memcpy(struct7cc._98.getAddress(), _80114a10.getAddress(), 0x260);
-    memcpy(struct7cc.svec_00.getAddress(), _8011517c.offset(combatStage_800bb0f4.get() * 0x8L).getAddress(), 0x8);
+    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(_80114a10.getAddress(), 0x4c * 8));
+    for(int i = 0; i < struct7cc._98.length; i++) {
+      struct7cc._98[i].set(buffer);
+    }
+
+    struct7cc._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
+    struct7cc._00._02 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
+    struct7cc._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
     for(int i = 0; stageIndices_800fb064.offset(i).get() != 0xffL; i++) {
-      struct7cc.dvecs_08.get(i).set(_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).cast(DVECTOR::new));
+      struct7cc._08[i]._00 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x00L).get();
+      struct7cc._08[i]._02 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x02L).get();
     }
 
     //LAB_80109a80

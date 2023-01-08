@@ -39,7 +39,6 @@ import legend.game.combat.types.AttackHitFlashEffect0c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlScriptData6cSub08_3;
 import legend.game.combat.types.BttlScriptData6cSub08_4;
 import legend.game.combat.types.BttlScriptData6cSub10_2;
@@ -64,6 +63,7 @@ import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub5c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.DeathDimensionEffect1c;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.EffeScriptData18;
 import legend.game.combat.types.EffeScriptData30;
@@ -171,12 +171,12 @@ import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c._800fb954;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
-import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de36c;
@@ -2437,7 +2437,7 @@ public final class SEffe {
     if((a3 & 0xf_ff00L) == 0xf_ff00L) {
       //TODO I added the first deref here, this might have been a retail bug...
       //     Looking at how _800c6944 gets set, I don't see how it could have been correct
-      a0.tmd_30.set(tmds_800c6944.deref().get((int)a3 & 0xff).deref());
+      a0.tmd_30.set(tmds_800c6944[(int)a3 & 0xff]);
       a0.tpage_56.set(0x20);
     } else {
       //LAB_80101d98
@@ -2483,7 +2483,7 @@ public final class SEffe {
 
     //LAB_80101f70
     if((a3 & 0xf_ff00L) == 0xf_ff00L) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get((int)(a3 & 0xff));
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[(int)(a3 & 0xff)];
       a0.u_58.set(metrics.u_00.get());
       a0.v_5a.set(metrics.v_02.get());
       a0.w_5e.set(metrics.w_04.get());
@@ -5798,7 +5798,7 @@ public final class SEffe {
         s0._02.set(1);
 
         if((a1 & 0xf_ff00L) == 0xf_ff00L) {
-          final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a1 & 0xff);
+          final SpriteMetrics08 metrics = spriteMetrics_800c6948[a1 & 0xff];
           effect.u_04.get(i).set(metrics.u_00.get());
           effect.v_0e.get(i).set(metrics.v_02.get());
           effect.w_18.get(i).set(metrics.w_04.get());
@@ -6044,7 +6044,7 @@ public final class SEffe {
 
     //LAB_8010d4a4
     if((s5 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(s5 & 0xff);
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[s5 & 0xff];
       effect.u_06.set((short)metrics.u_00.get());
       effect.v_08.set((short)metrics.v_02.get());
       effect.width_0a.set((short)metrics.w_04.get());
@@ -6178,7 +6178,7 @@ public final class SEffe {
       if((s7 & 0xf_ff00L) == 0xf_ff00L) {
         //TODO I added the first deref here, this might have been a retail bug...
         //     Looking at how _800c6944 gets set, I don't see how it could have been correct
-        instance.tmd_70.set(tmds_800c6944.deref().get(s7 & 0xff).deref());
+        instance.tmd_70.set(tmds_800c6944[s7 & 0xff]);
       } else {
         //LAB_8010dc40
         final long part = FUN_800eac58(s7 | 0x300_0000L).getAddress(); //TODO
@@ -6332,7 +6332,7 @@ public final class SEffe {
 
     //LAB_8010e1d8
     if((s4 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(s4 & 0xff);
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[s4 & 0xff];
       effect.metrics_04.u_00.set(metrics.u_00.get());
       effect.metrics_04.v_02.set(metrics.v_02.get());
       effect.metrics_04.w_04.set(metrics.w_04.get());
@@ -6492,7 +6492,7 @@ public final class SEffe {
 
     //LAB_8010ead0
     if((sp1c & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(sp1c & 0xff);
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[sp1c & 0xff];
       effect.metrics_04.u_00.set(metrics.u_00.get());
       effect.metrics_04.v_02.set(metrics.v_02.get());
       effect.metrics_04.w_04.set(metrics.w_04.get());
@@ -7440,7 +7440,7 @@ public final class SEffe {
     s1._0c.set(s3);
     s1._18.set(s4);
     if((s2 & 0xf_ff00L) == 0xf_ff00L) {
-      s1.part_14.set(deffManager_800c693c.deref()._390.get(s2 & 0xff).deref());
+      s1.part_14.set(deffManager_800c693c._390[s2 & 0xff]);
     } else {
       //LAB_801115b4
       s1.part_14.set(FUN_800eac58(s2));
@@ -8568,7 +8568,7 @@ public final class SEffe {
       file = a0.scriptState_04.scriptPtr_14;
     } else {
       //LAB_80115654
-      file = deffManager_800c693c.deref().mrg_2c.deref().getFile(mrgIndex, ScriptFile::new);
+      file = deffManager_800c693c.mrg_2c.getFile(mrgIndex, ScriptFile::new);
     }
 
     //LAB_80115674
@@ -8684,18 +8684,18 @@ public final class SEffe {
 
   @Method(0x80115ad8L)
   public static FlowControl FUN_80115ad8(final RunningScript a0) {
-    final DeffManager7cc v1 = deffManager_800c693c.deref();
+    final DeffManager7cc v1 = deffManager_800c693c;
 
-    final long v0;
+    final int v0;
     if(a0.params_20[0].get() >= 0) {
       //LAB_80115b08
-      v0 = a0.params_20[0].get() | v1._20.get();
+      v0 = a0.params_20[0].get() | v1._20;
     } else {
-      v0 = a0.params_20[0].get() & v1._20.get();
+      v0 = a0.params_20[0].get() & v1._20;
     }
 
     //LAB_80115b20
-    v1._20.set(v0);
+    v1._20 = v0;
     return FlowControl.CONTINUE;
   }
 
@@ -8730,7 +8730,7 @@ public final class SEffe {
 
   @Method(0x80115c2cL)
   public static void FUN_80115c2c(final int a0, final int a1) {
-    final int scriptIndex = allocateEffectManager(deffManager_800c693c.deref().scriptIndex_1c.get(), 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115b2c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115bf0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null);
+    final int scriptIndex = allocateEffectManager(deffManager_800c693c.scriptIndex_1c, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115b2c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115bf0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null);
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
     state.storage_44[8].set(a0);
     state.storage_44[9].set(a1);
@@ -8738,9 +8738,9 @@ public final class SEffe {
 
   @Method(0x80115cacL)
   public static long FUN_80115cac(final int a0) {
-    final int x;
-    final int y;
-    final int z;
+    final int _00;
+    final int _02;
+    final int _04;
 
     if(currentStage_800c66a4.get() < 71 || currentStage_800c66a4.get() > 78) {
       //LAB_80115d14
@@ -8748,19 +8748,19 @@ public final class SEffe {
       for(int i = 0; ; i++) {
         if(stageIndices_800fb064.offset(i).get() == 0xffL) {
           //LAB_80115cd8
-          final SVECTOR v0 = deffManager_800c693c.deref().svec_00;
-          x = v0.getX() & 0xffff;
-          y = v0.getY() & 0xffff;
-          z = v0.getZ() & 0xffff;
+          final DeffManager7cc.Struct08 v0 = deffManager_800c693c._00;
+          _00 = v0._00;
+          _02 = v0._02;
+          _04 = v0._04;
           break;
         }
 
         if(stageIndices_800fb064.offset(i).get() == currentStage_800c66a4.get()) {
           //LAB_80115d58
-          final DVECTOR v0 = deffManager_800c693c.deref().dvecs_08.get(i);
-          x = v0.getX() & 0xffff;
-          y = v0.getY() & 0xffff;
-          z = 0;
+          final DeffManager7cc.Struct04 v0 = deffManager_800c693c._08[i];
+          _00 = v0._00;
+          _02 = v0._02;
+          _04 = 0;
           break;
         }
       }
@@ -8773,14 +8773,14 @@ public final class SEffe {
         }
 
         //LAB_80115de8
-        stage_800bda0c.deref()._5e4.and(~(x | y | z));
+        stage_800bda0c.deref()._5e4.and(~(_00 | _02 | _04));
         //LAB_80115da8
       } else if(a0 == 1) {
         //LAB_80115e18
-        stage_800bda0c.deref()._5e4.or(x);
+        stage_800bda0c.deref()._5e4.or(_00);
       } else if(a0 == 2) {
         //LAB_80115e34
-        stage_800bda0c.deref()._5e4.or(y);
+        stage_800bda0c.deref()._5e4.or(_02);
 
         if((stage_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
           FUN_80115c2c(16, 6);
@@ -8788,7 +8788,7 @@ public final class SEffe {
       } else if(a0 == 3) {
         //LAB_80115e70
         //LAB_80115e8c
-        stage_800bda0c.deref()._5e4.or(z);
+        stage_800bda0c.deref()._5e4.or(_04);
       }
     }
 
@@ -8926,7 +8926,7 @@ public final class SEffe {
       } else {
         //LAB_80116724
         if((a2 & 0xf_ff00) == 0xf_ff00) {
-          sp8c = deffManager_800c693c.deref().tmds_2f8.get(a2 & 0xff).deref();
+          sp8c = deffManager_800c693c.tmds_2f8[a2 & 0xff];
         } else {
           //LAB_80116750
           //TODO
@@ -9715,7 +9715,7 @@ public final class SEffe {
 
     final long deffPart;
     if((param1 & 0xf_ff00) == 0xf_ff00) {
-      deffPart = deffManager_800c693c.deref()._390.get(param1 & 0xff).deref().getAddress();
+      deffPart = deffManager_800c693c._390[param1 & 0xff].getAddress();
     } else {
       //LAB_80117f58
       deffPart = FUN_800eac58(param1).getAddress();
@@ -9879,7 +9879,7 @@ public final class SEffe {
 
     if((s1 & 0xf_ff00) == 0xf_ff00) {
       effect._04.set(0);
-      effect.tmd_08.set(deffManager_800c693c.deref().tmds_2f8.get((int)s1 & 0xff).deref());
+      effect.tmd_08.set(deffManager_800c693c.tmds_2f8[(int)s1 & 0xff]);
       effect._10.set(0x20);
     } else {
       //LAB_8011847c
@@ -9965,7 +9965,7 @@ public final class SEffe {
     if((a1 & 0xf_ff00L) == 0xf_ff00L) {
       MEMORY.ref(2, a0).offset(0x10L).setu(0x20L);
       MEMORY.ref(4, a0).offset(0x4L).setu(0);
-      MEMORY.ref(4, a0).offset(0x8L).setu(deffManager_800c693c.deref().tmds_2f8.get((int)(a1 & 0xff)).deref().getAddress()); //TODO
+      MEMORY.ref(4, a0).offset(0x8L).setu(deffManager_800c693c.tmds_2f8[(int)(a1 & 0xff)].getAddress()); //TODO
     } else {
       //LAB_80118750
       long v0 = FUN_800eac58(a1 | 0x300_0000L).getAddress(); //TODO
