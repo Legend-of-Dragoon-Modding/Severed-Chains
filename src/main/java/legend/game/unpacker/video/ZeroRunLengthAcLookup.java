@@ -301,456 +301,456 @@ public class ZeroRunLengthAcLookup implements Iterable<ZeroRunLengthAc> {
 
         // To set the zero run-length and AC coefficient for the 2 codes covered with a sign bit.
         //
-        public ZeroRunLengthAcLookup.Builder _11s(final int zr, final int aac) {
+        public Builder _11s(final int zr, final int aac) {
             return this.set(_110______________, _111______________, zr, aac);
         }
 
         // ------------------------------------------------------------------------------
-        public ZeroRunLengthAcLookup.Builder _011s(final int zr, final int aac) {
+        public Builder _011s(final int zr, final int aac) {
             return this.set(_0110_____________, _0111_____________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0100s(final int zr, final int aac) {
+        public Builder _0100s(final int zr, final int aac) {
             return this.set(_01000____________, _01001____________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0101s(final int zr, final int aac) {
+        public Builder _0101s(final int zr, final int aac) {
             return this.set(_01010____________, _01011____________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00101s(final int zr, final int aac) {
+        public Builder _00101s(final int zr, final int aac) {
             return this.set(_001010___________, _001011___________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00110s(final int zr, final int aac) {
+        public Builder _00110s(final int zr, final int aac) {
             return this.set(_001100___________, _001101___________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00111s(final int zr, final int aac) {
+        public Builder _00111s(final int zr, final int aac) {
             return this.set(_001110___________, _001111___________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000100s(final int zr, final int aac) {
+        public Builder _000100s(final int zr, final int aac) {
             return this.set(_0001000__________, _0001001__________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000101s(final int zr, final int aac) {
+        public Builder _000101s(final int zr, final int aac) {
             return this.set(_0001010__________, _0001011__________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000110s(final int zr, final int aac) {
+        public Builder _000110s(final int zr, final int aac) {
             return this.set(_0001100__________, _0001101__________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000111s(final int zr, final int aac) {
+        public Builder _000111s(final int zr, final int aac) {
             return this.set(_0001110__________, _0001111__________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000100s(final int zr, final int aac) {
+        public Builder _0000100s(final int zr, final int aac) {
             return this.set(_00001000_________, _00001001_________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000101s(final int zr, final int aac) {
+        public Builder _0000101s(final int zr, final int aac) {
             return this.set(_00001010_________, _00001011_________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000110s(final int zr, final int aac) {
+        public Builder _0000110s(final int zr, final int aac) {
             return this.set(_00001100_________, _00001101_________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000111s(final int zr, final int aac) {
+        public Builder _0000111s(final int zr, final int aac) {
             return this.set(_00001110_________, _00001111_________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100000s(final int zr, final int aac) {
+        public Builder _00100000s(final int zr, final int aac) {
             return this.set(_001000000________, _001000001________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100001s(final int zr, final int aac) {
+        public Builder _00100001s(final int zr, final int aac) {
             return this.set(_001000010________, _001000011________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100010s(final int zr, final int aac) {
+        public Builder _00100010s(final int zr, final int aac) {
             return this.set(_001000100________, _001000101________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100011s(final int zr, final int aac) {
+        public Builder _00100011s(final int zr, final int aac) {
             return this.set(_001000110________, _001000111________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100100s(final int zr, final int aac) {
+        public Builder _00100100s(final int zr, final int aac) {
             return this.set(_001001000________, _001001001________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100101s(final int zr, final int aac) {
+        public Builder _00100101s(final int zr, final int aac) {
             return this.set(_001001010________, _001001011________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100110s(final int zr, final int aac) {
+        public Builder _00100110s(final int zr, final int aac) {
             return this.set(_001001100________, _001001101________, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00100111s(final int zr, final int aac) {
+        public Builder _00100111s(final int zr, final int aac) {
             return this.set(_001001110________, _001001111________, zr, aac);
         }
 
         // ------------------------------------------------------------------------------
-        public ZeroRunLengthAcLookup.Builder _0000001000s(final int zr, final int aac) {
+        public Builder _0000001000s(final int zr, final int aac) {
             return this.set(_00000010000______, _00000010001______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001001s(final int zr, final int aac) {
+        public Builder _0000001001s(final int zr, final int aac) {
             return this.set(_00000010010______, _00000010011______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001010s(final int zr, final int aac) {
+        public Builder _0000001010s(final int zr, final int aac) {
             return this.set(_00000010100______, _00000010101______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001011s(final int zr, final int aac) {
+        public Builder _0000001011s(final int zr, final int aac) {
             return this.set(_00000010110______, _00000010111______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001100s(final int zr, final int aac) {
+        public Builder _0000001100s(final int zr, final int aac) {
             return this.set(_00000011000______, _00000011001______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001101s(final int zr, final int aac) {
+        public Builder _0000001101s(final int zr, final int aac) {
             return this.set(_00000011010______, _00000011011______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001110s(final int zr, final int aac) {
+        public Builder _0000001110s(final int zr, final int aac) {
             return this.set(_00000011100______, _00000011101______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000001111s(final int zr, final int aac) {
+        public Builder _0000001111s(final int zr, final int aac) {
             return this.set(_00000011110______, _00000011111______, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010000s(final int zr, final int aac) {
+        public Builder _000000010000s(final int zr, final int aac) {
             return this.set(_0000000100000____, _0000000100001____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010001s(final int zr, final int aac) {
+        public Builder _000000010001s(final int zr, final int aac) {
             return this.set(_0000000100010____, _0000000100011____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010010s(final int zr, final int aac) {
+        public Builder _000000010010s(final int zr, final int aac) {
             return this.set(_0000000100100____, _0000000100101____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010011s(final int zr, final int aac) {
+        public Builder _000000010011s(final int zr, final int aac) {
             return this.set(_0000000100110____, _0000000100111____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010100s(final int zr, final int aac) {
+        public Builder _000000010100s(final int zr, final int aac) {
             return this.set(_0000000101000____, _0000000101001____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010101s(final int zr, final int aac) {
+        public Builder _000000010101s(final int zr, final int aac) {
             return this.set(_0000000101010____, _0000000101011____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010110s(final int zr, final int aac) {
+        public Builder _000000010110s(final int zr, final int aac) {
             return this.set(_0000000101100____, _0000000101101____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000010111s(final int zr, final int aac) {
+        public Builder _000000010111s(final int zr, final int aac) {
             return this.set(_0000000101110____, _0000000101111____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011000s(final int zr, final int aac) {
+        public Builder _000000011000s(final int zr, final int aac) {
             return this.set(_0000000110000____, _0000000110001____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011001s(final int zr, final int aac) {
+        public Builder _000000011001s(final int zr, final int aac) {
             return this.set(_0000000110010____, _0000000110011____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011010s(final int zr, final int aac) {
+        public Builder _000000011010s(final int zr, final int aac) {
             return this.set(_0000000110100____, _0000000110101____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011011s(final int zr, final int aac) {
+        public Builder _000000011011s(final int zr, final int aac) {
             return this.set(_0000000110110____, _0000000110111____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011100s(final int zr, final int aac) {
+        public Builder _000000011100s(final int zr, final int aac) {
             return this.set(_0000000111000____, _0000000111001____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011101s(final int zr, final int aac) {
+        public Builder _000000011101s(final int zr, final int aac) {
             return this.set(_0000000111010____, _0000000111011____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011110s(final int zr, final int aac) {
+        public Builder _000000011110s(final int zr, final int aac) {
             return this.set(_0000000111100____, _0000000111101____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000011111s(final int zr, final int aac) {
+        public Builder _000000011111s(final int zr, final int aac) {
             return this.set(_0000000111110____, _0000000111111____, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010000s(final int zr, final int aac) {
+        public Builder _0000000010000s(final int zr, final int aac) {
             return this.set(_00000000100000___, _00000000100001___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010001s(final int zr, final int aac) {
+        public Builder _0000000010001s(final int zr, final int aac) {
             return this.set(_00000000100010___, _00000000100011___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010010s(final int zr, final int aac) {
+        public Builder _0000000010010s(final int zr, final int aac) {
             return this.set(_00000000100100___, _00000000100101___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010011s(final int zr, final int aac) {
+        public Builder _0000000010011s(final int zr, final int aac) {
             return this.set(_00000000100110___, _00000000100111___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010100s(final int zr, final int aac) {
+        public Builder _0000000010100s(final int zr, final int aac) {
             return this.set(_00000000101000___, _00000000101001___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010101s(final int zr, final int aac) {
+        public Builder _0000000010101s(final int zr, final int aac) {
             return this.set(_00000000101010___, _00000000101011___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010110s(final int zr, final int aac) {
+        public Builder _0000000010110s(final int zr, final int aac) {
             return this.set(_00000000101100___, _00000000101101___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000010111s(final int zr, final int aac) {
+        public Builder _0000000010111s(final int zr, final int aac) {
             return this.set(_00000000101110___, _00000000101111___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011000s(final int zr, final int aac) {
+        public Builder _0000000011000s(final int zr, final int aac) {
             return this.set(_00000000110000___, _00000000110001___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011001s(final int zr, final int aac) {
+        public Builder _0000000011001s(final int zr, final int aac) {
             return this.set(_00000000110010___, _00000000110011___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011010s(final int zr, final int aac) {
+        public Builder _0000000011010s(final int zr, final int aac) {
             return this.set(_00000000110100___, _00000000110101___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011011s(final int zr, final int aac) {
+        public Builder _0000000011011s(final int zr, final int aac) {
             return this.set(_00000000110110___, _00000000110111___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011100s(final int zr, final int aac) {
+        public Builder _0000000011100s(final int zr, final int aac) {
             return this.set(_00000000111000___, _00000000111001___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011101s(final int zr, final int aac) {
+        public Builder _0000000011101s(final int zr, final int aac) {
             return this.set(_00000000111010___, _00000000111011___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011110s(final int zr, final int aac) {
+        public Builder _0000000011110s(final int zr, final int aac) {
             return this.set(_00000000111100___, _00000000111101___, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000011111s(final int zr, final int aac) {
+        public Builder _0000000011111s(final int zr, final int aac) {
             return this.set(_00000000111110___, _00000000111111___, zr, aac);
         }
 
         // ------------------------------------------------------------------------------
-        public ZeroRunLengthAcLookup.Builder _00000000010000s(final int zr, final int aac) {
+        public Builder _00000000010000s(final int zr, final int aac) {
             return this.set(_000000000100000__, _000000000100001__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010001s(final int zr, final int aac) {
+        public Builder _00000000010001s(final int zr, final int aac) {
             return this.set(_000000000100010__, _000000000100011__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010010s(final int zr, final int aac) {
+        public Builder _00000000010010s(final int zr, final int aac) {
             return this.set(_000000000100100__, _000000000100101__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010011s(final int zr, final int aac) {
+        public Builder _00000000010011s(final int zr, final int aac) {
             return this.set(_000000000100110__, _000000000100111__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010100s(final int zr, final int aac) {
+        public Builder _00000000010100s(final int zr, final int aac) {
             return this.set(_000000000101000__, _000000000101001__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010101s(final int zr, final int aac) {
+        public Builder _00000000010101s(final int zr, final int aac) {
             return this.set(_000000000101010__, _000000000101011__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010110s(final int zr, final int aac) {
+        public Builder _00000000010110s(final int zr, final int aac) {
             return this.set(_000000000101100__, _000000000101101__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000010111s(final int zr, final int aac) {
+        public Builder _00000000010111s(final int zr, final int aac) {
             return this.set(_000000000101110__, _000000000101111__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011000s(final int zr, final int aac) {
+        public Builder _00000000011000s(final int zr, final int aac) {
             return this.set(_000000000110000__, _000000000110001__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011001s(final int zr, final int aac) {
+        public Builder _00000000011001s(final int zr, final int aac) {
             return this.set(_000000000110010__, _000000000110011__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011010s(final int zr, final int aac) {
+        public Builder _00000000011010s(final int zr, final int aac) {
             return this.set(_000000000110100__, _000000000110101__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011011s(final int zr, final int aac) {
+        public Builder _00000000011011s(final int zr, final int aac) {
             return this.set(_000000000110110__, _000000000110111__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011100s(final int zr, final int aac) {
+        public Builder _00000000011100s(final int zr, final int aac) {
             return this.set(_000000000111000__, _000000000111001__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011101s(final int zr, final int aac) {
+        public Builder _00000000011101s(final int zr, final int aac) {
             return this.set(_000000000111010__, _000000000111011__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011110s(final int zr, final int aac) {
+        public Builder _00000000011110s(final int zr, final int aac) {
             return this.set(_000000000111100__, _000000000111101__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _00000000011111s(final int zr, final int aac) {
+        public Builder _00000000011111s(final int zr, final int aac) {
             return this.set(_000000000111110__, _000000000111111__, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010000s(final int zr, final int aac) {
+        public Builder _000000000010000s(final int zr, final int aac) {
             return this.set(_0000000000100000_, _0000000000100001_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010001s(final int zr, final int aac) {
+        public Builder _000000000010001s(final int zr, final int aac) {
             return this.set(_0000000000100010_, _0000000000100011_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010010s(final int zr, final int aac) {
+        public Builder _000000000010010s(final int zr, final int aac) {
             return this.set(_0000000000100100_, _0000000000100101_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010011s(final int zr, final int aac) {
+        public Builder _000000000010011s(final int zr, final int aac) {
             return this.set(_0000000000100110_, _0000000000100111_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010100s(final int zr, final int aac) {
+        public Builder _000000000010100s(final int zr, final int aac) {
             return this.set(_0000000000101000_, _0000000000101001_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010101s(final int zr, final int aac) {
+        public Builder _000000000010101s(final int zr, final int aac) {
             return this.set(_0000000000101010_, _0000000000101011_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010110s(final int zr, final int aac) {
+        public Builder _000000000010110s(final int zr, final int aac) {
             return this.set(_0000000000101100_, _0000000000101101_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000010111s(final int zr, final int aac) {
+        public Builder _000000000010111s(final int zr, final int aac) {
             return this.set(_0000000000101110_, _0000000000101111_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011000s(final int zr, final int aac) {
+        public Builder _000000000011000s(final int zr, final int aac) {
             return this.set(_0000000000110000_, _0000000000110001_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011001s(final int zr, final int aac) {
+        public Builder _000000000011001s(final int zr, final int aac) {
             return this.set(_0000000000110010_, _0000000000110011_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011010s(final int zr, final int aac) {
+        public Builder _000000000011010s(final int zr, final int aac) {
             return this.set(_0000000000110100_, _0000000000110101_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011011s(final int zr, final int aac) {
+        public Builder _000000000011011s(final int zr, final int aac) {
             return this.set(_0000000000110110_, _0000000000110111_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011100s(final int zr, final int aac) {
+        public Builder _000000000011100s(final int zr, final int aac) {
             return this.set(_0000000000111000_, _0000000000111001_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011101s(final int zr, final int aac) {
+        public Builder _000000000011101s(final int zr, final int aac) {
             return this.set(_0000000000111010_, _0000000000111011_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011110s(final int zr, final int aac) {
+        public Builder _000000000011110s(final int zr, final int aac) {
             return this.set(_0000000000111100_, _0000000000111101_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _000000000011111s(final int zr, final int aac) {
+        public Builder _000000000011111s(final int zr, final int aac) {
             return this.set(_0000000000111110_, _0000000000111111_, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010000s(final int zr, final int aac) {
+        public Builder _0000000000010000s(final int zr, final int aac) {
             return this.set(_00000000000100000, _00000000000100001, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010001s(final int zr, final int aac) {
+        public Builder _0000000000010001s(final int zr, final int aac) {
             return this.set(_00000000000100010, _00000000000100011, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010010s(final int zr, final int aac) {
+        public Builder _0000000000010010s(final int zr, final int aac) {
             return this.set(_00000000000100100, _00000000000100101, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010011s(final int zr, final int aac) {
+        public Builder _0000000000010011s(final int zr, final int aac) {
             return this.set(_00000000000100110, _00000000000100111, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010100s(final int zr, final int aac) {
+        public Builder _0000000000010100s(final int zr, final int aac) {
             return this.set(_00000000000101000, _00000000000101001, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010101s(final int zr, final int aac) {
+        public Builder _0000000000010101s(final int zr, final int aac) {
             return this.set(_00000000000101010, _00000000000101011, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010110s(final int zr, final int aac) {
+        public Builder _0000000000010110s(final int zr, final int aac) {
             return this.set(_00000000000101100, _00000000000101101, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000010111s(final int zr, final int aac) {
+        public Builder _0000000000010111s(final int zr, final int aac) {
             return this.set(_00000000000101110, _00000000000101111, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011000s(final int zr, final int aac) {
+        public Builder _0000000000011000s(final int zr, final int aac) {
             return this.set(_00000000000110000, _00000000000110001, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011001s(final int zr, final int aac) {
+        public Builder _0000000000011001s(final int zr, final int aac) {
             return this.set(_00000000000110010, _00000000000110011, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011010s(final int zr, final int aac) {
+        public Builder _0000000000011010s(final int zr, final int aac) {
             return this.set(_00000000000110100, _00000000000110101, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011011s(final int zr, final int aac) {
+        public Builder _0000000000011011s(final int zr, final int aac) {
             return this.set(_00000000000110110, _00000000000110111, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011100s(final int zr, final int aac) {
+        public Builder _0000000000011100s(final int zr, final int aac) {
             return this.set(_00000000000111000, _00000000000111001, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011101s(final int zr, final int aac) {
+        public Builder _0000000000011101s(final int zr, final int aac) {
             return this.set(_00000000000111010, _00000000000111011, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011110s(final int zr, final int aac) {
+        public Builder _0000000000011110s(final int zr, final int aac) {
             return this.set(_00000000000111100, _00000000000111101, zr, aac);
         }
 
-        public ZeroRunLengthAcLookup.Builder _0000000000011111s(final int zr, final int aac) {
+        public Builder _0000000000011111s(final int zr, final int aac) {
             return this.set(_00000000000111110, _00000000000111111, zr, aac);
         }
 
-        private @Nonnull ZeroRunLengthAcLookup.Builder set(@Nonnull final BitStreamCode positiveBitStreamCodeEndsWith0, @Nonnull final BitStreamCode negitiveBitStreamCodeEndsWith1, final int iZeroRunLength, final int iAbsoluteAcCoefficient) {
-            this.set(positiveBitStreamCodeEndsWith0, _0001101__________, iZeroRunLength, iAbsoluteAcCoefficient);
-            this.set(negitiveBitStreamCodeEndsWith1, _0001101__________, iZeroRunLength, -iAbsoluteAcCoefficient);
+        private @Nonnull Builder set(@Nonnull final BitStreamCode positiveBitStreamCodeEndsWith0, @Nonnull final BitStreamCode negitiveBitStreamCodeEndsWith1, final int iZeroRunLength, final int iAbsoluteAcCoefficient) {
+            this.set(positiveBitStreamCodeEndsWith0, iZeroRunLength, iAbsoluteAcCoefficient);
+            this.set(negitiveBitStreamCodeEndsWith1, iZeroRunLength, -iAbsoluteAcCoefficient);
             return this;
         }
 

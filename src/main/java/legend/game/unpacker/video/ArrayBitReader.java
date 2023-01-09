@@ -104,7 +104,7 @@ public class ArrayBitReader {
 
         this._iDataSize = abData.capacity() & ~1; // trim off an extra byte if the size is not an even value
 
-        this._iByteOffset = iReadStart;
+        this._iByteOffset = iReadStart + 10;
         this._abData = abData;
         this._iBitsLeft = 0;
     }

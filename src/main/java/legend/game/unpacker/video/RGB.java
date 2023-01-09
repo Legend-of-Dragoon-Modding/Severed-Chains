@@ -86,7 +86,7 @@ public class RGB {
         final int clampr = this.r < 0 ? 0x000000 : this.r > 255 ? 0xff0000 : this.r << 16;
         final int clampg = this.g < 0 ? 0x000000 : this.g > 255 ? 0x00ff00 : this.g << 8;
         final int clampb = this.b < 0 ? 0x000000 : this.b > 255 ? 0x0000ff : this.b;
-        return (clampr | clampg | clampb) << 8 | 0xff;
+        return (clampr | clampg | clampb);
     }
 
     @Override

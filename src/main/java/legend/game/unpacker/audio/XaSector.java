@@ -9,7 +9,10 @@ public class XaSector {
     private static final int[] positiveXaAdpcmTable = { 0, 60, 115, 98, 122 };
     private static final int[] negativeXaAdpcmTable = { 0, 0, -52, -55, -60 };
 
-    public static int[] generate(final ByteBuffer sector, final short[] old, final short[] older) {
+    public static final short[] old = new short[] {0, 0};
+    public static final short[] older = new short[] {0, 0};
+
+    public static int[] generate(final ByteBuffer sector) {
         final ShortList l = new ShortArrayList();
         final ShortList r = new ShortArrayList();
 
@@ -21,12 +24,12 @@ public class XaSector {
         for(int i = 0; i < 18; i++) { //Each sector consists of 12h 128-byte portions (=900h bytes) (the remaining 14h bytes of the sectors 914h-byte data region are 00h filled).
             for(int blk = 0; blk < 4; blk++) {
 
-                l.addAll(decodeNibbles(sector, position, blk, 0, 0, old, older));
+                l.addAll(decodeNibbles(sector, position, blk, 0, 0));
 
                 if(isStereo) {
-                    r.addAll(decodeNibbles(sector, position, blk, 1, 1, old, older));
+                    r.addAll(decodeNibbles(sector, position, blk, 1, 1));
                 } else {
-                    l.addAll(decodeNibbles(sector, position, blk, 1, 0, old, older));
+                    l.addAll(decodeNibbles(sector, position, blk, 1, 0));
                 }
             }
 
@@ -48,7 +51,7 @@ public class XaSector {
         return data;
     }
 
-    private static ShortList decodeNibbles(ByteBuffer xaapdcm, final int position, final int blk, final int nibble, final int lr, final short[] old, final short[] older) {
+    private static ShortList decodeNibbles(ByteBuffer xaapdcm, final int position, final int blk, final int nibble, final int lr) {
         final ShortList list = new ShortArrayList();
 
         final int shift = 12 - (xaapdcm.get(position + 4 + blk * 2 + nibble) & 0x0F);
@@ -72,5 +75,12 @@ public class XaSector {
 
     public static int signed4bit(final byte value) {
         return value << 28 >> 28;
+    }
+
+    public static void resetBuffer() {
+        old[0] = 0;
+        old[1] = 0;
+        older[0] = 0;
+        older[1]= 0;
     }
 }

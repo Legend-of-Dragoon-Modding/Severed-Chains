@@ -15,13 +15,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
@@ -45,6 +39,7 @@ public class Unpacker {
     transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
     transformers.put(Unpacker::drgn21_402_3_patcherDescriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::ikiDescriminator, Unpacker::ikiHandle);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -252,6 +247,15 @@ public class Unpacker {
     }
 
     return entries;
+  }
+
+  private static boolean ikiDescriminator(final String name, final FileData data) {
+    return name.endsWith(".IKI");
+  }
+
+  private static Map<String, FileData> ikiHandle(final String name, final FileData data) {
+    IkiFile.IkiFile(name, data);
+    return Collections.emptyMap();
   }
 
   private static boolean decompressDescriminator(final String name, final FileData data) {
