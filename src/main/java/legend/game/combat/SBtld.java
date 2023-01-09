@@ -274,7 +274,7 @@ public class SBtld {
   public static void FUN_8010989c(final long address, final int fileSize, final int index) {
     final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
 
-    getCombatant(index).filePtr_10.set(script.getAddress());
+    getCombatant(index).scriptPtr_10.set(script);
     _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
     uniqueMonsterCount_800c6698.add(1);
     decrementOverlayCount();

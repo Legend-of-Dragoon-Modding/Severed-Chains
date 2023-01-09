@@ -1659,8 +1659,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c913cL)
-  public static long getCombatantFile(final int index) {
-    return combatants_8005e398.get(index).filePtr_10.get();
+  public static ScriptFile getCombatantScript(final int index) {
+    return combatants_8005e398.get(index).scriptPtr_10.deref();
   }
 
   @Method(0x800c9170L)
@@ -1752,7 +1752,7 @@ public final class Bttl_800c {
   @Method(0x800c941cL)
   public static void combatantTmdAndAnimLoadedCallback(final List<byte[]> files, final int param) {
     final int combatantIndex = param >>> 9 & 0x3f;
-    final long s0 = param >>> 8 & 0x1L;
+    final int s0 = param >>> 8 & 0x1;
 
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
     combatant.flags_19e.and(0xffdf);
@@ -1765,8 +1765,9 @@ public final class Bttl_800c {
     combatant.mrg_00.set(MrgFile.alloc(files));
     final MrgFile mrg = combatant.mrg_00.deref();
 
+    // I don't think this is actually used?
     if(mrg.entries.get(34).size.get() != 0) {
-      combatant.filePtr_10.set(mrg.getFile(34)); // This should be an extended TMD
+      combatant.scriptPtr_10.set(mrg.getFile(34, ScriptFile::new));
     }
 
     //LAB_800c94a0
@@ -1821,7 +1822,7 @@ public final class Bttl_800c {
       model.count_c8.set((short)35);
 
       final long a3;
-      if((s0.charIndex_1a2.get() & 0x1L) != 0) {
+      if((s0.charIndex_1a2.get() & 0x1) != 0) {
         a3 = 0x9L;
       } else {
         a3 = s0.charIndex_1a2.get() - 0x200 >>> 1;
@@ -1840,7 +1841,7 @@ public final class Bttl_800c {
 
   @Method(0x800c96acL)
   public static void deallocateModelIfMonster(final Model124 model, final int combatantIndex) {
-    if((combatants_8005e398.get(combatantIndex).flags_19e.get() & 0x4L) == 0) {
+    if((combatants_8005e398.get(combatantIndex).flags_19e.get() & 0x4) == 0) {
       deallocateModel(model);
     }
 
@@ -1854,20 +1855,15 @@ public final class Bttl_800c {
     if(combatant.charIndex_1a2.get() >= 0 && combatant.mrg_04.isNull()) {
       combatant.flags_19e.or(0x10);
 
-      int a3 = 0;
+      final int a3;
       final int fileIndex;
       if((combatant.flags_19e.get() & 0x4L) == 0) {
-        a3 = a3 | 0x7f;
-        a3 = a3 | (combatantIndex & 0x3f) << 9;
-        a3 = a3 | 0x100;
+        a3 = (combatantIndex & 0x3f) << 9 | 0x100 | 0x7f;
         fileIndex = 3593 + combatant.charIndex_1a2.get();
       } else {
         //LAB_800c97a4
         final int a0_0 = combatant.charIndex_1a2.get() & 1;
-        a3 = a3 | combatant.charSlot_19c.get() & 0x7f;
-        a3 = a3 | (combatantIndex & 0x3f) << 9;
-        a3 = a3 | a0_0 << 7;
-        a3 = a3 & 0xffff_feff;
+        a3 = (combatantIndex & 0x3f) << 9 | a0_0 << 7 | combatant.charSlot_19c.get() & 0x7f;
         final int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
         if(a0_0 == 0) {
           // Additions
@@ -2567,8 +2563,8 @@ public final class Bttl_800c {
 
       if((state.ui_60.get() & 0x800L) == 0) {
         final ScriptFile script;
-        if((state.ui_60.get() & 0x4L) != 0) {
-          script = MEMORY.ref(4, getCombatantFile(bobj.combatantIndex_26c.get()), ScriptFile::new);
+        if((state.ui_60.get() & 0x4L) != 0) { // Enemy
+          script = getCombatantScript(bobj.combatantIndex_26c.get());
         } else {
           //LAB_800caf18
           script = script_800c66fc.deref();
