@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +41,13 @@ public class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
-  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new HashMap<>();
+  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new LinkedHashMap<>();
   static {
-    transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
-    transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
-    transformers.put(Unpacker::drgn21_402_3_patcherDescriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
+    transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
+    transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
+    transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -234,10 +237,10 @@ public class Unpacker {
     boolean wasTransformed = false;
 
     for(final var entry : transformers.entrySet()) {
-      final var descriminator = entry.getKey();
+      final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(descriminator.test(name, data)) {
+      if(discriminator.test(name, data)) {
         wasTransformed = true;
         transformer.apply(name, data)
           .entrySet().stream()
@@ -254,7 +257,7 @@ public class Unpacker {
     return entries;
   }
 
-  private static boolean decompressDescriminator(final String name, final FileData data) {
+  private static boolean decompressDiscriminator(final String name, final FileData data) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
@@ -262,7 +265,7 @@ public class Unpacker {
     return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
   }
 
-  private static boolean mrgDescriminator(final String name, final FileData data) {
+  private static boolean mrgDiscriminator(final String name, final FileData data) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
   }
 
@@ -291,7 +294,7 @@ public class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDescriminator(final String name, final FileData data) {
+  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data) {
     return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
   }
 
@@ -300,6 +303,96 @@ public class Unpacker {
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
     return Map.of(name, new FileData(newData));
+  }
+
+  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data) {
+    for(int i = 752; i <= 772; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    if(name.startsWith("SECT/DRGN0.BIN/752/0/")) {
+      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/752/1/")) {
+      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/752/2/")) {
+      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/753/2/")) {
+      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/754/2/")) {
+      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/755/2/")) {
+      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/756/2/")) {
+      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/757/2/")) {
+      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/772/1/")) {
+      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    }
+
+    return files;
+  }
+
+  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+    for(int i = 3537; i <= 3592; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    if(name.startsWith("SECT/DRGN0.BIN/3537/0/")) {
+      files.put("characters/dart/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3538/0/")) {
+      files.put("characters/dart/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3537/1/")) {
+      files.put("characters/lavitz/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3538/1/")) {
+      files.put("characters/lavitz/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3537/2/")) {
+      files.put("characters/shana/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3538/2/")) {
+      files.put("characters/shana/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3539/2/")) {
+      files.put("characters/rose/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3540/2/")) {
+      files.put("characters/rose/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3541/2/")) {
+      files.put("characters/haschel/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3542/2/")) {
+      files.put("characters/haschel/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3545/2/")) {
+      files.put("characters/meru/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3546/2/")) {
+      files.put("characters/meru/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3547/2/")) {
+      files.put("characters/kongol/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3548/2/")) {
+      files.put("characters/kongol/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3549/2/")) {
+      files.put("characters/miranda/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3550/2/")) {
+      files.put("characters/miranda/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3555/2/")) {
+      files.put("characters/albert/textures/combat", data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/3556/2/")) {
+      files.put("characters/albert/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    }
+
+    return files;
   }
 
   private static void writeFiles(final Map<String, FileData> files) {

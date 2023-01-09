@@ -64,6 +64,7 @@ import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
+import legend.game.types.SingleFileLoadedCallback;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct10;
@@ -165,7 +166,6 @@ import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
-import static legend.game.Scus94491BpeSegment_8004.singleCharacterCombatSoundFileIndices_8004f698;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.sssqGetTempo;
@@ -177,11 +177,10 @@ import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
 import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
-import static legend.game.Scus94491BpeSegment_8005.partySoundEffectPermutationFileIndices_80050104;
 import static legend.game.Scus94491BpeSegment_8005._80050190;
-import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
-import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
+import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
+import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
 import static legend.game.Scus94491BpeSegment_8005.deferredReallocOrFree_8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
@@ -1724,6 +1723,28 @@ public final class Scus94491BpeSegment {
     }
 
     return 0;
+  }
+
+  public static <Param> void loadFile(final String file, final SingleFileLoadedCallback<Param> callback, final Param param) {
+    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
+      .skip(1)
+      .findFirst())
+      .get();
+
+    LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+    callback.onLoad(Unpacker.loadFile(file), param);
+  }
+
+  public static <Param> void loadDir(final String dir, final FileLoadedCallback2<Param> callback, final Param param) {
+    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
+      .skip(1)
+      .findFirst())
+      .get();
+
+    LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+    callback.onLoad(Unpacker.loadDirectory(dir), param);
   }
 
   public static <Param> void loadDrgnFiles(int drgnBinIndex, final FileLoadedCallback2<Param> callback, final Param param, final String... files) {
@@ -4352,21 +4373,6 @@ public final class Scus94491BpeSegment {
     _800bd680.offset(0x10L).setu(a6 & 0xffL);
   }
 
-  @Method(0x8001a810L)
-  public static int[] getPlayerCombatSoundFileIndices() {
-    final int[] fileIndices = new int[3];
-
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-
-      if(charId != -1) {
-        fileIndices[charSlot] = singleCharacterCombatSoundFileIndices_8004f698.get(charId).get();
-      }
-    }
-
-    return fileIndices;
-  }
-
   @Method(0x8001aa24L)
   public static void FUN_8001aa24() {
     FUN_8001a4e8();
@@ -5051,19 +5057,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001cae0L)
-  public static void FUN_8001cae0(final List<byte[]> files, final int charSlot) {
+  public static void charSoundEffectsLoaded(final List<byte[]> files, final int charSlot) {
     final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-
-    // The first file has the char ID this sound package belongs to. If the char ID doesn't match, move on to the next one.
-    if(files.get(0)[0] != charId) {
-      return;
-    }
 
     //LAB_8001cb34
     final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
     final SoundFile sound = soundFileArr_800bcf80.get(index);
 
-    final byte[] file0 = files.get(0);
+    final byte[] file0 = files.get(0); //TODO remove, this file is just the char ID
     final byte[] file1 = files.get(1);
     final byte[] file2 = files.get(2);
     final int size0 = MathHelper.roundUp(file0.length, 4);
@@ -5507,17 +5508,32 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.oru(0x8L);
 
     // Player combat sounds for current party composition (example file: 764)
-    final int[] soundFileIndices = getPlayerCombatSoundFileIndices();
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
-        for(int charSlot1 = 0; charSlot1 < 3; charSlot1++) {
-          loadDrgnDir(0, partySoundEffectPermutationFileIndices_80050104.get(soundFileIndices[charSlot]).get() + "/" + charSlot1, Scus94491BpeSegment::FUN_8001cae0, charSlot);
-        }
+      final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
+
+      if(charIndex != -1) {
+        final String name = getCharacterName(charIndex).toLowerCase();
+        loadDir("characters/%s/sounds/combat".formatted(name), Scus94491BpeSegment::charSoundEffectsLoaded, charSlot);
       }
     }
 
     loadMonsterSounds();
     decrementOverlayCount();
+  }
+
+  public static String getCharacterName(final int id) {
+    return switch(id) {
+      case 0 -> "Dart";
+      case 1 -> "Lavitz";
+      case 2 -> "Shana";
+      case 3 -> "Rose";
+      case 4 -> "Haschel";
+      case 5 -> "Albert";
+      case 6 -> "Meru";
+      case 7 -> "Kongol";
+      case 8 -> "Miranda";
+      default -> throw new IllegalArgumentException("Invalid character ID " + id);
+    };
   }
 
   @Method(0x8001e010L)
