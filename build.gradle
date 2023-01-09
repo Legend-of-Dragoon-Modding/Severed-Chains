@@ -75,6 +75,8 @@ dependencies {
 
   implementation group: 'net.java.dev.jna', name: 'jna', version: '5.12.1'
 
+  implementation group: 'com.github.kokorin.jaffree', name: 'jaffree', version: '2022.06.03'
+
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
