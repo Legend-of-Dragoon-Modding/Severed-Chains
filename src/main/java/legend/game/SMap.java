@@ -2762,9 +2762,9 @@ public final class SMap {
           //LAB_800e17c4
           //LAB_800e17d8
           // Submap data (file example: 695)
-          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, SMap::submapAssetsLoadedCallback, 0);
+          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> SMap.submapAssetsLoadedCallback(files, 0));
           // Submap scripts (file example: 696)
-          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, SMap::submapAssetsLoadedCallback, 1);
+          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> SMap.submapAssetsLoadedCallback(files, 1));
         }
 
         loadingStage_800c68e4.addu(0x1L);
@@ -3257,20 +3257,20 @@ public final class SMap {
       if(chapterTitleNum == 1) {
         //LAB_800e2700
         //LAB_800e2794
-        loadDrgnDir(0, 6670, SMap::submapAssetsLoadedCallback, 0x10);
+        loadDrgnDir(0, 6670, files -> SMap.submapAssetsLoadedCallback(files, 0x10));
       } else if(chapterTitleNum == 2) {
         //LAB_800e2728
         //LAB_800e2794
-        loadDrgnDir(0, 6671, SMap::submapAssetsLoadedCallback, 0x10);
+        loadDrgnDir(0, 6671, files -> SMap.submapAssetsLoadedCallback(files, 0x10));
         //LAB_800e26e8
       } else if(chapterTitleNum == 3) {
         //LAB_800e2750
         //LAB_800e2794
-        loadDrgnDir(0, 6672, SMap::submapAssetsLoadedCallback, 0x10);
+        loadDrgnDir(0, 6672, files -> SMap.submapAssetsLoadedCallback(files, 0x10));
       } else if(chapterTitleNum == 4) {
         //LAB_800e2778
         //LAB_800e2794
-        loadDrgnDir(0, 6673, SMap::submapAssetsLoadedCallback, 0x10);
+        loadDrgnDir(0, 6673, files -> SMap.submapAssetsLoadedCallback(files, 0x10));
       }
 
       //LAB_800e27a4
@@ -4120,7 +4120,7 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final List<byte[]> files, final int packageIndex) {
+  public static void loadBackground(final List<byte[]> files) {
     backgroundLoaded_800cab10.setu(0x1L);
 
     //LAB_800e5374
@@ -4412,7 +4412,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         backgroundLoaded_800cab10.setu(0);
-        loadDrgnDir(2, fileIndex.get(), SMap::loadBackground, 0);
+        loadDrgnDir(2, fileIndex.get(), SMap::loadBackground);
         smapLoadingStage_800cb430.setu(0x6L);
       }
 
@@ -6691,7 +6691,7 @@ public final class SMap {
         final int fileIndex = smapFileIndices_800f982c.get(submapCut_80052c30.get()).get();
         if(fileIndex != 0) {
           // File example: 7508
-          loadDrgnDir(0, fileIndex, (files, param) -> {
+          loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
             submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), ExtendedTmd::new);
@@ -6699,9 +6699,9 @@ public final class SMap {
 
             MEMORY.setBytes(submapCutModel.getAddress(), files.get(0));
             MEMORY.setBytes(submapCutAnim.getAddress(), files.get(1));
-          }, 0);
+          });
 
-          loadDrgnDir(0, fileIndex + 1, (files, param) -> {
+          loadDrgnDir(0, fileIndex + 1, files -> {
             submapTextureAndMatrixLoaded_800d4be0.set(true);
 
             submapCutTexture = new Tim(files.get(0));
@@ -6716,7 +6716,7 @@ public final class SMap {
             for(int i = 0; i < 3; i++) {
               submapCutMatrix.transfer.component(i).set((int)MathHelper.get(matrixData, 18 + i * 2, 2));
             }
-          }, 1);
+          });
 
           if(submapCut_80052c30.get() == 673) { // End cutscene, loads "The End" TIM
             loadDrgnBinFile(0, 7610, 0, (address, fileSize, param) -> {

@@ -36,7 +36,6 @@ import legend.game.types.MenuItemStruct04;
 import legend.game.types.MenuStruct08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
-import legend.game.types.PartyPermutation08;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.Translucency;
@@ -57,8 +56,11 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
+import static legend.game.Scus94491BpeSegment.getCharacterName;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -165,9 +167,6 @@ public final class SItem {
   public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_80111d20 = MEMORY.ref(4, 0x80111d20L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
 
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
-
-  /** Contains data for every combination of party members (like a DRGN0 file index that contains the textures and models of each char */
-  public static final ArrayRef<ArrayRef<PartyPermutation08>> partyPermutations_80111d68 = MEMORY.ref(2, 0x80111d68L, ArrayRef.of(ArrayRef.classFor(PartyPermutation08.class), 9, 0x48, ArrayRef.of(PartyPermutation08.class, 9, 8, PartyPermutation08::new)));
 
   public static final ArrayRef<EquipmentStats1c> equipmentStats_80111ff0 = MEMORY.ref(1, 0x80111ff0L, ArrayRef.of(EquipmentStats1c.class, 0xc0, 0x1c, EquipmentStats1c::new));
   public static final ArrayRef<IntRef> kongolXpTable_801134f0 = MEMORY.ref(4, 0x801134f0L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
@@ -396,53 +395,20 @@ public final class SItem {
     }
 
     //LAB_800fc104
-    final int charCount = charCount_800c677c.get();
-
-    final int[] files = new int[charCount];
-    final int[] slots = new int[charCount];
-
-    charLoop:
-    for(int charSlot = 0; charSlot < charCount; charSlot++) {
-      for(int permGroup = 0; permGroup < 9; permGroup++) {
-        for(int perm = 0; perm < 9; perm++) {
-          for(int permSlot = 0; permSlot < 3; permSlot++) {
-            final PartyPermutation08 permutation = partyPermutations_80111d68.get(permGroup).get(perm);
-
-            if(permutation.charIndices_02.get(permSlot).get() == gameState_800babc8.charIndex_88.get(charSlot).get()) {
-              files[charSlot] = permutation.drgn0File_00.get() - 3537;
-              slots[charSlot] = permSlot;
-              continue charLoop;
-            }
-          }
-        }
-      }
-    }
-
-    int permIndices = 0;
-    for(int charSlot = 0; charSlot < charCount; charSlot++) {
-      permIndices |= files[charSlot] << charSlot * 8;
-      permIndices |= slots[charSlot] << 24 + charSlot * 2;
-    }
-
-    final int pi = permIndices;
-    loadSupportOverlay(2, () -> SItem.deferLoadPartyPermutationTimMrg(pi));
-    loadSupportOverlay(2, () -> SItem.deferLoadPartyPermutationTmdMrg(pi));
+    loadSupportOverlay(2, SItem::deferLoadPartyTims);
+    loadSupportOverlay(2, SItem::deferLoadPartyTmdAndAnims);
     _800bc960.oru(0x400L);
     decrementOverlayCount();
   }
 
   @Method(0x800fc210L)
-  public static void loadPartyPermutationTmdMrg(final List<byte[]> files, final int charSlot) {
+  public static void loadCharTmdAndAnims(final List<byte[]> files, final int charSlot) {
     //LAB_800fc260
     final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
     final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
     //LAB_800fc298
-    int s0 = combatant.charSlot_19c.get() & 0x7f;
-    s0 = s0 | (data.combatantIndex_26c.get() & 0x3f) << 9;
-    s0 = s0 & 0xffff_feff;
-
-    combatantTmdAndAnimLoadedCallback(files, s0);
+    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c.get(), false);
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
@@ -452,11 +418,11 @@ public final class SItem {
   @Method(0x800fc3c0L)
   public static void loadEnemyTextures(final int fileIndex) {
     // Example file: 2856
-    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback, 0);
+    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback);
   }
 
   @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<byte[]> files, final int param) {
+  public static void enemyTexturesLoadedCallback(final List<byte[]> files) {
     final long s2 = _1f8003f4.getPointer(); //TODO
 
     //LAB_800fc434
@@ -484,19 +450,19 @@ public final class SItem {
   }
 
   @Method(0x800fc504L)
-  public static void deferLoadPartyPermutationTimMrg(final int permIndices) {
+  public static void deferLoadPartyTims() {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int file = permIndices >> charSlot * 8 & 0xff;
-      final int slot = permIndices >> 24 + charSlot * 2 & 0x3;
-
-      loadDrgnDir(0, (3537 + file) + "/" + slot, SItem::loadPartyPermutationTimMrg, charSlot);
+      final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
+      final String name = getCharacterName(charId);
+      final int finalCharSlot = charSlot;
+      loadFile("characters/%s/textures/combat".formatted(name), files -> SItem.loadCharacterTim(files, finalCharSlot));
     }
   }
 
   @Method(0x800fc548L)
-  public static void loadPartyPermutationTimMrg(final List<byte[]> files, final int charSlot) {
-    final long tim = mallocTail(files.get(0).length);
-    MEMORY.setBytes(tim, files.get(0));
+  public static void loadCharacterTim(final byte[] file, final int charSlot) {
+    final long tim = mallocTail(file.length);
+    MEMORY.setBytes(tim, file);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
     loadCombatantTim(bobj.combatantIndex_26c.get(), tim);
@@ -506,12 +472,12 @@ public final class SItem {
   }
 
   @Method(0x800fc654L)
-  public static void deferLoadPartyPermutationTmdMrg(final int permIndices) {
+  public static void deferLoadPartyTmdAndAnims() {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int file = permIndices >> charSlot * 8 & 0xff;
-      final int slot = permIndices >> 24 + charSlot * 2 & 0x3;
-
-      loadDrgnDir(0, (3537 + file + 1) + "/" + slot, SItem::loadPartyPermutationTmdMrg, charSlot);
+      final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
+      final String name = getCharacterName(charId);
+      final int finalCharSlot = charSlot;
+      loadDir("characters/%s/models/combat".formatted(name), files -> SItem.loadCharTmdAndAnims(files, finalCharSlot));
     }
   }
 

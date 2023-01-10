@@ -13,7 +13,6 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.core.spu.Voice;
@@ -1013,8 +1012,6 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
-
-  public static final ArrayRef<UnsignedByteRef> singleCharacterCombatSoundFileIndices_8004f698 = MEMORY.ref(1, 0x8004f698L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
 
   public static final Value _8004f6a4 = MEMORY.ref(4, 0x8004f6a4L);
 

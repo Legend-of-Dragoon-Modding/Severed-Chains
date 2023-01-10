@@ -163,7 +163,7 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800c9708;
+import static legend.game.combat.Bttl_800c.loadAttackAnimations;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66c8;
@@ -2681,7 +2681,7 @@ public final class Bttl_800e {
       for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
         final CombatantStruct1a8 v1 = getCombatant(i);
         if((v1.flags_19e.get() & 0x1L) != 0 && v1.charIndex_1a2.get() >= 0) {
-          FUN_800c9708(i);
+          loadAttackAnimations(i);
         }
 
         //LAB_800e6408
@@ -2766,7 +2766,7 @@ public final class Bttl_800e {
     for(int i = 0; _800fb040.offset(i).get() != 0xff; i++) {
       if(_800fb040.offset(i).get() == s3) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
-          loadDrgnDir(0, 4115 + i, Bttl_800e::FUN_800e929c, 0);
+          loadDrgnDir(0, 4115 + i, Bttl_800e::FUN_800e929c);
         }
       }
 
@@ -2774,8 +2774,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e67b0
-    loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c, 0);
-    loadDrgnDir(0, 4140 + s3 * 2, Bttl_800e::loadDeffPackage, battle24.scriptIndex_18);
+    loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c);
+    loadDrgnDir(0, 4140 + s3 * 2, files -> Bttl_800e.loadDeffPackage(files, battle24.scriptIndex_18));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2788,8 +2788,8 @@ public final class Bttl_800e {
     final BattleStruct24_2 t0 = _800c6938;
     t0.script_14 = null;
     t0._00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c, 0);
-    loadDrgnDir(0, 4308 + s0, Bttl_800e::loadDeffPackage, t0.scriptIndex_18);
+    loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
+    loadDrgnDir(0, 4308 + s0, files -> Bttl_800e.loadDeffPackage(files, t0.scriptIndex_18));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -2813,8 +2813,8 @@ public final class Bttl_800e {
     v1._00 |= 0x300_0000;
 
     if(sp20 < 256) {
-      loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c, 0);
-      loadDrgnDir(0, 4434 + sp20 * 2, Bttl_800e::loadDeffPackage, v1.scriptIndex_18);
+      loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c);
+      loadDrgnDir(0, 4434 + sp20 * 2, files -> Bttl_800e.loadDeffPackage(files, v1.scriptIndex_18));
     } else {
       //LAB_800e6a30
       final long a0_0 = sp20 >>> 4;
@@ -2825,8 +2825,8 @@ public final class Bttl_800e {
 
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c, 0);
-      loadDrgnDir(0, 4946 + fileIndex, Bttl_800e::loadDeffPackage, v1.scriptIndex_18);
+      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c);
+      loadDrgnDir(0, 4946 + fileIndex, files -> Bttl_800e.loadDeffPackage(files, v1.scriptIndex_18));
     }
 
     //LAB_800e6a9c
@@ -2849,7 +2849,7 @@ public final class Bttl_800e {
     for(int i = 0; _800fb05c.offset(i).get() != 0xff; i++) {
       if(_800fb05c.offset(i).get() == s3) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
-          loadDrgnDir(0, 5505 + i, Bttl_800e::FUN_800e929c, 0);
+          loadDrgnDir(0, 5505 + i, Bttl_800e::FUN_800e929c);
         }
       }
 
@@ -2857,8 +2857,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6bd4
-    loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c, 0);
-    loadDrgnDir(0, 5512 + s3 * 2, Bttl_800e::loadDeffPackage, a0_0.scriptIndex_18);
+    loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c);
+    loadDrgnDir(0, 5512 + s3 * 2, files -> Bttl_800e.loadDeffPackage(files, a0_0.scriptIndex_18));
 
     //LAB_800e6d7c
     _800fafe8.setu(0x1L);
@@ -3798,7 +3798,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final List<byte[]> files, final int param) {
+  public static void FUN_800e929c(final List<byte[]> files) {
     //LAB_800e92d4
     for(final byte[] file : files) {
       if(file.length != 0) {
@@ -4454,15 +4454,15 @@ public final class Bttl_800e {
 
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
-    loadDrgnFiles(0, (files, param) -> {
+    loadDrgnFiles(0, files -> {
       final int size = files.get(0).length;
       final DeffFile deff = MEMORY.ref(4, mallocTail(size), DeffFile::new);
       MEMORY.setBytes(deff.getAddress(), files.get(0));
       FUN_800ea7d0(deff, size, 0);
-    }, 0, "4114/2");
+    }, "4114/2");
 
-    loadDrgnDir(0, "4114/3", (files, param) -> FUN_800e929c(files, 0), 0);
-    loadDrgnDir(0, "4114/1", (files, param) -> deffManager_800c693c.mrg_2c = MrgFile.alloc(files), 0);
+    loadDrgnDir(0, "4114/3", Bttl_800e::FUN_800e929c);
+    loadDrgnDir(0, "4114/1", files -> deffManager_800c693c.mrg_2c = MrgFile.alloc(files));
   }
 
   @Method(0x800ead44L)
@@ -5493,7 +5493,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void battleHudTexturesLoadedCallback(final List<byte[]> files, final int param) {
+  public static void battleHudTexturesLoadedCallback(final List<byte[]> files) {
     final short[] clutX = new short[6];
     for(int i = 0; i < 4; i++) {
       clutX[i] = _800c6e60.get(i).get();
