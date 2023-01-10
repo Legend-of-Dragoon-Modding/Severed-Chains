@@ -2500,7 +2500,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final List<byte[]> files, final int unused) {
+  public static void basicUiTexturesLoaded(final List<byte[]> files) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2552,7 +2552,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
-    loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded, 0);
+    loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded);
     noop_8002498c();
 
     textZ_800bdf00.set(13);

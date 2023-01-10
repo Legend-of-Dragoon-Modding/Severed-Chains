@@ -10,8 +10,7 @@ public class StageData10 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
-  /** Something to do with audio */
-  public final UnsignedByteRef _01;
+  public final UnsignedByteRef musicIndex_01;
   public final UnsignedByteRef _02;
   public final UnsignedByteRef _03;
   public final UnsignedByteRef _04;
@@ -26,7 +25,7 @@ public class StageData10 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this._01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
+    this.musicIndex_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
     this._03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
