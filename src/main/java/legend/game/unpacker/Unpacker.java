@@ -50,6 +50,7 @@ public class Unpacker {
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
+    transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
   }
 
@@ -364,6 +365,32 @@ public class Unpacker {
         files.put("characters/%s/textures/combat".formatted(charName), data);
       } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
         files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+      }
+    }
+
+    return files;
+  }
+
+  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+    for(int i = 4011; i <= 4030; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    for(int charId = 0; charId < 10; charId++) {
+      final String charName = getCharacterName(charId).toLowerCase();
+
+      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
+        files.put("characters/%s/textures/dragoon".formatted(charName), data);
+      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
+        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
       }
     }
 
