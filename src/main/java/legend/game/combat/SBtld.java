@@ -16,6 +16,7 @@ import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
@@ -285,7 +286,7 @@ public class SBtld {
 
     //LAB_8010993c
     //LAB_80109954
-    struct7cc._4c.set(ByteBuffer.wrap(MEMORY.getBytes(_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)));
+    struct7cc._4c.set(ByteBuffer.wrap(MEMORY.getBytes(_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
 
     FUN_800e5768(struct7cc._4c);
 

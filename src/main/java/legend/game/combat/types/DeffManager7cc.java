@@ -3,6 +3,8 @@ package legend.game.combat.types;
 import legend.core.gte.TmdObjTable;
 import legend.game.types.MrgFile;
 
+import java.util.Arrays;
+
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
   public final Struct04[] _08 = {new Struct04(), new Struct04(), new Struct04(), new Struct04(), new Struct04()};
@@ -22,18 +24,17 @@ public class DeffManager7cc {
   public final BattleStruct4c[] _98 = {new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c()};
   public final TmdObjTable[] tmds_2f8 = new TmdObjTable[38];
   public final DeffPart[] _390 = new DeffPart[3];
-  public final SpriteMetrics08[] spriteMetrics_39c = {new SpriteMetrics08(), new SpriteMetrics08(), new SpriteMetrics08(), new SpriteMetrics08()};
-  public int u_3ac;
-  public int v_3ae;
-
-  public int clut_3b2;
-
+  public final SpriteMetrics08[] spriteMetrics_39c = new SpriteMetrics08[65];
   public MrgFile deffPackage_5a8;
   public DeffFile deff_5ac;
 
   public BattleStruct24_2 _5b8 = new BattleStruct24_2();
   public BattleLightStruct64 _5dc = new BattleLightStruct64();
   public BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
+
+  public DeffManager7cc() {
+    Arrays.setAll(this.spriteMetrics_39c, i -> new SpriteMetrics08());
+  }
 
   public static class Struct08 {
     public int _00;

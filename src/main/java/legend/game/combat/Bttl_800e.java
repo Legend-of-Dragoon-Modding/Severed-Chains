@@ -42,7 +42,7 @@ import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.BttlLightStruct84Sub3c;
+import legend.game.combat.types.BttlLightStruct84Sub38;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub20;
@@ -2224,7 +2224,7 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e4ea0(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
     final int t1 = a0.params_20[4].get();
-    final BttlLightStruct84Sub3c t0 = light._10;
+    final BttlLightStruct84Sub38 t0 = light._10;
 
     t0._00 = 0;
     t0.vec_04.setX(light.light_00.direction_00.getX() << 12);
@@ -2259,7 +2259,7 @@ public final class Bttl_800e {
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
     light._10._00 = 0;
 
-    final BttlLightStruct84Sub3c a3 = light._10;
+    final BttlLightStruct84Sub38 a3 = light._10;
     a3.vec_04.set(sp0x10);
     a3.vec_28.set(s3, s4, s2);
     a3._34 = s5;
@@ -2289,7 +2289,7 @@ public final class Bttl_800e {
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, lights_800c692c[s3].light_00.direction_00);
 
-    final BttlLightStruct84Sub3c s0 = lights_800c692c[s3]._10;
+    final BttlLightStruct84Sub38 s0 = lights_800c692c[s3]._10;
     s0._00 = 0;
     s0.vec_04.set(sp0x10);
 
@@ -2325,7 +2325,7 @@ public final class Bttl_800e {
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
-    final BttlLightStruct84Sub3c v1 = light._10;
+    final BttlLightStruct84Sub38 v1 = light._10;
     v1._00 = 0x4001;
     v1.vec_04.set(sp0x10.getX() << 12, sp0x10.getY() << 12, sp0x10.getZ() << 12);
     v1.vec_10.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
@@ -2341,9 +2341,9 @@ public final class Bttl_800e {
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
-    final BttlLightStruct84Sub3c a0_0 = light._10;
+    final BttlLightStruct84Sub38 a0_0 = light._10;
     a0_0._00 = 0x4002;
-    a0_0.scriptIndex_38 = bobjIndex;
+    light.scriptIndex_48 = bobjIndex;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
     a0_0.vec_04.set(sp0x10).sub(bobj.model_148.coord2Param_64.rotate);
@@ -2360,12 +2360,12 @@ public final class Bttl_800e {
 
   @Method(0x800e5528L)
   public static FlowControl FUN_800e5528(final RunningScript a0) {
-    return lights_800c692c[a0.params_20[0].get()]._4c._00 > 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return lights_800c692c[a0.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @Method(0x800e5560L)
   public static FlowControl FUN_800e5560(final RunningScript a0) {
-    a0.params_20[1].set((int)lights_800c692c[a0.params_20[0].get()]._4c._00);
+    a0.params_20[1].set(lights_800c692c[a0.params_20[0].get()]._4c._00);
     return FlowControl.CONTINUE;
   }
 
@@ -2373,7 +2373,7 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e559c(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
     final int t1 = a0.params_20[4].get();
-    final BttlLightStruct84Sub3c t0 = light._4c;
+    final BttlLightStruct84Sub38 t0 = light._4c;
 
     t0._00 = 0;
     t0.vec_04.setX(light.light_00.r_0c.get() << 12);
@@ -2395,7 +2395,7 @@ public final class Bttl_800e {
   @Method(0x800e569cL)
   public static FlowControl FUN_800e569c(final RunningScript a0) {
     final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
-    final BttlLightStruct84Sub3c v1 = light._4c;
+    final BttlLightStruct84Sub38 v1 = light._4c;
     v1._00 = 0;
     v1.vec_04.set(light.light_00.r_0c.get() << 12, light.light_00.g_0d.get() << 12, light.light_00.b_0e.get() << 12);
     v1.vec_10.set(a0.params_20[1].get() << 12, a0.params_20[2].get() << 12, a0.params_20[3].get() << 12);
@@ -2515,7 +2515,7 @@ public final class Bttl_800e {
     //LAB_800e5ba0
     for(int i = 0; i < 3; i++) {
       final BttlLightStruct84 light = lights_800c692c[i];
-      final BttlLightStruct84Sub3c a2 = light._10;
+      final BttlLightStruct84Sub38 a2 = light._10;
 
       int v1 = a2._00 & 0xff;
       if(v1 == 0x1) {
@@ -2546,7 +2546,7 @@ public final class Bttl_800e {
       } else if(v1 == 0x2L) {
         //LAB_800e5bf0
         final SVECTOR sp0x10 = new SVECTOR();
-        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a2.scriptIndex_38].innerStruct_00;
+        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
         sp0x10.set(bobj.model_148.coord2Param_64.rotate).add(a2.vec_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 0x3L) {
@@ -2564,7 +2564,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800e5dd4
-      final BttlLightStruct84Sub3c s0 = light._4c;
+      final BttlLightStruct84Sub38 s0 = light._4c;
       v1 = s0._00 & 0xff;
       if(v1 == 0x1L) {
         //LAB_800e5df4
@@ -3864,7 +3864,7 @@ public final class Bttl_800e {
       a0.metrics_04.u_00.set(metrics.u_00.get());
       a0.metrics_04.v_02.set(metrics.v_02.get());
       a0.metrics_04.w_04.set(metrics.w_04.get());
-      a0.metrics_04.h_05.set(metrics.w_04.get());
+      a0.metrics_04.h_05.set(metrics.h_05.get());
       a0.metrics_04.clut_06.set(metrics.clut_06.get());
     } else {
       //LAB_800e9658

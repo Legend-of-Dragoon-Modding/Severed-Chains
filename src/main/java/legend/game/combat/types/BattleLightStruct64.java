@@ -10,6 +10,6 @@ public class BattleLightStruct64 {
 
   public int _2c;
   public int _2e;
-  public final VECTOR[] _30 = new VECTOR[4];
+  public final VECTOR[] _30 = {new VECTOR(), new VECTOR(), new VECTOR(), new VECTOR()};
   public int _60;
 }

@@ -88,11 +88,11 @@ public final class Temp {
       final DeffManager7cc a0 = deffManager_800c693c;
       final BattleStruct24 s1 = _800cbb74;
       s1._00.set(manager._10._00.get());
-      s1.tpage_0c.set((a0.v_3ae & 0x100) >>> 4 | (a0.u_3ac & 0x3ff) >>> 6);
-      s1.u_0e.set((a0.u_3ac & 0x3f) << 2);
-      s1.v_0f.set(a0.v_3ae);
-      s1.clutX_10.set(a0.clut_3b2 << 4 & 0x3ff);
-      s1.clutY_12.set(a0.clut_3b2 >>> 6 & 0x1ff);
+      s1.tpage_0c.set((a0.spriteMetrics_39c[2].v_02.get() & 0x100) >>> 4 | (a0.spriteMetrics_39c[2].u_00.get() & 0x3ff) >>> 6);
+      s1.u_0e.set((a0.spriteMetrics_39c[2].u_00.get() & 0x3f) << 2);
+      s1.v_0f.set(a0.spriteMetrics_39c[2].v_02.get());
+      s1.clutX_10.set(a0.spriteMetrics_39c[2].clut_06.get() << 4 & 0x3ff);
+      s1.clutY_12.set(a0.spriteMetrics_39c[2].clut_06.get() >>> 6 & 0x1ff);
 
       //LAB_800ca528
       for(int i = 0; i < 0x40; i++) {
