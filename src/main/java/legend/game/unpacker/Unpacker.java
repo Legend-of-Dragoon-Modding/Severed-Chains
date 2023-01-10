@@ -27,6 +27,8 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
 
+import static legend.game.Scus94491BpeSegment.getCharacterName;
+
 public class Unpacker {
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -48,6 +50,7 @@ public class Unpacker {
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
+    transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -342,7 +345,7 @@ public class Unpacker {
   }
 
   private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
-    for(int i = 3537; i <= 3592; i++) {
+    for(int i = 3993; i <= 4010; i++) {
       if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
         return true;
       }
@@ -354,45 +357,31 @@ public class Unpacker {
   private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data) {
     final Map<String, FileData> files = new HashMap<>();
 
-    if(name.startsWith("SECT/DRGN0.BIN/3537/0/")) {
-      files.put("characters/dart/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3538/0/")) {
-      files.put("characters/dart/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3537/1/")) {
-      files.put("characters/lavitz/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3538/1/")) {
-      files.put("characters/lavitz/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3537/2/")) {
-      files.put("characters/shana/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3538/2/")) {
-      files.put("characters/shana/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3539/2/")) {
-      files.put("characters/rose/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3540/2/")) {
-      files.put("characters/rose/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3541/2/")) {
-      files.put("characters/haschel/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3542/2/")) {
-      files.put("characters/haschel/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3545/2/")) {
-      files.put("characters/meru/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3546/2/")) {
-      files.put("characters/meru/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3547/2/")) {
-      files.put("characters/kongol/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3548/2/")) {
-      files.put("characters/kongol/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3549/2/")) {
-      files.put("characters/miranda/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3550/2/")) {
-      files.put("characters/miranda/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3555/2/")) {
-      files.put("characters/albert/textures/combat", data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/3556/2/")) {
-      files.put("characters/albert/models/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    for(int charId = 0; charId < 9; charId++) {
+      final String charName = getCharacterName(charId).toLowerCase();
+
+      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
+        files.put("characters/%s/textures/combat".formatted(charName), data);
+      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
+        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+      }
     }
 
     return files;
+  }
+
+  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data) {
+    for(int i = 3537; i <= 3592; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
+    return Map.of();
   }
 
   private static void writeFiles(final Map<String, FileData> files) {

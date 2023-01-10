@@ -97,9 +97,12 @@ import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
+import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.getMallocSize;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -1722,6 +1725,8 @@ public final class Bttl_800c {
             // Player TMDs
             //LAB_800c9334
             int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
+            combatant.flags_19e.or(0x2);
+
             if((combatant.charIndex_1a2.get() & 0x1) != 0) {
               if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
                 charIndex = 18; // Divine dragoon
@@ -1730,14 +1735,12 @@ public final class Bttl_800c {
                 charIndex += 9; // Dragoon
               }
 
-              //LAB_800c93b8
+              fileIndex = 3994 + charIndex * 2;
+              loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
+            } else {
+              final String charName = getCharacterName(charIndex).toLowerCase();
+              loadDir("characters/%s/models/combat".formatted(charName), files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
             }
-
-            //LAB_800c93bc
-            fileIndex = 3994 + charIndex * 2;
-            combatant.flags_19e.or(0x2);
-
-            loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
           }
         }
       }
@@ -2229,11 +2232,18 @@ public final class Bttl_800c {
         } else {
           fileIndex = 18;
         }
-      }
 
-      //LAB_800ca61c
-      // Example file: 4017
-      loadDrgnDir(0, 3993 + fileIndex * 2, files -> Bttl_800c.FUN_800ca65c(files, combatantIndex));
+        // Example file: 4017
+        loadDrgnDir(0, 3993 + fileIndex * 2, files -> Bttl_800c.FUN_800ca65c(files, combatantIndex));
+      } else {
+        final String charName = getCharacterName(fileIndex).toLowerCase();
+        loadFile("characters/%s/textures/combat".formatted(charName), data -> {
+          final long tim = mallocTail(data.length);
+          MEMORY.setBytes(tim, data);
+          loadCombatantTim(combatantIndex, tim);
+          free(tim);
+        });
+      }
     }
 
     //LAB_800ca64c
