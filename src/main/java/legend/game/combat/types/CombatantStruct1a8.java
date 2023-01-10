@@ -33,7 +33,12 @@ public class CombatantStruct1a8 implements MemoryRef {
    */
   public final UnsignedShortRef flags_19e;
   public final ShortRef colourMap_1a0;
-  /** Maybe not strictly char index? */
+  /**
+   * Not just char index
+   * <ul>
+   *   <li>0x1 - dragoon</li>
+   * </ul>
+   */
   public final ShortRef charIndex_1a2;
   public final ShortRef _1a4;
   public final ShortRef _1a6;

@@ -1011,8 +1011,8 @@ public final class Bttl_800c {
     loadBattleHudDeff_();
 
     //LAB_800c79a8
-    for(int index = 0; index < combatantCount_800c66a0.get(); index++) {
-      FUN_800c9708(index);
+    for(int combatantIndex = 0; combatantIndex < combatantCount_800c66a0.get(); combatantIndex++) {
+      loadAttackAnimations(combatantIndex);
     }
 
     //LAB_800c79c8
@@ -1393,7 +1393,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8774L)
-  public static void loadStageTmdAndAnim(final List<byte[]> files, final int unused) {
+  public static void loadStageTmdAndAnim(final List<byte[]> files) {
     setStageHasNoModel();
 
     final byte[] file0 = files.get(0);
@@ -1478,7 +1478,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
-    loadDrgnDir(0, 2497 + stage, (files, param) -> {
+    loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).length != 0) {
         final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).length), McqHeader::new);
         MEMORY.setBytes(mcq.getAddress(), files.get(0));
@@ -1492,9 +1492,9 @@ public final class Bttl_800c {
         loadStageTim(tim);
         free(tim);
       }
-    }, 0);
+    });
 
-    loadDrgnDir(0, (2497 + stage) + "/0", Bttl_800c::loadStageTmdAndAnim, 0);
+    loadDrgnDir(0, (2497 + stage) + "/0", Bttl_800c::loadStageTmdAndAnim);
 
     currentStage_800c66a4.setu(stage);
   }
@@ -1706,7 +1706,6 @@ public final class Bttl_800c {
   @Method(0x800c9290L)
   public static void loadCombatantTmdAndAnims(final int combatantIndex) {
     final CombatantStruct1a8 combatant = combatants_8005e398.get(combatantIndex);
-    final int callbackParam;
     final int fileIndex;
 
     if(combatant.charIndex_1a2.get() >= 0) {
@@ -1716,13 +1715,12 @@ public final class Bttl_800c {
 
           if((combatant.flags_19e.get() & 0x4) == 0) {
             // Enemy TMDs
-            callbackParam = (combatantIndex & 0x3f) << 9 | 0x100 | 0x7f;
             fileIndex = 3137 + combatant.charIndex_1a2.get();
+
+            loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, true));
           } else {
             // Player TMDs
             //LAB_800c9334
-            callbackParam = (combatantIndex & 0x3f) << 9 | (combatant.charIndex_1a2.get() & 0x1) << 7 | combatant.charSlot_19c.get() & 0x7f;
-
             int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
             if((combatant.charIndex_1a2.get() & 0x1) != 0) {
               if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
@@ -1738,10 +1736,9 @@ public final class Bttl_800c {
             //LAB_800c93bc
             fileIndex = 3994 + charIndex * 2;
             combatant.flags_19e.or(0x2);
-          }
 
-          //LAB_800c93e8
-          loadDrgnDir(0, fileIndex, Bttl_800c::combatantTmdAndAnimLoadedCallback, callbackParam);
+            loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
+          }
         }
       }
     }
@@ -1750,14 +1747,11 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c941cL)
-  public static void combatantTmdAndAnimLoadedCallback(final List<byte[]> files, final int param) {
-    final int combatantIndex = param >>> 9 & 0x3f;
-    final int s0 = param >>> 8 & 0x1;
-
+  public static void combatantTmdAndAnimLoadedCallback(final List<byte[]> files, final int combatantIndex, final boolean isMonster) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
     combatant.flags_19e.and(0xffdf);
 
-    if(s0 == 0) {
+    if(!isMonster) {
       _800bc960.oru(0x4L);
     }
 
@@ -1849,55 +1843,49 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9708L)
-  public static void FUN_800c9708(final int combatantIndex) {
+  public static void loadAttackAnimations(final int combatantIndex) {
     final CombatantStruct1a8 combatant = combatants_8005e398.get(combatantIndex);
 
     if(combatant.charIndex_1a2.get() >= 0 && combatant.mrg_04.isNull()) {
       combatant.flags_19e.or(0x10);
 
-      final int a3;
       final int fileIndex;
-      if((combatant.flags_19e.get() & 0x4L) == 0) {
-        a3 = (combatantIndex & 0x3f) << 9 | 0x100 | 0x7f;
+      if((combatant.flags_19e.get() & 0x4) == 0) {
+        // Enemy attack animations
         fileIndex = 3593 + combatant.charIndex_1a2.get();
+        loadDrgnDir(0, fileIndex, files -> Bttl_800c.attackAnimationsLoaded(files, combatantIndex, true, -1));
       } else {
         //LAB_800c97a4
-        final int a0_0 = combatant.charIndex_1a2.get() & 1;
-        a3 = (combatantIndex & 0x3f) << 9 | a0_0 << 7 | combatant.charSlot_19c.get() & 0x7f;
+        final int isDragoon = combatant.charIndex_1a2.get() & 0x1;
         final int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c.get()).get();
-        if(a0_0 == 0) {
+        if(isDragoon == 0) {
           // Additions
           fileIndex = 4031 + gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get() + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
-          //LAB_800c983c
-        } else if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) { // Divine dragoon
+        } else if(charIndex != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+          // Dragoon addition
+          fileIndex = 4103 + charIndex;
+        } else { // Divine dragoon
           // Divine dragoon addition
           fileIndex = 4112;
-        } else {
-          fileIndex = 4103 + charIndex;
         }
-      }
 
-      //LAB_800c9860
-      //LAB_800c9864
-      loadDrgnDir(0, fileIndex, Bttl_800c::FUN_800c9898, a3);
+        loadDrgnDir(0, fileIndex, files -> Bttl_800c.attackAnimationsLoaded(files, combatantIndex, false, combatant.charSlot_19c.get()));
+      }
     }
 
     //LAB_800c9888
   }
 
   @Method(0x800c9898L)
-  public static void FUN_800c9898(final List<byte[]> files, final int param) {
-    final int combatantIndex = param >>> 9 & 0x3f;
-    final int s0 = param >>> 8 & 0x1;
-    final int s7 = (param << 25) >> 25;
+  public static void attackAnimationsLoaded(final List<byte[]> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant.mrg_04.isNull()) {
       final MrgFile mrg = MrgFile.alloc(files);
 
       //LAB_800c9910
-      if(s0 == 0 && files.size() == 64) {
-        _8006e398.bobjIndices_d80.get(s7).set(0);
+      if(!isMonster && files.size() == 64) {
+        _8006e398.bobjIndices_d80.get(charSlot).set(0);
 
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
@@ -1910,7 +1898,7 @@ public final class Bttl_800c {
 
             //LAB_800c9974
             // Type 6 - TIM file
-            FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, s7, combatantIndex, animIndex);
+            FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, charSlot, combatantIndex, animIndex);
           }
         }
       }
@@ -2245,15 +2233,14 @@ public final class Bttl_800c {
 
       //LAB_800ca61c
       // Example file: 4017
-      loadDrgnDir(0, 3993 + fileIndex * 2, Bttl_800c::FUN_800ca65c, (combatantIndex & 0x3f) << 9 | (combatant.charIndex_1a2.get() & 0x1) << 7 | combatant.charSlot_19c.get() & 0x7f);
+      loadDrgnDir(0, 3993 + fileIndex * 2, files -> Bttl_800c.FUN_800ca65c(files, combatantIndex));
     }
 
     //LAB_800ca64c
   }
 
   @Method(0x800ca65cL)
-  public static void FUN_800ca65c(final List<byte[]> files, final int param) {
-    final int combatantIndex = param >>> 9 & 0x3f;
+  public static void FUN_800ca65c(final List<byte[]> files, final int combatantIndex) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(files.size() != 1) {
@@ -3157,7 +3144,7 @@ public final class Bttl_800c {
 
   @Method(0x800cc8f4L)
   public static long FUN_800cc8f4(final RunningScript a0) {
-    FUN_800c9708(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get());
+    loadAttackAnimations(scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get());
     return 0;
   }
 
@@ -3167,7 +3154,7 @@ public final class Bttl_800c {
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
       final CombatantStruct1a8 v1 = getCombatant(i);
       if((v1.flags_19e.get() & 0x1L) != 0 && v1.charIndex_1a2.get() >= 0) {
-        FUN_800c9708(i);
+        loadAttackAnimations(i);
       }
 
       //LAB_800cc9a8

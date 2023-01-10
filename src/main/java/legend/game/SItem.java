@@ -410,7 +410,7 @@ public final class SItem {
     final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
     //LAB_800fc298
-    combatantTmdAndAnimLoadedCallback(files, (data.combatantIndex_26c.get() & 0x3f) << 9 | combatant.charSlot_19c.get() & 0x7f);
+    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c.get(), false);
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
@@ -420,11 +420,11 @@ public final class SItem {
   @Method(0x800fc3c0L)
   public static void loadEnemyTextures(final int fileIndex) {
     // Example file: 2856
-    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback, 0);
+    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback);
   }
 
   @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<byte[]> files, final int param) {
+  public static void enemyTexturesLoadedCallback(final List<byte[]> files) {
     final long s2 = _1f8003f4.getPointer(); //TODO
 
     //LAB_800fc434
@@ -456,7 +456,8 @@ public final class SItem {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
       final String name = getCharacterName(charId);
-      loadFile("characters/%s/textures/combat".formatted(name), SItem::loadCharacterTim, charSlot);
+      final int finalCharSlot = charSlot;
+      loadFile("characters/%s/textures/combat".formatted(name), files -> SItem.loadCharacterTim(files, finalCharSlot));
     }
   }
 
@@ -477,7 +478,8 @@ public final class SItem {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
       final String name = getCharacterName(charId);
-      loadDir("characters/%s/models/combat".formatted(name), SItem::loadCharTmdAndAnims, charSlot);
+      final int finalCharSlot = charSlot;
+      loadDir("characters/%s/models/combat".formatted(name), files -> SItem.loadCharTmdAndAnims(files, finalCharSlot));
     }
   }
 

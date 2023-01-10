@@ -55,7 +55,6 @@ import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
-import legend.game.types.FileLoadedCallback2;
 import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
@@ -64,7 +63,6 @@ import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
-import legend.game.types.SingleFileLoadedCallback;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct10;
@@ -86,6 +84,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.GPU;
@@ -1673,6 +1672,7 @@ public final class Scus94491BpeSegment {
     assert false;
   }
 
+  @Deprecated
   @Method(0x8001524cL)
   public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
     final String name = entry.name_04.deref().get();
@@ -1725,7 +1725,7 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
-  public static <Param> void loadFile(final String file, final SingleFileLoadedCallback<Param> callback, final Param param) {
+  public static <Param> void loadFile(final String file, final Consumer<byte[]> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1733,10 +1733,10 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    callback.onLoad(Unpacker.loadFile(file), param);
+    onCompletion.accept(Unpacker.loadFile(file));
   }
 
-  public static <Param> void loadDir(final String dir, final FileLoadedCallback2<Param> callback, final Param param) {
+  public static <Param> void loadDir(final String dir, final Consumer<List<byte[]>> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1744,10 +1744,10 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    callback.onLoad(Unpacker.loadDirectory(dir), param);
+    onCompletion.accept(Unpacker.loadDirectory(dir));
   }
 
-  public static <Param> void loadDrgnFiles(int drgnBinIndex, final FileLoadedCallback2<Param> callback, final Param param, final String... files) {
+  public static <Param> void loadDrgnFiles(int drgnBinIndex, final Consumer<List<byte[]>> onCompletion, final String... files) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1766,10 +1766,10 @@ public final class Scus94491BpeSegment {
       fileData.add(data);
     }
 
-    callback.onLoad(fileData, param);
+    onCompletion.accept(fileData);
   }
 
-  public static <Param> void loadDrgnDir(int drgnBinIndex, final int directory, final FileLoadedCallback2<Param> callback, final Param param) {
+  public static <Param> void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<byte[]>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1781,10 +1781,10 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    callback.onLoad(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)), param);
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)));
   }
 
-  public static <Param> void loadDrgnDir(int drgnBinIndex, final String directory, final FileLoadedCallback2<Param> callback, final Param param) {
+  public static <Param> void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<byte[]>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1796,9 +1796,10 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    callback.onLoad(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)), param);
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)));
   }
 
+  @Deprecated
   @Method(0x80015310L)
   public static <Param> long loadDrgnBinFile(final int index, final int fileIndex, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
     final int drgnIndex;
@@ -2221,8 +2222,6 @@ public final class Scus94491BpeSegment {
     }
 
     RunningScript_800bc070.ui_1c.set(0);
-
-    scriptLog[20] = true;
 
     //LAB_80015fd8
     for(int index = 0; index < 0x48; index++) {
@@ -5139,7 +5138,8 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001ce70
-    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::FUN_8001ce98, charSlot);
+    final int finalCharSlot = charSlot;
+    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.FUN_8001ce98(files, finalCharSlot));
   }
 
   @Method(0x8001ce98L)
@@ -5207,10 +5207,10 @@ public final class Scus94491BpeSegment {
       if(bobj.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         // Regular dragoons
-        loadDrgnDir(0, 1317 + bobj.charIndex_272.get(), Scus94491BpeSegment::FUN_8001e98c, 0);
+        loadDrgnDir(0, 1317 + bobj.charIndex_272.get(), Scus94491BpeSegment::FUN_8001e98c);
       } else {
         // Divine dragoon
-        loadDrgnDir(0, 1328, Scus94491BpeSegment::FUN_8001e98c, 0);
+        loadDrgnDir(0, 1328, Scus94491BpeSegment::FUN_8001e98c);
       }
     } else if(type == 1) {
       //LAB_8001d164
@@ -5220,7 +5220,7 @@ public final class Scus94491BpeSegment {
       loadedDrgnFiles_800bcf78.oru(0x40L);
 
       //LAB_8001d1a8
-      loadDrgnDir(0, 1327, Scus94491BpeSegment::FUN_8001e98c, 0);
+      loadDrgnDir(0, 1327, Scus94491BpeSegment::FUN_8001e98c);
     }
 
     //LAB_8001d1b0
@@ -5308,7 +5308,8 @@ public final class Scus94491BpeSegment {
       file.used_00.set(false);
 
       if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, Scus94491BpeSegment::FUN_8001d51c, monsterSlot);
+        final int finalMonsterSlot = monsterSlot;
+        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> Scus94491BpeSegment.FUN_8001d51c(files, finalMonsterSlot));
       }
     }
 
@@ -5367,22 +5368,19 @@ public final class Scus94491BpeSegment {
       if(true) return;
 
       final int fileIndex;
-      final FileLoadedCallback2<Integer> callback;
-      final int callbackParam;
+      final Consumer<List<byte[]>> callback;
       if((stageData.musicIndex_01.get() & 0x1f) == 0x13) {
         unloadSoundFile(8);
         fileIndex = 732;
-        callback = Scus94491BpeSegment::musicPackageLoadedCallback;
-        callbackParam = 732 << 8;
+        callback = files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, 732 << 8);
       } else {
         //LAB_8001da58
         fileIndex = (int)combatMusicFileIndices_800501bc.get(stageData.musicIndex_01.get() & 0x1f).get();
-        callback = Scus94491BpeSegment::FUN_8001fb44;
-        callbackParam = 0;
+        callback = files -> Scus94491BpeSegment.FUN_8001fb44(files, 0);
       }
 
       //LAB_8001daa4
-      loadDrgnDir(0, fileIndex, callback, callbackParam);
+      loadDrgnDir(0, fileIndex, callback);
     }
 
     //LAB_8001daac
@@ -5513,7 +5511,8 @@ public final class Scus94491BpeSegment {
 
       if(charIndex != -1) {
         final String name = getCharacterName(charIndex).toLowerCase();
-        loadDir("characters/%s/sounds/combat".formatted(name), Scus94491BpeSegment::charSoundEffectsLoaded, charSlot);
+        final int finalCharSlot = charSlot;
+        loadDir("characters/%s/sounds/combat".formatted(name), files -> Scus94491BpeSegment.charSoundEffectsLoaded(files, finalCharSlot));
       }
     }
 
@@ -5728,7 +5727,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001e5ecL)
   public static void loadMenuSounds() {
     loadedDrgnFiles_800bcf78.oru(0x1L);
-    loadDrgnFiles(0, Scus94491BpeSegment::menuSoundsLoaded, 0, "5739/0", "5739/1", "5739/2", "5739/3");
+    loadDrgnFiles(0, Scus94491BpeSegment::menuSoundsLoaded, "5739/0", "5739/1", "5739/2", "5739/3");
   }
 
   /**
@@ -5738,7 +5737,7 @@ public final class Scus94491BpeSegment {
    * 3: Soundbank (has some map and battle sounds)
    */
   @Method(0x8001e694L)
-  public static void menuSoundsLoaded(final List<byte[]> files, final int unused) {
+  public static void menuSoundsLoaded(final List<byte[]> files) {
     setPreloadingAudioAssets(true);
 
     final SoundFile sound = soundFileArr_800bcf80.get(0);
@@ -5788,7 +5787,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001e98cL)
-  public static void FUN_8001e98c(final List<byte[]> files, final int param) {
+  public static void FUN_8001e98c(final List<byte[]> files) {
     final SoundFile sound = soundFileArr_800bcf80.get(4);
     sound.used_00.set(true);
 
@@ -5811,11 +5810,11 @@ public final class Scus94491BpeSegment {
   @Method(0x8001eadcL)
   public static void loadSubmapSounds(final int submapIndex) {
     loadedDrgnFiles_800bcf78.oru(0x2L);
-    loadDrgnDir(0, 5750 + submapIndex, Scus94491BpeSegment::submapSoundsLoaded, 0);
+    loadDrgnDir(0, 5750 + submapIndex, Scus94491BpeSegment::submapSoundsLoaded);
   }
 
   @Method(0x8001eb38L)
-  public static void submapSoundsLoaded(final List<byte[]> files, final int unused) {
+  public static void submapSoundsLoaded(final List<byte[]> files) {
     final MrgFile mrg = MrgFile.alloc(files, 4);
     soundFileArr_800bcf80.get(8).soundMrgPtr_04.set(mrg);
 
@@ -5855,11 +5854,11 @@ public final class Scus94491BpeSegment {
   @Method(0x8001eea8L)
   public static void FUN_8001eea8(final int index) {
     loadedDrgnFiles_800bcf78.oru(0x8000L);
-    loadDrgnDir(0, 5740 + index, Scus94491BpeSegment::FUN_8001eefc, 0);
+    loadDrgnDir(0, 5740 + index, Scus94491BpeSegment::FUN_8001eefc);
   }
 
   @Method(0x8001eefcL)
-  public static void FUN_8001eefc(final List<byte[]> files, final int param) {
+  public static void FUN_8001eefc(final List<byte[]> files) {
     final SoundFile sound = soundFileArr_800bcf80.get(12);
     sound.used_00.set(true);
 
@@ -5884,12 +5883,12 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001f070(final RunningScript a0) {
     loadedDrgnFiles_800bcf78.oru(0x20L);
     unloadSoundFile(6);
-    loadDrgnDir(0, 1841 + a0.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f0dc, 0);
+    loadDrgnDir(0, 1841 + a0.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f0dc);
     return 0;
   }
 
   @Method(0x8001f0dcL)
-  public static void FUN_8001f0dc(final List<byte[]> files, final int param) {
+  public static void FUN_8001f0dc(final List<byte[]> files) {
     final SoundFile sound = soundFileArr_800bcf80.get(10);
     sound.used_00.set(true);
 
@@ -5910,12 +5909,12 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001f250(final RunningScript script) {
     loadedDrgnFiles_800bcf78.oru(0x1_0000L);
     unloadSoundFile(7);
-    loadDrgnDir(0, 1897 + script.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f2c0, 0);
+    loadDrgnDir(0, 1897 + script.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f2c0);
     return 0;
   }
 
   @Method(0x8001f2c0L)
-  public static void FUN_8001f2c0(final List<byte[]> files, final int param) {
+  public static void FUN_8001f2c0(final List<byte[]> files) {
     final SoundFile sound = soundFileArr_800bcf80.get(10);
     sound.used_00.set(true);
 
@@ -6097,7 +6096,7 @@ public final class Scus94491BpeSegment {
   public static void loadEncounterSoundEffects(final int fileIndex) {
     loadedDrgnFiles_800bcf78.oru(0x4000L);
     // Example file: 700
-    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::encounterSoundEffectsLoaded_8001fd4c, 6);
+    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.encounterSoundEffectsLoaded_8001fd4c(files, 6));
   }
 
   @Method(0x8001fd4cL)

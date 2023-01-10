@@ -3141,7 +3141,7 @@ public class WMap {
   @Method(0x800d6880L)
   public static void FUN_800d6880() {
     filesLoadedFlags_800c66b8.and(0xffff_efffL);
-    loadDrgnDir(0, 5695, WMap::timsLoaded, 0x1_1000);
+    loadDrgnDir(0, 5695, files -> WMap.timsLoaded(files, 0x1_1000));
     struct258_800c66a8.deref()._20.set((short)0);
   }
 
@@ -3563,7 +3563,7 @@ public class WMap {
   @Method(0x800d8e4cL)
   public static void FUN_800d8e4c(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
-    loadDrgnDir(0, 5697 + index, WMap::timsLoaded, 2);
+    loadDrgnDir(0, 5697 + index, files -> WMap.timsLoaded(files, 0x2));
     loadDrgnBinFile(0, 5705 + index, 0, WMap::loadTmdCallback, 0, 0x2L);
   }
 
@@ -4631,13 +4631,14 @@ public class WMap {
   public static void FUN_800dfa70() {
     filesLoadedFlags_800c66b8.and(0xffff_fd57L);
 
-    loadDrgnDir(0, 5713, WMap::timsLoaded, 0x2a8);
+    loadDrgnDir(0, 5713, files -> WMap.timsLoaded(files, 0x2a8));
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.deref().models_0c.get(i).set(MEMORY.ref(4, mallocTail(0x124L), Model124::new));
-      loadDrgnDir(0, 5714 + i, WMap::FUN_800d5a30, i);
+      final int finalI = i;
+      loadDrgnDir(0, 5714 + i, files -> WMap.FUN_800d5a30(files, finalI));
       struct258_800c66a8.deref().models_0c.get(i).deref().colourMap_9d.set((int)_800ef694.offset(i).get() + 0x80);
     }
 
