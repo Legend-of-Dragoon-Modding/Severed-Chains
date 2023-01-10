@@ -453,7 +453,7 @@ public final class SItem {
   public static void deferLoadPartyTims() {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final String name = getCharacterName(charId);
+      final String name = getCharacterName(charId).toLowerCase();
       final int finalCharSlot = charSlot;
       loadFile("characters/%s/textures/combat".formatted(name), files -> SItem.loadCharacterTim(files, finalCharSlot));
     }
@@ -475,7 +475,7 @@ public final class SItem {
   public static void deferLoadPartyTmdAndAnims() {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final String name = getCharacterName(charId);
+      final String name = getCharacterName(charId).toLowerCase();
       final int finalCharSlot = charSlot;
       loadDir("characters/%s/models/combat".formatted(name), files -> SItem.loadCharTmdAndAnims(files, finalCharSlot));
     }
