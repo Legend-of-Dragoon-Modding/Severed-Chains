@@ -138,7 +138,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
@@ -1967,7 +1967,7 @@ public final class SMap {
     model.ub_a2.set(0);
     model.ub_a3.set(0);
 
-    FUN_80021584(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
+    loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
 
     sobj.us_12c.set(0);
     sobj.flags_190.and(0x9fff_ffffL);
@@ -2205,7 +2205,7 @@ public final class SMap {
     sobj.animIndex_132.set(script.params_20[1].get());
     model.ub_a3.set(0);
     model.ub_a2.set(1);
-    FUN_80021584(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
+    loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
     sobj.us_12c.set(0);
     sobj.flags_190.and(0x9fff_ffffL);
     return FlowControl.CONTINUE;
@@ -2428,7 +2428,7 @@ public final class SMap {
     model.ui_f4.set(0);
     model.ui_f8.set(0);
 
-    FUN_80021584(model, tmdAnimFile);
+    loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.setX(transferX);
     model.coord2_14.coord.transfer.setY(transferY);
@@ -2465,7 +2465,7 @@ public final class SMap {
         animateModel(model);
         if(sobj.us_12c.get() == 1 && (sobj.flags_190.get() & 0x2000_0000L) != 0) {
           sobj.animIndex_132.set(0);
-          FUN_80021584(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
+          loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e.get()).animations.get(sobj.animIndex_132.get()));
           sobj.us_12c.set(0);
           sobj.flags_190.and(0x9fff_ffffL);
         }

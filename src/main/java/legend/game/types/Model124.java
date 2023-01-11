@@ -17,6 +17,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.combat.deff.Cmb;
+import legend.game.combat.deff.Lmb;
 
 public class Model124 implements MemoryRef {
   private final Value ref;
@@ -24,14 +26,30 @@ public class Model124 implements MemoryRef {
   public final Pointer<UnboundedArrayRef<GsDOBJ2>> dobj2ArrPtr_00;
   public final Pointer<UnboundedArrayRef<GsCOORDINATE2>> coord2ArrPtr_04;
   public final Pointer<UnboundedArrayRef<GsCOORD2PARAM>> coord2ParamArrPtr_08;
+  /** Union with {@link #coord2ParamArrPtr_08} */
+  public final Pointer<LmbAnim> lmbAnim_08;
+  /** Union with {@link #coord2ParamArrPtr_08} */
+  public final Pointer<CmbAnim> cmbAnim_08;
   public final GsOBJTABLE2 ObjTable_0c; // GsOBJTABLE2 is 0xc bytes long... overlaps coord2's flag...?
   // 0x50 bytes
   public final GsCOORDINATE2 coord2_14;
   public final GsCOORD2PARAM coord2Param_64;
   public final Pointer<Tmd> tmd_8c;
+
   public final Pointer<UnboundedArrayRef<ModelPartTransforms>> partTransforms_90;
   /** One entry for each TMD object (tmdNobj_ca) */
   public final Pointer<UnboundedArrayRef<ModelPartTransforms>> partTransforms_94;
+  /**
+   * Union with {@link #partTransforms_90}
+   * <ul>
+   *   <li>1 - LMB</li>
+   *   <li>2 - CMB</li>
+   * </ul>
+   */
+  public final IntRef animType_90;
+  /** Union with {@link #partTransforms_94} */
+  public final IntRef lmbUnknown_94;
+
   public final UnsignedShortRef animCount_98;
   public final ShortRef s_9a;
   public final UnsignedByteRef ub_9c;
@@ -70,12 +88,16 @@ public class Model124 implements MemoryRef {
     this.dobj2ArrPtr_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, GsDOBJ2::new)));
     this.coord2ArrPtr_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new)));
     this.coord2ParamArrPtr_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new)));
+    this.lmbAnim_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, LmbAnim::new));
+    this.cmbAnim_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, CmbAnim::new));
     this.ObjTable_0c = ref.offset(4, 0x0cL).cast(GsOBJTABLE2::new);
     this.coord2_14 = ref.offset(4, 0x14L).cast(GsCOORDINATE2::new);
     this.coord2Param_64 = ref.offset(4, 0x64L).cast(GsCOORD2PARAM::new);
     this.tmd_8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, Tmd::new));
     this.partTransforms_90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
     this.partTransforms_94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0xc, ModelPartTransforms::new)));
+    this.animType_90 = ref.offset(4, 0x90L).cast(IntRef::new);
+    this.lmbUnknown_94 = ref.offset(4, 0x94L).cast(IntRef::new);
     this.animCount_98 = ref.offset(2, 0x98L).cast(UnsignedShortRef::new);
     this.s_9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
     this.ub_9c = ref.offset(1, 0x9cL).cast(UnsignedByteRef::new);
@@ -106,5 +128,43 @@ public class Model124 implements MemoryRef {
   @Override
   public long getAddress() {
     return this.ref.getAddress();
+  }
+
+  public static class CmbAnim implements MemoryRef {
+    private final Value ref;
+
+    public final IntRef _00;
+    public final Pointer<Cmb> cmb_04;
+    public final UnboundedArrayRef<Cmb.Sub0c> _08;
+
+    private CmbAnim(final Value ref) {
+      this.ref = ref;
+
+      this._00 = ref.offset(4, 0x00L).cast(IntRef::new);
+      this.cmb_04 = ref.offset(4, 0x04L).cast(Pointer.deferred(4, value -> { throw new RuntimeException("Can't instantiate"); }));
+      this._08 = ref.offset(2, 0x08L).cast(UnboundedArrayRef.of(0xc, Cmb.Sub0c::new));
+    }
+
+    @Override
+    public long getAddress() {
+      return this.ref.getAddress();
+    }
+  }
+
+  public static class LmbAnim implements MemoryRef {
+    private final Value ref;
+
+    public final Pointer<Lmb> lmb_00;
+
+    private LmbAnim(final Value ref) {
+      this.ref = ref;
+
+      this.lmb_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, value -> { throw new RuntimeException("Can't instantiate"); }));
+    }
+
+    @Override
+    public long getAddress() {
+      return this.ref.getAddress();
+    }
   }
 }

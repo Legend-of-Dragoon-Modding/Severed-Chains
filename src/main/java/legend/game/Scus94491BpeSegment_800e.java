@@ -26,7 +26,7 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
@@ -270,7 +270,7 @@ public final class Scus94491BpeSegment_800e {
     model.ui_f4.set(0);
     model.ui_f8.set(0);
 
-    FUN_80021584(model, tmdAnimFile);
+    loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.setX(x);
     model.coord2_14.coord.transfer.setY(y);

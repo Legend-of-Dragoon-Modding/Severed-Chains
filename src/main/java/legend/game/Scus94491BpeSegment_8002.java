@@ -439,7 +439,7 @@ public final class Scus94491BpeSegment_8002 {
     model.ui_f4.set(0);
     model.ui_f8.set(0);
 
-    FUN_80021584(model, tmdAnimFile);
+    loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.setX(transferX);
     model.coord2_14.coord.transfer.setY(transferY);
@@ -840,7 +840,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021584L)
-  public static void FUN_80021584(final Model124 model, final TmdAnimationFile tmdAnimFile) {
+  public static void loadModelStandardAnimation(final Model124 model, final TmdAnimationFile tmdAnimFile) {
     model.partTransforms_90.set(tmdAnimFile.partTransforms_10);
     model.partTransforms_94.set(tmdAnimFile.partTransforms_10);
     model.animCount_98.set(tmdAnimFile.count_0c);

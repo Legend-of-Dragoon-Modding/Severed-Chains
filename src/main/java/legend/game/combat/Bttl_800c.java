@@ -44,7 +44,6 @@ import legend.game.combat.types.BattleStageDarkening1800;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
@@ -53,7 +52,7 @@ import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
-import legend.game.combat.types.DeffFile;
+import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.FloatingNumberC4;
@@ -123,7 +122,7 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
@@ -296,8 +295,6 @@ public final class Bttl_800c {
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
   public static TmdObjTable[] tmds_800c6944;
   public static SpriteMetrics08[] spriteMetrics_800c6948;
-
-  public static final Pointer<DeffFile> deff_800c6950 = MEMORY.ref(4, 0x800c6950L, Pointer.deferred(4, DeffFile::new));
 
   public static final Pointer<BattleStageDarkening1800> stageDarkening_800c6958 = MEMORY.ref(4, 0x800c6958L, Pointer.deferred(4, BattleStageDarkening1800::new));
   public static final UnsignedShortRef stageDarkeningClutCount_800c695c = MEMORY.ref(2, 0x800c695cL, UnsignedShortRef::new);
@@ -2086,7 +2083,7 @@ public final class Bttl_800c {
 
   @Method(0x800ca100L)
   public static void FUN_800ca100(final Model124 model, final int combatantIndex, final int animIndex) {
-    FUN_80021584(model, FUN_800ca31c(combatantIndex, animIndex));
+    loadModelStandardAnimation(model, FUN_800ca31c(combatantIndex, animIndex));
     combatants_8005e398.get(combatantIndex)._14.get(0)._09.incr();
   }
 

@@ -85,7 +85,7 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
@@ -4660,7 +4660,7 @@ public class WMap {
 
       //LAB_800dfcc0
       initModel(model, struct258._b4.get(i).extendedTmd_00.deref(), struct258._b4.get(i).tmdAnim_08.deref());
-      FUN_80021584(model, struct258._b4.get(i).tmdAnim_08.deref());
+      loadModelStandardAnimation(model, struct258._b4.get(i).tmdAnim_08.deref());
 
       model.coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
       model.coord2Param_64.rotate.set((short)0, struct258.rotation_a4.getY(), (short)0);
@@ -5307,7 +5307,7 @@ public class WMap {
     //LAB_800e12b0
     if(struct.currentAnimIndex_ac.get() != struct.animIndex_b0.get()) {
       final long v1 = struct._b4.get(struct.modelIndex_1e4.get()).getAddress() + struct.animIndex_b0.get() * 0x4L;
-      FUN_80021584(struct.models_0c.get(struct.modelIndex_1e4.get()).deref(), MEMORY.ref(4, v1).deref(4).cast(TmdAnimationFile::new)); //TODO
+      loadModelStandardAnimation(struct.models_0c.get(struct.modelIndex_1e4.get()).deref(), MEMORY.ref(4, v1).deref(4).cast(TmdAnimationFile::new)); //TODO
     }
 
     //LAB_800e1354

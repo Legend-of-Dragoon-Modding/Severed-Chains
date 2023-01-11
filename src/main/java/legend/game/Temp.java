@@ -17,7 +17,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.DeffManager7cc;
+import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.scripting.FlowControl;

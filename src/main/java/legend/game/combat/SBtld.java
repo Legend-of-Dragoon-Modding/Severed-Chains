@@ -7,7 +7,7 @@ import legend.core.memory.types.Pointer;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.DeffManager7cc;
+import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
 import legend.game.types.LodString;

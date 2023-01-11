@@ -1764,6 +1764,19 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(fileData);
   }
 
+  public static <Param> void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<byte[]> onCompletion) {
+    if(drgnBinIndex >= 2) {
+      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+    }
+
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+    final String path = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file);
+    final byte[] data = Unpacker.loadFile(path);
+    onCompletion.accept(data);
+  }
+
   public static <Param> void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<byte[]>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();

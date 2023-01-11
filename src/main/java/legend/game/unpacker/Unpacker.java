@@ -47,6 +47,7 @@ public class Unpacker {
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
+    transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
@@ -275,6 +276,27 @@ public class Unpacker {
 
   private static Map<String, FileData> unmrg(final String name, final FileData data) {
     final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
+
+    if(archive.getCount() == 0) {
+      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+    }
+
+    final Map<String, FileData> files = new HashMap<>();
+    int i = 0;
+    for(final FileData entry : archive) {
+      files.put(name + '/' + i, entry);
+      i++;
+    }
+
+    return files;
+  }
+
+  private static boolean deffDiscriminator(final String name, final FileData data) {
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x46464544;
+  }
+
+  private static Map<String, FileData> undeff(final String name, final FileData data) {
+    final DeffArchive archive = new DeffArchive(data);
 
     if(archive.getCount() == 0) {
       return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
