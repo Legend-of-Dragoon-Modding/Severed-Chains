@@ -52,6 +52,15 @@ public abstract class MdecException {
         }
     }
 
+    /**
+     * Exception thrown at the end of an MDEC stream.
+     */
+    public static class EndOfStream extends RuntimeException {
+        public EndOfStream(@Nonnull final String message) {
+            super(message);
+        }
+    }
+
     public static String END_OF_BITSTREAM(final int bitstreamOffset) {
         return String.format("Unexpected end of bitstream at %d", bitstreamOffset);
     }

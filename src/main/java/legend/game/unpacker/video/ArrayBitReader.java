@@ -49,7 +49,7 @@ import java.nio.ByteBuffer;
  * in big-endian order, or in 16-bit little-endian order.
  */
 public class ArrayBitReader {
-    private static final Logger LOG = LogManager.getFormatterLogger(legend.game.fmv.ArrayBitReader.class);
+    private static final Logger LOG = LogManager.getFormatterLogger(ArrayBitReader.class);
 
     /**
      * Data to be read as a binary stream.
@@ -112,9 +112,9 @@ public class ArrayBitReader {
     /**
      * Reads 16-bits at the requested offset in the proper endian order.
      */
-    protected short readWord(final int i) throws legend.game.fmv.MdecException.EndOfStream {
+    protected short readWord(final int i) throws MdecException.EndOfStream {
         if(i + 1 >= this._iDataSize) {
-            throw new legend.game.fmv.MdecException.EndOfStream(legend.game.fmv.MdecException.END_OF_BITSTREAM(i));
+            throw new MdecException.EndOfStream(MdecException.END_OF_BITSTREAM(i));
         }
 
         return (short)(((this._abData.get(i + 1) & 0xFF) << 8) + (this._abData.get(i) & 0xFF));
@@ -125,7 +125,7 @@ public class ArrayBitReader {
      *
      * @param iCount expected to be from 1 to 31
      */
-    public int readUnsignedBits(int iCount) throws legend.game.fmv.MdecException.EndOfStream {
+    public int readUnsignedBits(int iCount) throws MdecException.EndOfStream {
         if(iCount < 0 || iCount >= 32) {
             throw new IllegalArgumentException("Bits to read are out of range " + iCount);
         }
@@ -163,7 +163,7 @@ public class ArrayBitReader {
                     this._iBitsLeft = 16 - iCount;
                     iRet = iRet << iCount | (this._siCurrentWord & 0xFFFF) >>> this._iBitsLeft;
                 }
-            } catch(final legend.game.fmv.MdecException.EndOfStream ex) {
+            } catch(final MdecException.EndOfStream ex) {
                 LOG.debug("Bitstream is about to end", ex);
                 // _iBitsLeft will == 0
                 return iRet << iCount;
@@ -179,14 +179,14 @@ public class ArrayBitReader {
      *
      * @param iCount expected to be from 0 to 31
      */
-    public int readSignedBits(final int iCount) throws legend.game.fmv.MdecException.EndOfStream {
+    public int readSignedBits(final int iCount) throws MdecException.EndOfStream {
         return this.readUnsignedBits(iCount) << 32 - iCount >> 32 - iCount; // extend sign bit
     }
 
     /**
      * @param iCount expected to be from 1 to 31
      */
-    public int peekUnsignedBits(final int iCount) throws legend.game.fmv.MdecException.EndOfStream {
+    public int peekUnsignedBits(final int iCount) throws MdecException.EndOfStream {
         final int iSaveOffs = this._iByteOffset;
         final int iSaveBitsLeft = this._iBitsLeft;
         final short siSaveCurrentWord = this._siCurrentWord;
@@ -199,7 +199,7 @@ public class ArrayBitReader {
         }
     }
 
-    public void skipBits(final int iCount) throws legend.game.fmv.MdecException.EndOfStream {
+    public void skipBits(final int iCount) throws MdecException.EndOfStream {
         this._iBitsLeft -= iCount;
         if(this._iBitsLeft < 0) {
             // same as _iByteOffset += -(_iBitsLeft / 16)*2;
@@ -209,11 +209,11 @@ public class ArrayBitReader {
             if(this._iByteOffset > this._iDataSize) { // clearly out of bounds
                 this._iBitsLeft = 0;
                 this._iByteOffset = this._iDataSize;
-                throw new legend.game.fmv.MdecException.EndOfStream(legend.game.fmv.MdecException.END_OF_BITSTREAM(this._iByteOffset));
+                throw new MdecException.EndOfStream(MdecException.END_OF_BITSTREAM(this._iByteOffset));
             } else if(this._iBitsLeft < 0) { // _iBitsLeft should be <= 0
                 if(this._iByteOffset == this._iDataSize) { // also out of bounds
                     this._iBitsLeft = 0;
-                    throw new legend.game.fmv.MdecException.EndOfStream(MdecException.END_OF_BITSTREAM(this._iByteOffset));
+                    throw new MdecException.EndOfStream(MdecException.END_OF_BITSTREAM(this._iByteOffset));
                 }
                 this._iBitsLeft += 16;
                 this._siCurrentWord = this.readWord(this._iByteOffset);

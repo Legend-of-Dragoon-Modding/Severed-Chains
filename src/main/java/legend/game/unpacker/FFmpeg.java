@@ -1,21 +1,34 @@
 package legend.game.unpacker;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
-import com.github.kokorin.jaffree.ffmpeg.FrameProducer;
-import com.github.kokorin.jaffree.ffmpeg.Stream;
-import com.github.kokorin.jaffree.ffmpeg.Frame;
-import com.github.kokorin.jaffree.ffmpeg.FrameInput;
-import com.github.kokorin.jaffree.ffmpeg.ChannelOutput;
+import com.github.kokorin.jaffree.StreamType;
+import com.github.kokorin.jaffree.ffmpeg.*;
 
 public class FFmpeg {
+    private static final Queue<int[]> frameBuffer = new LinkedList<>();
+    private static final Queue<byte[]> audioBuffer = new LinkedList<>();
+
+    public static int[] getFrame() {
+        return frameBuffer.poll();
+    }
+    public static byte[] getSamples() {return audioBuffer.poll();}
+
+    public static boolean isReady() {
+        return frameBuffer.size() > 0;
+    }
+
     public static void createVideo(final BufferedImage[] frames, final int[][] audio, Path path, int threads) {
         FrameProducer producer = new FrameProducer() {
             private int frameCounter = 0;
@@ -41,7 +54,7 @@ public class FFmpeg {
 
             @Override
             public Frame produce() {
-                if (frameCounter > frames.length - 1 || audioCounter > audio.length) {
+                if (frameCounter > frames.length - 1 && audioCounter > audio.length - 1 ) {
                     return null; // return null when End of Stream is reached
                 }
 
@@ -71,17 +84,60 @@ public class FFmpeg {
                     .addArguments("-c:v", "libx264") // video codec
                     .addArguments("-pix_fmt", "yuv420p")
                     .addArguments("-crf", "0")
-                    .addArguments("-preset:v", "slow") // Compression preset
-                    .addArguments("-qp", "0") // Lossless video
-                    .addArguments("-c:a", "aac") // Audio codec
+                    .addArguments("-c:a", "libopus") // Audio codec
                     .addArguments("-af", "volume=0.5") // halve the volume
                     .addArguments("-aq", "0") // Losless audio
-                    .addArguments("-ac", "2") // Stereo
                     .addArguments("-threads", Integer.toString(threads))
                     .execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static FFmpegResultFuture consumeVideo(String file, int frameBufferSize) {
+        return com.github.kokorin.jaffree.ffmpeg.FFmpeg.atPath()
+                .addInput(UrlInput.fromUrl(file))
+                .addOutput(FrameOutput
+                        .withConsumer(
+                                new FrameConsumer() {
+                                    @Override
+                                    public void consumeStreams(List<Stream> streams) {
+                                    }
+
+                                    @Override
+                                    public void consume(Frame frame) {
+                                        if (frame == null) {
+                                            return;
+                                        }
+
+                                        if (frame.getStreamId() == 0) {
+                                            if (frameBuffer.size() >= frameBufferSize) {
+                                                try {
+                                                    Thread.sleep(10);
+                                                } catch (InterruptedException e) {
+                                                    throw new RuntimeException(e);
+                                                }
+                                            }
+
+                                            int height = frame.getImage().getHeight();
+                                            int width = frame.getImage().getWidth();
+                                            int[] rgb = new int[height * width];
+
+                                            frame.getImage().getRGB(0, 0, width, height, rgb, 0, width);
+                                            for (int i = 0; i < rgb.length; i++) {
+                                                rgb[i] = rgb[i] << 8;
+                                            }
+                                            frameBuffer.add(rgb);
+
+                                        } else {
+                                            int[] samples = frame.getSamples();
+                                        }
+                                    }
+                                }
+                        )
+                        .disableStream(StreamType.SUBTITLE)
+                        .disableStream(StreamType.DATA)
+                ).executeAsync();
     }
 
 }
