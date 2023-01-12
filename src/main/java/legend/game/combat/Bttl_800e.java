@@ -2795,8 +2795,12 @@ public final class Bttl_800e {
     FUN_800e6470(a0);
     final int s0 = ((a0.params_20[0].get() & 0xffff) - 192) * 2;
     final BattleStruct24_2 t0 = _800c6938;
-    free(t0.script_14.getAddress());
-    t0.script_14 = null;
+
+    if(t0.script_14 != null) {
+      free(t0.script_14.getAddress());
+      t0.script_14 = null;
+    }
+
     t0._00 |= 0x200_0000;
     loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.scriptIndex_18));
@@ -2824,8 +2828,12 @@ public final class Bttl_800e {
     FUN_800e6470(a0);
 
     final BattleStruct24_2 v1 = _800c6938;
-    free(v1.script_14.getAddress());
-    v1.script_14 = null;
+
+    if(v1.script_14 != null) {
+      free(v1.script_14.getAddress());
+      v1.script_14 = null;
+    }
+
     v1._00 |= 0x300_0000;
 
     if(sp20 < 256) {
@@ -2868,8 +2876,12 @@ public final class Bttl_800e {
     FUN_800e6470(a0);
 
     final BattleStruct24_2 a0_0 = _800c6938;
-    free(a0_0.script_14.getAddress());
-    a0_0.script_14 = null;
+
+    if(a0_0.script_14 != null) {
+      free(a0_0.script_14.getAddress());
+      a0_0.script_14 = null;
+    }
+
     a0_0._00 |= 0x500_0000;
 
     //LAB_800e6b5c
