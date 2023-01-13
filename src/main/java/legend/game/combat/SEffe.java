@@ -4123,9 +4123,9 @@ public final class SEffe {
 
           //LAB_801075bc
           if(s0 < s3._30.get()) {
-            if(state.storage_44[8].get() != 0) {
+            if(state.storage_44[8] != 0) {
               MEMORY.ref(1, s2).offset(0x1cL).setu(0x1L);
-              state.storage_44[8].set(0);
+              state.storage_44[8] = 0;
             }
 
             //LAB_801075e8
@@ -4218,7 +4218,7 @@ public final class SEffe {
 
     final ScriptState<?> manager = scriptStatePtrArr_800bc1c0[effectIndex];
     FUN_801062a8(script.params_20[0].get(), script.params_20[1].get(), ((EffectManagerData6c)manager.innerStruct_00).effect_44.derefAs(AdditionOverlaysEffect44.class), script.params_20[2].get());
-    manager.storage_44[8].set(0);
+    manager.storage_44[8] = 0;
     script.params_20[4].set(effectIndex);
     _80119f41.setu(0x1L);
     return FlowControl.CONTINUE;
@@ -8702,8 +8702,8 @@ public final class SEffe {
   @Method(0x80115b2cL)
   public static void FUN_80115b2c(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[index];
-    final int s0 = v0.storage_44[8].get();
-    final int s1 = v0.storage_44[9].get();
+    final int s0 = v0.storage_44[8];
+    final int s1 = v0.storage_44[9];
 
     if(s1 == s0) {
       deallocateScriptAndChildren(index);
@@ -8713,10 +8713,10 @@ public final class SEffe {
 
       //LAB_80115bd4
       if(s1 < s0) {
-        v0.storage_44[8].decr();
+        v0.storage_44[8]--;
       } else {
         //LAB_80115bb4
-        v0.storage_44[8].incr();
+        v0.storage_44[8]++;
       }
     }
 
@@ -8725,15 +8725,15 @@ public final class SEffe {
 
   @Method(0x80115bf0L)
   public static void FUN_80115bf0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    applyScreenDarkening(scriptStatePtrArr_800bc1c0[index].storage_44[9].get());
+    applyScreenDarkening(scriptStatePtrArr_800bc1c0[index].storage_44[9]);
   }
 
   @Method(0x80115c2cL)
   public static void FUN_80115c2c(final int a0, final int a1) {
     final int scriptIndex = allocateEffectManager(deffManager_800c693c.deref().scriptIndex_1c.get(), 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115b2c", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80115bf0", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new), null);
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-    state.storage_44[8].set(a0);
-    state.storage_44[9].set(a1);
+    state.storage_44[8] = a0;
+    state.storage_44[9] = a1;
   }
 
   @Method(0x80115cacL)

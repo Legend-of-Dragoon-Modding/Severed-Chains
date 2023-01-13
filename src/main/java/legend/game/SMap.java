@@ -4227,7 +4227,7 @@ public final class SMap {
     }
 
     if(newScene == 0x3fc) {
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
@@ -4235,7 +4235,7 @@ public final class SMap {
     }
 
     if(newScene == 0x3fa) {
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
@@ -4244,14 +4244,14 @@ public final class SMap {
     }
 
     if(newScene == 0x3fb) {
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       smapLoadingStage_800cb430.setu(0x14L);
       _800f7e4c.setu(0x1L);
       return 1;
     }
 
     if(newScene == 0x3fe) {
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
@@ -4265,12 +4265,12 @@ public final class SMap {
       index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
       _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
       _800cab24.set(FUN_800ea974(-0x1L));
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       return 1;
     }
 
     if(newScene == 0x3ff) {
-      scriptsTickDisabled_800bc0b8.set(true);
+      scriptsTickDisabled_800bc0b8 = true;
       whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
@@ -4283,7 +4283,7 @@ public final class SMap {
       scene = encounterId_800bb0f8.get();
     } else {
       if(newScene > 0x1ff) {
-        scriptsTickDisabled_800bc0b8.set(true);
+        scriptsTickDisabled_800bc0b8 = true;
         _800f7e4c.setu(0x1L);
         return 1;
       }
@@ -4304,7 +4304,7 @@ public final class SMap {
       _80052c40.setu(0x1L);
     }
 
-    scriptsTickDisabled_800bc0b8.set(true);
+    scriptsTickDisabled_800bc0b8 = true;
     smapLoadingStage_800cb430.setu(0x13L);
     return 1;
   }
@@ -4476,7 +4476,7 @@ public final class SMap {
           _800cab24.set(FUN_800ea974(_800caaf4.get()));
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
-          scriptsTickDisabled_800bc0b8.set(false);
+          scriptsTickDisabled_800bc0b8 = false;
           _800c6ae0.setu(0);
         }
       }
@@ -4551,7 +4551,7 @@ public final class SMap {
       case 0xf -> {
         _80052c44.setu(0);
         FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
-        scriptsTickDisabled_800bc0b8.set(false);
+        scriptsTickDisabled_800bc0b8 = false;
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
         if(_800bdc34.get() != 0) {
@@ -4624,7 +4624,7 @@ public final class SMap {
           vsyncMode_8007a3b8.set(2);
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8.set(false);
+          scriptsTickDisabled_800bc0b8 = false;
         }
       }
 
@@ -4635,7 +4635,7 @@ public final class SMap {
         pregameLoadingStage_800bb10c.setu(0);
         vsyncMode_8007a3b8.set(2);
         _800f7e4c.setu(0);
-        scriptsTickDisabled_800bc0b8.set(false);
+        scriptsTickDisabled_800bc0b8 = false;
       }
 
       case 0x14 -> {
@@ -4665,7 +4665,7 @@ public final class SMap {
 
           //LAB_800e6490
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8.set(false);
+          scriptsTickDisabled_800bc0b8 = false;
         }
       }
 
@@ -4690,7 +4690,7 @@ public final class SMap {
           Fmv.playCurrentFmv();
           pregameLoadingStage_800bb10c.setu(0);
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8.set(false);
+          scriptsTickDisabled_800bc0b8 = false;
         }
       }
 
@@ -8172,7 +8172,7 @@ public final class SMap {
 
     script.params_20[9] = new ScriptStorageParam(state, 0);
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
     if(script.params_20[0].get() == 0 || _800f9e78.getSigned() >= 8) {
       //LAB_800f1698
       sobj._1d0._18.set(0);
@@ -8508,7 +8508,7 @@ public final class SMap {
     final ScriptState<?> sobj1 = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(sobj1, 0);
 
-    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0].get()].innerStruct_00;
+    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00;
     if(script.params_20[0].get() - 1 < 2) {
       sobj2._1d0._08.set(1);
       sobj2._1d0._10.set(0);
@@ -8565,7 +8565,7 @@ public final class SMap {
   public static FlowControl FUN_800f23a0(final RunningScript script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
 
     final int v0 = script.params_20[0].get();
 
@@ -8583,7 +8583,7 @@ public final class SMap {
   public static FlowControl FUN_800f23ec(final RunningScript a0) {
     a0.params_20[4] = new ScriptStorageParam(a0.scriptState_04, 0);
     final int a2 = a0.params_20[0].get();
-    final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.scriptState_04.storage_44[0].get()].innerStruct_00;
+    final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.scriptState_04.storage_44[0]].innerStruct_00;
 
     if(a2 == 1 || a2 == 3) {
       //LAB_800f2430
@@ -8657,7 +8657,7 @@ public final class SMap {
 
     if(script.params_20[0].get() == 1) {
       FUN_800f0e7c();
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[v1.storage_44[0].get()].innerStruct_00;
+      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[v1.storage_44[0]].innerStruct_00;
       sobj._1d0._18.set(0);
     }
 

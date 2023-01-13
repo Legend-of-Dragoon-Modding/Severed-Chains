@@ -189,8 +189,8 @@ public class ScriptDebuggerController {
     }
 
     this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getAddress()));
-    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5].get()));
-    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6].get()));
+    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5]));
+    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6]));
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
@@ -198,7 +198,7 @@ public class ScriptDebuggerController {
       return "null";
     }
 
-    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex].get();
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex];
     return "0x%1$x (%1$d)".formatted(val);
   }
 

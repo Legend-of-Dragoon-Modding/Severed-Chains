@@ -236,7 +236,7 @@ public class SBtld {
       data.model_148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
       data.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
-      state.flags_60.or(0x4);
+      state.storage_44[7] |= 0x4;
       _800c66d0.incr();
       monsterCount_800c6768.incr();
     }

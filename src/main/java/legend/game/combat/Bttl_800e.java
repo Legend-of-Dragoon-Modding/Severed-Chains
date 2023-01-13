@@ -5260,7 +5260,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800eccac
-        if((state.flags_60.get() & 0x4000L) == 0) {
+        if((state.storage_44[7] & 0x4000) == 0) {
           drawTargetArrow(data.model_148, textEffect, scriptIndex, data);
         }
 
@@ -5276,15 +5276,15 @@ public final class Bttl_800e {
     final int x;
     final int y;
     final int z;
-    final long v1 = scriptStatePtrArr_800bc1c0[scriptIndex].flags_60.get();
-    if((v1 & 0x4L) != 0) {
+    final int flags = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[7];
+    if((flags & 0x4) != 0) {
       // X and Z are swapped
       x = -data._78.getZ() * 100;
       y = -data._78.getY() * 100;
       z = -data._78.getX() * 100;
     } else {
       //LAB_800ecd90
-      if((v1 & 0x2L) != 0) {
+      if((flags & 0x2) != 0) {
         y = -1664;
       } else {
         //LAB_800ecda4
@@ -6041,7 +6041,7 @@ public final class Bttl_800e {
           final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
           final int spec;
           int s5;
-          if((scriptStatePtrArr_800bc1c0[(int)_800c66c8.get()].flags_60.get() & 0x4L) != 0x1L && _800c66c8.get() == bobjIndex) {
+          if((scriptStatePtrArr_800bc1c0[(int)_800c66c8.get()].storage_44[7] & 0x4) != 0x1 && _800c66c8.get() == bobjIndex) {
             spec = 2;
             s5 = 2;
           } else {
@@ -6293,7 +6293,7 @@ public final class Bttl_800e {
             str = playerNames_800fb378.get(targetBobj.charIndex_272.get()).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272.get() * 0x2L).get();
 
-            if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].flags_60.get() & 0x2L) != 0) {
+            if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].storage_44[7] & 0x2) != 0) {
               element = (int)_800c6ef0.offset(0x12L).get();
             }
           } else {
@@ -6301,11 +6301,11 @@ public final class Bttl_800e {
             //LAB_800f0d5c
             final int bobjIndex = _8006e398.bobjIndices_e0c.get(targetCombatant).get();
             targetBobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
-            if((scriptStatePtrArr_800bc1c0[bobjIndex].flags_60.get() & 0x4L) == 0) {
+            if((scriptStatePtrArr_800bc1c0[bobjIndex].storage_44[7] & 0x4) == 0) {
               str = playerNames_800fb378.get(targetBobj.charIndex_272.get()).deref();
               element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272.get() * 0x2L).get();
 
-              if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].flags_60.get() & 0x2L) != 0) {
+              if(targetBobj.charIndex_272.get() == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(menu.combatantIndex.get()).get()].storage_44[7] & 0x2) != 0) {
                 element = (int)_800c6ef0.offset(0x12L).get();
               }
             } else {
