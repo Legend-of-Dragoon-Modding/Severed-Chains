@@ -8,10 +8,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import com.github.kokorin.jaffree.StreamType;
 import com.github.kokorin.jaffree.ffmpeg.*;
@@ -27,6 +24,54 @@ public class FFmpeg {
 
     public static boolean isReady() {
         return frameBuffer.size() > 0;
+    }
+
+    public static void createAudio(final int[][] samples, Path path, int threads) {
+        FrameProducer producer = new FrameProducer() {
+            private int audioCounter = 0;
+            private int nextAudioTimecode = 0;
+
+            @Override
+            public List<Stream> produceStreams() {
+                return Collections.singletonList(
+                        new Stream()
+                                .setType(Stream.Type.AUDIO)
+                                .setTimebase(1500L)
+                                .setSampleRate(37800)
+                                .setChannels(1)
+                );
+            }
+
+            @Override
+            public Frame produce() {
+                if (audioCounter > samples.length - 1 ) {
+                    return null; // return null when End of Stream is reached
+                }
+
+                Frame audioFrame = Frame.createAudioFrame(0, nextAudioTimecode, samples[audioCounter]);
+                audioCounter++;
+                nextAudioTimecode += 160;
+                return audioFrame;
+            }
+        };
+
+        try (SeekableByteChannel outputChannel =
+                     Files.newByteChannel(path, StandardOpenOption.CREATE,
+                             StandardOpenOption.WRITE, StandardOpenOption.READ,
+                             StandardOpenOption.TRUNCATE_EXISTING)
+        ) {
+            com.github.kokorin.jaffree.ffmpeg.FFmpeg.atPath()
+                    .addInput(FrameInput.withProducer(producer))
+                    .addOutput(ChannelOutput.toChannel(path.getFileName().toString(), outputChannel))
+                    .addArguments("-c:a", "libopus") // Audio codec
+                    .addArguments("-af", "volume=0.5") // halve the volume
+                    .addArguments("-aq", "0") // Losless audio
+//                    .addArguments("-b:a", "96k") // Bitrate
+                    .addArguments("-threads", Integer.toString(threads))
+                    .execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void createVideo(final BufferedImage[] frames, final int[][] audio, Path path, int threads) {

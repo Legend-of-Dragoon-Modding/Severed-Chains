@@ -40,6 +40,7 @@ public class Unpacker {
     transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
     transformers.put(Unpacker::drgn21_402_3_patcherDescriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::ikiDescriminator, Unpacker::ikiHandle);
+    transformers.put(Unpacker::xaDescriminator, Unpacker::xaHandle);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -218,7 +219,7 @@ public class Unpacker {
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
-    final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+    final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
     return new Tuple<>(e.getKey(), new FileData(fileData));
   }
 
@@ -247,6 +248,15 @@ public class Unpacker {
     }
 
     return entries;
+  }
+
+  private static boolean xaDescriminator(final String name, final FileData data) {
+    return name.endsWith(".XA") && !name.endsWith("3.XA");
+  }
+
+  private static Map<String, FileData> xaHandle(final String name, final FileData data) {
+    XaFile.create(name, data);
+    return Collections.emptyMap();
   }
 
   private static boolean ikiDescriminator(final String name, final FileData data) {

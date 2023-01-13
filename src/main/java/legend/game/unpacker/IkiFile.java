@@ -14,7 +14,7 @@ import legend.game.unpacker.audio.XaSector;
 import legend.game.unpacker.video.Frame;
 
 public class IkiFile {
-    private static final int threads = ManagementFactory.getThreadMXBean().getThreadCount();
+    public static final int threads = ManagementFactory.getThreadMXBean().getThreadCount();
 
     public static void IkiFile(final String name, final FileData file) {
         ByteBuffer data = ByteBuffer.wrap(file.data()).order(ByteOrder.LITTLE_ENDIAN);
