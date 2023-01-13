@@ -22,7 +22,7 @@ public class GameVarParam extends Param {
 
   @Override
   public Param array(final int index) {
-    return new GameVarParam(this.index + index);
+    return new GameVarArrayParam(this.index, index);
   }
 
   @Override
