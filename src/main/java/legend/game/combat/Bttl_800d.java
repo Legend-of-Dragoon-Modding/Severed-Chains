@@ -22,10 +22,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.combat.deff.Anim;
-import legend.game.combat.deff.Cmb;
-import legend.game.combat.deff.Lmb;
-import legend.game.combat.deff.LmbType0;
+import legend.game.combat.deff.*;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
 import legend.game.combat.types.AdditionSparksEffect08;
@@ -85,21 +82,7 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
-import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
-import static legend.game.Scus94491BpeSegment_8003.RotTrans;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
-import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
+import static legend.game.Scus94491BpeSegment_8003.*;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -4524,7 +4507,6 @@ public final class Bttl_800d {
   @Method(0x800dd638L)
   public static long applyLmbAnimation(final Model124 a0, final long a1) {
     long v0;
-    final long v1;
     final long s6;
     if(a0.ub_9c.get() == 2) {
       return 2;
@@ -4534,18 +4516,19 @@ public final class Bttl_800d {
     final int count = Math.min(a0.count_c8.get(), a0.animCount_98.get());
 
     //LAB_800dd69c
-    final Lmb lmb = a0.lmbAnim_08.deref().lmb_00.deref();
+    final LmbType0 lmb = (LmbType0) a0.lmbAnim_08.deref().lmb_00.deref();
 
-    final long a0_0;
+    final int a0_0;
+    final int v1;
     if(a0.ub_a2.get() != 0) {
-      v1 = a1 * 2 % a0.s_9a.get();
+      v1 = (int)a1 * 2 % a0.s_9a.get();
       s6 = 0;
       v0 = a0.s_9a.get() >> 1;
       a0_0 = v1 >>> 1;
       v0 = v0 - a0_0;
     } else {
       //LAB_800dd6dc
-      v1 = a1 % a0.s_9a.get();
+      v1 = (int)a1 % a0.s_9a.get();
       v0 = a1 & 0x1L;
       s6 = v0 << 11;
       a0_0 = v1 >>> 1;
@@ -4557,33 +4540,32 @@ public final class Bttl_800d {
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      throw new RuntimeException("TODO");
-//      long a1_0 = lmb + MEMORY.ref(4, lmb).offset(0x8L).offset(i * 0xcL).offset(0x8L).get() + a0_0 * 0x14L;
-//      final MATRIX s0 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().coord;
-//
-//      final VECTOR trans = new VECTOR();
-//      final SVECTOR rot = new SVECTOR();
-//      final VECTOR scale = new VECTOR();
-//      trans.set((SVECTOR)MEMORY.ref(2, a1_0).offset(0x6L).cast(SVECTOR::new));
-//      rot.set((SVECTOR)MEMORY.ref(2, a1_0).offset(0xcL).cast(SVECTOR::new));
-//      scale.set((SVECTOR)MEMORY.ref(2, a1_0).offset(0x0L).cast(SVECTOR::new));
-//
-//      if(s6 != 0) {
-//        if(a1 == a0.s_9a.get() - 1) {
-//          a1_0 = lmb + MEMORY.ref(4, lmb).offset(0x8L).offset(i * 0xcL).offset(0x8L).get();
-//        } else {
-//          //LAB_800dd7cc
-//          a1_0 = a1_0 + 0x14L;
-//        }
-//
-//        //LAB_800dd7d0
-//        trans.add((SVECTOR)MEMORY.ref(2, a1_0).offset(0x6L).cast(SVECTOR::new)).div(2);
-//      }
-//
-//      //LAB_800dd818
-//      RotMatrix_80040010(rot, s0);
-//      TransMatrix(s0, trans);
-//      ScaleMatrixL(s0, scale);
+      LmbTransforms14 a1_0 = lmb._08.get(i)._08.deref().get(a0_0);
+      final MATRIX s0 = a0.dobj2ArrPtr_00.deref().get(i).coord2_04.deref().coord;
+
+      final VECTOR trans = new VECTOR();
+      final SVECTOR rot = new SVECTOR();
+      final VECTOR scale = new VECTOR();
+      trans.set(a1_0.trans_06);
+      rot.set(a1_0.rot_0c);
+      scale.set(a1_0.scale_00);
+
+      if(s6 != 0) {
+        if(a1 == a0.s_9a.get() - 1) {
+          a1_0 = lmb._08.get(i)._08.deref().get(0);
+        } else {
+          //LAB_800dd7cc
+          a1_0 = lmb._08.get(i)._08.deref().get(a0_0 + 1);
+        }
+
+        //LAB_800dd7d0
+        trans.add(a1_0.trans_06).div(2);
+      }
+
+      //LAB_800dd818
+      RotMatrix_80040010(rot, s0);
+      TransMatrix(s0, trans);
+      ScaleMatrixL(s0, scale);
     }
 
     //LAB_800dd84c

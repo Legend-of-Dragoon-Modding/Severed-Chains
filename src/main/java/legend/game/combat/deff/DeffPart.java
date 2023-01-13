@@ -8,6 +8,7 @@ import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.ExtendedTmd;
+import legend.game.types.TmdAnimationFile;
 
 public class DeffPart implements MemoryRef {
   protected final Value ref;
@@ -81,12 +82,14 @@ public class DeffPart implements MemoryRef {
       final int magic = (int)this.ref.offset(4, this.anim_14.getPointer()).get();
 
       if(magic == Lmb.MAGIC) {
-        throw new RuntimeException("Not supported yet");
-      } else if(magic == Cmb.MAGIC) {
+        return new LmbType0(value);
+      }
+
+      if(magic == Cmb.MAGIC) {
         return new Cmb(value);
       }
 
-      throw new RuntimeException("Unsupported anim type");
+      return new TmdAnimationFile(value);
     }
   }
 
