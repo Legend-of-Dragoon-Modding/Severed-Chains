@@ -3410,7 +3410,7 @@ public final class Bttl_800f {
 
   @Method(0x800f84c8L)
   public static void loadBattleHudTextures() {
-    loadDrgnDir(0, 4113, Bttl_800e::battleHudTexturesLoadedCallback, 0);
+    loadDrgnDir(0, 4113, Bttl_800e::battleHudTexturesLoadedCallback);
   }
 
   @Method(0x800f8568L)

@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.StreamSupport;
+
+import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public class Unpacker {
   static {
@@ -40,11 +43,15 @@ public class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
-  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new HashMap<>();
+  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new LinkedHashMap<>();
   static {
-    transformers.put(Unpacker::decompressDescriminator, Unpacker::decompress);
-    transformers.put(Unpacker::mrgDescriminator, Unpacker::unmrg);
-    transformers.put(Unpacker::drgn21_402_3_patcherDescriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
+    transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
+    transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
+    transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
+    transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
+    transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -234,10 +241,10 @@ public class Unpacker {
     boolean wasTransformed = false;
 
     for(final var entry : transformers.entrySet()) {
-      final var descriminator = entry.getKey();
+      final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(descriminator.test(name, data)) {
+      if(discriminator.test(name, data)) {
         wasTransformed = true;
         transformer.apply(name, data)
           .entrySet().stream()
@@ -254,7 +261,7 @@ public class Unpacker {
     return entries;
   }
 
-  private static boolean decompressDescriminator(final String name, final FileData data) {
+  private static boolean decompressDiscriminator(final String name, final FileData data) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
@@ -262,7 +269,7 @@ public class Unpacker {
     return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
   }
 
-  private static boolean mrgDescriminator(final String name, final FileData data) {
+  private static boolean mrgDiscriminator(final String name, final FileData data) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
   }
 
@@ -291,7 +298,7 @@ public class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDescriminator(final String name, final FileData data) {
+  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data) {
     return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
   }
 
@@ -300,6 +307,108 @@ public class Unpacker {
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
     return Map.of(name, new FileData(newData));
+  }
+
+  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data) {
+    for(int i = 752; i <= 772; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    if(name.startsWith("SECT/DRGN0.BIN/752/0/")) {
+      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/752/1/")) {
+      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/752/2/")) {
+      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/753/2/")) {
+      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/754/2/")) {
+      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/755/2/")) {
+      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/756/2/")) {
+      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/757/2/")) {
+      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    } else if(name.startsWith("SECT/DRGN0.BIN/772/1/")) {
+      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+    }
+
+    return files;
+  }
+
+  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+    for(int i = 3993; i <= 4010; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    for(int charId = 0; charId < 9; charId++) {
+      final String charName = getCharacterName(charId).toLowerCase();
+
+      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
+        files.put("characters/%s/textures/combat".formatted(charName), data);
+      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
+        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+      }
+    }
+
+    return files;
+  }
+
+  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+    for(int i = 4011; i <= 4030; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+    final Map<String, FileData> files = new HashMap<>();
+
+    for(int charId = 0; charId < 10; charId++) {
+      final String charName = getCharacterName(charId).toLowerCase();
+
+      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
+        files.put("characters/%s/textures/dragoon".formatted(charName), data);
+      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
+        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+      }
+    }
+
+    return files;
+  }
+
+  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data) {
+    for(int i = 3537; i <= 3592; i++) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
+    return Map.of();
   }
 
   private static void writeFiles(final Map<String, FileData> files) {

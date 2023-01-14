@@ -379,7 +379,7 @@ public final class Ttle {
 
     vsyncMode_8007a3b8.set(2);
 
-    loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded, 0);
+    loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
     loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
 
     // Prepare fire animation struct
@@ -414,7 +414,7 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final List<byte[]> files, final int unused) {
+  public static void menuTexturesMrgLoaded(final List<byte[]> files) {
     for(final byte[] data : files) {
       if(data.length != 0) {
         new Tim(data).uploadToGpu();
