@@ -138,24 +138,24 @@ public class CombatDebuggerController {
 
     this.scriptIndex.setText("View script %d".formatted(bobjIndex));
 
-    this.level.getValueFactory().setValue(bobj.level_04.get());
-    this.dlevel.getValueFactory().setValue(bobj.dlevel_06.get());
-    this.hp.getValueFactory().setValue(bobj.hp_08.get());
-    this.maxHp.getValueFactory().setValue(bobj.maxHp_10.get());
-    this.mp.getValueFactory().setValue(bobj.mp_0c.get());
-    this.maxMp.getValueFactory().setValue(bobj.maxMp_12.get());
-    this.sp.getValueFactory().setValue((int)bobj.sp_0a.get());
+    this.level.getValueFactory().setValue(bobj.level_04);
+    this.dlevel.getValueFactory().setValue(bobj.dlevel_06);
+    this.hp.getValueFactory().setValue(bobj.hp_08);
+    this.maxHp.getValueFactory().setValue(bobj.maxHp_10);
+    this.mp.getValueFactory().setValue(bobj.mp_0c);
+    this.maxMp.getValueFactory().setValue(bobj.maxMp_12);
+    this.sp.getValueFactory().setValue(bobj.sp_0a);
 
-    this.spd.getValueFactory().setValue(bobj.speed_32.get());
-    this.turn.getValueFactory().setValue((int)bobj.turnValue_4c.get());
-    this.atk.getValueFactory().setValue(bobj.attack_34.get());
-    this.def.getValueFactory().setValue(bobj.defence_38.get());
-    this.matk.getValueFactory().setValue(bobj.magicAttack_36.get());
-    this.mdef.getValueFactory().setValue(bobj.magicDefence_3a.get());
-    this.ahit.getValueFactory().setValue((int)bobj.attackHit_3c.get());
-    this.mhit.getValueFactory().setValue((int)bobj.magicHit_3e.get());
-    this.aavd.getValueFactory().setValue((int)bobj.attackAvoid_40.get());
-    this.mavd.getValueFactory().setValue((int)bobj.magicAvoid_42.get());
+    this.spd.getValueFactory().setValue(bobj.speed_32);
+    this.turn.getValueFactory().setValue(bobj.turnValue_4c);
+    this.atk.getValueFactory().setValue(bobj.attack_34);
+    this.def.getValueFactory().setValue(bobj.defence_38);
+    this.matk.getValueFactory().setValue(bobj.magicAttack_36);
+    this.mdef.getValueFactory().setValue(bobj.magicDefence_3a);
+    this.ahit.getValueFactory().setValue(bobj.attackHit_3c);
+    this.mhit.getValueFactory().setValue(bobj.magicHit_3e);
+    this.aavd.getValueFactory().setValue(bobj.attackAvoid_40);
+    this.mavd.getValueFactory().setValue(bobj.magicAvoid_42);
   }
 
   private String getCombatantName(final int combatantIndex) {
@@ -168,17 +168,17 @@ public class CombatDebuggerController {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
-    final CombatantStruct1a8 combatant = combatants_8005e398.get(bobj.combatantIndex_26c.get());
+    final CombatantStruct1a8 combatant = combatants_8005e398.get(bobj.combatantIndex_26c);
 
     if((combatant.flags_19e.get() & 0x1) == 0) {
       return "unused";
     }
 
     if((combatant.flags_19e.get() & 0x4) == 0) {
-      return currentEnemyNames_800c69d0.get(bobj.charSlot_276.get()).get();
+      return currentEnemyNames_800c69d0.get(bobj.charSlot_276).get();
     }
 
-    return bobj.charIndex_272.get() == 8 ? "Who?" : playerNames_800fb378.get(bobj.charIndex_272.get()).deref().get();
+    return bobj.charIndex_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charIndex_272).deref().get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -207,24 +207,24 @@ public class CombatDebuggerController {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
-    bobj.level_04.set(this.level.getValue());
-    bobj.dlevel_06.set(this.dlevel.getValue());
-    bobj.hp_08.set(this.hp.getValue());
-    bobj.maxHp_10.set(this.maxHp.getValue());
-    bobj.mp_0c.set(this.mp.getValue());
-    bobj.maxMp_12.set(this.maxMp.getValue());
-    bobj.sp_0a.set(this.sp.getValue().shortValue());
+    bobj.level_04 = this.level.getValue();
+    bobj.dlevel_06 = this.dlevel.getValue();
+    bobj.hp_08 = this.hp.getValue();
+    bobj.maxHp_10 = this.maxHp.getValue();
+    bobj.mp_0c = this.mp.getValue();
+    bobj.maxMp_12 = this.maxMp.getValue();
+    bobj.sp_0a = this.sp.getValue().shortValue();
 
-    bobj.speed_32.set(this.spd.getValue());
-    bobj.turnValue_4c.set(this.turn.getValue().shortValue());
-    bobj.attack_34.set(this.atk.getValue());
-    bobj.defence_38.set(this.def.getValue());
-    bobj.magicAttack_36.set(this.matk.getValue());
-    bobj.magicDefence_3a.set(this.mdef.getValue());
-    bobj.attackHit_3c.set(this.ahit.getValue().shortValue());
-    bobj.magicHit_3e.set(this.mhit.getValue().shortValue());
-    bobj.attackAvoid_40.set(this.aavd.getValue().shortValue());
-    bobj.magicAvoid_42.set(this.mavd.getValue().shortValue());
+    bobj.speed_32 = this.spd.getValue();
+    bobj.turnValue_4c = this.turn.getValue().shortValue();
+    bobj.attack_34 = this.atk.getValue();
+    bobj.defence_38 = this.def.getValue();
+    bobj.magicAttack_36 = this.matk.getValue();
+    bobj.magicDefence_3a = this.mdef.getValue();
+    bobj.attackHit_3c = this.ahit.getValue().shortValue();
+    bobj.magicHit_3e = this.mhit.getValue().shortValue();
+    bobj.attackAvoid_40 = this.aavd.getValue().shortValue();
+    bobj.magicAvoid_42 = this.mavd.getValue().shortValue();
   }
 
   private static class ListItem {

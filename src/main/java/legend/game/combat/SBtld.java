@@ -108,7 +108,7 @@ public class SBtld {
   @Method(0x80109170L)
   public static void FUN_80109170(final long address, final int fileSize, final int param) {
     script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
-    scriptIndex_800c674c.setu(allocateScriptState(5, 0, false, null, 0, null));
+    scriptIndex_800c674c.setu(allocateScriptState(5, null, 0, null));
     loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref());
 
     final long v1;
@@ -219,19 +219,19 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final int bobjIndex = allocateScriptState(0x27c, BattleObject27c::new);
+      final int bobjIndex = allocateScriptState(new BattleObject27c());
       setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
       setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(bobjIndex);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
       final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
-      data.magic_00.set(BattleScriptDataBase.BOBJ);
-      data.charIndex_272.set((short)charIndex);
-      data._274.set((short)_800c66d0.get());
-      data.charSlot_276.set((short)monsterCount_800c6768.get());
-      data.combatant_144.set(getCombatant(combatantIndex));
-      data.combatantIndex_26c.set((short)combatantIndex);
+      data.magic_00 = BattleScriptDataBase.BOBJ;
+      data.charIndex_272 = charIndex;
+      data._274 = _800c66d0.get();
+      data.charSlot_276 = monsterCount_800c6768.get();
+      data.combatant_144 = getCombatant(combatantIndex);
+      data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
       data.model_148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
       data.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());

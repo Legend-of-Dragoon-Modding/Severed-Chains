@@ -140,7 +140,7 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00 != null ? Long.toHexString(scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.getAddress()) : "empty state" : "not allocated";
+    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00 != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.getClass().getSimpleName() : "empty state" : "not allocated";
   }
 
   private void updateScriptVars() {

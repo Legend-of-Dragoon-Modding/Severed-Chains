@@ -70,7 +70,6 @@ import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
-import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a8f8;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -80,6 +79,7 @@ import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
+import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
@@ -348,18 +348,18 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final int bobjIndex = allocateScriptState(charSlot + 6, 0x27c, false, null, 0, BattleObject27c::new);
+      final int bobjIndex = allocateScriptState(charSlot + 6, null, 0, new BattleObject27c());
       setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
       setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
       _8006e398.charBobjIndices_e40.get(charSlot).set(bobjIndex);
       final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
-      bobj.magic_00.set(BattleScriptDataBase.BOBJ);
-      bobj.combatant_144.set(getCombatant((short)charIndices[charSlot]));
-      bobj.charIndex_272.set((short)charIndex);
-      bobj.charSlot_276.set((short)charSlot);
-      bobj.combatantIndex_26c.set((short)charIndices[charSlot]);
-      bobj._274.set((short)_800c66d0.get());
+      bobj.magic_00 = BattleScriptDataBase.BOBJ;
+      bobj.combatant_144 = getCombatant((short)charIndices[charSlot]);
+      bobj.charIndex_272 = charIndex;
+      bobj.charSlot_276 = charSlot;
+      bobj.combatantIndex_26c = charIndices[charSlot];
+      bobj._274 = _800c66d0.get();
       bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
       bobj.model_148.coord2_14.coord.transfer.setY(0);
       bobj.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
@@ -391,7 +391,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00).combatantIndex_26c.get()).flags_19e.or(0x2a);
+      combatants_8005e398.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00).combatantIndex_26c).flags_19e.or(0x2a);
     }
 
     //LAB_800fc104
@@ -405,10 +405,9 @@ public final class SItem {
   public static void loadCharTmdAndAnims(final List<byte[]> files, final int charSlot) {
     //LAB_800fc260
     final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
-    final CombatantStruct1a8 combatant = data.combatant_144.deref();
 
     //LAB_800fc298
-    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c.get(), false);
+    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
 
     //LAB_800fc34c
     _800bc960.oru(0x4L);
@@ -465,7 +464,7 @@ public final class SItem {
     MEMORY.setBytes(tim, file);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
-    loadCombatantTim(bobj.combatantIndex_26c.get(), tim);
+    loadCombatantTim(bobj.combatantIndex_26c, tim);
 
     free(tim);
     decrementOverlayCount();

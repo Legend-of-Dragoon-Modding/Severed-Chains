@@ -156,17 +156,17 @@ public class SmapDebuggerController {
     this.scaleY.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getY());
     this.scaleZ.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getZ());
 
-    this.collideByPlayer.setSelected((this.sobj.flags_190.get() & 0x10_0000L) != 0);
-    this.collide20.setSelected((this.sobj.flags_190.get() & 0x20_0000L) != 0);
-    this.collide40.setSelected((this.sobj.flags_190.get() & 0x40_0000L) != 0);
-    this.collide80.setSelected((this.sobj.flags_190.get() & 0x80_0000L) != 0);
-    this.collide100.setSelected((this.sobj.flags_190.get() & 0x100_0000L) != 0);
-    this.collide200.setSelected((this.sobj.flags_190.get() & 0x200_0000L) != 0);
-    this.collide400.setSelected((this.sobj.flags_190.get() & 0x400_0000L) != 0);
-    this.collide800.setSelected((this.sobj.flags_190.get() & 0x800_0000L) != 0);
-    this.collide1000.setSelected((this.sobj.flags_190.get() & 0x1000_0000L) != 0);
+    this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
+    this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
+    this.collide40.setSelected((this.sobj.flags_190 & 0x40_0000) != 0);
+    this.collide80.setSelected((this.sobj.flags_190 & 0x80_0000) != 0);
+    this.collide100.setSelected((this.sobj.flags_190 & 0x100_0000) != 0);
+    this.collide200.setSelected((this.sobj.flags_190 & 0x200_0000) != 0);
+    this.collide400.setSelected((this.sobj.flags_190 & 0x400_0000) != 0);
+    this.collide800.setSelected((this.sobj.flags_190 & 0x800_0000) != 0);
+    this.collide1000.setSelected((this.sobj.flags_190 & 0x1000_0000) != 0);
 
-    this.alertIcon.setSelected(this.sobj.showAlertIndicator_194.get());
+    this.alertIcon.setSelected(this.sobj.showAlertIndicator_194);
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -251,16 +251,16 @@ public class SmapDebuggerController {
 
   public void showAlertIconClick(final ActionEvent actionEvent) {
     if(this.sobj != null) {
-      this.sobj.showAlertIndicator_194.set(this.alertIcon.isSelected());
+      this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
     }
   }
 
   private void setOrClearFlag(final long flag, final boolean selected) {
     if(this.sobj != null) {
       if(selected) {
-        this.sobj.flags_190.or(flag);
+        this.sobj.flags_190 |= flag;
       } else {
-        this.sobj.flags_190.and(~flag);
+        this.sobj.flags_190 &= ~flag;
       }
     }
   }

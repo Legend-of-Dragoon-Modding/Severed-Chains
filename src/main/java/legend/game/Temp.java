@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.MemoryHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandQuad;
@@ -14,11 +13,10 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
+import legend.game.combat.types.DeffManager7cc;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.scripting.FlowControl;
 import legend.game.types.RunningScript;
@@ -26,7 +24,6 @@ import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
@@ -43,7 +40,7 @@ public final class Temp {
 
   @Method(0x800ca200L)
   public static void FUN_800ca200(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final TempEffectData_d18 s1 = manager.effect_44.derefAs(TempEffectData_d18.class);
+    final TempEffectData_d18 s1 = (TempEffectData_d18)manager.effect_44;
     s1._14.incr();
     final TempEffectData_d18_Sub34 s0 = s1._18.get(s1._14.get() & 0x3f);
     s0._00.setX(manager._10.trans_04.getX() + ((rand() & 0x1ff) - 0xff) * s1._10.get() / 0x1000);
@@ -77,7 +74,7 @@ public final class Temp {
 
   @Method(0x800ca438L)
   public static void FUN_800ca438(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final TempEffectData_d18 effect = manager.effect_44.derefAs(TempEffectData_d18.class);
+    final TempEffectData_d18 effect = (TempEffectData_d18)manager.effect_44;
 
     final MATRIX sp0x10 = new MATRIX();
     FUN_800e8594(sp0x10, manager);
@@ -87,7 +84,7 @@ public final class Temp {
     if(FUN_800e7dbc(sp0x30, sp0x10.transfer) != 0) {
       final DeffManager7cc a0 = deffManager_800c693c.deref();
       final BattleStruct24 s1 = _800cbb74;
-      s1._00.set(manager._10._00.get());
+      s1._00.set(manager._10.flags_00);
       s1.tpage_0c.set((a0.v_3ae.get() & 0x100) >>> 4 | (a0.u_3ac.get() & 0x3ff) >>> 6);
       s1.u_0e.set((a0.u_3ac.get() & 0x3f) << 2);
       s1.v_0f.set(a0.v_3ae.get());
@@ -121,14 +118,14 @@ public final class Temp {
     final int effectIndex = allocateEffectManager(
       script.scriptStateIndex_00,
       0xd18,
-      MEMORY.ref(4, MemoryHelper.getMethodAddress(Temp.class, "FUN_800ca200", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Temp::FUN_800ca200,
       Temp::FUN_800ca438,
       null,
       TempEffectData_d18::new
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
-    final TempEffectData_d18 effect = manager.effect_44.derefAs(TempEffectData_d18.class);
+    final TempEffectData_d18 effect = (TempEffectData_d18)manager.effect_44;
 
     effect._00.set(0);
     effect._04.set(0);
@@ -152,7 +149,7 @@ public final class Temp {
       v1._31.set(0);
     }
 
-    manager._10._00.or(0x5000_0000L);
+    manager._10.flags_00 |= 0x5000_0000;
     script.params_20[0].set(effectIndex);
     return 0;
   }
@@ -164,7 +161,7 @@ public final class Temp {
 
   @Method(0x800ca89cL)
   public static void FUN_800ca89c(final int effectIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final TempEffectData_08 s4 = manager.effect_44.derefAs(TempEffectData_08.class);
+    final TempEffectData_08 s4 = (TempEffectData_08)manager.effect_44;
 
     //LAB_800ca8fc
     for(int i = 0; i < 5; i++) {
@@ -201,13 +198,13 @@ public final class Temp {
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
-    final TempEffectData_08 effect = manager.effect_44.derefAs(TempEffectData_08.class);
+    final TempEffectData_08 effect = (TempEffectData_08)manager.effect_44;
     effect.u_00.set((short)0x300);
     effect.v_02.set((short)0);
     effect._04.set(0xff);
     effect._05.set(0xff);
     effect._06.set((short)0);
-    manager._10._00.and(0xfbff_ffffL).or(0x5000_0000L);
+    manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     script.params_20[0].set(effectIndex);
     return FlowControl.CONTINUE;
   }

@@ -654,6 +654,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021034
     model.dobj2ArrPtr_00.clear();
+    free(model.getAddress());
   }
 
   @Method(0x80021048L)

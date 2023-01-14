@@ -18,9 +18,7 @@ import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.TriConsumerRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.AdditionCharEffectData0c;
@@ -32,12 +30,12 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.BttlStruct50;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.GuardEffect06;
 import legend.game.combat.types.MonsterDeathEffect34;
+import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.ProjectileHitEffect14;
 import legend.game.combat.types.ProjectileHitEffect14Sub48;
 import legend.game.combat.types.SpriteMetrics08;
@@ -53,12 +51,9 @@ import java.util.Arrays;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
@@ -68,6 +63,8 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
+import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021584;
@@ -81,13 +78,13 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
-import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
-import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
+import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
@@ -102,11 +99,10 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.FUN_800cf244;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
@@ -122,7 +118,6 @@ import static legend.game.combat.Bttl_800c._800c67e8;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
 import static legend.game.combat.Bttl_800c._800c6920;
-import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c._800c6d94;
 import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
@@ -155,11 +150,13 @@ import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
 import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
+import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.effectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
+import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
-import static legend.game.combat.Bttl_800c.deffManager_800c693c;
+import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.getLightColour;
@@ -198,8 +195,8 @@ public final class Bttl_800d {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleScriptDataBase data = (BattleScriptDataBase)state.innerStruct_00;
 
-    if(data.magic_00.get() == BattleScriptDataBase.EM__) {
-      script.params_20[1].set(((EffectManagerData6c)data).effect_44.derefAs(BttlScriptData6cSub13c.class).model_10.animCount_98.get());
+    if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
+      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.animCount_98.get());
     } else {
       //LAB_800d017c
       script.params_20[1].set(((BattleObject27c)data).model_148.animCount_98.get());
@@ -212,7 +209,7 @@ public final class Bttl_800d {
   @Method(0x800d019cL)
   public static void renderProjectileHitEffect(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     int a0 = 0;
-    final ProjectileHitEffect14 effect = data.effect_44.derefAs(ProjectileHitEffect14.class);
+    final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
     //LAB_800d01ec
     for(int s7 = 0; s7 < effect.count_00.get(); s7++) {
@@ -261,7 +258,7 @@ public final class Bttl_800d {
           }
 
           //LAB_800d037c
-          int a2_0 = data._10.z_22.get();
+          int a2_0 = data._10.z_22;
           final int v1 = s1_0 + a2_0;
           if(v1 >= 0xa0) {
             if(v1 >= 0xffe) {
@@ -288,7 +285,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0538L)
   public static void deallocateProjectileHitEffect(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(manager.effect_44.derefAs(ProjectileHitEffect14.class)._08.getPointer());
+    free(((ProjectileHitEffect14)manager.effect_44)._08.getPointer());
   }
 
   @Method(0x800d0564L)
@@ -298,12 +295,12 @@ public final class Bttl_800d {
       0x14,
       null,
       Bttl_800d::renderProjectileHitEffect,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateProjectileHitEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocateProjectileHitEffect,
       ProjectileHitEffect14::new
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final ProjectileHitEffect14 effect = manager.effect_44.derefAs(ProjectileHitEffect14.class);
+    final ProjectileHitEffect14 effect = (ProjectileHitEffect14)manager.effect_44;
 
     final int count = script.params_20[1].get();
     effect.count_00.set(count);
@@ -361,7 +358,7 @@ public final class Bttl_800d {
   public static void renderAdditionSparks(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     int s7 = 0;
     long s3 = 0;
-    final AdditionSparksEffect08 s6 = data.effect_44.derefAs(AdditionSparksEffect08.class);
+    final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
     long s2 = s6._04.get(); //TODO
 
     //LAB_800d0a7c
@@ -401,7 +398,7 @@ public final class Bttl_800d {
         }
 
         //LAB_800d0b88
-        int a3 = data._10.z_22.get();
+        int a3 = data._10.z_22;
         final int v1 = s7 + a3;
         if(v1 >= 0xa0) {
           if(v1 >= 0xffe) {
@@ -440,7 +437,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0dc0L)
   public static void deallocateAdditionSparksEffect(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(AdditionSparksEffect08.class)._04.get());
+    free(((AdditionSparksEffect08)data.effect_44)._04.get());
   }
 
   @Method(0x800d0decL)
@@ -450,15 +447,15 @@ public final class Bttl_800d {
 
     final int scriptIndex = allocateEffectManager(
       s3.scriptStateIndex_00,
-      0x8L,
+      0x8,
       null,
       Bttl_800d::renderAdditionSparks,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateAdditionSparksEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocateAdditionSparksEffect,
       AdditionSparksEffect08::new
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final AdditionSparksEffect08 effect = manager.effect_44.derefAs(AdditionSparksEffect08.class);
+    final AdditionSparksEffect08 effect = (AdditionSparksEffect08)manager.effect_44;
 
     long t6 = mallocTail(count * 0x4cL);
     effect._04.set(t6);
@@ -517,7 +514,7 @@ public final class Bttl_800d {
   @Method(0x800d1220L)
   public static void renderAdditionHitStarburst(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final int[] sp0x48 = {-16, 16};
-    final AdditionStarburstEffect10 s7 = data.effect_44.derefAs(AdditionStarburstEffect10.class);
+    final AdditionStarburstEffect10 s7 = (AdditionStarburstEffect10)data.effect_44;
     long s6 = s7._0c.get();
 
     //LAB_800d128c
@@ -567,7 +564,7 @@ public final class Bttl_800d {
 
   @Method(0x800d15d8L)
   public static void renderAdditionCompletedStarburst(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final AdditionStarburstEffect10 sp80 = data.effect_44.derefAs(AdditionStarburstEffect10.class);
+    final AdditionStarburstEffect10 sp80 = (AdditionStarburstEffect10)data.effect_44;
     long sp84 = sp80._0c.get();
 
     final int[] sp0x18 = new int[3];
@@ -614,7 +611,7 @@ public final class Bttl_800d {
 
   @Method(0x800d19c0L)
   public static void deallocateAdditionStarburstEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(AdditionStarburstEffect10.class)._0c.get());
+    free(((AdditionStarburstEffect10)data.effect_44)._0c.get());
   }
 
   @Method(0x800d19ecL)
@@ -626,12 +623,12 @@ public final class Bttl_800d {
       0x10,
       null,
       additionStarburstRenderers_800c6dc4[s3.params_20[3].get()],
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateAdditionStarburstEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocateAdditionStarburstEffect,
       AdditionStarburstEffect10::new
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final AdditionStarburstEffect10 effect = manager.effect_44.derefAs(AdditionStarburstEffect10.class);
+    final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
     long t4 = mallocTail(count * 0x10L);
     effect.scriptIndex_00.set(s3.params_20[1].get());
     effect.count_04.set(count);
@@ -669,8 +666,8 @@ public final class Bttl_800d {
 
   @Method(0x800d1d3cL)
   public static void FUN_800d1d3c(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
-    if((int)manager._10._00.get() >= 0) {
-      GPU.queueCommand(effect.z_04.get() + manager._10.z_22.get() >> 2, new GpuCommandPoly(3)
+    if(manager._10.flags_00 >= 0) {
+      GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, effect._0c.get(), effect._0d.get(), effect._0e.get())
@@ -686,7 +683,7 @@ public final class Bttl_800d {
 
   @Method(0x800d21b8L)
   public static void FUN_800d21b8(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
-    if((int)manager._10._00.get() >= 0) {
+    if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
         rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
         rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12, // X is correct
@@ -707,7 +704,7 @@ public final class Bttl_800d {
       final ShortRef sp0x1c = new ShortRef();
       FUN_800cfb14(manager, sp0x30, sp0x18, sp0x1c);
 
-      GPU.queueCommand(effect.z_04.get() + manager._10.z_22.get() >> 2, new GpuCommandPoly(4)
+      GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(4)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
@@ -725,17 +722,17 @@ public final class Bttl_800d {
 
   @Method(0x800d247cL)
   public static void renderPotionEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final PotionEffect14 effect = manager.effect_44.derefAs(PotionEffect14.class);
+    final PotionEffect14 effect = (PotionEffect14)manager.effect_44;
     effect.angleStep_08.set(0x1000 / (0x4 << effect._00.get()));
 
     final ShortRef sp0x48 = new ShortRef();
     final ShortRef sp0x4c = new ShortRef();
     effect.z_04.set(FUN_800cfb14(manager, new VECTOR(), sp0x48, sp0x4c) >> 2);
 
-    final int z = effect.z_04.get() + manager._10.z_22.get();
+    final int z = effect.z_04.get() + manager._10.z_22;
     if(z >= 0xa0) {
       if(z >= 0xffe) {
-        effect.z_04.set(0xffe - manager._10.z_22.get());
+        effect.z_04.set(0xffe - manager._10.z_22);
       }
 
       //LAB_800d2510
@@ -748,9 +745,9 @@ public final class Bttl_800d {
       final ShortRef sp0x58 = new ShortRef();
       final ShortRef sp0x5c = new ShortRef();
       FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-      effect._0c.set((int)(manager._10._24.get() >>> 16 & 0xff));
-      effect._0d.set((int)(manager._10._24.get() >>>  8 & 0xff));
-      effect._0e.set((int)(manager._10._24.get()        & 0xff));
+      effect._0c.set(manager._10.flags_24 >>> 16 & 0xff);
+      effect._0d.set(manager._10.flags_24 >>>  8 & 0xff);
+      effect._0e.set(manager._10.flags_24        & 0xff);
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
@@ -764,7 +761,7 @@ public final class Bttl_800d {
         );
 
         FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-        effect.renderer_10.deref().run(manager, angle, new short[] {sp0x48.get(), sp0x4c.get(), sp0x50.get(), sp0x54.get(), sp0x58.get(), sp0x5c.get()}, effect, (manager._10._00.get() & 0x1000_0000L) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
+        effect.renderer_10.deref().run(manager, angle, new short[] {sp0x48.get(), sp0x4c.get(), sp0x50.get(), sp0x54.get(), sp0x58.get(), sp0x5c.get()}, effect, (manager._10.flags_00 & 0x1000_0000) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
         angle += effect.angleStep_08.get();
       }
     }
@@ -787,7 +784,7 @@ public final class Bttl_800d {
       0x14,
       null,
       Bttl_800d::renderPotionEffect,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocatePotionEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocatePotionEffect,
       PotionEffect14::new
     );
 
@@ -796,7 +793,7 @@ public final class Bttl_800d {
     //LAB_800d27b4
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
-    final PotionEffect14 effect = manager.effect_44.derefAs(PotionEffect14.class);
+    final PotionEffect14 effect = (PotionEffect14)manager.effect_44;
     effect._00.set(s2);
     effect._01.set(s1 - 3 > 1 ? 4 : 1);
     effect.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
@@ -813,7 +810,7 @@ public final class Bttl_800d {
     Arrays.setAll(sp0x18, i -> new IntRef());
     Arrays.setAll(sp0x38, i -> new IntRef());
 
-    final GuardEffect06 s7 = data.effect_44.derefAs(GuardEffect06.class);
+    final GuardEffect06 s7 = (GuardEffect06)data.effect_44;
     s7._02.incr();
     s7._04.add((short)0x400);
 
@@ -837,7 +834,7 @@ public final class Bttl_800d {
     //LAB_800d2a80
     //LAB_800d2a9c
     for(int i = 0; i < 5; i++) {
-      int a0 = data._10.z_22.get();
+      int a0 = data._10.z_22;
       final int v1 = s3 + a0;
       if(v1 >= 0xa0) {
         if(v1 >= 0xffe) {
@@ -887,7 +884,7 @@ public final class Bttl_800d {
 
       //LAB_800d2e20
       for(int n = 0; n < 5; n++) {
-        int a0 = data._10.z_22.get();
+        int a0 = data._10.z_22;
         final int v1 = s3 + a0;
         if(v1 >= 0xa0) {
           if(v1 >= 0xffe) {
@@ -921,12 +918,12 @@ public final class Bttl_800d {
       0x6,
       null,
       Bttl_800d::renderGuardEffect,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateGuardEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocateGuardEffect,
       GuardEffect06::new
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final GuardEffect06 effect = manager.effect_44.derefAs(GuardEffect06.class);
+    final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
@@ -969,7 +966,7 @@ public final class Bttl_800d {
 
   @Method(0x800d30c0L)
   public static void monsterDeathEffectRenderer(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = data.effect_44.derefAs(MonsterDeathEffect34.class);
+    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
     long s2 = s1.ptr_30.get();
 
     //LAB_800d30fc
@@ -993,7 +990,7 @@ public final class Bttl_800d {
 
   @Method(0x800d31b0L)
   public static void monsterDeathEffectTicker(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = data.effect_44.derefAs(MonsterDeathEffect34.class);
+    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
 
     s1._02.decr();
     if(s1._02.get() == 0) {
@@ -1052,24 +1049,24 @@ public final class Bttl_800d {
 
   @Method(0x800d3490L)
   public static void deallocateMonsterDeathEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(data.effect_44.derefAs(MonsterDeathEffect34.class).ptr_30.get());
+    free(((MonsterDeathEffect34)data.effect_44).ptr_30.get());
   }
 
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript a0) {
     final int fp = allocateEffectManager(
       a0.scriptStateIndex_00,
-      0x34L,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "monsterDeathEffectTicker", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      0x34,
+      Bttl_800d::monsterDeathEffectTicker,
       Bttl_800d::monsterDeathEffectRenderer,
-      MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "deallocateMonsterDeathEffect", int.class, ScriptState.classFor(EffectManagerData6c.class), EffectManagerData6c.class), TriConsumerRef::new),
+      Bttl_800d::deallocateMonsterDeathEffect,
       MonsterDeathEffect34::new
     );
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00;
     final int animCount = bobj.model_148.animCount_98.get();
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[fp].innerStruct_00;
-    final MonsterDeathEffect34 effect = manager.effect_44.derefAs(MonsterDeathEffect34.class);
+    final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
     long s4 = mallocTail(animCount * 0x30L);
     effect.ptr_30.set(s4); //TODO
     effect._00.set((short)0);
@@ -1087,7 +1084,7 @@ public final class Bttl_800d {
 
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948.deref().get(a0.params_20[2].get() & 0xff);
-    effect._0c._00.set(manager._10._00.get());
+    effect._0c._00.set(manager._10.flags_00 & 0xffff_ffffL);
     effect._0c.w_08.set(metrics.w_04.get());
     effect._0c.h_0a.set(metrics.h_05.get());
     effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
@@ -1199,16 +1196,16 @@ public final class Bttl_800d {
 
   @Method(0x800d3a20L)
   public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
-    renderAdditionNameChar(charStruct.position_04.get(), charStruct.offsetY_06.get(), (short)additionStruct.addition_02.get(), (short)charIdx, (int)charAlpha);
+    renderAdditionNameChar((short)charStruct.position_04, (short)charStruct.offsetY_06, (short)additionStruct.addition_02, (short)charIdx, (int)charAlpha);
   }
 
   @Method(0x800d3a64L)
   public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
-    final String sp0x18 = String.valueOf(a0._10.get());
+    final String sp0x18 = String.valueOf(a0._10);
 
     long s4;
-    if(a0._04.get() < 0x19L) {
-      s4 = a0._04.get() & 0x1L;
+    if(a0._04 < 25) {
+      s4 = a0._04 & 1;
     } else {
       s4 = 0;
     }
@@ -1216,19 +1213,19 @@ public final class Bttl_800d {
     //LAB_800d3ab8
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
-      int s1 = a1.position_04.get();
+      int s1 = a1.position_04;
 
       //LAB_800d3ad4
       for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98((short)s1, a1.offsetY_06.get(), sp0x18.charAt(i) - 0x30, (short)41, (int)charAlpha);
+        FUN_800d3f98((short)s1, (short)a1.offsetY_06, sp0x18.charAt(i) - 0x30, (short)41, (int)charAlpha);
         s1 = s1 + 8;
       }
 
       //LAB_800d3b08
-      FUN_800d3f98((short) s1      , a1.offsetY_06.get(), 0x0d, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 +  8), a1.offsetY_06.get(), 0x0e, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 + 16), a1.offsetY_06.get(), 0x0f, (short)41, (int)charAlpha);
-      FUN_800d3f98((short)(s1 + 24), a1.offsetY_06.get(), 0x10, (short)41, (int)charAlpha);
+      FUN_800d3f98((short) s1      , (short)a1.offsetY_06, 0x0d, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 +  8), (short)a1.offsetY_06, 0x0e, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 + 16), (short)a1.offsetY_06, 0x0f, (short)41, (int)charAlpha);
+      FUN_800d3f98((short)(s1 + 24), (short)a1.offsetY_06, 0x10, (short)41, (int)charAlpha);
     }
 
     //LAB_800d3b98
@@ -1236,54 +1233,49 @@ public final class Bttl_800d {
 
   @Method(0x800d3bb8L)
   public static void FUN_800d3bb8(final int index, final ScriptState<AdditionScriptData1c> state, final AdditionScriptData1c additionStruct) {
-    additionStruct._04.incr();
+    additionStruct._04++;
 
     if(_800faa9d.get() == 0) {
       deallocateScriptAndChildren(index);
     } else {
       //LAB_800d3c10
       //LAB_800d3c24
-      for(int charIdx = 0; charIdx < additionStruct.length_08.get(); charIdx++) {
-        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18.deref().get(charIdx);
+      for(int charIdx = 0; charIdx < additionStruct.length_08; charIdx++) {
+        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18[charIdx];
 
-        if(charStruct.scrolling_00.get() != 0) {
-          charStruct.position_04.add((short)additionStruct._0c.get());
+        if(charStruct.scrolling_00 != 0) {
+          charStruct.position_04 += additionStruct._0c;
 
-          if(charStruct.position_04.get() >= charStruct.offsetX_08.get()) {
-            charStruct.position_04.set(charStruct.offsetX_08.get());
-            charStruct.scrolling_00.set(0);
+          if(charStruct.position_04 >= charStruct.offsetX_08) {
+            charStruct.position_04 = charStruct.offsetX_08;
+            charStruct.scrolling_00 = 0;
           }
         } else {
           //LAB_800d3c70
-          if(charStruct.dupes_02.get() > 0) {
-            charStruct.dupes_02.decr();
+          if(charStruct.dupes_02 > 0) {
+            charStruct.dupes_02--;
           }
         }
 
         //LAB_800d3c84
         //LAB_800d3c88
-        additionStruct.renderer_14.deref().run(additionStruct, charStruct, 0x80L, (long)charIdx);
-        int currPosition = charStruct.position_04.get();
-        int s2 = charStruct.dupes_02.get() * 0x10;
+        additionStruct.renderer_14.accept(additionStruct, charStruct, 0x80L, (long)charIdx);
+        int currPosition = charStruct.position_04;
+        int s2 = charStruct.dupes_02 * 0x10;
 
         //LAB_800d3cbc
-        for(int dupeNum = 0; dupeNum < charStruct.dupes_02.get() - 1; dupeNum++) {
-          s2 -= 0x10;
-          currPosition -= 0xa;
-          final int origCharPosition = charStruct.position_04.get();
-          charStruct.position_04.set((short)currPosition);
-          additionStruct.renderer_14.deref().run(additionStruct, charStruct, s2 & 0xffL, (long)charIdx);
-          charStruct.position_04.set((short)origCharPosition);
+        for(int dupeNum = 0; dupeNum < charStruct.dupes_02 - 1; dupeNum++) {
+          s2 -= 16;
+          currPosition -= 10;
+          final int origCharPosition = charStruct.position_04;
+          charStruct.position_04 = currPosition;
+          additionStruct.renderer_14.accept(additionStruct, charStruct, s2 & 0xffL, (long)charIdx);
+          charStruct.position_04 = origCharPosition;
         }
       }
     }
 
     //LAB_800d3d1c
-  }
-
-  @Method(0x800d3d48L)
-  public static void FUN_800d3d48(final int index, final ScriptState<AdditionScriptData1c> state, final AdditionScriptData1c data) {
-    free(state.innerStruct_00.ptr_18.getPointer());
   }
 
   @Method(0x800d3d74L)
@@ -1293,10 +1285,9 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.get();
-      final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
+      final int scriptIndex = allocateScriptState(new AdditionScriptData1c());
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, Bttl_800d::FUN_800d3bb8);
-      setScriptDestructor(scriptIndex, Bttl_800d::FUN_800d3d48);
       final CString additionName = getAdditionName(0, addition);
 
       //LAB_800d3e5c
@@ -1307,13 +1298,14 @@ public final class Bttl_800d {
 
       //LAB_800d3e7c
       final AdditionScriptData1c additionStruct = (AdditionScriptData1c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-      additionStruct._00.set(0);
-      additionStruct.addition_02.set(addition);
-      additionStruct._04.set(0);
-      additionStruct.length_08.set(textLength);
-      additionStruct._0c.set(120);
-      additionStruct.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "renderAdditionNameChar", AdditionScriptData1c.class, AdditionCharEffectData0c.class, long.class, long.class), QuadConsumerRef::new));
-      additionStruct.ptr_18.setPointer(mallocTail(textLength * 0xcL));
+      additionStruct._00 = 0;
+      additionStruct.addition_02 = addition;
+      additionStruct._04 = 0;
+      additionStruct.length_08 = textLength;
+      additionStruct._0c = 120;
+      additionStruct.renderer_14 = Bttl_800d::renderAdditionNameChar;
+      additionStruct.ptr_18 = new AdditionCharEffectData0c[additionStruct.length_08];
+      Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
       _800faa9d.setu(0x1L);
 
       final int[] displayOffset = setAdditionNameDisplayCoords(0, addition);
@@ -1323,13 +1315,13 @@ public final class Bttl_800d {
 
       //LAB_800d3f18
       for(int charIdx = 0; charIdx < textLength; charIdx++) {
-        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18.deref().get(charIdx);
-        charStruct.scrolling_00.set(1);
-        charStruct.dupes_02.set((short)8);
-        charStruct.position_04.set((short)charPosition);
-        charStruct.offsetY_06.set((short)displayOffsetY);
-        charStruct.offsetX_08.set((short)displayOffsetX);
-        charStruct.offsetY_0a.set((short)displayOffsetY);
+        final AdditionCharEffectData0c charStruct = additionStruct.ptr_18[charIdx];
+        charStruct.scrolling_00 = 1;
+        charStruct.dupes_02 = 8;
+        charStruct.position_04 = charPosition;
+        charStruct.offsetY_06 = displayOffsetY;
+        charStruct.offsetX_08 = displayOffsetX;
+        charStruct.offsetY_0a = displayOffsetY;
         displayOffsetX += getCharDisplayWidth(additionName.charAt(charIdx));
         charPosition -= 80;
       }
@@ -1359,35 +1351,35 @@ public final class Bttl_800d {
     final long sp28;
     final long sp2c;
 
-    if(_800faa94.get() == 0 && s3._00.get() == 0) {
-      if(s3._02.get() == 0) {
+    if(_800faa94.get() == 0 && s3._00 == 0) {
+      if(s3._02 == 0) {
         deallocateScriptAndChildren(index);
         return;
       }
 
       //LAB_800d408c
-      s3._02.sub(0x10);
+      s3._02 -= 16;
     }
 
     //LAB_800d4090
-    s3._04.incr();
-    s3._10.add(s3._30.get());
-    s3._30.add(0x200);
+    s3._04++;
+    s3._10 += s3._30;
+    s3._30 += 0x200;
 
-    if(s3._20.get() < s3._10.get()) {
-      s3._10.set(s3._20.get());
-      s3._00.set(0);
+    if(s3._20 < s3._10) {
+      s3._10 = s3._20;
+      s3._00 = 0;
     }
 
     //LAB_800d40cc
-    s3._0c.add(s3._2c.get());
+    s3._0c += s3._2c;
 
-    if(Math.abs(s3._1c.get()) < Math.abs(s3._0c.get())) {
-      s3._0c.set(s3._1c.get());
+    if(Math.abs(s3._1c) < Math.abs(s3._0c)) {
+      s3._0c = s3._1c;
     }
 
     //LAB_800d4108
-    v0 = s3._3c.get();
+    v0 = s3.ptr_3c;
     s6 = 0x1L;
     s4 = v0 + 0x70L;
     v1 = v0 + 0x74L;
@@ -1401,14 +1393,14 @@ public final class Bttl_800d {
       s6 = s6 + 0x1L;
     } while((int)s6 < 0x8L);
 
-    MEMORY.ref(4, s4).offset(0x0L).setu(s3._0c.get());
-    MEMORY.ref(4, s4).offset(0x4L).setu(s3._10.get());
+    MEMORY.ref(4, s4).offset(0x0L).setu(s3._0c);
+    MEMORY.ref(4, s4).offset(0x4L).setu(s3._10);
     s6 = 0;
-    final String sp0x18 = Long.toString(s3._08.get());
-    fp = s3._02.get();
-    s4 = s3._3c.get();
+    final String sp0x18 = Integer.toString(s3._08);
+    fp = s3._02;
+    s4 = s3.ptr_3c;
     v1 = fp & 0xffL;
-    v0 = s3._01.get() + 0x21L;
+    v0 = s3._01 + 0x21L;
     v1 = v1 >>> 3;
     v0 = v0 & 0xffL;
     t0 = v0;
@@ -1422,12 +1414,12 @@ public final class Bttl_800d {
       sp30 = t0;
       fp = fp - sp20;
 
-      if(s6 == 0 || MEMORY.ref(4, s4).offset(0x0L).get() != s3._0c.get() || MEMORY.ref(4, sp30).offset(0x0L).get() != s3._10.get()) {
+      if(s6 == 0 || MEMORY.ref(4, s4).offset(0x0L).get() != s3._0c || MEMORY.ref(4, sp30).offset(0x0L).get() != s3._10) {
         //LAB_800d41d8
         s2 = (int)MEMORY.ref(4, s4).offset(0x0L).get() >> 8;
         s5 = (int)MEMORY.ref(4, sp30).offset(0x0L).get() >> 8;
 
-        if(s3._01.get() != 0) {
+        if(s3._01 != 0) {
           FUN_800d3f98((short)s2, (short)s5, 10, (short)sp28, (int)(fp & 0xff));
           s2 = s2 + 0x8L;
         }
@@ -1455,7 +1447,7 @@ public final class Bttl_800d {
 
   @Method(0x800d430cL)
   public static void FUN_800d430c(final int index, final ScriptState<BttlScriptData40> state, final BttlScriptData40 data) {
-    free(state.innerStruct_00._3c.get());
+    free(state.innerStruct_00.ptr_3c);
   }
 
   @Method(0x800d4338L)
@@ -1468,60 +1460,60 @@ public final class Bttl_800d {
       s4.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final int scriptIndex = allocateScriptState(0x40, BttlScriptData40::new);
+      final int scriptIndex = allocateScriptState(new BttlScriptData40());
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, Bttl_800d::FUN_800d4018);
       setScriptDestructor(scriptIndex, Bttl_800d::FUN_800d430c);
 
       final BttlScriptData40 s1 = (BttlScriptData40)state.innerStruct_00;
-      s1._00.set(0x1);
-      s1._02.set(0x80);
-      s1._04.set(0);
-      s1._08.set(s2);
-      s1._0c.set(0);
-      s1._10.set(30);
-      s1._1c.set((int)(_800faa90.getSigned() << 8));
-      s1._20.set(0x5000);
-      s1._3c.set(mallocTail(0x80L));
+      s1._00 = 1;
+      s1._02 = 0x80;
+      s1._04 = 0;
+      s1._08 = s2;
+      s1._0c = 0;
+      s1._10 = 30;
+      s1._1c = (int)(_800faa90.getSigned() << 8);
+      s1._20 = 0x5000;
+      s1.ptr_3c = mallocTail(0x80);
 
       if(s3 == 1) {
         _800faa92.setu(0);
         _800faa94.setu(s3);
         _800faa98.setu(0);
-        s1._01.set(0);
-        s1._1c.set(0xffff6e00);
+        s1._01 = 0;
+        s1._1c = 0xffff6e00;
         _800faa90.setu(-0x92L);
       } else {
         //LAB_800d4470
         _800faa92.addu(0x1L);
-        s1._01.set((int)_800faa92.get());
+        s1._01 = (int)_800faa92.get();
       }
 
       //LAB_800d448c
-      s1._2c.set((s1._1c.get() - s1._0c.get()) / 14);
-      s1._30.set(-0x800);
+      s1._2c = (s1._1c - s1._0c) / 14;
+      s1._30 = -0x800;
       _800faa98.addu(s2);
 
       //LAB_800d44dc
-      long a2 = s1._3c.get();
+      long a2 = s1.ptr_3c;
       for(long a3 = 0; a3 < 8; a3++) {
-        MEMORY.ref(4, a2).offset(0x0L).setu(s1._0c.get());
-        MEMORY.ref(4, a2).offset(0x4L).setu(s1._10.get());
+        MEMORY.ref(4, a2).offset(0x0L).setu(s1._0c);
+        MEMORY.ref(4, a2).offset(0x4L).setu(s1._10);
         a2 = a2 + 0x10L;
       }
 
-      final long v0 = String.valueOf(s1._08.get()).length();
+      final int strLen = String.valueOf(s1._08).length();
 
       final long v1;
-      if(s1._01.get() == 0) {
-        v1 = v0 + 0x2L;
+      if(s1._01 == 0) {
+        v1 = strLen + 2;
       } else {
-        v1 = v0 + 0x3L;
+        v1 = strLen + 3;
       }
 
       //LAB_800d453c
-      _800faa90.setu((s1._1c.get() >> 8) + v1 * 0x8L - 0x3L);
+      _800faa90.setu((s1._1c >> 8) + v1 * 8 - 3);
       s4.params_20[1].set(0);
     }
 
@@ -1533,28 +1525,27 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript a0) {
     final int s2 = a0.params_20[0].get();
     if(s2 != -1) {
-      final int scriptIndex = allocateScriptState(0x1c, AdditionScriptData1c::new);
+      final int scriptIndex = allocateScriptState(new AdditionScriptData1c());
       loadScriptFile(scriptIndex, doNothingScript_8004f650);
       setScriptTicker(scriptIndex, Bttl_800d::FUN_800d3bb8);
-      setScriptDestructor(scriptIndex, Bttl_800d::FUN_800d3d48);
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       final AdditionScriptData1c s0 = (AdditionScriptData1c)state.innerStruct_00;
-      s0.ptr_18.setPointer(mallocTail(0xcL));
+      s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       _800faa9c.setu(0x1L);
-      s0._0c.set(40);
-      s0.renderer_14.set(MEMORY.ref(4, getMethodAddress(Bttl_800d.class, "FUN_800d3a64", AdditionScriptData1c.class, AdditionCharEffectData0c.class, long.class, long.class), QuadConsumerRef::new));
-      s0._00.set(0);
-      s0.addition_02.set(0);
-      s0._04.set(0);
-      s0.length_08.set(0x1L);
-      s0._10.set(s2);
-      final AdditionCharEffectData0c struct = s0.ptr_18.deref().get(0);
-      struct.scrolling_00.set(1);
-      struct.dupes_02.set((short)8);
-      struct.position_04.set((short)-0xa0);
-      struct.offsetY_06.set((short)0x60);
-      struct.offsetX_08.set((short)(0x90 - (String.valueOf(s2).length() + 4) * 8));
-      struct.offsetY_0a.set((short)0x60);
+      s0._0c = 40;
+      s0.renderer_14 = Bttl_800d::FUN_800d3a64;
+      s0._00 = 0;
+      s0.addition_02 = 0;
+      s0._04 = 0;
+      s0.length_08 = 1;
+      s0._10 = s2;
+      final AdditionCharEffectData0c struct = s0.ptr_18[0];
+      struct.scrolling_00 = 1;
+      struct.dupes_02 = 8;
+      struct.position_04 = -160;
+      struct.offsetY_06 = 96;
+      struct.offsetX_08 = 144 - (String.valueOf(s2).length() + 4) * 8;
+      struct.offsetY_0a = 96;
     } else {
       //LAB_800d46b0
       _800faa9c.setu(0);
@@ -4387,7 +4378,7 @@ public final class Bttl_800d {
   public static VECTOR FUN_800dd02c(final int scriptIndex) {
     final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
-    if(data.magic_00.get() == BattleScriptDataBase.EM__) {
+    if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
       return ((EffectManagerData6c)data)._10.trans_04;
     }
 
@@ -4970,7 +4961,7 @@ public final class Bttl_800d {
     s0 = s0 >> 1 | s0 >> 2;
 
     final MATRIX sp0x10 = new MATRIX();
-    if((a1._00.get() & 0x8L) != 0) {
+    if((a1.flags_00 & 0x8) != 0) {
       FUN_8003eba0(a2, sp0x10);
       GsSetLightMatrix(sp0x10);
     } else {
@@ -4980,7 +4971,7 @@ public final class Bttl_800d {
 
     //LAB_800de45c
     MulMatrix0(worldToScreenMatrix_800c3548, a2, sp0x10);
-    if((a1._00.get() & 0x400_0000L) == 0) {
+    if((a1.flags_00 & 0x400_0000) == 0) {
       RotMatrix_8003faf0(a1.rot_10, sp0x10);
       ScaleVectorL_SVEC(sp0x10, a1.scale_16);
     }
@@ -4992,7 +4983,7 @@ public final class Bttl_800d {
 
       final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
       final GsDOBJ2 dobj2 = new GsDOBJ2(tmp.get());
-      dobj2.attribute_00.set(a1._00.get());
+      dobj2.attribute_00.set(a1.flags_00 & 0xffff_ffffL);
       dobj2.tmd_08.set(a0);
       renderCtmd(dobj2);
       tmp.release();

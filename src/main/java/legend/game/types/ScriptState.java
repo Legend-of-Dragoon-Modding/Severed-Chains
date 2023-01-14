@@ -1,18 +1,12 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.TriConsumer;
+import legend.game.scripting.TempTicker;
 
 import javax.annotation.Nullable;
 
 /** Holds persistent data for scripts */
-public class ScriptState<T extends MemoryRef> {
-  public static <T extends MemoryRef> Class<ScriptState<T>> classFor(final Class<T> t) {
-    //noinspection unchecked
-    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
-  }
-
+public class ScriptState<T> {
   /** This script's index */
   public final int index;
   public final T innerStruct_00;
@@ -20,7 +14,7 @@ public class ScriptState<T extends MemoryRef> {
   public TriConsumer<Integer, ScriptState<T>, T> renderer_08;
   public TriConsumer<Integer, ScriptState<T>, T> destructor_0c;
   /** If the callback returns non-zero, it's set to null */
-  public Value.TriFunction<Integer, ScriptState<T>, T, Long> tempTicker_10;
+  public TempTicker<T> tempTicker_10;
   /** Pointer to the script file */
   public ScriptFile scriptPtr_14;
   /** Pointer to the current script command */

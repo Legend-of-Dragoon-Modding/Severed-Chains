@@ -1,11 +1,10 @@
 package legend.game.types;
 
-import legend.core.memory.types.MemoryRef;
 import legend.game.scripting.Param;
 
 public class RunningScript {
   public int scriptStateIndex_00;
-  public ScriptState<? extends MemoryRef> scriptState_04;
+  public ScriptState<?> scriptState_04;
   /** Pointer to the start of the current command (i.e. the op) */
   public int opOffset_08;
   /** Pointer to the current element in the packet (may be op or param) */
