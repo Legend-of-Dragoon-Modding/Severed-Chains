@@ -11,7 +11,6 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -33,6 +32,7 @@ import legend.game.types.Renderable58;
 import legend.game.types.RunningScript;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.ScriptState;
+import legend.game.types.SobjPos14;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct10;
@@ -44,7 +44,6 @@ import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
-import legend.game.types.SobjPos14;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -80,10 +79,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc05c = MEMORY.ref(4, 0x800bc05cL);
 
   public static final RunningScript RunningScript_800bc070 = new RunningScript();
-  public static final BoolRef scriptsTickDisabled_800bc0b8 = MEMORY.ref(1, 0x800bc0b8L, BoolRef::new);
-  public static final BoolRef scriptsDisabled_800bc0b9 = MEMORY.ref(1, 0x800bc0b9L, BoolRef::new);
+  public static boolean scriptsTickDisabled_800bc0b8;
+  public static boolean scriptsDisabled_800bc0b9;
 
-  public static final ScriptState<? extends MemoryRef>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
+  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);

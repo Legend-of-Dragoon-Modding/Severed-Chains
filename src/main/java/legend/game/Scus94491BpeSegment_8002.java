@@ -654,6 +654,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021034
     model.dobj2ArrPtr_00.clear();
+    free(model.getAddress());
   }
 
   @Method(0x80021048L)
@@ -1389,7 +1390,7 @@ public final class Scus94491BpeSegment_8002 {
       inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
       FUN_8001e010(0);
-      scriptsDisabled_800bc0b9.set(true);
+      scriptsDisabled_800bc0b9 = true;
       Scus94491BpeSegment_8002.destMenu = destMenu;
       Scus94491BpeSegment_8002.destScreen = destScreen;
     }
@@ -1457,7 +1458,7 @@ public final class Scus94491BpeSegment_8002 {
           FUN_8001e010(-1);
         }
 
-        scriptsDisabled_800bc0b9.set(false);
+        scriptsDisabled_800bc0b9 = false;
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
@@ -1475,13 +1476,13 @@ public final class Scus94491BpeSegment_8002 {
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
         decrementOverlayCount();
         FUN_8001e010(-1);
-        scriptsDisabled_800bc0b9.set(false);
+        scriptsDisabled_800bc0b9 = false;
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
       case UNLOAD_POST_COMBAT_REPORT_30 -> {
         decrementOverlayCount();
-        scriptsDisabled_800bc0b9.set(false);
+        scriptsDisabled_800bc0b9 = false;
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
     }

@@ -158,7 +158,7 @@ public final class Ttle {
     whichMenu_800bdc38 = WhichMenu.NONE_0;
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(2);
-    scriptsTickDisabled_800bc0b8.set(false);
+    scriptsTickDisabled_800bc0b8 = false;
 
     FUN_8002a9c0();
     _80052c44.setu(5);
