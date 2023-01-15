@@ -14,6 +14,8 @@ import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 
+import java.util.Arrays;
+
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
@@ -232,6 +234,10 @@ public final class Scus94491BpeSegment_800e {
     model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.count_0c.get()];
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.count_0c.get()];
     model.count_c8 = tmdAnimFile.count_0c.get();
+
+    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
     model.tmd_8c = tmd;

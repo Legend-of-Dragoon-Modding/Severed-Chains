@@ -17,7 +17,7 @@ public class EncounterData38 implements MemoryRef {
   public EncounterData38(final Value ref) {
     this.ref = ref;
 
-    this.enemyIndices_00 = ref.offset(2, 0x00L).cast(ArrayRef.of(UnsignedShortRef.class, 2, 3, UnsignedShortRef::new));
+    this.enemyIndices_00 = ref.offset(2, 0x00L).cast(ArrayRef.of(UnsignedShortRef.class, 3, 2, UnsignedShortRef::new));
 
     this.enemyInfo_08 = ref.offset(2, 0x08L).cast(ArrayRef.of(EnemyInfo08.class, 6, 8, EnemyInfo08::new));
   }

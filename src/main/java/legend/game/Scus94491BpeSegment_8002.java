@@ -63,6 +63,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -480,6 +481,11 @@ public final class Scus94491BpeSegment_8002 {
     model.dobj2ArrPtr_00 = new GsDOBJ2[model.count_c8];
     model.coord2ArrPtr_04 = new GsCOORDINATE2[model.count_c8];
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[model.count_c8];
+
+    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+
     FUN_80020718(model, extendedTmd, tmdAnimFile);
   }
 
@@ -997,7 +1003,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021b08L)
-  public static void initObjTable2(final GsOBJTABLE2 table, final GsDOBJ2[] dobj2s, final GsCOORDINATE2[] coord2s, final GsCOORD2PARAM[] params, final long size) {
+  public static void initObjTable2(final GsOBJTABLE2 table, final GsDOBJ2[] dobj2s, final GsCOORDINATE2[] coord2s, final GsCOORD2PARAM[] params, final int size) {
     table.top = dobj2s;
     table.nobj = 0;
 

@@ -1271,8 +1271,7 @@ public final class Scus94491BpeSegment_8004 {
     final long t7;
     long lo;
     t0 = a0.getZ();
-    v1 = 0x8005_0000L;
-    v1 = v1 + 0x4d0cL;
+    v1 = sin_cos_80054d0c.getAddress();
     t4 = a0.getXY();
     t3 = (int)t0 >> 31;
     t0 = t0 + t3;

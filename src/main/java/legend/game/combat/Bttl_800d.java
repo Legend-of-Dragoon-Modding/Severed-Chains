@@ -4667,6 +4667,11 @@ public final class Bttl_800d {
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
     model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
+
+    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+
     model.tpage_108 = (int)((tmdWithId.id.get() & 0xffff_0000L) >>> 11);
     adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
@@ -4838,6 +4843,10 @@ public final class Bttl_800d {
     final int count = cmb.count_0c.get();
 
     anim.cmb_04 = cmb;
+    anim._08 = new Cmb.Sub0c[count];
+
+    Arrays.setAll(anim._08, i -> new Cmb.Sub0c());
+
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
     model.animCount_98 = count;

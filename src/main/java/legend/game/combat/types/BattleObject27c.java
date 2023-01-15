@@ -205,7 +205,10 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int tempAttackHitTurns_bd;
   public int tempMagicHit_be;
   public int tempMagicHitTurns_bf;
-
+  public int unknown_c0;
+  public int unknownTurns_c1;
+  public int unknown_c2;
+  public int unknownTurns_c3;
   public int tempPhysicalImmunity_c4;
   public int tempPhysicalImmunityTurns_c5;
   public int tempMagicalImmunity_c6;
@@ -361,21 +364,22 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 85 -> this.dragoonMagic_ae;
       case 86 -> this.dragoonDefence_b0;
       case 87 -> this.dragoonMagicDefence_b2;
-      case 88 -> (this.powerAttackTurns_b5 & 0xff) << 16 | this.powerAttack_b4 & 0xff;
-      case 89 -> (this.powerMagicAttackTurns_b7 & 0xff) << 16 | this.powerMagicAttack_b6 & 0xff;
-      case 90 -> (this.powerDefenceTurns_b9 & 0xff) << 16 | this.powerDefence_b8 & 0xff;
-      case 91 -> (this.powerMagicDefenceTurns_bb & 0xff) << 16 | this.powerMagicDefence_ba & 0xff;
-      case 92 -> (this.tempAttackHitTurns_bd & 0xff) << 16 | this.tempAttackHit_bc & 0xff;
-      case 93 -> (this.tempMagicHitTurns_bf & 0xff) << 16 | this.tempMagicHit_be & 0xff;
-
-      case 96 -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 16 | this.tempPhysicalImmunity_c4 & 0xff;
-      case 97 -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 16 | this.tempMagicalImmunity_c6 & 0xff;
+      case 88 -> (this.powerAttackTurns_b5 & 0xff) << 8 | this.powerAttack_b4 & 0xff;
+      case 89 -> (this.powerMagicAttackTurns_b7 & 0xff) << 8 | this.powerMagicAttack_b6 & 0xff;
+      case 90 -> (this.powerDefenceTurns_b9 & 0xff) << 8 | this.powerDefence_b8 & 0xff;
+      case 91 -> (this.powerMagicDefenceTurns_bb & 0xff) << 8 | this.powerMagicDefence_ba & 0xff;
+      case 92 -> (this.tempAttackHitTurns_bd & 0xff) << 8 | this.tempAttackHit_bc & 0xff;
+      case 93 -> (this.tempMagicHitTurns_bf & 0xff) << 8 | this.tempMagicHit_be & 0xff;
+      case 94 -> (this.unknownTurns_c1 & 0xff) << 8 | this.unknown_c0 & 0xff;
+      case 95 -> (this.unknownTurns_c3 & 0xff) << 8 | this.unknown_c2 & 0xff;
+      case 96 -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
+      case 97 -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
       case 98 -> this.speedUpTurns_c8;
       case 99 -> this.speedDownTurns_ca;
-      case 100 -> (this.tempSpPerPhysicalHitTurns_cd & 0xff) << 16 | this.tempSpPerPhysicalHit_cc & 0xff;
-      case 101 -> (this.tempMpPerPhysicalHitTurns_cf & 0xff) << 16 | this.tempMpPerPhysicalHit_ce & 0xff;
-      case 102 -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 16 | this.tempSpPerMagicalHit_d0 & 0xff;
-      case 103 -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 16 | this.tempMpPerMagicalHit_d2 & 0xff;
+      case 100 -> (this.tempSpPerPhysicalHitTurns_cd & 0xff) << 8 | this.tempSpPerPhysicalHit_cc & 0xff;
+      case 101 -> (this.tempMpPerPhysicalHitTurns_cf & 0xff) << 8 | this.tempMpPerPhysicalHit_ce & 0xff;
+      case 102 -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 8 | this.tempSpPerMagicalHit_d0 & 0xff;
+      case 103 -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 8 | this.tempMpPerMagicalHit_d2 & 0xff;
       case 104 -> this.itemTarget_d4;
       case 105 -> this.itemElement_d6;
       case 106 -> this.itemDamage_d8;
@@ -420,7 +424,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
       case 159 -> this._142;
 
-      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented");
+      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     };
   }
 
@@ -511,21 +515,64 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 85 -> this.dragoonMagic_ae = value;
       case 86 -> this.dragoonDefence_b0 = value;
       case 87 -> this.dragoonMagicDefence_b2 = value;
-//      case 88 -> (this.powerAttackTurns_b5 & 0xff) << 16 | this.powerAttack_b4 & 0xff;
-//      case 89 -> (this.powerMagicAttackTurns_b7 & 0xff) << 16 | this.powerMagicAttack_b6 & 0xff;
-//      case 90 -> (this.powerDefenceTurns_b9 & 0xff) << 16 | this.powerDefence_b8 & 0xff;
-//      case 91 -> (this.powerMagicDefenceTurns_bb & 0xff) << 16 | this.powerMagicDefence_ba & 0xff;
-//      case 92 -> (this.tempAttackHitTurns_bd & 0xff) << 16 | this.tempAttackHit_bc & 0xff;
-//      case 93 -> (this.tempMagicHitTurns_bf & 0xff) << 16 | this.tempMagicHit_be & 0xff;
-
-//      case 96 -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 16 | this.tempPhysicalImmunity_c4 & 0xff;
-//      case 97 -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 16 | this.tempMagicalImmunity_c6 & 0xff;
+      case 88 -> {
+        this.powerAttack_b4 = value & 0xff;
+        this.powerAttackTurns_b5 = value >>> 8 & 0xff;
+      }
+      case 89 -> {
+        this.powerMagicAttack_b6 = value & 0xff;
+        this.powerMagicAttackTurns_b7 = value >>> 8 & 0xff;
+      }
+      case 90 -> {
+        this.powerDefence_b8 = value & 0xff;
+        this.powerDefenceTurns_b9 = value >>> 8 & 0xff;
+      }
+      case 91 -> {
+        this.powerMagicDefence_ba = value & 0xff;
+        this.powerMagicDefenceTurns_bb = value >>> 8 & 0xff;
+      }
+      case 92 -> {
+        this.tempAttackHit_bc = value & 0xff;
+        this.tempAttackHitTurns_bd = value >>> 8 & 0xff;
+      }
+      case 93 -> {
+        this.tempMagicHit_be = value & 0xff;
+        this.tempMagicHitTurns_bf = value >>> 8 & 0xff;
+      }
+      case 94 -> {
+        this.unknown_c0 = value & 0xff;
+        this.unknownTurns_c1 = value >>> 8 & 0xff;
+      }
+      case 95 -> {
+        this.unknown_c2 = value & 0xff;
+        this.unknownTurns_c3 = value >>> 8 & 0xff;
+      }
+      case 96 -> {
+        this.tempPhysicalImmunity_c4 = value & 0xff;
+        this.tempPhysicalImmunityTurns_c5 = value >>> 8 & 0xff;
+      }
+      case 97 -> {
+        this.tempMagicalImmunity_c6 = value & 0xff;
+        this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
+      }
       case 98 -> this.speedUpTurns_c8 = value;
       case 99 -> this.speedDownTurns_ca = value;
-//      case 100 -> (this.tempSpPerPhysicalHitTurns_cd & 0xff) << 16 | this.tempSpPerPhysicalHit_cc & 0xff;
-//      case 101 -> (this.tempMpPerPhysicalHitTurns_cf & 0xff) << 16 | this.tempMpPerPhysicalHit_ce & 0xff;
-//      case 102 -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 16 | this.tempSpPerMagicalHit_d0 & 0xff;
-//      case 103 -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 16 | this.tempMpPerMagicalHit_d2 & 0xff;
+      case 100 -> {
+        this.tempSpPerPhysicalHit_cc = value & 0xff;
+        this.tempSpPerPhysicalHitTurns_cd = value >>> 8 & 0xff;
+      }
+      case 101 -> {
+        this.tempMpPerPhysicalHit_ce = value & 0xff;
+        this.tempMpPerPhysicalHitTurns_cf = value >>> 8 & 0xff;
+      }
+      case 102 -> {
+        this.tempSpPerMagicalHit_d0 = value & 0xff;
+        this.tempSpPerMagicalHitTurns_d1 = value >>> 8 & 0xff;
+      }
+      case 103 -> {
+        this.tempMpPerMagicalHit_d2 = value & 0xff;
+        this.tempMpPerMagicalHitTurns_d3 = value >>> 8 & 0xff;
+      }
       case 104 -> this.itemTarget_d4 = value;
       case 105 -> this.itemElement_d6 = value;
       case 106 -> this.itemDamage_d8 = value;
@@ -570,7 +617,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
       case 159 -> this._142 = value;
 
-      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented");
+      default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     }
   }
 }

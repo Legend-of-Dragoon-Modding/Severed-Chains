@@ -14,7 +14,7 @@ public class WMapStruct258 {
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
-  public long _1c; //TODO pointer to a struct
+  public long ptr_1c; //TODO pointer to a struct
   /** short */
   public int colour_20;
 
@@ -72,7 +72,7 @@ public class WMapStruct258 {
   public int _244;
 
   public int _248;
-
+  public int _24c;
   public int _250;
   public int _254;
 }

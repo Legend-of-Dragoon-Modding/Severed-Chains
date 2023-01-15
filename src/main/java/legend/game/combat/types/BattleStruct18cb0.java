@@ -24,6 +24,7 @@ public class BattleStruct18cb0 {
 
   public BattleStruct18cb0() {
     Arrays.setAll(this._38, i -> new AdditionStruct100());
+    Arrays.setAll(this._9ce8, i -> new Rendering1298());
   }
 
   public static class AdditionStruct100 {

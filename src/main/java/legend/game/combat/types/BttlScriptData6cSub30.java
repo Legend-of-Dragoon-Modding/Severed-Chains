@@ -4,11 +4,14 @@ import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub30 extends BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub30 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final IntRef _00;
   public final IntRef _04;
   public final IntRef _08;
@@ -23,7 +26,7 @@ public class BttlScriptData6cSub30 extends BttlScriptData6cSubBase1 {
   public final UnsignedShortRef tpage_2c;
 
   public BttlScriptData6cSub30(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this._00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
@@ -36,5 +39,10 @@ public class BttlScriptData6cSub30 extends BttlScriptData6cSubBase1 {
     this.tmd_24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, TmdObjTable::new));
 
     this.tpage_2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

@@ -23,6 +23,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
@@ -3422,8 +3423,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e805c
-    if(struct.effect_44 != null) {
-      free(struct.effect_44.getAddress());
+    if(struct.effect_44 instanceof MemoryRef) {
+      free(((MemoryRef)struct.effect_44).getAddress());
     }
 
     //LAB_800e8074
@@ -3715,7 +3716,7 @@ public final class Bttl_800e {
         free(a0_0.getAddress());
       } else {
         //LAB_800e8d84
-        s0 = new Ptr<>(v1._00::deref, v1._00::setNullable);
+        s0 = new Ptr<>(v1._00::derefNullable, v1._00::setNullable);
       }
 
       //LAB_800e8d88
@@ -3760,7 +3761,7 @@ public final class Bttl_800e {
         free(sub.getAddress());
       } else if(v1 == 1) {
         //LAB_800e8f6c
-        subPtr = new Ptr<>(sub._00::deref, sub._00::setNullable);
+        subPtr = new Ptr<>(sub._00::derefNullable, sub._00::setNullable);
         //LAB_800e8f1c
       } else if(v1 == 2) {
         //LAB_800e8f78
@@ -3938,7 +3939,7 @@ public final class Bttl_800e {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a2.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a2).effect_44).model_134.deref();
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a2).effect_44).model_134;
     } else {
       model = ((BattleObject27c)a2).model_148;
     }
@@ -3975,7 +3976,7 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      BttlScriptData6cSub13c::new
+      value -> new BttlScriptData6cSub13c()
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
@@ -3983,17 +3984,17 @@ public final class Bttl_800e {
 
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x200_0000);
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
-    effect._00.set(0);
-    effect.tmdType_04.set(animatedTmdType);
-    effect.extTmd_08.set(animatedTmdType.tmd_0c.deref());
-    effect.anim_0c.set(animatedTmdType.anim_14.deref());
+    effect._00 = 0;
+    effect.tmdType_04 = animatedTmdType;
+    effect.extTmd_08 = animatedTmdType.tmd_0c.deref();
+    effect.anim_0c = animatedTmdType.anim_14.deref();
     final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08.deref().get(0);
-    effect.model_134.set(effect.model_10);
+    effect.model_134 = effect.model_10;
     final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
-    final Model124 model = effect.model_134.deref();
+    final Model124 model = effect.model_134;
     model.colourMap_9d = (int)_800fb06c.offset(tpage * 0x4L).get();
-    loadModelTmd(model, effect.extTmd_08.deref());
-    loadModelAnim(model, effect.anim_0c.deref());
+    loadModelTmd(model, effect.extTmd_08);
+    loadModelAnim(model, effect.anim_0c);
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
     manager._10.flags_00 = 0x1400_0040;
     a0.params_20[0].set(scriptIndex);
@@ -4008,22 +4009,22 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      BttlScriptData6cSub13c::new
+      value -> new BttlScriptData6cSub13c()
     );
 
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     data.flags_04 = 0x100_0000;
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x100_0000);
     final BttlScriptData6cSub13c s0 = (BttlScriptData6cSub13c)data.effect_44;
-    s0._00.set(0);
+    s0._00 = 0;
 
-    s0.tmdType_04.set(animatedTmdType);
-    s0.extTmd_08.set(animatedTmdType.tmd_0c.deref());
-    s0.anim_0c.set(animatedTmdType.anim_14.deref());
+    s0.tmdType_04 = animatedTmdType;
+    s0.extTmd_08 = animatedTmdType.tmd_0c.deref();
+    s0.anim_0c = animatedTmdType.anim_14.deref();
     s0.model_10.colourMap_9d = 0;
-    s0.model_134.set(s0.model_10);
-    loadModelTmd(s0.model_134.deref(), s0.extTmd_08.deref());
-    loadModelAnim(s0.model_134.deref(), s0.anim_0c.deref());
+    s0.model_134 = s0.model_10;
+    loadModelTmd(s0.model_134, s0.extTmd_08);
+    loadModelAnim(s0.model_134, s0.anim_0c);
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
     data._10.flags_00 = 0x5400_0000;
     a0.params_20[0].set(scriptIndex);
@@ -4136,18 +4137,18 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      BttlScriptData6cSub13c::new
+      value -> new BttlScriptData6cSub13c()
     );
 
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[managerIndex].innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
     final BttlScriptData6cSub13c s0 = (BttlScriptData6cSub13c)manager.effect_44;
-    s0._00.set(0);
-    s0.tmdType_04.clear();
-    s0.extTmd_08.clear();
-    s0.anim_0c.clear();
-    s0.model_134.set(s0.model_10);
+    s0._00 = 0;
+    s0.tmdType_04 = null;
+    s0.extTmd_08 = null;
+    s0.anim_0c = null;
+    s0.model_134 = s0.model_10;
 
     if((s2 & 0xff00_0000) == 0x700_0000) {
       FUN_800e9ae4(s0.model_10, _1f8003f4.stage_963c);
@@ -4157,7 +4158,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800ea04c
-    final Model124 model = s0.model_134.deref();
+    final Model124 model = s0.model_134;
     manager._10.trans_04.set(model.coord2_14.coord.transfer);
     manager._10.rot_10.set(model.coord2Param_64.rotate);
     manager._10.scale_16.set(model.scaleVector_fc);
@@ -4176,7 +4177,7 @@ public final class Bttl_800e {
   @Method(0x800ea13cL)
   public static FlowControl FUN_800ea13c(final RunningScript a0) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00;
-    final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134.deref();
+    final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134;
     final int a1 = a0.params_20[1].get() & 0xffff;
 
     final int index = a1 >>> 5;
@@ -4189,7 +4190,7 @@ public final class Bttl_800e {
   @Method(0x800ea19cL)
   public static FlowControl FUN_800ea19c(final RunningScript a0) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00;
-    final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134.deref();
+    final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134;
     final int v1 = a0.params_20[1].get() & 0xffff;
 
     final int index = v1 >>> 5;
@@ -4207,8 +4208,8 @@ public final class Bttl_800e {
 
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x200_0000);
     final Anim cmb = animatedTmdType.anim_14.deref();
-    effect.anim_0c.set(cmb);
-    loadModelAnim(effect.model_134.deref(), cmb);
+    effect.anim_0c = cmb;
+    loadModelAnim(effect.model_134, cmb);
     manager._10.flags_24 = 0;
     FUN_80114f3c(effectIndex, 0, 0x100, 0);
     return FlowControl.CONTINUE;
@@ -4220,7 +4221,7 @@ public final class Bttl_800e {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a2.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a2).effect_44).model_134.deref();
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a2).effect_44).model_134;
     } else {
       //LAB_800ea2f8
       model = ((BattleObject27c)a2).model_148;
@@ -4238,7 +4239,7 @@ public final class Bttl_800e {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a3).effect_44).model_134.deref();
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a3).effect_44).model_134;
     } else {
       //LAB_800ea36c
       model = ((BattleObject27c)a3).model_148;
@@ -4254,11 +4255,11 @@ public final class Bttl_800e {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
-    if(effect.anim_0c.isNull()) {
+    if(effect.anim_0c == null) {
       a0.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      a0.params_20[1].set((manager._10.flags_24 + 2) / effect.model_134.deref().s_9a);
+      a0.params_20[1].set((manager._10.flags_24 + 2) / effect.model_134.s_9a);
     }
 
     //LAB_800ea3e4
@@ -4271,14 +4272,14 @@ public final class Bttl_800e {
     FUN_800e8594(sp0x10, manager);
 
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
-    final Model124 model = effect.model_134.deref();
+    final Model124 model = effect.model_134;
     model.coord2Param_64.rotate.set(manager._10.rot_10);
     model.scaleVector_fc.set(manager._10.scale_16);
     model.zOffset_a0 = manager._10.z_22;
     model.coord2_14.coord.set(sp0x10);
     model.coord2_14.flg = 0;
 
-    if(!effect.anim_0c.isNull()) {
+    if(effect.anim_0c != null) {
       FUN_800de2e8(model, manager._10.flags_24);
     }
 
@@ -4297,7 +4298,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800ea574
-      final Model124 model = effect.model_134.deref();
+      final Model124 model = effect.model_134;
 
       final int oldTpage = model.tpage_108;
 
@@ -4323,7 +4324,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea5f4L)
   public static void FUN_800ea5f4(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    deallocateModel(((BttlScriptData6cSub13c)manager.effect_44).model_134.deref());
+    deallocateModel(((BttlScriptData6cSub13c)manager.effect_44).model_134);
   }
 
   @Method(0x800ea620L)
@@ -4609,7 +4610,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800eb15c
-      a0 = new Ptr<>(a0.get()._00::deref, a0.get()._00::setNullable);
+      a0 = new Ptr<>(a0.get()._00::derefNullable, a0.get()._00::setNullable);
     }
 
     //LAB_800eb174

@@ -5,6 +5,8 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 
+import java.util.Arrays;
+
 public class WMapStruct19c0 {
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
@@ -67,12 +69,15 @@ public class WMapStruct19c0 {
 
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
   public final SVECTOR ambientLight_14c = new SVECTOR();
-  public final WMapSubStruct18[] _154 = new WMapSubStruct18[0x101]; //TODO unknown length
-
+  public final WMapSubStruct18[] _154 = new WMapSubStruct18[0x101];
   public int _196c;
   public int _1970;
   public int _1974;
 
   public final short[] _19a8 = new short[3];
   public final short[] _19ae = new short[3];
+
+  public WMapStruct19c0() {
+    Arrays.setAll(this._154, i -> new WMapSubStruct18());
+  }
 }

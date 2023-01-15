@@ -5,6 +5,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.TriConsumerRef;
@@ -13,7 +14,9 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class EffectData98 extends BttlScriptData6cSubBase1 {
+public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final IntRef scriptIndex_00;
   public final IntRef scriptIndex_04;
   public final EffectData98Inner24 _08;
@@ -48,7 +51,7 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
   public final Pointer<EffectData98> _94;
 
   public EffectData98(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this.scriptIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
@@ -81,5 +84,10 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
     this._8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, EffectData98::new));
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

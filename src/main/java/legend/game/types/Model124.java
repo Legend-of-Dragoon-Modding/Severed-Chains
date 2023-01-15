@@ -15,10 +15,10 @@ public class Model124 {
   public GsCOORDINATE2[] coord2ArrPtr_04;
   public GsCOORD2PARAM[] coord2ParamArrPtr_08;
   /** Union with {@link #coord2ParamArrPtr_08} */
-  public LmbAnim lmbAnim_08;
+  public final LmbAnim lmbAnim_08 = new LmbAnim();
   /** Union with {@link #coord2ParamArrPtr_08} */
-  public CmbAnim cmbAnim_08;
-  public GsOBJTABLE2 ObjTable_0c; // GsOBJTABLE2 is 0xc bytes long... overlaps coord2's flag...?
+  public final CmbAnim cmbAnim_08 = new CmbAnim();
+  public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
   // 0x50 bytes
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
   public final GsCOORD2PARAM coord2Param_64 = new GsCOORD2PARAM();
@@ -86,19 +86,29 @@ public class Model124 {
     public int _00;
     public Cmb cmb_04;
     public Cmb.Sub0c[] _08;
+
+    public void set(final CmbAnim other) {
+      this._00 = other._00;
+      this.cmb_04 = other.cmb_04;
+      this._08 = other._08;
+    }
   }
 
   public static class LmbAnim {
     public Lmb lmb_00;
+
+    public void set(final LmbAnim other) {
+      this.lmb_00 = other.lmb_00;
+    }
   }
 
   public void set(final Model124 other) {
     this.dobj2ArrPtr_00 = other.dobj2ArrPtr_00;
     this.coord2ArrPtr_04 = other.coord2ArrPtr_04;
     this.coord2ParamArrPtr_08 = other.coord2ParamArrPtr_08;
-    this.lmbAnim_08 = other.lmbAnim_08;
-    this.cmbAnim_08 = other.cmbAnim_08;
-    this.ObjTable_0c = other.ObjTable_0c;
+    this.lmbAnim_08.set(other.lmbAnim_08);
+    this.cmbAnim_08.set(other.cmbAnim_08);
+    this.ObjTable_0c.set(other.ObjTable_0c);
     this.coord2_14.set(other.coord2_14);
     this.coord2Param_64.set(other.coord2Param_64);
     this.tmd_8c = other.tmd_8c;

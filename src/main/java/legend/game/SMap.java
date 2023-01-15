@@ -91,6 +91,7 @@ import legend.game.types.WeirdTimHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
@@ -2359,6 +2360,10 @@ public final class SMap {
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
     model.tmd_8c = extendedTmd.tmdPtr_00.deref().tmd;
     model.tmdNobj_ca = count;
+
+    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
     if(!extendedTmd.ext_04.isNull()) {
       final SmallerStruct smallerStruct = MEMORY.ref(4, mallocTail(0x30L), SmallerStruct::new);
@@ -5698,8 +5703,8 @@ public final class SMap {
   @Method(0x800e8cd0L)
   public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final UnboundedArrayRef<SomethingStructSub0c_1> a2) {
     SomethingStructPtr_800d1a88 = SomethingStruct_800cbe08;
-    SomethingStruct_800cbe08.dobj2Ptr_20.set(GsDOBJ2_800cbdf8);
-    SomethingStruct_800cbe08.coord2Ptr_24.set(GsCOORDINATE2_800cbda8);
+    SomethingStruct_800cbe08.dobj2Ptr_20 = GsDOBJ2_800cbdf8;
+    SomethingStruct_800cbe08.coord2Ptr_24 = GsCOORDINATE2_800cbda8;
     GsInitCoordinate2(null, GsCOORDINATE2_800cbda8);
 
     SomethingStructPtr_800d1a88.dobj2Ptr_20.coord2_04 = SomethingStructPtr_800d1a88.coord2Ptr_24;

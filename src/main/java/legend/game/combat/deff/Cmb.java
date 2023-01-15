@@ -28,6 +28,13 @@ public class Cmb extends Anim {
     public final SVECTOR rot_00;
     public final SVECTOR trans_06;
 
+    public Sub0c() {
+      this.ref = null;
+
+      this.rot_00 = new SVECTOR();
+      this.trans_06 = new SVECTOR();
+    }
+
     public Sub0c(final Value ref) {
       this.ref = ref;
 

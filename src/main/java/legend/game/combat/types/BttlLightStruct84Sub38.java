@@ -3,7 +3,7 @@ package legend.game.combat.types;
 import legend.core.gte.VECTOR;
 
 public class BttlLightStruct84Sub38 {
-  public int  _00;
+  public int _00;
   public final VECTOR vec_04 = new VECTOR();
   public final VECTOR vec_10 = new VECTOR();
   public final VECTOR vec_1c = new VECTOR();

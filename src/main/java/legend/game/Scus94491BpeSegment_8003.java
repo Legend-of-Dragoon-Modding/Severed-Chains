@@ -2014,7 +2014,7 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003eb4c
     t4 = t4 - 0x80L;
     t4 = t4 << 1;
-    t5 = 0x8005_0000L;
+    t5 = 0x8005_0000L; //TODO
     t5 = t5 + t4;
     t5 = MEMORY.ref(2, t5).offset(0x4870L).getSigned();
 

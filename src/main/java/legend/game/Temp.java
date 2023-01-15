@@ -209,7 +209,9 @@ public final class Temp {
     return FlowControl.CONTINUE;
   }
 
-  private static class TempEffectData_d18 extends BttlScriptData6cSubBase1 {
+  private static class TempEffectData_d18 implements BttlScriptData6cSubBase1, MemoryRef {
+    private final Value ref;
+
     public final IntRef _00;
     public final IntRef _04;
     public final IntRef _08;
@@ -219,7 +221,7 @@ public final class Temp {
     public final ArrayRef<TempEffectData_d18_Sub34> _18;
 
     public TempEffectData_d18(final Value ref) {
-      super(ref);
+      this.ref = ref;
 
       this._00 = ref.offset(4, 0x00L).cast(IntRef::new);
       this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
@@ -228,6 +230,11 @@ public final class Temp {
       this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
       this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
       this._18 = ref.offset(4, 0x18L).cast(ArrayRef.of(TempEffectData_d18_Sub34.class, 0x40, 0x34, TempEffectData_d18_Sub34::new));
+    }
+
+    @Override
+    public long getAddress() {
+      return this.ref.getAddress();
     }
   }
 
@@ -268,7 +275,9 @@ public final class Temp {
     }
   }
 
-  private static class TempEffectData_08 extends BttlScriptData6cSubBase1 {
+  private static class TempEffectData_08 implements BttlScriptData6cSubBase1, MemoryRef {
+    private final Value ref;
+
     public final ShortRef u_00;
     public final ShortRef v_02;
     public final UnsignedByteRef _04;
@@ -277,7 +286,7 @@ public final class Temp {
     public final ShortRef _06;
 
     public TempEffectData_08(final Value ref) {
-      super(ref);
+      this.ref = ref;
 
       this.u_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
       this.v_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
@@ -285,6 +294,11 @@ public final class Temp {
       this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
 
       this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    }
+
+    @Override
+    public long getAddress() {
+      return this.ref.getAddress();
     }
   }
 }

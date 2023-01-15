@@ -1,12 +1,15 @@
 package legend.game.combat.types;
 
 import legend.core.memory.Value;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub14_4 extends BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub14_4 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final UnsignedShortRef count_00;
   public final UnsignedShortRef _02;
 
@@ -18,7 +21,7 @@ public class BttlScriptData6cSub14_4 extends BttlScriptData6cSubBase1 {
   public final Pointer<UnboundedArrayRef<BttlScriptData6cSub14_4Sub70>> ptr_10;
 
   public BttlScriptData6cSub14_4(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this.count_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
@@ -29,5 +32,10 @@ public class BttlScriptData6cSub14_4 extends BttlScriptData6cSubBase1 {
     this.height_0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
     this.clut_0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
     this.ptr_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x70, BttlScriptData6cSub14_4Sub70::new)));
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

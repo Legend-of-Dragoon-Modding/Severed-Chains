@@ -35,6 +35,7 @@ import legend.game.types.Translucency;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.CPU;
@@ -1455,6 +1456,9 @@ public final class Ttle {
     tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj.get()];
     tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj.get()];
 
+    Arrays.setAll(tmdRenderer.dobj2s_00, i -> new GsDOBJ2());
+    Arrays.setAll(tmdRenderer.coord2s_04, i -> new GsCOORDINATE2());
+
     //LAB_800cc02c
     for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
       //LAB_800cc04c
@@ -1476,7 +1480,7 @@ public final class Ttle {
       //LAB_800cc114
       GsInitCoordinate2(superCoord2, coord2);
 
-      dobj2.coord2_04.set(coord2);
+      dobj2.coord2_04 = coord2;
       coord2.coord.transfer.set(100, -430, -2048);
     }
 

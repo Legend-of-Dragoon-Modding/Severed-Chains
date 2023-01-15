@@ -8,6 +8,8 @@ import legend.core.gte.Tmd;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.ModelPartTransforms;
 
+import java.util.Arrays;
+
 public class BattleStage {
   public final GsDOBJ2[] dobj2s_00 = new GsDOBJ2[10];
   public final GsCOORDINATE2[] coord2s_a0 = new GsCOORDINATE2[10];
@@ -43,4 +45,10 @@ public class BattleStage {
   public final int[] _64a = new int[10];
   /** short */
   public final int[] _65e = new int[10];
+
+  public BattleStage() {
+    Arrays.setAll(this.dobj2s_00, i -> new GsDOBJ2());
+    Arrays.setAll(this.coord2s_a0, i -> new GsCOORDINATE2());
+    Arrays.setAll(this.params_3c0, i -> new GsCOORD2PARAM());
+  }
 }

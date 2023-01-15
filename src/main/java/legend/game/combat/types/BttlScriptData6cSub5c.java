@@ -4,12 +4,15 @@ import legend.core.gte.TmdObjTable;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 
-public class BttlScriptData6cSub5c extends BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub5c implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final IntRef lmbType_00;
   public final IntRef _04;
   public final IntRef _08;
@@ -28,7 +31,7 @@ public class BttlScriptData6cSub5c extends BttlScriptData6cSubBase1 {
   public final SpriteMetrics08 metrics_54;
 
   public BttlScriptData6cSub5c(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this.lmbType_00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
@@ -45,5 +48,10 @@ public class BttlScriptData6cSub5c extends BttlScriptData6cSubBase1 {
     this.deffTmdObjTable_4c = ref.offset(4, 0x4cL).cast(Pointer.deferred(4, TmdObjTable::new));
     this.deffSpriteFlags_50 = ref.offset(4, 0x50L).cast(IntRef::new);
     this.metrics_54 = ref.offset(4, 0x54L).cast(SpriteMetrics08::new);
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }
