@@ -14,7 +14,8 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class EffectData98 extends BttlScriptData6cSubBase1 {
-  public final IntRef _04;
+  public final IntRef scriptIndex_00;
+  public final IntRef scriptIndex_04;
   public final EffectData98Inner24 _08;
 
   public final Pointer<TmdObjTable> tmd_30;
@@ -49,7 +50,8 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
   public EffectData98(final Value ref) {
     super(ref);
 
-    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
+    this.scriptIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
+    this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(EffectData98Inner24::new);
 
     this.tmd_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));

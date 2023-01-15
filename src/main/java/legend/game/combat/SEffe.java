@@ -10091,14 +10091,14 @@ public final class SEffe {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800e8594(sp0x10, manager);
 
-      final long v1 = effect.scriptIndex_04.get() & 0xff00_0000L;
+      final long v1 = effect._04.get() & 0xff00_0000L;
       if(v1 == 0x300_0000L) {
         //LAB_80118f38
         if((manager._10.flags_00 & 0x4000_0000) != 0) {
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
         } else {
           //LAB_80118f5c
-          tmdGp0Tpage_1f8003ec.set(effect._2c.get());
+          tmdGp0Tpage_1f8003ec.set(effect.tpage_2c.get());
         }
 
         //LAB_80118f68
@@ -10122,7 +10122,7 @@ public final class SEffe {
         sp0x50.set(manager._10);
 
         final int a2 = effect._08.get() * (effect._0c.get() + 1);
-        if((effect.scriptIndex_00.get() & 0x4L) != 0) {
+        if((effect._00.get() & 0x4L) != 0) {
           final int v0 = effect._10.get() - 0x1000;
           sp0x50.vec_28.setX(sp0x50.colour_1c.getX() << 12);
           sp0x50.vec_28.setY(sp0x50.colour_1c.getY() << 12);
@@ -10133,7 +10133,7 @@ public final class SEffe {
         }
 
         //LAB_801190a8
-        if((effect.scriptIndex_00.get() & 0x8L) != 0) {
+        if((effect._00.get() & 0x8L) != 0) {
           final int v0 = effect._10.get() - 0x1000;
           sp0x90.setX(sp0x50.scale_16.getX() << 12);
           sp0x90.setY(sp0x50.scale_16.getY() << 12);
@@ -10157,11 +10157,11 @@ public final class SEffe {
           int y = sp0x10.transfer.getY() << 12;
           int z = sp0x10.transfer.getZ() << 12;
 
-          final long s5 = effect.scriptIndex_04.get() & 0xff00_0000L;
+          final long s5 = effect._04.get() & 0xff00_0000L;
 
           //LAB_80119204
           for(int s1 = effect._0c.get(); s1 >= 0; s1--) {
-            if((effect.scriptIndex_00.get() & 0x4L) != 0) {
+            if((effect._00.get() & 0x4L) != 0) {
               sp0x50.vec_28.add(sp0x84);
               //LAB_80119254
               //LAB_80119270
@@ -10172,7 +10172,7 @@ public final class SEffe {
             }
 
             //LAB_80119294
-            if((effect.scriptIndex_00.get() & 0x8L) != 0) {
+            if((effect._00.get() & 0x8L) != 0) {
               sp0x90.add(sp0x9c);
 
               //LAB_801192e4
@@ -10210,7 +10210,7 @@ public final class SEffe {
         }
 
         //LAB_80119420
-        if((effect.scriptIndex_04.get() & 0xff00_0000L) == 0x300_0000L && (manager._10.flags_00 & 0x40) == 0) {
+        if((effect._04.get() & 0xff00_0000L) == 0x300_0000L && (manager._10.flags_00 & 0x40) == 0) {
           FUN_800e62a8();
         }
       }
@@ -10240,8 +10240,8 @@ public final class SEffe {
     data.type_5c = _800fb954.get();
 
     final BttlScriptData6cSub30 s3 = (BttlScriptData6cSub30)data.effect_44;
-    s3.scriptIndex_00.set(s2);
-    s3.scriptIndex_04.set(s4);
+    s3._00.set(s2);
+    s3._04.set(s4);
     s3._08.set(s6);
     s3._0c.set(s0);
     s3._10.set(s1);
@@ -10266,9 +10266,12 @@ public final class SEffe {
       data._10.flags_00 = 0x1400_0000;
     } else if(v1 == 0) {
       //LAB_801195a8
+      throw new RuntimeException("The type is " + ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[s4].innerStruct_00).effect_44.getClass().getSimpleName());
+
+/*
       final BttlScriptData6cSubBase1 v1_0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[s4].innerStruct_00).effect_44;
-      s4 = v1_0.scriptIndex_00.get();
-      s3.scriptIndex_04.set(s4);
+      s4 = v1_0._00.get();
+      s3._04.set(s4);
 
       final long a1 = s4 & 0xff00_0000L;
       if(a1 == 0x300_0000L) {
@@ -10285,6 +10288,7 @@ public final class SEffe {
         MEMORY.ref(4, s3.getAddress()).offset(0x20L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x4L).get());
         MEMORY.ref(4, s3.getAddress()).offset(0x24L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x8L).get());
       }
+*/
     }
 
     //LAB_8011967c
