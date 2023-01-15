@@ -127,7 +127,7 @@ public final class Ttle {
   public static int _800c6754;
   public static int flamesZ;
 
-  public static final GsRVIEW2 GsRVIEW2_800c6760 = MEMORY.ref(4, 0x800c6760L, GsRVIEW2::new);
+  public static final GsRVIEW2 GsRVIEW2_800c6760 = new GsRVIEW2();
 
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
 
@@ -373,8 +373,8 @@ public final class Ttle {
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
     GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
-    GsRVIEW2_800c6760.viewpointTwist_18.set(0);
-    GsRVIEW2_800c6760.super_1c.clear();
+    GsRVIEW2_800c6760.viewpointTwist_18 = 0;
+    GsRVIEW2_800c6760.super_1c = null;
     GsSetRefView2(GsRVIEW2_800c6760);
 
     vsyncMode_8007a3b8.set(2);
@@ -1368,8 +1368,8 @@ public final class Ttle {
     //LAB_800cb7f0
     GsSetRefView2(GsRVIEW2_800c6760);
 
-    final UnboundedArrayRef<GsDOBJ2> dobj2s = _800c66d0.dobj2s_00;
-    final UnboundedArrayRef<GsCOORDINATE2> coord2s = _800c66d0.coord2s_04;
+    final GsDOBJ2[] dobj2s = _800c66d0.dobj2s_00;
+    final GsCOORDINATE2[] coord2s = _800c66d0.coord2s_04;
 
     //LAB_800cb834
     for(int i = 0; i < _800c66d0.count_08; i++) {
@@ -1377,12 +1377,12 @@ public final class Ttle {
       final MATRIX sp30 = new MATRIX();
 
       //LAB_800cb85c
-      FUN_800cc26c(rotation, coord2s.get(i));
-      GsGetLws(dobj2s.get(i).coord2_04.deref(), sp10, sp30);
+      FUN_800cc26c(rotation, coord2s[i]);
+      GsGetLws(dobj2s[i].coord2_04, sp10, sp30);
       GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
-      FUN_800cc388(dobj2s.get(i));
+      FUN_800cc388(dobj2s[i]);
     }
 
     //LAB_800cb904
@@ -1445,8 +1445,6 @@ public final class Ttle {
 
   @Method(0x800cbeb4L)
   public static void deallocateTmdRenderer(final TmdRenderingStruct renderer) {
-    free(renderer.coord2s_04.getAddress());
-    free(renderer.dobj2s_00.getAddress());
     free(renderer.tmd_0c.getAddress());
   }
 
@@ -1454,13 +1452,13 @@ public final class Ttle {
   public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
     adjustTmdPointers(tmd.tmd);
 
-    tmdRenderer.dobj2s_00 = MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x10L), UnboundedArrayRef.of(4, GsDOBJ2::new));
-    tmdRenderer.coord2s_04 = MEMORY.ref(4, mallocTail(tmd.tmd.header.nobj.get() * 0x50L), UnboundedArrayRef.of(4, GsCOORDINATE2::new));
+    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj.get()];
+    tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj.get()];
 
     //LAB_800cc02c
     for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
       //LAB_800cc04c
-      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00.get(objIndex), objIndex);
+      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00[objIndex], objIndex);
     }
 
     //LAB_800cc088
@@ -1472,8 +1470,8 @@ public final class Ttle {
   public static void FUN_800cc0b0(final TmdRenderingStruct renderer, @Nullable final GsCOORDINATE2 superCoord2) {
     //LAB_800cc0f0
     for(int i = 0; i < renderer.count_08; i++) {
-      final GsCOORDINATE2 coord2 = renderer.coord2s_04.get(i);
-      final GsDOBJ2 dobj2 = renderer.dobj2s_00.get(i);
+      final GsCOORDINATE2 coord2 = renderer.coord2s_04[i];
+      final GsDOBJ2 dobj2 = renderer.dobj2s_00[i];
 
       //LAB_800cc114
       GsInitCoordinate2(superCoord2, coord2);
@@ -1486,11 +1484,11 @@ public final class Ttle {
   }
 
   @Method(0x800cc1bcL)
-  public static void setDobjAttributes(final TmdRenderingStruct renderer, final long dobjAttribute) {
+  public static void setDobjAttributes(final TmdRenderingStruct renderer, final int dobjAttribute) {
     //LAB_800cc1e4
     for(int i = 0; i < renderer.count_08; i++) {
       //LAB_800cc208
-      renderer.dobj2s_00.get(i).attribute_00.set(dobjAttribute);
+      renderer.dobj2s_00[i].attribute_00 = dobjAttribute;
     }
 
     //LAB_800cc25c
@@ -1503,14 +1501,14 @@ public final class Ttle {
     m.transfer.set(a1.coord.transfer);
     RotMatrix_8003faf0(a0, m);
     a1.coord.set(m);
-    a1.flg.set(0);
+    a1.flg = 0;
   }
 
   @Method(0x800cc388L)
   public static void FUN_800cc388(final GsDOBJ2 dobj2) {
-    final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.deref().vert_top_00.deref();
-    long primitives = dobj2.tmd_08.deref().primitives_10.getPointer();
-    long primitiveCount = dobj2.tmd_08.deref().n_primitive_14.get();
+    final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.vert_top_00.deref();
+    long primitives = dobj2.tmd_08.primitives_10.getPointer();
+    long primitiveCount = dobj2.tmd_08.n_primitive_14.get();
 
     //LAB_800cc408
     while(primitiveCount != 0) {

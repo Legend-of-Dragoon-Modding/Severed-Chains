@@ -27,7 +27,7 @@ public class Renderer {
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
   public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency) {
-    final TmdObjTable objTable = dobj2.tmd_08.deref();
+    final TmdObjTable objTable = dobj2.tmd_08;
     final UnboundedArrayRef<SVECTOR> vertices = objTable.vert_top_00.deref();
     final long normals = objTable.normal_top_08.get();
     long primitives = objTable.primitives_10.getPointer();

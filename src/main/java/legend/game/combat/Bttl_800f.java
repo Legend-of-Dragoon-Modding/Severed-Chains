@@ -836,7 +836,7 @@ public final class Bttl_800f {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < attacker.additionHits_56; i++) {
-        additionMultiplier += getHitMultiplier(attacker.charSlot_276, i, 0x4L);
+        additionMultiplier += getHitMultiplier(attacker.charSlot_276, i, 4);
       }
 
       //LAB_800f2bb4

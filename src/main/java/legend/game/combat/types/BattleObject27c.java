@@ -3,9 +3,6 @@ package legend.game.combat.types;
 import legend.core.gte.SVECTOR;
 import legend.game.types.Model124;
 
-import static legend.core.GameEngine.MEMORY;
-import static legend.game.Scus94491BpeSegment.mallocTail;
-
 public class BattleObject27c extends BattleScriptDataBase {
   public int level_04;
   public int dlevel_06;
@@ -267,7 +264,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public int _142;
   public CombatantStruct1a8 combatant_144;
-  public final Model124 model_148;
+  public final Model124 model_148 = new Model124();
   public int combatantIndex_26c;
   public int animIndex_26e;
   public int animIndex_270;
@@ -276,10 +273,6 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int _274;
   public int charSlot_276;
   public int _278;
-
-  public BattleObject27c() {
-    this.model_148 = MEMORY.ref(4, mallocTail(0x124), Model124::new);
-  }
 
   public int getStat(final int statIndex) {
     return switch(statIndex) {

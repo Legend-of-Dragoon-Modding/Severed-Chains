@@ -3,6 +3,9 @@ package legend.game;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.game.types.ExtendedTmd;
@@ -54,9 +57,6 @@ import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bd7c0;
-import static legend.game.Scus94491BpeSegment_800b._800bd9f8;
-import static legend.game.Scus94491BpeSegment_800b._800bdb38;
 import static legend.game.Scus94491BpeSegment_800b._800bdb90;
 import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
@@ -212,8 +212,8 @@ public final class Scus94491BpeSegment_800e {
     model_800bda10.coord2Param_64.rotate.x.set((short)0);
     model_800bda10.coord2Param_64.rotate.y.set((short)0);
     model_800bda10.coord2Param_64.rotate.z.set((short)0);
-    model_800bda10.colourMap_9d.set(0);
-    model_800bda10.b_cc.set(0);
+    model_800bda10.colourMap_9d = 0;
+    model_800bda10.b_cc = 0;
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(legend.game.types.Model124, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
@@ -225,57 +225,56 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec.get(i).set(0);
+      model.aub_ec[i] = 0;
     }
 
-    model.dobj2ArrPtr_00.set(_800bd9f8);
-    model.coord2ArrPtr_04.set(_800bdb38);
-    model.coord2ParamArrPtr_08.set(_800bd7c0);
-    model.count_c8.set((short)tmdAnimFile.count_0c.get());
+    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.count_0c.get()];
+    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.count_0c.get()];
+    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.count_0c.get()];
+    model.count_c8 = tmdAnimFile.count_0c.get();
 
     final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
-    model.tmd_8c.set(tmd);
-    model.tmdNobj_ca.set(tmd.header.nobj.get());
+    model.tmd_8c = tmd;
+    model.tmdNobj_ca = tmd.header.nobj.get();
     model.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
 
     final long v0 = extendedTmd.ptr_08.get();
     if(v0 == 0) {
       //LAB_800e6c44
-      model.ptr_a8.set(extendedTmd.ptr_08.getAddress());
+      model.ptr_a8 = extendedTmd.ptr_08.getAddress();
 
       //LAB_800e6c54
       for(int i = 0; i < 7; i++) {
-        model.aui_d0.get(i).set(0);
+        model.ptrs_d0[i] = 0;
       }
     } else {
-      model.ptr_a8.set(extendedTmd.getAddress() + v0 / 4 * 4);
+      model.ptr_a8 = extendedTmd.getAddress() + v0 / 4 * 4;
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        model.aui_d0.get(i).set(model.ptr_a8.get() + MEMORY.ref(4, model.ptr_a8.get()).offset(i * 0x4L).get() / 4 * 4);
+        model.ptrs_d0[i] = model.ptr_a8 + MEMORY.ref(4, model.ptr_a8).offset(i * 0x4L).get() / 4 * 4;
         FUN_8002246c(model, i);
       }
     }
 
     //LAB_800e6c64
-    adjustTmdPointers(model.tmd_8c.deref());
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00.deref(), model.coord2ArrPtr_04.deref(), model.coord2ParamArrPtr_08.deref(), model.count_c8.get());
-    model.coord2_14.param.set(model.coord2Param_64);
+    adjustTmdPointers(model.tmd_8c);
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
+    model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.ObjTable_0c, model.tmd_8c.deref(), model.coord2_14, model.count_c8.get(), (short)(model.tmdNobj_ca.get() + 0x1L));
+    prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 
-    model.zOffset_a0.set((short)0);
-    model.ub_a2.set(0);
-    model.ub_a3.set(0);
-    model.ui_f4.set(0);
-    model.ui_f8.set(0);
+    model.zOffset_a0 = 0;
+    model.ub_a2 = 0;
+    model.ub_a3 = 0;
+    model.ui_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.setX(x);
     model.coord2_14.coord.transfer.setY(y);
     model.coord2_14.coord.transfer.setZ(z);
-    model.b_cc.set(0);
+    model.b_cc = 0;
     model.scaleVector_fc.setX(0x1000);
     model.scaleVector_fc.setY(0x1000);
     model.scaleVector_fc.setZ(0x1000);

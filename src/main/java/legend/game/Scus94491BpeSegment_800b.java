@@ -1,9 +1,6 @@
 package legend.game;
 
 import legend.core.gpu.Bpp;
-import legend.core.gte.GsCOORD2PARAM;
-import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -13,7 +10,6 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -160,20 +156,16 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd7b8 = MEMORY.ref(4, 0x800bd7b8L);
 
-  public static final UnboundedArrayRef<GsCOORD2PARAM> _800bd7c0 = MEMORY.ref(4, 0x800bd7c0L, UnboundedArrayRef.of(0x28, GsCOORD2PARAM::new));
-
-  public static final GsRVIEW2 rview2_800bd7e8 = MEMORY.ref(4, 0x800bd7e8L, GsRVIEW2::new);
+  public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
   public static final IntRef submapIndex_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
   public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
   public static final ArrayRef<SobjPos14> sobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(SobjPos14.class, 24, 0x14, SobjPos14::new));
-  public static final UnboundedArrayRef<GsDOBJ2> _800bd9f8 = MEMORY.ref(4, 0x800bd9f8L, UnboundedArrayRef.of(0x10, GsDOBJ2::new));
-  public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
-  public static final Pointer<BattleStage> stage_800bda0c = MEMORY.ref(4, 0x800bda0cL, Pointer.deferred(4, BattleStage::new));
-  public static final Model124 model_800bda10 = MEMORY.ref(4, 0x800bda10L, Model124::new);
 
-  public static final UnboundedArrayRef<GsCOORDINATE2> _800bdb38 = MEMORY.ref(4, 0x800bdb38L, UnboundedArrayRef.of(0x50, GsCOORDINATE2::new));
+  public static final Value _800bda08 = MEMORY.ref(4, 0x800bda08L);
+  public static BattleStage stage_800bda0c;
+  public static final Model124 model_800bda10 = new Model124();
 
   public static final Value _800bdb88 = MEMORY.ref(4, 0x800bdb88L);
 

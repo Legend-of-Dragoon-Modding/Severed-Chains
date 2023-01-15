@@ -18,6 +18,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -422,18 +423,18 @@ public final class SItem {
 
   @Method(0x800fc404L)
   public static void enemyTexturesLoadedCallback(final List<byte[]> files) {
-    final long s2 = _1f8003f4.getPointer(); //TODO
+    final BattleStruct18cb0 s2 = _1f8003f4;
 
     //LAB_800fc434
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
       final CombatantStruct1a8 a0 = getCombatant(i);
 
       if(a0.charSlot_19c.get() < 0) {
-        final long a2 = a0.charIndex_1a2.get() & 0x1ffL;
+        final int enemyIndex = a0.charIndex_1a2.get() & 0x1ff;
 
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((MEMORY.ref(2, s2).offset(enemySlot * 0x2L).get() & 0x1ffL) == a2 && files.get(enemySlot).length != 0) {
+          if((s2.encounterData_00.enemyIndices_00.get(enemySlot).get() & 0x1ff) == enemyIndex && files.get(enemySlot).length != 0) {
             final long tim = mallocTail(files.get(enemySlot).length);
             MEMORY.setBytes(tim, files.get(enemySlot));
             loadCombatantTim(i, tim);

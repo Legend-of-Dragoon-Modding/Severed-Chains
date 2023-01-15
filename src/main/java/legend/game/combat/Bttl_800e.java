@@ -103,9 +103,7 @@ import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -1739,14 +1737,14 @@ public final class Bttl_800e {
     sp0x10._00.set(0);
 
     final int mode;
-    if((dobj2.attribute_00.get() & 0x4000_0000L) == 0) {
+    if((dobj2.attribute_00 & 0x4000_0000) == 0) {
       mode = 0;
     } else {
       mode = 0x12; // Shaded and translucent
     }
 
     //LAB_800e3eb4
-    final TmdObjTable objTable = dobj2.tmd_08.deref();
+    final TmdObjTable objTable = dobj2.tmd_08;
     final UnboundedArrayRef<SVECTOR> vertices = objTable.vert_top_00.deref();
     final long normals = objTable.normal_top_08.get();
     long primitives = objTable.primitives_10.getPointer();
@@ -3636,8 +3634,8 @@ public final class Bttl_800e {
           sp0x10.set(s1.coord2_14.coord);
         } else {
           //LAB_800e8738
-          GsGetLw(s1.coord2ArrPtr_04.deref().get(coord2Index), sp0x10);
-          s1.coord2ArrPtr_04.deref().get(coord2Index).flg.set(0);
+          GsGetLw(s1.coord2ArrPtr_04[coord2Index], sp0x10);
+          s1.coord2ArrPtr_04[coord2Index].flg = 0;
         }
 
         //LAB_800e8774
@@ -3949,20 +3947,20 @@ public final class Bttl_800e {
     //LAB_800e97ec
     final int a0 = script.params_20[1].get();
     if(a0 == -1) {
-      model.b_cc.set(2);
-      model.b_cd.set(-1);
+      model.b_cc = 2;
+      model.b_cd = -1;
     } else if(a0 == -2) {
       //LAB_800e982c
-      model.b_cc.set(3);
+      model.b_cc = 3;
       //LAB_800e980c
     } else if(a0 == -3) {
       //LAB_800e983c
-      model.b_cc.set(0);
+      model.b_cc = 0;
     } else {
       //LAB_800e9844
       //LAB_800e9848
-      model.b_cc.set(3);
-      model.b_cd.set(a0);
+      model.b_cc = 3;
+      model.b_cd = a0;
     }
 
     //LAB_800e984c
@@ -3993,7 +3991,7 @@ public final class Bttl_800e {
     effect.model_134.set(effect.model_10);
     final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
     final Model124 model = effect.model_134.deref();
-    model.colourMap_9d.set((int)_800fb06c.offset(tpage * 0x4L).get());
+    model.colourMap_9d = (int)_800fb06c.offset(tpage * 0x4L).get();
     loadModelTmd(model, effect.extTmd_08.deref());
     loadModelAnim(model, effect.anim_0c.deref());
     FUN_80114f3c(scriptIndex, 0, 0x100, 0);
@@ -4022,7 +4020,7 @@ public final class Bttl_800e {
     s0.tmdType_04.set(animatedTmdType);
     s0.extTmd_08.set(animatedTmdType.tmd_0c.deref());
     s0.anim_0c.set(animatedTmdType.anim_14.deref());
-    s0.model_10.colourMap_9d.set(0);
+    s0.model_10.colourMap_9d = 0;
     s0.model_134.set(s0.model_10);
     loadModelTmd(s0.model_134.deref(), s0.extTmd_08.deref());
     loadModelAnim(s0.model_134.deref(), s0.anim_0c.deref());
@@ -4034,100 +4032,99 @@ public final class Bttl_800e {
 
   @Method(0x800e9ae4L)
   public static void FUN_800e9ae4(final Model124 model, final BattleStage a1) {
-    model.count_c8.set((short)a1.objtable2_550.nobj.get());
-    model.tmdNobj_ca.set(a1.objtable2_550.nobj.get());
-    model.ObjTable_0c.top.set(a1.objtable2_550.top.deref());
-    model.ObjTable_0c.nobj.set(a1.objtable2_550.nobj.get());
+    model.count_c8 = a1.objTable2_550.nobj;
+    model.tmdNobj_ca = a1.objTable2_550.nobj;
+    model.ObjTable_0c.top = a1.objTable2_550.top;
+    model.ObjTable_0c.nobj = a1.objTable2_550.nobj;
+    model.coord2_14.set(a1.coord2_558);
+    model.coord2Param_64.set(a1.param_5a8);
 
-    //LAB_800e9b24
-    memcpy(model.coord2_14.getAddress(), a1.coord2_558.getAddress(), 0x50);
-
-    //LAB_800e9b5c
-    memcpy(model.coord2Param_64.getAddress(), a1.param_5a8.getAddress(), 0x28);
-
-    model.tmd_8c.set(a1.tmd_5d0.deref());
-    model.partTransforms_90.set(a1.rotTrans_5d4.deref());
-    model.partTransforms_94.set(a1.rotTrans_5d8.deref());
-    model.animCount_98.set(a1.partCount_5dc.get());
-    model.s_9a.set(a1._5de.get());
-    model.ub_9c.set(a1._5e0.get());
-    model.colourMap_9d.set(0);
-    model.zOffset_a0.set((short)0x200);
-    model.ub_a2.set(0);
-    model.ub_a3.set(0);
-    model.smallerStructPtr_a4.clear();
-    model.s_9e.set(a1._5e2.get());
-    model.ptr_a8.set(a1._5ec.get());
+    model.tmd_8c = a1.tmd_5d0;
+    model.partTransforms_90 = a1.rotTrans_5d4;
+    model.partTransforms_94 = a1.rotTrans_5d8;
+    model.animCount_98 = a1.partCount_5dc;
+    model.s_9a = a1._5de;
+    model.ub_9c = a1._5e0;
+    model.colourMap_9d = 0;
+    model.zOffset_a0 = 0x200;
+    model.ub_a2 = 0;
+    model.ub_a3 = 0;
+    model.smallerStructPtr_a4 = null;
+    model.s_9e = a1._5e2;
+    model.ptr_a8 = a1._5ec;
 
     //LAB_800e9c0c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec.get(i).set(0);
+      model.aub_ec[i] = 0;
     }
 
-    model.ui_f4.set(a1._5e4.get());
-    model.ui_f8.set(0);
+    model.ui_f4 = a1._5e4;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    model.tpage_108.set(0);
+    model.tpage_108 = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
-    model.b_cc.set(0);
-    model.b_cd.set(0);
+    model.b_cc = 0;
+    model.b_cd = 0;
 
-    final int count = model.count_c8.get();
-    final long addr = mallocHead(count * 0x10 + count * 0x50 + count * 0x28);
-    model.dobj2ArrPtr_00.setPointer(addr);
-    model.coord2ArrPtr_04.setPointer(addr + count * 0x10);
-    model.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
-    memcpy(model.dobj2ArrPtr_00.getPointer(), a1.dobj2s_00.getAddress(), count * 0x10);
-    memcpy(model.coord2ArrPtr_04.getPointer(), a1.coord2s_a0.getAddress(), count * 0x50);
-    memcpy(model.coord2ParamArrPtr_08.getPointer(), a1.params_3c0.getAddress(), count * 0x28);
+    final int count = model.count_c8;
+    model.dobj2ArrPtr_00 = new GsDOBJ2[count];
+    model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
+    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
+
+    for(int i = 0; i < count; i++) {
+      model.dobj2ArrPtr_00[i] = new GsDOBJ2().set(a1.dobj2s_00[i]);
+      model.coord2ArrPtr_04[i] = new GsCOORDINATE2().set(a1.coord2s_a0[i]);
+      model.coord2ParamArrPtr_08[i] = new GsCOORD2PARAM().set(a1.params_3c0[i]);
+    }
 
     final GsCOORDINATE2 parent = model.coord2_14;
 
     //LAB_800e9d34
     for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00.deref().get(i);
-      dobj2.coord2_04.set(model.coord2ArrPtr_04.deref().get(i));
+      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
+      dobj2.coord2_04 = model.coord2ArrPtr_04[i];
 
-      final GsCOORDINATE2 coord2 = dobj2.coord2_04.deref();
-      coord2.param.set(model.coord2ParamArrPtr_08.deref().get(i));
-      coord2.super_.set(parent);
+      final GsCOORDINATE2 coord2 = dobj2.coord2_04;
+      coord2.param = model.coord2ParamArrPtr_08[i];
+      coord2.super_ = parent;
     }
 
     //LAB_800e9d90
-    model.coord2_14.param.set(model.coord2Param_64);
-    model.ObjTable_0c.top.set(model.dobj2ArrPtr_00.deref());
+    model.coord2_14.param = model.coord2Param_64;
+    model.ObjTable_0c.top = model.dobj2ArrPtr_00;
   }
 
   @Method(0x800e9db4L)
   public static void FUN_800e9db4(final Model124 model1, final Model124 model2) {
     //LAB_800e9dd8
-    memcpy(model1.getAddress(), model2.getAddress(), 0x124);
+    model1.set(model2);
 
-    final int count = model1.count_c8.get();
-    final long addr = mallocHead(count * 0x10 + count * 0x50 + count * 0x28);
-    model1.dobj2ArrPtr_00.setPointer(addr);
-    model1.coord2ArrPtr_04.setPointer(addr + count * 0x10);
-    model1.coord2ParamArrPtr_08.setPointer(addr + count * 0x60);
-    memcpy(model1.dobj2ArrPtr_00.getPointer(), model2.dobj2ArrPtr_00.getPointer(), count * 0x10);
-    memcpy(model1.coord2ArrPtr_04.getPointer(), model2.coord2ArrPtr_04.getPointer(), count * 0x50);
-    memcpy(model1.coord2ParamArrPtr_08.getPointer(), model2.coord2ParamArrPtr_08.getPointer(), count * 0x28);
+    final int count = model1.count_c8;
+    model1.dobj2ArrPtr_00 = new GsDOBJ2[count];
+    model1.coord2ArrPtr_04 = new GsCOORDINATE2[count];
+    model1.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
+
+    for(int i = 0; i < count; i++) {
+      model1.dobj2ArrPtr_00[i] = new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]);
+      model1.coord2ArrPtr_04[i] = new GsCOORDINATE2().set(model2.coord2ArrPtr_04[i]);
+      model1.coord2ParamArrPtr_08[i] = new GsCOORD2PARAM().set(model2.coord2ParamArrPtr_08[i]);
+    }
 
     final GsCOORDINATE2 parent = model1.coord2_14;
 
     //LAB_800e9ee8
     for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00.deref().get(i);
-      dobj2.coord2_04.set(model1.coord2ArrPtr_04.deref().get(i));
+      final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00[i];
+      dobj2.coord2_04 = model1.coord2ArrPtr_04[i];
 
-      final GsCOORDINATE2 coord2 = dobj2.coord2_04.deref();
-      coord2.param.set(model1.coord2ParamArrPtr_08.deref().get(i));
-      coord2.super_.set(parent);
+      final GsCOORDINATE2 coord2 = dobj2.coord2_04;
+      coord2.param = model1.coord2ParamArrPtr_08[i];
+      coord2.super_ = parent;
     }
 
     //LAB_800e9f44
-    model1.coord2_14.param.set(model1.coord2Param_64);
-    model1.ObjTable_0c.top.set(model1.dobj2ArrPtr_00.deref());
+    model1.coord2_14.param = model1.coord2Param_64;
+    model1.ObjTable_0c.top = model1.dobj2ArrPtr_00;
   }
 
   @Method(0x800e9f68L)
@@ -4153,7 +4150,7 @@ public final class Bttl_800e {
     s0.model_134.set(s0.model_10);
 
     if((s2 & 0xff00_0000) == 0x700_0000) {
-      FUN_800e9ae4(s0.model_10, _1f8003f4.deref().stage_963c);
+      FUN_800e9ae4(s0.model_10, _1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
       FUN_800e9db4(s0.model_10, ((BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00).model_148);
@@ -4173,7 +4170,7 @@ public final class Bttl_800e {
   public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c effectManager, final int coord2Index) {
     final Model124 model = ((BttlScriptData6cSub13c)effectManager.effect_44).model_10;
     applyModelRotationAndScale(model);
-    return model.coord2ArrPtr_04.deref().get(coord2Index);
+    return model.coord2ArrPtr_04[coord2Index];
   }
 
   @Method(0x800ea13cL)
@@ -4182,8 +4179,10 @@ public final class Bttl_800e {
     final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134.deref();
     final int a1 = a0.params_20[1].get() & 0xffff;
 
-    //TODO
-    MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)a1 >> 5) * 0x4L).oru(1L << (a1 & 0x1f));
+    final int index = a1 >>> 5;
+    final int shift = a1 & 0x1f;
+
+    model.ui_f4 |= 0x1L << shift + index * 32;
     return FlowControl.CONTINUE;
   }
 
@@ -4193,8 +4192,10 @@ public final class Bttl_800e {
     final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134.deref();
     final int v1 = a0.params_20[1].get() & 0xffff;
 
-    //TODO
-    MEMORY.ref(4, model.ui_f4.getAddress()).offset(((short)v1 >> 5) * 0x4L).and(~(1L << (v1 & 0x1f)));
+    final int index = v1 >>> 5;
+    final int shift = v1 & 0x1f;
+
+    model.ui_f4 &= ~(0x1L << shift + index * 32);
     return FlowControl.CONTINUE;
   }
 
@@ -4257,7 +4258,7 @@ public final class Bttl_800e {
       a0.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      a0.params_20[1].set((manager._10.flags_24 + 2) / effect.model_134.deref().s_9a.get());
+      a0.params_20[1].set((manager._10.flags_24 + 2) / effect.model_134.deref().s_9a);
     }
 
     //LAB_800ea3e4
@@ -4273,9 +4274,9 @@ public final class Bttl_800e {
     final Model124 model = effect.model_134.deref();
     model.coord2Param_64.rotate.set(manager._10.rot_10);
     model.scaleVector_fc.set(manager._10.scale_16);
-    model.zOffset_a0.set((short)manager._10.z_22);
+    model.zOffset_a0 = manager._10.z_22;
     model.coord2_14.coord.set(sp0x10);
-    model.coord2_14.flg.set(0);
+    model.coord2_14.flg = 0;
 
     if(!effect.anim_0c.isNull()) {
       FUN_800de2e8(model, manager._10.flags_24);
@@ -4298,16 +4299,16 @@ public final class Bttl_800e {
       //LAB_800ea574
       final Model124 model = effect.model_134.deref();
 
-      final int oldTpage = model.tpage_108.get();
+      final int oldTpage = model.tpage_108;
 
       if((manager._10.flags_00 & 0x4000_0000L) != 0) {
-        model.tpage_108.set(manager._10.flags_00 >>> 23 & 0x60);
+        model.tpage_108 = manager._10.flags_00 >>> 23 & 0x60;
       }
 
       //LAB_800ea598
       FUN_800dd89c(model, manager._10.flags_00);
 
-      model.tpage_108.set(oldTpage);
+      model.tpage_108 = oldTpage;
 
       if((manager._10.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
@@ -4790,42 +4791,42 @@ public final class Bttl_800e {
     final int y = stage.coord2_558.coord.transfer.getY();
     final int z = stage.coord2_558.coord.transfer.getZ();
 
-    stage_800bda0c.set(stage);
+    stage_800bda0c = stage;
 
     //LAB_800eb9fc
     for(int i = 0; i < 10; i++) {
-      stage._618.get(i).set(0);
+      stage._618[i] = 0;
     }
 
-    stage.tmd_5d0.set(extTmd.tmdPtr_00.deref().tmd);
+    stage.tmd_5d0 = extTmd.tmdPtr_00.deref().tmd;
 
     if(extTmd.ptr_08.get() != 0) {
-      stage._5ec.set(extTmd.getAddress() + extTmd.ptr_08.get() / 0x4L * 0x4L); //TODO
+      stage._5ec = extTmd.getAddress() + extTmd.ptr_08.get() / 0x4L * 0x4L; //TODO
 
       //LAB_800eba38
       for(int i = 0; i < 10; i++) {
-        stage._5f0.get(i).set(stage._5ec.get() + MEMORY.ref(2, stage._5ec.get()).offset(i * 0x4L).get());
+        stage._5f0[i] = stage._5ec + MEMORY.ref(2, stage._5ec).offset(i * 0x4L).get();
         FUN_800ec86c(stage, i);
       }
     } else {
       //LAB_800eba74
       //LAB_800eba7c
       for(int i = 0; i < 10; i++) {
-        stage._5f0.get(i).set(0);
+        stage._5f0[i] = 0;
       }
     }
 
     //LAB_800eba8c
-    adjustTmdPointers(stage.tmd_5d0.deref());
-    initObjTable2(stage.objtable2_550, stage.dobj2s_00, stage.coord2s_a0, stage.params_3c0, 10);
-    stage.coord2_558.param.set(stage.param_5a8);
+    adjustTmdPointers(stage.tmd_5d0);
+    initObjTable2(stage.objTable2_550, stage.dobj2s_00, stage.coord2s_a0, stage.params_3c0, 10);
+    stage.coord2_558.param = stage.param_5a8;
     GsInitCoordinate2(null, stage.coord2_558);
-    prepareObjTable2(stage.objtable2_550, stage.tmd_5d0.deref(), stage.coord2_558, 10, extTmd.tmdPtr_00.deref().tmd.header.nobj.get() + 1);
+    prepareObjTable2(stage.objTable2_550, stage.tmd_5d0, stage.coord2_558, 10, extTmd.tmdPtr_00.deref().tmd.header.nobj.get() + 1);
     applyInitialStageTransforms(stage, tmdAnim);
 
     stage.coord2_558.coord.transfer.set(x, y, z);
-    stage._5e4.set(0);
-    stage.z_5e8.set((short)0x200);
+    stage._5e4 = 0;
+    stage.z_5e8 = 0x200;
   }
 
   @Method(0x800ebb58L)
@@ -4886,10 +4887,10 @@ public final class Bttl_800e {
     final int s4;
     final int s6;
 
-    v0 = struct._5f0.get(index).get(); //TODO ptr to RECT?
+    v0 = struct._5f0[index]; //TODO ptr to RECT?
 
     if(v0 == 0) {
-      struct._618.get(index).set(0);
+      struct._618[index] = 0;
       return;
     }
 
@@ -4903,18 +4904,18 @@ public final class Bttl_800e {
     a2 = v0 + 0x8L;
 
     // There was a loop here, but each iteration overwrote the results from the previous iteration... I collapsed it into a single iteration
-    a2 += (struct._65e.get(index).get() - 1) * 0x4L;
+    a2 += (struct._65e[index] - 1) * 0x4L;
     int s0 = (short)MEMORY.ref(2, a2).offset(0x2L).get();
     final int t1 = (short)(MEMORY.ref(2, a2).offset(0x0L).get() & 1);
     final int t0 = (short)(MEMORY.ref(2, a2).offset(0x0L).get() >>> 1);
     a2 = a2 + 0x4L;
 
     //LAB_800ebdf0
-    if((s0 & 0xfL) != 0 && (struct._622.get(index).get() & 0xfL) != 0) {
-      struct._622.get(index).decr();
+    if((s0 & 0xf) != 0 && (struct._622[index] & 0xf) != 0) {
+      struct._622[index]--;
 
-      if(struct._622.get(index).get() == 0) {
-        struct._622.get(index).set(s0);
+      if(struct._622[index] == 0) {
+        struct._622[index] = s0;
         s0 = 16;
       } else {
         //LAB_800ebe34
@@ -4923,20 +4924,17 @@ public final class Bttl_800e {
     }
 
     //LAB_800ebe38
-    struct._64a.get(index).incr();
+    struct._64a[index]++;
 
-    if(struct._64a.get(index).get() >= (short)t0) {
-      struct._64a.get(index).set((short)0);
+    if(struct._64a[index] >= (short)t0) {
+      struct._64a[index] = 0;
 
       if(MEMORY.ref(2, a2).offset(0x0L).get() != 0xffffL) {
-        v0 = struct._65e.get(index).get() + 0x1L;
+        struct._65e[index]++;
       } else {
         //LAB_800ebe88
-        v0 = 0x1L;
+        struct._65e[index] = 1;
       }
-
-      //LAB_800ebe8c
-      struct._65e.get(index).set((short)v0);
     }
 
     //LAB_800ebe94
@@ -4969,10 +4967,10 @@ public final class Bttl_800e {
 
     GsInitCoordinate2(model.coord2_14, s2.coord2_14);
 
-    if(model.b_cc.get() != 3) {
+    if(model.b_cc != 3) {
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
 
-      if(model.b_cc.get() == 1) {
+      if(model.b_cc == 1) {
         s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
@@ -4983,22 +4981,22 @@ public final class Bttl_800e {
       s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
     } else {
       //LAB_800ec2ec
-      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04.deref().get(model.b_cd.get()).coord.transfer.getX());
+      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getX());
       s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - (model.coord2_14.coord.transfer.getY() << 12) / model.scaleVector_fc.getY());
-      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04.deref().get(model.b_cd.get()).coord.transfer.getZ());
+      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getZ());
     }
 
     //LAB_800ec370
-    s2.zOffset_a0.set((short)(model.zOffset_a0.get() + 0x10));
+    s2.zOffset_a0 = model.zOffset_a0 + 16;
     s2.scaleVector_fc.setX(model.vector_10c.getX() / 4);
     s2.scaleVector_fc.setY(model.vector_10c.getY() / 4);
     s2.scaleVector_fc.setZ(model.vector_10c.getZ() / 4);
     RotMatrix_8003faf0(s2.coord2Param_64.rotate, s2.coord2_14.coord);
     final VECTOR scale = new VECTOR().set(s2.scaleVector_fc);
     ScaleMatrixL(s2.coord2_14.coord, scale);
-    s2.coord2_14.flg.set(0);
-    final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00.deref().get(0).coord2_04.deref();
-    final GsCOORD2PARAM s0 = v0.param.deref();
+    s2.coord2_14.flg = 0;
+    final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
+    final GsCOORD2PARAM s0 = v0.param;
     s0.rotate.set((short)0, (short)0, (short)0);
     RotMatrix_80040780(s0.rotate, v0.coord);
     s0.trans.set(0, 0, 0);
@@ -5006,7 +5004,7 @@ public final class Bttl_800e {
 
     final MATRIX sp0x30 = new MATRIX();
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLws(s2.ObjTable_0c.top.deref().get(0).coord2_04.deref(), sp0x30, sp0x10);
+    GsGetLws(s2.ObjTable_0c.top[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
     CPU.CTC2(sp0x10.getPacked(0), 0);
     CPU.CTC2(sp0x10.getPacked(2), 1);
@@ -5016,8 +5014,8 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    Renderer.renderDobj2(s2.ObjTable_0c.top.deref().get(0), true);
-    s2.coord2ArrPtr_04.deref().get(0).flg.decr();
+    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true);
+    s2.coord2ArrPtr_04[0].flg--;
   }
 
   @Method(0x800ec4bcL)
@@ -5034,7 +5032,7 @@ public final class Bttl_800e {
   public static void FUN_800ec51c(final BattleStage stage) {
     //LAB_800ec548
     for(int i = 0; i < 10; i++) {
-      if(stage._618.get(i).get() != 0) {
+      if(stage._618[i] != 0) {
         FUN_800ebd34(stage, i);
       }
 
@@ -5042,16 +5040,16 @@ public final class Bttl_800e {
     }
 
     tmdGp0Tpage_1f8003ec.set(0);
-    zOffset_1f8003e8.set(stage.z_5e8.get());
+    zOffset_1f8003e8.set(stage.z_5e8);
 
     //LAB_800ec5a0
     long s4 = 0x1L;
-    for(int i = 0; i < stage.objtable2_550.nobj.get(); i++) {
-      final GsDOBJ2 dobj2 = stage.objtable2_550.top.deref().get(i);
-      if((s4 & stage._5e4.get()) == 0) {
+    for(int i = 0; i < stage.objTable2_550.nobj; i++) {
+      final GsDOBJ2 dobj2 = stage.objTable2_550.top[i];
+      if((s4 & stage._5e4) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
-        GsGetLws(dobj2.coord2_04.deref(), lw, ls);
+        GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
         CPU.CTC2(ls.getPacked(0), 0);
         CPU.CTC2(ls.getPacked(2), 1);
@@ -5074,10 +5072,10 @@ public final class Bttl_800e {
   @Method(0x800ec63cL)
   public static void applyStagePartAnimations(final BattleStage stage) {
     //LAB_800ec688
-    for(int i = 0; i < stage.partCount_5dc.get(); i++) {
-      final ModelPartTransforms rotTrans = stage.rotTrans_5d8.deref().get(i);
-      final GsCOORDINATE2 coord2 = stage.dobj2s_00.get(i).coord2_04.deref();
-      final GsCOORD2PARAM param = coord2.param.deref();
+    for(int i = 0; i < stage.partCount_5dc; i++) {
+      final ModelPartTransforms rotTrans = stage.rotTrans_5d8.get(i);
+      final GsCOORDINATE2 coord2 = stage.dobj2s_00[i].coord2_04;
+      final GsCOORD2PARAM param = coord2.param;
 
       param.rotate.set(rotTrans.rotate_00);
       RotMatrix_80040010(param.rotate, coord2.coord);
@@ -5087,26 +5085,26 @@ public final class Bttl_800e {
     }
 
     //LAB_800ec710
-    stage.rotTrans_5d8.set(stage.rotTrans_5d8.deref().slice(stage.partCount_5dc.get()));
+    stage.rotTrans_5d8 = stage.rotTrans_5d8.slice(stage.partCount_5dc);
   }
 
   @Method(0x800ec744L)
   public static void FUN_800ec744(final BattleStage stage) {
     RotMatrix_8003faf0(stage.param_5a8.rotate, stage.coord2_558.coord);
-    stage.coord2_558.flg.set(0);
+    stage.coord2_558.flg = 0;
   }
 
   @Method(0x800ec774L)
   public static void applyInitialStageTransforms(final BattleStage stage, final TmdAnimationFile anim) {
-    stage.rotTrans_5d4.set(anim.partTransforms_10);
-    stage.rotTrans_5d8.set(anim.partTransforms_10);
-    stage.partCount_5dc.set((short)anim.count_0c.get());
-    stage._5de.set(anim._0e.get());
-    stage._5e0.set((short)0);
+    stage.rotTrans_5d4 = anim.partTransforms_10;
+    stage.rotTrans_5d8 = anim.partTransforms_10;
+    stage.partCount_5dc = anim.count_0c.get();
+    stage._5de = anim._0e.get();
+    stage._5e0 = 0;
     applyStagePartAnimations(stage);
-    stage._5e0.set((short)1);
-    stage._5e2.set(stage._5de.get());
-    stage.rotTrans_5d8.set(stage.rotTrans_5d4.deref());
+    stage._5e0 = 1;
+    stage._5e2 = stage._5de;
+    stage.rotTrans_5d8 = stage.rotTrans_5d4;
   }
 
   @Method(0x800ec7e4L)
@@ -5122,24 +5120,24 @@ public final class Bttl_800e {
 
   @Method(0x800ec86cL)
   public static void FUN_800ec86c(final BattleStage stage, final int index) {
-    final long a2 = stage._5f0.get(index).get();
+    final long a2 = stage._5f0[index];
 
     if(a2 == 0) {
-      stage._618.get(index).set(0);
+      stage._618[index] = 0;
       return;
     }
 
     //LAB_800ec890
     if(MEMORY.ref(2, a2).get() == 0xffffL) {
-      stage._5f0.get(index).set(0);
+      stage._5f0[index] = 0;
       return;
     }
 
     //LAB_800ec8a8
-    stage._618.get(index).set(1);
-    stage._622.get(index).set((int)MEMORY.ref(2, a2).offset(0xaL).get());
-    stage._64a.get(index).set((short)0);
-    stage._65e.get(index).set((short)1);
+    stage._618[index] = 1;
+    stage._622[index] = (int)MEMORY.ref(2, a2).offset(0xaL).get();
+    stage._64a[index] = 0;
+    stage._65e[index] = 1;
   }
 
   /** Stage darkening for counterattacks change the clut, this saves a backup copy */
@@ -5168,19 +5166,19 @@ public final class Bttl_800e {
 
   @Method(0x800ec974L)
   public static void renderBttlModel(final Model124 model) {
-    tmdGp0Tpage_1f8003ec.set(model.tpage_108.get());
-    zOffset_1f8003e8.set(model.zOffset_a0.get());
+    tmdGp0Tpage_1f8003ec.set(model.tpage_108);
+    zOffset_1f8003e8.set(model.zOffset_a0);
 
     //LAB_800ec9d0
-    long s6 = model.ui_f4.get();
+    final long s6 = model.ui_f4;
     long s0 = 0x1L;
-    for(int i = 0; i < model.ObjTable_0c.nobj.get(); i++) {
-      final GsDOBJ2 s2 = model.ObjTable_0c.top.deref().get(i);
+    for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
+      final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
 
       if((s0 & s6) == 0) {
         final MATRIX sp0x30 = new MATRIX();
         final MATRIX sp0x10 = new MATRIX();
-        GsGetLws(s2.coord2_04.deref(), sp0x30, sp0x10);
+        GsGetLws(s2.coord2_04, sp0x30, sp0x10);
         GsSetLightMatrix(sp0x30);
         CPU.CTC2(sp0x10.getPacked(0), 0);
         CPU.CTC2(sp0x10.getPacked(2), 1);
@@ -5195,16 +5193,12 @@ public final class Bttl_800e {
 
       //LAB_800eca38
       s0 = s0 << 1;
-      if((int)s0 == 0) {
-        s0 = 0x1L;
-        s6 = model.ui_f8.get();
-      }
 
       //LAB_800eca4c
     }
 
     //LAB_800eca58
-    if(model.b_cc.get() != 0) {
+    if(model.b_cc != 0) {
       FUN_800ec258(model);
     }
 
@@ -5355,7 +5349,7 @@ public final class Bttl_800e {
   @Method(0x800ee2acL)
   public static FlowControl scriptSetBobjZOffset(final RunningScript a0) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.zOffset_a0.set((short)a0.params_20[1].get());
+    bobj.model_148.zOffset_a0 = a0.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
@@ -5377,31 +5371,31 @@ public final class Bttl_800e {
   @Method(0x800ee384L)
   public static FlowControl FUN_800ee384(final RunningScript a0) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.b_cc.set(2);
-    bobj.model_148.b_cd.set(-1);
+    bobj.model_148.b_cc = 2;
+    bobj.model_148.b_cd = -1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee3c0L)
   public static FlowControl FUN_800ee3c0(final RunningScript a0) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    v1.model_148.b_cc.set(3);
-    v1.model_148.b_cd.set(a0.params_20[1].get());
+    v1.model_148.b_cc = 3;
+    v1.model_148.b_cd = a0.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee408L)
   public static FlowControl FUN_800ee408(final RunningScript a0) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    final int a0_0 = bobj.model_148.b_cd.get();
+    final int a0_0 = bobj.model_148.b_cd;
     if(a0_0 == -2) {
       //LAB_800ee450
-      bobj.model_148.b_cc.set(0);
+      bobj.model_148.b_cc = 0;
     } else if(a0_0 == -1) {
-      bobj.model_148.b_cc.set(2);
+      bobj.model_148.b_cc = 2;
     } else {
       //LAB_800ee458
-      bobj.model_148.b_cc.set(3);
+      bobj.model_148.b_cc = 3;
     }
 
     //LAB_800ee460
@@ -5411,7 +5405,7 @@ public final class Bttl_800e {
   @Method(0x800ee468L)
   public static FlowControl FUN_800ee468(final RunningScript a0) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.b_cc.set(0);
+    bobj.model_148.b_cc = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5438,25 +5432,25 @@ public final class Bttl_800e {
 
   @Method(0x800ee574L)
   public static FlowControl scriptGetStageNobj(final RunningScript script) {
-    script.params_20[0].set(stage_800bda0c.deref().objtable2_550.nobj.get());
+    script.params_20[0].set(stage_800bda0c.objTable2_550.nobj);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee594L)
   public static FlowControl FUN_800ee594(final RunningScript a0) {
-    stage_800bda0c.deref()._5e4.or(1L << a0.params_20[0].get());
+    stage_800bda0c._5e4 |= 1L << a0.params_20[0].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee5c0L)
   public static FlowControl FUN_800ee5c0(final RunningScript a0) {
-    stage_800bda0c.deref()._5e4.and(~(1L << a0.params_20[0].get()));
+    stage_800bda0c._5e4 &= ~(1L << a0.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee5f0L)
   public static FlowControl scriptSetStageZ(final RunningScript script) {
-    stage_800bda0c.deref().z_5e8.set((short)script.params_20[0].get());
+    stage_800bda0c.z_5e8 = script.params_20[0].get();
     return FlowControl.CONTINUE;
   }
 

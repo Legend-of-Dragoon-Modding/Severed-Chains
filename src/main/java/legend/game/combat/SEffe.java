@@ -1067,7 +1067,7 @@ public final class SEffe {
   }
 
   @Method(0x800fcf20L)
-  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable a1, final long a2, final int tpage) {
+  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable tmd, final long a2, final int tpage) {
     if(MEMORY.ref(4, a2).offset(0x0L).getSigned() >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
@@ -1095,15 +1095,13 @@ public final class SEffe {
       }
 
       //LAB_800fd040
-      final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
-      final GsDOBJ2 sp0x60 = new GsDOBJ2(tmp.get());
-      sp0x60.attribute_00.set(MEMORY.ref(4, a2).offset(0x0L).get());
-      sp0x60.tmd_08.set(a1);
+      final GsDOBJ2 sp0x60 = new GsDOBJ2();
+      sp0x60.attribute_00 = (int)MEMORY.ref(4, a2).offset(0x0L).get();
+      sp0x60.tmd_08 = tmd;
       renderCtmd(sp0x60);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
         FUN_800e62a8();
       }
-      tmp.release();
     }
 
     //LAB_800fd064
@@ -3595,7 +3593,7 @@ public final class SEffe {
 
     final GsCOORDINATE2 coord2;
     if(a2 == 0) {
-      coord2 = v0.model_148.coord2ArrPtr_04.deref().get(1);
+      coord2 = v0.model_148.coord2ArrPtr_04[1];
     } else {
       //LAB_80105fe4
       coord2 = v0.model_148.coord2_14;
@@ -3624,15 +3622,15 @@ public final class SEffe {
   }
 
   @Method(0x801061bcL)
-  public static long FUN_801061bc(final int charSlot, final long a1, final long a2, final long a3) {
+  public static long FUN_801061bc(final int charSlot, final int hitNum, final int a2, final long a3) {
     //LAB_80106264
     final long v0;
     if(a3 == 0x1L || a3 == 0x3L) {
       //LAB_80106274
-      v0 = _800fb7c0.offset(a1 * 0x10L).offset(1, a2).get();
+      v0 = _800fb7c0.offset(hitNum * 0x10L).offset(1, a2).get();
     } else {
       //LAB_8010628c
-      v0 = getHitMultiplier(charSlot, a1, a2) & 0xffL;
+      v0 = getHitMultiplier(charSlot, hitNum, a2) & 0xffL;
     }
 
     //LAB_80106298
@@ -3642,20 +3640,20 @@ public final class SEffe {
   @Method(0x801062a8L)
   public static void FUN_801062a8(final int scriptIndex, final int a1, final AdditionOverlaysEffect44 a2, final long a3) {
     long v0;
-    long s3;
+    int hitNum;
     long s6;
     long s7;
     final BattleObject27c s5 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     //LAB_8010633c
-    for(s3 = 0; s3 < 8; s3++) {
-      if((FUN_801061bc(s5.charSlot_276, s3, 0x1L, a3) & 0xffL) == 0) {
+    for(hitNum = 0; hitNum < 8; hitNum++) {
+      if((FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xffL) == 0) {
         break;
       }
     }
 
     //LAB_80106374
-    v0 = s3 - 0x1L;
+    v0 = hitNum - 1;
     a2._30.set((int)v0);
     a2.scriptIndex_00.set(scriptIndex);
     a2.scriptIndex_04.set(a1);
@@ -3666,13 +3664,13 @@ public final class SEffe {
     a2._39.set(0);
     a2._3a.set((int)a3);
     a2._40.set(mallocTail((v0 & 0xffL) * 0x20L));
-    s6 = FUN_801061bc(s5.charSlot_276, 0, 0xfL, a3) & 0xffL;
+    s6 = FUN_801061bc(s5.charSlot_276, 0, 15, a3) & 0xffL;
     a2._36.set((int)s6);
 
     s7 = a2._40.get();
 
     //LAB_801063f0
-    for(s3 = 0; s3 < a2._30.get(); s3++) {
+    for(hitNum = 0; hitNum < a2._30.get(); hitNum++) {
       MEMORY.ref(1, s7).offset(0x0L).setu(0x1L);
       MEMORY.ref(1, s7).offset(0x1L).setu(0);
       MEMORY.ref(2, s7).offset(0x8L).setu(0);
@@ -3680,13 +3678,13 @@ public final class SEffe {
       seed_800fa754.advance();
       MEMORY.ref(1, s7).offset(0x2L).setu(0x3L);
       MEMORY.ref(1, s7).offset(0x1cL).setu(0);
-      _8011a014.offset(s3).offset(1, 0x0L).setu(0);
-      v0 = FUN_801061bc(s5.charSlot_276, s3, 0x1L, a3) & 0xffL;
+      _8011a014.offset(hitNum).offset(1, 0x0L).setu(0);
+      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xffL;
       s6 = s6 + v0;
       MEMORY.ref(2, s7).offset(0xaL).setu(v0);
-      v0 = FUN_801061bc(s5.charSlot_276, s3, 0x2L, a3) & 0xffL;
+      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 2, a3) & 0xffL;
       MEMORY.ref(2, s7).offset(0xcL).setu(v0);
-      v0 = FUN_801061bc(s5.charSlot_276, s3, 0x3L, a3) & 0xffL;
+      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 3, a3) & 0xffL;
       MEMORY.ref(2, s7).offset(0xeL).setu(v0);
       long a3_0 = MEMORY.ref(2, s7).offset(0x10L).get() + MEMORY.ref(2, s7).offset(0xcL).get();
       MEMORY.ref(2, s7).offset(0x10L).setu(a3_0 - (short)v0 / 2 + 1);
@@ -6267,8 +6265,7 @@ public final class SEffe {
     final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
     effect._04.incr();
 
-    final Memory.TemporaryReservation dobj2Tmp = MEMORY.temp(0x10);
-    final GsDOBJ2 dobj2 = new GsDOBJ2(dobj2Tmp.get());
+    final GsDOBJ2 dobj2 = new GsDOBJ2();
     final VECTOR trans = new VECTOR();
     final SVECTOR rot = new SVECTOR();
     final MATRIX transforms = new MATRIX();
@@ -6291,7 +6288,7 @@ public final class SEffe {
         TransMatrix(transforms, trans);
         ScaleMatrix(transforms, scale);
 
-        dobj2.tmd_08.set(instance.tmd_70.deref());
+        dobj2.tmd_08 = instance.tmd_70.deref();
 
         MulMatrix0(worldToScreenMatrix_800c3548, transforms, sp0x98);
         setRotTransMatrix(sp0x98);
@@ -6304,7 +6301,6 @@ public final class SEffe {
     }
 
     //LAB_8010e020
-    dobj2Tmp.release();
   }
 
   @Method(0x8010e04cL)
@@ -6737,8 +6733,7 @@ public final class SEffe {
       final MATRIX sp0xb8 = new MATRIX();
       final MATRIX sp0xd8 = new MATRIX();
 
-      final Memory.TemporaryReservation dobjTmp = MEMORY.temp(0x10);
-      final GsDOBJ2 sp0xf8 = new GsDOBJ2(dobjTmp.get());
+      final GsDOBJ2 sp0xf8 = new GsDOBJ2();
 
       //LAB_8010f3a4
       for(int i = 0; i < effect.count_00.get(); i++) {
@@ -6777,14 +6772,14 @@ public final class SEffe {
           ScaleMatrix(sp0x3c, sp0xa8);
           final long sp80 = 0;
           final long sp38 = 0;
-          sp0xf8.attribute_00.set(manager._10.flags_00 & 0xffff_ffffL);
+          sp0xf8.attribute_00 = manager._10.flags_00;
           MulMatrix0(worldToScreenMatrix_800c3548, sp0x3c, sp0x88);
           setRotTransMatrix(sp0x88);
           zOffset_1f8003e8.set(0);
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
 
           if(MEMORY.ref(1, s3).offset(0x01L).get() != 0) {
-            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x98L).get()); //TODO
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x98L).get(), TmdObjTable::new);
             renderCtmd(sp0xf8);
           }
 
@@ -6792,10 +6787,10 @@ public final class SEffe {
           final long v1 = MEMORY.ref(2, s3).offset(0xa2L).getSigned();
 
           if(v1 < 9) {
-            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x94L).get()); //TODO
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x94L).get(), TmdObjTable::new);
             renderCtmd(sp0xf8);
           } else if(v1 >= 11) {
-            sp0xf8.tmd_08.setPointer(MEMORY.ref(4, s3).offset(0x9cL).get()); //TODO
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x9cL).get(), TmdObjTable::new);
             renderCtmd(sp0xf8);
           }
 
@@ -6808,8 +6803,6 @@ public final class SEffe {
         //LAB_8010f624
         s3 += 0xa8L;
       }
-
-      dobjTmp.release();
     }
 
     //LAB_8010f640
@@ -7501,13 +7494,13 @@ public final class SEffe {
         //LAB_80111998
         final BttlScriptData6cSub13c struct13c = (BttlScriptData6cSub13c)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).effect_44;
         final Model124 model = struct13c.model_134.deref();
-        model.coord2_14.flg.set(0);
+        model.coord2_14.flg = 0;
         model.coord2_14.coord.set(sp0x10);
 
         //LAB_80111a0c
-        final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04.deref().get(a2);
+        final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04[a2];
         GsGetLw(coord2, a0);
-        coord2.flg.set(0);
+        coord2.flg = 0;
       } else if(v1 == 0) {
         //LAB_80111778
         final long a2_0 = effects.effect_44.getAddress(); //TODO
@@ -7546,9 +7539,9 @@ public final class SEffe {
     } else {
       final Model124 model = ((BattleObject27c)s0).model_148;
       applyModelRotationAndScale(model);
-      final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04.deref().get(a2);
+      final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04[a2];
       GsGetLw(coord2, a0);
-      coord2.flg.set(0);
+      coord2.flg = 0;
     }
 
     //LAB_80111a3c
@@ -8783,27 +8776,27 @@ public final class SEffe {
       //LAB_80115d84
       if(a0 == 0) {
         //LAB_80115dc0
-        if((stage_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
+        if((stage_800bda0c._5e4 & 0x8000) != 0) {
           FUN_80115c2c(6, 16);
         }
 
         //LAB_80115de8
-        stage_800bda0c.deref()._5e4.and(~(_00 | _02 | _04));
+        stage_800bda0c._5e4 &= ~(_00 | _02 | _04);
         //LAB_80115da8
       } else if(a0 == 1) {
         //LAB_80115e18
-        stage_800bda0c.deref()._5e4.or(_00);
+        stage_800bda0c._5e4 |= _00;
       } else if(a0 == 2) {
         //LAB_80115e34
-        stage_800bda0c.deref()._5e4.or(_02);
+        stage_800bda0c._5e4 |= _02;
 
-        if((stage_800bda0c.deref()._5e4.get() & 0x8000L) != 0) {
+        if((stage_800bda0c._5e4 & 0x8000) != 0) {
           FUN_80115c2c(16, 6);
         }
       } else if(a0 == 3) {
         //LAB_80115e70
         //LAB_80115e8c
-        stage_800bda0c.deref()._5e4.or(_04);
+        stage_800bda0c._5e4 |= _04;
       }
     }
 
@@ -8831,19 +8824,20 @@ public final class SEffe {
       //LAB_80115f54
       final BattleScriptDataBase a0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[a2].innerStruct_00;
       final long v0;
-      if(BattleScriptDataBase.EM__.equals(a0.magic_00)) {
+      if(!BattleScriptDataBase.EM__.equals(a0.magic_00)) {
+        //LAB_8011604c
+        v0 = _800fb0ec.offset(((BattleObject27c)a0).model_148.colourMap_9d * 0x4L).get();
+        u = (int)((v0 & 0xf) << 6);
+        v = (int)((v0 & 0x10) << 4);
+        w = 0x100;
+        h = 0x100;
+      } else {
         final EffectManagerData6c manager = (EffectManagerData6c)a0;
         final int v1 = manager.flags_04 & 0xff00_0000;
-        if(v1 == 0x200_0000) {
-          //LAB_80115fd8
-          v0 = _800fb0ec.offset(((BttlScriptData6cSub13c)manager.effect_44).model_134.deref().colourMap_9d.get() * 0x4L).get();
-          u = (int)((v0 & 0xf) << 6);
-          v = (int)((v0 & 0x10) << 4);
-          w = 256;
-          h = 256;
-        } else if(v1 == 0x300_0000) {
-          //LAB_80116014
-          throw new RuntimeException("ASM is bugged");
+        if(v1 != 0x200_0000) {
+          if(v1 == 0x300_0000) {
+            //LAB_80116014
+            throw new RuntimeException("ASM is bugged");
 //          v0 = manager._44.deref();
 //          MEMORY.ref(4, v0).offset(0x4L).setu(0);
 //          v0 = t2 + MEMORY.ref(4, t2).offset(0x8L).get() + s0 * 0x10L;
@@ -8851,24 +8845,25 @@ public final class SEffe {
 //          v = MEMORY.ref(2, v0).offset(0x2L).getSigned();
 //          w = MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4;
 //          h = MEMORY.ref(2, v0).offset(0x6L).getSigned();
-          //LAB_80115fc8
-        } else if(v1 == 0x400_0000) {
-          //LAB_8011602c
-          v0 = manager.effect_44.getAddress(); //TODO
-          u = (int)MEMORY.ref(2, v0).offset(0x4L).get();
-          v = (int)MEMORY.ref(2, v0).offset(0x6L).get();
-          w = (int)MEMORY.ref(1, v0).offset(0x8L).get();
-          h = (int)MEMORY.ref(1, v0).offset(0x9L).get();
+            //LAB_80115fc8
+          } else if(v1 == 0x400_0000) {
+            //LAB_8011602c
+            v0 = manager.effect_44.getAddress(); //TODO
+            u = (int)MEMORY.ref(2, v0).offset(0x4L).get();
+            v = (int)MEMORY.ref(2, v0).offset(0x6L).get();
+            w = (int)MEMORY.ref(1, v0).offset(0x8L).get();
+            h = (int)MEMORY.ref(1, v0).offset(0x9L).get();
+          } else {
+            throw new RuntimeException("Invalid state");
+          }
         } else {
-          throw new RuntimeException("Invalid state");
+          //LAB_80115fd8
+          v0 = _800fb0ec.offset(((BttlScriptData6cSub13c)manager.effect_44).model_134.deref().colourMap_9d * 0x4L).get();
+          u = (int)((v0 & 0xf) << 6);
+          v = (int)((v0 & 0x10) << 4);
+          w = 256;
+          h = 256;
         }
-      } else {
-        //LAB_8011604c
-        v0 = _800fb0ec.offset(((BattleObject27c)a0).model_148.colourMap_9d.get() * 0x4L).get();
-        u = (int)((v0 & 0xf) << 6);
-        v = (int)((v0 & 0x10) << 4);
-        w = 256;
-        h = 256;
       }
     } else if(type == 0x200_0000) {
       //LAB_80116098
@@ -9804,12 +9799,10 @@ public final class SEffe {
         GsSetLightMatrix(sp0x10);
         setRotTransMatrix(sp0x10);
 
-        final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
-        final GsDOBJ2 dobj2 = new GsDOBJ2(tmp.get());
-        dobj2.attribute_00.set(data._10.flags_00);
-        dobj2.tmd_08.set(s1.tmd_08.deref());
+        final GsDOBJ2 dobj2 = new GsDOBJ2();
+        dobj2.attribute_00 = data._10.flags_00;
+        dobj2.tmd_08 = s1.tmd_08.deref();
         renderCtmd(dobj2);
-        tmp.release();
       } else {
         //LAB_80118370
         FUN_800de3f4(s1.tmd_08.deref(), data._10, sp0x10);
@@ -9901,7 +9894,7 @@ public final class SEffe {
       //LAB_801185b0
     } else if(type == 0x700_0000) {
       //LAB_80118610
-      s0.tmd_08.set(_1f8003f4.deref().stage_963c.dobj2s_00.get(objIndex).tmd_08.deref());
+      s0.tmd_08.set(_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08);
     } else {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
@@ -9910,12 +9903,12 @@ public final class SEffe {
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
-          s0.tmd_08.set(((BttlScriptData6cSub13c)effects.effect_44).model_134.deref().dobj2ArrPtr_00.deref().get(objIndex).tmd_08.deref());
+          s0.tmd_08.set(((BttlScriptData6cSub13c)effects.effect_44).model_134.deref().dobj2ArrPtr_00[objIndex].tmd_08);
         }
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        s0.tmd_08.set(((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00.deref().get(objIndex).tmd_08.deref());
+        s0.tmd_08.set(((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08);
       }
     }
 
@@ -9971,7 +9964,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(s1._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(s1._10.z_22);
       FUN_800e60e0(s1._10.colour_1c.getX() << 5, s1._10.colour_1c.getY() << 5, s1._10.colour_1c.getZ() << 5);
-      FUN_800de3f4(model_800bda10.dobj2ArrPtr_00.deref().get(0).tmd_08.deref(), s1._10, sp0x10);
+      FUN_800de3f4(model_800bda10.dobj2ArrPtr_00[0].tmd_08, s1._10, sp0x10);
       FUN_800e6170();
     }
 

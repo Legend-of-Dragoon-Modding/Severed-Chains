@@ -4,10 +4,12 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
+import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.deff.DeffManager7cc;
+import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
 import legend.game.types.LodString;
@@ -26,7 +28,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -58,8 +59,7 @@ import static legend.game.combat.Bttl_800f.loadMonster;
 public class SBtld {
   private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
 
-  /** TODO 0x38-byte struct array */
-  public static final Value _80102050 = MEMORY.ref(4, 0x80102050L);
+  public static final ArrayRef<EncounterData38> _80102050 = MEMORY.ref(4, 0x80102050L, ArrayRef.of(EncounterData38.class, 0x200, 0x38, EncounterData38::new));
 
   public static final ArrayRef<StageData10> stageData_80109a98 = MEMORY.ref(4, 0x80109a98L, ArrayRef.of(StageData10.class, 0x200, 0x10, StageData10::new));
   public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x190, 0x1c, MonsterStats1c::new));
@@ -129,10 +129,10 @@ public class SBtld {
 
   @Method(0x80109250L)
   public static void FUN_80109250() {
-    long s1 = _1f8003f4.getPointer() + 0x38L; //TODO
-
     //LAB_801092a0
     for(int charSlot = 0; charSlot < 3; charSlot++) {
+      final BattleStruct18cb0.AdditionStruct100 character = _1f8003f4._38[charSlot];
+      final BattleStruct18cb0.AdditionStruct100 dragoon = _1f8003f4._38[charSlot + 3];
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
 
       if(charIndex >= 0) {
@@ -152,69 +152,66 @@ public class SBtld {
 
         //LAB_80109310
         if(addition < 0) {
-          MEMORY.ref(2, s1).offset(0x1eL).setu(0);
+          character.hits_00[0]._00[15] = 0;
         } else {
           //LAB_80109320
-          FUN_80109454(_8010e658.offset(addition * 0x80L).getAddress(), s1);
-          FUN_80109454(_8010e658.offset(s0 * 0x80L).getAddress(), s1 + 0x300L);
+          FUN_80109454(_8010e658.offset(addition * 0x80L).getAddress(), character);
+          FUN_80109454(_8010e658.offset(s0 * 0x80L).getAddress(), dragoon);
         }
-
-        //LAB_8010933c
-        s1 = s1 + 0x100L;
       }
 
       //LAB_80109340
     }
 
-    memcpy(_1f8003f4.getPointer(), _80102050.offset(encounterId_800bb0f8.get() * 0x38L).getAddress(), 0x38);
+    _1f8003f4.encounterData_00 = _80102050.get(encounterId_800bb0f8.get());
 
     decrementOverlayCount();
   }
 
   @Method(0x80109454L)
-  public static void FUN_80109454(final long a3, final long a1) {
+  public static void FUN_80109454(final long a3, final BattleStruct18cb0.AdditionStruct100 a1) {
     //LAB_80109460
     for(int i = 0; i < 8; i++) {
-      final long a0 = a1 + i * 0x20L;
+      final BattleStruct18cb0.AdditionHitStruct20 a0 = a1.hits_00[i];
       final long v1 = a3 + i * 0x10L;
-      MEMORY.ref(2, a0).offset(0x00L).setu(MEMORY.ref(1, v1).offset(0x0L).get());
-      MEMORY.ref(2, a0).offset(0x02L).setu(MEMORY.ref(1, v1).offset(0x1L).get());
-      MEMORY.ref(2, a0).offset(0x04L).setu(MEMORY.ref(1, v1).offset(0x2L).get());
-      MEMORY.ref(2, a0).offset(0x06L).setu(MEMORY.ref(1, v1).offset(0x3L).get());
-      MEMORY.ref(2, a0).offset(0x08L).setu(MEMORY.ref(1, v1).offset(0x4L).get());
-      MEMORY.ref(2, a0).offset(0x0aL).setu(MEMORY.ref(1, v1).offset(0x5L).get());
-      MEMORY.ref(2, a0).offset(0x0cL).setu(MEMORY.ref(1, v1).offset(0x6L).getSigned());
-      MEMORY.ref(2, a0).offset(0x0eL).setu(MEMORY.ref(1, v1).offset(0x7L).getSigned());
-      MEMORY.ref(2, a0).offset(0x10L).setu(MEMORY.ref(1, v1).offset(0x8L).getSigned());
-      MEMORY.ref(2, a0).offset(0x12L).setu(MEMORY.ref(1, v1).offset(0x9L).get());
-      MEMORY.ref(2, a0).offset(0x14L).setu(MEMORY.ref(1, v1).offset(0xaL).get());
-      MEMORY.ref(2, a0).offset(0x16L).setu(MEMORY.ref(1, v1).offset(0xbL).get());
-      MEMORY.ref(2, a0).offset(0x18L).setu(MEMORY.ref(1, v1).offset(0xcL).get());
-      MEMORY.ref(2, a0).offset(0x1aL).setu(MEMORY.ref(1, v1).offset(0xdL).get());
-      MEMORY.ref(2, a0).offset(0x1cL).setu(MEMORY.ref(1, v1).offset(0xeL).get());
-      MEMORY.ref(2, a0).offset(0x1eL).setu(MEMORY.ref(1, v1).offset(0xfL).get());
+      a0._00[ 0] = (short)MEMORY.ref(1, v1).offset(0x0L).get();
+      a0._00[ 1] = (short)MEMORY.ref(1, v1).offset(0x1L).get();
+      a0._00[ 2] = (short)MEMORY.ref(1, v1).offset(0x2L).get();
+      a0._00[ 3] = (short)MEMORY.ref(1, v1).offset(0x3L).get();
+      a0._00[ 4] = (short)MEMORY.ref(1, v1).offset(0x4L).get();
+      a0._00[ 5] = (short)MEMORY.ref(1, v1).offset(0x5L).get();
+      a0._00[ 6] = (short)MEMORY.ref(1, v1).offset(0x6L).getSigned();
+      a0._00[ 7] = (short)MEMORY.ref(1, v1).offset(0x7L).getSigned();
+      a0._00[ 8] = (short)MEMORY.ref(1, v1).offset(0x8L).getSigned();
+      a0._00[ 9] = (short)MEMORY.ref(1, v1).offset(0x9L).get();
+      a0._00[10] = (short)MEMORY.ref(1, v1).offset(0xaL).get();
+      a0._00[11] = (short)MEMORY.ref(1, v1).offset(0xbL).get();
+      a0._00[12] = (short)MEMORY.ref(1, v1).offset(0xcL).get();
+      a0._00[13] = (short)MEMORY.ref(1, v1).offset(0xdL).get();
+      a0._00[14] = (short)MEMORY.ref(1, v1).offset(0xeL).get();
+      a0._00[15] = (short)MEMORY.ref(1, v1).offset(0xfL).get();
     }
   }
 
   @Method(0x8010955cL)
   public static void allocateEnemyBattleObjects() {
-    final long fp = _1f8003f4.getPointer(); //TODO
+    final BattleStruct18cb0 fp = _1f8003f4;
 
     //LAB_801095a0
     for(int i = 0; i < 3; i++) {
-      final int s2 = (int)(MEMORY.ref(2, fp).offset(i * 0x2L).get() & 0x1ff);
-      if(s2 == 0x1ff) {
+      final int enemyIndex = fp.encounterData_00.enemyIndices_00.get(i).get() & 0x1ff;
+      if(enemyIndex == 0x1ff) {
         break;
       }
 
-      loadSupportOverlay(1, () -> SBtld.FUN_80109808((addCombatant(s2, -1) << 16) + s2));
+      loadSupportOverlay(1, () -> SBtld.FUN_80109808((addCombatant(enemyIndex, -1) << 16) + enemyIndex));
     }
 
     //LAB_801095ec
     //LAB_801095fc
     for(int i = 0; i < 6; i++) {
-      final long s5 = fp + i * 0x8L;
-      final int charIndex = (int)(MEMORY.ref(2, s5).offset(0x8L).get() & 0x1ff);
+      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08.get(i);
+      final int charIndex = s5.index_00.get() & 0x1ff;
       if(charIndex == 0x1ff) {
         break;
       }
@@ -233,9 +230,7 @@ public class SBtld {
       data.charSlot_276 = monsterCount_800c6768.get();
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;
-      data.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, s5).offset(0xaL).getSigned());
-      data.model_148.coord2_14.coord.transfer.setY((int)MEMORY.ref(2, s5).offset(0xcL).getSigned());
-      data.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, s5).offset(0xeL).getSigned());
+      data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
       state.storage_44[7] |= 0x4;
       _800c66d0.incr();
