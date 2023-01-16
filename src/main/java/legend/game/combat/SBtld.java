@@ -25,6 +25,7 @@ import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
@@ -58,8 +59,6 @@ import static legend.game.combat.Bttl_800f.loadMonster;
 
 public class SBtld {
   private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
-
-  public static final ArrayRef<EncounterData38> _80102050 = MEMORY.ref(4, 0x80102050L, ArrayRef.of(EncounterData38.class, 0x200, 0x38, EncounterData38::new));
 
   public static final ArrayRef<StageData10> stageData_80109a98 = MEMORY.ref(4, 0x80109a98L, ArrayRef.of(StageData10.class, 0x200, 0x10, StageData10::new));
   public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x190, 0x1c, MonsterStats1c::new));
@@ -163,7 +162,9 @@ public class SBtld {
       //LAB_80109340
     }
 
-    _1f8003f4.encounterData_00 = _80102050.get(encounterId_800bb0f8.get());
+    loadFile("encounters", file -> {
+      _1f8003f4.encounterData_00 = new EncounterData38(file, encounterId_800bb0f8.get() * 0x38);
+    });
 
     decrementOverlayCount();
   }
@@ -199,7 +200,7 @@ public class SBtld {
 
     //LAB_801095a0
     for(int i = 0; i < 3; i++) {
-      final int enemyIndex = fp.encounterData_00.enemyIndices_00.get(i).get() & 0x1ff;
+      final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
       if(enemyIndex == 0x1ff) {
         break;
       }
@@ -210,8 +211,8 @@ public class SBtld {
     //LAB_801095ec
     //LAB_801095fc
     for(int i = 0; i < 6; i++) {
-      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08.get(i);
-      final int charIndex = s5.index_00.get() & 0x1ff;
+      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08[i];
+      final int charIndex = s5.index_00 & 0x1ff;
       if(charIndex == 0x1ff) {
         break;
       }

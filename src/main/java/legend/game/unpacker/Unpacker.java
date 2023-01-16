@@ -53,6 +53,7 @@ public class Unpacker {
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
+    transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -444,6 +445,21 @@ public class Unpacker {
 
   private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
     return Map.of();
+  }
+
+  /** TODO this is pretty bad */
+  private static boolean btldDataDiscriminatorLatch = true;
+  /** Extracts table at 80102050 */
+  private static boolean extractBtldDataDiscriminator(final String name, final FileData data) {
+    return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data) {
+    btldDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    return files;
   }
 
   private static void writeFiles(final Map<String, FileData> files) {
