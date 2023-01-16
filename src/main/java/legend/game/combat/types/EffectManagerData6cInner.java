@@ -11,9 +11,10 @@ public class EffectManagerData6cInner {
   public final SVECTOR colour_1c = new SVECTOR();
   public int z_22;
   /** TODO I dunno what's going on here, seems sometimes the end of this struct is different */
-  public int flags_24;
-  public final VECTOR vec_24 = new VECTOR();
-  public final VECTOR vec_28 = new VECTOR();
+  public int _24;
+  public int _28;
+  public int _2c;
+  public int _30;
 
   public void set(final EffectManagerData6cInner other) {
     this.flags_00 = other.flags_00;
@@ -22,7 +23,9 @@ public class EffectManagerData6cInner {
     this.scale_16.set(other.scale_16);
     this.colour_1c.set(other.colour_1c);
     this.z_22 = other.z_22;
-    this.flags_24 = other.flags_24;
-    this.vec_28.set(other.vec_28);
+    this._24 = other._24;
+    this._28 = other._28;
+    this._2c = other._2c;
+    this._30 = other._30;
   }
 }

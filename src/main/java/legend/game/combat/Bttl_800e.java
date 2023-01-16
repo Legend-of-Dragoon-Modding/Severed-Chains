@@ -27,6 +27,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
+import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.types.AttackHitFlashEffect0c;
@@ -3479,8 +3480,10 @@ public final class Bttl_800e {
     s0._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
     s0._10.colour_1c.set((short)0x80, (short)0x80, (short)0x80);
     s0._10.z_22 = 0;
-    s0._10.flags_24 = 0;
-    s0._10.vec_28.set(0, 0, 0);
+    s0._10._24 = 0;
+    s0._10._28 = 0;
+    s0._10._2c = 0;
+    s0._10._30 = 0;
     s0.ticker_48 = ticker;
     s0.destructor_4c = destructor;
     s0.parentScriptIndex_50 = -1;
@@ -3553,8 +3556,10 @@ public final class Bttl_800e {
     s0._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
     s0._10.colour_1c.set((short)0x80, (short)0x80, (short)0x80);
     s0._10.z_22 = 0;
-    s0._10.flags_24 = 0;
-    s0._10.vec_28.set(0, 0, 0);
+    s0._10._24 = 0;
+    s0._10._28 = 0;
+    s0._10._2c = 0;
+    s0._10._30 = 0;
     s0.ticker_48 = ticker;
     s0.destructor_4c = destructor;
     s0.parentScriptIndex_50 = -1;
@@ -4041,6 +4046,7 @@ public final class Bttl_800e {
     model.coord2Param_64.set(a1.param_5a8);
 
     model.tmd_8c = a1.tmd_5d0;
+    model.animType_90 = -1;
     model.partTransforms_90 = a1.rotTrans_5d4;
     model.partTransforms_94 = a1.rotTrans_5d8;
     model.animCount_98 = a1.partCount_5dc;
@@ -4210,7 +4216,7 @@ public final class Bttl_800e {
     final Anim cmb = animatedTmdType.anim_14.deref();
     effect.anim_0c = cmb;
     loadModelAnim(effect.model_134, cmb);
-    manager._10.flags_24 = 0;
+    manager._10._24 = 0;
     FUN_80114f3c(effectIndex, 0, 0x100, 0);
     return FlowControl.CONTINUE;
   }
@@ -4259,7 +4265,7 @@ public final class Bttl_800e {
       a0.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      a0.params_20[1].set((manager._10.flags_24 + 2) / effect.model_134.s_9a);
+      a0.params_20[1].set((manager._10._24 + 2) / effect.model_134.s_9a);
     }
 
     //LAB_800ea3e4
@@ -4280,7 +4286,7 @@ public final class Bttl_800e {
     model.coord2_14.flg = 0;
 
     if(effect.anim_0c != null) {
-      FUN_800de2e8(model, manager._10.flags_24);
+      FUN_800de2e8(model, manager._10._24);
     }
 
     //LAB_800ea4fc
@@ -4486,7 +4492,13 @@ public final class Bttl_800e {
       case 1, 2 -> DeffPart.AnimatedTmdType::new;
       case 3 -> DeffPart.TmdType::new;
       case 4 -> DeffPart.SpriteType::new;
-      case 5 -> DeffPart.CmbType::new;
+      case 5 -> value -> {
+        if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
+          return new DeffPart.CmbType(value);
+        }
+
+        return new DeffPart.AnimatedTmdType(value);
+      };
       default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
     };
 

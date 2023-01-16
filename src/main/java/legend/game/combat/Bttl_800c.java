@@ -1879,7 +1879,7 @@ public final class Bttl_800c {
             }
 
             //LAB_800c9974
-            // Type 6 - TIM file
+            // Type 6 - TIM file (except it's loading animation data into VRAM???) TODO
             FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, charSlot, combatantIndex, animIndex);
           }
         }
@@ -3691,7 +3691,7 @@ public final class Bttl_800c {
     //LAB_800cdd24
     for(int i = 0; i < v0.n_vert_04.get(); i++) {
       final SVECTOR vert = v0.vert_top_00.deref().get(i);
-      final ShortRef component = vert.component(manager._10.flags_24);
+      final ShortRef component = vert.component(manager._10._24);
       final short val = component.get();
 
       if(val <= largest) {

@@ -838,6 +838,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021584L)
   public static void loadModelStandardAnimation(final Model124 model, final TmdAnimationFile tmdAnimFile) {
+    model.animType_90 = -1;
     model.partTransforms_90 = tmdAnimFile.partTransforms_10;
     model.partTransforms_94 = tmdAnimFile.partTransforms_10;
     model.animCount_98 = tmdAnimFile.count_0c.get();

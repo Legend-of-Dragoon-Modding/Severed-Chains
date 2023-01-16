@@ -15,7 +15,6 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
@@ -680,9 +679,9 @@ public final class Bttl_800d {
   public static void FUN_800d21b8(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12, // X is correct
-        manager._10.vec_28.getY()
+        rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10._28) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10._28) >> 12, // X is correct
+        manager._10._2c
       );
 
       final ShortRef sp0x10 = new ShortRef();
@@ -690,9 +689,9 @@ public final class Bttl_800d {
       FUN_800cfb14(manager, sp0x20, sp0x10, sp0x14);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
-        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get() + manager._10.vec_28.getX()) >> 12,
-        manager._10.vec_28.getY()
+        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get() + manager._10._28) >> 12,
+        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get() + manager._10._28) >> 12,
+        manager._10._2c
       );
 
       final ShortRef sp0x18 = new ShortRef();
@@ -740,9 +739,9 @@ public final class Bttl_800d {
       final ShortRef sp0x58 = new ShortRef();
       final ShortRef sp0x5c = new ShortRef();
       FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-      effect._0c.set(manager._10.flags_24 >>> 16 & 0xff);
-      effect._0d.set(manager._10.flags_24 >>>  8 & 0xff);
-      effect._0e.set(manager._10.flags_24        & 0xff);
+      effect._0c.set(manager._10._24 >>> 16 & 0xff);
+      effect._0d.set(manager._10._24 >>>  8 & 0xff);
+      effect._0e.set(manager._10._24        & 0xff);
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
@@ -4684,7 +4683,6 @@ public final class Bttl_800d {
       if((tmd.header.flags.get() & 0x2) != 0) {
         model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable.get(i);
       } else {
-        final Memory.TemporaryReservation tmp = MEMORY.temp(0x10);
         final GsDOBJ2 dobj2 = new GsDOBJ2();
         updateTmdPacketIlen(tmd.objTable, dobj2, i);
         model.dobj2ArrPtr_00[i].tmd_08 = dobj2.tmd_08;
