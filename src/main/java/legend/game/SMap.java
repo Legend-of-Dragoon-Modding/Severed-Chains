@@ -6405,7 +6405,7 @@ public final class SMap {
 
     //LAB_800ea534
     //LAB_800ea538
-    if((int)_800c6ae0.get() < 0x401L) {
+    if((int)_800c6ae0.get() <= 0x400L) {
       v0 = 0x1L;
     } else if(_800d1a8c.deref()._00.get() != 0) {
       v0 = 0;
@@ -6460,13 +6460,9 @@ public final class SMap {
 
     //LAB_800ea6a4
     _800cbda0.setu(v0);
-    v0 = _800f7f6c.get();
-    v1 = s2 << 1;
-    v1 = v1 + v0;
-    v0 = 0x800d_0000L;
-    v0 = MEMORY.ref(2, v0).offset(-0x4260L).get();
 
-    MEMORY.ref(2, v1).offset(0x0L).setu(v0);
+    v0 = _800cbda0.get();
+    _800f7f6c.offset(s2 * 0x2L).setu(v0);
 
     //LAB_800ea6dc
     return (short)v0;
