@@ -607,8 +607,6 @@ public class WMap {
 
   @Method(0x800c925cL) // Renders the player
   public static void renderWmapModel(final Model124 model) {
-    long s0 = 0x1L;
-    long s6 = model.ui_f4;
     final int nobj = model.ObjTable_0c.nobj;
 
     zOffset_1f8003e8.set(model.zOffset_a0);
@@ -618,7 +616,7 @@ public class WMap {
     for(int i = 0; i < nobj; i++) {
       final GsDOBJ2 dobj2 = model.ObjTable_0c.top[i];
 
-      if((s0 & s6) == 0) {
+      if((model.ui_f4 & 1L << i) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
@@ -633,11 +631,6 @@ public class WMap {
         CPU.CTC2(ls.transfer.getZ(), 7);
         Renderer.renderDobj2(dobj2, false);
       }
-
-      //LAB_800c9330
-      s0 = s0 << 1;
-
-      //LAB_800c9344
     }
 
     //LAB_800c9354

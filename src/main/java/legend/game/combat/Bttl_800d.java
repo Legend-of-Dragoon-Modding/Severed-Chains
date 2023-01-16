@@ -177,11 +177,10 @@ public final class Bttl_800d {
     //LAB_800d00d4
     if(clearBit) {
       v1.model_148.ui_f4 &= ~(0x1L << animIndex);
-      return;
+    } else {
+      //LAB_800d0104
+      v1.model_148.ui_f4 |= 0x1L << animIndex;
     }
-
-    //LAB_800d0104
-    v1.model_148.ui_f4 |= 0x1L << animIndex;
   }
 
   @Method(0x800d0124L)
@@ -4584,8 +4583,6 @@ public final class Bttl_800d {
     final long v0;
     final long v1;
     long s6;
-    long s4 = 0x1L;
-    final long s7 = model.ui_f4;
     final int nobj = model.ObjTable_0c.nobj;
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
@@ -4599,7 +4596,7 @@ public final class Bttl_800d {
       final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
 
       //LAB_800dd940
-      if((s4 & s7) == 0) {
+      if((model.ui_f4 & 1L << i) == 0) {
         final MATRIX lw = new MATRIX();
         final MATRIX ls = new MATRIX();
         GsGetLws(s2.coord2_04, lw, ls);
@@ -4626,9 +4623,6 @@ public final class Bttl_800d {
           s2.attribute_00 = s0;
         }
       }
-
-      //LAB_800dda3c
-      s4 = s4 << 1;
     }
 
     //LAB_800dda54
@@ -4660,7 +4654,7 @@ public final class Bttl_800d {
     final TmdWithId tmdWithId = extTmd.tmdPtr_00.deref();
     final Tmd tmd = tmdWithId.tmd;
     model.tmd_8c = tmd;
-    final short count = (short)tmd.header.nobj.get();
+    final int count = tmd.header.nobj.get();
     model.tmdNobj_ca = count;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
@@ -4866,17 +4860,17 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de2e8L)
-  public static void FUN_800de2e8(final Model124 a0, final int a1) {
-    final int type = a0.animType_90;
+  public static void applyAnimation(final Model124 model, final int a1) {
+    final int type = model.animType_90;
     if(type == 1) {
       //LAB_800de318
-      applyLmbAnimation(a0, a1);
+      applyLmbAnimation(model, a1);
     } else if(type == 0 || type == 2) {
       //LAB_800de328
-      applyCmbAnimation(a0, a1);
+      applyCmbAnimation(model, a1);
     } else {
       //LAB_800de338
-      applyStandardAnimation(a0, a1);
+      applyStandardAnimation(model, a1);
     }
 
     //LAB_800de340

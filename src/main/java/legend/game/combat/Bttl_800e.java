@@ -229,7 +229,7 @@ import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
-import static legend.game.combat.Bttl_800d.FUN_800de2e8;
+import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
@@ -4286,7 +4286,7 @@ public final class Bttl_800e {
     model.coord2_14.flg = 0;
 
     if(effect.anim_0c != null) {
-      FUN_800de2e8(model, manager._10._24);
+      applyAnimation(model, manager._10._24);
     }
 
     //LAB_800ea4fc
@@ -5183,12 +5183,9 @@ public final class Bttl_800e {
     zOffset_1f8003e8.set(model.zOffset_a0);
 
     //LAB_800ec9d0
-    final long s6 = model.ui_f4;
-    long s0 = 0x1L;
     for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-      final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
-
-      if((s0 & s6) == 0) {
+      if((model.ui_f4 & 1L << i) == 0) {
+        final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
         final MATRIX sp0x30 = new MATRIX();
         final MATRIX sp0x10 = new MATRIX();
         GsGetLws(s2.coord2_04, sp0x30, sp0x10);
@@ -5203,11 +5200,6 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
         Renderer.renderDobj2(s2, true);
       }
-
-      //LAB_800eca38
-      s0 = s0 << 1;
-
-      //LAB_800eca4c
     }
 
     //LAB_800eca58

@@ -1017,15 +1017,12 @@ public final class SMap {
 
   @Method(0x800daa3cL)
   public static void renderSmapModel(final Model124 a0) {
-    long s0 = 0x1L;
-    final long s6 = a0.ui_f4;
-
     zOffset_1f8003e8.set(a0.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(a0.tpage_108);
 
     //LAB_800daaa8
     for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
-      if((s0 & s6) == 0) {
+      if((a0.ui_f4 & 1L << i) == 0) {
         final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
 
         final MATRIX lw = new MATRIX();
@@ -1042,11 +1039,6 @@ public final class SMap {
         CPU.CTC2(ls.transfer.getZ(), 7);
         Renderer.renderDobj2(dobj2, false);
       }
-
-      //LAB_800dab10
-      s0 = s0 << 1;
-
-      //LAB_800dab24
     }
 
     //LAB_800dab34
