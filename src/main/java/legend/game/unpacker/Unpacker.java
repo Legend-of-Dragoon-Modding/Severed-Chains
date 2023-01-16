@@ -131,6 +131,8 @@ public class Unpacker {
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
       try {
+        final long start = System.nanoTime();
+
         final DirectoryEntry[] roots = new DirectoryEntry[4];
         final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
 
@@ -147,10 +149,13 @@ public class Unpacker {
 
         files.entrySet()
           .stream()
+          .parallel()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
           .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
           .forEach(Unpacker::writeFiles);
+
+        LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       } catch(final IOException e) {
         throw new UnpackerException(e);
       }
@@ -162,9 +167,11 @@ public class Unpacker {
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-    reader.seekSector(16);
-    reader.advance(12);
-    reader.read(sectorData);
+    synchronized(reader) {
+      reader.seekSector(16);
+      reader.advance(12);
+      reader.read(sectorData);
+    }
 
     if(sectorBuffer.get() != 1) {
       throw new UnpackerException("Invalid volume descriptor, expected primary");
@@ -194,9 +201,12 @@ public class Unpacker {
   private static void populateDirectoryTree(final DirectoryEntry source, final DirectoryEntry destinationTree) throws IOException {
     final byte[] sectorData = new byte[0x800];
 
-    source.reader().seekSector(source.sector());
-    source.reader().advance(12);
-    source.reader().read(sectorData);
+    synchronized(source.reader()) {
+      source.reader().seekSector(source.sector());
+      source.reader().advance(12);
+      source.reader().read(sectorData);
+    }
+
     int sectorOffset = 0;
 
     while(sectorData[sectorOffset] != 0) {
@@ -230,12 +240,15 @@ public class Unpacker {
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
-    final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
-    return new Tuple<>(e.getKey(), new FileData(fileData));
+
+    synchronized(entry.reader()) {
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      return new Tuple<>(e.getKey(), new FileData(fileData));
+    }
   }
 
   private static Map<String, FileData> transform(final String name, final FileData data) {
-    LOGGER.info("Unpacking %s...", name);
+//    LOGGER.info("Unpacking %s...", name);
 
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
