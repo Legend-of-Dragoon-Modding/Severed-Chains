@@ -134,8 +134,8 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
-  public static final Pointer<RunnableRef> syncFrame_8004dd3c = MEMORY.ref(4, 0x8004dd3cL, Pointer.of(4, RunnableRef::new));
-  public static final Pointer<RunnableRef> swapDisplayBuffer_8004dd40 = MEMORY.ref(4, 0x8004dd40L, Pointer.of(4, RunnableRef::new));
+  public static Runnable syncFrame_8004dd3c;
+  public static Runnable swapDisplayBuffer_8004dd40;
   public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
 

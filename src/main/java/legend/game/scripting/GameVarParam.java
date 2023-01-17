@@ -274,7 +274,7 @@ public class GameVarParam extends Param {
 //      case 137 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[9]._00.set(val);
 
       default -> throw new IllegalArgumentException("Unknown game data index " + index);
-    };
+    }
 
     return this;
   }

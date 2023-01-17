@@ -25,7 +25,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnsignedShortRef;
@@ -91,7 +90,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SPU;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
@@ -1360,8 +1358,8 @@ public final class Scus94491BpeSegment {
     GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
 
     //LAB_80012e8c
-    syncFrame_8004dd3c.deref().run();
-    swapDisplayBuffer_8004dd40.deref().run();
+    syncFrame_8004dd3c.run();
+    swapDisplayBuffer_8004dd40.run();
   }
 
   @Method(0x80012eccL)
@@ -1406,8 +1404,8 @@ public final class Scus94491BpeSegment {
     FUN_8003c5e0();
     setProjectionPlaneDistance(320);
 
-    syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame")).cast(RunnableRef::new));
-    swapDisplayBuffer_8004dd40.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "swapDisplayBuffer")).cast(RunnableRef::new));
+    syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame;
+    swapDisplayBuffer_8004dd40 = Scus94491BpeSegment::swapDisplayBuffer;
   }
 
   @Method(0x80013148L)
@@ -1420,7 +1418,7 @@ public final class Scus94491BpeSegment {
   public static void setWidthAndFlags(final int width) {
     if(width != displayWidth_1f8003e0.get()) {
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
-      syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
+      syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       width_8004dd34.setu(width);
     }
   }
@@ -1428,7 +1426,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001324cL)
   public static void setDepthResolution(final int orderingTableBits) {
     if(orderingTableBits_1f8003c0.get() != orderingTableBits) {
-      syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
+      syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       reinitOrderingTableBits_8004dd38.set(orderingTableBits);
     }
 
