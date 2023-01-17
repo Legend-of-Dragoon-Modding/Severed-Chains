@@ -51,7 +51,7 @@ import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub20;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
-import legend.game.combat.types.BttlStruct50;
+import legend.game.combat.types.CtmdUnpackingData50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EffectManagerData6c;
@@ -165,7 +165,7 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c.scriptIndex_800c66c8;
-import static legend.game.combat.Bttl_800c._800c6920;
+import static legend.game.combat.Bttl_800c.ctmdUnpackingData_800c6920;
 import static legend.game.combat.Bttl_800c._800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
@@ -1733,10 +1733,9 @@ public final class Bttl_800e {
   /** Render All method **/
   @Method(0x800e3e6cL)
   public static void renderCtmd(final GsDOBJ2 dobj2) {
-    final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0x50);
-    final BttlStruct50 sp0x10 = sp0x10tmp.get().cast(BttlStruct50::new);
-    _800c6920.set(sp0x10);
-    sp0x10._00.set(0);
+    final CtmdUnpackingData50 unpackingData = new CtmdUnpackingData50();
+    ctmdUnpackingData_800c6920 = unpackingData;
+    unpackingData._00 = 0;
 
     final int mode;
     if((dobj2.attribute_00 & 0x4000_0000) == 0) {
@@ -1754,9 +1753,9 @@ public final class Bttl_800e {
 
     //LAB_800e3ee4
     while(count != 0) {
-      sp0x10._0c.set(0);
-      sp0x10._08.set(0);
-      sp0x10._04.set(sp0x10._00.get());
+      unpackingData._0c = 0;
+      unpackingData._08 = 0;
+      unpackingData._04 = unpackingData._00;
 
       final long length = MEMORY.ref(2, primitives).get();
       final int command = (int)MEMORY.ref(4, primitives).get();
@@ -1767,7 +1766,7 @@ public final class Bttl_800e {
       count -= length;
     }
 
-    sp0x10tmp.release();
+    ctmdUnpackingData_800c6920 = null;
 
     //LAB_800e3f64
   }

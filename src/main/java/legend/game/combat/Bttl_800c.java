@@ -49,7 +49,7 @@ import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlStruct08;
-import legend.game.combat.types.BttlStruct50;
+import legend.game.combat.types.CtmdUnpackingData50;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
@@ -290,7 +290,7 @@ public final class Bttl_800c {
   public static final IntRef scriptIndex_800c6914 = MEMORY.ref(4, 0x800c6914L, IntRef::new);
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
-  public static final Pointer<BttlStruct50> _800c6920 = MEMORY.ref(4, 0x800c6920L, Pointer.deferred(4, BttlStruct50::new));
+  public static CtmdUnpackingData50 ctmdUnpackingData_800c6920;
 
   public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
   public static BttlLightStruct84[] lights_800c692c;

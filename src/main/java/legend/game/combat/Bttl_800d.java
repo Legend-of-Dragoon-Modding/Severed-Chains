@@ -34,7 +34,7 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.BttlStruct50;
+import legend.game.combat.types.CtmdUnpackingData50;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.GuardEffect06;
@@ -122,7 +122,7 @@ import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
-import static legend.game.combat.Bttl_800c._800c6920;
+import static legend.game.combat.Bttl_800c.ctmdUnpackingData_800c6920;
 import static legend.game.combat.Bttl_800c._800c6d94;
 import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
@@ -4978,54 +4978,53 @@ public final class Bttl_800d {
 
   @Method(0x800de840L)
   public static long unpackCtmdData(final long unpackedData, long packedData, final int unpackedSize) {
-    final BttlStruct50 a3 = _800c6920.deref();
-
-    //TODO isn't this just getting overwritten below?
-    MEMORY.ref(4, unpackedData).setu(a3._10.get((int)a3._04.get()).getAddress());
+    final CtmdUnpackingData50 unpackingData = ctmdUnpackingData_800c6920;
 
     //LAB_800de878
     final int unpackedCount = unpackedSize / 2;
-    while(a3._0c.get() < unpackedCount) {
-      if((a3._08.get() & 0x100L) == 0) {
-        a3._08.set(MEMORY.ref(1, packedData).get() | 0xff00L);
+    while(unpackingData._0c < unpackedCount) {
+      if((unpackingData._08 & 0x100) == 0) {
+        unpackingData._08 = (int)MEMORY.get(packedData, 1) | 0xff00;
         packedData++;
       }
 
       //LAB_800de89c
-      if((a3._08.get() & 0x1L) != 0) {
-        a3._10.get((int)a3._00.get()).set((int)(MEMORY.ref(1, packedData).offset(0x1L).get() << 8 | MEMORY.ref(1, packedData).offset(0x0L).get()));
-        a3._00.incr().and(0x1fL);
-        a3._0c.incr();
+      if((unpackingData._08 & 0x1) != 0) {
+        unpackingData._10[unpackingData._00] = (int)(MEMORY.get(packedData + 1, 1) << 8 | MEMORY.get(packedData, 1));
+        unpackingData._00++;
+        unpackingData._00 &= 0x1f;
+        unpackingData._0c++;
         packedData += 2;
       } else {
         //LAB_800de8ec
-        long a1 = MEMORY.ref(1, packedData).get();
-        final long t2 = (a1 >>> 5) + 1;
+        int a1 = (int)MEMORY.get(packedData, 1);
+        final int length = (a1 >>> 5) + 1;
 
         //LAB_800de904
-        int i;
-        for(i = 0; i < t2; i++) {
-          a1 &= 0x1fL;
-          a3._10.get((int)a3._00.get()).set(a3._10.get((int)a1).get());
-          a3._00.incr().and(0x1fL);
+        for(int i = 0; i < length; i++) {
+          a1 &= 0x1f;
+          unpackingData._10[unpackingData._00] = unpackingData._10[a1];
+          unpackingData._00++;
+          unpackingData._00 &= 0x1f;
           a1++;
         }
 
         //LAB_800de940
-        a3._0c.add(i);
+        unpackingData._0c += length;
         packedData++;
       }
 
       //LAB_800de94c
-      a3._08.set(a3._08.get() >> 1);
+      unpackingData._08 >>= 1;
     }
 
     //LAB_800de968
     //LAB_800de970
     for(int i = 0; i < unpackedCount; i++) {
-      MEMORY.ref(2, unpackedData).offset(i * 0x2L).setu(a3._10.get((int)a3._04.get()).get());
-      a3._04.incr().and(0x1fL);
-      a3._0c.decr();
+      MEMORY.set(unpackedData + i * 2, 2, unpackingData._10[unpackingData._04]);
+      unpackingData._04++;
+      unpackingData._04 &= 0x1f;
+      unpackingData._0c--;
     }
 
     //LAB_800de9b4
