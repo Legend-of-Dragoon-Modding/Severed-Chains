@@ -151,7 +151,6 @@ public class Unpacker {
 
         files.entrySet()
           .stream()
-          .parallel()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
           .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
