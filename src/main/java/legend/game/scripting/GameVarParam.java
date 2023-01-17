@@ -35,7 +35,7 @@ public class GameVarParam extends Param {
       case 14 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red1_18.get();
       case 15 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green1_10.get();
       case 16 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue1_0c.get();
-//      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(0);
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(0).get();
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98.get();
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c.get();
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0.get();
@@ -49,27 +49,27 @@ public class GameVarParam extends Param {
       case 29 -> Scus94491BpeSegment_800b._800beea4.get();
       case 30 -> Scus94491BpeSegment_800b._800beeac.get();
       case 31 -> Scus94491BpeSegment_800b._800beeb4.get();
-//      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c.get(0);
+      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[0];
       case 33 -> Bttl_800c._800c66d0.get();
-//      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40.get(0);
+      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[0];
       case 35 -> Bttl_800c.charCount_800c677c.get();
-//      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50.get(0);
+      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[0];
       case 37 -> Bttl_800c.monsterCount_800c6768.get();
       case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4;
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.get();
-//      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).get();
       case 42 -> Bttl_800c.scriptIndex_800c66bc.get();
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8.get();
       case 44 -> Bttl_800c._800c6748.get();
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
       case 47 -> Scus94491BpeSegment_800b.combatStage_800bb0f4.get();
-//      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78.get(0);
+      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[0];
       case 49 -> Bttl_800c._800c669c.get();
-//      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac.get(0);
+      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[0];
       case 51 -> Bttl_800c._800c6760.get();
-//      case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc.get(0);
+      case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[0];
       case 53 -> Bttl_800c.enemyCount_800c6758.get();
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4.get();
@@ -80,7 +80,7 @@ public class GameVarParam extends Param {
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.get();
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.get();
 
-//      case 64 -> SMap.sobjIndices_800c6880.get(0);
+      case 64 -> SMap.sobjIndices_800c6880.get(0).get();
       case 65 -> SMap.submapScriptIndex_800c6740.get();
       case 66 -> SMap.sobjCount_800c6730.get();
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.get();
@@ -89,7 +89,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34.get();
 //      case 71 -> SMap._800cb44c;
       case 72 -> SMap.encounterAccumulator_800c6ae8.get();
-//      case 73 -> SMap._800c6970.get(0);
+      case 73 -> SMap._800c6970.get(0).get();
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
@@ -115,9 +115,9 @@ public class GameVarParam extends Param {
       case 108 -> Bttl_800c._800c6770.get();
       case 109 -> Bttl_800c.mcqColour_800fa6dc.get();
 
-//      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(0);
-//      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(0);
-//      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(0);
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(0).get();
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(0).get();
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(0).get();
       case 115 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(0).partyFlags_04.get();
       case 116 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(1).partyFlags_04.get();
       case 117 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(2).partyFlags_04.get();
@@ -129,8 +129,8 @@ public class GameVarParam extends Param {
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(8).partyFlags_04.get();
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.get();
       case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4.get();
-//      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(0);
-//      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(0);
+      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(0).get();
+      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(0).get();
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.get();
 //      case 129 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[1]._00.get();
 //      case 130 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[2]._00.get();
@@ -166,7 +166,7 @@ public class GameVarParam extends Param {
       case 14 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red1_18.set(val);
       case 15 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green1_10.set(val);
       case 16 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue1_0c.set(val);
-//      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(0);
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(0).set(val);
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98.set(val);
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c.set(val);
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0.set(val);
@@ -180,27 +180,27 @@ public class GameVarParam extends Param {
       case 29 -> Scus94491BpeSegment_800b._800beea4.set(val);
       case 30 -> Scus94491BpeSegment_800b._800beeac.set(val);
       case 31 -> Scus94491BpeSegment_800b._800beeb4.set(val);
-//      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c.get(0);
+      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[0] = val;
       case 33 -> Bttl_800c._800c66d0.set(val);
-//      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40.get(0);
+      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[0] = val;
       case 35 -> Bttl_800c.charCount_800c677c.set(val);
-//      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50.get(0);
+      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[0] = val;
       case 37 -> Bttl_800c.monsterCount_800c6768.set(val);
       case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4 = val;
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec = val;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.set(val);
-//      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).set(val);
       case 42 -> Bttl_800c.scriptIndex_800c66bc.set(val);
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8.set(val);
       case 44 -> Bttl_800c._800c6748.set(val);
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
       case 47 -> Scus94491BpeSegment_800b.combatStage_800bb0f4.set(val);
-//      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78.get(0);
+      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[0] = val;
       case 49 -> Bttl_800c._800c669c.set(val);
-//      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac.get(0);
+      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[0] = val;
       case 51 -> Bttl_800c._800c6760.set(val);
-//      case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc.get(0);
+      case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[0] = val;
       case 53 -> Bttl_800c.enemyCount_800c6758.set(val);
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4.set(val);
@@ -211,7 +211,7 @@ public class GameVarParam extends Param {
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.set(val);
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.set(val);
 
-//      case 64 -> SMap.sobjIndices_800c6880.get(0);
+      case 64 -> SMap.sobjIndices_800c6880.get(0).set(val);
       case 65 -> SMap.submapScriptIndex_800c6740.set(val);
       case 66 -> SMap.sobjCount_800c6730.set(val);
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.set(val);
@@ -220,7 +220,7 @@ public class GameVarParam extends Param {
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34.set(val);
 //      case 71 -> SMap._800cb44c;
       case 72 -> SMap.encounterAccumulator_800c6ae8.set(val);
-//      case 73 -> SMap._800c6970.get(0);
+      case 73 -> SMap._800c6970.get(0).set(val);
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
@@ -246,9 +246,9 @@ public class GameVarParam extends Param {
       case 108 -> Bttl_800c._800c6770.set(val);
       case 109 -> Bttl_800c.mcqColour_800fa6dc.set(val);
 
-//      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(0);
-//      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(0);
-//      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(0);
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(0).set(val);
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(0).set(val);
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(0).set(val);
       case 115 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(0).partyFlags_04.set(val);
       case 116 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(1).partyFlags_04.set(val);
       case 117 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(2).partyFlags_04.set(val);
@@ -260,8 +260,8 @@ public class GameVarParam extends Param {
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c.get(8).partyFlags_04.set(val);
       case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.set(val);
       case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4.set(val);
-//      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(0);
-//      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(0);
+      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(0).set(val);
+      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(0).set(val);
 //      case 128 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[0]._00.set(val);
 //      case 129 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[1]._00.set(val);
 //      case 130 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[2]._00.set(val);
