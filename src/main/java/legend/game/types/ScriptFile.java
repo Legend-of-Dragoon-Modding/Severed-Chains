@@ -1,36 +1,31 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import static legend.core.GameEngine.MEMORY;
+public class ScriptFile {
+  public final String name;
+  private final int[] data;
 
-public class ScriptFile implements MemoryRef {
-  private final Value ref;
+  public ScriptFile(final String name, final byte[] data) {
+    this(name, new int[data.length / 4]);
+    ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().get(this.data);
+  }
 
-  public final UnboundedArrayRef<IntRef> offsetArr_00;
-  // Code is at an unknown starting point... just use the entrypoint offsets
-//  public final UnboundedArrayRef<UnsignedIntRef> code_40;
+  public ScriptFile(final String name, final int[] data) {
+    this.name = name;
+    this.data = data;
+  }
 
-  public ScriptFile(final Value ref) {
-    this.ref = ref;
-
-    this.offsetArr_00 = ref.offset(4, 0x00L).cast(UnboundedArrayRef.of(4, IntRef::new));
-//    this.code_40 = ref.offset(4, 0x40L).cast(UnboundedArrayRef.of(4, UnsignedIntRef::new));
+  public int getEntry(final int index) {
+    return this.data[index] / 4;
   }
 
   public int getOp(final int offset) {
-    return (int)MEMORY.get(this.ref.getAddress() + offset, 4);
+    return this.data[offset];
   }
 
   public void setOp(final int offset, final int value) {
-    MEMORY.set(this.ref.getAddress() + offset, 4, value);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    this.data[offset] = value;
   }
 }

@@ -1,15 +1,9 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
-
 /**
  * One for each ally and enemy
  */
-public class AdditionExtra04 implements MemoryRef {
-  private final Value ref;
-
+public class AdditionExtra04 {
   /**
    * <ul
    *   <li>0x01 Destroyer Mace </li>
@@ -17,16 +11,15 @@ public class AdditionExtra04 implements MemoryRef {
    *   <li>0x06 Ultimate Wargod (full damage) </li>
    * <ul>
    */
-  public final UnsignedByteRef flag_00;
+  public int flag_00;
+  public int unknown_01;
 
-  public AdditionExtra04(final Value ref) {
-    this.ref = ref;
-
-    this.flag_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
+  public int pack() {
+    return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff;
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public void unpack(final int val) {
+    this.flag_00 = val & 0xff;
+    this.unknown_01 = val >>> 8 & 0xff_ffff;
   }
 }

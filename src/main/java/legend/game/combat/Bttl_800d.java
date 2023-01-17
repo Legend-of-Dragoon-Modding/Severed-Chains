@@ -3174,7 +3174,7 @@ public final class Bttl_800d {
       //LAB_800daabc
       final int x;
       final int y;
-      final long a0 = tickCount_800bb0fc.get() & 0x3L;
+      final int a0 = tickCount_800bb0fc.get() & 0x3;
       if(a0 == 0) {
         //LAB_800dab04
         x = (int)_800c67e4.get();

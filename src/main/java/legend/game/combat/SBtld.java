@@ -24,11 +24,10 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.setScriptDestructor;
 import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -40,7 +39,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c66d0;
-import static legend.game.combat.Bttl_800c._800c66d8;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
@@ -94,22 +92,17 @@ public class SBtld {
     _800c6718.offset(0x24L).setu(stageData._0c.get());
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
-    final int uncompressedSize = (int)bpe_800fb77c.offset(0x0L).get();
     final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    final byte[] decompressed = Unpacker.decompress(archive);
-    final long destAddr = mallocTail(uncompressedSize);
-    MEMORY.setBytes(destAddr, decompressed);
+    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(archive));
 
-    script_800c66fc.setPointer(destAddr);
-
-    loadDrgnBinFile(1, 401, 0, SBtld::FUN_80109170, 0, 0x2L);
+    loadDrgnFile(1, "401", SBtld::FUN_80109170);
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final long address, final int fileSize, final int param) {
-    script_800c670c.set(MEMORY.ref(4, address, ScriptFile::new));
-    scriptIndex_800c674c.setu(allocateScriptState(5, null, 0, null));
-    loadScriptFile((int)scriptIndex_800c674c.get(), script_800c670c.deref());
+  public static void FUN_80109170(final byte[] file) {
+    script_800c670c = new ScriptFile("DRGN1.401", file);
+    scriptIndex_800c674c.set(allocateScriptState(5, null, 0, null));
+    loadScriptFile(scriptIndex_800c674c.get(), script_800c670c);
 
     final long v1;
     if((simpleRand() & 0x8000L) == 0) {
@@ -119,10 +112,10 @@ public class SBtld {
     }
 
     //LAB_801091dc
-    _800c6748.setu(_800c6718.offset(v1).get() + 0x1L);
-    _800c66b0.setu(simpleRand() & 0x3L);
-    _800c6780.setu(_800c6718.offset((_800c66b0.get() + 0x6L) * 0x4L).get());
-    _800bc960.oru(0x2L);
+    _800c6748.set((int)_800c6718.offset(v1).get() + 1);
+    _800c66b0.set(simpleRand() & 3);
+    _800c6780.set((int)_800c6718.offset((_800c66b0.get() + 6) * 0x4L).get());
+    _800bc960.or(0x2);
     decrementOverlayCount();
   }
 
@@ -162,9 +155,7 @@ public class SBtld {
       //LAB_80109340
     }
 
-    loadFile("encounters", file -> {
-      _1f8003f4.encounterData_00 = new EncounterData38(file, encounterId_800bb0f8.get() * 0x38);
-    });
+    loadFile("encounters", file -> _1f8003f4.encounterData_00 = new EncounterData38(file, encounterId_800bb0f8.get() * 0x38));
 
     decrementOverlayCount();
   }
@@ -221,8 +212,8 @@ public class SBtld {
       final int bobjIndex = allocateScriptState(new BattleObject27c());
       setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
       setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
-      _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(bobjIndex);
-      _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(bobjIndex);
+      _8006e398.bobjIndices_e0c[_800c66d0.get()] = bobjIndex;
+      _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = bobjIndex;
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
       final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
       data.magic_00 = BattleScriptDataBase.BOBJ;
@@ -239,12 +230,12 @@ public class SBtld {
     }
 
     //LAB_8010975c
-    _8006e398.bobjIndices_e0c.get(_800c66d0.get()).set(-1);
-    _8006e398.bobjIndices_e50.get(monsterCount_800c6768.get()).set(-1);
+    _8006e398.bobjIndices_e0c[_800c66d0.get()] = -1;
+    _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = -1;
 
     //LAB_801097ac
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      loadMonster(_8006e398.bobjIndices_e50.get(i).get());
+      loadMonster(_8006e398.bobjIndices_e50[i]);
     }
 
     //LAB_801097d0
@@ -257,20 +248,17 @@ public class SBtld {
     final int s0 = param >>> 16;
     final CombatantStruct1a8 v0 = getCombatant(s0);
     final long v1 = enemyRewards_80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
-    v0.xp_194.set((int)MEMORY.ref(2, v1).offset(0x0L).get());
-    v0.gold_196.set((int)MEMORY.ref(2, v1).offset(0x2L).get());
-    v0.itemChance_198.set((int)MEMORY.ref(1, v1).offset(0x4L).get());
-    v0.itemDrop_199.set((int)MEMORY.ref(1, v1).offset(0x5L).get());
-    v0._19a.set((int)MEMORY.ref(2, v1).offset(0x6L).get());
-    loadDrgnBinFile(1, fileIndex + 1, 0, SBtld::FUN_8010989c, s0, 0x2L);
+    v0.xp_194 = (int)MEMORY.ref(2, v1).offset(0x0L).get();
+    v0.gold_196 = (int)MEMORY.ref(2, v1).offset(0x2L).get();
+    v0.itemChance_198 = (int)MEMORY.ref(1, v1).offset(0x4L).get();
+    v0.itemDrop_199 = (int)MEMORY.ref(1, v1).offset(0x5L).get();
+    v0._19a = (int)MEMORY.ref(2, v1).offset(0x6L).get();
+    loadDrgnFile(1, Integer.toString(fileIndex + 1), file -> FUN_8010989c(file, s0));
   }
 
   @Method(0x8010989cL)
-  public static void FUN_8010989c(final long address, final int fileSize, final int index) {
-    final ScriptFile script = MEMORY.ref(4, address, ScriptFile::new);
-
-    getCombatant(index).scriptPtr_10.set(script);
-    _800c66d8.offset(uniqueMonsterCount_800c6698.get() * 0x4L).setu(script.getAddress()); //TODO
+  public static void FUN_8010989c(final byte[] file, final int index) {
+    getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
     uniqueMonsterCount_800c6698.add(1);
     decrementOverlayCount();
   }

@@ -108,7 +108,7 @@ public class CharSwapScreen extends MenuScreen {
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);
 
-      if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2L) == 0) {
+      if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2) == 0) {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 

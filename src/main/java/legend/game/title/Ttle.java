@@ -154,8 +154,8 @@ public final class Ttle {
   private static Window.Events.Key onKeyPress;
 
   public static void test() {
-    mainCallbackIndexOnceLoaded_8004dd24.setu(2);
-    pregameLoadingStage_800bb10c.setu(0);
+    mainCallbackIndexOnceLoaded_8004dd24.set(2);
+    pregameLoadingStage_800bb10c.set(0);
     whichMenu_800bdc38 = WhichMenu.NONE_0;
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(2);
@@ -257,9 +257,9 @@ public final class Ttle {
   @Method(0x800c7424L)
   public static void executeTtleUnloadingStage() {
     loadSItemAndSetUpNewGameData();
-    mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L);
+    mainCallbackIndexOnceLoaded_8004dd24.set(5);
     vsyncMode_8007a3b8.set(2);
-    pregameLoadingStage_800bb10c.setu(0);
+    pregameLoadingStage_800bb10c.set(0);
   }
 
   @Method(0x800c7524L)
@@ -272,7 +272,7 @@ public final class Ttle {
     final RECT rect = new RECT().set((short)640, (short)0, (short)MEMORY.ref(2, address).offset(0x8L).get(), (short)MEMORY.ref(2, address).offset(0xaL).get());
     gameOverMcq_800bdc3c.setPointer(address);
     LoadImage(rect, address + MEMORY.ref(4, address).offset(0x4L).get());
-    pregameLoadingStage_800bb10c.setu(0x3L);
+    pregameLoadingStage_800bb10c.set(3);
   }
 
   @Method(0x800c75b4L)
@@ -282,28 +282,28 @@ public final class Ttle {
 
   @Method(0x800c75fcL)
   public static void FUN_800c75fc() {
-    switch((int)pregameLoadingStage_800bb10c.get()) {
+    switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
         FUN_8002a9c0();
         setWidthAndFlags(640);
-        pregameLoadingStage_800bb10c.setu(0x1L);
+        pregameLoadingStage_800bb10c.set(1);
       }
 
       case 1 -> {
-        pregameLoadingStage_800bb10c.setu(0x2L);
+        pregameLoadingStage_800bb10c.set(2);
         loadDrgnBinFile(0, 6667, 0, Ttle::FUN_800c7558, 0, 0x2L);
       }
 
       case 3 -> {
         deallocateRenderables(0xffL);
         scriptStartEffect(2, 10);
-        pregameLoadingStage_800bb10c.setu(0x4L);
+        pregameLoadingStage_800bb10c.set(4);
       }
 
       case 4 -> {
         if((joypadPress_8007a398.get() & 0x820) != 0) {
           Scus94491BpeSegment_8002.playSound(2);
-          pregameLoadingStage_800bb10c.setu(0x5L);
+          pregameLoadingStage_800bb10c.set(5);
           scriptStartEffect(1, 10);
         }
 
@@ -312,7 +312,7 @@ public final class Ttle {
 
       case 5 -> {
         if(_800bb168.get() >= 0xff) {
-          pregameLoadingStage_800bb10c.setu(0x6L);
+          pregameLoadingStage_800bb10c.set(6);
         }
 
         //LAB_800c7740
@@ -322,8 +322,8 @@ public final class Ttle {
       case 6 -> {
         deallocateRenderables(0xffL);
         free(drgn0_6666FilePtr_800bdc3c.getPointer());
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
-        pregameLoadingStage_800bb10c.setu(0);
+        mainCallbackIndexOnceLoaded_8004dd24.set(2);
+        pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
       }
     }
@@ -333,7 +333,7 @@ public final class Ttle {
 
   @Method(0x800c7798L)
   public static void executeTtleLoadingStage() {
-    switch((int)pregameLoadingStage_800bb10c.get()) {
+    switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> initializeMainMenu();
       case 3 -> renderMainMenu();
       case 4 -> fadeOutForNewGame();
@@ -391,9 +391,9 @@ public final class Ttle {
       _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
     }
 
-    scriptStartEffect(0x2L, 0xfL);
+    scriptStartEffect(2, 15);
     SetGeomOffset(0, 0);
-    pregameLoadingStage_800bb10c.setu(0x3L);
+    pregameLoadingStage_800bb10c.set(3);
 
     addInputHandlers();
   }
@@ -435,7 +435,7 @@ public final class Ttle {
   @Method(0x800c7e50L)
   public static void fadeOutForNewGame() {
     if(_800c6754 == 0) {
-      scriptStartEffect(0x1L, 0xfL);
+      scriptStartEffect(1, 15);
     }
 
     //LAB_800c7e7c
@@ -453,10 +453,10 @@ public final class Ttle {
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0x2L);
-      afterFmvLoadingStage_800bf0ec.setu(0x3L);
+      afterFmvLoadingStage_800bf0ec.set(3);
       Fmv.playCurrentFmv();
 
-      pregameLoadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.set(0);
     }
 
     //LAB_800c7f90
@@ -465,7 +465,7 @@ public final class Ttle {
   @Method(0x800c7fa0L)
   public static void waitForSaveSelection() {
     if(_800c6754 == 0) {
-      scriptStartEffect(0x1L, 0xfL);
+      scriptStartEffect(1, 15);
     }
 
     //LAB_800c7fcc
@@ -487,13 +487,13 @@ public final class Ttle {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(_800bdc34.get() != 0) {
         if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
-          mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L); // WMAP
+          mainCallbackIndexOnceLoaded_8004dd24.set(8); // WMAP
         } else {
           //LAB_800c80a4
-          mainCallbackIndexOnceLoaded_8004dd24.setu(0x5L); // SMAP
+          mainCallbackIndexOnceLoaded_8004dd24.set(5); // SMAP
         }
 
-        pregameLoadingStage_800bb10c.setu(0);
+        pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
 
         //LAB_800c80c4
@@ -502,8 +502,8 @@ public final class Ttle {
 
       //LAB_800c80cc
       if(_800c6728 == 3) {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
-        pregameLoadingStage_800bb10c.setu(0);
+        mainCallbackIndexOnceLoaded_8004dd24.set(2);
+        pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
       } else {
         //LAB_800c8108
@@ -522,7 +522,7 @@ public final class Ttle {
   @Method(0x800c8148L)
   public static void fadeOutMainMenu() {
     if(_800c6754 == 0) {
-      scriptStartEffect(0x1L, 0xfL);
+      scriptStartEffect(1, 15);
     }
 
     //LAB_800c8174
@@ -540,10 +540,10 @@ public final class Ttle {
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0);
-      afterFmvLoadingStage_800bf0ec.setu(0x2L);
+      afterFmvLoadingStage_800bf0ec.set(2);
       Fmv.playCurrentFmv();
 
-      pregameLoadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.set(0);
     }
 
     //LAB_800c8218
@@ -596,7 +596,7 @@ public final class Ttle {
       menuIdleTime += 2;
 
       if(menuIdleTime > 1680) {
-        pregameLoadingStage_800bb10c.setu(0x6L);
+        pregameLoadingStage_800bb10c.set(6);
       }
     }
 
@@ -887,11 +887,11 @@ public final class Ttle {
       case 3 -> {
         _800c672c = 4;
         if(selectedMenuOption == 0) {
-          pregameLoadingStage_800bb10c.setu(0x4L);
+          pregameLoadingStage_800bb10c.set(4);
           //LAB_800c8a20
         } else if(selectedMenuOption == 1) {
           _800c6728 = 2;
-          pregameLoadingStage_800bb10c.setu(0x5L);
+          pregameLoadingStage_800bb10c.set(5);
         }
       }
 

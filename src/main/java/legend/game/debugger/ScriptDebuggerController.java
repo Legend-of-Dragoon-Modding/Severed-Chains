@@ -188,7 +188,7 @@ public class ScriptDebuggerController {
       this.destructor.setText("null");
     }
 
-    this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getAddress()));
+    this.filePtr.setText(state.scriptPtr_14.name);
     this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5]));
     this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6]));
   }

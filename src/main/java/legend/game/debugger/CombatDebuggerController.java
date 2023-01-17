@@ -127,7 +127,7 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final int bobjIndex = _8006e398.bobjIndices_e0c.get(index).get();
+    final int bobjIndex = _8006e398.bobjIndices_e0c[index];
 
     if(bobjIndex == -1) {
       return;
@@ -159,7 +159,7 @@ public class CombatDebuggerController {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final int bobjIndex = _8006e398.bobjIndices_e0c.get(combatantIndex).get();
+    final int bobjIndex = _8006e398.bobjIndices_e0c[combatantIndex];
 
     if(bobjIndex == -1) {
       return "unused";
@@ -168,13 +168,13 @@ public class CombatDebuggerController {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
-    final CombatantStruct1a8 combatant = combatants_8005e398.get(bobj.combatantIndex_26c);
+    final CombatantStruct1a8 combatant = combatants_8005e398[bobj.combatantIndex_26c];
 
-    if((combatant.flags_19e.get() & 0x1) == 0) {
+    if((combatant.flags_19e & 0x1) == 0) {
       return "unused";
     }
 
-    if((combatant.flags_19e.get() & 0x4) == 0) {
+    if((combatant.flags_19e & 0x4) == 0) {
       return currentEnemyNames_800c69d0.get(bobj.charSlot_276).get();
     }
 
@@ -186,7 +186,7 @@ public class CombatDebuggerController {
       return;
     }
 
-    final int scriptIndex = _8006e398.bobjIndices_e0c.get(this.bobjList.getSelectionModel().getSelectedIndex()).get();
+    final int scriptIndex = _8006e398.bobjIndices_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(scriptIndex).start(new Stage());
@@ -198,7 +198,7 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bobjList.getSelectionModel().getSelectedIndex();
-    final int bobjIndex = _8006e398.bobjIndices_e0c.get(index).get();
+    final int bobjIndex = _8006e398.bobjIndices_e0c[index];
 
     if(bobjIndex == -1) {
       return;

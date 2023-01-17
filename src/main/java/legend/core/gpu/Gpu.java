@@ -320,8 +320,8 @@ public class Gpu implements Runnable {
   public Runnable mainRenderer;
   public Runnable subRenderer = () -> { };
 
-  public long getVsyncCount() {
-    return (long)this.vsyncCount;
+  public int getVsyncCount() {
+    return (int)this.vsyncCount;
   }
 
   public boolean isReady() {

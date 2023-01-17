@@ -38,7 +38,7 @@ public class ScriptInlineParam extends Param {
 
   @Override
   public Param array(final int index) {
-    return new ScriptInlineParam(this.state, this.offset + index * 4);
+    return new ScriptInlineParam(this.state, this.offset + index);
   }
 
   @Override

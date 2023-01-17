@@ -7,8 +7,10 @@ import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.types.MrgFile;
+import legend.game.types.ScriptFile;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
@@ -20,7 +22,7 @@ public class DeffManager7cc {
   // TODO unused?
 //  public final Value _28;
   //TODO sub-structs from here down?
-  public MrgFile mrg_2c;
+  public ScriptFile[] scripts_2c;
   public long ptr_30;
   public long ptr_34;
   public MrgFile deff_38;

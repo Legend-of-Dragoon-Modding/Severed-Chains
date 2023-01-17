@@ -123,11 +123,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li value="8">WMAP</li>
    * </ol>
    */
-  public static final Value mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L);
+  public static final IntRef mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L, IntRef::new);
   /** When the overlay finishes loading, switch to this */
-  public static final Value mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L);
+  public static final IntRef mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L, IntRef::new);
   /** The previous index before the file finished loading */
-  public static final Value previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L);
+  public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
 
   public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
   public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
@@ -145,158 +145,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
   public static final IntRef scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL, IntRef::new);
-
-  /**
-   * Table of pointers to variables accessible by scripting engine
-   *
-   * <ol start="0">
-   *   <li>{@link legend.game.Scus94491BpeSegment_8004#mainCallbackIndex_8004dd20}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#pregameLoadingStage_800bb10c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#tickCount_800bb0fc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee90}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee94}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#gold_94}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_08}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8007#_8007a3a8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb104}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800babc0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bb168}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#red0_20}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#green0_1c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#blue0_14}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#red1_18}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#green1_10}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#scriptEffect_800bb140#blue1_0c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charIndex_88}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#chapterIndex_98}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#stardust_9c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#timestamp_a0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#submapScene_a4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#submapCut_a8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#submapScene_a4} (duplicate, not 0xac)</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_b0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8007#vsyncMode_8007a3b8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee98}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beebc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bee9c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beea4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeac}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800beeb4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e0c}</li>
-   *   <li>{@link legend.game.combat.Bttl_800c#_800c66d0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e40}</li>
-   *   <li>{@link Bttl_800c#charCount_800c677c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e50}</li>
-   *   <li>{@link Bttl_800c#monsterCount_800c6768}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#morphMode_ee4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#partyPermutation_eec}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#itemsDroppedByEnemiesCount_800bc978}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#itemsDroppedByEnemies_800bc928}</li>
-   *   <li>{@link Bttl_800c#_800c66bc}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#encounterId_800bb0f8}</li>
-   *   <li>{@link Bttl_800c#_800c6748}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#_180}</li>
-   *   <li>{@link Bttl_800c#_800c6718}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#combatStage_800bb0f4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_e78}</li>
-   *   <li>{@link Bttl_800c#_800c669c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_eac}</li>
-   *   <li>{@link Bttl_800c#_800c6760}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#bobjIndices_ebc}</li>
-   *   <li>{@link Bttl_800c#enemyCount_800c6758}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#_ef0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_b4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_b8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc974}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bc960}</li>
-   *   <li>{@link legend.game.combat.Bttl_800c#_800c66c8}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#goldGainedFromCombat_800bc920}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#totalXpFromCombat_800bc95c}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>{@link legend.game.SMap#sobjIndices_800c6880}</li>
-   *   <li>{@link legend.game.SMap#submapScriptIndex_800c6740}</li>
-   *   <li>{@link legend.game.SMap#sobjCount_800c6730}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bd7b0}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#_800bda08}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8005#submapCut_80052c30}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8005#submapScene_80052c34}</li>
-   *   <li>{@link legend.game.SMap#_800cb44c}</li>
-   *   <li>{@link legend.game.SMap#encounterAccumulator_800c6ae8}</li>
-   *   <li>{@link legend.game.SMap#_800c6970}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8004#_8004de54}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8004#_8004de50}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>{@link Bttl_800c#_800c6914}</li>
-   *   <li>{@link Bttl_800c#_800c6918}</li>
-   *   <li>{@link Bttl_800c#_800c67c8}</li>
-   *   <li>{@link Bttl_800c#_800c67cc}</li>
-   *   <li>{@link Bttl_800c#_800c67d0}</li>
-   *   <li>{@link Bttl_800c#_800c6710}</li>
-   *   <li>{@link Bttl_800c#_800c6780}</li>
-   *   <li>{@link Bttl_800c#_800c66a8}</li>
-   *   <li>{@link Bttl_800c#_800c6700}</li>
-   *   <li>{@link Bttl_800c#_800c6704}</li>
-   *   <li>{@link Bttl_800c#_800c66b0}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>{@link Bttl_800c#_800c6754}</li>
-   *   <li>{@link Bttl_800c#currentStage_800c66a4}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>{@link Bttl_800c#_800c6764}</li>
-   *   <li>{@link Bttl_800c#_800c6774}</li>
-   *   <li>{@link Bttl_800c#_800c6778}</li>
-   *   <li>{@link Bttl_800c#_800c676c}</li>
-   *   <li>{@link Bttl_800c#_800c6770}</li>
-   *   <li>{@link Bttl_800c#mcqColour_800fa6dc}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_15c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_17c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#dragoonSpirits_19c}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(0)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(1)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(2)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(3)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(4)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(5)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(6)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(7)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#charData_32c(8)#partyFlags_04}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8005#standingInSavePoint_8005a368}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8007#shopId_8007a3b4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1a4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_800b#gameState_800babc8#_1c4}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(0)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(1)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(2)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(3)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(4)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(5)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(6)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(7)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(8)}</li>
-   *   <li>{@link legend.game.Scus94491BpeSegment_8006#_8006e398#specialEffect_20(9)}</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   *   <li>null</li>
-   * </ol>
-   */
-  public static final ArrayRef<Pointer<IntRef>> scriptPtrs_8004de58 = MEMORY.ref(4, 0x8004de58L, ArrayRef.of(Pointer.classFor(IntRef.class), 0x90, 4, Pointer.deferred(4, IntRef::new)));
 
   public static final Function<RunningScript, FlowControl>[] scriptOps_8004e098 = new Function[128];
   static {
@@ -615,7 +463,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[355] = Bttl_800c::FUN_800cd4b0;
     scriptSubFunctions_8004e29c[356] = Bttl_800c::FUN_800cd4f0;
     scriptSubFunctions_8004e29c[357] = Bttl_800c::scriptAddCombatant;
-    scriptSubFunctions_8004e29c[358] = Bttl_800c::scriptDeallocateAndClearCombatant;
+    scriptSubFunctions_8004e29c[358] = Bttl_800c::scriptDeallocateAndRemoveCombatant;
     scriptSubFunctions_8004e29c[359] = Bttl_800c::FUN_800cda78;
     scriptSubFunctions_8004e29c[360] = Bttl_800c::FUN_800cd5b4;
     scriptSubFunctions_8004e29c[361] = Bttl_800c::FUN_800cd740;
@@ -1010,7 +858,7 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
-  public static final ScriptFile doNothingScript_8004f650 = MEMORY.ref(4, 0x8004f650L, ScriptFile::new);
+  public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
 
   public static final Value _8004f6a4 = MEMORY.ref(4, 0x8004f6a4L);

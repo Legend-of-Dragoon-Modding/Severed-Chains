@@ -8,7 +8,6 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.BattleDisplayStats144;
@@ -524,7 +523,7 @@ public final class Bttl_800f {
           // Attack all
 
           final int count;
-          final ArrayRef<IntRef> bobjs;
+          final int[] bobjs;
           if((attackerState.storage_44[7] & 0x4) == 0) {
             count = charCount_800c677c.get();
             bobjs = _8006e398.charBobjIndices_e40;
@@ -537,7 +536,7 @@ public final class Bttl_800f {
           //LAB_800f21b0
           //LAB_800f21d4
           for(int i = 0; i < count; i++) {
-            final BattleObject27c a1_0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjs.get(i).get()].innerStruct_00;
+            final BattleObject27c a1_0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjs[i]].innerStruct_00;
             a1_0._a8 = attacker._a8;
             FUN_800f9380(attacker, a1_0);
           }
@@ -878,7 +877,7 @@ public final class Bttl_800f {
       //LAB_800f2ddc
       //LAB_800f2dec
       for(int i = 0; i < Math.min(3, charCount_800c677c.get()); i++) {
-        if(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00).charIndex_272 == 0) {
+        if(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[i]].innerStruct_00).charIndex_272 == 0) {
           break;
         }
       }
@@ -1542,7 +1541,7 @@ public final class Bttl_800f {
     //LAB_800f4410
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(_8006e398.charBobjIndices_e40.get(charSlot).get() == script.params_20[0].get()) {
+      if(_8006e398.charBobjIndices_e40[charSlot] == script.params_20[0].get()) {
         break;
       }
     }
@@ -1577,7 +1576,7 @@ public final class Bttl_800f {
     //LAB_800f454c
     int i;
     for(i = 0; i < charCount_800c677c.get(); i++) {
-      if(_8006e398.charBobjIndices_e40.get(i).get() == a0.params_20[0].get()) {
+      if(_8006e398.charBobjIndices_e40[i] == a0.params_20[0].get()) {
         break;
       }
     }
@@ -1627,13 +1626,13 @@ public final class Bttl_800f {
     //LAB_800f4704
     //LAB_800f4708
     a0.params_20[0].set(structa4._a0.get());
-    a0.params_20[1].set(battleMenu_800c6c34.deref()._48.get());
+    a0.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
     a0.params_20[2].set(a2);
 
     //LAB_800f4770
     BattleObject27c t0 = null;
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      t0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(i).get()].innerStruct_00;
+      t0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[i]].innerStruct_00;
 
       if(t0.charIndex_272 == _800c6b60.deref().charIndex_08.get()) {
         break;
@@ -1677,7 +1676,7 @@ public final class Bttl_800f {
 
     //LAB_800f489c
     for(int a0 = 0; a0 < charCount_800c677c.get(); a0++) {
-      a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(a0).get()].innerStruct_00;
+      a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[a0]].innerStruct_00;
 
       if(struct58.charIndex_04.get() == a1.charIndex_272) {
         break;
@@ -1697,7 +1696,7 @@ public final class Bttl_800f {
 
     if(v1 == 1) {
       //LAB_800f4930
-      v1 = struct58._48.get();
+      v1 = struct58.target_48.get();
     } else {
       //LAB_800f4944
       //LAB_800f4948
@@ -1996,7 +1995,7 @@ public final class Bttl_800f {
           int charSlot = 0;
           int s2;
           do {
-            s2 = _8006e398.charBobjIndices_e40.get(charSlot).get();
+            s2 = _8006e398.charBobjIndices_e40[charSlot];
             data = (BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
 
             if(structa4.charIndex_08.get() == data.charIndex_272) {
@@ -2119,7 +2118,7 @@ public final class Bttl_800f {
         //LAB_800f538c
         int charSlot = 0;
         do {
-          data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00;
+          data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[charSlot]].innerStruct_00;
 
           if(structa4.charIndex_08.get() == data.charIndex_272) {
             break;
@@ -2216,7 +2215,7 @@ public final class Bttl_800f {
 
     //LAB_800f5694
     //LAB_800f5698
-    structa4._84.set((int)tickCount_800bb0fc.get() & 0x7);
+    structa4._84.set(tickCount_800bb0fc.get() & 0x7);
 
     //LAB_800f56ac
   }
@@ -2564,14 +2563,14 @@ public final class Bttl_800f {
     //LAB_800f6234
     int a3;
     for(a3 = 0; a3 < charCount_800c677c.get(); a3++) {
-      if(_8006e398.charBobjIndices_e40.get(a3).get() == a0) {
+      if(_8006e398.charBobjIndices_e40[a3] == a0) {
         break;
       }
     }
 
     //LAB_800f6254
     v0.iconCount_0e.set((short)0);
-    v0.charIndex_04.set((short)((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(a3).get()].innerStruct_00).charIndex_272);
+    v0.charIndex_04.set((short)((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[a3]].innerStruct_00).charIndex_272);
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
@@ -2667,9 +2666,9 @@ public final class Bttl_800f {
           }
 
           //LAB_800f6560
-          _800c6748.setu(0x21L);
+          _800c6748.set(0x21);
           struct58._00.set((short)5);
-          _800c66b0.setu(_800c6c30.offset(_800c6ba1.get()).get());
+          _800c66b0.set((int)_800c6c30.offset(_800c6ba1.get()).get());
           struct58._44.set(60 / vsyncMode_8007a3b8.get() + 2);
           FUN_800f8c38(0);
           break;
@@ -3103,9 +3102,7 @@ public final class Bttl_800f {
 
   @Method(0x800f7768L)
   public static int FUN_800f7768(final int targetType, final long a1) {
-    long v1;
-    final long t1;
-    long t4 = 0;
+    final int count;
     long t3 = 0x1L;
 
     final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
@@ -3113,7 +3110,7 @@ public final class Bttl_800f {
     if(targetType == 1) {
       struct58._4c.set(0x1L);
       //LAB_800f77d4
-      t1 = enemyCount_800c6758.get();
+      count = enemyCount_800c6758.get();
 
       //LAB_800f77e8
       _800c697c.setu(_800c697e.get());
@@ -3121,17 +3118,17 @@ public final class Bttl_800f {
       struct58._4c.set(0x1L);
       if(targetType == 0) {
         _800c697c.setu(_800c6980.get());
-        t1 = charCount_800c677c.get();
+        count = charCount_800c677c.get();
       } else {
         //LAB_800f77f0
-        t1 = _800c669c.get();
+        count = _800c669c.get();
       }
     }
 
     //LAB_800f77f4
     if((joypadPress_8007a398.get() & 0x3000L) != 0) {
       _800c697c.addu(0x1L);
-      if(_800c697c.getSigned() >= t1) {
+      if(_800c697c.getSigned() >= count) {
         _800c697c.setu(0);
       }
     }
@@ -3140,14 +3137,14 @@ public final class Bttl_800f {
     if((joypadPress_8007a398.get() & 0xc000L) != 0) {
       _800c697c.subu(0x1L);
       if(_800c697c.getSigned() < 0) {
-        _800c697c.setu(t1 - 0x1L);
+        _800c697c.setu(count - 1);
       }
       t3 = -0x1L;
     }
 
     //LAB_800f786c
     //LAB_800f7880
-    if(_800c697c.getSigned() < 0 || _800c697c.getSigned() >= (short)t1) {
+    if(_800c697c.getSigned() < 0 || _800c697c.getSigned() >= count) {
       //LAB_800f78a0
       _800c697c.setu(0);
       t3 = 0x1L;
@@ -3155,30 +3152,32 @@ public final class Bttl_800f {
 
     //LAB_800f78ac
     //LAB_800f78d4
-    for(v1 = 0; v1 < t1; v1++) {
-      t4 = _800c71f0.offset(targetType * 0x4L).deref(4).offset(_800c697c.getSigned() * 0x4L).get();
+    int v1;
+    int targetIndex = 0;
+    for(v1 = 0; v1 < count; v1++) {
+      targetIndex = _800c71f0[targetType][(int)_800c697c.getSigned()];
 
-      if((scriptStatePtrArr_800bc1c0[(int)t4].storage_44[7] & 0x4000) == 0) {
+      if(scriptStatePtrArr_800bc1c0[targetIndex] != null && (scriptStatePtrArr_800bc1c0[targetIndex].storage_44[7] & 0x4000) == 0) {
         break;
       }
 
       _800c697c.addu(t3);
 
-      if(_800c697c.get() >= t1) {
+      if(_800c697c.get() >= count) {
         _800c697c.setu(0);
       }
 
       //LAB_800f792c
       if(_800c697c.getSigned() < 0) {
-        _800c697c.setu(t1 - 0x1L);
+        _800c697c.setu(count - 1);
       }
 
       //LAB_800f7948
     }
 
     //LAB_800f7960
-    if(v1 == t1) {
-      t4 = _800c71f0.offset(targetType * 0x4L).deref(4).offset(_800c697c.getSigned() * 0x4L).get();
+    if(v1 == count) {
+      targetIndex = _800c71f0[targetType][(int)_800c697c.getSigned()];
       _800c697c.setu(0);
     }
 
@@ -3192,7 +3191,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f79bc
-    struct58._48.set((int)t4);
+    struct58.target_48.set(targetIndex);
 
     if(targetType == 1) {
       //LAB_800f79fc
@@ -3214,7 +3213,7 @@ public final class Bttl_800f {
     if((joypadPress_8007a398.get() & 0x40L) != 0) { // Circle
       ret = -1;
       _800c697c.setu(0);
-      struct58._48.set(-1);
+      struct58.target_48.set(-1);
       struct58._4c.set(0);
     }
 
@@ -3426,9 +3425,9 @@ public final class Bttl_800f {
   public static LodString getTargetEnemyName(final BattleObject27c target, final LodString targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
     if(target.charIndex_272 == 0x185) {
-      final int stageProgression = _8006e398.stageProgression_eec.get();
+      final int stageProgression = _8006e398.stageProgression_eec;
       if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
-        return _800c6ba8.get((int)_800c6f30.offset(_8006e398.stageProgression_eec.get() * 0x4L).get());
+        return _800c6ba8.get((int)_800c6f30.offset(_8006e398.stageProgression_eec * 0x4L).get());
       }
     }
 
@@ -3921,7 +3920,7 @@ public final class Bttl_800f {
     final int targetType = a0.params_20[0].get();
     final int targetBobj = a0.params_20[1].get();
 
-    final ArrayRef<IntRef> bobjs;
+    final int[] bobjs;
     final int count;
     if(targetType == 0) {
       bobjs = _8006e398.charBobjIndices_e40;
@@ -3939,7 +3938,7 @@ public final class Bttl_800f {
     //LAB_800f9abc
     //LAB_800f9adc
     for(int i = 0; i < count; i++) {
-      if(targetBobj == bobjs.get(i).get()) {
+      if(targetBobj == bobjs[i]) {
         if(targetType == 0) {
           _800c6980.setu(i);
         } else if(targetType == 1) {
@@ -4079,7 +4078,7 @@ public final class Bttl_800f {
 
     //LAB_800f9e8c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int bobjIndex = _8006e398.charBobjIndices_e40.get(charSlot).get();
+      final int bobjIndex = _8006e398.charBobjIndices_e40[charSlot];
       final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 
       if(charIndex == bobj.charIndex_272) {

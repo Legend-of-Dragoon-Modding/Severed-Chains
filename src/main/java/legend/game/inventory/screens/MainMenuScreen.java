@@ -183,7 +183,7 @@ public class MainMenuScreen extends MenuScreen {
 
     final boolean allocate = a2 == 0xff;
     if(allocate) {
-      renderDragoonSpirits((int)gameState_800babc8.dragoonSpirits_19c.get(0).get(), 40, 197);
+      renderDragoonSpirits(gameState_800babc8.dragoonSpirits_19c.get(0).get(), 40, 197);
       renderEightDigitNumber(67, 184, gameState_800babc8.gold_94.get(), 0); // Gold
       renderCharacter(146, 184, 10);
       renderCharacter(164, 184, 10);
@@ -199,7 +199,7 @@ public class MainMenuScreen extends MenuScreen {
     renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98.get()).deref(), 94, 24, 4);
 
     final LodString v1;
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 5) {
       v1 = submapNames_8011c108.get(submapIndex_800bd808.get()).deref();
     } else {
       v1 = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();

@@ -102,18 +102,18 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_8003c5e0();
 
-    _8007a3a8.setu(0);
-    _800bb104.setu(0);
-    _800babc0.setu(0);
+    _8007a3a8.set(0);
+    _800bb104.set(0);
+    _800babc0.set(0);
 
     InitGeom();
     setProjectionPlaneDistance(640);
     FUN_80019500();
 
-    mainCallbackIndexOnceLoaded_8004dd24.setu(0);
-    pregameLoadingStage_800bb10c.setu(0);
+    mainCallbackIndexOnceLoaded_8004dd24.set(0);
+    pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8.set(2);
-    tickCount_800bb0fc.setu(0);
+    tickCount_800bb0fc.set(0);
 
     precalculateTpages();
     loadSystemFont();
@@ -153,7 +153,7 @@ public final class Scus94491BpeSegment_800e {
     //LAB_800e6040
     _8004dd30.setu(0);
     fmvIndex_800bf0dc.setu(0);
-    afterFmvLoadingStage_800bf0ec.setu(0x2L);
+    afterFmvLoadingStage_800bf0ec.set(2);
   }
 
   @Method(0x800e6524L)

@@ -323,20 +323,20 @@ public final class SMap {
   public static final VECTOR cameraPos_800c6aa0 = MEMORY.ref(4, 0x800c6aa0L, VECTOR::new);
   public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
   public static final VECTOR prevPlayerPos_800c6ab0 = MEMORY.ref(4, 0x800c6ab0L, VECTOR::new);
-  public static final Value encounterMultiplier_800c6abc = MEMORY.ref(4, 0x800c6abcL); // Overlaps previous vector padding
+  public static final IntRef encounterMultiplier_800c6abc = MEMORY.ref(4, 0x800c6abcL, IntRef::new); // Overlaps previous vector padding
   public static final MATRIX matrix_800c6ac0 = MEMORY.ref(4, 0x800c6ac0L, MATRIX::new);
   public static final Value _800c6ae0 = MEMORY.ref(4, 0x800c6ae0L);
   public static final Value _800c6ae4 = MEMORY.ref(4, 0x800c6ae4L);
-  public static final Value encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L);
+  public static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
   public static final Pointer<UnknownStruct> _800c6aec = MEMORY.ref(4, 0x800c6aecL, Pointer.deferred(4, UnknownStruct::new));
   /** 14576 bytes - contains the contents of NEWROOT.RDT */
   public static final NewRootStruct newroot_800c6af0 = MEMORY.ref(4, 0x800c6af0L, NewRootStruct::new);
 
   public static WhichMenu _800caaf0;
-  public static final Value _800caaf4 = MEMORY.ref(4, 0x800caaf4L);
-  public static final Value _800caaf8 = MEMORY.ref(4, 0x800caaf8L);
-  public static final Value _800caafc = MEMORY.ref(4, 0x800caafcL);
-  public static final Value _800cab00 = MEMORY.ref(4, 0x800cab00L);
+  public static final IntRef _800caaf4 = MEMORY.ref(4, 0x800caaf4L, IntRef::new);
+  public static final IntRef _800caaf8 = MEMORY.ref(4, 0x800caaf8L, IntRef::new);
+  public static final IntRef _800caafc = MEMORY.ref(4, 0x800caafcL, IntRef::new);
+  public static final IntRef _800cab00 = MEMORY.ref(4, 0x800cab00L, IntRef::new);
   public static final Pointer<NewRootStruct> newrootPtr_800cab04 = MEMORY.ref(4, 0x800cab04L, Pointer.deferred(4, NewRootStruct::new));
 
   public static final Value backgroundLoaded_800cab10 = MEMORY.ref(4, 0x800cab10L);
@@ -620,7 +620,7 @@ public final class SMap {
   public static void swapDiskLoadingStage() {
     LOGGER.info("Disk swap loading stage %d", pregameLoadingStage_800bb10c.get());
 
-    final int v1 = switch((int)pregameLoadingStage_800bb10c.get()) {
+    final int v1 = switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> loadDiskSwapScreen();
       case 1 -> FUN_800d96b8();
       default -> throw new RuntimeException("Invalid stage");
@@ -628,11 +628,11 @@ public final class SMap {
 
     if(v1 == 1) {
       //LAB_800d930c
-      pregameLoadingStage_800bb10c.addu(0x1L);
+      pregameLoadingStage_800bb10c.incr();
     } else if(v1 == 2) {
       //LAB_800d9320
-      mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc05c.get());
-      pregameLoadingStage_800bb10c.setu(0);
+      mainCallbackIndexOnceLoaded_8004dd24.set(_800bc05c.get());
+      pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
     }
 
@@ -643,9 +643,9 @@ public final class SMap {
 
   @Method(0x800d93dcL)
   public static int loadDiskSwapScreen() {
-    _800babc0.setu(0);
-    _800bb104.setu(0);
-    _8007a3a8.setu(0);
+    _800babc0.set(0);
+    _800bb104.set(0);
+    _8007a3a8.set(0);
     _8004dd30.setu(0x1L);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.set(1);
@@ -749,14 +749,14 @@ public final class SMap {
 
   @Method(0x800d9e08L)
   public static void FUN_800d9e08() {
-    pregameLoadingStage_800bb10c.addu(0x1L);
+    pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
       fmvIndex_800bf0dc.setu(0x11L);
-      afterFmvLoadingStage_800bf0ec.setu(0x4L);
+      afterFmvLoadingStage_800bf0ec.set(4);
       _800ba3b8.setu(0x2L);
       _800bdd24.setu(0x9L);
-      pregameLoadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.set(0);
     }
 
     //LAB_800d9e5c
@@ -2609,8 +2609,8 @@ public final class SMap {
         loadTimImage(_80010544.getAddress());
 
         if(_80050274.get() != submapCut_80052c30.get()) {
-          _800bda08.setu(_80050274);
-          _80050274.setu(submapCut_80052c30.get());
+          _800bda08.set(_80050274.get());
+          _80050274.set(submapCut_80052c30.get());
         }
 
         //LAB_800e1440
@@ -2758,18 +2758,16 @@ public final class SMap {
 
           submapAssets = new SubmapAssets();
           submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1);
-          submapAssets.script = MEMORY.ref(4, mallocTail(submapScriptsMrg_800c68d8.get(0).length), ScriptFile::new);
-          MEMORY.setBytes(submapAssets.script.getAddress(), submapScriptsMrg_800c68d8.get(0));
+          submapAssets.script = new ScriptFile("Submap controller", submapScriptsMrg_800c68d8.get(0));
 
           for(int objIndex = 0; objIndex < objCount; objIndex++) {
             final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1);
             final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33);
 
             final SubmapObject obj = new SubmapObject();
-            obj.script = MEMORY.ref(4, mallocTail(scriptData.length), ScriptFile::new);
+            obj.script = new ScriptFile("Submap object " + objIndex, scriptData);
             obj.model = MEMORY.ref(4, mallocTail(tmdData.length), ExtendedTmd::new);
 
-            MEMORY.setBytes(obj.script.getAddress(), scriptData);
             MEMORY.setBytes(obj.model.getAddress(), tmdData);
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
@@ -3146,12 +3144,9 @@ public final class SMap {
     }
 
     //LAB_800e2350
-    _800bd7b0.setu(0x1L);
-
-    free(submapAssets.script.getAddress());
+    _800bd7b0.set(1);
 
     for(final SubmapObject obj : submapAssets.objects) {
-      free(obj.script.getAddress());
       free(obj.model.getAddress());
 
       for(final TmdAnimationFile anim : obj.animations) {
@@ -3555,9 +3550,9 @@ public final class SMap {
 
   @Method(0x800e3d68L)
   public static void clearJoypadInput() {
-    _800bee90.setu(0);
-    _800bee94.setu(0);
-    _800bee98.setu(0);
+    _800bee90.set(0);
+    _800bee94.set(0);
+    _800bee98.set(0);
   }
 
   @Method(0x800e3d80L)
@@ -3838,9 +3833,9 @@ public final class SMap {
 
     if((int)dist < 0x9L) {
       //LAB_800e4a98
-      encounterMultiplier_800c6abc.setu(0x1L);
+      encounterMultiplier_800c6abc.set(1);
     } else {
-      encounterMultiplier_800c6abc.setu(0x4L);
+      encounterMultiplier_800c6abc.set(4);
     }
 
     //LAB_800e4aa0
@@ -3886,9 +3881,9 @@ public final class SMap {
       return 0;
     }
 
-    encounterAccumulator_800c6ae8.addu(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc.get());
+    encounterAccumulator_800c6ae8.add(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc.get());
 
-    if(encounterAccumulator_800c6ae8.get() > 0x1400L) {
+    if(encounterAccumulator_800c6ae8.get() > 0x1400) {
       // Start combat
       encounterId_800bb0f8.set(sceneEncounterIds_800f74c4.get(encounterData_800f64c4.get(submapCut_80052c30.get()).scene_00.get()).get(randomEncounterIndex()).get());
       combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
@@ -4186,7 +4181,7 @@ public final class SMap {
 
     if(newCut > 0x7ff) {
       fmvIndex_800bf0dc.setu(newCut - 0x800L);
-      afterFmvLoadingStage_800bf0ec.setu(newScene);
+      afterFmvLoadingStage_800bf0ec.set(newScene);
       smapLoadingStage_800cb430.setu(0x15L);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4200,7 +4195,7 @@ public final class SMap {
 
     if(newCut > -1) {
       submapCut_80052c30.set(newCut);
-      submapScene_80052c34.setu(newScene);
+      submapScene_80052c34.set(newScene);
       smapLoadingStage_800cb430.setu(0x4L);
       _800cb450.setu(newCut);
       _800f7e4c.setu(0x1L);
@@ -4318,8 +4313,8 @@ public final class SMap {
 
       if(_800cab20.getSigned() >= 0) {
         setWidthAndFlags(384);
-        _800caaf4.setu(submapCut_80052c30.get());
-        _800caaf8.setu(submapScene_80052c34);
+        _800caaf4.set(submapCut_80052c30.get());
+        _800caaf8.set(submapScene_80052c34.get());
         return;
       }
     }
@@ -4327,9 +4322,9 @@ public final class SMap {
     //LAB_800e5a30
     //LAB_800e5a34
     if(pregameLoadingStage_800bb10c.get() == 0) {
-      pregameLoadingStage_800bb10c.setu(0x1L);
-      _800caaf4.setu(submapCut_80052c30.get());
-      _800caaf8.setu(submapScene_80052c34);
+      pregameLoadingStage_800bb10c.set(1);
+      _800caaf4.set(submapCut_80052c30.get());
+      _800caaf8.set(submapScene_80052c34.get());
       _80052c44.setu(0x2L);
 
       if(_800cb440.get() != 0) {
@@ -4359,7 +4354,7 @@ public final class SMap {
 
         //LAB_800e5b2c
         _80052c44.setu(0x2L);
-        encounterAccumulator_800c6ae8.setu(0);
+        encounterAccumulator_800c6ae8.set(0);
         smapLoadingStage_800cb430.setu(0x1L);
       }
 
@@ -4378,15 +4373,15 @@ public final class SMap {
       case 0x3 -> {
         _800cab28.setu(0);
         _80052c44.setu(0x1L);
-        _800caaf4.setu(submapCut_80052c30.get());
-        _800caaf8.setu(submapScene_80052c34);
+        _800caaf4.set(submapCut_80052c30.get());
+        _800caaf8.set(submapScene_80052c34.get());
 
         // Detect if we need to change disks
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         if(drgnIndex.get() != drgnBinIndex_800bc058.get()) {
           //LAB_800e5c9c
           diskNum_8004ddc0.set(drgnIndex.get());
-          _800bc05c.setu(0x5L);
+          _800bc05c.set(5);
           smapLoadingStage_800cb430.setu(0x16L);
           break;
         }
@@ -4398,9 +4393,9 @@ public final class SMap {
       }
 
       case 0x4 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
-        _800caafc.setu(submapCut_80052c30.get());
-        _800cab00.setu(submapScene_80052c34);
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        _800caafc.set(submapCut_80052c30.get());
+        _800cab00.set(submapScene_80052c34.get());
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         smapLoadingStage_800cb430.setu(0x11L);
       }
@@ -4421,8 +4416,8 @@ public final class SMap {
       }
 
       case 0x9 -> {
-        FUN_800e4d00(submapCut_80052c30.get(), (int)submapScene_80052c34.get());
-        FUN_800e81a0((int)submapScene_80052c34.get());
+        FUN_800e4d00(submapCut_80052c30.get(), submapScene_80052c34.get());
+        FUN_800e81a0(submapScene_80052c34.get());
         FUN_800e664c(submapCut_80052c30.get(), 0x1L);
         FUN_800e6d4c();
         if(_800cab2c.get() != 0) { // This might be to transition to another map or something?
@@ -4438,22 +4433,22 @@ public final class SMap {
 
       case 0xa -> {
         loadingStage_800c68e4.setu(0);
-        executeSceneGraphicsLoadingStage((int)_800caaf8.get());
+        executeSceneGraphicsLoadingStage(_800caaf8.get());
         smapLoadingStage_800cb430.setu(0xbL);
       }
 
       case 0xb -> {
-        executeSceneGraphicsLoadingStage((int)_800caaf8.get());
+        executeSceneGraphicsLoadingStage(_800caaf8.get());
         if(loadingStage_800c68e4.get() == 0xaL) {
           if(isScriptLoaded(0)) {
-            ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).ui_16c = (int)_800caaf8.get();
+            ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).ui_16c = _800caaf8.get();
           }
 
           //LAB_800e5e94
           FUN_800e770c();
           _800bdc34.setu(0);
           _80052c44.setu(0);
-          scriptStartEffect(0x2L, 0xaL);
+          scriptStartEffect(2, 10);
           _800cab24.set(FUN_800ea974(_800caaf4.get()));
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
@@ -4464,18 +4459,18 @@ public final class SMap {
 
       case 0xc -> {
         _80052c44.setu(0);
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         if(joypadPress_8007a398.get(0x10L) != 0 && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
 
       case 0xd -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
           if(scriptEffect_800bb140._24.get() == 0) {
-            scriptStartEffect(0x1L, 0xaL);
+            scriptStartEffect(1, 10);
           }
 
           //LAB_800e5fa4
@@ -4531,12 +4526,12 @@ public final class SMap {
 
       case 0xf -> {
         _80052c44.setu(0);
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         scriptsTickDisabled_800bc0b8 = false;
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
         if(_800bdc34.get() != 0) {
-          FUN_800e5534(submapCut_80052c30.get(), (int)submapScene_80052c34.get());
+          FUN_800e5534(submapCut_80052c30.get(), submapScene_80052c34.get());
         }
       }
 
@@ -4547,7 +4542,7 @@ public final class SMap {
       }
 
       case 0x11 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         if(isScriptLoaded(0)) {
           ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).us_12a = 1;
         }
@@ -4556,7 +4551,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
           if(scriptEffect_800bb140._24.get() == 0) {
-            scriptStartEffect(0x1L, 0xaL);
+            scriptStartEffect(1, 10);
           }
 
           //LAB_800e61fc
@@ -4584,11 +4579,11 @@ public final class SMap {
       }
 
       case 0x12 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
           if(scriptEffect_800bb140._24.get() == 0) {
-            scriptStartEffect(0x1L, 0xaL);
+            scriptStartEffect(1, 10);
           }
 
           //LAB_800e62b0
@@ -4600,8 +4595,8 @@ public final class SMap {
 
         //LAB_800e62cc
         if(a0) {
-          mainCallbackIndexOnceLoaded_8004dd24.setu(0x8L);
-          pregameLoadingStage_800bb10c.setu(0);
+          mainCallbackIndexOnceLoaded_8004dd24.set(8);
+          pregameLoadingStage_800bb10c.set(0);
           vsyncMode_8007a3b8.set(2);
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
@@ -4610,21 +4605,21 @@ public final class SMap {
       }
 
       case 0x13 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _80052c44.setu(0x5L);
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x6L);
-        pregameLoadingStage_800bb10c.setu(0);
+        mainCallbackIndexOnceLoaded_8004dd24.set(6);
+        pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
         _800f7e4c.setu(0);
         scriptsTickDisabled_800bc0b8 = false;
       }
 
       case 0x14 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
           if(scriptEffect_800bb140._24.get() == 0) {
-            scriptStartEffect(0x1L, 0xaL);
+            scriptStartEffect(1, 10);
           }
 
           //LAB_800e643c
@@ -4637,9 +4632,9 @@ public final class SMap {
         //LAB_800e6458
         if(a0) {
           FUN_8002a9c0();
-          mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
+          mainCallbackIndexOnceLoaded_8004dd24.set(2);
           vsyncMode_8007a3b8.set(2);
-          pregameLoadingStage_800bb10c.setu(0);
+          pregameLoadingStage_800bb10c.set(0);
 
           //LAB_800e6484
           _80052c44.setu(0x5L);
@@ -4651,11 +4646,11 @@ public final class SMap {
       }
 
       case 0x15 -> {
-        FUN_800e5104((int)_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
           if(scriptEffect_800bb140._24.get() == 0) {
-            scriptStartEffect(0x1L, 0xaL);
+            scriptStartEffect(1, 10);
           }
 
           //LAB_800e6394
@@ -4669,23 +4664,23 @@ public final class SMap {
         if(a0) {
           _80052c44.setu(0x5L);
           Fmv.playCurrentFmv();
-          pregameLoadingStage_800bb10c.setu(0);
+          pregameLoadingStage_800bb10c.set(0);
           _800f7e4c.setu(0);
           scriptsTickDisabled_800bc0b8 = false;
         }
       }
 
       case 0x16 -> {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0xaL);
+        mainCallbackIndexOnceLoaded_8004dd24.set(10);
         vsyncMode_8007a3b8.set(2);
         _80052c44.setu(0x1L);
-        pregameLoadingStage_800bb10c.setu(0);
+        pregameLoadingStage_800bb10c.set(0);
       }
 
       case 0x17 -> {
-        mainCallbackIndexOnceLoaded_8004dd24.setu(0x2L);
+        mainCallbackIndexOnceLoaded_8004dd24.set(2);
         vsyncMode_8007a3b8.set(2);
-        pregameLoadingStage_800bb10c.setu(0);
+        pregameLoadingStage_800bb10c.set(0);
       }
     }
 
@@ -4954,7 +4949,7 @@ public final class SMap {
     FUN_800e5534(a0.params_20[0].get() + 0x800, a0.params_20[1].get());
     submapCut_80052c30.set(a0.params_20[2].get());
     _800cb450.setu(submapCut_80052c30.get());
-    submapScene_80052c34.setu(a0.params_20[3].get());
+    submapScene_80052c34.set(a0.params_20[3].get());
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -9023,7 +9018,7 @@ public final class SMap {
 
   @Method(0x800f3a00L)
   public static int getEncounterTriangleColour() {
-    final long acc = encounterAccumulator_800c6ae8.get();
+    final int acc = encounterAccumulator_800c6ae8.get();
 
     if(acc <= 0xa00) {
       return 0;

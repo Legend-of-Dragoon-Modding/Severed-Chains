@@ -41,22 +41,22 @@ public class GameState52c implements MemoryRef {
 
   /** Used by the script engine */
   public final IntRef _b0;
-  public final UnsignedIntRef _b4;
-  public final UnsignedIntRef _b8;
+  public final IntRef _b4;
+  public final IntRef _b8;
   /**
    * <ul>
    *   <li>0x40000 - has psych bomb X</li>
    * </ul>
    */
-  public final ArrayRef<UnsignedIntRef> scriptFlags2_bc;
-  public final ArrayRef<UnsignedIntRef> scriptFlags1_13c;
-  public final ArrayRef<UnsignedIntRef> _15c;
-  public final ArrayRef<UnsignedIntRef> _17c;
-  public final ArrayRef<UnsignedIntRef> dragoonSpirits_19c;
+  public final ArrayRef<IntRef> scriptFlags2_bc;
+  public final ArrayRef<IntRef> scriptFlags1_13c;
+  public final ArrayRef<IntRef> _15c;
+  public final ArrayRef<IntRef> _17c;
+  public final ArrayRef<IntRef> dragoonSpirits_19c;
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
-  public final ArrayRef<UnsignedIntRef> _1a4;
+  public final ArrayRef<IntRef> _1a4;
   /** Note: I'm not _100%_ sure this is only chest flags */
-  public final ArrayRef<UnsignedIntRef> chestFlags_1c4;
+  public final ArrayRef<IntRef> chestFlags_1c4;
   public final ShortRef equipmentCount_1e4;
   public final ShortRef itemCount_1e6;
   public final ArrayRef<UnsignedByteRef> equipment_1e8;
@@ -106,15 +106,15 @@ public class GameState52c implements MemoryRef {
     this.submapCut_a8 = ref.offset(4, 0xa8L).cast(IntRef::new);
 
     this._b0 = ref.offset(4, 0xb0L).cast(IntRef::new);
-    this._b4 = ref.offset(4, 0xb4L).cast(UnsignedIntRef::new);
-    this._b8 = ref.offset(4, 0xb8L).cast(UnsignedIntRef::new);
-    this.scriptFlags2_bc = ref.offset(4, 0xbcL).cast(ArrayRef.of(UnsignedIntRef.class, 0x20, 4, UnsignedIntRef::new));
-    this.scriptFlags1_13c = ref.offset(4, 0x13cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-    this._15c = ref.offset(4, 0x15cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-    this._17c = ref.offset(4, 0x17cL).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-    this.dragoonSpirits_19c = ref.offset(4, 0x19cL).cast(ArrayRef.of(UnsignedIntRef.class, 2, 4, UnsignedIntRef::new));
-    this._1a4 = ref.offset(4, 0x1a4L).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-    this.chestFlags_1c4 = ref.offset(4, 0x1c4L).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
+    this._b4 = ref.offset(4, 0xb4L).cast(IntRef::new);
+    this._b8 = ref.offset(4, 0xb8L).cast(IntRef::new);
+    this.scriptFlags2_bc = ref.offset(4, 0xbcL).cast(ArrayRef.of(IntRef.class, 0x20, 4, IntRef::new));
+    this.scriptFlags1_13c = ref.offset(4, 0x13cL).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+    this._15c = ref.offset(4, 0x15cL).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+    this._17c = ref.offset(4, 0x17cL).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+    this.dragoonSpirits_19c = ref.offset(4, 0x19cL).cast(ArrayRef.of(IntRef.class, 2, 4, IntRef::new));
+    this._1a4 = ref.offset(4, 0x1a4L).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+    this.chestFlags_1c4 = ref.offset(4, 0x1c4L).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
     this.equipmentCount_1e4 = ref.offset(2, 0x1e4L).cast(ShortRef::new);
     this.itemCount_1e6 = ref.offset(2, 0x1e6L).cast(ShortRef::new);
     this.equipment_1e8 = ref.offset(1, 0x1e8L).cast(ArrayRef.of(UnsignedByteRef.class, 0x101, 1, UnsignedByteRef::new));

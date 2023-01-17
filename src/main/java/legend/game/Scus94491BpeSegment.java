@@ -28,7 +28,6 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
@@ -591,9 +590,9 @@ public final class Scus94491BpeSegment {
 
   private static void controllerPress(final int input) {
     if(!controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.oru(input);
-      _800bee94.oru(input);
-      _800bee98.oru(input);
+      _800bee90.or(input);
+      _800bee94.or(input);
+      _800bee98.or(input);
       keyRepeat.put(input, 0);
       controllerEdgeTriggers.put(input, true);
     }
@@ -660,9 +659,9 @@ public final class Scus94491BpeSegment {
       final int input = gamepadKeyMap.get(key);
 
       if(input != 0) {
-        _800bee90.oru(input);
-        _800bee94.oru(input);
-        _800bee98.oru(input);
+        _800bee90.or(input);
+        _800bee94.or(input);
+        _800bee98.or(input);
 
         keyRepeat.put(input, 0);
       }
@@ -710,9 +709,9 @@ public final class Scus94491BpeSegment {
 
       handleControllerInput();
 
-      joypadPress_8007a398.setu(_800bee94);
-      joypadInput_8007a39c.setu(_800bee90);
-      joypadRepeat_8007a3a0.setu(_800bee98);
+      joypadPress_8007a398.setu(_800bee94.get());
+      joypadInput_8007a39c.setu(_800bee90.get());
+      joypadRepeat_8007a3a0.setu(_800bee98.get());
 
       if(mainCallbackIndex_8004dd20.get() == 3) {
         gameState_800babc8.timestamp_a0.set(0);
@@ -737,16 +736,16 @@ public final class Scus94491BpeSegment {
       renderTextboxes();
 
       FUN_80020ed8();
-      tickCount_800bb0fc.addu(0x1L);
+      tickCount_800bb0fc.incr();
       endFrame();
 
-      _800bee94.setu(0);
-      _800bee98.setu(0);
+      _800bee94.set(0);
+      _800bee98.set(0);
 
       if(inputPulse) {
         for(final var entry : keyRepeat.int2IntEntrySet()) {
           if(entry.getIntValue() >= 2) { //TODO adjust for frame rate
-            _800bee98.oru(entry.getIntKey());
+            _800bee98.or(entry.getIntKey());
           }
 
           entry.setValue(entry.getIntValue() + 1);
@@ -798,7 +797,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
     if(loadQueuedOverlay() != 0) {
-      gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
+      gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
 
       tickScripts();
       renderScriptObjects();
@@ -1224,27 +1223,27 @@ public final class Scus94491BpeSegment {
 
     //LAB_800129c0
     //LAB_800129c4
-    if(mainCallbackIndexOnceLoaded_8004dd24.getSigned() != -1) {
+    if(mainCallbackIndexOnceLoaded_8004dd24.get() != -1) {
       if(loadingGameStateOverlay_8004dd08.get() != 0) {
         return 0;
       }
 
-      pregameLoadingStage_800bb10c.setu(0);
-      previousMainCallbackIndex_8004dd28.setu(mainCallbackIndex_8004dd20);
-      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(-1);
+      pregameLoadingStage_800bb10c.set(0);
+      previousMainCallbackIndex_8004dd28.set(mainCallbackIndex_8004dd20.get());
+      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24.get());
+      mainCallbackIndexOnceLoaded_8004dd24.set(-1);
       FUN_80019710();
       vsyncMode_8007a3b8.set(2);
-      loadGameStateOverlay((int)mainCallbackIndex_8004dd20.getSigned());
+      loadGameStateOverlay(mainCallbackIndex_8004dd20.get());
 
-      if(mainCallbackIndex_8004dd20.get() == 0x6L) { // Starting combat
+      if(mainCallbackIndex_8004dd20.get() == 6) { // Starting combat
         FUN_8001c4ec();
       }
     }
 
     //LAB_80012a34
     //LAB_80012a38
-    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
       //LAB_80012a6c
       return 1;
     }
@@ -1378,9 +1377,9 @@ public final class Scus94491BpeSegment {
     //LAB_80012f5c
     final int orderingTableBits = reinitOrderingTableBits_8004dd38.get();
 
-    _800babc0.setu(0);
-    _800bb104.setu(0);
-    _8007a3a8.setu(0);
+    _800babc0.set(0);
+    _800bb104.set(0);
+    _8007a3a8.set(0);
 
     final RECT rect1 = new RECT((short)0, (short)16, (short)width_8004dd34.get(), (short)240);
     final RECT rect2 = new RECT((short)0, (short)256, (short)width_8004dd34.get(), (short)240);
@@ -1414,7 +1413,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80013148L)
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
-    GsSortClear((int)_8007a3a8.get(), (int)_800bb104.get(), (int)_800babc0.get());
+    GsSortClear(_8007a3a8.get(), _800bb104.get(), _800babc0.get());
   }
 
   @Method(0x80013200L)
@@ -1539,13 +1538,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800136dcL)
-  public static void scriptStartEffect(final long effectType, final long frames) {
+  public static void scriptStartEffect(final int effectType, final int frames) {
     //LAB_800136f4
     scriptEffect_800bb140.type_00.set(effectType);
-    scriptEffect_800bb140.totalFrames_08.set((int)frames > 0 ? frames : 0xfL);
+    scriptEffect_800bb140.totalFrames_08.set(frames > 0 ? frames : 15);
     scriptEffect_800bb140.startTime_04.set(GPU.getVsyncCount());
 
-    if(_8004dd48.offset(effectType * 2).get() == 0x2L) {
+    if(_8004dd48.offset(effectType * 2).get() == 2) {
       scriptEffect_800bb140.blue1_0c.set(0);
       scriptEffect_800bb140.green1_10.set(0);
       scriptEffect_800bb140.blue0_14.set(0);
@@ -1554,7 +1553,7 @@ public final class Scus94491BpeSegment {
       scriptEffect_800bb140.red0_20.set(0);
     }
 
-    scriptEffect_800bb140._24.set(_8004dd48.offset(effectType * 2).get());
+    scriptEffect_800bb140._24.set((int)_8004dd48.offset(effectType * 2).get());
 
     //LAB_80013768
   }
@@ -1564,49 +1563,43 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void FUN_80013778() {
-    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
+    final int v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
 
     //LAB_800137d0
-    final long colour;
+    final int colour;
     if(scriptEffect_800bb140.totalFrames_08.get() == 0) {
       colour = 0;
     } else {
-      final long a1 = scriptEffect_800bb140._24.get();
-      if(a1 == 0x1L) {
+      final int a1 = scriptEffect_800bb140._24.get();
+      if(a1 == 0) {
+        colour = 0;
+      } else if(a1 == 1) {
         //LAB_80013818
         colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get();
-      } else if((int)a1 < 0x2L) {
-        if(a1 != 0) {
-          scriptEffect_800bb140.type_00.set(0);
-          scriptEffect_800bb140._24.set(0);
-        }
-
-        colour = 0;
-
         //LAB_80013808
-      } else if(a1 != 0x2L) {
-        scriptEffect_800bb140.type_00.set(0);
-        scriptEffect_800bb140._24.set(0);
-        colour = 0;
-      } else { // a1 == 2
+      } else if(a1 == 2) { // a1 == 2
         //LAB_8001383c
-        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xffL;
+        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xff;
 
         if(colour == 0) {
           //LAB_80013874
           scriptEffect_800bb140._24.set(0);
         }
+      } else {
+        scriptEffect_800bb140.type_00.set(0);
+        scriptEffect_800bb140._24.set(0);
+        colour = 0;
       }
     }
 
     //LAB_80013880
     //LAB_80013884
-    _800bb168.setu(colour);
+    _800bb168.set(colour);
 
     if(colour != 0) {
       //LAB_800138f0
       //LAB_80013948
-      switch((int)scriptEffect_800bb140.type_00.get()) {
+      switch(scriptEffect_800bb140.type_00.get()) {
         case 1, 2 -> drawFullScreenRect(colour, Translucency.B_MINUS_F);
         case 3, 4 -> drawFullScreenRect(colour, Translucency.B_PLUS_F);
 
@@ -1638,7 +1631,7 @@ public final class Scus94491BpeSegment {
       //LAB_800139c4
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_PLUS_F)
-        .rgb((int)scriptEffect_800bb140.red0_20.get(), (int)scriptEffect_800bb140.green0_1c.get(), (int)scriptEffect_800bb140.blue0_14.get())
+        .rgb(scriptEffect_800bb140.red0_20.get(), scriptEffect_800bb140.green0_1c.get(), scriptEffect_800bb140.blue0_14.get())
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
@@ -1650,7 +1643,7 @@ public final class Scus94491BpeSegment {
       //LAB_80013b10
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_MINUS_F)
-        .rgb((int)scriptEffect_800bb140.red1_18.get(), (int)scriptEffect_800bb140.green1_10.get(), (int)scriptEffect_800bb140.blue1_0c.get())
+        .rgb(scriptEffect_800bb140.red1_18.get(), scriptEffect_800bb140.green1_10.get(), scriptEffect_800bb140.blue1_0c.get())
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
@@ -1917,7 +1910,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80015918L)
   public static <T> int allocateScriptState(final int index, @Nullable final String typeName, final int a4, @Nullable final T type) {
-    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, type != null ? type.getClass().getSimpleName() : "null");
+    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, type != null ? type.getClass().getSimpleName() : "empty");
 
     final ScriptState<T> scriptState = new ScriptState<>(index, type);
     scriptStatePtrArr_800bc1c0[index] = scriptState;
@@ -2007,10 +2000,10 @@ public final class Scus94491BpeSegment {
     final ScriptState<?> struct = scriptStatePtrArr_800bc1c0[index];
 
     if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
+      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, index, offsetIndex);
 
       struct.scriptPtr_14 = script;
-      struct.offset_18 = script.offsetArr_00.get(offsetIndex).get();
+      struct.offset_18 = script.getEntry(offsetIndex);
       struct.storage_44[7] &= 0xfffd_ffff;
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", index);
@@ -2142,193 +2135,193 @@ public final class Scus94491BpeSegment {
 
     //LAB_80015fd8
     for(int index = 0; index < 72; index++) {
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
+      try {
+        final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
 
-      if(state != null && (state.storage_44[7] & 0x12_0000) == 0) {
-        RunningScript_800bc070.scriptStateIndex_00 = index;
-        RunningScript_800bc070.scriptState_04 = state;
-        RunningScript_800bc070.commandOffset_0c = state.offset_18;
-        RunningScript_800bc070.opOffset_08 = state.offset_18;
-
-        if(scriptLog[index]) {
-          System.err.printf("Exec script index %d (%08x)%n", index, state.scriptPtr_14.getAddress());
-        }
-
-        FlowControl ret;
-        //LAB_80016018
-        do {
-          final int opCommand = RunningScript_800bc070.getOp();
-          RunningScript_800bc070.opIndex_10 = opCommand & 0xff;
-          RunningScript_800bc070.paramCount_14 = opCommand >>> 8 & 0xff;
-          RunningScript_800bc070.opParam_18 = opCommand >>> 16;
+        if(state != null && (state.storage_44[7] & 0x12_0000) == 0) {
+          RunningScript_800bc070.scriptStateIndex_00 = index;
+          RunningScript_800bc070.scriptState_04 = state;
+          RunningScript_800bc070.commandOffset_0c = state.offset_18;
+          RunningScript_800bc070.opOffset_08 = state.offset_18;
 
           if(scriptLog[index]) {
-            System.err.println(Long.toHexString(RunningScript_800bc070.commandOffset_0c) + " (" + RunningScript_800bc070.commandOffset_0c + ')');
-            System.err.printf("param[p] = %x%n", opCommand >>> 16);
+            System.err.printf("Exec script index %d%n", index);
           }
 
-          if(RunningScript_800bc070.paramCount_14 > 10) {
-            throw new RuntimeException("Too many parameters!");
-          }
-
-          RunningScript_800bc070.commandOffset_0c += 4;
-
-          //LAB_80016050
-          for(int paramIndex = 0; paramIndex < RunningScript_800bc070.paramCount_14; paramIndex++) {
-            final int childCommand = RunningScript_800bc070.getOp();
-            final int paramType = childCommand >>> 24;
-            final int cmd2 = childCommand >>> 16 & 0xff;
-            final int cmd1 = childCommand >>> 8 & 0xff;
-            final int cmd0 = childCommand & 0xff;
-
-            RunningScript_800bc070.commandOffset_0c += 4;
-
-            if(paramType == 0x1) { // Push next value after this param
-              //LAB_800161f4
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c);
-              RunningScript_800bc070.commandOffset_0c += 4;
-            } else if(paramType == 0x2) { // Push storage[cmd0]
-              //LAB_80016200
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(state, cmd0);
-            } else if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
-              //LAB_800160cc
-              //LAB_8001620c
-              final int otherScriptIndex1 = state.storage_44[cmd0];
-              final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1];
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
-            } else if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
-              //LAB_80016258
-              final int otherScriptIndex = state.storage_44[cmd0];
-              final int storageIndex = cmd1 + state.storage_44[cmd2];
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
-            } else if(paramType == 0x5) { // Push gameVar[cmd0]
-              //LAB_80016290
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0);
-            } else if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
-              //LAB_800162a4
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + state.storage_44[cmd1]);
-            } else if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
-              //LAB_800162d0
-              final int arrIndex = state.storage_44[cmd1];
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, arrIndex);
-            } else if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
-              //LAB_800160e8
-              //LAB_800162f4
-              final int storage1 = state.storage_44[cmd1];
-              final int storage2 = state.storage_44[cmd2];
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
-            } else if(paramType == 0x9) { // Push (commandStart + (cmd0 | cmd1 << 8) * 4)
-              //LAB_80016328
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + (short)childCommand * 4);
-            } else if(paramType == 0xa) { // Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
-              //LAB_80016118
-              //LAB_80016334
-              final int storage = state.storage_44[cmd2];
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + ((short)childCommand + storage) * 4);
-            } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
-              //LAB_80016360
-              final int storage = state.storage_44[cmd2];
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + storage).get());
-            } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
-              //LAB_800163a0
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0]).get() + state.storage_44[cmd1]);
-              RunningScript_800bc070.commandOffset_0c += 4;
-            } else if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
-              //LAB_800163e8
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[state.storage_44[cmd0]], cmd1 + cmd2);
-            } else if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
-              //LAB_80016418
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + cmd1);
-            } else if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
-              //LAB_8001642c
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, cmd1);
-            } else if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
-              //LAB_80016180
-              //LAB_8001643c
-              RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + state.storage_44[cmd1], cmd2);
-            } else if(paramType == 0x11) {
-              //LAB_80016468
-              assert false;
-            } else if(paramType == 0x12) {
-              //LAB_80016138
-              //LAB_8001648c
-              assert false;
-            } else if(paramType == 0x13) {
-              //LAB_800164a4
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2);
-            } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
-              //LAB_800164b4
-              //LAB_800164cc
-              //LAB_800164d4
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2).get());
-            } else if(paramType == 0x15) {
-              //LAB_800161a0
-              //LAB_800164e0
-              //LAB_80016580
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0]).get() + cmd1);
-              RunningScript_800bc070.commandOffset_0c += 4;
-            } else if(paramType == 0x16) {
-              //LAB_80016518
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + state.storage_44[cmd1]);
-              RunningScript_800bc070.commandOffset_0c += 4;
-            } else if(paramType == 0x17) {
-              //LAB_800161d4
-              //LAB_8001654c
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + cmd1);
-              RunningScript_800bc070.commandOffset_0c += 4;
-            } else { // Treated as an immediate if not a valid op
-              //LAB_80016574
-              RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c - 4);
-            }
+          FlowControl ret;
+          //LAB_80016018
+          do {
+            final int opCommand = RunningScript_800bc070.getOp();
+            RunningScript_800bc070.opIndex_10 = opCommand & 0xff;
+            RunningScript_800bc070.paramCount_14 = opCommand >>> 8 & 0xff;
+            RunningScript_800bc070.opParam_18 = opCommand >>> 16;
 
             if(scriptLog[index]) {
-              System.err.printf("params[%d] = %s%n", paramIndex, RunningScript_800bc070.params_20[paramIndex]);
+              System.err.println(Long.toHexString(RunningScript_800bc070.commandOffset_0c) + " (" + RunningScript_800bc070.commandOffset_0c + ')');
+              System.err.printf("param[p] = %x%n", opCommand >>> 16);
             }
 
-            //LAB_80016584
-          }
-
-          EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
-
-          final int opIndex = RunningScript_800bc070.opIndex_10;
-          final Function<RunningScript, FlowControl> callback = scriptOps_8004e098[opIndex];
-
-          if(scriptLog[index]) {
-            if(scriptFunctionDescriptions.containsKey(opIndex)) {
-              System.err.println(scriptFunctionDescriptions.get(opIndex).apply(RunningScript_800bc070));
-            } else {
-              System.err.printf("Running callback %d%n", opIndex);
+            if(RunningScript_800bc070.paramCount_14 > 10) {
+              throw new RuntimeException("Too many parameters!");
             }
-          }
 
-          //LAB_80016598
-          try {
+            RunningScript_800bc070.commandOffset_0c++;
+
+            //LAB_80016050
+            for(int paramIndex = 0; paramIndex < RunningScript_800bc070.paramCount_14; paramIndex++) {
+              final int childCommand = RunningScript_800bc070.getOp();
+              final int paramType = childCommand >>> 24;
+              final int cmd2 = childCommand >>> 16 & 0xff;
+              final int cmd1 = childCommand >>> 8 & 0xff;
+              final int cmd0 = childCommand & 0xff;
+
+              RunningScript_800bc070.commandOffset_0c++;
+
+              if(paramType == 0x1) { // Push next value after this param
+                //LAB_800161f4
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c);
+                RunningScript_800bc070.commandOffset_0c++;
+              } else if(paramType == 0x2) { // Push storage[cmd0]
+                //LAB_80016200
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(state, cmd0);
+              } else if(paramType == 0x3) { // Push script[script[script[this].storage[cmd0]].storage[cmd1]].storage[cmd2]
+                //LAB_800160cc
+                //LAB_8001620c
+                final int otherScriptIndex1 = state.storage_44[cmd0];
+                final int otherScriptIndex2 = scriptStatePtrArr_800bc1c0[otherScriptIndex1].storage_44[cmd1];
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex2], cmd2);
+              } else if(paramType == 0x4) { // Push script[script[this].storage[cmd0]].storage[cmd1 + script[this].storage[cmd2]]
+                //LAB_80016258
+                final int otherScriptIndex = state.storage_44[cmd0];
+                final int storageIndex = cmd1 + state.storage_44[cmd2];
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[otherScriptIndex], storageIndex);
+              } else if(paramType == 0x5) { // Push gameVar[cmd0]
+                //LAB_80016290
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0);
+              } else if(paramType == 0x6) { // Push gameVar[cmd0 + script[this].storage[cmd1]]
+                //LAB_800162a4
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + state.storage_44[cmd1]);
+              } else if(paramType == 0x7) { // Push gameVar[cmd0][script[this].storage[cmd1]]
+                //LAB_800162d0
+                final int arrIndex = state.storage_44[cmd1];
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, arrIndex);
+              } else if(paramType == 0x8) { // Push gameVar[cmd0 + script[this].storage[cmd1]][script[this].storage[cmd2]]
+                //LAB_800160e8
+                //LAB_800162f4
+                final int storage1 = state.storage_44[cmd1];
+                final int storage2 = state.storage_44[cmd2];
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
+              } else if(paramType == 0x9) { // Push (commandStart + (cmd0 | cmd1 << 8) * 4)
+                //LAB_80016328
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + (short)childCommand);
+              } else if(paramType == 0xa) { // Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
+                //LAB_80016118
+                //LAB_80016334
+                final int storage = state.storage_44[cmd2];
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08 + ((short)childCommand + storage));
+              } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
+                //LAB_80016360
+                final int storage = state.storage_44[cmd2];
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + storage).get());
+              } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
+                //LAB_800163a0
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0]).get() + state.storage_44[cmd1]);
+                RunningScript_800bc070.commandOffset_0c++;
+              } else if(paramType == 0xd) { // Push script[script[this].storage[cmd0]].storage[cmd1 + cmd2]
+                //LAB_800163e8
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptStorageParam(scriptStatePtrArr_800bc1c0[state.storage_44[cmd0]], cmd1 + cmd2);
+              } else if(paramType == 0xe) { // Push gameVar[cmd0 + cmd1]
+                //LAB_80016418
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarParam(cmd0 + cmd1);
+              } else if(paramType == 0xf) { // Push gameVar[cmd0][cmd1]
+                //LAB_8001642c
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0, cmd1);
+              } else if(paramType == 0x10) { // Push gameVar[cmd0 + script[this].storage[cmd1]][cmd2]
+                //LAB_80016180
+                //LAB_8001643c
+                RunningScript_800bc070.params_20[paramIndex] = new GameVarArrayParam(cmd0 + state.storage_44[cmd1], cmd2);
+              } else if(paramType == 0x11) {
+                //LAB_80016468
+                assert false;
+              } else if(paramType == 0x12) {
+                //LAB_80016138
+                //LAB_8001648c
+                assert false;
+              } else if(paramType == 0x13) {
+                //LAB_800164a4
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2);
+              } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
+                //LAB_800164b4
+                //LAB_800164cc
+                //LAB_800164d4
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + new ScriptInlineParam(state, RunningScript_800bc070.opOffset_08).array((short)childCommand + cmd2).get());
+              } else if(paramType == 0x15) {
+                //LAB_800161a0
+                //LAB_800164e0
+                //LAB_80016580
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(state.storage_44[cmd0]).get() + cmd1);
+                RunningScript_800bc070.commandOffset_0c++;
+              } else if(paramType == 0x16) {
+                //LAB_80016518
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + state.storage_44[cmd1]);
+                RunningScript_800bc070.commandOffset_0c++;
+              } else if(paramType == 0x17) {
+                //LAB_800161d4
+                //LAB_8001654c
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c).array(cmd0).get() + cmd1);
+                RunningScript_800bc070.commandOffset_0c++;
+              } else { // Treated as an immediate if not a valid op
+                //LAB_80016574
+                RunningScript_800bc070.params_20[paramIndex] = new ScriptInlineParam(state, RunningScript_800bc070.commandOffset_0c - 1);
+              }
+
+              if(scriptLog[index]) {
+                System.err.printf("params[%d] = %s%n", paramIndex, RunningScript_800bc070.params_20[paramIndex]);
+              }
+
+              //LAB_80016584
+            }
+
+            EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
+
+            final int opIndex = RunningScript_800bc070.opIndex_10;
+            final Function<RunningScript, FlowControl> callback = scriptOps_8004e098[opIndex];
+
+            if(scriptLog[index]) {
+              if(scriptFunctionDescriptions.containsKey(opIndex)) {
+                System.err.println(scriptFunctionDescriptions.get(opIndex).apply(RunningScript_800bc070));
+              } else {
+                System.err.printf("Running callback %d%n", opIndex);
+              }
+            }
+
+            //LAB_80016598
             ret = callback.apply(RunningScript_800bc070);
-          } catch(final Throwable e) {
-            throw new RuntimeException("An error occurred while ticking script %d".formatted(index), e);
-          }
 
-          if(scriptLog[index]) {
-            if(ret == FlowControl.PAUSE) {
-              System.err.println("Pausing");
-            } else if(ret == FlowControl.PAUSE_AND_REWIND) {
-              System.err.println("Rewinding and pausing");
+            if(scriptLog[index]) {
+              if(ret == FlowControl.PAUSE) {
+                System.err.println("Pausing");
+              } else if(ret == FlowControl.PAUSE_AND_REWIND) {
+                System.err.println("Rewinding and pausing");
+              }
             }
-          }
 
-          // Returning 0 continues execution
-          // Returning 1 pauses execution until the next frame
-          // Returning anything else pauses execution and repeats the same instruction next frame
-          if(ret == FlowControl.CONTINUE || ret == FlowControl.PAUSE) {
-            //LAB_800165e8
-            RunningScript_800bc070.opOffset_08 = RunningScript_800bc070.commandOffset_0c;
-          }
+            // Returning 0 continues execution
+            // Returning 1 pauses execution until the next frame
+            // Returning anything else pauses execution and repeats the same instruction next frame
+            if(ret == FlowControl.CONTINUE || ret == FlowControl.PAUSE) {
+              //LAB_800165e8
+              RunningScript_800bc070.opOffset_08 = RunningScript_800bc070.commandOffset_0c;
+            }
 
-          Arrays.fill(RunningScript_800bc070.params_20, null);
-        } while(ret == FlowControl.CONTINUE);
+            Arrays.fill(RunningScript_800bc070.params_20, null);
+          } while(ret == FlowControl.CONTINUE);
 
-        //LAB_800165f4
-        state.offset_18 = RunningScript_800bc070.opOffset_08;
+          //LAB_800165f4
+          state.offset_18 = RunningScript_800bc070.opOffset_08;
+        }
+      } catch(final Throwable t) {
+        throw new RuntimeException("An error occurred while ticking script " + index, t);
       }
 
       //LAB_80016614
@@ -2851,7 +2844,7 @@ public final class Scus94491BpeSegment {
 
     scriptFork(script.params_20[0].get());
     final ScriptState<?> stateThatWasForked = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    stateThatWasForked.offset_18 = stateThatWasForked.scriptPtr_14.offsetArr_00.get(script.params_20[1].get()).get();
+    stateThatWasForked.offset_18 = stateThatWasForked.scriptPtr_14.getEntry(script.params_20[1].get());
     stateThatWasForked.storage_44[32] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
@@ -2919,7 +2912,7 @@ public final class Scus94491BpeSegment {
     final int shift = a0.params_20[0].get() & 0x1f;
     final int index = a0.params_20[0].get() >>> 5;
 
-    final ArrayRef<UnsignedIntRef> flags;
+    final ArrayRef<IntRef> flags;
     if(index < 8) {
       flags = gameState_800babc8.scriptFlags1_13c;
     } else if(index < 16) {
@@ -2929,10 +2922,10 @@ public final class Scus94491BpeSegment {
     }
 
     if(a0.params_20[1].get() != 0) {
-      flags.get(index % 8).or(0x1L << shift);
+      flags.get(index % 8).or(0x1 << shift);
     } else {
       //LAB_800173dc
-      flags.get(index % 8).and(~(0x1L << shift));
+      flags.get(index % 8).and(~(0x1 << shift));
     }
 
     //LAB_800173f4
@@ -2957,7 +2950,7 @@ public final class Scus94491BpeSegment {
     final int shift = value & 0x1f;
     final int index = value >>> 5;
 
-    a0.params_20[1].set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    a0.params_20[1].set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1 << shift) != 0 ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
@@ -2968,10 +2961,10 @@ public final class Scus94491BpeSegment {
     final int index = a0.params_20[0].get() >>> 5;
 
     if(a0.params_20[1].get() != 0) {
-      gameState_800babc8.scriptFlags2_bc.get(index).or(0x1L << shift);
+      gameState_800babc8.scriptFlags2_bc.get(index).or(0x1 << shift);
     } else {
       //LAB_8001748c
-      gameState_800babc8.scriptFlags2_bc.get(index).and(~(0x1L << shift));
+      gameState_800babc8.scriptFlags2_bc.get(index).and(~(0x1 << shift));
     }
 
     //LAB_800174a4
@@ -3211,10 +3204,10 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(_800bc91c.get() != 0x5L || _800bc974.get() == 0x3L) {
+    if(_800bc91c.get() != 5 || _800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-        pregameLoadingStage_800bb10c.addu(0x1L);
+        pregameLoadingStage_800bb10c.incr();
       }
     } else {
       //LAB_80018574
@@ -3236,7 +3229,7 @@ public final class Scus94491BpeSegment {
         if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
           _8004dd0c.setu(0x1L);
           _8004f2a8.setu(0);
-          pregameLoadingStage_800bb10c.addu(0x1L);
+          pregameLoadingStage_800bb10c.incr();
         }
       } else {
         //LAB_80018618
@@ -3257,14 +3250,14 @@ public final class Scus94491BpeSegment {
   public static void FUN_800186a0() {
     if(_800bc94c.get() != 0) {
       FUN_80018744();
-      _8004f5d4.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
 
       if(_800bc94c.get() != 0) {
         FUN_8001890c();
       }
     } else {
       //LAB_8001870c
-      _8004f5d4.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
     }
 
     //LAB_80018734
@@ -3272,14 +3265,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018744L)
   public static void FUN_80018744() {
-    if((_800bc960.get() & 0x400L) != 0) {
-      if((_800bc960.get() & 0x8L) == 0 && FUN_800187cc() != 0) {
-        _800bc960.oru(0x8L);
+    if((_800bc960.get() & 0x400) != 0) {
+      if((_800bc960.get() & 0x8) == 0 && FUN_800187cc() != 0) {
+        _800bc960.or(0x8);
       }
 
       //LAB_80018790
-      if((_800bc960.get() & 0x4L) == 0 && FUN_8001886c() != 0) {
-        _800bc960.oru(0x4L);
+      if((_800bc960.get() & 0x4) == 0 && FUN_8001886c() != 0) {
+        _800bc960.or(0x4);
       }
     }
 
@@ -3291,7 +3284,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_800187cc() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40.get(charSlot).get()].innerStruct_00).combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[charSlot]].innerStruct_00).combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3305,7 +3298,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001886c() {
     //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.bobjIndices_e50.get(i).get()].innerStruct_00).combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.bobjIndices_e50[i]].innerStruct_00).combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3326,7 +3319,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80018944L)
   public static void waitForFilesToLoad() {
     if(!loadingOverlay_8004dd1e && loadingGameStateOverlay_8004dd08.get() == 0) {
-      pregameLoadingStage_800bb10c.addu(0x1L);
+      pregameLoadingStage_800bb10c.incr();
     }
 
     //LAB_80018990
@@ -3334,12 +3327,12 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018998L)
   public static void FUN_80018998() {
-    pregameLoadingStage_800bb10c.addu(0x1L);
+    pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(_800bc91c.get() == 0x5L && _800bc974.get() != 0x3L) {
+    if(_800bc91c.get() == 5 && _800bc974.get() != 3) {
       FUN_800e5934();
     }
 
@@ -3347,9 +3340,9 @@ public final class Scus94491BpeSegment {
     //LAB_800189e8
     if(!loadingOverlay_8004dd1e && loadingGameStateOverlay_8004dd08.get() == 0) {
       FUN_800201c8(6);
-      pregameLoadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc91c.get());
+      mainCallbackIndexOnceLoaded_8004dd24.set(_800bc91c.get());
     }
 
     //LAB_80018a4c
@@ -3731,7 +3724,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void FUN_80019710() {
-    if(mainCallbackIndex_8004dd20.get() != 0x5L && previousMainCallbackIndex_8004dd28.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() != 5 && previousMainCallbackIndex_8004dd28.get() == 5) {
       sssqResetStuff();
       free(melbuSoundMrgSshdPtr_800bd784.getPointer());
       free(melbuSoundMrgSssqPtr_800bd788.getPointer());
@@ -3740,7 +3733,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001978c
     //LAB_80019790
-    if(mainCallbackIndex_8004dd20.get() != 0x6L && previousMainCallbackIndex_8004dd28.get() == 0x6L) {
+    if(mainCallbackIndex_8004dd20.get() != 6 && previousMainCallbackIndex_8004dd28.get() == 6) {
       sssqResetStuff();
 
       //LAB_800197c0
@@ -3759,7 +3752,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019824
     //LAB_80019828
-    switch((int)mainCallbackIndex_8004dd20.get()) {
+    switch(mainCallbackIndex_8004dd20.get()) {
       case 2 -> {
         setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
@@ -3835,7 +3828,7 @@ public final class Scus94491BpeSegment {
     //case 3, d, e
     //LAB_80019a20
     //LAB_80019a24
-    if(mainCallbackIndex_8004dd20.get() != 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() != 5) {
       submapIndex_800bd808.set(-1);
     }
 
@@ -3860,14 +3853,14 @@ public final class Scus94491BpeSegment {
 
       case 8 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || mainCallbackIndex_8004dd20.get() != 0x5L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || mainCallbackIndex_8004dd20.get() != 5) {
           return;
         }
       }
 
       case 9 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || mainCallbackIndex_8004dd20.get() != 0x6L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || mainCallbackIndex_8004dd20.get() != 6) {
           return;
         }
       }
@@ -3880,7 +3873,7 @@ public final class Scus94491BpeSegment {
 
       case 0xc -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || mainCallbackIndex_8004dd20.get() != 0x8L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || mainCallbackIndex_8004dd20.get() != 8) {
           return;
         }
       }
@@ -4006,7 +3999,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final int index = _8006e398.bobjIndices_e50.get(i).get();
+      final int index = _8006e398.bobjIndices_e50[i];
 
       if(((BattleObject27c)scriptStatePtrArr_800bc1c0[index].innerStruct_00).charIndex_272 == charOrMonsterIndex) {
         //LAB_8001a070
@@ -4503,11 +4496,11 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001b480
-    if(_800bc960.get(0x2L) != 0) {
+    if((_800bc960.get() & 0x2) != 0) {
       if(_8004f6ec.get() == 0) {
         _8004f6ec.setu(0x1L);
         FUN_8001c594(0x1L, 0x6L);
-        scriptStartEffect(0x1L, 0x1L);
+        scriptStartEffect(1, 1);
       }
     }
 
@@ -4517,7 +4510,7 @@ public final class Scus94491BpeSegment {
       if(_8004f6ec.get() >= 0x7L) {
         if(loadingGameStateOverlay_8004dd08.get() == 0) {
           _8004f6e4.setu(-0x1L);
-          _800bc960.oru(0x1L);
+          _800bc960.or(0x1);
         }
       }
 
@@ -4770,9 +4763,9 @@ public final class Scus94491BpeSegment {
     _800bd708.setu(0x8000L);
     _800bd714.setu(0);
     _800bd710.setu(0);
-    _8007a3a8.setu(0);
-    _800bb104.setu(0);
-    _800babc0.setu(0);
+    _8007a3a8.set(0);
+    _800bb104.set(0);
+    _800babc0.set(0);
     _8004f6e4.setu(0x1L);
     _8004f6e8.setu(0);
   }
@@ -5116,7 +5109,7 @@ public final class Scus94491BpeSegment {
     final int encounterId = encounterId_800bb0f8.get();
     if(encounterId == 390) { // Doel
       //LAB_8001d330
-      if(_8006e398.stageProgression_eec.get() == 0) {
+      if(_8006e398.stageProgression_eec == 0) {
         loadMonsterSounds(1290);
       } else {
         //LAB_8001d370
@@ -5125,7 +5118,7 @@ public final class Scus94491BpeSegment {
       //LAB_8001d31c
     } else if(encounterId == 431) { // Zackwell
       //LAB_8001d394
-      if(_8006e398.stageProgression_eec.get() == 0) {
+      if(_8006e398.stageProgression_eec == 0) {
         loadMonsterSounds(1296);
       } else {
         //LAB_8001d3d0
@@ -5133,7 +5126,7 @@ public final class Scus94491BpeSegment {
       }
     } else if(encounterId == 443) { // Melbu
       //LAB_8001d3f8
-      final int stageProgression = _8006e398.stageProgression_eec.get();
+      final int stageProgression = _8006e398.stageProgression_eec;
       if(stageProgression == 0) {
         //LAB_8001d43c
         loadMonsterSounds(1292);
@@ -5254,7 +5247,7 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(11);
     sound.used_00.set(true);
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && encounterId_800bb0f8.get() == 443) { // Melbu
+    if(mainCallbackIndex_8004dd20.get() == 5 || mainCallbackIndex_8004dd20.get() == 6 && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
       MEMORY.setBytes(melbuSoundMrgSshdPtr_800bd784.getPointer(), files.get(3));
       MEMORY.setBytes(melbuSoundMrgSssqPtr_800bd788.getPointer(), files.get(2));

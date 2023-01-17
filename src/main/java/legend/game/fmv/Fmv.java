@@ -213,7 +213,7 @@ public class Fmv {
     final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(fmvIndex_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
     Fmv.play(file.name_04.deref().get(), true);
     fmvStage_800bf0d8.setu(0);
-    mainCallbackIndexOnceLoaded_8004dd24.setu(afterFmvLoadingStage_800bf0ec);
+    mainCallbackIndexOnceLoaded_8004dd24.set(afterFmvLoadingStage_800bf0ec.get());
   }
 
   public static void play(final String file, final boolean doubleSpeed) {

@@ -397,7 +397,7 @@ public final class Scus94491BpeSegment_8002 {
     model.tmd_8c = tmd;
     model.tmdNobj_ca = tmd.header.nobj.get();
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
+    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
       FUN_800de004(model, extendedTmd);
     }
 
@@ -445,14 +445,14 @@ public final class Scus94491BpeSegment_8002 {
 
     int s1 = 0;
     //LAB_80020940
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
+    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
       //LAB_80020958
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         FUN_800d9e64(model.ObjTable_0c.top[s1++], model.colourMap_9d);
       }
 
       //LAB_80020978
-    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) { // WMAP
+    } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
       //LAB_80020990
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         FUN_800c8844(model.ObjTable_0c.top[s1++], model.colourMap_9d);
@@ -491,7 +491,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void animateModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) { // SMAP
+    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
       FUN_800da114(model);
       return;
     }
@@ -593,7 +593,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
-    if(_800bdb88.get() == 0x5L) {
+    if(_800bdb88.get() == 5) {
       if(loadingGameStateOverlay_8004dd08.get() == 0) {
         if(_800bd7b4.get() == 0x1L) {
           FUN_800e4708();
@@ -607,36 +607,36 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020f30
     //LAB_80020f34
-    final long a0 = _800bdb88.get();
+    final int a0 = _800bdb88.get();
     _800bd7b4.setu(0);
     if(a0 != mainCallbackIndex_8004dd20.get()) {
       _800bd80c.setu(a0);
-      _800bdb88.setu(mainCallbackIndex_8004dd20);
+      _800bdb88.set(mainCallbackIndex_8004dd20.get());
 
-      if(mainCallbackIndex_8004dd20.get() == 0x5L) {
-        _800bd7b0.setu(0x2L);
+      if(mainCallbackIndex_8004dd20.get() == 5) {
+        _800bd7b0.set(2);
         _800bd7b8.setu(0);
 
         if(a0 == 0x2L) {
-          _800bd7b0.setu(0x9L);
+          _800bd7b0.set(9);
         }
 
         //LAB_80020f84
         if(a0 == 0x6L) {
-          _800bd7b0.setu(-4L);
+          _800bd7b0.set(-4);
           _800bd7b8.setu(0x1L);
         }
 
         //LAB_80020fa4
         if(a0 == 0x8L) {
-          _800bd7b0.setu(0x3L);
+          _800bd7b0.set(3);
         }
       }
     }
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(_800bdb88.get() == 0x2L) {
+    if(_800bdb88.get() == 2) {
       _800bd7ac.setu(0x1L);
     }
 
@@ -646,7 +646,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020fe0L)
   public static void deallocateModel(final Model124 model) {
     //LAB_80021008
-    if(mainCallbackIndex_8004dd20.get() == 0x5 && model.smallerStructPtr_a4 != null) {
+    if(mainCallbackIndex_8004dd20.get() == 5 && model.smallerStructPtr_a4 != null) {
       free(model.smallerStructPtr_a4.getAddress());
     }
 
@@ -731,13 +731,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800211d8L)
   public static void renderModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 5) {
       //LAB_80021230
       renderSmapModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 0x6L) {
+    } else if(mainCallbackIndex_8004dd20.get() == 6) {
       //LAB_80021220
       renderBttlModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+    } else if(mainCallbackIndex_8004dd20.get() == 8) {
       //LAB_8002120c
       //LAB_80021240
       renderWmapModel(model);
@@ -748,20 +748,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021258L)
   public static void renderDobj2(final GsDOBJ2 dobj2) {
-    if(mainCallbackIndex_8004dd20.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() == 5) {
       //LAB_800212b0
       Renderer.renderDobj2(dobj2, false);
       return;
     }
 
-    if(mainCallbackIndex_8004dd20.get() == 0x6L) {
+    if(mainCallbackIndex_8004dd20.get() == 6) {
       //LAB_800212a0
       Renderer.renderDobj2(dobj2, true);
       return;
     }
 
     //LAB_8002128c
-    if(mainCallbackIndex_8004dd20.get() == 0x8L) {
+    if(mainCallbackIndex_8004dd20.get() == 8) {
       //LAB_800212c0
       Renderer.renderDobj2(dobj2, false);
     }
@@ -861,13 +861,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void FUN_80021628(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 0x5) { // SMAP
+    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
       //LAB_800216b4
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         FUN_800d9e64(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
       //LAB_800216d4
-    } else if(mainCallbackIndex_8004dd20.get() == 0x8) { // WMAP
+    } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
       //LAB_800216ec
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         FUN_800c8844(model.ObjTable_0c.top[i], model.colourMap_9d);
@@ -885,15 +885,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021724L)
   public static void FUN_80021724(final Model124 model) {
-    final long v1 = mainCallbackIndex_8004dd20.get();
-    if(v1 == 0x5) {
+    final int v1 = mainCallbackIndex_8004dd20.get();
+    if(v1 == 5) {
       //LAB_8002177c
       FUN_800da524(model);
       //LAB_80021758
-    } else if(v1 == 0x6L) {
+    } else if(v1 == 6) {
       //LAB_8002176c
       FUN_800ec258(model);
-    } else if(v1 == 0x8L) {
+    } else if(v1 == 8) {
       //LAB_8002178c
       FUN_800c8d90(model);
     }
@@ -923,7 +923,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800218f0L)
   public static void FUN_800218f0() {
     if(_800bd7ac.get() == 1) {
-      _800bd7b0.setu(9);
+      _800bd7b0.set(9);
       _800bd7ac.setu(0);
     }
   }
@@ -1686,10 +1686,10 @@ public final class Scus94491BpeSegment_8002 {
     response._00 = 1;
 
     if(itemId == 0xdf) { // Charm potion
-      if(mainCallbackIndex_8004dd20.get() == 0x8L || hasNoEncounters_800bed58.get() == 0) {
+      if(mainCallbackIndex_8004dd20.get() == 8 || hasNoEncounters_800bed58.get() == 0) {
         //LAB_80022e40
         response._00 = 8;
-        encounterAccumulator_800c6ae8.setu(0);
+        encounterAccumulator_800c6ae8.set(0);
       } else {
         //LAB_80022e50
         response._00 = 9;
@@ -1813,12 +1813,12 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023264L)
   public static void checkForPsychBombX() {
-    gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffffL);
+    gameState_800babc8.scriptFlags2_bc.get(13).and(0xfffb_ffff);
 
     //LAB_800232a4
     for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
       if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
-        gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000L);
+        gameState_800babc8.scriptFlags2_bc.get(13).or(0x4_0000);
       }
 
       //LAB_800232c4
@@ -4203,7 +4203,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800288a4L)
   public static void FUN_800288a4(final int textboxIndex) {
-    if((tickCount_800bb0fc.get() & 0x1L) == 0) {
+    if((tickCount_800bb0fc.get() & 0x1) == 0) {
       final Struct84 s0 = _800bdf38[textboxIndex];
 
       s0._2c += s0._2a & 0x7;
@@ -4914,7 +4914,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow._00 & 0x1) != 0) {
       if((_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
-        if((tickCount_800bb0fc.get() & 0x1L) == 0) {
+        if((tickCount_800bb0fc.get() & 0x1) == 0) {
           arrow.spriteIndex_08++;
         }
 
@@ -5081,7 +5081,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
     submapCut_80052c30.set(675);
-    submapScene_80052c34.setu(4);
+    submapScene_80052c34.set(4);
     index_80052c38.set(0);
     submapCut_80052c3c.set(-1);
     _80052c40.setu(0);

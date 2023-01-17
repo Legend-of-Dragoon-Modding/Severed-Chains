@@ -8610,7 +8610,7 @@ public final class SEffe {
       file = a0.scriptState_04.scriptPtr_14;
     } else {
       //LAB_80115654
-      file = deffManager_800c693c.mrg_2c.getFile(mrgIndex, ScriptFile::new);
+      file = deffManager_800c693c.scripts_2c[mrgIndex];
     }
 
     //LAB_80115674
