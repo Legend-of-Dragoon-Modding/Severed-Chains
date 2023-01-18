@@ -1950,18 +1950,20 @@ public final class Bttl_800c {
   public static void FUN_800c9c7c(final int combatantIndex, final int animIndex) {
     final CombatantStruct1a8_c s0 = combatants_8005e398[combatantIndex]._14[animIndex];
 
-    //LAB_800c9cec
-    while(s0._09 > 0) {
-      FUN_800ca194(combatantIndex, animIndex);
-    }
+    if(s0 != null) {
+      //LAB_800c9cec
+      while(s0._09 > 0) {
+        FUN_800ca194(combatantIndex, animIndex);
+      }
 
-    //LAB_800c9d04
-    if(s0 instanceof CombatantStruct1a8_c.IndexType index) {
-      FUN_800cad64(index.index_00);
-    }
+      //LAB_800c9d04
+      if(s0 instanceof CombatantStruct1a8_c.IndexType index) {
+        FUN_800cad64(index.index_00);
+      }
 
-    //LAB_800c9d84
-    combatants_8005e398[combatantIndex]._14[animIndex] = null;
+      //LAB_800c9d84
+      combatants_8005e398[combatantIndex]._14[animIndex] = null;
+    }
 
     //LAB_800c9da0
   }
@@ -2030,31 +2032,28 @@ public final class Bttl_800c {
   public static boolean FUN_800ca194(final int combatantIndex, final int animIndex) {
     final CombatantStruct1a8_c s0 = combatants_8005e398[combatantIndex]._14[animIndex];
 
-    if(s0._09 > 0) {
-      s0._09--;
-    }
-
-    //LAB_800ca1f4
-    final int type = s0.type_0a;
-
-    if(type == 0 || type > 6) {
-      //LAB_800ca250
-      return false;
-    }
-
-    if(type < 4) {
-      return true;
-    }
-
-    if(s0._09 == 0) {
-      if(s0.BttlStruct08_index_04 >= 0) {
-        FUN_800cad64(s0.BttlStruct08_index_04);
+    if(s0 != null) {
+      if(s0._09 > 0) {
+        s0._09--;
       }
 
-      //LAB_800ca240
-      s0.BttlStruct08_index_04 = -1;
-      s0.BattleStructEf4Sub08_index_06 = -1;
-      s0._0b = 0;
+      //LAB_800ca1f4
+      final int type = s0.type_0a;
+
+      if(type < 4) {
+        return true;
+      }
+
+      if(s0._09 == 0) {
+        if(s0.BttlStruct08_index_04 >= 0) {
+          FUN_800cad64(s0.BttlStruct08_index_04);
+        }
+
+        //LAB_800ca240
+        s0.BttlStruct08_index_04 = -1;
+        s0.BattleStructEf4Sub08_index_06 = -1;
+        s0._0b = 0;
+      }
     }
 
     //LAB_800ca258
@@ -2069,7 +2068,7 @@ public final class Bttl_800c {
     //LAB_800ca2bc
     boolean s3 = true;
     for(int i = 0; i < 32; i++) {
-      if(combatant._14[i]._09 == 0) {
+      if(combatant._14[i] != null && combatant._14[i]._09 == 0) {
         if(FUN_800ca194(combatantIndex, i)) {
           s3 = !s3;
         } else {

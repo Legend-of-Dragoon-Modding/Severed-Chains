@@ -62,12 +62,12 @@ public class BattleStruct4c {
       struct.lightDirection_00.setZ((short)vals[paramIndex + 1]);
       struct._06 = (short)(vals[paramIndex + 1] >> 16);
       struct._08 = (short)vals[paramIndex + 2];
-      struct.lightColour_0a.r.set((byte)(vals[paramIndex + 2] >> 16));
-      struct.lightColour_0a.g.set((byte)(vals[paramIndex + 2] >> 24));
-      struct.lightColour_0a.b.set((byte)vals[paramIndex + 3]);
-      struct._0d.r.set((byte)(vals[paramIndex + 3] >>  8));
-      struct._0d.g.set((byte)(vals[paramIndex + 3] >> 16));
-      struct._0d.b.set((byte)(vals[paramIndex + 3] >> 24));
+      struct.lightColour_0a.r.set(vals[paramIndex + 2] >>> 16 & 0xff);
+      struct.lightColour_0a.g.set(vals[paramIndex + 2] >>> 24 & 0xff);
+      struct.lightColour_0a.b.set(vals[paramIndex + 3] & 0xff);
+      struct._0d.r.set(vals[paramIndex + 3] >>  8 & 0xff);
+      struct._0d.g.set(vals[paramIndex + 3] >> 16 & 0xff);
+      struct._0d.b.set(vals[paramIndex + 3] >> 24 & 0xff);
       struct._10 = (short)vals[paramIndex + 4];
       struct._12 = (short)(vals[paramIndex + 4] >> 16);
       paramIndex += 5;
