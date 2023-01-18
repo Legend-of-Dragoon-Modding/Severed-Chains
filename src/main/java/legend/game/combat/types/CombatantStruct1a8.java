@@ -2,7 +2,7 @@ package legend.game.combat.types;
 
 import legend.game.types.ExtendedTmd;
 import legend.game.types.MrgFile;
-import legend.game.types.ScriptFile;
+import legend.game.scripting.ScriptFile;
 
 /** Data related to a combatant (player or enemy) */
 public class CombatantStruct1a8 {

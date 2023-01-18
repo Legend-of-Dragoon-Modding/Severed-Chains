@@ -18,7 +18,7 @@ import javafx.util.StringConverter;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.events.EventManager;
-import legend.game.types.ScriptState;
+import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;

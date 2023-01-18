@@ -22,7 +22,7 @@ import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
-import legend.game.types.ScriptState;
+import legend.game.scripting.ScriptState;
 
 import java.util.HashSet;
 import java.util.Set;

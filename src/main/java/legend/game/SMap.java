@@ -36,6 +36,9 @@ import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
@@ -62,11 +65,8 @@ import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
-import legend.game.types.RunningScript;
 import legend.game.types.SMapStruct3c;
 import legend.game.types.SavePointRenderData44;
-import legend.game.types.ScriptFile;
-import legend.game.types.ScriptState;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
 import legend.game.types.SnowEffect;
@@ -97,6 +97,7 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
@@ -105,8 +106,6 @@ import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment._80010544;
-import static legend.game.Scus94491BpeSegment.allocateScriptState;
-import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
@@ -243,7 +242,6 @@ import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -282,7 +280,7 @@ public final class SMap {
   public static final UnsignedShortRef chapterTitleNum_800c6738 = MEMORY.ref(2, 0x800c6738L, UnsignedShortRef::new);
 
   public static final Value _800c673c = MEMORY.ref(4, 0x800c673cL);
-  public static final IntRef submapScriptIndex_800c6740 = MEMORY.ref(4, 0x800c6740L, IntRef::new);
+  public static ScriptState<Void> submapControllerState_800c6740;
 
   public static final Model124 model_800c6748 = new Model124();
   public static final Value _800c686c = MEMORY.ref(2, 0x800c686cL);
@@ -688,13 +686,13 @@ public final class SMap {
   }
 
   @Method(0x800d9bc0L)
-  public static FlowControl FUN_800d9bc0(final RunningScript a0) {
+  public static FlowControl FUN_800d9bc0(final RunningScript<?> script) {
     loadSupportOverlay(2, () -> SMap.FUN_800d9b08(-1));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9bf4L)
-  public static FlowControl FUN_800d9bf4(final RunningScript a0) {
+  public static FlowControl FUN_800d9bf4(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
       gameState_800babc8.charData_32c.get(i).status_10.set(0);
@@ -704,27 +702,27 @@ public final class SMap {
   }
 
   @Method(0x800d9c1cL)
-  public static FlowControl FUN_800d9c1c(final RunningScript a0) {
+  public static FlowControl FUN_800d9c1c(final RunningScript<?> script) {
     //LAB_800d9c78
-    memcpy(gameState_800babc8.charData_32c.get(a0.params_20[1].get()).getAddress(), gameState_800babc8.charData_32c.get(a0.params_20[0].get()).getAddress(), 0x2c);
-    loadSupportOverlay(2, () -> SMap.FUN_800d9b08(a0.params_20[1].get()));
+    memcpy(gameState_800babc8.charData_32c.get(script.params_20[1].get()).getAddress(), gameState_800babc8.charData_32c.get(script.params_20[0].get()).getAddress(), 0x2c);
+    loadSupportOverlay(2, () -> SMap.FUN_800d9b08(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9ce4L)
-  public static FlowControl scriptSetCharAddition(final RunningScript a0) {
-    gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.set(a0.params_20[1].get());
+  public static FlowControl scriptSetCharAddition(final RunningScript<?> script) {
+    gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.set(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d20L)
-  public static FlowControl scriptGetCharAddition(final RunningScript a0) {
-    a0.params_20[1].set(gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.get());
+  public static FlowControl scriptGetCharAddition(final RunningScript<?> script) {
+    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d60L)
-  public static FlowControl FUN_800d9d60(final RunningScript a0) {
+  public static FlowControl FUN_800d9d60(final RunningScript<?> script) {
     if(gameState_800babc8.charData_32c.get(0).dlevelXp_0e.get() < 63901) {
       gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(63901);
     }
@@ -1151,17 +1149,17 @@ public final class SMap {
 
   /** TODO this method moves the player */
   @Method(0x800de1d0L)
-  public static FlowControl FUN_800de1d0(final RunningScript a0) {
-    final short deltaX = (short)a0.params_20[0].get();
-    final short deltaY = (short)a0.params_20[1].get();
-    final short deltaZ = (short)a0.params_20[2].get();
+  public static FlowControl FUN_800de1d0(final RunningScript<SubmapObject210> script) {
+    final short deltaX = (short)script.params_20[0].get();
+    final short deltaY = (short)script.params_20[1].get();
+    final short deltaZ = (short)script.params_20[2].get();
 
     if(deltaX != 0 || deltaY != 0 || deltaZ != 0) {
       final SVECTOR deltaMovement = new SVECTOR();
       final SVECTOR worldspaceDeltaMovement = new SVECTOR();
 
       //LAB_800de218
-      final SubmapObject210 player = (SubmapObject210)a0.scriptState_04.innerStruct_00;
+      final SubmapObject210 player = script.scriptState_04.innerStruct_00;
       final Model124 playerModel = player.model_00;
 
       deltaMovement.set(deltaX, deltaY, deltaZ);
@@ -1192,7 +1190,7 @@ public final class SMap {
   }
 
   @Method(0x800de334L)
-  public static FlowControl FUN_800de334(final RunningScript script) {
+  public static FlowControl FUN_800de334(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
     get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
     model_800c6748.coord2_14.coord.transfer.set(sp0x10);
@@ -1229,7 +1227,7 @@ public final class SMap {
   }
 
   @Method(0x800de4b4L)
-  public static FlowControl FUN_800de4b4(final RunningScript a0) {
+  public static FlowControl FUN_800de4b4(final RunningScript<?> script) {
     long sp68;
     long sp6c;
     long sp70;
@@ -1238,7 +1236,7 @@ public final class SMap {
     final MATRIX sp0x28 = new MATRIX();
     final MATRIX sp0x48 = new MATRIX();
 
-    final Param ints = a0.params_20[0];
+    final Param ints = script.params_20[0];
     int s0 = 0;
 
     //LAB_800de4f8
@@ -1286,13 +1284,13 @@ public final class SMap {
   }
 
   @Method(0x800de668L)
-  public static FlowControl FUN_800de668(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800de668(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    sobj.vec_138.x.set(a0.params_20[1].get());
-    sobj.vec_138.y.set(a0.params_20[2].get());
-    sobj.vec_138.z.set(a0.params_20[3].get());
-    sobj.i_144 = a0.params_20[4].get();
+    sobj.vec_138.x.set(script.params_20[1].get());
+    sobj.vec_138.y.set(script.params_20[2].get());
+    sobj.vec_138.z.set(script.params_20[3].get());
+    sobj.i_144 = script.params_20[4].get();
 
     sobj.us_170 = 1;
 
@@ -1367,12 +1365,12 @@ public final class SMap {
   }
 
   @Method(0x800de944L)
-  public static FlowControl FUN_800de944(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800de944(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    sobj.vec_138.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
-    final int a3 = a0.params_20[4].get();
+    sobj.vec_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    final int a3 = script.params_20[4].get();
     sobj.i_144 = a3;
     sobj.vec_148.setX((sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX()) / a3);
     sobj.vec_148.setZ((sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ()) / a3);
@@ -1416,14 +1414,14 @@ public final class SMap {
   }
 
   @Method(0x800deba0L)
-  public static FlowControl FUN_800deba0(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.vec_138.setX(a0.params_20[1].get());
-    sobj.vec_138.setY(a0.params_20[2].get());
-    sobj.vec_138.setZ(a0.params_20[3].get());
-    final int a3 = a0.params_20[4].get();
+  public static FlowControl FUN_800deba0(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    sobj.vec_138.setX(script.params_20[1].get());
+    sobj.vec_138.setY(script.params_20[2].get());
+    sobj.vec_138.setZ(script.params_20[3].get());
+    final int a3 = script.params_20[4].get();
     sobj.i_144 = a3;
-    sobj.ui_18c = _800f5ac0.get(a0.params_20[5].get()).get();
+    sobj.ui_18c = _800f5ac0.get(script.params_20[5].get()).get();
     sobj.vec_148.setX((sobj.vec_138.getX() - sobj.model_00.coord2_14.coord.transfer.getX()) / a3);
     sobj.vec_148.setZ((sobj.vec_138.getZ() - sobj.model_00.coord2_14.coord.transfer.getZ()) / a3);
 
@@ -1466,11 +1464,11 @@ public final class SMap {
   }
 
   @Method(0x800dee28L)
-  public static FlowControl scriptCheckPlayerCollision(final RunningScript script) {
+  public static FlowControl scriptCheckPlayerCollision(final RunningScript<SubmapObject210> script) {
     final SVECTOR deltaMovement = new SVECTOR();
     final SVECTOR movement = new SVECTOR();
 
-    final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
+    final SubmapObject210 sobj = script.scriptState_04.innerStruct_00;
     final Model124 model = sobj.model_00;
 
     final short deltaX = (short)script.params_20[0].get();
@@ -1539,42 +1537,42 @@ public final class SMap {
   }
 
   @Method(0x800df168L)
-  public static FlowControl FUN_800df168(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800dfe0c(a0);
+  public static FlowControl FUN_800df168(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800dfe0c(script);
   }
 
   @Method(0x800df198L)
-  public static FlowControl FUN_800df198(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800dfec8(a0);
+  public static FlowControl FUN_800df198(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800dfec8(script);
   }
 
   @Method(0x800df1c8L)
-  public static FlowControl FUN_800df1c8(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800dff68(a0);
+  public static FlowControl FUN_800df1c8(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800dff68(script);
   }
 
   @Method(0x800df1f8L)
-  public static FlowControl FUN_800df1f8(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800dffa4(a0);
+  public static FlowControl FUN_800df1f8(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800dffa4(script);
   }
 
   @Method(0x800df228L)
-  public static FlowControl FUN_800df228(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800dffdc(a0);
+  public static FlowControl FUN_800df228(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800dffdc(script);
   }
 
   @Method(0x800df258L)
-  public static FlowControl FUN_800df258(final RunningScript script) {
+  public static FlowControl FUN_800df258(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     model.coord2_14.coord.transfer.setX(script.params_20[1].get());
@@ -1585,7 +1583,7 @@ public final class SMap {
   }
 
   @Method(0x800df2b8L)
-  public static FlowControl FUN_800df2b8(final RunningScript script) {
+  public static FlowControl FUN_800df2b8(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     script.params_20[1].set(model.coord2_14.coord.transfer.getX());
@@ -1595,18 +1593,18 @@ public final class SMap {
   }
 
   @Method(0x800df314L)
-  public static FlowControl FUN_800df314(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800df314(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2Param_64.rotate.x.set((short)a0.params_20[1].get());
-    model.coord2Param_64.rotate.y.set((short)a0.params_20[2].get());
-    model.coord2Param_64.rotate.z.set((short)a0.params_20[3].get());
+    model.coord2Param_64.rotate.x.set((short)script.params_20[1].get());
+    model.coord2Param_64.rotate.y.set((short)script.params_20[2].get());
+    model.coord2Param_64.rotate.z.set((short)script.params_20[3].get());
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800df374L)
-  public static FlowControl FUN_800df374(final RunningScript script) {
+  public static FlowControl FUN_800df374(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     script.params_20[1].set(model.coord2Param_64.rotate.getX());
@@ -1616,110 +1614,110 @@ public final class SMap {
   }
 
   @Method(0x800df3d0L)
-  public static FlowControl FUN_800df3d0(final RunningScript a0) {
-    a0.params_20[3] = a0.params_20[2];
-    a0.params_20[2] = a0.params_20[1];
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return scriptFacePoint(a0);
+  public static FlowControl FUN_800df3d0(final RunningScript<?> script) {
+    script.params_20[3] = script.params_20[2];
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return scriptFacePoint(script);
   }
 
   @Method(0x800df410L)
-  public static FlowControl FUN_800df410(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e0094(a0);
+  public static FlowControl FUN_800df410(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e0094(script);
   }
 
   @Method(0x800df440L)
-  public static FlowControl FUN_800df440(final RunningScript a0) {
-    a0.params_20[4] = a0.params_20[3];
-    a0.params_20[3] = a0.params_20[2];
-    a0.params_20[2] = a0.params_20[1];
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800de668(a0);
+  public static FlowControl FUN_800df440(final RunningScript<?> script) {
+    script.params_20[4] = script.params_20[3];
+    script.params_20[3] = script.params_20[2];
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800de668(script);
   }
 
   @Method(0x800df488L)
-  public static FlowControl FUN_800df488(final RunningScript a0) {
-    a0.params_20[4] = a0.params_20[3];
-    a0.params_20[3] = a0.params_20[2];
-    a0.params_20[2] = a0.params_20[1];
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800de944(a0);
+  public static FlowControl FUN_800df488(final RunningScript<?> script) {
+    script.params_20[4] = script.params_20[3];
+    script.params_20[3] = script.params_20[2];
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800de944(script);
   }
 
   @Method(0x800df4d0L)
-  public static FlowControl FUN_800df4d0(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e00cc(a0);
+  public static FlowControl FUN_800df4d0(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e00cc(script);
   }
 
   @Method(0x800df500L)
-  public static FlowControl FUN_800df500(final RunningScript script) {
+  public static FlowControl FUN_800df500(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800df530L)
-  public static FlowControl FUN_800df530(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e0184(a0);
+  public static FlowControl FUN_800df530(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e0184(script);
   }
 
   @Method(0x800df560L)
-  public static FlowControl FUN_800df560(final RunningScript script) {
+  public static FlowControl FUN_800df560(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800df590L)
-  public static FlowControl FUN_800df590(final RunningScript script) {
+  public static FlowControl FUN_800df590(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800df5c0L)
-  public static FlowControl FUN_800df5c0(final RunningScript script) {
+  public static FlowControl FUN_800df5c0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0244(script);
   }
 
   @Method(0x800df5f0L)
-  public static FlowControl FUN_800df5f0(final RunningScript script) {
+  public static FlowControl FUN_800df5f0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return FUN_800e0284(script);
   }
 
   @Method(0x800df620L)
-  public static FlowControl FUN_800df620(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e02c0(a0);
+  public static FlowControl FUN_800df620(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e02c0(script);
   }
 
   @Method(0x800df650L)
-  public static FlowControl FUN_800df650(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e02fc(a0);
+  public static FlowControl FUN_800df650(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e02fc(script);
   }
 
   @Method(0x800df680L)
-  public static FlowControl FUN_800df680(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)a0.scriptState_04.innerStruct_00;
-    a0.params_20[0].set(sobj.s_178);
+  public static FlowControl FUN_800df680(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
+    script.params_20[0].set(sobj.s_178);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800df6a4L)
-  public static FlowControl FUN_800df6a4(final RunningScript s1) {
+  public static FlowControl FUN_800df6a4(final RunningScript<?> script) {
     SetRotMatrix(worldToScreenMatrix_800c3548);
     SetTransMatrix(worldToScreenMatrix_800c3548);
-    FUN_800e8104(new SVECTOR().set((short)s1.params_20[0].get(), (short)s1.params_20[0].get(), (short)s1.params_20[0].get()));
+    FUN_800e8104(new SVECTOR().set((short)script.params_20[0].get(), (short)script.params_20[0].get(), (short)script.params_20[0].get()));
 
     //LAB_800df744
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
@@ -1737,7 +1735,7 @@ public final class SMap {
    * Used for the little mouse thing running around in the Limestone Cave
    */
   @Method(0x800df788L)
-  public static FlowControl scriptRotateSobj(final RunningScript script) {
+  public static FlowControl scriptRotateSobj(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final int frames = script.params_20[4].get();
@@ -1761,7 +1759,7 @@ public final class SMap {
    * The (x, y, z) value is the amount to rotate per frame
    */
   @Method(0x800df890L)
-  public static FlowControl scriptRotateSobjAbsolute(final RunningScript script) {
+  public static FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.rotationAmount_17c.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.rotationFrames_188 = script.params_20[4].get();
@@ -1769,18 +1767,18 @@ public final class SMap {
   }
 
   @Method(0x800df904L)
-  public static FlowControl FUN_800df904(final RunningScript a0) {
-    a0.params_20[5] = a0.params_20[4];
-    a0.params_20[4] = a0.params_20[3];
-    a0.params_20[3] = a0.params_20[2];
-    a0.params_20[2] = a0.params_20[1];
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800deba0(a0);
+  public static FlowControl FUN_800df904(final RunningScript<?> script) {
+    script.params_20[5] = script.params_20[4];
+    script.params_20[4] = script.params_20[3];
+    script.params_20[3] = script.params_20[2];
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800deba0(script);
   }
 
   @Method(0x800df954L)
-  public static FlowControl scriptFacePlayer(final RunningScript script) {
+  public static FlowControl scriptFacePlayer(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
     sobj.model_00.coord2Param_64.rotate.setY((short)(-ratan2(playerPos_800c68e8.getZ(), playerPos_800c68e8.getX()) + 0xc01 & 0xfff));
     sobj.rotationFrames_188 = 0;
@@ -1788,11 +1786,11 @@ public final class SMap {
   }
 
   @Method(0x800df9a8L)
-  public static FlowControl FUN_800df9a8(final RunningScript a0) {
+  public static FlowControl FUN_800df9a8(final RunningScript<?> script) {
     final DVECTOR sp0x18 = new DVECTOR();
     final MATRIX sp0x20 = new MATRIX();
     final MATRIX sp0x40 = new MATRIX();
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     GsGetLws(sobj.model_00.coord2_14, sp0x40, sp0x20);
     CPU.CTC2(sp0x20.getPacked(0), 0);
     CPU.CTC2(sp0x20.getPacked(2), 1);
@@ -1810,8 +1808,8 @@ public final class SMap {
     long sp60 = CPU.MFC2(8);
     long sp64 = CPU.CFC2(31);
     long sp68 = (int)CPU.MFC2(19) >> 2;
-    a0.params_20[1].set(sp0x18.getX() + 192);
-    a0.params_20[2].set(sp0x18.getY() + 128);
+    script.params_20[1].set(sp0x18.getX() + 192);
+    script.params_20[2].set(sp0x18.getY() + 128);
     // 0, -130, 0
     CPU.MTC2(-130 << 16, 0);
     CPU.MTC2(0, 1);
@@ -1820,46 +1818,46 @@ public final class SMap {
     sp60 = CPU.MFC2(8);
     sp64 = CPU.CFC2(31);
     sp68 = (int)CPU.MFC2(19) >> 2;
-    a0.params_20[3].set(sp0x18.getX() + 192);
-    a0.params_20[4].set(sp0x18.getY() + 128);
+    script.params_20[3].set(sp0x18.getX() + 192);
+    script.params_20[4].set(sp0x18.getY() + 128);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dfb28L)
-  public static FlowControl FUN_800dfb28(final RunningScript a0) {
-    a0.params_20[0].set(submapIndex_800bd808.get());
+  public static FlowControl FUN_800dfb28(final RunningScript<?> script) {
+    script.params_20[0].set(submapIndex_800bd808.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dfb44L)
-  public static FlowControl FUN_800dfb44(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return scriptGetSobjNobj(a0);
+  public static FlowControl FUN_800dfb44(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return scriptGetSobjNobj(script);
   }
 
   @Method(0x800dfb74L)
-  public static FlowControl FUN_800dfb74(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e03e4(a0);
+  public static FlowControl FUN_800dfb74(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e03e4(script);
   }
 
   @Method(0x800dfba4L)
-  public static FlowControl FUN_800dfba4(final RunningScript a0) {
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800e0448(a0);
+  public static FlowControl FUN_800dfba4(final RunningScript<?> script) {
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800e0448(script);
   }
 
   @Method(0x800dfbd4L)
-  public static FlowControl FUN_800dfbd4(final RunningScript a0) {
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return scriptFaceCamera(a0);
+  public static FlowControl FUN_800dfbd4(final RunningScript<?> script) {
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return scriptFaceCamera(script);
   }
 
   @Method(0x800dfc00L)
-  public static FlowControl scriptScaleXyz(final RunningScript script) {
+  public static FlowControl scriptScaleXyz(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1873,7 +1871,7 @@ public final class SMap {
   }
 
   @Method(0x800dfc60L)
-  public static FlowControl scriptScaleUniform(final RunningScript script) {
+  public static FlowControl scriptScaleUniform(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1884,14 +1882,14 @@ public final class SMap {
   }
 
   @Method(0x800dfca0L)
-  public static FlowControl FUN_800dfca0(final RunningScript script) {
+  public static FlowControl FUN_800dfca0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dfcd8L)
-  public static FlowControl FUN_800dfcd8(final RunningScript script) {
+  public static FlowControl FUN_800dfcd8(final RunningScript<?> script) {
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
@@ -1899,17 +1897,17 @@ public final class SMap {
   }
 
   @Method(0x800dfd10L)
-  public static FlowControl FUN_800dfd10(final RunningScript script) {
+  public static FlowControl FUN_800dfd10(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800dfd48L)
-  public static FlowControl FUN_800dfd48(final RunningScript script) {
+  public static FlowControl FUN_800dfd48(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800dfd8cL)
-  public static FlowControl scriptShowAlertIndicator(final RunningScript script) {
+  public static FlowControl scriptShowAlertIndicator(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.showAlertIndicator_194 = true;
     sobj.alertIndicatorOffsetY_198 = script.params_20[1].get();
@@ -1917,14 +1915,14 @@ public final class SMap {
   }
 
   @Method(0x800dfdd8L)
-  public static FlowControl scriptHideAlertIndicator(final RunningScript script) {
+  public static FlowControl scriptHideAlertIndicator(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.showAlertIndicator_194 = false;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dfe0cL)
-  public static FlowControl FUN_800dfe0c(final RunningScript script) {
+  public static FlowControl FUN_800dfe0c(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1943,7 +1941,7 @@ public final class SMap {
   }
 
   @Method(0x800dfec8L)
-  public static FlowControl FUN_800dfec8(final RunningScript script) {
+  public static FlowControl FUN_800dfec8(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1960,28 +1958,28 @@ public final class SMap {
   }
 
   @Method(0x800dff68L)
-  public static FlowControl FUN_800dff68(final RunningScript script) {
+  public static FlowControl FUN_800dff68(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.animIndex_132);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dffa4L)
-  public static FlowControl FUN_800dffa4(final RunningScript script) {
+  public static FlowControl FUN_800dffa4(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.us_12a = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dffdcL)
-  public static FlowControl FUN_800dffdc(final RunningScript script) {
+  public static FlowControl FUN_800dffdc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.us_12c);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0018L)
-  public static FlowControl scriptFacePoint(final RunningScript script) {
+  public static FlowControl scriptFacePoint(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     final int angle = 0xc01 - ratan2(script.params_20[3].get() - model.coord2_14.coord.transfer.getZ(), script.params_20[1].get() - model.coord2_14.coord.transfer.getX()) & 0xfff;
@@ -1991,14 +1989,14 @@ public final class SMap {
   }
 
   @Method(0x800e0094L)
-  public static FlowControl FUN_800e0094(final RunningScript a0) {
+  public static FlowControl FUN_800e0094(final RunningScript<?> a0) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
     sobj.s_128 = a0.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e00ccL)
-  public static FlowControl FUN_800e00cc(final RunningScript script) {
+  public static FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     final int v0 = (int)FUN_800e9018(model.coord2_14.coord.transfer.getX(), model.coord2_14.coord.transfer.getY(), model.coord2_14.coord.transfer.getZ(), 0);
@@ -2008,56 +2006,56 @@ public final class SMap {
   }
 
   @Method(0x800e0148L)
-  public static FlowControl FUN_800e0148(final RunningScript script) {
+  public static FlowControl FUN_800e0148(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.s_172);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0184L)
-  public static FlowControl FUN_800e0184(final RunningScript script) {
+  public static FlowControl FUN_800e0184(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.s_172 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e01bcL)
-  public static FlowControl FUN_800e01bc(final RunningScript script) {
+  public static FlowControl FUN_800e01bc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     FUN_800de138(sobj.model_00, script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0204L)
-  public static FlowControl FUN_800e0204(final RunningScript script) {
+  public static FlowControl FUN_800e0204(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.smallerStructPtr_a4.uba_04.get(script.params_20[1].get()).set(0);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0244L)
-  public static FlowControl FUN_800e0244(final RunningScript script) {
+  public static FlowControl FUN_800e0244(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.aub_ec[script.params_20[1].get()] = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0284L)
-  public static FlowControl FUN_800e0284(final RunningScript script) {
+  public static FlowControl FUN_800e0284(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.aub_ec[script.params_20[1].get()] = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e02c0L)
-  public static FlowControl FUN_800e02c0(final RunningScript script) {
+  public static FlowControl FUN_800e02c0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.us_170);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e02fcL)
-  public static FlowControl FUN_800e02fc(final RunningScript script) {
+  public static FlowControl FUN_800e02fc(final RunningScript<?> script) {
     final SubmapObject210 struct1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     struct1.s_178 = script.params_20[1].get();
@@ -2080,14 +2078,14 @@ public final class SMap {
   }
 
   @Method(0x800e03a8L)
-  public static FlowControl scriptGetSobjNobj(final RunningScript script) {
+  public static FlowControl scriptGetSobjNobj(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.model_00.ObjTable_0c.nobj);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e03e4L)
-  public static FlowControl FUN_800e03e4(final RunningScript script) {
+  public static FlowControl FUN_800e03e4(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2101,7 +2099,7 @@ public final class SMap {
   }
 
   @Method(0x800e0448L)
-  public static FlowControl FUN_800e0448(final RunningScript script) {
+  public static FlowControl FUN_800e0448(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2115,7 +2113,7 @@ public final class SMap {
   }
 
   @Method(0x800e04b4L)
-  public static FlowControl scriptFaceCamera(final RunningScript script) {
+  public static FlowControl scriptFaceCamera(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.coord2Param_64.rotate.setY((short)(-ratan2(cameraPos_800c6aa0.getZ(), cameraPos_800c6aa0.getX()) + 0xc01 & 0xfff));
     sobj.rotationFrames_188 = 0;
@@ -2123,7 +2121,7 @@ public final class SMap {
   }
 
   @Method(0x800e0520L)
-  public static FlowControl FUN_800e0520(final RunningScript script) {
+  public static FlowControl FUN_800e0520(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     sobj.flags_190 = sobj.flags_190
@@ -2134,22 +2132,22 @@ public final class SMap {
   }
 
   @Method(0x800e057cL)
-  public static FlowControl FUN_800e057c(final RunningScript script) {
+  public static FlowControl FUN_800e057c(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e05c8L)
-  public static FlowControl FUN_800e05c8(final RunningScript script) {
+  public static FlowControl FUN_800e05c8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e05f0L)
-  public static FlowControl FUN_800e05f0(final RunningScript script) {
+  public static FlowControl FUN_800e05f0(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e0614L)
-  public static FlowControl FUN_800e0614(final RunningScript script) {
+  public static FlowControl FUN_800e0614(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.flatLightingEnabled_1c4 = true;
     sobj.flatLightRed_1c5 = script.params_20[1].get() & 0xff;
@@ -2159,7 +2157,7 @@ public final class SMap {
   }
 
   @Method(0x800e0684L)
-  public static FlowControl FUN_800e0684(final RunningScript script) {
+  public static FlowControl FUN_800e0684(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.flatLightingEnabled_1c4 = false;
     sobj.flatLightRed_1c5 = 0x80;
@@ -2169,12 +2167,12 @@ public final class SMap {
   }
 
   @Method(0x800e074cL)
-  public static FlowControl FUN_800e074c(final RunningScript script) {
+  public static FlowControl FUN_800e074c(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800e07f0L)
-  public static FlowControl FUN_800e07f0(final RunningScript script) {
+  public static FlowControl FUN_800e07f0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2188,7 +2186,7 @@ public final class SMap {
   }
 
   @Method(0x800e0894L)
-  public static FlowControl FUN_800e0894(final RunningScript script) {
+  public static FlowControl FUN_800e0894(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.collisionSizeHorizontal_1ac = script.params_20[1].get();
     sobj.collisionSizeVertical_1b0 = script.params_20[2].get();
@@ -2197,14 +2195,14 @@ public final class SMap {
   }
 
   @Method(0x800e08f4L)
-  public static FlowControl FUN_800e08f4(final RunningScript script) {
+  public static FlowControl FUN_800e08f4(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.collidedWithSobjIndex_1a8);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0930L)
-  public static FlowControl scriptSetAmbientColour(final RunningScript script) {
+  public static FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.ambientColourEnabled_1c8 = true;
     sobj.ambientRed_1ca = script.params_20[1].get() & 0xffff;
@@ -2214,7 +2212,7 @@ public final class SMap {
   }
 
   @Method(0x800e09a0L)
-  public static FlowControl scriptResetAmbientColour(final RunningScript script) {
+  public static FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.ambientRed_1ca = 0x800;
     sobj.ambientGreen_1cc = 0x800;
@@ -2224,21 +2222,21 @@ public final class SMap {
   }
 
   @Method(0x800e09e0L)
-  public static FlowControl FUN_800e09e0(final RunningScript script) {
+  public static FlowControl FUN_800e09e0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.b_cc = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a14L)
-  public static FlowControl FUN_800e0a14(final RunningScript script) {
+  public static FlowControl FUN_800e0a14(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.b_cc = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a48L)
-  public static FlowControl FUN_800e0a48(final RunningScript script) {
+  public static FlowControl FUN_800e0a48(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2248,7 +2246,7 @@ public final class SMap {
   }
 
   @Method(0x800e0a94L)
-  public static FlowControl FUN_800e0a94(final RunningScript script) {
+  public static FlowControl FUN_800e0a94(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2259,7 +2257,7 @@ public final class SMap {
   }
 
   @Method(0x800e0af4L)
-  public static FlowControl FUN_800e0af4(final RunningScript script) {
+  public static FlowControl FUN_800e0af4(final RunningScript<?> script) {
     script.params_20[0].set(_800c68f4.getX());
     script.params_20[1].set(_800c68f4.getY());
     script.params_20[2].set(_800c68f4.getZ());
@@ -2267,13 +2265,13 @@ public final class SMap {
   }
 
   @Method(0x800e0b34L)
-  public static FlowControl FUN_800e0b34(final RunningScript a0) {
-    if(a0.params_20[0].get() == 0) {
+  public static FlowControl FUN_800e0b34(final RunningScript<?> script) {
+    if(script.params_20[0].get() == 0) {
       loadTimImage(_80010544.getAddress());
     }
 
     //LAB_800e0b68
-    if(a0.params_20[0].get() == 1) {
+    if(script.params_20[0].get() == 1) {
       loadTimImage(_800d673c.getAddress());
     }
 
@@ -2282,50 +2280,50 @@ public final class SMap {
   }
 
   @Method(0x800e0ba0L)
-  public static FlowControl FUN_800e0ba0(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.playerCollisionSizeHorizontal_1b8 = a0.params_20[1].get();
-    sobj.playerCollisionSizeVertical_1bc = a0.params_20[2].get();
-    sobj.playerCollisionReach_1c0 = a0.params_20[3].get();
+  public static FlowControl FUN_800e0ba0(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    sobj.playerCollisionSizeHorizontal_1b8 = script.params_20[1].get();
+    sobj.playerCollisionSizeVertical_1bc = script.params_20[2].get();
+    sobj.playerCollisionReach_1c0 = script.params_20[3].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c00L)
-  public static FlowControl scriptLoadChapterTitleCard(final RunningScript a0) {
+  public static FlowControl scriptLoadChapterTitleCard(final RunningScript<?> script) {
     chapterTitleCardLoaded_800c68e0.set(false);
-    chapterTitleNum_800c6738.set(a0.params_20[0].get());
+    chapterTitleNum_800c6738.set(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c24L)
-  public static FlowControl scriptIsChapterTitleCardLoaded(final RunningScript a0) {
-    a0.params_20[0].set(chapterTitleCardLoaded_800c68e0.get() ? 1 : 0);
+  public static FlowControl scriptIsChapterTitleCardLoaded(final RunningScript<?> script) {
+    script.params_20[0].set(chapterTitleCardLoaded_800c68e0.get() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c40L)
-  public static FlowControl FUN_800e0c40(final RunningScript a0) {
+  public static FlowControl FUN_800e0c40(final RunningScript<?> script) {
     chapterTitleNum_800c6738.or(0x80);
     _800c686e.setu(0);
-    _800c687c.setu(a0.params_20[0].get());
-    _800c687e.setu(a0.params_20[1].get());
+    _800c687c.setu(script.params_20[0].get());
+    _800c687e.setu(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c80L)
-  public static FlowControl FUN_800e0c80(final RunningScript a0) {
-    a0.params_20[0].set((int)_800c686e.getSigned());
+  public static FlowControl FUN_800e0c80(final RunningScript<?> script) {
+    script.params_20[0].set((int)_800c686e.getSigned());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c9cL)
-  public static FlowControl FUN_800e0c9c(final RunningScript a0) {
-    _800c673c.setu(a0.params_20[0].get());
+  public static FlowControl FUN_800e0c9c(final RunningScript<?> script) {
+    _800c673c.setu(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0cb8L)
-  public static FlowControl FUN_800e0cb8(final RunningScript script) {
+  public static FlowControl FUN_800e0cb8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
@@ -2416,7 +2414,7 @@ public final class SMap {
   }
 
   @Method(0x800e0ff0L)
-  public static void submapObjectTicker(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static void submapObjectTicker(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     if(sobj.s_178 != 0) {
@@ -2479,13 +2477,13 @@ public final class SMap {
     }
 
     if(enableCollisionDebug) {
-      renderCollisionDebug(index, sobj);
+      renderCollisionDebug(state, sobj);
     }
   }
 
   public static boolean enableCollisionDebug;
 
-  private static void renderCollisionDebug(final int index, final SubmapObject210 sobj) {
+  private static void renderCollisionDebug(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     SetRotMatrix(worldToScreenMatrix_800c3548);
@@ -2506,7 +2504,7 @@ public final class SMap {
       queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x8000);
     }
 
-    if(sobjs_800c6880[0].index == index) {
+    if(sobjs_800c6880[0] == state) {
       transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, x0, y0, x1, y1);
       queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x80);
     }
@@ -2540,7 +2538,7 @@ public final class SMap {
   }
 
   @Method(0x800e123cL)
-  public static void submapObjectRenderer(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static void submapObjectRenderer(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     if(sobj.s_128 == 0) {
       if(sobj.flatLightingEnabled_1c4) {
         final GsF_LIGHT light0 = new GsF_LIGHT();
@@ -2830,8 +2828,8 @@ public final class SMap {
 
         GPU.uploadData(imageRect, tim.getData(), tim.getImageData());
 
-        final ScriptState<Void> submapController = allocateScriptState(0, null, 0, null);
-        submapScriptIndex_800c6740.set(submapController.index);
+        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, null, 0, null);
+        submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(submapAssets.script);
 
         //LAB_800e1a38
@@ -2868,7 +2866,7 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           final SubmapObject obj = submapAssets.objects.get(i);
 
-          final ScriptState<SubmapObject210> state = allocateScriptState(new SubmapObject210());
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(new SubmapObject210());
           sobjs_800c6880[i] = state;
           state.setTicker(SMap::submapObjectTicker);
           state.setRenderer(SMap::submapObjectRenderer);
@@ -3002,7 +3000,7 @@ public final class SMap {
 
   /** Handles cutscene movement */
   @Method(0x800e1f90L)
-  public static boolean FUN_800e1f90(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static boolean FUN_800e1f90(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     if((sobj.flags_190 & 0x8000_0000) != 0) {
@@ -3110,7 +3108,7 @@ public final class SMap {
 
   @Method(0x800e2220L)
   public static void unloadSmap() {
-    deallocateScriptAndChildren(submapScriptIndex_800c6740.get());
+    submapControllerState_800c6740.deallocateWithChildren();
 
     if(chapterTitleCardMrg_800c6710 != null) {
       chapterTitleCardMrg_800c6710 = null;
@@ -3129,7 +3127,7 @@ public final class SMap {
         final Model124 model = sobj.model_00;
         pos.pos_00.set(model.coord2_14.coord.transfer);
         pos.rot_0c.set(model.coord2Param_64.rotate);
-        deallocateScriptAndChildren(sobjs_800c6880[i].index);
+        sobjs_800c6880[i].deallocateWithChildren();
       } else {
         //LAB_800e231c
         pos.pos_00.set(0, 0, 0);
@@ -3573,7 +3571,7 @@ public final class SMap {
   }
 
   @Method(0x800e3df4L)
-  public static void scriptDestructor(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static void scriptDestructor(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     //LAB_800e3e24
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
       if(sobjs_800c6880[i] == state) {
@@ -3588,13 +3586,13 @@ public final class SMap {
   }
 
   @Method(0x800e3e60L)
-  public static boolean FUN_800e3e60(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static boolean FUN_800e3e60(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     sobj.us_170 = 0;
     return true;
   }
 
   @Method(0x800e3e74L)
-  public static boolean FUN_800e3e74(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  public static boolean FUN_800e3e74(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
     model.coord2_14.coord.transfer.y.add(sobj.s_134);
@@ -4197,7 +4195,7 @@ public final class SMap {
     }
 
     if(newScene == 0x3fc) {
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
@@ -4205,7 +4203,7 @@ public final class SMap {
     }
 
     if(newScene == 0x3fa) {
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
@@ -4214,14 +4212,14 @@ public final class SMap {
     }
 
     if(newScene == 0x3fb) {
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       smapLoadingStage_800cb430.setu(0x14L);
       _800f7e4c.setu(0x1L);
       return 1;
     }
 
     if(newScene == 0x3fe) {
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e4c.setu(0x1L);
@@ -4235,12 +4233,12 @@ public final class SMap {
       index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
       _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
       _800cab24.set(FUN_800ea974(-0x1L));
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       return 1;
     }
 
     if(newScene == 0x3ff) {
-      scriptsTickDisabled_800bc0b8 = true;
+      SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       smapLoadingStage_800cb430.setu(0xdL);
       _800cb450.setu(cut);
@@ -4253,7 +4251,7 @@ public final class SMap {
       scene = encounterId_800bb0f8.get();
     } else {
       if(newScene > 0x1ff) {
-        scriptsTickDisabled_800bc0b8 = true;
+        SCRIPTS.pause();
         _800f7e4c.setu(0x1L);
         return 1;
       }
@@ -4274,7 +4272,7 @@ public final class SMap {
       _80052c40.setu(0x1L);
     }
 
-    scriptsTickDisabled_800bc0b8 = true;
+    SCRIPTS.pause();
     smapLoadingStage_800cb430.setu(0x13L);
     return 1;
   }
@@ -4446,7 +4444,7 @@ public final class SMap {
           _800cab24.set(FUN_800ea974(_800caaf4.get()));
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
-          scriptsTickDisabled_800bc0b8 = false;
+          SCRIPTS.resume();
           _800c6ae0.setu(0);
         }
       }
@@ -4521,7 +4519,7 @@ public final class SMap {
       case 0xf -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        scriptsTickDisabled_800bc0b8 = false;
+        SCRIPTS.resume();
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
         if(_800bdc34.get() != 0) {
@@ -4594,7 +4592,7 @@ public final class SMap {
           vsyncMode_8007a3b8.set(2);
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8 = false;
+          SCRIPTS.resume();
         }
       }
 
@@ -4605,7 +4603,7 @@ public final class SMap {
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
         _800f7e4c.setu(0);
-        scriptsTickDisabled_800bc0b8 = false;
+        SCRIPTS.resume();
       }
 
       case 0x14 -> {
@@ -4635,7 +4633,7 @@ public final class SMap {
 
           //LAB_800e6490
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8 = false;
+          SCRIPTS.resume();
         }
       }
 
@@ -4660,7 +4658,7 @@ public final class SMap {
           Fmv.playCurrentFmv();
           pregameLoadingStage_800bb10c.set(0);
           _800f7e4c.setu(0);
-          scriptsTickDisabled_800bc0b8 = false;
+          SCRIPTS.resume();
         }
       }
 
@@ -4791,10 +4789,10 @@ public final class SMap {
   }
 
   @Method(0x800e67d4L)
-  public static FlowControl FUN_800e67d4(final RunningScript a0) {
-    final int scene = a0.params_20[1].get();
+  public static FlowControl FUN_800e67d4(final RunningScript<?> script) {
+    final int scene = script.params_20[1].get();
 
-    FUN_800e5534(a0.params_20[0].get(), scene);
+    FUN_800e5534(script.params_20[0].get(), scene);
 
     if(scene == 0x3fe || scene == 0x3fa || scene == 0x3ff) {
       return FlowControl.CONTINUE;
@@ -4805,35 +4803,35 @@ public final class SMap {
   }
 
   @Method(0x800e683cL)
-  public static FlowControl FUN_800e683c(final RunningScript a0) {
-    if(a0.params_20[0].get() < 3) {
-      _800f7e50.setu(a0.params_20[0].get());
+  public static FlowControl FUN_800e683c(final RunningScript<?> script) {
+    if(script.params_20[0].get() < 3) {
+      _800f7e50.setu(script.params_20[0].get());
     }
 
     //LAB_800e686c
-    if(a0.params_20[0].get() == 3) {
-      FUN_800e76b0(0x400L, 0x400L, a0.params_20[1].get());
+    if(script.params_20[0].get() == 3) {
+      FUN_800e76b0(0x400L, 0x400L, script.params_20[1].get());
     }
 
     //LAB_800e688c
-    a0.params_20[2].set((int)_800f7e50.get());
+    script.params_20[2].set((int)_800f7e50.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e68b4L)
-  public static FlowControl FUN_800e68b4(final RunningScript a0) {
+  public static FlowControl FUN_800e68b4(final RunningScript<?> script) {
     final IntRef x = new IntRef();
     final IntRef y = new IntRef();
     getScreenOffset(x, y);
-    a0.params_20[0].set(x.get());
-    a0.params_20[1].set(y.get());
+    script.params_20[0].set(x.get());
+    script.params_20[1].set(y.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6904L)
-  public static FlowControl FUN_800e6904(final RunningScript a0) {
-    final int x = a0.params_20[0].get();
-    final int y = a0.params_20[1].get();
+  public static FlowControl FUN_800e6904(final RunningScript<?> script) {
+    final int x = script.params_20[0].get();
+    final int y = script.params_20[1].get();
     final long v1 = _800f7e50.get();
 
     if(v1 == 0x1L) {
@@ -4855,44 +4853,44 @@ public final class SMap {
   }
 
   @Method(0x800e69a4L)
-  public static FlowControl FUN_800e69a4(final RunningScript a0) {
-    a0.params_20[0].set(FUN_800e6730(a0.params_20[1].get()));
+  public static FlowControl FUN_800e69a4(final RunningScript<?> script) {
+    script.params_20[0].set(FUN_800e6730(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e69e8L)
-  public static FlowControl FUN_800e69e8(final RunningScript a0) {
+  public static FlowControl FUN_800e69e8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e69f0L)
-  public static FlowControl FUN_800e69f0(final RunningScript a0) {
-    FUN_800e675c(FUN_800e6730(a0.params_20[0].get()) | 0x8);
+  public static FlowControl FUN_800e69f0(final RunningScript<?> script) {
+    FUN_800e675c(FUN_800e6730(script.params_20[0].get()) | 0x8);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6a28L)
-  public static FlowControl FUN_800e6a28(final RunningScript a0) {
-    FUN_800e675c(FUN_800e6730(a0.params_20[0].get()) & 0xffff_fff7);
+  public static FlowControl FUN_800e6a28(final RunningScript<?> script) {
+    FUN_800e675c(FUN_800e6730(script.params_20[0].get()) & 0xffff_fff7);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6a64L)
-  public static FlowControl FUN_800e6a64(final RunningScript a0) {
-    FUN_800e76b0(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
+  public static FlowControl FUN_800e6a64(final RunningScript<?> script) {
+    FUN_800e76b0(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6aa0L)
-  public static FlowControl FUN_800e6aa0(final RunningScript a0) {
-    a0.params_20[3].set((int)FUN_800e7728(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get()));
+  public static FlowControl FUN_800e6aa0(final RunningScript<?> script) {
+    script.params_20[3].set((int)FUN_800e7728(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6af0L)
-  public static FlowControl FUN_800e6af0(final RunningScript a0) {
-    if(a0.params_20[1].get() == 1) {
-      if(a0.params_20[0].get() != 0) {
+  public static FlowControl FUN_800e6af0(final RunningScript<?> script) {
+    if(script.params_20[1].get() == 1) {
+      if(script.params_20[0].get() != 0) {
         _800f7e54.oru(0x1L);
       } else {
         //LAB_800e6b34
@@ -4901,19 +4899,19 @@ public final class SMap {
     }
 
     //LAB_800e6b48
-    a0.params_20[2].set((int)_800f7e54.get());
+    script.params_20[2].set((int)_800f7e54.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6b64L)
-  public static FlowControl FUN_800e6b64(final RunningScript a0) {
-    if(a0.params_20[0].get() >= 0) {
+  public static FlowControl FUN_800e6b64(final RunningScript<?> script) {
+    if(script.params_20[0].get() >= 0) {
       final SVECTOR sp0x10 = new SVECTOR();
-      get3dAverageOfSomething(a0.params_20[0].get(), sp0x10);
+      get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
 
-      a0.params_20[1].set(sp0x10.getX());
-      a0.params_20[2].set(sp0x10.getY());
-      a0.params_20[3].set(sp0x10.getZ());
+      script.params_20[1].set(sp0x10.getX());
+      script.params_20[2].set(sp0x10.getY());
+      script.params_20[3].set(sp0x10.getZ());
     }
 
     //LAB_800e6bc8
@@ -4921,29 +4919,29 @@ public final class SMap {
   }
 
   @Method(0x800e6bd8L)
-  public static FlowControl FUN_800e6bd8(final RunningScript a0) {
+  public static FlowControl FUN_800e6bd8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6be0L)
-  public static FlowControl FUN_800e6be0(final RunningScript a0) {
-    final MATRIX coord = sobjs_800c6880[a0.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
-    a0.params_20[1].set((worldToScreenMatrix_800c3548.get(6) * coord.transfer.getX() + worldToScreenMatrix_800c3548.get(7) * coord.transfer.getY() + worldToScreenMatrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + worldToScreenMatrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
+  public static FlowControl FUN_800e6be0(final RunningScript<?> script) {
+    final MATRIX coord = sobjs_800c6880[script.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
+    script.params_20[1].set((worldToScreenMatrix_800c3548.get(6) * coord.transfer.getX() + worldToScreenMatrix_800c3548.get(7) * coord.transfer.getY() + worldToScreenMatrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + worldToScreenMatrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6cacL)
-  public static FlowControl FUN_800e6cac(final RunningScript a0) {
-    FUN_800e80e4(a0.params_20[0].get(), a0.params_20[1].get());
+  public static FlowControl FUN_800e6cac(final RunningScript<?> script) {
+    FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6ce0L)
-  public static FlowControl FUN_800e6ce0(final RunningScript a0) {
-    FUN_800e5534(a0.params_20[0].get() + 0x800, a0.params_20[1].get());
-    submapCut_80052c30.set(a0.params_20[2].get());
+  public static FlowControl FUN_800e6ce0(final RunningScript<?> script) {
+    FUN_800e5534(script.params_20[0].get() + 0x800, script.params_20[1].get());
+    submapCut_80052c30.set(script.params_20[2].get());
     _800cb450.setu(submapCut_80052c30.get());
-    submapScene_80052c34.set(a0.params_20[3].get());
+    submapScene_80052c34.set(script.params_20[3].get());
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -5488,16 +5486,16 @@ public final class SMap {
   }
 
   @Method(0x800e06c4L)
-  public static FlowControl FUN_800e06c4(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.collisionSizeHorizontal_1a0 = a0.params_20[1].get();
-    sobj.collisionSizeVertical_1a4 = a0.params_20[2].get();
+  public static FlowControl FUN_800e06c4(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    sobj.collisionSizeHorizontal_1a0 = script.params_20[1].get();
+    sobj.collisionSizeVertical_1a4 = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0710L)
-  public static FlowControl FUN_800e0710(final RunningScript a0) {
-    a0.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
+  public static FlowControl FUN_800e0710(final RunningScript<?> script) {
+    script.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
     return FlowControl.CONTINUE;
   }
 
@@ -5843,7 +5841,6 @@ public final class SMap {
     long a2;
     long a3;
     long t0;
-    long t3;
     long t4;
     long t5;
     long t6;
@@ -7913,7 +7910,7 @@ public final class SMap {
   }
 
   @Method(0x800f1060L)
-  public static FlowControl FUN_800f1060(final RunningScript a0) {
+  public static FlowControl FUN_800f1060(final RunningScript<?> script) {
     if(_800d4fe8.getSigned() != 0) {
       _800d4fe8.addu(0x1L);
       return FlowControl.CONTINUE;
@@ -7928,7 +7925,7 @@ public final class SMap {
     struct34_800d6018.parent_30.clear();
     GsInitCoordinate2(null, sp0x40);
 
-    final Param ints = a0.params_20[0];
+    final Param ints = script.params_20[0];
     int s1 = 0;
 
     //LAB_800f10dc
@@ -7986,7 +7983,7 @@ public final class SMap {
   }
 
   @Method(0x800f1274L)
-  public static FlowControl FUN_800f1274(final RunningScript a0) {
+  public static FlowControl FUN_800f1274(final RunningScript<?> script) {
     _800f9e74.setu(0x1L);
 
     final Struct34 v1 = _800d4f18;
@@ -8000,7 +7997,7 @@ public final class SMap {
     final IntRef screenOffsetX = new IntRef();
     final IntRef screenOffsetY = new IntRef();
     getScreenOffset(screenOffsetX, screenOffsetY);
-    sp0x48.coord.transfer.set(a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get());
+    sp0x48.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
     final MATRIX sp0x28 = new MATRIX();
     GsGetLs(sp0x48, sp0x28);
     PushMatrix();
@@ -8021,20 +8018,20 @@ public final class SMap {
     final int spa8 = (int)CPU.MFC2(19) >> 2;
     PopMatrix();
 
-    if(a0.params_20[2].get() < a0.params_20[1].get()) {
-      a0.params_20[2].add(a0.params_20[1].get());
+    if(script.params_20[2].get() < script.params_20[1].get()) {
+      script.params_20[2].add(script.params_20[1].get());
     }
 
     //LAB_800f13f0
     s1._02.set((short)0);
-    s1._04.set((short)a0.params_20[0].get());
-    s1._06.set((short)a0.params_20[1].get());
-    s1._08.set((short)a0.params_20[2].get());
+    s1._04.set((short)script.params_20[0].get());
+    s1._06.set((short)script.params_20[1].get());
+    s1._08.set((short)script.params_20[2].get());
     s1._0a.set((short)0);
-    s1._0c.set((a0.params_20[6].get() << 16) / a0.params_20[1].get());
-    s1._10.set(a0.params_20[8].get() << 16);
-    s1._14.set((a0.params_20[9].get() << 16) / a0.params_20[1].get());
-    s1._18.set((short)a0.params_20[7].get());
+    s1._0c.set((script.params_20[6].get() << 16) / script.params_20[1].get());
+    s1._10.set(script.params_20[8].get() << 16);
+    s1._14.set((script.params_20[9].get() << 16) / script.params_20[1].get());
+    s1._18.set((short)script.params_20[7].get());
     s1.x_1c.set(sp0x10.getX());
     s1.y_20.set(sp0x10.getY());
     s1.screenOffsetX_24.set(screenOffsetX.get());
@@ -8045,27 +8042,27 @@ public final class SMap {
   }
 
   @Method(0x800f14f0L)
-  public static FlowControl FUN_800f14f0(final RunningScript a0) {
-    final int v1 = a0.params_20[0].get();
+  public static FlowControl FUN_800f14f0(final RunningScript<?> script) {
+    final int v1 = script.params_20[0].get();
     _800f9e70.setu(v1);
 
     final long a1 = _800d4ee0.getAddress();
     if(v1 != 0) {
       MEMORY.ref(2, a1).offset(0x2L).setu(0);
-      MEMORY.ref(2, a1).offset(0x4L).setu(a0.params_20[1].get());
+      MEMORY.ref(2, a1).offset(0x4L).setu(script.params_20[1].get());
 
-      if(a0.params_20[2].get() == 0) {
-        a0.params_20[2].set(1);
+      if(script.params_20[2].get() == 0) {
+        script.params_20[2].set(1);
       }
 
       //LAB_800f154c
-      MEMORY.ref(2, a1).offset(0x6L).setu(a0.params_20[2].get());
-      MEMORY.ref(4, a1).offset(0x1cL).setu(a0.params_20[3].get());
-      MEMORY.ref(4, a1).offset(0x20L).setu(a0.params_20[4].get());
-      MEMORY.ref(2, a1).offset(0x18L).setu(a0.params_20[5].get());
-      MEMORY.ref(4, a1).offset(0xcL).setu((a0.params_20[6].get() << 16) / a0.params_20[2].get());
-      MEMORY.ref(4, a1).offset(0x10L).setu(a0.params_20[7].get() << 16);
-      MEMORY.ref(4, a1).offset(0x14L).setu((a0.params_20[8].get() << 16) / a0.params_20[2].get());
+      MEMORY.ref(2, a1).offset(0x6L).setu(script.params_20[2].get());
+      MEMORY.ref(4, a1).offset(0x1cL).setu(script.params_20[3].get());
+      MEMORY.ref(4, a1).offset(0x20L).setu(script.params_20[4].get());
+      MEMORY.ref(2, a1).offset(0x18L).setu(script.params_20[5].get());
+      MEMORY.ref(4, a1).offset(0xcL).setu((script.params_20[6].get() << 16) / script.params_20[2].get());
+      MEMORY.ref(4, a1).offset(0x10L).setu(script.params_20[7].get() << 16);
+      MEMORY.ref(4, a1).offset(0x14L).setu((script.params_20[8].get() << 16) / script.params_20[2].get());
 
       //LAB_800f15fc
     } else {
@@ -8085,7 +8082,7 @@ public final class SMap {
   }
 
   @Method(0x800f1634L)
-  public static FlowControl FUN_800f1634(final RunningScript script) {
+  public static FlowControl FUN_800f1634(final RunningScript<?> script) {
     final ScriptState<?> state = script.scriptState_04;
 
     script.params_20[9] = new ScriptStorageParam(state, 0);
@@ -8118,7 +8115,7 @@ public final class SMap {
   }
 
   @Method(0x800f179cL)
-  public static FlowControl scriptAddSavePoint(final RunningScript script) {
+  public static FlowControl scriptAddSavePoint(final RunningScript<?> script) {
     final DVECTOR sp0x48 = new DVECTOR();
     final DVECTOR sp0x50 = new DVECTOR();
     final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
@@ -8185,7 +8182,7 @@ public final class SMap {
   }
 
   @Method(0x800f1b64L)
-  public static FlowControl FUN_800f1b64(final RunningScript script) {
+  public static FlowControl FUN_800f1b64(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
     final GsCOORDINATE2 sp0x18 = new GsCOORDINATE2();
     final SVECTOR sp0x68 = new SVECTOR();
@@ -8241,7 +8238,7 @@ public final class SMap {
   }
 
   @Method(0x800f1d0cL)
-  public static FlowControl FUN_800f1d0c(final RunningScript script) {
+  public static FlowControl FUN_800f1d0c(final RunningScript<?> script) {
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
     GsInitCoordinate2(null, sp0x40);
     final SVECTOR sp0x10 = new SVECTOR();
@@ -8282,21 +8279,21 @@ public final class SMap {
   }
 
   @Method(0x800f1eb8L)
-  public static FlowControl FUN_800f1eb8(final RunningScript script) {
+  public static FlowControl FUN_800f1eb8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800f1f9cL)
-  public static FlowControl FUN_800f1f9c(final RunningScript a0) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj._1d0._04 = a0.params_20[1].get();
-    sobj._1d0._28 = a0.params_20[2].get();
-    sobj._1d0._30 = a0.params_20[3].get();
+  public static FlowControl FUN_800f1f9c(final RunningScript<?> script) {
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    sobj._1d0._04 = script.params_20[1].get();
+    sobj._1d0._28 = script.params_20[2].get();
+    sobj._1d0._30 = script.params_20[3].get();
 
-    if(a0.params_20[4].get() == 0) {
+    if(script.params_20[4].get() == 0) {
       sobj._1d0._38 = 1;
     } else {
-      sobj._1d0._38 = a0.params_20[4].get();
+      sobj._1d0._38 = script.params_20[4].get();
     }
 
     //LAB_800f2018
@@ -8312,17 +8309,17 @@ public final class SMap {
   }
 
   @Method(0x800f2048L)
-  public static FlowControl FUN_800f2048(final RunningScript a0) {
-    a0.params_20[4] = a0.params_20[3];
-    a0.params_20[3] = a0.params_20[2];
-    a0.params_20[2] = a0.params_20[1];
-    a0.params_20[1] = a0.params_20[0];
-    a0.params_20[0] = new ScriptStorageParam(a0.scriptState_04, 0);
-    return FUN_800f1f9c(a0);
+  public static FlowControl FUN_800f2048(final RunningScript<?> script) {
+    script.params_20[4] = script.params_20[3];
+    script.params_20[3] = script.params_20[2];
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return FUN_800f1f9c(script);
   }
 
   @Method(0x800f2090L)
-  public static FlowControl FUN_800f2090(final RunningScript script) {
+  public static FlowControl FUN_800f2090(final RunningScript<?> script) {
     final Param ints = script.params_20[0];
     int a0 = 0;
     Struct34 a1 = struct34_800d6018.parent_30.derefNullable();
@@ -8379,7 +8376,7 @@ public final class SMap {
   }
 
   @Method(0x800f2198L)
-  public static FlowControl FUN_800f2198(final RunningScript script) {
+  public static FlowControl FUN_800f2198(final RunningScript<?> script) {
     final short a1 = (short)script.params_20[0].get();
     final long a2 = _800d4d20.getAddress();
 
@@ -8411,7 +8408,7 @@ public final class SMap {
   }
 
   @Method(0x800f2264L)
-  public static FlowControl FUN_800f2264(final RunningScript script) {
+  public static FlowControl FUN_800f2264(final RunningScript<?> script) {
     final ScriptState<?> sobj1 = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(sobj1, 0);
 
@@ -8430,7 +8427,7 @@ public final class SMap {
   }
 
   @Method(0x800f22c4L)
-  public static FlowControl FUN_800f22c4(final RunningScript script) {
+  public static FlowControl FUN_800f22c4(final RunningScript<?> script) {
     script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
     final SubmapObject210 a0 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
 
@@ -8469,7 +8466,7 @@ public final class SMap {
   }
 
   @Method(0x800f23a0L)
-  public static FlowControl FUN_800f23a0(final RunningScript script) {
+  public static FlowControl FUN_800f23a0(final RunningScript<?> script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
@@ -8487,17 +8484,17 @@ public final class SMap {
   }
 
   @Method(0x800f23ecL)
-  public static FlowControl FUN_800f23ec(final RunningScript a0) {
-    a0.params_20[4] = new ScriptStorageParam(a0.scriptState_04, 0);
-    final int a2 = a0.params_20[0].get();
-    final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.scriptState_04.storage_44[0]].innerStruct_00;
+  public static FlowControl FUN_800f23ec(final RunningScript<?> script) {
+    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0);
+    final int a2 = script.params_20[0].get();
+    final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
 
     if(a2 == 1 || a2 == 3) {
       //LAB_800f2430
       a1._1d0._0c = 1;
-      a1._1d0._28 = a0.params_20[1].get();
-      a1._1d0._30 = a0.params_20[2].get();
-      a1._1d0._38 = a0.params_20[3].get();
+      a1._1d0._28 = script.params_20[1].get();
+      a1._1d0._30 = script.params_20[2].get();
+      a1._1d0._38 = script.params_20[3].get();
 
       if(a1._1d0._38 == 0) {
         a1._1d0._38++;
@@ -8518,7 +8515,7 @@ public final class SMap {
   }
 
   @Method(0x800f24b0L)
-  public static FlowControl FUN_800f24b0(final RunningScript script) {
+  public static FlowControl FUN_800f24b0(final RunningScript<?> script) {
     if(script.params_20[0].get() == 1) {
       _800f9e70.setu(0x2L);
     }
@@ -8528,7 +8525,7 @@ public final class SMap {
   }
 
   @Method(0x800f24d8L)
-  public static FlowControl FUN_800f24d8(final RunningScript script) {
+  public static FlowControl FUN_800f24d8(final RunningScript<?> script) {
     if(script.params_20[0].get() != 0) {
       _800f9e70.setu(0);
     }
@@ -8553,12 +8550,12 @@ public final class SMap {
   }
 
   @Method(0x800f2554L)
-  public static FlowControl FUN_800f2554(final RunningScript script) {
+  public static FlowControl FUN_800f2554(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800f25a8L)
-  public static FlowControl FUN_800f25a8(final RunningScript script) {
+  public static FlowControl FUN_800f25a8(final RunningScript<?> script) {
     final ScriptState<?> v1 = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(v1, 0);
 
@@ -8573,7 +8570,7 @@ public final class SMap {
   }
 
   @Method(0x800f2618L)
-  public static FlowControl FUN_800f2618(final RunningScript script) {
+  public static FlowControl FUN_800f2618(final RunningScript<?> script) {
     final IntRef refOffsetX = new IntRef();
     final IntRef refOffsetY = new IntRef();
     getScreenOffset(refOffsetX, refOffsetY);
@@ -8598,12 +8595,12 @@ public final class SMap {
   }
 
   @Method(0x800f26c8L)
-  public static FlowControl FUN_800f26c8(final RunningScript script) {
+  public static FlowControl FUN_800f26c8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x800f2780L)
-  public static FlowControl FUN_800f2780(final RunningScript script) {
+  public static FlowControl FUN_800f2780(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 

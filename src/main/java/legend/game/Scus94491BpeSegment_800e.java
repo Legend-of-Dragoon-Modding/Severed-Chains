@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
@@ -31,10 +32,10 @@ import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
@@ -71,7 +72,6 @@ import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -117,7 +117,7 @@ public final class Scus94491BpeSegment_800e {
 
     precalculateTpages();
     loadSystemFont();
-    clearScriptStates();
+    SCRIPTS.clear();
     allocateHeap(heap_8011e210.getAddress(), 0x3d_edf0L);
     loadOvalBlobTexture();
     FUN_800e6d60();
@@ -189,14 +189,6 @@ public final class Scus94491BpeSegment_800e {
     }
   }
 
-  @Method(0x800e6654L)
-  public static void clearScriptStates() {
-    //LAB_800e666c
-    for(int i = 0; i < 72; i++) {
-      scriptStatePtrArr_800bc1c0[i] = null;
-    }
-  }
-
   @Method(0x800e6998L)
   public static void loadOvalBlobTexture() {
     submapIndex_800bd808.set(0);
@@ -218,7 +210,7 @@ public final class Scus94491BpeSegment_800e {
     model_800bda10.b_cc = 0;
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(legend.game.types.Model124, legend.game.types.ExtendedTmd, TmdAnimationFile)} */
+  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, ExtendedTmd, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
   public static void FUN_800e6b3c(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
     final int x = model.coord2_14.coord.transfer.getX();

@@ -1,14 +1,11 @@
 package legend.game.scripting;
 
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptState;
-
 public abstract class Param {
   public abstract int get();
   public abstract Param set(final int val);
   public abstract Param array(final int index);
 
-  public void jump(final RunningScript script) {
+  public void jump(final RunningScript<?> script) {
     throw new IllegalStateException("Can't jump to non-script param");
   }
 

@@ -1,8 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptState;
-
 public class ScriptInlineParam extends Param {
   private final ScriptState<?> state;
   private final int offset;
@@ -13,7 +10,7 @@ public class ScriptInlineParam extends Param {
   }
 
   @Override
-  public void jump(final RunningScript script) {
+  public void jump(final RunningScript<?> script) {
     script.scriptState_04.scriptPtr_14 = this.state.scriptPtr_14;
     script.commandOffset_0c = this.offset;
   }

@@ -5,17 +5,18 @@ import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct4c;
 import legend.game.combat.types.BttlLightStruct84;
+import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.scripting.ScriptState;
 import legend.game.types.MrgFile;
-import legend.game.types.ScriptFile;
+import legend.game.scripting.ScriptFile;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
   public final Struct04[] _08 = {new Struct04(), new Struct04(), new Struct04(), new Struct04(), new Struct04()};
-  public int scriptIndex_1c;
+  public ScriptState<EffectManagerData6c> scriptState_1c;
   public int _20;
   // TODO this was just set to a pointer to _28, but _28 wasn't used
 //  public final UnsignedIntRef ptr_24;

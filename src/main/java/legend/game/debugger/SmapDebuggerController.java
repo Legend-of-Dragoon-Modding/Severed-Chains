@@ -17,7 +17,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.SMap;
-import legend.game.types.ScriptState;
+import legend.game.scripting.ScriptState;
 import legend.game.types.SubmapObject210;
 
 import static legend.game.SMap.sobjCount_800c6730;

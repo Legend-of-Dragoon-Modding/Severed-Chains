@@ -6,7 +6,6 @@ import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
-import legend.game.types.ScriptState;
 import legend.game.types.SubmapObject210;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;

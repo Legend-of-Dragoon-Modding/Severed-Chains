@@ -1,7 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.types.ScriptState;
-
 public class ScriptStorageParam extends Param {
   private final ScriptState<?> state;
   private final int index;

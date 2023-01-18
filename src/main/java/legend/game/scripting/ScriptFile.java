@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.scripting;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

@@ -13,6 +13,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.scripting.ScriptState;
 
 public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
@@ -45,9 +46,9 @@ public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
   public final VECTOR vec_70;
   public final IntRef _80;
   public final Pointer<TriConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94>> _84;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _88;
+  public final Pointer<QuadConsumerRef<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94>> _88;
   public final Pointer<QuadConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94, EffectData98Inner24>> _8c;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _90;
+  public final Pointer<QuadConsumerRef<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94>> _90;
   public final Pointer<EffectData98> _94;
 
   public EffectData98(final Value ref) {

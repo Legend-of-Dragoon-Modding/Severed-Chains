@@ -15,6 +15,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
+import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
@@ -25,9 +26,7 @@ import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
-import legend.game.types.RunningScript;
 import legend.game.types.ScriptEffectStruct;
-import legend.game.types.ScriptState;
 import legend.game.types.SobjPos14;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
@@ -73,10 +72,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final IntRef _800bc05c = MEMORY.ref(4, 0x800bc05cL, IntRef::new);
-
-  public static final RunningScript RunningScript_800bc070 = new RunningScript();
-  public static boolean scriptsTickDisabled_800bc0b8;
-  public static boolean scriptsDisabled_800bc0b9;
 
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 

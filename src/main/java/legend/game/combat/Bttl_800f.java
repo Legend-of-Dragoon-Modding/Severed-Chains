@@ -22,8 +22,8 @@ import legend.game.scripting.FlowControl;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptState;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptState;
 import legend.game.types.SpellStats0c;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -654,11 +654,10 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f2500L)
-  public static FlowControl FUN_800f2500(final RunningScript s3) {
-    final long t0;
-    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[s3.params_20[0].get()];
+  public static FlowControl FUN_800f2500(final RunningScript<?> script) {
+    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c s2 = (BattleObject27c)v0.innerStruct_00;
-    int damage = FUN_800f1d88(s3.params_20[0].get(), s3.params_20[1].get());
+    int damage = FUN_800f1d88(script.params_20[0].get(), script.params_20[1].get());
     if((v0.storage_44[7] & 0x4) != 0) {
       damage = FUN_800f946c(s2, damage, 0);
       FUN_800f9380(s2, s2);
@@ -670,63 +669,64 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2588
-    damage = applyResistancesAndImmunities(s3.params_20[1].get(), damage, 0);
-    ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[s3.params_20[0].get()];
+    damage = applyResistancesAndImmunities(script.params_20[1].get(), damage, 0);
+    ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c a1 = (BattleObject27c)a0.innerStruct_00;
 
-    final long a0_0;
+    final int element;
     if((a0.storage_44[7] & 0x4) == 0) {
-      a0_0 = a1.elementFlag_1c;
+      element = a1.elementFlag_1c;
     } else {
       //LAB_800f25f4
-      a0_0 = spellStats_800fa0b8.get(a1.spellId_4e).element_08.get();
+      element = spellStats_800fa0b8.get(a1.spellId_4e).element_08.get();
     }
 
-    a0 = scriptStatePtrArr_800bc1c0[s3.params_20[1].get()];
+    a0 = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
     final BattleObject27c a3 = (BattleObject27c)a0.innerStruct_00;
 
     //LAB_800f2614
+    final int elementalResistanceFlag;
     if((a0.storage_44[7] & 0x4) == 0) {
-      t0 = a3.elementalResistanceFlag_20;
+      elementalResistanceFlag = a3.elementalResistanceFlag_20;
     } else {
-      t0 = 0;
+      elementalResistanceFlag = 0;
     }
 
     //LAB_800f2620
-    if((a0_0 & t0) != 0) {
+    if((element & elementalResistanceFlag) != 0) {
       damage = damage / 2;
     }
 
     //LAB_800f2634
-    if((a0_0 & a3.elementalImmunityFlag_22) != 0) {
+    if((element & a3.elementalImmunityFlag_22) != 0) {
       damage = 0;
     }
 
     //LAB_800f2640
-    s3.params_20[2].set(damage);
-    s3.params_20[3].set(FUN_800f7c5c(s3.params_20[0].get(), s3.params_20[1].get(), 0));
+    script.params_20[2].set(damage);
+    script.params_20[3].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f2694L)
-  public static FlowControl FUN_800f2694(final RunningScript s1) {
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[s1.params_20[0].get()];
+  public static FlowControl FUN_800f2694(final RunningScript<?> script) {
+    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c bobj = state.innerStruct_00;
-    bobj.spellId_4e = s1.params_20[2].get();
+    bobj.spellId_4e = script.params_20[2].get();
     clearTempWeaponAndSpellStats(bobj);
     setTempSpellStats(state);
 
-    int damage = Math.max(1, FUN_800f946c(bobj, FUN_800f204c(s1.params_20[0].get(), s1.params_20[1].get(), 1), 0));
+    int damage = Math.max(1, FUN_800f946c(bobj, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 1), 0));
 
     //LAB_800f272c
     if((bobj.status_0e & 0x800) != 0) {
       bobj.status_0e &= 0xf7ff;
     } else {
       //LAB_800f2748
-      damage = applyResistancesAndImmunities(s1.params_20[1].get(), damage, 1);
-      final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[s1.params_20[1].get()];
+      damage = applyResistancesAndImmunities(script.params_20[1].get(), damage, 1);
+      final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
       final BattleObject27c v1 = (BattleObject27c)a3.innerStruct_00;
-      final int element = spellStats_800fa0b8.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[s1.params_20[0].get()].innerStruct_00).spellId_4e).element_08.get();
+      final int element = spellStats_800fa0b8.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).spellId_4e).element_08.get();
 
       //LAB_800f27c8
       if((a3.storage_44[7] & 0x4) == 0 && (v1.elementalResistanceFlag_20 & element) != 0) {
@@ -742,27 +742,27 @@ public final class Bttl_800f {
     }
 
     //LAB_800f27ec
-    s1.params_20[3].set(damage);
-    s1.params_20[4].set(FUN_800f7c5c(s1.params_20[0].get(), s1.params_20[1].get(), 1));
+    script.params_20[3].set(damage);
+    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 1));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f2838L)
-  public static FlowControl FUN_800f2838(final RunningScript s1) {
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[s1.params_20[0].get()];
+  public static FlowControl FUN_800f2838(final RunningScript<?> script) {
+    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c s0 = state.innerStruct_00;
     clearTempWeaponAndSpellStats(s0);
     setTempWeaponStats(state);
-    int a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(s1.params_20[0].get(), s1.params_20[1].get(), 0), 1));
+    int a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 0), 1));
 
     //LAB_800f28c8
     if((s0.status_0e & 0x800) != 0) {
       s0.status_0e &= 0xf7ff;
     } else {
       //LAB_800f28e4
-      a1 = applyResistancesAndImmunities(s1.params_20[1].get(), a1, 1);
-      final long a3 = scriptStatePtrArr_800bc1c0[s1.params_20[0].get()]._d4 >>> 16;
-      final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[s1.params_20[1].get()];
+      a1 = applyResistancesAndImmunities(script.params_20[1].get(), a1, 1);
+      final long a3 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()]._d4 >>> 16;
+      final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
       final BattleObject27c defender = (BattleObject27c)defenderState.innerStruct_00;
 
       //LAB_800f294c
@@ -777,9 +777,9 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2970
-    s1.params_20[3].set(a1);
-    s1.params_20[4].set(FUN_800f7c5c(s1.params_20[0].get(), s1.params_20[1].get(), 0x2L));
-    FUN_800f8854(s1.params_20[0].get(), s1.params_20[1].get(), 0x1L);
+    script.params_20[3].set(a1);
+    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
+    FUN_800f8854(script.params_20[0].get(), script.params_20[1].get(), 0x1L);
     return FlowControl.CONTINUE;
   }
 
@@ -953,26 +953,22 @@ public final class Bttl_800f {
             // 5 800f3164
             // 6 800f3188
             switch((int)a2) {
-              case 0 -> {
+              case 0 ->
                 //LAB_800f3108
                 s1 += _800fb4b4.offset(v1 * 0x10L).offset(2, s0 * 0x2L).getSigned();
-              }
 
-              case 3 -> {
+              case 3 ->
                 //LAB_800f3124
                 s1 += _800fb534.offset(v1 * 0x6L).offset(2, s0 * 0x2L).getSigned();
-              }
 
-              case 4 -> {
+              case 4 ->
                 //LAB_800f3144
                 s1 += _800fb548.offset(v1 * 0x6L).offset(2, s0 * 0x2L).getSigned();
-              }
 
-              case 5 -> {
+              case 5 ->
                 //LAB_800f3164
                 //LAB_800f317c
                 s1 += _800fb55c.offset(v1 * 0x10L).offset(2, s0 * 0x2L).getSigned();
-              }
 
               default ->
                 //LAB_800f3188
@@ -1538,7 +1534,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f43dcL)
-  public static FlowControl FUN_800f43dc(final RunningScript script) {
+  public static FlowControl FUN_800f43dc(final RunningScript<?> script) {
     //LAB_800f43f8
     //LAB_800f4410
     int charSlot;
@@ -1573,12 +1569,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4518L)
-  public static FlowControl FUN_800f4518(final RunningScript a0) {
+  public static FlowControl FUN_800f4518(final RunningScript<?> script) {
     //LAB_800f4534
     //LAB_800f454c
     int i;
     for(i = 0; i < charCount_800c677c.get(); i++) {
-      if(_8006e398.charBobjIndices_e40[i].index == a0.params_20[0].get()) {
+      if(_8006e398.charBobjIndices_e40[i].index == script.params_20[0].get()) {
         break;
       }
     }
@@ -1586,10 +1582,10 @@ public final class Bttl_800f {
     //LAB_800f456c
     final BattleStruct3c a2 = _800c6c40.get(i);
     a2._0c.set((short)0);
-    a2._0e.set((short)a0.params_20[1].get());
+    a2._0e.set((short)script.params_20[1].get());
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.sp_0a -= a0.params_20[2].get();
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.sp_0a -= script.params_20[2].get();
 
     if(bobj.sp_0a <= 0) {
       bobj.sp_0a = 0;
@@ -1601,7 +1597,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4600L)
-  public static FlowControl FUN_800f4600(final RunningScript a0) {
+  public static FlowControl FUN_800f4600(final RunningScript<?> script) {
     final short[] sp0x00 = new short[17];
     for(int i = 0; i < sp0x00.length; i++) {
       sp0x00[i] = (short)_800c7124.offset(i * 0x2L).getSigned();
@@ -1627,9 +1623,9 @@ public final class Bttl_800f {
 
     //LAB_800f4704
     //LAB_800f4708
-    a0.params_20[0].set(structa4._a0.get());
-    a0.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
-    a0.params_20[2].set(a2);
+    script.params_20[0].set(structa4._a0.get());
+    script.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
+    script.params_20[2].set(a2);
 
     //LAB_800f4770
     BattleObject27c t0 = null;
@@ -1649,7 +1645,7 @@ public final class Bttl_800f {
       for(int i = 0; i < 17; i++) {
         if(sp0x00[i] == a2 + 0xc0) {
           //LAB_800f4674
-          a0.params_20[1].set(-1);
+          script.params_20[1].set(-1);
           break;
         }
       }
@@ -1661,7 +1657,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f480cL)
-  public static FlowControl FUN_800f480c(final RunningScript s0) {
+  public static FlowControl FUN_800f480c(final RunningScript<?> script) {
     final long v0;
     BattleObject27c a1 = null;
     final long t5;
@@ -1672,7 +1668,7 @@ public final class Bttl_800f {
       sp0x10[i] = (int)MEMORY.ref(4, t5).offset(i * 0x4L).get();
     }
 
-    int t0 = s0.params_20[0].get();
+    int t0 = script.params_20[0].get();
 
     final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
 
@@ -1706,7 +1702,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f4950
-    s0.params_20[1].set(v1);
+    script.params_20[1].set(v1);
 
     //LAB_800f4954
     return FlowControl.CONTINUE;
@@ -2538,7 +2534,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f6134L)
-  public static void FUN_800f6134(final int scriptIndex, final long a1, final long a2) {
+  public static void FUN_800f6134(final ScriptState<BattleObject27c> bobjState, final long a1, final long a2) {
     final BattleMenuStruct58 v0 = battleMenu_800c6c34.deref();
     v0._00.set((short)1);
     v0._02.set(2);
@@ -2565,7 +2561,7 @@ public final class Bttl_800f {
     //LAB_800f6234
     int a3;
     for(a3 = 0; a3 < charCount_800c677c.get(); a3++) {
-      if(_8006e398.charBobjIndices_e40[a3].index == scriptIndex) {
+      if(_8006e398.charBobjIndices_e40[a3] == bobjState) {
         break;
       }
     }
@@ -3798,46 +3794,46 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f95d0L)
-  public static FlowControl FUN_800f95d0(final RunningScript a0) {
-    a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 0));
+  public static FlowControl FUN_800f95d0(final RunningScript<?> script) {
+    script.params_20[2].set(FUN_800f1aa8(script.params_20[0].get(), script.params_20[1].get(), 0));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9618L)
-  public static FlowControl FUN_800f9618(final RunningScript a0) {
-    a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 1));
+  public static FlowControl FUN_800f9618(final RunningScript<?> script) {
+    script.params_20[2].set(FUN_800f1aa8(script.params_20[0].get(), script.params_20[1].get(), 1));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9660L)
-  public static FlowControl FUN_800f9660(final RunningScript a0) {
-    a0.params_20[2].set(FUN_800f1aa8(a0.params_20[0].get(), a0.params_20[1].get(), 2));
+  public static FlowControl FUN_800f9660(final RunningScript<?> script) {
+    script.params_20[2].set(FUN_800f1aa8(script.params_20[0].get(), script.params_20[1].get(), 2));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f96a8L)
-  public static FlowControl FUN_800f96a8(final RunningScript a0) {
-    setTempSpellStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()]);
+  public static FlowControl FUN_800f96a8(final RunningScript<?> script) {
+    setTempSpellStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f96d4L)
-  public static FlowControl FUN_800f96d4(final RunningScript a0) {
-    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    a0.params_20[1].set(v1.model_148.coord2_14.coord.transfer.getX());
-    a0.params_20[2].set(v1.model_148.coord2_14.coord.transfer.getY());
-    a0.params_20[3].set(v1.model_148.coord2_14.coord.transfer.getZ());
+  public static FlowControl FUN_800f96d4(final RunningScript<?> script) {
+    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(v1.model_148.coord2_14.coord.transfer.getX());
+    script.params_20[2].set(v1.model_148.coord2_14.coord.transfer.getY());
+    script.params_20[3].set(v1.model_148.coord2_14.coord.transfer.getZ());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9730L)
-  public static FlowControl FUN_800f9730(final RunningScript a0) {
+  public static FlowControl FUN_800f9730(final RunningScript<?> script) {
     //LAB_800f9758
     for(int i = 0; i < 12; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
       if(num.state_00.get() == 0) {
-        calculateFloatingNumberRender(i, 0, 0, a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
+        calculateFloatingNumberRender(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
         break;
       }
 
@@ -3849,30 +3845,30 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f97d8L)
-  public static FlowControl FUN_800f97d8(final RunningScript a0) {
+  public static FlowControl FUN_800f97d8(final RunningScript<?> script) {
     FUN_800f4964();
-    FUN_800f49bc(((BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00).charIndex_272, (short)a0.params_20[1].get());
+    FUN_800f49bc(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charIndex_272, (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f984cL)
-  public static FlowControl scriptRenderRecover(final RunningScript a0) {
-    setFloatingNumCoordsAndRender(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
+  public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
+    setFloatingNumCoordsAndRender(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9884L)
-  public static FlowControl FUN_800f9884(final RunningScript a0) {
-    setTempWeaponStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()]);
+  public static FlowControl FUN_800f9884(final RunningScript<?> script) {
+    setTempWeaponStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f98b0L)
-  public static FlowControl FUN_800f98b0(final RunningScript s3) {
-    int itemId = s3.params_20[0].get();
+  public static FlowControl FUN_800f98b0(final RunningScript<?> script) {
+    int itemId = script.params_20[0].get();
 
     if(gameState_800babc8.itemCount_1e6.get() == 0) {
-      s3.params_20[1].set(-1);
+      script.params_20[1].set(-1);
       return FlowControl.CONTINUE;
     }
 
@@ -3899,28 +3895,28 @@ public final class Bttl_800f {
     }
 
     //LAB_800f99c0
-    s3.params_20[1].set(itemId);
+    script.params_20[1].set(itemId);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f99ecL)
-  public static FlowControl FUN_800f99ec(final RunningScript a0) {
+  public static FlowControl FUN_800f99ec(final RunningScript<?> script) {
     final int s1;
-    if(giveItem(a0.params_20[0].get()) == 0) {
-      s1 = a0.params_20[0].get();
+    if(giveItem(script.params_20[0].get()) == 0) {
+      s1 = script.params_20[0].get();
     } else {
       s1 = -1;
     }
 
     //LAB_800f9a2c
-    a0.params_20[1].set(s1);
+    script.params_20[1].set(s1);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9a50L)
-  public static FlowControl FUN_800f9a50(final RunningScript a0) {
-    final int targetType = a0.params_20[0].get();
-    final int targetBobj = a0.params_20[1].get();
+  public static FlowControl FUN_800f9a50(final RunningScript<?> script) {
+    final int targetType = script.params_20[0].get();
+    final int targetBobj = script.params_20[1].get();
 
     final ScriptState<BattleObject27c>[] bobjs;
     final int count;
@@ -3959,7 +3955,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9b2cL)
-  public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript a0) {
+  public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript<?> script) {
     //LAB_800f9b3c
     int found = 0;
     for(int i = 0; i < 12; i++) {
@@ -3974,41 +3970,41 @@ public final class Bttl_800f {
     }
 
     //LAB_800f9b64
-    a0.params_20[0].set(found);
+    script.params_20[0].set(found);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9b78L)
-  public static FlowControl FUN_800f9b78(final RunningScript a0) {
-    _800c6b64.setu(a0.params_20[0].get());
+  public static FlowControl FUN_800f9b78(final RunningScript<?> script) {
+    _800c6b64.setu(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9b94L)
-  public static FlowControl FUN_800f9b94(final RunningScript a0) {
+  public static FlowControl FUN_800f9b94(final RunningScript<?> script) {
     final long v1 = _800c6b6c.get();
     MEMORY.ref(2, v1).offset(0x0L).setu(0x1L);
-    MEMORY.ref(2, v1).offset(0x6L).setu(a0.params_20[0].get());
-    MEMORY.ref(2, v1).offset(0x8L).setu(a0.params_20[1].get());
+    MEMORY.ref(2, v1).offset(0x6L).setu(script.params_20[0].get());
+    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9bd4L)
-  public static FlowControl FUN_800f9bd4(final RunningScript a0) {
+  public static FlowControl FUN_800f9bd4(final RunningScript<?> script) {
     final long v1 = _800c6b6c.get();
     MEMORY.ref(2, v1).offset(0x0L).setu(0x4L);
-    MEMORY.ref(2, v1).offset(0x8L).setu(a0.params_20[0].get());
+    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9c00L)
-  public static FlowControl FUN_800f9c00(final RunningScript a0) {
-    FUN_800fa018(a0.params_20[0].get());
+  public static FlowControl FUN_800f9c00(final RunningScript<?> script) {
+    FUN_800fa018(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9c2cL)
-  public static FlowControl FUN_800f9c2c(final RunningScript script) {
+  public static FlowControl FUN_800f9c2c(final RunningScript<?> script) {
     renderTextBoxBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
@@ -4021,7 +4017,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9cacL)
-  public static FlowControl FUN_800f9cac(final RunningScript script) {
+  public static FlowControl FUN_800f9cac(final RunningScript<?> script) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
     final int t2 = script.params_20[0].get();
 
@@ -4042,7 +4038,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9d7cL)
-  public static FlowControl FUN_800f9d7c(final RunningScript script) {
+  public static FlowControl FUN_800f9d7c(final RunningScript<?> script) {
     final int bobjIndex = script.params_20[0].get();
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 

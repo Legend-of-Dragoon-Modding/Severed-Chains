@@ -22,10 +22,6 @@ public class TriConsumerRef<T, U, V> implements MemoryRef {
     this.ref.call(t, u, v);
   }
 
-  public void set(final TriConsumer<T, U, V> val) {
-    this.ref.set(val);
-  }
-
   @Override
   public long getAddress() {
     return this.ref.getAddress();

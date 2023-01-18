@@ -28,8 +28,8 @@ import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.PlayableSoundStruct;
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptFile;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptFile;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -143,83 +143,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
-
-  public static int scriptStateUpperBound_8004de4c;
-
-  public static final Function<RunningScript, FlowControl>[] scriptOps_8004e098 = new Function[128];
-  static {
-    scriptOps_8004e098[0] = Scus94491BpeSegment::scriptPause;
-    scriptOps_8004e098[1] = Scus94491BpeSegment::scriptRewindAndPause;
-    scriptOps_8004e098[2] = Scus94491BpeSegment::scriptWait;
-    scriptOps_8004e098[3] = Scus94491BpeSegment::scriptCompare;
-    scriptOps_8004e098[4] = Scus94491BpeSegment::scriptCompare0;
-
-    scriptOps_8004e098[8] = Scus94491BpeSegment::scriptMove;
-    scriptOps_8004e098[9] = Scus94491BpeSegment::FUN_80016790;
-    scriptOps_8004e098[10] = Scus94491BpeSegment::scriptMemCopy;
-
-    scriptOps_8004e098[12] = Scus94491BpeSegment::scriptSetZero;
-
-    scriptOps_8004e098[16] = Scus94491BpeSegment::scriptAnd;
-    scriptOps_8004e098[17] = Scus94491BpeSegment::scriptOr;
-    scriptOps_8004e098[18] = Scus94491BpeSegment::scriptXor;
-    scriptOps_8004e098[19] = Scus94491BpeSegment::scriptAndOr;
-    scriptOps_8004e098[20] = Scus94491BpeSegment::scriptNot;
-    scriptOps_8004e098[21] = Scus94491BpeSegment::scriptShiftLeft;
-    scriptOps_8004e098[22] = Scus94491BpeSegment::scriptShiftRightArithmetic;
-
-    scriptOps_8004e098[24] = Scus94491BpeSegment::scriptAdd;
-    scriptOps_8004e098[25] = Scus94491BpeSegment::scriptSubtract;
-    scriptOps_8004e098[26] = Scus94491BpeSegment::scriptSubtract2;
-    scriptOps_8004e098[27] = Scus94491BpeSegment::scriptIncrementBy1;
-    scriptOps_8004e098[28] = Scus94491BpeSegment::scriptDecrementBy1;
-    scriptOps_8004e098[29] = Scus94491BpeSegment::scriptNegate;
-    scriptOps_8004e098[30] = Scus94491BpeSegment::scriptAbs;
-
-    scriptOps_8004e098[32] = Scus94491BpeSegment::scriptMultiply;
-    scriptOps_8004e098[33] = Scus94491BpeSegment::scriptDivide;
-    scriptOps_8004e098[34] = Scus94491BpeSegment::scriptDivide2;
-    scriptOps_8004e098[35] = Scus94491BpeSegment::scriptMod;
-    scriptOps_8004e098[36] = Scus94491BpeSegment::scriptMod2;
-
-    scriptOps_8004e098[40] = Scus94491BpeSegment::FUN_80016b2c;
-    scriptOps_8004e098[41] = Scus94491BpeSegment::FUN_80016b5c;
-    scriptOps_8004e098[42] = Scus94491BpeSegment::FUN_80016b8c;
-    scriptOps_8004e098[43] = Scus94491BpeSegment::scriptMod;
-    scriptOps_8004e098[44] = Scus94491BpeSegment::scriptMod2;
-
-    scriptOps_8004e098[48] = Scus94491BpeSegment::scriptSquareRoot;
-    scriptOps_8004e098[49] = Scus94491BpeSegment::FUN_80016c00;
-    scriptOps_8004e098[50] = Scus94491BpeSegment::scriptSin;
-    scriptOps_8004e098[51] = Scus94491BpeSegment::scriptCos;
-    scriptOps_8004e098[52] = Scus94491BpeSegment::scriptRatan2;
-
-    scriptOps_8004e098[56] = Scus94491BpeSegment::scriptExecuteSubFunc;
-
-    scriptOps_8004e098[64] = Scus94491BpeSegment::scriptJump;
-    scriptOps_8004e098[65] = Scus94491BpeSegment::scriptConditionalJump;
-    scriptOps_8004e098[66] = Scus94491BpeSegment::scriptConditionalJump0;
-    scriptOps_8004e098[67] = Scus94491BpeSegment::FUN_80016dec;
-    scriptOps_8004e098[68] = Scus94491BpeSegment::FUN_80016e1c;
-
-    scriptOps_8004e098[72] = Scus94491BpeSegment::scriptJumpAndLink;
-    scriptOps_8004e098[73] = Scus94491BpeSegment::scriptJumpReturn;
-    scriptOps_8004e098[74] = Scus94491BpeSegment::scriptJumpAndLinkTable;
-
-    scriptOps_8004e098[80] = Scus94491BpeSegment::scriptDeallocateSelf;
-
-    scriptOps_8004e098[82] = Scus94491BpeSegment::scriptDeallocateChildren;
-    scriptOps_8004e098[83] = Scus94491BpeSegment::scriptDeallocateOther;
-
-    scriptOps_8004e098[86] = Scus94491BpeSegment::scriptForkAndJump;
-    scriptOps_8004e098[87] = Scus94491BpeSegment::scriptForkAndReenter;
-    scriptOps_8004e098[88] = Scus94491BpeSegment::scriptConsumeChild;
-
-    scriptOps_8004e098[96] = Scus94491BpeSegment::FUN_800172f4;
-    scriptOps_8004e098[97] = Scus94491BpeSegment::FUN_800172fc;
-    scriptOps_8004e098[98] = Scus94491BpeSegment::FUN_80017304;
-    scriptOps_8004e098[99] = Scus94491BpeSegment::scriptGetCallStackDepth;
-  }
 
   public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
   static {
@@ -508,7 +431,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[443] = Bttl_800e::FUN_800e596c;
     scriptSubFunctions_8004e29c[444] = Bttl_800e::FUN_800e59d8;
 
-    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
+//    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
     scriptSubFunctions_8004e29c[480] = Bttl_800f::FUN_800f95d0;
     scriptSubFunctions_8004e29c[481] = Bttl_800f::FUN_800f2500;
@@ -617,7 +540,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[600] = Bttl_800e::FUN_800e93e0;
     scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
-    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
+//    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
     scriptSubFunctions_8004e29c[606] = SEffe::allocateGuardHealEffect;
@@ -632,7 +555,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[614] = Bttl_800e::FUN_800eb84c;
     scriptSubFunctions_8004e29c[615] = Bttl_800e::FUN_800eb188;
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
-    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
+//    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
     scriptSubFunctions_8004e29c[619] = SEffe::FUN_80118df4;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
@@ -794,7 +717,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
     scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
     scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
-    scriptSubFunctions_8004e29c[842] = Bttl_800c::FUN_800c6968;
+//    scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
     scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
     scriptSubFunctions_8004e29c[844] = SEffe::FUN_801089cc;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;

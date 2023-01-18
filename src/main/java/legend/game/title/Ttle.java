@@ -41,6 +41,7 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -93,7 +94,6 @@ import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -159,7 +159,7 @@ public final class Ttle {
     whichMenu_800bdc38 = WhichMenu.NONE_0;
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(2);
-    scriptsTickDisabled_800bc0b8 = false;
+    SCRIPTS.resume();
 
     FUN_8002a9c0();
     _80052c44.setu(5);

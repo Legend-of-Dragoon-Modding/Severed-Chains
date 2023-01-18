@@ -8,7 +8,6 @@ import legend.game.Scus94491BpeSegment_8007;
 import legend.game.Scus94491BpeSegment_800b;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.types.ScriptState;
 import legend.game.types.SubmapObject210;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -86,7 +85,7 @@ public class GameVarParam extends Param {
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.get();
 
       case 64 -> SMap.sobjs_800c6880[0].index;
-      case 65 -> SMap.submapScriptIndex_800c6740.get();
+      case 65 -> SMap.submapControllerState_800c6740.index;
       case 66 -> SMap.sobjCount_800c6730.get();
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.get();
       case 68 -> Scus94491BpeSegment_800b._800bda08.get();
@@ -147,7 +146,7 @@ public class GameVarParam extends Param {
 //      case 136 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[8]._00.get();
 //      case 137 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[9]._00.get();
 
-      default -> throw new IllegalArgumentException("Unknown game data index " + index);
+      default -> throw new IllegalArgumentException("Unknown game data index " + this.index);
     };
   }
 
@@ -217,7 +216,7 @@ public class GameVarParam extends Param {
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.set(val);
 
       case 64 -> SMap.sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
-      case 65 -> SMap.submapScriptIndex_800c6740.set(val);
+      case 65 -> SMap.submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
       case 66 -> SMap.sobjCount_800c6730.set(val);
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.set(val);
       case 68 -> Scus94491BpeSegment_800b._800bda08.set(val);
@@ -278,7 +277,7 @@ public class GameVarParam extends Param {
 //      case 136 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[8]._00.set(val);
 //      case 137 -> Scus94491BpeSegment_8006._8006e398.specialEffect_00[9]._00.set(val);
 
-      default -> throw new IllegalArgumentException("Unknown game data index " + index);
+      default -> throw new IllegalArgumentException("Unknown game data index " + this.index);
     }
 
     return this;

@@ -12,17 +12,17 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
+import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
-import legend.game.types.ScriptFile;
-import legend.game.types.ScriptState;
 import legend.game.unpacker.Unpacker;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -95,7 +95,7 @@ public class SBtld {
 
   @Method(0x80109170L)
   public static void FUN_80109170(final byte[] file) {
-    scriptState_800c674c = allocateScriptState(5, null, 0, null);
+    scriptState_800c674c = SCRIPTS.allocateScriptState(5, null, 0, null);
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file));
 
     final long v1;
@@ -203,7 +203,7 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final ScriptState<BattleObject27c> state = allocateScriptState(new BattleObject27c());
+      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c());
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

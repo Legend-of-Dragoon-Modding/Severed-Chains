@@ -24,6 +24,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentStats1c;
@@ -39,7 +40,6 @@ import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
-import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
@@ -48,12 +48,12 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -347,7 +347,7 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final ScriptState<BattleObject27c> state = allocateScriptState(charSlot + 6, null, 0, new BattleObject27c());
+      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(charSlot + 6, null, 0, new BattleObject27c());
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

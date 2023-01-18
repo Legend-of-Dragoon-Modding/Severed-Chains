@@ -3,7 +3,7 @@ package legend.game.combat.types;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
-import legend.game.types.ScriptState;
+import legend.game.scripting.ScriptState;
 
 import java.util.Arrays;
 

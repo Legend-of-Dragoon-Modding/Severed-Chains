@@ -24,7 +24,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
@@ -63,6 +62,9 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -72,9 +74,6 @@ import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.MrgFile;
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptFile;
-import legend.game.types.ScriptState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
@@ -85,19 +84,19 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
-import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
@@ -2032,7 +2031,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e473cL)
-  public static FlowControl scriptResetLights(final RunningScript script) {
+  public static FlowControl scriptResetLights(final RunningScript<?> script) {
     resetLights();
     return FlowControl.CONTINUE;
   }
@@ -2045,13 +2044,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4788L)
-  public static FlowControl scriptSetLightDirection(final RunningScript script) {
+  public static FlowControl scriptSetLightDirection(final RunningScript<?> script) {
     setLightDirection(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e47c8L)
-  public static FlowControl scriptGetLightDirection(final RunningScript script) {
+  public static FlowControl scriptGetLightDirection(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     script.params_20[1].set(light.light_00.direction_00.getX());
     script.params_20[2].set(light.light_00.direction_00.getY());
@@ -2070,26 +2069,26 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e48a8L)
-  public static FlowControl FUN_800e48a8(final RunningScript a0) {
-    FUN_800e4824(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+  public static FlowControl FUN_800e48a8(final RunningScript<?> script) {
+    FUN_800e4824(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e48e8L)
-  public static FlowControl FUN_800e48e8(final RunningScript a0) {
+  public static FlowControl FUN_800e48e8(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_800e45c0(sp0x10, lights_800c692c[a0.params_20[0].get()].light_00.direction_00);
-    a0.params_20[1].set(sp0x10.getX());
-    a0.params_20[2].set(sp0x10.getY());
-    a0.params_20[3].set(sp0x10.getZ());
+    FUN_800e45c0(sp0x10, lights_800c692c[script.params_20[0].get()].light_00.direction_00);
+    script.params_20[1].set(sp0x10.getX());
+    script.params_20[2].set(sp0x10.getY());
+    script.params_20[3].set(sp0x10.getZ());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4964L)
-  public static FlowControl FUN_800e4964(final RunningScript a0) {
+  public static FlowControl FUN_800e4964(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
 
-    final int a2 = a0.params_20[1].get();
+    final int a2 = script.params_20[1].get();
     if(a2 != -1) {
       //LAB_800e49c0
       if(a2 - 1 < 3) {
@@ -2105,22 +2104,22 @@ public final class Bttl_800e {
     //LAB_800e4a34
     //LAB_800e4a38
     final VECTOR sp0x18 = new VECTOR();
-    sp0x10.x.add((short)a0.params_20[2].get());
-    sp0x10.y.add((short)a0.params_20[3].get());
-    sp0x10.z.add((short)a0.params_20[4].get());
+    sp0x10.x.add((short)script.params_20[2].get());
+    sp0x10.y.add((short)script.params_20[3].get());
+    sp0x10.z.add((short)script.params_20[4].get());
     FUN_800e4674(sp0x18, sp0x10);
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     light.light_00.direction_00.set(sp0x18);
     light._10._00 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4abcL)
-  public static FlowControl FUN_800e4abc(final RunningScript a0) {
-    final int s1 = a0.params_20[1].get();
+  public static FlowControl FUN_800e4abc(final RunningScript<?> script) {
+    final int s1 = script.params_20[1].get();
 
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_800e45c0(sp0x10, lights_800c692c[a0.params_20[0].get()].light_00.direction_00);
+    FUN_800e45c0(sp0x10, lights_800c692c[script.params_20[0].get()].light_00.direction_00);
 
     final SVECTOR s0;
     if(s1 - 1 < 3) {
@@ -2133,9 +2132,9 @@ public final class Bttl_800e {
     }
 
     //LAB_800e4b64
-    a0.params_20[1].set(sp0x10.getX() - s0.getX());
-    a0.params_20[2].set(sp0x10.getY() - s0.getY());
-    a0.params_20[3].set(sp0x10.getZ() - s0.getZ());
+    script.params_20[1].set(sp0x10.getX() - s0.getX());
+    script.params_20[2].set(sp0x10.getY() - s0.getY());
+    script.params_20[3].set(sp0x10.getZ() - s0.getZ());
     return FlowControl.CONTINUE;
   }
 
@@ -2149,17 +2148,17 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4c10L)
-  public static FlowControl FUN_800e4c10(final RunningScript a0) {
-    FUN_800e4bc0(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+  public static FlowControl FUN_800e4c10(final RunningScript<?> script) {
+    FUN_800e4bc0(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4c90L)
-  public static FlowControl FUN_800e4c90(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
-    a0.params_20[1].set(light.light_00.r_0c.get());
-    a0.params_20[2].set(light.light_00.g_0d.get());
-    a0.params_20[3].set(light.light_00.b_0e.get());
+  public static FlowControl FUN_800e4c90(final RunningScript<?> script) {
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
+    script.params_20[1].set(light.light_00.r_0c.get());
+    script.params_20[2].set(light.light_00.g_0d.get());
+    script.params_20[3].set(light.light_00.b_0e.get());
     return FlowControl.CONTINUE;
   }
 
@@ -2172,8 +2171,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4d2cL)
-  public static FlowControl FUN_800e4d2c(final RunningScript a0) {
-    FUN_800e4cf8(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get());
+  public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
+    FUN_800e4cf8(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     _800c6930._24 = 0;
     return FlowControl.CONTINUE;
   }
@@ -2187,44 +2186,44 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4db4L)
-  public static FlowControl scriptGetLightColour(final RunningScript a0) {
+  public static FlowControl scriptGetLightColour(final RunningScript<?> script) {
     final BattleLightStruct64 v0 = _800c6930;
-    a0.params_20[0].set(v0.colour_00.getX());
-    a0.params_20[1].set(v0.colour_00.getY());
-    a0.params_20[2].set(v0.colour_00.getZ());
+    script.params_20[0].set(v0.colour_00.getX());
+    script.params_20[1].set(v0.colour_00.getY());
+    script.params_20[2].set(v0.colour_00.getZ());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4dfcL)
-  public static FlowControl FUN_800e4dfc(final RunningScript a0) {
-    lights_800c692c[a0.params_20[0].get()]._10._00 = 0;
+  public static FlowControl FUN_800e4dfc(final RunningScript<?> script) {
+    lights_800c692c[script.params_20[0].get()]._10._00 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4e2cL)
-  public static FlowControl FUN_800e4e2c(final RunningScript a0) {
-    return lights_800c692c[a0.params_20[0].get()]._10._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+  public static FlowControl FUN_800e4e2c(final RunningScript<?> script) {
+    return lights_800c692c[script.params_20[0].get()]._10._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @Method(0x800e4e64L)
-  public static FlowControl FUN_800e4e64(final RunningScript a0) {
-    a0.params_20[1].set(lights_800c692c[a0.params_20[0].get()]._10._00);
+  public static FlowControl FUN_800e4e64(final RunningScript<?> script) {
+    script.params_20[1].set(lights_800c692c[script.params_20[0].get()]._10._00);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4ea0L)
-  public static FlowControl FUN_800e4ea0(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
-    final int t1 = a0.params_20[4].get();
+  public static FlowControl FUN_800e4ea0(final RunningScript<?> script) {
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
+    final int t1 = script.params_20[4].get();
     final BttlLightStruct84Sub38 t0 = light._10;
 
     t0._00 = 0;
     t0.vec_04.setX(light.light_00.direction_00.getX() << 12);
     t0.vec_04.setY(light.light_00.direction_00.getY() << 12);
     t0.vec_04.setZ(light.light_00.direction_00.getZ() << 12);
-    t0.vec_28.setX(a0.params_20[1].get() << 12);
-    t0.vec_28.setY(a0.params_20[2].get() << 12);
-    t0.vec_28.setZ(a0.params_20[3].get() << 12);
+    t0.vec_28.setX(script.params_20[1].get() << 12);
+    t0.vec_28.setY(script.params_20[2].get() << 12);
+    t0.vec_28.setZ(script.params_20[3].get() << 12);
     t0._34 = t1;
 
     if(t1 > 0) {
@@ -2240,13 +2239,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4fa0L)
-  public static FlowControl FUN_800e4fa0(final RunningScript a0) {
-    final int s3 = a0.params_20[1].get();
-    final int s4 = a0.params_20[2].get();
-    final int s2 = a0.params_20[3].get();
-    final int s5 = a0.params_20[4].get();
+  public static FlowControl FUN_800e4fa0(final RunningScript<?> script) {
+    final int s3 = script.params_20[1].get();
+    final int s4 = script.params_20[2].get();
+    final int s2 = script.params_20[3].get();
+    final int s5 = script.params_20[4].get();
 
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
     light._10._00 = 0;
@@ -2270,13 +2269,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e50e8L)
-  public static FlowControl FUN_800e50e8(final RunningScript a0) {
-    final int s3 = a0.params_20[0].get();
-    final int s2 = a0.params_20[1].get();
-    final int x = a0.params_20[2].get();
-    final int y = a0.params_20[3].get();
-    final int z = a0.params_20[4].get();
-    final int s4 = a0.params_20[5].get();
+  public static FlowControl FUN_800e50e8(final RunningScript<?> script) {
+    final int s3 = script.params_20[0].get();
+    final int s2 = script.params_20[1].get();
+    final int x = script.params_20[2].get();
+    final int y = script.params_20[3].get();
+    final int z = script.params_20[4].get();
+    final int s4 = script.params_20[5].get();
 
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, lights_800c692c[s3].light_00.direction_00);
@@ -2312,23 +2311,23 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e52f8L)
-  public static FlowControl FUN_800e52f8(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
+  public static FlowControl FUN_800e52f8(final RunningScript<?> script) {
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub38 v1 = light._10;
     v1._00 = 0x4001;
     v1.vec_04.set(sp0x10.getX() << 12, sp0x10.getY() << 12, sp0x10.getZ() << 12);
-    v1.vec_10.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
-    v1.vec_1c.set(a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get());
+    v1.vec_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    v1.vec_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e540cL)
-  public static FlowControl FUN_800e540c(final RunningScript a0) {
-    final int bobjIndex = a0.params_20[1].get();
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
+  public static FlowControl FUN_800e540c(final RunningScript<?> script) {
+    final int bobjIndex = script.params_20[1].get();
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
 
     final SVECTOR sp0x10 = new SVECTOR();
     FUN_800e45c0(sp0x10, light.light_00.direction_00);
@@ -2345,33 +2344,33 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e54f8L)
-  public static FlowControl FUN_800e54f8(final RunningScript a0) {
-    lights_800c692c[a0.params_20[0].get()]._4c._00 = 0;
+  public static FlowControl FUN_800e54f8(final RunningScript<?> script) {
+    lights_800c692c[script.params_20[0].get()]._4c._00 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e5528L)
-  public static FlowControl FUN_800e5528(final RunningScript a0) {
-    return lights_800c692c[a0.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+  public static FlowControl FUN_800e5528(final RunningScript<?> script) {
+    return lights_800c692c[script.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @Method(0x800e5560L)
-  public static FlowControl FUN_800e5560(final RunningScript a0) {
-    a0.params_20[1].set(lights_800c692c[a0.params_20[0].get()]._4c._00);
+  public static FlowControl FUN_800e5560(final RunningScript<?> script) {
+    script.params_20[1].set(lights_800c692c[script.params_20[0].get()]._4c._00);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e559cL)
-  public static FlowControl FUN_800e559c(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
-    final int t1 = a0.params_20[4].get();
+  public static FlowControl FUN_800e559c(final RunningScript<?> script) {
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
+    final int t1 = script.params_20[4].get();
     final BttlLightStruct84Sub38 t0 = light._4c;
 
     t0._00 = 0;
     t0.vec_04.setX(light.light_00.r_0c.get() << 12);
     t0.vec_04.setY(light.light_00.g_0d.get() << 12);
     t0.vec_04.setZ(light.light_00.b_0e.get() << 12);
-    t0.vec_28.set(a0.params_20[1].get() << 12, a0.params_20[2].get() << 12, a0.params_20[3].get() << 12);
+    t0.vec_28.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
     t0._34 = t1;
 
     if(t1 > 0) {
@@ -2385,13 +2384,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e569cL)
-  public static FlowControl FUN_800e569c(final RunningScript a0) {
-    final BttlLightStruct84 light = lights_800c692c[a0.params_20[0].get()];
+  public static FlowControl FUN_800e569c(final RunningScript<?> script) {
+    final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final BttlLightStruct84Sub38 v1 = light._4c;
     v1._00 = 0;
     v1.vec_04.set(light.light_00.r_0c.get() << 12, light.light_00.g_0d.get() << 12, light.light_00.b_0e.get() << 12);
-    v1.vec_10.set(a0.params_20[1].get() << 12, a0.params_20[2].get() << 12, a0.params_20[3].get() << 12);
-    v1.vec_1c.set(a0.params_20[4].get() << 12, a0.params_20[5].get() << 12, a0.params_20[6].get() << 12);
+    v1.vec_10.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
+    v1.vec_1c.set(script.params_20[4].get() << 12, script.params_20[5].get() << 12, script.params_20[6].get() << 12);
 
     if(v1._34 > 0) {
       v1._00 = 0x1;
@@ -2455,7 +2454,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e596cL)
-  public static FlowControl FUN_800e596c(final RunningScript a0) {
+  public static FlowControl FUN_800e596c(final RunningScript<?> script) {
     final int v0 = currentStage_800c66a4.get() - 0x47;
 
     if(v0 >= 0 && v0 < 0x8) {
@@ -2469,7 +2468,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e59d8L)
-  public static FlowControl FUN_800e59d8(final RunningScript script) {
+  public static FlowControl FUN_800e59d8(final RunningScript<?> script) {
     final int a0 = script.params_20[0].get();
 
     if(a0 == -1) {
@@ -2489,7 +2488,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e5a78L)
-  public static void FUN_800e5a78(final int index, final ScriptState<Void> state, final Void struct) {
+  public static void FUN_800e5a78(final ScriptState<Void> state, final Void struct) {
     final BattleLightStruct64 light1 = _800c6930;
 
     _800c6928.addu(0x1L);
@@ -2592,7 +2591,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e5fe8L)
-  public static void FUN_800e5fe8(final int index, final ScriptState<Void> state, final Void struct) {
+  public static void FUN_800e5fe8(final ScriptState<Void> state, final Void struct) {
     //LAB_800e6008
     for(int i = 0; i < 3; i++) {
       GsSetFlatLight(i, lights_800c692c[i].light_00);
@@ -2605,7 +2604,7 @@ public final class Bttl_800e {
 
   @Method(0x800e6070L)
   public static void FUN_800e6070() {
-    final ScriptState<Void> state = allocateScriptState(1, null, 0, null);
+    final ScriptState<Void> state = SCRIPTS.allocateScriptState(1, null, 0, null);
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(Bttl_800e::FUN_800e5a78);
     state.setRenderer(Bttl_800e::FUN_800e5fe8);
@@ -2655,7 +2654,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6314L)
-  public static void FUN_800e6314(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void FUN_800e6314(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
     if(struct7cc != null) {
@@ -2667,7 +2666,7 @@ public final class Bttl_800e {
     _800fafe8.setu(0x4L);
 
     if((struct7cc._20 & 0x4_0000) != 0) {
-      FUN_8001d068(_800c6938.scriptIndex_04, 1);
+      FUN_8001d068(_800c6938.bobjState_04, 1);
     }
 
     if((struct7cc._20 & 0x10_0000) != 0) {
@@ -2692,8 +2691,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6470L)
-  public static ScriptState<EffectManagerData6c> FUN_800e6470(final RunningScript a0) {
-    final int t0 = a0.params_20[0].get();
+  public static ScriptState<EffectManagerData6c> FUN_800e6470(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int t0 = script.params_20[0].get();
     final DeffManager7cc struct7cc = deffManager_800c693c;
     struct7cc._20 |= t0 & 0x1_0000 | t0 & 0x2_0000 | t0 & 0x10_0000;
 
@@ -2710,11 +2709,11 @@ public final class Bttl_800e {
       }
     }
 
-    final ScriptState<EffectManagerData6c> state = FUN_800e832c(
-      a0.scriptStateIndex_00,
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      script.scriptState_04,
       0,
       Bttl_800e::FUN_800e70bc,
-      Bttl_800e::FUN_800e71dc,
+      null,
       Bttl_800e::FUN_800e6314,
       null
     );
@@ -2724,11 +2723,11 @@ public final class Bttl_800e {
 
     final BattleStruct24_2 v0 = _800c6938;
     v0._00 = t0 & 0xffff;
-    v0.scriptIndex_04 = a0.params_20[1].get();
-    v0._08 = a0.params_20[2].get();
-    v0.scriptIndex_0c = a0.scriptStateIndex_00;
-    v0.scriptOffsetIndex_10 = a0.params_20[3].get() & 0xff;
-    v0.scriptIndex_18 = state.index;
+    v0.bobjState_04 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+    v0._08 = script.params_20[2].get();
+    v0.scriptIndex_0c = script.scriptState_04.index;
+    v0.scriptOffsetIndex_10 = script.params_20[3].get() & 0xff;
+    v0.managerState_18 = state;
     v0._1c = 0;
     v0.frameCount_20 = -1;
     loadSupportOverlay(3, Bttl_800e::FUN_800e704c);
@@ -2736,13 +2735,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e665cL)
-  public static long FUN_800e665c(final RunningScript a0) {
-    final int s3 = a0.params_20[0].get() & 0xffff;
-    final int s1 = a0.params_20[3].get() & 0xff;
+  public static long FUN_800e665c(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int s3 = script.params_20[0].get() & 0xffff;
+    final int s1 = script.params_20[3].get() & 0xff;
 
     final DeffManager7cc deffManager = deffManager_800c693c;
     deffManager._20 |= _800fafec.offset(s3).get() << 16;
-    FUN_800e6470(a0);
+    FUN_800e6470(script);
 
     final BattleStruct24_2 battle24 = _800c6938;
 
@@ -2750,7 +2749,7 @@ public final class Bttl_800e {
     if((deffManager._20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      FUN_8001d068(battle24.scriptIndex_04, s3 != 0x2e || s1 != 0 ? 0 : 2);
+      FUN_8001d068(battle24.bobjState_04, s3 != 0x2e || s1 != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
@@ -2771,17 +2770,17 @@ public final class Bttl_800e {
 
     //LAB_800e67b0
     loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c);
-    loadDrgnDir(0, 4140 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.scriptIndex_18));
+    loadDrgnDir(0, 4140 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
     loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file));
     _800fafe8.setu(0x1L);
     return 0;
   }
 
   @Method(0x800e6844L)
-  public static long FUN_800e6844(final RunningScript a0) {
+  public static long FUN_800e6844(final RunningScript<? extends BattleScriptDataBase> script) {
     deffManager_800c693c._20 |= 0x40_0000;
-    FUN_800e6470(a0);
-    final int s0 = ((a0.params_20[0].get() & 0xffff) - 192) * 2;
+    FUN_800e6470(script);
+    final int s0 = ((script.params_20[0].get() & 0xffff) - 192) * 2;
     final BattleStruct24_2 t0 = _800c6938;
 
     if(t0.script_14 != null) {
@@ -2790,25 +2789,25 @@ public final class Bttl_800e {
 
     t0._00 |= 0x200_0000;
     loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.scriptIndex_18));
+    loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
     loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file));
     _800fafe8.setu(0x1L);
     return 0;
   }
 
   @Method(0x800e6920L)
-  public static long FUN_800e6920(final RunningScript a0) {
-    final long s1 = a0.params_20[0].get() & 0xff_0000L;
-    int sp20 = (short)a0.params_20[0].get();
+  public static long FUN_800e6920(final RunningScript<? extends BattleScriptDataBase> script) {
+    final long s1 = script.params_20[0].get() & 0xff_0000L;
+    int sp20 = (short)script.params_20[0].get();
     if(sp20 == -1) {
-      final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00;
-      assert false : "?"; //a0.params_20.get(0).set(sp0x20);
+      final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+      assert false : "?"; //script.params_20.get(0).set(sp0x20);
       sp20 = getCombatant(v0.combatantIndex_26c).charIndex_1a2;
     }
 
     //LAB_800e69a8
     deffManager_800c693c._20 |= s1 & 0x10_0000;
-    FUN_800e6470(a0);
+    FUN_800e6470(script);
 
     final BattleStruct24_2 v1 = _800c6938;
 
@@ -2820,7 +2819,7 @@ public final class Bttl_800e {
 
     if(sp20 < 256) {
       loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c);
-      loadDrgnDir(0, 4434 + sp20 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.scriptIndex_18));
+      loadDrgnDir(0, 4434 + sp20 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalSp2 = sp20;
       loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file));
     } else {
@@ -2834,7 +2833,7 @@ public final class Bttl_800e {
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
       loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c);
-      loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.scriptIndex_18));
+      loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
       loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file));
     }
@@ -2845,11 +2844,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6aecL)
-  public static long FUN_800e6aec(final RunningScript a0) {
-    final int v1 = a0.params_20[0].get();
+  public static long FUN_800e6aec(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int v1 = script.params_20[0].get();
     final int s3 = v1 & 0xffff;
 
-    FUN_800e6470(a0);
+    FUN_800e6470(script);
 
     final BattleStruct24_2 a0_0 = _800c6938;
 
@@ -2872,7 +2871,7 @@ public final class Bttl_800e {
 
     //LAB_800e6bd4
     loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c);
-    loadDrgnDir(0, 5512 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.scriptIndex_18));
+    loadDrgnDir(0, 5512 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
     loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file));
 
     //LAB_800e6d7c
@@ -2881,10 +2880,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6db4L)
-  public static FlowControl FUN_800e6db4(final RunningScript a0) {
+  public static FlowControl FUN_800e6db4(final RunningScript<?> script) {
     final FlowControl flow;
     final long v1;
-    switch(a0.params_20[0].get() & 0xffff) {
+    switch(script.params_20[0].get() & 0xffff) {
       case 0, 1 -> {
         v1 = _800fafe8.get();
         if(v1 == 0x1L) {
@@ -2920,7 +2919,7 @@ public final class Bttl_800e {
 
           //LAB_800e6eb0
           final BattleStruct24_2 struct24 = _800c6938;
-          scriptStatePtrArr_800bc1c0[struct24.scriptIndex_18].loadScriptFile(struct24.script_14, struct24.scriptOffsetIndex_10);
+          struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptOffsetIndex_10);
           struct24._1c = 0;
           struct24.frameCount_20 = 0;
           _800fafe8.setu(0x3L);
@@ -2960,11 +2959,11 @@ public final class Bttl_800e {
 
           case 2:
           case 3:
-            deallocateScriptAndChildren(_800c6938.scriptIndex_18);
+            _800c6938.managerState_18.deallocateWithChildren();
 
           case 4:
             _800fafe8.setu(0);
-            _800c6938.scriptIndex_18 = 0;
+            _800c6938.managerState_18 = null;
             flow = FlowControl.CONTINUE;
             break;
 
@@ -2983,8 +2982,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6fb4L)
-  public static FlowControl FUN_800e6fb4(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.scriptIndex_0c) {
+  public static FlowControl FUN_800e6fb4(final RunningScript<? extends BattleScriptDataBase> script) {
+    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -2994,7 +2993,7 @@ public final class Bttl_800e {
 
     //LAB_800e7014
     if(v1 == 0) {
-      FUN_800e665c(a0);
+      FUN_800e665c(script);
     }
 
     if(v1 < 4) {
@@ -3004,7 +3003,7 @@ public final class Bttl_800e {
     if(v1 == 4) {
       //LAB_800e702c
       _800fafe8.setu(0);
-      _800c6938.scriptIndex_18 = 0;
+      _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -3017,16 +3016,16 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final List<byte[]> files, final int scriptIndex) {
+  public static void loadDeffPackage(final List<byte[]> files, final ScriptState<EffectManagerData6c> state) {
     final MrgFile mrg = MrgFile.alloc(files);
 
     deffManager_800c693c.deffPackage_5a8 = mrg;
 
-    FUN_800ea620(mrg, scriptIndex);
+    FUN_800ea620(mrg, state);
   }
 
   @Method(0x800e70bcL)
-  public static void FUN_800e70bc(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
+  public static void FUN_800e70bc(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
     final BattleStruct24_2 a0 = _800c6938;
 
     if(a0.frameCount_20 != -1) {
@@ -3058,14 +3057,9 @@ public final class Bttl_800e {
     //LAB_800e71c4
   }
 
-  @Method(0x800e71dcL)
-  public static void FUN_800e71dc(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    // empty
-  }
-
   @Method(0x800e71e4L)
-  public static FlowControl FUN_800e71e4(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.scriptIndex_0c) {
+  public static FlowControl FUN_800e71e4(final RunningScript<? extends BattleScriptDataBase> script) {
+    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -3076,7 +3070,7 @@ public final class Bttl_800e {
     if(v1 < 0x4L) {
       //LAB_800e7244
       if(v1 == 0) {
-        FUN_800e6844(a0);
+        FUN_800e6844(script);
       }
 
       return FlowControl.PAUSE_AND_REWIND;
@@ -3085,7 +3079,7 @@ public final class Bttl_800e {
     if(v1 == 0x4L) {
       //LAB_800e725c
       _800fafe8.setu(0);
-      _800c6938.scriptIndex_18 = 0;
+      _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -3094,8 +3088,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e727cL)
-  public static FlowControl FUN_800e727c(final RunningScript a0) {
-    if(_800fafe8.get() != 0 && a0.scriptStateIndex_00 != _800c6938.scriptIndex_0c) {
+  public static FlowControl FUN_800e727c(final RunningScript<? extends BattleScriptDataBase> script) {
+    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -3105,7 +3099,7 @@ public final class Bttl_800e {
 
     //LAB_800e72dc
     if(v1 == 0) {
-      FUN_800e6920(a0);
+      FUN_800e6920(script);
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -3116,7 +3110,7 @@ public final class Bttl_800e {
     if(v1 == 0x4L) {
       //LAB_800e72f4
       _800fafe8.setu(0);
-      _800c6938.scriptIndex_18 = 0;
+      _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
@@ -3125,9 +3119,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7314L)
-  public static FlowControl FUN_800e7314(final RunningScript a0) {
+  public static FlowControl FUN_800e7314(final RunningScript<? extends BattleScriptDataBase> script) {
     if(_800fafe8.get() != 0) {
-      if(a0.scriptStateIndex_00 != _800c6938.scriptIndex_0c) {
+      if(script.scriptState_04.index != _800c6938.scriptIndex_0c) {
         return FlowControl.PAUSE_AND_REWIND;
       }
     }
@@ -3139,13 +3133,13 @@ public final class Bttl_800e {
     if(v1 == 4) {
       //LAB_800e738c
       _800fafe8.setu(0);
-      _800c6938.scriptIndex_18 = 0;
+      _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
     //LAB_800e7374
     if(v1 == 0) {
-      FUN_800e6aec(a0);
+      FUN_800e6aec(script);
     }
 
     //LAB_800e739c
@@ -3153,30 +3147,30 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e73acL)
-  public static FlowControl FUN_800e73ac(final RunningScript a0) {
+  public static FlowControl FUN_800e73ac(final RunningScript<? extends BattleScriptDataBase> script) {
     if(_800fafe8.get() != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final int v1 = a0.params_20[4].get();
+    final int v1 = script.params_20[4].get();
     if(v1 == 0x100_0000) {
       //LAB_800e7414
-      FUN_800e665c(a0);
+      FUN_800e665c(script);
     } else if(v1 == 0x200_0000) {
       //LAB_800e7424
-      FUN_800e6844(a0);
+      FUN_800e6844(script);
       //LAB_800e73fc
     } else if(v1 == 0x300_0000 || v1 == 0x400_0000) {
       //LAB_800e7434
-      FUN_800e6920(a0);
+      FUN_800e6920(script);
     } else if(v1 == 0x500_0000) {
       //LAB_800e7444
-      FUN_800e6aec(a0);
+      FUN_800e6aec(script);
     }
 
     //LAB_800e7450
     //LAB_800e7454
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[_800c6938.scriptIndex_18].innerStruct_00;
+    final EffectManagerData6c manager = _800c6938.managerState_18.innerStruct_00;
     manager.ticker_48 = Bttl_800e::FUN_800e74e0;
 
     //LAB_800e7480
@@ -3184,21 +3178,21 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7490L)
-  public static FlowControl FUN_800e7490(final RunningScript a0) {
-    a0.params_20[0].set((int)_800fafe8.get());
+  public static FlowControl FUN_800e7490(final RunningScript<?> script) {
+    script.params_20[0].set((int)_800fafe8.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e74acL)
-  public static FlowControl FUN_800e74ac(final RunningScript a0) {
+  public static FlowControl FUN_800e74ac(final RunningScript<?> script) {
     final BattleStruct24_2 struct24 = _800c6938;
-    a0.params_20[0].set(struct24.scriptIndex_04);
-    a0.params_20[1].set(struct24._08);
+    script.params_20[0].set(struct24.bobjState_04.index);
+    script.params_20[1].set(struct24._08);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e74e0L)
-  public static void FUN_800e74e0(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void FUN_800e74e0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final long v1 = _800fafe8.get();
     final BattleStruct24_2 struct24 = _800c6938;
 
@@ -3353,47 +3347,45 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ec4L)
-  public static void effectManagerDestructor(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
-    LOGGER.info(EFFECTS, "Deallocating effect manager %d", index);
+  public static void effectManagerDestructor(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
+    LOGGER.info(EFFECTS, "Deallocating effect manager %d", state.index);
 
-    EffectManagerData6c a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
-
-    if(a0.parentScriptIndex_50 != -1) {
-      if(a0.newChildScriptIndex_56 != -1) {
-        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.newChildScriptIndex_56].innerStruct_00).oldChildScriptIndex_54 = a0.oldChildScriptIndex_54;
+    if(struct.parentScript_50 != null) {
+      if(struct.newChildScript_56 != null) {
+        struct.newChildScript_56.innerStruct_00.oldChildScript_54 = struct.oldChildScript_54;
       } else {
         //LAB_800e7f4c
-        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.parentScriptIndex_50].innerStruct_00).childScriptIndex_52 = a0.oldChildScriptIndex_54;
+        struct.parentScript_50.innerStruct_00.childScript_52 = struct.oldChildScript_54;
       }
 
       //LAB_800e7f6c
-      if(a0.oldChildScriptIndex_54 != -1) {
-        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.oldChildScriptIndex_54].innerStruct_00).newChildScriptIndex_56 = a0.newChildScriptIndex_56;
+      if(struct.oldChildScript_54 != null) {
+        struct.oldChildScript_54.innerStruct_00.newChildScript_56 = struct.newChildScript_56;
       }
 
       //LAB_800e7fa0
-      a0.parentScriptIndex_50 = -1;
-      a0.oldChildScriptIndex_54 = -1;
-      a0.newChildScriptIndex_56 = -1;
+      struct.parentScript_50 = null;
+      struct.oldChildScript_54 = null;
+      struct.newChildScript_56 = null;
     }
 
     //LAB_800e7fac
     //LAB_800e7fcc
-    while(struct.childScriptIndex_52 != -1) {
-      a0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[struct.childScriptIndex_52].innerStruct_00);
+    while(struct.childScript_52 != null) {
+      EffectManagerData6c child = struct.childScript_52.innerStruct_00;
 
       //LAB_800e7ff8
-      while(a0.childScriptIndex_52 != -1) {
-        a0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.childScriptIndex_52].innerStruct_00);
+      while(child.childScript_52 != null) {
+        child = child.childScript_52.innerStruct_00;
       }
 
       //LAB_800e8020
-      deallocateScriptAndChildren(a0.scriptIndex_0e);
+      child.myScriptState_0e.deallocateWithChildren();
     }
 
     //LAB_800e8040
     if(struct.destructor_4c != null) {
-      struct.destructor_4c.accept(index, state, struct);
+      struct.destructor_4c.accept(state, struct);
     }
 
     //LAB_800e805c
@@ -3415,8 +3407,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e80c4L)
-  public static ScriptState<EffectManagerData6c> allocateEffectManager(int parentIndex, final int subStructSize, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
-    final ScriptState<EffectManagerData6c> state = allocateScriptState(new EffectManagerData6c());
+  public static ScriptState<EffectManagerData6c> allocateEffectManager(@Nullable ScriptState<? extends BattleScriptDataBase> parentState, final int subStructSize, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
+    final ScriptState<EffectManagerData6c> state = SCRIPTS.allocateScriptState(new EffectManagerData6c());
     final EffectManagerData6c manager = state.innerStruct_00;
 
     state.loadScriptFile(doNothingScript_8004f650);
@@ -3426,7 +3418,6 @@ public final class Bttl_800e {
       state.setRenderer(renderer);
     }
 
-    //LAB_800e8150
     state.setDestructor(Bttl_800e::effectManagerDestructor);
 
     final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
@@ -3434,19 +3425,17 @@ public final class Bttl_800e {
     manager.size_08 = subStructSize;
     if(subStructSize != 0) {
       manager.effect_44 = MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor);
-      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     } else {
-      //LAB_800e8184
       manager.effect_44 = null;
-      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     }
 
-    //LAB_800e8188
     manager.magic_00 = BattleScriptDataBase.EM__;
     manager.flags_04 = 0xff00_0000;
     manager.scriptIndex_0c = -1;
     manager.coord2Index_0d = -1;
-    manager.scriptIndex_0e = state.index;
+    manager.myScriptState_0e = state;
     manager._10.flags_00 = 0x5400_0000;
     manager._10.trans_04.set(0, 0, 0);
     manager._10.rot_10.set((short)0, (short)0, (short)0);
@@ -3459,110 +3448,31 @@ public final class Bttl_800e {
     manager._10._30 = 0;
     manager.ticker_48 = ticker;
     manager.destructor_4c = destructor;
-    manager.parentScriptIndex_50 = -1;
-    manager.childScriptIndex_52 = -1;
-    manager.oldChildScriptIndex_54 = -1;
-    manager.newChildScriptIndex_56 = -1;
+    manager.parentScript_50 = null;
+    manager.childScript_52 = null;
+    manager.oldChildScript_54 = null;
+    manager.newChildScript_56 = null;
     manager._58 = null;
     manager.type_5c = _800c6e18.get();
     state.type_f8 = manager.type_5c;
 
-    if(parentIndex != -1) {
-      if(!BattleScriptDataBase.EM__.equals(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00)) {
-        parentIndex = deffManager_800c693c.scriptIndex_1c;
+    if(parentState != null) {
+      if(!BattleScriptDataBase.EM__.equals(parentState.innerStruct_00.magic_00)) {
+        parentState = deffManager_800c693c.scriptState_1c;
       }
 
-      //LAB_800e8294
-      final EffectManagerData6c parent = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      final EffectManagerData6c parent = (EffectManagerData6c)parentState.innerStruct_00;
       final EffectManagerData6c child = state.innerStruct_00;
 
-      child.parentScriptIndex_50 = parentIndex;
-      if(parent.childScriptIndex_52 != -1) {
-        child.oldChildScriptIndex_54 = parent.childScriptIndex_52;
-        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52].innerStruct_00).newChildScriptIndex_56 = state.index;
+      child.parentScript_50 = (ScriptState<EffectManagerData6c>)parentState;
+      if(parent.childScript_52 != null) {
+        child.oldChildScript_54 = parent.childScript_52;
+        parent.childScript_52.innerStruct_00.newChildScript_56 = state;
       }
 
-      //LAB_800e8300
-      parent.childScriptIndex_52 = state.index;
+      parent.childScript_52 = state;
     }
 
-    //LAB_800e8304
-    return state;
-  }
-
-  @Method(0x800e832cL)
-  public static ScriptState<EffectManagerData6c> FUN_800e832c(int parentIndex, final int subStructSize, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final TriConsumer<Integer, ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
-    final ScriptState<EffectManagerData6c> state = allocateScriptState(new EffectManagerData6c());
-
-    state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(Bttl_800e::effectManagerTicker);
-
-    if(renderer != null) {
-      state.setRenderer(renderer);
-    }
-
-    //LAB_800e83b8
-    state.setDestructor(Bttl_800e::effectManagerDestructor);
-
-    final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
-
-    final EffectManagerData6c s0 = state.innerStruct_00;
-    s0.size_08 = subStructSize;
-    if(subStructSize != 0) {
-      s0.effect_44 = MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor);
-      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, s0.effect_44.getClass().getSimpleName(), parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
-    } else {
-      //LAB_800e83ec
-      s0.effect_44 = null;
-      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentIndex, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
-    }
-
-    //LAB_800e83f0
-    s0.magic_00 = BattleScriptDataBase.EM__;
-    s0.flags_04 = 0xff00_0000;
-    s0.scriptIndex_0c = -1;
-    s0.coord2Index_0d = -1;
-    s0.scriptIndex_0e = state.index;
-    s0._10.flags_00 = 0x5400_0000;
-    s0._10.trans_04.set(0, 0, 0);
-    s0._10.rot_10.set((short)0, (short)0, (short)0);
-    s0._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
-    s0._10.colour_1c.set((short)0x80, (short)0x80, (short)0x80);
-    s0._10.z_22 = 0;
-    s0._10._24 = 0;
-    s0._10._28 = 0;
-    s0._10._2c = 0;
-    s0._10._30 = 0;
-    s0.ticker_48 = ticker;
-    s0.destructor_4c = destructor;
-    s0.parentScriptIndex_50 = -1;
-    s0.childScriptIndex_52 = -1;
-    s0.oldChildScriptIndex_54 = -1;
-    s0.newChildScriptIndex_56 = -1;
-    s0._58 = null;
-    s0.type_5c = _800c6e18.get();
-    state.type_f8 = s0.type_5c;
-
-    if(parentIndex != -1) {
-      if(!BattleScriptDataBase.EM__.equals(((BattleScriptDataBase)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00).magic_00)) {
-        parentIndex = deffManager_800c693c.scriptIndex_1c;
-      }
-
-      //LAB_800e84fc
-      final EffectManagerData6c parent = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
-      final EffectManagerData6c child = state.innerStruct_00;
-
-      child.parentScriptIndex_50 = parentIndex;
-      if(parent.childScriptIndex_52 != -1) {
-        child.oldChildScriptIndex_54 = parent.childScriptIndex_52;
-        ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[parent.childScriptIndex_52].innerStruct_00).newChildScriptIndex_56 = state.index;
-      }
-
-      //LAB_800e8568
-      parent.childScriptIndex_52 = state.index;
-    }
-
-    //LAB_800e856c
     return state;
   }
 
@@ -3724,7 +3634,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8e9cL)
-  public static void effectManagerTicker(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void effectManagerTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     Ptr<BttlScriptData6cSubBase2> subPtr = new Ptr<>(() -> data._58, val -> data._58 = val);
 
     //LAB_800e8ee0
@@ -3743,7 +3653,7 @@ public final class Bttl_800e {
         //LAB_800e8f1c
       } else if(v1 == 2) {
         //LAB_800e8f78
-        deallocateScriptAndChildren(index);
+        state.deallocateWithChildren();
         return;
       }
 
@@ -3752,7 +3662,7 @@ public final class Bttl_800e {
 
     //LAB_800e8f9c
     if(data.ticker_48 != null) {
-      data.ticker_48.accept(index, state, data);
+      data.ticker_48.accept(state, data);
     }
 
     //LAB_800e8fb8
@@ -3768,9 +3678,9 @@ public final class Bttl_800e {
     tmds_800c6944 = deffManager.tmds_2f8;
     deffManager_800c693c = deffManager;
     spriteMetrics_800c6948 = deffManager.spriteMetrics_39c;
-    final ScriptState<EffectManagerData6c> manager = allocateEffectManager(-1, 0, null, null, null, null);
+    final ScriptState<EffectManagerData6c> manager = allocateEffectManager(null, 0, null, null, null, null);
     manager.innerStruct_00.flags_04 = 0x600_0400;
-    deffManager.scriptIndex_1c = manager.index;
+    deffManager.scriptState_1c = manager;
     FUN_800e6070();
     loadSupportOverlay(1, SBtld::FUN_801098f4);
   }
@@ -3782,9 +3692,9 @@ public final class Bttl_800e {
 
   @Method(0x800e9120L)
   public static void FUN_800e9120() {
-    deallocateScriptAndChildren(1);
+    scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
     FUN_800eab8c();
-    deallocateScriptAndChildren(deffManager_800c693c.scriptIndex_1c);
+    deffManager_800c693c.scriptState_1c.deallocateWithChildren();
     deffManager_800c693c = null;
   }
 
@@ -3792,17 +3702,17 @@ public final class Bttl_800e {
   public static void FUN_800e9178(final int a0) {
     if(a0 == 1) {
       //LAB_800e91a0
-      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[deffManager_800c693c.scriptIndex_1c].innerStruct_00, 10);
+      FUN_800e8d04(deffManager_800c693c.scriptState_1c.innerStruct_00, 10);
     } else if(a0 == 2) {
       //LAB_800e91d8
-      FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[deffManager_800c693c.scriptIndex_1c].innerStruct_00, 10);
+      FUN_800e8d04(deffManager_800c693c.scriptState_1c.innerStruct_00, 10);
       FUN_800eab8c();
     } else {
       //LAB_800e9214
       FUN_800eab8c();
-      deallocateScriptAndChildren(deffManager_800c693c.scriptIndex_1c);
-      final ScriptState<EffectManagerData6c> manager = allocateEffectManager(-1, 0, null, null, null, null);
-      deffManager_800c693c.scriptIndex_1c = manager.index;
+      deffManager_800c693c.scriptState_1c.deallocateWithChildren();
+      final ScriptState<EffectManagerData6c> manager = allocateEffectManager(null, 0, null, null, null, null);
+      deffManager_800c693c.scriptState_1c = manager;
       manager.innerStruct_00.flags_04 = 0x600_0400;
     }
 
@@ -3822,8 +3732,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e93e0L)
-  public static FlowControl FUN_800e93e0(final RunningScript a0) {
-    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null).index);
+  public static FlowControl FUN_800e93e0(final RunningScript<? extends BattleScriptDataBase> script) {
+    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -3860,11 +3770,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9590L)
-  public static void renderAttackHitFlashEffect(final int index, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
+  public static void renderAttackHitFlashEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final MATRIX sp0x10 = new MATRIX();
-    FUN_800e8594(sp0x10, s0);
-    FUN_800e9428(((AttackHitFlashEffect0c)s0.effect_44).metrics_04, s0._10, sp0x10);
+    FUN_800e8594(sp0x10, data);
+    FUN_800e9428(((AttackHitFlashEffect0c)data.effect_44).metrics_04, data._10, sp0x10);
   }
 
   @Method(0x800e95f0L)
@@ -3893,9 +3802,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e96ccL)
-  public static FlowControl allocateAttackHitFlashEffect(final RunningScript s1) {
+  public static FlowControl allocateAttackHitFlashEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      s1.scriptStateIndex_00,
+      script.scriptState_04,
       0xc,
       null,
       Bttl_800e::renderAttackHitFlashEffect,
@@ -3905,14 +3814,14 @@ public final class Bttl_800e {
 
     final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 = 0x400_0000;
-    FUN_800e95f0(((AttackHitFlashEffect0c)manager.effect_44), s1.params_20[1].get());
+    FUN_800e95f0(((AttackHitFlashEffect0c)manager.effect_44), script.params_20[1].get());
     manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
-    s1.params_20[0].set(state.index);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e9798L)
-  public static FlowControl FUN_800e9798(final RunningScript script) {
+  public static FlowControl FUN_800e9798(final RunningScript<?> script) {
     final BattleScriptDataBase a2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -3947,9 +3856,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9854L)
-  public static FlowControl FUN_800e9854(final RunningScript a0) {
+  public static FlowControl FUN_800e9854(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      a0.scriptStateIndex_00,
+      script.scriptState_04,
       0x13c,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
@@ -3960,7 +3869,7 @@ public final class Bttl_800e {
     final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
-    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x200_0000);
+    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     effect._00 = 0;
     effect.tmdType_04 = animatedTmdType;
@@ -3975,14 +3884,14 @@ public final class Bttl_800e {
     loadModelAnim(model, effect.anim_0c);
     FUN_80114f3c(state, 0, 0x100, 0);
     manager._10.flags_00 = 0x1400_0040;
-    a0.params_20[0].set(state.index);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e99bcL)
-  public static FlowControl FUN_800e99bc(final RunningScript a0) {
+  public static FlowControl FUN_800e99bc(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      a0.scriptStateIndex_00,
+      script.scriptState_04,
       0x13c,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
@@ -3992,7 +3901,7 @@ public final class Bttl_800e {
 
     final EffectManagerData6c data = state.innerStruct_00;
     data.flags_04 = 0x100_0000;
-    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x100_0000);
+    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x100_0000);
     final BttlScriptData6cSub13c s0 = (BttlScriptData6cSub13c)data.effect_44;
     s0._00 = 0;
 
@@ -4005,7 +3914,7 @@ public final class Bttl_800e {
     loadModelAnim(s0.model_134, s0.anim_0c);
     FUN_80114f3c(state, 0, 0x100, 0);
     data._10.flags_00 = 0x5400_0000;
-    a0.params_20[0].set(state.index);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4108,10 +4017,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9f68L)
-  public static FlowControl FUN_800e9f68(final RunningScript a0) {
-    final int s2 = a0.params_20[1].get();
+  public static FlowControl FUN_800e9f68(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int s2 = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      a0.scriptStateIndex_00,
+      script.scriptState_04,
       0x13c,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
@@ -4142,7 +4051,7 @@ public final class Bttl_800e {
     manager._10.rot_10.set(model.coord2Param_64.rotate);
     manager._10.scale_16.set(model.scaleVector_fc);
     manager._10.flags_00 = 0x1400_0040;
-    a0.params_20[0].set(state.index);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4154,10 +4063,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea13cL)
-  public static FlowControl FUN_800ea13c(final RunningScript a0) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ea13c(final RunningScript<?> script) {
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134;
-    final int a1 = a0.params_20[1].get() & 0xffff;
+    final int a1 = script.params_20[1].get() & 0xffff;
 
     final int index = a1 >>> 5;
     final int shift = a1 & 0x1f;
@@ -4167,10 +4076,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea19cL)
-  public static FlowControl FUN_800ea19c(final RunningScript a0) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ea19c(final RunningScript<?> script) {
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final Model124 model = ((BttlScriptData6cSub13c)manager.effect_44).model_134;
-    final int v1 = a0.params_20[1].get() & 0xffff;
+    final int v1 = script.params_20[1].get() & 0xffff;
 
     final int index = v1 >>> 5;
     final int shift = v1 & 0x1f;
@@ -4180,13 +4089,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea200L)
-  public static FlowControl FUN_800ea200(final RunningScript a0) {
-    final int effectIndex = a0.params_20[0].get();
+  public static FlowControl FUN_800ea200(final RunningScript<?> script) {
+    final int effectIndex = script.params_20[0].get();
     final ScriptState<EffectManagerData6c> state = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[effectIndex];
     final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
-    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a0.params_20[1].get() | 0x200_0000);
+    final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
     final Anim cmb = animatedTmdType.anim_14.deref();
     effect.anim_0c = cmb;
     loadModelAnim(effect.model_134, cmb);
@@ -4196,7 +4105,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea2a0L)
-  public static FlowControl FUN_800ea2a0(final RunningScript script) {
+  public static FlowControl FUN_800ea2a0(final RunningScript<?> script) {
     final BattleScriptDataBase a2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -4214,7 +4123,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea30cL)
-  public static FlowControl FUN_800ea30c(final RunningScript script) {
+  public static FlowControl FUN_800ea30c(final RunningScript<?> script) {
     final BattleScriptDataBase a3 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -4231,15 +4140,15 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea384L)
-  public static FlowControl FUN_800ea384(final RunningScript a0) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ea384(final RunningScript<?> script) {
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
     if(effect.anim_0c == null) {
-      a0.params_20[1].set(0);
+      script.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      a0.params_20[1].set((manager._10._24 + 2) / effect.model_134.s_9a);
+      script.params_20[1].set((manager._10._24 + 2) / effect.model_134.s_9a);
     }
 
     //LAB_800ea3e4
@@ -4247,7 +4156,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea3f8L)
-  public static void FUN_800ea3f8(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final MATRIX sp0x10 = new MATRIX();
     FUN_800e8594(sp0x10, manager);
 
@@ -4267,7 +4176,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea510L)
-  public static void FUN_800ea510(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_800ea510(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       if((manager._10.flags_00 & 0x40) == 0) {
@@ -4303,12 +4212,12 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea5f4L)
-  public static void FUN_800ea5f4(final int scriptIndex, final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_800ea5f4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     deallocateModel(((BttlScriptData6cSub13c)manager.effect_44).model_134);
   }
 
   @Method(0x800ea620L)
-  public static void FUN_800ea620(final MrgFile deff, final int scriptIndex) {
+  public static void FUN_800ea620(final MrgFile deff, final ScriptState<EffectManagerData6c> deffManagerState) {
     //LAB_800ea674
     for(int i = 0; i < deff.count.get(); i++) {
       final DeffPart deffPart = deff.getFile(i, DeffPart::new);
@@ -4338,8 +4247,8 @@ public final class Bttl_800e {
 
         final long a2_0 = MEMORY.ref(4, deffPart.getAddress()).offset(0x8L).get(); //TODO
 
-        if(a2_0 != tmdType.tmd_0c.getPointer() && scriptIndex != 0) {
-          FUN_800eb308((EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00, extTmd, deffPart.getAddress() + a2_0);
+        if(a2_0 != tmdType.tmd_0c.getPointer() && deffManagerState.index != 0) {
+          FUN_800eb308(deffManagerState.innerStruct_00, extTmd, deffPart.getAddress() + a2_0);
         }
       }
 
@@ -4356,7 +4265,7 @@ public final class Bttl_800e {
     final MrgFile deffMrg = MrgFile.alloc(files);
 
     final DeffManager7cc struct7cc = deffManager_800c693c;
-    FUN_800ea620(deffMrg, struct7cc.scriptIndex_1c);
+    FUN_800ea620(deffMrg, struct7cc.scriptState_1c);
 
     //LAB_800ea814
     int i;
@@ -4537,13 +4446,13 @@ public final class Bttl_800e {
   public static BttlScriptData6cSub1c FUN_800eaf54(EffectManagerData6c manager, final RECT vramPos) {
     //LAB_800eaf80
     while((manager.flags_04 & 0x400) == 0) {
-      final int parentIndex = manager.parentScriptIndex_50;
+      final ScriptState<EffectManagerData6c> parent = manager.parentScript_50;
 
-      if(parentIndex == -1) {
+      if(parent == null) {
         break;
       }
 
-      manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      manager = parent.innerStruct_00;
     }
 
     //LAB_800eafb8
@@ -4564,7 +4473,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb01cL)
-  public static FlowControl FUN_800eb01c(final RunningScript script) {
+  public static FlowControl FUN_800eb01c(final RunningScript<?> script) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
@@ -4574,13 +4483,13 @@ public final class Bttl_800e {
 
     //LAB_800eb0c0
     while((v1_0.flags_04 & 0x400) == 0) {
-      final int parentIndex = v1_0.parentScriptIndex_50;
+      final ScriptState<EffectManagerData6c> parent = v1_0.parentScript_50;
 
-      if(parentIndex == -1) {
+      if(parent == null) {
         break;
       }
 
-      v1_0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      v1_0 = parent.innerStruct_00;
     }
 
     //LAB_800eb0f8
@@ -4610,7 +4519,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb188L)
-  public static FlowControl FUN_800eb188(final RunningScript script) {
+  public static FlowControl FUN_800eb188(final RunningScript<?> script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()];
     final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
@@ -4710,7 +4619,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb518L)
-  public static FlowControl FUN_800eb518(final RunningScript script) {
+  public static FlowControl FUN_800eb518(final RunningScript<?> script) {
     FUN_800eb48c(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
@@ -4749,7 +4658,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb84cL)
-  public static FlowControl FUN_800eb84c(final RunningScript script) {
+  public static FlowControl FUN_800eb84c(final RunningScript<?> script) {
     EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
@@ -4758,13 +4667,13 @@ public final class Bttl_800e {
 
     //LAB_800eb8fc
     while((manager.flags_04 & 0x400) == 0) {
-      final int parentIndex = manager.parentScriptIndex_50;
+      final ScriptState<EffectManagerData6c> parent = manager.parentScript_50;
 
-      if(parentIndex == -1) {
+      if(parent == null) {
         break;
       }
 
-      manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      manager = parent.innerStruct_00;
     }
 
     //LAB_800eb934
@@ -5329,52 +5238,52 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee210L)
-  public static FlowControl scriptCopyVram(final RunningScript script) {
+  public static FlowControl scriptCopyVram(final RunningScript<?> script) {
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee2acL)
-  public static FlowControl scriptSetBobjZOffset(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.zOffset_a0 = a0.params_20[1].get();
+  public static FlowControl scriptSetBobjZOffset(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.model_148.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee2e4L)
-  public static FlowControl scriptSetBobjScaleUniform(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    final int scale = a0.params_20[1].get();
+  public static FlowControl scriptSetBobjScaleUniform(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final int scale = script.params_20[1].get();
     bobj.model_148.scaleVector_fc.set(scale, scale, scale);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee324L)
-  public static FlowControl scriptSetBobjScale(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.scaleVector_fc.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+  public static FlowControl scriptSetBobjScale(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.model_148.scaleVector_fc.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee384L)
-  public static FlowControl FUN_800ee384(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ee384(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.b_cc = 2;
     bobj.model_148.b_cd = -1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee3c0L)
-  public static FlowControl FUN_800ee3c0(final RunningScript a0) {
-    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ee3c0(final RunningScript<?> script) {
+    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     v1.model_148.b_cc = 3;
-    v1.model_148.b_cd = a0.params_20[1].get();
+    v1.model_148.b_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee408L)
-  public static FlowControl FUN_800ee408(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ee408(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final int a0_0 = bobj.model_148.b_cd;
     if(a0_0 == -2) {
       //LAB_800ee450
@@ -5391,53 +5300,53 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee468L)
-  public static FlowControl FUN_800ee468(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
+  public static FlowControl FUN_800ee468(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.b_cc = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee49cL)
-  public static FlowControl FUN_800ee49c(final RunningScript a0) {
-    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    a1.model_148.vector_10c.setX(a0.params_20[1].get());
-    a1.model_148.vector_10c.setZ(a0.params_20[2].get());
+  public static FlowControl FUN_800ee49c(final RunningScript<?> script) {
+    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    a1.model_148.vector_10c.setX(script.params_20[1].get());
+    a1.model_148.vector_10c.setZ(script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee4e8L)
-  public static FlowControl FUN_800ee4e8(final RunningScript a0) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    bobj.model_148.vector_118.set(a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+  public static FlowControl FUN_800ee4e8(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.model_148.vector_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee548L)
-  public static FlowControl scriptApplyScreenDarkening(final RunningScript script) {
+  public static FlowControl scriptApplyScreenDarkening(final RunningScript<?> script) {
     applyScreenDarkening(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee574L)
-  public static FlowControl scriptGetStageNobj(final RunningScript script) {
+  public static FlowControl scriptGetStageNobj(final RunningScript<?> script) {
     script.params_20[0].set(stage_800bda0c.objTable2_550.nobj);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee594L)
-  public static FlowControl FUN_800ee594(final RunningScript a0) {
+  public static FlowControl FUN_800ee594(final RunningScript<?> a0) {
     stage_800bda0c._5e4 |= 1L << a0.params_20[0].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee5c0L)
-  public static FlowControl FUN_800ee5c0(final RunningScript a0) {
+  public static FlowControl FUN_800ee5c0(final RunningScript<?> a0) {
     stage_800bda0c._5e4 &= ~(1L << a0.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee5f0L)
-  public static FlowControl scriptSetStageZ(final RunningScript script) {
+  public static FlowControl scriptSetStageZ(final RunningScript<?> script) {
     stage_800bda0c.z_5e8 = script.params_20[0].get();
     return FlowControl.CONTINUE;
   }
