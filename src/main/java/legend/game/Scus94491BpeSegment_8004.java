@@ -2692,7 +2692,13 @@ public final class Scus94491BpeSegment_8004 {
 
     final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
     final SpuStruct44 a3 = _800c6630;
-    final SshdFile sshd = sound.sshdPtr_04.deref();
+    final SshdFile sshd = sound.sshdPtr_04.derefNullable();
+
+    //TODO GH#3 this shouldn't be necessary
+    if(sshd == null) {
+      return 0;
+    }
+
     a3.sshdPtr_08.set(sshd);
     sshdPtr_800c4ac0.set(sshd);
     final long t1 = sshd.getAddress() + sshd.ptr_1c.get();
@@ -2735,7 +2741,7 @@ public final class Scus94491BpeSegment_8004 {
   public static long FUN_80048d44(final int playableSoundIndex, final long a1, final long a2) {
     final long v0 = FUN_80048c38(playableSoundIndex, a1, a2);
     if(v0 == 0) {
-      assert false : "Error";
+//      assert false : "Error"; //TODO GH#3
       return -0x1L;
     }
 
