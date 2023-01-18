@@ -116,7 +116,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
@@ -126,10 +125,6 @@ import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment.setScriptRenderer;
-import static legend.game.Scus94491BpeSegment.setScriptTempTicker;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -139,7 +134,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
@@ -157,6 +151,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
+import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
@@ -298,7 +293,7 @@ public final class SMap {
   public static List<byte[]> submapAssetsMrg_800c6878;
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
-  public static final ArrayRef<IntRef> sobjIndices_800c6880 = MEMORY.ref(4, 0x800c6880L, ArrayRef.of(IntRef.class, 20, 4, IntRef::new));
+  public static final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
   public static final BoolRef submapScriptsLoaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L, BoolRef::new);
 
   public static List<byte[]> submapScriptsMrg_800c68d8;
@@ -1188,7 +1183,7 @@ public final class SMap {
 
       //LAB_800de2cc
       player.us_170 = 0;
-      setScriptTempTicker(sobjIndices_800c6880.get(player.sobjIndex_130).get(), SMap::FUN_800e3e60);
+      sobjs_800c6880[player.sobjIndex_130].setTempTicker(SMap::FUN_800e3e60);
       playerPos_800c68e8.set(worldspaceDeltaMovement);
     }
 
@@ -1365,7 +1360,7 @@ public final class SMap {
     sobj.vec_160.y.set(0);
     sobj.vec_160.z.set(0);
 
-    setScriptTempTicker(sobjIndices_800c6880.get(sobj.sobjIndex_130).get(), SMap::FUN_800e1f90);
+    sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e1f90);
 
     sobj.flags_190 &= 0x7fff_ffff;
     return FlowControl.CONTINUE;
@@ -1416,7 +1411,7 @@ public final class SMap {
     sobj.us_170 = 2;
     sobj.s_172 = 1;
     sobj.ui_18c = 7;
-    setScriptTempTicker(sobjIndices_800c6880.get(sobj.sobjIndex_130).get(), SMap::FUN_800e3e74);
+    sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e3e74);
     return FlowControl.CONTINUE;
   }
 
@@ -1466,7 +1461,7 @@ public final class SMap {
     sobj.vec_160.setX(0);
     sobj.vec_160.setZ(0);
     sobj.s_134 = ((sobj.vec_138.getY() - sobj.model_00.coord2_14.coord.transfer.getY()) * 2 - a3 * sobj.ui_18c * (a3 - 1)) / (a3 * 2);
-    setScriptTempTicker(sobjIndices_800c6880.get(sobj.sobjIndex_130).get(), SMap::FUN_800e3e74);
+    sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e3e74);
     return FlowControl.CONTINUE;
   }
 
@@ -1516,7 +1511,7 @@ public final class SMap {
     //LAB_800df02c
     // Handle collision with other sobjs
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-      final SubmapObject210 struct = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00;
+      final SubmapObject210 struct = sobjs_800c6880[i].innerStruct_00;
 
       if(struct != sobj && (struct.flags_190 & 0x10_0000) != 0) {
         final int x = struct.model_00.coord2_14.coord.transfer.getX() - (model.coord2_14.coord.transfer.getX() + movement.getX() + reachX);
@@ -1728,7 +1723,7 @@ public final class SMap {
 
     //LAB_800df744
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00;
+      final SubmapObject210 sobj = sobjs_800c6880[i].innerStruct_00;
       sobj.s_178 = 0;
     }
 
@@ -2070,7 +2065,7 @@ public final class SMap {
     if(script.params_20[1].get() != 0) {
       //LAB_800e035c
       for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-        final SubmapObject210 struct2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00;
+        final SubmapObject210 struct2 = sobjs_800c6880[i].innerStruct_00;
 
         if(struct2.sobjIndex_130 != struct1.sobjIndex_130) {
           struct2.s_178 = 0;
@@ -2511,7 +2506,7 @@ public final class SMap {
       queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x8000);
     }
 
-    if(sobjIndices_800c6880.get(0).get() == index) {
+    if(sobjs_800c6880[0].index == index) {
       transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, x0, y0, x1, y1);
       queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x80);
     }
@@ -2835,9 +2830,9 @@ public final class SMap {
 
         GPU.uploadData(imageRect, tim.getData(), tim.getImageData());
 
-        final int submapScriptIndex = allocateScriptState(0, null, 0, null);
-        submapScriptIndex_800c6740.set(submapScriptIndex);
-        loadScriptFile(submapScriptIndex, submapAssets.script);
+        final ScriptState<Void> submapController = allocateScriptState(0, null, 0, null);
+        submapScriptIndex_800c6740.set(submapController.index);
+        submapController.loadScriptFile(submapAssets.script);
 
         //LAB_800e1a38
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
@@ -2873,15 +2868,14 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           final SubmapObject obj = submapAssets.objects.get(i);
 
-          final int submapObjectScriptIndex = allocateScriptState(new SubmapObject210());
-          sobjIndices_800c6880.get(i).set(submapObjectScriptIndex);
-          setScriptTicker(submapObjectScriptIndex, SMap::submapObjectTicker);
-          setScriptRenderer(submapObjectScriptIndex, SMap::submapObjectRenderer);
-          setScriptDestructor(submapObjectScriptIndex, SMap::scriptDestructor);
-          loadScriptFile(submapObjectScriptIndex, obj.script);
+          final ScriptState<SubmapObject210> state = allocateScriptState(new SubmapObject210());
+          sobjs_800c6880[i] = state;
+          state.setTicker(SMap::submapObjectTicker);
+          state.setRenderer(SMap::submapObjectRenderer);
+          state.setDestructor(SMap::scriptDestructor);
+          state.loadScriptFile(obj.script);
 
-          final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[submapObjectScriptIndex].innerStruct_00;
-          final Model124 model = sobj.model_00;
+          final Model124 model = state.innerStruct_00.model_00;
           model.colourMap_9d = (int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get();
 
           final ExtendedTmd tmd = submapObjectModels_800c6a00.get(i).deref();
@@ -2895,39 +2889,39 @@ public final class SMap {
           }
 
           //LAB_800e1c50
-          sobj.s_128 = 0;
-          sobj.us_12a = 0;
-          sobj.us_12c = 0;
-          sobj.sobjIndex_12e = i;
-          sobj.sobjIndex_130 = i;
-          sobj.animIndex_132 = 0;
-          sobj.s_134 = 0;
-          sobj.i_144 = 0;
-          sobj.ui_16c = -1;
-          sobj.us_170 = 0;
-          sobj.s_172 = 0;
-          sobj.rotationFrames_188 = 0;
-          sobj.showAlertIndicator_194 = false;
-          sobj.collidedWithSobjIndex_19c = -1;
-          sobj.collisionSizeHorizontal_1a0 = 20;
-          sobj.collisionSizeVertical_1a4 = 20;
-          sobj.collidedWithSobjIndex_1a8 = -1;
-          sobj.collisionSizeHorizontal_1ac = 20;
-          sobj.collisionSizeVertical_1b0 = 20;
-          sobj.collisionReach_1b4 = 50;
-          sobj.playerCollisionSizeHorizontal_1b8 = 20;
-          sobj.playerCollisionSizeVertical_1bc = 20;
-          sobj.playerCollisionReach_1c0 = 50;
-          sobj.flatLightingEnabled_1c4 = false;
-          sobj.flatLightRed_1c5 = 0x80;
-          sobj.flatLightGreen_1c6 = 0x80;
-          sobj.flatLightBlue_1c7 = 0x80;
+          state.innerStruct_00.s_128 = 0;
+          state.innerStruct_00.us_12a = 0;
+          state.innerStruct_00.us_12c = 0;
+          state.innerStruct_00.sobjIndex_12e = i;
+          state.innerStruct_00.sobjIndex_130 = i;
+          state.innerStruct_00.animIndex_132 = 0;
+          state.innerStruct_00.s_134 = 0;
+          state.innerStruct_00.i_144 = 0;
+          state.innerStruct_00.ui_16c = -1;
+          state.innerStruct_00.us_170 = 0;
+          state.innerStruct_00.s_172 = 0;
+          state.innerStruct_00.rotationFrames_188 = 0;
+          state.innerStruct_00.showAlertIndicator_194 = false;
+          state.innerStruct_00.collidedWithSobjIndex_19c = -1;
+          state.innerStruct_00.collisionSizeHorizontal_1a0 = 20;
+          state.innerStruct_00.collisionSizeVertical_1a4 = 20;
+          state.innerStruct_00.collidedWithSobjIndex_1a8 = -1;
+          state.innerStruct_00.collisionSizeHorizontal_1ac = 20;
+          state.innerStruct_00.collisionSizeVertical_1b0 = 20;
+          state.innerStruct_00.collisionReach_1b4 = 50;
+          state.innerStruct_00.playerCollisionSizeHorizontal_1b8 = 20;
+          state.innerStruct_00.playerCollisionSizeVertical_1bc = 20;
+          state.innerStruct_00.playerCollisionReach_1c0 = 50;
+          state.innerStruct_00.flatLightingEnabled_1c4 = false;
+          state.innerStruct_00.flatLightRed_1c5 = 0x80;
+          state.innerStruct_00.flatLightGreen_1c6 = 0x80;
+          state.innerStruct_00.flatLightBlue_1c7 = 0x80;
 
           if(i == 0) { // Player
-            sobj.s_178 = 1;
+            state.innerStruct_00.s_178 = 1;
           } else {
             //LAB_800e1ce0
-            sobj.s_178 = 0;
+            state.innerStruct_00.s_178 = 0;
           }
 
           //LAB_800e1ce4
@@ -2935,16 +2929,16 @@ public final class SMap {
           model.coord2_14.coord.transfer.set(pos.pos_00);
           model.coord2Param_64.rotate.set(pos.rot_0c);
 
-          sobj.ui_18c = 7;
-          sobj.flags_190 = 0;
+          state.innerStruct_00.ui_18c = 7;
+          state.innerStruct_00.flags_190 = 0;
 
           if(i == 0) {
-            sobj.flags_190 = 0x1;
+            state.innerStruct_00.flags_190 = 0x1;
             FUN_800e4d88(index, model);
           }
 
           //LAB_800e1d60
-          FUN_800f04ac(sobj._1d0);
+          FUN_800f04ac(state.innerStruct_00._1d0);
         }
 
         //LAB_800e1d88
@@ -3129,13 +3123,13 @@ public final class SMap {
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
       final SobjPos14 pos = sobjPositions_800bd818.get(i);
 
-      final int sobjIndex = sobjIndices_800c6880.get(i).get();
-      if(sobjIndex != -1) {
-        final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndex].innerStruct_00;
+      final ScriptState<SubmapObject210> sobjState = sobjs_800c6880[i];
+      if(sobjState != null) {
+        final SubmapObject210 sobj = sobjState.innerStruct_00;
         final Model124 model = sobj.model_00;
         pos.pos_00.set(model.coord2_14.coord.transfer);
         pos.rot_0c.set(model.coord2Param_64.rotate);
-        deallocateScriptAndChildren(sobjIndices_800c6880.get(i).get());
+        deallocateScriptAndChildren(sobjs_800c6880[i].index);
       } else {
         //LAB_800e231c
         pos.pos_00.set(0, 0, 0);
@@ -3582,8 +3576,8 @@ public final class SMap {
   public static void scriptDestructor(final int index, final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     //LAB_800e3e24
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-      if(sobjIndices_800c6880.get(i).get() == index) {
-        sobjIndices_800c6880.get(i).set(-1);
+      if(sobjs_800c6880[i] == state) {
+        sobjs_800c6880[i] = null;
       }
 
       //LAB_800e3e38
@@ -3689,7 +3683,7 @@ public final class SMap {
     //LAB_800e43f0
     //LAB_800e4414
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-      final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00;
+      final SubmapObject210 sobj2 = sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
       if(sobj2 != sobj && (sobj2.flags_190 & a1) != 0) {
@@ -3724,7 +3718,7 @@ public final class SMap {
     //LAB_800e45dc
     //LAB_800e4600
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-      final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00;
+      final SubmapObject210 sobj2 = sobjs_800c6880[i].innerStruct_00;
       final Model124 model2 = sobj2.model_00;
 
       if(sobj2 != sobj && (sobj2.flags_190 & a1) != 0) {
@@ -3877,7 +3871,7 @@ public final class SMap {
       return 0;
     }
 
-    if(!hasPlayerMoved(((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).model_00.coord2_14.coord)) {
+    if(!hasPlayerMoved(sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.coord)) {
       return 0;
     }
 
@@ -4033,7 +4027,7 @@ public final class SMap {
         return;
       }
 
-      matrices[i] = ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(i).get()].innerStruct_00).model_00.coord2_14.coord;
+      matrices[i] = sobjs_800c6880[i].innerStruct_00.model_00.coord2_14.coord;
     }
 
     //LAB_800e5234
@@ -4143,7 +4137,7 @@ public final class SMap {
 
   @Method(0x800e5518L)
   public static boolean isScriptLoaded(final int index) {
-    return sobjIndices_800c6880.get(index).get() >= 0 && sobjIndices_800c6880.get(index).get() < 64;
+    return sobjs_800c6880[index] != null;
   }
 
   /** Part of map transitioning */
@@ -4270,7 +4264,7 @@ public final class SMap {
     encounterId_800bb0f8.set(scene);
 
     if(isScriptLoaded(0)) {
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00;
+      final SubmapObject210 sobj = sobjs_800c6880[0].innerStruct_00;
       final Model124 model = sobj.model_00;
 
       getScreenOffset(screenOffsetX_800bed50, screenOffsetY_800bed54);
@@ -4441,7 +4435,7 @@ public final class SMap {
         executeSceneGraphicsLoadingStage(_800caaf8.get());
         if(loadingStage_800c68e4.get() == 0xaL) {
           if(isScriptLoaded(0)) {
-            ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).ui_16c = _800caaf8.get();
+            sobjs_800c6880[0].innerStruct_00.ui_16c = _800caaf8.get();
           }
 
           //LAB_800e5e94
@@ -4544,7 +4538,7 @@ public final class SMap {
       case 0x11 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         if(isScriptLoaded(0)) {
-          ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).us_12a = 1;
+          sobjs_800c6880[0].innerStruct_00.us_12a = 1;
         }
 
         //LAB_800e61bc
@@ -4933,7 +4927,7 @@ public final class SMap {
 
   @Method(0x800e6be0L)
   public static FlowControl FUN_800e6be0(final RunningScript a0) {
-    final MATRIX coord = ((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(a0.params_20[0].get()).get()].innerStruct_00).model_00.coord2_14.coord;
+    final MATRIX coord = sobjs_800c6880[a0.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
     a0.params_20[1].set((worldToScreenMatrix_800c3548.get(6) * coord.transfer.getX() + worldToScreenMatrix_800c3548.get(7) * coord.transfer.getY() + worldToScreenMatrix_800c3548.get(8) * coord.transfer.getZ() >> 12) + worldToScreenMatrix_800c3548.transfer.getZ() >> 16 - orderingTableBits_1f8003c0.get());
     return FlowControl.CONTINUE;
   }
@@ -6467,8 +6461,7 @@ public final class SMap {
   public static void FUN_800ea84c(final MediumStruct a0) {
     if(isScriptLoaded(0)) {
       if(a0._44.get() != 0) {
-        final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00;
-        index_80052c38.set(sobj.ui_16c);
+        index_80052c38.set(sobjs_800c6880[0].innerStruct_00.ui_16c);
 
         //LAB_800ea8d4
         for(int i = 0; i < a0.count_40.get(); i++) {
@@ -6487,8 +6480,7 @@ public final class SMap {
   @Method(0x800ea90cL)
   public static void FUN_800ea90c(final MediumStruct a0) {
     if(isScriptLoaded(0)) {
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00;
-      index_80052c38.set(sobj.ui_16c);
+      index_80052c38.set(sobjs_800c6880[0].innerStruct_00.ui_16c);
     }
   }
 
@@ -8876,7 +8868,7 @@ public final class SMap {
     }
 
     final MATRIX ls = new MATRIX();
-    GsGetLs(((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndices_800c6880.get(0).get()].innerStruct_00).model_00.coord2_14, ls);
+    GsGetLs(sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, ls);
 
     PushMatrix();
     CPU.CTC2(ls.getPacked(0), 0); //

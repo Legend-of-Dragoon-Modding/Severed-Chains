@@ -26,17 +26,13 @@ import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c._800c6718;
@@ -47,9 +43,8 @@ import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
-import static legend.game.combat.Bttl_800c.scriptIndex_800c674c;
+import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.script_800c670c;
 import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
@@ -100,9 +95,8 @@ public class SBtld {
 
   @Method(0x80109170L)
   public static void FUN_80109170(final byte[] file) {
-    script_800c670c = new ScriptFile("DRGN1.401", file);
-    scriptIndex_800c674c.set(allocateScriptState(5, null, 0, null));
-    loadScriptFile(scriptIndex_800c674c.get(), script_800c670c);
+    scriptState_800c674c = allocateScriptState(5, null, 0, null);
+    scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file));
 
     final long v1;
     if((simpleRand() & 0x8000L) == 0) {
@@ -209,13 +203,12 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final int bobjIndex = allocateScriptState(new BattleObject27c());
-      setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
-      setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
-      _8006e398.bobjIndices_e0c[_800c66d0.get()] = bobjIndex;
-      _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = bobjIndex;
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-      final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
+      final ScriptState<BattleObject27c> state = allocateScriptState(new BattleObject27c());
+      state.setTicker(Bttl_800c::bobjTicker);
+      state.setDestructor(Bttl_800c::bobjDestructor);
+      _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
+      _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = state;
+      final BattleObject27c data = state.innerStruct_00;
       data.magic_00 = BattleScriptDataBase.BOBJ;
       data.charIndex_272 = charIndex;
       data._274 = _800c66d0.get();
@@ -230,8 +223,8 @@ public class SBtld {
     }
 
     //LAB_8010975c
-    _8006e398.bobjIndices_e0c[_800c66d0.get()] = -1;
-    _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = -1;
+    _8006e398.bobjIndices_e0c[_800c66d0.get()] = null;
+    _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = null;
 
     //LAB_801097ac
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {

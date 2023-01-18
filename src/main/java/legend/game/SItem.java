@@ -39,6 +39,7 @@ import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
+import legend.game.types.ScriptState;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
@@ -66,8 +67,6 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
@@ -120,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -349,12 +347,12 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final int bobjIndex = allocateScriptState(charSlot + 6, null, 0, new BattleObject27c());
-      setScriptTicker(bobjIndex, Bttl_800c::bobjTicker);
-      setScriptDestructor(bobjIndex, Bttl_800c::bobjDestructor);
-      _8006e398.bobjIndices_e0c[_800c66d0.get()] = bobjIndex;
-      _8006e398.charBobjIndices_e40[charSlot] = bobjIndex;
-      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+      final ScriptState<BattleObject27c> state = allocateScriptState(charSlot + 6, null, 0, new BattleObject27c());
+      state.setTicker(Bttl_800c::bobjTicker);
+      state.setDestructor(Bttl_800c::bobjDestructor);
+      _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
+      _8006e398.charBobjIndices_e40[charSlot] = state;
+      final BattleObject27c bobj = state.innerStruct_00;
       bobj.magic_00 = BattleScriptDataBase.BOBJ;
       bobj.combatant_144 = getCombatant((short)charIndices[charSlot]);
       bobj.charIndex_272 = charIndex;
@@ -369,8 +367,8 @@ public final class SItem {
     }
 
     //LAB_800fbf6c
-    _8006e398.bobjIndices_e0c[_800c66d0.get()] = -1;
-    _8006e398.charBobjIndices_e40[charCount_800c677c.get()] = -1;
+    _8006e398.bobjIndices_e0c[_800c66d0.get()] = null;
+    _8006e398.charBobjIndices_e40[charCount_800c677c.get()] = null;
 
     FUN_800f863c();
     decrementOverlayCount();
@@ -392,7 +390,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398[((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[i]].innerStruct_00).combatantIndex_26c].flags_19e |= 0x2a;
+      combatants_8005e398[_8006e398.charBobjIndices_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
     }
 
     //LAB_800fc104
@@ -405,7 +403,7 @@ public final class SItem {
   @Method(0x800fc210L)
   public static void loadCharTmdAndAnims(final List<byte[]> files, final int charSlot) {
     //LAB_800fc260
-    final BattleObject27c data = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[charSlot]].innerStruct_00;
+    final BattleObject27c data = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
 
     //LAB_800fc298
     combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
@@ -464,7 +462,7 @@ public final class SItem {
     final long tim = mallocTail(file.length);
     MEMORY.setBytes(tim, file);
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[charSlot]].innerStruct_00;
+    final BattleObject27c bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
     loadCombatantTim(bobj.combatantIndex_26c, tim);
 
     free(tim);

@@ -22,7 +22,6 @@ import legend.game.types.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
@@ -127,16 +126,15 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final int bobjIndex = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
 
-    if(bobjIndex == -1) {
+    if(state == null) {
       return;
     }
 
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+    final BattleObject27c bobj = state.innerStruct_00;
 
-    this.scriptIndex.setText("View script %d".formatted(bobjIndex));
+    this.scriptIndex.setText("View script %d".formatted(state.index));
 
     this.level.getValueFactory().setValue(bobj.level_04);
     this.dlevel.getValueFactory().setValue(bobj.dlevel_06);
@@ -159,14 +157,13 @@ public class CombatDebuggerController {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final int bobjIndex = _8006e398.bobjIndices_e0c[combatantIndex];
+    final ScriptState<BattleObject27c> state = _8006e398.bobjIndices_e0c[combatantIndex];
 
-    if(bobjIndex == -1) {
+    if(state == null) {
       return "unused";
     }
 
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+    final BattleObject27c bobj = state.innerStruct_00;
 
     final CombatantStruct1a8 combatant = combatants_8005e398[bobj.combatantIndex_26c];
 
@@ -186,10 +183,10 @@ public class CombatDebuggerController {
       return;
     }
 
-    final int scriptIndex = _8006e398.bobjIndices_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<BattleObject27c> state = _8006e398.bobjIndices_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
-    scriptDebugger.preselectScript(scriptIndex).start(new Stage());
+    scriptDebugger.preselectScript(state.index).start(new Stage());
   }
 
   public void refreshStats(final ActionEvent event) {
@@ -198,14 +195,13 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bobjList.getSelectionModel().getSelectedIndex();
-    final int bobjIndex = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
 
-    if(bobjIndex == -1) {
+    if(state == null) {
       return;
     }
 
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+    final BattleObject27c bobj = state.innerStruct_00;
 
     bobj.level_04 = this.level.getValue();
     bobj.dlevel_06 = this.dlevel.getValue();

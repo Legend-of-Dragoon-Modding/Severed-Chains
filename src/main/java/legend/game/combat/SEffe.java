@@ -110,7 +110,6 @@ import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -118,9 +117,6 @@ import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment.setScriptRenderer;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -2245,7 +2241,7 @@ public final class SEffe {
     // Calculate the index of this array element
     _8011a008.setu((a3.getAddress() - a2._68.deref().get(0).getAddress()) / 0x94);
 
-    FUN_80101308(a0, a1, a2, a3, a2._08);
+    FUN_80101308(a1, a2, a3, a2._08);
 
     if(a2._54.get() != 0) {
       final int v1 = a2._60.get();
@@ -2301,7 +2297,7 @@ public final class SEffe {
   }
 
   @Method(0x80101308L)
-  public static void FUN_80101308(long a0, final EffectManagerData6c sp3c, final EffectData98 fp, final EffectData98Sub94 s3, final EffectData98Inner24 a4) {
+  public static void FUN_80101308(final EffectManagerData6c sp3c, final EffectData98 fp, final EffectData98Sub94 s3, final EffectData98Inner24 a4) {
     long v1;
     final long a1;
     final long t2;
@@ -2344,7 +2340,7 @@ public final class SEffe {
     brokenT2For800ff5c4 = t2;
     s3._04.set((short)(seed_800fa754.advance().get() % (a4._14.get() + 1) + 1));
     s3._12.set((short)((a4._1c.get() & 0xff_0000L) >>> 16));
-    a0 = (a4._1c.get() & 0xff00L) >>> 8;
+    final long a0 = (a4._1c.get() & 0xff00L) >>> 8;
     s3._84.set((short)a0);
     s3._86.set((short)a0);
     s3._88.set((short)a0);
@@ -2518,7 +2514,7 @@ public final class SEffe {
 
   @Method(0x80102088L)
   public static FlowControl FUN_80102088(final RunningScript s2) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       s2.scriptStateIndex_00,
       0x98,
       null,
@@ -2527,7 +2523,7 @@ public final class SEffe {
       EffectData98::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final EffectData98 effect = (EffectData98)manager.effect_44;
     effect.count_50.set(s2.params_20[3].get());
     effect.size_64.set(effect.count_50.get() * 0x94);
@@ -2545,7 +2541,7 @@ public final class SEffe {
     _8011a010.set(effect);
 
     //LAB_801021c0
-    effect.scriptIndex_00.set(effectIndex);
+    effect.scriptIndex_00.set(state.index);
     effect.scriptIndex_04.set(s2.params_20[1].get());
     effect._84.set(_80119bac.get(s2.params_20[8].get()).deref());
     effect._88.set(_80119cb0.get(s2.params_20[8].get()).deref());
@@ -2555,7 +2551,7 @@ public final class SEffe {
     effect._6c.set(0);
     effect._94.clear();
     effect._8c.set(_80119db4.get(s2.params_20[8].get()).deref());
-    s2.params_20[0].set(effectIndex);
+    s2.params_20[0].set(state.index);
 
     //LAB_8010223c
     for(int i = 0; i < 9; i++) {
@@ -2567,7 +2563,7 @@ public final class SEffe {
     for(int i = 0; i < effect.count_50.get(); i++) {
       final EffectData98Sub94 s2_0 = effect._68.deref().get(i);
       _8011a008.setu(i);
-      FUN_80101308(effectIndex, manager, effect, s2_0, effect._08);
+      FUN_80101308(manager, effect, s2_0, effect._08);
       s2_0._3c.set(s2_0._50);
     }
 
@@ -3382,7 +3378,7 @@ public final class SEffe {
     final int s1 = script.params_20[7].get();
 
     //TODO counter-attack electricity
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x38,
       null,
@@ -3391,7 +3387,7 @@ public final class SEffe {
       BttlScriptData6cSub38::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub38 effect = (BttlScriptData6cSub38)manager.effect_44;
     effect.count_00.set(script.params_20[3].get());
     effect._04.set(0);
@@ -3435,7 +3431,7 @@ public final class SEffe {
     manager._10._28 = 0x100;
     manager._10._30 = 3;
 
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -3535,12 +3531,12 @@ public final class SEffe {
     final int s3 = script.params_20[1].get();
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     final BttlScriptData6cSub38 s1 = (BttlScriptData6cSub38)manager.effect_44;
-    final int effectIndex = allocateScriptState(new BttlScriptData6cSub1c_2());
-    loadScriptFile(effectIndex, doNothingScript_8004f650);
-    setScriptTicker(effectIndex, SEffe::FUN_80105aa0);
-    setScriptRenderer(effectIndex, SEffe::FUN_80105704);
-    setScriptDestructor(effectIndex, SEffe::FUN_80105bb8);
-    final BttlScriptData6cSub1c_2 effect = (BttlScriptData6cSub1c_2)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final ScriptState<BttlScriptData6cSub1c_2> state = allocateScriptState(new BttlScriptData6cSub1c_2());
+    state.loadScriptFile(doNothingScript_8004f650);
+    state.setTicker(SEffe::FUN_80105aa0);
+    state.setRenderer(SEffe::FUN_80105704);
+    state.setDestructor(SEffe::FUN_80105bb8);
+    final BttlScriptData6cSub1c_2 effect = state.innerStruct_00;
     effect.count_00 = s1.count_00.get();
     effect._04 = s3;
     effect.count_0c = s1._28.get();
@@ -4217,7 +4213,7 @@ public final class SEffe {
 
   @Method(0x801077e8L)
   public static FlowControl allocateAdditionOverlaysEffect(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x44,
       SEffe::tickAdditionOverlaysEffect,
@@ -4226,10 +4222,9 @@ public final class SEffe {
       AdditionOverlaysEffect44::new
     );
 
-    final ScriptState<?> manager = scriptStatePtrArr_800bc1c0[effectIndex];
-    FUN_801062a8(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)((EffectManagerData6c)manager.innerStruct_00).effect_44, script.params_20[2].get());
-    manager.storage_44[8] = 0;
-    script.params_20[4].set(effectIndex);
+    FUN_801062a8(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
+    state.storage_44[8] = 0;
+    script.params_20[4].set(state.index);
     _80119f41.setu(0x1L);
     return FlowControl.CONTINUE;
   }
@@ -4546,12 +4541,12 @@ public final class SEffe {
     final int s4 = script.params_20[1].get();
     final int s2 = script.params_20[0].get();
 
-    final int scriptIndex = allocateScriptState(new DragoonAdditionScriptData1c());
-    loadScriptFile(scriptIndex, doNothingScript_8004f650);
-    setScriptTicker(scriptIndex, SEffe::FUN_80108574);
-    setScriptRenderer(scriptIndex, SEffe::FUN_80108514);
+    final ScriptState<DragoonAdditionScriptData1c> state = allocateScriptState(new DragoonAdditionScriptData1c());
+    state.loadScriptFile(doNothingScript_8004f650);
+    state.setTicker(SEffe::FUN_80108574);
+    state.setRenderer(SEffe::FUN_80108514);
 
-    final DragoonAdditionScriptData1c s1 = (DragoonAdditionScriptData1c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final DragoonAdditionScriptData1c s1 = state.innerStruct_00;
     s1._00 = 1;
     s1._02 = 0;
     s1._04 = 0;
@@ -4594,7 +4589,7 @@ public final class SEffe {
     //LAB_80108984
     _80119f40.setu(0);
     _80119f42.setu(0);
-    _8011a024.setu(scriptIndex);
+    _8011a024.setu(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4677,11 +4672,10 @@ public final class SEffe {
   public static void FUN_80108cf4() {
     playSound(0, 50, 0, 0, (short)0, (short)0);
 
-    final int scriptIndex = allocateScriptState(new EffeScriptData30());
-    loadScriptFile(scriptIndex, doNothingScript_8004f650);
-    setScriptTicker(scriptIndex, SEffe::FUN_801089e8);
-    setScriptDestructor(scriptIndex, SEffe::doNothingScriptDestructor);
-    final EffeScriptData30 data = (EffeScriptData30)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final ScriptState<EffeScriptData30> state = allocateScriptState(new EffeScriptData30());
+    state.loadScriptFile(doNothingScript_8004f650);
+    state.setTicker(SEffe::FUN_801089e8);
+    final EffeScriptData30 data = state.innerStruct_00;
 
     //LAB_80108d9c
     int s2 = (int)_8011a01c.get();
@@ -4710,7 +4704,7 @@ public final class SEffe {
 
   @Method(0x80108df8L)
   public static FlowControl FUN_80108df8(final RunningScript a0) {
-    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -4767,7 +4761,7 @@ public final class SEffe {
   @Method(0x80109158L)
   public static FlowControl FUN_80109158(final RunningScript a0) {
     final int count = a0.params_20[1].get();
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x8,
       SEffe::FUN_80109000,
@@ -4776,7 +4770,7 @@ public final class SEffe {
       BttlScriptData6cSub08_3::new
     );
 
-    final EffectManagerData6c s1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c s1 = state.innerStruct_00;
     final BttlScriptData6cSub08_3 s0 = (BttlScriptData6cSub08_3)s1.effect_44;
     long t1 = mallocTail(count * 0xcL);
     s0.count_00.set(count);
@@ -4793,7 +4787,7 @@ public final class SEffe {
     }
 
     //LAB_80109328
-    a0.params_20[0].set(scriptIndex);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4901,7 +4895,7 @@ public final class SEffe {
 
   @Method(0x80109a7cL)
   public static FlowControl allocateScreenDistortionEffect(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x8,
       // Ticker and renderer are swapped for some reason
@@ -4911,12 +4905,12 @@ public final class SEffe {
       ScreenDistortionEffectData08::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)manager.effect_44;
     effect.angle_00.set(0x800);
     effect.angleStep_04.set(script.params_20[1].get());
     manager._10.flags_00 = 0x4000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4975,17 +4969,17 @@ public final class SEffe {
   public static FlowControl FUN_80109d30(final RunningScript a0) {
     final int s5 = a0.params_20[2].get();
     final int s4 = a0.params_20[3].get();
-    final int s2 = allocateScriptState(new EffeScriptData18());
-    loadScriptFile(s2, doNothingScript_8004f650);
-    setScriptTicker(s2, SEffe::FUN_80109b44);
-    setScriptRenderer(s2, SEffe::FUN_80109b3c);
-    setScriptDestructor(s2, SEffe::FUN_80109cf0);
+    final ScriptState<EffeScriptData18> state = allocateScriptState(new EffeScriptData18());
+    state.loadScriptFile(doNothingScript_8004f650);
+    state.setTicker(SEffe::FUN_80109b44);
+    state.setRenderer(SEffe::FUN_80109b3c);
+    state.setDestructor(SEffe::FUN_80109cf0);
     long v0 = ((MemoryRef)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00).effect_44).getAddress(); //TODO
     long v1 = MEMORY.ref(4, v0).offset(0x8L).get();
     v0 = ((MemoryRef)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00).effect_44).getAddress(); //TODO
     long s2_0 = MEMORY.ref(4, v1).offset(0x0L).get();
     final int count = (int)MEMORY.ref(4, v1).offset(0x4L).get();
-    final EffeScriptData18 s3 = (EffeScriptData18)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
+    final EffeScriptData18 s3 = state.innerStruct_00;
     s3.ticksRemaining_00 = s5;
     s3._04 = s4;
     s3.count_08 = count;
@@ -5110,7 +5104,7 @@ public final class SEffe {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[4].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x28,
       SEffe::FUN_80109fc4,
@@ -5119,7 +5113,7 @@ public final class SEffe {
       FrozenJetEffect28::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final FrozenJetEffect28 effect = (FrozenJetEffect28)manager.effect_44;
 
     final GuardHealEffect14 v1 = (GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
@@ -5159,13 +5153,13 @@ public final class SEffe {
     }
 
     //LAB_8010a5c8
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8010a610L)
   public static FlowControl FUN_8010a610(final RunningScript a0) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x24,
       SEffe::FUN_8010ae40,
@@ -5174,7 +5168,7 @@ public final class SEffe {
       BttlScriptData6cSub24::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub24 effect = (BttlScriptData6cSub24)manager.effect_44;
     effect.count_04.set(a0.params_20[1].get());
     effect._08.set(a0.params_20[2].get());
@@ -5214,7 +5208,7 @@ public final class SEffe {
     }
 
     //LAB_8010a818
-    a0.params_20[0].set(effectIndex);
+    a0.params_20[0].set(state.index);
     manager._10.flags_00 |= 0x5400_0000;
     return FlowControl.CONTINUE;
   }
@@ -5406,7 +5400,7 @@ public final class SEffe {
 
   @Method(0x8010b1d8L)
   public static FlowControl allocateDeathDimensionEffect(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x1c,
       null,
@@ -5415,14 +5409,14 @@ public final class SEffe {
       DeathDimensionEffect1c::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final DeathDimensionEffect1c effect = (DeathDimensionEffect1c)manager.effect_44;
     effect.ptr_00.set(mallocTail(0x8));
     effect._04.set(script.params_20[4].get());
     effect._08.set(script.params_20[5].get());
     effect._0c.set(script.params_20[6].get());
     effect._10.set(0);
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     FUN_8010c2e0(effect.ptr_00.get(), script.params_20[1].get());
 
     final int v0 = effect._0c.get();
@@ -5767,7 +5761,7 @@ public final class SEffe {
     _8011a034.get(3).set(a0.params_20[8].get());
     _8011a034.get(4).set(a0.params_20[9].get());
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x50,
       SEffe::FUN_8010c69c,
@@ -5776,7 +5770,7 @@ public final class SEffe {
       BttlScriptData6cSub50::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub50 effect = (BttlScriptData6cSub50)manager.effect_44;
     effect._00.set(5);
     effect._02.set(0);
@@ -5836,7 +5830,7 @@ public final class SEffe {
     effect._44.set((short)sp24);
     effect._48.set((short)0);
     manager._10.flags_00 |= 0x5000_0000;
-    a0.params_20[0].set(effectIndex);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -5993,7 +5987,7 @@ public final class SEffe {
     final int count = script.params_20[1].get();
     final int s5 = script.params_20[2].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x14,
       SEffe::FUN_8010f978,
@@ -6002,7 +5996,7 @@ public final class SEffe {
       BttlScriptData6cSub14_4::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub14_4 effect = (BttlScriptData6cSub14_4)manager.effect_44;
     effect.count_00.set(count);
     effect._02.set(0);
@@ -6074,7 +6068,7 @@ public final class SEffe {
 
     //LAB_8010d564
     manager._10.flags_00 |= 0x5000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -6139,7 +6133,7 @@ public final class SEffe {
     final int sp2c = script.params_20[7].get();
     final int sp30 = script.params_20[8].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x20,
       SEffe::goldDragoonTransformEffectTicker,
@@ -6148,7 +6142,7 @@ public final class SEffe {
       GoldDragoonTransformEffect20::new
     );
 
-    final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00).effect_44;
+    final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)state.innerStruct_00.effect_44;
 
     effect.count_00.set(count);
     effect._04.set(0);
@@ -6201,7 +6195,7 @@ public final class SEffe {
     }
 
     //LAB_8010dc8c
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -6309,7 +6303,7 @@ public final class SEffe {
     final int count = script.params_20[2].get();
     final int s4 = script.params_20[1].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x10,
       SEffe::FUN_8010e6b0,
@@ -6318,7 +6312,7 @@ public final class SEffe {
       BttlScriptData6cSub10_2::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     manager._10.flags_00 |= 0x5000_0000;
 
     final BttlScriptData6cSub10_2 effect = (BttlScriptData6cSub10_2)manager.effect_44;
@@ -6360,7 +6354,7 @@ public final class SEffe {
 
     //LAB_8010e2b0
     manager._10.flags_00 |= 0x5000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -6470,7 +6464,7 @@ public final class SEffe {
     final int sp20 = script.params_20[2].get();
     final int sp24 = script.params_20[3].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x18,
       SEffe::FUN_8010ff10,
@@ -6479,7 +6473,7 @@ public final class SEffe {
       BttlScriptData6cSub18::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub18 effect = (BttlScriptData6cSub18)manager.effect_44;
     effect.count_00.set(count);
     effect.ptr_0c.setPointer(mallocTail(count * 0x3c));
@@ -6520,7 +6514,7 @@ public final class SEffe {
 
     //LAB_8010ebac
     manager._10.flags_00 |= 0x5000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -6576,7 +6570,7 @@ public final class SEffe {
     final int s5 = script.params_20[2].get();
     final int sp38 = script.params_20[3].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x20,
       SEffe::FUN_8010f124,
@@ -6585,7 +6579,7 @@ public final class SEffe {
       BttlScriptData6cSub20_2::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub20_2 effect = (BttlScriptData6cSub20_2)manager.effect_44;
     long addr = mallocTail(count * 0xa8);
     effect.count_00.set(count);
@@ -6640,7 +6634,7 @@ public final class SEffe {
 
     //LAB_8010f0d0
     manager._10.flags_00 |= 0x1400_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -8421,20 +8415,20 @@ public final class SEffe {
   }
 
   @Method(0x80114f3cL)
-  public static void FUN_80114f3c(final int scriptIndex, final int a1, final int a2, final int a3) {
-    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c> manager, final int a1, final int a2, final int a3) {
+    final EffectManagerData6c state = manager.innerStruct_00;
 
-    if((1L << a1 + 5 & s0.flags_04) != 0) {
-      FUN_800e8d04(s0, a1 + 5);
+    if((1L << a1 + 5 & state.flags_04) != 0) {
+      FUN_800e8d04(state, a1 + 5);
     }
 
     //LAB_80114fa8
-    final BttlScriptData6cSub1c v0 = FUN_800e8dd4(s0, a1 + 0x5L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80114d98", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
+    final BttlScriptData6cSub1c v0 = FUN_800e8dd4(state, a1 + 0x5L, 0, MEMORY.ref(4, getMethodAddress(SEffe.class, "FUN_80114d98", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
 
     final int val = switch(a1) {
-      case 0 -> s0._10._24;
-      case 1 -> s0._10._28;
-      case 2 -> s0._10._2c;
+      case 0 -> state._10._24;
+      case 1 -> state._10._28;
+      case 2 -> state._10._2c;
       default -> throw new RuntimeException("Invalid value (I think)");
     };
 
@@ -8480,7 +8474,7 @@ public final class SEffe {
 
   @Method(0x80115014L)
   public static FlowControl FUN_80115014(final RunningScript a0) {
-    FUN_80114f3c(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
+    FUN_80114f3c((ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()], a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -8614,7 +8608,7 @@ public final class SEffe {
     }
 
     //LAB_80115674
-    loadScriptFile(scriptIndex, file, offset);
+    scriptStatePtrArr_800bc1c0[scriptIndex].loadScriptFile(file, offset);
     return FlowControl.CONTINUE;
   }
 
@@ -8622,7 +8616,7 @@ public final class SEffe {
   @Method(0x80115690L)
   public static FlowControl scriptLoadSameScriptAndJump(final RunningScript script) {
     final int s0 = script.params_20[0].get();
-    loadScriptFile(s0, script.scriptState_04.scriptPtr_14, 0);
+    scriptStatePtrArr_800bc1c0[s0].loadScriptFile(script.scriptState_04.scriptPtr_14, 0);
     script.params_20[1].jump(scriptStatePtrArr_800bc1c0[s0]);
     return FlowControl.CONTINUE;
   }
@@ -8772,7 +8766,7 @@ public final class SEffe {
 
   @Method(0x80115c2cL)
   public static void FUN_80115c2c(final int a0, final int a1) {
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       deffManager_800c693c.scriptIndex_1c,
       0,
       SEffe::FUN_80115b2c,
@@ -8781,7 +8775,6 @@ public final class SEffe {
       null
     );
 
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
     state.storage_44[8] = a0;
     state.storage_44[9] = a1;
   }
@@ -9708,7 +9701,7 @@ public final class SEffe {
   @Method(0x80117eb0L)
   public static FlowControl FUN_80117eb0(final RunningScript script) {
     final int param1 = script.params_20[1].get();
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x5c,
       null,
@@ -9717,7 +9710,7 @@ public final class SEffe {
       BttlScriptData6cSub5c::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 = 0;
 
     final DeffPart.LmbType lmbType;
@@ -9770,9 +9763,9 @@ public final class SEffe {
     //LAB_801180e8
     manager._10._24 = 0xffff_ffff;
     manager._10.flags_00 |= 0x5000_0000;
-    FUN_80114f3c(effectIndex, 0, 0x100, 0);
+    FUN_80114f3c(state, 0, 0x100, 0);
     manager._10._28 = 0x1000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -9864,7 +9857,7 @@ public final class SEffe {
 
   @Method(0x801183c0L)
   public static FlowControl allocateGuardHealEffect(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x14,
       null,
@@ -9874,7 +9867,7 @@ public final class SEffe {
       GuardHealEffect14::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 |= 0x300_0000;
 
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
@@ -9897,7 +9890,7 @@ public final class SEffe {
 
     //LAB_801184ac
     manager._10.flags_00 = 0x1400_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -9906,7 +9899,7 @@ public final class SEffe {
     final int flags = a0.params_20[1].get();
     final int objIndex = a0.params_20[2].get();
 
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x14,
       null,
@@ -9915,7 +9908,7 @@ public final class SEffe {
       GuardHealEffect14::new
     );
 
-    final EffectManagerData6c s4 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c s4 = state.innerStruct_00;
     s4.flags_04 = 0x300_0000;
 
     final GuardHealEffect14 s0 = (GuardHealEffect14)s4.effect_44;
@@ -9957,7 +9950,7 @@ public final class SEffe {
     //LAB_801186bc
     //LAB_801186c0
     s4._10.flags_00 = 0x1400_0000;
-    a0.params_20[0].set(scriptIndex);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -10015,21 +10008,29 @@ public final class SEffe {
 
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript a0) {
-    final int scriptIndex = allocateEffectManager(a0.scriptStateIndex_00, 0, null, SEffe::FUN_80118790, null, null);
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-    final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      a0.scriptStateIndex_00,
+      0,
+      null,
+      SEffe::FUN_80118790,
+      null,
+      null
+    );
+
+    final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0000;
     manager._10.scale_16.set((short)0x400, (short)0x400, (short)0x400);
     manager._10._24 = 0;
     manager._10.flags_00 = 0x6400_0040;
-    a0.params_20[0].set(scriptIndex);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80118984L)
   public static FlowControl FUN_80118984(final RunningScript a0) {
     final int effectIndex = a0.params_20[0].get();
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final ScriptState<EffectManagerData6c> state = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[effectIndex];
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
     final DeffPart part = getDeffPart(a0.params_20[1].get() | 0x500_0000);
@@ -10043,7 +10044,7 @@ public final class SEffe {
     effect.anim_0c = anim;
     loadModelAnim(effect.model_134, anim);
     manager._10._24 = 0;
-    FUN_80114f3c(effectIndex, 0, 0x100, 0);
+    FUN_80114f3c(state, 0, 0x100, 0);
     return FlowControl.CONTINUE;
   }
 
@@ -10112,8 +10113,16 @@ public final class SEffe {
 
   @Method(0x80118df4L)
   public static FlowControl FUN_80118df4(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(script.scriptStateIndex_00, 0x8, null, SEffe::FUN_80118a24, null, BttlScriptData6cSub08_4::new);
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      script.scriptStateIndex_00,
+      0x8,
+      null,
+      SEffe::FUN_80118a24,
+      null,
+      BttlScriptData6cSub08_4::new
+    );
+
+    final EffectManagerData6c manager = state.innerStruct_00;
     final BttlScriptData6cSub08_4 effect = (BttlScriptData6cSub08_4)manager.effect_44;
     effect._00.set((short)0x300);
     effect._02.set((short)0);
@@ -10124,7 +10133,7 @@ public final class SEffe {
     manager._10._24 = 0x80;
     manager._10._28 = 0x80;
     manager._10._2c = 0x100;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -10277,7 +10286,7 @@ public final class SEffe {
     final int s0 = a0.params_20[4].get();
     final int s1 = a0.params_20[5].get();
 
-    final int fp = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x30,
       SEffe::FUN_801196bc,
@@ -10286,7 +10295,7 @@ public final class SEffe {
       BttlScriptData6cSub30::new
     );
 
-    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[fp].innerStruct_00;
+    final EffectManagerData6c data = state.innerStruct_00;
     data.type_5c = _800fb954.get();
 
     final BttlScriptData6cSub30 s3 = (BttlScriptData6cSub30)data.effect_44;
@@ -10342,7 +10351,7 @@ public final class SEffe {
     }
 
     //LAB_8011967c
-    a0.params_20[0].set(fp);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 

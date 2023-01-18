@@ -25,7 +25,6 @@ import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800e.FUN_800e7dbc;
@@ -115,7 +114,7 @@ public final class Temp {
 
   @Method(0x800ca658L)
   public static long FUN_800ca658(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0xd18,
       Temp::FUN_800ca200,
@@ -124,7 +123,7 @@ public final class Temp {
       TempEffectData_d18::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final TempEffectData_d18 effect = (TempEffectData_d18)manager.effect_44;
 
     effect._00.set(0);
@@ -150,7 +149,7 @@ public final class Temp {
     }
 
     manager._10.flags_00 |= 0x5000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return 0;
   }
 
@@ -188,7 +187,7 @@ public final class Temp {
 
   @Method(0x800caae4L)
   public static FlowControl FUN_800caae4(final RunningScript script) {
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x8,
       null,
@@ -197,7 +196,7 @@ public final class Temp {
       TempEffectData_08::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final TempEffectData_08 effect = (TempEffectData_08)manager.effect_44;
     effect.u_00.set((short)0x300);
     effect.v_02.set((short)0);
@@ -205,7 +204,7 @@ public final class Temp {
     effect._05.set(0xff);
     effect._06.set((short)0);
     manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 

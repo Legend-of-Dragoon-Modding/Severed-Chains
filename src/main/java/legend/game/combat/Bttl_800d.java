@@ -62,12 +62,9 @@ import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.allocateScriptState;
 import static legend.game.Scus94491BpeSegment.deallocateScriptAndChildren;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.loadScriptFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.setScriptDestructor;
-import static legend.game.Scus94491BpeSegment.setScriptTicker;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
@@ -122,7 +119,6 @@ import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
-import static legend.game.combat.Bttl_800c.ctmdUnpackingData_800c6920;
 import static legend.game.combat.Bttl_800c._800c6d94;
 import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
@@ -154,6 +150,7 @@ import static legend.game.combat.Bttl_800c.additionStarburstRenderers_800c6dc4;
 import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
 import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
+import static legend.game.combat.Bttl_800c.ctmdUnpackingData_800c6920;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.effectRenderers_800fa758;
@@ -283,7 +280,7 @@ public final class Bttl_800d {
 
   @Method(0x800d0564L)
   public static FlowControl allocateProjectileHitEffect(final RunningScript script) {
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x14,
       null,
@@ -292,7 +289,7 @@ public final class Bttl_800d {
       ProjectileHitEffect14::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)manager.effect_44;
 
     final int count = script.params_20[1].get();
@@ -329,7 +326,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d0980
-    script.params_20[0].set(scriptIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -438,7 +435,7 @@ public final class Bttl_800d {
     final int count = s3.params_20[1].get();
     final int s4 = s3.params_20[6].get();
 
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       s3.scriptStateIndex_00,
       0x8,
       null,
@@ -447,7 +444,7 @@ public final class Bttl_800d {
       AdditionSparksEffect08::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionSparksEffect08 effect = (AdditionSparksEffect08)manager.effect_44;
 
     long t6 = mallocTail(count * 0x4cL);
@@ -484,7 +481,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1154
-    s3.params_20[0].set(scriptIndex);
+    s3.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -611,7 +608,7 @@ public final class Bttl_800d {
   public static FlowControl allocateAdditionStarburstEffect(final RunningScript s3) {
     final int count = s3.params_20[2].get();
 
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       s3.scriptStateIndex_00,
       0x10,
       null,
@@ -620,7 +617,7 @@ public final class Bttl_800d {
       AdditionStarburstEffect10::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
     long t4 = mallocTail(count * 0x10L);
     effect.scriptIndex_00.set(s3.params_20[1].get());
@@ -641,19 +638,19 @@ public final class Bttl_800d {
     }
 
     //LAB_800d1c7c
-    s3.params_20[0].set(scriptIndex);
+    s3.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript a0) {
-    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript a0) {
-    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null));
+    a0.params_20[0].set(allocateEffectManager(a0.scriptStateIndex_00, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -772,7 +769,7 @@ public final class Bttl_800d {
     final int s2 = script.params_20[1].get();
     final int s1 = script.params_20[2].get();
 
-    final int effectIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptStateIndex_00,
       0x14,
       null,
@@ -781,7 +778,7 @@ public final class Bttl_800d {
       PotionEffect14::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
 
     //LAB_800d27b4
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
@@ -790,7 +787,7 @@ public final class Bttl_800d {
     effect._00.set(s2);
     effect._01.set(s1 - 3 > 1 ? 4 : 1);
     effect.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
-    script.params_20[0].set(effectIndex);
+    script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -906,7 +903,7 @@ public final class Bttl_800d {
 
   @Method(0x800d2ff4L)
   public static FlowControl allocateGuardEffect(final RunningScript s0) {
-    final int scriptIndex = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       s0.scriptStateIndex_00,
       0x6,
       null,
@@ -915,7 +912,7 @@ public final class Bttl_800d {
       GuardEffect06::new
     );
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
     effect._00.set(1);
     effect._02.set(0);
@@ -923,7 +920,7 @@ public final class Bttl_800d {
     manager._10.colour_1c.setX((short)255);
     manager._10.colour_1c.setY((short)0);
     manager._10.colour_1c.setZ((short)0);
-    s0.params_20[0].set(scriptIndex);
+    s0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -1047,7 +1044,7 @@ public final class Bttl_800d {
 
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript a0) {
-    final int fp = allocateEffectManager(
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       a0.scriptStateIndex_00,
       0x34,
       Bttl_800d::monsterDeathEffectTicker,
@@ -1058,7 +1055,7 @@ public final class Bttl_800d {
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[1].get()].innerStruct_00;
     final int animCount = bobj.model_148.animCount_98;
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[fp].innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
     final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
     long s4 = mallocTail(animCount * 0x30L);
     effect.ptr_30.set(s4); //TODO
@@ -1089,7 +1086,7 @@ public final class Bttl_800d {
     effect._0c.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
     effect._0c._18.set((short)0);
     effect._0c._1a.set((short)0);
-    a0.params_20[0].set(fp);
+    a0.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -1278,9 +1275,9 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c.get(a0.params_20[0].get()).selectedAddition_19.get();
-      final int scriptIndex = allocateScriptState(new AdditionScriptData1c());
-      loadScriptFile(scriptIndex, doNothingScript_8004f650);
-      setScriptTicker(scriptIndex, Bttl_800d::FUN_800d3bb8);
+      final ScriptState<AdditionScriptData1c> state = allocateScriptState(new AdditionScriptData1c());
+      state.loadScriptFile(doNothingScript_8004f650);
+      state.setTicker(Bttl_800d::FUN_800d3bb8);
       final CString additionName = getAdditionName(0, addition);
 
       //LAB_800d3e5c
@@ -1290,7 +1287,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800d3e7c
-      final AdditionScriptData1c additionStruct = (AdditionScriptData1c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+      final AdditionScriptData1c additionStruct = state.innerStruct_00;
       additionStruct._00 = 0;
       additionStruct.addition_02 = addition;
       additionStruct._04 = 0;
@@ -1453,13 +1450,12 @@ public final class Bttl_800d {
       s4.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final int scriptIndex = allocateScriptState(new BttlScriptData40());
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-      loadScriptFile(scriptIndex, doNothingScript_8004f650);
-      setScriptTicker(scriptIndex, Bttl_800d::FUN_800d4018);
-      setScriptDestructor(scriptIndex, Bttl_800d::FUN_800d430c);
+      final ScriptState<BttlScriptData40> state = allocateScriptState(new BttlScriptData40());
+      state.loadScriptFile(doNothingScript_8004f650);
+      state.setTicker(Bttl_800d::FUN_800d4018);
+      state.setDestructor(Bttl_800d::FUN_800d430c);
 
-      final BttlScriptData40 s1 = (BttlScriptData40)state.innerStruct_00;
+      final BttlScriptData40 s1 = state.innerStruct_00;
       s1._00 = 1;
       s1._02 = 0x80;
       s1._04 = 0;
@@ -1518,11 +1514,10 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript a0) {
     final int s2 = a0.params_20[0].get();
     if(s2 != -1) {
-      final int scriptIndex = allocateScriptState(new AdditionScriptData1c());
-      loadScriptFile(scriptIndex, doNothingScript_8004f650);
-      setScriptTicker(scriptIndex, Bttl_800d::FUN_800d3bb8);
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-      final AdditionScriptData1c s0 = (AdditionScriptData1c)state.innerStruct_00;
+      final ScriptState<AdditionScriptData1c> state = allocateScriptState(new AdditionScriptData1c());
+      state.loadScriptFile(doNothingScript_8004f650);
+      state.setTicker(Bttl_800d::FUN_800d3bb8);
+      final AdditionScriptData1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       _800faa9c.setu(0x1L);
       s0._0c = 40;

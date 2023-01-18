@@ -26,7 +26,6 @@ import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
@@ -49,7 +48,6 @@ import legend.game.scripting.GameVarParam;
 import legend.game.scripting.Param;
 import legend.game.scripting.ScriptInlineParam;
 import legend.game.scripting.ScriptStorageParam;
-import legend.game.scripting.TempTicker;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
@@ -61,7 +59,6 @@ import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
 import legend.game.types.MrgFile;
 import legend.game.types.RunningScript;
-import legend.game.types.ScriptFile;
 import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
@@ -798,7 +795,6 @@ public final class Scus94491BpeSegment {
       gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
 
       tickScripts();
-      renderScriptObjects();
     }
   }
 
@@ -1858,38 +1854,34 @@ public final class Scus94491BpeSegment {
   public static void tickScripts() {
     executeScriptFrame();
     executeScriptTickers();
-    scriptStateUpperBound_8004de4c.set(9);
-  }
-
-  @Method(0x800157b8L)
-  public static void renderScriptObjects() {
+    scriptStateUpperBound_8004de4c = 9;
     executeScriptRenderers();
   }
 
   @Method(0x80015800L)
   public static int findFreeScriptState() {
-    scriptStateUpperBound_8004de4c.incr();
+    scriptStateUpperBound_8004de4c++;
 
-    if(scriptStateUpperBound_8004de4c.get() >= 72) {
-      scriptStateUpperBound_8004de4c.set(9);
+    if(scriptStateUpperBound_8004de4c >= 72) {
+      scriptStateUpperBound_8004de4c = 9;
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = scriptStateUpperBound_8004de4c.get(); i < 72; i++) {
+    for(int i = scriptStateUpperBound_8004de4c; i < 72; i++) {
       if(scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
-        scriptStateUpperBound_8004de4c.set(i);
+        scriptStateUpperBound_8004de4c = i;
         return i;
       }
     }
 
     //LAB_8001586c
     //LAB_80015898
-    for(int i = 9; i < scriptStateUpperBound_8004de4c.get(); i++) {
+    for(int i = 9; i < scriptStateUpperBound_8004de4c; i++) {
       if(scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
-        scriptStateUpperBound_8004de4c.set(i);
+        scriptStateUpperBound_8004de4c = i;
         return i;
       }
     }
@@ -1899,7 +1891,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800158ccL)
-  public static <T> int allocateScriptState(@Nullable final T type) {
+  public static <T> ScriptState<T> allocateScriptState(@Nullable final T type) {
     return allocateScriptState(findFreeScriptState(), null, 0, type);
   }
 
@@ -1907,7 +1899,7 @@ public final class Scus94491BpeSegment {
    * @return index
    */
   @Method(0x80015918L)
-  public static <T> int allocateScriptState(final int index, @Nullable final String typeName, final int a4, @Nullable final T type) {
+  public static <T> ScriptState<T> allocateScriptState(final int index, @Nullable final String typeName, final int a4, @Nullable final T type) {
     LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, type != null ? type.getClass().getSimpleName() : "empty");
 
     final ScriptState<T> scriptState = new ScriptState<>(index, type);
@@ -1929,87 +1921,7 @@ public final class Scus94491BpeSegment {
     EventManager.INSTANCE.postEvent(new ScriptAllocatedEvent(index));
 
     //LAB_80015a34
-    return index;
-  }
-
-  @Method(0x80015a68L)
-  public static <T> void setScriptTicker(final int index, @Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0[index];
-
-    if(callback == null) {
-      //LAB_80015aa0
-      struct.ticker_04 = null;
-      struct.storage_44[7] |= 0x4_0000;
-    } else {
-      struct.ticker_04 = callback;
-      struct.storage_44[7] &= 0xfffb_ffff;
-    }
-  }
-
-  @Method(0x80015ab4L)
-  public static <T> void setScriptRenderer(final int index, @Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0[index];
-
-    if(callback == null) {
-      //LAB_80015aec
-      struct.renderer_08 = null;
-      struct.storage_44[7] |= 0x8_0000;
-    } else {
-      struct.renderer_08 = callback;
-      struct.storage_44[7] &= 0xfff7_ffff;
-    }
-  }
-
-  @Method(0x80015b00L)
-  public static <T> void setScriptDestructor(final int index, @Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0[index];
-
-    if(callback == null) {
-      //LAB_80015b38
-      struct.destructor_0c = null;
-      struct.storage_44[7] |= 0x800_0000;
-    } else {
-      struct.destructor_0c = callback;
-      struct.storage_44[7] &= 0xf7ff_ffff;
-    }
-  }
-
-  @Method(0x80015b4cL)
-  public static <T> void setScriptTempTicker(final int index, @Nullable final TempTicker<T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0[index];
-
-    if(callback == null) {
-      //LAB_80015b80
-      struct.tempTicker_10 = null;
-      struct.storage_44[7] &= 0xfbff_ffff;
-    } else {
-      struct.tempTicker_10 = callback;
-      struct.storage_44[7] |= 0x400_0000;
-    }
-  }
-
-  @Method(0x80015b98L)
-  public static void loadScriptFile(final int index, @Nullable final ScriptFile script) {
-    loadScriptFile(index, script, 0);
-  }
-
-  @Method(0x80015bb8L)
-  public static void loadScriptFile(final int index, @Nullable final ScriptFile script, final int offsetIndex) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0[index];
-
-    if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, index, offsetIndex);
-
-      struct.scriptPtr_14 = script;
-      struct.offset_18 = script.getEntry(offsetIndex);
-      struct.storage_44[7] &= 0xfffd_ffff;
-    } else {
-      LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", index);
-
-      struct.scriptPtr_14 = null;
-      struct.offset_18 = -1;
-      struct.storage_44[7] |= 0x2_0000;
-    }
+    return scriptState;
   }
 
   @Method(0x80015c20L)
@@ -3021,7 +2933,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if((int)gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
+    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
       gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
       gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(0x7fff);
     }
@@ -3081,7 +2993,7 @@ public final class Scus94491BpeSegment {
       if(scriptState != null) {
         if((scriptState.storage_44[7] & 0x410_0000) == 0x400_0000) {
           if(scriptState.tempTicker_10.run(i, scriptState, scriptState.innerStruct_00)) {
-            setScriptTempTicker(i, null);
+            scriptState.setTempTicker(null);
           }
         }
       }
@@ -3282,7 +3194,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_800187cc() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.charBobjIndices_e40[charSlot]].innerStruct_00).combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(_8006e398.charBobjIndices_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3296,7 +3208,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001886c() {
     //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(FUN_800c90b0(((BattleObject27c)scriptStatePtrArr_800bc1c0[_8006e398.bobjIndices_e50[i]].innerStruct_00).combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(_8006e398.bobjIndices_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3884,7 +3796,7 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 32; i++) {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019b54
-        playSound(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, -1);
+        playSound(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
         break;
       }
     }
@@ -3943,8 +3855,8 @@ public final class Scus94491BpeSegment {
    * @param type 1 - player, 2 - monster
    */
   @Method(0x80019e24L)
-  public static void playBobjSound(final int type, final int bobjIndex, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+  public static void playBobjSound(final int type, final ScriptState<BattleObject27c> state, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
+    final BattleObject27c bobj = state.innerStruct_00;
 
     int soundFileIndex = 0;
     if(type == 1) {
@@ -3981,7 +3893,7 @@ public final class Scus94491BpeSegment {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019eac
         final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
-        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 0x2L, 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, bobjIndex);
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 0x2L, 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, state);
         break;
       }
     }
@@ -3993,15 +3905,15 @@ public final class Scus94491BpeSegment {
   @Method(0x80019facL)
   public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short a3, final short a4) {
     int soundFileIndex = 0;
-    int bobjIndex = 0;
+    ScriptState<BattleObject27c> state = null;
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final int index = _8006e398.bobjIndices_e50[i];
+      final ScriptState<BattleObject27c> state2 = _8006e398.bobjIndices_e50[i];
 
-      if(((BattleObject27c)scriptStatePtrArr_800bc1c0[index].innerStruct_00).charIndex_272 == charOrMonsterIndex) {
+      if(state2.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
         //LAB_8001a070
-        bobjIndex = index;
+        state = state2;
         break;
       }
     }
@@ -4038,7 +3950,7 @@ public final class Scus94491BpeSegment {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_8001a080
         final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
-        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, bobjIndex);
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, state);
         break;
       }
     }
@@ -4158,10 +4070,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, final int bobjIndex) {
+  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<BattleObject27c> state) {
     final SpuStruct28 spu28 = spu28Arr_800bd110.get(a3);
     spu28.type_00.set(type);
-    spu28.bobjIndex_04.set(bobjIndex);
+    spu28.bobjIndex_04.set(state != null ? state.index : -1);
     spu28.soundFileIndex_08.set(soundFileIndex);
     spu28.soundIndex_0c.set(soundIndex);
     spu28.playableSoundIndex_10.set(playableSoundIndex);
@@ -4238,7 +4150,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001abd0L)
   public static FlowControl scriptPlayBobjSound(final RunningScript script) {
-    playBobjSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    playBobjSound(script.params_20[0].get(), (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
   }
 

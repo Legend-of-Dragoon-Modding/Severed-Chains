@@ -2,11 +2,18 @@ package legend.game.types;
 
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.TempTicker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
 /** Holds persistent data for scripts */
 public class ScriptState<T> {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
+  private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
+
   /** This script's index */
   public final int index;
   public final T innerStruct_00;
@@ -90,5 +97,65 @@ public class ScriptState<T> {
   public ScriptState(final int index, @Nullable final T innerStruct) {
     this.index = index;
     this.innerStruct_00 = innerStruct;
+  }
+
+  public void setTicker(@Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
+    if(callback == null) {
+      this.ticker_04 = null;
+      this.storage_44[7] |= 0x4_0000;
+    } else {
+      this.ticker_04 = callback;
+      this.storage_44[7] &= 0xfffb_ffff;
+    }
+  }
+
+  public void setRenderer(@Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
+    if(callback == null) {
+      this.renderer_08 = null;
+      this.storage_44[7] |= 0x8_0000;
+    } else {
+      this.renderer_08 = callback;
+      this.storage_44[7] &= 0xfff7_ffff;
+    }
+  }
+
+  public void setDestructor(@Nullable final TriConsumer<Integer, ScriptState<T>, T> callback) {
+    if(callback == null) {
+      this.destructor_0c = null;
+      this.storage_44[7] |= 0x800_0000;
+    } else {
+      this.destructor_0c = callback;
+      this.storage_44[7] &= 0xf7ff_ffff;
+    }
+  }
+
+  public void setTempTicker(@Nullable final TempTicker<T> callback) {
+    if(callback == null) {
+      this.tempTicker_10 = null;
+      this.storage_44[7] &= 0xfbff_ffff;
+    } else {
+      this.tempTicker_10 = callback;
+      this.storage_44[7] |= 0x400_0000;
+    }
+  }
+
+  public void loadScriptFile(@Nullable final ScriptFile script) {
+    this.loadScriptFile(script, 0);
+  }
+
+  public void loadScriptFile(@Nullable final ScriptFile script, final int offsetIndex) {
+    if(script != null) {
+      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, offsetIndex);
+
+      this.scriptPtr_14 = script;
+      this.offset_18 = script.getEntry(offsetIndex);
+      this.storage_44[7] &= 0xfffd_ffff;
+    } else {
+      LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
+
+      this.scriptPtr_14 = null;
+      this.offset_18 = -1;
+      this.storage_44[7] |= 0x2_0000;
+    }
   }
 }

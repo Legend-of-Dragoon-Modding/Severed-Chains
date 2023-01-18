@@ -21,8 +21,7 @@ import legend.game.types.ScriptState;
 import legend.game.types.SubmapObject210;
 
 import static legend.game.SMap.sobjCount_800c6730;
-import static legend.game.SMap.sobjIndices_800c6880;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.SMap.sobjs_800c6880;
 
 public class SmapDebuggerController {
   @FXML
@@ -121,9 +120,9 @@ public class SmapDebuggerController {
   }
 
   private String getSobjName(final int index) {
-    final int sobjIndex = sobjIndices_800c6880.get(index).get();
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
-    if(sobjIndex == -1) {
+    if(state == null) {
       return "unused";
     }
 
@@ -131,20 +130,19 @@ public class SmapDebuggerController {
       return "Player";
     }
 
-    return "Script %d".formatted(sobjIndex);
+    return "Script %d".formatted(index);
   }
 
   private void displayStats(final int index) {
-    final int sobjIndex = sobjIndices_800c6880.get(index).get();
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
-    if(sobjIndex == -1) {
+    if(state == null) {
       return;
     }
 
-    this.scriptIndex.setText("View script %d".formatted(sobjIndex));
+    this.scriptIndex.setText("View script %d".formatted(index));
 
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[sobjIndex];
-    this.sobj = (SubmapObject210)state.innerStruct_00;
+    this.sobj = state.innerStruct_00;
 
     this.posX.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getX());
     this.posY.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getY());
@@ -174,10 +172,10 @@ public class SmapDebuggerController {
       return;
     }
 
-    final int scriptIndex = sobjIndices_800c6880.get(this.sobjList.getSelectionModel().getSelectedIndex()).get();
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
-    scriptDebugger.preselectScript(scriptIndex).start(new Stage());
+    scriptDebugger.preselectScript(state.index).start(new Stage());
   }
 
   public void refreshValues(final ActionEvent event) {

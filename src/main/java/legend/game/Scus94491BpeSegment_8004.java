@@ -144,7 +144,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
-  public static final IntRef scriptStateUpperBound_8004de4c = MEMORY.ref(4, 0x8004de4cL, IntRef::new);
+  public static int scriptStateUpperBound_8004de4c;
 
   public static final Function<RunningScript, FlowControl>[] scriptOps_8004e098 = new Function[128];
   static {
