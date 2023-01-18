@@ -58,7 +58,7 @@ public class GameState52c implements MemoryRef {
   public final ArrayRef<UnsignedByteRef> items_2e9;
 
   public final ArrayRef<CharacterData2c> charData_32c;
-  public final ArrayRef<UnsignedIntRef> _4b8;
+  public final ArrayRef<IntRef> _4b8;
 
   // World map stuff
   public final UnsignedShortRef pathIndex_4d8;
@@ -107,7 +107,7 @@ public class GameState52c implements MemoryRef {
     this.items_2e9 = ref.offset(1, 0x2e9L).cast(ArrayRef.of(UnsignedByteRef.class, Config.inventorySize() + 1, 1, UnsignedByteRef::new));
 
     this.charData_32c = ref.offset(4, 0x32cL).cast(ArrayRef.of(CharacterData2c.class, 9, 0x2c, CharacterData2c::new));
-    this._4b8 = ref.offset(4, 0x4b8L).cast(ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
+    this._4b8 = ref.offset(4, 0x4b8L).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
     this.pathIndex_4d8 = ref.offset(2, 0x4d8L).cast(UnsignedShortRef::new);
     this.dotIndex_4da = ref.offset(2, 0x4daL).cast(UnsignedShortRef::new);
     this.dotOffset_4dc = ref.offset(1, 0x4dcL).cast(UnsignedByteRef::new);
