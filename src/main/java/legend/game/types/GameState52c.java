@@ -16,20 +16,15 @@ public class GameState52c implements MemoryRef {
 
   /** Maybe flags? Maybe individual bytes? */
   public final IntRef _04;
-
-  /** Don't really know what this means */
-  public final UnsignedByteRef stardustProgress_0b;
-
-  public final IntRef stardustTurnedIn_50;
-
-  /** Zy: changed when I did the battles in the marshland. i believe this reset when i went back to get the stardust */
-  public final IntRef _58;
-  /** Zy: changes when you are on the boat in the marshland */
-  public final IntRef _5c;
-
-  /** Zy: used as byte, displays as short, actually is an int, blocks if over 99, typical LOD code */
-  public final IntRef heroTickets_74;
-
+  /**
+   * <ul>
+   *   <li>18 - stardust turned in</li>
+   *   <li>20 - Zy: changed when I did the battles in the marshland. I believe this reset when I went back to get the stardust</li>
+   *   <li>21 - Zy: changes when you are on the boat in the marshland</li>
+   *   <li>27 - hero tickets - Zy: used as byte, displays as short, actually is an int, blocks if over 99, typical LOD code</li>
+   * </ul>
+   */
+  public final ArrayRef<IntRef> scriptData_08;
   public final ArrayRef<IntRef> charIndex_88;
   public final IntRef gold_94;
   public final IntRef chapterIndex_98;
@@ -87,16 +82,7 @@ public class GameState52c implements MemoryRef {
     this.ref = ref;
 
     this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
-
-    this.stardustProgress_0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
-
-    this.stardustTurnedIn_50 = ref.offset(4, 0x50L).cast(IntRef::new);
-
-    this._58 = ref.offset(4, 0x58L).cast(IntRef::new);
-    this._5c = ref.offset(4, 0x5cL).cast(IntRef::new);
-
-    this.heroTickets_74 = ref.offset(4, 0x74L).cast(IntRef::new);
-
+    this.scriptData_08 = ref.offset(4, 0x08L).cast(ArrayRef.of(IntRef.class, 0x20, 4, IntRef::new));
     this.charIndex_88 = ref.offset(4, 0x88L).cast(ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
     this.gold_94 = ref.offset(4, 0x94L).cast(IntRef::new);
     this.chapterIndex_98 = ref.offset(4, 0x98L).cast(IntRef::new);

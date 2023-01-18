@@ -29,7 +29,7 @@ public class GameVarParam extends Param {
       case 3 -> Scus94491BpeSegment_800b._800bee90.get();
       case 4 -> Scus94491BpeSegment_800b._800bee94.get();
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94.get();
-//      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8._08;
+      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(0).get();
       case 7 -> Scus94491BpeSegment_8007._8007a3a8.get();
       case 8 -> Scus94491BpeSegment_800b._800bb104.get();
       case 9 -> Scus94491BpeSegment_800b._800babc0.get();
@@ -160,7 +160,7 @@ public class GameVarParam extends Param {
       case 3 -> Scus94491BpeSegment_800b._800bee90.set(val);
       case 4 -> Scus94491BpeSegment_800b._800bee94.set(val);
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94.set(val);
-//      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8._08;
+      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(0).set(val);
       case 7 -> Scus94491BpeSegment_8007._8007a3a8.set(val);
       case 8 -> Scus94491BpeSegment_800b._800bb104.set(val);
       case 9 -> Scus94491BpeSegment_800b._800babc0.set(val);
