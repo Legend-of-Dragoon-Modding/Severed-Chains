@@ -16,6 +16,17 @@ public final class DebugHelper {
     }
   }
 
+  public static StackWalker.StackFrame getStackFrame(final int steps) {
+    return StackWalker.getInstance().walk(frames -> frames
+      .skip(steps + 1)
+      .findFirst())
+      .get();
+  }
+
+  public static StackWalker.StackFrame getCallerFrame() {
+    return getStackFrame(2);
+  }
+
   public static Timer timer(final long interval) {
     return new Timer(interval);
   }

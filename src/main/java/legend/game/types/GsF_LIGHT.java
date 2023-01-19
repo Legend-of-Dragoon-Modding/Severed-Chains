@@ -46,6 +46,13 @@ public class GsF_LIGHT implements MemoryRef {
     this.b_0e = new UnsignedByteRef();
   }
 
+  public void clear() {
+    this.direction_00.set(0, 0, 0);
+    this.r_0c.set(0);
+    this.g_0d.set(0);
+    this.b_0e.set(0);
+  }
+
   @Override
   public long getAddress() {
     return this.ref != null ? this.ref.getAddress() : 0;

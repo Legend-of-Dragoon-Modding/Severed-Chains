@@ -2,6 +2,7 @@ package legend.game.combat.types;
 
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -9,7 +10,9 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class FrozenJetEffect28 extends BttlScriptData6cSubBase1 {
+public class FrozenJetEffect28 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final UnsignedIntRef vertexCount_00;
   public final UnsignedIntRef normalCount_04;
   public final UnsignedIntRef primitiveCount_08;
@@ -23,7 +26,7 @@ public class FrozenJetEffect28 extends BttlScriptData6cSubBase1 {
   public final UnsignedByteRef _24;
 
   public FrozenJetEffect28(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this.vertexCount_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this.normalCount_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
@@ -36,5 +39,10 @@ public class FrozenJetEffect28 extends BttlScriptData6cSubBase1 {
     this.verticesCopy_1c = ref.offset(4, 0x1cL).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x8, SVECTOR::new)));
     this.normalsCopy_20 = ref.offset(4, 0x20L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x8, SVECTOR::new)));
     this._24 = ref.offset(1, 0x24L).cast(UnsignedByteRef::new);
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

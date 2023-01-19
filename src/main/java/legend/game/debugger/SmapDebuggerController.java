@@ -17,17 +17,16 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.SMap;
-import legend.game.types.ScriptState;
-import legend.game.types.WorldObject210;
+import legend.game.scripting.ScriptState;
+import legend.game.types.SubmapObject210;
 
-import static legend.game.SMap.wobjCount_800c6730;
-import static legend.game.SMap.wobjIndices_800c6880;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.SMap.sobjCount_800c6730;
+import static legend.game.SMap.sobjs_800c6880;
 
 public class SmapDebuggerController {
   @FXML
-  private ListView<ListItem> wobjList;
-  private final ObservableList<ListItem> wobjs = FXCollections.observableArrayList(e -> new Observable[] {e.prop});
+  private ListView<ListItem> sobjList;
+  private final ObservableList<ListItem> sobjs = FXCollections.observableArrayList(e -> new Observable[] {e.prop});
 
   @FXML
   private Button scriptIndex;
@@ -76,15 +75,15 @@ public class SmapDebuggerController {
   @FXML
   public CheckBox alertIcon;
 
-  private WorldObject210 wobj;
+  private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < wobjCount_800c6730.get(); i++) {
-      this.wobjs.add(new ListItem(this::getWobjName, i));
+    for(int i = 0; i < sobjCount_800c6730.get(); i++) {
+      this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 
-    this.wobjList.setItems(this.wobjs);
-    this.wobjList.setCellFactory(param -> {
+    this.sobjList.setItems(this.sobjs);
+    this.sobjList.setCellFactory(param -> {
       final TextFieldListCell<ListItem> cell = new TextFieldListCell<>();
       cell.setConverter(new StringConverter<>() {
         @Override
@@ -100,7 +99,7 @@ public class SmapDebuggerController {
       return cell;
     });
 
-    this.wobjList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+    this.sobjList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
       final int index = newValue.intValue();
       this.displayStats(index);
     });
@@ -117,13 +116,13 @@ public class SmapDebuggerController {
     this.scaleY.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
     this.scaleZ.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
 
-    this.wobjList.getSelectionModel().select(0);
+    this.sobjList.getSelectionModel().select(0);
   }
 
-  private String getWobjName(final int index) {
-    final int wobjIndex = wobjIndices_800c6880.get(index).get();
+  private String getSobjName(final int index) {
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
-    if(wobjIndex == -1) {
+    if(state == null) {
       return "unused";
     }
 
@@ -131,80 +130,79 @@ public class SmapDebuggerController {
       return "Player";
     }
 
-    return "Script %d".formatted(wobjIndex);
+    return "Script %d".formatted(index);
   }
 
   private void displayStats(final int index) {
-    final int wobjIndex = wobjIndices_800c6880.get(index).get();
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
-    if(wobjIndex == -1) {
+    if(state == null) {
       return;
     }
 
-    this.scriptIndex.setText("View script %d".formatted(wobjIndex));
+    this.scriptIndex.setText("View script %d".formatted(index));
 
-    final ScriptState<WorldObject210> state = scriptStatePtrArr_800bc1c0.get(wobjIndex).derefAs(ScriptState.classFor(WorldObject210.class));
-    this.wobj = state.innerStruct_00.deref();
+    this.sobj = state.innerStruct_00;
 
-    this.posX.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getX());
-    this.posY.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getY());
-    this.posZ.getValueFactory().setValue(this.wobj.model_00.coord2_14.coord.transfer.getZ());
-    this.rotX.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getX());
-    this.rotY.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getY());
-    this.rotZ.getValueFactory().setValue((int)this.wobj.model_00.coord2Param_64.rotate.getZ());
-    this.scaleX.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getX());
-    this.scaleY.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getY());
-    this.scaleZ.getValueFactory().setValue(this.wobj.model_00.scaleVector_fc.getZ());
+    this.posX.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getX());
+    this.posY.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getY());
+    this.posZ.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getZ());
+    this.rotX.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getX());
+    this.rotY.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getY());
+    this.rotZ.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getZ());
+    this.scaleX.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getX());
+    this.scaleY.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getY());
+    this.scaleZ.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getZ());
 
-    this.collideByPlayer.setSelected((this.wobj.flags_190.get() & 0x10_0000L) != 0);
-    this.collide20.setSelected((this.wobj.flags_190.get() & 0x20_0000L) != 0);
-    this.collide40.setSelected((this.wobj.flags_190.get() & 0x40_0000L) != 0);
-    this.collide80.setSelected((this.wobj.flags_190.get() & 0x80_0000L) != 0);
-    this.collide100.setSelected((this.wobj.flags_190.get() & 0x100_0000L) != 0);
-    this.collide200.setSelected((this.wobj.flags_190.get() & 0x200_0000L) != 0);
-    this.collide400.setSelected((this.wobj.flags_190.get() & 0x400_0000L) != 0);
-    this.collide800.setSelected((this.wobj.flags_190.get() & 0x800_0000L) != 0);
-    this.collide1000.setSelected((this.wobj.flags_190.get() & 0x1000_0000L) != 0);
+    this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
+    this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
+    this.collide40.setSelected((this.sobj.flags_190 & 0x40_0000) != 0);
+    this.collide80.setSelected((this.sobj.flags_190 & 0x80_0000) != 0);
+    this.collide100.setSelected((this.sobj.flags_190 & 0x100_0000) != 0);
+    this.collide200.setSelected((this.sobj.flags_190 & 0x200_0000) != 0);
+    this.collide400.setSelected((this.sobj.flags_190 & 0x400_0000) != 0);
+    this.collide800.setSelected((this.sobj.flags_190 & 0x800_0000) != 0);
+    this.collide1000.setSelected((this.sobj.flags_190 & 0x1000_0000) != 0);
 
-    this.alertIcon.setSelected(this.wobj.showAlertIndicator_194.get());
+    this.alertIcon.setSelected(this.sobj.showAlertIndicator_194);
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
-    if(this.wobjList.getSelectionModel().getSelectedIndex() < 0) {
+    if(this.sobjList.getSelectionModel().getSelectedIndex() < 0) {
       return;
     }
 
-    final int scriptIndex = wobjIndices_800c6880.get(this.wobjList.getSelectionModel().getSelectedIndex()).get();
+    final ScriptState<SubmapObject210> state = sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
-    scriptDebugger.preselectScript(scriptIndex).start(new Stage());
+    scriptDebugger.preselectScript(state.index).start(new Stage());
   }
 
   public void refreshValues(final ActionEvent event) {
-    this.displayStats(this.wobjList.getSelectionModel().getSelectedIndex());
+    this.displayStats(this.sobjList.getSelectionModel().getSelectedIndex());
   }
 
   public void updatePos(final ActionEvent event) {
-    if(this.wobj != null) {
-      this.wobj.model_00.coord2_14.coord.transfer.setX(this.posX.getValueFactory().getValue());
-      this.wobj.model_00.coord2_14.coord.transfer.setY(this.posY.getValueFactory().getValue());
-      this.wobj.model_00.coord2_14.coord.transfer.setZ(this.posZ.getValueFactory().getValue());
+    if(this.sobj != null) {
+      this.sobj.model_00.coord2_14.coord.transfer.setX(this.posX.getValueFactory().getValue());
+      this.sobj.model_00.coord2_14.coord.transfer.setY(this.posY.getValueFactory().getValue());
+      this.sobj.model_00.coord2_14.coord.transfer.setZ(this.posZ.getValueFactory().getValue());
     }
   }
 
   public void updateRot(final ActionEvent event) {
-    if(this.wobj != null) {
-      this.wobj.model_00.coord2Param_64.rotate.setX(this.rotX.getValueFactory().getValue().shortValue());
-      this.wobj.model_00.coord2Param_64.rotate.setY(this.rotY.getValueFactory().getValue().shortValue());
-      this.wobj.model_00.coord2Param_64.rotate.setZ(this.rotZ.getValueFactory().getValue().shortValue());
+    if(this.sobj != null) {
+      this.sobj.model_00.coord2Param_64.rotate.setX(this.rotX.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2Param_64.rotate.setY(this.rotY.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2Param_64.rotate.setZ(this.rotZ.getValueFactory().getValue().shortValue());
     }
   }
 
   public void updateScale(final ActionEvent event) {
-    if(this.wobj != null) {
-      this.wobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
-      this.wobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
-      this.wobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
+    if(this.sobj != null) {
+      this.sobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
+      this.sobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
+      this.sobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
     }
   }
 
@@ -250,17 +248,17 @@ public class SmapDebuggerController {
   }
 
   public void showAlertIconClick(final ActionEvent actionEvent) {
-    if(this.wobj != null) {
-      this.wobj.showAlertIndicator_194.set(this.alertIcon.isSelected());
+    if(this.sobj != null) {
+      this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
     }
   }
 
   private void setOrClearFlag(final long flag, final boolean selected) {
-    if(this.wobj != null) {
+    if(this.sobj != null) {
       if(selected) {
-        this.wobj.flags_190.or(flag);
+        this.sobj.flags_190 |= flag;
       } else {
-        this.wobj.flags_190.and(~flag);
+        this.sobj.flags_190 &= ~flag;
       }
     }
   }

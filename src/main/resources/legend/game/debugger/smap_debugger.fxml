@@ -21,7 +21,7 @@
             <VBox prefHeight="378.0" prefWidth="182.0">
                <children>
                   <Label text="Submap Objects" />
-                  <ListView fx:id="wobjList" prefHeight="398.0" prefWidth="182.0" />
+                  <ListView fx:id="sobjList" prefHeight="398.0" prefWidth="182.0" />
                </children>
                <HBox.margin>
                   <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

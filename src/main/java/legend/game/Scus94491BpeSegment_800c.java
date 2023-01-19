@@ -9,15 +9,11 @@ import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.game.types.GsOffsetType;
 import legend.game.types.PlayableSoundStruct;
-import legend.game.types.RunningScript;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -46,7 +42,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c34c6 = MEMORY.ref(2, 0x800c34c6L);
   public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
   /** Incremented with each frame - overflows to 1 */
-  public static final Value PSDCNT_800c34d0 = MEMORY.ref(4, 0x800c34d0L);
+  public static int PSDCNT_800c34d0;
   /** Double buffer index */
   public static final UnsignedShortRef PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L, UnsignedShortRef::new);
   public static final EnumRef<GsOffsetType> doubleBufferOffsetMode_800c34d6 = MEMORY.ref(2, 0x800c34d6L, EnumRef.of(GsOffsetType::getValue, GsOffsetType.values()));
@@ -62,7 +58,7 @@ public final class Scus94491BpeSegment_800c {
   /** Includes aspect scale */
   public static final MATRIX identityAspectMatrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
 
-  public static final UnboundedArrayRef<Pointer<GsCOORDINATE2>> coord2s_800c35a8 = MEMORY.ref(4, 0x800c35a8L, UnboundedArrayRef.of(4, Pointer.deferred(4, GsCOORDINATE2::new)));
+  public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
   /** 0x990 bytes long, I think these map to voices, not channels */
   public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(2, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
@@ -89,7 +85,4 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
-
-  /** TODO this is in an overlay that we don't have yet */
-  public static final FunctionRef<RunningScript, Long> scriptSubFunction_800ca734 = MEMORY.ref(4, 0x800ca734L, FunctionRef::new);
 }

@@ -1,33 +1,19 @@
 package legend.core.gte;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.UnsignedIntRef;
-
 /** 0x10 bytes long */
-public class GsDOBJ2 implements MemoryRef {
-  private final Value ref;
-
+public class GsDOBJ2 {
   /** perspective, translation, rotate, display */
-  public final UnsignedIntRef attribute_00;
+  public int attribute_00;
   /** local dmatrix */
-  public final Pointer<GsCOORDINATE2> coord2_04;
-  public final Pointer<TmdObjTable> tmd_08;
-  public final IntRef id_0c;
+  public GsCOORDINATE2 coord2_04;
+  public TmdObjTable tmd_08;
+  public int id_0c;
 
-  public GsDOBJ2(final Value ref) {
-    this.ref = ref;
-
-    this.attribute_00 = ref.offset(4, 0x0L).cast(UnsignedIntRef::new);
-    this.coord2_04 = ref.offset(4, 0x4L).cast(Pointer.deferred(4, GsCOORDINATE2::new));
-    this.tmd_08 = ref.offset(4, 0x8L).cast(Pointer.deferred(4, TmdObjTable::new));
-    this.id_0c = ref.offset(4, 0xcL).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public GsDOBJ2 set(final GsDOBJ2 other) {
+    this.attribute_00 = other.attribute_00;
+    this.coord2_04 = other.coord2_04;
+    this.tmd_08 = other.tmd_08;
+    this.id_0c = other.id_0c;
+    return this;
   }
 }

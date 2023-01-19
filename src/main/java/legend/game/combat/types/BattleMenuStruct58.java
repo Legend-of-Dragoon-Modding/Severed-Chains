@@ -40,7 +40,7 @@ public class BattleMenuStruct58 implements MemoryRef {
   public final IntRef _3c;
   public final UnsignedIntRef _40;
   public final UnsignedIntRef _44;
-  public final IntRef _48;
+  public final IntRef target_48;
   public final UnsignedIntRef _4c;
   public final IntRef targetType_50;
   public final IntRef combatantIndex;
@@ -71,7 +71,7 @@ public class BattleMenuStruct58 implements MemoryRef {
     this._3c = ref.offset(4, 0x3cL).cast(IntRef::new);
     this._40 = ref.offset(4, 0x40L).cast(UnsignedIntRef::new);
     this._44 = ref.offset(4, 0x44L).cast(UnsignedIntRef::new);
-    this._48 = ref.offset(4, 0x48L).cast(IntRef::new);
+    this.target_48 = ref.offset(4, 0x48L).cast(IntRef::new);
     this._4c = ref.offset(4, 0x4cL).cast(UnsignedIntRef::new);
     this.targetType_50 = ref.offset(4, 0x50L).cast(IntRef::new);
     this.combatantIndex = ref.offset(4, 0x54L).cast(IntRef::new);

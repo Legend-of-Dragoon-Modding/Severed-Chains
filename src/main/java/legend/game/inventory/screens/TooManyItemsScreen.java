@@ -189,7 +189,7 @@ public class TooManyItemsScreen extends MenuScreen {
           free(drgn0_6666FilePtr_800bdc3c.getPointer());
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
-          if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
+          if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
             FUN_800e3fac();
           }
 

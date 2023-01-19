@@ -3,11 +3,14 @@ package legend.game.combat.types;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub50 extends BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub50 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
   public final UnsignedShortRef _00;
   public final UnsignedShortRef _02;
   public final ArrayRef<UnsignedShortRef> u_04;
@@ -26,7 +29,7 @@ public class BttlScriptData6cSub50 extends BttlScriptData6cSubBase1 {
   public final ShortRef _4a;
 
   public BttlScriptData6cSub50(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
@@ -44,5 +47,10 @@ public class BttlScriptData6cSub50 extends BttlScriptData6cSubBase1 {
 
     this._48 = ref.offset(2, 0x048L).cast(ShortRef::new);
     this._4a = ref.offset(2, 0x04aL).cast(ShortRef::new);
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

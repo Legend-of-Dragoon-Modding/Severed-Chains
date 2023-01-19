@@ -6,7 +6,6 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class CharacterData2c implements MemoryRef {
@@ -20,7 +19,7 @@ public class CharacterData2c implements MemoryRef {
    *   <li>0x20 - can't remove (don't select, can't be taken out of main party)</li>
    * </ul>
    */
-  public final UnsignedIntRef partyFlags_04;
+  public final IntRef partyFlags_04;
   public final UnsignedShortRef hp_08;
   public final UnsignedShortRef mp_0a;
   public final UnsignedShortRef sp_0c;
@@ -39,7 +38,7 @@ public class CharacterData2c implements MemoryRef {
     this.ref = ref;
 
     this.xp_00 = ref.offset(4, 0x00L).cast(IntRef::new);
-    this.partyFlags_04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
+    this.partyFlags_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this.hp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
     this.mp_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
     this.sp_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);

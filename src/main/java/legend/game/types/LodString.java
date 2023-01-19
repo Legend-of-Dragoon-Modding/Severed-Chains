@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
+import legend.game.scripting.Param;
 
 import javax.annotation.Nullable;
 
@@ -21,15 +22,45 @@ public class LodString implements MemoryRef {
     this.chars = new int[length];
   }
 
+  public LodString(final int[] chars) {
+    this.ref = null;
+    this.chars = chars;
+  }
+
   public LodString(final String text) {
     this(text.length() + 1);
     this.set(text);
   }
 
+  public static LodString fromParam(final Param param) {
+    int charCount = 0;
+    for(int paramIndex = 0; ; paramIndex++) {
+      final Param p = param.array(paramIndex);
+
+      charCount++;
+      if((p.get() & 0xffff) == 0xa0ff) {
+        break;
+      }
+
+      charCount++;
+      if((p.get() >>> 16 & 0xffff) == 0xa0ff) {
+        break;
+      }
+    }
+
+    final int[] chars = new int[charCount];
+    for(int charIndex = 0; charIndex < charCount; charIndex++) {
+      final Param p = param.array(charIndex / 2);
+      chars[charIndex] = p.get() >>> ((charIndex & 1) * 16) & 0xffff;
+    }
+
+    return new LodString(chars);
+  }
+
   public String get() {
     final StringBuilder sb = new StringBuilder();
 
-    for(int i = 0; i < 0x80; i++) {
+    for(int i = 0; i < (this.chars != null ? this.chars.length : 500); i++) {
       final long c = this.charAt(i);
 
       if(c == 0xa0ffL || c == 0xffffL) {
@@ -133,6 +164,10 @@ public class LodString implements MemoryRef {
 
   public int charAt(final int index) {
     if(this.ref == null) {
+      if(index >= this.chars.length) {
+        throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.chars.length));
+      }
+
       return this.chars[index];
     }
 

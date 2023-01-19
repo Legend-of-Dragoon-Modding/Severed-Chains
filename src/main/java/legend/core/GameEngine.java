@@ -16,6 +16,7 @@ import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
 import legend.game.modding.registries.Registries;
+import legend.game.scripting.ScriptManager;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
@@ -49,6 +50,8 @@ public final class GameEngine {
 
   public static final Registries REGISTRIES = new Registries();
   private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
+
+  public static final ScriptManager SCRIPTS = new ScriptManager();
 
   public static final Cpu CPU;
   public static final Gpu GPU;

@@ -3,138 +3,76 @@ package legend.game.types;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 
-public class WMapStruct258 implements MemoryRef {
-  private final Value ref;
+public class WMapStruct258 {
+  public int _00;
+  /** ubyte */
+  public int _04;
+  /** ubyte */
+  public int _05;
 
-  public final UnsignedIntRef _00;
-  public final UnsignedByteRef _04;
-  public final UnsignedByteRef _05;
+  public WMapTmdRenderingStruct18 tmdRendering_08;
+  public final Model124[] models_0c = new Model124[4];
+  public long ptr_1c; //TODO pointer to a struct
+  /** short */
+  public int colour_20;
 
-  public final Pointer<WMapTmdRenderingStruct18> tmdRendering_08;
-  public final ArrayRef<Pointer<Model124>> models_0c;
-  public final UnsignedIntRef _1c; //TODO pointer to a struct
-  public final ShortRef _20;
-
-  public final Pointer<UnboundedArrayRef<WMapStruct258Sub60>> _24;
-  public final UnsignedIntRef _28;
+  public WMapStruct258Sub60[] _24;
+  public int _28;
   /** TODO ptr */
-  public final UnsignedIntRef imageData_2c;
+  public long imageData_2c;
   /** TODO ptr */
-  public final UnsignedIntRef imageData_30;
-  public final GsCOORDINATE2 coord2_34;
-  public final VECTOR vec_84;
-  public final VECTOR vec_94;
-  public final SVECTOR rotation_a4;
-  public final IntRef currentAnimIndex_ac;
-  public final IntRef animIndex_b0;
-  public final ArrayRef<WMapStruct258Sub40> _b4;
-  public final ArrayRef<Pointer<MrgFile>> _1b4;
-  public final ArrayRef<ShortRef> _1c4;
-  public final IntRef modelIndex_1e4;
-  public final SVECTOR svec_1e8;
-  public final SVECTOR svec_1f0;
-  public final UnsignedByteRef zoomState_1f8;
-  public final UnsignedByteRef _1f9;
+  public long imageData_30;
+  public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
+  public final VECTOR vec_84 = new VECTOR();
+  public final VECTOR vec_94 = new VECTOR();
+  public final SVECTOR rotation_a4 = new SVECTOR();
+  public int currentAnimIndex_ac;
+  public int animIndex_b0;
+  public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
+  public final MrgFile[] _1b4 = new MrgFile[4];
+  /** short */
+  public final int[] _1c4 = new int[16];
+  public int modelIndex_1e4;
+  public final SVECTOR svec_1e8 = new SVECTOR();
+  public final SVECTOR svec_1f0 = new SVECTOR();
+  /** ubyte */
+  public int zoomState_1f8;
+  /** ubyte */
+  public int _1f9;
 
-  public final Pointer<WMapRender40> _1fc;
-  public final SVECTOR svec_200;
-  public final SVECTOR svec_208;
+  public WMapRender40 _1fc;
+  public final SVECTOR svec_200 = new SVECTOR();
+  public final SVECTOR svec_208 = new SVECTOR();
 
-  public final IntRef _218;
-  public final UnsignedShortRef _21c;
-  public final UnsignedShortRef _21e;
-  public final ByteRef _220;
-  public final UnsignedByteRef coolonWarpIndex_221;
-  public final UnsignedByteRef coolonWarpIndex_222;
-  public final UnsignedByteRef _223;
-  public final Pointer<UnboundedArrayRef<VECTOR>> vecs_224;
-  public final Pointer<UnboundedArrayRef<VECTOR>> vecs_228;
+  public int _218;
+  /** ushort */
+  public int _21c;
+  /** ushort */
+  public int _21e;
+  /** byte */
+  public int _220;
+  /** ubyte */
+  public int coolonWarpIndex_221;
+  /** ubyte */
+  public int coolonWarpIndex_222;
+  /** ubyte */
+  public int _223;
+  public UnboundedArrayRef<VECTOR> vecs_224;
+  public UnboundedArrayRef<VECTOR> vecs_228;
   /** TODO pointer */
-  public final UnsignedIntRef ptr_22c;
-  public final UnsignedIntRef _230;
-  public final UnsignedIntRef _234;
-  public final UnsignedIntRef _238;
-  public final UnsignedIntRef _23c;
-  public final UnsignedIntRef _240;
-  public final UnsignedByteRef _244;
+  public long ptr_22c;
+  public int _230;
+  public int _234;
+  public int _238;
+  public int _23c;
+  public int _240;
+  /** byte */
+  public int _244;
 
-  public final UnsignedIntRef _248;
-
-  public final UnsignedIntRef _250;
-  public final UnsignedIntRef _254;
-
-  public WMapStruct258(final Value ref) {
-    this.ref = ref;
-
-    this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-
-    this.tmdRendering_08 = ref.offset(4, 0x08L).cast(Pointer.deferred(4, WMapTmdRenderingStruct18::new));
-    this.models_0c = ref.offset(4, 0x0cL).cast(ArrayRef.of(Pointer.classFor(Model124.class), 4, 4, Pointer.deferred(4, Model124::new)));
-    this._1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
-
-    this._24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x60, WMapStruct258Sub60::new)));
-    this._28 = ref.offset(4, 0x28L).cast(UnsignedIntRef::new);
-    this.imageData_2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
-    this.imageData_30 = ref.offset(4, 0x30L).cast(UnsignedIntRef::new);
-    this.coord2_34 = ref.offset(4, 0x34L).cast(GsCOORDINATE2::new);
-    this.vec_84 = ref.offset(4, 0x84L).cast(VECTOR::new);
-    this.vec_94 = ref.offset(4, 0x94L).cast(VECTOR::new);
-    this.rotation_a4 = ref.offset(2, 0xa4L).cast(SVECTOR::new);
-    this.currentAnimIndex_ac = ref.offset(4, 0xacL).cast(IntRef::new);
-    this.animIndex_b0 = ref.offset(4, 0xb0L).cast(IntRef::new);
-    this._b4 = ref.offset(4, 0xb4L).cast(ArrayRef.of(WMapStruct258Sub40.class, 4, 0x40, WMapStruct258Sub40::new));
-    this._1b4 = ref.offset(4, 0x1b4L).cast(ArrayRef.of(Pointer.classFor(MrgFile.class), 4, 4, Pointer.deferred(4, MrgFile::new)));
-    this._1c4 = ref.offset(2, 0x1c4L).cast(ArrayRef.of(ShortRef.class, 16, 2, ShortRef::new));
-    this.modelIndex_1e4 = ref.offset(4, 0x1e4L).cast(IntRef::new);
-    this.svec_1e8 = ref.offset(2, 0x1e8L).cast(SVECTOR::new);
-    this.svec_1f0 = ref.offset(2, 0x1f0L).cast(SVECTOR::new);
-    this.zoomState_1f8 = ref.offset(1, 0x1f8L).cast(UnsignedByteRef::new);
-    this._1f9 = ref.offset(1, 0x1f9L).cast(UnsignedByteRef::new);
-
-    this._1fc = ref.offset(4, 0x1fcL).cast(Pointer.deferred(4, WMapRender40::new));
-    this.svec_200 = ref.offset(2, 0x200L).cast(SVECTOR::new);
-    this.svec_208 = ref.offset(2, 0x208L).cast(SVECTOR::new);
-
-    this._218 = ref.offset(4, 0x218L).cast(IntRef::new);
-    this._21c = ref.offset(2, 0x21cL).cast(UnsignedShortRef::new);
-    this._21e = ref.offset(2, 0x21eL).cast(UnsignedShortRef::new);
-    this._220 = ref.offset(1, 0x220L).cast(ByteRef::new);
-    this.coolonWarpIndex_221 = ref.offset(1, 0x221L).cast(UnsignedByteRef::new);
-    this.coolonWarpIndex_222 = ref.offset(1, 0x222L).cast(UnsignedByteRef::new);
-    this._223 = ref.offset(1, 0x223L).cast(UnsignedByteRef::new);
-    this.vecs_224 = ref.offset(4, 0x224L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
-    this.vecs_228 = ref.offset(4, 0x228L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
-    this.ptr_22c = ref.offset(4, 0x22cL).cast(UnsignedIntRef::new);
-    this._230 = ref.offset(4, 0x230L).cast(UnsignedIntRef::new);
-    this._234 = ref.offset(4, 0x234L).cast(UnsignedIntRef::new);
-    this._238 = ref.offset(4, 0x238L).cast(UnsignedIntRef::new);
-    this._23c = ref.offset(4, 0x23cL).cast(UnsignedIntRef::new);
-    this._240 = ref.offset(4, 0x240L).cast(UnsignedIntRef::new);
-    this._244 = ref.offset(1, 0x244L).cast(UnsignedByteRef::new);
-
-    this._248 = ref.offset(4, 0x248L).cast(UnsignedIntRef::new);
-
-    this._250 = ref.offset(4, 0x250L).cast(UnsignedIntRef::new);
-    this._254 = ref.offset(4, 0x254L).cast(UnsignedIntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
-  }
+  public int _248;
+  public int _24c;
+  public int _250;
+  public int _254;
 }

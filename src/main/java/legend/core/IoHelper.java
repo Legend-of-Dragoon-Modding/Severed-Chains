@@ -1,6 +1,7 @@
 package legend.core;
 
 import legend.core.gpu.RECT;
+import legend.core.gte.SVECTOR;
 import legend.core.memory.Value;
 
 import java.io.IOException;
@@ -121,5 +122,10 @@ public final class IoHelper {
 
   public static void readRect(final ByteBuffer stream, final RECT rect) {
     rect.set(readShort(stream), readShort(stream), readShort(stream), readShort(stream));
+  }
+
+  /** NOTE: DOES NOT READ PADDING */
+  public static void readSvec(final ByteBuffer stream, final SVECTOR svec) {
+    svec.set(readShort(stream), readShort(stream), readShort(stream));
   }
 }

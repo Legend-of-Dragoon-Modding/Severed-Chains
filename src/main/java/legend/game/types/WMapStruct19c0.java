@@ -4,134 +4,80 @@ import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 
-public class WMapStruct19c0 implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
-  public final GsRVIEW2 rview2_00;
-  public final GsCOORDINATE2 coord2_20;
-  public final SVECTOR mapRotation_70;
-  public final ShortRef mapRotationStartAngle_78;
-  public final ShortRef mapRotationEndAngle_7a;
-  public final ShortRef mapRotationStep_7c;
-  public final ShortRef mapRotationCounter_7e;
-  public final UnsignedByteRef mapRotating_80;
+public class WMapStruct19c0 {
+  public final GsRVIEW2 rview2_00 = new GsRVIEW2();
+  public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
+  public final SVECTOR mapRotation_70 = new SVECTOR();
+  /** short */
+  public int mapRotationStartAngle_78;
+  /** short */
+  public int mapRotationEndAngle_7a;
+  /** short */
+  public int mapRotationStep_7c;
+  /** short */
+  public int mapRotationCounter_7e;
+  /** ubyte */
+  public int mapRotating_80;
 
-  public final UnsignedIntRef _84;
-  public final UnsignedIntRef _88;
-  public final ArrayRef<COLOUR> colour_8c;
+  public int _84;
+  public int _88;
+  public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
+  /** short */
+  public int _98;
+  /** short */
+  public int _9a;
+  /** short */
+  public int _9c;
+  /** short */
+  public int _9e;
+  /** short */
+  public int _a0;
+  public final VECTOR vec_a4 = new VECTOR();
+  public final VECTOR vec_b4 = new VECTOR();
+  /** byte (bool?) */
+  public int _c4;
+  /** ubyte */
+  public int _c5;
 
-  public final ShortRef _98;
-  public final ShortRef _9a;
-  public final ShortRef _9c;
-  public final ShortRef _9e;
-  public final UnsignedShortRef _a0;
-  public final VECTOR vec_a4;
-  public final VECTOR vec_b4;
+  public final GsRVIEW2 rview2_c8 = new GsRVIEW2();
 
-  public final ByteRef _c4;
-  public final UnsignedByteRef _c5;
+  public int viewpointY_ec;
+  public int viewpointZ_f0;
 
-  public final GsRVIEW2 rview2_c8;
+  public int refpointY_f8;
+  public int refpointZ_fc;
 
-  public final IntRef viewpointY_ec;
-  public final IntRef viewpointZ_f0;
+  /** short */
+  public int _108;
+  /** short */
+  public int _10a;
+  /** short */
+  public int _10c;
+  /** ushort */
+  public int _10e;
+  /** ubyte */
+  public int _110;
 
-  public final IntRef refpointY_f8;
-  public final IntRef refpointZ_fc;
+  public int _114;
+  /** short */
+  public int _118;
+  /** ubyte */
+  public int _11a;
 
-  public final ShortRef _108;
-  public final ShortRef _10a;
-  public final ShortRef _10c;
-  public final UnsignedShortRef _10e;
-  public final UnsignedByteRef _110;
+  public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
+  public final SVECTOR ambientLight_14c = new SVECTOR();
+  public final WMapSubStruct18[] _154 = new WMapSubStruct18[0x101];
+  public int _196c;
+  public int _1970;
+  public int _1974;
 
-  public final UnsignedIntRef _114;
-  public final ShortRef _118;
-  public final UnsignedByteRef _11a;
+  public final short[] _19a8 = new short[3];
+  public final short[] _19ae = new short[3];
 
-  public final ArrayRef<GsF_LIGHT> lights_11c;
-
-  public final SVECTOR ambientLight_14c;
-  public final UnboundedArrayRef<WMapSubStruct18> _154; //TODO unknown length
-
-  public final IntRef _196c;
-  public final IntRef _1970;
-  public final IntRef _1974;
-
-  public final ArrayRef<ShortRef> _19a8;
-  public final ArrayRef<ShortRef> _19ae;
-
-  public WMapStruct19c0(final Value ref) {
-    this.ref = ref;
-
-    this.rview2_00 = ref.offset(4, 0x00L).cast(GsRVIEW2::new);
-    this.coord2_20 = ref.offset(4, 0x20L).cast(GsCOORDINATE2::new);
-    this.mapRotation_70 = ref.offset(2, 0x70L).cast(SVECTOR::new);
-    this.mapRotationStartAngle_78 = ref.offset(2, 0x78L).cast(ShortRef::new);
-    this.mapRotationEndAngle_7a = ref.offset(2, 0x7aL).cast(ShortRef::new);
-    this.mapRotationStep_7c = ref.offset(2, 0x7cL).cast(ShortRef::new);
-    this.mapRotationCounter_7e = ref.offset(2, 0x7eL).cast(ShortRef::new);
-    this.mapRotating_80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
-
-    this._84 = ref.offset(4, 0x84L).cast(UnsignedIntRef::new);
-    this._88 = ref.offset(4, 0x88L).cast(UnsignedIntRef::new);
-    this.colour_8c = ref.offset(4, 0x8cL).cast(ArrayRef.of(COLOUR.class, 3, 4, COLOUR::new));
-
-    this._98 = ref.offset(2, 0x98L).cast(ShortRef::new);
-    this._9a = ref.offset(2, 0x9aL).cast(ShortRef::new);
-    this._9c = ref.offset(2, 0x9cL).cast(ShortRef::new);
-    this._9e = ref.offset(2, 0x9eL).cast(ShortRef::new);
-    this._a0 = ref.offset(2, 0xa0L).cast(UnsignedShortRef::new);
-    this.vec_a4 = ref.offset(4, 0xa4L).cast(VECTOR::new);
-    this.vec_b4 = ref.offset(4, 0xb4L).cast(VECTOR::new);
-
-    this._c4 = ref.offset(1, 0xc4L).cast(ByteRef::new);
-    this._c5 = ref.offset(1, 0xc5L).cast(UnsignedByteRef::new);
-
-    this.rview2_c8 = ref.offset(4, 0xc8L).cast(GsRVIEW2::new);
-
-    this.viewpointY_ec = ref.offset(4, 0xecL).cast(IntRef::new);
-    this.viewpointZ_f0 = ref.offset(4, 0xf0L).cast(IntRef::new);
-
-    this.refpointY_f8 = ref.offset(4, 0xf8L).cast(IntRef::new);
-    this.refpointZ_fc = ref.offset(4, 0xfcL).cast(IntRef::new);
-
-    this._108 = ref.offset(2, 0x108L).cast(ShortRef::new);
-    this._10a = ref.offset(2, 0x10aL).cast(ShortRef::new);
-    this._10c = ref.offset(2, 0x10cL).cast(ShortRef::new);
-    this._10e = ref.offset(2, 0x10eL).cast(UnsignedShortRef::new);
-    this._110 = ref.offset(1, 0x110L).cast(UnsignedByteRef::new);
-
-    this._114 = ref.offset(4, 0x114L).cast(UnsignedIntRef::new);
-    this._118 = ref.offset(2, 0x118L).cast(ShortRef::new);
-    this._11a = ref.offset(1, 0x11aL).cast(UnsignedByteRef::new);
-
-    this.lights_11c = ref.offset(4, 0x11cL).cast(ArrayRef.of(GsF_LIGHT.class, 3, 0x10, GsF_LIGHT::new));
-
-    this.ambientLight_14c = ref.offset(2, 0x14cL).cast(SVECTOR::new);
-    this._154 = ref.offset(4, 0x154L).cast(UnboundedArrayRef.of(0x18, WMapSubStruct18::new));
-
-    this._196c = ref.offset(4, 0x196cL).cast(IntRef::new);
-    this._1970 = ref.offset(4, 0x1970L).cast(IntRef::new);
-    this._1974 = ref.offset(4, 0x1974L).cast(IntRef::new);
-
-    this._19a8 = ref.offset(2, 0x19a8L).cast(ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
-    this._19ae = ref.offset(2, 0x19aeL).cast(ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public WMapStruct19c0() {
+    Arrays.setAll(this._154, i -> new WMapSubStruct18());
   }
 }

@@ -16,21 +16,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.core.GameEngine;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
-import legend.game.types.ScriptState;
+import legend.game.scripting.ScriptState;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 
 public class ScriptDebuggerController {
   private static final Set<ScriptDebuggerController> INSTANCES = new HashSet<>();
@@ -143,49 +140,76 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer() != unusedScriptState_800bc0c0.getAddress() ? Long.toHexString(scriptStatePtrArr_800bc1c0.get(scriptIndex).getPointer()) : "not allocated";
+    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00 != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.getClass().getSimpleName() : "empty state" : "not allocated";
   }
 
   private void updateScriptVars() {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(this.scriptSelector.getValue().index).deref();
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[this.scriptSelector.getValue().index];
+
+    if(state == null) {
+      return;
+    }
 
     for(int storageIndex = 0; storageIndex < 33; storageIndex++) {
       this.storage.get(storageIndex).update();
     }
 
-    final Pointer<IntRef> top = state.commandPtr_18;
-    if(top.isNull()) {
+    if(state.offset_18 == -1) {
       this.stackTop.setText("null");
     } else {
-      this.stackTop.setText("0x%1$08x: %2$x".formatted(top.getPointer(), top.deref().get()));
+      this.stackTop.setText("0x%08x".formatted(state.offset_18));
     }
 
     for(int stackIndex = 0; stackIndex < 10; stackIndex++) {
       this.stack.get(stackIndex).update();
     }
 
-    this.ticker.setText("0x%1$x".formatted(state.ticker_04.getPointer()));
-    this.renderer.setText("0x%1$x".formatted(state.renderer_08.getPointer()));
-    this.tempTicker.setText("0x%1$x".formatted(state.tempTicker_10.getPointer()));
-    this.destructor.setText("0x%1$x".formatted(state.destructor_0c.getPointer()));
-    this.filePtr.setText("0x%1$x".formatted(state.scriptPtr_14.getPointer()));
-    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44.get(5).get()));
-    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44.get(6).get()));
+    if(state.ticker_04 != null) {
+      this.ticker.setText(state.ticker_04.toString());
+    } else {
+      this.ticker.setText("null");
+    }
+
+    if(state.renderer_08 != null) {
+      this.renderer.setText(state.renderer_08.toString());
+    } else {
+      this.renderer.setText("null");
+    }
+
+    if(state.tempTicker_10 != null) {
+      this.tempTicker.setText(state.tempTicker_10.toString());
+    } else {
+      this.tempTicker.setText("null");
+    }
+
+    if(state.destructor_0c != null) {
+      this.destructor.setText(state.destructor_0c.toString());
+    } else {
+      this.destructor.setText("null");
+    }
+
+    this.filePtr.setText(state.scriptPtr_14.name);
+    this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5]));
+    this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6]));
   }
 
   private String getScriptStorage(final int scriptIndex, final int storageIndex) {
-    final int val = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().storage_44.get(storageIndex).get();
+    if(scriptStatePtrArr_800bc1c0[scriptIndex] == null) {
+      return "null";
+    }
+
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex].storage_44[storageIndex];
     return "0x%1$x (%1$d)".formatted(val);
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
     return GameEngine.MEMORY.waitForLock(() -> {
-      final Pointer<IntRef> val = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().commandStack_1c.get(stackIndex);
+      final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
 
-      if(val.isNull()) {
+      if(val == -1) {
         return "null";
       } else {
-        return "0x%1$08x: %2$x".formatted(val.getPointer(), val.deref().get());
+        return "0x%08x".formatted(val);
       }
     });
   }
