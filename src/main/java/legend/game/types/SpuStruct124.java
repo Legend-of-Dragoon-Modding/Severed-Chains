@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -43,7 +44,8 @@ public class SpuStruct124 implements MemoryRef {
 
   public final UnsignedByteRef _035;
 
-  public final UnsignedByteRef _037;
+  /** If set, {@link #command_000} will get set to {@link #_039} at the end of this sound's tick */
+  public final BoolRef overrideCommand_037;
 
   public final UnsignedByteRef _039;
   public final UnsignedByteRef _03a;
@@ -117,7 +119,7 @@ public class SpuStruct124 implements MemoryRef {
 
     this._035 = ref.offset(1, 0x035L).cast(UnsignedByteRef::new);
 
-    this._037 = ref.offset(1, 0x037L).cast(UnsignedByteRef::new);
+    this.overrideCommand_037 = ref.offset(1, 0x037L).cast(BoolRef::new);
 
     this._039 = ref.offset(1, 0x039L).cast(UnsignedByteRef::new);
     this._03a = ref.offset(1, 0x03aL).cast(UnsignedByteRef::new);

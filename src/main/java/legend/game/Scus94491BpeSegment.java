@@ -4101,16 +4101,22 @@ public final class Scus94491BpeSegment {
         _800bd0fc.setu(a2);
         sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
 
-        if((a2 & 1) == 0) {
-          setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001fa18);
-        } else {
-          //LAB_8001dd3c
-          setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001fab4);
-        }
+        LOGGER.info("Loading SSHD to %08x", mrg.getFile(2));
+        LOGGER.info("Loading SSSQ to %08x", mrg.getFile(1));
 
         //LAB_8001dd44
         sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x2_1f70));
         sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), mrg.getFile(1, SssqFile::new)));
+
+        LOGGER.info("SSHD playable sound index %d", sound.playableSoundIndex_10.get());
+        LOGGER.info("SSSQ channel index %d", sssqChannelIndex_800bd0f8.get());
+
+        if((a2 & 1) == 0) {
+          Scus94491BpeSegment.FUN_8001fa18();
+        } else {
+          //LAB_8001dd3c
+          Scus94491BpeSegment.FUN_8001fab4();
+        }
       }
 
       //LAB_8001dd98
@@ -4506,7 +4512,7 @@ public final class Scus94491BpeSegment {
     soundFileArr_800bcf80.get(8).charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
     setSpuDmaCompleteCallback(Scus94491BpeSegment::submapSoundsCleanup);
 
-    if(files.get(4).length != mrg.getFile(3, SshdFile::new).size_04.get()) {
+    if(files.get(4).length != mrg.getFile(3, SshdFile::new).soundBankSize_04.get()) {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
 
@@ -4633,11 +4639,9 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f3d0L)
   public static void loadMusicPackage(final int index, final int a1) {
     unloadSoundFile(8);
-    //TODO GH#3
-    musicLoaded_800bd782.incr();
-//    loadedDrgnFiles_800bcf78.oru(0x80L);
-//    final int fileIndex = 5815 + index * 5;
-//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex * 0x100 | a1, 4);
+    loadedDrgnFiles_800bcf78.oru(0x80L);
+    final int fileIndex = 5815 + index * 5;
+    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | a1));
   }
 
   @Method(0x8001f450L)
