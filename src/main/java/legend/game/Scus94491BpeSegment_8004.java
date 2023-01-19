@@ -3540,7 +3540,7 @@ public final class Scus94491BpeSegment_8004 {
     final SpuStruct124 spu124 = _800c4ac8.get(channelIndex);
 
     if(spu124._03c.get() != 0) {
-      long s4 = 0;
+      int s4 = 0;
 
       if(spu124._03e.get(5).get(0).get() != 0) {
         sssqPtr_800c667c.setu(spu124.sssqPtr_010.getPointer());
@@ -3566,7 +3566,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004b0a0
       for(int i = 0; i < 16; i++) {
-        if(sssqDataPointer_800c6680.deref(1).offset(0x3L).get() != spu124._03e.get(1).get(i).get() && spu124._03e.get(0).get(i).get() == 0x1L) {
+        if(sssqDataPointer_800c6680.deref(1).offset(0x3L).get() != spu124._03e.get(1).get(i).get() && spu124._03e.get(0).get(i).get() == 1) {
           if(spu124._03e.get(2).get(i).get() != 0) {
             sssqDataPointer_800c6680.deref(1).offset(0x3L).setu(FUN_8004af3c(spu124._03e.get(1).get(i).get(), spu124._03e.get(4).get(i).get(), spu124._03e.get(3).get(i).get(), spu124._03e.get(2).get(i).get()));
             spu124._03e.get(2).get(i).decr();
@@ -3581,7 +3581,7 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_8004b130
-        sssqDataPointer_800c6680.addu(0x10L);
+        sssqDataPointer_800c6680.addu(0x10);
       }
 
       if(s4 == 0) {
