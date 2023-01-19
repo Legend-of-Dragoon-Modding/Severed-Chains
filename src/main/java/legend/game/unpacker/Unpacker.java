@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -54,8 +55,8 @@ public class Unpacker {
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
-    transformers.put(Unpacker::ikiDescriminator, Unpacker::ikiHandle);
-    transformers.put(Unpacker::xaDescriminator, Unpacker::xaHandle);
+    transformers.put(Unpacker::ikiDiscriminator, Unpacker::ikiHandle);
+    transformers.put(Unpacker::xaDiscriminator, Unpacker::xaHandle);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -277,7 +278,7 @@ public class Unpacker {
     return entries;
   }
 
-  private static boolean xaDescriminator(final String name, final FileData data) {
+  private static boolean xaDiscriminator(final String name, final FileData data) {
     return name.endsWith(".XA") && !name.endsWith("3.XA");
   }
 
@@ -286,7 +287,7 @@ public class Unpacker {
     return Collections.emptyMap();
   }
 
-  private static boolean ikiDescriminator(final String name, final FileData data) {
+  private static boolean ikiDiscriminator(final String name, final FileData data) {
     return name.endsWith(".IKI");
   }
 
@@ -295,7 +296,6 @@ public class Unpacker {
     return Collections.emptyMap();
   }
 
-  private static boolean decompressDescriminator(final String name, final FileData data) {
   private static boolean decompressDiscriminator(final String name, final FileData data) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
@@ -354,7 +354,7 @@ public class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDescriminator(final String name, final FileData data) {
+  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data) {
     return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
   }
 
