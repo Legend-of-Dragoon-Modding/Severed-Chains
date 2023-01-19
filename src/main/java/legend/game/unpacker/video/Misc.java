@@ -35,33 +35,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package legend.game.fmv;
+package legend.game.unpacker.video;
 
 import javax.annotation.Nonnull;
 
 /**
- * MDEC conversion and bitstream exceptions.
+ * Miscellaneous helper functions.
  */
-public abstract class MdecException {
-  /**
-   * Error related to decoding an MDEC stream.
-   */
-  public static class ReadCorruption extends RuntimeException {
-    public ReadCorruption(@Nonnull final String message) {
-      super(message);
-    }
-  }
+public final class Misc {
+    private final static String[] ZERO_PAD = {"", "0", "00", "000", "0000", "00000", "000000", "0000000", "00000000", "000000000", "0000000000", "00000000000", "000000000000", "0000000000000", "00000000000000", "000000000000000", "0000000000000000", "00000000000000000", "000000000000000000", "0000000000000000000", "00000000000000000000", "000000000000000000000", "0000000000000000000000", "00000000000000000000000", "000000000000000000000000", "0000000000000000000000000", "00000000000000000000000000", "000000000000000000000000000", "0000000000000000000000000000", "00000000000000000000000000000", "000000000000000000000000000000", "0000000000000000000000000000000", "00000000000000000000000000000000"};
 
-  /**
-   * Exception thrown at the end of an MDEC stream.
-   */
-  public static class EndOfStream extends RuntimeException {
-    public EndOfStream(@Nonnull final String message) {
-      super(message);
+    public static @Nonnull String bitsToString(final long lng, final int iLength) {
+        final String sBin = Long.toBinaryString(lng);
+        return zeroPadString(sBin, iLength, true);
     }
-  }
 
-  public static String END_OF_BITSTREAM(final int bitstreamOffset) {
-    return String.format("Unexpected end of bitstream at %d", bitstreamOffset);
-  }
+    public static @Nonnull String zeroPadString(@Nonnull final String s, final int iLength, final boolean blnTrim) {
+        final int iSLen = s.length();
+        if(iSLen < iLength) {
+            return ZERO_PAD[iLength - iSLen] + s;
+        } else if(iSLen > iLength && blnTrim) {
+            return s.substring(iSLen - iLength);
+        } else {
+            return s;
+        }
+    }
 }

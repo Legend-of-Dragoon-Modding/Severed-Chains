@@ -75,6 +75,10 @@ dependencies {
 
   implementation group: 'net.java.dev.jna', name: 'jna', version: '5.12.1'
 
+  implementation group: 'com.github.kokorin.jaffree', name: 'jaffree', version: '2022.06.03'
+
+  implementation group: 'com.tagtraum', name: 'ffmpeg', version: '4.0.0', ext: 'pom'
+
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
