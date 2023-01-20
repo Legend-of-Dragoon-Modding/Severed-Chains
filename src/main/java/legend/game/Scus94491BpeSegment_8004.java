@@ -4368,7 +4368,13 @@ public final class Scus94491BpeSegment_8004 {
     boolean s5 = false;
     final SpuStruct124 spu124 = _800c4ac8.get(voiceIndex);
     final PlayableSoundStruct playableSound = playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020.get());
-    final SshdFile sshd = playableSound.sshdPtr_04.deref();
+    final SshdFile sshd = playableSound.sshdPtr_04.derefNullable();
+
+    //TODO GH#3 this shouldn't be necessary
+    if(sshd == null) {
+      return;
+    }
+
     sshdPtr_800c4ac0.set(sshd);
 
     if(spu124._027.get() == 1) {
