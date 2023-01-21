@@ -160,7 +160,11 @@ public class UseItemScreen extends MenuScreen {
 
     //LAB_80102ee8
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
-    renderString(0, 194, 16, this.menuItems.get(selectedSlot + slotScroll).itemId_00, allocate);
+
+    if(selectedSlot + slotScroll < this.menuItems.size()) {
+      renderString(0, 194, 16, this.menuItems.get(selectedSlot + slotScroll).itemId_00, allocate);
+    }
+
     uploadRenderables();
   }
 

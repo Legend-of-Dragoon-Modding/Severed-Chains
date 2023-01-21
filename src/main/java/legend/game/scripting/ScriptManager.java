@@ -119,14 +119,38 @@ public class ScriptManager {
 
     //LAB_80015fd8
     for(int index = 0; index < 72; index++) {
-      try {
-        final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
 
-        if(state != null) {
+      if(state != null) {
+        try {
           state.executeFrame();
+        } catch(final Throwable t) {
+          final RunningScript<?> context = state.context;
+
+          LOGGER.error("Script %d crashed!", index);
+          LOGGER.error("File %s[%d]", state.scriptPtr_14.name, state.offset_18);
+          LOGGER.error("Parameters:");
+          LOGGER.error("  Op param: 0x%x", context.opParam_18);
+          for(int i = 0; i < context.paramCount_14; i++) {
+            LOGGER.error("  %d: %s", i + 1, context.params_20[i]);
+          }
+
+          LOGGER.error("Storage:");
+          for(int i = 0; i < state.storage_44.length; i++) {
+            LOGGER.error("  %d: 0x%x", i + 1, state.storage_44[i]);
+          }
+
+          LOGGER.error("Call stack:");
+          for(int i = 0; i < state.callStack_1c.length; i++) {
+            if(state.callStack_1c[i] == -1) {
+              break;
+            }
+
+            LOGGER.error("  %d: %d", i + 1, state.callStack_1c[i]);
+          }
+
+          throw new RuntimeException("An error occurred while ticking script " + index, t);
         }
-      } catch(final Throwable t) {
-        throw new RuntimeException("An error occurred while ticking script " + index, t);
       }
 
       //LAB_80016614

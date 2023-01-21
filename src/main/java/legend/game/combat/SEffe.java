@@ -5084,7 +5084,7 @@ public final class SEffe {
   @Method(0x8010a3fcL)
   public static FlowControl FUN_8010a3fc(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s4 = script.params_20[2].get();
-    final int sp18 = script.params_20[4].get();
+    final int sp18 = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,

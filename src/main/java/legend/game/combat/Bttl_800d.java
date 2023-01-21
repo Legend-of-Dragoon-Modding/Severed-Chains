@@ -4699,16 +4699,18 @@ public final class Bttl_800d {
       return 2;
     }
 
-    final int count = Math.min(a0.count_c8, a0.animCount_98);
 
     //LAB_800ddd9c
     final Model124.CmbAnim cmbAnim = a0.cmbAnim_08;
     final Cmb cmb = cmbAnim.cmb_04;
     final int a2 = cmbAnim._00;
-    final int t1 = cmb.count_0c.get();
     if(a1 == a2) {
       return a0.ub_9c;
     }
+
+    // Note: these two variables _should_ be the same
+    final int modelPartCount = cmb.modelPartCount_0c.get();
+    final int count = Math.min(a0.count_c8, a0.animCount_98);
 
     //LAB_800dddc4
     int t0;
@@ -4730,14 +4732,13 @@ public final class Bttl_800d {
 
     //LAB_800dde60
     if(a1_0 < t0) {
-      final long a3 = cmb.count_0c.get();
-
       //LAB_800dde88
-      for(int i = 0; i < a3; i++) {
-        final Cmb.Sub0c v1_0 = cmb._10.get(i);
-        final Cmb.Sub0c a0_0 = cmbAnim._08[i];
-        a0_0.rot_00.set(v1_0.rot_00);
-        a0_0.trans_06.set(v1_0.trans_06);
+      for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
+        final Cmb.Transforms0c fileTransforms = cmb.transforms_10.get(partIndex);
+        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+
+        modelTransforms.rot_00.set(fileTransforms.rot_00);
+        modelTransforms.trans_06.set(fileTransforms.trans_06);
       }
 
       //LAB_800ddee0
@@ -4746,20 +4747,20 @@ public final class Bttl_800d {
     }
 
     //LAB_800ddeec
-    long s4 = cmb._10.get(t1).getAddress() + t1 * t0 * 0x8L; //TODO
-
     //LAB_800ddf1c
     for(; t0 < a1_0; t0++) {
       //LAB_800ddf2c
-      for(int i = 0; i < t1; i++) {
-        final Cmb.Sub0c a2_0 = cmbAnim._08[i];
-        a2_0.rot_00.x.add((short)(MEMORY.ref(1, s4).offset(0x1L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned()));
-        a2_0.rot_00.y.add((short)(MEMORY.ref(1, s4).offset(0x2L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned()));
-        a2_0.rot_00.z.add((short)(MEMORY.ref(1, s4).offset(0x3L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned()));
-        a2_0.trans_06.x.add((short)(MEMORY.ref(1, s4).offset(0x5L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned()));
-        a2_0.trans_06.y.add((short)(MEMORY.ref(1, s4).offset(0x6L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned()));
-        a2_0.trans_06.z.add((short)(MEMORY.ref(1, s4).offset(0x7L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned()));
-        s4 = s4 + 0x8L;
+      for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(t0 * modelPartCount + partIndex);
+        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+
+        modelTransforms.rot_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00.get()));
+        modelTransforms.rot_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00.get()));
+        modelTransforms.rot_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get()));
+
+        modelTransforms.trans_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
+        modelTransforms.trans_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
+        modelTransforms.trans_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
       }
 
       //LAB_800ddfd4
@@ -4770,31 +4771,33 @@ public final class Bttl_800d {
     if(t3 == 0 || a0.ub_a3 != 0 || a1_0 == (a0.s_9a >> 1) - 1) {
       //LAB_800de164
       for(int i = 0; i < count; i++) {
-        final Cmb.Sub0c s0 = cmbAnim._08[i];
-        final MATRIX mat = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(s0.rot_00, mat);
-        mat.transfer.set(s0.trans_06);
+        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+        RotMatrix_80040010(modelTransforms.rot_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.trans_06);
       }
     } else {
-      s4 = cmb._10.get(t1).getAddress() + t1 * a1_0 * 0x8L; //TODO
-
       //LAB_800de050
       for(int i = 0; i < count; i++) {
-        final Cmb.Sub0c s0 = cmbAnim._08[i];
-        final MATRIX mat = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(s0.rot_00, mat);
-        mat.transfer.set(s0.trans_06);
-        final SVECTOR sp0x10 = new SVECTOR();
-        sp0x10.setX((short)(s0.rot_00.getX() + (MEMORY.ref(1, s4).offset(0x1L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned())));
-        sp0x10.setY((short)(s0.rot_00.getY() + (MEMORY.ref(1, s4).offset(0x2L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned())));
-        sp0x10.setZ((short)(s0.rot_00.getZ() + (MEMORY.ref(1, s4).offset(0x3L).getSigned() << MEMORY.ref(1, s4).offset(0x0L).getSigned())));
-        final MATRIX sp0x18 = new MATRIX();
-        RotMatrix_80040010(sp0x10, sp0x18);
-        sp0x18.transfer.setX((int)(s0.trans_06.getX() + (MEMORY.ref(1, s4).offset(0x5L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned())));
-        sp0x18.transfer.setY((int)(s0.trans_06.getY() + (MEMORY.ref(1, s4).offset(0x6L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned())));
-        sp0x18.transfer.setZ((int)(s0.trans_06.getZ() + (MEMORY.ref(1, s4).offset(0x7L).getSigned() << MEMORY.ref(1, s4).offset(0x4L).getSigned())));
-        FUN_800dd15c(mat, sp0x18, 0x800);
-        s4 = s4 + 0x8L;
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(a1_0 * modelPartCount + i);
+        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
+
+        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+        RotMatrix_80040010(modelTransforms.rot_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.trans_06);
+
+        final SVECTOR rotation = new SVECTOR();
+        rotation.setX((short)(modelTransforms.rot_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00.get())));
+        rotation.setY((short)(modelTransforms.rot_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00.get())));
+        rotation.setZ((short)(modelTransforms.rot_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get())));
+
+        final MATRIX translation = new MATRIX();
+        RotMatrix_80040010(rotation, translation);
+        translation.transfer.setX(modelTransforms.trans_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
+        translation.transfer.setY(modelTransforms.trans_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
+        translation.transfer.setZ(modelTransforms.trans_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
+
+        FUN_800dd15c(modelPartMatrix, translation, 0x800);
       }
     }
 
@@ -4816,12 +4819,12 @@ public final class Bttl_800d {
   @Method(0x800de210L)
   public static void loadModelCmb(final Model124 model, final Cmb cmb) {
     final Model124.CmbAnim anim = model.cmbAnim_08;
-    final int count = cmb.count_0c.get();
+    final int count = cmb.modelPartCount_0c.get();
 
     anim.cmb_04 = cmb;
-    anim._08 = new Cmb.Sub0c[count];
+    anim.transforms_08 = new Cmb.Transforms0c[count];
 
-    Arrays.setAll(anim._08, i -> new Cmb.Sub0c());
+    Arrays.setAll(anim.transforms_08, i -> new Cmb.Transforms0c());
 
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
@@ -4832,8 +4835,8 @@ public final class Bttl_800d {
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
-      final Cmb.Sub0c v1 = cmb._10.get(i);
-      final Cmb.Sub0c a1_0 = anim._08[i];
+      final Cmb.Transforms0c v1 = cmb.transforms_10.get(i);
+      final Cmb.Transforms0c a1_0 = anim.transforms_08[i];
       a1_0.rot_00.set(v1.rot_00);
       a1_0.trans_06.set(v1.trans_06);
     }

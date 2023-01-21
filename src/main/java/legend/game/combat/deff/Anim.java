@@ -5,7 +5,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 
 public abstract class Anim implements MemoryRef {
-  private final Value ref;
+  protected final Value ref;
 
   public final IntRef magic_00;
 

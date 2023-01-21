@@ -37,7 +37,7 @@ public class ScriptState<T> {
   }
 
   private final ScriptManager manager;
-  private final RunningScript<T> context = new RunningScript<>(this);
+  final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
@@ -309,7 +309,7 @@ public class ScriptState<T> {
       this.context.opOffset_08 = this.offset_18;
 
       if(scriptLog[this.index]) {
-        System.err.printf("Exec script index %d%n", this.index);
+        LOGGER.info(SCRIPT_MARKER, "Exec script index %d", this.index);
       }
 
       FlowControl ret;
@@ -321,8 +321,8 @@ public class ScriptState<T> {
         this.context.opParam_18 = opCommand >>> 16;
 
         if(scriptLog[this.index]) {
-          System.err.println(Long.toHexString(this.context.commandOffset_0c) + " (" + this.context.commandOffset_0c + ')');
-          System.err.printf("param[p] = %x%n", opCommand >>> 16);
+          LOGGER.info(SCRIPT_MARKER, "0x%x (%d)", this.context.commandOffset_0c, this.context.commandOffset_0c);
+          LOGGER.info(SCRIPT_MARKER, "param[p] = %x", opCommand >>> 16);
         }
 
         if(this.context.paramCount_14 > 10) {
@@ -440,7 +440,7 @@ public class ScriptState<T> {
           }
 
           if(scriptLog[this.index]) {
-            System.err.printf("params[%d] = %s%n", paramIndex, this.context.params_20[paramIndex]);
+            LOGGER.info(SCRIPT_MARKER, "params[%d] = %s", paramIndex, this.context.params_20[paramIndex]);
           }
 
           //LAB_80016584
@@ -452,9 +452,9 @@ public class ScriptState<T> {
 
         if(scriptLog[this.index]) {
           if(scriptFunctionDescriptions.containsKey(opIndex)) {
-            System.err.println(scriptFunctionDescriptions.get(opIndex).apply(this.context));
+            LOGGER.info(SCRIPT_MARKER, scriptFunctionDescriptions.get(opIndex).apply(this.context));
           } else {
-            System.err.printf("Running callback %d%n", opIndex);
+            LOGGER.info(SCRIPT_MARKER, "Running callback %d", opIndex);
           }
         }
 
@@ -463,9 +463,9 @@ public class ScriptState<T> {
 
         if(scriptLog[this.index]) {
           if(ret == FlowControl.PAUSE) {
-            System.err.println("Pausing");
+            LOGGER.info(SCRIPT_MARKER, "Pausing");
           } else if(ret == FlowControl.PAUSE_AND_REWIND) {
-            System.err.println("Rewinding and pausing");
+            LOGGER.info(SCRIPT_MARKER, "Rewinding and pausing");
           }
         }
 

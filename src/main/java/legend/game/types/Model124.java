@@ -85,12 +85,12 @@ public class Model124 {
   public static class CmbAnim {
     public int _00;
     public Cmb cmb_04;
-    public Cmb.Sub0c[] _08;
+    public Cmb.Transforms0c[] transforms_08;
 
     public void set(final CmbAnim other) {
       this._00 = other._00;
       this.cmb_04 = other.cmb_04;
-      this._08 = other._08;
+      this.transforms_08 = other.transforms_08;
     }
   }
 
