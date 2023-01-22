@@ -25,8 +25,8 @@ public class SpuStruct28 implements MemoryRef {
   public final IntRef soundFileIndex_08;
   public final IntRef soundIndex_0c;
   public final ShortRef playableSoundIndex_10;
-  public final ShortRef _12;
-  public final ShortRef _14;
+  public final ShortRef patchIndex_12;
+  public final ShortRef sequenceIndex_14;
   public final ShortRef pitchShiftVolRight_16;
   public final ShortRef pitchShiftVolLeft_18;
   public final ShortRef pitch_1a;
@@ -44,8 +44,8 @@ public class SpuStruct28 implements MemoryRef {
     this.soundFileIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this.soundIndex_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
     this.playableSoundIndex_10 = ref.offset(2, 0x10L).cast(ShortRef::new);
-    this._12 = ref.offset(2, 0x12L).cast(ShortRef::new);
-    this._14 = ref.offset(2, 0x14L).cast(ShortRef::new);
+    this.patchIndex_12 = ref.offset(2, 0x12L).cast(ShortRef::new);
+    this.sequenceIndex_14 = ref.offset(2, 0x14L).cast(ShortRef::new);
     this.pitchShiftVolRight_16 = ref.offset(2, 0x16L).cast(ShortRef::new);
     this.pitchShiftVolLeft_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this.pitch_1a = ref.offset(2, 0x1aL).cast(ShortRef::new);

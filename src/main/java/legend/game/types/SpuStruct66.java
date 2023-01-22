@@ -39,7 +39,7 @@ public class SpuStruct66 implements MemoryRef {
   public final ShortRef _36;
   public final UnsignedShortRef _38;
   public final UnsignedShortRef _3a;
-  public final UnsignedShortRef _3c;
+  public final UnsignedShortRef breath_3c;
   public final UnsignedShortRef _3e;
   public final UnsignedShortRef _40;
   public final UnsignedShortRef _42;
@@ -95,7 +95,7 @@ public class SpuStruct66 implements MemoryRef {
     this._36 = ref.offset(2, 0x36L).cast(ShortRef::new);
     this._38 = ref.offset(2, 0x38L).cast(UnsignedShortRef::new);
     this._3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
-    this._3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);
+    this.breath_3c = ref.offset(2, 0x3cL).cast(UnsignedShortRef::new);
     this._3e = ref.offset(2, 0x3eL).cast(UnsignedShortRef::new);
     this._40 = ref.offset(2, 0x40L).cast(UnsignedShortRef::new);
     this._42 = ref.offset(2, 0x42L).cast(UnsignedShortRef::new);

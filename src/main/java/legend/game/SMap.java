@@ -1050,9 +1050,9 @@ public final class SMap {
       smallerStruct.uba_04.get(index).set(0);
     } else {
       //LAB_800ddeac
-      final int v1 = (struct.colourMap_9d & 0x7f) * 2;
-      final int t2 = (int)_80050424.offset(v1).getSigned() + 112;
-      final int t1 = (int)_800503f8.offset(v1).getSigned();
+      final int colourMap = (struct.colourMap_9d & 0x7f);
+      final int x = _800503f8.get(colourMap).get();
+      final int y = _80050424.get(colourMap).get() + 112;
 
       long a1 = smallerStruct.tmdSubExtensionArr_20.get(index).getPointer() + 0x4L; //TODO
 
@@ -1079,7 +1079,7 @@ public final class SMap {
       }
 
       //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(t1, t2 + t3, t1, smallerStruct.sa_18.get(index).get() + t2, 16, 1));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + t3, x, smallerStruct.sa_18.get(index).get() + y, 16, 1));
     }
 
     //LAB_800ddff4

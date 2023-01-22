@@ -2955,14 +2955,14 @@ public final class Scus94491BpeSegment {
     if(spu28Arr_800bd110.get(a0).pitchShiftVolRight_16.get() == -1 && spu28Arr_800bd110.get(a0).pitchShiftVolLeft_18.get() == -1 && spu28Arr_800bd110.get(a0).pitch_1a.get() == -1) {
       s0 = (short)FUN_8004d648(
         spu28Arr_800bd110.get(a0).playableSoundIndex_10.get(),
-        spu28Arr_800bd110.get(a0)._12.get(),
-        spu28Arr_800bd110.get(a0)._14.get()
+        spu28Arr_800bd110.get(a0).patchIndex_12.get(),
+        spu28Arr_800bd110.get(a0).sequenceIndex_14.get()
       );
     } else {
       s0 = (short)sssqPitchShift(
         spu28Arr_800bd110.get(a0).playableSoundIndex_10.get(),
-        spu28Arr_800bd110.get(a0)._12.get(),
-        spu28Arr_800bd110.get(a0)._14.get(),
+        spu28Arr_800bd110.get(a0).patchIndex_12.get(),
+        spu28Arr_800bd110.get(a0).sequenceIndex_14.get(),
         spu28Arr_800bd110.get(a0).pitchShiftVolLeft_18.get(),
         spu28Arr_800bd110.get(a0).pitchShiftVolRight_16.get(),
         spu28Arr_800bd110.get(a0).pitch_1a.get()
@@ -2986,8 +2986,8 @@ public final class Scus94491BpeSegment {
     spu28.soundFileIndex_08.set(soundFileIndex);
     spu28.soundIndex_0c.set(soundIndex);
     spu28.playableSoundIndex_10.set(playableSoundIndex);
-    spu28._12.set((short)MEMORY.ref(1, a5).offset(0x0L).get());
-    spu28._14.set((short)MEMORY.ref(1, a5).offset(0x1L).get());
+    spu28.patchIndex_12.set((short)MEMORY.ref(1, a5).offset(0x0L).get());
+    spu28.sequenceIndex_14.set((short)MEMORY.ref(1, a5).offset(0x1L).get());
     spu28.pitchShiftVolRight_16.set(pitchShiftVolRight);
     spu28.pitchShiftVolLeft_18.set(pitchShiftVolLeft);
     spu28.pitch_1a.set(pitch);
@@ -4431,6 +4431,8 @@ public final class Scus94491BpeSegment {
     setSpuDmaCompleteCallback(Scus94491BpeSegment::unloadSoundbank_800bd778);
 
     sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x1010));
+
+    LOGGER.info("Menu sounds loaded to playable sound %d", sound.playableSoundIndex_10.get());
   }
 
   @Method(0x8001e780L)

@@ -1210,11 +1210,11 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022068
     int v1 = a0.colourMap_9d;
-    final long t2;
-    long v0;
+    final int x;
+    final int y;
     if((v1 & 0x80) == 0) {
-      t2 = _800503b0.offset(v1 * 0x2L).getSigned();
-      v0 = _800503d4.getAddress();
+      x = _800503b0.get(v1).get();
+      y = _800503d4.get(v1).get();
     } else {
       //LAB_80022098
       if(v1 == 0x80) {
@@ -1222,12 +1222,11 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       v1 &= 0x7f;
-      t2 = _800503f8.offset(v1 * 0x2L).getSigned();
-      v0 = _80050424.getAddress();
+      x = _800503f8.get(v1).get();
+      y = _80050424.get(v1).get();
     }
 
     //LAB_800220c0
-    final long t1 = MEMORY.ref(2, v0).offset(v1 * 0x2L).getSigned();
     long s1;
     if(a0.usArr_ba[index] != 0x5678) {
       a0.usArr_ba[index]--;
@@ -1238,9 +1237,9 @@ public final class Scus94491BpeSegment_8002 {
       s1 = a0.ptrs_d0[index];
       a0.usArr_ba[index] = (int)MEMORY.ref(2, s1).get() & 0x7fff;
       s1 += 0x2L;
-      final long a2 = MEMORY.ref(2, s1).getSigned() + t2;
+      final int destX = (int)MEMORY.ref(2, s1).getSigned() + x;
       s1 += 0x2L;
-      final long a0_1 = MEMORY.ref(2, s1).getSigned() + t1;
+      final int destY = (int)MEMORY.ref(2, s1).getSigned() + y;
       s1 += 0x2L;
       rect.w.set((short)(MEMORY.ref(2, s1).getSigned() / 4));
       s1 += 0x2L;
@@ -1253,13 +1252,13 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      rect.x.set((short)(MEMORY.ref(2, s1).getSigned() + t2));
+      rect.x.set((short)(MEMORY.ref(2, s1).getSigned() + x));
       s1 += 0x2L;
-      rect.y.set((short)(MEMORY.ref(2, s1).getSigned() + t1));
-
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), (int)a2 & 0xffff, (int)a0_1 & 0xffff, rect.w.get(), rect.h.get()));
-
+      rect.y.set((short)(MEMORY.ref(2, s1).getSigned() + y));
       s1 += 0x2L;
+
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), destX & 0xffff, destY & 0xffff, rect.w.get(), rect.h.get()));
+
       a0.usArr_ac[index]++;
 
       v1 = (int)MEMORY.ref(2, s1).get();
@@ -1282,17 +1281,17 @@ public final class Scus94491BpeSegment_8002 {
     s1 += 0x2L;
     final long a0_0 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
-    v0 = MEMORY.ref(2, s1).getSigned();
+    final long v0 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
     v1 = (int)MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
     long s3 = MEMORY.ref(2, s1).getSigned();
     s1 += 0x2L;
     int s0_0 = (int)MEMORY.ref(2, s1).offset(0x2L).getSigned();
-    final long s7 = v0 + t1;
+    final long s7 = v0 + y;
     final long s5 = v1 >>> 2;
     v1 = (int)MEMORY.ref(2, s1).getSigned();
-    final long s6 = a0_0 + t2;
+    final long s6 = a0_0 + x;
 
     if((a1_0 & 0xf) != 0) {
       a0.usArr_ac[index] = a1_0 - 1;

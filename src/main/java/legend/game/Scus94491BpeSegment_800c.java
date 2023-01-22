@@ -12,6 +12,7 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
+import legend.game.sound.VolumeRamp;
 import legend.game.types.GsOffsetType;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.SpuStruct124;
@@ -19,6 +20,7 @@ import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
 import legend.game.types.SshdStruct10;
+import legend.game.types.SssqEntry;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -69,7 +71,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
-  public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
+  public static final Pointer<VolumeRamp> volumeRamp_800c4ab0 = MEMORY.ref(4, 0x800c4ab0L, Pointer.deferred(2, VolumeRamp::new));
   public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
   public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
@@ -82,7 +84,7 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
   public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
-  public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
+  public static final Pointer<SssqEntry> sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L, Pointer.deferred(1, SssqEntry::new));
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }

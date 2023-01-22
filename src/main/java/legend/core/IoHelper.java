@@ -56,6 +56,12 @@ public final class IoHelper {
     stream.putInt(value);
   }
 
+  /** Write a 24-bit int */
+  public static void write3(final ByteBuffer stream, final int value) {
+    stream.putInt(value << 8);
+    stream.position(stream.position() - 1);
+  }
+
   public static void write(final ByteBuffer stream, final long value) {
     write(stream, (int)value);
   }

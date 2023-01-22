@@ -39,13 +39,10 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005039c = MEMORY.ref(2, 0x8005039cL);
 
-  public static final Value _800503b0 = MEMORY.ref(2, 0x800503b0L);
-
-  public static final Value _800503d4 = MEMORY.ref(2, 0x800503d4L);
-
-  public static final Value _800503f8 = MEMORY.ref(2, 0x800503f8L);
-
-  public static final Value _80050424 = MEMORY.ref(2, 0x80050424L);
+  public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
 
   public static final ArrayRef<Pointer<LodString>> _80050ae8 = MEMORY.ref(4, 0x80050ae8L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
 

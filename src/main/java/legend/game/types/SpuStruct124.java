@@ -5,7 +5,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -16,22 +15,23 @@ public class SpuStruct124 implements MemoryRef {
 
   /** Upper nibble is message, lower nibble is channel */
   public final UnsignedByteRef command_000;
-  public final UnsignedByteRef _001;
-  public final UnsignedByteRef _002;
-  public final UnsignedByteRef _003;
+  public final UnsignedByteRef previousCommand_001;
+  public final UnsignedByteRef param0_002;
+  public final UnsignedByteRef param1_003;
 
-  public final UnsignedByteRef _005;
+  public final UnsignedByteRef param2_005;
 
   public final UnsignedIntRef sssqOffset_00c;
-  public final Pointer<SssqFile> sssqPtr_010;
+  /** Can either be a full SSSQ file, or just a sequence */
+  public final UnsignedIntRef sssqPtr_010;
 
   public final UnsignedIntRef _018;
 
   public final UnsignedByteRef _01e;
 
   public final UnsignedShortRef playableSoundIndex_020;
-  public final UnsignedShortRef _022;
-  public final UnsignedShortRef _024;
+  public final UnsignedShortRef sequenceIndex_022;
+  public final UnsignedShortRef patchIndex_024;
   public final UnsignedByteRef _026;
   public final UnsignedByteRef _027;
   /** Union */
@@ -92,22 +92,22 @@ public class SpuStruct124 implements MemoryRef {
     this.ref = ref;
 
     this.command_000 = ref.offset(1, 0x000L).cast(UnsignedByteRef::new);
-    this._001 = ref.offset(1, 0x001L).cast(UnsignedByteRef::new);
-    this._002 = ref.offset(1, 0x002L).cast(UnsignedByteRef::new);
-    this._003 = ref.offset(1, 0x003L).cast(UnsignedByteRef::new);
+    this.previousCommand_001 = ref.offset(1, 0x001L).cast(UnsignedByteRef::new);
+    this.param0_002 = ref.offset(1, 0x002L).cast(UnsignedByteRef::new);
+    this.param1_003 = ref.offset(1, 0x003L).cast(UnsignedByteRef::new);
 
-    this._005 = ref.offset(1, 0x005L).cast(UnsignedByteRef::new);
+    this.param2_005 = ref.offset(1, 0x005L).cast(UnsignedByteRef::new);
 
     this.sssqOffset_00c = ref.offset(4, 0x00cL).cast(UnsignedIntRef::new);
-    this.sssqPtr_010 = ref.offset(4, 0x010L).cast(Pointer.deferred(1, SssqFile::new));
+    this.sssqPtr_010 = ref.offset(4, 0x010L).cast(UnsignedIntRef::new);
 
     this._018 = ref.offset(4, 0x018L).cast(UnsignedIntRef::new);
 
     this._01e = ref.offset(1, 0x01eL).cast(UnsignedByteRef::new);
 
     this.playableSoundIndex_020 = ref.offset(2, 0x020L).cast(UnsignedShortRef::new);
-    this._022 = ref.offset(2, 0x022L).cast(UnsignedShortRef::new);
-    this._024 = ref.offset(2, 0x024L).cast(UnsignedShortRef::new);
+    this.sequenceIndex_022 = ref.offset(2, 0x022L).cast(UnsignedShortRef::new);
+    this.patchIndex_024 = ref.offset(2, 0x024L).cast(UnsignedShortRef::new);
     this._026 = ref.offset(1, 0x026L).cast(UnsignedByteRef::new);
     this._027 = ref.offset(1, 0x027L).cast(UnsignedByteRef::new);
     this._028_4b = ref.offset(4, 0x028L).cast(UnsignedIntRef::new);

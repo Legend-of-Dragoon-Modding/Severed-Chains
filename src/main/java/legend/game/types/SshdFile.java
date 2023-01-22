@@ -5,6 +5,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.sound.PatchList;
+import legend.game.sound.VolumeRamp;
 
 public class SshdFile implements MemoryRef {
   public static final long MAGIC = 0x6468_5353L; //SShd
@@ -15,6 +17,14 @@ public class SshdFile implements MemoryRef {
   public final IntRef soundBankSize_04;
 
   public final UnsignedIntRef magic_0c;
+  /**
+   * <ul>
+   *   <li>0 - Same type as 4?</li>
+   *   <li>1 - {@link VolumeRamp}</li>
+   *   <li>3 - {@link PatchList} (only used if ptr 4 is also set?)</li>
+   *   <li>4 - Embedded SSSQ file? Has 24 entries instead of 16. Most header information is 0.</li>
+   * </ul>
+   */
   public final ArrayRef<IntRef> ptrs_10;
 
   public SshdFile(final Value ref) {
